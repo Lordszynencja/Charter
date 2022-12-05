@@ -1,0 +1,44 @@
+Release a4:
+-no new Features because of new developers. The sourcecode was cleaned up and the Javadoc a bit more extended.
+-fixed Bug #562622 in the MP3FileFilter should work with any .mp3 Files now
+-made improvements to the MPEGAudioFrameHeader Class so that it now accepts most MPEG-Audio files
+
+Release a3:
+-successfully parses MP3ext padding
+-removed size check that causes many people headaches
+-fixed MP3File.equals method
+-doesn't break when the 1st mpeg frame is corrupt
+-ignores bad frame sizes when parsing
+-removed unnecessary encoding which was giving someone exceptions
+-supports VBR files (calculates correct playing time and avg bitrate)
+-Playlist class supports MusicMatch playlists
+-Playlist class optimized in various ways
+-MP3Comparator class optimized slightly
+-created ID3Tag interface that will be of much use in later versions
+-ID3v1Tag and ID3v2Tag adhere to ID3Tag interface
+-added additional functionality to MPEGAudioFrameHeader
+-added functionality for parsing "x/y" type track fields in id3v2 tags
+-various other optimizations scattered about
+
+Release a2:
+-fixed a major bug with id3v2 tags that caused many problems
+ (I wasn't decoding/encoding the header size as a synchsafe int)
+-fixed about a dozen file handle leaks
+-mpeg frames are searched from beginning of file instead of after
+ id3v2 tag
+-padding size calculation now accurate
+-id3v2 writing and removing much more stable
+-added several Nullsoft genres I missed
+-fixed ArrayIndexOutOfBoundsException problem encountered
+ sometimes while writing id3v2 tags
+
+Release a1:
+-Reads, creates, updates, and removes id3v2.3 and id3v2.4 tags
+-Reads, creates, updates, and removes id3v1 tags
+-Extracts MPEG data such as bit rate, sample rate, channel mode, etc.
+-Calculates playing time of mp3 from mpeg information (no good w/VBR)
+-Can read and create Winamp styled playlists
+-Offers other utility classes such as MP3FileFilter and MP3Comparator
+-NullsoftID3GenreTable object keeps a list of genres for you and can
+ automatically determine the id3v1 genre from an id3v2 string or the
+ other way around
