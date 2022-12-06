@@ -1,13 +1,8 @@
 package log.charter.io.rs.xml.converters;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 
-public class TimeConverter implements SingleValueConverter {
-	private final NumberFormat format = new DecimalFormat("000");
-
+public class NullSafeIntegerConverter implements SingleValueConverter {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean canConvert(final Class type) {
@@ -17,11 +12,10 @@ public class TimeConverter implements SingleValueConverter {
 	@Override
 	public String toString(final Object obj) {
 		if (obj == null) {
-			return null;
+			return "";
 		}
 
-		final int value = (int) obj;
-		return value / 1000 + "." + format.format(value % 1000);
+		return obj.toString();
 	}
 
 	@Override
@@ -30,7 +24,7 @@ public class TimeConverter implements SingleValueConverter {
 			return null;
 		}
 
-		return Integer.parseInt(str.replaceAll("\\.", ""));
+		return Integer.parseInt(str);
 	}
 
 }

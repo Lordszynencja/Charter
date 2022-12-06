@@ -17,4 +17,13 @@ public class XMLHandler {
 
 		return xstream;
 	}
+
+	private static String generateXML(final Object object) {
+		return "<?xml version='1.0' encoding='UTF-8'?>\n" //
+				+ xstream.toXML(object);
+	}
+
+	public static String generateXML(final Vocals vocals) {
+		return generateXML((Object) vocals);
+	}
 }
