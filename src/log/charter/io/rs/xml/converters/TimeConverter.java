@@ -20,8 +20,15 @@ public class TimeConverter implements SingleValueConverter {
 			return null;
 		}
 
-		final int value = (int) obj;
-		return value / 1000 + "." + format.format(value % 1000);
+		int value = (int) obj;
+		String result = "";
+		if (value < 0) {
+			value = -value;
+			result = "-";
+		}
+		result += value / 1000 + "." + format.format(value % 1000);
+
+		return result;
 	}
 
 	@Override

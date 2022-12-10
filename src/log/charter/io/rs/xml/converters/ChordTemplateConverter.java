@@ -42,6 +42,7 @@ public class ChordTemplateConverter implements Converter {
 				chordTemplate.frets.put(Integer.valueOf(name.substring(4)), Integer.valueOf(value));
 			}
 		}
+
 		return chordTemplate;
 	}
 

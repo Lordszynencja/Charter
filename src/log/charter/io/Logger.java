@@ -28,17 +28,29 @@ public class Logger {
 	public static void debug(final String msg) {
 		if (Config.debugLogging) {
 			out.println("[DEBUG] " + msg);
+
+			if (out != System.out) {
+				System.out.println("[DEBUG] " + msg);
+			}
 		}
 	}
 
 	public static void error(final String msg) {
 		out.println("[ERROR] " + msg);
+
+		if (out != System.out) {
+			System.out.println("[ERROR] " + msg);
+		}
 	}
 
 	public static void error(final String msg, final Exception e) {
 		out.println("[ERROR] " + msg);
 		e.printStackTrace(out);
-		e.printStackTrace(System.out);
+
+		if (out != System.out) {
+			System.out.println("[ERROR] " + msg);
+			e.printStackTrace(System.out);
+		}
 	}
 
 	public static void setOutput(final PrintStream output) {

@@ -12,7 +12,7 @@ import log.charter.gui.handlers.CharterFrameComponentListener;
 import log.charter.gui.handlers.CharterFrameMouseWheelListener;
 import log.charter.gui.handlers.CharterFrameWindowFocusListener;
 import log.charter.gui.handlers.CharterFrameWindowListener;
-import log.charter.main.LogCharterMain;
+import log.charter.main.LogCharterRSMain;
 
 public class CharterFrame extends JFrame {
 	private static final long serialVersionUID = 3603305480386377813L;
@@ -24,7 +24,7 @@ public class CharterFrame extends JFrame {
 	public final JLabel helpLabel;
 
 	public CharterFrame() {
-		super(LogCharterMain.TITLE);
+		super(LogCharterRSMain.TITLE);
 		setLayout(null);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setLocationByPlatform(true);
@@ -85,44 +85,13 @@ public class CharterFrame extends JFrame {
 				+ "</html>");
 	}
 
-	public void setDrumsHelp() {
-		helpLabel.setText("<html>G → toggle grid<br>"//
-				+ "G, 1-9 → set grid size<br>"//
-				+ "1-9 when mouse is on beat → set beats in measure<br>"//
-				+ "Left press above tempo section → add/edit/remove song section<br>"//
-				+ "Ctrl + W → toggle Star Power section<br>"//
-				+ "Ctrl + P → toggle Solo section<br>"//
-				+ "Ctrl + K → toggle Drum Roll section<br>"//
-				+ "Ctrl + L → toggle Special Drum Roll section<br>"//
-				+ "Ctrl + E → toggle expert+ bass<br>"//
-				+ "Ctrl + Y → toggle yellow tom<br>"//
-				+ "Ctrl + B → toggle blue tom<br>"//
-				+ "Ctrl + G → toggle green tom<br>"//
-				+ "Ctrl + H → set auto-HOPO for selected notes (type max distance since previous note in ms to make it HOPO)<br>"//
-				+ "</html>");
-	}
-
-	public void setKeysHelp() {
-		helpLabel.setText("<html>G → toggle grid<br>"//
-				+ "G, 1-9 → set grid size<br>"//
-				+ "1-9 when mouse is on beat → set beats in measure<br>"//
-				+ "Left press above tempo section → add/edit/remove song section<br>"//
-				+ "Ctrl + W → toggle Star Power section<br>"//
-				+ "Ctrl + Y → toggle Solo section<br>"//
-				+ "U → toggle selected notes crazy<br>"//
-				+ "</html>");
-	}
-
 	public void setLyricsHelp() {
 		helpLabel.setText("<html>G → toggle grid<br>"//
 				+ "G, 1-9 → set grid size<br>"//
 				+ "1-9 when mouse is on beat → set beats in measure<br>"//
 				+ "Left press above tempo section → add/edit/remove song section<br>"//
-				+ "Ctrl + W → toggle Star Power section<br>"//
 				+ "Ctrl + L → place vocal line (vocals editing)<br>"//
 				+ "L → edit vocal note (vocals editing)<br>"//
-				+ "T → toggle note toneless (vocals editing)<br>"//
-				+ "Q → toggle note connected (vocals editing)<br>"//
 				+ "W → toggle note is word part (vocals editing)<br></html>");
 	}
 }

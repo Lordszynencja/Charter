@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 
 public class RW {
 
-	public static File getFile(final String filename) {
+	public static File getOrCreateFile(final String filename) {
 		final File f = new File(filename);
 		if (!f.exists()) {
 			final int split = filename.lastIndexOf("/");
@@ -45,6 +45,10 @@ public class RW {
 	}
 
 	public static byte[] readB(final File f) {
+		if (!f.exists()) {
+			return new byte[0];
+		}
+
 		try {
 			final FileInputStream input = new FileInputStream(f);
 			final byte[] bytes = new byte[(int) f.length()];
@@ -58,7 +62,7 @@ public class RW {
 	}
 
 	public static byte[] readB(final String filename) {
-		return readB(getFile(filename));
+		return readB(new File(filename));
 	}
 
 	public static Map<String, String> readConfig(final String filename) {
@@ -94,8 +98,7 @@ public class RW {
 	}
 
 	public static void writeB(final String filename, final byte[] content) {
-		final File f = getFile(filename);
-		writeB(f, content);
+		writeB(getOrCreateFile(filename), content);
 	}
 
 	public static void writeConfig(final String filename, final Map<String, String> config) {

@@ -1,23 +1,22 @@
 package log.charter.io.rs.xml.converters;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import log.charter.util.CollectionUtils.ArrayList2;
+
 public class CountedListConverter implements Converter {
 	public static class CountedList<T> {
-		public final List<T> list;
+		public final ArrayList2<T> list;
 
 		public CountedList() {
-			list = new ArrayList<>();
+			list = new ArrayList2<>();
 		}
 
-		public CountedList(final List<T> list) {
+		public CountedList(final ArrayList2<T> list) {
 			this.list = list;
 		}
 	}
@@ -38,8 +37,7 @@ public class CountedListConverter implements Converter {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-		final List<Object> list = (List<Object>) context.convertAnother(null, List.class);
-		return new CountedList<Object>(list);
+		return new CountedList<Object>((ArrayList2<Object>) context.convertAnother(null, ArrayList2.class));
 	}
 
 }

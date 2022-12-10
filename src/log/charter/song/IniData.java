@@ -21,17 +21,6 @@ public class IniData {
 	public String loadingPhrase = "";
 	public String charter = "";
 
-	public int diffG = -1;
-	public int diffGC = -1;
-	public int diffGR = -1;
-	public int diffB = -1;
-	public int diffD = -1;
-	public int diffK = -1;
-
-	public String sysexOpenBass = "True";
-	public String sysexSlider = "True";
-	public String proDrums = "True";
-
 	public Map<String, String> otherValues = new HashMap<>();
 
 	public IniData() {
@@ -77,33 +66,6 @@ public class IniData {
 				case "frets":
 				case "charter":
 					charter = value;
-					break;
-				case "diff_guitar":
-					diffG = Integer.valueOf(value);
-					break;
-				case "diff_guitar_coop":
-					diffGC = Integer.valueOf(value);
-					break;
-				case "diff_rhythm":
-					diffGR = Integer.valueOf(value);
-					break;
-				case "diff_bass":
-					diffB = Integer.valueOf(value);
-					break;
-				case "diff_drums":
-					diffD = Integer.valueOf(value);
-					break;
-				case "diff_keys":
-					diffK = Integer.valueOf(value);
-					break;
-				case "sysex_open_bass":
-					sysexSlider = value;
-					break;
-				case "sysex_slider":
-					sysexSlider = value;
-					break;
-				case "pro_drums":
-					proDrums = value;
 					break;
 				default:
 					otherValues.put(param, value);

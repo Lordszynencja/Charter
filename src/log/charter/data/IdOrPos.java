@@ -1,18 +1,18 @@
 package log.charter.data;
 
 public class IdOrPos {
-	public static IdOrPos fromId(final int id, final double pos) {
+	public static IdOrPos fromId(final int id, final int pos) {
 		return new IdOrPos(id, pos);
 	}
 
-	public static IdOrPos fromPos(final double pos) {
+	public static IdOrPos fromPos(final int pos) {
 		return new IdOrPos(-1, pos);
 	}
 
 	public final int id;
-	public final double pos;
+	public final int pos;
 
-	public IdOrPos(final int id, final double pos) {
+	public IdOrPos(final int id, final int pos) {
 		this.id = id;
 		this.pos = pos;
 	}
@@ -28,10 +28,5 @@ public class IdOrPos {
 
 	public boolean isPos() {
 		return id < 0;
-	}
-
-	@Override
-	public String toString() {
-		return "IdOrPos{" + (id >= 0 ? "id:" + id + "}" : "pos:" + pos + "}");
 	}
 }

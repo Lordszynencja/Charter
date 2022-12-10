@@ -1,18 +1,14 @@
 package log.charter.song;
 
 public class Position implements Comparable<Position> {
-	public double pos;
+	public int position;
 
-	public Position(final double pos) {
-		this.pos = pos;
-	}
-
-	public Position(final Position p) {
-		pos = p.pos;
+	public Position(final int pos) {
+		position = pos;
 	}
 
 	@Override
 	public int compareTo(final Position o) {
-		return new Double(pos).compareTo(o.pos);
+		return Integer.compare(position, o.position);
 	}
 }

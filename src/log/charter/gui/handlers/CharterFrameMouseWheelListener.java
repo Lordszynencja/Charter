@@ -3,6 +3,7 @@ package log.charter.gui.handlers;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import log.charter.data.Zoom;
 import log.charter.gui.ChartEventsHandler;
 
 public class CharterFrameMouseWheelListener implements MouseWheelListener {
@@ -17,13 +18,13 @@ public class CharterFrameMouseWheelListener implements MouseWheelListener {
 	public void mouseWheelMoved(final MouseWheelEvent e) {
 		final int rot = e.getWheelRotation();
 		if (handler.isCtrl()) {
-			handler.data.addZoom(rot * (handler.isShift() ? 10 : 1));
-		} else {
-			if (handler.data.currentInstrument.type.isVocalsType()) {
-				handler.data.changeLyricLength(rot);
-			} else {
-				handler.data.changeNoteLength(rot);
-			}
+			Zoom.addZoom(rot * (handler.isShift() ? 10 : 1));
+		} else {// TODO
+//			if (handler.data.currentInstrument.type.isVocalsType()) {
+//				handler.data.changeLyricLength(rot);
+//			} else {
+//				handler.data.changeNoteLength(rot);
+//			}
 			handler.setChanged();
 		}
 		e.consume();

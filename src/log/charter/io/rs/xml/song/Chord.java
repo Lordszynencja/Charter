@@ -1,29 +1,31 @@
 package log.charter.io.rs.xml.song;
 
-import java.util.List;
+import static log.charter.util.Utils.mapInteger;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.annotations.XStreamInclude;
+import log.charter.song.Note;
+import log.charter.song.Position;
+import log.charter.util.CollectionUtils.ArrayList2;
 
-import log.charter.io.rs.xml.converters.TimeConverter;
-
-@XStreamAlias("chord")
-@XStreamInclude(ChordNote.class)
-public class Chord {
-	@XStreamAsAttribute
-	@XStreamConverter(TimeConverter.class)
-	public int time;
-	@XStreamAsAttribute
+public class Chord extends Position {
 	public int chordId;
-	@XStreamAsAttribute
-	public Integer palmMute;
-	@XStreamAsAttribute
-	public Integer fretHandMute;
-	@XStreamAsAttribute
-	public Integer accent;
-	@XStreamImplicit
-	public List<ChordNote> chordNotes;
+	public boolean palmMute;
+	public boolean fretHandMute;
+	public boolean accent;
+	public ArrayList2<Note> chordNotes = new ArrayList2<>();
+
+	public Chord(final int pos, final int chordId) {
+		super(pos);
+		this.chordId = chordId;
+	}
+
+	public Chord(final ArrangementChord arrangementChord) {
+		super(arrangementChord.time);
+		chordId = arrangementChord.chordId;
+		palmMute = mapInteger(arrangementChord.palmMute);
+		fretHandMute = mapInteger(arrangementChord.fretHandMute);
+		accent = mapInteger(arrangementChord.accent);
+		chordNotes = arrangementChord.chordNotes == null ? new ArrayList2<>()
+				: arrangementChord.chordNotes.map(Note::new);
+	}
+
 }

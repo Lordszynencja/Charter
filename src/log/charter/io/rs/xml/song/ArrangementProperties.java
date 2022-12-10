@@ -7,65 +7,65 @@ public class ArrangementProperties {
 	 * is main arrangement
 	 */
 	@XStreamAsAttribute
-	int represent;
+	public int represent;
 	@XStreamAsAttribute
-	int bonusArr;
+	public int bonusArr;
 	@XStreamAsAttribute
-	int standardTuning;
+	public int standardTuning;
 	@XStreamAsAttribute
-	int nonStandardChords;
+	public int nonStandardChords;
 	@XStreamAsAttribute
-	int barreChords;
+	public int barreChords;
 	@XStreamAsAttribute
-	int powerChords;
+	public int powerChords;
 	@XStreamAsAttribute
-	int dropDPower;
+	public int dropDPower;
 	@XStreamAsAttribute
-	int openChords;
+	public int openChords;
 	@XStreamAsAttribute
-	int fingerPicking;
+	public int fingerPicking;
 	@XStreamAsAttribute
-	int pickDirection;
+	public int pickDirection;
 	@XStreamAsAttribute
-	int doubleStops;
+	public int doubleStops;
 	@XStreamAsAttribute
-	int palmMutes;
+	public int palmMutes;
 	@XStreamAsAttribute
-	int harmonics;
+	public int harmonics;
 	@XStreamAsAttribute
-	int pinchHarmonics;
+	public int pinchHarmonics;
 	@XStreamAsAttribute
-	int hopo;
+	public int hopo;
 	@XStreamAsAttribute
-	int tremolo;
+	public int tremolo;
 	@XStreamAsAttribute
-	int slides;
+	public int slides;
 	@XStreamAsAttribute
-	int unpitchedSlides;
+	public int unpitchedSlides;
 	@XStreamAsAttribute
-	int bends;
+	public int bends;
 	@XStreamAsAttribute
-	int tapping;
+	public int tapping;
 	@XStreamAsAttribute
-	int vibrato;
+	public int vibrato;
 	@XStreamAsAttribute
-	int fretHandMutes;
+	public int fretHandMutes;
 	@XStreamAsAttribute
-	int slapPop;
+	public int slapPop;
 	@XStreamAsAttribute
-	int twoFingerPicking;
+	public int twoFingerPicking;
 	@XStreamAsAttribute
-	int fifthsAndOctaves;
+	public int fifthsAndOctaves;
 	@XStreamAsAttribute
-	int syncopation;
+	public int syncopation;
 	@XStreamAsAttribute
-	int bassPick;
+	public int bassPick;
 	@XStreamAsAttribute
-	int sustain;
+	public int sustain;
 	@XStreamAsAttribute
-	int pathLead;
+	public int pathLead;
 	@XStreamAsAttribute
-	int pathRhythm;
+	public int pathRhythm;
 	@XStreamAsAttribute
-	int pathBass;
+	public int pathBass;
 }

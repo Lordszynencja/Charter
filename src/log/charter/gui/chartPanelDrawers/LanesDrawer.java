@@ -5,32 +5,26 @@ import static log.charter.gui.ChartPanel.getLaneY;
 import java.awt.Graphics;
 
 import log.charter.data.ChartData;
+import log.charter.data.EditMode;
 import log.charter.gui.ChartPanel;
+import log.charter.gui.ChartPanelColors;
+import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class LanesDrawer implements Drawer {
-	private static void drawLanes(final Graphics g, final int lanes, final int width) {
-		if (lanes <= 0 || lanes > 100) {
-			return;
-		}
-		for (int i = 0; i < lanes; i++) {
-			final int y = getLaneY(i, lanes);
-			g.drawLine(0, y, width, y);
-		}
+	private static void drawVocalLane(final Graphics g, final int width) {
+		g.setColor(ChartPanelColors.get(ColorLabel.LANE));
+		final int y = getLaneY(0, 1);
+		g.drawLine(0, y, width, y);
 	}
 
 	@Override
 	public void draw(final Graphics g, final ChartPanel panel, final ChartData data) {
-		g.setColor(ChartPanel.colors.get("LANE"));
-		int lanesCount = 0;
-		if (data.currentInstrument.type.isGuitarType()) {
-			lanesCount = 6;
-		} else if (data.currentInstrument.type.isDrumsType()) {
-			lanesCount = 5;
-		} else if (data.currentInstrument.type.isKeysType()) {
-			lanesCount = 5;
-		} else if (data.currentInstrument.type.isVocalsType()) {
-			lanesCount = 1;
+		if (data.isEmpty) {
+			return;
 		}
-		drawLanes(g, lanesCount, panel.getWidth());
+
+		if (data.editMode == EditMode.VOCALS) {
+			drawVocalLane(g, panel.getWidth());
+		}
 	}
 }

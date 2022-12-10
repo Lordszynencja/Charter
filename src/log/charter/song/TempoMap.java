@@ -8,7 +8,7 @@ import static log.charter.io.Logger.error;
 import java.util.ArrayList;
 import java.util.List;
 
-import log.charter.io.TickMsConverter;
+import log.charter.io.midi.MidiReader;
 
 public class TempoMap {
 	public static double btt(final double t, final int kbpm) {
@@ -27,6 +27,10 @@ public class TempoMap {
 
 	public final List<Tempo> tempos = new ArrayList<>();
 	public boolean isMs = false;
+
+	public TempoMap() {
+		tempos.add(new Tempo(0, 0, 120000, 4));
+	}
 
 	public TempoMap(final List<Tempo> tempos) {
 		for (final Tempo tmp : tempos) {
@@ -101,7 +105,7 @@ public class TempoMap {
 
 		for (int i = 1; i < tempos.size(); i++) {
 			final Tempo tmp = tempos.get(i);
-			tmp.pos = (tmp.id * TickMsConverter.ticksPerBeat);
+			tmp.pos = (tmp.id * MidiReader.ticksPerBeat);
 		}
 		isMs = false;
 	}
@@ -222,7 +226,7 @@ public class TempoMap {
 	/**
 	 *
 	 * @param time
-	 * 
+	 *
 	 * @return current tempo, new instance of current tempo, next tempo and if tempo
 	 *         is new
 	 */
@@ -361,18 +365,5 @@ public class TempoMap {
 
 	public void sort() {
 		tempos.sort(null);
-	}
-
-	@Override
-	public String toString() {
-		final StringBuilder b = new StringBuilder("TempoMap{tempos:[");
-		boolean first = true;
-		for (final Tempo t : tempos) {
-			b.append(first ? "" : ",\n\t").append(t);
-			first = false;
-		}
-		b.append("]}");
-
-		return b.toString();
 	}
 }

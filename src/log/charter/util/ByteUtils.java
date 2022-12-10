@@ -1,5 +1,9 @@
 package log.charter.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class ByteUtils {
 	public static double bytesToDouble(final byte[] bytes) {
 		final long l = (((long) bytes[0]) & 255)//
@@ -37,5 +41,38 @@ public class ByteUtils {
 
 	public static byte getBitByte(final int pos) {
 		return (byte) (1 << pos);
+	}
+
+	public static List<byte[]> splitToList(final byte[] bytes) {
+		int a = 0;
+		final List<byte[]> list = new ArrayList<>(bytes.length / 20);
+		while (a < bytes.length) {
+			final int length = (bytes[a] & 255) + ((bytes[a + 1] & 255) << 8);
+			a += 2;
+
+			list.add(Arrays.copyOfRange(bytes, a, a + length));
+			a += length;
+		}
+
+		return list;
+	}
+
+	public static byte[] joinList(final List<byte[]> list) {
+		int length = 0;
+		for (final byte[] b : list) {
+			length += b.length + 2;
+		}
+
+		final byte[] bytes = new byte[length];
+		int a = 0;
+		for (final byte[] b : list) {
+			bytes[a] = (byte) (b.length & 255);
+			bytes[a + 1] = (byte) ((b.length >> 8) & 255);
+
+			System.arraycopy(b, 0, bytes, a + 2, b.length);
+			a += b.length + 2;
+		}
+
+		return bytes;
 	}
 }
