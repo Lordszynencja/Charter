@@ -5,23 +5,32 @@ import java.awt.Graphics;
 import log.charter.data.ChartData;
 import log.charter.data.EditMode;
 import log.charter.gui.ChartPanel;
-import log.charter.gui.chartPanelDrawers.Drawer;
+import log.charter.gui.SelectionManager;
+import log.charter.gui.chartPanelDrawers.common.HighlightDrawer;
 
-public class ArrangementDrawer implements Drawer {
+public class ArrangementDrawer {
+
+	private ChartData data;
 
 	private final GuitarDrawer guitarDrawer = new GuitarDrawer();
 	private final VocalsDrawer vocalsDrawer = new VocalsDrawer();
 
-	@Override
-	public void draw(final Graphics g, final ChartPanel panel, final ChartData data) {
+	public void init(final ChartPanel chartPanel, final ChartData data, final HighlightDrawer highlightDrawer,
+			final SelectionManager selectionManager) {
+		this.data = data;
+		guitarDrawer.init(data, chartPanel);
+		vocalsDrawer.init(data, chartPanel, highlightDrawer, selectionManager);
+	}
+
+	public void draw(final Graphics g) {
 		if (data.isEmpty) {
 			return;
 		}
 
 		if (data.editMode == EditMode.GUITAR) {
-			guitarDrawer.draw(g, panel, data);
+			guitarDrawer.draw(g);
 		} else if (data.editMode == EditMode.VOCALS) {
-			vocalsDrawer.draw(g, panel, data);
+			vocalsDrawer.draw(g);
 		}
 	}
 

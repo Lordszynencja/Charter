@@ -12,6 +12,9 @@ import log.charter.data.ChartData;
 public class CharterFrameMouseMotionListener implements MouseMotionListener {
 	private final ChartData data;
 
+	public int mouseX = -1;
+	public int mouseY = -1;
+
 	public CharterFrameMouseMotionListener(final ChartData data) {
 		this.data = data;
 	}
@@ -25,15 +28,15 @@ public class CharterFrameMouseMotionListener implements MouseMotionListener {
 			data.songChart.beatsMap.moveBeat(data.draggedBeatId, newPos);
 		}
 
-		if (isInLanes(data.my) && (abs(data.mx - data.mousePressX) > 20)) {
+		if (isInLanes(data.my) && (abs(mouseX - data.mousePressX) > 20)) {
 			data.isNoteDrag = true;
 		}
 	}
 
 	@Override
 	public void mouseMoved(final MouseEvent e) {
-		data.mx = e.getX();
-		data.my = e.getY();
+		mouseX = e.getX();
+		mouseY = e.getY();
 	}
 
 }

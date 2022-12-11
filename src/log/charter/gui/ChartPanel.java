@@ -1,9 +1,6 @@
 package log.charter.gui;
 
-import static java.util.Arrays.asList;
-
 import java.awt.Graphics;
-import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -11,20 +8,13 @@ import log.charter.data.ChartData;
 import log.charter.data.Config;
 import log.charter.data.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.chartPanelDrawers.BeatsDrawer;
-import log.charter.gui.chartPanelDrawers.Drawer;
-import log.charter.gui.chartPanelDrawers.HighlightDrawer;
-import log.charter.gui.chartPanelDrawers.SelectedNotesDrawer;
+import log.charter.gui.chartPanelDrawers.common.HighlightDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.ArrangementDrawer;
+import log.charter.gui.handlers.AudioHandler;
+import log.charter.gui.handlers.CharterFrameMouseListener;
 import log.charter.gui.handlers.CharterFrameMouseMotionListener;
 
 public class ChartPanel extends JPanel {
-	private static final List<Drawer> DRAWERS = asList(//
-			new BeatsDrawer(), //
-			new ArrangementDrawer(), //
-			new SelectedNotesDrawer(), //
-			new HighlightDrawer());
-
 	private static final long serialVersionUID = -3439446235287039031L;
 
 	public static final int sectionNamesY = 10;
@@ -34,7 +24,8 @@ public class ChartPanel extends JPanel {
 	public static final int beatSizeTextY = beatTextY + 15;
 	public static final int lanesTop = beatSizeTextY + 5;
 	public static final int lanesBottom = lanesTop + 250;
-	public static final int HEIGHT = lanesBottom + 20;
+	public static final int handShapesY = lanesBottom + 30;
+	public static final int HEIGHT = handShapesY + 20;
 
 	public static final int lanesHeight = lanesBottom - lanesTop;
 
@@ -43,7 +34,7 @@ public class ChartPanel extends JPanel {
 	}
 
 	public static int getLaneY(final int lane, final int lanesNo) {
-		return lanesTop + (int) (ChartPanel.lanesHeight * (applyInvertion(lane, lanesNo) + 0.5) / lanesNo);
+		return lanesTop + (int) (lanesHeight * (applyInvertion(lane, lanesNo) + 0.5) / lanesNo);
 	}
 
 	public static int clamp(final double y, final int lanesNo) {
@@ -62,18 +53,49 @@ public class ChartPanel extends JPanel {
 		return applyInvertion((int) ((y - lanesTop) * lanesNo / lanesHeight), lanesNo);
 	}
 
-	private final ChartData data;
+	private boolean initiated = false;
 
-	public ChartPanel(final ChartEventsHandler handler) {
+	private ChartData data;
+
+	private final HighlightDrawer highlightDrawer = new HighlightDrawer();
+	private final ArrangementDrawer arrangementDrawer = new ArrangementDrawer();
+
+	public ChartPanel() {
 		super();
-		data = handler.data;
-		addMouseListener(handler);
+	}
+
+	public void init(final AudioHandler audioHandler, final ChartData data,
+			final ChartKeyboardHandler chartEventsHandler, final HighlightManager highlightManager,
+			final SelectionManager selectionManager) {
+		this.data = data;
+
+		arrangementDrawer.init(this, data, highlightDrawer, selectionManager);
+		highlightDrawer.init(data, highlightManager);
+
+		addMouseListener(new CharterFrameMouseListener(audioHandler, data));
 		addMouseMotionListener(new CharterFrameMouseMotionListener(data));
+
+		initiated = true;
+	}
+
+	private void drawMarker(final Graphics g) {
+		g.setColor(ChartPanelColors.get(ColorLabel.MARKER));
+		g.drawLine(Config.markerOffset, lanesTop - 5, Config.markerOffset, lanesBottom);
+	}
+
+	private void drawMouseDrag(final Graphics g) {
+		if (data.editMode == EditMode.GUITAR && data.isNoteAdd) {
+			g.setColor(ChartPanelColors.get(ColorLabel.NOTE_ADD_LINE));
+			g.drawLine(data.mousePressX, data.mousePressY, data.mx, data.my);
+		}
 	}
 
 	@Override
 	public void paintComponent(final Graphics g) {
-		data.time = (int) data.nextT;
+		if (!initiated) {
+			return;
+		}
+
 		g.setColor(ChartPanelColors.get(ColorLabel.BACKGROUND));
 		g.fillRect(0, 0, getWidth(), getHeight());
 		if (data.isEmpty) {
@@ -83,15 +105,9 @@ public class ChartPanel extends JPanel {
 		g.setColor(ChartPanelColors.get(ColorLabel.NOTE_BACKGROUND));
 		g.fillRect(0, lanesTop, getWidth(), lanesHeight);
 
-		for (final Drawer drawer : DRAWERS) {
-			drawer.draw(g, this, data);
-		}
+		arrangementDrawer.draw(g);
 
-		g.setColor(ChartPanelColors.get(ColorLabel.MARKER));
-		g.drawLine(Config.markerOffset, lanesTop - 5, Config.markerOffset, lanesBottom);
-		if (data.editMode == EditMode.GUITAR && data.isNoteAdd) {
-			g.setColor(ChartPanelColors.get(ColorLabel.NOTE_ADD_LINE));
-			g.drawLine(data.mousePressX, data.mousePressY, data.mx, data.my);
-		}
+		drawMarker(g);
+		drawMouseDrag(g);
 	}
 }

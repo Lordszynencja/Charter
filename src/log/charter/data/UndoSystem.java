@@ -3,11 +3,12 @@ package log.charter.data;
 import java.util.LinkedList;
 
 public class UndoSystem {
-	private final ChartData data;
+	private ChartData data;
+
 	private final LinkedList<UndoState> undo = new LinkedList<>();
 	private final LinkedList<UndoState> redo = new LinkedList<>();
 
-	public UndoSystem(final ChartData data) {
+	public void init(final ChartData data) {
 		this.data = data;
 	}
 

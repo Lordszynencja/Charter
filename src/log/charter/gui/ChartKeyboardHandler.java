@@ -5,13 +5,10 @@ import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 import static log.charter.data.EditMode.GUITAR;
 import static log.charter.data.EditMode.VOCALS;
-import static log.charter.gui.ChartPanel.isInLanes;
 import static log.charter.gui.ChartPanel.isInTempos;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,43 +16,32 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 import log.charter.data.ChartData;
-import log.charter.data.Config;
 import log.charter.data.EditMode;
 import log.charter.data.IdOrPos;
-import log.charter.gui.handlers.SongFileHandler;
+import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.modes.GuitarModeHandler;
 import log.charter.gui.modes.ModeHandler;
-import log.charter.gui.modes.VocalModeHandler;
+import log.charter.gui.modes.vocal.VocalModeHandler;
 import log.charter.gui.panes.LyricPane;
 import log.charter.io.Logger;
-import log.charter.io.rs.xml.song.Chord;
-import log.charter.io.rs.xml.vocals.Vocal;
-import log.charter.main.LogCharterRSMain;
+import log.charter.song.Beat;
+import log.charter.song.Chord;
 import log.charter.song.Level;
 import log.charter.song.Note;
-import log.charter.sound.MusicData;
-import log.charter.sound.RepeatingPlayer;
-import log.charter.sound.SoundPlayer;
-import log.charter.sound.SoundPlayer.Player;
+import log.charter.song.Position;
+import log.charter.song.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class ChartEventsHandler implements KeyListener, MouseListener {
-	public static final int FrameLength = 10;
+public class ChartKeyboardHandler implements KeyListener {
 
-	private final RepeatingPlayer tickPlayer = new RepeatingPlayer(MusicData.generateSound(4000, 0.01, 1));
-	private final RepeatingPlayer notePlayer = new RepeatingPlayer(MusicData.generateSound(1000, 0.02, 0.8));
+	private AudioHandler audioHandler;
+	private ChartData data;
+	private CharterFrame frame;
+	private SelectionManager selectionManager;
 
-	public final ChartData data;
-	public final CharterFrame frame;
-
-	private int currentFrame = 0;
-	private int framesDone = 0;
-	private Player player = null;
-	private int playStartT = 0;
+	private final int playStartT = 0;
 	private final int nextNoteId = -1;
-	private boolean claps = false;
-	private int nextBeatTime = -1;
-	private boolean metronome = false;
+	private final int nextBeatTime = -1;
 
 	private boolean ctrl = false;
 	private boolean alt = false;
@@ -63,68 +49,27 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 	private boolean left = false;
 	private boolean right = false;
 	private boolean gPressed = false;
-	private boolean clickCancelsRelease = false;
-	private boolean releaseCancelled = false;
-
-	public final SongFileHandler songFileHandler;
 
 	private final Map<EditMode, ModeHandler> modeHandlers = new HashMap<>();
 
-	public ChartEventsHandler(final CharterFrame frame) {
+	public ChartKeyboardHandler() {
+		modeHandlers.put(EditMode.GUITAR, new GuitarModeHandler());
+		modeHandlers.put(EditMode.VOCALS, new VocalModeHandler());
+	}
+
+	public void init(final AudioHandler audioHandler, final ChartData data, final CharterFrame frame,
+			final SelectionManager selectionManager) {
+		this.audioHandler = audioHandler;
+		this.data = data;
 		this.frame = frame;
-		data = new ChartData();
-		data.handler = this;
-		songFileHandler = new SongFileHandler(this);
+		this.selectionManager = selectionManager;
 
-		new Thread(() -> {
-			try {
-				while (true) {
-					currentFrame++;
-					Thread.sleep(FrameLength);
-				}
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
-		}).start();
-
-		new Thread(() -> {
-			try {
-				while (true) {
-					while (currentFrame > framesDone) {
-						frame();
-						frame.repaint();
-						framesDone++;
-					}
-					Thread.sleep(1);
-				}
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
-		}).start();
-
-		modeHandlers.put(EditMode.GUITAR, new GuitarModeHandler(this));
-		modeHandlers.put(EditMode.VOCALS, new VocalModeHandler(this));
+		modeHandlers.values().forEach(modeHandler -> modeHandler.init(data, frame, this));
 	}
 
 	public void cancelAllActions() {
 		data.softClearWithoutDeselect();
-		stopMusic();
-	}
-
-	public boolean checkChanged() {
-		if (data.changed) {
-			final int result = JOptionPane.showConfirmDialog(frame, "You have unsaved changes. Do you want to save?",
-					"Unsaved changes", JOptionPane.YES_NO_CANCEL_OPTION);
-
-			if (result == JOptionPane.YES_OPTION) {
-				songFileHandler.save();
-				return true;
-			} else if (result == JOptionPane.NO_OPTION) {
-				return true;
-			}
-			return false;
-		}
-		return true;
+		audioHandler.stopMusic();
 	}
 
 	public void clearKeys() {
@@ -156,70 +101,31 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 //	}
 
 	public void exit() {
-		stopMusic();
+		audioHandler.stopMusic();
 		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frame, "Are you sure you want to exit?", "Exit",
 				JOptionPane.YES_NO_OPTION)) {
-			if (!checkChanged()) {
+			if (!frame.checkChanged()) {
 				return;
 			}
+
 			frame.dispose();
 			System.exit(0);
 		}
 	}
 
-	private void frame() {
-		if ((player != null) && (player.startTime > 0)) {
-			setNextTime(
-					(playStartT + (((System.nanoTime() - player.startTime) * data.music.slowMultiplier()) / 1000000))
-							- Config.delay);
-			final double soundTime = data.nextT + Config.delay;
-
-			// TODO clap notes
-//			final List<? extends Event> notes = data.currentInstrument.type.isVocalsType() ? data.s.v.lyrics
-//					: data.currentNotes;
-//
-//			while ((nextNoteId != -1) && (notes.get(nextNoteId).pos < soundTime)) {
-//				nextNoteId++;
-//				if (nextNoteId >= notes.size()) {
-//					nextNoteId = -1;
-//				}
-//				if (claps) {
-//					notePlayer.queuePlaying();
-//				}
-//			}
-//
-			while ((nextBeatTime >= 0) && (nextBeatTime < soundTime)) {
-				nextBeatTime = data.songChart.beatsMap.getFirstBeatAfter((int) soundTime).position;
-				if (metronome) {
-					tickPlayer.queuePlaying();
-				}
-			}
-
-			if ((player != null) && player.isStopped()) {
-				stopMusic();
-			}
-		} else {
-			final int speed = (FrameLength * (shift ? 10 : 2)) / (ctrl ? 10 : 1);
-			setNextTime((data.nextT - (left ? speed : 0)) + (right ? speed : 0));
+	public void moveFromArrowKeys() {
+		if (!left && !right) {
+			return;
 		}
-
-		String title;
-		if (data.isEmpty) {
-			title = LogCharterRSMain.TITLE + " : No project";
-		} else {
-			title = LogCharterRSMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title + " : "//
-					+ data.editMode.name//
-					+ (data.changed ? "*" : "");
-		}
-
-		frame.setTitle(title);
+		final int speed = (Framer.frameLength * (shift ? 10 : 2)) / (ctrl ? 10 : 1);
+		frame.setNextTime(data.time - (left ? speed : 0) + (right ? speed : 0));
 	}
 
 	public boolean isAlt() {
 		return alt;
 	}
 
-	public boolean isCtrl() {
+	public boolean ctrl() {
 		return ctrl;
 	}
 
@@ -228,45 +134,12 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 	}
 
 	private void handleSpace() {
-		if (!data.isEmpty && (player == null) && !left && !right) {
-			// TODO note claps
-//			if (data.currentInstrument.type.isVocalsType()) {
-//				nextNoteId = data.findClosestVocalForTime(data.nextT);
-//				if ((nextNoteId > 0) && (nextNoteId < data.s.v.lyrics.size()) //
-//						&& (data.s.v.lyrics.get(nextNoteId).pos < data.nextT)) {
-//					nextNoteId++;
-//				}
-//				if (nextNoteId >= data.s.v.lyrics.size()) {
-//					nextNoteId = -1;
-//				}
-//			} else {
-//				nextNoteId = data.findClosestNoteForTime(data.nextT);
-//				if ((nextNoteId > 0) && (nextNoteId < data.currentNotes.size()) //
-//						&& (data.currentNotes.get(nextNoteId).pos < data.nextT)) {
-//					nextNoteId++;
-//				}
-//				if (nextNoteId >= data.currentNotes.size()) {
-//					nextNoteId = -1;
-//				}
-//			}
-
-			nextBeatTime = data.songChart.beatsMap.getFirstBeatAfter((int) (data.nextT - Config.delay)).position;
-
-			if (ctrl) {
-				data.music.setSlow(2);
-			} else {
-				data.music.setSlow(1);
-			}
-
-			playMusic();
-		} else {
-			stopMusic();
-		}
+		audioHandler.switchMusicPlayStatus();
 	}
 
 	private void handleHome() {
 		if (!ctrl) {
-			setNextTime(0);
+			frame.setNextTime(0);
 			return;
 		}
 
@@ -277,29 +150,29 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 
 			if (!chords.isEmpty()) {
 				if (!notes.isEmpty()) {
-					setNextTime(min(chords.get(0).position, notes.get(0).position));
+					frame.setNextTime(min(chords.get(0).position, notes.get(0).position));
 				} else {
-					setNextTime(chords.get(0).position);
+					frame.setNextTime(chords.get(0).position);
 				}
 			} else if (!notes.isEmpty()) {
-				setNextTime(notes.get(0).position);
+				frame.setNextTime(notes.get(0).position);
 			} else {
-				setNextTime(0);
+				frame.setNextTime(0);
 			}
 
 		} else if (data.editMode == VOCALS) {
 			final List<Vocal> vocals = data.songChart.vocals.vocals;
 			if (!vocals.isEmpty()) {
-				setNextTime(vocals.get(0).time);
+				frame.setNextTime(vocals.get(0).position);
 			} else {
-				setNextTime(0);
+				frame.setNextTime(0);
 			}
 		}
 	}
 
 	private void handleEnd() {
 		if (!ctrl) {
-			setNextTime(data.music.msLength());
+			frame.setNextTime(data.music.msLength());
 			return;
 		}
 
@@ -309,21 +182,21 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 			final ArrayList2<Note> notes = currentLevel.notes;
 			if (!chords.isEmpty()) {
 				if (!notes.isEmpty()) {
-					setNextTime(max(chords.getLast().position, notes.getLast().position));
+					frame.setNextTime(max(chords.getLast().position, notes.getLast().position));
 				} else {
-					setNextTime(chords.getLast().position);
+					frame.setNextTime(chords.getLast().position);
 				}
 			} else if (!notes.isEmpty()) {
-				setNextTime(notes.getLast().position);
+				frame.setNextTime(notes.getLast().position);
 			} else {
-				setNextTime(data.music.msLength());
+				frame.setNextTime(data.music.msLength());
 			}
 		} else if (data.editMode == VOCALS) {
 			final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
 			if (!vocals.isEmpty()) {
-				setNextTime(vocals.getLast().time);
+				frame.setNextTime(vocals.getLast().position);
 			} else {
-				setNextTime(data.music.msLength());
+				frame.setNextTime(data.music.msLength());
 			}
 		}
 	}
@@ -331,20 +204,21 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 	private void handleUp() {
 		if (data.editMode == GUITAR) {
 			data.moveSelectedOneStringUp();
-			setChanged();
+			data.setChanged();
 		}
 	}
 
 	private void handleDown() {
 		if (data.editMode == GUITAR) {
 			data.moveSelectedOneStringDown();
-			setChanged();
+			data.setChanged();
 		}
 	}
 
 	private void handleLeft() {
 		if (alt) {
-			setNextTime(data.songChart.beatsMap.getLastBeatBefore((int) data.nextT).position);
+			final Beat beat = Position.findLastBefore(data.songChart.beatsMap.beats, data.time);
+			frame.setNextTime(beat.position);
 		} else {
 			left = true;
 		}
@@ -352,7 +226,8 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 
 	private void handleRight() {
 		if (alt) {
-			setNextTime(data.songChart.beatsMap.getFirstBeatAfter((int) data.nextT).position);
+			final Beat beat = Position.findFirstAfter(data.songChart.beatsMap.beats, data.time);
+			frame.setNextTime(beat.position);
 		} else {
 			right = true;
 		}
@@ -437,7 +312,7 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 		}
 
 		if (!keysNotStoppingMusicOnPress.contains(keyCode)) {
-			stopMusic();
+			audioHandler.stopMusic();
 		}
 
 		keyPressBehaviors.getOrDefault(keyCode, () -> {
@@ -456,27 +331,19 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 		data.drawDebug = !data.drawDebug;
 	}
 
-	public void toggleClaps() {
-		claps = !claps;
-	}
-
-	public void toggleMetronome() {
-		metronome = !metronome;
-	}
-
 	public void delete() {
 		data.deleteSelected();
-		setChanged();
+		data.setChanged();
 	}
 
 	public void undo() {
 		data.undo();
-		setChanged();
+		data.setChanged();
 	}
 
 	public void redo() {
 		data.redo();
-		setChanged();
+		data.setChanged();
 	}
 
 	public void paste() {
@@ -489,17 +356,22 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 		} catch (final Exception exception) {
 			Logger.error("Couldn't paste notes", exception);
 		}
-		setChanged();
+		data.setChanged();
 	}
 
 	public void toggleHammerOn() {
 		data.toggleSelectedHammerOn(false, -1);
-		setChanged();
+		data.setChanged();
+	}
+
+	public void togglePullOff() {
+		data.toggleSelectedHammerOn(false, -1);
+		data.setChanged();
 	}
 
 	public void toggleCrazy() {
 		data.toggleSelectedCrazy();
-		setChanged();
+		data.setChanged();
 	}
 
 	public void toggleGrid() {
@@ -525,20 +397,20 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 	public void editLyric() {
 		if (data.selectedNotes.size() == 1) {
 			final int noteId = data.selectedNotes.get(0);
-			final int pos = data.songChart.vocals.vocals.get(noteId).time;
-			new LyricPane(frame, IdOrPos.fromId(noteId, pos));
+			final int pos = data.songChart.vocals.vocals.get(noteId).position;
+			new LyricPane(frame, data, IdOrPos.fromId(noteId, pos));
 		}
-		setChanged();
+		data.setChanged();
 	}
 
 	public void toggleVocalsWordPart() {
 		data.toggleSelectedVocalsWordPart();
-		setChanged();
+		data.setChanged();
 	}
 
 	public void toggleVocalsPhraseEnd() {
 		data.toggleSelectedVocalsPhraseEnd();
-		setChanged();
+		data.setChanged();
 	}
 
 	public void snapNotes() {// TODO
@@ -590,129 +462,6 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 	public void keyTyped(final KeyEvent e) {
 	}
 
-	@Override
-	public void mouseClicked(final MouseEvent e) {
-		if (releaseCancelled) {
-			clickCancelsRelease = false;
-			return;
-		}
-
-		if (e.getButton() == MouseEvent.BUTTON1) {// TODO
-			final int y = e.getY();
-			if (isInTempos(y)) {// TODO select tempo
-//				int newTempoMeasures = -1;
-//				final Object[] tempoData = data.s.tempoMap.findOrCreateClosestTempo(data.xToTime(data.mx));
-//				while ((newTempoMeasures < 0) || (newTempoMeasures > 1000)) {
-//					try {
-//						final String value = JOptionPane.showInputDialog("Measures in beat",
-//								"" + ((Tempo) tempoData[0]).beats);
-//						if (value == null) {
-//							return;
-//						}
-//						newTempoMeasures = Integer.valueOf(value);
-//					} catch (final Exception exception) {
-//					}
-//				}
-//
-//				if (tempoData != null) {
-//					data.changeTempoBeatsInMeasure((Tempo) tempoData[1], (boolean) tempoData[3], newTempoMeasures);
-//					setChanged();
-//				}
-			}
-		}
-	}
-
-	@Override
-	public void mouseEntered(final MouseEvent e) {
-	}
-
-	@Override
-	public void mouseExited(final MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(final MouseEvent e) {
-		if (data.isEmpty) {
-			return;
-		}
-
-		cancelAllActions();
-		if (clickCancelsRelease) {
-			releaseCancelled = true;
-			return;
-		} else {
-			clickCancelsRelease = true;
-			releaseCancelled = false;
-		}
-
-		data.mx = e.getX();
-		data.my = e.getY();
-
-		final int x = e.getX();
-		final int y = e.getY();
-		if (e.getButton() == MouseEvent.BUTTON1) {// TODO
-			if (isInTempos(y)) {
-//				final Object[] tempoData = data.s.tempoMap.findOrCreateClosestTempo(data.xToTime(x));
-//				if (tempoData != null) {
-//					data.startTempoDrag((Tempo) tempoData[0], (Tempo) tempoData[1], (Tempo) tempoData[2],
-//							(boolean) tempoData[3]);
-//				}
-			} else if (isInLanes(y)) {
-				data.mousePressX = data.mx;
-				data.mousePressY = data.my;
-			}
-		} else if (e.getButton() == MouseEvent.BUTTON3) {
-			if (isInLanes(y)) {
-				data.startNoteAdding(x, y);
-			}
-		}
-	}
-
-	@Override
-	public void mouseReleased(final MouseEvent e) {
-		if (data.isEmpty) {
-			return;
-		}
-
-		clickCancelsRelease = false;
-		if (releaseCancelled) {
-			return;
-		}
-
-		data.mx = e.getX();
-		data.my = e.getY();
-
-		switch (e.getButton()) {// TODO
-		case MouseEvent.BUTTON1:
-//			if (data.draggedTempo != null) {
-//				data.stopTempoDrag();
-//				setChanged();
-//			} else if (data.isNoteDrag) {
-//				data.endNoteDrag();
-//			} else if ((data.my > (ChartPanel.sectionNamesY - 5)) && (data.my < ChartPanel.spY)) {
-//				editSection(data.mx);
-//			} else if (ChartPanel.isInLanes(data.my)) {
-//				selectNotes(data.mx);
-//			}
-			break;
-		case MouseEvent.BUTTON3:
-			if (data.isNoteAdd) {
-				data.endNoteAdding();
-				setChanged();
-			}
-			break;
-		default:
-			break;
-		}
-
-		cancelAllActions();
-	}
-
-	private void playMusic() {
-		player = SoundPlayer.play(data.music, data.time);
-		playStartT = data.time;
-	}
-
 	private void selectNotes(final int x) {// TODO
 //		final IdOrPos idOrPos = data.currentInstrument.type.isVocalsType() ? data.findClosestVocalIdOrPosForX(x)
 //				: data.findClosestIdOrPosForX(x);
@@ -761,37 +510,11 @@ public class ChartEventsHandler implements KeyListener, MouseListener {
 //		data.lastSelectedNote = last;
 	}
 
-	public void setChanged() {
-		if (!data.isEmpty) {
-			data.changed = true;
-		}
+	public void selectAll() {
+		data.selectAll();
 	}
 
-	public void setNextTime(final double t) {
-		if ((frame != null) && (frame.scrollBar != null)) {
-			final int songLength = data.music.msLength();
-			final double songPart = songLength == 0 ? 0 : t / songLength;
-			frame.scrollBar.setValue((int) (songPart * frame.scrollBar.getMaximum()));
-		}
-		setNextTimeWithoutScrolling(t);
-	}
-
-	public void setNextTimeWithoutScrolling(final double t) {
-		data.nextT = t;
-		if (data.nextT < 0) {
-			data.nextT = 0;
-		}
-	}
-
-	public void showPopup(final String msg) {
-		JOptionPane.showMessageDialog(frame, msg);
-	}
-
-	public void stopMusic() {
-		if (player != null) {
-			final Player p = player;
-			player = null;
-			p.stop();
-		}
+	public void copy() {
+		data.copy();
 	}
 }

@@ -24,23 +24,23 @@ public class VocalsXStreamHandler {
 		xstream.registerConverter(new CollectionConverter(xstream.getMapper(), ArrayList2.class));
 		xstream.registerConverter(new MapConverter(xstream.getMapper(), HashMap2.class));
 		xstream.ignoreUnknownElements();
-		xstream.processAnnotations(Vocals.class);
+		xstream.processAnnotations(ArrangementVocals.class);
 		xstream.allowTypes(new Class[] { //
-				Vocals.class, //
-				Vocal.class });
+				ArrangementVocals.class, //
+				ArrangementVocal.class });
 
 		return xstream;
 	}
 
-	public static Vocals readVocals(final String xml) {
+	public static ArrangementVocals readVocals(final String xml) {
 		if (xml.isEmpty()) {
-			return new Vocals();
+			return new ArrangementVocals();
 		}
 
-		return (Vocals) xstream.fromXML(xml);
+		return (ArrangementVocals) xstream.fromXML(xml);
 	}
 
-	public static String saveVocals(final Vocals vocals) {
+	public static String saveVocals(final ArrangementVocals vocals) {
 		return XMLHandler.generateXML(xstream, vocals);
 	}
 }

@@ -1,6 +1,8 @@
 package log.charter.song;
 
 import static java.util.stream.Collectors.toCollection;
+import static log.charter.io.rs.xml.song.SongArrangementXStreamHandler.readSong;
+import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.readVocals;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -8,9 +10,6 @@ import java.util.List;
 
 import jogamp.common.os.elf.Section;
 import log.charter.io.rs.xml.song.SongArrangement;
-import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
-import log.charter.io.rs.xml.vocals.Vocals;
-import log.charter.io.rs.xml.vocals.VocalsXStreamHandler;
 import log.charter.io.rsc.xml.RocksmithChartProject;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.RW;
@@ -72,11 +71,11 @@ public class SongChart {
 
 		beatsMap = new BeatsMap(songLengthMs, project);
 		arrangements = project.arrangementFiles.stream()//
-				.map(filename -> SongArrangementXStreamHandler.readSong(RW.read(dir + filename)))//
+				.map(filename -> readSong(RW.read(dir + filename)))//
 				.map(ArrangementChart::new)//
 				.collect(toCollection(ArrayList2::new));
 
-		vocals = VocalsXStreamHandler.readVocals(RW.read(dir + "Vocals_RS2.xml"));
+		vocals = new Vocals(readVocals(RW.read(dir + "Vocals_RS2.xml")));
 	}
 
 	/**

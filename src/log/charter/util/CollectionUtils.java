@@ -3,11 +3,14 @@ package log.charter.util;
 import static java.util.stream.Collectors.toCollection;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CollectionUtils {
@@ -28,6 +31,10 @@ public class CollectionUtils {
 			super();
 		}
 
+		public ArrayList2(final int initialCapacity) {
+			super(initialCapacity);
+		}
+
 		public ArrayList2(final List<T> list) {
 			super(list);
 		}
@@ -42,10 +49,66 @@ public class CollectionUtils {
 					.collect(toCollection(ArrayList2::new));
 		}
 
+		public <U> ArrayList2<U> mapWithId(final BiFunction<Integer, T, U> mapper) {
+			final ArrayList2<U> list = new ArrayList2<>(size());
+			for (int i = 0; i < size(); i++) {
+				list.add(mapper.apply(i, get(i)));
+			}
+			return list;
+		}
+
 		public <U, V> HashMap2<U, V> toMap(final Function<T, Pair<U, V>> mapper) {
 			return stream()//
 					.map(mapper)//
 					.collect(Collectors.toMap(pair -> pair.a, pair -> pair.b, (a, b) -> a, HashMap2::new));
+		}
+
+		public boolean contains(final Predicate<T> predicate) {
+			for (final T element : this) {
+				if (predicate.test(element)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
+
+	public static class HashSet2<T> extends HashSet<T> {
+		private static final long serialVersionUID = 1L;
+
+		public HashSet2() {
+			super();
+		}
+
+		public HashSet2(final int initialCapacity) {
+			super(initialCapacity);
+		}
+
+		public HashSet2(final Collection<T> collection) {
+			super(collection);
+		}
+
+		public <U> HashSet2<U> map(final Function<T, U> mapper) {
+			return stream()//
+					.map(mapper)//
+					.collect(toCollection(HashSet2::new));
+		}
+
+		public <U, V> HashMap2<U, V> toMap(final Function<T, Pair<U, V>> mapper) {
+			return stream()//
+					.map(mapper)//
+					.collect(Collectors.toMap(pair -> pair.a, pair -> pair.b, (a, b) -> a, HashMap2::new));
+		}
+
+		public boolean contains(final Predicate<T> predicate) {
+			for (final T element : this) {
+				if (predicate.test(element)) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 

@@ -7,6 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.io.rs.xml.converters.TimeConverter;
+import log.charter.song.Anchor;
 
 @XStreamAlias("anchor")
 public class ArrangementAnchor {
@@ -17,4 +18,13 @@ public class ArrangementAnchor {
 	public int fret;
 	@XStreamAsAttribute
 	public BigDecimal width;
+
+	public ArrangementAnchor() {
+	}
+
+	public ArrangementAnchor(final Anchor anchor) {
+		time = anchor.position;
+		fret = anchor.fret;
+		width = new BigDecimal(4);
+	}
 }

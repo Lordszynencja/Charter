@@ -5,11 +5,8 @@ import static log.charter.gui.ChartPanel.isInLanes;
 import java.awt.Graphics;
 
 import log.charter.data.ChartData;
-import log.charter.gui.ChartPanel;
-import log.charter.gui.ChartPanelColors;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 
-public class HighlightDrawer implements Drawer {
+public class HighlightDrawerOld {
 	private void drawHighlightNoteAdd(final Graphics g, final ChartData data, final int strings) {
 //		final DrawList highlighted = new DrawList();
 //		final int noteH = ChartPanel.getLaneSize(strings);
@@ -98,17 +95,16 @@ public class HighlightDrawer implements Drawer {
 		}
 	}
 
-	@Override
-	public void draw(final Graphics g, final ChartPanel panel, final ChartData data) {
-		if (data.isEmpty) {
-			return;
-		}
-
-		g.setColor(ChartPanelColors.get(ColorLabel.HIGHLIGHT));
-//		if (data.currentInstrument.type.isGuitarType()) {
-//			drawGuitarHighlight(g, data);
-//		} else if (data.currentInstrument.type.isVocalsType()) {
-//			drawVocalsHiglight(g, data);
+//	public void draw(final Graphics g) {
+//		if (!initializeddata.isEmpty) {
+//			return;
 //		}
-	}
+//
+//		g.setColor(ChartPanelColors.get(ColorLabel.HIGHLIGHT));
+////		if (data.currentInstrument.type.isGuitarType()) {
+////			drawGuitarHighlight(g, data);
+////		} else if (data.currentInstrument.type.isVocalsType()) {
+////			drawVocalsHiglight(g, data);
+////		}
+//	}
 }

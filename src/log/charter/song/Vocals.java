@@ -1,8 +1,9 @@
-package log.charter.io.rs.xml.vocals;
+package log.charter.song;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
+import log.charter.io.rs.xml.vocals.ArrangementVocals;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("vocals")
@@ -18,16 +19,20 @@ public class Vocals {
 		this.vocals = vocals;
 	}
 
+	public Vocals(final ArrangementVocals arrangementVocals) {
+		vocals = arrangementVocals.vocals.map(Vocal::new);
+	}
+
 	public int insertNote(final int pos, final String text, final boolean wordPart, final boolean phraseEnd) {
 		final Vocal vocal = new Vocal(pos, text, wordPart, phraseEnd);
 
-		if (vocals.isEmpty() || vocals.getLast().time < pos) {
+		if (vocals.isEmpty() || vocals.getLast().position < pos) {
 			vocals.add(vocal);
 			return vocals.size() - 1;
 		}
 
 		for (int i = vocals.size() - 1; i >= 0; i--) {
-			if (vocals.get(i).time < pos) {
+			if (vocals.get(i).position < pos) {
 				vocals.add(i + 1, vocal);
 				return i + 1;
 			}

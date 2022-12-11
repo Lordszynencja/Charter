@@ -165,43 +165,4 @@ public class BeatsMap {
 			count++;
 		}
 	}
-
-	public Beat getFirstBeatAfter(final int soundTime) {
-		if (soundTime >= beats.getLast().position) {
-			return null;
-		}
-
-		int minId = 0;
-		int maxId = beats.size() - 1;
-		while (minId != maxId) {
-			final int id = (minId + maxId) / 2;
-			if (beats.get(id).position <= soundTime) {
-				minId = id + 1;
-			} else {
-				maxId = id;
-			}
-		}
-
-		return beats.get(maxId);
-	}
-
-	public Beat getLastBeatBefore(final int soundTime) {
-		if (soundTime <= beats.get(0).position) {
-			return null;
-		}
-
-		int minId = 0;
-		int maxId = beats.size() - 1;
-		while (minId != maxId) {
-			final int id = (minId + maxId) / 2;
-			if (beats.get(id).position >= soundTime) {
-				maxId = id - 1;
-			} else {
-				minId = id;
-			}
-		}
-
-		return beats.get(maxId);
-	}
-
 }

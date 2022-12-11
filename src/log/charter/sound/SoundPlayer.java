@@ -29,11 +29,11 @@ public class SoundPlayer {
 			return stopped;
 		}
 
-		private Player start(final int start) {
+		private Player start(final int startMs) {
 			new Thread(() -> {
 				try {
 					int startByte = (int) floor(
-							((musicData.outFormat.getFrameRate() * start) / musicData.slowMultiplier()) / 250);
+							((musicData.outFormat.getFrameRate() * startMs) / musicData.slowMultiplier()) / 250);
 					startByte -= startByte % 4;
 
 					if (stopped) {
@@ -68,10 +68,15 @@ public class SoundPlayer {
 		}
 
 		public void stop() {
+			if (stopped) {
+				return;
+			}
+
 			stopped = true;
 			line.stop();
 			line.drain();
 			line.flush();
+
 		}
 	}
 
@@ -117,9 +122,9 @@ public class SoundPlayer {
 		return data;
 	}
 
-	public static Player play(final MusicData md, final int start) {
+	public static Player play(final MusicData md, final int startMs) {
 		try {
-			return new Player(md).start(start);
+			return new Player(md).start(startMs);
 		} catch (final LineUnavailableException e) {
 			e.printStackTrace();
 		}

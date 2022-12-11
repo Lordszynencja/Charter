@@ -7,6 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.io.rs.xml.converters.TimeConverter;
+import log.charter.song.Chord;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("chord")

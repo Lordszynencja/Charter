@@ -40,6 +40,8 @@ public class ChartPanelColors {
 		NOTE_4(20, 230, 20), //
 		NOTE_5(230, 20, 230), //
 
+		REPEATED_CHORD(50, 250, 250, 128), //
+
 		NOTE_TAIL_0(210, 0, 0), //
 		NOTE_TAIL_1(210, 210, 0), //
 		NOTE_TAIL_2(0, 0, 210), //
@@ -47,12 +49,12 @@ public class ChartPanelColors {
 		NOTE_TAIL_4(0, 210, 0), //
 		NOTE_TAIL_5(210, 0, 210), //
 
-		LYRIC_LINE(100, 200, 200), //
-		LYRIC_LINE_TEXT(0, 0, 128), //
-		LYRIC_TEXT(255, 255, 255), //
-		LYRIC(255, 0, 255), //
-		LYRIC_WORD_PART(0, 0, 255), //
-		LYRIC_PHRASE_END(255, 128, 255),//
+		VOCAL_LINE_BACKGROUND(100, 200, 200), //
+		VOCAL_LINE_TEXT(0, 0, 128), //
+		VOCAL_TEXT(255, 255, 255), //
+		VOCAL_NOTE(0, 255, 255), //
+		VOCAL_NOTE_WORD_PART(0, 0, 255), //
+		VOCAL_NOTE_PHRASE_END(0, 255, 128),//
 
 		;
 
@@ -60,6 +62,10 @@ public class ChartPanelColors {
 
 		private ColorLabel(final int r, final int g, final int b) {
 			defaultColor = new Color(r, g, b);
+		}
+
+		private ColorLabel(final int r, final int g, final int b, final int a) {
+			defaultColor = new Color(r, g, b, a);
 		}
 	}
 

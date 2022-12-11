@@ -5,9 +5,10 @@ import java.awt.event.KeyEvent;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
+import log.charter.data.ChartData;
 import log.charter.data.IdOrPos;
 import log.charter.gui.CharterFrame;
-import log.charter.io.rs.xml.vocals.Vocal;
+import log.charter.song.Vocal;
 
 public class LyricPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
@@ -15,14 +16,16 @@ public class LyricPane extends ParamsPane {
 	private String text;
 	private boolean wordPart;
 	private boolean phraseEnd;
-	final CharterFrame frame;
 
-	public LyricPane(final CharterFrame frame, final IdOrPos idOrPos) {
+	private final ChartData data;
+
+	public LyricPane(final CharterFrame frame, final ChartData data, final IdOrPos idOrPos) {
 		super(frame, "Lyrics edit", 5);
-		this.frame = frame;
+		this.data = data;
+
 		final Vocal vocal;
 		if (idOrPos.isId()) {
-			vocal = frame.handler.data.songChart.vocals.vocals.get(idOrPos.id);
+			vocal = data.songChart.vocals.vocals.get(idOrPos.id);
 			text = vocal.getText();
 			wordPart = vocal.isWordPart();
 			phraseEnd = vocal.isPhraseEnd();
@@ -67,7 +70,7 @@ public class LyricPane extends ParamsPane {
 
 		if (idOrPos.isId()) {
 			if ("".equals(text)) {
-				frame.handler.data.removeVocalNote(idOrPos.id);
+				data.removeVocalNote(idOrPos.id);
 			} else {
 				vocal.lyric = text;
 				vocal.setWordPart(wordPart);
@@ -75,7 +78,7 @@ public class LyricPane extends ParamsPane {
 			}
 		} else {
 			if (!"".equals(text) && (text != null)) {
-				frame.handler.data.addVocalNote(idOrPos.pos, text, wordPart, phraseEnd);
+				data.addVocalNote(idOrPos.pos, text, wordPart, phraseEnd);
 			}
 		}
 

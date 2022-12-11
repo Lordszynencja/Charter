@@ -1,4 +1,4 @@
-package log.charter.gui.chartPanelDrawers;
+package log.charter.gui.chartPanelDrawers.common;
 
 import static log.charter.util.ScalingUtils.xToTime;
 
@@ -10,17 +10,25 @@ import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 
-public class AudioDrawer implements Drawer {
-	@Override
-	public void draw(final Graphics g, final ChartPanel panel, final ChartData data) {
+public class AudioDrawer {
+
+	private ChartData data;
+	private ChartPanel chartPanel;
+
+	public void init(final ChartData data, final ChartPanel chartPanel) {
+		this.data = data;
+		this.chartPanel = chartPanel;
+	}
+
+	public void draw(final Graphics g) {
 		if (data.isEmpty || !data.drawAudio) {
 			return;
 		}
 
 		final int zero = (int) ((xToTime(0, data.time) * data.music.outFormat.getFrameRate()) / 1000);
 		int start = zero;
-		int end = (int) ((xToTime(panel.getWidth(), data.time) * data.music.outFormat.getFrameRate()) / 1000);
-		final double multiplier = ((double) panel.getWidth()) / (end - start);
+		int end = (int) ((xToTime(chartPanel.getWidth(), data.time) * data.music.outFormat.getFrameRate()) / 1000);
+		final double multiplier = ((double) chartPanel.getWidth()) / (end - start);
 		if (start < 0) {
 			start = 0;
 		}
@@ -44,6 +52,7 @@ public class AudioDrawer implements Drawer {
 		double x1 = -xStep + ((start - zero) * multiplier);
 		int y0 = 0;
 		int y1 = 0;
+
 		g.setColor(ChartPanelColors.get(ColorLabel.MARKER));
 		for (int i = start; i < end; i += step) {
 			x0 = x1;

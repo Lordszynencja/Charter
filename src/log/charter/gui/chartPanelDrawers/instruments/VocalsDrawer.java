@@ -1,72 +1,156 @@
 package log.charter.gui.chartPanelDrawers.instruments;
 
 import static java.lang.Math.max;
-import static log.charter.gui.ChartPanel.getLaneY;
-import static log.charter.gui.ChartPanel.lyricLinesY;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
 
+import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.chartPanelDrawers.Drawer;
+import log.charter.gui.SelectionManager;
+import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
+import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
+import log.charter.gui.chartPanelDrawers.common.HighlightDrawer;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.FilledRectangle;
-import log.charter.gui.chartPanelDrawers.drawableShapes.TextDrawList;
-import log.charter.io.rs.xml.vocals.Vocal;
+import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
+import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
+import log.charter.song.Vocal;
+import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.HashSet2;
 
-public class VocalsDrawer implements Drawer {
+public class VocalsDrawer {
+	private final static Color vocalTextColor = ChartPanelColors.get(ColorLabel.VOCAL_TEXT);
+	private final static Color vocalNoteColor = ChartPanelColors.get(ColorLabel.VOCAL_NOTE);
+	private final static Color vocalNotePhraseEndColor = ChartPanelColors.get(ColorLabel.VOCAL_NOTE_PHRASE_END);
+	private final static Color vocalNoteWordPartColor = ChartPanelColors.get(ColorLabel.VOCAL_NOTE_WORD_PART);
 
-	private void drawVocals(final Graphics g, final ChartPanel panel, final ChartData data) {
-		final TextDrawList texts = new TextDrawList();
-		final DrawableShapeList notes = new DrawableShapeList();
-		final DrawableShapeList wordConnections = new DrawableShapeList();
-		final DrawableShapeList phraseEnds = new DrawableShapeList();
+	private static final int vocalNoteY = (ChartPanel.lanesTop + ChartPanel.lanesBottom) / 2;
 
-		final List<Vocal> vocals = data.songChart.vocals.vocals;
-		final int y = getLaneY(0, 1) - 3;
-		final int w = panel.getWidth();
+	private static ShapePositionWithSize getVocalNotePosition(final int x, final int length) {
+		return new ShapePositionWithSize(x, vocalNoteY - 4, length, 8);
+	}
 
-		for (int i = 0; i < vocals.size(); i++) {
-			final Vocal vocal = vocals.get(i);
-			final int x = timeToX(vocal.time, data.time);
-			if (x > w) {
-				break;
+	public static ShapePositionWithSize getVocalNotePosition(final int position, final int length, final int time) {
+		return getVocalNotePosition(timeToX(position, time), timeToXLength(length));
+	}
+
+	private class VocalNotesDrawingData {
+		private final DrawableShapeList texts = new DrawableShapeList();
+		private final DrawableShapeList notes = new DrawableShapeList();
+		private final DrawableShapeList wordConnections = new DrawableShapeList();
+
+		private final FontMetrics fontMetrics;
+		private final int time;
+
+		public VocalNotesDrawingData(final FontMetrics fontMetrics, final int time) {
+			this.fontMetrics = fontMetrics;
+			this.time = time;
+		}
+
+		public void addVocal(final Vocal vocal, final Vocal next, final int x, final int lengthPx,
+				final boolean selected) {
+			if ((x + lengthPx) > 0) {
+				Color color = vocal.isPhraseEnd() ? vocalNotePhraseEndColor : vocalNoteColor;
+				if (selected) {
+					color = new Color(255, 0, 0);
+				}
+				notes.add(new FilledRectangle(getVocalNotePosition(x, lengthPx), color));
+
+				final String text = vocal.getText() + (vocal.isWordPart() ? "-" : "");
+				if ((x + fontMetrics.stringWidth(text)) > 0) {
+					texts.add(new Text(text, x + 2, vocalNoteY - 10, vocalTextColor));
+				}
 			}
 
-			final int length = max(1, timeToXLength(vocal.length));
-			if ((x + length) > 0) {
-				(vocal.isPhraseEnd() ? phraseEnds : notes).add(new FilledRectangle(x, y, length, 8));
-			}
-
-			final String text = vocal.getText();
-			if ((x + g.getFontMetrics().stringWidth(text)) > 0) {
-				texts.addString(text, x, ChartPanel.textY + 17);
-			}
-			if (vocal.isWordPart() && (i < (vocals.size() - 1))) {
-				final Vocal next = vocals.get(i + 1);
-				final int nextStart = timeToX(next.time, data.time);
-				wordConnections.add(new FilledRectangle(x + length, y + 2, nextStart - x - length, 4));
+			if (vocal.isWordPart() && next != null) {
+				final int nextStart = timeToX(next.position, time);
+				wordConnections.add(new FilledRectangle(x + lengthPx, vocalNoteY - 2, nextStart - x - lengthPx, 4,
+						vocalNoteWordPartColor));
 			}
 		}
 
-		g.setColor(ChartPanelColors.get(ColorLabel.LYRIC_TEXT));
-		texts.draw(g, ChartPanelColors.get(ColorLabel.LYRIC_TEXT));
-		g.setColor(ChartPanelColors.get(ColorLabel.LYRIC_WORD_PART));
-		wordConnections.draw(g);
-		g.setColor(ChartPanelColors.get(ColorLabel.LYRIC));
-		notes.draw(g);
-		g.setColor(ChartPanelColors.get(ColorLabel.LYRIC_PHRASE_END));
-		phraseEnds.draw(g);
+		public void draw(final Graphics g) {
+			wordConnections.draw(g);
+			notes.draw(g);
+			texts.draw(g);
+		}
 	}
 
-	private void drawLyricLines(final Graphics g, final ChartPanel panel, final ChartData data) {
-		final TextDrawList lyricLines = new TextDrawList();
-		final DrawableShapeList lines = new DrawableShapeList();
+	private boolean initiated = false;
+
+	private ChartData data;
+	private ChartPanel chartPanel;
+	private HighlightDrawer highlightDrawer;
+	private SelectionManager selectionManager;
+
+	private final AudioDrawer audioDrawer = new AudioDrawer();
+	private final BeatsDrawer beatsDrawer = new BeatsDrawer();
+
+	public void init(final ChartData data, final ChartPanel chartPanel, final HighlightDrawer highlightDrawer,
+			final SelectionManager selectionManager) {
+		this.data = data;
+		this.chartPanel = chartPanel;
+		this.highlightDrawer = highlightDrawer;
+		this.selectionManager = selectionManager;
+
+		audioDrawer.init(data, chartPanel);
+		beatsDrawer.init(data, chartPanel);
+
+		initiated = true;
+	}
+
+	private void drawVocals(final Graphics g) {
+		final VocalNotesDrawingData drawingData = new VocalNotesDrawingData(g.getFontMetrics(), data.time);
+
+		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
+		final int width = chartPanel.getWidth();
+		final HashSet2<Integer> selectedVocalIds = selectionManager.getSelectedVocalsSet()
+				.map(selection -> selection.id);
+
+		for (int i = 0; i < vocals.size(); i++) {
+			final Vocal vocal = vocals.get(i);
+			final int x = timeToX(vocal.position, data.time);
+			if (x > width) {
+				break;
+			}
+
+			final Vocal next = vocals.size() > i + 1 ? vocals.get(i + 1) : null;
+			final int length = max(1, timeToXLength(vocal.length));
+			final boolean isSelected = selectedVocalIds.contains(i);
+			drawingData.addVocal(vocal, next, x, length, isSelected);
+		}
+
+		drawingData.draw(g);
+	}
+
+	private static class VocalLinesDrawingData {
+		private final static Color vocalLineBackgroundColor = ChartPanelColors.get(ColorLabel.VOCAL_LINE_BACKGROUND);
+		private final static Color vocalLineTextColor = ChartPanelColors.get(ColorLabel.VOCAL_LINE_TEXT);
+
+		public static final int lyricLinesY = 30;
+
+		private final DrawableShapeList backgrounds = new DrawableShapeList();
+		private final DrawableShapeList texts = new DrawableShapeList();
+
+		public void addLyricLine(final String text, final int x, final int lengthPx) {
+			backgrounds.add(new FilledRectangle(x, lyricLinesY - 4, lengthPx, 19, vocalLineBackgroundColor));
+			texts.add(new Text(text, x + 3, lyricLinesY + 11, vocalLineTextColor));
+		}
+
+		public void draw(final Graphics g) {
+			backgrounds.draw(g);
+			texts.draw(g);
+		}
+	}
+
+	private void drawLyricLines(final Graphics g) {
+		final VocalLinesDrawingData drawingData = new VocalLinesDrawingData();
 		String currentLine = "";
 		boolean started = false;
 		int x = 0;
@@ -74,28 +158,27 @@ public class VocalsDrawer implements Drawer {
 		for (final Vocal vocal : data.songChart.vocals.vocals) {
 			if (!started) {
 				started = true;
-				x = timeToX(vocal.time, data.time);
+				x = timeToX(vocal.position, data.time);
 			}
 
 			currentLine += vocal.getText();
-			if (currentLine.endsWith("-")) {
-				currentLine = currentLine.substring(0, currentLine.length() - 1);
-			} else {
+			if (!vocal.isWordPart()) {
 				currentLine += " ";
 			}
 
 			if (vocal.isPhraseEnd()) {
-				lines.add(new FilledRectangle(x, lyricLinesY, timeToXLength(vocal.length), 13));
-				lyricLines.addString(currentLine, x, lyricLinesY + 11);
+				drawingData.addLyricLine(currentLine, x, timeToX(vocal.position + vocal.length, data.time) - x);
+				currentLine = "";
+				started = false;
 			}
 		}
 
-		g.setColor(ChartPanelColors.get(ColorLabel.LYRIC_LINE));
-		lines.draw(g);
-		lyricLines.draw(g, ChartPanelColors.get(ColorLabel.LYRIC_LINE_TEXT));
+		drawingData.draw(g);
 	}
 
-	private void drawSelectedVocals(final Graphics g, final ChartPanel panel, final ChartData data) {
+	private void drawSelectedVocals(final Graphics g) {
+		selectionManager.getSelectedVocals();
+		// TODO make after selection is done
 //		final DrawList selects = new DrawList();
 //		final int w = panel.getWidth();
 //
@@ -131,14 +214,17 @@ public class VocalsDrawer implements Drawer {
 //		}
 //	}
 
-	@Override
-	public void draw(final Graphics g, final ChartPanel panel, final ChartData data) {
-		if (data.isEmpty) {
+	public void draw(final Graphics g) {
+		if (!initiated || data.isEmpty) {
 			return;
 		}
 
-		drawLyricLines(g, panel, data);
-		drawVocals(g, panel, data);
+		audioDrawer.draw(g);
+		beatsDrawer.draw(g);
+		drawVocals(g);
+		drawLyricLines(g);
+		drawSelectedVocals(g);
+		highlightDrawer.draw(g);
 
 		if (data.drawDebug) {
 			// drawDebugNoteId(g, panel, data);

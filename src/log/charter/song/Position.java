@@ -1,10 +1,76 @@
 package log.charter.song;
 
+import static java.lang.Math.abs;
+
+import log.charter.util.CollectionUtils.ArrayList2;
+
 public class Position implements Comparable<Position> {
+	public static <T extends Position> Integer findClosest(final ArrayList2<T> positions, final int position) {
+		if (positions.isEmpty()) {
+			return null;
+		}
+		if (positions.size() == 1) {
+			return 0;
+		}
+
+		int left = 0;
+		int right = positions.size() - 1;
+		while (right - left > 1) {
+			final int id = (left + right) / 2;
+			if (positions.get(id).position > position) {
+				right = id;
+			} else {
+				left = id;
+			}
+		}
+
+		final int leftDistance = abs(positions.get(left).position - position);
+		final int rightDistance = abs(positions.get(right).position - position);
+		return leftDistance < rightDistance ? left : right;
+	}
+
+	public static <T extends Position> T findFirstAfter(final ArrayList2<T> list, final int position) {
+		if (position >= list.getLast().position) {
+			return null;
+		}
+
+		int minId = 0;
+		int maxId = list.size() - 1;
+		while (minId != maxId) {
+			final int id = (minId + maxId) / 2;
+			if (list.get(id).position <= position) {
+				minId = id + 1;
+			} else {
+				maxId = id;
+			}
+		}
+
+		return list.get(maxId);
+	}
+
+	public static <T extends Position> T findLastBefore(final ArrayList2<T> list, final int position) {
+		if (position <= list.get(0).position) {
+			return null;
+		}
+
+		int minId = 0;
+		int maxId = list.size() - 1;
+		while (minId != maxId) {
+			final int id = (minId + maxId) / 2;
+			if (list.get(id).position >= position) {
+				maxId = id - 1;
+			} else {
+				minId = id;
+			}
+		}
+
+		return list.get(maxId);
+	}
+
 	public int position;
 
-	public Position(final int pos) {
-		position = pos;
+	public Position(final int position) {
+		this.position = position;
 	}
 
 	@Override

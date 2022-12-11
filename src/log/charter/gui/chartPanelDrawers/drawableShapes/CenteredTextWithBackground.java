@@ -3,14 +3,14 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class CenteredText implements DrawableShape {
+public class CenteredTextWithBackground implements DrawableShape {
 	private final int x;
 	private final int y;
 	private final String text;
 	private final Color backgroundColor;
 	private final Color textColor;
 
-	public CenteredText(final int x, final int y, final String text) {
+	public CenteredTextWithBackground(final int x, final int y, final String text) {
 		this.x = x;
 		this.y = y;
 		this.text = text;
@@ -18,7 +18,7 @@ public class CenteredText implements DrawableShape {
 		textColor = Color.BLACK;
 	}
 
-	public CenteredText(final int x, final int y, final String text, final Color textColor) {
+	public CenteredTextWithBackground(final int x, final int y, final String text, final Color textColor) {
 		this.x = x;
 		this.y = y;
 		this.text = text;
@@ -26,7 +26,7 @@ public class CenteredText implements DrawableShape {
 		this.textColor = textColor;
 	}
 
-	public CenteredText(final int x, final int y, final String text, final Color backgroundColor,
+	public CenteredTextWithBackground(final int x, final int y, final String text, final Color backgroundColor,
 			final Color textColor) {
 		this.x = x;
 		this.y = y;

@@ -5,15 +5,19 @@ import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
+import javax.swing.JScrollBar;
+
 import log.charter.data.Config;
-import log.charter.gui.CharterFrame;
+import log.charter.gui.ChartPanel;
 
 public class CharterFrameComponentListener implements ComponentListener {
 
-	private final CharterFrame frame;
+	private final ChartPanel chartPanel;
+	private final JScrollBar scrollBar;
 
-	public CharterFrameComponentListener(final CharterFrame frame) {
-		this.frame = frame;
+	public CharterFrameComponentListener(final ChartPanel chartPanel, final JScrollBar scrollBar) {
+		this.chartPanel = chartPanel;
+		this.scrollBar = scrollBar;
 	}
 
 	private void changeWidth(final Component c, final int w) {
@@ -43,8 +47,8 @@ public class CharterFrameComponentListener implements ComponentListener {
 		Config.windowHeight = e.getComponent().getHeight();
 		Config.windowWidth = e.getComponent().getWidth();
 
-		changeWidth(frame.scrollBar, Config.windowWidth);
-		changeWidth(frame.chartPanel, Config.windowWidth);
+		changeWidth(scrollBar, Config.windowWidth);
+		changeWidth(chartPanel, Config.windowWidth);
 	}
 
 	@Override

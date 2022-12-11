@@ -3,13 +3,13 @@ package log.charter.gui.handlers;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import log.charter.gui.ChartEventsHandler;
+import log.charter.gui.ChartKeyboardHandler;
 
 public class CharterFrameWindowListener implements WindowListener {
 
-	private final ChartEventsHandler eventsHandler;
+	private final ChartKeyboardHandler eventsHandler;
 
-	public CharterFrameWindowListener(final ChartEventsHandler eventsHandler) {
+	public CharterFrameWindowListener(final ChartKeyboardHandler eventsHandler) {
 		this.eventsHandler = eventsHandler;
 	}
 

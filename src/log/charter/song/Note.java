@@ -2,10 +2,11 @@ package log.charter.song;
 
 import static log.charter.util.Utils.mapInteger;
 
+import log.charter.gui.SelectionManager.Selectable;
 import log.charter.io.rs.xml.song.ArrangementNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class Note extends Position {
+public class Note extends Position implements Selectable {
 	public int string;
 	public int fret;
 	public int sustain;
@@ -54,5 +55,10 @@ public class Note extends Position {
 		harmonicPinch = mapInteger(arrangementNote.harmonicPinch);
 		bendValues = arrangementNote.bendValues == null ? new ArrayList2<>()
 				: arrangementNote.bendValues.list.map(BendValue::new);
+	}
+
+	@Override
+	public String getSignature() {
+		return position + "-" + string;
 	}
 }

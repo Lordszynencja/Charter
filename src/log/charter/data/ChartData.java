@@ -11,9 +11,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import log.charter.gui.ChartEventsHandler;
+import log.charter.gui.CharterFrame;
+import log.charter.gui.CharterMenuBar;
 import log.charter.gui.panes.LyricPane;
-import log.charter.io.rs.xml.vocals.Vocal;
+import log.charter.io.rs.xml.vocals.ArrangementVocal;
 import log.charter.song.ArrangementChart;
 import log.charter.song.Level;
 import log.charter.song.Note;
@@ -89,7 +90,7 @@ public class ChartData {
 	public int mx = -1;
 	public int my = -1;
 	public int time = 0;
-	public double nextT = 0;
+	public int nextTime = 0;
 	public boolean drawAudio = false;
 	public boolean drawDebug = false;
 
@@ -100,11 +101,17 @@ public class ChartData {
 
 	public boolean changed = false;
 
-	public final UndoSystem undoSystem;
-	public ChartEventsHandler handler;
+	private CharterFrame frame;
+	private CharterMenuBar menuBar;
+	private UndoSystem undoSystem;
 
 	public ChartData() {
-		undoSystem = new UndoSystem(this);
+	}
+
+	public void init(final CharterFrame frame, final CharterMenuBar menuBar, final UndoSystem undoSystem) {
+		this.frame = frame;
+		this.menuBar = menuBar;
+		this.undoSystem = undoSystem;
 	}
 
 	public void addVocalNote(final int pos, final String text, final boolean wordPart, final boolean phraseEnd) {
@@ -145,17 +152,8 @@ public class ChartData {
 //	}
 
 	public void changeEditMode(final EditMode editMode) {
-		handler.stopMusic();
-		handler.frame.menuBar.changeEditMode(editMode);
+		this.editMode = editMode;
 
-		switch (editMode) {
-		case GUITAR:
-			break;
-		case VOCALS:
-			break;
-		default:
-			break;
-		}
 		changeDifficulty(0);
 		softClear();
 		undoSystem.clear();
@@ -233,7 +231,7 @@ public class ChartData {
 		isNoteDrag = false;
 
 		time = 0;
-		nextT = 0;
+		nextTime = 0;
 		drawAudio = false;
 		gridSize = 4;
 		useGrid = true;
@@ -304,7 +302,7 @@ public class ChartData {
 		if (idOrPos.isId()) {
 			removeVocalNote(idOrPos.id);
 		} else {
-			new LyricPane(handler.frame, idOrPos);
+			new LyricPane(frame, this, idOrPos);
 		}
 	}
 
@@ -671,7 +669,7 @@ public class ChartData {
 		return notes;
 	}
 
-	private void fixLyricLength(final Vocal vocal, final int id, final Vocal next) {// TODO
+	private void fixLyricLength(final ArrangementVocal vocal, final int id, final ArrangementVocal next) {// TODO
 //		if (next.pos < (Config.minLongNoteDistance + l.pos + l.getLength())) {
 //			l.setLength(next.pos - Config.minLongNoteDistance - l.pos);
 //		}
@@ -1140,5 +1138,18 @@ public class ChartData {
 
 	public Level getCurrentArrangementLevel() {
 		return songChart.arrangements.get(currentArrangement).levels.get(currentDiff);
+	}
+
+	public void setChanged() {
+		if (!isEmpty) {
+			changed = true;
+		}
+	}
+
+	public void setNextTime(final int t) {
+		nextTime = t;
+		if (nextTime < 0) {
+			nextTime = 0;
+		}
 	}
 }

@@ -61,4 +61,15 @@ public class FileChooseUtils {
 
 		return showDialog(frame, chooser);
 	}
+
+	public static File chooseDirectory(final CharterFrame frame, final String startingPath) {
+		final JFileChooser chooser = new JFileChooser(new File(startingPath));
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		final int chosenOption = chooser.showOpenDialog(frame);
+		if (chosenOption != JFileChooser.APPROVE_OPTION) {
+			return null;
+		}
+
+		return chooser.getSelectedFile();
+	}
 }

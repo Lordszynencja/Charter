@@ -17,7 +17,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import log.charter.data.ChartData;
 import log.charter.data.EditMode;
+import log.charter.gui.handlers.AudioHandler;
+import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.panes.ConfigPane;
 import log.charter.gui.panes.SongOptionsPane;
 import log.charter.main.LogCharterRSMain;
@@ -56,7 +59,11 @@ public class CharterMenuBar extends JMenuBar {
 		return getKeyStroke(keyCode, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
 	}
 
-	private final ChartEventsHandler handler;
+	private AudioHandler audioHandler;
+	private CharterFrame frame;
+	private ChartData data;
+	private ChartKeyboardHandler chartKeyboardHandler;
+	private SongFileHandler songFileHandler;
 
 	private JMenu editMenu;
 	private JMenuItem songOptionsItem;
@@ -65,9 +72,14 @@ public class CharterMenuBar extends JMenuBar {
 	private JMenu vocalsMenu;
 	private JMenu notesMenu;
 
-	public CharterMenuBar(final ChartEventsHandler handler) {
-		super();
-		this.handler = handler;
+	public void init(final AudioHandler audioHandler, final ChartKeyboardHandler chartKeyboardHandler,
+			final CharterFrame frame, final ChartData data, final SongFileHandler songFileHandler) {
+		this.audioHandler = audioHandler;
+		this.data = data;
+		this.frame = frame;
+		this.chartKeyboardHandler = chartKeyboardHandler;
+		this.songFileHandler = songFileHandler;
+
 		final Dimension size = new Dimension(100, 20);
 		setMinimumSize(size);
 		this.setSize(size);
@@ -81,24 +93,25 @@ public class CharterMenuBar extends JMenuBar {
 		this.add(prepareVocalsMenu());
 		this.add(prepareNotesMenu());
 		this.add(prepareInfoMenu());
+
+		frame.setJMenuBar(this);
 	}
 
 	private JMenu prepareFileMenu() {
 		final JMenu importSubmenu = new JMenu("Import");
 		importSubmenu.add(createItem("Open song from RS arrangement XML",
-				e -> handler.songFileHandler.openSongWithImportFromArrangementXML()));
-		importSubmenu.add(createItem("RS arrangement XML", e -> handler.songFileHandler.importRSArrangementXML()));
-		importSubmenu.add(
-				createItem("RS vocals arrangement XML", e -> handler.songFileHandler.importRSVocalsArrangementXML()));
+				e -> songFileHandler.openSongWithImportFromArrangementXML()));
+		importSubmenu.add(createItem("RS arrangement XML", e -> songFileHandler.importRSArrangementXML()));
+		importSubmenu.add(createItem("RS vocals arrangement XML", e -> songFileHandler.importRSVocalsArrangementXML()));
 
 		final JMenu menu = new JMenu("File");
-		menu.add(createItem("New", ctrl('N'), e -> handler.songFileHandler.newSong()));
-		menu.add(createItem("Open", ctrl('O'), e -> handler.songFileHandler.open()));
-		menu.add(createItem("Open audio file", e -> handler.songFileHandler.openAudioFile()));
+		menu.add(createItem("New", ctrl('N'), e -> songFileHandler.newSong()));
+		menu.add(createItem("Open", ctrl('O'), e -> songFileHandler.open()));
+		menu.add(createItem("Open audio file", e -> songFileHandler.openAudioFile()));
 		menu.add(importSubmenu);
-		menu.add(createItem("Save", ctrl('S'), e -> handler.songFileHandler.save()));
-		menu.add(createItem("Save as...", ctrlShift('S'), e -> handler.songFileHandler.saveAs()));
-		menu.add(createItem("Exit", button(VK_ESCAPE), e -> handler.exit()));
+		menu.add(createItem("Save", ctrl('S'), e -> songFileHandler.save()));
+		menu.add(createItem("Save as...", ctrlShift('S'), e -> songFileHandler.saveAs()));
+		menu.add(createItem("Exit", button(VK_ESCAPE), e -> chartKeyboardHandler.exit()));
 
 		return menu;
 	}
@@ -106,15 +119,15 @@ public class CharterMenuBar extends JMenuBar {
 	private JMenu prepareEditMenu() {
 		final JMenu menu = new JMenu("Edit");
 
-		menu.add(createItem("Select all", ctrl('A'), e -> handler.data.selectAll()));
-		menu.add(createItem("Delete", button(VK_DELETE), e -> handler.delete()));
-		menu.add(createItem("Undo", ctrl('Z'), e -> handler.undo()));
-		menu.add(createItem("Redo", ctrl('R'), e -> handler.redo()));
-		menu.add(createItem("Copy", ctrl('C'), e -> handler.data.copy()));
-		menu.add(createItem("Paste", ctrl('V'), e -> handler.paste()));
+		menu.add(createItem("Select all", ctrl('A'), e -> chartKeyboardHandler.selectAll()));
+		menu.add(createItem("Delete", button(VK_DELETE), e -> chartKeyboardHandler.delete()));
+		menu.add(createItem("Undo", ctrl('Z'), e -> chartKeyboardHandler.undo()));
+		menu.add(createItem("Redo", ctrl('R'), e -> chartKeyboardHandler.redo()));
+		menu.add(createItem("Copy", ctrl('C'), e -> chartKeyboardHandler.copy()));
+		menu.add(createItem("Paste", ctrl('V'), e -> chartKeyboardHandler.paste()));
 		menu.addSeparator();
 
-		menu.add(createItem("Toggle debug info", e -> handler.toggleDrawDebug()));
+		menu.add(createItem("Toggle debug info", e -> chartKeyboardHandler.toggleDrawDebug()));
 
 		menu.setEnabled(false);
 		editMenu = menu;
@@ -123,9 +136,9 @@ public class CharterMenuBar extends JMenuBar {
 
 	private JMenu prepareConfigMenu() {
 		final JMenu menu = new JMenu("Config");
-		menu.add(createItem("Options", e -> new ConfigPane(handler.frame)));
+		menu.add(createItem("Options", e -> new ConfigPane(frame)));
 
-		songOptionsItem = createItem("Song options", e -> new SongOptionsPane(handler.frame));
+		songOptionsItem = createItem("Song options", e -> new SongOptionsPane(frame, songFileHandler, data));
 		songOptionsItem.setEnabled(false);
 		menu.add(songOptionsItem);
 
@@ -133,6 +146,8 @@ public class CharterMenuBar extends JMenuBar {
 	}
 
 	public void changeEditMode(final EditMode editMode) {
+		audioHandler.stopMusic();
+
 		editMenu.setEnabled(true);
 		songOptionsItem.setEnabled(true);
 		instrumentMenu.setEnabled(true);
@@ -146,19 +161,21 @@ public class CharterMenuBar extends JMenuBar {
 		} else if (editMode == EditMode.VOCALS) {
 			vocalsMenu.setEnabled(true);
 		}
+
+		data.changeEditMode(editMode);
 	}
 
 	private JMenu prepareInstrumentMenu() {
 		final JMenu menu = new JMenu("Instrument");
 
-		for (final EditMode mode : EditMode.values()) {
-			menu.add(createItem(mode.name(), e -> handler.data.changeEditMode(mode)));
+		for (final EditMode editMode : EditMode.values()) {
+			menu.add(createItem(editMode.name(), e -> changeEditMode(editMode)));
 		}
 		menu.addSeparator();
 
-		menu.add(createItem("Draw waveform", button(VK_F5), e -> handler.toggleDrawWaveform()));
-		menu.add(createItem("Toggle claps on note", button('C'), e -> handler.toggleClaps()));
-		menu.add(createItem("Toggle metronome on measures", button('M'), e -> handler.toggleMetronome()));
+		menu.add(createItem("Draw waveform", button(VK_F5), e -> chartKeyboardHandler.toggleDrawWaveform()));
+		menu.add(createItem("Toggle claps on note", button('C'), e -> audioHandler.toggleClaps()));
+		menu.add(createItem("Toggle metronome on measures", button('M'), e -> audioHandler.toggleMetronome()));
 
 		menu.setEnabled(false);
 
@@ -169,8 +186,8 @@ public class CharterMenuBar extends JMenuBar {
 	private JMenu prepareGuitarMenu() {
 		final JMenu menu = new JMenu("Guitar");
 
-		menu.add(createItem("Toggle HO/PO", button('H'), e -> handler.toggleHammerOn()));
-		menu.add(createItem("Toggle crazy notes", button('U'), e -> handler.toggleCrazy()));
+		menu.add(createItem("Toggle HO/PO", button('H'), e -> chartKeyboardHandler.toggleHammerOn()));
+		menu.add(createItem("Toggle crazy notes", button('U'), e -> chartKeyboardHandler.toggleCrazy()));
 
 		menu.setEnabled(false);
 
@@ -181,9 +198,9 @@ public class CharterMenuBar extends JMenuBar {
 	private JMenu prepareVocalsMenu() {
 		final JMenu menu = new JMenu("Vocals");
 
-		menu.add(createItem("Edit lyric", button('L'), e -> handler.editLyric()));
-		menu.add(createItem("Toggle notes word part", button('W'), e -> handler.toggleVocalsWordPart()));
-		menu.add(createItem("Toggle notes phrase end", button('E'), e -> handler.toggleVocalsPhraseEnd()));
+		menu.add(createItem("Edit lyric", button('L'), e -> chartKeyboardHandler.editLyric()));
+		menu.add(createItem("Toggle notes word part", button('W'), e -> chartKeyboardHandler.toggleVocalsWordPart()));
+		menu.add(createItem("Toggle notes phrase end", button('E'), e -> chartKeyboardHandler.toggleVocalsPhraseEnd()));
 
 		menu.setEnabled(false);
 
@@ -194,11 +211,11 @@ public class CharterMenuBar extends JMenuBar {
 	private JMenu prepareNotesMenu() {
 		final JMenu menu = new JMenu("Notes");
 
-		menu.add(createItem("Toggle grid", button('G'), e -> handler.toggleGrid()));
-		menu.add(createItem("Change grid size", e -> handler.changeGridSize()));
-		menu.add(createItem("Snap notes to grid", ctrl('F'), e -> handler.snapNotes()));
-		menu.add(createItem("Double grid size", button(VK_PERIOD), e -> handler.doubleGridSize()));
-		menu.add(createItem("Half grid size", button(VK_COMMA), e -> handler.halfGridSize()));
+		menu.add(createItem("Toggle grid", button('G'), e -> chartKeyboardHandler.toggleGrid()));
+		menu.add(createItem("Change grid size", e -> chartKeyboardHandler.changeGridSize()));
+		menu.add(createItem("Snap notes to grid", ctrl('F'), e -> chartKeyboardHandler.snapNotes()));
+		menu.add(createItem("Double grid size", button(VK_PERIOD), e -> chartKeyboardHandler.doubleGridSize()));
+		menu.add(createItem("Half grid size", button(VK_COMMA), e -> chartKeyboardHandler.halfGridSize()));
 
 		menu.addSeparator();
 		final JMenu copyFromMenu = new JMenu("Copy from");
@@ -231,7 +248,7 @@ public class CharterMenuBar extends JMenuBar {
 				+ "GP import\n"//
 				+ "a lot more";
 
-		menu.add(createItem("Version", e -> JOptionPane.showMessageDialog(handler.frame, infoText)));
+		menu.add(createItem("Version", e -> JOptionPane.showMessageDialog(frame, infoText)));
 
 		return menu;
 	}

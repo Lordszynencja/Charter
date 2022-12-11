@@ -1,4 +1,4 @@
-package log.charter.gui.chartPanelDrawers;
+package log.charter.gui.chartPanelDrawers.common;
 
 import static log.charter.gui.ChartPanel.beatTextY;
 import static log.charter.gui.ChartPanel.lanesBottom;
@@ -14,23 +14,31 @@ import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.song.Beat;
 
-public class BeatsDrawer implements Drawer {
-	@Override
-	public void draw(final Graphics g, final ChartPanel panel, final ChartData data) {
+public class BeatsDrawer {
+	private ChartData data;
+	private ChartPanel chartPanel;
+
+	public void init(final ChartData data, final ChartPanel chartPanel) {
+		this.data = data;
+		this.chartPanel = chartPanel;
+	}
+
+	public void draw(final Graphics g) {
 		if (data.isEmpty) {
 			return;
 		}
 
-		int id = 1;
+		int id = 0;
 		final List<Beat> beats = data.songChart.beatsMap.beats;
 		g.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
 
 		for (final Beat beat : beats) {
+			id++;
 			final int x = timeToX(beat.position, data.time);
-			if (x < 0) {
+			if (x < -100) {
 				continue;
 			}
-			if (x > panel.getWidth()) {
+			if (x > chartPanel.getWidth()) {
 				break;
 			}
 
@@ -46,7 +54,6 @@ public class BeatsDrawer implements Drawer {
 				g.drawLine(x, beatTextY, x, lanesBottom);
 				g.drawString("" + id, x + 3, ChartPanel.beatTextY + 11);
 			}
-			id++;
 		}
 	}
 

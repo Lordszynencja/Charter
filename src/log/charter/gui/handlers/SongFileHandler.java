@@ -14,19 +14,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
 import helliker.id3.MP3File;
+import log.charter.data.ChartData;
 import log.charter.data.Config;
-import log.charter.gui.ChartEventsHandler;
+import log.charter.gui.CharterFrame;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
-import log.charter.io.rs.xml.vocals.Vocals;
+import log.charter.io.rs.xml.vocals.ArrangementVocals;
 import log.charter.io.rs.xml.vocals.VocalsXStreamHandler;
 import log.charter.io.rsc.xml.RocksmithChartProject;
 import log.charter.song.ArrangementChart;
 import log.charter.song.SongChart;
+import log.charter.song.Vocals;
 import log.charter.sound.MusicData;
 import log.charter.util.FileChooseUtils;
 import log.charter.util.RW;
@@ -82,18 +81,20 @@ public class SongFileHandler {
 		}
 	}
 
-	private final ChartEventsHandler handler;
+	private CharterFrame frame;
+	private ChartData data;
 
-	public SongFileHandler(final ChartEventsHandler handler) {
-		this.handler = handler;
+	public void init(final ChartData data, final CharterFrame frame) {
+		this.frame = frame;
+		this.data = data;
 	}
 
 	public void newSong() {
-		if (!handler.checkChanged()) {
+		if (!frame.checkChanged()) {
 			return;
 		}
 
-		final File songFile = FileChooseUtils.chooseMusicFile(handler.frame, Config.musicPath);
+		final File songFile = FileChooseUtils.chooseMusicFile(frame, Config.musicPath);
 		if (songFile == null) {
 			return;
 		}
@@ -102,22 +103,21 @@ public class SongFileHandler {
 		final int dotIndex = songName.lastIndexOf('.');
 		final String extension = songName.substring(dotIndex + 1).toLowerCase();
 		if (!extension.equals("mp3") && !extension.equals("ogg")) {
-			handler.showPopup("Not an Mp3 or Ogg file!");
+			frame.showPopup("Not an Mp3 or Ogg file!");
 			return;
 		}
 
 		final Map<String, String> songData = extractNewSongData(songFile.getAbsolutePath());
 		String folderName = songName.substring(0, songName.lastIndexOf('.'));
 
-		folderName = JOptionPane.showInputDialog(handler.frame, "Choose folder name", folderName);
+		folderName = frame.showInputDialog("Choose folder name", folderName);
 		if (folderName == null) {
 			return;
 		}
 
 		File f = new File(Config.songsPath + "/" + folderName);
 		while (f.exists()) {
-			folderName = JOptionPane.showInputDialog(handler.frame,
-					"Given folder already exists, choose different name", folderName);
+			folderName = frame.showInputDialog("Given folder already exists, choose different name", folderName);
 			if (folderName == null) {
 				return;
 			}
@@ -133,7 +133,7 @@ public class SongFileHandler {
 
 		final MusicData musicData = MusicData.readFile(musicPath);
 		if (musicData == null) {
-			handler.showPopup(
+			frame.showPopup(
 					"Music file not found in song folder, something went wrong with copying or the file is invalid");
 			return;
 		}
@@ -148,12 +148,12 @@ public class SongFileHandler {
 			songChart.albumYear = null;
 		}
 
-		handler.data.setSong(songDir, songChart, musicData, "project.rscp");
+		data.setSong(songDir, songChart, musicData, "project.rscp");
 		save();
 	}
 
 	public MusicData chooseMusicFile(final String startingDir) {
-		final File musicFile = FileChooseUtils.chooseMusicFile(handler.frame, startingDir);
+		final File musicFile = FileChooseUtils.chooseMusicFile(frame, startingDir);
 		if (musicFile == null) {
 			return null;
 		}
@@ -162,16 +162,16 @@ public class SongFileHandler {
 	}
 
 	public void open() {
-		if (!handler.checkChanged()) {
+		if (!frame.checkChanged()) {
 			return;
 		}
 
-		String startingDir = handler.data.path;
+		String startingDir = data.path;
 		if (!new File(startingDir).exists()) {
 			startingDir = Config.songsPath;
 		}
 
-		final File projectFileChosen = chooseFile(handler.frame, startingDir, new String[] { ".rscp" },
+		final File projectFileChosen = chooseFile(frame, startingDir, new String[] { ".rscp" },
 				new String[] { "Rocksmith Chart Project" });
 		if (projectFileChosen == null) {
 			return;
@@ -181,31 +181,31 @@ public class SongFileHandler {
 		final String name = projectFileChosen.getName().toLowerCase();
 
 		if (!name.endsWith(".rscp")) {
-			handler.showPopup("This file type is not supported");
+			frame.showPopup("This file type is not supported");
 			error("unsupported file: " + projectFileChosen.getName());
 			return;
 		}
 
 		final RocksmithChartProject project = readProject(RW.read(projectFileChosen));
 		if (project.chartFormatVersion > 1) {
-			handler.showPopup("Project is newer version than program handles.");
+			frame.showPopup("Project is newer version than program handles.");
 			return;
 		}
 
 		MusicData musicData = MusicData.readFile(dir + project.musicFileName);
 		if (musicData == null) {
-			handler.showPopup(
+			frame.showPopup(
 					"Music file " + project.musicFileName + " not found in song folder, please choose new file.");
 
-			final File musicFile = FileChooseUtils.chooseMusicFile(handler.frame, startingDir);
+			final File musicFile = FileChooseUtils.chooseMusicFile(frame, startingDir);
 			if (musicFile == null) {
-				handler.showPopup("Operation canceled.");
+				frame.showPopup("Operation canceled.");
 				return;
 			}
 
 			musicData = MusicData.readFile(musicFile.getAbsolutePath());
 			if (musicData == null) {
-				handler.showPopup("Wrong music file.");
+				frame.showPopup("Wrong music file.");
 				return;
 			}
 		}
@@ -220,19 +220,19 @@ public class SongFileHandler {
 
 		Config.lastPath = dir;
 		Config.save();
-		handler.data.setSong(dir, songChart, musicData, projectFileChosen.getName());
-		handler.data.changed = false;
+		data.setSong(dir, songChart, musicData, projectFileChosen.getName());
+		data.changed = false;
 	}
 
 	public void openAudioFile() {
-		final MusicData musicData = chooseMusicFile(handler.data.path);
+		final MusicData musicData = chooseMusicFile(data.path);
 		if (musicData != null) {
-			handler.data.music = musicData;
+			data.music = musicData;
 		}
 	}
 
 	public void openSongWithImportFromArrangementXML() {
-		final File songFile = FileChooseUtils.chooseMusicFile(handler.frame, Config.songsPath);
+		final File songFile = FileChooseUtils.chooseMusicFile(frame, Config.songsPath);
 		if (songFile == null) {
 			return;
 		}
@@ -241,18 +241,18 @@ public class SongFileHandler {
 		final int dotIndex = songName.lastIndexOf('.');
 		final String extension = songName.substring(dotIndex + 1).toLowerCase();
 		if (!extension.equals("mp3") && !extension.equals("ogg")) {
-			handler.showPopup("Not an Mp3 or Ogg file!");
+			frame.showPopup("Not an Mp3 or Ogg file!");
 			return;
 		}
 
 		final MusicData musicData = MusicData.readFile(songFile.getAbsolutePath());
 		if (musicData == null) {
-			handler.showPopup("Music file couldn't be loaded");
+			frame.showPopup("Music file couldn't be loaded");
 			return;
 		}
 
 		final String dir = songFile.getParent() + File.separator;
-		final File arrangementFile = FileChooseUtils.chooseFile(handler.frame, dir, new String[] { ".xml" },
+		final File arrangementFile = FileChooseUtils.chooseFile(frame, dir, new String[] { ".xml" },
 				new String[] { "RS arrangmenet file (XML)" });
 		if (arrangementFile == null) {
 			return;
@@ -261,12 +261,12 @@ public class SongFileHandler {
 		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(arrangementFile));
 		final SongChart songChart = new SongChart(musicData.msLength(), songName, songArrangement);
 
-		handler.data.setSong(dir, songChart, musicData, "project.rscp");
+		data.setSong(dir, songChart, musicData, "project.rscp");
 	}
 
 	public void importRSArrangementXML() {
-		final String dir = handler.data.isEmpty ? Config.songsPath : handler.data.path;
-		final File arrangementFile = FileChooseUtils.chooseFile(handler.frame, dir, new String[] { ".xml" },
+		final String dir = data.isEmpty ? Config.songsPath : data.path;
+		final File arrangementFile = FileChooseUtils.chooseFile(frame, dir, new String[] { ".xml" },
 				new String[] { "RS arrangmenet file (XML)" });
 		if (arrangementFile == null) {
 			return;
@@ -275,34 +275,34 @@ public class SongFileHandler {
 		try {
 			final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(arrangementFile));
 			final ArrangementChart arrangementChart = new ArrangementChart(songArrangement);
-			handler.data.songChart.arrangements.add(arrangementChart);
+			data.songChart.arrangements.add(arrangementChart);
 		} catch (final Exception e) {
-			handler.showPopup("Couldn't load arrangement:\n" + e.getMessage());
+			frame.showPopup("Couldn't load arrangement:\n" + e.getMessage());
 		}
 	}
 
 	public void importRSVocalsArrangementXML() {
-		final String dir = handler.data.isEmpty ? Config.songsPath : handler.data.path;
-		final File arrangementFile = FileChooseUtils.chooseFile(handler.frame, dir, new String[] { ".xml" },
+		final String dir = data.isEmpty ? Config.songsPath : data.path;
+		final File arrangementFile = FileChooseUtils.chooseFile(frame, dir, new String[] { ".xml" },
 				new String[] { "RS arrangmenet file (XML)" });
 		if (arrangementFile == null) {
 			return;
 		}
 
 		try {
-			final Vocals vocals = VocalsXStreamHandler.readVocals(RW.read(arrangementFile));
-			handler.data.songChart.vocals = vocals;
+			final ArrangementVocals vocals = VocalsXStreamHandler.readVocals(RW.read(arrangementFile));
+			data.songChart.vocals = new Vocals(vocals);
 		} catch (final Exception e) {
-			handler.showPopup("Couldn't load arrangement:\n" + e.getMessage());
+			frame.showPopup("Couldn't load arrangement:\n" + e.getMessage());
 		}
 	}
 
 	public void importSong() {
-		if (!handler.checkChanged()) {
+		if (!frame.checkChanged()) {
 			return;
 		}
 
-		final File songFile = FileChooseUtils.chooseMusicFile(handler.frame, Config.lastPath);
+		final File songFile = FileChooseUtils.chooseMusicFile(frame, Config.lastPath);
 		if (songFile == null) {
 			return;
 		}
@@ -311,22 +311,21 @@ public class SongFileHandler {
 		final int dotIndex = songName.lastIndexOf('.');
 		final String extension = songName.substring(dotIndex + 1).toLowerCase();
 		if (!extension.equals("mp3") && !extension.equals("ogg")) {
-			handler.showPopup("Not an Mp3 or Ogg file!");
+			frame.showPopup("Not an Mp3 or Ogg file!");
 			return;
 		}
 
 		final Map<String, String> songData = extractNewSongData(songFile.getAbsolutePath());
 		String folderName = songName.substring(0, songName.lastIndexOf('.'));
 
-		folderName = JOptionPane.showInputDialog(handler.frame, "Choose folder name", folderName);
+		folderName = frame.showInputDialog("Choose folder name", folderName);
 		if (folderName == null) {
 			return;
 		}
 
 		File f = new File(Config.songsPath + "/" + folderName);
 		while (f.exists()) {
-			folderName = JOptionPane.showInputDialog(handler.frame,
-					"Given folder already exists, choose different name", folderName);
+			folderName = frame.showInputDialog("Given folder already exists, choose different name", folderName);
 			if (folderName == null) {
 				return;
 			}
@@ -342,7 +341,7 @@ public class SongFileHandler {
 
 		final MusicData musicData = MusicData.readFile(musicPath);
 		if (musicData == null) {
-			handler.showPopup(
+			frame.showPopup(
 					"Music file not found in song folder, something went wrong with copying or the file is invalid");
 			return;
 		}
@@ -357,49 +356,46 @@ public class SongFileHandler {
 			songChart.albumYear = null;
 		}
 
-		handler.data.setSong(songDir, songChart, musicData, "project.rscp");
+		data.setSong(songDir, songChart, musicData, "project.rscp");
 		save();
 	}
 
 	public void save() {
-		if (handler.data.isEmpty) {
+		if (data.isEmpty) {
 			return;
 		}
 
-		final RocksmithChartProject project = new RocksmithChartProject(handler.data.songChart);
+		final RocksmithChartProject project = new RocksmithChartProject(data.songChart);
 
 		final int id = 1;
-		for (final ArrangementChart arrangementChart : handler.data.songChart.arrangements) {
+		for (final ArrangementChart arrangementChart : data.songChart.arrangements) {
 			final String arrangementFileName = id + "_" + arrangementChart.getTypeName() + "_RS2.xml";
 			project.arrangementFiles.add(arrangementFileName);
-			final SongArrangement songArrangement = new SongArrangement(handler.data.songChart, arrangementChart);
-			RW.write(handler.data.path + arrangementFileName, SongArrangementXStreamHandler.saveSong(songArrangement));
+			final SongArrangement songArrangement = new SongArrangement(data.songChart, arrangementChart);
+			RW.write(data.path + arrangementFileName, SongArrangementXStreamHandler.saveSong(songArrangement));
 		}
 
-		if (!handler.data.songChart.vocals.vocals.isEmpty()) {
-			RW.write(handler.data.path + "Vocals_RS2.xml", saveVocals(handler.data.songChart.vocals));
+		if (!data.songChart.vocals.vocals.isEmpty()) {
+			RW.write(data.path + "Vocals_RS2.xml", saveVocals(new ArrangementVocals(data.songChart.vocals)));
 		}
 
-		RW.write(handler.data.path + handler.data.projectFileName, saveProject(project));
+		RW.write(data.path + data.projectFileName, saveProject(project));
 
 		Config.save();
-		handler.data.changed = false;
+		data.changed = false;
 	}
 
 	public void saveAs() {
-		if (handler.data.isEmpty) {
+		if (data.isEmpty) {
 			return;
 		}
 
-		final JFileChooser chooser = new JFileChooser(new File(handler.data.path));
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-		final int chosenOption = chooser.showOpenDialog(handler.frame);
-		if (chosenOption != JFileChooser.APPROVE_OPTION) {
+		final File newDir = FileChooseUtils.chooseDirectory(frame, data.path);
+		if (newDir == null) {
 			return;
 		}
-		final File newDir = chooser.getSelectedFile();
-		handler.data.path = newDir.getAbsolutePath();
+
+		data.path = newDir.getAbsolutePath();
 		save();
 		Config.save();
 	}

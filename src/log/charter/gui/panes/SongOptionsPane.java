@@ -2,7 +2,9 @@ package log.charter.gui.panes;
 
 import java.math.BigDecimal;
 
+import log.charter.data.ChartData;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.handlers.SongFileHandler;
 import log.charter.song.SongChart;
 
 public final class SongOptionsPane extends ParamsPane {
@@ -15,10 +17,10 @@ public final class SongOptionsPane extends ParamsPane {
 	private Integer albumYear;
 	public BigDecimal crowdSpeed;
 
-	public SongOptionsPane(final CharterFrame frame) {
+	public SongOptionsPane(final CharterFrame frame, final SongFileHandler songFileHandler, final ChartData data) {
 		super(frame, "Song options", 21);
 
-		final SongChart songChart = frame.handler.data.songChart;
+		final SongChart songChart = data.songChart;
 		title = songChart.title;
 		artistName = songChart.artistName;
 		artistNameSort = songChart.artistNameSort;
@@ -47,7 +49,7 @@ public final class SongOptionsPane extends ParamsPane {
 			songChart.albumName = albumName;
 			songChart.albumYear = albumYear;
 
-			frame.handler.songFileHandler.save();
+			songFileHandler.save();
 
 			dispose();
 		});

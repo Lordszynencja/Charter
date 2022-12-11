@@ -1,19 +1,28 @@
-package log.charter.io.rs.xml.vocals;
+package log.charter.song;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.data.Config;
-import log.charter.io.rs.xml.converters.TimeConverter;
+import log.charter.gui.SelectionManager.Selectable;
+import log.charter.io.rs.xml.vocals.ArrangementVocal;
 
 @XStreamAlias("vocal")
-public class Vocal {
-	public Vocal() {
+public class Vocal extends Position implements Selectable {
+	public int length;
+	public String lyric;
+
+	public Vocal(final int position) {
+		super(position);
+	}
+
+	public Vocal(final ArrangementVocal arrangementVocal) {
+		super(arrangementVocal.time);
+		length = arrangementVocal.length == null ? 0 : arrangementVocal.length;
+		lyric = arrangementVocal.lyric;
 	}
 
 	public Vocal(final int time, final String text, final boolean wordPart, final boolean phraseEnd) {
-		this.time = time;
+		super(time);
 		lyric = text;
 
 		if (wordPart) {
@@ -21,15 +30,6 @@ public class Vocal {
 		}
 		length = Config.minTailLength;
 	}
-
-	@XStreamAsAttribute
-	@XStreamConverter(TimeConverter.class)
-	public Integer time;
-	@XStreamAsAttribute
-	@XStreamConverter(TimeConverter.class)
-	public Integer length;
-	@XStreamAsAttribute
-	public String lyric;
 
 	public boolean isWordPart() {
 		return lyric.endsWith("-");
@@ -60,6 +60,16 @@ public class Vocal {
 	}
 
 	public String getText() {
-		return lyric.replace("+", "");
+		String text = lyric.replace("+", "");
+		if (text.endsWith("-")) {
+			text = text.substring(0, text.length() - 1);
+		}
+
+		return text;
+	}
+
+	@Override
+	public String getSignature() {
+		return position + "";
 	}
 }
