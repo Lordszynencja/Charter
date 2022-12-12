@@ -3,23 +3,20 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Text implements DrawableShape {
-
+class Text implements DrawableShape {
+	private final ShapePosition position;
 	private final String text;
-	private final int x;
-	private final int y;
 	private final Color color;
 
-	public Text(final String text, final int x, final int y, final Color color) {
+	public Text(final ShapePosition position, final String text, final Color color) {
+		this.position = position;
 		this.text = text;
-		this.x = x;
-		this.y = y;
 		this.color = color;
 	}
 
 	@Override
 	public void draw(final Graphics g) {
 		g.setColor(color);
-		g.drawString(text, x, y);
+		g.drawString(text, position.x, position.y);
 	}
 }

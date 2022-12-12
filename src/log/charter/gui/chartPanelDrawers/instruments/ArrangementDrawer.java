@@ -6,7 +6,6 @@ import log.charter.data.ChartData;
 import log.charter.data.EditMode;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.SelectionManager;
-import log.charter.gui.chartPanelDrawers.common.HighlightDrawer;
 
 public class ArrangementDrawer {
 
@@ -15,11 +14,10 @@ public class ArrangementDrawer {
 	private final GuitarDrawer guitarDrawer = new GuitarDrawer();
 	private final VocalsDrawer vocalsDrawer = new VocalsDrawer();
 
-	public void init(final ChartPanel chartPanel, final ChartData data, final HighlightDrawer highlightDrawer,
-			final SelectionManager selectionManager) {
+	public void init(final ChartPanel chartPanel, final ChartData data, final SelectionManager selectionManager) {
 		this.data = data;
-		guitarDrawer.init(data, chartPanel);
-		vocalsDrawer.init(data, chartPanel, highlightDrawer, selectionManager);
+		guitarDrawer.init(data, chartPanel, selectionManager);
+		vocalsDrawer.init(data, chartPanel, selectionManager);
 	}
 
 	public void draw(final Graphics g) {

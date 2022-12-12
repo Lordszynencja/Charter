@@ -13,4 +13,17 @@ public class ShapePositionWithSize extends ShapePosition {
 	public ShapePositionWithSize centered() {
 		return new ShapePositionWithSize(x - width / 2, y - height / 2, width, height);
 	}
+
+	public ShapePositionWithSize centeredX() {
+		return new ShapePositionWithSize(x - width / 2, y, width, height);
+	}
+
+	public ShapePositionWithSize centeredY() {
+		return new ShapePositionWithSize(x, y - height / 2, width, height);
+	}
+
+	public ShapePositionWithSize resized(final int xOffset, final int yOffset, final int widthOffset,
+			final int heightOffset) {
+		return new ShapePositionWithSize(x + xOffset, y + yOffset, width + widthOffset, height + heightOffset);
+	}
 }

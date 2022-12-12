@@ -11,9 +11,10 @@ import javax.swing.JScrollBar;
 import log.charter.data.ChartData;
 import log.charter.data.Config;
 import log.charter.data.UndoSystem;
+import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.handlers.AudioHandler;
+import log.charter.gui.handlers.ChartPanelMouseListener;
 import log.charter.gui.handlers.CharterFrameComponentListener;
-import log.charter.gui.handlers.CharterFrameMouseWheelListener;
 import log.charter.gui.handlers.CharterFrameWindowFocusListener;
 import log.charter.gui.handlers.CharterFrameWindowListener;
 import log.charter.gui.handlers.SongFileHandler;
@@ -26,6 +27,8 @@ public class CharterFrame extends JFrame {
 	private final CharterMenuBar menuBar = new CharterMenuBar();
 	private final JScrollBar scrollBar = createScrollBar();
 	private final JLabel helpLabel = createHelp();
+
+	private final ChartPanelMouseListener chartPanelMouseListener = new ChartPanelMouseListener();
 
 	private final ChartData data = new ChartData();
 	private final AudioHandler audioHandler = new AudioHandler();
@@ -45,23 +48,25 @@ public class CharterFrame extends JFrame {
 		setSize(Config.windowWidth, Config.windowHeight);
 		setLocation(Config.windowPosX, Config.windowPosY);
 
+		chartPanelMouseListener.init(audioHandler, data, chartKeyboardHandler, selectionManager);
+
 		audioHandler.init(data, this, chartKeyboardHandler);
 		data.init(this, menuBar, undoSystem);
 		chartKeyboardHandler.init(audioHandler, data, this, selectionManager);
-		chartPanel.init(audioHandler, data, chartKeyboardHandler, highlightManager, selectionManager);
-		highlightManager.init(data, selectionManager);
+		chartPanel.init(chartPanelMouseListener, audioHandler, data, chartKeyboardHandler, highlightManager,
+				selectionManager);
+		highlightManager.init(data, chartPanelMouseListener, selectionManager);
 		menuBar.init(audioHandler, chartKeyboardHandler, this, data, songFileHandler);
 		songFileHandler.init(data, this);
 		selectionManager.init(data);
 		undoSystem.init(data);
 
-		add(chartPanel, 0, Config.windowWidth, ChartPanel.HEIGHT);
-		add(scrollBar, ChartPanel.HEIGHT, Config.windowWidth, 20);
-		add(helpLabel, ChartPanel.HEIGHT + 20, Config.windowWidth, 300);
+		add(chartPanel, 0, Config.windowWidth, DrawerUtils.HEIGHT);
+		add(scrollBar, DrawerUtils.HEIGHT, Config.windowWidth, 20);
+		add(helpLabel, DrawerUtils.HEIGHT + 20, Config.windowWidth, 300);
 
 		addComponentListener(new CharterFrameComponentListener(chartPanel, scrollBar));
 		addKeyListener(chartKeyboardHandler);
-		addMouseWheelListener(new CharterFrameMouseWheelListener(data, chartKeyboardHandler));
 		addWindowFocusListener(new CharterFrameWindowFocusListener(chartKeyboardHandler));
 		addWindowListener(new CharterFrameWindowListener(chartKeyboardHandler));
 

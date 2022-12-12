@@ -29,9 +29,9 @@ public class Position implements Comparable<Position> {
 		return leftDistance < rightDistance ? left : right;
 	}
 
-	public static <T extends Position> T findFirstAfter(final ArrayList2<T> list, final int position) {
+	public static <T extends Position> int findFirstIdAfter(final ArrayList2<T> list, final int position) {
 		if (position >= list.getLast().position) {
-			return null;
+			return -1;
 		}
 
 		int minId = 0;
@@ -45,12 +45,17 @@ public class Position implements Comparable<Position> {
 			}
 		}
 
-		return list.get(maxId);
+		return maxId;
 	}
 
-	public static <T extends Position> T findLastBefore(final ArrayList2<T> list, final int position) {
+	public static <T extends Position> T findFirstAfter(final ArrayList2<T> list, final int position) {
+		final int id = findFirstIdAfter(list, position);
+		return id < 0 ? null : list.get(id);
+	}
+
+	public static <T extends Position> int findLastIdBefore(final ArrayList2<T> list, final int position) {
 		if (position <= list.get(0).position) {
-			return null;
+			return -1;
 		}
 
 		int minId = 0;
@@ -64,7 +69,12 @@ public class Position implements Comparable<Position> {
 			}
 		}
 
-		return list.get(maxId);
+		return maxId;
+	}
+
+	public static <T extends Position> T findLastBefore(final ArrayList2<T> list, final int position) {
+		final int id = findLastIdBefore(list, position);
+		return id < 0 ? null : list.get(id);
 	}
 
 	public int position;

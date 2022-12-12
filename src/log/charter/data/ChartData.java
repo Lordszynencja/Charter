@@ -863,7 +863,7 @@ public class ChartData {
 		clear();
 		isEmpty = false;
 		songChart = song;
-		changeEditMode(EditMode.GUITAR);
+		menuBar.changeEditMode(EditMode.GUITAR);
 		path = dir;
 		this.projectFileName = projectFileName;
 		Config.lastPath = path;

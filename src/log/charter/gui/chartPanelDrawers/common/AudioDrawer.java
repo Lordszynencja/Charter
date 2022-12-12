@@ -1,5 +1,7 @@
 package log.charter.gui.chartPanelDrawers.common;
 
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.Color;
@@ -38,7 +40,7 @@ public class AudioDrawer {
 			end = musicValues.length;
 		}
 
-		final int midY = (ChartPanel.lanesBottom + ChartPanel.lanesTop) / 2;
+		final int midY = (lanesBottom + lanesTop) / 2;
 
 		int step = 1;
 		double xStep = multiplier;

@@ -1,6 +1,11 @@
 package log.charter.gui.chartPanelDrawers.instruments;
 
 import static java.lang.Math.max;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.text;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
 
@@ -15,22 +20,21 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.SelectionManager;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
-import log.charter.gui.chartPanelDrawers.common.HighlightDrawer;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
-import log.charter.gui.chartPanelDrawers.drawableShapes.FilledRectangle;
+import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePosition;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
-import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.song.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 
 public class VocalsDrawer {
+	private final static Color selectColor = ChartPanelColors.get(ColorLabel.SELECT);
 	private final static Color vocalTextColor = ChartPanelColors.get(ColorLabel.VOCAL_TEXT);
 	private final static Color vocalNoteColor = ChartPanelColors.get(ColorLabel.VOCAL_NOTE);
 	private final static Color vocalNotePhraseEndColor = ChartPanelColors.get(ColorLabel.VOCAL_NOTE_PHRASE_END);
 	private final static Color vocalNoteWordPartColor = ChartPanelColors.get(ColorLabel.VOCAL_NOTE_WORD_PART);
 
-	private static final int vocalNoteY = (ChartPanel.lanesTop + ChartPanel.lanesBottom) / 2;
+	private static final int vocalNoteY = (lanesTop + lanesBottom) / 2;
 
 	private static ShapePositionWithSize getVocalNotePosition(final int x, final int length) {
 		return new ShapePositionWithSize(x, vocalNoteY - 4, length, 8);
@@ -56,22 +60,25 @@ public class VocalsDrawer {
 		public void addVocal(final Vocal vocal, final Vocal next, final int x, final int lengthPx,
 				final boolean selected) {
 			if ((x + lengthPx) > 0) {
-				Color color = vocal.isPhraseEnd() ? vocalNotePhraseEndColor : vocalNoteColor;
+				final Color color = vocal.isPhraseEnd() ? vocalNotePhraseEndColor : vocalNoteColor;
+				final ShapePositionWithSize position = getVocalNotePosition(x, lengthPx);
+				notes.add(filledRectangle(position, color));
 				if (selected) {
-					color = new Color(255, 0, 0);
+					notes.add(strokedRectangle(position.resized(-1, -1, 1, 1), selectColor));
 				}
-				notes.add(new FilledRectangle(getVocalNotePosition(x, lengthPx), color));
 
 				final String text = vocal.getText() + (vocal.isWordPart() ? "-" : "");
 				if ((x + fontMetrics.stringWidth(text)) > 0) {
-					texts.add(new Text(text, x + 2, vocalNoteY - 10, vocalTextColor));
+					texts.add(text(new ShapePosition(x + 2, vocalNoteY - 10), text, vocalTextColor));
 				}
 			}
 
 			if (vocal.isWordPart() && next != null) {
 				final int nextStart = timeToX(next.position, time);
-				wordConnections.add(new FilledRectangle(x + lengthPx, vocalNoteY - 2, nextStart - x - lengthPx, 4,
-						vocalNoteWordPartColor));
+				final ShapePositionWithSize position = new ShapePositionWithSize(x + lengthPx, vocalNoteY,
+						nextStart - x - lengthPx, 4)//
+								.centeredY();
+				wordConnections.add(filledRectangle(position, vocalNoteWordPartColor));
 			}
 		}
 
@@ -86,17 +93,14 @@ public class VocalsDrawer {
 
 	private ChartData data;
 	private ChartPanel chartPanel;
-	private HighlightDrawer highlightDrawer;
 	private SelectionManager selectionManager;
 
 	private final AudioDrawer audioDrawer = new AudioDrawer();
 	private final BeatsDrawer beatsDrawer = new BeatsDrawer();
 
-	public void init(final ChartData data, final ChartPanel chartPanel, final HighlightDrawer highlightDrawer,
-			final SelectionManager selectionManager) {
+	public void init(final ChartData data, final ChartPanel chartPanel, final SelectionManager selectionManager) {
 		this.data = data;
 		this.chartPanel = chartPanel;
-		this.highlightDrawer = highlightDrawer;
 		this.selectionManager = selectionManager;
 
 		audioDrawer.init(data, chartPanel);
@@ -139,8 +143,11 @@ public class VocalsDrawer {
 		private final DrawableShapeList texts = new DrawableShapeList();
 
 		public void addLyricLine(final String text, final int x, final int lengthPx) {
-			backgrounds.add(new FilledRectangle(x, lyricLinesY - 4, lengthPx, 19, vocalLineBackgroundColor));
-			texts.add(new Text(text, x + 3, lyricLinesY + 11, vocalLineTextColor));
+			final ShapePositionWithSize backgroundPosition = new ShapePositionWithSize(x, lyricLinesY - 4, lengthPx,
+					19);
+			backgrounds.add(filledRectangle(backgroundPosition, vocalLineBackgroundColor));
+			final ShapePosition textPosition = new ShapePosition(x + 3, lyricLinesY + 11);
+			texts.add(text(textPosition, text, vocalLineTextColor));
 		}
 
 		public void draw(final Graphics g) {
@@ -224,7 +231,6 @@ public class VocalsDrawer {
 		drawVocals(g);
 		drawLyricLines(g);
 		drawSelectedVocals(g);
-		highlightDrawer.draw(g);
 
 		if (data.drawDebug) {
 			// drawDebugNoteId(g, panel, data);

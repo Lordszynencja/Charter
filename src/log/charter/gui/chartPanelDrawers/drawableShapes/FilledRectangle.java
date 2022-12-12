@@ -3,7 +3,7 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class FilledRectangle implements DrawableShape {
+class FilledRectangle implements DrawableShape {
 	private final ShapePositionWithSize position;
 	private final Color color;
 

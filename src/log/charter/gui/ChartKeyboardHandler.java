@@ -5,7 +5,6 @@ import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 import static log.charter.data.EditMode.GUITAR;
 import static log.charter.data.EditMode.VOCALS;
-import static log.charter.gui.ChartPanel.isInTempos;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -18,6 +17,7 @@ import javax.swing.JOptionPane;
 import log.charter.data.ChartData;
 import log.charter.data.EditMode;
 import log.charter.data.IdOrPos;
+import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.modes.GuitarModeHandler;
 import log.charter.gui.modes.ModeHandler;
@@ -121,7 +121,7 @@ public class ChartKeyboardHandler implements KeyListener {
 		frame.setNextTime(data.time - (left ? speed : 0) + (right ? speed : 0));
 	}
 
-	public boolean isAlt() {
+	public boolean alt() {
 		return alt;
 	}
 
@@ -129,7 +129,7 @@ public class ChartKeyboardHandler implements KeyListener {
 		return ctrl;
 	}
 
-	public boolean isShift() {
+	public boolean shift() {
 		return shift;
 	}
 
@@ -243,7 +243,7 @@ public class ChartKeyboardHandler implements KeyListener {
 //				data.gridSize = num;
 //				data.useGrid = true;
 //			}
-		} else if (isInTempos(data.my)) {// TODO
+		} else if (DrawerUtils.isInTempos(data.my)) {// TODO
 //			if (num != 0) {
 //				final Object[] tempoData = data.s.tempoMap.findOrCreateClosestTempo(data.xToTime(data.mx));
 //				if (tempoData != null) {

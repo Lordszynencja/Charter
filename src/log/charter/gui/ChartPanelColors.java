@@ -10,7 +10,7 @@ import log.charter.util.RW;
 
 public class ChartPanelColors {
 	public enum ColorLabel {
-		BACKGROUND(160, 160, 160), //
+		BACKGROUND(80, 80, 80), //
 		NOTE_BACKGROUND(16, 16, 16), //
 		NOTE_ADD_LINE(0, 255, 0), //
 		LANE(128, 128, 128), //
@@ -40,7 +40,8 @@ public class ChartPanelColors {
 		NOTE_4(20, 230, 20), //
 		NOTE_5(230, 20, 230), //
 
-		REPEATED_CHORD(50, 250, 250, 128), //
+		REPEATED_CHORD(50, 250, 250, 64), //
+		HAND_SHAPE(0, 128, 255, 255), //
 
 		NOTE_TAIL_0(210, 0, 0), //
 		NOTE_TAIL_1(210, 210, 0), //
@@ -55,7 +56,6 @@ public class ChartPanelColors {
 		VOCAL_NOTE(0, 255, 255), //
 		VOCAL_NOTE_WORD_PART(0, 0, 255), //
 		VOCAL_NOTE_PHRASE_END(0, 255, 128),//
-
 		;
 
 		public final Color defaultColor;

@@ -1,7 +1,8 @@
 package log.charter.gui;
 
-import static log.charter.gui.ChartPanel.lanesBottom;
-import static log.charter.gui.ChartPanel.lanesTop;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.handShapesY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 
 import log.charter.data.ChartData;
 import log.charter.data.EditMode;
@@ -55,7 +56,7 @@ public class PositionWithIdAndType extends Position {
 					return GUITAR_NOTE;
 				}
 
-				if (y >= lanesBottom && y < ChartPanel.handShapesY) {
+				if (y >= lanesBottom && y < handShapesY) {
 					return HAND_SHAPE;
 				}
 
