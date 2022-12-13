@@ -2,11 +2,11 @@ package log.charter.song;
 
 import static log.charter.util.Utils.mapInteger;
 
-import log.charter.gui.SelectionManager.Selectable;
+import log.charter.data.managers.SelectionManager.Selectable;
 import log.charter.io.rs.xml.song.ArrangementChord;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class Chord extends Position implements Selectable {
+public class Chord extends Selectable {
 	public int chordId;
 	public boolean palmMute;
 	public boolean fretHandMute;

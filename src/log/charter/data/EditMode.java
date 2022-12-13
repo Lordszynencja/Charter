@@ -1,11 +1,12 @@
 package log.charter.data;
 
 public enum EditMode {
-	VOCALS("Vocals"), GUITAR("Guitar");
+	GUITAR("Guitar"), //
+	VOCALS("Vocals");
 
-	public final String name;
+	public final String label;
 
-	private EditMode(final String name) {
-		this.name = name;
+	private EditMode(final String label) {
+		this.label = label;
 	}
 }

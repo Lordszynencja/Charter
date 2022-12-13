@@ -3,21 +3,22 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import log.charter.util.Position2D;
+
 public interface DrawableShape {
 	public void draw(final Graphics g);
 
 	// Lines
-	public static DrawableShape line(final ShapePositionWithSize startPosition, final ShapePositionWithSize endPosition,
-			final Color color) {
+	public static DrawableShape line(final Position2D startPosition, final Position2D endPosition, final Color color) {
 		return new Line(startPosition, endPosition, color);
 	}
 
 	public static DrawableShape lineVertical(final int x, final int y0, final int y1, final Color color) {
-		return new Line(new ShapePosition(x, y0), new ShapePosition(x, y1), color);
+		return new Line(new Position2D(x, y0), new Position2D(x, y1), color);
 	}
 
 	public static DrawableShape lineHorizontal(final int x0, final int x1, final int y, final Color color) {
-		return new Line(new ShapePosition(x0, y), new ShapePosition(x1, y), color);
+		return new Line(new Position2D(x0, y), new Position2D(x1, y), color);
 	}
 
 	// Rectangles
@@ -36,11 +37,11 @@ public interface DrawableShape {
 	}
 
 	// Texts
-	public static DrawableShape text(final ShapePosition position, final String text, final Color color) {
+	public static DrawableShape text(final Position2D position, final String text, final Color color) {
 		return new Text(position, text, color);
 	}
 
-	public static DrawableShape centeredTextWithBackground(final ShapePosition position, final String text,
+	public static DrawableShape centeredTextWithBackground(final Position2D position, final String text,
 			final Color backgroundColor, final Color textColor) {
 		return new CenteredTextWithBackground(position, text, backgroundColor, textColor);
 	}

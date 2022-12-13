@@ -77,4 +77,9 @@ public class Section extends Position {
 		super(arrangementSection.startTime);
 		type = SectionType.findByRSName(arrangementSection.name);
 	}
+
+	public Section(final Section other) {
+		super(other);
+		type = other.type;
+	}
 }

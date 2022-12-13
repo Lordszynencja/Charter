@@ -17,13 +17,15 @@ public class AudioDrawer {
 	private ChartData data;
 	private ChartPanel chartPanel;
 
+	public boolean drawAudio;
+
 	public void init(final ChartData data, final ChartPanel chartPanel) {
 		this.data = data;
 		this.chartPanel = chartPanel;
 	}
 
 	public void draw(final Graphics g) {
-		if (data.isEmpty || !data.drawAudio) {
+		if (!drawAudio) {
 			return;
 		}
 

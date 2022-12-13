@@ -1,7 +1,6 @@
 package log.charter.gui.handlers;
 
 import static java.lang.Math.abs;
-import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -9,34 +8,31 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
-import javax.swing.text.Highlighter.Highlight;
-
 import log.charter.data.ChartData;
 import log.charter.data.Zoom;
-import log.charter.gui.ChartKeyboardHandler;
-import log.charter.gui.SelectionManager;
-import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.SelectionManager;
+import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 
-public class ChartPanelMouseListener implements MouseListener, MouseMotionListener, MouseWheelListener {
-	private AudioHandler audioHandler;
+public class MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private ChartData data;
-	private ChartKeyboardHandler chartKeyboardHandler;
+	private KeyboardHandler keyboardHandler;
+	private ModeManager modeManager;
+	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
 	private SelectionManager selectionManager;
 
-	private boolean clickCancelsRelease = false;
+	private boolean pressCancelsRelease = false;
 	private boolean releaseCancelled = false;
 	private int mouseX = -1;
 	private int mouseY = -1;
 
-	private Highlight mouseRightPressHighlight;
-	private int mousePressX = -1;
-	private int mousePressY = -1;
-
-	public void init(final AudioHandler audioHandler, final ChartData data,
-			final ChartKeyboardHandler chartKeyboardHandler, final SelectionManager selectionManager) {
-		this.audioHandler = audioHandler;
+	public void init(final AudioHandler audioHandler, final ChartData data, final KeyboardHandler keyboardHandler,
+			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
+			final SelectionManager selectionManager) {
 		this.data = data;
-		this.chartKeyboardHandler = chartKeyboardHandler;
+		this.keyboardHandler = keyboardHandler;
+		this.modeManager = modeManager;
+		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
 		this.selectionManager = selectionManager;
 	}
 
@@ -48,12 +44,13 @@ public class ChartPanelMouseListener implements MouseListener, MouseMotionListen
 		mouseMoved(e);
 
 		if (releaseCancelled) {
-			clickCancelsRelease = false;
+			pressCancelsRelease = false;
 			return;
 		}
 
 		if (e.getButton() == MouseEvent.BUTTON1) {
-			selectionManager.click(e.getX(), e.getY(), chartKeyboardHandler.ctrl(), chartKeyboardHandler.shift());
+			selectionManager.click(e.getX(), e.getY(), keyboardHandler.ctrl(), keyboardHandler.shift());
+			return;
 		}
 	}
 
@@ -76,16 +73,14 @@ public class ChartPanelMouseListener implements MouseListener, MouseMotionListen
 		}
 
 		cancelAllActions();
-		if (clickCancelsRelease) {
+		if (pressCancelsRelease) {
 			releaseCancelled = true;
 			return;
 		} else {
-			clickCancelsRelease = true;
+			pressCancelsRelease = true;
 			releaseCancelled = false;
 		}
-
-		mousePressX = e.getX();
-		mousePressY = e.getY();
+		mouseButtonPressReleaseHandler.press(e);
 
 		if (e.getButton() == MouseEvent.BUTTON1) {// TODO
 //			if (isInTempos(y)) {
@@ -98,11 +93,6 @@ public class ChartPanelMouseListener implements MouseListener, MouseMotionListen
 //				data.mousePressX = data.mx;
 //				data.mousePressY = data.my;
 //			}
-		} else if (e.getButton() == MouseEvent.BUTTON3) {
-			mouseRightPressHighlight = null;
-//			if (isInLanes(y)) {
-//				data.startNoteAdding(x, y);
-//			}
 		}
 	}
 
@@ -114,13 +104,21 @@ public class ChartPanelMouseListener implements MouseListener, MouseMotionListen
 			return;
 		}
 
-		clickCancelsRelease = false;
+		pressCancelsRelease = false;
 		if (releaseCancelled) {
 			return;
 		}
 
-		switch (e.getButton()) {// TODO
-		case MouseEvent.BUTTON1:
+		final MouseButtonPressReleaseData clickData = mouseButtonPressReleaseHandler.release(e);
+		if (clickData == null) {
+			return;
+		}
+
+		switch (clickData.button) {// TODO
+		case LEFT_BUTTON:
+			if (abs(clickData.releasePosition.x - clickData.pressPosition.x) > 5) {
+				// TODO drag tempos/notes/other things if it moved more than few pixels
+				// TODO drag the selected notes
 //			if (data.draggedTempo != null) {
 //				data.stopTempoDrag();
 //				setChanged();
@@ -129,14 +127,11 @@ public class ChartPanelMouseListener implements MouseListener, MouseMotionListen
 //			} else if ((data.my > (ChartPanel.sectionNamesY - 5)) && (data.my < ChartPanel.spY)) {
 //				editSection(data.mx);
 //			} else if (ChartPanel.isInLanes(data.my)) {
-//				selectNotes(data.mx);
 //			}
-			break;
-		case MouseEvent.BUTTON3:
-			if (data.isNoteAdd) {
-				data.endNoteAdding();
-				data.setChanged();
 			}
+			break;
+		case RIGHT_BUTTON:
+			modeManager.getHandler().rightClick(clickData);
 			break;
 		default:
 			break;
@@ -149,14 +144,10 @@ public class ChartPanelMouseListener implements MouseListener, MouseMotionListen
 	public void mouseDragged(final MouseEvent e) {
 		mouseMoved(e);
 
-		if (data.draggedBeatId != null) {
-			final int newPos = xToTime(data.mx, data.time);
-			data.songChart.beatsMap.moveBeat(data.draggedBeatId, newPos);
-		}
-
-		if (DrawerUtils.isInLanes(data.my) && (abs(mouseX - data.mousePressX) > 20)) {
-			data.isNoteDrag = true;
-		}
+//		if (data.draggedBeatId != null) {
+//			final int newPos = xToTime(data.mx, data.time);
+//			data.songChart.beatsMap.moveBeat(data.draggedBeatId, newPos);
+//		}
 	}
 
 	@Override
@@ -174,28 +165,17 @@ public class ChartPanelMouseListener implements MouseListener, MouseMotionListen
 	}
 
 	public void cancelAllActions() {
-		data.softClearWithoutDeselect();
-		audioHandler.stopMusic();
-	}
-
-	public void softClearWithoutDeselect() {// TODO
-//		draggedTempoPrev = null;
-//		draggedTempo = null;
-//		draggedTempoNext = null;
-		mousePressX = -1;
-		mousePressY = -1;
-//		isNoteAdd = false;
-//		isNoteDrag = false;
+		mouseButtonPressReleaseHandler.clear();
 	}
 
 	@Override
 	public void mouseWheelMoved(final MouseWheelEvent e) {
 		int changeValue = e.getWheelRotation();
-		if (chartKeyboardHandler.shift()) {
+		if (keyboardHandler.shift()) {
 			changeValue *= 8;
 		}
 
-		if (chartKeyboardHandler.ctrl()) {
+		if (keyboardHandler.ctrl()) {
 			Zoom.addZoom(changeValue);
 			return;
 		}
@@ -206,7 +186,7 @@ public class ChartPanelMouseListener implements MouseListener, MouseMotionListen
 //			} else {
 //				handler.data.changeNoteLength(rot);
 //			}
-			data.setChanged();
+//			data.setChanged();
 		}
 		e.consume();
 	}

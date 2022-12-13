@@ -57,4 +57,8 @@ public class ArrangementChart {
 
 		return arrangementType.name() + "_" + subType;
 	}
+
+	public String getTypeNameLabel() {
+		return getTypeName().replace("_", " ");
+	}
 }

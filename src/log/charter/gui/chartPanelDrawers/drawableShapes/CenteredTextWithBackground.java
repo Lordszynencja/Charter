@@ -3,13 +3,15 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import log.charter.util.Position2D;
+
 class CenteredTextWithBackground implements DrawableShape {
-	private final ShapePosition position;
+	private final Position2D position;
 	private final String text;
 	private final Color backgroundColor;
 	private final Color textColor;
 
-	public CenteredTextWithBackground(final ShapePosition position, final String text, final Color backgroundColor,
+	public CenteredTextWithBackground(final Position2D position, final String text, final Color backgroundColor,
 			final Color textColor) {
 		this.position = position;
 		this.text = text;

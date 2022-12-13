@@ -128,6 +128,13 @@ public class CollectionUtils {
 					.map(entry -> mapper.apply(entry.getKey(), entry.getValue()))//
 					.collect(toCollection(ArrayList2::new));
 		}
+
+		public <V, W> HashMap2<V, W> map(final Function<T, V> keyMapper, final Function<U, W> valueMapper) {
+			final HashMap2<V, W> newMap = new HashMap2<>();
+			entrySet().stream()//
+					.forEach(entry -> newMap.put(keyMapper.apply(entry.getKey()), valueMapper.apply(entry.getValue())));
+			return newMap;
+		}
 	}
 
 	public static int[] arrayOf(final int... values) {

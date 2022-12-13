@@ -1,15 +1,22 @@
 package log.charter.gui.chartPanelDrawers.common;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import log.charter.data.Config;
 
 public class DrawerUtils {
 	public static final int sectionNamesY = 10;
 	public static final int lyricLinesY = 30;
+
 	public static final int beatTextY = 50;
-	public static final int beatSizeTextY = 65;
-	public static final int lanesTop = 80;
-	public static final int lanesBottom = lanesTop + 250;
+	public static final int beatSizeTextY = beatTextY + 15;
+	public static final int anchorY = beatSizeTextY + 5;
+	public static final int anchorTextY = anchorY + 10;
+	public static final int lanesTop = anchorTextY + 15;
+	public static final int lanesBottom = lanesTop + 300;
 	public static final int handShapesY = lanesBottom + 30;
+
 	public static final int HEIGHT = handShapesY + 20;
 
 	public static final int lanesHeight = lanesBottom - lanesTop;
@@ -27,11 +34,13 @@ public class DrawerUtils {
 	}
 
 	public static int getLaneY(final int lane, final int lanesNo) {
-		return lanesTop + (int) (lanesHeight * (applyInvertion(lane, lanesNo) + 0.5) / lanesNo);
+		final int lanePositionInLanes = (int) (lanesHeight * (applyInvertion(lane, lanesNo) + 0.5) / lanesNo);
+		return lanesTop + lanePositionInLanes;
 	}
 
 	public static int yToLane(final double y, final int lanesNo) {
-		return applyInvertion((int) ((y - lanesTop) * lanesNo / lanesHeight), lanesNo);
+		final int lane = applyInvertion((int) ((y - lanesTop) * lanesNo / lanesHeight), lanesNo);
+		return max(0, min(lanesNo - 1, lane));
 	}
 
 	public static boolean isInLanes(final int y) {

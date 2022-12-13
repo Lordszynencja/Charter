@@ -23,16 +23,20 @@ public class Vocals {
 		vocals = arrangementVocals.vocals.map(Vocal::new);
 	}
 
-	public int insertNote(final int pos, final String text, final boolean wordPart, final boolean phraseEnd) {
-		final Vocal vocal = new Vocal(pos, text, wordPart, phraseEnd);
+	public Vocals(final Vocals other) {
+		vocals = other.vocals.map(Vocal::new);
+	}
 
-		if (vocals.isEmpty() || vocals.getLast().position < pos) {
+	public int insertNote(final int position, final String text, final boolean wordPart, final boolean phraseEnd) {
+		final Vocal vocal = new Vocal(position, text, wordPart, phraseEnd);
+
+		if (vocals.isEmpty() || vocals.getLast().position < position) {
 			vocals.add(vocal);
 			return vocals.size() - 1;
 		}
 
 		for (int i = vocals.size() - 1; i >= 0; i--) {
-			if (vocals.get(i).position < pos) {
+			if (vocals.get(i).position < position) {
 				vocals.add(i + 1, vocal);
 				return i + 1;
 			}

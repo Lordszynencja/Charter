@@ -3,12 +3,14 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import log.charter.util.Position2D;
+
 class Text implements DrawableShape {
-	private final ShapePosition position;
+	private final Position2D position;
 	private final String text;
 	private final Color color;
 
-	public Text(final ShapePosition position, final String text, final Color color) {
+	public Text(final Position2D position, final String text, final Color color) {
 		this.position = position;
 		this.text = text;
 		this.color = color;

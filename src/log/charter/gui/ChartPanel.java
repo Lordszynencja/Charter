@@ -5,12 +5,17 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 import log.charter.data.ChartData;
+import log.charter.data.managers.HighlightManager;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.SelectionManager;
+import log.charter.gui.chartPanelDrawers.ArrangementDrawer;
+import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BackgroundDrawer;
+import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.HighlightDrawer;
 import log.charter.gui.chartPanelDrawers.common.MarkerDrawer;
-import log.charter.gui.chartPanelDrawers.instruments.ArrangementDrawer;
-import log.charter.gui.handlers.AudioHandler;
-import log.charter.gui.handlers.ChartPanelMouseListener;
+import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
+import log.charter.gui.handlers.MouseHandler;
 
 public class ChartPanel extends JPanel {
 	private static final long serialVersionUID = -3439446235287039031L;
@@ -26,18 +31,19 @@ public class ChartPanel extends JPanel {
 		super();
 	}
 
-	public void init(final ChartPanelMouseListener chartPanelMouseListener, final AudioHandler audioHandler,
-			final ChartData data, final ChartKeyboardHandler chartKeyboardHandler,
-			final HighlightManager highlightManager, final SelectionManager selectionManager) {
+	public void init(final AudioDrawer audioDrawer, final BeatsDrawer beatsDrawer, final ChartData data,
+			final HighlightManager highlightManager, final ModeManager modeManager,
+			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final MouseHandler mouseHandler,
+			final SelectionManager selectionManager) {
 		this.data = data;
 
 		backgroundDrawer.init(data, this);
-		arrangementDrawer.init(this, data, selectionManager);
-		highlightDrawer.init(chartPanelMouseListener, data, highlightManager);
+		arrangementDrawer.init(audioDrawer, beatsDrawer, this, data, modeManager, selectionManager);
+		highlightDrawer.init(data, highlightManager, modeManager, mouseHandler, mouseButtonPressReleaseHandler);
 
-		addMouseListener(chartPanelMouseListener);
-		addMouseMotionListener(chartPanelMouseListener);
-		addMouseWheelListener(chartPanelMouseListener);
+		addMouseListener(mouseHandler);
+		addMouseMotionListener(mouseHandler);
+		addMouseWheelListener(mouseHandler);
 
 		setDoubleBuffered(true);
 	}

@@ -1,11 +1,9 @@
 package log.charter.song;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.HashMap2;
 
 public class BeatsMap {
 	public int songLengthMs;
@@ -13,7 +11,7 @@ public class BeatsMap {
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 	public ArrayList2<Event> events = new ArrayList2<>();
 	public ArrayList2<Section> sections = new ArrayList2<>();
-	public Map<String, Phrase> phrases = new HashMap<>();
+	public HashMap2<String, Phrase> phrases = new HashMap2<>();
 	public ArrayList2<PhraseIteration> phraseIterations = new ArrayList2<>();
 
 	/**
@@ -72,6 +70,15 @@ public class BeatsMap {
 
 			beatCount++;
 		}
+	}
+
+	public BeatsMap(final BeatsMap other) {
+		songLengthMs = other.songLengthMs;
+		beats = other.beats.map(Beat::new);
+		events = other.events.map(Event::new);
+		sections = other.sections.map(Section::new);
+		phrases = other.phrases.map(name -> name, Phrase::new);
+		phraseIterations = other.phraseIterations.map(PhraseIteration::new);
 	}
 
 	private void makeBeatsUntilSongEnd() {
@@ -164,5 +171,22 @@ public class BeatsMap {
 			}
 			count++;
 		}
+	}
+
+	public int getPositionFromGridClosestTo(final int position, final int gridSize) {
+		final int nextBeatId = Position.findFirstIdAfter(beats, position);
+		if (nextBeatId == -1) {
+			return beats.getLast().position;
+		}
+		if (nextBeatId == 0) {
+			return beats.get(0).position;
+		}
+
+		final int previousBeatPosition = beats.get(nextBeatId - 1).position;
+		final int beatSize = beats.get(nextBeatId).position - previousBeatPosition;
+		final int distanceInBeat = position - previousBeatPosition;
+		final int gridInBeat = (int) Math.round(1.0 * distanceInBeat * gridSize / beatSize);
+
+		return previousBeatPosition + beatSize * gridInBeat / gridSize;
 	}
 }

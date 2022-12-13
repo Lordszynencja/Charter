@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import jogamp.common.os.elf.Section;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -40,11 +39,6 @@ public class SongChart {
 	public BeatsMap beatsMap;
 	public ArrayList2<ArrangementChart> arrangements;
 	public Vocals vocals = new Vocals();
-
-	public ArrayList2<Event> events = new ArrayList2<>();
-	public ArrayList2<Section> sections = new ArrayList2<>();
-	public ArrayList2<Phrase> phrases = new ArrayList2<>();
-	public ArrayList2<PhraseIteration> phraseIterations = new ArrayList2<>();
 
 	/**
 	 * creates empty chart

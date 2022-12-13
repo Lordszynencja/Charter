@@ -3,13 +3,13 @@ package log.charter.gui.handlers;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
-import log.charter.gui.ChartKeyboardHandler;
+import log.charter.gui.CharterFrame;
 
 public class CharterFrameWindowFocusListener implements WindowFocusListener {
-	private final ChartKeyboardHandler chartKeyboardHandler;
+	private final CharterFrame frame;
 
-	public CharterFrameWindowFocusListener(final ChartKeyboardHandler chartKeyboardHandler) {
-		this.chartKeyboardHandler = chartKeyboardHandler;
+	public CharterFrameWindowFocusListener(final CharterFrame frame) {
+		this.frame = frame;
 	}
 
 	@Override
@@ -18,7 +18,6 @@ public class CharterFrameWindowFocusListener implements WindowFocusListener {
 
 	@Override
 	public void windowLostFocus(final WindowEvent e) {
-		chartKeyboardHandler.clearKeys();
-		chartKeyboardHandler.cancelAllActions();
+		frame.cancelAllActions();
 	}
 }

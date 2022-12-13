@@ -1,12 +1,17 @@
-package log.charter.data;
+package log.charter.data.undoSystem;
 
-public class UndoState {// TODO
+import log.charter.data.ChartData;
+
+public interface UndoState {// TODO
 //	private final Vocals vocals;
 //	private final Instrument instrument;
 //	private final Map<Integer, String> sections;
 //	private final TempoMap tempoMap;
 
-	public UndoState(final ChartData data) {// TODO
+//	public UndoState(final ChartData data) {// TODO
+//		if (data.editMode == EditMode.VOCALS) {
+	// this.vocals = new
+//		}
 //		if (data.currentInstrument.type.isVocalsType()) {
 //			vocals = new Vocals(data.s.v);
 //			instrument = null;
@@ -19,10 +24,10 @@ public class UndoState {// TODO
 //			sections.put(entry.getKey(), entry.getValue());
 //		}
 //		tempoMap = new TempoMap(data.s.tempoMap);
-	}
+//	}
 
-	public UndoState undo(final ChartData data) {// TODO
-		final UndoState undo = new UndoState(data);
+	public UndoState undo(final ChartData data);
+	// final UndoState undo = new UndoState(data);
 //		if (vocals != null) {
 //			data.s.v = vocals;
 //		} else {
@@ -32,6 +37,4 @@ public class UndoState {// TODO
 //		}
 //		data.s.sections = sections;
 //		data.s.tempoMap = tempoMap;
-		return undo;
-	}
 }

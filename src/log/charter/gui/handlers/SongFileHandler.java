@@ -17,6 +17,7 @@ import java.util.Map;
 import helliker.id3.MP3File;
 import log.charter.data.ChartData;
 import log.charter.data.Config;
+import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
@@ -81,12 +82,14 @@ public class SongFileHandler {
 		}
 	}
 
-	private CharterFrame frame;
 	private ChartData data;
+	private CharterFrame frame;
+	private UndoSystem undoSystem;
 
-	public void init(final ChartData data, final CharterFrame frame) {
-		this.frame = frame;
+	public void init(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem) {
 		this.data = data;
+		this.frame = frame;
+		this.undoSystem = undoSystem;
 	}
 
 	public void newSong() {
@@ -221,7 +224,6 @@ public class SongFileHandler {
 		Config.lastPath = dir;
 		Config.save();
 		data.setSong(dir, songChart, musicData, projectFileChosen.getName());
-		data.changed = false;
 	}
 
 	public void openAudioFile() {
@@ -262,6 +264,7 @@ public class SongFileHandler {
 		final SongChart songChart = new SongChart(musicData.msLength(), songName, songArrangement);
 
 		data.setSong(dir, songChart, musicData, "project.rscp");
+		save();
 	}
 
 	public void importRSArrangementXML() {
@@ -276,6 +279,7 @@ public class SongFileHandler {
 			final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(arrangementFile));
 			final ArrangementChart arrangementChart = new ArrangementChart(songArrangement);
 			data.songChart.arrangements.add(arrangementChart);
+			save();
 		} catch (final Exception e) {
 			frame.showPopup("Couldn't load arrangement:\n" + e.getMessage());
 		}
@@ -292,6 +296,7 @@ public class SongFileHandler {
 		try {
 			final ArrangementVocals vocals = VocalsXStreamHandler.readVocals(RW.read(arrangementFile));
 			data.songChart.vocals = new Vocals(vocals);
+			save();
 		} catch (final Exception e) {
 			frame.showPopup("Couldn't load arrangement:\n" + e.getMessage());
 		}
@@ -380,9 +385,9 @@ public class SongFileHandler {
 		}
 
 		RW.write(data.path + data.projectFileName, saveProject(project));
+		undoSystem.onSave();
 
 		Config.save();
-		data.changed = false;
 	}
 
 	public void saveAs() {

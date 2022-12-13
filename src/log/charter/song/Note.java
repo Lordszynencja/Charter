@@ -2,11 +2,11 @@ package log.charter.song;
 
 import static log.charter.util.Utils.mapInteger;
 
-import log.charter.gui.SelectionManager.Selectable;
+import log.charter.data.managers.SelectionManager.Selectable;
 import log.charter.io.rs.xml.song.ArrangementNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class Note extends Position implements Selectable {
+public class Note extends Selectable {
 	public int string;
 	public int fret;
 	public int sustain;
@@ -61,4 +61,5 @@ public class Note extends Position implements Selectable {
 	public String getSignature() {
 		return position + "-" + string;
 	}
+
 }

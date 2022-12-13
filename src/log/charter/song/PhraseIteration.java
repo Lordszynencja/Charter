@@ -26,4 +26,9 @@ public class PhraseIteration extends Position {
 		super(pos);
 		this.phraseName = phraseName;
 	}
+
+	public PhraseIteration(final PhraseIteration other) {
+		super(other);
+		phraseName = other.phraseName;
+	}
 }

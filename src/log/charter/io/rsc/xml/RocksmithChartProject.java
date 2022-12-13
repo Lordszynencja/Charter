@@ -1,8 +1,6 @@
 package log.charter.io.rsc.xml;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -13,6 +11,7 @@ import log.charter.song.PhraseIteration;
 import log.charter.song.Section;
 import log.charter.song.SongChart;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.HashMap2;
 
 @XStreamAlias("project")
 public class RocksmithChartProject {
@@ -31,7 +30,7 @@ public class RocksmithChartProject {
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 	public ArrayList2<Event> events = new ArrayList2<>();
 	public ArrayList2<Section> sections = new ArrayList2<>();
-	public Map<String, Phrase> phrases = new HashMap<>();
+	public HashMap2<String, Phrase> phrases = new HashMap2<>();
 	public ArrayList2<PhraseIteration> phraseIterations = new ArrayList2<>();
 
 	public RocksmithChartProject() {

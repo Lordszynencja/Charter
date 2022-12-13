@@ -24,6 +24,7 @@ public class CharterFrameComponentListener implements ComponentListener {
 		final int y = c.getY();
 		final int h = c.getHeight();
 		final Dimension newScrollBarSize = new Dimension(Config.windowWidth, h);
+
 		c.setMinimumSize(newScrollBarSize);
 		c.setPreferredSize(newScrollBarSize);
 		c.setMaximumSize(newScrollBarSize);

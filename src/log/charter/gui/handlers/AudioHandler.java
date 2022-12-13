@@ -1,7 +1,6 @@
 package log.charter.gui.handlers;
 
 import log.charter.data.ChartData;
-import log.charter.gui.ChartKeyboardHandler;
 import log.charter.gui.CharterFrame;
 import log.charter.song.Position;
 import log.charter.sound.MusicData;
@@ -18,7 +17,7 @@ public class AudioHandler {
 
 	private ChartData data;
 	private CharterFrame frame;
-	private ChartKeyboardHandler chartKeyboardHandler;
+	private KeyboardHandler keyboardHandler;
 
 	private Player songPlayer = null;
 
@@ -29,10 +28,10 @@ public class AudioHandler {
 	private int songTimeOnStart = 0;
 	private int playStartTime;
 
-	public void init(final ChartData data, final CharterFrame frame, final ChartKeyboardHandler chartKeyboardHandler) {
+	public void init(final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler) {
 		this.data = data;
 		this.frame = frame;
-		this.chartKeyboardHandler = chartKeyboardHandler;
+		this.keyboardHandler = keyboardHandler;
 	}
 
 	public void toggleClaps() {
@@ -93,7 +92,7 @@ public class AudioHandler {
 
 //			nextBeatTime = data.songChart.beatsMap.getFirstBeatAfter((int) (data.nextT - Config.delay)).position;
 
-		if (chartKeyboardHandler.ctrl()) {
+		if (keyboardHandler.ctrl()) {
 			data.music.setSlow(2);
 		} else {
 			data.music.setSlow(1);

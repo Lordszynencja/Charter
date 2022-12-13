@@ -28,4 +28,9 @@ public class Phrase {
 		maxDifficulty = arrangementPhrase.maxDifficulty;
 		solo = arrangementPhrase.solo != null && arrangementPhrase.solo == 1;
 	}
+
+	public Phrase(final Phrase other) {
+		maxDifficulty = other.maxDifficulty;
+		solo = other.solo;
+	}
 }

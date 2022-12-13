@@ -21,7 +21,6 @@ public class ChartPanelColors {
 		PHRASE_NAME(255, 255, 0), //
 		HIGHLIGHT(255, 0, 0), //
 		SELECT(0, 255, 255), //
-		SOLO_SECTION(100, 100, 210), //
 
 		CRAZY_NOTE(0, 0, 0), //
 		NOTE_FLAG_MARKER(255, 255, 255), //
@@ -40,7 +39,8 @@ public class ChartPanelColors {
 		NOTE_4(20, 230, 20), //
 		NOTE_5(230, 20, 230), //
 
-		REPEATED_CHORD(50, 250, 250, 64), //
+		ANCHOR(128, 0, 0), //
+		REPEATED_CHORD(0, 200, 200, 128), //
 		HAND_SHAPE(0, 128, 255, 255), //
 
 		NOTE_TAIL_0(210, 0, 0), //
@@ -50,12 +50,11 @@ public class ChartPanelColors {
 		NOTE_TAIL_4(0, 210, 0), //
 		NOTE_TAIL_5(210, 0, 210), //
 
-		VOCAL_LINE_BACKGROUND(100, 200, 200), //
+		VOCAL_LINE_BACKGROUND(0, 210, 210), //
 		VOCAL_LINE_TEXT(0, 0, 128), //
-		VOCAL_TEXT(255, 255, 255), //
-		VOCAL_NOTE(0, 255, 255), //
-		VOCAL_NOTE_WORD_PART(0, 0, 255), //
-		VOCAL_NOTE_PHRASE_END(0, 255, 128),//
+		VOCAL_TEXT(210, 210, 210), //
+		VOCAL_NOTE(0, 255, 255, 192), //
+		VOCAL_NOTE_WORD_PART(0, 0, 255, 192), //
 		;
 
 		public final Color defaultColor;
@@ -76,7 +75,7 @@ public class ChartPanelColors {
 			colors.put(colorLabel, colorLabel.defaultColor);
 		}
 
-		Map<String, String> config = RW.readConfig("colors.txt");
+		Map<String, String> config = new HashMap<>();// RW.readConfig("colors.txt");
 		for (final Entry<String, String> configEntry : config.entrySet()) {
 			try {
 				final ColorLabel colorLabel = ColorLabel.valueOf(configEntry.getKey());

@@ -10,13 +10,20 @@ import javax.swing.JScrollBar;
 
 import log.charter.data.ChartData;
 import log.charter.data.Config;
-import log.charter.data.UndoSystem;
+import log.charter.data.managers.HighlightManager;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.SelectionManager;
+import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
+import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.handlers.AudioHandler;
-import log.charter.gui.handlers.ChartPanelMouseListener;
 import log.charter.gui.handlers.CharterFrameComponentListener;
 import log.charter.gui.handlers.CharterFrameWindowFocusListener;
 import log.charter.gui.handlers.CharterFrameWindowListener;
+import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
+import log.charter.gui.handlers.MouseHandler;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.main.LogCharterRSMain;
 
@@ -28,12 +35,15 @@ public class CharterFrame extends JFrame {
 	private final JScrollBar scrollBar = createScrollBar();
 	private final JLabel helpLabel = createHelp();
 
-	private final ChartPanelMouseListener chartPanelMouseListener = new ChartPanelMouseListener();
-
-	private final ChartData data = new ChartData();
+	private final AudioDrawer audioDrawer = new AudioDrawer();
 	private final AudioHandler audioHandler = new AudioHandler();
-	private final ChartKeyboardHandler chartKeyboardHandler = new ChartKeyboardHandler();
+	private final BeatsDrawer beatsDrawer = new BeatsDrawer();
+	private final ChartData data = new ChartData();
 	private final HighlightManager highlightManager = new HighlightManager();
+	private final KeyboardHandler keyboardHandler = new KeyboardHandler();
+	private final ModeManager modeManager = new ModeManager();
+	private final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler = new MouseButtonPressReleaseHandler();
+	private final MouseHandler mouseHandler = new MouseHandler();
 	private final SongFileHandler songFileHandler = new SongFileHandler();
 	private final SelectionManager selectionManager = new SelectionManager();
 	private final UndoSystem undoSystem = new UndoSystem();
@@ -48,27 +58,33 @@ public class CharterFrame extends JFrame {
 		setSize(Config.windowWidth, Config.windowHeight);
 		setLocation(Config.windowPosX, Config.windowPosY);
 
-		chartPanelMouseListener.init(audioHandler, data, chartKeyboardHandler, selectionManager);
-
-		audioHandler.init(data, this, chartKeyboardHandler);
-		data.init(this, menuBar, undoSystem);
-		chartKeyboardHandler.init(audioHandler, data, this, selectionManager);
-		chartPanel.init(chartPanelMouseListener, audioHandler, data, chartKeyboardHandler, highlightManager,
+		audioDrawer.init(data, chartPanel);
+		audioHandler.init(data, this, keyboardHandler);
+		beatsDrawer.init(data, chartPanel, selectionManager);
+		data.init(menuBar, selectionManager, undoSystem);
+		keyboardHandler.init(audioHandler, data, this, modeManager, mouseHandler);
+		highlightManager.init(data, modeManager, selectionManager);
+		modeManager.init(data, this, keyboardHandler, selectionManager, undoSystem);
+		mouseButtonPressReleaseHandler.init(highlightManager);
+		mouseHandler.init(audioHandler, data, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
 				selectionManager);
-		highlightManager.init(data, chartPanelMouseListener, selectionManager);
-		menuBar.init(audioHandler, chartKeyboardHandler, this, data, songFileHandler);
-		songFileHandler.init(data, this);
-		selectionManager.init(data);
-		undoSystem.init(data);
+		songFileHandler.init(data, this, undoSystem);
+		selectionManager.init(data, modeManager);
+		undoSystem.init(data, modeManager, selectionManager);
+
+		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, modeManager, mouseButtonPressReleaseHandler,
+				mouseHandler, selectionManager);
+		menuBar.init(audioDrawer, audioHandler, data, this, keyboardHandler, modeManager, selectionManager,
+				songFileHandler, undoSystem);
 
 		add(chartPanel, 0, Config.windowWidth, DrawerUtils.HEIGHT);
 		add(scrollBar, DrawerUtils.HEIGHT, Config.windowWidth, 20);
 		add(helpLabel, DrawerUtils.HEIGHT + 20, Config.windowWidth, 300);
 
 		addComponentListener(new CharterFrameComponentListener(chartPanel, scrollBar));
-		addKeyListener(chartKeyboardHandler);
-		addWindowFocusListener(new CharterFrameWindowFocusListener(chartKeyboardHandler));
-		addWindowListener(new CharterFrameWindowListener(chartKeyboardHandler));
+		addKeyListener(keyboardHandler);
+		addWindowFocusListener(new CharterFrameWindowFocusListener(this));
+		addWindowListener(new CharterFrameWindowListener(this));
 
 		setGuitarHelp();
 
@@ -80,7 +96,7 @@ public class CharterFrame extends JFrame {
 
 	private void frame() {
 		audioHandler.frame();
-		chartKeyboardHandler.moveFromArrowKeys();
+		keyboardHandler.moveFromArrowKeys();
 		updateTitle();
 
 		data.time = (int) data.nextTime;
@@ -145,22 +161,23 @@ public class CharterFrame extends JFrame {
 	}
 
 	public boolean checkChanged() {
-		if (data.changed) {
-			final int result = JOptionPane.showConfirmDialog(this, "You have unsaved changes. Do you want to save?",
-					"Unsaved changes", JOptionPane.YES_NO_CANCEL_OPTION);
-
-			if (result == JOptionPane.YES_OPTION) {
-				songFileHandler.save();
-				return true;
-			}
-			if (result == JOptionPane.NO_OPTION) {
-				return true;
-			}
-
-			return false;
+		if (undoSystem.isSaved()) {
+			return true;
 		}
 
-		return true;
+		final int result = JOptionPane.showConfirmDialog(this, "You have unsaved changes. Do you want to save?",
+				"Unsaved changes", JOptionPane.YES_NO_CANCEL_OPTION);
+
+		if (result == JOptionPane.YES_OPTION) {
+			songFileHandler.save();
+			return true;
+		}
+
+		if (result == JOptionPane.NO_OPTION) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public void showPopup(final String msg) {
@@ -172,19 +189,39 @@ public class CharterFrame extends JFrame {
 	}
 
 	private void updateTitle() {
-		String title;
-		if (data.isEmpty) {
-			title = LogCharterRSMain.TITLE + " : No project";
-		} else {
-			title = LogCharterRSMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title + " : "//
-					+ data.editMode.name//
-					+ (data.changed ? "*" : "");
-		}
-
+		final String title = makeTitle();
 		if (title.equals(getTitle())) {
 			return;
 		}
 
 		setTitle(title);
 	}
+
+	private String makeTitle() {
+		if (data.isEmpty) {
+			return LogCharterRSMain.TITLE + " : No project";
+		}
+		return LogCharterRSMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title + " : "//
+				+ data.getCurrentArrangement().getTypeNameLabel()//
+				+ (undoSystem.isSaved() ? "" : "*");
+	}
+
+	public void cancelAllActions() {
+		audioHandler.stopMusic();
+		keyboardHandler.clearKeys();
+	}
+
+	public void exit() {
+		audioHandler.stopMusic();
+		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this, "Are you sure you want to exit?", "Exit",
+				JOptionPane.YES_NO_OPTION)) {
+			if (!checkChanged()) {
+				return;
+			}
+
+			dispose();
+			System.exit(0);
+		}
+	}
+
 }

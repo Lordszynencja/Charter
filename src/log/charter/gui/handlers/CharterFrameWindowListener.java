@@ -3,14 +3,13 @@ package log.charter.gui.handlers;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import log.charter.gui.ChartKeyboardHandler;
+import log.charter.gui.CharterFrame;
 
 public class CharterFrameWindowListener implements WindowListener {
+	private final CharterFrame frame;
 
-	private final ChartKeyboardHandler eventsHandler;
-
-	public CharterFrameWindowListener(final ChartKeyboardHandler eventsHandler) {
-		this.eventsHandler = eventsHandler;
+	public CharterFrameWindowListener(final CharterFrame frame) {
+		this.frame = frame;
 	}
 
 	@Override
@@ -23,7 +22,7 @@ public class CharterFrameWindowListener implements WindowListener {
 
 	@Override
 	public void windowClosing(final WindowEvent e) {
-		eventsHandler.exit();
+		frame.exit();
 	}
 
 	@Override
@@ -41,5 +40,4 @@ public class CharterFrameWindowListener implements WindowListener {
 	@Override
 	public void windowOpened(final WindowEvent e) {
 	}
-
 }

@@ -3,11 +3,11 @@ package log.charter.song;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.data.Config;
-import log.charter.gui.SelectionManager.Selectable;
+import log.charter.data.managers.SelectionManager.Selectable;
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
 
 @XStreamAlias("vocal")
-public class Vocal extends Position implements Selectable {
+public class Vocal extends Selectable {
 	public int length;
 	public String lyric;
 
@@ -29,6 +29,12 @@ public class Vocal extends Position implements Selectable {
 			lyric += "-";
 		}
 		length = Config.minTailLength;
+	}
+
+	public Vocal(final Vocal other) {
+		super(other.position);
+		length = other.length;
+		lyric = other.lyric;
 	}
 
 	public boolean isWordPart() {

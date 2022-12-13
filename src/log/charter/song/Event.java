@@ -70,4 +70,8 @@ public class Event extends Position {
 		type = EventType.findByRSName(arrangementEvent.code);
 	}
 
+	public Event(final Event other) {
+		super(other);
+		type = other.type;
+	}
 }

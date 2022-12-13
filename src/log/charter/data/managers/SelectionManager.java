@@ -1,13 +1,17 @@
-package log.charter.gui;
+package log.charter.data.managers;
 
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import log.charter.data.ChartData;
-import log.charter.gui.PositionWithIdAndType.PositionType;
+import log.charter.data.PositionWithIdAndType;
+import log.charter.data.PositionWithIdAndType.PositionType;
+import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.Chord;
 import log.charter.song.HandShape;
@@ -16,12 +20,21 @@ import log.charter.song.Note;
 import log.charter.song.Position;
 import log.charter.song.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.IntRange;
 
 public class SelectionManager {
-	public static interface Selectable {
-		public String getSignature();
+	public abstract static class Selectable extends Position {
+		public Selectable(final int position) {
+			super(position);
+		}
+
+		public Selectable(final Selectable position) {
+			super(position);
+		}
+
+		public abstract String getSignature();
 	}
 
 	public static class Selection<T extends Selectable> {
@@ -35,30 +48,64 @@ public class SelectionManager {
 	}
 
 	private enum SelectionTypeEnum {
-		BEAT, CHORD, HAND_SHAPE, NOTE, VOCAL;
+		ANCHOR, //
+		BEAT, //
+		CHORD, //
+		HAND_SHAPE, //
+		NOTE, //
+		VOCAL;
+
+		public static SelectionTypeEnum fromPositionType(final PositionType type) {
+			switch (type) {
+			case ANCHOR:
+				return ANCHOR;
+			case BEAT:
+				return BEAT;
+			case GUITAR_NOTE:
+				return null;
+			case HAND_SHAPE:
+				return HAND_SHAPE;
+			case NONE:
+				return null;
+			case VOCAL:
+				return VOCAL;
+			default:
+				return null;
+			}
+		}
 	}
 
 	private ChartData data;
+	private ModeManager modeManager;
 
 	private SelectionTypeEnum lastSelectedValue = null;
 
+	private final ArrayList2<Selection<Anchor>> selectedAnchors = new ArrayList2<>();
 	private final ArrayList2<Selection<Beat>> selectedBeats = new ArrayList2<>();
 	private final ArrayList2<Selection<Chord>> selectedChords = new ArrayList2<>();
 	private final ArrayList2<Selection<HandShape>> selectedHandShapes = new ArrayList2<>();
 	private final ArrayList2<Selection<Note>> selectedNotes = new ArrayList2<>();
 	private final ArrayList2<Selection<Vocal>> selectedVocals = new ArrayList2<>();
 
-	public void init(final ChartData data) {
+	public void init(final ChartData data, final ModeManager modeManager) {
 		this.data = data;
+		this.modeManager = modeManager;
 	}
 
-	private <T extends Position & Selectable> ArrayList2<Selection<T>> getSortedCopy(
-			final ArrayList2<Selection<T>> list) {
+	private <T extends Selectable> ArrayList2<Selection<T>> getSortedCopy(final ArrayList2<Selection<T>> list) {
 		final ArrayList2<Selection<T>> copy = new ArrayList2<>(list);
 		copy.sort((selection0, selection1) -> Integer.compare(selection0.selectable.position,
 				selection1.selectable.position));
 
 		return copy;
+	}
+
+	public ArrayList2<Selection<Anchor>> getSelectedAnchors() {
+		return getSortedCopy(selectedAnchors);
+	}
+
+	public HashSet2<Selection<Anchor>> getSelectedAnchorsSet() {
+		return new HashSet2<>(selectedAnchors);
 	}
 
 	public ArrayList2<Selection<Beat>> getSelectedBeats() {
@@ -101,7 +148,7 @@ public class SelectionManager {
 		return new HashSet2<>(selectedVocals);
 	}
 
-	private <T extends Position & Selectable> void addSelectables(final ArrayList2<Selection<T>> selections,
+	private <T extends Selectable> void addSelectables(final ArrayList2<Selection<T>> selections,
 			final ArrayList2<T> available, final int fromId, final int toId) {
 		final Set<String> selectedSignatures = new HashSet<>(
 				selections.map(selection -> selection.selectable.getSignature()));
@@ -114,7 +161,7 @@ public class SelectionManager {
 		}
 	}
 
-	private <T extends Position & Selectable> void addSelectables(final ArrayList2<Selection<T>> selections,
+	private <T extends Selectable> void addSelectables(final ArrayList2<Selection<T>> selections,
 			final ArrayList2<T> available, int toId) {
 		int fromId = selections.isEmpty() ? toId : selections.getLast().id;
 		if (fromId > toId) {
@@ -126,9 +173,8 @@ public class SelectionManager {
 		addSelectables(selections, available, fromId, toId);
 	}
 
-	private <T extends Position & Selectable> void addSelectablesFromToPosition(
-			final ArrayList2<Selection<T>> selections, final ArrayList2<T> available, final int fromPosition,
-			final int toPosition) {
+	private <T extends Selectable> void addSelectablesFromToPosition(final ArrayList2<Selection<T>> selections,
+			final ArrayList2<T> available, final int fromPosition, final int toPosition) {
 		final Set<String> selectedSignatures = new HashSet<>(
 				selections.map(selection -> selection.selectable.getSignature()));
 
@@ -141,7 +187,7 @@ public class SelectionManager {
 		}
 	}
 
-	private <T extends Position & Selectable> void switchSelectable(final ArrayList2<Selection<T>> selections,
+	private <T extends Selectable> void switchSelectable(final ArrayList2<Selection<T>> selections,
 			final ArrayList2<T> available, final int id) {
 		if (selections.contains(selection -> selection.id == id)) {
 			selections.removeIf(selection -> selection.id == id);
@@ -151,36 +197,34 @@ public class SelectionManager {
 		selections.add(new Selection<>(id, available.get(id)));
 	}
 
-	private <T extends Position & Selectable> void setSelectable(final ArrayList2<Selection<T>> selections,
+	private <T extends Selectable> void setSelectable(final ArrayList2<Selection<T>> selections,
 			final ArrayList2<T> available, final int id) {
 		selections.clear();
 		selections.add(new Selection<>(id, available.get(id)));
 	}
 
-	private void clearBeatSelection() {
-		if (!selectedBeats.isEmpty()) {
-			selectedBeats.clear();
+	private void clearList(final ArrayList2<?> list) {
+		if (!list.isEmpty()) {
+			list.clear();
 		}
 	}
 
-	private void clearGuitarNotesSelection() {
-		if (!selectedChords.isEmpty()) {
-			selectedChords.clear();
+	private void clearSelectionsExcept(final PositionType type) {
+		if (type != PositionType.ANCHOR) {
+			clearList(selectedAnchors);
 		}
-		if (!selectedNotes.isEmpty()) {
-			selectedNotes.clear();
+		if (type != PositionType.BEAT) {
+			clearList(selectedBeats);
 		}
-	}
-
-	private void clearHandShapesSelection() {
-		if (!selectedHandShapes.isEmpty()) {
-			selectedHandShapes.clear();
+		if (type != PositionType.GUITAR_NOTE) {
+			clearList(selectedChords);
+			clearList(selectedNotes);
 		}
-	}
-
-	private void clearVocalsSelection() {
-		if (!selectedVocals.isEmpty()) {
-			selectedVocals.clear();
+		if (type != PositionType.HAND_SHAPE) {
+			clearList(selectedHandShapes);
+		}
+		if (type != PositionType.VOCAL) {
+			clearList(selectedVocals);
 		}
 	}
 
@@ -207,7 +251,7 @@ public class SelectionManager {
 	}
 
 	public PositionWithIdAndType findExistingPosition(final int x, final int y) {
-		final PositionType positionType = PositionType.fromY(y, data);
+		final PositionType positionType = PositionType.fromY(y, modeManager.editMode);
 		final ArrayList2<PositionWithIdAndType> positions = positionType.positionChooser
 				.getAvailablePositionsForSelection(data);
 
@@ -226,9 +270,8 @@ public class SelectionManager {
 		return closest;
 	}
 
-	private <T extends Position & Selectable> void addSelectablesWithModifiers(
-			final ArrayList2<Selection<T>> selections, final ArrayList2<T> available, final int id, final boolean ctrl,
-			final boolean shift) {
+	private <T extends Selectable> void addSelectablesWithModifiers(final ArrayList2<Selection<T>> selections,
+			final ArrayList2<T> available, final int id, final boolean ctrl, final boolean shift) {
 		if (ctrl) {
 			switchSelectable(selections, available, id);
 			return;
@@ -244,28 +287,12 @@ public class SelectionManager {
 
 	private void positionNotFound(final boolean ctrl) {
 		if (!ctrl) {
-			clearBeatSelection();
-			clearGuitarNotesSelection();
-			clearHandShapesSelection();
-			clearVocalsSelection();
+			clearSelectionsExcept(PositionType.NONE);
 		}
-	}
-
-	private void positionBeat(final PositionWithIdAndType closestPosition, final boolean ctrl, final boolean shift) {
-		clearGuitarNotesSelection();
-		clearHandShapesSelection();
-		clearVocalsSelection();
-
-		addSelectablesWithModifiers(selectedBeats, data.songChart.beatsMap.beats, closestPosition.id, ctrl, shift);
-		lastSelectedValue = SelectionTypeEnum.BEAT;
 	}
 
 	private void positionGuitarNote(final PositionWithIdAndType closestPosition, final boolean ctrl,
 			final boolean shift) {
-		clearBeatSelection();
-		clearHandShapesSelection();
-		clearVocalsSelection();
-
 		final Level level = data.getCurrentArrangementLevel();
 		if (ctrl) {
 			if (closestPosition.chord != null) {
@@ -296,7 +323,8 @@ public class SelectionManager {
 			return;
 		}
 
-		clearGuitarNotesSelection();
+		clearList(selectedChords);
+		clearList(selectedNotes);
 
 		if (closestPosition.chord != null) {
 			setSelectable(selectedChords, level.chords, closestPosition.id);
@@ -308,27 +336,36 @@ public class SelectionManager {
 		lastSelectedValue = SelectionTypeEnum.NOTE;
 	}
 
-	private void positionHandShape(final PositionWithIdAndType closestPosition, final boolean ctrl,
-			final boolean shift) {
-		clearBeatSelection();
-		clearGuitarNotesSelection();
-		clearVocalsSelection();
+	private static class SelectableSupplier<T extends Selectable> {
+		public final Supplier<ArrayList2<Selection<T>>> selection;
+		public final Supplier<ArrayList2<T>> available;
 
-		addSelectablesWithModifiers(selectedHandShapes, data.getCurrentArrangementLevel().handShapes,
-				closestPosition.id, ctrl, shift);
-		lastSelectedValue = SelectionTypeEnum.HAND_SHAPE;
+		private SelectableSupplier(final Supplier<ArrayList2<Selection<T>>> selection,
+				final Supplier<ArrayList2<T>> available) {
+			this.selection = selection;
+			this.available = available;
+		}
 	}
 
-	private void positionVocals(final PositionWithIdAndType closestPosition, final boolean ctrl, final boolean shift) {
-		clearBeatSelection();
-		clearHandShapesSelection();
-		clearGuitarNotesSelection();
+	private final Map<PositionType, SelectableSupplier<? extends Selectable>> selectableSuppliers = new HashMap2<>();
 
-		addSelectablesWithModifiers(selectedVocals, data.songChart.vocals.vocals, closestPosition.id, ctrl, shift);
-		lastSelectedValue = SelectionTypeEnum.VOCAL;
+	{
+		selectableSuppliers.put(PositionType.ANCHOR, //
+				new SelectableSupplier<>(() -> selectedAnchors, () -> data.getCurrentArrangementLevel().anchors));
+		selectableSuppliers.put(PositionType.BEAT, //
+				new SelectableSupplier<>(() -> selectedBeats, () -> data.songChart.beatsMap.beats));
+		selectableSuppliers.put(PositionType.HAND_SHAPE, //
+				new SelectableSupplier<>(() -> selectedHandShapes, () -> data.getCurrentArrangementLevel().handShapes));
+		selectableSuppliers.put(PositionType.VOCAL, //
+				new SelectableSupplier<Vocal>(() -> selectedVocals, () -> data.songChart.vocals.vocals));
 	}
 
-	public void click(final int x, final int y, final boolean ctrl, final boolean shift) {
+	@SuppressWarnings("unchecked")
+	private <T extends Selectable> SelectableSupplier<T> getSelectableSupplier(final PositionType type) {
+		return (SelectableSupplier<T>) selectableSuppliers.get(type);
+	}
+
+	public <T extends Selectable> void click(final int x, final int y, final boolean ctrl, final boolean shift) {
 		if (data.isEmpty) {
 			return;
 		}
@@ -339,21 +376,26 @@ public class SelectionManager {
 			return;
 		}
 
+		clearSelectionsExcept(closestPosition.type);
 		switch (closestPosition.type) {
+		case ANCHOR:
 		case BEAT:
-			positionBeat(closestPosition, ctrl, shift);
+		case HAND_SHAPE:
+		case VOCAL:
+			final SelectableSupplier<T> supplier = getSelectableSupplier(closestPosition.type);
+			addSelectablesWithModifiers(supplier.selection.get(), supplier.available.get(), closestPosition.id, ctrl,
+					shift);
+			lastSelectedValue = SelectionTypeEnum.fromPositionType(closestPosition.type);
 			break;
 		case GUITAR_NOTE:
 			positionGuitarNote(closestPosition, ctrl, shift);
 			break;
-		case HAND_SHAPE:
-			positionHandShape(closestPosition, ctrl, shift);
-			break;
-		case VOCAL:
-			positionVocals(closestPosition, ctrl, shift);
-			break;
 		default:
 			break;
 		}
+	}
+
+	public void clear() {
+		clearSelectionsExcept(PositionType.NONE);
 	}
 }

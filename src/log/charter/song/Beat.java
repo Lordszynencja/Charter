@@ -6,12 +6,12 @@ import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import log.charter.gui.SelectionManager.Selectable;
+import log.charter.data.managers.SelectionManager.Selectable;
 import log.charter.io.rs.xml.song.EBeat;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("beat")
-public class Beat extends Position implements Selectable {
+public class Beat extends Selectable {
 	public static ArrayList2<Beat> fromEbeats(final List<EBeat> ebeats) {
 		return ebeats.stream()//
 				.map(Beat::new)//
@@ -31,6 +31,13 @@ public class Beat extends Position implements Selectable {
 	private Beat(final EBeat ebeat) {
 		super(ebeat.time);
 		firstInMeasure = ebeat.measure != null && ebeat.measure == 1;
+	}
+
+	public Beat(final Beat other) {
+		super(other);
+		beatsInMeasure = other.beatsInMeasure;
+		firstInMeasure = other.firstInMeasure;
+		anchor = other.anchor;
 	}
 
 	@Override
