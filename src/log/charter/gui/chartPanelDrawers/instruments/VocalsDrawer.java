@@ -14,7 +14,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.SelectionManager;
+import log.charter.data.PositionWithIdAndType.PositionType;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -111,8 +112,8 @@ public class VocalsDrawer {
 
 		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
 		final int width = chartPanel.getWidth();
-		final HashSet2<Integer> selectedVocalIds = selectionManager.getSelectedVocalsSet()
-				.map(selection -> selection.id);
+		final HashSet2<Integer> selectedVocalIds = selectionManager.getSelectedAccessor(PositionType.VOCAL)//
+				.getSelectedSet().map(selection -> selection.id);
 
 		for (int i = 0; i < vocals.size(); i++) {
 			final Vocal vocal = vocals.get(i);
@@ -123,8 +124,8 @@ public class VocalsDrawer {
 
 			final Vocal next = vocals.size() > i + 1 ? vocals.get(i + 1) : null;
 			final int length = max(1, timeToXLength(vocal.length));
-			final boolean isSelected = selectedVocalIds.contains(i);
-			drawingData.addVocal(vocal, next, x, length, isSelected);
+			final boolean selected = selectedVocalIds.contains(i);
+			drawingData.addVocal(vocal, next, x, length, selected);
 		}
 
 		drawingData.draw(g);
@@ -180,44 +181,6 @@ public class VocalsDrawer {
 		drawingData.draw(g);
 	}
 
-	private void drawSelectedVocals(final Graphics g) {
-		selectionManager.getSelectedVocals();
-		// TODO make after selection is done
-//		final DrawList selects = new DrawList();
-//		final int w = panel.getWidth();
-//
-//		for (final int id : data.selectedNotes) {
-//			final Lyric l = data.s.v.lyrics.get(id);
-//			final int x = data.timeToX(l.pos);
-//			final int y = getLaneY(0, 1) - 4;
-//			int length = data.timeToXLength(l.getLength()) + 1;
-//			if (length < 3) {
-//				length = 3;
-//			}
-//			if (x > (w + (ChartPanel.noteW / 2))) {
-//				break;
-//			}
-//			if ((x + length) > 0) {
-//				for (int c = 0; c < 5; c++) {
-//					selects.addPositions(x - 1, y, length, 9);
-//				}
-//			}
-//		}
-//
-//		selects.draw(g, ChartPanel.colors.get("SELECT"));
-	}
-//
-//	private void drawDebugNoteId(final Graphics g, final ChartPanel panel, final ChartData data) {
-//		for (int i = 0; i < data.currentNotes.size(); i++) {
-//			final Note n = data.currentNotes.get(i);
-//			final int x = data.timeToX(n.pos);
-//			if (x >= 0 && x < panel.getWidth()) {
-//				g.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
-//				g.drawString("" + i, x - 5, ChartPanel.beatTextY - 10);
-//			}
-//		}
-//	}
-
 	public void draw(final Graphics g) {
 		if (!initiated || data.isEmpty) {
 			return;
@@ -227,6 +190,5 @@ public class VocalsDrawer {
 		beatsDrawer.draw(g);
 		drawVocals(g);
 		drawLyricLines(g);
-		drawSelectedVocals(g);
 	}
 }

@@ -14,12 +14,16 @@ import java.awt.Graphics;
 import java.util.List;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.SelectionManager;
+import log.charter.data.PositionWithIdAndType.PositionType;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
+import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
+import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButton;
+import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressData;
 import log.charter.song.Beat;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.Position2D;
@@ -63,19 +67,31 @@ public class BeatsDrawer {
 
 	private ChartData data;
 	private ChartPanel chartPanel;
+	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
 	private SelectionManager selectionManager;
 
-	public void init(final ChartData data, final ChartPanel chartPanel, final SelectionManager selectionManager) {
+	public void init(final ChartData data, final ChartPanel chartPanel,
+			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
+			final SelectionManager selectionManager) {
 		this.data = data;
 		this.chartPanel = chartPanel;
+		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
 		this.selectionManager = selectionManager;
 	}
 
 	public void draw(final Graphics g) {
 		final BeatsDrawingData drawingData = new BeatsDrawingData();
 		final List<Beat> beats = data.songChart.beatsMap.beats;
-		final HashSet2<Integer> selectedBeatIds = selectionManager.getSelectedBeatsSet()//
-				.map(selection -> selection.id);
+		final HashSet2<Integer> selectedBeatIds = selectionManager.getSelectedAccessor(PositionType.BEAT)//
+				.getSelectedSet().map(selection -> selection.id);
+
+		if (selectedBeatIds.isEmpty()) {
+			final MouseButtonPressData pressData = mouseButtonPressReleaseHandler
+					.getPressPosition(MouseButton.LEFT_BUTTON);
+			if (pressData != null && pressData.highlight.beat != null) {
+				selectedBeatIds.add(pressData.highlight.id);
+			}
+		}
 
 		for (int i = 0; i < beats.size(); i++) {
 			final Beat beat = beats.get(i);

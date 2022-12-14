@@ -11,7 +11,7 @@ import java.awt.event.MouseWheelListener;
 import log.charter.data.ChartData;
 import log.charter.data.Zoom;
 import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.SelectionManager;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 
 public class MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener {
@@ -50,7 +50,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			selectionManager.click(e.getX(), e.getY(), keyboardHandler.ctrl(), keyboardHandler.shift());
-			return;
 		}
 	}
 
@@ -80,6 +79,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			pressCancelsRelease = true;
 			releaseCancelled = false;
 		}
+
 		mouseButtonPressReleaseHandler.press(e);
 
 		if (e.getButton() == MouseEvent.BUTTON1) {// TODO

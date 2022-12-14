@@ -19,7 +19,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.SelectionManager;
+import log.charter.data.PositionWithIdAndType.PositionType;
+import log.charter.data.managers.selection.ChordOrNote;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -34,6 +36,7 @@ import log.charter.song.Chord;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
 import log.charter.song.Note;
+import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.IntRange;
 import log.charter.util.Position2D;
@@ -133,8 +136,8 @@ public class GuitarDrawer {
 			if (selected) {
 				final int top = anchorY - 1;
 				final int bottom = lanesBottom + 1;
-				final ShapePositionWithSize beatPosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
-				anchors.add(strokedRectangle(beatPosition, selectColor));
+				final ShapePositionWithSize anchorPosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
+				anchors.add(strokedRectangle(anchorPosition, selectColor));
 			}
 		}
 
@@ -199,70 +202,9 @@ public class GuitarDrawer {
 		}
 	}
 
-	private void addSingleNotes(final DrawingData drawingData, final Level level, final int panelWidth) {
-		final HashSet2<Integer> selectedNoteIds = selectionManager.getSelectedNotesSet()//
-				.map(selection -> selection.id);
-
-		for (int i = 0; i < level.notes.size(); i++) {
-			final Note note = level.notes.get(i);
-			final int x = timeToX(note.position, data.time);
-			final int length = timeToXLength(note.sustain);
-			if (isPastRightEdge(x, panelWidth)) {
-				break;
-			}
-
-			if (!isOnScreen(x, length)) {
-				continue;
-			}
-
-			final boolean selected = selectedNoteIds.contains(i);
-			drawingData.addNote(note, x, length, selected);
-			if (isTailVisible(length)) {
-				drawingData.addNoteTail(note, x, length, selected);
-			}
-		}
-	}
-
-	private void addChords(final DrawingData drawingData, final ArrangementChart arrangement, final Level level,
-			final int panelWidth) {
-		final HashSet2<Integer> selectedChordIds = selectionManager.getSelectedChordsSet()//
-				.map(selection -> selection.id);
-
-		for (int i = 0; i < level.chords.size(); i++) {
-			final Chord chord = level.chords.get(i);
-			final int x = timeToX(chord.position, data.time);
-			if (isPastRightEdge(x, panelWidth)) {
-				break;
-			}
-
-			final boolean selected = selectedChordIds.contains(i);
-
-			if (chord.chordNotes.isEmpty()) {
-				if (!isOnScreen(x, 0)) {
-					continue;
-				}
-
-				final ChordTemplate chordTemplate = arrangement.chordTemplates.get(chord.chordId);
-				drawingData.addRepeatedChord(chord, chordTemplate, x, selected);
-			} else {
-				for (final Note note : chord.chordNotes) {
-					final int length = timeToXLength(note.sustain);
-					if (!isOnScreen(x, length)) {
-						continue;
-					}
-
-					drawingData.addNote(note, x, length, selected);
-					if (isTailVisible(length)) {
-						drawingData.addNoteTail(note, x, length, selected);
-					}
-				}
-			}
-		}
-	}
-
 	private void addAnchors(final DrawingData drawingData, final Level level, final int panelWidth) {
-		final HashSet2<Integer> selectedAnchorIds = selectionManager.getSelectedAnchorsSet()//
-				.map(selection -> selection.id);
+		final HashSet2<Integer> selectedAnchorIds = selectionManager.getSelectedAccessor(PositionType.ANCHOR)//
+				.getSelectedSet().map(selection -> selection.id);
 
 		for (int i = 0; i < level.anchors.size(); i++) {
 			final Anchor anchor = level.anchors.get(i);
@@ -280,9 +222,89 @@ public class GuitarDrawer {
 		}
 	}
 
-	private void addHandShapes(final DrawingData drawingData, final Level level, final int panelWidth) {
-		final HashSet2<Integer> selectedHandShapeIds = selectionManager.getSelectedHandShapesSet()//
+	private boolean addChord(final DrawingData drawingData, final ArrangementChart arrangement, final int panelWidth,
+			final Chord chord, final boolean selected) {
+		final int x = timeToX(chord.position, data.time);
+		if (isPastRightEdge(x, panelWidth)) {
+			return false;
+		}
+
+		if (chord.chordNotes.isEmpty()) {
+			if (!isOnScreen(x, 0)) {
+				return true;
+			}
+
+			final ChordTemplate chordTemplate = arrangement.chordTemplates.get(chord.chordId);
+			drawingData.addRepeatedChord(chord, chordTemplate, x, selected);
+
+			return true;
+		}
+
+		for (final Note note : chord.chordNotes) {
+			final int length = timeToXLength(note.sustain);
+			if (!isOnScreen(x, length)) {
+				continue;
+			}
+
+			drawingData.addNote(note, x, length, selected);
+			if (isTailVisible(length)) {
+				drawingData.addNoteTail(note, x, length, selected);
+			}
+		}
+
+		return true;
+	}
+
+	private boolean addNote(final DrawingData drawingData, final int panelWidth, final Note note,
+			final boolean selected) {
+		final int x = timeToX(note.position, data.time);
+		final int length = timeToXLength(note.sustain);
+		if (isPastRightEdge(x, panelWidth)) {
+			return false;
+		}
+
+		if (!isOnScreen(x, length)) {
+			return true;
+		}
+
+		drawingData.addNote(note, x, length, selected);
+		if (isTailVisible(length)) {
+			drawingData.addNoteTail(note, x, length, selected);
+		}
+
+		return true;
+	}
+
+	private boolean addChordOrNote(final DrawingData drawingData, final ArrangementChart arrangement,
+			final int panelWidth, final ChordOrNote chordOrNote, final boolean selected) {
+		if (chordOrNote.chord != null) {
+			return addChord(drawingData, arrangement, panelWidth, chordOrNote.chord, selected);
+		}
+		if (chordOrNote.note != null) {
+			return addNote(drawingData, panelWidth, chordOrNote.note, selected);
+		}
+
+		return true;
+	}
+
+	private void addGuitarNotes(final DrawingData drawingData, final ArrangementChart arrangement,
+			final int panelWidth) {
+		final HashSet2<Integer> selectedNoteIds = selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE)
+				.getSelectedSet()//
 				.map(selection -> selection.id);
+
+		final ArrayList2<ChordOrNote> chordsAndNotes = PositionType.GUITAR_NOTE.getPositions(data);
+
+		for (int i = 0; i < chordsAndNotes.size(); i++) {
+			final ChordOrNote chordOrNote = chordsAndNotes.get(i);
+			final boolean selected = selectedNoteIds.contains(i);
+			addChordOrNote(drawingData, arrangement, panelWidth, chordOrNote, selected);
+		}
+	}
+
+	private void addHandShapes(final DrawingData drawingData, final Level level, final int panelWidth) {
+		final HashSet2<Integer> selectedHandShapeIds = selectionManager.getSelectedAccessor(PositionType.HAND_SHAPE)//
+				.getSelectedSet().map(selection -> selection.id);
 
 		for (int i = 0; i < level.handShapes.size(); i++) {
 			final HandShape handShape = level.handShapes.get(i);
@@ -309,8 +331,7 @@ public class GuitarDrawer {
 
 		final int panelWidth = chartPanel.getWidth();
 
-		addSingleNotes(drawingData, level, panelWidth);
-		addChords(drawingData, arrangement, level, panelWidth);
+		addGuitarNotes(drawingData, arrangement, panelWidth);
 		addHandShapes(drawingData, level, panelWidth);
 		addAnchors(drawingData, level, panelWidth);
 

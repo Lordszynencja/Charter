@@ -15,6 +15,7 @@ import log.charter.data.ChartData;
 import log.charter.data.Config;
 import log.charter.data.PositionWithIdAndType;
 import log.charter.data.PositionWithIdAndType.PositionType;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.song.Beat;
 import log.charter.song.Chord;
 import log.charter.song.Note;
@@ -80,12 +81,13 @@ public class HighlightManager {
 			final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
 			final int beatIdFrom = max(0, findLastIdBefore(beats, fromPosition));
 			final int beatIdTo = min(beats.size(), findFirstIdAfter(beats, toPosition));
+			final int gridSize = data.songChart.beatsMap.gridSize;
 
 			for (int beatId = beatIdFrom; beatId < beatIdTo; beatId++) {
 				final Beat beat = beats.get(beatId);
 				final Beat next = beats.get(beatId + 1);
-				for (int gridId = 0; gridId < data.gridSize; gridId++) {
-					final int gridPosition = beat.position + ((next.position - beat.position) * gridId / data.gridSize);
+				for (int gridId = 0; gridId < gridSize; gridId++) {
+					final int gridPosition = beat.position + ((next.position - beat.position) * gridId / gridSize);
 					if (gridPosition >= fromPosition && gridPosition <= toPosition) {
 						positions.add(fromPosition(gridPosition, getLane(gridPosition)));
 					}
@@ -163,9 +165,7 @@ public class HighlightManager {
 		}
 
 		int position = xToTime(x, data.time);
-		if (data.useGrid) {
-			position = data.songChart.beatsMap.getPositionFromGridClosestTo(position, data.gridSize);
-		}
+		position = data.songChart.beatsMap.getPositionFromGridClosestTo(position);
 
 		if (position < 0) {
 			position = 0;

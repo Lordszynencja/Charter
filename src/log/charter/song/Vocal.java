@@ -3,11 +3,10 @@ package log.charter.song;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.data.Config;
-import log.charter.data.managers.SelectionManager.Selectable;
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
 
 @XStreamAlias("vocal")
-public class Vocal extends Selectable {
+public class Vocal extends Position {
 	public int length;
 	public String lyric;
 
@@ -72,10 +71,5 @@ public class Vocal extends Selectable {
 		}
 
 		return text;
-	}
-
-	@Override
-	public String getSignature() {
-		return position + "";
 	}
 }

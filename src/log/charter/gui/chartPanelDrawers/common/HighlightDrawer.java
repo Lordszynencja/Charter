@@ -8,11 +8,13 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.line;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.gui.chartPanelDrawers.instruments.GuitarDrawer.noteTailOffset;
 import static log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer.getVocalNotePosition;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
+import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -24,8 +26,9 @@ import log.charter.data.EditMode;
 import log.charter.data.PositionWithIdAndType;
 import log.charter.data.PositionWithIdAndType.PositionType;
 import log.charter.data.managers.HighlightManager;
-import log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.selection.ChordOrNote;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
@@ -38,7 +41,6 @@ import log.charter.io.rs.xml.song.ChordTemplate;
 import log.charter.song.Chord;
 import log.charter.song.HandShape;
 import log.charter.song.Note;
-import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.IntRange;
 import log.charter.util.Position2D;
 
@@ -52,19 +54,26 @@ public class HighlightDrawer {
 		void drawHighlight(Graphics g, PositionWithIdAndType highlight, int x, int y);
 	}
 
+	private static interface DragTypeDrawer {
+		void drawDrag(Graphics g, PositionWithIdAndType highlight, int x);
+	}
+
 	private ChartData data;
 	private HighlightManager highlightManager;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
 	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
+	private SelectionManager selectionManager;
 
 	public void init(final ChartData data, final HighlightManager highlightManager, final ModeManager modeManager,
-			final MouseHandler mouseHandler, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
+			final MouseHandler mouseHandler, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
+			final SelectionManager selectionManager) {
 		this.data = data;
 		this.highlightManager = highlightManager;
 		this.modeManager = modeManager;
 		this.mouseHandler = mouseHandler;
 		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
+		this.selectionManager = selectionManager;
 	}
 
 	private void drawAnchorHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
@@ -130,26 +139,28 @@ public class HighlightDrawer {
 			final int y) {
 		final int strings = data.getCurrentArrangement().tuning.strings;
 
-		if (highlight.note != null) {
-			final Note note = highlight.note;
-			drawNoteHighlight(g, note.string, note.position, note.sustain, strings);
-			return;
-		}
+		if (highlight.chordOrNote != null) {
 
-		if (highlight.chord != null) {
-			final Chord chord = highlight.chord;
-			if (!chord.chordNotes.isEmpty()) {
-				for (final Note note : chord.chordNotes) {
-					drawNoteHighlight(g, note.string, note.position, note.sustain, strings);
+			if (highlight.chordOrNote.chord != null) {
+				final Chord chord = highlight.chordOrNote.chord;
+				if (!chord.chordNotes.isEmpty()) {
+					for (final Note note : chord.chordNotes) {
+						drawNoteHighlight(g, note.string, note.position, note.sustain, strings);
+					}
+
+					return;
 				}
+
+				final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
+				drawRepeatedChordHighlight(g, chordTemplate, chord.position, strings);
 
 				return;
 			}
-
-			final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
-			drawRepeatedChordHighlight(g, chordTemplate, chord.position, strings);
-
-			return;
+			if (highlight.chordOrNote.note != null) {
+				final Note note = highlight.chordOrNote.note;
+				drawNoteHighlight(g, note.string, note.position, note.sustain, strings);
+				return;
+			}
 		}
 
 		final int lane = yToLane(y, strings);
@@ -194,6 +205,86 @@ public class HighlightDrawer {
 		highlightDrawers.put(PositionType.VOCAL, this::drawVocalHighlight);
 	}
 
+	private void drawAnchorDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
+		if (highlight.anchor == null && !selectionManager.getSelectedAccessor(PositionType.ANCHOR).isSelected()) {
+			return;
+		}
+
+		final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
+		final int dragX = timeToX(position, data.time);
+		lineVertical(dragX, anchorY, lanesBottom, highlightColor).draw(g);
+	}
+
+	private void drawBeatDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
+		if (highlight.beat == null && !selectionManager.getSelectedAccessor(PositionType.BEAT).isSelected()) {
+			return;
+		}
+
+		lineVertical(x, beatTextY, lanesBottom, highlightColor).draw(g);
+	}
+
+	private void drawNoteDrag() {
+
+	}
+
+	private void drawGuitarNoteDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
+		if (highlight.chordOrNote == null//
+				&& !selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE).isSelected()) {
+			return;
+		}
+
+		final int strings = data.getCurrentArrangement().tuning.strings;
+
+		if (highlight.chordOrNote != null) {
+			final ChordOrNote chordOrNote = highlight.chordOrNote;
+			final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
+
+			if (chordOrNote.chord != null) {
+//				drawRepeatedChordHighlight(g, chordTemplate, position, strings);
+			} else {
+				drawNoteHighlight(g, chordOrNote.note.string, position, chordOrNote.note.sustain, strings);
+			}
+		}
+
+//		final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
+//		final int dragX = timeToX(position, data.time);
+//		lineVertical(dragX, anchorY, lanesBottom, highlightColor).draw(g);
+	}
+
+	private void drawHandShapeDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
+		if (highlight.anchor == null) {
+			return;
+		}
+
+		final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
+		final int dragX = timeToX(position, data.time);
+		lineVertical(dragX, anchorY, lanesBottom, highlightColor).draw(g);
+	}
+
+	private void drawNoneDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
+	}
+
+	private void drawVocalDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
+		if (highlight.anchor == null) {
+			return;
+		}
+
+		final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
+		final int dragX = timeToX(position, data.time);
+		lineVertical(dragX, anchorY, lanesBottom, highlightColor).draw(g);
+	}
+
+	private final Map<PositionType, DragTypeDrawer> dragDrawers = new HashMap<>();
+
+	{
+		dragDrawers.put(PositionType.ANCHOR, this::drawAnchorDrag);
+		dragDrawers.put(PositionType.BEAT, this::drawBeatDrag);
+		dragDrawers.put(PositionType.GUITAR_NOTE, this::drawGuitarNoteDrag);
+		dragDrawers.put(PositionType.HAND_SHAPE, this::drawHandShapeDrag);
+		dragDrawers.put(PositionType.NONE, this::drawNoneDrag);
+		dragDrawers.put(PositionType.VOCAL, this::drawVocalDrag);
+	}
+
 	private void drawNoteAdditionHighlight(final Graphics g, final int x, final int y) {
 		if (modeManager.editMode == EditMode.VOCALS) {
 			return;
@@ -213,36 +304,43 @@ public class HighlightDrawer {
 		final int currentX = timeToX(highlight.position, data.time);
 		line(new Position2D(pressX, pressY), new Position2D(currentX, y), noteAdditionLineColor).draw(g);
 
-		final ArrayList2<PositionWithStringOrNoteId> positions = highlightManager.getPositionsWithStrings(pressXTime,
-				highlight.position, pressY, y);
-		final ArrayList2<Chord> chords = data.getCurrentArrangementLevel().chords;
-		final ArrayList2<Note> notes = data.getCurrentArrangementLevel().notes;
-		final int strings = data.getCurrentArrangement().tuning.strings;
-
-		for (final PositionWithStringOrNoteId highlightPosition : positions) {
-			if (highlightPosition.chordId != null) {
-				final Chord chord = chords.get(highlightPosition.chordId);
-				final PositionWithIdAndType positionHighlight = PositionWithIdAndType.create(highlightPosition.chordId,
-						chord);
-				drawGuitarNoteHighlight(g, positionHighlight, currentX, y);
-				continue;
-			}
-			if (highlightPosition.noteId != null) {
-				final Note note = notes.get(highlightPosition.noteId);
-				final PositionWithIdAndType positionHighlight = PositionWithIdAndType.create(highlightPosition.noteId,
-						note);
-				drawGuitarNoteHighlight(g, positionHighlight, currentX, y);
-				continue;
-			}
-
-			final PositionWithIdAndType positionHighlight = PositionWithIdAndType.create(highlightPosition.position,
-					PositionType.GUITAR_NOTE);
-			final int laneY = getLaneY(highlightPosition.string, strings);
-			drawGuitarNoteHighlight(g, positionHighlight, currentX, laneY);
-		}
+//		final ArrayList2<PositionWithStringOrNoteId> positions = highlightManager.getPositionsWithStrings(pressXTime,
+//				highlight.position, pressY, y);
+//		ArrayList2<ChordOrNote> chordsAndNotes = PositionType.GUITAR_NOTE.getPositions(data);
+//		final int strings = data.getCurrentArrangement().tuning.strings;
+//
+//		for (final PositionWithStringOrNoteId highlightPosition : positions) {
+//			if (highlightPosition.chordId != null) {
+//				final chordOrNote chordOrNote = chordsAndNotes.get(highlightPosition.chordId);
+//				final PositionWithIdAndType positionHighlight = PositionWithIdAndType.create(highlightPosition.chordId,
+//						chord);
+//				drawGuitarNoteHighlight(g, positionHighlight, currentX, y);
+//				continue;
+//			}
+//			if (highlightPosition.noteId != null) {
+//				final Note note = notes.get(highlightPosition.noteId);
+//				final PositionWithIdAndType positionHighlight = PositionWithIdAndType.create(highlightPosition.noteId,
+//						note);
+//				drawGuitarNoteHighlight(g, positionHighlight, currentX, y);
+//				continue;
+//			}
+//
+//			final PositionWithIdAndType positionHighlight = PositionWithIdAndType.create(highlightPosition.position,
+//					PositionType.GUITAR_NOTE);
+//			final int laneY = getLaneY(highlightPosition.string, strings);
+//			drawGuitarNoteHighlight(g, positionHighlight, currentX, laneY);
+//		}
 	}
 
 	public void draw(final Graphics g) {
+		final MouseButtonPressData leftPressPosition = mouseButtonPressReleaseHandler
+				.getPressPosition(MouseButton.LEFT_BUTTON);
+		if (leftPressPosition != null) {
+			final DragTypeDrawer drawer = dragDrawers.get(leftPressPosition.highlight.type);
+			drawer.drawDrag(g, leftPressPosition.highlight, mouseHandler.getMouseX());
+			return;
+		}
+
 		final int x = mouseHandler.getMouseX();
 		final int y = mouseHandler.getMouseY();
 		final PositionWithIdAndType highlight = highlightManager.getHighlight(x, y);

@@ -5,12 +5,13 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.handShapesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 
+import java.util.function.BiFunction;
+
+import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
-import log.charter.song.Chord;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
-import log.charter.song.Note;
 import log.charter.song.Position;
 import log.charter.song.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -24,9 +25,8 @@ public class PositionWithIdAndType extends Position {
 
 		public Anchor anchor;
 		public Beat beat;
-		public Chord chord;
+		public ChordOrNote chordOrNote;
 		public HandShape handShape;
-		public Note note;
 		public Vocal vocal;
 
 		public TemporaryValue(final int position, final PositionType type) {
@@ -52,19 +52,14 @@ public class PositionWithIdAndType extends Position {
 			this.beat = beat;
 		}
 
-		public TemporaryValue(final int id, final Chord chord) {
-			this(chord.position, chord.position + chord.length(), id, PositionType.GUITAR_NOTE);
-			this.chord = chord;
+		public TemporaryValue(final int id, final ChordOrNote chordOrNote) {
+			this(chordOrNote.position, chordOrNote.position + chordOrNote.length(), id, PositionType.GUITAR_NOTE);
+			this.chordOrNote = chordOrNote;
 		}
 
 		public TemporaryValue(final int id, final HandShape handShape) {
 			this(handShape.position, handShape.position + handShape.length, id, PositionType.HAND_SHAPE);
 			this.handShape = handShape;
-		}
-
-		public TemporaryValue(final int id, final Note note) {
-			this(note.position, note.position + note.sustain, id, PositionType.GUITAR_NOTE);
-			this.note = note;
 		}
 
 		public TemporaryValue(final int id, final Vocal vocal) {
@@ -73,7 +68,7 @@ public class PositionWithIdAndType extends Position {
 		}
 
 		public PositionWithIdAndType transform() {
-			return new PositionWithIdAndType(position, endPosition, id, type, anchor, beat, chord, handShape, note,
+			return new PositionWithIdAndType(position, endPosition, id, type, anchor, beat, chordOrNote, handShape,
 					vocal);
 		}
 	}
@@ -90,16 +85,12 @@ public class PositionWithIdAndType extends Position {
 		return new TemporaryValue(id, beat).transform();
 	}
 
-	public static PositionWithIdAndType create(final int id, final Chord chord) {
-		return new TemporaryValue(id, chord).transform();
+	public static PositionWithIdAndType create(final int id, final ChordOrNote chordOrNote) {
+		return new TemporaryValue(id, chordOrNote).transform();
 	}
 
 	public static PositionWithIdAndType create(final int id, final HandShape handShape) {
 		return new TemporaryValue(id, handShape).transform();
-	}
-
-	public static PositionWithIdAndType create(final int id, final Note note) {
-		return new TemporaryValue(id, note).transform();
 	}
 
 	public static PositionWithIdAndType create(final int id, final Vocal vocal) {
@@ -107,27 +98,22 @@ public class PositionWithIdAndType extends Position {
 	}
 
 	public enum PositionType {
-		ANCHOR(data -> data.getCurrentArrangementLevel().anchors.mapWithId(PositionWithIdAndType::create)), //
-		BEAT(data -> data.songChart.beatsMap.beats.mapWithId(PositionWithIdAndType::create)), //
+		ANCHOR(data -> data.getCurrentArrangementLevel().anchors, PositionWithIdAndType::create), //
+		BEAT(data -> data.songChart.beatsMap.beats, PositionWithIdAndType::create), //
 		GUITAR_NOTE(data -> {
 			final Level currentLevel = data.getCurrentArrangementLevel();
-			final ArrayList2<PositionWithIdAndType> list = currentLevel.notes.mapWithId(PositionWithIdAndType::create);
-			list.addAll(currentLevel.chords.mapWithId(PositionWithIdAndType::create));
+			final ArrayList2<ChordOrNote> list = currentLevel.notes.map(ChordOrNote::new);
+			list.addAll(currentLevel.chords.map(ChordOrNote::new));
 			list.sort(null);
+
 			return list;
-		}), //
-		HAND_SHAPE(data -> data.getCurrentArrangementLevel().handShapes.mapWithId(PositionWithIdAndType::create)), //
-		NONE(data -> new ArrayList2<>()), //
-		VOCAL(data -> data.songChart.vocals.vocals.mapWithId(PositionWithIdAndType::create));
+		}, PositionWithIdAndType::create), //
+		HAND_SHAPE(data -> data.getCurrentArrangementLevel().handShapes, PositionWithIdAndType::create), //
+		NONE(data -> new ArrayList2<>(), (id, nothing) -> null), //
+		VOCAL(data -> data.songChart.vocals.vocals, PositionWithIdAndType::create);
 
-		public static interface PositionChooser {
-			ArrayList2<PositionWithIdAndType> getAvailablePositionsForSelection(ChartData data);
-		}
-
-		public final PositionChooser positionChooser;
-
-		private PositionType(final PositionChooser positionChooser) {
-			this.positionChooser = positionChooser;
+		public static interface PositionChooser<T extends Position> {
+			ArrayList2<T> getAvailablePositionsForSelection(ChartData data);
 		}
 
 		public static PositionType fromY(final int y, final EditMode mode) {
@@ -161,6 +147,21 @@ public class PositionWithIdAndType extends Position {
 
 			return NONE;
 		}
+
+		private final PositionChooser<?> positionChooser;
+		public final PositionChooser<PositionWithIdAndType> positionWithIdAndTypeChooser;
+
+		private <T extends Position> PositionType(final PositionChooser<T> positionChooser,
+				final BiFunction<Integer, T, PositionWithIdAndType> mapper) {
+			this.positionChooser = positionChooser;
+			positionWithIdAndTypeChooser = data -> positionChooser.getAvailablePositionsForSelection(data)
+					.mapWithId(mapper);
+		}
+
+		@SuppressWarnings("unchecked")
+		public <T> ArrayList2<T> getPositions(final ChartData data) {
+			return (ArrayList2<T>) positionChooser.getAvailablePositionsForSelection(data);
+		}
 	}
 
 	public final int endPosition;
@@ -169,13 +170,12 @@ public class PositionWithIdAndType extends Position {
 
 	public final Anchor anchor;
 	public final Beat beat;
-	public final Chord chord;
+	public final ChordOrNote chordOrNote;
 	public final HandShape handShape;
-	public final Note note;
 	public final Vocal vocal;
 
 	private PositionWithIdAndType(final int position, final int endPosition, final Integer id, final PositionType type,
-			final Anchor anchor, final Beat beat, final Chord chord, final HandShape handShape, final Note note,
+			final Anchor anchor, final Beat beat, final ChordOrNote chordOrNote, final HandShape handShape,
 			final Vocal vocal) {
 		super(position);
 		this.endPosition = endPosition;
@@ -184,9 +184,8 @@ public class PositionWithIdAndType extends Position {
 
 		this.anchor = anchor;
 		this.beat = beat;
-		this.chord = chord;
+		this.chordOrNote = chordOrNote;
 		this.handShape = handShape;
-		this.note = note;
 		this.vocal = vocal;
 	}
 }

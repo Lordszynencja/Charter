@@ -7,7 +7,7 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.SelectionManager;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.song.Vocal;

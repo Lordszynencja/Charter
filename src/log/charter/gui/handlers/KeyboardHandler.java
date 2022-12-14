@@ -256,16 +256,6 @@ public class KeyboardHandler implements KeyListener {
 //		setChanged();
 	}
 
-	public void doubleGridSize() {
-		data.gridSize *= 2;
-	}
-
-	public void halfGridSize() {
-		if (data.gridSize % 2 == 0) {
-			data.gridSize /= 2;
-		}
-	}
-
 	@Override
 	public void keyReleased(final KeyEvent e) {
 		switch (e.getKeyCode()) {

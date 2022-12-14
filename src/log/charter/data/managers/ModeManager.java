@@ -8,6 +8,7 @@ import log.charter.data.EditMode;
 import log.charter.data.managers.modes.GuitarModeHandler;
 import log.charter.data.managers.modes.ModeHandler;
 import log.charter.data.managers.modes.VocalModeHandler;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.KeyboardHandler;

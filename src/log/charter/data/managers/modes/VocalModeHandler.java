@@ -3,8 +3,10 @@ package log.charter.data.managers.modes;
 import java.util.function.Function;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.SelectionManager;
-import log.charter.data.managers.SelectionManager.Selection;
+import log.charter.data.PositionWithIdAndType.PositionType;
+import log.charter.data.managers.selection.Selection;
+import log.charter.data.managers.selection.SelectionAccessor;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.KeyboardHandler;
@@ -52,12 +54,13 @@ public class VocalModeHandler extends ModeHandler {
 
 	@Override
 	public void handleLyricsEdit() {
-		final ArrayList2<Selection<Vocal>> selectedVocals = selectionManager.getSelectedVocals();
-		if (selectedVocals.isEmpty()) {
+		final SelectionAccessor<Vocal> selectedVocalsAccessor = selectionManager
+				.getSelectedAccessor(PositionType.VOCAL);
+		if (!selectedVocalsAccessor.isSelected()) {
 			return;
 		}
 
-		final Selection<Vocal> selection = selectedVocals.get(0);
+		final Selection<Vocal> selection = selectedVocalsAccessor.getSortedSelected().get(0);
 
 		new LyricPane(selection.id, selection.selectable, frame, data, selectionManager, undoSystem);
 	}

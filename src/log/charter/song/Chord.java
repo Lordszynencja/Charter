@@ -2,11 +2,10 @@ package log.charter.song;
 
 import static log.charter.util.Utils.mapInteger;
 
-import log.charter.data.managers.SelectionManager.Selectable;
 import log.charter.io.rs.xml.song.ArrangementChord;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class Chord extends Selectable {
+public class Chord extends Position {
 	public int chordId;
 	public boolean palmMute;
 	public boolean fretHandMute;
@@ -26,11 +25,6 @@ public class Chord extends Selectable {
 		accent = mapInteger(arrangementChord.accent);
 		chordNotes = arrangementChord.chordNotes == null ? new ArrayList2<>()
 				: arrangementChord.chordNotes.map(Note::new);
-	}
-
-	@Override
-	public String getSignature() {
-		return position + "";
 	}
 
 	public int length() {

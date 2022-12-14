@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import log.charter.data.ChartData;
 import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.SelectionManager;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.chartPanelDrawers.ArrangementDrawer;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BackgroundDrawer;
@@ -39,7 +39,8 @@ public class ChartPanel extends JPanel {
 
 		backgroundDrawer.init(data, this);
 		arrangementDrawer.init(audioDrawer, beatsDrawer, this, data, modeManager, selectionManager);
-		highlightDrawer.init(data, highlightManager, modeManager, mouseHandler, mouseButtonPressReleaseHandler);
+		highlightDrawer.init(data, highlightManager, modeManager, mouseHandler, mouseButtonPressReleaseHandler,
+				selectionManager);
 
 		addMouseListener(mouseHandler);
 		addMouseMotionListener(mouseHandler);

@@ -5,8 +5,8 @@ import java.awt.event.KeyEvent;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
-import log.charter.data.ChartData;
 import log.charter.gui.CharterFrame;
+import log.charter.song.BeatsMap;
 
 public class GridPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
@@ -14,14 +14,14 @@ public class GridPane extends ParamsPane {
 	private int gridSize;
 	private boolean useGrid;
 
-	private final ChartData data;
+	private final BeatsMap beatsMap;
 
-	public GridPane(final CharterFrame frame, final ChartData data) {
+	public GridPane(final CharterFrame frame, final BeatsMap beatsMap) {
 		super(frame, "Grid options", 5);
-		this.data = data;
+		this.beatsMap = beatsMap;
 
-		gridSize = data.gridSize;
-		useGrid = data.useGrid;
+		gridSize = beatsMap.gridSize;
+		useGrid = beatsMap.useGrid;
 
 		addConfigValue(0, "Grid size", gridSize, 50, createIntValidator(1, 1024, false),
 				val -> gridSize = Integer.valueOf(val), false);
@@ -38,8 +38,8 @@ public class GridPane extends ParamsPane {
 	}
 
 	private void saveAndExit() {
-		data.gridSize = gridSize;
-		data.useGrid = useGrid;
+		beatsMap.gridSize = gridSize;
+		beatsMap.useGrid = useGrid;
 
 		dispose();
 	}

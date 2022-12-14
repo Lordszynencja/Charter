@@ -7,6 +7,8 @@ import log.charter.util.CollectionUtils.HashMap2;
 
 public class BeatsMap {
 	public int songLengthMs;
+	public boolean useGrid = true;
+	public int gridSize = 4;
 
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 	public ArrayList2<Event> events = new ArrayList2<>();
@@ -173,7 +175,11 @@ public class BeatsMap {
 		}
 	}
 
-	public int getPositionFromGridClosestTo(final int position, final int gridSize) {
+	public int getPositionFromGridClosestTo(final int position) {
+		if (!useGrid) {
+			return position;
+		}
+
 		final int nextBeatId = Position.findFirstIdAfter(beats, position);
 		if (nextBeatId == -1) {
 			return beats.getLast().position;

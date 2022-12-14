@@ -21,7 +21,7 @@ import javax.swing.KeyStroke;
 import log.charter.data.ChartData;
 import log.charter.data.EditMode;
 import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.SelectionManager;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.handlers.AudioHandler;
@@ -126,7 +126,7 @@ public class CharterMenuBar extends JMenuBar {
 
 		menu.addSeparator();
 		menu.add(createItem("Song options", e -> new SongOptionsPane(frame, songFileHandler, data)));
-		menu.add(createItem("Grid options", button('G'), e -> new GridPane(frame, data)));
+		menu.add(createItem("Grid options", button('G'), e -> new GridPane(frame, data.songChart.beatsMap)));
 
 		return menu;
 	}
@@ -217,8 +217,12 @@ public class CharterMenuBar extends JMenuBar {
 		final JMenu menu = new JMenu("Notes");
 
 		menu.add(createItem("Snap notes to grid", ctrl('F'), e -> keyboardHandler.snapNotes()));
-		menu.add(createItem("Double grid size", button(VK_PERIOD), e -> keyboardHandler.doubleGridSize()));
-		menu.add(createItem("Half grid size", button(VK_COMMA), e -> keyboardHandler.halfGridSize()));
+		menu.add(createItem("Double grid size", button(VK_PERIOD), e -> data.songChart.beatsMap.gridSize *= 2));
+		menu.add(createItem("Half grid size", button(VK_COMMA), e -> {
+			if (data.songChart.beatsMap.gridSize % 2 == 0) {
+				data.songChart.beatsMap.gridSize /= 2;
+			}
+		}));
 
 		menu.addSeparator();
 		final JMenu copyFromMenu = new JMenu("Copy from");

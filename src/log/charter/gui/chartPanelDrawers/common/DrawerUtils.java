@@ -11,7 +11,7 @@ public class DrawerUtils {
 
 	public static final int beatTextY = 50;
 	public static final int beatSizeTextY = beatTextY + 15;
-	public static final int anchorY = beatSizeTextY + 5;
+	public static final int anchorY = beatSizeTextY + 15;
 	public static final int anchorTextY = anchorY + 10;
 	public static final int lanesTop = anchorTextY + 15;
 	public static final int lanesBottom = lanesTop + 300;

@@ -12,7 +12,7 @@ import log.charter.data.ChartData;
 import log.charter.data.Config;
 import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.SelectionManager;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
@@ -60,7 +60,7 @@ public class CharterFrame extends JFrame {
 
 		audioDrawer.init(data, chartPanel);
 		audioHandler.init(data, this, keyboardHandler);
-		beatsDrawer.init(data, chartPanel, selectionManager);
+		beatsDrawer.init(data, chartPanel, mouseButtonPressReleaseHandler, selectionManager);
 		data.init(menuBar, selectionManager, undoSystem);
 		keyboardHandler.init(audioHandler, data, this, modeManager, mouseHandler);
 		highlightManager.init(data, modeManager, selectionManager);

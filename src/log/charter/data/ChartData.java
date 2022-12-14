@@ -8,7 +8,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import log.charter.data.managers.SelectionManager;
+import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterMenuBar;
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
@@ -30,8 +30,6 @@ public class ChartData {
 
 	public int time = 0;
 	public int nextTime = 0;
-	public int gridSize = 1;
-	public boolean useGrid = true;
 
 	private CharterMenuBar menuBar;
 	private SelectionManager selectionManager;
@@ -142,8 +140,6 @@ public class ChartData {
 		currentDiff = 0;
 		time = 0;
 		nextTime = 0;
-		gridSize = 4;
-		useGrid = true;
 
 		selectionManager.clear();
 		undoSystem.clear();
