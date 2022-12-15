@@ -1,6 +1,6 @@
 package log.charter.data.managers.selection;
 
-import log.charter.data.PositionWithIdAndType;
+import log.charter.data.types.PositionWithIdAndType;
 import log.charter.song.Position;
 
 public interface TypeSelectionManager<T extends Position> {

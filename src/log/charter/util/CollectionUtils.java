@@ -39,6 +39,14 @@ public class CollectionUtils {
 			super(list);
 		}
 
+		@SafeVarargs
+		public ArrayList2(final T... elements) {
+			super();
+			for (final T element : elements) {
+				add(element);
+			}
+		}
+
 		public T getLast() {
 			return isEmpty() ? null : get(size() - 1);
 		}

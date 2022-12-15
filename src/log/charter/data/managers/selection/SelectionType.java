@@ -1,6 +1,6 @@
 package log.charter.data.managers.selection;
 
-import log.charter.data.PositionWithIdAndType.PositionType;
+import log.charter.data.types.PositionType;
 
 public enum SelectionType {
 	ANCHOR, //

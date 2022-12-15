@@ -6,8 +6,8 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import log.charter.data.PositionWithIdAndType;
 import log.charter.data.managers.HighlightManager;
+import log.charter.data.types.PositionWithIdAndType;
 import log.charter.util.Position2D;
 
 public class MouseButtonPressReleaseHandler {

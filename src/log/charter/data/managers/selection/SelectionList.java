@@ -11,12 +11,19 @@ class SelectionList<T extends Position> {
 		Selection<T> make(int id, T selectable);
 	}
 
+	static interface TemporarySelectionSupplier<T extends Position> {
+		Selection<T> make();
+	}
+
 	private final SelectionMaker<T> selectionMaker;
+	private final TemporarySelectionSupplier<T> temporarySelectionSupplier;
 
 	final ArrayList2<Selection<T>> selected = new ArrayList2<>();
 
-	SelectionList(final SelectionMaker<T> selectionMaker) {
+	SelectionList(final SelectionMaker<T> selectionMaker,
+			final TemporarySelectionSupplier<T> temporarySelectionSupplier) {
 		this.selectionMaker = selectionMaker;
+		this.temporarySelectionSupplier = temporarySelectionSupplier;
 	}
 
 	private void addSelectables(final ArrayList2<T> available, final int fromId, final int toId) {
@@ -85,7 +92,20 @@ class SelectionList<T extends Position> {
 		}
 	}
 
+	private ArrayList2<Selection<T>> getSelectionWithTemporary() {
+		if (!selected.isEmpty()) {
+			return selected;
+		}
+
+		final Selection<T> temporarySelection = temporarySelectionSupplier.make();
+		if (temporarySelection == null) {
+			return new ArrayList2<>();
+		}
+
+		return new ArrayList2<>(temporarySelection);
+	}
+
 	public SelectionAccessor<T> getAccessor() {
-		return new SelectionAccessor<>(() -> selected);
+		return new SelectionAccessor<>(this::getSelectionWithTemporary);
 	}
 }

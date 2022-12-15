@@ -6,9 +6,10 @@ import static log.charter.util.ScalingUtils.xToTime;
 import java.util.Map;
 
 import log.charter.data.ChartData;
-import log.charter.data.PositionWithIdAndType;
-import log.charter.data.PositionWithIdAndType.PositionType;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.types.PositionType;
+import log.charter.data.types.PositionWithIdAndType;
+import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.HandShape;
@@ -29,15 +30,16 @@ public class SelectionManager {
 
 	private final Map<PositionType, TypeSelectionManager<?>> typeSelectionManagers = new HashMap2<>();
 
-	public void init(final ChartData data, final ModeManager modeManager) {
+	public void init(final ChartData data, final ModeManager modeManager,
+			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
 		this.data = data;
 		this.modeManager = modeManager;
 
-		anchorsManager = new AnchorsSelectionManager(data);
-		beatsManager = new BeatsSelectionManager(data);
-		chordsNotesManager = new ChordsNotesSelectionManager(data);
-		handShapesManager = new HandShapesSelectionManager(data);
-		vocalsManager = new VocalsSelectionManager(data);
+		anchorsManager = new AnchorsSelectionManager(data, mouseButtonPressReleaseHandler);
+		beatsManager = new BeatsSelectionManager(data, mouseButtonPressReleaseHandler);
+		chordsNotesManager = new ChordsNotesSelectionManager(data, mouseButtonPressReleaseHandler);
+		handShapesManager = new HandShapesSelectionManager(data, mouseButtonPressReleaseHandler);
+		vocalsManager = new VocalsSelectionManager(data, mouseButtonPressReleaseHandler);
 
 		typeSelectionManagers.put(PositionType.ANCHOR, anchorsManager);
 		typeSelectionManagers.put(PositionType.BEAT, beatsManager);
@@ -77,8 +79,7 @@ public class SelectionManager {
 
 	public PositionWithIdAndType findExistingPosition(final int x, final int y) {
 		final PositionType positionType = PositionType.fromY(y, modeManager.editMode);
-		final ArrayList2<PositionWithIdAndType> positions = positionType.positionWithIdAndTypeChooser
-				.getAvailablePositionsForSelection(data);
+		final ArrayList2<PositionWithIdAndType> positions = positionType.manager.getPositionsWithIdsAndTypes(data);
 
 		final ArrayList2<PositionWithLink> positionsWithLinks = PositionWithLink.fromPositionsWithIdAndType(positions);
 		final int position = xToTime(x, data.time);

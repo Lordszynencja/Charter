@@ -19,9 +19,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 import log.charter.data.ChartData;
-import log.charter.data.PositionWithIdAndType.PositionType;
 import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.data.managers.selection.SelectionManager;
+import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -120,7 +120,7 @@ public class GuitarDrawer {
 			final int yTop = chordTopBottom.min - noteYOffset;
 			final int yBottom = chordTopBottom.max + noteYOffset;
 
-			final ShapePositionWithSize position = new ShapePositionWithSize(x, yTop, noteWidth, yBottom - yTop - 1)//
+			final ShapePositionWithSize position = new ShapePositionWithSize(x, yTop, noteWidth, yBottom - yTop + 1)//
 					.centeredX();
 			chordNotes.add(filledRectangle(position, repeatedChordColor));
 

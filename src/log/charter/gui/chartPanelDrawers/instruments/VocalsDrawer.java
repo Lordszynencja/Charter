@@ -14,8 +14,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 import log.charter.data.ChartData;
-import log.charter.data.PositionWithIdAndType.PositionType;
 import log.charter.data.managers.selection.SelectionManager;
+import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;

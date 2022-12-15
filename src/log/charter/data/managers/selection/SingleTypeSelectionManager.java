@@ -1,15 +1,14 @@
 package log.charter.data.managers.selection;
 
-import log.charter.data.PositionWithIdAndType;
-import log.charter.data.managers.selection.SelectionList.SelectionMaker;
+import log.charter.data.types.PositionWithIdAndType;
 import log.charter.song.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 abstract class SingleTypeSelectionManager<T extends Position> implements TypeSelectionManager<T> {
 	private final SelectionList<T> selectionList;
 
-	SingleTypeSelectionManager(final SelectionMaker<T> selectionMaker) {
-		this.selectionList = new SelectionList<>(selectionMaker);
+	SingleTypeSelectionManager() {
+		this.selectionList = new SelectionList<>(this::makeSelection, this::getTemporarySelect);
 	}
 
 	abstract protected ArrayList2<T> getAvailable();
@@ -29,4 +28,8 @@ abstract class SingleTypeSelectionManager<T extends Position> implements TypeSel
 	public void clear() {
 		selectionList.clear();
 	}
+
+	abstract protected Selection<T> makeSelection(int id, T selectable);
+
+	abstract protected Selection<T> getTemporarySelect();
 }

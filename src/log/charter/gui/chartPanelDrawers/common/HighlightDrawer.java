@@ -23,12 +23,12 @@ import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.data.EditMode;
-import log.charter.data.PositionWithIdAndType;
-import log.charter.data.PositionWithIdAndType.PositionType;
 import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.data.managers.selection.SelectionManager;
+import log.charter.data.types.PositionType;
+import log.charter.data.types.PositionWithIdAndType;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
@@ -130,7 +130,7 @@ public class HighlightDrawer {
 		final int yTop = chordTopBottom.min - offset - 1;
 		final int yBottom = chordTopBottom.max + offset;
 
-		final ShapePositionWithSize chordPosition = new ShapePositionWithSize(x, yTop, noteWidth, yBottom - yTop - 1)//
+		final ShapePositionWithSize chordPosition = new ShapePositionWithSize(x, yTop, noteWidth, yBottom - yTop + 1)//
 				.centeredX();
 		strokedRectangle(chordPosition, highlightColor).draw(g);
 	}
@@ -139,32 +139,35 @@ public class HighlightDrawer {
 			final int y) {
 		final int strings = data.getCurrentArrangement().tuning.strings;
 
-		if (highlight.chordOrNote != null) {
+		if (highlight.chordOrNote == null) {
+			final int lane = yToLane(y, strings);
+			drawNoteHighlight(g, lane, highlight.position, 0, strings);
 
-			if (highlight.chordOrNote.chord != null) {
-				final Chord chord = highlight.chordOrNote.chord;
-				if (!chord.chordNotes.isEmpty()) {
-					for (final Note note : chord.chordNotes) {
-						drawNoteHighlight(g, note.string, note.position, note.sustain, strings);
-					}
-
-					return;
-				}
-
-				final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
-				drawRepeatedChordHighlight(g, chordTemplate, chord.position, strings);
-
-				return;
-			}
-			if (highlight.chordOrNote.note != null) {
-				final Note note = highlight.chordOrNote.note;
-				drawNoteHighlight(g, note.string, note.position, note.sustain, strings);
-				return;
-			}
+			return;
 		}
 
-		final int lane = yToLane(y, strings);
-		drawNoteHighlight(g, lane, highlight.position, 0, strings);
+		if (highlight.chordOrNote.chord != null) {
+			final Chord chord = highlight.chordOrNote.chord;
+			if (!chord.chordNotes.isEmpty()) {
+				for (final Note note : chord.chordNotes) {
+					drawNoteHighlight(g, note.string, note.position, note.sustain, strings);
+				}
+
+				return;
+			}
+
+			final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
+			drawRepeatedChordHighlight(g, chordTemplate, chord.position, strings);
+
+			return;
+		}
+
+		if (highlight.chordOrNote.note != null) {
+			final Note note = highlight.chordOrNote.note;
+			drawNoteHighlight(g, note.string, note.position, note.sustain, strings);
+
+			return;
+		}
 	}
 
 	private ShapePositionWithSize getHandShapeHighlightPosition(final PositionWithIdAndType highlight) {
@@ -223,10 +226,6 @@ public class HighlightDrawer {
 		lineVertical(x, beatTextY, lanesBottom, highlightColor).draw(g);
 	}
 
-	private void drawNoteDrag() {
-
-	}
-
 	private void drawGuitarNoteDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
 		if (highlight.chordOrNote == null//
 				&& !selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE).isSelected()) {
@@ -240,15 +239,23 @@ public class HighlightDrawer {
 			final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
 
 			if (chordOrNote.chord != null) {
-//				drawRepeatedChordHighlight(g, chordTemplate, position, strings);
-			} else {
-				drawNoteHighlight(g, chordOrNote.note.string, position, chordOrNote.note.sustain, strings);
-			}
-		}
+				final Chord chord = chordOrNote.chord;
+				if (!chord.chordNotes.isEmpty()) {
+					for (final Note note : chord.chordNotes) {
+						drawNoteHighlight(g, note.string, position, note.sustain, strings);
+					}
 
-//		final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
-//		final int dragX = timeToX(position, data.time);
-//		lineVertical(dragX, anchorY, lanesBottom, highlightColor).draw(g);
+					return;
+				}
+
+				final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
+				drawRepeatedChordHighlight(g, chordTemplate, position, strings);
+				return;
+			}
+
+			drawNoteHighlight(g, chordOrNote.note.string, position, chordOrNote.note.sustain, strings);
+			return;
+		}
 	}
 
 	private void drawHandShapeDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {

@@ -13,9 +13,9 @@ import static log.charter.util.ScalingUtils.xToTime;
 
 import log.charter.data.ChartData;
 import log.charter.data.Config;
-import log.charter.data.PositionWithIdAndType;
-import log.charter.data.PositionWithIdAndType.PositionType;
 import log.charter.data.managers.selection.SelectionManager;
+import log.charter.data.types.PositionType;
+import log.charter.data.types.PositionWithIdAndType;
 import log.charter.song.Beat;
 import log.charter.song.Chord;
 import log.charter.song.Note;
