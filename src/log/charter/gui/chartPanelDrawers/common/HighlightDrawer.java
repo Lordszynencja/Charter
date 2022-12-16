@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
 import log.charter.data.EditMode;
@@ -41,7 +42,6 @@ import log.charter.io.rs.xml.song.ChordTemplate;
 import log.charter.song.Chord;
 import log.charter.song.HandShape;
 import log.charter.song.Note;
-import log.charter.util.IntRange;
 import log.charter.util.Position2D;
 
 public class HighlightDrawer {
@@ -113,26 +113,18 @@ public class HighlightDrawer {
 		final int tailHeight = getAsOdd((noteHeight - 1) * 3 / 4) + 1;
 		final int tailLength = timeToXLength(length) - noteTailOffset - 2;
 		if (tailLength > 0) {
-			final int tailX = x + noteTailOffset + 1;
-			final ShapePositionWithSize tailPosition = new ShapePositionWithSize(tailX, y, tailLength + 1, tailHeight)//
+			final int tailX = x + noteTailOffset;
+			final ShapePositionWithSize tailPosition = new ShapePositionWithSize(tailX, y, tailLength + 2, tailHeight)//
 					.centeredY();
 			strokedRectangle(tailPosition, highlightColor).draw(g);
 		}
 	}
 
-	private void drawRepeatedChordHighlight(final Graphics g, final ChordTemplate chordTemplate, final int position,
-			final int strings) {
-		final int x = timeToX(position, data.time);
-		final IntRange stringRange = chordTemplate.getStringRange();
-		final IntRange chordTopBottom = new IntRange(getLaneY(stringRange.min, strings),
-				getLaneY(stringRange.max, strings));
-		final int offset = getLaneSize(strings) / 2;
-		final int yTop = chordTopBottom.min - offset - 1;
-		final int yBottom = chordTopBottom.max + offset;
-
-		final ShapePositionWithSize chordPosition = new ShapePositionWithSize(x, yTop, noteWidth, yBottom - yTop + 1)//
-				.centeredX();
-		strokedRectangle(chordPosition, highlightColor).draw(g);
+	private void drawChordHighlight(final Graphics g, final Chord chord, final ChordTemplate chordTemplate,
+			final int position, final int strings) {
+		for (final Entry<Integer, Integer> chordFret : chordTemplate.frets.entrySet()) {
+			drawNoteHighlight(g, chordFret.getKey(), position, chord.length, strings);
+		}
 	}
 
 	private void drawGuitarNoteHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
@@ -148,16 +140,8 @@ public class HighlightDrawer {
 
 		if (highlight.chordOrNote.chord != null) {
 			final Chord chord = highlight.chordOrNote.chord;
-			if (!chord.chordNotes.isEmpty()) {
-				for (final Note note : chord.chordNotes) {
-					drawNoteHighlight(g, note.string, note.position, note.sustain, strings);
-				}
-
-				return;
-			}
-
 			final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
-			drawRepeatedChordHighlight(g, chordTemplate, chord.position, strings);
+			drawChordHighlight(g, chord, chordTemplate, chord.position, strings);
 
 			return;
 		}
@@ -237,19 +221,11 @@ public class HighlightDrawer {
 		if (highlight.chordOrNote != null) {
 			final ChordOrNote chordOrNote = highlight.chordOrNote;
 			final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
-
 			if (chordOrNote.chord != null) {
 				final Chord chord = chordOrNote.chord;
-				if (!chord.chordNotes.isEmpty()) {
-					for (final Note note : chord.chordNotes) {
-						drawNoteHighlight(g, note.string, position, note.sustain, strings);
-					}
-
-					return;
-				}
-
 				final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
-				drawRepeatedChordHighlight(g, chordTemplate, position, strings);
+
+				drawChordHighlight(g, chord, chordTemplate, position, strings);
 				return;
 			}
 

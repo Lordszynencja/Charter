@@ -16,4 +16,9 @@ public class BendValue extends Position {
 		super(arrangementBendValue.time);
 		bendValue = arrangementBendValue.step;
 	}
+
+	public BendValue(final BendValue other) {
+		super(other);
+		bendValue = other.bendValue;
+	}
 }

@@ -14,6 +14,7 @@ import log.charter.gui.chartPanelDrawers.common.BackgroundDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.HighlightDrawer;
 import log.charter.gui.chartPanelDrawers.common.MarkerDrawer;
+import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseHandler;
 
@@ -32,13 +33,13 @@ public class ChartPanel extends JPanel {
 	}
 
 	public void init(final AudioDrawer audioDrawer, final BeatsDrawer beatsDrawer, final ChartData data,
-			final HighlightManager highlightManager, final ModeManager modeManager,
-			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final MouseHandler mouseHandler,
-			final SelectionManager selectionManager) {
+			final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
+			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
+			final MouseHandler mouseHandler, final SelectionManager selectionManager) {
 		this.data = data;
 
 		backgroundDrawer.init(data, this);
-		arrangementDrawer.init(audioDrawer, beatsDrawer, this, data, modeManager, selectionManager);
+		arrangementDrawer.init(audioDrawer, beatsDrawer, this, data, keyboardHandler, modeManager, selectionManager);
 		highlightDrawer.init(data, highlightManager, modeManager, mouseHandler, mouseButtonPressReleaseHandler,
 				selectionManager);
 

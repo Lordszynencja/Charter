@@ -1,7 +1,8 @@
 package log.charter.song;
 
+import static java.util.stream.Collectors.toCollection;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 import log.charter.io.rs.xml.song.ArrangementEvent;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -32,7 +33,7 @@ public class Event extends Position {
 				}
 			}
 
-			return null;
+			return HIGH_PITCH_TICK;
 		}
 	}
 
@@ -53,7 +54,7 @@ public class Event extends Position {
 					return true;
 				})//
 				.map(Event::new)//
-				.collect(Collectors.toCollection(ArrayList2::new));
+				.collect(toCollection(ArrayList2::new));
 
 		return events;
 	}

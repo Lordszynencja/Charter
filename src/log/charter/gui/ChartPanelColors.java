@@ -40,7 +40,6 @@ public class ChartPanelColors {
 		NOTE_5(230, 20, 230), //
 
 		ANCHOR(128, 0, 0), //
-		REPEATED_CHORD(0, 200, 200, 128), //
 		HAND_SHAPE(0, 128, 255, 255), //
 
 		NOTE_TAIL_0(210, 0, 0), //

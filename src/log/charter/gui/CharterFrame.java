@@ -25,6 +25,7 @@ import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseHandler;
 import log.charter.gui.handlers.SongFileHandler;
+import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.main.LogCharterRSMain;
 
 public class CharterFrame extends JFrame {
@@ -72,8 +73,8 @@ public class CharterFrame extends JFrame {
 		selectionManager.init(data, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 
-		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, modeManager, mouseButtonPressReleaseHandler,
-				mouseHandler, selectionManager);
+		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
+				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 		menuBar.init(audioDrawer, audioHandler, data, this, keyboardHandler, modeManager, selectionManager,
 				songFileHandler, undoSystem);
 

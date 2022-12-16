@@ -21,6 +21,12 @@ public class ChordOrNote extends Position {
 	}
 
 	public int length() {
-		return chord != null ? chord.length() : note.sustain;
+		return chord != null ? chord.length : note.sustain;
+	}
+
+	public ChordOrNote(final ChordOrNote other) {
+		super(other);
+		chord = other.chord == null ? null : new Chord(other.chord);
+		note = other.note == null ? null : new Note(other.note);
 	}
 }

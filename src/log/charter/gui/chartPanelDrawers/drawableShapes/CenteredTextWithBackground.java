@@ -32,7 +32,7 @@ class CenteredTextWithBackground implements DrawableShape {
 		if (backgroundColor != null) {
 			final int bgY = textY - height;
 			g.setColor(backgroundColor);
-			g.fillRect(textX, bgY - 1, width, height + 2);
+			g.fillRect(textX - 1, bgY - 2, width + 1, height + 4);
 		}
 
 		g.setColor(textColor);

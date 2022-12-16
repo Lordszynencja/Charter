@@ -77,10 +77,7 @@ public class SelectionManager {
 		}
 	}
 
-	public PositionWithIdAndType findExistingPosition(final int x, final int y) {
-		final PositionType positionType = PositionType.fromY(y, modeManager.editMode);
-		final ArrayList2<PositionWithIdAndType> positions = positionType.manager.getPositionsWithIdsAndTypes(data);
-
+	private PositionWithIdAndType findExistingLong(final int x, final ArrayList2<PositionWithIdAndType> positions) {
 		final ArrayList2<PositionWithLink> positionsWithLinks = PositionWithLink.fromPositionsWithIdAndType(positions);
 		final int position = xToTime(x, data.time);
 		final Integer id = Position.findClosest(positionsWithLinks, position);
@@ -94,6 +91,32 @@ public class SelectionManager {
 		}
 
 		return closest;
+	}
+
+	private PositionWithIdAndType findExistingPoint(final int x, final ArrayList2<PositionWithIdAndType> positions) {
+		final int position = xToTime(x, data.time);
+		final Integer id = Position.findClosest(positions, position);
+		if (id == null) {
+			return null;
+		}
+
+		final PositionWithIdAndType closest = positions.get(id);
+		if (x - timeToX(closest.position, data.time) < -20 || x - timeToX(closest.position, data.time) > 20) {
+			return null;
+		}
+
+		return closest;
+	}
+
+	public PositionWithIdAndType findExistingPosition(final int x, final int y) {
+		final PositionType positionType = PositionType.fromY(y, modeManager.editMode);
+		final ArrayList2<PositionWithIdAndType> positions = positionType.manager.getPositionsWithIdsAndTypes(data);
+
+		if (positionType == PositionType.HAND_SHAPE || positionType == PositionType.VOCAL) {
+			return findExistingLong(x, positions);
+		}
+
+		return findExistingPoint(x, positions);
 	}
 
 	public void click(final int x, final int y, final boolean ctrl, final boolean shift) {
@@ -127,7 +150,7 @@ public class SelectionManager {
 	public <T extends Position> SelectionAccessor<T> getSelectedAccessor(final PositionType type) {
 		final TypeSelectionManager<?> typeSelectionManager = typeSelectionManagers.get(type);
 		if (typeSelectionManager == null) {
-			return null;
+			return new SelectionAccessor<>(() -> new ArrayList2<>());
 		}
 
 		return (SelectionAccessor<T>) typeSelectionManager.getAccessor();

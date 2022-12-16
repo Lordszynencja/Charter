@@ -174,6 +174,10 @@ public class KeyboardHandler implements KeyListener {
 	@Override
 	public void keyPressed(final KeyEvent e) {
 		final int keyCode = e.getKeyCode();
+		if (keyCode == KeyEvent.VK_UNDEFINED) {
+			return;
+		}
+
 		if (data.isEmpty) {
 			switch (keyCode) {
 			case KeyEvent.VK_CONTROL:
@@ -204,11 +208,6 @@ public class KeyboardHandler implements KeyListener {
 		}).run();
 	}
 
-	public void delete() {
-		data.deleteSelected();
-//		data.setChanged();
-	}
-
 	public void paste() {
 		if (data.isEmpty) {
 			return;
@@ -229,11 +228,6 @@ public class KeyboardHandler implements KeyListener {
 
 	public void togglePullOff() {
 		data.toggleSelectedHammerOn(false, -1);
-//		data.setChanged();
-	}
-
-	public void toggleCrazy() {
-		data.toggleSelectedCrazy();
 //		data.setChanged();
 	}
 

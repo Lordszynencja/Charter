@@ -1,6 +1,7 @@
 package log.charter.io.rs.xml.song;
 
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -14,8 +15,10 @@ import log.charter.util.CollectionUtils.HashMap2;
 
 @XStreamAlias("level")
 public class ArrangementLevel {
-	public static ArrayList2<ArrangementLevel> fromLevels(final HashMap2<Integer, Level> levels) {
-		final ArrayList2<ArrangementLevel> arrangementLevels = levels.map(ArrangementLevel::new);
+	public static ArrayList2<ArrangementLevel> fromLevels(final HashMap2<Integer, Level> levels,
+			final ArrayList2<ChordTemplate> chordTemplates) {
+		final ArrayList2<ArrangementLevel> arrangementLevels = levels
+				.map((difficulty, level) -> new ArrangementLevel(difficulty, level, chordTemplates));
 
 		arrangementLevels.sort((a, b) -> Integer.compare(a.difficulty, b.difficulty));
 
@@ -34,18 +37,35 @@ public class ArrangementLevel {
 	public ArrangementLevel() {
 	}
 
-	private ArrangementLevel(final int difficulty, final Level levelChart) {
+	private ArrangementLevel(final int difficulty, final Level levelChart,
+			final ArrayList2<ChordTemplate> chordTemplates) {
 		this.difficulty = difficulty;
 
-		levelChart.notes.forEach(note -> note.sustain = note.sustain >= Config.minTailLength ? note.sustain : 0);
+		levelChart.chordsAndNotes//
+				.stream().filter(chordOrNote -> chordOrNote.note != null)//
+				.map(chordOrNote -> chordOrNote.note)//
+				.forEach(note -> note.sustain = note.sustain >= Config.minTailLength ? note.sustain : 0);
 
-		notes = new CountedList<>(levelChart.notes.map(ArrangementNote::new));
-		chords = new CountedList<>(levelChart.chords.map(ArrangementChord::new));
+		notes = new CountedList<>();
+		levelChart.chordsAndNotes.stream()//
+				.filter(chordOrNote -> chordOrNote.note != null)//
+				.map(chordOrNote -> new ArrangementNote(chordOrNote.note))//
+				.forEach(notes.list::add);
+		chords = new CountedList<>();
+
+		levelChart.chordsAndNotes.stream()//
+				.filter(chordOrNote -> chordOrNote.chord != null)//
+				.map(chordOrNote -> new ArrangementChord(chordOrNote.chord,
+						chordTemplates.get(chordOrNote.chord.chordId)))//
+				.forEach(chords.list::add);
 		fretHandMutes = new CountedList<>();
 		anchors = new CountedList<>(levelChart.anchors.map(ArrangementAnchor::new));
 
-		final LinkedList<Chord> chordsForHandShapes = new LinkedList<>(levelChart.chords);
-		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>(levelChart.chords);
+		final LinkedList<Chord> chordsForHandShapes = levelChart.chordsAndNotes.stream()//
+				.filter(chordOrNote -> chordOrNote.chord != null)//
+				.map(chordOrNote -> chordOrNote.chord)//
+				.collect(Collectors.toCollection(LinkedList::new));
+		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
 		handShapes = new CountedList<>(levelChart.handShapes.map(handShape -> {
 			int chordId = 0;
 

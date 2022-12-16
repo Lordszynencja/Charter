@@ -17,4 +17,9 @@ public class Anchor extends Position {
 		super(arrangementAnchor.time);
 		fret = arrangementAnchor.fret;
 	}
+
+	public Anchor(final Anchor other) {
+		super(other);
+		fret = other.fret;
+	}
 }

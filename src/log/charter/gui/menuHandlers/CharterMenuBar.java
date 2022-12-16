@@ -1,7 +1,6 @@
-package log.charter.gui;
+package log.charter.gui.menuHandlers;
 
 import static java.awt.event.KeyEvent.VK_COMMA;
-import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.awt.event.KeyEvent.VK_ESCAPE;
 import static java.awt.event.KeyEvent.VK_F5;
 import static java.awt.event.KeyEvent.VK_PERIOD;
@@ -23,43 +22,41 @@ import log.charter.data.EditMode;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.panes.ConfigPane;
-import log.charter.gui.panes.GridPane;
-import log.charter.gui.panes.SongOptionsPane;
 import log.charter.main.LogCharterRSMain;
 import log.charter.song.ArrangementChart;
 import log.charter.util.CollectionUtils.HashMap2;
 
 public class CharterMenuBar extends JMenuBar {
-
 	private static final long serialVersionUID = -5784270027920161709L;
 
-	private static JMenuItem createItem(final String name, final ActionListener listener) {
+	static JMenuItem createItem(final String name, final ActionListener listener) {
 		final JMenuItem item = new JMenuItem(name);
 		item.addActionListener(listener);
 		return item;
 	}
 
-	private static JMenuItem createItem(final String name, final KeyStroke keyStroke, final ActionListener listener) {
+	static JMenuItem createItem(final String name, final KeyStroke keyStroke, final ActionListener listener) {
 		final JMenuItem item = new JMenuItem(name);
 		item.setAccelerator(keyStroke);
 		item.addActionListener(listener);
 		return item;
 	}
 
-	private static KeyStroke button(final int keyCode) {
+	static KeyStroke button(final int keyCode) {
 		return getKeyStroke(keyCode, 0);
 	}
 
-	private static KeyStroke ctrl(final int keyCode) {
+	static KeyStroke ctrl(final int keyCode) {
 		return getKeyStroke(keyCode, KeyEvent.CTRL_DOWN_MASK);
 	}
 
-	private static KeyStroke ctrlShift(final int keyCode) {
+	static KeyStroke ctrlShift(final int keyCode) {
 		return getKeyStroke(keyCode, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
 	}
 
@@ -71,9 +68,10 @@ public class CharterMenuBar extends JMenuBar {
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private SongFileHandler songFileHandler;
-	private UndoSystem undoSystem;
 
-	private final JMenu editMenu;
+	private final EditMenuHandler editMenuHandler = new EditMenuHandler();
+
+	private JMenu editMenu;
 	private final JMenu fileMenu;
 	private final JMenu guitarMenu;
 	private final JMenu infoMenu;
@@ -82,7 +80,6 @@ public class CharterMenuBar extends JMenuBar {
 
 	public CharterMenuBar() {
 		fileMenu = prepareFileMenu();
-		editMenu = prepareEditMenu();
 		guitarMenu = prepareGuitarMenu();
 		infoMenu = prepareInfoMenu();
 		notesMenu = prepareNotesMenu();
@@ -101,34 +98,20 @@ public class CharterMenuBar extends JMenuBar {
 		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
 		this.songFileHandler = songFileHandler;
-		this.undoSystem = undoSystem;
+
+		editMenuHandler.init(data, frame, selectionManager, undoSystem);
 
 		final Dimension size = new Dimension(100, 20);
 		setMinimumSize(size);
 		this.setSize(size);
 		setMaximumSize(size);
 
+		editMenu = editMenuHandler.prepareMenu();
+
 		this.add(fileMenu);
 		this.add(infoMenu);
 
 		frame.setJMenuBar(this);
-	}
-
-	private JMenu prepareEditMenu() {
-		final JMenu menu = new JMenu("Edit");
-
-		menu.add(createItem("Select all", ctrl('A'), e -> keyboardHandler.selectAll()));
-		menu.add(createItem("Delete", button(VK_DELETE), e -> keyboardHandler.delete()));
-		menu.add(createItem("Undo", ctrl('Z'), e -> undoSystem.undo()));
-		menu.add(createItem("Redo", ctrl('R'), e -> undoSystem.redo()));
-		menu.add(createItem("Copy", ctrl('C'), e -> keyboardHandler.copy()));
-		menu.add(createItem("Paste", ctrl('V'), e -> keyboardHandler.paste()));
-
-		menu.addSeparator();
-		menu.add(createItem("Song options", e -> new SongOptionsPane(frame, songFileHandler, data)));
-		menu.add(createItem("Grid options", button('G'), e -> new GridPane(frame, data.songChart.beatsMap)));
-
-		return menu;
 	}
 
 	private JMenu prepareFileMenu() {
@@ -208,7 +191,6 @@ public class CharterMenuBar extends JMenuBar {
 		final JMenu menu = new JMenu("Guitar");
 
 		menu.add(createItem("Toggle HO/PO", button('H'), e -> keyboardHandler.toggleHammerOn()));
-		menu.add(createItem("Toggle crazy notes", button('U'), e -> keyboardHandler.toggleCrazy()));
 
 		return menu;
 	}

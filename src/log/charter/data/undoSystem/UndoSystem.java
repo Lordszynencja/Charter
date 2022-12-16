@@ -24,7 +24,7 @@ public class UndoSystem {
 
 	private UndoState createUndoState() {
 		if (modeManager.editMode == EditMode.GUITAR) {
-			return null;
+			return new GuitarUndoState(data);
 		}
 
 		if (modeManager.editMode == EditMode.VOCALS) {
@@ -57,7 +57,8 @@ public class UndoSystem {
 
 		selectionManager.clear();
 		savePosition--;
-		redo.add(undo.removeLast().undo(data));
+		final UndoState lastUndo = undo.removeLast();
+		redo.add(lastUndo.undo(data));
 	}
 
 	public void redo() {

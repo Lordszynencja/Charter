@@ -12,4 +12,9 @@ public class HandShape extends Position {
 		super(arrangementHandShape.startTime);
 		length = arrangementHandShape.endTime - position;
 	}
+
+	public HandShape(final HandShape other) {
+		super(other);
+		length = other.length;
+	}
 }

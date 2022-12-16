@@ -25,7 +25,6 @@ public class Note extends Position {
 	public boolean harmonic;
 	public boolean harmonicPinch;
 	public ArrayList2<BendValue> bendValues;
-	public boolean crazy;
 
 	public Note(final int pos, final int string, final int fret) {
 		super(pos);
@@ -54,5 +53,28 @@ public class Note extends Position {
 		harmonicPinch = mapInteger(arrangementNote.harmonicPinch);
 		bendValues = arrangementNote.bendValues == null ? new ArrayList2<>()
 				: arrangementNote.bendValues.list.map(BendValue::new);
+	}
+
+	public Note(final Note other) {
+		super(other);
+		string = other.string;
+		fret = other.fret;
+		sustain = other.sustain;
+		vibrato = other.vibrato;
+		accent = other.accent;
+		mute = other.mute;
+		palmMute = other.palmMute;
+		pluck = other.pluck;
+		hopo = other.hopo;
+		hammerOn = other.hammerOn;
+		pullOff = other.pullOff;
+		slap = other.slap;
+		slideTo = other.slideTo;
+		slideUnpitchTo = other.slideUnpitchTo;
+		bend = other.bend;
+		tap = other.tap;
+		harmonic = other.harmonic;
+		harmonicPinch = other.harmonicPinch;
+		bendValues = other.bendValues.map(BendValue::new);
 	}
 }

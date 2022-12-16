@@ -11,6 +11,7 @@ import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.GuitarDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
+import log.charter.gui.handlers.KeyboardHandler;
 
 public class ArrangementDrawer {
 	private ModeManager modeManager;
@@ -19,10 +20,11 @@ public class ArrangementDrawer {
 	private final VocalsDrawer vocalsDrawer = new VocalsDrawer();
 
 	public void init(final AudioDrawer audioDrawer, final BeatsDrawer beatsDrawer, final ChartPanel chartPanel,
-			final ChartData data, final ModeManager modeManager, final SelectionManager selectionManager) {
+			final ChartData data, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+			final SelectionManager selectionManager) {
 		this.modeManager = modeManager;
 
-		guitarDrawer.init(audioDrawer, beatsDrawer, data, chartPanel, selectionManager);
+		guitarDrawer.init(audioDrawer, beatsDrawer, data, chartPanel, keyboardHandler, selectionManager);
 		vocalsDrawer.init(audioDrawer, beatsDrawer, data, chartPanel, selectionManager);
 	}
 

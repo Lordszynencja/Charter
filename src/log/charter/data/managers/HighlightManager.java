@@ -3,7 +3,6 @@ package log.charter.data.managers;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId.fromChordId;
 import static log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId.fromNoteId;
 import static log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId.fromPosition;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
@@ -13,12 +12,11 @@ import static log.charter.util.ScalingUtils.xToTime;
 
 import log.charter.data.ChartData;
 import log.charter.data.Config;
+import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.song.Beat;
-import log.charter.song.Chord;
-import log.charter.song.Note;
 import log.charter.song.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -95,35 +93,21 @@ public class HighlightManager {
 			}
 		}
 
-		private void addChordPositions() {
-			final ArrayList2<Chord> chords = data.getCurrentArrangementLevel().chords;
-			final int chordIdFrom = max(0, findLastIdBefore(chords, fromPosition));
-			final int chordIdTo = min(chords.size() - 1, findFirstIdAfter(chords, toPosition));
-			for (int i = chordIdFrom; i <= chordIdTo; i++) {
-				final Chord chord = chords.get(i);
-				if (chord.position >= fromPosition && chord.position <= toPosition) {
-					noteChordPositions.add(fromChordId(i, chord.position, getLane(chord.position)));
-				}
-			}
-		}
-
-		private void addNotePositions() {
-			final ArrayList2<Note> notes = data.getCurrentArrangementLevel().notes;
-			final int chordIdFrom = max(0, findLastIdBefore(notes, fromPosition));
-			final int chordIdTo = min(notes.size() - 1, findFirstIdAfter(notes, toPosition));
-			for (int i = chordIdFrom; i <= chordIdTo; i++) {
-				final Note note = notes.get(i);
-				if (note.position >= fromPosition && note.position <= toPosition) {
-					noteChordPositions.add(fromNoteId(i, note.position, getLane(note.position)));
+		private void addGuitarNotePositions() {
+			final ArrayList2<ChordOrNote> chordsAndNotes = data.getCurrentArrangementLevel().chordsAndNotes;
+			final int idFrom = max(0, findLastIdBefore(chordsAndNotes, fromPosition));
+			final int idTo = min(chordsAndNotes.size() - 1, findFirstIdAfter(chordsAndNotes, toPosition));
+			for (int i = idFrom; i <= idTo; i++) {
+				final ChordOrNote chordOrNote = chordsAndNotes.get(i);
+				if (chordOrNote.position >= fromPosition && chordOrNote.position <= toPosition) {
+					noteChordPositions.add(fromNoteId(i, chordOrNote.position, getLane(chordOrNote.position)));
 				}
 			}
 		}
 
 		public ArrayList2<PositionWithStringOrNoteId> getPositionsWithStrings() {
 			addAvailablePositions();
-			addChordPositions();
-			addNotePositions();
-			noteChordPositions.sort(null);
+			addGuitarNotePositions();
 
 			final ArrayList2<PositionWithStringOrNoteId> finalPositions = new ArrayList2<>();
 

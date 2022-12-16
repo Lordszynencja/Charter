@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.CharterMenuBar;
+import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
 import log.charter.song.ArrangementChart;
 import log.charter.song.Level;
@@ -609,13 +609,6 @@ public class ChartData {
 //
 //		selectedNotes.stream()//
 //				.forEach(id -> action.accept(currentNotes.get(id), id));
-	}
-
-	public void toggleSelectedCrazy() {
-		changeSelectedNotesWithId((n, id) -> {
-			n.crazy = !n.crazy;
-			fixNotesLength(n, id);
-		});
 	}
 
 	public void toggleSelectedHammerOn(final boolean ctrl, final double maxDistance) {

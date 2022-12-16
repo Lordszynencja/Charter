@@ -18,9 +18,9 @@ public class ArrangementChart {
 
 	public HashMap2<Integer, Level> levels = new HashMap2<>();
 
+	public ArrayList2<Section> sections = new ArrayList2<>();
 	public HashMap2<String, Phrase> phrases = new HashMap2<>();
 	public ArrayList2<PhraseIteration> phraseIterations = new ArrayList2<>();
-	public ArrayList2<Section> sections = new ArrayList2<>();
 	public ArrayList2<Event> events = new ArrayList2<>();
 	public ArrayList2<ChordTemplate> chordTemplates = new ArrayList2<>();
 	public ArrayList2<ChordTemplate> fretHandMuteTemplates = new ArrayList2<>();
@@ -36,11 +36,13 @@ public class ArrangementChart {
 		centOffset = songArrangement.centOffset;
 
 		levels = Level.fromArrangementLevels(songArrangement.levels.list);
+
+		sections = Section.fromArrangementSections(songArrangement.sections.list);
 		phrases = Phrase.fromArrangementPhrases(songArrangement.phrases.list);
 		phraseIterations = PhraseIteration.fromArrangementPhraseIterations(songArrangement.phrases.list,
 				songArrangement.phraseIterations.list);
-		sections = Section.fromArrangementSections(songArrangement.sections.list);
 		events = Event.fromArrangement(new ArrayList2<>(), songArrangement.events.list);
+
 		chordTemplates = new ArrayList2<>(songArrangement.chordTemplates.list);
 		fretHandMuteTemplates = new ArrayList2<>(songArrangement.fretHandMuteTemplates.list);
 	}

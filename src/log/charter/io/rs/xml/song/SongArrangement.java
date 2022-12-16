@@ -87,7 +87,8 @@ public class SongArrangement {
 		ebeats = new CountedList<>(songChart.beatsMap.beats.map(EBeat::new));
 		sections = new CountedList<>(ArrangementSection.fromSections(arrangementChart.sections));
 		events = new CountedList<>(ArrangementEvent.fromEventsAndBeatMap(arrangementChart.events, songChart.beatsMap));
-		levels = new CountedList<>(ArrangementLevel.fromLevels(arrangementChart.levels));
+		levels = new CountedList<>(
+				ArrangementLevel.fromLevels(arrangementChart.levels, arrangementChart.chordTemplates));
 
 		fixMeasureNumbers();
 	}

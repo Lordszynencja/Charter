@@ -1,5 +1,12 @@
 package log.charter.io.rs.xml.song;
 
+import static java.util.stream.Collectors.minBy;
+import static log.charter.io.rs.xml.song.ArrangementChordNote.forBend;
+import static log.charter.io.rs.xml.song.ArrangementChordNote.forSlide;
+import static log.charter.io.rs.xml.song.ArrangementChordNote.forUnpitchedSlide;
+
+import java.util.Map.Entry;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -24,18 +31,74 @@ public class ArrangementChord {
 	public Integer fretHandMute;
 	@XStreamAsAttribute
 	public Integer accent;
+	@XStreamAsAttribute
+	public Integer linkNext;
 	@XStreamImplicit
 	public ArrayList2<ArrangementChordNote> chordNotes;
 
 	public ArrangementChord() {
 	}
 
-	public ArrangementChord(final Chord chord) {
+	private void setChordNotes(final Chord chord, final ChordTemplate chordTemplate) {
+		final int position = chord.position;
+		final int length = chord.length;
+
+		if (chord.slideTo != null) {
+			chordNotes = new ArrayList2<>();
+			if (chordTemplate.frets.isEmpty()) {
+				return;
+			}
+
+			final int minFret = chordTemplate.frets.values().stream().collect(minBy(Integer::compare)).get();
+			final int slideDifference = chord.slideTo - minFret;
+			for (final Entry<Integer, Integer> chordFret : chordTemplate.frets.entrySet()) {
+				final int string = chordFret.getKey();
+				final int fret = chordFret.getValue();
+				chordNotes.add(forSlide(position, string, fret, length, fret - slideDifference));
+			}
+
+			return;
+		}
+
+		if (chord.unpitchedSlideTo != null) {
+			chordNotes = new ArrayList2<>();
+			if (chordTemplate.frets.isEmpty()) {
+				return;
+			}
+
+			final int minFret = chordTemplate.frets.values().stream().collect(minBy(Integer::compare)).get();
+			final int slideDifference = chord.slideTo - minFret;
+			for (final Entry<Integer, Integer> chordFret : chordTemplate.frets.entrySet()) {
+				final int string = chordFret.getKey();
+				final int fret = chordFret.getValue();
+				chordNotes.add(forUnpitchedSlide(position, string, fret, length, fret - slideDifference));
+			}
+
+			return;
+		}
+
+		if (!chord.bendValues.isEmpty()) {
+			chordNotes = new ArrayList2<>();
+			for (final Entry<Integer, Integer> chordFret : chordTemplate.frets.entrySet()) {
+				final int string = chordFret.getKey();
+				final int fret = chordFret.getValue();
+				chordNotes.add(forBend(position, string, fret, length, chord.bendValues.get(string)));
+			}
+
+			return;
+		}
+
+		chordNotes = null;
+	}
+
+	public ArrangementChord(final Chord chord, final ChordTemplate chordTemplate) {
 		time = chord.position;
 		chordId = chord.chordId;
 		palmMute = chord.palmMute ? 1 : null;
 		fretHandMute = chord.fretHandMute ? 1 : null;
 		accent = chord.accent ? 1 : null;
-		chordNotes = chord.chordNotes.isEmpty() ? null : chord.chordNotes.map(ArrangementChordNote::new);
+		linkNext = chord.linkNext ? 1 : null;
+
+		setChordNotes(chord, chordTemplate);
 	}
 }
