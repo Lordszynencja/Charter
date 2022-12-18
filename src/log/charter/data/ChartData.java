@@ -8,8 +8,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
 import log.charter.song.ArrangementChart;
@@ -31,16 +33,20 @@ public class ChartData {
 	public int time = 0;
 	public int nextTime = 0;
 
-	private CharterMenuBar menuBar;
+	private AudioHandler audioHandler;
+	private CharterMenuBar charterMenuBar;
+	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
 	public ChartData() {
 	}
 
-	public void init(final CharterMenuBar menuBar, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
-		this.menuBar = menuBar;
+	public void init(final AudioHandler audioHandler, final CharterMenuBar charterMenuBar,
+			final ModeManager modeManager, final SelectionManager selectionManager, final UndoSystem undoSystem) {
+		this.audioHandler = audioHandler;
+		this.charterMenuBar = charterMenuBar;
+		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 	}
@@ -439,7 +445,12 @@ public class ChartData {
 		clear();
 		isEmpty = false;
 		songChart = song;
-		menuBar.changeEditMode(EditMode.GUITAR);
+		audioHandler.stopMusic();
+		selectionManager.clear();
+		changeDifficulty(0);
+		modeManager.editMode = EditMode.GUITAR;
+
+		charterMenuBar.refreshMenus();
 		path = dir;
 		this.projectFileName = projectFileName;
 		Config.lastPath = path;
@@ -521,10 +532,6 @@ public class ChartData {
 //				}
 //			}
 //		}
-	}
-
-	private void softClear() {// TODO
-		selectionManager.clear();
 	}
 
 	public void startTempoDrag(final Tempo prevTmp, final Tempo tmp, final Tempo nextTmp, final boolean isNew) {// TODO

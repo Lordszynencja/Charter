@@ -6,6 +6,7 @@ import static log.charter.util.ScalingUtils.xToTime;
 import java.util.Map;
 
 import log.charter.data.ChartData;
+import log.charter.data.EditMode;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
@@ -154,5 +155,13 @@ public class SelectionManager {
 		}
 
 		return (SelectionAccessor<T>) typeSelectionManager.getAccessor();
+	}
+
+	public void selectAllNotes() {
+		if (modeManager.editMode == EditMode.GUITAR) {
+			chordsNotesManager.addAll();
+		} else if (modeManager.editMode == EditMode.VOCALS) {
+			vocalsManager.addAll();
+		}
 	}
 }

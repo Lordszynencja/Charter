@@ -1,11 +1,6 @@
 package log.charter.gui.menuHandlers;
 
 import static java.awt.event.KeyEvent.VK_DELETE;
-import static log.charter.gui.menuHandlers.CharterMenuBar.button;
-import static log.charter.gui.menuHandlers.CharterMenuBar.createItem;
-import static log.charter.gui.menuHandlers.CharterMenuBar.ctrl;
-
-import java.awt.event.ActionEvent;
 
 import javax.swing.JMenu;
 
@@ -21,7 +16,7 @@ import log.charter.gui.panes.SongOptionsPane;
 import log.charter.song.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-class EditMenuHandler {
+class EditMenuHandler extends CharterMenuHandler {
 	private ChartData data;
 	private CharterFrame frame;
 	private SelectionManager selectionManager;
@@ -35,30 +30,36 @@ class EditMenuHandler {
 		this.undoSystem = undoSystem;
 	}
 
+	@Override
+	boolean isApplicable() {
+		return !data.isEmpty;
+	}
+
+	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = new JMenu("Edit");
 
-		menu.add(createItem("Undo", ctrl('Z'), e -> undoSystem.undo()));
-		menu.add(createItem("Redo", ctrl('R'), e -> undoSystem.redo()));
+		menu.add(createItem("Undo", ctrl('Z'), undoSystem::undo));
+		menu.add(createItem("Redo", ctrl('R'), undoSystem::redo));
 
 		menu.addSeparator();
-		menu.add(createItem("Select all notes", ctrl('A'), this::selectAll));
+		menu.add(createItem("Select all notes", ctrl('A'), this::selectAllNotes));
 		menu.add(createItem("Delete", button(VK_DELETE), this::delete));
 		menu.add(createItem("Copy", ctrl('C'), this::copy));
 		menu.add(createItem("Paste", ctrl('V'), this::paste));
 
 		menu.addSeparator();
-		menu.add(createItem("Song options", e -> new SongOptionsPane(frame, data)));
-		menu.add(createItem("Grid options", button('G'), e -> new GridPane(frame, data.songChart.beatsMap)));
+		menu.add(createItem("Song options", () -> new SongOptionsPane(frame, data)));
+		menu.add(createItem("Grid options", button('G'), () -> new GridPane(frame, data.songChart.beatsMap)));
 
 		return menu;
 	}
 
-	private void selectAll(final ActionEvent e) {
-
+	private void selectAllNotes() {
+		selectionManager.selectAllNotes();
 	}
 
-	private void delete(final ActionEvent e) {
+	private void delete() {
 		boolean undoAdded = false;
 
 		for (final PositionType type : PositionType.values()) {
@@ -80,11 +81,11 @@ class EditMenuHandler {
 		selectionManager.clear();
 	}
 
-	private void copy(final ActionEvent e) {
+	private void copy() {
 
 	}
 
-	private void paste(final ActionEvent e) {
+	private void paste() {
 
 	}
 

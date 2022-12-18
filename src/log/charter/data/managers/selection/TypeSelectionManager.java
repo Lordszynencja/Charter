@@ -9,5 +9,7 @@ public interface TypeSelectionManager<T extends Position> {
 	void addSelection(PositionWithIdAndType closestPosition, final int x, final int y, final boolean ctrl,
 			final boolean shift);
 
+	public void addAll();
+
 	public void clear();
 }

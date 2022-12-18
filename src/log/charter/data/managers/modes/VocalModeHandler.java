@@ -3,15 +3,12 @@ package log.charter.data.managers.modes;
 import java.util.function.Function;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.selection.Selection;
-import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
-import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
-import log.charter.gui.panes.LyricPane;
+import log.charter.gui.panes.VocalPane;
 import log.charter.song.Position;
 import log.charter.song.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -53,19 +50,6 @@ public class VocalModeHandler extends ModeHandler {
 	}
 
 	@Override
-	public void handleLyricsEdit() {
-		final SelectionAccessor<Vocal> selectedVocalsAccessor = selectionManager
-				.getSelectedAccessor(PositionType.VOCAL);
-		if (!selectedVocalsAccessor.isSelected()) {
-			return;
-		}
-
-		final Selection<Vocal> selection = selectedVocalsAccessor.getSortedSelected().get(0);
-
-		new LyricPane(selection.id, selection.selectable, frame, data, selectionManager, undoSystem);
-	}
-
-	@Override
 	public void snapNotes() {
 		// TODO Auto-generated method stub
 
@@ -78,6 +62,6 @@ public class VocalModeHandler extends ModeHandler {
 			return;
 		}
 
-		new LyricPane(clickData.pressHighlight.position, frame, data, selectionManager, undoSystem);
+		new VocalPane(clickData.pressHighlight.position, data, frame, selectionManager, undoSystem);
 	}
 }

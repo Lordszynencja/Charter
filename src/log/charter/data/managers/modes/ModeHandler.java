@@ -7,9 +7,6 @@ public abstract class ModeHandler {
 
 	public abstract void handleHome();
 
-	public void handleLyricsEdit() {
-	}
-
 	public abstract void rightClick(MouseButtonPressReleaseData clickData);
 
 	public abstract void snapNotes();

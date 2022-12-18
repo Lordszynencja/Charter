@@ -2,6 +2,7 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
 import log.charter.util.Position2D;
 
@@ -19,6 +20,17 @@ public interface DrawableShape {
 
 	public static DrawableShape lineHorizontal(final int x0, final int x1, final int y, final Color color) {
 		return new Line(new Position2D(x0, y), new Position2D(x1, y), color);
+	}
+
+	// Triangles
+	public static DrawableShape filledTriangle(final Position2D a, final Position2D b, final Position2D c,
+			final Color color) {
+		return new FilledTriangle(a, b, c, color);
+	}
+
+	public static DrawableShape strokedTriangle(final Position2D a, final Position2D b, final Position2D c,
+			final Color color) {
+		return new StrokedTriangle(a, b, c, color);
 	}
 
 	// Rectangles
@@ -45,4 +57,10 @@ public interface DrawableShape {
 			final Color backgroundColor, final Color textColor) {
 		return new CenteredTextWithBackground(position, text, backgroundColor, textColor);
 	}
+
+	// Images
+	public static DrawableShape centeredImage(final Position2D position, final BufferedImage image) {
+		return new CenteredImage(position, image);
+	}
+
 }

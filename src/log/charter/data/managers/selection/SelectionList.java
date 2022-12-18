@@ -86,6 +86,15 @@ class SelectionList<T extends Position> {
 		}
 	}
 
+	public void addAll(final ArrayList2<T> available) {
+		clear();
+
+		for (int i = 0; i < available.size(); i++) {
+			final T selectable = available.get(i);
+			selected.add(selectionMaker.make(i, selectable));
+		}
+	}
+
 	public void clear() {
 		if (!selected.isEmpty()) {
 			selected.clear();

@@ -2,6 +2,7 @@ package log.charter.io.rs.xml.song;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.song.BendValue;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -31,6 +32,9 @@ public class ArrangementChordNote extends ArrangementNote {
 		note.sustain = sustain;
 		for (final BendValue bendValue : bendValues) {
 			if (bendValue.position >= time && bendValue.position <= time + sustain) {
+				if (note.bendValues == null) {
+					note.bendValues = new CountedList<>();
+				}
 				note.bendValues.list.add(new ArrangementBendValue(bendValue));
 			}
 		}

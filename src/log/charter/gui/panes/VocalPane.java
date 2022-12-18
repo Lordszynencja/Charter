@@ -7,12 +7,14 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 import log.charter.data.ChartData;
+import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.song.Vocal;
+import log.charter.util.CollectionUtils.ArrayList2;
 
-public class LyricPane extends ParamsPane {
+public class VocalPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private String text;
@@ -20,13 +22,15 @@ public class LyricPane extends ParamsPane {
 	private boolean phraseEnd;
 
 	private final ChartData data;
+	private final CharterFrame frame;
 	private final SelectionManager selectionManager;
 	private final UndoSystem undoSystem;
 
-	private LyricPane(final String name, final CharterFrame frame, final ChartData data,
+	private VocalPane(final String name, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		super(frame, name, 5);
 		this.data = data;
+		this.frame = frame;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 	}
@@ -52,9 +56,9 @@ public class LyricPane extends ParamsPane {
 		setVisible(true);
 	}
 
-	public LyricPane(final int position, final CharterFrame frame, final ChartData data,
+	public VocalPane(final int position, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this("Vocal creation", frame, data, selectionManager, undoSystem);
+		this("Vocal creation", data, frame, selectionManager, undoSystem);
 
 		text = "";
 		wordPart = false;
@@ -63,15 +67,16 @@ public class LyricPane extends ParamsPane {
 		createElementsAndShow(e -> createAndExit(position));
 	}
 
-	public LyricPane(final int id, final Vocal vocal, final CharterFrame frame, final ChartData data,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this("Vocal edit", frame, data, selectionManager, undoSystem);
+	public VocalPane(final int id, final Vocal vocal, final ChartData data, final CharterFrame frame,
+			final SelectionManager selectionManager, final UndoSystem undoSystem,
+			final ArrayList2<Selection<Vocal>> remainingVocals) {
+		this("Vocal edit", data, frame, selectionManager, undoSystem);
 
 		text = vocal.getText();
 		wordPart = vocal.isWordPart();
 		phraseEnd = vocal.isPhraseEnd();
 
-		createElementsAndShow(e -> saveAndExit(id, vocal));
+		createElementsAndShow(e -> saveAndExit(id, vocal, remainingVocals));
 	}
 
 	private void createAndExit(final int position) {
@@ -86,7 +91,7 @@ public class LyricPane extends ParamsPane {
 		data.songChart.vocals.insertNote(position, text, wordPart, phraseEnd);
 	}
 
-	private void saveAndExit(final int id, final Vocal vocal) {
+	private void saveAndExit(final int id, final Vocal vocal, final ArrayList2<Selection<Vocal>> remainingVocals) {
 		dispose();
 		if (text == null || "".equals(text)) {
 			undoSystem.addUndo();
@@ -97,6 +102,12 @@ public class LyricPane extends ParamsPane {
 		vocal.lyric = text;
 		vocal.setWordPart(wordPart);
 		vocal.setPhraseEnd(phraseEnd);
+
+		if (!remainingVocals.isEmpty()) {
+			final Selection<Vocal> nextSelectedVocal = remainingVocals.remove(0);
+			new VocalPane(nextSelectedVocal.id, nextSelectedVocal.selectable, data, frame, selectionManager, undoSystem,
+					remainingVocals);
+		}
 	}
 
 }

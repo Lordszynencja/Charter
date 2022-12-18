@@ -31,8 +31,8 @@ import log.charter.main.LogCharterRSMain;
 public class CharterFrame extends JFrame {
 	private static final long serialVersionUID = 3603305480386377813L;
 
+	private final CharterMenuBar charterMenuBar = new CharterMenuBar();
 	private final ChartPanel chartPanel = new ChartPanel();
-	private final CharterMenuBar menuBar = new CharterMenuBar();
 	private final JScrollBar scrollBar = createScrollBar();
 	private final JLabel helpLabel = createHelp();
 
@@ -62,7 +62,7 @@ public class CharterFrame extends JFrame {
 		audioDrawer.init(data, chartPanel);
 		audioHandler.init(data, this, keyboardHandler);
 		beatsDrawer.init(data, chartPanel, mouseButtonPressReleaseHandler, selectionManager);
-		data.init(menuBar, selectionManager, undoSystem);
+		data.init(audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
 		keyboardHandler.init(audioHandler, data, this, modeManager, mouseHandler);
 		highlightManager.init(data, modeManager, selectionManager);
 		modeManager.init(data, this, keyboardHandler, selectionManager, undoSystem);
@@ -73,10 +73,10 @@ public class CharterFrame extends JFrame {
 		selectionManager.init(data, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 
+		charterMenuBar.init(audioDrawer, audioHandler, data, this, keyboardHandler, modeManager, selectionManager,
+				songFileHandler, undoSystem);
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
-		menuBar.init(audioDrawer, audioHandler, data, this, keyboardHandler, modeManager, selectionManager,
-				songFileHandler, undoSystem);
 
 		add(chartPanel, 0, Config.windowWidth, DrawerUtils.HEIGHT);
 		add(scrollBar, DrawerUtils.HEIGHT, Config.windowWidth, 20);

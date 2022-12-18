@@ -25,6 +25,11 @@ abstract class SingleTypeSelectionManager<T extends Position> implements TypeSel
 	}
 
 	@Override
+	public void addAll() {
+		selectionList.addAll(getAvailable());
+	}
+
+	@Override
 	public void clear() {
 		selectionList.clear();
 	}
