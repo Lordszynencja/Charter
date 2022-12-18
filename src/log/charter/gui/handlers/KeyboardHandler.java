@@ -69,7 +69,7 @@ public class KeyboardHandler implements KeyListener {
 		if (!left && !right) {
 			return;
 		}
-		final int speed = (Framer.frameLength * (shift ? 10 : 2)) / (ctrl ? 10 : 1);
+		final int speed = (Framer.frameLength * (shift ? 20 : 2)) / (ctrl ? 2 : 1);
 		frame.setNextTime(data.time - (left ? speed : 0) + (right ? speed : 0));
 	}
 

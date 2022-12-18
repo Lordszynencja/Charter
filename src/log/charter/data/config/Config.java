@@ -1,4 +1,4 @@
-package log.charter.data;
+package log.charter.data.config;
 
 import static log.charter.io.Logger.error;
 
@@ -13,6 +13,7 @@ import log.charter.util.RW;
 public class Config {
 	private static final String configName = "config.ini";
 
+	public static String language = "English";
 	public static String lastPath = "C:/";
 	public static String musicPath = System.getProperty("user.home") + File.separator + "Music";
 	public static String songsPath = System.getProperty("user.home") + File.separator + "Documents";
@@ -56,6 +57,8 @@ public class Config {
 
 		read();
 		save();
+
+		Localization.init();
 	}
 
 	public static void read() {

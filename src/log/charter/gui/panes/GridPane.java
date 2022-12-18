@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
+import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.song.BeatsMap;
 
@@ -17,15 +18,15 @@ public class GridPane extends ParamsPane {
 	private final BeatsMap beatsMap;
 
 	public GridPane(final CharterFrame frame, final BeatsMap beatsMap) {
-		super(frame, "Grid options", 5);
+		super(frame, Label.GRID_PANE.label(), 5);
 		this.beatsMap = beatsMap;
 
 		gridSize = beatsMap.gridSize;
 		useGrid = beatsMap.useGrid;
 
-		addConfigValue(0, "Grid size", gridSize, 50, createIntValidator(1, 1024, false),
+		addConfigValue(0, Label.GRID_PANE_GRID_SIZE, gridSize, 50, createIntValidator(1, 1024, false),
 				val -> gridSize = Integer.valueOf(val), false);
-		addConfigCheckbox(1, "Use grid", useGrid, val -> useGrid = val);
+		addConfigCheckbox(1, Label.GRID_PANE_USE_GRID, useGrid, val -> useGrid = val);
 
 		addButtons(4, e -> saveAndExit());
 		getRootPane().registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),

@@ -11,7 +11,7 @@ public class Note extends Position {
 	public int sustain;
 	public Integer vibrato;
 	public boolean accent;
-	public boolean mute;
+	public boolean fretHandMute;
 	public boolean palmMute;
 	public boolean pluck;
 	public boolean hopo;
@@ -19,12 +19,13 @@ public class Note extends Position {
 	public boolean pullOff;
 	public boolean slap;
 	public Integer slideTo;
-	public Integer slideUnpitchTo;
+	public Integer unpitchedSlideTo;
 	public Integer bend;
 	public boolean tap;
 	public boolean harmonic;
 	public boolean harmonicPinch;
 	public ArrayList2<BendValue> bendValues;
+	public boolean linkNext;
 
 	public Note(final int pos, final int string, final int fret) {
 		super(pos);
@@ -39,20 +40,21 @@ public class Note extends Position {
 		sustain = arrangementNote.sustain == null ? 0 : arrangementNote.sustain;
 		vibrato = arrangementNote.vibrato;
 		accent = mapInteger(arrangementNote.accent);
-		mute = mapInteger(arrangementNote.mute);
+		fretHandMute = mapInteger(arrangementNote.mute);
 		palmMute = mapInteger(arrangementNote.palmMute);
 		pluck = mapInteger(arrangementNote.pluck);
 		hammerOn = mapInteger(arrangementNote.hammerOn);
 		pullOff = mapInteger(arrangementNote.pullOff);
 		slap = mapInteger(arrangementNote.slap);
 		slideTo = arrangementNote.slideTo;
-		slideUnpitchTo = arrangementNote.slideUnpitchTo;
+		unpitchedSlideTo = arrangementNote.slideUnpitchTo;
 		bend = arrangementNote.bend;
 		tap = mapInteger(arrangementNote.tap);
 		harmonic = mapInteger(arrangementNote.harmonic);
 		harmonicPinch = mapInteger(arrangementNote.harmonicPinch);
 		bendValues = arrangementNote.bendValues == null ? new ArrayList2<>()
 				: arrangementNote.bendValues.list.map(BendValue::new);
+		linkNext = mapInteger(arrangementNote.linkNext);
 	}
 
 	public Note(final Note other) {
@@ -62,7 +64,7 @@ public class Note extends Position {
 		sustain = other.sustain;
 		vibrato = other.vibrato;
 		accent = other.accent;
-		mute = other.mute;
+		fretHandMute = other.fretHandMute;
 		palmMute = other.palmMute;
 		pluck = other.pluck;
 		hopo = other.hopo;
@@ -70,11 +72,12 @@ public class Note extends Position {
 		pullOff = other.pullOff;
 		slap = other.slap;
 		slideTo = other.slideTo;
-		slideUnpitchTo = other.slideUnpitchTo;
+		unpitchedSlideTo = other.unpitchedSlideTo;
 		bend = other.bend;
 		tap = other.tap;
 		harmonic = other.harmonic;
 		harmonicPinch = other.harmonicPinch;
 		bendValues = other.bendValues.map(BendValue::new);
+		linkNext = other.linkNext;
 	}
 }

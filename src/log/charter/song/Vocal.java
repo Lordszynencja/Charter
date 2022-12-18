@@ -2,7 +2,7 @@ package log.charter.song;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import log.charter.data.Config;
+import log.charter.data.config.Config;
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
 
 @XStreamAlias("vocal")

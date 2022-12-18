@@ -1,8 +1,12 @@
 package log.charter.gui.menuHandlers;
 
+import java.io.File;
+
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 
+import log.charter.data.config.Localization;
+import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.main.LogCharterRSMain;
 
@@ -17,9 +21,11 @@ class InfoMenuHandler extends CharterMenuHandler {
 			+ "a lot more";
 
 	private CharterFrame frame;
+	private CharterMenuBar charterMenuBar;
 
-	public void init(final CharterFrame frame) {
+	public void init(final CharterFrame frame, final CharterMenuBar charterMenuBar) {
 		this.frame = frame;
+		this.charterMenuBar = charterMenuBar;
 	}
 
 	@Override
@@ -29,10 +35,24 @@ class InfoMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu("Info");
+		final JMenu languageMenu = new JMenu(Label.INFO_MENU_LANGUAGE.label());
+		final File languagesFolder = new File(Localization.languagesFolder);
+		if (languagesFolder.isDirectory()) {
+			for (final String fileName : languagesFolder.list((dir, name) -> name.endsWith(".txt"))) {
+				final String language = fileName.substring(0, fileName.lastIndexOf('.'));
+				languageMenu.add(createItem(language, () -> Localization.changeLanguage(language, charterMenuBar)));
+			}
+		}
 
-		menu.add(createItem("Version", () -> JOptionPane.showMessageDialog(frame, infoText)));
+		final JMenu menu = new JMenu(Label.INFO_MENU.label());
+
+		menu.add(createItem(Label.INFO_MENU_VERSION, this::showVersion));
+		menu.add(languageMenu);
 
 		return menu;
+	}
+
+	private void showVersion() {
+		JOptionPane.showMessageDialog(frame, infoText);
 	}
 }

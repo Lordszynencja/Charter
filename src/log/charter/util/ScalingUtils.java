@@ -1,7 +1,7 @@
 package log.charter.util;
 
-import log.charter.data.Config;
-import log.charter.data.Zoom;
+import log.charter.data.config.Config;
+import log.charter.data.config.Zoom;
 
 public class ScalingUtils {
 	public static int xToTime(final int x, final int t) {

@@ -5,7 +5,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 
 import java.awt.Graphics;
 
-import log.charter.data.Config;
+import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 

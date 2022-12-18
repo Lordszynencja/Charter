@@ -3,8 +3,8 @@ package log.charter.data.undoSystem;
 import java.util.LinkedList;
 
 import log.charter.data.ChartData;
-import log.charter.data.EditMode;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 
 public class UndoSystem {

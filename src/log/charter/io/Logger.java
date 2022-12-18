@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import log.charter.data.Config;
+import log.charter.data.config.Config;
 
 public class Logger {
 	private static PrintStream out = System.out;
@@ -32,6 +32,16 @@ public class Logger {
 			if (out != System.out) {
 				System.out.println("[DEBUG] " + msg);
 			}
+		}
+	}
+
+	public static void debug(final String msg, final Exception e) {
+		out.println("[DEBUG] " + msg);
+		e.printStackTrace(out);
+
+		if (out != System.out) {
+			System.out.println("[DEBUG] " + msg);
+			e.printStackTrace(System.out);
 		}
 	}
 

@@ -7,6 +7,7 @@ import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
@@ -26,9 +27,9 @@ public class VocalPane extends ParamsPane {
 	private final SelectionManager selectionManager;
 	private final UndoSystem undoSystem;
 
-	private VocalPane(final String name, final ChartData data, final CharterFrame frame,
+	private VocalPane(final Label label, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		super(frame, name, 5);
+		super(frame, label.label(), 5);
 		this.data = data;
 		this.frame = frame;
 		this.selectionManager = selectionManager;
@@ -36,12 +37,12 @@ public class VocalPane extends ParamsPane {
 	}
 
 	private void createElementsAndShow(final ActionListener saveAction) {
-		addConfigValue(0, "Lyric", text, 200, null, val -> text = val, true);
-		addConfigCheckbox(1, "Word part", wordPart, val -> {
+		addConfigValue(0, Label.VOCAL_PANE_LYRIC, text, 200, null, val -> text = val, true);
+		addConfigCheckbox(1, Label.VOCAL_PANE_WORD_PART, wordPart, val -> {
 			wordPart = val;
 			components.get(2).setEnabled(!val);
 		});
-		addConfigCheckbox(2, "Phrase end", phraseEnd, val -> {
+		addConfigCheckbox(2, Label.VOCAL_PANE_PHRASE_END, phraseEnd, val -> {
 			phraseEnd = val;
 			components.get(1).setEnabled(!val);
 		});
@@ -58,7 +59,7 @@ public class VocalPane extends ParamsPane {
 
 	public VocalPane(final int position, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this("Vocal creation", data, frame, selectionManager, undoSystem);
+		this(Label.VOCAL_PANE_CREATION, data, frame, selectionManager, undoSystem);
 
 		text = "";
 		wordPart = false;
@@ -70,7 +71,7 @@ public class VocalPane extends ParamsPane {
 	public VocalPane(final int id, final Vocal vocal, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem,
 			final ArrayList2<Selection<Vocal>> remainingVocals) {
-		this("Vocal edit", data, frame, selectionManager, undoSystem);
+		this(Label.VOCAL_PANE_EDIT, data, frame, selectionManager, undoSystem);
 
 		text = vocal.getText();
 		wordPart = vocal.isWordPart();

@@ -1,4 +1,4 @@
-package log.charter.data;
+package log.charter.data.config;
 
 public class Zoom {
 	public static double zoom = Math.pow(0.99, Config.zoomLvl);

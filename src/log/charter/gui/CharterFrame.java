@@ -9,7 +9,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 
 import log.charter.data.ChartData;
-import log.charter.data.Config;
+import log.charter.data.config.Config;
+import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.selection.SelectionManager;
@@ -52,7 +53,7 @@ public class CharterFrame extends JFrame {
 	private final Framer framer = new Framer(this::frame);
 
 	public CharterFrame() {
-		super(LogCharterRSMain.TITLE + " : No project");
+		super(LogCharterRSMain.TITLE + " : " + Label.NO_PROJECT.label());
 		setLayout(null);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setLocationByPlatform(true);
@@ -166,8 +167,8 @@ public class CharterFrame extends JFrame {
 			return true;
 		}
 
-		final int result = JOptionPane.showConfirmDialog(this, "You have unsaved changes. Do you want to save?",
-				"Unsaved changes", JOptionPane.YES_NO_CANCEL_OPTION);
+		final int result = JOptionPane.showConfirmDialog(this, Label.UNSAVED_CHANGES_MESSAGE.label(),
+				Label.UNSAVED_CHANGES_POPUP.label(), JOptionPane.YES_NO_CANCEL_OPTION);
 
 		if (result == JOptionPane.YES_OPTION) {
 			songFileHandler.save();
@@ -200,7 +201,7 @@ public class CharterFrame extends JFrame {
 
 	private String makeTitle() {
 		if (data.isEmpty) {
-			return LogCharterRSMain.TITLE + " : No project";
+			return LogCharterRSMain.TITLE + " : " + Label.NO_PROJECT.label();
 		}
 		return LogCharterRSMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title + " : "//
 				+ data.getCurrentArrangement().getTypeNameLabel()//
@@ -214,8 +215,8 @@ public class CharterFrame extends JFrame {
 
 	public void exit() {
 		audioHandler.stopMusic();
-		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this, "Are you sure you want to exit?", "Exit",
-				JOptionPane.YES_NO_OPTION)) {
+		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this, Label.EXIT_MESSAGE.label(),
+				Label.EXIT_POPUP.label(), JOptionPane.YES_NO_OPTION)) {
 			if (!checkChanged()) {
 				return;
 			}

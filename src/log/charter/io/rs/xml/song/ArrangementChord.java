@@ -54,7 +54,7 @@ public class ArrangementChord {
 			for (final Entry<Integer, Integer> chordFret : chordTemplate.frets.entrySet()) {
 				final int string = chordFret.getKey();
 				final int fret = chordFret.getValue();
-				chordNotes.add(forSlide(position, string, fret, length, fret - slideDifference));
+				chordNotes.add(forSlide(position, string, fret, length, fret + slideDifference));
 			}
 
 			return;
@@ -67,11 +67,11 @@ public class ArrangementChord {
 			}
 
 			final int minFret = chordTemplate.frets.values().stream().collect(minBy(Integer::compare)).get();
-			final int slideDifference = chord.slideTo - minFret;
+			final int slideDifference = chord.unpitchedSlideTo - minFret;
 			for (final Entry<Integer, Integer> chordFret : chordTemplate.frets.entrySet()) {
 				final int string = chordFret.getKey();
 				final int fret = chordFret.getValue();
-				chordNotes.add(forUnpitchedSlide(position, string, fret, length, fret - slideDifference));
+				chordNotes.add(forUnpitchedSlide(position, string, fret, length, fret + slideDifference));
 			}
 
 			return;

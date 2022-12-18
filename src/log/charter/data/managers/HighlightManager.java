@@ -11,7 +11,7 @@ import static log.charter.song.Position.findLastIdBefore;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import log.charter.data.ChartData;
-import log.charter.data.Config;
+import log.charter.data.config.Config;
 import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;

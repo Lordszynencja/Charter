@@ -5,6 +5,7 @@ import static java.awt.event.KeyEvent.VK_DELETE;
 import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
@@ -37,20 +38,20 @@ class EditMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu("Edit");
+		final JMenu menu = new JMenu(Label.EDIT_MENU.label());
 
-		menu.add(createItem("Undo", ctrl('Z'), undoSystem::undo));
-		menu.add(createItem("Redo", ctrl('R'), undoSystem::redo));
-
-		menu.addSeparator();
-		menu.add(createItem("Select all notes", ctrl('A'), this::selectAllNotes));
-		menu.add(createItem("Delete", button(VK_DELETE), this::delete));
-		menu.add(createItem("Copy", ctrl('C'), this::copy));
-		menu.add(createItem("Paste", ctrl('V'), this::paste));
+		menu.add(createItem(Label.EDIT_MENU_UNDO, ctrl('Z'), undoSystem::undo));
+		menu.add(createItem(Label.EDIT_MENU_REDO, ctrl('R'), undoSystem::redo));
 
 		menu.addSeparator();
-		menu.add(createItem("Song options", () -> new SongOptionsPane(frame, data)));
-		menu.add(createItem("Grid options", button('G'), () -> new GridPane(frame, data.songChart.beatsMap)));
+		menu.add(createItem(Label.EDIT_MENU_SELECT_ALL, ctrl('A'), this::selectAllNotes));
+		menu.add(createItem(Label.EDIT_MENU_DELETE, button(VK_DELETE), this::delete));
+		menu.add(createItem(Label.EDIT_MENU_COPY, ctrl('C'), this::copy));
+		menu.add(createItem(Label.EDIT_MENU_PASTE, ctrl('V'), this::paste));
+
+		menu.addSeparator();
+		menu.add(createItem(Label.EDIT_MENU_SONG_OPTIONS, this::songOptions));
+		menu.add(createItem(Label.EDIT_MENU_GRID_OPTIONS, button('G'), this::gridOptions));
 
 		return menu;
 	}
@@ -89,4 +90,11 @@ class EditMenuHandler extends CharterMenuHandler {
 
 	}
 
+	private void songOptions() {
+		new SongOptionsPane(frame, data);
+	}
+
+	private void gridOptions() {
+		new GridPane(frame, data.songChart.beatsMap);
+	}
 }

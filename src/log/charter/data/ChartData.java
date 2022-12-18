@@ -8,7 +8,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import log.charter.data.config.Config;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.handlers.AudioHandler;

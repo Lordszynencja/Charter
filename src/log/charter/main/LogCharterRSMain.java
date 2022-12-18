@@ -3,7 +3,7 @@ package log.charter.main;
 import java.io.IOException;
 import java.io.InputStream;
 
-import log.charter.data.Config;
+import log.charter.data.config.Config;
 import log.charter.gui.CharterFrame;
 import log.charter.util.RW;
 

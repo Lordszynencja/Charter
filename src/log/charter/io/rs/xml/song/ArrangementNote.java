@@ -53,6 +53,8 @@ public class ArrangementNote {
 	@XStreamAsAttribute
 	public Integer harmonicPinch;
 	public CountedList<ArrangementBendValue> bendValues;
+	@XStreamAsAttribute
+	public Integer linkNext;
 
 	public ArrangementNote() {
 	}
@@ -64,7 +66,7 @@ public class ArrangementNote {
 		sustain = note.sustain > 0 ? note.sustain : null;
 		vibrato = note.vibrato;
 		accent = note.accent ? 1 : null;
-		mute = note.mute ? 1 : null;
+		mute = note.fretHandMute ? 1 : null;
 		palmMute = note.palmMute ? 1 : null;
 		pluck = note.pluck ? 1 : null;
 		hopo = note.hammerOn || note.pullOff ? 1 : null;
@@ -72,12 +74,13 @@ public class ArrangementNote {
 		pullOff = note.pullOff ? 1 : null;
 		slap = note.slap ? 1 : null;
 		slideTo = note.slideTo;
-		slideUnpitchTo = note.slideUnpitchTo;
+		slideUnpitchTo = note.unpitchedSlideTo;
 		bend = note.bend;
 		tap = note.tap ? 1 : null;
 		harmonic = note.harmonic ? 1 : null;
 		harmonicPinch = note.harmonicPinch ? 1 : null;
 		bendValues = note.bendValues.isEmpty() ? null
 				: new CountedList<>(note.bendValues.map(ArrangementBendValue::new));
+		linkNext = note.linkNext ? 1 : null;
 	}
 }

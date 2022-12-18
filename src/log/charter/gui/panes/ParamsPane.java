@@ -20,7 +20,8 @@ import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import log.charter.data.Config;
+import log.charter.data.config.Config;
+import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 
 public class ParamsPane extends JDialog {
@@ -40,11 +41,13 @@ public class ParamsPane extends JDialog {
 	protected static final ValueValidator dirValidator = val -> {
 		final File f = new File(val);
 		if (!f.exists()) {
-			return "directory doesn't exist";
+			return Label.DIRECTORY_DOESNT_EXIST.label();
 		}
+
 		if (!f.isDirectory()) {
-			return "given path is not folder";
+			return Label.NOT_A_FOLDER.label();
 		}
+
 		return null;
 	};
 
@@ -62,19 +65,22 @@ public class ParamsPane extends JDialog {
 			if (((val == null) || val.isEmpty()) && acceptEmpty) {
 				return null;
 			}
-			try {
-				final BigDecimal number = new BigDecimal(val);
-				if (number.compareTo(minVal) < 0) {
-					return "value must be greater than or equal " + minVal;
-				}
-				if (number.compareTo(maxVal) > 0) {
-					return "value must be less than or equal " + maxVal;
-				}
 
-				return null;
+			final BigDecimal number;
+			try {
+				number = new BigDecimal(val);
 			} catch (final Exception e) {
-				return "number expected";
+				return Label.VALUE_NUMBER_EXPECTED.label();
 			}
+
+			if (number.compareTo(minVal) < 0) {
+				return String.format(Label.VALUE_MUST_BE_GE.label(), minVal.toString());
+			}
+			if (number.compareTo(maxVal) > 0) {
+				return String.format(Label.VALUE_MUST_BE_LE.label(), maxVal.toString());
+			}
+
+			return null;
 		};
 	}
 
@@ -83,60 +89,23 @@ public class ParamsPane extends JDialog {
 			if (((val == null) || val.isEmpty()) && acceptEmpty) {
 				return null;
 			}
-			try {
-				final int i = Integer.parseInt(val);
-				if (i < minVal) {
-					return "value must be greater than or equal " + minVal;
-				}
-				if (i > maxVal) {
-					return "value must be less than or equal " + maxVal;
-				}
-				return null;
-			} catch (final Exception e) {
-				return "number expected";
-			}
-		};
-	}
 
-	protected static ValueValidator createFloatValidator(final float minVal, final float maxVal,
-			final boolean acceptEmpty) {
-		return val -> {
-			if (((val == null) || val.isEmpty()) && acceptEmpty) {
-				return null;
-			}
+			final int i;
 			try {
-				final float f = Float.parseFloat(val);
-				if (f < minVal) {
-					return "value must be greater than or equal " + minVal;
-				}
-				if (f > maxVal) {
-					return "value must be less than or equal " + maxVal;
-				}
-				return null;
+				i = Integer.parseInt(val);
 			} catch (final Exception e) {
-				return "number expected";
+				return Label.VALUE_NUMBER_EXPECTED.label();
 			}
-		};
-	}
 
-	protected static ValueValidator createIntValidatorWarning(final int minVal, final int maxVal,
-			final boolean acceptEmpty) {
-		return val -> {
-			if (((val == null) || val.isEmpty()) && acceptEmpty) {
-				return null;
+			if (i < minVal) {
+				return String.format(Label.VALUE_MUST_BE_GE.label(), minVal + "");
 			}
-			try {
-				final int i = Integer.parseInt(val);
-				if (i < minVal) {
-					return "value must be greater than or equal " + minVal;
-				}
-				if (i > maxVal) {
-					return "value must be less than or equal " + maxVal;
-				}
-				return null;
-			} catch (final Exception e) {
-				return "number expected";
+
+			if (i > maxVal) {
+				return String.format(Label.VALUE_MUST_BE_LE.label(), maxVal + "");
 			}
+
+			return null;
 		};
 	}
 
@@ -175,29 +144,28 @@ public class ParamsPane extends JDialog {
 		this.addButtons(row, onSave, e -> dispose());
 	}
 
-	protected void addButtons(final int row, final String name, final ActionListener onSave) {
-		this.addButtons(row, name, "Cancel", onSave, e -> dispose());
+	protected void addButtons(final int row, final Label label, final ActionListener onSave) {
+		this.addButtons(row, label, Label.BUTTON_CANCEL, onSave, e -> dispose());
 	}
 
 	protected void addButtons(final int row, final ActionListener onSave, final ActionListener onCancel) {
-		addButtons(row, "Save", "Cancel", onSave, onCancel);
+		addButtons(row, Label.BUTTON_SAVE, Label.BUTTON_CANCEL, onSave, onCancel);
 	}
 
-	protected void addButtons(final int row, final String button1Label, final String button2Label,
+	protected void addButtons(final int row, final Label button1Label, final Label button2Label,
 			final ActionListener on1, final ActionListener on2) {
-		final JButton button1 = new JButton(button1Label);
+		final JButton button1 = new JButton(button1Label.label());
 		button1.addActionListener(on1);
 		add(button1, (w - 300) / 2, OPTIONS_USPACE + (row * OPTIONS_HEIGHT), 100, 25);
-		final JButton button2 = new JButton(button2Label);
+		final JButton button2 = new JButton(button2Label.label());
 		button2.addActionListener(on2);
 		add(button2, (w - 300) / 2 + 125, OPTIONS_USPACE + (row * OPTIONS_HEIGHT), 100, 25);
 	}
 
-	protected void addConfigCheckbox(final int id, final String name, final boolean val,
+	protected void addConfigCheckbox(final int id, final Label label, final boolean val,
 			final BooleanValueSetter setter) {
 		final int y = OPTIONS_USPACE + (id * OPTIONS_HEIGHT);
-		final JLabel label = new JLabel(name, SwingConstants.LEFT);
-		add(label, OPTIONS_LSPACE, y, OPTIONS_LABEL_WIDTH, OPTIONS_HEIGHT);
+		add(new JLabel(label.label(), SwingConstants.LEFT), OPTIONS_LSPACE, y, OPTIONS_LABEL_WIDTH, OPTIONS_HEIGHT);
 
 		final int fieldX = OPTIONS_LSPACE + OPTIONS_LABEL_WIDTH + 3;
 		final JCheckBox checkbox = new JCheckBox();
@@ -207,11 +175,10 @@ public class ParamsPane extends JDialog {
 		add(checkbox, fieldX, y, 20, OPTIONS_HEIGHT);
 	}
 
-	protected void addConfigValue(final int id, final String name, final Object val, final int inputLength,
+	protected void addConfigValue(final int id, final Label label, final Object val, final int inputLength,
 			final ValueValidator validator, final StringValueSetter setter, final boolean allowWrong) {
 		final int y = OPTIONS_USPACE + (id * OPTIONS_HEIGHT);
-		final JLabel label = new JLabel(name, SwingConstants.LEFT);
-		add(label, OPTIONS_LSPACE, y, OPTIONS_LABEL_WIDTH, OPTIONS_HEIGHT);
+		add(new JLabel(label.label(), SwingConstants.LEFT), OPTIONS_LSPACE, y, OPTIONS_LABEL_WIDTH, OPTIONS_HEIGHT);
 
 		final int fieldX = OPTIONS_LSPACE + OPTIONS_LABEL_WIDTH + 3;
 		final JTextField field = new JTextField(val == null ? "" : val.toString(), inputLength);

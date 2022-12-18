@@ -9,7 +9,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import log.charter.data.ChartData;
-import log.charter.data.Zoom;
+import log.charter.data.config.Zoom;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;

@@ -3,8 +3,8 @@ package log.charter.gui.chartPanelDrawers;
 import java.awt.Graphics;
 
 import log.charter.data.ChartData;
-import log.charter.data.EditMode;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;

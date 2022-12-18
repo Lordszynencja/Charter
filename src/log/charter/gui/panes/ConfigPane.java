@@ -1,6 +1,7 @@
 package log.charter.gui.panes;
 
-import log.charter.data.Config;
+import log.charter.data.config.Config;
+import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 
 public final class ConfigPane extends ParamsPane {
@@ -17,24 +18,24 @@ public final class ConfigPane extends ParamsPane {
 	private boolean invertStrings = Config.invertStrings;
 
 	public ConfigPane(final CharterFrame frame) {
-		super(frame, "Config", 10);
+		super(frame, Label.CONFIG_PANE.label(), 10);
 
-		addConfigValue(0, "Music folder", musicPath, 300, dirValidator, //
+		addConfigValue(0, Label.CONFIG_MUSIC_FOLDER, musicPath, 300, dirValidator, //
 				val -> musicPath = val, false);
-		addConfigValue(1, "Songs folder", songsPath, 300, dirValidator, //
+		addConfigValue(1, Label.CONFIG_SONGS_FOLDER, songsPath, 300, dirValidator, //
 				val -> songsPath = val, false);
 
-		addConfigValue(2, "Minimal note distance", minNoteDistance + "", 50, createIntValidator(1, 1000, false),
-				val -> minNoteDistance = Integer.valueOf(val), false);
-		addConfigValue(3, "Minimal distance between tail and next note", minLongNoteDistance + "", 50, //
+		addConfigValue(2, Label.CONFIG_MINIMAL_NOTE_DISTANCE, minNoteDistance + "", 50,
+				createIntValidator(1, 1000, false), val -> minNoteDistance = Integer.valueOf(val), false);
+		addConfigValue(3, Label.CONFIG_MINIMAL_TAIL_TO_NOTE_DISTANCE, minLongNoteDistance + "", 50, //
 				createIntValidator(1, 1000, false), val -> minLongNoteDistance = Integer.valueOf(val), false);
-		addConfigValue(4, "Minimal note tail length", minTailLength + "", 50, createIntValidator(1, 1000, false), //
+		addConfigValue(4, Label.CONFIG_MINIMAL_TAIL_LENGTH, minTailLength + "", 50, createIntValidator(1, 1000, false), //
 				val -> minTailLength = Integer.valueOf(val), false);
-		addConfigValue(5, "Sound delay", delay + "", 50, createIntValidator(1, 10000, false), //
+		addConfigValue(5, Label.CONFIG_SOUND_DELAY, delay + "", 50, createIntValidator(1, 10000, false), //
 				val -> delay = Integer.valueOf(val), false);
-		addConfigValue(6, "Marker position", markerOffset + "", 50, createIntValidator(1, 1000, false), //
+		addConfigValue(6, Label.CONFIG_MARKER_POSITION, markerOffset + "", 50, createIntValidator(1, 1000, false), //
 				val -> markerOffset = Integer.valueOf(val), false);
-		addConfigCheckbox(7, "Invert strings", invertStrings, val -> invertStrings = val);
+		addConfigCheckbox(7, Label.CONFIG_INVERT_STRINGS, invertStrings, val -> invertStrings = val);
 
 		addButtons(9, e -> {
 			Config.delay = delay;

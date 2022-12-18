@@ -3,8 +3,9 @@ package log.charter.gui.menuHandlers;
 import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
-import log.charter.data.EditMode;
+import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
@@ -39,11 +40,11 @@ class VocalsMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu("Vocals");
+		final JMenu menu = new JMenu(Label.VOCALS_MENU.label());
 
-		menu.add(createItem("Edit vocal", button('L'), this::editVocals));
-		menu.add(createItem("Toggle word part", button('W'), this::toggleWordPart));
-		menu.add(createItem("Toggle phrase end", button('E'), this::togglePhraseEnd));
+		menu.add(createItem(Label.VOCALS_MENU_EDIT_VOCALS, button('L'), this::editVocals));
+		menu.add(createItem(Label.VOCALS_MENU_TOGGLE_WORD_PART, button('W'), this::toggleWordPart));
+		menu.add(createItem(Label.VOCALS_MENU_TOGGLE_PHRASE_END, button('E'), this::togglePhraseEnd));
 
 		return menu;
 	}

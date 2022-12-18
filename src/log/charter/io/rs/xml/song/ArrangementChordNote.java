@@ -30,12 +30,14 @@ public class ArrangementChordNote extends ArrangementNote {
 			final ArrayList2<BendValue> bendValues) {
 		final ArrangementChordNote note = new ArrangementChordNote(time, string, fret);
 		note.sustain = sustain;
-		for (final BendValue bendValue : bendValues) {
-			if (bendValue.position >= time && bendValue.position <= time + sustain) {
-				if (note.bendValues == null) {
-					note.bendValues = new CountedList<>();
+		if (bendValues != null) {
+			for (final BendValue bendValue : bendValues) {
+				if (bendValue.position >= time && bendValue.position <= time + sustain) {
+					if (note.bendValues == null) {
+						note.bendValues = new CountedList<>();
+					}
+					note.bendValues.list.add(new ArrangementBendValue(bendValue));
 				}
-				note.bendValues.list.add(new ArrangementBendValue(bendValue));
 			}
 		}
 

@@ -2,7 +2,6 @@ package log.charter.gui.chartPanelDrawers.common;
 
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getAsOdd;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneSize;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
@@ -10,7 +9,6 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.line;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
-import static log.charter.gui.chartPanelDrawers.instruments.GuitarDrawer.noteTailOffset;
 import static log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer.getVocalNotePosition;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
@@ -23,9 +21,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
-import log.charter.data.EditMode;
 import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
@@ -110,14 +108,14 @@ public class HighlightDrawer {
 				.centered();
 		strokedRectangle(notePosition, highlightColor).draw(g);
 
-		final int tailHeight = getAsOdd((noteHeight - 1) * 3 / 4) + 1;
-		final int tailLength = timeToXLength(length) - noteTailOffset - 2;
-		if (tailLength > 0) {
-			final int tailX = x + noteTailOffset;
-			final ShapePositionWithSize tailPosition = new ShapePositionWithSize(tailX, y, tailLength + 2, tailHeight)//
-					.centeredY();
-			strokedRectangle(tailPosition, highlightColor).draw(g);
-		}
+//		final int tailHeight = getAsOdd((noteHeight - 1) * 3 / 4) + 1;
+//		final int tailLength = timeToXLength(length);
+//		if (tailLength > 0) {
+//			final int tailX = x;
+//			final ShapePositionWithSize tailPosition = new ShapePositionWithSize(tailX, y, tailLength + 2, tailHeight)//
+//					.centeredY();
+//			 strokedRectangle(tailPosition, highlightColor).draw(g);
+//		}
 	}
 
 	private void drawChordHighlight(final Graphics g, final Chord chord, final ChordTemplate chordTemplate,

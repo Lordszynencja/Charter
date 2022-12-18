@@ -24,6 +24,10 @@ public class ChartPanelColors {
 
 		CRAZY_NOTE(0, 0, 0), //
 		NOTE_FLAG_MARKER(255, 255, 255), //
+		SLIDE_NORMAL_FRET_BG(255, 255, 255), //
+		SLIDE_NORMAL_FRET_TEXT(0, 0, 0), //
+		SLIDE_UNPITCHED_FRET_BG(255, 128, 128), //
+		SLIDE_UNPITCHED_FRET_TEXT(0, 0, 0), //
 
 		LANE_0(115, 10, 10), //
 		LANE_1(115, 115, 10), //
@@ -64,6 +68,10 @@ public class ChartPanelColors {
 
 		private ColorLabel(final int r, final int g, final int b, final int a) {
 			defaultColor = new Color(r, g, b, a);
+		}
+
+		public Color color() {
+			return colors.getOrDefault(this, defaultColor);
 		}
 	}
 

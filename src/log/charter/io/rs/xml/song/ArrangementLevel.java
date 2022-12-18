@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.data.Config;
+import log.charter.data.config.Config;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.song.Chord;
 import log.charter.song.Level;

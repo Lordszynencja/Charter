@@ -3,7 +3,7 @@ package log.charter.gui.chartPanelDrawers.common;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-import log.charter.data.Config;
+import log.charter.data.config.Config;
 
 public class DrawerUtils {
 	public static final int sectionNamesY = 10;

@@ -5,8 +5,9 @@ import static java.awt.event.KeyEvent.VK_F5;
 import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
-import log.charter.data.EditMode;
+import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.handlers.AudioHandler;
@@ -55,15 +56,15 @@ class InstrumentMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu("Instrument");
+		final JMenu menu = new JMenu(Label.INSTRUMENT_MENU.label());
 
 		menu.add(createItem(EditMode.VOCALS.label, () -> changeEditMode(EditMode.VOCALS)));
 		createArrangementMenuItems(menu);
 
 		menu.addSeparator();
-		menu.add(createItem("Toggle waveform drawing", button(VK_F5), this::toggleWaveforDrawing));
-		menu.add(createItem("Toggle claps on note", button('C'), audioHandler::toggleClaps));
-		menu.add(createItem("Toggle metronome on measures", button('M'), audioHandler::toggleMetronome));
+		menu.add(createItem(Label.INSTRUMENT_MENU_TOGGLE_WAVEFORM, button(VK_F5), this::toggleWaveforDrawing));
+		menu.add(createItem(Label.INSTRUMENT_MENU_TOGGLE_CLAPS, button('C'), audioHandler::toggleClaps));
+		menu.add(createItem(Label.INSTRUMENT_MENU_TOGGLE_METRONOME, button('M'), audioHandler::toggleMetronome));
 
 		return menu;
 	}

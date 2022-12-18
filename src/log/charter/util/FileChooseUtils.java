@@ -5,6 +5,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 
 public class FileChooseUtils {
@@ -27,7 +28,7 @@ public class FileChooseUtils {
 
 			@Override
 			public String getDescription() {
-				return "Mp3 (.mp3) or Ogg (.ogg) file";
+				return Label.MP3_OR_OGG_FILE.label();
 			}
 		});
 

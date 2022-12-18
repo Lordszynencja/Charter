@@ -7,7 +7,7 @@ import java.awt.event.ComponentListener;
 
 import javax.swing.JScrollBar;
 
-import log.charter.data.Config;
+import log.charter.data.config.Config;
 import log.charter.gui.ChartPanel;
 
 public class CharterFrameComponentListener implements ComponentListener {

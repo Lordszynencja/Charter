@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import log.charter.data.ChartData;
-import log.charter.data.EditMode;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.modes.GuitarModeHandler;
 import log.charter.data.managers.modes.ModeHandler;
 import log.charter.data.managers.modes.VocalModeHandler;

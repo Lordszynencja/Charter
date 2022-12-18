@@ -8,15 +8,21 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import log.charter.data.config.Localization.Label;
+
 abstract class CharterMenuHandler {
-	protected static JMenuItem createItem(final String name, final Runnable onAction) {
-		final JMenuItem item = new JMenuItem(name);
+	protected static JMenuItem createItem(final Label label, final Runnable onAction) {
+		return createItem(label.label(), onAction);
+	}
+
+	protected static JMenuItem createItem(final String label, final Runnable onAction) {
+		final JMenuItem item = new JMenuItem(label);
 		item.addActionListener(e -> onAction.run());
 		return item;
 	}
 
-	protected static JMenuItem createItem(final String name, final KeyStroke keyStroke, final Runnable onAction) {
-		final JMenuItem item = new JMenuItem(name);
+	protected static JMenuItem createItem(final Label label, final KeyStroke keyStroke, final Runnable onAction) {
+		final JMenuItem item = new JMenuItem(label.label());
 		item.setAccelerator(keyStroke);
 		item.addActionListener(e -> onAction.run());
 		return item;

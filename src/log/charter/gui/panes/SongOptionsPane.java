@@ -3,6 +3,7 @@ package log.charter.gui.panes;
 import java.math.BigDecimal;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.song.SongChart;
 
@@ -17,7 +18,7 @@ public final class SongOptionsPane extends ParamsPane {
 	public BigDecimal crowdSpeed;
 
 	public SongOptionsPane(final CharterFrame frame, final ChartData data) {
-		super(frame, "Song options", 21);
+		super(frame, Label.SONG_OPTIONS_PANE.label(), 21);
 
 		final SongChart songChart = data.songChart;
 		title = songChart.title;
@@ -27,17 +28,18 @@ public final class SongOptionsPane extends ParamsPane {
 		albumYear = songChart.albumYear;
 		crowdSpeed = songChart.crowdSpeed;
 
-		addConfigValue(0, "Title", title, 300, null, //
+		addConfigValue(0, Label.SONG_OPTIONS_TITLE, title, 300, null, //
 				val -> title = val, false);
-		addConfigValue(1, "Artist name", artistName, 300, null, //
+		addConfigValue(1, Label.SONG_OPTIONS_ARTIST_NAME, artistName, 300, null, //
 				val -> artistName = val, false);
-		addConfigValue(2, "Artist name (sorting)", artistNameSort, 300, null, //
+		addConfigValue(2, Label.SONG_OPTIONS_ARTIST_NAME_SORTING, artistNameSort, 300, null, //
 				val -> artistNameSort = val, false);
-		addConfigValue(3, "Album", albumName, 300, null, //
+		addConfigValue(3, Label.SONG_OPTIONS_ALBUM, albumName, 300, null, //
 				val -> albumName = val, false);
-		addConfigValue(4, "Year", albumYear, 80, createIntValidator(Integer.MIN_VALUE, Integer.MAX_VALUE, true), //
+		addConfigValue(4, Label.SONG_OPTIONS_YEAR, albumYear, 80,
+				createIntValidator(Integer.MIN_VALUE, Integer.MAX_VALUE, true), //
 				val -> albumYear = (val == null) || val.isEmpty() ? null : Integer.valueOf(val), false);
-		addConfigValue(5, "Crowd speed", crowdSpeed, 80,
+		addConfigValue(5, Label.SONG_OPTIONS_CROWD_SPEED, crowdSpeed, 80,
 				createBigDecimalValidator(new BigDecimal("0"), new BigDecimal("9999"), false), //
 				val -> crowdSpeed = new BigDecimal(val), false);
 

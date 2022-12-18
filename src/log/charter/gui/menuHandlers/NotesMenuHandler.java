@@ -6,6 +6,7 @@ import static java.awt.event.KeyEvent.VK_PERIOD;
 import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Localization.Label;
 
 class NotesMenuHandler extends CharterMenuHandler {
 
@@ -22,11 +23,11 @@ class NotesMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu("Notes");
+		final JMenu menu = new JMenu(Label.NOTES_MENU.label());
 
-		menu.add(createItem("Snap notes to grid", ctrl('F'), this::snapNotes));
-		menu.add(createItem("Double grid size", button(VK_PERIOD), this::doubleGridSize));
-		menu.add(createItem("Half grid size", button(VK_COMMA), this::halveGridSize));
+		menu.add(createItem(Label.NOTES_MENU_SNAP, ctrl('F'), this::snapNotes));
+		menu.add(createItem(Label.NOTES_MENU_DOUBLE_GRID, button(VK_PERIOD), this::doubleGridSize));
+		menu.add(createItem(Label.NOTES_MENU_HALVE_GRID, button(VK_COMMA), this::halveGridSize));
 
 		menu.addSeparator();
 		// final JMenu copyFromMenu = new JMenu("Copy from");

@@ -1,4 +1,4 @@
-package log.charter.data;
+package log.charter.data.managers.modes;
 
 public enum EditMode {
 	GUITAR("Guitar"), //

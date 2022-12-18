@@ -6,7 +6,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 
 import log.charter.data.ChartData;
-import log.charter.data.EditMode;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.types.positions.AnchorPositionTypeManager;
 import log.charter.data.types.positions.BeatPositionTypeManager;
 import log.charter.data.types.positions.GuitarNotePositionTypeManager;
