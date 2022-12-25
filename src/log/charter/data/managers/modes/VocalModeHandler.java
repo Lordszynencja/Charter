@@ -10,7 +10,7 @@ import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.VocalPane;
 import log.charter.song.Position;
-import log.charter.song.Vocal;
+import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class VocalModeHandler extends ModeHandler {

@@ -17,22 +17,21 @@ import log.charter.data.ChartData;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
-import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
-import log.charter.song.Vocal;
+import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.Position2D;
 
 public class VocalsDrawer {
-	private final static Color selectColor = ChartPanelColors.get(ColorLabel.SELECT);
-	private final static Color vocalTextColor = ChartPanelColors.get(ColorLabel.VOCAL_TEXT);
-	private final static Color vocalNoteColor = ChartPanelColors.get(ColorLabel.VOCAL_NOTE);
-	private final static Color vocalNoteWordPartColor = ChartPanelColors.get(ColorLabel.VOCAL_NOTE_WORD_PART);
+	private final static Color selectColor = ColorLabel.SELECT.color();
+	private final static Color vocalTextColor = ColorLabel.VOCAL_TEXT.color();
+	private final static Color vocalNoteColor = ColorLabel.VOCAL_NOTE.color();
+	private final static Color vocalNoteWordPartColor = ColorLabel.VOCAL_NOTE_WORD_PART.color();
 
 	private static final int vocalNoteY = (lanesTop + lanesBottom) / 2;
 
@@ -132,8 +131,8 @@ public class VocalsDrawer {
 	}
 
 	private static class VocalLinesDrawingData {
-		private final static Color vocalLineBackgroundColor = ChartPanelColors.get(ColorLabel.VOCAL_LINE_BACKGROUND);
-		private final static Color vocalLineTextColor = ChartPanelColors.get(ColorLabel.VOCAL_LINE_TEXT);
+		private final static Color vocalLineBackgroundColor = ColorLabel.VOCAL_LINE_BACKGROUND.color();
+		private final static Color vocalLineTextColor = ColorLabel.VOCAL_LINE_TEXT.color();
 
 		public static final int lyricLinesY = 30;
 

@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 import log.charter.io.rs.xml.song.ArrangementProperties;
 import log.charter.io.rs.xml.song.ArrangementType;
-import log.charter.io.rs.xml.song.ChordTemplate;
 import log.charter.io.rs.xml.song.SongArrangement;
+import log.charter.song.configs.Tuning;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 
@@ -43,8 +43,10 @@ public class ArrangementChart {
 				songArrangement.phraseIterations.list);
 		events = Event.fromArrangement(new ArrayList2<>(), songArrangement.events.list);
 
-		chordTemplates = new ArrayList2<>(songArrangement.chordTemplates.list);
-		fretHandMuteTemplates = new ArrayList2<>(songArrangement.fretHandMuteTemplates.list);
+		chordTemplates = songArrangement.chordTemplates.list.map(ChordTemplate::new);
+		if (songArrangement.fretHandMuteTemplates != null) {
+			fretHandMuteTemplates = songArrangement.fretHandMuteTemplates.list.map(ChordTemplate::new);
+		}
 	}
 
 	public String getTypeName() {
@@ -62,5 +64,10 @@ public class ArrangementChart {
 
 	public String getTypeNameLabel() {
 		return getTypeName().replace("_", " ");
+	}
+
+	public boolean templateExists(final ChordTemplate chordTemplate) {
+		// TODO check if template like that already exists
+		return false;
 	}
 }

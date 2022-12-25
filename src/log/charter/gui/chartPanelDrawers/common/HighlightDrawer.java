@@ -28,7 +28,6 @@ import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
-import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.instruments.GuitarDrawer;
@@ -36,15 +35,15 @@ import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressData;
 import log.charter.gui.handlers.MouseHandler;
-import log.charter.io.rs.xml.song.ChordTemplate;
-import log.charter.song.Chord;
+import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
-import log.charter.song.Note;
+import log.charter.song.notes.Chord;
+import log.charter.song.notes.Note;
 import log.charter.util.Position2D;
 
 public class HighlightDrawer {
-	private static final Color highlightColor = ChartPanelColors.get(ColorLabel.HIGHLIGHT);
-	private static final Color noteAdditionLineColor = ChartPanelColors.get(ColorLabel.NOTE_ADD_LINE);
+	private static final Color highlightColor = ColorLabel.HIGHLIGHT.color();
+	private static final Color noteAdditionLineColor = ColorLabel.NOTE_ADD_LINE.color();
 
 	private static final int noteWidth = GuitarDrawer.noteWidth + 1;
 
@@ -146,7 +145,7 @@ public class HighlightDrawer {
 
 		if (highlight.chordOrNote.note != null) {
 			final Note note = highlight.chordOrNote.note;
-			drawNoteHighlight(g, note.string, note.position, note.sustain, strings);
+			drawNoteHighlight(g, note.string, note.position, note.length, strings);
 
 			return;
 		}
@@ -227,7 +226,7 @@ public class HighlightDrawer {
 				return;
 			}
 
-			drawNoteHighlight(g, chordOrNote.note.string, position, chordOrNote.note.sustain, strings);
+			drawNoteHighlight(g, chordOrNote.note.string, position, chordOrNote.note.length, strings);
 			return;
 		}
 	}

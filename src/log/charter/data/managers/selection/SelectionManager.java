@@ -15,7 +15,7 @@ import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.HandShape;
 import log.charter.song.Position;
-import log.charter.song.Vocal;
+import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 

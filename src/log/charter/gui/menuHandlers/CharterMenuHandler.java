@@ -43,4 +43,5 @@ abstract class CharterMenuHandler {
 	abstract boolean isApplicable();
 
 	abstract JMenu prepareMenu();
+
 }

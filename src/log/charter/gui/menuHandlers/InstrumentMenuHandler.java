@@ -54,12 +54,23 @@ class InstrumentMenuHandler extends CharterMenuHandler {
 		}
 	}
 
+	private void createLevelMenuItems(final JMenu menu) {
+		for (final int level : data.getCurrentArrangement().levels.keySet()) {
+			menu.add(createItem("Level " + level, () -> changeLevel(level)));
+		}
+	}
+
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = new JMenu(Label.INSTRUMENT_MENU.label());
 
 		menu.add(createItem(EditMode.VOCALS.label, () -> changeEditMode(EditMode.VOCALS)));
 		createArrangementMenuItems(menu);
+
+		if (modeManager.editMode != EditMode.VOCALS) {
+			menu.addSeparator();
+			createLevelMenuItems(menu);
+		}
 
 		menu.addSeparator();
 		menu.add(createItem(Label.INSTRUMENT_MENU_TOGGLE_WAVEFORM, button(VK_F5), this::toggleWaveforDrawing));
@@ -80,6 +91,11 @@ class InstrumentMenuHandler extends CharterMenuHandler {
 
 	private void changeArrangement(final int arrangementId) {
 		data.currentArrangement = arrangementId;
+		changeEditMode(EditMode.GUITAR);
+	}
+
+	private void changeLevel(final int levelId) {
+		data.currentLevel = levelId;
 		changeEditMode(EditMode.GUITAR);
 	}
 

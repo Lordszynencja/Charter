@@ -16,11 +16,13 @@ import java.util.List;
 import java.util.Map;
 
 import helliker.id3.MP3File;
+import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
@@ -29,7 +31,7 @@ import log.charter.io.rs.xml.vocals.VocalsXStreamHandler;
 import log.charter.io.rsc.xml.RocksmithChartProject;
 import log.charter.song.ArrangementChart;
 import log.charter.song.SongChart;
-import log.charter.song.Vocals;
+import log.charter.song.vocals.Vocals;
 import log.charter.sound.MusicData;
 import log.charter.util.FileChooseUtils;
 import log.charter.util.RW;
@@ -85,13 +87,18 @@ public class SongFileHandler {
 		}
 	}
 
+	private ArrangementFixer arrangementFixer;
 	private ChartData data;
 	private CharterFrame frame;
+	private CharterMenuBar charterMenuBar;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem) {
+	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final CharterFrame frame,
+			final CharterMenuBar charterMenuBar, final UndoSystem undoSystem) {
+		this.arrangementFixer = arrangementFixer;
 		this.data = data;
 		this.frame = frame;
+		this.charterMenuBar = charterMenuBar;
 		this.undoSystem = undoSystem;
 	}
 
@@ -213,8 +220,13 @@ public class SongFileHandler {
 				return;
 			}
 		}
-
-		final SongChart songChart = new SongChart(musicData.msLength(), project, dir);
+		final SongChart songChart;
+		try {
+			songChart = new SongChart(musicData.msLength(), project, dir);
+		} catch (final Exception e) {
+			frame.showPopup(e.getMessage());
+			return;
+		}
 
 		final List<String> filesToBackup = new ArrayList<>();
 		filesToBackup.add(projectFileChosen.getName());
@@ -281,6 +293,7 @@ public class SongFileHandler {
 			final ArrangementChart arrangementChart = new ArrangementChart(songArrangement);
 			data.songChart.arrangements.add(arrangementChart);
 			save();
+			charterMenuBar.refreshMenus();
 		} catch (final Exception e) {
 			Logger.error("Couldn't load arrangement", e);
 			frame.showPopup(Label.COULDNT_LOAD_ARRANGEMENT.label() + ":\n" + e.getMessage());
@@ -372,14 +385,17 @@ public class SongFileHandler {
 			return;
 		}
 
+		arrangementFixer.fixArrangement();
+
 		final RocksmithChartProject project = new RocksmithChartProject(data.songChart);
 
-		final int id = 1;
+		int id = 1;
 		for (final ArrangementChart arrangementChart : data.songChart.arrangements) {
 			final String arrangementFileName = id + "_" + arrangementChart.getTypeName() + "_RS2.xml";
 			project.arrangementFiles.add(arrangementFileName);
 			final SongArrangement songArrangement = new SongArrangement(data.songChart, arrangementChart);
 			RW.write(data.path + arrangementFileName, SongArrangementXStreamHandler.saveSong(songArrangement));
+			id++;
 		}
 
 		if (!data.songChart.vocals.vocals.isEmpty()) {

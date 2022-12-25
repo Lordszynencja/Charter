@@ -5,7 +5,7 @@ import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.HandShape;
 import log.charter.song.Position;
-import log.charter.song.Vocal;
+import log.charter.song.vocals.Vocal;
 
 public class PositionWithIdAndType extends Position {
 	public static PositionWithIdAndType create(final int position, final PositionType type) {

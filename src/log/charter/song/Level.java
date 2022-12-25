@@ -6,6 +6,8 @@ import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.io.rs.xml.song.ArrangementChord;
 import log.charter.io.rs.xml.song.ArrangementLevel;
 import log.charter.io.rs.xml.song.ArrangementNote;
+import log.charter.song.notes.Chord;
+import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.CollectionUtils.Pair;

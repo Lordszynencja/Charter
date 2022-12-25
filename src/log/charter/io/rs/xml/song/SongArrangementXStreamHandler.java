@@ -29,7 +29,7 @@ public class SongArrangementXStreamHandler {
 				ArrangementBendValue.class, //
 				ArrangementChord.class, //
 				ArrangementChordNote.class, //
-				ChordTemplate.class, //
+				ArrangementChordTemplate.class, //
 				EBeat.class, //
 				ArrangementEvent.class, //
 				ArrangementHandShape.class, //

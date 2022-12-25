@@ -3,8 +3,9 @@ package log.charter.song;
 import static java.lang.Math.abs;
 
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.Positionable;
 
-public class Position implements Comparable<Position> {
+public class Position implements Positionable {
 	public static <T extends Position> Integer findClosest(final ArrayList2<T> positions, final int position) {
 		if (positions.isEmpty()) {
 			return null;
@@ -88,7 +89,8 @@ public class Position implements Comparable<Position> {
 	}
 
 	@Override
-	public int compareTo(final Position o) {
-		return Integer.compare(position, o.position);
+	public int position() {
+		return position;
 	}
+
 }

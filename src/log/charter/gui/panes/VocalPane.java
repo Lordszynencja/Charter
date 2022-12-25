@@ -1,8 +1,8 @@
 package log.charter.gui.panes;
 
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
@@ -12,11 +12,20 @@ import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.song.Vocal;
+import log.charter.gui.components.ParamsPane;
+import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class VocalPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
+
+	private static PaneSizes getSizes() {
+		final PaneSizes sizes = new PaneSizes();
+		sizes.labelWidth = 70;
+		sizes.width = 360;
+
+		return sizes;
+	}
 
 	private String text;
 	private boolean wordPart;
@@ -29,28 +38,36 @@ public class VocalPane extends ParamsPane {
 
 	private VocalPane(final Label label, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		super(frame, label.label(), 5);
+		super(frame, label.label(), 5, getSizes());
 		this.data = data;
 		this.frame = frame;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 	}
 
-	private void createElementsAndShow(final ActionListener saveAction) {
+	private void createElementsAndShow(final Runnable saveAction) {
 		addConfigValue(0, Label.VOCAL_PANE_LYRIC, text, 200, null, val -> text = val, true);
 		addConfigCheckbox(1, Label.VOCAL_PANE_WORD_PART, wordPart, val -> {
 			wordPart = val;
-			components.get(2).setEnabled(!val);
+
+			phraseEnd = false;
+			final JCheckBox phraseEndCheckbox = (JCheckBox) components.get(5);
+			phraseEndCheckbox.setSelected(false);
+			phraseEndCheckbox.setEnabled(!val);
 		});
 		addConfigCheckbox(2, Label.VOCAL_PANE_PHRASE_END, phraseEnd, val -> {
 			phraseEnd = val;
-			components.get(1).setEnabled(!val);
+
+			wordPart = false;
+			final JCheckBox wordPartCheckbox = (JCheckBox) components.get(3);
+			wordPartCheckbox.setSelected(false);
+			wordPartCheckbox.setEnabled(!val);
 		});
 
 		addButtons(4, saveAction);
 		getRootPane().registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
-		getRootPane().registerKeyboardAction(saveAction, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+		getRootPane().registerKeyboardAction(e -> saveAction.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
 
 		validate();
@@ -65,7 +82,7 @@ public class VocalPane extends ParamsPane {
 		wordPart = false;
 		phraseEnd = false;
 
-		createElementsAndShow(e -> createAndExit(position));
+		createElementsAndShow(() -> createAndExit(position));
 	}
 
 	public VocalPane(final int id, final Vocal vocal, final ChartData data, final CharterFrame frame,
@@ -77,7 +94,7 @@ public class VocalPane extends ParamsPane {
 		wordPart = vocal.isWordPart();
 		phraseEnd = vocal.isPhraseEnd();
 
-		createElementsAndShow(e -> saveAndExit(id, vocal, remainingVocals));
+		createElementsAndShow(() -> saveAndExit(id, vocal, remainingVocals));
 	}
 
 	private void createAndExit(final int position) {
@@ -94,15 +111,19 @@ public class VocalPane extends ParamsPane {
 
 	private void saveAndExit(final int id, final Vocal vocal, final ArrayList2<Selection<Vocal>> remainingVocals) {
 		dispose();
+
 		if (text == null || "".equals(text)) {
 			undoSystem.addUndo();
 			data.songChart.vocals.removeNote(id);
 			return;
 		}
 
-		vocal.lyric = text;
-		vocal.setWordPart(wordPart);
-		vocal.setPhraseEnd(phraseEnd);
+		if (vocal.getText() != text || vocal.isWordPart() != wordPart || vocal.isPhraseEnd() != phraseEnd) {
+			undoSystem.addUndo();
+			vocal.lyric = text;
+			vocal.setWordPart(wordPart);
+			vocal.setPhraseEnd(phraseEnd);
+		}
 
 		if (!remainingVocals.isEmpty()) {
 			final Selection<Vocal> nextSelectedVocal = remainingVocals.remove(0);

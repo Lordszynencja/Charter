@@ -3,7 +3,7 @@ package log.charter.io.rs.xml.vocals;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
-import log.charter.song.Vocals;
+import log.charter.song.vocals.Vocals;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("vocals")

@@ -175,6 +175,28 @@ public class BeatsMap {
 		}
 	}
 
+	public int getNextPositionFromGridAfter(final int position) {
+		if (!useGrid) {
+			return position + 50;
+		}
+
+		final int nextBeatId = Position.findFirstIdAfter(beats, position);
+		if (nextBeatId == -1) {
+			return beats.getLast().position;
+		}
+		if (nextBeatId == 0) {
+			return beats.get(0).position;
+		}
+
+		final int previousBeatPosition = beats.get(nextBeatId - 1).position;
+		final int beatSize = beats.get(nextBeatId).position - previousBeatPosition;
+		final int distanceInBeat = position - previousBeatPosition;
+		int gridInBeat = (int) Math.round(1.0 * distanceInBeat * gridSize / beatSize);
+		gridInBeat++;
+
+		return previousBeatPosition + beatSize * gridInBeat / gridSize;
+	}
+
 	public int getPositionFromGridClosestTo(final int position) {
 		if (!useGrid) {
 			return position;

@@ -1,10 +1,12 @@
-package log.charter.song;
+package log.charter.song.configs;
 
 import java.util.Arrays;
 
 import log.charter.io.rs.xml.song.ArrangementTuning;
 
 public class Tuning {
+	private static final int[] standardStringDistances = { 0, 5, 10, 15, 19, 24 };
+
 	public enum TuningType {
 		E_STANDARD("E standard", new int[] { 0, 0, 0, 0, 0, 0 }), //
 		E_DROP_D("E drop D", new int[] { -2, 0, 0, 0, 0, 0 }), //
@@ -80,6 +82,10 @@ public class Tuning {
 	public Tuning() {
 	}
 
+	public Tuning(final TuningType tuningType) {
+		this.tuningType = tuningType;
+	}
+
 	public Tuning(final int strings, final ArrangementTuning arrangementTuning) {
 		tuning = new int[] { //
 				arrangementTuning.string0, //
@@ -105,9 +111,26 @@ public class Tuning {
 
 	public int[] getTuning(final int strings) {
 		final int[] tuning = Arrays.copyOf(tuningType == TuningType.CUSTOM ? this.tuning : tuningType.tuning, strings);
-		for (int i = this.strings; i < strings; i++) {
-			tuning[i] = tuning[this.strings - 1];
+		for (int i = strings; i < strings; i++) {
+			tuning[i] = tuning[strings - 1];
 		}
 		return tuning;
+	}
+
+	public int[] getTuning() {
+		final int[] tuning = Arrays.copyOf(tuningType == TuningType.CUSTOM ? this.tuning : tuningType.tuning, strings);
+		for (int i = strings; i < strings; i++) {
+			tuning[i] = tuning[strings - 1];
+		}
+		return tuning;
+	}
+
+	public int getStringOffset(final int string) {
+		final int[] tuning = getTuning();
+		if (string < 0 || string >= tuning.length) {
+			return 0;
+		}
+
+		return standardStringDistances[string] + tuning[string];
 	}
 }

@@ -3,6 +3,7 @@ package log.charter.gui.menuHandlers;
 import java.util.function.Consumer;
 
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
@@ -15,9 +16,16 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.panes.ChordOptionsPane;
+import log.charter.gui.panes.HandShapePane;
+import log.charter.gui.panes.NoteOptionsPane;
 import log.charter.gui.panes.SlidePane;
-import log.charter.song.Chord;
-import log.charter.song.Note;
+import log.charter.song.HandShape;
+import log.charter.song.enums.HOPO;
+import log.charter.song.enums.Mute;
+import log.charter.song.notes.Chord;
+import log.charter.song.notes.Note;
+import log.charter.util.CollectionUtils.ArrayList2;
 
 class GuitarMenuHandler extends CharterMenuHandler {
 	private ChartData data;
@@ -49,6 +57,23 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Label.GUITAR_MENU_SET_SLIDE, button('S'), this::setSlide));
 		menu.add(createItem(Label.GUITAR_MENU_TOGGLE_LINK_NEXT, button('L'), this::toggleLinkNext));
 
+		menu.addSeparator();
+		final JMenuItem noteOptions = createItem(Label.GUITAR_MENU_NOTE_OPTIONS, button('N'), this::noteOptions);
+		noteOptions.setToolTipText(Label.GUITAR_MENU_NOTE_OPTIONS_TOOLTIP.label());
+		menu.add(noteOptions);
+
+		final JMenuItem chordOptions = createItem(Label.GUITAR_MENU_CHORD_OPTIONS, button('Q'), this::chordOptions);
+		chordOptions.setToolTipText(Label.GUITAR_MENU_CHORD_OPTIONS_TOOLTIP.label());
+		menu.add(chordOptions);
+
+		final JMenuItem singleNoteOptions = createItem(Label.GUITAR_MENU_SINGLE_NOTE_OPTIONS, button('E'),
+				this::singleNoteOptions);
+		singleNoteOptions.setToolTipText(Label.GUITAR_MENU_SINGLE_NOTE_OPTIONS_TOOLTIP.label());
+		menu.add(singleNoteOptions);
+
+		menu.addSeparator();
+		menu.add(createItem(Label.GUITAR_MENU_HAND_SHAPE_OPTIONS, button('U'), this::handShapeOptions));
+
 		return menu;
 	}
 
@@ -72,22 +97,20 @@ class GuitarMenuHandler extends CharterMenuHandler {
 
 	private void toggleMute() {
 		singleToggleOnAllSelectedNotes(chord -> {
-			if (chord.palmMute) {
-				chord.palmMute = false;
-				chord.fretHandMute = true;
-			} else if (chord.fretHandMute) {
-				chord.fretHandMute = false;
+			if (chord.mute == Mute.PALM) {
+				chord.mute = Mute.STRING;
+			} else if (chord.mute == Mute.STRING) {
+				chord.mute = null;
 			} else {
-				chord.palmMute = true;
+				chord.mute = Mute.PALM;
 			}
 		}, note -> {
-			if (note.palmMute) {
-				note.palmMute = false;
-				note.fretHandMute = true;
-			} else if (note.fretHandMute) {
-				note.fretHandMute = false;
+			if (note.mute == Mute.PALM) {
+				note.mute = Mute.STRING;
+			} else if (note.mute == Mute.STRING) {
+				note.mute = null;
 			} else {
-				note.palmMute = true;
+				note.mute = Mute.PALM;
 			}
 		});
 	}
@@ -95,18 +118,12 @@ class GuitarMenuHandler extends CharterMenuHandler {
 	private void toggleHOPO() {
 		singleToggleOnAllSelectedNotes(chord -> {
 		}, note -> {
-			if (note.hammerOn) {
-				note.hopo = true;
-				note.hammerOn = false;
-				note.pullOff = true;
-			} else if (note.pullOff) {
-				note.hopo = false;
-				note.hammerOn = false;
-				note.pullOff = false;
+			if (note.hopo == HOPO.HAMMER_ON) {
+				note.hopo = HOPO.PULL_OFF;
+			} else if (note.hopo == HOPO.PULL_OFF) {
+				note.hopo = HOPO.NONE;
 			} else {
-				note.hopo = true;
-				note.hammerOn = true;
-				note.pullOff = false;
+				note.hopo = HOPO.HAMMER_ON;
 			}
 		});
 	}
@@ -127,5 +144,61 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		}
 
 		new SlidePane(frame, undoSystem, selectedAccessor.getSortedSelected().get(0).selectable);
+	}
+
+	private ArrayList2<ChordOrNote> getSelectedNotes() {
+		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
+				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+
+		return selectedAccessor.getSortedSelected().map(selection -> selection.selectable);
+	}
+
+	private void openChordOptionsPopup(final ArrayList2<ChordOrNote> selected) {
+		new ChordOptionsPane(data, frame, undoSystem, selected);
+	}
+
+	private void openSingleNoteOptionsPopup(final ArrayList2<ChordOrNote> selected) {
+		new NoteOptionsPane(data, frame, undoSystem, selected);
+	}
+
+	private void noteOptions() {
+		final ArrayList2<ChordOrNote> selected = getSelectedNotes();
+		if (selected.isEmpty()) {
+			return;
+		}
+
+		if (selected.get(0).isChord()) {
+			openChordOptionsPopup(selected);
+		} else {
+			openSingleNoteOptionsPopup(selected);
+		}
+	}
+
+	private void chordOptions() {
+		final ArrayList2<ChordOrNote> selected = getSelectedNotes();
+		if (selected.isEmpty()) {
+			return;
+		}
+
+		openChordOptionsPopup(selected);
+	}
+
+	private void singleNoteOptions() {
+		final ArrayList2<ChordOrNote> selected = getSelectedNotes();
+		if (selected.isEmpty()) {
+			return;
+		}
+
+		openSingleNoteOptionsPopup(selected);
+	}
+
+	private void handShapeOptions() {
+		final SelectionAccessor<HandShape> selectedAccessor = selectionManager
+				.getSelectedAccessor(PositionType.HAND_SHAPE);
+		if (!selectedAccessor.isSelected()) {
+			return;
+		}
+
+		new HandShapePane(data, frame, selectedAccessor.getSortedSelected().get(0).selectable);
 	}
 }

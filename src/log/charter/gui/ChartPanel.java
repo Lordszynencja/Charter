@@ -2,7 +2,7 @@ package log.charter.gui;
 
 import java.awt.Graphics;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.HighlightManager;
@@ -18,7 +18,7 @@ import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseHandler;
 
-public class ChartPanel extends JPanel {
+public class ChartPanel extends JComponent {
 	private static final long serialVersionUID = -3439446235287039031L;
 
 	private ChartData data;

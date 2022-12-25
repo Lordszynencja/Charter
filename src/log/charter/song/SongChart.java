@@ -1,15 +1,18 @@
 package log.charter.song;
 
-import static java.util.stream.Collectors.toCollection;
 import static log.charter.io.rs.xml.song.SongArrangementXStreamHandler.readSong;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.readVocals;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import log.charter.data.config.Localization.Label;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
+import log.charter.song.notes.Note;
+import log.charter.song.vocals.Vocals;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.RW;
 
@@ -53,7 +56,7 @@ public class SongChart {
 	/**
 	 * creates chart from loaded project
 	 */
-	public SongChart(final int songLengthMs, final RocksmithChartProject project, final String dir) {
+	public SongChart(final int songLengthMs, final RocksmithChartProject project, final String dir) throws IOException {
 		musicFileName = project.musicFileName;
 
 		artistName = project.artistName;
@@ -64,10 +67,18 @@ public class SongChart {
 		crowdSpeed = project.crowdSpeed;
 
 		beatsMap = new BeatsMap(songLengthMs, project);
-		arrangements = project.arrangementFiles.stream()//
-				.map(filename -> readSong(RW.read(dir + filename)))//
-				.map(ArrangementChart::new)//
-				.collect(toCollection(ArrayList2::new));
+
+		arrangements = new ArrayList2<>();
+
+		for (final String filename : project.arrangementFiles) {
+			try {
+				final String xml = RW.read(dir + filename);
+				final SongArrangement songArrangement = readSong(xml);
+				arrangements.add(new ArrangementChart(songArrangement));
+			} catch (final Exception e) {
+				throw new IOException(String.format(Label.MISSING_ARRANGEMENT_FILE.label(), filename));
+			}
+		}
 
 		vocals = new Vocals(readVocals(RW.read(dir + "Vocals_RS2.xml")));
 	}

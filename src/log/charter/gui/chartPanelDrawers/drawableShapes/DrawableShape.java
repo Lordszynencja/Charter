@@ -42,6 +42,11 @@ public interface DrawableShape {
 		return new StrokedRectangle(position, color);
 	}
 
+	// Diamonds
+	public static DrawableShape filledDiamond(final Position2D position, final int radius, final Color color) {
+		return new FilledDiamond(position, radius, color);
+	}
+
 	// Arcs
 	public static DrawableShape filledArc(final ShapePositionWithSize position, final int startAngle,
 			final int arcAngle, final Color color) {

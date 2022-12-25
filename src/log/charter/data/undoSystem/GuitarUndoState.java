@@ -2,9 +2,9 @@ package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.selection.ChordOrNote;
-import log.charter.io.rs.xml.song.ChordTemplate;
 import log.charter.song.Anchor;
 import log.charter.song.ArrangementChart;
+import log.charter.song.ChordTemplate;
 import log.charter.song.Event;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
@@ -55,7 +55,7 @@ public class GuitarUndoState implements UndoState {
 	}
 
 	public GuitarUndoState(final ChartData data) {
-		this(data, data.currentArrangement, data.currentDiff, new BeatsMapUndoState(data));
+		this(data, data.currentArrangement, data.currentLevel, new BeatsMapUndoState(data));
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.VocalPane;
-import log.charter.song.Vocal;
+import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 class VocalsMenuHandler extends CharterMenuHandler {
@@ -51,6 +51,10 @@ class VocalsMenuHandler extends CharterMenuHandler {
 
 	private void editVocals() {
 		final SelectionAccessor<Vocal> selectedAccessor = selectionManager.getSelectedAccessor(PositionType.VOCAL);
+		if (!selectedAccessor.isSelected()) {
+			return;
+		}
+
 		final ArrayList2<Selection<Vocal>> selectedVocals = selectedAccessor.getSortedSelected();
 		final Selection<Vocal> firstSelectedVocal = selectedVocals.remove(0);
 		new VocalPane(firstSelectedVocal.id, firstSelectedVocal.selectable, data, frame, selectionManager, undoSystem,

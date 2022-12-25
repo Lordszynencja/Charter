@@ -4,7 +4,7 @@ import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.HandShape;
-import log.charter.song.Vocal;
+import log.charter.song.vocals.Vocal;
 
 class TemporaryValue {
 	public int position;

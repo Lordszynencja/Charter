@@ -17,7 +17,6 @@ import log.charter.data.ChartData;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
-import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
@@ -30,9 +29,9 @@ import log.charter.util.Position2D;
 
 public class BeatsDrawer {
 	private static class BeatsDrawingData {
-		private static final Color selectColor = ChartPanelColors.get(ColorLabel.SELECT);
-		private static final Color mainBeatColor = ChartPanelColors.get(ColorLabel.MAIN_BEAT);
-		private static final Color secondaryBeatColor = ChartPanelColors.get(ColorLabel.SECONDARY_BEAT);
+		private static final Color selectColor = ColorLabel.SELECT.color();
+		private static final Color mainBeatColor = ColorLabel.MAIN_BEAT.color();
+		private static final Color secondaryBeatColor = ColorLabel.SECONDARY_BEAT.color();
 
 		private final DrawableShapeList beats = new DrawableShapeList();
 

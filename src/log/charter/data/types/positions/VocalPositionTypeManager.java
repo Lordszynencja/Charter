@@ -2,7 +2,7 @@ package log.charter.data.types.positions;
 
 import log.charter.data.ChartData;
 import log.charter.data.types.PositionWithIdAndType;
-import log.charter.song.Vocal;
+import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class VocalPositionTypeManager implements PositionTypeManager<Vocal> {

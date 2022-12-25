@@ -4,13 +4,13 @@ public class IntRange {
 	public final int min;
 	public final int max;
 
-	public IntRange(final int a, final int b) {
-		if (a < b) {
-			min = a;
-			max = b;
+	public IntRange(final int min, final int max) {
+		if (min < max) {
+			this.min = min;
+			this.max = max;
 		} else {
-			min = b;
-			max = a;
+			this.min = max;
+			this.max = min;
 		}
 	}
 }

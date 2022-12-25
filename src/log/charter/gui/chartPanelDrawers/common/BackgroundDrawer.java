@@ -14,7 +14,6 @@ import java.text.DecimalFormat;
 
 import log.charter.data.ChartData;
 import log.charter.gui.ChartPanel;
-import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 
@@ -34,12 +33,12 @@ public class BackgroundDrawer {
 	}
 
 	private void drawBackground(final Graphics g) {
-		g.setColor(ChartPanelColors.get(ColorLabel.BACKGROUND));
+		g.setColor(ColorLabel.BASE_BG_2.color());
 		g.fillRect(0, 0, chartPanel.getWidth(), chartPanel.getHeight());
 	}
 
 	private void drawLanesBackground(final Graphics g) {
-		g.setColor(ChartPanelColors.get(ColorLabel.NOTE_BACKGROUND));
+		g.setColor(ColorLabel.BASE_BG_1.color());
 		g.fillRect(0, lanesTop, chartPanel.getWidth(), lanesHeight);
 	}
 

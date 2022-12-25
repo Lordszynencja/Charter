@@ -6,12 +6,15 @@ import java.util.stream.Collectors;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.data.config.Config;
+import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
-import log.charter.song.Chord;
+import log.charter.song.ChordTemplate;
+import log.charter.song.HandShape;
 import log.charter.song.Level;
+import log.charter.song.notes.Chord;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.SeekableList;
 
 @XStreamAlias("level")
 public class ArrangementLevel {
@@ -41,47 +44,84 @@ public class ArrangementLevel {
 			final ArrayList2<ChordTemplate> chordTemplates) {
 		this.difficulty = difficulty;
 
-		levelChart.chordsAndNotes//
-				.stream().filter(chordOrNote -> chordOrNote.note != null)//
-				.map(chordOrNote -> chordOrNote.note)//
-				.forEach(note -> note.sustain = note.sustain >= Config.minTailLength ? note.sustain : 0);
+		setNotes(levelChart.chordsAndNotes);
+		setChords(levelChart.chordsAndNotes, chordTemplates);
 
+		fretHandMutes = new CountedList<>();
+		anchors = new CountedList<>(levelChart.anchors.map(ArrangementAnchor::new));
+
+		setHandShapes(levelChart.chordsAndNotes, levelChart.handShapes);
+
+		addChordNotesForFirstChordsInHandShape(levelChart.chordsAndNotes, chordTemplates);
+	}
+
+	private void setNotes(final ArrayList2<ChordOrNote> chordsAndNotes) {
 		notes = new CountedList<>();
-		levelChart.chordsAndNotes.stream()//
+		chordsAndNotes.stream()//
 				.filter(chordOrNote -> chordOrNote.note != null)//
 				.map(chordOrNote -> new ArrangementNote(chordOrNote.note))//
 				.forEach(notes.list::add);
-		chords = new CountedList<>();
+	}
 
-		levelChart.chordsAndNotes.stream()//
+	private void setChords(final ArrayList2<ChordOrNote> chordsAndNotes,
+			final ArrayList2<ChordTemplate> chordTemplates) {
+		chords = new CountedList<>();
+		chordsAndNotes.stream()//
 				.filter(chordOrNote -> chordOrNote.chord != null)//
 				.map(chordOrNote -> new ArrangementChord(chordOrNote.chord,
 						chordTemplates.get(chordOrNote.chord.chordId)))//
 				.forEach(chords.list::add);
-		fretHandMutes = new CountedList<>();
-		anchors = new CountedList<>(levelChart.anchors.map(ArrangementAnchor::new));
+	}
 
-		final LinkedList<Chord> chordsForHandShapes = levelChart.chordsAndNotes.stream()//
+	private void setHandShapes(final ArrayList2<ChordOrNote> chordsAndNotes, final ArrayList2<HandShape> handShapes) {
+		final LinkedList<Chord> chordsForHandShapes = chordsAndNotes.stream()//
 				.filter(chordOrNote -> chordOrNote.chord != null)//
 				.map(chordOrNote -> chordOrNote.chord)//
 				.collect(Collectors.toCollection(LinkedList::new));
 		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
-		handShapes = new CountedList<>(levelChart.handShapes.map(handShape -> {
-			int chordId = 0;
-
+		this.handShapes = new CountedList<ArrangementHandShape>();
+		for (final HandShape handShape : handShapes) {
 			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position < handShape.position) {
 				chordsWithoutHandShapes.add(chordsForHandShapes.get(0));
 				chordsForHandShapes.remove(0);
 			}
 
-			if (!chordsForHandShapes.isEmpty()) {
-				chordId = chordsForHandShapes.get(0).chordId;
+			this.handShapes.list.add(new ArrangementHandShape(handShape));
+		}
+
+		this.handShapes.list.addAll(chordsWithoutHandShapes.map(ArrangementHandShape::new));
+		this.handShapes.list.sort((a, b) -> Integer.compare(a.startTime, b.startTime));
+	}
+
+	private void addChordNotesForFirstChordsInHandShape(final ArrayList2<ChordOrNote> chordsAndNotes,
+			final ArrayList2<ChordTemplate> chordTemplates) {
+		final SeekableList<ChordOrNote> seekableNotes = new SeekableList<>(chordsAndNotes);
+		final SeekableList<ArrangementChord> seekableArrangementChords = new SeekableList<>(chords.list);
+
+		for (final ArrangementHandShape handShape : handShapes.list) {
+			seekableNotes.seekNextGreaterEqual(handShape.startTime);
+
+			if (!seekableNotes.hasPosition()) {
+				return;
 			}
 
-			return new ArrangementHandShape(handShape, chordId);
-		}));
+			final ChordOrNote chordOrNote = seekableNotes.getCurrent();
+			if (chordOrNote.position > handShape.endTime) {
+				continue;
+			}
 
-		handShapes.list.addAll(chordsWithoutHandShapes.map(ArrangementHandShape::new));
-		handShapes.list.sort((a, b) -> Integer.compare(a.startTime, b.startTime));
+			if (chordOrNote.isChord()) {
+				seekableArrangementChords.seekNextGreaterEqual(chordOrNote.chord.position);
+				final ArrangementChord chord = seekableArrangementChords.getCurrent();
+				final ChordTemplate chordTemplate = chordTemplates.get(chord.chordId);
+				if (chord.chordNotes != null && !chord.chordNotes.isEmpty()) {
+					continue;
+				}
+
+				chord.populateChordNotes(chordTemplate);
+				continue;
+			}
+
+		}
 	}
 }

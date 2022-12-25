@@ -1,5 +1,7 @@
 package log.charter.gui.handlers;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 
 import java.awt.event.KeyEvent;
@@ -69,8 +71,11 @@ public class KeyboardHandler implements KeyListener {
 		if (!left && !right) {
 			return;
 		}
+
 		final int speed = (Framer.frameLength * (shift ? 20 : 2)) / (ctrl ? 2 : 1);
-		frame.setNextTime(data.time - (left ? speed : 0) + (right ? speed : 0));
+		int nextTime = data.time - (left ? speed : 0) + (right ? speed : 0);
+		nextTime = max(0, min(data.music.msLength(), nextTime));
+		frame.setNextTime(nextTime);
 	}
 
 	public boolean alt() {

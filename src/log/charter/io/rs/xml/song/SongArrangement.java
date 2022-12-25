@@ -47,11 +47,11 @@ public class SongArrangement {
 	public ArrangementProperties arrangementProperties = new ArrangementProperties();
 	public CountedList<ArrangementPhrase> phrases;
 	public CountedList<ArrangementPhraseIteration> phraseIterations;
-	public CountedList<String> newLinkedDiffs = new CountedList<>();
-	public CountedList<String> linkedDiffs = new CountedList<>();
+	// public CountedList<String> newLinkedDiffs = new CountedList<>();
+	// public CountedList<String> linkedDiffs = new CountedList<>();
 	public CountedList<String> phraseProperties = new CountedList<>();
-	public CountedList<ChordTemplate> chordTemplates;
-	public CountedList<ChordTemplate> fretHandMuteTemplates;
+	public CountedList<ArrangementChordTemplate> chordTemplates;
+	public CountedList<ArrangementChordTemplate> fretHandMuteTemplates;
 	public CountedList<EBeat> ebeats;
 	public CountedList<ArrangementSection> sections;
 	public CountedList<ArrangementEvent> events;
@@ -82,8 +82,9 @@ public class SongArrangement {
 		phrases = new CountedList<ArrangementPhrase>(arrangementChart.phrases.map(ArrangementPhrase::new));
 		phraseIterations = new CountedList<>(
 				ArrangementPhraseIteration.fromPhraseIterations(phrases.list, arrangementChart.phraseIterations));
-		chordTemplates = new CountedList<>(arrangementChart.chordTemplates);
-		fretHandMuteTemplates = new CountedList<>(arrangementChart.fretHandMuteTemplates);
+		chordTemplates = new CountedList<>(arrangementChart.chordTemplates.map(ArrangementChordTemplate::new));
+		fretHandMuteTemplates = new CountedList<>(
+				arrangementChart.fretHandMuteTemplates.map(ArrangementChordTemplate::new));
 		ebeats = new CountedList<>(songChart.beatsMap.beats.map(EBeat::new));
 		sections = new CountedList<>(ArrangementSection.fromSections(arrangementChart.sections));
 		events = new CountedList<>(ArrangementEvent.fromEventsAndBeatMap(arrangementChart.events, songChart.beatsMap));

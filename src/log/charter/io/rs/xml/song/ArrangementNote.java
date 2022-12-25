@@ -7,7 +7,11 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.Note;
+import log.charter.song.enums.BassPickingTechnique;
+import log.charter.song.enums.HOPO;
+import log.charter.song.enums.Harmonic;
+import log.charter.song.enums.Mute;
+import log.charter.song.notes.Note;
 
 @XStreamAlias("note")
 @XStreamInclude(ArrangementBendValue.class)
@@ -63,24 +67,66 @@ public class ArrangementNote {
 		time = note.position;
 		string = note.string;
 		fret = note.fret;
-		sustain = note.sustain > 0 ? note.sustain : null;
+		sustain = note.length > 0 ? note.length : null;
 		vibrato = note.vibrato;
 		accent = note.accent ? 1 : null;
-		mute = note.fretHandMute ? 1 : null;
-		palmMute = note.palmMute ? 1 : null;
-		pluck = note.pluck ? 1 : null;
-		hopo = note.hammerOn || note.pullOff ? 1 : null;
-		hammerOn = note.hammerOn ? 1 : null;
-		pullOff = note.pullOff ? 1 : null;
-		slap = note.slap ? 1 : null;
-		slideTo = note.slideTo;
-		slideUnpitchTo = note.unpitchedSlideTo;
 		bend = note.bend;
-		tap = note.tap ? 1 : null;
-		harmonic = note.harmonic ? 1 : null;
-		harmonicPinch = note.harmonicPinch ? 1 : null;
 		bendValues = note.bendValues.isEmpty() ? null
 				: new CountedList<>(note.bendValues.map(ArrangementBendValue::new));
 		linkNext = note.linkNext ? 1 : null;
+
+		setUpMute(note);
+		setUpHOPO(note);
+		setUpBassPickingTechniques(note);
+		setUpHarmonic(note);
+		setUpSlide(note);
+	}
+
+	private void setUpMute(final Note note) {
+		if (note.mute == Mute.STRING) {
+			mute = 1;
+		} else if (note.mute == Mute.PALM) {
+			palmMute = 1;
+		}
+	}
+
+	private void setUpHOPO(final Note note) {
+		if (note.hopo == HOPO.HAMMER_ON) {
+			hopo = 1;
+			hammerOn = 1;
+		} else if (note.hopo == HOPO.PULL_OFF) {
+			hopo = 1;
+			pullOff = 1;
+		} else if (note.hopo == HOPO.TAP) {
+			tap = 1;
+		}
+	}
+
+	private void setUpBassPickingTechniques(final Note note) {
+		if (note.bassPicking == BassPickingTechnique.POP) {
+			pluck = 1;
+		} else if (note.bassPicking == BassPickingTechnique.SLAP) {
+			slap = 1;
+		}
+	}
+
+	private void setUpHarmonic(final Note note) {
+		if (note.harmonic == Harmonic.NORMAL) {
+			harmonic = 1;
+		} else if (note.harmonic == Harmonic.PINCH) {
+			harmonicPinch = 1;
+		}
+	}
+
+	private void setUpSlide(final Note note) {
+		if (note.slideTo == null) {
+			return;
+		}
+
+		if (note.unpitchedSlide) {
+			slideUnpitchTo = note.slideTo;
+		} else {
+			slideTo = note.slideTo;
+		}
 	}
 }

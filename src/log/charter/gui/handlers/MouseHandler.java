@@ -81,19 +81,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 
 		mouseButtonPressReleaseHandler.press(e);
-
-		if (e.getButton() == MouseEvent.BUTTON1) {// TODO
-//			if (isInTempos(y)) {
-//				final Object[] tempoData = data.s.tempoMap.findOrCreateClosestTempo(data.xToTime(x));
-//				if (tempoData != null) {
-//					data.startTempoDrag((Tempo) tempoData[0], (Tempo) tempoData[1], (Tempo) tempoData[2],
-//							(boolean) tempoData[3]);
-//				}
-//			} else if (isInLanes(y)) {
-//				data.mousePressX = data.mx;
-//				data.mousePressY = data.my;
-//			}
-		}
 	}
 
 	@Override

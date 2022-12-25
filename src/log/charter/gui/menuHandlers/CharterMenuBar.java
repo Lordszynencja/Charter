@@ -8,6 +8,7 @@ import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.handlers.AudioHandler;
@@ -51,6 +52,8 @@ public class CharterMenuBar extends JMenuBar {
 		setMinimumSize(size);
 		this.setSize(size);
 		setMaximumSize(size);
+
+		setBackground(ColorLabel.BASE_BG_2.color());
 
 		refreshMenus();
 

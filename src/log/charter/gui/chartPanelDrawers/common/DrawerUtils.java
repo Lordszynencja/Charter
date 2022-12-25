@@ -2,8 +2,7 @@ package log.charter.gui.chartPanelDrawers.common;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-
-import log.charter.data.config.Config;
+import static log.charter.util.Utils.getStringPosition;
 
 public class DrawerUtils {
 	public static final int sectionNamesY = 10;
@@ -21,10 +20,6 @@ public class DrawerUtils {
 
 	public static final int lanesHeight = lanesBottom - lanesTop;
 
-	public static int applyInvertion(final int lane, final int lanesNo) {
-		return Config.invertStrings ? lane : lanesNo - lane - 1;
-	}
-
 	public static int getAsOdd(final int x) {
 		return x % 2 == 0 ? x + 1 : x;
 	}
@@ -34,12 +29,12 @@ public class DrawerUtils {
 	}
 
 	public static int getLaneY(final int lane, final int lanesNo) {
-		final int lanePositionInLanes = (int) (lanesHeight * (applyInvertion(lane, lanesNo) + 0.5) / lanesNo);
+		final int lanePositionInLanes = (int) (lanesHeight * (getStringPosition(lane, lanesNo) + 0.5) / lanesNo);
 		return lanesTop + lanePositionInLanes;
 	}
 
 	public static int yToLane(final double y, final int lanesNo) {
-		final int lane = applyInvertion((int) ((y - lanesTop) * lanesNo / lanesHeight), lanesNo);
+		final int lane = getStringPosition((int) ((y - lanesTop) * lanesNo / lanesHeight), lanesNo);
 		return max(0, min(lanesNo - 1, lane));
 	}
 

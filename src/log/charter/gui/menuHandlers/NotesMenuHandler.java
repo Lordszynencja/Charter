@@ -29,7 +29,7 @@ class NotesMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Label.NOTES_MENU_DOUBLE_GRID, button(VK_PERIOD), this::doubleGridSize));
 		menu.add(createItem(Label.NOTES_MENU_HALVE_GRID, button(VK_COMMA), this::halveGridSize));
 
-		menu.addSeparator();
+		// addSeparator(menu);
 		// final JMenu copyFromMenu = new JMenu("Copy from");
 
 //		for (final InstrumentType type : InstrumentType.sortedValues()) {

@@ -10,7 +10,19 @@ import log.charter.util.RW;
 
 public class ChartPanelColors {
 	public enum ColorLabel {
-		BACKGROUND(80, 80, 80), //
+		BASE_1(0, 96, 96), //
+		BASE_2(32, 128, 128), //
+
+		BASE_BG_0(0, 0, 0), //
+		BASE_BG_1(32, 32, 32), //
+		BASE_BG_2(64, 64, 64), //
+		BASE_BG_3(96, 96, 96), //
+		BASE_BG_4(128, 128, 128), //
+		BASE_BG_5(255, 255, 255), //
+
+		BASE_DARK_TEXT(64, 192, 192), //
+		BASE_TEXT(96, 224, 224), //
+
 		NOTE_BACKGROUND(16, 16, 16), //
 		NOTE_ADD_LINE(0, 255, 0), //
 		LANE(128, 128, 128), //
@@ -29,19 +41,33 @@ public class ChartPanelColors {
 		SLIDE_UNPITCHED_FRET_BG(255, 128, 128), //
 		SLIDE_UNPITCHED_FRET_TEXT(0, 0, 0), //
 
-		LANE_0(115, 10, 10), //
-		LANE_1(115, 115, 10), //
-		LANE_2(10, 10, 115), //
-		LANE_3(115, 60, 10), //
-		LANE_4(10, 115, 10), //
-		LANE_5(115, 10, 115), //
+		LANE_0(96, 0, 0), //
+		LANE_1(96, 96, 0), //
+		LANE_2(0, 0, 128), //
+		LANE_3(96, 48, 0), //
+		LANE_4(0, 96, 0), //
+		LANE_5(96, 0, 96), //
 
-		NOTE_0(230, 20, 20), //
-		NOTE_1(230, 230, 20), //
-		NOTE_2(20, 20, 230), //
-		NOTE_3(230, 125, 20), //
-		NOTE_4(20, 230, 20), //
-		NOTE_5(230, 20, 230), //
+		LANE_BRIGHT_0(128, 0, 0), //
+		LANE_BRIGHT_1(128, 128, 0), //
+		LANE_BRIGHT_2(0, 0, 192), //
+		LANE_BRIGHT_3(128, 64, 0), //
+		LANE_BRIGHT_4(0, 128, 0), //
+		LANE_BRIGHT_5(128, 0, 128), //
+
+		NOTE_0(192, 0, 0), //
+		NOTE_1(192, 192, 0), //
+		NOTE_2(0, 0, 192), //
+		NOTE_3(192, 96, 0), //
+		NOTE_4(0, 192, 0), //
+		NOTE_5(192, 0, 192), //
+
+		NOTE_ACCENT_0(255, 0, 0), //
+		NOTE_ACCENT_1(255, 255, 0), //
+		NOTE_ACCENT_2(0, 0, 255), //
+		NOTE_ACCENT_3(255, 128, 0), //
+		NOTE_ACCENT_4(0, 255, 0), //
+		NOTE_ACCENT_5(255, 0, 255), //
 
 		ANCHOR(128, 0, 0), //
 		HAND_SHAPE(0, 128, 255, 255), //
@@ -107,9 +133,5 @@ public class ChartPanelColors {
 		}
 
 		RW.writeConfig("colors.txt", config);
-	}
-
-	public static Color get(final ColorLabel colorLabel) {
-		return colors.get(colorLabel);
 	}
 }

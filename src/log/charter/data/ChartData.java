@@ -8,6 +8,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.swing.JScrollBar;
+
 import log.charter.data.config.Config;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
@@ -18,9 +20,9 @@ import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
 import log.charter.song.ArrangementChart;
 import log.charter.song.Level;
-import log.charter.song.Note;
 import log.charter.song.SongChart;
 import log.charter.song.Tempo;
+import log.charter.song.notes.Note;
 import log.charter.sound.MusicData;
 
 public class ChartData {
@@ -30,7 +32,7 @@ public class ChartData {
 	public SongChart songChart = null;
 	public MusicData music = new MusicData(new byte[0], 44100);
 	public int currentArrangement = 0;
-	public int currentDiff = 0;
+	public int currentLevel = 0;
 
 	public int time = 0;
 	public int nextTime = 0;
@@ -38,6 +40,7 @@ public class ChartData {
 	private AudioHandler audioHandler;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
+	private JScrollBar scrollBar;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
@@ -45,10 +48,12 @@ public class ChartData {
 	}
 
 	public void init(final AudioHandler audioHandler, final CharterMenuBar charterMenuBar,
-			final ModeManager modeManager, final SelectionManager selectionManager, final UndoSystem undoSystem) {
+			final ModeManager modeManager, final JScrollBar scrollBar, final SelectionManager selectionManager,
+			final UndoSystem undoSystem) {
 		this.audioHandler = audioHandler;
 		this.charterMenuBar = charterMenuBar;
 		this.modeManager = modeManager;
+		this.scrollBar = scrollBar;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 	}
@@ -61,7 +66,7 @@ public class ChartData {
 	}
 
 	public void changeDifficulty(final int newDiff) {
-		currentDiff = newDiff;
+		currentLevel = newDiff;
 	}
 
 //	private void changeEventList(final List<Event> events, final double start, final double end) {
@@ -139,18 +144,6 @@ public class ChartData {
 	public void changeTempoBeatsInMeasure(final Tempo tmp, final boolean isNew, final int beats) {
 		undoSystem.addUndo();
 		tmp.beats = beats;
-	}
-
-	public void clear() {
-		path = "C:/";
-		music = new MusicData(new byte[0], 44100);
-		currentArrangement = 0;
-		currentDiff = 0;
-		time = 0;
-		nextTime = 0;
-
-		selectionManager.clear();
-		undoSystem.clear();
 	}
 
 	public void copy() {// TODO
@@ -444,8 +437,12 @@ public class ChartData {
 
 	public void setSong(final String dir, final SongChart song, final MusicData musicData,
 			final String projectFileName) {// TODO
-		clear();
+		currentArrangement = 0;
+		currentLevel = 0;
+		time = 0;
+		nextTime = 0;
 		isEmpty = false;
+
 		songChart = song;
 		audioHandler.stopMusic();
 		selectionManager.clear();
@@ -453,10 +450,15 @@ public class ChartData {
 		modeManager.editMode = EditMode.GUITAR;
 
 		charterMenuBar.refreshMenus();
+		scrollBar.setValue(0);
+		scrollBar.setMaximum(musicData.msLength());
+
 		path = dir;
 		this.projectFileName = projectFileName;
 		Config.lastPath = path;
 		music = musicData;
+
+		selectionManager.clear();
 		undoSystem.clear();
 	}
 
@@ -677,13 +679,16 @@ public class ChartData {
 	}
 
 	public Level getCurrentArrangementLevel() {
-		return songChart.arrangements.get(currentArrangement).levels.get(currentDiff);
+		return songChart.arrangements.get(currentArrangement).levels.get(currentLevel);
 	}
 
 	public void setNextTime(final int t) {
 		nextTime = t;
 		if (nextTime < 0) {
 			nextTime = 0;
+		}
+		if (nextTime > music.msLength()) {
+			nextTime = music.msLength();
 		}
 	}
 }

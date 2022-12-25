@@ -6,18 +6,18 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import log.charter.io.rs.xml.song.ChordTemplate;
+import log.charter.io.rs.xml.song.ArrangementChordTemplate;
 
 public class ChordTemplateConverter implements Converter {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean canConvert(final Class type) {
-		return type.equals(ChordTemplate.class);
+		return type.equals(ArrangementChordTemplate.class);
 	}
 
 	@Override
 	public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		final ChordTemplate chordTemplate = (ChordTemplate) source;
+		final ArrangementChordTemplate chordTemplate = (ArrangementChordTemplate) source;
 		writer.addAttribute("chordName", chordTemplate.chordName);
 		writer.addAttribute("displayName", chordTemplate.displayName);
 
@@ -27,7 +27,7 @@ public class ChordTemplateConverter implements Converter {
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-		final ChordTemplate chordTemplate = new ChordTemplate();
+		final ArrangementChordTemplate chordTemplate = new ArrangementChordTemplate();
 		for (int i = 0; i < reader.getAttributeCount(); i++) {
 			final String name = reader.getAttributeName(i);
 			final String value = reader.getAttribute(i);
@@ -37,7 +37,9 @@ public class ChordTemplateConverter implements Converter {
 			} else if (name.equals("displayName")) {
 				chordTemplate.displayName = value;
 			} else if (name.matches("finger[0-9]+")) {
-				chordTemplate.fingers.put(Integer.valueOf(name.substring(6)), Integer.valueOf(value));
+				final int string = Integer.valueOf(name.substring(6));
+				final int finger = Integer.valueOf(value);
+				chordTemplate.fingers.put(string, finger);
 			} else if (name.matches("fret[0-9]+")) {
 				chordTemplate.frets.put(Integer.valueOf(name.substring(4)), Integer.valueOf(value));
 			}

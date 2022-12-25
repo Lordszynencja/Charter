@@ -7,8 +7,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.Chord;
 import log.charter.song.HandShape;
+import log.charter.song.notes.Chord;
 
 @XStreamAlias("handShape")
 public class ArrangementHandShape {
@@ -30,8 +30,8 @@ public class ArrangementHandShape {
 		endTime = chord.position + max(50, chord.length);
 	}
 
-	public ArrangementHandShape(final HandShape handShape, final int chordId) {
-		this.chordId = chordId;
+	public ArrangementHandShape(final HandShape handShape) {
+		chordId = handShape.chordId;
 		startTime = handShape.position;
 		endTime = startTime + handShape.length;
 	}

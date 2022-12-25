@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.Vocal;
+import log.charter.song.vocals.Vocal;
 
 @XStreamAlias("vocal")
 public class ArrangementVocal {

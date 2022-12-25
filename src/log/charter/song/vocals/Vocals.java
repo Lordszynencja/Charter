@@ -1,4 +1,4 @@
-package log.charter.song;
+package log.charter.song.vocals;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;

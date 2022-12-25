@@ -9,7 +9,6 @@ import java.awt.Graphics;
 
 import log.charter.data.ChartData;
 import log.charter.gui.ChartPanel;
-import log.charter.gui.ChartPanelColors;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class AudioDrawer {
@@ -57,7 +56,7 @@ public class AudioDrawer {
 		int y0 = 0;
 		int y1 = 0;
 
-		g.setColor(ChartPanelColors.get(ColorLabel.MARKER));
+		g.setColor(ColorLabel.MARKER.color());
 		for (int i = start; i < end; i += step) {
 			x0 = x1;
 			x1 += xStep;
