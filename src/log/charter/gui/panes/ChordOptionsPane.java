@@ -112,6 +112,7 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 				val -> slideTo = val, false);
 		addConfigCheckbox(row++, 120, 0, Label.SLIDE_PANE_UNPITCHED, unpitchedSlide, val -> unpitchedSlide = val);
 
+		row++;
 		addDefaultFinish(row, this::onSave);
 	}
 
@@ -133,10 +134,15 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 	}
 
 	private void onSave() {
+		dispose();
 		undoSystem.addUndo();
 
-		final int chordId = getSavedTemplateId();
+		if (chordTemplate.frets.isEmpty()) {
+			data.getCurrentArrangementLevel().chordsAndNotes.removeAll(chordsAndNotes);
+			return;
+		}
 
+		final int chordId = getSavedTemplateId();
 		for (final ChordOrNote chordOrNote : chordsAndNotes) {
 			if (chordOrNote.isChord()) {
 				chordOrNote.chord.chordId = chordId;
@@ -145,8 +151,6 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 				changeNoteToChord(chordOrNote, chordId);
 			}
 		}
-
-		dispose();
 	}
 
 }

@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.HighlightManager;
+import log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.ChordOrNote;
@@ -38,6 +39,7 @@ import log.charter.gui.handlers.MouseHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.notes.Chord;
+import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.Position2D;
 
 public class HighlightDrawer {
@@ -263,7 +265,14 @@ public class HighlightDrawer {
 		final int currentX = timeToX(highlight.position, data.time);
 		line(new Position2D(pressX, pressY), new Position2D(currentX, y), noteAdditionLineColor).draw(g);
 
-//		final ArrayList2<PositionWithStringOrNoteId> positions = highlightManager.getPositionsWithStrings(pressXTime,
+		final ArrayList2<PositionWithStringOrNoteId> dragPositions = highlightManager
+				.getPositionsWithStrings(pressXTime, highlight.position, pressY, y);
+		for (final PositionWithStringOrNoteId position : dragPositions) {
+			drawNoteHighlight(g, position.string, position.position, 0, data.currentStrings());
+		}
+
+		// final ArrayList2<PositionWithStringOrNoteId> positions =
+		// highlightManager.getPositionsWithStrings(pressXTime,
 //				highlight.position, pressY, y);
 //		ArrayList2<ChordOrNote> chordsAndNotes = PositionType.GUITAR_NOTE.getPositions(data);
 //		final int strings = data.getCurrentArrangement().tuning.strings;
