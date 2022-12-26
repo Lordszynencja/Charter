@@ -39,10 +39,11 @@ public class GuitarUndoState implements UndoState {
 		final ArrangementChart arrangement = data.songChart.arrangements.get(arrangementId);
 		final Level level = arrangement.levels.get(levelId);
 
-		sections = arrangement.sections.map(Section::new);
+		sections = arrangement.sections.map(section -> new Section(beatsMapUndoState.beatsMap.beats, section));
 		phrases = arrangement.phrases.map(phraseName -> phraseName, Phrase::new);
-		phraseIterations = arrangement.phraseIterations.map(PhraseIteration::new);
-		events = arrangement.events.map(Event::new);
+		phraseIterations = arrangement.phraseIterations
+				.map(phraseIteration -> new PhraseIteration(beatsMapUndoState.beatsMap.beats, phraseIteration));
+		events = arrangement.events.map(event -> new Event(beatsMapUndoState.beatsMap.beats, event));
 
 		chordTemplates = arrangement.chordTemplates.map(ChordTemplate::new);
 		fretHandMuteTemplates = arrangement.fretHandMuteTemplates.map(ChordTemplate::new);

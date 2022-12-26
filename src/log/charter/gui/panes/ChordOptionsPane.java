@@ -7,7 +7,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.ParamsPane;
+import log.charter.gui.components.ChordTemplateEditor;
 import log.charter.song.ChordTemplate;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
@@ -16,25 +16,27 @@ import log.charter.song.notes.Chord;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class ChordOptionsPane extends ParamsPane {
+public class ChordOptionsPane extends ChordTemplateEditor {
 	private static final long serialVersionUID = 1L;
 
 	private static PaneSizes getSizes() {
 		final PaneSizes sizes = new PaneSizes();
 		sizes.labelWidth = 80;
-		sizes.width = 300;
+		sizes.width = 350;
 		sizes.rowHeight = 20;
 
 		return sizes;
 	}
 
-	private final ChartData data;
+	private static ChordTemplate prepareTemplateFromData(final ChartData data, final ChordOrNote chordOrNote) {
+		return !chordOrNote.isChord() || chordOrNote.chord.chordId == -1 ? new ChordTemplate()
+				: new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(chordOrNote.chord.chordId));
+	}
+
 	private final UndoSystem undoSystem;
 
 	private final ArrayList2<ChordOrNote> chordsAndNotes;
 
-	private String chordName;
-	private Integer chordId;
 	private Mute mute;
 	private HOPO hopo = HOPO.NONE;
 	private Harmonic harmonic = Harmonic.NONE;
@@ -45,8 +47,8 @@ public class ChordOptionsPane extends ParamsPane {
 
 	public ChordOptionsPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final ArrayList2<ChordOrNote> notes) {
-		super(frame, Label.NOTE_OPTIONS_PANE.label(), 20, getSizes());
-		this.data = data;
+		super(data, frame, Label.NOTE_OPTIONS_PANE, 18 + data.getCurrentArrangement().tuning.strings, getSizes(),
+				prepareTemplateFromData(data, notes.get(0)));
 		this.undoSystem = undoSystem;
 
 		chordsAndNotes = notes;
@@ -64,9 +66,9 @@ public class ChordOptionsPane extends ParamsPane {
 	}
 
 	private void getNoteValues(final Note note) {
-		chordName = "";
-		chordId = null;
 		mute = note.mute;
+		hopo = note.hopo;
+		harmonic = note.harmonic;
 		accent = note.accent;
 		linkNext = note.linkNext;
 		slideTo = note.slideTo;
@@ -74,94 +76,75 @@ public class ChordOptionsPane extends ParamsPane {
 	}
 
 	private void getChordValues(final Chord chord, final ChordTemplate chordTemplate) {
-		chordName = chordTemplate.chordName;
-		chordId = chord.chordId;
 		mute = chord.mute;
+		hopo = chord.hopo;
+		harmonic = chord.harmonic;
 		accent = chord.accent;
 		linkNext = chord.linkNext;
 		slideTo = chord.slideTo;
 		unpitchedSlide = chord.unpitchedSlide;
 	}
 
-	private void addChordNameInput() {
-//		final AutocompleteInput<ArrangementChordTemplate> input = new AutocompleteInput<>(this, 50, chordName,
-//				data.getCurrentArrangement().chordTemplates, true,
-//				chordTemplate -> chordTemplate.getNameWithFrets(data.getCurrentArrangement().tuning.strings), null);
-
-		addLabel(0, 20, Label.CHORD_NAME);
-	}
-
 	private void addInputs(final int strings) {
-		addChordNameInput();
+		addChordNameSuggestionButton(100, 0);
+		addChordNameInput(100, 1);
 
-		// TODO add frets and fingers
-		// TODO add chord shape showing
-		addLabel(2, 20, Label.MUTE);
-		addConfigRadioButtons(3, 30, mute.ordinal(), i -> mute = Mute.values()[i], //
+		addChordTemplateEditor(3);
+
+		int row = 4 + data.currentStrings();
+
+		addLabel(row++, 20, Label.MUTE);
+		addConfigRadioButtons(row++, 30, mute.ordinal(), i -> mute = Mute.values()[i], //
 				Label.MUTE_STRING, Label.MUTE_PALM, Label.MUTE_NONE);
 
-		addLabel(4, 20, Label.HOPO);
-		addConfigRadioButtons(5, 30, hopo.ordinal(), i -> hopo = HOPO.values()[i], //
+		addLabel(row++, 20, Label.HOPO);
+		addConfigRadioButtons(row++, 30, hopo.ordinal(), i -> hopo = HOPO.values()[i], //
 				Label.HOPO_HAMMER_ON, Label.HOPO_PULL_OFF, Label.HOPO_TAP, Label.HOPO_NONE);
 
-		addLabel(6, 20, Label.HARMONIC);
-		addConfigRadioButtons(7, 30, harmonic.ordinal(), i -> harmonic = Harmonic.values()[i], //
+		addLabel(row++, 20, Label.HARMONIC);
+		addConfigRadioButtons(row++, 30, harmonic.ordinal(), i -> harmonic = Harmonic.values()[i], //
 				Label.HARMONIC_NORMAL, Label.HARMONIC_PINCH, Label.HARMONIC_NONE);
 
-		addConfigCheckbox(11, 20, 70, Label.ACCENT, accent, val -> accent = val);
-		addConfigCheckbox(12, 20, 70, Label.LINK_NEXT, linkNext, val -> linkNext = val);
-		addIntegerConfigValue(13, 20, 0, Label.SLIDE_PANE_FRET, slideTo, 40, createIntValidator(0, 28, true),
+		row++;
+		addConfigCheckbox(row++, 20, 70, Label.ACCENT, accent, val -> accent = val);
+		addConfigCheckbox(row++, 20, 70, Label.LINK_NEXT, linkNext, val -> linkNext = val);
+		addIntegerConfigValue(row, 20, 0, Label.SLIDE_PANE_FRET, slideTo, 40, createIntValidator(0, 28, true),
 				val -> slideTo = val, false);
-		addConfigCheckbox(13, 120, 0, Label.SLIDE_PANE_UNPITCHED, unpitchedSlide, val -> unpitchedSlide = val);
+		addConfigCheckbox(row++, 120, 0, Label.SLIDE_PANE_UNPITCHED, unpitchedSlide, val -> unpitchedSlide = val);
 
-		addDefaultFinish(16, this::onSave);
+		addDefaultFinish(row, this::onSave);
 	}
 
-	private void addTemplate() {
-//TODO make it add template
+	private void setChordValues(final Chord chord) {
+		chord.mute = mute;
+		chord.hopo = hopo;
+		chord.harmonic = harmonic;
+		chord.accent = accent;
+		chord.linkNext = linkNext;
+		chord.slideTo = slideTo;
+		chord.unpitchedSlide = unpitchedSlide;
 	}
 
-	private void setChordValues(final Note note) {
-//		note.string = string;
-//		note.fret = fret;
-//		note.mute = mute;
-//		note.hopo = hopo;
-//		note.bassPicking = bassPicking;
-//		note.harmonic = harmonic;
-//		note.slideTo = slideTo;
-//		note.unpitchedSlide = unpitchedSlide;
-//		note.accent = accent;
-//		note.linkNext = linkNext;
-//		note.vibrato = vibrato;
-	}
-
-	private void changeNoteToChord(final ChordOrNote chordOrNote) {
-//		final Note note = new Note(chordOrNote.position, string, fret);
-//		note.mute = mute;
-//		note.hopo = hopo;
-//		note.bassPicking = bassPicking;
-//		note.harmonic = harmonic;
-//		note.slideTo = slideTo;
-//		note.unpitchedSlide = unpitchedSlide;
-//		note.accent = accent;
-//		note.linkNext = linkNext;
-//		note.vibrato = vibrato;
-//		chordOrNote.note = note;
-//		chordOrNote.chord = null;
+	private void changeNoteToChord(final ChordOrNote chordOrNote, final int chordId) {
+		final Chord chord = new Chord(chordOrNote.position, chordId);
+		setChordValues(chord);
+		chordOrNote.note = null;
+		chordOrNote.chord = chord;
 	}
 
 	private void onSave() {
 		undoSystem.addUndo();
 
+		final int chordId = getSavedTemplateId();
+
 		for (final ChordOrNote chordOrNote : chordsAndNotes) {
 			if (chordOrNote.isChord()) {
-				setChordValues(chordOrNote.note);
+				chordOrNote.chord.chordId = chordId;
+				setChordValues(chordOrNote.chord);
 			} else {
-				changeNoteToChord(chordOrNote);
+				changeNoteToChord(chordOrNote, chordId);
 			}
 		}
-
-		getOwnerlessWindows()[0].requestFocus();
 
 		dispose();
 	}

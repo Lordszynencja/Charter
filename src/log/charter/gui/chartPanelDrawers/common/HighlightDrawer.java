@@ -38,7 +38,6 @@ import log.charter.gui.handlers.MouseHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.notes.Chord;
-import log.charter.song.notes.Note;
 import log.charter.util.Position2D;
 
 public class HighlightDrawer {
@@ -127,28 +126,8 @@ public class HighlightDrawer {
 	private void drawGuitarNoteHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
 			final int y) {
 		final int strings = data.getCurrentArrangement().tuning.strings;
-
-		if (highlight.chordOrNote == null) {
-			final int lane = yToLane(y, strings);
-			drawNoteHighlight(g, lane, highlight.position, 0, strings);
-
-			return;
-		}
-
-		if (highlight.chordOrNote.chord != null) {
-			final Chord chord = highlight.chordOrNote.chord;
-			final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
-			drawChordHighlight(g, chord, chordTemplate, chord.position, strings);
-
-			return;
-		}
-
-		if (highlight.chordOrNote.note != null) {
-			final Note note = highlight.chordOrNote.note;
-			drawNoteHighlight(g, note.string, note.position, note.length, strings);
-
-			return;
-		}
+		final int lane = yToLane(y, strings);
+		drawNoteHighlight(g, lane, highlight.position, 0, strings);
 	}
 
 	private ShapePositionWithSize getHandShapeHighlightPosition(final PositionWithIdAndType highlight) {
@@ -213,7 +192,7 @@ public class HighlightDrawer {
 			return;
 		}
 
-		final int strings = data.getCurrentArrangement().tuning.strings;
+		final int strings = data.currentStrings();
 
 		if (highlight.chordOrNote != null) {
 			final ChordOrNote chordOrNote = highlight.chordOrNote;

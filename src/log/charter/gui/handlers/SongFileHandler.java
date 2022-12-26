@@ -290,7 +290,8 @@ public class SongFileHandler {
 
 		try {
 			final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(arrangementFile));
-			final ArrangementChart arrangementChart = new ArrangementChart(songArrangement);
+			final ArrangementChart arrangementChart = new ArrangementChart(songArrangement,
+					data.songChart.beatsMap.beats);
 			data.songChart.arrangements.add(arrangementChart);
 			save();
 			charterMenuBar.refreshMenus();

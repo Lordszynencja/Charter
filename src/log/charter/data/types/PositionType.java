@@ -1,6 +1,7 @@
 package log.charter.data.types;
 
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.handShapesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
@@ -14,7 +15,7 @@ import log.charter.data.types.positions.HandShapePositionTypeManager;
 import log.charter.data.types.positions.NonePositionTypeManager;
 import log.charter.data.types.positions.PositionTypeManager;
 import log.charter.data.types.positions.VocalPositionTypeManager;
-import log.charter.song.Position;
+import log.charter.song.enums.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public enum PositionType {
@@ -32,11 +33,13 @@ public enum PositionType {
 	}
 
 	public static PositionType fromY(final int y, final EditMode mode) {
-		if (y < anchorY) {
-			return BEAT;
-		}
-
 		if (mode == EditMode.VOCALS) {
+			if (y < beatTextY) {
+				return NONE;
+			}
+			if (y < lanesTop) {
+				return BEAT;
+			}
 			if (y >= lanesTop && y < lanesBottom) {
 				return VOCAL;
 			}
@@ -45,6 +48,12 @@ public enum PositionType {
 		}
 
 		if (mode == EditMode.GUITAR) {
+			if (y < beatTextY) {
+				return NONE;
+			}
+			if (y < anchorY) {
+				return BEAT;
+			}
 			if (y < lanesTop) {
 				return ANCHOR;
 			}

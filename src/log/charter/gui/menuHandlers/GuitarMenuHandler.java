@@ -22,6 +22,7 @@ import log.charter.gui.panes.NoteOptionsPane;
 import log.charter.gui.panes.SlidePane;
 import log.charter.song.HandShape;
 import log.charter.song.enums.HOPO;
+import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.Note;
@@ -54,11 +55,12 @@ class GuitarMenuHandler extends CharterMenuHandler {
 
 		menu.add(createItem(Label.GUITAR_MENU_TOGGLE_MUTES, button('P'), this::toggleMute));
 		menu.add(createItem(Label.GUITAR_MENU_TOGGLE_HOPO, button('H'), this::toggleHOPO));
+		menu.add(createItem(Label.GUITAR_MENU_TOGGLE_HARMONIC, button('O'), this::toggleHarmonic));
 		menu.add(createItem(Label.GUITAR_MENU_SET_SLIDE, button('S'), this::setSlide));
 		menu.add(createItem(Label.GUITAR_MENU_TOGGLE_LINK_NEXT, button('L'), this::toggleLinkNext));
 
 		menu.addSeparator();
-		final JMenuItem noteOptions = createItem(Label.GUITAR_MENU_NOTE_OPTIONS, button('N'), this::noteOptions);
+		final JMenuItem noteOptions = createItem(Label.GUITAR_MENU_NOTE_OPTIONS, button('W'), this::noteOptions);
 		noteOptions.setToolTipText(Label.GUITAR_MENU_NOTE_OPTIONS_TOOLTIP.label());
 		menu.add(noteOptions);
 
@@ -124,6 +126,26 @@ class GuitarMenuHandler extends CharterMenuHandler {
 				note.hopo = HOPO.NONE;
 			} else {
 				note.hopo = HOPO.HAMMER_ON;
+			}
+		});
+	}
+
+	private void toggleHarmonic() {
+		singleToggleOnAllSelectedNotes(chord -> {
+			if (chord.harmonic == Harmonic.NONE) {
+				chord.harmonic = Harmonic.NORMAL;
+			} else if (chord.harmonic == Harmonic.NORMAL) {
+				chord.harmonic = Harmonic.PINCH;
+			} else if (chord.harmonic == Harmonic.PINCH) {
+				chord.harmonic = Harmonic.NONE;
+			}
+		}, note -> {
+			if (note.harmonic == Harmonic.NONE) {
+				note.harmonic = Harmonic.NORMAL;
+			} else if (note.harmonic == Harmonic.NORMAL) {
+				note.harmonic = Harmonic.PINCH;
+			} else if (note.harmonic == Harmonic.PINCH) {
+				note.harmonic = Harmonic.NONE;
 			}
 		});
 	}
@@ -199,6 +221,6 @@ class GuitarMenuHandler extends CharterMenuHandler {
 			return;
 		}
 
-		new HandShapePane(data, frame, selectedAccessor.getSortedSelected().get(0).selectable);
+		new HandShapePane(data, frame, undoSystem, selectedAccessor.getSortedSelected().get(0).selectable);
 	}
 }

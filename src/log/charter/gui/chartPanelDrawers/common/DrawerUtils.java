@@ -5,10 +5,12 @@ import static java.lang.Math.min;
 import static log.charter.util.Utils.getStringPosition;
 
 public class DrawerUtils {
-	public static final int sectionNamesY = 10;
-	public static final int lyricLinesY = 30;
+	public static final int sectionNamesY = 5;
+	public static final int phraseNamesY = 20;
+	public static final int eventNamesY = 35;
+	public static final int lyricLinesY = 55;
 
-	public static final int beatTextY = 50;
+	public static final int beatTextY = 70;
 	public static final int beatSizeTextY = beatTextY + 15;
 	public static final int anchorY = beatSizeTextY + 15;
 	public static final int anchorTextY = anchorY + 10;

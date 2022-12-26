@@ -29,8 +29,9 @@ public class ChartPanelColors {
 		MAIN_BEAT(255, 255, 255), //
 		SECONDARY_BEAT(200, 200, 200), //
 		MARKER(255, 0, 0), //
-		SECTION_NAME(255, 255, 255), //
-		PHRASE_NAME(255, 255, 0), //
+		SECTION_NAME_BG(192, 128, 64), //
+		PHRASE_NAME_BG(192, 0, 192), //
+		EVENT_BG(128, 0, 0), //
 		HIGHLIGHT(255, 0, 0), //
 		SELECT(0, 255, 255), //
 

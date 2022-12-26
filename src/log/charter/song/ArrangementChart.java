@@ -25,10 +25,14 @@ public class ArrangementChart {
 	public ArrayList2<ChordTemplate> chordTemplates = new ArrayList2<>();
 	public ArrayList2<ChordTemplate> fretHandMuteTemplates = new ArrayList2<>();
 
-	public ArrangementChart() {
+	public ArrangementChart(final ArrayList2<Beat> beats) {
+		phrases.put("COUNT", new Phrase(0, false));
+		phrases.put("END", new Phrase(0, false));
+		phraseIterations.add(new PhraseIteration(beats.get(0), "COUNT"));
+		phraseIterations.add(new PhraseIteration(beats.getLast(), "END"));
 	}
 
-	public ArrangementChart(final SongArrangement songArrangement) {
+	public ArrangementChart(final SongArrangement songArrangement, final ArrayList2<Beat> beats) {
 		arrangementType = songArrangement.arrangement;
 		arrangementProperties = songArrangement.arrangementProperties;
 		tuning = new Tuning(arrangementType.strings, songArrangement.tuning);
@@ -37,9 +41,9 @@ public class ArrangementChart {
 
 		levels = Level.fromArrangementLevels(songArrangement.levels.list);
 
-		sections = Section.fromArrangementSections(songArrangement.sections.list);
+		sections = Section.fromArrangementSections(beats, songArrangement.sections.list);
 		phrases = Phrase.fromArrangementPhrases(songArrangement.phrases.list);
-		phraseIterations = PhraseIteration.fromArrangementPhraseIterations(songArrangement.phrases.list,
+		phraseIterations = PhraseIteration.fromArrangementPhraseIterations(beats, songArrangement.phrases.list,
 				songArrangement.phraseIterations.list);
 		events = Event.fromArrangement(new ArrayList2<>(), songArrangement.events.list);
 
@@ -64,10 +68,5 @@ public class ArrangementChart {
 
 	public String getTypeNameLabel() {
 		return getTypeName().replace("_", " ");
-	}
-
-	public boolean templateExists(final ChordTemplate chordTemplate) {
-		// TODO check if template like that already exists
-		return false;
 	}
 }

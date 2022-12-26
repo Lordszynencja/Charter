@@ -5,35 +5,37 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledDiamond;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineHorizontal;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.Set;
 
 import javax.swing.JComponent;
 
 import log.charter.data.ChartData;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
+import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.song.ChordTemplate;
+import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.IntRange;
 import log.charter.util.Position2D;
 
-public class ChordTemplatePreview extends JComponent {
+public class ChordTemplatePreview extends JComponent implements MouseListener, MouseMotionListener, KeyListener {
 	private static final long serialVersionUID = 1L;
 	private static final double fretsProportion = pow(2, -1.0 / 12);
-	private static final int fretStart = 20;
-
-	private final ChartData data;
-	private final ChordTemplate chordTemplate;
-
-	public ChordTemplatePreview(final ChartData data, final ChordTemplate chordTemplate) {
-		super();
-		this.data = data;
-		this.chordTemplate = chordTemplate;
-	}
+	private static final int fretStart = 22;
+	private static final Set<Integer> dotFrets = new HashSet2<>(new ArrayList2<>(3, 5, 7, 9));
 
 	private static class FretPosition {
 		public final int fret;
@@ -45,7 +47,46 @@ public class ChordTemplatePreview extends JComponent {
 			this.position = position;
 			this.length = length;
 		}
+	}
 
+	private static int[] getStringPositions(final int strings, final int height) {
+		final int[] stringPositions = new int[strings];
+		final int stringSpace = (height - fretStart) / 6;
+		int y = fretStart + stringSpace / 2;
+		for (int i = 0; i < strings; i++) {
+			stringPositions[getStringPosition(i, strings)] = y;
+			y += stringSpace;
+		}
+
+		return stringPositions;
+	}
+
+	private final int[] stringPositions;
+
+	private final ChordTemplateEditor parent;
+
+	private final ChartData data;
+	private final ChordTemplate chordTemplate;
+
+	private Integer mouseString;
+	private Integer mouseFret;
+
+	public ChordTemplatePreview(final ChordTemplateEditor parent, final ChartData data,
+			final ChordTemplate chordTemplate, final int height) {
+		super();
+		this.parent = parent;
+		this.data = data;
+		this.chordTemplate = chordTemplate;
+
+		stringPositions = getStringPositions(data.getCurrentArrangement().tuning.strings, height);
+
+		addMouseListener(this);
+		addMouseMotionListener(this);
+		addKeyListener(this);
+		parent.addKeyListener(this);
+
+		setFocusable(true);
+		setRequestFocusEnabled(true);
 	}
 
 	private IntRange getFretsRange() {
@@ -121,6 +162,25 @@ public class ChordTemplatePreview extends JComponent {
 		g.fillRect(0, 0, getWidth(), getHeight());
 	}
 
+	private void addDot(final DrawableShapeList frets, final FretPosition fretPosition, final int y) {
+		final int x = fretPosition.position - fretPosition.length / 2;
+		final ShapePositionWithSize position = new ShapePositionWithSize(x, y, 10, 10).centered();
+		frets.add(filledOval(position, ColorLabel.BASE_BG_4));
+	}
+
+	private void addFretDotLow(final DrawableShapeList frets, final FretPosition fretPosition) {
+		addDot(frets, fretPosition, getHeight() - 25);
+	}
+
+	private void addFretDotHigh(final DrawableShapeList frets, final FretPosition fretPosition) {
+		addDot(frets, fretPosition, fretStart + 25);
+	}
+
+	private void addFretDotDouble(final DrawableShapeList frets, final FretPosition fretPosition) {
+		addFretDotLow(frets, fretPosition);
+		addFretDotHigh(frets, fretPosition);
+	}
+
 	private void drawFrets(final Graphics g, final FretPosition[] fretPositions) {
 		final DrawableShapeList frets = new DrawableShapeList();
 
@@ -130,6 +190,16 @@ public class ChordTemplatePreview extends JComponent {
 			frets.add(lineVertical(fretPosition.position + 1, fretStart, getHeight(), ColorLabel.BASE_BG_2.color()));
 			frets.add(centeredTextWithBackground(new Position2D(fretPosition.position, 10), fretPosition.fret + "",
 					null, ColorLabel.BASE_DARK_TEXT.color()));
+
+			if (fretPosition.fret % 12 == 0 && fretPosition.fret >= 12) {
+				addFretDotDouble(frets, fretPosition);
+			} else if (dotFrets.contains(fretPosition.fret % 12)) {
+				if ((fretPosition.fret / 12) % 2 == 0) {
+					addFretDotLow(frets, fretPosition);
+				} else {
+					addFretDotHigh(frets, fretPosition);
+				}
+			}
 		}
 
 		frets.draw(g);
@@ -140,15 +210,11 @@ public class ChordTemplatePreview extends JComponent {
 		final int width = getWidth();
 		final DrawableShapeList stringLines = new DrawableShapeList();
 
-		final int stringSpace = (getHeight() - fretStart) / 6;
-		int y = fretStart + stringSpace / 2;
 		for (int i = 0; i < strings; i++) {
-			final int stringNumber = getStringPosition(i, strings);
-			final Color color = ColorLabel.valueOf("LANE_" + stringNumber).color();
-			stringLines.add(lineHorizontal(0, width, y, color));
-			final Color color2 = ColorLabel.valueOf("LANE_BRIGHT_" + stringNumber).color();
-			stringLines.add(lineHorizontal(0, width, y + 1, color2));
-			y += stringSpace;
+			final Color color = ColorLabel.valueOf("LANE_" + i).color();
+			stringLines.add(lineHorizontal(0, width, stringPositions[i], color));
+			final Color color2 = ColorLabel.valueOf("LANE_BRIGHT_" + i).color();
+			stringLines.add(lineHorizontal(0, width, stringPositions[i] + 1, color2));
 		}
 
 		stringLines.draw(g);
@@ -159,34 +225,27 @@ public class ChordTemplatePreview extends JComponent {
 		final int baseFret = fretPositions[0].fret;
 		final DrawableShapeList pressMarks = new DrawableShapeList();
 
-		final int stringSpace = (getHeight() - fretStart) / 6;
-		int y = fretStart + stringSpace / 2;
-
 		for (int i = 0; i < strings; i++) {
-			final int stringNumber = getStringPosition(i, strings);
-			final Integer fret = chordTemplate.frets.get(stringNumber);
+			final Integer fret = chordTemplate.frets.get(i);
 			if (fret == null) {
-				y += stringSpace;
 				continue;
 			}
 			if (fret == 0) {
 				for (int j = 0; j < 8; j++) {
-					final Color color = ColorLabel.valueOf((j < 2 || j >= 6 ? "LANE_BRIGHT_" : "NOTE_") + stringNumber)
-							.color();
-					pressMarks.add(lineHorizontal(0, getWidth(), y - 3 + j, color));
+					final Color color = ColorLabel.valueOf((j < 2 || j >= 6 ? "LANE_BRIGHT_" : "NOTE_") + i).color();
+					pressMarks.add(lineHorizontal(0, getWidth(), stringPositions[i] - 3 + j, color));
 				}
-				y += stringSpace;
 				continue;
 			}
 
 			final FretPosition fretPosition = fretPositions[fret - baseFret];
-			final Position2D position = new Position2D(fretPosition.position - fretPosition.length / 2, y);
-			pressMarks.add(filledDiamond(position.move(1, 0), 10, ColorLabel.valueOf("NOTE_" + stringNumber).color()));
+			final Position2D position = new Position2D(fretPosition.position - fretPosition.length / 2,
+					stringPositions[i]);
+			pressMarks.add(filledDiamond(position.move(1, 0), 10, ColorLabel.valueOf("NOTE_" + i).color()));
 
-			final Integer finger = chordTemplate.fingers.get(stringNumber);
+			final Integer finger = chordTemplate.fingers.get(i);
 			final String fingerText = finger == null ? "" : finger == 0 ? "T" : finger.toString();
 			pressMarks.add(centeredTextWithBackground(position, fingerText, null, ColorLabel.BASE_TEXT.color()));
-			y += stringSpace;
 		}
 
 		pressMarks.draw(g);
@@ -199,5 +258,121 @@ public class ChordTemplatePreview extends JComponent {
 		drawFrets(g, fretPositions);
 		drawStrings(g);
 		drawFretPressMarks(g, fretPositions);
+	}
+
+	@Override
+	public void keyTyped(final KeyEvent e) {
+	}
+
+	@Override
+	public void keyPressed(final KeyEvent e) {
+		if (mouseString == null || chordTemplate.frets.get(mouseString) == null) {
+			return;
+		}
+
+		Integer fingerId;
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_T:
+			fingerId = 0;
+			break;
+		case KeyEvent.VK_1:
+			fingerId = 1;
+			break;
+		case KeyEvent.VK_2:
+			fingerId = 2;
+			break;
+		case KeyEvent.VK_3:
+			fingerId = 3;
+			break;
+		case KeyEvent.VK_4:
+			fingerId = 4;
+			break;
+		default:
+			return;
+		}
+
+		chordTemplate.fingers.put(mouseString, fingerId);
+		parent.fingerUpdated(mouseString, fingerId);
+	}
+
+	@Override
+	public void keyReleased(final KeyEvent e) {
+	}
+
+	private void updateMouseStringAndFret(final int x, final int y) {
+		final int strings = data.getCurrentArrangement().tuning.strings;
+
+		mouseString = null;
+		for (int i = 0; i < strings; i++) {
+			final int stringPosition = stringPositions[i];
+			if (y > stringPosition - 10 && y <= stringPosition + 10) {
+				mouseString = i;
+			}
+		}
+
+		mouseFret = null;
+		final FretPosition[] fretPositions = getFretPositions();
+		for (final FretPosition fretPosition : fretPositions) {
+			if (x > fretPosition.position - fretPosition.length && x < fretPosition.position) {
+				mouseFret = fretPosition.fret;
+			}
+		}
+
+		if (mouseFret == null) {
+			final FretPosition lastPosition = fretPositions[fretPositions.length - 1];
+			if (lastPosition.fret < 28 && x > lastPosition.position) {
+				mouseFret = lastPosition.fret + 1;
+			}
+		}
+	}
+
+	@Override
+	public void mouseClicked(final MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(final MouseEvent e) {
+		this.requestFocus();
+
+		updateMouseStringAndFret(e.getX(), e.getY());
+
+		if (mouseString == null || mouseFret == null) {
+			return;
+		}
+
+		final Integer currentFret = chordTemplate.frets.get(mouseString);
+		if (currentFret != null && currentFret == mouseFret) {
+			chordTemplate.frets.remove(mouseString);
+			chordTemplate.fingers.remove(mouseString);
+			parent.fretUpdated(mouseString, null);
+			parent.fingerUpdated(mouseString, null);
+		} else {
+			chordTemplate.frets.put(mouseString, mouseFret);
+			parent.fretUpdated(mouseString, mouseFret);
+		}
+	}
+
+	@Override
+	public void mouseReleased(final MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(final MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(final MouseEvent e) {
+		mouseFret = null;
+		mouseString = null;
+	}
+
+	@Override
+	public void mouseDragged(final MouseEvent e) {
+		mouseMoved(e);
+	}
+
+	@Override
+	public void mouseMoved(final MouseEvent e) {
+		updateMouseStringAndFret(e.getX(), e.getY());
 	}
 }

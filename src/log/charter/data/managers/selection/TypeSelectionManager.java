@@ -1,7 +1,7 @@
 package log.charter.data.managers.selection;
 
 import log.charter.data.types.PositionWithIdAndType;
-import log.charter.song.Position;
+import log.charter.song.enums.Position;
 
 public interface TypeSelectionManager<T extends Position> {
 	SelectionAccessor<T> getAccessor();

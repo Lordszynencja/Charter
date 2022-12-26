@@ -2,7 +2,7 @@ package log.charter.data.managers.selection;
 
 import java.util.function.Supplier;
 
-import log.charter.song.Position;
+import log.charter.song.enums.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 

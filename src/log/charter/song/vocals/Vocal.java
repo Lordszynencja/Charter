@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.data.config.Config;
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
-import log.charter.song.Position;
+import log.charter.song.enums.Position;
 
 @XStreamAlias("vocal")
 public class Vocal extends Position {

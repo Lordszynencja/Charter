@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.util.Position2D;
 
 public interface DrawableShape {
@@ -53,9 +54,23 @@ public interface DrawableShape {
 		return new FilledArc(position, startAngle, arcAngle, color);
 	}
 
+	// Ovals
+	public static DrawableShape filledOval(final ShapePositionWithSize position, final Color color) {
+		return new FilledOval(position, color);
+	}
+
+	public static DrawableShape filledOval(final ShapePositionWithSize position, final ColorLabel color) {
+		return filledOval(position, color.color());
+	}
+
 	// Texts
 	public static DrawableShape text(final Position2D position, final String text, final Color color) {
 		return new Text(position, text, color);
+	}
+
+	public static DrawableShape textWithBackground(final Position2D position, final String text,
+			final ColorLabel backgroundColor, final ColorLabel textColor) {
+		return new TextWithBackground(position, text, backgroundColor.color(), textColor.color());
 	}
 
 	public static DrawableShape centeredTextWithBackground(final Position2D position, final String text,

@@ -1,6 +1,6 @@
 package log.charter.data.managers.selection;
 
-import log.charter.song.Position;
+import log.charter.song.enums.Position;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.Note;
 

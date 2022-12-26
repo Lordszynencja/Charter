@@ -21,7 +21,7 @@ public class ArrangementPhraseIteration {
 			phraseIds.put(arrangementPhrases.get(i).name, i);
 		}
 
-		return phraseIterations.map(phraseIteration -> new ArrangementPhraseIteration(phraseIteration.position,
+		return phraseIterations.map(phraseIteration -> new ArrangementPhraseIteration(phraseIteration.beat.position,
 				phraseIds.get(phraseIteration.phraseName)));
 	}
 

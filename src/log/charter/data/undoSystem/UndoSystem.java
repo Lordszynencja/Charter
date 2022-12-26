@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 
 public class UndoSystem {
@@ -23,20 +22,7 @@ public class UndoSystem {
 	}
 
 	private UndoState createUndoState() {
-		if (modeManager.editMode == EditMode.GUITAR) {
-			return new GuitarUndoState(data);
-		}
-
-		if (modeManager.editMode == EditMode.VOCALS) {
-			return new VocalUndoState(data);
-		}
-
-		return new UndoState() {
-			@Override
-			public UndoState undo(final ChartData data) {
-				return this;
-			}
-		};
+		return new BaseUndoState(modeManager, data);
 	}
 
 	public void addUndo() {

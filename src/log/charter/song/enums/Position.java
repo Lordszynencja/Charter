@@ -1,6 +1,8 @@
-package log.charter.song;
+package log.charter.song.enums;
 
 import static java.lang.Math.abs;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.Positionable;
@@ -78,6 +80,7 @@ public class Position implements Positionable {
 		return id < 0 ? null : list.get(id);
 	}
 
+	@XStreamAsAttribute
 	public int position;
 
 	public Position(final int position) {
@@ -91,6 +94,22 @@ public class Position implements Positionable {
 	@Override
 	public int position() {
 		return position;
+	}
+
+	@Override
+	public int hashCode() {
+		return Integer.hashCode(position);
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (!Position.class.isAssignableFrom(obj.getClass())) {
+			return false;
+		}
+
+		final Position otherPosition = (Position) obj;
+
+		return otherPosition.position == position;
 	}
 
 }

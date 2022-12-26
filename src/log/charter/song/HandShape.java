@@ -3,6 +3,7 @@ package log.charter.song;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.io.rs.xml.song.ArrangementHandShape;
+import log.charter.song.enums.Position;
 
 @XStreamAlias("handShape")
 public class HandShape extends Position {
@@ -12,6 +13,7 @@ public class HandShape extends Position {
 	public HandShape(final int position, final int length) {
 		super(position);
 		this.length = length;
+		chordId = -1;
 	}
 
 	public HandShape(final ArrangementHandShape arrangementHandShape) {

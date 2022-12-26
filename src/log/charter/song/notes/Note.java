@@ -4,11 +4,11 @@ import static log.charter.util.Utils.mapInteger;
 
 import log.charter.io.rs.xml.song.ArrangementNote;
 import log.charter.song.BendValue;
-import log.charter.song.Position;
 import log.charter.song.enums.BassPickingTechnique;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
+import log.charter.song.enums.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.Slideable;
 
@@ -25,7 +25,7 @@ public class Note extends Position implements Slideable {
 	public boolean unpitchedSlide;
 	public Integer bend;
 	public Harmonic harmonic = Harmonic.NONE;
-	public ArrayList2<BendValue> bendValues;
+	public ArrayList2<BendValue> bendValues = new ArrayList2<>();
 	public boolean linkNext;
 
 	public Note(final int pos, final int string, final int fret) {

@@ -39,7 +39,7 @@ public class ArrangementEvent {
 	}
 
 	public ArrangementEvent(final Event event) {
-		time = event.position;
+		time = event.beat.position;
 		code = event.type.rsName;
 	}
 

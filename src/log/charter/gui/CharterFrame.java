@@ -34,7 +34,6 @@ import log.charter.gui.handlers.MouseHandler;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.lookAndFeel.CharterTheme;
 import log.charter.gui.menuHandlers.CharterMenuBar;
-import log.charter.gui.panes.TestPane;
 import log.charter.main.LogCharterRSMain;
 
 public class CharterFrame extends JFrame {
@@ -112,8 +111,6 @@ public class CharterFrame extends JFrame {
 		setFocusable(true);
 
 		framer.start();
-
-		new TestPane(this);
 	}
 
 	private void frame() {

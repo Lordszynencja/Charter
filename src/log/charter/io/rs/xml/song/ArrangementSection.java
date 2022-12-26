@@ -9,7 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.io.rs.xml.converters.TimeConverter;
 import log.charter.song.Section;
-import log.charter.song.Section.SectionType;
+import log.charter.song.SectionType;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("section")
@@ -42,7 +42,7 @@ public class ArrangementSection {
 	private ArrangementSection(final Section section, final int number) {
 		name = section.type.rsName;
 		this.number = number;
-		startTime = section.position;
+		startTime = section.beat.position;
 	}
 
 }

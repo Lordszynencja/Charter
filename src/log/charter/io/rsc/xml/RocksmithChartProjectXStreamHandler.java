@@ -1,7 +1,5 @@
 package log.charter.io.rsc.xml;
 
-import java.awt.Event;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
@@ -9,9 +7,6 @@ import com.thoughtworks.xstream.converters.collections.MapConverter;
 import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
 import log.charter.song.Beat;
-import log.charter.song.Phrase;
-import log.charter.song.PhraseIteration;
-import log.charter.song.Section;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 
@@ -27,11 +22,7 @@ public class RocksmithChartProjectXStreamHandler {
 		xstream.processAnnotations(RocksmithChartProject.class);
 		xstream.allowTypes(new Class[] { //
 				RocksmithChartProject.class, //
-				Beat.class, //
-				Event.class, //
-				Phrase.class, //
-				PhraseIteration.class, //
-				Section.class });
+				Beat.class });
 
 		return xstream;
 	}

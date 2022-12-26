@@ -75,6 +75,8 @@ public class ChordNameAdviceButton extends JButton implements ActionListener, Mo
 
 		parent.addMouseListener(this);
 		addMouseListener(this);
+
+		setFocusable(false);
 	}
 
 	private void removePopup() {

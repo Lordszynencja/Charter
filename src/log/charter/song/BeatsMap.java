@@ -2,8 +2,8 @@ package log.charter.song;
 
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
+import log.charter.song.enums.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
 
 public class BeatsMap {
 	public int songLengthMs;
@@ -11,10 +11,6 @@ public class BeatsMap {
 	public int gridSize = 4;
 
 	public ArrayList2<Beat> beats = new ArrayList2<>();
-	public ArrayList2<Event> events = new ArrayList2<>();
-	public ArrayList2<Section> sections = new ArrayList2<>();
-	public HashMap2<String, Phrase> phrases = new HashMap2<>();
-	public ArrayList2<PhraseIteration> phraseIterations = new ArrayList2<>();
 
 	/**
 	 * creates beats map for new project
@@ -24,11 +20,6 @@ public class BeatsMap {
 
 		beats.add(new Beat(0, 4, true));
 		makeBeatsUntilSongEnd();
-
-		phrases.put("COUNT", new Phrase(0, false));
-		phrases.put("END", new Phrase(0, false));
-		phraseIterations.add(new PhraseIteration(0, "COUNT"));
-		phraseIterations.add(new PhraseIteration(songLength, "END"));
 	}
 
 	/**
@@ -38,10 +29,6 @@ public class BeatsMap {
 		this.songLengthMs = songLengthMs;
 
 		beats = rocksmithChartProject.beats;
-		events = rocksmithChartProject.events;
-		sections = rocksmithChartProject.sections;
-		phrases = rocksmithChartProject.phrases;
-		phraseIterations = rocksmithChartProject.phraseIterations;
 	}
 
 	/**
@@ -51,11 +38,6 @@ public class BeatsMap {
 		this.songLengthMs = songLengthMs;
 
 		beats = Beat.fromEbeats(songArrangement.ebeats.list);
-		events = Event.fromArrangement(beats, songArrangement.events.list);
-		sections = Section.fromArrangementSections(songArrangement.sections.list);
-		phrases = Phrase.fromArrangementPhrases(songArrangement.phrases.list);
-		phraseIterations = PhraseIteration.fromArrangementPhraseIterations(songArrangement.phrases.list,
-				songArrangement.phraseIterations.list);
 
 		int beatsInMeasure = -1;
 		int beatCount = 0;
@@ -77,10 +59,6 @@ public class BeatsMap {
 	public BeatsMap(final BeatsMap other) {
 		songLengthMs = other.songLengthMs;
 		beats = other.beats.map(Beat::new);
-		events = other.events.map(Event::new);
-		sections = other.sections.map(Section::new);
-		phrases = other.phrases.map(name -> name, Phrase::new);
-		phraseIterations = other.phraseIterations.map(PhraseIteration::new);
 	}
 
 	private void makeBeatsUntilSongEnd() {

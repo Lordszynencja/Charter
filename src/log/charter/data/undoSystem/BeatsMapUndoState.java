@@ -4,7 +4,7 @@ import log.charter.data.ChartData;
 import log.charter.song.BeatsMap;
 
 public class BeatsMapUndoState implements UndoState {
-	private final BeatsMap beatsMap;
+	public final BeatsMap beatsMap;
 
 	private BeatsMapUndoState(final ChartData data, final boolean fromUndo) {
 		final BeatsMap tmpBeatsMap = data.songChart.beatsMap;

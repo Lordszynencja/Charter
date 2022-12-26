@@ -4,8 +4,6 @@ import java.awt.HeadlessException;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.swing.JScrollBar;
@@ -185,55 +183,6 @@ public class ChartData {
 //		}
 	}
 
-	public void deleteSelected() {// TODO
-		undoSystem.addUndo();
-
-//		for (int i = selectedNotes.size() - 1; i >= 0; i--) {
-//			final int id = selectedNotes.get(i);
-//			if (currentInstrument.type.isVocalsType()) {
-//				s.v.lyrics.remove(id);
-//			} else {
-//				currentNotes.remove(id);
-//			}
-//		}
-		// deselect();
-	}
-
-	private void endNoteDragLyrics() {// TODO
-		// undoSystem.addUndo();
-
-//		final List<Lyric> events = new ArrayList<>(selectedNotes.size());
-//		final List<Lyric> editedEvents = s.v.lyrics;
-//		for (int i = selectedNotes.size() - 1; i >= 0; i--) {
-//			final int id = selectedNotes.get(i);
-//			final Lyric l = editedEvents.remove(id);
-//			events.add(l);
-//		}
-//
-//		final double dt = xToTime(mx) - events.get(events.size() - 1).pos;
-//
-//		deselect();
-//		for (int i = events.size() - 1; i >= 0; i--) {
-//			final Lyric l = events.get(i);
-//			final IdOrPos noteMovedTo = findClosestVocalIdOrPosForTime(l.pos + dt, handler.isCtrl());
-//			if (noteMovedTo.isPos()) {
-//				l.pos = noteMovedTo.pos;
-//				int firstAfter = findFirstLyricAfterTime(l.pos);
-//				if (firstAfter == -1) {
-//					firstAfter = editedEvents.size();
-//				}
-//				editedEvents.add(firstAfter, l);
-//				selectedNotes.add(firstAfter);
-//				if ((firstAfter - 1) > 0) {
-//					fixLyricLength(editedEvents.get(firstAfter - 1), firstAfter - 1, l);
-//				}
-//				if ((firstAfter + 1) < events.size()) {
-//					fixLyricLength(l, firstAfter, editedEvents.get(firstAfter + 1));
-//				}
-//			}
-//		}
-	}
-
 	private void endNoteDragNotes() {
 		undoSystem.addUndo();
 
@@ -349,6 +298,7 @@ public class ChartData {
 	}
 
 	public void paste() throws HeadlessException, IOException, UnsupportedFlavorException {// TODO
+		undoSystem.addUndo();
 //		final byte[] notesData = ClipboardHandler.readClipboardBytes();
 //
 //		try {
@@ -424,14 +374,6 @@ public class ChartData {
 //			}
 //		} catch (final Exception e) {
 //			Logger.error("Couldn't paste", e);
-//		}
-	}
-
-	public void selectAll() {// TODO
-//		deselect();
-//		final List<? extends Event> events = currentInstrument.type.isVocalsType() ? s.v.lyrics : currentNotes;
-//		for (int i = 0; i < events.size(); i++) {
-//			selectedNotes.add(i);
 //		}
 	}
 
@@ -551,127 +493,12 @@ public class ChartData {
 //		draggedTempoNext = null;
 	}
 
-	public void addNote(final double pos, final int colorBit) {// TODO
-//		int color = 0;
-//		if (currentInstrument.type.isGuitarType()) {
-//			color = colorBit == 0 ? 0 : (1 << (colorBit - 1));
-//		} else {
-//			color = 1 << colorBit;
-//		}
-//
-//		final Note n = new Note(pos, color);
-//		int insertPos = findFirstNoteAfterTime(pos);
-//		if (insertPos == -1) {
-//			insertPos = currentNotes.size();
-//			currentNotes.add(n);
-//		} else {
-//			currentNotes.add(insertPos, n);
-//		}
-//		n.tap = isInSection(n, currentInstrument.tap);
-//
-//		if (!currentInstrument.type.isDrumsType()) {
-//			fixNotesLength(n, insertPos);
-//		}
-//		addToSelection(insertPos);
-	}
-
-	private boolean toggleNote(final int id, final int colorBit) {// TODO
-		return false;
-//		final Note n = currentNotes.get(id);
-//		int color = 0;
-//		if (currentInstrument.type.isGuitarType()) {
-//			color = colorBit == 0 ? 0 : (1 << (colorBit - 1));
-//		} else {
-//			color = 1 << colorBit;
-//		}
-//
-//		if (n.notes == color) {
-//			currentNotes.remove(id);
-//			removeFromSelection(id);
-//			return true;
-//		}
-//		if (color == 0) {
-//			n.notes = 0;
-//			fixNotesLength(n, id);
-//			if (!selectedNotes.contains(id)) {
-//				addToSelection(id);
-//			}
-//			return false;
-//		}
-//
-//		n.notes ^= color;
-//		fixNotesLength(n, id);
-//		if (!selectedNotes.contains(id)) {
-//			addToSelection(id);
-//		}
-//		return false;
-	}
-
-	private void changeSelectedNotes(final Consumer<Note> action) {
-//		undoSystem.addUndo();
-//
-//		selectedNotes.stream()//
-//				.map(id -> currentNotes.get(id))//
-//				.forEach(action);
-	}
-
-	private void changeSelectedNotesWithId(final BiConsumer<Note, Integer> action) {
-//		undoSystem.addUndo();
-//
-//		selectedNotes.stream()//
-//				.forEach(id -> action.accept(currentNotes.get(id), id));
-	}
-
-	public void toggleSelectedHammerOn(final boolean ctrl, final double maxDistance) {
-//		changeSelectedNotesWithId((n, id) -> {
-//			if (ctrl) {
-//				if (id == 0) {
-//					n.hopo = n.tap;
-//				} else {
-//					final Note prev = currentNotes.get(id - 1);
-//					final double distance = n.pos - prev.pos;
-//					n.hopo = n.tap || ((distance <= maxDistance) && (n.notes != prev.notes));
-//				}
-//			} else {
-//				n.hopo = n.tap || (n.hopo ^ true);
-//			}
-//		});
-	}
-
-	public void toggleSelectedNotes(final int colorBit) {
-//		undoSystem.addUndo();
-//
-//		for (int i = selectedNotes.size() - 1; i >= 0; i--) {
-//			final int id = selectedNotes.get(i);
-//			toggleNote(id, colorBit);
-//			if (selectedNotes.get(i) != id) {
-//				for (int j = i; j < selectedNotes.size(); j++) {
-//					selectedNotes.set(j, selectedNotes.get(j) - 1);
-//				}
-//			}
-//		}
-	}
-
-	public void toggleSelectedVocalsWordPart() {// TODO
-//		undoSystem.addUndo();
-//
-//		for (final int id : selectedNotes) {
-//			final Lyric l = s.v.lyrics.get(id);
-//			l.wordPart = !l.wordPart;
-//		}
-	}
-
-	public void toggleSelectedVocalsPhraseEnd() {// TODO change last note to be phrase end
-//		undoSystem.addUndo();
-//
-//		for (final int id : selectedNotes) {
-//			final Lyric l = s.v.lyrics.get(id);
-//			l.wordPart = !l.wordPart;
-//		}
-	}
-
 	public void undo() {
 		undoSystem.undo();
+	}
+
+	public int currentStrings() {
+		return getCurrentArrangement().tuning.strings;
 	}
 
 	public ArrangementChart getCurrentArrangement() {

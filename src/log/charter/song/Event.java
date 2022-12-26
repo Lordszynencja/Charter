@@ -7,7 +7,7 @@ import java.util.List;
 import log.charter.io.rs.xml.song.ArrangementEvent;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class Event extends Position {
+public class Event extends OnBeat {
 	public enum EventType {
 		HIGH_PITCH_TICK("B0", "High pitch tick (B0)"), //
 		LOW_PITCH_TICK("B1", "Low pitch tick (B1)"), //
@@ -41,19 +41,20 @@ public class Event extends Position {
 			final List<ArrangementEvent> arrangementEvents) {
 		final ArrayList2<Event> events = arrangementEvents.stream()//
 				.filter(arrangementEvent -> {
-					if (arrangementEvent.code.startsWith("TS:")) {
-						final int time = arrangementEvent.time;
-						final int beatsInMeasure = Integer.valueOf(arrangementEvent.code.split(":")[1].split("/")[0]);
-						beats.stream()//
-								.filter(beat -> beat.position >= time)//
-								.forEach(beat -> beat.beatsInMeasure = beatsInMeasure);
-
-						return false;
+					if (!arrangementEvent.code.startsWith("TS:")) {
+						return true;
 					}
 
-					return true;
+					final int time = arrangementEvent.time;
+					final int beatsInMeasure = Integer.valueOf(arrangementEvent.code.split(":")[1].split("/")[0]);
+					beats.stream()//
+							.filter(beat -> beat.position >= time)//
+							.forEach(beat -> beat.beatsInMeasure = beatsInMeasure);
+
+					return false;
+
 				})//
-				.map(Event::new)//
+				.map(arrangementEvent -> new Event(beats, arrangementEvent))//
 				.collect(toCollection(ArrayList2::new));
 
 		return events;
@@ -61,18 +62,18 @@ public class Event extends Position {
 
 	public EventType type;
 
-	public Event(final int pos, final EventType type) {
-		super(pos);
+	public Event(final Beat beat, final EventType type) {
+		super(beat);
 		this.type = type;
 	}
 
-	private Event(final ArrangementEvent arrangementEvent) {
-		super(arrangementEvent.time);
+	private Event(final ArrayList2<Beat> beats, final ArrangementEvent arrangementEvent) {
+		super(beats, arrangementEvent.time);
 		type = EventType.findByRSName(arrangementEvent.code);
 	}
 
-	public Event(final Event other) {
-		super(other);
+	public Event(final ArrayList2<Beat> beats, final Event other) {
+		super(beats, other);
 		type = other.type;
 	}
 }

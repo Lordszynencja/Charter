@@ -2,7 +2,7 @@ package log.charter.gui.handlers;
 
 import log.charter.data.ChartData;
 import log.charter.gui.CharterFrame;
-import log.charter.song.Position;
+import log.charter.song.enums.Position;
 import log.charter.sound.MusicData;
 import log.charter.sound.RepeatingPlayer;
 import log.charter.sound.RotatingRepeatingPlayer;

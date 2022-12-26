@@ -51,6 +51,7 @@ public class Localization {
 		GUITAR_MENU("Guitar"), //
 		GUITAR_MENU_TOGGLE_MUTES("Toggle mutes"), //
 		GUITAR_MENU_TOGGLE_HOPO("Toggle HO/PO"), //
+		GUITAR_MENU_TOGGLE_HARMONIC("Toggle harmonic"), //
 		GUITAR_MENU_SET_SLIDE("Set slide"), //
 		GUITAR_MENU_TOGGLE_LINK_NEXT("Toggle link next"), //
 		GUITAR_MENU_NOTE_OPTIONS("Note options"), //
@@ -163,6 +164,7 @@ public class Localization {
 		VALUE_MUST_BE_GE("Value must be greater or equal to %s"), //
 		VALUE_MUST_BE_LE("Value must be lesser or equal to %s"), //
 		VALUE_NUMBER_EXPECTED("Number expected"), //
+		WRONG_FINGER_VALUE("Wrong finger name, must be one of (T, 1, 2, 3, 4)"), //
 		WRONG_MUSIC_FILE("Wrong music file"),//
 		;
 

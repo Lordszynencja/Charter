@@ -3,6 +3,7 @@ package log.charter.song;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.io.rs.xml.song.ArrangementPhrase;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -16,7 +17,9 @@ public class Phrase {
 				.toMap(arrangementPhrase -> new Pair<>(arrangementPhrase.name, new Phrase(arrangementPhrase)));
 	}
 
+	@XStreamAsAttribute
 	public int maxDifficulty;
+	@XStreamAsAttribute
 	public boolean solo;
 
 	public Phrase(final int maxDifficulty, final boolean solo) {

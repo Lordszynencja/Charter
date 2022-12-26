@@ -6,8 +6,9 @@ import static java.lang.Math.min;
 import static log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId.fromNoteId;
 import static log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId.fromPosition;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
-import static log.charter.song.Position.findFirstIdAfter;
-import static log.charter.song.Position.findLastIdBefore;
+import static log.charter.song.enums.Position.findFirstIdAfter;
+import static log.charter.song.enums.Position.findLastIdBefore;
+import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import log.charter.data.ChartData;
@@ -17,7 +18,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.song.Beat;
-import log.charter.song.Position;
+import log.charter.song.enums.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class HighlightManager {
@@ -142,17 +143,15 @@ public class HighlightManager {
 	}
 
 	public PositionWithIdAndType getHighlight(final int x, final int y) {
-		final PositionWithIdAndType existingPosition = selectionManager.findExistingPosition(x, y);
+		int position = xToTime(x, data.time);
+		position = data.songChart.beatsMap.getPositionFromGridClosestTo(position);
+		position = max(0, min(data.songChart.beatsMap.songLengthMs, position));
+
+		final PositionWithIdAndType existingPosition = selectionManager
+				.findExistingPosition(timeToX(position, data.time), y);
 
 		if (existingPosition != null) {
 			return existingPosition;
-		}
-
-		int position = xToTime(x, data.time);
-		position = data.songChart.beatsMap.getPositionFromGridClosestTo(position);
-
-		if (position < 0) {
-			position = 0;
 		}
 
 		return PositionWithIdAndType.create(position, PositionType.fromY(y, modeManager.editMode));

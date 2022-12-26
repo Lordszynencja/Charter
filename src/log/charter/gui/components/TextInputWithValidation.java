@@ -91,6 +91,8 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 	private final StringValueSetter setter;
 	private final boolean allowWrongValues;
 
+	private boolean disableEvents;
+
 	public TextInputWithValidation(final String text, final int length, final ValueValidator validator,
 			final StringValueSetter setter, final boolean allowWrongValues) {
 		super(text, length);
@@ -136,6 +138,10 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 
 	@Override
 	public void changedUpdate(final DocumentEvent e) {
+		if (disableEvents) {
+			return;
+		}
+
 		if (validator == null) {
 			setter.setValue(getText());
 			return;
@@ -147,5 +153,11 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		validateValue();
 
 		repaint();
+	}
+
+	public void setTextWithoutEvent(final String text) {
+		disableEvents = true;
+		setText(text);
+		disableEvents = false;
 	}
 }

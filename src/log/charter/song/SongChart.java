@@ -74,7 +74,7 @@ public class SongChart {
 			try {
 				final String xml = RW.read(dir + filename);
 				final SongArrangement songArrangement = readSong(xml);
-				arrangements.add(new ArrangementChart(songArrangement));
+				arrangements.add(new ArrangementChart(songArrangement, beatsMap.beats));
 			} catch (final Exception e) {
 				throw new IOException(String.format(Label.MISSING_ARRANGEMENT_FILE.label(), filename));
 			}
@@ -97,6 +97,6 @@ public class SongChart {
 
 		beatsMap = new BeatsMap(songLengthMs, songArrangement);
 		arrangements = new ArrayList2<>();
-		arrangements.add(new ArrangementChart(songArrangement));
+		arrangements.add(new ArrangementChart(songArrangement, beatsMap.beats));
 	}
 }

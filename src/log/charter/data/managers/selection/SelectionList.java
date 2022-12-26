@@ -3,7 +3,7 @@ package log.charter.data.managers.selection;
 import java.util.HashSet;
 import java.util.Set;
 
-import log.charter.song.Position;
+import log.charter.song.enums.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 class SelectionList<T extends Position> {

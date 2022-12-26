@@ -1,6 +1,6 @@
 package log.charter.data.managers.selection;
 
-import log.charter.song.Position;
+import log.charter.song.enums.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Selection<T extends Position> {

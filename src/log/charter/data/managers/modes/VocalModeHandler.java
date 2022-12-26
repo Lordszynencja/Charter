@@ -9,7 +9,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.VocalPane;
-import log.charter.song.Position;
+import log.charter.song.enums.Position;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -51,12 +51,15 @@ public class VocalModeHandler extends ModeHandler {
 
 	@Override
 	public void snapNotes() {
+		undoSystem.addUndo();
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
+		undoSystem.addUndo();
+
 		if (clickData.pressHighlight.vocal != null) {
 			data.songChart.vocals.removeNote(clickData.pressHighlight.id);
 			return;

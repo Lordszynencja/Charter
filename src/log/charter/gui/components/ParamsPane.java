@@ -31,6 +31,10 @@ public class ParamsPane extends JDialog {
 		public int uSpace = 10;
 		public int labelWidth = 200;
 		public int rowHeight = 25;
+
+		public int getY(final int row) {
+			return uSpace + row * rowHeight;
+		}
 	}
 
 	public static interface BooleanValueSetter {
@@ -55,7 +59,7 @@ public class ParamsPane extends JDialog {
 	}
 
 	protected int getY(final int row) {
-		return sizes.uSpace + row * sizes.rowHeight;
+		return sizes.getY(row);
 	}
 
 	public ParamsPane(final CharterFrame frame, final String title, final int rows, final PaneSizes sizes) {
@@ -166,6 +170,7 @@ public class ParamsPane extends JDialog {
 		final JCheckBox checkbox = new JCheckBox();
 		checkbox.setSelected(val);
 		checkbox.addActionListener(a -> setter.setValue(checkbox.isSelected()));
+		checkbox.setFocusable(false);
 
 		add(checkbox, x, getY(row), 20, 20);
 	}
