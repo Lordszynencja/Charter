@@ -2,6 +2,8 @@ package log.charter.gui.panes;
 
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
 
+import javax.swing.JTextField;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.selection.ChordOrNote;
@@ -47,7 +49,7 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 
 	public ChordOptionsPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final ArrayList2<ChordOrNote> notes) {
-		super(data, frame, Label.NOTE_OPTIONS_PANE, 18 + data.getCurrentArrangement().tuning.strings, getSizes(),
+		super(data, frame, Label.CHORD_OPTIONS_PANE, 18 + data.getCurrentArrangement().tuning.strings, getSizes(),
 				prepareTemplateFromData(data, notes.get(0)));
 		this.undoSystem = undoSystem;
 
@@ -92,26 +94,40 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 		addChordTemplateEditor(3);
 
 		int row = 4 + data.currentStrings();
+		final int radioButtonWidth = 65;
 
-		addLabel(row++, 20, Label.MUTE);
-		addConfigRadioButtons(row++, 30, mute.ordinal(), i -> mute = Mute.values()[i], //
+		row++;
+		final int muteLabelY = getY(row++);
+		addLabelExact(muteLabelY, 20, Label.MUTE);
+		final int muteRadioY = getY(row++) - 3;
+		addConfigRadioButtonsExact(muteRadioY, 30, radioButtonWidth, mute.ordinal(), i -> mute = Mute.values()[i], //
 				Label.MUTE_STRING, Label.MUTE_PALM, Label.MUTE_NONE);
 
-		addLabel(row++, 20, Label.HOPO);
-		addConfigRadioButtons(row++, 30, hopo.ordinal(), i -> hopo = HOPO.values()[i], //
+		final int hopoLabelY = getY(row++) + 3;
+		addLabelExact(hopoLabelY, 20, Label.HOPO);
+		final int hopoRadioY = getY(row++);
+		addConfigRadioButtonsExact(hopoRadioY, 30, radioButtonWidth, hopo.ordinal(), i -> hopo = HOPO.values()[i], //
 				Label.HOPO_HAMMER_ON, Label.HOPO_PULL_OFF, Label.HOPO_TAP, Label.HOPO_NONE);
 
-		addLabel(row++, 20, Label.HARMONIC);
-		addConfigRadioButtons(row++, 30, harmonic.ordinal(), i -> harmonic = Harmonic.values()[i], //
+		final int harmonicLabelY = getY(row++) + 6;
+		addLabelExact(harmonicLabelY, 20, Label.HARMONIC);
+		final int harmonicRadioY = getY(row++) + 3;
+		addConfigRadioButtonsExact(harmonicRadioY, 30, radioButtonWidth, harmonic.ordinal(),
+				i -> harmonic = Harmonic.values()[i], //
 				Label.HARMONIC_NORMAL, Label.HARMONIC_PINCH, Label.HARMONIC_NONE);
 
 		row++;
-		addConfigCheckbox(row++, 20, 70, Label.ACCENT, accent, val -> accent = val);
-		addConfigCheckbox(row++, 20, 70, Label.LINK_NEXT, linkNext, val -> linkNext = val);
-		addIntegerConfigValue(row, 20, 0, Label.SLIDE_PANE_FRET, slideTo, 40, createIntValidator(0, 28, true),
-				val -> slideTo = val, false);
-		addConfigCheckbox(row++, 120, 0, Label.SLIDE_PANE_UNPITCHED, unpitchedSlide, val -> unpitchedSlide = val);
+		addConfigCheckbox(row, 20, 45, Label.ACCENT, accent, val -> accent = val);
+		addConfigCheckbox(row++, 110, 0, Label.LINK_NEXT, linkNext, val -> linkNext = val);
 
+		row++;
+		addIntegerConfigValue(row, 20, 45, Label.SLIDE_PANE_FRET, slideTo, 30, createIntValidator(0, 28, true),
+				val -> slideTo = val, false);
+		((JTextField) components.getLast()).setHorizontalAlignment(JTextField.CENTER);
+		addConfigCheckbox(row, 120, unpitchedSlide, val -> unpitchedSlide = val);
+		addLabel(row++, 140, Label.SLIDE_PANE_UNPITCHED);
+
+		row++;
 		row++;
 		addDefaultFinish(row, this::onSave);
 	}

@@ -101,6 +101,8 @@ public class Localization {
 		VOCALS_MENU_TOGGLE_WORD_PART("Toggle word part"), //
 		VOCALS_MENU_TOGGLE_PHRASE_END("Toggle phrase end"), //
 
+		ANCHOR_PANE("Anchor edit"), //
+
 		CHORD_OPTIONS_PANE("Chord options"), //
 		HAND_SHAPE_PANE("Hand shape edit"), //
 		NOTE_OPTIONS_PANE("Note options"), //

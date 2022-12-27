@@ -10,6 +10,7 @@ import log.charter.gui.CharterFrame;
 
 public class FileChooseUtils {
 	private static File showDialog(final CharterFrame frame, final JFileChooser chooser) {
+
 		final int chosenOption = chooser.showOpenDialog(frame);
 		if (chosenOption != JFileChooser.APPROVE_OPTION) {
 			return null;

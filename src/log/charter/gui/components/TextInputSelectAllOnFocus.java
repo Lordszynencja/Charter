@@ -1,0 +1,24 @@
+package log.charter.gui.components;
+
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
+import javax.swing.JTextField;
+
+public class TextInputSelectAllOnFocus implements FocusListener {
+	private final JTextField input;
+
+	public TextInputSelectAllOnFocus(final JTextField input) {
+		this.input = input;
+	}
+
+	@Override
+	public void focusGained(final FocusEvent e) {
+		input.selectAll();
+	}
+
+	@Override
+	public void focusLost(final FocusEvent e) {
+	}
+
+}

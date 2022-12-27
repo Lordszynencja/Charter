@@ -2,6 +2,8 @@ package log.charter.gui.panes;
 
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
 
+import javax.swing.JTextField;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.selection.ChordOrNote;
@@ -65,33 +67,52 @@ public class NoteOptionsPane extends ParamsPane {
 	}
 
 	private void addInputs(final int strings) {
-		addIntegerConfigValue(0, 20, 0, Label.STRING, string + 1, 30, createIntValidator(1, strings, false),
+		int row = 0;
+		addIntegerConfigValue(row, 20, 0, Label.STRING, string + 1, 30, createIntValidator(1, strings, false),
 				val -> string = val - 1, false);
-		addIntegerConfigValue(0, 100, 0, Label.FRET, fret, 30, createIntValidator(0, 28, false), val -> fret = val,
+		((JTextField) components.getLast()).setHorizontalAlignment(JTextField.CENTER);
+		addIntegerConfigValue(row++, 100, 0, Label.FRET, fret, 30, createIntValidator(0, 28, false), val -> fret = val,
 				false);
+		((JTextField) components.getLast()).setHorizontalAlignment(JTextField.CENTER);
 
-		addLabel(2, 20, Label.MUTE);
-		addConfigRadioButtons(3, 30, mute.ordinal(), i -> mute = Mute.values()[i], //
+		final int radioButtonWidth = 65;
+
+		row++;
+		final int muteLabelY = getY(row++);
+		addLabelExact(muteLabelY, 20, Label.MUTE);
+		final int muteRadioY = getY(row++) - 3;
+		addConfigRadioButtonsExact(muteRadioY, 30, radioButtonWidth, mute.ordinal(), i -> mute = Mute.values()[i], //
 				Label.MUTE_STRING, Label.MUTE_PALM, Label.MUTE_NONE);
 
-		addLabel(4, 20, Label.HOPO);
-		addConfigRadioButtons(5, 30, hopo.ordinal(), i -> hopo = HOPO.values()[i], //
+		final int hopoLabelY = getY(row++) + 3;
+		addLabelExact(hopoLabelY, 20, Label.HOPO);
+		final int hopoRadioY = getY(row++);
+		addConfigRadioButtonsExact(hopoRadioY, 30, radioButtonWidth, hopo.ordinal(), i -> hopo = HOPO.values()[i], //
 				Label.HOPO_HAMMER_ON, Label.HOPO_PULL_OFF, Label.HOPO_TAP, Label.HOPO_NONE);
 
-		addLabel(6, 20, Label.BASS_PICKING_TECHNIQUE);
-		addConfigRadioButtons(7, 30, bassPicking.ordinal(), i -> bassPicking = BassPickingTechnique.values()[i], //
+		final int bassPickingLabelY = getY(row++) + 6;
+		addLabelExact(bassPickingLabelY, 20, Label.BASS_PICKING_TECHNIQUE);
+		final int bassPickingRadioY = getY(row++) + 3;
+		addConfigRadioButtonsExact(bassPickingRadioY, 30, 60, bassPicking.ordinal(),
+				i -> bassPicking = BassPickingTechnique.values()[i], //
 				Label.BASS_PICKING_POP, Label.BASS_PICKING_SLAP, Label.BASS_PICKING_NONE);
 
-		addLabel(8, 20, Label.HARMONIC);
-		addConfigRadioButtons(9, 30, harmonic.ordinal(), i -> harmonic = Harmonic.values()[i], //
+		final int harmonicLabelY = getY(row++) + 9;
+		addLabelExact(harmonicLabelY, 20, Label.HARMONIC);
+		final int harmonicRadioY = getY(row++) + 6;
+		addConfigRadioButtonsExact(harmonicRadioY, 30, radioButtonWidth, harmonic.ordinal(),
+				i -> harmonic = Harmonic.values()[i], //
 				Label.HARMONIC_NORMAL, Label.HARMONIC_PINCH, Label.HARMONIC_NONE);
 
-		addConfigCheckbox(11, 20, 70, Label.ACCENT, accent, val -> accent = val);
-		addConfigCheckbox(12, 20, 70, Label.LINK_NEXT, linkNext, val -> linkNext = val);
-		addIntegerConfigValue(13, 50, 0, Label.SLIDE_PANE_FRET, slideTo, 40, createIntValidator(0, 28, true),
+		row++;
+		addConfigCheckbox(row, 20, 45, Label.ACCENT, accent, val -> accent = val);
+		addConfigCheckbox(row++, 110, 0, Label.LINK_NEXT, linkNext, val -> linkNext = val);
+
+		addIntegerConfigValue(row, 20, 45, Label.SLIDE_PANE_FRET, slideTo, 40, createIntValidator(0, 28, true),
 				val -> slideTo = val, false);
-		addConfigCheckbox(13, 120, 0, Label.SLIDE_PANE_UNPITCHED, unpitchedSlide, val -> unpitchedSlide = val);
-		addIntegerConfigValue(14, 50, 100, Label.VIBRATO, vibrato, 40, createIntValidator(0, 1000, true),
+		addConfigCheckbox(row++, 120, 0, Label.SLIDE_PANE_UNPITCHED, unpitchedSlide, val -> unpitchedSlide = val);
+
+		addIntegerConfigValue(row++, 20, 45, Label.VIBRATO, vibrato, 40, createIntValidator(0, 1000, true),
 				val -> vibrato = val, false);
 
 		addDefaultFinish(16, this::onSave);

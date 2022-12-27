@@ -4,8 +4,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -23,6 +21,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.TextInputWithValidation.StringValueSetter;
 import log.charter.gui.components.TextInputWithValidation.ValueValidator;
+import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ParamsPane extends JDialog {
 	public static class PaneSizes {
@@ -49,7 +48,7 @@ public class ParamsPane extends JDialog {
 
 	private static final int OPTIONS_MAX_INPUT_WIDTH = 500;
 
-	protected final List<Component> components = new ArrayList<>();
+	protected final ArrayList2<Component> components = new ArrayList2<>();
 
 	private final int width;
 	private final PaneSizes sizes;
@@ -105,9 +104,16 @@ public class ParamsPane extends JDialog {
 	 * @return width of created label
 	 */
 	protected int addLabel(final int row, final int x, final Label label) {
+		return addLabelExact(getY(row), x, label);
+	}
+
+	/**
+	 * @return width of created label
+	 */
+	protected int addLabelExact(final int y, final int x, final Label label) {
 		final JLabel labelComponent = new JLabel(label.label(), SwingConstants.LEFT);
 		final int labelWidth = labelComponent.getPreferredSize().width;
-		add(labelComponent, x, getY(row), labelWidth, 20);
+		add(labelComponent, x, y, labelWidth, 20);
 
 		return labelWidth;
 	}
@@ -167,34 +173,39 @@ public class ParamsPane extends JDialog {
 	}
 
 	protected void addConfigCheckbox(final int row, final int x, final boolean val, final BooleanValueSetter setter) {
+		addConfigCheckboxExact(getY(row), x, val, setter);
+	}
+
+	protected void addConfigCheckboxExact(final int y, final int x, final boolean val,
+			final BooleanValueSetter setter) {
 		final JCheckBox checkbox = new JCheckBox();
 		checkbox.setSelected(val);
 		checkbox.addActionListener(a -> setter.setValue(checkbox.isSelected()));
 		checkbox.setFocusable(false);
 
-		add(checkbox, x, getY(row), 20, 20);
+		add(checkbox, x, y, 20, 20);
 	}
 
-	protected <T extends Enum<T>> void addConfigRadioButtons(final int row, final int val,
-			final IntegerValueSetter setter, final Label... labels) {
-		this.addConfigRadioButtons(row, sizes.lSpace, val, setter, labels);
+	protected <T extends Enum<T>> void addConfigRadioButtons(final int row, final int x, final int optionWidth,
+			final int val, final IntegerValueSetter setter, final Label... labels) {
+		addConfigRadioButtonsExact(getY(row), x, optionWidth, val, setter, labels);
 	}
 
-	protected <T extends Enum<T>> void addConfigRadioButtons(final int row, int x, final int val,
-			final IntegerValueSetter setter, final Label... labels) {
-		final int y = getY(row);
+	protected <T extends Enum<T>> void addConfigRadioButtonsExact(final int y, int x, final int optionWidth,
+			final int val, final IntegerValueSetter setter, final Label... labels) {
 		final ButtonGroup group = new ButtonGroup();
 
 		for (int i = 0; i < labels.length; i++) {
-			x += addLabel(row, x, labels[i]);
-
 			final JRadioButton radioButton = new JRadioButton();
 			radioButton.setSelected(i == val);
 			final int buttonId = i;
 			radioButton.addActionListener(a -> setter.setValue(buttonId));
 			group.add(radioButton);
 			add(radioButton, x, y, 20, 20);
-			x += 25;
+
+			addLabelExact(y, x + 20, labels[i]);
+
+			x += optionWidth;
 		}
 	}
 
@@ -226,10 +237,10 @@ public class ParamsPane extends JDialog {
 		}
 		add(labelComponent, x, y, labelWidth, 20);
 
-		final int fieldX = x + labelComponent.getWidth() + 10;
 		final TextInputWithValidation input = new TextInputWithValidation(val, inputLength, validator, setter,
 				allowWrong);
 
+		final int fieldX = x + labelWidth + 5;
 		final int length = inputLength > OPTIONS_MAX_INPUT_WIDTH ? OPTIONS_MAX_INPUT_WIDTH : inputLength;
 		add(input, fieldX, y, length, 20);
 	}

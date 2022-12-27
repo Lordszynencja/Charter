@@ -98,8 +98,8 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 				max = max(max, fret);
 			}
 		}
-		if (min == 28 && max == 0) {
-			return new IntRange(0, 3);
+		if (min > max) {
+			min = max;
 		}
 
 		if (min > 0) {
@@ -111,7 +111,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		if (max < 28) {
 			max++;
 		}
-		while (max - min < 3) {
+		while (max - min < 5) {
 			if (min > 0) {
 				min--;
 			}

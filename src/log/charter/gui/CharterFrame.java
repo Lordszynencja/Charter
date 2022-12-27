@@ -2,7 +2,10 @@ package log.charter.gui;
 
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.io.IOException;
+import java.io.InputStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -34,6 +37,7 @@ import log.charter.gui.handlers.MouseHandler;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.lookAndFeel.CharterTheme;
 import log.charter.gui.menuHandlers.CharterMenuBar;
+import log.charter.io.Logger;
 import log.charter.main.LogCharterRSMain;
 
 public class CharterFrame extends JFrame {
@@ -62,6 +66,12 @@ public class CharterFrame extends JFrame {
 
 	public CharterFrame() {
 		super(LogCharterRSMain.TITLE + " : " + Label.NO_PROJECT.label());
+		try {
+			final InputStream stream = this.getClass().getResourceAsStream("/rs_charter_icon.png");
+			setIconImage(ImageIO.read(stream));
+		} catch (final IOException e) {
+			Logger.error("Couldn't load icon", e);
+		}
 
 		CharterTheme.install(this);
 
@@ -78,7 +88,7 @@ public class CharterFrame extends JFrame {
 		data.init(audioHandler, charterMenuBar, modeManager, scrollBar, selectionManager, undoSystem);
 		keyboardHandler.init(audioHandler, data, this, modeManager, mouseHandler);
 		highlightManager.init(data, modeManager, selectionManager);
-		modeManager.init(data, this, keyboardHandler, selectionManager, undoSystem);
+		modeManager.init(data, this, highlightManager, keyboardHandler, selectionManager, undoSystem);
 		mouseButtonPressReleaseHandler.init(highlightManager);
 		mouseHandler.init(audioHandler, data, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
 				selectionManager);
@@ -192,20 +202,12 @@ public class CharterFrame extends JFrame {
 	}
 
 	public void setGuitarHelp() {
-		helpLabel.setText("<html>G, 1-9 → set grid size<br>"//
-				+ "1-9 when mouse is on beat → set beats in measure<br>"//
-				+ "Left press above tempo section → add/edit/remove song section<br>"//
+		helpLabel.setText("<html>TEST BUILD<br>"//
 				+ "</html>");
 	}
 
 	public void setLyricsHelp() {
-		helpLabel.setText("<html>G → toggle grid<br>"//
-				+ "G, 1-9 → set grid size<br>"//
-				+ "1-9 when mouse is on beat → set beats in measure<br>"//
-				+ "Left press above tempo section → add/edit/remove song section<br>"//
-				+ "Ctrl + L → place vocal line (vocals editing)<br>"//
-				+ "L → edit vocal note (vocals editing)<br>"//
-				+ "W → toggle note is word part (vocals editing)<br></html>");
+		helpLabel.setText("<html>TEST BUILD</html>");
 	}
 
 	public boolean checkChanged() {

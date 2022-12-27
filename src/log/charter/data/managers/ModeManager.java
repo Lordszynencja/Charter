@@ -26,9 +26,10 @@ public class ModeManager {
 		modeHandlers.put(EditMode.VOCALS, vocalModeHandler);
 	}
 
-	public void init(final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		guitarModeHandler.init(data, frame, keyboardHandler, undoSystem);
+	public void init(final ChartData data, final CharterFrame frame, final HighlightManager highlightManager,
+			final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
+			final UndoSystem undoSystem) {
+		guitarModeHandler.init(data, frame, highlightManager, keyboardHandler, undoSystem);
 		vocalModeHandler.init(data, frame, keyboardHandler, selectionManager, undoSystem);
 	}
 

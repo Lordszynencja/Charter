@@ -9,6 +9,8 @@ import java.awt.event.MouseListener;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.swing.JTextField;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
@@ -100,6 +102,8 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 
 			final TextInputWithValidation input = new TextInputWithValidation(fret == null ? "" : fret.toString(), 40,
 					createIntValidator(0, 28, true), val -> updateFretValue(string, val), false);
+			input.setHorizontalAlignment(JTextField.CENTER);
+			input.addFocusListener(new TextInputSelectAllOnFocus(input));
 
 			fretInputs.add(input);
 			add(input, fretInputX, getY(row + 1 + getStringPosition(i, strings)), 30, 20);
@@ -114,6 +118,8 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 
 			final TextInputWithValidation input = new TextInputWithValidation(fingerNames.get(finger), 40,
 					this::validateFinger, val -> updateFingerValue(string, val), false);
+			input.setHorizontalAlignment(JTextField.CENTER);
+			input.addFocusListener(new TextInputSelectAllOnFocus(input));
 
 			fingerInputs.add(input);
 			this.add(input, fingerInputX, getY(row + 1 + getStringPosition(string, strings)), 20, 20);

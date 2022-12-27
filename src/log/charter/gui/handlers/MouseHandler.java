@@ -130,11 +130,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	@Override
 	public void mouseDragged(final MouseEvent e) {
 		mouseMoved(e);
-
-//		if (data.draggedBeatId != null) {
-//			final int newPos = xToTime(data.mx, data.time);
-//			data.songChart.beatsMap.moveBeat(data.draggedBeatId, newPos);
-//		}
 	}
 
 	@Override
@@ -157,13 +152,9 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	@Override
 	public void mouseWheelMoved(final MouseWheelEvent e) {
-		int changeValue = e.getWheelRotation();
-		if (keyboardHandler.shift()) {
-			changeValue *= 8;
-		}
-
 		if (keyboardHandler.ctrl()) {
-			Zoom.addZoom(changeValue);
+			final int zoomChange = e.getWheelRotation() * (keyboardHandler.shift() ? 1 : 8);
+			Zoom.addZoom(zoomChange);
 			return;
 		}
 

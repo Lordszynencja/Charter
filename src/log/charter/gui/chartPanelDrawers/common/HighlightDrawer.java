@@ -76,14 +76,10 @@ public class HighlightDrawer {
 
 	private void drawAnchorHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
 			final int y) {
-		if (highlight.anchor == null) {
-			return;
-		}
-
-		final int beatX = timeToX(highlight.anchor.position, data.time);
+		final int anchorX = timeToX(highlight.position, data.time);
 		final int top = anchorY - 1;
 		final int bottom = lanesBottom + 1;
-		final ShapePositionWithSize beatPosition = new ShapePositionWithSize(beatX - 1, top, 2, bottom - top);
+		final ShapePositionWithSize beatPosition = new ShapePositionWithSize(anchorX - 1, top, 2, bottom - top);
 		strokedRectangle(beatPosition, highlightColor).draw(g);
 	}
 
@@ -253,7 +249,7 @@ public class HighlightDrawer {
 
 		final MouseButtonPressData pressPosition = mouseButtonPressReleaseHandler
 				.getPressPosition(MouseButton.RIGHT_BUTTON);
-		if (pressPosition == null) {
+		if (pressPosition == null || pressPosition.highlight.type != PositionType.GUITAR_NOTE) {
 			return;
 		}
 
