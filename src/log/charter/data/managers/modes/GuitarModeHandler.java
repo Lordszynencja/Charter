@@ -113,7 +113,7 @@ public class GuitarModeHandler extends ModeHandler {
 		handShapes.sort(null);
 
 		new HandShapePane(data, frame, handShape, () -> {
-			handShapes.remove(handShape);
+			undoSystem.undo();
 			undoSystem.removeRedo();
 		});
 	}

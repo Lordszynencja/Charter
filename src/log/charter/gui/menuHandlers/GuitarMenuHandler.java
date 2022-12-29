@@ -24,6 +24,7 @@ import log.charter.gui.panes.ChordOptionsPane;
 import log.charter.gui.panes.HandShapePane;
 import log.charter.gui.panes.NoteOptionsPane;
 import log.charter.gui.panes.SlidePane;
+import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
@@ -236,12 +237,24 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		if (handShapes.size() > deleteFromId && handShapes.get(deleteFromId).endPosition() < position) {
 			deleteFromId++;
 		}
-		final int deleteToId = firstIdAfter - 1;
+		final int deleteToId = firstIdAfter == -1 ? handShapes.size() - 1 : firstIdAfter - 1;
 		for (int i = deleteToId; i >= deleteFromId; i--) {
 			handShapes.remove(i);
 		}
 
-		final int chordId = 0;
+		ChordTemplate chordTemplate = new ChordTemplate();
+		if (selected.get(0).selectable.isChord()) {
+			chordTemplate = data.getCurrentArrangement().chordTemplates.get(selected.get(0).selectable.chord.chordId);
+		}
 
+		final HandShape handShape = new HandShape(position, endPosition - position);
+		handShape.chordId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
+
+		handShapes.add(handShape);
+		handShapes.sort(null);
+		new HandShapePane(data, frame, handShape, () -> {
+			undoSystem.undo();
+			undoSystem.removeRedo();
+		});
 	}
 }
