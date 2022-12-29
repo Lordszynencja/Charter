@@ -11,21 +11,11 @@ import log.charter.song.BendValue;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
-import log.charter.song.enums.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
-import log.charter.util.Slideable;
 
-public class Chord extends Position implements Slideable {
+public class Chord extends GuitarSound {
 	public int chordId;
-	public int length;
-	public Mute mute = Mute.NONE;
-	public HOPO hopo = HOPO.NONE;
-	public Harmonic harmonic = Harmonic.NONE;
-	public boolean accent;
-	public boolean linkNext;
-	public Integer slideTo;
-	public boolean unpitchedSlide;
 	public HashMap2<Integer, ArrayList2<BendValue>> bendValues = new HashMap2<>();
 
 	public Chord(final int pos, final int chordId) {
@@ -42,7 +32,7 @@ public class Chord extends Position implements Slideable {
 
 		if (arrangementChord.chordNotes != null) {
 			for (final ArrangementNote arrangementNote : arrangementChord.chordNotes) {
-				length = max(arrangementNote.sustain == null ? 0 : arrangementNote.sustain, length);
+				length(max(arrangementNote.sustain == null ? 0 : arrangementNote.sustain, length()));
 				if (arrangementNote.slideTo != null) {
 					slideTo = slideTo == null ? arrangementNote.slideTo : min(slideTo, arrangementNote.slideTo);
 				}
@@ -83,30 +73,6 @@ public class Chord extends Position implements Slideable {
 	public Chord(final Chord other) {
 		super(other);
 		chordId = other.chordId;
-		length = other.length;
-		mute = other.mute;
-		hopo = other.hopo;
-		harmonic = other.harmonic;
-		accent = other.accent;
-		linkNext = other.linkNext;
-		slideTo = other.slideTo;
-		unpitchedSlide = other.unpitchedSlide;
 		bendValues = other.bendValues.map(i -> i, list -> list.map(BendValue::new));
-	}
-
-	@Override
-	public Integer slideTo() {
-		return slideTo;
-	}
-
-	@Override
-	public boolean unpitched() {
-		return unpitchedSlide;
-	}
-
-	@Override
-	public void setSlide(final Integer slideTo, final boolean unpitched) {
-		this.slideTo = slideTo;
-		unpitchedSlide = unpitched;
 	}
 }

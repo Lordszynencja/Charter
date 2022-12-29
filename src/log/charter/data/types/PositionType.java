@@ -15,7 +15,7 @@ import log.charter.data.types.positions.HandShapePositionTypeManager;
 import log.charter.data.types.positions.NonePositionTypeManager;
 import log.charter.data.types.positions.PositionTypeManager;
 import log.charter.data.types.positions.VocalPositionTypeManager;
-import log.charter.song.enums.Position;
+import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public enum PositionType {
@@ -28,7 +28,7 @@ public enum PositionType {
 
 	public final PositionTypeManager<?> manager;
 
-	private <T extends Position> PositionType(final PositionTypeManager<T> manager) {
+	private <T extends IPosition> PositionType(final PositionTypeManager<T> manager) {
 		this.manager = manager;
 	}
 
@@ -71,7 +71,7 @@ public enum PositionType {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Position> ArrayList2<T> getPositions(final ChartData data) {
+	public <T extends IPosition> ArrayList2<T> getPositions(final ChartData data) {
 		return (ArrayList2<T>) manager.getPositions(data);
 	}
 }

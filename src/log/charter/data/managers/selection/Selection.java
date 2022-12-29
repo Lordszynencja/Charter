@@ -1,13 +1,13 @@
 package log.charter.data.managers.selection;
 
-import log.charter.song.enums.Position;
+import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class Selection<T extends Position> {
-	public static <T extends Position> ArrayList2<Selection<T>> getSortedCopy(final ArrayList2<Selection<T>> list) {
+public class Selection<T extends IPosition> {
+	public static <T extends IPosition> ArrayList2<Selection<T>> getSortedCopy(final ArrayList2<Selection<T>> list) {
 		final ArrayList2<Selection<T>> copy = new ArrayList2<>(list);
-		copy.sort((selection0, selection1) -> Integer.compare(selection0.selectable.position,
-				selection1.selectable.position));
+		copy.sort((selection0, selection1) -> Integer.compare(selection0.selectable.position(),
+				selection1.selectable.position()));
 
 		return copy;
 	}

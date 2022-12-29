@@ -1,10 +1,10 @@
 package log.charter.data.managers.selection;
 
 import log.charter.data.types.PositionWithIdAndType;
-import log.charter.song.enums.Position;
+import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-abstract class SingleTypeSelectionManager<T extends Position> implements TypeSelectionManager<T> {
+abstract class SingleTypeSelectionManager<T extends IPosition> implements TypeSelectionManager<T> {
 	private final SelectionList<T> selectionList;
 
 	SingleTypeSelectionManager() {

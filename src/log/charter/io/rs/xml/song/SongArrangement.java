@@ -47,8 +47,6 @@ public class SongArrangement {
 	public ArrangementProperties arrangementProperties = new ArrangementProperties();
 	public CountedList<ArrangementPhrase> phrases;
 	public CountedList<ArrangementPhraseIteration> phraseIterations;
-	// public CountedList<String> newLinkedDiffs = new CountedList<>();
-	// public CountedList<String> linkedDiffs = new CountedList<>();
 	public CountedList<String> phraseProperties = new CountedList<>();
 	public CountedList<ArrangementChordTemplate> chordTemplates;
 	public CountedList<ArrangementChordTemplate> fretHandMuteTemplates;
@@ -63,13 +61,13 @@ public class SongArrangement {
 
 		title = songChart.title;
 		arrangement = arrangementChart.arrangementType;
-		offset = -beatsTmp.get(0).position;
+		offset = -beatsTmp.get(0).position();
 		centOffset = arrangementChart.centOffset;
 		songLength = songChart.beatsMap.songLengthMs;
 		lastConversionDateTime = LocalDateTime.now();
 		startBeat = -offset;
 		averageTempo = new BigDecimal(
-				(double) (beatsTmp.get(beatsTmp.size() - 1).position - startBeat) / (beatsTmp.size() - 1)).setScale(3,
+				(double) (beatsTmp.get(beatsTmp.size() - 1).position() - startBeat) / (beatsTmp.size() - 1)).setScale(3,
 						RoundingMode.HALF_UP);
 		tuning = new ArrangementTuning(arrangementChart.tuning);
 		capo = arrangementChart.capo;

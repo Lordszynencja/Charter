@@ -6,9 +6,13 @@ import java.awt.event.FocusListener;
 import javax.swing.JTextField;
 
 public class TextInputSelectAllOnFocus implements FocusListener {
+	public static void addSelectTextOnFocus(final JTextField input) {
+		input.addFocusListener(new TextInputSelectAllOnFocus(input));
+	}
+
 	private final JTextField input;
 
-	public TextInputSelectAllOnFocus(final JTextField input) {
+	private TextInputSelectAllOnFocus(final JTextField input) {
 		this.input = input;
 	}
 

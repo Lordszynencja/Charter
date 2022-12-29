@@ -1,15 +1,19 @@
 package log.charter.data.managers.modes;
 
+import static log.charter.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
+
 import java.util.function.Function;
 
 import log.charter.data.ChartData;
+import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
+import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.VocalPane;
-import log.charter.song.enums.Position;
+import log.charter.song.notes.Position;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -41,12 +45,12 @@ public class VocalModeHandler extends ModeHandler {
 
 	@Override
 	public void handleEnd() {
-		frame.setNextTime(getTimeValue(data.music.msLength(), list -> list.getLast().position));
+		frame.setNextTime(getTimeValue(data.music.msLength(), list -> list.getLast().position()));
 	}
 
 	@Override
 	public void handleHome() {
-		frame.setNextTime(getTimeValue(0, list -> list.get(0).position));
+		frame.setNextTime(getTimeValue(0, list -> list.get(0).position()));
 	}
 
 	@Override
@@ -65,6 +69,17 @@ public class VocalModeHandler extends ModeHandler {
 			return;
 		}
 
-		new VocalPane(clickData.pressHighlight.position, data, frame, selectionManager, undoSystem);
+		new VocalPane(clickData.pressHighlight.position(), data, frame, selectionManager, undoSystem);
+	}
+
+	@Override
+	public void changeLength(int change) {
+		if (keyboardHandler.shift()) {
+			change *= 4;
+		}
+
+		final SelectionAccessor<Vocal> selectedNotes = selectionManager.getSelectedAccessor(PositionType.VOCAL);
+		changePositionsWithLengthsLength(data.songChart.beatsMap, selectedNotes.getSortedSelected(),
+				data.songChart.vocals.vocals, change);
 	}
 }

@@ -119,10 +119,24 @@ public class ParamsPane extends JDialog {
 	}
 
 	protected void addDefaultFinish(final int row, final Runnable onSave) {
-		addButtons(row, onSave);
-		getRootPane().registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+		addDefaultFinish(row, onSave, () -> {
+		});
+	}
+
+	protected void addDefaultFinish(final int row, final Runnable onSave, final Runnable onCancel) {
+		final Runnable paneOnSave = () -> {
+			onSave.run();
+			dispose();
+		};
+		final Runnable paneOnCancel = () -> {
+			onCancel.run();
+			dispose();
+		};
+
+		addButtons(row, paneOnSave, paneOnCancel);
+		getRootPane().registerKeyboardAction(e -> paneOnCancel.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
-		getRootPane().registerKeyboardAction(e -> onSave.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+		getRootPane().registerKeyboardAction(e -> paneOnSave.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
 
 		validate();

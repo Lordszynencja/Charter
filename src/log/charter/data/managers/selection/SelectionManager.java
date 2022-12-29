@@ -1,5 +1,6 @@
 package log.charter.data.managers.selection;
 
+import static log.charter.song.notes.IPosition.findClosest;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
@@ -14,7 +15,9 @@ import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.HandShape;
-import log.charter.song.enums.Position;
+import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.IPosition;
+import log.charter.song.notes.Position;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
@@ -63,7 +66,7 @@ public class SelectionManager {
 			final ArrayList2<PositionWithLink> newPositions = new ArrayList2<>(positions.size() * 2);
 
 			for (final PositionWithIdAndType position : positions) {
-				newPositions.add(new PositionWithLink(position.position, position));
+				newPositions.add(new PositionWithLink(position.position(), position));
 				newPositions.add(new PositionWithLink(position.endPosition, position));
 			}
 
@@ -81,13 +84,13 @@ public class SelectionManager {
 	private PositionWithIdAndType findExistingLong(final int x, final ArrayList2<PositionWithIdAndType> positions) {
 		final ArrayList2<PositionWithLink> positionsWithLinks = PositionWithLink.fromPositionsWithIdAndType(positions);
 		final int position = xToTime(x, data.time);
-		final Integer id = Position.findClosest(positionsWithLinks, position);
+		final Integer id = findClosest(positionsWithLinks, position);
 		if (id == null) {
 			return null;
 		}
 
 		final PositionWithIdAndType closest = positionsWithLinks.get(id).link;
-		if (x - timeToX(closest.position, data.time) < -20 || x - timeToX(closest.endPosition, data.time) > 20) {
+		if (x - timeToX(closest.position(), data.time) < -20 || x - timeToX(closest.endPosition, data.time) > 20) {
 			return null;
 		}
 
@@ -96,13 +99,13 @@ public class SelectionManager {
 
 	private PositionWithIdAndType findExistingPoint(final int x, final ArrayList2<PositionWithIdAndType> positions) {
 		final int position = xToTime(x, data.time);
-		final Integer id = Position.findClosest(positions, position);
+		final Integer id = findClosest(positions, position);
 		if (id == null) {
 			return null;
 		}
 
 		final PositionWithIdAndType closest = positions.get(id);
-		if (x - timeToX(closest.position, data.time) < -20 || x - timeToX(closest.position, data.time) > 20) {
+		if (x - timeToX(closest.position(), data.time) < -20 || x - timeToX(closest.position(), data.time) > 20) {
 			return null;
 		}
 
@@ -148,7 +151,7 @@ public class SelectionManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends Position> SelectionAccessor<T> getSelectedAccessor(final PositionType type) {
+	public <T extends IPosition> SelectionAccessor<T> getSelectedAccessor(final PositionType type) {
 		final TypeSelectionManager<?> typeSelectionManager = typeSelectionManagers.get(type);
 		if (typeSelectionManager == null) {
 			return new SelectionAccessor<>(() -> new ArrayList2<>());

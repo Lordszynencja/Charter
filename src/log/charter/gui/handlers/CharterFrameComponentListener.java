@@ -61,12 +61,14 @@ public class CharterFrameComponentListener implements ComponentListener {
 	public void componentMoved(final ComponentEvent e) {
 		Config.windowPosX = e.getComponent().getX();
 		Config.windowPosY = e.getComponent().getY();
+		Config.markChanged();
 	}
 
 	@Override
 	public void componentResized(final ComponentEvent e) {
 		Config.windowHeight = e.getComponent().getHeight();
 		Config.windowWidth = e.getComponent().getWidth();
+		Config.markChanged();
 
 		final Insets insets = frame.getInsets();
 		final int widthDifference = insets.left + insets.right;

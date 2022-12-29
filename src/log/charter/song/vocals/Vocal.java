@@ -4,11 +4,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.data.config.Config;
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
-import log.charter.song.enums.Position;
+import log.charter.song.notes.PositionWithLength;
 
 @XStreamAlias("vocal")
-public class Vocal extends Position {
-	public int length;
+public class Vocal extends PositionWithLength {
 	public String lyric;
 
 	public Vocal(final int position) {
@@ -16,24 +15,21 @@ public class Vocal extends Position {
 	}
 
 	public Vocal(final ArrangementVocal arrangementVocal) {
-		super(arrangementVocal.time);
-		length = arrangementVocal.length == null ? 0 : arrangementVocal.length;
+		super(arrangementVocal.time, arrangementVocal.length == null ? 0 : arrangementVocal.length);
 		lyric = arrangementVocal.lyric;
 	}
 
 	public Vocal(final int time, final String text, final boolean wordPart, final boolean phraseEnd) {
-		super(time);
+		super(time, Config.minTailLength);
 		lyric = text;
 
 		if (wordPart) {
 			lyric += "-";
 		}
-		length = Config.minTailLength;
 	}
 
 	public Vocal(final Vocal other) {
-		super(other.position);
-		length = other.length;
+		super(other);
 		lyric = other.lyric;
 	}
 

@@ -63,6 +63,8 @@ public class ChartPanelColors {
 		NOTE_4(0, 192, 0), //
 		NOTE_5(192, 0, 192), //
 
+		NOTE_STRING_MUTE(128, 128, 128), //
+
 		NOTE_ACCENT_0(255, 0, 0), //
 		NOTE_ACCENT_1(255, 255, 0), //
 		NOTE_ACCENT_2(0, 0, 255), //
@@ -70,15 +72,15 @@ public class ChartPanelColors {
 		NOTE_ACCENT_4(0, 255, 0), //
 		NOTE_ACCENT_5(255, 0, 255), //
 
-		ANCHOR(128, 0, 0), //
-		HAND_SHAPE(0, 128, 255, 255), //
-
 		NOTE_TAIL_0(210, 0, 0), //
 		NOTE_TAIL_1(210, 210, 0), //
 		NOTE_TAIL_2(0, 0, 210), //
 		NOTE_TAIL_3(210, 105, 0), //
 		NOTE_TAIL_4(0, 210, 0), //
 		NOTE_TAIL_5(210, 0, 210), //
+
+		ANCHOR(128, 0, 0), //
+		HAND_SHAPE(0, 128, 255, 255), //
 
 		VOCAL_LINE_BACKGROUND(0, 210, 210), //
 		VOCAL_LINE_TEXT(0, 0, 128), //

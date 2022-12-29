@@ -3,15 +3,15 @@ package log.charter.data.managers.selection;
 import java.util.HashSet;
 import java.util.Set;
 
-import log.charter.song.enums.Position;
+import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-class SelectionList<T extends Position> {
-	static interface SelectionMaker<T extends Position> {
+class SelectionList<T extends IPosition> {
+	static interface SelectionMaker<T extends IPosition> {
 		Selection<T> make(int id, T selectable);
 	}
 
-	static interface TemporarySelectionSupplier<T extends Position> {
+	static interface TemporarySelectionSupplier<T extends IPosition> {
 		Selection<T> make();
 	}
 
@@ -27,11 +27,12 @@ class SelectionList<T extends Position> {
 	}
 
 	private void addSelectables(final ArrayList2<T> available, final int fromId, final int toId) {
-		final Set<Integer> selectedSignatures = new HashSet<>(selected.map(selection -> selection.selectable.position));
+		final Set<Integer> selectedSignatures = new HashSet<>(
+				selected.map(selection -> selection.selectable.position()));
 
 		for (int i = fromId; i <= toId; i++) {
 			final T selectable = available.get(i);
-			if (!selectedSignatures.contains(selectable.position)) {
+			if (!selectedSignatures.contains(selectable.position())) {
 				selected.add(selectionMaker.make(i, selectable));
 			}
 		}
@@ -72,18 +73,6 @@ class SelectionList<T extends Position> {
 		}
 
 		setSelectable(available, id);
-	}
-
-	void addSelectablesFromToPosition(final ArrayList2<T> available, final int fromPosition, final int toPosition) {
-		final Set<Integer> selectedSignatures = new HashSet<>(selected.map(selection -> selection.selectable.position));
-
-		for (int i = 0; i < available.size(); i++) {
-			final T selectable = available.get(i);
-			if (selectable.position >= fromPosition && selectable.position <= toPosition
-					&& !selectedSignatures.contains(selectable.position)) {
-				selected.add(selectionMaker.make(i, selectable));
-			}
-		}
 	}
 
 	public void addAll(final ArrayList2<T> available) {

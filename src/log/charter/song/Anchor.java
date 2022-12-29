@@ -3,7 +3,7 @@ package log.charter.song;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.io.rs.xml.song.ArrangementAnchor;
-import log.charter.song.enums.Position;
+import log.charter.song.notes.Position;
 
 @XStreamAlias("anchor")
 public class Anchor extends Position {

@@ -1,10 +1,10 @@
 package log.charter.data.types;
 
-import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.HandShape;
-import log.charter.song.enums.Position;
+import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.Position;
 import log.charter.song.vocals.Vocal;
 
 public class PositionWithIdAndType extends Position {

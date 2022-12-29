@@ -21,7 +21,7 @@ public class ArrangementBendValue {
 	}
 
 	public ArrangementBendValue(final BendValue bendValue) {
-		time = bendValue.position;
+		time = bendValue.position();
 		step = bendValue.bendValue;
 	}
 }

@@ -1,12 +1,13 @@
 package log.charter.gui.panes;
 
+import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
 
 import javax.swing.JTextField;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ParamsPane;
@@ -16,6 +17,7 @@ import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -70,10 +72,15 @@ public class NoteOptionsPane extends ParamsPane {
 		int row = 0;
 		addIntegerConfigValue(row, 20, 0, Label.STRING, string + 1, 30, createIntValidator(1, strings, false),
 				val -> string = val - 1, false);
-		((JTextField) components.getLast()).setHorizontalAlignment(JTextField.CENTER);
-		addIntegerConfigValue(row++, 100, 0, Label.FRET, fret, 30, createIntValidator(0, 28, false), val -> fret = val,
-				false);
-		((JTextField) components.getLast()).setHorizontalAlignment(JTextField.CENTER);
+		final JTextField stringInput = (JTextField) components.getLast();
+		stringInput.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(stringInput);
+
+		addIntegerConfigValue(row++, 100, 0, Label.FRET, fret, 30, createIntValidator(0, Config.frets, false),
+				val -> fret = val, false);
+		final JTextField fretInput = (JTextField) components.getLast();
+		fretInput.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(fretInput);
 
 		final int radioButtonWidth = 65;
 
@@ -108,12 +115,18 @@ public class NoteOptionsPane extends ParamsPane {
 		addConfigCheckbox(row, 20, 45, Label.ACCENT, accent, val -> accent = val);
 		addConfigCheckbox(row++, 110, 0, Label.LINK_NEXT, linkNext, val -> linkNext = val);
 
-		addIntegerConfigValue(row, 20, 45, Label.SLIDE_PANE_FRET, slideTo, 40, createIntValidator(0, 28, true),
-				val -> slideTo = val, false);
+		addIntegerConfigValue(row, 20, 45, Label.SLIDE_PANE_FRET, slideTo, 40,
+				createIntValidator(1, Config.frets, true), val -> slideTo = val, false);
+		final JTextField slideToInput = (JTextField) components.getLast();
+		slideToInput.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(slideToInput);
 		addConfigCheckbox(row++, 120, 0, Label.SLIDE_PANE_UNPITCHED, unpitchedSlide, val -> unpitchedSlide = val);
 
 		addIntegerConfigValue(row++, 20, 45, Label.VIBRATO, vibrato, 40, createIntValidator(0, 1000, true),
 				val -> vibrato = val, false);
+		final JTextField vibratoInput = (JTextField) components.getLast();
+		vibratoInput.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(vibratoInput);
 
 		addDefaultFinish(16, this::onSave);
 	}
@@ -161,7 +174,7 @@ public class NoteOptionsPane extends ParamsPane {
 	}
 
 	private void changeChordToNote(final ChordOrNote chordOrNote) {
-		final Note note = new Note(chordOrNote.position, string, fret);
+		final Note note = new Note(chordOrNote.position(), string, fret);
 		note.mute = mute;
 		note.hopo = hopo;
 		note.bassPicking = bassPicking;
@@ -185,8 +198,6 @@ public class NoteOptionsPane extends ParamsPane {
 				setNoteValues(chordOrNote.note);
 			}
 		}
-
-		dispose();
 	}
 
 }

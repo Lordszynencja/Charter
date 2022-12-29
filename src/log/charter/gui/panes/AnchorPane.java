@@ -1,9 +1,11 @@
 package log.charter.gui.panes;
 
+import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
 
 import javax.swing.JTextField;
 
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -35,9 +37,11 @@ public class AnchorPane extends ParamsPane {
 
 		fret = anchor.fret;
 
-		addIntegerConfigValue(0, 80, 0, Label.FRET, fret, 30, createIntValidator(1, 28, false), val -> fret = val,
-				false);
-		((JTextField) components.getLast()).selectAll();
+		addIntegerConfigValue(0, 80, 0, Label.FRET, fret, 30, createIntValidator(1, Config.frets, false),
+				val -> fret = val, false);
+		final JTextField input = (JTextField) components.getLast();
+		input.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(input);
 
 		addDefaultFinish(2, this::saveAndExit);
 	}
@@ -46,7 +50,5 @@ public class AnchorPane extends ParamsPane {
 		undoSystem.addUndo();
 
 		anchor.fret = fret;
-
-		dispose();
 	}
 }

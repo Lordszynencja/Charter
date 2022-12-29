@@ -1,9 +1,9 @@
 package log.charter.data.types;
 
-import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.HandShape;
+import log.charter.song.notes.ChordOrNote;
 import log.charter.song.vocals.Vocal;
 
 class TemporaryValue {
@@ -32,32 +32,31 @@ class TemporaryValue {
 	}
 
 	public TemporaryValue(final int id, final Anchor anchor) {
-		this(anchor.position, anchor.position, id, PositionType.ANCHOR);
+		this(anchor.position(), anchor.position(), id, PositionType.ANCHOR);
 		this.anchor = anchor;
 	}
 
 	public TemporaryValue(final int id, final Beat beat) {
-		this(beat.position, beat.position, id, PositionType.BEAT);
+		this(beat.position(), beat.position(), id, PositionType.BEAT);
 		this.beat = beat;
 	}
 
 	public TemporaryValue(final int id, final ChordOrNote chordOrNote) {
-		this(chordOrNote.position, chordOrNote.position + chordOrNote.length(), id, PositionType.GUITAR_NOTE);
+		this(chordOrNote.position(), chordOrNote.endPosition(), id, PositionType.GUITAR_NOTE);
 		this.chordOrNote = chordOrNote;
 	}
 
 	public TemporaryValue(final int id, final HandShape handShape) {
-		this(handShape.position, handShape.position + handShape.length, id, PositionType.HAND_SHAPE);
+		this(handShape.position(), handShape.endPosition(), id, PositionType.HAND_SHAPE);
 		this.handShape = handShape;
 	}
 
 	public TemporaryValue(final int id, final Vocal vocal) {
-		this(vocal.position, vocal.position + vocal.length, id, PositionType.VOCAL);
+		this(vocal.position(), vocal.endPosition(), id, PositionType.VOCAL);
 		this.vocal = vocal;
 	}
 
 	public PositionWithIdAndType transform() {
-		return new PositionWithIdAndType(position, endPosition, id, type, anchor, beat, chordOrNote, handShape,
-				vocal);
+		return new PositionWithIdAndType(position, endPosition, id, type, anchor, beat, chordOrNote, handShape, vocal);
 	}
 }

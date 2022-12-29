@@ -19,7 +19,7 @@ public class EBeat {
 	}
 
 	public EBeat(final Beat beat) {
-		time = beat.position;
+		time = beat.position();
 		measure = beat.firstInMeasure ? 1 : null;
 	}
 }

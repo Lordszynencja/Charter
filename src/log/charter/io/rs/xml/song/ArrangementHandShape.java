@@ -26,13 +26,13 @@ public class ArrangementHandShape {
 
 	public ArrangementHandShape(final Chord chord) {
 		chordId = chord.chordId;
-		startTime = chord.position;
-		endTime = chord.position + max(50, chord.length);
+		startTime = chord.position();
+		endTime = chord.position() + max(50, chord.length());
 	}
 
 	public ArrangementHandShape(final HandShape handShape) {
 		chordId = handShape.chordId;
-		startTime = handShape.position;
-		endTime = startTime + handShape.length;
+		startTime = handShape.position();
+		endTime = startTime + handShape.length();
 	}
 }

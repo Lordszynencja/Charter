@@ -5,6 +5,8 @@ public class Zoom {
 
 	public static void addZoom(final int change) {
 		Config.zoomLvl += change;
+		Config.markChanged();
+
 		setZoomBasedOnConfig();
 	}
 

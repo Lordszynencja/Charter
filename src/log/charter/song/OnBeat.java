@@ -1,6 +1,6 @@
 package log.charter.song;
 
-import static log.charter.song.enums.Position.findLastBefore;
+import static log.charter.song.notes.IPosition.findLastBefore;
 
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -16,6 +16,6 @@ public class OnBeat {
 	}
 
 	public OnBeat(final ArrayList2<Beat> beats, final OnBeat other) {
-		this(beats, other.beat.position);
+		this(beats, other.beat.position());
 	}
 }

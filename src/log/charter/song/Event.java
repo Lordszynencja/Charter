@@ -48,7 +48,7 @@ public class Event extends OnBeat {
 					final int time = arrangementEvent.time;
 					final int beatsInMeasure = Integer.valueOf(arrangementEvent.code.split(":")[1].split("/")[0]);
 					beats.stream()//
-							.filter(beat -> beat.position >= time)//
+							.filter(beat -> beat.position() >= time)//
 							.forEach(beat -> beat.beatsInMeasure = beatsInMeasure);
 
 					return false;

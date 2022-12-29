@@ -42,7 +42,7 @@ public class ArrangementSection {
 	private ArrangementSection(final Section section, final int number) {
 		name = section.type.rsName;
 		this.number = number;
-		startTime = section.beat.position;
+		startTime = section.beat.position();
 	}
 
 }

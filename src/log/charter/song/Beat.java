@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.io.rs.xml.song.EBeat;
-import log.charter.song.enums.Position;
+import log.charter.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("beat")

@@ -69,4 +69,16 @@ public class ArrangementChart {
 	public String getTypeNameLabel() {
 		return getTypeName().replace("_", " ");
 	}
+
+	public int getChordTemplateIdWithSave(final ChordTemplate chordTemplate) {
+		for (int i = 0; i < chordTemplates.size(); i++) {
+			final ChordTemplate existingChordTemplate = chordTemplates.get(i);
+			if (existingChordTemplate.equals(chordTemplate)) {
+				return i;
+			}
+		}
+
+		chordTemplates.add(chordTemplate);
+		return chordTemplates.size() - 1;
+	}
 }

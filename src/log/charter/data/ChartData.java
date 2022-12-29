@@ -4,7 +4,6 @@ import java.awt.HeadlessException;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Function;
 
 import javax.swing.JScrollBar;
 
@@ -398,86 +397,12 @@ public class ChartData {
 		path = dir;
 		this.projectFileName = projectFileName;
 		Config.lastPath = path;
+		Config.markChanged();
+
 		music = musicData;
 
 		selectionManager.clear();
 		undoSystem.clear();
-	}
-
-	public void snapSelectedNotes() {// TODO
-		undoSystem.addUndo();
-		// snapNotes(selectedNotes);
-	}
-
-	private void snapNotes2(final List<Integer> notes, final Function<Double, Double> positionCalculator) {// TODO
-//		for (int i = 0; i < notes.size(); i++) {
-//			final int id = notes.get(i);
-//			final Note n = currentNotes.get(id);
-//			final double newPos = positionCalculator.apply(n.pos);
-//
-//			final boolean isBeforePrevious = (id > 0) && (newPos <= currentNotes.get(id - 1).pos);
-//			final boolean isAfterNext = ((id + 1) < currentNotes.size()) && (newPos >= currentNotes.get(id + 1).pos);
-//			if (isBeforePrevious || isAfterNext) {
-//				if (currentInstrument.type.isDrumsType()) {
-//					if (isBeforePrevious) {
-//						currentNotes.get(id - 1).drumMerge(n);
-//					} else {
-//						currentNotes.get(id + 1).drumMerge(n);
-//					}
-//				}
-//				notes.remove(i);
-//				for (int j = i; j < notes.size(); j++) {
-//					notes.add(j, notes.remove(j) - 1);
-//				}
-//				currentNotes.remove(id);
-//				i--;
-//			} else {
-//				final double newLength = positionCalculator.apply(n.pos + n.getLength()) - newPos;
-//				n.pos = newPos;
-//				n.setLength(newLength);
-//			}
-//		}
-//
-//			for (int i = 0; i < notes.size(); i++) {
-//				final int id = notes.get(i);
-//				fixNotesLength(currentNotes.get(id), id);
-//			}
-//
-	}
-
-	public void snapNotes(final List<Integer> notes) {// TODO
-//		snapNotes2(notes, pos -> s.tempoMap.findClosestGridPositionForTime(pos, useGrid, gridSize));
-	}
-
-	public void snapNotes(final List<Integer> notes, final int gridSizeToUse) {// TODO
-//		snapNotes2(notes, pos -> s.tempoMap.findClosestGridPositionForTime(pos, true, gridSizeToUse));
-	}
-
-	public void snapSelectedVocals() {// TODO
-//		undoSystem.addUndo();
-//
-//		for (int i = 0; i < selectedNotes.size(); i++) {
-//			final int id = selectedNotes.get(i);
-//			final Lyric l = s.v.lyrics.get(id);
-//			final double newPos = s.tempoMap.findClosestGridPositionForTime(l.pos, useGrid, gridSize);
-//			if (((id > 0) && (newPos <= s.v.lyrics.get(id - 1).pos))//
-//					|| (((id + 1) < s.v.lyrics.size()) && (newPos >= s.v.lyrics.get(id + 1).pos))) {
-//				removeFromSelectionByPos(i);
-//				s.v.lyrics.remove(id);
-//			} else {
-//				final double newLength = s.tempoMap.findClosestGridPositionForTime(l.pos + l.getLength(), useGrid,
-//						gridSize) - newPos;
-//				l.pos = newPos;
-//				l.setLength(newLength);
-//
-//				if (id > 0) {
-//					fixLyricLength(s.v.lyrics.get(id - 1), id - 1, l);
-//				}
-//				if ((id + 1) < s.v.lyrics.size()) {
-//					fixLyricLength(l, id, s.v.lyrics.get(id + 1));
-//				}
-//			}
-//		}
 	}
 
 	public void startTempoDrag(final Tempo prevTmp, final Tempo tmp, final Tempo nextTmp, final boolean isNew) {// TODO

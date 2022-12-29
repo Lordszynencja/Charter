@@ -30,13 +30,13 @@ public class Vocals {
 	public int insertNote(final int position, final String text, final boolean wordPart, final boolean phraseEnd) {
 		final Vocal vocal = new Vocal(position, text, wordPart, phraseEnd);
 
-		if (vocals.isEmpty() || vocals.getLast().position < position) {
+		if (vocals.isEmpty() || vocals.getLast().position() < position) {
 			vocals.add(vocal);
 			return vocals.size() - 1;
 		}
 
 		for (int i = vocals.size() - 1; i >= 0; i--) {
-			if (vocals.get(i).position < position) {
+			if (vocals.get(i).position() < position) {
 				vocals.add(i + 1, vocal);
 				return i + 1;
 			}

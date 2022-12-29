@@ -22,8 +22,8 @@ public class ArrangementVocal {
 	}
 
 	public ArrangementVocal(final Vocal vocal) {
-		time = vocal.position;
-		length = vocal.length;
+		time = vocal.position();
+		length = vocal.length();
 		lyric = vocal.lyric;
 	}
 }

@@ -1,7 +1,5 @@
 package log.charter.gui.menuHandlers;
 
-import static java.awt.event.KeyEvent.VK_F5;
-
 import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
@@ -73,7 +71,7 @@ class InstrumentMenuHandler extends CharterMenuHandler {
 		}
 
 		menu.addSeparator();
-		menu.add(createItem(Label.INSTRUMENT_MENU_TOGGLE_WAVEFORM, button(VK_F5), this::toggleWaveforDrawing));
+		menu.add(createItem(Label.INSTRUMENT_MENU_TOGGLE_WAVEFORM, button('U'), this::toggleWaveforDrawing));
 		menu.add(createItem(Label.INSTRUMENT_MENU_TOGGLE_CLAPS, button('C'), audioHandler::toggleClaps));
 		menu.add(createItem(Label.INSTRUMENT_MENU_TOGGLE_METRONOME, button('M'), audioHandler::toggleMetronome));
 

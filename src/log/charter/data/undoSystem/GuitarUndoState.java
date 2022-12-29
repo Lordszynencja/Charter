@@ -1,7 +1,6 @@
 package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.song.Anchor;
 import log.charter.song.ArrangementChart;
 import log.charter.song.ChordTemplate;
@@ -11,6 +10,7 @@ import log.charter.song.Level;
 import log.charter.song.Phrase;
 import log.charter.song.PhraseIteration;
 import log.charter.song.Section;
+import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 

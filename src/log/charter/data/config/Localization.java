@@ -20,6 +20,7 @@ public class Localization {
 		CONFIG_SOUND_DELAY("Sound delay"), //
 		CONFIG_MARKER_POSITION("Marker position"), //
 		CONFIG_INVERT_STRINGS("Invert strings"), //
+		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
 
 		EDIT_MENU("Edit"), //
 		EDIT_MENU_UNDO("Undo"), //
@@ -63,6 +64,7 @@ public class Localization {
 		GUITAR_MENU_CHORD_OPTIONS_TOOLTIP(
 				"Opens notes for edit as chord, will change selected single notes into chords"), //
 		GUITAR_MENU_HAND_SHAPE_OPTIONS("Hand shape options"), //
+		GUITAR_MENU_MARK_HAND_SHAPE("Mark hand shape"), //
 
 		INFO_MENU("Info"), //
 		INFO_MENU_VERSION("Version"), //
@@ -206,7 +208,7 @@ public class Localization {
 
 	public static void changeLanguage(final String newLanguage, final CharterMenuBar charterMenuBar) {
 		Config.language = newLanguage;
-		Config.changed = true;
+		Config.markChanged();
 
 		readLocalizationFile();
 		charterMenuBar.refreshMenus();

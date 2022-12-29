@@ -14,7 +14,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.GridPane;
 import log.charter.gui.panes.SongOptionsPane;
-import log.charter.song.enums.Position;
+import log.charter.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 class EditMenuHandler extends CharterMenuHandler {

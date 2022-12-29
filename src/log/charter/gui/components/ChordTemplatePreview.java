@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.swing.JComponent;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
@@ -90,7 +91,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	}
 
 	private IntRange getFretsRange() {
-		int min = 28;
+		int min = Config.frets;
 		int max = 0;
 		for (final int fret : chordTemplate.frets.values()) {
 			if (fret != 0) {
@@ -108,14 +109,14 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		if (min > 0) {
 			min--;
 		}
-		if (max < 28) {
+		if (max < Config.frets) {
 			max++;
 		}
 		while (max - min < 5) {
 			if (min > 0) {
 				min--;
 			}
-			if (max < 28) {
+			if (max < Config.frets) {
 				max++;
 			}
 		}
@@ -320,7 +321,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 
 		if (mouseFret == null) {
 			final FretPosition lastPosition = fretPositions[fretPositions.length - 1];
-			if (lastPosition.fret < 28 && x > lastPosition.position) {
+			if (lastPosition.fret < Config.frets && x > lastPosition.position) {
 				mouseFret = lastPosition.fret + 1;
 			}
 		}

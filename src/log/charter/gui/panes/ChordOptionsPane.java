@@ -1,12 +1,13 @@
 package log.charter.gui.panes;
 
+import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
 
 import javax.swing.JTextField;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ChordTemplateEditor;
@@ -15,6 +16,7 @@ import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -31,8 +33,18 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 	}
 
 	private static ChordTemplate prepareTemplateFromData(final ChartData data, final ChordOrNote chordOrNote) {
-		return !chordOrNote.isChord() || chordOrNote.chord.chordId == -1 ? new ChordTemplate()
-				: new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(chordOrNote.chord.chordId));
+		if (chordOrNote.isChord()) {
+			if (chordOrNote.chord.chordId < 0
+					|| chordOrNote.chord.chordId >= data.getCurrentArrangement().chordTemplates.size()) {
+				return new ChordTemplate();
+			}
+
+			return new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(chordOrNote.chord.chordId));
+		}
+
+		final ChordTemplate chordTemplate = new ChordTemplate();
+		chordTemplate.frets.put(chordOrNote.note.string, chordOrNote.note.fret);
+		return chordTemplate;
 	}
 
 	private final UndoSystem undoSystem;
@@ -89,7 +101,8 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 
 	private void addInputs(final int strings) {
 		addChordNameSuggestionButton(100, 0);
-		addChordNameInput(100, 1);
+		addChordNameInput(100, 1, newChordTemplate -> {
+		});
 
 		addChordTemplateEditor(3);
 
@@ -121,9 +134,11 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 		addConfigCheckbox(row++, 110, 0, Label.LINK_NEXT, linkNext, val -> linkNext = val);
 
 		row++;
-		addIntegerConfigValue(row, 20, 45, Label.SLIDE_PANE_FRET, slideTo, 30, createIntValidator(0, 28, true),
-				val -> slideTo = val, false);
-		((JTextField) components.getLast()).setHorizontalAlignment(JTextField.CENTER);
+		addIntegerConfigValue(row, 20, 45, Label.SLIDE_PANE_FRET, slideTo, 30,
+				createIntValidator(1, Config.frets, true), val -> slideTo = val, false);
+		final JTextField input = (JTextField) components.getLast();
+		input.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(input);
 		addConfigCheckbox(row, 120, unpitchedSlide, val -> unpitchedSlide = val);
 		addLabel(row++, 140, Label.SLIDE_PANE_UNPITCHED);
 
@@ -143,14 +158,13 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 	}
 
 	private void changeNoteToChord(final ChordOrNote chordOrNote, final int chordId) {
-		final Chord chord = new Chord(chordOrNote.position, chordId);
+		final Chord chord = new Chord(chordOrNote.position(), chordId);
 		setChordValues(chord);
 		chordOrNote.note = null;
 		chordOrNote.chord = chord;
 	}
 
 	private void onSave() {
-		dispose();
 		undoSystem.addUndo();
 
 		if (chordTemplate.frets.isEmpty()) {
@@ -158,7 +172,7 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 			return;
 		}
 
-		final int chordId = getSavedTemplateId();
+		final int chordId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
 		for (final ChordOrNote chordOrNote : chordsAndNotes) {
 			if (chordOrNote.isChord()) {
 				chordOrNote.chord.chordId = chordId;

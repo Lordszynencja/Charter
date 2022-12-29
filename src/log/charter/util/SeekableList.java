@@ -1,8 +1,9 @@
 package log.charter.util;
 
+import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class SeekableList<T extends Positionable> {
+public class SeekableList<T extends IPosition> {
 	private final ArrayList2<T> list;
 	private int position = 0;
 

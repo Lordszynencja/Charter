@@ -17,12 +17,12 @@ import log.charter.song.ChordTemplate;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.Positionable;
 
 @XStreamAlias("chord")
 @XStreamInclude(ArrangementChordNote.class)
-public class ArrangementChord implements Positionable {
+public class ArrangementChord implements IPosition {
 	@XStreamAsAttribute
 	@XStreamConverter(TimeConverter.class)
 	public int time;
@@ -43,7 +43,7 @@ public class ArrangementChord implements Positionable {
 	}
 
 	public ArrangementChord(final Chord chord, final ChordTemplate chordTemplate) {
-		time = chord.position;
+		time = chord.position();
 		chordId = chord.chordId;
 		accent = chord.accent ? 1 : null;
 		linkNext = chord.linkNext ? 1 : null;
@@ -72,7 +72,7 @@ public class ArrangementChord implements Positionable {
 		}
 
 		populateChordNotes(chordTemplate);
-		setChordNoteLengths(chord.length);
+		setChordNoteLengths(chord.length());
 
 		final int minFret = chordTemplate.frets.values().stream().collect(minBy(Integer::compare)).get();
 		final int slideDifference = chord.slideTo - minFret;
@@ -111,7 +111,7 @@ public class ArrangementChord implements Positionable {
 		}
 
 		populateChordNotes(chordTemplate);
-		setChordNoteLengths(chord.length);
+		setChordNoteLengths(chord.length());
 
 		for (final ArrangementChordNote chordNote : chordNotes) {
 			final ArrayList2<BendValue> bendValues = chord.bendValues.get(chordNote.string);
@@ -121,7 +121,8 @@ public class ArrangementChord implements Positionable {
 
 			chordNote.bendValues = new CountedList<>();
 			for (final BendValue bendValue : bendValues) {
-				if (bendValue.position >= chordNote.time && bendValue.position <= chordNote.time + chordNote.sustain) {
+				if (bendValue.position() >= chordNote.time
+						&& bendValue.position() <= chordNote.time + chordNote.sustain) {
 					chordNote.bendValues.list.add(new ArrangementBendValue(bendValue));
 				}
 			}
@@ -137,6 +138,11 @@ public class ArrangementChord implements Positionable {
 	@Override
 	public int position() {
 		return time;
+	}
+
+	@Override
+	public void position(final int newPosition) {
+		time = newPosition;
 	}
 
 	public void populateChordNotes(final ChordTemplate chordTemplate) {
@@ -155,4 +161,5 @@ public class ArrangementChord implements Positionable {
 			chordNotes.add(new ArrangementChordNote(time, string, fret));
 		}
 	}
+
 }

@@ -70,4 +70,8 @@ public class UndoSystem {
 	public boolean isSaved() {
 		return savePosition == 0;
 	}
+
+	public void removeRedo() {
+		redo.clear();
+	}
 }

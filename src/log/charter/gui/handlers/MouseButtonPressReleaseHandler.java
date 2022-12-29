@@ -57,7 +57,7 @@ public class MouseButtonPressReleaseHandler {
 		}
 
 		public boolean isDrag() {
-			return abs(releasePosition.x - pressPosition.x) > 5 || abs(releasePosition.y - pressPosition.y) > 5;
+			return abs(releasePosition.x - pressPosition.x) > 5;
 		}
 	}
 

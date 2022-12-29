@@ -1,17 +1,20 @@
 package log.charter.gui.components;
 
 import static java.lang.Math.max;
+import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
 import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.swing.JTextField;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.song.ChordTemplate;
@@ -65,19 +68,25 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 		repaint();
 	}
 
-	protected void addChordNameInput(final int x, final int row) {
+	protected void addChordNameInput(final int x, final int row, final Consumer<ChordTemplate> onTemplateChange) {
 		addLabel(1, x - 80, Label.CHORD_NAME);
+
+		final Consumer<ChordTemplate> inputOnTemplateChange = newTemplate -> {
+			onChordTemplateChange(newTemplate);
+			onTemplateChange.accept(newTemplate);
+		};
 
 		final int strings = data.getCurrentArrangement().tuning.strings;
 		final Function<ChordTemplate, String> formatter = chordTemplate -> chordTemplate.getNameWithFrets(strings);
 		chordNameInput = new AutocompleteInput<>(this, 80, chordTemplate.chordName, this::getPossibleChords, formatter,
-				this::onChordTemplateChange);
+				inputOnTemplateChange);
 		this.add(chordNameInput, x, getY(row), 150, 20);
 	}
 
 	private ArrayList2<ChordTemplate> getPossibleChords(final String filter) {
 		return data.getCurrentArrangement().chordTemplates.stream()//
-				.filter(chordTemplate -> chordTemplate.chordName.toLowerCase().contains(filter.toLowerCase()))//
+				.filter(chordTemplate -> chordTemplate.getNameWithFrets(data.currentStrings()).toLowerCase()
+						.contains(filter.toLowerCase()))//
 				.collect(Collectors.toCollection(ArrayList2::new));
 	}
 
@@ -86,6 +95,13 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 		chordTemplate.arpeggio = newChordTemplate.arpeggio;
 		chordTemplate.fingers = new HashMap2<>(newChordTemplate.fingers);
 		chordTemplate.frets = new HashMap2<>(newChordTemplate.frets);
+
+		for (int i = 0; i < data.currentStrings(); i++) {
+			fretUpdated(i, chordTemplate.frets.get(i));
+			fingerUpdated(i, chordTemplate.fingers.get(i));
+		}
+
+		chordNameInput.setText(newChordTemplate.chordName);
 
 		repaint();
 	}
@@ -101,9 +117,9 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 			final Integer fret = chordTemplate.frets.get(string);
 
 			final TextInputWithValidation input = new TextInputWithValidation(fret == null ? "" : fret.toString(), 40,
-					createIntValidator(0, 28, true), val -> updateFretValue(string, val), false);
+					createIntValidator(0, Config.frets, true), val -> updateFretValue(string, val), false);
 			input.setHorizontalAlignment(JTextField.CENTER);
-			input.addFocusListener(new TextInputSelectAllOnFocus(input));
+			addSelectTextOnFocus(input);
 
 			fretInputs.add(input);
 			add(input, fretInputX, getY(row + 1 + getStringPosition(i, strings)), 30, 20);
@@ -119,7 +135,7 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 			final TextInputWithValidation input = new TextInputWithValidation(fingerNames.get(finger), 40,
 					this::validateFinger, val -> updateFingerValue(string, val), false);
 			input.setHorizontalAlignment(JTextField.CENTER);
-			input.addFocusListener(new TextInputSelectAllOnFocus(input));
+			addSelectTextOnFocus(input);
 
 			fingerInputs.add(input);
 			this.add(input, fingerInputX, getY(row + 1 + getStringPosition(string, strings)), 20, 20);
@@ -200,18 +216,5 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 
 	@Override
 	public void mouseExited(final MouseEvent e) {
-	}
-
-	protected Integer getSavedTemplateId() {
-		final ArrayList2<ChordTemplate> chordTemplates = data.getCurrentArrangement().chordTemplates;
-		for (int i = 0; i < chordTemplates.size(); i++) {
-			final ChordTemplate existingChordTemplate = chordTemplates.get(i);
-			if (existingChordTemplate.equals(chordTemplate)) {
-				return i;
-			}
-		}
-
-		chordTemplates.add(chordTemplate);
-		return chordTemplates.size() - 1;
 	}
 }

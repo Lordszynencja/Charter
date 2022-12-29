@@ -64,6 +64,10 @@ public interface DrawableShape {
 	}
 
 	// Texts
+	public static DrawableShape text(final Position2D position, final String text, final ColorLabel color) {
+		return text(position, text, color.color());
+	}
+
 	public static DrawableShape text(final Position2D position, final String text, final Color color) {
 		return new Text(position, text, color);
 	}

@@ -1,8 +1,8 @@
 package log.charter.data.types.positions;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.data.types.PositionWithIdAndType;
+import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class GuitarNotePositionTypeManager implements PositionTypeManager<ChordOrNote> {

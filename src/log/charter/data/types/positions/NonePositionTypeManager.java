@@ -2,7 +2,7 @@ package log.charter.data.types.positions;
 
 import log.charter.data.ChartData;
 import log.charter.data.types.PositionWithIdAndType;
-import log.charter.song.enums.Position;
+import log.charter.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class NonePositionTypeManager implements PositionTypeManager<Position> {

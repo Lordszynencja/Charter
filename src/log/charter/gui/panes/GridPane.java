@@ -1,11 +1,9 @@
 package log.charter.gui.panes;
 
+import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
 
-import java.awt.event.KeyEvent;
-
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
+import javax.swing.JTextField;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
@@ -37,23 +35,14 @@ public class GridPane extends ParamsPane {
 
 		addIntegerConfigValue(0, 20, 0, Label.GRID_PANE_GRID_SIZE, gridSize, 50, createIntValidator(1, 1024, false),
 				val -> gridSize = Integer.valueOf(val), false);
+		addSelectTextOnFocus((JTextField) components.getLast());
 		addConfigCheckbox(1, Label.GRID_PANE_USE_GRID, useGrid, val -> useGrid = val);
 
-		addButtons(3, this::saveAndExit);
-
-		getRootPane().registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				JComponent.WHEN_IN_FOCUSED_WINDOW);
-		getRootPane().registerKeyboardAction(e -> saveAndExit(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
-				JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-		validate();
-		setVisible(true);
+		addDefaultFinish(3, this::saveAndExit);
 	}
 
 	private void saveAndExit() {
 		beatsMap.gridSize = gridSize;
 		beatsMap.useGrid = useGrid;
-
-		dispose();
 	}
 }

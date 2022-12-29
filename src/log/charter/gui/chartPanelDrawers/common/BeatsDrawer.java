@@ -139,7 +139,7 @@ public class BeatsDrawer {
 
 		for (int i = 0; i < beats.size(); i++) {
 			final Beat beat = beats.get(i);
-			final int x = timeToX(beat.position, data.time);
+			final int x = timeToX(beat.position(), data.time);
 			if (x < -1000) {
 				continue;
 			}
@@ -154,7 +154,7 @@ public class BeatsDrawer {
 
 	private void addSections(final BeatsDrawingData drawingData) {
 		for (final Section section : data.getCurrentArrangement().sections) {
-			final int x = timeToX(section.beat.position, data.time);
+			final int x = timeToX(section.beat.position(), data.time);
 			if (x < -1000) {
 				continue;
 			}
@@ -168,7 +168,7 @@ public class BeatsDrawer {
 
 	private void addPhrases(final BeatsDrawingData drawingData) {
 		for (final PhraseIteration phraseIteration : data.getCurrentArrangement().phraseIterations) {
-			final int x = timeToX(phraseIteration.beat.position, data.time);
+			final int x = timeToX(phraseIteration.beat.position(), data.time);
 			if (x < -1000) {
 				continue;
 			}
@@ -185,7 +185,7 @@ public class BeatsDrawer {
 		final HashMap2<Integer, ArrayList2<Event>> eventsOnPositions = new HashMap2<>();
 
 		for (final Event event : data.getCurrentArrangement().events) {
-			final int position = event.beat.position;
+			final int position = event.beat.position();
 			ArrayList2<Event> beatEvents = eventsOnPositions.get(position);
 			if (beatEvents == null) {
 				beatEvents = new ArrayList2<>();

@@ -6,12 +6,12 @@ import java.util.stream.Collectors;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.data.managers.selection.ChordOrNote;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.SeekableList;
@@ -81,8 +81,11 @@ public class ArrangementLevel {
 		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
 		this.handShapes = new CountedList<ArrangementHandShape>();
 		for (final HandShape handShape : handShapes) {
-			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position < handShape.position) {
+			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position() < handShape.position()) {
 				chordsWithoutHandShapes.add(chordsForHandShapes.get(0));
+				chordsForHandShapes.remove(0);
+			}
+			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position() < handShape.endPosition()) {
 				chordsForHandShapes.remove(0);
 			}
 
@@ -106,12 +109,12 @@ public class ArrangementLevel {
 			}
 
 			final ChordOrNote chordOrNote = seekableNotes.getCurrent();
-			if (chordOrNote.position > handShape.endTime) {
+			if (chordOrNote.position() > handShape.endTime) {
 				continue;
 			}
 
 			if (chordOrNote.isChord()) {
-				seekableArrangementChords.seekNextGreaterEqual(chordOrNote.chord.position);
+				seekableArrangementChords.seekNextGreaterEqual(chordOrNote.chord.position());
 				final ArrangementChord chord = seekableArrangementChords.getCurrent();
 				final ChordTemplate chordTemplate = chordTemplates.get(chord.chordId);
 				if (chord.chordNotes != null && !chord.chordNotes.isEmpty()) {

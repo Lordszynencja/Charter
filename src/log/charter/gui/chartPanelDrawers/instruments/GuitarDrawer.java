@@ -8,6 +8,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getAsOdd;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneSize;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
@@ -35,7 +36,7 @@ import java.util.Map.Entry;
 import javax.imageio.ImageIO;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.selection.ChordOrNote;
+import log.charter.data.config.Config;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
@@ -55,6 +56,7 @@ import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
@@ -81,6 +83,7 @@ public class GuitarDrawer {
 	private static final Color[] noteColors = new Color[6];
 	private static final Color[] noteAccentColors = new Color[6];
 	private static final Color[] noteTailColors = new Color[6];
+	private static final Color stringMuteNoteColor = ColorLabel.NOTE_STRING_MUTE.color();
 	private static final Color anchorColor = ColorLabel.ANCHOR.color();
 	private static final Color handShapeColor = ColorLabel.HAND_SHAPE.color();
 
@@ -129,7 +132,7 @@ public class GuitarDrawer {
 
 			this.string = string;
 			this.fretNumber = fretNumber;
-			this.fret = fret + (mute == Mute.STRING ? "X" : "");
+			this.fret = fret;
 			this.accent = accent;
 			this.mute = mute;
 			this.hopo = hopo;
@@ -157,7 +160,9 @@ public class GuitarDrawer {
 		for (final Entry<Integer, Integer> chordFret : chordTemplate.frets.entrySet()) {
 			final int string = chordFret.getKey();
 			final int fret = chordFret.getValue();
-			final String fretDescription = fret + (ctrl ? "(" + chordTemplate.fingers.get(string) + ")" : "");
+			final Integer finger = chordTemplate.fingers.get(string);
+			final String fretDescription = fret
+					+ (ctrl && finger != null ? "(" + (finger == 0 ? "T" : finger.toString()) + ")" : "");
 			final Integer slideTo = slideDistance == null ? null : (fret + slideDistance);
 
 			notes.add(new NoteData(x, length, string, fret, fretDescription, chord.accent, chord.mute, chord.hopo,
@@ -180,6 +185,7 @@ public class GuitarDrawer {
 		private final DrawableShapeList noteFrets;
 		private final DrawableShapeList selects;
 		private final DrawableShapeList slideFrets;
+		private final DrawableShapeList noteIds;
 
 		public DrawingData(final int strings) {
 			stringPositions = new int[strings];
@@ -196,6 +202,7 @@ public class GuitarDrawer {
 			noteFrets = new DrawableShapeList();
 			selects = new DrawableShapeList();
 			slideFrets = new DrawableShapeList();
+			noteIds = new DrawableShapeList();
 		}
 
 		private void addHammerOnShape(final int y, final NoteData note) {
@@ -262,7 +269,8 @@ public class GuitarDrawer {
 			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 					.centered();
 
-			notes.add(filledRectangle(position, noteColors[note.string]));
+			final Color noteColor = note.mute != Mute.STRING ? noteColors[note.string] : stringMuteNoteColor;
+			notes.add(filledRectangle(position, noteColor));
 			if (note.accent) {
 				final Color accentColor = noteAccentColors[note.string];
 				notes.add(strokedRectangle(position.resized(0, 0, -1, -1), accentColor));
@@ -367,7 +375,7 @@ public class GuitarDrawer {
 			Position2D lastBendLinePosition = new Position2D(note.x, getBendLineY(y, BigDecimal.ZERO));
 
 			for (final BendValue bendValue : note.bendValues) {
-				final int bendX = timeToX(bendValue.position, data.time);
+				final int bendX = timeToX(bendValue.position(), data.time);
 				final int bendY = bendX > note.x + noteWidth ? y : y - 26;
 
 				final Position2D lineTo = new Position2D(bendX, getBendLineY(y, bendValue.bendValue));
@@ -408,6 +416,10 @@ public class GuitarDrawer {
 
 		public void addChord(final Chord chord, final ChordTemplate chordTemplate, final int x, final int length,
 				final boolean selected, final boolean lastWasLinkNext, final boolean ctrl) {
+			if (Config.showChordIds) {
+				noteIds.add(text(new Position2D(x, lanesTop), chord.chordId + "", ColorLabel.BASE_TEXT));
+			}
+
 			for (final NoteData noteData : fromChord(chord, chordTemplate, x, length, selected, lastWasLinkNext,
 					ctrl)) {
 				addSimpleNote(noteData);
@@ -426,7 +438,11 @@ public class GuitarDrawer {
 			}
 		}
 
-		public void addHandShape(final int x, final int length, final boolean selected) {
+		public void addHandShape(final int x, final int length, final boolean selected, final HandShape handShape) {
+			if (Config.showChordIds) {
+				noteIds.add(text(new Position2D(x, lanesBottom + 20), handShape.chordId + "", ColorLabel.BASE_TEXT));
+			}
+
 			final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom, length, 10);
 			handShapes.add(filledRectangle(position, handShapeColor));
 
@@ -450,6 +466,9 @@ public class GuitarDrawer {
 			noteFrets.draw(g);
 			handShapes.draw(g);
 			selects.draw(g);
+
+			g.setFont(bendValueFont);
+			noteIds.draw(g);
 		}
 	}
 
@@ -498,7 +517,7 @@ public class GuitarDrawer {
 
 		for (int i = 0; i < level.anchors.size(); i++) {
 			final Anchor anchor = level.anchors.get(i);
-			final int x = timeToX(anchor.position, data.time);
+			final int x = timeToX(anchor.position(), data.time);
 			if (isPastRightEdge(x, panelWidth)) {
 				break;
 			}
@@ -514,12 +533,12 @@ public class GuitarDrawer {
 
 	private boolean addChord(final DrawingData drawingData, final ArrangementChart arrangement, final int panelWidth,
 			final Chord chord, final boolean selected, final boolean lastWasLinkNext) {
-		final int x = timeToX(chord.position, data.time);
+		final int x = timeToX(chord.position(), data.time);
 		if (isPastRightEdge(x, panelWidth)) {
 			return false;
 		}
 
-		final int length = timeToXLength(chord.length);
+		final int length = timeToXLength(chord.length());
 		if (!isOnScreen(x, length)) {
 			return true;
 		}
@@ -531,8 +550,8 @@ public class GuitarDrawer {
 
 	private boolean addNote(final DrawingData drawingData, final int panelWidth, final Note note,
 			final boolean selected, final boolean lastWasLinkNext) {
-		final int x = timeToX(note.position, data.time);
-		final int length = timeToXLength(note.length);
+		final int x = timeToX(note.position(), data.time);
+		final int length = timeToXLength(note.length());
 		if (isPastRightEdge(x, panelWidth)) {
 			return false;
 		}
@@ -583,18 +602,18 @@ public class GuitarDrawer {
 
 		for (int i = 0; i < level.handShapes.size(); i++) {
 			final HandShape handShape = level.handShapes.get(i);
-			final int x = timeToX(handShape.position, data.time);
+			final int x = timeToX(handShape.position(), data.time);
 			if (isPastRightEdge(x, panelWidth)) {
 				break;
 			}
 
-			final int length = timeToXLength(handShape.length);
+			final int length = timeToXLength(handShape.length());
 			if (!isOnScreen(x, length)) {
 				continue;
 			}
 
 			final boolean selected = selectedHandShapeIds.contains(i);
-			drawingData.addHandShape(x, length, selected);
+			drawingData.addHandShape(x, length, selected, handShape);
 		}
 	}
 

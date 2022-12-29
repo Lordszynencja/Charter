@@ -1,5 +1,7 @@
 package log.charter.io.rs.xml.song;
 
+import java.util.stream.Collectors;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -64,13 +66,15 @@ public class ArrangementNote {
 	}
 
 	public ArrangementNote(final Note note) {
-		time = note.position;
+		time = note.position();
 		string = note.string;
 		fret = note.fret;
-		sustain = note.length > 0 ? note.length : null;
+		sustain = note.length() > 0 ? note.length() : null;
 		vibrato = note.vibrato;
 		accent = note.accent ? 1 : null;
-		bend = note.bend;
+		bend = note.bendValues.isEmpty() ? null
+				: note.bendValues.stream().map(bendValue -> bendValue.bendValue.intValue())
+						.collect(Collectors.maxBy(Integer::compare)).orElse(null);
 		bendValues = note.bendValues.isEmpty() ? null
 				: new CountedList<>(note.bendValues.map(ArrangementBendValue::new));
 		linkNext = note.linkNext ? 1 : null;

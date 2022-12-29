@@ -235,7 +235,8 @@ public class SongFileHandler {
 		makeBackups(dir, filesToBackup);
 
 		Config.lastPath = dir;
-		Config.save();
+		Config.markChanged();
+
 		data.setSong(dir, songChart, musicData, projectFileChosen.getName());
 	}
 

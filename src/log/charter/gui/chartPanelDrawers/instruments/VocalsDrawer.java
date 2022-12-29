@@ -72,7 +72,7 @@ public class VocalsDrawer {
 			}
 
 			if (vocal.isWordPart() && next != null) {
-				final int nextStart = timeToX(next.position, time);
+				final int nextStart = timeToX(next.position(), time);
 				final ShapePositionWithSize position = new ShapePositionWithSize(x + lengthPx, vocalNoteY,
 						nextStart - x - lengthPx, 4)//
 								.centeredY();
@@ -116,13 +116,13 @@ public class VocalsDrawer {
 
 		for (int i = 0; i < vocals.size(); i++) {
 			final Vocal vocal = vocals.get(i);
-			final int x = timeToX(vocal.position, data.time);
+			final int x = timeToX(vocal.position(), data.time);
 			if (x > width) {
 				break;
 			}
 
 			final Vocal next = vocals.size() > i + 1 ? vocals.get(i + 1) : null;
-			final int length = max(1, timeToXLength(vocal.length));
+			final int length = max(1, timeToXLength(vocal.length()));
 			final boolean selected = selectedVocalIds.contains(i);
 			drawingData.addVocal(vocal, next, x, length, selected);
 		}
@@ -162,7 +162,7 @@ public class VocalsDrawer {
 		for (final Vocal vocal : data.songChart.vocals.vocals) {
 			if (!started) {
 				started = true;
-				x = timeToX(vocal.position, data.time);
+				x = timeToX(vocal.position(), data.time);
 			}
 
 			currentLine += vocal.getText();
@@ -171,7 +171,7 @@ public class VocalsDrawer {
 			}
 
 			if (vocal.isPhraseEnd()) {
-				drawingData.addLyricLine(currentLine, x, timeToX(vocal.position + vocal.length, data.time) - x);
+				drawingData.addLyricLine(currentLine, x, timeToX(vocal.position() + vocal.length(), data.time) - x);
 				currentLine = "";
 				started = false;
 			}

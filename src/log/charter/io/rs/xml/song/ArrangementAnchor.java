@@ -23,7 +23,7 @@ public class ArrangementAnchor {
 	}
 
 	public ArrangementAnchor(final Anchor anchor) {
-		time = anchor.position;
+		time = anchor.position();
 		fret = anchor.fret;
 		width = new BigDecimal(4);
 	}

@@ -5,6 +5,7 @@ import log.charter.data.types.PositionType;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressData;
+import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 class ChordsNotesSelectionManager extends SingleTypeSelectionManager<ChordOrNote> {
