@@ -100,19 +100,10 @@ public class HighlightDrawer {
 			final int strings) {
 		final int x = timeToX(position, data.time);
 		final int y = getLaneY(string, strings);
-		final int noteHeight = getLaneSize(strings) + 1;
+		final int noteHeight = getLaneSize(6) + 1;
 		final ShapePositionWithSize notePosition = new ShapePositionWithSize(x, y, noteWidth, noteHeight)//
 				.centered();
 		strokedRectangle(notePosition, highlightColor).draw(g);
-
-//		final int tailHeight = getAsOdd((noteHeight - 1) * 3 / 4) + 1;
-//		final int tailLength = timeToXLength(length);
-//		if (tailLength > 0) {
-//			final int tailX = x;
-//			final ShapePositionWithSize tailPosition = new ShapePositionWithSize(tailX, y, tailLength + 2, tailHeight)//
-//					.centeredY();
-//			 strokedRectangle(tailPosition, highlightColor).draw(g);
-//		}
 	}
 
 	private void drawChordHighlight(final Graphics g, final Chord chord, final ChordTemplate chordTemplate,
