@@ -3,6 +3,7 @@ package log.charter.gui.components;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
+import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledDiamond;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
@@ -52,7 +53,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 
 	private static int[] getStringPositions(final int strings, final int height) {
 		final int[] stringPositions = new int[strings];
-		final int stringSpace = (height - fretStart) / 6;
+		final int stringSpace = (height - fretStart) / maxStrings;
 		int y = fretStart + stringSpace / 2;
 		for (int i = 0; i < strings; i++) {
 			stringPositions[getStringPosition(i, strings)] = y;

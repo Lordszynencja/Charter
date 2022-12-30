@@ -2,6 +2,9 @@ package log.charter.gui.menuHandlers;
 
 import static java.awt.event.KeyEvent.VK_DELETE;
 
+import java.util.List;
+
+import javax.swing.JDialog;
 import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
@@ -18,6 +21,12 @@ import log.charter.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 class EditMenuHandler extends CharterMenuHandler {
+	private static final List<PositionType> deletablePositionTypes = new ArrayList2<>(//
+			PositionType.ANCHOR, //
+			PositionType.GUITAR_NOTE, //
+			PositionType.HAND_SHAPE, //
+			PositionType.VOCAL);
+
 	private ChartData data;
 	private CharterFrame frame;
 	private SelectionManager selectionManager;
@@ -63,7 +72,7 @@ class EditMenuHandler extends CharterMenuHandler {
 	private void delete() {
 		boolean undoAdded = false;
 
-		for (final PositionType type : PositionType.values()) {
+		for (final PositionType type : deletablePositionTypes) {
 			final SelectionAccessor<Position> selectedTypeAccessor = selectionManager.getSelectedAccessor(type);
 			if (selectedTypeAccessor.isSelected()) {
 				if (!undoAdded) {
@@ -83,11 +92,11 @@ class EditMenuHandler extends CharterMenuHandler {
 	}
 
 	private void copy() {
-
+		new JDialog(frame, "Copying is not implemented yet");
 	}
 
 	private void paste() {
-
+		new JDialog(frame, "Pasting is not implemented yet");
 	}
 
 	private void songOptions() {

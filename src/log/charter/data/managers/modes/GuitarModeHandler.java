@@ -83,7 +83,8 @@ public class GuitarModeHandler extends ModeHandler {
 		undoSystem.addUndo();
 
 		if (anchorPosition.anchor != null) {
-			new AnchorPane(frame, undoSystem, anchorPosition.anchor);
+			new AnchorPane(data, frame, undoSystem, anchorPosition.anchor, () -> {
+			});
 			return;
 		}
 
@@ -92,7 +93,10 @@ public class GuitarModeHandler extends ModeHandler {
 		anchors.add(anchor);
 		anchors.sort(null);
 
-		new AnchorPane(frame, undoSystem, anchor);
+		new AnchorPane(data, frame, undoSystem, anchor, () -> {
+			undoSystem.undo();
+			undoSystem.removeRedo();
+		});
 	}
 
 	private void rightClickHandShape(final PositionWithIdAndType handShapePosition) {

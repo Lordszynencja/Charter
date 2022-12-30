@@ -71,6 +71,7 @@ public class Localization {
 		INFO_MENU_LANGUAGE("Language"), //
 
 		INSTRUMENT_MENU("Instrument"), //
+		INSTRUMENT_MENU_TUNING("Tuning"), //
 		INSTRUMENT_MENU_TOGGLE_WAVEFORM("Toggle waveform drawing"), //
 		INSTRUMENT_MENU_TOGGLE_CLAPS("Toggle claps on note"), //
 		INSTRUMENT_MENU_TOGGLE_METRONOME("Toggle metronome"), //
@@ -91,6 +92,11 @@ public class Localization {
 		SONG_OPTIONS_ALBUM("Album"), //
 		SONG_OPTIONS_YEAR("Year"), //
 		SONG_OPTIONS_CROWD_SPEED("Crowd speed"), //
+
+		TUNING_PANE("Tuning"), //
+		TUNING_TYPE("Tuning"), //
+		TUNING_STRINGS("Strings"), //
+		TUNING_CAPO("Capo"), //
 
 		VOCAL_PANE_CREATION("Vocal creation"), //
 		VOCAL_PANE_EDIT("Vocal edit"), //
@@ -142,6 +148,8 @@ public class Localization {
 		ACCENT("Accent"), //
 		LINK_NEXT("Link next"), //
 		VIBRATO("Vibrato"), //
+
+		ANCHOR_WIDTH("Anchor width"), //
 
 		CHOOSE_FOLDER_NAME("Choose folder name"), //
 		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement"), //

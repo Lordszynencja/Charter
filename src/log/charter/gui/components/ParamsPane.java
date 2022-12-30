@@ -51,7 +51,7 @@ public class ParamsPane extends JDialog {
 	protected final ArrayList2<Component> components = new ArrayList2<>();
 
 	private final int width;
-	private final PaneSizes sizes;
+	protected final PaneSizes sizes;
 
 	public ParamsPane(final CharterFrame frame, final String title, final int rows) {
 		this(frame, title, rows, new PaneSizes());
@@ -245,16 +245,21 @@ public class ParamsPane extends JDialog {
 			final int inputLength, final ValueValidator validator, final StringValueSetter setter,
 			final boolean allowWrong) {
 		final int y = getY(row);
-		final JLabel labelComponent = new JLabel(label.label(), SwingConstants.LEFT);
-		if (labelWidth == 0) {
-			labelWidth = labelComponent.getPreferredSize().width;
+		if (label != null) {
+			final JLabel labelComponent = new JLabel(label.label(), SwingConstants.LEFT);
+			if (labelWidth == 0) {
+				labelWidth = labelComponent.getPreferredSize().width;
+			}
+
+			labelWidth += 5;
+
+			add(labelComponent, x, y, labelWidth, 20);
 		}
-		add(labelComponent, x, y, labelWidth, 20);
 
 		final TextInputWithValidation input = new TextInputWithValidation(val, inputLength, validator, setter,
 				allowWrong);
 
-		final int fieldX = x + labelWidth + 5;
+		final int fieldX = x + labelWidth;
 		final int length = inputLength > OPTIONS_MAX_INPUT_WIDTH ? OPTIONS_MAX_INPUT_WIDTH : inputLength;
 		add(input, fieldX, y, length, 20);
 	}

@@ -26,6 +26,7 @@ public class Config {
 	public static boolean invertStrings = false;
 	public static boolean showChordIds = false;
 	public static int frets = 28;
+	public static int maxStrings = 6;
 
 	public static int windowPosX = 100;
 	public static int windowPosY = 100;

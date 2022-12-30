@@ -6,6 +6,7 @@ import static java.lang.Math.min;
 import static log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId.fromNoteId;
 import static log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId.fromPosition;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
+import static log.charter.song.notes.IPosition.findClosest;
 import static log.charter.song.notes.IPosition.findFirstIdAfter;
 import static log.charter.song.notes.IPosition.findLastIdBefore;
 import static log.charter.util.ScalingUtils.timeToX;
@@ -136,10 +137,34 @@ public class HighlightManager {
 		this.selectionManager = selectionManager;
 	}
 
+	private int snapPosition(final PositionType positionType, final int position) {
+		if (positionType != PositionType.ANCHOR) {
+			return data.songChart.beatsMap.getPositionFromGridClosestTo(position);
+		}
+
+		final int closestNotePosition = findClosest(data.getCurrentArrangementLevel().chordsAndNotes, position);
+		if (!data.songChart.beatsMap.useGrid) {
+			if (abs(closestNotePosition - position) < 10) {
+				return closestNotePosition;
+			}
+
+			return position;
+		}
+
+		final int closestGridPosition = data.songChart.beatsMap.getPositionFromGridClosestTo(position);
+		if (abs(closestGridPosition - position) < abs(closestNotePosition - position) + 10) {
+			return closestGridPosition;
+		}
+
+		return closestNotePosition;
+	}
+
 	public PositionWithIdAndType getHighlight(final int x, final int y) {
+		final PositionType positionType = PositionType.fromY(y, modeManager.editMode);
+
 		int position = xToTime(x, data.time);
-		position = data.songChart.beatsMap.getPositionFromGridClosestTo(position);
-		position = max(0, min(data.songChart.beatsMap.songLengthMs, position));
+		position = snapPosition(positionType, position);
+		position = max(0, min(data.songChart.beatsMap.beats.getLast().position(), position));
 
 		final PositionWithIdAndType existingPosition = selectionManager
 				.findExistingPosition(timeToX(position, data.time), y);
@@ -148,7 +173,7 @@ public class HighlightManager {
 			return existingPosition;
 		}
 
-		return PositionWithIdAndType.create(position, PositionType.fromY(y, modeManager.editMode));
+		return PositionWithIdAndType.create(position, positionType);
 	}
 
 	public ArrayList2<PositionWithStringOrNoteId> getPositionsWithStrings(final int fromPosition, final int toPosition,

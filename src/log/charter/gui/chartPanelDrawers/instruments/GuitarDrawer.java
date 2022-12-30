@@ -2,6 +2,7 @@ package log.charter.gui.chartPanelDrawers.instruments;
 
 import static java.lang.Math.min;
 import static java.util.stream.Collectors.minBy;
+import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getAsOdd;
@@ -64,7 +65,7 @@ import log.charter.util.Position2D;
 
 public class GuitarDrawer {
 	public static final int noteWidth = 23;
-	public static final int noteHeight = getLaneSize(6);
+	public static final int noteHeight = getLaneSize(maxStrings);
 	public static final int tailHeight = getAsOdd(noteHeight * 3 / 4);
 	public static final BigDecimal bendStepSize = new BigDecimal("10");
 
@@ -80,9 +81,9 @@ public class GuitarDrawer {
 	private static final BufferedImage palmMuteMarker = loadImage("images/palmMute.png");
 
 	private final static Color selectColor = ColorLabel.SELECT.color();
-	private static final Color[] noteColors = new Color[6];
-	private static final Color[] noteAccentColors = new Color[6];
-	private static final Color[] noteTailColors = new Color[6];
+	private static final Color[] noteColors = new Color[maxStrings];
+	private static final Color[] noteAccentColors = new Color[maxStrings];
+	private static final Color[] noteTailColors = new Color[maxStrings];
 	private static final Color stringMuteNoteColor = ColorLabel.NOTE_STRING_MUTE.color();
 	private static final Color anchorColor = ColorLabel.ANCHOR.color();
 	private static final Color handShapeColor = ColorLabel.HAND_SHAPE.color();
@@ -92,7 +93,7 @@ public class GuitarDrawer {
 	private static final Font fretFont = new Font(Font.MONOSPACED, Font.PLAIN, 15);
 
 	static {
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < maxStrings; i++) {
 			noteColors[i] = ColorLabel.valueOf("NOTE_" + i).color();
 			noteAccentColors[i] = ColorLabel.valueOf("NOTE_ACCENT_" + i).color();
 			noteTailColors[i] = ColorLabel.valueOf("NOTE_TAIL_" + i).color();
@@ -302,6 +303,10 @@ public class GuitarDrawer {
 		}
 
 		private void addSimpleNote(final NoteData note) {
+			if (note.string >= stringPositions.length) {
+				return;
+			}
+
 			final int y = stringPositions[note.string];
 			addNoteShape(note, y);
 
@@ -584,7 +589,7 @@ public class GuitarDrawer {
 				.getSelectedSet()//
 				.map(selection -> selection.id);
 
-		final ArrayList2<ChordOrNote> chordsAndNotes = PositionType.GUITAR_NOTE.getPositions(data);
+		final ArrayList2<ChordOrNote> chordsAndNotes = data.getCurrentArrangementLevel().chordsAndNotes;
 
 		boolean lastWasLinkNext = false;
 		for (int i = 0; i < chordsAndNotes.size(); i++) {

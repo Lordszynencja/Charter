@@ -1,10 +1,21 @@
 package log.charter.song.configs;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import log.charter.io.rs.xml.song.ArrangementTuning;
 
 public class Tuning {
+	private static final int[] getTuningValues(final int[] tuning, final int strings) {
+		final int[] tuningValues = Arrays.copyOf(tuning, strings);
+		for (int i = tuning.length; i < strings; i++) {
+			tuningValues[i] = tuning[tuning.length - 1];
+		}
+
+		return tuningValues;
+	}
+
 	private static final int[] standardStringDistances = { 0, 5, 10, 15, 19, 24 };
 
 	public enum TuningType {
@@ -37,6 +48,25 @@ public class Tuning {
 			this.tuning = tuning;
 		}
 
+		public String nameWithValues(final int strings) {
+			final int baseValue = tuning[0];
+			boolean singleValue = true;
+			for (int i = 0; i < tuning.length; i++) {
+				if (tuning[i] != baseValue) {
+					singleValue = false;
+				}
+			}
+			if (singleValue) {
+				return name + " (" + baseValue + ")";
+			}
+
+			final List<String> values = new ArrayList<>();
+			for (final int tuningValue : getTuningValues(tuning, strings)) {
+				values.add(tuningValue + "");
+			}
+			return name + " (" + String.join(",", values) + ")";
+		}
+
 		public boolean isTuning(final int[] tuning) {
 			for (int i = 0; i < tuning.length; i++) {
 				if (tuning[i] != this.tuning[i]) {
@@ -56,12 +86,11 @@ public class Tuning {
 
 			return CUSTOM;
 		}
-
 	}
 
 	public TuningType tuningType = TuningType.E_STANDARD;
 	public int strings = 6;
-	public int[] tuning = { 0, 0, 0, 0, 0, 0 };
+	public int[] tuning = new int[strings];
 
 	public void strings(final int newStrings) {
 		if (newStrings > 6) {
@@ -86,6 +115,11 @@ public class Tuning {
 		this.tuningType = tuningType;
 	}
 
+	public Tuning(final TuningType tuningType, final int strings) {
+		this.tuningType = tuningType;
+		this.strings = strings;
+	}
+
 	public Tuning(final int strings, final ArrangementTuning arrangementTuning) {
 		tuning = new int[] { //
 				arrangementTuning.string0, //
@@ -100,6 +134,12 @@ public class Tuning {
 		strings(strings);
 	}
 
+	public Tuning(final Tuning other) {
+		tuningType = other.tuningType;
+		strings = other.strings;
+		tuning = Arrays.copyOf(other.tuning, other.tuning.length);
+	}
+
 	public void tuning(final TuningType tuningType) {
 		this.tuningType = tuningType;
 	}
@@ -110,19 +150,16 @@ public class Tuning {
 	}
 
 	public int[] getTuning(final int strings) {
-		final int[] tuning = Arrays.copyOf(tuningType == TuningType.CUSTOM ? this.tuning : tuningType.tuning, strings);
-		for (int i = strings; i < strings; i++) {
-			tuning[i] = tuning[strings - 1];
-		}
-		return tuning;
+		return getTuningValues(tuningType == TuningType.CUSTOM ? tuning : tuningType.tuning, strings);
 	}
 
 	public int[] getTuning() {
-		final int[] tuning = Arrays.copyOf(tuningType == TuningType.CUSTOM ? this.tuning : tuningType.tuning, strings);
-		for (int i = strings; i < strings; i++) {
-			tuning[i] = tuning[strings - 1];
-		}
-		return tuning;
+		return getTuning(strings);
+	}
+
+	public void changeTuning(final int string, final int tuningValue) {
+		tuning[string] = tuningValue;
+		tuningType = TuningType.fromTuning(getTuningValues(tuning, strings));
 	}
 
 	public int getStringOffset(final int string) {

@@ -1,6 +1,6 @@
 package log.charter.data.managers.selection;
 
-import static log.charter.song.notes.IPosition.findClosest;
+import static log.charter.song.notes.IPosition.findClosestId;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
@@ -84,7 +84,7 @@ public class SelectionManager {
 	private PositionWithIdAndType findExistingLong(final int x, final ArrayList2<PositionWithIdAndType> positions) {
 		final ArrayList2<PositionWithLink> positionsWithLinks = PositionWithLink.fromPositionsWithIdAndType(positions);
 		final int position = xToTime(x, data.time);
-		final Integer id = findClosest(positionsWithLinks, position);
+		final Integer id = findClosestId(positionsWithLinks, position);
 		if (id == null) {
 			return null;
 		}
@@ -99,7 +99,7 @@ public class SelectionManager {
 
 	private PositionWithIdAndType findExistingPoint(final int x, final ArrayList2<PositionWithIdAndType> positions) {
 		final int position = xToTime(x, data.time);
-		final Integer id = findClosest(positions, position);
+		final Integer id = findClosestId(positions, position);
 		if (id == null) {
 			return null;
 		}

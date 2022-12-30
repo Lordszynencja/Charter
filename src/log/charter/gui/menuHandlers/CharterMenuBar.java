@@ -44,7 +44,7 @@ public class CharterMenuBar extends JMenuBar {
 		fileMenuHandler.init(data, frame, songFileHandler);
 		infoMenuHandler.init(frame, this);
 		guitarMenuHandler.init(data, frame, modeManager, selectionManager, undoSystem);
-		instrumentMenuHandler.init(audioDrawer, audioHandler, data, this, modeManager, selectionManager);
+		instrumentMenuHandler.init(audioDrawer, audioHandler, data, frame, this, modeManager, selectionManager);
 		notesMenuHandler.init(data);
 		vocalsMenuHandler.init(data, frame, modeManager, selectionManager, undoSystem);
 

@@ -7,8 +7,10 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.handlers.AudioHandler;
+import log.charter.gui.panes.TuningPane;
 import log.charter.song.ArrangementChart;
 import log.charter.util.CollectionUtils.HashMap2;
 
@@ -16,16 +18,18 @@ class InstrumentMenuHandler extends CharterMenuHandler {
 	private AudioDrawer audioDrawer;
 	private AudioHandler audioHandler;
 	private ChartData data;
+	private CharterFrame frame;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 
 	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler, final ChartData data,
-			final CharterMenuBar charterMenuBar, final ModeManager modeManager,
+			final CharterFrame frame, final CharterMenuBar charterMenuBar, final ModeManager modeManager,
 			final SelectionManager selectionManager) {
 		this.audioDrawer = audioDrawer;
 		this.audioHandler = audioHandler;
 		this.data = data;
+		this.frame = frame;
 		this.charterMenuBar = charterMenuBar;
 		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
@@ -67,6 +71,9 @@ class InstrumentMenuHandler extends CharterMenuHandler {
 
 		if (modeManager.editMode != EditMode.VOCALS) {
 			menu.addSeparator();
+			menu.add(createItem(Label.INSTRUMENT_MENU_TUNING, this::editTuning));
+
+			menu.addSeparator();
 			createLevelMenuItems(menu);
 		}
 
@@ -90,6 +97,10 @@ class InstrumentMenuHandler extends CharterMenuHandler {
 	private void changeArrangement(final int arrangementId) {
 		data.currentArrangement = arrangementId;
 		changeEditMode(EditMode.GUITAR);
+	}
+
+	private void editTuning() {
+		new TuningPane(data, frame);
 	}
 
 	private void changeLevel(final int levelId) {

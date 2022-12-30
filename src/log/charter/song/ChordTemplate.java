@@ -2,6 +2,7 @@ package log.charter.song;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.data.config.Config.maxStrings;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -34,7 +35,7 @@ public class ChordTemplate {
 	}
 
 	public IntRange getStringRange() {
-		int minString = 6;
+		int minString = maxStrings;
 		int maxString = 0;
 		for (final int string : frets.keySet()) {
 			minString = min(minString, string);

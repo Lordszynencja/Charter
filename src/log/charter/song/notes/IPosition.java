@@ -7,7 +7,7 @@ import java.util.List;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public interface IPosition extends Comparable<IPosition> {
-	public static <T extends IPosition> Integer findClosest(final ArrayList2<T> positions, final int position) {
+	public static <T extends IPosition> Integer findClosestId(final ArrayList2<T> positions, final int position) {
 		if (positions.isEmpty()) {
 			return null;
 		}
@@ -29,6 +29,15 @@ public interface IPosition extends Comparable<IPosition> {
 		final int leftDistance = abs(positions.get(left).position() - position);
 		final int rightDistance = abs(positions.get(right).position() - position);
 		return leftDistance < rightDistance ? left : right;
+	}
+
+	public static <T extends IPosition> int findClosest(final ArrayList2<T> positions, final int position) {
+		final Integer id = findClosestId(positions, position);
+		if (id == null) {
+			return position;
+		}
+
+		return positions.get(id).position();
 	}
 
 	public static <T extends IPosition> int findFirstIdAfter(final ArrayList2<T> list, final int position) {
