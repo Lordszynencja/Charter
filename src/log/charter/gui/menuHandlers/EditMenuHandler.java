@@ -15,7 +15,6 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.panes.GridPane;
 import log.charter.gui.panes.SongOptionsPane;
 import log.charter.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -23,6 +22,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 class EditMenuHandler extends CharterMenuHandler {
 	private static final List<PositionType> deletablePositionTypes = new ArrayList2<>(//
 			PositionType.ANCHOR, //
+			PositionType.BEAT, //
 			PositionType.GUITAR_NOTE, //
 			PositionType.HAND_SHAPE, //
 			PositionType.VOCAL);
@@ -60,7 +60,6 @@ class EditMenuHandler extends CharterMenuHandler {
 
 		menu.addSeparator();
 		menu.add(createItem(Label.EDIT_MENU_SONG_OPTIONS, this::songOptions));
-		menu.add(createItem(Label.EDIT_MENU_GRID_OPTIONS, button('G'), this::gridOptions));
 
 		return menu;
 	}
@@ -101,9 +100,5 @@ class EditMenuHandler extends CharterMenuHandler {
 
 	private void songOptions() {
 		new SongOptionsPane(frame, data);
-	}
-
-	private void gridOptions() {
-		new GridPane(frame, data.songChart.beatsMap);
 	}
 }

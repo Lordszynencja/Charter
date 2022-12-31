@@ -32,39 +32,60 @@ public enum PositionType {
 		this.manager = manager;
 	}
 
-	public static PositionType fromY(final int y, final EditMode mode) {
-		if (mode == EditMode.VOCALS) {
-			if (y < beatTextY) {
-				return NONE;
-			}
-			if (y < lanesTop) {
-				return BEAT;
-			}
-			if (y >= lanesTop && y < lanesBottom) {
-				return VOCAL;
-			}
+	private static PositionType fromYGuitar(final int y) {
+		if (y < beatTextY) {
+			return NONE;
+		}
+		if (y < anchorY) {
+			return BEAT;
+		}
+		if (y < lanesTop) {
+			return ANCHOR;
+		}
+		if (y >= lanesTop && y < lanesBottom) {
+			return GUITAR_NOTE;
+		}
+		if (y >= lanesBottom && y < handShapesY) {
+			return HAND_SHAPE;
+		}
 
+		return NONE;
+	}
+
+	private static PositionType fromYTempoMap(final int y) {
+		if (y < beatTextY) {
 			return NONE;
 		}
 
-		if (mode == EditMode.GUITAR) {
-			if (y < beatTextY) {
-				return NONE;
-			}
-			if (y < anchorY) {
-				return BEAT;
-			}
-			if (y < lanesTop) {
-				return ANCHOR;
-			}
-			if (y >= lanesTop && y < lanesBottom) {
-				return GUITAR_NOTE;
-			}
-			if (y >= lanesBottom && y < handShapesY) {
-				return HAND_SHAPE;
-			}
+		if (y < lanesBottom) {
+			return BEAT;
+		}
 
+		return NONE;
+	}
+
+	private static PositionType fromYVocals(final int y) {
+		if (y < lanesTop) {
 			return NONE;
+		}
+		if (y >= lanesTop && y < lanesBottom) {
+			return VOCAL;
+		}
+
+		return NONE;
+	}
+
+	public static PositionType fromY(final int y, final EditMode mode) {
+		if (mode == EditMode.GUITAR) {
+			return fromYGuitar(y);
+		}
+
+		if (mode == EditMode.TEMPO_MAP) {
+			return fromYTempoMap(y);
+		}
+
+		if (mode == EditMode.VOCALS) {
+			return fromYVocals(y);
 		}
 
 		return NONE;

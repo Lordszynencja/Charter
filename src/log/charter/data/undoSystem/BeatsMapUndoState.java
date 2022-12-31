@@ -6,18 +6,17 @@ import log.charter.song.BeatsMap;
 public class BeatsMapUndoState implements UndoState {
 	public final BeatsMap beatsMap;
 
-	private BeatsMapUndoState(final ChartData data, final boolean fromUndo) {
-		final BeatsMap tmpBeatsMap = data.songChart.beatsMap;
-		beatsMap = fromUndo ? tmpBeatsMap : new BeatsMap(tmpBeatsMap);
+	private BeatsMapUndoState(final BeatsMap beatsMap) {
+		this.beatsMap = beatsMap;
 	}
 
 	public BeatsMapUndoState(final ChartData data) {
-		this(data, false);
+		this(new BeatsMap(data.songChart.beatsMap));
 	}
 
 	@Override
 	public BeatsMapUndoState undo(final ChartData data) {
-		final BeatsMapUndoState redo = new BeatsMapUndoState(data, true);
+		final BeatsMapUndoState redo = new BeatsMapUndoState(data.songChart.beatsMap);
 
 		data.songChart.beatsMap = beatsMap;
 

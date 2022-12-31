@@ -4,13 +4,20 @@ import java.math.BigDecimal;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+import log.charter.data.ChartData;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.song.Beat;
 import log.charter.song.SongChart;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("project")
 public class RocksmithChartProject {
-	public int chartFormatVersion = 1;
+	public int chartFormatVersion = 2;
+	public EditMode editMode = EditMode.TEMPO_MAP;
+	public int arrangement = 0;
+	public int level = 0;
+	public int time = 0;
 
 	public String artistName;
 	public String artistNameSort;
@@ -27,7 +34,12 @@ public class RocksmithChartProject {
 	public RocksmithChartProject() {
 	}
 
-	public RocksmithChartProject(final SongChart songChart) {
+	public RocksmithChartProject(final ModeManager modeManager, final ChartData data, final SongChart songChart) {
+		editMode = modeManager.editMode;
+		arrangement = data.currentArrangement;
+		level = data.currentLevel;
+		time = data.time;
+
 		artistName = songChart.artistName;
 		artistNameSort = songChart.artistNameSort;
 		title = songChart.title;

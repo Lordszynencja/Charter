@@ -23,6 +23,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
@@ -50,6 +51,13 @@ public class BeatsDrawer {
 		private void addBeatLine(final int x, final Beat beat) {
 			final Color color = beat.firstInMeasure ? mainBeatColor : secondaryBeatColor;
 			beats.add(lineVertical(x, beatTextY, lanesBottom, color));
+
+			if (beat.anchor) {
+				final Position2D leftCorner = new Position2D(x - 3, beatTextY);
+				final Position2D rightCorner = new Position2D(x + 4, beatTextY);
+				final Position2D bottomCorner = new Position2D(x, beatTextY + 3);
+				beats.add(DrawableShape.filledTriangle(leftCorner, rightCorner, bottomCorner, color));
+			}
 		}
 
 		private void addBeatMeasureNumber(final int x, final int id) {

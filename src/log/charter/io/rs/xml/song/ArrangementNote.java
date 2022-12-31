@@ -72,11 +72,14 @@ public class ArrangementNote {
 		sustain = note.length() > 0 ? note.length() : null;
 		vibrato = note.vibrato;
 		accent = note.accent ? 1 : null;
+
 		bend = note.bendValues.isEmpty() ? null
-				: note.bendValues.stream().map(bendValue -> bendValue.bendValue.intValue())
+				: note.bendValues.stream()
+						.map(bendValue -> bendValue.bendValue == null ? 0 : bendValue.bendValue.intValue())
 						.collect(Collectors.maxBy(Integer::compare)).orElse(null);
 		bendValues = note.bendValues.isEmpty() ? null
 				: new CountedList<>(note.bendValues.map(ArrangementBendValue::new));
+
 		linkNext = note.linkNext ? 1 : null;
 
 		setUpMute(note);

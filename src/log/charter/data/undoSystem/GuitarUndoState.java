@@ -3,6 +3,7 @@ package log.charter.data.undoSystem;
 import log.charter.data.ChartData;
 import log.charter.song.Anchor;
 import log.charter.song.ArrangementChart;
+import log.charter.song.Beat;
 import log.charter.song.ChordTemplate;
 import log.charter.song.Event;
 import log.charter.song.HandShape;
@@ -18,8 +19,6 @@ public class GuitarUndoState implements UndoState {
 	private final int arrangementId;
 	private final int levelId;
 
-	private final BeatsMapUndoState beatsMapUndoState;
-
 	private final ArrayList2<Section> sections;
 	private final HashMap2<String, Phrase> phrases;
 	private final ArrayList2<PhraseIteration> phraseIterations;
@@ -33,17 +32,17 @@ public class GuitarUndoState implements UndoState {
 	private final ArrayList2<HandShape> handShapes;
 
 	private GuitarUndoState(final ChartData data, final int arrangementId, final int levelId,
-			final BeatsMapUndoState beatsMapUndoState) {
+			final ArrayList2<Beat> beats) {
 		this.arrangementId = arrangementId;
 		this.levelId = levelId;
 		final ArrangementChart arrangement = data.songChart.arrangements.get(arrangementId);
 		final Level level = arrangement.levels.get(levelId);
 
-		sections = arrangement.sections.map(section -> new Section(beatsMapUndoState.beatsMap.beats, section));
+		sections = arrangement.sections.map(section -> new Section(beats, section));
 		phrases = arrangement.phrases.map(phraseName -> phraseName, Phrase::new);
 		phraseIterations = arrangement.phraseIterations
-				.map(phraseIteration -> new PhraseIteration(beatsMapUndoState.beatsMap.beats, phraseIteration));
-		events = arrangement.events.map(event -> new Event(beatsMapUndoState.beatsMap.beats, event));
+				.map(phraseIteration -> new PhraseIteration(beats, phraseIteration));
+		events = arrangement.events.map(event -> new Event(beats, event));
 
 		chordTemplates = arrangement.chordTemplates.map(ChordTemplate::new);
 		fretHandMuteTemplates = arrangement.fretHandMuteTemplates.map(ChordTemplate::new);
@@ -51,17 +50,19 @@ public class GuitarUndoState implements UndoState {
 		anchors = level.anchors.map(Anchor::new);
 		chordsAndNotes = level.chordsAndNotes.map(ChordOrNote::new);
 		handShapes = level.handShapes.map(HandShape::new);
-
-		this.beatsMapUndoState = beatsMapUndoState;
 	}
 
 	public GuitarUndoState(final ChartData data) {
-		this(data, data.currentArrangement, data.currentLevel, new BeatsMapUndoState(data));
+		this(data, data.currentArrangement, data.currentLevel, data.songChart.beatsMap.beats);
+	}
+
+	public GuitarUndoState(final ChartData data, final int arrangementId, final int levelId) {
+		this(data, arrangementId, levelId, data.songChart.beatsMap.beats);
 	}
 
 	@Override
 	public GuitarUndoState undo(final ChartData data) {
-		final GuitarUndoState redo = new GuitarUndoState(data, arrangementId, levelId, beatsMapUndoState.undo(data));
+		final GuitarUndoState redo = new GuitarUndoState(data, arrangementId, levelId, data.songChart.beatsMap.beats);
 
 		final ArrangementChart arrangement = data.songChart.arrangements.get(arrangementId);
 		final Level level = arrangement.levels.get(levelId);

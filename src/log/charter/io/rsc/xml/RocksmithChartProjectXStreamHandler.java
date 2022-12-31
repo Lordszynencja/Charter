@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
 
+import log.charter.data.managers.modes.EditMode;
 import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
 import log.charter.song.Beat;
@@ -28,7 +29,18 @@ public class RocksmithChartProjectXStreamHandler {
 	}
 
 	public static RocksmithChartProject readProject(final String xml) {
-		return (RocksmithChartProject) xstream.fromXML(xml);
+		final RocksmithChartProject project = (RocksmithChartProject) xstream.fromXML(xml);
+
+		if (project.chartFormatVersion == 1) {
+			project.editMode = EditMode.GUITAR;
+			project.arrangement = 0;
+			project.level = 0;
+			project.time = 0;
+
+			project.chartFormatVersion = 2;
+		}
+
+		return project;
 	}
 
 	public static String saveProject(final RocksmithChartProject rocksmithChartProject) {

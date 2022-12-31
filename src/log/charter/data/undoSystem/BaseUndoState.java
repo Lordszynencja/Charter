@@ -10,11 +10,13 @@ public class BaseUndoState implements UndoState {
 
 	public BaseUndoState(final ModeManager modeManager, final ChartData data) {
 		if (modeManager.editMode == EditMode.GUITAR) {
-			internalUndoState = new GuitarUndoState(data);
+			internalUndoState = new GuitarModeUndoState(data);
+		} else if (modeManager.editMode == EditMode.TEMPO_MAP) {
+			internalUndoState = new TempoMapUndoState(data);
 		} else if (modeManager.editMode == EditMode.VOCALS) {
 			internalUndoState = new VocalUndoState(data);
 		} else {
-			internalUndoState = null;
+			throw new RuntimeException("wrong edit mode " + modeManager.editMode);
 		}
 
 		markerPosition = data.time;

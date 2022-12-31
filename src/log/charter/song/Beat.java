@@ -1,5 +1,6 @@
 package log.charter.song;
 
+import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toCollection;
 
 import java.util.List;
@@ -14,9 +15,23 @@ import log.charter.util.CollectionUtils.ArrayList2;
 @XStreamAlias("beat")
 public class Beat extends Position {
 	public static ArrayList2<Beat> fromEbeats(final List<EBeat> ebeats) {
-		return ebeats.stream()//
+		final ArrayList2<Beat> beats = ebeats.stream()//
 				.map(Beat::new)//
 				.collect(toCollection(ArrayList2::new));
+
+		beats.get(0).anchor = true;
+		for (int i = 1; i < beats.size() - 1; i++) {
+			final Beat current = beats.get(i);
+			final Beat previous = beats.get(i - 1);
+			final Beat next = beats.get(i + 1);
+			final int previousDistance = current.position() - previous.position();
+			final int nextDistance = next.position() - current.position();
+			if (abs(previousDistance - nextDistance) > 10) {
+				current.anchor = true;
+			}
+		}
+
+		return beats;
 	}
 
 	@XStreamAsAttribute

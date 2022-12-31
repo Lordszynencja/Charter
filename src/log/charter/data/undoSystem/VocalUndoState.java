@@ -5,22 +5,20 @@ import log.charter.song.vocals.Vocals;
 
 public class VocalUndoState implements UndoState {
 	private final Vocals vocals;
-	private final BeatsMapUndoState beatsMapUndoState;
 
-	private VocalUndoState(final ChartData data, final BeatsMapUndoState beatsMapUndoState, final boolean fromUndo) {
+	private VocalUndoState(final ChartData data, final boolean fromUndo) {
 		final Vocals tmpVocals = data.songChart.vocals;
 		vocals = fromUndo ? tmpVocals : new Vocals(tmpVocals);
-		this.beatsMapUndoState = beatsMapUndoState;
 	}
 
 	public VocalUndoState(final ChartData data) {
-		this(data, new BeatsMapUndoState(data), false);
+		this(data, false);
 
 	}
 
 	@Override
 	public VocalUndoState undo(final ChartData data) {
-		final VocalUndoState redo = new VocalUndoState(data, beatsMapUndoState.undo(data), true);
+		final VocalUndoState redo = new VocalUndoState(data, true);
 
 		data.songChart.vocals = vocals;
 

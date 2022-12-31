@@ -70,11 +70,11 @@ public class Localization {
 		INFO_MENU_VERSION("Version"), //
 		INFO_MENU_LANGUAGE("Language"), //
 
-		INSTRUMENT_MENU("Instrument"), //
-		INSTRUMENT_MENU_TUNING("Tuning"), //
-		INSTRUMENT_MENU_TOGGLE_WAVEFORM("Toggle waveform drawing"), //
-		INSTRUMENT_MENU_TOGGLE_CLAPS("Toggle claps on note"), //
-		INSTRUMENT_MENU_TOGGLE_METRONOME("Toggle metronome"), //
+		ARRANGEMENT_MENU("Arrangement"), //
+		ARRANGEMENT_MENU_TUNING("Tuning"), //
+		ARRANGEMENT_MENU_TOGGLE_WAVEFORM("Toggle waveform drawing"), //
+		ARRANGEMENT_MENU_TOGGLE_CLAPS("Toggle claps on note"), //
+		ARRANGEMENT_MENU_TOGGLE_METRONOME("Toggle metronome"), //
 
 		NOTES_MENU("Notes"), //
 		NOTES_MENU_SNAP("Snap notes to grid"), //

@@ -20,6 +20,8 @@ import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.menuHandlers.CharterMenuBar;
@@ -91,14 +93,16 @@ public class SongFileHandler {
 	private ChartData data;
 	private CharterFrame frame;
 	private CharterMenuBar charterMenuBar;
+	private ModeManager modeManager;
 	private UndoSystem undoSystem;
 
 	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final CharterFrame frame,
-			final CharterMenuBar charterMenuBar, final UndoSystem undoSystem) {
+			final CharterMenuBar charterMenuBar, final ModeManager modeManager, final UndoSystem undoSystem) {
 		this.arrangementFixer = arrangementFixer;
 		this.data = data;
 		this.frame = frame;
 		this.charterMenuBar = charterMenuBar;
+		this.modeManager = modeManager;
 		this.undoSystem = undoSystem;
 	}
 
@@ -160,7 +164,7 @@ public class SongFileHandler {
 			songChart.albumYear = null;
 		}
 
-		data.setSong(songDir, songChart, musicData, "project.rscp");
+		data.setNewSong(songDir, songChart, musicData, "project.rscp");
 		save();
 	}
 
@@ -199,7 +203,7 @@ public class SongFileHandler {
 		}
 
 		final RocksmithChartProject project = readProject(RW.read(projectFileChosen));
-		if (project.chartFormatVersion > 1) {
+		if (project.chartFormatVersion > 2) {
 			frame.showPopup(Label.PROJECT_IS_NEWER_VERSION.label());
 			return;
 		}
@@ -237,7 +241,8 @@ public class SongFileHandler {
 		Config.lastPath = dir;
 		Config.markChanged();
 
-		data.setSong(dir, songChart, musicData, projectFileChosen.getName());
+		data.setSong(dir, songChart, musicData, projectFileChosen.getName(), project.editMode, project.arrangement,
+				project.level, project.time);
 	}
 
 	public void openAudioFile() {
@@ -277,7 +282,7 @@ public class SongFileHandler {
 		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(arrangementFile));
 		final SongChart songChart = new SongChart(musicData.msLength(), songName, songArrangement);
 
-		data.setSong(dir, songChart, musicData, "project.rscp");
+		data.setSong(dir, songChart, musicData, "project.rscp", EditMode.GUITAR, 0, 0, 0);
 		save();
 	}
 
@@ -320,68 +325,6 @@ public class SongFileHandler {
 		}
 	}
 
-	public void importSong() {
-		if (!frame.checkChanged()) {
-			return;
-		}
-
-		final File songFile = FileChooseUtils.chooseMusicFile(frame, Config.lastPath);
-		if (songFile == null) {
-			return;
-		}
-
-		final String songName = songFile.getName();
-		final int dotIndex = songName.lastIndexOf('.');
-		final String extension = songName.substring(dotIndex + 1).toLowerCase();
-		if (!extension.equals("mp3") && !extension.equals("ogg")) {
-			frame.showPopup(Label.NOT_MP3_OGG.label());
-			return;
-		}
-
-		final Map<String, String> songData = extractNewSongData(songFile.getAbsolutePath());
-		String folderName = songName.substring(0, songName.lastIndexOf('.'));
-
-		folderName = frame.showInputDialog(Label.CHOOSE_FOLDER_NAME.label(), folderName);
-		if (folderName == null) {
-			return;
-		}
-
-		File f = new File(Config.songsPath + "/" + folderName);
-		while (f.exists()) {
-			folderName = frame.showInputDialog(Label.FOLDER_EXISTS_CHOOSE_DIFFERENT.label(), folderName);
-			if (folderName == null) {
-				return;
-			}
-
-			f = new File(Config.songsPath + "/" + folderName);
-		}
-		f.mkdir();
-
-		final String songDir = f.getAbsolutePath();
-		final String musicFileName = "guitar." + extension;
-		final String musicPath = songDir + "/" + musicFileName;
-		RW.writeB(musicPath, RW.readB(songFile));
-
-		final MusicData musicData = MusicData.readFile(musicPath);
-		if (musicData == null) {
-			frame.showPopup(Label.MUSIC_DATA_NOT_FOUND.label());
-			return;
-		}
-
-		final SongChart songChart = new SongChart(musicData.msLength(), musicFileName);
-		songChart.artistName = songData.getOrDefault("artist", "");
-		songChart.title = songData.getOrDefault("title", "");
-		songChart.albumName = songData.getOrDefault("album", "");
-		try {
-			songChart.albumYear = Integer.valueOf(songData.getOrDefault("year", ""));
-		} catch (final NumberFormatException e) {
-			songChart.albumYear = null;
-		}
-
-		data.setSong(songDir, songChart, musicData, "project.rscp");
-		save();
-	}
-
 	public void save() {
 		if (data.isEmpty) {
 			return;
@@ -389,7 +332,7 @@ public class SongFileHandler {
 
 		arrangementFixer.fixArrangement();
 
-		final RocksmithChartProject project = new RocksmithChartProject(data.songChart);
+		final RocksmithChartProject project = new RocksmithChartProject(modeManager, data, data.songChart);
 
 		int id = 1;
 		for (final ArrangementChart arrangementChart : data.songChart.arrangements) {

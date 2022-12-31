@@ -14,7 +14,7 @@ import log.charter.gui.panes.TuningPane;
 import log.charter.song.ArrangementChart;
 import log.charter.util.CollectionUtils.HashMap2;
 
-class InstrumentMenuHandler extends CharterMenuHandler {
+class ArrangementMenuHandler extends CharterMenuHandler {
 	private AudioDrawer audioDrawer;
 	private AudioHandler audioHandler;
 	private ChartData data;
@@ -40,7 +40,7 @@ class InstrumentMenuHandler extends CharterMenuHandler {
 		return !data.isEmpty;
 	}
 
-	private void createArrangementMenuItems(final JMenu menu) {
+	private void addArrangementsList(final JMenu menu) {
 		final HashMap2<String, Integer> arrangementNumbers = new HashMap2<>();
 		for (int i = 0; i < data.songChart.arrangements.size(); i++) {
 			final ArrangementChart arrangement = data.songChart.arrangements.get(i);
@@ -64,23 +64,24 @@ class InstrumentMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu(Label.INSTRUMENT_MENU.label());
+		final JMenu menu = new JMenu(Label.ARRANGEMENT_MENU.label());
 
+		menu.add(createItem(EditMode.TEMPO_MAP.label, () -> changeEditMode(EditMode.TEMPO_MAP)));
 		menu.add(createItem(EditMode.VOCALS.label, () -> changeEditMode(EditMode.VOCALS)));
-		createArrangementMenuItems(menu);
+		addArrangementsList(menu);
 
-		if (modeManager.editMode != EditMode.VOCALS) {
+		if (modeManager.editMode == EditMode.GUITAR) {
 			menu.addSeparator();
-			menu.add(createItem(Label.INSTRUMENT_MENU_TUNING, this::editTuning));
+			menu.add(createItem(Label.ARRANGEMENT_MENU_TUNING, this::editTuning));
 
 			menu.addSeparator();
 			createLevelMenuItems(menu);
 		}
 
 		menu.addSeparator();
-		menu.add(createItem(Label.INSTRUMENT_MENU_TOGGLE_WAVEFORM, button('U'), this::toggleWaveforDrawing));
-		menu.add(createItem(Label.INSTRUMENT_MENU_TOGGLE_CLAPS, button('C'), audioHandler::toggleClaps));
-		menu.add(createItem(Label.INSTRUMENT_MENU_TOGGLE_METRONOME, button('M'), audioHandler::toggleMetronome));
+		menu.add(createItem(Label.ARRANGEMENT_MENU_TOGGLE_WAVEFORM, button('U'), this::toggleWaveforDrawing));
+		menu.add(createItem(Label.ARRANGEMENT_MENU_TOGGLE_CLAPS, button('C'), audioHandler::toggleClaps));
+		menu.add(createItem(Label.ARRANGEMENT_MENU_TOGGLE_METRONOME, button('M'), audioHandler::toggleMetronome));
 
 		return menu;
 	}

@@ -7,24 +7,33 @@ import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
+import log.charter.gui.CharterFrame;
+import log.charter.gui.panes.GridPane;
 
 class NotesMenuHandler extends CharterMenuHandler {
 
+	private CharterFrame frame;
 	private ChartData data;
+	private ModeManager modeManager;
 
-	public void init(final ChartData data) {
+	public void init(final CharterFrame frame, final ChartData data, final ModeManager modeManager) {
+		this.frame = frame;
 		this.data = data;
+		this.modeManager = modeManager;
 	}
 
 	@Override
 	boolean isApplicable() {
-		return !data.isEmpty;
+		return !data.isEmpty && modeManager.editMode != EditMode.TEMPO_MAP;
 	}
 
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = new JMenu(Label.NOTES_MENU.label());
 
+		menu.add(createItem(Label.EDIT_MENU_GRID_OPTIONS, button('G'), this::gridOptions));
 		menu.add(createItem(Label.NOTES_MENU_SNAP, ctrl('F'), this::snapNotes));
 		menu.add(createItem(Label.NOTES_MENU_DOUBLE_GRID, button(VK_PERIOD), this::doubleGridSize));
 		menu.add(createItem(Label.NOTES_MENU_HALVE_GRID, button(VK_COMMA), this::halveGridSize));
@@ -44,6 +53,10 @@ class NotesMenuHandler extends CharterMenuHandler {
 		// menu.add(copyFromMenu);
 
 		return menu;
+	}
+
+	private void gridOptions() {
+		new GridPane(frame, data.songChart.beatsMap);
 	}
 
 	private void doubleGridSize() {

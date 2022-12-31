@@ -3,7 +3,6 @@ package log.charter.data;
 import java.awt.HeadlessException;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.util.List;
 
 import javax.swing.JScrollBar;
 
@@ -14,12 +13,9 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.menuHandlers.CharterMenuBar;
-import log.charter.io.rs.xml.vocals.ArrangementVocal;
 import log.charter.song.ArrangementChart;
 import log.charter.song.Level;
 import log.charter.song.SongChart;
-import log.charter.song.Tempo;
-import log.charter.song.notes.Note;
 import log.charter.sound.MusicData;
 
 public class ChartData {
@@ -28,9 +24,9 @@ public class ChartData {
 	public boolean isEmpty = true;
 	public SongChart songChart = null;
 	public MusicData music = new MusicData(new byte[0], 44100);
+
 	public int currentArrangement = 0;
 	public int currentLevel = 0;
-
 	public int time = 0;
 	public int nextTime = 0;
 
@@ -55,92 +51,8 @@ public class ChartData {
 		this.undoSystem = undoSystem;
 	}
 
-	public void addVocalNote(final int pos, final String text, final boolean wordPart, final boolean phraseEnd) {
-		undoSystem.addUndo();
-		selectionManager.clear();
-
-		songChart.vocals.insertNote(pos, text, wordPart, phraseEnd);
-	}
-
 	public void changeDifficulty(final int newDiff) {
 		currentLevel = newDiff;
-	}
-
-//	private void changeEventList(final List<Event> events, final double start, final double end) {
-//		int id = 0;
-//		while (id < events.size()) {
-//			final Event e = events.get(id);
-//			if ((e.pos + e.getLength()) < start) {
-//				id++;
-//				continue;
-//			}
-//			if (e.pos > end) {
-//				break;
-//			}
-//			if ((e.pos == start) && ((e.pos + e.getLength()) == end)) {
-//				events.remove(id);
-//				return;
-//			}
-//			events.remove(id);
-//		}
-//
-//		events.add(new Event(start, end - start));
-//		events.sort(null);
-//	}
-
-	public void changeLyricLength(final int grids) {// TODO
-//		undoSystem.addUndo();
-//		for (final int id : selectedNotes) {
-//			final Lyric l = s.v.lyrics.get(id);
-//			if (useGrid) {
-//				if (grids < 0) {
-//					l.setLength(s.tempoMap.findNextGridPositionForTime(l.pos + l.getLength(), gridSize) - l.pos);
-//				} else {
-//					l.setLength(s.tempoMap.findPreviousGridPositionForTime(l.pos + l.getLength(), gridSize) - l.pos);
-//				}
-//			} else {
-//				l.setLength(l.getLength() - (100 * grids));
-//			}
-//			if ((id + 1) < s.v.lyrics.size()) {
-//				fixLyricLength(l, id, s.v.lyrics.get(id + 1));
-//			}
-//		}
-	}
-
-	public void changeNoteLength(final int grids) {// TODO
-//		undoSystem.addUndo();
-//		for (final int id : selectedNotes) {
-//			final Note note = currentNotes.get(id);
-//			if (useGrid) {
-//				if (grids < 0) {
-//					note.setLength(
-//							s.tempoMap.findNextGridPositionForTime(note.pos + note.getLength(), gridSize) - note.pos);
-//				} else {
-//					note.setLength(s.tempoMap.findPreviousGridPositionForTime(note.pos + note.getLength(), gridSize)
-//							- note.pos);
-//				}
-//			} else {
-//				note.setLength(note.getLength() - (100 * grids));
-//			}
-//			fixNextNotesLength(note, id);
-//		}
-	}
-
-	private void changeSections(final List<Object> events) {// TODO
-//		if (selectedNotes.isEmpty()) {
-//			return;
-//		}
-//		undoSystem.addUndo();
-//
-//		final Note first = currentNotes.get(selectedNotes.get(0));
-//		final Note last = currentNotes.get(selectedNotes.get(selectedNotes.size() - 1));
-//
-//		changeEventList(events, first.pos, last.pos + last.getLength());
-	}
-
-	public void changeTempoBeatsInMeasure(final Tempo tmp, final boolean isNew, final int beats) {
-		undoSystem.addUndo();
-		tmp.beats = beats;
 	}
 
 	public void copy() {// TODO
@@ -215,54 +127,6 @@ public class ChartData {
 //				existing.notes |= n.notes;
 //			}
 //		}
-	}
-
-	private void fixLyricLength(final ArrangementVocal vocal, final int id, final ArrangementVocal next) {// TODO
-//		if (next.pos < (Config.minLongNoteDistance + l.pos + l.getLength())) {
-//			l.setLength(next.pos - Config.minLongNoteDistance - l.pos);
-//		}
-	}
-
-	private void fixNextNotesLength(final Note n, final int id) {// TODO
-//		if (n.getLength() < Config.minTailLength) {
-//			n.setLength(1);
-//		}
-//		for (int i = id + 1; (i < currentNotes.size()) && (i < (id + 100)); i++) {
-//			final Note nextNote = currentNotes.get(i);
-//			if (fixNoteLength(n, id, nextNote)) {
-//				return;
-//			}
-//		}
-	}
-
-	private boolean fixNoteLength(final Note n, final int nId, final Note next) {// TODO
-//		if (n.getLength() < Config.minTailLength) {
-//			n.setLength(1);
-//			return true;
-//		}
-//
-//		if (next == null) {
-//			return false;
-//		}
-//
-//		if ((n.crazy ? notesColorsOverlap(n, next) : true) && notesOverlap(n, next)) {
-//			n.setLength(next.pos - Config.minLongNoteDistance - n.pos);
-//			return true;
-//		}
-
-		return false;
-	}
-
-	private void fixNotesLength(final Note n, final int id) {
-		fixNextNotesLength(n, id);
-		fixPreviousNotesLength(n, id);
-	}
-
-	private void fixPreviousNotesLength(final Note n, final int id) {
-		for (int i = id - 1; (i >= 0) && (i > (id - 100)); i--) {
-			final Note prevNote = null;// TODO currentNotes.get(i);
-			fixNoteLength(prevNote, i, n);
-		}
 	}
 
 	public void moveSelectedOneStringUp() {// TODO
@@ -376,23 +240,27 @@ public class ChartData {
 //		}
 	}
 
-	public void setSong(final String dir, final SongChart song, final MusicData musicData,
-			final String projectFileName) {// TODO
-		currentArrangement = 0;
-		currentLevel = 0;
-		time = 0;
-		nextTime = 0;
+	public void setNewSong(final String dir, final SongChart song, final MusicData musicData,
+			final String projectFileName) {
+		setSong(dir, song, musicData, projectFileName, EditMode.TEMPO_MAP, 0, 0, 0);
+	}
+
+	public void setSong(final String dir, final SongChart song, final MusicData musicData, final String projectFileName,
+			final EditMode editMode, final int arrangement, final int level, final int time) {
+		currentArrangement = arrangement;
+		this.time = time;
+		nextTime = time;
 		isEmpty = false;
 
 		songChart = song;
 		audioHandler.stopMusic();
 		selectionManager.clear();
-		changeDifficulty(0);
-		modeManager.editMode = EditMode.GUITAR;
+		changeDifficulty(level);
+		modeManager.editMode = editMode;
 
 		charterMenuBar.refreshMenus();
-		scrollBar.setValue(0);
 		scrollBar.setMaximum(musicData.msLength());
+		scrollBar.setValue(time);
 
 		path = dir;
 		this.projectFileName = projectFileName;
@@ -403,19 +271,6 @@ public class ChartData {
 
 		selectionManager.clear();
 		undoSystem.clear();
-	}
-
-	public void startTempoDrag(final Tempo prevTmp, final Tempo tmp, final Tempo nextTmp, final boolean isNew) {// TODO
-//		draggedTempoPrev = prevTmp;
-//		draggedTempo = tmp;
-//		draggedTempoNext = nextTmp;
-//		undoSystem.addUndo();
-	}
-
-	public void stopTempoDrag() {// TODO
-//		draggedTempoPrev = null;
-//		draggedTempo = null;
-//		draggedTempoNext = null;
 	}
 
 	public void undo() {

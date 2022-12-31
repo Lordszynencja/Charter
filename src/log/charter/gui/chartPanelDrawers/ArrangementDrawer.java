@@ -10,12 +10,14 @@ import log.charter.gui.ChartPanel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.GuitarDrawer;
+import log.charter.gui.chartPanelDrawers.instruments.TempoMapDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.handlers.KeyboardHandler;
 
 public class ArrangementDrawer {
 	private ModeManager modeManager;
 
+	private final TempoMapDrawer tempoMapDrawer = new TempoMapDrawer();
 	private final GuitarDrawer guitarDrawer = new GuitarDrawer();
 	private final VocalsDrawer vocalsDrawer = new VocalsDrawer();
 
@@ -24,6 +26,7 @@ public class ArrangementDrawer {
 			final SelectionManager selectionManager) {
 		this.modeManager = modeManager;
 
+		tempoMapDrawer.init(audioDrawer, beatsDrawer);
 		guitarDrawer.init(audioDrawer, beatsDrawer, data, chartPanel, keyboardHandler, selectionManager);
 		vocalsDrawer.init(audioDrawer, beatsDrawer, data, chartPanel, selectionManager);
 	}
@@ -31,6 +34,8 @@ public class ArrangementDrawer {
 	public void draw(final Graphics g) {
 		if (modeManager.editMode == EditMode.GUITAR) {
 			guitarDrawer.draw(g);
+		} else if (modeManager.editMode == EditMode.TEMPO_MAP) {
+			tempoMapDrawer.draw(g);
 		} else if (modeManager.editMode == EditMode.VOCALS) {
 			vocalsDrawer.draw(g);
 		}

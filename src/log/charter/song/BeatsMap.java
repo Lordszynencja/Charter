@@ -125,24 +125,6 @@ public class BeatsMap {
 		}
 	}
 
-	private void fixSpread(final int beatId) {
-		// TODO fix spread of beats between chosen beat and last anchored one
-//then from chosen to next anchored/end of song, then fix notes
-		// if there's anchored, fix positions only
-		// if it goes to the end, change to match distance between chosen beat and
-		// previous for all next beats, then remove/add
-	}
-
-	public void moveBeat(final int beatId, final int newPosition) {
-		final Beat movedBeat = beats.get(beatId);
-
-		// TODO move beat's position, set anchor
-		// TODO take notes on left and right side and move them accordingly
-		// TODO don't move past 50* beats between this and last/next anchored (beat
-		// shouldn't be shorter than 50 ms)
-		fixSpread(beatId);
-	}
-
 	public void changeBeatsInMeasure(final int id, final int newBeatsInMeasure) {
 		final Beat beat = beats.get(id);
 		final int oldBeatsInMeasure = beat.beatsInMeasure;
@@ -290,5 +272,25 @@ public class BeatsMap {
 		final int gridInBeat = (int) Math.round(1.0 * distanceInBeat * gridSize / beatSize);
 
 		return previousBeatPosition + beatSize * gridInBeat / gridSize;
+	}
+
+	public int findPreviousAnchoredBeat(final int beatId) {
+		for (int i = beatId - 1; i > 0; i--) {
+			if (beats.get(i).anchor) {
+				return i;
+			}
+		}
+
+		return 0;
+	}
+
+	public int findNextAnchoredBeat(final int beatId) {
+		for (int i = beatId + 1; i < beats.size(); i++) {
+			if (beats.get(i).anchor) {
+				return i;
+			}
+		}
+
+		return beats.size() - 1;
 	}
 }

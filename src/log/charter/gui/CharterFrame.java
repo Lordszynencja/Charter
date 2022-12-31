@@ -21,6 +21,7 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -91,8 +92,8 @@ public class CharterFrame extends JFrame {
 		modeManager.init(data, this, highlightManager, keyboardHandler, selectionManager, undoSystem);
 		mouseButtonPressReleaseHandler.init(highlightManager);
 		mouseHandler.init(audioHandler, data, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
-				selectionManager);
-		songFileHandler.init(arrangementFixer, data, this, charterMenuBar, undoSystem);
+				selectionManager, undoSystem);
+		songFileHandler.init(arrangementFixer, data, this, charterMenuBar, modeManager, undoSystem);
 		selectionManager.init(data, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 
@@ -251,9 +252,21 @@ public class CharterFrame extends JFrame {
 		if (data.isEmpty) {
 			return LogCharterRSMain.TITLE + " : " + Label.NO_PROJECT.label();
 		}
-		return LogCharterRSMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title + " : "//
-				+ data.getCurrentArrangement().getTypeNameLabel()//
-				+ (undoSystem.isSaved() ? "" : "*");
+
+		String title = LogCharterRSMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title
+				+ " : ";
+
+		if (modeManager.editMode == EditMode.GUITAR) {
+			title += data.getCurrentArrangement().getTypeNameLabel();
+		} else if (modeManager.editMode == EditMode.TEMPO_MAP) {
+			title += "Tempo map";
+		} else if (modeManager.editMode == EditMode.VOCALS) {
+			title += "Vocals";
+		}
+
+		title += undoSystem.isSaved() ? "" : "*";
+
+		return title;
 	}
 
 	public void cancelAllActions() {

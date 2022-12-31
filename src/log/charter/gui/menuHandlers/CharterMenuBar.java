@@ -23,14 +23,14 @@ public class CharterMenuBar extends JMenuBar {
 	private final FileMenuHandler fileMenuHandler = new FileMenuHandler();
 	private final GuitarMenuHandler guitarMenuHandler = new GuitarMenuHandler();
 	private final InfoMenuHandler infoMenuHandler = new InfoMenuHandler();
-	private final InstrumentMenuHandler instrumentMenuHandler = new InstrumentMenuHandler();
+	private final ArrangementMenuHandler arrangementMenuHandler = new ArrangementMenuHandler();
 	private final NotesMenuHandler notesMenuHandler = new NotesMenuHandler();
 	private final VocalsMenuHandler vocalsMenuHandler = new VocalsMenuHandler();
 
 	private final ArrayList2<CharterMenuHandler> menus = new ArrayList2<>(//
 			fileMenuHandler, //
 			editMenuHandler, //
-			instrumentMenuHandler, //
+			arrangementMenuHandler, //
 			vocalsMenuHandler, //
 			notesMenuHandler, //
 			guitarMenuHandler, //
@@ -44,8 +44,8 @@ public class CharterMenuBar extends JMenuBar {
 		fileMenuHandler.init(data, frame, songFileHandler);
 		infoMenuHandler.init(frame, this);
 		guitarMenuHandler.init(data, frame, modeManager, selectionManager, undoSystem);
-		instrumentMenuHandler.init(audioDrawer, audioHandler, data, frame, this, modeManager, selectionManager);
-		notesMenuHandler.init(data);
+		arrangementMenuHandler.init(audioDrawer, audioHandler, data, frame, this, modeManager, selectionManager);
+		notesMenuHandler.init(frame, data, modeManager);
 		vocalsMenuHandler.init(data, frame, modeManager, selectionManager, undoSystem);
 
 		final Dimension size = new Dimension(100, 20);
