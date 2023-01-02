@@ -65,10 +65,10 @@ public class BeatsMap {
 		beats = other.beats.map(Beat::new);
 	}
 
-	private void makeBeatsUntilSongEnd() {
+	public void makeBeatsUntilSongEnd() {
 		Beat current = beats.getLast();
 		if (current.position() > songLengthMs) {
-			beats.removeIf(beat -> beat.position() >= songLengthMs);
+			beats.removeIf(beat -> beat.position() > songLengthMs);
 			return;
 		}
 
@@ -88,7 +88,7 @@ public class BeatsMap {
 		final int beatsInMeasure = current.beatsInMeasure;
 		int pos = current.position() + distance;
 		int beatInMeasure = 0;
-		for (int i = beats.size() - 1; i >= 0; i++) {
+		for (int i = beats.size() - 1; i >= 0; i--) {
 			if (beats.get(i).firstInMeasure) {
 				break;
 			}
@@ -284,13 +284,13 @@ public class BeatsMap {
 		return 0;
 	}
 
-	public int findNextAnchoredBeat(final int beatId) {
+	public Integer findNextAnchoredBeat(final int beatId) {
 		for (int i = beatId + 1; i < beats.size(); i++) {
 			if (beats.get(i).anchor) {
 				return i;
 			}
 		}
 
-		return beats.size() - 1;
+		return null;
 	}
 }

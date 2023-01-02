@@ -40,7 +40,6 @@ public class BeatsMapUndoState implements UndoState {
 	}
 
 	private final BeatsMap beatsMap;
-
 	private final ArrayList2<Pair<Integer, ArrangementSectionsPhraseIterationsEvents>> arrangementsEvents;
 
 	private BeatsMapUndoState(final ChartData data, final BeatsMap beatsMap) {

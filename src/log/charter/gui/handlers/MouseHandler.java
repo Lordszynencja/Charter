@@ -20,8 +20,10 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.song.ArrangementChart;
+import log.charter.song.Beat;
 import log.charter.song.Level;
 import log.charter.song.notes.IPosition;
+import log.charter.util.CollectionUtils.ArrayList2;
 
 public class MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private ChartData data;
@@ -145,7 +147,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			left.add(positions.get(id));
 			id++;
 		}
-		while (id < positions.size() && positions.get(id).position() <= rightPosition) {
+		while (id < positions.size() && positions.get(id).position() < rightPosition) {
 			right.add(positions.get(id));
 			id++;
 		}
@@ -187,23 +189,54 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		clickData.pressHighlight.beat.anchor = true;
 
-		final int leftId = data.songChart.beatsMap.findPreviousAnchoredBeat(clickData.pressHighlight.id);
-		// TODO add fix if right is not anchored
-		final int rightId = data.songChart.beatsMap.findNextAnchoredBeat(clickData.pressHighlight.id);
+		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
 
-		final int leftPosition = data.songChart.beatsMap.beats.get(leftId).position();
+		final int leftId = data.songChart.beatsMap.findPreviousAnchoredBeat(clickData.pressHighlight.id);
+		final int middleId = clickData.pressHighlight.id;
+		final Integer rightId = data.songChart.beatsMap.findNextAnchoredBeat(clickData.pressHighlight.id);
+
+		final int leftPosition = beats.get(leftId).position();
 		final int middlePositionBefore = clickData.pressHighlight.position();
 		final int middlePositionAfter = max(0,
 				min(data.music.msLength(), xToTime(clickData.releasePosition.x, data.time)));
-		final int rightPosition = data.songChart.beatsMap.beats.get(rightId).position();
+		final int rightPositionBefore;
+		final int rightPositionAfter;
+		boolean changeLastBeat = false;
+
+		if (rightId != null) {
+			rightPositionBefore = beats.get(rightId).position();
+			rightPositionAfter = rightPositionBefore;
+		} else if (beats.size() > middleId + 1) {
+			rightPositionBefore = beats.getLast().position();
+			final int beatLength = middleId == leftId ? 500
+					: (middlePositionAfter - leftPosition) / (middleId - leftId);
+			rightPositionAfter = middlePositionAfter + (beats.size() - middleId - 1) * beatLength;
+			changeLastBeat = true;
+		} else {
+			rightPositionBefore = middlePositionBefore;
+			rightPositionAfter = middlePositionAfter;
+		}
 
 		final List<IPosition> left = new ArrayList<>();
 		final List<IPosition> right = new ArrayList<>();
 
-		getAllLeftRightPositions(leftPosition, middlePositionBefore, rightPosition, left, right);
-		movePositionsBasedOnBeatsChange(leftPosition, middlePositionBefore, leftPosition, middlePositionAfter, left);
-		movePositionsBasedOnBeatsChange(middlePositionBefore, rightPosition, middlePositionAfter, rightPosition, right);
+		getAllLeftRightPositions(leftPosition, middlePositionBefore, rightPositionBefore, left, right);
+		if (!left.isEmpty()) {
+			movePositionsBasedOnBeatsChange(leftPosition, middlePositionBefore, leftPosition, middlePositionAfter,
+					left);
+		}
+		if (!right.isEmpty()) {
+			movePositionsBasedOnBeatsChange(middlePositionBefore, rightPositionBefore, middlePositionAfter,
+					rightPositionAfter, right);
+		} else {
+			clickData.pressHighlight.beat.position(middlePositionAfter);
+		}
 
+		if (changeLastBeat) {
+			beats.getLast().position(rightPositionAfter);
+		}
+
+		data.songChart.beatsMap.makeBeatsUntilSongEnd();
 	}
 
 	@Override

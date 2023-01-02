@@ -42,6 +42,7 @@ public class ChartPanel extends JComponent {
 		arrangementDrawer.init(audioDrawer, beatsDrawer, this, data, keyboardHandler, modeManager, selectionManager);
 		highlightDrawer.init(data, highlightManager, modeManager, mouseHandler, mouseButtonPressReleaseHandler,
 				selectionManager);
+		markerDrawer.init(data);
 
 		addMouseListener(mouseHandler);
 		addMouseMotionListener(mouseHandler);

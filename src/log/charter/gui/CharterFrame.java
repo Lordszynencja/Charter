@@ -5,7 +5,6 @@ import java.awt.Insets;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -40,6 +39,7 @@ import log.charter.gui.lookAndFeel.CharterTheme;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
 import log.charter.main.LogCharterRSMain;
+import net.sf.image4j.codec.ico.ICODecoder;
 
 public class CharterFrame extends JFrame {
 	private static final long serialVersionUID = 3603305480386377813L;
@@ -68,8 +68,8 @@ public class CharterFrame extends JFrame {
 	public CharterFrame() {
 		super(LogCharterRSMain.TITLE + " : " + Label.NO_PROJECT.label());
 		try {
-			final InputStream stream = this.getClass().getResourceAsStream("/rs_charter_icon.png");
-			setIconImage(ImageIO.read(stream));
+			final InputStream stream = this.getClass().getResourceAsStream("/icon.ico");
+			setIconImages(ICODecoder.read(stream));
 		} catch (final IOException e) {
 			Logger.error("Couldn't load icon", e);
 		}
