@@ -39,7 +39,7 @@ public class ArrangementChart {
 		capo = songArrangement.capo;
 		centOffset = songArrangement.centOffset;
 
-		levels = Level.fromArrangementLevels(songArrangement.levels.list);
+		chordTemplates = songArrangement.chordTemplates.list.map(ChordTemplate::new);
 
 		sections = Section.fromArrangementSections(beats, songArrangement.sections.list);
 		phrases = Phrase.fromArrangementPhrases(songArrangement.phrases.list);
@@ -47,10 +47,11 @@ public class ArrangementChart {
 				songArrangement.phraseIterations.list);
 		events = Event.fromArrangement(new ArrayList2<>(), songArrangement.events.list);
 
-		chordTemplates = songArrangement.chordTemplates.list.map(ChordTemplate::new);
 		if (songArrangement.fretHandMuteTemplates != null) {
 			fretHandMuteTemplates = songArrangement.fretHandMuteTemplates.list.map(ChordTemplate::new);
 		}
+
+		levels = Level.fromArrangementLevels(this, songArrangement.levels.list);
 	}
 
 	public String getTypeName() {

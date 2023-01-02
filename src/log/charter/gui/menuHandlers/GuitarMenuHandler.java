@@ -77,8 +77,8 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(singleNoteOptions);
 
 		menu.addSeparator();
-		menu.add(createItem(Label.GUITAR_MENU_HAND_SHAPE_OPTIONS, button('T'), this::handShapeOptions));
 		menu.add(createItem(Label.GUITAR_MENU_MARK_HAND_SHAPE, ctrl('T'), this::markHandShape));
+		menu.add(createItem(Label.GUITAR_MENU_HAND_SHAPE_OPTIONS, button('T'), this::handShapeOptions));
 
 		return menu;
 	}
@@ -224,10 +224,10 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		int endPosition = selected.getLast().selectable.endPosition();
 		final int firstIdAfter = findFirstIdAfter(handShapes, endPosition);
 		if (firstIdAfter == -1) {
-			endPosition = data.songChart.beatsMap.getPositionWithAddedGrid(endPosition, 1, 16);
+			endPosition = data.songChart.beatsMap.getPositionWithAddedGrid(endPosition, 1, 8);
 		} else {
 			endPosition = min(handShapes.get(firstIdAfter).position() - Config.minNoteDistance,
-					data.songChart.beatsMap.getPositionWithAddedGrid(endPosition, 1, 16));
+					data.songChart.beatsMap.getPositionWithAddedGrid(endPosition, 1, 8));
 		}
 
 		int deleteFromId = findLastIdBefore(handShapes, position);

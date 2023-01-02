@@ -12,6 +12,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
@@ -80,6 +82,24 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 		final Function<ChordTemplate, String> formatter = chordTemplate -> chordTemplate.getNameWithFrets(strings);
 		chordNameInput = new AutocompleteInput<>(this, 80, chordTemplate.chordName, this::getPossibleChords, formatter,
 				inputOnTemplateChange);
+		chordNameInput.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void insertUpdate(final DocumentEvent e) {
+				changedUpdate(e);
+			}
+
+			@Override
+			public void removeUpdate(final DocumentEvent e) {
+				changedUpdate(e);
+			}
+
+			@Override
+			public void changedUpdate(final DocumentEvent e) {
+				chordTemplate.chordName = chordNameInput.getText();
+			}
+
+		});
 		this.add(chordNameInput, x, getY(row), 150, 20);
 	}
 

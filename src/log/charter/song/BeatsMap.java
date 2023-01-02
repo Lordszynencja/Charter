@@ -1,8 +1,7 @@
 package log.charter.song;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.lang.Math.round;
+import static java.lang.Math.ceil;
+import static java.lang.Math.floor;
 import static log.charter.song.notes.IPosition.findFirstIdAfter;
 
 import log.charter.io.rs.xml.song.SongArrangement;
@@ -161,8 +160,7 @@ public class BeatsMap {
 
 		int beatLength = next.position() - current.position();
 		final int distanceInBeat = position - current.position();
-		int gridInBeat = (int) round(1.0 * distanceInBeat * gridSize / beatLength);
-		gridInBeat = max(0, min(gridSize - 1, gridInBeat));
+		int gridInBeat = (int) floor(1.0 * distanceInBeat * gridSize / beatLength + 0.1);
 		while (gridAdditions > 0) {
 			gridInBeat++;
 			gridAdditions--;
@@ -209,8 +207,7 @@ public class BeatsMap {
 
 		int beatLength = next.position() - current.position();
 		final int distanceInBeat = position - current.position();
-		int gridInBeat = (int) round(1.0 * distanceInBeat * gridSize / beatLength);
-		gridInBeat = max(0, min(gridSize - 1, gridInBeat));
+		int gridInBeat = (int) ceil(1.0 * distanceInBeat * gridSize / beatLength - 0.1);
 		while (gridRemovals > 0) {
 			gridInBeat--;
 			gridRemovals--;

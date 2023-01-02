@@ -40,37 +40,45 @@ public class ArrangementLevel {
 	public ArrangementLevel() {
 	}
 
-	private ArrangementLevel(final int difficulty, final Level levelChart,
-			final ArrayList2<ChordTemplate> chordTemplates) {
+	private ArrangementLevel(final int difficulty, final Level level, final ArrayList2<ChordTemplate> chordTemplates) {
 		this.difficulty = difficulty;
 
-		setNotes(levelChart.chordsAndNotes);
-		setChords(levelChart.chordsAndNotes, chordTemplates);
+		setChordsAndNotes(chordTemplates, level.chordsAndNotes);
 
 		fretHandMutes = new CountedList<>();
-		anchors = new CountedList<>(levelChart.anchors.map(ArrangementAnchor::new));
+		anchors = new CountedList<>(level.anchors.map(ArrangementAnchor::new));
 
-		setHandShapes(levelChart.chordsAndNotes, levelChart.handShapes);
+		setHandShapes(level.chordsAndNotes, level.handShapes);
 
-		addChordNotesForFirstChordsInHandShape(levelChart.chordsAndNotes, chordTemplates);
+		addChordNotesForFirstChordsInHandShape(level.chordsAndNotes, chordTemplates);
 	}
 
-	private void setNotes(final ArrayList2<ChordOrNote> chordsAndNotes) {
+	private void setChordsAndNotes(final ArrayList2<ChordTemplate> chordTemplates,
+			final ArrayList2<ChordOrNote> chordsAndNotes) {
 		notes = new CountedList<>();
-		chordsAndNotes.stream()//
-				.filter(chordOrNote -> chordOrNote.note != null)//
-				.map(chordOrNote -> new ArrangementNote(chordOrNote.note))//
-				.forEach(notes.list::add);
-	}
-
-	private void setChords(final ArrayList2<ChordOrNote> chordsAndNotes,
-			final ArrayList2<ChordTemplate> chordTemplates) {
 		chords = new CountedList<>();
-		chordsAndNotes.stream()//
-				.filter(chordOrNote -> chordOrNote.chord != null)//
-				.map(chordOrNote -> new ArrangementChord(chordOrNote.chord,
-						chordTemplates.get(chordOrNote.chord.chordId)))//
-				.forEach(chords.list::add);
+
+		for (int i = 0; i < chordsAndNotes.size(); i++) {
+			final ChordOrNote sound = chordsAndNotes.get(i);
+			if (sound.isNote()) {
+				notes.list.add(new ArrangementNote(sound.note));
+				continue;
+			}
+
+			final Chord chord = sound.chord;
+			final ChordTemplate chordTemplate = chordTemplates.get(chord.chordId);
+			final int nextPosition = i + 1 < chordsAndNotes.size() ? chordsAndNotes.get(i + 1).position()
+					: chord.position() + 100;
+			final ArrangementChord arrangementChord = new ArrangementChord(chord, chordTemplate, nextPosition);
+
+			if (i > 0 && chordsAndNotes.get(i - 1).asGuitarSound().linkNext) {
+				arrangementChord.populateChordNotes(chordTemplate);
+				notes.list.addAll(arrangementChord.chordNotes);
+				continue;
+			}
+
+			chords.list.add(arrangementChord);
+		}
 	}
 
 	private void setHandShapes(final ArrayList2<ChordOrNote> chordsAndNotes, final ArrayList2<HandShape> handShapes) {

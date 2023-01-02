@@ -65,8 +65,8 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int speed = (Framer.frameLength * (shift ? 20 : 2)) / (ctrl ? 2 : 1);
-		int nextTime = data.time - (left ? speed : 0) + (right ? speed : 0);
+		final int speed = Framer.frameLength * (shift ? 20 : 4) / (ctrl ? 4 : 1);
+		int nextTime = data.nextTime - (left ? speed : 0) + (right ? speed : 0);
 		nextTime = max(0, min(data.music.msLength(), nextTime));
 		frame.setNextTime(nextTime);
 	}

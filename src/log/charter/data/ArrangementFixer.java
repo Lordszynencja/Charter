@@ -1,17 +1,25 @@
 package log.charter.data;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static log.charter.song.notes.IPosition.findFirstIdAfter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import log.charter.data.config.Config;
 import log.charter.song.ArrangementChart;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
+import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
+import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ArrangementFixer {
 	private ChartData data;
@@ -31,13 +39,55 @@ public class ArrangementFixer {
 		positions.removeAll(positionsToRemove);
 	}
 
+	private void addMissingHandShapes(final Level level) {
+		final LinkedList<Chord> chordsForHandShapes = level.chordsAndNotes.stream()//
+				.filter(chordOrNote -> chordOrNote.chord != null)//
+				.map(chordOrNote -> chordOrNote.chord)//
+				.collect(Collectors.toCollection(LinkedList::new));
+		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
+		for (final HandShape handShape : level.handShapes) {
+			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position() < handShape.position()) {
+				chordsWithoutHandShapes.add(chordsForHandShapes.remove(0));
+			}
+			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position() < handShape.endPosition()) {
+				chordsForHandShapes.remove(0);
+			}
+		}
+		chordsWithoutHandShapes.addAll(chordsForHandShapes);
+
+		for (final Chord chord : chordsWithoutHandShapes) {
+			int endPosition = chord.position();
+
+			final int firstIdAfter = findFirstIdAfter(level.handShapes, endPosition);
+			if (firstIdAfter == -1) {
+				endPosition = data.songChart.beatsMap.getPositionWithAddedGrid(endPosition, 1, 8);
+			} else {
+				endPosition = min(level.handShapes.get(firstIdAfter).position() - Config.minNoteDistance,
+						data.songChart.beatsMap.getPositionWithAddedGrid(endPosition, 1, 8));
+			}
+
+			final int length = max(1, endPosition - chord.position());
+			final HandShape handShape = new HandShape(chord, length);
+			if (firstIdAfter != -1) {
+				level.handShapes.add(firstIdAfter, handShape);
+			} else {
+				level.handShapes.add(handShape);
+			}
+		}
+
+		level.handShapes.sort(null);
+	}
+
 	private void fixLevel(final Level level) {
 		level.chordsAndNotes//
 				.stream().filter(chordOrNote -> chordOrNote.note != null)//
 				.map(chordOrNote -> chordOrNote.note)//
 				.forEach(note -> note.length(note.length() >= Config.minTailLength ? note.length() : 0));
 
+		removeDuplicates(level.anchors);
 		removeDuplicates(level.chordsAndNotes);
+		removeDuplicates(level.handShapes);
+		addMissingHandShapes(level);
 	}
 
 	private void removeChordTemplate(final ArrangementChart arrangementChart, final int removedId,

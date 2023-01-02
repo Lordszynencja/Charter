@@ -19,6 +19,10 @@ public interface DrawableShape {
 		return new Line(new Position2D(x, y0), new Position2D(x, y1), color);
 	}
 
+	public static DrawableShape lineVertical(final int x, final int y0, final int y1, final ColorLabel color) {
+		return line(new Position2D(x, y0), new Position2D(x, y1), color.color());
+	}
+
 	public static DrawableShape lineHorizontal(final int x0, final int x1, final int y, final Color color) {
 		return new Line(new Position2D(x0, y), new Position2D(x1, y), color);
 	}
@@ -37,6 +41,10 @@ public interface DrawableShape {
 	// Rectangles
 	public static DrawableShape filledRectangle(final ShapePositionWithSize position, final Color color) {
 		return new FilledRectangle(position, color);
+	}
+
+	public static DrawableShape filledRectangle(final ShapePositionWithSize position, final ColorLabel color) {
+		return filledRectangle(position, color.color());
 	}
 
 	public static DrawableShape strokedRectangle(final ShapePositionWithSize position, final Color color) {

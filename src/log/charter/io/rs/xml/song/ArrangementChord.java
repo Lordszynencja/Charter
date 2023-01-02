@@ -37,19 +37,19 @@ public class ArrangementChord implements IPosition {
 	@XStreamAsAttribute
 	public Integer linkNext;
 	@XStreamImplicit
-	public ArrayList2<ArrangementChordNote> chordNotes;
+	public ArrayList2<ArrangementNote> chordNotes;
 
 	public ArrangementChord() {
 	}
 
-	public ArrangementChord(final Chord chord, final ChordTemplate chordTemplate) {
+	public ArrangementChord(final Chord chord, final ChordTemplate chordTemplate, final int nextPosition) {
 		time = chord.position();
 		chordId = chord.chordId;
 		accent = chord.accent ? 1 : null;
 		linkNext = chord.linkNext ? 1 : null;
 
 		setUpMute(chord);
-		setChordNotes(chord, chordTemplate);
+		setChordNotes(chord, chordTemplate, nextPosition);
 	}
 
 	private void setUpMute(final Chord chord) {
@@ -61,7 +61,7 @@ public class ArrangementChord implements IPosition {
 	}
 
 	private void setChordNoteLengths(final int length) {
-		for (final ArrangementChordNote chordNote : chordNotes) {
+		for (final ArrangementNote chordNote : chordNotes) {
 			chordNote.sustain = length;
 		}
 	}
@@ -76,7 +76,7 @@ public class ArrangementChord implements IPosition {
 
 		final int minFret = chordTemplate.frets.values().stream().collect(minBy(Integer::compare)).get();
 		final int slideDifference = chord.slideTo - minFret;
-		for (final ArrangementChordNote chordNote : chordNotes) {
+		for (final ArrangementNote chordNote : chordNotes) {
 			if (chord.unpitchedSlide) {
 				chordNote.slideUnpitchTo = chordNote.fret + slideDifference;
 			} else {
@@ -92,7 +92,7 @@ public class ArrangementChord implements IPosition {
 
 		populateChordNotes(chordTemplate);
 
-		for (final ArrangementChordNote chordNote : chordNotes) {
+		for (final ArrangementNote chordNote : chordNotes) {
 			if (chord.hopo == HOPO.HAMMER_ON) {
 				chordNote.hopo = 1;
 				chordNote.hammerOn = 1;
@@ -113,7 +113,7 @@ public class ArrangementChord implements IPosition {
 		populateChordNotes(chordTemplate);
 		setChordNoteLengths(chord.length());
 
-		for (final ArrangementChordNote chordNote : chordNotes) {
+		for (final ArrangementNote chordNote : chordNotes) {
 			final ArrayList2<BendValue> bendValues = chord.bendValues.get(chordNote.string);
 			if (bendValues == null || bendValues.isEmpty()) {
 				continue;
@@ -129,10 +129,19 @@ public class ArrangementChord implements IPosition {
 		}
 	}
 
-	private void setChordNotes(final Chord chord, final ChordTemplate chordTemplate) {
+	private void setChordNotes(final Chord chord, final ChordTemplate chordTemplate, final int nextPosition) {
 		setChordNotesSlide(chord, chordTemplate);
 		setChordNotesHOPO(chord, chordTemplate);
 		setChordNotesBends(chord, chordTemplate);
+
+		if (chord.linkNext) {
+			populateChordNotes(chordTemplate);
+
+			for (final ArrangementNote chordNote : chordNotes) {
+				chordNote.linkNext = 1;
+				chordNote.sustain = nextPosition - time;
+			}
+		}
 	}
 
 	@Override

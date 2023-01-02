@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
@@ -120,14 +122,16 @@ public class BeatsDrawer {
 
 	private ChartData data;
 	private ChartPanel chartPanel;
+	private ModeManager modeManager;
 	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
 	private SelectionManager selectionManager;
 
-	public void init(final ChartData data, final ChartPanel chartPanel,
+	public void init(final ChartData data, final ChartPanel chartPanel, final ModeManager modeManager,
 			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
 			final SelectionManager selectionManager) {
 		this.data = data;
 		this.chartPanel = chartPanel;
+		this.modeManager = modeManager;
 		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
 		this.selectionManager = selectionManager;
 	}
@@ -220,9 +224,12 @@ public class BeatsDrawer {
 		final BeatsDrawingData drawingData = new BeatsDrawingData();
 
 		addBeats(drawingData);
-		addSections(drawingData);
-		addPhrases(drawingData);
-		addEvents(drawingData);
+
+		if (modeManager.editMode == EditMode.GUITAR) {
+			addSections(drawingData);
+			addPhrases(drawingData);
+			addEvents(drawingData);
+		}
 
 		drawingData.draw(g);
 	}

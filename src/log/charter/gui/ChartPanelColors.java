@@ -80,7 +80,8 @@ public class ChartPanelColors {
 		NOTE_TAIL_5(210, 0, 210), //
 
 		ANCHOR(128, 0, 0), //
-		HAND_SHAPE(0, 128, 255, 255), //
+		HAND_SHAPE(0, 128, 255), //
+		HAND_SHAPE_ARPEGGIO(128, 0, 255), //
 
 		VOCAL_LINE_BACKGROUND(0, 210, 210), //
 		VOCAL_LINE_TEXT(0, 0, 128), //
@@ -89,7 +90,7 @@ public class ChartPanelColors {
 		VOCAL_NOTE_WORD_PART(0, 0, 255, 192), //
 		;
 
-		public final Color defaultColor;
+		private final Color defaultColor;
 
 		private ColorLabel(final int r, final int g, final int b) {
 			defaultColor = new Color(r, g, b);

@@ -64,6 +64,7 @@ public class ChordTemplate {
 	public boolean equals(final ChordTemplate other) {
 		return chordName.equals(other.chordName)//
 				&& arpeggio == other.arpeggio//
-				&& frets.equals(other.frets);
+				&& frets.equals(other.frets)//
+				&& fingers.equals(other.fingers);
 	}
 }

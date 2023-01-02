@@ -85,7 +85,7 @@ public class CharterFrame extends JFrame {
 		arrangementFixer.init(data);
 		audioDrawer.init(data, chartPanel);
 		audioHandler.init(data, this, keyboardHandler);
-		beatsDrawer.init(data, chartPanel, mouseButtonPressReleaseHandler, selectionManager);
+		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, selectionManager);
 		data.init(audioHandler, charterMenuBar, modeManager, scrollBar, selectionManager, undoSystem);
 		keyboardHandler.init(audioHandler, data, this, modeManager, mouseHandler, selectionManager);
 		highlightManager.init(data, modeManager, selectionManager);

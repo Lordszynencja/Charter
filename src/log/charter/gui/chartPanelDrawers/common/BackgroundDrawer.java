@@ -19,8 +19,8 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 
 public class BackgroundDrawer {
 	private static final int timeScaleTop = DrawerUtils.lanesBottom;
-	private static final int nonsecondsMarkerHeight = 10;
-	private static final int timestampY = timeScaleTop + 30;
+	private static final int nonsecondsMarkerHeight = 20;
+	private static final int timestampY = timeScaleTop + nonsecondsMarkerHeight + 20;
 
 	private static final DecimalFormat twoDigitsFormat = new DecimalFormat("00");
 
@@ -60,7 +60,8 @@ public class BackgroundDrawer {
 		while (time <= endTime) {
 			final int x = timeToX(time * 100, data.time);
 			if (time % 10 == 0) {
-				filledRectangle(new ShapePositionWithSize(x, timeScaleTop, 2, 20), Color.WHITE).draw(g);
+				filledRectangle(new ShapePositionWithSize(x, timeScaleTop, 2, nonsecondsMarkerHeight + 10), Color.WHITE)
+						.draw(g);
 				final String formattedtime = twoDigitsFormat.format(time / 600) + ":"
 						+ twoDigitsFormat.format((time / 10) % 60);
 				g.drawString(formattedtime, x - 21, timestampY);
