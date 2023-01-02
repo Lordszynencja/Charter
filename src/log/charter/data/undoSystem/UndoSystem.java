@@ -25,15 +25,19 @@ public class UndoSystem {
 		return new BaseUndoState(modeManager, data);
 	}
 
-	public void addUndo() {
+	public void addUndo(final UndoState undoState) {
 		savePosition++;
 
-		undo.add(createUndoState());
+		undo.add(undoState);
 		while (undo.size() > 100) {
 			undo.removeFirst();
 		}
 
 		redo.clear();
+	}
+
+	public void addUndo() {
+		addUndo(createUndoState());
 	}
 
 	public void undo() {

@@ -5,8 +5,8 @@ import log.charter.song.ArrangementChart;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class TempoMapUndoState implements UndoState {
-	private final BeatsMapUndoState beatsMapUndoState;
 
+	private final BeatsMapUndoState beatsMapUndoState;
 	private final ArrayList2<GuitarUndoState> guitarUndoStates;
 	private final VocalUndoState vocalUndoState;
 
@@ -33,10 +33,9 @@ public class TempoMapUndoState implements UndoState {
 
 	@Override
 	public TempoMapUndoState undo(final ChartData data) {
-		final BeatsMapUndoState beatsMapRedoState = beatsMapUndoState.undo(data);
-
 		final ArrayList2<GuitarUndoState> guitarRedoStates = guitarUndoStates.map(state -> state.undo(data));
 		final VocalUndoState vocalRedoState = vocalUndoState.undo(data);
+		final BeatsMapUndoState beatsMapRedoState = beatsMapUndoState.undo(data);
 
 		return new TempoMapUndoState(beatsMapRedoState, guitarRedoStates, vocalRedoState);
 	}

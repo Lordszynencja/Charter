@@ -188,13 +188,13 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		clickData.pressHighlight.beat.anchor = true;
 
 		final int leftId = data.songChart.beatsMap.findPreviousAnchoredBeat(clickData.pressHighlight.id);
+		// TODO add fix if right is not anchored
 		final int rightId = data.songChart.beatsMap.findNextAnchoredBeat(clickData.pressHighlight.id);
 
 		final int leftPosition = data.songChart.beatsMap.beats.get(leftId).position();
 		final int middlePositionBefore = clickData.pressHighlight.position();
 		final int middlePositionAfter = max(0,
 				min(data.music.msLength(), xToTime(clickData.releasePosition.x, data.time)));
-
 		final int rightPosition = data.songChart.beatsMap.beats.get(rightId).position();
 
 		final List<IPosition> left = new ArrayList<>();
@@ -203,6 +203,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		getAllLeftRightPositions(leftPosition, middlePositionBefore, rightPosition, left, right);
 		movePositionsBasedOnBeatsChange(leftPosition, middlePositionBefore, leftPosition, middlePositionAfter, left);
 		movePositionsBasedOnBeatsChange(middlePositionBefore, rightPosition, middlePositionAfter, rightPosition, right);
+
 	}
 
 	@Override
