@@ -63,7 +63,7 @@ public class Chord extends GuitarSound {
 					final ArrayList2<BendValue> noteBendValues = new ArrayList2<>();
 					bendValues.put(arrangementNote.string, noteBendValues);
 					for (final ArrangementBendValue bendValue : arrangementNote.bendValues.list) {
-						noteBendValues.add(new BendValue(bendValue));
+						noteBendValues.add(new BendValue(bendValue, arrangementChord.time));
 					}
 				}
 			}

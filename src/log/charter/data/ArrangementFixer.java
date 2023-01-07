@@ -178,5 +178,8 @@ public class ArrangementFixer {
 			fixDuplicatedChordTemplates(arrangementChart);
 			removeUnusedChordTemplates(arrangementChart);
 		}
+
+		data.songChart.beatsMap.makeBeatsUntilSongEnd();
+		data.songChart.beatsMap.fixFirstBeatInMeasures();
 	}
 }

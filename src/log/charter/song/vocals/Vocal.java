@@ -14,6 +14,11 @@ public class Vocal extends PositionWithLength {
 		super(position);
 	}
 
+	public Vocal(final String lyric) {
+		super(0);
+		this.lyric = lyric;
+	}
+
 	public Vocal(final ArrangementVocal arrangementVocal) {
 		super(arrangementVocal.time, arrangementVocal.length == null ? 0 : arrangementVocal.length);
 		lyric = arrangementVocal.lyric;

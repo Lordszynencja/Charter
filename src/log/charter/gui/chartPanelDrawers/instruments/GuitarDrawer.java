@@ -14,11 +14,13 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledPolygon;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.line;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineHorizontal;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedPolygon;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.text;
@@ -33,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
@@ -100,6 +103,7 @@ public class GuitarDrawer {
 	}
 
 	private class NoteData {
+		public final int position;
 		public final int x;
 		public final int length;
 
@@ -119,14 +123,15 @@ public class GuitarDrawer {
 
 		public NoteData(final int x, final int length, final Note note, final boolean selected,
 				final boolean lastWasLinkNext) {
-			this(x, length, note.string, note.fret, note.fret + "", note.accent, note.mute, note.hopo, note.harmonic,
-					note.bendValues, note.slideTo, note.unpitchedSlide, selected, lastWasLinkNext);
+			this(note.position(), x, length, note.string, note.fret, note.fret + "", note.accent, note.mute, note.hopo,
+					note.harmonic, note.bendValues, note.slideTo, note.unpitchedSlide, selected, lastWasLinkNext);
 		}
 
-		private NoteData(final int x, final int length, final int string, final int fretNumber, final String fret,
-				final boolean accent, final Mute mute, final HOPO hopo, final Harmonic harmonic,
+		private NoteData(final int position, final int x, final int length, final int string, final int fretNumber,
+				final String fret, final boolean accent, final Mute mute, final HOPO hopo, final Harmonic harmonic,
 				final ArrayList2<BendValue> bendValues, final Integer slideTo, final boolean unpitchedSlide,
 				final boolean selected, final boolean lastWasLinkNext) {
+			this.position = position;
 			this.x = x;
 			this.length = lastWasLinkNext ? max(5, length) : length;
 
@@ -165,8 +170,8 @@ public class GuitarDrawer {
 					+ (ctrl && finger != null ? "(" + (finger == 0 ? "T" : finger.toString()) + ")" : "");
 			final Integer slideTo = slideDistance == null ? null : (fret + slideDistance);
 
-			notes.add(new NoteData(x, length, string, fret, fretDescription, chord.accent, chord.mute, chord.hopo,
-					chord.harmonic, chord.bendValues.get(string), slideTo, chord.unpitchedSlide, selected,
+			notes.add(new NoteData(chord.position(), x, length, string, fret, fretDescription, chord.accent, chord.mute,
+					chord.hopo, chord.harmonic, chord.bendValues.get(string), slideTo, chord.unpitchedSlide, selected,
 					lastWasLinkNext));
 		}
 
@@ -207,60 +212,8 @@ public class GuitarDrawer {
 			noteIds = new DrawableShapeList();
 		}
 
-		private void addHammerOnShape(final int y, final NoteData note) {
-			final Position2D a = new Position2D(note.x, y - noteHeight / 2);
-			final Position2D b = new Position2D(note.x - noteWidth / 2, y + noteHeight / 2);
-			final Position2D c = new Position2D(note.x + noteWidth / 2, y + noteHeight / 2);
-			notes.add(filledTriangle(a, b, c, noteColors[note.string]));
-
-			if (note.selected) {
-				selects.add(strokedTriangle(a, b, c, selectColor));
-			}
-		}
-
-		private void addPullOffShape(final int y, final NoteData note) {
-			final Position2D a = new Position2D(note.x, y + noteHeight / 2);
-			final Position2D b = new Position2D(note.x - noteWidth / 2, y - noteHeight / 2);
-			final Position2D c = new Position2D(note.x + noteWidth / 2, y - noteHeight / 2);
-			notes.add(filledTriangle(a, b, c, noteColors[note.string]));
-
-			if (note.selected) {
-				selects.add(strokedTriangle(a, b, c, selectColor));
-			}
-		}
-
-		private void addHarmonicShape(final int y, final NoteData note) {
-			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)
-					.centered();
-
-			notes.add(filledRectangle(position, noteColors[note.string]));
-
-			final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y - 1, noteWidth + 5,
-					noteWidth + 5).centered();
-			notes.add(filledOval(harmonicPosition, new Color(224, 224, 224)));
-			notes.add(filledOval(harmonicPosition.resized(5, 5, -10, -10), noteColors[note.string]));
-
-			if (note.selected) {
-				selects.add(strokedRectangle(position.resized(-1, -1, 1, 1), selectColor));
-			}
-		}
-
-		private void addPinchHarmonicShape(final int y, final NoteData note) {
-			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
-					.centered();
-
-			notes.add(filledRectangle(position, noteColors[note.string]));
-			notes.add(filledOval(position.resized(-2, -2, 3, 3), ColorLabel.BASE_BG_1.color()));
-			notes.add(lineHorizontal(note.x - noteWidth / 2 - 2, note.x + noteWidth / 2 + 2, y,
-					ColorLabel.valueOf("LANE_" + note.string).color()));
-			notes.add(filledOval(position.resized(2, 2, -5, -5), noteColors[note.string]));
-			notes.add(filledOval(position.resized(5, 5, -11, -11), ColorLabel.BASE_BG_1.color()));
-			notes.add(lineHorizontal(note.x - noteWidth / 2 + 5, note.x + noteWidth / 2 - 5, y,
-					ColorLabel.valueOf("LANE_" + note.string).color()));
-
-			if (note.selected) {
-				selects.add(strokedRectangle(position.resized(-1, -1, 1, 1), selectColor));
-			}
+		private Color getNoteColor(final NoteData note) {
+			return note.mute != Mute.STRING ? noteColors[note.string] : stringMuteNoteColor;
 		}
 
 		private void addNormalNoteShape(final int y, final NoteData note) {
@@ -271,8 +224,7 @@ public class GuitarDrawer {
 			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 					.centered();
 
-			final Color noteColor = note.mute != Mute.STRING ? noteColors[note.string] : stringMuteNoteColor;
-			notes.add(filledRectangle(position, noteColor));
+			notes.add(filledRectangle(position, getNoteColor(note)));
 			if (note.accent) {
 				final Color accentColor = noteAccentColors[note.string];
 				notes.add(strokedRectangle(position.resized(0, 0, -1, -1), accentColor));
@@ -285,17 +237,88 @@ public class GuitarDrawer {
 			}
 		}
 
+		private void addHammerOnShape(final int y, final NoteData note) {
+			final Position2D a = new Position2D(note.x, y - noteHeight / 2);
+			final Position2D b = new Position2D(note.x - noteWidth / 2, y + noteHeight / 2);
+			final Position2D c = new Position2D(note.x + noteWidth / 2, y + noteHeight / 2);
+			notes.add(filledTriangle(a, b, c, getNoteColor(note)));
+
+			if (note.selected) {
+				selects.add(strokedTriangle(a, b, c, selectColor));
+			}
+		}
+
+		private void addPullOffShape(final int y, final NoteData note) {
+			final Position2D a = new Position2D(note.x, y + noteHeight / 2);
+			final Position2D b = new Position2D(note.x - noteWidth / 2, y - noteHeight / 2);
+			final Position2D c = new Position2D(note.x + noteWidth / 2, y - noteHeight / 2);
+			notes.add(filledTriangle(a, b, c, getNoteColor(note)));
+
+			if (note.selected) {
+				selects.add(strokedTriangle(a, b, c, selectColor));
+			}
+		}
+
+		private void addTapShape(final int y, final NoteData note) {
+			final int x0 = note.x - noteWidth / 2 - 2;
+			final int x1 = x0 + 10;
+			final int x3 = note.x + noteWidth / 2 + 2;
+			final int x2 = x3 - 10;
+
+			final int y0 = y - noteHeight / 2 - 2;
+			final int y1 = y;
+			final int y2 = y + noteHeight / 2 + 3;
+
+			final List<Position2D> positions = new ArrayList2<>(//
+					new Position2D(x2, y0), //
+					new Position2D(x3, y0), //
+					new Position2D(x1, y1), //
+					new Position2D(x3, y2), //
+					new Position2D(x2, y2), //
+					new Position2D(x0, y1));
+
+			notes.add(filledPolygon(positions, getNoteColor(note)));
+
+			if (note.selected) {
+				selects.add(strokedPolygon(positions, selectColor));
+			}
+		}
+
+		private void addHarmonicShape(final int y, final NoteData note) {
+			final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y - 1, noteWidth + 5,
+					noteWidth + 5).centered();
+			notes.add(filledOval(harmonicPosition, new Color(224, 224, 224)));
+			notes.add(filledOval(harmonicPosition.resized(5, 5, -10, -10), noteColors[note.string]));
+		}
+
+		private void addPinchHarmonicShape(final int y, final NoteData note) {
+			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+					.centered();
+
+			notes.add(filledOval(position.resized(-2, -2, 3, 3), ColorLabel.BASE_BG_1.color()));
+			notes.add(lineHorizontal(note.x - noteWidth / 2 - 2, note.x + noteWidth / 2 + 2, y,
+					ColorLabel.valueOf("LANE_" + note.string).color()));
+			notes.add(filledOval(position.resized(2, 2, -5, -5), noteColors[note.string]));
+			notes.add(filledOval(position.resized(5, 5, -11, -11), ColorLabel.BASE_BG_1.color()));
+			notes.add(lineHorizontal(note.x - noteWidth / 2 + 5, note.x + noteWidth / 2 - 5, y,
+					ColorLabel.valueOf("LANE_" + note.string).color()));
+		}
+
 		private void addNoteShape(final NoteData note, final int y) {
-			if (note.hopo == HOPO.HAMMER_ON) {
+			if (note.hopo == HOPO.NONE) {
+				addNormalNoteShape(y, note);
+			} else if (note.hopo == HOPO.HAMMER_ON) {
 				addHammerOnShape(y, note);
 			} else if (note.hopo == HOPO.PULL_OFF) {
 				addPullOffShape(y, note);
-			} else if (note.harmonic == Harmonic.NORMAL) {
+			} else if (note.hopo == HOPO.TAP) {
+				addTapShape(y, note);
+			}
+
+			if (note.harmonic == Harmonic.NORMAL) {
 				addHarmonicShape(y, note);
 			} else if (note.harmonic == Harmonic.PINCH) {
 				addPinchHarmonicShape(y, note);
-			} else {
-				addNormalNoteShape(y, note);
 			}
 		}
 
@@ -381,7 +404,7 @@ public class GuitarDrawer {
 			Position2D lastBendLinePosition = new Position2D(note.x, getBendLineY(y, BigDecimal.ZERO));
 
 			for (final BendValue bendValue : note.bendValues) {
-				final int bendX = timeToX(bendValue.position(), data.time);
+				final int bendX = timeToX(note.position + bendValue.position(), data.time);
 				final int bendY = bendX > note.x + noteWidth ? y : y - 26;
 
 				final Position2D lineTo = new Position2D(bendX, getBendLineY(y, bendValue.bendValue));

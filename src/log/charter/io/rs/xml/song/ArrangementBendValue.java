@@ -20,8 +20,8 @@ public class ArrangementBendValue {
 	public ArrangementBendValue() {
 	}
 
-	public ArrangementBendValue(final BendValue bendValue) {
-		time = bendValue.position();
+	public ArrangementBendValue(final BendValue bendValue, final int notePosition) {
+		time = notePosition + bendValue.position();
 		step = bendValue.bendValue;
 	}
 }

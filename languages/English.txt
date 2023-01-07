@@ -40,6 +40,7 @@ GUITAR_MENU_TOGGLE_HOPO=Toggle HO/PO
 GUITAR_MENU_TOGGLE_HARMONIC=Toggle harmonic
 GUITAR_MENU_SET_SLIDE=Set slide
 GUITAR_MENU_TOGGLE_LINK_NEXT=Toggle link next
+GUITAR_MENU_SET_FRET=Set fret
 GUITAR_MENU_NOTE_OPTIONS=Note options
 GUITAR_MENU_NOTE_OPTIONS_TOOLTIP=Opens notes for edit as chord or single note based on first note selected
 GUITAR_MENU_SINGLE_NOTE_OPTIONS=Single note options

@@ -78,7 +78,8 @@ public class ArrangementNote {
 						.map(bendValue -> bendValue.bendValue == null ? 0 : bendValue.bendValue.intValue())
 						.collect(Collectors.maxBy(Integer::compare)).orElse(null);
 		bendValues = note.bendValues.isEmpty() ? null
-				: new CountedList<>(note.bendValues.map(ArrangementBendValue::new));
+				: new CountedList<>(
+						note.bendValues.map(bendValue -> new ArrangementBendValue(bendValue, note.position())));
 
 		linkNext = note.linkNext ? 1 : null;
 

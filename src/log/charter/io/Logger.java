@@ -18,7 +18,9 @@ public class Logger {
 			final File dir = new File("logs/");
 			if (!dir.exists()) {
 				dir.mkdirs();
+				dir.mkdir();
 			}
+
 			out = new PrintStream(new FileOutputStream(dir.getAbsolutePath() + "/" + name, false));
 		} catch (final Exception e) {
 			e.printStackTrace();

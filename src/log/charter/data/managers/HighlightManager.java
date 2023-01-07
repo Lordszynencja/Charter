@@ -166,11 +166,15 @@ public class HighlightManager {
 		position = snapPosition(positionType, position);
 		position = max(0, min(data.songChart.beatsMap.beats.getLast().position(), position));
 
-		final PositionWithIdAndType existingPosition = selectionManager
-				.findExistingPosition(timeToX(position, data.time), y);
-
+		final PositionWithIdAndType existingPosition = selectionManager.findExistingPosition(x, y);
 		if (existingPosition != null) {
 			return existingPosition;
+		}
+
+		final PositionWithIdAndType existingPositionCloseToGrid = selectionManager
+				.findExistingPosition(timeToX(position, data.time), y);
+		if (existingPositionCloseToGrid != null) {
+			return existingPositionCloseToGrid;
 		}
 
 		return PositionWithIdAndType.create(position, positionType);

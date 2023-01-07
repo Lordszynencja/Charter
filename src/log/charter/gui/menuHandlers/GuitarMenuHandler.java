@@ -65,6 +65,7 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Label.GUITAR_MENU_TOGGLE_LINK_NEXT, button('L'), this::toggleLinkNext));
 
 		menu.addSeparator();
+		menu.add(createItem(Label.GUITAR_MENU_SET_FRET, alt('F'), this::setFret));
 		final JMenuItem noteOptions = createItem(Label.GUITAR_MENU_NOTE_OPTIONS, button('W'), this::noteOptions);
 		noteOptions.setToolTipText(Label.GUITAR_MENU_NOTE_OPTIONS_TOOLTIP.label());
 		menu.add(noteOptions);
@@ -153,6 +154,10 @@ class GuitarMenuHandler extends CharterMenuHandler {
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 
 		return selectedAccessor.getSortedSelected().map(selection -> selection.selectable);
+	}
+
+	private void setFret() {
+
 	}
 
 	private void openChordOptionsPopup(final ArrayList2<ChordOrNote> selected) {

@@ -3,6 +3,7 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.util.Position2D;
@@ -54,6 +55,23 @@ public interface DrawableShape {
 	// Diamonds
 	public static DrawableShape filledDiamond(final Position2D position, final int radius, final Color color) {
 		return new FilledDiamond(position, radius, color);
+	}
+
+	// Polygons
+	public static DrawableShape filledPolygon(final List<Position2D> positions, final Color color) {
+		return new FilledPolygon(positions.toArray(new Position2D[0]), color);
+	}
+
+	public static DrawableShape filledPolygon(final Color color, final Position2D... positions) {
+		return new FilledPolygon(positions, color);
+	}
+
+	public static DrawableShape strokedPolygon(final List<Position2D> positions, final Color color) {
+		return new StrokedPolygon(positions.toArray(new Position2D[0]), color);
+	}
+
+	public static DrawableShape strokedPolygon(final Color color, final Position2D... positions) {
+		return new StrokedPolygon(positions, color);
 	}
 
 	// Arcs

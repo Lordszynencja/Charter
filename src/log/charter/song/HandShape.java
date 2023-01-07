@@ -15,6 +15,11 @@ public class HandShape extends PositionWithLength {
 		chordId = -1;
 	}
 
+	public HandShape(final int chordId) {
+		super(0, 0);
+		this.chordId = chordId;
+	}
+
 	public HandShape(final ArrangementHandShape arrangementHandShape) {
 		super(arrangementHandShape.startTime, arrangementHandShape.endTime - arrangementHandShape.startTime);
 		chordId = arrangementHandShape.chordId;

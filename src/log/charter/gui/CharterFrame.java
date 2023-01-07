@@ -18,6 +18,7 @@ import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.copySystem.CopyManager;
 import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
@@ -53,6 +54,7 @@ public class CharterFrame extends JFrame {
 	private final AudioDrawer audioDrawer = new AudioDrawer();
 	private final AudioHandler audioHandler = new AudioHandler();
 	private final BeatsDrawer beatsDrawer = new BeatsDrawer();
+	private final CopyManager copyManager = new CopyManager();
 	private final ChartData data = new ChartData();
 	private final HighlightManager highlightManager = new HighlightManager();
 	private final KeyboardHandler keyboardHandler = new KeyboardHandler();
@@ -86,6 +88,7 @@ public class CharterFrame extends JFrame {
 		audioDrawer.init(data, chartPanel);
 		audioHandler.init(data, this, keyboardHandler);
 		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, selectionManager);
+		copyManager.init(data, modeManager, selectionManager, undoSystem);
 		data.init(audioHandler, charterMenuBar, modeManager, scrollBar, selectionManager, undoSystem);
 		keyboardHandler.init(audioHandler, data, this, modeManager, mouseHandler, selectionManager);
 		highlightManager.init(data, modeManager, selectionManager);
@@ -97,8 +100,8 @@ public class CharterFrame extends JFrame {
 		selectionManager.init(data, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 
-		charterMenuBar.init(audioDrawer, audioHandler, data, this, keyboardHandler, modeManager, selectionManager,
-				songFileHandler, undoSystem);
+		charterMenuBar.init(audioDrawer, audioHandler, copyManager, data, this, keyboardHandler, modeManager,
+				selectionManager, songFileHandler, undoSystem);
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 
@@ -122,6 +125,12 @@ public class CharterFrame extends JFrame {
 		setFocusable(true);
 
 		framer.start();
+	}
+
+	public CharterFrame(final String path) {
+		this();
+
+		songFileHandler.open(path);
 	}
 
 	private void frame() {

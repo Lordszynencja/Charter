@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import javax.swing.JMenuBar;
 
 import log.charter.data.ChartData;
+import log.charter.data.copySystem.CopyManager;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
@@ -36,11 +37,11 @@ public class CharterMenuBar extends JMenuBar {
 			guitarMenuHandler, //
 			infoMenuHandler);
 
-	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler, final ChartData data,
-			final CharterFrame frame, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
-			final SelectionManager selectionManager, final SongFileHandler songFileHandler,
-			final UndoSystem undoSystem) {
-		editMenuHandler.init(data, frame, selectionManager, undoSystem);
+	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler, final CopyManager copyManager,
+			final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
+			final ModeManager modeManager, final SelectionManager selectionManager,
+			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
+		editMenuHandler.init(copyManager, data, frame, selectionManager, undoSystem);
 		fileMenuHandler.init(data, frame, songFileHandler);
 		infoMenuHandler.init(frame, this);
 		guitarMenuHandler.init(data, frame, modeManager, selectionManager, undoSystem);

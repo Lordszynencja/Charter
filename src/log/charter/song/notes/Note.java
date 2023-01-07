@@ -35,7 +35,8 @@ public class Note extends GuitarSound {
 		vibrato = arrangementNote.vibrato;
 		bassPicking = BassPickingTechnique.fromArrangmentNote(arrangementNote);
 		bendValues = arrangementNote.bendValues == null ? new ArrayList2<>()
-				: arrangementNote.bendValues.list.map(BendValue::new);
+				: arrangementNote.bendValues.list
+						.map(arrangementBendValue -> new BendValue(arrangementBendValue, arrangementNote.time));
 	}
 
 	public Note(final Note other) {

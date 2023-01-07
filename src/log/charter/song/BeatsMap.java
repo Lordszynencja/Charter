@@ -65,7 +65,7 @@ public class BeatsMap {
 	}
 
 	public void makeBeatsUntilSongEnd() {
-		Beat current = beats.getLast();
+		final Beat current = beats.getLast();
 		if (current.position() > songLengthMs) {
 			beats.removeIf(beat -> beat.position() > songLengthMs);
 			return;
@@ -96,9 +96,7 @@ public class BeatsMap {
 
 		while (pos < songLengthMs) {
 			beatInMeasure++;
-			previous = current;
-			current = new Beat(pos, beatsInMeasure, beatInMeasure == beatsInMeasure);
-			beats.add(current);
+			beats.add(new Beat(pos, beatsInMeasure, beatInMeasure == beatsInMeasure));
 
 			pos += distance;
 			if (beatInMeasure == beatsInMeasure) {
@@ -120,6 +118,8 @@ public class BeatsMap {
 			} else if (count == previousBIM) {
 				beat.firstInMeasure = true;
 				count = 0;
+			} else {
+				beat.firstInMeasure = false;
 			}
 		}
 	}

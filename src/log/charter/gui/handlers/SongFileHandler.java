@@ -177,6 +177,50 @@ public class SongFileHandler {
 		return MusicData.readFile(musicFile.getAbsolutePath());
 	}
 
+	public void open(final String path) {
+		final File projectFileChosen = new File(path);
+		final String dir = projectFileChosen.getParent() + File.separator;
+		final String name = projectFileChosen.getName().toLowerCase();
+
+		if (!name.endsWith(".rscp")) {
+			frame.showPopup(Label.UNSUPPORTED_FILE_TYPE.label());
+			error("unsupported file: " + projectFileChosen.getName());
+			return;
+		}
+
+		final RocksmithChartProject project = readProject(RW.read(projectFileChosen));
+		if (project.chartFormatVersion > 2) {
+			frame.showPopup(Label.PROJECT_IS_NEWER_VERSION.label());
+			return;
+		}
+
+		final MusicData musicData = MusicData.readFile(dir + project.musicFileName);
+		if (musicData == null) {
+			frame.showPopup(Label.WRONG_MUSIC_FILE.label());
+			return;
+		}
+
+		final SongChart songChart;
+		try {
+			songChart = new SongChart(musicData.msLength(), project, dir);
+		} catch (final Exception e) {
+			frame.showPopup(e.getMessage());
+			return;
+		}
+
+		final List<String> filesToBackup = new ArrayList<>();
+		filesToBackup.add(projectFileChosen.getName());
+		filesToBackup.addAll(project.arrangementFiles);
+		filesToBackup.add("Vocals_RS2.xml");
+		makeBackups(dir, filesToBackup);
+
+		Config.lastPath = dir;
+		Config.markChanged();
+
+		data.setSong(dir, songChart, musicData, projectFileChosen.getName(), project.editMode, project.arrangement,
+				project.level, project.time);
+	}
+
 	public void open() {
 		if (!frame.checkChanged()) {
 			return;
@@ -344,7 +388,7 @@ public class SongFileHandler {
 		}
 
 		if (!data.songChart.vocals.vocals.isEmpty()) {
-			RW.write(data.path + "Vocals_RS2.xml", saveVocals(new ArrangementVocals(data.songChart.vocals)));
+			RW.write(data.path + "Vocals_RS2.xml", saveVocals(new ArrangementVocals(data.songChart.vocals)), "UTF-8");
 		}
 
 		RW.write(data.path + data.projectFileName, saveProject(project));

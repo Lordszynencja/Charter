@@ -253,6 +253,8 @@ public class ChartData {
 		isEmpty = false;
 
 		songChart = song;
+		music = musicData;
+
 		audioHandler.stopMusic();
 		selectionManager.clear();
 		changeDifficulty(level);
@@ -267,8 +269,6 @@ public class ChartData {
 		Config.lastPath = path;
 		Config.markChanged();
 
-		music = musicData;
-
 		selectionManager.clear();
 		undoSystem.clear();
 	}
@@ -278,14 +278,23 @@ public class ChartData {
 	}
 
 	public int currentStrings() {
+		if (modeManager.editMode != EditMode.GUITAR) {
+			return -1;
+		}
 		return getCurrentArrangement().tuning.strings;
 	}
 
 	public ArrangementChart getCurrentArrangement() {
+		if (modeManager.editMode != EditMode.GUITAR) {
+			return null;
+		}
 		return songChart.arrangements.get(currentArrangement);
 	}
 
 	public Level getCurrentArrangementLevel() {
+		if (modeManager.editMode != EditMode.GUITAR) {
+			return null;
+		}
 		return songChart.arrangements.get(currentArrangement).levels.get(currentLevel);
 	}
 

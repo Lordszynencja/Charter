@@ -14,8 +14,8 @@ public class BytesSelection implements Transferable, ClipboardOwner {
 	private static final byte[] hexes = { '0', '1', '2', '3', '4', '5', '6', '7', '8', //
 			'9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-	private static final int string = 0;
-	private static final int plainText = 1;
+	private static final int plainText = 0;
+	private static final int string = 1;
 	private static final int inputStream = 2;
 	private static final int byteArray = 3;
 
@@ -25,8 +25,8 @@ public class BytesSelection implements Transferable, ClipboardOwner {
 		DataFlavor[] flavors;
 
 		try {
-			flavors = new DataFlavor[] { new DataFlavor("application/x-java-serialized-object; class=java.lang.String"), //
-					new DataFlavor("text/plain; charset=unicode; class=java.io.InputStream"), //
+			flavors = new DataFlavor[] { new DataFlavor("text/plain; charset=unicode; class=java.io.InputStream"), //
+					new DataFlavor("application/x-java-serialized-object; class=java.lang.String"), //
 					new DataFlavor("application/octet-stream; class=java.io.InputStream"), //
 					new DataFlavor("application/octet-stream") };
 		} catch (final Exception e) {
@@ -49,13 +49,11 @@ public class BytesSelection implements Transferable, ClipboardOwner {
 	}
 
 	@Override
-	public Object getTransferData(final DataFlavor flavor)
-			throws UnsupportedFlavorException,
-			IOException {
-		if (supportedFlavors[string].equals(flavor)) {
-			return new String(hexedBytes);
-		} else if (supportedFlavors[plainText].equals(flavor)) {
-			return new StringReader(new String(hexedBytes));
+	public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+		if (supportedFlavors[plainText].equals(flavor)) {
+			return new StringReader(new String(bytes));
+		} else if (supportedFlavors[string].equals(flavor)) {
+			return new String(bytes);
 		} else if (supportedFlavors[inputStream].equals(flavor)) {
 			return new ByteArrayInputStream(bytes);
 		} else if (supportedFlavors[byteArray].equals(flavor)) {

@@ -41,6 +41,9 @@ public interface IPosition extends Comparable<IPosition> {
 	}
 
 	public static <T extends IPosition> int findFirstIdAfter(final ArrayList2<T> list, final int position) {
+		if (list.isEmpty()) {
+			return -1;
+		}
 		if (position >= list.getLast().position()) {
 			return -1;
 		}
@@ -65,6 +68,10 @@ public interface IPosition extends Comparable<IPosition> {
 	}
 
 	public static <T extends IPosition> int findLastIdBefore(final List<T> list, final int position) {
+		if (list.isEmpty()) {
+			return -1;
+		}
+
 		if (position <= list.get(0).position()) {
 			return -1;
 		}
@@ -81,6 +88,28 @@ public interface IPosition extends Comparable<IPosition> {
 		}
 
 		return list.get(maxId).position() >= position ? minId : maxId;
+	}
+
+	public static <T extends IPosition> int findLastIdBeforeEqual(final List<T> list, final int position) {
+		if (list.isEmpty()) {
+			return -1;
+		}
+		if (position < list.get(0).position()) {
+			return -1;
+		}
+
+		int minId = 0;
+		int maxId = list.size() - 1;
+		while (maxId - minId > 1) {
+			final int id = (minId + maxId) / 2;
+			if (list.get(id).position() > position) {
+				maxId = id - 1;
+			} else {
+				minId = id;
+			}
+		}
+
+		return list.get(maxId).position() > position ? minId : maxId;
 	}
 
 	public static <T extends IPosition> T findLastBefore(final List<T> list, final int position) {

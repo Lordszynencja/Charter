@@ -13,8 +13,8 @@ public class BendValue extends Position {
 		this.bendValue = bendValue;
 	}
 
-	public BendValue(final ArrangementBendValue arrangementBendValue) {
-		super(arrangementBendValue.time);
+	public BendValue(final ArrangementBendValue arrangementBendValue, final int noteTime) {
+		super(arrangementBendValue.time - noteTime);
 		bendValue = arrangementBendValue.step;
 	}
 

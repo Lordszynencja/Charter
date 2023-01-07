@@ -11,6 +11,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.panes.TuningPane;
+import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.ArrangementChart;
 import log.charter.util.CollectionUtils.HashMap2;
 
@@ -69,6 +70,7 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(EditMode.TEMPO_MAP.label, () -> changeEditMode(EditMode.TEMPO_MAP)));
 		menu.add(createItem(EditMode.VOCALS.label, () -> changeEditMode(EditMode.VOCALS)));
 		addArrangementsList(menu);
+		menu.add(createItem("New arrangement...", this::addArrangement));
 
 		if (modeManager.editMode == EditMode.GUITAR) {
 			menu.addSeparator();
@@ -97,6 +99,12 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 
 	private void changeArrangement(final int arrangementId) {
 		data.currentArrangement = arrangementId;
+		changeEditMode(EditMode.GUITAR);
+	}
+
+	private void addArrangement() {
+		data.currentArrangement = data.songChart.arrangements.size();
+		data.songChart.arrangements.add(new ArrangementChart(ArrangementType.Lead, data.songChart.beatsMap.beats));
 		changeEditMode(EditMode.GUITAR);
 	}
 

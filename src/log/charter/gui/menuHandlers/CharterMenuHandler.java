@@ -32,6 +32,10 @@ abstract class CharterMenuHandler {
 		return getKeyStroke(keyCode, 0);
 	}
 
+	protected static KeyStroke alt(final int keyCode) {
+		return getKeyStroke(keyCode, KeyEvent.ALT_DOWN_MASK);
+	}
+
 	protected static KeyStroke ctrl(final int keyCode) {
 		return getKeyStroke(keyCode, KeyEvent.CTRL_DOWN_MASK);
 	}

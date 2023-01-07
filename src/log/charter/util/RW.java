@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -85,6 +86,10 @@ public class RW {
 
 	public static void write(final String filename, final String content) {
 		writeB(filename, content.getBytes());
+	}
+
+	public static void write(final String filename, final String content, final String charset) {
+		writeB(filename, content.getBytes(Charset.forName(charset)));
 	}
 
 	public static void writeB(final File f, final byte[] content) {

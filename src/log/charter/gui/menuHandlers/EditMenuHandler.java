@@ -4,11 +4,11 @@ import static java.awt.event.KeyEvent.VK_DELETE;
 
 import java.util.List;
 
-import javax.swing.JDialog;
 import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.copySystem.CopyManager;
 import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
@@ -27,13 +27,15 @@ class EditMenuHandler extends CharterMenuHandler {
 			PositionType.HAND_SHAPE, //
 			PositionType.VOCAL);
 
+	private CopyManager copyManager;
 	private ChartData data;
 	private CharterFrame frame;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	void init(final ChartData data, final CharterFrame frame, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
+	void init(final CopyManager copyManager, final ChartData data, final CharterFrame frame,
+			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+		this.copyManager = copyManager;
 		this.data = data;
 		this.frame = frame;
 		this.selectionManager = selectionManager;
@@ -55,8 +57,8 @@ class EditMenuHandler extends CharterMenuHandler {
 		menu.addSeparator();
 		menu.add(createItem(Label.EDIT_MENU_SELECT_ALL, ctrl('A'), this::selectAllNotes));
 		menu.add(createItem(Label.EDIT_MENU_DELETE, button(VK_DELETE), this::delete));
-		menu.add(createItem(Label.EDIT_MENU_COPY, ctrl('C'), this::copy));
-		menu.add(createItem(Label.EDIT_MENU_PASTE, ctrl('V'), this::paste));
+		menu.add(createItem(Label.EDIT_MENU_COPY, ctrl('C'), copyManager::copy));
+		menu.add(createItem(Label.EDIT_MENU_PASTE, ctrl('V'), copyManager::paste));
 
 		menu.addSeparator();
 		menu.add(createItem(Label.EDIT_MENU_SONG_OPTIONS, this::songOptions));
@@ -84,18 +86,14 @@ class EditMenuHandler extends CharterMenuHandler {
 				for (int i = selected.size() - 1; i >= 0; i--) {
 					positions.remove(selected.get(i).id);
 				}
+
+				if (type == PositionType.BEAT) {
+					data.songChart.beatsMap.fixFirstBeatInMeasures();
+				}
 			}
 		}
 
 		selectionManager.clear();
-	}
-
-	private void copy() {
-		new JDialog(frame, "Copying is not implemented yet");
-	}
-
-	private void paste() {
-		new JDialog(frame, "Pasting is not implemented yet");
 	}
 
 	private void songOptions() {

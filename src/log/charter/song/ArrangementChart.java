@@ -25,7 +25,8 @@ public class ArrangementChart {
 	public ArrayList2<ChordTemplate> chordTemplates = new ArrayList2<>();
 	public ArrayList2<ChordTemplate> fretHandMuteTemplates = new ArrayList2<>();
 
-	public ArrangementChart(final ArrayList2<Beat> beats) {
+	public ArrangementChart(final ArrangementType arrangementType, final ArrayList2<Beat> beats) {
+		this.arrangementType = arrangementType;
 		phrases.put("COUNT", new Phrase(0, false));
 		phrases.put("END", new Phrase(0, false));
 		phraseIterations.add(new PhraseIteration(beats.get(0), "COUNT"));

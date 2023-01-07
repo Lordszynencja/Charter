@@ -155,7 +155,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	private void getAllLeftRightPositions(final int leftPosition, final int middlePosition, final int rightPosition,
 			final List<IPosition> left, final List<IPosition> right) {
-		splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, data.songChart.beatsMap.beats);
 		splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, data.songChart.vocals.vocals);
 
 		for (final ArrangementChart arrangement : data.songChart.arrangements) {
@@ -180,6 +179,18 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 	}
 
+	private void straightenBeats(final int from, final int to) {
+		final int positionFrom = data.songChart.beatsMap.beats.get(from).position();
+		final int positionTo = data.songChart.beatsMap.beats.get(to).position();
+		final int size = to - from;
+
+		for (int i = 1; i < size; i++) {
+			final int beatId = from + i;
+			final int beatPosition = (positionFrom * (size - i) + positionTo * i) / size;
+			data.songChart.beatsMap.beats.get(beatId).position(beatPosition);
+		}
+	}
+
 	private void dragTempo(final MouseButtonPressReleaseData clickData) {
 		if (modeManager.editMode != EditMode.TEMPO_MAP) {
 			return;
@@ -201,7 +212,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 				min(data.music.msLength(), xToTime(clickData.releasePosition.x, data.time)));
 		final int rightPositionBefore;
 		final int rightPositionAfter;
-		boolean changeLastBeat = false;
 
 		if (rightId != null) {
 			rightPositionBefore = beats.get(rightId).position();
@@ -211,7 +221,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			final int beatLength = middleId == leftId ? 500
 					: (middlePositionAfter - leftPosition) / (middleId - leftId);
 			rightPositionAfter = middlePositionAfter + (beats.size() - middleId - 1) * beatLength;
-			changeLastBeat = true;
 		} else {
 			rightPositionBefore = middlePositionBefore;
 			rightPositionAfter = middlePositionAfter;
@@ -228,12 +237,18 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		if (!right.isEmpty()) {
 			movePositionsBasedOnBeatsChange(middlePositionBefore, rightPositionBefore, middlePositionAfter,
 					rightPositionAfter, right);
-		} else {
-			clickData.pressHighlight.beat.position(middlePositionAfter);
 		}
 
-		if (changeLastBeat) {
-			beats.getLast().position(rightPositionAfter);
+		clickData.pressHighlight.beat.position(middlePositionAfter);
+
+		straightenBeats(leftId, middleId);
+
+		if (rightId != null) {
+			straightenBeats(middleId, rightId);
+		} else {
+			while (beats.size() > middleId + 1) {
+				beats.remove(beats.size() - 1);
+			}
 		}
 
 		data.songChart.beatsMap.makeBeatsUntilSongEnd();

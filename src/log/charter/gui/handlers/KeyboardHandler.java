@@ -21,7 +21,6 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
-import log.charter.song.Beat;
 import log.charter.song.ChordTemplate;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
@@ -98,21 +97,25 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	private void handleLeft() {
-		if (alt) {
-			final Beat beat = findLastBefore(data.songChart.beatsMap.beats, data.time);
-			frame.setNextTime(beat.position());
-		} else {
+		if (!alt) {
 			left = true;
+			return;
 		}
+
+		final int newTime = ctrl ? data.songChart.beatsMap.getPositionWithRemovedGrid(data.time, 1)//
+				: findLastBefore(data.songChart.beatsMap.beats, data.time).position();
+		frame.setNextTime(newTime);
 	}
 
 	private void handleRight() {
-		if (alt) {
-			final Beat beat = findFirstAfter(data.songChart.beatsMap.beats, data.time);
-			frame.setNextTime(beat.position());
-		} else {
+		if (!alt) {
 			right = true;
+			return;
 		}
+
+		final int newTime = ctrl ? data.songChart.beatsMap.getPositionWithAddedGrid(data.time, 1)//
+				: findFirstAfter(data.songChart.beatsMap.beats, data.time).position();
+		frame.setNextTime(newTime);
 	}
 
 	private void setFret(final int fret) {

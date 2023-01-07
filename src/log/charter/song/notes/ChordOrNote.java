@@ -1,5 +1,8 @@
 package log.charter.song.notes;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("sound")
 public class ChordOrNote implements IPositionWithLength {
 	public Chord chord;
 	public Note note;

@@ -23,7 +23,13 @@ public class LogCharterRSMain {
 	public static void main(final String[] args) throws InterruptedException, IOException {
 		Config.init();
 		createHelpFile();
-		new CharterFrame();
+
+		if (args.length > 0) {
+			new CharterFrame(args[0]);
+		} else {
+			new CharterFrame();
+		}
+
 		new Thread(() -> {
 			try {
 				while (true) {
