@@ -12,6 +12,7 @@ import log.charter.data.config.Localization.Label;
 
 public class TextInputWithValidation extends JTextField implements DocumentListener {
 	private static final long serialVersionUID = 1L;
+	public static final Color errorBackground = new Color(160, 64, 64);
 
 	public static interface StringValueSetter {
 		void setValue(String val);
@@ -130,7 +131,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		error = true;
 		normalBackgroundColor = getBackground();
 		setToolTipText(validation);
-		setBackground(new Color(160, 64, 64));
+		setBackground(errorBackground);
 		if (allowWrongValues) {
 			setter.setValue(val);
 		}

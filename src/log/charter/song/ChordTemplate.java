@@ -5,6 +5,7 @@ import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.io.rs.xml.song.ArrangementChordTemplate;
 import log.charter.util.CollectionUtils.HashMap2;
@@ -12,7 +13,9 @@ import log.charter.util.IntRange;
 
 @XStreamAlias("chordTemplate")
 public class ChordTemplate {
+	@XStreamAsAttribute
 	public String chordName = "";
+	@XStreamAsAttribute
 	public boolean arpeggio;
 	public HashMap2<Integer, Integer> fingers = new HashMap2<>();
 	public HashMap2<Integer, Integer> frets = new HashMap2<>();

@@ -82,6 +82,7 @@ public class ChartPanelColors {
 		ANCHOR(128, 0, 0), //
 		HAND_SHAPE(0, 128, 255), //
 		HAND_SHAPE_ARPEGGIO(128, 0, 255), //
+		TONE_CHANGE(128, 128, 0), //
 
 		VOCAL_LINE_BACKGROUND(0, 210, 210), //
 		VOCAL_LINE_TEXT(0, 0, 128), //

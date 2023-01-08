@@ -11,6 +11,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneSize;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
@@ -24,6 +25,7 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.str
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.text;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.textWithBackground;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
 
@@ -57,6 +59,7 @@ import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
+import log.charter.song.ToneChange;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
@@ -189,9 +192,10 @@ public class GuitarDrawer {
 		private final DrawableShapeList noteTailSelects;
 		private final DrawableShapeList notes;
 		private final DrawableShapeList noteFrets;
+		private final DrawableShapeList noteIds;
 		private final DrawableShapeList selects;
 		private final DrawableShapeList slideFrets;
-		private final DrawableShapeList noteIds;
+		private final DrawableShapeList toneChanges;
 
 		public DrawingData(final int strings) {
 			stringPositions = new int[strings];
@@ -207,9 +211,10 @@ public class GuitarDrawer {
 			noteTailSelects = new DrawableShapeList();
 			notes = new DrawableShapeList();
 			noteFrets = new DrawableShapeList();
+			noteIds = new DrawableShapeList();
 			selects = new DrawableShapeList();
 			slideFrets = new DrawableShapeList();
-			noteIds = new DrawableShapeList();
+			toneChanges = new DrawableShapeList();
 		}
 
 		private Color getNoteColor(final NoteData note) {
@@ -493,8 +498,22 @@ public class GuitarDrawer {
 			}
 		}
 
+		public void addToneChange(final ToneChange toneChange, final int x, final boolean selected) {
+			toneChanges.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.TONE_CHANGE));
+			toneChanges.add(textWithBackground(new Position2D(x + 4, toneChangeY + 12), "" + toneChange.toneName,
+					ColorLabel.TONE_CHANGE, ColorLabel.BASE_TEXT));
+
+			if (selected) {
+				final int top = toneChangeY - 1;
+				final int bottom = lanesBottom + 1;
+				final ShapePositionWithSize toneChangePosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
+				selects.add(strokedRectangle(toneChangePosition, selectColor));
+			}
+		}
+
 		public void draw(final Graphics g) {
 			g.setFont(anchorFont);
+			toneChanges.draw(g);
 			anchors.draw(g);
 			chordNames.draw(g);
 			noteTails.draw(g);
@@ -554,9 +573,34 @@ public class GuitarDrawer {
 		}
 	}
 
-	private void addAnchors(final DrawingData drawingData, final Level level, final int panelWidth) {
-		final HashSet2<Integer> selectedAnchorIds = selectionManager.getSelectedAccessor(PositionType.ANCHOR)//
+	private HashSet2<Integer> getSelectedIds(final PositionType positionType) {
+		return selectionManager.getSelectedAccessor(positionType)//
 				.getSelectedSet().map(selection -> selection.id);
+	}
+
+	private void addToneChanges(final DrawingData drawingData, final ArrangementChart arrangement,
+			final int panelWidth) {
+		final HashSet2<Integer> selectedToneChangeIds = getSelectedIds(PositionType.TONE_CHANGE);
+		final ArrayList2<ToneChange> toneChanges = arrangement.toneChanges;
+
+		for (int i = 0; i < toneChanges.size(); i++) {
+			final ToneChange toneChange = toneChanges.get(i);
+			final int x = timeToX(toneChange.position(), data.time);
+			if (isPastRightEdge(x, panelWidth)) {
+				break;
+			}
+
+			if (!isOnScreen(x, 100)) {
+				continue;
+			}
+
+			final boolean selected = selectedToneChangeIds.contains(i);
+			drawingData.addToneChange(toneChange, x, selected);
+		}
+	}
+
+	private void addAnchors(final DrawingData drawingData, final Level level, final int panelWidth) {
+		final HashSet2<Integer> selectedAnchorIds = getSelectedIds(PositionType.ANCHOR);
 
 		for (int i = 0; i < level.anchors.size(); i++) {
 			final Anchor anchor = level.anchors.get(i);
@@ -623,10 +667,7 @@ public class GuitarDrawer {
 
 	private void addGuitarNotes(final DrawingData drawingData, final ArrangementChart arrangement,
 			final int panelWidth) {
-		final HashSet2<Integer> selectedNoteIds = selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE)
-				.getSelectedSet()//
-				.map(selection -> selection.id);
-
+		final HashSet2<Integer> selectedNoteIds = getSelectedIds(PositionType.GUITAR_NOTE);
 		final ArrayList2<ChordOrNote> chordsAndNotes = data.getCurrentArrangementLevel().chordsAndNotes;
 
 		boolean lastWasLinkNext = false;
@@ -641,8 +682,7 @@ public class GuitarDrawer {
 
 	private void addHandShapes(final DrawingData drawingData, final ArrangementChart arrangement, final Level level,
 			final int panelWidth) {
-		final HashSet2<Integer> selectedHandShapeIds = selectionManager.getSelectedAccessor(PositionType.HAND_SHAPE)//
-				.getSelectedSet().map(selection -> selection.id);
+		final HashSet2<Integer> selectedHandShapeIds = getSelectedIds(PositionType.HAND_SHAPE);
 
 		for (int i = 0; i < level.handShapes.size(); i++) {
 			final HandShape handShape = level.handShapes.get(i);
@@ -675,9 +715,10 @@ public class GuitarDrawer {
 
 		final int panelWidth = chartPanel.getWidth();
 
+		addToneChanges(drawingData, arrangement, panelWidth);
+		addAnchors(drawingData, level, panelWidth);
 		addGuitarNotes(drawingData, arrangement, panelWidth);
 		addHandShapes(drawingData, arrangement, level, panelWidth);
-		addAnchors(drawingData, level, panelWidth);
 
 		drawingData.draw(g);
 	}

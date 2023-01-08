@@ -4,6 +4,8 @@ import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import log.charter.song.Beat;
 import log.charter.song.notes.IPosition;
 
@@ -32,6 +34,7 @@ public abstract class CopiedPosition<T extends IPosition> {
 		return beatId + 1.0 * (position - beat.position()) / (nextBeat.position() - beat.position());
 	}
 
+	@XStreamAsAttribute
 	public final double position;
 
 	public CopiedPosition(final List<Beat> beats, final double basePositionInBeats, final T positionWithLength) {

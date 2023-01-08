@@ -7,7 +7,7 @@ public class ArrangementProperties {
 	 * is main arrangement
 	 */
 	@XStreamAsAttribute
-	public int represent;
+	public int represent = 1;
 	@XStreamAsAttribute
 	public int bonusArr;
 	@XStreamAsAttribute

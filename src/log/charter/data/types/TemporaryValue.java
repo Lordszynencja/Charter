@@ -3,6 +3,7 @@ package log.charter.data.types;
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.HandShape;
+import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.vocals.Vocal;
 
@@ -16,6 +17,7 @@ class TemporaryValue {
 	public Beat beat;
 	public ChordOrNote chordOrNote;
 	public HandShape handShape;
+	public ToneChange toneChange;
 	public Vocal vocal;
 
 	public TemporaryValue(final int position, final PositionType type) {
@@ -51,12 +53,18 @@ class TemporaryValue {
 		this.handShape = handShape;
 	}
 
+	public TemporaryValue(final int id, final ToneChange toneChange) {
+		this(toneChange.position(), toneChange.position(), id, PositionType.TONE_CHANGE);
+		this.toneChange = toneChange;
+	}
+
 	public TemporaryValue(final int id, final Vocal vocal) {
 		this(vocal.position(), vocal.endPosition(), id, PositionType.VOCAL);
 		this.vocal = vocal;
 	}
 
 	public PositionWithIdAndType transform() {
-		return new PositionWithIdAndType(position, endPosition, id, type, anchor, beat, chordOrNote, handShape, vocal);
+		return new PositionWithIdAndType(position, endPosition, id, type, anchor, beat, chordOrNote, handShape,
+				toneChange, vocal);
 	}
 }

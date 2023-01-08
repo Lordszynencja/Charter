@@ -2,10 +2,13 @@ package log.charter.data.copySystem.data.positions;
 
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import log.charter.song.Beat;
 import log.charter.song.notes.IPositionWithLength;
 
 public abstract class CopiedPositionWithLength<T extends IPositionWithLength> extends CopiedPosition<T> {
+	@XStreamAsAttribute
 	public final double length;
 
 	public CopiedPositionWithLength(final List<Beat> beats, final double basePositionInBeats,

@@ -26,6 +26,7 @@ import log.charter.data.copySystem.data.positions.CopiedPhraseIterationPosition;
 import log.charter.data.copySystem.data.positions.CopiedPosition;
 import log.charter.data.copySystem.data.positions.CopiedSectionPosition;
 import log.charter.data.copySystem.data.positions.CopiedSoundPosition;
+import log.charter.data.copySystem.data.positions.CopiedToneChangePosition;
 import log.charter.data.copySystem.data.positions.CopiedVocalPosition;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
@@ -179,6 +180,8 @@ public class CopyManager {
 				arrangement.events, CopiedEventPosition::new);
 		final ArrayList2<ChordTemplate> copiedChordTemplates = data.getCurrentArrangement().chordTemplates
 				.map(ChordTemplate::new);
+		final ArrayList2<CopiedToneChangePosition> copiedToneChanges = copyPositionsFromTo(from, to,
+				basePositionInBeats, data.getCurrentArrangement().toneChanges, CopiedToneChangePosition::new);
 		final ArrayList2<CopiedAnchorPosition> copiedAnchors = copyPositionsFromTo(from, to, basePositionInBeats,
 				data.getCurrentArrangementLevel().anchors, CopiedAnchorPosition::new);
 		final ArrayList2<CopiedSoundPosition> copiedSounds = copyPositionsFromTo(from, to, basePositionInBeats,
@@ -187,7 +190,7 @@ public class CopyManager {
 				data.getCurrentArrangementLevel().handShapes, CopiedHandShapePosition::new);
 
 		return new FullGuitarCopyData(copiedSections, copiedPhrases, copiedPhraseIterations, copiedEvents,
-				copiedChordTemplates, copiedAnchors, copiedSounds, copiedHandShapes);
+				copiedChordTemplates, copiedToneChanges, copiedAnchors, copiedSounds, copiedHandShapes);
 	}
 
 	private CopyData getGuitarCopyDataBeats() {
@@ -276,6 +279,9 @@ public class CopyManager {
 		}
 		if (selectionManager.getSelectedAccessor(PositionType.HAND_SHAPE).isSelected()) {
 			return getGuitarCopyDataHandShapes();
+		}
+		if (selectionManager.getSelectedAccessor(PositionType.TONE_CHANGE).isSelected()) {
+			return getCopyData(PositionType.TONE_CHANGE, CopiedAnchorPosition::new, AnchorsCopyData::new);
 		}
 
 		return null;

@@ -15,6 +15,7 @@ import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.HandShape;
+import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
 import log.charter.song.notes.Position;
@@ -30,6 +31,7 @@ public class SelectionManager {
 	private TypeSelectionManager<Beat> beatsManager;
 	private TypeSelectionManager<ChordOrNote> chordsNotesManager;
 	private TypeSelectionManager<HandShape> handShapesManager;
+	private TypeSelectionManager<ToneChange> toneChangesManager;
 	private TypeSelectionManager<Vocal> vocalsManager;
 
 	private final Map<PositionType, TypeSelectionManager<?>> typeSelectionManagers = new HashMap2<>();
@@ -43,12 +45,14 @@ public class SelectionManager {
 		beatsManager = new BeatsSelectionManager(data, mouseButtonPressReleaseHandler);
 		chordsNotesManager = new ChordsNotesSelectionManager(data, mouseButtonPressReleaseHandler);
 		handShapesManager = new HandShapesSelectionManager(data, mouseButtonPressReleaseHandler);
+		toneChangesManager = new ToneChangeSelectionManager(data, mouseButtonPressReleaseHandler);
 		vocalsManager = new VocalsSelectionManager(data, mouseButtonPressReleaseHandler);
 
 		typeSelectionManagers.put(PositionType.ANCHOR, anchorsManager);
 		typeSelectionManagers.put(PositionType.BEAT, beatsManager);
 		typeSelectionManagers.put(PositionType.GUITAR_NOTE, chordsNotesManager);
 		typeSelectionManagers.put(PositionType.HAND_SHAPE, handShapesManager);
+		typeSelectionManagers.put(PositionType.TONE_CHANGE, toneChangesManager);
 		typeSelectionManagers.put(PositionType.VOCAL, vocalsManager);
 	}
 

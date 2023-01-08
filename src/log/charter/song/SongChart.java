@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.io.Logger;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
 import log.charter.song.notes.Note;
@@ -76,6 +77,7 @@ public class SongChart {
 				final SongArrangement songArrangement = readSong(xml);
 				arrangements.add(new ArrangementChart(songArrangement, beatsMap.beats));
 			} catch (final Exception e) {
+				Logger.error("Couldn't load arrangement file " + filename, e);
 				throw new IOException(String.format(Label.MISSING_ARRANGEMENT_FILE.label(), filename));
 			}
 		}

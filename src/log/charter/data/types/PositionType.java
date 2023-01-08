@@ -5,6 +5,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.handShapesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.modes.EditMode;
@@ -14,6 +15,7 @@ import log.charter.data.types.positions.GuitarNotePositionTypeManager;
 import log.charter.data.types.positions.HandShapePositionTypeManager;
 import log.charter.data.types.positions.NonePositionTypeManager;
 import log.charter.data.types.positions.PositionTypeManager;
+import log.charter.data.types.positions.ToneChangePositionTypeManager;
 import log.charter.data.types.positions.VocalPositionTypeManager;
 import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -24,6 +26,7 @@ public enum PositionType {
 	GUITAR_NOTE(new GuitarNotePositionTypeManager()), //
 	HAND_SHAPE(new HandShapePositionTypeManager()), //
 	NONE(new NonePositionTypeManager()), //
+	TONE_CHANGE(new ToneChangePositionTypeManager()), //
 	VOCAL(new VocalPositionTypeManager());
 
 	public final PositionTypeManager<?> manager;
@@ -36,8 +39,11 @@ public enum PositionType {
 		if (y < beatTextY) {
 			return NONE;
 		}
-		if (y < anchorY) {
+		if (y < toneChangeY) {
 			return BEAT;
+		}
+		if (y < anchorY) {
+			return TONE_CHANGE;
 		}
 		if (y < lanesTop) {
 			return ANCHOR;

@@ -1,6 +1,7 @@
 package log.charter.data.copySystem.data.positions;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.song.Beat;
 import log.charter.song.Event;
@@ -9,6 +10,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("copiedEvent")
 public class CopiedEventPosition extends CopiedOnBeatPosition<Event> {
+	@XStreamAsAttribute
 	public final EventType eventType;
 
 	public CopiedEventPosition(final ArrayList2<Beat> beats, final int baseBeat, final Event onBeat) {

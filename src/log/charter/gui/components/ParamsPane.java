@@ -44,6 +44,10 @@ public class ParamsPane extends JDialog {
 		void setValue(Integer val);
 	}
 
+	public static interface SaverWithStatus {
+		boolean save();
+	}
+
 	private static final long serialVersionUID = -3193534671039163160L;
 
 	private static final int OPTIONS_MAX_INPUT_WIDTH = 500;
@@ -123,18 +127,36 @@ public class ParamsPane extends JDialog {
 	}
 
 	protected void addDefaultFinish(final int row, final Runnable onSave) {
-		addDefaultFinish(row, onSave, () -> {
+		addDefaultFinish(row, () -> {
+			onSave.run();
+			return true;
 		});
 	}
 
+	protected void addDefaultFinish(final int row, final SaverWithStatus onSave) {
+		addDefaultFinish(row, onSave, () -> true);
+	}
+
 	protected void addDefaultFinish(final int row, final Runnable onSave, final Runnable onCancel) {
-		final Runnable paneOnSave = () -> {
+		addDefaultFinish(row, () -> {
 			onSave.run();
-			dispose();
+			return true;
+		}, () -> {
+			onCancel.run();
+			return true;
+		});
+	}
+
+	protected void addDefaultFinish(final int row, final SaverWithStatus onSave, final SaverWithStatus onCancel) {
+		final Runnable paneOnSave = () -> {
+			if (onSave.save()) {
+				dispose();
+			}
 		};
 		final Runnable paneOnCancel = () -> {
-			onCancel.run();
-			dispose();
+			if (onCancel.save()) {
+				dispose();
+			}
 		};
 
 		addButtons(row, paneOnSave, paneOnCancel);

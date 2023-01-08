@@ -3,6 +3,7 @@ package log.charter.gui.menuHandlers;
 import static java.awt.event.KeyEvent.VK_DELETE;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JMenu;
 
@@ -18,6 +19,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.SongOptionsPane;
 import log.charter.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.HashSet2;
 
 class EditMenuHandler extends CharterMenuHandler {
 	private static final List<PositionType> deletablePositionTypes = new ArrayList2<>(//
@@ -25,6 +27,7 @@ class EditMenuHandler extends CharterMenuHandler {
 			PositionType.BEAT, //
 			PositionType.GUITAR_NOTE, //
 			PositionType.HAND_SHAPE, //
+			PositionType.TONE_CHANGE, //
 			PositionType.VOCAL);
 
 	private CopyManager copyManager;
@@ -91,6 +94,12 @@ class EditMenuHandler extends CharterMenuHandler {
 				if (type == PositionType.BEAT) {
 					data.songChart.beatsMap.fixFirstBeatInMeasures();
 				}
+				if (type == PositionType.TONE_CHANGE) {
+					data.getCurrentArrangement().tones = data.getCurrentArrangement().toneChanges.stream()//
+							.map(toneChange -> toneChange.toneName)//
+							.collect(Collectors.toCollection(HashSet2::new));
+				}
+
 			}
 		}
 

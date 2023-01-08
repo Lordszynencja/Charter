@@ -17,11 +17,13 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.AnchorPane;
-import log.charter.gui.panes.GuitarBeatPane;
 import log.charter.gui.panes.ChordOptionsPane;
+import log.charter.gui.panes.GuitarBeatPane;
 import log.charter.gui.panes.HandShapePane;
+import log.charter.gui.panes.ToneChangePane;
 import log.charter.song.Anchor;
 import log.charter.song.HandShape;
+import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
 import log.charter.song.notes.Note;
@@ -184,6 +186,27 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 	}
 
+	private void rightClickToneChange(final PositionWithIdAndType toneChangePosition) {
+		selectionManager.clear();
+
+		if (toneChangePosition.toneChange != null) {
+			new ToneChangePane(data, frame, undoSystem, toneChangePosition.toneChange, () -> {
+			});
+			return;
+		}
+
+		undoSystem.addUndo();
+		final ToneChange toneChange = new ToneChange(toneChangePosition.position(), "");
+		final ArrayList2<ToneChange> toneChanges = data.getCurrentArrangement().toneChanges;
+		toneChanges.add(toneChange);
+		toneChanges.sort(null);
+
+		new ToneChangePane(data, frame, undoSystem, toneChange, () -> {
+			undoSystem.undo();
+			undoSystem.removeRedo();
+		});
+	}
+
 	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
 		if (clickData.pressHighlight.type == PositionType.ANCHOR) {
@@ -215,6 +238,15 @@ public class GuitarModeHandler extends ModeHandler {
 			}
 
 			rightClickHandShape(clickData.pressHighlight);
+			return;
+		}
+
+		if (clickData.pressHighlight.type == PositionType.TONE_CHANGE) {
+			if (clickData.isDrag()) {
+				return;
+			}
+
+			rightClickToneChange(clickData.pressHighlight);
 			return;
 		}
 	}

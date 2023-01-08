@@ -10,7 +10,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.handlers.AudioHandler;
-import log.charter.gui.panes.TuningPane;
+import log.charter.gui.panes.ArrangementSettingsPane;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.ArrangementChart;
 import log.charter.util.CollectionUtils.HashMap2;
@@ -74,7 +74,7 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 
 		if (modeManager.editMode == EditMode.GUITAR) {
 			menu.addSeparator();
-			menu.add(createItem(Label.ARRANGEMENT_MENU_TUNING, this::editTuning));
+			menu.add(createItem(Label.ARRANGEMENT_MENU_OPTIONS, this::editOptions));
 
 			menu.addSeparator();
 			createLevelMenuItems(menu);
@@ -106,10 +106,12 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 		data.currentArrangement = data.songChart.arrangements.size();
 		data.songChart.arrangements.add(new ArrangementChart(ArrangementType.Lead, data.songChart.beatsMap.beats));
 		changeEditMode(EditMode.GUITAR);
+
+		new ArrangementSettingsPane(charterMenuBar, data, frame);
 	}
 
-	private void editTuning() {
-		new TuningPane(data, frame);
+	private void editOptions() {
+		new ArrangementSettingsPane(charterMenuBar, data, frame);
 	}
 
 	private void changeLevel(final int levelId) {

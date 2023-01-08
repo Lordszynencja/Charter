@@ -38,6 +38,7 @@ public class SongArrangementXStreamHandler {
 				ArrangementPhrase.class, //
 				ArrangementPhraseIteration.class, //
 				ArrangementSection.class, //
+				ArrangementTone.class, //
 				SongArrangement.class });
 
 		return xstream;

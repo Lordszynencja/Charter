@@ -90,7 +90,7 @@ public class Localization {
 		INFO_MENU_LANGUAGE("Language"), //
 
 		ARRANGEMENT_MENU("Arrangement"), //
-		ARRANGEMENT_MENU_TUNING("Tuning"), //
+		ARRANGEMENT_MENU_OPTIONS("Arrangement options"), //
 		ARRANGEMENT_MENU_TOGGLE_WAVEFORM("Toggle waveform drawing"), //
 		ARRANGEMENT_MENU_TOGGLE_CLAPS("Toggle claps on note"), //
 		ARRANGEMENT_MENU_TOGGLE_METRONOME("Toggle metronome"), //
@@ -112,10 +112,13 @@ public class Localization {
 		SONG_OPTIONS_YEAR("Year"), //
 		SONG_OPTIONS_CROWD_SPEED("Crowd speed"), //
 
-		TUNING_PANE("Tuning"), //
-		TUNING_TYPE("Tuning"), //
-		TUNING_STRINGS("Strings"), //
-		TUNING_CAPO("Capo"), //
+		ARRANGEMENT_OPTIONS_PANE("Arrangement options"), //
+		ARRANGEMENT_OPTIONS_TYPE("Arrangement type"), //
+		ARRANGEMENT_OPTIONS_SUBTYPE("Arrangement subtype"), //
+		ARRANGEMENT_OPTIONS_BASE_TONE("Base tone"), //
+		ARRANGEMENT_OPTIONS_TUNING_TYPE("Tuning"), //
+		ARRANGEMENT_OPTIONS_STRINGS("Strings"), //
+		ARRANGEMENT_OPTIONS_CAPO("Capo"), //
 
 		VOCAL_PANE_CREATION("Vocal creation"), //
 		VOCAL_PANE_EDIT("Vocal edit"), //
@@ -129,6 +132,7 @@ public class Localization {
 		VOCALS_MENU_TOGGLE_PHRASE_END("Toggle phrase end"), //
 
 		ANCHOR_PANE("Anchor edit"), //
+		ANCHOR_WIDTH("Anchor width"), //
 
 		CHORD_OPTIONS_PANE("Chord options"), //
 		HAND_SHAPE_PANE("Hand shape edit"), //
@@ -168,13 +172,14 @@ public class Localization {
 		LINK_NEXT("Link next"), //
 		VIBRATO("Vibrato"), //
 
-		ANCHOR_WIDTH("Anchor width"), //
-
 		SPECIAL_GUITAR_PASTE_PANE("Special paste"), //
 		SPECIAL_GUITAR_PASTE_PANE_BEATS("Paste sections, phrases and events"), //
 		SPECIAL_GUITAR_PASTE_PANE_ANCHORS("Paste anchors"), //
 		SPECIAL_GUITAR_PASTE_PANE_SOUNDS("Paste notes"), //
 		SPECIAL_GUITAR_PASTE_PANE_HAND_SHAPES("Paste hand shapes"), //
+
+		TONE_CHANGE_PANE("Tone change options"), //
+		TONE_CHANGE_TONE_NAME("Tone name"), //
 
 		CHOOSE_FOLDER_NAME("Choose folder name"), //
 		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement"), //
@@ -195,9 +200,11 @@ public class Localization {
 		PROJECT_IS_NEWER_VERSION("Project is newer version than program handles"), //
 		ROCKSMITH_CHART_PROJECT("Rocksmith Chart Project"), //
 		RS_ARRANGEMENT_FILE("RS arrangmenet file (XML)"), //
+		TONE_NAME_PAST_LIMIT("There are already 4 tones, can't add another tone"), //
 		UNSAVED_CHANGES_POPUP("Unsaved changes"), //
 		UNSAVED_CHANGES_MESSAGE("You have unsaved changes. Do you want to save?"), //
 		UNSUPPORTED_FILE_TYPE("This file type is not supported"), //
+		VALUE_CANT_BE_EMPTY("Value must not be empty"), //
 		VALUE_MUST_BE_GE("Value must be greater or equal to %s"), //
 		VALUE_MUST_BE_LE("Value must be lesser or equal to %s"), //
 		VALUE_NUMBER_EXPECTED("Number expected"), //

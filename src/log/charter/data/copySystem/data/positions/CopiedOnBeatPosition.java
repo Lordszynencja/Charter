@@ -2,11 +2,14 @@ package log.charter.data.copySystem.data.positions;
 
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import log.charter.song.Beat;
 import log.charter.song.OnBeat;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public abstract class CopiedOnBeatPosition<T extends OnBeat> {
+	@XStreamAsAttribute
 	public final int beatId;
 
 	public CopiedOnBeatPosition(final ArrayList2<Beat> beats, final int baseBeat, final T onBeat) {

@@ -8,4 +8,9 @@ public enum ArrangementType {
 	private ArrangementType(final int strings) {
 		this.strings = strings;
 	}
+
+	@Override
+	public String toString() {
+		return name();
+	}
 }

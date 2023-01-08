@@ -6,6 +6,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneSize;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.line;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
@@ -140,6 +141,15 @@ public class HighlightDrawer {
 	private void drawNoneHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x, final int y) {
 	}
 
+	private void drawToneChangeHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
+			final int y) {
+		final int toneChangeX = timeToX(highlight.position(), data.time);
+		final int top = toneChangeY - 1;
+		final int bottom = lanesBottom + 1;
+		final ShapePositionWithSize beatPosition = new ShapePositionWithSize(toneChangeX - 1, top, 2, bottom - top);
+		strokedRectangle(beatPosition, highlightColor).draw(g);
+	}
+
 	private void drawVocalHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x, final int y) {
 		final int position = highlight.position();
 		final int length = highlight.vocal == null ? 50 : highlight.vocal.length();
@@ -155,6 +165,7 @@ public class HighlightDrawer {
 		highlightDrawers.put(PositionType.GUITAR_NOTE, this::drawGuitarNoteHighlight);
 		highlightDrawers.put(PositionType.HAND_SHAPE, this::drawHandShapeHighlight);
 		highlightDrawers.put(PositionType.NONE, this::drawNoneHighlight);
+		highlightDrawers.put(PositionType.TONE_CHANGE, this::drawToneChangeHighlight);
 		highlightDrawers.put(PositionType.VOCAL, this::drawVocalHighlight);
 	}
 

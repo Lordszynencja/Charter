@@ -17,6 +17,8 @@ import log.charter.io.rs.xml.converters.TimeConverter;
 import log.charter.song.ArrangementChart;
 import log.charter.song.Beat;
 import log.charter.song.SongChart;
+import log.charter.song.ToneChange;
+import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("song")
 @XStreamInclude({ ArrangementTuning.class, ArrangementProperties.class, TranscriptionTrack.class })
@@ -45,6 +47,12 @@ public class SongArrangement {
 	public Integer albumYear;
 	public BigDecimal crowdSpeed;
 	public ArrangementProperties arrangementProperties = new ArrangementProperties();
+	public String tonebase;
+	public String tonea;
+	public String toneb;
+	public String tonec;
+	public String toned;
+	public CountedList<ArrangementTone> tones;
 	public CountedList<ArrangementPhrase> phrases;
 	public CountedList<ArrangementPhraseIteration> phraseIterations;
 	public CountedList<String> phraseProperties = new CountedList<>();
@@ -77,6 +85,7 @@ public class SongArrangement {
 		albumYear = songChart.albumYear;
 		crowdSpeed = songChart.crowdSpeed;
 		arrangementProperties = arrangementChart.arrangementProperties;
+		setTones(arrangementChart);
 		phrases = new CountedList<ArrangementPhrase>(arrangementChart.phrases.map(ArrangementPhrase::new));
 		phraseIterations = new CountedList<>(
 				ArrangementPhraseIteration.fromPhraseIterations(phrases.list, arrangementChart.phraseIterations));
@@ -90,6 +99,32 @@ public class SongArrangement {
 				ArrangementLevel.fromLevels(arrangementChart.levels, arrangementChart.chordTemplates));
 
 		fixMeasureNumbers();
+	}
+
+	private void setTones(final ArrangementChart arrangementChart) {
+		tonebase = arrangementChart.baseTone;
+		final ArrayList2<String> tonesList = new ArrayList2<>();
+		for (final ToneChange toneChange : arrangementChart.toneChanges) {
+			if (!tonesList.contains(toneChange.toneName)) {
+				tonesList.add(toneChange.toneName);
+			}
+		}
+
+		if (tonesList.size() >= 1) {
+			tonea = tonesList.get(0);
+		}
+		if (tonesList.size() >= 2) {
+			toneb = tonesList.get(1);
+		}
+		if (tonesList.size() >= 3) {
+			tonec = tonesList.get(2);
+		}
+		if (tonesList.size() >= 4) {
+			toned = tonesList.get(3);
+		}
+
+		tones = arrangementChart.toneChanges.isEmpty() ? null
+				: new CountedList<>(arrangementChart.toneChanges.map(ArrangementTone::new));
 	}
 
 	private void fixMeasureNumbers() {
