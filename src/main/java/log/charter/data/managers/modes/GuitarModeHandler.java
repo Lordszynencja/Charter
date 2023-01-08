@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.HighlightManager;
-import log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId;
+import log.charter.data.managers.PositionWithStringOrNoteId;
 import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;

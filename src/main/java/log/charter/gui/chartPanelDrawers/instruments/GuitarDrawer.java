@@ -467,7 +467,8 @@ public class GuitarDrawer {
 
 		public void addAnchor(final Anchor anchor, final int x, final boolean selected) {
 			anchors.add(lineVertical(x, anchorY, lanesBottom, ColorLabel.ANCHOR));
-			anchors.add(text(new Position2D(x + 4, anchorTextY), "" + anchor.fret, ColorLabel.ANCHOR));
+			anchors.add(text(new Position2D(x + 4, anchorTextY),
+					"" + anchor.fret + " - " + (anchor.fret + anchor.width), ColorLabel.ANCHOR));
 
 			if (selected) {
 				final int top = anchorY - 1;

@@ -9,7 +9,10 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ParamsPane;
 
 public class GuitarSpecialPastePane extends ParamsPane {
-	private static boolean pasteBeatsDefault = true;
+	private static boolean pasteSectionsDefault = true;
+	private static boolean pastePhrasesDefault = true;
+	private static boolean pasteEventsDefault = true;
+	private static boolean pasteToneChangesDefault = true;
 	private static boolean pasteAnchorsDefault = true;
 	private static boolean pasteSoundsDefault = true;
 	private static boolean pasteHandShapesDefault = true;
@@ -30,7 +33,10 @@ public class GuitarSpecialPastePane extends ParamsPane {
 
 	private final FullGuitarCopyData copyData;
 
-	private boolean pasteBeats = pasteBeatsDefault;
+	private boolean pasteSections = pasteSectionsDefault;
+	private boolean pastePhrases = pastePhrasesDefault;
+	private boolean pasteEvents = pasteEventsDefault;
+	private boolean pasteToneChanges = pasteToneChangesDefault;
 	private boolean pasteAnchors = pasteAnchorsDefault;
 	private boolean pasteSounds = pasteSoundsDefault;
 	private boolean pasteHandShapes = pasteHandShapesDefault;
@@ -38,7 +44,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	public GuitarSpecialPastePane(final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem,
 			final FullGuitarCopyData fullGuitarCopyData) {
-		super(frame, Label.SPECIAL_GUITAR_PASTE_PANE, 6, getSizes());
+		super(frame, Label.SPECIAL_GUITAR_PASTE_PANE, 9, getSizes());
 
 		this.data = data;
 		this.selectionManager = selectionManager;
@@ -47,14 +53,20 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		copyData = fullGuitarCopyData;
 
 		int row = 0;
-		addConfigCheckbox(row, 20, 0, null, pasteBeats, val -> pasteBeats = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_PANE_BEATS);
+		addConfigCheckbox(row, 20, 0, null, pasteSections, val -> pasteSections = val);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_SECTIONS);
+		addConfigCheckbox(row, 20, 0, null, pastePhrases, val -> pastePhrases = val);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_PHRASES);
+		addConfigCheckbox(row, 20, 0, null, pasteEvents, val -> pasteEvents = val);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_EVENTS);
+		addConfigCheckbox(row, 20, 0, null, pasteToneChanges, val -> pasteToneChanges = val);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_TONE_CHANGES);
 		addConfigCheckbox(row, 20, 0, null, pasteAnchors, val -> pasteAnchors = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_PANE_ANCHORS);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_ANCHORS);
 		addConfigCheckbox(row, 20, 0, null, pasteSounds, val -> pasteSounds = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_PANE_SOUNDS);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_SOUNDS);
 		addConfigCheckbox(row, 20, 0, null, pasteHandShapes, val -> pasteHandShapes = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_PANE_HAND_SHAPES);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_HAND_SHAPES);
 
 		row++;
 		addDefaultFinish(row, this::saveAndExit);
@@ -64,13 +76,25 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		undoSystem.addUndo();
 		selectionManager.clear();
 
-		pasteBeatsDefault = pasteBeats;
+		pasteSectionsDefault = pasteSections;
+		pastePhrasesDefault = pastePhrases;
+		pasteEventsDefault = pasteEvents;
+		pasteToneChangesDefault = pasteToneChanges;
 		pasteAnchorsDefault = pasteAnchors;
 		pasteSoundsDefault = pasteSounds;
 		pasteHandShapesDefault = pasteHandShapes;
 
-		if (pasteBeats) {
-			copyData.beats.paste(data);
+		if (pasteSections) {
+			copyData.beats.pasteSections(data);
+		}
+		if (pastePhrases) {
+			copyData.beats.pastePhrases(data);
+		}
+		if (pasteEvents) {
+			copyData.beats.pasteEvents(data);
+		}
+		if (pasteToneChanges) {
+			copyData.toneChanges.paste(data);
 		}
 		if (pasteAnchors) {
 			copyData.anchors.paste(data);

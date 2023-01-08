@@ -32,8 +32,12 @@ public class BeatsCopyData implements ICopyData {
 		return sections.isEmpty() && phrases.isEmpty() && phraseIterations.isEmpty() && events.isEmpty();
 	}
 
-	@Override
-	public void paste(final ChartData data) {
+	public void pasteSections(final ChartData data) {
+		ICopyData.simplePasteOnBeat(data.songChart.beatsMap.beats, data.time, data.getCurrentArrangement().sections,
+				sections);
+	}
+
+	public void pastePhrases(final ChartData data) {
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 		for (final CopiedPhraseIterationPosition phraseIteration : phraseIterations) {
 			final String phraseName = phraseIteration.phraseName;
@@ -41,12 +45,19 @@ public class BeatsCopyData implements ICopyData {
 				arrangement.phrases.put(phraseName, phrases.get(phraseName));
 			}
 		}
-
-		ICopyData.simplePasteOnBeat(data.songChart.beatsMap.beats, data.time, data.getCurrentArrangement().sections,
-				sections);
 		ICopyData.simplePasteOnBeat(data.songChart.beatsMap.beats, data.time,
 				data.getCurrentArrangement().phraseIterations, phraseIterations);
+	}
+
+	public void pasteEvents(final ChartData data) {
 		ICopyData.simplePasteOnBeat(data.songChart.beatsMap.beats, data.time, data.getCurrentArrangement().events,
 				events);
+	}
+
+	@Override
+	public void paste(final ChartData data) {
+		pasteSections(data);
+		pastePhrases(data);
+		pasteEvents(data);
 	}
 }

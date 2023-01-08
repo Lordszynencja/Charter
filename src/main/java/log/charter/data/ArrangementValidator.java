@@ -20,10 +20,6 @@ public class ArrangementValidator {
 		this.frame = frame;
 	}
 
-	private Runnable moveToTime(final int time) {
-		return () -> data.setNextTime(time);
-	}
-
 	private Runnable moveToTimeOnArrangement(final int arrangementId, final int time) {
 		return () -> {
 			data.currentArrangement = arrangementId;

@@ -1,12 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
-	<artifactId>charter</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>Charter</name>
+	<artifactId>rs_charter</artifactId>
+	<version>0.8.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>RS Charter</name>
 	<description>Charting program for Rocksmith 2014</description>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -35,27 +42,132 @@
 			<version>1.0.3-1</version>
 		</dependency>
 		<dependency>
-		  	<groupId>com.thoughtworks.xstream</groupId>
-		  	<artifactId>xstream</artifactId>
-		  	<version>1.4.19</version>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.19</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.jclarion</groupId>
-		    <artifactId>image4j</artifactId>
-		    <version>0.7</version>
+			<groupId>org.jclarion</groupId>
+			<artifactId>image4j</artifactId>
+			<version>0.7</version>
 		</dependency>
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<finalName>RS Charter</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.10.1</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+					<encoding>UTF-8</encoding>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/libs</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>log.charter.main.LogCharterRSMain</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<appendAssemblyId>false</appendAssemblyId>
+					<outputDirectory>${project.build.directory}/RS Charter</outputDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.akathist.maven.plugins.launch4j</groupId>
+				<artifactId>launch4j-maven-plugin</artifactId>
+				<version>2.3.0</version>
+				<executions>
+					<execution>
+						<id>l4j-gui</id>
+						<phase>package</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<headerType>gui</headerType>
+							<outfile>target/RS Charter/RS Charter.exe</outfile>
+							<jar>target/RS Charter/RS Charter.jar</jar>
+							<icon>src/main/resources/icon.ico</icon>
+							<errTitle>RSC</errTitle>
+							<classPath>
+								<mainClass>log.charter.main.LogCharterRSMain</mainClass>
+								<addDependencies>true</addDependencies>
+								<preCp>anything</preCp>
+							</classPath>
+							<jre>
+								<path>%JAVA_HOME%;%PATH%</path>
+								<minVersion>1.8.0</minVersion>
+							</jre>
+							<versionInfo>
+								<fileVersion>0.8.0.0</fileVersion>
+								<txtFileVersion>txt file version?</txtFileVersion>
+								<fileDescription>a description</fileDescription>
+								<copyright>BSD 3-Clause</copyright>
+								<productVersion>0.8.0.0</productVersion>
+								<txtProductVersion>txt product version</txtProductVersion>
+								<productName>RS Charter</productName>
+								<internalName>RSC</internalName>
+								<originalFilename>RS Charter.exe</originalFilename>
+							</versionInfo>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/RS Charter/images</outputDirectory>
+							<resources>
+								<resource>
+									<directory>images</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

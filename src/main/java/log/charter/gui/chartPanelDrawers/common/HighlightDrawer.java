@@ -24,8 +24,8 @@ import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.HighlightManager;
-import log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.PositionWithStringOrNoteId;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;

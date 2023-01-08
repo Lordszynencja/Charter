@@ -7,6 +7,8 @@ import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import java.util.function.Function;
 
+import com.thoughtworks.xstream.io.StreamException;
+
 import log.charter.data.ChartData;
 import log.charter.data.copySystem.data.AnchorsCopyData;
 import log.charter.data.copySystem.data.BeatsCopyData;
@@ -322,6 +324,10 @@ public class CopyManager {
 		try {
 			return CopyDataXStreamHandler.readProject(xml);
 		} catch (final Exception e) {
+			if (e instanceof StreamException) {
+				return null;
+			}
+
 			Logger.debug("xml parse failed:\n" + xml, e);
 			return null;
 		}

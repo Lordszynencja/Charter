@@ -3,8 +3,8 @@ package log.charter.data.managers;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId.fromNoteId;
-import static log.charter.data.managers.HighlightManager.PositionWithStringOrNoteId.fromPosition;
+import static log.charter.data.managers.PositionWithStringOrNoteId.fromNoteId;
+import static log.charter.data.managers.PositionWithStringOrNoteId.fromPosition;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
 import static log.charter.song.notes.IPosition.findClosest;
 import static log.charter.song.notes.IPosition.findFirstIdAfter;
@@ -19,29 +19,9 @@ import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.song.Beat;
 import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class HighlightManager {
-	public static class PositionWithStringOrNoteId extends Position {
-		public static PositionWithStringOrNoteId fromNoteId(final int noteId, final int position, final int string) {
-			return new PositionWithStringOrNoteId(position, noteId, string);
-		}
-
-		public static PositionWithStringOrNoteId fromPosition(final int position, final int string) {
-			return new PositionWithStringOrNoteId(position, null, string);
-		}
-
-		public final Integer noteId;
-		public final int string;
-
-		private PositionWithStringOrNoteId(final int position, final Integer noteId, final int string) {
-			super(position);
-			this.noteId = noteId;
-			this.string = string;
-		}
-	}
-
 	private class PositionsWithStringsCalculator {
 		private final int fromPosition;
 		private final int toPosition;

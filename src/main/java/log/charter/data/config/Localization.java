@@ -173,10 +173,13 @@ public class Localization {
 		VIBRATO("Vibrato"), //
 
 		SPECIAL_GUITAR_PASTE_PANE("Special paste"), //
-		SPECIAL_GUITAR_PASTE_PANE_BEATS("Paste sections, phrases and events"), //
-		SPECIAL_GUITAR_PASTE_PANE_ANCHORS("Paste anchors"), //
-		SPECIAL_GUITAR_PASTE_PANE_SOUNDS("Paste notes"), //
-		SPECIAL_GUITAR_PASTE_PANE_HAND_SHAPES("Paste hand shapes"), //
+		SPECIAL_GUITAR_PASTE_SECTIONS("Paste sections"), //
+		SPECIAL_GUITAR_PASTE_PHRASES("Paste phrases"), //
+		SPECIAL_GUITAR_PASTE_EVENTS("Paste events"), //
+		SPECIAL_GUITAR_PASTE_TONE_CHANGES("Paste tone changes"), //
+		SPECIAL_GUITAR_PASTE_ANCHORS("Paste anchors"), //
+		SPECIAL_GUITAR_PASTE_SOUNDS("Paste notes"), //
+		SPECIAL_GUITAR_PASTE_HAND_SHAPES("Paste hand shapes"), //
 
 		TONE_CHANGE_PANE("Tone change options"), //
 		TONE_CHANGE_TONE_NAME("Tone name"), //
