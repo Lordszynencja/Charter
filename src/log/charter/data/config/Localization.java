@@ -8,13 +8,6 @@ import log.charter.util.RW;
 
 public class Localization {
 	public enum Label {
-		BEAT_PANE("Beat options"), //
-		BEAT_PANE_SECTION_TYPE("Section"), //
-		BEAT_PANE_PHRASE_NAME("Phrase name"), //
-		BEAT_PANE_PHRASE_LEVEL("Level"), //
-		BEAT_PANE_PHRASE_SOLO("Solo"), //
-		BEAT_PANE_EVENT_ADD("Add event"), //
-		BEAT_PANE_EVENT_REMOVE("Remove event"), //
 
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
@@ -58,11 +51,24 @@ public class Localization {
 		GRID_PANE_GRID_SIZE("Grid size"), //
 		GRID_PANE_USE_GRID("Use grid"), //
 
+		GUITAR_BEAT_PANE("Guitar beat options"), //
+		GUITAR_BEAT_PANE_SECTION_TYPE("Section"), //
+		GUITAR_BEAT_PANE_PHRASE_NAME("Phrase name"), //
+		GUITAR_BEAT_PANE_PHRASE_LEVEL("Level"), //
+		GUITAR_BEAT_PANE_PHRASE_SOLO("Solo"), //
+		GUITAR_BEAT_PANE_EVENT_ADD("Add event"), //
+		GUITAR_BEAT_PANE_EVENT_REMOVE("Remove event"), //
+
 		GUITAR_MENU("Guitar"), //
+		GUITAR_MENU_STRING_UP("Move notes string up"), //
+		GUITAR_MENU_STRING_DOWN("Move notes string down"), //
+		GUITAR_MENU_STRING_UP_KEEP_FRETS("Move notes string up keeping the frets"), //
+		GUITAR_MENU_STRING_DOWN_KEEP_FRETS("Move notes string down keeping the frets"), //
 		GUITAR_MENU_TOGGLE_MUTES("Toggle mutes"), //
 		GUITAR_MENU_TOGGLE_HOPO("Toggle HO/PO"), //
 		GUITAR_MENU_TOGGLE_HARMONIC("Toggle harmonic"), //
 		GUITAR_MENU_SET_SLIDE("Set slide"), //
+		GUITAR_MENU_TOGGLE_ACCENT("Toggle accent"), //
 		GUITAR_MENU_TOGGLE_LINK_NEXT("Toggle link next"), //
 		GUITAR_MENU_SET_FRET("Set fret"), //
 		GUITAR_MENU_NOTE_OPTIONS("Note options"), //
@@ -75,6 +81,9 @@ public class Localization {
 				"Opens notes for edit as chord, will change selected single notes into chords"), //
 		GUITAR_MENU_HAND_SHAPE_OPTIONS("Hand shape options"), //
 		GUITAR_MENU_MARK_HAND_SHAPE("Mark hand shape"), //
+
+		TEMPO_BEAT_PANE("Tempo beat options"), //
+		TEMPO_BEAT_PANE_BEATS_IN_MEASURE("Beats in measure"), //
 
 		INFO_MENU("Info"), //
 		INFO_MENU_VERSION("Version"), //

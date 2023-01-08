@@ -1,9 +1,5 @@
 package log.charter.data;
 
-import java.awt.HeadlessException;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-
 import javax.swing.JScrollBar;
 
 import log.charter.data.config.Config;
@@ -55,45 +51,6 @@ public class ChartData {
 		currentLevel = newDiff;
 	}
 
-	public void copy() {// TODO
-		if (isEmpty) {
-			return;
-		}
-//
-//		final List<byte[]> list = new ArrayList<>(selectedNotes.size() + 1);
-//
-//		if (currentInstrument.type.isVocalsType()) {
-//			final double firstLyricPos = s.v.lyrics.get(selectedNotes.get(0)).pos;
-//			list.add("lyrics".getBytes());
-//
-//			for (final int id : selectedNotes) {
-//				list.add(s.v.lyrics.get(id).toBytes(firstLyricPos));
-//			}
-//		} else {
-//			final double firstNotePos = currentNotes.get(selectedNotes.get(0)).pos;
-//			list.add("notes".getBytes());
-//
-//			for (final int id : selectedNotes) {
-//				list.add(currentNotes.get(id).toBytes(firstNotePos));
-//			}
-//		}
-//
-//		ClipboardHandler.setClipboardBytes(joinList(list));
-	}
-
-	public void copyFrom(final Level levelChart) {// TODO
-//		if ((!isEmpty && (instrumentType != currentInstrument.type)) || (diff != currentDiff)) {
-//			final List<Note> from = s.getInstrument(instrumentType).notes.get(diff);
-//
-//			undoSystem.addUndo();
-//
-//			currentNotes.clear();
-//			for (int i = 0; i < from.size(); i++) {
-//				currentNotes.add(new Note(from.get(i)));
-//			}
-//		}
-	}
-
 	private void endNoteDragNotes() {
 		undoSystem.addUndo();
 
@@ -126,117 +83,6 @@ public class ChartData {
 //				final Note existing = editedEvents.get(id);
 //				existing.notes |= n.notes;
 //			}
-//		}
-	}
-
-	public void moveSelectedOneStringUp() {// TODO
-//		final List<Note> notes = new ArrayList<>(selectedNotes.size());
-//		for (final int id : selectedNotes) {
-//			final Note n = currentNotes.get(id);
-//			if ((n.notes & 16) > 0) {
-//				return;
-//			}
-//			notes.add(n);
-//		}
-//		for (final Note n : notes) {
-//			n.notes *= 2;
-//			if (n.notes == 0) {
-//				n.notes = 1;
-//			}
-//		}
-	}
-
-	public void moveSelectedOneStringDown() {// TODO
-//		final List<Note> notes = new ArrayList<>(selectedNotes.size());
-//		for (final int id : selectedNotes) {
-//			final Note n = currentNotes.get(id);
-//			if (n.notes == 0) {
-//				return;
-//			}
-//			notes.add(n);
-//		}
-//		for (final Note n : notes) {
-//			n.notes = (n.notes & 1) > 0 ? 0 : n.notes / 2;
-//		}
-	}
-
-	public void paste() throws HeadlessException, IOException, UnsupportedFlavorException {// TODO
-		undoSystem.addUndo();
-//		final byte[] notesData = ClipboardHandler.readClipboardBytes();
-//
-//		try {
-//			final List<byte[]> list = splitToList(notesData);
-//			final String name = new String(list.get(0));
-//			final boolean notesPaste = "notes".equals(name);
-//			final boolean lyricsPaste = "lyrics".equals(name);
-//			if ((lyricsPaste && !currentInstrument.type.isVocalsType())
-//					|| (notesPaste && currentInstrument.type.isVocalsType())) {
-//				return;
-//			}
-//
-//			deselect();
-//			undoSystem.addUndo();
-//			final int n = list.size();
-//			final double markerPos = nextT;
-//
-//			if (notesPaste) {
-//				int noteId = findFirstNoteAfterTime(markerPos);
-//				if (noteId < 0) {
-//					noteId = currentNotes.size();
-//				}
-//
-//				for (int i = 1; i < n; i++) {
-//					final Note note = Note.fromBytes(list.get(i), markerPos);
-//
-//					while ((noteId < currentNotes.size()) && (currentNotes.get(noteId).pos < note.pos)) {
-//						noteId++;
-//					}
-//
-//					if (noteId < currentNotes.size()) {// is inside
-//						if (currentNotes.get(noteId).pos != note.pos) {
-//							currentNotes.add(noteId, note);
-//							fixNotesLength(note, noteId);
-//						}
-//					} else {// is last
-//						currentNotes.add(note);
-//						fixNotesLength(note, noteId);
-//					}
-//					addToSelection(noteId);
-//					noteId++;
-//				}
-//			} else if (lyricsPaste) {
-//				int lyricId = findFirstLyricAfterTime(markerPos);
-//				if (lyricId < 0) {
-//					lyricId = s.v.lyrics.size();
-//				}
-//
-//				for (int i = 1; i < n; i++) {
-//					final Lyric l = Lyric.fromBytes(list.get(i), markerPos);
-//
-//					while ((lyricId < s.v.lyrics.size()) && (s.v.lyrics.get(lyricId).pos < l.pos)) {
-//						lyricId++;
-//					}
-//
-//					if (lyricId < s.v.lyrics.size()) {// is inside
-//						if (s.v.lyrics.get(lyricId).pos != l.pos) {
-//							s.v.lyrics.add(lyricId, l);
-//							fixLyricLength(l, lyricId, s.v.lyrics.get(lyricId + 1));
-//							if (lyricId > 0) {
-//								fixLyricLength(s.v.lyrics.get(lyricId), lyricId - 1, l);
-//							}
-//						}
-//					} else {// is last
-//						s.v.lyrics.add(l);
-//						if (lyricId > 0) {
-//							fixLyricLength(s.v.lyrics.get(lyricId - 1), lyricId - 1, l);
-//						}
-//					}
-//					selectedNotes.add(lyricId);
-//					lyricId++;
-//				}
-//			}
-//		} catch (final Exception e) {
-//			Logger.error("Couldn't paste", e);
 //		}
 	}
 

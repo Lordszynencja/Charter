@@ -279,6 +279,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	@Override
 	public void mouseWheelMoved(final MouseWheelEvent e) {
+		if (data.isEmpty) {
+			return;
+		}
+
 		final int change = -e.getWheelRotation();
 		if (keyboardHandler.ctrl()) {
 			final int zoomChange = change * (keyboardHandler.shift() ? 1 : 8);

@@ -17,7 +17,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.AnchorPane;
-import log.charter.gui.panes.BeatPane;
+import log.charter.gui.panes.GuitarBeatPane;
 import log.charter.gui.panes.ChordOptionsPane;
 import log.charter.gui.panes.HandShapePane;
 import log.charter.song.Anchor;
@@ -105,7 +105,7 @@ public class GuitarModeHandler extends ModeHandler {
 			return;
 		}
 
-		new BeatPane(data, frame, undoSystem, beatPosition.beat);
+		new GuitarBeatPane(data, frame, undoSystem, beatPosition.beat);
 	}
 
 	private void rightClickHandShape(final PositionWithIdAndType handShapePosition) {

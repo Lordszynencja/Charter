@@ -82,20 +82,6 @@ public class KeyboardHandler implements KeyListener {
 		return shift;
 	}
 
-	private void handleUp() {
-//		if (data.editMode == GUITAR) {
-//			data.moveSelectedOneStringUp();
-//			data.setChanged();
-//		}
-	}
-
-	private void handleDown() {
-//		if (data.editMode == GUITAR) {
-//			data.moveSelectedOneStringDown();
-////			data.setChanged();
-//		}
-	}
-
 	private void handleLeft() {
 		if (!alt) {
 			left = true;
@@ -174,8 +160,6 @@ public class KeyboardHandler implements KeyListener {
 		keyPressBehaviors.put(KeyEvent.VK_SHIFT, () -> shift = true);
 		keyPressBehaviors.put(KeyEvent.VK_HOME, () -> modeManager.getHandler().handleHome());
 		keyPressBehaviors.put(KeyEvent.VK_END, () -> modeManager.getHandler().handleEnd());
-		keyPressBehaviors.put(KeyEvent.VK_UP, this::handleUp);
-		keyPressBehaviors.put(KeyEvent.VK_DOWN, this::handleDown);
 		keyPressBehaviors.put(KeyEvent.VK_LEFT, this::handleLeft);
 		keyPressBehaviors.put(KeyEvent.VK_RIGHT, this::handleRight);
 		keyPressBehaviors.put(KeyEvent.VK_0, () -> setFret(0));

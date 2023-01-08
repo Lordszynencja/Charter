@@ -34,7 +34,7 @@ import log.charter.song.Section;
 import log.charter.song.SectionType;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class BeatPane extends ParamsPane {
+public class GuitarBeatPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private static class SectionTypeListValue {
@@ -89,8 +89,8 @@ public class BeatPane extends ParamsPane {
 	private int phraseLevel;
 	private boolean phraseSolo;
 
-	public BeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem, final Beat beat) {
-		super(frame, Label.BEAT_PANE, 10, getSizes());
+	public GuitarBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem, final Beat beat) {
+		super(frame, Label.GUITAR_BEAT_PANE, 10, getSizes());
 		this.data = data;
 		this.undoSystem = undoSystem;
 
@@ -164,23 +164,23 @@ public class BeatPane extends ParamsPane {
 		sectionTypeInput
 				.addItemListener(e -> sectionType = ((SectionTypeListValue) sectionTypeInput.getSelectedItem()).type);
 
-		addLabel(row, 20, Label.BEAT_PANE_SECTION_TYPE);
+		addLabel(row, 20, Label.GUITAR_BEAT_PANE_SECTION_TYPE);
 		this.add(sectionTypeInput, 100, getY(row++), 200, 20);
 
 		return row;
 	}
 
 	private int preparePhraseInputs(int row) {
-		addLabel(row, 20, Label.BEAT_PANE_PHRASE_NAME);
+		addLabel(row, 20, Label.GUITAR_BEAT_PANE_PHRASE_NAME);
 		phraseNameInput = new AutocompleteInput<>(this, 100, phraseName, this::getPossiblePhraseNames, s -> s,
 				this::onPhraseNameSelected);
 		this.add(phraseNameInput, 100, getY(row++), 100, 20);
 
-		addIntegerConfigValue(row, 50, 45, Label.BEAT_PANE_PHRASE_LEVEL, phraseLevel, 30,
+		addIntegerConfigValue(row, 50, 45, Label.GUITAR_BEAT_PANE_PHRASE_LEVEL, phraseLevel, 30,
 				createIntValidator(0, 100, false), val -> phraseLevel = val, false);
 		phraseLevelInput = (JTextField) components.getLast();
 
-		addConfigCheckbox(row++, 150, 0, Label.BEAT_PANE_PHRASE_SOLO, phraseSolo, val -> phraseSolo = val);
+		addConfigCheckbox(row++, 150, 0, Label.GUITAR_BEAT_PANE_PHRASE_SOLO, phraseSolo, val -> phraseSolo = val);
 		phraseSoloInput = (JCheckBox) components.getLast();
 
 		return row;
@@ -234,13 +234,13 @@ public class BeatPane extends ParamsPane {
 
 		this.add(scrollTable, 50, getY(row), 170, 120);
 
-		final JButton rowAddButton = new JButton(Label.BEAT_PANE_EVENT_ADD.label());
+		final JButton rowAddButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_ADD.label());
 		rowAddButton.addActionListener(e -> {
 			tableModel.addRow((Vector<?>) null);
 		});
 		this.add(rowAddButton, 230, getY(row + 1), 150, 20);
 
-		final JButton rowRemoveButton = new JButton(Label.BEAT_PANE_EVENT_REMOVE.label());
+		final JButton rowRemoveButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_REMOVE.label());
 		rowRemoveButton.addActionListener(e -> {
 			if (tableModel.getRowCount() > 0) {
 				eventsTable.clearSelection();

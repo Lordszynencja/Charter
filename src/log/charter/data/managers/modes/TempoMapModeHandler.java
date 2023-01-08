@@ -1,24 +1,22 @@
 package log.charter.data.managers.modes;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
+import log.charter.gui.panes.TempoBeatPane;
 
 public class TempoMapModeHandler extends ModeHandler {
 	private ChartData data;
 	private CharterFrame frame;
-	private HighlightManager highlightManager;
 	SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData data, final CharterFrame frame, final HighlightManager highlightManager,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+	public void init(final ChartData data, final CharterFrame frame, final SelectionManager selectionManager,
+			final UndoSystem undoSystem) {
 		this.data = data;
 		this.frame = frame;
-		this.highlightManager = highlightManager;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 	}
@@ -39,6 +37,11 @@ public class TempoMapModeHandler extends ModeHandler {
 
 	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
+		if (clickData.isDrag() || clickData.pressHighlight.beat == null) {
+			return;
+		}
+
+		new TempoBeatPane(data, frame, undoSystem, clickData.pressHighlight.beat);
 	}
 
 	@Override

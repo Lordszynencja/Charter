@@ -33,7 +33,7 @@ public class ModeManager {
 			final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
 			final UndoSystem undoSystem) {
 		guitarModeHandler.init(data, frame, highlightManager, keyboardHandler, selectionManager, undoSystem);
-		tempoMapModeHandler.init(data, frame, highlightManager, selectionManager, undoSystem);
+		tempoMapModeHandler.init(data, frame, selectionManager, undoSystem);
 		vocalModeHandler.init(data, frame, keyboardHandler, selectionManager, undoSystem);
 	}
 
