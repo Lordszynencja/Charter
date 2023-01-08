@@ -15,6 +15,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalScrollBarUI;
 
 import log.charter.data.ArrangementFixer;
+import log.charter.data.ArrangementValidator;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
@@ -51,6 +52,7 @@ public class CharterFrame extends JFrame {
 	private final JLabel helpLabel = createHelp();
 
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
+	private final ArrangementValidator arrangementValidator = new ArrangementValidator();
 	private final AudioDrawer audioDrawer = new AudioDrawer();
 	private final AudioHandler audioHandler = new AudioHandler();
 	private final BeatsDrawer beatsDrawer = new BeatsDrawer();
@@ -85,6 +87,7 @@ public class CharterFrame extends JFrame {
 		setLocation(Config.windowPosX, Config.windowPosY);
 
 		arrangementFixer.init(data);
+		arrangementValidator.init(data, this);
 		audioDrawer.init(data, chartPanel);
 		audioHandler.init(data, this, keyboardHandler);
 		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, selectionManager);
@@ -96,7 +99,8 @@ public class CharterFrame extends JFrame {
 		mouseButtonPressReleaseHandler.init(highlightManager);
 		mouseHandler.init(audioHandler, data, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
 				selectionManager, undoSystem);
-		songFileHandler.init(arrangementFixer, data, this, charterMenuBar, modeManager, undoSystem);
+		songFileHandler.init(arrangementFixer, arrangementValidator, data, this, charterMenuBar, modeManager,
+				undoSystem);
 		selectionManager.init(data, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 

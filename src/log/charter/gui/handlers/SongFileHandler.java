@@ -17,6 +17,7 @@ import java.util.Map;
 
 import helliker.id3.MP3File;
 import log.charter.data.ArrangementFixer;
+import log.charter.data.ArrangementValidator;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
@@ -90,15 +91,18 @@ public class SongFileHandler {
 	}
 
 	private ArrangementFixer arrangementFixer;
+	private ArrangementValidator arrangementValidator;
 	private ChartData data;
 	private CharterFrame frame;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final CharterFrame frame,
-			final CharterMenuBar charterMenuBar, final ModeManager modeManager, final UndoSystem undoSystem) {
+	public void init(final ArrangementFixer arrangementFixer, final ArrangementValidator arrangementValidator,
+			final ChartData data, final CharterFrame frame, final CharterMenuBar charterMenuBar,
+			final ModeManager modeManager, final UndoSystem undoSystem) {
 		this.arrangementFixer = arrangementFixer;
+		this.arrangementValidator = arrangementValidator;
 		this.data = data;
 		this.frame = frame;
 		this.charterMenuBar = charterMenuBar;
@@ -375,6 +379,9 @@ public class SongFileHandler {
 		}
 
 		arrangementFixer.fixArrangement();
+		if (!arrangementValidator.validate()) {
+			return;
+		}
 
 		final RocksmithChartProject project = new RocksmithChartProject(modeManager, data, data.songChart);
 
@@ -399,6 +406,11 @@ public class SongFileHandler {
 
 	public void saveAs() {
 		if (data.isEmpty) {
+			return;
+		}
+
+		arrangementFixer.fixArrangement();
+		if (!arrangementValidator.validate()) {
 			return;
 		}
 

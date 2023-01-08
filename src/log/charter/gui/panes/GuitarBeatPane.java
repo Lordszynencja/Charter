@@ -89,7 +89,8 @@ public class GuitarBeatPane extends ParamsPane {
 	private int phraseLevel;
 	private boolean phraseSolo;
 
-	public GuitarBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem, final Beat beat) {
+	public GuitarBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
+			final Beat beat) {
 		super(frame, Label.GUITAR_BEAT_PANE, 10, getSizes());
 		this.data = data;
 		this.undoSystem = undoSystem;
@@ -263,10 +264,11 @@ public class GuitarBeatPane extends ParamsPane {
 			arrangement.sections.sort(null);
 		} else if (section != null && sectionType == null) {
 			arrangement.sections.remove(section);
-		} else {
+		} else if (section != null) {
 			section.type = sectionType;
 		}
 
+		phraseName = phraseNameInput.getText();
 		Phrase phrase = arrangement.phrases.get(phraseName);
 		if (phrase == null && !phraseName.isEmpty()) {
 			phrase = new Phrase(phraseLevel, phraseSolo);
@@ -281,8 +283,8 @@ public class GuitarBeatPane extends ParamsPane {
 			arrangement.phraseIterations.sort(null);
 		} else if (phraseIteration != null && phraseName.isEmpty()) {
 			arrangement.phraseIterations.remove(phraseIteration);
-		} else {
-			section.type = sectionType;
+		} else if (phraseIteration != null) {
+			phraseIteration.phraseName = phraseName;
 		}
 
 		arrangement.events.removeAll(events);
