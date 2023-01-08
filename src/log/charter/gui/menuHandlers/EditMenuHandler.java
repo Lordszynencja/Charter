@@ -59,6 +59,7 @@ class EditMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Label.EDIT_MENU_DELETE, button(VK_DELETE), this::delete));
 		menu.add(createItem(Label.EDIT_MENU_COPY, ctrl('C'), copyManager::copy));
 		menu.add(createItem(Label.EDIT_MENU_PASTE, ctrl('V'), copyManager::paste));
+		menu.add(createItem(Label.EDIT_MENU_SPECIAL_PASTE, ctrlShift('V'), copyManager::specialPaste));
 
 		menu.addSeparator();
 		menu.add(createItem(Label.EDIT_MENU_SONG_OPTIONS, this::songOptions));

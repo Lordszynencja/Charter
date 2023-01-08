@@ -34,7 +34,7 @@ public class AnchorPane extends ParamsPane {
 
 	public AnchorPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem, final Anchor anchor,
 			final Runnable onCancel) {
-		super(frame, Label.ANCHOR_PANE.label(), 3, getSizes());
+		super(frame, Label.ANCHOR_PANE, 3, getSizes());
 		this.data = data;
 		this.undoSystem = undoSystem;
 

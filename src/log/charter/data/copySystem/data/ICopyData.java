@@ -19,7 +19,10 @@ public interface ICopyData {
 
 		for (final V copiedPosition : positionsToPaste) {
 			try {
-				positions.add(copiedPosition.getValue(beats, basePositionInBeats));
+				final T value = copiedPosition.getValue(beats, basePositionInBeats);
+				if (value != null) {
+					positions.add(value);
+				}
 			} catch (final Exception e) {
 				Logger.error("Couldn't paste position", e);
 			}
@@ -34,7 +37,10 @@ public interface ICopyData {
 
 		for (final V copiedPosition : positionsToPaste) {
 			try {
-				positions.add(copiedPosition.getValue(beats, baseBeatId));
+				final T value = copiedPosition.getValue(beats, baseBeatId);
+				if (value != null) {
+					positions.add(value);
+				}
 			} catch (final Exception e) {
 				Logger.error("Couldn't paste position", e);
 			}

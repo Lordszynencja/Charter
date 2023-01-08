@@ -31,7 +31,7 @@ public final class ConfigPane extends ParamsPane {
 	private boolean showChordIds = Config.showChordIds;
 
 	public ConfigPane(final CharterFrame frame) {
-		super(frame, Label.CONFIG_PANE.label(), 11, getSizes());
+		super(frame, Label.CONFIG_PANE, 11, getSizes());
 
 		int row = 0;
 

@@ -108,7 +108,7 @@ public class BeatsDrawer {
 		}
 
 		public void addEvents(final ArrayList2<Event> events, final int x) {
-			final String eventsName = String.join(", " + events.map(event -> event.type.label));
+			final String eventsName = String.join(", ", events.map(event -> event.type.label));
 			sectionsAndPhrases.add(textWithBackground(new Position2D(x, eventNamesY + 11), eventsName,
 					ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT));
 		}

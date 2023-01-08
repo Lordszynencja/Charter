@@ -20,8 +20,14 @@ public abstract class CopiedPositionWithLength<T extends IPositionWithLength> ex
 	@Override
 	public T getValue(final List<Beat> beats, final double basePositionInBeats) {
 		final T value = super.getValue(beats, basePositionInBeats);
+		if (value == null) {
+			return null;
+		}
 
-		final double endPositionInBeats = basePositionInBeats + position + length;
+		double endPositionInBeats = basePositionInBeats + position + length;
+		if (endPositionInBeats > beats.size() - 1) {
+			endPositionInBeats = beats.size() - 1;
+		}
 
 		value.length(findPositionForBeatPosition(beats, endPositionInBeats) - value.position());
 

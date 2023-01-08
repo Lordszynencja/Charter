@@ -123,7 +123,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 				dragTempo(clickData);
 			}
 			if (clickData.pressHighlight.chordOrNote != null) {
-				// TODO drag and snap notes?
+				// TODO drag notes?
 			}
 			break;
 		case RIGHT_BUTTON:

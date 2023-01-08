@@ -18,6 +18,11 @@ public abstract class CopiedOnBeatPosition<T extends OnBeat> {
 	public T getValue(final ArrayList2<Beat> beats, final int baseBeatId) {
 		final T value = createValue();
 
+		final int valueBeatId = baseBeatId + beatId;
+		if (valueBeatId < 0 || valueBeatId >= beats.size()) {
+			return null;
+		}
+
 		value.beat = beats.get(baseBeatId + beatId);
 
 		return value;

@@ -53,16 +53,12 @@ public class ParamsPane extends JDialog {
 	private final int width;
 	protected final PaneSizes sizes;
 
-	public ParamsPane(final CharterFrame frame, final String title, final int rows) {
+	public ParamsPane(final CharterFrame frame, final Label title, final int rows) {
 		this(frame, title, rows, new PaneSizes());
 	}
 
-	protected int getY(final int row) {
-		return sizes.getY(row);
-	}
-
-	public ParamsPane(final CharterFrame frame, final String title, final int rows, final PaneSizes sizes) {
-		super(frame, title, true);
+	public ParamsPane(final CharterFrame frame, final Label title, final int rows, final PaneSizes sizes) {
+		super(frame, title.label(), true);
 		this.sizes = sizes;
 
 		pack();
@@ -78,6 +74,10 @@ public class ParamsPane extends JDialog {
 
 		setSize(width, h);
 		setLayout(null);
+	}
+
+	protected int getY(final int row) {
+		return sizes.getY(row);
 	}
 
 	private void setComponentBounds(final JComponent component, final int x, final int y, final int w, final int h) {
@@ -111,6 +111,10 @@ public class ParamsPane extends JDialog {
 	 * @return width of created label
 	 */
 	protected int addLabelExact(final int y, final int x, final Label label) {
+		if (label == null) {
+			return 0;
+		}
+
 		final JLabel labelComponent = new JLabel(label.label(), SwingConstants.LEFT);
 		final int labelWidth = labelComponent.getPreferredSize().width;
 		add(labelComponent, x, y, labelWidth, 20);

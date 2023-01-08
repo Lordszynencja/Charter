@@ -11,6 +11,10 @@ public abstract class CopiedPosition<T extends IPosition> {
 	public static int findPositionForBeatPosition(final List<Beat> beats, final double beatPosition) {
 		final int beatId = (int) beatPosition;
 		final Beat beat = beats.get(beatId);
+		if (beatId >= beats.size() - 1) {
+			return beat.position();
+		}
+
 		final Beat nextBeat = beats.get(beatId + 1);
 
 		return (int) (beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0));
@@ -18,7 +22,7 @@ public abstract class CopiedPosition<T extends IPosition> {
 
 	public static double findBeatPositionForPosition(final List<Beat> beats, final int position) {
 		final int beatId = findLastIdBeforeEqual(beats, position);
-		if (beatId == beats.size() - 1) {
+		if (beatId >= beats.size() - 1) {
 			return beatId;
 		}
 
@@ -40,6 +44,10 @@ public abstract class CopiedPosition<T extends IPosition> {
 		final T value = prepareValue();
 
 		final double startBeatPosition = basePositionInBeats + position;
+
+		if (startBeatPosition < 0 || startBeatPosition > beats.size() - 1) {
+			return null;
+		}
 
 		value.position(findPositionForBeatPosition(beats, startBeatPosition));
 

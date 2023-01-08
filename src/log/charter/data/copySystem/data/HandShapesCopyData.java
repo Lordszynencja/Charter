@@ -44,6 +44,10 @@ public class HandShapesCopyData implements ICopyData {
 		for (final CopiedHandShapePosition copiedPosition : this.handShapes) {
 			try {
 				final HandShape handShape = copiedPosition.getValue(beats, basePositionInBeats);
+				if (handShape == null) {
+					continue;
+				}
+
 				final int chordId = handShape.chordId;
 				if (!chordIdsMap.containsKey(chordId)) {
 					chordIdsMap.put(chordId, arrangement.getChordTemplateIdWithSave(chordTemplates.get(chordId)));

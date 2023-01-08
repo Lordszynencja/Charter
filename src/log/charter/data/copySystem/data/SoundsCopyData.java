@@ -44,6 +44,10 @@ public class SoundsCopyData implements ICopyData {
 		for (final CopiedSoundPosition copiedPosition : this.sounds) {
 			try {
 				final ChordOrNote sound = copiedPosition.getValue(beats, basePositionInBeats);
+				if (sound == null) {
+					continue;
+				}
+
 				if (sound.isChord()) {
 					final int chordId = sound.chord.chordId;
 					if (!chordIdsMap.containsKey(chordId)) {

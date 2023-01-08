@@ -50,7 +50,7 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 
 	protected ChordTemplateEditor(final ChartData data, final CharterFrame frame, final Label title, final int rows,
 			final PaneSizes sizes, final ChordTemplate chordTemplate) {
-		super(frame, title.label(), rows, sizes);
+		super(frame, title, rows, sizes);
 		this.data = data;
 		this.chordTemplate = chordTemplate;
 

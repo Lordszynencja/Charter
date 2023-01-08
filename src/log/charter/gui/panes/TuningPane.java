@@ -56,7 +56,7 @@ public final class TuningPane extends ParamsPane {
 	boolean ignoreEvents = false;
 
 	public TuningPane(final ChartData data, final CharterFrame frame) {
-		super(frame, Label.TUNING_PANE.label(), 5, getSizes());
+		super(frame, Label.TUNING_PANE, 5, getSizes());
 
 		this.data = data;
 		final ArrangementChart arrangement = data.getCurrentArrangement();

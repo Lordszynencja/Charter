@@ -38,7 +38,7 @@ public class TempoMapModeHandler extends ModeHandler {
 	}
 
 	@Override
-	public void rightClick(final MouseButtonPressReleaseData clickData) {// TODO edit beat with events/sections/phrases
+	public void rightClick(final MouseButtonPressReleaseData clickData) {
 	}
 
 	@Override

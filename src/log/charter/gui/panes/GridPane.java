@@ -27,7 +27,7 @@ public class GridPane extends ParamsPane {
 	private final BeatsMap beatsMap;
 
 	public GridPane(final CharterFrame frame, final BeatsMap beatsMap) {
-		super(frame, Label.GRID_PANE.label(), 4, getSizes());
+		super(frame, Label.GRID_PANE, 4, getSizes());
 		this.beatsMap = beatsMap;
 
 		gridSize = beatsMap.gridSize;

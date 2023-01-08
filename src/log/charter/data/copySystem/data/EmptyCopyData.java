@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import log.charter.data.ChartData;
 
 @XStreamAlias("emptyCopyData")
-public class EmptyCopyData implements ICopyData {
+public class EmptyCopyData implements ICopyData, FullCopyData {
 
 	@Override
 	public boolean isEmpty() {

@@ -8,9 +8,9 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 		HandShapesCopyData.class, SoundsCopyData.class, VocalsCopyData.class })
 public class CopyData {
 	public final ICopyData selectedCopy;
-	public final ICopyData fullCopy;
+	public final FullCopyData fullCopy;
 
-	public CopyData(final ICopyData selectedCopy, final ICopyData fullCopy) {
+	public CopyData(final ICopyData selectedCopy, final FullCopyData fullCopy) {
 		this.selectedCopy = selectedCopy;
 		this.fullCopy = fullCopy;
 	}

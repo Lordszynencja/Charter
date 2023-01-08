@@ -51,7 +51,7 @@ public class NoteOptionsPane extends ParamsPane {
 
 	public NoteOptionsPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final ArrayList2<ChordOrNote> notes) {
-		super(frame, Label.NOTE_OPTIONS_PANE.label(), 20, getSizes());
+		super(frame, Label.NOTE_OPTIONS_PANE, 20, getSizes());
 		this.undoSystem = undoSystem;
 
 		chordsAndNotes = notes;

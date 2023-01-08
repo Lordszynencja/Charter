@@ -37,7 +37,7 @@ public final class SongOptionsPane extends ParamsPane {
 	public BigDecimal crowdSpeed;
 
 	public SongOptionsPane(final CharterFrame frame, final ChartData data) {
-		super(frame, Label.SONG_OPTIONS_PANE.label(), 8, getSizes());
+		super(frame, Label.SONG_OPTIONS_PANE, 8, getSizes());
 
 		songChart = data.songChart;
 

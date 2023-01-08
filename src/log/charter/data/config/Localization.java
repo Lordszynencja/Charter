@@ -8,6 +8,14 @@ import log.charter.util.RW;
 
 public class Localization {
 	public enum Label {
+		BEAT_PANE("Beat options"), //
+		BEAT_PANE_SECTION_TYPE("Section"), //
+		BEAT_PANE_PHRASE_NAME("Phrase name"), //
+		BEAT_PANE_PHRASE_LEVEL("Level"), //
+		BEAT_PANE_PHRASE_SOLO("Solo"), //
+		BEAT_PANE_EVENT_ADD("Add event"), //
+		BEAT_PANE_EVENT_REMOVE("Remove event"), //
+
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
 
@@ -29,6 +37,7 @@ public class Localization {
 		EDIT_MENU_DELETE("Delete"), //
 		EDIT_MENU_COPY("Copy"), //
 		EDIT_MENU_PASTE("Paste"), //
+		EDIT_MENU_SPECIAL_PASTE("Special paste"), //
 		EDIT_MENU_SONG_OPTIONS("Song options"), //
 		EDIT_MENU_GRID_OPTIONS("Grid options"), //
 
@@ -151,6 +160,12 @@ public class Localization {
 		VIBRATO("Vibrato"), //
 
 		ANCHOR_WIDTH("Anchor width"), //
+
+		SPECIAL_GUITAR_PASTE_PANE("Special paste"), //
+		SPECIAL_GUITAR_PASTE_PANE_BEATS("Paste sections, phrases and events"), //
+		SPECIAL_GUITAR_PASTE_PANE_ANCHORS("Paste anchors"), //
+		SPECIAL_GUITAR_PASTE_PANE_SOUNDS("Paste notes"), //
+		SPECIAL_GUITAR_PASTE_PANE_HAND_SHAPES("Paste hand shapes"), //
 
 		CHOOSE_FOLDER_NAME("Choose folder name"), //
 		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement"), //

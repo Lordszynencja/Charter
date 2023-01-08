@@ -17,6 +17,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.AnchorPane;
+import log.charter.gui.panes.BeatPane;
 import log.charter.gui.panes.ChordOptionsPane;
 import log.charter.gui.panes.HandShapePane;
 import log.charter.song.Anchor;
@@ -80,7 +81,6 @@ public class GuitarModeHandler extends ModeHandler {
 
 	private void rightClickAnchor(final PositionWithIdAndType anchorPosition) {
 		selectionManager.clear();
-		undoSystem.addUndo();
 
 		if (anchorPosition.anchor != null) {
 			new AnchorPane(data, frame, undoSystem, anchorPosition.anchor, () -> {
@@ -88,6 +88,7 @@ public class GuitarModeHandler extends ModeHandler {
 			return;
 		}
 
+		undoSystem.addUndo();
 		final Anchor anchor = new Anchor(anchorPosition.position(), 0);
 		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 		anchors.add(anchor);
@@ -97,6 +98,14 @@ public class GuitarModeHandler extends ModeHandler {
 			undoSystem.undo();
 			undoSystem.removeRedo();
 		});
+	}
+
+	private void rightClickBeat(final PositionWithIdAndType beatPosition) {
+		if (beatPosition.beat == null) {
+			return;
+		}
+
+		new BeatPane(data, frame, undoSystem, beatPosition.beat);
 	}
 
 	private void rightClickHandShape(final PositionWithIdAndType handShapePosition) {
@@ -183,6 +192,15 @@ public class GuitarModeHandler extends ModeHandler {
 			}
 
 			rightClickAnchor(clickData.pressHighlight);
+			return;
+		}
+
+		if (clickData.pressHighlight.type == PositionType.BEAT) {
+			if (clickData.isDrag()) {
+				return;
+			}
+
+			rightClickBeat(clickData.pressHighlight);
 			return;
 		}
 

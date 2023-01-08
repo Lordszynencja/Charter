@@ -31,7 +31,7 @@ public class SlidePane extends ParamsPane {
 	private boolean unpitched;
 
 	public SlidePane(final CharterFrame frame, final UndoSystem undoSystem, final ChordOrNote chordOrNote) {
-		super(frame, Label.SLIDE_PANE.label(), 4, getSizes());
+		super(frame, Label.SLIDE_PANE, 4, getSizes());
 		this.undoSystem = undoSystem;
 
 		slideable = chordOrNote.asGuitarSound();
