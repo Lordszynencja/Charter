@@ -17,6 +17,7 @@ import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
 import log.charter.song.ChordTemplate;
 import log.charter.song.Phrase;
 import log.charter.song.ToneChange;
+import log.charter.song.notes.GuitarSound;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 
@@ -45,6 +46,7 @@ public class CopyDataXStreamHandler {
 				CopiedToneChangePosition.class, //
 				CopiedVocalPosition.class, //
 				FullGuitarCopyData.class, //
+				GuitarSound.class, //
 				HandShapesCopyData.class, //
 				Phrase.class, //
 				SoundsCopyData.class, //

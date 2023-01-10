@@ -335,15 +335,18 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 	public void mousePressed(final MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			selectedBend = getBendPosition();
+			final int value = getValueFromY(e.getY());
 			if (selectedBend.id == null) {
 				final double position = getPositionFromX(selectedBend.x);
-				final int value = getValueFromY(e.getY());
 				final EditorBendValue newBendValue = new EditorBendValue(position, value);
 
 				bendValues.add(newBendValue);
 				bendValues.sort((v0, v1) -> Double.compare(v0.position, v1.position));
 
 				selectedBend = new BendPositionWithId(selectedBend.x, value, bendValues.indexOf(newBendValue));
+			} else {
+				bendValues.get(selectedBend.id).value = value;
+				selectedBend.value = value;
 			}
 
 			return;

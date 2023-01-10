@@ -5,6 +5,7 @@ import java.util.Set;
 
 import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.Pair;
 
 class SelectionList<T extends IPosition> {
 	static interface SelectionMaker<T extends IPosition> {
@@ -82,6 +83,14 @@ class SelectionList<T extends IPosition> {
 			final T selectable = available.get(i);
 			selected.add(selectionMaker.make(i, selectable));
 		}
+	}
+
+	void add(final int id, final T selectable) {
+		selected.add(selectionMaker.make(id, selectable));
+	}
+
+	void add(final ArrayList2<Pair<Integer, T>> toAdd) {
+		selected.addAll(toAdd.map(pair -> selectionMaker.make(pair.a, pair.b)));
 	}
 
 	public void clear() {

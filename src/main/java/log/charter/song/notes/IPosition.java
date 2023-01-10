@@ -31,6 +31,10 @@ public interface IPosition extends Comparable<IPosition> {
 		return leftDistance < rightDistance ? left : right;
 	}
 
+	public static <T extends IPosition> Integer findClosestId(final ArrayList2<T> positions, final IPosition position) {
+		return findClosestId(positions, position.position());
+	}
+
 	public static <T extends IPosition> int findClosest(final ArrayList2<T> positions, final int position) {
 		final Integer id = findClosestId(positions, position);
 		if (id == null) {
@@ -38,6 +42,15 @@ public interface IPosition extends Comparable<IPosition> {
 		}
 
 		return positions.get(id).position();
+	}
+
+	public static <T extends IPosition> T findClosestPosition(final ArrayList2<T> positions, final int position) {
+		final Integer id = findClosestId(positions, position);
+		if (id == null) {
+			return null;
+		}
+
+		return positions.get(id);
 	}
 
 	public static <T extends IPosition> int findFirstIdAfter(final ArrayList2<T> list, final int position) {
@@ -110,6 +123,10 @@ public interface IPosition extends Comparable<IPosition> {
 		}
 
 		return list.get(maxId).position() >= position ? minId : maxId;
+	}
+
+	public static <T extends IPosition> int findLastIdBeforeEqual(final List<T> list, final IPosition position) {
+		return findLastIdBeforeEqual(list, position.position());
 	}
 
 	public static <T extends IPosition> int findLastIdBeforeEqual(final List<T> list, final int position) {

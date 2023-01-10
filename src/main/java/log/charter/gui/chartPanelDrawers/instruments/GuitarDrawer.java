@@ -531,6 +531,21 @@ public class GuitarDrawer {
 			final int fullSteps = value / 4;
 			final int quarterSteps = value % 4;
 
+			if (fullSteps == 0) {
+				if (quarterSteps == 0) {
+					return "0";
+				}
+				if (quarterSteps == 1) {
+					return "¼";
+				}
+				if (quarterSteps == 2) {
+					return "½";
+				}
+				if (quarterSteps == 3) {
+					return "¾";
+				}
+			}
+
 			String text = fullSteps + "";
 			if (quarterSteps == 1) {
 				text += " ¼";

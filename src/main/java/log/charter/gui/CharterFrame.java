@@ -69,8 +69,8 @@ public class CharterFrame extends JFrame {
 
 	private final Framer framer = new Framer(this::frame);
 
-	public CharterFrame() {
-		super(LogCharterRSMain.TITLE + " : " + Label.NO_PROJECT.label());
+	public CharterFrame(final String title) {
+		super(title);
 		try {
 			final InputStream stream = this.getClass().getResourceAsStream("/icon.ico");
 			setIconImages(ICODecoder.read(stream));
@@ -131,8 +131,8 @@ public class CharterFrame extends JFrame {
 		framer.start();
 	}
 
-	public CharterFrame(final String path) {
-		this();
+	public CharterFrame(final String title, final String path) {
+		this(title);
 
 		songFileHandler.open(path);
 	}

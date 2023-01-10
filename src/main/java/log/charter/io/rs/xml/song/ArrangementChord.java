@@ -143,6 +143,10 @@ public class ArrangementChord implements IPosition {
 	}
 
 	private void setChordNotes(final Chord chord, final ChordTemplate chordTemplate, final int nextPosition) {
+		if (chord.mute != Mute.NONE) {
+			return;
+		}
+
 		setChordNotesSlide(chord, chordTemplate);
 		setChordNotesTremolo(chord, chordTemplate);
 		setChordNotesHOPO(chord, chordTemplate);
@@ -172,6 +176,7 @@ public class ArrangementChord implements IPosition {
 		if (chordNotes != null && !chordNotes.isEmpty()) {
 			return;
 		}
+
 		chordNotes = new ArrayList2<>();
 		if (chordTemplate.frets.isEmpty()) {
 			return;

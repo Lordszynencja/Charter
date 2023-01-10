@@ -172,4 +172,12 @@ public class SelectionManager {
 			vocalsManager.addAll();
 		}
 	}
+
+	public void addSoundSelection(final int id) {
+		chordsNotesManager.add(id);
+	}
+
+	public void addSoundSelection(final ArrayList2<Integer> ids) {
+		chordsNotesManager.add(ids);
+	}
 }

@@ -3,6 +3,7 @@ package log.charter.data;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.song.notes.IPosition.findFirstIdAfter;
+import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,10 +13,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import log.charter.data.config.Config;
+import log.charter.song.Anchor;
 import log.charter.song.ArrangementChart;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
+import log.charter.song.PhraseIteration;
+import log.charter.song.SectionType;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
@@ -78,7 +82,28 @@ public class ArrangementFixer {
 		level.handShapes.sort(null);
 	}
 
-	private void fixLevel(final Level level) {
+	private void addMissingAnchors(final ArrangementChart arrangement, final Level level) {
+		for (final PhraseIteration phraseIteration : arrangement.phraseIterations) {
+			final int sectionId = findLastIdBeforeEqual(arrangement.sections, phraseIteration.position());
+			if (sectionId != -1 && arrangement.sections.get(sectionId).type == SectionType.NO_GUITAR) {
+				continue;
+			}
+
+			final int lastAnchorId = findLastIdBeforeEqual(level.anchors, phraseIteration);
+			if (lastAnchorId == -1) {
+				continue;
+			}
+
+			final Anchor lastAnchor = level.anchors.get(lastAnchorId);
+			if (lastAnchor.position() != phraseIteration.position()) {
+				final Anchor newAnchor = new Anchor(phraseIteration.position(), lastAnchor.fret);
+				level.anchors.add(newAnchor);
+				level.anchors.sort(null);
+			}
+		}
+	}
+
+	private void fixLevel(final ArrangementChart arrangement, final Level level) {
 		level.chordsAndNotes//
 				.stream().filter(chordOrNote -> chordOrNote.note != null)//
 				.map(chordOrNote -> chordOrNote.note)//
@@ -87,6 +112,8 @@ public class ArrangementFixer {
 		removeDuplicates(level.anchors);
 		removeDuplicates(level.chordsAndNotes);
 		removeDuplicates(level.handShapes);
+
+		addMissingAnchors(arrangement, level);
 		addMissingHandShapes(level);
 	}
 
@@ -170,13 +197,13 @@ public class ArrangementFixer {
 	}
 
 	public void fixArrangement() {
-		for (final ArrangementChart arrangementChart : data.songChart.arrangements) {
-			for (final Level level : arrangementChart.levels.values()) {
-				fixLevel(level);
+		for (final ArrangementChart arrangement : data.songChart.arrangements) {
+			for (final Level level : arrangement.levels.values()) {
+				fixLevel(arrangement, level);
 			}
 
-			fixDuplicatedChordTemplates(arrangementChart);
-			removeUnusedChordTemplates(arrangementChart);
+			fixDuplicatedChordTemplates(arrangement);
+			removeUnusedChordTemplates(arrangement);
 		}
 
 		data.songChart.beatsMap.makeBeatsUntilSongEnd();

@@ -11,6 +11,7 @@ import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
@@ -156,8 +157,9 @@ public class KeyboardHandler implements KeyListener {
 		}
 	}
 
-	private void handleFKey(final int number) {
+	private void handleFKey(final KeyEvent e, final int number) {
 		setFret(shift ? number + 12 : number);
+		e.consume();
 	}
 
 	private ArrayList2<ChordOrNote> getSelectedNotes() {
@@ -175,7 +177,7 @@ public class KeyboardHandler implements KeyListener {
 		new NoteOptionsPane(data, frame, undoSystem, selected);
 	}
 
-	private void noteOptions() {
+	private void noteOptions(final KeyEvent e) {
 		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
 			return;
 		}
@@ -192,30 +194,30 @@ public class KeyboardHandler implements KeyListener {
 		}
 	}
 
-	private final Map<Integer, Runnable> keyPressBehaviors = new HashMap<>();
+	private final Map<Integer, Consumer<KeyEvent>> keyPressBehaviors = new HashMap<>();
 
 	{
-		keyPressBehaviors.put(KeyEvent.VK_SPACE, () -> audioHandler.switchMusicPlayStatus());
-		keyPressBehaviors.put(KeyEvent.VK_CONTROL, () -> ctrl = true);
-		keyPressBehaviors.put(KeyEvent.VK_ALT, () -> alt = true);
-		keyPressBehaviors.put(KeyEvent.VK_SHIFT, () -> shift = true);
-		keyPressBehaviors.put(KeyEvent.VK_HOME, () -> modeManager.getHandler().handleHome());
-		keyPressBehaviors.put(KeyEvent.VK_END, () -> modeManager.getHandler().handleEnd());
-		keyPressBehaviors.put(KeyEvent.VK_LEFT, this::handleLeft);
-		keyPressBehaviors.put(KeyEvent.VK_RIGHT, this::handleRight);
-		keyPressBehaviors.put(KeyEvent.VK_0, () -> setFret(0));
-		keyPressBehaviors.put(KeyEvent.VK_F1, () -> handleFKey(1));
-		keyPressBehaviors.put(KeyEvent.VK_F2, () -> handleFKey(2));
-		keyPressBehaviors.put(KeyEvent.VK_F3, () -> handleFKey(3));
-		keyPressBehaviors.put(KeyEvent.VK_F4, () -> handleFKey(4));
-		keyPressBehaviors.put(KeyEvent.VK_F5, () -> handleFKey(5));
-		keyPressBehaviors.put(KeyEvent.VK_F6, () -> handleFKey(6));
-		keyPressBehaviors.put(KeyEvent.VK_F7, () -> handleFKey(7));
-		keyPressBehaviors.put(KeyEvent.VK_F8, () -> handleFKey(8));
-		keyPressBehaviors.put(KeyEvent.VK_F9, () -> handleFKey(9));
-		keyPressBehaviors.put(KeyEvent.VK_F10, () -> handleFKey(10));
-		keyPressBehaviors.put(KeyEvent.VK_F11, () -> handleFKey(11));
-		keyPressBehaviors.put(KeyEvent.VK_F12, () -> handleFKey(12));
+		keyPressBehaviors.put(KeyEvent.VK_SPACE, e -> audioHandler.switchMusicPlayStatus());
+		keyPressBehaviors.put(KeyEvent.VK_CONTROL, e -> ctrl = true);
+		keyPressBehaviors.put(KeyEvent.VK_ALT, e -> alt = true);
+		keyPressBehaviors.put(KeyEvent.VK_SHIFT, e -> shift = true);
+		keyPressBehaviors.put(KeyEvent.VK_HOME, e -> modeManager.getHandler().handleHome());
+		keyPressBehaviors.put(KeyEvent.VK_END, e -> modeManager.getHandler().handleEnd());
+		keyPressBehaviors.put(KeyEvent.VK_LEFT, e -> handleLeft());
+		keyPressBehaviors.put(KeyEvent.VK_RIGHT, e -> handleRight());
+		keyPressBehaviors.put(KeyEvent.VK_0, e -> setFret(0));
+		keyPressBehaviors.put(KeyEvent.VK_F1, e -> handleFKey(e, 1));
+		keyPressBehaviors.put(KeyEvent.VK_F2, e -> handleFKey(e, 2));
+		keyPressBehaviors.put(KeyEvent.VK_F3, e -> handleFKey(e, 3));
+		keyPressBehaviors.put(KeyEvent.VK_F4, e -> handleFKey(e, 4));
+		keyPressBehaviors.put(KeyEvent.VK_F5, e -> handleFKey(e, 5));
+		keyPressBehaviors.put(KeyEvent.VK_F6, e -> handleFKey(e, 6));
+		keyPressBehaviors.put(KeyEvent.VK_F7, e -> handleFKey(e, 7));
+		keyPressBehaviors.put(KeyEvent.VK_F8, e -> handleFKey(e, 8));
+		keyPressBehaviors.put(KeyEvent.VK_F9, e -> handleFKey(e, 9));
+		keyPressBehaviors.put(KeyEvent.VK_F10, e -> handleFKey(e, 10));
+		keyPressBehaviors.put(KeyEvent.VK_F11, e -> handleFKey(e, 11));
+		keyPressBehaviors.put(KeyEvent.VK_F12, e -> handleFKey(e, 12));
 		keyPressBehaviors.put(KeyEvent.VK_N, this::noteOptions);
 	}
 
@@ -267,8 +269,8 @@ public class KeyboardHandler implements KeyListener {
 			audioHandler.stopMusic();
 		}
 
-		keyPressBehaviors.getOrDefault(keyCode, () -> {
-		}).run();
+		keyPressBehaviors.getOrDefault(keyCode, x -> {
+		}).accept(e);
 	}
 
 	@Override

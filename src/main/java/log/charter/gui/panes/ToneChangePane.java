@@ -89,7 +89,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		final String name = toneNameInput.getText();
 
 		final ArrangementChart arrangement = data.getCurrentArrangement();
-		if (arrangement.tones.size() >= 4 && !arrangement.tones.contains(name)) {
+		if (arrangement.tones.size() >= 4 && !arrangement.tones.contains(name) && !name.isEmpty()) {
 			error = true;
 			toneNameInputBackgroundColor = toneNameInput.getBackground();
 			toneNameInput.setBackground(TextInputWithValidation.errorBackground);
@@ -115,7 +115,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 		if (toneName.isEmpty()) {
 			arrangement.toneChanges.remove(toneChange);
-			if (!arrangement.toneChanges.contains(toneChange -> toneChange.toneName.equals(toneChange.toneName))) {
+			if (!arrangement.toneChanges.contains(toneChange -> toneChange.toneName.equals(this.toneChange.toneName))) {
 				arrangement.tones.remove(toneChange.toneName);
 			}
 			return true;

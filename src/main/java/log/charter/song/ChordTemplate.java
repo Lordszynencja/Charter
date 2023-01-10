@@ -25,7 +25,7 @@ public class ChordTemplate {
 
 	public ChordTemplate(final ArrangementChordTemplate arrangementChordTemplate) {
 		chordName = arrangementChordTemplate.chordName;
-		arpeggio = arrangementChordTemplate.displayName.contains("-arg");
+		arpeggio = arrangementChordTemplate.displayName.contains("-arp");
 		fingers = new HashMap2<>(arrangementChordTemplate.fingers);
 		frets = new HashMap2<>(arrangementChordTemplate.frets);
 	}

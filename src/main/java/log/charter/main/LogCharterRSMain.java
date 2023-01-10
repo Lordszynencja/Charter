@@ -3,6 +3,7 @@ package log.charter.main;
 import java.io.IOException;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 
 public class LogCharterRSMain {
@@ -13,9 +14,9 @@ public class LogCharterRSMain {
 		Config.init();
 
 		if (args.length > 0) {
-			new CharterFrame(args[0]);
+			new CharterFrame(LogCharterRSMain.TITLE + " : Loading project...", args[0]);
 		} else {
-			new CharterFrame();
+			new CharterFrame(LogCharterRSMain.TITLE + " : " + Label.NO_PROJECT.label());
 		}
 
 		new Thread(() -> {

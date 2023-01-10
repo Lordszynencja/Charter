@@ -1,15 +1,19 @@
 package log.charter.io.rs.xml.song;
 
+import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
+
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+import log.charter.io.Logger;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
+import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -47,10 +51,10 @@ public class ArrangementLevel {
 
 		fretHandMutes = new CountedList<>();
 		anchors = new CountedList<>(level.anchors.map(ArrangementAnchor::new));
-
-		setHandShapes(level.chordsAndNotes, level.handShapes);
+		handShapes = new CountedList<ArrangementHandShape>(level.handShapes.map(ArrangementHandShape::new));
 
 		addChordNotesForFirstChordsInHandShape(level.chordsAndNotes, chordTemplates);
+		addChordNotesForChordsWithDifferentShapeThanHandShape(chordTemplates);
 	}
 
 	private void setChordsAndNotes(final ArrayList2<ChordTemplate> chordTemplates,
@@ -117,22 +121,34 @@ public class ArrangementLevel {
 			}
 
 			final ChordOrNote chordOrNote = seekableNotes.getCurrent();
-			if (chordOrNote.position() > handShape.endTime) {
+			if (!chordOrNote.isChord() || chordOrNote.position() > handShape.endTime
+					|| chordOrNote.chord.mute != Mute.NONE) {
 				continue;
 			}
 
-			if (chordOrNote.isChord()) {
-				seekableArrangementChords.seekNextGreaterEqual(chordOrNote.chord.position());
-				final ArrangementChord chord = seekableArrangementChords.getCurrent();
-				final ChordTemplate chordTemplate = chordTemplates.get(chord.chordId);
-				if (chord.chordNotes != null && !chord.chordNotes.isEmpty()) {
-					continue;
-				}
-
-				chord.populateChordNotes(chordTemplate);
+			seekableArrangementChords.seekNextGreaterEqual(chordOrNote.chord.position());
+			final ArrangementChord chord = seekableArrangementChords.getCurrent();
+			final ChordTemplate chordTemplate = chordTemplates.get(chord.chordId);
+			if (chord.chordNotes != null && !chord.chordNotes.isEmpty()) {
 				continue;
 			}
 
+			chord.populateChordNotes(chordTemplate);
+		}
+	}
+
+	private void addChordNotesForChordsWithDifferentShapeThanHandShape(final ArrayList2<ChordTemplate> chordTemplates) {
+		for (final ArrangementChord chord : chords.list) {
+			final int handShapeId = findLastIdBeforeEqual(handShapes.list, chord.time);
+			if (handShapeId == -1) {
+				Logger.error("Chord has no hand shape after adding them!");
+				continue;
+			}
+
+			final ArrangementHandShape handShape = handShapes.list.get(handShapeId);
+			if (handShape.chordId != chord.chordId) {
+				chord.populateChordNotes(chordTemplates.get(chord.chordId));
+			}
 		}
 	}
 }

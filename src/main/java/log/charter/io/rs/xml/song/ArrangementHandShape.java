@@ -9,9 +9,10 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 import log.charter.io.rs.xml.converters.TimeConverter;
 import log.charter.song.HandShape;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.IPosition;
 
 @XStreamAlias("handShape")
-public class ArrangementHandShape {
+public class ArrangementHandShape implements IPosition {
 	@XStreamAsAttribute
 	public int chordId;
 	@XStreamAsAttribute
@@ -34,5 +35,15 @@ public class ArrangementHandShape {
 		chordId = handShape.chordId;
 		startTime = handShape.position();
 		endTime = startTime + handShape.length();
+	}
+
+	@Override
+	public int position() {
+		return startTime;
+	}
+
+	@Override
+	public void position(final int newPosition) {
+		startTime = newPosition;
 	}
 }
