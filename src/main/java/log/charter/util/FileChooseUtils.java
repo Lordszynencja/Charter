@@ -1,5 +1,6 @@
 package log.charter.util;
 
+import java.awt.Component;
 import java.io.File;
 
 import javax.swing.JFileChooser;
@@ -64,10 +65,10 @@ public class FileChooseUtils {
 		return showDialog(frame, chooser);
 	}
 
-	public static File chooseDirectory(final CharterFrame frame, final String startingPath) {
+	public static File chooseDirectory(final Component parent, final String startingPath) {
 		final JFileChooser chooser = new JFileChooser(new File(startingPath));
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		final int chosenOption = chooser.showOpenDialog(frame);
+		final int chosenOption = chooser.showOpenDialog(parent);
 		if (chosenOption != JFileChooser.APPROVE_OPTION) {
 			return null;
 		}

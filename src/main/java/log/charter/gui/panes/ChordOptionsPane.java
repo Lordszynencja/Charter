@@ -58,17 +58,18 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 	private boolean linkNext;
 	private Integer slideTo;
 	private boolean unpitchedSlide;
+	private boolean tremolo;
 
 	public ChordOptionsPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final ArrayList2<ChordOrNote> notes) {
-		super(data, frame, Label.CHORD_OPTIONS_PANE, 18 + data.getCurrentArrangement().tuning.strings, getSizes(),
+		super(data, frame, Label.CHORD_OPTIONS_PANE, 19 + data.getCurrentArrangement().tuning.strings, getSizes(),
 				prepareTemplateFromData(data, notes.get(0)));
 		this.undoSystem = undoSystem;
 
 		chordsAndNotes = notes;
 
 		final ChordOrNote chordOrNote = notes.get(0);
-		if (chordOrNote.note != null) {
+		if (chordOrNote.isNote()) {
 			getNoteValues(chordOrNote.note);
 		} else {
 			final Chord chord = chordOrNote.chord;
@@ -87,6 +88,7 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 		linkNext = note.linkNext;
 		slideTo = note.slideTo;
 		unpitchedSlide = note.unpitchedSlide;
+		tremolo = note.tremolo;
 	}
 
 	private void getChordValues(final Chord chord, final ChordTemplate chordTemplate) {
@@ -97,6 +99,7 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 		linkNext = chord.linkNext;
 		slideTo = chord.slideTo;
 		unpitchedSlide = chord.unpitchedSlide;
+		tremolo = chord.tremolo;
 	}
 
 	private void addInputs(final int strings) {
@@ -142,6 +145,8 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 		addConfigCheckbox(row, 120, unpitchedSlide, val -> unpitchedSlide = val);
 		addLabel(row++, 140, Label.SLIDE_PANE_UNPITCHED);
 
+		addConfigCheckbox(row++, 110, 0, Label.TREMOLO, tremolo, val -> tremolo = val);
+
 		row++;
 		row++;
 		addDefaultFinish(row, this::onSave);
@@ -155,6 +160,7 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 		chord.linkNext = linkNext;
 		chord.slideTo = slideTo;
 		chord.unpitchedSlide = unpitchedSlide;
+		chord.tremolo = tremolo;
 	}
 
 	private void changeNoteToChord(final ChordOrNote chordOrNote, final int chordId) {

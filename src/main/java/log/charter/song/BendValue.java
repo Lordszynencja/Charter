@@ -15,7 +15,7 @@ public class BendValue extends Position {
 
 	public BendValue(final ArrangementBendValue arrangementBendValue, final int noteTime) {
 		super(arrangementBendValue.time - noteTime);
-		bendValue = arrangementBendValue.step;
+		bendValue = arrangementBendValue.step == null ? BigDecimal.ZERO : arrangementBendValue.step;
 	}
 
 	public BendValue(final BendValue other) {

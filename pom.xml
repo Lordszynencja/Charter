@@ -4,7 +4,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
-	<artifactId>rs_charter</artifactId>
+	<artifactId>RS_Charter</artifactId>
 	<version>0.8.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -93,8 +93,7 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<appendAssemblyId>false</appendAssemblyId>
-					<outputDirectory>${project.build.directory}/RS Charter</outputDirectory>
+					<outputDirectory>${project.build.directory}</outputDirectory>
 				</configuration>
 				<executions>
 					<execution>
@@ -120,7 +119,7 @@
 						<configuration>
 							<headerType>gui</headerType>
 							<outfile>target/RS Charter/RS Charter.exe</outfile>
-							<jar>target/RS Charter/RS Charter.jar</jar>
+							<jar>target/RS Charter-jar-with-dependencies.jar</jar>
 							<icon>src/main/resources/icon.ico</icon>
 							<errTitle>RSC</errTitle>
 							<classPath>
@@ -166,6 +165,25 @@
 								</resource>
 							</resources>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>sh.tak.appbundler</groupId>
+				<artifactId>appbundle-maven-plugin</artifactId>
+				<version>1.2.0</version>
+				<configuration>
+					<mainClass>log.charter.main.LogCharterRSMain</mainClass>
+					<iconFile>src/main/resources/icon.ico</iconFile>
+					<generateDiskImageFile>true</generateDiskImageFile>
+					<buildDirectory>${basedir}/target/RS Charter</buildDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>bundle</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

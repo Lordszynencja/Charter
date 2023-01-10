@@ -29,16 +29,14 @@ public class MusicData {
 		return new MusicData(new int[][] { data, data }, DEF_RATE);
 	}
 
-	public static MusicData readFile(final String path) {
-		if (path.endsWith(".mp3")) {
-			final File f = new File(path);
-			if (f.exists()) {
-				return Mp3Loader.load(f.getAbsolutePath());
+	public static MusicData readFile(final File file) {
+		if (file.getName().endsWith(".mp3")) {
+			if (file.exists()) {
+				return Mp3Loader.load(file.getAbsolutePath());
 			}
-		} else if (path.endsWith(".ogg")) {
-			final File f = new File(path);
-			if (f.exists()) {
-				return OggLoader.load(f.getAbsolutePath());
+		} else if (file.getName().endsWith(".ogg")) {
+			if (file.exists()) {
+				return OggLoader.load(file.getAbsolutePath());
 			}
 		}
 
@@ -46,12 +44,12 @@ public class MusicData {
 	}
 
 	public static MusicData readSongFile(final String dir) {
-		File musicFile = new File(dir + "/guitar.mp3");
+		File musicFile = new File(dir, "guitar.mp3");
 		if (musicFile.exists()) {
 			return Mp3Loader.load(musicFile.getAbsolutePath());
 		}
 
-		musicFile = new File(dir + "/guitar.ogg");
+		musicFile = new File(dir, "guitar.ogg");
 		if (musicFile.exists()) {
 			return OggLoader.load(musicFile.getAbsolutePath());
 		}

@@ -40,6 +40,7 @@ public class PositionWithIdAndType extends Position {
 	public final int endPosition;
 	public final Integer id;
 	public final PositionType type;
+	public final boolean existingPosition;
 
 	public final Anchor anchor;
 	public final Beat beat;
@@ -49,12 +50,13 @@ public class PositionWithIdAndType extends Position {
 	public final Vocal vocal;
 
 	PositionWithIdAndType(final int position, final int endPosition, final Integer id, final PositionType type,
-			final Anchor anchor, final Beat beat, final ChordOrNote chordOrNote, final HandShape handShape,
-			final ToneChange toneChange, final Vocal vocal) {
+			final boolean existingPosition, final Anchor anchor, final Beat beat, final ChordOrNote chordOrNote,
+			final HandShape handShape, final ToneChange toneChange, final Vocal vocal) {
 		super(position);
 		this.endPosition = endPosition;
 		this.id = id;
 		this.type = type;
+		this.existingPosition = existingPosition;
 
 		this.anchor = anchor;
 		this.beat = beat;

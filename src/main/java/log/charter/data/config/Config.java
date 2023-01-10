@@ -11,10 +11,10 @@ import java.util.function.Consumer;
 import log.charter.util.RW;
 
 public class Config {
-	private static final String configName = "config.ini";
+	private static final String configPath = new File(RW.getProgramDirectory(), "config.ini").getAbsolutePath();
 
 	public static String language = "English";
-	public static String lastPath = "C:/";
+	public static String lastPath = "";
 	public static String musicPath = System.getProperty("user.home") + File.separator + "Music";
 	public static String songsPath = System.getProperty("user.home") + File.separator + "Documents";
 
@@ -32,7 +32,7 @@ public class Config {
 	public static int windowPosY = 100;
 	public static int windowWidth = 800;
 	public static int windowHeight = 600;
-	public static int zoomLvl = 0;
+	public static int zoomLvl = 100;
 
 	public static boolean debugLogging = false;
 
@@ -70,7 +70,7 @@ public class Config {
 	}
 
 	public static void read() {
-		for (final Entry<String, String> configVal : RW.readConfig(configName).entrySet()) {
+		for (final Entry<String, String> configVal : RW.readConfig(configPath).entrySet()) {
 			try {
 				setters.getOrDefault(configVal.getKey(), val -> {
 				}).accept(configVal.getValue());
@@ -110,7 +110,7 @@ public class Config {
 
 		config.put("debugLogging", debugLogging + "");
 
-		RW.writeConfig(configName, config);
+		RW.writeConfig(configPath, config);
 
 		changed = false;
 	}

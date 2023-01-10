@@ -3,6 +3,7 @@ package log.charter.song;
 import static java.lang.Math.ceil;
 import static java.lang.Math.floor;
 import static log.charter.song.notes.IPosition.findFirstIdAfter;
+import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
@@ -289,5 +290,29 @@ public class BeatsMap {
 		}
 
 		return null;
+	}
+
+	public double getPositionInBeats(final int position) {
+		final int beatId = findLastIdBeforeEqual(beats, position);
+		if (beatId >= beats.size() - 1) {
+			return beatId;
+		}
+
+		final Beat beat = beats.get(beatId);
+		final Beat nextBeat = beats.get(beatId + 1);
+
+		return beatId + 1.0 * (position - beat.position()) / (nextBeat.position() - beat.position());
+	}
+
+	public int getPositionForPositionInBeats(final double beatPosition) {
+		final int beatId = (int) beatPosition;
+		final Beat beat = beats.get(beatId);
+		if (beatId >= beats.size() - 1) {
+			return beat.position();
+		}
+
+		final Beat nextBeat = beats.get(beatId + 1);
+
+		return (int) (beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0));
 	}
 }

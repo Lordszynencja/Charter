@@ -22,6 +22,6 @@ public class ArrangementBendValue {
 
 	public ArrangementBendValue(final BendValue bendValue, final int notePosition) {
 		time = notePosition + bendValue.position();
-		step = bendValue.bendValue;
+		step = bendValue.bendValue.compareTo(BigDecimal.ZERO) == 0 ? null : bendValue.bendValue;
 	}
 }

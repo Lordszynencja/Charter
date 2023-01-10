@@ -60,10 +60,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			pressCancelsRelease = false;
 			return;
 		}
-
-		if (e.getButton() == MouseEvent.BUTTON1) {
-			selectionManager.click(e.getX(), e.getY(), keyboardHandler.ctrl(), keyboardHandler.shift());
-		}
 	}
 
 	@Override
@@ -117,8 +113,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		switch (clickData.button) {
 		case LEFT_BUTTON:
 			if (!clickData.isDrag()) {
+				selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
 				break;
 			}
+
 			if (clickData.pressHighlight.beat != null) {
 				dragTempo(clickData);
 			}

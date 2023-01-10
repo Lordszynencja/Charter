@@ -42,6 +42,10 @@ public class Chord extends GuitarSound {
 					unpitchedSlide = true;
 				}
 
+				if (mapInteger(arrangementNote.tremolo)) {
+					tremolo = true;
+				}
+
 				if (mapInteger(arrangementNote.hammerOn)) {
 					hopo = HOPO.HAMMER_ON;
 				}

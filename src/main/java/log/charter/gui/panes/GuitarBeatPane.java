@@ -215,7 +215,6 @@ public class GuitarBeatPane extends ParamsPane {
 
 		final DefaultTableModel tableModel = new DefaultTableModel();
 		tableModel.setColumnCount(1);
-		tableModel.setRowCount(events.size());
 		eventsTable = new JTable(tableModel);
 		eventsTable.setShowGrid(false);
 		eventsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -237,18 +236,29 @@ public class GuitarBeatPane extends ParamsPane {
 
 		final JButton rowAddButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_ADD.label());
 		rowAddButton.addActionListener(e -> {
-			tableModel.addRow((Vector<?>) null);
+			tableModel.addRow(new Vector<Object>());
 		});
 		this.add(rowAddButton, 230, getY(row + 1), 150, 20);
 
 		final JButton rowRemoveButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_REMOVE.label());
 		rowRemoveButton.addActionListener(e -> {
-			if (tableModel.getRowCount() > 0) {
-				eventsTable.clearSelection();
-				final int rowToRemove = tableModel.getRowCount() - 1;
-				tableModel.removeRow(rowToRemove);
-				tableModel.setRowCount(rowToRemove);
+			if (tableModel.getRowCount() == 0) {
+				return;
 			}
+
+			int rowToRemove = eventsTable.getEditingRow();
+			if (rowToRemove == -1) {
+				rowToRemove = eventsTable.getSelectedRow();
+				if (rowToRemove == -1) {
+					return;
+				}
+			}
+
+			if (eventsTable.getCellEditor() != null) {
+				eventsTable.getCellEditor().cancelCellEditing();
+			}
+			eventsTable.clearSelection();
+			tableModel.removeRow(0);
 		});
 		this.add(rowRemoveButton, 230, getY(row + 3), 150, 20);
 

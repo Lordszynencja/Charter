@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import log.charter.data.config.Config;
+import log.charter.util.RW;
 
 public class Logger {
 	private static PrintStream out = System.out;
@@ -15,13 +16,13 @@ public class Logger {
 		try {
 			final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			final String name = "log-" + dateFormat.format(new Date()) + ".txt";
-			final File dir = new File("logs/");
+			final File dir = new File(RW.getProgramDirectory(), "logs");
 			if (!dir.exists()) {
 				dir.mkdirs();
 				dir.mkdir();
 			}
 
-			out = new PrintStream(new FileOutputStream(dir.getAbsolutePath() + "/" + name, false));
+			out = new PrintStream(new FileOutputStream(new File(dir, name), false));
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

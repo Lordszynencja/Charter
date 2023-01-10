@@ -12,4 +12,9 @@ public class Position2D {
 	public Position2D move(final int offsetX, final int offsetY) {
 		return new Position2D(x + offsetX, y + offsetY);
 	}
+
+	@Override
+	public String toString() {
+		return "Position2D{x=" + x + ", y=" + y + "}";
+	}
 }

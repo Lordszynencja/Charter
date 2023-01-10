@@ -12,6 +12,7 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
+import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.HandShape;
@@ -127,27 +128,27 @@ public class SelectionManager {
 		return findExistingPoint(x, positions);
 	}
 
-	public void click(final int x, final int y, final boolean ctrl, final boolean shift) {
+	public void click(final MouseButtonPressReleaseData clickData, final boolean ctrl, final boolean shift) {
 		if (data.isEmpty) {
 			return;
 		}
 
-		final PositionWithIdAndType closestPosition = findExistingPosition(x, y);
-		if (closestPosition == null) {
+		if (!clickData.pressHighlight.existingPosition) {
 			if (!ctrl) {
 				clearSelectionsExcept(PositionType.NONE);
 			}
 			return;
 		}
 
-		clearSelectionsExcept(closestPosition.type);
+		clearSelectionsExcept(clickData.pressHighlight.type);
 
-		final TypeSelectionManager<?> manager = typeSelectionManagers.get(closestPosition.type);
+		final TypeSelectionManager<?> manager = typeSelectionManagers.get(clickData.pressHighlight.type);
 		if (manager == null) {
 			return;
 		}
 
-		manager.addSelection(closestPosition, x, y, ctrl, shift);
+		manager.addSelection(clickData.pressHighlight, clickData.pressPosition.x, clickData.pressPosition.y, ctrl,
+				shift);
 	}
 
 	public void clear() {

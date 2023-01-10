@@ -34,7 +34,7 @@ class NotesMenuHandler extends CharterMenuHandler {
 		final JMenu menu = new JMenu(Label.NOTES_MENU.label());
 
 		menu.add(createItem(Label.EDIT_MENU_GRID_OPTIONS, button('G'), this::gridOptions));
-		menu.add(createItem(Label.NOTES_MENU_SNAP, ctrl('F'), this::snapNotes));
+		menu.add(createItem(Label.NOTES_MENU_SNAP, ctrl('G'), this::snapNotes));
 		menu.add(createItem(Label.NOTES_MENU_DOUBLE_GRID, button(VK_PERIOD), this::doubleGridSize));
 		menu.add(createItem(Label.NOTES_MENU_HALVE_GRID, button(VK_COMMA), this::halveGridSize));
 

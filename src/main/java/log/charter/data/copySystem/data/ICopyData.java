@@ -1,6 +1,5 @@
 package log.charter.data.copySystem.data;
 
-import static log.charter.data.copySystem.data.positions.CopiedPosition.findBeatPositionForPosition;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import log.charter.data.ChartData;
@@ -8,18 +7,19 @@ import log.charter.data.copySystem.data.positions.CopiedOnBeatPosition;
 import log.charter.data.copySystem.data.positions.CopiedPosition;
 import log.charter.io.Logger;
 import log.charter.song.Beat;
+import log.charter.song.BeatsMap;
 import log.charter.song.OnBeat;
 import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public interface ICopyData {
-	static <T extends IPosition, V extends CopiedPosition<T>> void simplePaste(final ArrayList2<Beat> beats,
-			final int time, final ArrayList2<T> positions, final ArrayList2<V> positionsToPaste) {
-		final double basePositionInBeats = findBeatPositionForPosition(beats, time);
+	static <T extends IPosition, V extends CopiedPosition<T>> void simplePaste(final BeatsMap beatsMap, final int time,
+			final ArrayList2<T> positions, final ArrayList2<V> positionsToPaste) {
+		final double basePositionInBeats = beatsMap.getPositionInBeats(time);
 
 		for (final V copiedPosition : positionsToPaste) {
 			try {
-				final T value = copiedPosition.getValue(beats, basePositionInBeats);
+				final T value = copiedPosition.getValue(beatsMap, basePositionInBeats);
 				if (value != null) {
 					positions.add(value);
 				}

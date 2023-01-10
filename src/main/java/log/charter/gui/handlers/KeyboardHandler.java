@@ -15,12 +15,16 @@ import java.util.Map;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
+import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
+import log.charter.gui.panes.ChordOptionsPane;
+import log.charter.gui.panes.NoteOptionsPane;
 import log.charter.song.ChordTemplate;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
@@ -34,6 +38,7 @@ public class KeyboardHandler implements KeyListener {
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
 	private SelectionManager selectionManager;
+	private UndoSystem undoSystem;
 
 	private boolean ctrl = false;
 	private boolean alt = false;
@@ -42,13 +47,15 @@ public class KeyboardHandler implements KeyListener {
 	private boolean right = false;
 
 	public void init(final AudioHandler audioHandler, final ChartData data, final CharterFrame frame,
-			final ModeManager modeManage, final MouseHandler mouseHandler, final SelectionManager selectionManager) {
+			final ModeManager modeManage, final MouseHandler mouseHandler, final SelectionManager selectionManager,
+			final UndoSystem undoSystem) {
 		this.audioHandler = audioHandler;
 		this.data = data;
 		this.frame = frame;
 		modeManager = modeManage;
 		this.mouseHandler = mouseHandler;
 		this.selectionManager = selectionManager;
+		this.undoSystem = undoSystem;
 	}
 
 	public void clearKeys() {
@@ -104,12 +111,14 @@ public class KeyboardHandler implements KeyListener {
 		frame.setNextTime(newTime);
 	}
 
-	private void setFret(final int fret) {
+	public void setFret(final int fret) {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		if (!selectionAccessor.isSelected()) {
 			return;
 		}
+
+		undoSystem.addUndo();
 
 		final ArrayList2<Selection<ChordOrNote>> selected = selectionAccessor.getSortedSelected();
 		for (final Selection<ChordOrNote> selection : selected) {
@@ -151,6 +160,38 @@ public class KeyboardHandler implements KeyListener {
 		setFret(shift ? number + 12 : number);
 	}
 
+	private ArrayList2<ChordOrNote> getSelectedNotes() {
+		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
+				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+
+		return selectedAccessor.getSortedSelected().map(selection -> selection.selectable);
+	}
+
+	private void openChordOptionsPopup(final ArrayList2<ChordOrNote> selected) {
+		new ChordOptionsPane(data, frame, undoSystem, selected);
+	}
+
+	private void openSingleNoteOptionsPopup(final ArrayList2<ChordOrNote> selected) {
+		new NoteOptionsPane(data, frame, undoSystem, selected);
+	}
+
+	private void noteOptions() {
+		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+			return;
+		}
+
+		final ArrayList2<ChordOrNote> selected = getSelectedNotes();
+		if (selected.isEmpty()) {
+			return;
+		}
+
+		if (selected.get(0).isChord()) {
+			openChordOptionsPopup(selected);
+		} else {
+			openSingleNoteOptionsPopup(selected);
+		}
+	}
+
 	private final Map<Integer, Runnable> keyPressBehaviors = new HashMap<>();
 
 	{
@@ -175,6 +216,7 @@ public class KeyboardHandler implements KeyListener {
 		keyPressBehaviors.put(KeyEvent.VK_F10, () -> handleFKey(10));
 		keyPressBehaviors.put(KeyEvent.VK_F11, () -> handleFKey(11));
 		keyPressBehaviors.put(KeyEvent.VK_F12, () -> handleFKey(12));
+		keyPressBehaviors.put(KeyEvent.VK_N, this::noteOptions);
 	}
 
 	private static final List<Integer> keysNotClearingMousePressesOnPress = asList(//

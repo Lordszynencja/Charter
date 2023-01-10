@@ -52,10 +52,13 @@ public class ParamsPane extends JDialog {
 
 	private static final int OPTIONS_MAX_INPUT_WIDTH = 500;
 
+	private final CharterFrame frame;
+
 	protected final ArrayList2<Component> components = new ArrayList2<>();
 
-	private final int width;
 	protected final PaneSizes sizes;
+
+	private int width;
 
 	public ParamsPane(final CharterFrame frame, final Label title, final int rows) {
 		this(frame, title, rows, new PaneSizes());
@@ -63,21 +66,34 @@ public class ParamsPane extends JDialog {
 
 	public ParamsPane(final CharterFrame frame, final Label title, final int rows, final PaneSizes sizes) {
 		super(frame, title.label(), true);
+		this.frame = frame;
+
 		this.sizes = sizes;
 
 		pack();
 
-		final Insets insets = getInsets();
-		width = sizes.width + insets.left + insets.right;
-		final int h = insets.top + insets.bottom + (sizes.uSpace * 2) + (rows * sizes.rowHeight);
+		setSizeWithInsets(sizes.width, rows * sizes.rowHeight);
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(true);
+		setLayout(null);
+	}
+
+	protected void setWidthWithInsets(final int newWidth) {
+		final Insets insets = getInsets();
+		width = newWidth + insets.left + insets.right;
+		setSize(width, getHeight());
+		setLocation(Config.windowPosX + frame.getWidth() / 2 - width / 2,
+				Config.windowPosY + frame.getHeight() / 2 - getHeight() / 2);
+	}
+
+	protected void setSizeWithInsets(final int newWidth, final int newHeight) {
+		final Insets insets = getInsets();
+		width = newWidth + insets.left + insets.right;
+		final int h = newHeight + insets.top + insets.bottom + (sizes.uSpace * 2);
+		setSize(width, h);
 		setLocation(Config.windowPosX + frame.getWidth() / 2 - width / 2,
 				Config.windowPosY + frame.getHeight() / 2 - h / 2);
-
-		setSize(width, h);
-		setLayout(null);
 	}
 
 	protected int getY(final int row) {

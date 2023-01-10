@@ -14,6 +14,7 @@ public class Note extends GuitarSound {
 	public int string;
 	public int fret;
 	public Integer vibrato;
+	public boolean tremolo;
 	public BassPickingTechnique bassPicking = BassPickingTechnique.NONE;
 	public ArrayList2<BendValue> bendValues = new ArrayList2<>();
 
@@ -27,7 +28,7 @@ public class Note extends GuitarSound {
 		super(arrangementNote.time, arrangementNote.sustain == null ? 0 : arrangementNote.sustain,
 				Mute.fromArrangmentNote(arrangementNote), HOPO.fromArrangmentNote(arrangementNote),
 				Harmonic.fromArrangmentNote(arrangementNote), mapInteger(arrangementNote.accent),
-				mapInteger(arrangementNote.linkNext),
+				mapInteger(arrangementNote.tremolo), mapInteger(arrangementNote.linkNext),
 				arrangementNote.slideTo == null ? arrangementNote.slideUnpitchTo : arrangementNote.slideTo,
 				arrangementNote.slideUnpitchTo != null);
 		string = arrangementNote.string;

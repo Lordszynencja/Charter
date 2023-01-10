@@ -1,5 +1,6 @@
 package log.charter.data.config;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,6 +70,8 @@ public class Localization {
 		GUITAR_MENU_TOGGLE_HARMONIC("Toggle harmonic"), //
 		GUITAR_MENU_SET_SLIDE("Set slide"), //
 		GUITAR_MENU_TOGGLE_ACCENT("Toggle accent"), //
+		GUITAR_MENU_TOGGLE_VIBRATO("Toggle vibrato"), //
+		GUITAR_MENU_TOGGLE_TREMOLO("Toggle tremolo"), //
 		GUITAR_MENU_TOGGLE_LINK_NEXT("Toggle link next"), //
 		GUITAR_MENU_SET_FRET("Set fret"), //
 		GUITAR_MENU_NOTE_OPTIONS("Note options"), //
@@ -79,6 +82,7 @@ public class Localization {
 		GUITAR_MENU_CHORD_OPTIONS("Chord options"), //
 		GUITAR_MENU_CHORD_OPTIONS_TOOLTIP(
 				"Opens notes for edit as chord, will change selected single notes into chords"), //
+		GUITAR_MENU_BEND_SETTINGS("Bend settings"), //
 		GUITAR_MENU_HAND_SHAPE_OPTIONS("Hand shape options"), //
 		GUITAR_MENU_MARK_HAND_SHAPE("Mark hand shape"), //
 
@@ -137,6 +141,7 @@ public class Localization {
 		CHORD_OPTIONS_PANE("Chord options"), //
 		HAND_SHAPE_PANE("Hand shape edit"), //
 		NOTE_OPTIONS_PANE("Note options"), //
+		BEND_OPTIONS_PANE("Bend options"), //
 
 		CHORD_NAME("Chord name"), //
 		CHORD_NAME_ADVICE("Chord name advice"), //
@@ -171,6 +176,7 @@ public class Localization {
 		ACCENT("Accent"), //
 		LINK_NEXT("Link next"), //
 		VIBRATO("Vibrato"), //
+		TREMOLO("Tremolo"), //
 
 		SPECIAL_GUITAR_PASTE_PANE("Special paste"), //
 		SPECIAL_GUITAR_PASTE_SECTIONS("Paste sections"), //
@@ -210,6 +216,7 @@ public class Localization {
 		PROJECT_IS_NEWER_VERSION("Project is newer version than program handles"), //
 		ROCKSMITH_CHART_PROJECT("Rocksmith Chart Project"), //
 		RS_ARRANGEMENT_FILE("RS arrangmenet file (XML)"), //
+		SELECT_FOLDER("Select"), //
 		TONE_NAME_PAST_LIMIT("There are already 4 tones, can't add another tone"), //
 		UNSAVED_CHANGES_POPUP("Unsaved changes"), //
 		UNSAVED_CHANGES_MESSAGE("You have unsaved changes. Do you want to save?"), //
@@ -233,7 +240,7 @@ public class Localization {
 		}
 	}
 
-	public static final String languagesFolder = "languages/";
+	public static final String languagesFolder = new File(RW.getProgramDirectory(), "languages").getAbsolutePath();
 
 	private static Map<String, String> labels;
 
@@ -242,14 +249,14 @@ public class Localization {
 		for (final Label label : Label.values()) {
 			localizationFileBuilder.append(label.name()).append('=').append(label.defaultLabel).append('\n');
 		}
-		RW.write(languagesFolder + "English.txt", localizationFileBuilder.toString());
+		RW.write(new File(languagesFolder, "English.txt"), localizationFileBuilder.toString());
 
 		readLocalizationFile();
 	}
 
 	private static void readLocalizationFile() {
 		try {
-			labels = RW.readConfig(languagesFolder + Config.language + ".txt");
+			labels = RW.readConfig(new File(languagesFolder, Config.language + ".txt"));
 		} catch (final Exception e) {
 			Config.language = "English";
 			labels = new HashMap<>();

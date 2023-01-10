@@ -2,6 +2,8 @@ package log.charter.gui.chartPanelDrawers.instruments;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.lang.Math.round;
+import static java.lang.Math.sin;
 import static java.util.stream.Collectors.minBy;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorTextY;
@@ -14,6 +16,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.clippedShapes;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledPolygon;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
@@ -36,7 +39,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -44,15 +47,18 @@ import javax.imageio.ImageIO;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.config.Zoom;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
+import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.io.Logger;
 import log.charter.song.Anchor;
 import log.charter.song.ArrangementChart;
 import log.charter.song.BendValue;
@@ -65,10 +71,12 @@ import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.GuitarSound;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.Position2D;
+import log.charter.util.RW;
 
 public class GuitarDrawer {
 	public static final int noteWidth = 23;
@@ -78,10 +86,14 @@ public class GuitarDrawer {
 
 	private static BufferedImage loadImage(final String path) {
 		try {
-			return ImageIO.read(new File(path));
+			return ImageIO.read(new File(RW.getProgramDirectory(), path));
 		} catch (final IOException e) {
-			e.printStackTrace();
-			return new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
+			try {
+				return ImageIO.read(new File(path));
+			} catch (final IOException e2) {
+				Logger.error("Couldn't load image " + path, e);
+				return new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
+			}
 		}
 	}
 
@@ -94,7 +106,7 @@ public class GuitarDrawer {
 	private static final Color stringMuteNoteColor = ColorLabel.NOTE_STRING_MUTE.color();
 
 	private static final Font anchorFont = new Font(Font.DIALOG, Font.BOLD, 13);
-	private static final Font bendValueFont = new Font(Font.MONOSPACED, Font.PLAIN, 15);
+	private static final Font bendValueFont = new Font(Font.DIALOG, Font.PLAIN, 15);
 	private static final Font fretFont = new Font(Font.MONOSPACED, Font.PLAIN, 15);
 
 	static {
@@ -120,20 +132,30 @@ public class GuitarDrawer {
 		public final ArrayList2<BendValue> bendValues;
 		public final Integer slideTo;
 		public final boolean unpitchedSlide;
+		public final Integer vibrato;
+		public final boolean tremolo;
 
 		public final boolean selected;
 		public final boolean linkPrevious;
 
 		public NoteData(final int x, final int length, final Note note, final boolean selected,
 				final boolean lastWasLinkNext) {
-			this(note.position(), x, length, note.string, note.fret, note.fret + "", note.accent, note.mute, note.hopo,
-					note.harmonic, note.bendValues, note.slideTo, note.unpitchedSlide, selected, lastWasLinkNext);
+			this(x, length, note.string, note.fret, note.fret + "", note, note.bendValues, note.slideTo, note.vibrato,
+					selected, lastWasLinkNext);
+		}
+
+		public NoteData(final int x, final int length, final int string, final int fret, final String fretDescription,
+				final GuitarSound sound, final ArrayList2<BendValue> bendValues, final Integer slideTo,
+				final Integer vibrato, final boolean selected, final boolean lastWasLinkNext) {
+			this(sound.position(), x, length, string, fret, fretDescription, sound.accent, sound.mute, sound.hopo,
+					sound.harmonic, bendValues, slideTo, sound.unpitchedSlide, vibrato, sound.tremolo, selected,
+					lastWasLinkNext);
 		}
 
 		private NoteData(final int position, final int x, final int length, final int string, final int fretNumber,
 				final String fret, final boolean accent, final Mute mute, final HOPO hopo, final Harmonic harmonic,
 				final ArrayList2<BendValue> bendValues, final Integer slideTo, final boolean unpitchedSlide,
-				final boolean selected, final boolean lastWasLinkNext) {
+				final Integer vibrato, final boolean tremolo, final boolean selected, final boolean lastWasLinkNext) {
 			this.position = position;
 			this.x = x;
 			this.length = lastWasLinkNext ? max(5, length) : length;
@@ -148,6 +170,8 @@ public class GuitarDrawer {
 			this.bendValues = bendValues;
 			this.slideTo = slideTo;
 			this.unpitchedSlide = unpitchedSlide;
+			this.vibrato = vibrato;
+			this.tremolo = tremolo;
 
 			this.selected = selected;
 			linkPrevious = lastWasLinkNext;
@@ -173,9 +197,8 @@ public class GuitarDrawer {
 					+ (ctrl && finger != null ? "(" + (finger == 0 ? "T" : finger.toString()) + ")" : "");
 			final Integer slideTo = slideDistance == null ? null : (fret + slideDistance);
 
-			notes.add(new NoteData(chord.position(), x, length, string, fret, fretDescription, chord.accent, chord.mute,
-					chord.hopo, chord.harmonic, chord.bendValues.get(string), slideTo, chord.unpitchedSlide, selected,
-					lastWasLinkNext));
+			notes.add(new NoteData(x, length, string, fret, fretDescription, chord, chord.bendValues.get(string),
+					slideTo, null, selected, lastWasLinkNext));
 		}
 
 		return notes;
@@ -355,14 +378,65 @@ public class GuitarDrawer {
 
 		private void addSlideCommon(final NoteData note, final int y, final Color backgroundColor,
 				final Color fretColor) {
-			final int topY = y - tailHeight / 2;
-			final int bottomY = y + tailHeight / 2 + 1;
+			final int topY = y - tailHeight / 3;
+			final int bottomY = y + tailHeight / 3 + 1;
 			final Position2D a = new Position2D(note.x, topY);
 			final Position2D b = new Position2D(note.x, bottomY);
 			final int tailEndY = note.slideTo < note.fretNumber ? bottomY : topY;
 			final Position2D c = new Position2D(note.x + note.length, tailEndY);
+			final Color color = noteTailColors[note.string];
 
-			noteTails.add(filledTriangle(a, b, c, noteTailColors[note.string]));
+			if (note.vibrato != null || note.tremolo) {
+				if (note.vibrato != null) {
+					final List<DrawableShape> shapes = new ArrayList<>();
+					final int vibratoSpeed = (int) (note.vibrato * Zoom.zoom * 1.5);
+					final int vibratoLineHeight = tailHeight / 2;
+					final int vibratoAmplitude = tailHeight - vibratoLineHeight - 1;
+					final int vibratoOffset = (vibratoAmplitude - tailHeight) / 2;
+					for (int i = 0; i < note.length + 2; i++) {
+						final int segmentY = y
+								+ (int) (vibratoOffset - vibratoAmplitude * sin(i * Math.PI / vibratoSpeed) / 2);
+
+						shapes.add(lineVertical(note.x + i, segmentY, segmentY + vibratoLineHeight, color));
+					}
+					noteTails.add(clippedShapes(
+							new ShapePositionWithSize(note.x, y - tailHeight / 2, note.length, tailHeight), shapes));
+				}
+				if (note.tremolo) {
+					int x = note.x + 40;
+					final int totalHeight = bottomY - topY;
+					int middleY = y;
+					int height = totalHeight;
+					while (x < note.x + note.length) {
+						final int distance = x - note.x;
+						final double lengthRatio1 = (distance - 20) * 1.0 / note.length;
+						final double lengthRatio2 = distance * 1.0 / note.length;
+						final int h1 = (int) (totalHeight * (1 - lengthRatio1));
+						final int h2 = (int) (totalHeight * (1 - lengthRatio2));
+						final int middleY1 = (int) (y * (1 - lengthRatio1) + tailEndY * lengthRatio1);
+						final int middleY2 = (int) (y * (1 - lengthRatio2) + tailEndY * lengthRatio2);
+
+						noteTails.add(filledPolygon(color, //
+								new Position2D(x - 40, middleY - 2 * height / 3), //
+								new Position2D(x - 20, middleY1 - h1 / 3), //
+								new Position2D(x, middleY2 - 2 * h2 / 3), //
+								new Position2D(x, middleY2 + h2 / 3), //
+								new Position2D(x - 20, middleY1 + 2 * h1 / 3), //
+								new Position2D(x - 40, middleY + height / 3)));
+
+						middleY = middleY2;
+						height = h2;
+						x += 40;
+					}
+
+					noteTails.add(filledTriangle(new Position2D(x - 40, middleY - 2 * height / 3),
+							new Position2D(x - 40, middleY + height / 3),
+							new Position2D(note.x + note.length, tailEndY), color));
+				}
+			} else {
+				noteTails.add(filledTriangle(a, b, c, color));
+			}
+
 			slideFrets.add(centeredTextWithBackground(c, note.slideTo + "", backgroundColor, fretColor));
 			if (note.selected) {
 				noteTailSelects.add(strokedTriangle(a, b, c, selectColor));
@@ -381,7 +455,68 @@ public class GuitarDrawer {
 		private void addNormalNoteTailShape(final NoteData note, final int y) {
 			final ShapePositionWithSize position = new ShapePositionWithSize(note.x - 1, y, note.length + 2, tailHeight)
 					.centeredY();
-			noteTails.add(filledRectangle(position, noteTailColors[note.string]));
+			final Color color = noteTailColors[note.string];
+
+			if (note.vibrato != null || note.tremolo) {
+				final List<DrawableShape> shapes = new ArrayList<>();
+				if (note.vibrato != null && note.tremolo) {
+					final int vibratoSpeed = (int) (note.vibrato * Zoom.zoom * 1.5);
+					final int vibratoLineHeight = tailHeight / 2;
+					final int vibratoAmplitude = tailHeight - vibratoLineHeight - 1;
+					final int vibratoOffset = (vibratoAmplitude - tailHeight) / 2;
+					for (int i = 0; i < note.length + 2; i++) {
+						final int segmentY = y
+								+ (int) (vibratoOffset - vibratoAmplitude * sin(i * Math.PI / vibratoSpeed) / 2);
+
+						shapes.add(lineVertical(position.x + i, segmentY, y, color));
+					}
+
+					int x = position.x;
+					final int y0 = y + tailHeight / 4;
+					final int y1 = y + tailHeight / 2;
+					while (x < position.x + position.width) {
+						shapes.add(filledPolygon(color, //
+								new Position2D(x, y), //
+								new Position2D(x + 40, y), //
+								new Position2D(x + 40, y1), //
+								new Position2D(x + 20, y0), //
+								new Position2D(x, y1)));
+						x += 40;
+					}
+				} else if (note.vibrato != null) {
+					final int vibratoSpeed = (int) (note.vibrato * Zoom.zoom * 1.5);
+					final int vibratoLineHeight = tailHeight / 2;
+					final int vibratoAmplitude = tailHeight - vibratoLineHeight - 1;
+					final int vibratoOffset = (vibratoAmplitude - tailHeight) / 2;
+					for (int i = 0; i < note.length + 2; i++) {
+						final int segmentY = y
+								+ (int) (vibratoOffset - vibratoAmplitude * sin(i * Math.PI / vibratoSpeed) / 2);
+
+						shapes.add(lineVertical(position.x + i, segmentY, segmentY + vibratoLineHeight, color));
+					}
+				} else {
+					int x = position.x;
+					final int y0 = y + tailHeight / 2;
+					final int y1 = y + tailHeight / 4;
+					final int y2 = y - tailHeight / 4;
+					final int y3 = y - tailHeight / 2;
+					while (x < position.x + position.width) {
+						shapes.add(filledPolygon(color, //
+								new Position2D(x, y0), //
+								new Position2D(x + 20, y1), //
+								new Position2D(x + 40, y0), //
+								new Position2D(x + 40, y2), //
+								new Position2D(x + 20, y3), //
+								new Position2D(x, y2)));
+						x += 40;
+					}
+				}
+
+				noteTails.add(clippedShapes(position, shapes));
+			} else {
+				noteTails.add(filledRectangle(position.resized(0, tailHeight / 6, 0, -tailHeight / 3), color));
+			}
+
 			if (note.selected) {
 				noteTailSelects.add(strokedRectangle(position.resized(0, -1, 0, 1), selectColor));
 			}
@@ -392,11 +527,22 @@ public class GuitarDrawer {
 				return "0";
 			}
 
-			try {
-				return bendValue.intValueExact() + "";
-			} catch (final ArithmeticException e) {
-				return bendValue.setScale(1, RoundingMode.HALF_UP).toString();
+			final int value = (int) round(bendValue.doubleValue() * 4);
+			final int fullSteps = value / 4;
+			final int quarterSteps = value % 4;
+
+			String text = fullSteps + "";
+			if (quarterSteps == 1) {
+				text += " ¼";
 			}
+			if (quarterSteps == 2) {
+				text += " ½";
+			}
+			if (quarterSteps == 3) {
+				text += " ¾";
+			}
+
+			return text;
 		}
 
 		private int getBendLineY(final int y, final BigDecimal bendValue) {
@@ -519,14 +665,16 @@ public class GuitarDrawer {
 			chordNames.draw(g);
 			noteTails.draw(g);
 
-			g.setFont(bendValueFont);
-			bendValues.draw(g);
 			slideFrets.draw(g);
 			noteTailSelects.draw(g);
 			notes.draw(g);
 
+			g.setFont(bendValueFont);
+			bendValues.draw(g);
+
 			g.setFont(fretFont);
 			noteFrets.draw(g);
+
 			handShapes.draw(g);
 			selects.draw(g);
 

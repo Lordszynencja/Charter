@@ -48,6 +48,7 @@ public class NoteOptionsPane extends ParamsPane {
 	private Integer slideTo;
 	private boolean unpitchedSlide;
 	private Integer vibrato;
+	private boolean tremolo;
 
 	public NoteOptionsPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final ArrayList2<ChordOrNote> notes) {
@@ -128,6 +129,8 @@ public class NoteOptionsPane extends ParamsPane {
 		vibratoInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(vibratoInput);
 
+		addConfigCheckbox(row++, 20, 45, Label.TREMOLO, tremolo, val -> tremolo = val);
+
 		addDefaultFinish(16, this::onSave);
 	}
 
@@ -143,6 +146,7 @@ public class NoteOptionsPane extends ParamsPane {
 		slideTo = note.slideTo;
 		unpitchedSlide = note.unpitchedSlide;
 		vibrato = note.vibrato;
+		tremolo = note.tremolo;
 	}
 
 	private void getChordValues(final Chord chord, final ChordTemplate chordTemplate) {
@@ -157,6 +161,7 @@ public class NoteOptionsPane extends ParamsPane {
 		slideTo = chord.slideTo;
 		unpitchedSlide = chord.unpitchedSlide;
 		vibrato = null;
+		tremolo = chord.tremolo;
 	}
 
 	private void setNoteValues(final Note note) {
@@ -171,6 +176,7 @@ public class NoteOptionsPane extends ParamsPane {
 		note.accent = accent;
 		note.linkNext = linkNext;
 		note.vibrato = vibrato;
+		note.tremolo = tremolo;
 	}
 
 	private void changeChordToNote(final ChordOrNote chordOrNote) {
@@ -184,6 +190,7 @@ public class NoteOptionsPane extends ParamsPane {
 		note.accent = accent;
 		note.linkNext = linkNext;
 		note.vibrato = vibrato;
+		note.tremolo = tremolo;
 		chordOrNote.note = note;
 		chordOrNote.chord = null;
 	}

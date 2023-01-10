@@ -31,6 +31,8 @@ public class ArrangementNote {
 	@XStreamAsAttribute
 	public Integer vibrato;
 	@XStreamAsAttribute
+	public Integer tremolo;
+	@XStreamAsAttribute
 	public Integer accent;
 	@XStreamAsAttribute
 	public Integer mute;
@@ -71,6 +73,7 @@ public class ArrangementNote {
 		fret = note.fret;
 		sustain = note.length() > 0 ? note.length() : null;
 		vibrato = note.vibrato;
+		tremolo = note.tremolo ? 1 : null;
 		accent = note.accent ? 1 : null;
 
 		bend = note.bendValues.isEmpty() ? null

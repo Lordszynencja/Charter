@@ -1,7 +1,6 @@
 package log.charter.data.copySystem;
 
 import static java.util.stream.Collectors.toCollection;
-import static log.charter.data.copySystem.data.positions.CopiedPosition.findBeatPositionForPosition;
 import static log.charter.song.notes.IPosition.findFirstIdAfterEqual;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
@@ -43,6 +42,7 @@ import log.charter.io.ClipboardHandler;
 import log.charter.io.Logger;
 import log.charter.song.ArrangementChart;
 import log.charter.song.Beat;
+import log.charter.song.BeatsMap;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.OnBeat;
@@ -55,7 +55,7 @@ import log.charter.util.CollectionUtils.HashSet2;
 
 public class CopyManager {
 	private static interface CopiedPositionMaker<T extends IPosition, V extends CopiedPosition<T>> {
-		V make(ArrayList2<Beat> beats, double basePositionInBeats, T position);
+		V make(BeatsMap beatsMap, double basePositionInBeats, T position);
 	}
 
 	private static interface CopiedOnBeatPositionMaker<T extends OnBeat, V extends CopiedOnBeatPosition<T>> {
@@ -79,16 +79,15 @@ public class CopyManager {
 
 	private <T extends IPosition, V extends CopiedPosition<T>> ArrayList2<V> makeCopy(final ArrayList2<T> positions,
 			final double basePositionInBeats, final CopiedPositionMaker<T, V> copiedPositionMaker) {
-		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
+		final BeatsMap beatsMap = data.songChart.beatsMap;
 
-		return positions.map(position -> copiedPositionMaker.make(beats, basePositionInBeats, position));
+		return positions.map(position -> copiedPositionMaker.make(beatsMap, basePositionInBeats, position));
 	}
 
 	private <T extends IPosition, V extends CopiedPosition<T>> ArrayList2<V> makeCopy(
 			final ArrayList2<Selection<T>> selectedPositions, final CopiedPositionMaker<T, V> copiedPositionMaker) {
-		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
-		final double basePositionInBeats = findBeatPositionForPosition(beats,
-				selectedPositions.get(0).selectable.position());
+		final BeatsMap beatsMap = data.songChart.beatsMap;
+		final double basePositionInBeats = beatsMap.getPositionInBeats(selectedPositions.get(0).selectable.position());
 
 		return makeCopy(selectedPositions.map(selected -> selected.selectable), basePositionInBeats,
 				copiedPositionMaker);
@@ -144,7 +143,7 @@ public class CopyManager {
 	private <T extends IPosition, V extends CopiedPosition<T>> ArrayList2<V> copyPositionsFromTo(final int from,
 			final int to, final double basePositionInBeats, final ArrayList2<T> positions,
 			final CopiedPositionMaker<T, V> copiedPositionMaker) {
-		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
+		final BeatsMap beatsMap = data.songChart.beatsMap;
 
 		int fromId = findFirstIdAfterEqual(positions, from);
 		if (fromId == -1) {
@@ -159,7 +158,7 @@ public class CopyManager {
 		}
 
 		return positions.stream().skip(fromId).limit(toId - fromId + 1)//
-				.map(position -> copiedPositionMaker.make(beats, basePositionInBeats, position))//
+				.map(position -> copiedPositionMaker.make(beatsMap, basePositionInBeats, position))//
 				.collect(toCollection(ArrayList2::new));
 	}
 
@@ -169,8 +168,8 @@ public class CopyManager {
 		}
 
 		final ArrangementChart arrangement = data.getCurrentArrangement();
-		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
-		final double basePositionInBeats = findBeatPositionForPosition(beats, from);
+		final BeatsMap beatsMap = data.songChart.beatsMap;
+		final double basePositionInBeats = beatsMap.getPositionInBeats(from);
 		final int baseBeatId = (int) basePositionInBeats;
 
 		final ArrayList2<CopiedSectionPosition> copiedSections = makeBeatsCopyFromToSectionsPhrases(from, to,

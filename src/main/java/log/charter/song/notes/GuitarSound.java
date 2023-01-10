@@ -9,6 +9,7 @@ public class GuitarSound extends PositionWithLength {
 	public HOPO hopo = HOPO.NONE;
 	public Harmonic harmonic = Harmonic.NONE;
 	public boolean accent;
+	public boolean tremolo;
 	public boolean linkNext;
 	public Integer slideTo;
 	public boolean unpitchedSlide;
@@ -22,12 +23,14 @@ public class GuitarSound extends PositionWithLength {
 	}
 
 	public GuitarSound(final int position, final int length, final Mute mute, final HOPO hopo, final Harmonic harmonic,
-			final boolean accent, final boolean linkNext, final Integer slideTo, final boolean unpitchedSlide) {
+			final boolean accent, final boolean tremolo, final boolean linkNext, final Integer slideTo,
+			final boolean unpitchedSlide) {
 		super(position, length);
 		this.mute = mute;
 		this.hopo = hopo;
 		this.harmonic = harmonic;
 		this.accent = accent;
+		this.tremolo = tremolo;
 		this.linkNext = linkNext;
 		this.slideTo = slideTo;
 		this.unpitchedSlide = unpitchedSlide;
@@ -39,6 +42,7 @@ public class GuitarSound extends PositionWithLength {
 		hopo = other.hopo;
 		harmonic = other.harmonic;
 		accent = other.accent;
+		tremolo = other.tremolo;
 		linkNext = other.linkNext;
 		slideTo = other.slideTo;
 		unpitchedSlide = other.unpitchedSlide;

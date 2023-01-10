@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,6 +15,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class RW {
+	public static File getProgramDirectory() {
+		try {
+			final File file = new File(RW.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+			if (file.getName().endsWith(".exe")) {
+				return file.getParentFile();
+			}
+
+			if (file.getAbsolutePath().contains("LOG-charter-RS\\target\\classes")) {
+				return new File("").getAbsoluteFile();
+			}
+
+			return file.getParentFile();
+		} catch (final URISyntaxException e) {
+			return new File("");
+		}
+	}
 
 	public static File getOrCreateFile(final String filename) {
 		final File f = new File(filename);
@@ -67,7 +84,11 @@ public class RW {
 	}
 
 	public static Map<String, String> readConfig(final String filename) {
-		final String[] lines = read(filename).split("\r\n|\r|\n");
+		return readConfig(new File(filename));
+	}
+
+	public static Map<String, String> readConfig(final File file) {
+		final String[] lines = read(file).split("\r\n|\r|\n");
 
 		final Map<String, String> config = new HashMap<>();
 		for (final String line : lines) {
@@ -88,8 +109,8 @@ public class RW {
 		writeB(filename, content.getBytes());
 	}
 
-	public static void write(final String filename, final String content, final String charset) {
-		writeB(filename, content.getBytes(Charset.forName(charset)));
+	public static void write(final File file, final String content, final String charset) {
+		writeB(file, content.getBytes(Charset.forName(charset)));
 	}
 
 	public static void writeB(final File f, final byte[] content) {

@@ -1,7 +1,5 @@
 package log.charter.data.copySystem.data;
 
-import static log.charter.data.copySystem.data.positions.CopiedPosition.findBeatPositionForPosition;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +9,7 @@ import log.charter.data.ChartData;
 import log.charter.data.copySystem.data.positions.CopiedSoundPosition;
 import log.charter.io.Logger;
 import log.charter.song.ArrangementChart;
-import log.charter.song.Beat;
+import log.charter.song.BeatsMap;
 import log.charter.song.ChordTemplate;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -35,15 +33,15 @@ public class SoundsCopyData implements ICopyData {
 	@Override
 	public void paste(final ChartData data) {
 		final ArrangementChart arrangement = data.getCurrentArrangement();
-		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
+		final BeatsMap beatsMap = data.songChart.beatsMap;
 		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
 
-		final double basePositionInBeats = findBeatPositionForPosition(beats, data.time);
+		final double basePositionInBeats = beatsMap.getPositionInBeats(data.time);
 		final Map<Integer, Integer> chordIdsMap = new HashMap<>();
 
 		for (final CopiedSoundPosition copiedPosition : this.sounds) {
 			try {
-				final ChordOrNote sound = copiedPosition.getValue(beats, basePositionInBeats);
+				final ChordOrNote sound = copiedPosition.getValue(beatsMap, basePositionInBeats);
 				if (sound == null) {
 					continue;
 				}

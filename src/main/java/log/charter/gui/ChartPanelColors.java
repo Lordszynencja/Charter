@@ -1,6 +1,7 @@
 package log.charter.gui;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -106,6 +107,8 @@ public class ChartPanelColors {
 		}
 	}
 
+	private static final String colorFilePath = new File(RW.getProgramDirectory(), "colors.txt").getAbsolutePath();
+
 	private static final Map<ColorLabel, Color> colors = new HashMap<>();
 
 	static {
@@ -113,7 +116,7 @@ public class ChartPanelColors {
 			colors.put(colorLabel, colorLabel.defaultColor);
 		}
 
-		Map<String, String> config = new HashMap<>();// RW.readConfig("colors.txt");
+		Map<String, String> config = RW.readConfig(colorFilePath);
 		for (final Entry<String, String> configEntry : config.entrySet()) {
 			try {
 				final ColorLabel colorLabel = ColorLabel.valueOf(configEntry.getKey());
@@ -137,6 +140,6 @@ public class ChartPanelColors {
 			config.put(colorEntry.getKey().name(), r + " " + g + " " + b);
 		}
 
-		RW.writeConfig("colors.txt", config);
+		RW.writeConfig(colorFilePath, config);
 	}
 }

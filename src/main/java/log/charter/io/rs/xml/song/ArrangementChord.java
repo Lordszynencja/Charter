@@ -85,6 +85,19 @@ public class ArrangementChord implements IPosition {
 		}
 	}
 
+	private void setChordNotesTremolo(final Chord chord, final ChordTemplate chordTemplate) {
+		if (!chord.tremolo) {
+			return;
+		}
+
+		populateChordNotes(chordTemplate);
+		setChordNoteLengths(chord.length());
+
+		for (final ArrangementNote chordNote : chordNotes) {
+			chordNote.tremolo = 1;
+		}
+	}
+
 	private void setChordNotesHOPO(final Chord chord, final ChordTemplate chordTemplate) {
 		if (chord.hopo == HOPO.NONE) {
 			return;
@@ -131,6 +144,7 @@ public class ArrangementChord implements IPosition {
 
 	private void setChordNotes(final Chord chord, final ChordTemplate chordTemplate, final int nextPosition) {
 		setChordNotesSlide(chord, chordTemplate);
+		setChordNotesTremolo(chord, chordTemplate);
 		setChordNotesHOPO(chord, chordTemplate);
 		setChordNotesBends(chord, chordTemplate);
 

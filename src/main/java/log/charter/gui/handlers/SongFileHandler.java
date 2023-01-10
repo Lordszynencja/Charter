@@ -136,23 +136,23 @@ public class SongFileHandler {
 			return;
 		}
 
-		File f = new File(Config.songsPath + "/" + folderName);
+		File f = new File(Config.songsPath, folderName);
 		while (f.exists()) {
 			folderName = frame.showInputDialog(Label.FOLDER_EXISTS_CHOOSE_DIFFERENT.label(), folderName);
 			if (folderName == null) {
 				return;
 			}
 
-			f = new File(Config.songsPath + "/" + folderName);
+			f = new File(Config.songsPath, folderName);
 		}
 		f.mkdir();
 
 		final String songDir = f.getAbsolutePath();
 		final String musicFileName = "guitar." + extension;
-		final String musicPath = songDir + "/" + musicFileName;
-		RW.writeB(musicPath, RW.readB(songFile));
+		final File musicFile = new File(songDir, musicFileName);
+		RW.writeB(musicFile, RW.readB(songFile));
 
-		final MusicData musicData = MusicData.readFile(musicPath);
+		final MusicData musicData = MusicData.readFile(musicFile);
 		if (musicData == null) {
 			frame.showPopup(Label.MUSIC_DATA_NOT_FOUND.label());
 			return;
@@ -178,7 +178,7 @@ public class SongFileHandler {
 			return null;
 		}
 
-		return MusicData.readFile(musicFile.getAbsolutePath());
+		return MusicData.readFile(musicFile);
 	}
 
 	public void open(final String path) {
@@ -198,7 +198,7 @@ public class SongFileHandler {
 			return;
 		}
 
-		final MusicData musicData = MusicData.readFile(dir + project.musicFileName);
+		final MusicData musicData = MusicData.readFile(new File(dir, project.musicFileName));
 		if (musicData == null) {
 			frame.showPopup(Label.WRONG_MUSIC_FILE.label());
 			return;
@@ -231,7 +231,7 @@ public class SongFileHandler {
 		}
 
 		String startingDir = data.path;
-		if (!new File(startingDir).exists()) {
+		if (startingDir.isEmpty() || !new File(startingDir).exists()) {
 			startingDir = Config.songsPath;
 		}
 
@@ -256,7 +256,7 @@ public class SongFileHandler {
 			return;
 		}
 
-		MusicData musicData = MusicData.readFile(dir + project.musicFileName);
+		MusicData musicData = MusicData.readFile(new File(dir, project.musicFileName));
 		if (musicData == null) {
 			frame.showPopup(Label.MUSIC_FILE_NOT_FOUND_PICK_NEW.label());
 
@@ -266,7 +266,7 @@ public class SongFileHandler {
 				return;
 			}
 
-			musicData = MusicData.readFile(musicFile.getAbsolutePath());
+			musicData = MusicData.readFile(musicFile);
 			if (musicData == null) {
 				frame.showPopup(Label.WRONG_MUSIC_FILE.label());
 				return;
@@ -314,7 +314,7 @@ public class SongFileHandler {
 			return;
 		}
 
-		final MusicData musicData = MusicData.readFile(songFile.getAbsolutePath());
+		final MusicData musicData = MusicData.readFile(songFile);
 		if (musicData == null) {
 			frame.showPopup(Label.MUSIC_FILE_COULDNT_BE_LOADED.label());
 			return;
@@ -390,12 +390,13 @@ public class SongFileHandler {
 			final String arrangementFileName = id + "_" + arrangementChart.getTypeName() + "_RS2.xml";
 			project.arrangementFiles.add(arrangementFileName);
 			final SongArrangement songArrangement = new SongArrangement(data.songChart, arrangementChart);
-			RW.write(data.path + arrangementFileName, SongArrangementXStreamHandler.saveSong(songArrangement));
+			RW.write(new File(data.path, arrangementFileName), SongArrangementXStreamHandler.saveSong(songArrangement));
 			id++;
 		}
 
 		if (!data.songChart.vocals.vocals.isEmpty()) {
-			RW.write(data.path + "Vocals_RS2.xml", saveVocals(new ArrangementVocals(data.songChart.vocals)), "UTF-8");
+			RW.write(new File(data.path, "Vocals_RS2.xml"), saveVocals(new ArrangementVocals(data.songChart.vocals)),
+					"UTF-8");
 		}
 
 		RW.write(data.path + data.projectFileName, saveProject(project));

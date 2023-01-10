@@ -40,6 +40,10 @@ abstract class CharterMenuHandler {
 		return getKeyStroke(keyCode, KeyEvent.CTRL_DOWN_MASK);
 	}
 
+	protected static KeyStroke shift(final int keyCode) {
+		return getKeyStroke(keyCode, KeyEvent.SHIFT_DOWN_MASK);
+	}
+
 	protected static KeyStroke ctrlShift(final int keyCode) {
 		return getKeyStroke(keyCode, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
 	}

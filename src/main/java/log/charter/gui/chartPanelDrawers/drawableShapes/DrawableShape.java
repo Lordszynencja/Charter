@@ -113,4 +113,8 @@ public interface DrawableShape {
 		return new CenteredImage(position, image);
 	}
 
+	// Clip
+	public static DrawableShape clippedShapes(final ShapePositionWithSize position, final List<DrawableShape> shapes) {
+		return new ClippedShapes(position, shapes);
+	}
 }

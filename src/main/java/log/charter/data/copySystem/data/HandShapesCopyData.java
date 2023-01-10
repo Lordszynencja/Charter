@@ -1,7 +1,5 @@
 package log.charter.data.copySystem.data;
 
-import static log.charter.data.copySystem.data.positions.CopiedPosition.findBeatPositionForPosition;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +9,7 @@ import log.charter.data.ChartData;
 import log.charter.data.copySystem.data.positions.CopiedHandShapePosition;
 import log.charter.io.Logger;
 import log.charter.song.ArrangementChart;
-import log.charter.song.Beat;
+import log.charter.song.BeatsMap;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -35,15 +33,15 @@ public class HandShapesCopyData implements ICopyData {
 	@Override
 	public void paste(final ChartData data) {
 		final ArrangementChart arrangement = data.getCurrentArrangement();
-		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
+		final BeatsMap beatsMap = data.songChart.beatsMap;
 		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
 
-		final double basePositionInBeats = findBeatPositionForPosition(beats, data.time);
+		final double basePositionInBeats = beatsMap.getPositionInBeats(data.time);
 		final Map<Integer, Integer> chordIdsMap = new HashMap<>();
 
 		for (final CopiedHandShapePosition copiedPosition : this.handShapes) {
 			try {
-				final HandShape handShape = copiedPosition.getValue(beats, basePositionInBeats);
+				final HandShape handShape = copiedPosition.getValue(beatsMap, basePositionInBeats);
 				if (handShape == null) {
 					continue;
 				}
