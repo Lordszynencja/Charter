@@ -18,9 +18,9 @@ public class Config {
 	public static String musicPath = System.getProperty("user.home") + File.separator + "Music";
 	public static String songsPath = System.getProperty("user.home") + File.separator + "Documents";
 
-	public static int minNoteDistance = 5;
-	public static int minTailLength = 30;
-	public static int delay = 15;
+	public static int minNoteDistance = 50;
+	public static int minTailLength = 50;
+	public static int delay = 25;
 	public static int markerOffset = 300;
 
 	public static boolean invertStrings = false;
@@ -30,8 +30,8 @@ public class Config {
 
 	public static int windowPosX = 100;
 	public static int windowPosY = 100;
-	public static int windowWidth = 800;
-	public static int windowHeight = 600;
+	public static int windowWidth = 1200;
+	public static int windowHeight = 700;
 	public static int zoomLvl = 100;
 
 	public static boolean debugLogging = false;

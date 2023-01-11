@@ -349,6 +349,7 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 				selectedBend.value = value;
 			}
 
+			repaint();
 			return;
 		}
 

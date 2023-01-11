@@ -6,6 +6,7 @@ import static java.util.Arrays.asList;
 import static log.charter.song.notes.IPosition.findFirstAfter;
 import static log.charter.song.notes.IPosition.findLastBefore;
 
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
@@ -158,7 +159,15 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	private void handleFKey(final KeyEvent e, final int number) {
-		setFret(shift ? number + 12 : number);
+		boolean capsLock;
+		try {
+			capsLock = Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
+		} catch (final Exception exception) {
+			capsLock = false;
+		}
+		final boolean shiftOctave = shift ^ capsLock;
+
+		setFret(shiftOctave ? number + 12 : number);
 		e.consume();
 	}
 
@@ -199,7 +208,10 @@ public class KeyboardHandler implements KeyListener {
 	{
 		keyPressBehaviors.put(KeyEvent.VK_SPACE, e -> audioHandler.switchMusicPlayStatus());
 		keyPressBehaviors.put(KeyEvent.VK_CONTROL, e -> ctrl = true);
-		keyPressBehaviors.put(KeyEvent.VK_ALT, e -> alt = true);
+		keyPressBehaviors.put(KeyEvent.VK_ALT, e -> {
+			alt = true;
+			e.consume();
+		});
 		keyPressBehaviors.put(KeyEvent.VK_SHIFT, e -> shift = true);
 		keyPressBehaviors.put(KeyEvent.VK_HOME, e -> modeManager.getHandler().handleHome());
 		keyPressBehaviors.put(KeyEvent.VK_END, e -> modeManager.getHandler().handleEnd());
@@ -236,8 +248,7 @@ public class KeyboardHandler implements KeyListener {
 			KeyEvent.VK_M, //
 			KeyEvent.VK_SPACE);
 
-	@Override
-	public void keyPressed(final KeyEvent e) {
+	private void keyUsed(final KeyEvent e) {
 		final int keyCode = e.getKeyCode();
 		if (keyCode == KeyEvent.VK_UNDEFINED) {
 			return;
@@ -274,6 +285,15 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	@Override
+	public void keyPressed(final KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_F10) {
+			return;
+		}
+
+		keyUsed(e);
+	}
+
+	@Override
 	public void keyReleased(final KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
@@ -290,6 +310,9 @@ public class KeyboardHandler implements KeyListener {
 			break;
 		case KeyEvent.VK_SHIFT:
 			shift = false;
+			break;
+		case KeyEvent.VK_F10:
+			keyUsed(e);
 			break;
 		default:
 			break;

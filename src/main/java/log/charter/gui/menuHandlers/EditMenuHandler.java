@@ -17,6 +17,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.SongOptionsPane;
+import log.charter.song.notes.IPosition;
 import log.charter.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
@@ -74,6 +75,7 @@ class EditMenuHandler extends CharterMenuHandler {
 		selectionManager.selectAllNotes();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void delete() {
 		boolean undoAdded = false;
 
@@ -85,8 +87,9 @@ class EditMenuHandler extends CharterMenuHandler {
 					undoAdded = true;
 				}
 
-				final ArrayList2<Selection<Position>> selected = selectedTypeAccessor.getSortedSelected();
-				final ArrayList2<?> positions = type.getPositions(data);
+				final ArrayList2<Selection<IPosition>> selected = (ArrayList2<Selection<IPosition>>) (ArrayList2<?>) selectedTypeAccessor
+						.getSortedSelected();
+				final ArrayList2<IPosition> positions = type.getPositions(data);
 				for (int i = selected.size() - 1; i >= 0; i--) {
 					positions.remove(selected.get(i).id);
 				}

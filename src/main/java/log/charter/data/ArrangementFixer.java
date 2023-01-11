@@ -103,6 +103,18 @@ public class ArrangementFixer {
 		}
 	}
 
+	private void fixLinkedNotes(final ArrayList2<ChordOrNote> sounds) {
+		for (int i = 0; i < sounds.size() - 1; i++) {
+			final ChordOrNote sound = sounds.get(i);
+			if (!sound.asGuitarSound().linkNext) {
+				continue;
+			}
+
+			final ChordOrNote nextSound = sounds.get(i + 1);
+			sound.length(nextSound.position() - sound.position());
+		}
+	}
+
 	private void fixLevel(final ArrangementChart arrangement, final Level level) {
 		level.chordsAndNotes//
 				.stream().filter(chordOrNote -> chordOrNote.note != null)//
@@ -115,6 +127,8 @@ public class ArrangementFixer {
 
 		addMissingAnchors(arrangement, level);
 		addMissingHandShapes(level);
+
+		fixLinkedNotes(level.chordsAndNotes);
 	}
 
 	private void removeChordTemplate(final ArrangementChart arrangementChart, final int removedId,

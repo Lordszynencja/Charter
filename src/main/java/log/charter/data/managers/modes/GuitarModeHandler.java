@@ -7,6 +7,7 @@ import static log.charter.song.notes.IPositionWithLength.changePositionsWithLeng
 import java.util.function.Function;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.PositionWithStringOrNoteId;
 import log.charter.data.managers.selection.SelectionAccessor;
@@ -26,7 +27,9 @@ import log.charter.song.Anchor;
 import log.charter.song.HandShape;
 import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.GuitarSound;
 import log.charter.song.notes.IPosition;
+import log.charter.song.notes.IPositionWithLength;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -134,66 +137,89 @@ public class GuitarModeHandler extends ModeHandler {
 		});
 	}
 
-	private void rightClickGuitarNote(final MouseButtonPressReleaseData clickData) {
-		selectionManager.clear();
-		undoSystem.addUndo();
-
+	private ChordOrNote addSound(final Note note) {
 		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		final ChordOrNote sound = new ChordOrNote(note);
+		sounds.add(new ChordOrNote(note));
+		sounds.sort(null);
 
-		if (!clickData.isDrag()) {
-			final int string = yToLane(clickData.pressPosition.y, data.currentStrings());
-			if (string < 0 || string >= data.currentStrings()) {
-				return;
-			}
-
-			if (clickData.pressHighlight.chordOrNote != null) {
-				final ChordOrNote chordOrNote = clickData.pressHighlight.chordOrNote;
-				if (chordOrNote.isChord() || chordOrNote.note.string != string) {
-					selectionManager.addSoundSelection(clickData.pressHighlight.id);
-					new ChordOptionsPane(data, frame, undoSystem, new ArrayList2<>(chordOrNote));
-					return;
+		final ChordOrNote previous = IPosition.findLastBefore(sounds, note.position());
+		if (previous != null) {
+			final GuitarSound previousSound = previous.asGuitarSound();
+			if (previousSound.linkNext) {
+				if (previousSound.endPosition() > note.position()) {
+					previousSound.length(note.position() - previousSound.position());
 				}
-
-				sounds.remove(clickData.pressHighlight.chordOrNote);
-				return;
+			} else if (previousSound.endPosition() > note.position() - Config.minNoteDistance) {
+				previousSound.length(note.position() - Config.minNoteDistance - previousSound.position());
 			}
+		}
 
-			final Note note = new Note(clickData.pressHighlight.position(), string, 0);
-			sounds.add(new ChordOrNote(note));
-			sounds.sort(null);
+		selectionManager.addSoundSelection(findClosestId(sounds, note));
 
-			selectionManager.addSoundSelection(findClosestId(sounds, note));
+		return sound;
+	}
 
+	private void addSingleNote(final MouseButtonPressReleaseData clickData) {
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		final int string = yToLane(clickData.pressPosition.y, data.currentStrings());
+		if (string < 0 || string >= data.currentStrings()) {
 			return;
 		}
 
+		if (clickData.pressHighlight.chordOrNote != null) {
+			final ChordOrNote chordOrNote = clickData.pressHighlight.chordOrNote;
+			if (chordOrNote.isChord() || chordOrNote.note.string != string) {
+				selectionManager.addSoundSelection(clickData.pressHighlight.id);
+				new ChordOptionsPane(data, frame, undoSystem, new ArrayList2<>(chordOrNote));
+				return;
+			}
+
+			sounds.remove(clickData.pressHighlight.chordOrNote);
+			return;
+		}
+
+		final Note note = new Note(clickData.pressHighlight.position(), string, 0);
+		addSound(note);
+	}
+
+	private void addMultipleNotes(final MouseButtonPressReleaseData clickData) {
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
 		final ArrayList2<PositionWithStringOrNoteId> positions = highlightManager.getPositionsWithStrings(
 				clickData.pressHighlight.position(), clickData.releaseHighlight.position(), clickData.pressPosition.y,
 				clickData.releasePosition.y);
 
 		final ArrayList2<ChordOrNote> editedSounds = new ArrayList2<>();
 
+		int insertedNotes = 0;
 		for (final PositionWithStringOrNoteId position : positions) {
 			if (position.noteId != null) {
-				editedSounds.add(sounds.get(position.noteId));
+				final int noteId = position.noteId + insertedNotes;
+				editedSounds.add(sounds.get(noteId));
+				selectionManager.addSoundSelection(noteId);
 			} else {
 				final Note note = new Note(position.position(), position.string, 0);
-				final ChordOrNote chordOrNote = new ChordOrNote(note);
-				editedSounds.add(chordOrNote);
-				sounds.add(chordOrNote);
+				final ChordOrNote sound = addSound(note);
+				insertedNotes++;
+				editedSounds.add(sound);
 			}
-		}
-		sounds.sort(null);
-
-		final int fromId = findClosestId(sounds, positions.get(0));
-		final int toId = findClosestId(sounds, positions.getLast());
-		for (int i = fromId; i <= toId; i++) {
-			selectionManager.addSoundSelection(i);
 		}
 
 		if (editedSounds.get(0).isChord() || editedSounds.get(0).note.string != positions.get(0).string) {
 			new ChordOptionsPane(data, frame, undoSystem, editedSounds);
 		}
+	}
+
+	private void rightClickGuitarNote(final MouseButtonPressReleaseData clickData) {
+		selectionManager.clear();
+		undoSystem.addUndo();
+
+		if (!clickData.isDrag()) {
+			addSingleNote(clickData);
+			return;
+		}
+
+		addMultipleNotes(clickData);
 	}
 
 	private void rightClickToneChange(final PositionWithIdAndType toneChangePosition) {
@@ -264,8 +290,8 @@ public class GuitarModeHandler extends ModeHandler {
 	private void changeNotesLength(final int change) {
 		final SelectionAccessor<ChordOrNote> selectedNotes = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		changePositionsWithLengthsLength(data.songChart.beatsMap, selectedNotes.getSortedSelected(),
-				data.getCurrentArrangementLevel().chordsAndNotes, change);
+		IPositionWithLength.changeNotesLength(data.songChart.beatsMap, selectedNotes.getSortedSelected(),
+				data.getCurrentArrangementLevel().chordsAndNotes, change, !keyboardHandler.alt());
 	}
 
 	private void changeHandShapesLength(final int change) {
