@@ -1,9 +1,10 @@
 package log.charter.gui.chartPanelDrawers.common;
 
 import static java.lang.Math.abs;
+import static log.charter.data.config.Config.noteHeight;
+import static log.charter.data.config.Config.noteWidth;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneSize;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
@@ -32,7 +33,6 @@ import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
-import log.charter.gui.chartPanelDrawers.instruments.GuitarDrawer;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressData;
@@ -47,8 +47,6 @@ import log.charter.util.Position2D;
 public class HighlightDrawer {
 	private static final Color highlightColor = ColorLabel.HIGHLIGHT.color();
 	private static final Color noteAdditionLineColor = ColorLabel.NOTE_ADD_LINE.color();
-
-	private static final int noteWidth = GuitarDrawer.noteWidth + 1;
 
 	private static interface HighlightTypeDrawer {
 		void drawHighlight(Graphics g, PositionWithIdAndType highlight, int x, int y);
@@ -99,10 +97,9 @@ public class HighlightDrawer {
 
 	private void drawNoteHighlight(final Graphics g, final int string, final int position, final int length,
 			final int strings) {
-		final int x = timeToX(position, data.time);
+		final int x = timeToX(position, data.time) - 1 + noteWidth % 2;
 		final int y = getLaneY(string, strings);
-		final int noteHeight = getLaneSize(6) + 1;
-		final ShapePositionWithSize notePosition = new ShapePositionWithSize(x, y, noteWidth, noteHeight)//
+		final ShapePositionWithSize notePosition = new ShapePositionWithSize(x, y, noteWidth + 1, noteHeight + 1)//
 				.centered();
 		strokedRectangle(notePosition, highlightColor).draw(g);
 	}

@@ -6,6 +6,7 @@ import static java.awt.event.KeyEvent.VK_PERIOD;
 import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
@@ -61,11 +62,15 @@ class NotesMenuHandler extends CharterMenuHandler {
 
 	private void doubleGridSize() {
 		data.songChart.beatsMap.gridSize *= 2;
+		Config.lastGridSize = data.songChart.beatsMap.gridSize;
+		Config.markChanged();
 	}
 
 	private void halveGridSize() {
 		if (data.songChart.beatsMap.gridSize % 2 == 0) {
 			data.songChart.beatsMap.gridSize /= 2;
+			Config.lastGridSize = data.songChart.beatsMap.gridSize;
+			Config.markChanged();
 		}
 	}
 

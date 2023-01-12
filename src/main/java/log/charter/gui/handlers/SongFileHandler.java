@@ -347,6 +347,7 @@ public class SongFileHandler {
 			final ArrangementChart arrangementChart = new ArrangementChart(songArrangement,
 					data.songChart.beatsMap.beats);
 			data.songChart.arrangements.add(arrangementChart);
+			data.currentArrangement = data.songChart.arrangements.size() - 1;
 			save();
 			charterMenuBar.refreshMenus();
 		} catch (final Exception e) {

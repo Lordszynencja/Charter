@@ -13,4 +13,9 @@ public class IntRange {
 			this.max = min;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "IntRange [min=" + min + ", max=" + max + "]";
+	}
 }

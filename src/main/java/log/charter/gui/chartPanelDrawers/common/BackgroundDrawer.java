@@ -1,5 +1,6 @@
 package log.charter.gui.chartPanelDrawers.common;
 
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
@@ -18,9 +19,7 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 
 public class BackgroundDrawer {
-	private static final int timeScaleTop = DrawerUtils.lanesBottom;
-	private static final int nonsecondsMarkerHeight = 20;
-	private static final int timestampY = timeScaleTop + nonsecondsMarkerHeight + 20;
+	private static final int nonsecondsMarkerHeight = 15;
 
 	private static final DecimalFormat twoDigitsFormat = new DecimalFormat("00");
 
@@ -60,13 +59,13 @@ public class BackgroundDrawer {
 		while (time <= endTime) {
 			final int x = timeToX(time * 100, data.time);
 			if (time % 10 == 0) {
-				filledRectangle(new ShapePositionWithSize(x, timeScaleTop, 2, nonsecondsMarkerHeight + 10), Color.WHITE)
+				filledRectangle(new ShapePositionWithSize(x, lanesBottom, 2, nonsecondsMarkerHeight + 10), Color.WHITE)
 						.draw(g);
 				final String formattedtime = twoDigitsFormat.format(time / 600) + ":"
 						+ twoDigitsFormat.format((time / 10) % 60);
-				g.drawString(formattedtime, x - 21, timestampY);
+				g.drawString(formattedtime, x - 21, lanesBottom + nonsecondsMarkerHeight + 20);
 			} else {
-				lineVertical(x, timeScaleTop, timeScaleTop + nonsecondsMarkerHeight, Color.WHITE).draw(g);
+				lineVertical(x, lanesBottom, lanesBottom + nonsecondsMarkerHeight, Color.WHITE).draw(g);
 			}
 
 			time++;

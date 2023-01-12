@@ -5,6 +5,7 @@ import static log.charter.gui.components.TextInputWithValidation.ValueValidator.
 
 import javax.swing.JTextField;
 
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ParamsPane;
@@ -44,5 +45,8 @@ public class GridPane extends ParamsPane {
 	private void saveAndExit() {
 		beatsMap.gridSize = gridSize;
 		beatsMap.useGrid = useGrid;
+
+		Config.lastGridSize = gridSize;
+		Config.markChanged();
 	}
 }

@@ -22,6 +22,8 @@ public class Config {
 	public static int minTailLength = 50;
 	public static int delay = 25;
 	public static int markerOffset = 300;
+	public static int noteWidth = 15;
+	public static int noteHeight = 25;
 
 	public static boolean invertStrings = false;
 	public static boolean showChordIds = false;
@@ -33,6 +35,7 @@ public class Config {
 	public static int windowWidth = 1200;
 	public static int windowHeight = 700;
 	public static int zoomLvl = 100;
+	public static int lastGridSize = 4;
 
 	public static boolean debugLogging = false;
 
@@ -50,6 +53,8 @@ public class Config {
 		setters.put("minTailLength", val -> minTailLength = Integer.valueOf(val));
 		setters.put("delay", val -> delay = Integer.valueOf(val));
 		setters.put("markerOffset", val -> markerOffset = Integer.valueOf(val));
+		setters.put("noteWidth", val -> noteWidth = Integer.valueOf(val));
+		setters.put("noteHeight", val -> noteHeight = Integer.valueOf(val));
 
 		setters.put("invertStrings", val -> invertStrings = Boolean.valueOf(val));
 		setters.put("showChordIds", val -> showChordIds = Boolean.valueOf(val));
@@ -60,6 +65,7 @@ public class Config {
 		setters.put("windowWidth", val -> windowWidth = Integer.valueOf(val));
 		setters.put("windowHeight", val -> windowHeight = Integer.valueOf(val));
 		setters.put("zoomLvl", val -> zoomLvl = Integer.valueOf(val));
+		setters.put("lastGridSize", val -> lastGridSize = Integer.valueOf(val));
 
 		setters.put("debugLogging", val -> debugLogging = Boolean.valueOf(val));
 
@@ -97,6 +103,8 @@ public class Config {
 		config.put("minTailLength", minTailLength + "");
 		config.put("delay", delay + "");
 		config.put("markerOffset", markerOffset + "");
+		config.put("noteWidth", noteWidth + "");
+		config.put("noteHeight", noteHeight + "");
 
 		config.put("invertStrings", invertStrings + "");
 		config.put("showChordIds", showChordIds + "");
@@ -107,6 +115,7 @@ public class Config {
 		config.put("windowWidth", windowWidth + "");
 		config.put("windowHeight", windowHeight + "");
 		config.put("zoomLvl", zoomLvl + "");
+		config.put("lastGridSize", lastGridSize + "");
 
 		config.put("debugLogging", debugLogging + "");
 

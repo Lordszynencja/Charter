@@ -96,7 +96,8 @@ public class ArrangementFixer {
 
 			final Anchor lastAnchor = level.anchors.get(lastAnchorId);
 			if (lastAnchor.position() != phraseIteration.position()) {
-				final Anchor newAnchor = new Anchor(phraseIteration.position(), lastAnchor.fret);
+				final Anchor newAnchor = new Anchor(lastAnchor);
+				newAnchor.position(phraseIteration.position());
 				level.anchors.add(newAnchor);
 				level.anchors.sort(null);
 			}

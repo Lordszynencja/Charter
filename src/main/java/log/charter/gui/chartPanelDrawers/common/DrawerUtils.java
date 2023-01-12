@@ -2,6 +2,8 @@ package log.charter.gui.chartPanelDrawers.common;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.data.config.Config.maxStrings;
+import static log.charter.data.config.Config.noteHeight;
 import static log.charter.util.Utils.getStringPosition;
 
 public class DrawerUtils {
@@ -10,18 +12,33 @@ public class DrawerUtils {
 	public static final int eventNamesY = 35;
 	public static final int lyricLinesY = 55;
 
-	public static final int beatTextY = 70;
-	public static final int beatSizeTextY = beatTextY + 15;
-	public static final int toneChangeY = beatSizeTextY + 10;
-	public static final int anchorY = toneChangeY + 15;
-	public static final int anchorTextY = anchorY + 10;
-	public static final int lanesTop = anchorTextY + 15;
-	public static final int lanesBottom = lanesTop + 300;
-	public static final int handShapesY = lanesBottom + 30;
+	public static int beatTextY = 70;
+	public static int beatSizeTextY = beatTextY + 15;
+	public static int toneChangeY = beatSizeTextY + 10;
+	public static int anchorY = toneChangeY + 15;
+	public static int anchorTextY = anchorY + 10;
+	public static int lanesTop = anchorTextY + 15;
+	public static int laneHeight;
+	public static int lanesHeight;
+	public static int lanesBottom;
+	public static int handShapesY;
+	public static int editAreaBottom;
 
-	public static final int HEIGHT = handShapesY + 20;
+	public static int tailHeight;
 
-	public static final int lanesHeight = lanesBottom - lanesTop;
+	static {
+		setSizesBasedOnNotesSizes();
+	}
+
+	public static void setSizesBasedOnNotesSizes() {
+		laneHeight = noteHeight * 3 / 2;
+		lanesHeight = laneHeight * maxStrings;
+		lanesBottom = lanesTop + lanesHeight;
+		handShapesY = lanesBottom + 30;
+		editAreaBottom = handShapesY + 20;
+
+		tailHeight = getAsOdd(noteHeight * 3 / 4);
+	}
 
 	public static int getAsOdd(final int x) {
 		return x % 2 == 0 ? x + 1 : x;

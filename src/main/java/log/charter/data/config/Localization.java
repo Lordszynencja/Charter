@@ -21,6 +21,8 @@ public class Localization {
 		CONFIG_MINIMAL_TAIL_LENGTH("Minimal note tail length"), //
 		CONFIG_SOUND_DELAY("Sound delay"), //
 		CONFIG_MARKER_POSITION("Marker position"), //
+		CONFIG_NOTE_WIDTH("Note width"), //
+		CONFIG_NOTE_HEIGHT("Note height"), //
 		CONFIG_INVERT_STRINGS("Invert strings"), //
 		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
 

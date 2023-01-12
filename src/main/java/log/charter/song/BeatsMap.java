@@ -5,6 +5,7 @@ import static java.lang.Math.floor;
 import static log.charter.song.notes.IPosition.findFirstIdAfter;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
+import log.charter.data.config.Config;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -12,7 +13,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class BeatsMap {
 	public int songLengthMs;
 	public boolean useGrid = true;
-	public int gridSize = 4;
+	public int gridSize = Config.lastGridSize;
 
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 

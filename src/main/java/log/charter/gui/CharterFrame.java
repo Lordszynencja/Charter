@@ -1,5 +1,10 @@
 package log.charter.gui;
 
+import static log.charter.data.config.Config.windowHeight;
+import static log.charter.data.config.Config.windowWidth;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaBottom;
+
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.io.IOException;
@@ -112,12 +117,12 @@ public class CharterFrame extends JFrame {
 		final Insets insets = getInsets();
 		final int widthDifference = insets.left + insets.right;
 
-		add(chartPanel, 0, Config.windowWidth - widthDifference, DrawerUtils.HEIGHT);
-		add(scrollBar, DrawerUtils.HEIGHT, Config.windowWidth - widthDifference, 20);
-		add(helpLabel, DrawerUtils.HEIGHT + 20, Config.windowWidth - widthDifference,
-				Config.windowHeight - DrawerUtils.HEIGHT - 20);
+		add(chartPanel, 0, Config.windowWidth - widthDifference, DrawerUtils.editAreaBottom);
+		add(scrollBar, DrawerUtils.editAreaBottom, Config.windowWidth - widthDifference, 20);
+		add(helpLabel, DrawerUtils.editAreaBottom + 20, Config.windowWidth - widthDifference,
+				Config.windowHeight - DrawerUtils.editAreaBottom - 20);
 
-		addComponentListener(new CharterFrameComponentListener(this, chartPanel, helpLabel, scrollBar));
+		addComponentListener(new CharterFrameComponentListener(this));
 		addKeyListener(keyboardHandler);
 		addWindowFocusListener(new CharterFrameWindowFocusListener(this));
 		addWindowListener(new CharterFrameWindowListener(this));
@@ -129,6 +134,32 @@ public class CharterFrame extends JFrame {
 		setFocusable(true);
 
 		framer.start();
+	}
+
+	private void changeComponentBounds(final Component c, final int x, final int y, final int w, final int h) {
+		final Dimension newSize = new Dimension(w, h);
+
+		c.setMinimumSize(newSize);
+		c.setPreferredSize(newSize);
+		c.setMaximumSize(newSize);
+		c.setBounds(x, y, w, h);
+		c.validate();
+		c.repaint();
+	}
+
+	public void resize() {
+		Config.windowHeight = getHeight();
+		Config.windowWidth = getWidth();
+		Config.markChanged();
+
+		final Insets insets = getInsets();
+		final int width = windowWidth - insets.left - insets.right;
+		final int helpY = editAreaBottom + scrollBar.getHeight();
+		final int helpHeight = windowHeight - insets.top - insets.bottom - helpY;
+
+		changeComponentBounds(chartPanel, 0, 0, width, editAreaBottom);
+		changeComponentBounds(scrollBar, 0, editAreaBottom, width, scrollBar.getHeight());
+		changeComponentBounds(helpLabel, 0, helpY, width, helpHeight);
 	}
 
 	public CharterFrame(final String title, final String path) {
