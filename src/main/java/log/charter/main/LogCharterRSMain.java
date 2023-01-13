@@ -7,7 +7,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 
 public class LogCharterRSMain {
-	public static final String VERSION = "0.8.2 - 2023.01.11";
+	public static final String VERSION = "0.8.3 - 2023.01.13";
 	public static final String TITLE = "LoG Charter RS";
 
 	public static void main(final String[] args) throws InterruptedException, IOException {

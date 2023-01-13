@@ -4,6 +4,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatSizeTextY
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.phraseNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
@@ -12,14 +13,15 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.str
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.text;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.textWithBackground;
 import static log.charter.util.ScalingUtils.timeToX;
+import static log.charter.util.ScalingUtils.xToTime;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.List;
 import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
@@ -40,18 +42,15 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.Position2D;
+import log.charter.util.grid.GridPosition;
 
 public class BeatsDrawer {
 	private static class BeatsDrawingData {
-		private static final Color selectColor = ColorLabel.SELECT.color();
-		private static final Color mainBeatColor = ColorLabel.MAIN_BEAT.color();
-		private static final Color secondaryBeatColor = ColorLabel.SECONDARY_BEAT.color();
-
 		private final DrawableShapeList beats = new DrawableShapeList();
 		private final DrawableShapeList sectionsAndPhrases = new DrawableShapeList();
 
 		private void addBeatLine(final int x, final Beat beat) {
-			final Color color = beat.firstInMeasure ? mainBeatColor : secondaryBeatColor;
+			final ColorLabel color = beat.firstInMeasure ? ColorLabel.MAIN_BEAT : ColorLabel.SECONDARY_BEAT;
 			beats.add(lineVertical(x, beatTextY, lanesBottom, color));
 
 			if (beat.anchor) {
@@ -64,19 +63,19 @@ public class BeatsDrawer {
 
 		private void addBeatMeasureNumber(final int x, final int id) {
 			final String text = "" + (id + 1);
-			beats.add(text(new Position2D(x + 3, beatTextY + 11), text, mainBeatColor));
+			beats.add(text(new Position2D(x + 3, beatTextY + 11), text, ColorLabel.MAIN_BEAT));
 		}
 
 		private void addMeasureChange(final int x, final Beat beat) {
 			beats.add(text(new Position2D(x + 3, beatSizeTextY + 11), beat.beatsInMeasure + "/" + beat.noteDenominator,
-					mainBeatColor));
+					ColorLabel.MAIN_BEAT));
 		}
 
 		private void addSelect(final int x) {
 			final int top = beatTextY - 1;
 			final int bottom = lanesBottom + 1;
 			final ShapePositionWithSize beatPosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
-			beats.add(strokedRectangle(beatPosition, selectColor));
+			beats.add(strokedRectangle(beatPosition, ColorLabel.SELECT));
 		}
 
 		public void addBeat(final Beat beat, final int x, final int id, final Beat previousBeat,
@@ -93,6 +92,10 @@ public class BeatsDrawer {
 			if (selected) {
 				addSelect(x);
 			}
+		}
+
+		public void addGrid(final int x) {
+			beats.add(lineVertical(x, lanesTop, lanesBottom, ColorLabel.GRID));
 		}
 
 		public void addSection(final Section section, final int x) {
@@ -165,6 +168,16 @@ public class BeatsDrawer {
 		}
 	}
 
+	private void addGrid(final BeatsDrawingData drawingData) {
+		final GridPosition<Beat> gridPosition = GridPosition.create(data.songChart.beatsMap.beats,
+				xToTime(0, data.time));
+		final int maxTime = xToTime(chartPanel.getWidth() + 1, data.time);
+		while (gridPosition.position() < maxTime) {
+			drawingData.addGrid(timeToX(gridPosition.position(), data.time));
+			gridPosition.next();
+		}
+	}
+
 	private void addSections(final BeatsDrawingData drawingData) {
 		for (final Section section : data.getCurrentArrangement().sections) {
 			final int x = timeToX(section.beat.position(), data.time);
@@ -225,6 +238,10 @@ public class BeatsDrawer {
 		final BeatsDrawingData drawingData = new BeatsDrawingData();
 
 		addBeats(drawingData);
+
+		if (Config.showGrid && modeManager.editMode != EditMode.TEMPO_MAP) {
+			addGrid(drawingData);
+		}
 
 		if (modeManager.editMode == EditMode.GUITAR) {
 			addSections(drawingData);

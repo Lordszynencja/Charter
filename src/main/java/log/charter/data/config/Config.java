@@ -36,6 +36,8 @@ public class Config {
 	public static int windowWidth = 1200;
 	public static int windowHeight = 700;
 	public static int zoomLvl = 100;
+
+	public static boolean showGrid = true;
 	public static GridType gridType = GridType.BEAT;
 	public static int gridSize = 4;
 
@@ -69,6 +71,7 @@ public class Config {
 		setters.put("windowWidth", val -> windowWidth = Integer.valueOf(val));
 		setters.put("windowHeight", val -> windowHeight = Integer.valueOf(val));
 		setters.put("zoomLvl", val -> zoomLvl = Integer.valueOf(val));
+		setters.put("showGrid", val -> showGrid = Boolean.valueOf(val));
 		setters.put("gridType", val -> gridType = GridType.valueOf(val));
 		setters.put("gridSize", val -> gridSize = Integer.valueOf(val));
 
@@ -122,6 +125,7 @@ public class Config {
 		config.put("windowWidth", windowWidth + "");
 		config.put("windowHeight", windowHeight + "");
 		config.put("zoomLvl", zoomLvl + "");
+		config.put("showGrid", showGrid + "");
 		config.put("gridType", gridType + "");
 		config.put("gridSize", gridSize + "");
 

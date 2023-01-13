@@ -21,9 +21,13 @@ public class MeasureBasedGridPosition extends GridPosition<Beat> {
 
 	@Override
 	public GridPosition<Beat> next() {
+		final int startBeatId = positionId;
 		final int additions = positions.get(positionId).beatsInMeasure;
 		for (int i = 0; i < additions; i++) {
 			super.next();
+			if (positionId != startBeatId && positions.get(positionId).firstInMeasure) {
+				break;
+			}
 		}
 
 		return this;
@@ -31,9 +35,13 @@ public class MeasureBasedGridPosition extends GridPosition<Beat> {
 
 	@Override
 	public GridPosition<Beat> previous() {
+		final int startBeatId = positionId;
 		final int removals = positions.get(positionId > 0 && gridId == 0 ? positionId - 1 : positionId).beatsInMeasure;
 		for (int i = 0; i < removals; i++) {
 			super.previous();
+			if (positionId != startBeatId && positions.get(positionId).firstInMeasure) {
+				break;
+			}
 		}
 
 		return this;

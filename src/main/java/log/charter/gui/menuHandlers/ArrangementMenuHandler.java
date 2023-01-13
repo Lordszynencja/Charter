@@ -83,8 +83,8 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 
 		menu.addSeparator();
 		menu.add(createItem(Label.ARRANGEMENT_MENU_TOGGLE_WAVEFORM, ctrl('W'), this::toggleWaveforDrawing));
-		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_CLAPS.label(), "["));
-		menu.add(createItem(Label.ARRANGEMENT_MENU_TOGGLE_METRONOME, button('Y'), audioHandler::toggleMetronome));
+		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_CLAPS, "[", audioHandler::toggleClaps));
+		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_METRONOME, "Y", audioHandler::toggleMetronome));
 
 		return menu;
 	}

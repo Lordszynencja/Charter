@@ -7,6 +7,7 @@ import java.awt.Graphics;
 
 import javax.swing.JMenuItem;
 
+import log.charter.data.config.Localization.Label;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class SpecialMenuItem extends JMenuItem {
@@ -14,22 +15,26 @@ public class SpecialMenuItem extends JMenuItem {
 
 	private final String shortcut;
 
-	public SpecialMenuItem(final String label, final String shortcut) {
-		super(label);
+	public SpecialMenuItem(final Label label, final String shortcut, final Runnable onClick) {
+		super(label.label());
 		this.shortcut = shortcut;
+		addActionListener(e -> onClick.run());
 
 		final Dimension preferredSize = getPreferredSize();
-		preferredSize.width += 30;
+		preferredSize.width += 60;
+		setPreferredSize(preferredSize);
 	}
 
 	@Override
 	public void paint(final Graphics g) {
 		super.paint(g);
 
-		final Font acceleratorFont = new Font(Font.DIALOG, Font.PLAIN, 10);
-		final FontMetrics fontMetrics = getFontMetrics(acceleratorFont);
-		g.setFont(acceleratorFont);
-		g.setColor(ColorLabel.BASE_DARK_TEXT.color());
-		g.drawString(shortcut, getWidth() - 30, 2 + fontMetrics.getAscent());
+		if (shortcut != null) {
+			final Font shortcutFont = new Font(Font.DIALOG, Font.PLAIN, 10);
+			final FontMetrics fontMetrics = getFontMetrics(shortcutFont);
+			g.setFont(shortcutFont);
+			g.setColor(ColorLabel.BASE_DARK_TEXT.color());
+			g.drawString(shortcut, getWidth() - 60, 2 + fontMetrics.getAscent());
+		}
 	}
 }

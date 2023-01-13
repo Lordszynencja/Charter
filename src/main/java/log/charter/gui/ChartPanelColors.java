@@ -28,7 +28,8 @@ public class ChartPanelColors {
 		NOTE_ADD_LINE(0, 255, 0), //
 		LANE(128, 128, 128), //
 		MAIN_BEAT(255, 255, 255), //
-		SECONDARY_BEAT(200, 200, 200), //
+		SECONDARY_BEAT(160, 160, 160), //
+		GRID(96, 96, 96), //
 		MARKER(255, 0, 0), //
 		SECTION_NAME_BG(192, 128, 64), //
 		PHRASE_NAME_BG(192, 0, 192), //

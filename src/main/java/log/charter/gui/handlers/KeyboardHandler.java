@@ -2,7 +2,9 @@ package log.charter.gui.handlers;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.lang.System.nanoTime;
 import static java.util.Arrays.asList;
+import static log.charter.data.config.Config.frets;
 import static log.charter.song.notes.IPosition.findFirstAfter;
 import static log.charter.song.notes.IPosition.findLastBefore;
 
@@ -40,6 +42,7 @@ public class KeyboardHandler implements KeyListener {
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
 	private SelectionManager selectionManager;
+	private SongFileHandler songFileHandler;
 	private UndoSystem undoSystem;
 
 	private boolean ctrl = false;
@@ -48,15 +51,19 @@ public class KeyboardHandler implements KeyListener {
 	private boolean left = false;
 	private boolean right = false;
 
+	private int lastFretNumber = 0;
+	private int fretNumberTimer = 0;
+
 	public void init(final AudioHandler audioHandler, final ChartData data, final CharterFrame frame,
-			final ModeManager modeManage, final MouseHandler mouseHandler, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
+			final ModeManager modeManager, final MouseHandler mouseHandler, final SelectionManager selectionManager,
+			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
 		this.audioHandler = audioHandler;
 		this.data = data;
 		this.frame = frame;
-		modeManager = modeManage;
+		this.modeManager = modeManager;
 		this.mouseHandler = mouseHandler;
 		this.selectionManager = selectionManager;
+		this.songFileHandler = songFileHandler;
 		this.undoSystem = undoSystem;
 	}
 
@@ -68,7 +75,12 @@ public class KeyboardHandler implements KeyListener {
 		right = false;
 	}
 
-	public void moveFromArrowKeys() {
+	public void clearFretNumber() {
+		lastFretNumber = 0;
+		fretNumberTimer = 0;
+	}
+
+	private void moveFromArrowKeys() {
 		if (!left && !right) {
 			return;
 		}
@@ -77,6 +89,15 @@ public class KeyboardHandler implements KeyListener {
 		int nextTime = data.nextTime - (left ? speed : 0) + (right ? speed : 0);
 		nextTime = max(0, min(data.music.msLength(), nextTime));
 		frame.setNextTime(nextTime);
+	}
+
+	private void decreaseNumberTimer() {
+		fretNumberTimer--;
+	}
+
+	public void frame() {
+		moveFromArrowKeys();
+		decreaseNumberTimer();
 	}
 
 	public boolean alt() {
@@ -158,6 +179,19 @@ public class KeyboardHandler implements KeyListener {
 		}
 	}
 
+	private void handleNumber(final int number) {
+		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= frets) {
+			fretNumberTimer = (int) (nanoTime() / 1_000_000 + 2000);
+			lastFretNumber = lastFretNumber * 10 + number;
+			setFret(lastFretNumber);
+			return;
+		}
+
+		fretNumberTimer = (int) (nanoTime() / 1_000_000 + 2000);
+		lastFretNumber = number;
+		setFret(number);
+	}
+
 	private void handleFKey(final KeyEvent e, final int number) {
 		boolean capsLock;
 		try {
@@ -186,7 +220,7 @@ public class KeyboardHandler implements KeyListener {
 		new NoteOptionsPane(data, frame, undoSystem, selected);
 	}
 
-	private void noteOptions(final KeyEvent e) {
+	private void noteOptions() {
 		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
 			return;
 		}
@@ -200,6 +234,36 @@ public class KeyboardHandler implements KeyListener {
 			openChordOptionsPopup(selected);
 		} else {
 			openSingleNoteOptionsPopup(selected);
+		}
+	}
+
+	private void handleN(final KeyEvent e) {
+		if (alt || shift) {
+			return;
+		}
+
+		if (ctrl) {
+			songFileHandler.newSong();
+		} else {
+			noteOptions();
+		}
+	}
+
+	private void handleO(final KeyEvent e) {
+		if (ctrl && !alt && !shift) {
+			songFileHandler.open();
+		}
+	}
+
+	private void handleS(final KeyEvent e) {
+		if (alt || !ctrl) {
+			return;
+		}
+
+		if (shift) {
+			songFileHandler.saveAs();
+		} else {
+			songFileHandler.save();
 		}
 	}
 
@@ -217,8 +281,20 @@ public class KeyboardHandler implements KeyListener {
 		keyPressBehaviors.put(KeyEvent.VK_END, e -> modeManager.getHandler().handleEnd());
 		keyPressBehaviors.put(KeyEvent.VK_LEFT, e -> handleLeft());
 		keyPressBehaviors.put(KeyEvent.VK_RIGHT, e -> handleRight());
-		keyPressBehaviors.put(KeyEvent.VK_N, this::noteOptions);
-		keyPressBehaviors.put(KeyEvent.VK_0, e -> setFret(0));
+		keyPressBehaviors.put(KeyEvent.VK_N, this::handleN);
+		keyPressBehaviors.put(KeyEvent.VK_O, this::handleO);
+		keyPressBehaviors.put(KeyEvent.VK_S, this::handleS);
+		keyPressBehaviors.put(KeyEvent.VK_ESCAPE, e -> frame.exit());
+		keyPressBehaviors.put(KeyEvent.VK_1, e -> handleNumber(1));
+		keyPressBehaviors.put(KeyEvent.VK_2, e -> handleNumber(2));
+		keyPressBehaviors.put(KeyEvent.VK_3, e -> handleNumber(3));
+		keyPressBehaviors.put(KeyEvent.VK_4, e -> handleNumber(4));
+		keyPressBehaviors.put(KeyEvent.VK_5, e -> handleNumber(5));
+		keyPressBehaviors.put(KeyEvent.VK_6, e -> handleNumber(6));
+		keyPressBehaviors.put(KeyEvent.VK_7, e -> handleNumber(7));
+		keyPressBehaviors.put(KeyEvent.VK_8, e -> handleNumber(8));
+		keyPressBehaviors.put(KeyEvent.VK_9, e -> handleNumber(9));
+		keyPressBehaviors.put(KeyEvent.VK_0, e -> handleNumber(0));
 		keyPressBehaviors.put(KeyEvent.VK_F1, e -> handleFKey(e, 1));
 		keyPressBehaviors.put(KeyEvent.VK_F2, e -> handleFKey(e, 2));
 		keyPressBehaviors.put(KeyEvent.VK_F3, e -> handleFKey(e, 3));
@@ -239,12 +315,14 @@ public class KeyboardHandler implements KeyListener {
 			KeyEvent.VK_CONTROL, //
 			KeyEvent.VK_ALT, //
 			KeyEvent.VK_SHIFT, //
+			KeyEvent.VK_CAPS_LOCK, //
 			KeyEvent.VK_LEFT, //
 			KeyEvent.VK_RIGHT);
 	private static final List<Integer> keysNotStoppingMusicOnPress = asList(//
 			KeyEvent.VK_CONTROL, //
 			KeyEvent.VK_ALT, //
 			KeyEvent.VK_SHIFT, //
+			KeyEvent.VK_CAPS_LOCK, //
 			KeyEvent.VK_F5, //
 			KeyEvent.VK_C, //
 			KeyEvent.VK_M, //

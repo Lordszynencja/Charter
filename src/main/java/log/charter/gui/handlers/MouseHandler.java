@@ -80,6 +80,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			return;
 		}
 
+		keyboardHandler.clearFretNumber();
 		cancelAllActions();
 		if (pressCancelsRelease) {
 			releaseCancelled = true;

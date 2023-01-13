@@ -34,6 +34,11 @@ public interface DrawableShape {
 		return new FilledTriangle(a, b, c, color);
 	}
 
+	public static DrawableShape filledTriangle(final Position2D a, final Position2D b, final Position2D c,
+			final ColorLabel color) {
+		return filledTriangle(a, b, c, color.color());
+	}
+
 	public static DrawableShape strokedTriangle(final Position2D a, final Position2D b, final Position2D c,
 			final Color color) {
 		return new StrokedTriangle(a, b, c, color);
@@ -50,6 +55,10 @@ public interface DrawableShape {
 
 	public static DrawableShape strokedRectangle(final ShapePositionWithSize position, final Color color) {
 		return new StrokedRectangle(position, color);
+	}
+
+	public static DrawableShape strokedRectangle(final ShapePositionWithSize position, final ColorLabel color) {
+		return strokedRectangle(position, color.color());
 	}
 
 	// Diamonds
