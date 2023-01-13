@@ -19,7 +19,7 @@ public class ArrangementEvent {
 		Beat previous = null;
 		for (final Beat beat : beatsMap.beats) {
 			if (previous == null || previous.beatsInMeasure != beat.beatsInMeasure) {
-				arrangementEvents.add(new ArrangementEvent(beat.position(), beat.beatsInMeasure));
+				arrangementEvents.add(new ArrangementEvent(beat.position(), beat.beatsInMeasure, beat.noteDenominator));
 			}
 			previous = beat;
 		}
@@ -43,8 +43,8 @@ public class ArrangementEvent {
 		code = event.type.rsName;
 	}
 
-	public ArrangementEvent(final int time, final int beatsInMeasure) {
+	public ArrangementEvent(final int time, final int beatsInMeasure, final int noteDenominator) {
 		this.time = time;
-		code = "TS:" + beatsInMeasure + "/4";
+		code = "TS:" + beatsInMeasure + "/" + noteDenominator;
 	}
 }

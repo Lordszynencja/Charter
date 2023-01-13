@@ -8,7 +8,7 @@ import javax.sound.sampled.SourceDataLine;
 
 import log.charter.io.Logger;
 
-public class RepeatingPlayer {
+public class RepeatingPlayer implements IPlayer {
 	private static final int BUFF_SIZE = 1024 * 128;
 
 	private final MusicData musicData;
@@ -35,7 +35,7 @@ public class RepeatingPlayer {
 			try {
 				while (!stopped) {
 					if (playAgain) {
-						play();
+						playSound();
 					}
 					Thread.sleep(1);
 				}
@@ -46,7 +46,7 @@ public class RepeatingPlayer {
 		}).start();
 	}
 
-	private void play() {
+	private void playSound() {
 		line.flush();
 		final byte[] data = musicData.getData();
 		int startByte = 0;
@@ -63,7 +63,8 @@ public class RepeatingPlayer {
 		playAgain = false;
 	}
 
-	public void queuePlaying() {
+	@Override
+	public void play() {
 		playAgain = true;
 	}
 

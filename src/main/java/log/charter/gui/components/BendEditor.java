@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
+import static log.charter.data.config.Config.gridSize;
 import static log.charter.song.notes.IPosition.findFirstIdAfterEqual;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
@@ -170,14 +171,14 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 	}
 
 	private BendPositionWithId getBendPosition() {
-		final double gridLength = 1.0 / beatsMap.gridSize;
+		final double gridLength = 1.0 / gridSize;
 		final double mousePosition = (mouseX - getXFromBendPosition(0)) * 1.0 / beatWidth;
 		if (mousePosition > noteEndPosition + gridLength / 2 || mousePosition < noteStartPosition - gridLength / 2) {
 			return null;
 		}
 
-		final int closestGrid = (int) round(mousePosition * beatsMap.gridSize);
-		if (closestGrid < 0 || closestGrid > (lastBeatId - firstBeatId) * beatsMap.gridSize) {
+		final int closestGrid = (int) round(mousePosition * gridSize);
+		if (closestGrid < 0 || closestGrid > (lastBeatId - firstBeatId) * gridSize) {
 			return null;
 		}
 
@@ -202,7 +203,7 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 
 		final double distanceToClosestBendValue = closestBendValue == null ? 2
 				: abs(closestBendValue.position - mousePosition);
-		final double distanceToClosestGrid = abs(1.0 * closestGrid / beatsMap.gridSize - mousePosition);
+		final double distanceToClosestGrid = abs(1.0 * closestGrid / gridSize - mousePosition);
 
 		if (distanceToClosestBendValue < distanceToClosestGrid) {
 			return new BendPositionWithId(getXFromBendPosition(closestBendValue.position), closestBendValue.value,

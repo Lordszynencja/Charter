@@ -43,7 +43,6 @@ public class AudioDrawer {
 		}
 	}
 
-	private static final int midY = (lanesBottom + lanesTop) / 2;
 	private static final Color normalColor = new Color(64, 128, 128);
 	private static final Color highIntensityColor = new Color(255, 128, 255);
 	private static final Color normalColorZoomed = new Color(64, 128, 128, 32);
@@ -72,17 +71,19 @@ public class AudioDrawer {
 		int end = (int) (xToTime(chartPanel.getWidth(), data.time) * timeToFrameMultiplier);
 		end = min(musicValues.length, end);
 
-		int x0;
+		final int midY = (lanesBottom + lanesTop) / 2;
+		final int yScale = (lanesBottom - lanesTop) / 2;
+		int x0 = 0;
 		int x1 = timeToX((int) ((start - 1) / timeToFrameMultiplier), data.time);
 		int y0 = 0;
-		int y1 = musicValues[start - 1] / 320;
+		int y1 = musicValues[start - 1] * yScale / 0x8000;
 		final RMSCalculator rmsCalculator = new RMSCalculator(musicValues, (int) timeToFrameMultiplier, start);
 
 		for (int frame = start; frame < end; frame++) {
 			x0 = x1;
 			x1 = timeToX(frame / timeToFrameMultiplier, data.time);
 			y0 = y1;
-			y1 = musicValues[frame] / 320;
+			y1 = musicValues[frame] * yScale / 0x8000;
 
 			rmsCalculator.addValue(musicValues[frame]);
 

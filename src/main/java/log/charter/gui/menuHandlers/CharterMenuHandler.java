@@ -11,6 +11,7 @@ import javax.swing.KeyStroke;
 import log.charter.data.config.Localization.Label;
 
 abstract class CharterMenuHandler {
+
 	protected static JMenuItem createItem(final Label label, final Runnable onAction) {
 		return createItem(label.label(), onAction);
 	}
@@ -23,8 +24,12 @@ abstract class CharterMenuHandler {
 
 	protected static JMenuItem createItem(final Label label, final KeyStroke keyStroke, final Runnable onAction) {
 		final JMenuItem item = new JMenuItem(label.label());
-		item.setAccelerator(keyStroke);
-		item.addActionListener(e -> onAction.run());
+		if (onAction != null) {
+			item.setAccelerator(keyStroke);
+			item.addActionListener(e -> {
+				onAction.run();
+			});
+		}
 		return item;
 	}
 

@@ -3,6 +3,8 @@ package log.charter.data.managers;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.data.config.Config.gridSize;
+import static log.charter.data.config.Config.minNoteDistance;
 import static log.charter.data.managers.PositionWithStringOrNoteId.fromNoteId;
 import static log.charter.data.managers.PositionWithStringOrNoteId.fromPosition;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
@@ -13,12 +15,12 @@ import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.song.Beat;
 import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class HighlightManager {
@@ -54,7 +56,6 @@ public class HighlightManager {
 			final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
 			final int beatIdFrom = max(0, findLastIdBefore(beats, fromPosition));
 			final int beatIdTo = min(beats.size(), findFirstIdAfter(beats, toPosition));
-			final int gridSize = data.songChart.beatsMap.gridSize;
 
 			for (int beatId = beatIdFrom; beatId < beatIdTo; beatId++) {
 				final Beat beat = beats.get(beatId);
@@ -90,7 +91,7 @@ public class HighlightManager {
 			for (final PositionWithStringOrNoteId position : positions) {
 				boolean isCloseToNoteOrChord = false;
 				for (final PositionWithStringOrNoteId noteOrChord : noteChordPositions) {
-					if (abs(noteOrChord.position() - position.position()) < Config.minNoteDistance) {
+					if (abs(noteOrChord.position() - position.position()) < minNoteDistance) {
 						isCloseToNoteOrChord = true;
 						break;
 					}
@@ -118,20 +119,21 @@ public class HighlightManager {
 	}
 
 	private int snapPosition(final PositionType positionType, final int position) {
+		if (positionType == PositionType.BEAT) {
+			return findClosest(data.songChart.beatsMap.beats, position);
+		}
 		if (positionType != PositionType.ANCHOR) {
 			return data.songChart.beatsMap.getPositionFromGridClosestTo(position);
 		}
 
-		final int closestNotePosition = findClosest(data.getCurrentArrangementLevel().chordsAndNotes, position);
-		if (!data.songChart.beatsMap.useGrid) {
-			if (abs(closestNotePosition - position) < 10) {
-				return closestNotePosition;
-			}
-
-			return position;
-		}
-
 		final int closestGridPosition = data.songChart.beatsMap.getPositionFromGridClosestTo(position);
+		final ChordOrNote closestSound = IPosition.findClosestPosition(data.getCurrentArrangementLevel().chordsAndNotes,
+				position);
+		if (closestSound == null) {
+			return closestGridPosition;
+		}
+		final int closestNotePosition = closestSound.position();
+
 		if (abs(closestGridPosition - position) < abs(closestNotePosition - position) + 10) {
 			return closestGridPosition;
 		}

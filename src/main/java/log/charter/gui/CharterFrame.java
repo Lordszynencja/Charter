@@ -6,9 +6,12 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaBotto
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Insets;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -331,4 +334,16 @@ public class CharterFrame extends JFrame {
 		}
 	}
 
+	private final List<Integer> frameTimes = new ArrayList<>();
+
+	@Override
+	public void paint(final Graphics g) {
+		super.paint(g);
+
+		final int t = (int) (System.nanoTime() / 1_000_000);
+		frameTimes.add(t);
+
+		frameTimes.removeIf(t0 -> t - t0 > 1000);
+		helpLabel.setText("FPS: " + frameTimes.size());
+	}
 }

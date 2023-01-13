@@ -29,13 +29,15 @@ public class Config {
 	public static boolean showChordIds = false;
 	public static int frets = 28;
 	public static int maxStrings = 6;
+	public static int FPS = 60;
 
 	public static int windowPosX = 100;
 	public static int windowPosY = 100;
 	public static int windowWidth = 1200;
 	public static int windowHeight = 700;
 	public static int zoomLvl = 100;
-	public static int lastGridSize = 4;
+	public static GridType gridType = GridType.BEAT;
+	public static int gridSize = 4;
 
 	public static boolean debugLogging = false;
 
@@ -59,13 +61,16 @@ public class Config {
 		setters.put("invertStrings", val -> invertStrings = Boolean.valueOf(val));
 		setters.put("showChordIds", val -> showChordIds = Boolean.valueOf(val));
 		setters.put("frets", val -> frets = Integer.valueOf(val));
+		setters.put("maxStrings", val -> maxStrings = Integer.valueOf(val));
+		setters.put("FPS", val -> FPS = Integer.valueOf(val));
 
 		setters.put("windowPosX", val -> windowPosX = Integer.valueOf(val));
 		setters.put("windowPosY", val -> windowPosY = Integer.valueOf(val));
 		setters.put("windowWidth", val -> windowWidth = Integer.valueOf(val));
 		setters.put("windowHeight", val -> windowHeight = Integer.valueOf(val));
 		setters.put("zoomLvl", val -> zoomLvl = Integer.valueOf(val));
-		setters.put("lastGridSize", val -> lastGridSize = Integer.valueOf(val));
+		setters.put("gridType", val -> gridType = GridType.valueOf(val));
+		setters.put("gridSize", val -> gridSize = Integer.valueOf(val));
 
 		setters.put("debugLogging", val -> debugLogging = Boolean.valueOf(val));
 
@@ -109,13 +114,16 @@ public class Config {
 		config.put("invertStrings", invertStrings + "");
 		config.put("showChordIds", showChordIds + "");
 		config.put("frets", frets + "");
+		config.put("maxStrings", maxStrings + "");
+		config.put("FPS", FPS + "");
 
 		config.put("windowPosX", windowPosX + "");
 		config.put("windowPosY", windowPosY + "");
 		config.put("windowWidth", windowWidth + "");
 		config.put("windowHeight", windowHeight + "");
 		config.put("zoomLvl", zoomLvl + "");
-		config.put("lastGridSize", lastGridSize + "");
+		config.put("gridType", gridType + "");
+		config.put("gridSize", gridSize + "");
 
 		config.put("debugLogging", debugLogging + "");
 

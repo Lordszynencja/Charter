@@ -9,7 +9,6 @@ import log.charter.util.RW;
 
 public class Localization {
 	public enum Label {
-
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
 
@@ -25,6 +24,7 @@ public class Localization {
 		CONFIG_NOTE_HEIGHT("Note height"), //
 		CONFIG_INVERT_STRINGS("Invert strings"), //
 		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
+		CONFIG_FPS("FPS"), //
 
 		EDIT_MENU("Edit"), //
 		EDIT_MENU_UNDO("Undo"), //
@@ -51,8 +51,11 @@ public class Localization {
 		FILE_MENU_OPTIONS("Options"), //
 
 		GRID_PANE("Grid options"), //
-		GRID_PANE_GRID_SIZE("Grid size"), //
+		GRID_PANE_GRID_SIZE("Grid size 1/"), //
 		GRID_PANE_USE_GRID("Use grid"), //
+		GRID_PANE_NOTE_TYPE("Note"), //
+		GRID_PANE_BEAT_TYPE("Beat"), //
+		GRID_PANE_MEASURE_TYPE("Measure"), //
 
 		GUITAR_BEAT_PANE("Guitar beat options"), //
 		GUITAR_BEAT_PANE_SECTION_TYPE("Section"), //
@@ -90,6 +93,7 @@ public class Localization {
 
 		TEMPO_BEAT_PANE("Tempo beat options"), //
 		TEMPO_BEAT_PANE_BEATS_IN_MEASURE("Beats in measure"), //
+		TEMPO_BEAT_PANE_NOTE_DENOMINATOR("Note denominator"), //
 
 		INFO_MENU("Info"), //
 		INFO_MENU_VERSION("Version"), //

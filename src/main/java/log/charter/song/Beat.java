@@ -37,14 +37,17 @@ public class Beat extends Position {
 	@XStreamAsAttribute
 	public int beatsInMeasure = 4;
 	@XStreamAsAttribute
+	public int noteDenominator = 4;
+	@XStreamAsAttribute
 	public boolean firstInMeasure = false;
 	@XStreamAsAttribute
 	public boolean anchor = false;
 
-	public Beat(final int pos, final int beatsInMeasure, final boolean firstInMeasure) {
+	public Beat(final int pos, final int beatsInMeasure, final int noteDenominator, final boolean firstInMeasure) {
 		super(pos);
 		this.beatsInMeasure = beatsInMeasure;
 		this.firstInMeasure = firstInMeasure;
+		this.noteDenominator = noteDenominator;
 	}
 
 	private Beat(final EBeat ebeat) {
@@ -56,6 +59,12 @@ public class Beat extends Position {
 		super(other);
 		beatsInMeasure = other.beatsInMeasure;
 		firstInMeasure = other.firstInMeasure;
+		noteDenominator = other.noteDenominator;
 		anchor = other.anchor;
+	}
+
+	public void setTimeSignature(final int beatsInMeasure, final int noteDenominator) {
+		this.beatsInMeasure = beatsInMeasure;
+		this.noteDenominator = noteDenominator;
 	}
 }

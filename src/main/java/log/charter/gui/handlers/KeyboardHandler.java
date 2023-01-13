@@ -73,7 +73,7 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int speed = Framer.frameLength * (shift ? 20 : 4) / (ctrl ? 4 : 1);
+		final int speed = (int) (Framer.frameLength * (shift ? 20 : 4) / (ctrl ? 4 : 1));
 		int nextTime = data.nextTime - (left ? speed : 0) + (right ? speed : 0);
 		nextTime = max(0, min(data.music.msLength(), nextTime));
 		frame.setNextTime(nextTime);
@@ -217,6 +217,7 @@ public class KeyboardHandler implements KeyListener {
 		keyPressBehaviors.put(KeyEvent.VK_END, e -> modeManager.getHandler().handleEnd());
 		keyPressBehaviors.put(KeyEvent.VK_LEFT, e -> handleLeft());
 		keyPressBehaviors.put(KeyEvent.VK_RIGHT, e -> handleRight());
+		keyPressBehaviors.put(KeyEvent.VK_N, this::noteOptions);
 		keyPressBehaviors.put(KeyEvent.VK_0, e -> setFret(0));
 		keyPressBehaviors.put(KeyEvent.VK_F1, e -> handleFKey(e, 1));
 		keyPressBehaviors.put(KeyEvent.VK_F2, e -> handleFKey(e, 2));
@@ -230,7 +231,8 @@ public class KeyboardHandler implements KeyListener {
 		keyPressBehaviors.put(KeyEvent.VK_F10, e -> handleFKey(e, 10));
 		keyPressBehaviors.put(KeyEvent.VK_F11, e -> handleFKey(e, 11));
 		keyPressBehaviors.put(KeyEvent.VK_F12, e -> handleFKey(e, 12));
-		keyPressBehaviors.put(KeyEvent.VK_N, this::noteOptions);
+		keyPressBehaviors.put(KeyEvent.VK_OPEN_BRACKET, e -> audioHandler.toggleClaps());
+		keyPressBehaviors.put(KeyEvent.VK_CLOSE_BRACKET, e -> audioHandler.toggleMetronome());
 	}
 
 	private static final List<Integer> keysNotClearingMousePressesOnPress = asList(//
@@ -246,7 +248,9 @@ public class KeyboardHandler implements KeyListener {
 			KeyEvent.VK_F5, //
 			KeyEvent.VK_C, //
 			KeyEvent.VK_M, //
-			KeyEvent.VK_SPACE);
+			KeyEvent.VK_SPACE, //
+			KeyEvent.VK_OPEN_BRACKET, //
+			KeyEvent.VK_CLOSE_BRACKET);
 
 	private void keyUsed(final KeyEvent e) {
 		final int keyCode = e.getKeyCode();

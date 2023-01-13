@@ -1,8 +1,13 @@
 package log.charter.gui;
 
-public class Framer {
-	public static final int frameLength = 10;
+import static java.lang.Math.max;
 
+import log.charter.data.config.Config;
+
+public class Framer {
+	public static double frameLength = 1000.0 / Config.FPS;
+
+	private double nextFrameTime = System.nanoTime() / 1_000_000;
 	private int currentFrame = 0;
 	private int framesDone = 0;
 
@@ -12,12 +17,24 @@ public class Framer {
 		this.runnable = runnable;
 	}
 
+	private long getCurrentTime() {
+		return System.nanoTime() / 1_000_000;
+	}
+
+	private long getSleepLength() {
+		return max(1, (long) (nextFrameTime - getCurrentTime()));
+	}
+
 	public void start() {
 		new Thread(() -> {
 			try {
 				while (true) {
-					currentFrame++;
-					Thread.sleep(frameLength);
+					while (nextFrameTime <= getCurrentTime()) {
+						nextFrameTime += frameLength;
+						currentFrame++;
+					}
+
+					Thread.sleep(getSleepLength());
 				}
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
@@ -31,7 +48,8 @@ public class Framer {
 						runnable.run();
 						framesDone++;
 					}
-					Thread.sleep(1);
+
+					Thread.sleep(getSleepLength());
 				}
 			} catch (final InterruptedException e) {
 				e.printStackTrace();

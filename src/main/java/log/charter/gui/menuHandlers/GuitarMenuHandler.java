@@ -1,6 +1,5 @@
 package log.charter.gui.menuHandlers;
 
-import static java.lang.Math.min;
 import static log.charter.song.notes.IPosition.findFirstIdAfter;
 import static log.charter.song.notes.IPosition.findLastIdBefore;
 
@@ -577,14 +576,7 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
 		final ArrayList2<Selection<ChordOrNote>> selected = selectionAccessor.getSortedSelected();
 		final int position = selected.get(0).selectable.position();
-		int endPosition = selected.getLast().selectable.endPosition();
-		final int firstIdAfter = findFirstIdAfter(handShapes, endPosition);
-		if (firstIdAfter == -1) {
-			endPosition = data.songChart.beatsMap.getPositionWithAddedGrid(endPosition, 1, 8);
-		} else {
-			endPosition = min(handShapes.get(firstIdAfter).position() - Config.minNoteDistance,
-					data.songChart.beatsMap.getPositionWithAddedGrid(endPosition, 1, 8));
-		}
+		final int endPosition = selected.getLast().selectable.endPosition();
 
 		int deleteFromId = findLastIdBefore(handShapes, position);
 		if (deleteFromId == -1) {
@@ -593,6 +585,8 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		if (handShapes.size() > deleteFromId && handShapes.get(deleteFromId).endPosition() < position) {
 			deleteFromId++;
 		}
+
+		final int firstIdAfter = findFirstIdAfter(handShapes, endPosition);
 		final int deleteToId = firstIdAfter == -1 ? handShapes.size() - 1 : firstIdAfter - 1;
 		for (int i = deleteToId; i >= deleteFromId; i--) {
 			handShapes.remove(i);

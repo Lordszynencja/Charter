@@ -62,9 +62,13 @@ public class VocalModeHandler extends ModeHandler {
 
 	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
-		undoSystem.addUndo();
+		if (clickData.pressHighlight.type != PositionType.VOCAL) {
+			return;
+		}
 
 		if (clickData.pressHighlight.vocal != null) {
+			undoSystem.addUndo();
+
 			data.songChart.vocals.removeNote(clickData.pressHighlight.id);
 			return;
 		}

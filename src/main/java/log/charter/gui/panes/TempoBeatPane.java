@@ -31,14 +31,16 @@ public class TempoBeatPane extends ParamsPane {
 	private final Beat beat;
 
 	private int beatsInMeasure;
+	private int noteDenominator;
 
 	public TempoBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem, final Beat beat) {
-		super(frame, Label.TEMPO_BEAT_PANE, 3, getSizes());
+		super(frame, Label.TEMPO_BEAT_PANE, 4, getSizes());
 		this.data = data;
 		this.undoSystem = undoSystem;
 
 		this.beat = beat;
 		beatsInMeasure = beat.beatsInMeasure;
+		noteDenominator = beat.noteDenominator;
 
 		int row = 0;
 		addIntegerConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_BEATS_IN_MEASURE, beatsInMeasure, 30,
@@ -46,6 +48,11 @@ public class TempoBeatPane extends ParamsPane {
 		final JTextField beatsInMeasureInput = (JTextField) components.getLast();
 		beatsInMeasureInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(beatsInMeasureInput);
+		addIntegerConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_BEATS_IN_MEASURE, noteDenominator, 30,
+				createIntValidator(1, 99, false), val -> noteDenominator = val, false);
+		final JTextField noteDenominatorInput = (JTextField) components.getLast();
+		noteDenominatorInput.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(noteDenominatorInput);
 
 		row++;
 		addDefaultFinish(row, this::saveAndExit);
@@ -64,7 +71,8 @@ public class TempoBeatPane extends ParamsPane {
 		}
 
 		for (int i = beatId; i < beatIdTo; i++) {
-			beats.get(i).beatsInMeasure = beatsInMeasure;
+			final Beat beat = beats.get(i);
+			beat.setTimeSignature(beatsInMeasure, noteDenominator);
 		}
 
 		data.songChart.beatsMap.fixFirstBeatInMeasures();

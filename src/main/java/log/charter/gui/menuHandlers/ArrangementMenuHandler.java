@@ -9,6 +9,7 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
+import log.charter.gui.components.SpecialMenuItem;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.panes.ArrangementSettingsPane;
 import log.charter.io.rs.xml.song.ArrangementType;
@@ -82,8 +83,8 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 
 		menu.addSeparator();
 		menu.add(createItem(Label.ARRANGEMENT_MENU_TOGGLE_WAVEFORM, ctrl('W'), this::toggleWaveforDrawing));
-		menu.add(createItem(Label.ARRANGEMENT_MENU_TOGGLE_CLAPS, ctrl('C'), audioHandler::toggleClaps));
-		menu.add(createItem(Label.ARRANGEMENT_MENU_TOGGLE_METRONOME, ctrl('M'), audioHandler::toggleMetronome));
+		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_CLAPS.label(), "["));
+		menu.add(createItem(Label.ARRANGEMENT_MENU_TOGGLE_METRONOME, button('Y'), audioHandler::toggleMetronome));
 
 		return menu;
 	}

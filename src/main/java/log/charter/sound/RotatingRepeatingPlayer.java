@@ -1,6 +1,6 @@
 package log.charter.sound;
 
-public class RotatingRepeatingPlayer {
+public class RotatingRepeatingPlayer implements IPlayer {
 
 	private int nextPlayer = 0;
 	private final RepeatingPlayer[] players;
@@ -12,8 +12,9 @@ public class RotatingRepeatingPlayer {
 		}
 	}
 
+	@Override
 	public void play() {
-		players[nextPlayer++].queuePlaying();
+		players[nextPlayer++].play();
 		nextPlayer = nextPlayer % players.length;
 	}
 }

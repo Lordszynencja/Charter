@@ -18,7 +18,7 @@ public class SlidePane extends ParamsPane {
 	private static PaneSizes getSizes() {
 		final PaneSizes sizes = new PaneSizes();
 		sizes.labelWidth = 80;
-		sizes.width = 300;
+		sizes.width = 250;
 
 		return sizes;
 	}
@@ -39,12 +39,12 @@ public class SlidePane extends ParamsPane {
 		slideTo = slideable.slideTo;
 		unpitched = slideable.unpitchedSlide;
 
-		addIntegerConfigValue(0, 20, 0, Label.SLIDE_PANE_FRET, slideTo, 50, createIntValidator(1, 100, true),
+		addIntegerConfigValue(0, 60, 0, Label.SLIDE_PANE_FRET, slideTo, 50, createIntValidator(1, 100, true),
 				val -> slideTo = val, false);
 		final JTextField input = (JTextField) components.getLast();
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
-		addConfigCheckbox(1, Label.SLIDE_PANE_UNPITCHED, unpitched, val -> unpitched = val);
+		addConfigCheckbox(1, 60, 0, Label.SLIDE_PANE_UNPITCHED, unpitched, val -> unpitched = val);
 
 		addDefaultFinish(3, this::saveAndExit);
 	}

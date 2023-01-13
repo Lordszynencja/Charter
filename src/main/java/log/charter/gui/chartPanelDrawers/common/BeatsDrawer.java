@@ -6,6 +6,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.phraseNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.text;
@@ -25,7 +26,6 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
@@ -58,7 +58,7 @@ public class BeatsDrawer {
 				final Position2D leftCorner = new Position2D(x - 3, beatTextY);
 				final Position2D rightCorner = new Position2D(x + 4, beatTextY);
 				final Position2D bottomCorner = new Position2D(x, beatTextY + 3);
-				beats.add(DrawableShape.filledTriangle(leftCorner, rightCorner, bottomCorner, color));
+				beats.add(filledTriangle(leftCorner, rightCorner, bottomCorner, color));
 			}
 		}
 
@@ -68,7 +68,8 @@ public class BeatsDrawer {
 		}
 
 		private void addMeasureChange(final int x, final Beat beat) {
-			beats.add(text(new Position2D(x + 3, beatSizeTextY + 11), beat.beatsInMeasure + "/4", mainBeatColor));
+			beats.add(text(new Position2D(x + 3, beatSizeTextY + 11), beat.beatsInMeasure + "/" + beat.noteDenominator,
+					mainBeatColor));
 		}
 
 		private void addSelect(final int x) {

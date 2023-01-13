@@ -39,37 +39,23 @@ class NotesMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Label.NOTES_MENU_DOUBLE_GRID, button(VK_PERIOD), this::doubleGridSize));
 		menu.add(createItem(Label.NOTES_MENU_HALVE_GRID, button(VK_COMMA), this::halveGridSize));
 
-		// addSeparator(menu);
-		// final JMenu copyFromMenu = new JMenu("Copy from");
-
-//		for (final InstrumentType type : InstrumentType.sortedValues()) {
-//			final JMenu copyFromMenuInstr = new JMenu(type.name);
-//			for (int i = 0; i < Instrument.diffNames.length; i++) {
-//				final int diff = i;
-//				copyFromMenuInstr.add(createItem(Instrument.diffNames[i], e -> handler.copyFrom(type, diff)));
-//			}
-//			copyFromMenu.add(copyFromMenuInstr);
-//		}
-
-		// menu.add(copyFromMenu);
-
 		return menu;
 	}
 
 	private void gridOptions() {
-		new GridPane(frame, data.songChart.beatsMap);
+		new GridPane(frame);
 	}
 
 	private void doubleGridSize() {
-		data.songChart.beatsMap.gridSize *= 2;
-		Config.lastGridSize = data.songChart.beatsMap.gridSize;
-		Config.markChanged();
+		if (Config.gridSize <= 512) {
+			Config.gridSize *= 2;
+			Config.markChanged();
+		}
 	}
 
 	private void halveGridSize() {
-		if (data.songChart.beatsMap.gridSize % 2 == 0) {
-			data.songChart.beatsMap.gridSize /= 2;
-			Config.lastGridSize = data.songChart.beatsMap.gridSize;
+		if (Config.gridSize % 2 == 0) {
+			Config.gridSize /= 2;
 			Config.markChanged();
 		}
 	}

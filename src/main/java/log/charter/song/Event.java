@@ -1,5 +1,7 @@
 package log.charter.song;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.util.stream.Collectors.toCollection;
 
 import java.util.List;
@@ -46,13 +48,14 @@ public class Event extends OnBeat {
 					}
 
 					final int time = arrangementEvent.time;
-					final int beatsInMeasure = Integer.valueOf(arrangementEvent.code.split(":")[1].split("/")[0]);
+					final String[] timeSignatureParts = arrangementEvent.code.split(":")[1].split("/");
+					final int beatsInMeasure = max(1, min(1024, Integer.valueOf(timeSignatureParts[0])));
+					final int noteDenominator = max(1, min(1024, Integer.valueOf(timeSignatureParts[1])));
 					beats.stream()//
 							.filter(beat -> beat.position() >= time)//
-							.forEach(beat -> beat.beatsInMeasure = beatsInMeasure);
+							.forEach(beat -> beat.setTimeSignature(beatsInMeasure, noteDenominator));
 
 					return false;
-
 				})//
 				.map(arrangementEvent -> new Event(beats, arrangementEvent))//
 				.collect(toCollection(ArrayList2::new));

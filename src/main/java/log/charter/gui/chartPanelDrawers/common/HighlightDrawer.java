@@ -97,10 +97,11 @@ public class HighlightDrawer {
 
 	private void drawNoteHighlight(final Graphics g, final int string, final int position, final int length,
 			final int strings) {
-		final int x = timeToX(position, data.time) - 1 + noteWidth % 2;
+		final int x = timeToX(position, data.time);
 		final int y = getLaneY(string, strings);
-		final ShapePositionWithSize notePosition = new ShapePositionWithSize(x, y, noteWidth + 1, noteHeight + 1)//
-				.centered();
+		final ShapePositionWithSize notePosition = new ShapePositionWithSize(x, y, noteWidth, noteHeight)//
+				.centered()//
+				.resized(-1, -1, 1, 1);
 		strokedRectangle(notePosition, highlightColor).draw(g);
 	}
 

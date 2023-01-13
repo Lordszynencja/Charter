@@ -1,19 +1,18 @@
 package log.charter.song;
 
-import static java.lang.Math.ceil;
-import static java.lang.Math.floor;
-import static log.charter.song.notes.IPosition.findFirstIdAfter;
+import static java.lang.Math.abs;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
-import log.charter.data.config.Config;
+import java.util.ArrayList;
+import java.util.List;
+
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.grid.GridPosition;
 
 public class BeatsMap {
 	public int songLengthMs;
-	public boolean useGrid = true;
-	public int gridSize = Config.lastGridSize;
 
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 
@@ -23,7 +22,7 @@ public class BeatsMap {
 	public BeatsMap(final int songLength) {
 		songLengthMs = songLength;
 
-		beats.add(new Beat(0, 4, true));
+		beats.add(new Beat(0, 4, 4, true));
 		makeBeatsUntilSongEnd();
 	}
 
@@ -86,7 +85,6 @@ public class BeatsMap {
 			}
 		}
 
-		final int beatsInMeasure = current.beatsInMeasure;
 		int pos = current.position() + distance;
 		int beatInMeasure = 0;
 		for (int i = beats.size() - 1; i >= 0; i--) {
@@ -96,9 +94,10 @@ public class BeatsMap {
 			beatInMeasure++;
 		}
 
+		final int beatsInMeasure = current.beatsInMeasure;
 		while (pos < songLengthMs) {
 			beatInMeasure++;
-			beats.add(new Beat(pos, beatsInMeasure, beatInMeasure == beatsInMeasure));
+			beats.add(new Beat(pos, beatsInMeasure, current.noteDenominator, beatInMeasure == beatsInMeasure));
 
 			pos += distance;
 			if (beatInMeasure == beatsInMeasure) {
@@ -108,169 +107,63 @@ public class BeatsMap {
 	}
 
 	public void fixFirstBeatInMeasures() {
+		final List<Beat> beatsFromPreviousMeasure = new ArrayList<>();
 		int previousBIM = -1;
-		int count = 0;
 		for (int i = 0; i < beats.size(); i++) {
-			count++;
 			final Beat beat = beats.get(i);
 			if (beat.beatsInMeasure != previousBIM) {
+				for (final Beat beatFromPreviousMeasure : beatsFromPreviousMeasure) {
+					beatFromPreviousMeasure.beatsInMeasure = beatsFromPreviousMeasure.size();
+				}
 				beat.firstInMeasure = true;
 				previousBIM = beat.beatsInMeasure;
-				count = 0;
-			} else if (count == previousBIM) {
+				beatsFromPreviousMeasure.clear();
+			} else if (beatsFromPreviousMeasure.size() >= previousBIM) {
+				beatsFromPreviousMeasure.clear();
 				beat.firstInMeasure = true;
-				count = 0;
 			} else {
 				beat.firstInMeasure = false;
 			}
+
+			beatsFromPreviousMeasure.add(beat);
 		}
-	}
-
-	public void changeBeatsInMeasure(final int id, final int newBeatsInMeasure) {
-		final Beat beat = beats.get(id);
-		final int oldBeatsInMeasure = beat.beatsInMeasure;
-		int count = oldBeatsInMeasure;
-		while (id < beats.size() && beat.beatsInMeasure == oldBeatsInMeasure) {
-			beat.beatsInMeasure = newBeatsInMeasure;
-			if (count == newBeatsInMeasure) {
-				beat.firstInMeasure = true;
-				count = 0;
-			}
-			count++;
-		}
-	}
-
-	public int getPositionWithAddedGrid(final int position, int gridAdditions, final int gridSize) {
-		if (!useGrid) {
-			return position + 10 * gridAdditions;
-		}
-
-		int nextBeatId = findFirstIdAfter(beats, position);
-		if (nextBeatId == -1) {
-			return beats.getLast().position();
-		}
-		if (nextBeatId == 0) {
-			gridAdditions--;
-			nextBeatId = 1;
-		}
-
-		Beat next = beats.get(nextBeatId);
-		Beat current = beats.get(nextBeatId - 1);
-
-		next = beats.get(nextBeatId);
-		current = beats.get(nextBeatId - 1);
-
-		int beatLength = next.position() - current.position();
-		final int distanceInBeat = position - current.position();
-		int gridInBeat = (int) floor(1.0 * distanceInBeat * gridSize / beatLength + 0.1);
-		while (gridAdditions > 0) {
-			gridInBeat++;
-			gridAdditions--;
-		}
-
-		if (gridInBeat >= gridSize) {
-			nextBeatId += gridInBeat / gridSize;
-			gridInBeat %= gridSize;
-			if (nextBeatId >= beats.size()) {
-				return beats.getLast().position();
-			}
-
-			next = beats.get(nextBeatId);
-			current = beats.get(nextBeatId - 1);
-		}
-
-		beatLength = next.position() - current.position();
-		return current.position() + beatLength * gridInBeat / gridSize;
 	}
 
 	public int getPositionWithAddedGrid(final int position, final int gridAdditions) {
-		return this.getPositionWithAddedGrid(position, gridAdditions, gridSize);
+		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+		for (int i = 0; i < gridAdditions; i++) {
+			gridPosition.next();
+		}
+
+		return gridPosition.position();
 	}
 
-	public int getPositionWithRemovedGrid(final int position, int gridRemovals) {
-		if (!useGrid) {
-			return position - 10 * gridRemovals;
+	public int getPositionWithRemovedGrid(final int position, final int gridRemovals) {
+		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+		for (int i = 0; i < gridRemovals; i++) {
+			gridPosition.previous();
 		}
 
-		int nextBeatId = findFirstIdAfter(beats, position);
-		if (nextBeatId == 0) {
-			return beats.get(0).position();
-		}
-		if (nextBeatId == -1) {
-			gridRemovals--;
-			nextBeatId = beats.size() - 1;
-		}
-
-		Beat next = beats.get(nextBeatId);
-		Beat current = beats.get(nextBeatId - 1);
-
-		next = beats.get(nextBeatId);
-		current = beats.get(nextBeatId - 1);
-
-		int beatLength = next.position() - current.position();
-		final int distanceInBeat = position - current.position();
-		int gridInBeat = (int) ceil(1.0 * distanceInBeat * gridSize / beatLength - 0.1);
-		while (gridRemovals > 0) {
-			gridInBeat--;
-			gridRemovals--;
-		}
-
-		while (gridInBeat < 0) {
-			nextBeatId--;
-			gridInBeat += gridSize;
-			if (nextBeatId < 1) {
-				return beats.get(0).position();
-			}
-
-			next = beats.get(nextBeatId);
-			current = beats.get(nextBeatId - 1);
-		}
-
-		beatLength = next.position() - current.position();
-		return current.position() + beatLength * gridInBeat / gridSize;
+		return gridPosition.position();
 	}
 
 	public int getNextPositionFromGridAfter(final int position) {
-		if (!useGrid) {
-			return position + 10;
-		}
+		return getPositionWithAddedGrid(position, 1);
+	}
 
-		final int nextBeatId = findFirstIdAfter(beats, position);
-		if (nextBeatId == -1) {
-			return beats.getLast().position();
-		}
-		if (nextBeatId == 0) {
-			return beats.get(0).position();
-		}
-
-		final int previousBeatPosition = beats.get(nextBeatId - 1).position();
-		final int beatSize = beats.get(nextBeatId).position() - previousBeatPosition;
-		final int distanceInBeat = position - previousBeatPosition;
-		int gridInBeat = (int) Math.round(1.0 * distanceInBeat * gridSize / beatSize);
-		gridInBeat++;
-
-		return previousBeatPosition + beatSize * gridInBeat / gridSize;
+	public int getNextPositionFromGrid(final int position) {
+		return getPositionWithAddedGrid(position, 1);
 	}
 
 	public int getPositionFromGridClosestTo(final int position) {
-		if (!useGrid) {
-			return position;
-		}
+		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+		final int leftPosition = gridPosition.position();
+		final int rightPosition = gridPosition.next().position();
+		if (abs(position - leftPosition) < abs(position - rightPosition)) {
+			return leftPosition;
 
-		final int nextBeatId = findFirstIdAfter(beats, position);
-		if (nextBeatId == -1) {
-			return beats.getLast().position();
 		}
-		if (nextBeatId == 0) {
-			return beats.get(0).position();
-		}
-
-		final int previousBeatPosition = beats.get(nextBeatId - 1).position();
-		final int beatSize = beats.get(nextBeatId).position() - previousBeatPosition;
-		final int distanceInBeat = position - previousBeatPosition;
-		final int gridInBeat = (int) Math.round(1.0 * distanceInBeat * gridSize / beatSize);
-
-		return previousBeatPosition + beatSize * gridInBeat / gridSize;
+		return rightPosition;
 	}
 
 	public int findPreviousAnchoredBeat(final int beatId) {

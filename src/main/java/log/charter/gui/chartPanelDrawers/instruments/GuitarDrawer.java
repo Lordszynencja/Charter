@@ -106,9 +106,9 @@ public class GuitarDrawer {
 	private static final Color[] noteTailColors = new Color[maxStrings];
 	private static final Color stringMuteNoteColor = ColorLabel.NOTE_STRING_MUTE.color();
 
-	private static final Font anchorFont = new Font(Font.DIALOG, Font.BOLD, 13);
-	private static final Font bendValueFont = new Font(Font.DIALOG, Font.PLAIN, 15);
-	private static final Font fretFont = new Font(Font.MONOSPACED, Font.PLAIN, 15);
+	private static Font anchorFont = new Font(Font.DIALOG, Font.BOLD, 13);
+	private static Font bendValueFont = new Font(Font.DIALOG, Font.BOLD, 15);
+	private static Font fretFont = new Font(Font.SANS_SERIF, Font.BOLD, 15);
 
 	static {
 		for (int i = 0; i < maxStrings; i++) {
@@ -648,8 +648,9 @@ public class GuitarDrawer {
 
 		public void addAnchor(final Anchor anchor, final int x, final boolean selected) {
 			anchors.add(lineVertical(x, anchorY, lanesBottom, ColorLabel.ANCHOR));
-			anchors.add(text(new Position2D(x + 4, anchorTextY),
-					"" + anchor.fret + " - " + (anchor.fret + anchor.width - 1), ColorLabel.ANCHOR));
+			final String anchorText = anchor.width == 4 ? anchor.fret + ""
+					: anchor.fret + " - " + (anchor.fret + anchor.width - 1);
+			anchors.add(text(new Position2D(x + 4, anchorTextY), anchorText, ColorLabel.ANCHOR));
 
 			if (selected) {
 				final int top = anchorY - 1;

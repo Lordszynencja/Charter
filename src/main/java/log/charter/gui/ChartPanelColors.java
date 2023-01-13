@@ -45,42 +45,42 @@ public class ChartPanelColors {
 
 		LANE_0(96, 0, 0), //
 		LANE_1(96, 96, 0), //
-		LANE_2(0, 0, 128), //
+		LANE_2(0, 0, 144), //
 		LANE_3(96, 48, 0), //
 		LANE_4(0, 96, 0), //
 		LANE_5(96, 0, 96), //
 
 		LANE_BRIGHT_0(128, 0, 0), //
 		LANE_BRIGHT_1(128, 128, 0), //
-		LANE_BRIGHT_2(0, 0, 192), //
+		LANE_BRIGHT_2(0, 0, 208), //
 		LANE_BRIGHT_3(128, 64, 0), //
 		LANE_BRIGHT_4(0, 128, 0), //
 		LANE_BRIGHT_5(128, 0, 128), //
 
+		NOTE_STRING_MUTE(128, 128, 128), //
+
 		NOTE_0(192, 0, 0), //
 		NOTE_1(192, 192, 0), //
-		NOTE_2(0, 0, 192), //
+		NOTE_2(16, 16, 224), //
 		NOTE_3(192, 96, 0), //
 		NOTE_4(0, 192, 0), //
 		NOTE_5(192, 0, 192), //
 
-		NOTE_STRING_MUTE(128, 128, 128), //
+		NOTE_TAIL_0(224, 0, 0), //
+		NOTE_TAIL_1(224, 224, 0), //
+		NOTE_TAIL_2(24, 24, 224), //
+		NOTE_TAIL_3(224, 105, 0), //
+		NOTE_TAIL_4(0, 224, 0), //
+		NOTE_TAIL_5(224, 0, 224), //
 
 		NOTE_ACCENT_0(255, 0, 0), //
 		NOTE_ACCENT_1(255, 255, 0), //
-		NOTE_ACCENT_2(0, 0, 255), //
+		NOTE_ACCENT_2(32, 32, 255), //
 		NOTE_ACCENT_3(255, 128, 0), //
 		NOTE_ACCENT_4(0, 255, 0), //
 		NOTE_ACCENT_5(255, 0, 255), //
 
-		NOTE_TAIL_0(210, 0, 0), //
-		NOTE_TAIL_1(210, 210, 0), //
-		NOTE_TAIL_2(0, 0, 210), //
-		NOTE_TAIL_3(210, 105, 0), //
-		NOTE_TAIL_4(0, 210, 0), //
-		NOTE_TAIL_5(210, 0, 210), //
-
-		ANCHOR(128, 0, 0), //
+		ANCHOR(192, 32, 32), //
 		HAND_SHAPE(0, 128, 255), //
 		HAND_SHAPE_ARPEGGIO(128, 0, 255), //
 		TONE_CHANGE(128, 128, 0), //

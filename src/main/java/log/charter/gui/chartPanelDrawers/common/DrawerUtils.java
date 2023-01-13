@@ -16,7 +16,7 @@ public class DrawerUtils {
 	public static int beatSizeTextY = beatTextY + 15;
 	public static int toneChangeY = beatSizeTextY + 10;
 	public static int anchorY = toneChangeY + 15;
-	public static int anchorTextY = anchorY + 10;
+	public static int anchorTextY = anchorY + 11;
 	public static int lanesTop = anchorTextY + 15;
 	public static int laneHeight;
 	public static int lanesHeight;

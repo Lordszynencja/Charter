@@ -73,7 +73,7 @@ public class ArrangementChart {
 		phrases = Phrase.fromArrangementPhrases(songArrangement.phrases.list);
 		phraseIterations = PhraseIteration.fromArrangementPhraseIterations(beats, songArrangement.phrases.list,
 				songArrangement.phraseIterations.list);
-		events = Event.fromArrangement(new ArrayList2<>(), songArrangement.events.list);
+		events = Event.fromArrangement(beats, songArrangement.events.list);
 
 		if (songArrangement.fretHandMuteTemplates != null) {
 			fretHandMuteTemplates = songArrangement.fretHandMuteTemplates.list.map(ChordTemplate::new);

@@ -1,8 +1,6 @@
 package log.charter.data;
 
 import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static log.charter.song.notes.IPosition.findFirstIdAfter;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
@@ -60,23 +58,11 @@ public class ArrangementFixer {
 		chordsWithoutHandShapes.addAll(chordsForHandShapes);
 
 		for (final Chord chord : chordsWithoutHandShapes) {
-			int endPosition = chord.position();
-
-			final int firstIdAfter = findFirstIdAfter(level.handShapes, endPosition);
-			if (firstIdAfter == -1) {
-				endPosition = data.songChart.beatsMap.getPositionWithAddedGrid(endPosition, 1, 8);
-			} else {
-				endPosition = min(level.handShapes.get(firstIdAfter).position() - Config.minNoteDistance,
-						data.songChart.beatsMap.getPositionWithAddedGrid(endPosition, 1, 8));
-			}
+			final int endPosition = chord.position();
 
 			final int length = max(1, endPosition - chord.position());
 			final HandShape handShape = new HandShape(chord, length);
-			if (firstIdAfter != -1) {
-				level.handShapes.add(firstIdAfter, handShape);
-			} else {
-				level.handShapes.add(handShape);
-			}
+			level.handShapes.add(handShape);
 		}
 
 		level.handShapes.sort(null);
