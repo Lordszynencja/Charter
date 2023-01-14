@@ -57,7 +57,11 @@ public class ChordNameSuggester {
 		final ArrayList2<String> foundNames = new ArrayList2<>();
 		for (int i = 0; i < notes.size(); i++) {
 			final int root = notes.get(i);
-			foundNames.addAll(ChordNameAdder.getSuggestedChordNames(root, notes));
+			ArrayList2<String> foundNamesForRoot = ChordNameAdder.getSuggestedChordNames(root, notes);
+			if (root != sounds[0] % 12) {
+				foundNamesForRoot = foundNamesForRoot.map(chordName -> chordName + "/" + getToneName(sounds[0]));
+			}
+			foundNames.addAll(foundNamesForRoot);
 		}
 
 		return foundNames;

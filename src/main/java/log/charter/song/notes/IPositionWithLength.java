@@ -34,8 +34,8 @@ public interface IPositionWithLength extends IPosition {
 		for (final Selection<ChordOrNote> selected : toChange) {
 			final GuitarSound sound = selected.selectable.asGuitarSound();
 			int endPosition = sound.endPosition();
-			endPosition = change > 0 ? beatsMap.getPositionWithAddedGrid(endPosition, change)
-					: beatsMap.getPositionWithRemovedGrid(endPosition, -change);
+			endPosition = change > 0 ? beatsMap.getPositionWithAddedGrid(endPosition + 1, change)
+					: beatsMap.getPositionWithRemovedGrid(endPosition + 1, -change);
 
 			if ((sound.linkNext || cutBeforeNext) && allPositions.size() > selected.id + 1) {
 				final IPosition next = allPositions.get(selected.id + 1);

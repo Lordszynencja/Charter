@@ -2,6 +2,9 @@ package log.charter.data.config;
 
 import static log.charter.io.Logger.error;
 
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +33,23 @@ public class Config {
 	public static int frets = 28;
 	public static int maxStrings = 6;
 	public static int FPS = 60;
+
+	static {
+		final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		final GraphicsDevice[] gs = ge.getScreenDevices();
+
+		for (int i = 0; i < gs.length; i++) {
+			final DisplayMode dm = gs[i].getDisplayMode();
+
+			final int refreshRate = dm.getRefreshRate();
+			if (refreshRate == DisplayMode.REFRESH_RATE_UNKNOWN) {
+				System.out.println("Unknown rate");
+			} else {
+				FPS = refreshRate;
+				break;
+			}
+		}
+	}
 
 	public static int windowPosX = 100;
 	public static int windowPosY = 100;

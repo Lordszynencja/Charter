@@ -71,7 +71,7 @@ public class GridPosition<T extends IPosition> {
 
 		if (gridId < 0) {
 			positionId--;
-			gridId = 0;
+			gridId = gridSize - 1;
 		}
 
 		if (positionId < 0) {

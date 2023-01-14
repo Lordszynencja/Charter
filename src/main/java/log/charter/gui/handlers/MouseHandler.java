@@ -16,7 +16,9 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Zoom;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
+import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionManager;
+import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.song.ArrangementChart;
@@ -122,7 +124,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 				dragTempo(clickData);
 			}
 			if (clickData.pressHighlight.chordOrNote != null) {
-				// TODO drag notes?
+				dragNotes(clickData);
+			}
+			if (clickData.pressHighlight.vocal != null) {
+				dragVocals(clickData);
 			}
 			break;
 		case RIGHT_BUTTON:
@@ -251,6 +256,38 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 
 		data.songChart.beatsMap.makeBeatsUntilSongEnd();
+	}
+
+	private void dragPositions(final int start, final int end, final ArrayList2<Selection<IPosition>> positions) {
+		if (positions.isEmpty()) {
+			return;
+		}
+
+		undoSystem.addUndo();
+
+		final double startInBeats = data.songChart.beatsMap.getPositionInBeats(start);
+		final double endInBeats = data.songChart.beatsMap.getPositionInBeats(end);
+		final double add = endInBeats - startInBeats;
+		for (final Selection<IPosition> selection : positions) {
+			final IPosition position = selection.selectable;
+			final double positionInBeats = data.songChart.beatsMap.getPositionInBeats(position.position());
+			final int newPosition = data.songChart.beatsMap.getPositionForPositionInBeats(positionInBeats + add);
+			position.position(newPosition);
+		}
+	}
+
+	private void dragNotes(final MouseButtonPressReleaseData clickData) {
+		final int dragStartPosition = clickData.pressHighlight.chordOrNote.position();
+		final int dragEndPosition = clickData.releaseHighlight.position();
+		dragPositions(dragStartPosition, dragEndPosition,
+				selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE).getSortedSelected());
+	}
+
+	private void dragVocals(final MouseButtonPressReleaseData clickData) {
+		final int dragStartPosition = clickData.pressHighlight.vocal.position();
+		final int dragEndPosition = clickData.releaseHighlight.position();
+		dragPositions(dragStartPosition, dragEndPosition,
+				selectionManager.getSelectedAccessor(PositionType.VOCAL).getSortedSelected());
 	}
 
 	@Override
