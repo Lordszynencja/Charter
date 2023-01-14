@@ -41,13 +41,13 @@ public class CharterMenuBar extends JMenuBar {
 			final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
 			final ModeManager modeManager, final SelectionManager selectionManager,
 			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
-		editMenuHandler.init(copyManager, data, frame, selectionManager, undoSystem);
+		editMenuHandler.init(copyManager, data, frame, keyboardHandler, selectionManager, undoSystem);
 		fileMenuHandler.init(data, frame, songFileHandler);
 		infoMenuHandler.init(frame, this);
-		guitarMenuHandler.init(data, frame, keyboardHandler, modeManager, selectionManager, undoSystem);
+		guitarMenuHandler.init(data, keyboardHandler, modeManager);
 		arrangementMenuHandler.init(audioDrawer, audioHandler, data, frame, this, modeManager, selectionManager);
-		notesMenuHandler.init(frame, data, modeManager);
-		vocalsMenuHandler.init(data, frame, modeManager, selectionManager, undoSystem);
+		notesMenuHandler.init(frame, data, keyboardHandler, modeManager);
+		vocalsMenuHandler.init(data, keyboardHandler, modeManager);
 
 		final Dimension size = new Dimension(100, 20);
 		setMinimumSize(size);

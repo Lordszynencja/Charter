@@ -41,6 +41,9 @@ public class UndoSystem {
 	}
 
 	public void undo() {
+		if (data.isEmpty) {
+			return;
+		}
 		if (undo.isEmpty()) {
 			return;
 		}
@@ -52,6 +55,9 @@ public class UndoSystem {
 	}
 
 	public void redo() {
+		if (data.isEmpty) {
+			return;
+		}
 		if (redo.isEmpty()) {
 			return;
 		}

@@ -51,11 +51,15 @@ public class AudioDrawer {
 	private ChartData data;
 	private ChartPanel chartPanel;
 
-	public boolean drawAudio;
+	private boolean drawAudio;
 
 	public void init(final ChartData data, final ChartPanel chartPanel) {
 		this.data = data;
 		this.chartPanel = chartPanel;
+	}
+
+	public void toggle() {
+		drawAudio = !drawAudio;
 	}
 
 	public void draw(final Graphics g) {

@@ -92,6 +92,9 @@ public class CharterFrame extends JFrame {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setLocationByPlatform(true);
 		setSize(Config.windowWidth, Config.windowHeight);
+		if (Config.windowFullscreen) {
+			setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
 		setLocation(Config.windowPosX, Config.windowPosY);
 
 		arrangementFixer.init(data);
@@ -101,8 +104,8 @@ public class CharterFrame extends JFrame {
 		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, selectionManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
 		data.init(audioHandler, charterMenuBar, modeManager, scrollBar, selectionManager, undoSystem);
-		keyboardHandler.init(audioHandler, data, this, modeManager, mouseHandler, selectionManager, songFileHandler,
-				undoSystem);
+		keyboardHandler.init(audioDrawer, audioHandler, copyManager, data, this, modeManager, mouseHandler,
+				selectionManager, songFileHandler, undoSystem);
 		highlightManager.init(data, modeManager, selectionManager);
 		modeManager.init(data, this, highlightManager, keyboardHandler, selectionManager, undoSystem);
 		mouseButtonPressReleaseHandler.init(highlightManager);
@@ -154,6 +157,7 @@ public class CharterFrame extends JFrame {
 	public void resize() {
 		Config.windowHeight = getHeight();
 		Config.windowWidth = getWidth();
+		Config.windowFullscreen = getExtendedState() == JFrame.MAXIMIZED_BOTH;
 		Config.markChanged();
 
 		final Insets insets = getInsets();

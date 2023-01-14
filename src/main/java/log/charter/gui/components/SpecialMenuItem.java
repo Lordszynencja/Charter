@@ -20,9 +20,11 @@ public class SpecialMenuItem extends JMenuItem {
 		this.shortcut = shortcut;
 		addActionListener(e -> onClick.run());
 
-		final Dimension preferredSize = getPreferredSize();
-		preferredSize.width += 60;
-		setPreferredSize(preferredSize);
+		if (shortcut != null) {
+			final Dimension preferredSize = getPreferredSize();
+			preferredSize.width += 60;
+			setPreferredSize(preferredSize);
+		}
 	}
 
 	@Override

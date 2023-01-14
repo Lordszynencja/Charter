@@ -82,9 +82,9 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 		}
 
 		menu.addSeparator();
-		menu.add(createItem(Label.ARRANGEMENT_MENU_TOGGLE_WAVEFORM, ctrl('W'), this::toggleWaveforDrawing));
-		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_CLAPS, "[", audioHandler::toggleClaps));
-		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_METRONOME, "Y", audioHandler::toggleMetronome));
+		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_CLAPS, "F3", audioHandler::toggleClaps));
+		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_METRONOME, "F4", audioHandler::toggleMetronome));
+		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_WAVEFORM, "F5", audioDrawer::toggle));
 
 		return menu;
 	}
@@ -120,7 +120,4 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 		changeEditMode(EditMode.GUITAR);
 	}
 
-	private void toggleWaveforDrawing() {
-		audioDrawer.drawAudio = !audioDrawer.drawAudio;
-	}
 }

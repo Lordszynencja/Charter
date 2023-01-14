@@ -36,7 +36,10 @@ public class AudioHandler {
 			}
 
 			if (on && nextTime == -1) {
-				nextTime = findFirstAfter(positionsSupplier.get(), t).position();
+				final IPosition nextPosition = findFirstAfter(positionsSupplier.get(), t);
+				if (nextPosition != null) {
+					nextTime = nextPosition.position();
+				}
 			}
 		}
 

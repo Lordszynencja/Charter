@@ -7,7 +7,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 
 public class LogCharterRSMain {
-	public static final String VERSION = "0.8.3 - 2023.01.13";
+	public static final String VERSION = "0.8.4 - 2023.01.14";
 	public static final String TITLE = "LoG Charter RS";
 
 	public static void main(final String[] args) throws InterruptedException, IOException {
@@ -23,7 +23,7 @@ public class LogCharterRSMain {
 			try {
 				while (true) {
 					Config.save();
-					Thread.sleep(10000);
+					Thread.sleep(1000);
 				}
 			} catch (final InterruptedException e) {
 				e.printStackTrace();

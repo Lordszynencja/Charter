@@ -69,12 +69,18 @@ public class GuitarModeHandler extends ModeHandler {
 
 	@Override
 	public void handleEnd() {
-		frame.setNextTime(getTimeValue(data.music.msLength(), list -> list.getLast().position()));
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		if (!sounds.isEmpty()) {
+			frame.setNextTime(sounds.getLast().position());
+		}
 	}
 
 	@Override
 	public void handleHome() {
-		frame.setNextTime(getTimeValue(0, list -> list.get(0).position()));
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		if (!sounds.isEmpty()) {
+			frame.setNextTime(sounds.get(0).position());
+		}
 	}
 
 	@Override

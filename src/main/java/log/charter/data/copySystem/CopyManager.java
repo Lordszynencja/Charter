@@ -305,6 +305,10 @@ public class CopyManager {
 	}
 
 	public void copy() {
+		if (data.isEmpty) {
+			return;
+		}
+
 		final CopyData copyData = getCopyData();
 		if (copyData == null) {
 			return;
@@ -333,6 +337,10 @@ public class CopyManager {
 	}
 
 	public void paste() {
+		if (data.isEmpty) {
+			return;
+		}
+
 		final CopyData copyData = getDataFromClipboard();
 		if (copyData == null || copyData.selectedCopy == null) {
 			return;
@@ -357,6 +365,9 @@ public class CopyManager {
 	}
 
 	public void specialPaste() {
+		if (data.isEmpty) {
+			return;
+		}
 		if (modeManager.editMode != EditMode.GUITAR) {
 			return;
 		}

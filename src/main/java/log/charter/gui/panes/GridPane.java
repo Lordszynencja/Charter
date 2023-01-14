@@ -33,7 +33,7 @@ public class GridPane extends ParamsPane {
 				createIntValidator(1, 1024, false), val -> gridSize = Integer.valueOf(val), false);
 		addSelectTextOnFocus((JTextField) components.getLast());
 		addConfigRadioButtons(row++, 10, 70, gridType.ordinal(), val -> gridType = GridType.values()[val], //
-				Label.GRID_PANE_MEASURE_TYPE, //
+				// Label.GRID_PANE_MEASURE_TYPE, //
 				Label.GRID_PANE_BEAT_TYPE, //
 				Label.GRID_PANE_NOTE_TYPE);
 
