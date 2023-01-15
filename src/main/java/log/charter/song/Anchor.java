@@ -16,6 +16,12 @@ public class Anchor extends Position {
 		width = 4;
 	}
 
+	public Anchor(final int position, final int fret, final int width) {
+		super(position);
+		this.fret = fret;
+		this.width = width;
+	}
+
 	public Anchor() {
 		super(0);
 	}
@@ -30,5 +36,9 @@ public class Anchor extends Position {
 		super(other);
 		fret = other.fret;
 		width = other.width;
+	}
+
+	public int topFret() {
+		return fret + width - 1;
 	}
 }

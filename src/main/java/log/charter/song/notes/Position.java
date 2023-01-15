@@ -14,6 +14,10 @@ public class Position implements IPosition {
 		position = other.position;
 	}
 
+	public Position(final IPosition other) {
+		position = other.position();
+	}
+
 	@Override
 	public int position() {
 		return position;
