@@ -14,6 +14,8 @@ import static java.awt.event.KeyEvent.VK_A;
 import static java.awt.event.KeyEvent.VK_ALT;
 import static java.awt.event.KeyEvent.VK_B;
 import static java.awt.event.KeyEvent.VK_C;
+import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
+import static java.awt.event.KeyEvent.VK_CLOSE_BRACKET;
 import static java.awt.event.KeyEvent.VK_COMMA;
 import static java.awt.event.KeyEvent.VK_CONTROL;
 import static java.awt.event.KeyEvent.VK_DELETE;
@@ -31,7 +33,18 @@ import static java.awt.event.KeyEvent.VK_L;
 import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_M;
 import static java.awt.event.KeyEvent.VK_N;
+import static java.awt.event.KeyEvent.VK_NUMPAD0;
+import static java.awt.event.KeyEvent.VK_NUMPAD1;
+import static java.awt.event.KeyEvent.VK_NUMPAD2;
+import static java.awt.event.KeyEvent.VK_NUMPAD3;
+import static java.awt.event.KeyEvent.VK_NUMPAD4;
+import static java.awt.event.KeyEvent.VK_NUMPAD5;
+import static java.awt.event.KeyEvent.VK_NUMPAD6;
+import static java.awt.event.KeyEvent.VK_NUMPAD7;
+import static java.awt.event.KeyEvent.VK_NUMPAD8;
+import static java.awt.event.KeyEvent.VK_NUMPAD9;
 import static java.awt.event.KeyEvent.VK_O;
+import static java.awt.event.KeyEvent.VK_OPEN_BRACKET;
 import static java.awt.event.KeyEvent.VK_PERIOD;
 import static java.awt.event.KeyEvent.VK_Q;
 import static java.awt.event.KeyEvent.VK_R;
@@ -313,16 +326,16 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	private void handleCtrl() {
-		ctrl = !ctrl;
+		ctrl = true;
 	}
 
 	private void handleAlt(final KeyEvent e) {
-		alt = !alt;
+		alt = true;
 		e.consume();
 	}
 
 	private void handleShift() {
-		shift = !shift;
+		shift = true;
 	}
 
 	private void handleLeft() {
@@ -1173,29 +1186,40 @@ public class KeyboardHandler implements KeyListener {
 		key(VK_9).singleFunction(e -> handleNumber(9));
 		key(VK_0).singleFunction(e -> handleNumber(0));
 
+		key(VK_NUMPAD0).singleFunction(e -> handleNumber(0));
+		key(VK_NUMPAD1).singleFunction(e -> handleNumber(1));
+		key(VK_NUMPAD2).singleFunction(e -> handleNumber(2));
+		key(VK_NUMPAD3).singleFunction(e -> handleNumber(3));
+		key(VK_NUMPAD4).singleFunction(e -> handleNumber(4));
+		key(VK_NUMPAD5).singleFunction(e -> handleNumber(5));
+		key(VK_NUMPAD6).singleFunction(e -> handleNumber(6));
+		key(VK_NUMPAD7).singleFunction(e -> handleNumber(7));
+		key(VK_NUMPAD8).singleFunction(e -> handleNumber(8));
+		key(VK_NUMPAD9).singleFunction(e -> handleNumber(9));
+
 		key(VK_F3).singleFunction(audioHandler::toggleClaps);
 		key(VK_F4).singleFunction(audioHandler::toggleMetronome);
 		key(VK_F5).singleFunction(audioDrawer::toggle);
 	}
 
 	private static final List<Integer> keysNotClearingMousePressesOnPress = asList(//
-			KeyEvent.VK_CONTROL, //
-			KeyEvent.VK_ALT, //
-			KeyEvent.VK_SHIFT, //
-			KeyEvent.VK_CAPS_LOCK, //
-			KeyEvent.VK_LEFT, //
-			KeyEvent.VK_RIGHT);
+			VK_CONTROL, //
+			VK_ALT, //
+			VK_SHIFT, //
+			VK_CAPS_LOCK, //
+			VK_LEFT, //
+			VK_RIGHT);
 	private static final List<Integer> keysNotStoppingMusicOnPress = asList(//
-			KeyEvent.VK_CONTROL, //
-			KeyEvent.VK_ALT, //
-			KeyEvent.VK_SHIFT, //
-			KeyEvent.VK_CAPS_LOCK, //
-			KeyEvent.VK_F5, //
-			KeyEvent.VK_C, //
-			KeyEvent.VK_M, //
-			KeyEvent.VK_SPACE, //
-			KeyEvent.VK_OPEN_BRACKET, //
-			KeyEvent.VK_CLOSE_BRACKET);
+			VK_CONTROL, //
+			VK_ALT, //
+			VK_SHIFT, //
+			VK_CAPS_LOCK, //
+			VK_F3, //
+			VK_F4, //
+			VK_F5, //
+			VK_SPACE, //
+			VK_OPEN_BRACKET, //
+			VK_CLOSE_BRACKET);
 
 	private void keyUsed(final KeyEvent e) {
 		final int keyCode = e.getKeyCode();

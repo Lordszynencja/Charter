@@ -14,6 +14,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingWorker;
 
 import helliker.id3.MP3File;
 import log.charter.data.ArrangementFixer;
@@ -40,6 +46,36 @@ import log.charter.util.FileChooseUtils;
 import log.charter.util.RW;
 
 public class SongFileHandler {
+	private static class LoadingDialog extends JDialog {
+		private static final long serialVersionUID = 1L;
+
+		private final JLabel text;
+		private final JProgressBar progressBar;
+
+		public LoadingDialog(final CharterFrame frame, final int steps) {
+			super(frame, Label.LOADING.label());
+			setLayout(null);
+			setSize(300, 200);
+			setLocation(frame.getWidth() / 2 - getWidth() / 2, frame.getHeight() / 2 - getHeight() / 2);
+
+			text = new JLabel(Label.LOADING.label());
+			text.setHorizontalAlignment(JLabel.CENTER);
+			text.setBounds(0, 30, 300, 20);
+			add(text);
+
+			progressBar = new JProgressBar(0, steps);
+			progressBar.setBounds(50, 100, getWidth() - 100, 30);
+			add(progressBar);
+
+			setVisible(true);
+		}
+
+		public void setProgress(final int progress, final String description) {
+			progressBar.setValue(progress);
+			text.setText(description);
+		}
+	}
+
 	private static Map<String, String> extractNewSongData(final String path) {
 		final Map<String, String> data = new HashMap<>();
 		try {
@@ -108,6 +144,21 @@ public class SongFileHandler {
 		this.charterMenuBar = charterMenuBar;
 		this.modeManager = modeManager;
 		this.undoSystem = undoSystem;
+	}
+
+	private void doWithLoadingDialog(final int steps, final Consumer<LoadingDialog> operation) {
+		final LoadingDialog dialog = new LoadingDialog(frame, steps);
+
+		final SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				operation.accept(dialog);
+				dialog.dispose();
+				return null;
+			}
+		};
+
+		mySwingWorker.execute();
 	}
 
 	public void newSong() {
@@ -181,7 +232,9 @@ public class SongFileHandler {
 		return MusicData.readFile(musicFile);
 	}
 
-	public void open(final String path) {
+	private void openInternal(final LoadingDialog loadingDialog, final String path) {
+		loadingDialog.setProgress(0, Label.LOADING_PROJECT_FILE.label());
+
 		final File projectFileChosen = new File(path);
 		final String dir = projectFileChosen.getParent() + File.separator;
 		final String name = projectFileChosen.getName().toLowerCase();
@@ -197,6 +250,7 @@ public class SongFileHandler {
 			frame.showPopup(Label.PROJECT_IS_NEWER_VERSION.label());
 			return;
 		}
+		loadingDialog.setProgress(1, Label.LOADING_MUSIC_FILE.label());
 
 		final MusicData musicData = MusicData.readFile(new File(dir, project.musicFileName));
 		if (musicData == null) {
@@ -218,11 +272,16 @@ public class SongFileHandler {
 		filesToBackup.add("Vocals_RS2.xml");
 		makeBackups(dir, filesToBackup);
 
-		Config.lastPath = dir;
-		Config.markChanged();
-
+		loadingDialog.setProgress(2, Label.LOADING_ARRANGEMENTS.label());
 		data.setSong(dir, songChart, musicData, projectFileChosen.getName(), project.editMode, project.arrangement,
 				project.level, project.time);
+
+		loadingDialog.setProgress(3, Label.LOADING_DONE.label());
+		return;
+	}
+
+	public void open(final String path) {
+		doWithLoadingDialog(3, (dialog) -> openInternal(dialog, path));
 	}
 
 	public void open() {
@@ -241,56 +300,7 @@ public class SongFileHandler {
 			return;
 		}
 
-		final String dir = projectFileChosen.getParent() + File.separator;
-		final String name = projectFileChosen.getName().toLowerCase();
-
-		if (!name.endsWith(".rscp")) {
-			frame.showPopup(Label.UNSUPPORTED_FILE_TYPE.label());
-			error("unsupported file: " + projectFileChosen.getName());
-			return;
-		}
-
-		final RocksmithChartProject project = readProject(RW.read(projectFileChosen));
-		if (project.chartFormatVersion > 2) {
-			frame.showPopup(Label.PROJECT_IS_NEWER_VERSION.label());
-			return;
-		}
-
-		MusicData musicData = MusicData.readFile(new File(dir, project.musicFileName));
-		if (musicData == null) {
-			frame.showPopup(Label.MUSIC_FILE_NOT_FOUND_PICK_NEW.label());
-
-			final File musicFile = FileChooseUtils.chooseMusicFile(frame, startingDir);
-			if (musicFile == null) {
-				frame.showPopup(Label.OPERATION_CANCELLED.label());
-				return;
-			}
-
-			musicData = MusicData.readFile(musicFile);
-			if (musicData == null) {
-				frame.showPopup(Label.WRONG_MUSIC_FILE.label());
-				return;
-			}
-		}
-		final SongChart songChart;
-		try {
-			songChart = new SongChart(musicData.msLength(), project, dir);
-		} catch (final Exception e) {
-			frame.showPopup(e.getMessage());
-			return;
-		}
-
-		final List<String> filesToBackup = new ArrayList<>();
-		filesToBackup.add(projectFileChosen.getName());
-		filesToBackup.addAll(project.arrangementFiles);
-		filesToBackup.add("Vocals_RS2.xml");
-		makeBackups(dir, filesToBackup);
-
-		Config.lastPath = dir;
-		Config.markChanged();
-
-		data.setSong(dir, songChart, musicData, projectFileChosen.getName(), project.editMode, project.arrangement,
-				project.level, project.time);
+		open(projectFileChosen.getAbsolutePath());
 	}
 
 	public void openAudioFile() {
@@ -314,11 +324,15 @@ public class SongFileHandler {
 			return;
 		}
 
+		LoadingDialog loadingDialog = new LoadingDialog(frame, 1);
+		loadingDialog.setProgress(0, Label.LOADING_MUSIC_FILE.label());
 		final MusicData musicData = MusicData.readFile(songFile);
 		if (musicData == null) {
+			loadingDialog.dispose();
 			frame.showPopup(Label.MUSIC_FILE_COULDNT_BE_LOADED.label());
 			return;
 		}
+		loadingDialog.dispose();
 
 		final String dir = songFile.getParent() + File.separator;
 		final File arrangementFile = FileChooseUtils.chooseFile(frame, dir, new String[] { ".xml" },
@@ -327,10 +341,14 @@ public class SongFileHandler {
 			return;
 		}
 
+		loadingDialog = new LoadingDialog(frame, 1);
+		loadingDialog.setProgress(0, Label.LOADING_ARRANGEMENTS.label());
 		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(arrangementFile));
 		final SongChart songChart = new SongChart(musicData.msLength(), songName, songArrangement);
 
 		data.setSong(dir, songChart, musicData, "project.rscp", EditMode.GUITAR, 0, 0, 0);
+		loadingDialog.dispose();
+
 		save();
 	}
 
@@ -402,10 +420,10 @@ public class SongFileHandler {
 					"UTF-8");
 		}
 
-		RW.write(data.path + data.projectFileName, saveProject(project));
+		RW.write(new File(data.path, data.projectFileName), saveProject(project));
 		undoSystem.onSave();
 
-		Config.save();
+		Config.markChanged();
 	}
 
 	public void saveAs() {
@@ -424,6 +442,10 @@ public class SongFileHandler {
 		}
 
 		data.path = newDir.getAbsolutePath();
+		Config.lastDir = data.path;
+		Config.lastPath = new File(data.path, data.projectFileName).getAbsolutePath();
+		Config.markChanged();
+
 		save();
 		Config.save();
 	}

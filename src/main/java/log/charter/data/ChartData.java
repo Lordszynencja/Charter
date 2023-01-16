@@ -1,5 +1,7 @@
 package log.charter.data;
 
+import java.io.File;
+
 import javax.swing.JScrollBar;
 
 import log.charter.data.config.Config;
@@ -112,7 +114,8 @@ public class ChartData {
 
 		path = dir;
 		this.projectFileName = projectFileName;
-		Config.lastPath = path;
+		Config.lastDir = path;
+		Config.lastPath = new File(path, projectFileName).getAbsolutePath();
 		Config.markChanged();
 
 		selectionManager.clear();

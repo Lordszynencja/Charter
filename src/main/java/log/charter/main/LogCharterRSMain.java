@@ -13,8 +13,13 @@ public class LogCharterRSMain {
 	public static void main(final String[] args) throws InterruptedException, IOException {
 		Config.init();
 
+		String pathToOpen = Config.lastPath;
 		if (args.length > 0) {
-			new CharterFrame(LogCharterRSMain.TITLE + " : Loading project...", args[0]);
+			pathToOpen = args[0];
+		}
+
+		if (pathToOpen != null && !pathToOpen.isEmpty()) {
+			new CharterFrame(LogCharterRSMain.TITLE + " : Loading project...", pathToOpen);
 		} else {
 			new CharterFrame(LogCharterRSMain.TITLE + " : " + Label.NO_PROJECT.label());
 		}

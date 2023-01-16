@@ -17,6 +17,7 @@ public class Config {
 	private static final String configPath = new File(RW.getProgramDirectory(), "config.ini").getAbsolutePath();
 
 	public static String language = "English";
+	public static String lastDir = "";
 	public static String lastPath = "";
 	public static String musicPath = System.getProperty("user.home") + File.separator + "Music";
 	public static String songsPath = System.getProperty("user.home") + File.separator + "Documents";
@@ -70,6 +71,7 @@ public class Config {
 
 	public static void init() {
 		setters.put("language", val -> language = val);
+		setters.put("lastDir", val -> lastDir = val);
 		setters.put("lastPath", val -> lastPath = val);
 		setters.put("musicPath", val -> musicPath = val);
 		setters.put("songsPath", val -> songsPath = val);
@@ -125,6 +127,7 @@ public class Config {
 
 		final Map<String, String> config = new HashMap<>();
 		config.put("language", language);
+		config.put("lastDir", lastDir);
 		config.put("lastPath", lastPath);
 		config.put("musicPath", musicPath);
 		config.put("songsPath", songsPath);

@@ -210,6 +210,11 @@ public class Localization {
 		EXIT_POPUP("Exit"), //
 		EXIT_MESSAGE("Are you sure you want to exit?"), //
 		FOLDER_EXISTS_CHOOSE_DIFFERENT("Given folder already exists, choose different name"), //
+		LOADING("Please wait, loading..."), //
+		LOADING_ARRANGEMENTS("Loading arrangements"), //
+		LOADING_DONE("Loading done"), //
+		LOADING_MUSIC_FILE("Loading music file"), //
+		LOADING_PROJECT_FILE("Loading project file"), //
 		MP3_OR_OGG_FILE("Mp3 (.mp3) or Ogg (.ogg) file"), //
 		MISSING_ARRANGEMENT_FILE("Missing arrangement file %s"), //
 		MUSIC_FILE_COULDNT_BE_LOADED("Music file couldn't be loaded"), //
