@@ -268,46 +268,66 @@ public class GuitarDrawer {
 			if (note.accent) {
 				final Color accentColor = noteAccentColors[note.string];
 				notes.add(strokedRectangle(position.resized(0, 0, -1, -1), accentColor));
-				notes.add(strokedRectangle(position.resized(-1, -1, 1, 1), accentColor));
 				notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor));
 			}
 
 			if (note.selected) {
-				selects.add(strokedRectangle(position.resized(-1, -1, 1, 1), selectColor));
+				selects.add(strokedRectangle(position, selectColor, 2));
 			}
 		}
 
 		private void addHammerOnShape(final int y, final NoteData note) {
+			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+					.centered();
+
 			final Position2D a = new Position2D(note.x, y - noteHeight / 2);
 			final Position2D b = new Position2D(note.x - noteWidth / 2, y + noteHeight / 2);
 			final Position2D c = new Position2D(note.x + noteWidth / 2, y + noteHeight / 2);
 			notes.add(filledTriangle(a, b, c, getNoteColor(note)));
 
+			if (note.accent) {
+				final Color accentColor = noteAccentColors[note.string];
+				notes.add(strokedRectangle(position.resized(0, 0, -1, -1), accentColor));
+				notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor));
+			}
+
 			if (note.selected) {
-				selects.add(strokedTriangle(a, b, c, selectColor));
+				selects.add(strokedRectangle(position, selectColor, 2));
 			}
 		}
 
 		private void addPullOffShape(final int y, final NoteData note) {
+			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+					.centered();
+
 			final Position2D a = new Position2D(note.x, y + noteHeight / 2);
 			final Position2D b = new Position2D(note.x - noteWidth / 2, y - noteHeight / 2);
 			final Position2D c = new Position2D(note.x + noteWidth / 2, y - noteHeight / 2);
 			notes.add(filledTriangle(a, b, c, getNoteColor(note)));
 
+			if (note.accent) {
+				final Color accentColor = noteAccentColors[note.string];
+				notes.add(strokedRectangle(position.resized(0, 0, -1, -1), accentColor));
+				notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor));
+			}
+
 			if (note.selected) {
-				selects.add(strokedTriangle(a, b, c, selectColor));
+				selects.add(strokedRectangle(position, selectColor, 2));
 			}
 		}
 
 		private void addTapShape(final int y, final NoteData note) {
-			final int x0 = note.x - noteWidth / 2 - 2;
-			final int x1 = x0 + 10;
-			final int x3 = note.x + noteWidth / 2 + 2;
-			final int x2 = x3 - 10;
+			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+					.centered();
 
-			final int y0 = y - noteHeight / 2 - 2;
+			final int x0 = note.x - noteWidth / 2;
+			final int x1 = x0 + noteWidth / 2;
+			final int x3 = note.x + noteWidth / 2;
+			final int x2 = x3 - noteWidth / 2;
+
+			final int y0 = y - noteHeight / 2;
 			final int y1 = y;
-			final int y2 = y + noteHeight / 2 + 3;
+			final int y2 = y + noteHeight / 2;
 
 			final List<Position2D> positions = new ArrayList2<>(//
 					new Position2D(x2, y0), //
@@ -319,8 +339,14 @@ public class GuitarDrawer {
 
 			notes.add(filledPolygon(positions, getNoteColor(note)));
 
+			if (note.accent) {
+				final Color accentColor = noteAccentColors[note.string];
+				notes.add(strokedRectangle(position.resized(0, 0, -1, -1), accentColor));
+				notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor));
+			}
+
 			if (note.selected) {
-				selects.add(strokedPolygon(positions, selectColor));
+				selects.add(strokedRectangle(position, selectColor, 2));
 			}
 		}
 

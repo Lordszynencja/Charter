@@ -43,3 +43,7 @@ config.ini
 config.ini
 src/log/charter/main/help.txt
 colors.txt
+
+# Exclude IntelliJ IDE files
+.idea/
+RS_Charter.iml
