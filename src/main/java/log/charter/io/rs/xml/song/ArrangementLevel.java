@@ -2,16 +2,12 @@ package log.charter.io.rs.xml.song;
 
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
-import java.util.LinkedList;
-import java.util.stream.Collectors;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.song.ChordTemplate;
-import log.charter.song.HandShape;
 import log.charter.song.Level;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
@@ -83,29 +79,6 @@ public class ArrangementLevel {
 
 			chords.list.add(arrangementChord);
 		}
-	}
-
-	private void setHandShapes(final ArrayList2<ChordOrNote> chordsAndNotes, final ArrayList2<HandShape> handShapes) {
-		final LinkedList<Chord> chordsForHandShapes = chordsAndNotes.stream()//
-				.filter(chordOrNote -> chordOrNote.chord != null)//
-				.map(chordOrNote -> chordOrNote.chord)//
-				.collect(Collectors.toCollection(LinkedList::new));
-		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
-		this.handShapes = new CountedList<ArrangementHandShape>();
-		for (final HandShape handShape : handShapes) {
-			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position() < handShape.position()) {
-				chordsWithoutHandShapes.add(chordsForHandShapes.get(0));
-				chordsForHandShapes.remove(0);
-			}
-			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position() < handShape.endPosition()) {
-				chordsForHandShapes.remove(0);
-			}
-
-			this.handShapes.list.add(new ArrangementHandShape(handShape));
-		}
-
-		this.handShapes.list.addAll(chordsWithoutHandShapes.map(ArrangementHandShape::new));
-		this.handShapes.list.sort((a, b) -> Integer.compare(a.startTime, b.startTime));
 	}
 
 	private void addChordNotesForFirstChordsInHandShape(final ArrayList2<ChordOrNote> chordsAndNotes,

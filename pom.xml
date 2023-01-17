@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
 	<artifactId>RS_Charter</artifactId>
-	<version>0.8.0-SNAPSHOT</version>
+	<version>0.9.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>RS Charter</name>
@@ -93,6 +93,7 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					<appendAssemblyId>false</appendAssemblyId>
 					<outputDirectory>${project.build.directory}</outputDirectory>
 				</configuration>
 				<executions>
@@ -119,7 +120,7 @@
 						<configuration>
 							<headerType>gui</headerType>
 							<outfile>target/RS Charter/RS Charter.exe</outfile>
-							<jar>target/RS Charter-jar-with-dependencies.jar</jar>
+							<jar>target/RS Charter.jar</jar>
 							<icon>src/main/resources/icon.ico</icon>
 							<errTitle>RSC</errTitle>
 							<classPath>
@@ -152,16 +153,30 @@
 				<executions>
 					<execution>
 						<id>copy-resources</id>
-						<phase>validate</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/target/RS Charter/images</outputDirectory>
+							<outputDirectory>${basedir}/target/RS Charter</outputDirectory>
 							<resources>
 								<resource>
-									<directory>images</directory>
-									<filtering>true</filtering>
+									<directory>${basedir}/src/main/resources/</directory>
+									<filtering>false</filtering>
+								</resource>
+								<resource>
+									<directory>${basedir}/target</directory>
+									<include>RS Charter.jar</include>
+									<targetPath>${basedir}/target/RS Charter</targetPath>
+									<filtering>false</filtering>
+								</resource>
+								<resource>
+									<directory>${basedir}</directory>
+									<includes>
+										<include>images/**</include>
+										<include>languages/**</include>
+										<include>rubberband/**</include>
+									</includes>
 								</resource>
 							</resources>
 						</configuration>

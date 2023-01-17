@@ -44,10 +44,11 @@ public final class ConfigPane extends ParamsPane {
 	private int noteHeight = Config.noteHeight;
 	private boolean invertStrings = Config.invertStrings;
 	private boolean showChordIds = Config.showChordIds;
+	private boolean createDefaultStretchesInBackground = Config.createDefaultStretchesInBackground;
 	private int FPS = Config.FPS;
 
 	public ConfigPane(final CharterFrame frame) {
-		super(frame, Label.CONFIG_PANE, 13, getSizes());
+		super(frame, Label.CONFIG_PANE, 14, getSizes());
 		this.frame = frame;
 
 		int row = 0;
@@ -83,6 +84,8 @@ public final class ConfigPane extends ParamsPane {
 				val -> noteHeight = Integer.valueOf(val), false);
 		addConfigCheckbox(row++, 20, 150, Label.CONFIG_INVERT_STRINGS, invertStrings, val -> invertStrings = val);
 		addConfigCheckbox(row++, 20, 150, Label.CONFIG_SHOW_CHORD_IDS, showChordIds, val -> showChordIds = val);
+		addConfigCheckbox(row++, 20, 0, Label.CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND,
+				createDefaultStretchesInBackground, val -> createDefaultStretchesInBackground = val);
 		addConfigValue(row++, 20, 150, Label.CONFIG_FPS, FPS + "", 50, createIntValidator(1, 1000, false), //
 				val -> FPS = Integer.valueOf(val), false);
 

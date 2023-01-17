@@ -35,9 +35,6 @@ public class ChartData {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public ChartData() {
-	}
-
 	public void init(final AudioHandler audioHandler, final CharterMenuBar charterMenuBar,
 			final ModeManager modeManager, final JScrollBar scrollBar, final SelectionManager selectionManager,
 			final UndoSystem undoSystem) {
@@ -51,41 +48,6 @@ public class ChartData {
 
 	public void changeDifficulty(final int newDiff) {
 		currentLevel = newDiff;
-	}
-
-	private void endNoteDragNotes() {
-		undoSystem.addUndo();
-
-//		final List<Note> events = new ArrayList<>(selectedNotes.size());
-//		final List<Note> editedEvents = null;
-//		for (int i = selectedNotes.size() - 1; i >= 0; i--) {
-//			final int id = selectedNotes.get(i);
-//			final Note l = editedEvents.remove(id);
-//			events.add(l);
-//		}
-//
-//		final double dt = xToTime(mx, time) - events.get(events.size() - 1).pos;
-//
-//		deselect();
-//		for (int i = events.size() - 1; i >= 0; i--) {
-//			final Note n = events.get(i);
-//			final IdOrPos noteMovedTo = findClosestIdOrPosForTime(n.pos + dt, handler.isCtrl());
-//			if (noteMovedTo.isPos()) {
-//				final Note newNote = new Note(n);
-//				newNote.pos = noteMovedTo.pos;
-//				int firstAfter = findFirstNoteAfterTime(newNote.pos);
-//				if (firstAfter == -1) {
-//					firstAfter = editedEvents.size();
-//				}
-//				editedEvents.add(firstAfter, newNote);
-//				selectedNotes.add(firstAfter);
-//				fixNotesLength(newNote, firstAfter);
-//			} else {
-//				final int id = noteMovedTo.id;
-//				final Note existing = editedEvents.get(id);
-//				existing.notes |= n.notes;
-//			}
-//		}
 	}
 
 	public void setNewSong(final String dir, final SongChart song, final MusicData musicData,
@@ -103,7 +65,7 @@ public class ChartData {
 		songChart = song;
 		music = musicData;
 
-		audioHandler.stopMusic();
+		audioHandler.clear();
 		selectionManager.clear();
 		changeDifficulty(level);
 		modeManager.editMode = editMode;

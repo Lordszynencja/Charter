@@ -1,19 +1,29 @@
 package log.charter.gui.handlers;
 
 import static java.lang.System.nanoTime;
+import static log.charter.data.config.Config.stretchedMusicSpeed;
 import static log.charter.song.notes.IPosition.findFirstAfter;
 import static log.charter.sound.MusicData.generateSound;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.SwingWorker;
+
 import log.charter.data.ChartData;
+import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.song.notes.IPosition;
 import log.charter.sound.IPlayer;
+import log.charter.sound.MusicData;
 import log.charter.sound.RepeatingPlayer;
 import log.charter.sound.RotatingRepeatingPlayer;
 import log.charter.sound.SoundPlayer;
 import log.charter.sound.SoundPlayer.Player;
+import log.charter.sound.StretchedFileLoader;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class AudioHandler {
@@ -50,19 +60,25 @@ public class AudioHandler {
 
 	private ChartData data;
 	private CharterFrame frame;
-	private KeyboardHandler keyboardHandler;
+
+	private List<Integer> speedsToProcess = new ArrayList<>();
+	private MusicData slowedDownSong;
+	private int loadingSpeed = 100;
+	private int currentlyLoadedSpecialSpeed = loadingSpeed;
 
 	private TickPlayer beatTickPlayer;
 	private TickPlayer noteTickPlayer;
 	private Player songPlayer;
 
+	private int speed = 100;
 	private int songTimeOnStart = 0;
 	private long playStartTime;
 
-	public void init(final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler) {
+	private boolean ignoreStops = false;
+
+	public void init(final ChartData data, final CharterFrame frame) {
 		this.data = data;
 		this.frame = frame;
-		this.keyboardHandler = keyboardHandler;
 
 		beatTickPlayer = new TickPlayer(new RepeatingPlayer(generateSound(4000, 0.01, 1)), //
 				() -> data.songChart.beatsMap.beats);
@@ -78,13 +94,17 @@ public class AudioHandler {
 		beatTickPlayer.on = !beatTickPlayer.on;
 	}
 
-	public void playMusic() {
-		songPlayer = SoundPlayer.play(data.music, data.time);
+	private void playMusic(final MusicData musicData, final int speed) {
+		this.speed = speed;
+		songPlayer = SoundPlayer.play(musicData, data.time * 100 / speed);
 		songTimeOnStart = data.time;
 		playStartTime = nanoTime() / 1_000_000L;
 	}
 
 	public void stopMusic() {
+		if (ignoreStops) {
+			return;
+		}
 		if (songPlayer != null) {
 			songPlayer.stop();
 			songPlayer = null;
@@ -93,7 +113,104 @@ public class AudioHandler {
 		}
 	}
 
-	public void switchMusicPlayStatus() {
+	public void clear() {
+		loadingSpeed = 100;
+		currentlyLoadedSpecialSpeed = loadingSpeed;
+		slowedDownSong = null;
+		stopMusic();
+	}
+
+	public void togglePlayNormalSpeed() {
+		if (data.isEmpty) {
+			return;
+		}
+		if (songPlayer != null) {
+			stopMusic();
+			return;
+		}
+
+		playMusic(data.music, 100);
+	}
+
+	public void createDefaultStretches() {
+		speedsToProcess = new ArrayList<>();
+		if (stretchedMusicSpeed == 25) {
+			speedsToProcess.add(25);
+			speedsToProcess.add(50);
+			speedsToProcess.add(75);
+		} else if (stretchedMusicSpeed == 50) {
+			speedsToProcess.add(50);
+			speedsToProcess.add(25);
+			speedsToProcess.add(75);
+		} else if (stretchedMusicSpeed == 75) {
+			speedsToProcess.add(75);
+			speedsToProcess.add(50);
+			speedsToProcess.add(25);
+		} else {
+			speedsToProcess.add(stretchedMusicSpeed);
+			speedsToProcess.add(50);
+			speedsToProcess.add(25);
+			speedsToProcess.add(75);
+		}
+
+		new Thread(() -> {
+			final List<Integer> speedsToProcess = this.speedsToProcess;
+			final MusicData musicData = data.music;
+			final String dir = data.path;
+
+			while (!speedsToProcess.isEmpty()) {
+				final int speedToProcess = speedsToProcess.get(0);
+
+				final StretchedFileLoader stretchedFileLoader = new StretchedFileLoader(musicData, dir, speedToProcess);
+
+				while (stretchedFileLoader.result == null) {
+					try {
+						Thread.sleep(1);
+					} catch (final InterruptedException e) {
+					}
+				}
+
+				speedsToProcess.remove(0);
+			}
+		}).start();
+	}
+
+	private void loadStretched() {
+		final int speedToMake = stretchedMusicSpeed;
+		loadingSpeed = speedToMake;
+		slowedDownSong = null;
+		StretchedFileLoader stretchedFileLoader = new StretchedFileLoader(data.music, data.path, speedToMake);
+
+		while (stretchedFileLoader.result == null) {
+			try {
+				Thread.sleep(1);
+			} catch (final InterruptedException e) {
+			}
+		}
+
+		if (loadingSpeed == speedToMake) {
+			slowedDownSong = stretchedFileLoader.result;
+			currentlyLoadedSpecialSpeed = speedToMake;
+			stretchedFileLoader = null;
+		}
+	}
+
+	public void loadStretchedWithCheck() {
+		while (speedsToProcess.contains(stretchedMusicSpeed) || loadingSpeed != currentlyLoadedSpecialSpeed) {
+			try {
+				Thread.sleep(1);
+			} catch (final InterruptedException e) {
+			}
+		}
+
+		if (currentlyLoadedSpecialSpeed == stretchedMusicSpeed) {
+			return;
+		}
+
+		loadStretched();
+	}
+
+	public void togglePlaySetSpeed() {
 		if (data.isEmpty) {
 			return;
 		}
@@ -103,13 +220,38 @@ public class AudioHandler {
 			return;
 		}
 
-		if (keyboardHandler.ctrl()) {
-			data.music.setSlow(2);
-		} else {
-			data.music.setSlow(1);
+		if (slowedDownSong != null) {
+			playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
+			return;
 		}
 
-		playMusic();
+		final JDialog dialog = new JDialog(frame, Label.LOADING.label());
+		dialog.setLayout(null);
+		dialog.setSize(300, 100);
+		dialog.setLocation(frame.getWidth() / 2 - dialog.getWidth() / 2,
+				frame.getHeight() / 2 - dialog.getHeight() / 2);
+
+		final JLabel text = new JLabel(Label.LOADING.label());
+		text.setHorizontalAlignment(JLabel.CENTER);
+		text.setBounds(0, 30, 300, 20);
+		dialog.add(text);
+
+		dialog.setVisible(true);
+
+		final SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				loadStretchedWithCheck();
+
+				ignoreStops = true;
+				playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
+				dialog.dispose();
+				ignoreStops = false;
+				return null;
+			}
+		};
+
+		mySwingWorker.execute();
 	}
 
 	public void frame() {
@@ -120,7 +262,7 @@ public class AudioHandler {
 			stopMusic();
 		}
 
-		final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * data.music.slowMultiplier());
+		final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed / 100);
 		final int nextTime = songTimeOnStart + timePassed;
 		frame.setNextTime(nextTime);
 

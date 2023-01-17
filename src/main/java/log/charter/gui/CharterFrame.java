@@ -100,7 +100,7 @@ public class CharterFrame extends JFrame {
 		arrangementFixer.init(data);
 		arrangementValidator.init(data, this);
 		audioDrawer.init(data, chartPanel);
-		audioHandler.init(data, this, keyboardHandler);
+		audioHandler.init(data, this);
 		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, selectionManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
 		data.init(audioHandler, charterMenuBar, modeManager, scrollBar, selectionManager, undoSystem);
@@ -111,8 +111,8 @@ public class CharterFrame extends JFrame {
 		mouseButtonPressReleaseHandler.init(highlightManager);
 		mouseHandler.init(audioHandler, data, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
 				selectionManager, undoSystem);
-		songFileHandler.init(arrangementFixer, arrangementValidator, data, this, charterMenuBar, modeManager,
-				undoSystem);
+		songFileHandler.init(arrangementFixer, arrangementValidator, audioHandler, data, this, charterMenuBar,
+				modeManager, undoSystem);
 		selectionManager.init(data, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 
@@ -183,7 +183,9 @@ public class CharterFrame extends JFrame {
 
 		data.time = (int) data.nextTime;
 
-		repaint();
+		if (hasFocus()) {
+			repaint();
+		}
 	}
 
 	private void add(final JComponent component, final int y, final int w, final int h) {

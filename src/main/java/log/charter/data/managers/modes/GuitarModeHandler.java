@@ -4,8 +4,6 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
 import static log.charter.song.notes.IPosition.findClosestId;
 import static log.charter.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
 
-import java.util.function.Function;
-
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.managers.HighlightManager;
@@ -50,21 +48,6 @@ public class GuitarModeHandler extends ModeHandler {
 		this.keyboardHandler = keyboardHandler;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
-	}
-
-	private int getTimeValue(final int defaultValue,
-			final Function<ArrayList2<? extends IPosition>, Integer> positionFromListGetter) {
-		if (!keyboardHandler.ctrl()) {
-			return defaultValue;
-		}
-
-		final ArrayList2<ChordOrNote> chordsAndNotes = data.getCurrentArrangementLevel().chordsAndNotes;
-
-		if (chordsAndNotes.isEmpty()) {
-			return defaultValue;
-		}
-
-		return positionFromListGetter.apply(chordsAndNotes);
 	}
 
 	@Override

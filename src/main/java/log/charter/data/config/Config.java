@@ -21,6 +21,7 @@ public class Config {
 	public static String lastPath = "";
 	public static String musicPath = System.getProperty("user.home") + File.separator + "Music";
 	public static String songsPath = System.getProperty("user.home") + File.separator + "Documents";
+	public static String rubberbandPath;
 
 	public static int minNoteDistance = 50;
 	public static int minTailLength = 50;
@@ -31,11 +32,35 @@ public class Config {
 
 	public static boolean invertStrings = false;
 	public static boolean showChordIds = false;
+	public static boolean createDefaultStretchesInBackground = true;
 	public static int frets = 24;
 	public static int maxStrings = 6;
 	public static int FPS = 60;
 
+	public static int windowPosX = 100;
+	public static int windowPosY = 100;
+	public static int windowWidth = 1200;
+	public static int windowHeight = 700;
+	public static boolean windowFullscreen = false;
+	public static int zoomLvl = 100;
+	public static int stretchedMusicSpeed = 50;
+
+	public static boolean showGrid = true;
+	public static GridType gridType = GridType.BEAT;
+	public static int gridSize = 4;
+
+	public static boolean debugLogging = false;
+
+	private static boolean changed = false;
+
 	static {
+		final String os = System.getProperty("os.name").toLowerCase();
+		final String osPath = os.startsWith("windows")
+				? "rubberband-3.1.2-gpl-executable-windows" + File.separator + "rubberband.exe" //
+				: os.startsWith("mac") ? "rubberband-3.1.2-gpl-executable-macos" + File.separator + "rubberband"//
+						: "rubberband-3.1.2-gpl-executable-windows" + File.separator + "rubberband.exe";
+		rubberbandPath = new File(RW.getProgramDirectory(), "rubberband" + File.separator + osPath).getAbsolutePath();
+
 		final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		final GraphicsDevice[] gs = ge.getScreenDevices();
 
@@ -51,21 +76,6 @@ public class Config {
 			}
 		}
 	}
-
-	public static int windowPosX = 100;
-	public static int windowPosY = 100;
-	public static int windowWidth = 1200;
-	public static int windowHeight = 700;
-	public static boolean windowFullscreen = false;
-	public static int zoomLvl = 100;
-
-	public static boolean showGrid = true;
-	public static GridType gridType = GridType.BEAT;
-	public static int gridSize = 4;
-
-	public static boolean debugLogging = false;
-
-	private static boolean changed = false;
 
 	private static final Map<String, Consumer<String>> setters = new HashMap<>();
 
@@ -85,6 +95,8 @@ public class Config {
 
 		setters.put("invertStrings", val -> invertStrings = Boolean.valueOf(val));
 		setters.put("showChordIds", val -> showChordIds = Boolean.valueOf(val));
+		setters.put("createDefaultStretchesInBackground",
+				val -> createDefaultStretchesInBackground = Boolean.valueOf(val));
 		setters.put("frets", val -> frets = Integer.valueOf(val));
 		setters.put("maxStrings", val -> maxStrings = Integer.valueOf(val));
 		setters.put("FPS", val -> FPS = Integer.valueOf(val));
@@ -95,6 +107,7 @@ public class Config {
 		setters.put("windowHeight", val -> windowHeight = Integer.valueOf(val));
 		setters.put("windowFullscreen", val -> windowFullscreen = Boolean.valueOf(val));
 		setters.put("zoomLvl", val -> zoomLvl = Integer.valueOf(val));
+		setters.put("stretchedMusicSpeed", val -> stretchedMusicSpeed = Integer.valueOf(val));
 		setters.put("showGrid", val -> showGrid = Boolean.valueOf(val));
 		setters.put("gridType", val -> gridType = GridType.valueOf(val));
 		setters.put("gridSize", val -> gridSize = Integer.valueOf(val));
@@ -141,6 +154,7 @@ public class Config {
 
 		config.put("invertStrings", invertStrings + "");
 		config.put("showChordIds", showChordIds + "");
+		config.put("createDefaultStretchesInBackground", createDefaultStretchesInBackground + "");
 		config.put("frets", frets + "");
 		config.put("maxStrings", maxStrings + "");
 		config.put("FPS", FPS + "");
@@ -151,6 +165,7 @@ public class Config {
 		config.put("windowHeight", windowHeight + "");
 		config.put("windowFullscreen", windowFullscreen + "");
 		config.put("zoomLvl", zoomLvl + "");
+		config.put("stretchedMusicSpeed", stretchedMusicSpeed + "");
 		config.put("showGrid", showGrid + "");
 		config.put("gridType", gridType + "");
 		config.put("gridSize", gridSize + "");
