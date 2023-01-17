@@ -16,6 +16,8 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
 
 import log.charter.sound.HighPassFilter.PassType;
+import log.charter.sound.mp3.Mp3Loader;
+import log.charter.sound.ogg.OggLoader;
 
 public class MusicData {
 	public static final int DEF_RATE = 44100;
@@ -78,7 +80,10 @@ public class MusicData {
 		outFormat = new AudioFormat(Encoding.PCM_SIGNED, rate, 16, 2, 4, rate, false);
 	}
 
-	public MusicData(final int[][] data, final float rate) {
+	public MusicData(int[][] data, final float rate) {
+		if (data.length == 1) {
+			data = new int[][] { data[0], data[0] };
+		}
 		preparedData = toBytes(data);
 		this.data = data;
 		outFormat = new AudioFormat(Encoding.PCM_SIGNED, rate, 16, 2, 4, rate, false);

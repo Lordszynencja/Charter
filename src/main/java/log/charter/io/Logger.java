@@ -48,6 +48,24 @@ public class Logger {
 		}
 	}
 
+	public static void info(final String msg) {
+		out.println("[INFO] " + msg);
+
+		if (out != System.out) {
+			System.out.println("[INFO] " + msg);
+		}
+	}
+
+	public static void info(final String msg, final Exception e) {
+		out.println("[INFO] " + msg);
+		e.printStackTrace(out);
+
+		if (out != System.out) {
+			System.out.println("[INFO] " + msg);
+			e.printStackTrace(System.out);
+		}
+	}
+
 	public static void error(final String msg) {
 		out.println("[ERROR] " + msg);
 

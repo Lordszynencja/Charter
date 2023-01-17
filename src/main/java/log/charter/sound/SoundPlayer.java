@@ -204,7 +204,10 @@ public class SoundPlayer {
 		return new int[][] { sum(separated[0]), sum(separated[1]) };
 	}
 
-	public static byte[] toBytes(final int[][] data) {
+	public static byte[] toBytes(int[][] data) {
+		if (data.length == 1) {
+			data = new int[][] { data[0], data[0] };
+		}
 		if (data[0].length != data[1].length) {
 			throw new IllegalArgumentException("Left and right channel have different lengths");
 		}

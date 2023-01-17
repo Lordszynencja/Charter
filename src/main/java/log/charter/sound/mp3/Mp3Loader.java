@@ -1,4 +1,4 @@
-package log.charter.sound;
+package log.charter.sound.mp3;
 
 import static java.util.Arrays.copyOf;
 import static javax.sound.sampled.AudioSystem.getAudioInputStream;
@@ -13,6 +13,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
 
+import log.charter.sound.MusicData;
 import log.charter.util.RW;
 
 public class Mp3Loader {

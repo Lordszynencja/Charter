@@ -1,4 +1,4 @@
-package log.charter.sound;
+package log.charter.sound.ogg;
 
 import static log.charter.io.Logger.error;
 
@@ -21,6 +21,7 @@ import com.jcraft.jorbis.DspState;
 import com.jcraft.jorbis.Info;
 
 import log.charter.io.Logger;
+import log.charter.sound.MusicData;
 import log.charter.util.RW;
 
 /**
