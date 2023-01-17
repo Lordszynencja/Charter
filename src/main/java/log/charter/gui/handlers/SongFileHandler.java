@@ -1,5 +1,6 @@
 package log.charter.gui.handlers;
 
+import static log.charter.data.config.Config.createDefaultStretchesInBackground;
 import static log.charter.io.Logger.debug;
 import static log.charter.io.Logger.error;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.saveVocals;
@@ -128,6 +129,7 @@ public class SongFileHandler {
 
 	private ArrangementFixer arrangementFixer;
 	private ArrangementValidator arrangementValidator;
+	private AudioHandler audioHandler;
 	private ChartData data;
 	private CharterFrame frame;
 	private CharterMenuBar charterMenuBar;
@@ -135,10 +137,11 @@ public class SongFileHandler {
 	private UndoSystem undoSystem;
 
 	public void init(final ArrangementFixer arrangementFixer, final ArrangementValidator arrangementValidator,
-			final ChartData data, final CharterFrame frame, final CharterMenuBar charterMenuBar,
-			final ModeManager modeManager, final UndoSystem undoSystem) {
+			final AudioHandler audioHandler, final ChartData data, final CharterFrame frame,
+			final CharterMenuBar charterMenuBar, final ModeManager modeManager, final UndoSystem undoSystem) {
 		this.arrangementFixer = arrangementFixer;
 		this.arrangementValidator = arrangementValidator;
+		this.audioHandler = audioHandler;
 		this.data = data;
 		this.frame = frame;
 		this.charterMenuBar = charterMenuBar;
@@ -221,6 +224,10 @@ public class SongFileHandler {
 
 		data.setNewSong(songDir, songChart, musicData, "project.rscp");
 		save();
+
+		if (createDefaultStretchesInBackground) {
+			audioHandler.createDefaultStretches();
+		}
 	}
 
 	public MusicData chooseMusicFile(final String startingDir) {
@@ -277,7 +284,10 @@ public class SongFileHandler {
 				project.level, project.time);
 
 		loadingDialog.setProgress(3, Label.LOADING_DONE.label());
-		return;
+
+		if (createDefaultStretchesInBackground) {
+			audioHandler.createDefaultStretches();
+		}
 	}
 
 	public void open(final String path) {
@@ -350,6 +360,10 @@ public class SongFileHandler {
 		loadingDialog.dispose();
 
 		save();
+
+		if (createDefaultStretchesInBackground) {
+			audioHandler.createDefaultStretches();
+		}
 	}
 
 	public void importRSArrangementXML() {

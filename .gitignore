@@ -43,3 +43,4 @@ config.ini
 config.ini
 src/log/charter/main/help.txt
 colors.txt
+*.log

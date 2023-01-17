@@ -32,6 +32,7 @@ public class Config {
 
 	public static boolean invertStrings = false;
 	public static boolean showChordIds = false;
+	public static boolean createDefaultStretchesInBackground = true;
 	public static int frets = 24;
 	public static int maxStrings = 6;
 	public static int FPS = 60;
@@ -42,7 +43,7 @@ public class Config {
 	public static int windowHeight = 700;
 	public static boolean windowFullscreen = false;
 	public static int zoomLvl = 100;
-	public static int musicStretch = 200;
+	public static int stretchedMusicSpeed = 50;
 
 	public static boolean showGrid = true;
 	public static GridType gridType = GridType.BEAT;
@@ -94,6 +95,8 @@ public class Config {
 
 		setters.put("invertStrings", val -> invertStrings = Boolean.valueOf(val));
 		setters.put("showChordIds", val -> showChordIds = Boolean.valueOf(val));
+		setters.put("createDefaultStretchesInBackground",
+				val -> createDefaultStretchesInBackground = Boolean.valueOf(val));
 		setters.put("frets", val -> frets = Integer.valueOf(val));
 		setters.put("maxStrings", val -> maxStrings = Integer.valueOf(val));
 		setters.put("FPS", val -> FPS = Integer.valueOf(val));
@@ -104,7 +107,7 @@ public class Config {
 		setters.put("windowHeight", val -> windowHeight = Integer.valueOf(val));
 		setters.put("windowFullscreen", val -> windowFullscreen = Boolean.valueOf(val));
 		setters.put("zoomLvl", val -> zoomLvl = Integer.valueOf(val));
-		setters.put("musicStretch", val -> musicStretch = Integer.valueOf(val));
+		setters.put("stretchedMusicSpeed", val -> stretchedMusicSpeed = Integer.valueOf(val));
 		setters.put("showGrid", val -> showGrid = Boolean.valueOf(val));
 		setters.put("gridType", val -> gridType = GridType.valueOf(val));
 		setters.put("gridSize", val -> gridSize = Integer.valueOf(val));
@@ -151,6 +154,7 @@ public class Config {
 
 		config.put("invertStrings", invertStrings + "");
 		config.put("showChordIds", showChordIds + "");
+		config.put("createDefaultStretchesInBackground", createDefaultStretchesInBackground + "");
 		config.put("frets", frets + "");
 		config.put("maxStrings", maxStrings + "");
 		config.put("FPS", FPS + "");
@@ -161,7 +165,7 @@ public class Config {
 		config.put("windowHeight", windowHeight + "");
 		config.put("windowFullscreen", windowFullscreen + "");
 		config.put("zoomLvl", zoomLvl + "");
-		config.put("musicStretch", musicStretch + "");
+		config.put("stretchedMusicSpeed", stretchedMusicSpeed + "");
 		config.put("showGrid", showGrid + "");
 		config.put("gridType", gridType + "");
 		config.put("gridSize", gridSize + "");

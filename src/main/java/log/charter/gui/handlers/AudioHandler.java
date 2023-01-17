@@ -1,10 +1,12 @@
 package log.charter.gui.handlers;
 
 import static java.lang.System.nanoTime;
-import static log.charter.data.config.Config.musicStretch;
+import static log.charter.data.config.Config.stretchedMusicSpeed;
 import static log.charter.song.notes.IPosition.findFirstAfter;
 import static log.charter.sound.MusicData.generateSound;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import javax.swing.JDialog;
@@ -59,13 +61,16 @@ public class AudioHandler {
 	private ChartData data;
 	private CharterFrame frame;
 
+	private List<Integer> speedsToProcess = new ArrayList<>();
 	private MusicData slowedDownSong;
+	private int loadingSpeed = 100;
+	private int currentlyLoadedSpecialSpeed = loadingSpeed;
 
 	private TickPlayer beatTickPlayer;
 	private TickPlayer noteTickPlayer;
 	private Player songPlayer;
 
-	private int stretch = 100;
+	private int speed = 100;
 	private int songTimeOnStart = 0;
 	private long playStartTime;
 
@@ -89,8 +94,9 @@ public class AudioHandler {
 		beatTickPlayer.on = !beatTickPlayer.on;
 	}
 
-	private void playMusic(final MusicData musicData) {
-		songPlayer = SoundPlayer.play(musicData, data.time * stretch / 100);
+	private void playMusic(final MusicData musicData, final int speed) {
+		this.speed = speed;
+		songPlayer = SoundPlayer.play(musicData, data.time * 100 / speed);
 		songTimeOnStart = data.time;
 		playStartTime = nanoTime() / 1_000_000L;
 	}
@@ -108,6 +114,8 @@ public class AudioHandler {
 	}
 
 	public void clear() {
+		loadingSpeed = 100;
+		currentlyLoadedSpecialSpeed = loadingSpeed;
 		slowedDownSong = null;
 		stopMusic();
 	}
@@ -121,22 +129,85 @@ public class AudioHandler {
 			return;
 		}
 
-		stretch = 100;
-		playMusic(data.music);
+		playMusic(data.music, 100);
 	}
 
-	private void loadAndPlayStretched() {
-		final StretchedFileLoader stretchedFileLoader = new StretchedFileLoader(data.music, data.path, musicStretch);
+	public void createDefaultStretches() {
+		speedsToProcess = new ArrayList<>();
+		if (stretchedMusicSpeed == 25) {
+			speedsToProcess.add(25);
+			speedsToProcess.add(50);
+			speedsToProcess.add(75);
+		} else if (stretchedMusicSpeed == 50) {
+			speedsToProcess.add(50);
+			speedsToProcess.add(25);
+			speedsToProcess.add(75);
+		} else if (stretchedMusicSpeed == 75) {
+			speedsToProcess.add(75);
+			speedsToProcess.add(50);
+			speedsToProcess.add(25);
+		} else {
+			speedsToProcess.add(stretchedMusicSpeed);
+			speedsToProcess.add(50);
+			speedsToProcess.add(25);
+			speedsToProcess.add(75);
+		}
+
+		new Thread(() -> {
+			final List<Integer> speedsToProcess = this.speedsToProcess;
+			final MusicData musicData = data.music;
+			final String dir = data.path;
+
+			while (!speedsToProcess.isEmpty()) {
+				final int speedToProcess = speedsToProcess.get(0);
+
+				final StretchedFileLoader stretchedFileLoader = new StretchedFileLoader(musicData, dir, speedToProcess);
+
+				while (stretchedFileLoader.result == null) {
+					try {
+						Thread.sleep(1);
+					} catch (final InterruptedException e) {
+					}
+				}
+
+				speedsToProcess.remove(0);
+			}
+		}).start();
+	}
+
+	private void loadStretched() {
+		final int speedToMake = stretchedMusicSpeed;
+		loadingSpeed = speedToMake;
+		slowedDownSong = null;
+		StretchedFileLoader stretchedFileLoader = new StretchedFileLoader(data.music, data.path, speedToMake);
+
 		while (stretchedFileLoader.result == null) {
 			try {
 				Thread.sleep(1);
 			} catch (final InterruptedException e) {
 			}
 		}
-		slowedDownSong = stretchedFileLoader.result;
 
-		stretch = musicStretch;
-		playMusic(slowedDownSong);
+		if (loadingSpeed == speedToMake) {
+			slowedDownSong = stretchedFileLoader.result;
+			currentlyLoadedSpecialSpeed = speedToMake;
+			stretchedFileLoader = null;
+		}
+	}
+
+	public void loadStretchedWithCheck() {
+		while (speedsToProcess.contains(stretchedMusicSpeed) || loadingSpeed != currentlyLoadedSpecialSpeed) {
+			try {
+				Thread.sleep(1);
+			} catch (final InterruptedException e) {
+			}
+		}
+
+		if (currentlyLoadedSpecialSpeed == stretchedMusicSpeed) {
+			return;
+		}
+
+		loadStretched();
 	}
 
 	public void togglePlaySetSpeed() {
@@ -150,8 +221,7 @@ public class AudioHandler {
 		}
 
 		if (slowedDownSong != null) {
-			stretch = musicStretch;
-			playMusic(slowedDownSong);
+			playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
 			return;
 		}
 
@@ -171,8 +241,10 @@ public class AudioHandler {
 		final SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
+				loadStretchedWithCheck();
+
 				ignoreStops = true;
-				loadAndPlayStretched();
+				playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
 				dialog.dispose();
 				ignoreStops = false;
 				return null;
@@ -190,7 +262,7 @@ public class AudioHandler {
 			stopMusic();
 		}
 
-		final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * 100 / stretch);
+		final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed / 100);
 		final int nextTime = songTimeOnStart + timePassed;
 		frame.setNextTime(nextTime);
 

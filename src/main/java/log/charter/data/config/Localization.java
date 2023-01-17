@@ -9,6 +9,12 @@ import log.charter.util.RW;
 
 public class Localization {
 	public enum Label {
+		ARRANGEMENT_MENU("Arrangement"), //
+		ARRANGEMENT_MENU_OPTIONS("Arrangement options"), //
+		ARRANGEMENT_MENU_TOGGLE_WAVEFORM("Toggle waveform drawing"), //
+		ARRANGEMENT_MENU_TOGGLE_CLAPS("Toggle claps on note"), //
+		ARRANGEMENT_MENU_TOGGLE_METRONOME("Toggle metronome"), //
+
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
 
@@ -24,7 +30,11 @@ public class Localization {
 		CONFIG_NOTE_HEIGHT("Note height"), //
 		CONFIG_INVERT_STRINGS("Invert strings"), //
 		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
+		CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create default stretches in background"), //
 		CONFIG_FPS("FPS"), //
+
+		STRETCH_PANE("Custom music stretch"), //
+		STRETCH_PANE_VALUE("Song speed (%)"), //
 
 		EDIT_MENU("Edit"), //
 		EDIT_MENU_UNDO("Undo"), //
@@ -100,11 +110,11 @@ public class Localization {
 		INFO_MENU_VERSION("Version"), //
 		INFO_MENU_LANGUAGE("Language"), //
 
-		ARRANGEMENT_MENU("Arrangement"), //
-		ARRANGEMENT_MENU_OPTIONS("Arrangement options"), //
-		ARRANGEMENT_MENU_TOGGLE_WAVEFORM("Toggle waveform drawing"), //
-		ARRANGEMENT_MENU_TOGGLE_CLAPS("Toggle claps on note"), //
-		ARRANGEMENT_MENU_TOGGLE_METRONOME("Toggle metronome"), //
+		MUSIC_MENU("Music"), //
+		MUSIC_MENU_25("25% speed"), //
+		MUSIC_MENU_50("50% speed"), //
+		MUSIC_MENU_75("75% speed"), //
+		MUSIC_MENU_CUSTOM("Custom speed"), //
 
 		NOTES_MENU("Notes"), //
 		NOTES_MENU_SNAP("Snap notes to grid"), //

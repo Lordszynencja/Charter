@@ -18,15 +18,15 @@ public class StretchedFileLoader {
 
 	private final MusicData musicData;
 	private final String dir;
-	private final int slow;
+	private final int speed;
 	private final File targetFile;
 	public MusicData result;
 
-	public StretchedFileLoader(final MusicData musicData, final String dir, final int slow) {
+	public StretchedFileLoader(final MusicData musicData, final String dir, final int speed) {
 		this.musicData = musicData;
 		this.dir = dir;
-		this.slow = slow;
-		targetFile = new File(dir, getResultFileName(slow));
+		this.speed = speed;
+		targetFile = new File(dir, getResultFileName(speed));
 
 		new Thread(this::run).start();
 
@@ -77,7 +77,7 @@ public class StretchedFileLoader {
 		final String source = new File(dir, tmpFileName).getAbsolutePath();
 		final String target = targetFile.getAbsolutePath();
 
-		final String[] cmd = { exe, "-3", "-t" + (slow / 100.0), source, target };
+		final String[] cmd = { exe, "-3", "-t" + (100.0 / speed), source, target };
 
 		try {
 			runRubberBand(cmd);

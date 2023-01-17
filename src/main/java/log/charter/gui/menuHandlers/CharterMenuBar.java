@@ -20,17 +20,19 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class CharterMenuBar extends JMenuBar {
 	private static final long serialVersionUID = -5784270027920161709L;
 
+	private final ArrangementMenuHandler arrangementMenuHandler = new ArrangementMenuHandler();
 	private final EditMenuHandler editMenuHandler = new EditMenuHandler();
 	private final FileMenuHandler fileMenuHandler = new FileMenuHandler();
 	private final GuitarMenuHandler guitarMenuHandler = new GuitarMenuHandler();
 	private final InfoMenuHandler infoMenuHandler = new InfoMenuHandler();
-	private final ArrangementMenuHandler arrangementMenuHandler = new ArrangementMenuHandler();
+	private final MusicMenuHandler musicMenuHandler = new MusicMenuHandler();
 	private final NotesMenuHandler notesMenuHandler = new NotesMenuHandler();
 	private final VocalsMenuHandler vocalsMenuHandler = new VocalsMenuHandler();
 
 	private final ArrayList2<CharterMenuHandler> menus = new ArrayList2<>(//
 			fileMenuHandler, //
 			editMenuHandler, //
+			musicMenuHandler, //
 			arrangementMenuHandler, //
 			vocalsMenuHandler, //
 			notesMenuHandler, //
@@ -41,11 +43,12 @@ public class CharterMenuBar extends JMenuBar {
 			final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
 			final ModeManager modeManager, final SelectionManager selectionManager,
 			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
+		arrangementMenuHandler.init(audioDrawer, audioHandler, data, frame, this, modeManager, selectionManager);
 		editMenuHandler.init(copyManager, data, frame, keyboardHandler, selectionManager, undoSystem);
 		fileMenuHandler.init(data, frame, songFileHandler);
-		infoMenuHandler.init(frame, this);
 		guitarMenuHandler.init(data, keyboardHandler, modeManager, selectionManager, undoSystem);
-		arrangementMenuHandler.init(audioDrawer, audioHandler, data, frame, this, modeManager, selectionManager);
+		infoMenuHandler.init(frame, this);
+		musicMenuHandler.init(audioHandler, data, frame);
 		notesMenuHandler.init(frame, data, keyboardHandler, modeManager);
 		vocalsMenuHandler.init(data, keyboardHandler, modeManager);
 

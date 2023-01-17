@@ -111,8 +111,8 @@ public class CharterFrame extends JFrame {
 		mouseButtonPressReleaseHandler.init(highlightManager);
 		mouseHandler.init(audioHandler, data, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
 				selectionManager, undoSystem);
-		songFileHandler.init(arrangementFixer, arrangementValidator, data, this, charterMenuBar, modeManager,
-				undoSystem);
+		songFileHandler.init(arrangementFixer, arrangementValidator, audioHandler, data, this, charterMenuBar,
+				modeManager, undoSystem);
 		selectionManager.init(data, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 
