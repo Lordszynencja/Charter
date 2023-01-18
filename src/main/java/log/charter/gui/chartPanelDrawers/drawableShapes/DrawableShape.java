@@ -61,6 +61,10 @@ public interface DrawableShape {
 		return strokedRectangle(position, color.color());
 	}
 
+	public static DrawableShape strokedRectangle(final ShapePositionWithSize position, final Color color, final int thickness) {
+		return new StrokedRectangle(position, color, thickness);
+	}
+
 	// Diamonds
 	public static DrawableShape filledDiamond(final Position2D position, final int radius, final Color color) {
 		return new FilledDiamond(position, radius, color);
