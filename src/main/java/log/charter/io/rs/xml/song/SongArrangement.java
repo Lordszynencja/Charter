@@ -110,6 +110,7 @@ public class SongArrangement {
 			}
 		}
 
+		tonesList.sort((a, b) -> a.equals(tonebase) ? -1 : b.equals(tonebase) ? 1 : 0);
 		if (tonesList.size() >= 1) {
 			tonea = tonesList.get(0);
 		}
