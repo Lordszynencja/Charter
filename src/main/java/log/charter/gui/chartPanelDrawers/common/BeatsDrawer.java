@@ -173,7 +173,12 @@ public class BeatsDrawer {
 				xToTime(0, data.time));
 		final int maxTime = xToTime(chartPanel.getWidth() + 1, data.time);
 		while (gridPosition.position() < maxTime) {
-			drawingData.addGrid(timeToX(gridPosition.position(), data.time));
+			if (gridPosition.positionId >= data.songChart.beatsMap.beats.size() - 1) {
+				break;
+			}
+			if (gridPosition.gridId != 0) {
+				drawingData.addGrid(timeToX(gridPosition.position(), data.time));
+			}
 			gridPosition.next();
 		}
 	}
