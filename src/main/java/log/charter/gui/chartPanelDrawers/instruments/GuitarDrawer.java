@@ -25,7 +25,6 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.fil
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.line;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineHorizontal;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedPolygon;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.text;
@@ -498,7 +497,7 @@ public class GuitarDrawer {
 
 		private void addNormalNoteTailShape(final NoteData note, final int y) {
 			final IntRange topBottom = getDefaultTailTopBottom(y);
-			int x = note.x - 1;
+			final int x = note.x - 1;
 			final int length = note.length + 1;
 			final Color color = noteTailColors[note.string];
 
@@ -515,7 +514,7 @@ public class GuitarDrawer {
 						noteTails.add(lineVertical(x + i, segmentY, y, color));
 					}
 
-					final int fragmentX = x;
+					int fragmentX = x;
 					final int y0 = y + tailHeight / 4;
 					final int y1 = y + tailHeight / 2;
 					while (fragmentX < x + length) {
@@ -525,7 +524,7 @@ public class GuitarDrawer {
 								new Position2D(x + 40, y1), //
 								new Position2D(x + 20, y0), //
 								new Position2D(x, y1)));
-						x += 40;
+						fragmentX += 40;
 					}
 				} else if (note.vibrato != null) {
 					final int vibratoSpeed = (int) (note.vibrato * Zoom.zoom * 1.5);
@@ -539,7 +538,7 @@ public class GuitarDrawer {
 						noteTails.add(lineVertical(x + i, segmentY, segmentY + vibratoLineHeight, color));
 					}
 				} else {
-					final int fragmentX = x;
+					int fragmentX = x;
 					final int y0 = y + tailHeight / 2;
 					final int y1 = y + tailHeight / 4;
 					final int y2 = y - tailHeight / 4;
@@ -552,7 +551,7 @@ public class GuitarDrawer {
 								new Position2D(x + 40, y2), //
 								new Position2D(x + 20, y3), //
 								new Position2D(x, y2)));
-						x += 40;
+						fragmentX += 40;
 					}
 				}
 			} else {
@@ -934,9 +933,13 @@ public class GuitarDrawer {
 	}
 
 	public void draw(final Graphics g) {
-		beatsDrawer.draw(g);
-		drawGuitarLanes(g);
-		audioDrawer.draw(g);
-		drawGuitarNotes(g);
+		try {
+			beatsDrawer.draw(g);
+			drawGuitarLanes(g);
+			audioDrawer.draw(g);
+			drawGuitarNotes(g);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
