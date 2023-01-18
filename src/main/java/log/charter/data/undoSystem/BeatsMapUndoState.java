@@ -14,7 +14,7 @@ import log.charter.song.SectionType;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 
-public class BeatsMapUndoState implements UndoState {
+public class BeatsMapUndoState extends UndoState {
 	private static class ArrangementSectionsPhraseIterationsEvents {
 		private final ArrayList2<Pair<Integer, SectionType>> sections;
 		private final ArrayList2<Pair<Integer, String>> phraseIterations;

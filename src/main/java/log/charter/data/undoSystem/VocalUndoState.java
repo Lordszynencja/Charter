@@ -3,7 +3,7 @@ package log.charter.data.undoSystem;
 import log.charter.data.ChartData;
 import log.charter.song.vocals.Vocals;
 
-public class VocalUndoState implements UndoState {
+public class VocalUndoState extends UndoState {
 	private final Vocals vocals;
 
 	private VocalUndoState(final ChartData data, final boolean fromUndo) {

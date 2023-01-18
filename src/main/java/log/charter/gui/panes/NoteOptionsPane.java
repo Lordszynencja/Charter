@@ -1,5 +1,6 @@
 package log.charter.gui.panes;
 
+import static java.util.Arrays.asList;
 import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
 
@@ -20,6 +21,7 @@ import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.Pair;
 
 public class NoteOptionsPane extends ParamsPane {
 	private static final long serialVersionUID = 1L;
@@ -89,28 +91,35 @@ public class NoteOptionsPane extends ParamsPane {
 		final int muteLabelY = getY(row++);
 		addLabelExact(muteLabelY, 20, Label.MUTE);
 		final int muteRadioY = getY(row++) - 3;
-		addConfigRadioButtonsExact(muteRadioY, 30, radioButtonWidth, mute.ordinal(), i -> mute = Mute.values()[i], //
-				Label.MUTE_STRING, Label.MUTE_PALM, Label.MUTE_NONE);
+		addConfigRadioButtonsExact(muteRadioY, 30, radioButtonWidth, mute, val -> mute = val, //
+				asList(new Pair<>(Mute.STRING, Label.MUTE_STRING), //
+						new Pair<>(Mute.PALM, Label.MUTE_PALM), //
+						new Pair<>(Mute.NONE, Label.MUTE_NONE)));
 
 		final int hopoLabelY = getY(row++) + 3;
 		addLabelExact(hopoLabelY, 20, Label.HOPO);
 		final int hopoRadioY = getY(row++);
-		addConfigRadioButtonsExact(hopoRadioY, 30, radioButtonWidth, hopo.ordinal(), i -> hopo = HOPO.values()[i], //
-				Label.HOPO_HAMMER_ON, Label.HOPO_PULL_OFF, Label.HOPO_TAP, Label.HOPO_NONE);
+		addConfigRadioButtonsExact(hopoRadioY, 30, radioButtonWidth, hopo, val -> hopo = val, //
+				asList(new Pair<>(HOPO.HAMMER_ON, Label.HOPO_HAMMER_ON), //
+						new Pair<>(HOPO.PULL_OFF, Label.HOPO_PULL_OFF), //
+						new Pair<>(HOPO.TAP, Label.HOPO_TAP), //
+						new Pair<>(HOPO.NONE, Label.HOPO_NONE)));
 
 		final int bassPickingLabelY = getY(row++) + 6;
 		addLabelExact(bassPickingLabelY, 20, Label.BASS_PICKING_TECHNIQUE);
 		final int bassPickingRadioY = getY(row++) + 3;
-		addConfigRadioButtonsExact(bassPickingRadioY, 30, 60, bassPicking.ordinal(),
-				i -> bassPicking = BassPickingTechnique.values()[i], //
-				Label.BASS_PICKING_POP, Label.BASS_PICKING_SLAP, Label.BASS_PICKING_NONE);
+		addConfigRadioButtonsExact(bassPickingRadioY, 30, 60, bassPicking, val -> bassPicking = val, //
+				asList(new Pair<>(BassPickingTechnique.POP, Label.BASS_PICKING_POP), //
+						new Pair<>(BassPickingTechnique.SLAP, Label.BASS_PICKING_SLAP), //
+						new Pair<>(BassPickingTechnique.NONE, Label.BASS_PICKING_NONE)));
 
 		final int harmonicLabelY = getY(row++) + 9;
 		addLabelExact(harmonicLabelY, 20, Label.HARMONIC);
 		final int harmonicRadioY = getY(row++) + 6;
-		addConfigRadioButtonsExact(harmonicRadioY, 30, radioButtonWidth, harmonic.ordinal(),
-				i -> harmonic = Harmonic.values()[i], //
-				Label.HARMONIC_NORMAL, Label.HARMONIC_PINCH, Label.HARMONIC_NONE);
+		addConfigRadioButtonsExact(harmonicRadioY, 30, radioButtonWidth, harmonic, val -> harmonic = val, //
+				asList(new Pair<>(Harmonic.NORMAL, Label.HARMONIC_NORMAL), //
+						new Pair<>(Harmonic.PINCH, Label.HARMONIC_PINCH), //
+						new Pair<>(Harmonic.NONE, Label.HARMONIC_NONE)));
 
 		row++;
 		addConfigCheckbox(row, 20, 45, Label.ACCENT, accent, val -> accent = val);

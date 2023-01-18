@@ -21,6 +21,8 @@ public class VocalModeHandler extends ModeHandler {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
+	private int lastUndoIdForScroll = -1;
+
 	public void init(final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this.data = data;
@@ -73,6 +75,11 @@ public class VocalModeHandler extends ModeHandler {
 	public void changeLength(int change) {
 		if (keyboardHandler.shift()) {
 			change *= 4;
+		}
+
+		if (undoSystem.getLastUndoId() != lastUndoIdForScroll || lastUndoIdForScroll == -1) {
+			undoSystem.addUndo();
+			lastUndoIdForScroll = undoSystem.getLastUndoId();
 		}
 
 		final SelectionAccessor<Vocal> selectedNotes = selectionManager.getSelectedAccessor(PositionType.VOCAL);

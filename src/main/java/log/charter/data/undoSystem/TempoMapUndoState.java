@@ -4,7 +4,7 @@ import log.charter.data.ChartData;
 import log.charter.song.ArrangementChart;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class TempoMapUndoState implements UndoState {
+public class TempoMapUndoState extends UndoState {
 
 	private final BeatsMapUndoState beatsMapUndoState;
 	private final ArrayList2<GuitarUndoState> guitarUndoStates;

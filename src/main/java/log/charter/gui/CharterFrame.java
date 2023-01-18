@@ -1,5 +1,6 @@
 package log.charter.gui;
 
+import static log.charter.data.config.Config.windowFullscreen;
 import static log.charter.data.config.Config.windowHeight;
 import static log.charter.data.config.Config.windowWidth;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaBottom;
@@ -14,11 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalScrollBarUI;
 
@@ -36,7 +39,6 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
-import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.CharterFrameComponentListener;
 import log.charter.gui.handlers.CharterFrameWindowFocusListener;
@@ -58,6 +60,7 @@ public class CharterFrame extends JFrame {
 	private final ChartPanel chartPanel = new ChartPanel();
 	private final JScrollBar scrollBar = createScrollBar();
 	private final JLabel helpLabel = createHelp();
+	private final JTabbedPane tabs = createTabs();
 
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
 	private final ArrangementValidator arrangementValidator = new ArrangementValidator();
@@ -100,7 +103,7 @@ public class CharterFrame extends JFrame {
 		arrangementFixer.init(data);
 		arrangementValidator.init(data, this);
 		audioDrawer.init(data, chartPanel);
-		audioHandler.init(data, this);
+		audioHandler.init(data, this, modeManager);
 		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, selectionManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
 		data.init(audioHandler, charterMenuBar, modeManager, scrollBar, selectionManager, undoSystem);
@@ -121,13 +124,10 @@ public class CharterFrame extends JFrame {
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 
-		final Insets insets = getInsets();
-		final int widthDifference = insets.left + insets.right;
-
-		add(chartPanel, 0, Config.windowWidth - widthDifference, DrawerUtils.editAreaBottom);
-		add(scrollBar, DrawerUtils.editAreaBottom, Config.windowWidth - widthDifference, 20);
-		add(helpLabel, DrawerUtils.editAreaBottom + 20, Config.windowWidth - widthDifference,
-				Config.windowHeight - DrawerUtils.editAreaBottom - 20);
+		add(chartPanel);
+		add(scrollBar);
+		add(tabs);
+		resizeComponents();
 
 		addComponentListener(new CharterFrameComponentListener(this));
 		addKeyListener(keyboardHandler);
@@ -155,19 +155,27 @@ public class CharterFrame extends JFrame {
 	}
 
 	public void resize() {
-		Config.windowHeight = getHeight();
-		Config.windowWidth = getWidth();
-		Config.windowFullscreen = getExtendedState() == JFrame.MAXIMIZED_BOTH;
+		windowHeight = getHeight();
+		windowWidth = getWidth();
+		windowFullscreen = getExtendedState() == JFrame.MAXIMIZED_BOTH;
 		Config.markChanged();
 
+		resizeComponents();
+	}
+
+	private void resizeComponents() {
 		final Insets insets = getInsets();
 		final int width = windowWidth - insets.left - insets.right;
-		final int helpY = editAreaBottom + scrollBar.getHeight();
-		final int helpHeight = windowHeight - insets.top - insets.bottom - helpY;
+		final int height = windowHeight - insets.top - insets.bottom - charterMenuBar.getHeight();
 
 		changeComponentBounds(chartPanel, 0, 0, width, editAreaBottom);
-		changeComponentBounds(scrollBar, 0, editAreaBottom, width, scrollBar.getHeight());
-		changeComponentBounds(helpLabel, 0, helpY, width, helpHeight);
+
+		final int scrollBarHeight = 20;
+		changeComponentBounds(scrollBar, 0, editAreaBottom, width, scrollBarHeight);
+
+		final int tabsY = editAreaBottom + scrollBarHeight;
+		final int tabsHeight = height - tabsY;
+		changeComponentBounds(tabs, 0, tabsY, width, tabsHeight);
 	}
 
 	public CharterFrame(final String title, final String path) {
@@ -183,30 +191,9 @@ public class CharterFrame extends JFrame {
 
 		data.time = (int) data.nextTime;
 
-		if (hasFocus()) {
+		if (isFocused()) {
 			repaint();
 		}
-	}
-
-	private void add(final JComponent component, final int y, final int w, final int h) {
-		component.setBounds(0, y, w, h);
-		final Dimension size = new Dimension(w, h);
-		component.setMinimumSize(size);
-		component.setPreferredSize(size);
-		component.setMaximumSize(size);
-		component.validate();
-
-		add(component);
-	}
-
-	private JLabel createHelp() {
-		final JLabel help = new JLabel();
-		help.setVerticalAlignment(JLabel.TOP);
-		help.setBackground(ColorLabel.BASE_BG_2.color());
-		help.setForeground(ColorLabel.BASE_DARK_TEXT.color());
-		help.setOpaque(true);
-
-		return help;
 	}
 
 	private JScrollBar createScrollBar() {
@@ -249,6 +236,30 @@ public class CharterFrame extends JFrame {
 		});
 
 		return scrollBar;
+	}
+
+	private JLabel createHelp() {
+		final JLabel help = new JLabel();
+		help.setVerticalAlignment(JLabel.TOP);
+		help.setBackground(ColorLabel.BASE_BG_2.color());
+		help.setForeground(ColorLabel.BASE_DARK_TEXT.color());
+		help.setOpaque(true);
+		help.setFocusable(false);
+
+		return help;
+	}
+
+	private JTabbedPane createTabs() {
+		final JTextArea textArea = new JTextArea(1000, 1000);
+		textArea.setBackground(ColorLabel.BASE_BG_2.color());
+		textArea.setForeground(ColorLabel.BASE_TEXT.color());
+		textArea.setCaretColor(ColorLabel.BASE_TEXT.color());
+
+		final JTabbedPane tabs = new JTabbedPane(JTabbedPane.TOP);
+		tabs.addTab("Help", helpLabel);
+		tabs.addTab("Text", new JScrollPane(textArea));
+
+		return tabs;
 	}
 
 	public void setNextTime(final int t) {

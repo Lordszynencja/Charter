@@ -47,8 +47,10 @@ public class ChartPanel extends JComponent {
 		addMouseListener(mouseHandler);
 		addMouseMotionListener(mouseHandler);
 		addMouseWheelListener(mouseHandler);
+		addKeyListener(keyboardHandler);
 
 		setDoubleBuffered(true);
+		setFocusable(true);
 	}
 
 	@Override

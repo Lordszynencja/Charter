@@ -15,7 +15,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.CollectionUtils.HashSet2;
 
-public class GuitarUndoState implements UndoState {
+public class GuitarUndoState extends UndoState {
 	private final int arrangementId;
 	private final int levelId;
 

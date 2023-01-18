@@ -2,7 +2,7 @@ package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
 
-public class GuitarModeUndoState implements UndoState {
+public class GuitarModeUndoState extends UndoState {
 	private final BeatsMapUndoState beatsMapUndoState;
 	private final GuitarUndoState guitarUndoState;
 

@@ -4,7 +4,7 @@ import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 
-public class BaseUndoState implements UndoState {
+public class BaseUndoState extends UndoState {
 	private final UndoState internalUndoState;
 	private final int markerPosition;
 

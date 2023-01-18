@@ -57,7 +57,8 @@ public class SongFileHandler {
 			super(frame, Label.LOADING.label());
 			setLayout(null);
 			setSize(300, 200);
-			setLocation(frame.getWidth() / 2 - getWidth() / 2, frame.getHeight() / 2 - getHeight() / 2);
+			setLocation(frame.getX() + frame.getWidth() / 2 - getWidth() / 2,
+					frame.getY() + frame.getHeight() / 2 - getHeight() / 2);
 
 			text = new JLabel(Label.LOADING.label());
 			text.setHorizontalAlignment(JLabel.CENTER);

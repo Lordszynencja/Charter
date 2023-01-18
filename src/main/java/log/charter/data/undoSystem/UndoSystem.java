@@ -7,6 +7,8 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.selection.SelectionManager;
 
 public class UndoSystem {
+	public static int nextId = 1;
+
 	private ChartData data;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
@@ -79,6 +81,10 @@ public class UndoSystem {
 
 	public boolean isSaved() {
 		return savePosition == 0;
+	}
+
+	public int getLastUndoId() {
+		return undo.isEmpty() ? -1 : undo.getLast().id;
 	}
 
 	public void removeRedo() {

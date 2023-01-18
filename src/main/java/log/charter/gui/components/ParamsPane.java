@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -22,6 +23,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.TextInputWithValidation.StringValueSetter;
 import log.charter.gui.components.TextInputWithValidation.ValueValidator;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.Pair;
 
 public class ParamsPane extends JDialog {
 	public static class PaneSizes {
@@ -34,6 +36,10 @@ public class ParamsPane extends JDialog {
 		public int getY(final int row) {
 			return uSpace + row * rowHeight;
 		}
+	}
+
+	public static interface ValueSetter<T> {
+		void setValue(T val);
 	}
 
 	public static interface BooleanValueSetter {
@@ -242,24 +248,24 @@ public class ParamsPane extends JDialog {
 		add(checkbox, x, y, 20, 20);
 	}
 
-	protected <T extends Enum<T>> void addConfigRadioButtons(final int row, final int x, final int optionWidth,
-			final int val, final IntegerValueSetter setter, final Label... labels) {
-		addConfigRadioButtonsExact(getY(row), x, optionWidth, val, setter, labels);
+	protected <T> void addConfigRadioButtons(final int row, final int x, final int optionWidth, final T val,
+			final ValueSetter<T> setter, final List<Pair<T, Label>> values) {
+		addConfigRadioButtonsExact(getY(row), x, optionWidth, val, setter, values);
 	}
 
-	protected <T extends Enum<T>> void addConfigRadioButtonsExact(final int y, int x, final int optionWidth,
-			final int val, final IntegerValueSetter setter, final Label... labels) {
+	protected <T> void addConfigRadioButtonsExact(final int y, int x, final int optionWidth, final T val,
+			final ValueSetter<T> setter, final List<Pair<T, Label>> values) {
 		final ButtonGroup group = new ButtonGroup();
 
-		for (int i = 0; i < labels.length; i++) {
+		for (int i = 0; i < values.size(); i++) {
+			final Pair<T, Label> value = values.get(i);
 			final JRadioButton radioButton = new JRadioButton();
-			radioButton.setSelected(i == val);
-			final int buttonId = i;
-			radioButton.addActionListener(a -> setter.setValue(buttonId));
+			radioButton.setSelected(value.a.equals(val));
+			radioButton.addActionListener(a -> setter.setValue(value.a));
 			group.add(radioButton);
 			add(radioButton, x, y, 20, 20);
 
-			addLabelExact(y, x + 20, labels[i]);
+			addLabelExact(y, x + 20, value.b);
 
 			x += optionWidth;
 		}

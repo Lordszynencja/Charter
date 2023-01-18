@@ -1021,6 +1021,21 @@ public class KeyboardHandler implements KeyListener {
 		});
 	}
 
+	private void handleE() {
+		if (data.isEmpty) {
+			return;
+		}
+
+		if (modeManager.editMode == EditMode.GUITAR) {
+			editNoteAsSingleNote();
+			return;
+		}
+
+		if (modeManager.editMode == EditMode.VOCALS) {
+			togglePhraseEnd();
+		}
+	}
+
 	private void handleL() {
 		if (modeManager.editMode == EditMode.VOCALS) {
 			editVocals();
@@ -1148,8 +1163,7 @@ public class KeyboardHandler implements KeyListener {
 		key(VK_A).ctrl().function(selectionManager::selectAllNotes);
 		key(VK_B).function(this::editBend);
 		key(VK_C).ctrl().function(copyManager::copy);
-		key(VK_E).function(this::editNoteAsSingleNote);
-		key(VK_E).ctrl().function(this::toggleWordPart);
+		key(VK_E).function(this::handleE);
 		key(VK_G).function(e -> new GridPane(frame));
 		// key(VK_G).ctrl().function(e->snapNotes());
 		key(VK_H).function(this::toggleHOPO);
@@ -1173,8 +1187,8 @@ public class KeyboardHandler implements KeyListener {
 		key(VK_W).function(this::handleW);
 		key(VK_Z).ctrl().function(undoSystem::undo);
 
-		key(VK_COMMA).ctrl().function(this::halveGridSize);
-		key(VK_PERIOD).ctrl().function(this::doubleGridSize);
+		key(VK_COMMA).function(this::halveGridSize);
+		key(VK_PERIOD).function(this::doubleGridSize);
 
 		key(VK_1).singleFunction(e -> handleNumber(1));
 		key(VK_2).singleFunction(e -> handleNumber(2));

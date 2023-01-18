@@ -15,6 +15,7 @@ import javax.swing.SwingWorker;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.ModeManager;
 import log.charter.gui.CharterFrame;
 import log.charter.song.notes.IPosition;
 import log.charter.sound.IPlayer;
@@ -60,6 +61,7 @@ public class AudioHandler {
 
 	private ChartData data;
 	private CharterFrame frame;
+	private ModeManager modeManager;
 
 	private List<Integer> speedsToProcess = new ArrayList<>();
 	private MusicData slowedDownSong;
@@ -76,14 +78,28 @@ public class AudioHandler {
 
 	private boolean ignoreStops = false;
 
-	public void init(final ChartData data, final CharterFrame frame) {
+	public void init(final ChartData data, final CharterFrame frame, final ModeManager modeManager) {
 		this.data = data;
 		this.frame = frame;
+		this.modeManager = modeManager;
 
 		beatTickPlayer = new TickPlayer(new RepeatingPlayer(generateSound(4000, 0.01, 1)), //
 				() -> data.songChart.beatsMap.beats);
 		noteTickPlayer = new TickPlayer(new RotatingRepeatingPlayer(generateSound(1000, 0.02, 0.8), 4), //
-				() -> data.getCurrentArrangementLevel().chordsAndNotes);
+				this::getCurrentClapPositions);
+	}
+
+	private ArrayList2<? extends IPosition> getCurrentClapPositions() {
+		switch (modeManager.editMode) {
+		case GUITAR:
+			return data.getCurrentArrangementLevel().chordsAndNotes;
+		case TEMPO_MAP:
+			return data.songChart.beatsMap.beats;
+		case VOCALS:
+			return data.songChart.vocals.vocals;
+		default:
+			return new ArrayList2<>();
+		}
 	}
 
 	public void toggleClaps() {

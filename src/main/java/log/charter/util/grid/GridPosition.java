@@ -47,7 +47,7 @@ public class GridPosition<T extends IPosition> {
 		final int nextPosition = positions.get(positionId + 1).position();
 		final int beatLength = nextPosition - currentPosition;
 		final int distanceInBeat = position - currentPosition;
-		gridId = (int) floor(1.0 * distanceInBeat * gridSize / beatLength);
+		gridId = (int) floor(1.0 * (distanceInBeat + 1) * gridSize / beatLength);
 	}
 
 	public GridPosition<T> next() {

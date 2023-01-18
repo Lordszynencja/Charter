@@ -76,6 +76,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	@Override
 	public void mousePressed(final MouseEvent e) {
+		if (e.getComponent() != null) {
+			e.getComponent().requestFocus();
+		}
+
 		mouseMoved(e);
 
 		if (data.isEmpty) {
