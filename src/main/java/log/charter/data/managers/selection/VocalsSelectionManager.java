@@ -13,7 +13,7 @@ class VocalsSelectionManager extends SingleTypeSelectionManager<Vocal> {
 	private final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
 
 	VocalsSelectionManager(final ChartData data, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
-		super();
+		super(PositionType.VOCAL);
 		this.data = data;
 		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
 	}

@@ -118,6 +118,7 @@ public class Localization {
 
 		NOTES_MENU("Notes"), //
 		NOTES_MENU_SNAP("Snap notes to grid"), //
+		NOTES_MENU_SNAP_ALL("Snap all items between to grid"), //
 		NOTES_MENU_DOUBLE_GRID("Double grid resolution"), //
 		NOTES_MENU_HALVE_GRID("Halve grid resolution"), //
 

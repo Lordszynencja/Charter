@@ -36,7 +36,8 @@ class NotesMenuHandler extends CharterMenuHandler {
 		final JMenu menu = new JMenu(Label.NOTES_MENU.label());
 
 		menu.add(new SpecialMenuItem(Label.EDIT_MENU_GRID_OPTIONS, "G", this::gridOptions));
-		// menu.add(new SpecialMenuItem(Label.NOTES_MENU_SNAP, "Ctrl-G", null));
+		menu.add(new SpecialMenuItem(Label.NOTES_MENU_SNAP, "Ctrl-G", keyboardHandler::snapSelected));
+		menu.add(new SpecialMenuItem(Label.NOTES_MENU_SNAP_ALL, "Ctrl-Shift-G", keyboardHandler::snapAll));
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_HALVE_GRID, ",", keyboardHandler::halveGridSize));
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_DOUBLE_GRID, ".", keyboardHandler::doubleGridSize));
 
