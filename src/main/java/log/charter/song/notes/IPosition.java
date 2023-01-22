@@ -156,6 +156,14 @@ public interface IPosition extends Comparable<IPosition> {
 		return id < 0 ? null : list.get(id);
 	}
 
+	public static <T extends IPosition> List<T> getFromTo(final ArrayList2<T> list, final int from, final int to) {
+		int fromId = findFirstIdAfterEqual(list, from);
+		fromId = fromId == -1 ? 0 : fromId;
+		int toId = findLastIdBeforeEqual(list, to);
+		toId = toId == -1 ? list.size() : (toId + 1);
+		return list.subList(fromId, toId);
+	}
+
 	int position();
 
 	void position(int newPosition);

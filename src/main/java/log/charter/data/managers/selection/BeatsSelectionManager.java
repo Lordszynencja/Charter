@@ -13,7 +13,7 @@ class BeatsSelectionManager extends SingleTypeSelectionManager<Beat> {
 	private final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
 
 	BeatsSelectionManager(final ChartData data, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
-		super();
+		super(PositionType.BEAT);
 		this.data = data;
 		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
 	}

@@ -14,7 +14,7 @@ class ChordsNotesSelectionManager extends SingleTypeSelectionManager<ChordOrNote
 
 	ChordsNotesSelectionManager(final ChartData data,
 			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
-		super();
+		super(PositionType.GUITAR_NOTE);
 		this.data = data;
 		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
 	}

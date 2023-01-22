@@ -32,6 +32,7 @@ public class SelectionManager {
 	private TypeSelectionManager<Beat> beatsManager;
 	private TypeSelectionManager<ChordOrNote> chordsNotesManager;
 	private TypeSelectionManager<HandShape> handShapesManager;
+	private TypeSelectionManager<IPosition> noneManager;
 	private TypeSelectionManager<ToneChange> toneChangesManager;
 	private TypeSelectionManager<Vocal> vocalsManager;
 
@@ -46,6 +47,7 @@ public class SelectionManager {
 		beatsManager = new BeatsSelectionManager(data, mouseButtonPressReleaseHandler);
 		chordsNotesManager = new ChordsNotesSelectionManager(data, mouseButtonPressReleaseHandler);
 		handShapesManager = new HandShapesSelectionManager(data, mouseButtonPressReleaseHandler);
+		noneManager = new NoneTypeSelectionManager();
 		toneChangesManager = new ToneChangeSelectionManager(data, mouseButtonPressReleaseHandler);
 		vocalsManager = new VocalsSelectionManager(data, mouseButtonPressReleaseHandler);
 
@@ -53,6 +55,7 @@ public class SelectionManager {
 		typeSelectionManagers.put(PositionType.BEAT, beatsManager);
 		typeSelectionManagers.put(PositionType.GUITAR_NOTE, chordsNotesManager);
 		typeSelectionManagers.put(PositionType.HAND_SHAPE, handShapesManager);
+		typeSelectionManagers.put(PositionType.NONE, noneManager);
 		typeSelectionManagers.put(PositionType.TONE_CHANGE, toneChangesManager);
 		typeSelectionManagers.put(PositionType.VOCAL, vocalsManager);
 	}
@@ -159,10 +162,23 @@ public class SelectionManager {
 	public <T extends IPosition> SelectionAccessor<T> getSelectedAccessor(final PositionType type) {
 		final TypeSelectionManager<?> typeSelectionManager = typeSelectionManagers.get(type);
 		if (typeSelectionManager == null) {
-			return new SelectionAccessor<>(() -> new ArrayList2<>());
+			return new SelectionAccessor<>(PositionType.NONE, () -> new ArrayList2<>());
 		}
 
 		return (SelectionAccessor<T>) typeSelectionManager.getAccessor();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends IPosition> SelectionAccessor<T> getCurrentlySelectedAccessor() {
+		for (final PositionType positionType : PositionType.values()) {
+			final TypeSelectionManager<?> typeSelectionManager = typeSelectionManagers.get(positionType);
+			final SelectionAccessor<T> accessor = (SelectionAccessor<T>) typeSelectionManager.getAccessor();
+			if (accessor.isSelected()) {
+				return accessor;
+			}
+		}
+
+		return (SelectionAccessor<T>) noneManager.getAccessor();
 	}
 
 	public void selectAllNotes() {

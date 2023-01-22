@@ -14,7 +14,7 @@ class HandShapesSelectionManager extends SingleTypeSelectionManager<HandShape> {
 
 	HandShapesSelectionManager(final ChartData data,
 			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
-		super();
+		super(PositionType.HAND_SHAPE);
 		this.data = data;
 		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
 	}

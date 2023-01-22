@@ -2,14 +2,17 @@ package log.charter.data.managers.selection;
 
 import java.util.function.Supplier;
 
+import log.charter.data.types.PositionType;
 import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 
 public class SelectionAccessor<T extends IPosition> {
+	public final PositionType type;
 	private final Supplier<ArrayList2<Selection<T>>> selectedSupplier;
 
-	SelectionAccessor(final Supplier<ArrayList2<Selection<T>>> selectedSupplier) {
+	SelectionAccessor(final PositionType type, final Supplier<ArrayList2<Selection<T>>> selectedSupplier) {
+		this.type = type;
 		this.selectedSupplier = selectedSupplier;
 	}
 

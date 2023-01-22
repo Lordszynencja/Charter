@@ -14,7 +14,7 @@ class AnchorsSelectionManager extends SingleTypeSelectionManager<Anchor> {
 	private final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
 
 	AnchorsSelectionManager(final ChartData data, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
-		super();
+		super(PositionType.ANCHOR);
 		this.data = data;
 		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
 	}

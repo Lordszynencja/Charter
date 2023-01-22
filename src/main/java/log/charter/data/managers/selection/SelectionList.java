@@ -3,6 +3,7 @@ package log.charter.data.managers.selection;
 import java.util.HashSet;
 import java.util.Set;
 
+import log.charter.data.types.PositionType;
 import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
@@ -16,13 +17,15 @@ class SelectionList<T extends IPosition> {
 		Selection<T> make();
 	}
 
+	private final PositionType type;
 	private final SelectionMaker<T> selectionMaker;
 	private final TemporarySelectionSupplier<T> temporarySelectionSupplier;
 
 	final ArrayList2<Selection<T>> selected = new ArrayList2<>();
 
-	SelectionList(final SelectionMaker<T> selectionMaker,
+	SelectionList(final PositionType type, final SelectionMaker<T> selectionMaker,
 			final TemporarySelectionSupplier<T> temporarySelectionSupplier) {
+		this.type = type;
 		this.selectionMaker = selectionMaker;
 		this.temporarySelectionSupplier = temporarySelectionSupplier;
 	}
@@ -113,6 +116,6 @@ class SelectionList<T extends IPosition> {
 	}
 
 	public SelectionAccessor<T> getAccessor() {
-		return new SelectionAccessor<>(this::getSelectionWithTemporary);
+		return new SelectionAccessor<>(type, this::getSelectionWithTemporary);
 	}
 }

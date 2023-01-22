@@ -15,7 +15,7 @@ class ToneChangeSelectionManager extends SingleTypeSelectionManager<ToneChange> 
 
 	ToneChangeSelectionManager(final ChartData data,
 			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
-		super();
+		super(PositionType.TONE_CHANGE);
 		this.data = data;
 		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
 	}
