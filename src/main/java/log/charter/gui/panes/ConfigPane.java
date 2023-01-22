@@ -5,15 +5,16 @@ import static log.charter.gui.components.TextInputWithValidation.ValueValidator.
 
 import java.io.File;
 
-import javax.swing.JButton;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.Theme;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.components.ParamsPane;
+import log.charter.util.CollectionUtils;
 import log.charter.util.FileChooseUtils;
 
 public final class ConfigPane extends ParamsPane {
@@ -40,6 +41,7 @@ public final class ConfigPane extends ParamsPane {
 	private int minTailLength = Config.minTailLength;
 	private int delay = Config.delay;
 	private int markerOffset = Config.markerOffset;
+	private Theme theme = Config.theme;
 	private int noteWidth = Config.noteWidth;
 	private int noteHeight = Config.noteHeight;
 	private boolean invertStrings = Config.invertStrings;
@@ -48,7 +50,7 @@ public final class ConfigPane extends ParamsPane {
 	private int FPS = Config.FPS;
 
 	public ConfigPane(final CharterFrame frame) {
-		super(frame, Label.CONFIG_PANE, 14, getSizes());
+		super(frame, Label.CONFIG_PANE, 17, getSizes());
 		this.frame = frame;
 
 		int row = 0;
@@ -89,6 +91,15 @@ public final class ConfigPane extends ParamsPane {
 		addConfigValue(row++, 20, 150, Label.CONFIG_FPS, FPS + "", 50, createIntValidator(1, 1000, false), //
 				val -> FPS = Integer.valueOf(val), false);
 
+		// Theme selection
+		row++;
+		final JLabel themeLabel = new JLabel("Theme", SwingConstants.LEFT);
+		add(themeLabel, 20, getY(row++), themeLabel.getPreferredSize().width, 20);
+		final CollectionUtils.ArrayList2<CollectionUtils.Pair<Theme, Label>> availableThemes = new CollectionUtils.ArrayList2<>(//
+				new CollectionUtils.Pair<>(Theme.DEFAULT, Label.CONFIG_THEME_DEFAULT), //
+				new CollectionUtils.Pair<>(Theme.ROCKSMITH, Label.CONFIG_THEME_ROCKSMITH));
+		addConfigRadioButtons(row++, 20, 70, theme, val -> theme = val, availableThemes);
+
 		row++;
 		addDefaultFinish(row, this::saveAndExit);
 	}
@@ -126,6 +137,8 @@ public final class ConfigPane extends ParamsPane {
 		Config.showChordIds = showChordIds;
 
 		Config.FPS = FPS;
+
+		Config.theme = theme;
 
 		Config.markChanged();
 		Config.save();

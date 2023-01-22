@@ -27,6 +27,7 @@ public class Config {
 	public static int minTailLength = 50;
 	public static int delay = 25;
 	public static int markerOffset = 300;
+	public static Theme theme = Theme.DEFAULT;
 	public static int noteWidth = 15;
 	public static int noteHeight = 25;
 
@@ -101,6 +102,8 @@ public class Config {
 		setters.put("maxStrings", val -> maxStrings = Integer.valueOf(val));
 		setters.put("FPS", val -> FPS = Integer.valueOf(val));
 
+		setters.put("theme", val -> theme = Theme.valueOf(val));
+
 		setters.put("windowPosX", val -> windowPosX = Integer.valueOf(val));
 		setters.put("windowPosY", val -> windowPosY = Integer.valueOf(val));
 		setters.put("windowWidth", val -> windowWidth = Integer.valueOf(val));
@@ -158,6 +161,8 @@ public class Config {
 		config.put("frets", frets + "");
 		config.put("maxStrings", maxStrings + "");
 		config.put("FPS", FPS + "");
+
+		config.put("Theme", theme + "");
 
 		config.put("windowPosX", windowPosX + "");
 		config.put("windowPosY", windowPosY + "");

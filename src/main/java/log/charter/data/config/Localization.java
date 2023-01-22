@@ -26,6 +26,9 @@ public class Localization {
 		CONFIG_MINIMAL_TAIL_LENGTH("Minimal note tail length"), //
 		CONFIG_SOUND_DELAY("Sound delay"), //
 		CONFIG_MARKER_POSITION("Marker position"), //
+		CONFIG_THEME("Theme"), //
+		CONFIG_THEME_DEFAULT("Default"), //
+		CONFIG_THEME_ROCKSMITH("Rocksmith"), //
 		CONFIG_NOTE_WIDTH("Note width"), //
 		CONFIG_NOTE_HEIGHT("Note height"), //
 		CONFIG_INVERT_STRINGS("Invert strings"), //
