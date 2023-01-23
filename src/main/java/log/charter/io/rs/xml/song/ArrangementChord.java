@@ -53,7 +53,7 @@ public class ArrangementChord implements IPosition {
 	}
 
 	private void setUpMute(final Chord chord) {
-		if (chord.mute == Mute.STRING) {
+		if (chord.mute == Mute.FULL) {
 			fretHandMute = 1;
 		} else if (chord.mute == Mute.PALM) {
 			palmMute = 1;

@@ -4,11 +4,11 @@ import log.charter.io.rs.xml.song.ArrangementChord;
 import log.charter.io.rs.xml.song.ArrangementNote;
 
 public enum Mute {
-	STRING, PALM, NONE;
+	FULL, PALM, NONE;
 
 	public static Mute fromArrangmentNote(final ArrangementNote note) {
 		if (note.mute != null && note.mute == 1) {
-			return STRING;
+			return FULL;
 		}
 		if (note.palmMute != null && note.palmMute == 1) {
 			return PALM;
@@ -19,7 +19,7 @@ public enum Mute {
 
 	public static Mute fromArrangmentChord(final ArrangementChord chord) {
 		if (chord.fretHandMute != null && chord.fretHandMute == 1) {
-			return STRING;
+			return FULL;
 		}
 		if (chord.palmMute != null && chord.palmMute == 1) {
 			return PALM;

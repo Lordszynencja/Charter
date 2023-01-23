@@ -650,8 +650,8 @@ public class KeyboardHandler implements KeyListener {
 			case NONE:
 				return Mute.PALM;
 			case PALM:
-				return Mute.STRING;
-			case STRING:
+				return Mute.FULL;
+			case FULL:
 				return Mute.NONE;
 			default:
 				return Mute.NONE;

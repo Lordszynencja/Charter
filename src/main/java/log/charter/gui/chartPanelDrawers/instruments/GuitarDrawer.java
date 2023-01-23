@@ -82,6 +82,14 @@ import log.charter.util.Position2D;
 import log.charter.util.RW;
 
 public class GuitarDrawer {
+
+	private HighwayDrawer getHighwayDrawer(final int strings) {
+		return switch (Config.theme) {
+			case DEFAULT -> new HighwayDrawer(strings);
+			case ROCKSMITH -> new RocksmithHighwayDrawer(strings);
+		};
+	}
+
 	public static final BigDecimal bendStepSize = new BigDecimal("10");
 
 	private static BufferedImage loadImage(final String path) {
@@ -98,16 +106,13 @@ public class GuitarDrawer {
 	}
 
 	private static final BufferedImage palmMuteMarker = loadImage("images/palmMute.png");
+	private static final BufferedImage muteMarker = loadImage("images/mute.png");
 
 	private final static Color selectColor = ColorLabel.SELECT.color();
 	private static final Color[] noteColors = new Color[maxStrings];
 	private static final Color[] noteAccentColors = new Color[maxStrings];
 	private static final Color[] noteTailColors = new Color[maxStrings];
 	private static final Color stringMuteNoteColor = ColorLabel.NOTE_STRING_MUTE.color();
-
-	private static Font anchorFont = new Font(Font.DIALOG, Font.BOLD, 13);
-	private static Font bendValueFont = new Font(Font.DIALOG, Font.BOLD, 15);
-	private static Font fretFont = new Font(Font.SANS_SERIF, Font.BOLD, 15);
 
 	static {
 		for (int i = 0; i < maxStrings; i++) {
@@ -204,38 +209,40 @@ public class GuitarDrawer {
 		return notes;
 	}
 
-	private class DrawingData {
-		private final BufferedImage scaledPalmMute;
-		{
-			final int w = palmMuteMarker.getWidth();
-			final int h = palmMuteMarker.getHeight();
-			scaledPalmMute = new BufferedImage(noteWidth, noteHeight, BufferedImage.TYPE_INT_ARGB);
-			final AffineTransform at = new AffineTransform();
-			at.scale(1.0 * noteWidth / w, 1.0 * noteHeight / h);
-			final AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-			scaleOp.filter(palmMuteMarker, scaledPalmMute);
-		}
+	private class HighwayDrawer {
+		protected final Font anchorFont;
+		protected final Font bendValueFont;
+		protected final Font fretFont;
+		protected final BufferedImage palmMuteImage;
+		protected final BufferedImage muteImage;
 
-		private final int[] stringPositions;
+		protected final int[] stringPositions;
 
-		private final DrawableShapeList anchors;
-		private final DrawableShapeList bendValues;
-		private final DrawableShapeList chordNames;
-		private final DrawableShapeList handShapes;
-		private final DrawableShapeList noteTails;
-		private final DrawableShapeList noteTailSelects;
-		private final DrawableShapeList notes;
-		private final DrawableShapeList noteFrets;
-		private final DrawableShapeList noteIds;
-		private final DrawableShapeList selects;
-		private final DrawableShapeList slideFrets;
-		private final DrawableShapeList toneChanges;
+		protected final DrawableShapeList anchors;
+		protected final DrawableShapeList bendValues;
+		protected final DrawableShapeList chordNames;
+		protected final DrawableShapeList handShapes;
+		protected final DrawableShapeList noteTails;
+		protected final DrawableShapeList noteTailSelects;
+		protected final DrawableShapeList notes;
+		protected final DrawableShapeList noteFrets;
+		protected final DrawableShapeList noteIds;
+		protected final DrawableShapeList selects;
+		protected final DrawableShapeList slideFrets;
+		protected final DrawableShapeList toneChanges;
 
-		public DrawingData(final int strings) {
+		public HighwayDrawer(final int strings) {
 			stringPositions = new int[strings];
 			for (int i = 0; i < strings; i++) {
 				stringPositions[i] = getLaneY(i, strings);
 			}
+
+			anchorFont = defineAnchorFont();
+			bendValueFont = defineBendFont();
+			fretFont = defineFretFont();
+
+			palmMuteImage = definePalmMuteImage();
+			muteImage = defineMuteImage();
 
 			anchors = new DrawableShapeList();
 			bendValues = new DrawableShapeList();
@@ -251,11 +258,45 @@ public class GuitarDrawer {
 			toneChanges = new DrawableShapeList();
 		}
 
-		private Color getNoteColor(final NoteData note) {
-			return note.mute != Mute.STRING ? noteColors[note.string] : stringMuteNoteColor;
+		protected Font defineAnchorFont() {
+			return new Font(Font.DIALOG, Font.BOLD, 13);
 		}
 
-		private void addNormalNoteShape(final int y, final NoteData note) {
+		protected Font defineBendFont() {
+			return new Font(Font.DIALOG, Font.BOLD, 15);
+		}
+
+		protected Font defineFretFont() {
+			return new Font(Font.SANS_SERIF, Font.BOLD, 15);
+		}
+
+		protected BufferedImage definePalmMuteImage() {
+			final int w = palmMuteMarker.getWidth();
+			final int h = palmMuteMarker.getHeight();
+			BufferedImage scaledPalmMuteImage = new BufferedImage(noteWidth, noteHeight, BufferedImage.TYPE_INT_ARGB);
+			final AffineTransform at = new AffineTransform();
+			at.scale(1.0 * noteWidth / w, 1.0 * noteHeight / h);
+			final AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+			scaleOp.filter(palmMuteMarker, scaledPalmMuteImage);
+			return scaledPalmMuteImage;
+		}
+
+		protected BufferedImage defineMuteImage() {
+			final int w = muteMarker.getWidth();
+			final int h = muteMarker.getHeight();
+			BufferedImage scaledMuteImage = new BufferedImage(noteWidth, noteHeight, BufferedImage.TYPE_INT_ARGB);
+			final AffineTransform at = new AffineTransform();
+			at.scale(1.0 * noteWidth / w, 1.0 * noteHeight / h);
+			final AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+			scaleOp.filter(muteMarker, scaledMuteImage);
+			return scaledMuteImage;
+		}
+
+		protected Color getNoteColor(final NoteData note) {
+			return note.mute != Mute.FULL ? noteColors[note.string] : stringMuteNoteColor;
+		}
+
+		protected void addNormalNoteShape(final int y, final NoteData note) {
 			if (note.linkPrevious) {
 				return;
 			}
@@ -275,7 +316,7 @@ public class GuitarDrawer {
 			}
 		}
 
-		private void addHammerOnShape(final int y, final NoteData note) {
+		protected void addHammerOnShape(final int y, final NoteData note) {
 			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 					.centered();
 
@@ -295,7 +336,7 @@ public class GuitarDrawer {
 			}
 		}
 
-		private void addPullOffShape(final int y, final NoteData note) {
+		protected void addPullOffShape(final int y, final NoteData note) {
 			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 					.centered();
 
@@ -315,7 +356,7 @@ public class GuitarDrawer {
 			}
 		}
 
-		private void addTapShape(final int y, final NoteData note) {
+		protected void addTapShape(final int y, final NoteData note) {
 			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 					.centered();
 
@@ -349,14 +390,14 @@ public class GuitarDrawer {
 			}
 		}
 
-		private void addHarmonicShape(final int y, final NoteData note) {
+		protected void addHarmonicShape(final int y, final NoteData note) {
 			final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y - 1, noteWidth + 5,
 					noteWidth + 5).centered();
 			notes.add(filledOval(harmonicPosition, new Color(224, 224, 224)));
 			notes.add(filledOval(harmonicPosition.resized(5, 5, -10, -10), noteColors[note.string]));
 		}
 
-		private void addPinchHarmonicShape(final int y, final NoteData note) {
+		protected void addPinchHarmonicShape(final int y, final NoteData note) {
 			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 					.centered();
 
@@ -369,58 +410,22 @@ public class GuitarDrawer {
 					ColorLabel.valueOf("LANE_" + note.string).color()));
 		}
 
-		private void addNoteShape(final NoteData note, final int y) {
-			if (note.hopo == HOPO.NONE) {
-				addNormalNoteShape(y, note);
-			} else if (note.hopo == HOPO.HAMMER_ON) {
-				addHammerOnShape(y, note);
-			} else if (note.hopo == HOPO.PULL_OFF) {
-				addPullOffShape(y, note);
-			} else if (note.hopo == HOPO.TAP) {
-				addTapShape(y, note);
-			}
-
-			if (note.harmonic == Harmonic.NORMAL) {
-				addHarmonicShape(y, note);
-			} else if (note.harmonic == Harmonic.PINCH) {
-				addPinchHarmonicShape(y, note);
-			}
+		protected void addPalmMute(final NoteData note, final int y) {
+			notes.add(centeredImage(new Position2D(note.x, y), palmMuteImage));
 		}
 
-		private void addPalmMute(final NoteData note, final int y) {
-			notes.add(centeredImage(new Position2D(note.x, y), scaledPalmMute));
+		protected void addMute(final NoteData note, final int y) {
+			notes.add(centeredImage(new Position2D(note.x, y), muteImage));
 		}
 
-		private void addSimpleNote(final NoteData note) {
-			if (note.string >= stringPositions.length) {
-				return;
-			}
-
-			final int y = stringPositions[note.string];
-			addNoteShape(note, y);
-
-			if (note.mute == Mute.PALM) {
-				addPalmMute(note, y);
-			}
-
-			if (!note.linkPrevious) {
-				noteFrets.add(centeredTextWithBackground(new Position2D(note.x, y), note.fret, Color.WHITE,
-						note.mute == Mute.STRING ? Color.GRAY : Color.BLACK));
-			}
-
-			if (note.length > 0) {
-				addNoteTail(note, y);
-			}
-		}
-
-		private IntRange getDefaultTailTopBottom(final int y) {
+		protected IntRange getDefaultTailTopBottom(final int y) {
 			final int topY = y - tailHeight / 3;
 			final int bottomY = y + tailHeight / 3 + 1;
 			return new IntRange(topY, bottomY);
 		}
 
-		private void addSlideCommon(final NoteData note, final int y, final Color backgroundColor,
-				final Color fretColor) {
+		protected void addSlideCommon(final NoteData note, final int y, final Color backgroundColor,
+									  final Color fretColor) {
 			IntRange topBottom = getDefaultTailTopBottom(y);
 			topBottom = new IntRange(topBottom.min - 1, topBottom.max);
 			final Position2D a = new Position2D(note.x, topBottom.min);
@@ -486,16 +491,16 @@ public class GuitarDrawer {
 			}
 		}
 
-		private void addSlideNoteTailShape(final NoteData note, final int y) {
+		protected void addSlideNoteTailShape(final NoteData note, final int y) {
 			addSlideCommon(note, y, ColorLabel.SLIDE_NORMAL_FRET_BG.color(), ColorLabel.SLIDE_NORMAL_FRET_TEXT.color());
 		}
 
-		private void addUnpitchedSlideNoteTailShape(final NoteData note, final int y) {
+		protected void addUnpitchedSlideNoteTailShape(final NoteData note, final int y) {
 			addSlideCommon(note, y, ColorLabel.SLIDE_UNPITCHED_FRET_BG.color(),
 					ColorLabel.SLIDE_UNPITCHED_FRET_TEXT.color());
 		}
 
-		private void addNormalNoteTailShape(final NoteData note, final int y) {
+		protected void addNormalNoteTailShape(final NoteData note, final int y) {
 			final IntRange topBottom = getDefaultTailTopBottom(y);
 			final int x = note.x - 1;
 			final int length = note.length + 1;
@@ -567,7 +572,7 @@ public class GuitarDrawer {
 			}
 		}
 
-		private String formatBendValue(final BigDecimal bendValue) {
+		protected String formatBendValue(final BigDecimal bendValue) {
 			if (bendValue == null) {
 				return "0";
 			}
@@ -605,13 +610,13 @@ public class GuitarDrawer {
 			return text;
 		}
 
-		private int getBendLineY(final int y, final BigDecimal bendValue) {
+		protected int getBendLineY(final int y, final BigDecimal bendValue) {
 			final int bendOffset = min(tailHeight, bendValue == null ? 0
 					: bendValue.multiply(new BigDecimal(tailHeight)).divide(new BigDecimal(4)).intValue());
 			return y + tailHeight / 2 - bendOffset;
 		}
 
-		private void addBendValues(final NoteData note, final int y) {
+		protected void addBendValues(final NoteData note, final int y) {
 			Position2D lastBendLinePosition = new Position2D(note.x, getBendLineY(y, BigDecimal.ZERO));
 
 			for (final BendValue bendValue : note.bendValues) {
@@ -633,7 +638,7 @@ public class GuitarDrawer {
 					Color.WHITE));
 		}
 
-		private void addNoteTail(final NoteData note, final int y) {
+		protected void addNoteTail(final NoteData note, final int y) {
 			if (note.slideTo != null) {
 				if (note.unpitchedSlide) {
 					addUnpitchedSlideNoteTailShape(note, y);
@@ -647,6 +652,50 @@ public class GuitarDrawer {
 			if (note.bendValues != null && !note.bendValues.isEmpty()) {
 				addBendValues(note, y);
 			}
+		}
+
+		protected void addNoteShape(final NoteData note, final int y) {
+			if (note.hopo == HOPO.NONE) {
+				addNormalNoteShape(y, note);
+			} else if (note.hopo == HOPO.HAMMER_ON) {
+				addHammerOnShape(y, note);
+			} else if (note.hopo == HOPO.PULL_OFF) {
+				addPullOffShape(y, note);
+			} else if (note.hopo == HOPO.TAP) {
+				addTapShape(y, note);
+			}
+
+			if (note.harmonic == Harmonic.NORMAL) {
+				addHarmonicShape(y, note);
+			} else if (note.harmonic == Harmonic.PINCH) {
+				addPinchHarmonicShape(y, note);
+			}
+
+			if (!note.linkPrevious) {
+				if (note.mute == Mute.PALM) {
+					addPalmMute(note, y);
+				}
+				else if (note.mute == Mute.FULL)
+				{
+					addMute(note, y);	
+				}
+
+				noteFrets.add(centeredTextWithBackground(new Position2D(note.x, y), note.fret, Color.WHITE,
+						note.mute == Mute.FULL ? Color.GRAY : Color.BLACK));
+			}
+
+			if (note.length > 0) {
+				addNoteTail(note, y);
+			}
+		}
+
+		protected void addSimpleNote(final NoteData note) {
+			if (note.string >= stringPositions.length) {
+				return;
+			}
+
+			final int y = stringPositions[note.string];
+			addNoteShape(note, y);
 		}
 
 		public void addNote(final Note note, final int x, final int length, final boolean selected,
@@ -725,9 +774,10 @@ public class GuitarDrawer {
 			chordNames.draw(g);
 			noteTails.draw(g);
 
-			slideFrets.draw(g);
 			noteTailSelects.draw(g);
 			notes.draw(g);
+
+			slideFrets.draw(g);
 
 			g.setFont(bendValueFont);
 			bendValues.draw(g);
@@ -740,6 +790,218 @@ public class GuitarDrawer {
 
 			g.setFont(bendValueFont);
 			noteIds.draw(g);
+		}
+	}
+
+	private class RocksmithHighwayDrawer extends HighwayDrawer {
+		public RocksmithHighwayDrawer(final int strings) {
+			super(strings);
+		}
+
+		@Override
+		protected Font defineAnchorFont() {
+			return new Font(Font.DIALOG, Font.BOLD, 12);
+		}
+
+		@Override
+		protected Font defineBendFont() {
+			return new Font(Font.DIALOG, Font.BOLD, 12);
+		}
+
+		@Override
+		protected Font defineFretFont() {
+			return new Font(Font.SANS_SERIF, Font.BOLD, 12);
+		}
+
+		@Override
+		protected BufferedImage definePalmMuteImage() {
+			final int w = palmMuteMarker.getWidth();
+			final int h = palmMuteMarker.getHeight();
+			BufferedImage scaledPalmMuteImage = new BufferedImage(noteWidth, noteHeight, BufferedImage.TYPE_INT_ARGB);
+			final AffineTransform at = new AffineTransform();
+			at.scale(1.0 * noteWidth / w, 1.0 * noteHeight / h);
+			final AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+			scaleOp.filter(palmMuteMarker, scaledPalmMuteImage);
+			return scaledPalmMuteImage;
+		}
+
+		@Override
+		protected BufferedImage defineMuteImage() {
+			final int w = muteMarker.getWidth();
+			final int h = muteMarker.getHeight();
+			BufferedImage scaledMuteImage = new BufferedImage(noteWidth - noteWidth/4, noteHeight, BufferedImage.TYPE_INT_ARGB);
+			final AffineTransform at = new AffineTransform();
+			at.scale(1.0 * (noteWidth - noteWidth/4) / w, 1.0 * noteHeight / h);
+			final AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+			scaleOp.filter(muteMarker, scaledMuteImage);
+			return scaledMuteImage;
+		}
+
+		@Override
+		protected Color getNoteColor(final NoteData note) {
+			return noteColors[note.string];
+		}
+
+		@Override
+		protected void addNoteShape(final NoteData note, final int y) {
+			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+					.centered();
+
+			if (note.length > 0) {
+				addNoteTail(note, y);
+			}
+
+			addNormalNoteShape(y, note);
+
+			if (!note.linkPrevious) {
+				if (note.hopo == HOPO.HAMMER_ON) {
+					addHammerOnShape(y, note);
+				} else if (note.hopo == HOPO.PULL_OFF) {
+					addPullOffShape(y, note);
+				} else if (note.hopo == HOPO.TAP) {
+					addTapShape(y, note);
+				}
+
+				if (note.harmonic == Harmonic.NORMAL) {
+					addHarmonicShape(y, note);
+				} else if (note.harmonic == Harmonic.PINCH) {
+					addPinchHarmonicShape(y, note);
+				}
+
+				if (note.mute == Mute.PALM) {
+					addPalmMute(note, y);
+				}
+
+				if (note.mute == Mute.PALM) {
+					addPalmMute(note, y);
+				} else if (note.mute == Mute.FULL) {
+					addMute(note, y);
+				}
+
+				noteFrets.add(centeredTextWithBackground(new Position2D(note.x, y), note.fret, Color.WHITE, Color.BLACK));
+
+				if (note.accent) {
+					notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), getNoteColor(note).brighter(), 1));
+				}
+
+				if (note.selected) {
+					selects.add(strokedRectangle(position, selectColor, 2));
+				}
+			}
+		}
+
+		@Override
+		protected void addNormalNoteShape(final int y, final NoteData note) {
+			if (note.linkPrevious) {
+				return;
+			}
+
+			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+					.centered();
+
+			notes.add(filledRectangle(position, getNoteColor(note)));
+
+			notes.add(strokedRectangle(position.resized(1, 1, -2, -2), getNoteColor(note).brighter(), 2));
+		}
+
+		@Override
+		protected void addHammerOnShape(final int y, final NoteData note) {
+			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+					.centered();
+
+			notes.add(filledRectangle(position.resized(2, 2, -4, -4), Color.BLACK));
+
+			final Position2D a = new Position2D(note.x, y + noteHeight / 2);
+			final Position2D b = new Position2D(note.x - noteWidth / 2, y - noteHeight / 2);
+			final Position2D c = new Position2D(note.x + noteWidth / 2, y - noteHeight / 2);
+			notes.add(filledTriangle(a, b, c, getNoteColor(note).brighter()));
+			notes.add(filledTriangle(a.move(0, -3), b.move(3, 2), c.move(-3, 2), Color.WHITE));
+		}
+
+		@Override
+		protected void addPullOffShape(final int y, final NoteData note) {
+			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+					.centered();
+
+			notes.add(filledRectangle(position.resized(2, 2, -4, -4), Color.BLACK));
+
+			final Position2D a = new Position2D(note.x, y - noteHeight / 2);
+			final Position2D b = new Position2D(note.x - noteWidth / 2, y + noteHeight / 2);
+			final Position2D c = new Position2D(note.x + noteWidth / 2, y + noteHeight / 2);
+			notes.add(filledTriangle(a, b, c, getNoteColor(note).brighter()));
+			notes.add(filledTriangle(a.move(0, 3), b.move(3, -2), c.move(-3, -2), Color.WHITE));
+		}
+
+		@Override
+		protected void addTapShape(final int y, final NoteData note) {
+			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+					.centered();
+
+			final List<Position2D> positions = new ArrayList2<>(//
+					new Position2D(note.x - noteWidth / 2, y - noteHeight / 2), // top left
+					new Position2D(note.x - noteWidth / 2 + 4, y - noteHeight / 2), // top left inset
+					new Position2D(note.x, y + noteHeight / 2 - 4), // middle inset
+					new Position2D(note.x + noteWidth / 2 - 4, y - noteHeight / 2), // top right inset
+					new Position2D(note.x + noteWidth / 2, y - noteHeight / 2), // top right
+					new Position2D(note.x, y + noteHeight / 2)); // middle
+
+			notes.add(filledPolygon(positions, Color.BLACK));
+		}
+
+		@Override
+		protected void addHarmonicShape(final int y, final NoteData note) {
+			final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y - 1, noteWidth + 5,
+					noteWidth + 5).centered();
+			notes.add(filledOval(harmonicPosition, new Color(224, 224, 224)));
+			notes.add(filledOval(harmonicPosition.resized(5, 5, -10, -10), noteColors[note.string]));
+		}
+
+		@Override
+		protected void addPinchHarmonicShape(final int y, final NoteData note) {
+			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+					.centered();
+
+			notes.add(filledOval(position.resized(-2, -2, 3, 3), ColorLabel.BASE_BG_1.color()));
+			notes.add(lineHorizontal(note.x - noteWidth / 2 - 2, note.x + noteWidth / 2 + 2, y,
+					ColorLabel.valueOf("LANE_" + note.string).color()));
+			notes.add(filledOval(position.resized(2, 2, -5, -5), noteColors[note.string]));
+			notes.add(filledOval(position.resized(5, 5, -11, -11), ColorLabel.BASE_BG_1.color()));
+			notes.add(lineHorizontal(note.x - noteWidth / 2 + 5, note.x + noteWidth / 2 - 5, y,
+					ColorLabel.valueOf("LANE_" + note.string).color()));
+		}
+
+		@Override
+		protected void addPalmMute(final NoteData note, final int y) {
+			notes.add(centeredImage(new Position2D(note.x, y), palmMuteImage));
+		}
+
+		@Override
+		protected void addMute(final NoteData note, final int y) {
+			final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+					.centered();
+
+			notes.add(filledRectangle(position.resized(2, 2, -4, -4), Color.BLACK));
+
+			notes.add(centeredImage(new Position2D(note.x, y), muteImage));
+		}
+
+		@Override
+		protected void addSlideCommon(final NoteData note, final int y, final Color backgroundColor,
+									  final Color fretColor) {
+			addNormalNoteTailShape(note, y);
+
+			IntRange topBottom = getDefaultTailTopBottom(y);
+			topBottom = new IntRange(topBottom.min - 1, topBottom.max);
+			final int slideStartY = note.slideTo < note.fretNumber ? topBottom.min : topBottom.max;
+			final int slideEndY = note.slideTo < note.fretNumber ? topBottom.max : topBottom.min;
+			final Position2D slideStart = new Position2D(note.x + noteWidth / 2, slideStartY);
+			final Position2D slideEnd = new Position2D(note.x + note.length, slideEndY);
+
+			final int lineStartYOffset = note.slideTo < note.fretNumber ? 1 : -1;
+			final int lineEndYOffset = - lineStartYOffset;
+			notes.add(line(slideStart.move(0, lineStartYOffset), slideEnd.move(0, lineEndYOffset), Color.BLACK, 2));
+
+			slideFrets.add(centeredTextWithBackground(slideEnd, note.slideTo + "", backgroundColor, fretColor));
 		}
 	}
 
@@ -787,8 +1049,8 @@ public class GuitarDrawer {
 				.getSelectedSet().map(selection -> selection.id);
 	}
 
-	private void addToneChanges(final DrawingData drawingData, final ArrangementChart arrangement,
-			final int panelWidth) {
+	private void addToneChanges(final HighwayDrawer highwayDrawer, final ArrangementChart arrangement,
+								final int panelWidth) {
 		final HashSet2<Integer> selectedToneChangeIds = getSelectedIds(PositionType.TONE_CHANGE);
 		final ArrayList2<ToneChange> toneChanges = arrangement.toneChanges;
 
@@ -804,11 +1066,11 @@ public class GuitarDrawer {
 			}
 
 			final boolean selected = selectedToneChangeIds.contains(i);
-			drawingData.addToneChange(toneChange, x, selected);
+			highwayDrawer.addToneChange(toneChange, x, selected);
 		}
 	}
 
-	private void addAnchors(final DrawingData drawingData, final Level level, final int panelWidth) {
+	private void addAnchors(final HighwayDrawer highwayDrawer, final Level level, final int panelWidth) {
 		final HashSet2<Integer> selectedAnchorIds = getSelectedIds(PositionType.ANCHOR);
 
 		for (int i = 0; i < level.anchors.size(); i++) {
@@ -823,12 +1085,12 @@ public class GuitarDrawer {
 			}
 
 			final boolean selected = selectedAnchorIds.contains(i);
-			drawingData.addAnchor(anchor, x, selected);
+			highwayDrawer.addAnchor(anchor, x, selected);
 		}
 	}
 
-	private boolean addChord(final DrawingData drawingData, final ArrangementChart arrangement, final int panelWidth,
-			final Chord chord, final boolean selected, final boolean lastWasLinkNext) {
+	private boolean addChord(final HighwayDrawer highwayDrawer, final ArrangementChart arrangement, final int panelWidth,
+							 final Chord chord, final boolean selected, final boolean lastWasLinkNext) {
 		final int x = timeToX(chord.position(), data.time);
 		if (isPastRightEdge(x, panelWidth)) {
 			return false;
@@ -840,12 +1102,12 @@ public class GuitarDrawer {
 		}
 
 		final ChordTemplate chordTemplate = arrangement.chordTemplates.get(chord.chordId);
-		drawingData.addChord(chord, chordTemplate, x, length, selected, lastWasLinkNext, keyboardHandler.ctrl());
+		highwayDrawer.addChord(chord, chordTemplate, x, length, selected, lastWasLinkNext, keyboardHandler.ctrl());
 		return true;
 	}
 
-	private boolean addNote(final DrawingData drawingData, final int panelWidth, final Note note,
-			final boolean selected, final boolean lastWasLinkNext) {
+	private boolean addNote(final HighwayDrawer highwayDrawer, final int panelWidth, final Note note,
+							final boolean selected, final boolean lastWasLinkNext) {
 		final int x = timeToX(note.position(), data.time);
 		final int length = timeToXLength(note.length());
 		if (isPastRightEdge(x, panelWidth)) {
@@ -856,26 +1118,26 @@ public class GuitarDrawer {
 			return true;
 		}
 
-		drawingData.addNote(note, x, length, selected, lastWasLinkNext);
+		highwayDrawer.addNote(note, x, length, selected, lastWasLinkNext);
 
 		return true;
 	}
 
-	private boolean addChordOrNote(final DrawingData drawingData, final ArrangementChart arrangement,
-			final int panelWidth, final ChordOrNote chordOrNote, final boolean selected,
-			final boolean lastWasLinkNext) {
+	private boolean addChordOrNote(final HighwayDrawer highwayDrawer, final ArrangementChart arrangement,
+								   final int panelWidth, final ChordOrNote chordOrNote, final boolean selected,
+								   final boolean lastWasLinkNext) {
 		if (chordOrNote.chord != null) {
-			return addChord(drawingData, arrangement, panelWidth, chordOrNote.chord, selected, lastWasLinkNext);
+			return addChord(highwayDrawer, arrangement, panelWidth, chordOrNote.chord, selected, lastWasLinkNext);
 		}
 		if (chordOrNote.note != null) {
-			return addNote(drawingData, panelWidth, chordOrNote.note, selected, lastWasLinkNext);
+			return addNote(highwayDrawer, panelWidth, chordOrNote.note, selected, lastWasLinkNext);
 		}
 
 		return true;
 	}
 
-	private void addGuitarNotes(final DrawingData drawingData, final ArrangementChart arrangement,
-			final int panelWidth) {
+	private void addGuitarNotes(final HighwayDrawer highwayDrawer, final ArrangementChart arrangement,
+								final int panelWidth) {
 		final HashSet2<Integer> selectedNoteIds = getSelectedIds(PositionType.GUITAR_NOTE);
 		final ArrayList2<ChordOrNote> chordsAndNotes = data.getCurrentArrangementLevel().chordsAndNotes;
 
@@ -883,14 +1145,14 @@ public class GuitarDrawer {
 		for (int i = 0; i < chordsAndNotes.size(); i++) {
 			final ChordOrNote chordOrNote = chordsAndNotes.get(i);
 			final boolean selected = selectedNoteIds.contains(i);
-			addChordOrNote(drawingData, arrangement, panelWidth, chordOrNote, selected, lastWasLinkNext);
+			addChordOrNote(highwayDrawer, arrangement, panelWidth, chordOrNote, selected, lastWasLinkNext);
 
 			lastWasLinkNext = chordOrNote.chord != null ? chordOrNote.chord.linkNext : chordOrNote.note.linkNext;
 		}
 	}
 
-	private void addHandShapes(final DrawingData drawingData, final ArrangementChart arrangement, final Level level,
-			final int panelWidth) {
+	private void addHandShapes(final HighwayDrawer highwayDrawer, final ArrangementChart arrangement, final Level level,
+							   final int panelWidth) {
 		final HashSet2<Integer> selectedHandShapeIds = getSelectedIds(PositionType.HAND_SHAPE);
 
 		for (int i = 0; i < level.handShapes.size(); i++) {
@@ -912,7 +1174,7 @@ public class GuitarDrawer {
 				chordTemplate = new ChordTemplate();
 			}
 			final boolean selected = selectedHandShapeIds.contains(i);
-			drawingData.addHandShape(x, length, selected, handShape, chordTemplate);
+			highwayDrawer.addHandShape(x, length, selected, handShape, chordTemplate);
 		}
 	}
 
@@ -920,16 +1182,16 @@ public class GuitarDrawer {
 		final Level level = data.getCurrentArrangementLevel();
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 		final int strings = data.getCurrentArrangement().tuning.strings;
-		final DrawingData drawingData = new DrawingData(strings);
+		final HighwayDrawer highwayDrawer = getHighwayDrawer(strings);
 
 		final int panelWidth = chartPanel.getWidth();
 
-		addToneChanges(drawingData, arrangement, panelWidth);
-		addAnchors(drawingData, level, panelWidth);
-		addGuitarNotes(drawingData, arrangement, panelWidth);
-		addHandShapes(drawingData, arrangement, level, panelWidth);
+		addToneChanges(highwayDrawer, arrangement, panelWidth);
+		addAnchors(highwayDrawer, level, panelWidth);
+		addGuitarNotes(highwayDrawer, arrangement, panelWidth);
+		addHandShapes(highwayDrawer, arrangement, level, panelWidth);
 
-		drawingData.draw(g);
+		highwayDrawer.draw(g);
 	}
 
 	public void draw(final Graphics g) {

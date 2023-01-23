@@ -162,7 +162,7 @@ public class Config {
 		config.put("maxStrings", maxStrings + "");
 		config.put("FPS", FPS + "");
 
-		config.put("Theme", theme + "");
+		config.put("theme", theme + "");
 
 		config.put("windowPosX", windowPosX + "");
 		config.put("windowPosY", windowPosY + "");

@@ -174,7 +174,7 @@ public class Localization {
 		ARPEGGIO("Arpeggio"), //
 
 		MUTE("Mute:"), //
-		MUTE_STRING("String"), //
+		MUTE_FULL("Full"), //
 		MUTE_PALM("Palm"), //
 		MUTE_NONE("None"), //
 
