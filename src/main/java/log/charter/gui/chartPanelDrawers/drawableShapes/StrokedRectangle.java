@@ -29,6 +29,7 @@ class StrokedRectangle implements DrawableShape {
 	@Override
 	public void draw(final Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setColor(color);
 		g2.setStroke(new BasicStroke(thickness));
 		g2.drawRect(position.x, position.y, position.width, position.height);

@@ -15,26 +15,11 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.tailHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.clippedShapes;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledPolygon;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.line;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineHorizontal;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedTriangle;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.text;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.textWithBackground;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.*;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -768,6 +753,8 @@ public class GuitarDrawer {
 		}
 
 		public void draw(final Graphics g) {
+			Graphics2D g2 = (Graphics2D) g;
+
 			g.setFont(anchorFont);
 			toneChanges.draw(g);
 			anchors.draw(g);
@@ -986,7 +973,7 @@ public class GuitarDrawer {
 		}
 
 		@Override
-		protected void addSlideCommon(final NoteData note, final int y, final Color backgroundColor,
+		protected void addSlideCommon(final NoteData note, final int y, final Color outlineColor,
 									  final Color fretColor) {
 			addNormalNoteTailShape(note, y);
 
@@ -1001,7 +988,7 @@ public class GuitarDrawer {
 			final int lineEndYOffset = - lineStartYOffset;
 			notes.add(line(slideStart.move(0, lineStartYOffset), slideEnd.move(0, lineEndYOffset), Color.BLACK, 2));
 
-			slideFrets.add(centeredTextWithBackground(slideEnd, note.slideTo + "", backgroundColor, fretColor));
+			slideFrets.add(centeredTextWithBackground(slideEnd, note.slideTo + "", outlineColor, fretColor));
 		}
 	}
 

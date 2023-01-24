@@ -27,6 +27,7 @@ class Line implements DrawableShape {
 	@Override
 	public void draw(final Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setColor(color);
 		g2.setStroke(new BasicStroke(thickness));
 		g2.drawLine(startPosition.x, startPosition.y, endPosition.x, endPosition.y);

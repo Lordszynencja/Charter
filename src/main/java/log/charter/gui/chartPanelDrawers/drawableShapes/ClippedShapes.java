@@ -1,7 +1,6 @@
 package log.charter.gui.chartPanelDrawers.drawableShapes;
 
-import java.awt.Graphics;
-import java.awt.Shape;
+import java.awt.*;
 import java.util.List;
 
 class ClippedShapes implements DrawableShape {
@@ -15,13 +14,16 @@ class ClippedShapes implements DrawableShape {
 
 	@Override
 	public void draw(final Graphics g) {
-		final Shape oldClip = g.getClip();
-		g.setClip(position.x, position.y, position.width, position.height);
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		final Shape oldClip = g2.getClip();
+		g2.setClip(position.x, position.y, position.width, position.height);
 		for (final DrawableShape shape : shapes) {
 			shape.draw(g);
 		}
 
-		g.setClip(oldClip);
+		g2.setClip(oldClip);
 	}
 
 }

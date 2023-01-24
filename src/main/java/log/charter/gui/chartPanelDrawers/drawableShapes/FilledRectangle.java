@@ -1,7 +1,6 @@
 package log.charter.gui.chartPanelDrawers.drawableShapes;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 
 class FilledRectangle implements DrawableShape {
 	private final ShapePositionWithSize position;
@@ -19,8 +18,10 @@ class FilledRectangle implements DrawableShape {
 
 	@Override
 	public void draw(final Graphics g) {
-		g.setColor(color);
-		g.fillRect(position.x, position.y, position.width, position.height);
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setColor(color);
+		g2.fillRect(position.x, position.y, position.width, position.height);
 	}
 
 	public FilledRectangle centered() {
