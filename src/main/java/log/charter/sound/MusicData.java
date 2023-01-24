@@ -15,6 +15,7 @@ import java.util.List;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
 
+import log.charter.io.Logger;
 import log.charter.sound.HighPassFilter.PassType;
 import log.charter.sound.mp3.Mp3Loader;
 import log.charter.sound.ogg.OggLoader;
@@ -32,14 +33,18 @@ public class MusicData {
 	}
 
 	public static MusicData readFile(final File file) {
-		if (file.getName().endsWith(".mp3")) {
-			if (file.exists()) {
-				return Mp3Loader.load(file.getAbsolutePath());
+		try {
+			if (file.getName().endsWith(".mp3")) {
+				if (file.exists()) {
+					return Mp3Loader.load(file.getAbsolutePath());
+				}
+			} else if (file.getName().endsWith(".ogg")) {
+				if (file.exists()) {
+					return OggLoader.load(file.getAbsolutePath());
+				}
 			}
-		} else if (file.getName().endsWith(".ogg")) {
-			if (file.exists()) {
-				return OggLoader.load(file.getAbsolutePath());
-			}
+		} catch (final Exception e) {
+			Logger.error("Couldn't load file " + file, e);
 		}
 
 		return null;

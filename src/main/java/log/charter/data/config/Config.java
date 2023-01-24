@@ -36,6 +36,7 @@ public class Config {
 	public static boolean createDefaultStretchesInBackground = true;
 	public static int frets = 24;
 	public static int maxStrings = 6;
+	public static int maxBendValue = 3;
 	public static int FPS = 60;
 
 	public static int windowPosX = 100;

@@ -9,9 +9,9 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
-import log.charter.gui.chartPanelDrawers.instruments.GuitarDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.TempoMapDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
 import log.charter.gui.handlers.KeyboardHandler;
 
 public class ArrangementDrawer {
