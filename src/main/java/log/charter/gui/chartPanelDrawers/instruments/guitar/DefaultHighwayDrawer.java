@@ -416,15 +416,20 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 				int fragmentX = x;
 				final int y0 = y + tailHeight / 4;
 				final int y1 = y + tailHeight / 2;
-				while (fragmentX < x + length) {
+				while (fragmentX <= x + length - 40) {
 					noteTails.add(filledPolygon(color, //
-							new Position2D(x, y), //
-							new Position2D(x + 40, y), //
-							new Position2D(x + 40, y1), //
-							new Position2D(x + 20, y0), //
-							new Position2D(x, y1)));
+							new Position2D(fragmentX, y), //
+							new Position2D(fragmentX + 40, y), //
+							new Position2D(fragmentX + 40, y1), //
+							new Position2D(fragmentX + 20, y0), //
+							new Position2D(fragmentX, y1)));
 					fragmentX += 40;
 				}
+
+				noteTails.add(filledPolygon(color, //
+						new Position2D(fragmentX, y), //
+						new Position2D(x + length, y), //
+						new Position2D(fragmentX, y1)));
 			} else if (note.vibrato != null) {
 				final int vibratoSpeed = (int) (note.vibrato * Zoom.zoom * 1.5);
 				final int vibratoLineHeight = topBottom.max - topBottom.min;
@@ -442,16 +447,22 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 				final int y1 = y + tailHeight / 4;
 				final int y2 = y - tailHeight / 4;
 				final int y3 = y - tailHeight / 2;
-				while (fragmentX < x + length) {
+				while (fragmentX <= x + length - 40) {
 					noteTails.add(filledPolygon(color, //
-							new Position2D(x, y0), //
-							new Position2D(x + 20, y1), //
-							new Position2D(x + 40, y0), //
-							new Position2D(x + 40, y2), //
-							new Position2D(x + 20, y3), //
-							new Position2D(x, y2)));
+							new Position2D(fragmentX, y0), //
+							new Position2D(fragmentX + 20, y1), //
+							new Position2D(fragmentX + 40, y0), //
+							new Position2D(fragmentX + 40, y2), //
+							new Position2D(fragmentX + 20, y3), //
+							new Position2D(fragmentX, y2)));
 					fragmentX += 40;
 				}
+
+				noteTails.add(filledPolygon(color, //
+						new Position2D(fragmentX, y0), //
+						new Position2D(x + length, y1), //
+						new Position2D(x + length, y3), //
+						new Position2D(fragmentX, y2)));
 			}
 		} else {
 			final ShapePositionWithSize position = new ShapePositionWithSize(x, topBottom.min, length,
