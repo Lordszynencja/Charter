@@ -1,7 +1,6 @@
 package log.charter.gui.chartPanelDrawers.drawableShapes;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 
 import log.charter.util.Position2D;
 
@@ -20,7 +19,9 @@ class FilledTriangle implements DrawableShape {
 
 	@Override
 	public void draw(final Graphics g) {
-		g.setColor(color);
-		g.fillPolygon(new int[] { a.x, b.x, c.x }, new int[] { a.y, b.y, c.y }, 3);
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setColor(color);
+		g2.fillPolygon(new int[] { a.x, b.x, c.x }, new int[] { a.y, b.y, c.y }, 3);
 	}
 }

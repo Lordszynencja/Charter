@@ -1,7 +1,6 @@
 package log.charter.gui.chartPanelDrawers.drawableShapes;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 
 import log.charter.util.Position2D;
 
@@ -21,14 +20,16 @@ class TextWithBackground implements DrawableShape {
 
 	@Override
 	public void draw(final Graphics g) {
-		final int width = g.getFontMetrics().stringWidth(text);
-		final int height = g.getFontMetrics().getAscent() - g.getFontMetrics().getDescent();
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		final int width = g2.getFontMetrics().stringWidth(text);
+		final int height = g2.getFontMetrics().getAscent() - g.getFontMetrics().getDescent();
 
-		g.setColor(backgroundColor);
-		g.fillRect(position.x, position.y - height - 2, width + 2, height + 5);
+		g2.setColor(backgroundColor);
+		g2.fillRect(position.x, position.y - height - 2, width + 2, height + 5);
 
-		g.setColor(textColor);
-		g.drawString(text, position.x + 1, position.y - 1);
+		g2.setColor(textColor);
+		g2.drawString(text, position.x + 1, position.y - 1);
 	}
 
 }

@@ -5,6 +5,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 import static log.charter.data.config.Config.gridSize;
+import static log.charter.data.config.Config.maxBendValue;
 import static log.charter.song.notes.IPosition.findFirstIdAfterEqual;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
@@ -30,13 +31,15 @@ import log.charter.util.Position2D;
 
 public class BendEditor extends JComponent implements MouseListener, MouseMotionListener {
 	private static final int beatWidth = 200;
+	private static final int height = 40 + 40 * maxBendValue;
+	private static final int maxBendInternalValue = maxBendValue * 4;
 
 	private static int getXFromBendPosition(final double position) {
 		return 20 + (int) round(position * beatWidth);
 	}
 
 	private static int getYFromBendValue(final int value) {
-		return 140 - (int) round(value * 10);
+		return height - 20 - (int) round(value * 10);
 	}
 
 	private static double getPositionFromX(final int x) {
@@ -49,7 +52,7 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 		final int y0 = getYFromBendValue(0);
 		final int y1 = getYFromBendValue(1);
 		int value = (int) round(1.0 * (y0 - y) / (y0 - y1));
-		value = max(0, min(12, value));
+		value = max(0, min(maxBendInternalValue, value));
 
 		return value;
 	}
@@ -122,7 +125,7 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 		noteStartPosition = beatsMap.getPositionInBeats(notePosition) - firstBeatId;
 		noteEndPosition = beatsMap.getPositionInBeats(notePosition + noteLength) - firstBeatId;
 
-		final Dimension size = new Dimension(41 + (lastBeatId - firstBeatId) * beatWidth, 160);
+		final Dimension size = new Dimension(41 + (lastBeatId - firstBeatId) * beatWidth, height);
 		setMinimumSize(size);
 		setMaximumSize(size);
 		setPreferredSize(size);
@@ -149,7 +152,7 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 				final double positionInBeats = beatsMap.getPositionInBeats(fullPosition);
 				final double position = positionInBeats - firstBeatId;
 				int value = (int) round(bendValueToEdit.bendValue.doubleValue() * 4);
-				value = max(0, min(12, value));
+				value = max(0, min(maxBendInternalValue, value));
 
 				bendValues.add(new EditorBendValue(position, value));
 			}
@@ -233,15 +236,16 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 		g.setColor(ColorLabel.valueOf("NOTE_" + string).color());
 		final int noteX0 = getXFromBendPosition(noteStartPosition);
 		final int noteX1 = getXFromBendPosition(noteEndPosition);
-		g.fillRect(noteX0, getYFromBendValue(13), noteX1 - noteX0, getYFromBendValue(12) - getYFromBendValue(13));
+		g.fillRect(noteX0, getYFromBendValue(maxBendInternalValue + 1), noteX1 - noteX0,
+				getYFromBendValue(maxBendInternalValue) - getYFromBendValue(maxBendInternalValue + 1));
 
 		g.setColor(ColorLabel.BASE_2.color());
 		for (int i = 0; i <= lastBeatId - firstBeatId; i++) {
 			final int x = getXFromBendPosition(i);
-			g.drawLine(x, 10, x, 150);
+			g.drawLine(x, 10, x, height - 10);
 		}
 
-		for (int i = 0; i <= 12; i++) {
+		for (int i = 0; i <= maxBendInternalValue; i++) {
 			g.setColor((i % 4 == 0 ? ColorLabel.BASE_2 : ColorLabel.BASE_1).color());
 			final int y = getYFromBendValue(i);
 			g.drawLine(10, y, getWidth(), y);
@@ -249,7 +253,7 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 
 		g.setColor(ColorLabel.BASE_TEXT.color());
 		g.setFont(new Font(Font.DIALOG, Font.PLAIN, 10));
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i <= maxBendValue; i++) {
 			final int y = getYFromBendValue(i * 4) + 4;
 			g.drawString(i + "", 2, y);
 		}
@@ -261,7 +265,7 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 			g.setColor(ColorLabel.HIGHLIGHT.color());
 			if (highlightedBend.value == -1) {
 				final int x = highlightedBend.x;
-				g.drawLine(x, getYFromBendValue(12), x, getYFromBendValue(0));
+				g.drawLine(x, getYFromBendValue(maxBendInternalValue), x, getYFromBendValue(0));
 			} else {
 				final int x = highlightedBend.x - 2;
 				final int y = getYFromBendValue(highlightedBend.value) - 2;

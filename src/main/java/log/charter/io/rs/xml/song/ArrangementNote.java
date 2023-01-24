@@ -94,7 +94,7 @@ public class ArrangementNote {
 	}
 
 	private void setUpMute(final Note note) {
-		if (note.mute == Mute.STRING) {
+		if (note.mute == Mute.FULL) {
 			mute = 1;
 		} else if (note.mute == Mute.PALM) {
 			palmMute = 1;

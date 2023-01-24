@@ -119,7 +119,7 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 		addLabelExact(muteLabelY, 20, Label.MUTE);
 		final int muteRadioY = getY(row++) - 3;
 		addConfigRadioButtonsExact(muteRadioY, 30, radioButtonWidth, mute, val -> mute = val, //
-				asList(new Pair<>(Mute.STRING, Label.MUTE_STRING), //
+				asList(new Pair<>(Mute.FULL, Label.MUTE_FULL), //
 						new Pair<>(Mute.PALM, Label.MUTE_PALM), //
 						new Pair<>(Mute.NONE, Label.MUTE_NONE)));
 

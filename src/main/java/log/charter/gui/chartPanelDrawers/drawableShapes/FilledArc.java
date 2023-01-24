@@ -1,7 +1,6 @@
 package log.charter.gui.chartPanelDrawers.drawableShapes;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 
 class FilledArc implements DrawableShape {
 	private final ShapePositionWithSize position;
@@ -19,7 +18,9 @@ class FilledArc implements DrawableShape {
 
 	@Override
 	public void draw(final Graphics g) {
-		g.setColor(color);
-		g.fillArc(position.x, position.y, position.width, position.height, startAngle, arcAngle);
+		Graphics2D g2 = (Graphics2D)g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setColor(color);
+		g2.fillArc(position.x, position.y, position.width, position.height, startAngle, arcAngle);
 	}
 }
