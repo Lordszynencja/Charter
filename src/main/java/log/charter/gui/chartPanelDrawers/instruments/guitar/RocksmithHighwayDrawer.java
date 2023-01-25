@@ -183,11 +183,17 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 
 	@Override
 	protected void addHarmonicShape(final int y, final NoteData note) {
-		final int size = Math.min(noteWidth, noteHeight);
-		final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y, size,
-				size).centered();
+		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
+				.centered();
+
+		notes.add(filledRectangle(position.resized(2, 2, -4, -4), Color.BLACK));
+
+		final int harmonicSize = Math.min(noteWidth, noteHeight) + 2;
+		final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y, harmonicSize,
+				harmonicSize).centered();
 		notes.add(filledOval(harmonicPosition, new Color(224, 224, 224)));
-		notes.add(filledOval(harmonicPosition.resized(5, 5, -10, -10), noteColors[note.string]));
+		notes.add(filledOval(harmonicPosition.resized(5, 5, -10, -10), Color.BLACK));
+		notes.add(filledOval(harmonicPosition.resized(10, 10, -20, -20), new Color(224, 224, 224)));
 	}
 
 	@Override
@@ -195,13 +201,16 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
-		notes.add(filledOval(position.resized(-2, -2, 3, 3), ColorLabel.BASE_BG_1.color()));
-		notes.add(lineHorizontal(note.x - noteWidth / 2 - 2, note.x + noteWidth / 2 + 2, y,
-				ColorLabel.valueOf("LANE_" + note.string).color()));
-		notes.add(filledOval(position.resized(2, 2, -5, -5), noteColors[note.string]));
-		notes.add(filledOval(position.resized(5, 5, -11, -11), ColorLabel.BASE_BG_1.color()));
-		notes.add(lineHorizontal(note.x - noteWidth / 2 + 5, note.x + noteWidth / 2 - 5, y,
-				ColorLabel.valueOf("LANE_" + note.string).color()));
+		notes.add(filledOval(position, Color.BLACK));
+		notes.add(filledOval(position.resized(1, 1, -2, -2), getNoteColor(note)));
+		notes.add(filledOval(position.resized(3, 3, -6, -6), Color.BLACK));
+
+		final int harmonicSize = Math.min(noteWidth, noteHeight) -3;
+		final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y, harmonicSize,
+				harmonicSize).centered();
+
+		notes.add(filledOval(harmonicPosition, getNoteColor(note)));
+		notes.add(filledOval(harmonicPosition.resized(5,5, -10, -10), Color.BLACK));
 	}
 
 	@Override
