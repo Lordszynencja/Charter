@@ -183,8 +183,9 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 
 	@Override
 	protected void addHarmonicShape(final int y, final NoteData note) {
-		final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y - 1, noteWidth + 5,
-				noteWidth + 5).centered();
+		final int size = Math.min(noteWidth, noteHeight);
+		final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y, size,
+				size).centered();
 		notes.add(filledOval(harmonicPosition, new Color(224, 224, 224)));
 		notes.add(filledOval(harmonicPosition.resized(5, 5, -10, -10), noteColors[note.string]));
 	}
