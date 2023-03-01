@@ -58,9 +58,9 @@ public class ArrangementFixer {
 		chordsWithoutHandShapes.addAll(chordsForHandShapes);
 
 		for (final Chord chord : chordsWithoutHandShapes) {
-			final int endPosition = chord.position();
+			final int endPosition = chord.endPosition();
 
-			final int length = max(1, endPosition - chord.position());
+			final int length = max(50, endPosition - chord.position());
 			final HandShape handShape = new HandShape(chord, length);
 			level.handShapes.add(handShape);
 		}

@@ -134,8 +134,7 @@ public class ArrangementChord implements IPosition {
 
 			chordNote.bendValues = new CountedList<>();
 			for (final BendValue bendValue : bendValues) {
-				if (bendValue.position() >= chordNote.time
-						&& bendValue.position() <= chordNote.time + chordNote.sustain) {
+				if (bendValue.position() >= 0 && bendValue.position() <= chordNote.sustain) {
 					chordNote.bendValues.list.add(new ArrangementBendValue(bendValue, chord.position()));
 				}
 			}
