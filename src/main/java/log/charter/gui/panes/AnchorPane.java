@@ -49,6 +49,7 @@ public class AnchorPane extends ParamsPane {
 		final JTextField input = (JTextField) components.getLast();
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
+
 		addIntegerConfigValue(row++, 20, 100, Label.ANCHOR_WIDTH, width, 30, createIntValidator(1, Config.frets, false),
 				val -> width = val, false);
 		final JTextField AnchorWidthInput = (JTextField) components.getLast();

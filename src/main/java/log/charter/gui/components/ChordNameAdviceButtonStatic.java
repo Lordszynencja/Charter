@@ -1,7 +1,5 @@
 package log.charter.gui.components;
 
-import static log.charter.util.chordRecognition.ChordNameSuggester.suggestChordNames;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,13 +12,14 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
 
+import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.song.configs.Tuning;
+import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.chordRecognition.ChordNameSuggester;
 
-public class ChordNameAdviceButton extends JButton implements ActionListener, MouseListener {
+public class ChordNameAdviceButtonStatic extends JButton implements ActionListener, MouseListener {
 	private static final long serialVersionUID = 1L;
 
 	private class PopupLabelMouseListener implements MouseListener {
@@ -59,18 +58,23 @@ public class ChordNameAdviceButton extends JButton implements ActionListener, Mo
 		}
 	}
 
-	private final RowedPanel parent;
+	private final ParamsPane parent;
 	private final ArrayList2<JLabel> popups = new ArrayList2<>();
-	private final Supplier<Tuning> tuningSupplier;
-	private final Supplier<HashMap2<Integer, Integer>> fretsSupplier;
+	private final ChartData data;
+	private final Supplier<ChordTemplate> chordTemplateSupplier;
 	private final Consumer<String> onChoose;
 
-	public ChordNameAdviceButton(final Label label, final RowedPanel parent, final Supplier<Tuning> tuningSupplier,
-			final Supplier<HashMap2<Integer, Integer>> fretsSupplier, final Consumer<String> onChoose) {
+	public ChordNameAdviceButtonStatic(final Label label, final ParamsPane parent, final ChartData data,
+			final ChordTemplate chordTemplate, final Consumer<String> onChoose) {
+		this(label, parent, data, () -> chordTemplate, onChoose);
+	}
+
+	public ChordNameAdviceButtonStatic(final Label label, final ParamsPane parent, final ChartData data,
+			final Supplier<ChordTemplate> chordTemplateSupplier, final Consumer<String> onChoose) {
 		super(label.label());
 		this.parent = parent;
-		this.tuningSupplier = tuningSupplier;
-		this.fretsSupplier = fretsSupplier;
+		this.data = data;
+		this.chordTemplateSupplier = chordTemplateSupplier;
 		this.onChoose = onChoose;
 
 		addActionListener(this);
@@ -111,7 +115,8 @@ public class ChordNameAdviceButton extends JButton implements ActionListener, Mo
 	public void actionPerformed(final ActionEvent e) {
 		removePopup();
 
-		final ArrayList2<String> suggestedChordNames = suggestChordNames(tuningSupplier.get(), fretsSupplier.get());
+		final ArrayList2<String> suggestedChordNames = ChordNameSuggester
+				.suggestChordNames(data.getCurrentArrangement().tuning, chordTemplateSupplier.get().frets);
 
 		final int x = getX();
 		int y = getY() + getHeight();

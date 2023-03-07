@@ -29,6 +29,7 @@ public class Chord extends GuitarSound {
 		mute = Mute.fromArrangmentChord(arrangementChord);
 		accent = mapInteger(arrangementChord.accent);
 		linkNext = mapInteger(arrangementChord.linkNext);
+		ignore = mapInteger(arrangementChord.ignore);
 
 		if (arrangementChord.chordNotes != null) {
 			for (final ArrangementNote arrangementNote : arrangementChord.chordNotes) {

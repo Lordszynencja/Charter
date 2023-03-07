@@ -39,6 +39,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
+import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.CharterFrameComponentListener;
 import log.charter.gui.handlers.CharterFrameWindowFocusListener;
@@ -58,6 +59,7 @@ public class CharterFrame extends JFrame {
 
 	private final CharterMenuBar charterMenuBar = new CharterMenuBar();
 	private final ChartPanel chartPanel = new ChartPanel();
+	private final CurrentSelectionEditor currentSelectionEditor = new CurrentSelectionEditor();
 	private final JScrollBar scrollBar = createScrollBar();
 	private final JLabel helpLabel = createHelp();
 	private final JTabbedPane tabs = createTabs();
@@ -116,13 +118,14 @@ public class CharterFrame extends JFrame {
 				selectionManager, undoSystem);
 		songFileHandler.init(arrangementFixer, arrangementValidator, audioHandler, data, this, charterMenuBar,
 				modeManager, undoSystem);
-		selectionManager.init(data, modeManager, mouseButtonPressReleaseHandler);
+		selectionManager.init(data, this, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 
 		charterMenuBar.init(audioDrawer, audioHandler, copyManager, data, this, keyboardHandler, modeManager,
 				selectionManager, songFileHandler, undoSystem);
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
+		currentSelectionEditor.init(data, selectionManager, undoSystem);
 
 		add(chartPanel);
 		add(scrollBar);
@@ -256,6 +259,7 @@ public class CharterFrame extends JFrame {
 		textArea.setCaretColor(ColorLabel.BASE_TEXT.color());
 
 		final JTabbedPane tabs = new JTabbedPane(JTabbedPane.TOP);
+		tabs.addTab("Quick edit", new JScrollPane(currentSelectionEditor));
 		tabs.addTab("Help", helpLabel);
 		tabs.addTab("Text", new JScrollPane(textArea));
 
@@ -302,6 +306,10 @@ public class CharterFrame extends JFrame {
 
 	public String showInputDialog(final String msg, final String value) {
 		return JOptionPane.showInputDialog(this, msg, value);
+	}
+
+	public void selectionChanged() {
+		currentSelectionEditor.selectionChanged();
 	}
 
 	private void updateTitle() {

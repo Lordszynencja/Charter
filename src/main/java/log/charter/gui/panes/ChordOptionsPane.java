@@ -11,7 +11,7 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.ChordTemplateEditor;
+import log.charter.gui.components.ChordTemplateEditorDialog;
 import log.charter.song.ChordTemplate;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
@@ -22,7 +22,7 @@ import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 
-public class ChordOptionsPane extends ChordTemplateEditor {
+public class ChordOptionsPane extends ChordTemplateEditorDialog {
 	private static final long serialVersionUID = 1L;
 
 	private static PaneSizes getSizes() {
@@ -58,13 +58,14 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 	private Harmonic harmonic = Harmonic.NONE;
 	private boolean accent;
 	private boolean linkNext;
+	private boolean ignore;
 	private Integer slideTo;
 	private boolean unpitchedSlide;
 	private boolean tremolo;
 
 	public ChordOptionsPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final ArrayList2<ChordOrNote> notes) {
-		super(data, frame, Label.CHORD_OPTIONS_PANE, 19 + data.getCurrentArrangement().tuning.strings, getSizes(),
+		super(data, frame, Label.CHORD_OPTIONS_PANE, 20 + data.getCurrentArrangement().tuning.strings, getSizes(),
 				prepareTemplateFromData(data, notes.get(0)));
 		this.undoSystem = undoSystem;
 
@@ -88,6 +89,7 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 		harmonic = note.harmonic;
 		accent = note.accent;
 		linkNext = note.linkNext;
+		ignore = note.ignore;
 		slideTo = note.slideTo;
 		unpitchedSlide = note.unpitchedSlide;
 		tremolo = note.tremolo;
@@ -99,6 +101,7 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 		harmonic = chord.harmonic;
 		accent = chord.accent;
 		linkNext = chord.linkNext;
+		ignore = chord.ignore;
 		slideTo = chord.slideTo;
 		unpitchedSlide = chord.unpitchedSlide;
 		tremolo = chord.tremolo;
@@ -142,7 +145,8 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 
 		row++;
 		addConfigCheckbox(row, 20, 45, Label.ACCENT, accent, val -> accent = val);
-		addConfigCheckbox(row++, 110, 0, Label.LINK_NEXT, linkNext, val -> linkNext = val);
+		addConfigCheckbox(row, 110, 0, Label.LINK_NEXT, linkNext, val -> linkNext = val);
+		addConfigCheckbox(row++, 210, 0, Label.IGNORE_NOTE, ignore, val -> ignore = val);
 
 		row++;
 		addIntegerConfigValue(row, 20, 45, Label.SLIDE_PANE_FRET, slideTo, 30,
@@ -166,6 +170,7 @@ public class ChordOptionsPane extends ChordTemplateEditor {
 		chord.harmonic = harmonic;
 		chord.accent = accent;
 		chord.linkNext = linkNext;
+		chord.ignore = ignore;
 		chord.slideTo = slideTo;
 		chord.unpitchedSlide = unpitchedSlide;
 		chord.tremolo = tremolo;

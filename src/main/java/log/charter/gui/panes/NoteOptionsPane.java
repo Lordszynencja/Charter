@@ -47,6 +47,7 @@ public class NoteOptionsPane extends ParamsPane {
 	private Harmonic harmonic;
 	private boolean accent;
 	private boolean linkNext;
+	private boolean ignore;
 	private Integer slideTo;
 	private boolean unpitchedSlide;
 	private Integer vibrato;
@@ -54,7 +55,7 @@ public class NoteOptionsPane extends ParamsPane {
 
 	public NoteOptionsPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final ArrayList2<ChordOrNote> notes) {
-		super(frame, Label.NOTE_OPTIONS_PANE, 20, getSizes());
+		super(frame, Label.NOTE_OPTIONS_PANE, 21, getSizes());
 		this.undoSystem = undoSystem;
 
 		chordsAndNotes = notes;
@@ -123,7 +124,8 @@ public class NoteOptionsPane extends ParamsPane {
 
 		row++;
 		addConfigCheckbox(row, 20, 45, Label.ACCENT, accent, val -> accent = val);
-		addConfigCheckbox(row++, 110, 0, Label.LINK_NEXT, linkNext, val -> linkNext = val);
+		addConfigCheckbox(row, 110, 0, Label.LINK_NEXT, linkNext, val -> linkNext = val);
+		addConfigCheckbox(row++, 210, 0, Label.IGNORE_NOTE, ignore, val -> ignore = val);
 
 		addIntegerConfigValue(row, 20, 45, Label.SLIDE_PANE_FRET, slideTo, 40,
 				createIntValidator(1, Config.frets, true), val -> slideTo = val, false);
@@ -152,6 +154,7 @@ public class NoteOptionsPane extends ParamsPane {
 		harmonic = note.harmonic;
 		accent = note.accent;
 		linkNext = note.linkNext;
+		ignore = note.ignore;
 		slideTo = note.slideTo;
 		unpitchedSlide = note.unpitchedSlide;
 		vibrato = note.vibrato;
@@ -167,6 +170,7 @@ public class NoteOptionsPane extends ParamsPane {
 		harmonic = Harmonic.NONE;
 		accent = chord.accent;
 		linkNext = chord.linkNext;
+		ignore = chord.ignore;
 		slideTo = chord.slideTo;
 		unpitchedSlide = chord.unpitchedSlide;
 		vibrato = null;
@@ -184,6 +188,7 @@ public class NoteOptionsPane extends ParamsPane {
 		note.unpitchedSlide = unpitchedSlide;
 		note.accent = accent;
 		note.linkNext = linkNext;
+		note.ignore = ignore;
 		note.vibrato = vibrato;
 		note.tremolo = tremolo;
 	}
@@ -198,6 +203,7 @@ public class NoteOptionsPane extends ParamsPane {
 		note.unpitchedSlide = unpitchedSlide;
 		note.accent = accent;
 		note.linkNext = linkNext;
+		note.ignore = ignore;
 		note.vibrato = vibrato;
 		note.tremolo = tremolo;
 		chordOrNote.note = note;

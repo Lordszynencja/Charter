@@ -36,6 +36,8 @@ public class ArrangementChord implements IPosition {
 	public Integer accent;
 	@XStreamAsAttribute
 	public Integer linkNext;
+	@XStreamAsAttribute
+	public Integer ignore;
 	@XStreamImplicit
 	public ArrayList2<ArrangementNote> chordNotes;
 
@@ -47,6 +49,7 @@ public class ArrangementChord implements IPosition {
 		chordId = chord.chordId;
 		accent = chord.accent ? 1 : null;
 		linkNext = chord.linkNext ? 1 : null;
+		ignore = chord.ignore ? 1 : null;
 
 		setUpMute(chord);
 		setChordNotes(chord, chordTemplate, nextPosition);

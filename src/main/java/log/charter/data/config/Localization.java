@@ -196,6 +196,7 @@ public class Localization {
 
 		ACCENT("Accent"), //
 		LINK_NEXT("Link next"), //
+		IGNORE_NOTE("Ignore"), //
 		VIBRATO("Vibrato"), //
 		TREMOLO("Tremolo"), //
 

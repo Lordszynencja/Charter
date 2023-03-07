@@ -5,11 +5,11 @@ import javax.swing.JCheckBox;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.ChordTemplateEditor;
+import log.charter.gui.components.ChordTemplateEditorDialog;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 
-public class HandShapePane extends ChordTemplateEditor {
+public class HandShapePane extends ChordTemplateEditorDialog {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private static PaneSizes getSizes() {

@@ -17,7 +17,7 @@ import javax.swing.event.DocumentListener;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class AutocompleteInput<T> extends JTextField implements DocumentListener, MouseListener {
+public class AutocompleteInputDialog<T> extends JTextField implements DocumentListener, MouseListener {
 	private static class AutocompleteValue<T> {
 		public final String text;
 		public final T value;
@@ -66,7 +66,7 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 
 	private static final long serialVersionUID = 2783139051300279130L;
 
-	private final RowedPanel parent;
+	private final ParamsPane parent;
 
 	private final ArrayList2<JLabel> popups = new ArrayList2<>();
 
@@ -76,7 +76,7 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 
 	private boolean disableDocumentUpdateHandling = false;
 
-	public AutocompleteInput(final RowedPanel parent, final int columns, final String text,
+	public AutocompleteInputDialog(final ParamsPane parent, final int columns, final String text,
 			final Function<String, ArrayList2<T>> possibleValuesGetter, final Function<T, String> formatter,
 			final Consumer<T> onSelect) {
 		super(columns);

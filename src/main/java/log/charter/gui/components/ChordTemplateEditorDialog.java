@@ -23,7 +23,7 @@ import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 
-public class ChordTemplateEditor extends ParamsPane implements MouseListener {
+public class ChordTemplateEditorDialog extends ParamsPane implements MouseListener {
 	private static final long serialVersionUID = 1L;
 
 	private static final HashMap2<String, Integer> fingerIds = new HashMap2<>();
@@ -43,12 +43,12 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 	protected final ChartData data;
 	protected final ChordTemplate chordTemplate;
 
-	private AutocompleteInput<ChordTemplate> chordNameInput;
+	private AutocompleteInputDialog<ChordTemplate> chordNameInput;
 	private final ArrayList2<TextInputWithValidation> fretInputs = new ArrayList2<>();
 	private final ArrayList2<TextInputWithValidation> fingerInputs = new ArrayList2<>();
-	private ChordTemplatePreview chordTemplatePreview;
+	private ChordTemplateEditorDialogPreview chordTemplatePreview;
 
-	protected ChordTemplateEditor(final ChartData data, final CharterFrame frame, final Label title, final int rows,
+	protected ChordTemplateEditorDialog(final ChartData data, final CharterFrame frame, final Label title, final int rows,
 			final PaneSizes sizes, final ChordTemplate chordTemplate) {
 		super(frame, title, rows, sizes);
 		this.data = data;
@@ -60,7 +60,7 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 	}
 
 	protected void addChordNameSuggestionButton(final int x, final int row) {
-		this.add(new ChordNameAdviceButton(Label.CHORD_NAME_ADVICE, this, data, chordTemplate, this::onChordNameSelect),
+		this.add(new ChordNameAdviceButtonStatic(Label.CHORD_NAME_ADVICE, this, data, chordTemplate, this::onChordNameSelect),
 				x, getY(row), 150, 20);
 	}
 
@@ -80,7 +80,7 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 
 		final int strings = data.getCurrentArrangement().tuning.strings;
 		final Function<ChordTemplate, String> formatter = chordTemplate -> chordTemplate.getNameWithFrets(strings);
-		chordNameInput = new AutocompleteInput<>(this, 80, chordTemplate.chordName, this::getPossibleChords, formatter,
+		chordNameInput = new AutocompleteInputDialog<>(this, 80, chordTemplate.chordName, this::getPossibleChords, formatter,
 				inputOnTemplateChange);
 		chordNameInput.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -164,7 +164,7 @@ public class ChordTemplateEditor extends ParamsPane implements MouseListener {
 
 		final int y = getY(row);
 		final int height = 22 + getY(row + data.getCurrentArrangement().tuning.strings) - y;
-		chordTemplatePreview = new ChordTemplatePreview(this, data, chordTemplate, height);
+		chordTemplatePreview = new ChordTemplateEditorDialogPreview(this, data, chordTemplate, height);
 		add(chordTemplatePreview, x, y, 240, height);
 	}
 

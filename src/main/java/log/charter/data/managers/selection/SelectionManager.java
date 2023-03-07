@@ -11,6 +11,7 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.song.Anchor;
@@ -26,6 +27,7 @@ import log.charter.util.CollectionUtils.HashMap2;
 
 public class SelectionManager {
 	private ChartData data;
+	private CharterFrame frame;
 	private ModeManager modeManager;
 
 	private TypeSelectionManager<Anchor> anchorsManager;
@@ -38,9 +40,10 @@ public class SelectionManager {
 
 	private final Map<PositionType, TypeSelectionManager<?>> typeSelectionManagers = new HashMap2<>();
 
-	public void init(final ChartData data, final ModeManager modeManager,
+	public void init(final ChartData data, final CharterFrame frame, final ModeManager modeManager,
 			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
 		this.data = data;
+		this.frame = frame;
 		this.modeManager = modeManager;
 
 		anchorsManager = new AnchorsSelectionManager(data, mouseButtonPressReleaseHandler);
@@ -140,6 +143,8 @@ public class SelectionManager {
 			if (!ctrl) {
 				clearSelectionsExcept(PositionType.NONE);
 			}
+
+			frame.selectionChanged();
 			return;
 		}
 
@@ -147,15 +152,18 @@ public class SelectionManager {
 
 		final TypeSelectionManager<?> manager = typeSelectionManagers.get(clickData.pressHighlight.type);
 		if (manager == null) {
+			frame.selectionChanged();
 			return;
 		}
 
 		manager.addSelection(clickData.pressHighlight, clickData.pressPosition.x, clickData.pressPosition.y, ctrl,
 				shift);
+		frame.selectionChanged();
 	}
 
 	public void clear() {
 		clearSelectionsExcept(PositionType.NONE);
+		frame.selectionChanged();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -191,13 +199,18 @@ public class SelectionManager {
 		} else if (modeManager.editMode == EditMode.VOCALS) {
 			vocalsManager.addAll();
 		}
+
+		frame.selectionChanged();
 	}
 
 	public void addSoundSelection(final int id) {
 		chordsNotesManager.add(id);
+		frame.selectionChanged();
 	}
 
 	public void addSoundSelection(final ArrayList2<Integer> ids) {
 		chordsNotesManager.add(ids);
+		frame.selectionChanged();
 	}
+
 }

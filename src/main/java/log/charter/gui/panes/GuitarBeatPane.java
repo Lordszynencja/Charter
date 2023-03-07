@@ -22,7 +22,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.AutocompleteInput;
+import log.charter.gui.components.AutocompleteInputDialog;
 import log.charter.gui.components.ParamsPane;
 import log.charter.song.ArrangementChart;
 import log.charter.song.Beat;
@@ -74,7 +74,7 @@ public class GuitarBeatPane extends ParamsPane {
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
-	private AutocompleteInput<String> phraseNameInput;
+	private AutocompleteInputDialog<String> phraseNameInput;
 	private JTextField phraseLevelInput;
 	private JCheckBox phraseSoloInput;
 	private JTable eventsTable;
@@ -173,7 +173,7 @@ public class GuitarBeatPane extends ParamsPane {
 
 	private int preparePhraseInputs(int row) {
 		addLabel(row, 20, Label.GUITAR_BEAT_PANE_PHRASE_NAME);
-		phraseNameInput = new AutocompleteInput<>(this, 100, phraseName, this::getPossiblePhraseNames, s -> s,
+		phraseNameInput = new AutocompleteInputDialog<>(this, 100, phraseName, this::getPossiblePhraseNames, s -> s,
 				this::onPhraseNameSelected);
 		this.add(phraseNameInput, 100, getY(row++), 100, 20);
 

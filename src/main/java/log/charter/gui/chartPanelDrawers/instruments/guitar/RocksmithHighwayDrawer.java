@@ -121,7 +121,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 			}
 
 			if (note.selected) {
-				selects.add(strokedRectangle(position, selectColor, 2));
+				selects.add(strokedRectangle(position.resized(0, 0, -1, -1), selectColor, 2));
 			}
 		}
 	}

@@ -10,7 +10,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.AutocompleteInput;
+import log.charter.gui.components.AutocompleteInputDialog;
 import log.charter.gui.components.ParamsPane;
 import log.charter.gui.components.TextInputWithValidation;
 import log.charter.song.ArrangementChart;
@@ -31,7 +31,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
-	private final AutocompleteInput<String> toneNameInput;
+	private final AutocompleteInputDialog<String> toneNameInput;
 	private boolean error;
 	private Color toneNameInputBackgroundColor;
 
@@ -50,7 +50,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		toneName = toneChange.toneName;
 
 		int row = 0;
-		toneNameInput = new AutocompleteInput<>(this, 100, toneName, this::getPossibleValues, s -> s, this::onSelect);
+		toneNameInput = new AutocompleteInputDialog<>(this, 100, toneName, this::getPossibleValues, s -> s, this::onSelect);
 		toneNameInput.getDocument().addDocumentListener(this);
 		final int labelWidth = addLabel(row, 20, Label.TONE_CHANGE_TONE_NAME);
 		add(toneNameInput, 20 + labelWidth + 3, getY(row++), 100, 20);

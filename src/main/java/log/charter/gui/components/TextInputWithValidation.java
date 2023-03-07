@@ -18,6 +18,14 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		void setValue(String val);
 	}
 
+	public static interface BooleanValueSetter {
+		void setValue(boolean val);
+	}
+
+	public static interface IntegerValueSetter {
+		void setValue(Integer val);
+	}
+
 	public static interface ValueValidator {
 		public static final ValueValidator dirValidator = val -> {
 			final File f = new File(val);
@@ -58,31 +66,47 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		}
 
 		public static ValueValidator createIntValidator(final int minVal, final int maxVal, final boolean acceptEmpty) {
-			return val -> {
-				if (((val == null) || val.isEmpty()) && acceptEmpty) {
-					return null;
-				}
-
-				final int i;
-				try {
-					i = Integer.parseInt(val);
-				} catch (final Exception e) {
-					return Label.VALUE_NUMBER_EXPECTED.label();
-				}
-
-				if (i < minVal) {
-					return String.format(Label.VALUE_MUST_BE_GE.label(), minVal + "");
-				}
-
-				if (i > maxVal) {
-					return String.format(Label.VALUE_MUST_BE_LE.label(), maxVal + "");
-				}
-
-				return null;
-			};
+			return new IntegerValueValidator(minVal, maxVal, acceptEmpty);
 		}
 
 		String validateValue(String val);
+	}
+
+	public static class IntegerValueValidator implements ValueValidator {
+		private final int minValue;
+		private final int maxValue;
+		private final boolean acceptEmpty;
+
+		public IntegerValueValidator(final int minValue, final int maxValue, final boolean acceptEmpty) {
+			this.minValue = minValue;
+			this.maxValue = maxValue;
+			this.acceptEmpty = acceptEmpty;
+		}
+
+		@Override
+		public String validateValue(final String val) {
+			if (((val == null) || val.isEmpty()) && acceptEmpty) {
+				return null;
+			}
+
+			final int i;
+			try {
+				i = Integer.parseInt(val);
+			} catch (final Exception e) {
+				return Label.VALUE_NUMBER_EXPECTED.label();
+			}
+
+			if (i < minValue) {
+				return String.format(Label.VALUE_MUST_BE_GE.label(), minValue + "");
+			}
+
+			if (i > maxValue) {
+				return String.format(Label.VALUE_MUST_BE_LE.label(), maxValue + "");
+			}
+
+			return null;
+		}
+
 	}
 
 	private boolean error;
@@ -102,6 +126,17 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		this.setter = setter;
 
 		getDocument().addDocumentListener(this);
+	}
+
+	public TextInputWithValidation(final String text, final int length, final IntegerValueValidator validator,
+			final IntegerValueSetter setter, final boolean allowWrongValues) {
+		this(text, length, validator, (final String s) -> {
+			try {
+				setter.setValue(Integer.valueOf(s));
+			} catch (final NumberFormatException e) {
+				setter.setValue(null);
+			}
+		}, allowWrongValues);
 	}
 
 	@Override
