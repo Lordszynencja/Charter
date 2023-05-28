@@ -32,7 +32,7 @@ public class AnchorSelectionEditor {
 		this.undoSystem = undoSystem;
 
 		int row = 0;
-		final TextInputWithValidation anchorFretInput = new TextInputWithValidation("", 20,
+		final TextInputWithValidation anchorFretInput = new TextInputWithValidation(null, 20,
 				new IntegerValueValidator(1, frets, false), this::changeAnchorFret, false);
 		anchorFretInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(anchorFretInput);
@@ -40,7 +40,7 @@ public class AnchorSelectionEditor {
 		anchorFret.setLocation(10, selectionEditor.getY(row++));
 		selectionEditor.add(anchorFret);
 
-		final TextInputWithValidation anchorWidthInput = new TextInputWithValidation("", 20,
+		final TextInputWithValidation anchorWidthInput = new TextInputWithValidation(null, 20,
 				new IntegerValueValidator(1, frets, false), this::changeAnchorWidth, false);
 		anchorWidthInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(anchorWidthInput);

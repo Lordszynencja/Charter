@@ -4,6 +4,7 @@ import static log.charter.util.Utils.mapInteger;
 
 import log.charter.io.rs.xml.song.ArrangementNote;
 import log.charter.song.BendValue;
+import log.charter.song.ChordTemplate;
 import log.charter.song.enums.BassPickingTechnique;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
@@ -47,5 +48,15 @@ public class Note extends GuitarSound {
 		vibrato = other.vibrato;
 		bassPicking = other.bassPicking;
 		bendValues = other.bendValues.map(BendValue::new);
+	}
+
+	public Note(final Chord chord, final ChordTemplate template) {
+		super(chord);
+		string = template.frets.keySet().stream().min(Integer::compare).orElse(0);
+		fret = template.frets.get(string);
+		bendValues = chord.bendValues.get(string);
+		if (bendValues == null) {
+			bendValues = new ArrayList2<>();
+		}
 	}
 }

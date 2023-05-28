@@ -80,4 +80,10 @@ public class Chord extends GuitarSound {
 		chordId = other.chordId;
 		bendValues = other.bendValues.map(i -> i, list -> list.map(BendValue::new));
 	}
+
+	public Chord(final int templateId, final Note note) {
+		super(note);
+		chordId = templateId;
+		bendValues.put(note.string, note.bendValues);
+	}
 }

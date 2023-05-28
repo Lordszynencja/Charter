@@ -44,10 +44,14 @@ public class RowedPanel extends JPanel {
 
 	public final ArrayList2<Component> components = new ArrayList2<>();
 
-	public RowedPanel(final int rowHeight) {
+	public RowedPanel(final int width, final int rowHeight, final int rows) {
 		this.rowHeight = rowHeight;
 
 		setLayout(null);
+		setSize(width, getY(rows) + rowHeight);
+		setMinimumSize(getSize());
+		setPreferredSize(getSize());
+		setMaximumSize(getSize());
 	}
 
 	public int getY(final int row) {
@@ -112,18 +116,19 @@ public class RowedPanel extends JPanel {
 		add(checkbox, x, y, 20, 20);
 	}
 
-	public <T> void addRadioButtons(final int row, final int x, final int optionWidth, final T val,
-			final ValueSetter<T> setter, final List<Pair<T, Label>> values) {
-		addRadioButtonsExact(getY(row), x, optionWidth, val, setter, values);
+	public <T extends Enum<T>> ButtonGroup addRadioButtons(final int row, final int x, final int optionWidth,
+			final T val, final ValueSetter<T> setter, final List<Pair<T, Label>> values) {
+		return addRadioButtonsExact(getY(row), x, optionWidth, val, setter, values);
 	}
 
-	public <T> void addRadioButtonsExact(final int y, int x, final int optionWidth, final T val,
+	public <T extends Enum<T>> ButtonGroup addRadioButtonsExact(final int y, int x, final int optionWidth, final T val,
 			final ValueSetter<T> setter, final List<Pair<T, Label>> values) {
 		final ButtonGroup group = new ButtonGroup();
 
 		for (int i = 0; i < values.size(); i++) {
 			final Pair<T, Label> value = values.get(i);
 			final JRadioButton radioButton = new JRadioButton();
+			radioButton.setActionCommand(value.a.name());
 			radioButton.setSelected(value.a.equals(val));
 			radioButton.addActionListener(a -> setter.setValue(value.a));
 			group.add(radioButton);
@@ -133,5 +138,7 @@ public class RowedPanel extends JPanel {
 
 			x += optionWidth;
 		}
+
+		return group;
 	}
 }

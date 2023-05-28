@@ -81,7 +81,7 @@ public class ChordNameAdviceButton extends JButton implements ActionListener, Mo
 		setFocusable(false);
 	}
 
-	private void removePopup() {
+	public void removePopup() {
 		popups.forEach(parent::remove);
 		parent.repaint();
 		popups.clear();

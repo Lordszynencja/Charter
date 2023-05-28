@@ -244,6 +244,7 @@ public class Localization {
 		ROCKSMITH_CHART_PROJECT("Rocksmith Chart Project"), //
 		RS_ARRANGEMENT_FILE("RS arrangmenet file (XML)"), //
 		SELECT_FOLDER("Select"), //
+		TONE_NAME_CANT_BE_EMPTY("Tone name can't be empty"), //
 		TONE_NAME_PAST_LIMIT("There are already 4 tones, can't add another tone"), //
 		UNSAVED_CHANGES_POPUP("Unsaved changes"), //
 		UNSAVED_CHANGES_MESSAGE("You have unsaved changes. Do you want to save?"), //

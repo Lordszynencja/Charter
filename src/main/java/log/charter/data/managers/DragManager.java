@@ -46,14 +46,4 @@ public class DragManager {
 
 		return null;
 	}
-
-	public int getDragDistance() {
-		final PositionWithIdAndType dragStart = getDragStart();
-
-		if (dragStart == null) {
-			return 0;
-		}
-
-		return 0;
-	}
 }

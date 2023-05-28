@@ -37,6 +37,7 @@ import log.charter.util.Position2D;
 public class ChordTemplatePreview extends JComponent implements MouseListener, MouseMotionListener, KeyListener {
 	private static final long serialVersionUID = 1L;
 	private static final double fretsProportion = pow(2, -1.0 / 12);
+	private static final int minFrets = 7;
 	private static final int fretStart = 22;
 	private static final Set<Integer> dotFrets = new HashSet2<>(new ArrayList2<>(3, 5, 7, 9));
 
@@ -118,7 +119,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		if (max < Config.frets) {
 			max++;
 		}
-		while (max - min < 5) {
+		while (max - min < minFrets) {
 			if (min > 0) {
 				min--;
 			}

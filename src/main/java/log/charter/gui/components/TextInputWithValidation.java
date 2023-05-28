@@ -65,7 +65,8 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 			};
 		}
 
-		public static ValueValidator createIntValidator(final int minVal, final int maxVal, final boolean acceptEmpty) {
+		public static IntegerValueValidator createIntValidator(final int minVal, final int maxVal,
+				final boolean acceptEmpty) {
 			return new IntegerValueValidator(minVal, maxVal, acceptEmpty);
 		}
 
@@ -112,7 +113,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 	private boolean error;
 	private Color normalBackgroundColor;
 
-	private final ValueValidator validator;
+	private ValueValidator validator;
 	private final StringValueSetter setter;
 	private final boolean allowWrongValues;
 
@@ -128,9 +129,9 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		getDocument().addDocumentListener(this);
 	}
 
-	public TextInputWithValidation(final String text, final int length, final IntegerValueValidator validator,
+	public TextInputWithValidation(final Integer value, final int length, final IntegerValueValidator validator,
 			final IntegerValueSetter setter, final boolean allowWrongValues) {
-		this(text, length, validator, (final String s) -> {
+		this(value == null ? "" : (value + ""), length, validator, (final String s) -> {
 			try {
 				setter.setValue(Integer.valueOf(s));
 			} catch (final NumberFormatException e) {
@@ -195,5 +196,9 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		disableEvents = true;
 		setText(text);
 		disableEvents = false;
+	}
+
+	public void setValidator(final ValueValidator validator) {
+		this.validator = validator;
 	}
 }

@@ -125,7 +125,7 @@ public class CharterFrame extends JFrame {
 				selectionManager, songFileHandler, undoSystem);
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
-		currentSelectionEditor.init(data, selectionManager, undoSystem);
+		currentSelectionEditor.init(arrangementFixer, data, selectionManager, undoSystem);
 
 		add(chartPanel);
 		add(scrollBar);

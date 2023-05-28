@@ -139,7 +139,7 @@ public class ArrangementFixer {
 		}
 	}
 
-	private void fixDuplicatedChordTemplates(final ArrangementChart arrangementChart) {
+	public void fixDuplicatedChordTemplates(final ArrangementChart arrangementChart) {
 		final List<ChordTemplate> templates = arrangementChart.chordTemplates;
 		for (int i = 0; i < templates.size(); i++) {
 			final ChordTemplate template = templates.get(i);
@@ -147,7 +147,9 @@ public class ArrangementFixer {
 				ChordTemplate otherTemplate = templates.get(j);
 				while (template.equals(otherTemplate) && j < templates.size()) {
 					removeChordTemplate(arrangementChart, j, i);
-					otherTemplate = templates.get(j);
+					if (j < templates.size()) {
+						otherTemplate = templates.get(j);
+					}
 				}
 			}
 		}
@@ -171,7 +173,7 @@ public class ArrangementFixer {
 		return false;
 	}
 
-	private void removeUnusedChordTemplates(final ArrangementChart arrangementChart) {
+	public void removeUnusedChordTemplates(final ArrangementChart arrangementChart) {
 		final Map<Integer, Integer> templateIdsMap = new HashMap<>();
 
 		final int templatesAmount = arrangementChart.chordTemplates.size();

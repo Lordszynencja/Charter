@@ -72,8 +72,14 @@ public class HighlightManager {
 
 		private void addGuitarNotePositions() {
 			final ArrayList2<ChordOrNote> chordsAndNotes = data.getCurrentArrangementLevel().chordsAndNotes;
-			final int idFrom = max(0, findLastIdBefore(chordsAndNotes, fromPosition));
-			final int idTo = min(chordsAndNotes.size() - 1, findFirstIdAfter(chordsAndNotes, toPosition));
+			int idFrom = findLastIdBefore(chordsAndNotes, fromPosition);
+			int idTo = findFirstIdAfter(chordsAndNotes, toPosition);
+			if (idFrom == -1) {
+				idFrom = 0;
+			}
+			if (idTo == -1) {
+				idTo = chordsAndNotes.size() - 1;
+			}
 			for (int i = idFrom; i <= idTo; i++) {
 				final ChordOrNote chordOrNote = chordsAndNotes.get(i);
 				if (chordOrNote.position() >= fromPosition && chordOrNote.position() <= toPosition) {

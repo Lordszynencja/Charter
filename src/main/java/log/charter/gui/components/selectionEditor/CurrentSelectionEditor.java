@@ -1,13 +1,17 @@
 package log.charter.gui.components.selectionEditor;
 
 import static log.charter.data.types.PositionType.ANCHOR;
+import static log.charter.data.types.PositionType.GUITAR_NOTE;
 import static log.charter.data.types.PositionType.HAND_SHAPE;
 import static log.charter.data.types.PositionType.NONE;
+import static log.charter.data.types.PositionType.TONE_CHANGE;
+import static log.charter.data.types.PositionType.VOCAL;
 
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionAccessor;
@@ -18,7 +22,10 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.RowedPanel;
 import log.charter.song.Anchor;
 import log.charter.song.HandShape;
+import log.charter.song.ToneChange;
+import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
+import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.HashSet2;
 
 public class CurrentSelectionEditor extends RowedPanel {
@@ -37,20 +44,27 @@ public class CurrentSelectionEditor extends RowedPanel {
 	private SelectionManager selectionManager;
 
 	private final AnchorSelectionEditor anchorSelectionEditor = new AnchorSelectionEditor();
+	private final GuitarSoundSelectionEditor guitarSoundSelectionEditor = new GuitarSoundSelectionEditor(this);
 	private final HandShapeSelectionEditor handShapeSelectionEditor = new HandShapeSelectionEditor(this);
+	private final ToneChangeSelectionEditor toneChangeSelectionEditor = new ToneChangeSelectionEditor();
+	private final VocalSelectionEditor vocalSelectionEditor = new VocalSelectionEditor();
 
 	public CurrentSelectionEditor() {
-		super(25);
+		super(700, 25, 14);
 
 		setOpaque(true);
 		setBackground(ColorLabel.BASE_BG_2.color());
 	}
 
-	public void init(final ChartData data, final SelectionManager selectionManager, final UndoSystem undoSystem) {
+	public void init(final ArrangementFixer arrangementFixer, final ChartData data,
+			final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this.selectionManager = selectionManager;
 
 		anchorSelectionEditor.init(this, selectionManager, undoSystem);
-		handShapeSelectionEditor.init(data, selectionManager, undoSystem);
+		guitarSoundSelectionEditor.init(this, arrangementFixer, data, selectionManager, undoSystem);
+		handShapeSelectionEditor.init(this, arrangementFixer, data, selectionManager, undoSystem);
+		toneChangeSelectionEditor.init(this, data, selectionManager, undoSystem);
+		vocalSelectionEditor.init(this, selectionManager, undoSystem);
 	}
 
 	private void hideAllfieldsExcept(final PositionType type) {
@@ -60,10 +74,28 @@ public class CurrentSelectionEditor extends RowedPanel {
 			anchorSelectionEditor.showFields();
 		}
 
+		if (type != GUITAR_NOTE) {
+			guitarSoundSelectionEditor.hideFields();
+		} else {
+			guitarSoundSelectionEditor.showFields();
+		}
+
 		if (type != HAND_SHAPE) {
 			handShapeSelectionEditor.hideFields();
 		} else {
 			handShapeSelectionEditor.showFields();
+		}
+
+		if (type != TONE_CHANGE) {
+			toneChangeSelectionEditor.hideFields();
+		} else {
+			toneChangeSelectionEditor.showFields();
+		}
+
+		if (type != VOCAL) {
+			vocalSelectionEditor.hideFields();
+		} else {
+			vocalSelectionEditor.showFields();
 		}
 	}
 
@@ -80,12 +112,23 @@ public class CurrentSelectionEditor extends RowedPanel {
 			final SelectionAccessor<Anchor> selectedAnchorsAccessor = (SelectionAccessor<Anchor>) (SelectionAccessor<?>) selected;
 			anchorSelectionEditor.selectionChanged(selectedAnchorsAccessor);
 		}
+		if (selected.type == GUITAR_NOTE) {
+			final SelectionAccessor<ChordOrNote> selectedChordsOrNotesAccessor = (SelectionAccessor<ChordOrNote>) (SelectionAccessor<?>) selected;
+			guitarSoundSelectionEditor.selectionChanged(selectedChordsOrNotesAccessor);
+		}
 		if (selected.type == HAND_SHAPE) {
 			final SelectionAccessor<HandShape> selectedAnchorsAccessor = (SelectionAccessor<HandShape>) (SelectionAccessor<?>) selected;
 			handShapeSelectionEditor.selectionChanged(selectedAnchorsAccessor);
 		}
+		if (selected.type == TONE_CHANGE) {
+			final SelectionAccessor<ToneChange> selectedToneChangesAccessor = (SelectionAccessor<ToneChange>) (SelectionAccessor<?>) selected;
+			toneChangeSelectionEditor.selectionChanged(selectedToneChangesAccessor);
+		}
+		if (selected.type == VOCAL) {
+			final SelectionAccessor<Vocal> selectedAnchorsAccessor = (SelectionAccessor<Vocal>) (SelectionAccessor<?>) selected;
+			vocalSelectionEditor.selectionChanged(selectedAnchorsAccessor);
+		}
 
 		repaint();
 	}
-
 }

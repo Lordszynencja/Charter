@@ -54,7 +54,8 @@ public class ChordTemplateEditor implements MouseListener {
 
 	private ChordNameAdviceButton chordNameAdviceButton;
 	private JLabel chordNameLabel;
-	private AutocompleteInput<ChordTemplate> chordNameInput;
+	protected AutocompleteInput<ChordTemplate> chordNameInput;
+	private JLabel fretsLabel;
 	private JLabel fingersLabel;
 	private final ArrayList2<TextInputWithValidation> fretInputs = new ArrayList2<>();
 	private final ArrayList2<TextInputWithValidation> fingerInputs = new ArrayList2<>();
@@ -113,6 +114,10 @@ public class ChordTemplateEditor implements MouseListener {
 
 			@Override
 			public void changedUpdate(final DocumentEvent e) {
+				if (chordNameInput.isDisableDocumentUpdateHandling()) {
+					return;
+				}
+
 				final String newName = chordNameInput.getText();
 				chordTemplateSupplier.get().chordName = newName;
 				onChange.run();
@@ -132,6 +137,7 @@ public class ChordTemplateEditor implements MouseListener {
 	protected void setCurrentValuesInInputs() {
 		final ChordTemplate chordTemplate = chordTemplateSupplier.get();
 		chordNameInput.setTextWithoutUpdate(chordTemplate.chordName);
+		chordNameInput.removePopup();
 
 		for (int i = 0; i < data.currentStrings(); i++) {
 			final Integer fret = chordTemplate.frets.get(i);
@@ -165,16 +171,18 @@ public class ChordTemplateEditor implements MouseListener {
 		parent.repaint();
 	}
 
-	public void addChordTemplateEditor(final int row) {
-		int x = 20;
+	public void addChordTemplateEditor(final int baseX, final int row) {
+		int x = baseX;
 
-		final int fretLabelWidth = parent.addLabel(parent.getY(row), x, Label.FRET);
+		final int fretLabelWidth = parent.addLabel(row, x, Label.FRET);
+		fretsLabel = (JLabel) parent.components.getLast();
 		final int fretInputX = x + fretLabelWidth / 2 - 15;
 		for (int i = 0; i < maxStrings; i++) {
 			final int string = i;
 
-			final TextInputWithValidation input = new TextInputWithValidation("", 40,
-					createIntValidator(0, Config.frets, true), val -> updateFretValue(string, val), false);
+			final TextInputWithValidation input = new TextInputWithValidation(null, 40,
+					createIntValidator(0, Config.frets, true), (final Integer val) -> updateFretValue(string, val),
+					false);
 			input.setHorizontalAlignment(JTextField.CENTER);
 			addSelectTextOnFocus(input);
 
@@ -204,7 +212,7 @@ public class ChordTemplateEditor implements MouseListener {
 		final int y = parent.getY(row);
 		final int height = 22 + parent.getY(row + maxStrings) - y;
 		chordTemplatePreview = new ChordTemplatePreview(parent, this, data, chordTemplateSupplier);
-		parent.add(chordTemplatePreview, x, y, 240, height);
+		parent.add(chordTemplatePreview, x, y, 440, height);
 	}
 
 	private String validateFinger(final String val) {
@@ -218,8 +226,8 @@ public class ChordTemplateEditor implements MouseListener {
 		return Label.WRONG_FINGER_VALUE.label();
 	}
 
-	private void updateFretValue(final int string, final String fret) {
-		if (fret == null || fret.isEmpty()) {
+	private void updateFretValue(final int string, final Integer fret) {
+		if (fret == null) {
 			chordTemplateSupplier.get().frets.remove(string);
 		} else {
 			chordTemplateSupplier.get().frets.put(string, Integer.valueOf(fret));
@@ -291,6 +299,7 @@ public class ChordTemplateEditor implements MouseListener {
 		chordNameAdviceButton.setVisible(true);
 		chordNameLabel.setVisible(true);
 		chordNameInput.setVisible(true);
+		fretsLabel.setVisible(true);
 		fingersLabel.setVisible(true);
 
 		for (int i = 0; i < data.getCurrentArrangement().tuning.strings; i++) {
@@ -312,8 +321,11 @@ public class ChordTemplateEditor implements MouseListener {
 
 	public void hideFields() {
 		chordNameAdviceButton.setVisible(false);
+		chordNameAdviceButton.removePopup();
 		chordNameLabel.setVisible(false);
 		chordNameInput.setVisible(false);
+		chordNameInput.removePopup();
+		fretsLabel.setVisible(false);
 		fingersLabel.setVisible(false);
 
 		for (final TextInputWithValidation fretInput : fretInputs) {

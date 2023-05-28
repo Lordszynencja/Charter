@@ -104,7 +104,7 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 		super.processKeyEvent(e);
 	}
 
-	private void removePopup() {
+	public void removePopup() {
 		popups.forEach(parent::remove);
 		parent.repaint();
 		popups.clear();
@@ -184,5 +184,9 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 		disableDocumentUpdateHandling = true;
 		setText(text);
 		disableDocumentUpdateHandling = false;
+	}
+
+	public boolean isDisableDocumentUpdateHandling() {
+		return disableDocumentUpdateHandling;
 	}
 }
