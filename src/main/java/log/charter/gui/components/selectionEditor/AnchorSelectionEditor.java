@@ -88,6 +88,6 @@ public class AnchorSelectionEditor {
 		anchorFret.field.setTextWithoutEvent(fret == null ? "" : (fret + ""));
 
 		final Integer width = getSingleValue(selectedAnchors, selection -> selection.selectable.width);
-		anchorFret.field.setTextWithoutEvent(width == null ? "" : (width + ""));
+		anchorWidth.field.setTextWithoutEvent(width == null ? "" : (width + ""));
 	}
 }

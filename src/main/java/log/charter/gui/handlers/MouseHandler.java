@@ -20,6 +20,7 @@ import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.song.ArrangementChart;
 import log.charter.song.Beat;
@@ -29,6 +30,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 public class MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private ChartData data;
+	private CharterFrame frame;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
@@ -40,10 +42,12 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	private int mouseX = -1;
 	private int mouseY = -1;
 
-	public void init(final AudioHandler audioHandler, final ChartData data, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
+	public void init(final AudioHandler audioHandler, final ChartData data, final CharterFrame frame,
+			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this.data = data;
+		this.frame = frame;
 		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
 		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
@@ -285,6 +289,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		final int dragEndPosition = clickData.releaseHighlight.position();
 		dragPositions(dragStartPosition, dragEndPosition,
 				selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE).getSortedSelected());
+
+		frame.selectionChanged();
 	}
 
 	private void dragVocals(final MouseButtonPressReleaseData clickData) {
@@ -292,6 +298,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		final int dragEndPosition = clickData.releaseHighlight.position();
 		dragPositions(dragStartPosition, dragEndPosition,
 				selectionManager.getSelectedAccessor(PositionType.VOCAL).getSortedSelected());
+
+		frame.selectionChanged();
 	}
 
 	@Override

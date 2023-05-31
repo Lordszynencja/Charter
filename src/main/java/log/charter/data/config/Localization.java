@@ -254,8 +254,11 @@ public class Localization {
 		VALUE_MUST_BE_LE("Value must be lesser or equal to %s"), //
 		VALUE_NUMBER_EXPECTED("Number expected"), //
 		WRONG_FINGER_VALUE("Wrong finger name, must be one of (T, 1, 2, 3, 4)"), //
-		WRONG_MUSIC_FILE("Wrong music file"),//
-		;
+		WRONG_MUSIC_FILE("Wrong music file"), //
+
+		SONG_FOLDER_SELECT("Create song folder"), //
+		SONG_FOLDER_AUDIO_FILE_FOLDER("Use audio file folder (%s)"), //
+		SONG_FOLDER_CREATE_NEW("Create new folder in %s");
 
 		private final String defaultLabel;
 

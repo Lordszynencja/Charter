@@ -85,5 +85,7 @@ public class VocalModeHandler extends ModeHandler {
 		final SelectionAccessor<Vocal> selectedNotes = selectionManager.getSelectedAccessor(PositionType.VOCAL);
 		changePositionsWithLengthsLength(data.songChart.beatsMap, selectedNotes.getSortedSelected(),
 				data.songChart.vocals.vocals, change);
+
+		frame.selectionChanged();
 	}
 }

@@ -19,7 +19,7 @@ public class FieldWithLabel<T extends Component> extends Container {
 	public final JLabel label;
 	public final T field;
 
-	public FieldWithLabel(final Label label, final int labelWidth, final int inputWidth, final int height,
+	public FieldWithLabel(final String label, final int labelWidth, final int inputWidth, final int height,
 			final T field, final LabelPosition labelPosition) {
 		super();
 		setLayout(null);
@@ -50,8 +50,13 @@ public class FieldWithLabel<T extends Component> extends Container {
 		this.setSize(labelWidth + inputWidth + 3, height);
 	}
 
-	private JLabel addLabel(final Label label, final int x, final int w, final int h, final int labelAlignment) {
-		final JLabel labelComponent = new JLabel(label.label(), labelAlignment);
+	public FieldWithLabel(final Label label, final int labelWidth, final int inputWidth, final int height,
+			final T field, final LabelPosition labelPosition) {
+		this(label.label(), labelWidth, inputWidth, height, field, labelPosition);
+	}
+
+	private JLabel addLabel(final String label, final int x, final int w, final int h, final int labelAlignment) {
+		final JLabel labelComponent = new JLabel(label, labelAlignment);
 		labelComponent.setBounds(x, 0, w, h);
 		final Dimension size = new Dimension(w, h);
 		labelComponent.setMinimumSize(size);

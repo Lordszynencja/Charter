@@ -32,6 +32,7 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.SongFolderSelectPane;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.song.SongArrangement;
@@ -156,7 +157,13 @@ public class SongFileHandler {
 		final SwingWorker<Void, Void> mySwingWorker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				operation.accept(dialog);
+				try {
+					operation.accept(dialog);
+				} catch (final Exception e) {
+					Logger.error("error when loading", e);
+					dialog.dispose();
+				}
+
 				dialog.dispose();
 				return null;
 			}
@@ -184,27 +191,25 @@ public class SongFileHandler {
 		}
 
 		final Map<String, String> songData = extractNewSongData(songFile.getAbsolutePath());
-		String folderName = songName.substring(0, songName.lastIndexOf('.'));
 
-		folderName = frame.showInputDialog(Label.CHOOSE_FOLDER_NAME.label(), folderName);
-		if (folderName == null) {
+		final String artist = songData.get("artist");
+		final String title = songData.get("title");
+
+		final String defaultFolderName = artist.isBlank()//
+				? title.isBlank() //
+						? songName.substring(0, songName.lastIndexOf('.'))//
+						: "unknown artist - " + title
+				: title.isBlank() //
+						? artist + " - unknown title"//
+						: artist + " - " + title;
+
+		final File songFolder = chooseSongFolder(songFile.getParent(), defaultFolderName);
+		if (songFolder == null) {
 			return;
 		}
 
-		File f = new File(Config.songsPath, folderName);
-		while (f.exists()) {
-			folderName = frame.showInputDialog(Label.FOLDER_EXISTS_CHOOSE_DIFFERENT.label(), folderName);
-			if (folderName == null) {
-				return;
-			}
-
-			f = new File(Config.songsPath, folderName);
-		}
-		f.mkdir();
-
-		final String songDir = f.getAbsolutePath();
 		final String musicFileName = "guitar." + extension;
-		final File musicFile = new File(songDir, musicFileName);
+		final File musicFile = new File(songFolder, musicFileName);
 		RW.writeB(musicFile, RW.readB(songFile));
 
 		final MusicData musicData = MusicData.readFile(musicFile);
@@ -223,7 +228,7 @@ public class SongFileHandler {
 			songChart.albumYear = null;
 		}
 
-		data.setNewSong(songDir, songChart, musicData, "project.rscp");
+		data.setNewSong(songFolder, songChart, musicData, "project.rscp");
 		save();
 
 		if (createDefaultStretchesInBackground) {
@@ -240,6 +245,33 @@ public class SongFileHandler {
 		return MusicData.readFile(musicFile);
 	}
 
+	public File chooseSongFolder(final String audioFileDirectory, final String defaultFolderName) {
+		final SongFolderSelectPane songFolderSelectPane = new SongFolderSelectPane(frame, Config.songsPath,
+				audioFileDirectory, defaultFolderName);
+
+		if (songFolderSelectPane.isAudioFolderChosen()) {
+			return new File(audioFileDirectory);
+		}
+
+		String folderName = songFolderSelectPane.getFolderName();
+		if (folderName == null || folderName.isBlank()) {
+			return null;
+		}
+
+		File songFolder = new File(Config.songsPath, folderName);
+		while (songFolder.exists()) {
+			folderName = frame.showInputDialog(Label.FOLDER_EXISTS_CHOOSE_DIFFERENT.label(), folderName);
+			if (folderName == null) {
+				return null;
+			}
+
+			songFolder = new File(Config.songsPath, folderName);
+		}
+		songFolder.mkdir();
+
+		return songFolder;
+	}
+
 	private void openInternal(final LoadingDialog loadingDialog, final String path) {
 		loadingDialog.setProgress(0, Label.LOADING_PROJECT_FILE.label());
 
@@ -252,10 +284,15 @@ public class SongFileHandler {
 			error("unsupported file: " + projectFileChosen.getName());
 			return;
 		}
-
-		final RocksmithChartProject project = readProject(RW.read(projectFileChosen));
-		if (project.chartFormatVersion > 2) {
-			frame.showPopup(Label.PROJECT_IS_NEWER_VERSION.label());
+		final RocksmithChartProject project;
+		try {
+			project = readProject(RW.read(projectFileChosen));
+			if (project.chartFormatVersion > 2) {
+				frame.showPopup(Label.PROJECT_IS_NEWER_VERSION.label());
+				return;
+			}
+		} catch (final Exception e) {
+			frame.showPopup(String.format(Label.MISSING_ARRANGEMENT_FILE.label(), projectFileChosen.getAbsolutePath()));
 			return;
 		}
 		loadingDialog.setProgress(1, Label.LOADING_MUSIC_FILE.label());

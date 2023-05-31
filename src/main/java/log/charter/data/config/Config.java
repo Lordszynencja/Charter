@@ -50,6 +50,7 @@ public class Config {
 	public static boolean showGrid = true;
 	public static GridType gridType = GridType.BEAT;
 	public static int gridSize = 4;
+	public static boolean audioFolderChosenForNewSong = false;
 
 	public static boolean debugLogging = false;
 
@@ -115,6 +116,7 @@ public class Config {
 		setters.put("showGrid", val -> showGrid = Boolean.valueOf(val));
 		setters.put("gridType", val -> gridType = GridType.valueOf(val));
 		setters.put("gridSize", val -> gridSize = Integer.valueOf(val));
+		setters.put("audioFolderChosenForNewSong", val -> audioFolderChosenForNewSong = Boolean.valueOf(val));
 
 		setters.put("debugLogging", val -> debugLogging = Boolean.valueOf(val));
 
@@ -175,6 +177,7 @@ public class Config {
 		config.put("showGrid", showGrid + "");
 		config.put("gridType", gridType + "");
 		config.put("gridSize", gridSize + "");
+		config.put("audioFolderChosenForNewSong", audioFolderChosenForNewSong + "");
 
 		config.put("debugLogging", debugLogging + "");
 

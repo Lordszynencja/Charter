@@ -305,5 +305,7 @@ public class GuitarModeHandler extends ModeHandler {
 
 		changeNotesLength(change);
 		changeHandShapesLength(change);
+
+		frame.selectionChanged();
 	}
 }

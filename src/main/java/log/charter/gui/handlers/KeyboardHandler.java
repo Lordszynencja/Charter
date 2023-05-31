@@ -423,6 +423,8 @@ public class KeyboardHandler implements KeyListener {
 			movedChordTemplates.put(sound.chord.chordId, newTemplateId);
 			sound.chord.chordId = newTemplateId;
 		}
+
+		frame.selectionChanged();
 	}
 
 	public void moveNotesDownKeepFrets() {
@@ -471,6 +473,8 @@ public class KeyboardHandler implements KeyListener {
 			movedChordTemplates.put(sound.chord.chordId, newTemplateId);
 			sound.chord.chordId = newTemplateId;
 		}
+
+		frame.selectionChanged();
 	}
 
 	public void moveNotesUp() {
@@ -539,6 +543,8 @@ public class KeyboardHandler implements KeyListener {
 			movedChordTemplates.put(sound.chord.chordId, newTemplateId);
 			sound.chord.chordId = newTemplateId;
 		}
+
+		frame.selectionChanged();
 	}
 
 	public void moveNotesDown() {
@@ -607,6 +613,8 @@ public class KeyboardHandler implements KeyListener {
 			movedChordTemplates.put(sound.chord.chordId, newTemplateId);
 			sound.chord.chordId = newTemplateId;
 		}
+
+		frame.selectionChanged();
 	}
 
 	private <T> void singleToggleOnAllSelectedNotesWithBaseValueNote(final Function<Note, T> baseValueGetter,
@@ -623,6 +631,8 @@ public class KeyboardHandler implements KeyListener {
 
 		undoSystem.addUndo();
 		selected.forEach(selectedValue -> handler.accept(selectedValue.selectable.note, baseValue));
+
+		frame.selectionChanged();
 	}
 
 	private <T> void singleToggleOnAllSelectedNotesWithBaseValue(final Function<GuitarSound, T> baseValueGetter,
@@ -638,6 +648,8 @@ public class KeyboardHandler implements KeyListener {
 
 		undoSystem.addUndo();
 		selected.forEach(selectedValue -> handler.accept(selectedValue.selectable.asGuitarSound(), baseValue));
+
+		frame.selectionChanged();
 	}
 
 	public void toggleMute() {
@@ -884,21 +896,29 @@ public class KeyboardHandler implements KeyListener {
 		case TONE_CHANGE:
 			undoSystem.addUndo();
 			snapPositions(accessor.getSelectedSet().map(selection -> selection.selectable));
+
+			frame.selectionChanged();
 			break;
 		case GUITAR_NOTE:
 			undoSystem.addUndo();
 			snapNotePositionsWithLength(accessor.getSelectedSet().map(selection -> (ChordOrNote) selection.selectable),
 					data.getCurrentArrangementLevel().chordsAndNotes);
+
+			frame.selectionChanged();
 			break;
 		case HAND_SHAPE:
 			undoSystem.addUndo();
 			snapPositionsWithLength(accessor.getSelectedSet().map(selection -> (HandShape) selection.selectable),
 					data.getCurrentArrangementLevel().handShapes);
+
+			frame.selectionChanged();
 			break;
 		case VOCAL:
 			undoSystem.addUndo();
 			snapPositionsWithLength(accessor.getSelectedSet().map(selection -> (Vocal) selection.selectable),
 					data.songChart.vocals.vocals);
+
+			frame.selectionChanged();
 			break;
 		case BEAT:
 		case NONE:
@@ -920,11 +940,15 @@ public class KeyboardHandler implements KeyListener {
 		if (modeManager.editMode == EditMode.TEMPO_MAP) {
 			return;
 		}
+
 		if (modeManager.editMode == EditMode.VOCALS) {
 			undoSystem.addUndo();
 			snapPositionsWithLength(getFromTo(data.songChart.vocals.vocals, from, to), data.songChart.vocals.vocals);
+
+			frame.selectionChanged();
 			return;
 		}
+
 		if (modeManager.editMode == EditMode.GUITAR) {
 			undoSystem.addUndo();
 			final ArrangementChart arrangement = data.getCurrentArrangement();
@@ -933,6 +957,8 @@ public class KeyboardHandler implements KeyListener {
 			snapPositions(getFromTo(level.anchors, from, to));
 			snapNotePositionsWithLength(getFromTo(level.chordsAndNotes, from, to), level.chordsAndNotes);
 			snapPositionsWithLength(getFromTo(level.handShapes, from, to), level.handShapes);
+
+			frame.selectionChanged();
 		}
 	}
 
@@ -962,9 +988,13 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
+		undoSystem.addUndo();
+
 		for (final Selection<Vocal> vocalSelection : selectedAccessor.getSelectedSet()) {
 			vocalSelection.selectable.setWordPart(!vocalSelection.selectable.isWordPart());
 		}
+
+		frame.selectionChanged();
 	}
 
 	public void togglePhraseEnd() {
@@ -977,9 +1007,13 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
+		undoSystem.addUndo();
+
 		for (final Selection<Vocal> selectedVocal : selectedAccessor.getSelectedSet()) {
 			selectedVocal.selectable.setPhraseEnd(!selectedVocal.selectable.isPhraseEnd());
 		}
+
+		frame.selectionChanged();
 	}
 
 	private void openChordOptionsPopup(final ArrayList2<ChordOrNote> selected) {
@@ -1240,6 +1274,8 @@ public class KeyboardHandler implements KeyListener {
 				selection.selectable.note.fret = fret;
 			}
 		}
+
+		frame.selectionChanged();
 	}
 
 	private void handleNumber(final int number) {

@@ -50,9 +50,9 @@ public class ChartData {
 		currentLevel = newDiff;
 	}
 
-	public void setNewSong(final String dir, final SongChart song, final MusicData musicData,
+	public void setNewSong(final File songFolder, final SongChart song, final MusicData musicData,
 			final String projectFileName) {
-		setSong(dir, song, musicData, projectFileName, EditMode.TEMPO_MAP, 0, 0, 0);
+		setSong(songFolder.getAbsolutePath(), song, musicData, projectFileName, EditMode.TEMPO_MAP, 0, 0, 0);
 	}
 
 	public void setSong(final String dir, final SongChart song, final MusicData musicData, final String projectFileName,
