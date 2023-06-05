@@ -50,6 +50,7 @@ public class ChartPanelColors {
 		LANE_3(96, 48, 0), //
 		LANE_4(0, 96, 0), //
 		LANE_5(96, 0, 96), //
+		LANE_6(128, 32, 32), //
 
 		LANE_BRIGHT_0(128, 0, 0), //
 		LANE_BRIGHT_1(128, 128, 0), //
@@ -57,6 +58,7 @@ public class ChartPanelColors {
 		LANE_BRIGHT_3(128, 64, 0), //
 		LANE_BRIGHT_4(0, 128, 0), //
 		LANE_BRIGHT_5(128, 0, 128), //
+		LANE_BRIGHT_6(128, 0, 128), //
 
 		NOTE_STRING_MUTE(128, 128, 128), //
 
@@ -66,6 +68,7 @@ public class ChartPanelColors {
 		NOTE_3(192, 96, 0), //
 		NOTE_4(0, 192, 0), //
 		NOTE_5(192, 0, 192), //
+		NOTE_6(192, 0, 192), //
 
 		NOTE_TAIL_0(224, 0, 0), //
 		NOTE_TAIL_1(224, 224, 0), //
@@ -73,6 +76,7 @@ public class ChartPanelColors {
 		NOTE_TAIL_3(224, 105, 0), //
 		NOTE_TAIL_4(0, 224, 0), //
 		NOTE_TAIL_5(224, 0, 224), //
+		NOTE_TAIL_6(224, 0, 224), //
 
 		NOTE_ACCENT_0(255, 0, 0), //
 		NOTE_ACCENT_1(255, 255, 0), //
@@ -80,6 +84,7 @@ public class ChartPanelColors {
 		NOTE_ACCENT_3(255, 128, 0), //
 		NOTE_ACCENT_4(0, 255, 0), //
 		NOTE_ACCENT_5(255, 0, 255), //
+		NOTE_ACCENT_6(255, 0, 255), //
 
 		ANCHOR(192, 32, 32), //
 		HAND_SHAPE(0, 128, 255), //
@@ -91,7 +96,10 @@ public class ChartPanelColors {
 		VOCAL_TEXT(210, 210, 210), //
 		VOCAL_NOTE(0, 255, 255, 192), //
 		VOCAL_NOTE_WORD_PART(0, 0, 255, 192), //
-		;
+
+		PREVIEW_3D_ANCHOR(0, 0, 255, 64), //
+		PREVIEW_3D_FRET_LANE(64, 128, 255), //
+		PREVIEW_3D_BEAT(64, 64, 128);
 
 		private final Color defaultColor;
 
@@ -122,8 +130,16 @@ public class ChartPanelColors {
 			try {
 				final ColorLabel colorLabel = ColorLabel.valueOf(configEntry.getKey());
 				final String[] rgb = configEntry.getValue().split(" ");
-				final Color color = new Color(Integer.valueOf(rgb[0], 16), Integer.valueOf(rgb[1], 16),
-						Integer.valueOf(rgb[2], 16));
+				final Color color;
+				if (rgb.length == 3) {
+					color = new Color(Integer.valueOf(rgb[0], 16), Integer.valueOf(rgb[1], 16),
+							Integer.valueOf(rgb[2], 16));
+				} else if (rgb.length == 4) {
+					color = new Color(Integer.valueOf(rgb[0], 16), Integer.valueOf(rgb[1], 16),
+							Integer.valueOf(rgb[2], 16), Integer.valueOf(rgb[3], 16));
+				} else {
+					color = new Color(0, 0, 0, 255);
+				}
 
 				colors.put(colorLabel, color);
 			} catch (final Exception e) {
@@ -138,7 +154,8 @@ public class ChartPanelColors {
 			final String r = Integer.toHexString(c.getRed());
 			final String g = Integer.toHexString(c.getGreen());
 			final String b = Integer.toHexString(c.getBlue());
-			config.put(colorEntry.getKey().name(), r + " " + g + " " + b);
+			final String a = Integer.toHexString(c.getAlpha());
+			config.put(colorEntry.getKey().name(), r + " " + g + " " + b + " " + a);
 		}
 
 		RW.writeConfig(colorFilePath, config);

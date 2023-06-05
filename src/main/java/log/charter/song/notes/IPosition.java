@@ -151,6 +151,11 @@ public interface IPosition extends Comparable<IPosition> {
 		return list.get(maxId).position() > position ? minId : maxId;
 	}
 
+	public static <T extends IPosition> T findLastBeforeEqual(final List<T> list, final int position) {
+		final int id = findLastIdBeforeEqual(list, position);
+		return id < 0 ? null : list.get(id);
+	}
+
 	public static <T extends IPosition> T findLastBefore(final List<T> list, final int position) {
 		final int id = findLastIdBefore(list, position);
 		return id < 0 ? null : list.get(id);

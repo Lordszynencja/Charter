@@ -227,6 +227,7 @@ public class KeyboardHandler implements KeyListener {
 		@Override
 		public void fireFunction(final KeyEvent e) {
 			function.accept(e);
+			e.consume();
 		}
 	}
 
@@ -247,6 +248,7 @@ public class KeyboardHandler implements KeyListener {
 		@Override
 		public void fireFunction(final KeyEvent e) {
 			functions.get(modifierKeysValue(ctrl, alt, shift)).accept(e);
+			e.consume();
 		}
 	}
 

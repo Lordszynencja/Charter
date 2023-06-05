@@ -99,6 +99,10 @@ public class ChartData {
 		if (modeManager.editMode != EditMode.GUITAR) {
 			return null;
 		}
+		if (songChart.arrangements.isEmpty()) {
+			return null;
+		}
+
 		return songChart.arrangements.get(currentArrangement);
 	}
 

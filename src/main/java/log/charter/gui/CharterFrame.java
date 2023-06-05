@@ -39,6 +39,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
+import log.charter.gui.components.preview3D.Preview3DPanel;
 import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.CharterFrameComponentListener;
@@ -62,6 +63,7 @@ public class CharterFrame extends JFrame {
 	private final CurrentSelectionEditor currentSelectionEditor = new CurrentSelectionEditor();
 	private final JScrollBar scrollBar = createScrollBar();
 	private final JLabel helpLabel = createHelp();
+	private final Preview3DPanel preview3DPanel = new Preview3DPanel();
 	private final JTabbedPane tabs = createTabs();
 
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
@@ -126,6 +128,7 @@ public class CharterFrame extends JFrame {
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 		currentSelectionEditor.init(arrangementFixer, data, selectionManager, undoSystem);
+		preview3DPanel.init(data, keyboardHandler);
 
 		add(chartPanel);
 		add(scrollBar);
@@ -197,6 +200,8 @@ public class CharterFrame extends JFrame {
 		if (isFocused()) {
 			repaint();
 		}
+
+		preview3DPanel.repaint();
 	}
 
 	private JScrollBar createScrollBar() {
@@ -262,6 +267,7 @@ public class CharterFrame extends JFrame {
 		tabs.addTab("Quick edit", new JScrollPane(currentSelectionEditor));
 		tabs.addTab("Help", helpLabel);
 		tabs.addTab("Text", new JScrollPane(textArea));
+		tabs.addTab("3D Preview", preview3DPanel);
 
 		return tabs;
 	}
@@ -328,6 +334,10 @@ public class CharterFrame extends JFrame {
 
 		String title = LogCharterRSMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title
 				+ " : ";
+
+		if (data.songChart.arrangements.isEmpty()) {
+			return title;
+		}
 
 		if (modeManager.editMode == EditMode.GUITAR) {
 			title += data.getCurrentArrangement().getTypeNameLabel();

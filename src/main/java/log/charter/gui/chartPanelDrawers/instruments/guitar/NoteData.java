@@ -15,7 +15,7 @@ import log.charter.song.notes.GuitarSound;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-class NoteData {
+public class NoteData {
 	public static ArrayList2<NoteData> fromChord(final Chord chord, final ChordTemplate chordTemplate, final int x,
 			final int length, final boolean selected, final boolean lastWasLinkNext, final boolean ctrl) {
 		final ArrayList2<NoteData> notes = new ArrayList2<>();
@@ -42,9 +42,9 @@ class NoteData {
 		return notes;
 	}
 
-	public final int position;
+	public int position;
 	public final int x;
-	public final int length;
+	public int length;
 
 	public final int string;
 	public final int fretNumber;
@@ -61,6 +61,7 @@ class NoteData {
 
 	public final boolean selected;
 	public final boolean linkPrevious;
+	public final double prebend;
 
 	public NoteData(final int x, final int length, final Note note, final boolean selected,
 			final boolean lastWasLinkNext) {
@@ -91,7 +92,7 @@ class NoteData {
 		this.mute = mute;
 		this.hopo = hopo;
 		this.harmonic = harmonic;
-		this.bendValues = bendValues;
+		this.bendValues = bendValues == null ? new ArrayList2<>() : bendValues;
 		this.slideTo = slideTo;
 		this.unpitchedSlide = unpitchedSlide;
 		this.vibrato = vibrato;
@@ -99,5 +100,9 @@ class NoteData {
 
 		this.selected = selected;
 		linkPrevious = lastWasLinkNext;
+
+		prebend = !this.bendValues.isEmpty() && this.bendValues.get(0).position() == 0
+				? this.bendValues.get(0).bendValue.doubleValue()
+				: 0;
 	}
 }
