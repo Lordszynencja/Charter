@@ -2,10 +2,11 @@ package log.charter.gui.components.preview3D;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
-import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.visibility;
+import static log.charter.gui.components.preview3D.Preview3DUtils.visibilityZ;
 import static log.charter.song.notes.IPosition.findFirstAfter;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
@@ -62,9 +63,9 @@ public class Preview3DAnchorsDrawer {
 	private void drawAnchor(final BaseShaderDrawData drawData, final Anchor anchor, final int anchorEnd) {
 		final double x0 = getFretPosition(anchor.fret - 1);
 		final double x1 = getFretPosition(anchor.fret + anchor.width - 1);
-		final double y = getStringPosition(data.currentStrings()) - 0.01;
+		final double y = getChartboardYPosition(data.currentStrings()) - 0.001;
 		final double z0 = max(0, getTimePosition(anchor.position() - data.time));
-		final double z1 = min(Preview3DUtils.visibilityZ, getTimePosition(anchorEnd - data.time));
+		final double z1 = min(visibilityZ, getTimePosition(anchorEnd - data.time));
 
 		final Color color = new Color(0, 0, 255, 64);
 		drawData.addVertex(new Point3D(x0, y, z0), color)//

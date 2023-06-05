@@ -3,6 +3,8 @@ package log.charter.song.notes;
 import static java.lang.Math.max;
 import static log.charter.data.config.Config.minNoteDistance;
 
+import java.util.List;
+
 import log.charter.data.managers.selection.Selection;
 import log.charter.song.BeatsMap;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -53,29 +55,28 @@ public interface IPositionWithLength extends IPosition {
 		}
 	}
 
-	// TODO
-//	public static <PwL extends PositionWithLength, P extends Position> void snapToGrid(
-//			final BeatsMap beatsMap, final ArrayList2<Selection<PwL>> toChange, final ArrayList2<P> allPositions) {
-//		for (final Selection<PwL> selected : toChange) {
-//			final PositionWithLength positionWithLength = selected.selectable;
-//			int position = positionWithLength.position();
-//			position =beatsMap.getPositionFromGridClosestTo(position);
-//			if (selected.id>0 && allPositions.get(selected.id-1).position == )
-//			int endPosition = positionWithLength.endPosition();
-//			endPosition = change > 0 ? beatsMap.getPositionWithAddedGrid(endPosition, change)
-//					: beatsMap.getPositionWithRemovedGrid(endPosition, -change);
-//
-//			if (allPositions.size() > selected.id + 1) {
-//				final Position next = allPositions.get(selected.id + 1);
-//				if (next.position - endPosition < minNoteDistance) {
-//					endPosition = next.position - minNoteDistance;
-//				}
-//			}
-//
-//			final int length = max(0, endPosition - positionWithLength.position());
-//			positionWithLength.length(length);
-//		}
-//	}
+	public static <T extends IPositionWithLength> int findLastIdBefore(final List<T> list, final int position) {
+		if (list.isEmpty()) {
+			return -1;
+		}
+
+		if (position <= list.get(0).position()) {
+			return -1;
+		}
+
+		int minId = 0;
+		int maxId = list.size() - 1;
+		while (maxId - minId > 1) {
+			final int id = (minId + maxId) / 2;
+			if (list.get(id).endPosition() >= position) {
+				maxId = id - 1;
+			} else {
+				minId = id;
+			}
+		}
+
+		return list.get(maxId).endPosition() >= position ? minId : maxId;
+	}
 
 	int length();
 

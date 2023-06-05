@@ -3,33 +3,45 @@ package log.charter.gui.components.preview3D;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.sin;
+import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Matrix4.moveMatrix;
+import static log.charter.gui.components.preview3D.Matrix4.scaleMatrix;
+import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretMiddlePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
-import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPositionWithBend;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
+import static log.charter.gui.components.preview3D.Preview3DUtils.getTopStringYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.visibility;
+import static log.charter.song.notes.IPosition.findFirstAfterEqual;
+import static log.charter.song.notes.IPosition.findFirstIdAfterEqual;
 import static log.charter.song.notes.IPosition.findLastBeforeEqual;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
+import static log.charter.song.notes.IPositionWithLength.findLastIdBefore;
 
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.NoteData;
 import log.charter.gui.components.preview3D.BaseShader.BaseShaderDrawData;
 import log.charter.gui.components.preview3D.shapes.CompositeModel;
 import log.charter.gui.components.preview3D.shapes.FrettedNoteModel;
+import log.charter.gui.components.preview3D.shapes.Model;
+import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
 import log.charter.gui.components.preview3D.shapes.OpenNoteModel;
 import log.charter.song.Anchor;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
+import log.charter.song.HandShape;
+import log.charter.song.enums.HOPO;
+import log.charter.song.enums.Harmonic;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -121,7 +133,7 @@ public class Preview3DGuitarSoundsDrawer {
 		if (note.vibrato != null) {
 			bendValue += sin(dt * Math.PI * note.vibrato / 10000) * 0.2;
 		}
-		final double value = getStringPositionWithBend(note.string, bendValue);
+		final double value = getStringPositionWithBend(note.string, data.currentStrings(), bendValue);
 
 		return value;
 	}
@@ -155,13 +167,13 @@ public class Preview3DGuitarSoundsDrawer {
 //	}
 //
 
-	private void drawChordShadow(final BaseShader baseShader, final Chord chord) {
-		final Anchor anchor = findAnchorForPosition(chord.position());
+	private void drawChordShadow(final BaseShader baseShader, final int position) {
+		final Anchor anchor = findAnchorForPosition(position);
 		final double x0 = getFretPosition(anchor.fret - 1);
 		final double x2 = getFretPosition(anchor.topFret());
-		final double y0 = getStringPosition(data.currentStrings());
-		final double y1 = getStringPosition(0);
-		final double z = max(0, getTimePosition(chord.position() - data.time));
+		final double y0 = getChartboardYPosition(data.currentStrings());
+		final double y1 = getTopStringYPosition();
+		final double z = max(0, getTimePosition(position - data.time));
 
 		final Point3D p00 = new Point3D(x0, y0, z);
 		final Point3D p01 = new Point3D((x2 + x0) / 2, y0, z);
@@ -184,7 +196,7 @@ public class Preview3DGuitarSoundsDrawer {
 
 	private void drawNoteShadow(final BaseShader baseShader, final double x, final double y, final double z,
 			final Color color) {
-		final double shadowBaseY = Preview3DUtils.getStringPosition(data.currentStrings());
+		final double shadowBaseY = getChartboardYPosition(data.currentStrings());
 		final Point3D shadowBaseP0 = new Point3D(x - 0.02, shadowBaseY, z);
 		final Point3D shadowBaseP1 = new Point3D(x, shadowBaseY, z);
 		final Point3D shadowBaseP2 = new Point3D(x + 0.02, shadowBaseY, z);
@@ -200,18 +212,34 @@ public class Preview3DGuitarSoundsDrawer {
 				.draw(GL30.GL_TRIANGLE_FAN);
 	}
 
+	private void drawHarmonic(final BaseShader baseShader, final double x, final double y, final double z,
+			final Harmonic harmonic) {
+		baseShader.setModelMatrix(moveMatrix(x, y, z));
+		final Model model = NoteStatusModels.harmonicsModels.get(harmonic);
+		final Color color = NoteStatusModels.harmonicsColors.get(harmonic).color();
+		baseShader.drawModel(model, color);
+	}
+
+	private void drawHOPO(final BaseShader baseShader, final double x, final double y, final double z,
+			final HOPO hopo) {
+		baseShader.setModelMatrix(moveMatrix(x, y, z));
+		final Model model = NoteStatusModels.hoposModels.get(hopo);
+		final Color color = NoteStatusModels.hoposColors.get(hopo).color();
+		baseShader.drawModel(model, color);
+	}
+
 	private void drawNoteHead(final BaseShader baseShader, final NoteData note, final boolean hit,
 			final boolean chordPart) {
 		if (note.linkPrevious) {
 			return;
 		}
 
-		Color color = ColorLabel.valueOf("NOTE_" + note.string).color();
+		Color color = getStringBasedColor(StringColorLabelType.NOTE, note.string, data.currentStrings());
 		if (hit) {
 			color = color.brighter();
 		}
 
-		final double y = getStringPositionWithBend(note.string, note.prebend);
+		final double y = getStringPositionWithBend(note.string, data.currentStrings(), note.prebend);
 		final double z = getTimePosition(note.position - data.time);
 		if (note.fretNumber == 0) {
 			final Anchor anchor = findAnchorForPosition(note.position);
@@ -226,6 +254,14 @@ public class Preview3DGuitarSoundsDrawer {
 				drawData.draw(points.a);
 			}
 
+			final double middleX = (getFretPosition(anchor.topFret()) + x) / 2;
+			if (note.hopo != HOPO.NONE) {
+				drawHOPO(baseShader, middleX, y, z, note.hopo);
+			}
+			if (note.harmonic != Harmonic.NONE) {
+				drawHarmonic(baseShader, middleX, y, z, note.harmonic);
+			}
+
 			return;
 		}
 
@@ -237,36 +273,21 @@ public class Preview3DGuitarSoundsDrawer {
 			drawData.addModel(FrettedNoteModel.instance, color);
 			drawData.draw(FrettedNoteModel.instance.getDrawMode());
 		} else {
-			final Color accentColor = ColorLabel.valueOf("NOTE_ACCENT_" + note.string).color();
-			baseShader.setModelMatrix(moveMatrix(x, y, z).multiply(Matrix4.scaleMatrix(1.1, 1.1, 1)));
+			final Color accentColor = getStringBasedColor(StringColorLabelType.NOTE_ACCENT, note.string,
+					data.currentStrings());
+			baseShader.setModelMatrix(moveMatrix(x, y, z).multiply(scaleMatrix(1.1, 1.1, 1)));
 			final BaseShaderDrawData drawData = baseShader.new BaseShaderDrawData();
 			drawData.addModel(FrettedNoteModel.instance, accentColor);
 			drawData.draw(FrettedNoteModel.instance.getDrawMode());
 		}
 
-//		if (note.harmonic == Harmonic.NORMAL) {
-//			final double harmonicZ = z0 - 0.02;
-//			final Point3D[] points = new Point3D[12];
-//			for (int i = 0; i < points.length; i++) {
-//				final double px = x + sin(2 * i * Math.PI / points.length) * 0.2;
-//				final double py = y + cos(2 * i * Math.PI / points.length) * 0.2;
-//				points[i] = new Point3D(px, py, harmonicZ);
-//			}
-//			shapesList.addShape(new Color(224, 224, 224), order - 0.01, points);
-//		}
-//
-//		if (note.harmonic == Harmonic.PINCH) {
-//			final double harmonicZ = z0 - 0.01;
-//			final Point3D[] points = new Point3D[12];
-//			for (int i = 0; i < points.length; i++) {
-//				final double px = x + Math.sin(2 * i * Math.PI / points.length) * 0.3;
-//				final double py = y + cos(2 * i * Math.PI / points.length) * 0.15;
-//				points[i] = new Point3D(px, py, harmonicZ);
-//			}
-//			shapesList.addShape(new Color(0, 0, 0), order - 0.01, points);
-//		}
-
-		// TODO shadow
+		// TODO mutes
+		if (note.hopo != HOPO.NONE) {
+			drawHOPO(baseShader, x, y, z, note.hopo);
+		}
+		if (note.harmonic != Harmonic.NONE) {
+			drawHarmonic(baseShader, x, y, z, note.harmonic);
+		}
 
 		if (!hit && !chordPart) {
 			drawNoteShadow(baseShader, x, y, z, color);
@@ -293,7 +314,7 @@ public class Preview3DGuitarSoundsDrawer {
 
 		final BaseShaderDrawData drawData = baseShader.new BaseShaderDrawData();
 
-		final Color color = ColorLabel.valueOf("NOTE_TAIL_" + note.string).color();
+		final Color color = getStringBasedColor(StringColorLabelType.NOTE_TAIL, note.string, data.currentStrings());
 
 		final int tremoloSize = 100;
 		for (int t = max(data.time, note.position); t <= note.position + note.length
@@ -313,6 +334,7 @@ public class Preview3DGuitarSoundsDrawer {
 
 		baseShader.clearModelMatrix();
 		drawData.draw(GL30.GL_TRIANGLE_STRIP);
+		// TODO slides
 	}
 
 	private void drawNote(final BaseShader baseShader, final NoteData note, final boolean chordPart) {
@@ -335,36 +357,61 @@ public class Preview3DGuitarSoundsDrawer {
 		drawNoteTail(baseShader, note);
 	}
 
+	private void drawSingleNote(final BaseShader baseShader, final ChordOrNote sound, final boolean lastWasLinkNext) {
+		final NoteData noteData = new NoteData(0, sound.note.length(), sound.note, false, lastWasLinkNext);
+		drawNote(baseShader, noteData, false);
+	}
+
+	private boolean isFirstChordInTheHandShape(final Chord chord) {
+		final HandShape chordHandShape = findLastBeforeEqual(data.getCurrentArrangementLevel().handShapes,
+				chord.position());
+		if (chordHandShape == null || chordHandShape.chordId != chord.chordId
+				|| chordHandShape.endPosition() < chord.position()) {
+			return true;
+		}
+
+		final ArrayList2<Chord> chords = data.getCurrentArrangementLevel().chordsAndNotes.stream()//
+				.filter(s -> s.isChord() && s.chord.chordId == chordHandShape.chordId)//
+				.map(s -> s.chord)//
+				.collect(Collectors.toCollection(ArrayList2::new));
+		final Chord firstInHandShape = findFirstAfterEqual(chords, chordHandShape.position());
+		return firstInHandShape.position() == chord.position();
+	}
+
+	private void drawChord(final BaseShader baseShader, final ChordOrNote sound, final boolean lastWasLinkNext) {
+		final Chord chord = sound.chord;
+		if (isFirstChordInTheHandShape(chord)) {
+			final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
+			final ArrayList2<NoteData> notes = NoteData.fromChord(chord, chordTemplate, 0, sound.chord.length(), false,
+					lastWasLinkNext, false);
+
+			for (int j = notes.size() - 1; j >= 0; j--) {
+				drawNote(baseShader, notes.get(j), true);
+			}
+		}
+
+		if (!lastWasLinkNext && chord.position() + highlightWindow > data.time) {
+			drawChordShadow(baseShader, chord.position());
+		}
+	}
+
 	public void draw(final BaseShader baseShader) {
 		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
 
-		for (int i = sounds.size() - 1; i >= 0; i--) {
+		int soundsFrom = findFirstIdAfterEqual(sounds, data.time - highlightWindow);
+		if (soundsFrom == -1) {
+			soundsFrom = 0;
+		}
+		final int soundsTo = findLastIdBefore(sounds, data.time + visibility);
+
+		for (int i = soundsTo; i >= soundsFrom; i--) {
 			final ChordOrNote sound = sounds.get(i);
-			if (sound.position() > data.time + visibility) {
-				continue;
-			}
-			if (sound.endPosition() < data.time - 50) {
-				continue;
-			}
-			if (sound.endPosition() < data.time - visibility) {
-				return;
-			}
+			final boolean lastWasLinkNext = i > 0 && sounds.get(i - 1).asGuitarSound().linkNext;
 
 			if (sound.isNote()) {
-				final boolean lastWasLinkNext = i > 0 && sounds.get(i - 1).asGuitarSound().linkNext;
-				final NoteData noteData = new NoteData(0, sound.note.length(), sound.note, false, lastWasLinkNext);
-				drawNote(baseShader, noteData, false);
+				drawSingleNote(baseShader, sound, lastWasLinkNext);
 			} else {
-				final boolean lastWasLinkNext = i > 0 && sounds.get(i - 1).asGuitarSound().linkNext;
-				final Chord chord = sound.chord;
-				final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
-				final ArrayList2<NoteData> notes = NoteData.fromChord(chord, chordTemplate, 0, sound.chord.length(),
-						false, lastWasLinkNext, false);
-				for (int j = notes.size() - 1; j >= 0; j--) {
-					drawNote(baseShader, notes.get(j), true);
-				}
-
-				drawChordShadow(baseShader, chord);
+				drawChord(baseShader, sound, lastWasLinkNext);
 			}
 		}
 	}

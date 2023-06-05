@@ -27,14 +27,14 @@ public class NoteBendPane extends ParamsPane {
 
 	private final Note note;
 
-	public NoteBendPane(final BeatsMap beatsMap, final CharterFrame frame, final UndoSystem undoSystem,
-			final Note note) {
+	public NoteBendPane(final BeatsMap beatsMap, final CharterFrame frame, final UndoSystem undoSystem, final Note note,
+			final int strings) {
 		super(frame, Label.BEND_OPTIONS_PANE, 10, getSizes());
 		this.undoSystem = undoSystem;
 
 		this.note = note;
 
-		bendEditor = new BendEditor(beatsMap, note.position(), note.length(), note.string, note.bendValues);
+		bendEditor = new BendEditor(beatsMap, note.position(), note.length(), note.string, note.bendValues, strings);
 
 		final int maxWidth = frame.getWidth() - 40;
 		if (bendEditor.getWidth() < maxWidth) {

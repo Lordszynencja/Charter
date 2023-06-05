@@ -6,6 +6,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.round;
 import static log.charter.data.config.Config.gridSize;
 import static log.charter.data.config.Config.maxBendValue;
+import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.song.notes.IPosition.findFirstIdAfterEqual;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
@@ -23,7 +24,9 @@ import java.util.function.BiConsumer;
 
 import javax.swing.JComponent;
 
+import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.song.BeatsMap;
 import log.charter.song.BendValue;
 import log.charter.song.notes.Chord;
@@ -105,6 +108,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	private double noteEndPosition = 1;
 
 	private int string;
+	private int strings;
 	private final ArrayList2<EditorBendValue> bendValues = new ArrayList2<>();
 
 	private int mouseX;
@@ -114,6 +118,8 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 	public BendEditorGraph(final BeatsMap beatsMap, final BiConsumer<Integer, ArrayList2<BendValue>> onChangeBends) {
 		super();
+		strings = Config.maxStrings;
+
 		this.onChangeBends = onChangeBends;
 
 		this.beatsMap = beatsMap;
@@ -151,8 +157,9 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		calculateSize();
 	}
 
-	public void setNote(final Note note) {
+	public void setNote(final Note note, final int strings) {
 		string = note.string;
+		this.strings = strings;
 		notePosition = note.position();
 		noteLength = note.length();
 		calculateBeatPositions();
@@ -160,8 +167,9 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		setBendValues(note.string, note.bendValues);
 	}
 
-	public void setChord(final Chord chord, final int string) {
+	public void setChord(final Chord chord, final int string, final int strings) {
 		this.string = string;
+		this.strings = strings;
 		notePosition = chord.position();
 		noteLength = chord.length();
 		calculateBeatPositions();
@@ -265,7 +273,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		g.setColor(getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-		g.setColor(ColorLabel.valueOf("NOTE_" + string).color());
+		g.setColor(getStringBasedColor(StringColorLabelType.NOTE, string, strings));
 		final int noteX0 = getXFromBendPosition(noteStartPosition);
 		final int noteX1 = getXFromBendPosition(noteEndPosition);
 		g.fillRect(noteX0, getYFromBendValue(maxBendInternalValue + 1), noteX1 - noteX0,

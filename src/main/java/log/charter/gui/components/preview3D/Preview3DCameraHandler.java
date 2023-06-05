@@ -6,7 +6,7 @@ import static log.charter.gui.components.preview3D.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.Matrix4.rotationXMatrix;
 import static log.charter.gui.components.preview3D.Matrix4.scaleMatrix;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
-import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
+import static log.charter.gui.components.preview3D.Preview3DUtils.getTopStringYPosition;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import log.charter.data.ChartData;
@@ -64,7 +64,7 @@ public class Preview3DCameraHandler {
 	public void updateCamera(final double aspectRatio, final double x, final double y) {
 		updateFretFocus();
 
-		final double camY = 1 + getStringPosition(0) + (fretSpan - 4) * 0.2;
+		final double camY = 1 + getTopStringYPosition() + (fretSpan - 4) * 0.2;
 		final double camZ = -2.6 + (fretSpan - 4) * 0.005;
 		final double camRotationX = 0.2 + (fretSpan - 4) * 0.015;
 

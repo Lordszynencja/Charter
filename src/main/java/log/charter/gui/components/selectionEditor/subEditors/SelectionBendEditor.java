@@ -1,6 +1,7 @@
 package log.charter.gui.components.selectionEditor.subEditors;
 
 import static log.charter.data.config.Config.maxStrings;
+import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.RowedPanel;
 import log.charter.song.BeatsMap;
 import log.charter.song.BendValue;
@@ -71,7 +72,7 @@ public class SelectionBendEditor extends RowedPanel {
 		for (int i = 0; i < maxStrings; i++) {
 			final int string = i;
 			final JRadioButton radioButton = new JRadioButton((string + 1) + "");
-			radioButton.setForeground(ColorLabel.valueOf("NOTE_" + string).color());
+			radioButton.setForeground(getStringBasedColor(StringColorLabelType.NOTE, string, maxStrings));
 			radioButton.addActionListener(e -> onSelectString(string));
 			this.add(radioButton, 20 + 40 * i, getY(0), 40, 20);
 
@@ -90,28 +91,32 @@ public class SelectionBendEditor extends RowedPanel {
 	private void enableAndSelectStringsForNote(final Note note) {
 		final int string = note.string;
 
+		final int stringsAmount = data.currentStrings();
+		final int stringOffset = stringsAmount > 6 ? 9 - stringsAmount : 3;
 		for (int i = 0; i < string; i++) {
-			strings.get(i).setEnabled(false);
+			strings.get(i + stringOffset).setEnabled(false);
 		}
-		strings.get(string).setEnabled(true);
-		strings.get(string).setSelected(true);
+		strings.get(string + stringOffset).setEnabled(true);
+		strings.get(string + stringOffset).setSelected(true);
 		for (int i = string + 1; i < data.currentStrings(); i++) {
-			strings.get(i).setEnabled(false);
+			strings.get(i + stringOffset).setEnabled(false);
 		}
 
-		bendEditorGraph.setNote(note);
+		bendEditorGraph.setNote(note, data.currentStrings());
 	}
 
 	private void enableAndSelectStringsForChord(final Chord chord) {
 		final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
 		final int string = chordTemplate.frets.keySet().stream().min(Integer::compare).get();
+		final int stringsAmount = data.currentStrings();
+		final int stringOffset = stringsAmount > 6 ? 9 - stringsAmount : 3;
 
 		for (int i = 0; i < data.currentStrings(); i++) {
-			strings.get(i).setEnabled(chordTemplate.frets.containsKey(i));
+			strings.get(i + stringOffset).setEnabled(chordTemplate.frets.containsKey(i));
 		}
-		strings.get(string).setSelected(true);
+		strings.get(string + stringOffset).setSelected(true);
 
-		bendEditorGraph.setChord(chord, string);
+		bendEditorGraph.setChord(chord, string, data.currentStrings());
 	}
 
 	public void enableAndSelectStrings(final ChordOrNote sound) {
@@ -127,11 +132,10 @@ public class SelectionBendEditor extends RowedPanel {
 		bendEditorGraph.setBeatsMap(data.songChart.beatsMap);
 
 		final int stringsAmount = data.currentStrings();
-		for (int i = 0; i < stringsAmount; i++) {
-			strings.get(i).setVisible(true);
-		}
-		for (int i = stringsAmount; i < maxStrings; i++) {
-			strings.get(i).setVisible(false);
+		final int stringOffset = stringsAmount > 6 ? 9 - stringsAmount : 3;
+		for (int i = 0; i < maxStrings; i++) {
+			strings.get(i).setVisible(i >= stringOffset && i < stringsAmount + stringOffset);
+			strings.get(i).setForeground(getStringBasedColor(StringColorLabelType.NOTE, i, stringsAmount));
 		}
 
 		enableAndSelectStrings(selected);

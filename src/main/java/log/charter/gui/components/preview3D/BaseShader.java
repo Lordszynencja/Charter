@@ -173,4 +173,8 @@ public class BaseShader {
 		GL30.glBufferData(GL30.GL_ARRAY_BUFFER, data, GL30.GL_STREAM_DRAW);
 		GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, 0);
 	}
+
+	public void drawModel(final Model model, final Color color) {
+		new BaseShaderDrawData().addModel(model, color).draw(model.getDrawMode());
+	}
 }

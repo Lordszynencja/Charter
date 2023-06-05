@@ -1,6 +1,7 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
 import static log.charter.data.config.Config.noteWidth;
+import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
@@ -12,7 +13,7 @@ import log.charter.data.ChartData;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.handlers.KeyboardHandler;
@@ -64,7 +65,7 @@ public class GuitarDrawer {
 		final int x = timeToX(0, data.time);
 
 		for (int i = 0; i < lanes; i++) {
-			g.setColor(ColorLabel.valueOf("LANE_" + i).color());
+			g.setColor(getStringBasedColor(StringColorLabelType.LANE, i, data.currentStrings()));
 			final int y = getLaneY(i, lanes);
 			g.drawLine(x, y, width, y);
 		}

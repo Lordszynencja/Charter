@@ -3,6 +3,7 @@ package log.charter.gui.components;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
+import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledDiamond;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
@@ -24,6 +25,7 @@ import javax.swing.JComponent;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.song.ChordTemplate;
@@ -208,14 +210,14 @@ public class ChordTemplateEditorDialogPreview extends JComponent
 	}
 
 	private void drawStrings(final Graphics g) {
-		final int strings = data.getCurrentArrangement().tuning.strings;
+		final int strings = data.currentStrings();
 		final int width = getWidth();
 		final DrawableShapeList stringLines = new DrawableShapeList();
 
 		for (int i = 0; i < strings; i++) {
-			final Color color = ColorLabel.valueOf("LANE_" + i).color();
+			final Color color = getStringBasedColor(StringColorLabelType.LANE, i, strings);
 			stringLines.add(lineHorizontal(0, width, stringPositions[i], color));
-			final Color color2 = ColorLabel.valueOf("LANE_BRIGHT_" + i).color();
+			final Color color2 = getStringBasedColor(StringColorLabelType.LANE_BRIGHT, i, strings);
 			stringLines.add(lineHorizontal(0, width, stringPositions[i] + 1, color2));
 		}
 
@@ -223,7 +225,7 @@ public class ChordTemplateEditorDialogPreview extends JComponent
 	}
 
 	private void drawFretPressMarks(final Graphics g, final FretPosition[] fretPositions) {
-		final int strings = data.getCurrentArrangement().tuning.strings;
+		final int strings = data.currentStrings();
 		final int baseFret = fretPositions[0].fret;
 		final DrawableShapeList pressMarks = new DrawableShapeList();
 
@@ -234,7 +236,9 @@ public class ChordTemplateEditorDialogPreview extends JComponent
 			}
 			if (fret == 0) {
 				for (int j = 0; j < 8; j++) {
-					final Color color = ColorLabel.valueOf((j < 2 || j >= 6 ? "LANE_BRIGHT_" : "NOTE_") + i).color();
+					final StringColorLabelType type = j < 2 || j >= 6 ? StringColorLabelType.LANE_BRIGHT
+							: StringColorLabelType.NOTE;
+					final Color color = getStringBasedColor(type, i, strings);
 					pressMarks.add(lineHorizontal(0, getWidth(), stringPositions[i] - 3 + j, color));
 				}
 				continue;
@@ -243,7 +247,8 @@ public class ChordTemplateEditorDialogPreview extends JComponent
 			final FretPosition fretPosition = fretPositions[fret - baseFret];
 			final Position2D position = new Position2D(fretPosition.position - fretPosition.length / 2,
 					stringPositions[i]);
-			pressMarks.add(filledDiamond(position.move(1, 0), 10, ColorLabel.valueOf("NOTE_" + i).color()));
+			pressMarks.add(
+					filledDiamond(position.move(1, 0), 10, getStringBasedColor(StringColorLabelType.NOTE, i, strings)));
 
 			final Integer finger = chordTemplate.fingers.get(i);
 			final String fingerText = finger == null ? "" : finger == 0 ? "T" : finger.toString();
@@ -302,7 +307,7 @@ public class ChordTemplateEditorDialogPreview extends JComponent
 	}
 
 	private void updateMouseStringAndFret(final int x, final int y) {
-		final int strings = data.getCurrentArrangement().tuning.strings;
+		final int strings = data.currentStrings();
 
 		mouseString = null;
 		for (int i = 0; i < strings; i++) {

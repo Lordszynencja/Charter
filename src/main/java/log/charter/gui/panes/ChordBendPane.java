@@ -1,5 +1,7 @@
 package log.charter.gui.panes;
 
+import static java.lang.Math.max;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -10,7 +12,8 @@ import javax.swing.JScrollPane;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.ChartPanelColors;
+import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.BendEditor;
 import log.charter.gui.components.ParamsPane;
@@ -39,12 +42,14 @@ public class ChordBendPane extends ParamsPane {
 	private final Chord chord;
 
 	private int string;
+	private int strings;
 	private HashMap2<Integer, ArrayList2<BendValue>> bendValues;
 
 	public ChordBendPane(final BeatsMap beatsMap, final CharterFrame frame, final UndoSystem undoSystem,
-			final Chord chord, final ChordTemplate chordTemplate) {
+			final Chord chord, final ChordTemplate chordTemplate, final int strings) {
 		super(frame, Label.BEND_OPTIONS_PANE, 11, getSizes());
 		this.undoSystem = undoSystem;
+		this.strings = strings;
 
 		this.chord = chord;
 		bendValues = chord.bendValues.map(i -> i, bendValues -> bendValues.map(BendValue::new));
@@ -67,12 +72,13 @@ public class ChordBendPane extends ParamsPane {
 		int width = 40 + possibleStrings.size() * 40;
 
 		string = possibleStrings.get(0);
-		bendEditor = new BendEditor(beatsMap, chord.position(), chord.length(), string, bendValues.get(string));
+		bendEditor = new BendEditor(beatsMap, chord.position(), chord.length(), string, bendValues.get(string),
+				strings);
 
 		final int maxWidth = frame.getWidth() - 40;
 		if (bendEditor.getWidth() < maxWidth) {
 			bendEditor.setLocation(20, getY(1));
-			width = Math.max(width, bendEditor.getWidth() + 40);
+			width = max(width, bendEditor.getWidth() + 40);
 			this.add(bendEditor);
 		} else {
 			final JScrollPane scrollPane = new JScrollPane(bendEditor, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
@@ -92,7 +98,7 @@ public class ChordBendPane extends ParamsPane {
 		for (int i = 0; i < possibleStrings.size(); i++) {
 			final int string = possibleStrings.get(i);
 			final JRadioButton radioButton = new JRadioButton((string + 1) + "");
-			radioButton.setForeground(ColorLabel.valueOf("NOTE_" + string).color());
+			radioButton.setForeground(ChartPanelColors.getStringBasedColor(StringColorLabelType.NOTE, string, strings));
 			radioButton.addActionListener(e -> changeString(string));
 			if (i == 0) {
 				radioButton.setSelected(true);

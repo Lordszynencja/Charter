@@ -6,6 +6,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.round;
 import static log.charter.data.config.Config.gridSize;
 import static log.charter.data.config.Config.maxBendValue;
+import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.song.notes.IPosition.findFirstIdAfterEqual;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
@@ -23,6 +24,7 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.song.Beat;
 import log.charter.song.BeatsMap;
 import log.charter.song.BendValue;
@@ -102,15 +104,17 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 	private final double noteEndPosition;
 
 	private int string;
+	private final int strings;
 	private final ArrayList2<EditorBendValue> bendValues = new ArrayList2<>();
 
 	private int mouseX;
 	private BendPositionWithId selectedBend = null;
 
 	public BendEditor(final BeatsMap beatsMap, final int notePosition, final int noteLength, final int string,
-			final ArrayList2<BendValue> bendValuesToEdit) {
+			final ArrayList2<BendValue> bendValuesToEdit, final int strings) {
 		super();
 		this.beatsMap = beatsMap;
+		this.strings = strings;
 
 		this.notePosition = notePosition;
 		this.noteLength = noteLength;
@@ -233,7 +237,7 @@ public class BendEditor extends JComponent implements MouseListener, MouseMotion
 		g.setColor(getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-		g.setColor(ColorLabel.valueOf("NOTE_" + string).color());
+		g.setColor(getStringBasedColor(StringColorLabelType.NOTE, string, strings));
 		final int noteX0 = getXFromBendPosition(noteStartPosition);
 		final int noteX1 = getXFromBendPosition(noteEndPosition);
 		g.fillRect(noteX0, getYFromBendValue(maxBendInternalValue + 1), noteX1 - noteX0,

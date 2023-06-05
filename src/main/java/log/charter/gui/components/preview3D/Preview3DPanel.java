@@ -21,11 +21,12 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 
 	private final BaseShader baseShader = new BaseShader();
 
+	private final Preview3DAnchorsDrawer anchorsDrawer = new Preview3DAnchorsDrawer();
+	private final Preview3DBeatsDrawer beatsDrawer = new Preview3DBeatsDrawer();
 	private final Preview3DCameraHandler cameraHandler = new Preview3DCameraHandler();
 	private final Preview3DFretLanesDrawer fretLanesDrawer = new Preview3DFretLanesDrawer();
-	private final Preview3DStringsDrawer stringsDrawer = new Preview3DStringsDrawer();
-	private final Preview3DAnchorsDrawer anchorsDrawer = new Preview3DAnchorsDrawer();
 	private final Preview3DGuitarSoundsDrawer soundsDrawer = new Preview3DGuitarSoundsDrawer();
+	private final Preview3DStringsDrawer stringsDrawer = new Preview3DStringsDrawer();
 
 	private static GLData prepareGLData() {
 		final GLData data = new GLData();
@@ -41,10 +42,12 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 	public void init(final ChartData data, final KeyboardHandler keyboardHandler) {
 		this.data = data;
 
-		cameraHandler.init(data);
-		stringsDrawer.init(data);
 		anchorsDrawer.init(data);
+		beatsDrawer.init(data);
+		cameraHandler.init(data);
+		fretLanesDrawer.init(data);
 		soundsDrawer.init(data);
+		stringsDrawer.init(data);
 
 		addMouseMotionListener(this);
 		addKeyListener(keyboardHandler);
@@ -120,10 +123,10 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		stringsDrawer.draw(baseShader);
 		fretLanesDrawer.draw(baseShader);
 		anchorsDrawer.draw(baseShader);
+		beatsDrawer.draw(baseShader);
 		soundsDrawer.draw(baseShader);
 
 //		drawFretNumbers(shapesList);
-//		drawGuitarSounds(shapesList);
 
 		baseShader.stopUsing();
 

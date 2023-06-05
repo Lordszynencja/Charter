@@ -1107,9 +1107,9 @@ public class KeyboardHandler implements KeyListener {
 
 		if (sound.isChord()) {
 			new ChordBendPane(data.songChart.beatsMap, frame, undoSystem, sound.chord,
-					data.getCurrentArrangement().chordTemplates.get(sound.chord.chordId));
+					data.getCurrentArrangement().chordTemplates.get(sound.chord.chordId), data.currentStrings());
 		} else if (sound.isNote()) {
-			new NoteBendPane(data.songChart.beatsMap, frame, undoSystem, sound.note);
+			new NoteBendPane(data.songChart.beatsMap, frame, undoSystem, sound.note, data.currentStrings());
 		}
 	}
 

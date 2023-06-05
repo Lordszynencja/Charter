@@ -5,11 +5,14 @@ import static log.charter.gui.components.TextInputWithValidation.ValueValidator.
 
 import java.io.File;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import log.charter.data.config.Config;
-import log.charter.data.config.Theme;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.Theme;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
@@ -48,9 +51,10 @@ public final class ConfigPane extends ParamsPane {
 	private boolean showChordIds = Config.showChordIds;
 	private boolean createDefaultStretchesInBackground = Config.createDefaultStretchesInBackground;
 	private int FPS = Config.FPS;
+	private int maxStrings = Config.maxStrings;
 
 	public ConfigPane(final CharterFrame frame) {
-		super(frame, Label.CONFIG_PANE, 17, getSizes());
+		super(frame, Label.CONFIG_PANE, 18, getSizes());
 		this.frame = frame;
 
 		int row = 0;
@@ -90,6 +94,8 @@ public final class ConfigPane extends ParamsPane {
 				createDefaultStretchesInBackground, val -> createDefaultStretchesInBackground = val);
 		addConfigValue(row++, 20, 150, Label.CONFIG_FPS, FPS + "", 50, createIntValidator(1, 1000, false), //
 				val -> FPS = Integer.valueOf(val), false);
+		addConfigValue(row++, 20, 150, Label.CONFIG_MAX_STRINGS, maxStrings + "", 20, createIntValidator(1, 9, false), //
+				val -> maxStrings = Integer.valueOf(val), false);
 
 		// Theme selection
 		row++;
@@ -137,6 +143,7 @@ public final class ConfigPane extends ParamsPane {
 		Config.showChordIds = showChordIds;
 
 		Config.FPS = FPS;
+		Config.maxStrings = maxStrings;
 
 		Config.theme = theme;
 

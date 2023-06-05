@@ -2,6 +2,7 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
 import static log.charter.data.config.Config.noteHeight;
 import static log.charter.data.config.Config.noteWidth;
+import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
@@ -20,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
@@ -117,7 +119,8 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 			noteFrets.add(centeredTextWithBackground(new Position2D(note.x, y), note.fret, Color.WHITE, Color.BLACK));
 
 			if (note.accent) {
-				notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), getNoteColor(note).brighter(), 1));
+				final Color accentColor = getStringBasedColor(StringColorLabelType.NOTE_ACCENT, note.string, strings);
+				notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor, 1));
 			}
 
 			if (note.selected) {
@@ -136,7 +139,6 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 				.centered();
 
 		notes.add(filledRectangle(position, getNoteColor(note)));
-
 		notes.add(strokedRectangle(position.resized(1, 1, -2, -2), getNoteColor(note).brighter(), 2));
 	}
 
@@ -194,13 +196,13 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
+		final Color laneColor = getStringBasedColor(StringColorLabelType.LANE, note.string, strings);
+
 		notes.add(filledOval(position.resized(-2, -2, 3, 3), ColorLabel.BASE_BG_1.color()));
-		notes.add(lineHorizontal(note.x - noteWidth / 2 - 2, note.x + noteWidth / 2 + 2, y,
-				ColorLabel.valueOf("LANE_" + note.string).color()));
+		notes.add(lineHorizontal(note.x - noteWidth / 2 - 2, note.x + noteWidth / 2 + 2, y, laneColor));
 		notes.add(filledOval(position.resized(2, 2, -5, -5), noteColors[note.string]));
 		notes.add(filledOval(position.resized(5, 5, -11, -11), ColorLabel.BASE_BG_1.color()));
-		notes.add(lineHorizontal(note.x - noteWidth / 2 + 5, note.x + noteWidth / 2 - 5, y,
-				ColorLabel.valueOf("LANE_" + note.string).color()));
+		notes.add(lineHorizontal(note.x - noteWidth / 2 + 5, note.x + noteWidth / 2 - 5, y, laneColor));
 	}
 
 	@Override

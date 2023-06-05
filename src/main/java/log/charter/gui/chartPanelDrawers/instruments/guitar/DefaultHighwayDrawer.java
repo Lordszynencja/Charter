@@ -3,9 +3,9 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar;
 import static java.lang.Math.round;
 import static java.lang.Math.sin;
 import static log.charter.data.config.Config.maxBendValue;
-import static log.charter.data.config.Config.maxStrings;
 import static log.charter.data.config.Config.noteHeight;
 import static log.charter.data.config.Config.noteWidth;
+import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
@@ -48,6 +48,7 @@ import javax.imageio.ImageIO;
 import log.charter.data.config.Config;
 import log.charter.data.config.Zoom;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
@@ -85,18 +86,10 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	protected static final BufferedImage muteMarker = loadImage("images/mute.png");
 
 	protected final static Color selectColor = ColorLabel.SELECT.color();
-	protected static final Color[] noteColors = new Color[maxStrings];
-	protected static final Color[] noteAccentColors = new Color[maxStrings];
-	protected static final Color[] noteTailColors = new Color[maxStrings];
+	protected final Color[] noteColors;
+	protected final Color[] noteAccentColors;
+	protected final Color[] noteTailColors;
 	protected static final Color stringMuteNoteColor = ColorLabel.NOTE_STRING_MUTE.color();
-
-	static {
-		for (int i = 0; i < maxStrings; i++) {
-			noteColors[i] = ColorLabel.valueOf("NOTE_" + i).color();
-			noteAccentColors[i] = ColorLabel.valueOf("NOTE_ACCENT_" + i).color();
-			noteTailColors[i] = ColorLabel.valueOf("NOTE_TAIL_" + i).color();
-		}
-	}
 
 	protected final Font anchorFont;
 	protected final Font bendValueFont;
@@ -105,6 +98,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	protected final BufferedImage palmMuteImage;
 	protected final BufferedImage muteImage;
 
+	protected final int strings;
 	protected final int bendStepSize;
 	protected final int time;
 	protected final int[] stringPositions;
@@ -123,10 +117,18 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	protected final DrawableShapeList toneChanges;
 
 	public DefaultHighwayDrawer(final int strings, final int time) {
+		this.strings = strings;
 		this.time = time;
+
 		stringPositions = new int[strings];
+		noteColors = new Color[strings];
+		noteAccentColors = new Color[strings];
+		noteTailColors = new Color[strings];
 		for (int i = 0; i < strings; i++) {
 			stringPositions[i] = getLaneY(i, strings);
+			noteColors[i] = getStringBasedColor(StringColorLabelType.NOTE, i, strings);
+			noteAccentColors[i] = getStringBasedColor(StringColorLabelType.NOTE_ACCENT, i, strings);
+			noteTailColors[i] = getStringBasedColor(StringColorLabelType.NOTE_TAIL, i, strings);
 		}
 
 		bendStepSize = tailHeight / 3;
@@ -295,13 +297,13 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
+		final Color laneColor = getStringBasedColor(StringColorLabelType.LANE, note.string, strings);
+
 		notes.add(filledOval(position.resized(-2, -2, 3, 3), ColorLabel.BASE_BG_1.color()));
-		notes.add(lineHorizontal(note.x - noteWidth / 2 - 2, note.x + noteWidth / 2 + 2, y,
-				ColorLabel.valueOf("LANE_" + note.string).color()));
+		notes.add(lineHorizontal(note.x - noteWidth / 2 - 2, note.x + noteWidth / 2 + 2, y, laneColor));
 		notes.add(filledOval(position.resized(2, 2, -5, -5), noteColors[note.string]));
 		notes.add(filledOval(position.resized(5, 5, -11, -11), ColorLabel.BASE_BG_1.color()));
-		notes.add(lineHorizontal(note.x - noteWidth / 2 + 5, note.x + noteWidth / 2 - 5, y,
-				ColorLabel.valueOf("LANE_" + note.string).color()));
+		notes.add(lineHorizontal(note.x - noteWidth / 2 + 5, note.x + noteWidth / 2 - 5, y, laneColor));
 	}
 
 	protected void addPalmMute(final NoteData note, final int y) {

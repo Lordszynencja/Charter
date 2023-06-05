@@ -35,6 +35,7 @@ public class Localization {
 		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
 		CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create default stretches in background"), //
 		CONFIG_FPS("FPS"), //
+		CONFIG_MAX_STRINGS("Max strings"), //
 
 		STRETCH_PANE("Custom music stretch"), //
 		STRETCH_PANE_VALUE("Song speed (%)"), //
