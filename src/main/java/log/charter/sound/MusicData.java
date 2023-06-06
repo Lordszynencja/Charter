@@ -23,13 +23,23 @@ import log.charter.sound.ogg.OggLoader;
 public class MusicData {
 	public static final int DEF_RATE = 44100;
 
-	public static MusicData generateSound(final double pitch, final double length, final double loudness) {
-		final int[] data = new int[(int) (length * DEF_RATE)];
+	public static MusicData generateSound(final double pitchHz, final double lengthSeconds, final double loudness) {
+		return generateSound(pitchHz, lengthSeconds, loudness, DEF_RATE);
+	}
+
+	public static MusicData generateSound(final double pitchHz, final double lengthSeconds, final double loudness,
+			final float sampleRate) {
+		final int[] data = new int[(int) (lengthSeconds * sampleRate)];
 		for (int i = 0; i < data.length; i++) {
-			data[i] = (int) (pow(sin((pitch * Math.PI * i) / DEF_RATE), 2) * loudness * 32767);
+			data[i] = (int) (pow(sin((pitchHz * Math.PI * i) / sampleRate), 2) * loudness * 32767);
 		}
 
-		return new MusicData(new int[][] { data, data }, DEF_RATE);
+		return new MusicData(new int[][] { data, data }, sampleRate);
+	}
+
+	public static MusicData generateSilence(final double lengthSeconds, final float sampleRate) {
+		final int[] data = new int[(int) (lengthSeconds * sampleRate)];
+		return new MusicData(new int[][] { data, data }, sampleRate);
 	}
 
 	public static MusicData readFile(final File file) {
@@ -181,5 +191,27 @@ public class MusicData {
 		}
 
 		return new MusicData(newData, rate);
+	}
+
+	public MusicData join(final MusicData other) {
+		int length0 = 0;
+		for (int i = 0; i < data.length; i++) {
+			length0 = max(length0, data[i].length);
+		}
+		int length1 = 0;
+		for (int i = 0; i < other.data.length; i++) {
+			length1 = max(length1, other.data[i].length);
+		}
+
+		final int channels = max(data.length, other.data.length);
+		final int[][] newData = new int[channels][length0 + length1];
+		for (int channel = 0; channel < data.length; channel++) {
+			System.arraycopy(data[channel], 0, newData[channel], 0, data[channel].length);
+		}
+		for (int channel = 0; channel < other.data.length; channel++) {
+			System.arraycopy(other.data[channel], 0, newData[channel], length0, other.data[channel].length);
+		}
+
+		return new MusicData(newData, outFormat.getSampleRate());
 	}
 }

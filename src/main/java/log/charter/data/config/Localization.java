@@ -49,7 +49,7 @@ public class Localization {
 		EDIT_MENU_PASTE("Paste"), //
 		EDIT_MENU_SPECIAL_PASTE("Special paste"), //
 		EDIT_MENU_SONG_OPTIONS("Song options"), //
-		EDIT_MENU_GRID_OPTIONS("Grid options"), //
+		EDIT_MENU_ADD_SILENCE("Add silence in the beginning"), //
 
 		FILE_MENU("File"), //
 		FILE_MENU_NEW("New"), //
@@ -105,6 +105,7 @@ public class Localization {
 		GUITAR_MENU_MARK_HAND_SHAPE("Mark hand shape"), //
 		GUITAR_MENU_EDIT_HAND_SHAPE("Edit hand shape"), //
 		GUITAR_MENU_AUTOCREATE_FHP("Autocreate Fret Hand Positions"), //
+		GUITAR_MENU_FULL_SCREEN_PREVIEW("Full screen preview"), //
 
 		TEMPO_BEAT_PANE("Tempo beat options"), //
 		TEMPO_BEAT_PANE_BEATS_IN_MEASURE("Beats in measure"), //
@@ -121,6 +122,7 @@ public class Localization {
 		MUSIC_MENU_CUSTOM("Custom speed"), //
 
 		NOTES_MENU("Notes"), //
+		NOTES_MENU_GRID_OPTIONS("Grid options"), //
 		NOTES_MENU_SNAP("Snap notes to grid"), //
 		NOTES_MENU_SNAP_ALL("Snap all items between to grid"), //
 		NOTES_MENU_DOUBLE_GRID("Double grid resolution"), //
@@ -137,6 +139,8 @@ public class Localization {
 		SONG_OPTIONS_ALBUM("Album"), //
 		SONG_OPTIONS_YEAR("Year"), //
 		SONG_OPTIONS_CROWD_SPEED("Crowd speed"), //
+
+		ADD_SILENCE_SECONDS("Add this many seconds of silence:"), //
 
 		ARRANGEMENT_OPTIONS_PANE("Arrangement options"), //
 		ARRANGEMENT_OPTIONS_TYPE("Arrangement type"), //

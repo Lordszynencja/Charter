@@ -195,6 +195,7 @@ public class AudioHandler {
 		final int speedToMake = stretchedMusicSpeed;
 		loadingSpeed = speedToMake;
 		slowedDownSong = null;
+
 		StretchedFileLoader stretchedFileLoader = new StretchedFileLoader(data.music, data.path, speedToMake);
 
 		while (stretchedFileLoader.result == null) {
@@ -202,6 +203,10 @@ public class AudioHandler {
 				Thread.sleep(1);
 			} catch (final InterruptedException e) {
 			}
+		}
+
+		if (stretchedFileLoader.result.msLength() == 0) {
+			return;
 		}
 
 		if (loadingSpeed == speedToMake) {
@@ -260,7 +265,9 @@ public class AudioHandler {
 				loadStretchedWithCheck();
 
 				ignoreStops = true;
-				playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
+				if (slowedDownSong != null) {
+					playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
+				}
 				dialog.dispose();
 				ignoreStops = false;
 				return null;

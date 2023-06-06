@@ -32,6 +32,8 @@ public class Preview3DStringsDrawer {
 					.addVertex(new Point3D(x1, y, 0), stringColor);
 		}
 
+		GL30.glLineWidth(2);
 		drawData.draw(GL30.GL_LINES);
+		GL30.glLineWidth(1);
 	}
 }

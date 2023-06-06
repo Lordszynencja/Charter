@@ -3,6 +3,9 @@ package log.charter.sound;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import log.charter.data.config.Config;
 import log.charter.io.Logger;
@@ -10,10 +13,19 @@ import log.charter.sound.wav.WavLoader;
 import log.charter.sound.wav.WavWriter;
 
 public class StretchedFileLoader {
+	private static final AtomicInteger stopperIdGenerator = new AtomicInteger(0);
 	private static final String tmpFileName = "guitar_tmp.wav";
 
 	private static String getResultFileName(final int speed) {
 		return "guitar_" + speed + ".wav";
+	}
+
+	private static final Map<Integer, Runnable> stoppers = new HashMap<>();
+
+	public static void stopAllProcesses() {
+		for (final Runnable stopper : stoppers.values()) {
+			stopper.run();
+		}
 	}
 
 	private final MusicData musicData;
@@ -29,7 +41,6 @@ public class StretchedFileLoader {
 		targetFile = new File(dir, getResultFileName(speed));
 
 		new Thread(this::run).start();
-
 	}
 
 	private void run() {
@@ -52,6 +63,11 @@ public class StretchedFileLoader {
 
 	private void runRubberBand(final String[] cmd) throws IOException {
 		final Process process = Runtime.getRuntime().exec(cmd);
+		final int stopperId = stopperIdGenerator.getAndIncrement();
+		stoppers.put(stopperId, () -> {
+			stoppers.remove(stopperId);
+			process.destroyForcibly();
+		});
 		final InputStream in = process.getInputStream();
 		final InputStream err = process.getErrorStream();
 

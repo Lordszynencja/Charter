@@ -22,6 +22,7 @@ public class Config {
 	public static String musicPath = System.getProperty("user.home") + File.separator + "Music";
 	public static String songsPath = System.getProperty("user.home") + File.separator + "Documents";
 	public static String rubberbandPath;
+	public static String oggEncPath;
 
 	public static int minNoteDistance = 50;
 	public static int minTailLength = 50;
@@ -63,6 +64,7 @@ public class Config {
 				: os.startsWith("mac") ? "rubberband-3.1.2-gpl-executable-macos" + File.separator + "rubberband"//
 						: "rubberband-3.1.2-gpl-executable-windows" + File.separator + "rubberband.exe";
 		rubberbandPath = new File(RW.getProgramDirectory(), "rubberband" + File.separator + osPath).getAbsolutePath();
+		oggEncPath = new File(RW.getProgramDirectory(), "oggenc" + File.separator + "oggenc2.exe").getAbsolutePath();
 
 		final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		final GraphicsDevice[] gs = ge.getScreenDevices();

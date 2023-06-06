@@ -66,6 +66,9 @@ public class CharterFrame extends JFrame {
 	private final Preview3DPanel preview3DPanel = new Preview3DPanel();
 	private final JTabbedPane tabs = createTabs();
 
+	private final JFrame fullscreenPreviewFrame = new JFrame();
+	private final Preview3DPanel fullscreenPreview3DPanel = new Preview3DPanel();
+
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
 	private final ArrangementValidator arrangementValidator = new ArrangementValidator();
 	private final AudioDrawer audioDrawer = new AudioDrawer();
@@ -130,6 +133,13 @@ public class CharterFrame extends JFrame {
 		currentSelectionEditor.init(arrangementFixer, data, selectionManager, undoSystem);
 		preview3DPanel.init(data, keyboardHandler);
 
+		fullscreenPreview3DPanel.init(data, keyboardHandler);
+		fullscreenPreviewFrame.addKeyListener(keyboardHandler);
+		fullscreenPreviewFrame.addWindowFocusListener(new CharterFrameWindowFocusListener(this));
+		fullscreenPreviewFrame.add(fullscreenPreview3DPanel);
+		fullscreenPreviewFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		fullscreenPreviewFrame.setUndecorated(true);
+
 		add(chartPanel);
 		add(scrollBar);
 		add(tabs);
@@ -190,6 +200,10 @@ public class CharterFrame extends JFrame {
 		songFileHandler.open(path);
 	}
 
+	public void switchFullscreenPreview() {
+		fullscreenPreviewFrame.setVisible(!fullscreenPreviewFrame.isVisible());
+	}
+
 	private void frame() {
 		audioHandler.frame();
 		keyboardHandler.frame();
@@ -199,9 +213,13 @@ public class CharterFrame extends JFrame {
 
 		if (isFocused()) {
 			repaint();
+			preview3DPanel.repaint();
 		}
 
-		preview3DPanel.repaint();
+		if (fullscreenPreviewFrame.isFocused()) {
+			fullscreenPreviewFrame.repaint();
+			fullscreenPreview3DPanel.repaint();
+		}
 	}
 
 	private JScrollBar createScrollBar() {
@@ -240,7 +258,6 @@ public class CharterFrame extends JFrame {
 
 				super.configureScrollBarColors();
 			}
-
 		});
 
 		return scrollBar;
@@ -359,14 +376,25 @@ public class CharterFrame extends JFrame {
 
 	public void exit() {
 		audioHandler.stopMusic();
+
+		final boolean fullscreenWasVisible = fullscreenPreviewFrame.isVisible();
+		fullscreenPreviewFrame.setVisible(false);
+		fullscreenPreviewFrame.repaint();
+
 		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this, Label.EXIT_MESSAGE.label(),
 				Label.EXIT_POPUP.label(), JOptionPane.YES_NO_OPTION)) {
 			if (!checkChanged()) {
 				return;
 			}
 
+			fullscreenPreviewFrame.dispose();
 			dispose();
 			System.exit(0);
+		}
+
+		if (fullscreenWasVisible) {
+			fullscreenPreviewFrame.setVisible(true);
+			fullscreenPreviewFrame.requestFocus();
 		}
 	}
 

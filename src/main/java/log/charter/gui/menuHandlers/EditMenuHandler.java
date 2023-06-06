@@ -10,6 +10,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SpecialMenuItem;
 import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.panes.AddSilencePane;
 import log.charter.gui.panes.SongOptionsPane;
 
 class EditMenuHandler extends CharterMenuHandler {
@@ -52,11 +53,16 @@ class EditMenuHandler extends CharterMenuHandler {
 
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.EDIT_MENU_SONG_OPTIONS, null, this::songOptions));
+		menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_SILENCE, null, this::addSilence));
 
 		return menu;
 	}
 
 	private void songOptions() {
 		new SongOptionsPane(frame, data);
+	}
+
+	private void addSilence() {
+		new AddSilencePane(frame, data);
 	}
 }

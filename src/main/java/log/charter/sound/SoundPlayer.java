@@ -76,7 +76,6 @@ public class SoundPlayer {
 			line.stop();
 			line.drain();
 			line.flush();
-
 		}
 	}
 

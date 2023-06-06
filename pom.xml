@@ -8,13 +8,11 @@
 	<packaging>jar</packaging>
 	<name>RS Charter</name>
 	<description>Charting program for Rocksmith 2014</description>
-	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<lwjgl.version>3.3.2</lwjgl.version>
 		<lwjgl3-awt.version>0.1.8</lwjgl3-awt.version>
 	</properties>
-	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -26,7 +24,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
 	<dependencies>
 		<dependency>
 			<groupId>com.googlecode.soundlibs</groupId>
@@ -109,13 +106,12 @@
 			<artifactId>lwjgl-opengl</artifactId>
 			<classifier>${lwjgl.natives}</classifier>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>org.lwjglx</groupId>
 			<artifactId>lwjgl3-awt</artifactId>
 			<version>${lwjgl3-awt.version}</version>
 		</dependency>
 	</dependencies>
-	
 	<profiles>
 		<profile>
 			<id>lwjgl-natives-linux-amd64</id>
@@ -226,7 +222,6 @@
 			</properties>
 		</profile>
 	</profiles>
-
 	<build>
 		<finalName>RS Charter</finalName>
 		<plugins>
@@ -350,6 +345,7 @@
 										<include>images/**</include>
 										<include>languages/**</include>
 										<include>rubberband/**</include>
+										<include>oggenc/**</include>
 									</includes>
 								</resource>
 							</resources>

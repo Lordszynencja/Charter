@@ -16,6 +16,7 @@ import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SpecialMenuItem;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.song.ChordTemplate;
@@ -26,14 +27,16 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 class GuitarMenuHandler extends CharterMenuHandler {
 	private ChartData data;
+	private CharterFrame frame;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData data, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+	public void init(final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
+			final ModeManager modeManager, final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this.data = data;
+		this.frame = frame;
 		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
@@ -85,6 +88,9 @@ class GuitarMenuHandler extends CharterMenuHandler {
 
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_AUTOCREATE_FHP, null, this::addFHP));
+
+		menu.addSeparator();
+		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_FULL_SCREEN_PREVIEW, "F11", frame::switchFullscreenPreview));
 
 		return menu;
 	}
