@@ -131,9 +131,9 @@ public class CharterFrame extends JFrame {
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 		currentSelectionEditor.init(arrangementFixer, data, selectionManager, undoSystem);
-		preview3DPanel.init(data, keyboardHandler);
+		preview3DPanel.init(data, keyboardHandler, modeManager);
 
-		fullscreenPreview3DPanel.init(data, keyboardHandler);
+		fullscreenPreview3DPanel.init(data, keyboardHandler, modeManager);
 		fullscreenPreviewFrame.addKeyListener(keyboardHandler);
 		fullscreenPreviewFrame.addWindowFocusListener(new CharterFrameWindowFocusListener(this));
 		fullscreenPreviewFrame.add(fullscreenPreview3DPanel);
@@ -377,7 +377,6 @@ public class CharterFrame extends JFrame {
 	public void exit() {
 		audioHandler.stopMusic();
 
-		final boolean fullscreenWasVisible = fullscreenPreviewFrame.isVisible();
 		fullscreenPreviewFrame.setVisible(false);
 		fullscreenPreviewFrame.repaint();
 
@@ -390,11 +389,6 @@ public class CharterFrame extends JFrame {
 			fullscreenPreviewFrame.dispose();
 			dispose();
 			System.exit(0);
-		}
-
-		if (fullscreenWasVisible) {
-			fullscreenPreviewFrame.setVisible(true);
-			fullscreenPreviewFrame.requestFocus();
 		}
 	}
 

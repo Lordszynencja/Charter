@@ -12,12 +12,15 @@ import org.lwjgl.opengl.awt.AWTGLCanvas;
 import org.lwjgl.opengl.awt.GLData;
 
 import log.charter.data.ChartData;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.handlers.KeyboardHandler;
 
 public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 
 	private ChartData data;
+	private ModeManager modeManager;
 
 	private final BaseShader baseShader = new BaseShader();
 
@@ -39,8 +42,9 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		super(prepareGLData());
 	}
 
-	public void init(final ChartData data, final KeyboardHandler keyboardHandler) {
+	public void init(final ChartData data, final KeyboardHandler keyboardHandler, final ModeManager modeManager) {
 		this.data = data;
+		this.modeManager = modeManager;
 
 		anchorsDrawer.init(data);
 		beatsDrawer.init(data);
@@ -111,7 +115,8 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		GL30.glClearColor(0.25f, 0.25f, 0.25f, 1);
 		GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
 
-		if (data == null || data.isEmpty) {
+		if (data == null || data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+			swapBuffers();
 			return;
 		}
 
