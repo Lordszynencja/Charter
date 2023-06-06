@@ -45,6 +45,8 @@ public class ChartPanelColors {
 		SLIDE_UNPITCHED_FRET_BG(255, 128, 128), //
 		SLIDE_UNPITCHED_FRET_TEXT(0, 0, 0), //
 		NOTE_STRING_MUTE(128, 128, 128), //
+		FULL_MUTE(255, 255, 255), //
+		PALM_MUTE(0, 0, 0), //
 		HAMMER_ON(255, 255, 255), //
 		PULL_OFF(255, 255, 255), //
 		TAP(0, 0, 0), //
