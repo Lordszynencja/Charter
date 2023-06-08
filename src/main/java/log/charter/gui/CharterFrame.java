@@ -53,6 +53,7 @@ import log.charter.gui.lookAndFeel.CharterTheme;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
 import log.charter.main.LogCharterRSMain;
+import log.charter.sound.StretchedFileLoader;
 import net.sf.image4j.codec.ico.ICODecoder;
 
 public class CharterFrame extends JFrame {
@@ -388,6 +389,7 @@ public class CharterFrame extends JFrame {
 
 			fullscreenPreviewFrame.dispose();
 			dispose();
+			StretchedFileLoader.stopAllProcesses();
 			System.exit(0);
 		}
 	}

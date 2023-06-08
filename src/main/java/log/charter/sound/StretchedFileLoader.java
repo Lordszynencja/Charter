@@ -3,6 +3,7 @@ package log.charter.sound;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +24,7 @@ public class StretchedFileLoader {
 	private static final Map<Integer, Runnable> stoppers = new HashMap<>();
 
 	public static void stopAllProcesses() {
-		for (final Runnable stopper : stoppers.values()) {
+		for (final Runnable stopper : new ArrayList<>(stoppers.values())) {
 			stopper.run();
 		}
 	}

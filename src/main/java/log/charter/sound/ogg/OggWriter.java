@@ -23,7 +23,7 @@ public class OggWriter {
 		final String inputPath = input.getAbsolutePath();
 		final String outputPath = output.getAbsolutePath();
 
-		final String[] cmd = { exe, "--quiet", "-q 10", "-s", "0", inputPath, "-o", outputPath };
+		final String[] cmd = { exe, "--quiet", "-q 10", "-s", "0", inputPath, "--output=" + outputPath };
 
 		try {
 			runCmd(cmd);

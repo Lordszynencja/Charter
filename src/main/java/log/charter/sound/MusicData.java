@@ -77,7 +77,7 @@ public class MusicData {
 	private static int[][] splitAudio(final byte[] b) {
 		final int[][] d = new int[2][b.length / 4];
 		for (int i = 0; i < b.length; i += 4) {
-			d[0][i / 4] = b[i] + (b[i + 1] * 256);
+			d[0][i / 4] = b[i] + ((int) (b[i + 1]) * 256);
 			d[1][i / 4] = b[i + 2] + (b[i + 3] * 256);
 		}
 
@@ -206,10 +206,9 @@ public class MusicData {
 		final int channels = max(data.length, other.data.length);
 		final int[][] newData = new int[channels][length0 + length1];
 		for (int channel = 0; channel < data.length; channel++) {
-			System.arraycopy(data[channel], 0, newData[channel], 0, data[channel].length);
-		}
-		for (int channel = 0; channel < other.data.length; channel++) {
-			System.arraycopy(other.data[channel], 0, newData[channel], length0, other.data[channel].length);
+			final int[] targetChannel = newData[channel];
+			System.arraycopy(data[channel], 0, targetChannel, 0, data[channel].length);
+			System.arraycopy(other.data[channel], 0, targetChannel, length0, other.data[channel].length);
 		}
 
 		return new MusicData(newData, outFormat.getSampleRate());

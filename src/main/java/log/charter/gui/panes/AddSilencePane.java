@@ -48,14 +48,16 @@ public class AddSilencePane extends ParamsPane {
 
 	private void saveAndExit() {
 		final MusicData songMusicData = data.music;
-		data.music = MusicData.generateSilence(time.doubleValue(), songMusicData.outFormat.getSampleRate())//
-				.join(songMusicData);
+		final MusicData silenceMusicData = MusicData.generateSilence(time.doubleValue(),
+				songMusicData.outFormat.getSampleRate());
+		final MusicData joined = silenceMusicData.join(songMusicData);
+		data.music = joined;
 
 		if (!data.songChart.musicFileName.endsWith(".ogg")) {
 			data.songChart.musicFileName = "guitar.ogg";
 		}
 
-		OggWriter.writeOgg(new File(data.path, data.songChart.musicFileName).getAbsolutePath(), data.music);
+		OggWriter.writeOgg(new File(data.path, data.songChart.musicFileName).getAbsolutePath(), joined);
 
 		StretchedFileLoader.stopAllProcesses();
 		for (final File oldWav : new File(data.path).listFiles(s -> s.getName().matches("guitar_(tmp|[0-9]*).wav"))) {

@@ -215,10 +215,15 @@ public class SoundPlayer {
 		final byte[] bytes = new byte[l * 4];
 
 		for (int i = 0; i < l; i++) {
-			bytes[i * 4] = (byte) data[0][i];
-			bytes[(i * 4) + 1] = (byte) (data[0][i] / 256);
-			bytes[(i * 4) + 2] = (byte) data[1][i];
-			bytes[(i * 4) + 3] = (byte) (data[1][i] / 256);
+			final byte b0 = (byte) data[0][i];
+			final byte b1 = (byte) ((data[0][i] - b0) / 256);
+			final byte b2 = (byte) data[1][i];
+			final byte b3 = (byte) ((data[1][i] - b2) / 256);
+
+			bytes[i * 4] = b0;
+			bytes[(i * 4) + 1] = b1;
+			bytes[(i * 4) + 2] = b2;
+			bytes[(i * 4) + 3] = b3;
 		}
 
 		return bytes;
