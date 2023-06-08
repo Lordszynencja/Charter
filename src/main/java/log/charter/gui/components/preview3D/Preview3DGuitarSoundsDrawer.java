@@ -4,6 +4,9 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
+import static java.util.stream.Collectors.maxBy;
+import static java.util.stream.Collectors.minBy;
+import static java.util.stream.Collectors.teeing;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.Matrix4.scaleMatrix;
@@ -22,6 +25,7 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.lwjgl.opengl.GL30;
@@ -108,7 +112,7 @@ public class Preview3DGuitarSoundsDrawer {
 //		}
 //	}
 //
-	private double getNoteHeightAtTime(final NoteData note, final int t) {
+	private double getNoteHeightAtTime(final NoteData note, final int t, final boolean invertBend) {
 		final int dt = t - note.position;
 
 		double bendValue = 0;
@@ -130,6 +134,9 @@ public class Preview3DGuitarSoundsDrawer {
 			} else {
 				bendValue = bendAValue;
 			}
+		}
+		if (invertBend) {
+			bendValue = -bendValue;
 		}
 
 		if (note.vibrato != null) {
@@ -330,7 +337,7 @@ public class Preview3DGuitarSoundsDrawer {
 		return (endPosition - startPosition) * weight;
 	}
 
-	private void drawNoteTail(final BaseShader baseShader, final NoteData note) {
+	private void drawNoteTail(final BaseShader baseShader, final NoteData note, final boolean invertBend) {
 		if (note.length < 10) {
 			return;
 		}
@@ -356,7 +363,7 @@ public class Preview3DGuitarSoundsDrawer {
 		for (int t = max(data.time, note.position); t <= note.position + note.length
 				&& t < data.time + visibility; t += 1) {
 			final double xSlideOffset = getNoteSlideOffsetAtTime(note, (double) (t - note.position) / note.length);
-			final double y = getNoteHeightAtTime(note, t);
+			final double y = getNoteHeightAtTime(note, t, invertBend);
 			final double z = getTimePosition(t - data.time);
 
 			if (note.tremolo) {
@@ -373,7 +380,8 @@ public class Preview3DGuitarSoundsDrawer {
 		drawData.draw(GL30.GL_TRIANGLE_STRIP);
 	}
 
-	private void drawNote(final BaseShader baseShader, final NoteData note, final boolean chordPart) {
+	private void drawNote(final BaseShader baseShader, final NoteData note, final boolean chordPart,
+			final boolean invertBend) {
 		if (!note.linkPrevious && note.position <= data.time + anticipationWindow && note.position >= data.time) {
 			// drawNoteAnticipation(baseShader, note);
 		}
@@ -390,12 +398,12 @@ public class Preview3DGuitarSoundsDrawer {
 			// drawNoteHold(baseShader, note);
 		}
 
-		drawNoteTail(baseShader, note);
+		drawNoteTail(baseShader, note, invertBend);
 	}
 
 	private void drawSingleNote(final BaseShader baseShader, final ChordOrNote sound, final boolean lastWasLinkNext) {
 		final NoteData noteData = new NoteData(0, sound.note.length(), sound.note, false, lastWasLinkNext);
-		drawNote(baseShader, noteData, false);
+		drawNote(baseShader, noteData, false, sound.note.string < data.currentStrings() / 2);
 	}
 
 	private boolean isFirstChordInTheHandShape(final Chord chord) {
@@ -421,9 +429,16 @@ public class Preview3DGuitarSoundsDrawer {
 			final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
 			final ArrayList2<NoteData> notes = NoteData.fromChord(chord, chordTemplate, 0, sound.chord.length(), false,
 					lastWasLinkNext, false);
+			final Pair<Optional<Integer>, Optional<Integer>> furthestStrings = notes.stream().map(note -> note.string)//
+					.collect(teeing(maxBy(Integer::compareTo), minBy(Integer::compareTo), Pair::new));
+			final int minString = furthestStrings.b.orElse(0);
+			final int maxString = furthestStrings.a.orElse(data.currentStrings() - 1);
+
+			final boolean invertBend = maxString < data.currentStrings() - 2
+					&& (minString <= 2 || maxString > data.currentStrings() / 2);
 
 			for (int j = notes.size() - 1; j >= 0; j--) {
-				drawNote(baseShader, notes.get(j), true);
+				drawNote(baseShader, notes.get(j), true, invertBend);
 			}
 		}
 

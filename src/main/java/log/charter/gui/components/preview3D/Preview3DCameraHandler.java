@@ -15,6 +15,10 @@ import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DCameraHandler {
+	private final static int fretFocusWindowStartOffset = 1000;
+	private final static int fretFocusWindowEndOffset = 5000;
+	private final static double focusingSpeedMultiplier = 0.002;
+
 	private final static double minScreenScaleX = 0.5;
 	private final static double screenScaleXMultiplier = 1;
 	private final static double minScreenScaleY = 1;
@@ -36,11 +40,11 @@ public class Preview3DCameraHandler {
 		int minFret = Config.frets;
 		int maxFret = 1;
 
-		int anchorsFrom = findLastIdBeforeEqual(anchors, data.time);
+		int anchorsFrom = findLastIdBeforeEqual(anchors, data.time + fretFocusWindowStartOffset);
 		if (anchorsFrom == -1) {
 			anchorsFrom = 0;
 		}
-		final int anchorsTo = findLastIdBeforeEqual(anchors, data.time + Preview3DUtils.visibility);
+		final int anchorsTo = findLastIdBeforeEqual(anchors, data.time + fretFocusWindowEndOffset);
 		if (anchorsTo == -1) {
 			return;
 		}
@@ -55,7 +59,7 @@ public class Preview3DCameraHandler {
 			}
 		}
 
-		final double focusingSpeed = Math.pow(0.99, Config.FPS / 200.0);
+		final double focusingSpeed = Math.pow(0.99, Config.FPS * focusingSpeedMultiplier);
 		camX = camX * focusingSpeed
 				+ (getFretPosition(maxFret) + getFretPosition(minFret - 1)) / 2 * (1 - focusingSpeed);
 		fretSpan = fretSpan * focusingSpeed + (maxFret - minFret + 1) * (1 - focusingSpeed);

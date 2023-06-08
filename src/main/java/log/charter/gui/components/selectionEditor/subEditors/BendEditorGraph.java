@@ -204,8 +204,8 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	private ArrayList2<BendValue> getBendValues() {
 		final ArrayList2<BendValue> bendValuesForNote = new ArrayList2<>();
 		for (final EditorBendValue bendValue : bendValues) {
-			final int position = beatsMap.getPositionForPositionInBeats(bendValue.position + firstBeatId)
-					- notePosition;
+			final int position = min(noteLength,
+					beatsMap.getPositionForPositionInBeats(bendValue.position + firstBeatId) - notePosition);
 			final BigDecimal value = new BigDecimal(bendValue.value / 4.0).setScale(2, RoundingMode.HALF_UP);
 			bendValuesForNote.add(new BendValue(position, value));
 		}
