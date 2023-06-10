@@ -47,10 +47,10 @@ class FileMenuHandler extends CharterMenuHandler {
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_SAVE_AS, "Ctrl-Shift-S", songFileHandler::saveAs));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_EXIT, "Esc", frame::exit));
+		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPTIONS, null, () -> new ConfigPane(frame)));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPTIONS, null, () -> new ConfigPane(frame)));
+		menu.add(new SpecialMenuItem(Label.FILE_MENU_EXIT, "Esc", frame::exit));
 
 		return menu;
 	}

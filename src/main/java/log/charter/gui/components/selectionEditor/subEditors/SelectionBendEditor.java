@@ -5,6 +5,8 @@ import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
@@ -89,33 +91,64 @@ public class SelectionBendEditor extends RowedPanel {
 		}
 	}
 
+	private void doActionOnStringButtons(final boolean[] shouldActionBeDone,
+			final BiConsumer<JRadioButton, Integer> action) {
+		final int stringsAmount = shouldActionBeDone.length;
+		final int stringOffset = stringsAmount > 6 ? 9 - stringsAmount : (Config.maxStrings - 6);
+		for (int i = 0; i < stringsAmount; i++) {
+			if (shouldActionBeDone[i]) {
+				action.accept(strings.get(i + stringOffset), i);
+			}
+		}
+	}
+
+	private void doActionOnStringButtons(final boolean[] shouldActionBeDone, final Consumer<JRadioButton> action) {
+		final int stringsAmount = shouldActionBeDone.length;
+		final int stringOffset = stringsAmount > 6 ? 9 - stringsAmount : (Config.maxStrings - 6);
+		for (int i = 0; i < stringsAmount; i++) {
+			if (shouldActionBeDone[i]) {
+				action.accept(strings.get(i + stringOffset));
+			}
+		}
+	}
+
 	private void enableAndSelectStringsForNote(final Note note) {
 		final int string = note.string;
 
-		final int stringsAmount = data.currentStrings();
-		final int stringOffset = stringsAmount > 6 ? 9 - stringsAmount : (Config.maxStrings - 6);
-		for (int i = 0; i < string; i++) {
-			strings.get(i + stringOffset).setEnabled(false);
-		}
-		strings.get(string + stringOffset).setEnabled(true);
-		strings.get(string + stringOffset).setSelected(true);
-		for (int i = string + 1; i < data.currentStrings(); i++) {
-			strings.get(i + stringOffset).setEnabled(false);
-		}
+		final boolean[] stringsForAction = new boolean[data.currentStrings()];
+		stringsForAction[string] = true;
+		doActionOnStringButtons(stringsForAction, button -> {
+			button.setEnabled(true);
+			button.setSelected(true);
+		});
 
-		bendEditorGraph.setNote(note, data.currentStrings());
+		for (int i = 0; i < stringsForAction.length; i++) {
+			stringsForAction[i] = !stringsForAction[i];
+		}
+		doActionOnStringButtons(stringsForAction, button -> {
+			button.setEnabled(false);
+		});
+
+		bendEditorGraph.setNote(note, stringsForAction.length);
 	}
 
 	private void enableAndSelectStringsForChord(final Chord chord) {
 		final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
 		final int string = chordTemplate.frets.keySet().stream().min(Integer::compare).get();
-		final int stringsAmount = data.currentStrings();
-		final int stringOffset = stringsAmount > 6 ? 9 - stringsAmount : (Config.maxStrings - 6);
 
-		for (int i = 0; i < data.currentStrings(); i++) {
-			strings.get(i + stringOffset).setEnabled(chordTemplate.frets.containsKey(i));
+		final boolean[] stringsForAction = new boolean[data.currentStrings()];
+		stringsForAction[string] = true;
+		doActionOnStringButtons(stringsForAction, button -> {
+			button.setEnabled(true);
+			button.setSelected(true);
+		});
+
+		for (int i = 0; i < stringsForAction.length; i++) {
+			stringsForAction[i] = chordTemplate.frets.containsKey(i);
 		}
-		strings.get(string + stringOffset).setSelected(true);
+		doActionOnStringButtons(stringsForAction, button -> {
+			button.setEnabled(true);
+		});
 
 		bendEditorGraph.setChord(chord, string, data.currentStrings());
 	}
@@ -132,12 +165,16 @@ public class SelectionBendEditor extends RowedPanel {
 	public void onChangeSelection(final ChordOrNote selected) {
 		bendEditorGraph.setBeatsMap(data.songChart.beatsMap);
 
-		final int stringsAmount = data.currentStrings();
-		final int stringOffset = stringsAmount > 6 ? 9 - stringsAmount : (Config.maxStrings - 6);
-		for (int i = 0; i < maxStrings; i++) {
-			strings.get(i).setVisible(i >= stringOffset && i < stringsAmount + stringOffset);
-			strings.get(i).setForeground(getStringBasedColor(StringColorLabelType.NOTE, i, stringsAmount));
+		strings.forEach(button -> button.setVisible(false));
+
+		final boolean[] stringsForAction = new boolean[data.currentStrings()];
+		for (int i = 0; i < stringsForAction.length; i++) {
+			stringsForAction[i] = true;
 		}
+		doActionOnStringButtons(stringsForAction, (button, i) -> {
+			button.setVisible(true);
+			button.setForeground(getStringBasedColor(StringColorLabelType.NOTE, i, stringsForAction.length));
+		});
 
 		enableAndSelectStrings(selected);
 	}

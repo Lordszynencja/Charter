@@ -21,22 +21,23 @@ public class Localization {
 		CONFIG_PANE("Config"), //
 		CONFIG_MUSIC_FOLDER("Music folder"), //
 		CONFIG_SONGS_FOLDER("Songs folder"), //
-		CONFIG_MINIMAL_NOTE_DISTANCE("Minimal note distance"), //
-		CONFIG_MINIMAL_TAIL_TO_NOTE_DISTANCE("Minimal distance between tail and next note"), //
-		CONFIG_MINIMAL_TAIL_LENGTH("Minimal note tail length"), //
-		CONFIG_SOUND_DELAY("Sound delay"), //
-		CONFIG_MARKER_POSITION("Marker position"), //
-		CONFIG_THEME("Theme"), //
-		CONFIG_THEME_DEFAULT("Default"), //
-		CONFIG_THEME_ROCKSMITH("Rocksmith"), //
-		CONFIG_NOTE_WIDTH("Note width"), //
-		CONFIG_NOTE_HEIGHT("Note height"), //
+		CONFIG_MINIMAL_NOTE_DISTANCE("Minimal note distance (ms)"), //
+		// CONFIG_MINIMAL_TAIL_TO_NOTE_DISTANCE("Minimal distance between tail and next
+		// note"), //
+		CONFIG_MINIMAL_TAIL_LENGTH("Minimal note tail length (ms)"), //
+		CONFIG_SOUND_DELAY("Sound delay (ms)"), //
+		CONFIG_MARKER_POSITION("Marker position (px)"), //
+		CONFIG_NOTE_WIDTH("Note width (px)"), //
+		CONFIG_NOTE_HEIGHT("Note height (px)"), //
 		CONFIG_INVERT_STRINGS("Invert strings"), //
 		CONFIG_LEFT_HANDED("Left handed"), //
 		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
 		CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
 		CONFIG_FPS("FPS"), //
 		CONFIG_MAX_STRINGS("Max strings"), //
+		CONFIG_THEME("Graphical theme"), //
+		CONFIG_THEME_DEFAULT("Default"), //
+		CONFIG_THEME_ROCKSMITH("Rocksmith"), //
 
 		STRETCH_PANE("Custom music stretch"), //
 		STRETCH_PANE_VALUE("Song speed (%)"), //
