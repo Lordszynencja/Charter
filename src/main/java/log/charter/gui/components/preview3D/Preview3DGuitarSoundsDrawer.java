@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.NoteData;
 import log.charter.gui.components.preview3D.BaseShader.BaseShaderDrawData;
@@ -60,17 +61,21 @@ public class Preview3DGuitarSoundsDrawer {
 	private ChartData data;
 
 	private final static Map<Integer, Map<Integer, CompositeModel>> openNoteModels = new HashMap<>();
+	private final static Map<Integer, Map<Integer, CompositeModel>> openNoteModelsLeftHanded = new HashMap<>();
 
 	private static CompositeModel getOpenNoteModel(final int fret0, final int fret1) {
-		if (openNoteModels.get(fret0) == null) {
-			openNoteModels.put(fret0, new HashMap<>());
+		final Map<Integer, Map<Integer, CompositeModel>> currentMap = Config.leftHanded ? openNoteModelsLeftHanded
+				: openNoteModels;
+
+		if (currentMap.get(fret0) == null) {
+			currentMap.put(fret0, new HashMap<>());
 		}
-		if (openNoteModels.get(fret0).get(fret1) == null) {
+		if (currentMap.get(fret0).get(fret1) == null) {
 			final double width = getFretPosition(fret1) - getFretPosition(fret0);
-			openNoteModels.get(fret0).put(fret1, new OpenNoteModel(width));
+			currentMap.get(fret0).put(fret1, new OpenNoteModel(width));
 		}
 
-		return openNoteModels.get(fret0).get(fret1);
+		return currentMap.get(fret0).get(fret1);
 	}
 
 	public void init(final ChartData data) {
@@ -139,8 +144,8 @@ public class Preview3DGuitarSoundsDrawer {
 			bendValue = -bendValue;
 		}
 
-		if (note.vibrato != null) {
-			bendValue += sin(dt * Math.PI * note.vibrato / 10000) * 0.2;
+		if (note.vibrato) {
+			bendValue += sin(dt * Math.PI / 100) * 0.2;
 		}
 		final double value = getStringPositionWithBend(note.string, data.currentStrings(), bendValue);
 

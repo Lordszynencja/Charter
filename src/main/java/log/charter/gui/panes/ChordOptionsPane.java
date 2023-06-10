@@ -61,11 +61,12 @@ public class ChordOptionsPane extends ChordTemplateEditorDialog {
 	private boolean ignore;
 	private Integer slideTo;
 	private boolean unpitchedSlide;
+	private boolean vibrato;
 	private boolean tremolo;
 
 	public ChordOptionsPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final ArrayList2<ChordOrNote> notes) {
-		super(data, frame, Label.CHORD_OPTIONS_PANE, 20 + data.getCurrentArrangement().tuning.strings, getSizes(),
+		super(data, frame, Label.CHORD_OPTIONS_PANE, 21 + data.getCurrentArrangement().tuning.strings, getSizes(),
 				prepareTemplateFromData(data, notes.get(0)));
 		this.undoSystem = undoSystem;
 
@@ -92,6 +93,7 @@ public class ChordOptionsPane extends ChordTemplateEditorDialog {
 		ignore = note.ignore;
 		slideTo = note.slideTo;
 		unpitchedSlide = note.unpitchedSlide;
+		vibrato = note.vibrato;
 		tremolo = note.tremolo;
 	}
 
@@ -104,6 +106,7 @@ public class ChordOptionsPane extends ChordTemplateEditorDialog {
 		ignore = chord.ignore;
 		slideTo = chord.slideTo;
 		unpitchedSlide = chord.unpitchedSlide;
+		vibrato = chord.vibrato;
 		tremolo = chord.tremolo;
 	}
 
@@ -157,6 +160,7 @@ public class ChordOptionsPane extends ChordTemplateEditorDialog {
 		addConfigCheckbox(row, 120, unpitchedSlide, val -> unpitchedSlide = val);
 		addLabel(row++, 140, Label.SLIDE_PANE_UNPITCHED);
 
+		addConfigCheckbox(row++, 110, 0, Label.VIBRATO, vibrato, val -> vibrato = val);
 		addConfigCheckbox(row++, 110, 0, Label.TREMOLO, tremolo, val -> tremolo = val);
 
 		row++;

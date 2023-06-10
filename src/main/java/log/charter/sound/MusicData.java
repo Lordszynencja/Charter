@@ -76,9 +76,14 @@ public class MusicData {
 
 	private static int[][] splitAudio(final byte[] b) {
 		final int[][] d = new int[2][b.length / 4];
-		for (int i = 0; i < b.length; i += 4) {
-			d[0][i / 4] = b[i] + ((int) (b[i + 1]) * 256);
-			d[1][i / 4] = b[i + 2] + (b[i + 3] * 256);
+		for (int i = 0; i < d[0].length; i++) {
+			final byte b0 = b[i * 4];
+			final byte b1 = b[i * 4 + 1];
+			final byte b2 = b[i * 4 + 2];
+			final byte b3 = b[i * 4 + 3];
+
+			d[0][i] = (b0 & 0xFF) + (b1 << 8);
+			d[1][i] = (b2 & 0xFF) + (b3 << 8);
 		}
 
 		return d;
@@ -89,10 +94,18 @@ public class MusicData {
 	private byte[] preparedData;
 	private int slow = 1;
 
+	public MusicData(final byte[] b) {
+		this(b, DEF_RATE);
+	}
+
 	public MusicData(final byte[] b, final float rate) {
 		preparedData = b;
 		data = splitAudio(b);
 		outFormat = new AudioFormat(Encoding.PCM_SIGNED, rate, 16, 2, 4, rate, false);
+	}
+
+	public MusicData(final int[][] data) {
+		this(data, DEF_RATE);
 	}
 
 	public MusicData(int[][] data, final float rate) {
@@ -212,5 +225,15 @@ public class MusicData {
 		}
 
 		return new MusicData(newData, outFormat.getSampleRate());
+	}
+
+	public int getFirstDifferent(final MusicData other) {
+		for (int i = 0; i < data[0].length; i++) {
+			if (data[0][i] != other.data[0][i]) {
+				return i;
+			}
+		}
+
+		return -1;
 	}
 }

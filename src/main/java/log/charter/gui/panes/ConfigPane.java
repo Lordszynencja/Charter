@@ -44,14 +44,16 @@ public final class ConfigPane extends ParamsPane {
 	private int minTailLength = Config.minTailLength;
 	private int delay = Config.delay;
 	private int markerOffset = Config.markerOffset;
-	private Theme theme = Config.theme;
 	private int noteWidth = Config.noteWidth;
 	private int noteHeight = Config.noteHeight;
 	private boolean invertStrings = Config.invertStrings;
+	private boolean leftHanded = Config.leftHanded;
 	private boolean showChordIds = Config.showChordIds;
 	private boolean createDefaultStretchesInBackground = Config.createDefaultStretchesInBackground;
 	private int FPS = Config.FPS;
 	private int maxStrings = Config.maxStrings;
+
+	private Theme theme = Config.theme;
 
 	public ConfigPane(final CharterFrame frame) {
 		super(frame, Label.CONFIG_PANE, 18, getSizes());
@@ -88,8 +90,9 @@ public final class ConfigPane extends ParamsPane {
 		addConfigValue(row++, 20, 150, Label.CONFIG_NOTE_HEIGHT, noteHeight + "", 50,
 				createIntValidator(1, 1000, false), //
 				val -> noteHeight = Integer.valueOf(val), false);
-		addConfigCheckbox(row++, 20, 150, Label.CONFIG_INVERT_STRINGS, invertStrings, val -> invertStrings = val);
-		addConfigCheckbox(row++, 20, 150, Label.CONFIG_SHOW_CHORD_IDS, showChordIds, val -> showChordIds = val);
+		addConfigCheckbox(row, 20, 100, Label.CONFIG_INVERT_STRINGS, invertStrings, val -> invertStrings = val);
+		addConfigCheckbox(row++, 180, 100, Label.CONFIG_LEFT_HANDED, leftHanded, val -> leftHanded = val);
+		addConfigCheckbox(row++, 20, 100, Label.CONFIG_SHOW_CHORD_IDS, showChordIds, val -> showChordIds = val);
 		addConfigCheckbox(row++, 20, 0, Label.CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND,
 				createDefaultStretchesInBackground, val -> createDefaultStretchesInBackground = val);
 		addConfigValue(row++, 20, 150, Label.CONFIG_FPS, FPS + "", 50, createIntValidator(1, 1000, false), //
@@ -140,6 +143,7 @@ public final class ConfigPane extends ParamsPane {
 		Config.noteHeight = noteHeight;
 
 		Config.invertStrings = invertStrings;
+		Config.leftHanded = leftHanded;
 		Config.showChordIds = showChordIds;
 
 		Config.FPS = FPS;

@@ -213,8 +213,8 @@ public class CharterFrame extends JFrame {
 		data.time = (int) data.nextTime;
 
 		if (isFocused()) {
-			repaint();
 			preview3DPanel.repaint();
+			repaint();
 		}
 
 		if (fullscreenPreviewFrame.isFocused()) {

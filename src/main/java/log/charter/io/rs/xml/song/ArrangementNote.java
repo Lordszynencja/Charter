@@ -75,7 +75,7 @@ public class ArrangementNote {
 		string = note.string;
 		fret = note.fret;
 		sustain = note.length() > 0 ? note.length() : null;
-		vibrato = note.vibrato;
+		vibrato = note.vibrato ? 1 : null;
 		tremolo = note.tremolo ? 1 : null;
 		accent = note.accent ? 1 : null;
 

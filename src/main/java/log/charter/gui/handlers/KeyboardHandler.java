@@ -728,7 +728,7 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		this.singleToggleOnAllSelectedNotesWithBaseValueNote(note -> note.vibrato == null ? 80 : null,
+		this.singleToggleOnAllSelectedNotesWithBaseValueNote(note -> !note.vibrato,
 				(note, vibrato) -> note.vibrato = vibrato);
 	}
 
@@ -1282,6 +1282,8 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	private void handleNumber(final int number) {
+		System.out.print("test");
+
 		if (data.isEmpty) {
 			return;
 		}

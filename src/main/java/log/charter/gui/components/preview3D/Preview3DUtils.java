@@ -10,7 +10,8 @@ public class Preview3DUtils {
 	public static double stringDistance = 0.35;
 
 	public static double getFretPosition(final double fret) {
-		return 3 * (1 - Math.pow(0.5, fret / 12.0));
+		final double disposition = 3 * (1 - Math.pow(0.5, fret / 12.0));
+		return Config.leftHanded ? 1.5 - disposition : disposition;
 	}
 
 	public static double getFretMiddlePosition(final double fret) {

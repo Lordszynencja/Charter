@@ -50,7 +50,7 @@ public class NoteOptionsPane extends ParamsPane {
 	private boolean ignore;
 	private Integer slideTo;
 	private boolean unpitchedSlide;
-	private Integer vibrato;
+	private boolean vibrato;
 	private boolean tremolo;
 
 	public NoteOptionsPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
@@ -134,12 +134,7 @@ public class NoteOptionsPane extends ParamsPane {
 		addSelectTextOnFocus(slideToInput);
 		addConfigCheckbox(row++, 120, 0, Label.SLIDE_PANE_UNPITCHED, unpitchedSlide, val -> unpitchedSlide = val);
 
-		addIntegerConfigValue(row++, 20, 45, Label.VIBRATO, vibrato, 40, createIntValidator(0, 1000, true),
-				val -> vibrato = val, false);
-		final JTextField vibratoInput = (JTextField) components.getLast();
-		vibratoInput.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(vibratoInput);
-
+		addConfigCheckbox(row++, 20, 45, Label.VIBRATO, vibrato, val -> vibrato = val);
 		addConfigCheckbox(row++, 20, 45, Label.TREMOLO, tremolo, val -> tremolo = val);
 
 		addDefaultFinish(16, this::onSave);
@@ -173,7 +168,7 @@ public class NoteOptionsPane extends ParamsPane {
 		ignore = chord.ignore;
 		slideTo = chord.slideTo;
 		unpitchedSlide = chord.unpitchedSlide;
-		vibrato = null;
+		vibrato = chord.vibrato;
 		tremolo = chord.tremolo;
 	}
 

@@ -53,7 +53,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private FieldWithLabel<JCheckBox> ignore;
 	private FieldWithLabel<TextInputWithValidation> slideFret;
 	private FieldWithLabel<JCheckBox> unpitchedSlide;
-	private FieldWithLabel<TextInputWithValidation> vibrato;
+	private FieldWithLabel<JCheckBox> vibrato;
 	private FieldWithLabel<JCheckBox> tremolo;
 
 	private SelectionBendEditor selectionBendEditor;
@@ -130,7 +130,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void addSlideInputs(final CurrentSelectionEditor parent, final AtomicInteger row) {
 		final TextInputWithValidation slideFretInput = new TextInputWithValidation(null, 30,
-				createIntValidator(1, frets, false), (final Integer val) -> changeSlideFret(val), false);
+				createIntValidator(1, frets, true), (final Integer val) -> changeSlideFret(val), false);
 		slideFret = new FieldWithLabel<>(Label.SLIDE_PANE_FRET, 60, 30, 20, slideFretInput, LabelPosition.LEFT);
 		slideFret.setLocation(20, parent.getY(row.get()));
 		parent.add(slideFret);
@@ -144,9 +144,9 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void addVibratoTremoloInput(final CurrentSelectionEditor parent, final AtomicInteger row) {
-		final TextInputWithValidation vibratoInput = new TextInputWithValidation(null, 30,
-				createIntValidator(0, 1000, true), (final Integer val) -> changeVibrato(val), false);
-		vibrato = new FieldWithLabel<>(Label.VIBRATO, 60, 30, 20, vibratoInput, LabelPosition.LEFT);
+		final JCheckBox vibratoInput = new JCheckBox();
+		vibratoInput.addActionListener(a -> changeVibrato(vibratoInput.isSelected()));
+		vibrato = new FieldWithLabel<>(Label.VIBRATO, 60, 30, 20, vibratoInput, LabelPosition.LEFT_CLOSE);
 		vibrato.setLocation(20, parent.getY(row.get()));
 		parent.add(vibrato);
 
@@ -355,7 +355,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		}
 	}
 
-	private void changeSlideFret(final int newSlideFret) {
+	private void changeSlideFret(final Integer newSlideFret) {
 		undoSystem.addUndo();
 
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
@@ -375,14 +375,13 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		}
 	}
 
-	private void changeVibrato(final Integer newVibrato) {
+	private void changeVibrato(final boolean newVibrato) {
 		undoSystem.addUndo();
-		changeSelectedChordsToNotes();
 
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
-			selection.selectable.note.vibrato = newVibrato;
+			selection.selectable.asGuitarSound().vibrato = newVibrato;
 		}
 	}
 
@@ -491,7 +490,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			setCurrentValuesInInputs();
 			fret.field.setTextWithoutEvent("");
 			string.field.setTextWithoutEvent("");
-			vibrato.field.setTextWithoutEvent("");
 			return;
 		}
 
@@ -499,8 +497,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				selection -> selection.selectable.isNote() ? selection.selectable.note.fret : null);
 		final Integer stringValue = getSingleValue(selected,
 				selection -> selection.selectable.isNote() ? selection.selectable.note.string : null);
-		final Integer vibratoValue = getSingleValue(selected,
-				selection -> selection.selectable.isNote() ? selection.selectable.note.vibrato : null);
 
 		chordTemplate = new ChordTemplate();
 		if (stringValue != null && fretValue != null) {
@@ -510,7 +506,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 		fret.field.setTextWithoutEvent(fretValue == null ? "" : (fretValue + ""));
 		string.field.setTextWithoutEvent(stringValue == null ? "" : (stringValue + ""));
-		vibrato.field.setTextWithoutEvent(vibratoValue == null ? "" : (vibratoValue + ""));
 	}
 
 	public void selectionChanged(final SelectionAccessor<ChordOrNote> selectedChordOrNotesAccessor) {
@@ -552,6 +547,12 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			unpitchedSlideValue = false;
 		}
 		unpitchedSlide.field.setSelected(unpitchedSlideValue);
+
+		Boolean vibratoValue = getSingleValue(selected, selection -> selection.selectable.asGuitarSound().vibrato);
+		if (vibratoValue == null) {
+			vibratoValue = false;
+		}
+		vibrato.field.setSelected(vibratoValue);
 
 		Boolean tremoloValue = getSingleValue(selected, selection -> selection.selectable.asGuitarSound().tremolo);
 		if (tremoloValue == null) {

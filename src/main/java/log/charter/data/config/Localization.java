@@ -32,8 +32,9 @@ public class Localization {
 		CONFIG_NOTE_WIDTH("Note width"), //
 		CONFIG_NOTE_HEIGHT("Note height"), //
 		CONFIG_INVERT_STRINGS("Invert strings"), //
+		CONFIG_LEFT_HANDED("Left handed"), //
 		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
-		CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create default stretches in background"), //
+		CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
 		CONFIG_FPS("FPS"), //
 		CONFIG_MAX_STRINGS("Max strings"), //
 
@@ -247,7 +248,7 @@ public class Localization {
 		OPERATION_CANCELLED("Operation cancelled"), //
 		PROJECT_IS_NEWER_VERSION("Project is newer version than program handles"), //
 		ROCKSMITH_CHART_PROJECT("Rocksmith Chart Project"), //
-		RS_ARRANGEMENT_FILE("RS arrangmenet file (XML)"), //
+		RS_ARRANGEMENT_FILE("RS arrangment file (XML)"), //
 		SELECT_FOLDER("Select"), //
 		TONE_NAME_CANT_BE_EMPTY("Tone name can't be empty"), //
 		TONE_NAME_PAST_LIMIT("There are already 4 tones, can't add another tone"), //

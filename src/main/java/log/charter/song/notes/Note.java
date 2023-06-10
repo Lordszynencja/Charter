@@ -14,8 +14,6 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class Note extends GuitarSound {
 	public int string;
 	public int fret;
-	public Integer vibrato;
-	public boolean tremolo;
 	public BassPickingTechnique bassPicking = BassPickingTechnique.NONE;
 	public ArrayList2<BendValue> bendValues = new ArrayList2<>();
 
@@ -29,12 +27,12 @@ public class Note extends GuitarSound {
 		super(arrangementNote.time, arrangementNote.sustain == null ? 0 : arrangementNote.sustain,
 				Mute.fromArrangmentNote(arrangementNote), HOPO.fromArrangmentNote(arrangementNote),
 				Harmonic.fromArrangmentNote(arrangementNote), mapInteger(arrangementNote.accent),
-				mapInteger(arrangementNote.tremolo), mapInteger(arrangementNote.linkNext),
+				mapInteger(arrangementNote.vibrato), mapInteger(arrangementNote.tremolo),
+				mapInteger(arrangementNote.linkNext),
 				arrangementNote.slideTo == null ? arrangementNote.slideUnpitchTo : arrangementNote.slideTo,
 				arrangementNote.slideUnpitchTo != null, mapInteger(arrangementNote.ignore));
 		string = arrangementNote.string;
 		fret = arrangementNote.fret;
-		vibrato = arrangementNote.vibrato;
 		bassPicking = BassPickingTechnique.fromArrangmentNote(arrangementNote);
 		bendValues = arrangementNote.bendValues == null ? new ArrayList2<>()
 				: arrangementNote.bendValues.list
@@ -45,7 +43,6 @@ public class Note extends GuitarSound {
 		super(other);
 		string = other.string;
 		fret = other.fret;
-		vibrato = other.vibrato;
 		bassPicking = other.bassPicking;
 		bendValues = other.bendValues.map(BendValue::new);
 	}

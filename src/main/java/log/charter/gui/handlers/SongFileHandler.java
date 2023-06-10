@@ -352,9 +352,15 @@ public class SongFileHandler {
 	}
 
 	public void openAudioFile() {
-		final MusicData musicData = chooseMusicFile(data.path);
+		final File musicFile = FileChooseUtils.chooseMusicFile(frame, data.path);
+		if (musicFile == null) {
+			return;
+		}
+
+		final MusicData musicData = MusicData.readFile(musicFile);
 		if (musicData != null) {
 			data.music = musicData;
+			data.songChart.musicFileName = musicFile.getName();
 		}
 	}
 

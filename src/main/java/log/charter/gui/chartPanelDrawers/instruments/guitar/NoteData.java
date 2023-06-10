@@ -36,7 +36,7 @@ public class NoteData {
 			final Integer slideTo = slideDistance == null ? null : (fret + slideDistance);
 
 			notes.add(new NoteData(x, length, string, fret, fretDescription, chord, chord.bendValues.get(string),
-					slideTo, null, selected, lastWasLinkNext));
+					slideTo, selected, lastWasLinkNext));
 		}
 
 		return notes;
@@ -56,7 +56,7 @@ public class NoteData {
 	public final ArrayList2<BendValue> bendValues;
 	public final Integer slideTo;
 	public final boolean unpitchedSlide;
-	public final Integer vibrato;
+	public final boolean vibrato;
 	public final boolean tremolo;
 
 	public final boolean selected;
@@ -65,22 +65,22 @@ public class NoteData {
 
 	public NoteData(final int x, final int length, final Note note, final boolean selected,
 			final boolean lastWasLinkNext) {
-		this(x, length, note.string, note.fret, note.fret + "", note, note.bendValues, note.slideTo, note.vibrato,
-				selected, lastWasLinkNext);
+		this(x, length, note.string, note.fret, note.fret + "", note, note.bendValues, note.slideTo, selected,
+				lastWasLinkNext);
 	}
 
 	public NoteData(final int x, final int length, final int string, final int fret, final String fretDescription,
 			final GuitarSound sound, final ArrayList2<BendValue> bendValues, final Integer slideTo,
-			final Integer vibrato, final boolean selected, final boolean lastWasLinkNext) {
+			final boolean selected, final boolean lastWasLinkNext) {
 		this(sound.position(), x, length, string, fret, fretDescription, sound.accent, sound.mute, sound.hopo,
-				sound.harmonic, bendValues, slideTo, sound.unpitchedSlide, vibrato, sound.tremolo, selected,
+				sound.harmonic, bendValues, slideTo, sound.unpitchedSlide, sound.vibrato, sound.tremolo, selected,
 				lastWasLinkNext);
 	}
 
 	private NoteData(final int position, final int x, final int length, final int string, final int fretNumber,
 			final String fret, final boolean accent, final Mute mute, final HOPO hopo, final Harmonic harmonic,
 			final ArrayList2<BendValue> bendValues, final Integer slideTo, final boolean unpitchedSlide,
-			final Integer vibrato, final boolean tremolo, final boolean selected, final boolean lastWasLinkNext) {
+			final boolean vibrato, final boolean tremolo, final boolean selected, final boolean lastWasLinkNext) {
 		this.position = position;
 		this.x = x;
 		this.length = lastWasLinkNext ? max(5, length) : length;

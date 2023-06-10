@@ -15,6 +15,7 @@ import log.charter.gui.components.ParamsPane;
 import log.charter.sound.MusicData;
 import log.charter.sound.StretchedFileLoader;
 import log.charter.sound.ogg.OggWriter;
+import log.charter.util.RW;
 
 public class AddSilencePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
@@ -46,22 +47,36 @@ public class AddSilencePane extends ParamsPane {
 		addDefaultFinish(3, this::saveAndExit);
 	}
 
-	private void saveAndExit() {
+	private void addSilence() {
 		final MusicData songMusicData = data.music;
 		final MusicData silenceMusicData = MusicData.generateSilence(time.doubleValue(),
 				songMusicData.outFormat.getSampleRate());
 		final MusicData joined = silenceMusicData.join(songMusicData);
 		data.music = joined;
+	}
 
-		if (!data.songChart.musicFileName.endsWith(".ogg")) {
+	private void changeMusicFileNameAndMakeBackupIfNeeded() {
+		if (!data.songChart.musicFileName.equals("guitar.ogg")) {
 			data.songChart.musicFileName = "guitar.ogg";
+		} else {
+			RW.writeB(new File(data.path, data.songChart.musicFileName + "_old_" + System.currentTimeMillis() + ".ogg"),
+					RW.readB(new File(data.path, data.songChart.musicFileName)));
 		}
+	}
 
-		OggWriter.writeOgg(new File(data.path, data.songChart.musicFileName).getAbsolutePath(), joined);
-
+	private void cleanUp() {
 		StretchedFileLoader.stopAllProcesses();
 		for (final File oldWav : new File(data.path).listFiles(s -> s.getName().matches("guitar_(tmp|[0-9]*).wav"))) {
 			oldWav.delete();
 		}
+	}
+
+	private void saveAndExit() {
+		changeMusicFileNameAndMakeBackupIfNeeded();
+		addSilence();
+
+		OggWriter.writeOgg(new File(data.path, data.songChart.musicFileName).getAbsolutePath(), data.music);
+
+		cleanUp();
 	}
 }

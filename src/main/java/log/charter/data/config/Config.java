@@ -33,6 +33,7 @@ public class Config {
 	public static int noteHeight = 25;
 
 	public static boolean invertStrings = false;
+	public static boolean leftHanded = false;
 	public static boolean showChordIds = false;
 	public static boolean createDefaultStretchesInBackground = true;
 	public static int frets = 24;
@@ -99,6 +100,7 @@ public class Config {
 		setters.put("noteHeight", val -> noteHeight = Integer.valueOf(val));
 
 		setters.put("invertStrings", val -> invertStrings = Boolean.valueOf(val));
+		setters.put("leftHanded", val -> leftHanded = Boolean.valueOf(val));
 		setters.put("showChordIds", val -> showChordIds = Boolean.valueOf(val));
 		setters.put("createDefaultStretchesInBackground",
 				val -> createDefaultStretchesInBackground = Boolean.valueOf(val));
@@ -161,6 +163,7 @@ public class Config {
 		config.put("noteHeight", noteHeight + "");
 
 		config.put("invertStrings", invertStrings + "");
+		config.put("leftHanded", leftHanded + "");
 		config.put("showChordIds", showChordIds + "");
 		config.put("createDefaultStretchesInBackground", createDefaultStretchesInBackground + "");
 		config.put("frets", frets + "");
