@@ -45,7 +45,6 @@ public class SongArrangement {
 	public String artistNameSort;
 	public String albumName;
 	public Integer albumYear;
-	public BigDecimal crowdSpeed;
 	public ArrangementProperties arrangementProperties = new ArrangementProperties();
 	public String tonebase;
 	public String tonea;
@@ -75,15 +74,14 @@ public class SongArrangement {
 		lastConversionDateTime = LocalDateTime.now();
 		startBeat = -offset;
 		averageTempo = new BigDecimal(
-				(double) (beatsTmp.get(beatsTmp.size() - 1).position() - startBeat) / (beatsTmp.size() - 1)).setScale(3,
-						RoundingMode.HALF_UP);
+				(double) (beatsTmp.get(beatsTmp.size() - 1).position() - startBeat) / (beatsTmp.size() - 1))
+				.setScale(3, RoundingMode.HALF_UP);
 		tuning = new ArrangementTuning(arrangementChart.tuning);
 		capo = arrangementChart.capo;
 		artistName = songChart.artistName;
 		artistNameSort = songChart.artistNameSort;
 		albumName = songChart.albumName;
 		albumYear = songChart.albumYear;
-		crowdSpeed = songChart.crowdSpeed;
 		arrangementProperties = arrangementChart.arrangementProperties;
 		setTones(arrangementChart);
 		phrases = new CountedList<ArrangementPhrase>(arrangementChart.phrases.map(ArrangementPhrase::new));

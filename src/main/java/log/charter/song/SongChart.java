@@ -4,7 +4,6 @@ import static log.charter.io.rs.xml.song.SongArrangementXStreamHandler.readSong;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.readVocals;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +37,6 @@ public class SongChart {
 	public String title;
 	public String albumName;
 	public Integer albumYear;
-	public BigDecimal crowdSpeed = new BigDecimal("1.0");
 
 	public BeatsMap beatsMap;
 	public ArrayList2<ArrangementChart> arrangements;
@@ -65,7 +63,6 @@ public class SongChart {
 		title = project.title;
 		albumName = project.albumName;
 		albumYear = project.albumYear;
-		crowdSpeed = project.crowdSpeed;
 
 		beatsMap = new BeatsMap(songLengthMs, project);
 
