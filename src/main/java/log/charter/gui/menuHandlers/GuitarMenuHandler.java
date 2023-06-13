@@ -4,7 +4,6 @@ import static log.charter.song.notes.IPosition.findFirstIdAfterEqual;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 
 import log.charter.data.ArrangementFretHandPositionsCreator;
 import log.charter.data.ChartData;
@@ -68,19 +67,19 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_TOGGLE_TREMOLO, "T", keyboardHandler::toggleTremolo));
 		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_TOGGLE_LINK_NEXT, "L", keyboardHandler::toggleLinkNext));
 
-		menu.addSeparator();
-		final JMenuItem noteOptions = new SpecialMenuItem(Label.GUITAR_MENU_EDIT_NOTE, "W", keyboardHandler::editNote);
-		noteOptions.setToolTipText(Label.GUITAR_MENU_EDIT_NOTE_TOOLTIP.label());
-		menu.add(noteOptions);
-		final JMenuItem chordOptions = new SpecialMenuItem(Label.GUITAR_MENU_EDIT_AS_CHORD, "Q",
-				keyboardHandler::editNoteAsChord);
-		chordOptions.setToolTipText(Label.GUITAR_MENU_EDIT_AS_CHORD_TOOLTIP.label());
-		menu.add(chordOptions);
-		final JMenuItem singleNoteOptions = new SpecialMenuItem(Label.GUITAR_MENU_EDIT_AS_SINGLE_NOTE, "E",
-				keyboardHandler::editNoteAsSingleNote);
-		singleNoteOptions.setToolTipText(Label.GUITAR_MENU_EDIT_AS_SINGLE_NOTE_TOOLTIP.label());
-		menu.add(singleNoteOptions);
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_EDIT_BEND, "B", keyboardHandler::editBend));
+//		menu.addSeparator();
+//		final JMenuItem noteOptions = new SpecialMenuItem(Label.GUITAR_MENU_EDIT_NOTE, "W", keyboardHandler::editNote);
+//		noteOptions.setToolTipText(Label.GUITAR_MENU_EDIT_NOTE_TOOLTIP.label());
+//		menu.add(noteOptions);
+//		final JMenuItem chordOptions = new SpecialMenuItem(Label.GUITAR_MENU_EDIT_AS_CHORD, "Q",
+//				keyboardHandler::editNoteAsChord);
+//		chordOptions.setToolTipText(Label.GUITAR_MENU_EDIT_AS_CHORD_TOOLTIP.label());
+//		menu.add(chordOptions);
+//		final JMenuItem singleNoteOptions = new SpecialMenuItem(Label.GUITAR_MENU_EDIT_AS_SINGLE_NOTE, "E",
+//				keyboardHandler::editNoteAsSingleNote);
+//		singleNoteOptions.setToolTipText(Label.GUITAR_MENU_EDIT_AS_SINGLE_NOTE_TOOLTIP.label());
+//		menu.add(singleNoteOptions);
+//		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_EDIT_BEND, "B", keyboardHandler::editBend));
 
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_MARK_HAND_SHAPE, "Shift-H", keyboardHandler::markHandShape));

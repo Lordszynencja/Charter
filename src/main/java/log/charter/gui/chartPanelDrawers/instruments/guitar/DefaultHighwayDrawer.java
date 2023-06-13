@@ -85,11 +85,10 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	protected static final BufferedImage palmMuteMarker = loadImage("images/palmMute.png");
 	protected static final BufferedImage muteMarker = loadImage("images/mute.png");
 
-	protected final static Color selectColor = ColorLabel.SELECT.color();
+	protected final Color selectColor = ColorLabel.SELECT.color();
 	protected final Color[] noteColors;
 	protected final Color[] noteAccentColors;
 	protected final Color[] noteTailColors;
-	protected static final Color stringMuteNoteColor = ColorLabel.NOTE_STRING_MUTE.color();
 
 	protected final Font anchorFont;
 	protected final Font bendValueFont;
@@ -189,7 +188,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	protected Color getNoteColor(final NoteData note) {
-		return note.mute != Mute.FULL ? noteColors[note.string] : stringMuteNoteColor;
+		return note.mute != Mute.FULL ? noteColors[note.string] : ColorLabel.NOTE_FULL_MUTE.color();
 	}
 
 	protected void addNormalNoteShape(final int y, final NoteData note) {

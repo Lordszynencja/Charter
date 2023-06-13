@@ -205,7 +205,7 @@ public class GuitarModeHandler extends ModeHandler {
 		selectionManager.clear();
 		undoSystem.addUndo();
 
-		if (!clickData.isDrag()) {
+		if (!clickData.isXDrag()) {
 			addSingleNote(clickData);
 			return;
 		}
@@ -237,7 +237,7 @@ public class GuitarModeHandler extends ModeHandler {
 	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
 		if (clickData.pressHighlight.type == PositionType.ANCHOR) {
-			if (clickData.isDrag()) {
+			if (clickData.isXDrag()) {
 				return;
 			}
 
@@ -246,7 +246,7 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 
 		if (clickData.pressHighlight.type == PositionType.BEAT) {
-			if (clickData.isDrag()) {
+			if (clickData.isXDrag()) {
 				return;
 			}
 
@@ -260,7 +260,7 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 
 		if (clickData.pressHighlight.type == PositionType.HAND_SHAPE) {
-			if (clickData.isDrag()) {
+			if (clickData.isXDrag()) {
 				return;
 			}
 
@@ -269,7 +269,7 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 
 		if (clickData.pressHighlight.type == PositionType.TONE_CHANGE) {
-			if (clickData.isDrag()) {
+			if (clickData.isXDrag()) {
 				return;
 			}
 

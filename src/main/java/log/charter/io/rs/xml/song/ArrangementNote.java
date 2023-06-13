@@ -97,6 +97,32 @@ public class ArrangementNote {
 		setUpSlide(note);
 	}
 
+	public ArrangementNote(final ArrangementChordNote chordNote) {
+		time = chordNote.time;
+		string = chordNote.string;
+		fret = chordNote.fret;
+		sustain = chordNote.sustain;
+		vibrato = chordNote.vibrato;
+		tremolo = chordNote.tremolo;
+		accent = chordNote.accent;
+		mute = chordNote.mute;
+		palmMute = chordNote.palmMute;
+		pluck = chordNote.pluck;
+		hopo = chordNote.hopo;
+		hammerOn = chordNote.hammerOn;
+		pullOff = chordNote.pullOff;
+		slap = chordNote.slap;
+		slideTo = chordNote.slideTo;
+		slideUnpitchTo = chordNote.slideUnpitchTo;
+		bend = chordNote.bend;
+		tap = chordNote.tap;
+		harmonic = chordNote.harmonic;
+		harmonicPinch = chordNote.harmonicPinch;
+		linkNext = chordNote.linkNext;
+		ignore = chordNote.ignore;
+		bendValues = chordNote.bendValues;
+	}
+
 	private void setUpMute(final Note note) {
 		if (note.mute == Mute.FULL) {
 			mute = 1;

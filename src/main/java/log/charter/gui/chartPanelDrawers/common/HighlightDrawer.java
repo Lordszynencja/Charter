@@ -17,7 +17,6 @@ import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.ScalingUtils.xToTime;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,9 +44,6 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.Position2D;
 
 public class HighlightDrawer {
-	private static final Color highlightColor = ColorLabel.HIGHLIGHT.color();
-	private static final Color noteAdditionLineColor = ColorLabel.NOTE_ADD_LINE.color();
-
 	private static interface HighlightTypeDrawer {
 		void drawHighlight(Graphics g, PositionWithIdAndType highlight, int x, int y);
 	}
@@ -80,7 +76,7 @@ public class HighlightDrawer {
 		final int top = anchorY - 1;
 		final int bottom = lanesBottom + 1;
 		final ShapePositionWithSize beatPosition = new ShapePositionWithSize(anchorX - 1, top, 2, bottom - top);
-		strokedRectangle(beatPosition, highlightColor).draw(g);
+		strokedRectangle(beatPosition, ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
 	private void drawBeatHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x, final int y) {
@@ -92,7 +88,7 @@ public class HighlightDrawer {
 		final int top = beatTextY - 1;
 		final int bottom = lanesBottom + 1;
 		final ShapePositionWithSize beatPosition = new ShapePositionWithSize(beatX - 1, top, 2, bottom - top);
-		strokedRectangle(beatPosition, highlightColor).draw(g);
+		strokedRectangle(beatPosition, ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
 	private void drawNoteHighlight(final Graphics g, final int string, final int position, final int length,
@@ -102,7 +98,7 @@ public class HighlightDrawer {
 		final ShapePositionWithSize notePosition = new ShapePositionWithSize(x, y, noteWidth, noteHeight)//
 				.centered()//
 				.resized(-1, -1, 1, 1);
-		strokedRectangle(notePosition, highlightColor).draw(g);
+		strokedRectangle(notePosition, ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
 	private void drawChordHighlight(final Graphics g, final Chord chord, final ChordTemplate chordTemplate,
@@ -133,7 +129,7 @@ public class HighlightDrawer {
 
 	private void drawHandShapeHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
 			final int y) {
-		strokedRectangle(getHandShapeHighlightPosition(highlight), highlightColor).draw(g);
+		strokedRectangle(getHandShapeHighlightPosition(highlight), ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
 	private void drawNoneHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x, final int y) {
@@ -145,14 +141,14 @@ public class HighlightDrawer {
 		final int top = toneChangeY - 1;
 		final int bottom = lanesBottom + 1;
 		final ShapePositionWithSize beatPosition = new ShapePositionWithSize(toneChangeX - 1, top, 2, bottom - top);
-		strokedRectangle(beatPosition, highlightColor).draw(g);
+		strokedRectangle(beatPosition, ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
 	private void drawVocalHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x, final int y) {
 		final int position = highlight.position();
 		final int length = highlight.vocal == null ? 50 : highlight.vocal.length();
 		final ShapePositionWithSize vocalNotePosition = getVocalNotePosition(position, length, data.time);
-		strokedRectangle(vocalNotePosition.resized(-1, -1, 1, 1), highlightColor).draw(g);
+		strokedRectangle(vocalNotePosition.resized(-1, -1, 1, 1), ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
 	private final Map<PositionType, HighlightTypeDrawer> highlightDrawers = new HashMap<>();
@@ -174,7 +170,7 @@ public class HighlightDrawer {
 
 		final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
 		final int dragX = timeToX(position, data.time);
-		lineVertical(dragX, anchorY, lanesBottom, highlightColor).draw(g);
+		lineVertical(dragX, anchorY, lanesBottom, ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
 	private void drawBeatDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
@@ -182,7 +178,7 @@ public class HighlightDrawer {
 			return;
 		}
 
-		lineVertical(x, beatTextY, lanesBottom, highlightColor).draw(g);
+		lineVertical(x, beatTextY, lanesBottom, ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
 	private void drawGuitarNoteDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
@@ -216,7 +212,7 @@ public class HighlightDrawer {
 
 		final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
 		final int dragX = timeToX(position, data.time);
-		lineVertical(dragX, anchorY, lanesBottom, highlightColor).draw(g);
+		lineVertical(dragX, anchorY, lanesBottom, ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
 	private void drawNoneDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
@@ -229,7 +225,7 @@ public class HighlightDrawer {
 
 		final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
 		final int dragX = timeToX(position, data.time);
-		lineVertical(dragX, anchorY, lanesBottom, highlightColor).draw(g);
+		lineVertical(dragX, anchorY, lanesBottom, ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
 	private final Map<PositionType, DragTypeDrawer> dragDrawers = new HashMap<>();
@@ -260,7 +256,7 @@ public class HighlightDrawer {
 
 		final PositionWithIdAndType highlight = highlightManager.getHighlight(x, y);
 		final int currentX = timeToX(highlight.position(), data.time);
-		line(new Position2D(pressX, pressY), new Position2D(currentX, y), noteAdditionLineColor).draw(g);
+		line(new Position2D(pressX, pressY), new Position2D(currentX, y), ColorLabel.NOTE_ADD_LINE.color()).draw(g);
 
 		final ArrayList2<PositionWithStringOrNoteId> dragPositions = highlightManager
 				.getPositionsWithStrings(pressXTime, highlight.position(), pressY, y);

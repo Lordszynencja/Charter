@@ -123,7 +123,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		switch (clickData.button) {
 		case LEFT_BUTTON:
-			if (!clickData.isDrag()) {
+			if (!clickData.isXDrag()) {
 				selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
 				break;
 			}

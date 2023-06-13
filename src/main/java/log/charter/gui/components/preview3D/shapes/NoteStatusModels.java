@@ -216,10 +216,10 @@ public class NoteStatusModels {
 	public static final Map<Mute, ColorLabel> mutesColors = new HashMap<>();
 	static {
 		mutesModels.put(Mute.FULL, fullMuteModel);
-		mutesColors.put(Mute.FULL, ColorLabel.FULL_MUTE);
+		mutesColors.put(Mute.FULL, ColorLabel.PREVIEW_3D_FULL_MUTE);
 
 		mutesModels.put(Mute.PALM, palmMuteModel);
-		mutesColors.put(Mute.PALM, ColorLabel.PALM_MUTE);
+		mutesColors.put(Mute.PALM, ColorLabel.PREVIEW_3D_PALM_MUTE);
 	}
 
 	public static final Model hoModel = new HOModel();

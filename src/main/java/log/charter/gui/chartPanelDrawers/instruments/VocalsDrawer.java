@@ -9,7 +9,6 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.tex
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
 
-import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 
@@ -28,11 +27,6 @@ import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.Position2D;
 
 public class VocalsDrawer {
-	private final static Color selectColor = ColorLabel.SELECT.color();
-	private final static Color vocalTextColor = ColorLabel.VOCAL_TEXT.color();
-	private final static Color vocalNoteColor = ColorLabel.VOCAL_NOTE.color();
-	private final static Color vocalNoteWordPartColor = ColorLabel.VOCAL_NOTE_WORD_PART.color();
-
 	private static final int vocalNoteY = (lanesTop + lanesBottom) / 2;
 
 	private static ShapePositionWithSize getVocalNotePosition(final int x, final int length) {
@@ -60,14 +54,14 @@ public class VocalsDrawer {
 				final boolean selected) {
 			if ((x + lengthPx) > 0) {
 				final ShapePositionWithSize position = getVocalNotePosition(x, lengthPx);
-				notes.add(filledRectangle(position, vocalNoteColor));
+				notes.add(filledRectangle(position, ColorLabel.VOCAL_NOTE.color()));
 				if (selected) {
-					notes.add(strokedRectangle(position.resized(-1, -1, 1, 1), selectColor));
+					notes.add(strokedRectangle(position.resized(-1, -1, 1, 1), ColorLabel.SELECT.color()));
 				}
 
 				final String text = vocal.getText() + (vocal.isWordPart() ? "-" : "");
 				if ((x + fontMetrics.stringWidth(text)) > 0) {
-					texts.add(text(new Position2D(x + 2, vocalNoteY - 10), text, vocalTextColor));
+					texts.add(text(new Position2D(x + 2, vocalNoteY - 10), text, ColorLabel.VOCAL_TEXT.color()));
 				}
 			}
 
@@ -75,8 +69,8 @@ public class VocalsDrawer {
 				final int nextStart = timeToX(next.position(), time);
 				final ShapePositionWithSize position = new ShapePositionWithSize(x + lengthPx, vocalNoteY,
 						nextStart - x - lengthPx, 4)//
-								.centeredY();
-				wordConnections.add(filledRectangle(position, vocalNoteWordPartColor));
+						.centeredY();
+				wordConnections.add(filledRectangle(position, ColorLabel.VOCAL_NOTE_WORD_PART.color()));
 			}
 		}
 
@@ -131,9 +125,6 @@ public class VocalsDrawer {
 	}
 
 	private static class VocalLinesDrawingData {
-		private final static Color vocalLineBackgroundColor = ColorLabel.VOCAL_LINE_BACKGROUND.color();
-		private final static Color vocalLineTextColor = ColorLabel.VOCAL_LINE_TEXT.color();
-
 		public static final int lyricLinesY = 30;
 
 		private final DrawableShapeList backgrounds = new DrawableShapeList();
@@ -142,9 +133,9 @@ public class VocalsDrawer {
 		public void addLyricLine(final String text, final int x, final int lengthPx) {
 			final ShapePositionWithSize backgroundPosition = new ShapePositionWithSize(x, lyricLinesY - 4, lengthPx,
 					19);
-			backgrounds.add(filledRectangle(backgroundPosition, vocalLineBackgroundColor));
+			backgrounds.add(filledRectangle(backgroundPosition, ColorLabel.VOCAL_LINE_BACKGROUND.color()));
 			final Position2D textPosition = new Position2D(x + 3, lyricLinesY + 11);
-			texts.add(text(textPosition, text, vocalLineTextColor));
+			texts.add(text(textPosition, text, ColorLabel.VOCAL_LINE_TEXT.color()));
 		}
 
 		public void draw(final Graphics g) {

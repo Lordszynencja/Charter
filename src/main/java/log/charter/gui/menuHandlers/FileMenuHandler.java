@@ -8,6 +8,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SpecialMenuItem;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.panes.ConfigPane;
+import log.charter.gui.panes.GraphicConfigPane;
 
 class FileMenuHandler extends CharterMenuHandler {
 	private ChartData data;
@@ -48,6 +49,7 @@ class FileMenuHandler extends CharterMenuHandler {
 
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPTIONS, null, () -> new ConfigPane(frame)));
+		menu.add(new SpecialMenuItem(Label.FILE_MENU_GRAPHIC_OPTIONS, null, () -> new GraphicConfigPane(frame)));
 
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_EXIT, "Esc", frame::exit));

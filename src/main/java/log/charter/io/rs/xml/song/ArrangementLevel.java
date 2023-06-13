@@ -73,7 +73,7 @@ public class ArrangementLevel {
 
 			if (i > 0 && chordsAndNotes.get(i - 1).asGuitarSound().linkNext) {
 				arrangementChord.populateChordNotes(chordTemplate);
-				notes.list.addAll(arrangementChord.chordNotes);
+				arrangementChord.chordNotes.stream().map(ArrangementNote::new).forEach(notes.list::add);
 				continue;
 			}
 

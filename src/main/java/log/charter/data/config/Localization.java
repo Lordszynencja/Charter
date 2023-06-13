@@ -22,8 +22,6 @@ public class Localization {
 		CONFIG_MUSIC_FOLDER("Music folder"), //
 		CONFIG_SONGS_FOLDER("Songs folder"), //
 		CONFIG_MINIMAL_NOTE_DISTANCE("Minimal note distance (ms)"), //
-		// CONFIG_MINIMAL_TAIL_TO_NOTE_DISTANCE("Minimal distance between tail and next
-		// note"), //
 		CONFIG_MINIMAL_TAIL_LENGTH("Minimal note tail length (ms)"), //
 		CONFIG_SOUND_DELAY("Sound delay (ms)"), //
 		CONFIG_MARKER_POSITION("Marker position (px)"), //
@@ -38,6 +36,116 @@ public class Localization {
 		CONFIG_THEME("Graphical theme"), //
 		CONFIG_THEME_DEFAULT("Default"), //
 		CONFIG_THEME_ROCKSMITH("Rocksmith"), //
+
+		GRAPHIC_CONFIG_PANE("Graphic config pane"), //
+		GRAPHIC_CONFIG_BASE_1("Base 1"), //
+		GRAPHIC_CONFIG_BASE_2("Base 2"), //
+
+		GRAPHIC_CONFIG_BASE_BG_0("Base background 0"), //
+		GRAPHIC_CONFIG_BASE_BG_1("Base background 1"), //
+		GRAPHIC_CONFIG_BASE_BG_2("Base background 2"), //
+		GRAPHIC_CONFIG_BASE_BG_3("Base background 3"), //
+		GRAPHIC_CONFIG_BASE_BG_4("Base background 4"), //
+		GRAPHIC_CONFIG_BASE_BG_5("Base background 5"), //
+
+		GRAPHIC_CONFIG_BASE_DARK_TEXT("Dark text"), //
+		GRAPHIC_CONFIG_BASE_TEXT("Text"), //
+
+		GRAPHIC_CONFIG_NOTE_BACKGROUND("Note background"), //
+		GRAPHIC_CONFIG_NOTE_ADD_LINE("Note add line"), //
+		GRAPHIC_CONFIG_LANE("Lane"), //
+		GRAPHIC_CONFIG_MAIN_BEAT("Main beat"), //
+		GRAPHIC_CONFIG_SECONDARY_BEAT("Secondary beat"), //
+		GRAPHIC_CONFIG_GRID("Grid"), //
+		GRAPHIC_CONFIG_MARKER("Marker"), //
+		GRAPHIC_CONFIG_SECTION_NAME_BG("Section name background"), //
+		GRAPHIC_CONFIG_PHRASE_NAME_BG("Phrase name background"), //
+		GRAPHIC_CONFIG_EVENT_BG("Event background"), //
+		GRAPHIC_CONFIG_HIGHLIGHT("Highlight"), //
+		GRAPHIC_CONFIG_SELECT("Select"), //
+
+		GRAPHIC_CONFIG_NOTE_FLAG_MARKER("Note flag marker"), //
+		GRAPHIC_CONFIG_SLIDE_NORMAL_FRET_BG("Normal slide fret background"), //
+		GRAPHIC_CONFIG_SLIDE_NORMAL_FRET_TEXT("Normal slide fret text"), //
+		GRAPHIC_CONFIG_SLIDE_UNPITCHED_FRET_BG("Unpitched slide fret background"), //
+		GRAPHIC_CONFIG_SLIDE_UNPITCHED_FRET_TEXT("Unpitched slide fret text"), //
+		GRAPHIC_CONFIG_NOTE_FULL_MUTE("Full mute"), //
+		GRAPHIC_CONFIG_HAMMER_ON("Hammer on"), //
+		GRAPHIC_CONFIG_PULL_OFF("Pull off"), //
+		GRAPHIC_CONFIG_TAP("Tap"), //
+		GRAPHIC_CONFIG_HARMONIC("Harmonic"), //
+		GRAPHIC_CONFIG_PINCH_HARMONIC("Pinch harmonic"), //
+
+		GRAPHIC_CONFIG_LANE_0("Lane 1"), //
+		GRAPHIC_CONFIG_LANE_BRIGHT_0("Lane bright 1"), //
+		GRAPHIC_CONFIG_NOTE_0("Note 1"), //
+		GRAPHIC_CONFIG_NOTE_TAIL_0("Note tail 1"), //
+		GRAPHIC_CONFIG_NOTE_ACCENT_0("Note accent 1"), //
+
+		GRAPHIC_CONFIG_LANE_1("Lane 2"), //
+		GRAPHIC_CONFIG_LANE_BRIGHT_1("Lane bright 2"), //
+		GRAPHIC_CONFIG_NOTE_1("Note 2"), //
+		GRAPHIC_CONFIG_NOTE_TAIL_1("Note tail 2"), //
+		GRAPHIC_CONFIG_NOTE_ACCENT_1("Note accent 2"), //
+
+		GRAPHIC_CONFIG_LANE_2("Lane 3"), //
+		GRAPHIC_CONFIG_LANE_BRIGHT_2("Lane bright 3"), //
+		GRAPHIC_CONFIG_NOTE_2("Note 3"), //
+		GRAPHIC_CONFIG_NOTE_TAIL_2("Note tail 3"), //
+		GRAPHIC_CONFIG_NOTE_ACCENT_2("Note accent 3"), //
+
+		GRAPHIC_CONFIG_LANE_3("Lane 4"), //
+		GRAPHIC_CONFIG_LANE_BRIGHT_3("Lane bright 4"), //
+		GRAPHIC_CONFIG_NOTE_3("Note 4"), //
+		GRAPHIC_CONFIG_NOTE_TAIL_3("Note tail 4"), //
+		GRAPHIC_CONFIG_NOTE_ACCENT_3("Note accent 4"), //
+
+		GRAPHIC_CONFIG_LANE_4("Lane 5"), //
+		GRAPHIC_CONFIG_LANE_BRIGHT_4("Lane bright 5"), //
+		GRAPHIC_CONFIG_NOTE_4("Note 5"), //
+		GRAPHIC_CONFIG_NOTE_TAIL_4("Note tail 5"), //
+		GRAPHIC_CONFIG_NOTE_ACCENT_4("Note accent 5"), //
+
+		GRAPHIC_CONFIG_LANE_5("Lane 6"), //
+		GRAPHIC_CONFIG_LANE_BRIGHT_5("Lane bright 6"), //
+		GRAPHIC_CONFIG_NOTE_5("Note 6"), //
+		GRAPHIC_CONFIG_NOTE_TAIL_5("Note tail 6"), //
+		GRAPHIC_CONFIG_NOTE_ACCENT_5("Note accent 6"), //
+
+		GRAPHIC_CONFIG_LANE_6("Lane 7"), //
+		GRAPHIC_CONFIG_LANE_BRIGHT_6("Lane bright 7"), //
+		GRAPHIC_CONFIG_NOTE_6("Note 7"), //
+		GRAPHIC_CONFIG_NOTE_TAIL_6("Note tail 7"), //
+		GRAPHIC_CONFIG_NOTE_ACCENT_6("Note accent 7"), //
+
+		GRAPHIC_CONFIG_LANE_7("Lane 8"), //
+		GRAPHIC_CONFIG_LANE_BRIGHT_7("Lane bright 8"), //
+		GRAPHIC_CONFIG_NOTE_7("Note 8"), //
+		GRAPHIC_CONFIG_NOTE_TAIL_7("Note tail 8"), //
+		GRAPHIC_CONFIG_NOTE_ACCENT_7("Note accent 8"), //
+
+		GRAPHIC_CONFIG_LANE_8("Lane 9"), //
+		GRAPHIC_CONFIG_LANE_BRIGHT_8("Lane bright 9"), //
+		GRAPHIC_CONFIG_NOTE_8("Note 9"), //
+		GRAPHIC_CONFIG_NOTE_TAIL_8("Note tail 9"), //
+		GRAPHIC_CONFIG_NOTE_ACCENT_8("Note accent 9"), //
+
+		GRAPHIC_CONFIG_ANCHOR("Anchor"), //
+		GRAPHIC_CONFIG_HAND_SHAPE("Hand shape"), //
+		GRAPHIC_CONFIG_HAND_SHAPE_ARPEGGIO("Arpeggio"), //
+		GRAPHIC_CONFIG_TONE_CHANGE("Tone change"), //
+
+		GRAPHIC_CONFIG_VOCAL_LINE_BACKGROUND("Vocal line background"), //
+		GRAPHIC_CONFIG_VOCAL_LINE_TEXT("Vocal line text"), //
+		GRAPHIC_CONFIG_VOCAL_TEXT("Vocal text"), //
+		GRAPHIC_CONFIG_VOCAL_NOTE("Vocal note"), //
+		GRAPHIC_CONFIG_VOCAL_NOTE_WORD_PART("Vocal note word part"), //
+
+		GRAPHIC_CONFIG_PREVIEW_3D_FULL_MUTE("3D preview full mute"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_PALM_MUTE("3D preview palm mute"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_ANCHOR("3D preview anchor"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_FRET_LANE("3D preview fret lane"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_BEAT("3D preview beat"), //
 
 		STRETCH_PANE("Custom music stretch"), //
 		STRETCH_PANE_VALUE("Song speed (%)"), //
@@ -63,8 +171,9 @@ public class Localization {
 		FILE_MENU_IMPORT_RS_VOCALS("RS vocals arrangement XML"), //
 		FILE_MENU_SAVE("Save"), //
 		FILE_MENU_SAVE_AS("Save as..."), //
-		FILE_MENU_EXIT("Exit"), //
 		FILE_MENU_OPTIONS("Options"), //
+		FILE_MENU_GRAPHIC_OPTIONS("Graphic options"), //
+		FILE_MENU_EXIT("Exit"), //
 
 		GRID_PANE("Grid options"), //
 		GRID_PANE_GRID_SIZE("Grid size 1/"), //

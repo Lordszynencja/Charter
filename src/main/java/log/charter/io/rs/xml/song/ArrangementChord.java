@@ -39,7 +39,7 @@ public class ArrangementChord implements IPosition {
 	@XStreamAsAttribute
 	public Integer ignore;
 	@XStreamImplicit
-	public ArrayList2<ArrangementNote> chordNotes;
+	public ArrayList2<ArrangementChordNote> chordNotes;
 
 	public ArrangementChord() {
 	}

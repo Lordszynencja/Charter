@@ -43,6 +43,9 @@ public class Chord extends GuitarSound {
 					unpitchedSlide = true;
 				}
 
+				if (mapInteger(arrangementNote.vibrato)) {
+					vibrato = true;
+				}
 				if (mapInteger(arrangementNote.tremolo)) {
 					tremolo = true;
 				}
