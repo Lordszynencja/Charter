@@ -72,7 +72,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void addFretInput(final CurrentSelectionEditor parent, final AtomicInteger row) {
 		final TextInputWithValidation fretInput = new TextInputWithValidation(null, 30,
-				createIntValidator(1, frets, false), (final Integer val) -> changeFret(val), false);
+				createIntValidator(0, frets, false), (final Integer val) -> changeFret(val), false);
 		fret = new FieldWithLabel<>(Label.FRET, 60, 30, 20, fretInput, LabelPosition.LEFT);
 		fret.setLocation(20, parent.getY(row.getAndIncrement()));
 		parent.add(fret);
@@ -251,7 +251,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 		chordTemplate = new ChordTemplate();
 		final String fretValue = fret.field.getText();
-		if (fretValue != null) {
+		if (fretValue != null && !fretValue.isBlank()) {
 			chordTemplate.frets.put(newString, Integer.valueOf(fretValue));
 		}
 
@@ -265,6 +265,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		if (selected.size() == 1) {
 			selectionBendEditor.enableAndSelectStrings(selected.stream().findAny().get().selectable);
 		}
+
+		setCurrentValuesInInputs();
 	}
 
 	private void changeFret(final int newFret) {
@@ -274,7 +276,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		chordTemplate = new ChordTemplate();
 		final String stringValue = string.field.getText();
 		if (stringValue != null) {
-			chordTemplate.frets.put(Integer.valueOf(stringValue), newFret);
+			chordTemplate.frets.put(Integer.valueOf(stringValue) - 1, newFret);
 		}
 
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
@@ -282,6 +284,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
 			selection.selectable.note.fret = newFret;
 		}
+
+		setCurrentValuesInInputs();
 	}
 
 	private void changeMute(final Mute newMute) {
@@ -505,7 +509,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		setCurrentValuesInInputs();
 
 		fret.field.setTextWithoutEvent(fretValue == null ? "" : (fretValue + ""));
-		string.field.setTextWithoutEvent(stringValue == null ? "" : (stringValue + ""));
+		string.field.setTextWithoutEvent(stringValue == null ? "" : ((stringValue + 1) + ""));
 	}
 
 	public void selectionChanged(final SelectionAccessor<ChordOrNote> selectedChordOrNotesAccessor) {

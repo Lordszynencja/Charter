@@ -195,10 +195,12 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 	public void setTextWithoutEvent(final String text) {
 		disableEvents = true;
 		setText(text);
+		clearError();
 		disableEvents = false;
 	}
 
 	public void setValidator(final ValueValidator validator) {
 		this.validator = validator;
+		clearError();
 	}
 }
