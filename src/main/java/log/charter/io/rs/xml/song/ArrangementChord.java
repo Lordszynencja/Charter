@@ -15,6 +15,7 @@ import log.charter.io.rs.xml.converters.TimeConverter;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
 import log.charter.song.enums.HOPO;
+import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.IPosition;
@@ -157,6 +158,22 @@ public class ArrangementChord implements IPosition {
 		}
 	}
 
+	private void setChordNotesHarmonic(final Chord chord, final ChordTemplate chordTemplate) {
+		if (chord.harmonic == Harmonic.NONE) {
+			return;
+		}
+
+		populateChordNotes(chordTemplate);
+
+		for (final ArrangementNote chordNote : chordNotes) {
+			if (chord.harmonic == Harmonic.NORMAL) {
+				chordNote.harmonic = 1;
+			} else if (chord.harmonic == Harmonic.PINCH) {
+				chordNote.harmonicPinch = 1;
+			}
+		}
+	}
+
 	private void setChordNotes(final Chord chord, final ChordTemplate chordTemplate, final int nextPosition) {
 		if (chord.mute != Mute.NONE) {
 			return;
@@ -167,6 +184,7 @@ public class ArrangementChord implements IPosition {
 		setChordNotesTremolo(chord, chordTemplate);
 		setChordNotesHOPO(chord, chordTemplate);
 		setChordNotesBends(chord, chordTemplate);
+		setChordNotesHarmonic(chord, chordTemplate);
 
 		if (chord.linkNext) {
 			populateChordNotes(chordTemplate);
