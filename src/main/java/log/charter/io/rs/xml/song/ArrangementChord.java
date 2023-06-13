@@ -202,7 +202,7 @@ public class ArrangementChord implements IPosition {
 			final int string = chordFret.getKey();
 			final int fret = chordFret.getValue();
 
-			chordNotes.add(new ArrangementChordNote(time, string, fret));
+			chordNotes.add(new ArrangementChordNote(time, string, fret, palmMute));
 		}
 	}
 

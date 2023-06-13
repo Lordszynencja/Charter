@@ -95,7 +95,7 @@ public class ArrangementLevel {
 
 			final ChordOrNote chordOrNote = seekableNotes.getCurrent();
 			if (!chordOrNote.isChord() || chordOrNote.position() > handShape.endTime
-					|| chordOrNote.chord.mute != Mute.NONE) {
+					|| chordOrNote.chord.mute == Mute.FULL) {
 				continue;
 			}
 
