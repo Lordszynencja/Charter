@@ -20,6 +20,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.RowedPanel;
+import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.song.Anchor;
 import log.charter.song.HandShape;
 import log.charter.song.ToneChange;
@@ -57,7 +58,8 @@ public class CurrentSelectionEditor extends RowedPanel {
 	}
 
 	public void init(final ArrangementFixer arrangementFixer, final ChartData data,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+			final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
+			final UndoSystem undoSystem) {
 		this.selectionManager = selectionManager;
 
 		anchorSelectionEditor.init(this, selectionManager, undoSystem);
@@ -65,6 +67,8 @@ public class CurrentSelectionEditor extends RowedPanel {
 		handShapeSelectionEditor.init(this, arrangementFixer, data, selectionManager, undoSystem);
 		toneChangeSelectionEditor.init(this, data, selectionManager, undoSystem);
 		vocalSelectionEditor.init(this, selectionManager, undoSystem);
+
+		addKeyListener(keyboardHandler);
 	}
 
 	private void hideAllfieldsExcept(final PositionType type) {

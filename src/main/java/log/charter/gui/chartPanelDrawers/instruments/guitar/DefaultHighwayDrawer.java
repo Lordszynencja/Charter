@@ -5,6 +5,7 @@ import static java.lang.Math.sin;
 import static log.charter.data.config.Config.maxBendValue;
 import static log.charter.data.config.Config.noteHeight;
 import static log.charter.data.config.Config.noteWidth;
+import static log.charter.data.config.Config.showChordIds;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
@@ -45,7 +46,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import log.charter.data.config.Config;
 import log.charter.data.config.Zoom;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
@@ -618,17 +618,17 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	@Override
 	public void addChord(final Chord chord, final ChordTemplate chordTemplate, final int x, final int length,
 			final boolean selected, final boolean lastWasLinkNext, final boolean ctrl) {
-		if (Config.showChordIds) {
-			noteIds.add(text(new Position2D(x, lanesTop), chord.chordId + "", ColorLabel.BASE_TEXT));
-		}
-
 		for (final NoteData noteData : fromChord(chord, chordTemplate, x, length, selected, lastWasLinkNext, ctrl)) {
 			addSimpleNote(noteData);
 		}
 
-		if (chordTemplate.chordName != null) {
-			chordNames
-					.add(text(new Position2D(x + 2, lanesTop - 1), chordTemplate.chordName, ColorLabel.BASE_DARK_TEXT));
+		String chordName = chordTemplate.chordName;
+		if (showChordIds) {
+			chordName = (chordName == null || chordName.isBlank()) ? "[" + chord.chordId + "]"
+					: chordName + " [" + chord.chordId + "]";
+		}
+		if (chordName != null) {
+			chordNames.add(text(new Position2D(x + 2, lanesTop - 1), chordName, ColorLabel.BASE_DARK_TEXT));
 		}
 	}
 
@@ -649,10 +649,6 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	@Override
 	public void addHandShape(final int x, final int length, final boolean selected, final HandShape handShape,
 			final ChordTemplate chordTemplate) {
-		if (Config.showChordIds) {
-			noteIds.add(text(new Position2D(x, lanesBottom + 20), handShape.chordId + "", ColorLabel.BASE_TEXT));
-		}
-
 		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom, length, 10);
 		final ColorLabel fillColor = chordTemplate.arpeggio ? ColorLabel.HAND_SHAPE_ARPEGGIO : ColorLabel.HAND_SHAPE;
 		handShapes.add(filledRectangle(position, fillColor));
@@ -661,9 +657,13 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 			selects.add(strokedRectangle(position, selectColor));
 		}
 
-		if (chordTemplate.chordName != null) {
-			chordNames.add(
-					text(new Position2D(x + 2, lanesBottom + 21), chordTemplate.chordName, ColorLabel.BASE_DARK_TEXT));
+		String chordName = chordTemplate.chordName;
+		if (showChordIds) {
+			chordName = (chordName == null || chordName.isBlank()) ? "[" + handShape.chordId + "]"
+					: chordName + " [" + handShape.chordId + "]";
+		}
+		if (chordName != null) {
+			chordNames.add(text(new Position2D(x + 2, lanesBottom + 21), chordName, ColorLabel.BASE_DARK_TEXT));
 		}
 	}
 
