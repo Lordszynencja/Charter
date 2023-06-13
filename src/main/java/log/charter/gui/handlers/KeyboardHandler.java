@@ -115,7 +115,6 @@ import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.GuitarSound;
 import log.charter.song.notes.IPosition;
 import log.charter.song.notes.IPositionWithLength;
-import log.charter.song.notes.Note;
 import log.charter.song.notes.Position;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -618,24 +617,6 @@ public class KeyboardHandler implements KeyListener {
 		frame.selectionChanged();
 	}
 
-	private <T> void singleToggleOnAllSelectedNotesWithBaseValueNote(final Function<Note, T> baseValueGetter,
-			final BiConsumer<Note, T> handler) {
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		if (!selectedAccessor.isSelected()) {
-			return;
-		}
-
-		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
-		selected.removeIf(selection -> selection.selectable.isChord());
-		final T baseValue = baseValueGetter.apply(selected.get(0).selectable.note);
-
-		undoSystem.addUndo();
-		selected.forEach(selectedValue -> handler.accept(selectedValue.selectable.note, baseValue));
-
-		frame.selectionChanged();
-	}
-
 	private <T> void singleToggleOnAllSelectedNotesWithBaseValue(final Function<GuitarSound, T> baseValueGetter,
 			final BiConsumer<GuitarSound, T> handler) {
 		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
@@ -726,7 +707,7 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		this.singleToggleOnAllSelectedNotesWithBaseValueNote(note -> !note.vibrato,
+		this.singleToggleOnAllSelectedNotesWithBaseValue(note -> !note.vibrato,
 				(note, vibrato) -> note.vibrato = vibrato);
 	}
 
