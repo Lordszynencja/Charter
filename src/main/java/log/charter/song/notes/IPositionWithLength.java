@@ -55,7 +55,8 @@ public interface IPositionWithLength extends IPosition {
 	}
 
 	public static void changeNotesLength(final BeatsMap beatsMap, final ArrayList2<Selection<ChordOrNote>> toChange,
-			final ArrayList2<ChordOrNote> allPositions, final int change, final boolean cutBeforeNext) {
+			final ArrayList2<ChordOrNote> allPositions, final int change, final boolean cutBeforeNext,
+			final List<Integer> selectedStrings) {
 		for (final Selection<ChordOrNote> selected : toChange) {
 			final GuitarSound sound = selected.selectable.asGuitarSound();
 			final boolean linkNext = selected.selectable.isChord() ? selected.selectable.chord.linkNext()
@@ -77,6 +78,15 @@ public interface IPositionWithLength extends IPosition {
 
 			final int length = max(0, endPosition - sound.position());
 			sound.length(length);
+			if (selected.selectable.isChord()) {
+				selected.selectable.chord.chordNotes.forEach((string, chordNote) -> {
+					if (!selectedStrings.contains(string)) {
+						return;
+					}
+
+					chordNote.length = length;
+				});
+			}
 		}
 	}
 

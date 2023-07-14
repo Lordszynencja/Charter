@@ -16,6 +16,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.AnchorPane;
@@ -34,6 +35,7 @@ import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class GuitarModeHandler extends ModeHandler {
+	private CurrentSelectionEditor currentSelectionEditor;
 	private ChartData data;
 	private CharterFrame frame;
 	private HighlightManager highlightManager;
@@ -43,9 +45,10 @@ public class GuitarModeHandler extends ModeHandler {
 
 	private int lastUndoIdForScroll = -1;
 
-	public void init(final ChartData data, final CharterFrame frame, final HighlightManager highlightManager,
-			final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
+	public void init(final CurrentSelectionEditor currentSelectionEditor, final ChartData data,
+			final CharterFrame frame, final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
+			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+		this.currentSelectionEditor = currentSelectionEditor;
 		this.data = data;
 		this.frame = frame;
 		this.highlightManager = highlightManager;
@@ -296,7 +299,8 @@ public class GuitarModeHandler extends ModeHandler {
 		final SelectionAccessor<ChordOrNote> selectedNotes = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		IPositionWithLength.changeNotesLength(data.songChart.beatsMap, selectedNotes.getSortedSelected(),
-				data.getCurrentArrangementLevel().chordsAndNotes, change, !keyboardHandler.alt());
+				data.getCurrentArrangementLevel().chordsAndNotes, change, !keyboardHandler.alt(),
+				currentSelectionEditor.getSelectedStrings());
 	}
 
 	private void changeHandShapesLength(final int change) {

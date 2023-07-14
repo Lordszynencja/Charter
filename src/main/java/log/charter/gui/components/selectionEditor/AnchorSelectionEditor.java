@@ -84,10 +84,10 @@ public class AnchorSelectionEditor {
 	public void selectionChanged(final SelectionAccessor<Anchor> selectedAnchorsAccessor) {
 		final HashSet2<Selection<Anchor>> selectedAnchors = selectedAnchorsAccessor.getSelectedSet();
 
-		final Integer fret = getSingleValue(selectedAnchors, selection -> selection.selectable.fret);
+		final Integer fret = getSingleValue(selectedAnchors, selection -> selection.selectable.fret, null);
 		anchorFret.field.setTextWithoutEvent(fret == null ? "" : (fret + ""));
 
-		final Integer width = getSingleValue(selectedAnchors, selection -> selection.selectable.width);
+		final Integer width = getSingleValue(selectedAnchors, selection -> selection.selectable.width, null);
 		anchorWidth.field.setTextWithoutEvent(width == null ? "" : (width + ""));
 	}
 }

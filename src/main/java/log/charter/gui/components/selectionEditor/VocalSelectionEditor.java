@@ -136,14 +136,14 @@ public class VocalSelectionEditor {
 			vocalText.setVisible(false);
 		}
 
-		Boolean wordPart = getSingleValue(selectedVocals, selection -> selection.selectable.isWordPart());
-		wordPart = wordPart == null ? false : wordPart;
-		vocalWordPart.field.setEnabled(true);
+		final Boolean wordPart = getSingleValue(selectedVocals, selection -> selection.selectable.isWordPart(), false);
+		final Boolean phraseEnd = getSingleValue(selectedVocals, selection -> selection.selectable.isPhraseEnd(),
+				false);
+
+		vocalWordPart.field.setEnabled(wordPart || !phraseEnd);
 		vocalWordPart.field.setSelected(wordPart);
 
-		Boolean phraseEnd = getSingleValue(selectedVocals, selection -> selection.selectable.isPhraseEnd());
-		phraseEnd = phraseEnd == null ? false : phraseEnd;
+		vocalPhraseEnd.field.setEnabled(phraseEnd || !wordPart);
 		vocalPhraseEnd.field.setSelected(phraseEnd);
-		vocalPhraseEnd.field.setEnabled(true);
 	}
 }

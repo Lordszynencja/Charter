@@ -107,6 +107,7 @@ import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
 import log.charter.song.notes.IPositionWithLength;
@@ -372,6 +373,30 @@ public class KeyboardHandler implements KeyListener {
 		return false;
 	}
 
+	private void moveChordNotesUp(final int strings, final Map<Integer, ChordNote> chordNotes) {
+		chordNotes.remove(strings - 1);
+		for (int string = strings - 2; string >= 0; string--) {
+			final ChordNote movedChordNote = chordNotes.remove(string);
+			if (movedChordNote != null) {
+				chordNotes.put(string + 1, movedChordNote);
+			}
+		}
+	}
+
+	private void moveChordNotesDown(final int strings, final Map<Integer, ChordNote> chordNotes) {
+		chordNotes.remove(0);
+		try {
+			chordNotes.get(1).harmonic = Harmonic.NORMAL;
+		} catch (final Exception e) {
+		}
+		for (int string = 1; string < strings; string++) {
+			final ChordNote movedChordNote = chordNotes.remove(string);
+			if (movedChordNote != null) {
+				chordNotes.put(string - 1, movedChordNote);
+			}
+		}
+	}
+
 	public void moveNotesUpKeepFrets() {
 		final ArrayList2<Selection<ChordOrNote>> selectedSounds = selectionManager
 				.<ChordOrNote>getSelectedAccessor(PositionType.GUITAR_NOTE).getSortedSelected();
@@ -379,8 +404,8 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int topString = data.currentStrings() - 1;
-		if (containsString(selectedSounds, topString)) {
+		final int strings = data.currentStrings();
+		if (containsString(selectedSounds, strings - 1)) {
 			return;
 		}
 
@@ -398,6 +423,7 @@ public class KeyboardHandler implements KeyListener {
 			}
 
 			if (movedChordTemplates.containsKey(sound.chord.templateId())) {
+				moveChordNotesUp(strings, sound.chord.chordNotes);
 				final int newTemplateId = movedChordTemplates.get(sound.chord.templateId());
 				final ChordTemplate chordTemplate = chordTemplates.get(newTemplateId);
 				sound.chord.updateTemplate(newTemplateId, chordTemplate);
@@ -406,7 +432,7 @@ public class KeyboardHandler implements KeyListener {
 
 			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.templateId()));
 			newChordTemplate.chordName = "";
-			for (int string = topString - 1; string >= 0; string--) {
+			for (int string = strings - 2; string >= 0; string--) {
 				final Integer fret = newChordTemplate.frets.remove(string);
 				if (fret == null) {
 					continue;
@@ -416,6 +442,7 @@ public class KeyboardHandler implements KeyListener {
 				newChordTemplate.fingers.put(string + 1, newChordTemplate.fingers.remove(string));
 			}
 
+			moveChordNotesUp(strings, sound.chord.chordNotes);
 			final int newTemplateId = arrangement.getChordTemplateIdWithSave(newChordTemplate);
 			movedChordTemplates.put(sound.chord.templateId(), newTemplateId);
 			sound.chord.updateTemplate(newTemplateId, newChordTemplate);
@@ -431,13 +458,13 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int topString = data.currentStrings() - 1;
 		if (containsString(selectedSounds, 0)) {
 			return;
 		}
 
 		undoSystem.addUndo();
 
+		final int strings = data.currentStrings();
 		final Map<Integer, Integer> movedChordTemplates = new HashMap<>();
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 		final ArrayList2<ChordTemplate> chordTemplates = arrangement.chordTemplates;
@@ -450,6 +477,7 @@ public class KeyboardHandler implements KeyListener {
 			}
 
 			if (movedChordTemplates.containsKey(sound.chord.templateId())) {
+				moveChordNotesDown(strings, sound.chord.chordNotes);
 				final int newTemplateId = movedChordTemplates.get(sound.chord.templateId());
 				final ChordTemplate chordTemplate = chordTemplates.get(newTemplateId);
 				sound.chord.updateTemplate(newTemplateId, chordTemplate);
@@ -458,7 +486,7 @@ public class KeyboardHandler implements KeyListener {
 
 			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.templateId()));
 			newChordTemplate.chordName = "";
-			for (int string = 1; string <= topString; string++) {
+			for (int string = 1; string < strings; string++) {
 				final Integer fret = newChordTemplate.frets.remove(string);
 				if (fret == null) {
 					continue;
@@ -468,6 +496,7 @@ public class KeyboardHandler implements KeyListener {
 				newChordTemplate.fingers.put(string - 1, newChordTemplate.fingers.remove(string));
 			}
 
+			moveChordNotesDown(strings, sound.chord.chordNotes);
 			final int newTemplateId = arrangement.getChordTemplateIdWithSave(newChordTemplate);
 			movedChordTemplates.put(sound.chord.templateId(), newTemplateId);
 			sound.chord.updateTemplate(newTemplateId, newChordTemplate);
@@ -483,14 +512,14 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int topString = data.currentStrings() - 1;
-		if (containsString(selectedSounds, topString)) {
+		final int strings = data.currentStrings();
+		if (containsString(selectedSounds, strings - 1)) {
 			return;
 		}
 
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 		final Map<Integer, Integer> stringDifferences = new HashMap<>();
-		for (int i = 0; i <= topString - 1; i++) {
+		for (int i = 0; i < strings; i++) {
 			stringDifferences.put(i, arrangement.tuning.getStringOffset(i) - arrangement.tuning.getStringOffset(i + 1));
 		}
 
@@ -511,6 +540,7 @@ public class KeyboardHandler implements KeyListener {
 			}
 
 			if (movedChordTemplates.containsKey(sound.chord.templateId())) {
+				moveChordNotesUp(strings, sound.chord.chordNotes);
 				final int newTemplateId = movedChordTemplates.get(sound.chord.templateId());
 				final ChordTemplate chordTemplate = chordTemplates.get(newTemplateId);
 				sound.chord.updateTemplate(newTemplateId, chordTemplate);
@@ -520,7 +550,7 @@ public class KeyboardHandler implements KeyListener {
 			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.templateId()));
 			newChordTemplate.chordName = "";
 			boolean wrongFret = false;
-			for (int string = topString - 1; string >= 0; string--) {
+			for (int string = strings - 2; string >= 0; string--) {
 				Integer fret = newChordTemplate.frets.remove(string);
 				if (fret == null) {
 					continue;
@@ -540,6 +570,7 @@ public class KeyboardHandler implements KeyListener {
 				continue;
 			}
 
+			moveChordNotesUp(strings, sound.chord.chordNotes);
 			final int newTemplateId = arrangement.getChordTemplateIdWithSave(newChordTemplate);
 			movedChordTemplates.put(sound.chord.templateId(), newTemplateId);
 			sound.chord.updateTemplate(newTemplateId, newChordTemplate);
@@ -555,14 +586,14 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int topString = data.currentStrings() - 1;
 		if (containsString(selectedSounds, 0)) {
 			return;
 		}
 
+		final int strings = data.currentStrings();
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 		final Map<Integer, Integer> stringDifferences = new HashMap<>();
-		for (int i = 1; i <= topString; i++) {
+		for (int i = 1; i < strings; i++) {
 			stringDifferences.put(i, arrangement.tuning.getStringOffset(i) - arrangement.tuning.getStringOffset(i - 1));
 		}
 
@@ -583,16 +614,18 @@ public class KeyboardHandler implements KeyListener {
 			}
 
 			if (movedChordTemplates.containsKey(sound.chord.templateId())) {
+				moveChordNotesDown(strings, sound.chord.chordNotes);
 				final int newTemplateId = movedChordTemplates.get(sound.chord.templateId());
 				final ChordTemplate chordTemplate = chordTemplates.get(newTemplateId);
 				sound.chord.updateTemplate(newTemplateId, chordTemplate);
+
 				continue;
 			}
 
 			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.templateId()));
 			newChordTemplate.chordName = "";
 			boolean wrongFret = false;
-			for (int string = 1; string <= topString; string++) {
+			for (int string = 1; string < strings; string++) {
 				Integer fret = newChordTemplate.frets.remove(string);
 				if (fret == null) {
 					continue;
@@ -612,6 +645,7 @@ public class KeyboardHandler implements KeyListener {
 				continue;
 			}
 
+			moveChordNotesDown(strings, sound.chord.chordNotes);
 			final int newTemplateId = arrangement.getChordTemplateIdWithSave(newChordTemplate);
 			movedChordTemplates.put(sound.chord.templateId(), newTemplateId);
 			sound.chord.updateTemplate(newTemplateId, newChordTemplate);

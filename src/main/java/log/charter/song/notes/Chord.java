@@ -1,9 +1,11 @@
 package log.charter.song.notes;
 
+import static java.lang.Math.min;
 import static log.charter.util.Utils.mapInteger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -89,8 +91,19 @@ public class Chord extends GuitarSound {
 				chordNotes.put(arrangementNote.string, chordNote);
 			}
 		}
+		if (arrangementChord.chordNotes == null || arrangementChord.chordNotes.isEmpty()) {
+			for (final Integer string : template.frets.keySet()) {
+				if (!chordNotes.containsKey(string)) {
+					final ChordNote chordNote = new ChordNote();
+					chordNote.mute = mute;
+					chordNotes.put(string, chordNote);
+				}
+			}
+		}
 
 		updateChordNotes(template);
+
+		chordNotes.values().forEach(n -> n.mute = mute);
 	}
 
 	public Chord(final Chord other) {
@@ -141,6 +154,17 @@ public class Chord extends GuitarSound {
 		return false;
 	}
 
+	public Integer slideTo() {
+		Integer slideTo = null;
+		for (final Entry<Integer, ChordNote> chordNote : chordNotes.entrySet()) {
+			if (chordNote.getValue().slideTo != null) {
+				slideTo = slideTo == null ? chordNote.getValue().slideTo : min(slideTo, chordNote.getValue().slideTo);
+			}
+		}
+
+		return slideTo;
+	}
+
 	public int templateId() {
 		return templateId;
 	}
@@ -151,11 +175,27 @@ public class Chord extends GuitarSound {
 	}
 
 	private void updateChordNotes(final ChordTemplate template) {
+		final Mute mute = chordNotesValue(n -> n.mute, Mute.NONE);
+		final HOPO hopo = chordNotesValue(n -> n.hopo, HOPO.NONE);
+		final int length = length();
+		final boolean linkNext = linkNext();
+		final boolean tremolo = chordNotesValue(n -> n.tremolo, false);
+		final boolean vibrato = chordNotesValue(n -> n.vibrato, false);
+
 		for (final Integer string : template.frets.keySet()) {
 			if (!chordNotes.containsKey(string)) {
-				chordNotes.put(string, new ChordNote());
+				final ChordNote chordNote = new ChordNote();
+				chordNote.mute = mute;
+				chordNote.hopo = hopo;
+				chordNote.length = length;
+				chordNote.linkNext = linkNext;
+				chordNote.tremolo = tremolo;
+				chordNote.vibrato = vibrato;
+
+				chordNotes.put(string, chordNote);
 			}
 		}
+
 		for (final Integer existingString : new ArrayList<>(chordNotes.keySet())) {
 			if (!template.frets.containsKey(existingString)) {
 				chordNotes.remove(existingString);

@@ -33,13 +33,24 @@ public class CurrentSelectionEditor extends RowedPanel {
 	private static final long serialVersionUID = 1L;
 
 	public static <T extends IPosition, U> U getSingleValue(final HashSet2<Selection<T>> selected,
-			final Function<Selection<T>, U> mapper) {
+			final Function<Selection<T>, U> mapper, final U defaultValue) {
 		final List<U> values = selected.stream()//
 				.map(mapper)//
 				.distinct()//
 				.collect(Collectors.toList());
 
-		return values.size() == 1 ? values.get(0) : null;
+		return values.size() == 1 ? values.get(0) : defaultValue;
+	}
+
+	public static <T extends IPosition, U> U getSingleValueWithoutNulls(final HashSet2<Selection<T>> selected,
+			final Function<Selection<T>, U> mapper, final U defaultValue) {
+		final List<U> values = selected.stream()//
+				.map(mapper)//
+				.distinct()//
+				.filter(v -> v != null)//
+				.collect(Collectors.toList());
+
+		return values.size() == 1 ? values.get(0) : defaultValue;
 	}
 
 	private SelectionManager selectionManager;
@@ -134,5 +145,9 @@ public class CurrentSelectionEditor extends RowedPanel {
 		}
 
 		repaint();
+	}
+
+	public List<Integer> getSelectedStrings() {
+		return guitarSoundSelectionEditor.getSelectedStrings();
 	}
 }

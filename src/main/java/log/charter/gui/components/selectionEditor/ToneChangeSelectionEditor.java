@@ -68,7 +68,7 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 	public void selectionChanged(final SelectionAccessor<ToneChange> selectedToneChangesAccessor) {
 		final HashSet2<Selection<ToneChange>> selectedToneChanges = selectedToneChangesAccessor.getSelectedSet();
 
-		final String toneName = getSingleValue(selectedToneChanges, selection -> selection.selectable.toneName);
+		final String toneName = getSingleValue(selectedToneChanges, selection -> selection.selectable.toneName, "");
 		toneNameField.field.setTextWithoutUpdate(toneName == null ? "" : toneName);
 	}
 

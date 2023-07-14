@@ -91,7 +91,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	public void selectionChanged(final SelectionAccessor<HandShape> selectedHandShapesAccessor) {
 		final HashSet2<Selection<HandShape>> selected = selectedHandShapesAccessor.getSelectedSet();
 
-		final Integer templateId = getSingleValue(selected, selection -> selection.selectable.templateId);
+		final Integer templateId = getSingleValue(selected, selection -> selection.selectable.templateId, null);
 		if (templateId != null) {
 			chordTemplate = new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(templateId));
 			setCurrentValuesInInputs();
