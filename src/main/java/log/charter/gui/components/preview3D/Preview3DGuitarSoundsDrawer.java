@@ -414,13 +414,14 @@ public class Preview3DGuitarSoundsDrawer {
 	private boolean isFirstChordInTheHandShape(final Chord chord) {
 		final HandShape chordHandShape = findLastBeforeEqual(data.getCurrentArrangementLevel().handShapes,
 				chord.position());
-		if (chordHandShape == null || chordHandShape.chordId != chord.chordId
+		chord.chordNotesVisibility(false);
+		if (chordHandShape == null || chordHandShape.templateId != chord.templateId()
 				|| chordHandShape.endPosition() < chord.position()) {
 			return true;
 		}
 
 		final ArrayList2<Chord> chords = data.getCurrentArrangementLevel().chordsAndNotes.stream()//
-				.filter(s -> s.isChord() && s.chord.chordId == chordHandShape.chordId)//
+				.filter(s -> s.isChord() && s.chord.templateId() == chordHandShape.templateId)//
 				.map(s -> s.chord)//
 				.collect(Collectors.toCollection(ArrayList2::new));
 		final Chord firstInHandShape = findFirstAfterEqual(chords, chordHandShape.position());
@@ -431,7 +432,7 @@ public class Preview3DGuitarSoundsDrawer {
 		final Chord chord = sound.chord;
 		final boolean chordNotesDrawn = isFirstChordInTheHandShape(chord);
 		if (chordNotesDrawn) {
-			final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
+			final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
 			final ArrayList2<NoteData> notes = NoteData.fromChord(chord, chordTemplate, 0, sound.chord.length(), false,
 					lastWasLinkNext, false);
 			final Pair<Optional<Integer>, Optional<Integer>> furthestStrings = notes.stream().map(note -> note.string)//
@@ -448,7 +449,8 @@ public class Preview3DGuitarSoundsDrawer {
 		}
 
 		if (!lastWasLinkNext && chord.position() + highlightWindow > data.time) {
-			drawChordShadow(baseShader, chord.position(), !chordNotesDrawn, chord.mute);
+			drawChordShadow(baseShader, chord.position(), !chordNotesDrawn,
+					chord.chordNotesValue(n -> n.mute, Mute.NONE));
 		}
 	}
 
@@ -463,7 +465,7 @@ public class Preview3DGuitarSoundsDrawer {
 
 		for (int i = soundsTo; i >= soundsFrom; i--) {
 			final ChordOrNote sound = sounds.get(i);
-			final boolean lastWasLinkNext = i > 0 && sounds.get(i - 1).asGuitarSound().linkNext;
+			final boolean lastWasLinkNext = i > 0 && sounds.get(i - 1).asGuitarSound().linkNext();
 
 			if (sound.isNote()) {
 				drawSingleNote(baseShader, sound, lastWasLinkNext);

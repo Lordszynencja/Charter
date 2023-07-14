@@ -87,6 +87,16 @@ public class CharterFrame extends JFrame {
 	private final UndoSystem undoSystem = new UndoSystem();
 
 	private final Framer framer = new Framer(this::frame);
+	private final Thread audioFramer = new Thread(() -> {
+		try {
+			while (true) {
+				audioFrame();
+				Thread.sleep(1);
+			}
+		} catch (final InterruptedException e) {
+			Logger.error("error in audio framer", e);
+		}
+	});
 
 	public CharterFrame(final String title) {
 		super(title);
@@ -127,8 +137,8 @@ public class CharterFrame extends JFrame {
 		selectionManager.init(data, this, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 
-		charterMenuBar.init(audioDrawer, audioHandler, copyManager, data, this, keyboardHandler, modeManager,
-				selectionManager, songFileHandler, undoSystem);
+		charterMenuBar.init(arrangementFixer, audioDrawer, audioHandler, copyManager, data, this, keyboardHandler,
+				modeManager, selectionManager, songFileHandler, undoSystem);
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 		currentSelectionEditor.init(arrangementFixer, data, keyboardHandler, selectionManager, undoSystem);
@@ -158,6 +168,7 @@ public class CharterFrame extends JFrame {
 		setFocusable(true);
 
 		framer.start();
+		audioFramer.start();
 	}
 
 	private void changeComponentBounds(final Component c, final int x, final int y, final int w, final int h) {
@@ -206,7 +217,6 @@ public class CharterFrame extends JFrame {
 	}
 
 	private void frame() {
-		audioHandler.frame();
 		keyboardHandler.frame();
 		updateTitle();
 
@@ -221,6 +231,10 @@ public class CharterFrame extends JFrame {
 			fullscreenPreviewFrame.repaint();
 			fullscreenPreview3DPanel.repaint();
 		}
+	}
+
+	private void audioFrame() {
+		audioHandler.frame();
 	}
 
 	private JScrollBar createScrollBar() {

@@ -14,9 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.handlers.midiPlayer.MidiChartNotePlayer;
 import log.charter.song.notes.IPosition;
 import log.charter.sound.IPlayer;
 import log.charter.sound.MusicData;
@@ -70,6 +72,7 @@ public class AudioHandler {
 
 	private TickPlayer beatTickPlayer;
 	private TickPlayer noteTickPlayer;
+	private final MidiChartNotePlayer midiChartNotePlayer = new MidiChartNotePlayer();
 	private Player songPlayer;
 
 	private int speed = 100;
@@ -77,6 +80,7 @@ public class AudioHandler {
 	private long playStartTime;
 
 	private boolean ignoreStops = false;
+	private boolean midiNotesPlaying = false;
 
 	public void init(final ChartData data, final CharterFrame frame, final ModeManager modeManager) {
 		this.data = data;
@@ -87,6 +91,7 @@ public class AudioHandler {
 				() -> data.songChart.beatsMap.beats);
 		noteTickPlayer = new TickPlayer(new RotatingRepeatingPlayer(generateSound(1000, 0.02, 0.8), 4), //
 				this::getCurrentClapPositions);
+		midiChartNotePlayer.init(data, modeManager);
 	}
 
 	private ArrayList2<? extends IPosition> getCurrentClapPositions() {
@@ -102,6 +107,16 @@ public class AudioHandler {
 		}
 	}
 
+	public void toggleMidiNotes() {
+		if (midiNotesPlaying) {
+			midiChartNotePlayer.stopPlaying();
+			midiNotesPlaying = false;
+		} else {
+			midiChartNotePlayer.startPlaying(speed);
+			midiNotesPlaying = true;
+		}
+	}
+
 	public void toggleClaps() {
 		noteTickPlayer.on = !noteTickPlayer.on;
 	}
@@ -112,20 +127,29 @@ public class AudioHandler {
 
 	private void playMusic(final MusicData musicData, final int speed) {
 		this.speed = speed;
-		songPlayer = SoundPlayer.play(musicData, data.time * 100 / speed);
+		songPlayer = SoundPlayer.play(musicData.volume(Config.volume), data.time * 100 / speed);
 		songTimeOnStart = data.time;
 		playStartTime = nanoTime() / 1_000_000L;
+
+		if (midiNotesPlaying) {
+			midiChartNotePlayer.startPlaying(speed);
+		}
 	}
 
 	public void stopMusic() {
 		if (ignoreStops) {
 			return;
 		}
+
 		if (songPlayer != null) {
 			songPlayer.stop();
 			songPlayer = null;
 			beatTickPlayer.stop();
 			noteTickPlayer.stop();
+
+			if (midiNotesPlaying) {
+				midiChartNotePlayer.stopPlaying();
+			}
 		}
 	}
 
@@ -140,6 +164,7 @@ public class AudioHandler {
 		if (data.isEmpty) {
 			return;
 		}
+
 		if (songPlayer != null) {
 			stopMusic();
 			return;
@@ -291,5 +316,6 @@ public class AudioHandler {
 
 		beatTickPlayer.handleFrame(nextTime);
 		noteTickPlayer.handleFrame(nextTime);
+		midiChartNotePlayer.frame();
 	}
 }

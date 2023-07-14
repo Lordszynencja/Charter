@@ -20,8 +20,8 @@ public class HandShapePane extends ChordTemplateEditorDialog {
 	}
 
 	private static ChordTemplate prepareTemplateFromData(final ChartData data, final HandShape handShape) {
-		return handShape.chordId == -1 ? new ChordTemplate()
-				: new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(handShape.chordId));
+		return handShape.templateId == -1 ? new ChordTemplate()
+				: new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(handShape.templateId));
 	}
 
 	private final HandShape handShape;
@@ -49,6 +49,6 @@ public class HandShapePane extends ChordTemplateEditorDialog {
 	}
 
 	private void saveAndExit() {
-		handShape.chordId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
+		handShape.templateId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
 	}
 }

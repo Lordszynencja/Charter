@@ -153,7 +153,9 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 	private void clearError() {
 		error = false;
 		setToolTipText(null);
-		setBackground(normalBackgroundColor);
+		if (normalBackgroundColor != null) {
+			setBackground(normalBackgroundColor);
+		}
 	}
 
 	private void validateValue() {

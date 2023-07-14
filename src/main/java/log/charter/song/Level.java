@@ -1,18 +1,16 @@
 package log.charter.song;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static log.charter.util.Utils.mapInteger;
 
 import java.util.List;
 import java.util.Map.Entry;
 
-import log.charter.data.config.Config;
 import log.charter.io.rs.xml.song.ArrangementBendValue;
 import log.charter.io.rs.xml.song.ArrangementChord;
 import log.charter.io.rs.xml.song.ArrangementLevel;
 import log.charter.io.rs.xml.song.ArrangementNote;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -38,7 +36,8 @@ public class Level {
 		handShapes = arrangementLevel.handShapes.list.map(HandShape::new);
 
 		for (final ArrangementChord arrangementChord : arrangementLevel.chords.list) {
-			chordsAndNotes.add(new ChordOrNote(new Chord(arrangementChord)));
+			chordsAndNotes.add(new ChordOrNote(
+					new Chord(arrangementChord, arrangement.chordTemplates.get(arrangementChord.chordId))));
 		}
 
 		final HashMap2<Integer, ArrayList2<ArrangementNote>> arrangementNotesMap = new HashMap2<>();
@@ -64,28 +63,28 @@ public class Level {
 			}
 			final int chordId = arrangement.getChordTemplateIdWithSave(specialTemplate);
 
-			final Chord chord = new Chord(notesPosition.getKey(), chordId);
+			final Chord chord = new Chord(notesPosition.getKey(), chordId, arrangement.chordTemplates.get(chordId));
+			chord.splitIntoNotes = true;
 			for (final ArrangementNote arrangementNote : notesPosition.getValue()) {
-				chord.linkNext |= mapInteger(arrangementNote.linkNext);
-				chord.length(max(chord.length(), arrangementNote.sustain == null ? 0 : arrangementNote.sustain));
+				final ChordNote chordNote = chord.chordNotes.get(arrangementNote.string);
+				chordNote.linkNext = mapInteger(arrangementNote.linkNext);
+				chordNote.length = arrangementNote.sustain == null ? 0 : arrangementNote.sustain;
 
 				if (arrangementNote.bendValues != null && !arrangementNote.bendValues.list.isEmpty()) {
-					final ArrayList2<BendValue> noteBendValues = new ArrayList2<>();
-					chord.bendValues.put(arrangementNote.string, noteBendValues);
 					for (final ArrangementBendValue bendValue : arrangementNote.bendValues.list) {
-						noteBendValues.add(new BendValue(bendValue, arrangementNote.time));
+						chordNote.bendValues.add(new BendValue(bendValue, arrangementNote.time));
 					}
 				}
 
 				if (arrangementNote.slideTo != null) {
-					chord.slideTo = min(arrangementNote.slideTo, chord.slideTo == null ? Config.frets : chord.slideTo);
+					chordNote.slideTo = arrangementNote.slideTo;
 				}
 				if (arrangementNote.slideUnpitchTo != null) {
-					chord.slideTo = min(arrangementNote.slideUnpitchTo,
-							chord.slideTo == null ? Config.frets : chord.slideTo);
-					chord.unpitchedSlide = true;
+					chordNote.slideTo = arrangementNote.slideUnpitchTo;
+					chordNote.unpitchedSlide = true;
 				}
 			}
+
 			chordsAndNotes.add(new ChordOrNote(chord));
 		}
 

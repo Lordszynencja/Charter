@@ -10,6 +10,7 @@ import static log.charter.sound.SoundPlayer.toBytes;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.sound.sampled.AudioFormat;
@@ -222,6 +223,18 @@ public class MusicData {
 			final int[] targetChannel = newData[channel];
 			System.arraycopy(data[channel], 0, targetChannel, 0, data[channel].length);
 			System.arraycopy(other.data[channel], 0, targetChannel, length0, other.data[channel].length);
+		}
+
+		return new MusicData(newData, outFormat.getSampleRate());
+	}
+
+	public MusicData volume(final double volume) {
+		final int[][] newData = new int[data.length][];
+		for (int channel = 0; channel < data.length; channel++) {
+			newData[channel] = Arrays.copyOf(data[channel], data[channel].length);
+			for (int i = 0; i < newData[channel].length; i++) {
+				newData[channel][i] *= volume;
+			}
 		}
 
 		return new MusicData(newData, outFormat.getSampleRate());

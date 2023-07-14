@@ -1,7 +1,6 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
 import static java.lang.Math.max;
-import static java.util.stream.Collectors.minBy;
 
 import java.util.Map.Entry;
 
@@ -11,7 +10,7 @@ import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
-import log.charter.song.notes.GuitarSound;
+import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -19,24 +18,16 @@ public class NoteData {
 	public static ArrayList2<NoteData> fromChord(final Chord chord, final ChordTemplate chordTemplate, final int x,
 			final int length, final boolean selected, final boolean lastWasLinkNext, final boolean ctrl) {
 		final ArrayList2<NoteData> notes = new ArrayList2<>();
-		Integer slideDistance;
-		try {
-			slideDistance = chord.slideTo == null ? null//
-					: chord.slideTo - chordTemplate.frets.values().stream().collect(minBy(Integer::compare)).get();
-		} catch (final Exception e) {
-			slideDistance = null;
-		}
 
-		for (final Entry<Integer, Integer> chordFret : chordTemplate.frets.entrySet()) {
-			final int string = chordFret.getKey();
-			final int fret = chordFret.getValue();
+		for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
+			final int string = chordNoteEntry.getKey();
+			final int fret = chordTemplate.frets.get(string);
 			final Integer finger = chordTemplate.fingers.get(string);
 			final String fretDescription = fret
 					+ (ctrl && finger != null ? "(" + (finger == 0 ? "T" : finger.toString()) + ")" : "");
-			final Integer slideTo = slideDistance == null ? null : (fret + slideDistance);
 
-			notes.add(new NoteData(x, length, string, fret, fretDescription, chord, chord.bendValues.get(string),
-					slideTo, selected, lastWasLinkNext));
+			notes.add(new NoteData(x, length, string, fret, fretDescription, chord, chordNoteEntry.getValue(), selected,
+					lastWasLinkNext));
 		}
 
 		return notes;
@@ -65,20 +56,25 @@ public class NoteData {
 
 	public NoteData(final int x, final int length, final Note note, final boolean selected,
 			final boolean lastWasLinkNext) {
-		this(x, length, note.string, note.fret, note.fret + "", note, note.bendValues, note.slideTo, selected,
-				lastWasLinkNext);
+		this(note.position(), x, length, //
+				note.string, note.fret, note.fret + "", //
+				note.accent, note.mute, note.hopo, note.harmonic, note.bendValues, note.slideTo, note.unpitchedSlide,
+				note.vibrato, note.tremolo, //
+				selected, lastWasLinkNext);
 	}
 
 	public NoteData(final int x, final int length, final int string, final int fret, final String fretDescription,
-			final GuitarSound sound, final ArrayList2<BendValue> bendValues, final Integer slideTo,
-			final boolean selected, final boolean lastWasLinkNext) {
-		this(sound.position(), x, length, string, fret, fretDescription, sound.accent, sound.mute, sound.hopo,
-				sound.harmonic, bendValues, slideTo, sound.unpitchedSlide, sound.vibrato, sound.tremolo, selected,
-				lastWasLinkNext);
+			final Chord chord, final ChordNote chordNote, final boolean selected, final boolean lastWasLinkNext) {
+		this(chord.position(), x, length, //
+				string, fret, fretDescription, //
+				chord.accent, chordNote.mute, chordNote.hopo, chordNote.harmonic, chordNote.bendValues,
+				chordNote.slideTo, chordNote.unpitchedSlide, chordNote.vibrato, chordNote.tremolo, //
+				selected, lastWasLinkNext);
 	}
 
-	private NoteData(final int position, final int x, final int length, final int string, final int fretNumber,
-			final String fret, final boolean accent, final Mute mute, final HOPO hopo, final Harmonic harmonic,
+	private NoteData(final int position, final int x, final int length, //
+			final int string, final int fretNumber, final String fret, //
+			final boolean accent, final Mute mute, final HOPO hopo, final Harmonic harmonic,
 			final ArrayList2<BendValue> bendValues, final Integer slideTo, final boolean unpitchedSlide,
 			final boolean vibrato, final boolean tremolo, final boolean selected, final boolean lastWasLinkNext) {
 		this.position = position;

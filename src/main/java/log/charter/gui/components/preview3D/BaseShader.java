@@ -7,6 +7,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.gui.components.preview3D.shapes.Model;
+import log.charter.io.Logger;
 
 public class BaseShader {
 	private final static String vertexShaderCode = "#version 330\n"//
@@ -79,10 +80,10 @@ public class BaseShader {
 		final int len = GL30.glGetShaderi(shader, GL30.GL_INFO_LOG_LENGTH);
 		final String err = GL30.glGetShaderInfoLog(shader, len);
 		if (err != null && err.length() != 0) {
-			System.out.println(name + " shader compile log:\n" + err + "\n");
+			Logger.error(name + " shader compile log:\n" + err + "\n");
 		}
 		if (comp == GL30.GL_FALSE) {
-			System.out.println("Could not compile " + name + " shader");
+			Logger.error("Could not compile " + name + " shader");
 		}
 	}
 

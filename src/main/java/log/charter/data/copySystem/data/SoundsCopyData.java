@@ -47,11 +47,15 @@ public class SoundsCopyData implements ICopyData {
 				}
 
 				if (sound.isChord()) {
-					final int chordId = sound.chord.chordId;
-					if (!chordIdsMap.containsKey(chordId)) {
-						chordIdsMap.put(chordId, arrangement.getChordTemplateIdWithSave(chordTemplates.get(chordId)));
+					final int templateId = sound.chord.templateId();
+					if (!chordIdsMap.containsKey(templateId)) {
+						chordIdsMap.put(templateId,
+								arrangement.getChordTemplateIdWithSave(chordTemplates.get(templateId)));
 					}
-					sound.chord.chordId = chordIdsMap.get(chordId);
+
+					final int newTemplateId = chordIdsMap.get(templateId);
+					final ChordTemplate newTemplate = arrangement.chordTemplates.get(newTemplateId);
+					sound.chord.updateTemplate(newTemplateId, newTemplate);
 				}
 
 				sounds.add(sound);

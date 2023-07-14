@@ -46,11 +46,11 @@ public class HandShapesCopyData implements ICopyData {
 					continue;
 				}
 
-				final int chordId = handShape.chordId;
-				if (!chordIdsMap.containsKey(chordId)) {
-					chordIdsMap.put(chordId, arrangement.getChordTemplateIdWithSave(chordTemplates.get(chordId)));
+				final int templateId = handShape.templateId;
+				if (!chordIdsMap.containsKey(templateId)) {
+					chordIdsMap.put(templateId, arrangement.getChordTemplateIdWithSave(chordTemplates.get(templateId)));
 				}
-				handShape.chordId = chordIdsMap.get(chordId);
+				handShape.templateId = chordIdsMap.get(templateId);
 
 				handShapes.add(handShape);
 			} catch (final Exception e) {

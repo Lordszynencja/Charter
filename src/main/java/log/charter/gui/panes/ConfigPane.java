@@ -43,19 +43,21 @@ public final class ConfigPane extends ParamsPane {
 	private int minNoteDistance = Config.minNoteDistance;
 	private int minTailLength = Config.minTailLength;
 	private int delay = Config.delay;
+	private int midiDelay = Config.midiDelay;
 	private int markerOffset = Config.markerOffset;
 	private int noteWidth = Config.noteWidth;
 	private int noteHeight = Config.noteHeight;
 	private boolean invertStrings = Config.invertStrings;
 	private boolean leftHanded = Config.leftHanded;
 	private boolean showChordIds = Config.showChordIds;
+	private boolean showGrid = Config.showGrid;
 	private boolean createDefaultStretchesInBackground = Config.createDefaultStretchesInBackground;
 	private int FPS = Config.FPS;
 
 	private Theme theme = Config.theme;
 
 	public ConfigPane(final CharterFrame frame) {
-		super(frame, Label.CONFIG_PANE, 16, getSizes());
+		super(frame, Label.CONFIG_PANE, 18, getSizes());
 		this.frame = frame;
 
 		int row = 0;
@@ -81,6 +83,8 @@ public final class ConfigPane extends ParamsPane {
 				val -> minTailLength = Integer.valueOf(val), false);
 		addConfigValue(row++, 20, 0, Label.CONFIG_SOUND_DELAY, delay + "", 50, createIntValidator(1, 10000, false), //
 				val -> delay = Integer.valueOf(val), false);
+		addConfigValue(row++, 20, 0, Label.CONFIG_MIDI_DELAY, midiDelay + "", 50, createIntValidator(1, 10000, false), //
+				val -> midiDelay = Integer.valueOf(val), false);
 		addConfigValue(row++, 20, 0, Label.CONFIG_MARKER_POSITION, markerOffset + "", 50,
 				createIntValidator(1, 1000, false), //
 				val -> markerOffset = Integer.valueOf(val), false);
@@ -91,6 +95,7 @@ public final class ConfigPane extends ParamsPane {
 		addConfigCheckbox(row, 20, 0, Label.CONFIG_INVERT_STRINGS, invertStrings, val -> invertStrings = val);
 		addConfigCheckbox(row++, 180, 0, Label.CONFIG_LEFT_HANDED, leftHanded, val -> leftHanded = val);
 		addConfigCheckbox(row++, 20, 0, Label.CONFIG_SHOW_CHORD_IDS, showChordIds, val -> showChordIds = val);
+		addConfigCheckbox(row++, 20, 0, Label.CONFIG_SHOW_GRID, showGrid, val -> showGrid = val);
 		addConfigCheckbox(row++, 20, 0, Label.CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND,
 				createDefaultStretchesInBackground, val -> createDefaultStretchesInBackground = val);
 		addConfigValue(row++, 20, 0, Label.CONFIG_FPS, FPS + "", 50, createIntValidator(1, 1000, false), //
@@ -132,6 +137,7 @@ public final class ConfigPane extends ParamsPane {
 		Config.minNoteDistance = minNoteDistance;
 		Config.minTailLength = minTailLength;
 		Config.delay = delay;
+		Config.midiDelay = midiDelay;
 		Config.markerOffset = markerOffset;
 		Config.noteWidth = noteWidth;
 		Config.noteHeight = noteHeight;
@@ -139,6 +145,7 @@ public final class ConfigPane extends ParamsPane {
 		Config.invertStrings = invertStrings;
 		Config.leftHanded = leftHanded;
 		Config.showChordIds = showChordIds;
+		Config.showGrid = showGrid;
 
 		Config.FPS = FPS;
 

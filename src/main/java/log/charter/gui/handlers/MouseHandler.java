@@ -10,6 +10,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import log.charter.data.ChartData;
@@ -123,20 +124,36 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		switch (clickData.button) {
 		case LEFT_BUTTON:
-			if (!clickData.isXDrag()) {
-				selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
+			switch (modeManager.editMode) {
+			case GUITAR:
+				if (!clickData.isXDrag()) {
+					selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
+					break;
+				}
+				if (clickData.pressHighlight.chordOrNote != null) {
+					dragNotes(clickData);
+				}
+				break;
+			case TEMPO_MAP:
+				if (modeManager.editMode == EditMode.TEMPO_MAP) {
+					dragTempo(clickData);
+				} else {
+					selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
+				}
+				break;
+			case VOCALS:
+				if (!clickData.isXDrag()) {
+					selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
+					break;
+				}
+				if (clickData.pressHighlight.vocal != null) {
+					dragVocals(clickData);
+				}
+				break;
+			default:
 				break;
 			}
 
-			if (clickData.pressHighlight.beat != null) {
-				dragTempo(clickData);
-			}
-			if (clickData.pressHighlight.chordOrNote != null) {
-				dragNotes(clickData);
-			}
-			if (clickData.pressHighlight.vocal != null) {
-				dragVocals(clickData);
-			}
 			break;
 		case RIGHT_BUTTON:
 			modeManager.getHandler().rightClick(clickData);
@@ -170,6 +187,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, data.songChart.vocals.vocals);
 
 		for (final ArrangementChart arrangement : data.songChart.arrangements) {
+			splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, arrangement.toneChanges);
 			for (final Level level : arrangement.levels.values()) {
 				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.anchors);
 				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.chordsAndNotes);
@@ -210,6 +228,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		undoSystem.addUndo();
 
+		if (clickData.pressHighlight.id != null && clickData.pressHighlight.id == 0) {
+			final int positionBefore = clickData.pressHighlight.position();
+			final int positionAfter = max(0,
+					min(data.music.msLength(), xToTime(clickData.releasePosition.x, data.time)));
+			moveEverything(positionAfter - positionBefore);
+			return;
+		}
+
 		clickData.pressHighlight.beat.anchor = true;
 
 		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
@@ -219,8 +245,9 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		final Integer rightId = data.songChart.beatsMap.findNextAnchoredBeat(clickData.pressHighlight.id);
 
 		final int leftPosition = beats.get(leftId).position();
+		final int minNewPosition = leftPosition + (middleId - leftId) * 10;
 		final int middlePositionBefore = clickData.pressHighlight.position();
-		final int middlePositionAfter = max(0,
+		int middlePositionAfter = max(minNewPosition,
 				min(data.music.msLength(), xToTime(clickData.releasePosition.x, data.time)));
 		final int rightPositionBefore;
 		final int rightPositionAfter;
@@ -228,6 +255,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		if (rightId != null) {
 			rightPositionBefore = beats.get(rightId).position();
 			rightPositionAfter = rightPositionBefore;
+			final int maxNewPosition = rightPositionAfter - (rightId - middleId) * 10;
+			middlePositionAfter = min(maxNewPosition, middlePositionAfter);
 		} else if (beats.size() > middleId + 1) {
 			rightPositionBefore = beats.getLast().position();
 			final int beatLength = middleId == leftId ? 500
@@ -258,9 +287,33 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		if (rightId != null) {
 			straightenBeats(middleId, rightId);
 		} else {
-			while (beats.size() > middleId + 1) {
-				beats.remove(beats.size() - 1);
+			// TODO change positions of beats on the right to middleId
+			final int basePosition = beats.get(middleId).position();
+			final int distance = basePosition - beats.get(middleId - 1).position();
+			for (int i = middleId + 1; i < beats.size(); i++) {
+				beats.get(i).position(basePosition + (i - middleId) * distance);
 			}
+		}
+
+		data.songChart.beatsMap.makeBeatsUntilSongEnd();
+	}
+
+	private void moveEverything(final int positionDifference) {
+		final List<IPosition> positionsToMove = new LinkedList<>();
+		positionsToMove.addAll(data.songChart.beatsMap.beats);
+		for (final ArrangementChart arrangement : data.songChart.arrangements) {
+			positionsToMove.addAll(arrangement.toneChanges);
+			for (final Level level : arrangement.levels.values()) {
+				positionsToMove.addAll(level.anchors);
+				positionsToMove.addAll(level.chordsAndNotes);
+				positionsToMove.addAll(level.handShapes);
+			}
+		}
+		positionsToMove.addAll(data.songChart.vocals.vocals);
+
+		final int maxPosition = data.music.msLength();
+		for (final IPosition positionToMove : positionsToMove) {
+			positionToMove.position(min(maxPosition, max(0, positionToMove.position() + positionDifference)));
 		}
 
 		data.songChart.beatsMap.makeBeatsUntilSongEnd();

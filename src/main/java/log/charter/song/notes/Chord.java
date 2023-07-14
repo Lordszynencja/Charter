@@ -1,92 +1,199 @@
 package log.charter.song.notes;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static log.charter.util.Utils.mapInteger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import log.charter.io.rs.xml.song.ArrangementBendValue;
 import log.charter.io.rs.xml.song.ArrangementChord;
 import log.charter.io.rs.xml.song.ArrangementNote;
 import log.charter.song.BendValue;
+import log.charter.song.ChordTemplate;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
-import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 
 public class Chord extends GuitarSound {
-	public int chordId;
-	public HashMap2<Integer, ArrayList2<BendValue>> bendValues = new HashMap2<>();
-
-	public Chord(final int pos, final int chordId) {
-		super(pos);
-		this.chordId = chordId;
+	public enum ChordNotesVisibility {
+		NONE, NOTES, TAILS;
 	}
 
-	public Chord(final ArrangementChord arrangementChord) {
-		super(arrangementChord.time);
-		chordId = arrangementChord.chordId;
-		mute = Mute.fromArrangmentChord(arrangementChord);
-		accent = mapInteger(arrangementChord.accent);
-		linkNext = mapInteger(arrangementChord.linkNext);
-		ignore = mapInteger(arrangementChord.ignore);
+	private int templateId;
+	public boolean splitIntoNotes = false;
+	public HashMap2<Integer, ChordNote> chordNotes = new HashMap2<>();
+
+	public Chord(final int pos, final int templateId, final ChordTemplate template) {
+		super(pos);
+		this.templateId = templateId;
+		updateChordNotes(template);
+	}
+
+	public Chord(final ArrangementChord arrangementChord, final ChordTemplate template) {
+		super(arrangementChord.time, mapInteger(arrangementChord.accent), mapInteger(arrangementChord.ignore));
+		templateId = arrangementChord.chordId;
+		final Mute mute = Mute.fromArrangmentChord(arrangementChord);
+		final boolean linkNext = mapInteger(arrangementChord.linkNext);
 
 		if (arrangementChord.chordNotes != null) {
 			for (final ArrangementNote arrangementNote : arrangementChord.chordNotes) {
-				length(max(arrangementNote.sustain == null ? 0 : arrangementNote.sustain, length()));
+				final ChordNote chordNote = new ChordNote();
+
+				chordNote.length = arrangementNote.sustain == null ? 0 : arrangementNote.sustain;
+				if (mapInteger(arrangementNote.mute)) {
+					chordNote.mute = Mute.FULL;
+				}
+				if (mapInteger(arrangementNote.palmMute)) {
+					chordNote.mute = Mute.PALM;
+				}
+				chordNote.mute = mute;
+
 				if (arrangementNote.slideTo != null) {
-					slideTo = slideTo == null ? arrangementNote.slideTo : min(slideTo, arrangementNote.slideTo);
+					chordNote.slideTo = arrangementNote.slideTo;
 				}
 				if (arrangementNote.slideUnpitchTo != null) {
-					slideTo = slideTo == null ? arrangementNote.slideUnpitchTo
-							: min(slideTo, arrangementNote.slideUnpitchTo);
-					unpitchedSlide = true;
+					chordNote.slideTo = arrangementNote.slideUnpitchTo;
+					chordNote.unpitchedSlide = true;
 				}
 
-				if (mapInteger(arrangementNote.vibrato)) {
-					vibrato = true;
-				}
-				if (mapInteger(arrangementNote.tremolo)) {
-					tremolo = true;
-				}
+				chordNote.vibrato = mapInteger(arrangementNote.vibrato);
+				chordNote.tremolo = mapInteger(arrangementNote.tremolo);
 
 				if (mapInteger(arrangementNote.hammerOn)) {
-					hopo = HOPO.HAMMER_ON;
+					chordNote.hopo = HOPO.HAMMER_ON;
 				}
 				if (mapInteger(arrangementNote.pullOff)) {
-					hopo = HOPO.PULL_OFF;
+					chordNote.hopo = HOPO.PULL_OFF;
 				}
 				if (mapInteger(arrangementNote.tap)) {
-					hopo = HOPO.TAP;
+					chordNote.hopo = HOPO.TAP;
 				}
-
 				if (mapInteger(arrangementNote.harmonic)) {
-					harmonic = Harmonic.NORMAL;
+					chordNote.harmonic = Harmonic.NORMAL;
 				}
 				if (mapInteger(arrangementNote.harmonicPinch)) {
-					harmonic = Harmonic.PINCH;
+					chordNote.harmonic = Harmonic.PINCH;
 				}
 
 				if (arrangementNote.bendValues != null && !arrangementNote.bendValues.list.isEmpty()) {
-					final ArrayList2<BendValue> noteBendValues = new ArrayList2<>();
-					bendValues.put(arrangementNote.string, noteBendValues);
 					for (final ArrangementBendValue bendValue : arrangementNote.bendValues.list) {
-						noteBendValues.add(new BendValue(bendValue, arrangementChord.time));
+						chordNote.bendValues.add(new BendValue(bendValue, arrangementChord.time));
 					}
 				}
+
+				chordNote.linkNext = linkNext || mapInteger(arrangementNote.linkNext);
+
+				chordNotes.put(arrangementNote.string, chordNote);
 			}
 		}
+
+		updateChordNotes(template);
 	}
 
 	public Chord(final Chord other) {
 		super(other);
-		chordId = other.chordId;
-		bendValues = other.bendValues.map(i -> i, list -> list.map(BendValue::new));
+		templateId = other.templateId;
+		accent = other.accent;
+		splitIntoNotes = other.splitIntoNotes;
+		chordNotes = other.chordNotes.map(i -> i, ChordNote::new);
 	}
 
-	public Chord(final int templateId, final Note note) {
+	public Chord(final int templateId, final Note note, final ChordTemplate template) {
 		super(note);
-		chordId = templateId;
-		bendValues.put(note.string, note.bendValues);
+		this.templateId = templateId;
+		chordNotes.put(note.string, new ChordNote(note));
+		updateChordNotes(template);
 	}
+
+	private <T> List<T> chordNotesValues(final Function<ChordNote, T> getter) {
+		return chordNotes.values().stream()//
+				.map(getter)//
+				.distinct()//
+				.collect(Collectors.toList());
+	}
+
+	public <T> T chordNotesValue(final Function<ChordNote, T> getter, final T defaultValue) {
+		final List<T> values = chordNotesValues(getter);
+		return values.size() == 1 ? values.get(0) : defaultValue;
+	}
+
+	public boolean fullyMuted() {
+		for (final ChordNote chordNote : chordNotes.values()) {
+			if (chordNote.mute != Mute.FULL) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean linkNext() {
+		for (final ChordNote chordNote : chordNotes.values()) {
+			if (chordNote.linkNext) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public int templateId() {
+		return templateId;
+	}
+
+	public void updateTemplate(final int templateId, final ChordTemplate template) {
+		this.templateId = templateId;
+		updateChordNotes(template);
+	}
+
+	private void updateChordNotes(final ChordTemplate template) {
+		for (final Integer string : template.frets.keySet()) {
+			if (!chordNotes.containsKey(string)) {
+				chordNotes.put(string, new ChordNote());
+			}
+		}
+		for (final Integer existingString : new ArrayList<>(chordNotes.keySet())) {
+			if (!template.frets.containsKey(existingString)) {
+				chordNotes.remove(existingString);
+			}
+		}
+	}
+
+	public ChordNotesVisibility chordNotesVisibility() {
+		if (splitIntoNotes) {
+			return ChordNotesVisibility.NOTES;
+		}
+
+		if (fullyMuted()) {
+			return ChordNotesVisibility.NONE;
+		}
+
+		for (final ChordNote chordNote : chordNotes.values()) {
+			if (chordNote.linkNext || chordNote.slideTo != null || chordNote.tremolo || chordNote.vibrato
+					|| !chordNote.bendValues.isEmpty()) {
+				return ChordNotesVisibility.TAILS;
+			}
+		}
+		for (final ChordNote chordNote : chordNotes.values()) {
+			if (chordNote.harmonic != Harmonic.NONE || chordNote.hopo != HOPO.NONE) {
+				return ChordNotesVisibility.NOTES;
+			}
+		}
+
+		return ChordNotesVisibility.NONE;
+	}
+
+	public ChordNotesVisibility chordNotesVisibility(final boolean forceAddNotes) {
+		final ChordNotesVisibility baseVisibility = chordNotesVisibility();
+		if (baseVisibility != ChordNotesVisibility.NONE) {
+			return baseVisibility;
+		}
+
+		return (forceAddNotes && !fullyMuted()) ? ChordNotesVisibility.NOTES : ChordNotesVisibility.NONE;
+	}
+
 }

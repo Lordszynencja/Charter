@@ -6,9 +6,15 @@ import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.readVocals;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
+import log.charter.data.ArrangementFretHandPositionsCreator;
 import log.charter.data.config.Localization.Label;
 import log.charter.io.Logger;
+import log.charter.io.gp.gp5.GP5File;
+import log.charter.io.gp.gp5.GPBar;
+import log.charter.io.gp.gp5.GPMasterBar;
+import log.charter.io.gp.gp5.GPTrackData;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
 import log.charter.song.notes.Note;
@@ -97,5 +103,65 @@ public class SongChart {
 		beatsMap = new BeatsMap(songLengthMs, songArrangement);
 		arrangements = new ArrayList2<>();
 		arrangements.add(new ArrangementChart(songArrangement, beatsMap.beats));
+	}
+
+	public void addGP5Arrangements(final GP5File gp5File) {
+		checkSongDataFromGP5File(gp5File);
+		checkBeatsFromGP5File(gp5File);
+
+		for (final Entry<Integer, List<GPBar>> trackBars : gp5File.bars.entrySet()) {
+			final int trackId = trackBars.getKey();
+			final GPTrackData trackData = gp5File.tracks.get(trackId);
+			if (trackData.isPercussion) {
+				continue;
+			}
+
+			final ArrangementChart chart = new ArrangementChart(beatsMap.beats, trackBars.getValue(), trackData);
+			final Level level = chart.levels.get(0);
+			arrangements.add(chart);
+			ArrangementFretHandPositionsCreator.createFretHandPositions(chart.chordTemplates, level.chordsAndNotes,
+					level.anchors);
+		}
+	}
+
+	private void checkSongDataFromGP5File(final GP5File gp5File) {
+		if (artistName == null || artistName.isBlank()) {
+			artistName = gp5File.scoreInformation.artist;
+		}
+		if (title == null || title.isBlank()) {
+			title = gp5File.scoreInformation.title;
+		}
+		if (albumName == null || albumName.isBlank()) {
+			albumName = gp5File.scoreInformation.album;
+		}
+	}
+
+	private void checkBeatsFromGP5File(final GP5File gp5File) {
+		final int bpm = gp5File.tempo * gp5File.masterBars.get(0).timeSignatureDenominator / 4;
+		final ArrayList2<Beat> beats = beatsMap.beats;
+		if (beats.stream().anyMatch(beat -> beat.anchor)) {
+			// return;
+		}
+
+		beatsMap.setBPM(0, bpm);
+
+		int currentBeat = 0;
+		for (final GPMasterBar masterBar : gp5File.masterBars) {
+			final int numberOfBeats = masterBar.timeSignatureNumerator;
+
+			for (int i = 0; i < numberOfBeats; i++) {
+				if (currentBeat + i >= beats.size()) {
+					break;
+				}
+
+				final Beat beat = beats.get(currentBeat + i);
+				beat.beatsInMeasure = masterBar.timeSignatureNumerator;
+				beat.noteDenominator = masterBar.timeSignatureDenominator;
+			}
+
+			currentBeat += numberOfBeats;
+		}
+
+		beatsMap.fixFirstBeatInMeasures();
 	}
 }

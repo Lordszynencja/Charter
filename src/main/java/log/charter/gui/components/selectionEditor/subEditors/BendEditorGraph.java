@@ -174,7 +174,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		noteLength = chord.length();
 		calculateBeatPositions();
 
-		setBendValues(string, chord.bendValues.get(string));
+		setBendValues(string, chord.chordNotes.get(string).bendValues);
 	}
 
 	public void setBendValues(final int string, final ArrayList2<BendValue> bendValuesToEdit) {

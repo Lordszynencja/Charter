@@ -38,6 +38,35 @@ public class FileChooseUtils {
 	}
 
 	public static File chooseFile(final CharterFrame frame, final String startingDir, final String[] extensions,
+			final String description) {
+		final JFileChooser chooser = new JFileChooser(new File(startingDir));
+		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.addChoosableFileFilter(new FileFilter() {
+			@Override
+			public boolean accept(final File f) {
+				if (f.isDirectory()) {
+					return true;
+				}
+
+				for (final String extension : extensions) {
+					if (f.getName().toLowerCase().endsWith(extension)) {
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			@Override
+			public String getDescription() {
+				return description;
+			}
+		});
+
+		return showDialog(frame, chooser);
+	}
+
+	public static File chooseFile(final CharterFrame frame, final String startingDir, final String[] extensions,
 			final String[] descriptions) {
 		final JFileChooser chooser = new JFileChooser(new File(startingDir));
 		chooser.setAcceptAllFileFilterUsed(false);

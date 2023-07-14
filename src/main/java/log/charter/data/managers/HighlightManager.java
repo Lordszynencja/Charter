@@ -83,7 +83,7 @@ public class HighlightManager {
 			for (int i = idFrom; i <= idTo; i++) {
 				final ChordOrNote chordOrNote = chordsAndNotes.get(i);
 				if (chordOrNote.position() >= fromPosition && chordOrNote.position() <= toPosition) {
-					noteChordPositions.add(fromNoteId(i, chordOrNote.position(), getLane(chordOrNote.position())));
+					noteChordPositions.add(fromNoteId(i, chordOrNote, getLane(chordOrNote.position())));
 				}
 			}
 		}

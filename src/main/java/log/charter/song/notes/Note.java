@@ -15,6 +15,14 @@ public class Note extends GuitarSound {
 	public int string;
 	public int fret;
 	public BassPickingTechnique bassPicking = BassPickingTechnique.NONE;
+	public Mute mute = Mute.NONE;
+	public HOPO hopo = HOPO.NONE;
+	public Harmonic harmonic = Harmonic.NONE;
+	public boolean vibrato = false;
+	public boolean tremolo = false;
+	public boolean linkNext = false;
+	public Integer slideTo = null;
+	public boolean unpitchedSlide = false;
 	public ArrayList2<BendValue> bendValues = new ArrayList2<>();
 
 	public Note(final int pos, final int string, final int fret) {
@@ -25,15 +33,19 @@ public class Note extends GuitarSound {
 
 	public Note(final ArrangementNote arrangementNote) {
 		super(arrangementNote.time, arrangementNote.sustain == null ? 0 : arrangementNote.sustain,
-				Mute.fromArrangmentNote(arrangementNote), HOPO.fromArrangmentNote(arrangementNote),
-				Harmonic.fromArrangmentNote(arrangementNote), mapInteger(arrangementNote.accent),
-				mapInteger(arrangementNote.vibrato), mapInteger(arrangementNote.tremolo),
-				mapInteger(arrangementNote.linkNext),
-				arrangementNote.slideTo == null ? arrangementNote.slideUnpitchTo : arrangementNote.slideTo,
-				arrangementNote.slideUnpitchTo != null, mapInteger(arrangementNote.ignore));
+				mapInteger(arrangementNote.accent), mapInteger(arrangementNote.ignore));
+
 		string = arrangementNote.string;
 		fret = arrangementNote.fret;
 		bassPicking = BassPickingTechnique.fromArrangmentNote(arrangementNote);
+		mute = Mute.fromArrangmentNote(arrangementNote);
+		hopo = HOPO.fromArrangmentNote(arrangementNote);
+		harmonic = Harmonic.fromArrangmentNote(arrangementNote);
+		vibrato = mapInteger(arrangementNote.vibrato);
+		tremolo = mapInteger(arrangementNote.tremolo);
+		linkNext = mapInteger(arrangementNote.linkNext);
+		slideTo = arrangementNote.slideTo == null ? arrangementNote.slideUnpitchTo : arrangementNote.slideTo;
+		unpitchedSlide = arrangementNote.slideUnpitchTo != null;
 		bendValues = arrangementNote.bendValues == null ? new ArrayList2<>()
 				: arrangementNote.bendValues.list
 						.map(arrangementBendValue -> new BendValue(arrangementBendValue, arrangementNote.time));
@@ -41,6 +53,7 @@ public class Note extends GuitarSound {
 
 	public Note(final Note other) {
 		super(other);
+
 		string = other.string;
 		fret = other.fret;
 		bassPicking = other.bassPicking;
@@ -49,11 +62,24 @@ public class Note extends GuitarSound {
 
 	public Note(final Chord chord, final ChordTemplate template) {
 		super(chord);
+
 		string = template.frets.keySet().stream().min(Integer::compare).orElse(0);
 		fret = template.frets.get(string);
-		bendValues = chord.bendValues.get(string);
-		if (bendValues == null) {
-			bendValues = new ArrayList2<>();
-		}
+
+		final ChordNote chordNote = chord.chordNotes.get(string);
+		mute = chordNote.mute;
+		hopo = chordNote.hopo;
+		harmonic = chordNote.harmonic;
+		vibrato = chordNote.vibrato;
+		tremolo = chordNote.tremolo;
+		linkNext = chordNote.linkNext;
+		slideTo = chordNote.slideTo;
+		unpitchedSlide = chordNote.unpitchedSlide;
+		bendValues = chordNote.bendValues.map(BendValue::new);
+	}
+
+	@Override
+	public boolean linkNext() {
+		return linkNext;
 	}
 }

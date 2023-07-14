@@ -1,5 +1,7 @@
 package log.charter.gui.components.selectionEditor;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 import static log.charter.data.config.Config.frets;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
@@ -7,6 +9,7 @@ import static log.charter.gui.components.selectionEditor.CurrentSelectionEditor.
 
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import javax.swing.JCheckBox;
 
@@ -30,8 +33,9 @@ import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.Note;
+import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.CollectionUtils.Pair;
 
@@ -50,6 +54,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private RadioButtonGroupInRow<Harmonic> harmonic;
 	private FieldWithLabel<JCheckBox> accent;
 	private FieldWithLabel<JCheckBox> linkNext;
+	private FieldWithLabel<JCheckBox> splitIntoNotes;
 	private FieldWithLabel<JCheckBox> ignore;
 	private FieldWithLabel<TextInputWithValidation> slideFret;
 	private FieldWithLabel<JCheckBox> unpitchedSlide;
@@ -108,23 +113,36 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 						new Pair<>(Harmonic.NONE, Label.HARMONIC_NONE)));
 	}
 
-	private void addAccentLinkNextIgnoreInputs(final CurrentSelectionEditor parent, final AtomicInteger row) {
+	private void addAccentLinkNextSplitIntoNotesIgnoreInputs(final CurrentSelectionEditor parent,
+			final AtomicInteger row) {
+		int x = 10;
+
 		final JCheckBox accentInput = new JCheckBox();
 		accentInput.addActionListener(a -> changeAccent(accentInput.isSelected()));
 		accent = new FieldWithLabel<JCheckBox>(Label.ACCENT, 50, 20, 20, accentInput, LabelPosition.LEFT_CLOSE);
-		accent.setLocation(10, parent.getY(row.get()));
+		accent.setLocation(x, parent.getY(row.get()));
 		parent.add(accent);
 
+		x += 90;
 		final JCheckBox linkNextInput = new JCheckBox();
 		linkNextInput.addActionListener(a -> changeLinkNext(linkNextInput.isSelected()));
 		linkNext = new FieldWithLabel<JCheckBox>(Label.LINK_NEXT, 60, 20, 20, linkNextInput, LabelPosition.LEFT_CLOSE);
-		linkNext.setLocation(100, parent.getY(row.get()));
+		linkNext.setLocation(x, parent.getY(row.get()));
 		parent.add(linkNext);
 
+		x += 70;
+		final JCheckBox splitIntoNotesInput = new JCheckBox();
+		splitIntoNotesInput.addActionListener(a -> changeSplitIntoNotes(splitIntoNotesInput.isSelected()));
+		splitIntoNotes = new FieldWithLabel<JCheckBox>(Label.SPLIT_INTO_NOTES, 60, 20, 20, splitIntoNotesInput,
+				LabelPosition.LEFT_CLOSE);
+		splitIntoNotes.setLocation(x, parent.getY(row.get()));
+		parent.add(splitIntoNotes);
+
+		x += 90;
 		final JCheckBox ignoreInput = new JCheckBox();
 		ignoreInput.addActionListener(a -> changeIgnore(ignoreInput.isSelected()));
 		ignore = new FieldWithLabel<JCheckBox>(Label.IGNORE_NOTE, 60, 20, 20, ignoreInput, LabelPosition.LEFT_CLOSE);
-		ignore.setLocation(190, parent.getY(row.getAndIncrement()));
+		ignore.setLocation(x, parent.getY(row.getAndIncrement()));
 		parent.add(ignore);
 	}
 
@@ -180,7 +198,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		addHOPOInputs(selectionEditor, row);
 		addBassPickingTechniqueInputs(selectionEditor, row);
 		addHarmonicInputs(selectionEditor, row);
-		addAccentLinkNextIgnoreInputs(selectionEditor, row);
+		addAccentLinkNextSplitIntoNotesIgnoreInputs(selectionEditor, row);
 		addSlideInputs(selectionEditor, row);
 		addVibratoTremoloInput(selectionEditor, row);
 
@@ -208,10 +226,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				continue;
 			}
 
-			final Note note = selection.selectable.note;
-			final Chord chord = new Chord(templateId, note);
-			selection.selectable.note = null;
-			selection.selectable.chord = chord;
+			selection.selectable.turnToChord(templateId, arrangement.chordTemplates.get(templateId));
 		}
 
 		if (selected.size() == 1) {
@@ -233,11 +248,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				continue;
 			}
 
-			final Chord chord = selection.selectable.chord;
-			final ChordTemplate template = arrangement.chordTemplates.get(chord.chordId);
-			final Note note = new Note(chord, template);
-			selection.selectable.chord = null;
-			selection.selectable.note = note;
+			final ChordTemplate template = arrangement.chordTemplates.get(selection.selectable.chord.templateId());
+			selection.selectable.turnToNote(template);
 		}
 
 		if (selected.size() == 1) {
@@ -294,7 +306,11 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
-			selection.selectable.asGuitarSound().mute = newMute;
+			if (selection.selectable.isNote()) {
+				selection.selectable.note.mute = newMute;
+			} else {
+				selection.selectable.chord.chordNotes.values().forEach(n -> n.mute = newMute);
+			}
 		}
 	}
 
@@ -304,7 +320,11 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
-			selection.selectable.asGuitarSound().hopo = newHOPO;
+			if (selection.selectable.isNote()) {
+				selection.selectable.note.hopo = newHOPO;
+			} else {
+				selection.selectable.chord.chordNotes.values().forEach(n -> n.hopo = newHOPO);
+			}
 		}
 	}
 
@@ -325,7 +345,11 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
-			selection.selectable.asGuitarSound().harmonic = newHarmonic;
+			if (selection.selectable.isNote()) {
+				selection.selectable.note.harmonic = newHarmonic;
+			} else {
+				selection.selectable.chord.chordNotes.values().forEach(n -> n.harmonic = newHarmonic);
+			}
 		}
 	}
 
@@ -344,8 +368,35 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
-			selection.selectable.asGuitarSound().linkNext = newLinkNext;
+			if (selection.selectable.isNote()) {
+				selection.selectable.note.linkNext = newLinkNext;
+			} else {
+				selection.selectable.chord.chordNotes.values().forEach(n -> n.linkNext = newLinkNext);
+			}
+
+			final int nextId = selection.id + 1;
+			if (nextId < sounds.size()) {
+				final ChordOrNote nextSound = sounds.get(nextId);
+				if (nextSound.isChord()) {
+					nextSound.chord.splitIntoNotes = true;
+				}
+			}
+		}
+	}
+
+	private void changeSplitIntoNotes(final boolean newSplitIntoNotes) {
+		undoSystem.addUndo();
+
+		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
+				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
+			if (!selection.selectable.isChord()) {
+				continue;
+			}
+
+			selection.selectable.chord.splitIntoNotes = newSplitIntoNotes;
 		}
 	}
 
@@ -364,8 +415,27 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		final ArrayList2<ChordTemplate> chordTemplates = data.getCurrentArrangement().chordTemplates;
+
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
-			selection.selectable.asGuitarSound().slideTo = newSlideFret;
+			if (selection.selectable.isNote()) {
+				selection.selectable.note.slideTo = newSlideFret;
+			} else {
+				final Chord chord = selection.selectable.chord;
+				final ChordTemplate chordTemplate = chordTemplates.get(chord.templateId());
+				final int minFret = chordTemplate.frets.values().stream()//
+						.filter(fret -> fret > 0)//
+						.collect(Collectors.minBy(Integer::compare)).orElse(1);
+				final int fretDifference = minFret - newSlideFret;
+				for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
+					final int fret = chordTemplate.frets.get(chordNoteEntry.getKey());
+					if (fret == 0) {
+						continue;
+					}
+
+					chordNoteEntry.getValue().slideTo = min(frets, max(1, fret - fretDifference));
+				}
+			}
 		}
 	}
 
@@ -375,7 +445,11 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
-			selection.selectable.asGuitarSound().unpitchedSlide = newUnpitchedSlide;
+			if (selection.selectable.isNote()) {
+				selection.selectable.note.unpitchedSlide = newUnpitchedSlide;
+			} else {
+				selection.selectable.chord.chordNotes.values().forEach(n -> n.unpitchedSlide = newUnpitchedSlide);
+			}
 		}
 	}
 
@@ -385,7 +459,11 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
-			selection.selectable.asGuitarSound().vibrato = newVibrato;
+			if (selection.selectable.isNote()) {
+				selection.selectable.note.vibrato = newVibrato;
+			} else {
+				selection.selectable.chord.chordNotes.values().forEach(n -> n.vibrato = newVibrato);
+			}
 		}
 	}
 
@@ -395,7 +473,11 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
-			selection.selectable.asGuitarSound().tremolo = newTremolo;
+			if (selection.selectable.isNote()) {
+				selection.selectable.note.tremolo = newTremolo;
+			} else {
+				selection.selectable.chord.chordNotes.values().forEach(n -> n.tremolo = newTremolo);
+			}
 		}
 	}
 
@@ -435,7 +517,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 			for (final Selection<ChordOrNote> selection : selected) {
 				if (selection.selectable.isChord()) {
-					selection.selectable.chord.chordId = templateId;
+					selection.selectable.chord.updateTemplate(templateId, chordTemplate);
 				}
 			}
 
@@ -458,6 +540,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		harmonic.setVisible(true);
 		accent.setVisible(true);
 		linkNext.setVisible(true);
+		splitIntoNotes.setVisible(true);
 		ignore.setVisible(true);
 		slideFret.setVisible(true);
 		unpitchedSlide.setVisible(true);
@@ -477,6 +560,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		harmonic.setVisible(false);
 		accent.setVisible(false);
 		linkNext.setVisible(false);
+		splitIntoNotes.setVisible(false);
 		ignore.setVisible(false);
 		slideFret.setVisible(false);
 		unpitchedSlide.setVisible(false);
@@ -488,7 +572,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void setFretsOnSelectionChange(final HashSet2<Selection<ChordOrNote>> selected) {
 		final Integer templateId = getSingleValue(selected,
-				selection -> selection.selectable.isChord() ? selection.selectable.chord.chordId : null);
+				selection -> selection.selectable.isChord() ? selection.selectable.chord.templateId() : null);
 		if (templateId != null) {
 			chordTemplate = new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(templateId));
 			setCurrentValuesInInputs();
@@ -517,11 +601,32 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		setFretsOnSelectionChange(selected);
 		string.field.setValidator(createIntValidator(1, data.currentStrings(), false));
 
-		mute.setSelected(getSingleValue(selected, selection -> selection.selectable.asGuitarSound().mute));
-		hopo.setSelected(getSingleValue(selected, selection -> selection.selectable.asGuitarSound().hopo));
+		mute.setSelected(getSingleValue(selected, selection -> {
+			if (selection.selectable.isNote()) {
+				return selection.selectable.note.mute;
+			}
+
+			final Mute mute = selection.selectable.chord.chordNotesValue(n -> n.mute, Mute.NONE);
+			return mute == null ? Mute.NONE : mute;
+		}));
+		hopo.setSelected(getSingleValue(selected, selection -> {
+			if (selection.selectable.isNote()) {
+				return selection.selectable.note.hopo;
+			}
+
+			final HOPO hopo = selection.selectable.chord.chordNotesValue(n -> n.hopo, HOPO.NONE);
+			return hopo == null ? HOPO.NONE : hopo;
+		}));
 		bassPickingTechnique.setSelected(getSingleValue(selected,
 				selection -> selection.selectable.isNote() ? selection.selectable.note.bassPicking : null));
-		harmonic.setSelected(getSingleValue(selected, selection -> selection.selectable.asGuitarSound().harmonic));
+		harmonic.setSelected(getSingleValue(selected, selection -> {
+			if (selection.selectable.isNote()) {
+				return selection.selectable.note.harmonic;
+			}
+
+			final Harmonic harmonic = selection.selectable.chord.chordNotesValue(n -> n.harmonic, Harmonic.NONE);
+			return harmonic == null ? Harmonic.NONE : harmonic;
+		}));
 
 		Boolean accentValue = getSingleValue(selected, selection -> selection.selectable.asGuitarSound().accent);
 		if (accentValue == null) {
@@ -529,11 +634,18 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		}
 		accent.field.setSelected(accentValue);
 
-		Boolean linkNextValue = getSingleValue(selected, selection -> selection.selectable.asGuitarSound().linkNext);
+		Boolean linkNextValue = getSingleValue(selected, selection -> selection.selectable.asGuitarSound().linkNext());
 		if (linkNextValue == null) {
 			linkNextValue = false;
 		}
 		linkNext.field.setSelected(linkNextValue);
+
+		Boolean splitIntoNotesValue = getSingleValue(selected,
+				selection -> selection.selectable.isChord() ? selection.selectable.chord.splitIntoNotes : false);
+		if (splitIntoNotesValue == null) {
+			splitIntoNotesValue = false;
+		}
+		splitIntoNotes.field.setSelected(splitIntoNotesValue);
 
 		Boolean ignoreValue = getSingleValue(selected, selection -> selection.selectable.asGuitarSound().ignore);
 		if (ignoreValue == null) {
@@ -541,24 +653,59 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		}
 		ignore.field.setSelected(ignoreValue);
 
-		final Integer slideFretValue = getSingleValue(selected,
-				selection -> selection.selectable.asGuitarSound().slideTo);
+		final Integer slideFretValue = getSingleValue(selected, selection -> {
+			if (selection.selectable.isNote()) {
+				return selection.selectable.note.slideTo;
+			}
+
+			Integer minSlideTo = null;
+			for (final ChordNote chordNote : selection.selectable.chord.chordNotes.values()) {
+				if (chordNote.slideTo == null) {
+					continue;
+				}
+
+				if (minSlideTo == null) {
+					minSlideTo = chordNote.slideTo;
+				} else {
+					minSlideTo = min(minSlideTo, chordNote.slideTo);
+				}
+			}
+
+			return minSlideTo;
+		});
 		slideFret.field.setTextWithoutEvent(slideFretValue == null ? "" : (slideFretValue + ""));
 
-		Boolean unpitchedSlideValue = getSingleValue(selected,
-				selection -> selection.selectable.asGuitarSound().unpitchedSlide);
+		Boolean unpitchedSlideValue = getSingleValue(selected, selection -> {
+			if (selection.selectable.isNote()) {
+				return selection.selectable.note.unpitchedSlide;
+			}
+
+			return selection.selectable.chord.chordNotesValue(n -> n.unpitchedSlide, false);
+		});
 		if (unpitchedSlideValue == null) {
 			unpitchedSlideValue = false;
 		}
 		unpitchedSlide.field.setSelected(unpitchedSlideValue);
 
-		Boolean vibratoValue = getSingleValue(selected, selection -> selection.selectable.asGuitarSound().vibrato);
+		Boolean vibratoValue = getSingleValue(selected, selection -> {
+			if (selection.selectable.isNote()) {
+				return selection.selectable.note.vibrato;
+			}
+
+			return selection.selectable.chord.chordNotesValue(n -> n.vibrato, false);
+		});
 		if (vibratoValue == null) {
 			vibratoValue = false;
 		}
 		vibrato.field.setSelected(vibratoValue);
 
-		Boolean tremoloValue = getSingleValue(selected, selection -> selection.selectable.asGuitarSound().tremolo);
+		Boolean tremoloValue = getSingleValue(selected, selection -> {
+			if (selection.selectable.isNote()) {
+				return selection.selectable.note.tremolo;
+			}
+
+			return selection.selectable.chord.chordNotesValue(n -> n.tremolo, false);
+		});
 		if (tremoloValue == null) {
 			tremoloValue = false;
 		}

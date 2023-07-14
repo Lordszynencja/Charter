@@ -4,6 +4,8 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
 import static log.charter.song.notes.IPosition.findClosestId;
 import static log.charter.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
 
+import java.util.stream.Collectors;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.managers.HighlightManager;
@@ -17,11 +19,11 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.AnchorPane;
-import log.charter.gui.panes.ChordOptionsPane;
 import log.charter.gui.panes.GuitarBeatPane;
 import log.charter.gui.panes.HandShapePane;
 import log.charter.gui.panes.ToneChangePane;
 import log.charter.song.Anchor;
+import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
@@ -70,10 +72,10 @@ public class GuitarModeHandler extends ModeHandler {
 
 	@Override
 	public void snapNotes() {// TODO
-		undoSystem.addUndo();
+		// undoSystem.addUndo();
 
-		selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		selectionManager.getSelectedAccessor(PositionType.HAND_SHAPE);
+		// selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		// selectionManager.getSelectedAccessor(PositionType.HAND_SHAPE);
 	}
 
 	private void rightClickAnchor(final PositionWithIdAndType anchorPosition) {
@@ -137,7 +139,7 @@ public class GuitarModeHandler extends ModeHandler {
 		final ChordOrNote previous = IPosition.findLastBefore(sounds, note.position());
 		if (previous != null) {
 			final GuitarSound previousSound = previous.asGuitarSound();
-			if (previousSound.linkNext) {
+			if (previousSound.linkNext()) {
 				if (previousSound.endPosition() > note.position()) {
 					previousSound.length(note.position() - previousSound.position());
 				}
@@ -151,53 +153,65 @@ public class GuitarModeHandler extends ModeHandler {
 		return sound;
 	}
 
-	private void addSingleNote(final MouseButtonPressReleaseData clickData) {
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
-		final int string = yToLane(clickData.pressPosition.y, data.currentStrings());
+	private int addOrRemoveSingleNote(final int string, final int position, final Integer id,
+			final ChordOrNote chordOrNote) {
 		if (string < 0 || string >= data.currentStrings()) {
-			return;
+			return 0;
 		}
 
-		if (clickData.pressHighlight.chordOrNote != null) {
-			final ChordOrNote chordOrNote = clickData.pressHighlight.chordOrNote;
-			if (chordOrNote.isChord() || chordOrNote.note.string != string) {
-				selectionManager.addSoundSelection(clickData.pressHighlight.id);
-				new ChordOptionsPane(data, frame, undoSystem, new ArrayList2<>(chordOrNote));
-				return;
+		if (chordOrNote == null) {
+			addSound(new Note(position, string, 0));
+			return 1;
+		}
+
+		if (chordOrNote.isNote() && chordOrNote.note.string == string) {
+			data.getCurrentArrangementLevel().chordsAndNotes.remove((int) id);
+			return -1;
+		}
+
+		if (chordOrNote.isChord()) {
+			final ChordTemplate chordTemplate = new ChordTemplate(
+					data.getCurrentArrangement().chordTemplates.get(chordOrNote.chord.templateId()));
+			if (chordTemplate.frets.containsKey(string)) {
+				chordTemplate.frets.remove(string);
+			} else {
+				final int fret = chordTemplate.frets.values().stream().collect(Collectors.minBy(Integer::compare))
+						.orElse(0);
+				chordTemplate.frets.put(string, fret);
 			}
 
-			sounds.remove(clickData.pressHighlight.chordOrNote);
-			return;
+			final int newTemplateId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
+			chordOrNote.chord.updateTemplate(newTemplateId, chordTemplate);
+			if (chordTemplate.frets.size() == 1) {
+				chordOrNote.turnToNote(chordTemplate);
+			}
+		} else {
+			final ChordTemplate chordTemplate = new ChordTemplate();
+			chordTemplate.frets.put(chordOrNote.note.string, chordOrNote.note.fret);
+			chordTemplate.frets.put(string, chordOrNote.note.fret);
+			final int chordId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
+			chordOrNote.turnToChord(chordId, chordTemplate);
 		}
 
-		final Note note = new Note(clickData.pressHighlight.position(), string, 0);
-		addSound(note);
+		selectionManager.addSoundSelection(id);
+		return 0;
+	}
+
+	private void addSingleNote(final MouseButtonPressReleaseData clickData) {
+		final int string = yToLane(clickData.pressPosition.y, data.currentStrings());
+		addOrRemoveSingleNote(string, clickData.pressHighlight.position(), clickData.pressHighlight.id,
+				clickData.pressHighlight.chordOrNote);
 	}
 
 	private void addMultipleNotes(final MouseButtonPressReleaseData clickData) {
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
 		final ArrayList2<PositionWithStringOrNoteId> positions = highlightManager.getPositionsWithStrings(
 				clickData.pressHighlight.position(), clickData.releaseHighlight.position(), clickData.pressPosition.y,
 				clickData.releasePosition.y);
 
-		final ArrayList2<ChordOrNote> editedSounds = new ArrayList2<>();
-
-		int insertedNotes = 0;
+		int noteIdChange = 0;
 		for (final PositionWithStringOrNoteId position : positions) {
-			if (position.noteId != null) {
-				final int noteId = position.noteId + insertedNotes;
-				editedSounds.add(sounds.get(noteId));
-				selectionManager.addSoundSelection(noteId);
-			} else {
-				final Note note = new Note(position.position(), position.string, 0);
-				final ChordOrNote sound = addSound(note);
-				insertedNotes++;
-				editedSounds.add(sound);
-			}
-		}
-
-		if (editedSounds.get(0).isChord() || editedSounds.get(0).note.string != positions.get(0).string) {
-			new ChordOptionsPane(data, frame, undoSystem, editedSounds);
+			noteIdChange += addOrRemoveSingleNote(position.string, position.position(),
+					position.noteId == null ? null : (position.noteId + noteIdChange), position.sound);
 		}
 	}
 

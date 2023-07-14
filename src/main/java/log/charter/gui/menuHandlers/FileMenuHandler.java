@@ -1,23 +1,35 @@
 package log.charter.gui.menuHandlers;
 
+import java.io.File;
+
 import javax.swing.JMenu;
 
+import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SpecialMenuItem;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.panes.ConfigPane;
 import log.charter.gui.panes.GraphicConfigPane;
+import log.charter.io.gp.gp5.GP5File;
+import log.charter.io.gp.gp5.GP5FileReader;
+import log.charter.util.FileChooseUtils;
 
 class FileMenuHandler extends CharterMenuHandler {
+	private ArrangementFixer arrangementFixer;
 	private ChartData data;
 	private CharterFrame frame;
+	private CharterMenuBar charterMenuBar;
 	private SongFileHandler songFileHandler;
 
-	public void init(final ChartData data, final CharterFrame frame, final SongFileHandler songFileHandler) {
+	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final CharterFrame frame,
+			final CharterMenuBar charterMenuBar, final SongFileHandler songFileHandler) {
+		this.arrangementFixer = arrangementFixer;
 		this.data = data;
 		this.frame = frame;
+		this.charterMenuBar = charterMenuBar;
 		this.songFileHandler = songFileHandler;
 	}
 
@@ -40,6 +52,7 @@ class FileMenuHandler extends CharterMenuHandler {
 				new SpecialMenuItem(Label.FILE_MENU_IMPORT_RS_GUITAR, null, songFileHandler::importRSArrangementXML));
 		importSubmenu.add(new SpecialMenuItem(Label.FILE_MENU_IMPORT_RS_VOCALS, null,
 				songFileHandler::importRSVocalsArrangementXML));
+		importSubmenu.add(new SpecialMenuItem(Label.FILE_MENU_IMPORT_GP, null, this::importGPFile));
 		importSubmenu.setEnabled(!data.isEmpty);
 		menu.add(importSubmenu);
 
@@ -57,4 +70,18 @@ class FileMenuHandler extends CharterMenuHandler {
 		return menu;
 	}
 
+	private void importGPFile() {
+		final String dir = data.isEmpty ? Config.songsPath : data.path;
+		final File file = FileChooseUtils.chooseFile(frame, dir, new String[] { ".gp3", ".gp4", "gp5" },
+				Label.GP_FILE.label());
+		if (file == null) {
+			return;
+		}
+
+		final GP5File gp5File = GP5FileReader.importGPFile(file);
+		data.songChart.addGP5Arrangements(gp5File);
+		arrangementFixer.fixArrangement();
+
+		charterMenuBar.refreshMenus();
+	}
 }

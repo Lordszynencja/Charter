@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+import log.charter.io.Logger;
 import log.charter.util.RW;
 
 public class Config {
@@ -27,6 +28,9 @@ public class Config {
 	public static int minNoteDistance = 50;
 	public static int minTailLength = 50;
 	public static int delay = 25;
+	public static double volume = 1;
+	public static int midiDelay = 200;
+	public static double midiVolume = 1;
 	public static int markerOffset = 300;
 	public static Theme theme = Theme.DEFAULT;
 	public static int noteWidth = 15;
@@ -75,7 +79,8 @@ public class Config {
 
 			final int refreshRate = dm.getRefreshRate();
 			if (refreshRate == DisplayMode.REFRESH_RATE_UNKNOWN) {
-				System.out.println("Unknown rate");
+				Logger.error("Unknown monitor refresh rate, setting to 60");
+				FPS = 60;
 			} else {
 				FPS = refreshRate;
 				break;
@@ -83,9 +88,9 @@ public class Config {
 		}
 	}
 
-	private static final Map<String, Consumer<String>> setters = new HashMap<>();
-
 	public static void init() {
+		final Map<String, Consumer<String>> setters = new HashMap<>();
+
 		setters.put("language", val -> language = val);
 		setters.put("lastDir", val -> lastDir = val);
 		setters.put("lastPath", val -> lastPath = val);
@@ -95,6 +100,9 @@ public class Config {
 		setters.put("minNoteDistance", val -> minNoteDistance = Integer.valueOf(val));
 		setters.put("minTailLength", val -> minTailLength = Integer.valueOf(val));
 		setters.put("delay", val -> delay = Integer.valueOf(val));
+		setters.put("volume", val -> volume = Double.valueOf(val));
+		setters.put("midiDelay", val -> midiDelay = Integer.valueOf(val));
+		setters.put("midiVolume", val -> midiVolume = Double.valueOf(val));
 		setters.put("markerOffset", val -> markerOffset = Integer.valueOf(val));
 		setters.put("noteWidth", val -> noteWidth = Integer.valueOf(val));
 		setters.put("noteHeight", val -> noteHeight = Integer.valueOf(val));
@@ -124,13 +132,6 @@ public class Config {
 
 		setters.put("debugLogging", val -> debugLogging = Boolean.valueOf(val));
 
-		read();
-		save();
-
-		Localization.init();
-	}
-
-	public static void read() {
 		for (final Entry<String, String> configVal : RW.readConfig(configPath).entrySet()) {
 			try {
 				setters.getOrDefault(configVal.getKey(), val -> {
@@ -141,6 +142,10 @@ public class Config {
 		}
 
 		markChanged();
+
+		save();
+
+		Localization.init();
 	}
 
 	public static void save() {
@@ -158,6 +163,9 @@ public class Config {
 		config.put("minNoteDistance", minNoteDistance + "");
 		config.put("minTailLength", minTailLength + "");
 		config.put("delay", delay + "");
+		config.put("volume", volume + "");
+		config.put("midiDelay", midiDelay + "");
+		config.put("midiVolume", midiVolume + "");
 		config.put("markerOffset", markerOffset + "");
 		config.put("noteWidth", noteWidth + "");
 		config.put("noteHeight", noteHeight + "");

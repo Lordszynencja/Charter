@@ -9,10 +9,9 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ParamsPane;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.GuitarSound;
+import log.charter.song.notes.Note;
 
-public class SlidePane extends ParamsPane {
+public class NoteSlidePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private static PaneSizes getSizes() {
@@ -25,19 +24,18 @@ public class SlidePane extends ParamsPane {
 
 	private final UndoSystem undoSystem;
 
-	private final GuitarSound slideable;
+	private final Note note;
 
 	private Integer slideTo;
 	private boolean unpitched;
 
-	public SlidePane(final CharterFrame frame, final UndoSystem undoSystem, final ChordOrNote chordOrNote) {
+	public NoteSlidePane(final CharterFrame frame, final UndoSystem undoSystem, final Note note) {
 		super(frame, Label.SLIDE_PANE, 4, getSizes());
 		this.undoSystem = undoSystem;
 
-		slideable = chordOrNote.asGuitarSound();
-
-		slideTo = slideable.slideTo;
-		unpitched = slideable.unpitchedSlide;
+		this.note = note;
+		slideTo = note.slideTo;
+		unpitched = note.unpitchedSlide;
 
 		addIntegerConfigValue(0, 60, 0, Label.SLIDE_PANE_FRET, slideTo, 50, createIntValidator(1, 100, true),
 				val -> slideTo = val, false);
@@ -52,7 +50,7 @@ public class SlidePane extends ParamsPane {
 	private void saveAndExit() {
 		undoSystem.addUndo();
 
-		slideable.slideTo = slideTo;
-		slideable.unpitchedSlide = unpitched;
+		note.slideTo = slideTo;
+		note.unpitchedSlide = unpitched;
 	}
 }

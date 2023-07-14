@@ -138,8 +138,11 @@ public class BeatsMap {
 		return gridPosition.position();
 	}
 
-	public int getPositionWithRemovedGrid(final int position, final int gridRemovals) {
+	public int getPositionWithRemovedGrid(final int position, int gridRemovals) {
 		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+		if (gridPosition.position() != position) {
+			gridRemovals--;
+		}
 		for (int i = 0; i < gridRemovals; i++) {
 			gridPosition.previous();
 		}
@@ -208,5 +211,24 @@ public class BeatsMap {
 		final Beat nextBeat = beats.get(beatId + 1);
 
 		return (int) (beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0));
+	}
+
+	public void setBPM(final int beatId, final int newBPM) {
+		for (int i = beats.size() - 1; i > beatId; i--) {
+			beats.remove(i);
+		}
+
+		final Beat startBeat = beats.getLast();
+		final int startPosition = startBeat.position();
+		int position = startPosition + 60_000 / newBPM;
+		int createdBeatId = 1;
+		while (position <= songLengthMs) {
+			final Beat newBeat = new Beat(position, startBeat.beatsInMeasure, startBeat.noteDenominator, false);
+			beats.add(newBeat);
+			createdBeatId++;
+			position = startPosition + createdBeatId * 60_000 / newBPM;
+		}
+
+		fixFirstBeatInMeasures();
 	}
 }

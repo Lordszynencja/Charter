@@ -624,8 +624,8 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 		String chordName = chordTemplate.chordName;
 		if (showChordIds) {
-			chordName = (chordName == null || chordName.isBlank()) ? "[" + chord.chordId + "]"
-					: chordName + " [" + chord.chordId + "]";
+			chordName = (chordName == null || chordName.isBlank()) ? "[" + chord.templateId() + "]"
+					: chordName + " [" + chord.templateId() + "]";
 		}
 		if (chordName != null) {
 			chordNames.add(text(new Position2D(x + 2, lanesTop - 1), chordName, ColorLabel.BASE_DARK_TEXT));
@@ -659,8 +659,8 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 		String chordName = chordTemplate.chordName;
 		if (showChordIds) {
-			chordName = (chordName == null || chordName.isBlank()) ? "[" + handShape.chordId + "]"
-					: chordName + " [" + handShape.chordId + "]";
+			chordName = (chordName == null || chordName.isBlank()) ? "[" + handShape.templateId + "]"
+					: chordName + " [" + handShape.templateId + "]";
 		}
 		if (chordName != null) {
 			chordNames.add(text(new Position2D(x + 2, lanesBottom + 21), chordName, ColorLabel.BASE_DARK_TEXT));

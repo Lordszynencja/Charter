@@ -3,6 +3,7 @@ package log.charter.gui.chartPanelDrawers.common;
 import static java.lang.Math.abs;
 import static log.charter.data.config.Config.noteHeight;
 import static log.charter.data.config.Config.noteWidth;
+import static log.charter.data.types.PositionType.BEAT;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
@@ -194,7 +195,7 @@ public class HighlightDrawer {
 			final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
 			if (chordOrNote.chord != null) {
 				final Chord chord = chordOrNote.chord;
-				final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
+				final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
 
 				drawChordHighlight(g, chord, chordTemplate, position, strings);
 				return;
@@ -265,12 +266,34 @@ public class HighlightDrawer {
 		}
 	}
 
+	private boolean tryToDrawDrag(final Graphics g, final MouseButtonPressData leftPressPosition) {
+		if (leftPressPosition == null) {
+			return false;
+		}
+
+		if (leftPressPosition.highlight.type == BEAT) {
+			if (modeManager.editMode != EditMode.TEMPO_MAP) {
+				return false;
+			}
+
+			final DragTypeDrawer drawer = dragDrawers.get(leftPressPosition.highlight.type);
+			drawer.drawDrag(g, leftPressPosition.highlight, mouseHandler.getMouseX());
+			return true;
+		}
+
+		if (abs(leftPressPosition.position.x - mouseHandler.getMouseX()) > 5) {
+			final DragTypeDrawer drawer = dragDrawers.get(leftPressPosition.highlight.type);
+			drawer.drawDrag(g, leftPressPosition.highlight, mouseHandler.getMouseX());
+			return true;
+		}
+
+		return false;
+	}
+
 	public void draw(final Graphics g) {
 		final MouseButtonPressData leftPressPosition = mouseButtonPressReleaseHandler
 				.getPressPosition(MouseButton.LEFT_BUTTON);
-		if (leftPressPosition != null && abs(leftPressPosition.position.x - mouseHandler.getMouseX()) > 5) {
-			final DragTypeDrawer drawer = dragDrawers.get(leftPressPosition.highlight.type);
-			drawer.drawDrag(g, leftPressPosition.highlight, mouseHandler.getMouseX());
+		if (tryToDrawDrag(g, leftPressPosition)) {
 			return;
 		}
 

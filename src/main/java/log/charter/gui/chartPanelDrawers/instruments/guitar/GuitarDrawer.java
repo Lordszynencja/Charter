@@ -128,7 +128,7 @@ public class GuitarDrawer {
 			return true;
 		}
 
-		final ChordTemplate chordTemplate = arrangement.chordTemplates.get(chord.chordId);
+		final ChordTemplate chordTemplate = arrangement.chordTemplates.get(chord.templateId());
 		highwayDrawer.addChord(chord, chordTemplate, x, length, selected, lastWasLinkNext, keyboardHandler.ctrl());
 		return true;
 	}
@@ -174,7 +174,7 @@ public class GuitarDrawer {
 			final boolean selected = selectedNoteIds.contains(i);
 			addChordOrNote(highwayDrawer, arrangement, panelWidth, chordOrNote, selected, lastWasLinkNext);
 
-			lastWasLinkNext = chordOrNote.chord != null ? chordOrNote.chord.linkNext : chordOrNote.note.linkNext;
+			lastWasLinkNext = chordOrNote.chord != null ? chordOrNote.chord.linkNext() : chordOrNote.note.linkNext;
 		}
 	}
 
@@ -195,8 +195,8 @@ public class GuitarDrawer {
 			}
 
 			final ChordTemplate chordTemplate;
-			if (handShape.chordId >= 0 && arrangement.chordTemplates.size() > handShape.chordId) {
-				chordTemplate = arrangement.chordTemplates.get(handShape.chordId);
+			if (handShape.templateId >= 0 && arrangement.chordTemplates.size() > handShape.templateId) {
+				chordTemplate = arrangement.chordTemplates.get(handShape.templateId);
 			} else {
 				chordTemplate = new ChordTemplate();
 			}

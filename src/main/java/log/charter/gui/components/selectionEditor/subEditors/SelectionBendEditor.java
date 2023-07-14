@@ -87,7 +87,7 @@ public class SelectionBendEditor extends RowedPanel {
 	private void onSelectString(final int string) {
 		final ChordOrNote sound = getCurrentlySelectedSound();
 		if (sound.isChord()) {
-			bendEditorGraph.setBendValues(string, sound.chord.bendValues.get(string));
+			bendEditorGraph.setBendValues(string, sound.chord.chordNotes.get(string).bendValues);
 		}
 	}
 
@@ -133,7 +133,7 @@ public class SelectionBendEditor extends RowedPanel {
 	}
 
 	private void enableAndSelectStringsForChord(final Chord chord) {
-		final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.chordId);
+		final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
 		final int string = chordTemplate.frets.keySet().stream().min(Integer::compare).get();
 
 		final boolean[] stringsForAction = new boolean[data.currentStrings()];
@@ -148,6 +148,13 @@ public class SelectionBendEditor extends RowedPanel {
 		}
 		doActionOnStringButtons(stringsForAction, button -> {
 			button.setEnabled(true);
+		});
+
+		for (int i = 0; i < stringsForAction.length; i++) {
+			stringsForAction[i] = !stringsForAction[i];
+		}
+		doActionOnStringButtons(stringsForAction, button -> {
+			button.setEnabled(false);
 		});
 
 		bendEditorGraph.setChord(chord, string, data.currentStrings());
@@ -186,7 +193,7 @@ public class SelectionBendEditor extends RowedPanel {
 		if (sound.isNote()) {
 			sound.note.bendValues = newBends;
 		} else {
-			sound.chord.bendValues.put(string, newBends);
+			sound.chord.chordNotes.get(string).bendValues = newBends;
 		}
 	}
 }

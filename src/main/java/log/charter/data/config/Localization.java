@@ -11,9 +11,10 @@ public class Localization {
 	public enum Label {
 		ARRANGEMENT_MENU("Arrangement"), //
 		ARRANGEMENT_MENU_OPTIONS("Arrangement options"), //
-		ARRANGEMENT_MENU_TOGGLE_WAVEFORM("Toggle waveform drawing"), //
+		ARRANGEMENT_MENU_TOGGLE_MIDI_NOTES("Toggle midi notes"), //
 		ARRANGEMENT_MENU_TOGGLE_CLAPS("Toggle claps on note"), //
 		ARRANGEMENT_MENU_TOGGLE_METRONOME("Toggle metronome"), //
+		ARRANGEMENT_MENU_TOGGLE_WAVEFORM("Toggle waveform drawing"), //
 
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
@@ -24,12 +25,14 @@ public class Localization {
 		CONFIG_MINIMAL_NOTE_DISTANCE("Minimal note distance (ms)"), //
 		CONFIG_MINIMAL_TAIL_LENGTH("Minimal note tail length (ms)"), //
 		CONFIG_SOUND_DELAY("Sound delay (ms)"), //
+		CONFIG_MIDI_DELAY("Midi sound delay (ms)"), //
 		CONFIG_MARKER_POSITION("Marker position (px)"), //
 		CONFIG_NOTE_WIDTH("Note width (px)"), //
 		CONFIG_NOTE_HEIGHT("Note height (px)"), //
 		CONFIG_INVERT_STRINGS("Invert strings"), //
 		CONFIG_LEFT_HANDED("Left handed"), //
 		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
+		CONFIG_SHOW_GRID("Show grid"), //
 		CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
 		CONFIG_FPS("FPS"), //
 		CONFIG_MAX_STRINGS("Max strings"), //
@@ -169,6 +172,7 @@ public class Localization {
 		FILE_MENU_IMPORT("Import"), //
 		FILE_MENU_IMPORT_RS_GUITAR("RS guitar arrangement XML"), //
 		FILE_MENU_IMPORT_RS_VOCALS("RS vocals arrangement XML"), //
+		FILE_MENU_IMPORT_GP("Guitar Pro file"), //
 		FILE_MENU_SAVE("Save"), //
 		FILE_MENU_SAVE_AS("Save as..."), //
 		FILE_MENU_OPTIONS("Options"), //
@@ -312,6 +316,7 @@ public class Localization {
 
 		ACCENT("Accent"), //
 		LINK_NEXT("Link next"), //
+		SPLIT_INTO_NOTES("Split"), //
 		IGNORE_NOTE("Ignore"), //
 		VIBRATO("Vibrato"), //
 		TREMOLO("Tremolo"), //
@@ -341,6 +346,7 @@ public class Localization {
 		EXIT_POPUP("Exit"), //
 		EXIT_MESSAGE("Are you sure you want to exit?"), //
 		FOLDER_EXISTS_CHOOSE_DIFFERENT("Given folder already exists, choose different name"), //
+		GP_FILE("GP file (.gp3, .gp4, .gp5)"), //
 		LOADING("Please wait, loading..."), //
 		LOADING_ARRANGEMENTS("Loading arrangements"), //
 		LOADING_DONE("Loading done"), //

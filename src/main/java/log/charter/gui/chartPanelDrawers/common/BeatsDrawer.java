@@ -17,6 +17,8 @@ import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.Font;
 import java.awt.Graphics;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -45,6 +47,8 @@ import log.charter.util.Position2D;
 import log.charter.util.grid.GridPosition;
 
 public class BeatsDrawer {
+	private static final NumberFormat bpmFormat = new DecimalFormat("##0.0");
+
 	private static class BeatsDrawingData {
 		private final DrawableShapeList beats = new DrawableShapeList();
 		private final DrawableShapeList sectionsAndPhrases = new DrawableShapeList();
@@ -54,16 +58,21 @@ public class BeatsDrawer {
 			beats.add(lineVertical(x, beatTextY, lanesBottom, color));
 
 			if (beat.anchor) {
-				final Position2D leftCorner = new Position2D(x - 3, beatTextY);
-				final Position2D rightCorner = new Position2D(x + 4, beatTextY);
-				final Position2D bottomCorner = new Position2D(x, beatTextY + 3);
+				final Position2D leftCorner = new Position2D(x - 4, beatTextY);
+				final Position2D rightCorner = new Position2D(x + 5, beatTextY);
+				final Position2D bottomCorner = new Position2D(x, beatTextY + 4);
 				beats.add(filledTriangle(leftCorner, rightCorner, bottomCorner, color));
 			}
 		}
 
-		private void addBeatMeasureNumber(final int x, final int id) {
-			final String text = "" + (id + 1);
+		private void addBeatMeasureNumber(final int x, final int id, final String bpmValue) {
+			final String text = "" + (id + 1) + " (" + bpmValue + " BPM)";
 			beats.add(text(new Position2D(x + 3, beatTextY + 11), text, ColorLabel.MAIN_BEAT));
+		}
+
+		private void addBPMNumber(final int x, final String bpmValue) {
+			final String text = "(" + bpmValue + " BPM)";
+			beats.add(text(new Position2D(x + 3, beatTextY + 11), text, ColorLabel.SECONDARY_BEAT));
 		}
 
 		private void addMeasureChange(final int x, final Beat beat) {
@@ -78,17 +87,19 @@ public class BeatsDrawer {
 			beats.add(strokedRectangle(beatPosition, ColorLabel.SELECT));
 		}
 
-		public void addBeat(final Beat beat, final int x, final int id, final Beat previousBeat,
+		public void addBeat(final Beat beat, final int x, final int id, final Beat previousBeat, final double bpm,
 				final boolean selected) {
 			addBeatLine(x, beat);
 
 			if (beat.firstInMeasure) {
-				addBeatMeasureNumber(x, id);
+				addBeatMeasureNumber(x, id, bpmFormat.format(bpm));
+			} else if (beat.anchor) {
+				addBPMNumber(x, bpmFormat.format(bpm));
 			}
+
 			if (previousBeat == null || beat.beatsInMeasure != previousBeat.beatsInMeasure) {
 				addMeasureChange(x, beat);
 			}
-
 			if (selected) {
 				addSelect(x);
 			}
@@ -140,6 +151,22 @@ public class BeatsDrawer {
 		this.selectionManager = selectionManager;
 	}
 
+	private double findBPM(final Beat beat, final int beatId) {
+		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
+
+		int nextAnchorId = beats.size() - 1;
+		for (int i = beatId + 1; i < beats.size(); i++) {
+			if (beats.get(i).anchor) {
+				nextAnchorId = i;
+				break;
+			}
+		}
+
+		final Beat nextAnchor = beats.get(nextAnchorId);
+
+		return 60_000.0 / (nextAnchor.position() - beat.position()) * (nextAnchorId - beatId);
+	}
+
 	private void addBeats(final BeatsDrawingData drawingData) {
 		final List<Beat> beats = data.songChart.beatsMap.beats;
 		final HashSet2<Integer> selectedBeatIds = selectionManager.getSelectedAccessor(PositionType.BEAT)//
@@ -153,6 +180,7 @@ public class BeatsDrawer {
 			}
 		}
 
+		double bpm = 120;
 		for (int i = 0; i < beats.size(); i++) {
 			final Beat beat = beats.get(i);
 			final int x = timeToX(beat.position(), data.time);
@@ -164,7 +192,10 @@ public class BeatsDrawer {
 			}
 
 			final boolean selected = selectedBeatIds.contains(i);
-			drawingData.addBeat(beat, x, i, i > 0 ? beats.get(i - 1) : null, selected);
+			if (i == 0 || ((beat.firstInMeasure || beat.anchor) && i < beats.size() - 1)) {
+				bpm = findBPM(beat, i);
+			}
+			drawingData.addBeat(beat, x, i, i > 0 ? beats.get(i - 1) : null, bpm, selected);
 		}
 	}
 

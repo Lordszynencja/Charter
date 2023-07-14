@@ -2,6 +2,8 @@ package log.charter.song.notes;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+import log.charter.song.ChordTemplate;
+
 @XStreamAlias("sound")
 public class ChordOrNote implements IPositionWithLength {
 	public Chord chord;
@@ -54,4 +56,13 @@ public class ChordOrNote implements IPositionWithLength {
 		asGuitarSound().length(newLength);
 	}
 
+	public void turnToNote(final ChordTemplate chordTemplate) {
+		note = new Note(chord, chordTemplate);
+		chord = null;
+	}
+
+	public void turnToChord(final int chordId, final ChordTemplate chordTemplate) {
+		chord = new Chord(chordId, note, chordTemplate);
+		note = null;
+	}
 }

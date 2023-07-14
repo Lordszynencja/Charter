@@ -3,6 +3,7 @@ package log.charter.song.notes;
 import static java.lang.Math.max;
 import static log.charter.data.config.Config.minNoteDistance;
 
+import java.util.Collection;
 import java.util.List;
 
 import log.charter.data.managers.selection.Selection;
@@ -10,6 +11,28 @@ import log.charter.song.BeatsMap;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public interface IPositionWithLength extends IPosition {
+	public static class EndPosition implements IPosition {
+		private final IPositionWithLength position;
+
+		public EndPosition(final IPositionWithLength position) {
+			this.position = position;
+		}
+
+		@Override
+		public int position() {
+			return position.endPosition();
+		}
+
+		@Override
+		public void position(final int newPosition) {
+			position.endPosition(newPosition);
+		}
+	}
+
+	public static List<IPosition> getAsEndPositions(final Collection<? extends IPositionWithLength> positions) {
+		return positions.stream().map(IPositionWithLength::asEndPosition).toList();
+	}
+
 	public static <PwL extends IPositionWithLength, P extends IPosition> void changePositionsWithLengthsLength(
 			final BeatsMap beatsMap, final ArrayList2<Selection<PwL>> toChange, final ArrayList2<P> allPositions,
 			final int change) {
@@ -35,13 +58,15 @@ public interface IPositionWithLength extends IPosition {
 			final ArrayList2<ChordOrNote> allPositions, final int change, final boolean cutBeforeNext) {
 		for (final Selection<ChordOrNote> selected : toChange) {
 			final GuitarSound sound = selected.selectable.asGuitarSound();
+			final boolean linkNext = selected.selectable.isChord() ? selected.selectable.chord.linkNext()
+					: selected.selectable.note.linkNext;
 			int endPosition = sound.endPosition();
 			endPosition = change > 0 ? beatsMap.getPositionWithAddedGrid(endPosition, change)
 					: beatsMap.getPositionWithRemovedGrid(endPosition, -change);
 
-			if ((sound.linkNext || cutBeforeNext) && allPositions.size() > selected.id + 1) {
+			if ((linkNext || cutBeforeNext) && allPositions.size() > selected.id + 1) {
 				final IPosition next = allPositions.get(selected.id + 1);
-				if (sound.linkNext) {
+				if (linkNext) {
 					endPosition = next.position();
 				} else {
 					if (next.position() - endPosition < minNoteDistance) {
@@ -107,5 +132,13 @@ public interface IPositionWithLength extends IPosition {
 
 	default int endPosition() {
 		return position() + length();
+	}
+
+	default void endPosition(final int newEndPosition) {
+		length(newEndPosition - position());
+	}
+
+	default IPosition asEndPosition() {
+		return new EndPosition(this);
 	}
 }

@@ -82,6 +82,7 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 		}
 
 		menu.addSeparator();
+		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_MIDI_NOTES, "F2", audioHandler::toggleMidiNotes));
 		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_CLAPS, "F3", audioHandler::toggleClaps));
 		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_METRONOME, "F4", audioHandler::toggleMetronome));
 		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_WAVEFORM, "F5", audioDrawer::toggle));
