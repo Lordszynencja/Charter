@@ -17,7 +17,6 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosit
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTopStringYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.visibility;
-import static log.charter.song.notes.IPosition.findFirstAfterEqual;
 import static log.charter.song.notes.IPosition.findLastBeforeEqual;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
@@ -26,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.lwjgl.opengl.GL30;
 
@@ -43,11 +41,11 @@ import log.charter.gui.components.preview3D.shapes.OpenNoteModel;
 import log.charter.song.Anchor;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
-import log.charter.song.HandShape;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.Chord.ChordNotesVisibility;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
 import log.charter.song.notes.IPositionWithLength;
@@ -411,30 +409,15 @@ public class Preview3DGuitarSoundsDrawer {
 		drawNote(baseShader, noteData, false, sound.note.string < data.currentStrings() / 2);
 	}
 
-	private boolean isFirstChordInTheHandShape(final Chord chord) {
-		final HandShape chordHandShape = findLastBeforeEqual(data.getCurrentArrangementLevel().handShapes,
-				chord.position());
-		chord.chordNotesVisibility(false);
-		if (chordHandShape == null || chordHandShape.templateId != chord.templateId()
-				|| chordHandShape.endPosition() < chord.position()) {
-			return true;
-		}
-
-		final ArrayList2<Chord> chords = data.getCurrentArrangementLevel().chordsAndNotes.stream()//
-				.filter(s -> s.isChord() && s.chord.templateId() == chordHandShape.templateId)//
-				.map(s -> s.chord)//
-				.collect(Collectors.toCollection(ArrayList2::new));
-		final Chord firstInHandShape = findFirstAfterEqual(chords, chordHandShape.position());
-		return firstInHandShape.position() == chord.position();
-	}
-
-	private void drawChord(final BaseShader baseShader, final ChordOrNote sound, final boolean lastWasLinkNext) {
+	private void drawChord(final BaseShader baseShader, final int soundId, final ChordOrNote sound,
+			final boolean lastWasLinkNext) {
 		final Chord chord = sound.chord;
-		final boolean chordNotesDrawn = isFirstChordInTheHandShape(chord);
+		final boolean chordNotesDrawn = chord.chordNotesVisibility(
+				data.getCurrentArrangementLevel().shouldChordShowNotes(soundId)) != ChordNotesVisibility.NONE;
 		if (chordNotesDrawn) {
 			final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
-			final ArrayList2<NoteData> notes = NoteData.fromChord(chord, chordTemplate, 0, sound.chord.length(), false,
-					lastWasLinkNext, false);
+			final ArrayList2<NoteData> notes = NoteData.fromChord(chord, chordTemplate, 0, false, lastWasLinkNext,
+					false);
 			final Pair<Optional<Integer>, Optional<Integer>> furthestStrings = notes.stream().map(note -> note.string)//
 					.collect(teeing(maxBy(Integer::compareTo), minBy(Integer::compareTo), Pair::new));
 			final int minString = furthestStrings.b.orElse(0);
@@ -465,12 +448,17 @@ public class Preview3DGuitarSoundsDrawer {
 
 		for (int i = soundsTo; i >= soundsFrom; i--) {
 			final ChordOrNote sound = sounds.get(i);
-			final boolean lastWasLinkNext = i > 0 && sounds.get(i - 1).asGuitarSound().linkNext();
+
+			boolean lastWasLinkNext = false;
+			if (i > 0) {
+				final ChordOrNote previousSound = sounds.get(i - 1);
+				lastWasLinkNext = previousSound.isNote() ? previousSound.note.linkNext : previousSound.chord.linkNext();
+			}
 
 			if (sound.isNote()) {
 				drawSingleNote(baseShader, sound, lastWasLinkNext);
 			} else {
-				drawChord(baseShader, sound, lastWasLinkNext);
+				drawChord(baseShader, i, sound, lastWasLinkNext);
 			}
 		}
 	}

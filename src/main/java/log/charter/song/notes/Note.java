@@ -77,9 +77,4 @@ public class Note extends GuitarSound {
 		unpitchedSlide = chordNote.unpitchedSlide;
 		bendValues = chordNote.bendValues.map(BendValue::new);
 	}
-
-	@Override
-	public boolean linkNext() {
-		return linkNext;
-	}
 }

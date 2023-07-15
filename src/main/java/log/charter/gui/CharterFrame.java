@@ -347,8 +347,8 @@ public class CharterFrame extends JFrame {
 		return JOptionPane.showInputDialog(this, msg, value);
 	}
 
-	public void selectionChanged() {
-		currentSelectionEditor.selectionChanged();
+	public void selectionChanged(final boolean stringsCouldChange) {
+		currentSelectionEditor.selectionChanged(stringsCouldChange);
 	}
 
 	private void updateTitle() {

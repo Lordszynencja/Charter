@@ -12,9 +12,10 @@ import log.charter.song.notes.ChordNote;
 
 @XStreamAlias("chordNote")
 public class ArrangementChordNote extends ArrangementNote {
-	public ArrangementChordNote(final int time, final int string, final int fret, final ChordNote chordNote,
-			final boolean ignore) {
+	public ArrangementChordNote(final int time, final int length, final int string, final int fret,
+			final ChordNote chordNote, final boolean ignore) {
 		this.time = time;
+		sustain = length;
 		this.string = string;
 		this.fret = fret;
 

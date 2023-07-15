@@ -152,7 +152,6 @@ public class ChordTemplateEditor implements MouseListener {
 		}
 
 		chordTemplatePreview.changeStringsAmount();
-
 		chordTemplatePreview.repaint();
 	}
 

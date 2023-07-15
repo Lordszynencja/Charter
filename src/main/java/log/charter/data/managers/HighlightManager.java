@@ -150,14 +150,17 @@ public class HighlightManager {
 	public PositionWithIdAndType getHighlight(final int x, final int y) {
 		final PositionType positionType = PositionType.fromY(y, modeManager.editMode);
 
-		int position = xToTime(x, data.time);
-		position = snapPosition(positionType, position);
-		position = max(0, min(data.songChart.beatsMap.beats.getLast().position(), position));
-
 		final PositionWithIdAndType existingPosition = selectionManager.findExistingPosition(x, y);
 		if (existingPosition != null) {
 			return existingPosition;
 		}
+		int position = xToTime(x, data.time);
+		if (positionType == PositionType.BEAT) {
+			return PositionWithIdAndType.create(position, positionType);
+		}
+
+		position = snapPosition(positionType, position);
+		position = max(0, min(data.songChart.beatsMap.beats.getLast().position(), position));
 
 		final PositionWithIdAndType existingPositionCloseToGrid = selectionManager
 				.findExistingPosition(timeToX(position, data.time), y);

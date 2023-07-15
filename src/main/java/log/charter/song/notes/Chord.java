@@ -143,17 +143,6 @@ public class Chord extends GuitarSound {
 		return true;
 	}
 
-	@Override
-	public boolean linkNext() {
-		for (final ChordNote chordNote : chordNotes.values()) {
-			if (chordNote.linkNext) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	public Integer slideTo() {
 		Integer slideTo = null;
 		for (final Entry<Integer, ChordNote> chordNote : chordNotes.entrySet()) {
@@ -178,7 +167,7 @@ public class Chord extends GuitarSound {
 		final Mute mute = chordNotesValue(n -> n.mute, Mute.NONE);
 		final HOPO hopo = chordNotesValue(n -> n.hopo, HOPO.NONE);
 		final int length = length();
-		final boolean linkNext = linkNext();
+		final boolean linkNext = chordNotesValue(n -> n.linkNext, false);
 		final boolean tremolo = chordNotesValue(n -> n.tremolo, false);
 		final boolean vibrato = chordNotesValue(n -> n.vibrato, false);
 
@@ -207,14 +196,13 @@ public class Chord extends GuitarSound {
 		if (splitIntoNotes) {
 			return ChordNotesVisibility.NOTES;
 		}
-
 		if (fullyMuted()) {
 			return ChordNotesVisibility.NONE;
 		}
 
 		for (final ChordNote chordNote : chordNotes.values()) {
 			if (chordNote.linkNext || chordNote.slideTo != null || chordNote.tremolo || chordNote.vibrato
-					|| !chordNote.bendValues.isEmpty()) {
+					|| !chordNote.bendValues.isEmpty() || chordNote.length > 0) {
 				return ChordNotesVisibility.TAILS;
 			}
 		}
@@ -234,6 +222,20 @@ public class Chord extends GuitarSound {
 		}
 
 		return (forceAddNotes && !fullyMuted()) ? ChordNotesVisibility.NOTES : ChordNotesVisibility.NONE;
+	}
+
+	@Override
+	public int length() {
+		return chordNotes.values().stream().map(n -> n.length).collect(Collectors.maxBy(Integer::compareTo)).orElse(0);
+	}
+
+	@Override
+	public void length(final int newLength) {
+		throw new UnsupportedOperationException("Chords need to have specific chord notes' lengths changed!");
+	}
+
+	public boolean linkNext() {
+		return chordNotes.values().stream().anyMatch(n -> n.linkNext);
 	}
 
 }

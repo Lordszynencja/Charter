@@ -16,7 +16,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 public class NoteData {
 	public static ArrayList2<NoteData> fromChord(final Chord chord, final ChordTemplate chordTemplate, final int x,
-			final int length, final boolean selected, final boolean lastWasLinkNext, final boolean ctrl) {
+			final boolean selected, final boolean lastWasLinkNext, final boolean ctrl) {
 		final ArrayList2<NoteData> notes = new ArrayList2<>();
 
 		for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
@@ -25,6 +25,7 @@ public class NoteData {
 			final Integer finger = chordTemplate.fingers.get(string);
 			final String fretDescription = fret
 					+ (ctrl && finger != null ? "(" + (finger == 0 ? "T" : finger.toString()) + ")" : "");
+			final int length = chordNoteEntry.getValue().length;
 
 			notes.add(new NoteData(x, length, string, fret, fretDescription, chord, chordNoteEntry.getValue(), selected,
 					lastWasLinkNext));

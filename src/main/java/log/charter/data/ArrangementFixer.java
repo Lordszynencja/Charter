@@ -2,6 +2,8 @@ package log.charter.data;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.data.config.Config.minNoteDistance;
+import static log.charter.song.notes.ChordOrNote.findNextSoundOnString;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import log.charter.song.PhraseIteration;
 import log.charter.song.SectionType;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.CommonNote;
 import log.charter.song.notes.IPosition;
 import log.charter.song.notes.IPositionWithLength;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -92,18 +95,58 @@ public class ArrangementFixer {
 		}
 	}
 
-	private void fixLinkedNotes(final ArrayList2<ChordOrNote> sounds) {
-		for (int i = 0; i < sounds.size() - 1; i++) {
-			final ChordOrNote sound = sounds.get(i);
-			if (!sound.asGuitarSound().linkNext()) {
-				continue;
-			}
+	private static void fixLinkedNote(final CommonNote note, final int id, final ArrayList2<ChordOrNote> sounds) {
+		if (!note.linkNext()) {
+			return;
+		}
 
-			final ChordOrNote nextSound = sounds.get(i + 1);
-			if (nextSound.isChord()) {
-				nextSound.chord.splitIntoNotes = true;
+		final ChordOrNote nextSound = findNextSoundOnString(note.string(), id + 1, sounds);
+		if (nextSound == null) {
+			return;
+		}
+
+		if (nextSound.isChord()) {
+			nextSound.chord.splitIntoNotes = true;
+		}
+
+		note.length(nextSound.position() - note.position() - 1);
+	}
+
+	public static void fixNoteLength(final CommonNote note, final int id, final ArrayList2<ChordOrNote> sounds) {
+		if (note.linkNext()) {
+			fixLinkedNote(note, id, sounds);
+			return;
+		}
+
+		int endPosition = note.endPosition();
+
+		if (note.passOtherNotes()) {
+			final ChordOrNote nextSoundOnString = ChordOrNote.findNextSoundOnString(note.string(), id + 1, sounds);
+			if (nextSoundOnString != null) {
+				endPosition = min(endPosition, nextSoundOnString.position() - minNoteDistance);
 			}
-			sound.length(nextSound.position() - sound.position());
+		} else if (id + 1 < sounds.size()) {
+			final IPosition next = sounds.get(id + 1);
+			endPosition = min(endPosition, next.position() - minNoteDistance);
+		}
+
+		note.endPosition(max(note.position(), endPosition));
+	}
+
+	public static void fixSoundLength(final int id, final ArrayList2<ChordOrNote> sounds) {
+		final ChordOrNote sound = sounds.get(id);
+		if (sound.isNote()) {
+			fixNoteLength(CommonNote.create(sound.note), id, sounds);
+		} else {
+			sound.chord.chordNotes.forEach((string, chordNote) -> {
+				fixNoteLength(CommonNote.create(sound.chord, string, chordNote), id, sounds);
+			});
+		}
+	}
+
+	private void fixNoteLengths(final ArrayList2<ChordOrNote> sounds) {
+		for (int i = 0; i < sounds.size(); i++) {
+			fixSoundLength(i, sounds);
 		}
 	}
 
@@ -135,7 +178,7 @@ public class ArrangementFixer {
 		addMissingAnchors(arrangement, level);
 		addMissingHandShapes(level);
 
-		fixLinkedNotes(level.chordsAndNotes);
+		fixNoteLengths(level.chordsAndNotes);
 
 		fixLengths(level.handShapes);
 	}

@@ -2,12 +2,13 @@ package log.charter.data.managers.modes;
 
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
 import static log.charter.song.notes.IPosition.findClosestId;
+import static log.charter.song.notes.IPosition.findLastIdBefore;
 import static log.charter.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
 
 import java.util.stream.Collectors;
 
+import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.PositionWithStringOrNoteId;
 import log.charter.data.managers.selection.SelectionAccessor;
@@ -28,13 +29,13 @@ import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.GuitarSound;
-import log.charter.song.notes.IPosition;
 import log.charter.song.notes.IPositionWithLength;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class GuitarModeHandler extends ModeHandler {
+	private static final long scrollTimeoutForUndo = 1000;
+
 	private CurrentSelectionEditor currentSelectionEditor;
 	private ChartData data;
 	private CharterFrame frame;
@@ -43,7 +44,7 @@ public class GuitarModeHandler extends ModeHandler {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	private int lastUndoIdForScroll = -1;
+	private long lastScrollTime = -scrollTimeoutForUndo;
 
 	public void init(final CurrentSelectionEditor currentSelectionEditor, final ChartData data,
 			final CharterFrame frame, final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
@@ -139,16 +140,9 @@ public class GuitarModeHandler extends ModeHandler {
 		sounds.add(new ChordOrNote(note));
 		sounds.sort(null);
 
-		final ChordOrNote previous = IPosition.findLastBefore(sounds, note.position());
-		if (previous != null) {
-			final GuitarSound previousSound = previous.asGuitarSound();
-			if (previousSound.linkNext()) {
-				if (previousSound.endPosition() > note.position()) {
-					previousSound.length(note.position() - previousSound.position());
-				}
-			} else if (previousSound.endPosition() > note.position() - Config.minNoteDistance) {
-				previousSound.length(note.position() - Config.minNoteDistance - previousSound.position());
-			}
+		final int previousId = findLastIdBefore(sounds, note.position());
+		if (previousId != -1) {
+			ArrangementFixer.fixSoundLength(previousId, sounds);
 		}
 
 		selectionManager.addSoundSelection(findClosestId(sounds, note));
@@ -298,7 +292,7 @@ public class GuitarModeHandler extends ModeHandler {
 	private void changeNotesLength(final int change) {
 		final SelectionAccessor<ChordOrNote> selectedNotes = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		IPositionWithLength.changeNotesLength(data.songChart.beatsMap, selectedNotes.getSortedSelected(),
+		IPositionWithLength.changeSoundsLength(data.songChart.beatsMap, selectedNotes.getSortedSelected(),
 				data.getCurrentArrangementLevel().chordsAndNotes, change, !keyboardHandler.alt(),
 				currentSelectionEditor.getSelectedStrings());
 	}
@@ -316,14 +310,14 @@ public class GuitarModeHandler extends ModeHandler {
 			change *= 4;
 		}
 
-		if (undoSystem.getLastUndoId() != lastUndoIdForScroll || lastUndoIdForScroll == -1) {
+		if (System.currentTimeMillis() - lastScrollTime > scrollTimeoutForUndo) {
 			undoSystem.addUndo();
-			lastUndoIdForScroll = undoSystem.getLastUndoId();
 		}
 
 		changeNotesLength(change);
 		changeHandShapesLength(change);
 
-		frame.selectionChanged();
+		frame.selectionChanged(false);
+		lastScrollTime = System.currentTimeMillis();
 	}
 }

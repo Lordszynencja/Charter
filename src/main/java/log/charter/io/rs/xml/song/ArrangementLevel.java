@@ -1,13 +1,10 @@
 package log.charter.io.rs.xml.song;
 
-import static log.charter.song.notes.IPosition.findLastBeforeEqual;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.song.ChordTemplate;
-import log.charter.song.HandShape;
 import log.charter.song.Level;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
@@ -41,17 +38,17 @@ public class ArrangementLevel {
 	private ArrangementLevel(final int difficulty, final Level level, final ArrayList2<ChordTemplate> chordTemplates) {
 		this.difficulty = difficulty;
 
-		setChordsAndNotes(chordTemplates, level.chordsAndNotes, level.handShapes);
+		setChordsAndNotes(level, chordTemplates);
 
 		fretHandMutes = new CountedList<>();
 		anchors = new CountedList<>(level.anchors.map(ArrangementAnchor::new));
 		handShapes = new CountedList<ArrangementHandShape>(level.handShapes.map(ArrangementHandShape::new));
 	}
 
-	private void setChordsAndNotes(final ArrayList2<ChordTemplate> chordTemplates,
-			final ArrayList2<ChordOrNote> chordsAndNotes, final ArrayList2<HandShape> handShapes) {
+	private void setChordsAndNotes(final Level level, final ArrayList2<ChordTemplate> chordTemplates) {
 		notes = new CountedList<>();
 		chords = new CountedList<>();
+		final ArrayList2<ChordOrNote> chordsAndNotes = level.chordsAndNotes;
 
 		for (int i = 0; i < chordsAndNotes.size(); i++) {
 			final ChordOrNote sound = chordsAndNotes.get(i);
@@ -62,11 +59,7 @@ public class ArrangementLevel {
 
 			final Chord chord = sound.chord;
 			final ChordTemplate chordTemplate = chordTemplates.get(chord.templateId());
-			final HandShape handShape = findLastBeforeEqual(handShapes, chord.position());
-			final boolean forceAddNotes = handShape != null//
-					&& (i == 0//
-							|| handShape.templateId != chord.templateId()//
-							|| (chordsAndNotes.get(i - 1).position() > handShape.position()));
+			final boolean forceAddNotes = level.shouldChordShowNotes(i);
 			final int nextPosition = i + 1 < chordsAndNotes.size() ? chordsAndNotes.get(i + 1).position()
 					: chord.position() + 100;
 			final ArrangementChord arrangementChord = new ArrangementChord(chord, chordTemplate, nextPosition,

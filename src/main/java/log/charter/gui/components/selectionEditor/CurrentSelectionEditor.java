@@ -115,7 +115,7 @@ public class CurrentSelectionEditor extends RowedPanel {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void selectionChanged() {
+	public void selectionChanged(final boolean stringsCouldChange) {
 		final SelectionAccessor<IPosition> selected = selectionManager.getCurrentlySelectedAccessor();
 		if (selected == null || !selected.isSelected()) {
 			hideAllfieldsExcept(NONE);
@@ -129,7 +129,7 @@ public class CurrentSelectionEditor extends RowedPanel {
 		}
 		if (selected.type == GUITAR_NOTE) {
 			final SelectionAccessor<ChordOrNote> selectedChordsOrNotesAccessor = (SelectionAccessor<ChordOrNote>) (SelectionAccessor<?>) selected;
-			guitarSoundSelectionEditor.selectionChanged(selectedChordsOrNotesAccessor);
+			guitarSoundSelectionEditor.selectionChanged(selectedChordsOrNotesAccessor, stringsCouldChange);
 		}
 		if (selected.type == HAND_SHAPE) {
 			final SelectionAccessor<HandShape> selectedAnchorsAccessor = (SelectionAccessor<HandShape>) (SelectionAccessor<?>) selected;

@@ -108,7 +108,7 @@ public class SelectionManager {
 		return closest;
 	}
 
-	private PositionWithIdAndType findExistingPoint(final int x, final ArrayList2<PositionWithIdAndType> positions) {
+	private PositionWithIdAndType findClosestExistingPoint(final int x, final ArrayList2<PositionWithIdAndType> positions) {
 		final int position = xToTime(x, data.time);
 		final Integer id = findClosestId(positions, position);
 		if (id == null) {
@@ -131,7 +131,7 @@ public class SelectionManager {
 			return findExistingLong(x, positions);
 		}
 
-		return findExistingPoint(x, positions);
+		return findClosestExistingPoint(x, positions);
 	}
 
 	public void click(final MouseButtonPressReleaseData clickData, final boolean ctrl, final boolean shift) {
@@ -144,7 +144,7 @@ public class SelectionManager {
 				clearSelectionsExcept(PositionType.NONE);
 			}
 
-			frame.selectionChanged();
+			frame.selectionChanged(true);
 			return;
 		}
 
@@ -152,18 +152,18 @@ public class SelectionManager {
 
 		final TypeSelectionManager<?> manager = typeSelectionManagers.get(clickData.pressHighlight.type);
 		if (manager == null) {
-			frame.selectionChanged();
+			frame.selectionChanged(true);
 			return;
 		}
 
 		manager.addSelection(clickData.pressHighlight, clickData.pressPosition.x, clickData.pressPosition.y, ctrl,
 				shift);
-		frame.selectionChanged();
+		frame.selectionChanged(true);
 	}
 
 	public void clear() {
 		clearSelectionsExcept(PositionType.NONE);
-		frame.selectionChanged();
+		frame.selectionChanged(true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -200,17 +200,17 @@ public class SelectionManager {
 			vocalsManager.addAll();
 		}
 
-		frame.selectionChanged();
+		frame.selectionChanged(true);
 	}
 
 	public void addSoundSelection(final int id) {
 		chordsNotesManager.add(id);
-		frame.selectionChanged();
+		frame.selectionChanged(true);
 	}
 
 	public void addSoundSelection(final ArrayList2<Integer> ids) {
 		chordsNotesManager.add(ids);
-		frame.selectionChanged();
+		frame.selectionChanged(true);
 	}
 
 }

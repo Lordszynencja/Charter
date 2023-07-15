@@ -54,11 +54,7 @@ public class ArrangementChord implements IPosition {
 			setUpMute(chord);
 		} else {
 			populateChordNotes(chordTemplate, chord);
-			if (chordNotesVisibility == ChordNotesVisibility.TAILS) {
-				setChordNoteLengths(chord.length());
-			}
 		}
-
 	}
 
 	private void setUpMute(final Chord chord) {
@@ -67,12 +63,6 @@ public class ArrangementChord implements IPosition {
 			fretHandMute = 1;
 		} else if (mute == Mute.PALM) {
 			palmMute = 1;
-		}
-	}
-
-	private void setChordNoteLengths(final int length) {
-		for (final ArrangementNote chordNote : chordNotes) {
-			chordNote.sustain = length;
 		}
 	}
 
@@ -101,8 +91,8 @@ public class ArrangementChord implements IPosition {
 			final int fret = chordFret.getValue();
 
 			final ChordNote chordNote = chord.chordNotes.get(string);
-			final ArrangementChordNote arrangementChordNote = new ArrangementChordNote(time, string, fret, chordNote,
-					chord.ignore);
+			final ArrangementChordNote arrangementChordNote = new ArrangementChordNote(time, chordNote.length, string,
+					fret, chordNote, chord.ignore);
 
 			chordNotes.add(arrangementChordNote);
 		}

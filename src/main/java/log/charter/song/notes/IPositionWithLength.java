@@ -1,6 +1,7 @@
 package log.charter.song.notes;
 
 import static java.lang.Math.max;
+import static log.charter.data.ArrangementFixer.fixNoteLength;
 import static log.charter.data.config.Config.minNoteDistance;
 
 import java.util.Collection;
@@ -42,7 +43,7 @@ public interface IPositionWithLength extends IPosition {
 			endPosition = change > 0 ? beatsMap.getPositionWithAddedGrid(endPosition, change)
 					: beatsMap.getPositionWithRemovedGrid(endPosition, -change);
 
-			if (allPositions.size() > selected.id + 1) {
+			if (selected.id + 1 < allPositions.size()) {
 				final IPosition next = allPositions.get(selected.id + 1);
 				if (next.position() - endPosition < minNoteDistance) {
 					endPosition = next.position() - minNoteDistance;
@@ -54,37 +55,53 @@ public interface IPositionWithLength extends IPosition {
 		}
 	}
 
-	public static void changeNotesLength(final BeatsMap beatsMap, final ArrayList2<Selection<ChordOrNote>> toChange,
+	private static boolean soundHasStringFromSelected(final List<Integer> selectedStrings, final ChordOrNote sound) {
+		if (sound.isNote()) {
+			return selectedStrings.contains(sound.note.string);
+		}
+
+		for (final int string : sound.chord.chordNotes.keySet()) {
+			if (selectedStrings.contains(string)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static void changeNoteLength(final BeatsMap beatsMap, final ArrayList2<ChordOrNote> allPositions,
+			final CommonNote note, final int id, final int change) {
+		if (note.linkNext()) {
+			fixNoteLength(note, id, allPositions);
+			return;
+		}
+
+		final int newEndPosition = change > 0 ? beatsMap.getPositionWithAddedGrid(note.endPosition(), change)
+				: beatsMap.getPositionWithRemovedGrid(note.endPosition(), -change);
+		note.endPosition(newEndPosition);
+
+		fixNoteLength(note, id, allPositions);
+	}
+
+	public static void changeSoundsLength(final BeatsMap beatsMap, final ArrayList2<Selection<ChordOrNote>> toChange,
 			final ArrayList2<ChordOrNote> allPositions, final int change, final boolean cutBeforeNext,
 			final List<Integer> selectedStrings) {
 		for (final Selection<ChordOrNote> selected : toChange) {
-			final GuitarSound sound = selected.selectable.asGuitarSound();
-			final boolean linkNext = selected.selectable.isChord() ? selected.selectable.chord.linkNext()
-					: selected.selectable.note.linkNext;
-			int endPosition = sound.endPosition();
-			endPosition = change > 0 ? beatsMap.getPositionWithAddedGrid(endPosition, change)
-					: beatsMap.getPositionWithRemovedGrid(endPosition, -change);
-
-			if ((linkNext || cutBeforeNext) && allPositions.size() > selected.id + 1) {
-				final IPosition next = allPositions.get(selected.id + 1);
-				if (linkNext) {
-					endPosition = next.position();
-				} else {
-					if (next.position() - endPosition < minNoteDistance) {
-						endPosition = next.position() - minNoteDistance;
-					}
-				}
+			final ChordOrNote sound = selected.selectable;
+			if (!soundHasStringFromSelected(selectedStrings, sound)) {
+				continue;
 			}
 
-			final int length = max(0, endPosition - sound.position());
-			sound.length(length);
-			if (selected.selectable.isChord()) {
-				selected.selectable.chord.chordNotes.forEach((string, chordNote) -> {
+			if (sound.isNote()) {
+				changeNoteLength(beatsMap, allPositions, CommonNote.create(sound.note), selected.id, change);
+			} else {
+				sound.chord.chordNotes.forEach((string, chordNote) -> {
 					if (!selectedStrings.contains(string)) {
 						return;
 					}
 
-					chordNote.length = length;
+					changeNoteLength(beatsMap, allPositions, CommonNote.create(sound.chord, string, chordNote),
+							selected.id, change);
 				});
 			}
 		}

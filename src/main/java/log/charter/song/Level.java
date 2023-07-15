@@ -1,5 +1,6 @@
 package log.charter.song;
 
+import static log.charter.song.notes.IPosition.findLastBeforeEqual;
 import static log.charter.util.Utils.mapInteger;
 
 import java.util.List;
@@ -89,5 +90,37 @@ public class Level {
 		}
 
 		chordsAndNotes.sort(null);
+
+		for (int i = 0; i < chordsAndNotes.size() - 1; i++) {
+			final ChordOrNote sound = chordsAndNotes.get(i);
+			final ChordOrNote nextSound = chordsAndNotes.get(i + 1);
+			if (sound.endPosition() >= nextSound.position()) {
+				sound.asGuitarSound().passOtherNotes = true;
+			}
+		}
+	}
+
+	public boolean shouldChordShowNotes(final int id) {
+		final Chord chord = chordsAndNotes.get(id).chord;
+		final HandShape handShape = findLastBeforeEqual(handShapes, chord.position());
+		if (handShape == null) {
+			return true;
+		} else if (handShape.templateId != chord.templateId()) {
+			return true;
+		} else {
+			for (int j = id - 1; j > 0; j--) {
+				final ChordOrNote previousSound = chordsAndNotes.get(j);
+				if (previousSound.isNote()) {
+					continue;
+				}
+				if (previousSound.position() >= handShape.position()) {
+					break;
+				}
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

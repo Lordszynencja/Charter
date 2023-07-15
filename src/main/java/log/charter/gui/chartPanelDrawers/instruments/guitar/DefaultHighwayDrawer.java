@@ -30,6 +30,7 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.tex
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.textWithBackground;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.NoteData.fromChord;
 import static log.charter.util.ScalingUtils.timeToX;
+import static log.charter.util.ScalingUtils.timeToXLength;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -618,7 +619,8 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	@Override
 	public void addChord(final Chord chord, final ChordTemplate chordTemplate, final int x, final int length,
 			final boolean selected, final boolean lastWasLinkNext, final boolean ctrl) {
-		for (final NoteData noteData : fromChord(chord, chordTemplate, x, length, selected, lastWasLinkNext, ctrl)) {
+		for (final NoteData noteData : fromChord(chord, chordTemplate, x, selected, lastWasLinkNext, ctrl)) {
+			noteData.length = timeToXLength(noteData.length);
 			addSimpleNote(noteData);
 		}
 

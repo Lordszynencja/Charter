@@ -3,9 +3,26 @@ package log.charter.song.notes;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.song.ChordTemplate;
+import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("sound")
 public class ChordOrNote implements IPositionWithLength {
+	public static ChordOrNote findNextSoundOnString(final int string, final int startFromId,
+			final ArrayList2<ChordOrNote> sounds) {
+		for (int i = startFromId; i < sounds.size(); i++) {
+			final ChordOrNote sound = sounds.get(i);
+			if (sound.isNote()) {
+				if (sound.note.string == string) {
+					return sound;
+				}
+			} else if (sound.chord.chordNotes.containsKey(string)) {
+				return sound;
+			}
+		}
+
+		return null;
+	}
+
 	public Chord chord;
 	public Note note;
 

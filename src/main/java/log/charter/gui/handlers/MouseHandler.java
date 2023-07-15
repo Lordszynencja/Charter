@@ -222,7 +222,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	}
 
 	private void dragTempo(final MouseButtonPressReleaseData clickData) {
-		if (modeManager.editMode != EditMode.TEMPO_MAP) {
+		if (modeManager.editMode != EditMode.TEMPO_MAP || !clickData.pressHighlight.existingPosition) {
 			return;
 		}
 
@@ -343,7 +343,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		dragPositions(dragStartPosition, dragEndPosition,
 				selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE).getSortedSelected());
 
-		frame.selectionChanged();
+		frame.selectionChanged(false);
 	}
 
 	private void dragVocals(final MouseButtonPressReleaseData clickData) {
@@ -352,7 +352,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		dragPositions(dragStartPosition, dragEndPosition,
 				selectionManager.getSelectedAccessor(PositionType.VOCAL).getSortedSelected());
 
-		frame.selectionChanged();
+		frame.selectionChanged(false);
 	}
 
 	@Override

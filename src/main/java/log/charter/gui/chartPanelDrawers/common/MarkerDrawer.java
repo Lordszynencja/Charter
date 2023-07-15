@@ -4,7 +4,9 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.util.ScalingUtils.timeToX;
 
+import java.awt.BasicStroke;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
@@ -19,6 +21,8 @@ public class MarkerDrawer {
 
 	public void draw(final Graphics g) {
 		g.setColor(ColorLabel.MARKER.color());
+		final Graphics2D g2 = (Graphics2D) g;
+		g2.setStroke(new BasicStroke(1));
 		g.drawLine(Config.markerOffset, lanesTop - 5, Config.markerOffset, lanesBottom);
 
 		final int startX = timeToX(0, data.time);

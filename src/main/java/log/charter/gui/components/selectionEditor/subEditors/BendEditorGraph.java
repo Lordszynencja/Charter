@@ -6,6 +6,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.round;
 import static log.charter.data.config.Config.gridSize;
 import static log.charter.data.config.Config.maxBendValue;
+import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.song.notes.IPosition.findFirstIdAfterEqual;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
@@ -24,7 +25,6 @@ import java.util.function.BiConsumer;
 
 import javax.swing.JComponent;
 
-import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.song.BeatsMap;
@@ -101,7 +101,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	private BeatsMap beatsMap;
 
 	private int notePosition = 0;
-	private int noteLength = 1;
+	private final int[] notesLengths = new int[maxStrings];
 	private int firstBeatId = 0;
 	private int lastBeatId = 1;
 	private double noteStartPosition = 0;
@@ -118,7 +118,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 	public BendEditorGraph(final BeatsMap beatsMap, final BiConsumer<Integer, ArrayList2<BendValue>> onChangeBends) {
 		super();
-		strings = Config.maxStrings;
+		strings = maxStrings;
 
 		this.onChangeBends = onChangeBends;
 
@@ -149,10 +149,10 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 	private void calculateBeatPositions() {
 		firstBeatId = findLastIdBeforeEqual(beatsMap.beats, notePosition);
-		lastBeatId = findFirstIdAfterEqual(beatsMap.beats, notePosition + noteLength);
+		lastBeatId = findFirstIdAfterEqual(beatsMap.beats, notePosition + notesLengths[string]);
 
 		noteStartPosition = beatsMap.getPositionInBeats(notePosition) - firstBeatId;
-		noteEndPosition = beatsMap.getPositionInBeats(notePosition + noteLength) - firstBeatId;
+		noteEndPosition = beatsMap.getPositionInBeats(notePosition + notesLengths[string]) - firstBeatId;
 
 		calculateSize();
 	}
@@ -161,7 +161,10 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		string = note.string;
 		this.strings = strings;
 		notePosition = note.position();
-		noteLength = note.length();
+		for (int i = 0; i < notesLengths.length; i++) {
+			notesLengths[i] = 1;
+		}
+		notesLengths[string] = note.length();
 		calculateBeatPositions();
 
 		setBendValues(note.string, note.bendValues);
@@ -171,7 +174,10 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		this.string = string;
 		this.strings = strings;
 		notePosition = chord.position();
-		noteLength = chord.length();
+		for (int i = 0; i < notesLengths.length; i++) {
+			notesLengths[i] = 1;
+		}
+		chord.chordNotes.forEach((chordNoteString, chordNote) -> notesLengths[chordNoteString] = chordNote.length);
 		calculateBeatPositions();
 
 		setBendValues(string, chord.chordNotes.get(string).bendValues);
@@ -184,7 +190,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 		if (bendValuesToEdit != null) {
 			for (final BendValue bendValueToEdit : bendValuesToEdit) {
-				if (bendValueToEdit.position() > noteLength) {
+				if (bendValueToEdit.position() > notesLengths[string]) {
 					continue;
 				}
 				final int fullPosition = notePosition + bendValueToEdit.position();
@@ -198,13 +204,14 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 			}
 		}
 
+		calculateBeatPositions();
 		repaint();
 	}
 
 	private ArrayList2<BendValue> getBendValues() {
 		final ArrayList2<BendValue> bendValuesForNote = new ArrayList2<>();
 		for (final EditorBendValue bendValue : bendValues) {
-			final int position = min(noteLength,
+			final int position = min(notesLengths[string],
 					beatsMap.getPositionForPositionInBeats(bendValue.position + firstBeatId) - notePosition);
 			final BigDecimal value = new BigDecimal(bendValue.value / 4.0).setScale(2, RoundingMode.HALF_UP);
 			bendValuesForNote.add(new BendValue(position, value));
