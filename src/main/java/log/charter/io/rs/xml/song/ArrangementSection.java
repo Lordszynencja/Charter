@@ -8,18 +8,19 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.Section;
+import log.charter.song.EventPoint;
 import log.charter.song.SectionType;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("section")
 public class ArrangementSection {
-	public static ArrayList2<ArrangementSection> fromSections(final ArrayList2<Section> sections) {
+	public static ArrayList2<ArrangementSection> fromSections(final ArrayList2<EventPoint> sections) {
 		final Map<SectionType, Integer> sectionNumbers = new HashMap<>();
 
 		return sections.map(section -> {
-			sectionNumbers.put(section.type, sectionNumbers.getOrDefault(section.type, 0) + 1);
-			return new ArrangementSection(section, sectionNumbers.getOrDefault(section.type, 0));
+			final SectionType sectionType = section.section;
+			sectionNumbers.put(sectionType, sectionNumbers.getOrDefault(sectionType, 0) + 1);
+			return new ArrangementSection(section.position(), sectionType, sectionNumbers.getOrDefault(sectionType, 0));
 		});
 	}
 
@@ -39,10 +40,10 @@ public class ArrangementSection {
 	public ArrangementSection() {
 	}
 
-	private ArrangementSection(final Section section, final int number) {
-		name = section.type.rsName;
+	private ArrangementSection(final int position, final SectionType section, final int number) {
+		startTime = position;
+		name = section.rsName;
 		this.number = number;
-		startTime = section.beat.position();
 	}
 
 }

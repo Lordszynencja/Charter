@@ -145,7 +145,7 @@ public class GuitarDrawer {
 			return true;
 		}
 
-		highwayDrawer.addNote(note, x, length, selected, lastWasLinkNext);
+		highwayDrawer.addNote(note, x, selected, lastWasLinkNext);
 
 		return true;
 	}

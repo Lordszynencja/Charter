@@ -105,22 +105,23 @@ public class Level {
 		final HandShape handShape = findLastBeforeEqual(handShapes, chord.position());
 		if (handShape == null) {
 			return true;
-		} else if (handShape.templateId != chord.templateId()) {
+		}
+		if (handShape.templateId != chord.templateId()) {
 			return true;
-		} else {
-			for (int j = id - 1; j > 0; j--) {
-				final ChordOrNote previousSound = chordsAndNotes.get(j);
-				if (previousSound.isNote()) {
-					continue;
-				}
-				if (previousSound.position() >= handShape.position()) {
-					break;
-				}
-
-				return true;
-			}
 		}
 
-		return false;
+		for (int j = id - 1; j > 0; j--) {
+			final ChordOrNote previousSound = chordsAndNotes.get(j);
+			if (previousSound.isNote()) {
+				continue;
+			}
+			if (previousSound.position() < handShape.position()) {
+				break;
+			}
+
+			return false;
+		}
+
+		return true;
 	}
 }

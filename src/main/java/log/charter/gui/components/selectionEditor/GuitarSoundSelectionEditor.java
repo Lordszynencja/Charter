@@ -163,7 +163,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		int x = 20;
 		final JCheckBox splitIntoNotesInput = new JCheckBox();
 		splitIntoNotesInput.addActionListener(a -> changeSplitIntoNotes(splitIntoNotesInput.isSelected()));
-		splitIntoNotes = new FieldWithLabel<JCheckBox>(Label.SPLIT_INTO_NOTES, 60, 20, 20, splitIntoNotesInput,
+		splitIntoNotes = new FieldWithLabel<JCheckBox>(Label.SPLIT_INTO_NOTES, 50, 20, 20, splitIntoNotesInput,
 				LabelPosition.LEFT_CLOSE);
 		splitIntoNotes.setLocation(x, parent.getY(row.get()));
 		parent.add(splitIntoNotes);
@@ -178,7 +178,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		x += 90;
 		final JCheckBox passOtherNotesInput = new JCheckBox();
 		passOtherNotesInput.addActionListener(a -> changePassOtherNotes(passOtherNotesInput.isSelected()));
-		passOtherNotes = new FieldWithLabel<JCheckBox>(Label.PASS_OTHER_NOTES, 80, 20, 20, passOtherNotesInput,
+		passOtherNotes = new FieldWithLabel<JCheckBox>(Label.PASS_OTHER_NOTES, 120, 20, 20, passOtherNotesInput,
 				LabelPosition.LEFT_CLOSE);
 		passOtherNotes.setLocation(x, parent.getY(row.getAndIncrement()));
 		parent.add(passOtherNotes);

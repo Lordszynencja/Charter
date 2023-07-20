@@ -21,11 +21,12 @@ import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.AnchorPane;
-import log.charter.gui.panes.GuitarBeatPane;
+import log.charter.gui.panes.GuitarEventPointPane;
 import log.charter.gui.panes.HandShapePane;
 import log.charter.gui.panes.ToneChangePane;
 import log.charter.song.Anchor;
 import log.charter.song.ChordTemplate;
+import log.charter.song.EventPoint;
 import log.charter.song.HandShape;
 import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
@@ -103,12 +104,25 @@ public class GuitarModeHandler extends ModeHandler {
 		});
 	}
 
-	private void rightClickBeat(final PositionWithIdAndType beatPosition) {
-		if (beatPosition.beat == null) {
+	private void rightClickEventPoint(final PositionWithIdAndType eventPointPosition) {
+		selectionManager.clear();
+
+		if (eventPointPosition.eventPoint != null) {
+			new GuitarEventPointPane(data, frame, undoSystem, eventPointPosition.eventPoint, () -> {
+			});
 			return;
 		}
 
-		new GuitarBeatPane(data, frame, undoSystem, beatPosition.beat);
+		undoSystem.addUndo();
+		final EventPoint eventPoint = new EventPoint(eventPointPosition.position());
+		final ArrayList2<EventPoint> eventPoints = data.getCurrentArrangement().eventPoints;
+		eventPoints.add(eventPoint);
+		eventPoints.sort(null);
+
+		new GuitarEventPointPane(data, frame, undoSystem, eventPoint, () -> {
+			undoSystem.undo();
+			undoSystem.removeRedo();
+		});
 	}
 
 	private void rightClickHandShape(final PositionWithIdAndType handShapePosition) {
@@ -247,21 +261,28 @@ public class GuitarModeHandler extends ModeHandler {
 
 	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
+		if (clickData.pressHighlight.type == PositionType.EVENT_POINT) {
+			if (clickData.isXDrag()) {
+				return;
+			}
+
+			rightClickEventPoint(clickData.pressHighlight);
+			return;
+		}
+		if (clickData.pressHighlight.type == PositionType.TONE_CHANGE) {
+			if (clickData.isXDrag()) {
+				return;
+			}
+
+			rightClickToneChange(clickData.pressHighlight);
+			return;
+		}
 		if (clickData.pressHighlight.type == PositionType.ANCHOR) {
 			if (clickData.isXDrag()) {
 				return;
 			}
 
 			rightClickAnchor(clickData.pressHighlight);
-			return;
-		}
-
-		if (clickData.pressHighlight.type == PositionType.BEAT) {
-			if (clickData.isXDrag()) {
-				return;
-			}
-
-			rightClickBeat(clickData.pressHighlight);
 			return;
 		}
 
@@ -276,15 +297,6 @@ public class GuitarModeHandler extends ModeHandler {
 			}
 
 			rightClickHandShape(clickData.pressHighlight);
-			return;
-		}
-
-		if (clickData.pressHighlight.type == PositionType.TONE_CHANGE) {
-			if (clickData.isXDrag()) {
-				return;
-			}
-
-			rightClickToneChange(clickData.pressHighlight);
 			return;
 		}
 	}

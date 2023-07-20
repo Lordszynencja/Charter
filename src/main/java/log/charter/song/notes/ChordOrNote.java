@@ -23,6 +23,22 @@ public class ChordOrNote implements IPositionWithLength {
 		return null;
 	}
 
+	public static ChordOrNote findPreviousSoundOnString(final int string, final int startFromId,
+			final ArrayList2<ChordOrNote> sounds) {
+		for (int i = startFromId; i >= 0; i--) {
+			final ChordOrNote sound = sounds.get(i);
+			if (sound.isNote()) {
+				if (sound.note.string == string) {
+					return sound;
+				}
+			} else if (sound.chord.chordNotes.containsKey(string)) {
+				return sound;
+			}
+		}
+
+		return null;
+	}
+
 	public Chord chord;
 	public Note note;
 
@@ -71,6 +87,14 @@ public class ChordOrNote implements IPositionWithLength {
 	@Override
 	public void length(final int newLength) {
 		asGuitarSound().length(newLength);
+	}
+
+	public boolean linkNext(final int string) {
+		if (isNote()) {
+			return note.string == string && note.linkNext;
+		}
+
+		return chord.chordNotes.containsKey(string) && chord.chordNotes.get(string).linkNext;
 	}
 
 	public void turnToNote(final ChordTemplate chordTemplate) {

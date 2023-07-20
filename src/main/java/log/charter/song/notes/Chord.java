@@ -193,6 +193,12 @@ public class Chord extends GuitarSound {
 	}
 
 	public ChordNotesVisibility chordNotesVisibility() {
+		for (final ChordNote chordNote : chordNotes.values()) {
+			if (chordNote.linkNext || chordNote.slideTo != null || chordNote.tremolo || chordNote.vibrato
+					|| !chordNote.bendValues.isEmpty() || chordNote.length > 0) {
+				return ChordNotesVisibility.TAILS;
+			}
+		}
 		if (splitIntoNotes) {
 			return ChordNotesVisibility.NOTES;
 		}
@@ -201,13 +207,7 @@ public class Chord extends GuitarSound {
 		}
 
 		for (final ChordNote chordNote : chordNotes.values()) {
-			if (chordNote.linkNext || chordNote.slideTo != null || chordNote.tremolo || chordNote.vibrato
-					|| !chordNote.bendValues.isEmpty() || chordNote.length > 0) {
-				return ChordNotesVisibility.TAILS;
-			}
-		}
-		for (final ChordNote chordNote : chordNotes.values()) {
-			if (chordNote.harmonic != Harmonic.NONE || chordNote.hopo != HOPO.NONE) {
+			if (chordNote.harmonic != Harmonic.NONE || chordNote.hopo != HOPO.NONE || chordNote.mute != Mute.NONE) {
 				return ChordNotesVisibility.NOTES;
 			}
 		}

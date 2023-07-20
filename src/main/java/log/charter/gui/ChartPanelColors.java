@@ -101,7 +101,7 @@ public class ChartPanelColors {
 		LANE_8(128, 128, 128), //
 		LANE_BRIGHT_8(160, 160, 160), //
 		NOTE_8(255, 255, 255), //
-		NOTE_TAIL_8(224, 0, 224), //
+		NOTE_TAIL_8(224, 224, 224), //
 		NOTE_ACCENT_8(0, 0, 0), //
 
 		ANCHOR(192, 32, 32), //
@@ -118,8 +118,8 @@ public class ChartPanelColors {
 		PREVIEW_3D_FULL_MUTE(255, 255, 255), //
 		PREVIEW_3D_PALM_MUTE(0, 0, 0), //
 		PREVIEW_3D_ANCHOR(0, 0, 255, 64), //
-		PREVIEW_3D_FRET_LANE(64, 128, 255), //
-		PREVIEW_3D_BEAT(64, 64, 128);
+		PREVIEW_3D_FRET_LANE(64, 192, 255), //
+		PREVIEW_3D_BEAT(64, 128, 255);
 
 		private final Color defaultColor;
 

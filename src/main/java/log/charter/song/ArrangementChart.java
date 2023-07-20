@@ -2,10 +2,13 @@ package log.charter.song;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.song.notes.IPosition.findClosestPosition;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import log.charter.data.config.Config;
 import log.charter.io.gp.gp5.GPBar;
@@ -54,23 +57,41 @@ public class ArrangementChart {
 
 	public HashMap2<Integer, Level> levels = new HashMap2<>();
 
-	public ArrayList2<Section> sections = new ArrayList2<>();
+	public ArrayList2<EventPoint> eventPoints = new ArrayList2<>();
 	public HashMap2<String, Phrase> phrases = new HashMap2<>();
-	public ArrayList2<PhraseIteration> phraseIterations = new ArrayList2<>();
-	public ArrayList2<Event> events = new ArrayList2<>();
 	public HashSet2<String> tones = new HashSet2<>();
 	public ArrayList2<ToneChange> toneChanges = new ArrayList2<>();
 	public ArrayList2<ChordTemplate> chordTemplates = new ArrayList2<>();
 	public ArrayList2<ChordTemplate> fretHandMuteTemplates = new ArrayList2<>();
 
-	public ArrangementChart(final ArrangementType arrangementType, final ArrayList2<Beat> beats) {
-		this.arrangementType = arrangementType;
+	private void addCountEndPhrases(final ArrayList2<Beat> beats) {
 		phrases.put("COUNT", new Phrase(0, false));
 		phrases.put("END", new Phrase(0, false));
-		phraseIterations.add(new PhraseIteration(beats.get(0), "COUNT"));
-		phraseIterations.add(new PhraseIteration(beats.getLast(), "END"));
 
+		final EventPoint count = new EventPoint(0);
+		count.phrase = "COUNT";
+		eventPoints.add(0, count);
+
+		final EventPoint end = new EventPoint(beats.getLast().position());
+		end.phrase = "END";
+		eventPoints.add(end);
+	}
+
+	public ArrangementChart(final ArrangementType arrangementType, final ArrayList2<Beat> beats) {
+		this.arrangementType = arrangementType;
+		addCountEndPhrases(beats);
 		levels.put(0, new Level());
+	}
+
+	public EventPoint findOrCreateArrangementEventsPoint(final int position) {
+		EventPoint arrangementEventsPoint = findClosestPosition(eventPoints, position);
+		if (arrangementEventsPoint == null || arrangementEventsPoint.position() != position) {
+			arrangementEventsPoint = new EventPoint(position);
+			eventPoints.add(arrangementEventsPoint);
+			eventPoints.sort(null);
+		}
+
+		return arrangementEventsPoint;
 	}
 
 	public ArrangementChart(final SongArrangement songArrangement, final ArrayList2<Beat> beats) {
@@ -86,11 +107,34 @@ public class ArrangementChart {
 		tones = new HashSet2<>(toneChanges.map(toneChange -> toneChange.toneName));
 		chordTemplates = songArrangement.chordTemplates.list.map(ChordTemplate::new);
 
-		sections = Section.fromArrangementSections(beats, songArrangement.sections.list);
+		songArrangement.sections.list.forEach(arrangementSection -> {
+			final EventPoint arrangementEventsPoint = findOrCreateArrangementEventsPoint(
+					arrangementSection.startTime);
+			arrangementEventsPoint.section = SectionType.findByRSName(arrangementSection.name);
+		});
 		phrases = Phrase.fromArrangementPhrases(songArrangement.phrases.list);
-		phraseIterations = PhraseIteration.fromArrangementPhraseIterations(beats, songArrangement.phrases.list,
-				songArrangement.phraseIterations.list);
-		events = Event.fromArrangement(beats, songArrangement.events.list);
+		songArrangement.phraseIterations.list.forEach(arrangementPhraseIteration -> {
+			final EventPoint arrangementEventsPoint = findOrCreateArrangementEventsPoint(
+					arrangementPhraseIteration.time);
+			final String phraseName = songArrangement.phrases.list.get(arrangementPhraseIteration.phraseId).name;
+			arrangementEventsPoint.phrase = phraseName;
+		});
+		songArrangement.events.list.forEach(arrangementEvent -> {
+			if (arrangementEvent.code.startsWith("TS:")) {
+				final int time = arrangementEvent.time;
+				final String[] timeSignatureParts = arrangementEvent.code.split(":")[1].split("/");
+				final int beatsInMeasure = max(1, min(1024, Integer.valueOf(timeSignatureParts[0])));
+				final int noteDenominator = max(1, min(1024, Integer.valueOf(timeSignatureParts[1])));
+				beats.stream()//
+						.filter(beat -> beat.position() >= time)//
+						.forEach(beat -> beat.setTimeSignature(beatsInMeasure, noteDenominator));
+				return;
+			}
+
+			final EventPoint arrangementEventsPoint = findOrCreateArrangementEventsPoint(
+					arrangementEvent.time);
+			arrangementEventsPoint.events.add(EventType.findByRSName(arrangementEvent.code));
+		});
 
 		if (songArrangement.fretHandMuteTemplates != null) {
 			fretHandMuteTemplates = songArrangement.fretHandMuteTemplates.list.map(ChordTemplate::new);
@@ -103,6 +147,7 @@ public class ArrangementChart {
 		capo = trackData.capo;
 		arrangementType = getGPArrangementType(trackData);
 		addBars(beats, gpBars);
+		addCountEndPhrases(beats);
 	}
 
 	private ArrangementType getGPArrangementType(final GPTrackData trackData) {
@@ -407,5 +452,9 @@ public class ArrangementChart {
 
 		chordTemplates.add(chordTemplate);
 		return chordTemplates.size() - 1;
+	}
+
+	public ArrayList2<EventPoint> getFilteredEventPoints(final Predicate<EventPoint> filter) {
+		return eventPoints.stream().filter(filter).collect(Collectors.toCollection(ArrayList2::new));
 	}
 }

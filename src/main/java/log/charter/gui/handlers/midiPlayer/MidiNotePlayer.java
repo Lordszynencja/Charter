@@ -135,8 +135,12 @@ public class MidiNotePlayer {
 		return pitchBendBaseValue + (int) (bendStep * pitchBendRange);
 	}
 
-	private int playMidiNote(final GuitarSoundType soundType, final int string, final int note,
+	private void playMidiNote(final GuitarSoundType soundType, final int string, final int note,
 			final double bendValue) {
+		if (lastNotes[string] != -1) {
+			return;
+		}
+
 		final MidiChannel channel = channels[string];
 		channel.allNotesOff();
 		channel.programChange(instruments.get(soundType).getPatch().getProgram());
@@ -146,8 +150,6 @@ public class MidiNotePlayer {
 		channel.noteOn(actualNote, 127);
 		lastNotes[string] = note;
 		lastActualNotes[string] = actualNote;
-
-		return actualNote;
 	}
 
 	public void updateBend(final int string, final double bendValue) {
@@ -162,7 +164,7 @@ public class MidiNotePlayer {
 		if (lastActualNotes[string] != actualNote) {
 			channel.noteOff(lastNotes[string]);
 			channel.setPitchBend(pitchBend);
-			channel.noteOn(actualNote, 64);
+			channel.noteOn(actualNote, 96);
 			lastActualNotes[string] = actualNote;
 		} else {
 			channel.setPitchBend(pitchBend);

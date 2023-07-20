@@ -8,6 +8,7 @@ import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +17,10 @@ import java.util.stream.Collectors;
 import log.charter.data.config.Config;
 import log.charter.song.Anchor;
 import log.charter.song.ArrangementChart;
+import log.charter.song.EventPoint;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
-import log.charter.song.PhraseIteration;
 import log.charter.song.SectionType;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
@@ -74,21 +75,28 @@ public class ArrangementFixer {
 	}
 
 	private void addMissingAnchors(final ArrangementChart arrangement, final Level level) {
-		for (final PhraseIteration phraseIteration : arrangement.phraseIterations) {
-			final int sectionId = findLastIdBeforeEqual(arrangement.sections, phraseIteration.position());
-			if (sectionId != -1 && arrangement.sections.get(sectionId).type == SectionType.NO_GUITAR) {
+		final List<EventPoint> sections = arrangement.eventPoints.stream().filter(p -> p.section != null)
+				.collect(Collectors.toList());
+
+		for (final EventPoint eventPoint : arrangement.eventPoints) {
+			if (eventPoint.phrase == null) {
 				continue;
 			}
 
-			final int lastAnchorId = findLastIdBeforeEqual(level.anchors, phraseIteration);
+			final int sectionId = findLastIdBeforeEqual(sections, eventPoint);
+			if (sectionId != -1 && sections.get(sectionId).section == SectionType.NO_GUITAR) {
+				continue;
+			}
+
+			final int lastAnchorId = findLastIdBeforeEqual(level.anchors, eventPoint);
 			if (lastAnchorId == -1) {
 				continue;
 			}
 
 			final Anchor lastAnchor = level.anchors.get(lastAnchorId);
-			if (lastAnchor.position() != phraseIteration.position()) {
+			if (lastAnchor.position() != eventPoint.position()) {
 				final Anchor newAnchor = new Anchor(lastAnchor);
-				newAnchor.position(phraseIteration.position());
+				newAnchor.position(eventPoint.position());
 				level.anchors.add(newAnchor);
 				level.anchors.sort(null);
 			}
@@ -167,9 +175,12 @@ public class ArrangementFixer {
 
 	private void fixLevel(final ArrangementChart arrangement, final Level level) {
 		level.chordsAndNotes//
-				.stream().filter(chordOrNote -> chordOrNote.note != null)//
+				.stream().filter(chordOrNote -> chordOrNote.isNote())//
 				.map(chordOrNote -> chordOrNote.note)//
 				.forEach(note -> note.length(note.length() >= Config.minTailLength ? note.length() : 0));
+
+		level.chordsAndNotes
+				.removeIf(sound -> sound.isChord() && sound.chord.templateId() >= arrangement.chordTemplates.size());
 
 		removeDuplicates(level.anchors);
 		removeDuplicates(level.chordsAndNotes);
@@ -266,6 +277,16 @@ public class ArrangementFixer {
 		}
 	}
 
+	private void fixMissingFingersOnChordTemplates(final ArrangementChart arrangementChart) {
+		arrangementChart.chordTemplates.forEach(chordTemplate -> {
+			for (final int string : new HashSet<>(chordTemplate.fingers.keySet())) {
+				if (chordTemplate.fingers.get(string) == null) {
+					chordTemplate.fingers.remove(string);
+				}
+			}
+		});
+	}
+
 	public void fixArrangement() {
 		for (final ArrangementChart arrangement : data.songChart.arrangements) {
 			for (final Level level : arrangement.levels.values()) {
@@ -274,6 +295,7 @@ public class ArrangementFixer {
 
 			fixDuplicatedChordTemplates(arrangement);
 			removeUnusedChordTemplates(arrangement);
+			fixMissingFingersOnChordTemplates(arrangement);
 		}
 
 		data.songChart.beatsMap.makeBeatsUntilSongEnd();

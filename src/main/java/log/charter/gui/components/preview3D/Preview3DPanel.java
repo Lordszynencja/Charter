@@ -28,6 +28,7 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 	private final Preview3DBeatsDrawer beatsDrawer = new Preview3DBeatsDrawer();
 	private final Preview3DCameraHandler cameraHandler = new Preview3DCameraHandler();
 	private final Preview3DFretLanesDrawer fretLanesDrawer = new Preview3DFretLanesDrawer();
+	private final Preview3DHandShapesDrawer handShapesDrawer = new Preview3DHandShapesDrawer();
 	private final Preview3DGuitarSoundsDrawer soundsDrawer = new Preview3DGuitarSoundsDrawer();
 	private final Preview3DStringsDrawer stringsDrawer = new Preview3DStringsDrawer();
 
@@ -50,6 +51,7 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		beatsDrawer.init(data);
 		cameraHandler.init(data);
 		fretLanesDrawer.init(data);
+		handShapesDrawer.init(data);
 		soundsDrawer.init(data);
 		stringsDrawer.init(data);
 
@@ -128,6 +130,7 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		stringsDrawer.draw(baseShader);
 		fretLanesDrawer.draw(baseShader);
 		anchorsDrawer.draw(baseShader);
+		handShapesDrawer.draw(baseShader);
 		beatsDrawer.draw(baseShader);
 		soundsDrawer.draw(baseShader);
 

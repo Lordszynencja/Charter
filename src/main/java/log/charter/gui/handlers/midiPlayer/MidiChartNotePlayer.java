@@ -1,6 +1,8 @@
 package log.charter.gui.handlers.midiPlayer;
 
 import static java.lang.Math.min;
+import static java.lang.Math.pow;
+import static java.lang.Math.sin;
 import static log.charter.data.config.Config.midiDelay;
 import static log.charter.song.notes.IPosition.findLastBeforeEqual;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
@@ -14,6 +16,7 @@ import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.song.BendValue;
+import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordNote;
@@ -44,11 +47,15 @@ public class MidiChartNotePlayer {
 
 	private void stopSound(final MidiChartNotePlayerNoteData sound) {
 		if (sound.sound.isNote()) {
-			midiNotePlayer.stopSound(sound.sound.note.string);
-		} else {
-			for (final Integer string : sound.sound.chord.chordNotes.keySet()) {
-				midiNotePlayer.stopSound(string);
+			if (!sound.sound.note.linkNext) {
+				midiNotePlayer.stopSound(sound.sound.note.string);
 			}
+		} else {
+			sound.sound.chord.chordNotes.forEach((string, chordNote) -> {
+				if (!chordNote.linkNext) {
+					midiNotePlayer.stopSound(string);
+				}
+			});
 		}
 	}
 
@@ -64,9 +71,9 @@ public class MidiChartNotePlayer {
 		}
 	}
 
-	private void updateBend(final int position, final int length, final int string, final List<BendValue> bendValues) {
+	private double getBendValue(final List<BendValue> bendValues, final int position, final int length) {
 		if (bendValues.isEmpty()) {
-			return;
+			return 0;
 		}
 
 		final int insidePosition = getCurrentTime() - position;
@@ -87,7 +94,27 @@ public class MidiChartNotePlayer {
 
 		final double weight = 1.0 * (insidePosition - bendPointA.position())
 				/ (bendPointB.position() - bendPointA.position());
-		final double bendValue = weight * (bendValueB - bendValueA) + bendValueA;
+		return weight * (bendValueB - bendValueA) + bendValueA;
+	}
+
+	private double getSlideValue(final int position, final int length, final int slideLength,
+			final boolean unpitchedSlide) {
+		final double progress = 1.0 * (getCurrentTime() - position) / length;
+
+		final double weight = unpitchedSlide//
+				? 1 - sin((1 - progress) * Math.PI / 2)//
+				: pow(sin(progress * Math.PI / 2), 3);
+		return slideLength * weight;
+	}
+
+	private void updateBend(final int position, final int length, final int string, final List<BendValue> bendValues,
+			final int fret, final Integer slideTo, final boolean unpitchedSlide) {
+		double bendValue = getBendValue(bendValues, position, length);
+
+		if (slideTo != null) {
+			bendValue += getSlideValue(position, length, slideTo - fret, unpitchedSlide);
+		}
+
 		midiNotePlayer.updateBend(string, bendValue);
 	}
 
@@ -100,12 +127,16 @@ public class MidiChartNotePlayer {
 
 			if (sound.sound.isNote()) {
 				final Note note = sound.sound.note;
-				updateBend(note.position(), note.length(), note.string, note.bendValues);
+				updateBend(note.position(), note.length(), note.string, note.bendValues, note.fret, note.slideTo,
+						note.unpitchedSlide);
 			} else {
 				final Chord chord = sound.sound.chord;
-				for (final Entry<Integer, ChordNote> chordNote : chord.chordNotes.entrySet()) {
-					updateBend(chord.position(), chordNote.getValue().length, chordNote.getKey(),
-							chordNote.getValue().bendValues);
+				final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
+				for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
+					final int string = chordNoteEntry.getKey();
+					final ChordNote chordNote = chordNoteEntry.getValue();
+					updateBend(chord.position(), chordNote.length, string, chordNote.bendValues,
+							chordTemplate.frets.get(string), chordNote.slideTo, chordNote.unpitchedSlide);
 				}
 			}
 		}
@@ -184,8 +215,8 @@ public class MidiChartNotePlayer {
 		if (modeManager.editMode != EditMode.GUITAR) {
 			return;
 		}
-		playing = false;
 
+		playing = false;
 		nextSound = null;
 		sounds.clear();
 		midiNotePlayer.stopSound();

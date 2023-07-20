@@ -4,6 +4,7 @@ import static log.charter.gui.components.TextInputWithValidation.ValueValidator.
 
 import java.awt.Dimension;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.swing.DefaultCellEditor;
@@ -25,16 +26,13 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.AutocompleteInputDialog;
 import log.charter.gui.components.ParamsPane;
 import log.charter.song.ArrangementChart;
-import log.charter.song.Beat;
-import log.charter.song.Event;
-import log.charter.song.Event.EventType;
+import log.charter.song.EventPoint;
+import log.charter.song.EventType;
 import log.charter.song.Phrase;
-import log.charter.song.PhraseIteration;
-import log.charter.song.Section;
 import log.charter.song.SectionType;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class GuitarBeatPane extends ParamsPane {
+public class GuitarEventPointPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private static class SectionTypeListValue {
@@ -79,112 +77,66 @@ public class GuitarBeatPane extends ParamsPane {
 	private JCheckBox phraseSoloInput;
 	private JTable eventsTable;
 
-	private final Beat beat;
-	private Section section;
-	private PhraseIteration phraseIteration;
-	private final ArrayList2<Event> events = new ArrayList2<>();
+	private final EventPoint eventPoint;
 
-	private SectionType sectionType;
-	private String phraseName = "";
+	private SectionType section;
 	private int phraseLevel;
 	private boolean phraseSolo;
+	private final ArrayList2<EventType> events;
 
-	public GuitarBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
-			final Beat beat) {
+	public GuitarEventPointPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
+			final EventPoint eventPoint, final Runnable onCancel) {
 		super(frame, Label.GUITAR_BEAT_PANE, 10, getSizes());
 		this.data = data;
 		this.undoSystem = undoSystem;
 
-		this.beat = beat;
+		this.eventPoint = eventPoint;
 
 		final ArrangementChart arrangement = data.getCurrentArrangement();
-		prepareSection(arrangement);
-		preparePhrase(arrangement);
-		prepareEvents(arrangement);
 
-		int row = 0;
-		row = prepareSectionInput(row);
-		row = preparePhraseInputs(row);
-		row = prepareEventList(row);
-
-		row++;
-		addDefaultFinish(row, this::saveAndExit);
-	}
-
-	private void prepareSection(final ArrangementChart arrangement) {
-		for (final Section section : arrangement.sections) {
-			if (section.position() > beat.position()) {
-				break;
-			}
-			if (section.beat == beat) {
-				this.section = section;
-				break;
-			}
-		}
-		if (section != null) {
-			sectionType = section.type;
-		}
-	}
-
-	private void preparePhrase(final ArrangementChart arrangement) {
-		for (final PhraseIteration phraseIteration : arrangement.phraseIterations) {
-			if (phraseIteration.position() > beat.position()) {
-				break;
-			}
-			if (phraseIteration.beat == beat) {
-				this.phraseIteration = phraseIteration;
-				break;
-			}
-		}
-		if (phraseIteration != null) {
-			phraseName = phraseIteration.phraseName;
-			final Phrase phrase = arrangement.phrases.get(phraseName);
+		section = eventPoint.section;
+		final Phrase phrase = arrangement.phrases.get(eventPoint.phrase);
+		if (phrase != null) {
 			phraseLevel = phrase.maxDifficulty;
 			phraseSolo = phrase.solo;
 		}
+		events = new ArrayList2<>(eventPoint.events);
+
+		final AtomicInteger row = new AtomicInteger(0);
+		prepareSectionInput(row);
+		preparePhraseInputs(row, eventPoint.phrase == null ? "" : eventPoint.phrase);
+		prepareEventList(row);
+
+		addDefaultFinish(row.incrementAndGet(), this::saveAndExit, onCancel);
 	}
 
-	private void prepareEvents(final ArrangementChart arrangement) {
-		for (final Event event : arrangement.events) {
-			if (event.position() > beat.position()) {
-				break;
-			}
-			if (event.beat == beat) {
-				events.add(event);
-			}
-		}
-	}
-
-	private int prepareSectionInput(int row) {
+	private void prepareSectionInput(final AtomicInteger row) {
 		final JComboBox<SectionTypeListValue> sectionTypeInput = new JComboBox<>();
 		sectionTypeInput.addItem(new SectionTypeListValue(null));
 		for (final SectionType type : SectionType.values()) {
 			sectionTypeInput.addItem(new SectionTypeListValue(type));
 		}
-		sectionTypeInput.setSelectedIndex(sectionType == null ? 0 : 1 + sectionType.ordinal());
+		sectionTypeInput.setSelectedIndex(section == null ? 0 : 1 + section.ordinal());
 		sectionTypeInput
-				.addItemListener(e -> sectionType = ((SectionTypeListValue) sectionTypeInput.getSelectedItem()).type);
+				.addItemListener(e -> section = ((SectionTypeListValue) sectionTypeInput.getSelectedItem()).type);
 
-		addLabel(row, 20, Label.GUITAR_BEAT_PANE_SECTION_TYPE);
-		this.add(sectionTypeInput, 100, getY(row++), 200, 20);
-
-		return row;
+		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_SECTION_TYPE);
+		this.add(sectionTypeInput, 100, getY(row.getAndIncrement()), 200, 20);
 	}
 
-	private int preparePhraseInputs(int row) {
-		addLabel(row, 20, Label.GUITAR_BEAT_PANE_PHRASE_NAME);
-		phraseNameInput = new AutocompleteInputDialog<>(this, 100, phraseName, this::getPossiblePhraseNames, s -> s,
+	private void preparePhraseInputs(final AtomicInteger row, final String phrase) {
+		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_PHRASE_NAME);
+		phraseNameInput = new AutocompleteInputDialog<>(this, 100, phrase, this::getPossiblePhraseNames, s -> s,
 				this::onPhraseNameSelected);
-		this.add(phraseNameInput, 100, getY(row++), 100, 20);
+		this.add(phraseNameInput, 100, getY(row.getAndIncrement()), 100, 20);
 
-		addIntegerConfigValue(row, 50, 45, Label.GUITAR_BEAT_PANE_PHRASE_LEVEL, phraseLevel, 30,
+		addIntegerConfigValue(row.get(), 50, 45, Label.GUITAR_BEAT_PANE_PHRASE_LEVEL, phraseLevel, 30,
 				createIntValidator(0, 100, false), val -> phraseLevel = val, false);
 		phraseLevelInput = (JTextField) components.getLast();
 
-		addConfigCheckbox(row++, 150, 0, Label.GUITAR_BEAT_PANE_PHRASE_SOLO, phraseSolo, val -> phraseSolo = val);
+		addConfigCheckbox(row.getAndIncrement(), 150, 0, Label.GUITAR_BEAT_PANE_PHRASE_SOLO, phraseSolo,
+				val -> phraseSolo = val);
 		phraseSoloInput = (JCheckBox) components.getLast();
-
-		return row;
 	}
 
 	private ArrayList2<String> getPossiblePhraseNames(final String text) {
@@ -205,7 +157,7 @@ public class GuitarBeatPane extends ParamsPane {
 		phraseSoloInput.setSelected(phraseSolo);
 	}
 
-	private int prepareEventList(final int row) {
+	private void prepareEventList(final AtomicInteger row) {
 		final JComboBox<EventTypeListValue> eventTypeComboBox = new JComboBox<>();
 		eventTypeComboBox.addItem(new EventTypeListValue(null));
 		for (final EventType type : EventType.values()) {
@@ -214,6 +166,7 @@ public class GuitarBeatPane extends ParamsPane {
 		eventTypeComboBox.setMinimumSize(new Dimension(100, 20));
 
 		final DefaultTableModel tableModel = new DefaultTableModel();
+		tableModel.setRowCount(events.size());
 		tableModel.setColumnCount(1);
 		eventsTable = new JTable(tableModel);
 		eventsTable.setShowGrid(false);
@@ -229,16 +182,18 @@ public class GuitarBeatPane extends ParamsPane {
 		scrollTable.setMinimumSize(new Dimension(100, 80));
 
 		for (int tableRow = 0; tableRow < events.size(); tableRow++) {
-			tableModel.setValueAt(eventTypeComboBox.getItemAt(events.get(tableRow).type.ordinal() + 1), tableRow, 0);
+			final int id = events.get(tableRow).ordinal() + 1;
+			final EventTypeListValue value = eventTypeComboBox.getItemAt(id);
+			tableModel.setValueAt(value, tableRow, 0);
 		}
 
-		this.add(scrollTable, 50, getY(row), 170, 120);
+		this.add(scrollTable, 50, getY(row.getAndIncrement()), 170, 120);
 
 		final JButton rowAddButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_ADD.label());
 		rowAddButton.addActionListener(e -> {
 			tableModel.addRow(new Vector<Object>());
 		});
-		this.add(rowAddButton, 230, getY(row + 1), 150, 20);
+		this.add(rowAddButton, 230, getY(row.getAndAdd(2)), 150, 20);
 
 		final JButton rowRemoveButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_REMOVE.label());
 		rowRemoveButton.addActionListener(e -> {
@@ -260,50 +215,61 @@ public class GuitarBeatPane extends ParamsPane {
 			eventsTable.clearSelection();
 			tableModel.removeRow(0);
 		});
-		this.add(rowRemoveButton, 230, getY(row + 3), 150, 20);
+		this.add(rowRemoveButton, 230, getY(row.getAndAdd(2)), 150, 20);
+	}
 
-		return row + 5;
+	private boolean hasValues() {
+		if (section != null) {
+			return true;
+		}
+		if (!phraseNameInput.getText().isBlank()) {
+			return true;
+		}
+		if (eventsTable.getRowCount() == 0) {
+			return false;
+		}
+
+		for (int row = 0; row < eventsTable.getRowCount(); row++) {
+			final EventTypeListValue value = (EventTypeListValue) eventsTable.getValueAt(row, 0);
+			if (value != null && value.type != null) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private void saveAndExit() {
 		undoSystem.addUndo();
 
 		final ArrangementChart arrangement = data.getCurrentArrangement();
-		if (section == null && sectionType != null) {
-			arrangement.sections.add(new Section(beat, sectionType));
-			arrangement.sections.sort(null);
-		} else if (section != null && sectionType == null) {
-			arrangement.sections.remove(section);
-		} else if (section != null) {
-			section.type = sectionType;
+		final String phraseName = phraseNameInput.getText();
+
+		if (!hasValues()) {
+			arrangement.eventPoints.remove(eventPoint);
+			return;
 		}
 
-		phraseName = phraseNameInput.getText();
-		Phrase phrase = arrangement.phrases.get(phraseName);
-		if (phrase == null && !phraseName.isEmpty()) {
-			phrase = new Phrase(phraseLevel, phraseSolo);
-			arrangement.phrases.put(phraseName, phrase);
-		} else if (phrase != null) {
-			phrase.maxDifficulty = phraseLevel;
-			phrase.solo = phraseSolo;
+		eventPoint.section = section;
+		eventPoint.phrase = phraseName.isBlank() ? null : phraseName;
+		if (!phraseName.isBlank()) {
+			Phrase phrase = arrangement.phrases.get(phraseName);
+			if (phrase == null) {
+				phrase = new Phrase(phraseLevel, phraseSolo);
+				arrangement.phrases.put(phraseName, phrase);
+			} else {
+				phrase.maxDifficulty = phraseLevel;
+				phrase.solo = phraseSolo;
+			}
 		}
 
-		if (phraseIteration == null && !phraseName.isEmpty()) {
-			arrangement.phraseIterations.add(new PhraseIteration(beat, phraseName));
-			arrangement.phraseIterations.sort(null);
-		} else if (phraseIteration != null && phraseName.isEmpty()) {
-			arrangement.phraseIterations.remove(phraseIteration);
-		} else if (phraseIteration != null) {
-			phraseIteration.phraseName = phraseName;
-		}
-
-		arrangement.events.removeAll(events);
+		eventPoint.events.clear();
 		for (int row = 0; row < eventsTable.getRowCount(); row++) {
 			final EventTypeListValue value = (EventTypeListValue) eventsTable.getValueAt(row, 0);
 			if (value != null && value.type != null) {
-				arrangement.events.add(new Event(beat, value.type));
+				eventPoint.events.add(value.type);
 			}
 		}
-		arrangement.events.sort(null);
+		eventPoint.events.sort(null);
 	}
 }

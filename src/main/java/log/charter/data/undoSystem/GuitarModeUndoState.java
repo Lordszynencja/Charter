@@ -3,22 +3,19 @@ package log.charter.data.undoSystem;
 import log.charter.data.ChartData;
 
 public class GuitarModeUndoState extends UndoState {
-	private final BeatsMapUndoState beatsMapUndoState;
 	private final GuitarUndoState guitarUndoState;
 
-	GuitarModeUndoState(final GuitarUndoState guitarUndoState, final BeatsMapUndoState beatsMapUndoState) {
-		this.beatsMapUndoState = beatsMapUndoState;
+	GuitarModeUndoState(final GuitarUndoState guitarUndoState) {
 		this.guitarUndoState = guitarUndoState;
 	}
 
 	public GuitarModeUndoState(final ChartData data) {
-		this(new GuitarUndoState(data), new BeatsMapUndoState(data));
+		this(new GuitarUndoState(data));
 	}
 
 	@Override
 	public GuitarModeUndoState undo(final ChartData data) {
-		final GuitarModeUndoState redo = new GuitarModeUndoState(guitarUndoState.undo(data),
-				beatsMapUndoState.undo(data));
+		final GuitarModeUndoState redo = new GuitarModeUndoState(guitarUndoState.undo(data));
 		return redo;
 	}
 }

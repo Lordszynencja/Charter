@@ -76,12 +76,12 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected Color getNoteColor(final NoteData note) {
+	protected Color getNoteColor(final EditorNoteDrawingData note) {
 		return noteColors[note.string];
 	}
 
 	@Override
-	protected void addNoteShape(final NoteData note, final int y) {
+	protected void addNoteShape(final EditorNoteDrawingData note, final int y) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -130,7 +130,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addNormalNoteShape(final int y, final NoteData note) {
+	protected void addNormalNoteShape(final int y, final EditorNoteDrawingData note) {
 		if (note.linkPrevious) {
 			return;
 		}
@@ -143,7 +143,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addHammerOnShape(final int y, final NoteData note) {
+	protected void addHammerOnShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -157,7 +157,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addPullOffShape(final int y, final NoteData note) {
+	protected void addPullOffShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -171,7 +171,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addTapShape(final int y, final NoteData note) {
+	protected void addTapShape(final int y, final EditorNoteDrawingData note) {
 		final List<Position2D> positions = new ArrayList2<>(//
 				new Position2D(note.x - noteWidth / 2, y - noteHeight / 2), // top left
 				new Position2D(note.x - noteWidth / 2 + 4, y - noteHeight / 2), // top left inset
@@ -184,7 +184,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addHarmonicShape(final int y, final NoteData note) {
+	protected void addHarmonicShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y - 1, noteWidth + 5,
 				noteWidth + 5).centered();
 		notes.add(filledOval(harmonicPosition, new Color(224, 224, 224)));
@@ -192,7 +192,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addPinchHarmonicShape(final int y, final NoteData note) {
+	protected void addPinchHarmonicShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -206,12 +206,12 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addPalmMute(final NoteData note, final int y) {
+	protected void addPalmMute(final EditorNoteDrawingData note, final int y) {
 		notes.add(centeredImage(new Position2D(note.x, y), palmMuteImage));
 	}
 
 	@Override
-	protected void addMute(final NoteData note, final int y) {
+	protected void addMute(final EditorNoteDrawingData note, final int y) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -221,7 +221,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addSlideCommon(final NoteData note, final int y, final Color outlineColor, final Color fretColor) {
+	protected void addSlideCommon(final EditorNoteDrawingData note, final int y, final Color outlineColor, final Color fretColor) {
 		addNormalNoteTailShape(note, y);
 
 		IntRange topBottom = getDefaultTailTopBottom(y);

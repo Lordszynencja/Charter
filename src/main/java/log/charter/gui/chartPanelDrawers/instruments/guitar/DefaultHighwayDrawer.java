@@ -28,9 +28,9 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.str
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.text;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.textWithBackground;
-import static log.charter.gui.chartPanelDrawers.instruments.guitar.NoteData.fromChord;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.EditorNoteDrawingData.fromChord;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.EditorNoteDrawingData.fromNote;
 import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.timeToXLength;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -188,11 +188,11 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		return scaledMuteImage;
 	}
 
-	protected Color getNoteColor(final NoteData note) {
+	protected Color getNoteColor(final EditorNoteDrawingData note) {
 		return note.mute != Mute.FULL ? noteColors[note.string] : ColorLabel.NOTE_FULL_MUTE.color();
 	}
 
-	protected void addNormalNoteShape(final int y, final NoteData note) {
+	protected void addNormalNoteShape(final int y, final EditorNoteDrawingData note) {
 		if (note.linkPrevious) {
 			return;
 		}
@@ -212,7 +212,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		}
 	}
 
-	protected void addHammerOnShape(final int y, final NoteData note) {
+	protected void addHammerOnShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -232,7 +232,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		}
 	}
 
-	protected void addPullOffShape(final int y, final NoteData note) {
+	protected void addPullOffShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -252,7 +252,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		}
 	}
 
-	protected void addTapShape(final int y, final NoteData note) {
+	protected void addTapShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -286,14 +286,14 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		}
 	}
 
-	protected void addHarmonicShape(final int y, final NoteData note) {
+	protected void addHarmonicShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y - 1, noteWidth + 5,
 				noteWidth + 5).centered();
 		notes.add(filledOval(harmonicPosition, new Color(224, 224, 224)));
 		notes.add(filledOval(harmonicPosition.resized(5, 5, -10, -10), noteColors[note.string]));
 	}
 
-	protected void addPinchHarmonicShape(final int y, final NoteData note) {
+	protected void addPinchHarmonicShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -306,11 +306,11 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		notes.add(lineHorizontal(note.x - noteWidth / 2 + 5, note.x + noteWidth / 2 - 5, y, laneColor));
 	}
 
-	protected void addPalmMute(final NoteData note, final int y) {
+	protected void addPalmMute(final EditorNoteDrawingData note, final int y) {
 		notes.add(centeredImage(new Position2D(note.x, y), palmMuteImage));
 	}
 
-	protected void addMute(final NoteData note, final int y) {
+	protected void addMute(final EditorNoteDrawingData note, final int y) {
 		notes.add(centeredImage(new Position2D(note.x, y), muteImage));
 	}
 
@@ -320,7 +320,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		return new IntRange(topY, bottomY);
 	}
 
-	protected void addSlideCommon(final NoteData note, final int y, final Color backgroundColor,
+	protected void addSlideCommon(final EditorNoteDrawingData note, final int y, final Color backgroundColor,
 			final Color fretColor) {
 		IntRange topBottom = getDefaultTailTopBottom(y);
 		topBottom = new IntRange(topBottom.min - 1, topBottom.max);
@@ -387,16 +387,16 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		}
 	}
 
-	protected void addSlideNoteTailShape(final NoteData note, final int y) {
+	protected void addSlideNoteTailShape(final EditorNoteDrawingData note, final int y) {
 		addSlideCommon(note, y, ColorLabel.SLIDE_NORMAL_FRET_BG.color(), ColorLabel.SLIDE_NORMAL_FRET_TEXT.color());
 	}
 
-	protected void addUnpitchedSlideNoteTailShape(final NoteData note, final int y) {
+	protected void addUnpitchedSlideNoteTailShape(final EditorNoteDrawingData note, final int y) {
 		addSlideCommon(note, y, ColorLabel.SLIDE_UNPITCHED_FRET_BG.color(),
 				ColorLabel.SLIDE_UNPITCHED_FRET_TEXT.color());
 	}
 
-	protected void addNormalNoteTailShape(final NoteData note, final int y) {
+	protected void addNormalNoteTailShape(final EditorNoteDrawingData note, final int y) {
 		final IntRange topBottom = getDefaultTailTopBottom(y);
 		final int x = note.x - 1;
 		final int length = note.length + 1;
@@ -530,7 +530,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		return y + tailHeight / 3 - bendOffset;
 	}
 
-	protected void addBendValues(final NoteData note, final int y) {
+	protected void addBendValues(final EditorNoteDrawingData note, final int y) {
 		Position2D lastBendLinePosition = new Position2D(note.x, getBendLineY(y, BigDecimal.ZERO));
 
 		for (final BendValue bendValue : note.bendValues) {
@@ -552,7 +552,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 				line(lastBendLinePosition, new Position2D(note.x + note.length, lastBendLinePosition.y), Color.WHITE));
 	}
 
-	protected void addNoteTail(final NoteData note, final int y) {
+	protected void addNoteTail(final EditorNoteDrawingData note, final int y) {
 		if (note.slideTo != null) {
 			if (note.unpitchedSlide) {
 				addUnpitchedSlideNoteTailShape(note, y);
@@ -568,7 +568,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		}
 	}
 
-	protected void addNoteShape(final NoteData note, final int y) {
+	protected void addNoteShape(final EditorNoteDrawingData note, final int y) {
 		if (note.hopo == HOPO.NONE) {
 			addNormalNoteShape(y, note);
 		} else if (note.hopo == HOPO.HAMMER_ON) {
@@ -601,7 +601,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		}
 	}
 
-	protected void addSimpleNote(final NoteData note) {
+	protected void addSimpleNote(final EditorNoteDrawingData note) {
 		if (note.string >= stringPositions.length) {
 			return;
 		}
@@ -611,16 +611,15 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addNote(final Note note, final int x, final int length, final boolean selected,
-			final boolean lastWasLinkNext) {
-		addSimpleNote(new NoteData(x, length, note, selected, lastWasLinkNext));
+	public void addNote(final Note note, final int x, final boolean selected, final boolean lastWasLinkNext) {
+		addSimpleNote(fromNote(x, note, selected, lastWasLinkNext));
 	}
 
 	@Override
 	public void addChord(final Chord chord, final ChordTemplate chordTemplate, final int x, final int length,
 			final boolean selected, final boolean lastWasLinkNext, final boolean ctrl) {
-		for (final NoteData noteData : fromChord(chord, chordTemplate, x, selected, lastWasLinkNext, ctrl)) {
-			noteData.length = timeToXLength(noteData.length);
+		for (final EditorNoteDrawingData noteData : fromChord(chord, chordTemplate, x, selected, lastWasLinkNext,
+				ctrl)) {
 			addSimpleNote(noteData);
 		}
 

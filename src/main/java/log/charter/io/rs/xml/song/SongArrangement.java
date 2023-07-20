@@ -85,14 +85,16 @@ public class SongArrangement {
 		arrangementProperties = arrangementChart.arrangementProperties;
 		setTones(arrangementChart);
 		phrases = new CountedList<ArrangementPhrase>(arrangementChart.phrases.map(ArrangementPhrase::new));
-		phraseIterations = new CountedList<>(
-				ArrangementPhraseIteration.fromPhraseIterations(phrases.list, arrangementChart.phraseIterations));
+		phraseIterations = new CountedList<>(ArrangementPhraseIteration.fromPhraseIterations(phrases.list,
+				arrangementChart.getFilteredEventPoints(p -> p.phrase != null)));
 		chordTemplates = new CountedList<>(arrangementChart.chordTemplates.map(ArrangementChordTemplate::new));
 		fretHandMuteTemplates = new CountedList<>(
 				arrangementChart.fretHandMuteTemplates.map(ArrangementChordTemplate::new));
 		ebeats = new CountedList<>(songChart.beatsMap.beats.map(EBeat::new));
-		sections = new CountedList<>(ArrangementSection.fromSections(arrangementChart.sections));
-		events = new CountedList<>(ArrangementEvent.fromEventsAndBeatMap(arrangementChart.events, songChart.beatsMap));
+		sections = new CountedList<>(
+				ArrangementSection.fromSections(arrangementChart.getFilteredEventPoints(p -> p.section != null)));
+		events = new CountedList<>(ArrangementEvent.fromEventsAndBeatMap(
+				arrangementChart.getFilteredEventPoints(p -> !p.events.isEmpty()), songChart.beatsMap));
 		levels = new CountedList<>(
 				ArrangementLevel.fromLevels(arrangementChart.levels, arrangementChart.chordTemplates));
 

@@ -318,7 +318,7 @@ public class Localization {
 		LINK_NEXT("Link next"), //
 		SPLIT_INTO_NOTES("Split"), //
 		IGNORE_NOTE("Ignore"), //
-		PASS_OTHER_NOTES("Pass notes"), //
+		PASS_OTHER_NOTES("Crazy/Arpeggiato"), //
 		VIBRATO("Vibrato"), //
 		TREMOLO("Tremolo"), //
 

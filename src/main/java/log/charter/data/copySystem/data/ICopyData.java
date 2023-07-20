@@ -1,14 +1,9 @@
 package log.charter.data.copySystem.data;
 
-import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
-
 import log.charter.data.ChartData;
-import log.charter.data.copySystem.data.positions.CopiedOnBeatPosition;
 import log.charter.data.copySystem.data.positions.CopiedPosition;
 import log.charter.io.Logger;
-import log.charter.song.Beat;
 import log.charter.song.BeatsMap;
-import log.charter.song.OnBeat;
 import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -20,24 +15,6 @@ public interface ICopyData {
 		for (final V copiedPosition : positionsToPaste) {
 			try {
 				final T value = copiedPosition.getValue(beatsMap, basePositionInBeats);
-				if (value != null) {
-					positions.add(value);
-				}
-			} catch (final Exception e) {
-				Logger.error("Couldn't paste position", e);
-			}
-		}
-
-		positions.sort(null);
-	}
-
-	static <T extends OnBeat, V extends CopiedOnBeatPosition<T>> void simplePasteOnBeat(final ArrayList2<Beat> beats,
-			final int time, final ArrayList2<T> positions, final ArrayList2<V> positionsToPaste) {
-		final int baseBeatId = findLastIdBeforeEqual(beats, time);
-
-		for (final V copiedPosition : positionsToPaste) {
-			try {
-				final T value = copiedPosition.getValue(beats, baseBeatId);
 				if (value != null) {
 					positions.add(value);
 				}

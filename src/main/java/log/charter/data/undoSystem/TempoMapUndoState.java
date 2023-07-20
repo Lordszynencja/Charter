@@ -6,20 +6,15 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 public class TempoMapUndoState extends UndoState {
 
-	private final BeatsMapUndoState beatsMapUndoState;
 	private final ArrayList2<GuitarUndoState> guitarUndoStates;
 	private final VocalUndoState vocalUndoState;
 
-	private TempoMapUndoState(final BeatsMapUndoState beatsMapUndoState,
-			final ArrayList2<GuitarUndoState> guitarUndoStates, final VocalUndoState vocalUndoState) {
-		this.beatsMapUndoState = beatsMapUndoState;
+	private TempoMapUndoState(final ArrayList2<GuitarUndoState> guitarUndoStates, final VocalUndoState vocalUndoState) {
 		this.guitarUndoStates = guitarUndoStates;
 		this.vocalUndoState = vocalUndoState;
 	}
 
 	public TempoMapUndoState(final ChartData data) {
-		beatsMapUndoState = new BeatsMapUndoState(data);
-
 		guitarUndoStates = new ArrayList2<>();
 		for (int arrangementId = 0; arrangementId < data.songChart.arrangements.size(); arrangementId++) {
 			final ArrangementChart arrangement = data.songChart.arrangements.get(arrangementId);
@@ -35,8 +30,7 @@ public class TempoMapUndoState extends UndoState {
 	public TempoMapUndoState undo(final ChartData data) {
 		final ArrayList2<GuitarUndoState> guitarRedoStates = guitarUndoStates.map(state -> state.undo(data));
 		final VocalUndoState vocalRedoState = vocalUndoState.undo(data);
-		final BeatsMapUndoState beatsMapRedoState = beatsMapUndoState.undo(data);
 
-		return new TempoMapUndoState(beatsMapRedoState, guitarRedoStates, vocalRedoState);
+		return new TempoMapUndoState(guitarRedoStates, vocalRedoState);
 	}
 }

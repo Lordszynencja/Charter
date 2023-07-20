@@ -17,7 +17,7 @@ import org.lwjgl.opengl.GL30;
 import log.charter.data.ChartData;
 import log.charter.gui.components.preview3D.BaseShader.BaseShaderDrawData;
 import log.charter.song.Anchor;
-import log.charter.song.PhraseIteration;
+import log.charter.song.EventPoint;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DAnchorsDrawer {
@@ -48,8 +48,8 @@ public class Preview3DAnchorsDrawer {
 				timeTo = data.songChart.beatsMap.songLengthMs;
 			}
 
-			final PhraseIteration nextPhraseIteration = findFirstAfter(data.getCurrentArrangement().phraseIterations,
-					anchor.position());
+			final EventPoint nextPhraseIteration = findFirstAfter(
+					data.getCurrentArrangement().getFilteredEventPoints(p -> p.phrase != null), anchor.position());
 			if (nextPhraseIteration != null) {
 				timeTo = min(timeTo, nextPhraseIteration.position());
 			}

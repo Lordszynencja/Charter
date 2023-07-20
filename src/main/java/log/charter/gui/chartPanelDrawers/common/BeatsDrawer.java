@@ -20,7 +20,6 @@ import java.awt.Graphics;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
@@ -30,18 +29,18 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressData;
 import log.charter.song.Beat;
-import log.charter.song.Event;
+import log.charter.song.EventPoint;
+import log.charter.song.EventType;
 import log.charter.song.Phrase;
-import log.charter.song.PhraseIteration;
-import log.charter.song.Section;
+import log.charter.song.SectionType;
 import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.Position2D;
 import log.charter.util.grid.GridPosition;
@@ -109,23 +108,42 @@ public class BeatsDrawer {
 			beats.add(lineVertical(x, lanesTop, lanesBottom, ColorLabel.GRID));
 		}
 
-		public void addSection(final Section section, final int x) {
-			final String sectionName = section.type.label;
-			sectionsAndPhrases.add(textWithBackground(new Position2D(x, sectionNamesY + 11), sectionName,
+		private void addSection(final SectionType section, final int x) {
+			sectionsAndPhrases.add(textWithBackground(new Position2D(x, sectionNamesY + 11), section.label,
 					ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT));
 		}
 
-		public void addPhrase(final Phrase phrase, final PhraseIteration phraseIteration, final int x) {
-			final String phraseName = phraseIteration.phraseName + " (" + phrase.maxDifficulty + ")"//
+		private void addPhrase(final Phrase phrase, final String phraseName, final int x) {
+			final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
 					+ (phrase.solo ? "[Solo]" : "");
-			sectionsAndPhrases.add(textWithBackground(new Position2D(x, phraseNamesY + 11), phraseName,
+			sectionsAndPhrases.add(textWithBackground(new Position2D(x, phraseNamesY + 11), phraseLabel,
 					ColorLabel.PHRASE_NAME_BG, ColorLabel.BASE_DARK_TEXT));
 		}
 
-		public void addEvents(final ArrayList2<Event> events, final int x) {
-			final String eventsName = String.join(", ", events.map(event -> event.type.label));
+		private void addEvents(final ArrayList2<EventType> events, final int x) {
+			final String eventsName = String.join(", ", events.map(event -> event.label));
 			sectionsAndPhrases.add(textWithBackground(new Position2D(x, eventNamesY + 11), eventsName,
 					ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT));
+		}
+
+		public void addEventPoint(final EventPoint eventPoint, final Phrase phrase, final int x,
+				final boolean selected) {
+			if (eventPoint.section != null) {
+				addSection(eventPoint.section, x);
+			}
+			if (eventPoint.phrase != null) {
+				addPhrase(phrase, eventPoint.phrase, x);
+			}
+			if (!eventPoint.events.isEmpty()) {
+				addEvents(eventPoint.events, x);
+			}
+
+			if (selected) {
+				final int top = sectionNamesY - 1;
+				final int bottom = lanesBottom + 1;
+				final ShapePositionWithSize beatPosition = new ShapePositionWithSize(x - 1, top, 3, bottom - top);
+				beats.add(DrawableShape.filledRectangle(beatPosition, ColorLabel.SELECT));
+			}
 		}
 
 		public void draw(final Graphics g) {
@@ -214,9 +232,23 @@ public class BeatsDrawer {
 		}
 	}
 
-	private void addSections(final BeatsDrawingData drawingData) {
-		for (final Section section : data.getCurrentArrangement().sections) {
-			final int x = timeToX(section.beat.position(), data.time);
+	private void addEventPoints(final BeatsDrawingData drawingData) {
+		final HashSet2<Integer> selectedEventPointIds = selectionManager.getSelectedAccessor(PositionType.EVENT_POINT)//
+				.getSelectedSet().map(selection -> selection.id);
+
+		if (selectedEventPointIds.isEmpty()) {
+			final MouseButtonPressData pressData = mouseButtonPressReleaseHandler
+					.getPressPosition(MouseButton.LEFT_BUTTON);
+			if (pressData != null && pressData.highlight.eventPoint != null) {
+				selectedEventPointIds.add(pressData.highlight.id);
+			}
+		}
+
+		final ArrayList2<EventPoint> eventPoints = data.getCurrentArrangement().eventPoints;
+
+		for (int i = 0; i < eventPoints.size(); i++) {
+			final EventPoint eventPoint = eventPoints.get(i);
+			final int x = timeToX(eventPoint.position(), data.time);
 			if (x < -1000) {
 				continue;
 			}
@@ -224,49 +256,9 @@ public class BeatsDrawer {
 				break;
 			}
 
-			drawingData.addSection(section, x);
-		}
-	}
-
-	private void addPhrases(final BeatsDrawingData drawingData) {
-		for (final PhraseIteration phraseIteration : data.getCurrentArrangement().phraseIterations) {
-			final int x = timeToX(phraseIteration.beat.position(), data.time);
-			if (x < -1000) {
-				continue;
-			}
-			if (x > chartPanel.getWidth()) {
-				break;
-			}
-
-			final Phrase phrase = data.getCurrentArrangement().phrases.get(phraseIteration.phraseName);
-			drawingData.addPhrase(phrase, phraseIteration, x);
-		}
-	}
-
-	private void addEvents(final BeatsDrawingData drawingData) {
-		final HashMap2<Integer, ArrayList2<Event>> eventsOnPositions = new HashMap2<>();
-
-		for (final Event event : data.getCurrentArrangement().events) {
-			final int position = event.beat.position();
-			ArrayList2<Event> beatEvents = eventsOnPositions.get(position);
-			if (beatEvents == null) {
-				beatEvents = new ArrayList2<>();
-				eventsOnPositions.put(position, beatEvents);
-			}
-
-			beatEvents.add(event);
-		}
-
-		for (final Entry<Integer, ArrayList2<Event>> eventsOnPosition : eventsOnPositions.entrySet()) {
-			final int x = timeToX(eventsOnPosition.getKey(), data.time);
-			if (x < -1000) {
-				continue;
-			}
-			if (x > chartPanel.getWidth()) {
-				continue;
-			}
-
-			drawingData.addEvents(eventsOnPosition.getValue(), x);
+			final boolean selected = selectedEventPointIds.contains(i);
+			drawingData.addEventPoint(eventPoint, data.getCurrentArrangement().phrases.get(eventPoint.phrase), x,
+					selected);
 		}
 	}
 
@@ -280,9 +272,7 @@ public class BeatsDrawer {
 		}
 
 		if (modeManager.editMode == EditMode.GUITAR) {
-			addSections(drawingData);
-			addPhrases(drawingData);
-			addEvents(drawingData);
+			addEventPoints(drawingData);
 		}
 
 		drawingData.draw(g);

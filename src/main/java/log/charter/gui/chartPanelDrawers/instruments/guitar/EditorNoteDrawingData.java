@@ -1,6 +1,7 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
 import static java.lang.Math.max;
+import static log.charter.util.ScalingUtils.timeToXLength;
 
 import java.util.Map.Entry;
 
@@ -14,21 +15,31 @@ import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class NoteData {
-	public static ArrayList2<NoteData> fromChord(final Chord chord, final ChordTemplate chordTemplate, final int x,
-			final boolean selected, final boolean lastWasLinkNext, final boolean ctrl) {
-		final ArrayList2<NoteData> notes = new ArrayList2<>();
+public class EditorNoteDrawingData {
+	public static EditorNoteDrawingData fromNote(final int x, final Note note, final boolean selected,
+			final boolean lastWasLinkNext) {
+		return new EditorNoteDrawingData(x, timeToXLength(note.length()), note, selected, lastWasLinkNext);
+	}
+
+	public static EditorNoteDrawingData fromChordNote(final int x, final Chord chord, final ChordTemplate chordTemplate,
+			final int string, final ChordNote chordNote, final boolean selected, final boolean lastWasLinkNext,
+			final boolean ctrl) {
+		final int fret = chordTemplate.frets.get(string);
+		final Integer finger = chordTemplate.fingers.get(string);
+		final String fretDescription = fret
+				+ (ctrl && finger != null ? "(" + (finger == 0 ? "T" : finger.toString()) + ")" : "");
+
+		return new EditorNoteDrawingData(x, timeToXLength(chordNote.length), string, fret, fretDescription, chord,
+				chordNote, selected, lastWasLinkNext);
+	}
+
+	public static ArrayList2<EditorNoteDrawingData> fromChord(final Chord chord, final ChordTemplate chordTemplate,
+			final int x, final boolean selected, final boolean lastWasLinkNext, final boolean ctrl) {
+		final ArrayList2<EditorNoteDrawingData> notes = new ArrayList2<>();
 
 		for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
-			final int string = chordNoteEntry.getKey();
-			final int fret = chordTemplate.frets.get(string);
-			final Integer finger = chordTemplate.fingers.get(string);
-			final String fretDescription = fret
-					+ (ctrl && finger != null ? "(" + (finger == 0 ? "T" : finger.toString()) + ")" : "");
-			final int length = chordNoteEntry.getValue().length;
-
-			notes.add(new NoteData(x, length, string, fret, fretDescription, chord, chordNoteEntry.getValue(), selected,
-					lastWasLinkNext));
+			notes.add(fromChordNote(x, chord, chordTemplate, chordNoteEntry.getKey(), chordNoteEntry.getValue(),
+					selected, lastWasLinkNext, ctrl));
 		}
 
 		return notes;
@@ -36,7 +47,7 @@ public class NoteData {
 
 	public int position;
 	public final int x;
-	public int length;
+	public final int length;
 
 	public final int string;
 	public final int fretNumber;
@@ -55,7 +66,7 @@ public class NoteData {
 	public final boolean linkPrevious;
 	public final double prebend;
 
-	public NoteData(final int x, final int length, final Note note, final boolean selected,
+	private EditorNoteDrawingData(final int x, final int length, final Note note, final boolean selected,
 			final boolean lastWasLinkNext) {
 		this(note.position(), x, length, //
 				note.string, note.fret, note.fret + "", //
@@ -64,8 +75,9 @@ public class NoteData {
 				selected, lastWasLinkNext);
 	}
 
-	public NoteData(final int x, final int length, final int string, final int fret, final String fretDescription,
-			final Chord chord, final ChordNote chordNote, final boolean selected, final boolean lastWasLinkNext) {
+	private EditorNoteDrawingData(final int x, final int length, final int string, final int fret,
+			final String fretDescription, final Chord chord, final ChordNote chordNote, final boolean selected,
+			final boolean lastWasLinkNext) {
 		this(chord.position(), x, length, //
 				string, fret, fretDescription, //
 				chord.accent, chordNote.mute, chordNote.hopo, chordNote.harmonic, chordNote.bendValues,
@@ -73,7 +85,7 @@ public class NoteData {
 				selected, lastWasLinkNext);
 	}
 
-	private NoteData(final int position, final int x, final int length, //
+	private EditorNoteDrawingData(final int position, final int x, final int length, //
 			final int string, final int fretNumber, final String fret, //
 			final boolean accent, final Mute mute, final HOPO hopo, final Harmonic harmonic,
 			final ArrayList2<BendValue> bendValues, final Integer slideTo, final boolean unpitchedSlide,

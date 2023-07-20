@@ -16,6 +16,7 @@ import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
+import log.charter.song.EventPoint;
 import log.charter.song.HandShape;
 import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
@@ -33,6 +34,7 @@ public class SelectionManager {
 	private TypeSelectionManager<Anchor> anchorsManager;
 	private TypeSelectionManager<Beat> beatsManager;
 	private TypeSelectionManager<ChordOrNote> chordsNotesManager;
+	private TypeSelectionManager<EventPoint> eventPointsManager;
 	private TypeSelectionManager<HandShape> handShapesManager;
 	private TypeSelectionManager<IPosition> noneManager;
 	private TypeSelectionManager<ToneChange> toneChangesManager;
@@ -49,6 +51,7 @@ public class SelectionManager {
 		anchorsManager = new AnchorsSelectionManager(data, mouseButtonPressReleaseHandler);
 		beatsManager = new BeatsSelectionManager(data, mouseButtonPressReleaseHandler);
 		chordsNotesManager = new ChordsNotesSelectionManager(data, mouseButtonPressReleaseHandler);
+		eventPointsManager = new EventPointsSelectionManager(data, mouseButtonPressReleaseHandler);
 		handShapesManager = new HandShapesSelectionManager(data, mouseButtonPressReleaseHandler);
 		noneManager = new NoneTypeSelectionManager();
 		toneChangesManager = new ToneChangeSelectionManager(data, mouseButtonPressReleaseHandler);
@@ -56,6 +59,7 @@ public class SelectionManager {
 
 		typeSelectionManagers.put(PositionType.ANCHOR, anchorsManager);
 		typeSelectionManagers.put(PositionType.BEAT, beatsManager);
+		typeSelectionManagers.put(PositionType.EVENT_POINT, eventPointsManager);
 		typeSelectionManagers.put(PositionType.GUITAR_NOTE, chordsNotesManager);
 		typeSelectionManagers.put(PositionType.HAND_SHAPE, handShapesManager);
 		typeSelectionManagers.put(PositionType.NONE, noneManager);
@@ -108,7 +112,8 @@ public class SelectionManager {
 		return closest;
 	}
 
-	private PositionWithIdAndType findClosestExistingPoint(final int x, final ArrayList2<PositionWithIdAndType> positions) {
+	private PositionWithIdAndType findClosestExistingPoint(final int x,
+			final ArrayList2<PositionWithIdAndType> positions) {
 		final int position = xToTime(x, data.time);
 		final Integer id = findClosestId(positions, position);
 		if (id == null) {

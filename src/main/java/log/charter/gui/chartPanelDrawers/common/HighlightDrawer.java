@@ -8,6 +8,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.line;
@@ -92,6 +93,16 @@ public class HighlightDrawer {
 		strokedRectangle(beatPosition, ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
+	private void drawEventPointHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
+			final int y) {
+		final int eventPointX = timeToX(highlight.position(), data.time);
+		final int top = sectionNamesY - 1;
+		final int bottom = lanesBottom + 1;
+		final ShapePositionWithSize eventPointPosition = new ShapePositionWithSize(eventPointX - 1, top, 2,
+				bottom - top);
+		strokedRectangle(eventPointPosition, ColorLabel.HIGHLIGHT.color()).draw(g);
+	}
+
 	private void drawNoteHighlight(final Graphics g, final int string, final int position, final int length,
 			final int strings) {
 		final int x = timeToX(position, data.time);
@@ -157,6 +168,7 @@ public class HighlightDrawer {
 	{
 		highlightDrawers.put(PositionType.ANCHOR, this::drawAnchorHighlight);
 		highlightDrawers.put(PositionType.BEAT, this::drawBeatHighlight);
+		highlightDrawers.put(PositionType.EVENT_POINT, this::drawEventPointHighlight);
 		highlightDrawers.put(PositionType.GUITAR_NOTE, this::drawGuitarNoteHighlight);
 		highlightDrawers.put(PositionType.HAND_SHAPE, this::drawHandShapeHighlight);
 		highlightDrawers.put(PositionType.NONE, this::drawNoneHighlight);
@@ -176,6 +188,15 @@ public class HighlightDrawer {
 
 	private void drawBeatDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
 		if (highlight.beat == null && !selectionManager.getSelectedAccessor(PositionType.BEAT).isSelected()) {
+			return;
+		}
+
+		lineVertical(x, beatTextY, lanesBottom, ColorLabel.HIGHLIGHT.color()).draw(g);
+	}
+
+	private void drawEventPointDrag(final Graphics g, final PositionWithIdAndType highlight, final int x) {
+		if (highlight.eventPoint == null
+				&& !selectionManager.getSelectedAccessor(PositionType.EVENT_POINT).isSelected()) {
 			return;
 		}
 
@@ -234,6 +255,7 @@ public class HighlightDrawer {
 	{
 		dragDrawers.put(PositionType.ANCHOR, this::drawAnchorDrag);
 		dragDrawers.put(PositionType.BEAT, this::drawBeatDrag);
+		dragDrawers.put(PositionType.EVENT_POINT, this::drawEventPointDrag);
 		dragDrawers.put(PositionType.GUITAR_NOTE, this::drawGuitarNoteDrag);
 		dragDrawers.put(PositionType.HAND_SHAPE, this::drawHandShapeDrag);
 		dragDrawers.put(PositionType.NONE, this::drawNoneDrag);

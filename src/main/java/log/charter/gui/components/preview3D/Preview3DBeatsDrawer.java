@@ -35,16 +35,16 @@ public class Preview3DBeatsDrawer {
 			beatsFrom = 0;
 		}
 		final int beatsTo = findLastIdBeforeEqual(beats, data.time + visibility);
-		final Color color = new Color(64, 128, 255);
-		ColorLabel.PREVIEW_3D_BEAT.color();
+
+		final double x0 = getFretPosition(0);
+		final double x1 = getFretPosition(Config.frets);
+		final double y = getChartboardYPosition(data.currentStrings()) + 0.0001;
+		final Color color = ColorLabel.PREVIEW_3D_BEAT.color();
 		final Color alpha = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0);
 
 		for (int i = beatsFrom; i <= beatsTo; i++) {
 			final Beat beat = beats.get(i);
 
-			final double x0 = getFretPosition(0);
-			final double x1 = getFretPosition(Config.frets);
-			final double y = getChartboardYPosition(data.currentStrings());
 			final double z = getTimePosition(beat.position() - data.time);
 
 			if (beat.firstInMeasure) {
@@ -76,7 +76,6 @@ public class Preview3DBeatsDrawer {
 
 		}
 
-		GL30.glPointSize(10);
 		drawData.draw(GL30.GL_QUADS);
 	}
 }

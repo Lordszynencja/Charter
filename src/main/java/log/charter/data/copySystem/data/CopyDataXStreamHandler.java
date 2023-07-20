@@ -5,10 +5,8 @@ import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
 
 import log.charter.data.copySystem.data.positions.CopiedAnchorPosition;
-import log.charter.data.copySystem.data.positions.CopiedEventPosition;
+import log.charter.data.copySystem.data.positions.CopiedArrangementEventsPointPosition;
 import log.charter.data.copySystem.data.positions.CopiedHandShapePosition;
-import log.charter.data.copySystem.data.positions.CopiedPhraseIterationPosition;
-import log.charter.data.copySystem.data.positions.CopiedSectionPosition;
 import log.charter.data.copySystem.data.positions.CopiedSoundPosition;
 import log.charter.data.copySystem.data.positions.CopiedToneChangePosition;
 import log.charter.data.copySystem.data.positions.CopiedVocalPosition;
@@ -34,14 +32,12 @@ public class CopyDataXStreamHandler {
 		xstream.processAnnotations(CopyData.class);
 		xstream.allowTypes(new Class[] { //
 				AnchorsCopyData.class, //
-				BeatsCopyData.class, //
+				EventPointsCopyData.class, //
 				ChordTemplate.class, //
 				CopyData.class, //
 				CopiedAnchorPosition.class, //
-				CopiedEventPosition.class, //
+				CopiedArrangementEventsPointPosition.class, //
 				CopiedHandShapePosition.class, //
-				CopiedPhraseIterationPosition.class, //
-				CopiedSectionPosition.class, //
 				CopiedSoundPosition.class, //
 				CopiedToneChangePosition.class, //
 				CopiedVocalPosition.class, //

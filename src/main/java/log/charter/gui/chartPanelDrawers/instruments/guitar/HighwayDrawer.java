@@ -25,7 +25,7 @@ interface HighwayDrawer {
 	void addChord(Chord chord, ChordTemplate chordTemplate, int x, int length, boolean selected,
 			boolean lastWasLinkNext, boolean ctrl);
 
-	void addNote(Note note, int x, int length, boolean selected, boolean lastWasLinkNext);
+	void addNote(Note note, int x, boolean selected, boolean lastWasLinkNext);
 
 	void addHandShape(int x, int length, boolean selected, HandShape handShape, ChordTemplate chordTemplate);
 

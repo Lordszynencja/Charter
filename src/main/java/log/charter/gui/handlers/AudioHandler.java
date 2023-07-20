@@ -109,10 +109,14 @@ public class AudioHandler {
 
 	public void toggleMidiNotes() {
 		if (midiNotesPlaying) {
-			midiChartNotePlayer.stopPlaying();
+			if (songPlayer != null) {
+				midiChartNotePlayer.stopPlaying();
+			}
 			midiNotesPlaying = false;
 		} else {
-			midiChartNotePlayer.startPlaying(speed);
+			if (songPlayer != null) {
+				midiChartNotePlayer.startPlaying(speed);
+			}
 			midiNotesPlaying = true;
 		}
 	}

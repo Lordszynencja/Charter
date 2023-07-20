@@ -84,14 +84,8 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		pasteSoundsDefault = pasteSounds;
 		pasteHandShapesDefault = pasteHandShapes;
 
-		if (pasteSections) {
-			copyData.beats.pasteSections(data);
-		}
-		if (pastePhrases) {
-			copyData.beats.pastePhrases(data);
-		}
-		if (pasteEvents) {
-			copyData.beats.pasteEvents(data);
+		if (pasteSections || pastePhrases || pasteEvents) {
+			copyData.beats.paste(data, pasteSections, pastePhrases, pasteEvents);
 		}
 		if (pasteToneChanges) {
 			copyData.toneChanges.paste(data);

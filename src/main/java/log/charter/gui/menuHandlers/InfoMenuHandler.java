@@ -12,13 +12,8 @@ import log.charter.main.LogCharterRSMain;
 
 class InfoMenuHandler extends CharterMenuHandler {
 	private static final String infoText = "Lords of Games Rocksmith Charter\n"//
-			+ "Created by Lordszynencja\n"//
-			+ "Current version: " + LogCharterRSMain.VERSION + "\n\n"//
-			+ "TODO:\n"//
-			+ "working Save As...\n"//
-			+ "GP import\n"//
-			+ "note edit\n"//
-			+ "a lot more";
+			+ "Created by Lordszynencja\n\n"//
+			+ "Current version: " + LogCharterRSMain.VERSION;
 
 	private CharterFrame frame;
 	private CharterMenuBar charterMenuBar;
