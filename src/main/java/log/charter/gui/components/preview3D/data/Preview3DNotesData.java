@@ -1,8 +1,7 @@
 package log.charter.gui.components.preview3D.data;
 
 import static log.charter.song.notes.ChordOrNote.findPreviousSoundOnString;
-import static log.charter.song.notes.IPosition.findLastIdBefore;
-import static log.charter.song.notes.IPositionWithLength.findFirstIdAfterEqual;
+import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +33,18 @@ public class Preview3DNotesData {
 		}
 		final ArrayList2<ChordOrNote> sounds = level.chordsAndNotes;
 
-		int soundsFrom = findFirstIdAfterEqual(sounds, fromTime);
+		int soundsFrom = findLastIdBeforeEqual(sounds, fromTime);
 		if (soundsFrom == -1) {
 			soundsFrom = 0;
 		}
-		final int soundsTo = findLastIdBefore(sounds, toTime);
+		final int soundsTo = findLastIdBeforeEqual(sounds, toTime);
 
 		for (int i = soundsFrom; i <= soundsTo; i++) {
 			final ChordOrNote sound = sounds.get(i);
+			if (sound.endPosition() < fromTime) {
+				continue;
+			}
+
 			if (sound.isNote()) {
 				addNote(sounds, i, sound.note);
 			} else {

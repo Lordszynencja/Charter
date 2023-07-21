@@ -405,6 +405,10 @@ public class Preview3DGuitarSoundsDrawer {
 		}
 		for (int i = notesData.chords.size() - 1; i >= 0; i--) {
 			final Preview3DChordDrawingData chord = notesData.chords.get(i);
+			if (chord.position() < data.time - highlightWindow) {
+				continue;
+			}
+
 			drawChordShadow(baseShader, chord.position(), chord.mute);
 		}
 	}

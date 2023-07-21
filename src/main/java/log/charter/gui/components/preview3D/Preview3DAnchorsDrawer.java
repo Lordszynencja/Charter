@@ -67,6 +67,10 @@ public class Preview3DAnchorsDrawer {
 		final double z0 = max(0, getTimePosition(anchor.position() - data.time));
 		final double z1 = min(visibilityZ, getTimePosition(anchorEnd - data.time));
 
+		if (z1 < z0) {
+			return;
+		}
+
 		final Color color = new Color(0, 0, 255, 64);
 		drawData.addVertex(new Point3D(x0, y, z0), color)//
 				.addVertex(new Point3D(x1, y, z0), color)//
