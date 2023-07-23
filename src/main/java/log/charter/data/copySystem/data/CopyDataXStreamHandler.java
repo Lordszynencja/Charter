@@ -12,9 +12,11 @@ import log.charter.data.copySystem.data.positions.CopiedToneChangePosition;
 import log.charter.data.copySystem.data.positions.CopiedVocalPosition;
 import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
+import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
 import log.charter.song.Phrase;
 import log.charter.song.ToneChange;
+import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.GuitarSound;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
@@ -32,7 +34,8 @@ public class CopyDataXStreamHandler {
 		xstream.processAnnotations(CopyData.class);
 		xstream.allowTypes(new Class[] { //
 				AnchorsCopyData.class, //
-				EventPointsCopyData.class, //
+				BendValue.class, //
+				ChordNote.class, //
 				ChordTemplate.class, //
 				CopyData.class, //
 				CopiedAnchorPosition.class, //
@@ -41,6 +44,7 @@ public class CopyDataXStreamHandler {
 				CopiedSoundPosition.class, //
 				CopiedToneChangePosition.class, //
 				CopiedVocalPosition.class, //
+				EventPointsCopyData.class, //
 				FullGuitarCopyData.class, //
 				GuitarSound.class, //
 				HandShapesCopyData.class, //

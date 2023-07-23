@@ -2,6 +2,7 @@ package log.charter.gui.components.selectionEditor;
 
 import static java.lang.Math.max;
 import static log.charter.data.config.Config.maxStrings;
+import static log.charter.gui.components.RowedPanel.setComponentBounds;
 import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
 import static log.charter.util.Utils.getStringPosition;
@@ -30,6 +31,8 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 
 public class ChordTemplateEditor implements MouseListener {
+	private static final int width = 440;
+
 	private static final HashMap2<String, Integer> fingerIds = new HashMap2<>();
 	private static final HashMap2<Integer, String> fingerNames = new HashMap2<>();
 
@@ -77,6 +80,28 @@ public class ChordTemplateEditor implements MouseListener {
 		chordTemplatePreview = new ChordTemplatePreview(parent, this, data, chordTemplateSupplier);
 	}
 
+	private int calculateHeight(final int strings) {
+		return 22 + strings * parent.rowHeight;
+	}
+
+	private void setCorrectPositions() {
+		final int strings = data.currentStrings();
+
+		final int x = chordTemplatePreview.getX();
+		int y = chordTemplatePreview.getY();
+		setComponentBounds(chordTemplatePreview, x, y, width, calculateHeight(strings));
+
+		for (int i = 0; i < strings; i++) {
+			y = parent.getY(3 + strings - i);
+
+			final TextInputWithValidation fretInput = fretInputs.get(i);
+			setComponentBounds(fretInput, fretInput.getX(), y, fretInput.getWidth(), fretInput.getHeight());
+
+			final TextInputWithValidation fingerInput = fingerInputs.get(i);
+			setComponentBounds(fingerInput, fingerInput.getX(), y, fingerInput.getWidth(), fingerInput.getHeight());
+		}
+	}
+
 	protected void addChordNameSuggestionButton(final int x, final int row) {
 		chordNameAdviceButton = new ChordNameAdviceButton(Label.CHORD_NAME_ADVICE, parent,
 				() -> data.getCurrentArrangement().tuning, () -> chordTemplateSupplier.get().frets,
@@ -93,7 +118,7 @@ public class ChordTemplateEditor implements MouseListener {
 	}
 
 	protected void addChordNameInput(final int x, final int row) {
-		parent.addLabel(1, x - 80, Label.CHORD_NAME);
+		parent.addLabel(1, x - 80, Label.CHORD_NAME, 80);
 		chordNameLabel = (JLabel) parent.components.getLast();
 
 		final int strings = maxStrings;
@@ -152,6 +177,7 @@ public class ChordTemplateEditor implements MouseListener {
 		}
 
 		chordTemplatePreview.changeStringsAmount();
+		setCorrectPositions();
 		chordTemplatePreview.repaint();
 	}
 
@@ -173,8 +199,9 @@ public class ChordTemplateEditor implements MouseListener {
 	public void addChordTemplateEditor(final int baseX, final int row) {
 		int x = baseX;
 
-		final int fretLabelWidth = parent.addLabel(row, x, Label.FRET);
+		final int fretLabelWidth = parent.addLabel(row, x, Label.FRET, 50);
 		fretsLabel = (JLabel) parent.components.getLast();
+		fretsLabel.setHorizontalAlignment(JLabel.CENTER);
 		final int fretInputX = x + fretLabelWidth / 2 - 15;
 		for (int i = 0; i < maxStrings; i++) {
 			final int string = i;
@@ -191,8 +218,9 @@ public class ChordTemplateEditor implements MouseListener {
 
 		x += 5 + max(fretLabelWidth, 40);
 
-		final int fingerLabelWidth = parent.addLabel(row, x, Label.CHORD_TEMPLATE_FINGER);
+		final int fingerLabelWidth = parent.addLabel(row, x, Label.CHORD_TEMPLATE_FINGER, 50);
 		fingersLabel = (JLabel) parent.components.getLast();
+		fingersLabel.setHorizontalAlignment(JLabel.CENTER);
 
 		final int fingerInputX = x + fingerLabelWidth / 2 - 10;
 		for (int i = 0; i < maxStrings; i++) {
@@ -209,9 +237,8 @@ public class ChordTemplateEditor implements MouseListener {
 		x += 5 + max(fingerLabelWidth, 20);
 
 		final int y = parent.getY(row);
-		final int height = 22 + parent.getY(row + maxStrings) - y;
 		chordTemplatePreview = new ChordTemplatePreview(parent, this, data, chordTemplateSupplier);
-		parent.add(chordTemplatePreview, x, y, 440, height);
+		parent.add(chordTemplatePreview, x, y, width, calculateHeight(maxStrings));
 	}
 
 	private String validateFinger(final String val) {

@@ -96,6 +96,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
+import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.panes.GridPane;
 import log.charter.gui.panes.HandShapePane;
 import log.charter.gui.panes.VocalPane;
@@ -250,6 +251,7 @@ public class KeyboardHandler implements KeyListener {
 	private AudioDrawer audioDrawer;
 	private AudioHandler audioHandler;
 	private CopyManager copyManager;
+	private ChartToolbar chartToolbar;
 	private ChartData data;
 	private CharterFrame frame;
 	private ModeManager modeManager;
@@ -268,12 +270,13 @@ public class KeyboardHandler implements KeyListener {
 	private int fretNumberTimer = 0;
 
 	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler, final CopyManager copyManager,
-			final ChartData data, final CharterFrame frame, final ModeManager modeManager,
-			final MouseHandler mouseHandler, final SelectionManager selectionManager,
+			final ChartToolbar chartToolbar, final ChartData data, final CharterFrame frame,
+			final ModeManager modeManager, final MouseHandler mouseHandler, final SelectionManager selectionManager,
 			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
 		this.audioDrawer = audioDrawer;
 		this.audioHandler = audioHandler;
 		this.copyManager = copyManager;
+		this.chartToolbar = chartToolbar;
 		this.data = data;
 		this.frame = frame;
 		this.modeManager = modeManager;
@@ -386,10 +389,6 @@ public class KeyboardHandler implements KeyListener {
 
 	private void moveChordNotesDown(final int strings, final Map<Integer, ChordNote> chordNotes) {
 		chordNotes.remove(0);
-		try {
-			chordNotes.get(1).harmonic = Harmonic.NORMAL;
-		} catch (final Exception e) {
-		}
 		for (int string = 1; string < strings; string++) {
 			final ChordNote movedChordNote = chordNotes.remove(string);
 			if (movedChordNote != null) {
@@ -1343,7 +1342,7 @@ public class KeyboardHandler implements KeyListener {
 		// key(VK_B).function(this::editBend);
 		key(VK_C).ctrl().function(copyManager::copy);
 		key(VK_E).function(this::handleE);
-		key(VK_G).function(e -> new GridPane(frame));
+		key(VK_G).function(e -> new GridPane(frame, chartToolbar));
 		key(VK_G).ctrl().function(this::snapSelected);
 		key(VK_G).ctrl().shift().function(this::snapAll);
 		key(VK_H).function(this::toggleHOPO);

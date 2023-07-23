@@ -1,5 +1,6 @@
 package log.charter.gui.handlers.midiPlayer;
 
+import static log.charter.data.config.Config.midiVolume;
 import static log.charter.song.notes.IPosition.findLastBeforeEqual;
 
 import java.math.BigDecimal;
@@ -125,18 +126,17 @@ public class MidiNotePlayer {
 	}
 
 	private int getPitchBend(double bendStep) {
-		if (bendStep <= 0) {
-			bendStep = 0;
+		if (bendStep < -2) {
+			bendStep = -2;
 		}
-		if (bendStep >= 1) {
-			bendStep = 1;
+		if (bendStep > 2) {
+			bendStep = 2;
 		}
 
-		return pitchBendBaseValue + (int) (bendStep * pitchBendRange);
+		return pitchBendBaseValue + (int) (bendStep * pitchBendRange / 2);
 	}
 
-	private void playMidiNote(final GuitarSoundType soundType, final int string, final int note,
-			final double bendValue) {
+	private void playMidiNote(final GuitarSoundType soundType, final int string, final int note, double bendValue) {
 		if (lastNotes[string] != -1) {
 			return;
 		}
@@ -145,22 +145,30 @@ public class MidiNotePlayer {
 		channel.allNotesOff();
 		channel.programChange(instruments.get(soundType).getPatch().getProgram());
 
-		final int actualNote = note + (int) bendValue;
-		channel.setPitchBend(getPitchBend(bendValue % 1.0));
+		int actualNote = note;
+		while (bendValue >= 2) {
+			bendValue -= 2;
+			actualNote += 2;
+		}
+		channel.setPitchBend(getPitchBend(bendValue));
 		channel.noteOn(actualNote, 127);
 		lastNotes[string] = note;
 		lastActualNotes[string] = actualNote;
 	}
 
-	public void updateBend(final int string, final double bendValue) {
+	public void updateBend(final int string, double bendValue) {
 		if (lastNotes[string] == -1) {
 			return;
 		}
 
 		final MidiChannel channel = channels[string];
 
-		final int actualNote = lastNotes[string] + (int) bendValue;
-		final int pitchBend = getPitchBend(bendValue % 1.0);
+		int actualNote = lastNotes[string];
+		while (bendValue >= 2) {
+			bendValue -= 2;
+			actualNote += 2;
+		}
+		final int pitchBend = getPitchBend(bendValue);
 		if (lastActualNotes[string] != actualNote) {
 			channel.noteOff(lastNotes[string]);
 			channel.setPitchBend(pitchBend);
@@ -168,6 +176,12 @@ public class MidiNotePlayer {
 			lastActualNotes[string] = actualNote;
 		} else {
 			channel.setPitchBend(pitchBend);
+		}
+	}
+
+	public void updateVolume() {
+		for (final MidiChannel channel : channels) {
+			channel.controlChange(7, (int) (midiVolume * 127.0));
 		}
 	}
 

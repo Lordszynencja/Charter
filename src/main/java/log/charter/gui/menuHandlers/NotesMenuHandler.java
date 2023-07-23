@@ -8,19 +8,22 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SpecialMenuItem;
+import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.panes.GridPane;
 
 class NotesMenuHandler extends CharterMenuHandler {
 
 	private CharterFrame frame;
+	private ChartToolbar chartToolbar;
 	private ChartData data;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 
-	public void init(final CharterFrame frame, final ChartData data, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager) {
+	public void init(final CharterFrame frame, final ChartToolbar chartToolbar, final ChartData data,
+			final KeyboardHandler keyboardHandler, final ModeManager modeManager) {
 		this.frame = frame;
+		this.chartToolbar = chartToolbar;
 		this.data = data;
 		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
@@ -45,6 +48,6 @@ class NotesMenuHandler extends CharterMenuHandler {
 	}
 
 	private void gridOptions() {
-		new GridPane(frame);
+		new GridPane(frame, chartToolbar);
 	}
 }

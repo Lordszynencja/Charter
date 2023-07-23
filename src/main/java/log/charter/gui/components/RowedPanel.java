@@ -73,28 +73,30 @@ public class RowedPanel extends JPanel {
 	/**
 	 * @return width of created label
 	 */
-	public int addLabel(final int row, final int x, final Label label) {
-		return addLabelExact(getY(row), x, label);
+	public int addLabel(final int row, final int x, final Label label, final int width) {
+		return addLabelExact(getY(row), x, label, width);
 	}
 
 	/**
 	 * @return width of created label
 	 */
-	public int addLabelExact(final int y, final int x, final Label label) {
+	public int addLabelExact(final int y, final int x, final Label label, int width) {
 		if (label == null) {
 			return 0;
 		}
 
 		final JLabel labelComponent = new JLabel(label.label(), SwingConstants.LEFT);
-		final int labelWidth = labelComponent.getPreferredSize().width;
-		add(labelComponent, x, y, labelWidth, 20);
+		if (width == 0) {
+			width = labelComponent.getPreferredSize().width;
+		}
+		add(labelComponent, x, y, width, 20);
 
-		return labelWidth;
+		return width;
 	}
 
 	public void addCheckbox(final int row, final int x, int labelWidth, final Label label, final boolean val,
 			final BooleanValueSetter setter) {
-		final int actualLabelWidth = addLabel(row, x, label);
+		final int actualLabelWidth = addLabel(row, x, label, labelWidth);
 
 		if (labelWidth == 0) {
 			labelWidth = actualLabelWidth;
@@ -134,7 +136,7 @@ public class RowedPanel extends JPanel {
 			group.add(radioButton);
 			add(radioButton, x, y, 20, 20);
 
-			addLabelExact(y, x + 20, value.b);
+			addLabelExact(y, x + 20, value.b, optionWidth - 20);
 
 			x += optionWidth;
 		}

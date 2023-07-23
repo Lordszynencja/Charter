@@ -81,9 +81,9 @@ public class NoteStatusModels {
 			final double y = FrettedNoteModel.height * 0.5;
 			final double z = -FrettedNoteModel.depth / 2 - 0.01;
 
-			points.add(new Point3D(-x, -y, z));
-			points.add(new Point3D(0, y, z));
-			points.add(new Point3D(x, -y, z));
+			points.add(new Point3D(-x, y, z));
+			points.add(new Point3D(0, -y, z));
+			points.add(new Point3D(x, y, z));
 		}
 
 		@Override
@@ -104,9 +104,9 @@ public class NoteStatusModels {
 			final double y = FrettedNoteModel.height * 0.5;
 			final double z = -FrettedNoteModel.depth / 2 - 0.01;
 
-			points.add(new Point3D(-x, y, z));
-			points.add(new Point3D(0, -y, z));
-			points.add(new Point3D(x, y, z));
+			points.add(new Point3D(-x, -y, z));
+			points.add(new Point3D(0, y, z));
+			points.add(new Point3D(x, -y, z));
 		}
 
 		@Override

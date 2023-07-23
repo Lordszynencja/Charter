@@ -15,6 +15,7 @@ import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.io.Logger;
 
 public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 	private static final long serialVersionUID = 1L;
@@ -76,12 +77,16 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 
 	@Override
 	public void paint(final Graphics g) {
-		if (!isValid()) {
-			GL.setCapabilities(null);
-			return;
-		}
+		try {
+			if (!isValid()) {
+				GL.setCapabilities(null);
+				return;
+			}
 
-		render();
+			render();
+		} catch (final Exception e) {
+			Logger.error("Exception in paint", e);
+		}
 	}
 
 	@Override
@@ -98,46 +103,56 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 
 	@Override
 	public void initGL() {
-		GL.createCapabilities();
+		try {
+			GL.createCapabilities();
 
-		baseShader.init();
+			baseShader.init();
 
-		GL30.glEnable(GL30.GL_DEPTH_TEST);
-		GL30.glDepthFunc(GL30.GL_GEQUAL);
-		GL30.glClearDepth(0);
+			GL30.glEnable(GL30.GL_DEPTH_TEST);
+			GL30.glDepthFunc(GL30.GL_GEQUAL);
+			GL30.glClearDepth(0);
 
-		GL30.glEnable(GL30.GL_BLEND);
-		GL30.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+			GL30.glEnable(GL30.GL_BLEND);
+			GL30.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+		} catch (final Exception e) {
+			Logger.error("Exception in initGL", e);
+			throw e;
+		}
 	}
 
 	@Override
 	public void paintGL() {
-		baseShader.use();
-		GL30.glViewport(0, 0, getWidth(), getHeight());
-		GL30.glClearColor(0.25f, 0.25f, 0.25f, 1);
-		GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
+		try {
+			baseShader.use();
+			GL30.glViewport(0, 0, getWidth(), getHeight());
+			GL30.glClearColor(0.25f, 0.25f, 0.25f, 1);
+			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
 
-		if (data == null || data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
-			swapBuffers();
-			return;
-		}
+			if (data == null || data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+				swapBuffers();
+				return;
+			}
 
-		cameraHandler.updateCamera(1.0 * getWidth() / getHeight(), ((double) mouseX) / getWidth(),
-				((double) mouseY) / getHeight());
-		baseShader.setSceneMatrix(cameraHandler.currentMatrix);
+			cameraHandler.updateCamera(1.0 * getWidth() / getHeight(), ((double) mouseX) / getWidth(),
+					((double) mouseY) / getHeight());
+			baseShader.setSceneMatrix(cameraHandler.currentMatrix);
 
-		baseShader.setModelMatrix(moveMatrix(0, 0, 0));
-		stringsDrawer.draw(baseShader);
-		fretLanesDrawer.draw(baseShader);
-		anchorsDrawer.draw(baseShader);
-		handShapesDrawer.draw(baseShader);
-		beatsDrawer.draw(baseShader);
-		soundsDrawer.draw(baseShader);
+			baseShader.setModelMatrix(moveMatrix(0, 0, 0));
+			stringsDrawer.draw(baseShader);
+			fretLanesDrawer.draw(baseShader);
+			anchorsDrawer.draw(baseShader);
+			handShapesDrawer.draw(baseShader);
+			beatsDrawer.draw(baseShader);
+			soundsDrawer.draw(baseShader);
 
 //		drawFretNumbers(shapesList);
 
-		baseShader.stopUsing();
+			baseShader.stopUsing();
 
-		swapBuffers();
+			swapBuffers();
+		} catch (final Exception e) {
+			Logger.error("Exception in paintGL", e);
+			throw e;
+		}
 	}
 }

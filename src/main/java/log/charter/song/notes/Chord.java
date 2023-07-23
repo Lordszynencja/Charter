@@ -143,6 +143,16 @@ public class Chord extends GuitarSound {
 		return true;
 	}
 
+	public boolean palmMuted() {
+		for (final ChordNote chordNote : chordNotes.values()) {
+			if (chordNote.mute != Mute.PALM) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public Integer slideTo() {
 		Integer slideTo = null;
 		for (final Entry<Integer, ChordNote> chordNote : chordNotes.entrySet()) {
@@ -202,7 +212,7 @@ public class Chord extends GuitarSound {
 		if (splitIntoNotes) {
 			return ChordNotesVisibility.NOTES;
 		}
-		if (fullyMuted()) {
+		if (fullyMuted() || palmMuted()) {
 			return ChordNotesVisibility.NONE;
 		}
 
@@ -231,7 +241,6 @@ public class Chord extends GuitarSound {
 
 	@Override
 	public void length(final int newLength) {
-		throw new UnsupportedOperationException("Chords need to have specific chord notes' lengths changed!");
 	}
 
 	public boolean linkNext() {

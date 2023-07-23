@@ -18,6 +18,7 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.midiPlayer.MidiChartNotePlayer;
 import log.charter.song.notes.IPosition;
 import log.charter.sound.IPlayer;
@@ -61,6 +62,7 @@ public class AudioHandler {
 		}
 	}
 
+	private ChartToolbar chartToolbar;
 	private ChartData data;
 	private CharterFrame frame;
 	private ModeManager modeManager;
@@ -80,9 +82,11 @@ public class AudioHandler {
 	private long playStartTime;
 
 	private boolean ignoreStops = false;
-	private boolean midiNotesPlaying = false;
+	public boolean midiNotesPlaying = false;
 
-	public void init(final ChartData data, final CharterFrame frame, final ModeManager modeManager) {
+	public void init(final ChartToolbar chartToolbar, final ChartData data, final CharterFrame frame,
+			final ModeManager modeManager) {
+		this.chartToolbar = chartToolbar;
 		this.data = data;
 		this.frame = frame;
 		this.modeManager = modeManager;
@@ -119,14 +123,28 @@ public class AudioHandler {
 			}
 			midiNotesPlaying = true;
 		}
+
+		chartToolbar.updateValues();
 	}
 
 	public void toggleClaps() {
 		noteTickPlayer.on = !noteTickPlayer.on;
+
+		chartToolbar.updateValues();
+	}
+
+	public boolean claps() {
+		return noteTickPlayer.on;
 	}
 
 	public void toggleMetronome() {
 		beatTickPlayer.on = !beatTickPlayer.on;
+
+		chartToolbar.updateValues();
+	}
+
+	public boolean metronome() {
+		return beatTickPlayer.on;
 	}
 
 	private void playMusic(final MusicData musicData, final int speed) {

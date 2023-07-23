@@ -13,6 +13,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
+import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.SongFileHandler;
@@ -41,17 +42,17 @@ public class CharterMenuBar extends JMenuBar {
 			infoMenuHandler);
 
 	public void init(final ArrangementFixer arrangementFixer, final AudioDrawer audioDrawer,
-			final AudioHandler audioHandler, final CopyManager copyManager, final ChartData data,
-			final CharterFrame frame, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
-			final SelectionManager selectionManager, final SongFileHandler songFileHandler,
-			final UndoSystem undoSystem) {
+			final AudioHandler audioHandler, final CopyManager copyManager, final ChartToolbar chartToolbar,
+			final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
+			final ModeManager modeManager, final SelectionManager selectionManager,
+			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
 		arrangementMenuHandler.init(audioDrawer, audioHandler, data, frame, this, modeManager, selectionManager);
 		editMenuHandler.init(copyManager, data, frame, keyboardHandler, selectionManager, undoSystem);
 		fileMenuHandler.init(arrangementFixer, data, frame, this, songFileHandler);
 		guitarMenuHandler.init(data, frame, keyboardHandler, modeManager, selectionManager, undoSystem);
 		infoMenuHandler.init(frame, this);
 		musicMenuHandler.init(audioHandler, data, frame);
-		notesMenuHandler.init(frame, data, keyboardHandler, modeManager);
+		notesMenuHandler.init(frame, chartToolbar, data, keyboardHandler, modeManager);
 		vocalsMenuHandler.init(data, keyboardHandler, modeManager);
 
 		final Dimension size = new Dimension(100, 20);

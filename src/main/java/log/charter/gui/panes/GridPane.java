@@ -10,6 +10,7 @@ import log.charter.data.config.GridType;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ParamsPane;
+import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 
@@ -24,11 +25,15 @@ public class GridPane extends ParamsPane {
 		return sizes;
 	}
 
+	private final ChartToolbar chartToolbar;
+
 	private int gridSize = Config.gridSize;
 	private GridType gridType = Config.gridType;
 
-	public GridPane(final CharterFrame frame) {
+	public GridPane(final CharterFrame frame, final ChartToolbar chartToolbar) {
 		super(frame, Label.GRID_PANE, 4, getSizes());
+
+		this.chartToolbar = chartToolbar;
 
 		final ArrayList2<Pair<GridType, Label>> gridTypesToPick = new ArrayList2<>(//
 //				new Pair<>(GridType.MEASURE, Label.GRID_PANE_MEASURE_TYPE), //
@@ -49,5 +54,7 @@ public class GridPane extends ParamsPane {
 		Config.gridSize = gridSize;
 		Config.gridType = gridType;
 		Config.markChanged();
+
+		chartToolbar.updateValues();
 	}
 }

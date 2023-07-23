@@ -14,6 +14,7 @@ import java.awt.Graphics;
 import log.charter.data.ChartData;
 import log.charter.data.config.Zoom;
 import log.charter.gui.ChartPanel;
+import log.charter.gui.components.toolbar.ChartToolbar;
 
 public class AudioDrawer {
 	private static class RMSCalculator {
@@ -50,23 +51,73 @@ public class AudioDrawer {
 
 	private ChartData data;
 	private ChartPanel chartPanel;
+	private ChartToolbar chartToolbar;
 
 	private boolean drawAudio;
 
-	public void init(final ChartData data, final ChartPanel chartPanel) {
+	public void init(final ChartData data, final ChartPanel chartPanel, final ChartToolbar chartToolbar) {
 		this.data = data;
 		this.chartPanel = chartPanel;
+		this.chartToolbar = chartToolbar;
 	}
 
 	public void toggle() {
 		drawAudio = !drawAudio;
+
+		chartToolbar.updateValues();
 	}
 
-	public void draw(final Graphics g) {
-		if (!drawAudio) {
-			return;
-		}
+	public boolean drawing() {
+		return drawAudio;
+	}
 
+	private void drawApproximate(final Graphics g) {
+		int position = 0;
+		int maxValue = 0;
+		int minValue = 0;
+		boolean highIntensity = false;
+
+		final float timeToFrameMultiplier = data.music.outFormat.getFrameRate() / 1000;
+
+		final int[] musicValues = data.music.data[0];
+		int start = (int) (xToTime(0, data.time) * timeToFrameMultiplier);
+		start = max(1, start);
+		int end = (int) (xToTime(chartPanel.getWidth(), data.time) * timeToFrameMultiplier);
+		end = min(musicValues.length, end);
+
+		final int midY = (lanesBottom + lanesTop) / 2;
+		final int yScale = (lanesBottom - lanesTop) * 9 / 20;
+		final RMSCalculator rmsCalculator = new RMSCalculator(musicValues, (int) timeToFrameMultiplier, start);
+
+		for (int frame = start; frame < end; frame++) {
+			final int newPosition = timeToX(frame / timeToFrameMultiplier, data.time);
+			final int newHeight = musicValues[frame] * yScale / 0x8000;
+			if (newPosition > position) {
+				g.setColor(highIntensity ? highIntensityColor : normalColor);
+				final int height = max(-minValue, maxValue);
+				g.drawLine(position, midY + height, position, midY - height);
+
+				position = newPosition;
+				maxValue = 0;
+				minValue = 0;
+				highIntensity = false;
+			}
+
+			if (newHeight > maxValue) {
+				maxValue = newHeight;
+			}
+			if (newHeight < minValue) {
+				minValue = newHeight;
+			}
+
+			rmsCalculator.addValue(musicValues[frame]);
+			if (!highIntensity && rmsCalculator.getRMS() > 4) {
+				highIntensity = true;
+			}
+		}
+	}
+
+	private void drawFull(final Graphics g) {
 		final float timeToFrameMultiplier = data.music.outFormat.getFrameRate() / 1000;
 
 		final int[] musicValues = data.music.data[0];
@@ -91,24 +142,20 @@ public class AudioDrawer {
 
 			rmsCalculator.addValue(musicValues[frame]);
 
-			if (Zoom.zoom < 0.5) {
-				if (rmsCalculator.getRMS() > 4) {
-					g.setColor(highIntensityColor);
-				}
+			g.setColor(rmsCalculator.getRMS() > 4 ? highIntensityColorZoomed : normalColorZoomed);
+			g.drawLine(x0, midY + y0, x1, midY + y1);
+		}
+	}
 
-				if (frame % 100 == 0) {
-					g.drawLine(x0, midY - y0, x0, midY + y0);
-					g.setColor(normalColor);
-				}
-			} else {
-				if (rmsCalculator.getRMS() > 4) {
-					g.setColor(highIntensityColorZoomed);
-				} else {
-					g.setColor(normalColorZoomed);
-				}
+	public void draw(final Graphics g) {
+		if (!drawAudio) {
+			return;
+		}
 
-				g.drawLine(x0, midY + y0, x1, midY + y1);
-			}
+		if (Zoom.zoom > 2) {
+			drawFull(g);
+		} else {
+			drawApproximate(g);
 		}
 	}
 }

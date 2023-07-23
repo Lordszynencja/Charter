@@ -57,6 +57,14 @@ public class Note extends GuitarSound {
 		string = other.string;
 		fret = other.fret;
 		bassPicking = other.bassPicking;
+		mute = other.mute;
+		hopo = other.hopo;
+		harmonic = other.harmonic;
+		vibrato = other.vibrato;
+		tremolo = other.tremolo;
+		linkNext = other.linkNext;
+		slideTo = other.slideTo;
+		unpitchedSlide = other.unpitchedSlide;
 		bendValues = other.bendValues.map(BendValue::new);
 	}
 

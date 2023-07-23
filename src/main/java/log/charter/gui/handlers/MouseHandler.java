@@ -12,6 +12,8 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Zoom;
@@ -337,11 +339,29 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 	}
 
+	private void sortAndReselectDraggedPositions(final ArrayList2<Selection<IPosition>> moved,
+			final List<? extends IPosition> allPositions) {
+		allPositions.sort(null);
+
+		final Set<Integer> movedPositions = moved.stream().map(p -> p.selectable.position())
+				.collect(Collectors.toSet());
+		selectionManager.clear();
+		for (int i = 0; i < allPositions.size(); i++) {
+			final IPosition position = allPositions.get(i);
+			if (movedPositions.contains(position.position())) {
+				selectionManager.addSoundSelection(i);
+			}
+		}
+	}
+
 	private void dragNotes(final MouseButtonPressReleaseData clickData) {
 		final int dragStartPosition = clickData.pressHighlight.chordOrNote.position();
 		final int dragEndPosition = clickData.releaseHighlight.position();
-		dragPositions(dragStartPosition, dragEndPosition,
-				selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE).getSortedSelected());
+		final ArrayList2<Selection<IPosition>> positions = selectionManager
+				.getSelectedAccessor(PositionType.GUITAR_NOTE).getSortedSelected();
+		dragPositions(dragStartPosition, dragEndPosition, positions);
+
+		sortAndReselectDraggedPositions(positions, data.getCurrentArrangementLevel().chordsAndNotes);
 
 		frame.selectionChanged(false);
 	}
@@ -349,8 +369,11 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	private void dragVocals(final MouseButtonPressReleaseData clickData) {
 		final int dragStartPosition = clickData.pressHighlight.vocal.position();
 		final int dragEndPosition = clickData.releaseHighlight.position();
-		dragPositions(dragStartPosition, dragEndPosition,
-				selectionManager.getSelectedAccessor(PositionType.VOCAL).getSortedSelected());
+		final ArrayList2<Selection<IPosition>> positions = selectionManager.getSelectedAccessor(PositionType.VOCAL)
+				.getSortedSelected();
+		dragPositions(dragStartPosition, dragEndPosition, positions);
+
+		sortAndReselectDraggedPositions(positions, data.songChart.vocals.vocals);
 
 		frame.selectionChanged(false);
 	}

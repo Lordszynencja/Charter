@@ -243,6 +243,11 @@ public class Localization {
 		NOTES_MENU_DOUBLE_GRID("Double grid resolution"), //
 		NOTES_MENU_HALVE_GRID("Halve grid resolution"), //
 
+		TOOLBAR_MIDI("Midi"), //
+		TOOLBAR_CLAPS("Claps"), //
+		TOOLBAR_METRONOME("Metronome"), //
+		TOOLBAR_WAVEFORM_GRAPH("Waveform graph"),
+
 		SLIDE_PANE("Slide options"), //
 		SLIDE_PANE_FRET("Slide to"), //
 		SLIDE_PANE_UNPITCHED("Unpitched"), //

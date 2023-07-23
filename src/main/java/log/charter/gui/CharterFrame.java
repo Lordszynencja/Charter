@@ -4,6 +4,9 @@ import static log.charter.data.config.Config.windowFullscreen;
 import static log.charter.data.config.Config.windowHeight;
 import static log.charter.data.config.Config.windowWidth;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editorY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.scrollBarBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toolbarY;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -41,6 +44,7 @@ import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.components.preview3D.Preview3DPanel;
 import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
+import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.CharterFrameComponentListener;
 import log.charter.gui.handlers.CharterFrameWindowFocusListener;
@@ -60,6 +64,7 @@ public class CharterFrame extends JFrame {
 	private static final long serialVersionUID = 3603305480386377813L;
 
 	private final CharterMenuBar charterMenuBar = new CharterMenuBar();
+	private final ChartToolbar chartToolbar = new ChartToolbar();
 	private final ChartPanel chartPanel = new ChartPanel();
 	private final CurrentSelectionEditor currentSelectionEditor = new CurrentSelectionEditor();
 	private final JScrollBar scrollBar = createScrollBar();
@@ -91,7 +96,7 @@ public class CharterFrame extends JFrame {
 		try {
 			while (true) {
 				audioFrame();
-				Thread.sleep(1);
+				Thread.sleep(0, 100_000);
 			}
 		} catch (final InterruptedException e) {
 			Logger.error("error in audio framer", e);
@@ -120,13 +125,13 @@ public class CharterFrame extends JFrame {
 
 		arrangementFixer.init(data);
 		arrangementValidator.init(data, this);
-		audioDrawer.init(data, chartPanel);
-		audioHandler.init(data, this, modeManager);
+		audioDrawer.init(data, chartPanel, chartToolbar);
+		audioHandler.init(chartToolbar, data, this, modeManager);
 		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, selectionManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
 		data.init(audioHandler, charterMenuBar, modeManager, scrollBar, selectionManager, undoSystem);
-		keyboardHandler.init(audioDrawer, audioHandler, copyManager, data, this, modeManager, mouseHandler,
-				selectionManager, songFileHandler, undoSystem);
+		keyboardHandler.init(audioDrawer, audioHandler, copyManager, chartToolbar, data, this, modeManager,
+				mouseHandler, selectionManager, songFileHandler, undoSystem);
 		highlightManager.init(data, modeManager, selectionManager);
 		modeManager.init(currentSelectionEditor, data, this, highlightManager, keyboardHandler, selectionManager,
 				undoSystem);
@@ -138,8 +143,9 @@ public class CharterFrame extends JFrame {
 		selectionManager.init(data, this, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 
-		charterMenuBar.init(arrangementFixer, audioDrawer, audioHandler, copyManager, data, this, keyboardHandler,
-				modeManager, selectionManager, songFileHandler, undoSystem);
+		charterMenuBar.init(arrangementFixer, audioDrawer, audioHandler, copyManager, chartToolbar, data, this,
+				keyboardHandler, modeManager, selectionManager, songFileHandler, undoSystem);
+		chartToolbar.init(audioDrawer, audioHandler, keyboardHandler);
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 		currentSelectionEditor.init(arrangementFixer, data, keyboardHandler, selectionManager, undoSystem);
@@ -152,6 +158,7 @@ public class CharterFrame extends JFrame {
 		fullscreenPreviewFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		fullscreenPreviewFrame.setUndecorated(true);
 
+		add(chartToolbar);
 		add(chartPanel);
 		add(scrollBar);
 		add(tabs);
@@ -197,14 +204,10 @@ public class CharterFrame extends JFrame {
 		final int width = windowWidth - insets.left - insets.right;
 		final int height = windowHeight - insets.top - insets.bottom - charterMenuBar.getHeight();
 
-		changeComponentBounds(chartPanel, 0, 0, width, editAreaBottom);
-
-		final int scrollBarHeight = 20;
-		changeComponentBounds(scrollBar, 0, editAreaBottom, width, scrollBarHeight);
-
-		final int tabsY = editAreaBottom + scrollBarHeight;
-		final int tabsHeight = height - tabsY;
-		changeComponentBounds(tabs, 0, tabsY, width, tabsHeight);
+		changeComponentBounds(chartToolbar, 0, toolbarY, width, editorY - toolbarY);
+		changeComponentBounds(chartPanel, 0, editorY, width, editAreaBottom - editorY);
+		changeComponentBounds(scrollBar, 0, editAreaBottom, width, scrollBarBottom - editAreaBottom);
+		changeComponentBounds(tabs, 0, scrollBarBottom, width, height - scrollBarBottom);
 	}
 
 	public CharterFrame(final String title, final String path) {

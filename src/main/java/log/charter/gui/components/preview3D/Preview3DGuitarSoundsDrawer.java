@@ -26,6 +26,7 @@ import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.BaseShader.BaseShaderDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DChordDrawingData;
@@ -174,20 +175,68 @@ public class Preview3DGuitarSoundsDrawer {
 //	}
 //
 
+	private void drawFullChordMute(final BaseShader baseShader, final double x0, final double x1, final double y0,
+			final double y1, double z) {
+		final double x = (x0 + x1) / 2;
+		final double y = (y0 + y1) / 2;
+		final double d0y = 0.8 * (y1 - y);
+		final double d1y = 0.9 * (y1 - y);
+		final double d0x = d0y / 10;
+		final double d1x = d1y / 10;
+		z -= 0.001;
+
+		final Color color = ColorLabel.PREVIEW_3D_CHORD_FULL_MUTE.color();
+		final BaseShaderDrawData shadowDrawData = baseShader.new BaseShaderDrawData();
+		shadowDrawData.addVertex(new Point3D(x - d1x, y + d0y, z), color)//
+				.addVertex(new Point3D(x - d0x, y + d1y, z), color)//
+				.addVertex(new Point3D(x + d1x, y - d0y, z), color)//
+				.addVertex(new Point3D(x + d0x, y - d1y, z), color)//
+
+				.addVertex(new Point3D(x + d1x, y + d0y, z), color)//
+				.addVertex(new Point3D(x - d0x, y - d1y, z), color)//
+				.addVertex(new Point3D(x - d1x, y - d0y, z), color)//
+				.addVertex(new Point3D(x + d0x, y + d1y, z), color)//
+				.draw(GL30.GL_QUADS);
+	}
+
+	private void drawPalmChordMute(final BaseShader baseShader, final double x0, final double x1, final double y0,
+			final double y1, double z) {
+		final double x = (x0 + x1) / 2;
+		final double y = (y0 + y1) / 2;
+		final double d0x = 0.8 * (x1 - x);
+		final double d1x = 0.9 * (x1 - x);
+		final double d0y = 0.8 * (y1 - y);
+		final double d1y = 0.9 * (y1 - y);
+		z -= 0.001;
+
+		final Color color = ColorLabel.PREVIEW_3D_CHORD_FULL_MUTE.color();
+		final BaseShaderDrawData shadowDrawData = baseShader.new BaseShaderDrawData();
+		shadowDrawData.addVertex(new Point3D(x - d1x, y + d0y, z), color)//
+				.addVertex(new Point3D(x - d0x, y + d1y, z), color)//
+				.addVertex(new Point3D(x + d1x, y - d0y, z), color)//
+				.addVertex(new Point3D(x + d0x, y - d1y, z), color)//
+
+				.addVertex(new Point3D(x + d1x, y + d0y, z), color)//
+				.addVertex(new Point3D(x - d0x, y - d1y, z), color)//
+				.addVertex(new Point3D(x - d1x, y - d0y, z), color)//
+				.addVertex(new Point3D(x + d0x, y + d1y, z), color)//
+				.draw(GL30.GL_QUADS);
+	}
+
 	private void drawChordShadow(final BaseShader baseShader, final int position, final Mute mute) {
 		final Anchor anchor = findAnchorForPosition(position);
 		final double x0 = getFretPosition(anchor.fret - 1);
-		final double x2 = getFretPosition(anchor.topFret());
+		final double x1 = getFretPosition(anchor.topFret());
 		final double y0 = getChartboardYPosition(data.currentStrings());
 		final double y1 = getTopStringYPosition();
 		final double z = max(0, getTimePosition(position - data.time));
 
 		final Point3D p00 = new Point3D(x0, y0, z);
-		final Point3D p01 = new Point3D((x2 + x0) / 2, y0, z);
-		final Point3D p02 = new Point3D(x2, y0, z);
+		final Point3D p01 = new Point3D((x1 + x0) / 2, y0, z);
+		final Point3D p02 = new Point3D(x1, y0, z);
 		final Point3D p10 = new Point3D(x0, y1, z);
-		final Point3D p12 = new Point3D(x2, y1, z);
-		final Color color = new Color(0, 192, 255);
+		final Point3D p12 = new Point3D(x1, y1, z);
+		final Color color = ColorLabel.PREVIEW_3D_CHORD_BOX.color();
 		final Color shadowInvisibleColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0);
 
 		baseShader.clearModelMatrix();
@@ -201,10 +250,9 @@ public class Preview3DGuitarSoundsDrawer {
 				.draw(GL30.GL_TRIANGLES);
 
 		if (mute == Mute.FULL) {
-			// TODO
-		}
-		if (mute == Mute.PALM) {
-			// TODO
+			drawFullChordMute(baseShader, x0, x1, y0, y1, z);
+		} else if (mute == Mute.PALM) {
+			drawPalmChordMute(baseShader, x0, x1, y0, y1, z);
 		}
 	}
 
@@ -250,12 +298,8 @@ public class Preview3DGuitarSoundsDrawer {
 		baseShader.drawModel(model, color);
 	}
 
-	private void drawNoteHead(final BaseShader baseShader, final int position, final Preview3DNoteData note,
+	private void drawOpenStringNoteHead(final BaseShader baseShader, final int position, final Preview3DNoteData note,
 			final boolean hit) {
-		if (note.linkPrevious) {
-			return;
-		}
-
 		Color color = getStringBasedColor(StringColorLabelType.NOTE, note.string, data.currentStrings());
 		if (hit) {
 			color = color.brighter();
@@ -277,6 +321,9 @@ public class Preview3DGuitarSoundsDrawer {
 			}
 
 			final double middleX = (getFretPosition(anchor.topFret()) + x) / 2;
+			if (note.mute != Mute.NONE) {
+				drawMuteForSingleNote(baseShader, middleX, y, z, note.mute);
+			}
 			if (note.hopo != HOPO.NONE) {
 				drawHOPO(baseShader, middleX, y, z, note.hopo);
 			}
@@ -286,8 +333,26 @@ public class Preview3DGuitarSoundsDrawer {
 
 			return;
 		}
+	}
+
+	private void drawNoteHead(final BaseShader baseShader, final int position, final Preview3DNoteData note,
+			final boolean hit) {
+		if (note.linkPrevious) {
+			return;
+		}
+		if (note.fret == 0) {
+			drawOpenStringNoteHead(baseShader, position, note, hit);
+			return;
+		}
+
+		Color color = getStringBasedColor(StringColorLabelType.NOTE, note.string, data.currentStrings());
+		if (hit) {
+			color = color.brighter();
+		}
 
 		final double x = getFretMiddlePosition(note.fret);
+		final double y = getStringPositionWithBend(note.string, data.currentStrings(), note.prebend);
+		final double z = getTimePosition(position - data.time);
 
 		if (!note.accent) {
 			baseShader.setModelMatrix(Matrix4.moveMatrix(x, y, z));

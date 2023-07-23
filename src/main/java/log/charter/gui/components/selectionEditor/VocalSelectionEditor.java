@@ -44,14 +44,14 @@ public class VocalSelectionEditor {
 
 		final JCheckBox vocalWordPartInput = new JCheckBox();
 		vocalWordPartInput.addActionListener(a -> changeWordPart(vocalWordPartInput.isSelected()));
-		vocalWordPart = new FieldWithLabel<JCheckBox>(Label.VOCAL_PANE_WORD_PART, 100, 20, 20, vocalWordPartInput,
+		vocalWordPart = new FieldWithLabel<>(Label.VOCAL_PANE_WORD_PART, 100, 20, 20, vocalWordPartInput,
 				LabelPosition.LEFT);
 		vocalWordPart.setLocation(10, selectionEditor.getY(row++));
 		selectionEditor.add(vocalWordPart);
 
 		final JCheckBox vocalPhraseEndInput = new JCheckBox();
 		vocalPhraseEndInput.addActionListener(a -> changePhraseEnd(vocalPhraseEndInput.isSelected()));
-		vocalPhraseEnd = new FieldWithLabel<JCheckBox>(Label.VOCAL_PANE_PHRASE_END, 100, 20, 20, vocalPhraseEndInput,
+		vocalPhraseEnd = new FieldWithLabel<>(Label.VOCAL_PANE_PHRASE_END, 100, 20, 20, vocalPhraseEndInput,
 				LabelPosition.LEFT);
 		vocalPhraseEnd.setLocation(10, selectionEditor.getY(row++));
 		selectionEditor.add(vocalPhraseEnd);
