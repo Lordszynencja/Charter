@@ -371,10 +371,6 @@ public class CharterFrame extends JFrame {
 		String title = LogCharterRSMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title
 				+ " : ";
 
-		if (data.songChart.arrangements.isEmpty()) {
-			return title;
-		}
-
 		if (modeManager.editMode == EditMode.GUITAR) {
 			title += data.getCurrentArrangement().getTypeNameLabel();
 		} else if (modeManager.editMode == EditMode.TEMPO_MAP) {

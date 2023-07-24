@@ -351,6 +351,7 @@
 										<include>languages/**</include>
 										<include>rubberband/**</include>
 										<include>oggenc/**</include>
+										<include>manual.pdf</include>
 									</includes>
 								</resource>
 							</resources>

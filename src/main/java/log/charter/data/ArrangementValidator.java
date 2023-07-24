@@ -49,7 +49,7 @@ public class ArrangementValidator {
 
 	private boolean validateCountPhrases(final int arrangementId, final ArrangementChart arrangement) {
 		final ArrayList2<EventPoint> countPhrases = arrangement.eventPoints.stream()//
-				.filter(eventPoint -> eventPoint.phrase.equals("COUNT"))//
+				.filter(eventPoint -> eventPoint.phrase != null && eventPoint.phrase.equals("COUNT"))//
 				.collect(Collectors.toCollection(ArrayList2::new));
 		if (countPhrases.isEmpty()) {
 			final boolean warningStoppedValidation = !showWarning(Label.COUNT_PHRASE_MISSING,
@@ -70,7 +70,7 @@ public class ArrangementValidator {
 
 	private boolean validateEndPhrases(final int arrangementId, final ArrangementChart arrangement) {
 		final ArrayList2<EventPoint> endPhrases = arrangement.eventPoints.stream()//
-				.filter(eventPoint -> eventPoint.phrase.equals("END"))//
+				.filter(eventPoint -> eventPoint.phrase != null && eventPoint.phrase.equals("END"))//
 				.collect(Collectors.toCollection(ArrayList2::new));
 		if (endPhrases.isEmpty()) {
 			final boolean warningStoppedValidation = !showWarning(Label.END_PHRASE_MISSING,

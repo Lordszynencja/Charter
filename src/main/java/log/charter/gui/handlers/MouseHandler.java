@@ -406,7 +406,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		final int change = -e.getWheelRotation();
 		if (keyboardHandler.ctrl()) {
-			final int zoomChange = change * (keyboardHandler.shift() ? 1 : 8);
+			final int zoomChange = change * (keyboardHandler.shift() ? 8 : 1);
 			Zoom.addZoom(zoomChange);
 			return;
 		}
