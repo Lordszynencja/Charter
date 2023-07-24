@@ -8,6 +8,7 @@ import java.util.List;
 
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
+import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.grid.GridPosition;
 
@@ -230,5 +231,16 @@ public class BeatsMap {
 		}
 
 		fixFirstBeatInMeasures();
+	}
+
+	public void movePositions(final int start, final int end, final List<? extends IPosition> positions) {
+		final double startInBeats = getPositionInBeats(start);
+		final double endInBeats = getPositionInBeats(end);
+		final double add = endInBeats - startInBeats;
+		for (final IPosition position : positions) {
+			final double positionInBeats = getPositionInBeats(position.position());
+			final int newPosition = getPositionForPositionInBeats(positionInBeats + add);
+			position.position(newPosition);
+		}
 	}
 }

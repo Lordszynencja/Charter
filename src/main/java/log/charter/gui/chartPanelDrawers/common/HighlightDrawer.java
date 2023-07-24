@@ -288,7 +288,9 @@ public class HighlightDrawer {
 		}
 	}
 
-	private boolean tryToDrawDrag(final Graphics g, final MouseButtonPressData leftPressPosition) {
+	private boolean tryToDrawDrag(final Graphics g) {
+		final MouseButtonPressData leftPressPosition = mouseButtonPressReleaseHandler
+				.getPressPosition(MouseButton.LEFT_BUTTON);
 		if (leftPressPosition == null) {
 			return false;
 		}
@@ -313,9 +315,7 @@ public class HighlightDrawer {
 	}
 
 	public void draw(final Graphics g) {
-		final MouseButtonPressData leftPressPosition = mouseButtonPressReleaseHandler
-				.getPressPosition(MouseButton.LEFT_BUTTON);
-		if (tryToDrawDrag(g, leftPressPosition)) {
+		if (tryToDrawDrag(g)) {
 			return;
 		}
 

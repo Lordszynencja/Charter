@@ -13,6 +13,7 @@ import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BackgroundDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.HighlightDrawer;
+import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.common.MarkerDrawer;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
@@ -26,6 +27,7 @@ public class ChartPanel extends JComponent {
 	private final ArrangementDrawer arrangementDrawer = new ArrangementDrawer();
 	private final BackgroundDrawer backgroundDrawer = new BackgroundDrawer();
 	private final HighlightDrawer highlightDrawer = new HighlightDrawer();
+	private final LyricLinesDrawer lyricLinesDrawer = new LyricLinesDrawer();
 	private final MarkerDrawer markerDrawer = new MarkerDrawer();
 
 	public ChartPanel() {
@@ -39,9 +41,11 @@ public class ChartPanel extends JComponent {
 		this.data = data;
 
 		backgroundDrawer.init(data, this);
-		arrangementDrawer.init(audioDrawer, beatsDrawer, this, data, keyboardHandler, modeManager, selectionManager);
+		arrangementDrawer.init(audioDrawer, beatsDrawer, this, data, keyboardHandler, lyricLinesDrawer, modeManager,
+				selectionManager);
 		highlightDrawer.init(data, highlightManager, modeManager, mouseHandler, mouseButtonPressReleaseHandler,
 				selectionManager);
+		lyricLinesDrawer.init(data);
 		markerDrawer.init(data);
 
 		addMouseListener(mouseHandler);

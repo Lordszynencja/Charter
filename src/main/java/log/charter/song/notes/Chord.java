@@ -4,14 +4,16 @@ import static java.lang.Math.min;
 import static log.charter.util.Utils.mapInteger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import log.charter.io.rs.xml.song.ArrangementBendValue;
 import log.charter.io.rs.xml.song.ArrangementChord;
-import log.charter.io.rs.xml.song.ArrangementNote;
+import log.charter.io.rs.xml.song.ArrangementChordNote;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
 import log.charter.song.enums.HOPO;
@@ -41,17 +43,17 @@ public class Chord extends GuitarSound {
 		final boolean linkNext = mapInteger(arrangementChord.linkNext);
 
 		if (arrangementChord.chordNotes != null) {
-			for (final ArrangementNote arrangementNote : arrangementChord.chordNotes) {
+			for (final ArrangementChordNote arrangementNote : arrangementChord.chordNotes) {
 				final ChordNote chordNote = new ChordNote();
 
 				chordNote.length = arrangementNote.sustain == null ? 0 : arrangementNote.sustain;
 				if (mapInteger(arrangementNote.mute)) {
 					chordNote.mute = Mute.FULL;
-				}
-				if (mapInteger(arrangementNote.palmMute)) {
+				} else if (mapInteger(arrangementNote.palmMute)) {
 					chordNote.mute = Mute.PALM;
+				} else {
+					chordNote.mute = mute;
 				}
-				chordNote.mute = mute;
 
 				if (arrangementNote.slideTo != null) {
 					chordNote.slideTo = arrangementNote.slideTo;
@@ -91,19 +93,31 @@ public class Chord extends GuitarSound {
 				chordNotes.put(arrangementNote.string, chordNote);
 			}
 		}
+
+		Set<Integer> existingChordNoteStrings;
+
 		if (arrangementChord.chordNotes == null || arrangementChord.chordNotes.isEmpty()) {
 			for (final Integer string : template.frets.keySet()) {
 				if (!chordNotes.containsKey(string)) {
 					final ChordNote chordNote = new ChordNote();
-					chordNote.mute = mute;
 					chordNotes.put(string, chordNote);
 				}
 			}
+
+			existingChordNoteStrings = new HashSet<>();
+		} else {
+			existingChordNoteStrings = arrangementChord.chordNotes.stream()//
+					.map(arrangementChordNote -> arrangementChordNote.string)//
+					.collect(Collectors.toSet());
 		}
 
 		updateChordNotes(template);
 
-		chordNotes.values().forEach(n -> n.mute = mute);
+		chordNotes.forEach((string, chordNote) -> {
+			if (!existingChordNoteStrings.contains(string)) {
+				chordNote.mute = mute;
+			}
+		});
 	}
 
 	public Chord(final Chord other) {

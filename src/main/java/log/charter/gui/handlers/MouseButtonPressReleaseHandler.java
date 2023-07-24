@@ -89,13 +89,20 @@ public class MouseButtonPressReleaseHandler {
 			return null;
 		}
 
-		final MouseButtonPressData pressData = pressedButtons.remove(button);
+		final MouseButtonPressData pressData = pressedButtons.get(button);
 		if (pressData == null) {
 			return null;
 		}
 
 		final PositionWithIdAndType highlight = highlightManager.getHighlight(e.getX(), e.getY());
 		return new MouseButtonPressReleaseData(pressData, highlight, e.getX(), e.getY());
+	}
+
+	public void remove(final MouseEvent e) {
+		final MouseButton button = MouseButton.fromEvent(e);
+		if (button != null) {
+			pressedButtons.remove(button);
+		}
 	}
 
 	public void clear() {

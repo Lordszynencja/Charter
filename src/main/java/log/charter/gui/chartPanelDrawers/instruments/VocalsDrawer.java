@@ -19,6 +19,7 @@ import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
+import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.song.vocals.Vocal;
@@ -87,14 +88,17 @@ public class VocalsDrawer {
 	private BeatsDrawer beatsDrawer;
 	private ChartData data;
 	private ChartPanel chartPanel;
+	private LyricLinesDrawer lyricLinesDrawer;
 	private SelectionManager selectionManager;
 
 	public void init(final AudioDrawer audioDrawer, final BeatsDrawer beatsDrawer, final ChartData data,
-			final ChartPanel chartPanel, final SelectionManager selectionManager) {
+			final ChartPanel chartPanel, final LyricLinesDrawer lyricLinesDrawer,
+			final SelectionManager selectionManager) {
 		this.audioDrawer = audioDrawer;
 		this.beatsDrawer = beatsDrawer;
 		this.data = data;
 		this.chartPanel = chartPanel;
+		this.lyricLinesDrawer = lyricLinesDrawer;
 		this.selectionManager = selectionManager;
 
 		initiated = true;
@@ -124,53 +128,6 @@ public class VocalsDrawer {
 		drawingData.draw(g);
 	}
 
-	private static class VocalLinesDrawingData {
-		public static final int lyricLinesY = 30;
-
-		private final DrawableShapeList backgrounds = new DrawableShapeList();
-		private final DrawableShapeList texts = new DrawableShapeList();
-
-		public void addLyricLine(final String text, final int x, final int lengthPx) {
-			final ShapePositionWithSize backgroundPosition = new ShapePositionWithSize(x, lyricLinesY - 4, lengthPx,
-					19);
-			backgrounds.add(filledRectangle(backgroundPosition, ColorLabel.VOCAL_LINE_BACKGROUND.color()));
-			final Position2D textPosition = new Position2D(x + 3, lyricLinesY + 11);
-			texts.add(text(textPosition, text, ColorLabel.VOCAL_LINE_TEXT.color()));
-		}
-
-		public void draw(final Graphics g) {
-			backgrounds.draw(g);
-			texts.draw(g);
-		}
-	}
-
-	private void drawLyricLines(final Graphics g) {
-		final VocalLinesDrawingData drawingData = new VocalLinesDrawingData();
-		String currentLine = "";
-		boolean started = false;
-		int x = 0;
-
-		for (final Vocal vocal : data.songChart.vocals.vocals) {
-			if (!started) {
-				started = true;
-				x = timeToX(vocal.position(), data.time);
-			}
-
-			currentLine += vocal.getText();
-			if (!vocal.isWordPart()) {
-				currentLine += " ";
-			}
-
-			if (vocal.isPhraseEnd()) {
-				drawingData.addLyricLine(currentLine, x, timeToX(vocal.position() + vocal.length(), data.time) - x);
-				currentLine = "";
-				started = false;
-			}
-		}
-
-		drawingData.draw(g);
-	}
-
 	public void draw(final Graphics g) {
 		if (!initiated || data.isEmpty) {
 			return;
@@ -179,6 +136,6 @@ public class VocalsDrawer {
 		audioDrawer.draw(g);
 		beatsDrawer.draw(g);
 		drawVocals(g);
-		drawLyricLines(g);
+		lyricLinesDrawer.draw(g);
 	}
 }

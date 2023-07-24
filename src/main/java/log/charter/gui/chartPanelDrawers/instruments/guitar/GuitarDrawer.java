@@ -16,6 +16,7 @@ import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
+import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.song.Anchor;
 import log.charter.song.ArrangementChart;
@@ -45,16 +46,18 @@ public class GuitarDrawer {
 	protected ChartData data;
 	private ChartPanel chartPanel;
 	private KeyboardHandler keyboardHandler;
+	private LyricLinesDrawer lyricLinesDrawer;
 	private SelectionManager selectionManager;
 
 	public void init(final AudioDrawer audioDrawer, final BeatsDrawer beatsDrawer, final ChartData data,
-			final ChartPanel chartPanel, final KeyboardHandler keyboardHandler,
+			final ChartPanel chartPanel, final KeyboardHandler keyboardHandler, final LyricLinesDrawer lyricLinesDrawer,
 			final SelectionManager selectionManager) {
 		this.audioDrawer = audioDrawer;
 		this.beatsDrawer = beatsDrawer;
 		this.data = data;
 		this.chartPanel = chartPanel;
 		this.keyboardHandler = keyboardHandler;
+		this.lyricLinesDrawer = lyricLinesDrawer;
 		this.selectionManager = selectionManager;
 	}
 
@@ -224,6 +227,7 @@ public class GuitarDrawer {
 	public void draw(final Graphics g) {
 		try {
 			beatsDrawer.draw(g);
+			lyricLinesDrawer.draw(g);
 			drawGuitarLanes(g);
 			audioDrawer.draw(g);
 			drawGuitarNotes(g);
