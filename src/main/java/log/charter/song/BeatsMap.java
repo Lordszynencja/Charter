@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import log.charter.io.rs.xml.song.SongArrangement;
@@ -233,7 +234,7 @@ public class BeatsMap {
 		fixFirstBeatInMeasures();
 	}
 
-	public void movePositions(final int start, final int end, final List<? extends IPosition> positions) {
+	public void movePositions(final int start, final int end, final Collection<? extends IPosition> positions) {
 		final double startInBeats = getPositionInBeats(start);
 		final double endInBeats = getPositionInBeats(end);
 		final double add = endInBeats - startInBeats;

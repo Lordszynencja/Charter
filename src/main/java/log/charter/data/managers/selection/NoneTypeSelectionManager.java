@@ -1,5 +1,7 @@
 package log.charter.data.managers.selection;
 
+import java.util.Set;
+
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.song.notes.IPosition;
@@ -31,6 +33,10 @@ public class NoneTypeSelectionManager implements TypeSelectionManager<IPosition>
 
 	@Override
 	public void add(final ArrayList2<Integer> ids) {
+	}
+
+	@Override
+	public void addPositions(final Set<Integer> positions) {
 	}
 
 }

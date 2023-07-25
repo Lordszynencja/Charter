@@ -37,6 +37,7 @@ public class ChartPanelColors {
 		EVENT_BG(128, 0, 0), //
 		HIGHLIGHT(255, 0, 0), //
 		SELECT(0, 255, 255), //
+		VOCAL_SELECT(255, 0, 255), //
 
 		NOTE_FLAG_MARKER(255, 255, 255), //
 		SLIDE_NORMAL_FRET_BG(255, 255, 255), //

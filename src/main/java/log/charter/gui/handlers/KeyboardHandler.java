@@ -57,14 +57,12 @@ import static java.awt.event.KeyEvent.VK_UP;
 import static java.awt.event.KeyEvent.VK_V;
 import static java.awt.event.KeyEvent.VK_W;
 import static java.awt.event.KeyEvent.VK_Z;
-import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.System.nanoTime;
 import static java.util.Arrays.asList;
 import static log.charter.data.ArrangementFixer.fixSoundLength;
 import static log.charter.data.config.Config.frets;
-import static log.charter.data.config.Config.minNoteDistance;
 import static log.charter.song.notes.IPosition.findFirstAfter;
 import static log.charter.song.notes.IPosition.findFirstIdAfter;
 import static log.charter.song.notes.IPosition.findLastBefore;
@@ -78,11 +76,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.copySystem.CopyManager;
@@ -101,7 +101,6 @@ import log.charter.gui.panes.GridPane;
 import log.charter.gui.panes.HandShapePane;
 import log.charter.gui.panes.VocalPane;
 import log.charter.song.ArrangementChart;
-import log.charter.song.Beat;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
@@ -118,7 +117,6 @@ import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.chordRecognition.ChordNameSuggester;
-import log.charter.util.grid.GridPosition;
 
 public class KeyboardHandler implements KeyListener {
 	private static Consumer<KeyEvent> emptyHandler = e -> {
@@ -250,6 +248,7 @@ public class KeyboardHandler implements KeyListener {
 
 	private AudioDrawer audioDrawer;
 	private AudioHandler audioHandler;
+	private ArrangementFixer arrangementFixer;
 	private CopyManager copyManager;
 	private ChartToolbar chartToolbar;
 	private ChartData data;
@@ -269,12 +268,14 @@ public class KeyboardHandler implements KeyListener {
 	private int lastFretNumber = 0;
 	private int fretNumberTimer = 0;
 
-	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler, final CopyManager copyManager,
-			final ChartToolbar chartToolbar, final ChartData data, final CharterFrame frame,
-			final ModeManager modeManager, final MouseHandler mouseHandler, final SelectionManager selectionManager,
+	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler,
+			final ArrangementFixer arrangementFixer, final CopyManager copyManager, final ChartToolbar chartToolbar,
+			final ChartData data, final CharterFrame frame, final ModeManager modeManager,
+			final MouseHandler mouseHandler, final SelectionManager selectionManager,
 			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
 		this.audioDrawer = audioDrawer;
 		this.audioHandler = audioHandler;
+		this.arrangementFixer = arrangementFixer;
 		this.copyManager = copyManager;
 		this.chartToolbar = chartToolbar;
 		this.data = data;
@@ -941,98 +942,74 @@ public class KeyboardHandler implements KeyListener {
 		frame.setNextTime(newTime);
 	}
 
-	private int snap(final int position) {
-		final GridPosition<Beat> gridPosition = GridPosition.create(data.songChart.beatsMap.beats, position);
-		final int positionA = gridPosition.position();
-		final int positionB = gridPosition.next().position();
-		if (abs(position - positionA) < abs(position - positionB)) {
-			return positionA;
-		} else {
-			return positionB;
-		}
-	}
-
 	private void snapPositions(final Collection<? extends IPosition> positions) {
 		for (final IPosition position : positions) {
-			position.position(snap(position.position()));
+			final int newPosition = data.songChart.beatsMap.getPositionFromGridClosestTo(position.position());
+			position.position(newPosition);
 		}
 	}
 
-	private void snapNotePositionsWithLength(final Collection<ChordOrNote> positions,
-			final ArrayList2<ChordOrNote> allPositions) {
-		for (final ChordOrNote position : positions) {
-			position.position(snap(position.position()));
-		}
+	private void snapNotePositions(final Collection<ChordOrNote> positions) {
+		snapPositions(positions);
 
-		for (final ChordOrNote position : positions) {
-			if (position.isNote() ? position.note.linkNext : position.chord.linkNext()) {
-				final ChordOrNote next = findFirstAfter(allPositions, position.position());
-				position.length(next.position() - position.position());
-				continue;
-			}
-
-			final int length = snap(position.endPosition()) - position.position();
-			final ChordOrNote next = findFirstAfter(allPositions, position.position());
-			if (next != null) {
-				position.length(max(0, min(length, next.position() - position.position() - minNoteDistance)));
-			} else {
-				position.length(length);
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		for (int i = 1; i < sounds.size(); i++) {
+			while (i < sounds.size() && sounds.get(i).position() == sounds.get(i - 1).position()) {
+				sounds.remove(i);
 			}
 		}
+
+		arrangementFixer.fixNoteLengths(sounds);
 	}
 
 	private <T extends IPositionWithLength> void snapPositionsWithLength(final Collection<T> positions,
 			final ArrayList2<T> allPositions) {
-		for (final T position : positions) {
-			position.position(snap(position.position()));
+		snapPositions(positions);
+		arrangementFixer.fixLengths(allPositions);
+	}
 
-			final int length = snap(position.endPosition()) - position.position();
-			final T next = findFirstAfter(allPositions, position.position());
-			if (next != null) {
-				position.length(max(0, min(length, next.position() - position.position() - minNoteDistance)));
-			} else {
-				position.length(length);
-			}
-		}
+	private void reselectAfterSnapping(final PositionType type, final Collection<Selection<IPosition>> selected) {
+		final Set<Integer> selectedPositions = selected.stream()//
+				.map(selection -> selection.selectable.position())//
+				.collect(Collectors.toSet());
+
+		selectionManager.clear();
+		selectionManager.addSelectionForPositions(type, selectedPositions);
 	}
 
 	public void snapSelected() {
 		final SelectionAccessor<IPosition> accessor = selectionManager.getCurrentlySelectedAccessor();
+		if (!accessor.isSelected() || !asList(PositionType.EVENT_POINT, PositionType.TONE_CHANGE, PositionType.ANCHOR,
+				PositionType.GUITAR_NOTE, PositionType.HAND_SHAPE, PositionType.VOCAL).contains(accessor.type)) {
+			return;
+		}
+
+		undoSystem.addUndo();
+
+		final HashSet2<Selection<IPosition>> selected = accessor.getSelectedSet();
 
 		switch (accessor.type) {
+		case EVENT_POINT:
 		case ANCHOR:
 		case TONE_CHANGE:
-			undoSystem.addUndo();
-			snapPositions(accessor.getSelectedSet().map(selection -> selection.selectable));
-
-			frame.selectionChanged(false);
+			snapPositions(selected.map(selection -> selection.selectable));
 			break;
 		case GUITAR_NOTE:
-			undoSystem.addUndo();
-			snapNotePositionsWithLength(accessor.getSelectedSet().map(selection -> (ChordOrNote) selection.selectable),
-					data.getCurrentArrangementLevel().chordsAndNotes);
-
-			frame.selectionChanged(false);
+			snapNotePositions(selected.map(selection -> (ChordOrNote) selection.selectable));
 			break;
 		case HAND_SHAPE:
-			undoSystem.addUndo();
-			snapPositionsWithLength(accessor.getSelectedSet().map(selection -> (HandShape) selection.selectable),
+			snapPositionsWithLength(selected.map(selection -> (HandShape) selection.selectable),
 					data.getCurrentArrangementLevel().handShapes);
-
-			frame.selectionChanged(false);
 			break;
 		case VOCAL:
-			undoSystem.addUndo();
-			snapPositionsWithLength(accessor.getSelectedSet().map(selection -> (Vocal) selection.selectable),
+			snapPositionsWithLength(selected.map(selection -> (Vocal) selection.selectable),
 					data.songChart.vocals.vocals);
-
-			frame.selectionChanged(false);
 			break;
-		case BEAT:
-		case NONE:
 		default:
 			break;
 		}
+
+		reselectAfterSnapping(accessor.type, selected);
 	}
 
 	public void snapAll() {
@@ -1051,22 +1028,25 @@ public class KeyboardHandler implements KeyListener {
 
 		if (modeManager.editMode == EditMode.VOCALS) {
 			undoSystem.addUndo();
+
 			snapPositionsWithLength(getFromTo(data.songChart.vocals.vocals, from, to), data.songChart.vocals.vocals);
 
-			frame.selectionChanged(false);
+			reselectAfterSnapping(accessor.type, selected);
 			return;
 		}
 
 		if (modeManager.editMode == EditMode.GUITAR) {
 			undoSystem.addUndo();
+
 			final ArrangementChart arrangement = data.getCurrentArrangement();
 			final Level level = data.getCurrentArrangementLevel();
+			snapPositions(getFromTo(arrangement.eventPoints, from, to));
 			snapPositions(getFromTo(arrangement.toneChanges, from, to));
 			snapPositions(getFromTo(level.anchors, from, to));
-			snapNotePositionsWithLength(getFromTo(level.chordsAndNotes, from, to), level.chordsAndNotes);
+			snapNotePositions(getFromTo(level.chordsAndNotes, from, to));
 			snapPositionsWithLength(getFromTo(level.handShapes, from, to), level.handShapes);
 
-			frame.selectionChanged(false);
+			reselectAfterSnapping(accessor.type, selected);
 		}
 	}
 
@@ -1122,25 +1102,6 @@ public class KeyboardHandler implements KeyListener {
 		}
 
 		frame.selectionChanged(false);
-	}
-
-	public void editHandShape2() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
-			return;
-		}
-
-		final SelectionAccessor<HandShape> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.HAND_SHAPE);
-		if (!selectedAccessor.isSelected()) {
-			return;
-		}
-
-		undoSystem.addUndo();
-
-		new HandShapePane(data, frame, selectedAccessor.getSortedSelected().get(0).selectable, () -> {
-			undoSystem.undo();
-			undoSystem.removeRedo();
-		});
 	}
 
 	public void markHandShape() {

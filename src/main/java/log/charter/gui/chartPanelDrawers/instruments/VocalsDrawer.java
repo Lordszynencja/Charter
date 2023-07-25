@@ -57,7 +57,7 @@ public class VocalsDrawer {
 				final ShapePositionWithSize position = getVocalNotePosition(x, lengthPx);
 				notes.add(filledRectangle(position, ColorLabel.VOCAL_NOTE.color()));
 				if (selected) {
-					notes.add(strokedRectangle(position.resized(-1, -1, 1, 1), ColorLabel.SELECT.color()));
+					notes.add(strokedRectangle(position.resized(-1, -1, 1, 1), ColorLabel.VOCAL_SELECT.color()));
 				}
 
 				final String text = vocal.getText() + (vocal.isWordPart() ? "-" : "");

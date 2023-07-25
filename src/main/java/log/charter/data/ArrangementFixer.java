@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 import log.charter.data.config.Config;
 import log.charter.song.Anchor;
 import log.charter.song.ArrangementChart;
-import log.charter.song.EventPoint;
 import log.charter.song.ChordTemplate;
+import log.charter.song.EventPoint;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
 import log.charter.song.SectionType;
@@ -152,13 +152,13 @@ public class ArrangementFixer {
 		}
 	}
 
-	private void fixNoteLengths(final ArrayList2<ChordOrNote> sounds) {
+	public void fixNoteLengths(final ArrayList2<ChordOrNote> sounds) {
 		for (int i = 0; i < sounds.size(); i++) {
 			fixSoundLength(i, sounds);
 		}
 	}
 
-	private void fixLengths(final ArrayList2<? extends IPositionWithLength> positions) {
+	public void fixLengths(final ArrayList2<? extends IPositionWithLength> positions) {
 		if (positions.isEmpty()) {
 			return;
 		}

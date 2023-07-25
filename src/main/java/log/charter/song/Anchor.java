@@ -23,7 +23,7 @@ public class Anchor extends Position {
 	}
 
 	public Anchor() {
-		super(0);
+		super(1);
 	}
 
 	public Anchor(final ArrangementAnchor arrangementAnchor) {

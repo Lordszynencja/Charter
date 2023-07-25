@@ -5,6 +5,7 @@ import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.util.Map;
+import java.util.Set;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
@@ -216,6 +217,11 @@ public class SelectionManager {
 	public void addSoundSelection(final ArrayList2<Integer> ids) {
 		chordsNotesManager.add(ids);
 		frame.selectionChanged(true);
+	}
+
+	public void addSelectionForPositions(final PositionType type, final Set<Integer> positions) {
+		typeSelectionManagers.get(type).addPositions(positions);
+		frame.selectionChanged(type == PositionType.GUITAR_NOTE);
 	}
 
 }

@@ -51,13 +51,6 @@ public class VocalModeHandler extends ModeHandler {
 	}
 
 	@Override
-	public void snapNotes() {
-		undoSystem.addUndo();
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
 		if (clickData.pressHighlight.type != PositionType.VOCAL) {
 			return;

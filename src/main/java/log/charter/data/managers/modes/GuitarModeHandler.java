@@ -70,17 +70,10 @@ public class GuitarModeHandler extends ModeHandler {
 	@Override
 	public void handleHome() {
 		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+
 		if (!sounds.isEmpty()) {
 			frame.setNextTime(sounds.get(0).position());
 		}
-	}
-
-	@Override
-	public void snapNotes() {// TODO
-		// undoSystem.addUndo();
-
-		// selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		// selectionManager.getSelectedAccessor(PositionType.HAND_SHAPE);
 	}
 
 	private void rightClickAnchor(final PositionWithIdAndType anchorPosition) {
