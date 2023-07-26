@@ -54,10 +54,12 @@ public class ChordTemplateEditor implements MouseListener {
 	private ChartData data;
 
 	private Supplier<ChordTemplate> chordTemplateSupplier;
+	private boolean editingChordName = false;
+	private int chordTemplateEditorRow;
 
 	private ChordNameAdviceButton chordNameAdviceButton;
 	private JLabel chordNameLabel;
-	protected AutocompleteInput<ChordTemplate> chordNameInput;
+	private AutocompleteInput<ChordTemplate> chordNameInput;
 	private JLabel fretsLabel;
 	private JLabel fingersLabel;
 	private final ArrayList2<TextInputWithValidation> fretInputs = new ArrayList2<>();
@@ -92,7 +94,7 @@ public class ChordTemplateEditor implements MouseListener {
 		setComponentBounds(chordTemplatePreview, x, y, width, calculateHeight(strings));
 
 		for (int i = 0; i < strings; i++) {
-			y = parent.getY(3 + strings - i);
+			y = parent.getY(chordTemplateEditorRow + 1 + getStringPosition(i, strings));
 
 			final TextInputWithValidation fretInput = fretInputs.get(i);
 			setComponentBounds(fretInput, fretInput.getX(), y, fretInput.getWidth(), fretInput.getHeight());
@@ -143,9 +145,11 @@ public class ChordTemplateEditor implements MouseListener {
 					return;
 				}
 
+				editingChordName = true;
 				final String newName = chordNameInput.getText();
 				chordTemplateSupplier.get().chordName = newName;
 				onChange.run();
+				editingChordName = false;
 			}
 		});
 
@@ -154,8 +158,9 @@ public class ChordTemplateEditor implements MouseListener {
 
 	private ArrayList2<ChordTemplate> getPossibleChords(final String filter) {
 		return data.getCurrentArrangement().chordTemplates.stream()//
-				.filter(chordTemplate -> chordTemplate.getNameWithFrets(data.currentStrings()).toLowerCase()
-						.contains(filter.toLowerCase()))//
+				.filter(chordTemplate -> !chordTemplate.equals(chordTemplateSupplier.get())//
+						&& chordTemplate.getNameWithFrets(data.currentStrings()).toLowerCase()
+								.contains(filter.toLowerCase()))//
 				.collect(Collectors.toCollection(ArrayList2::new));
 	}
 
@@ -197,6 +202,7 @@ public class ChordTemplateEditor implements MouseListener {
 	}
 
 	public void addChordTemplateEditor(final int baseX, final int row) {
+		chordTemplateEditorRow = row;
 		int x = baseX;
 
 		final int fretLabelWidth = parent.addLabel(row, x, Label.FRET, 50);
@@ -367,5 +373,14 @@ public class ChordTemplateEditor implements MouseListener {
 		}
 
 		chordTemplatePreview.hideFields();
+	}
+
+	public void clearChordName() {
+		if (editingChordName) {
+			return;
+		}
+
+		chordNameInput.setTextWithoutUpdate("");
+		chordNameInput.removePopup();
 	}
 }

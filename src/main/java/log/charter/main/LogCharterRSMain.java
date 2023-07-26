@@ -5,6 +5,7 @@ import java.io.IOException;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
+import log.charter.io.Logger;
 
 public class LogCharterRSMain {
 	public static final String VERSION = "0.9.15 - 2023.07.25";
@@ -31,7 +32,7 @@ public class LogCharterRSMain {
 					Thread.sleep(1000);
 				}
 			} catch (final InterruptedException e) {
-				e.printStackTrace();
+				Logger.error("Error in config save thread", e);
 			}
 		}).start();
 	}

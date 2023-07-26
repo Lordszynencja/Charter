@@ -1079,6 +1079,7 @@ public class KeyboardHandler implements KeyListener {
 		undoSystem.addUndo();
 
 		for (final Selection<Vocal> vocalSelection : selectedAccessor.getSelectedSet()) {
+			vocalSelection.selectable.setPhraseEnd(false);
 			vocalSelection.selectable.setWordPart(!vocalSelection.selectable.isWordPart());
 		}
 
@@ -1098,6 +1099,7 @@ public class KeyboardHandler implements KeyListener {
 		undoSystem.addUndo();
 
 		for (final Selection<Vocal> selectedVocal : selectedAccessor.getSelectedSet()) {
+			selectedVocal.selectable.setWordPart(false);
 			selectedVocal.selectable.setPhraseEnd(!selectedVocal.selectable.isPhraseEnd());
 		}
 
@@ -1158,11 +1160,6 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		if (modeManager.editMode == EditMode.GUITAR) {
-			// editNoteAsSingleNote();
-			return;
-		}
-
 		if (modeManager.editMode == EditMode.VOCALS) {
 			togglePhraseEnd();
 		}
@@ -1181,10 +1178,6 @@ public class KeyboardHandler implements KeyListener {
 	private void handleW() {
 		if (modeManager.editMode == EditMode.VOCALS) {
 			toggleWordPart();
-		}
-
-		if (modeManager.editMode == EditMode.GUITAR) {
-			// editNote();
 		}
 	}
 
@@ -1300,24 +1293,19 @@ public class KeyboardHandler implements KeyListener {
 
 		key(VK_A).function(this::toggleAccent);
 		key(VK_A).ctrl().function(selectionManager::selectAllNotes);
-		// key(VK_B).function(this::editBend);
 		key(VK_C).ctrl().function(copyManager::copy);
 		key(VK_E).function(this::handleE);
 		key(VK_G).function(e -> new GridPane(frame, chartToolbar));
 		key(VK_G).ctrl().function(this::snapSelected);
 		key(VK_G).ctrl().shift().function(this::snapAll);
 		key(VK_H).function(this::toggleHOPO);
-		// key(VK_H).ctrl().function(this::editHandShape);
 		key(VK_H).shift().function(this::markHandShape);
 		key(VK_L).function(this::handleL);
 		key(VK_M).function(this::toggleMute);
-		// key(VK_N).function(this::editNote);
 		key(VK_N).ctrl().function(songFileHandler::newSong);
 		key(VK_O).function(this::toggleHarmonic);
 		key(VK_O).ctrl().function((Runnable) songFileHandler::open);
-		// key(VK_Q).ctrl().function(this::editNoteAsChord);
 		key(VK_R).ctrl().function(undoSystem::redo);
-		// key(VK_S).function(this::editSlide);
 		key(VK_S).ctrl().function(songFileHandler::save);
 		key(VK_S).ctrl().shift().function(songFileHandler::saveAs);
 		key(VK_T).function(this::toggleTremolo);

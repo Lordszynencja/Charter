@@ -24,7 +24,9 @@ import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
+import log.charter.gui.panes.VocalPane;
 import log.charter.song.ArrangementChart;
 import log.charter.song.Beat;
 import log.charter.song.Level;
@@ -36,6 +38,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private ArrangementFixer arrangementFixer;
 	private ChartData data;
+	private CharterFrame frame;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
@@ -46,13 +49,15 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	private boolean releaseCancelled = false;
 	private int mouseX = -1;
 	private int mouseY = -1;
+	private long lastLeftClickTime = 0;
 
-	public void init(final ArrangementFixer arrangementFixer, final ChartData data,
+	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final CharterFrame frame,
 			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
 			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this.arrangementFixer = arrangementFixer;
 		this.data = data;
+		this.frame = frame;
 		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
 		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
@@ -128,6 +133,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		switch (clickData.button) {
 		case LEFT_BUTTON:
+			final boolean wasLeftDoubleClick = System.currentTimeMillis() - lastLeftClickTime < 500;
+			lastLeftClickTime = System.currentTimeMillis();
 			switch (modeManager.editMode) {
 			case GUITAR:
 				if (!clickData.isXDrag()) {
@@ -158,17 +165,18 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			case VOCALS:
 				if (!clickData.isXDrag()) {
 					selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
-					break;
+				} else if (clickData.pressHighlight.type == PositionType.VOCAL) {
+					dragPositionsWithLength(PositionType.VOCAL, clickData, data.songChart.vocals.vocals);
 				}
 
-				if (clickData.pressHighlight.type == PositionType.VOCAL) {
-					dragPositionsWithLength(PositionType.VOCAL, clickData, data.songChart.vocals.vocals);
+				if (wasLeftDoubleClick && clickData.pressHighlight.vocal != null) {
+					new VocalPane(clickData.pressHighlight.id, clickData.pressHighlight.vocal, data, frame,
+							selectionManager, undoSystem);
 				}
 				break;
 			default:
 				break;
 			}
-
 			break;
 		case RIGHT_BUTTON:
 			modeManager.getHandler().rightClick(clickData);

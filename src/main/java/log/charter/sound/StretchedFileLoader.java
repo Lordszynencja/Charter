@@ -47,7 +47,12 @@ public class StretchedFileLoader {
 	private void run() {
 		if (targetFile.exists()) {
 			loadResult();
-			return;
+
+			if (result.data.length > 0) {
+				return;
+			}
+
+			result = null;
 		}
 
 		createTempFile();

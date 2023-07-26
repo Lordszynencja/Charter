@@ -164,6 +164,9 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 		removePopup();
 
 		final String text = getText();
+		if (text.isEmpty()) {
+			return;
+		}
 
 		final ArrayList2<AutocompleteValue<T>> valuesToShow = possibleValuesGetter.apply(text).stream()//
 				.map(value -> new AutocompleteValue<>(formatter.apply(value), value))//

@@ -280,8 +280,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
 
-		chordNameInput.setTextWithoutUpdate("");
-		chordNameInput.removePopup();
+		clearChordName();
 
 		for (final Selection<ChordOrNote> selection : selected) {
 			if (selection.selectable.isNote()) {

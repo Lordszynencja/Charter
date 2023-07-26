@@ -136,7 +136,7 @@ public class CharterFrame extends JFrame {
 		modeManager.init(currentSelectionEditor, data, this, highlightManager, keyboardHandler, selectionManager,
 				undoSystem);
 		mouseButtonPressReleaseHandler.init(highlightManager);
-		mouseHandler.init(arrangementFixer, data, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
+		mouseHandler.init(arrangementFixer, data, this, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
 				selectionManager, undoSystem);
 		songFileHandler.init(arrangementFixer, arrangementValidator, audioHandler, data, this, charterMenuBar,
 				modeManager, undoSystem);
@@ -221,24 +221,32 @@ public class CharterFrame extends JFrame {
 	}
 
 	private void frame() {
-		keyboardHandler.frame();
-		updateTitle();
+		try {
+			keyboardHandler.frame();
+			updateTitle();
 
-		data.time = (int) data.nextTime;
+			data.time = (int) data.nextTime;
 
-		if (isFocused()) {
-			preview3DPanel.repaint();
-			repaint();
-		}
+			if (isFocused()) {
+				preview3DPanel.repaint();
+				repaint();
+			}
 
-		if (fullscreenPreviewFrame.isFocused()) {
-			fullscreenPreviewFrame.repaint();
-			fullscreenPreview3DPanel.repaint();
+			if (fullscreenPreviewFrame.isFocused()) {
+				fullscreenPreviewFrame.repaint();
+				fullscreenPreview3DPanel.repaint();
+			}
+		} catch (final Exception e) {
+			Logger.error("Error in frame", e);
 		}
 	}
 
 	private void audioFrame() {
-		audioHandler.frame();
+		try {
+			audioHandler.frame();
+		} catch (final Exception e) {
+			Logger.error("Error in audio frame", e);
+		}
 	}
 
 	private JScrollBar createScrollBar() {
