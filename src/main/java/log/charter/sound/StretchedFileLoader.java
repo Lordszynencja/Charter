@@ -33,31 +33,35 @@ public class StretchedFileLoader {
 	private final String dir;
 	private final int speed;
 	private final File targetFile;
-	public MusicData result;
 
 	public StretchedFileLoader(final MusicData musicData, final String dir, final int speed) {
 		this.musicData = musicData;
 		this.dir = dir;
 		this.speed = speed;
 		targetFile = new File(dir, getResultFileName(speed));
-
-		new Thread(this::run).start();
 	}
 
-	private void run() {
+	public MusicData quickLoad() {
 		if (targetFile.exists()) {
-			loadResult();
+			final MusicData result = loadResult();
 
-			if (result.data.length > 0) {
-				return;
+			if (result != null && result.data.length > 0) {
+				return result;
 			}
+		}
 
-			result = null;
+		return null;
+	}
+
+	public boolean generate() {
+		if (quickLoad() != null) {
+			return true;
 		}
 
 		createTempFile();
 		runRubberBand();
-		loadResult();
+
+		return quickLoad() != null;
 	}
 
 	private void createTempFile() {
@@ -89,7 +93,6 @@ public class StretchedFileLoader {
 			try {
 				Thread.sleep(1);
 			} catch (final InterruptedException e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -105,7 +108,6 @@ public class StretchedFileLoader {
 			runRubberBand(cmd);
 		} catch (final IOException e) {
 			Logger.error("Couldn't run rubber band!", e);
-			e.printStackTrace();
 		}
 	}
 
@@ -120,7 +122,7 @@ public class StretchedFileLoader {
 		}
 	}
 
-	private void loadResult() {
-		result = WavLoader.load(targetFile);
+	private MusicData loadResult() {
+		return WavLoader.load(targetFile);
 	}
 }

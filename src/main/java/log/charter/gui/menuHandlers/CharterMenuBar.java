@@ -52,7 +52,7 @@ public class CharterMenuBar extends JMenuBar {
 		guitarMenuHandler.init(data, frame, keyboardHandler, modeManager, selectionManager, undoSystem);
 		infoMenuHandler.init(frame, this);
 		musicMenuHandler.init(audioHandler, data, frame);
-		notesMenuHandler.init(frame, chartToolbar, data, keyboardHandler, modeManager);
+		notesMenuHandler.init(data, keyboardHandler, modeManager);
 		vocalsMenuHandler.init(data, keyboardHandler, modeManager);
 
 		final Dimension size = new Dimension(100, 20);

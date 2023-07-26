@@ -8,7 +8,7 @@ import static log.charter.util.Utils.getStringPosition;
 
 public class DrawerUtils {
 	public static final int toolbarY = 0;
-	public static final int editorY = toolbarY + 22;
+	public static final int editorY = toolbarY + 20;
 
 	public static final int sectionNamesY = 5;
 	public static final int phraseNamesY = sectionNamesY + 15;

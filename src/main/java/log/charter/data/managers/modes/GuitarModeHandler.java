@@ -297,6 +297,7 @@ public class GuitarModeHandler extends ModeHandler {
 	private void changeNotesLength(final int change) {
 		final SelectionAccessor<ChordOrNote> selectedNotes = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+
 		IPositionWithLength.changeSoundsLength(data.songChart.beatsMap, selectedNotes.getSortedSelected(),
 				data.getCurrentArrangementLevel().chordsAndNotes, change, !keyboardHandler.alt(),
 				currentSelectionEditor.getSelectedStrings());

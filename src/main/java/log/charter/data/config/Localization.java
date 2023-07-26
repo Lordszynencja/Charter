@@ -163,6 +163,7 @@ public class Localization {
 		EDIT_MENU_SPECIAL_PASTE("Special paste"), //
 		EDIT_MENU_SONG_OPTIONS("Song options"), //
 		EDIT_MENU_ADD_SILENCE("Add silence in the beginning"), //
+		EDIT_MENU_ADD_DEFAULT_SILENCE("Add default silence based on bars"), //
 
 		FILE_MENU("File"), //
 		FILE_MENU_NEW("New"), //
@@ -246,7 +247,10 @@ public class Localization {
 		TOOLBAR_MIDI("Midi"), //
 		TOOLBAR_CLAPS("Claps"), //
 		TOOLBAR_METRONOME("Metronome"), //
-		TOOLBAR_WAVEFORM_GRAPH("Waveform graph"),
+		TOOLBAR_WAVEFORM_GRAPH("Waveform graph"), //
+		TOOLBAR_SLOWED_PLAYBACK_SPEED("Slowed speed"), //
+		TOOLBAR_VOLUME("Volume"), //
+		TOOLBAR_MIDI_VOLUME("Midi volume"), //
 
 		SLIDE_PANE("Slide options"), //
 		SLIDE_PANE_FRET("Slide to"), //
@@ -260,7 +264,11 @@ public class Localization {
 		SONG_OPTIONS_YEAR("Year"), //
 		SONG_OPTIONS_CROWD_SPEED("Crowd speed"), //
 
+		ADD_SILENCE_PANE("Add silence"), //
 		ADD_SILENCE_SECONDS("Add this many seconds of silence:"), //
+
+		ADD_DEFAULT_SILENCE_PANE("Add silence"), //
+		ADD_DEFAULT_SILENCE_BARS("Add this many bars of silence after 10s:"), //
 
 		ARRANGEMENT_OPTIONS_PANE("Arrangement options"), //
 		ARRANGEMENT_OPTIONS_TYPE("Arrangement type"), //
@@ -352,6 +360,7 @@ public class Localization {
 		EXIT_POPUP("Exit"), //
 		EXIT_MESSAGE("Are you sure you want to exit?"), //
 		FOLDER_EXISTS_CHOOSE_DIFFERENT("Given folder already exists, choose different name"), //
+		GENERATING_SLOWED_SOUND("Playback speed added to queue"), //
 		GP_FILE("GP file (.gp3, .gp4, .gp5)"), //
 		LOADING("Please wait, loading..."), //
 		LOADING_ARRANGEMENTS("Loading arrangements"), //

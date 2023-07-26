@@ -1,10 +1,9 @@
 package log.charter.gui.panes;
 
 import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
-import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createBigDecimalValidator;
+import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
 
 import java.io.File;
-import java.math.BigDecimal;
 
 import javax.swing.JTextField;
 
@@ -12,50 +11,72 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ParamsPane;
+import log.charter.song.Beat;
 import log.charter.sound.MusicData;
 import log.charter.sound.StretchedFileLoader;
 import log.charter.sound.ogg.OggWriter;
 import log.charter.util.RW;
 
-public class AddSilencePane extends ParamsPane {
+public class AddDefaultSilencePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private static PaneSizes getSizes() {
 		final PaneSizes sizes = new PaneSizes();
 		sizes.labelWidth = 80;
-		sizes.width = 250;
+		sizes.width = 260;
 
 		return sizes;
 	}
 
 	private final ChartData data;
 
-	private BigDecimal time;
+	private int bars = 2;
 
-	public AddSilencePane(final CharterFrame frame, final ChartData data) {
-		super(frame, Label.ADD_SILENCE_PANE, 4, getSizes());
+	public AddDefaultSilencePane(final CharterFrame frame, final ChartData data) {
+		super(frame, Label.ADD_DEFAULT_SILENCE_PANE, 4, getSizes());
 		this.data = data;
 
-		addLabel(0, 20, Label.ADD_SILENCE_SECONDS);
+		addLabel(0, 20, Label.ADD_DEFAULT_SILENCE_BARS);
 
-		addConfigValue(1, 20, 0, null, "", 100,
-				createBigDecimalValidator(new BigDecimal(0.1), new BigDecimal(60), false),
-				val -> time = new BigDecimal(val), false);
+		addIntegerConfigValue(1, 20, 0, null, 2, 100, createIntValidator(0, 10, false), val -> bars = val, false);
 		final JTextField input = (JTextField) components.getLast();
 		addSelectTextOnFocus(input);
 
 		addDefaultFinish(3, this::saveAndExit);
 	}
 
-	private void addSilence() {
+	private void addSilence(final int movement) {
 		final MusicData songMusicData = data.music;
-		final MusicData silenceMusicData = MusicData.generateSilence(time.doubleValue(),
+		final MusicData silenceMusicData = MusicData.generateSilence(movement / 1000.0,
 				songMusicData.outFormat.getSampleRate());
 		final MusicData joined = silenceMusicData.join(songMusicData);
 		data.music = joined;
 		data.songChart.beatsMap.songLengthMs = joined.msLength();
 
-		data.songChart.moveEverything((int) (time.doubleValue() * 1000));
+		data.songChart.moveEverything(movement);
+	}
+
+	private void addSilenceAndBars() {
+		int movement = 10_000;
+
+		final Beat firstBeat = data.songChart.beatsMap.beats.get(0);
+		final int firstBarPosition = firstBeat.position();
+		final int secondBarPosition = data.songChart.beatsMap.beats.get(firstBeat.beatsInMeasure).position();
+		final int barLength = secondBarPosition - firstBarPosition;
+		movement += bars * barLength;
+		addSilence(movement);
+
+		final int beatsInMeasure = firstBeat.beatsInMeasure;
+		for (int bar = 0; bar < bars; bar++) {
+			final int barPosition = firstBeat.position() - barLength * (bars - bar);
+			for (int i = 0; i < beatsInMeasure; i++) {
+				final int beatPosition = barPosition + i * barLength / beatsInMeasure;
+				data.songChart.beatsMap.beats
+						.add(new Beat(beatPosition, beatsInMeasure, firstBeat.noteDenominator, i == 0));
+			}
+		}
+
+		data.songChart.beatsMap.beats.sort(null);
 	}
 
 	private void changeMusicFileNameAndMakeBackupIfNeeded() {
@@ -76,7 +97,11 @@ public class AddSilencePane extends ParamsPane {
 
 	private void saveAndExit() {
 		changeMusicFileNameAndMakeBackupIfNeeded();
-		addSilence();
+		if (bars == 0) {
+			addSilence(10_000);
+		} else {
+			addSilenceAndBars();
+		}
 
 		OggWriter.writeOgg(new File(data.path, data.songChart.musicFileName).getAbsolutePath(), data.music);
 

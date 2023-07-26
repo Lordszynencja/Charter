@@ -6,24 +6,15 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
-import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SpecialMenuItem;
-import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.KeyboardHandler;
-import log.charter.gui.panes.GridPane;
 
 class NotesMenuHandler extends CharterMenuHandler {
-
-	private CharterFrame frame;
-	private ChartToolbar chartToolbar;
 	private ChartData data;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 
-	public void init(final CharterFrame frame, final ChartToolbar chartToolbar, final ChartData data,
-			final KeyboardHandler keyboardHandler, final ModeManager modeManager) {
-		this.frame = frame;
-		this.chartToolbar = chartToolbar;
+	public void init(final ChartData data, final KeyboardHandler keyboardHandler, final ModeManager modeManager) {
 		this.data = data;
 		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
@@ -38,16 +29,11 @@ class NotesMenuHandler extends CharterMenuHandler {
 	JMenu prepareMenu() {
 		final JMenu menu = new JMenu(Label.NOTES_MENU.label());
 
-		menu.add(new SpecialMenuItem(Label.NOTES_MENU_GRID_OPTIONS, "G", this::gridOptions));
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_SNAP, "Ctrl-G", keyboardHandler::snapSelected));
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_SNAP_ALL, "Ctrl-Shift-G", keyboardHandler::snapAll));
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_HALVE_GRID, ",", keyboardHandler::halveGridSize));
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_DOUBLE_GRID, ".", keyboardHandler::doubleGridSize));
 
 		return menu;
-	}
-
-	private void gridOptions() {
-		new GridPane(frame, chartToolbar);
 	}
 }

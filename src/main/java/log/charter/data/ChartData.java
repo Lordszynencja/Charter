@@ -17,7 +17,7 @@ import log.charter.song.SongChart;
 import log.charter.sound.MusicData;
 
 public class ChartData {
-	public String path = Config.lastPath;
+	public String path = Config.lastDir;
 	public String projectFileName = "project.rscp";
 	public boolean isEmpty = true;
 	public SongChart songChart = null;
@@ -65,7 +65,6 @@ public class ChartData {
 		songChart = song;
 		music = musicData;
 
-		audioHandler.clear();
 		selectionManager.clear();
 		changeDifficulty(level);
 		modeManager.editMode = editMode;
@@ -82,6 +81,9 @@ public class ChartData {
 
 		selectionManager.clear();
 		undoSystem.clear();
+
+		audioHandler.clear();
+		audioHandler.setSong();
 	}
 
 	public void undo() {

@@ -41,7 +41,7 @@ class MusicMenuHandler extends CharterMenuHandler {
 		Config.markChanged();
 
 		audioHandler.clear();
-		new Thread(audioHandler::loadStretchedWithCheck).start();
+		audioHandler.addSpeedToStretch();
 	}
 
 	public void customSpeed() {

@@ -1,6 +1,5 @@
 package log.charter.gui.handlers;
 
-import static log.charter.data.config.Config.createDefaultStretchesInBackground;
 import static log.charter.io.Logger.debug;
 import static log.charter.io.Logger.error;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.saveVocals;
@@ -231,9 +230,8 @@ public class SongFileHandler {
 		data.setNewSong(songFolder, songChart, musicData, "project.rscp");
 		save();
 
-		if (createDefaultStretchesInBackground) {
-			audioHandler.createDefaultStretches();
-		}
+		audioHandler.clear();
+		audioHandler.setSong();
 	}
 
 	public MusicData chooseMusicFile(final String startingDir) {
@@ -322,10 +320,6 @@ public class SongFileHandler {
 				project.level, project.time);
 
 		loadingDialog.setProgress(3, Label.LOADING_DONE.label());
-
-		if (createDefaultStretchesInBackground) {
-			audioHandler.createDefaultStretches();
-		}
 	}
 
 	public void open(final String path) {
@@ -404,10 +398,6 @@ public class SongFileHandler {
 		loadingDialog.dispose();
 
 		save();
-
-		if (createDefaultStretchesInBackground) {
-			audioHandler.createDefaultStretches();
-		}
 	}
 
 	public void importRSArrangementXML() {

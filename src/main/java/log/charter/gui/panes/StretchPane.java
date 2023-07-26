@@ -43,7 +43,8 @@ public class StretchPane extends ParamsPane {
 	private void saveAndExit() {
 		Config.stretchedMusicSpeed = stretchedMusicSpeed;
 		Config.markChanged();
+
 		audioHandler.clear();
-		new Thread(audioHandler::loadStretchedWithCheck).start();
+		audioHandler.addSpeedToStretch();
 	}
 }

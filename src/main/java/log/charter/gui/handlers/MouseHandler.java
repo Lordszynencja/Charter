@@ -10,7 +10,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -256,7 +255,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			final int positionBefore = clickData.pressHighlight.position();
 			final int positionAfter = max(0,
 					min(data.music.msLength(), xToTime(clickData.releasePosition.x, data.time)));
-			moveEverything(positionAfter - positionBefore);
+			data.songChart.moveEverything(positionAfter - positionBefore);
 			return;
 		}
 
@@ -316,27 +315,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			for (int i = middleId + 1; i < beats.size(); i++) {
 				beats.get(i).position(basePosition + (i - middleId) * distance);
 			}
-		}
-
-		data.songChart.beatsMap.makeBeatsUntilSongEnd();
-	}
-
-	private void moveEverything(final int positionDifference) {
-		final List<IPosition> positionsToMove = new LinkedList<>();
-		positionsToMove.addAll(data.songChart.beatsMap.beats);
-		for (final ArrangementChart arrangement : data.songChart.arrangements) {
-			positionsToMove.addAll(arrangement.toneChanges);
-			for (final Level level : arrangement.levels.values()) {
-				positionsToMove.addAll(level.anchors);
-				positionsToMove.addAll(level.chordsAndNotes);
-				positionsToMove.addAll(level.handShapes);
-			}
-		}
-		positionsToMove.addAll(data.songChart.vocals.vocals);
-
-		final int maxPosition = data.music.msLength();
-		for (final IPosition positionToMove : positionsToMove) {
-			positionToMove.position(min(maxPosition, max(0, positionToMove.position() + positionDifference)));
 		}
 
 		data.songChart.beatsMap.makeBeatsUntilSongEnd();
@@ -450,6 +428,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		if (keyboardHandler.ctrl()) {
 			final int zoomChange = change * (keyboardHandler.shift() ? 8 : 1);
 			Zoom.addZoom(zoomChange);
+			return;
+		}
+
+		if (!selectionManager.getCurrentlySelectedAccessor().isSelected()) {
 			return;
 		}
 

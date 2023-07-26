@@ -96,8 +96,6 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
-import log.charter.gui.components.toolbar.ChartToolbar;
-import log.charter.gui.panes.GridPane;
 import log.charter.gui.panes.HandShapePane;
 import log.charter.gui.panes.VocalPane;
 import log.charter.song.ArrangementChart;
@@ -175,12 +173,6 @@ public class KeyboardHandler implements KeyListener {
 			add();
 		}
 
-		public void function(final Consumer<KeyEvent> function) {
-			this.function = function;
-
-			add();
-		}
-
 		private void addSingle() {
 			keyHandlers.put(key, new SingleFunctionForKey(function));
 		}
@@ -250,7 +242,6 @@ public class KeyboardHandler implements KeyListener {
 	private AudioHandler audioHandler;
 	private ArrangementFixer arrangementFixer;
 	private CopyManager copyManager;
-	private ChartToolbar chartToolbar;
 	private ChartData data;
 	private CharterFrame frame;
 	private ModeManager modeManager;
@@ -269,15 +260,14 @@ public class KeyboardHandler implements KeyListener {
 	private int fretNumberTimer = 0;
 
 	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler,
-			final ArrangementFixer arrangementFixer, final CopyManager copyManager, final ChartToolbar chartToolbar,
-			final ChartData data, final CharterFrame frame, final ModeManager modeManager,
-			final MouseHandler mouseHandler, final SelectionManager selectionManager,
-			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
+			final ArrangementFixer arrangementFixer, final CopyManager copyManager, final ChartData data,
+			final CharterFrame frame, final ModeManager modeManager, final MouseHandler mouseHandler,
+			final SelectionManager selectionManager, final SongFileHandler songFileHandler,
+			final UndoSystem undoSystem) {
 		this.audioDrawer = audioDrawer;
 		this.audioHandler = audioHandler;
 		this.arrangementFixer = arrangementFixer;
 		this.copyManager = copyManager;
-		this.chartToolbar = chartToolbar;
 		this.data = data;
 		this.frame = frame;
 		this.modeManager = modeManager;
@@ -1295,7 +1285,6 @@ public class KeyboardHandler implements KeyListener {
 		key(VK_A).ctrl().function(selectionManager::selectAllNotes);
 		key(VK_C).ctrl().function(copyManager::copy);
 		key(VK_E).function(this::handleE);
-		key(VK_G).function(e -> new GridPane(frame, chartToolbar));
 		key(VK_G).ctrl().function(this::snapSelected);
 		key(VK_G).ctrl().shift().function(this::snapAll);
 		key(VK_H).function(this::toggleHOPO);

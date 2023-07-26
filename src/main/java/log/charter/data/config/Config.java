@@ -32,7 +32,7 @@ public class Config {
 	public static int midiDelay = 200;
 	public static double midiVolume = 1;
 	public static int markerOffset = 300;
-	public static Theme theme = Theme.DEFAULT;
+	public static Theme theme = Theme.ROCKSMITH;
 	public static int noteWidth = 15;
 	public static int noteHeight = 25;
 
@@ -59,6 +59,7 @@ public class Config {
 	public static boolean audioFolderChosenForNewSong = false;
 
 	public static boolean debugLogging = false;
+	public static boolean debugDrawing = false;
 
 	private static boolean changed = false;
 

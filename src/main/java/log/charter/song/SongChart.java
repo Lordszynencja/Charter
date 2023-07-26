@@ -1,10 +1,13 @@
 package log.charter.song;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static log.charter.io.rs.xml.song.SongArrangementXStreamHandler.readSong;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.readVocals;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -17,6 +20,7 @@ import log.charter.io.gp.gp5.GPMasterBar;
 import log.charter.io.gp.gp5.GPTrackData;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
+import log.charter.song.notes.IPosition;
 import log.charter.song.notes.Note;
 import log.charter.song.vocals.Vocals;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -163,5 +167,25 @@ public class SongChart {
 		}
 
 		beatsMap.fixFirstBeatInMeasures();
+	}
+
+	public void moveEverything(final int positionDifference) {
+		final List<IPosition> positionsToMove = new LinkedList<>();
+		positionsToMove.addAll(beatsMap.beats);
+		for (final ArrangementChart arrangement : arrangements) {
+			positionsToMove.addAll(arrangement.toneChanges);
+			for (final Level level : arrangement.levels.values()) {
+				positionsToMove.addAll(level.anchors);
+				positionsToMove.addAll(level.chordsAndNotes);
+				positionsToMove.addAll(level.handShapes);
+			}
+		}
+		positionsToMove.addAll(vocals.vocals);
+
+		for (final IPosition positionToMove : positionsToMove) {
+			positionToMove.position(min(beatsMap.songLengthMs, max(0, positionToMove.position() + positionDifference)));
+		}
+
+		beatsMap.makeBeatsUntilSongEnd();
 	}
 }

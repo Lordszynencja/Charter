@@ -208,8 +208,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 		final JCheckBox tremoloInput = new JCheckBox();
 		tremoloInput.addActionListener(a -> changeTremolo(tremoloInput.isSelected()));
-		tremolo = new FieldWithLabel<>(Label.TREMOLO, 80, 20, 20, tremoloInput, LabelPosition.LEFT_CLOSE);
-		tremolo.setLocation(100, parent.getY(row.getAndIncrement()));
+		tremolo = new FieldWithLabel<>(Label.TREMOLO, 50, 20, 20, tremoloInput, LabelPosition.LEFT_CLOSE);
+		tremolo.setLocation(120, parent.getY(row.getAndIncrement()));
 		parent.add(tremolo);
 	}
 
