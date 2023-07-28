@@ -115,7 +115,7 @@ public class MidiChartNotePlayer {
 			bendValue += getSlideValue(position, length, slideTo - fret, unpitchedSlide);
 		}
 
-		midiNotePlayer.updateBend(string, bendValue);
+		midiNotePlayer.updateBend(string, fret, bendValue);
 	}
 
 	private void updateSoundingSounds() {

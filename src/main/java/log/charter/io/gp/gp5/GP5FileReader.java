@@ -116,8 +116,7 @@ public class GP5FileReader {
 	}
 
 	public static GP5File importGPFile(final File file) {
-		final GP5File gp5File = new GP5FileReader(new ByteArrayInputStream(RW.readB(file)))
-				.readScore(new ByteArrayInputStream(RW.readB(file)));
+		final GP5File gp5File = new GP5FileReader(new ByteArrayInputStream(RW.readB(file))).readScore();
 
 		return gp5File;
 	}
@@ -138,7 +137,7 @@ public class GP5FileReader {
 		this.data = data;
 	}
 
-	private GP5File readScore(final ByteArrayInputStream data) {
+	private GP5File readScore() {
 		if (file != null) {
 			return file;
 		}
@@ -153,8 +152,8 @@ public class GP5FileReader {
 		final List<GPLyrics> lyrics = readLyrics();
 		readSettings();
 
-		barCount = readInt32LE(this.data);
-		trackCount = readInt32LE(this.data);
+		barCount = readInt32LE(data);
+		trackCount = readInt32LE(data);
 		masterBars = readMasterBars();
 		tracks = readTracksData();
 		bars = readBars();
@@ -977,8 +976,17 @@ public class GP5FileReader {
 	private GPGraceNote readGrace() {
 		final int fret = readShortInt8(data);
 		readShortInt8(data);// dynamics
-		final boolean slide = readShortInt8(data) == 1;
-		final GPDuration duration = GPDuration.fromValue(data.read()); // duration
+
+		final int type = readShortInt8(data);
+		final boolean slide = type == 1;
+		final boolean legato = type == 3;
+		final int durationValue = data.read();
+		final GPDuration duration = switch (durationValue) {
+		case 1 -> GPDuration.NOTE_64;
+		case 2 -> GPDuration.NOTE_32;
+		case 3 -> GPDuration.NOTE_16;
+		default -> GPDuration.NOTE_64;
+		};
 
 		boolean graceBefore = true;
 		boolean deadGraceNote = false;
@@ -988,7 +996,7 @@ public class GP5FileReader {
 			deadGraceNote = (flags & 0x01) != 0;
 		}
 
-		return new GPGraceNote(fret, duration, slide, graceBefore, deadGraceNote);
+		return new GPGraceNote(fret, duration, slide, graceBefore, deadGraceNote, legato);
 	}
 
 	private GPSlideType[] readSlide() {

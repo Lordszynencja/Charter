@@ -2,6 +2,7 @@ package log.charter.song;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.data.config.Config.minTailLength;
 import static log.charter.song.notes.IPosition.findClosestPosition;
 
 import java.math.BigDecimal;
@@ -14,6 +15,8 @@ import log.charter.data.config.Config;
 import log.charter.io.gp.gp5.GPBar;
 import log.charter.io.gp.gp5.GPBeat;
 import log.charter.io.gp.gp5.GPBend;
+import log.charter.io.gp.gp5.GPDuration;
+import log.charter.io.gp.gp5.GPGraceNote;
 import log.charter.io.gp.gp5.GPNote;
 import log.charter.io.gp.gp5.GPNoteEffects;
 import log.charter.io.gp.gp5.GPTrackData;
@@ -22,9 +25,12 @@ import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.song.configs.Tuning;
 import log.charter.song.enums.HOPO;
+import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.CommonNote;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
@@ -45,6 +51,56 @@ public class ArrangementChart {
 		@Override
 		public String toString() {
 			return name;
+		}
+	}
+
+	private static class NotePositionInformation {
+		public final List<Beat> beats;
+		public final int positionIn64s;
+		public final int barBeatId;
+
+		public NotePositionInformation(final List<Beat> beats, final int positionIn64s, final int barBeatId) {
+			this.beats = beats;
+			this.positionIn64s = positionIn64s;
+			this.barBeatId = barBeatId;
+		}
+
+		private NotePositionInformation move(final int offsetIn64s) {
+			return new NotePositionInformation(beats, positionIn64s + offsetIn64s, barBeatId);
+		}
+
+		public NotePositionInformation move(final GPDuration duration) {
+			return move(duration.length);
+		}
+
+		public NotePositionInformation moveBackwards(final GPDuration duration) {
+			return move(-duration.length);
+		}
+
+		public int getPosition() {
+			final Beat startingBeat = beats.get(barBeatId);
+			int beatOffset64 = positionIn64s * startingBeat.noteDenominator;
+			int beatOffset = beatOffset64 / 64;
+			if (beatOffset64 < 0) {
+				beatOffset64 += 64;
+				beatOffset--;
+			}
+			if (barBeatId + beatOffset < 0) {
+				return max(0, beats.get(0).position());
+			}
+
+			final Beat beatFrom = beats.get(barBeatId + beatOffset);
+			if (barBeatId + beatOffset + 1 == beats.size()) {
+				return beatFrom.position();
+			}
+
+			final Beat beatTo = beatOffset64 >= 0 ? beats.get(barBeatId + beatOffset + 1)
+					: beats.get(barBeatId + beatOffset - 1);
+
+			final int beatLength = beatTo.position() - beatFrom.position();
+			final int positionInBeat = beatLength * (beatOffset64 % 64) / 64;
+
+			return beatFrom.position() + positionInBeat;
 		}
 	}
 
@@ -108,8 +164,7 @@ public class ArrangementChart {
 		chordTemplates = songArrangement.chordTemplates.list.map(ChordTemplate::new);
 
 		songArrangement.sections.list.forEach(arrangementSection -> {
-			final EventPoint arrangementEventsPoint = findOrCreateArrangementEventsPoint(
-					arrangementSection.startTime);
+			final EventPoint arrangementEventsPoint = findOrCreateArrangementEventsPoint(arrangementSection.startTime);
 			arrangementEventsPoint.section = SectionType.findByRSName(arrangementSection.name);
 		});
 		phrases = Phrase.fromArrangementPhrases(songArrangement.phrases.list);
@@ -131,8 +186,7 @@ public class ArrangementChart {
 				return;
 			}
 
-			final EventPoint arrangementEventsPoint = findOrCreateArrangementEventsPoint(
-					arrangementEvent.time);
+			final EventPoint arrangementEventsPoint = findOrCreateArrangementEventsPoint(arrangementEvent.time);
 			arrangementEventsPoint.events.add(EventType.findByRSName(arrangementEvent.code));
 		});
 
@@ -170,6 +224,9 @@ public class ArrangementChart {
 		levels.put(0, level);
 
 		int currentBarBeatId = 0;
+		final boolean[] wasHOPOStart = new boolean[9];
+		final int[] hopoFrom = new int[9];
+		HandShape lastHandShape = null;
 		for (final GPBar gpBar : gpBars) {
 			if (currentBarBeatId >= beats.size()) {
 				return;
@@ -180,24 +237,26 @@ public class ArrangementChart {
 			}
 
 			final List<GPBeat> voice = gpBar.voices.get(0);
-			int noteOffset = 0;
+			NotePositionInformation notePosition = new NotePositionInformation(beats, 0, currentBarBeatId);
 			for (final GPBeat gpBeat : voice) {
-				final int position = noteOffsetToPosition(beats, noteOffset, currentBarBeatId);
-				noteOffset += switch (gpBeat.duration) {
-				case NOTE_1 -> 64;
-				case NOTE_2 -> 32;
-				case NOTE_4 -> 16;
-				case NOTE_8 -> 8;
-				case NOTE_16 -> 4;
-				case NOTE_32 -> 2;
-				case NOTE_64 -> 1;
-				default -> 1;
-				};
-				final int nextPosition = noteOffsetToPosition(beats, noteOffset, currentBarBeatId);
+				if (gpBeat.notes.isEmpty()) {
+					lastHandShape = null;
+					continue;
+				}
+
 				if (gpBeat.notes.size() == 1) {
-					addNote(level, gpBeat, gpBeat.notes.get(0), position, nextPosition);
+					addNote(level, gpBeat, gpBeat.notes.get(0), notePosition, wasHOPOStart, hopoFrom);
+					lastHandShape = null;
 				} else if (gpBeat.notes.size() > 1) {
-					addChord(level, gpBeat, gpBeat.notes, position);
+					addChord(level, gpBeat, gpBeat.notes, notePosition, wasHOPOStart, hopoFrom, lastHandShape);
+					lastHandShape = level.handShapes.getLast();
+				}
+
+				notePosition = notePosition.move(gpBeat.duration);
+				for (final GPNote note : gpBeat.notes) {
+					final int string = note.string;
+					wasHOPOStart[string] = note.effects.isHammerPullOrigin;
+					hopoFrom[string] = note.fret;
 				}
 			}
 
@@ -207,25 +266,35 @@ public class ArrangementChart {
 		}
 	}
 
-	private int noteOffsetToPosition(final ArrayList2<Beat> beats, final int noteOffsetIn64s, final int barBeatId) {
-		final Beat startingBeat = beats.get(barBeatId);
-		final int beatOffset64 = noteOffsetIn64s * startingBeat.noteDenominator;
-		final int beatOffset = beatOffset64 / 64;
+	private void setStatuses(final CommonNote note, final GPBeat gpBeat, final GPNote gpNote,
+			final boolean[] wasHOPOStart, final int[] hopoFrom) {
+		final GPNoteEffects effects = gpNote.effects;
 
-		final Beat beatFrom = beats.get(barBeatId + beatOffset);
-		if (barBeatId + beatOffset + 1 == beats.size()) {
-			return beatFrom.position();
+		note.vibrato(gpBeat.beatEffects.vibrato || effects.vibrato);
+		note.tremolo(effects.tremoloPickingSpeed != null);
+		if (gpBeat.beatEffects.bassPickingTechnique != null) {
+			note.bassPicking(gpBeat.beatEffects.bassPickingTechnique);
 		}
 
-		final Beat beatTo = beats.get(barBeatId + beatOffset + 1);
-		final int beatLength = beatTo.position() - beatFrom.position();
-		final int positionInBeat = beatLength * (beatOffset64 % 64) / 64;
-
-		return beatFrom.position() + positionInBeat;
+		if (gpBeat.beatEffects.hopo != null && gpBeat.beatEffects.hopo != HOPO.NONE) {
+			note.hopo(gpBeat.beatEffects.hopo);
+		} else if (wasHOPOStart[gpNote.string]) {
+			note.hopo(hopoFrom[gpNote.string] > gpNote.fret ? HOPO.PULL_OFF : HOPO.HAMMER_ON);
+		}
+		if (gpBeat.beatEffects.harmonic != null && gpBeat.beatEffects.harmonic != Harmonic.NONE) {
+			note.harmonic(gpBeat.beatEffects.harmonic);
+		} else if (effects.harmonic != null) {
+			note.harmonic(effects.harmonic);
+		}
+		if (gpNote.dead) {
+			note.mute(Mute.FULL);
+		} else if (effects.palmMute) {
+			note.mute(Mute.PALM);
+		}
 	}
 
-	private void addNote(final Level level, final GPBeat gpBeat, final GPNote gpNote, final int position,
-			final int nextPosition) {
+	private void addNote(final Level level, final GPBeat gpBeat, final GPNote gpNote,
+			final NotePositionInformation position, final boolean[] wasHOPOStart, final int[] hopoFrom) {
 		if (gpNote.fret < 0 || gpNote.fret > Config.frets) {
 			return;
 		}
@@ -236,47 +305,24 @@ public class ArrangementChart {
 		final ChordOrNote previousNote = level.chordsAndNotes.getLast();
 		if (previousNote != null) {
 			if (gpNote.tied) {
-				if (previousNote.isChord()) {
-					previousNote.chord.chordNotes.values().forEach(n -> n.linkNext = true);
-				} else {
-					previousNote.note.linkNext = true;
-				}
+				previousNote.notes().forEach(n -> n.linkNext(true));
 			}
 			if (previousNote.isNote() && previousNote.note.linkNext && previousNote.note.fret != gpNote.fret) {
 				previousNote.note.slideTo = gpNote.fret;
 			}
 		}
 
-		final int noteLength = nextPosition - position;
+		final Note note = new Note(position.getPosition(), gpNote.string - 1, gpNote.fret);
+		final int noteLength = position.move(gpBeat.duration).getPosition() - note.position();
 		final GPNoteEffects effects = gpNote.effects;
 
-		final Note note = new Note(position, gpNote.string - 1, gpNote.fret);
-		note.vibrato = gpBeat.beatEffects.vibrato || effects.vibrato;
-		note.tremolo = effects.tremoloPickingSpeed != null;
+		setStatuses(CommonNote.create(note), gpBeat, gpNote, wasHOPOStart, hopoFrom);
 		if (note.vibrato || note.tremolo) {
 			note.length(noteLength);
 		}
-		if (gpBeat.beatEffects.bassPickingTechnique != null) {
-			note.bassPicking = gpBeat.beatEffects.bassPickingTechnique;
-		}
-		if (gpBeat.beatEffects.hopo != null) {
-			note.hopo = gpBeat.beatEffects.hopo;
-		}
-		if (gpBeat.beatEffects.harmonic != null) {
-			note.harmonic = gpBeat.beatEffects.harmonic;
-		} else if (effects.harmonic != null) {
-			note.harmonic = effects.harmonic;
-		}
 
 		note.accent = gpNote.accent;
-		if (gpNote.dead) {
-			note.mute = Mute.FULL;
-		}
 		note.ignore = gpNote.ghost;
-
-		if (effects.palmMute) {
-			note.mute = Mute.PALM;
-		}
 
 		Note lastNote = note;
 		final List<Note> afterNotes = new ArrayList<>();
@@ -300,7 +346,7 @@ public class ArrangementChart {
 					} else {
 						final Note split = new Note(note.position() + bendPositionOffset, note.string, note.fret);
 						split.vibrato = bendPoint.vibrato;
-						split.endPosition(nextPosition);
+						split.endPosition(position.move(gpBeat.duration).getPosition());
 
 						lastNote.linkNext = true;
 						lastNote.endPosition(split.position() - 1);
@@ -320,13 +366,15 @@ public class ArrangementChart {
 
 		if (effects.trill != null) {
 			final int notes = gpBeat.duration.length / effects.trill.speed.length;
+			NotePositionInformation trillNotePosition = position.move(effects.trill.speed);
 			for (int i = 1; i < notes; i++) {
-				final int trillNotePosition = position + noteLength * i / notes;
 				final int fret = gpNote.fret + (i % 2) * effects.trill.value;
-				final Note trillNote = new Note(trillNotePosition, note.string, fret);
+				final Note trillNote = new Note(trillNotePosition.getPosition(), note.string, fret);
 				trillNote.hopo = i % 2 == 0 ? HOPO.PULL_OFF : HOPO.HAMMER_ON;
 				trillNote.ignore = true;
 				afterNotes.add(trillNote);
+
+				trillNotePosition = trillNotePosition.move(effects.trill.speed);
 			}
 		}
 
@@ -375,42 +423,102 @@ public class ArrangementChart {
 			}
 		}
 
-//		public final GPGraceNote graceNote;
+		Note graceNote = null;
+		if (effects.graceNote != null) {
+			final GPGraceNote graceNoteData = effects.graceNote;
+			if (graceNoteData.beforeBeat) {
+				final int graceNotePosition = position.moveBackwards(graceNoteData.duration).getPosition();
+				graceNote = new Note(graceNotePosition, note.string, graceNoteData.fret);
+			} else {
+				graceNote = new Note(note.position(), note.string, graceNoteData.fret);
+				final int noteEndPosition = note.endPosition();
+				note.position(position.move(graceNoteData.duration).getPosition());
+				note.endPosition(noteEndPosition);
+			}
 
-//TODO statuses etc.
+			if (graceNoteData.dead) {
+				graceNote.mute = Mute.FULL;
+			}
+			if (graceNoteData.slide) {
+				graceNote.slideTo = note.fret;
+				graceNote.linkNext = true;
+				graceNote.endPosition(note.position() - 1);
+				note.length(max(note.length(), minTailLength));
+			}
+			if (graceNoteData.legato) {
+				note.hopo = graceNote.fret < note.fret ? HOPO.HAMMER_ON : HOPO.PULL_OFF;
+			}
+		}
+
+		if (graceNote != null) {
+			level.chordsAndNotes.add(new ChordOrNote(graceNote));
+		}
 		level.chordsAndNotes.add(new ChordOrNote(note));
 		afterNotes.forEach(afterNote -> level.chordsAndNotes.add(new ChordOrNote(afterNote)));
 	}
 
-	private void addChord(final Level level, final GPBeat gpBeat, final List<GPNote> notes, final int position) {
+	private void addChord(final Level level, final GPBeat gpBeat, final List<GPNote> notes,
+			final NotePositionInformation position, final boolean[] wasHOPOStart, final int[] hOPOFrom,
+			final HandShape lastHandShape) {
 		final ChordTemplate chordTemplate = new ChordTemplate();
 		chordTemplate.chordName = gpBeat.chord == null ? "" : gpBeat.chord.chordName;
 		if (chordTemplate.chordName == null) {
 			chordTemplate.chordName = "";
 		}
 
-		final Chord chord = new Chord(position, -1, chordTemplate);
-		if (gpBeat.beatEffects.hopo != null) {
-			chord.chordNotes.values().forEach(n -> n.hopo = gpBeat.beatEffects.hopo);
-		}
-		chord.chordNotes.values().forEach(n -> n.vibrato = gpBeat.beatEffects.vibrato);
-		if (gpBeat.beatEffects.harmonic != null) {
-			chord.chordNotes.values().forEach(n -> n.harmonic = gpBeat.beatEffects.harmonic);
-		}
+		final Chord chord = new Chord(position.getPosition(), -1, chordTemplate);
+		final int length = position.move(gpBeat.duration).getPosition() - chord.position();
+		boolean setLength = false;
 
 		for (final GPNote gpNote : notes) {
-			chordTemplate.fingers.put(gpNote.string - 1, gpNote.finger == -1 ? null : gpNote.finger);
-			chordTemplate.frets.put(gpNote.string - 1, gpNote.fret);
+			final int string = gpNote.string - 1;
+			chordTemplate.fingers.put(string, gpNote.finger == -1 ? null : gpNote.finger);
+			chordTemplate.frets.put(string, gpNote.fret);
 
-			if (gpNote.effects.tremoloPickingSpeed != null) {
-				chord.chordNotes.values().forEach(n -> n.tremolo = true);
+			final ChordNote chordNote = new ChordNote();
+			chord.chordNotes.put(string, chordNote);
+			setStatuses(CommonNote.create(chord, string, chordNote), gpBeat, gpNote, wasHOPOStart, hOPOFrom);
+			if (chordNote.vibrato || chordNote.tremolo) {
+				setLength = true;
+			}
+			chord.ignore |= gpNote.ghost;
+
+			final GPNoteEffects effects = gpNote.effects;
+			if (!effects.bends.isEmpty()) {
+				setLength = true;
+
+				int lastBendValue = 0;
+				for (final GPBend bendPoint : effects.bends) {
+					if (bendPoint.offset == 0 && bendPoint.value == 0) {
+						continue;
+					}
+					if (bendPoint.offset == 60 && bendPoint.value == lastBendValue) {
+						break;
+					}
+					chordNote.vibrato |= bendPoint.vibrato;
+
+					final int bendPosition = length * bendPoint.offset / 60;
+					final BigDecimal bendValue = new BigDecimal("0.01").multiply(new BigDecimal(bendPoint.value));
+					chordNote.bendValues.add(new BendValue(bendPosition, bendValue));
+
+					lastBendValue = bendPoint.value;
+				}
 			}
 		}
-		// TODO add statuses
+		if (setLength) {
+			chord.chordNotes.values().forEach(n -> n.length = length);
+		}
 
 		final int templateId = getChordTemplateIdWithSave(chordTemplate);
 		chord.updateTemplate(templateId, chordTemplate);
 		level.chordsAndNotes.add(new ChordOrNote(chord));
+
+		final int handshapeEndPosition = position.move(gpBeat.duration).moveBackwards(GPDuration.NOTE_32).getPosition();
+		if (lastHandShape != null && lastHandShape.templateId == chord.templateId()) {
+			lastHandShape.endPosition(handshapeEndPosition);
+		} else {
+			level.handShapes.add(new HandShape(chord, handshapeEndPosition - chord.position()));
+		}
 	}
 
 	public ArrangementSubtype getSubType() {
@@ -456,5 +564,9 @@ public class ArrangementChart {
 
 	public ArrayList2<EventPoint> getFilteredEventPoints(final Predicate<EventPoint> filter) {
 		return eventPoints.stream().filter(filter).collect(Collectors.toCollection(ArrayList2::new));
+	}
+
+	public String getFileName(final int id) {
+		return id + "_" + getTypeName() + "_RS2.xml";
 	}
 }

@@ -1,5 +1,8 @@
 package log.charter.song.notes;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.song.ChordTemplate;
@@ -105,5 +108,15 @@ public class ChordOrNote implements IPositionWithLength {
 	public void turnToChord(final int chordId, final ChordTemplate chordTemplate) {
 		chord = new Chord(chordId, note, chordTemplate);
 		note = null;
+	}
+
+	public List<CommonNote> notes() {
+		if (isNote()) {
+			return List.of(CommonNote.create(note));
+		}
+
+		return chord.chordNotes.entrySet().stream()//
+				.map(entry -> CommonNote.create(chord, entry.getKey(), entry.getValue()))//
+				.collect(Collectors.toList());
 	}
 }

@@ -29,7 +29,7 @@ public final class SongOptionsPane extends ParamsPane {
 	private Integer albumYear;
 
 	public SongOptionsPane(final CharterFrame frame, final ChartData data) {
-		super(frame, Label.SONG_OPTIONS_PANE, 7, getSizes());
+		super(frame, Label.SONG_OPTIONS_PANE, getSizes());
 
 		songChart = data.songChart;
 

@@ -44,7 +44,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	public GuitarSpecialPastePane(final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem,
 			final FullGuitarCopyData fullGuitarCopyData) {
-		super(frame, Label.SPECIAL_GUITAR_PASTE_PANE, 9, getSizes());
+		super(frame, Label.SPECIAL_GUITAR_PASTE_PANE, getSizes());
 
 		this.data = data;
 		this.selectionManager = selectionManager;

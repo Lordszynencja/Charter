@@ -41,7 +41,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 
 	public ToneChangePane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final ToneChange toneChange, final Runnable onCancel) {
-		super(frame, Label.TONE_CHANGE_PANE, 4, getSizes());
+		super(frame, Label.TONE_CHANGE_PANE, getSizes());
 		this.data = data;
 		this.undoSystem = undoSystem;
 
@@ -50,7 +50,8 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		toneName = toneChange.toneName;
 
 		int row = 0;
-		toneNameInput = new AutocompleteInputDialog<>(this, 100, toneName, this::getPossibleValues, s -> s, this::onSelect);
+		toneNameInput = new AutocompleteInputDialog<>(this, 100, toneName, this::getPossibleValues, s -> s,
+				this::onSelect);
 		toneNameInput.getDocument().addDocumentListener(this);
 		final int labelWidth = addLabel(row, 20, Label.TONE_CHANGE_TONE_NAME);
 		add(toneNameInput, 20 + labelWidth + 3, getY(row++), 100, 20);

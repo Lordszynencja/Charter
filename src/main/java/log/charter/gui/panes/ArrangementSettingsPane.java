@@ -64,7 +64,7 @@ public final class ArrangementSettingsPane extends ParamsPane {
 
 	public ArrangementSettingsPane(final CharterMenuBar charterMenuBar, final ChartData data,
 			final CharterFrame frame) {
-		super(frame, Label.ARRANGEMENT_OPTIONS_PANE, 9, getSizes());
+		super(frame, Label.ARRANGEMENT_OPTIONS_PANE, getSizes());
 
 		this.charterMenuBar = charterMenuBar;
 		this.data = data;

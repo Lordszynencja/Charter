@@ -34,7 +34,7 @@ public class TempoBeatPane extends ParamsPane {
 	private int noteDenominator;
 
 	public TempoBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem, final Beat beat) {
-		super(frame, Label.TEMPO_BEAT_PANE, 4, getSizes());
+		super(frame, Label.TEMPO_BEAT_PANE, getSizes());
 		this.data = data;
 		this.undoSystem = undoSystem;
 

@@ -114,16 +114,31 @@ public class SongFileHandler {
 		return data;
 	}
 
+	public static void makeDefaultBackups(final ChartData data) {
+		if (data.isEmpty) {
+			return;
+		}
+
+		final List<String> filesToBackup = new ArrayList<>();
+		filesToBackup.add(data.projectFileName);
+		for (int i = 0; i < data.songChart.arrangements.size(); i++) {
+			filesToBackup.add(data.songChart.arrangements.get(i).getFileName(i + 1));
+		}
+		filesToBackup.add("Vocals_RS2.xml");
+		System.out.println("Doing backup of " + data.path + ", files: " + filesToBackup);
+
+		makeBackups(data.path, filesToBackup);
+	}
+
 	private static void makeBackups(final String dir, final List<String> fileNames) {
-		final String backupDir = dir//
-				+ "backups" + File.separator//
-				+ new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + File.separator;
-		new File(backupDir).mkdirs();
+		final String backupFolderName = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
+		final File backupFolder = new File(new File(new File(dir), "backups"), backupFolderName);
+		backupFolder.mkdirs();
 
 		for (final String fileName : fileNames) {
-			final File f = new File(dir + fileName);
+			final File f = new File(dir, fileName);
 			if (f.exists()) {
-				RW.writeB(backupDir + fileName, RW.readB(f));
+				RW.writeB(new File(backupFolder, fileName), RW.readB(f));
 			}
 		}
 	}
@@ -148,6 +163,18 @@ public class SongFileHandler {
 		this.charterMenuBar = charterMenuBar;
 		this.modeManager = modeManager;
 		this.undoSystem = undoSystem;
+
+		new Thread(() -> {
+			while (true) {
+				try {
+					Thread.sleep(Config.backupDelay * 1000);
+				} catch (final InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				makeDefaultBackups(data);
+			}
+		}).start();
 	}
 
 	private void doWithLoadingDialog(final int steps, final Consumer<LoadingDialog> operation) {
@@ -456,7 +483,7 @@ public class SongFileHandler {
 
 		int id = 1;
 		for (final ArrangementChart arrangementChart : data.songChart.arrangements) {
-			final String arrangementFileName = id + "_" + arrangementChart.getTypeName() + "_RS2.xml";
+			final String arrangementFileName = arrangementChart.getFileName(id);
 			project.arrangementFiles.add(arrangementFileName);
 			final SongArrangement songArrangement = new SongArrangement(data.songChart, arrangementChart);
 			RW.write(new File(data.path, arrangementFileName), SongArrangementXStreamHandler.saveSong(songArrangement));

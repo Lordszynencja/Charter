@@ -35,6 +35,7 @@ public class Localization {
 		CONFIG_SHOW_GRID("Show grid"), //
 		CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
 		CONFIG_FPS("FPS"), //
+		CONFIG_BACKUP_DELAY("Backup delay (s)"), //
 		CONFIG_MAX_STRINGS("Max strings"), //
 		CONFIG_THEME("Graphical theme"), //
 		CONFIG_THEME_DEFAULT("Default"), //
@@ -143,12 +144,16 @@ public class Localization {
 		GRAPHIC_CONFIG_VOCAL_TEXT("Vocal text"), //
 		GRAPHIC_CONFIG_VOCAL_NOTE("Vocal note"), //
 		GRAPHIC_CONFIG_VOCAL_NOTE_WORD_PART("Vocal note word part"), //
+		GRAPHIC_CONFIG_VOCAL_SELECT("Vocal selection"), //
 
 		GRAPHIC_CONFIG_PREVIEW_3D_FULL_MUTE("3D preview full mute"), //
 		GRAPHIC_CONFIG_PREVIEW_3D_PALM_MUTE("3D preview palm mute"), //
 		GRAPHIC_CONFIG_PREVIEW_3D_ANCHOR("3D preview anchor"), //
 		GRAPHIC_CONFIG_PREVIEW_3D_FRET_LANE("3D preview fret lane"), //
 		GRAPHIC_CONFIG_PREVIEW_3D_BEAT("3D preview beat"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_BOX("Chord box"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_FULL_MUTE("Full mute chord"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_PALM_MUTE("Palm mute chord"), //
 
 		STRETCH_PANE("Custom music stretch"), //
 		STRETCH_PANE_VALUE("Song speed (%)"), //

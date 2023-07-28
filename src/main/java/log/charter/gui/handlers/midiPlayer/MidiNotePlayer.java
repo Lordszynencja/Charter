@@ -125,6 +125,11 @@ public class MidiNotePlayer {
 		}
 	}
 
+	private int getMidiNote(final int string, final int fret, final int strings) {
+		final boolean isBass = data.getCurrentArrangement().arrangementType == ArrangementType.Bass || strings < 6;
+		return isBass ? getBassMidiNote(string, fret, strings) : getGuitarMidiNote(string, fret, strings);
+	}
+
 	private int getPitchBend(double bendStep) {
 		if (bendStep < -2) {
 			bendStep = -2;
@@ -156,7 +161,7 @@ public class MidiNotePlayer {
 		lastActualNotes[string] = actualNote;
 	}
 
-	public void updateBend(final int string, double bendValue) {
+	public void updateBend(final int string, final int fret, double bendValue) {
 		if (lastNotes[string] == -1) {
 			return;
 		}
@@ -164,10 +169,12 @@ public class MidiNotePlayer {
 		final MidiChannel channel = channels[string];
 
 		int actualNote = lastNotes[string];
+		bendValue += getMidiNote(string, fret, data.currentStrings()) - actualNote;
 		while (bendValue >= 2) {
 			bendValue -= 2;
 			actualNote += 2;
 		}
+
 		final int pitchBend = getPitchBend(bendValue);
 		if (lastActualNotes[string] != actualNote) {
 			channel.noteOff(lastNotes[string]);
@@ -201,8 +208,7 @@ public class MidiNotePlayer {
 		}
 
 		final int strings = data.getCurrentArrangement().tuning.strings;
-		final boolean isBass = data.getCurrentArrangement().arrangementType == ArrangementType.Bass || strings < 6;
-		final int midiNote = isBass ? getBassMidiNote(string, fret, strings) : getGuitarMidiNote(string, fret, strings);
+		final int midiNote = getMidiNote(string, fret, strings);
 
 		double bendValue = 0;
 		if (!bendValues.isEmpty()) {

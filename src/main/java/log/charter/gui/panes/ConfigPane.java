@@ -53,11 +53,12 @@ public final class ConfigPane extends ParamsPane {
 	private boolean showGrid = Config.showGrid;
 	private boolean createDefaultStretchesInBackground = Config.createDefaultStretchesInBackground;
 	private int FPS = Config.FPS;
+	private int backupDelay = Config.backupDelay;
 
 	private Theme theme = Config.theme;
 
 	public ConfigPane(final CharterFrame frame) {
-		super(frame, Label.CONFIG_PANE, 18, getSizes());
+		super(frame, Label.CONFIG_PANE, getSizes());
 		this.frame = frame;
 
 		int row = 0;
@@ -100,6 +101,9 @@ public final class ConfigPane extends ParamsPane {
 				createDefaultStretchesInBackground, val -> createDefaultStretchesInBackground = val);
 		addConfigValue(row++, 20, 0, Label.CONFIG_FPS, FPS + "", 50, createIntValidator(1, 1000, false), //
 				val -> FPS = Integer.valueOf(val), false);
+		addConfigValue(row++, 20, 0, Label.CONFIG_BACKUP_DELAY, backupDelay + "", 50,
+				createIntValidator(1, 3600, false), //
+				val -> backupDelay = Integer.valueOf(val), false);
 
 		// Theme selection
 		final JLabel themeLabel = new JLabel(Label.CONFIG_THEME.label(), SwingConstants.LEFT);
@@ -109,7 +113,8 @@ public final class ConfigPane extends ParamsPane {
 				new CollectionUtils.Pair<>(Theme.ROCKSMITH, Label.CONFIG_THEME_ROCKSMITH));
 		addConfigRadioButtons(row++, 20, 100, theme, val -> theme = val, availableThemes);
 
-		addDefaultFinish(row + 1, this::saveAndExit);
+		row++;
+		addDefaultFinish(row, this::saveAndExit);
 	}
 
 	private void selectMusicFolder() {

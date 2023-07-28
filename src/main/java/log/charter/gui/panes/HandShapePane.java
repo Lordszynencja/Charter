@@ -30,8 +30,7 @@ public class HandShapePane extends ChordTemplateEditorDialog {
 
 	public HandShapePane(final ChartData data, final CharterFrame frame, final HandShape handShape,
 			final Runnable onCancel) {
-		super(data, frame, Label.HAND_SHAPE_PANE, 8 + data.getCurrentArrangement().tuning.strings, getSizes(),
-				prepareTemplateFromData(data, handShape));
+		super(data, frame, Label.HAND_SHAPE_PANE, getSizes(), prepareTemplateFromData(data, handShape));
 
 		this.handShape = handShape;
 

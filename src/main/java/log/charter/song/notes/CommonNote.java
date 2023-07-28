@@ -1,6 +1,7 @@
 package log.charter.song.notes;
 
 import log.charter.song.BendValue;
+import log.charter.song.enums.BassPickingTechnique;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
@@ -36,6 +37,15 @@ public interface CommonNote {
 		@Override
 		public int string() {
 			return string;
+		}
+
+		@Override
+		public BassPickingTechnique bassPicking() {
+			return BassPickingTechnique.NONE;
+		}
+
+		@Override
+		public void bassPicking(final BassPickingTechnique bassPicking) {
 		}
 
 		@Override
@@ -152,6 +162,16 @@ public interface CommonNote {
 		}
 
 		@Override
+		public BassPickingTechnique bassPicking() {
+			return note.bassPicking;
+		}
+
+		@Override
+		public void bassPicking(final BassPickingTechnique bassPicking) {
+			note.bassPicking = bassPicking;
+		}
+
+		@Override
 		public Mute mute() {
 			return note.mute;
 		}
@@ -261,6 +281,10 @@ public interface CommonNote {
 	}
 
 	public int string();
+
+	public BassPickingTechnique bassPicking();
+
+	public void bassPicking(BassPickingTechnique bassPicking);
 
 	public Mute mute();
 

@@ -23,7 +23,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 	private static PaneSizes getSizes() {
 		final PaneSizes sizes = new PaneSizes();
 		sizes.labelWidth = 80;
-		sizes.width = 260;
+		sizes.width = 300;
 
 		return sizes;
 	}
@@ -33,7 +33,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 	private int bars = 2;
 
 	public AddDefaultSilencePane(final CharterFrame frame, final ChartData data) {
-		super(frame, Label.ADD_DEFAULT_SILENCE_PANE, 4, getSizes());
+		super(frame, Label.ADD_DEFAULT_SILENCE_PANE, getSizes());
 		this.data = data;
 
 		addLabel(0, 20, Label.ADD_DEFAULT_SILENCE_BARS);

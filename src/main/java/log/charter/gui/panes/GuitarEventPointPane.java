@@ -86,7 +86,7 @@ public class GuitarEventPointPane extends ParamsPane {
 
 	public GuitarEventPointPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final EventPoint eventPoint, final Runnable onCancel) {
-		super(frame, Label.GUITAR_BEAT_PANE, 10, getSizes());
+		super(frame, Label.GUITAR_BEAT_PANE, getSizes());
 		this.data = data;
 		this.undoSystem = undoSystem;
 

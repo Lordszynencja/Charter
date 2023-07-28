@@ -66,34 +66,30 @@ public class ParamsPane extends JDialog {
 
 	private int width;
 
-	public ParamsPane(final CharterFrame frame, final Label title, final int rows) {
-		this(frame, title, rows, new PaneSizes());
+	public ParamsPane(final CharterFrame frame, final Label title) {
+		this(frame, title, new PaneSizes());
 	}
 
-	public ParamsPane(final CharterFrame frame, final Label title, final int rows, final PaneSizes sizes) {
+	public ParamsPane(final CharterFrame frame, final Label title, final PaneSizes sizes) {
 		super(frame, title.label(), true);
-		this.frame = frame;
 
+		this.frame = frame;
 		this.sizes = sizes;
 
-		pack();
-
-		setSizeWithInsets(sizes.width, rows * sizes.rowHeight);
+		setWidthWithInsets(sizes.width);
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(true);
 		setLayout(null);
 	}
 
-	protected void setWidthWithInsets(final int newWidth) {
+	private void setWidthWithInsets(final int newWidth) {
 		final Insets insets = getInsets();
 		width = newWidth + insets.left + insets.right;
 		setSize(width, getHeight());
-		setLocation(Config.windowPosX + frame.getWidth() / 2 - width / 2,
-				Config.windowPosY + frame.getHeight() / 2 - getHeight() / 2);
 	}
 
-	protected void setSizeWithInsets(final int newWidth, final int newHeight) {
+	private void setSizeWithInsets(final int newWidth, final int newHeight) {
 		final Insets insets = getInsets();
 		width = newWidth + insets.left + insets.right;
 		final int h = newHeight + insets.top + insets.bottom + (sizes.uSpace * 2);
@@ -186,6 +182,8 @@ public class ParamsPane extends JDialog {
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
 		getRootPane().registerKeyboardAction(e -> paneOnSave.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+		setSizeWithInsets(sizes.width, (row + 2) * sizes.rowHeight + sizes.rowHeight / 2);
 
 		validate();
 		setVisible(true);

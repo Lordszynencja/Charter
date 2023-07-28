@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.ChartPanelColors;
@@ -51,13 +52,25 @@ public class GraphicConfigPane extends ParamsPane {
 		public Object getValueAt(final int rowIndex, final int columnIndex) {
 			final var colorLabel = colors.get(rowIndex);
 
-			return switch (columnIndex) {
-			case 0 -> Label.valueOf("GRAPHIC_CONFIG_" + colorLabel.a.name()).label();
-			case 1 -> colorLabel.b.getRed();
-			case 2 -> colorLabel.b.getGreen();
-			case 3 -> colorLabel.b.getBlue();
-			default -> null;
-			};
+			if (columnIndex == 0) {
+				final String labelName = "GRAPHIC_CONFIG_" + colorLabel.a.name();
+				try {
+					return Label.valueOf(labelName).label();
+				} catch (final Exception e) {
+					return labelName;
+				}
+			}
+			if (columnIndex == 1) {
+				return colorLabel.b.getRed();
+			}
+			if (columnIndex == 2) {
+				return colorLabel.b.getGreen();
+			}
+			if (columnIndex == 3) {
+				return colorLabel.b.getBlue();
+			}
+
+			return null;
 		}
 
 		@Override
@@ -125,7 +138,7 @@ public class GraphicConfigPane extends ParamsPane {
 	}
 
 	public GraphicConfigPane(final CharterFrame frame) {
-		super(frame, Label.GRAPHIC_CONFIG_PANE, 21, getSizes());
+		super(frame, Label.GRAPHIC_CONFIG_PANE, getSizes());
 
 		for (final ColorLabel colorLabel : ColorLabel.values()) {
 			colors.add(new Pair<>(colorLabel, colorLabel.color()));
@@ -133,15 +146,12 @@ public class GraphicConfigPane extends ParamsPane {
 		removeUnseenColors();
 
 		final JTable table = new JTable(new EmployeeTableModel());
-		table.getColumnModel().getColumn(1).setPreferredWidth(30);
-		table.getColumnModel().getColumn(1).setMinWidth(30);
-		table.getColumnModel().getColumn(1).setMaxWidth(30);
-		table.getColumnModel().getColumn(2).setPreferredWidth(30);
-		table.getColumnModel().getColumn(2).setMinWidth(30);
-		table.getColumnModel().getColumn(2).setMaxWidth(30);
-		table.getColumnModel().getColumn(3).setPreferredWidth(30);
-		table.getColumnModel().getColumn(3).setMinWidth(30);
-		table.getColumnModel().getColumn(3).setMaxWidth(30);
+		for (int i = 1; i <= 3; i++) {
+			final TableColumn column = table.getColumnModel().getColumn(1);
+			column.setPreferredWidth(30);
+			column.setMinWidth(30);
+			column.setMaxWidth(30);
+		}
 
 		this.add(new JScrollPane(table), 20, getY(0), sizes.width - 40, getY(19) - getY(0));
 

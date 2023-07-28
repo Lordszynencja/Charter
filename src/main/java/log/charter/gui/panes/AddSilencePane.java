@@ -23,7 +23,7 @@ public class AddSilencePane extends ParamsPane {
 	private static PaneSizes getSizes() {
 		final PaneSizes sizes = new PaneSizes();
 		sizes.labelWidth = 80;
-		sizes.width = 250;
+		sizes.width = 300;
 
 		return sizes;
 	}
@@ -33,7 +33,7 @@ public class AddSilencePane extends ParamsPane {
 	private BigDecimal time;
 
 	public AddSilencePane(final CharterFrame frame, final ChartData data) {
-		super(frame, Label.ADD_SILENCE_PANE, 4, getSizes());
+		super(frame, Label.ADD_SILENCE_PANE, getSizes());
 		this.data = data;
 
 		addLabel(0, 20, Label.ADD_SILENCE_SECONDS);

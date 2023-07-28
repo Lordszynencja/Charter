@@ -35,7 +35,7 @@ public class VocalPane extends ParamsPane {
 
 	private VocalPane(final Label label, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		super(frame, label, 5, getSizes());
+		super(frame, label, getSizes());
 		this.data = data;
 		this.frame = frame;
 		this.selectionManager = selectionManager;
