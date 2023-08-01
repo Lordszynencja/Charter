@@ -3,10 +3,6 @@ package log.charter.gui;
 import static log.charter.data.config.Config.windowFullscreen;
 import static log.charter.data.config.Config.windowHeight;
 import static log.charter.data.config.Config.windowWidth;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaBottom;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editorY;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.scrollBarBottom;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toolbarY;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -16,17 +12,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.UIManager;
-import javax.swing.plaf.metal.MetalScrollBarUI;
 
 import log.charter.data.ArrangementFixer;
 import log.charter.data.ArrangementValidator;
@@ -42,6 +35,8 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
+import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
+import log.charter.gui.components.ChartMap;
 import log.charter.gui.components.preview3D.Preview3DPanel;
 import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
@@ -67,7 +62,7 @@ public class CharterFrame extends JFrame {
 	private final ChartToolbar chartToolbar = new ChartToolbar();
 	private final ChartPanel chartPanel = new ChartPanel();
 	private final CurrentSelectionEditor currentSelectionEditor = new CurrentSelectionEditor();
-	private final JScrollBar scrollBar = createScrollBar();
+	private final ChartMap chartMap = new ChartMap();
 	private final JLabel helpLabel = createHelp();
 	private final Preview3DPanel preview3DPanel = new Preview3DPanel();
 	private final JTabbedPane tabs = createTabs();
@@ -129,7 +124,7 @@ public class CharterFrame extends JFrame {
 		audioHandler.init(chartToolbar, data, this, modeManager);
 		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, selectionManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
-		data.init(audioHandler, charterMenuBar, modeManager, scrollBar, selectionManager, undoSystem);
+		data.init(audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
 		keyboardHandler.init(audioDrawer, audioHandler, arrangementFixer, copyManager, data, this, modeManager,
 				mouseHandler, selectionManager, songFileHandler, undoSystem);
 		highlightManager.init(data, modeManager, selectionManager);
@@ -148,7 +143,8 @@ public class CharterFrame extends JFrame {
 		chartToolbar.init(audioDrawer, audioHandler, keyboardHandler);
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
-		currentSelectionEditor.init(arrangementFixer, data, keyboardHandler, selectionManager, undoSystem);
+		chartMap.init(chartPanel, data, this, modeManager);
+		currentSelectionEditor.init(arrangementFixer, data, this, keyboardHandler, selectionManager, undoSystem);
 		preview3DPanel.init(data, keyboardHandler, modeManager);
 
 		fullscreenPreview3DPanel.init(data, keyboardHandler, modeManager);
@@ -160,7 +156,7 @@ public class CharterFrame extends JFrame {
 
 		add(chartToolbar);
 		add(chartPanel);
-		add(scrollBar);
+		add(chartMap);
 		add(tabs);
 		resizeComponents();
 
@@ -199,15 +195,20 @@ public class CharterFrame extends JFrame {
 		resizeComponents();
 	}
 
+	private void resizeComponent(final AtomicInteger y, final Component c, final int width, final int height) {
+		changeComponentBounds(c, 0, y.getAndAdd(height), width, height);
+	}
+
 	private void resizeComponents() {
 		final Insets insets = getInsets();
 		final int width = windowWidth - insets.left - insets.right;
 		final int height = windowHeight - insets.top - insets.bottom - charterMenuBar.getHeight();
 
-		changeComponentBounds(chartToolbar, 0, toolbarY, width, editorY - toolbarY);
-		changeComponentBounds(chartPanel, 0, editorY, width, editAreaBottom - editorY);
-		changeComponentBounds(scrollBar, 0, editAreaBottom, width, scrollBarBottom - editAreaBottom);
-		changeComponentBounds(tabs, 0, scrollBarBottom, width, height - scrollBarBottom);
+		final AtomicInteger y = new AtomicInteger(0);
+		resizeComponent(y, chartToolbar, width, ChartToolbar.height);
+		resizeComponent(y, chartPanel, width, DrawerUtils.editAreaHeight);
+		resizeComponent(y, chartMap, width, ChartMap.getPreferredHeight());
+		changeComponentBounds(tabs, 0, y.get(), width, height - y.get());
 	}
 
 	public CharterFrame(final String title, final String path) {
@@ -249,47 +250,6 @@ public class CharterFrame extends JFrame {
 		}
 	}
 
-	private JScrollBar createScrollBar() {
-		final JScrollBar scrollBar = new JScrollBar(JScrollBar.HORIZONTAL, 0, 0, 0, 1);
-		scrollBar.addAdjustmentListener(e -> {
-			data.setNextTime(e.getValue());
-		});
-		scrollBar.setBackground(ColorLabel.BASE_BG_4.color());
-
-		scrollBar.setUI(new MetalScrollBarUI() {
-			@Override
-			protected JButton createDecreaseButton(final int orientation) {
-				return createZeroButton();
-			}
-
-			@Override
-			protected JButton createIncreaseButton(final int orientation) {
-				return createZeroButton();
-			}
-
-			private JButton createZeroButton() {
-				final JButton jbutton = new JButton();
-				jbutton.setPreferredSize(new Dimension(0, 0));
-				jbutton.setMinimumSize(new Dimension(0, 0));
-				jbutton.setMaximumSize(new Dimension(0, 0));
-				return jbutton;
-			}
-
-			@Override
-			protected void configureScrollBarColors() {
-				UIManager.put("ScrollBar.highlight", ColorLabel.BASE_BG_1.color());
-				UIManager.put("ScrollBar.shadow", ColorLabel.BASE_BG_3.color());
-				UIManager.put("ScrollBar.thumb", ColorLabel.BASE_BG_3.color());
-				UIManager.put("ScrollBar.thumbShadow", ColorLabel.BASE_BG_2.color());
-				UIManager.put("ScrollBar.thumbHighlight", ColorLabel.BASE_BG_4.color());
-
-				super.configureScrollBarColors();
-			}
-		});
-
-		return scrollBar;
-	}
-
 	private JLabel createHelp() {
 		final JLabel help = new JLabel();
 		help.setVerticalAlignment(JLabel.TOP);
@@ -317,7 +277,6 @@ public class CharterFrame extends JFrame {
 	}
 
 	public void setNextTime(final int t) {
-		scrollBar.setValue(t);
 		data.setNextTime(t);
 	}
 

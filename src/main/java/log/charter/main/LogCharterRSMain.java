@@ -8,8 +8,9 @@ import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
 
 public class LogCharterRSMain {
-	public static final String VERSION = "0.10.0 - 2023.07.28";
-	public static final String TITLE = "LoG Charter RS";
+	public static final String VERSION = "0.11.0";
+	public static final String VERSION_DATE = "2023.07.31";
+	public static final String TITLE = "LoG Charter RS " + VERSION;
 
 	public static void main(final String[] args) throws InterruptedException, IOException {
 		Config.init();

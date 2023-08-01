@@ -169,7 +169,8 @@ public class MidiNotePlayer {
 		final MidiChannel channel = channels[string];
 
 		int actualNote = lastNotes[string];
-		bendValue += getMidiNote(string, fret, data.currentStrings()) - actualNote;
+		bendValue += getMidiNote(string, fret, data.currentStrings())
+				+ data.getCurrentArrangement().tuning.getTuning()[string] - actualNote;
 		while (bendValue >= 2) {
 			bendValue -= 2;
 			actualNote += 2;
@@ -208,7 +209,8 @@ public class MidiNotePlayer {
 		}
 
 		final int strings = data.getCurrentArrangement().tuning.strings;
-		final int midiNote = getMidiNote(string, fret, strings);
+		final int midiNote = getMidiNote(string, fret, strings)
+				+ data.getCurrentArrangement().tuning.getTuning()[string];
 
 		double bendValue = 0;
 		if (!bendValues.isEmpty()) {
@@ -217,7 +219,6 @@ public class MidiNotePlayer {
 				bendValue = noteBendValue.bendValue.doubleValue();
 			}
 		}
-		bendValue += data.getCurrentArrangement().tuning.tuning[string];
 		bendValue += data.getCurrentArrangement().centOffset.multiply(new BigDecimal("0.01")).doubleValue();
 
 		playMidiNote(soundType, string, midiNote, bendValue);

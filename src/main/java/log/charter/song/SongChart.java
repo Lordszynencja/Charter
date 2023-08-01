@@ -24,6 +24,7 @@ import log.charter.song.notes.IPosition;
 import log.charter.song.notes.Note;
 import log.charter.song.vocals.Vocals;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.RW;
 
 public class SongChart {
@@ -52,6 +53,8 @@ public class SongChart {
 	public ArrayList2<ArrangementChart> arrangements;
 	public Vocals vocals = new Vocals();
 
+	public HashMap2<Integer, Integer> bookmarks;
+
 	/**
 	 * creates empty chart
 	 */
@@ -60,6 +63,8 @@ public class SongChart {
 
 		beatsMap = new BeatsMap(songLengthMs);
 		arrangements = new ArrayList2<>();
+
+		bookmarks = new HashMap2<>();
 	}
 
 	/**
@@ -90,6 +95,11 @@ public class SongChart {
 		}
 
 		vocals = new Vocals(readVocals(RW.read(dir + "Vocals_RS2.xml")));
+
+		bookmarks = project.bookmarks;
+		if (bookmarks == null) {
+			bookmarks = new HashMap2<>();
+		}
 	}
 
 	/**
@@ -107,6 +117,8 @@ public class SongChart {
 		beatsMap = new BeatsMap(songLengthMs, songArrangement);
 		arrangements = new ArrayList2<>();
 		arrangements.add(new ArrangementChart(songArrangement, beatsMap.beats));
+
+		bookmarks = new HashMap2<>();
 	}
 
 	public void addGP5Arrangements(final GP5File gp5File) {
@@ -143,8 +155,8 @@ public class SongChart {
 	private void checkBeatsFromGP5File(final GP5File gp5File) {
 		final int bpm = gp5File.tempo * gp5File.masterBars.get(0).timeSignatureDenominator / 4;
 		final ArrayList2<Beat> beats = beatsMap.beats;
-		if (beats.stream().anyMatch(beat -> beat.anchor)) {
-			// return;
+		if (beats.stream().skip(1).anyMatch(beat -> beat.anchor)) {
+			return;
 		}
 
 		beatsMap.setBPM(0, bpm);

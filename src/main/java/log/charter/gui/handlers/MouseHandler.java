@@ -49,6 +49,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	private int mouseX = -1;
 	private int mouseY = -1;
 	private long lastLeftClickTime = 0;
+	private Integer lastClickId = null;
 
 	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final CharterFrame frame,
 			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
@@ -132,8 +133,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		switch (clickData.button) {
 		case LEFT_BUTTON:
-			final boolean wasLeftDoubleClick = System.currentTimeMillis() - lastLeftClickTime < 500;
+			final boolean wasLeftDoubleClick = lastClickId != null && lastClickId.equals(clickData.pressHighlight.id) //
+					&& System.currentTimeMillis() - lastLeftClickTime < 300;
 			lastLeftClickTime = System.currentTimeMillis();
+			lastClickId = clickData.pressHighlight.id;
 			switch (modeManager.editMode) {
 			case GUITAR:
 				if (!clickData.isXDrag()) {

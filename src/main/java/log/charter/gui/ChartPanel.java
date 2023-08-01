@@ -1,5 +1,7 @@
 package log.charter.gui;
 
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaHeight;
+
 import java.awt.Graphics;
 
 import javax.swing.JComponent;
@@ -32,6 +34,8 @@ public class ChartPanel extends JComponent {
 
 	public ChartPanel() {
 		super();
+
+		setSize(getWidth(), editAreaHeight);
 	}
 
 	public void init(final AudioDrawer audioDrawer, final BeatsDrawer beatsDrawer, final ChartData data,

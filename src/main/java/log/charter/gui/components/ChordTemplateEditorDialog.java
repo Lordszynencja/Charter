@@ -3,6 +3,8 @@ package log.charter.gui.components;
 import static java.lang.Math.max;
 import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
+import static log.charter.song.ChordTemplate.fingerIds;
+import static log.charter.song.ChordTemplate.fingerNames;
 import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.event.MouseEvent;
@@ -25,20 +27,6 @@ import log.charter.util.CollectionUtils.HashMap2;
 
 public class ChordTemplateEditorDialog extends ParamsPane implements MouseListener {
 	private static final long serialVersionUID = 1L;
-
-	private static final HashMap2<String, Integer> fingerIds = new HashMap2<>();
-	private static final HashMap2<Integer, String> fingerNames = new HashMap2<>();
-
-	static {
-		fingerIds.put("T", 0);
-		fingerIds.put("1", 1);
-		fingerIds.put("2", 2);
-		fingerIds.put("3", 3);
-		fingerIds.put("4", 4);
-
-		fingerIds.forEach((name, id) -> fingerNames.put(id, name));
-		fingerNames.put(null, "");
-	}
 
 	protected final ChartData data;
 	protected final ChordTemplate chordTemplate;

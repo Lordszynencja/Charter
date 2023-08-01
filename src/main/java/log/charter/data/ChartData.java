@@ -2,8 +2,6 @@ package log.charter.data;
 
 import java.io.File;
 
-import javax.swing.JScrollBar;
-
 import log.charter.data.config.Config;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
@@ -31,17 +29,14 @@ public class ChartData {
 	private AudioHandler audioHandler;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
-	private JScrollBar scrollBar;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
 	public void init(final AudioHandler audioHandler, final CharterMenuBar charterMenuBar,
-			final ModeManager modeManager, final JScrollBar scrollBar, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
+			final ModeManager modeManager, final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this.audioHandler = audioHandler;
 		this.charterMenuBar = charterMenuBar;
 		this.modeManager = modeManager;
-		this.scrollBar = scrollBar;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 	}
@@ -70,8 +65,6 @@ public class ChartData {
 		modeManager.editMode = editMode;
 
 		charterMenuBar.refreshMenus();
-		scrollBar.setMaximum(musicData.msLength());
-		scrollBar.setValue(time);
 
 		path = dir;
 		this.projectFileName = projectFileName;

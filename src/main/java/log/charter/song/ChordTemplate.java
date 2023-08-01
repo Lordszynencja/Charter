@@ -13,6 +13,20 @@ import log.charter.util.IntRange;
 
 @XStreamAlias("chordTemplate")
 public class ChordTemplate {
+	public static final HashMap2<String, Integer> fingerIds = new HashMap2<>();
+	public static final HashMap2<Integer, String> fingerNames = new HashMap2<>();
+
+	static {
+		fingerIds.put("T", 0);
+		fingerIds.put("1", 1);
+		fingerIds.put("2", 2);
+		fingerIds.put("3", 3);
+		fingerIds.put("4", 4);
+
+		fingerIds.forEach((name, id) -> fingerNames.put(id, name));
+		fingerNames.put(null, "");
+	}
+
 	@XStreamAsAttribute
 	public String chordName = "";
 	@XStreamAsAttribute

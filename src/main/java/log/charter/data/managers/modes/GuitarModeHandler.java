@@ -1,5 +1,6 @@
 package log.charter.data.managers.modes;
 
+import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
 import static log.charter.song.notes.IPosition.findClosestId;
 import static log.charter.song.notes.IPosition.findLastIdBefore;
@@ -184,6 +185,8 @@ public class GuitarModeHandler extends ModeHandler {
 				chordTemplate.frets.put(string, fret);
 			}
 
+			setSuggestedFingers(chordTemplate);
+
 			final int newTemplateId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
 			chordOrNote.chord.updateTemplate(newTemplateId, chordTemplate);
 			if (chordTemplate.frets.size() == 1) {
@@ -193,6 +196,8 @@ public class GuitarModeHandler extends ModeHandler {
 			final ChordTemplate chordTemplate = new ChordTemplate();
 			chordTemplate.frets.put(chordOrNote.note.string, chordOrNote.note.fret);
 			chordTemplate.frets.put(string, chordOrNote.note.fret);
+			setSuggestedFingers(chordTemplate);
+
 			final int chordId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
 			chordOrNote.turnToChord(chordId, chordTemplate);
 		}

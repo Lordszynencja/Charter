@@ -1,8 +1,14 @@
 package log.charter.gui.components;
 
+import static java.awt.event.KeyEvent.VK_1;
+import static java.awt.event.KeyEvent.VK_2;
+import static java.awt.event.KeyEvent.VK_3;
+import static java.awt.event.KeyEvent.VK_4;
+import static java.awt.event.KeyEvent.VK_T;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
+import static java.util.Arrays.asList;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledDiamond;
@@ -27,9 +33,11 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.components.selectionEditor.ChordTemplateEditor;
+import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
@@ -73,18 +81,25 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	private boolean parentListenerAdded = false;
 
 	private final ChartData data;
+	private final CharterFrame frame;
+	private final KeyboardHandler keyboardHandler;
+
 	private final Supplier<ChordTemplate> chordTemplateSupplier;
 
 	private Integer mouseString;
 	private Integer mouseFret;
 
 	public ChordTemplatePreview(final RowedPanel parent, final ChordTemplateEditor chordEditor, final ChartData data,
+			final CharterFrame frame, final KeyboardHandler keyboardHandler,
 			final Supplier<ChordTemplate> chordTemplateSupplier) {
 		super();
 		this.parent = parent;
 		this.chordEditor = chordEditor;
 
 		this.data = data;
+		this.frame = frame;
+		this.keyboardHandler = keyboardHandler;
+
 		this.chordTemplateSupplier = chordTemplateSupplier;
 
 		stringPositions = getStringPositions(Config.maxStrings, parent.rowHeight);
@@ -275,29 +290,38 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 
 	@Override
 	public void keyTyped(final KeyEvent e) {
+		if (!asList(VK_T, VK_1, VK_2, VK_3, VK_4).contains(e.getKeyCode())) {
+			keyboardHandler.keyTyped(e);
+			return;
+		}
 	}
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
+		if (!asList(VK_T, VK_1, VK_2, VK_3, VK_4).contains(e.getKeyCode())) {
+			keyboardHandler.keyPressed(e);
+			return;
+		}
+
 		if (mouseString == null || chordTemplateSupplier.get().frets.get(mouseString) == null) {
 			return;
 		}
 
 		Integer fingerId;
 		switch (e.getKeyCode()) {
-		case KeyEvent.VK_T:
+		case VK_T:
 			fingerId = 0;
 			break;
-		case KeyEvent.VK_1:
+		case VK_1:
 			fingerId = 1;
 			break;
-		case KeyEvent.VK_2:
+		case VK_2:
 			fingerId = 2;
 			break;
-		case KeyEvent.VK_3:
+		case VK_3:
 			fingerId = 3;
 			break;
-		case KeyEvent.VK_4:
+		case VK_4:
 			fingerId = 4;
 			break;
 		default:
@@ -306,10 +330,15 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 
 		chordTemplateSupplier.get().fingers.put(mouseString, fingerId);
 		chordEditor.fingerUpdated(mouseString, fingerId);
+		e.consume();
 	}
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
+		if (!asList(VK_T, VK_1, VK_2, VK_3, VK_4).contains(e.getKeyCode())) {
+			keyboardHandler.keyReleased(e);
+			return;
+		}
 	}
 
 	private void updateMouseStringAndFret(final int x, final int y) {
@@ -371,12 +400,14 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 
 	@Override
 	public void mouseEntered(final MouseEvent e) {
+		grabFocus();
 	}
 
 	@Override
 	public void mouseExited(final MouseEvent e) {
 		mouseFret = null;
 		mouseString = null;
+		frame.requestFocusInWindow();
 	}
 
 	@Override

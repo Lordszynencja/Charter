@@ -1225,8 +1225,14 @@ public class KeyboardHandler implements KeyListener {
 					}
 				}
 
-				newTemplate.chordName = ChordNameSuggester
-						.suggestChordNames(data.getCurrentArrangement().tuning, newTemplate.frets).get(0);
+				final ArrayList2<String> suggestedNames = ChordNameSuggester
+						.suggestChordNames(data.getCurrentArrangement().tuning, newTemplate.frets);
+
+				if (!suggestedNames.isEmpty()) {
+					newTemplate.chordName = suggestedNames.get(0);
+				} else {
+					newTemplate.chordName = "";
+				}
 				final int newTemplateId = data.getCurrentArrangement().getChordTemplateIdWithSave(newTemplate);
 				chord.updateTemplate(newTemplateId, newTemplate);
 			} else {
@@ -1252,6 +1258,32 @@ public class KeyboardHandler implements KeyListener {
 		fretNumberTimer = (int) (nanoTime() / 1_000_000 + 2000);
 		lastFretNumber = number;
 		setFret(number);
+	}
+
+	private void toggleBookmark(final int number) {
+		if (data.isEmpty) {
+			return;
+		}
+
+		final Integer currentBookmark = data.songChart.bookmarks.get(number);
+		if (currentBookmark == null || currentBookmark != data.time) {
+			data.songChart.bookmarks.put(number, data.time);
+		} else {
+			data.songChart.bookmarks.remove(number);
+		}
+	}
+
+	private void moveToBookmark(final int number) {
+		if (data.isEmpty) {
+			return;
+		}
+
+		final Integer bookmark = data.songChart.bookmarks.get(number);
+		if (bookmark == null) {
+			return;
+		}
+
+		data.setNextTime(bookmark);
 	}
 
 	private void switchFullscreenPreview() {
@@ -1307,27 +1339,26 @@ public class KeyboardHandler implements KeyListener {
 		key(VK_COMMA).function(this::halveGridSize);
 		key(VK_PERIOD).function(this::doubleGridSize);
 
-		key(VK_1).singleFunction(e -> handleNumber(1));
-		key(VK_2).singleFunction(e -> handleNumber(2));
-		key(VK_3).singleFunction(e -> handleNumber(3));
-		key(VK_4).singleFunction(e -> handleNumber(4));
-		key(VK_5).singleFunction(e -> handleNumber(5));
-		key(VK_6).singleFunction(e -> handleNumber(6));
-		key(VK_7).singleFunction(e -> handleNumber(7));
-		key(VK_8).singleFunction(e -> handleNumber(8));
-		key(VK_9).singleFunction(e -> handleNumber(9));
-		key(VK_0).singleFunction(e -> handleNumber(0));
+		final int[][] numberKeys = new int[10][];
+		numberKeys[0] = new int[] { VK_0, VK_NUMPAD0 };
+		numberKeys[1] = new int[] { VK_1, VK_NUMPAD1 };
+		numberKeys[2] = new int[] { VK_2, VK_NUMPAD2 };
+		numberKeys[3] = new int[] { VK_3, VK_NUMPAD3 };
+		numberKeys[4] = new int[] { VK_4, VK_NUMPAD4 };
+		numberKeys[5] = new int[] { VK_5, VK_NUMPAD5 };
+		numberKeys[6] = new int[] { VK_6, VK_NUMPAD6 };
+		numberKeys[7] = new int[] { VK_7, VK_NUMPAD7 };
+		numberKeys[8] = new int[] { VK_8, VK_NUMPAD8 };
+		numberKeys[9] = new int[] { VK_9, VK_NUMPAD9 };
 
-		key(VK_NUMPAD0).singleFunction(e -> handleNumber(0));
-		key(VK_NUMPAD1).singleFunction(e -> handleNumber(1));
-		key(VK_NUMPAD2).singleFunction(e -> handleNumber(2));
-		key(VK_NUMPAD3).singleFunction(e -> handleNumber(3));
-		key(VK_NUMPAD4).singleFunction(e -> handleNumber(4));
-		key(VK_NUMPAD5).singleFunction(e -> handleNumber(5));
-		key(VK_NUMPAD6).singleFunction(e -> handleNumber(6));
-		key(VK_NUMPAD7).singleFunction(e -> handleNumber(7));
-		key(VK_NUMPAD8).singleFunction(e -> handleNumber(8));
-		key(VK_NUMPAD9).singleFunction(e -> handleNumber(9));
+		for (int i = 0; i <= 9; i++) {
+			final int number = i;
+			for (final int key : numberKeys[number]) {
+				key(key).function(() -> handleNumber(number));
+				key(key).ctrl().function(() -> toggleBookmark(number));
+				key(key).shift().function(() -> moveToBookmark(number));
+			}
+		}
 
 		key(VK_F2).singleFunction(audioHandler::toggleMidiNotes);
 		key(VK_F3).singleFunction(audioHandler::toggleClaps);

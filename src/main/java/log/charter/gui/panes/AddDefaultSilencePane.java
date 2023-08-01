@@ -45,7 +45,19 @@ public class AddDefaultSilencePane extends ParamsPane {
 		addDefaultFinish(3, this::saveAndExit);
 	}
 
+	private void removeAudio(final int movement) {
+		data.music = data.music.remove(movement / 1000.0);
+		data.songChart.beatsMap.songLengthMs = data.music.msLength();
+
+		data.songChart.moveEverything(-movement);
+	}
+
 	private void addSilence(final int movement) {
+		if (movement < 0) {
+			removeAudio(-movement);
+			return;
+		}
+
 		final MusicData songMusicData = data.music;
 		final MusicData silenceMusicData = MusicData.generateSilence(movement / 1000.0,
 				songMusicData.outFormat.getSampleRate());
@@ -60,6 +72,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 		int movement = 10_000;
 
 		final Beat firstBeat = data.songChart.beatsMap.beats.get(0);
+		movement -= firstBeat.position();
 		final int firstBarPosition = firstBeat.position();
 		final int secondBarPosition = data.songChart.beatsMap.beats.get(firstBeat.beatsInMeasure).position();
 		final int barLength = secondBarPosition - firstBarPosition;
@@ -98,7 +111,8 @@ public class AddDefaultSilencePane extends ParamsPane {
 	private void saveAndExit() {
 		changeMusicFileNameAndMakeBackupIfNeeded();
 		if (bars == 0) {
-			addSilence(10_000);
+			final Beat firstBeat = data.songChart.beatsMap.beats.get(0);
+			addSilence(10_000 - firstBeat.position());
 		} else {
 			addSilenceAndBars();
 		}

@@ -6,7 +6,7 @@ import log.charter.song.notes.IPosition;
 
 public class ScalingUtils {
 	public static int xToTime(final int x, final int t) {
-		return (int) (((x - Config.markerOffset) / Zoom.zoom) + t);
+		return (int) (xToTimeLength(x - Config.markerOffset) + t);
 	}
 
 	public static int xToTimeLength(final int x) {

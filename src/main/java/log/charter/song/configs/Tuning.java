@@ -92,7 +92,7 @@ public class Tuning {
 
 	public TuningType tuningType = TuningType.E_STANDARD;
 	public int strings = 6;
-	public int[] tuning = new int[strings];
+	private int[] tuning = new int[strings];
 
 	public void strings(final int newStrings) {
 		if (newStrings > 6) {

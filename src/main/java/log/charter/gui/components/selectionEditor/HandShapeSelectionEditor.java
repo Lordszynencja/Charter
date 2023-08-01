@@ -13,6 +13,8 @@ import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.CharterFrame;
+import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.song.ArrangementChart;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
@@ -35,8 +37,9 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	}
 
 	public void init(final CurrentSelectionEditor parent, final ArrangementFixer arrangementFixer, final ChartData data,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		super.init(data, () -> chordTemplate, this::templateEdited);
+			final CharterFrame frame, final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
+			final UndoSystem undoSystem) {
+		super.init(data, frame, keyboardHandler, () -> chordTemplate, this::templateEdited);
 
 		this.arrangementFixer = arrangementFixer;
 		this.data = data;

@@ -32,6 +32,8 @@ import log.charter.io.Logger;
 public class ChartToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
+	public static final int height = 20;
+
 	private AudioDrawer audioDrawer;
 	private AudioHandler audioHandler;
 
@@ -49,6 +51,8 @@ public class ChartToolbar extends JToolBar {
 
 	public ChartToolbar() {
 		super();
+		setSize(getWidth(), 20);
+
 		setLayout(null);
 
 		setFocusable(true);

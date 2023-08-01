@@ -1,10 +1,13 @@
 package log.charter.gui.components.selectionEditor;
 
 import static java.lang.Math.max;
+import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.components.RowedPanel.setComponentBounds;
 import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
+import static log.charter.song.ChordTemplate.fingerIds;
+import static log.charter.song.ChordTemplate.fingerNames;
 import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.event.MouseEvent;
@@ -21,31 +24,19 @@ import javax.swing.event.DocumentListener;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.components.AutocompleteInput;
 import log.charter.gui.components.ChordNameAdviceButton;
 import log.charter.gui.components.ChordTemplatePreview;
 import log.charter.gui.components.RowedPanel;
 import log.charter.gui.components.TextInputWithValidation;
+import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 
 public class ChordTemplateEditor implements MouseListener {
 	private static final int width = 440;
-
-	private static final HashMap2<String, Integer> fingerIds = new HashMap2<>();
-	private static final HashMap2<Integer, String> fingerNames = new HashMap2<>();
-
-	static {
-		fingerIds.put("T", 0);
-		fingerIds.put("1", 1);
-		fingerIds.put("2", 2);
-		fingerIds.put("3", 3);
-		fingerIds.put("4", 4);
-
-		fingerIds.forEach((name, id) -> fingerNames.put(id, name));
-		fingerNames.put(null, "");
-	}
 
 	protected final RowedPanel parent;
 	private boolean parentListenerAdded = false;
@@ -68,18 +59,17 @@ public class ChordTemplateEditor implements MouseListener {
 
 	protected ChordTemplateEditor(final RowedPanel parent) {
 		this.parent = parent;
-
-		parent.setFocusable(true);
 	}
 
-	public void init(final ChartData data, final Supplier<ChordTemplate> chordTemplateSupplier,
-			final Runnable onChange) {
+	public void init(final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
+			final Supplier<ChordTemplate> chordTemplateSupplier, final Runnable onChange) {
 		this.onChange = onChange;
 
 		this.data = data;
 
 		this.chordTemplateSupplier = chordTemplateSupplier;
-		chordTemplatePreview = new ChordTemplatePreview(parent, this, data, chordTemplateSupplier);
+		chordTemplatePreview = new ChordTemplatePreview(parent, this, data, frame, keyboardHandler,
+				chordTemplateSupplier);
 	}
 
 	private int calculateHeight(final int strings) {
@@ -243,7 +233,6 @@ public class ChordTemplateEditor implements MouseListener {
 		x += 5 + max(fingerLabelWidth, 20);
 
 		final int y = parent.getY(row);
-		chordTemplatePreview = new ChordTemplatePreview(parent, this, data, chordTemplateSupplier);
 		parent.add(chordTemplatePreview, x, y, width, calculateHeight(maxStrings));
 	}
 
@@ -265,6 +254,7 @@ public class ChordTemplateEditor implements MouseListener {
 			chordTemplateSupplier.get().frets.put(string, Integer.valueOf(fret));
 		}
 
+		updateFingers();
 		onChange.run();
 
 		chordTemplatePreview.repaint();
@@ -282,10 +272,18 @@ public class ChordTemplateEditor implements MouseListener {
 		chordTemplatePreview.repaint();
 	}
 
+	private void updateFingers() {
+		setSuggestedFingers(chordTemplateSupplier.get());
+		for (int i = 0; i < Config.maxStrings; i++) {
+			fingerUpdated(i, chordTemplateSupplier.get().fingers.get(i));
+		}
+	}
+
 	public void fretUpdated(final int string, final Integer fret) {
 		final TextInputWithValidation input = fretInputs.get(string);
 		input.setTextWithoutEvent(fret == null ? "" : fret.toString());
 		input.repaint();
+		updateFingers();
 
 		onChange.run();
 

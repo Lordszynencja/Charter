@@ -29,6 +29,7 @@ public class Localization {
 		CONFIG_MARKER_POSITION("Marker position (px)"), //
 		CONFIG_NOTE_WIDTH("Note width (px)"), //
 		CONFIG_NOTE_HEIGHT("Note height (px)"), //
+		CONFIG_CHART_MAP_HEIGHT_MULTIPLIER("Chart map size"), //
 		CONFIG_INVERT_STRINGS("Invert strings"), //
 		CONFIG_LEFT_HANDED("Left handed"), //
 		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
@@ -271,6 +272,8 @@ public class Localization {
 
 		ADD_SILENCE_PANE("Add silence"), //
 		ADD_SILENCE_SECONDS("Add this many seconds of silence:"), //
+		ADD_SILENCE_ADD("Add silence"), //
+		ADD_SILENCE_SET("Set silence"), //
 
 		ADD_DEFAULT_SILENCE_PANE("Add silence"), //
 		ADD_DEFAULT_SILENCE_BARS("Add this many bars of silence after 10s:"), //
@@ -282,6 +285,7 @@ public class Localization {
 		ARRANGEMENT_OPTIONS_TUNING_TYPE("Tuning"), //
 		ARRANGEMENT_OPTIONS_STRINGS("Strings"), //
 		ARRANGEMENT_OPTIONS_CAPO("Capo"), //
+		ARRANGEMENT_OPTIONS_MOVE_FRETS("Move frets on tuning change"), //
 
 		VOCAL_PANE_CREATION("Vocal creation"), //
 		VOCAL_PANE_EDIT("Vocal edit"), //

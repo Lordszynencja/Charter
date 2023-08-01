@@ -47,6 +47,7 @@ public final class ConfigPane extends ParamsPane {
 	private int markerOffset = Config.markerOffset;
 	private int noteWidth = Config.noteWidth;
 	private int noteHeight = Config.noteHeight;
+	private int chartMapHeightMultiplier = Config.chartMapHeightMultiplier;
 	private boolean invertStrings = Config.invertStrings;
 	private boolean leftHanded = Config.leftHanded;
 	private boolean showChordIds = Config.showChordIds;
@@ -93,6 +94,9 @@ public final class ConfigPane extends ParamsPane {
 				val -> noteWidth = Integer.valueOf(val), false);
 		addConfigValue(row++, 20, 0, Label.CONFIG_NOTE_HEIGHT, noteHeight + "", 50, createIntValidator(1, 1000, false), //
 				val -> noteHeight = Integer.valueOf(val), false);
+		addConfigValue(row++, 20, 0, Label.CONFIG_CHART_MAP_HEIGHT_MULTIPLIER, chartMapHeightMultiplier + "", 50,
+				createIntValidator(1, 100, false), //
+				val -> chartMapHeightMultiplier = Integer.valueOf(val), false);
 		addConfigCheckbox(row, 20, 0, Label.CONFIG_INVERT_STRINGS, invertStrings, val -> invertStrings = val);
 		addConfigCheckbox(row++, 180, 0, Label.CONFIG_LEFT_HANDED, leftHanded, val -> leftHanded = val);
 		addConfigCheckbox(row++, 20, 0, Label.CONFIG_SHOW_CHORD_IDS, showChordIds, val -> showChordIds = val);
@@ -146,6 +150,7 @@ public final class ConfigPane extends ParamsPane {
 		Config.markerOffset = markerOffset;
 		Config.noteWidth = noteWidth;
 		Config.noteHeight = noteHeight;
+		Config.chartMapHeightMultiplier = chartMapHeightMultiplier;
 
 		Config.invertStrings = invertStrings;
 		Config.leftHanded = leftHanded;

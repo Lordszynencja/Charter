@@ -29,11 +29,13 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.components.FieldWithLabel;
 import log.charter.gui.components.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.RadioButtonGroupInRow;
 import log.charter.gui.components.TextInputWithValidation;
 import log.charter.gui.components.selectionEditor.subEditors.SelectionBendEditor;
+import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.song.ArrangementChart;
 import log.charter.song.ChordTemplate;
 import log.charter.song.enums.BassPickingTechnique;
@@ -220,8 +222,9 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	}
 
 	public void init(final CurrentSelectionEditor selectionEditor, final ArrangementFixer arrangementFixer,
-			final ChartData data, final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		super.init(data, () -> chordTemplate, this::templateEdited);
+			final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
+			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+		super.init(data, frame, keyboardHandler, () -> chordTemplate, this::templateEdited);
 
 		this.arrangementFixer = arrangementFixer;
 		this.data = data;

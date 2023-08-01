@@ -228,6 +228,27 @@ public class MusicData {
 		return new MusicData(newData, outFormat.getSampleRate());
 	}
 
+	public MusicData remove(final double time) {
+		int length = 0;
+		for (int i = 0; i < data.length; i++) {
+			length = max(length, data[i].length);
+		}
+
+		final int samplesRemoved = (int) (time * outFormat.getSampleRate());
+		length -= samplesRemoved;
+
+		final int channels = data.length;
+		final int[][] newData = new int[channels][length];
+		for (int channel = 0; channel < data.length; channel++) {
+			final int[] src = data[channel];
+			final int[] dest = newData[channel];
+			final int toMove = max(0, data[channel].length - samplesRemoved);
+			System.arraycopy(src, samplesRemoved, dest, 0, toMove);
+		}
+
+		return new MusicData(newData, outFormat.getSampleRate());
+	}
+
 	public MusicData volume(final double volume) {
 		final int[][] newData = new int[data.length][];
 		for (int channel = 0; channel < data.length; channel++) {

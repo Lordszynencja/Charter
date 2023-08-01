@@ -8,6 +8,7 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.song.Beat;
 import log.charter.song.SongChart;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.HashMap2;
 
 @XStreamAlias("project")
 public class RocksmithChartProject {
@@ -28,6 +29,8 @@ public class RocksmithChartProject {
 
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 
+	public HashMap2<Integer, Integer> bookmarks = new HashMap2<>();
+
 	public RocksmithChartProject() {
 	}
 
@@ -46,5 +49,7 @@ public class RocksmithChartProject {
 		musicFileName = songChart.musicFileName;
 
 		beats = songChart.beatsMap.beats;
+
+		bookmarks = songChart.bookmarks;
 	}
 }

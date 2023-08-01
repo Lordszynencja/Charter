@@ -73,6 +73,7 @@ public class Config {
 	public static Theme theme = Theme.ROCKSMITH;
 	public static int noteWidth = 15;
 	public static int noteHeight = 25;
+	public static int chartMapHeightMultiplier = 3;
 
 	public static boolean invertStrings = false;
 	public static boolean leftHanded = false;
@@ -121,6 +122,8 @@ public class Config {
 		valueAccessors.put("markerOffset", ValueAccessor.forInteger(v -> markerOffset = v, () -> markerOffset));
 		valueAccessors.put("noteWidth", ValueAccessor.forInteger(v -> noteWidth = v, () -> noteWidth));
 		valueAccessors.put("noteHeight", ValueAccessor.forInteger(v -> noteHeight = v, () -> noteHeight));
+		valueAccessors.put("chartMapHeightMultiplier",
+				ValueAccessor.forInteger(v -> chartMapHeightMultiplier = v, () -> chartMapHeightMultiplier));
 
 		valueAccessors.put("invertStrings", ValueAccessor.forBoolean(v -> invertStrings = v, () -> invertStrings));
 		valueAccessors.put("leftHanded", ValueAccessor.forBoolean(v -> leftHanded = v, () -> leftHanded));

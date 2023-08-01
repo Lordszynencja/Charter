@@ -2,11 +2,13 @@ package log.charter.gui.chartPanelDrawers.common;
 
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatSizeTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.phraseNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
@@ -29,7 +31,6 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
@@ -51,6 +52,7 @@ public class BeatsDrawer {
 	private static class BeatsDrawingData {
 		private final DrawableShapeList beats = new DrawableShapeList();
 		private final DrawableShapeList sectionsAndPhrases = new DrawableShapeList();
+		private final DrawableShapeList bookmarks = new DrawableShapeList();
 
 		private void addBeatLine(final int x, final Beat beat) {
 			final ColorLabel color = beat.firstInMeasure ? ColorLabel.MAIN_BEAT : ColorLabel.SECONDARY_BEAT;
@@ -64,8 +66,8 @@ public class BeatsDrawer {
 			}
 		}
 
-		private void addBeatMeasureNumber(final int x, final int id, final String bpmValue) {
-			final String text = "" + (id + 1) + " (" + bpmValue + " BPM)";
+		private void addBeatBarNumber(final int x, final int barNumber, final String bpmValue) {
+			final String text = "" + barNumber + " (" + bpmValue + " BPM)";
 			beats.add(text(new Position2D(x + 3, beatTextY + 11), text, ColorLabel.MAIN_BEAT));
 		}
 
@@ -86,12 +88,12 @@ public class BeatsDrawer {
 			beats.add(strokedRectangle(beatPosition, ColorLabel.SELECT));
 		}
 
-		public void addBeat(final Beat beat, final int x, final int id, final Beat previousBeat, final double bpm,
-				final boolean selected) {
+		public void addBeat(final Beat beat, final int x, final int barNumber, final Beat previousBeat,
+				final double bpm, final boolean selected) {
 			addBeatLine(x, beat);
 
 			if (beat.firstInMeasure) {
-				addBeatMeasureNumber(x, id, bpmFormat.format(bpm));
+				addBeatBarNumber(x, barNumber, bpmFormat.format(bpm));
 			} else if (beat.anchor) {
 				addBPMNumber(x, bpmFormat.format(bpm));
 			}
@@ -142,14 +144,20 @@ public class BeatsDrawer {
 				final int top = sectionNamesY - 1;
 				final int bottom = lanesBottom + 1;
 				final ShapePositionWithSize beatPosition = new ShapePositionWithSize(x - 1, top, 3, bottom - top);
-				beats.add(DrawableShape.filledRectangle(beatPosition, ColorLabel.SELECT));
+				beats.add(filledRectangle(beatPosition, ColorLabel.SELECT));
 			}
+		}
+
+		public void addBookmark(final int number, final int x) {
+			bookmarks.add(lineVertical(x, 0, editAreaHeight, ColorLabel.BOOKMARK));
+			bookmarks.add(text(new Position2D(x + 2, 12), number + "", ColorLabel.BOOKMARK));
 		}
 
 		public void draw(final Graphics g) {
 			g.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
 			beats.draw(g);
 			sectionsAndPhrases.draw(g);
+			bookmarks.draw(g);
 		}
 	}
 
@@ -199,8 +207,16 @@ public class BeatsDrawer {
 		}
 
 		double bpm = 120;
+		int bar = 0;
 		for (int i = 0; i < beats.size(); i++) {
 			final Beat beat = beats.get(i);
+			if (beat.firstInMeasure) {
+				bar++;
+			}
+			if (i == 0 || (beat.anchor && i < beats.size() - 1)) {
+				bpm = findBPM(beat, i);
+			}
+
 			final int x = timeToX(beat.position(), data.time);
 			if (x < -1000) {
 				continue;
@@ -210,10 +226,8 @@ public class BeatsDrawer {
 			}
 
 			final boolean selected = selectedBeatIds.contains(i);
-			if (i == 0 || ((beat.firstInMeasure || beat.anchor) && i < beats.size() - 1)) {
-				bpm = findBPM(beat, i);
-			}
-			drawingData.addBeat(beat, x, i, i > 0 ? beats.get(i - 1) : null, bpm, selected);
+
+			drawingData.addBeat(beat, x, bar, i > 0 ? beats.get(i - 1) : null, bpm, selected);
 		}
 	}
 
@@ -262,6 +276,13 @@ public class BeatsDrawer {
 		}
 	}
 
+	private void addBookmarks(final BeatsDrawingData drawingData) {
+		data.songChart.bookmarks.forEach((number, position) -> {
+			final int x = timeToX(position, data.time);
+			drawingData.addBookmark(number, x);
+		});
+	}
+
 	public void draw(final Graphics g) {
 		final BeatsDrawingData drawingData = new BeatsDrawingData();
 
@@ -274,6 +295,8 @@ public class BeatsDrawer {
 		if (modeManager.editMode == EditMode.GUITAR) {
 			addEventPoints(drawingData);
 		}
+
+		addBookmarks(drawingData);
 
 		drawingData.draw(g);
 	}

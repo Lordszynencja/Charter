@@ -102,7 +102,7 @@ public class ParamsPane extends JDialog {
 		return sizes.getY(row);
 	}
 
-	private void setComponentBounds(final JComponent component, final int x, final int y, final int w, final int h) {
+	private void setComponentBounds(final Component component, final int x, final int y, final int w, final int h) {
 		component.setBounds(x, y, w, h);
 		final Dimension size = new Dimension(w, h);
 		component.setMinimumSize(size);
@@ -110,13 +110,13 @@ public class ParamsPane extends JDialog {
 		component.setMaximumSize(size);
 	}
 
-	public void add(final JComponent component, final int x, final int y, final int w, final int h) {
+	public void add(final Component component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
 		add(component);
 		components.add(component);
 	}
 
-	public void addTop(final JComponent component, final int x, final int y, final int w, final int h) {
+	public void addTop(final Component component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
 		add(component, 0);
 		components.add(component);
@@ -146,7 +146,9 @@ public class ParamsPane extends JDialog {
 
 	protected void addDefaultFinish(final int row, final Runnable onSave) {
 		addDefaultFinish(row, () -> {
-			onSave.run();
+			if (onSave != null) {
+				onSave.run();
+			}
 			return true;
 		});
 	}
@@ -157,10 +159,14 @@ public class ParamsPane extends JDialog {
 
 	protected void addDefaultFinish(final int row, final Runnable onSave, final Runnable onCancel) {
 		addDefaultFinish(row, () -> {
-			onSave.run();
+			if (onSave != null) {
+				onSave.run();
+			}
 			return true;
 		}, () -> {
-			onCancel.run();
+			if (onCancel != null) {
+				onCancel.run();
+			}
 			return true;
 		});
 	}

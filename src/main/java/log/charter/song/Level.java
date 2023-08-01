@@ -21,8 +21,15 @@ import log.charter.util.CollectionUtils.Pair;
 public class Level {
 	public static HashMap2<Integer, Level> fromArrangementLevels(final ArrangementChart arrangement,
 			final List<ArrangementLevel> arrangementLevels) {
-		return new ArrayList2<>(arrangementLevels).toMap(
-				arrangementLevel -> new Pair<>(arrangementLevel.difficulty, new Level(arrangementLevel, arrangement)));
+		final HashMap2<Integer, Level> levels = new ArrayList2<>(arrangementLevels)//
+				.toMap(arrangementLevel -> new Pair<>(arrangementLevel.difficulty,
+						new Level(arrangementLevel, arrangement)));
+
+		if (levels.get(0) == null) {
+			levels.put(0, new Level());
+		}
+
+		return levels;
 	}
 
 	public ArrayList2<Anchor> anchors = new ArrayList2<>();
@@ -110,7 +117,7 @@ public class Level {
 			return true;
 		}
 
-		for (int j = id - 1; j > 0; j--) {
+		for (int j = id - 1; j >= 0; j--) {
 			final ChordOrNote previousSound = chordsAndNotes.get(j);
 			if (previousSound.isNote()) {
 				continue;

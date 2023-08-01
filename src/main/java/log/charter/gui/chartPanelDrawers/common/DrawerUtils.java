@@ -7,9 +7,6 @@ import static log.charter.data.config.Config.noteHeight;
 import static log.charter.util.Utils.getStringPosition;
 
 public class DrawerUtils {
-	public static final int toolbarY = 0;
-	public static final int editorY = toolbarY + 20;
-
 	public static final int sectionNamesY = 5;
 	public static final int phraseNamesY = sectionNamesY + 15;
 	public static final int eventNamesY = phraseNamesY + 15;
@@ -24,9 +21,9 @@ public class DrawerUtils {
 	public static int lanesHeight;
 	public static int lanesBottom;
 	public static int handShapesY;
+	public static int editAreaHeight;
 
-	public static int editAreaBottom;
-	public static int scrollBarBottom;
+	public static final int scrollBarSize = 20;
 
 	public static int tailHeight;
 
@@ -39,9 +36,7 @@ public class DrawerUtils {
 		lanesHeight = laneHeight * maxStrings;
 		lanesBottom = lanesTop + lanesHeight;
 		handShapesY = lanesBottom + 30;
-
-		editAreaBottom = editorY + handShapesY + 20;
-		scrollBarBottom = editAreaBottom + 20;
+		editAreaHeight = handShapesY + 20;
 
 		tailHeight = getAsOdd(noteHeight * 3 / 4);
 	}
