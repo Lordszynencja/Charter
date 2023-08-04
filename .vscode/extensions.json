@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "redhat.java",
+        "vscjava.vscode-maven",
+        "vscjava.vscode-java-test",
+        "vscjava.vscode-java-dependency",
+        "vscjava.vscode-java-debug",
+        "redhat.fabric8-analytics"
+    ]
+}
