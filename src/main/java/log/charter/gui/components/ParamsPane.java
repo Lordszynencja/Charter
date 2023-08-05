@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -20,6 +21,8 @@ import javax.swing.WindowConstants;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.TextInputWithValidation.BigDecimalValueValidator;
+import log.charter.gui.components.TextInputWithValidation.IntegerValueValidator;
 import log.charter.gui.components.TextInputWithValidation.StringValueSetter;
 import log.charter.gui.components.TextInputWithValidation.ValueValidator;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -48,6 +51,10 @@ public class ParamsPane extends JDialog {
 
 	public static interface IntegerValueSetter {
 		void setValue(Integer val);
+	}
+
+	public static interface BigDecimalValueSetter {
+		void setValue(BigDecimal val);
 	}
 
 	public static interface SaverWithStatus {
@@ -275,9 +282,22 @@ public class ParamsPane extends JDialog {
 		}
 	}
 
+	protected void addBigDecimalConfigValue(final int row, final int x, final int labelWidth, final Label label,
+			final BigDecimal value, final int inputLength, final BigDecimalValueValidator validator,
+			final BigDecimalValueSetter setter, final boolean allowWrong) {
+		addConfigValue(row, x, labelWidth, label, value == null ? "" : value.toString(), inputLength, validator,
+				val -> {
+					try {
+						setter.setValue(new BigDecimal(val));
+					} catch (final NumberFormatException e) {
+						setter.setValue(null);
+					}
+				}, allowWrong);
+	}
+
 	protected void addIntegerConfigValue(final int row, final int x, final int labelWidth, final Label label,
-			final Integer value, final int inputLength, final ValueValidator validator, final IntegerValueSetter setter,
-			final boolean allowWrong) {
+			final Integer value, final int inputLength, final IntegerValueValidator validator,
+			final IntegerValueSetter setter, final boolean allowWrong) {
 		addConfigValue(row, x, labelWidth, label, value == null ? "" : value.toString(), inputLength, validator,
 				val -> {
 					try {

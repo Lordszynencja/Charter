@@ -16,6 +16,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.io.Logger;
 import log.charter.io.gp.gp5.GP5File;
 import log.charter.io.gp.gp5.GPBar;
+import log.charter.io.gp.gp5.GPBeat;
 import log.charter.io.gp.gp5.GPMasterBar;
 import log.charter.io.gp.gp5.GPTrackData;
 import log.charter.io.rs.xml.song.SongArrangement;
@@ -153,7 +154,7 @@ public class SongChart {
 	}
 
 	private void checkBeatsFromGP5File(final GP5File gp5File) {
-		final int bpm = gp5File.tempo * gp5File.masterBars.get(0).timeSignatureDenominator / 4;
+		int bpm = gp5File.tempo * gp5File.masterBars.get(0).timeSignatureDenominator / 4;
 		final ArrayList2<Beat> beats = beatsMap.beats;
 		if (beats.stream().skip(1).anyMatch(beat -> beat.anchor)) {
 			return;
@@ -161,21 +162,36 @@ public class SongChart {
 
 		beatsMap.setBPM(0, bpm);
 
-		int currentBeat = 0;
+		final List<GPBar> bars = gp5File.bars.get(0);
+		int currentBeatId = 0;
+		for (int i = 0; i < bars.size(); i++) {
+			final GPBeat beat = bars.get(i).voices.get(0).get(0);
+			if (beat.tempo != bpm) {
+				bpm = beat.tempo;
+				beatsMap.setBPM(currentBeatId, bpm);
+				beats.get(currentBeatId).anchor = true;
+			}
+
+			currentBeatId += gp5File.masterBars.get(i).timeSignatureNumerator;
+			if (currentBeatId >= beats.size()) {
+				break;
+			}
+		}
+
 		for (final GPMasterBar masterBar : gp5File.masterBars) {
 			final int numberOfBeats = masterBar.timeSignatureNumerator;
 
 			for (int i = 0; i < numberOfBeats; i++) {
-				if (currentBeat + i >= beats.size()) {
+				if (currentBeatId + i >= beats.size()) {
 					break;
 				}
 
-				final Beat beat = beats.get(currentBeat + i);
+				final Beat beat = beats.get(currentBeatId + i);
 				beat.beatsInMeasure = masterBar.timeSignatureNumerator;
 				beat.noteDenominator = masterBar.timeSignatureDenominator;
 			}
 
-			currentBeat += numberOfBeats;
+			currentBeatId += numberOfBeats;
 		}
 
 		beatsMap.fixFirstBeatInMeasures();

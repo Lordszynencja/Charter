@@ -16,7 +16,7 @@ import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.handlers.KeyboardHandler;
 
 public class ModeManager {
-	public EditMode editMode = EditMode.GUITAR;
+	public EditMode editMode = EditMode.TEMPO_MAP;
 
 	private final GuitarModeHandler guitarModeHandler = new GuitarModeHandler();
 	private final TempoMapModeHandler tempoMapModeHandler = new TempoMapModeHandler();

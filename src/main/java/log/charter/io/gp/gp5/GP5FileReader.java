@@ -1,10 +1,18 @@
 package log.charter.io.gp.gp5;
 
-import java.awt.Color;
+import static log.charter.io.gp.gp5.GP5BinaryUtils.readBoolean;
+import static log.charter.io.gp.gp5.GP5BinaryUtils.readColor;
+import static log.charter.io.gp.gp5.GP5BinaryUtils.readDouble;
+import static log.charter.io.gp.gp5.GP5BinaryUtils.readInt32LE;
+import static log.charter.io.gp.gp5.GP5BinaryUtils.readShortInt8;
+import static log.charter.io.gp.gp5.GP5BinaryUtils.readStringWithByteSkip;
+import static log.charter.io.gp.gp5.GP5BinaryUtils.readStringWithSize;
+import static log.charter.io.gp.gp5.GP5BinaryUtils.readStringWithSizeSkip;
+import static log.charter.io.gp.gp5.GP5BinaryUtils.readStringWithSkip;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +27,6 @@ import log.charter.util.RW;
 
 public class GP5FileReader {
 	private static final String versionString = "FICHIER GUITAR PRO";
-	private static final String encoding = "UTF-8";
 
 	private static final int timeSignatureNumeratorFlag = 1 << 0;
 	private static final int timeSignatureDenominatorFlag = 1 << 1;
@@ -31,89 +38,6 @@ public class GP5FileReader {
 	private static final int isDoubleBarFlag = 1 << 7;
 
 	private static final int percussionTrackFlag = 1 << 0;
-
-	private static boolean readBoolean(final ByteArrayInputStream data) {
-		return data.read() != 0;
-	}
-
-	private static int readShortInt8(final ByteArrayInputStream data) {
-		final int v = data.read();
-		return ((v & 0x80) >> 7) * -128 + (v & 0x7F);
-	}
-
-	private static int readInt32LE(final ByteArrayInputStream data) {
-		final int b0 = data.read();
-		final int b1 = data.read();
-		final int b2 = data.read();
-		final int b3 = data.read();
-		return (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
-	}
-
-	private static double readDouble(final ByteArrayInputStream data) {
-		final byte[] bytes = new byte[8];
-		try {
-			data.read(bytes);
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-
-		long l = 0;
-		for (int i = 0; i < 8; i++) {
-			final int offset = i * 8;
-			l |= (long) (bytes[i] & 0xFF) << offset;
-		}
-
-		return Double.longBitsToDouble(l);
-	}
-
-	private static String readString(final ByteArrayInputStream data, final int length) {
-		final byte[] bytes = new byte[length];
-		data.read(bytes, 0, length);
-		try {
-			return new String(bytes, encoding);
-		} catch (final UnsupportedEncodingException e) {
-			return new String(bytes);
-		}
-	}
-
-	private static String readStringWithSizeSkip(final ByteArrayInputStream data) {
-		data.skip(4);
-		return readString(data, data.read());
-	}
-
-	private static String readStringWithSize(final ByteArrayInputStream data) {
-		return readString(data, readInt32LE(data));
-	}
-
-	private static String readStringWithSkip(final ByteArrayInputStream data, final int length) {
-		final int stringLength = data.read();
-		final String s = readString(data, stringLength);
-		if (stringLength < length) {
-			data.skip(length - stringLength);
-		}
-
-		return s;
-	}
-
-	private static String readStringWithByteSkip(final ByteArrayInputStream data) {
-		final int length = readInt32LE(data) - 1;
-		data.read();
-		return readString(data, length);
-	}
-
-	private static Color readColor(final ByteArrayInputStream data, final boolean readAlpha) {
-		final int r = data.read();
-		final int g = data.read();
-		final int b = data.read();
-		int a = 255;
-		if (readAlpha) {
-			a = data.read();
-		} else {
-			data.skip(1);
-		}
-
-		return new Color(r, g, b, a);
-	}
 
 	public static GP5File importGPFile(final File file) {
 		final GP5File gp5File = new GP5FileReader(new ByteArrayInputStream(RW.readB(file))).readScore();
@@ -521,14 +445,17 @@ public class GP5FileReader {
 		}
 
 		final List<GPBeat> beats = new ArrayList<>();
+		int lastTempo = tempo;
 		for (int i = 0; i < beatCount; i++) {
-			beats.add(readBeat(trackId));
+			final GPBeat beat = readBeat(trackId, lastTempo);
+			beats.add(beat);
+			lastTempo = beat.tempo;
 		}
 
 		return beats;
 	}
 
-	private GPBeat readBeat(final int trackId) {
+	private GPBeat readBeat(final int trackId, final int lastTempo) {
 		final int flags = data.read();
 		final int dots = (flags & 0x01) != 0 ? 1 : 0;
 		boolean isEmpty = false;
@@ -564,8 +491,9 @@ public class GP5FileReader {
 			beatEffects = new GPBeatEffects();
 		}
 
+		int tempo = lastTempo;
 		if ((flags & 0x10) != 0) {
-			readMixTableChange();
+			tempo = readMixTableChange();
 		}
 
 		final int stringFlags = data.read();
@@ -585,7 +513,8 @@ public class GP5FileReader {
 
 		}
 
-		return new GPBeat(dots, isEmpty, duration, tupletNumerator, tupletDenominator, beatEffects, chord, notes, text);
+		return new GPBeat(tempo, dots, isEmpty, duration, tupletNumerator, tupletDenominator, beatEffects, chord, notes,
+				text);
 	}
 
 	private final int[][] tupletNumeratorsDenominators = { //
@@ -807,7 +736,7 @@ public class GP5FileReader {
 		return effects;
 	}
 
-	private void readMixTableChange() {
+	private int readMixTableChange() {
 		readShortInt8(data);// instrument
 		if (version >= 500) {
 			data.skip(16); // Rse Info
@@ -859,6 +788,8 @@ public class GP5FileReader {
 			readStringWithByteSkip(data);
 			readStringWithByteSkip(data);
 		}
+
+		return tempo;
 	}
 
 	private GPNote readNote(final int string) {

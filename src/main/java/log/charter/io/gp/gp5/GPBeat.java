@@ -3,6 +3,7 @@ package log.charter.io.gp.gp5;
 import java.util.List;
 
 public class GPBeat {
+	public final int tempo;
 	public final int dots;
 	public final boolean isEmpty;
 	public final GPDuration duration;
@@ -13,9 +14,10 @@ public class GPBeat {
 	public final List<GPNote> notes;
 	public final String text;
 
-	public GPBeat(final int dots, final boolean isEmpty, final GPDuration duration, final int tupletNumerator,
-			final int tupletDenominator, final GPBeatEffects beatEffects, final GPChord chord, final List<GPNote> notes,
-			final String text) {
+	public GPBeat(final int tempo, final int dots, final boolean isEmpty, final GPDuration duration,
+			final int tupletNumerator, final int tupletDenominator, final GPBeatEffects beatEffects,
+			final GPChord chord, final List<GPNote> notes, final String text) {
+		this.tempo = tempo;
 		this.dots = dots;
 		this.isEmpty = isEmpty;
 		this.duration = duration;
@@ -29,8 +31,9 @@ public class GPBeat {
 
 	@Override
 	public String toString() {
-		return "GPBeat [dots=" + dots + ", isEmpty=" + isEmpty + ", duration=" + duration + ", tupletNumerator="
-				+ tupletNumerator + ", tupletDenominator=" + tupletDenominator + ", beatEffects=" + beatEffects
-				+ ", chord=" + chord + ", notes=" + notes + ", text=" + text + "]";
+		return "GPBeat [tempo=" + tempo + ", dots=" + dots + ", isEmpty=" + isEmpty + ", duration=" + duration
+				+ ", tupletNumerator=" + tupletNumerator + ", tupletDenominator=" + tupletDenominator + ", beatEffects="
+				+ beatEffects + ", chord=" + chord + ", notes=" + notes + ", text=" + text + "]";
 	}
+
 }

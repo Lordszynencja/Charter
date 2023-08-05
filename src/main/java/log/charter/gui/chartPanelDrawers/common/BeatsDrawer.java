@@ -66,6 +66,11 @@ public class BeatsDrawer {
 			}
 		}
 
+		private void addBeatBarNumber(final int x, final int barNumber) {
+			final String text = "" + barNumber;
+			beats.add(text(new Position2D(x + 3, beatTextY + 11), text, ColorLabel.MAIN_BEAT));
+		}
+
 		private void addBeatBarNumber(final int x, final int barNumber, final String bpmValue) {
 			final String text = "" + barNumber + " (" + bpmValue + " BPM)";
 			beats.add(text(new Position2D(x + 3, beatTextY + 11), text, ColorLabel.MAIN_BEAT));
@@ -93,7 +98,11 @@ public class BeatsDrawer {
 			addBeatLine(x, beat);
 
 			if (beat.firstInMeasure) {
-				addBeatBarNumber(x, barNumber, bpmFormat.format(bpm));
+				if (previousBeat == null || beat.anchor) {
+					addBeatBarNumber(x, barNumber, bpmFormat.format(bpm));
+				} else {
+					addBeatBarNumber(x, barNumber);
+				}
 			} else if (beat.anchor) {
 				addBPMNumber(x, bpmFormat.format(bpm));
 			}
@@ -177,22 +186,6 @@ public class BeatsDrawer {
 		this.selectionManager = selectionManager;
 	}
 
-	private double findBPM(final Beat beat, final int beatId) {
-		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
-
-		int nextAnchorId = beats.size() - 1;
-		for (int i = beatId + 1; i < beats.size(); i++) {
-			if (beats.get(i).anchor) {
-				nextAnchorId = i;
-				break;
-			}
-		}
-
-		final Beat nextAnchor = beats.get(nextAnchorId);
-
-		return 60_000.0 / (nextAnchor.position() - beat.position()) * (nextAnchorId - beatId);
-	}
-
 	private void addBeats(final BeatsDrawingData drawingData) {
 		final List<Beat> beats = data.songChart.beatsMap.beats;
 		final HashSet2<Integer> selectedBeatIds = selectionManager.getSelectedAccessor(PositionType.BEAT)//
@@ -214,7 +207,7 @@ public class BeatsDrawer {
 				bar++;
 			}
 			if (i == 0 || (beat.anchor && i < beats.size() - 1)) {
-				bpm = findBPM(beat, i);
+				bpm = data.songChart.beatsMap.findBPM(beat, i);
 			}
 
 			final int x = timeToX(beat.position(), data.time);

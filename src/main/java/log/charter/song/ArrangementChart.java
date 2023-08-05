@@ -89,6 +89,10 @@ public class ArrangementChart {
 				return max(0, beats.get(0).position());
 			}
 
+			if (barBeatId + beatOffset >= beats.size()) {
+				return beats.get(beats.size() - 1).position();
+			}
+
 			final Beat beatFrom = beats.get(barBeatId + beatOffset);
 			if (barBeatId + beatOffset + 1 == beats.size()) {
 				return beatFrom.position();

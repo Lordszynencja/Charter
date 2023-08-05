@@ -9,6 +9,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.gui.components.ParamsPane.BigDecimalValueSetter;
 
 public class TextInputWithValidation extends JTextField implements DocumentListener {
 	private static final long serialVersionUID = 1L;
@@ -107,7 +108,43 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 
 			return null;
 		}
+	}
 
+	public static class BigDecimalValueValidator implements ValueValidator {
+		private final BigDecimal minValue;
+		private final BigDecimal maxValue;
+		private final boolean acceptEmpty;
+
+		public BigDecimalValueValidator(final BigDecimal minValue, final BigDecimal maxValue,
+				final boolean acceptEmpty) {
+			this.minValue = minValue;
+			this.maxValue = maxValue;
+			this.acceptEmpty = acceptEmpty;
+		}
+
+		@Override
+		public String validateValue(final String val) {
+			if (((val == null) || val.isEmpty()) && acceptEmpty) {
+				return null;
+			}
+
+			final BigDecimal i;
+			try {
+				i = new BigDecimal(val);
+			} catch (final NumberFormatException e) {
+				return Label.VALUE_NUMBER_EXPECTED.label();
+			}
+
+			if (i.compareTo(minValue) < 0) {
+				return String.format(Label.VALUE_MUST_BE_GE.label(), minValue.toString());
+			}
+
+			if (i.compareTo(maxValue) > 0) {
+				return String.format(Label.VALUE_MUST_BE_LE.label(), maxValue.toString());
+			}
+
+			return null;
+		}
 	}
 
 	private boolean error;
@@ -134,6 +171,17 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		this(value == null ? "" : (value + ""), length, validator, (final String s) -> {
 			try {
 				setter.setValue(Integer.valueOf(s));
+			} catch (final NumberFormatException e) {
+				setter.setValue(null);
+			}
+		}, allowWrongValues);
+	}
+
+	public TextInputWithValidation(final BigDecimal value, final int length, final BigDecimalValueValidator validator,
+			final BigDecimalValueSetter setter, final boolean allowWrongValues) {
+		this(value == null ? "" : value.toString(), length, validator, (final String s) -> {
+			try {
+				setter.setValue(new BigDecimal(s));
 			} catch (final NumberFormatException e) {
 				setter.setValue(null);
 			}
