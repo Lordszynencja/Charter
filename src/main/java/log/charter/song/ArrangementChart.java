@@ -245,6 +245,7 @@ public class ArrangementChart {
 			for (final GPBeat gpBeat : voice) {
 				if (gpBeat.notes.isEmpty()) {
 					lastHandShape = null;
+					notePosition = notePosition.move(gpBeat.duration);
 					continue;
 				}
 
