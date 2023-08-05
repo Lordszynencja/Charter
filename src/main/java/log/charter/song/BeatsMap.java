@@ -223,8 +223,15 @@ public class BeatsMap {
 
 		final Beat startBeat = beats.getLast();
 		final int startPosition = startBeat.position();
-		int position = (int) (startPosition + 60_000 / newBPM);
+		int position = (int)(60_000 / newBPM);
+		
 		int createdBeatId = 1;
+
+		if (startBeat.noteDenominator != 4) {
+			position /= startBeat.noteDenominator / 4;
+		}
+		position += startPosition;
+
 		while (position <= songLengthMs) {
 			final Beat newBeat = new Beat(position, startBeat.beatsInMeasure, startBeat.noteDenominator, false);
 			beats.add(newBeat);

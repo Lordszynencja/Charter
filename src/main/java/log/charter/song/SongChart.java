@@ -162,21 +162,7 @@ public class SongChart {
 
 		beatsMap.setBPM(0, bpm);
 
-		final List<GPBar> bars = gp5File.bars.get(0);
 		int currentBeatId = 0;
-		for (int i = 0; i < bars.size(); i++) {
-			final GPBeat beat = bars.get(i).voices.get(0).get(0);
-			if (beat.tempo != bpm) {
-				bpm = beat.tempo;
-				beatsMap.setBPM(currentBeatId, bpm);
-				beats.get(currentBeatId).anchor = true;
-			}
-
-			currentBeatId += gp5File.masterBars.get(i).timeSignatureNumerator;
-			if (currentBeatId >= beats.size()) {
-				break;
-			}
-		}
 
 		for (final GPMasterBar masterBar : gp5File.masterBars) {
 			final int numberOfBeats = masterBar.timeSignatureNumerator;
@@ -189,9 +175,27 @@ public class SongChart {
 				final Beat beat = beats.get(currentBeatId + i);
 				beat.beatsInMeasure = masterBar.timeSignatureNumerator;
 				beat.noteDenominator = masterBar.timeSignatureDenominator;
+				beatsMap.setBPM(currentBeatId+i, bpm); // Using this function to update position according to time signature
 			}
 
 			currentBeatId += numberOfBeats;
+		}
+
+		currentBeatId = 0;
+
+		final List<GPBar> bars = gp5File.bars.get(0);
+		for (int i = 0; i < bars.size(); i++) {
+			final GPBeat beat = bars.get(i).voices.get(0).get(0);
+			if (beat.tempo != bpm) {
+				bpm = beat.tempo;
+				beatsMap.setBPM(currentBeatId, bpm);
+				beats.get(currentBeatId).anchor = true;
+			}
+
+			currentBeatId += gp5File.masterBars.get(i).timeSignatureNumerator;
+			if (currentBeatId >= beats.size()) {
+				break;
+			}
 		}
 
 		beatsMap.fixFirstBeatInMeasures();
