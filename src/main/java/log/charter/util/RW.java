@@ -22,7 +22,7 @@ public class RW {
 				return file.getParentFile();
 			}
 
-			if (file.getAbsolutePath().contains("LOG-charter-RS\\target\\classes")) {
+			if (file.getAbsolutePath().contains("LoG-Charter-RS\\target\\classes")) {
 				return new File("").getAbsoluteFile();
 			}
 
