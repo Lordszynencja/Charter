@@ -429,7 +429,7 @@ public class GP5FileReader {
 
 		final List<List<GPBeat>> voices = new ArrayList<>();
 		for (int v = 0; v < voiceCount; v++) {
-			final List<GPBeat> voice = readVoice(trackId);
+			final List<GPBeat> voice = readVoice(trackId, v == 0); // Only read tempo changes for voice 0
 			if (voice != null) {
 				voices.add(voice);
 			}
@@ -438,24 +438,23 @@ public class GP5FileReader {
 		return new GPBar(voices);
 	}
 
-	private List<GPBeat> readVoice(final int trackId) {
+	private List<GPBeat> readVoice(final int trackId, final boolean read_tempo_changes) {
 		final int beatCount = readInt32LE(data);
 		if (beatCount == 0) {
 			return null;
 		}
 
 		final List<GPBeat> beats = new ArrayList<>();
-		int lastTempo = tempo;
+
 		for (int i = 0; i < beatCount; i++) {
-			final GPBeat beat = readBeat(trackId, lastTempo);
+			final GPBeat beat = readBeat(trackId, read_tempo_changes);
 			beats.add(beat);
-			lastTempo = beat.tempo;
 		}
 
 		return beats;
 	}
 
-	private GPBeat readBeat(final int trackId, final int lastTempo) {
+	private GPBeat readBeat(final int trackId, final boolean read_tempo_changes) {
 		final int flags = data.read();
 		final int dots = (flags & 0x01) != 0 ? 1 : 0;
 		boolean isEmpty = false;
@@ -491,8 +490,7 @@ public class GP5FileReader {
 			beatEffects = new GPBeatEffects();
 		}
 
-		int tempo = lastTempo;
-		if ((flags & 0x10) != 0) {
+		if ((flags & 0x10) != 0 && read_tempo_changes) {
 			tempo = readMixTableChange();
 		}
 
