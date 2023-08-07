@@ -154,47 +154,65 @@ public class SongChart {
 	}
 
 	private void checkBeatsFromGP5File(final GP5File gp5File) {
-		int bpm = gp5File.tempo * gp5File.masterBars.get(0).timeSignatureDenominator / 4;
-		final ArrayList2<Beat> beats = beatsMap.beats;
-		if (beats.stream().skip(1).anyMatch(beat -> beat.anchor)) {
+		int current_bpm = gp5File.tempo * gp5File.masterBars.get(0).timeSignatureDenominator / 4;
+		final ArrayList2<Beat> tempo_map_beats = beatsMap.beats;
+		if (tempo_map_beats.stream().skip(1).anyMatch(beat -> beat.anchor)) {
 			return;
 		}
 
-		beatsMap.setBPM(0, bpm);
+		// ArrayList2<WrappedGPBars> wrappedGPMeasures = new ArrayList2<WrappedGPBars>();
+		ArrayList2<ArrayList2<WrappedGPBars>> voice_list = new ArrayList2<>();
+		beatsMap.setBPM(0, current_bpm);
 
-		int currentBeatId = 0;
+		final int master_bars_count = gp5File.masterBars.size();
+		final List<GPBar> bars = gp5File.bars.get(0);
+		final int other_bars_count = bars.size();
+		// TODO: final int voices = bars.get(0).voices.size();
+		final int voices = 1;
 
-		for (final GPMasterBar masterBar : gp5File.masterBars) {
-			final int numberOfBeats = masterBar.timeSignatureNumerator;
+		if (other_bars_count == master_bars_count) {
+			for (int voice = 0; voice < voices; voice++) {
+				ArrayList2<WrappedGPBars> wrapped_GP_bars_in_voice = new ArrayList2<WrappedGPBars>();
+				boolean recalculate_beats = false;
+				int total_bar_beats = 0;
 
-			for (int i = 0; i < numberOfBeats; i++) {
-				if (currentBeatId + i >= beats.size()) {
-					break;
+				for (int bar = 0; bar < other_bars_count; bar++) {
+					final GPMasterBar master_bar = gp5File.masterBars.get(bar);
+					wrapped_GP_bars_in_voice.add(new WrappedGPBars(master_bar,bar+1));
+					
+					final int time_signature_num = master_bar.timeSignatureNumerator;
+					final int time_signature_den = master_bar.timeSignatureDenominator;
+
+					for (int bar_beat = 0; bar_beat < time_signature_num; bar_beat++) {
+						if (total_bar_beats + bar_beat >= tempo_map_beats.size()) {
+							break;
+						}
+
+						final Beat tempo_map_beat = tempo_map_beats.get(total_bar_beats + bar_beat);
+						tempo_map_beat.beatsInMeasure = time_signature_num;
+						tempo_map_beat.noteDenominator = time_signature_den;
+						wrapped_GP_bars_in_voice.getLast().bar_beats.add(tempo_map_beat);
+					}
+
+					wrapped_GP_bars_in_voice.getLast().available_space_in_64ths =
+					(int)(((double)time_signature_num / time_signature_den) * 64);
+					
+					final int notes_in_bar = bars.get(bar).voices.get(voice).size();
+					for (int note_beat = 0; note_beat < notes_in_bar; note_beat++) {
+						final GPBeat current_note_beat = bars.get(bar).voices.get(voice).get(note_beat);
+						wrapped_GP_bars_in_voice.get(bar).note_beats.add(current_note_beat);
+						if (current_bpm != current_note_beat.tempo) {
+							current_bpm = current_note_beat.tempo;
+							tempo_map_beats.get(total_bar_beats).anchor = true;
+						}
+					}
+					wrapped_GP_bars_in_voice.getLast().notes_in_bar = notes_in_bar;
+					beatsMap.setBPM(total_bar_beats, current_bpm); // Using this function to update position according to time signature
+					total_bar_beats += time_signature_num;
 				}
 
-				final Beat beat = beats.get(currentBeatId + i);
-				beat.beatsInMeasure = masterBar.timeSignatureNumerator;
-				beat.noteDenominator = masterBar.timeSignatureDenominator;
-				beatsMap.setBPM(currentBeatId+i, bpm); // Using this function to update position according to time signature
-			}
-
-			currentBeatId += numberOfBeats;
-		}
-
-		currentBeatId = 0;
-
-		final List<GPBar> bars = gp5File.bars.get(0);
-		for (int i = 0; i < bars.size(); i++) {
-			final GPBeat beat = bars.get(i).voices.get(0).get(0);
-			if (beat.tempo != bpm) {
-				bpm = beat.tempo;
-				beatsMap.setBPM(currentBeatId, bpm);
-				beats.get(currentBeatId).anchor = true;
-			}
-
-			currentBeatId += gp5File.masterBars.get(i).timeSignatureNumerator;
-			if (currentBeatId >= beats.size()) {
-				break;
+				// TODO: unwrap beats, then refresh positions from bpm and anchor changes
+				voice_list.add(wrapped_GP_bars_in_voice);
 			}
 		}
 
