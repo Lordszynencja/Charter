@@ -801,7 +801,7 @@ public class KeyboardHandler implements KeyListener {
 			return !sound.chord.chordNotesValue(n -> n.tremolo, false);
 		}, (sound, tremolo) -> {
 			if (sound.isNote()) {
-				sound.note.vibrato = tremolo;
+				sound.note.tremolo = tremolo;
 			} else {
 				sound.chord.chordNotes.values().forEach(n -> n.tremolo = tremolo);
 			}
