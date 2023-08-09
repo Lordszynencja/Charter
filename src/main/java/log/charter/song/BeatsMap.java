@@ -79,10 +79,6 @@ public class BeatsMap {
 
 	public void makeBeatsUntilSongEnd() {
 		final Beat current = beats.getLast();
-		if (current.position() > songLengthMs) {
-			beats.removeIf(beat -> beat.position() > songLengthMs);
-			return;
-		}
 
 		Beat previous;
 		int distance;

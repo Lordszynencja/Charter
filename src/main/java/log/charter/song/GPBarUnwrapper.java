@@ -84,6 +84,9 @@ public class GPBarUnwrapper {
 				beats_map.setBPM(first_in_bar_index, combo_beat.note_beats.get(0).tempo, false);
 				first_in_bar_index += combo_beat.bar_beats.size();
 			}
+			for (int i = 0; i < this.unwrapped_bars.getLast().bar_beats.size(); i++) {
+				beats_map.append_last_beat(); // Add an extra bar for end phrase
+			}
 			this.unwrapped_beats_map = new BeatsMap(beats_map);
 			this.unwrapped_beats_map.fixFirstBeatInMeasures();
 		}
@@ -93,5 +96,15 @@ public class GPBarUnwrapper {
 
 	public final BeatsMap get_unwrapped_beats_map() {
 		return this.unwrapped_beats_map;
+	}
+
+	public final int get_last_bar_start_position() {
+		for (int i = this.unwrapped_beats_map.beats.size() - 1; i > 0; i--) {
+			Beat beat = this.unwrapped_beats_map.beats.get(i);
+			if (beat.firstInMeasure) {
+				return beat.position();
+			}
+		}
+		return 0;
 	}
 }

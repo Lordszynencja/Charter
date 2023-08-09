@@ -145,7 +145,7 @@ public class ArrangementChart {
 		count.phrase = "COUNT";
 		eventPoints.add(0, count);
 
-		final EventPoint end = new EventPoint(unwrap.get(0).get_unwrapped_beats_map().beats.getLast().position());
+		final EventPoint end = new EventPoint(unwrap.get(0).get_last_bar_start_position());
 		end.phrase = "END";
 		eventPoints.add(end);
 	}
