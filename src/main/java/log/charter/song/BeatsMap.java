@@ -16,7 +16,7 @@ import log.charter.util.grid.GridPosition;
 
 public class BeatsMap {
 	public int songLengthMs;
-
+	public int next_beat_position;
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 
 	/**
@@ -24,9 +24,18 @@ public class BeatsMap {
 	 */
 	public BeatsMap(final int songLength) {
 		songLengthMs = songLength;
-
+		next_beat_position = 0;
 		beats.add(new Beat(0, 4, 4, true));
 		makeBeatsUntilSongEnd();
+	}
+
+	public BeatsMap(final int songLength, final boolean fill_beats_for_song) {
+		songLengthMs = songLength;
+		next_beat_position = 0;
+		if (fill_beats_for_song) {
+			beats.add(new Beat(0, 4, 4, true));
+			makeBeatsUntilSongEnd();
+		}
 	}
 
 	/**
@@ -216,21 +225,17 @@ public class BeatsMap {
 		return (int) (beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0));
 	}
 
-	public void setBPM(final int bpm_beat_id, final double newBPM) {
+	public void setBPM(final int bpm_beat_id, final double newBPM, boolean append_to_end_of_song) {
 		int previous_beat_length = beats.size() > 1 && bpm_beat_id < beats.size() - 1  ?
 			beats.get(bpm_beat_id+1).position() - beats.get(bpm_beat_id).position() :
 			500; // Magic number, calculated for 120 BPM
 
 		if (bpm_beat_id >= beats.size()) {
-			final int start_position = beats.getLast().position();
-			final int beat_length = beat_length_from_bpm_and_denominator((int)newBPM, beats.getLast().noteDenominator);
-			int next_start_position = start_position + beat_length;
-
-			while (next_start_position <= songLengthMs) {
-				final Beat last_beat = beats.getLast();
-				next_start_position = last_beat.position() + previous_beat_length;
-				final Beat new_beat = new Beat(next_start_position, last_beat.beatsInMeasure, last_beat.noteDenominator, false);
-				beats.add(new_beat);
+			if (append_to_end_of_song == false) {
+				return;
+			}
+			while (beats.getLast().position() <= songLengthMs) {
+				append_last_beat();
 			}
 		}
 		else {
@@ -246,15 +251,20 @@ public class BeatsMap {
 			int beat_offset_from_bpm_changes = delta_beat_length;
 
 			while (next_start_position <= songLengthMs) {
-				next_start_position += beat_length;
 				if (i <= beats.size() - 1) {
-					// beats.get(i).position(next_start_position); // Update position of existing beat
+					next_start_position += beat_length;
 					alter_beat_position(i,beat_offset_from_bpm_changes);
 					beat_offset_from_bpm_changes += delta_beat_length;
 				}
+				else {
+					if (append_to_end_of_song == false) {
+						return;
+					}
+					append_last_beat();
+					next_start_position += beat_length;
+				}
 				i++;
 			}
-
 		}
 	}
 
@@ -308,5 +318,47 @@ public class BeatsMap {
 	public void alter_beat_position(final int i, final int beat_position_shift) {
 		int original_beat_position = beats.get(i).position();
 		beats.get(i).position(original_beat_position + beat_position_shift);
+	}
+
+	public void append_last_beat()
+	{
+		Beat last_beat = beats.getLast();
+
+		next_beat_position = last_beat.position() + get_previous_beat_length();
+		final Beat new_beat = new Beat(next_beat_position, last_beat.beatsInMeasure, last_beat.noteDenominator, false);
+		beats.add(new_beat);
+	}
+
+	public void append_last_beat(Beat beat)
+	{
+		Beat last_beat = beats.getLast();
+
+		if (last_beat != null) {
+			next_beat_position = last_beat.position() + get_previous_beat_length();
+			beat.position(next_beat_position);
+		}
+		final Beat new_beat = new Beat(beat);
+		beats.add(new_beat);
+	}
+
+	public int get_previous_beat_length(final int index)
+	{
+		if (beats.size() > 1 && index < beats.size() - 1) {
+			return beats.get(index+1).position() - beats.get(index).position();
+		}
+		else {
+			return 500; // Magic number, calculated for 120 BPM
+		}
+	}
+
+	public int get_previous_beat_length()
+	{
+		if (beats.size() >= 2) {
+			return beats.getLast().position() - beats.get(beats.size() - 2).position();
+		}
+		else {
+			return 500; // Magic number, calculated for 120 BPM
+		}
+		
 	}
 }

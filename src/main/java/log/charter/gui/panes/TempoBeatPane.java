@@ -87,7 +87,7 @@ public class TempoBeatPane extends ParamsPane {
 
 		if (bpm.compareTo(calculateBPM(beat)) != 0) {
 			beat.anchor = true;
-			data.songChart.beatsMap.setBPM(beatId, bpm.doubleValue());
+			data.songChart.beatsMap.setBPM(beatId, bpm.doubleValue(), true);
 		}
 
 		final int currentBeatsInMeasure = beat.beatsInMeasure;

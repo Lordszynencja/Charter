@@ -137,6 +137,19 @@ public class ArrangementChart {
 		eventPoints.add(end);
 	}
 
+	private void addCountEndPhrases2(final ArrayList2<GPBarUnwrapper> unwrap) {
+		phrases.put("COUNT", new Phrase(0, false));
+		phrases.put("END", new Phrase(0, false));
+
+		final EventPoint count = new EventPoint(0);
+		count.phrase = "COUNT";
+		eventPoints.add(0, count);
+
+		final EventPoint end = new EventPoint(unwrap.get(0).get_unwrapped_beats_map().beats.getLast().position());
+		end.phrase = "END";
+		eventPoints.add(end);
+	}
+
 	public ArrangementChart(final ArrangementType arrangementType, final ArrayList2<Beat> beats) {
 		this.arrangementType = arrangementType;
 		addCountEndPhrases(beats);
@@ -207,6 +220,13 @@ public class ArrangementChart {
 		addBars(beats, gpBars);
 		addCountEndPhrases(beats);
 	}
+	
+	public ArrangementChart(final ArrayList2<GPBarUnwrapper> unwrap, final GPTrackData trackData) {
+		capo = trackData.capo;
+		arrangementType = getGPArrangementType(trackData);
+		addBars(unwrap);
+		addCountEndPhrases2(unwrap);
+	}
 
 	private ArrangementType getGPArrangementType(final GPTrackData trackData) {
 		if (trackData.trackName.toLowerCase().contains("lead")) {
@@ -274,6 +294,53 @@ public class ArrangementChart {
 			do {
 				currentBarBeatId++;
 			} while (currentBarBeatId < beats.size() && !beats.get(currentBarBeatId).firstInMeasure);
+		}
+	}
+	private void addBars(final ArrayList2<GPBarUnwrapper> unwrap) {
+		final Level level = new Level();
+		levels = new HashMap2<>();
+		levels.put(0, level);
+
+		int note_index = 0;
+		final boolean[] wasHOPOStart = new boolean[9];
+		final int[] hopoFrom = new int[9];
+		HandShape lastHandShape = null;
+
+		for (GPBarUnwrapper voice : unwrap) {
+			for (CombinedGPBars bar : voice.unwrapped_bars) {
+				// Initial note position is the first is a bar
+				NotePositionInformation notePosition = new NotePositionInformation(voice.get_unwrapped_beats_map().beats, 0, note_index);
+				for (GPBeat note_beat : bar.note_beats) {
+					int unmanipulatedLength = note_beat.duration.length;
+					note_beat.duration.length = (note_beat.duration.length * note_beat.tupletDenominator) / note_beat.tupletNumerator;
+		
+					if (note_beat.notes.isEmpty()) {
+						lastHandShape = null;
+						notePosition = notePosition.move(note_beat.duration);
+						note_beat.duration.length = unmanipulatedLength;
+						continue;
+					}
+
+					if (note_beat.notes.size() == 1) {
+						addNote(level, note_beat, note_beat.notes.get(0), notePosition, wasHOPOStart, hopoFrom);
+						lastHandShape = null;
+					}
+					else if (note_beat.notes.size() > 1) {
+						addChord(level, note_beat, note_beat.notes, notePosition, wasHOPOStart, hopoFrom, lastHandShape);
+						lastHandShape = level.handShapes.getLast();
+					}
+
+					notePosition = notePosition.move(note_beat.duration);
+					note_beat.duration.length = unmanipulatedLength;
+
+					for (final GPNote note : note_beat.notes) {
+						final int string = note.string;
+						wasHOPOStart[string] = note.effects.isHammerPullOrigin;
+						hopoFrom[string] = note.fret;
+					}
+				}
+				note_index += bar.bar_beats.size();
+			}
 		}
 	}
 

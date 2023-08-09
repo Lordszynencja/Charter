@@ -4,7 +4,7 @@ import log.charter.io.gp.gp5.GPMasterBar;
 import log.charter.io.gp.gp5.GPBeat;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class WrappedGPBars {
+public class CombinedGPBars {
 	public GPMasterBar bar;
 	public ArrayList2<Beat> bar_beats;
 	public ArrayList2<GPBeat> note_beats;
@@ -12,7 +12,7 @@ public class WrappedGPBars {
 	public int available_space_in_64ths;
 	public int notes_in_bar;
 
-	public WrappedGPBars(final GPMasterBar bar, final int id) {
+	public CombinedGPBars(final GPMasterBar bar, final int id) {
 		this.bar = bar;
 		this.gp_bar_id = id;
 		this.bar_beats = new ArrayList2<>();
