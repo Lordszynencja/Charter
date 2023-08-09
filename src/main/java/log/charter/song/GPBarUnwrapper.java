@@ -31,23 +31,40 @@ public class GPBarUnwrapper {
 
 	public void unwrap() {
 		int start_of_repeat_bar = 0;
-		// int repeat_n_times = -1; 
         HashMap<Integer, Integer> repeat_tracker = new HashMap<>();
+		int active_alternate_ending = 0;
+		int processed_alternate_endings = 0;
 
 		List<Integer> bar_order = new ArrayList<>();
 		for (int i = 0; i < this.bars.size(); i++) {
 			final CombinedGPBars combo_bar = this.bars.get(i);
 			final int current_id = combo_bar.gp_bar_id;
+
+			if (combo_bar.bar.alternateEndings != 0) {
+				previous_alternate_ending = active_alternate_ending;
+				active_alternate_ending = combo_bar.bar.alternateEndings;
+
+				if (active_alternate_ending != 0 &&
+					processed_alternate_endings >= combo_bar.bar.alternateEndings) {
+					continue;
+				}
+			}
+			else {
+				processed_alternate_endings = active_alternate_ending;
+			}
 			bar_order.add(current_id);
 
 			// If this is a repeat bar, initialize its entry to keep track of potential nested repeats
 			if (combo_bar.bar.repeatCount != 0) {
 				repeat_tracker.putIfAbsent(current_id, -1);
 			}
+
+			// Store repeat start
 			if (combo_bar.bar.isRepeatStart) {
 				start_of_repeat_bar = current_id;
 			}
 
+			// Handle repeat bars
 			if (repeat_tracker.containsKey(current_id)) {
 				int repeat_n_times = repeat_tracker.get(current_id);
 
