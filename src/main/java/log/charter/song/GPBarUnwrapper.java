@@ -29,11 +29,23 @@ public class GPBarUnwrapper {
 		return this.bars.getLast();
 	}
 
+	private final int read_alternate_ending_bit(final int bitmask, final int start_bit)
+	{
+		int alternate_ending = start_bit;
+
+		for (int i = start_bit; i < 8; i++) {
+			if (((bitmask >> i) & 1) != 0) {
+				alternate_ending = i+1;
+				break;
+			}
+		}
+		return alternate_ending;
+	}
 	public void unwrap() {
-		int start_of_repeat_bar = 0;
+		int start_of_repeat_bar = 1; // If no repeat starts are set, the first bar is used
         HashMap<Integer, Integer> repeat_tracker = new HashMap<>();
-		int active_alternate_ending = 0;
-		int processed_alternate_endings = 0;
+		int next_alternate_ending_to_process = 1;
+		int bar_to_progress_past_to_disable_alt_ending = 0;
 
 		List<Integer> bar_order = new ArrayList<>();
 		for (int i = 0; i < this.bars.size(); i++) {
@@ -41,16 +53,20 @@ public class GPBarUnwrapper {
 			final int current_id = combo_bar.gp_bar_id;
 
 			if (combo_bar.bar.alternateEndings != 0) {
-				previous_alternate_ending = active_alternate_ending;
-				active_alternate_ending = combo_bar.bar.alternateEndings;
-
-				if (active_alternate_ending != 0 &&
-					processed_alternate_endings >= combo_bar.bar.alternateEndings) {
+				bar_to_progress_past_to_disable_alt_ending = current_id;
+				// If this is a different alternate ending skip it
+				if (next_alternate_ending_to_process != read_alternate_ending_bit(combo_bar.bar.alternateEndings, next_alternate_ending_to_process-1)) {
 					continue;
+				}
+				// If the right ending, progress to the next one
+				else if (next_alternate_ending_to_process == read_alternate_ending_bit(combo_bar.bar.alternateEndings, next_alternate_ending_to_process-1)) {
+					next_alternate_ending_to_process++;
 				}
 			}
 			else {
-				processed_alternate_endings = active_alternate_ending;
+				if (current_id > bar_to_progress_past_to_disable_alt_ending) {
+					next_alternate_ending_to_process = 1;
+				}
 			}
 			bar_order.add(current_id);
 
