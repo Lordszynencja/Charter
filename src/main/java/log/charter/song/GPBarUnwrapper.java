@@ -45,6 +45,8 @@ public class GPBarUnwrapper {
 		int start_of_repeat_bar = 1; // If no repeat starts are set, the first bar is used
         HashMap<Integer, Integer> repeat_tracker = new HashMap<>();
 		int next_alternate_ending_to_process = 1;
+		int stored_next_alternate_ending = 0;
+		int latest_alternate_ending = 1;
 		int bar_to_progress_past_to_disable_alt_ending = 0;
 
 		List<Integer> bar_order = new ArrayList<>();
@@ -53,19 +55,22 @@ public class GPBarUnwrapper {
 			final int current_id = combo_bar.gp_bar_id;
 
 			if (combo_bar.bar.alternateEndings != 0) {
-				bar_to_progress_past_to_disable_alt_ending = current_id;
+				bar_to_progress_past_to_disable_alt_ending = current_id > bar_to_progress_past_to_disable_alt_ending ? current_id : bar_to_progress_past_to_disable_alt_ending;
+				latest_alternate_ending = read_alternate_ending_bit(combo_bar.bar.alternateEndings, next_alternate_ending_to_process-1);
+
 				// If this is a different alternate ending skip it
-				if (next_alternate_ending_to_process != read_alternate_ending_bit(combo_bar.bar.alternateEndings, next_alternate_ending_to_process-1)) {
+				if (next_alternate_ending_to_process != latest_alternate_ending) {
 					continue;
 				}
 				// If the right ending, progress to the next one
-				else if (next_alternate_ending_to_process == read_alternate_ending_bit(combo_bar.bar.alternateEndings, next_alternate_ending_to_process-1)) {
-					next_alternate_ending_to_process++;
+				else if (next_alternate_ending_to_process == latest_alternate_ending) {
+					stored_next_alternate_ending = next_alternate_ending_to_process + 1; // Read when repeating
 				}
 			}
 			else {
-				if (current_id > bar_to_progress_past_to_disable_alt_ending) {
-					next_alternate_ending_to_process = 1;
+				if (latest_alternate_ending == next_alternate_ending_to_process - 1) {
+					bar_to_progress_past_to_disable_alt_ending = current_id > bar_to_progress_past_to_disable_alt_ending ? current_id : bar_to_progress_past_to_disable_alt_ending;
+					continue;
 				}
 			}
 			bar_order.add(current_id);
@@ -77,6 +82,12 @@ public class GPBarUnwrapper {
 
 			// Store repeat start
 			if (combo_bar.bar.isRepeatStart) {
+				// When passing a new repeat bar we can reset alternate ending variables
+				if (start_of_repeat_bar != current_id) {
+					next_alternate_ending_to_process = 1;
+					stored_next_alternate_ending = 0;
+					latest_alternate_ending = 1;
+				}
 				start_of_repeat_bar = current_id;
 			}
 
@@ -94,6 +105,9 @@ public class GPBarUnwrapper {
 
 				repeat_n_times--; // We are sending it to repeat
 				repeat_tracker.put(current_id, repeat_n_times);
+				next_alternate_ending_to_process = stored_next_alternate_ending;
+				stored_next_alternate_ending = 0;
+				latest_alternate_ending = 0;
 				continue;
 			}
 		}
