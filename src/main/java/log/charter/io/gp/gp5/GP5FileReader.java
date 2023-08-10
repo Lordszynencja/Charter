@@ -3,6 +3,7 @@ package log.charter.io.gp.gp5;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readBoolean;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readColor;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readDouble;
+import static log.charter.io.gp.gp5.GP5BinaryUtils.readInt16LE;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readInt32LE;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readShortInt8;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readStringWithByteSkip;
@@ -54,7 +55,7 @@ public class GP5FileReader {
 	private List<GPMasterBar> masterBars;
 	private List<GPTrackData> tracks;
 	private Map<Integer, List<GPBar>> bars;
-
+	private Directions directions;
 	private GP5File file;
 
 	private GP5FileReader(final ByteArrayInputStream data) {
@@ -82,7 +83,7 @@ public class GP5FileReader {
 		tracks = readTracksData();
 		bars = readBars();
 
-		file = new GP5File(version, scoreInformation, tempo, masterBars, tracks, bars, lyrics);
+		file = new GP5File(version, scoreInformation, tempo, masterBars, tracks, bars, lyrics, directions);
 		return file;
 	}
 
@@ -162,7 +163,7 @@ public class GP5FileReader {
 		}
 
 		readPlaybackInfos();
-		readRepetitions();
+		readDirections();
 	}
 
 	private void readMasterSettings() {
@@ -213,30 +214,30 @@ public class GP5FileReader {
 		}
 	}
 
-	private void readRepetitions() {
+	private void readDirections() {
 		if (version < 500) {
 			return;
 		}
-
-		data.skip(2); // "Coda" bar index
-		data.skip(2); // "Double Coda" bar index
-		data.skip(2); // "Segno" bar index
-		data.skip(2); // "Segno Segno" bar index
-		data.skip(2); // "Fine" bar index
-		data.skip(2); // "Da Capo" bar index
-		data.skip(2); // "Da Capo al Coda" bar index
-		data.skip(2); // "Da Capo al Double Coda" bar index
-		data.skip(2); // "Da Capo al Fine" bar index
-		data.skip(2); // "Da Segno" bar index
-		data.skip(2); // "Da Segno al Coda" bar index
-		data.skip(2); // "Da Segno al Double Coda" bar index
-		data.skip(2); // "Da Segno al Fine "bar index
-		data.skip(2); // "Da Segno Segno" bar index
-		data.skip(2); // "Da Segno Segno al Coda" bar index
-		data.skip(2); // "Da Segno Segno al Double Coda" bar index
-		data.skip(2); // "Da Segno Segno al Fine" bar index
-		data.skip(2); // "Da Coda" bar index
-		data.skip(2); // "Da Double Coda" bar index
+		directions = new Directions();
+		directions.coda = readInt16LE(data); // "Coda" bar index
+		directions.double_coda = readInt16LE(data); // "Double Coda" bar index
+		directions.segno = readInt16LE(data); // "Segno" bar index
+		directions.segno_segno = readInt16LE(data); // "Segno Segno" bar index
+		directions.fine = readInt16LE(data); // "Fine" bar index
+		directions.da_capo = readInt16LE(data); // "Da Capo" bar index
+		directions.da_capo_al_coda = readInt16LE(data); // "Da Capo al Coda" bar index
+		directions.da_capo_al_double_coda = readInt16LE(data); // "Da Capo al Double Coda" bar index
+		directions.da_capo_al_fine = readInt16LE(data); // "Da Capo al Fine" bar index
+		directions.da_segno = readInt16LE(data); // "Da Segno" bar index
+		directions.da_segno_al_coda = readInt16LE(data); // "Da Segno al Coda" bar index
+		directions.da_segno_al_double_coda = readInt16LE(data); // "Da Segno al Double Coda" bar index
+		directions.da_segno_al_fine = readInt16LE(data); // "Da Segno al Fine "bar index
+		directions.da_segno_segno = readInt16LE(data); // "Da Segno Segno" bar index
+		directions.da_segno_segno_al_coda = readInt16LE(data); // "Da Segno Segno al Coda" bar index
+		directions.da_segno_segno_al_double_coda = readInt16LE(data); // "Da Segno Segno al Double Coda" bar index
+		directions.da_segno_segno_al_fine = readInt16LE(data); // "Da Segno Segno al Fine" bar index
+		directions.da_coda = readInt16LE(data); // "Da Coda" bar index
+		directions.da_double_coda = readInt16LE(data); // "Da Double Coda" bar index
 		data.skip(4); // unknown
 	}
 

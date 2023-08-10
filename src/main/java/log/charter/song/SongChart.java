@@ -167,7 +167,7 @@ public class SongChart {
 
 		if (other_bars_count == master_bars_count) {
 			for (int voice = 0; voice < voices; voice++) {
-				GPBarUnwrapper wrapped_GP_bars_in_voice = new GPBarUnwrapper();
+				GPBarUnwrapper wrapped_GP_bars_in_voice = new GPBarUnwrapper(gp5File.directions);
 				int total_bar_beats = 0;
 
 				for (int bar = 0; bar < other_bars_count; bar++) {
