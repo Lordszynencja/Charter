@@ -10,11 +10,13 @@ public class GPBarUnwrapper {
 	ArrayList2<CombinedGPBars> bars;
 	ArrayList2<CombinedGPBars> unwrapped_bars;
 	BeatsMap unwrapped_beats_map;
+	List<Integer> bar_order;
 
 	public GPBarUnwrapper() {
 		this.bars = new ArrayList2<CombinedGPBars>();
 		this.unwrapped_bars = new ArrayList2<CombinedGPBars>();
 		this.unwrapped_beats_map = new BeatsMap(0);
+		this.bar_order = new ArrayList<>();
 	}
 
 	public boolean add_bar(final CombinedGPBars bar) {
@@ -49,7 +51,6 @@ public class GPBarUnwrapper {
 		int latest_alternate_ending = 1;
 		int bar_to_progress_past_to_disable_alt_ending = 0;
 
-		List<Integer> bar_order = new ArrayList<>();
 		for (int i = 0; i < this.bars.size(); i++) {
 			final CombinedGPBars combo_bar = this.bars.get(i);
 			final int current_id = combo_bar.gp_bar_id;
@@ -73,7 +74,7 @@ public class GPBarUnwrapper {
 					continue;
 				}
 			}
-			bar_order.add(current_id);
+			this.bar_order.add(current_id);
 
 			// If this is a repeat bar, initialize its entry to keep track of potential nested repeats
 			if (combo_bar.bar.repeatCount != 0) {
@@ -113,7 +114,7 @@ public class GPBarUnwrapper {
 		}
 
 		// Now that we know the bar order, start unwrapping
-		for (int bar: bar_order) {
+		for (int bar: this.bar_order) {
 			this.unwrapped_bars.add(this.bars.get(bar-1));
 		}
 	}

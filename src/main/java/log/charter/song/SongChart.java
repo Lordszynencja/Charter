@@ -152,7 +152,7 @@ public class SongChart {
 		}
 	}
 
-	private ArrayList2<GPBarUnwrapper> unwrapGP5File(final GP5File gp5File) {
+	public ArrayList2<GPBarUnwrapper> unwrapGP5File(final GP5File gp5File) {
 		int current_bpm = gp5File.tempo * gp5File.masterBars.get(0).timeSignatureDenominator / 4;
 		final ArrayList2<Beat> tempo_map_beats = beatsMap.beats;
 		ArrayList2<GPBarUnwrapper> voice_list = new ArrayList2<>();
