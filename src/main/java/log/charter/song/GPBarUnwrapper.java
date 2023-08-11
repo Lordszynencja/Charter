@@ -65,6 +65,28 @@ public class GPBarUnwrapper {
 		for (int i = 0; i < this.bars.size(); i++) {
 			final CombinedGPBars combo_bar = this.bars.get(i);
 			final int current_id = combo_bar.gp_bar_id;
+			for (int j = i; j < this.bars.size(); j++) {
+				if (this.bars.get(j).bar.repeatCount != 0) {
+					is_in_repeat_section = true;
+					bar_to_check_if_directions_are_ok = j+1;
+					break;
+				}
+				else if (this.bars.get(j).bar.isRepeatStart) {
+					is_in_repeat_section = false;
+					break;
+				}
+				else {
+					is_in_repeat_section = false;
+				}
+			}
+
+			if (is_in_repeat_section) {
+				if (repeat_tracker.containsKey(bar_to_check_if_directions_are_ok)) {
+					if (repeat_tracker.get(bar_to_check_if_directions_are_ok) == 0) {
+						is_in_repeat_section = false;
+					}
+				}
+			}
 
 			if (combo_bar.bar.alternateEndings != 0) {
 				bar_to_progress_past_to_disable_alt_ending = current_id > bar_to_progress_past_to_disable_alt_ending ? current_id : bar_to_progress_past_to_disable_alt_ending;
@@ -87,6 +109,10 @@ public class GPBarUnwrapper {
 			}
 			this.bar_order.add(current_id);
 
+			// Check early if this is the fine bar and if so, end unwrapping
+			if (fine_activated && fine_bar(current_id)) {
+				break;
+			}
 			// If this is a repeat bar, initialize its entry to keep track of potential nested repeats
 			if (combo_bar.bar.repeatCount != 0) {
 				repeat_tracker.putIfAbsent(current_id, -1);
@@ -120,16 +146,14 @@ public class GPBarUnwrapper {
 				next_alternate_ending_to_process = stored_next_alternate_ending;
 				stored_next_alternate_ending = 0;
 				latest_alternate_ending = 0;
-				continue;
+				if (repeat_n_times >= 0) {
+					continue; // Don't continue to check directions if we are repeating
+				}
 			}
 
 			if (al_fine_bar(current_id)) {
 				fine_activated = true;
 			}
-			else if (fine_activated && fine_bar(current_id)) {
-				break;
-			}
-
 			if (al_coda_bar(current_id)) {
 				coda_activated = true;
 			}
@@ -142,17 +166,21 @@ public class GPBarUnwrapper {
 			if (da_capo_bar(current_id)) {
 				i = -1; // Return to first bar
 			}
-			else if ((direction_bar_id = da_segno_bar(current_id)) != 0 ||
-				     (direction_bar_id = da_segno_segno_bar(current_id)) != 0) {
-				i = direction_bar_id - 1; // Go to segno/segno segno bar
+			else if (is_in_repeat_section == false &&
+					((direction_bar_id = da_segno_bar(current_id)) != 0 ||
+				     (direction_bar_id = da_segno_segno_bar(current_id)) != 0)) {
+				i = direction_bar_id - 1 - 1; // Go to segno/segno segno bar
+				if (repeat_tracker.containsKey(bar_to_check_if_directions_are_ok)) {
+					repeat_tracker.put(bar_to_check_if_directions_are_ok, -1); // Reset repeats when using direction
+				}
 			}
 			else if (coda_activated && (direction_bar_id = da_coda_bar(current_id)) != 0) {
 				coda_activated = false;
-				i = direction_bar_id - 1; // Go to coda bar
+				i = direction_bar_id - 1 - 1; // Go to coda bar
 			}
 			else if (double_coda_activated && (direction_bar_id = da_double_coda_bar(current_id)) != 0) {
 				double_coda_activated = false;
-				i = direction_bar_id - 1; // Go to double coda bar
+				i = direction_bar_id - 1 - 1; // Go to double coda bar
 			}
 
 
@@ -233,7 +261,7 @@ public class GPBarUnwrapper {
 		if (bar_id == this.directions.da_coda) {
 			direction_bar_id = this.directions.coda;
 			this.directions.da_coda = 65535;
-		};
+		}
 		return direction_bar_id;
 	}
 	private int da_double_coda_bar(final int bar_id) {
@@ -241,56 +269,39 @@ public class GPBarUnwrapper {
 		if (bar_id == this.directions.da_double_coda) {
 			direction_bar_id = this.directions.double_coda;
 			this.directions.da_double_coda = 65535;
-		};
+		}
 		return direction_bar_id;
 	}
-	private boolean al_coda_bar(final int bar_id) {
-		if (bar_id == this.directions.da_capo_al_coda) {
-			this.directions.da_capo_al_coda = 65535;
-			return true;
-		}
-		if (bar_id == this.directions.da_segno_al_coda) {
-			this.directions.da_segno_al_coda = 65535;
-			return true;
-		}
-		if (bar_id == this.directions.da_segno_segno_al_coda) {
-			this.directions.da_segno_segno_al_coda = 65535;
+	private boolean fine_bar(final int bar_id) {
+		if (bar_id == this.directions.fine) {
+			this.directions.fine = 65535;
 			return true;
 		}
 		return false;
+	}
+	private boolean al_coda_bar(final int bar_id) {
+		return (bar_id == this.directions.da_capo_al_coda ||
+				bar_id == this.directions.da_segno_al_coda ||
+				bar_id == this.directions.da_segno_segno_al_coda ||
+				(this.directions.da_capo_al_coda == 65535 && // If there are no "al coda", da coda will trigger by itself
+				 this.directions.da_segno_al_coda == 65535 &&
+				 this.directions.da_segno_segno_al_coda == 65535));
 	}
 	private boolean al_double_coda_bar(final int bar_id) {
-		if (bar_id == this.directions.da_capo_al_double_coda) {
-			this.directions.da_capo_al_double_coda = 65535;
-			return true;
-		}
-		if (bar_id == this.directions.da_segno_al_double_coda) {
-			this.directions.da_segno_al_double_coda = 65535;
-			return true;
-		}
-		if (bar_id == this.directions.da_segno_segno_al_double_coda) {
-			this.directions.da_segno_segno_al_double_coda = 65535;
-			return true;
-		}
-		return false;
+		return (bar_id == this.directions.da_capo_al_double_coda ||
+				bar_id == this.directions.da_segno_al_double_coda ||
+				bar_id == this.directions.da_segno_segno_al_double_coda ||
+				(this.directions.da_capo_al_double_coda == 65535 && // If there are no "al double coda", da double coda will trigger by itself
+				 this.directions.da_segno_al_double_coda == 65535 &&
+				 this.directions.da_segno_segno_al_double_coda == 65535));
 	}
 	private boolean al_fine_bar(final int bar_id) {
-		if (bar_id == this.directions.da_capo_al_fine) {
-			this.directions.da_capo_al_fine = 65535;
-			return true;
-		}
-		if (bar_id == this.directions.da_segno_al_fine) {
-			this.directions.da_segno_al_fine = 65535;
-			return true;
-		}
-		if (bar_id == this.directions.da_segno_segno_al_fine) {
-			this.directions.da_segno_segno_al_fine = 65535;
-			return true;
-		}
-		return false;
-	}
-	private boolean fine_bar(final int bar_id) {
-		return (bar_id == this.directions.fine);
+		return (bar_id == this.directions.da_capo_al_fine ||
+				bar_id == this.directions.da_segno_al_fine ||
+				bar_id == this.directions.da_segno_segno_al_fine ||
+				(this.directions.da_capo_al_fine == 65535 && // If there are no "al fine", fine will trigger by itself
+				 this.directions.da_segno_al_fine == 65535 &&
+				 this.directions.da_segno_segno_al_fine == 65535));
 	}
 
 	public final BeatsMap get_unwrapped_beats_map(final int song_length_ms) {

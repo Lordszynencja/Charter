@@ -132,7 +132,7 @@ public class TestGPBarUnwrapper {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         ArrayList<Integer> expected_result = new ArrayList<>(
-            Arrays.asList(1,3,4,1,2,3,4));
+            Arrays.asList(1,2,3,2,3));
 
         assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
     }
@@ -159,7 +159,7 @@ public class TestGPBarUnwrapper {
                 18,19,18,19,20,21,20,22,
                 12,13,14,23,24,23,24,23,24,25,
                 26,27,26,27,26,27,26,27,
-                28,29,28,29,28,29,30));
+                28,29,28,29,28,29,28,30));
 
         assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
     }
