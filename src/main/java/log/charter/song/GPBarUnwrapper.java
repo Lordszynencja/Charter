@@ -1,6 +1,7 @@
 package log.charter.song;
 
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -62,6 +63,9 @@ public class GPBarUnwrapper {
 		boolean coda_activated = false;
 		boolean double_coda_activated = false;
 
+		boolean is_in_repeat_section = false;
+		int bar_to_check_if_directions_are_ok = 0;
+
 		for (int i = 0; i < this.bars.size(); i++) {
 			final CombinedGPBars combo_bar = this.bars.get(i);
 			final int current_id = combo_bar.gp_bar_id;
@@ -102,7 +106,9 @@ public class GPBarUnwrapper {
 				}
 			}
 			else {
-				if (latest_alternate_ending == next_alternate_ending_to_process - 1) {
+				// If there are alt endings, skip the ones we have processed
+				if (latest_alternate_ending != 0 &&
+					latest_alternate_ending == next_alternate_ending_to_process - 1) {
 					bar_to_progress_past_to_disable_alt_ending = current_id > bar_to_progress_past_to_disable_alt_ending ? current_id : bar_to_progress_past_to_disable_alt_ending;
 					continue;
 				}
@@ -173,6 +179,13 @@ public class GPBarUnwrapper {
 				if (repeat_tracker.containsKey(bar_to_check_if_directions_are_ok)) {
 					repeat_tracker.put(bar_to_check_if_directions_are_ok, -1); // Reset repeats when using direction
 				}
+				for (Entry<Integer, Integer> entry : repeat_tracker.entrySet() ) {
+					if (entry.getKey() >= direction_bar_id) {
+						entry.setValue(-1);
+					}
+				}
+				next_alternate_ending_to_process = 1; // Reset alt ending variables
+				
 			}
 			else if (coda_activated && (direction_bar_id = da_coda_bar(current_id)) != 0) {
 				coda_activated = false;

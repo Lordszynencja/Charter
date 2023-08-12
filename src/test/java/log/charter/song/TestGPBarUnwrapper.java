@@ -163,4 +163,27 @@ public class TestGPBarUnwrapper {
 
         assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
     }
+    @Test
+    void testRealComplexTabProgression2() {
+        final File file = new File("src/test/resources/gp_import_test_files/real_complex_tab_progression_2.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(1,2,1,2,
+                3,4,3,5,
+                6,7,6,8,
+                9,10,11,12,13,12,14,
+                15,16,17,18,15,16,19,20,
+                21,22,23,21,22,24,
+                25,26,25,27,
+                28,29,28,30,
+                31,32,33,32,34,
+                35,36,35,37, // Dal Segno al Coda
+                21,22,23,21,22,24,
+                25,26,25,27,
+                28,29,28,30, // Da Coda
+                38,39));
+
+        assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
+    }
 }
