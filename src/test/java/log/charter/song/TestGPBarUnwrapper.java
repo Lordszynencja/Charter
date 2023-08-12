@@ -87,6 +87,46 @@ public class TestGPBarUnwrapper {
         assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
     }
     @Test
+    void testMissingCoda() {
+        final File file = new File("src/test/resources/gp_import_test_files/missing_coda.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(1,2,3,4));
+
+        assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
+    }
+    @Test
+    void testMissingDoubleCoda() {
+        final File file = new File("src/test/resources/gp_import_test_files/missing_double_coda.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(1,2,3,4));
+
+        assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
+    }
+    @Test
+    void testMissingSegno() {
+        final File file = new File("src/test/resources/gp_import_test_files/missing_segno.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(1,2,3,4));
+
+        assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
+    }
+    @Test
+    void testMissingSegnoSegno() {
+        final File file = new File("src/test/resources/gp_import_test_files/missing_segno_segno.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(1,2,3,4));
+
+        assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
+    }
+    @Test
     void testDaCapo() {
         final File file = new File("src/test/resources/gp_import_test_files/da_capo.gp5");
         final GP5File gp5File = GP5FileReader.importGPFile(file);

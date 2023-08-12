@@ -159,13 +159,13 @@ public class GPBarUnwrapper {
 				}
 			}
 
-			if (al_fine_bar(current_id)) {
+			if (fine_exists() && al_fine_bar(current_id)) {
 				fine_activated = true;
 			}
-			if (al_coda_bar(current_id)) {
+			if (coda_exists() && al_coda_bar(current_id)) {
 				coda_activated = true;
 			}
-			if (al_double_coda_bar(current_id)) {
+			if (double_coda_exists() && al_double_coda_bar(current_id)) {
 				double_coda_activated = true;
 			}
 
@@ -175,8 +175,8 @@ public class GPBarUnwrapper {
 				i = -1; // Return to first bar
 			}
 			else if (is_in_repeat_section == false &&
-					((direction_bar_id = da_segno_bar(current_id)) != 0 ||
-				     (direction_bar_id = da_segno_segno_bar(current_id)) != 0)) {
+					((segno_exists() && (direction_bar_id = da_segno_bar(current_id)) != 0) ||
+				     (segno_segno_exists() && (direction_bar_id = da_segno_segno_bar(current_id)) != 0))) {
 				i = direction_bar_id - 1 - 1; // Go to segno/segno segno bar
 				if (repeat_tracker.containsKey(bar_to_check_if_directions_are_ok)) {
 					repeat_tracker.put(bar_to_check_if_directions_are_ok, -1); // Reset repeats when using direction
@@ -299,6 +299,21 @@ public class GPBarUnwrapper {
 			return true;
 		}
 		return false;
+	}
+	private boolean coda_exists() {
+		return (this.directions.coda != 65535);
+	}
+	private boolean double_coda_exists() {
+		return (this.directions.double_coda != 65535);
+	}
+	private boolean fine_exists() {
+		return (this.directions.fine != 65535);
+	}
+	private boolean segno_exists() {
+		return (this.directions.segno != 65535);
+	}
+	private boolean segno_segno_exists() {
+		return (this.directions.segno_segno != 65535);
 	}
 	private boolean al_coda_bar(final int bar_id) {
 		return (bar_id == this.directions.da_capo_al_coda ||
