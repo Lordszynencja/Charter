@@ -107,8 +107,8 @@ public class TestGPBarUnwrapper {
         assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
     }
     @Test
-    void testDaCoda() {
-        final File file = new File("src/test/resources/gp_import_test_files/da_coda.gp5");
+    void testDaCoda1() {
+        final File file = new File("src/test/resources/gp_import_test_files/da_coda_1.gp5");
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         ArrayList<Integer> expected_result = new ArrayList<>(
@@ -117,8 +117,18 @@ public class TestGPBarUnwrapper {
         assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
     }
     @Test
-    void testDaDoubleCoda() {
-        final File file = new File("src/test/resources/gp_import_test_files/da_double_coda.gp5");
+    void testDaCoda2() {
+        final File file = new File("src/test/resources/gp_import_test_files/da_coda_2.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(1,2,1,3,4,1,2,1,2,3,4));
+
+        assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
+    }
+    @Test
+    void testDaDoubleCoda1() {
+        final File file = new File("src/test/resources/gp_import_test_files/da_double_coda_1.gp5");
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         ArrayList<Integer> expected_result = new ArrayList<>(
@@ -127,8 +137,18 @@ public class TestGPBarUnwrapper {
         assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
     }
     @Test
-    void testDalSegno() {
-        final File file = new File("src/test/resources/gp_import_test_files/dal_segno.gp5");
+    void testDaDoubleCoda2() {
+        final File file = new File("src/test/resources/gp_import_test_files/da_double_coda_2.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(1,2,1,3,4,1,2,1,2,3,4));
+
+        assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
+    }
+    @Test
+    void testDalSegno1() {
+        final File file = new File("src/test/resources/gp_import_test_files/dal_segno_1.gp5");
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         ArrayList<Integer> expected_result = new ArrayList<>(
@@ -137,8 +157,28 @@ public class TestGPBarUnwrapper {
         assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
     }
     @Test
-    void testDalSegnoSegno() {
-        final File file = new File("src/test/resources/gp_import_test_files/dal_segno_segno.gp5");
+    void testDalSegno2() {
+        final File file = new File("src/test/resources/gp_import_test_files/dal_segno_2.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(1,2,3,4,1,2,3,2,3,4,1,2,3,4));
+
+        assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
+    }
+    @Test
+    void testDalSegnoSegno1() {
+        final File file = new File("src/test/resources/gp_import_test_files/dal_segno_segno_1.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(1,2,3,2,3));
+
+        assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
+    }
+    @Test
+    void testDalSegnoSegno2() {
+        final File file = new File("src/test/resources/gp_import_test_files/dal_segno_segno_2.gp5");
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         ArrayList<Integer> expected_result = new ArrayList<>(

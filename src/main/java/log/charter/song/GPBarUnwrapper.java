@@ -70,13 +70,15 @@ public class GPBarUnwrapper {
 			final CombinedGPBars combo_bar = this.bars.get(i);
 			final int current_id = combo_bar.gp_bar_id;
 			for (int j = i; j < this.bars.size(); j++) {
-				if (this.bars.get(j).bar.repeatCount != 0) {
-					is_in_repeat_section = true;
-					bar_to_check_if_directions_are_ok = j+1;
+				if (this.bars.get(j).bar.isRepeatStart ||
+					this.directions.coda == j ||
+					this.directions.double_coda == j) {
+					is_in_repeat_section = false;
 					break;
 				}
-				else if (this.bars.get(j).bar.isRepeatStart) {
-					is_in_repeat_section = false;
+				else if (this.bars.get(j).bar.repeatCount != 0) {
+					is_in_repeat_section = true;
+					bar_to_check_if_directions_are_ok = j+1;
 					break;
 				}
 				else {
@@ -180,20 +182,26 @@ public class GPBarUnwrapper {
 					repeat_tracker.put(bar_to_check_if_directions_are_ok, -1); // Reset repeats when using direction
 				}
 				for (Entry<Integer, Integer> entry : repeat_tracker.entrySet() ) {
-					if (entry.getKey() >= direction_bar_id) {
 						entry.setValue(-1);
 					}
-				}
 				next_alternate_ending_to_process = 1; // Reset alt ending variables
 				
 			}
-			else if (coda_activated && (direction_bar_id = da_coda_bar(current_id)) != 0) {
+			else if (coda_activated &&
+					 is_in_repeat_section == false && (direction_bar_id = da_coda_bar(current_id)) != 0) {
 				coda_activated = false;
 				i = direction_bar_id - 1 - 1; // Go to coda bar
+				for (Entry<Integer, Integer> entry : repeat_tracker.entrySet() ) {
+					entry.setValue(-1);
+				}
 			}
-			else if (double_coda_activated && (direction_bar_id = da_double_coda_bar(current_id)) != 0) {
+			else if (double_coda_activated &&
+					 is_in_repeat_section == false && (direction_bar_id = da_double_coda_bar(current_id)) != 0) {
 				double_coda_activated = false;
 				i = direction_bar_id - 1 - 1; // Go to double coda bar
+				for (Entry<Integer, Integer> entry : repeat_tracker.entrySet() ) {
+					entry.setValue(-1);
+				}
 			}
 
 
