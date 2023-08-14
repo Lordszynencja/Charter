@@ -110,6 +110,7 @@ import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
 import log.charter.song.notes.IPositionWithLength;
+import log.charter.song.notes.Note;
 import log.charter.song.notes.Position;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -827,7 +828,13 @@ public class KeyboardHandler implements KeyListener {
 		undoSystem.addUndo();
 		selected.forEach(selectedValue -> {
 			if (selectedValue.selectable.isNote()) {
-				selectedValue.selectable.note.linkNext = newValue;
+				final Note note = selectedValue.selectable.note;
+				note.linkNext = newValue;
+				final ChordOrNote nextSound = ChordOrNote.findNextSoundOnString(note.string, selectedValue.id + 1,
+						sounds);
+				if (nextSound != null && nextSound.isNote()) {
+					nextSound.note.fret = note.slideTo == null ? note.fret : note.slideTo;
+				}
 			} else {
 				selectedValue.selectable.chord.chordNotes.values().forEach(n -> n.linkNext = newValue);
 			}

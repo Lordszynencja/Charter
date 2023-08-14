@@ -188,12 +188,17 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		return scaledMuteImage;
 	}
 
+	protected Color applyWrongLink(final Color color) {
+		return new Color(color.getRed(), color.getGreen(), color.getBlue(), 128);
+	}
+
 	protected Color getNoteColor(final EditorNoteDrawingData note) {
-		return note.mute != Mute.FULL ? noteColors[note.string] : ColorLabel.NOTE_FULL_MUTE.color();
+		final Color color = note.mute != Mute.FULL ? noteColors[note.string] : ColorLabel.NOTE_FULL_MUTE.color();
+		return note.wrongLink ? applyWrongLink(color) : color;
 	}
 
 	protected void addNormalNoteShape(final int y, final EditorNoteDrawingData note) {
-		if (note.linkPrevious) {
+		if (note.linkPrevious && !note.wrongLink) {
 			return;
 		}
 
@@ -585,7 +590,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 			addPinchHarmonicShape(y, note);
 		}
 
-		if (!note.linkPrevious) {
+		if (!note.linkPrevious || note.wrongLink) {
 			if (note.mute == Mute.PALM) {
 				addPalmMute(note, y);
 			} else if (note.mute == Mute.FULL) {
@@ -611,15 +616,16 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addNote(final Note note, final int x, final boolean selected, final boolean lastWasLinkNext) {
-		addSimpleNote(fromNote(x, note, selected, lastWasLinkNext));
+	public void addNote(final Note note, final int x, final boolean selected, final boolean lastWasLinkNext,
+			final boolean wrongLinkNext) {
+		addSimpleNote(fromNote(x, note, selected, lastWasLinkNext, wrongLinkNext));
 	}
 
 	@Override
 	public void addChord(final Chord chord, final ChordTemplate chordTemplate, final int x, final int length,
-			final boolean selected, final boolean lastWasLinkNext, final boolean ctrl) {
+			final boolean selected, final boolean lastWasLinkNext, final boolean wrongLinkNext, final boolean ctrl) {
 		for (final EditorNoteDrawingData noteData : fromChord(chord, chordTemplate, x, selected, lastWasLinkNext,
-				ctrl)) {
+				wrongLinkNext, ctrl)) {
 			addSimpleNote(noteData);
 		}
 

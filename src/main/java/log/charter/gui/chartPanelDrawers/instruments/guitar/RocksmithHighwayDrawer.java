@@ -77,7 +77,8 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 
 	@Override
 	protected Color getNoteColor(final EditorNoteDrawingData note) {
-		return noteColors[note.string];
+		final Color color = noteColors[note.string];
+		return note.wrongLink ? applyWrongLink(color) : color;
 	}
 
 	@Override
@@ -91,7 +92,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 
 		addNormalNoteShape(y, note);
 
-		if (!note.linkPrevious) {
+		if (!note.linkPrevious || note.wrongLink) {
 			if (note.hopo == HOPO.HAMMER_ON) {
 				addHammerOnShape(y, note);
 			} else if (note.hopo == HOPO.PULL_OFF) {
@@ -131,7 +132,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 
 	@Override
 	protected void addNormalNoteShape(final int y, final EditorNoteDrawingData note) {
-		if (note.linkPrevious) {
+		if (note.linkPrevious && !note.wrongLink) {
 			return;
 		}
 
@@ -221,7 +222,8 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addSlideCommon(final EditorNoteDrawingData note, final int y, final Color outlineColor, final Color fretColor) {
+	protected void addSlideCommon(final EditorNoteDrawingData note, final int y, final Color outlineColor,
+			final Color fretColor) {
 		addNormalNoteTailShape(note, y);
 
 		IntRange topBottom = getDefaultTailTopBottom(y);

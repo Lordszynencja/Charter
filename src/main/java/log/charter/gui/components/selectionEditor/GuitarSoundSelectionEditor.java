@@ -457,27 +457,44 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		}
 	}
 
-	private void changeSlideFret(final Integer newSlideFret) {
-		undoSystem.addUndo();
+	private void cleanSlide() {
+		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
+				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
+			if (selection.selectable.isNote()) {
+				final Note note = selection.selectable.note;
+				note.slideTo = null;
 
+				if (note.linkNext) {
+					final ChordOrNote nextSound = ChordOrNote.findNextSoundOnString(note.string, selection.id + 1,
+							data.getCurrentArrangementLevel().chordsAndNotes);
+					if (nextSound != null && nextSound.isNote()) {
+						nextSound.note.fret = note.fret;
+					}
+				}
+			} else {
+				selection.selectable.chord.chordNotes.values().forEach(n -> n.slideTo = null);
+			}
+		}
+	}
+
+	private void setSlide(final int newSlideFret) {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		final ArrayList2<ChordTemplate> chordTemplates = data.getCurrentArrangement().chordTemplates;
 
-		if (newSlideFret == null) {
-			for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
-				if (selection.selectable.isNote()) {
-					selection.selectable.note.slideTo = null;
-				} else {
-					selection.selectable.chord.chordNotes.values().forEach(n -> n.slideTo = null);
-				}
-			}
-			return;
-		}
-
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
 			if (selection.selectable.isNote()) {
-				selection.selectable.note.slideTo = newSlideFret;
+				final Note note = selection.selectable.note;
+				note.slideTo = newSlideFret;
+
+				if (note.linkNext) {
+					final ChordOrNote nextSound = ChordOrNote.findNextSoundOnString(note.string, selection.id + 1,
+							data.getCurrentArrangementLevel().chordsAndNotes);
+					if (nextSound != null && nextSound.isNote()) {
+						nextSound.note.fret = note.slideTo;
+					}
+				}
 			} else {
 				final Chord chord = selection.selectable.chord;
 				final ChordTemplate chordTemplate = chordTemplates.get(chord.templateId());
@@ -500,6 +517,17 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				}
 			}
 		}
+	}
+
+	private void changeSlideFret(final Integer newSlideFret) {
+		undoSystem.addUndo();
+
+		if (newSlideFret == null) {
+			cleanSlide();
+			return;
+		}
+
+		setSlide(newSlideFret);
 	}
 
 	private void changeUnpitchedSlide(final boolean newUnpitchedSlide) {
