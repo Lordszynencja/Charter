@@ -47,6 +47,7 @@ public class GPBarUnwrapper {
 		}
 		return alternate_ending;
 	}
+
 	public void unwrap() {
 		// Repeat handling
 		int start_of_repeat_bar = 1; // If no repeat starts are set, the first bar is used
@@ -203,14 +204,20 @@ public class GPBarUnwrapper {
 					entry.setValue(-1);
 				}
 			}
-
-
-			
 		}
 
 		// Now that we know the bar order, start unwrapping
 		for (int bar: this.bar_order) {
-			this.unwrapped_bars.add(this.bars.get(bar-1));
+			this.unwrapped_bars.add(new CombinedGPBars(this.bars.get(bar-1)));
+		}
+
+		// With all bars in correct order, update the positions of them
+		double sum_of_bar_widths = 0;
+		for (int i = 0; i < this.unwrapped_bars.size(); i++) {
+			for (int j = 0; j < this.unwrapped_bars.get(i).bar_beats.size(); j++) {
+				this.unwrapped_bars.get(i).bar_beats.get(j).position((int)sum_of_bar_widths);
+				sum_of_bar_widths += this.unwrapped_bars.get(i).bar_beats.get(j).bar_width_in_time_ms;
+			}
 		}
 	}
 
@@ -344,14 +351,11 @@ public class GPBarUnwrapper {
 		if (this.unwrapped_beats_map.songLengthMs == 0) {
 			// Initialize a beat map first time
 			BeatsMap beats_map = new BeatsMap(song_length_ms, false);
-			int first_in_bar_index = 0;
+			// int first_in_bar_index = 0;
 			for (CombinedGPBars combo_beat : this.unwrapped_bars) {
-				
 				for (Beat beat : combo_beat.bar_beats) {
-					beats_map.append_last_beat(beat);
+					beats_map.beats.add(beat);
 				}
-				beats_map.setBPM(first_in_bar_index, combo_beat.note_beats.get(0).tempo, false);
-				first_in_bar_index += combo_beat.bar_beats.size();
 			}
 			for (int i = 0; i < this.unwrapped_bars.getLast().bar_beats.size(); i++) {
 				beats_map.append_last_beat(); // Add an extra bar for end phrase

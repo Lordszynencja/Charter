@@ -153,11 +153,9 @@ public class SongChart {
 	}
 
 	public ArrayList2<GPBarUnwrapper> unwrapGP5File(final GP5File gp5File) {
-		int current_bpm = gp5File.tempo * gp5File.masterBars.get(0).timeSignatureDenominator / 4;
 		final ArrayList2<Beat> tempo_map_beats = beatsMap.beats;
 		ArrayList2<GPBarUnwrapper> voice_list = new ArrayList2<>();
 
-		beatsMap.setBPM(0, current_bpm, true);
 
 		final int master_bars_count = gp5File.masterBars.size();
 		final List<GPBar> bars = gp5File.bars.get(0);
@@ -170,6 +168,7 @@ public class SongChart {
 				GPBarUnwrapper wrapped_GP_bars_in_voice = new GPBarUnwrapper(gp5File.directions);
 				int total_bar_beats = 0;
 
+				// Create 
 				for (int bar = 0; bar < other_bars_count; bar++) {
 					final GPMasterBar master_bar = gp5File.masterBars.get(bar);
 					wrapped_GP_bars_in_voice.add_bar(new CombinedGPBars(master_bar,bar+1));
@@ -177,34 +176,32 @@ public class SongChart {
 					final int time_signature_num = master_bar.timeSignatureNumerator;
 					final int time_signature_den = master_bar.timeSignatureDenominator;
 
+					// Add bar lines and and store time signature on them
 					for (int bar_beat = 0; bar_beat < time_signature_num; bar_beat++) {
 						if (total_bar_beats + bar_beat >= tempo_map_beats.size()) {
 							beatsMap.append_last_beat(); // Ensure there is a new beat to set up
 						}
 
 						final Beat tempo_map_beat = tempo_map_beats.get(total_bar_beats + bar_beat);
-						tempo_map_beat.beatsInMeasure = time_signature_num;
-						tempo_map_beat.noteDenominator = time_signature_den;
-						wrapped_GP_bars_in_voice.getLast().bar_beats.add(tempo_map_beat);
+						tempo_map_beat.setTimeSignature(time_signature_num, time_signature_den);
+						wrapped_GP_bars_in_voice.getLast().bar_beats.add(wrapped_GP_bars_in_voice.get(bar).new BeatUnwrapper(tempo_map_beat));
 					}
 
 					wrapped_GP_bars_in_voice.getLast().available_space_in_64ths =
 					(int)(((double)time_signature_num / time_signature_den) * 64);
 					
+					// Add note beats of this bar to the combined class
 					final int notes_in_bar = bars.get(bar).voices.get(voice).size();
 					for (int note_beat = 0; note_beat < notes_in_bar; note_beat++) {
 						final GPBeat current_note_beat = bars.get(bar).voices.get(voice).get(note_beat);
-						wrapped_GP_bars_in_voice.get(bar).note_beats.add(current_note_beat);
-						if (current_bpm != current_note_beat.tempo) {
-							current_bpm = current_note_beat.tempo;
-							tempo_map_beats.get(total_bar_beats).anchor = true;
-						}
+						wrapped_GP_bars_in_voice.get(bar).note_beats.add(wrapped_GP_bars_in_voice.get(bar).new GPBeatUnwrapper(current_note_beat));
 					}
 					wrapped_GP_bars_in_voice.getLast().notes_in_bar = notes_in_bar;
+					wrapped_GP_bars_in_voice.getLast().update_bars_from_note_tempo();
 					total_bar_beats += time_signature_num;
 				}
-
 				wrapped_GP_bars_in_voice.unwrap();
+
 				// TODO: multiple beat maps for voices and tracks
 				beatsMap = new BeatsMap(wrapped_GP_bars_in_voice.get_unwrapped_beats_map(beatsMap.songLengthMs));
 				voice_list.add(wrapped_GP_bars_in_voice);
