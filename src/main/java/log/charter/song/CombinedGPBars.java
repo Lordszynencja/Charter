@@ -152,7 +152,7 @@ public class CombinedGPBars {
 				double overshoot_time = 0;
 
 				if (overshoot_duration > 0) {
-					overshoot_time = overshoot_duration * note_beat.note_time_ms;
+					overshoot_time = (overshoot_duration * note_beat.note_time_ms) / note_beat.note_duration;
 				}
 
 				if (beat_index < this.bar_beats.size()) {
