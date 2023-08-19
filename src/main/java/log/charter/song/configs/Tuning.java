@@ -145,14 +145,14 @@ public class Tuning {
 		tuning = Arrays.copyOf(other.tuning, other.tuning.length);
 	}
 
-	public Tuning(int[] gp_tuning) {
+	public Tuning(int[] gp_tuning, final int capo) {
 		this.strings = gp_tuning.length;
 		
 		int[] converted_tuning = new int[this.strings];
 
 		for (int i = 0; i < this.strings; i++) {
 			// A default E standard is offset by 40 from the Tuning E standard, and ordered in the opposite order
-			converted_tuning[i] = gp_tuning[this.strings-1-i] - 40 - standardStringDistances[i];
+			converted_tuning[i] = gp_tuning[this.strings-1-i] - 40 - standardStringDistances[i] + capo;
 		}
 		this.tuning = Arrays.copyOf(converted_tuning, this.strings);
 		this.tuningType = TuningType.fromTuning(tuning);
