@@ -39,7 +39,7 @@ public class CombinedGPBars {
 			return note_time_ms;
 		}
 		static final double four_over_four_beat_length(int bpm) {
-			return 60000/bpm;
+			return 60000/(double)bpm;
 		}
 
 		double note_time_from_duration(int bpm) {
@@ -61,7 +61,7 @@ public class CombinedGPBars {
 		double note_duration(int note_length_den, int note_tuple_num, int note_tuple_den, boolean is_dotted_note) {
 			// Example triplet 16th note: 4/16 -> 1/4 (0.25) -> 0.1667 
 			final double whole_note_length = 4;
-			final double note_duration = whole_note_length / note_length_den;
+			final double note_duration = whole_note_length / (double)note_length_den;
 			double note_tupled_length = note_duration * ((double)note_tuple_den / (double)note_tuple_num);
 			if (is_dotted_note) {
 				note_tupled_length *= 1.5;
@@ -86,13 +86,14 @@ public class CombinedGPBars {
 
 	public class BeatUnwrapper extends Beat {
 		double bar_width_in_time_ms;
-
+		double float_pos;
 		public BeatUnwrapper(final Beat beat) {
 			super(beat);
 		}
 		public BeatUnwrapper(final BeatUnwrapper beat) {
 			super(beat);
 			this.bar_width_in_time_ms = beat.bar_width_in_time_ms;
+			this.float_pos = beat.float_pos;
 		}
 	}
 
@@ -130,16 +131,20 @@ public class CombinedGPBars {
 		double sum_of_note_durations = 0;
 		int current_tempo = 0;
 
-		double duration_to_extract_position = 1.0;
-
 		int beat_index = 0;
+		double beat_duration = 4.0 / this.bar_beats.get(beat_index).noteDenominator;
+		double duration_to_extract_position = beat_duration;
+
 		this.bar_beats.get(beat_index).position(0);
+		this.bar_beats.get(beat_index).anchor = true;
+		this.bar_beats.get(beat_index).firstInMeasure = true;
+
 		beat_index++;
 
 		for (final GPBeatUnwrapper note_beat : this.note_beats) {
 			if (current_tempo != note_beat.tempo) {
 				if (beat_index < this.bar_beats.size()) {
-					this.bar_beats.get(beat_index).anchor = true;
+					// this.bar_beats.get(beat_index).anchor = true;
 				}
 				current_tempo = note_beat.tempo;
 			}
@@ -147,7 +152,8 @@ public class CombinedGPBars {
 			sum_of_note_lengths += note_beat.note_time_ms;
 			sum_of_note_durations += note_beat.note_duration;
 
-			if (sum_of_note_durations >= duration_to_extract_position) {
+			// While loop to handle long notes over multiple beats
+			while (sum_of_note_durations >= duration_to_extract_position) {
 				double overshoot_duration = sum_of_note_durations - duration_to_extract_position;
 				double overshoot_time = 0;
 
@@ -157,12 +163,14 @@ public class CombinedGPBars {
 
 				if (beat_index < this.bar_beats.size()) {
 					this.bar_beats.get(beat_index).position((int)(sum_of_note_lengths-overshoot_time));
+					this.bar_beats.get(beat_index).float_pos = sum_of_note_lengths-overshoot_time;
+					this.bar_beats.get(beat_index).firstInMeasure = false;
 				}
 				if (beat_index > 0) {
-					this.bar_beats.get(beat_index-1).bar_width_in_time_ms = sum_of_note_lengths - overshoot_time - this.bar_beats.get(beat_index-1).position();
+					this.bar_beats.get(beat_index-1).bar_width_in_time_ms = sum_of_note_lengths - overshoot_time - this.bar_beats.get(beat_index-1).float_pos;
 				}
 				beat_index++;
-				duration_to_extract_position++;
+				duration_to_extract_position += beat_duration;
 			}
 		}
 	}

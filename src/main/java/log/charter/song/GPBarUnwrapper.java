@@ -211,7 +211,7 @@ public class GPBarUnwrapper {
 			this.unwrapped_bars.add(new CombinedGPBars(this.bars.get(bar-1)));
 		}
 
-		// With all bars in correct order, update the positions of them
+		// With all bars in correct order, update the positions of them (reduce truncated positions)
 		double sum_of_bar_widths = 0;
 		for (int i = 0; i < this.unwrapped_bars.size(); i++) {
 			for (int j = 0; j < this.unwrapped_bars.get(i).bar_beats.size(); j++) {
@@ -356,9 +356,6 @@ public class GPBarUnwrapper {
 				for (Beat beat : combo_beat.bar_beats) {
 					beats_map.beats.add(beat);
 				}
-			}
-			for (int i = 0; i < this.unwrapped_bars.getLast().bar_beats.size(); i++) {
-				beats_map.append_last_beat(); // Add an extra bar for end phrase
 			}
 			this.unwrapped_beats_map = new BeatsMap(beats_map);
 			this.unwrapped_beats_map.fixFirstBeatInMeasures();
