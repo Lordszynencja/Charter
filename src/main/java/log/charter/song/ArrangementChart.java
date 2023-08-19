@@ -714,12 +714,12 @@ public class ArrangementChart {
 		final Chord chord = new Chord(position.getPosition(), -1, chordTemplate);
 		final int length = position.move(gpBeat.duration).getPosition() - chord.position();
 		boolean setLength = false;
-
+		
 		for (final GPNote gpNote : notes) {
 			final int string = gpNote.string - 1;
 			chordTemplate.fingers.put(string, gpNote.finger == -1 ? null : gpNote.finger);
 			chordTemplate.frets.put(string, gpNote.fret);
-
+			
 			final ChordNote chordNote = new ChordNote();
 			chord.chordNotes.put(string, chordNote);
 			setStatuses(CommonNote.create(chord, string, chordNote), gpBeat, gpNote, wasHOPOStart, hOPOFrom);
@@ -782,6 +782,16 @@ public class ArrangementChart {
 			final int string = gpNote.string - 1;
 			chordTemplate.fingers.put(string, gpNote.finger == -1 ? null : gpNote.finger);
 			chordTemplate.frets.put(string, gpNote.fret);
+
+			final ChordOrNote previousNote = level.chordsAndNotes.getLast();
+			if (previousNote != null) {
+				if (gpNote.tied) {
+					previousNote.notes().forEach(n -> n.linkNext(true));
+				}
+				if (previousNote.isNote() && previousNote.note.linkNext && previousNote.note.fret != gpNote.fret) {
+					previousNote.note.slideTo = gpNote.fret;
+				}
+			}
 
 			final ChordNote chordNote = new ChordNote();
 			chord.chordNotes.put(string, chordNote);
