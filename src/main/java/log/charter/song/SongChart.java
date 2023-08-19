@@ -124,15 +124,15 @@ public class SongChart {
 
 	public void addGP5Arrangements(final GP5File gp5File) {
 		checkSongDataFromGP5File(gp5File);
-		final ArrayList2<GPBarUnwrapper> unwrapped = unwrapGP5File(gp5File);
 		for (final Entry<Integer, List<GPBar>> trackBars : gp5File.bars.entrySet()) {
 			final int trackId = trackBars.getKey();
+			final ArrayList2<GPBarUnwrapper> unwrapped_track = unwrapGP5File(gp5File, trackId);
 			final GPTrackData trackData = gp5File.tracks.get(trackId);
 			if (trackData.isPercussion) {
 				continue;
 			}
 
-			final ArrangementChart chart = new ArrangementChart(unwrapped, trackData);
+			final ArrangementChart chart = new ArrangementChart(unwrapped_track, trackData);
 			final Level level = chart.levels.get(0);
 			arrangements.add(chart);
 			ArrangementFretHandPositionsCreator.createFretHandPositions(chart.chordTemplates, level.chordsAndNotes,
@@ -153,14 +153,18 @@ public class SongChart {
 	}
 
 	public ArrayList2<GPBarUnwrapper> unwrapGP5File(final GP5File gp5File) {
+		return unwrapGP5File(gp5File, 0);
+	}
+
+	public ArrayList2<GPBarUnwrapper> unwrapGP5File(final GP5File gp5File, final int track_id) {
 		final ArrayList2<Beat> tempo_map_beats = beatsMap.beats;
 		ArrayList2<GPBarUnwrapper> voice_list = new ArrayList2<>();
 
 
 		final int master_bars_count = gp5File.masterBars.size();
-		final List<GPBar> bars = gp5File.bars.get(0);
+		final List<GPBar> bars = gp5File.bars.get(track_id);
 		final int other_bars_count = bars.size();
-		// TODO: final int voices = bars.get(0).voices.size();
+		// final int voices = bars.get(track_id).voices.size(); // TODO: Fix multiple voices messing up beats
 		final int voices = 1;
 
 		if (other_bars_count == master_bars_count) {
