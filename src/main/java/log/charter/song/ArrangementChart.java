@@ -225,6 +225,7 @@ public class ArrangementChart {
 	public ArrangementChart(final ArrayList2<GPBarUnwrapper> unwrap, final GPTrackData trackData) {
 		capo = trackData.capo;
 		arrangementType = getGPArrangementType(trackData);
+		tuning = new Tuning(trackData.tuning);
 		addBars(unwrap);
 		addCountEndPhrases2(unwrap);
 	}
