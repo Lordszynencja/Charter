@@ -4,6 +4,7 @@ import java.util.List;
 
 import log.charter.io.gp.gp5.GPMasterBar;
 import log.charter.io.gp.gp5.GPNote;
+import log.charter.io.Logger;
 import log.charter.io.gp.gp5.GPBeat;
 import log.charter.io.gp.gp5.GPBeatEffects;
 import log.charter.io.gp.gp5.GPChord;
@@ -129,7 +130,6 @@ public class CombinedGPBars {
 	public void update_bars_from_note_tempo() {
 		double sum_of_note_lengths = 0;
 		double sum_of_note_durations = 0;
-		int current_tempo = 0;
 
 		int beat_index = 0;
 		double beat_duration = 4.0 / this.bar_beats.get(beat_index).noteDenominator;
@@ -142,16 +142,13 @@ public class CombinedGPBars {
 		beat_index++;
 
 		for (final GPBeatUnwrapper note_beat : this.note_beats) {
-			if (current_tempo != note_beat.tempo) {
-				if (beat_index < this.bar_beats.size()) {
-					// this.bar_beats.get(beat_index).anchor = true;
-				}
-				current_tempo = note_beat.tempo;
-			}
-
 			sum_of_note_lengths += note_beat.note_time_ms;
 			sum_of_note_durations += note_beat.note_duration;
 
+			if ((int)sum_of_note_durations * 16 > this.available_space_in_64ths) {
+				Logger.error("Bar exceeds allowed duration. Bar: " + this.gp_bar_id);
+				return;
+			}
 			// While loop to handle long notes over multiple beats
 			while (sum_of_note_durations >= duration_to_extract_position) {
 				double overshoot_duration = sum_of_note_durations - duration_to_extract_position;

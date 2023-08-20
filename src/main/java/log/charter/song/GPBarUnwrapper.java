@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import log.charter.io.gp.gp5.Directions;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.io.Logger;
 
 public class GPBarUnwrapper {
 	Directions directions;
@@ -351,14 +352,29 @@ public class GPBarUnwrapper {
 		if (this.unwrapped_beats_map.songLengthMs == 0) {
 			// Initialize a beat map first time
 			BeatsMap beats_map = new BeatsMap(song_length_ms, false);
-			// int first_in_bar_index = 0;
+
 			for (CombinedGPBars combo_beat : this.unwrapped_bars) {
 				for (Beat beat : combo_beat.bar_beats) {
 					beats_map.beats.add(beat);
 				}
 			}
 			this.unwrapped_beats_map = new BeatsMap(beats_map);
-			this.unwrapped_beats_map.fixFirstBeatInMeasures();
+		}
+		int number_of_bars = this.unwrapped_bars.size();
+		int number_of_first_beats_in_bars = 0;
+		int previous_pos = 0;
+		for (Beat beat : this.unwrapped_beats_map.beats) {
+			if (beat.firstInMeasure) {
+				number_of_first_beats_in_bars++;
+			}
+			if (previous_pos > beat.position()) {
+				Logger.error("Unwrapping issue detected: earlier beats were placed ahead.");
+			}
+			previous_pos = beat.position();
+		}
+
+		if (number_of_bars != number_of_first_beats_in_bars) {
+			Logger.error("Unwrapping issue detected: incorrect number of first beats in bars.");
 		}
 
 		return this.unwrapped_beats_map;
