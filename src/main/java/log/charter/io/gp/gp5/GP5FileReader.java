@@ -491,9 +491,9 @@ public class GP5FileReader {
 			beatEffects = new GPBeatEffects();
 		}
 
-		if ((flags & 0x10) != 0 && read_tempo_changes) {
+		if ((flags & 0x10) != 0) {
 			int possible_tempo_change = 0;
-			if ((possible_tempo_change = readMixTableChange()) > 0) {
+			if ((possible_tempo_change = readMixTableChange()) > 0 && read_tempo_changes) {
 				tempo = possible_tempo_change;
 			}
 		}
