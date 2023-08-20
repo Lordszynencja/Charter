@@ -87,6 +87,26 @@ public class TestGPBarUnwrapper {
         assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
     }
     @Test
+    void testAltEndings5() {
+        final File file = new File("src/test/resources/gp_import_test_files/alt_ending_test_5.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(1,2,1,3,4));
+
+        assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
+    }
+    @Test
+    void testAltEndings6() {
+        final File file = new File("src/test/resources/gp_import_test_files/alt_ending_test_6.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(1,2,1,3,1,4,5));
+
+        assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
+    }
+    @Test
     void testMissingCoda() {
         final File file = new File("src/test/resources/gp_import_test_files/missing_coda.gp5");
         final GP5File gp5File = GP5FileReader.importGPFile(file);
