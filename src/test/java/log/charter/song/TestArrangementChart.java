@@ -313,4 +313,22 @@ public class TestArrangementChart {
         assertTrue(note_positions.equals(expected_result));
     }
 
+    @Test
+    void testGraceNote() {
+        final File file = new File("src/test/resources/gp_import_test_files/grace_notes.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
+        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
+            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+        }
+
+        ArrayList<Integer> expected_result = new ArrayList<>(
+            Arrays.asList(0, 125,       // Grace note on beat
+                               1875, 2000)); // Grace note before beat
+
+        assertTrue(note_positions.equals(expected_result));
+    }
+
 }
