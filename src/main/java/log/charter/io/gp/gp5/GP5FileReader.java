@@ -492,7 +492,10 @@ public class GP5FileReader {
 		}
 
 		if ((flags & 0x10) != 0 && read_tempo_changes) {
-			tempo = readMixTableChange();
+			int possible_tempo_change = 0;
+			if ((possible_tempo_change = readMixTableChange()) > 0) {
+				tempo = possible_tempo_change;
+			}
 		}
 
 		final int stringFlags = data.read();
