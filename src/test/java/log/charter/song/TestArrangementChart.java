@@ -189,7 +189,25 @@ public class TestArrangementChart {
             assertTrue((bar_length/96) == duration || (bar_length/96) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
         }
     }
+    @Test
+    void testCustomTupletSixteenOverFour() {
+        final File file = new File("src/test/resources/gp_import_test_files/custom_tuplets_16_4.gp5");
+        final GP5File gp5File = GP5FileReader.importGPFile(file);
+        final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
+        final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
+        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
+            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+        }
 
+        int beat_length = (60000/gp5File.tempo);
+        int bar_length = beat_length * 16; // for 16/4
+        int tuplet_duration = bar_length/13;
+        for (int i = 0; i < note_positions.size()-1; i++) {
+            int duration = note_positions.get(i+1) - note_positions.get(i);
+            assertTrue(tuplet_duration == duration || tuplet_duration + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
+        }
+    }
 
     @Test
     void testTempoChange1() {
