@@ -265,13 +265,8 @@ public class ArrangementChart {
 			final List<GPBeat> voice = gpBar.voices.get(0);
 			NotePositionInformation notePosition = new NotePositionInformation(beats, 0, currentBarBeatId);
 			for (final GPBeat gpBeat : voice) {
-				int unmanipulatedLength = gpBeat.duration.length;
-				gpBeat.duration.length = (gpBeat.duration.length * gpBeat.tupletDenominator) / gpBeat.tupletNumerator;
-		
 				if (gpBeat.notes.isEmpty()) {
 					lastHandShape = null;
-					notePosition = notePosition.move(gpBeat.duration);
-					gpBeat.duration.length = unmanipulatedLength;
 					continue;
 				}
 
@@ -284,8 +279,6 @@ public class ArrangementChart {
 				}
 
 				notePosition = notePosition.move(gpBeat.duration);
-				gpBeat.duration.length = unmanipulatedLength;
-
 				for (final GPNote note : gpBeat.notes) {
 					final int string = note.string;
 					wasHOPOStart[string] = note.effects.isHammerPullOrigin;
@@ -315,7 +308,6 @@ public class ArrangementChart {
 					lastHandShape = null; // Throw error
 				}
 				for (GPBeatUnwrapper note_beat : bar.note_beats) {
-					// Ex unmanip 32 -> 21 if triplet (trunkated 21,33)
 					if (note_beat.notes.isEmpty()) {
 						lastHandShape = null;
 						note_start_position += note_beat.note_time_ms; // Rest notes take time too

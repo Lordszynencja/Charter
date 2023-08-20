@@ -221,15 +221,12 @@ public class BeatsMap {
 		return (int) (beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0));
 	}
 
-	public void setBPM(final int bpm_beat_id, final double newBPM, boolean append_to_end_of_song) {
+	public void setBPM(final int bpm_beat_id, final double newBPM) {
 		int previous_beat_length = beats.size() > 1 && bpm_beat_id < beats.size() - 1  ?
 			beats.get(bpm_beat_id+1).position() - beats.get(bpm_beat_id).position() :
 			500; // Magic number, calculated for 120 BPM
 
 		if (bpm_beat_id >= beats.size()) {
-			if (append_to_end_of_song == false) {
-				return;
-			}
 			while (beats.getLast().position() <= songLengthMs) {
 				append_last_beat();
 			}
@@ -253,9 +250,6 @@ public class BeatsMap {
 					beat_offset_from_bpm_changes += delta_beat_length;
 				}
 				else {
-					if (append_to_end_of_song == false) {
-						return;
-					}
 					append_last_beat();
 					next_start_position += beat_length;
 				}

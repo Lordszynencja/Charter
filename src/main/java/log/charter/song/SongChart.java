@@ -206,7 +206,6 @@ public class SongChart {
 				}
 				wrapped_GP_bars_in_voice.unwrap();
 
-				// TODO: multiple beat maps for voices and tracks
 				beatsMap = new BeatsMap(wrapped_GP_bars_in_voice.get_unwrapped_beats_map(beatsMap.songLengthMs));
 				voice_list.add(wrapped_GP_bars_in_voice);
 			}
