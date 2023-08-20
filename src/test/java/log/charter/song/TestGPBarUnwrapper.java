@@ -92,7 +92,7 @@ public class TestGPBarUnwrapper {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         ArrayList<Integer> expected_result = new ArrayList<>(
-            Arrays.asList(1,2,1,3,4));
+            Arrays.asList(1,2,1,3,4)); // Note: Different behaviour between TuxGuitar and Guitar Pro 8 (test is GP8)
 
         assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
     }
@@ -102,7 +102,7 @@ public class TestGPBarUnwrapper {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         ArrayList<Integer> expected_result = new ArrayList<>(
-            Arrays.asList(1,2,1,3,1,4,5));
+            Arrays.asList(1,2,1,3,1,4,5)); // Note: Different behaviour between TuxGuitar and Guitar Pro 8 (test is GP8)
 
         assertTrue(unwrapped.get(0).bar_order.equals(expected_result));
     }
