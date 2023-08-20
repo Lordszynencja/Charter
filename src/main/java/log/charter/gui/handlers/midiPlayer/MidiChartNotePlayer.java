@@ -60,6 +60,10 @@ public class MidiChartNotePlayer {
 	}
 
 	private void playNextSound() {
+		if (nextSound == null) {
+			return;
+		}
+
 		midiNotePlayer.playSound(nextSound.sound);
 		sounds.add(nextSound);
 		final int newNextSoundId = nextSound.noteId + 1;

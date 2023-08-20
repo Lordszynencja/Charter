@@ -174,8 +174,8 @@ public class Localization {
 		FILE_MENU("File"), //
 		FILE_MENU_NEW("New"), //
 		FILE_MENU_OPEN("Open"), //
-		FILE_MENU_OPEN_RS("Open song from RS arrangement XML"), //
-		FILE_MENU_OPEN_AUDIO("Open audio file"), //
+		FILE_MENU_OPEN_RS("Create song based on RS arrangement XML"), //
+		FILE_MENU_OPEN_AUDIO("Temporary open an audio file"), //
 		FILE_MENU_IMPORT("Import"), //
 		FILE_MENU_IMPORT_RS_GUITAR("RS guitar arrangement XML"), //
 		FILE_MENU_IMPORT_RS_VOCALS("RS vocals arrangement XML"), //

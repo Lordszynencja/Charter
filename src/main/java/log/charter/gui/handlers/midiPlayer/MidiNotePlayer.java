@@ -175,10 +175,14 @@ public class MidiNotePlayer {
 			bendValue -= 2;
 			actualNote += 2;
 		}
+		while (bendValue < 0) {
+			bendValue += 2;
+			actualNote -= 2;
+		}
 
 		final int pitchBend = getPitchBend(bendValue);
 		if (lastActualNotes[string] != actualNote) {
-			channel.noteOff(lastNotes[string]);
+			channel.noteOff(lastActualNotes[string]);
 			channel.setPitchBend(pitchBend);
 			channel.noteOn(actualNote, 96);
 			lastActualNotes[string] = actualNote;
