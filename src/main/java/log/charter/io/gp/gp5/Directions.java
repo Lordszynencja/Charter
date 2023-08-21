@@ -2,69 +2,69 @@ package log.charter.io.gp.gp5;
 
 public class Directions {
 	public int coda;
-	public int double_coda;
+	public int doubleCoda;
 	public int segno;
-	public int segno_segno;
+	public int segnoSegno;
 	public int fine;
-	public int da_capo;
-	public int da_capo_al_coda;
-	public int da_capo_al_double_coda;
-	public int da_capo_al_fine;
-	public int da_segno;
-	public int da_segno_al_coda;
-	public int da_segno_al_double_coda;
-	public int da_segno_al_fine;
-	public int da_segno_segno;
-	public int da_segno_segno_al_coda;
-	public int da_segno_segno_al_double_coda;
-	public int da_segno_segno_al_fine;
-	public int da_coda;
-	public int da_double_coda;
+	public int daCapo;
+	public int daCapoAlCoda;
+	public int daCapoAlDoubleCoda;
+	public int daCapoAlFine;
+	public int daSegno;
+	public int daSegnoAlCoda;
+	public int daSegnoAlDoubleCoda;
+	public int daSegnoAlFine;
+	public int daSegnoSegno;
+	public int daSegnoSegnoAlCoda;
+	public int daSegnoSegnoAlDoubleCoda;
+	public int daSegnoSegnoAlFine;
+	public int daCoda;
+	public int daDoubleCoda;
 
 	public Directions() {
 		coda = 0;
-		double_coda = 0;
+		doubleCoda = 0;
 		segno = 0;
-		segno_segno = 0;
+		segnoSegno = 0;
 		fine = 0;
-		da_capo = 0;
-		da_capo_al_coda = 0;
-		da_capo_al_double_coda = 0;
-		da_capo_al_fine = 0;
-		da_segno = 0;
-		da_segno_al_coda = 0;
-		da_segno_al_double_coda = 0;
-		da_segno_al_fine = 0;
-		da_segno_segno = 0;
-		da_segno_segno_al_coda = 0;
-		da_segno_segno_al_double_coda = 0;
-		da_segno_segno_al_fine = 0;
-		da_coda = 0;
-		da_double_coda = 0;
+		daCapo = 0;
+		daCapoAlCoda = 0;
+		daCapoAlDoubleCoda = 0;
+		daCapoAlFine = 0;
+		daSegno = 0;
+		daSegnoAlCoda = 0;
+		daSegnoAlDoubleCoda = 0;
+		daSegnoAlFine = 0;
+		daSegnoSegno = 0;
+		daSegnoSegnoAlCoda = 0;
+		daSegnoSegnoAlDoubleCoda = 0;
+		daSegnoSegnoAlFine = 0;
+		daCoda = 0;
+		daDoubleCoda = 0;
 	}
 
 	@Override
 	public String toString() {
 		return "Directions [" +
 			   "coda=" + coda +
-			   ", double_coda=" + double_coda +
+			   ", doubleCoda=" + doubleCoda +
 			   ", segno=" + segno +
-			   ", segno_segno=" + segno_segno +
+			   ", segnoSegno=" + segnoSegno +
 			   ", fine=" + fine +
-			   ", da_capo=" + da_capo +
-			   ", da_capo_al_coda=" + da_capo_al_coda +
-			   ", da_capo_al_double_coda=" + da_capo_al_double_coda +
-			   ", da_capo_al_fine=" + da_capo_al_fine +
-			   ", da_segno=" + da_segno +
-			   ", da_segno_al_coda=" + da_segno_al_coda +
-			   ", da_segno_al_double_coda=" + da_segno_al_double_coda +
-			   ", da_segno_al_fine=" + da_segno_al_fine +
-			   ", da_segno_segno=" + da_segno_segno +
-			   ", da_segno_segno_al_coda=" + da_segno_segno_al_coda +
-			   ", da_segno_segno_al_double_coda=" + da_segno_segno_al_double_coda +
-			   ", da_segno_segno_al_fine=" + da_segno_segno_al_fine +
-			   ", da_coda=" + da_coda +
-			   ", da_double_coda=" + da_double_coda +
+			   ", daCapo=" + daCapo +
+			   ", daCapoAlCoda=" + daCapoAlCoda +
+			   ", daCapoAlDoubleCoda=" + daCapoAlDoubleCoda +
+			   ", daCapoAlFine=" + daCapoAlFine +
+			   ", daSegno=" + daSegno +
+			   ", daSegnoAlCoda=" + daSegnoAlCoda +
+			   ", daSegnoAlDoubleCoda=" + daSegnoAlDoubleCoda +
+			   ", daSegnoAlFine=" + daSegnoAlFine +
+			   ", daSegnoSegno=" + daSegnoSegno +
+			   ", daSegnoSegnoAlCoda=" + daSegnoSegnoAlCoda +
+			   ", daSegnoSegnoAlDoubleCoda=" + daSegnoSegnoAlDoubleCoda +
+			   ", daSegnoSegnoAlFine=" + daSegnoSegnoAlFine +
+			   ", daCoda=" + daCoda +
+			   ", daDoubleCoda=" + daDoubleCoda +
 			   "]";
 	}
 

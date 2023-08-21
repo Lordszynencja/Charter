@@ -16,7 +16,7 @@ import log.charter.util.grid.GridPosition;
 
 public class BeatsMap {
 	public int songLengthMs;
-	public int next_beat_position;
+	public int nextBeatPosition;
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 
 	/**
@@ -24,15 +24,15 @@ public class BeatsMap {
 	 */
 	public BeatsMap(final int songLength) {
 		songLengthMs = songLength;
-		next_beat_position = 0;
+		nextBeatPosition = 0;
 		beats.add(new Beat(0, 4, 4, true));
 		makeBeatsUntilSongEnd();
 	}
 
-	public BeatsMap(final int songLength, final boolean fill_beats_for_song) {
+	public BeatsMap(final int songLength, final boolean fillBeatsForSong) {
 		songLengthMs = songLength;
-		next_beat_position = 0;
-		if (fill_beats_for_song) {
+		nextBeatPosition = 0;
+		if (fillBeatsForSong) {
 			beats.add(new Beat(0, 4, 4, true));
 			makeBeatsUntilSongEnd();
 		}
@@ -221,37 +221,37 @@ public class BeatsMap {
 		return (int) (beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0));
 	}
 
-	public void setBPM(final int bpm_beat_id, final double newBPM) {
-		int previous_beat_length = beats.size() > 1 && bpm_beat_id < beats.size() - 1  ?
-			beats.get(bpm_beat_id+1).position() - beats.get(bpm_beat_id).position() :
+	public void setBPM(final int bpmBeatId, final double newBPM) {
+		int previousBeatLength = beats.size() > 1 && bpmBeatId < beats.size() - 1  ?
+			beats.get(bpmBeatId+1).position() - beats.get(bpmBeatId).position() :
 			500; // Magic number, calculated for 120 BPM
 
-		if (bpm_beat_id >= beats.size()) {
+		if (bpmBeatId >= beats.size()) {
 			while (beats.getLast().position() <= songLengthMs) {
-				append_last_beat();
+				appendLastBeat();
 			}
 		}
 		else {
-			final Beat bpm_beat = beats.get(bpm_beat_id);
+			final Beat bpmBeat = beats.get(bpmBeatId);
 
-			final int beat_length = beat_length_from_bpm_and_denominator((int)newBPM, bpm_beat.noteDenominator);
-			int delta_beat_length = beat_length - previous_beat_length;
-			final int start_position = bpm_beat.position();
-			int next_start_position = start_position + beat_length;
+			final int beatLength = beatLengthFromBpmAndDenominator((int)newBPM, bpmBeat.noteDenominator);
+			int deltaBeatLength = beatLength - previousBeatLength;
+			final int startPosition = bpmBeat.position();
+			int nextStartPosition = startPosition + beatLength;
 
-			int updated_beat_id = 1; // The next beat will get a new start position
-			int i = bpm_beat_id + updated_beat_id;
-			int beat_offset_from_bpm_changes = delta_beat_length;
+			int updatedBeatId = 1; // The next beat will get a new start position
+			int i = bpmBeatId + updatedBeatId;
+			int beatOffsetFromBpmChanges = deltaBeatLength;
 
-			while (next_start_position <= songLengthMs) {
+			while (nextStartPosition <= songLengthMs) {
 				if (i <= beats.size() - 1) {
-					next_start_position += beat_length;
-					alter_beat_position(i,beat_offset_from_bpm_changes);
-					beat_offset_from_bpm_changes += delta_beat_length;
+					nextStartPosition += beatLength;
+					alterBeatPosition(i,beatOffsetFromBpmChanges);
+					beatOffsetFromBpmChanges += deltaBeatLength;
 				}
 				else {
-					append_last_beat();
-					next_start_position += beat_length;
+					appendLastBeat();
+					nextStartPosition += beatLength;
 				}
 				i++;
 			}
@@ -297,41 +297,41 @@ public class BeatsMap {
 		return 60_000.0 / distancePassed * beatsPassed;
 	}
 
-	public int beat_length_from_bpm_and_denominator(final int bpm, final int denominator) {
+	public int beatLengthFromBpmAndDenominator(final int bpm, final int denominator) {
 		// Example: 60 beats per minute in 4/4 -> 1 beat = 1 second beat length
 		// if converting to 7/8 the beat length will be (1 s / 8/4 ) -> 0.5 s
-		final int beat_length_in_four = (int)(60_000 / bpm);
-		final int beat_length = beat_length_in_four / (denominator / 4);
-		return beat_length;
+		final int beatLengthInFour = (int)(60_000 / bpm);
+		final int beatLength = beatLengthInFour / (denominator / 4);
+		return beatLength;
 	}
 
-	public void alter_beat_position(final int i, final int beat_position_shift) {
-		int original_beat_position = beats.get(i).position();
-		beats.get(i).position(original_beat_position + beat_position_shift);
+	public void alterBeatPosition(final int i, final int beatPositionShift) {
+		int originalBeatPosition = beats.get(i).position();
+		beats.get(i).position(originalBeatPosition + beatPositionShift);
 	}
 
-	public void append_last_beat()
+	public void appendLastBeat()
 	{
-		Beat last_beat = beats.getLast();
+		Beat lastBeat = beats.getLast();
 
-		next_beat_position = last_beat.position() + get_previous_beat_length();
-		final Beat new_beat = new Beat(next_beat_position, last_beat.beatsInMeasure, last_beat.noteDenominator, false);
-		beats.add(new_beat);
+		nextBeatPosition = lastBeat.position() + getPreviousBeatLength();
+		final Beat newBeat = new Beat(nextBeatPosition, lastBeat.beatsInMeasure, lastBeat.noteDenominator, false);
+		beats.add(newBeat);
 	}
 
-	public void append_last_beat(Beat beat)
+	public void appendLastBeat(Beat beat)
 	{
-		Beat last_beat = beats.getLast();
+		Beat lastBeat = beats.getLast();
 
-		if (last_beat != null) {
-			next_beat_position = last_beat.position() + get_previous_beat_length();
-			beat.position(next_beat_position);
+		if (lastBeat != null) {
+			nextBeatPosition = lastBeat.position() + getPreviousBeatLength();
+			beat.position(nextBeatPosition);
 		}
-		final Beat new_beat = new Beat(beat);
-		beats.add(new_beat);
+		final Beat newBeat = new Beat(beat);
+		beats.add(newBeat);
 	}
 
-	public int get_previous_beat_length(final int index)
+	public int getPreviousBeatLength(final int index)
 	{
 		if (beats.size() > 1 && index < beats.size() - 1) {
 			return beats.get(index+1).position() - beats.get(index).position();
@@ -341,7 +341,7 @@ public class BeatsMap {
 		}
 	}
 
-	public int get_previous_beat_length()
+	public int getPreviousBeatLength()
 	{
 		if (beats.size() >= 2) {
 			return beats.getLast().position() - beats.get(beats.size() - 2).position();

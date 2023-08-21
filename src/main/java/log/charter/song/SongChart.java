@@ -95,7 +95,7 @@ public class SongChart {
 			}
 		}
 
-		vocals = new Vocals(readVocals(RW.read(dir + "Vocals_RS2.xml")));
+		vocals = new Vocals(readVocals(RW.read(dir + "_VocalsRS2.xml")));
 
 		bookmarks = project.bookmarks;
 		if (bookmarks == null) {
@@ -126,13 +126,13 @@ public class SongChart {
 		checkSongDataFromGP5File(gp5File);
 		for (final Entry<Integer, List<GPBar>> trackBars : gp5File.bars.entrySet()) {
 			final int trackId = trackBars.getKey();
-			final ArrayList2<GPBarUnwrapper> unwrapped_track = unwrapGP5File(gp5File, trackId);
+			final ArrayList2<GPBarUnwrapper> unwrappedTrack = unwrapGP5File(gp5File, trackId);
 			final GPTrackData trackData = gp5File.tracks.get(trackId);
 			if (trackData.isPercussion) {
 				continue;
 			}
 
-			final ArrangementChart chart = new ArrangementChart(unwrapped_track, trackData);
+			final ArrangementChart chart = new ArrangementChart(unwrappedTrack, trackData);
 			final Level level = chart.levels.get(0);
 			arrangements.add(chart);
 			ArrangementFretHandPositionsCreator.createFretHandPositions(chart.chordTemplates, level.chordsAndNotes,
@@ -156,62 +156,62 @@ public class SongChart {
 		return unwrapGP5File(gp5File, 0);
 	}
 
-	public ArrayList2<GPBarUnwrapper> unwrapGP5File(final GP5File gp5File, final int track_id) {
-		final ArrayList2<Beat> tempo_map_beats = beatsMap.beats;
-		ArrayList2<GPBarUnwrapper> voice_list = new ArrayList2<>();
+	public ArrayList2<GPBarUnwrapper> unwrapGP5File(final GP5File gp5File, final int trackId) {
+		final ArrayList2<Beat> tempoMapBeats = beatsMap.beats;
+		ArrayList2<GPBarUnwrapper> voiceList = new ArrayList2<>();
 
 
-		final int master_bars_count = gp5File.masterBars.size();
-		final List<GPBar> bars = gp5File.bars.get(track_id);
-		final int other_bars_count = bars.size();
-		// final int voices = bars.get(track_id).voices.size(); // TODO: Fix multiple voices messing up beats
+		final int masterBarsCount = gp5File.masterBars.size();
+		final List<GPBar> bars = gp5File.bars.get(trackId);
+		final int otherBarsCount = bars.size();
+		// final int voices = bars.get(trackId).voices.size(); // TODO: Fix multiple voices messing up beats
 		final int voices = 1;
 
-		if (other_bars_count == master_bars_count) {
+		if (otherBarsCount == masterBarsCount) {
 			for (int voice = 0; voice < voices; voice++) {
-				GPBarUnwrapper wrapped_GP_bars_in_voice = new GPBarUnwrapper(gp5File.directions);
-				int total_bar_beats = 0;
+				GPBarUnwrapper wrappedGPBarsInVoice = new GPBarUnwrapper(gp5File.directions);
+				int totalBarBeats = 0;
 
 				// Create 
-				for (int bar = 0; bar < other_bars_count; bar++) {
-					final GPMasterBar master_bar = gp5File.masterBars.get(bar);
-					wrapped_GP_bars_in_voice.add_bar(new CombinedGPBars(master_bar,bar+1));
+				for (int bar = 0; bar < otherBarsCount; bar++) {
+					final GPMasterBar masterBar = gp5File.masterBars.get(bar);
+					wrappedGPBarsInVoice.addBar(new CombinedGPBars(masterBar,bar+1));
 					
-					final int time_signature_num = master_bar.timeSignatureNumerator;
-					final int time_signature_den = master_bar.timeSignatureDenominator;
+					final int timeSignatureNum = masterBar.timeSignatureNumerator;
+					final int timeSignatureDen = masterBar.timeSignatureDenominator;
 
 					// Add bar lines and and store time signature on them
-					for (int bar_beat = 0; bar_beat < time_signature_num; bar_beat++) {
-						if (total_bar_beats + bar_beat >= tempo_map_beats.size()) {
-							beatsMap.append_last_beat(); // Ensure there is a new beat to set up
+					for (int barBeat = 0; barBeat < timeSignatureNum; barBeat++) {
+						if (totalBarBeats + barBeat >= tempoMapBeats.size()) {
+							beatsMap.appendLastBeat(); // Ensure there is a new beat to set up
 						}
 
-						final Beat tempo_map_beat = tempo_map_beats.get(total_bar_beats + bar_beat);
-						tempo_map_beat.setTimeSignature(time_signature_num, time_signature_den);
-						wrapped_GP_bars_in_voice.getLast().bar_beats.add(wrapped_GP_bars_in_voice.get(bar).new BeatUnwrapper(tempo_map_beat));
+						final Beat tempoMapBeat = tempoMapBeats.get(totalBarBeats + barBeat);
+						tempoMapBeat.setTimeSignature(timeSignatureNum, timeSignatureDen);
+						wrappedGPBarsInVoice.getLast().barBeats.add(wrappedGPBarsInVoice.get(bar).new BeatUnwrapper(tempoMapBeat));
 					}
 
-					wrapped_GP_bars_in_voice.getLast().available_space_in_64ths =
-					(int)(((double)time_signature_num / time_signature_den) * 64);
+					wrappedGPBarsInVoice.getLast().availableSpaceIn_64ths =
+					(int)(((double)timeSignatureNum / timeSignatureDen) * 64);
 					
 					// Add note beats of this bar to the combined class
-					final int notes_in_bar = bars.get(bar).voices.get(voice).size();
-					for (int note_beat = 0; note_beat < notes_in_bar; note_beat++) {
-						final GPBeat current_note_beat = bars.get(bar).voices.get(voice).get(note_beat);
-						wrapped_GP_bars_in_voice.get(bar).note_beats.add(wrapped_GP_bars_in_voice.get(bar).new GPBeatUnwrapper(current_note_beat));
+					final int notesInBar = bars.get(bar).voices.get(voice).size();
+					for (int noteBeat = 0; noteBeat < notesInBar; noteBeat++) {
+						final GPBeat currentNoteBeat = bars.get(bar).voices.get(voice).get(noteBeat);
+						wrappedGPBarsInVoice.get(bar).noteBeats.add(wrappedGPBarsInVoice.get(bar).new GPBeatUnwrapper(currentNoteBeat));
 					}
-					wrapped_GP_bars_in_voice.getLast().notes_in_bar = notes_in_bar;
-					wrapped_GP_bars_in_voice.getLast().update_bars_from_note_tempo();
-					total_bar_beats += time_signature_num;
+					wrappedGPBarsInVoice.getLast().notesInBar = notesInBar;
+					wrappedGPBarsInVoice.getLast().updateBarsFromNoteTempo();
+					totalBarBeats += timeSignatureNum;
 				}
-				wrapped_GP_bars_in_voice.unwrap();
+				wrappedGPBarsInVoice.unwrap();
 
-				beatsMap = new BeatsMap(wrapped_GP_bars_in_voice.get_unwrapped_beats_map(beatsMap.songLengthMs));
-				voice_list.add(wrapped_GP_bars_in_voice);
+				beatsMap = new BeatsMap(wrappedGPBarsInVoice.getUnwrappedBeatsMap(beatsMap.songLengthMs));
+				voiceList.add(wrappedGPBarsInVoice);
 			}
 		}
 
-		return voice_list;
+		return voiceList;
 	}
 
 	public void moveEverything(final int positionDifference) {

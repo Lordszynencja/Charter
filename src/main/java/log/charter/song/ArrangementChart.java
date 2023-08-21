@@ -146,7 +146,7 @@ public class ArrangementChart {
 		count.phrase = "COUNT";
 		eventPoints.add(0, count);
 
-		final EventPoint end = new EventPoint(unwrap.get(0).get_last_bar_start_position());
+		final EventPoint end = new EventPoint(unwrap.get(0).getLastBarStartPosition());
 		end.phrase = "END";
 		eventPoints.add(end);
 	}
@@ -301,31 +301,31 @@ public class ArrangementChart {
 		HandShape lastHandShape = null;
 
 		for (GPBarUnwrapper voice : unwrap) {
-			double note_start_position = 0;
-			for (CombinedGPBars bar : voice.unwrapped_bars) {
+			double noteStartPosition = 0;
+			for (CombinedGPBars bar : voice.unwrappedBars) {
 				// Initial note position is the first is a bar
-				if (bar.bar.timeSignatureNumerator != bar.bar_beats.size()) {
+				if (bar.bar.timeSignatureNumerator != bar.barBeats.size()) {
 					lastHandShape = null; // Throw error
 				}
-				for (GPBeatUnwrapper note_beat : bar.note_beats) {
-					if (note_beat.notes.isEmpty()) {
+				for (GPBeatUnwrapper noteBeat : bar.noteBeats) {
+					if (noteBeat.notes.isEmpty()) {
 						lastHandShape = null;
-						note_start_position += note_beat.note_time_ms; // Rest notes take time too
+						noteStartPosition += noteBeat.noteTimeMs; // Rest notes take time too
 						continue;
 					}
 
-					if (note_beat.notes.size() == 1) {
-						addNote(level, note_beat, (int)note_start_position, wasHOPOStart, hopoFrom);
+					if (noteBeat.notes.size() == 1) {
+						addNote(level, noteBeat, (int)noteStartPosition, wasHOPOStart, hopoFrom);
 						lastHandShape = null;
 					}
-					else if (note_beat.notes.size() > 1) {
-						addChord(level, note_beat, (int)note_start_position, wasHOPOStart, hopoFrom, lastHandShape);
+					else if (noteBeat.notes.size() > 1) {
+						addChord(level, noteBeat, (int)noteStartPosition, wasHOPOStart, hopoFrom, lastHandShape);
 						lastHandShape = level.handShapes.getLast();
 					}
 
-					note_start_position += note_beat.note_time_ms;
+					noteStartPosition += noteBeat.noteTimeMs;
 
-					for (final GPNote note : note_beat.notes) {
+					for (final GPNote note : noteBeat.notes) {
 						final int string = note.string;
 						wasHOPOStart[string] = note.effects.isHammerPullOrigin;
 						hopoFrom[string] = note.fret;
@@ -362,7 +362,7 @@ public class ArrangementChart {
 		}
 	}
 
-	private void addNote(final Level level, final GPBeatUnwrapper gpBeat, final int note_start_position,
+	private void addNote(final Level level, final GPBeatUnwrapper gpBeat, final int noteStartPosition,
 		final boolean[] wasHOPOStart, final int[] hopoFrom) {
 		
 		if (gpBeat.notes.size() != 1) {
@@ -386,13 +386,13 @@ public class ArrangementChart {
 			}
 		}
 
-		final Note note = new Note(note_start_position, gpNote.string - 1, gpNote.fret);
-		final int note_length = (int)gpBeat.note_time_ms;
+		final Note note = new Note(noteStartPosition, gpNote.string - 1, gpNote.fret);
+		final int noteLength = (int)gpBeat.noteTimeMs;
 		final GPNoteEffects effects = gpNote.effects;
 
 		setStatuses(CommonNote.create(note), gpBeat, gpNote, wasHOPOStart, hopoFrom);
 		if (note.vibrato || note.tremolo) {
-			note.length(note_length);
+			note.length(noteLength);
 		}
 
 		note.accent = gpNote.accent;
@@ -401,7 +401,7 @@ public class ArrangementChart {
 		Note lastNote = note;
 		final List<Note> afterNotes = new ArrayList<>();
 		if (!effects.bends.isEmpty()) {
-			note.length(note_length);
+			note.length(noteLength);
 
 			int lastBendValue = 0;
 			for (final GPBend bendPoint : effects.bends) {
@@ -412,15 +412,15 @@ public class ArrangementChart {
 					break;
 				}
 
-				final int bendPositionOffset = note_length * bendPoint.offset / 60;
+				final int bendPositionOffset = noteLength * bendPoint.offset / 60;
 
 				if (bendPoint.vibrato && !lastNote.vibrato) {
 					if (bendPoint.offset == 0) {
 						lastNote.vibrato = bendPoint.vibrato;
 					} else {
-						final Note split = new Note(note_start_position + bendPositionOffset, note.string, note.fret);
+						final Note split = new Note(noteStartPosition + bendPositionOffset, note.string, note.fret);
 						split.vibrato = bendPoint.vibrato;
-						split.endPosition(note_start_position + note_length);
+						split.endPosition(noteStartPosition + noteLength);
 
 						lastNote.linkNext = true;
 						lastNote.endPosition(split.position() - 1);
@@ -440,7 +440,7 @@ public class ArrangementChart {
 
 		if (effects.trill != null) {
 			final int notes = gpBeat.duration.length / effects.trill.speed.length;
-			int trillNotePosition = (int)((double)note_start_position + gpBeat.note_time_ms/(double)notes);
+			int trillNotePosition = (int)((double)noteStartPosition + gpBeat.noteTimeMs/(double)notes);
 			for (int i = 1; i < notes; i++) {
 				final int fret = gpNote.fret + (i % 2) * effects.trill.value;
 				final Note trillNote = new Note(trillNotePosition, note.string, fret);
@@ -448,7 +448,7 @@ public class ArrangementChart {
 				trillNote.ignore = true;
 				afterNotes.add(trillNote);
 
-				trillNotePosition += (int)(gpBeat.note_time_ms/(double)notes);
+				trillNotePosition += (int)(gpBeat.noteTimeMs/(double)notes);
 			}
 		}
 
@@ -501,12 +501,12 @@ public class ArrangementChart {
 		if (effects.graceNote != null) {
 			final GPGraceNote graceNoteData = effects.graceNote;
 			if (graceNoteData.beforeBeat) {
-				final int graceNotePosition = note_start_position - (int)gpBeat.gp_duration_to_time(graceNoteData.duration);
+				final int graceNotePosition = noteStartPosition - (int)gpBeat.gpDurationToTime(graceNoteData.duration);
 				graceNote = new Note(graceNotePosition, note.string, graceNoteData.fret);
 			} else {
-				graceNote = new Note(note_start_position, note.string, graceNoteData.fret);
-				note.position(note_start_position + (int)gpBeat.gp_duration_to_time(graceNoteData.duration));
-				note.endPosition(note_start_position + note_length);
+				graceNote = new Note(noteStartPosition, note.string, graceNoteData.fret);
+				note.position(noteStartPosition + (int)gpBeat.gpDurationToTime(graceNoteData.duration));
+				note.endPosition(noteStartPosition + noteLength);
 			}
 
 			if (graceNoteData.dead) {
@@ -758,7 +758,7 @@ public class ArrangementChart {
 		}
 	}
 
-	private void addChord(final Level level, final GPBeatUnwrapper gpBeat, final int note_start_position,
+	private void addChord(final Level level, final GPBeatUnwrapper gpBeat, final int noteStartPosition,
 		final boolean[] wasHOPOStart, final int[] hOPOFrom,	final HandShape lastHandShape) {
 		final ChordTemplate chordTemplate = new ChordTemplate();
 		chordTemplate.chordName = gpBeat.chord == null ? "" : gpBeat.chord.chordName;
@@ -766,8 +766,8 @@ public class ArrangementChart {
 			chordTemplate.chordName = "";
 		}
 
-		final Chord chord = new Chord(note_start_position, -1, chordTemplate);
-		final int length = (int)gpBeat.note_time_ms;
+		final Chord chord = new Chord(noteStartPosition, -1, chordTemplate);
+		final int length = (int)gpBeat.noteTimeMs;
 		boolean setLength = false;
 
 		for (final GPNote gpNote : gpBeat.notes) {
@@ -823,7 +823,7 @@ public class ArrangementChart {
 		chord.updateTemplate(templateId, chordTemplate);
 		level.chordsAndNotes.add(new ChordOrNote(chord));
 
-		final int handshapeEndPosition = note_start_position + length - (int)gpBeat.gp_duration_to_time(GPDuration.NOTE_32);
+		final int handshapeEndPosition = noteStartPosition + length - (int)gpBeat.gpDurationToTime(GPDuration.NOTE_32);
 
 		if (lastHandShape != null && lastHandShape.templateId == chord.templateId()) {
 			lastHandShape.endPosition(handshapeEndPosition);

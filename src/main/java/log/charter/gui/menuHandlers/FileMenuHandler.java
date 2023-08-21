@@ -84,8 +84,8 @@ public class FileMenuHandler extends CharterMenuHandler {
 
 		charterMenuBar.refreshMenus();
 	}
-	public void importGPFile(String file_path) {
-		final File file = new File(file_path);
+	public void importGPFile(String filePath) {
+		final File file = new File(filePath);
 
 		final GP5File gp5File = GP5FileReader.importGPFile(file);
 		data.songChart.addGP5Arrangements(gp5File);

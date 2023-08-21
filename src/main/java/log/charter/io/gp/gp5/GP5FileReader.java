@@ -220,24 +220,24 @@ public class GP5FileReader {
 		}
 		directions = new Directions();
 		directions.coda = readInt16LE(data); // "Coda" bar index
-		directions.double_coda = readInt16LE(data); // "Double Coda" bar index
+		directions.doubleCoda = readInt16LE(data); // "Double Coda" bar index
 		directions.segno = readInt16LE(data); // "Segno" bar index
-		directions.segno_segno = readInt16LE(data); // "Segno Segno" bar index
+		directions.segnoSegno = readInt16LE(data); // "Segno Segno" bar index
 		directions.fine = readInt16LE(data); // "Fine" bar index
-		directions.da_capo = readInt16LE(data); // "Da Capo" bar index
-		directions.da_capo_al_coda = readInt16LE(data); // "Da Capo al Coda" bar index
-		directions.da_capo_al_double_coda = readInt16LE(data); // "Da Capo al Double Coda" bar index
-		directions.da_capo_al_fine = readInt16LE(data); // "Da Capo al Fine" bar index
-		directions.da_segno = readInt16LE(data); // "Da Segno" bar index
-		directions.da_segno_al_coda = readInt16LE(data); // "Da Segno al Coda" bar index
-		directions.da_segno_al_double_coda = readInt16LE(data); // "Da Segno al Double Coda" bar index
-		directions.da_segno_al_fine = readInt16LE(data); // "Da Segno al Fine "bar index
-		directions.da_segno_segno = readInt16LE(data); // "Da Segno Segno" bar index
-		directions.da_segno_segno_al_coda = readInt16LE(data); // "Da Segno Segno al Coda" bar index
-		directions.da_segno_segno_al_double_coda = readInt16LE(data); // "Da Segno Segno al Double Coda" bar index
-		directions.da_segno_segno_al_fine = readInt16LE(data); // "Da Segno Segno al Fine" bar index
-		directions.da_coda = readInt16LE(data); // "Da Coda" bar index
-		directions.da_double_coda = readInt16LE(data); // "Da Double Coda" bar index
+		directions.daCapo = readInt16LE(data); // "Da Capo" bar index
+		directions.daCapoAlCoda = readInt16LE(data); // "Da Capo al Coda" bar index
+		directions.daCapoAlDoubleCoda = readInt16LE(data); // "Da Capo al Double Coda" bar index
+		directions.daCapoAlFine = readInt16LE(data); // "Da Capo al Fine" bar index
+		directions.daSegno = readInt16LE(data); // "Da Segno" bar index
+		directions.daSegnoAlCoda = readInt16LE(data); // "Da Segno al Coda" bar index
+		directions.daSegnoAlDoubleCoda = readInt16LE(data); // "Da Segno al Double Coda" bar index
+		directions.daSegnoAlFine = readInt16LE(data); // "Da Segno al Fine "bar index
+		directions.daSegnoSegno = readInt16LE(data); // "Da Segno Segno" bar index
+		directions.daSegnoSegnoAlCoda = readInt16LE(data); // "Da Segno Segno al Coda" bar index
+		directions.daSegnoSegnoAlDoubleCoda = readInt16LE(data); // "Da Segno Segno al Double Coda" bar index
+		directions.daSegnoSegnoAlFine = readInt16LE(data); // "Da Segno Segno al Fine" bar index
+		directions.daCoda = readInt16LE(data); // "Da Coda" bar index
+		directions.daDoubleCoda = readInt16LE(data); // "Da Double Coda" bar index
 		data.skip(4); // unknown
 	}
 
@@ -439,7 +439,7 @@ public class GP5FileReader {
 		return new GPBar(voices);
 	}
 
-	private List<GPBeat> readVoice(final int trackId, final boolean read_tempo_changes) {
+	private List<GPBeat> readVoice(final int trackId, final boolean readTempoChanges) {
 		final int beatCount = readInt32LE(data);
 		if (beatCount == 0) {
 			return null;
@@ -448,14 +448,14 @@ public class GP5FileReader {
 		final List<GPBeat> beats = new ArrayList<>();
 
 		for (int i = 0; i < beatCount; i++) {
-			final GPBeat beat = readBeat(trackId, read_tempo_changes);
+			final GPBeat beat = readBeat(trackId, readTempoChanges);
 			beats.add(beat);
 		}
 
 		return beats;
 	}
 
-	private GPBeat readBeat(final int trackId, final boolean read_tempo_changes) {
+	private GPBeat readBeat(final int trackId, final boolean readTempoChanges) {
 		final int flags = data.read();
 		final int dots = (flags & 0x01) != 0 ? 1 : 0;
 		boolean isEmpty = false;
@@ -492,9 +492,9 @@ public class GP5FileReader {
 		}
 
 		if ((flags & 0x10) != 0) {
-			int possible_tempo_change = 0;
-			if ((possible_tempo_change = readMixTableChange()) > 0 && read_tempo_changes) {
-				tempo = possible_tempo_change;
+			int possibleTempoChange = 0;
+			if ((possibleTempoChange = readMixTableChange()) > 0 && readTempoChanges) {
+				tempo = possibleTempoChange;
 			}
 		}
 

@@ -17,12 +17,12 @@ import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 
 public class TestArrangementChart {
-    FileMenuHandler file_menu_handler;
+    FileMenuHandler fileMenuHandler;
     SongChart song;
 
     @BeforeEach
     void setUp() {
-        file_menu_handler = new FileMenuHandler();
+        fileMenuHandler = new FileMenuHandler();
         song = new SongChart(30000, "test");
     }
     @Test
@@ -31,57 +31,57 @@ public class TestArrangementChart {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
-        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        final ArrayList2<Integer> notePositions = new ArrayList2<>();
         for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
-            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+            notePositions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
         }
-        int beat_length = (60000/gp5File.tempo);
-        int bar_length = beat_length * 4; // for 4/4
+        int beatLength = (60000/gp5File.tempo);
+        int barLength = beatLength * 4; // for 4/4
 
-        int n_whole_notes = 1;
-        int n_half_notes = 2;
-        int n_quarter_notes = 4;
-        int n_eighth_notes = 8;
-        int n_sixteenth_notes = 16;
-        int n_thirtysecond_notes = 32;
-        int n_sixtyfourth_notes = 64;
+        int nWholeNotes = 1;
+        int nHalfNotes = 2;
+        int nQuarterNotes = 4;
+        int nEighthNotes = 8;
+        int nSixteenthNotes = 16;
+        int nThirtysecondNotes = 32;
+        int nSixtyfourthNotes = 64;
     
         int i = 0;
-        int j = n_whole_notes;
+        int j = nWholeNotes;
 
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertEquals(bar_length, duration);
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertEquals(barLength, duration);
         }
-        j += n_half_notes;
+        j += nHalfNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertEquals(bar_length/2, duration);
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertEquals(barLength/2, duration);
         }
-        j += n_quarter_notes;
+        j += nQuarterNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertEquals(bar_length/4, duration);
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertEquals(barLength/4, duration);
         }
-        j += n_eighth_notes;
+        j += nEighthNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertEquals(bar_length/8, duration);
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertEquals(barLength/8, duration);
         }
-        j += n_sixteenth_notes;
+        j += nSixteenthNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertEquals(bar_length/16, duration);
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertEquals(barLength/16, duration);
         }
-        j += n_thirtysecond_notes;
+        j += nThirtysecondNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertEquals(bar_length/32, duration);
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertEquals(barLength/32, duration);
         }
-        j += n_sixtyfourth_notes;
+        j += nSixtyfourthNotes;
         for (; i < j - 1; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertTrue((int)Math.round((bar_length/64)) == duration || (int)Math.round((bar_length/64)) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertTrue((int)Math.round((barLength/64)) == duration || (int)Math.round((barLength/64)) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
         }
     }
     @Test
@@ -90,51 +90,51 @@ public class TestArrangementChart {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
-        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        final ArrayList2<Integer> notePositions = new ArrayList2<>();
         for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
-            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+            notePositions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
         }
-        int beat_length = (60000/gp5File.tempo);
-        int bar_length = beat_length * 6; // for 12/8
+        int beatLength = (60000/gp5File.tempo);
+        int barLength = beatLength * 6; // for 12/8
 
-        int n_half_notes = 3;
-        int n_quarter_notes = 6;
-        int n_eighth_notes = 12;
-        int n_sixteenth_notes = 24;
-        int n_thirtysecond_notes = 48;
-        int n_sixtyfourth_notes = 96;
+        int nHalfNotes = 3;
+        int nQuarterNotes = 6;
+        int nEighthNotes = 12;
+        int nSixteenthNotes = 24;
+        int nThirtysecondNotes = 48;
+        int nSixtyfourthNotes = 96;
     
         int i = 0;
-        int j = n_half_notes;
+        int j = nHalfNotes;
 
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertEquals(bar_length/3, duration);
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertEquals(barLength/3, duration);
         }
-        j += n_quarter_notes;
+        j += nQuarterNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertEquals(bar_length/6, duration);
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertEquals(barLength/6, duration);
         }
-        j += n_eighth_notes;
+        j += nEighthNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertEquals(bar_length/12, duration);
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertEquals(barLength/12, duration);
         }
-        j += n_sixteenth_notes;
+        j += nSixteenthNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertEquals(bar_length/24, duration);
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertEquals(barLength/24, duration);
         }
-        j += n_thirtysecond_notes;
+        j += nThirtysecondNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertEquals(bar_length/48, duration);
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertEquals(barLength/48, duration);
         }
-        j += n_sixtyfourth_notes;
+        j += nSixtyfourthNotes;
         for (; i < j-1; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertTrue((bar_length/96) == duration || (bar_length/96) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertTrue((barLength/96) == duration || (barLength/96) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
         }
     }
     @Test
@@ -143,50 +143,50 @@ public class TestArrangementChart {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
-        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        final ArrayList2<Integer> notePositions = new ArrayList2<>();
         for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
-            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+            notePositions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
         }
-        int beat_length = (60000/gp5File.tempo);
-        int bar_length = beat_length * 4; // for 4/4
-        int n_half_notes = 3;
-        int n_quarter_notes = 6;
-        int n_eighth_notes = 12;
-        int n_sixteenth_notes = 24;
-        int n_thirtysecond_notes = 48;
-        int n_sixtyfourth_notes = 96;
+        int beatLength = (60000/gp5File.tempo);
+        int barLength = beatLength * 4; // for 4/4
+        int nHalfNotes = 3;
+        int nQuarterNotes = 6;
+        int nEighthNotes = 12;
+        int nSixteenthNotes = 24;
+        int nThirtysecondNotes = 48;
+        int nSixtyfourthNotes = 96;
     
         int i = 0;
-        int j = n_half_notes;
+        int j = nHalfNotes;
 
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertTrue((bar_length/3) == duration || (bar_length/3) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertTrue((barLength/3) == duration || (barLength/3) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
         }
-        j += n_quarter_notes;
+        j += nQuarterNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertTrue((bar_length/6) == duration || (bar_length/6) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertTrue((barLength/6) == duration || (barLength/6) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
         }
-        j += n_eighth_notes;
+        j += nEighthNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertTrue((bar_length/12) == duration || (bar_length/12) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertTrue((barLength/12) == duration || (barLength/12) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
         }
-        j += n_sixteenth_notes;
+        j += nSixteenthNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertTrue((bar_length/24) == duration || (bar_length/24) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertTrue((barLength/24) == duration || (barLength/24) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
         }
-        j += n_thirtysecond_notes;
+        j += nThirtysecondNotes;
         for (; i < j; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertTrue((bar_length/48) == duration || (bar_length/48) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertTrue((barLength/48) == duration || (barLength/48) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
         }
-        j += n_sixtyfourth_notes;
+        j += nSixtyfourthNotes;
         for (; i < j-1; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertTrue((bar_length/96) == duration || (bar_length/96) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertTrue((barLength/96) == duration || (barLength/96) + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
         }
     }
     @Test
@@ -195,17 +195,17 @@ public class TestArrangementChart {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
-        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        final ArrayList2<Integer> notePositions = new ArrayList2<>();
         for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
-            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+            notePositions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
         }
 
-        int beat_length = (60000/gp5File.tempo);
-        int bar_length = beat_length * 16; // for 16/4
-        int tuplet_duration = bar_length/13;
-        for (int i = 0; i < note_positions.size()-1; i++) {
-            int duration = note_positions.get(i+1) - note_positions.get(i);
-            assertTrue(tuplet_duration == duration || tuplet_duration + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
+        int beatLength = (60000/gp5File.tempo);
+        int barLength = beatLength * 16; // for 16/4
+        int tupletDuration = barLength/13;
+        for (int i = 0; i < notePositions.size()-1; i++) {
+            int duration = notePositions.get(i+1) - notePositions.get(i);
+            assertTrue(tupletDuration == duration || tupletDuration + 1 == duration); // Duration is 62,5, i.e. 62 or 63 depending on values
         }
     }
 
@@ -215,16 +215,16 @@ public class TestArrangementChart {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
-        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        final ArrayList2<Integer> notePositions = new ArrayList2<>();
         for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
-            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+            notePositions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
         }
-        ArrayList<Integer> expected_result = new ArrayList<>(
+        ArrayList<Integer> expectedResult = new ArrayList<>(
             Arrays.asList(0,500,        // 240 bpm (bar 1)
                                1000, 2000,   // 120 bpm (bar 2)
                                3000, 5000)); // 60 bpm (bar 3)
 
-        assertTrue(note_positions.equals(expected_result));
+        assertTrue(notePositions.equals(expectedResult));
     }
     @Test
     void testTempoChange2() {
@@ -232,16 +232,16 @@ public class TestArrangementChart {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
-        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        final ArrayList2<Integer> notePositions = new ArrayList2<>();
         for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
-            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+            notePositions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
         }
-        ArrayList<Integer> expected_result = new ArrayList<>(
+        ArrayList<Integer> expectedResult = new ArrayList<>(
             Arrays.asList(0,250, 500, 750,          // 240 bpm (bar 1)
                                1000, 1500, 2000, 2500,   // 120 bpm (bar 2)
                                3000, 4000, 5000, 6000)); // 60 bpm (bar 3)
 
-        assertTrue(note_positions.equals(expected_result));
+        assertTrue(notePositions.equals(expectedResult));
     }
     @Test
     void testTempoChange3() {
@@ -249,16 +249,16 @@ public class TestArrangementChart {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
-        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        final ArrayList2<Integer> notePositions = new ArrayList2<>();
         for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
-            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+            notePositions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
         }
-        ArrayList<Integer> expected_result = new ArrayList<>(
+        ArrayList<Integer> expectedResult = new ArrayList<>(
             Arrays.asList(0, 250, 500,              // 240 bpm (bar 1)
                                1000, 1500, 2000, 2500,   // 120 bpm (bar 1.5)
                                3500, 4500, 5500, 6500, 7500)); // 60 bpm (bar 2.5)
 
-        assertTrue(note_positions.equals(expected_result));
+        assertTrue(notePositions.equals(expectedResult));
     }
     @Test
     void testTempoChange4() {
@@ -266,16 +266,16 @@ public class TestArrangementChart {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
-        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        final ArrayList2<Integer> notePositions = new ArrayList2<>();
         for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
-            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+            notePositions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
         }
-        ArrayList<Integer> expected_result = new ArrayList<>(
+        ArrayList<Integer> expectedResult = new ArrayList<>(
             Arrays.asList(0, 250, 500, 750,          // 240 bpm (bar 1)
                                1250, 1750, 2250, 2750,   // 120 bpm (bar 1.75)
                                3750, 4750, 5750, 6750)); // 60 bpm (bar 2.75)
 
-        assertTrue(note_positions.equals(expected_result));
+        assertTrue(notePositions.equals(expectedResult));
     }
     @Test
     void testTempoChange5() {
@@ -283,16 +283,16 @@ public class TestArrangementChart {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
-        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        final ArrayList2<Integer> notePositions = new ArrayList2<>();
         for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
-            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+            notePositions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
         }
-        ArrayList<Integer> expected_result = new ArrayList<>(
+        ArrayList<Integer> expectedResult = new ArrayList<>(
             Arrays.asList(0, 250, 500, 750, 1000, 1250,          // 240 bpm (bar 1)
                                1750, // 120 bpm (bar 2.25)
                                2750, 3750, 4750, 5750, 6750)); // 60 bpm (bar 2.5)
 
-        assertTrue(note_positions.equals(expected_result));
+        assertTrue(notePositions.equals(expectedResult));
     }
     @Test
     void testTempoChange6() {
@@ -300,17 +300,17 @@ public class TestArrangementChart {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
-        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        final ArrayList2<Integer> notePositions = new ArrayList2<>();
         for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
-            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+            notePositions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
         }
-        ArrayList<Integer> expected_result = new ArrayList<>(
+        ArrayList<Integer> expectedResult = new ArrayList<>(
             Arrays.asList(0, 250, 500, 750, // 240 bpm (bar 1)
                                1000, 1500, 2000, 2500, // 120 bpm (bar 2)
                                3000, 3250, 3500, 3750, // 240 bpm (bar 1)
                                4000, 4500, 5000, 5500)); // 120 bpm (bar 2)
 
-        assertTrue(note_positions.equals(expected_result));
+        assertTrue(notePositions.equals(expectedResult));
     }
 
     @Test
@@ -319,16 +319,16 @@ public class TestArrangementChart {
         final GP5File gp5File = GP5FileReader.importGPFile(file);
         final ArrayList2<GPBarUnwrapper> unwrapped = song.unwrapGP5File(gp5File);
         final ArrangementChart chart = new ArrangementChart(unwrapped,  gp5File.tracks.get(0));
-        final ArrayList2<Integer> note_positions = new ArrayList2<>();
+        final ArrayList2<Integer> notePositions = new ArrayList2<>();
         for (int i = 0; i < chart.levels.get(0).chordsAndNotes.size(); i++) {
-            note_positions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
+            notePositions.add(chart.levels.get(0).chordsAndNotes.get(i).note.position());
         }
 
-        ArrayList<Integer> expected_result = new ArrayList<>(
+        ArrayList<Integer> expectedResult = new ArrayList<>(
             Arrays.asList(0, 125,       // Grace note on beat
                                1875, 2000)); // Grace note before beat
 
-        assertTrue(note_positions.equals(expected_result));
+        assertTrue(notePositions.equals(expectedResult));
     }
 
 }
