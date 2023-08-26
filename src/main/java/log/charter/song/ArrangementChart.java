@@ -138,7 +138,7 @@ public class ArrangementChart {
 		eventPoints.add(end);
 	}
 
-	private void addCountEndPhrases2(final ArrayList2<GPBarUnwrapper> unwrap) {
+	private void addCountEndPhrasesForGPBarUnwrappers(final ArrayList2<GPBarUnwrapper> unwrap) {
 		phrases.put("COUNT", new Phrase(0, false));
 		phrases.put("END", new Phrase(0, false));
 
@@ -225,9 +225,9 @@ public class ArrangementChart {
 	public ArrangementChart(final ArrayList2<GPBarUnwrapper> unwrap, final GPTrackData trackData) {
 		capo = trackData.capo;
 		arrangementType = getGPArrangementType(trackData);
-		tuning = new Tuning(trackData.tuning, capo);
+		tuning = new Tuning(Tuning.createFromGpTuning(trackData.tuning, capo));
 		addBars(unwrap);
-		addCountEndPhrases2(unwrap);
+		addCountEndPhrasesForGPBarUnwrappers(unwrap);
 	}
 
 	private ArrangementType getGPArrangementType(final GPTrackData trackData) {
@@ -310,7 +310,7 @@ public class ArrangementChart {
 				for (GPBeatUnwrapper noteBeat : bar.noteBeats) {
 					if (noteBeat.notes.isEmpty()) {
 						lastHandShape = null;
-						noteStartPosition += noteBeat.noteTimeMs; // Rest notes take time too
+						noteStartPosition += noteBeat.getNoteTimeMs(); // Rest notes take time too
 						continue;
 					}
 
@@ -323,7 +323,7 @@ public class ArrangementChart {
 						lastHandShape = level.handShapes.getLast();
 					}
 
-					noteStartPosition += noteBeat.noteTimeMs;
+					noteStartPosition += noteBeat.getNoteTimeMs();
 
 					for (final GPNote note : noteBeat.notes) {
 						final int string = note.string;
@@ -387,7 +387,7 @@ public class ArrangementChart {
 		}
 
 		final Note note = new Note(noteStartPosition, gpNote.string - 1, gpNote.fret);
-		final int noteLength = (int)gpBeat.noteTimeMs;
+		final int noteLength = (int)gpBeat.getNoteTimeMs();
 		final GPNoteEffects effects = gpNote.effects;
 
 		setStatuses(CommonNote.create(note), gpBeat, gpNote, wasHOPOStart, hopoFrom);
@@ -440,7 +440,7 @@ public class ArrangementChart {
 
 		if (effects.trill != null) {
 			final int notes = gpBeat.duration.length / effects.trill.speed.length;
-			int trillNotePosition = (int)((double)noteStartPosition + gpBeat.noteTimeMs/(double)notes);
+			int trillNotePosition = (int)((double)noteStartPosition + noteLength/(double)notes);
 			for (int i = 1; i < notes; i++) {
 				final int fret = gpNote.fret + (i % 2) * effects.trill.value;
 				final Note trillNote = new Note(trillNotePosition, note.string, fret);
@@ -448,7 +448,7 @@ public class ArrangementChart {
 				trillNote.ignore = true;
 				afterNotes.add(trillNote);
 
-				trillNotePosition += (int)(gpBeat.noteTimeMs/(double)notes);
+				trillNotePosition += (int)(noteLength/(double)notes);
 			}
 		}
 
@@ -767,7 +767,7 @@ public class ArrangementChart {
 		}
 
 		final Chord chord = new Chord(noteStartPosition, -1, chordTemplate);
-		final int length = (int)gpBeat.noteTimeMs;
+		final int length = (int)gpBeat.getNoteTimeMs();
 		boolean setLength = false;
 
 		for (final GPNote gpNote : gpBeat.notes) {

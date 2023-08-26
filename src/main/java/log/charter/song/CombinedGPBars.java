@@ -13,68 +13,81 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 public class CombinedGPBars {
 	public class GPBeatUnwrapper extends GPBeat {
-		double noteDuration;
-		double noteTimeMs;
+		private double noteDuration;
+		private double noteTimeMs;
 
 		public GPBeatUnwrapper(final int tempo, final int dots, final boolean isEmpty, final GPDuration duration,
 				final int tupletNumerator, final int tupletDenominator, final GPBeatEffects beatEffects,
 				final GPChord chord, final List<GPNote> notes, final String text) {
-			super(tempo,dots,isEmpty,duration,tupletNumerator,tupletDenominator,beatEffects,chord,notes,text);
+			super(tempo, dots, isEmpty, duration, tupletNumerator, tupletDenominator, beatEffects, chord, notes, text);
 			this.noteDuration = noteDuration(gpDurationToNoteDenominator(duration), tupletNumerator, tupletDenominator, dots != 0);
 			this.noteTimeMs = noteTimeFromDuration(tempo);
 		}
+
 		public GPBeatUnwrapper(final GPBeat beat) {
-			super(beat.tempo,beat.dots,beat.isEmpty,beat.duration,beat.tupletNumerator,beat.tupletDenominator,beat.beatEffects,beat.chord,beat.notes,beat.text);
+			super(beat.tempo, beat.dots, beat.isEmpty, beat.duration, beat.tupletNumerator, beat.tupletDenominator,
+					beat.beatEffects, beat.chord, beat.notes, beat.text);
 			this.noteDuration = noteDuration(gpDurationToNoteDenominator(duration), tupletNumerator, tupletDenominator, dots != 0);
 			this.noteTimeMs = noteTimeFromDuration(tempo);
 		}
 		
-		final int gpDurationToNoteDenominator(GPDuration duration) {
+		public final double getNoteTimeMs() {
+			return this.noteTimeMs;
+		}
+
+		private final int gpDurationToNoteDenominator(GPDuration duration) {
 			// Example length 16 -> 64/16 = 4 -> 1/4 (quarter)
 			return (64/duration.length);
 		}
+
 		final double gpDurationToTime(GPDuration duration) {
 			// Example length 16 -> 64/16 = 4 -> 1/4 (quarter)
-			double noteDuration = noteDuration(gpDurationToNoteDenominator(duration), this.tupletNumerator, this.tupletDenominator, this.dots != 0);
-			double noteTimeMs = noteTimeFromCustomDuration(this.tempo, noteDuration);
-			return noteTimeMs;
+			final double calculatedNoteDuration = noteDuration(gpDurationToNoteDenominator(duration), this.tupletNumerator, this.tupletDenominator, this.dots != 0);
+			final double calculatedNoteTimeMs = noteTimeFromCustomDuration(this.tempo, calculatedNoteDuration);
+			return calculatedNoteTimeMs;
 		}
+
 		static final double fourOverFourBeatLength(int bpm) {
 			return 60000/(double)bpm;
 		}
 
 		double noteTimeFromDuration(int bpm) {
 			final double fourOverFourBeatLength = fourOverFourBeatLength(bpm); // Same as whole note note time
-			final double noteTimeMs = fourOverFourBeatLength * this.noteDuration;
-			return noteTimeMs;
+			final double calculatedNoteTimeMs = fourOverFourBeatLength * this.noteDuration;
+			return calculatedNoteTimeMs;
 		}
+
 		double noteTimeFromCustomDuration(int bpm, double duration) {
 			final double fourOverFourBeatLength = fourOverFourBeatLength(bpm); // Same as whole note note time
-			final double noteTimeMs = fourOverFourBeatLength * duration;
-			return noteTimeMs;
+			final double calculatedNoteTimeMs = fourOverFourBeatLength * duration;
+			return calculatedNoteTimeMs;
 		}
+
 		double noteTime(int bpm, int noteLengthDen, int noteTupleNum, int noteTupleDen, boolean isDottedNote) {
 			final double fourOverFourBeatLength = fourOverFourBeatLength(bpm); // Same as whole note note time
-			final double noteDuration = noteDuration(noteLengthDen, noteTupleNum, noteTupleDen, isDottedNote);
-			final double noteTimeMs = (int)(fourOverFourBeatLength * noteDuration);
-			return noteTimeMs;
+			final double calculatedNoteDuration = noteDuration(noteLengthDen, noteTupleNum, noteTupleDen, isDottedNote);
+			final double calculatedNoteTimeMs = (int)(fourOverFourBeatLength * calculatedNoteDuration);
+			return calculatedNoteTimeMs;
 		}
+
 		double noteDuration(int noteLengthDen, int noteTupleNum, int noteTupleDen, boolean isDottedNote) {
 			// Example triplet 16th note: 4/16 -> 1/4 (0.25) -> 0.1667 
 			final double wholeNoteLength = 4;
-			final double noteDuration = wholeNoteLength / (double)noteLengthDen;
-			double noteTupledLength = noteDuration * ((double)noteTupleDen / (double)noteTupleNum);
+			final double calculatedNoteDuration = wholeNoteLength / (double)noteLengthDen;
+			double noteTupledLength = calculatedNoteDuration * ((double)noteTupleDen / (double)noteTupleNum);
 			if (isDottedNote) {
 				noteTupledLength *= 1.5;
 			}
 			return noteTupledLength;
 		}
+
 		static double barDuration(int num, int den) {
 			// Example 6/8 -> 3/4, 2/2 -> 4/4, 12/8 -> 6/4
 			final double relationToFourDen = (double)den / 4;
 			final double relationToFourNum = (double)num / relationToFourDen;
 			return relationToFourNum;
 		}
+
 		static double barTime(int bpm, int num, int den) {
 			double baseBarLength = fourOverFourBeatLength(bpm);
 			double barDuration = barDuration(num, den);
@@ -88,9 +101,11 @@ public class CombinedGPBars {
 	public class BeatUnwrapper extends Beat {
 		double barWidthInTimeMs;
 		double floatPos;
+
 		public BeatUnwrapper(final Beat beat) {
 			super(beat);
 		}
+
 		public BeatUnwrapper(final BeatUnwrapper beat) {
 			super(beat);
 			this.barWidthInTimeMs = beat.barWidthInTimeMs;
