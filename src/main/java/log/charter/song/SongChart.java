@@ -157,7 +157,9 @@ public class SongChart {
 	}
 
 	public ArrayList2<GPBarUnwrapper> unwrapGP5File(final GP5File gp5File, final int trackId) {
-		final ArrayList2<Beat> tempoMapBeats = beatsMap.beats;
+		BeatsMap tempoMap = new BeatsMap(beatsMap.songLengthMs);
+		final ArrayList2<Beat> tempoMapBeats = tempoMap.beats;
+
 		ArrayList2<GPBarUnwrapper> voiceList = new ArrayList2<>();
 
 
@@ -171,10 +173,14 @@ public class SongChart {
 			for (int voice = 0; voice < voices; voice++) {
 				GPBarUnwrapper wrappedGPBarsInVoice = new GPBarUnwrapper(gp5File.directions);
 				int totalBarBeats = 0;
+				int previousTempo = gp5File.tempo;
 
 				// Create 
 				for (int bar = 0; bar < otherBarsCount; bar++) {
 					final GPMasterBar masterBar = gp5File.masterBars.get(bar);
+					if (bar > 0) {
+						previousTempo = wrappedGPBarsInVoice.getLast().noteBeats.getLast().tempo;
+					}
 					wrappedGPBarsInVoice.addBar(new CombinedGPBars(masterBar,bar+1));
 					
 					final int timeSignatureNum = masterBar.timeSignatureNumerator;
@@ -183,7 +189,7 @@ public class SongChart {
 					// Add bar lines and and store time signature on them
 					for (int barBeat = 0; barBeat < timeSignatureNum; barBeat++) {
 						if (totalBarBeats + barBeat >= tempoMapBeats.size()) {
-							beatsMap.appendLastBeat(); // Ensure there is a new beat to set up
+							tempoMap.appendLastBeat(); // Ensure there is a new beat to set up
 						}
 
 						final Beat tempoMapBeat = tempoMapBeats.get(totalBarBeats + barBeat);
@@ -201,14 +207,18 @@ public class SongChart {
 						wrappedGPBarsInVoice.get(bar).noteBeats.add(wrappedGPBarsInVoice.get(bar).new GPBeatUnwrapper(currentNoteBeat));
 					}
 					wrappedGPBarsInVoice.getLast().notesInBar = notesInBar;
-					wrappedGPBarsInVoice.getLast().updateBarsFromNoteTempo();
+					wrappedGPBarsInVoice.getLast().updateBarsFromNoteTempo(previousTempo);
 					totalBarBeats += timeSignatureNum;
 				}
-				wrappedGPBarsInVoice.unwrap();
 
-				beatsMap = new BeatsMap(wrappedGPBarsInVoice.getUnwrappedBeatsMap(beatsMap.songLengthMs));
 				voiceList.add(wrappedGPBarsInVoice);
 			}
+
+			// Unwrap them after all wrapped voices have been parsed so that shared beats aren't mangled
+			for (int i = 0; i < voiceList.size(); i++) {
+				voiceList.get(i).unwrap();
+			}
+			beatsMap = new BeatsMap(voiceList.get(0).getUnwrappedBeatsMap(beatsMap.songLengthMs));
 		}
 
 		return voiceList;
