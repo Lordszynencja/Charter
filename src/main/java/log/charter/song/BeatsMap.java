@@ -274,17 +274,14 @@ public class BeatsMap {
 
 	public double findBPM(final Beat beat, final int beatId) {
 		int nextAnchorId = beats.size() - 1;
-		int previousTimeSignatureNum = -1;
 		int previousTimeSignatureDen = -1;
 
 		for (int i = beatId + 1; i < beats.size(); i++) {
 			if (beats.get(i).anchor ||
-				(previousTimeSignatureNum != -1 && previousTimeSignatureNum != beats.get(i).beatsInMeasure) ||
 				(previousTimeSignatureDen != -1 && previousTimeSignatureDen != beats.get(i).noteDenominator)) {
 				nextAnchorId = i;
 				break;
 			}
-			previousTimeSignatureNum = beats.get(i).beatsInMeasure;
 			previousTimeSignatureDen = beats.get(i).noteDenominator;
 		}
 
