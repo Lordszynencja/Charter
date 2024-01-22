@@ -402,9 +402,15 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
 		for (final Selection<ChordOrNote> selection : selected) {
 			if (selection.selectable.isNote()) {
-				selection.selectable.note.linkNext = newLinkNext;
+				if (isSelected(selection.selectable.note.string)) {
+					selection.selectable.note.linkNext = newLinkNext;
+				}
 			} else {
-				selection.selectable.chord.chordNotes.values().forEach(n -> n.linkNext = newLinkNext);
+				selection.selectable.chord.chordNotes.forEach((string, chordNote) -> {
+					if (isSelected(string)) {
+						chordNote.linkNext = newLinkNext;
+					}
+				});
 			}
 
 			final int nextId = selection.id + 1;
