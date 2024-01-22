@@ -16,17 +16,21 @@ import log.charter.util.grid.GridPosition;
 
 public class BeatsMap {
 	public int songLengthMs;
-
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 
 	/**
 	 * creates beats map for new project
 	 */
 	public BeatsMap(final int songLength) {
-		songLengthMs = songLength;
+		this(songLength, true);
+	}
 
-		beats.add(new Beat(0, 4, 4, true));
-		makeBeatsUntilSongEnd();
+	public BeatsMap(final int songLength, final boolean fillBeatsForSong) {
+		songLengthMs = songLength;
+		if (fillBeatsForSong) {
+			beats.add(new Beat(0, 4, 4, true));
+			makeBeatsUntilSongEnd();
+		}
 	}
 
 	/**
@@ -215,12 +219,12 @@ public class BeatsMap {
 
 		return (int) (beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0));
 	}
-
+	
 	public void setBPM(final int beatId, final double newBPM) {
 		for (int i = beats.size() - 1; i > beatId; i--) {
 			beats.remove(i);
 		}
-
+		
 		final Beat startBeat = beats.getLast();
 		final int startPosition = startBeat.position();
 		int position = (int) (startPosition + 60_000 / newBPM);
@@ -231,7 +235,46 @@ public class BeatsMap {
 			createdBeatId++;
 			position = startPosition + (int) (createdBeatId * 60_000 / newBPM);
 		}
+		
+		fixFirstBeatInMeasures();
+	}
+			
+	public void setBPMFromGP(final int bpmBeatId, final double newBPM) {
+		int previousBeatLength = beats.size() > 1 && bpmBeatId < beats.size() - 1  ?
+			beats.get(bpmBeatId+1).position() - beats.get(bpmBeatId).position() :
+			500; // Magic number, calculated for 120 BPM
 
+		if (bpmBeatId >= beats.size()) {
+			while (beats.getLast().position() <= songLengthMs) {
+				appendLastBeat();
+			}
+		}
+		else {
+			final Beat bpmBeat = beats.get(bpmBeatId);
+
+			final int beatLength = beatLengthFromTempoAndDenominator((int)newBPM, bpmBeat.noteDenominator);
+			int deltaBeatLength = beatLength - previousBeatLength;
+			final int startPosition = bpmBeat.position();
+			int nextStartPosition = startPosition + beatLength;
+
+			int updatedBeatId = 1; // The next beat will get a new start position
+			int i = bpmBeatId + updatedBeatId;
+			int beatOffsetFromBpmChanges = deltaBeatLength;
+
+			while (nextStartPosition <= songLengthMs) {
+				if (i <= beats.size() - 1) {
+					nextStartPosition += beatLength;
+					int originalBeatPosition = beats.get(i).position();
+					beats.get(i).position(originalBeatPosition + beatOffsetFromBpmChanges);
+					beatOffsetFromBpmChanges += deltaBeatLength;
+				}
+				else {
+					appendLastBeat();
+					nextStartPosition += beatLength;
+				}
+				i++;
+			}
+		}
 		fixFirstBeatInMeasures();
 	}
 
@@ -254,6 +297,7 @@ public class BeatsMap {
 
 	public double findBPM(final Beat beat, final int beatId) {
 		int nextAnchorId = beats.size() - 1;
+
 		for (int i = beatId + 1; i < beats.size(); i++) {
 			if (beats.get(i).anchor) {
 				nextAnchorId = i;
@@ -265,5 +309,35 @@ public class BeatsMap {
 		final int distancePassed = nextAnchor.position() - beat.position();
 		final int beatsPassed = nextAnchorId - beatId;
 		return 60_000.0 / distancePassed * beatsPassed;
+	}
+
+	static public int beatLengthFromTempoAndDenominator(final int tempo, final int denominator) {
+		// Example: 60 quarter notes per minute in 4/4 -> 1 beat = 1 second beat length
+		// if converting to 7/8 the beat length will be (1 s / 8/4 ) -> 0.5 s
+		final int beatLengthInFour = (int)(60_000 / tempo);
+		final int beatLength = beatLengthInFour / (denominator / 4);
+		return beatLength;
+	}
+
+	public void alterBeatPosition(final int i, final int beatPositionShift) {
+		int originalBeatPosition = beats.get(i).position();
+		beats.get(i).position(originalBeatPosition + beatPositionShift);
+	}
+
+	public void appendLastBeat() {
+		final Beat lastBeat = beats.getLast();
+		final int nextBeatPosition = lastBeat.position() + getLastBeatLength();
+		final Beat newBeat = new Beat(nextBeatPosition, lastBeat.beatsInMeasure, lastBeat.noteDenominator, false);
+		beats.add(newBeat);
+	}
+
+	public int getLastBeatLength() {
+		if (beats.size() >= 2) {
+			return beats.getLast().position() - beats.get(beats.size() - 2).position();
+		}
+		else {
+			return 500; // Magic number, calculated for 120 BPM
+		}
+		
 	}
 }

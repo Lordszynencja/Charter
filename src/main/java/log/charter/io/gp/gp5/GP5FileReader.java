@@ -3,6 +3,7 @@ package log.charter.io.gp.gp5;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readBoolean;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readColor;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readDouble;
+import static log.charter.io.gp.gp5.GP5BinaryUtils.readInt16LE;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readInt32LE;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readShortInt8;
 import static log.charter.io.gp.gp5.GP5BinaryUtils.readStringWithByteSkip;
@@ -54,7 +55,7 @@ public class GP5FileReader {
 	private List<GPMasterBar> masterBars;
 	private List<GPTrackData> tracks;
 	private Map<Integer, List<GPBar>> bars;
-
+	private Directions directions;
 	private GP5File file;
 
 	private GP5FileReader(final ByteArrayInputStream data) {
@@ -82,7 +83,7 @@ public class GP5FileReader {
 		tracks = readTracksData();
 		bars = readBars();
 
-		file = new GP5File(version, scoreInformation, tempo, masterBars, tracks, bars, lyrics);
+		file = new GP5File(version, scoreInformation, tempo, masterBars, tracks, bars, lyrics, directions);
 		return file;
 	}
 
@@ -162,7 +163,7 @@ public class GP5FileReader {
 		}
 
 		readPlaybackInfos();
-		readRepetitions();
+		readDirections();
 	}
 
 	private void readMasterSettings() {
@@ -213,30 +214,30 @@ public class GP5FileReader {
 		}
 	}
 
-	private void readRepetitions() {
+	private void readDirections() {
 		if (version < 500) {
 			return;
 		}
-
-		data.skip(2); // "Coda" bar index
-		data.skip(2); // "Double Coda" bar index
-		data.skip(2); // "Segno" bar index
-		data.skip(2); // "Segno Segno" bar index
-		data.skip(2); // "Fine" bar index
-		data.skip(2); // "Da Capo" bar index
-		data.skip(2); // "Da Capo al Coda" bar index
-		data.skip(2); // "Da Capo al Double Coda" bar index
-		data.skip(2); // "Da Capo al Fine" bar index
-		data.skip(2); // "Da Segno" bar index
-		data.skip(2); // "Da Segno al Coda" bar index
-		data.skip(2); // "Da Segno al Double Coda" bar index
-		data.skip(2); // "Da Segno al Fine "bar index
-		data.skip(2); // "Da Segno Segno" bar index
-		data.skip(2); // "Da Segno Segno al Coda" bar index
-		data.skip(2); // "Da Segno Segno al Double Coda" bar index
-		data.skip(2); // "Da Segno Segno al Fine" bar index
-		data.skip(2); // "Da Coda" bar index
-		data.skip(2); // "Da Double Coda" bar index
+		directions = new Directions();
+		directions.coda = readInt16LE(data); // "Coda" bar index
+		directions.doubleCoda = readInt16LE(data); // "Double Coda" bar index
+		directions.segno = readInt16LE(data); // "Segno" bar index
+		directions.segnoSegno = readInt16LE(data); // "Segno Segno" bar index
+		directions.fine = readInt16LE(data); // "Fine" bar index
+		directions.daCapo = readInt16LE(data); // "Da Capo" bar index
+		directions.daCapoAlCoda = readInt16LE(data); // "Da Capo al Coda" bar index
+		directions.daCapoAlDoubleCoda = readInt16LE(data); // "Da Capo al Double Coda" bar index
+		directions.daCapoAlFine = readInt16LE(data); // "Da Capo al Fine" bar index
+		directions.daSegno = readInt16LE(data); // "Da Segno" bar index
+		directions.daSegnoAlCoda = readInt16LE(data); // "Da Segno al Coda" bar index
+		directions.daSegnoAlDoubleCoda = readInt16LE(data); // "Da Segno al Double Coda" bar index
+		directions.daSegnoAlFine = readInt16LE(data); // "Da Segno al Fine "bar index
+		directions.daSegnoSegno = readInt16LE(data); // "Da Segno Segno" bar index
+		directions.daSegnoSegnoAlCoda = readInt16LE(data); // "Da Segno Segno al Coda" bar index
+		directions.daSegnoSegnoAlDoubleCoda = readInt16LE(data); // "Da Segno Segno al Double Coda" bar index
+		directions.daSegnoSegnoAlFine = readInt16LE(data); // "Da Segno Segno al Fine" bar index
+		directions.daCoda = readInt16LE(data); // "Da Coda" bar index
+		directions.daDoubleCoda = readInt16LE(data); // "Da Double Coda" bar index
 		data.skip(4); // unknown
 	}
 
@@ -429,7 +430,7 @@ public class GP5FileReader {
 
 		final List<List<GPBeat>> voices = new ArrayList<>();
 		for (int v = 0; v < voiceCount; v++) {
-			final List<GPBeat> voice = readVoice(trackId);
+			final List<GPBeat> voice = readVoice(trackId, v == 0); // Only read tempo changes for voice 0
 			if (voice != null) {
 				voices.add(voice);
 			}
@@ -438,24 +439,23 @@ public class GP5FileReader {
 		return new GPBar(voices);
 	}
 
-	private List<GPBeat> readVoice(final int trackId) {
+	private List<GPBeat> readVoice(final int trackId, final boolean readTempoChanges) {
 		final int beatCount = readInt32LE(data);
 		if (beatCount == 0) {
 			return null;
 		}
 
 		final List<GPBeat> beats = new ArrayList<>();
-		int lastTempo = tempo;
+
 		for (int i = 0; i < beatCount; i++) {
-			final GPBeat beat = readBeat(trackId, lastTempo);
+			final GPBeat beat = readBeat(trackId, readTempoChanges);
 			beats.add(beat);
-			lastTempo = beat.tempo;
 		}
 
 		return beats;
 	}
 
-	private GPBeat readBeat(final int trackId, final int lastTempo) {
+	private GPBeat readBeat(final int trackId, final boolean readTempoChanges) {
 		final int flags = data.read();
 		final int dots = (flags & 0x01) != 0 ? 1 : 0;
 		boolean isEmpty = false;
@@ -491,9 +491,11 @@ public class GP5FileReader {
 			beatEffects = new GPBeatEffects();
 		}
 
-		int tempo = lastTempo;
 		if ((flags & 0x10) != 0) {
-			tempo = readMixTableChange();
+			int possibleTempoChange = 0;
+			if ((possibleTempoChange = readMixTableChange()) > 0 && readTempoChanges) {
+				tempo = possibleTempoChange;
+			}
 		}
 
 		final int stringFlags = data.read();

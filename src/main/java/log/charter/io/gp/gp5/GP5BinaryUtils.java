@@ -17,6 +17,12 @@ public class GP5BinaryUtils {
 		return ((v & 0x80) >> 7) * -128 + (v & 0x7F);
 	}
 
+	public static int readInt16LE(final ByteArrayInputStream data) {
+		final int b0 = data.read();
+		final int b1 = data.read();
+
+		return (b1 << 8) | b0;
+	}
 	public static int readInt32LE(final ByteArrayInputStream data) {
 		final int b0 = data.read();
 		final int b1 = data.read();

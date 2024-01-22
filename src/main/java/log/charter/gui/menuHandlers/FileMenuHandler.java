@@ -17,7 +17,7 @@ import log.charter.io.gp.gp5.GP5File;
 import log.charter.io.gp.gp5.GP5FileReader;
 import log.charter.util.FileChooseUtils;
 
-class FileMenuHandler extends CharterMenuHandler {
+public class FileMenuHandler extends CharterMenuHandler {
 	private ArrangementFixer arrangementFixer;
 	private ChartData data;
 	private CharterFrame frame;
@@ -77,6 +77,15 @@ class FileMenuHandler extends CharterMenuHandler {
 		if (file == null) {
 			return;
 		}
+
+		final GP5File gp5File = GP5FileReader.importGPFile(file);
+		data.songChart.addGP5Arrangements(gp5File);
+		arrangementFixer.fixArrangement();
+
+		charterMenuBar.refreshMenus();
+	}
+	public void importGPFile(String filePath) {
+		final File file = new File(filePath);
 
 		final GP5File gp5File = GP5FileReader.importGPFile(file);
 		data.songChart.addGP5Arrangements(gp5File);

@@ -22,7 +22,7 @@ public enum GPDuration {
 		};
 	}
 
-	public final int length;
+	public int length;
 
 	private GPDuration(final int length) {
 		this.length = length;

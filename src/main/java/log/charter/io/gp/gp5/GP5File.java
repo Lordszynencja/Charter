@@ -11,10 +11,12 @@ public class GP5File {
 	public final List<GPTrackData> tracks;
 	public final Map<Integer, List<GPBar>> bars;
 	public final List<GPLyrics> lyrics;
+	public final Directions directions;
+
 
 	public GP5File(final int version, final ScoreInformation scoreInformation, final int tempo,
 			final List<GPMasterBar> masterBars, final List<GPTrackData> tracks, final Map<Integer, List<GPBar>> bars,
-			final List<GPLyrics> lyrics) {
+			final List<GPLyrics> lyrics, final Directions directions) {
 		this.version = version;
 		this.scoreInformation = scoreInformation;
 		this.tempo = tempo;
@@ -22,6 +24,7 @@ public class GP5File {
 		this.tracks = tracks;
 		this.bars = bars;
 		this.lyrics = lyrics;
+		this.directions = directions;
 	}
 
 	@Override
