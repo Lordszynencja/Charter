@@ -219,12 +219,12 @@ public class BeatsMap {
 
 		return (int) (beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0));
 	}
-	
+
 	public void setBPM(final int beatId, final double newBPM) {
 		for (int i = beats.size() - 1; i > beatId; i--) {
 			beats.remove(i);
 		}
-		
+
 		final Beat startBeat = beats.getLast();
 		final int startPosition = startBeat.position();
 		int position = (int) (startPosition + 60_000 / newBPM);
@@ -235,40 +235,38 @@ public class BeatsMap {
 			createdBeatId++;
 			position = startPosition + (int) (createdBeatId * 60_000 / newBPM);
 		}
-		
+
 		fixFirstBeatInMeasures();
 	}
-			
-	public void setBPMFromGP(final int bpmBeatId, final double newBPM) {
-		int previousBeatLength = beats.size() > 1 && bpmBeatId < beats.size() - 1  ?
-			beats.get(bpmBeatId+1).position() - beats.get(bpmBeatId).position() :
-			500; // Magic number, calculated for 120 BPM
+
+	public void setTempo(final int bpmBeatId, final double newBPM) {
+		final int previousBeatLength = beats.size() > 1 && bpmBeatId < beats.size() - 1
+				? beats.get(bpmBeatId + 1).position() - beats.get(bpmBeatId).position()
+				: 500; // Magic number, calculated for 120 BPM
 
 		if (bpmBeatId >= beats.size()) {
 			while (beats.getLast().position() <= songLengthMs) {
 				appendLastBeat();
 			}
-		}
-		else {
+		} else {
 			final Beat bpmBeat = beats.get(bpmBeatId);
 
-			final int beatLength = beatLengthFromTempoAndDenominator((int)newBPM, bpmBeat.noteDenominator);
-			int deltaBeatLength = beatLength - previousBeatLength;
+			final int beatLength = beatLengthFromTempoAndDenominator((int) newBPM, bpmBeat.noteDenominator);
+			final int deltaBeatLength = beatLength - previousBeatLength;
 			final int startPosition = bpmBeat.position();
 			int nextStartPosition = startPosition + beatLength;
 
-			int updatedBeatId = 1; // The next beat will get a new start position
+			final int updatedBeatId = 1; // The next beat will get a new start position
 			int i = bpmBeatId + updatedBeatId;
 			int beatOffsetFromBpmChanges = deltaBeatLength;
 
 			while (nextStartPosition <= songLengthMs) {
 				if (i <= beats.size() - 1) {
 					nextStartPosition += beatLength;
-					int originalBeatPosition = beats.get(i).position();
+					final int originalBeatPosition = beats.get(i).position();
 					beats.get(i).position(originalBeatPosition + beatOffsetFromBpmChanges);
 					beatOffsetFromBpmChanges += deltaBeatLength;
-				}
-				else {
+				} else {
 					appendLastBeat();
 					nextStartPosition += beatLength;
 				}
@@ -314,13 +312,13 @@ public class BeatsMap {
 	static public int beatLengthFromTempoAndDenominator(final int tempo, final int denominator) {
 		// Example: 60 quarter notes per minute in 4/4 -> 1 beat = 1 second beat length
 		// if converting to 7/8 the beat length will be (1 s / 8/4 ) -> 0.5 s
-		final int beatLengthInFour = (int)(60_000 / tempo);
+		final int beatLengthInFour = (int) (60_000 / tempo);
 		final int beatLength = beatLengthInFour / (denominator / 4);
 		return beatLength;
 	}
 
 	public void alterBeatPosition(final int i, final int beatPositionShift) {
-		int originalBeatPosition = beats.get(i).position();
+		final int originalBeatPosition = beats.get(i).position();
 		beats.get(i).position(originalBeatPosition + beatPositionShift);
 	}
 
@@ -334,10 +332,9 @@ public class BeatsMap {
 	public int getLastBeatLength() {
 		if (beats.size() >= 2) {
 			return beats.getLast().position() - beats.get(beats.size() - 2).position();
-		}
-		else {
+		} else {
 			return 500; // Magic number, calculated for 120 BPM
 		}
-		
+
 	}
 }

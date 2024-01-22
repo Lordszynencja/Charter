@@ -10,7 +10,6 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.fil
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.line;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineHorizontal;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 
 import java.awt.Color;
@@ -20,7 +19,6 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.song.enums.HOPO;
@@ -185,15 +183,15 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addHarmonicShape(final int y, final NoteData note) {
+	protected void addHarmonicShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
 		notes.add(filledRectangle(position.resized(2, 2, -4, -4), Color.BLACK));
 
 		final int harmonicSize = Math.min(noteWidth, noteHeight) + 2;
-		final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y, harmonicSize,
-				harmonicSize).centered();
+		final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y, harmonicSize, harmonicSize)
+				.centered();
 		notes.add(filledOval(harmonicPosition, new Color(224, 224, 224)));
 		notes.add(filledOval(harmonicPosition.resized(5, 5, -10, -10), Color.BLACK));
 		notes.add(filledOval(harmonicPosition.resized(10, 10, -20, -20), new Color(224, 224, 224)));
@@ -208,12 +206,12 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 		notes.add(filledOval(position.resized(1, 1, -2, -2), getNoteColor(note)));
 		notes.add(filledOval(position.resized(3, 3, -6, -6), Color.BLACK));
 
-		final int harmonicSize = Math.min(noteWidth, noteHeight) -3;
-		final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y, harmonicSize,
-				harmonicSize).centered();
+		final int harmonicSize = Math.min(noteWidth, noteHeight) - 3;
+		final ShapePositionWithSize harmonicPosition = new ShapePositionWithSize(note.x, y, harmonicSize, harmonicSize)
+				.centered();
 
 		notes.add(filledOval(harmonicPosition, getNoteColor(note)));
-		notes.add(filledOval(harmonicPosition.resized(5,5, -10, -10), Color.BLACK));
+		notes.add(filledOval(harmonicPosition.resized(5, 5, -10, -10), Color.BLACK));
 	}
 
 	@Override
