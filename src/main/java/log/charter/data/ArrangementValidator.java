@@ -1,6 +1,5 @@
 package log.charter.data;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
@@ -8,7 +7,7 @@ import javax.swing.JOptionPane;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.song.ArrangementChart;
-import log.charter.song.PhraseIteration;
+import log.charter.song.EventPoint;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ArrangementValidator {
@@ -49,8 +48,8 @@ public class ArrangementValidator {
 	}
 
 	private boolean validateCountPhrases(final int arrangementId, final ArrangementChart arrangement) {
-		final ArrayList2<PhraseIteration> countPhrases = arrangement.phraseIterations.stream()//
-				.filter(phraseIteration -> phraseIteration.phraseName.equals("COUNT"))//
+		final ArrayList2<EventPoint> countPhrases = arrangement.eventPoints.stream()//
+				.filter(eventPoint -> eventPoint.phrase != null && eventPoint.phrase.equals("COUNT"))//
 				.collect(Collectors.toCollection(ArrayList2::new));
 		if (countPhrases.isEmpty()) {
 			final boolean warningStoppedValidation = !showWarning(Label.COUNT_PHRASE_MISSING,
@@ -70,9 +69,9 @@ public class ArrangementValidator {
 	}
 
 	private boolean validateEndPhrases(final int arrangementId, final ArrangementChart arrangement) {
-		final List<PhraseIteration> endPhrases = arrangement.phraseIterations.stream()//
-				.filter(phraseIteration -> phraseIteration.phraseName.equals("END"))//
-				.collect(Collectors.toList());
+		final ArrayList2<EventPoint> endPhrases = arrangement.eventPoints.stream()//
+				.filter(eventPoint -> eventPoint.phrase != null && eventPoint.phrase.equals("END"))//
+				.collect(Collectors.toCollection(ArrayList2::new));
 		if (endPhrases.isEmpty()) {
 			final boolean warningStoppedValidation = !showWarning(Label.END_PHRASE_MISSING,
 					moveToTimeOnArrangement(arrangementId, data.songChart.beatsMap.beats.getLast().position()));

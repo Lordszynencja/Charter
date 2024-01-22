@@ -27,12 +27,12 @@ public class StretchPane extends ParamsPane {
 	private int stretchedMusicSpeed = Config.stretchedMusicSpeed;
 
 	public StretchPane(final AudioHandler audioHandler, final CharterFrame frame) {
-		super(frame, Label.STRETCH_PANE, 3, getSizes());
+		super(frame, Label.STRETCH_PANE, getSizes());
 
 		this.audioHandler = audioHandler;
 
 		int row = 0;
-		addIntegerConfigValue(row++, 20, 70, Label.GRID_PANE_GRID_SIZE, stretchedMusicSpeed, 50,
+		addIntegerConfigValue(row++, 20, 70, Label.STRETCH_PANE_VALUE, stretchedMusicSpeed, 50,
 				createIntValidator(10, 1000, false), val -> stretchedMusicSpeed = Integer.valueOf(val), false);
 		addSelectTextOnFocus((JTextField) components.getLast());
 
@@ -43,7 +43,8 @@ public class StretchPane extends ParamsPane {
 	private void saveAndExit() {
 		Config.stretchedMusicSpeed = stretchedMusicSpeed;
 		Config.markChanged();
+
 		audioHandler.clear();
-		new Thread(audioHandler::loadStretchedWithCheck).start();
+		audioHandler.addSpeedToStretch();
 	}
 }

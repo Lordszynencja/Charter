@@ -18,10 +18,10 @@ public class WavLoader {
 
 			return new MusicData(sound, wavFile.getSampleRate());
 		} catch (final Exception e) {
-			Logger.error("Couldn't load wav " + file.getAbsolutePath(), e);
+			Logger.error("Couldn't load wav " + file.getAbsolutePath() + ", deleting it", e);
 			file.delete();
 		}
 
-		return new MusicData(new byte[0], MusicData.DEF_RATE);
+		return null;
 	}
 }

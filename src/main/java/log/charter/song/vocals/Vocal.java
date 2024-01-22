@@ -30,6 +30,8 @@ public class Vocal extends PositionWithLength {
 
 		if (wordPart) {
 			lyric += "-";
+		} else if (phraseEnd) {
+			lyric += "+";
 		}
 	}
 

@@ -10,6 +10,8 @@ import log.charter.data.config.Config;
 import log.charter.util.RW;
 
 public class Logger {
+	private static final SimpleDateFormat timeFormat = new SimpleDateFormat("<yyyy-MM-dd HH:mm:ss>");
+
 	private static PrintStream out = System.out;
 
 	static {
@@ -22,69 +24,81 @@ public class Logger {
 				dir.mkdir();
 			}
 
-			out = new PrintStream(new FileOutputStream(new File(dir, name), false));
+			out = new PrintStream(new FileOutputStream(new File(dir, name), true));
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void debug(final String msg) {
+	private static String getLine(final String type, final String msg) {
+		return "[" + type + "]" + timeFormat.format(new Date()) + " " + msg;
+	}
+
+	public static void debug(String msg) {
+		msg = getLine("DEBUG", msg);
+
 		if (Config.debugLogging) {
-			out.println("[DEBUG] " + msg);
+			out.println(msg);
 
 			if (out != System.out) {
-				System.out.println("[DEBUG] " + msg);
+				System.out.println(msg);
 			}
 		}
 	}
 
-	public static void debug(final String msg, final Exception e) {
-		out.println("[DEBUG] " + msg);
+	public static void debug(String msg, final Exception e) {
+		msg = getLine("DEBUG", msg);
+
+		out.println(msg);
 		e.printStackTrace(out);
 
 		if (out != System.out) {
-			System.out.println("[DEBUG] " + msg);
+			System.out.println(msg);
 			e.printStackTrace(System.out);
 		}
 	}
 
-	public static void info(final String msg) {
-		out.println("[INFO] " + msg);
+	public static void info(String msg) {
+		msg = getLine("INFO", msg);
+
+		out.println(msg);
 
 		if (out != System.out) {
-			System.out.println("[INFO] " + msg);
+			System.out.println(msg);
 		}
 	}
 
-	public static void info(final String msg, final Exception e) {
-		out.println("[INFO] " + msg);
+	public static void info(String msg, final Exception e) {
+		msg = getLine("INFO", msg);
+
+		out.println(msg);
 		e.printStackTrace(out);
 
 		if (out != System.out) {
-			System.out.println("[INFO] " + msg);
+			System.out.println(msg);
 			e.printStackTrace(System.out);
 		}
 	}
 
-	public static void error(final String msg) {
-		out.println("[ERROR] " + msg);
+	public static void error(String msg) {
+		msg = getLine("ERROR", msg);
+
+		out.println(msg);
 
 		if (out != System.out) {
-			System.out.println("[ERROR] " + msg);
+			System.out.println(msg);
 		}
 	}
 
-	public static void error(final String msg, final Exception e) {
-		out.println("[ERROR] " + msg);
+	public static void error(String msg, final Exception e) {
+		msg = getLine("ERROR", msg);
+
+		out.println(msg);
 		e.printStackTrace(out);
 
 		if (out != System.out) {
-			System.out.println("[ERROR] " + msg);
+			System.out.println(msg);
 			e.printStackTrace(System.out);
 		}
-	}
-
-	public static void setOutput(final PrintStream output) {
-		out = output;
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -20,6 +21,8 @@ import javax.swing.WindowConstants;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.TextInputWithValidation.BigDecimalValueValidator;
+import log.charter.gui.components.TextInputWithValidation.IntegerValueValidator;
 import log.charter.gui.components.TextInputWithValidation.StringValueSetter;
 import log.charter.gui.components.TextInputWithValidation.ValueValidator;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -50,6 +53,10 @@ public class ParamsPane extends JDialog {
 		void setValue(Integer val);
 	}
 
+	public static interface BigDecimalValueSetter {
+		void setValue(BigDecimal val);
+	}
+
 	public static interface SaverWithStatus {
 		boolean save();
 	}
@@ -66,34 +73,30 @@ public class ParamsPane extends JDialog {
 
 	private int width;
 
-	public ParamsPane(final CharterFrame frame, final Label title, final int rows) {
-		this(frame, title, rows, new PaneSizes());
+	public ParamsPane(final CharterFrame frame, final Label title) {
+		this(frame, title, new PaneSizes());
 	}
 
-	public ParamsPane(final CharterFrame frame, final Label title, final int rows, final PaneSizes sizes) {
+	public ParamsPane(final CharterFrame frame, final Label title, final PaneSizes sizes) {
 		super(frame, title.label(), true);
-		this.frame = frame;
 
+		this.frame = frame;
 		this.sizes = sizes;
 
-		pack();
-
-		setSizeWithInsets(sizes.width, rows * sizes.rowHeight);
+		setWidthWithInsets(sizes.width);
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(true);
 		setLayout(null);
 	}
 
-	protected void setWidthWithInsets(final int newWidth) {
+	private void setWidthWithInsets(final int newWidth) {
 		final Insets insets = getInsets();
 		width = newWidth + insets.left + insets.right;
 		setSize(width, getHeight());
-		setLocation(Config.windowPosX + frame.getWidth() / 2 - width / 2,
-				Config.windowPosY + frame.getHeight() / 2 - getHeight() / 2);
 	}
 
-	protected void setSizeWithInsets(final int newWidth, final int newHeight) {
+	private void setSizeWithInsets(final int newWidth, final int newHeight) {
 		final Insets insets = getInsets();
 		width = newWidth + insets.left + insets.right;
 		final int h = newHeight + insets.top + insets.bottom + (sizes.uSpace * 2);
@@ -106,7 +109,7 @@ public class ParamsPane extends JDialog {
 		return sizes.getY(row);
 	}
 
-	private void setComponentBounds(final JComponent component, final int x, final int y, final int w, final int h) {
+	private void setComponentBounds(final Component component, final int x, final int y, final int w, final int h) {
 		component.setBounds(x, y, w, h);
 		final Dimension size = new Dimension(w, h);
 		component.setMinimumSize(size);
@@ -114,13 +117,13 @@ public class ParamsPane extends JDialog {
 		component.setMaximumSize(size);
 	}
 
-	public void add(final JComponent component, final int x, final int y, final int w, final int h) {
+	public void add(final Component component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
 		add(component);
 		components.add(component);
 	}
 
-	public void addTop(final JComponent component, final int x, final int y, final int w, final int h) {
+	public void addTop(final Component component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
 		add(component, 0);
 		components.add(component);
@@ -150,7 +153,9 @@ public class ParamsPane extends JDialog {
 
 	protected void addDefaultFinish(final int row, final Runnable onSave) {
 		addDefaultFinish(row, () -> {
-			onSave.run();
+			if (onSave != null) {
+				onSave.run();
+			}
 			return true;
 		});
 	}
@@ -161,10 +166,14 @@ public class ParamsPane extends JDialog {
 
 	protected void addDefaultFinish(final int row, final Runnable onSave, final Runnable onCancel) {
 		addDefaultFinish(row, () -> {
-			onSave.run();
+			if (onSave != null) {
+				onSave.run();
+			}
 			return true;
 		}, () -> {
-			onCancel.run();
+			if (onCancel != null) {
+				onCancel.run();
+			}
 			return true;
 		});
 	}
@@ -186,6 +195,8 @@ public class ParamsPane extends JDialog {
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
 		getRootPane().registerKeyboardAction(e -> paneOnSave.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+		setSizeWithInsets(sizes.width, (row + 2) * sizes.rowHeight + sizes.rowHeight / 2);
 
 		validate();
 		setVisible(true);
@@ -271,9 +282,22 @@ public class ParamsPane extends JDialog {
 		}
 	}
 
+	protected void addBigDecimalConfigValue(final int row, final int x, final int labelWidth, final Label label,
+			final BigDecimal value, final int inputLength, final BigDecimalValueValidator validator,
+			final BigDecimalValueSetter setter, final boolean allowWrong) {
+		addConfigValue(row, x, labelWidth, label, value == null ? "" : value.toString(), inputLength, validator,
+				val -> {
+					try {
+						setter.setValue(new BigDecimal(val));
+					} catch (final NumberFormatException e) {
+						setter.setValue(null);
+					}
+				}, allowWrong);
+	}
+
 	protected void addIntegerConfigValue(final int row, final int x, final int labelWidth, final Label label,
-			final Integer value, final int inputLength, final ValueValidator validator, final IntegerValueSetter setter,
-			final boolean allowWrong) {
+			final Integer value, final int inputLength, final IntegerValueValidator validator,
+			final IntegerValueSetter setter, final boolean allowWrong) {
 		addConfigValue(row, x, labelWidth, label, value == null ? "" : value.toString(), inputLength, validator,
 				val -> {
 					try {

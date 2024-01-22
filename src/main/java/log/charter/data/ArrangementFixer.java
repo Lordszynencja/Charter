@@ -1,10 +1,14 @@
 package log.charter.data;
 
 import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static log.charter.data.config.Config.minNoteDistance;
+import static log.charter.song.notes.ChordOrNote.findNextSoundOnString;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +18,15 @@ import log.charter.data.config.Config;
 import log.charter.song.Anchor;
 import log.charter.song.ArrangementChart;
 import log.charter.song.ChordTemplate;
+import log.charter.song.EventPoint;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
-import log.charter.song.PhraseIteration;
 import log.charter.song.SectionType;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.CommonNote;
 import log.charter.song.notes.IPosition;
+import log.charter.song.notes.IPositionWithLength;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ArrangementFixer {
@@ -43,7 +49,7 @@ public class ArrangementFixer {
 
 	private void addMissingHandShapes(final Level level) {
 		final LinkedList<Chord> chordsForHandShapes = level.chordsAndNotes.stream()//
-				.filter(chordOrNote -> chordOrNote.chord != null)//
+				.filter(chordOrNote -> chordOrNote.isChord() && !chordOrNote.chord.splitIntoNotes)//
 				.map(chordOrNote -> chordOrNote.chord)//
 				.collect(Collectors.toCollection(LinkedList::new));
 		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
@@ -58,9 +64,9 @@ public class ArrangementFixer {
 		chordsWithoutHandShapes.addAll(chordsForHandShapes);
 
 		for (final Chord chord : chordsWithoutHandShapes) {
-			final int endPosition = chord.position();
+			final int endPosition = chord.endPosition();
 
-			final int length = max(1, endPosition - chord.position());
+			final int length = max(50, endPosition - chord.position());
 			final HandShape handShape = new HandShape(chord, length);
 			level.handShapes.add(handShape);
 		}
@@ -69,44 +75,112 @@ public class ArrangementFixer {
 	}
 
 	private void addMissingAnchors(final ArrangementChart arrangement, final Level level) {
-		for (final PhraseIteration phraseIteration : arrangement.phraseIterations) {
-			final int sectionId = findLastIdBeforeEqual(arrangement.sections, phraseIteration.position());
-			if (sectionId != -1 && arrangement.sections.get(sectionId).type == SectionType.NO_GUITAR) {
+		final List<EventPoint> sections = arrangement.eventPoints.stream().filter(p -> p.section != null)
+				.collect(Collectors.toList());
+
+		for (final EventPoint eventPoint : arrangement.eventPoints) {
+			if (eventPoint.phrase == null) {
 				continue;
 			}
 
-			final int lastAnchorId = findLastIdBeforeEqual(level.anchors, phraseIteration);
+			final int sectionId = findLastIdBeforeEqual(sections, eventPoint);
+			if (sectionId != -1 && sections.get(sectionId).section == SectionType.NO_GUITAR) {
+				continue;
+			}
+
+			final int lastAnchorId = findLastIdBeforeEqual(level.anchors, eventPoint);
 			if (lastAnchorId == -1) {
 				continue;
 			}
 
 			final Anchor lastAnchor = level.anchors.get(lastAnchorId);
-			if (lastAnchor.position() != phraseIteration.position()) {
+			if (lastAnchor.position() != eventPoint.position()) {
 				final Anchor newAnchor = new Anchor(lastAnchor);
-				newAnchor.position(phraseIteration.position());
+				newAnchor.position(eventPoint.position());
 				level.anchors.add(newAnchor);
 				level.anchors.sort(null);
 			}
 		}
 	}
 
-	private void fixLinkedNotes(final ArrayList2<ChordOrNote> sounds) {
-		for (int i = 0; i < sounds.size() - 1; i++) {
-			final ChordOrNote sound = sounds.get(i);
-			if (!sound.asGuitarSound().linkNext) {
-				continue;
-			}
-
-			final ChordOrNote nextSound = sounds.get(i + 1);
-			sound.length(nextSound.position() - sound.position());
+	private static void fixLinkedNote(final CommonNote note, final int id, final ArrayList2<ChordOrNote> sounds) {
+		if (!note.linkNext()) {
+			return;
 		}
+
+		final ChordOrNote nextSound = findNextSoundOnString(note.string(), id + 1, sounds);
+		if (nextSound == null) {
+			return;
+		}
+
+		if (nextSound.isChord()) {
+			nextSound.chord.splitIntoNotes = true;
+		}
+
+		note.length(nextSound.position() - note.position() - 1);
+	}
+
+	public static void fixNoteLength(final CommonNote note, final int id, final ArrayList2<ChordOrNote> sounds) {
+		if (note.linkNext()) {
+			fixLinkedNote(note, id, sounds);
+			return;
+		}
+
+		int endPosition = note.endPosition();
+
+		if (note.passOtherNotes()) {
+			final ChordOrNote nextSoundOnString = ChordOrNote.findNextSoundOnString(note.string(), id + 1, sounds);
+			if (nextSoundOnString != null) {
+				endPosition = min(endPosition, nextSoundOnString.position() - minNoteDistance);
+			}
+		} else if (id + 1 < sounds.size()) {
+			final IPosition next = sounds.get(id + 1);
+			endPosition = min(endPosition, next.position() - minNoteDistance);
+		}
+
+		note.endPosition(max(note.position(), endPosition));
+	}
+
+	public static void fixSoundLength(final int id, final ArrayList2<ChordOrNote> sounds) {
+		final ChordOrNote sound = sounds.get(id);
+		if (sound.isNote()) {
+			fixNoteLength(CommonNote.create(sound.note), id, sounds);
+		} else {
+			sound.chord.chordNotes.forEach((string, chordNote) -> {
+				fixNoteLength(CommonNote.create(sound.chord, string, chordNote), id, sounds);
+			});
+		}
+	}
+
+	public void fixNoteLengths(final ArrayList2<ChordOrNote> sounds) {
+		for (int i = 0; i < sounds.size(); i++) {
+			fixSoundLength(i, sounds);
+		}
+	}
+
+	public void fixLengths(final ArrayList2<? extends IPositionWithLength> positions) {
+		if (positions.isEmpty()) {
+			return;
+		}
+
+		for (int i = 0; i < positions.size() - 1; i++) {
+			final IPositionWithLength position = positions.get(i);
+			final IPositionWithLength nextPosition = positions.get(i + 1);
+			position.endPosition(min(nextPosition.position() - Config.minNoteDistance, position.endPosition()));
+		}
+
+		final IPositionWithLength lastPosition = positions.getLast();
+		lastPosition.endPosition(min(data.songChart.beatsMap.songLengthMs - 1, lastPosition.endPosition()));
 	}
 
 	private void fixLevel(final ArrangementChart arrangement, final Level level) {
 		level.chordsAndNotes//
-				.stream().filter(chordOrNote -> chordOrNote.note != null)//
+				.stream().filter(chordOrNote -> chordOrNote.isNote())//
 				.map(chordOrNote -> chordOrNote.note)//
 				.forEach(note -> note.length(note.length() >= Config.minTailLength ? note.length() : 0));
+
+		level.chordsAndNotes
+				.removeIf(sound -> sound.isChord() && sound.chord.templateId() >= arrangement.chordTemplates.size());
 
 		removeDuplicates(level.anchors);
 		removeDuplicates(level.chordsAndNotes);
@@ -115,7 +189,9 @@ public class ArrangementFixer {
 		addMissingAnchors(arrangement, level);
 		addMissingHandShapes(level);
 
-		fixLinkedNotes(level.chordsAndNotes);
+		fixNoteLengths(level.chordsAndNotes);
+
+		fixLengths(level.handShapes);
 	}
 
 	private void removeChordTemplate(final ArrangementChart arrangementChart, final int removedId,
@@ -123,23 +199,23 @@ public class ArrangementFixer {
 		arrangementChart.chordTemplates.remove(removedId);
 		for (final Level level : arrangementChart.levels.values()) {
 			for (final ChordOrNote chordOrNote : level.chordsAndNotes) {
-				if (!chordOrNote.isChord() || chordOrNote.chord.chordId != removedId) {
+				if (!chordOrNote.isChord() || chordOrNote.chord.templateId() != removedId) {
 					continue;
 				}
 
-				chordOrNote.chord.chordId = replacementId;
+				chordOrNote.chord.updateTemplate(replacementId, arrangementChart.chordTemplates.get(replacementId));
 			}
 			for (final HandShape handShape : level.handShapes) {
-				if (handShape.chordId != removedId) {
+				if (handShape.templateId != removedId) {
 					continue;
 				}
 
-				handShape.chordId = replacementId;
+				handShape.templateId = replacementId;
 			}
 		}
 	}
 
-	private void fixDuplicatedChordTemplates(final ArrangementChart arrangementChart) {
+	public void fixDuplicatedChordTemplates(final ArrangementChart arrangementChart) {
 		final List<ChordTemplate> templates = arrangementChart.chordTemplates;
 		for (int i = 0; i < templates.size(); i++) {
 			final ChordTemplate template = templates.get(i);
@@ -147,7 +223,9 @@ public class ArrangementFixer {
 				ChordTemplate otherTemplate = templates.get(j);
 				while (template.equals(otherTemplate) && j < templates.size()) {
 					removeChordTemplate(arrangementChart, j, i);
-					otherTemplate = templates.get(j);
+					if (j < templates.size()) {
+						otherTemplate = templates.get(j);
+					}
 				}
 			}
 		}
@@ -156,13 +234,13 @@ public class ArrangementFixer {
 	private boolean isTemplateUsed(final ArrangementChart arrangementChart, final int templateId) {
 		for (final Level level : arrangementChart.levels.values()) {
 			for (final ChordOrNote sound : level.chordsAndNotes) {
-				if (sound.isChord() && sound.chord.chordId == templateId) {
+				if (sound.isChord() && sound.chord.templateId() == templateId) {
 					return true;
 				}
 			}
 
 			for (final HandShape handShape : level.handShapes) {
-				if (handShape.chordId == templateId) {
+				if (handShape.templateId == templateId) {
 					return true;
 				}
 			}
@@ -171,7 +249,7 @@ public class ArrangementFixer {
 		return false;
 	}
 
-	private void removeUnusedChordTemplates(final ArrangementChart arrangementChart) {
+	public void removeUnusedChordTemplates(final ArrangementChart arrangementChart) {
 		final Map<Integer, Integer> templateIdsMap = new HashMap<>();
 
 		final int templatesAmount = arrangementChart.chordTemplates.size();
@@ -187,14 +265,26 @@ public class ArrangementFixer {
 		for (final Level level : arrangementChart.levels.values()) {
 			for (final ChordOrNote sound : level.chordsAndNotes) {
 				if (sound.isChord()) {
-					sound.chord.chordId = templateIdsMap.get(sound.chord.chordId);
+					final int newTemplateId = templateIdsMap.get(sound.chord.templateId());
+					final ChordTemplate template = arrangementChart.chordTemplates.get(newTemplateId);
+					sound.chord.updateTemplate(newTemplateId, template);
 				}
 			}
 
 			for (final HandShape handShape : level.handShapes) {
-				handShape.chordId = templateIdsMap.get(handShape.chordId);
+				handShape.templateId = templateIdsMap.get(handShape.templateId);
 			}
 		}
+	}
+
+	private void fixMissingFingersOnChordTemplates(final ArrangementChart arrangementChart) {
+		arrangementChart.chordTemplates.forEach(chordTemplate -> {
+			for (final int string : new HashSet<>(chordTemplate.fingers.keySet())) {
+				if (chordTemplate.fingers.get(string) == null) {
+					chordTemplate.fingers.remove(string);
+				}
+			}
+		});
 	}
 
 	public void fixArrangement() {
@@ -205,6 +295,7 @@ public class ArrangementFixer {
 
 			fixDuplicatedChordTemplates(arrangement);
 			removeUnusedChordTemplates(arrangement);
+			fixMissingFingersOnChordTemplates(arrangement);
 		}
 
 		data.songChart.beatsMap.makeBeatsUntilSongEnd();

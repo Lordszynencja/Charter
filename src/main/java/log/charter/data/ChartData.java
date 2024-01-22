@@ -2,8 +2,6 @@ package log.charter.data;
 
 import java.io.File;
 
-import javax.swing.JScrollBar;
-
 import log.charter.data.config.Config;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
@@ -17,7 +15,7 @@ import log.charter.song.SongChart;
 import log.charter.sound.MusicData;
 
 public class ChartData {
-	public String path = Config.lastPath;
+	public String path = Config.lastDir;
 	public String projectFileName = "project.rscp";
 	public boolean isEmpty = true;
 	public SongChart songChart = null;
@@ -31,17 +29,14 @@ public class ChartData {
 	private AudioHandler audioHandler;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
-	private JScrollBar scrollBar;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
 	public void init(final AudioHandler audioHandler, final CharterMenuBar charterMenuBar,
-			final ModeManager modeManager, final JScrollBar scrollBar, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
+			final ModeManager modeManager, final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this.audioHandler = audioHandler;
 		this.charterMenuBar = charterMenuBar;
 		this.modeManager = modeManager;
-		this.scrollBar = scrollBar;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 	}
@@ -50,9 +45,9 @@ public class ChartData {
 		currentLevel = newDiff;
 	}
 
-	public void setNewSong(final String dir, final SongChart song, final MusicData musicData,
+	public void setNewSong(final File songFolder, final SongChart song, final MusicData musicData,
 			final String projectFileName) {
-		setSong(dir, song, musicData, projectFileName, EditMode.TEMPO_MAP, 0, 0, 0);
+		setSong(songFolder.getAbsolutePath(), song, musicData, projectFileName, EditMode.TEMPO_MAP, 0, 0, 0);
 	}
 
 	public void setSong(final String dir, final SongChart song, final MusicData musicData, final String projectFileName,
@@ -65,14 +60,11 @@ public class ChartData {
 		songChart = song;
 		music = musicData;
 
-		audioHandler.clear();
 		selectionManager.clear();
 		changeDifficulty(level);
 		modeManager.editMode = editMode;
 
 		charterMenuBar.refreshMenus();
-		scrollBar.setMaximum(musicData.msLength());
-		scrollBar.setValue(time);
 
 		path = dir;
 		this.projectFileName = projectFileName;
@@ -82,6 +74,9 @@ public class ChartData {
 
 		selectionManager.clear();
 		undoSystem.clear();
+
+		audioHandler.clear();
+		audioHandler.setSong();
 	}
 
 	public void undo() {
@@ -99,6 +94,10 @@ public class ChartData {
 		if (modeManager.editMode != EditMode.GUITAR) {
 			return null;
 		}
+		if (songChart.arrangements.isEmpty()) {
+			return null;
+		}
+
 		return songChart.arrangements.get(currentArrangement);
 	}
 

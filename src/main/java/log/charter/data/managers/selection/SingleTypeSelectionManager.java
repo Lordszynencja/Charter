@@ -1,5 +1,7 @@
 package log.charter.data.managers.selection;
 
+import java.util.Set;
+
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.song.notes.IPosition;
@@ -40,6 +42,17 @@ abstract class SingleTypeSelectionManager<T extends IPosition> implements TypeSe
 	public void add(final ArrayList2<Integer> ids) {
 		final ArrayList2<T> available = getAvailable();
 		selectionList.add(ids.map(id -> new Pair<>(id, available.get(id))));
+	}
+
+	@Override
+	public void addPositions(final Set<Integer> positions) {
+		final ArrayList2<T> available = getAvailable();
+		for (int i = 0; i < available.size(); i++) {
+			final T availablePosition = available.get(i);
+			if (positions.contains(availablePosition.position())) {
+				selectionList.add(i, availablePosition);
+			}
+		}
 	}
 
 	@Override

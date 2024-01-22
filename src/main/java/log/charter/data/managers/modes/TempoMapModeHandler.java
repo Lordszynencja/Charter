@@ -32,12 +32,8 @@ public class TempoMapModeHandler extends ModeHandler {
 	}
 
 	@Override
-	public void snapNotes() {
-	}
-
-	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
-		if (clickData.isDrag() || clickData.pressHighlight.beat == null) {
+		if (clickData.isXDrag() || clickData.pressHighlight.beat == null) {
 			return;
 		}
 

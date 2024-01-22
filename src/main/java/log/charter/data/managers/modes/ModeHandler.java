@@ -9,7 +9,5 @@ public abstract class ModeHandler {
 
 	public abstract void rightClick(MouseButtonPressReleaseData clickData);
 
-	public abstract void snapNotes();
-
 	public abstract void changeLength(int change);
 }

@@ -72,12 +72,18 @@ public class HighlightManager {
 
 		private void addGuitarNotePositions() {
 			final ArrayList2<ChordOrNote> chordsAndNotes = data.getCurrentArrangementLevel().chordsAndNotes;
-			final int idFrom = max(0, findLastIdBefore(chordsAndNotes, fromPosition));
-			final int idTo = min(chordsAndNotes.size() - 1, findFirstIdAfter(chordsAndNotes, toPosition));
+			int idFrom = findLastIdBefore(chordsAndNotes, fromPosition);
+			int idTo = findFirstIdAfter(chordsAndNotes, toPosition);
+			if (idFrom == -1) {
+				idFrom = 0;
+			}
+			if (idTo == -1) {
+				idTo = chordsAndNotes.size() - 1;
+			}
 			for (int i = idFrom; i <= idTo; i++) {
 				final ChordOrNote chordOrNote = chordsAndNotes.get(i);
 				if (chordOrNote.position() >= fromPosition && chordOrNote.position() <= toPosition) {
-					noteChordPositions.add(fromNoteId(i, chordOrNote.position(), getLane(chordOrNote.position())));
+					noteChordPositions.add(fromNoteId(i, chordOrNote, getLane(chordOrNote.position())));
 				}
 			}
 		}
@@ -144,14 +150,17 @@ public class HighlightManager {
 	public PositionWithIdAndType getHighlight(final int x, final int y) {
 		final PositionType positionType = PositionType.fromY(y, modeManager.editMode);
 
-		int position = xToTime(x, data.time);
-		position = snapPosition(positionType, position);
-		position = max(0, min(data.songChart.beatsMap.beats.getLast().position(), position));
-
 		final PositionWithIdAndType existingPosition = selectionManager.findExistingPosition(x, y);
 		if (existingPosition != null) {
 			return existingPosition;
 		}
+		int position = xToTime(x, data.time);
+		if (positionType == PositionType.BEAT) {
+			return PositionWithIdAndType.create(position, positionType);
+		}
+
+		position = snapPosition(positionType, position);
+		position = max(0, min(data.songChart.beatsMap.beats.getLast().position(), position));
 
 		final PositionWithIdAndType existingPositionCloseToGrid = selectionManager
 				.findExistingPosition(timeToX(position, data.time), y);

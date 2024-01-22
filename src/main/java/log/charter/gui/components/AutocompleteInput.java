@@ -66,7 +66,7 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 
 	private static final long serialVersionUID = 2783139051300279130L;
 
-	private final ParamsPane parent;
+	private final RowedPanel parent;
 
 	private final ArrayList2<JLabel> popups = new ArrayList2<>();
 
@@ -76,7 +76,7 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 
 	private boolean disableDocumentUpdateHandling = false;
 
-	public AutocompleteInput(final ParamsPane parent, final int columns, final String text,
+	public AutocompleteInput(final RowedPanel parent, final int columns, final String text,
 			final Function<String, ArrayList2<T>> possibleValuesGetter, final Function<T, String> formatter,
 			final Consumer<T> onSelect) {
 		super(columns);
@@ -104,7 +104,7 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 		super.processKeyEvent(e);
 	}
 
-	private void removePopup() {
+	public void removePopup() {
 		popups.forEach(parent::remove);
 		parent.repaint();
 		popups.clear();
@@ -164,6 +164,9 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 		removePopup();
 
 		final String text = getText();
+		if (text.isEmpty()) {
+			return;
+		}
 
 		final ArrayList2<AutocompleteValue<T>> valuesToShow = possibleValuesGetter.apply(text).stream()//
 				.map(value -> new AutocompleteValue<>(formatter.apply(value), value))//
@@ -184,5 +187,9 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 		disableDocumentUpdateHandling = true;
 		setText(text);
 		disableDocumentUpdateHandling = false;
+	}
+
+	public boolean isDisableDocumentUpdateHandling() {
+		return disableDocumentUpdateHandling;
 	}
 }

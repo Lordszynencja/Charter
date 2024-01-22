@@ -12,10 +12,11 @@ import log.charter.data.managers.modes.VocalModeHandler;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.handlers.KeyboardHandler;
 
 public class ModeManager {
-	public EditMode editMode = EditMode.GUITAR;
+	public EditMode editMode = EditMode.TEMPO_MAP;
 
 	private final GuitarModeHandler guitarModeHandler = new GuitarModeHandler();
 	private final TempoMapModeHandler tempoMapModeHandler = new TempoMapModeHandler();
@@ -29,10 +30,11 @@ public class ModeManager {
 		modeHandlers.put(EditMode.VOCALS, vocalModeHandler);
 	}
 
-	public void init(final ChartData data, final CharterFrame frame, final HighlightManager highlightManager,
-			final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
-		guitarModeHandler.init(data, frame, highlightManager, keyboardHandler, selectionManager, undoSystem);
+	public void init(final CurrentSelectionEditor currentSelectionEditor, final ChartData data,
+			final CharterFrame frame, final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
+			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+		guitarModeHandler.init(currentSelectionEditor, data, frame, highlightManager, keyboardHandler, selectionManager,
+				undoSystem);
 		tempoMapModeHandler.init(data, frame, selectionManager, undoSystem);
 		vocalModeHandler.init(data, frame, keyboardHandler, selectionManager, undoSystem);
 	}

@@ -11,6 +11,7 @@ import log.charter.data.ChartData;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.types.positions.AnchorPositionTypeManager;
 import log.charter.data.types.positions.BeatPositionTypeManager;
+import log.charter.data.types.positions.EventPointPositionTypeManager;
 import log.charter.data.types.positions.GuitarNotePositionTypeManager;
 import log.charter.data.types.positions.HandShapePositionTypeManager;
 import log.charter.data.types.positions.NonePositionTypeManager;
@@ -23,6 +24,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public enum PositionType {
 	ANCHOR(new AnchorPositionTypeManager()), //
 	BEAT(new BeatPositionTypeManager()), //
+	EVENT_POINT(new EventPointPositionTypeManager()), //
 	GUITAR_NOTE(new GuitarNotePositionTypeManager()), //
 	HAND_SHAPE(new HandShapePositionTypeManager()), //
 	NONE(new NonePositionTypeManager()), //
@@ -36,11 +38,8 @@ public enum PositionType {
 	}
 
 	private static PositionType fromYGuitar(final int y) {
-		if (y < beatTextY) {
-			return NONE;
-		}
 		if (y < toneChangeY) {
-			return BEAT;
+			return EVENT_POINT;
 		}
 		if (y < anchorY) {
 			return TONE_CHANGE;

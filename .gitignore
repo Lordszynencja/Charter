@@ -49,3 +49,7 @@ colors.txt
 # Exclude IntelliJ IDE files
 .idea/
 RS_Charter.iml
+*.odt#
+RS Charter - Linux.zip
+RS Charter - Mac.zip
+RS Charter - Windows.zip

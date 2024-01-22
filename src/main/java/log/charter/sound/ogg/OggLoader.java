@@ -78,12 +78,11 @@ public class OggLoader {
 	}
 
 	private void decodeCurrentPacket() {
-		int samples;
-
 		if (jorbisBlock.synthesis(joggPacket) == 0) {
 			jorbisDspState.synthesis_blockin(jorbisBlock);
 		}
 
+		int samples;
 		int range;
 
 		while (((samples = jorbisDspState.synthesis_pcmout(pcmInfo, pcmIndex)) > 0) && !stopped) {

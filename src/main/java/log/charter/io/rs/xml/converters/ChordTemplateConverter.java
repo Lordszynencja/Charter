@@ -38,7 +38,7 @@ public class ChordTemplateConverter implements Converter {
 				chordTemplate.displayName = value;
 			} else if (name.matches("finger[0-9]+")) {
 				final int string = Integer.valueOf(name.substring(6));
-				final int finger = Integer.valueOf(value);
+				final Integer finger = value.equals("null") ? null : Integer.valueOf(value);
 				chordTemplate.fingers.put(string, finger);
 			} else if (name.matches("fret[0-9]+")) {
 				chordTemplate.frets.put(Integer.valueOf(name.substring(4)), Integer.valueOf(value));

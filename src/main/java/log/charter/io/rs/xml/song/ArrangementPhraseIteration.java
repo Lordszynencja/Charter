@@ -8,21 +8,20 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.PhraseIteration;
+import log.charter.song.EventPoint;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("phraseIteration")
 public class ArrangementPhraseIteration {
 	public static ArrayList2<ArrangementPhraseIteration> fromPhraseIterations(
-			final ArrayList2<ArrangementPhrase> arrangementPhrases,
-			final ArrayList2<PhraseIteration> phraseIterations) {
+			final ArrayList2<ArrangementPhrase> arrangementPhrases, final ArrayList2<EventPoint> phraseIterations) {
 		final Map<String, Integer> phraseIds = new HashMap<>();
 		for (int i = 0; i < arrangementPhrases.size(); i++) {
 			phraseIds.put(arrangementPhrases.get(i).name, i);
 		}
 
-		return phraseIterations.map(phraseIteration -> new ArrangementPhraseIteration(phraseIteration.beat.position(),
-				phraseIds.get(phraseIteration.phraseName)));
+		return phraseIterations.map(phraseIteration -> new ArrangementPhraseIteration(phraseIteration.position(),
+				phraseIds.get(phraseIteration.phrase)));
 	}
 
 	@XStreamAsAttribute

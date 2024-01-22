@@ -11,7 +11,7 @@ public class CopiedHandShapePosition extends CopiedPositionWithLength<HandShape>
 
 	public CopiedHandShapePosition(final BeatsMap beatsMap, final double baseBeatPosition, final HandShape handShape) {
 		super(beatsMap, baseBeatPosition, handShape);
-		chordId = handShape.chordId;
+		chordId = handShape.templateId;
 	}
 
 	@Override

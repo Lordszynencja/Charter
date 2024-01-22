@@ -1,5 +1,7 @@
 package log.charter.data.managers.selection;
 
+import java.util.Set;
+
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -17,4 +19,6 @@ public interface TypeSelectionManager<T extends IPosition> {
 	public void add(int id);
 
 	public void add(ArrayList2<Integer> ids);
+
+	public void addPositions(Set<Integer> positions);
 }

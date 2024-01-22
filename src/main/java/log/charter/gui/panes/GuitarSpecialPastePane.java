@@ -44,7 +44,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	public GuitarSpecialPastePane(final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem,
 			final FullGuitarCopyData fullGuitarCopyData) {
-		super(frame, Label.SPECIAL_GUITAR_PASTE_PANE, 9, getSizes());
+		super(frame, Label.SPECIAL_GUITAR_PASTE_PANE, getSizes());
 
 		this.data = data;
 		this.selectionManager = selectionManager;
@@ -84,14 +84,8 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		pasteSoundsDefault = pasteSounds;
 		pasteHandShapesDefault = pasteHandShapes;
 
-		if (pasteSections) {
-			copyData.beats.pasteSections(data);
-		}
-		if (pastePhrases) {
-			copyData.beats.pastePhrases(data);
-		}
-		if (pasteEvents) {
-			copyData.beats.pasteEvents(data);
+		if (pasteSections || pastePhrases || pasteEvents) {
+			copyData.beats.paste(data, pasteSections, pastePhrases, pasteEvents);
 		}
 		if (pasteToneChanges) {
 			copyData.toneChanges.paste(data);

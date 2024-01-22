@@ -60,9 +60,12 @@ public class ArrangementNote {
 	public Integer harmonic;
 	@XStreamAsAttribute
 	public Integer harmonicPinch;
-	public CountedList<ArrangementBendValue> bendValues;
 	@XStreamAsAttribute
 	public Integer linkNext;
+	@XStreamAsAttribute
+	public Integer ignore;
+
+	public CountedList<ArrangementBendValue> bendValues;
 
 	public ArrangementNote() {
 	}
@@ -72,7 +75,7 @@ public class ArrangementNote {
 		string = note.string;
 		fret = note.fret;
 		sustain = note.length() > 0 ? note.length() : null;
-		vibrato = note.vibrato;
+		vibrato = note.vibrato ? 1 : null;
 		tremolo = note.tremolo ? 1 : null;
 		accent = note.accent ? 1 : null;
 
@@ -85,12 +88,39 @@ public class ArrangementNote {
 						note.bendValues.map(bendValue -> new ArrangementBendValue(bendValue, note.position())));
 
 		linkNext = note.linkNext ? 1 : null;
+		ignore = note.ignore ? 1 : null;
 
 		setUpMute(note);
 		setUpHOPO(note);
 		setUpBassPickingTechniques(note);
 		setUpHarmonic(note);
 		setUpSlide(note);
+	}
+
+	public ArrangementNote(final ArrangementChordNote chordNote) {
+		time = chordNote.time;
+		string = chordNote.string;
+		fret = chordNote.fret;
+		sustain = chordNote.sustain;
+		vibrato = chordNote.vibrato;
+		tremolo = chordNote.tremolo;
+		accent = chordNote.accent;
+		mute = chordNote.mute;
+		palmMute = chordNote.palmMute;
+		pluck = chordNote.pluck;
+		hopo = chordNote.hopo;
+		hammerOn = chordNote.hammerOn;
+		pullOff = chordNote.pullOff;
+		slap = chordNote.slap;
+		slideTo = chordNote.slideTo;
+		slideUnpitchTo = chordNote.slideUnpitchTo;
+		bend = chordNote.bend;
+		tap = chordNote.tap;
+		harmonic = chordNote.harmonic;
+		harmonicPinch = chordNote.harmonicPinch;
+		linkNext = chordNote.linkNext;
+		ignore = chordNote.ignore;
+		bendValues = chordNote.bendValues;
 	}
 
 	private void setUpMute(final Note note) {

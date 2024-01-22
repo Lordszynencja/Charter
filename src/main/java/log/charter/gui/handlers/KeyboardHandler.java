@@ -12,7 +12,6 @@ import static java.awt.event.KeyEvent.VK_8;
 import static java.awt.event.KeyEvent.VK_9;
 import static java.awt.event.KeyEvent.VK_A;
 import static java.awt.event.KeyEvent.VK_ALT;
-import static java.awt.event.KeyEvent.VK_B;
 import static java.awt.event.KeyEvent.VK_C;
 import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
 import static java.awt.event.KeyEvent.VK_CLOSE_BRACKET;
@@ -23,6 +22,8 @@ import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_E;
 import static java.awt.event.KeyEvent.VK_END;
 import static java.awt.event.KeyEvent.VK_ESCAPE;
+import static java.awt.event.KeyEvent.VK_F11;
+import static java.awt.event.KeyEvent.VK_F2;
 import static java.awt.event.KeyEvent.VK_F3;
 import static java.awt.event.KeyEvent.VK_F4;
 import static java.awt.event.KeyEvent.VK_F5;
@@ -46,7 +47,6 @@ import static java.awt.event.KeyEvent.VK_NUMPAD9;
 import static java.awt.event.KeyEvent.VK_O;
 import static java.awt.event.KeyEvent.VK_OPEN_BRACKET;
 import static java.awt.event.KeyEvent.VK_PERIOD;
-import static java.awt.event.KeyEvent.VK_Q;
 import static java.awt.event.KeyEvent.VK_R;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_S;
@@ -57,13 +57,12 @@ import static java.awt.event.KeyEvent.VK_UP;
 import static java.awt.event.KeyEvent.VK_V;
 import static java.awt.event.KeyEvent.VK_W;
 import static java.awt.event.KeyEvent.VK_Z;
-import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.System.nanoTime;
 import static java.util.Arrays.asList;
+import static log.charter.data.ArrangementFixer.fixSoundLength;
 import static log.charter.data.config.Config.frets;
-import static log.charter.data.config.Config.minNoteDistance;
 import static log.charter.song.notes.IPosition.findFirstAfter;
 import static log.charter.song.notes.IPosition.findFirstIdAfter;
 import static log.charter.song.notes.IPosition.findLastBefore;
@@ -77,11 +76,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.copySystem.CopyManager;
@@ -95,16 +96,9 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
-import log.charter.gui.panes.ChordBendPane;
-import log.charter.gui.panes.ChordOptionsPane;
-import log.charter.gui.panes.GridPane;
 import log.charter.gui.panes.HandShapePane;
-import log.charter.gui.panes.NoteBendPane;
-import log.charter.gui.panes.NoteOptionsPane;
-import log.charter.gui.panes.SlidePane;
 import log.charter.gui.panes.VocalPane;
 import log.charter.song.ArrangementChart;
-import log.charter.song.Beat;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
@@ -112,8 +106,8 @@ import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
+import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.GuitarSound;
 import log.charter.song.notes.IPosition;
 import log.charter.song.notes.IPositionWithLength;
 import log.charter.song.notes.Note;
@@ -122,7 +116,6 @@ import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.chordRecognition.ChordNameSuggester;
-import log.charter.util.grid.GridPosition;
 
 public class KeyboardHandler implements KeyListener {
 	private static Consumer<KeyEvent> emptyHandler = e -> {
@@ -181,12 +174,6 @@ public class KeyboardHandler implements KeyListener {
 			add();
 		}
 
-		public void function(final Consumer<KeyEvent> function) {
-			this.function = function;
-
-			add();
-		}
-
 		private void addSingle() {
 			keyHandlers.put(key, new SingleFunctionForKey(function));
 		}
@@ -227,6 +214,7 @@ public class KeyboardHandler implements KeyListener {
 		@Override
 		public void fireFunction(final KeyEvent e) {
 			function.accept(e);
+			e.consume();
 		}
 	}
 
@@ -247,11 +235,13 @@ public class KeyboardHandler implements KeyListener {
 		@Override
 		public void fireFunction(final KeyEvent e) {
 			functions.get(modifierKeysValue(ctrl, alt, shift)).accept(e);
+			e.consume();
 		}
 	}
 
 	private AudioDrawer audioDrawer;
 	private AudioHandler audioHandler;
+	private ArrangementFixer arrangementFixer;
 	private CopyManager copyManager;
 	private ChartData data;
 	private CharterFrame frame;
@@ -270,12 +260,14 @@ public class KeyboardHandler implements KeyListener {
 	private int lastFretNumber = 0;
 	private int fretNumberTimer = 0;
 
-	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler, final CopyManager copyManager,
-			final ChartData data, final CharterFrame frame, final ModeManager modeManager,
-			final MouseHandler mouseHandler, final SelectionManager selectionManager,
-			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
+	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler,
+			final ArrangementFixer arrangementFixer, final CopyManager copyManager, final ChartData data,
+			final CharterFrame frame, final ModeManager modeManager, final MouseHandler mouseHandler,
+			final SelectionManager selectionManager, final SongFileHandler songFileHandler,
+			final UndoSystem undoSystem) {
 		this.audioDrawer = audioDrawer;
 		this.audioHandler = audioHandler;
+		this.arrangementFixer = arrangementFixer;
 		this.copyManager = copyManager;
 		this.data = data;
 		this.frame = frame;
@@ -369,12 +361,32 @@ public class KeyboardHandler implements KeyListener {
 				continue;
 			}
 
-			if (chordTemplates.get(sound.chord.chordId).frets.get(string) != null) {
+			if (chordTemplates.get(sound.chord.templateId()).frets.get(string) != null) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	private void moveChordNotesUp(final int strings, final Map<Integer, ChordNote> chordNotes) {
+		chordNotes.remove(strings - 1);
+		for (int string = strings - 2; string >= 0; string--) {
+			final ChordNote movedChordNote = chordNotes.remove(string);
+			if (movedChordNote != null) {
+				chordNotes.put(string + 1, movedChordNote);
+			}
+		}
+	}
+
+	private void moveChordNotesDown(final int strings, final Map<Integer, ChordNote> chordNotes) {
+		chordNotes.remove(0);
+		for (int string = 1; string < strings; string++) {
+			final ChordNote movedChordNote = chordNotes.remove(string);
+			if (movedChordNote != null) {
+				chordNotes.put(string - 1, movedChordNote);
+			}
+		}
 	}
 
 	public void moveNotesUpKeepFrets() {
@@ -384,8 +396,8 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int topString = data.currentStrings() - 1;
-		if (containsString(selectedSounds, topString)) {
+		final int strings = data.currentStrings();
+		if (containsString(selectedSounds, strings - 1)) {
 			return;
 		}
 
@@ -402,14 +414,17 @@ public class KeyboardHandler implements KeyListener {
 				continue;
 			}
 
-			if (movedChordTemplates.containsKey(sound.chord.chordId)) {
-				sound.chord.chordId = movedChordTemplates.get(sound.chord.chordId);
+			if (movedChordTemplates.containsKey(sound.chord.templateId())) {
+				moveChordNotesUp(strings, sound.chord.chordNotes);
+				final int newTemplateId = movedChordTemplates.get(sound.chord.templateId());
+				final ChordTemplate chordTemplate = chordTemplates.get(newTemplateId);
+				sound.chord.updateTemplate(newTemplateId, chordTemplate);
 				continue;
 			}
 
-			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.chordId));
+			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.templateId()));
 			newChordTemplate.chordName = "";
-			for (int string = topString - 1; string >= 0; string--) {
+			for (int string = strings - 2; string >= 0; string--) {
 				final Integer fret = newChordTemplate.frets.remove(string);
 				if (fret == null) {
 					continue;
@@ -419,10 +434,13 @@ public class KeyboardHandler implements KeyListener {
 				newChordTemplate.fingers.put(string + 1, newChordTemplate.fingers.remove(string));
 			}
 
+			moveChordNotesUp(strings, sound.chord.chordNotes);
 			final int newTemplateId = arrangement.getChordTemplateIdWithSave(newChordTemplate);
-			movedChordTemplates.put(sound.chord.chordId, newTemplateId);
-			sound.chord.chordId = newTemplateId;
+			movedChordTemplates.put(sound.chord.templateId(), newTemplateId);
+			sound.chord.updateTemplate(newTemplateId, newChordTemplate);
 		}
+
+		frame.selectionChanged(true);
 	}
 
 	public void moveNotesDownKeepFrets() {
@@ -432,13 +450,13 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int topString = data.currentStrings() - 1;
 		if (containsString(selectedSounds, 0)) {
 			return;
 		}
 
 		undoSystem.addUndo();
 
+		final int strings = data.currentStrings();
 		final Map<Integer, Integer> movedChordTemplates = new HashMap<>();
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 		final ArrayList2<ChordTemplate> chordTemplates = arrangement.chordTemplates;
@@ -450,14 +468,17 @@ public class KeyboardHandler implements KeyListener {
 				continue;
 			}
 
-			if (movedChordTemplates.containsKey(sound.chord.chordId)) {
-				sound.chord.chordId = movedChordTemplates.get(sound.chord.chordId);
+			if (movedChordTemplates.containsKey(sound.chord.templateId())) {
+				moveChordNotesDown(strings, sound.chord.chordNotes);
+				final int newTemplateId = movedChordTemplates.get(sound.chord.templateId());
+				final ChordTemplate chordTemplate = chordTemplates.get(newTemplateId);
+				sound.chord.updateTemplate(newTemplateId, chordTemplate);
 				continue;
 			}
 
-			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.chordId));
+			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.templateId()));
 			newChordTemplate.chordName = "";
-			for (int string = 1; string <= topString; string++) {
+			for (int string = 1; string < strings; string++) {
 				final Integer fret = newChordTemplate.frets.remove(string);
 				if (fret == null) {
 					continue;
@@ -467,10 +488,13 @@ public class KeyboardHandler implements KeyListener {
 				newChordTemplate.fingers.put(string - 1, newChordTemplate.fingers.remove(string));
 			}
 
+			moveChordNotesDown(strings, sound.chord.chordNotes);
 			final int newTemplateId = arrangement.getChordTemplateIdWithSave(newChordTemplate);
-			movedChordTemplates.put(sound.chord.chordId, newTemplateId);
-			sound.chord.chordId = newTemplateId;
+			movedChordTemplates.put(sound.chord.templateId(), newTemplateId);
+			sound.chord.updateTemplate(newTemplateId, newChordTemplate);
 		}
+
+		frame.selectionChanged(true);
 	}
 
 	public void moveNotesUp() {
@@ -480,14 +504,14 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int topString = data.currentStrings() - 1;
-		if (containsString(selectedSounds, topString)) {
+		final int strings = data.currentStrings();
+		if (containsString(selectedSounds, strings - 1)) {
 			return;
 		}
 
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 		final Map<Integer, Integer> stringDifferences = new HashMap<>();
-		for (int i = 0; i <= topString - 1; i++) {
+		for (int i = 0; i < strings; i++) {
 			stringDifferences.put(i, arrangement.tuning.getStringOffset(i) - arrangement.tuning.getStringOffset(i + 1));
 		}
 
@@ -507,15 +531,18 @@ public class KeyboardHandler implements KeyListener {
 				continue;
 			}
 
-			if (movedChordTemplates.containsKey(sound.chord.chordId)) {
-				sound.chord.chordId = movedChordTemplates.get(sound.chord.chordId);
+			if (movedChordTemplates.containsKey(sound.chord.templateId())) {
+				moveChordNotesUp(strings, sound.chord.chordNotes);
+				final int newTemplateId = movedChordTemplates.get(sound.chord.templateId());
+				final ChordTemplate chordTemplate = chordTemplates.get(newTemplateId);
+				sound.chord.updateTemplate(newTemplateId, chordTemplate);
 				continue;
 			}
 
-			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.chordId));
+			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.templateId()));
 			newChordTemplate.chordName = "";
 			boolean wrongFret = false;
-			for (int string = topString - 1; string >= 0; string--) {
+			for (int string = strings - 2; string >= 0; string--) {
 				Integer fret = newChordTemplate.frets.remove(string);
 				if (fret == null) {
 					continue;
@@ -535,10 +562,13 @@ public class KeyboardHandler implements KeyListener {
 				continue;
 			}
 
+			moveChordNotesUp(strings, sound.chord.chordNotes);
 			final int newTemplateId = arrangement.getChordTemplateIdWithSave(newChordTemplate);
-			movedChordTemplates.put(sound.chord.chordId, newTemplateId);
-			sound.chord.chordId = newTemplateId;
+			movedChordTemplates.put(sound.chord.templateId(), newTemplateId);
+			sound.chord.updateTemplate(newTemplateId, newChordTemplate);
 		}
+
+		frame.selectionChanged(true);
 	}
 
 	public void moveNotesDown() {
@@ -548,14 +578,14 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int topString = data.currentStrings() - 1;
 		if (containsString(selectedSounds, 0)) {
 			return;
 		}
 
+		final int strings = data.currentStrings();
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 		final Map<Integer, Integer> stringDifferences = new HashMap<>();
-		for (int i = 1; i <= topString; i++) {
+		for (int i = 1; i < strings; i++) {
 			stringDifferences.put(i, arrangement.tuning.getStringOffset(i) - arrangement.tuning.getStringOffset(i - 1));
 		}
 
@@ -575,15 +605,19 @@ public class KeyboardHandler implements KeyListener {
 				continue;
 			}
 
-			if (movedChordTemplates.containsKey(sound.chord.chordId)) {
-				sound.chord.chordId = movedChordTemplates.get(sound.chord.chordId);
+			if (movedChordTemplates.containsKey(sound.chord.templateId())) {
+				moveChordNotesDown(strings, sound.chord.chordNotes);
+				final int newTemplateId = movedChordTemplates.get(sound.chord.templateId());
+				final ChordTemplate chordTemplate = chordTemplates.get(newTemplateId);
+				sound.chord.updateTemplate(newTemplateId, chordTemplate);
+
 				continue;
 			}
 
-			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.chordId));
+			final ChordTemplate newChordTemplate = new ChordTemplate(chordTemplates.get(sound.chord.templateId()));
 			newChordTemplate.chordName = "";
 			boolean wrongFret = false;
-			for (int string = 1; string <= topString; string++) {
+			for (int string = 1; string < strings; string++) {
 				Integer fret = newChordTemplate.frets.remove(string);
 				if (fret == null) {
 					continue;
@@ -603,14 +637,17 @@ public class KeyboardHandler implements KeyListener {
 				continue;
 			}
 
+			moveChordNotesDown(strings, sound.chord.chordNotes);
 			final int newTemplateId = arrangement.getChordTemplateIdWithSave(newChordTemplate);
-			movedChordTemplates.put(sound.chord.chordId, newTemplateId);
-			sound.chord.chordId = newTemplateId;
+			movedChordTemplates.put(sound.chord.templateId(), newTemplateId);
+			sound.chord.updateTemplate(newTemplateId, newChordTemplate);
 		}
+
+		frame.selectionChanged(true);
 	}
 
-	private <T> void singleToggleOnAllSelectedNotesWithBaseValueNote(final Function<Note, T> baseValueGetter,
-			final BiConsumer<Note, T> handler) {
+	private <T> void singleToggleOnAllSelectedNotesWithBaseValue(final Function<ChordOrNote, T> baseValueGetter,
+			final BiConsumer<ChordOrNote, T> handler) {
 		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		if (!selectedAccessor.isSelected()) {
@@ -618,26 +655,12 @@ public class KeyboardHandler implements KeyListener {
 		}
 
 		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
-		selected.removeIf(selection -> selection.selectable.isChord());
-		final T baseValue = baseValueGetter.apply(selected.get(0).selectable.note);
+		final T baseValue = baseValueGetter.apply(selected.get(0).selectable);
 
 		undoSystem.addUndo();
-		selected.forEach(selectedValue -> handler.accept(selectedValue.selectable.note, baseValue));
-	}
+		selected.forEach(selectedValue -> handler.accept(selectedValue.selectable, baseValue));
 
-	private <T> void singleToggleOnAllSelectedNotesWithBaseValue(final Function<GuitarSound, T> baseValueGetter,
-			final BiConsumer<GuitarSound, T> handler) {
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		if (!selectedAccessor.isSelected()) {
-			return;
-		}
-
-		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
-		final T baseValue = baseValueGetter.apply(selected.get(0).selectable.asGuitarSound());
-
-		undoSystem.addUndo();
-		selected.forEach(selectedValue -> handler.accept(selectedValue.selectable.asGuitarSound(), baseValue));
+		frame.selectionChanged(false);
 	}
 
 	public void toggleMute() {
@@ -646,7 +669,13 @@ public class KeyboardHandler implements KeyListener {
 		}
 
 		singleToggleOnAllSelectedNotesWithBaseValue(sound -> {
-			switch (sound.mute) {
+			Mute mute;
+			if (sound.isNote()) {
+				mute = sound.note.mute;
+			} else {
+				mute = sound.chord.chordNotesValue(n -> n.mute, Mute.NONE);
+			}
+			switch (mute) {
 			case NONE:
 				return Mute.PALM;
 			case PALM:
@@ -656,7 +685,13 @@ public class KeyboardHandler implements KeyListener {
 			default:
 				return Mute.NONE;
 			}
-		}, (sound, mute) -> sound.mute = mute);
+		}, (sound, mute) -> {
+			if (sound.isNote()) {
+				sound.note.mute = mute;
+			} else {
+				sound.chord.chordNotes.values().forEach(n -> n.mute = mute);
+			}
+		});
 	}
 
 	public void toggleHOPO() {
@@ -665,7 +700,14 @@ public class KeyboardHandler implements KeyListener {
 		}
 
 		singleToggleOnAllSelectedNotesWithBaseValue(sound -> {
-			switch (sound.hopo) {
+			HOPO hopo;
+			if (sound.isNote()) {
+				hopo = sound.note.hopo;
+			} else {
+				hopo = sound.chord.chordNotesValue(n -> n.hopo, HOPO.NONE);
+			}
+
+			switch (hopo) {
 			case HAMMER_ON:
 				return HOPO.PULL_OFF;
 			case NONE:
@@ -677,7 +719,13 @@ public class KeyboardHandler implements KeyListener {
 			default:
 				return HOPO.NONE;
 			}
-		}, (sound, hopo) -> sound.hopo = hopo);
+		}, (sound, hopo) -> {
+			if (sound.isNote()) {
+				sound.note.hopo = hopo;
+			} else {
+				sound.chord.chordNotes.values().forEach(n -> n.hopo = hopo);
+			}
+		});
 	}
 
 	public void toggleHarmonic() {
@@ -686,7 +734,14 @@ public class KeyboardHandler implements KeyListener {
 		}
 
 		singleToggleOnAllSelectedNotesWithBaseValue(sound -> {
-			switch (sound.harmonic) {
+			Harmonic harmonic;
+			if (sound.isNote()) {
+				harmonic = sound.note.harmonic;
+			} else {
+				harmonic = sound.chord.chordNotesValue(n -> n.harmonic, Harmonic.NONE);
+			}
+
+			switch (harmonic) {
 			case NONE:
 				return Harmonic.NORMAL;
 			case NORMAL:
@@ -696,7 +751,13 @@ public class KeyboardHandler implements KeyListener {
 			default:
 				return Harmonic.NONE;
 			}
-		}, (sound, harmonic) -> sound.harmonic = harmonic);
+		}, (sound, harmonic) -> {
+			if (sound.isNote()) {
+				sound.note.harmonic = harmonic;
+			} else {
+				sound.chord.chordNotes.values().forEach(n -> n.harmonic = harmonic);
+			}
+		});
 	}
 
 	public void toggleAccent() {
@@ -704,8 +765,8 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		this.singleToggleOnAllSelectedNotesWithBaseValue(sound -> !sound.accent,
-				(sound, accent) -> sound.accent = accent);
+		this.singleToggleOnAllSelectedNotesWithBaseValue(sound -> !sound.asGuitarSound().accent,
+				(sound, accent) -> sound.asGuitarSound().accent = accent);
 	}
 
 	public void toggleVibrato() {
@@ -713,8 +774,19 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		this.singleToggleOnAllSelectedNotesWithBaseValueNote(note -> note.vibrato == null ? 80 : null,
-				(note, vibrato) -> note.vibrato = vibrato);
+		this.singleToggleOnAllSelectedNotesWithBaseValue(sound -> {
+			if (sound.isNote()) {
+				return !sound.note.vibrato;
+			}
+
+			return !sound.chord.chordNotesValue(n -> n.vibrato, false);
+		}, (sound, vibrato) -> {
+			if (sound.isNote()) {
+				sound.note.vibrato = vibrato;
+			} else {
+				sound.chord.chordNotes.values().forEach(n -> n.vibrato = vibrato);
+			}
+		});
 	}
 
 	public void toggleTremolo() {
@@ -722,8 +794,19 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		this.singleToggleOnAllSelectedNotesWithBaseValue(sound -> !sound.tremolo,
-				(sound, tremolo) -> sound.tremolo = tremolo);
+		this.singleToggleOnAllSelectedNotesWithBaseValue(sound -> {
+			if (sound.isNote()) {
+				return !sound.note.tremolo;
+			}
+
+			return !sound.chord.chordNotesValue(n -> n.tremolo, false);
+		}, (sound, tremolo) -> {
+			if (sound.isNote()) {
+				sound.note.tremolo = tremolo;
+			} else {
+				sound.chord.chordNotes.values().forEach(n -> n.tremolo = tremolo);
+			}
+		});
 	}
 
 	public void toggleLinkNext() {
@@ -731,8 +814,43 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		this.singleToggleOnAllSelectedNotesWithBaseValue(sound -> !sound.linkNext,
-				(sound, linkNext) -> sound.linkNext = linkNext);
+		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
+				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		if (!selectedAccessor.isSelected()) {
+			return;
+		}
+
+		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final ChordOrNote sound = selected.get(0).selectable;
+		final boolean newValue = sound.isNote() ? !sound.note.linkNext : !sound.chord.linkNext();
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+
+		undoSystem.addUndo();
+		selected.forEach(selectedValue -> {
+			if (selectedValue.selectable.isNote()) {
+				final Note note = selectedValue.selectable.note;
+				note.linkNext = newValue;
+				final ChordOrNote nextSound = ChordOrNote.findNextSoundOnString(note.string, selectedValue.id + 1,
+						sounds);
+				if (nextSound != null && nextSound.isNote()) {
+					nextSound.note.fret = note.slideTo == null ? note.fret : note.slideTo;
+				}
+			} else {
+				selectedValue.selectable.chord.chordNotes.values().forEach(n -> n.linkNext = newValue);
+			}
+
+			final int nextId = selectedValue.id + 1;
+			if (nextId < sounds.size()) {
+				final ChordOrNote nextSound = sounds.get(nextId);
+				if (nextSound.isChord()) {
+					nextSound.chord.splitIntoNotes = true;
+				}
+			}
+
+			fixSoundLength(selectedValue.id, sounds);
+		});
+
+		frame.selectionChanged(false);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -821,90 +939,74 @@ public class KeyboardHandler implements KeyListener {
 		frame.setNextTime(newTime);
 	}
 
-	private int snap(final int position) {
-		final GridPosition<Beat> gridPosition = GridPosition.create(data.songChart.beatsMap.beats, position);
-		final int positionA = gridPosition.position();
-		final int positionB = gridPosition.next().position();
-		if (abs(position - positionA) < abs(position - positionB)) {
-			return positionA;
-		} else {
-			return positionB;
-		}
-	}
-
 	private void snapPositions(final Collection<? extends IPosition> positions) {
 		for (final IPosition position : positions) {
-			position.position(snap(position.position()));
+			final int newPosition = data.songChart.beatsMap.getPositionFromGridClosestTo(position.position());
+			position.position(newPosition);
 		}
 	}
 
-	private void snapNotePositionsWithLength(final Collection<ChordOrNote> positions,
-			final ArrayList2<ChordOrNote> allPositions) {
-		for (final ChordOrNote position : positions) {
-			position.position(snap(position.position()));
-		}
+	private void snapNotePositions(final Collection<ChordOrNote> positions) {
+		snapPositions(positions);
 
-		for (final ChordOrNote position : positions) {
-			if (position.asGuitarSound().linkNext) {
-				final ChordOrNote next = findFirstAfter(allPositions, position.position());
-				position.length(next.position() - position.position());
-				continue;
-			}
-
-			final int length = snap(position.endPosition()) - position.position();
-			final ChordOrNote next = findFirstAfter(allPositions, position.position());
-			if (next != null) {
-				position.length(max(0, min(length, next.position() - position.position() - minNoteDistance)));
-			} else {
-				position.length(length);
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		for (int i = 1; i < sounds.size(); i++) {
+			while (i < sounds.size() && sounds.get(i).position() == sounds.get(i - 1).position()) {
+				sounds.remove(i);
 			}
 		}
+
+		arrangementFixer.fixNoteLengths(sounds);
 	}
 
 	private <T extends IPositionWithLength> void snapPositionsWithLength(final Collection<T> positions,
 			final ArrayList2<T> allPositions) {
-		for (final T position : positions) {
-			position.position(snap(position.position()));
+		snapPositions(positions);
+		arrangementFixer.fixLengths(allPositions);
+	}
 
-			final int length = snap(position.endPosition()) - position.position();
-			final T next = findFirstAfter(allPositions, position.position());
-			if (next != null) {
-				position.length(max(0, min(length, next.position() - position.position() - minNoteDistance)));
-			} else {
-				position.length(length);
-			}
-		}
+	private void reselectAfterSnapping(final PositionType type, final Collection<Selection<IPosition>> selected) {
+		final Set<Integer> selectedPositions = selected.stream()//
+				.map(selection -> selection.selectable.position())//
+				.collect(Collectors.toSet());
+
+		selectionManager.clear();
+		selectionManager.addSelectionForPositions(type, selectedPositions);
 	}
 
 	public void snapSelected() {
 		final SelectionAccessor<IPosition> accessor = selectionManager.getCurrentlySelectedAccessor();
+		if (!accessor.isSelected() || !asList(PositionType.EVENT_POINT, PositionType.TONE_CHANGE, PositionType.ANCHOR,
+				PositionType.GUITAR_NOTE, PositionType.HAND_SHAPE, PositionType.VOCAL).contains(accessor.type)) {
+			return;
+		}
+
+		undoSystem.addUndo();
+
+		final HashSet2<Selection<IPosition>> selected = accessor.getSelectedSet();
 
 		switch (accessor.type) {
+		case EVENT_POINT:
 		case ANCHOR:
 		case TONE_CHANGE:
-			undoSystem.addUndo();
-			snapPositions(accessor.getSelectedSet().map(selection -> selection.selectable));
+			snapPositions(selected.map(selection -> selection.selectable));
 			break;
 		case GUITAR_NOTE:
-			undoSystem.addUndo();
-			snapNotePositionsWithLength(accessor.getSelectedSet().map(selection -> (ChordOrNote) selection.selectable),
-					data.getCurrentArrangementLevel().chordsAndNotes);
+			snapNotePositions(selected.map(selection -> (ChordOrNote) selection.selectable));
 			break;
 		case HAND_SHAPE:
-			undoSystem.addUndo();
-			snapPositionsWithLength(accessor.getSelectedSet().map(selection -> (HandShape) selection.selectable),
+			snapPositionsWithLength(selected.map(selection -> (HandShape) selection.selectable),
 					data.getCurrentArrangementLevel().handShapes);
 			break;
 		case VOCAL:
-			undoSystem.addUndo();
-			snapPositionsWithLength(accessor.getSelectedSet().map(selection -> (Vocal) selection.selectable),
+			snapPositionsWithLength(selected.map(selection -> (Vocal) selection.selectable),
 					data.songChart.vocals.vocals);
 			break;
-		case BEAT:
-		case NONE:
 		default:
 			break;
 		}
+
+		reselectAfterSnapping(accessor.type, selected);
 	}
 
 	public void snapAll() {
@@ -920,19 +1022,28 @@ public class KeyboardHandler implements KeyListener {
 		if (modeManager.editMode == EditMode.TEMPO_MAP) {
 			return;
 		}
+
 		if (modeManager.editMode == EditMode.VOCALS) {
 			undoSystem.addUndo();
+
 			snapPositionsWithLength(getFromTo(data.songChart.vocals.vocals, from, to), data.songChart.vocals.vocals);
+
+			reselectAfterSnapping(accessor.type, selected);
 			return;
 		}
+
 		if (modeManager.editMode == EditMode.GUITAR) {
 			undoSystem.addUndo();
+
 			final ArrangementChart arrangement = data.getCurrentArrangement();
 			final Level level = data.getCurrentArrangementLevel();
+			snapPositions(getFromTo(arrangement.eventPoints, from, to));
 			snapPositions(getFromTo(arrangement.toneChanges, from, to));
 			snapPositions(getFromTo(level.anchors, from, to));
-			snapNotePositionsWithLength(getFromTo(level.chordsAndNotes, from, to), level.chordsAndNotes);
+			snapNotePositions(getFromTo(level.chordsAndNotes, from, to));
 			snapPositionsWithLength(getFromTo(level.handShapes, from, to), level.handShapes);
+
+			reselectAfterSnapping(accessor.type, selected);
 		}
 	}
 
@@ -962,9 +1073,14 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
+		undoSystem.addUndo();
+
 		for (final Selection<Vocal> vocalSelection : selectedAccessor.getSelectedSet()) {
+			vocalSelection.selectable.setPhraseEnd(false);
 			vocalSelection.selectable.setWordPart(!vocalSelection.selectable.isWordPart());
 		}
+
+		frame.selectionChanged(false);
 	}
 
 	public void togglePhraseEnd() {
@@ -977,123 +1093,14 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		for (final Selection<Vocal> selectedVocal : selectedAccessor.getSelectedSet()) {
-			selectedVocal.selectable.setPhraseEnd(!selectedVocal.selectable.isPhraseEnd());
-		}
-	}
-
-	private void openChordOptionsPopup(final ArrayList2<ChordOrNote> selected) {
-		new ChordOptionsPane(data, frame, undoSystem, selected);
-	}
-
-	private void openSingleNoteOptionsPopup(final ArrayList2<ChordOrNote> selected) {
-		new NoteOptionsPane(data, frame, undoSystem, selected);
-	}
-
-	public void editNoteAsChord() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
-			return;
-		}
-
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		if (!selectedAccessor.isSelected()) {
-			return;
-		}
-
-		openChordOptionsPopup(selectedAccessor.getSortedSelected().map(selection -> selection.selectable));
-	}
-
-	public void editNoteAsSingleNote() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
-			return;
-		}
-
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		if (!selectedAccessor.isSelected()) {
-			return;
-		}
-
-		openSingleNoteOptionsPopup(selectedAccessor.getSortedSelected().map(selection -> selection.selectable));
-	}
-
-	public void editNote() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
-			return;
-		}
-
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-
-		final ArrayList2<ChordOrNote> selected = selectedAccessor.getSortedSelected()
-				.map(selection -> selection.selectable);
-		if (selected.isEmpty()) {
-			return;
-		}
-
-		if (selected.get(0).isChord()) {
-			openChordOptionsPopup(selected);
-		} else {
-			openSingleNoteOptionsPopup(selected);
-		}
-	}
-
-	public void editSlide() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
-			return;
-		}
-
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		if (!selectedAccessor.isSelected()) {
-			return;
-		}
-
-		new SlidePane(frame, undoSystem, selectedAccessor.getSortedSelected().get(0).selectable);
-	}
-
-	public void editBend() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
-			return;
-		}
-
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		if (!selectedAccessor.isSelected()) {
-			return;
-		}
-
-		final ChordOrNote sound = selectedAccessor.getSortedSelected().get(0).selectable;
-		if (sound.length() < 10) {
-			return;
-		}
-
-		if (sound.isChord()) {
-			new ChordBendPane(data.songChart.beatsMap, frame, undoSystem, sound.chord,
-					data.getCurrentArrangement().chordTemplates.get(sound.chord.chordId));
-		} else if (sound.isNote()) {
-			new NoteBendPane(data.songChart.beatsMap, frame, undoSystem, sound.note);
-		}
-	}
-
-	public void editHandShape() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
-			return;
-		}
-
-		final SelectionAccessor<HandShape> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.HAND_SHAPE);
-		if (!selectedAccessor.isSelected()) {
-			return;
-		}
-
 		undoSystem.addUndo();
 
-		new HandShapePane(data, frame, selectedAccessor.getSortedSelected().get(0).selectable, () -> {
-			undoSystem.undo();
-			undoSystem.removeRedo();
-		});
+		for (final Selection<Vocal> selectedVocal : selectedAccessor.getSelectedSet()) {
+			selectedVocal.selectable.setWordPart(false);
+			selectedVocal.selectable.setPhraseEnd(!selectedVocal.selectable.isPhraseEnd());
+		}
+
+		frame.selectionChanged(false);
 	}
 
 	public void markHandShape() {
@@ -1130,11 +1137,12 @@ public class KeyboardHandler implements KeyListener {
 
 		ChordTemplate chordTemplate = new ChordTemplate();
 		if (selected.get(0).selectable.isChord()) {
-			chordTemplate = data.getCurrentArrangement().chordTemplates.get(selected.get(0).selectable.chord.chordId);
+			chordTemplate = data.getCurrentArrangement().chordTemplates
+					.get(selected.get(0).selectable.chord.templateId());
 		}
 
 		final HandShape handShape = new HandShape(position, endPosition - position);
-		handShape.chordId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
+		handShape.templateId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
 
 		handShapes.add(handShape);
 		handShapes.sort(null);
@@ -1146,11 +1154,6 @@ public class KeyboardHandler implements KeyListener {
 
 	private void handleE() {
 		if (data.isEmpty) {
-			return;
-		}
-
-		if (modeManager.editMode == EditMode.GUITAR) {
-			editNoteAsSingleNote();
 			return;
 		}
 
@@ -1172,10 +1175,6 @@ public class KeyboardHandler implements KeyListener {
 	private void handleW() {
 		if (modeManager.editMode == EditMode.VOCALS) {
 			toggleWordPart();
-		}
-
-		if (modeManager.editMode == EditMode.GUITAR) {
-			editNote();
 		}
 	}
 
@@ -1211,7 +1210,7 @@ public class KeyboardHandler implements KeyListener {
 			if (selection.selectable.isChord()) {
 				final Chord chord = selection.selectable.chord;
 				final ChordTemplate newTemplate = new ChordTemplate(
-						data.getCurrentArrangement().chordTemplates.get(chord.chordId));
+						data.getCurrentArrangement().chordTemplates.get(chord.templateId()));
 				int fretChange = 0;
 				for (int i = 0; i < data.currentStrings(); i++) {
 					if (newTemplate.frets.get(i) != null) {
@@ -1233,13 +1232,22 @@ public class KeyboardHandler implements KeyListener {
 					}
 				}
 
-				newTemplate.chordName = ChordNameSuggester
-						.suggestChordNames(data.getCurrentArrangement().tuning, newTemplate.frets).get(0);
-				chord.chordId = data.getCurrentArrangement().getChordTemplateIdWithSave(newTemplate);
+				final ArrayList2<String> suggestedNames = ChordNameSuggester
+						.suggestChordNames(data.getCurrentArrangement().tuning, newTemplate.frets);
+
+				if (!suggestedNames.isEmpty()) {
+					newTemplate.chordName = suggestedNames.get(0);
+				} else {
+					newTemplate.chordName = "";
+				}
+				final int newTemplateId = data.getCurrentArrangement().getChordTemplateIdWithSave(newTemplate);
+				chord.updateTemplate(newTemplateId, newTemplate);
 			} else {
 				selection.selectable.note.fret = fret;
 			}
 		}
+
+		frame.selectionChanged(false);
 	}
 
 	private void handleNumber(final int number) {
@@ -1257,6 +1265,36 @@ public class KeyboardHandler implements KeyListener {
 		fretNumberTimer = (int) (nanoTime() / 1_000_000 + 2000);
 		lastFretNumber = number;
 		setFret(number);
+	}
+
+	private void toggleBookmark(final int number) {
+		if (data.isEmpty) {
+			return;
+		}
+
+		final Integer currentBookmark = data.songChart.bookmarks.get(number);
+		if (currentBookmark == null || currentBookmark != data.time) {
+			data.songChart.bookmarks.put(number, data.time);
+		} else {
+			data.songChart.bookmarks.remove(number);
+		}
+	}
+
+	private void moveToBookmark(final int number) {
+		if (data.isEmpty) {
+			return;
+		}
+
+		final Integer bookmark = data.songChart.bookmarks.get(number);
+		if (bookmark == null) {
+			return;
+		}
+
+		data.setNextTime(bookmark);
+	}
+
+	private void switchFullscreenPreview() {
+		frame.switchFullscreenPreview();
 	}
 
 	private final Map<Integer, KeyHandler> keyHandlers = new HashMap<>();
@@ -1284,24 +1322,18 @@ public class KeyboardHandler implements KeyListener {
 
 		key(VK_A).function(this::toggleAccent);
 		key(VK_A).ctrl().function(selectionManager::selectAllNotes);
-		key(VK_B).function(this::editBend);
 		key(VK_C).ctrl().function(copyManager::copy);
 		key(VK_E).function(this::handleE);
-		key(VK_G).function(e -> new GridPane(frame));
 		key(VK_G).ctrl().function(this::snapSelected);
 		key(VK_G).ctrl().shift().function(this::snapAll);
 		key(VK_H).function(this::toggleHOPO);
-		key(VK_H).ctrl().function(this::editHandShape);
 		key(VK_H).shift().function(this::markHandShape);
 		key(VK_L).function(this::handleL);
 		key(VK_M).function(this::toggleMute);
-		key(VK_N).function(this::editNote);
 		key(VK_N).ctrl().function(songFileHandler::newSong);
 		key(VK_O).function(this::toggleHarmonic);
 		key(VK_O).ctrl().function((Runnable) songFileHandler::open);
-		key(VK_Q).ctrl().function(this::editNoteAsChord);
 		key(VK_R).ctrl().function(undoSystem::redo);
-		key(VK_S).function(this::editSlide);
 		key(VK_S).ctrl().function(songFileHandler::save);
 		key(VK_S).ctrl().shift().function(songFileHandler::saveAs);
 		key(VK_T).function(this::toggleTremolo);
@@ -1314,31 +1346,32 @@ public class KeyboardHandler implements KeyListener {
 		key(VK_COMMA).function(this::halveGridSize);
 		key(VK_PERIOD).function(this::doubleGridSize);
 
-		key(VK_1).singleFunction(e -> handleNumber(1));
-		key(VK_2).singleFunction(e -> handleNumber(2));
-		key(VK_3).singleFunction(e -> handleNumber(3));
-		key(VK_4).singleFunction(e -> handleNumber(4));
-		key(VK_5).singleFunction(e -> handleNumber(5));
-		key(VK_6).singleFunction(e -> handleNumber(6));
-		key(VK_7).singleFunction(e -> handleNumber(7));
-		key(VK_8).singleFunction(e -> handleNumber(8));
-		key(VK_9).singleFunction(e -> handleNumber(9));
-		key(VK_0).singleFunction(e -> handleNumber(0));
+		final int[][] numberKeys = new int[10][];
+		numberKeys[0] = new int[] { VK_0, VK_NUMPAD0 };
+		numberKeys[1] = new int[] { VK_1, VK_NUMPAD1 };
+		numberKeys[2] = new int[] { VK_2, VK_NUMPAD2 };
+		numberKeys[3] = new int[] { VK_3, VK_NUMPAD3 };
+		numberKeys[4] = new int[] { VK_4, VK_NUMPAD4 };
+		numberKeys[5] = new int[] { VK_5, VK_NUMPAD5 };
+		numberKeys[6] = new int[] { VK_6, VK_NUMPAD6 };
+		numberKeys[7] = new int[] { VK_7, VK_NUMPAD7 };
+		numberKeys[8] = new int[] { VK_8, VK_NUMPAD8 };
+		numberKeys[9] = new int[] { VK_9, VK_NUMPAD9 };
 
-		key(VK_NUMPAD0).singleFunction(e -> handleNumber(0));
-		key(VK_NUMPAD1).singleFunction(e -> handleNumber(1));
-		key(VK_NUMPAD2).singleFunction(e -> handleNumber(2));
-		key(VK_NUMPAD3).singleFunction(e -> handleNumber(3));
-		key(VK_NUMPAD4).singleFunction(e -> handleNumber(4));
-		key(VK_NUMPAD5).singleFunction(e -> handleNumber(5));
-		key(VK_NUMPAD6).singleFunction(e -> handleNumber(6));
-		key(VK_NUMPAD7).singleFunction(e -> handleNumber(7));
-		key(VK_NUMPAD8).singleFunction(e -> handleNumber(8));
-		key(VK_NUMPAD9).singleFunction(e -> handleNumber(9));
+		for (int i = 0; i <= 9; i++) {
+			final int number = i;
+			for (final int key : numberKeys[number]) {
+				key(key).function(() -> handleNumber(number));
+				key(key).ctrl().function(() -> toggleBookmark(number));
+				key(key).shift().function(() -> moveToBookmark(number));
+			}
+		}
 
+		key(VK_F2).singleFunction(audioHandler::toggleMidiNotes);
 		key(VK_F3).singleFunction(audioHandler::toggleClaps);
 		key(VK_F4).singleFunction(audioHandler::toggleMetronome);
 		key(VK_F5).singleFunction(audioDrawer::toggle);
+		key(VK_F11).singleFunction(this::switchFullscreenPreview);
 	}
 
 	private static final List<Integer> keysNotClearingMousePressesOnPress = asList(//
@@ -1353,6 +1386,7 @@ public class KeyboardHandler implements KeyListener {
 			VK_ALT, //
 			VK_SHIFT, //
 			VK_CAPS_LOCK, //
+			VK_F2, //
 			VK_F3, //
 			VK_F4, //
 			VK_F5, //

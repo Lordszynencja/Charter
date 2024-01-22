@@ -3,6 +3,10 @@ package log.charter.sound;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import log.charter.data.config.Config;
 import log.charter.io.Logger;
@@ -10,37 +14,54 @@ import log.charter.sound.wav.WavLoader;
 import log.charter.sound.wav.WavWriter;
 
 public class StretchedFileLoader {
+	private static final AtomicInteger stopperIdGenerator = new AtomicInteger(0);
 	private static final String tmpFileName = "guitar_tmp.wav";
 
 	private static String getResultFileName(final int speed) {
 		return "guitar_" + speed + ".wav";
 	}
 
+	private static final Map<Integer, Runnable> stoppers = new HashMap<>();
+
+	public static void stopAllProcesses() {
+		for (final Runnable stopper : new ArrayList<>(stoppers.values())) {
+			stopper.run();
+		}
+	}
+
 	private final MusicData musicData;
 	private final String dir;
 	private final int speed;
 	private final File targetFile;
-	public MusicData result;
 
 	public StretchedFileLoader(final MusicData musicData, final String dir, final int speed) {
 		this.musicData = musicData;
 		this.dir = dir;
 		this.speed = speed;
 		targetFile = new File(dir, getResultFileName(speed));
-
-		new Thread(this::run).start();
-
 	}
 
-	private void run() {
+	public MusicData quickLoad() {
 		if (targetFile.exists()) {
-			loadResult();
-			return;
+			final MusicData result = loadResult();
+
+			if (result != null && result.data.length > 0) {
+				return result;
+			}
+		}
+
+		return null;
+	}
+
+	public boolean generate() {
+		if (quickLoad() != null) {
+			return true;
 		}
 
 		createTempFile();
 		runRubberBand();
-		loadResult();
+
+		return quickLoad() != null;
 	}
 
 	private void createTempFile() {
@@ -52,6 +73,11 @@ public class StretchedFileLoader {
 
 	private void runRubberBand(final String[] cmd) throws IOException {
 		final Process process = Runtime.getRuntime().exec(cmd);
+		final int stopperId = stopperIdGenerator.getAndIncrement();
+		stoppers.put(stopperId, () -> {
+			stoppers.remove(stopperId);
+			process.destroyForcibly();
+		});
 		final InputStream in = process.getInputStream();
 		final InputStream err = process.getErrorStream();
 
@@ -67,7 +93,6 @@ public class StretchedFileLoader {
 			try {
 				Thread.sleep(1);
 			} catch (final InterruptedException e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -83,7 +108,6 @@ public class StretchedFileLoader {
 			runRubberBand(cmd);
 		} catch (final IOException e) {
 			Logger.error("Couldn't run rubber band!", e);
-			e.printStackTrace();
 		}
 	}
 
@@ -98,7 +122,7 @@ public class StretchedFileLoader {
 		}
 	}
 
-	private void loadResult() {
-		result = WavLoader.load(targetFile);
+	private MusicData loadResult() {
+		return WavLoader.load(targetFile);
 	}
 }

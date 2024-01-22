@@ -9,6 +9,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
+import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.TempoMapDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
@@ -22,13 +23,14 @@ public class ArrangementDrawer {
 	private final VocalsDrawer vocalsDrawer = new VocalsDrawer();
 
 	public void init(final AudioDrawer audioDrawer, final BeatsDrawer beatsDrawer, final ChartPanel chartPanel,
-			final ChartData data, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
-			final SelectionManager selectionManager) {
+			final ChartData data, final KeyboardHandler keyboardHandler, final LyricLinesDrawer lyricLinesDrawer,
+			final ModeManager modeManager, final SelectionManager selectionManager) {
 		this.modeManager = modeManager;
 
 		tempoMapDrawer.init(audioDrawer, beatsDrawer);
-		guitarDrawer.init(audioDrawer, beatsDrawer, data, chartPanel, keyboardHandler, selectionManager);
-		vocalsDrawer.init(audioDrawer, beatsDrawer, data, chartPanel, selectionManager);
+		guitarDrawer.init(audioDrawer, beatsDrawer, data, chartPanel, keyboardHandler, lyricLinesDrawer,
+				selectionManager);
+		vocalsDrawer.init(audioDrawer, beatsDrawer, data, chartPanel, lyricLinesDrawer, selectionManager);
 	}
 
 	public void draw(final Graphics g) {

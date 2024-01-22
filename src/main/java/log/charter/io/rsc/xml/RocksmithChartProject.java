@@ -1,7 +1,5 @@
 package log.charter.io.rsc.xml;
 
-import java.math.BigDecimal;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.data.ChartData;
@@ -10,6 +8,7 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.song.Beat;
 import log.charter.song.SongChart;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.HashMap2;
 
 @XStreamAlias("project")
 public class RocksmithChartProject {
@@ -24,12 +23,13 @@ public class RocksmithChartProject {
 	public String title;
 	public String albumName;
 	public Integer albumYear;
-	public BigDecimal crowdSpeed = new BigDecimal("1.0");
 
 	public String musicFileName;
 	public ArrayList2<String> arrangementFiles = new ArrayList2<>();
 
 	public ArrayList2<Beat> beats = new ArrayList2<>();
+
+	public HashMap2<Integer, Integer> bookmarks = new HashMap2<>();
 
 	public RocksmithChartProject() {
 	}
@@ -45,10 +45,11 @@ public class RocksmithChartProject {
 		title = songChart.title;
 		albumName = songChart.albumName;
 		albumYear = songChart.albumYear;
-		crowdSpeed = songChart.crowdSpeed;
 
 		musicFileName = songChart.musicFileName;
 
 		beats = songChart.beatsMap.beats;
+
+		bookmarks = songChart.bookmarks;
 	}
 }

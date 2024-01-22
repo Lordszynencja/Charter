@@ -15,13 +15,15 @@ import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class VocalModeHandler extends ModeHandler {
+	private static final long scrollTimeoutForUndo = 1000;
+
 	private ChartData data;
 	private CharterFrame frame;
 	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	private int lastUndoIdForScroll = -1;
+	private long lastScrollTime = -scrollTimeoutForUndo;
 
 	public void init(final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
@@ -49,13 +51,6 @@ public class VocalModeHandler extends ModeHandler {
 	}
 
 	@Override
-	public void snapNotes() {
-		undoSystem.addUndo();
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
 		if (clickData.pressHighlight.type != PositionType.VOCAL) {
 			return;
@@ -77,13 +72,15 @@ public class VocalModeHandler extends ModeHandler {
 			change *= 4;
 		}
 
-		if (undoSystem.getLastUndoId() != lastUndoIdForScroll || lastUndoIdForScroll == -1) {
+		if (System.currentTimeMillis() - lastScrollTime > scrollTimeoutForUndo) {
 			undoSystem.addUndo();
-			lastUndoIdForScroll = undoSystem.getLastUndoId();
 		}
 
 		final SelectionAccessor<Vocal> selectedNotes = selectionManager.getSelectedAccessor(PositionType.VOCAL);
 		changePositionsWithLengthsLength(data.songChart.beatsMap, selectedNotes.getSortedSelected(),
 				data.songChart.vocals.vocals, change);
+
+		frame.selectionChanged(false);
+		lastScrollTime = System.currentTimeMillis();
 	}
 }

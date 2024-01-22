@@ -78,9 +78,11 @@ public class Tuning {
 		}
 
 		public static TuningType fromTuning(final int[] tuning) {
-			for (final TuningType type : values()) {
-				if (type.isTuning(tuning)) {
-					return type;
+			if (tuning.length <= 6) {
+				for (final TuningType type : values()) {
+					if (type.isTuning(tuning)) {
+						return type;
+					}
 				}
 			}
 
@@ -90,7 +92,7 @@ public class Tuning {
 
 	public TuningType tuningType = TuningType.E_STANDARD;
 	public int strings = 6;
-	public int[] tuning = new int[strings];
+	private int[] tuning = new int[strings];
 
 	public void strings(final int newStrings) {
 		if (newStrings > 6) {
@@ -120,18 +122,21 @@ public class Tuning {
 		this.strings = strings;
 	}
 
-	public Tuning(final int strings, final ArrangementTuning arrangementTuning) {
+	public Tuning(final int defaultStrings, final ArrangementTuning arrangementTuning) {
 		tuning = new int[] { //
 				arrangementTuning.string0, //
 				arrangementTuning.string1, //
 				arrangementTuning.string2, //
 				arrangementTuning.string3, //
 				arrangementTuning.string4, //
-				arrangementTuning.string5 };
+				arrangementTuning.string5, //
+				arrangementTuning.string6, //
+				arrangementTuning.string7, //
+				arrangementTuning.string8 };
 		tuning = Arrays.copyOf(tuning, strings);
 		tuningType = TuningType.fromTuning(tuning);
 
-		strings(strings);
+		strings(arrangementTuning.strings == 0 ? defaultStrings : arrangementTuning.strings);
 	}
 
 	public Tuning(final Tuning other) {

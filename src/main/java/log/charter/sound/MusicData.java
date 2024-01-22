@@ -10,6 +10,7 @@ import static log.charter.sound.SoundPlayer.toBytes;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.sound.sampled.AudioFormat;
@@ -23,13 +24,23 @@ import log.charter.sound.ogg.OggLoader;
 public class MusicData {
 	public static final int DEF_RATE = 44100;
 
-	public static MusicData generateSound(final double pitch, final double length, final double loudness) {
-		final int[] data = new int[(int) (length * DEF_RATE)];
+	public static MusicData generateSound(final double pitchHz, final double lengthSeconds, final double loudness) {
+		return generateSound(pitchHz, lengthSeconds, loudness, DEF_RATE);
+	}
+
+	public static MusicData generateSound(final double pitchHz, final double lengthSeconds, final double loudness,
+			final float sampleRate) {
+		final int[] data = new int[(int) (lengthSeconds * sampleRate)];
 		for (int i = 0; i < data.length; i++) {
-			data[i] = (int) (pow(sin((pitch * Math.PI * i) / DEF_RATE), 2) * loudness * 32767);
+			data[i] = (int) (pow(sin((pitchHz * Math.PI * i) / sampleRate), 2) * loudness * 32767);
 		}
 
-		return new MusicData(new int[][] { data, data }, DEF_RATE);
+		return new MusicData(new int[][] { data, data }, sampleRate);
+	}
+
+	public static MusicData generateSilence(final double lengthSeconds, final float sampleRate) {
+		final int[] data = new int[(int) (lengthSeconds * sampleRate)];
+		return new MusicData(new int[][] { data, data }, sampleRate);
 	}
 
 	public static MusicData readFile(final File file) {
@@ -66,9 +77,14 @@ public class MusicData {
 
 	private static int[][] splitAudio(final byte[] b) {
 		final int[][] d = new int[2][b.length / 4];
-		for (int i = 0; i < b.length; i += 4) {
-			d[0][i / 4] = b[i] + (b[i + 1] * 256);
-			d[1][i / 4] = b[i + 2] + (b[i + 3] * 256);
+		for (int i = 0; i < d[0].length; i++) {
+			final byte b0 = b[i * 4];
+			final byte b1 = b[i * 4 + 1];
+			final byte b2 = b[i * 4 + 2];
+			final byte b3 = b[i * 4 + 3];
+
+			d[0][i] = (b0 & 0xFF) + (b1 << 8);
+			d[1][i] = (b2 & 0xFF) + (b3 << 8);
 		}
 
 		return d;
@@ -79,10 +95,18 @@ public class MusicData {
 	private byte[] preparedData;
 	private int slow = 1;
 
+	public MusicData(final byte[] b) {
+		this(b, DEF_RATE);
+	}
+
 	public MusicData(final byte[] b, final float rate) {
 		preparedData = b;
 		data = splitAudio(b);
 		outFormat = new AudioFormat(Encoding.PCM_SIGNED, rate, 16, 2, 4, rate, false);
+	}
+
+	public MusicData(final int[][] data) {
+		this(data, DEF_RATE);
 	}
 
 	public MusicData(int[][] data, final float rate) {
@@ -181,5 +205,69 @@ public class MusicData {
 		}
 
 		return new MusicData(newData, rate);
+	}
+
+	public MusicData join(final MusicData other) {
+		int length0 = 0;
+		for (int i = 0; i < data.length; i++) {
+			length0 = max(length0, data[i].length);
+		}
+		int length1 = 0;
+		for (int i = 0; i < other.data.length; i++) {
+			length1 = max(length1, other.data[i].length);
+		}
+
+		final int channels = max(data.length, other.data.length);
+		final int[][] newData = new int[channels][length0 + length1];
+		for (int channel = 0; channel < data.length; channel++) {
+			final int[] targetChannel = newData[channel];
+			System.arraycopy(data[channel], 0, targetChannel, 0, data[channel].length);
+			System.arraycopy(other.data[channel], 0, targetChannel, length0, other.data[channel].length);
+		}
+
+		return new MusicData(newData, outFormat.getSampleRate());
+	}
+
+	public MusicData remove(final double time) {
+		int length = 0;
+		for (int i = 0; i < data.length; i++) {
+			length = max(length, data[i].length);
+		}
+
+		final int samplesRemoved = (int) (time * outFormat.getSampleRate());
+		length -= samplesRemoved;
+
+		final int channels = data.length;
+		final int[][] newData = new int[channels][length];
+		for (int channel = 0; channel < data.length; channel++) {
+			final int[] src = data[channel];
+			final int[] dest = newData[channel];
+			final int toMove = max(0, data[channel].length - samplesRemoved);
+			System.arraycopy(src, samplesRemoved, dest, 0, toMove);
+		}
+
+		return new MusicData(newData, outFormat.getSampleRate());
+	}
+
+	public MusicData volume(final double volume) {
+		final int[][] newData = new int[data.length][];
+		for (int channel = 0; channel < data.length; channel++) {
+			newData[channel] = Arrays.copyOf(data[channel], data[channel].length);
+			for (int i = 0; i < newData[channel].length; i++) {
+				newData[channel][i] *= volume;
+			}
+		}
+
+		return new MusicData(newData, outFormat.getSampleRate());
+	}
+
+	public int getFirstDifferent(final MusicData other) {
+		for (int i = 0; i < data[0].length; i++) {
+			if (data[0][i] != other.data[0][i]) {
+				return i;
+			}
+		}
+
+		return -1;
 	}
 }

@@ -9,6 +9,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.gui.components.ParamsPane.BigDecimalValueSetter;
 
 public class TextInputWithValidation extends JTextField implements DocumentListener {
 	private static final long serialVersionUID = 1L;
@@ -16,6 +17,14 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 
 	public static interface StringValueSetter {
 		void setValue(String val);
+	}
+
+	public static interface BooleanValueSetter {
+		void setValue(boolean val);
+	}
+
+	public static interface IntegerValueSetter {
+		void setValue(Integer val);
 	}
 
 	public static interface ValueValidator {
@@ -57,38 +66,91 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 			};
 		}
 
-		public static ValueValidator createIntValidator(final int minVal, final int maxVal, final boolean acceptEmpty) {
-			return val -> {
-				if (((val == null) || val.isEmpty()) && acceptEmpty) {
-					return null;
-				}
-
-				final int i;
-				try {
-					i = Integer.parseInt(val);
-				} catch (final Exception e) {
-					return Label.VALUE_NUMBER_EXPECTED.label();
-				}
-
-				if (i < minVal) {
-					return String.format(Label.VALUE_MUST_BE_GE.label(), minVal + "");
-				}
-
-				if (i > maxVal) {
-					return String.format(Label.VALUE_MUST_BE_LE.label(), maxVal + "");
-				}
-
-				return null;
-			};
+		public static IntegerValueValidator createIntValidator(final int minVal, final int maxVal,
+				final boolean acceptEmpty) {
+			return new IntegerValueValidator(minVal, maxVal, acceptEmpty);
 		}
 
 		String validateValue(String val);
 	}
 
+	public static class IntegerValueValidator implements ValueValidator {
+		private final int minValue;
+		private final int maxValue;
+		private final boolean acceptEmpty;
+
+		public IntegerValueValidator(final int minValue, final int maxValue, final boolean acceptEmpty) {
+			this.minValue = minValue;
+			this.maxValue = maxValue;
+			this.acceptEmpty = acceptEmpty;
+		}
+
+		@Override
+		public String validateValue(final String val) {
+			if (((val == null) || val.isEmpty()) && acceptEmpty) {
+				return null;
+			}
+
+			final int i;
+			try {
+				i = Integer.parseInt(val);
+			} catch (final Exception e) {
+				return Label.VALUE_NUMBER_EXPECTED.label();
+			}
+
+			if (i < minValue) {
+				return String.format(Label.VALUE_MUST_BE_GE.label(), minValue + "");
+			}
+
+			if (i > maxValue) {
+				return String.format(Label.VALUE_MUST_BE_LE.label(), maxValue + "");
+			}
+
+			return null;
+		}
+	}
+
+	public static class BigDecimalValueValidator implements ValueValidator {
+		private final BigDecimal minValue;
+		private final BigDecimal maxValue;
+		private final boolean acceptEmpty;
+
+		public BigDecimalValueValidator(final BigDecimal minValue, final BigDecimal maxValue,
+				final boolean acceptEmpty) {
+			this.minValue = minValue;
+			this.maxValue = maxValue;
+			this.acceptEmpty = acceptEmpty;
+		}
+
+		@Override
+		public String validateValue(final String val) {
+			if (((val == null) || val.isEmpty()) && acceptEmpty) {
+				return null;
+			}
+
+			final BigDecimal i;
+			try {
+				i = new BigDecimal(val);
+			} catch (final NumberFormatException e) {
+				return Label.VALUE_NUMBER_EXPECTED.label();
+			}
+
+			if (i.compareTo(minValue) < 0) {
+				return String.format(Label.VALUE_MUST_BE_GE.label(), minValue.toString());
+			}
+
+			if (i.compareTo(maxValue) > 0) {
+				return String.format(Label.VALUE_MUST_BE_LE.label(), maxValue.toString());
+			}
+
+			return null;
+		}
+	}
+
 	private boolean error;
 	private Color normalBackgroundColor;
 
-	private final ValueValidator validator;
+	private ValueValidator validator;
 	private final StringValueSetter setter;
 	private final boolean allowWrongValues;
 
@@ -104,6 +166,28 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		getDocument().addDocumentListener(this);
 	}
 
+	public TextInputWithValidation(final Integer value, final int length, final IntegerValueValidator validator,
+			final IntegerValueSetter setter, final boolean allowWrongValues) {
+		this(value == null ? "" : (value + ""), length, validator, (final String s) -> {
+			try {
+				setter.setValue(Integer.valueOf(s));
+			} catch (final NumberFormatException e) {
+				setter.setValue(null);
+			}
+		}, allowWrongValues);
+	}
+
+	public TextInputWithValidation(final BigDecimal value, final int length, final BigDecimalValueValidator validator,
+			final BigDecimalValueSetter setter, final boolean allowWrongValues) {
+		this(value == null ? "" : value.toString(), length, validator, (final String s) -> {
+			try {
+				setter.setValue(new BigDecimal(s));
+			} catch (final NumberFormatException e) {
+				setter.setValue(null);
+			}
+		}, allowWrongValues);
+	}
+
 	@Override
 	public void insertUpdate(final DocumentEvent e) {
 		changedUpdate(e);
@@ -117,7 +201,9 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 	private void clearError() {
 		error = false;
 		setToolTipText(null);
-		setBackground(normalBackgroundColor);
+		if (normalBackgroundColor != null) {
+			setBackground(normalBackgroundColor);
+		}
 	}
 
 	private void validateValue() {
@@ -159,6 +245,12 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 	public void setTextWithoutEvent(final String text) {
 		disableEvents = true;
 		setText(text);
+		clearError();
 		disableEvents = false;
+	}
+
+	public void setValidator(final ValueValidator validator) {
+		this.validator = validator;
+		clearError();
 	}
 }

@@ -34,7 +34,7 @@ public class AnchorPane extends ParamsPane {
 
 	public AnchorPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem, final Anchor anchor,
 			final Runnable onCancel) {
-		super(frame, Label.ANCHOR_PANE, 3, getSizes());
+		super(frame, Label.ANCHOR_PANE, getSizes());
 		this.data = data;
 		this.undoSystem = undoSystem;
 
@@ -49,6 +49,7 @@ public class AnchorPane extends ParamsPane {
 		final JTextField input = (JTextField) components.getLast();
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
+
 		addIntegerConfigValue(row++, 20, 100, Label.ANCHOR_WIDTH, width, 30, createIntValidator(1, Config.frets, false),
 				val -> width = val, false);
 		final JTextField AnchorWidthInput = (JTextField) components.getLast();

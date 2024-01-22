@@ -5,10 +5,12 @@ import java.io.IOException;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
+import log.charter.io.Logger;
 
 public class LogCharterRSMain {
-	public static final String VERSION = "0.9.2 - 2023.01.18";
-	public static final String TITLE = "LoG Charter RS";
+	public static final String VERSION = "0.11.2";
+	public static final String VERSION_DATE = "2023.08.14";
+	public static final String TITLE = "LoG Charter RS " + VERSION;
 
 	public static void main(final String[] args) throws InterruptedException, IOException {
 		Config.init();
@@ -31,9 +33,10 @@ public class LogCharterRSMain {
 					Thread.sleep(1000);
 				}
 			} catch (final InterruptedException e) {
-				e.printStackTrace();
+				Logger.error("Error in config save thread", e);
 			}
 		}).start();
-	}
 
+		Logger.info("Program started");
+	}
 }

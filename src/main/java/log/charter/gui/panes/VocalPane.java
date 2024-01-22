@@ -1,5 +1,7 @@
 package log.charter.gui.panes;
 
+import java.util.List;
+
 import javax.swing.JCheckBox;
 
 import log.charter.data.ChartData;
@@ -10,7 +12,6 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ParamsPane;
 import log.charter.song.vocals.Vocal;
-import log.charter.util.CollectionUtils.ArrayList2;
 
 public class VocalPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
@@ -34,7 +35,7 @@ public class VocalPane extends ParamsPane {
 
 	private VocalPane(final Label label, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		super(frame, label, 5, getSizes());
+		super(frame, label, getSizes());
 		this.data = data;
 		this.frame = frame;
 		this.selectionManager = selectionManager;
@@ -53,8 +54,19 @@ public class VocalPane extends ParamsPane {
 	}
 
 	public VocalPane(final int id, final Vocal vocal, final ChartData data, final CharterFrame frame,
+			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+		this(Label.VOCAL_PANE_EDIT, data, frame, selectionManager, undoSystem);
+
+		text = vocal.getText();
+		wordPart = vocal.isWordPart();
+		phraseEnd = vocal.isPhraseEnd();
+
+		createElementsAndShow(() -> saveAndExit(id, vocal));
+	}
+
+	public VocalPane(final int id, final Vocal vocal, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem,
-			final ArrayList2<Selection<Vocal>> remainingVocals) {
+			final List<Selection<Vocal>> remainingVocals) {
 		this(Label.VOCAL_PANE_EDIT, data, frame, selectionManager, undoSystem);
 
 		text = vocal.getText();
@@ -97,7 +109,22 @@ public class VocalPane extends ParamsPane {
 		data.songChart.vocals.insertNote(position, text, wordPart, phraseEnd);
 	}
 
-	private void saveAndExit(final int id, final Vocal vocal, final ArrayList2<Selection<Vocal>> remainingVocals) {
+	private void saveAndExit(final int id, final Vocal vocal) {
+		if (text == null || "".equals(text)) {
+			undoSystem.addUndo();
+			data.songChart.vocals.removeNote(id);
+			return;
+		}
+
+		if (vocal.getText() != text || vocal.isWordPart() != wordPart || vocal.isPhraseEnd() != phraseEnd) {
+			undoSystem.addUndo();
+			vocal.lyric = text;
+			vocal.setWordPart(wordPart);
+			vocal.setPhraseEnd(phraseEnd);
+		}
+	}
+
+	private void saveAndExit(final int id, final Vocal vocal, final List<Selection<Vocal>> remainingVocals) {
 		if (text == null || "".equals(text)) {
 			undoSystem.addUndo();
 			data.songChart.vocals.removeNote(id);

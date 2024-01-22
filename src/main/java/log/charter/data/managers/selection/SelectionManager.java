@@ -5,16 +5,19 @@ import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.util.Map;
+import java.util.Set;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
+import log.charter.song.EventPoint;
 import log.charter.song.HandShape;
 import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
@@ -26,11 +29,13 @@ import log.charter.util.CollectionUtils.HashMap2;
 
 public class SelectionManager {
 	private ChartData data;
+	private CharterFrame frame;
 	private ModeManager modeManager;
 
 	private TypeSelectionManager<Anchor> anchorsManager;
 	private TypeSelectionManager<Beat> beatsManager;
 	private TypeSelectionManager<ChordOrNote> chordsNotesManager;
+	private TypeSelectionManager<EventPoint> eventPointsManager;
 	private TypeSelectionManager<HandShape> handShapesManager;
 	private TypeSelectionManager<IPosition> noneManager;
 	private TypeSelectionManager<ToneChange> toneChangesManager;
@@ -38,14 +43,16 @@ public class SelectionManager {
 
 	private final Map<PositionType, TypeSelectionManager<?>> typeSelectionManagers = new HashMap2<>();
 
-	public void init(final ChartData data, final ModeManager modeManager,
+	public void init(final ChartData data, final CharterFrame frame, final ModeManager modeManager,
 			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
 		this.data = data;
+		this.frame = frame;
 		this.modeManager = modeManager;
 
 		anchorsManager = new AnchorsSelectionManager(data, mouseButtonPressReleaseHandler);
 		beatsManager = new BeatsSelectionManager(data, mouseButtonPressReleaseHandler);
 		chordsNotesManager = new ChordsNotesSelectionManager(data, mouseButtonPressReleaseHandler);
+		eventPointsManager = new EventPointsSelectionManager(data, mouseButtonPressReleaseHandler);
 		handShapesManager = new HandShapesSelectionManager(data, mouseButtonPressReleaseHandler);
 		noneManager = new NoneTypeSelectionManager();
 		toneChangesManager = new ToneChangeSelectionManager(data, mouseButtonPressReleaseHandler);
@@ -53,6 +60,7 @@ public class SelectionManager {
 
 		typeSelectionManagers.put(PositionType.ANCHOR, anchorsManager);
 		typeSelectionManagers.put(PositionType.BEAT, beatsManager);
+		typeSelectionManagers.put(PositionType.EVENT_POINT, eventPointsManager);
 		typeSelectionManagers.put(PositionType.GUITAR_NOTE, chordsNotesManager);
 		typeSelectionManagers.put(PositionType.HAND_SHAPE, handShapesManager);
 		typeSelectionManagers.put(PositionType.NONE, noneManager);
@@ -105,7 +113,8 @@ public class SelectionManager {
 		return closest;
 	}
 
-	private PositionWithIdAndType findExistingPoint(final int x, final ArrayList2<PositionWithIdAndType> positions) {
+	private PositionWithIdAndType findClosestExistingPoint(final int x,
+			final ArrayList2<PositionWithIdAndType> positions) {
 		final int position = xToTime(x, data.time);
 		final Integer id = findClosestId(positions, position);
 		if (id == null) {
@@ -128,7 +137,7 @@ public class SelectionManager {
 			return findExistingLong(x, positions);
 		}
 
-		return findExistingPoint(x, positions);
+		return findClosestExistingPoint(x, positions);
 	}
 
 	public void click(final MouseButtonPressReleaseData clickData, final boolean ctrl, final boolean shift) {
@@ -140,6 +149,8 @@ public class SelectionManager {
 			if (!ctrl) {
 				clearSelectionsExcept(PositionType.NONE);
 			}
+
+			frame.selectionChanged(true);
 			return;
 		}
 
@@ -147,15 +158,18 @@ public class SelectionManager {
 
 		final TypeSelectionManager<?> manager = typeSelectionManagers.get(clickData.pressHighlight.type);
 		if (manager == null) {
+			frame.selectionChanged(true);
 			return;
 		}
 
 		manager.addSelection(clickData.pressHighlight, clickData.pressPosition.x, clickData.pressPosition.y, ctrl,
 				shift);
+		frame.selectionChanged(true);
 	}
 
 	public void clear() {
 		clearSelectionsExcept(PositionType.NONE);
+		frame.selectionChanged(true);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -191,13 +205,23 @@ public class SelectionManager {
 		} else if (modeManager.editMode == EditMode.VOCALS) {
 			vocalsManager.addAll();
 		}
+
+		frame.selectionChanged(true);
 	}
 
 	public void addSoundSelection(final int id) {
 		chordsNotesManager.add(id);
+		frame.selectionChanged(true);
 	}
 
 	public void addSoundSelection(final ArrayList2<Integer> ids) {
 		chordsNotesManager.add(ids);
+		frame.selectionChanged(true);
 	}
+
+	public void addSelectionForPositions(final PositionType type, final Set<Integer> positions) {
+		typeSelectionManagers.get(type).addPositions(positions);
+		frame.selectionChanged(type == PositionType.GUITAR_NOTE);
+	}
+
 }

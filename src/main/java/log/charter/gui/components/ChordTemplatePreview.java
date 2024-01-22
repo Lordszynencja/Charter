@@ -1,8 +1,15 @@
 package log.charter.gui.components;
 
+import static java.awt.event.KeyEvent.VK_1;
+import static java.awt.event.KeyEvent.VK_2;
+import static java.awt.event.KeyEvent.VK_3;
+import static java.awt.event.KeyEvent.VK_4;
+import static java.awt.event.KeyEvent.VK_T;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
+import static java.util.Arrays.asList;
+import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledDiamond;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
@@ -18,14 +25,19 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.swing.JComponent;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.ChartPanelColors.StringColorLabelType;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
+import log.charter.gui.components.selectionEditor.ChordTemplateEditor;
+import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
@@ -35,6 +47,7 @@ import log.charter.util.Position2D;
 public class ChordTemplatePreview extends JComponent implements MouseListener, MouseMotionListener, KeyListener {
 	private static final long serialVersionUID = 1L;
 	private static final double fretsProportion = pow(2, -1.0 / 12);
+	private static final int minFrets = 7;
 	private static final int fretStart = 22;
 	private static final Set<Integer> dotFrets = new HashSet2<>(new ArrayList2<>(3, 5, 7, 9));
 
@@ -50,9 +63,8 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		}
 	}
 
-	private static int[] getStringPositions(final int strings, final int height) {
+	private static int[] getStringPositions(final int strings, final int stringSpace) {
 		final int[] stringPositions = new int[strings];
-		final int stringSpace = (height - fretStart) / strings;
 		int y = fretStart + stringSpace / 2;
 		for (int i = 0; i < strings; i++) {
 			stringPositions[getStringPosition(i, strings)] = y;
@@ -62,38 +74,50 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		return stringPositions;
 	}
 
-	private final int[] stringPositions;
+	private int[] stringPositions;
 
-	private final ChordTemplateEditor parent;
+	private final RowedPanel parent;
+	private final ChordTemplateEditor chordEditor;
+	private boolean parentListenerAdded = false;
 
 	private final ChartData data;
-	private final ChordTemplate chordTemplate;
+	private final CharterFrame frame;
+	private final KeyboardHandler keyboardHandler;
+
+	private final Supplier<ChordTemplate> chordTemplateSupplier;
 
 	private Integer mouseString;
 	private Integer mouseFret;
 
-	public ChordTemplatePreview(final ChordTemplateEditor parent, final ChartData data,
-			final ChordTemplate chordTemplate, final int height) {
+	public ChordTemplatePreview(final RowedPanel parent, final ChordTemplateEditor chordEditor, final ChartData data,
+			final CharterFrame frame, final KeyboardHandler keyboardHandler,
+			final Supplier<ChordTemplate> chordTemplateSupplier) {
 		super();
 		this.parent = parent;
-		this.data = data;
-		this.chordTemplate = chordTemplate;
+		this.chordEditor = chordEditor;
 
-		stringPositions = getStringPositions(data.getCurrentArrangement().tuning.strings, height);
+		this.data = data;
+		this.frame = frame;
+		this.keyboardHandler = keyboardHandler;
+
+		this.chordTemplateSupplier = chordTemplateSupplier;
+
+		stringPositions = getStringPositions(Config.maxStrings, parent.rowHeight);
 
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
-		parent.addKeyListener(this);
 
 		setFocusable(true);
 		setRequestFocusEnabled(true);
+
+		hideFields();
 	}
 
 	private IntRange getFretsRange() {
 		int min = Config.frets;
 		int max = 0;
-		for (final int fret : chordTemplate.frets.values()) {
+		for (final int fret : chordTemplateSupplier.get().frets.values()) {
 			if (fret != 0) {
 				min = min(min, fret);
 				max = max(max, fret);
@@ -112,7 +136,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		if (max < Config.frets) {
 			max++;
 		}
-		while (max - min < 5) {
+		while (max - min < minFrets) {
 			if (min > 0) {
 				min--;
 			}
@@ -207,14 +231,14 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	}
 
 	private void drawStrings(final Graphics g) {
-		final int strings = data.getCurrentArrangement().tuning.strings;
+		final int strings = data.currentStrings();
 		final int width = getWidth();
 		final DrawableShapeList stringLines = new DrawableShapeList();
 
 		for (int i = 0; i < strings; i++) {
-			final Color color = ColorLabel.valueOf("LANE_" + i).color();
+			final Color color = getStringBasedColor(StringColorLabelType.LANE, i, strings);
 			stringLines.add(lineHorizontal(0, width, stringPositions[i], color));
-			final Color color2 = ColorLabel.valueOf("LANE_BRIGHT_" + i).color();
+			final Color color2 = getStringBasedColor(StringColorLabelType.LANE_BRIGHT, i, strings);
 			stringLines.add(lineHorizontal(0, width, stringPositions[i] + 1, color2));
 		}
 
@@ -222,18 +246,20 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	}
 
 	private void drawFretPressMarks(final Graphics g, final FretPosition[] fretPositions) {
-		final int strings = data.getCurrentArrangement().tuning.strings;
+		final int strings = data.currentStrings();
 		final int baseFret = fretPositions[0].fret;
 		final DrawableShapeList pressMarks = new DrawableShapeList();
 
 		for (int i = 0; i < strings; i++) {
-			final Integer fret = chordTemplate.frets.get(i);
+			final Integer fret = chordTemplateSupplier.get().frets.get(i);
 			if (fret == null) {
 				continue;
 			}
 			if (fret == 0) {
 				for (int j = 0; j < 8; j++) {
-					final Color color = ColorLabel.valueOf((j < 2 || j >= 6 ? "LANE_BRIGHT_" : "NOTE_") + i).color();
+					final StringColorLabelType type = j < 2 || j >= 6 ? StringColorLabelType.LANE_BRIGHT
+							: StringColorLabelType.NOTE;
+					final Color color = getStringBasedColor(type, i, strings);
 					pressMarks.add(lineHorizontal(0, getWidth(), stringPositions[i] - 3 + j, color));
 				}
 				continue;
@@ -242,9 +268,10 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 			final FretPosition fretPosition = fretPositions[fret - baseFret];
 			final Position2D position = new Position2D(fretPosition.position - fretPosition.length / 2,
 					stringPositions[i]);
-			pressMarks.add(filledDiamond(position.move(1, 0), 10, ColorLabel.valueOf("NOTE_" + i).color()));
+			pressMarks.add(
+					filledDiamond(position.move(1, 0), 10, getStringBasedColor(StringColorLabelType.NOTE, i, strings)));
 
-			final Integer finger = chordTemplate.fingers.get(i);
+			final Integer finger = chordTemplateSupplier.get().fingers.get(i);
 			final String fingerText = finger == null ? "" : finger == 0 ? "T" : finger.toString();
 			pressMarks.add(centeredTextWithBackground(position, fingerText, null, ColorLabel.BASE_TEXT.color()));
 		}
@@ -263,41 +290,55 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 
 	@Override
 	public void keyTyped(final KeyEvent e) {
+		if (!asList(VK_T, VK_1, VK_2, VK_3, VK_4).contains(e.getKeyCode())) {
+			keyboardHandler.keyTyped(e);
+			return;
+		}
 	}
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
-		if (mouseString == null || chordTemplate.frets.get(mouseString) == null) {
+		if (!asList(VK_T, VK_1, VK_2, VK_3, VK_4).contains(e.getKeyCode())) {
+			keyboardHandler.keyPressed(e);
+			return;
+		}
+
+		if (mouseString == null || chordTemplateSupplier.get().frets.get(mouseString) == null) {
 			return;
 		}
 
 		Integer fingerId;
 		switch (e.getKeyCode()) {
-		case KeyEvent.VK_T:
+		case VK_T:
 			fingerId = 0;
 			break;
-		case KeyEvent.VK_1:
+		case VK_1:
 			fingerId = 1;
 			break;
-		case KeyEvent.VK_2:
+		case VK_2:
 			fingerId = 2;
 			break;
-		case KeyEvent.VK_3:
+		case VK_3:
 			fingerId = 3;
 			break;
-		case KeyEvent.VK_4:
+		case VK_4:
 			fingerId = 4;
 			break;
 		default:
 			return;
 		}
 
-		chordTemplate.fingers.put(mouseString, fingerId);
-		parent.fingerUpdated(mouseString, fingerId);
+		chordTemplateSupplier.get().fingers.put(mouseString, fingerId);
+		chordEditor.fingerUpdated(mouseString, fingerId);
+		e.consume();
 	}
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
+		if (!asList(VK_T, VK_1, VK_2, VK_3, VK_4).contains(e.getKeyCode())) {
+			keyboardHandler.keyReleased(e);
+			return;
+		}
 	}
 
 	private void updateMouseStringAndFret(final int x, final int y) {
@@ -341,15 +382,15 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 			return;
 		}
 
-		final Integer currentFret = chordTemplate.frets.get(mouseString);
+		final Integer currentFret = chordTemplateSupplier.get().frets.get(mouseString);
 		if (currentFret != null && currentFret == mouseFret) {
-			chordTemplate.frets.remove(mouseString);
-			chordTemplate.fingers.remove(mouseString);
-			parent.fretUpdated(mouseString, null);
-			parent.fingerUpdated(mouseString, null);
+			chordTemplateSupplier.get().frets.remove(mouseString);
+			chordTemplateSupplier.get().fingers.remove(mouseString);
+			chordEditor.fretUpdated(mouseString, null);
+			chordEditor.fingerUpdated(mouseString, null);
 		} else {
-			chordTemplate.frets.put(mouseString, mouseFret);
-			parent.fretUpdated(mouseString, mouseFret);
+			chordTemplateSupplier.get().frets.put(mouseString, mouseFret);
+			chordEditor.fretUpdated(mouseString, mouseFret);
 		}
 	}
 
@@ -359,12 +400,14 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 
 	@Override
 	public void mouseEntered(final MouseEvent e) {
+		grabFocus();
 	}
 
 	@Override
 	public void mouseExited(final MouseEvent e) {
 		mouseFret = null;
 		mouseString = null;
+		frame.requestFocusInWindow();
 	}
 
 	@Override
@@ -375,5 +418,27 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	@Override
 	public void mouseMoved(final MouseEvent e) {
 		updateMouseStringAndFret(e.getX(), e.getY());
+	}
+
+	public void changeStringsAmount() {
+		stringPositions = getStringPositions(data.currentStrings(), parent.rowHeight);
+	}
+
+	public void showFields() {
+		setVisible(true);
+
+		if (!parentListenerAdded) {
+			parent.addKeyListener(this);
+			parentListenerAdded = true;
+		}
+	}
+
+	public void hideFields() {
+		setVisible(false);
+
+		if (parentListenerAdded) {
+			parent.removeKeyListener(this);
+			parentListenerAdded = false;
+		}
 	}
 }

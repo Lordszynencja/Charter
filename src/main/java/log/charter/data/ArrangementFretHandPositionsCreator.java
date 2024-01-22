@@ -42,7 +42,7 @@ public class ArrangementFretHandPositionsCreator {
 			return new FretRange(sound, sound.note.fret, sound.note.hopo == HOPO.TAP);
 		}
 
-		final ChordTemplate template = chordTemplates.get(sound.chord.chordId);
+		final ChordTemplate template = chordTemplates.get(sound.chord.templateId());
 		int minFret = Config.frets;
 		int maxFret = 0;
 		for (final int fret : template.frets.values()) {

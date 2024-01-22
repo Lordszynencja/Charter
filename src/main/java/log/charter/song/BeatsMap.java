@@ -1,13 +1,16 @@
 package log.charter.song;
 
 import static java.lang.Math.abs;
+import static log.charter.song.notes.IPosition.findClosestId;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.RocksmithChartProject;
+import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.grid.GridPosition;
 
@@ -138,8 +141,11 @@ public class BeatsMap {
 		return gridPosition.position();
 	}
 
-	public int getPositionWithRemovedGrid(final int position, final int gridRemovals) {
+	public int getPositionWithRemovedGrid(final int position, int gridRemovals) {
 		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+		if (gridPosition.position() != position) {
+			gridRemovals--;
+		}
 		for (int i = 0; i < gridRemovals; i++) {
 			gridPosition.previous();
 		}
@@ -208,5 +214,56 @@ public class BeatsMap {
 		final Beat nextBeat = beats.get(beatId + 1);
 
 		return (int) (beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0));
+	}
+
+	public void setBPM(final int beatId, final double newBPM) {
+		for (int i = beats.size() - 1; i > beatId; i--) {
+			beats.remove(i);
+		}
+
+		final Beat startBeat = beats.getLast();
+		final int startPosition = startBeat.position();
+		int position = (int) (startPosition + 60_000 / newBPM);
+		int createdBeatId = 1;
+		while (position <= songLengthMs) {
+			final Beat newBeat = new Beat(position, startBeat.beatsInMeasure, startBeat.noteDenominator, false);
+			beats.add(newBeat);
+			createdBeatId++;
+			position = startPosition + (int) (createdBeatId * 60_000 / newBPM);
+		}
+
+		fixFirstBeatInMeasures();
+	}
+
+	public void movePositions(final int start, final int end, final Collection<? extends IPosition> positions) {
+		final double startInBeats = getPositionInBeats(start);
+		final double endInBeats = getPositionInBeats(end);
+		final double add = endInBeats - startInBeats;
+		for (final IPosition position : positions) {
+			final double positionInBeats = getPositionInBeats(position.position());
+			final int newPosition = getPositionForPositionInBeats(positionInBeats + add);
+			position.position(newPosition);
+		}
+	}
+
+	public double findBPM(final Beat beat) {
+		final int beatId = findClosestId(beats, beat.position());
+
+		return findBPM(beat, beatId);
+	}
+
+	public double findBPM(final Beat beat, final int beatId) {
+		int nextAnchorId = beats.size() - 1;
+		for (int i = beatId + 1; i < beats.size(); i++) {
+			if (beats.get(i).anchor) {
+				nextAnchorId = i;
+				break;
+			}
+		}
+
+		final Beat nextAnchor = beats.get(nextAnchorId);
+		final int distancePassed = nextAnchor.position() - beat.position();
+		final int beatsPassed = nextAnchorId - beatId;
+		return 60_000.0 / distancePassed * beatsPassed;
 	}
 }

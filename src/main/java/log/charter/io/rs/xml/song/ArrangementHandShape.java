@@ -26,13 +26,13 @@ public class ArrangementHandShape implements IPosition {
 	}
 
 	public ArrangementHandShape(final Chord chord) {
-		chordId = chord.chordId;
+		chordId = chord.templateId();
 		startTime = chord.position();
 		endTime = chord.position() + max(50, chord.length());
 	}
 
 	public ArrangementHandShape(final HandShape handShape) {
-		chordId = handShape.chordId;
+		chordId = handShape.templateId;
 		startTime = handShape.position();
 		endTime = startTime + handShape.length();
 	}

@@ -8,30 +8,30 @@ import log.charter.song.notes.PositionWithLength;
 
 @XStreamAlias("handShape")
 public class HandShape extends PositionWithLength {
-	public int chordId;
+	public int templateId;
 
 	public HandShape(final int position, final int length) {
 		super(position, length);
-		chordId = -1;
+		templateId = -1;
 	}
 
-	public HandShape(final int chordId) {
+	public HandShape(final int templateId) {
 		super(0, 0);
-		this.chordId = chordId;
+		this.templateId = templateId;
 	}
 
 	public HandShape(final ArrangementHandShape arrangementHandShape) {
 		super(arrangementHandShape.startTime, arrangementHandShape.endTime - arrangementHandShape.startTime);
-		chordId = arrangementHandShape.chordId;
+		templateId = arrangementHandShape.chordId;
 	}
 
 	public HandShape(final HandShape other) {
 		super(other);
-		chordId = other.chordId;
+		templateId = other.templateId;
 	}
 
 	public HandShape(final Chord chord, final int length) {
 		super(chord.position(), length);
-		chordId = chord.chordId;
+		templateId = chord.templateId();
 	}
 }

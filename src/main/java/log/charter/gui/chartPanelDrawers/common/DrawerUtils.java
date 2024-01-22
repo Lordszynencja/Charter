@@ -8,11 +8,10 @@ import static log.charter.util.Utils.getStringPosition;
 
 public class DrawerUtils {
 	public static final int sectionNamesY = 5;
-	public static final int phraseNamesY = 20;
-	public static final int eventNamesY = 35;
-	public static final int lyricLinesY = 55;
-
-	public static int beatTextY = 70;
+	public static final int phraseNamesY = sectionNamesY + 15;
+	public static final int eventNamesY = phraseNamesY + 15;
+	public static final int lyricLinesY = eventNamesY + 20;
+	public static int beatTextY = lyricLinesY + 15;
 	public static int beatSizeTextY = beatTextY + 15;
 	public static int toneChangeY = beatSizeTextY + 10;
 	public static int anchorY = toneChangeY + 15;
@@ -22,7 +21,9 @@ public class DrawerUtils {
 	public static int lanesHeight;
 	public static int lanesBottom;
 	public static int handShapesY;
-	public static int editAreaBottom;
+	public static int editAreaHeight;
+
+	public static final int scrollBarSize = 20;
 
 	public static int tailHeight;
 
@@ -35,7 +36,7 @@ public class DrawerUtils {
 		lanesHeight = laneHeight * maxStrings;
 		lanesBottom = lanesTop + lanesHeight;
 		handShapesY = lanesBottom + 30;
-		editAreaBottom = handShapesY + 20;
+		editAreaHeight = handShapesY + 20;
 
 		tailHeight = getAsOdd(noteHeight * 3 / 4);
 	}

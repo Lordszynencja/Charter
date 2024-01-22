@@ -2,6 +2,7 @@ package log.charter.data.types;
 
 import log.charter.song.Anchor;
 import log.charter.song.Beat;
+import log.charter.song.EventPoint;
 import log.charter.song.HandShape;
 import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
@@ -25,6 +26,10 @@ public class PositionWithIdAndType extends Position {
 		return new TemporaryValue(id, chordOrNote).transform();
 	}
 
+	public static PositionWithIdAndType create(final int id, final EventPoint eventPoint) {
+		return new TemporaryValue(id, eventPoint).transform();
+	}
+
 	public static PositionWithIdAndType create(final int id, final HandShape handShape) {
 		return new TemporaryValue(id, handShape).transform();
 	}
@@ -45,13 +50,14 @@ public class PositionWithIdAndType extends Position {
 	public final Anchor anchor;
 	public final Beat beat;
 	public final ChordOrNote chordOrNote;
+	public final EventPoint eventPoint;
 	public final HandShape handShape;
 	public final ToneChange toneChange;
 	public final Vocal vocal;
 
 	PositionWithIdAndType(final int position, final int endPosition, final Integer id, final PositionType type,
 			final boolean existingPosition, final Anchor anchor, final Beat beat, final ChordOrNote chordOrNote,
-			final HandShape handShape, final ToneChange toneChange, final Vocal vocal) {
+			final EventPoint eventPoint, final HandShape handShape, final ToneChange toneChange, final Vocal vocal) {
 		super(position);
 		this.endPosition = endPosition;
 		this.id = id;
@@ -61,6 +67,7 @@ public class PositionWithIdAndType extends Position {
 		this.anchor = anchor;
 		this.beat = beat;
 		this.chordOrNote = chordOrNote;
+		this.eventPoint = eventPoint;
 		this.handShape = handShape;
 		this.toneChange = toneChange;
 		this.vocal = vocal;

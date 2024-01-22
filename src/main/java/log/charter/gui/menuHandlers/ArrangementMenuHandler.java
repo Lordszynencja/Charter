@@ -82,6 +82,7 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 		}
 
 		menu.addSeparator();
+		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_MIDI_NOTES, "F2", audioHandler::toggleMidiNotes));
 		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_CLAPS, "F3", audioHandler::toggleClaps));
 		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_METRONOME, "F4", audioHandler::toggleMetronome));
 		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_WAVEFORM, "F5", audioDrawer::toggle));
@@ -92,7 +93,6 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 	private void changeEditMode(final EditMode editMode) {
 		audioHandler.stopMusic();
 		selectionManager.clear();
-		data.changeDifficulty(0);
 		modeManager.editMode = editMode;
 
 		charterMenuBar.refreshMenus();
@@ -100,19 +100,31 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 
 	private void changeArrangement(final int arrangementId) {
 		data.currentArrangement = arrangementId;
+		data.changeDifficulty(0);
 		changeEditMode(EditMode.GUITAR);
 	}
 
 	private void addArrangement() {
+		final int previousArrangement = data.currentArrangement;
+		final EditMode previousEditMode = modeManager.editMode;
+		final int previousDifficulty = data.currentLevel;
 		data.currentArrangement = data.songChart.arrangements.size();
+		data.changeDifficulty(0);
 		data.songChart.arrangements.add(new ArrangementChart(ArrangementType.Lead, data.songChart.beatsMap.beats));
 		changeEditMode(EditMode.GUITAR);
 
-		new ArrangementSettingsPane(charterMenuBar, data, frame);
+		new ArrangementSettingsPane(charterMenuBar, data, frame, selectionManager, () -> {
+			data.currentArrangement = previousArrangement;
+			data.changeDifficulty(previousDifficulty);
+			data.songChart.arrangements.remove(data.songChart.arrangements.size() - 1);
+
+			changeEditMode(previousEditMode);
+			charterMenuBar.refreshMenus();
+		}, true);
 	}
 
 	private void editOptions() {
-		new ArrangementSettingsPane(charterMenuBar, data, frame);
+		new ArrangementSettingsPane(charterMenuBar, data, frame, selectionManager, null, false);
 	}
 
 	private void changeLevel(final int levelId) {

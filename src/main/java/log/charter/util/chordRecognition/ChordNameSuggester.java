@@ -67,12 +67,28 @@ public class ChordNameSuggester {
 		return foundNames;
 	}
 
+	private static boolean negativeExists(final int[] sounds) {
+		for (final int sound : sounds) {
+			if (sound < 0) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public static ArrayList2<String> suggestChordNames(final Tuning tuning,
 			final HashMap2<Integer, Integer> templateFrets) {
 		final int[] sounds = new int[templateFrets.size()];
 		int i = 0;
 		for (final Entry<Integer, Integer> stringWithFret : templateFrets.entrySet()) {
 			sounds[i++] = tuning.getStringOffset(stringWithFret.getKey()) + stringWithFret.getValue();
+		}
+
+		while (negativeExists(sounds)) {
+			for (i = 0; i < sounds.length; i++) {
+				sounds[i] += 12;
+			}
 		}
 
 		Arrays.sort(sounds);

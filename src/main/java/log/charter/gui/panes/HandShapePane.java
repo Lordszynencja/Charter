@@ -5,11 +5,11 @@ import javax.swing.JCheckBox;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.ChordTemplateEditor;
+import log.charter.gui.components.ChordTemplateEditorDialog;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 
-public class HandShapePane extends ChordTemplateEditor {
+public class HandShapePane extends ChordTemplateEditorDialog {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private static PaneSizes getSizes() {
@@ -20,8 +20,8 @@ public class HandShapePane extends ChordTemplateEditor {
 	}
 
 	private static ChordTemplate prepareTemplateFromData(final ChartData data, final HandShape handShape) {
-		return handShape.chordId == -1 ? new ChordTemplate()
-				: new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(handShape.chordId));
+		return handShape.templateId == -1 ? new ChordTemplate()
+				: new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(handShape.templateId));
 	}
 
 	private final HandShape handShape;
@@ -30,8 +30,7 @@ public class HandShapePane extends ChordTemplateEditor {
 
 	public HandShapePane(final ChartData data, final CharterFrame frame, final HandShape handShape,
 			final Runnable onCancel) {
-		super(data, frame, Label.HAND_SHAPE_PANE, 8 + data.getCurrentArrangement().tuning.strings, getSizes(),
-				prepareTemplateFromData(data, handShape));
+		super(data, frame, Label.HAND_SHAPE_PANE, getSizes(), prepareTemplateFromData(data, handShape));
 
 		this.handShape = handShape;
 
@@ -49,6 +48,6 @@ public class HandShapePane extends ChordTemplateEditor {
 	}
 
 	private void saveAndExit() {
-		handShape.chordId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
+		handShape.templateId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
 	}
 }

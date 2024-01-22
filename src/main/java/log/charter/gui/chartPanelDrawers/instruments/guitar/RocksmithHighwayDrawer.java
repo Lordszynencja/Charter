@@ -2,6 +2,7 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
 import static log.charter.data.config.Config.noteHeight;
 import static log.charter.data.config.Config.noteWidth;
+import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
@@ -20,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
@@ -74,12 +76,13 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected Color getNoteColor(final NoteData note) {
-		return noteColors[note.string];
+	protected Color getNoteColor(final EditorNoteDrawingData note) {
+		final Color color = noteColors[note.string];
+		return note.wrongLink ? applyWrongLink(color) : color;
 	}
 
 	@Override
-	protected void addNoteShape(final NoteData note, final int y) {
+	protected void addNoteShape(final EditorNoteDrawingData note, final int y) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -89,7 +92,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 
 		addNormalNoteShape(y, note);
 
-		if (!note.linkPrevious) {
+		if (!note.linkPrevious || note.wrongLink) {
 			if (note.hopo == HOPO.HAMMER_ON) {
 				addHammerOnShape(y, note);
 			} else if (note.hopo == HOPO.PULL_OFF) {
@@ -117,18 +120,19 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 			noteFrets.add(centeredTextWithBackground(new Position2D(note.x, y), note.fret, Color.WHITE, Color.BLACK));
 
 			if (note.accent) {
-				notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), getNoteColor(note).brighter(), 1));
+				final Color accentColor = getStringBasedColor(StringColorLabelType.NOTE_ACCENT, note.string, strings);
+				notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor, 1));
 			}
 
 			if (note.selected) {
-				selects.add(strokedRectangle(position, selectColor, 2));
+				selects.add(strokedRectangle(position.resized(0, 0, -1, -1), selectColor, 2));
 			}
 		}
 	}
 
 	@Override
-	protected void addNormalNoteShape(final int y, final NoteData note) {
-		if (note.linkPrevious) {
+	protected void addNormalNoteShape(final int y, final EditorNoteDrawingData note) {
+		if (note.linkPrevious && !note.wrongLink) {
 			return;
 		}
 
@@ -136,12 +140,11 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 				.centered();
 
 		notes.add(filledRectangle(position, getNoteColor(note)));
-
 		notes.add(strokedRectangle(position.resized(1, 1, -2, -2), getNoteColor(note).brighter(), 2));
 	}
 
 	@Override
-	protected void addHammerOnShape(final int y, final NoteData note) {
+	protected void addHammerOnShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -155,7 +158,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addPullOffShape(final int y, final NoteData note) {
+	protected void addPullOffShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -169,7 +172,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addTapShape(final int y, final NoteData note) {
+	protected void addTapShape(final int y, final EditorNoteDrawingData note) {
 		final List<Position2D> positions = new ArrayList2<>(//
 				new Position2D(note.x - noteWidth / 2, y - noteHeight / 2), // top left
 				new Position2D(note.x - noteWidth / 2 + 4, y - noteHeight / 2), // top left inset
@@ -197,7 +200,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addPinchHarmonicShape(final int y, final NoteData note) {
+	protected void addPinchHarmonicShape(final int y, final EditorNoteDrawingData note) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -214,12 +217,12 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addPalmMute(final NoteData note, final int y) {
+	protected void addPalmMute(final EditorNoteDrawingData note, final int y) {
 		notes.add(centeredImage(new Position2D(note.x, y), palmMuteImage));
 	}
 
 	@Override
-	protected void addMute(final NoteData note, final int y) {
+	protected void addMute(final EditorNoteDrawingData note, final int y) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
@@ -229,7 +232,8 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addSlideCommon(final NoteData note, final int y, final Color outlineColor, final Color fretColor) {
+	protected void addSlideCommon(final EditorNoteDrawingData note, final int y, final Color outlineColor,
+			final Color fretColor) {
 		addNormalNoteTailShape(note, y);
 
 		IntRange topBottom = getDefaultTailTopBottom(y);
