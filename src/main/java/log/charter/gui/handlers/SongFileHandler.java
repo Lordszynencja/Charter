@@ -5,6 +5,7 @@ import static log.charter.io.Logger.error;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.saveVocals;
 import static log.charter.io.rsc.xml.RocksmithChartProjectXStreamHandler.readProject;
 import static log.charter.io.rsc.xml.RocksmithChartProjectXStreamHandler.saveProject;
+import static log.charter.song.SongChart.vocalsFileName;
 import static log.charter.util.FileChooseUtils.chooseFile;
 
 import java.io.File;
@@ -124,7 +125,7 @@ public class SongFileHandler {
 		for (int i = 0; i < data.songChart.arrangements.size(); i++) {
 			filesToBackup.add(data.songChart.arrangements.get(i).getFileName(i + 1));
 		}
-		filesToBackup.add("Vocals_RS2.xml");
+		filesToBackup.add(vocalsFileName);
 		System.out.println("Doing backup of " + data.path + ", files: " + filesToBackup);
 
 		makeBackups(data.path, filesToBackup);
@@ -328,6 +329,7 @@ public class SongFileHandler {
 			return;
 		}
 
+		loadingDialog.setProgress(2, Label.LOADING_ARRANGEMENTS.label());
 		final SongChart songChart;
 		try {
 			songChart = new SongChart(musicData.msLength(), project, dir);
@@ -339,10 +341,9 @@ public class SongFileHandler {
 		final List<String> filesToBackup = new ArrayList<>();
 		filesToBackup.add(projectFileChosen.getName());
 		filesToBackup.addAll(project.arrangementFiles);
-		filesToBackup.add("Vocals_RS2.xml");
+		filesToBackup.add(vocalsFileName);
 		makeBackups(dir, filesToBackup);
 
-		loadingDialog.setProgress(2, Label.LOADING_ARRANGEMENTS.label());
 		data.setSong(dir, songChart, musicData, projectFileChosen.getName(), project.editMode, project.arrangement,
 				project.level, project.time);
 
@@ -444,7 +445,9 @@ public class SongFileHandler {
 			modeManager.editMode = EditMode.GUITAR;
 			data.currentArrangement = data.songChart.arrangements.size() - 1;
 			save();
+
 			charterMenuBar.refreshMenus();
+			frame.updateEditAreaSizes();
 		} catch (final Exception e) {
 			Logger.error("Couldn't load arrangement", e);
 			frame.showPopup(Label.COULDNT_LOAD_ARRANGEMENT.label() + ":\n" + e.getMessage());
@@ -491,7 +494,7 @@ public class SongFileHandler {
 		}
 
 		if (!data.songChart.vocals.vocals.isEmpty()) {
-			RW.write(new File(data.path, "Vocals_RS2.xml"), saveVocals(new ArrangementVocals(data.songChart.vocals)),
+			RW.write(new File(data.path, vocalsFileName), saveVocals(new ArrangementVocals(data.songChart.vocals)),
 					"UTF-8");
 		}
 

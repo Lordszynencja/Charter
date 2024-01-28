@@ -56,6 +56,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 	private final CharterMenuBar charterMenuBar;
 	private final ChartData data;
+	private final CharterFrame frame;
 	private final SelectionManager selectionManager;
 
 	private JComboBox<TuningTypeHolder> tuningSelect;
@@ -77,6 +78,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 		this.charterMenuBar = charterMenuBar;
 		this.data = data;
+		this.frame = frame;
 		this.selectionManager = selectionManager;
 
 		final ArrangementChart arrangement = data.getCurrentArrangement();
@@ -287,5 +289,6 @@ public class ArrangementSettingsPane extends ParamsPane {
 		selectionManager.clear();
 
 		charterMenuBar.refreshMenus();
+		frame.updateEditAreaSizes();
 	}
 }

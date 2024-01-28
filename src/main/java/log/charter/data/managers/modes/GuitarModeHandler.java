@@ -1,7 +1,7 @@
 package log.charter.data.managers.modes;
 
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.song.notes.IPosition.findClosestId;
 import static log.charter.song.notes.IPosition.findLastIdBefore;
 import static log.charter.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
@@ -207,7 +207,7 @@ public class GuitarModeHandler extends ModeHandler {
 	}
 
 	private void addSingleNote(final MouseButtonPressReleaseData clickData) {
-		final int string = yToLane(clickData.pressPosition.y, data.currentStrings());
+		final int string = yToString(clickData.pressPosition.y, data.currentStrings());
 		addOrRemoveSingleNote(string, clickData.pressHighlight.position(), clickData.pressHighlight.id,
 				clickData.pressHighlight.chordOrNote);
 	}

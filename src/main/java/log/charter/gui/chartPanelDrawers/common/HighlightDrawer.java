@@ -10,7 +10,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.line;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
@@ -18,6 +18,7 @@ import static log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer.getVoca
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.Graphics;
 import java.util.Collection;
@@ -131,7 +132,7 @@ public class HighlightDrawer {
 
 	private void drawNoteHighlight(final Graphics g, final int string, final int position, final int strings) {
 		final int x = timeToX(position, data.time);
-		final int y = getLaneY(string, strings);
+		final int y = getLaneY(getStringPosition(string, strings));
 		final ShapePositionWithSize notePosition = new ShapePositionWithSize(x, y, noteWidth, noteHeight)//
 				.centered()//
 				.resized(-1, -1, 1, 1);
@@ -148,7 +149,7 @@ public class HighlightDrawer {
 	private void drawGuitarNoteHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
 			final int y) {
 		final int strings = data.getCurrentArrangement().tuning.strings;
-		final int lane = yToLane(y, strings);
+		final int lane = yToString(y, strings);
 		drawNoteHighlight(g, lane, highlight.position(), strings);
 	}
 

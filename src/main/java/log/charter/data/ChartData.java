@@ -7,6 +7,7 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.song.ArrangementChart;
@@ -26,14 +27,16 @@ public class ChartData {
 	public int time = 0;
 	public int nextTime = 0;
 
+	private CharterFrame frame;
 	private AudioHandler audioHandler;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final AudioHandler audioHandler, final CharterMenuBar charterMenuBar,
+	public void init(final CharterFrame frame, final AudioHandler audioHandler, final CharterMenuBar charterMenuBar,
 			final ModeManager modeManager, final SelectionManager selectionManager, final UndoSystem undoSystem) {
+		this.frame = frame;
 		this.audioHandler = audioHandler;
 		this.charterMenuBar = charterMenuBar;
 		this.modeManager = modeManager;
@@ -65,6 +68,7 @@ public class ChartData {
 		modeManager.editMode = editMode;
 
 		charterMenuBar.refreshMenus();
+		frame.updateEditAreaSizes();
 
 		path = dir;
 		this.projectFileName = projectFileName;

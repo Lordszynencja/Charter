@@ -5,6 +5,7 @@ import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
+import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.Graphics;
 import java.math.BigDecimal;
@@ -70,7 +71,7 @@ public class GuitarDrawer {
 
 		for (int i = 0; i < lanes; i++) {
 			g.setColor(getStringBasedColor(StringColorLabelType.LANE, i, data.currentStrings()));
-			final int y = getLaneY(i, lanes);
+			final int y = getLaneY(getStringPosition(i, lanes));
 			g.drawLine(x, y, width, y);
 		}
 	}

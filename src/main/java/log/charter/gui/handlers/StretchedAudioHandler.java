@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import log.charter.io.Logger;
 import log.charter.sound.MusicData;
 import log.charter.sound.StretchedFileLoader;
 
@@ -90,8 +91,22 @@ public class StretchedAudioHandler {
 	}
 
 	private void run() {
+		int lastSpeed = -1;
+		int tries = 0;
+
 		while (true) {
+
 			if (!speedsToGenerate.isEmpty()) {
+				if (speedsToGenerate.get(0) == lastSpeed) {
+					tries++;
+					if (tries == 10) {
+						Logger.error("Couldn't run rubberband, exiting the thread that uses it");
+						return;
+					}
+				} else {
+					lastSpeed = speedsToGenerate.get(0);
+					tries = 0;
+				}
 				generate(speedsToGenerate.get(0));
 			}
 

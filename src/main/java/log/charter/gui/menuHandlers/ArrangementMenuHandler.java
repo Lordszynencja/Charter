@@ -96,12 +96,16 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 		modeManager.editMode = editMode;
 
 		charterMenuBar.refreshMenus();
+
+		frame.updateEditAreaSizes();
 	}
 
 	private void changeArrangement(final int arrangementId) {
 		data.currentArrangement = arrangementId;
 		data.changeDifficulty(0);
 		changeEditMode(EditMode.GUITAR);
+
+		frame.updateEditAreaSizes();
 	}
 
 	private void addArrangement() {

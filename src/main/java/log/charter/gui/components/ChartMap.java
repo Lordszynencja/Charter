@@ -2,7 +2,6 @@ package log.charter.gui.components;
 
 import static java.lang.Math.max;
 import static log.charter.data.config.Config.chartMapHeightMultiplier;
-import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.util.ScalingUtils.xToTimeLength;
 import static log.charter.util.Utils.getStringPosition;
@@ -22,16 +21,13 @@ import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.song.EventPoint;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.vocals.Vocal;
 
 public class ChartMap extends Component implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
-
-	public static int getPreferredHeight() {
-		return 2 * chartMapHeightMultiplier + 1 + maxStrings * chartMapHeightMultiplier;
-	}
 
 	private ChartPanel chartPanel;
 	private ChartData data;
@@ -45,7 +41,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 		this.frame = frame;
 		this.modeManager = modeManager;
 
-		setSize(frame.getWidth(), getPreferredHeight());
+		setSize(frame.getWidth(), DrawerUtils.chartMapHeight);
 
 		setFocusable(false);
 		addMouseListener(this);
@@ -83,9 +79,9 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	private void drawVocalLines(final Graphics g) {
 		g.setColor(ColorLabel.VOCAL_NOTE.color());
 
-		final int y0 = 2 * chartMapHeightMultiplier;
-		final int y2 = getHeight() - 2 * chartMapHeightMultiplier;
-		final int y1 = (y0 + y2) / 2;
+		final int y0 = chartMapHeightMultiplier;
+		final int y2 = getHeight() - chartMapHeightMultiplier - 1;
+		final int y1 = y0 + chartMapHeightMultiplier;
 		boolean started = false;
 		int x = 0;
 
@@ -98,7 +94,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 			if (vocal.isPhraseEnd()) {
 				final int x1 = timeToPosition(vocal.position() + vocal.length());
 
-				g.fillRect(x, y1 - chartMapHeightMultiplier, x1 - x, 2 * chartMapHeightMultiplier + 1);
+				g.fillRect(x, y1, x1 - x, chartMapHeightMultiplier);
 				g.drawLine(x, y0, x, y2);
 				g.drawLine(x1, y0, x1, y2);
 				started = false;
@@ -176,7 +172,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 		final int x0 = markerPosition - timeToPosition(xToTimeLength(Config.markerOffset));
 		final int x1 = markerPosition + timeToPosition(xToTimeLength(chartPanel.getWidth() - Config.markerOffset));
 		g.setColor(ColorLabel.SELECT.color());
-		g.drawRect(x0, 0, x1 - x0, getPreferredHeight() - 1);
+		g.drawRect(x0, 0, x1 - x0, getHeight() - 1);
 
 		g.setColor(ColorLabel.MARKER.color());
 		g.drawLine(markerPosition, 0, markerPosition, getHeight() - 1);

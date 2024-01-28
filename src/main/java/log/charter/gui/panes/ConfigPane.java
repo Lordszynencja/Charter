@@ -15,7 +15,6 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.config.Theme;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
-import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.components.ParamsPane;
 import log.charter.util.CollectionUtils;
 import log.charter.util.FileChooseUtils;
@@ -164,7 +163,7 @@ public final class ConfigPane extends ParamsPane {
 		Config.markChanged();
 		Config.save();
 
-		DrawerUtils.setSizesBasedOnNotesSizes();
+		frame.updateEditAreaSizes();
 		frame.resize();
 		Framer.frameLength = 1000.0 / FPS;
 	}

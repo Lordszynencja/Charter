@@ -31,6 +31,7 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.tex
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.EditorNoteDrawingData.fromChord;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.EditorNoteDrawingData.fromNote;
 import static log.charter.util.ScalingUtils.timeToX;
+import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -125,7 +126,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		noteAccentColors = new Color[strings];
 		noteTailColors = new Color[strings];
 		for (int i = 0; i < strings; i++) {
-			stringPositions[i] = getLaneY(i, strings);
+			stringPositions[i] = getLaneY(getStringPosition(i, strings));
 			noteColors[i] = getStringBasedColor(StringColorLabelType.NOTE, i, strings);
 			noteAccentColors[i] = getStringBasedColor(StringColorLabelType.NOTE_ACCENT, i, strings);
 			noteTailColors[i] = getStringBasedColor(StringColorLabelType.NOTE_TAIL, i, strings);

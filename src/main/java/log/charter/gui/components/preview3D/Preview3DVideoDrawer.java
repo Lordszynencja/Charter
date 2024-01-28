@@ -23,6 +23,7 @@ public class Preview3DVideoDrawer {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private ChartData data;
 
 	private final BufferedImage image = new BufferedImage(16, 9, BufferedImage.TYPE_INT_RGB);

@@ -7,7 +7,7 @@ import static log.charter.data.config.Config.gridSize;
 import static log.charter.data.config.Config.minNoteDistance;
 import static log.charter.data.managers.PositionWithStringOrNoteId.fromNoteId;
 import static log.charter.data.managers.PositionWithStringOrNoteId.fromPosition;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToLane;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.song.notes.IPosition.findClosest;
 import static log.charter.song.notes.IPosition.findFirstIdAfter;
 import static log.charter.song.notes.IPosition.findLastIdBefore;
@@ -45,11 +45,11 @@ public class HighlightManager {
 			final int distance = position - fromPosition;
 			final int maxDistance = toPosition - fromPosition;
 			if (distance == 0) {
-				return yToLane(fromY, data.getCurrentArrangement().tuning.strings);
+				return yToString(fromY, data.getCurrentArrangement().tuning.strings);
 			}
 
 			final int y = fromY + (toY - fromY) * distance / maxDistance;
-			return yToLane(y, data.getCurrentArrangement().tuning.strings);
+			return yToString(y, data.getCurrentArrangement().tuning.strings);
 		}
 
 		private void addAvailablePositions() {

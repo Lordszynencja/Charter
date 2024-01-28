@@ -51,6 +51,7 @@ import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.lookAndFeel.CharterTheme;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
+import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.main.LogCharterRSMain;
 import log.charter.sound.StretchedFileLoader;
 import net.sf.image4j.codec.ico.ICODecoder;
@@ -124,7 +125,7 @@ public class CharterFrame extends JFrame {
 		audioHandler.init(chartToolbar, data, this, modeManager);
 		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, selectionManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
-		data.init(audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
+		data.init(this, audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
 		keyboardHandler.init(audioDrawer, audioHandler, arrangementFixer, copyManager, data, this, modeManager,
 				mouseHandler, selectionManager, songFileHandler, undoSystem);
 		highlightManager.init(data, modeManager, selectionManager);
@@ -207,7 +208,7 @@ public class CharterFrame extends JFrame {
 		final AtomicInteger y = new AtomicInteger(0);
 		resizeComponent(y, chartToolbar, width, ChartToolbar.height);
 		resizeComponent(y, chartPanel, width, DrawerUtils.editAreaHeight);
-		resizeComponent(y, chartMap, width, ChartMap.getPreferredHeight());
+		resizeComponent(y, chartMap, width, DrawerUtils.chartMapHeight);
 		changeComponentBounds(tabs, 0, y.get(), width, height - y.get());
 	}
 
@@ -328,6 +329,20 @@ public class CharterFrame extends JFrame {
 		}
 
 		setTitle(title);
+	}
+
+	public void updateEditAreaSizes() {
+		final EditMode editMode = modeManager.editMode;
+
+		ArrangementType arrangementType = null;
+		int strings = 1;
+		if (editMode == EditMode.GUITAR) {
+			arrangementType = data.getCurrentArrangement().arrangementType;
+			strings = data.getCurrentArrangement().tuning.strings;
+		}
+
+		DrawerUtils.updateEditAreaSizes(editMode, arrangementType, strings);
+		resize();
 	}
 
 	private String makeTitle() {

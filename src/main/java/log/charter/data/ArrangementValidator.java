@@ -24,6 +24,8 @@ public class ArrangementValidator {
 			data.currentArrangement = arrangementId;
 			data.currentLevel = 0;
 			data.setNextTime(time);
+
+			frame.updateEditAreaSizes();
 		};
 	}
 

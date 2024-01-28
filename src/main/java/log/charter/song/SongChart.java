@@ -29,6 +29,7 @@ import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.RW;
 
 public class SongChart {
+	public static final String vocalsFileName = "Vocals_RS2.xml";
 
 	public static void addNote(final List<List<Note>> list, final Note n, final int diff) {
 		if ((diff < 0) || (diff > 255)) {
@@ -95,7 +96,7 @@ public class SongChart {
 			}
 		}
 
-		vocals = new Vocals(readVocals(RW.read(dir + "_VocalsRS2.xml")));
+		vocals = new Vocals(readVocals(RW.read(dir + vocalsFileName)));
 
 		bookmarks = project.bookmarks;
 		if (bookmarks == null) {
@@ -157,32 +158,32 @@ public class SongChart {
 	}
 
 	public ArrayList2<GPBarUnwrapper> unwrapGP5File(final GP5File gp5File, final int trackId) {
-		BeatsMap tempoMap = new BeatsMap(beatsMap.songLengthMs);
+		final BeatsMap tempoMap = new BeatsMap(beatsMap.songLengthMs);
 		final ArrayList2<Beat> tempoMapBeats = tempoMap.beats;
 
-		ArrayList2<GPBarUnwrapper> voiceList = new ArrayList2<>();
-
+		final ArrayList2<GPBarUnwrapper> voiceList = new ArrayList2<>();
 
 		final int masterBarsCount = gp5File.masterBars.size();
 		final List<GPBar> bars = gp5File.bars.get(trackId);
 		final int otherBarsCount = bars.size();
-		// final int voices = bars.get(trackId).voices.size(); // TODO: Fix multiple voices messing up beats
+		// final int voices = bars.get(trackId).voices.size(); // TODO: Fix multiple
+		// voices messing up beats
 		final int voices = 1;
 
 		if (otherBarsCount == masterBarsCount) {
 			for (int voice = 0; voice < voices; voice++) {
-				GPBarUnwrapper wrappedGPBarsInVoice = new GPBarUnwrapper(gp5File.directions);
+				final GPBarUnwrapper wrappedGPBarsInVoice = new GPBarUnwrapper(gp5File.directions);
 				int totalBarBeats = 0;
 				int previousTempo = gp5File.tempo;
 
-				// Create 
+				// Create
 				for (int bar = 0; bar < otherBarsCount; bar++) {
 					final GPMasterBar masterBar = gp5File.masterBars.get(bar);
 					if (bar > 0) {
 						previousTempo = wrappedGPBarsInVoice.getLast().noteBeats.getLast().tempo;
 					}
-					wrappedGPBarsInVoice.addBar(new CombinedGPBars(masterBar,bar+1));
-					
+					wrappedGPBarsInVoice.addBar(new CombinedGPBars(masterBar, bar + 1));
+
 					final int timeSignatureNum = masterBar.timeSignatureNumerator;
 					final int timeSignatureDen = masterBar.timeSignatureDenominator;
 
@@ -194,17 +195,20 @@ public class SongChart {
 
 						final Beat tempoMapBeat = tempoMapBeats.get(totalBarBeats + barBeat);
 						tempoMapBeat.setTimeSignature(timeSignatureNum, timeSignatureDen);
-						wrappedGPBarsInVoice.getLast().barBeats.add(wrappedGPBarsInVoice.get(bar).new BeatUnwrapper(tempoMapBeat));
+						wrappedGPBarsInVoice.getLast().barBeats
+								.add(wrappedGPBarsInVoice.get(bar).new BeatUnwrapper(tempoMapBeat));
 					}
 
-					wrappedGPBarsInVoice.getLast().availableSpaceIn_64ths =
-					(int)(((double)timeSignatureNum / timeSignatureDen) * 64);
-					
+					wrappedGPBarsInVoice
+							.getLast().availableSpaceIn_64ths = (int) (((double) timeSignatureNum / timeSignatureDen)
+									* 64);
+
 					// Add note beats of this bar to the combined class
 					final int notesInBar = bars.get(bar).voices.get(voice).size();
 					for (int noteBeat = 0; noteBeat < notesInBar; noteBeat++) {
 						final GPBeat currentNoteBeat = bars.get(bar).voices.get(voice).get(noteBeat);
-						wrappedGPBarsInVoice.get(bar).noteBeats.add(wrappedGPBarsInVoice.get(bar).new GPBeatUnwrapper(currentNoteBeat));
+						wrappedGPBarsInVoice.get(bar).noteBeats
+								.add(wrappedGPBarsInVoice.get(bar).new GPBeatUnwrapper(currentNoteBeat));
 					}
 					wrappedGPBarsInVoice.getLast().notesInBar = notesInBar;
 					wrappedGPBarsInVoice.getLast().updateBarsFromNoteTempo(previousTempo);
@@ -214,7 +218,8 @@ public class SongChart {
 				voiceList.add(wrappedGPBarsInVoice);
 			}
 
-			// Unwrap them after all wrapped voices have been parsed so that shared beats aren't mangled
+			// Unwrap them after all wrapped voices have been parsed so that shared beats
+			// aren't mangled
 			for (int i = 0; i < voiceList.size(); i++) {
 				voiceList.get(i).unwrap();
 			}

@@ -2,9 +2,14 @@ package log.charter.gui.chartPanelDrawers.common;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.data.config.Config.chartMapHeightMultiplier;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.data.config.Config.noteHeight;
 import static log.charter.util.Utils.getStringPosition;
+
+import log.charter.data.config.Config;
+import log.charter.data.managers.modes.EditMode;
+import log.charter.io.rs.xml.song.ArrangementType;
 
 public class DrawerUtils {
 	public static final int sectionNamesY = 5;
@@ -23,39 +28,81 @@ public class DrawerUtils {
 	public static int handShapesY;
 	public static int editAreaHeight;
 
-	public static final int scrollBarSize = 20;
+	public static int chartMapHeight = 20;
 
 	public static int tailHeight;
 
 	static {
-		setSizesBasedOnNotesSizes();
+		updateEditAreaSizes(EditMode.TEMPO_MAP, null, 1);
 	}
 
-	public static void setSizesBasedOnNotesSizes() {
-		laneHeight = noteHeight * 3 / 2;
-		lanesHeight = laneHeight * maxStrings;
+	private static void setEditAreaSizesForTempoMap() {
+		laneHeight = 100;
+		tailHeight = 100;
+		lanesHeight = 100;
+		lanesBottom = lanesTop + lanesHeight;
+		handShapesY = lanesBottom;
+		editAreaHeight = handShapesY;
+
+		chartMapHeight = 15;
+	}
+
+	private static void setEditAreaSizesForVocals() {
+		laneHeight = 100;
+		tailHeight = 100;
+		lanesHeight = 100;
+		lanesBottom = lanesTop + lanesHeight;
+		handShapesY = lanesBottom;
+		editAreaHeight = handShapesY;
+
+		chartMapHeight = Config.chartMapHeightMultiplier * 5;
+	}
+
+	private static void setEditAreaSizesForGuitar(final ArrangementType arrangementType, final int strings) {
+		laneHeight = (int) (noteHeight * (arrangementType == ArrangementType.Bass ? 2 : 1.5));
+		tailHeight = getAsOdd(noteHeight * 3 / 4);
+		lanesHeight = laneHeight * strings;
 		lanesBottom = lanesTop + lanesHeight;
 		handShapesY = lanesBottom + 30;
 		editAreaHeight = handShapesY + 20;
 
-		tailHeight = getAsOdd(noteHeight * 3 / 4);
+		chartMapHeight = 2 * chartMapHeightMultiplier + 1 + maxStrings * chartMapHeightMultiplier;
+	}
+
+	public static void updateEditAreaSizes(final EditMode editMode, final ArrangementType arrangementType,
+			final int strings) {
+		switch (editMode) {
+		case GUITAR:
+			setEditAreaSizesForGuitar(arrangementType, strings);
+			break;
+		case VOCALS:
+			setEditAreaSizesForVocals();
+			break;
+		case TEMPO_MAP:
+		default:
+			setEditAreaSizesForTempoMap();
+			break;
+
+		}
 	}
 
 	public static int getAsOdd(final int x) {
 		return x % 2 == 0 ? x + 1 : x;
 	}
 
-	public static int getLaneSize(final int lanes) {
-		return getAsOdd((int) (DrawerUtils.lanesHeight * 0.8 / lanes));
+	public static int getLaneY(final int lane) {
+		return lanesTop + (int) (laneHeight * (lane + 0.5));
 	}
 
-	public static int getLaneY(final int lane, final int lanesNo) {
-		final int lanePositionInLanes = (int) (lanesHeight * (getStringPosition(lane, lanesNo) + 0.5) / lanesNo);
-		return lanesTop + lanePositionInLanes;
-	}
+	public static int yToString(double y, final int lanesNo) {
+		if (y > lanesBottom) {
+			y = lanesBottom;
+		}
+		if (y < lanesTop) {
+			y = lanesTop;
+		}
 
-	public static int yToLane(final double y, final int lanesNo) {
-		final int lane = getStringPosition((int) ((y - lanesTop) * lanesNo / lanesHeight), lanesNo);
+		final int lane = getStringPosition((int) ((y - lanesTop) / laneHeight), lanesNo);
 		return max(0, min(lanesNo - 1, lane));
 	}
 
