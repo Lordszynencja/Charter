@@ -1,7 +1,5 @@
 package log.charter.gui.components.preview3D;
 
-import static log.charter.gui.components.preview3D.Matrix4.moveMatrix;
-
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -14,6 +12,9 @@ import org.lwjgl.opengl.awt.GLData;
 import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
+import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
+import log.charter.gui.components.preview3D.shaders.ShadersHolder;
+import log.charter.gui.components.preview3D.shapes.Texture;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.io.Logger;
 
@@ -23,15 +24,18 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 	private ChartData data;
 	private ModeManager modeManager;
 
-	private final BaseShader baseShader = new BaseShader();
+	private final ShadersHolder shadersHolder = new ShadersHolder();
+	private final TexturesHolder texturesHolder = new TexturesHolder();
 
 	private final Preview3DAnchorsDrawer anchorsDrawer = new Preview3DAnchorsDrawer();
 	private final Preview3DBeatsDrawer beatsDrawer = new Preview3DBeatsDrawer();
 	private final Preview3DCameraHandler cameraHandler = new Preview3DCameraHandler();
+	private final Preview3DFingeringDrawer fingeringDrawer = new Preview3DFingeringDrawer();
 	private final Preview3DFretLanesDrawer fretLanesDrawer = new Preview3DFretLanesDrawer();
 	private final Preview3DHandShapesDrawer handShapesDrawer = new Preview3DHandShapesDrawer();
 	private final Preview3DGuitarSoundsDrawer soundsDrawer = new Preview3DGuitarSoundsDrawer();
 	private final Preview3DStringsDrawer stringsDrawer = new Preview3DStringsDrawer();
+	private final Preview3DVideoDrawer videoDrawer = new Preview3DVideoDrawer();
 
 	private static GLData prepareGLData() {
 		final GLData data = new GLData();
@@ -51,10 +55,12 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		anchorsDrawer.init(data);
 		beatsDrawer.init(data);
 		cameraHandler.init(data);
+		fingeringDrawer.init(data, texturesHolder);
 		fretLanesDrawer.init(data);
 		handShapesDrawer.init(data);
 		soundsDrawer.init(data);
 		stringsDrawer.init(data);
+		videoDrawer.init(data);
 
 		addMouseMotionListener(this);
 		addKeyListener(keyboardHandler);
@@ -101,12 +107,17 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		mouseY = e.getY();
 	}
 
+	Texture sprite;
+
 	@Override
 	public void initGL() {
 		try {
 			GL.createCapabilities();
 
-			baseShader.init();
+			shadersHolder.init();
+			texturesHolder.init();
+
+			videoDrawer.initGL();
 
 			GL30.glEnable(GL30.GL_DEPTH_TEST);
 			GL30.glDepthFunc(GL30.GL_GEQUAL);
@@ -123,7 +134,6 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 	@Override
 	public void paintGL() {
 		try {
-			baseShader.use();
 			GL30.glViewport(0, 0, getWidth(), getHeight());
 			GL30.glClearColor(0.25f, 0.25f, 0.25f, 1);
 			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
@@ -135,24 +145,27 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 
 			cameraHandler.updateCamera(1.0 * getWidth() / getHeight(), ((double) mouseX) / getWidth(),
 					((double) mouseY) / getHeight());
-			baseShader.setSceneMatrix(cameraHandler.currentMatrix);
+			shadersHolder.setSceneMatrix(cameraHandler.currentMatrix);
 
-			baseShader.setModelMatrix(moveMatrix(0, 0, 0));
-			stringsDrawer.draw(baseShader);
-			fretLanesDrawer.draw(baseShader);
-			anchorsDrawer.draw(baseShader);
-			handShapesDrawer.draw(baseShader);
-			beatsDrawer.draw(baseShader);
-			soundsDrawer.draw(baseShader);
+			videoDrawer.draw(shadersHolder, getWidth(), getHeight());
+			stringsDrawer.draw(shadersHolder);
+			fretLanesDrawer.draw(shadersHolder);
+			anchorsDrawer.draw(shadersHolder);
+			handShapesDrawer.draw(shadersHolder);
+			beatsDrawer.draw(shadersHolder);
+			soundsDrawer.draw(shadersHolder);
+			fingeringDrawer.draw(shadersHolder);
 
 //		drawFretNumbers(shapesList);
 
-			baseShader.stopUsing();
+			shadersHolder.clearShader();
 
 			swapBuffers();
 		} catch (final Exception e) {
 			Logger.error("Exception in paintGL", e);
 			throw e;
+		} catch (final Error error) {
+			error.printStackTrace();
 		}
 	}
 }

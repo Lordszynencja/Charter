@@ -15,7 +15,10 @@ import java.awt.Color;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
-import log.charter.gui.components.preview3D.BaseShader.BaseShaderDrawData;
+import log.charter.gui.components.preview3D.glUtils.Matrix4;
+import log.charter.gui.components.preview3D.glUtils.Point3D;
+import log.charter.gui.components.preview3D.shaders.ShadersHolder;
+import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
 import log.charter.song.Anchor;
 import log.charter.song.EventPoint;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -29,8 +32,8 @@ public class Preview3DAnchorsDrawer {
 		this.data = data;
 	}
 
-	public void draw(final BaseShader shader) {
-		final BaseShaderDrawData drawData = shader.new BaseShaderDrawData();
+	public void draw(final ShadersHolder shadersHolder) {
+		final BaseShaderDrawData drawData = shadersHolder.new BaseShaderDrawData();
 		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 		int anchorsFrom = findLastIdBeforeEqual(anchors, data.time);
 		if (anchorsFrom == -1) {
@@ -57,7 +60,7 @@ public class Preview3DAnchorsDrawer {
 			drawAnchor(drawData, anchor, timeTo);
 		}
 
-		drawData.draw(GL30.GL_QUADS);
+		drawData.draw(GL30.GL_QUADS, Matrix4.identity);
 	}
 
 	private void drawAnchor(final BaseShaderDrawData drawData, final Anchor anchor, final int anchorEnd) {

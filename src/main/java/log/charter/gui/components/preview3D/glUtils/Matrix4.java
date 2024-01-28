@@ -1,4 +1,4 @@
-package log.charter.gui.components.preview3D;
+package log.charter.gui.components.preview3D.glUtils;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;

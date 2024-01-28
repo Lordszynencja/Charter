@@ -1,4 +1,4 @@
-package log.charter.gui.components.preview3D;
+package log.charter.gui.components.preview3D.glUtils;
 
 import java.util.Comparator;
 
@@ -55,6 +55,6 @@ public class Point3D {
 	}
 
 	public Point3D descale() {
-		return new Point3D(x / w, y / w, z / 2, 1);
+		return new Point3D(x / w, y / w, z / w, 1);
 	}
 }

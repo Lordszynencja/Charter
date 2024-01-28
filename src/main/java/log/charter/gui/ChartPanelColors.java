@@ -126,6 +126,7 @@ public class ChartPanelColors {
 		PREVIEW_3D_CHORD_PALM_MUTE(0, 128, 160), //
 		PREVIEW_3D_ANCHOR(0, 0, 255, 64), //
 		PREVIEW_3D_FRET_LANE(64, 192, 255), //
+		PREVIEW_3D_ARPEGGIO(192, 64, 255), //
 		PREVIEW_3D_BEAT(64, 128, 255);
 
 		private final Color defaultColor;

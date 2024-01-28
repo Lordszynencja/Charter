@@ -6,12 +6,16 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.visibilityZ;
 
 import java.awt.Color;
 
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.preview3D.BaseShader.BaseShaderDrawData;
+import log.charter.gui.components.preview3D.glUtils.Matrix4;
+import log.charter.gui.components.preview3D.glUtils.Point3D;
+import log.charter.gui.components.preview3D.shaders.ShadersHolder;
+import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
 
 public class Preview3DFretLanesDrawer {
 	private ChartData data;
@@ -20,8 +24,8 @@ public class Preview3DFretLanesDrawer {
 		this.data = data;
 	}
 
-	public void draw(final BaseShader baseShader) {
-		final BaseShaderDrawData drawData = baseShader.new BaseShaderDrawData();
+	public void draw(final ShadersHolder shadersHolder) {
+		final BaseShaderDrawData drawData = shadersHolder.new BaseShaderDrawData();
 		final Color color = ColorLabel.PREVIEW_3D_FRET_LANE.color();
 		final double y = getChartboardYPosition(data.currentStrings());
 
@@ -31,6 +35,7 @@ public class Preview3DFretLanesDrawer {
 					.addVertex(new Point3D(x, y, visibilityZ), color);
 		}
 
-		drawData.draw(GL33.GL_LINES);
+		GL30.glLineWidth(1);
+		drawData.draw(GL33.GL_LINES, Matrix4.identity);
 	}
 }

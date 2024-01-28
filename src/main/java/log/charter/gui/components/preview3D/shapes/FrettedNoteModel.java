@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL30;
 
-import log.charter.gui.components.preview3D.Point3D;
+import log.charter.gui.components.preview3D.glUtils.Point3D;
 
 public class FrettedNoteModel implements Model {
 	public static final double width = 0.07;

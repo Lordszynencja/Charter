@@ -1,16 +1,16 @@
 package log.charter.gui.components.preview3D;
 
 import static java.lang.Math.min;
-import static log.charter.gui.components.preview3D.Matrix4.cameraMatrix;
-import static log.charter.gui.components.preview3D.Matrix4.moveMatrix;
-import static log.charter.gui.components.preview3D.Matrix4.rotationXMatrix;
-import static log.charter.gui.components.preview3D.Matrix4.scaleMatrix;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
-import static log.charter.gui.components.preview3D.Preview3DUtils.getTopStringYPosition;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.cameraMatrix;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationXMatrix;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -68,7 +68,7 @@ public class Preview3DCameraHandler {
 	public void updateCamera(final double aspectRatio, final double x, final double y) {
 		updateFretFocus();
 
-		final double camY = 1 + getTopStringYPosition() + (fretSpan - 4) * 0.2;
+		final double camY = 1 + Preview3DUtils.topStringPosition + (fretSpan - 4) * 0.2;
 		final double camZ = -2.6 + (fretSpan - 4) * 0.005;
 		final double camRotationX = 0.2 + (fretSpan - 4) * 0.015;
 

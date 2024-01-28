@@ -8,7 +8,7 @@ import java.util.Map;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.preview3D.Point3D;
+import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;

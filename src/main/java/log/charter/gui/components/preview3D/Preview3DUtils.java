@@ -18,12 +18,8 @@ public class Preview3DUtils {
 		return (getFretPosition(fret - 1) + getFretPosition(fret)) / 2;
 	}
 
-	public static double getTopStringYPosition() {
-		return topStringPosition;
-	}
-
 	public static double getChartboardYPosition(final int strings) {
-		return -2;
+		return -stringDistance * strings;
 	}
 
 	private static int invertStrings(final int string, final int strings) {
@@ -31,7 +27,7 @@ public class Preview3DUtils {
 	}
 
 	public static double getStringPosition(final int string, final int strings) {
-		return topStringPosition - invertStrings(string, strings) * (2.0 / strings);
+		return topStringPosition - invertStrings(string, strings) * stringDistance;
 	}
 
 	public static double getStringPositionWithBend(final int string, final int strings, final double bendValue) {

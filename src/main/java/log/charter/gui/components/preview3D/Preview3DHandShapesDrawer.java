@@ -15,7 +15,10 @@ import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.preview3D.BaseShader.BaseShaderDrawData;
+import log.charter.gui.components.preview3D.glUtils.Matrix4;
+import log.charter.gui.components.preview3D.glUtils.Point3D;
+import log.charter.gui.components.preview3D.shaders.ShadersHolder;
+import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
 import log.charter.song.Anchor;
 import log.charter.song.HandShape;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -50,6 +53,7 @@ public class Preview3DHandShapesDrawer {
 
 	private void addHandShape(final BaseShaderDrawData drawData, final HandShape handShape) {
 		final double y = getChartboardYPosition(data.currentStrings()) + 0.0002;
+		final boolean arpeggio = data.getCurrentArrangement().chordTemplates.get(handShape.templateId).arpeggio;
 
 		Anchor anchor = findLastBeforeEqual(data.getCurrentArrangementLevel().anchors, handShape.position());
 		if (anchor == null) {
@@ -64,15 +68,15 @@ public class Preview3DHandShapesDrawer {
 		final double z0 = getTimePosition(timeFrom);
 		final double z1 = getTimePosition(timeTo);
 
-		final Color color = ColorLabel.PREVIEW_3D_FRET_LANE.color();
+		final Color color = (arpeggio ? ColorLabel.PREVIEW_3D_ARPEGGIO : ColorLabel.PREVIEW_3D_FRET_LANE).color();
 		final Color alpha = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0);
 
 		addThickLine(drawData, anchor.fret - 1, y, z0, z1, color, alpha);
 		addThickLine(drawData, anchor.topFret(), y, z0, z1, color, alpha);
 	}
 
-	public void draw(final BaseShader baseShader) {
-		final BaseShaderDrawData drawData = baseShader.new BaseShaderDrawData();
+	public void draw(final ShadersHolder shadersHolder) {
+		final BaseShaderDrawData drawData = shadersHolder.new BaseShaderDrawData();
 
 		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
 		int idFrom = findLastIdBeforeEqual(handShapes, data.time);
@@ -85,6 +89,6 @@ public class Preview3DHandShapesDrawer {
 			addHandShape(drawData, handShapes.get(i));
 		}
 
-		drawData.draw(GL30.GL_QUADS);
+		drawData.draw(GL30.GL_QUADS, Matrix4.identity);
 	}
 }

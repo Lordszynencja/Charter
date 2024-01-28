@@ -14,7 +14,10 @@ import org.lwjgl.opengl.GL30;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.preview3D.BaseShader.BaseShaderDrawData;
+import log.charter.gui.components.preview3D.glUtils.Matrix4;
+import log.charter.gui.components.preview3D.glUtils.Point3D;
+import log.charter.gui.components.preview3D.shaders.ShadersHolder;
+import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
 import log.charter.song.Beat;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -27,8 +30,8 @@ public class Preview3DBeatsDrawer {
 		this.data = data;
 	}
 
-	public void draw(final BaseShader shader) {
-		final BaseShaderDrawData drawData = shader.new BaseShaderDrawData();
+	public void draw(final ShadersHolder shadersHolder) {
+		final BaseShaderDrawData drawData = shadersHolder.new BaseShaderDrawData();
 		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
 		int beatsFrom = findFirstIdAfterEqual(beats, data.time);
 		if (beatsFrom == -1) {
@@ -76,6 +79,6 @@ public class Preview3DBeatsDrawer {
 
 		}
 
-		drawData.draw(GL30.GL_QUADS);
+		drawData.draw(GL30.GL_QUADS, Matrix4.identity);
 	}
 }
