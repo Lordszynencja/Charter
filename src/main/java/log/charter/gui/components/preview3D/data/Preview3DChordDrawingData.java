@@ -5,10 +5,12 @@ import log.charter.song.notes.Position;
 
 public class Preview3DChordDrawingData extends Position {
 	public final Mute mute;
+	public final boolean onlyBox;
 
-	public Preview3DChordDrawingData(final int position, final Mute mute) {
+	public Preview3DChordDrawingData(final int position, final Mute mute, final boolean onlyBox) {
 		super(position);
 		this.mute = mute;
+		this.onlyBox = onlyBox;
 	}
 
 }

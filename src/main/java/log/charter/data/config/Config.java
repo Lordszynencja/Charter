@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import javax.swing.JFrame;
+
 import log.charter.io.Logger;
 import log.charter.util.RW;
 
@@ -80,7 +82,7 @@ public class Config {
 	public static boolean showChordIds = false;
 	public static boolean createDefaultStretchesInBackground = true;
 	public static int frets = 24;
-	public static int maxStrings = 6;
+	public static int maxStrings = 9;
 	public static int maxBendValue = 3;
 	public static int FPS = 60;
 	public static int backupDelay = 600;
@@ -89,7 +91,15 @@ public class Config {
 	public static int windowPosY = 100;
 	public static int windowWidth = 1200;
 	public static int windowHeight = 700;
-	public static boolean windowFullscreen = false;
+	public static int windowExtendedState = JFrame.NORMAL;
+
+	public static int previewWindowPosX = 200;
+	public static int previewWindowPosY = 200;
+	public static int previewWindowWidth = 1200;
+	public static int previewWindowHeight = 700;
+	public static int previewWindowExtendedState = JFrame.NORMAL;
+	public static boolean previewWindowBorderless = false;
+
 	public static int zoomLvl = 100;
 	public static int stretchedMusicSpeed = 50;
 
@@ -131,7 +141,6 @@ public class Config {
 		valueAccessors.put("createDefaultStretchesInBackground", ValueAccessor
 				.forBoolean(v -> createDefaultStretchesInBackground = v, () -> createDefaultStretchesInBackground));
 		valueAccessors.put("frets", ValueAccessor.forInteger(v -> frets = v, () -> frets));
-		valueAccessors.put("maxStrings", ValueAccessor.forInteger(v -> maxStrings = v, () -> maxStrings));
 		valueAccessors.put("FPS", ValueAccessor.forInteger(v -> FPS = v, () -> FPS));
 		valueAccessors.put("backupDelay", ValueAccessor.forInteger(v -> backupDelay = v, () -> backupDelay));
 
@@ -141,8 +150,21 @@ public class Config {
 		valueAccessors.put("windowPosY", ValueAccessor.forInteger(v -> windowPosY = v, () -> windowPosY));
 		valueAccessors.put("windowWidth", ValueAccessor.forInteger(v -> windowWidth = v, () -> windowWidth));
 		valueAccessors.put("windowHeight", ValueAccessor.forInteger(v -> windowHeight = v, () -> windowHeight));
-		valueAccessors.put("windowFullscreen",
-				ValueAccessor.forBoolean(v -> windowFullscreen = v, () -> windowFullscreen));
+		valueAccessors.put("windowExtendedState",
+				ValueAccessor.forInteger(v -> windowExtendedState = v, () -> windowExtendedState));
+
+		valueAccessors.put("previewWindowPosX",
+				ValueAccessor.forInteger(v -> previewWindowPosX = v, () -> previewWindowPosX));
+		valueAccessors.put("previewWindowPosY",
+				ValueAccessor.forInteger(v -> previewWindowPosY = v, () -> previewWindowPosY));
+		valueAccessors.put("previewWindowWidth",
+				ValueAccessor.forInteger(v -> previewWindowWidth = v, () -> previewWindowWidth));
+		valueAccessors.put("previewWindowHeight",
+				ValueAccessor.forInteger(v -> previewWindowHeight = v, () -> previewWindowHeight));
+		valueAccessors.put("previewWindowExtendedState",
+				ValueAccessor.forInteger(v -> previewWindowExtendedState = v, () -> previewWindowExtendedState));
+		valueAccessors.put("previewWindowBorderless",
+				ValueAccessor.forBoolean(v -> previewWindowBorderless = v, () -> previewWindowBorderless));
 		valueAccessors.put("zoomLvl", ValueAccessor.forInteger(v -> zoomLvl = v, () -> zoomLvl));
 		valueAccessors.put("stretchedMusicSpeed",
 				ValueAccessor.forInteger(v -> stretchedMusicSpeed = v, () -> stretchedMusicSpeed));

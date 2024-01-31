@@ -14,7 +14,7 @@ public class Preview3DUtils {
 		return Config.leftHanded ? 1.5 - disposition : disposition;
 	}
 
-	public static double getFretMiddlePosition(final double fret) {
+	public static double getFretMiddlePosition(final int fret) {
 		return (getFretPosition(fret - 1) + getFretPosition(fret)) / 2;
 	}
 

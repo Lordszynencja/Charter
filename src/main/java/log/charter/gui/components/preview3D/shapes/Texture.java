@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL30;
 
+import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.io.Logger;
 
 public class Texture {
@@ -94,7 +95,11 @@ public class Texture {
 	}
 
 	public void replaceTexture(final BufferedImage newTexture) {
-		replaceTexture(newTexture.getWidth(), newTexture.getHeight(), getBuffer(newTexture));
+		replaceTexture(new BufferedTextureData(newTexture));
+	}
+
+	public void replaceTexture(final BufferedTextureData newTexture) {
+		replaceTexture(newTexture.width, newTexture.height, newTexture.buffer);
 	}
 
 	public void replaceTexture(final int width, final int height, final ByteBuffer buffer) {

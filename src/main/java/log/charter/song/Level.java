@@ -119,7 +119,10 @@ public class Level {
 
 		for (int j = id - 1; j >= 0; j--) {
 			final ChordOrNote previousSound = chordsAndNotes.get(j);
-			if (previousSound.isNote()) {
+			if (previousSound.isNote()//
+					|| previousSound.chord.fullyMuted()//
+					|| previousSound.chord.palmMuted()//
+					|| previousSound.chord.templateId() != handShape.templateId) {
 				continue;
 			}
 			if (previousSound.position() < handShape.position()) {

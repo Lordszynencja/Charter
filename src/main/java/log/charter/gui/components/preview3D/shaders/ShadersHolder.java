@@ -26,7 +26,7 @@ public class ShadersHolder {
 
 	private String shaderInUse = null;
 
-	public void init() {
+	public void initGL() {
 		shadersMap.put(BASE_SHADER_NAME, baseShader);
 		shadersMap.put(BASE_TEXTURE_SHADER_NAME, baseTextureShader);
 		shadersMap.put(VIDEO_SHADER_NAME, videoShader);

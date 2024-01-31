@@ -23,6 +23,7 @@ import static java.awt.event.KeyEvent.VK_E;
 import static java.awt.event.KeyEvent.VK_END;
 import static java.awt.event.KeyEvent.VK_ESCAPE;
 import static java.awt.event.KeyEvent.VK_F11;
+import static java.awt.event.KeyEvent.VK_F12;
 import static java.awt.event.KeyEvent.VK_F2;
 import static java.awt.event.KeyEvent.VK_F3;
 import static java.awt.event.KeyEvent.VK_F4;
@@ -1293,10 +1294,6 @@ public class KeyboardHandler implements KeyListener {
 		data.setNextTime(bookmark);
 	}
 
-	private void switchFullscreenPreview() {
-		frame.switchFullscreenPreview();
-	}
-
 	private final Map<Integer, KeyHandler> keyHandlers = new HashMap<>();
 
 	private void prepareHandlers() {
@@ -1371,7 +1368,8 @@ public class KeyboardHandler implements KeyListener {
 		key(VK_F3).singleFunction(audioHandler::toggleClaps);
 		key(VK_F4).singleFunction(audioHandler::toggleMetronome);
 		key(VK_F5).singleFunction(audioDrawer::toggle);
-		key(VK_F11).singleFunction(this::switchFullscreenPreview);
+		key(VK_F11).singleFunction(frame::switchWindowedPreview);
+		key(VK_F12).singleFunction(frame::switchBorderlessWindowedPreview);
 	}
 
 	private static final List<Integer> keysNotClearingMousePressesOnPress = asList(//

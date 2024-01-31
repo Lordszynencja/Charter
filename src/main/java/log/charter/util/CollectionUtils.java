@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -22,6 +23,27 @@ public class CollectionUtils {
 			this.a = a;
 			this.b = b;
 		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(a, b);
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final Pair<?, ?> other = (Pair<?, ?>) obj;
+			return Objects.equals(a, other.a) && Objects.equals(b, other.b);
+		}
+
 	}
 
 	public static class ArrayList2<T> extends ArrayList<T> {

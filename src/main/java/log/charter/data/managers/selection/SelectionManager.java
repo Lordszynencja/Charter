@@ -209,9 +209,13 @@ public class SelectionManager {
 		frame.selectionChanged(true);
 	}
 
-	public void addSoundSelection(final int id) {
-		chordsNotesManager.add(id);
+	public void addSelection(final PositionType type, final int id) {
+		typeSelectionManagers.get(type).add(id);
 		frame.selectionChanged(true);
+	}
+
+	public void addSoundSelection(final int id) {
+		addSelection(PositionType.GUITAR_NOTE, id);
 	}
 
 	public void addSoundSelection(final ArrayList2<Integer> ids) {

@@ -1,4 +1,4 @@
-package log.charter.gui.components.preview3D;
+package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -9,12 +9,14 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.visibility;
 import static log.charter.gui.components.preview3D.Preview3DUtils.visibilityZ;
 import static log.charter.song.notes.IPosition.findFirstAfter;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
+import static log.charter.util.Utils.isDottedFret;
 
 import java.awt.Color;
 
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
+import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
@@ -24,6 +26,7 @@ import log.charter.song.EventPoint;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DAnchorsDrawer {
+
 	private ChartData data;
 
 	public Matrix4 currentMatrix;
@@ -64,8 +67,6 @@ public class Preview3DAnchorsDrawer {
 	}
 
 	private void drawAnchor(final BaseShaderDrawData drawData, final Anchor anchor, final int anchorEnd) {
-		final double x0 = getFretPosition(anchor.fret - 1);
-		final double x1 = getFretPosition(anchor.fret + anchor.width - 1);
 		final double y = getChartboardYPosition(data.currentStrings()) - 0.001;
 		final double z0 = max(0, getTimePosition(anchor.position() - data.time));
 		final double z1 = min(visibilityZ, getTimePosition(anchorEnd - data.time));
@@ -74,10 +75,16 @@ public class Preview3DAnchorsDrawer {
 			return;
 		}
 
-		final Color color = new Color(0, 0, 255, 64);
-		drawData.addVertex(new Point3D(x0, y, z0), color)//
-				.addVertex(new Point3D(x1, y, z0), color)//
-				.addVertex(new Point3D(x1, y, z1), color)//
-				.addVertex(new Point3D(x0, y, z1), color);
+		for (int fret = anchor.fret; fret < anchor.fret + anchor.width; fret++) {
+			final double x0 = getFretPosition(fret - 1);
+			final double x1 = getFretPosition(fret);
+			final Color color = (isDottedFret(fret) ? ColorLabel.PREVIEW_3D_LANE_DOTTED : ColorLabel.PREVIEW_3D_LANE)
+					.color();
+
+			drawData.addVertex(new Point3D(x0, y, z0), color)//
+					.addVertex(new Point3D(x1, y, z0), color)//
+					.addVertex(new Point3D(x1, y, z1), color)//
+					.addVertex(new Point3D(x0, y, z1), color);
+		}
 	}
 }

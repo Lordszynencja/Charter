@@ -227,9 +227,11 @@ public class Localization {
 		GUITAR_MENU_MARK_HAND_SHAPE("Mark hand shape"), //
 		GUITAR_MENU_EDIT_HAND_SHAPE("Edit hand shape"), //
 		GUITAR_MENU_AUTOCREATE_FHP("Autocreate Fret Hand Positions"), //
-		GUITAR_MENU_FULL_SCREEN_PREVIEW("Full screen preview"), //
+		GUITAR_MENU_WINDOWED_PREVIEW("Windowed preview"), //
+		GUITAR_MENU_BORDERLESS_WINDOWED_PREVIEW("Borderless windowed preview"), //
 
 		TEMPO_BEAT_PANE("Tempo beat options"), //
+		TEMPO_BEAT_PANE_BPM("BPM"), //
 		TEMPO_BEAT_PANE_BEATS_IN_MEASURE("Beats in measure"), //
 		TEMPO_BEAT_PANE_NOTE_DENOMINATOR("Note denominator"), //
 

@@ -1,34 +1,22 @@
-package log.charter.gui.components.preview3D;
+package log.charter.gui.components.preview3D.drawers;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
+import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shapes.Texture;
 
 public class Preview3DVideoDrawer {
-	private static class BufferData {
-		public final ByteBuffer buffer;
-		public final int width;
-		public final int height;
-
-		public BufferData(final ByteBuffer buffer, final int width, final int height) {
-			this.buffer = buffer;
-			this.width = width;
-			this.height = height;
-		}
-	}
-
 	@SuppressWarnings("unused")
 	private ChartData data;
 
 	private final BufferedImage image = new BufferedImage(16, 9, BufferedImage.TYPE_INT_RGB);
 	private final boolean imageChanged = true;
-	private BufferData bufferData = null;
+	private BufferedTextureData bufferData = null;
 	private Texture texture = null;
 
 	public void init(final ChartData data) {
@@ -54,14 +42,14 @@ public class Preview3DVideoDrawer {
 			}
 
 			if (imageChanged) {
-				bufferData = new BufferData(Texture.getBuffer(image), image.getWidth(), image.getHeight());
+				bufferData = new BufferedTextureData(image);
 			}
 			nextFrameTime += 16_666_666;
 		}
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final int width, final int height) {
-		final BufferData currentBufferData = bufferData;
+		final BufferedTextureData currentBufferData = bufferData;
 
 		if (bufferData != null) {
 			texture.replaceTexture(currentBufferData.width, currentBufferData.height, currentBufferData.buffer);

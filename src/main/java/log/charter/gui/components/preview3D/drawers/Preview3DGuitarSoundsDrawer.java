@@ -1,4 +1,4 @@
-package log.charter.gui.components.preview3D;
+package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
@@ -27,6 +27,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
+import log.charter.gui.components.preview3D.Preview3DUtils;
 import log.charter.gui.components.preview3D.data.Preview3DChordDrawingData;
 import log.charter.gui.components.preview3D.data.Preview3DNoteData;
 import log.charter.gui.components.preview3D.data.Preview3DNotesData;
@@ -225,13 +226,17 @@ public class Preview3DGuitarSoundsDrawer {
 				.draw(GL30.GL_QUADS, Matrix4.identity);
 	}
 
-	private void drawChordShadow(final ShadersHolder shadersHolder, final int position, final Mute mute) {
-		final Anchor anchor = findAnchorForPosition(position);
+	private void drawChordBox(final ShadersHolder shadersHolder, final Preview3DChordDrawingData chord) {
+		final Anchor anchor = findAnchorForPosition(chord.position());
 		final double x0 = getFretPosition(anchor.fret - 1);
 		final double x1 = getFretPosition(anchor.topFret());
 		final double y0 = getChartboardYPosition(data.currentStrings());
-		final double y1 = Preview3DUtils.topStringPosition;
-		final double z = max(0, getTimePosition(position - data.time));
+		double y1 = Preview3DUtils.topStringPosition;
+		final double z = max(0, getTimePosition(chord.position() - data.time));
+
+		if (chord.onlyBox) {
+			y1 = (y0 + y1 * 2) / 3;
+		}
 
 		final Point3D p00 = new Point3D(x0, y0, z);
 		final Point3D p01 = new Point3D((x1 + x0) / 2, y0, z);
@@ -250,9 +255,9 @@ public class Preview3DGuitarSoundsDrawer {
 				.addVertex(p12, shadowInvisibleColor)//
 				.draw(GL30.GL_TRIANGLES, Matrix4.identity);
 
-		if (mute == Mute.FULL) {
+		if (chord.mute == Mute.FULL) {
 			drawFullChordMute(shadersHolder, x0, x1, y0, y1, z);
-		} else if (mute == Mute.PALM) {
+		} else if (chord.mute == Mute.PALM) {
 			drawPalmChordMute(shadersHolder, x0, x1, y0, y1, z);
 		}
 	}
@@ -465,13 +470,14 @@ public class Preview3DGuitarSoundsDrawer {
 				drawNote(shadersHolder, note, shouldBendDownwards);
 			}
 		}
+
 		for (int i = notesData.chords.size() - 1; i >= 0; i--) {
 			final Preview3DChordDrawingData chord = notesData.chords.get(i);
 			if (chord.position() < data.time - highlightWindow) {
 				continue;
 			}
 
-			drawChordShadow(shadersHolder, chord.position(), chord.mute);
+			drawChordBox(shadersHolder, chord);
 		}
 	}
 

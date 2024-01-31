@@ -8,6 +8,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionManager;
+import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ParamsPane;
@@ -106,7 +107,8 @@ public class VocalPane extends ParamsPane {
 		undoSystem.addUndo();
 		selectionManager.clear();
 
-		data.songChart.vocals.insertNote(position, text, wordPart, phraseEnd);
+		final int vocalId = data.songChart.vocals.insertNote(position, text, wordPart, phraseEnd);
+		selectionManager.addSelection(PositionType.VOCAL, vocalId);
 	}
 
 	private void saveAndExit(final int id, final Vocal vocal) {

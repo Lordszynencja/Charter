@@ -4,41 +4,60 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import log.charter.data.config.Config;
 import log.charter.io.rs.xml.song.ArrangementTuning;
 
 public class Tuning {
-	private static final int[] getTuningValues(final int[] tuning, final int strings) {
-		final int[] tuningValues = Arrays.copyOf(tuning, strings);
-		for (int i = tuning.length; i < strings; i++) {
-			tuningValues[i] = tuning[tuning.length - 1];
+	private static int getStringPositionInFull(final int string, final int strings) {
+		final int stringOffset = strings <= 6 ? 3 : Config.maxStrings - strings;
+		return stringOffset + string;
+	}
+
+	private static int[] getTuningValues(final int[] tuning, final int strings) {
+		final int[] fullTuning = getFullTuning(tuning);
+		final int[] tuningValues = new int[strings];
+		for (int i = 0; i < strings; i++) {
+			tuningValues[i] = fullTuning[getStringPositionInFull(i, strings)];
 		}
 
 		return tuningValues;
 	}
 
-	private static final int[] standardStringDistances = { 0, 5, 10, 15, 19, 24 };
+	private static int[] getFullTuning(final int[] tuning) {
+		final int[] fullTuning = new int[Config.maxStrings];
+		for (int i = 0; i < Config.maxStrings; i++) {
+			fullTuning[i] = tuning[tuning.length - 1];
+		}
+		for (int i = 0; i < tuning.length; i++) {
+			fullTuning[getStringPositionInFull(i, tuning.length)] = tuning[i];
+		}
+
+		return fullTuning;
+	}
+
+	private static final int[] standardStringDistances = { -15, -10, -5, 0, 5, 10, 15, 19, 24 };
 
 	public enum TuningType {
-		E_STANDARD("E standard", new int[] { 0, 0, 0, 0, 0, 0 }), //
-		E_DROP_D("E drop D", new int[] { -2, 0, 0, 0, 0, 0 }), //
-		E_DROP_C("E drop C", new int[] { -4, 0, 0, 0, 0, 0 }), //
-		E_FLAT_STANDARD("Eb standard", new int[] { -1, -1, -1, -1, -1, -1 }), //
-		E_FLAT_DROP_D_FLAT("Eb drop Db", new int[] { -3, -1, -1, -1, -1, -1 }), //
-		D_STANDARD("D standard", new int[] { -2, -2, -2, -2, -2, -2 }), //
-		D_DROP_C("D drop C", new int[] { -4, -2, -2, -2, -2, -2 }), //
-		C_SHARP_STANDARD("C# standard", new int[] { -3, -3, -3, -3, -3, -3 }), //
-		C_SHARP_DROP_B("C# drop B", new int[] { -5, -3, -3, -3, -3, -3 }), //
-		C_STANDARD("C standard", new int[] { -4, -4, -4, -4, -4, -4 }), //
-		B_STANDARD("B standard", new int[] { -5, -5, -5, -5, -5, -5 }), //
-		A_SHARP_STANDARD("A# standard", new int[] { -6, -6, -6, -6, -6, -6 }), //
-		A_STANDARD("A standard", new int[] { -7, -7, -7, -7, -7, -7 }), //
-		G_SHARP_STANDARD("G# standard", new int[] { -8, -8, -8, -8, -8, -8 }), //
-		G_STANDARD("G standard", new int[] { -9, -9, -9, -9, -9, -9 }), //
-		F_SHARP_STANDARD("F# standard", new int[] { -10, -10, -10, -10, -10, -10 }), //
-		F_STANDARD("F# standard", new int[] { -11, -11, -11, -11, -11, -11 }), //
-		OPEN_D("Open D", new int[] { -2, 0, 0, -1, -2, -2 }), //
-		OPEN_G("Open G", new int[] { -2, -2, 0, 0, 0, -2 }), //
-		CUSTOM("Custom", new int[] { 0, 0, 0, 0, 0, 0 });
+		E_STANDARD("E standard", new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }), //
+		E_DROP_D("E drop D", new int[] { 0, 0, 0, -2, 0, 0, 0, 0, 0 }), //
+		E_DROP_C("E drop C", new int[] { 0, 0, 0, -4, 0, 0, 0, 0, 0 }), //
+		E_FLAT_STANDARD("Eb standard", new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1 }), //
+		E_FLAT_DROP_D_FLAT("Eb drop Db", new int[] { -1, -1, -1, -3, -1, -1, -1, -1, -1 }), //
+		D_STANDARD("D standard", new int[] { -2, -2, -2, -2, -2, -2, -2, -2, -2 }), //
+		D_DROP_C("D drop C", new int[] { -2, -2, -2, -2, -4, -2, -2, -2, -2 }), //
+		C_SHARP_STANDARD("C# standard", new int[] { -3, -3, -3, -3, -3, -3, -3, -3, -3 }), //
+		C_SHARP_DROP_B("C# drop B", new int[] { -3, -3, -3, -5, -3, -3, -3, -3, -3 }), //
+		C_STANDARD("C standard", new int[] { -4, -4, -4, -4, -4, -4, -4, -4, -4 }), //
+		B_STANDARD("B standard", new int[] { -5, -5, -5, -5, -5, -5, -5, -5, -5 }), //
+		A_SHARP_STANDARD("A# standard", new int[] { -6, -6, -6, -6, -6, -6, -6, -6, -6 }), //
+		A_STANDARD("A standard", new int[] { -7, -7, -7, -7, -7, -7, -7, -7, -7 }), //
+		G_SHARP_STANDARD("G# standard", new int[] { -8, -8, -8, -8, -8, -8, -8, -8, -8 }), //
+		G_STANDARD("G standard", new int[] { -9, -9, -9, -9, -9, -9, -9, -9, -9 }), //
+		F_SHARP_STANDARD("F# standard", new int[] { -10, -10, -10, -10, -10, -10, -10, -10, -10 }), //
+		F_STANDARD("F# standard", new int[] { -11, -11, -11, -11, -11, -11, -11, -11, -11 }), //
+		OPEN_D("Open D", new int[] { 0, 0, 0, -2, 0, 0, -1, -2, -2 }), //
+		OPEN_G("Open G", new int[] { 0, 0, 0, -2, -2, 0, 0, 0, -2 }), //
+		CUSTOM("Custom", new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
 		public final String name;
 		public final int[] tuning;
@@ -67,7 +86,7 @@ public class Tuning {
 			return name + " (" + String.join(",", values) + ")";
 		}
 
-		public boolean isTuning(final int[] tuning) {
+		private boolean isFullTuning(final int[] tuning) {
 			for (int i = 0; i < tuning.length; i++) {
 				if (tuning[i] != this.tuning[i]) {
 					return false;
@@ -78,11 +97,11 @@ public class Tuning {
 		}
 
 		public static TuningType fromTuning(final int[] tuning) {
-			if (tuning.length <= 6) {
-				for (final TuningType type : values()) {
-					if (type.isTuning(tuning)) {
-						return type;
-					}
+			final int[] fullTuning = getFullTuning(tuning);
+
+			for (final TuningType type : values()) {
+				if (type.isFullTuning(fullTuning)) {
+					return type;
 				}
 			}
 
@@ -95,16 +114,8 @@ public class Tuning {
 	private int[] tuning = new int[strings];
 
 	public void strings(final int newStrings) {
-		if (newStrings > 6) {
-			tuningType = TuningType.CUSTOM;
-		}
-
 		if (tuningType == TuningType.CUSTOM) {
-			final int[] oldTuning = tuning;
-			tuning = new int[newStrings];
-			for (int i = 0; i < strings && i < newStrings; i++) {
-				tuning[i] = oldTuning[i];
-			}
+			tuning = getTuningValues(tuning, newStrings);
 		}
 
 		strings = newStrings;
@@ -139,32 +150,32 @@ public class Tuning {
 		strings(arrangementTuning.strings == 0 ? defaultStrings : arrangementTuning.strings);
 	}
 
+	public Tuning(final int[] tuning) {
+		strings = tuning.length;
+		this.tuning = tuning;
+		tuningType = TuningType.fromTuning(tuning);
+	}
+
 	public Tuning(final Tuning other) {
 		tuningType = other.tuningType;
 		strings = other.strings;
 		tuning = Arrays.copyOf(other.tuning, other.tuning.length);
 	}
 
-	public static final Tuning createFromGpTuning(int[] gpTuning, final int capo) {
+	public static final Tuning createFromGpTuning(final int[] gpTuning, final int capo) {
 		final int strings = gpTuning.length;
-		
-		int[] convertedTuning = new int[strings];
+		final int[] convertedTuning = new int[strings];
 
 		for (int i = 0; i < strings; i++) {
-			// A default E standard is offset by 40 from the Tuning E standard, and ordered in the opposite order
-			convertedTuning[i] = gpTuning[strings-1-i] - 40 - standardStringDistances[i] + capo;
+			// A default E standard is offset by 40 from the Tuning E standard, and ordered
+			// in the opposite order
+			final int gpStringPosition = strings - 1 - i;
+
+			convertedTuning[i] = gpTuning[gpStringPosition] - 40
+					- standardStringDistances[getStringPositionInFull(i, strings)] + capo;
 		}
-		final TuningType tuningType = TuningType.fromTuning(convertedTuning);
-		return new Tuning(tuningType, strings);
-	}
 
-	public void tuning(final TuningType tuningType) {
-		this.tuningType = tuningType;
-	}
-
-	public void tuning(final int[] tuning) {
-		tuningType = TuningType.CUSTOM;
-		this.tuning = tuning;
+		return new Tuning(convertedTuning);
 	}
 
 	public int[] getTuning(final int strings) {
@@ -186,6 +197,6 @@ public class Tuning {
 			return 0;
 		}
 
-		return standardStringDistances[string] + tuning[string];
+		return standardStringDistances[getStringPositionInFull(string, strings)] + tuning[string];
 	}
 }

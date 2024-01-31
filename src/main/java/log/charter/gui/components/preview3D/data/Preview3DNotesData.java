@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import log.charter.data.config.Config;
 import log.charter.song.ArrangementChart;
 import log.charter.song.ChordTemplate;
 import log.charter.song.Level;
@@ -28,18 +27,14 @@ public class Preview3DNotesData {
 		chords = new ArrayList<>();
 
 		notes = new ArrayList<>();
-		for (int i = 0; i < Config.maxStrings; i++) {
+		for (int i = 0; i < arrangement.tuning.strings; i++) {
 			notes.add(new ArrayList<>());
 		}
 		final ArrayList2<ChordOrNote> sounds = level.chordsAndNotes;
 
-		int soundsFrom = findLastIdBeforeEqual(sounds, fromTime);
-		if (soundsFrom == -1) {
-			soundsFrom = 0;
-		}
 		final int soundsTo = findLastIdBeforeEqual(sounds, toTime);
 
-		for (int i = soundsFrom; i <= soundsTo; i++) {
+		for (int i = 0; i <= soundsTo; i++) {
 			final ChordOrNote sound = sounds.get(i);
 			if (sound.endPosition() < fromTime) {
 				continue;
@@ -67,10 +62,11 @@ public class Preview3DNotesData {
 		final ChordNotesVisibility chordNotesVisibility = chord.chordNotesVisibility(level.shouldChordShowNotes(id));
 
 		if (chordNotesVisibility == ChordNotesVisibility.NONE) {
-			chords.add(new Preview3DChordDrawingData(chord.position(), chord.chordNotesValue(n -> n.mute, Mute.NONE)));
+			chords.add(new Preview3DChordDrawingData(chord.position(), chord.chordNotesValue(n -> n.mute, Mute.NONE),
+					true));
 		} else {
 			if (!chord.splitIntoNotes) {
-				chords.add(new Preview3DChordDrawingData(chord.position(), Mute.NONE));
+				chords.add(new Preview3DChordDrawingData(chord.position(), Mute.NONE, false));
 			}
 
 			final ChordTemplate chordTemplate = arrangement.chordTemplates.get(chord.templateId());

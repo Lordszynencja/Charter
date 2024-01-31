@@ -24,13 +24,14 @@ public class TexturesHolder {
 	}
 
 	private static final List<Pair<String, String>> texturesToLoad = asList(//
-			new Pair<>("fingering", "textures/fingering.png"));
+			new Pair<>("fingering", "textures/fingering.png"), //
+			new Pair<>("inlay", "textures/inlay.png"));
 
 	private Texture errorTexture;
 
 	private final Map<String, Texture> textures = new HashMap<>();
 
-	public void init() {
+	public void initGL() {
 		texturesToLoad.forEach(textureData -> textures.put(textureData.a, new Texture(new File(textureData.b))));
 
 		errorTexture = new Texture();

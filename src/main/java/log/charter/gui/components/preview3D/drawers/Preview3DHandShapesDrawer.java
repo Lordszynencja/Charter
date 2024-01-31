@@ -1,4 +1,4 @@
-package log.charter.gui.components.preview3D;
+package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -68,7 +68,7 @@ public class Preview3DHandShapesDrawer {
 		final double z0 = getTimePosition(timeFrom);
 		final double z1 = getTimePosition(timeTo);
 
-		final Color color = (arpeggio ? ColorLabel.PREVIEW_3D_ARPEGGIO : ColorLabel.PREVIEW_3D_FRET_LANE).color();
+		final Color color = (arpeggio ? ColorLabel.PREVIEW_3D_ARPEGGIO : ColorLabel.PREVIEW_3D_LANE_BORDER).color();
 		final Color alpha = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0);
 
 		addThickLine(drawData, anchor.fret - 1, y, z0, z1, color, alpha);

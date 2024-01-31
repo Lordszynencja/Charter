@@ -1,4 +1,4 @@
-package log.charter.gui.components.preview3D;
+package log.charter.gui.components.preview3D.drawers;
 
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
@@ -17,13 +17,12 @@ import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseTextureShaderDrawData;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
+import log.charter.song.Level;
+import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
-import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.IntRange;
 
 public class Preview3DFingeringDrawer {
-	private static final double fingeringZ = -0.01;
-
 	private static final Point2D fingerShapeSingle = new Point2D(0, 0);
 	private static final Point2D fingerShapeEnd = new Point2D(0.25, 0);
 	private static final Point2D fingerShapeMiddle = new Point2D(0.5, 0);
@@ -46,7 +45,7 @@ public class Preview3DFingeringDrawer {
 
 	private void addQuad(final BaseTextureShaderDrawData drawData, final double x0, final double x1, final double y0,
 			final double y1, final Point2D textureBase) {
-		drawData.addZQuad(x0, x1, y0, y1, fingeringZ, textureBase.x, textureBase.x + 0.25, textureBase.y,
+		drawData.addZQuad(x0, x1, y0, y1, -0.01, textureBase.x, textureBase.x + 0.25, textureBase.y,
 				textureBase.y + 0.25);
 	}
 
@@ -114,19 +113,33 @@ public class Preview3DFingeringDrawer {
 		}
 	}
 
+	private ChordTemplate findTemplateToUse() {
+		final Level level = data.getCurrentArrangementLevel();
+
+		final HandShape handShape = IPosition.findLastBeforeEqual(level.handShapes, data.time + 20);
+		if (handShape == null || handShape.endPosition() < data.time) {
+			return null;
+		}
+
+		final ChordOrNote sound = IPosition.findLastBeforeEqual(level.chordsAndNotes, data.time + 20);
+		if (sound.position() < handShape.position() || sound.isNote()) {
+			return data.getCurrentArrangement().chordTemplates.get(handShape.templateId);
+		}
+		if (sound.chord.fullyMuted()) {
+			return null;
+		}
+
+		return data.getCurrentArrangement().chordTemplates.get(sound.chord.templateId());
+	}
+
 	public void draw(final ShadersHolder shadersHolder) {
 		final BaseTextureShaderDrawData drawData = shadersHolder.new BaseTextureShaderDrawData();
 
-		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
-		final HandShape handShape = IPosition.findLastBeforeEqual(handShapes, data.time + 20);
-		if (handShape == null || handShape.endPosition() < data.time) {
+		final ChordTemplate template = findTemplateToUse();
+		if (template == null) {
 			return;
 		}
-		final ChordTemplate template = data.getCurrentArrangement().chordTemplates.get(handShape.templateId);
 
-		// TODO find fingering to show
-		// if there's a chord with different fingering going on then replace, with same
-		// offsets
 		addFingering(drawData, template.fingers, template.frets);
 
 		GL30.glDisable(GL30.GL_DEPTH_TEST);

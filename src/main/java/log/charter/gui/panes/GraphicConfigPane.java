@@ -1,10 +1,7 @@
 package log.charter.gui.panes;
 
-import static log.charter.data.config.Config.maxStrings;
-
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JScrollPane;
@@ -106,44 +103,12 @@ public class GraphicConfigPane extends ParamsPane {
 
 	private final List<Pair<ColorLabel, Color>> colors = new ArrayList<>();
 
-	private void removeUnseenColors() {
-		if (maxStrings >= 9) {
-			return;
-		}
-
-		final HashSet<ColorLabel> colorsToRemove = new HashSet<>();
-		if (maxStrings < 9) {
-			colorsToRemove.add(ColorLabel.LANE_8);
-			colorsToRemove.add(ColorLabel.LANE_BRIGHT_8);
-			colorsToRemove.add(ColorLabel.NOTE_8);
-			colorsToRemove.add(ColorLabel.NOTE_ACCENT_8);
-			colorsToRemove.add(ColorLabel.NOTE_TAIL_8);
-		}
-		if (maxStrings < 8) {
-			colorsToRemove.add(ColorLabel.LANE_7);
-			colorsToRemove.add(ColorLabel.LANE_BRIGHT_7);
-			colorsToRemove.add(ColorLabel.NOTE_7);
-			colorsToRemove.add(ColorLabel.NOTE_ACCENT_7);
-			colorsToRemove.add(ColorLabel.NOTE_TAIL_7);
-		}
-		if (maxStrings < 7) {
-			colorsToRemove.add(ColorLabel.LANE_6);
-			colorsToRemove.add(ColorLabel.LANE_BRIGHT_6);
-			colorsToRemove.add(ColorLabel.NOTE_6);
-			colorsToRemove.add(ColorLabel.NOTE_ACCENT_6);
-			colorsToRemove.add(ColorLabel.NOTE_TAIL_6);
-		}
-
-		colors.removeIf(pair -> colorsToRemove.contains(pair.a));
-	}
-
 	public GraphicConfigPane(final CharterFrame frame) {
 		super(frame, Label.GRAPHIC_CONFIG_PANE, getSizes());
 
 		for (final ColorLabel colorLabel : ColorLabel.values()) {
 			colors.add(new Pair<>(colorLabel, colorLabel.color()));
 		}
-		removeUnseenColors();
 
 		final JTable table = new JTable(new EmployeeTableModel());
 		for (int i = 1; i <= 3; i++) {

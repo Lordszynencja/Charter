@@ -1,5 +1,6 @@
 package log.charter.gui.components.preview3D;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -12,6 +13,18 @@ import org.lwjgl.opengl.awt.GLData;
 import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
+import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.components.preview3D.drawers.Preview3DAnchorsDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DBeatsDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DFingeringDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DGuitarSoundsDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DHandShapesDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DInlayDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DLaneBordersDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DLyricsDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DStringsFretsDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DVideoDrawer;
+import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shapes.Texture;
@@ -25,16 +38,19 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 	private ModeManager modeManager;
 
 	private final ShadersHolder shadersHolder = new ShadersHolder();
+	private final TextTexturesHolder textTexturesHolder = new TextTexturesHolder();
 	private final TexturesHolder texturesHolder = new TexturesHolder();
 
 	private final Preview3DAnchorsDrawer anchorsDrawer = new Preview3DAnchorsDrawer();
 	private final Preview3DBeatsDrawer beatsDrawer = new Preview3DBeatsDrawer();
 	private final Preview3DCameraHandler cameraHandler = new Preview3DCameraHandler();
 	private final Preview3DFingeringDrawer fingeringDrawer = new Preview3DFingeringDrawer();
-	private final Preview3DFretLanesDrawer fretLanesDrawer = new Preview3DFretLanesDrawer();
+	private final Preview3DGuitarSoundsDrawer guitarSoundsDrawer = new Preview3DGuitarSoundsDrawer();
 	private final Preview3DHandShapesDrawer handShapesDrawer = new Preview3DHandShapesDrawer();
-	private final Preview3DGuitarSoundsDrawer soundsDrawer = new Preview3DGuitarSoundsDrawer();
-	private final Preview3DStringsDrawer stringsDrawer = new Preview3DStringsDrawer();
+	private final Preview3DInlayDrawer inlayDrawer = new Preview3DInlayDrawer();
+	private final Preview3DLaneBordersDrawer laneBordersDrawer = new Preview3DLaneBordersDrawer();
+	private final Preview3DLyricsDrawer lyricsDrawer = new Preview3DLyricsDrawer();
+	private final Preview3DStringsFretsDrawer stringsFretsDrawer = new Preview3DStringsFretsDrawer();
 	private final Preview3DVideoDrawer videoDrawer = new Preview3DVideoDrawer();
 
 	private static GLData prepareGLData() {
@@ -53,13 +69,15 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		this.modeManager = modeManager;
 
 		anchorsDrawer.init(data);
-		beatsDrawer.init(data);
+		beatsDrawer.init(data, textTexturesHolder);
 		cameraHandler.init(data);
 		fingeringDrawer.init(data, texturesHolder);
-		fretLanesDrawer.init(data);
+		guitarSoundsDrawer.init(data);
 		handShapesDrawer.init(data);
-		soundsDrawer.init(data);
-		stringsDrawer.init(data);
+		inlayDrawer.init(data, texturesHolder);
+		laneBordersDrawer.init(data);
+		lyricsDrawer.init(data, textTexturesHolder);
+		stringsFretsDrawer.init(data);
 		videoDrawer.init(data);
 
 		addMouseMotionListener(this);
@@ -68,15 +86,6 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		mouseX = 500;
 		mouseY = 200;
 	}
-
-//
-//	private void drawFretNumbers(final Drawable3DShapesListForScene shapesList) {
-//		final Color color = ColorLabel.BASE_TEXT.color();
-//		final double y = getStringPosition(7);
-//		for (int i = 1; i <= Config.frets; i++) {
-//			shapesList.addText(color, 9.8, new Point3D(getFretMiddlePosition(i), y, 1), "" + i);
-//		}
-//	}
 
 	private int mouseX = 0;
 	private int mouseY = 0;
@@ -114,8 +123,9 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		try {
 			GL.createCapabilities();
 
-			shadersHolder.init();
-			texturesHolder.init();
+			shadersHolder.initGL();
+			textTexturesHolder.initGL();
+			texturesHolder.initGL();
 
 			videoDrawer.initGL();
 
@@ -135,7 +145,10 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 	public void paintGL() {
 		try {
 			GL30.glViewport(0, 0, getWidth(), getHeight());
-			GL30.glClearColor(0.25f, 0.25f, 0.25f, 1);
+
+			final Color backgroundColor = ColorLabel.PREVIEW_3D_BACKGROUND.color();
+			GL30.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
+					backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
 			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
 
 			if (data == null || data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
@@ -147,16 +160,18 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 					((double) mouseY) / getHeight());
 			shadersHolder.setSceneMatrix(cameraHandler.currentMatrix);
 
-			videoDrawer.draw(shadersHolder, getWidth(), getHeight());
-			stringsDrawer.draw(shadersHolder);
-			fretLanesDrawer.draw(shadersHolder);
+			// videoDrawer.draw(shadersHolder, getWidth(), getHeight());
+			stringsFretsDrawer.draw(shadersHolder);
+			laneBordersDrawer.draw(shadersHolder);
 			anchorsDrawer.draw(shadersHolder);
 			handShapesDrawer.draw(shadersHolder);
 			beatsDrawer.draw(shadersHolder);
-			soundsDrawer.draw(shadersHolder);
+			guitarSoundsDrawer.draw(shadersHolder);
+			inlayDrawer.draw(shadersHolder);
 			fingeringDrawer.draw(shadersHolder);
 
-//		drawFretNumbers(shapesList);
+			lyricsDrawer.draw(shadersHolder, 1.0 * getHeight() / getWidth(),
+					getHeight() < 500 ? 500.0 / getHeight() : 1);
 
 			shadersHolder.clearShader();
 

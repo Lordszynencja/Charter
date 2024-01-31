@@ -27,6 +27,7 @@ import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.ArrangementChart;
 import log.charter.song.ArrangementChart.ArrangementSubtype;
+import log.charter.song.ChordTemplate;
 import log.charter.song.configs.Tuning;
 import log.charter.song.configs.Tuning.TuningType;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -164,12 +165,17 @@ public class ArrangementSettingsPane extends ParamsPane {
 		addSelectTextOnFocus(capoInput);
 	}
 
+	private void setTuningValues() {
+		final int[] tuningValues = tuning.getTuning();
+		for (int i = 0; i < tuningValues.length; i++) {
+			tuningInputs.get(i).setTextWithoutEvent("" + tuningValues[i]);
+		}
+	}
+
 	private void addTuningInputs() {
-		final int[] tuningValues = tuning.getTuning(maxStrings);
-		for (int i = 0; i < maxStrings; i++) {
+		for (int i = 0; i < Config.maxStrings; i++) {
 			final int string = i;
-			addIntegerConfigValue(tuningInputsRow, 20 + i * 40, 0, null, tuningValues[i], 30,
-					createIntValidator(-24, 24, false), //
+			addIntegerConfigValue(tuningInputsRow, 20 + i * 40, 0, null, 0, 30, createIntValidator(-24, 24, false), //
 					val -> onTuningValueChanged(string, val), false);
 			final TextInputWithValidation tuningInput = (TextInputWithValidation) components.getLast();
 			tuningInput.setHorizontalAlignment(JTextField.CENTER);
@@ -180,6 +186,8 @@ public class ArrangementSettingsPane extends ParamsPane {
 				this.remove(tuningInput);
 			}
 		}
+
+		setTuningValues();
 	}
 
 	private void addMoveFretsCheckbox(final AtomicInteger row) {
@@ -199,10 +207,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 		ignoreEvents = true;
 		tuning = new Tuning(newTuningType, tuning.strings);
 
-		final int[] tuningValues = tuning.getTuning();
-		for (int i = 0; i < tuning.strings; i++) {
-			tuningInputs.get(i).setTextWithoutEvent(tuningValues[i] + "");
-		}
+		setTuningValues();
 
 		ignoreEvents = false;
 	}
@@ -223,6 +228,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 		for (int i = tuning.strings; i < oldStrings; i++) {
 			this.remove(tuningInputs.get(i));
 		}
+		setTuningValues();
 
 		repaint();
 
@@ -241,6 +247,27 @@ public class ArrangementSettingsPane extends ParamsPane {
 		ignoreEvents = false;
 	}
 
+	private void changeChordTemplate(final ChordTemplate chordTemplate, final int[] fretsDifference) {
+		boolean templateChanged = false;
+		for (final int string : new ArrayList<>(chordTemplate.frets.keySet())) {
+			if (string >= tuning.strings) {
+				chordTemplate.frets.remove(string);
+				chordTemplate.fingers.remove(string);
+			} else if (fretsDifference[string] != 0) {
+				templateChanged = true;
+				int newFret = chordTemplate.frets.get(string) + fretsDifference[string];
+				if (newFret < 0) {
+					newFret = 0;
+				}
+				chordTemplate.frets.put(string, newFret);
+			}
+		}
+
+		if (templateChanged) {
+			ChordTemplateFingerSetter.setSuggestedFingers(chordTemplate);
+		}
+	}
+
 	private void saveAndExit() {
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 
@@ -253,28 +280,16 @@ public class ArrangementSettingsPane extends ParamsPane {
 						: tuningBefore[string] - tuningAfter[string];
 			}
 
-			arrangement.chordTemplates.forEach(chordTemplate -> {
-				boolean templateChanged = false;
-				for (final int string : new ArrayList<>(chordTemplate.frets.keySet())) {
-					if (fretsDifference[string] != 0) {
-						templateChanged = true;
-						int newFret = chordTemplate.frets.get(string) + fretsDifference[string];
-						if (newFret < 0) {
-							newFret = 0;
-						}
-						chordTemplate.frets.put(string, newFret);
-					}
-				}
-
-				if (templateChanged) {
-					ChordTemplateFingerSetter.setSuggestedFingers(chordTemplate);
-				}
-			});
+			arrangement.chordTemplates.forEach(chordTemplate -> changeChordTemplate(chordTemplate, fretsDifference));
 
 			arrangement.levels.values().forEach(level -> {
 				level.chordsAndNotes.forEach(sound -> {
 					if (sound.isNote()) {
-						sound.note.fret = max(0, sound.note.fret + fretsDifference[sound.note.string]);
+						if (sound.note.string >= tuning.strings) {
+							sound.note.string = tuning.strings - 1;
+						} else {
+							sound.note.fret = max(0, sound.note.fret + fretsDifference[sound.note.string]);
+						}
 					}
 				});
 			});

@@ -6,9 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import log.charter.data.config.Config;
 import log.charter.io.Logger;
+import log.charter.util.ColorUtils;
 import log.charter.util.RW;
+import log.charter.util.Utils;
 
 public class ChartPanelColors {
 	public enum ColorLabel {
@@ -54,59 +55,15 @@ public class ChartPanelColors {
 		HARMONIC(255, 255, 255), //
 		PINCH_HARMONIC(0, 0, 0), //
 
-		LANE_0(96, 0, 0), //
-		LANE_BRIGHT_0(128, 0, 0), //
 		NOTE_0(192, 0, 0), //
-		NOTE_TAIL_0(224, 0, 0), //
-		NOTE_ACCENT_0(255, 0, 0), //
-
-		LANE_1(96, 96, 0), //
-		LANE_BRIGHT_1(128, 128, 0), //
 		NOTE_1(192, 192, 0), //
-		NOTE_TAIL_1(224, 224, 0), //
-		NOTE_ACCENT_1(255, 255, 0), //
-
-		LANE_2(0, 0, 144), //
-		LANE_BRIGHT_2(0, 0, 208), //
 		NOTE_2(16, 16, 224), //
-		NOTE_TAIL_2(24, 24, 224), //
-		NOTE_ACCENT_2(32, 32, 255), //
-
-		LANE_3(96, 48, 0), //
-		LANE_BRIGHT_3(128, 64, 0), //
 		NOTE_3(192, 96, 0), //
-		NOTE_TAIL_3(224, 105, 0), //
-		NOTE_ACCENT_3(255, 128, 0), //
-
-		LANE_4(0, 96, 0), //
-		LANE_BRIGHT_4(0, 128, 0), //
 		NOTE_4(0, 192, 0), //
-		NOTE_TAIL_4(0, 224, 0), //
-		NOTE_ACCENT_4(0, 255, 0), //
-
-		LANE_5(96, 0, 96), //
-		LANE_BRIGHT_5(128, 0, 128), //
 		NOTE_5(192, 0, 192), //
-		NOTE_TAIL_5(224, 0, 224), //
-		NOTE_ACCENT_5(255, 0, 255), //
-
-		LANE_6(48, 24, 0), //
-		LANE_BRIGHT_6(64, 32, 0), //
-		NOTE_6(96, 48, 0), //
-		NOTE_TAIL_6(160, 80, 0), //
-		NOTE_ACCENT_6(128, 64, 0), //
-
-		LANE_7(16, 16, 16), //
-		LANE_BRIGHT_7(48, 48, 48), //
-		NOTE_7(0, 0, 0), //
-		NOTE_TAIL_7(32, 32, 32), //
-		NOTE_ACCENT_7(255, 255, 255), //
-
-		LANE_8(128, 128, 128), //
-		LANE_BRIGHT_8(160, 160, 160), //
-		NOTE_8(255, 255, 255), //
-		NOTE_TAIL_8(224, 224, 224), //
-		NOTE_ACCENT_8(0, 0, 0), //
+		NOTE_6(0, 192, 192), //
+		NOTE_7(96, 48, 0), //
+		NOTE_8(128, 128, 128), //
 
 		ANCHOR(192, 32, 32), //
 		HAND_SHAPE(0, 128, 255), //
@@ -119,15 +76,20 @@ public class ChartPanelColors {
 		VOCAL_NOTE(0, 255, 255, 192), //
 		VOCAL_NOTE_WORD_PART(0, 0, 255, 192), //
 
+		PREVIEW_3D_BACKGROUND(0, 0, 0), //
 		PREVIEW_3D_CHORD_BOX(0, 192, 255), //
 		PREVIEW_3D_FULL_MUTE(255, 255, 255), //
 		PREVIEW_3D_PALM_MUTE(0, 0, 0), //
 		PREVIEW_3D_CHORD_FULL_MUTE(0, 128, 160), //
 		PREVIEW_3D_CHORD_PALM_MUTE(0, 128, 160), //
 		PREVIEW_3D_ANCHOR(0, 0, 255, 64), //
-		PREVIEW_3D_FRET_LANE(64, 192, 255), //
+		PREVIEW_3D_LANE(128, 128, 255, 64), //
+		PREVIEW_3D_LANE_DOTTED(0, 0, 192, 64), //
+		PREVIEW_3D_LANE_BORDER(64, 192, 255), //
 		PREVIEW_3D_ARPEGGIO(192, 64, 255), //
-		PREVIEW_3D_BEAT(64, 128, 255);
+		PREVIEW_3D_BEAT(64, 128, 255), //
+		PREVIEW_3D_LYRICS(255, 255, 255), //
+		PREVIEW_3D_LYRICS_PASSED(255, 192, 128);
 
 		private final Color defaultColor;
 
@@ -153,15 +115,24 @@ public class ChartPanelColors {
 	}
 
 	public static Color getStringBasedColor(final StringColorLabelType type, final int string, final int strings) {
-		if (strings <= 6) {
-			return ColorLabel.valueOf(type.name() + "_" + string).color();
-		}
+		final int stringId = Utils.stringId(string, strings);
 
-		final int offset = strings - 6;
-		if (string < offset) {
-			return ColorLabel.valueOf(type.name() + "_" + (Config.maxStrings - string - 1)).color();
+		final Color base = ColorLabel.valueOf("NOTE_" + stringId).color();
+
+		switch (type) {
+		case LANE:
+			return ColorUtils.multiplyColor(base, 0.5);
+		case LANE_BRIGHT:
+			return ColorUtils.multiplyColor(base, 0.66);
+		case NOTE:
+			return base;
+		case NOTE_TAIL:
+			return ColorUtils.multiplyColor(base, 1.2);
+		case NOTE_ACCENT:
+			return ColorUtils.multiplyColor(base, 1.5);
+		default:
+			return base;
 		}
-		return ColorLabel.valueOf(type.name() + "_" + (string - offset)).color();
 	}
 
 	private static final String colorFilePath = new File(RW.getProgramDirectory(), "colors.txt").getAbsolutePath();

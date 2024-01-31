@@ -73,7 +73,9 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_AUTOCREATE_FHP, null, this::addFHP));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_FULL_SCREEN_PREVIEW, "F11", frame::switchFullscreenPreview));
+		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_WINDOWED_PREVIEW, "F11", frame::switchWindowedPreview));
+		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_BORDERLESS_WINDOWED_PREVIEW, "F12",
+				frame::switchBorderlessWindowedPreview));
 
 		return menu;
 	}

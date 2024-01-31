@@ -1,6 +1,6 @@
 package log.charter.gui;
 
-import static log.charter.data.config.Config.windowFullscreen;
+import static log.charter.data.config.Config.windowExtendedState;
 import static log.charter.data.config.Config.windowHeight;
 import static log.charter.data.config.Config.windowWidth;
 
@@ -37,6 +37,7 @@ import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.components.ChartMap;
+import log.charter.gui.components.preview3D.Preview3DFrame;
 import log.charter.gui.components.preview3D.Preview3DPanel;
 import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
@@ -68,8 +69,8 @@ public class CharterFrame extends JFrame {
 	private final Preview3DPanel preview3DPanel = new Preview3DPanel();
 	private final JTabbedPane tabs = createTabs();
 
-	private final JFrame fullscreenPreviewFrame = new JFrame();
-	private final Preview3DPanel fullscreenPreview3DPanel = new Preview3DPanel();
+	private final Preview3DFrame windowedPreviewFrame = new Preview3DFrame();
+	private final Preview3DPanel windowedPreview3DPanel = new Preview3DPanel();
 
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
 	private final ArrangementValidator arrangementValidator = new ArrangementValidator();
@@ -112,12 +113,10 @@ public class CharterFrame extends JFrame {
 
 		setLayout(null);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		setLocationByPlatform(true);
+
 		setSize(Config.windowWidth, Config.windowHeight);
-		if (Config.windowFullscreen) {
-			setExtendedState(JFrame.MAXIMIZED_BOTH);
-		}
 		setLocation(Config.windowPosX, Config.windowPosY);
+		setExtendedState(windowExtendedState);
 
 		arrangementFixer.init(data);
 		arrangementValidator.init(data, this);
@@ -148,12 +147,8 @@ public class CharterFrame extends JFrame {
 		currentSelectionEditor.init(arrangementFixer, data, this, keyboardHandler, selectionManager, undoSystem);
 		preview3DPanel.init(data, keyboardHandler, modeManager);
 
-		fullscreenPreview3DPanel.init(data, keyboardHandler, modeManager);
-		fullscreenPreviewFrame.addKeyListener(keyboardHandler);
-		fullscreenPreviewFrame.addWindowFocusListener(new CharterFrameWindowFocusListener(this));
-		fullscreenPreviewFrame.add(fullscreenPreview3DPanel);
-		fullscreenPreviewFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		fullscreenPreviewFrame.setUndecorated(true);
+		windowedPreview3DPanel.init(data, keyboardHandler, modeManager);
+		windowedPreviewFrame.init(keyboardHandler, windowedPreview3DPanel);
 
 		add(chartToolbar);
 		add(chartPanel);
@@ -163,7 +158,7 @@ public class CharterFrame extends JFrame {
 
 		addComponentListener(new CharterFrameComponentListener(this));
 		addKeyListener(keyboardHandler);
-		addWindowFocusListener(new CharterFrameWindowFocusListener(this));
+		addWindowFocusListener(new CharterFrameWindowFocusListener(keyboardHandler));
 		addWindowListener(new CharterFrameWindowListener(this));
 
 		setGuitarHelp();
@@ -190,7 +185,7 @@ public class CharterFrame extends JFrame {
 	public void resize() {
 		windowHeight = getHeight();
 		windowWidth = getWidth();
-		windowFullscreen = getExtendedState() == JFrame.MAXIMIZED_BOTH;
+		windowExtendedState = getExtendedState();
 		Config.markChanged();
 
 		resizeComponents();
@@ -218,8 +213,16 @@ public class CharterFrame extends JFrame {
 		songFileHandler.open(path);
 	}
 
-	public void switchFullscreenPreview() {
-		fullscreenPreviewFrame.setVisible(!fullscreenPreviewFrame.isVisible());
+	public void switchWindowedPreview() {
+		windowedPreviewFrame.setVisible(!windowedPreviewFrame.isVisible());
+	}
+
+	public void switchBorderlessWindowedPreview() {
+		if (windowedPreviewFrame.isUndecorated()) {
+			windowedPreviewFrame.setWindowed();
+		} else {
+			windowedPreviewFrame.setBorderlessFullScreen();
+		}
 	}
 
 	private void frame() {
@@ -229,14 +232,14 @@ public class CharterFrame extends JFrame {
 
 			data.time = (int) data.nextTime;
 
-			if (isFocused()) {
+			repaint();
+			if (preview3DPanel.isShowing()) {
 				preview3DPanel.repaint();
-				repaint();
 			}
 
-			if (fullscreenPreviewFrame.isFocused()) {
-				fullscreenPreviewFrame.repaint();
-				fullscreenPreview3DPanel.repaint();
+			if (windowedPreviewFrame.isShowing()) {
+				windowedPreviewFrame.repaint();
+				windowedPreview3DPanel.repaint();
 			}
 		} catch (final Exception e) {
 			Logger.error("Error in frame", e);
@@ -374,8 +377,8 @@ public class CharterFrame extends JFrame {
 	public void exit() {
 		audioHandler.stopMusic();
 
-		fullscreenPreviewFrame.setVisible(false);
-		fullscreenPreviewFrame.repaint();
+		windowedPreviewFrame.setVisible(false);
+		windowedPreviewFrame.repaint();
 
 		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this, Label.EXIT_MESSAGE.label(),
 				Label.EXIT_POPUP.label(), JOptionPane.YES_NO_OPTION)) {
@@ -383,7 +386,7 @@ public class CharterFrame extends JFrame {
 				return;
 			}
 
-			fullscreenPreviewFrame.dispose();
+			windowedPreviewFrame.dispose();
 			dispose();
 			StretchedFileLoader.stopAllProcesses();
 			System.exit(0);

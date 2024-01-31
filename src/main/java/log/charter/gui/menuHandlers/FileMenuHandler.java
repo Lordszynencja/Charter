@@ -13,6 +13,7 @@ import log.charter.gui.components.SpecialMenuItem;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.panes.ConfigPane;
 import log.charter.gui.panes.GraphicConfigPane;
+import log.charter.io.Logger;
 import log.charter.io.gp.gp5.GP5File;
 import log.charter.io.gp.gp5.GP5FileReader;
 import log.charter.util.FileChooseUtils;
@@ -78,20 +79,14 @@ public class FileMenuHandler extends CharterMenuHandler {
 			return;
 		}
 
-		final GP5File gp5File = GP5FileReader.importGPFile(file);
-		data.songChart.addGP5Arrangements(gp5File);
-		arrangementFixer.fixArrangement();
+		try {
+			final GP5File gp5File = GP5FileReader.importGPFile(file);
+			data.songChart.addGP5Arrangements(gp5File);
+			arrangementFixer.fixArrangement();
 
-		charterMenuBar.refreshMenus();
-	}
-
-	public void importGPFile(final String filePath) {
-		final File file = new File(filePath);
-
-		final GP5File gp5File = GP5FileReader.importGPFile(file);
-		data.songChart.addGP5Arrangements(gp5File);
-		arrangementFixer.fixArrangement();
-
-		charterMenuBar.refreshMenus();
+			charterMenuBar.refreshMenus();
+		} catch (final Exception e) {
+			Logger.error("Couldn't import gp5 file " + file.getAbsolutePath(), e);
+		}
 	}
 }

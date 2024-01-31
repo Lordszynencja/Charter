@@ -83,7 +83,10 @@ public class ParamsPane extends JDialog {
 		this.frame = frame;
 		this.sizes = sizes;
 
+		pack();
+
 		setWidthWithInsets(sizes.width);
+		setSize(width, 100);
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(true);
@@ -196,7 +199,7 @@ public class ParamsPane extends JDialog {
 		getRootPane().registerKeyboardAction(e -> paneOnSave.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-		setSizeWithInsets(sizes.width, (row + 2) * sizes.rowHeight + sizes.rowHeight / 2);
+		setSizeWithInsets(sizes.width, 2 * sizes.uSpace + row * sizes.rowHeight);
 
 		validate();
 		setVisible(true);
@@ -216,8 +219,8 @@ public class ParamsPane extends JDialog {
 
 	protected void addButtons(final int row, final Label button1Label, final Label button2Label, final Runnable on1,
 			final Runnable on2) {
-		final int center = width / 2;
-		final int x0 = center - 100 - 20;
+		final int center = sizes.width / 2;
+		final int x0 = center - 110;
 		final int x1 = center + 10;
 
 		final JButton button1 = new JButton(button1Label.label());

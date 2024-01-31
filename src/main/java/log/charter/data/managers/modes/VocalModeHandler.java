@@ -59,6 +59,7 @@ public class VocalModeHandler extends ModeHandler {
 		if (clickData.pressHighlight.vocal != null) {
 			undoSystem.addUndo();
 
+			selectionManager.clear();
 			data.songChart.vocals.removeNote(clickData.pressHighlight.id);
 			return;
 		}

@@ -42,7 +42,7 @@ public class TempoBeatPane extends ParamsPane {
 	private int noteDenominator;
 
 	private BigDecimal roundBPM(final BigDecimal bpm) {
-		return bpm.setScale(1, RoundingMode.HALF_UP);
+		return bpm.setScale(2, RoundingMode.HALF_UP);
 	}
 
 	private BigDecimal calculateBPM(final Beat beat) {
@@ -59,21 +59,22 @@ public class TempoBeatPane extends ParamsPane {
 		noteDenominator = beat.noteDenominator;
 
 		int row = 0;
+
+		bpm = calculateBPM(beat);
+		addBigDecimalConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_BPM, bpm, 60,
+				new BigDecimalValueValidator(minBPM, maxBPM, false), val -> bpm = roundBPM(val), false);
+
 		addIntegerConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_BEATS_IN_MEASURE, beatsInMeasure, 30,
 				createIntValidator(1, 99, false), val -> beatsInMeasure = val, false);
 		final JTextField beatsInMeasureInput = (JTextField) components.getLast();
 		beatsInMeasureInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(beatsInMeasureInput);
 
-		addIntegerConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_BEATS_IN_MEASURE, noteDenominator, 30,
+		addIntegerConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_NOTE_DENOMINATOR, noteDenominator, 30,
 				createIntValidator(1, 99, false), val -> noteDenominator = val, false);
 		final JTextField noteDenominatorInput = (JTextField) components.getLast();
 		noteDenominatorInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(noteDenominatorInput);
-
-		bpm = calculateBPM(beat);
-		addBigDecimalConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE, bpm, 60,
-				new BigDecimalValueValidator(minBPM, maxBPM, false), val -> bpm = roundBPM(val), false);
 
 		row++;
 		addDefaultFinish(row, this::saveAndExit);
