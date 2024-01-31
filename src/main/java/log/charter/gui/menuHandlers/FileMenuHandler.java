@@ -13,6 +13,7 @@ import log.charter.gui.components.SpecialMenuItem;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.panes.ConfigPane;
 import log.charter.gui.panes.GraphicConfigPane;
+import log.charter.gui.panes.TexturesSettingsPane;
 import log.charter.io.Logger;
 import log.charter.io.gp.gp5.GP5File;
 import log.charter.io.gp.gp5.GP5FileReader;
@@ -64,6 +65,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPTIONS, null, () -> new ConfigPane(frame)));
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_GRAPHIC_OPTIONS, null, () -> new GraphicConfigPane(frame)));
+		menu.add(new SpecialMenuItem(Label.FILE_MENU_TEXTURING_OPTIONS, null, () -> new TexturesSettingsPane(frame)));
 
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_EXIT, "Esc", frame::exit));

@@ -51,10 +51,10 @@ class CharterCheckBox {
 			super(14, 14);
 			this.interiorColor = interiorColor;
 			this.disabledInteriorColor = disabledInteriorColor;
-			armedInteriorColor = mix(interiorColor, disabledInteriorColor, 0.5f);
+			armedInteriorColor = mix(interiorColor, disabledInteriorColor, 0.5);
 			this.edgeColor = edgeColor;
-			edgeHighlightColor = mix(interiorColor, Color.WHITE, 0.5f);
-			edgeShadowColor = mix(edgeColor, Color.BLACK, 0.5f);
+			edgeHighlightColor = mix(interiorColor, Color.WHITE, 0.5);
+			edgeShadowColor = mix(edgeColor, Color.BLACK, 0.5);
 			this.selectColor = selectColor;
 		}
 

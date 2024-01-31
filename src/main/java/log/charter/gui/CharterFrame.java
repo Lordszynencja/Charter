@@ -233,16 +233,16 @@ public class CharterFrame extends JFrame {
 			data.time = (int) data.nextTime;
 
 			repaint();
-			if (preview3DPanel.isShowing()) {
-				preview3DPanel.repaint();
-			}
 
 			if (windowedPreviewFrame.isShowing()) {
 				windowedPreviewFrame.repaint();
 				windowedPreview3DPanel.repaint();
 			}
+			if (preview3DPanel.isShowing()) {
+				preview3DPanel.repaint();
+			}
 		} catch (final Exception e) {
-			Logger.error("Error in frame", e);
+			Logger.error("Exception in frame()", e);
 		}
 	}
 
@@ -250,7 +250,7 @@ public class CharterFrame extends JFrame {
 		try {
 			audioHandler.frame();
 		} catch (final Exception e) {
-			Logger.error("Error in audio frame", e);
+			Logger.error("Exception in audioFrame()", e);
 		}
 	}
 
@@ -377,19 +377,28 @@ public class CharterFrame extends JFrame {
 	public void exit() {
 		audioHandler.stopMusic();
 
-		windowedPreviewFrame.setVisible(false);
-		windowedPreviewFrame.repaint();
+		boolean restorePreviewWindow = false;
+		if (windowedPreviewFrame.isVisible() && windowedPreviewFrame.isFocused()) {
+			restorePreviewWindow = true;
+			windowedPreviewFrame.dispose();
+		}
 
-		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this, Label.EXIT_MESSAGE.label(),
-				Label.EXIT_POPUP.label(), JOptionPane.YES_NO_OPTION)) {
+		final int result = JOptionPane.showConfirmDialog(this, Label.EXIT_MESSAGE.label(), Label.EXIT_POPUP.label(),
+				JOptionPane.YES_NO_OPTION);
+
+		if (JOptionPane.YES_OPTION == result) {
 			if (!checkChanged()) {
 				return;
 			}
 
-			windowedPreviewFrame.dispose();
 			dispose();
 			StretchedFileLoader.stopAllProcesses();
 			System.exit(0);
+			return;
+		}
+
+		if (restorePreviewWindow) {
+			windowedPreviewFrame.setVisible(true);
 		}
 	}
 
@@ -404,5 +413,10 @@ public class CharterFrame extends JFrame {
 
 		frameTimes.removeIf(t0 -> t - t0 > 1000);
 		helpLabel.setText("FPS: " + frameTimes.size());
+	}
+
+	public void reloadTextures() {
+		preview3DPanel.reloadTextures();
+		windowedPreview3DPanel.reloadTextures();
 	}
 }

@@ -3,15 +3,37 @@ package log.charter.gui.components.preview3D;
 import log.charter.data.config.Config;
 
 public class Preview3DUtils {
-	public static final int visibility = 6_000;
+	public static final int visibility = 3_000;
 	private static final double timeZMultiplier = 0.01;
 	public static final double visibilityZ = getTimePosition(visibility);
-	public static double topStringPosition = 0;
-	public static double stringDistance = 0.35;
+	public static final double topStringPosition = 0;
+	public static final double stringDistance = 0.35;
+	public static final int closeDistance = 200;
+	public static final double closeDistanceZ = getTimePosition(closeDistance);
+	private static double fretLengthMultiplier = 1;// Math.pow(0.5, 1 / 12.0);
 
-	public static double getFretPosition(final double fret) {
-		final double disposition = 3 * (1 - Math.pow(0.5, fret / 12.0));
-		return Config.leftHanded ? 1.5 - disposition : disposition;
+	private static double[] fretPositions = new double[Config.frets + 1];
+	static {
+		double fretLength = 0.1;
+		fretPositions[0] = 0;
+		for (int fret = 1; fret <= Config.frets; fret++) {
+			fretPositions[fret] = fretPositions[fret - 1] + fretLength;
+			fretLength *= fretLengthMultiplier;
+		}
+	}
+
+	public static double getFretPosition(final int fret) {
+		if (fret < 0) {
+			return fretPositions[0];
+		}
+		if (fret > Config.frets) {
+			return fretPositions[Config.frets];
+		}
+
+		if (Config.leftHanded) {
+			return fretPositions[Config.frets] / 2 - fretPositions[fret];
+		}
+		return fretPositions[fret];
 	}
 
 	public static double getFretMiddlePosition(final int fret) {

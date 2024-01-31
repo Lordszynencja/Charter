@@ -1,13 +1,11 @@
 package log.charter.gui.components;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
@@ -16,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 
 public class FieldWithLabel<T extends Component> extends Container {
@@ -160,11 +157,5 @@ public class FieldWithLabel<T extends Component> extends Container {
 		super.paint(g);
 
 		label.setSize(getTextWidth() + 1, label.getHeight());
-
-		if (Config.debugDrawing) {
-			final Rectangle clipBounds = g.getClipBounds();
-			g.setColor(Color.red);
-			g.drawRect(clipBounds.x, clipBounds.y, clipBounds.width - 1, clipBounds.height - 2);
-		}
 	}
 }

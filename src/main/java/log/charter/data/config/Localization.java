@@ -42,6 +42,9 @@ public class Localization {
 		CONFIG_THEME_DEFAULT("Default"), //
 		CONFIG_THEME_ROCKSMITH("Rocksmith"), //
 
+		TEXTURES_SETTINGS_PANE_INLAY("Inlay"), //
+		TEXTURES_SETTINGS_PANE_TEXTURE_PACK("Texture pack"), //
+
 		GRAPHIC_CONFIG_PANE("Graphic config pane"), //
 		GRAPHIC_CONFIG_BASE_1("Base 1"), //
 		GRAPHIC_CONFIG_BASE_2("Base 2"), //
@@ -81,59 +84,15 @@ public class Localization {
 		GRAPHIC_CONFIG_HARMONIC("Harmonic"), //
 		GRAPHIC_CONFIG_PINCH_HARMONIC("Pinch harmonic"), //
 
-		GRAPHIC_CONFIG_LANE_0("Lane 1"), //
-		GRAPHIC_CONFIG_LANE_BRIGHT_0("Lane bright 1"), //
 		GRAPHIC_CONFIG_NOTE_0("Note 1"), //
-		GRAPHIC_CONFIG_NOTE_TAIL_0("Note tail 1"), //
-		GRAPHIC_CONFIG_NOTE_ACCENT_0("Note accent 1"), //
-
-		GRAPHIC_CONFIG_LANE_1("Lane 2"), //
-		GRAPHIC_CONFIG_LANE_BRIGHT_1("Lane bright 2"), //
 		GRAPHIC_CONFIG_NOTE_1("Note 2"), //
-		GRAPHIC_CONFIG_NOTE_TAIL_1("Note tail 2"), //
-		GRAPHIC_CONFIG_NOTE_ACCENT_1("Note accent 2"), //
-
-		GRAPHIC_CONFIG_LANE_2("Lane 3"), //
-		GRAPHIC_CONFIG_LANE_BRIGHT_2("Lane bright 3"), //
 		GRAPHIC_CONFIG_NOTE_2("Note 3"), //
-		GRAPHIC_CONFIG_NOTE_TAIL_2("Note tail 3"), //
-		GRAPHIC_CONFIG_NOTE_ACCENT_2("Note accent 3"), //
-
-		GRAPHIC_CONFIG_LANE_3("Lane 4"), //
-		GRAPHIC_CONFIG_LANE_BRIGHT_3("Lane bright 4"), //
 		GRAPHIC_CONFIG_NOTE_3("Note 4"), //
-		GRAPHIC_CONFIG_NOTE_TAIL_3("Note tail 4"), //
-		GRAPHIC_CONFIG_NOTE_ACCENT_3("Note accent 4"), //
-
-		GRAPHIC_CONFIG_LANE_4("Lane 5"), //
-		GRAPHIC_CONFIG_LANE_BRIGHT_4("Lane bright 5"), //
 		GRAPHIC_CONFIG_NOTE_4("Note 5"), //
-		GRAPHIC_CONFIG_NOTE_TAIL_4("Note tail 5"), //
-		GRAPHIC_CONFIG_NOTE_ACCENT_4("Note accent 5"), //
-
-		GRAPHIC_CONFIG_LANE_5("Lane 6"), //
-		GRAPHIC_CONFIG_LANE_BRIGHT_5("Lane bright 6"), //
 		GRAPHIC_CONFIG_NOTE_5("Note 6"), //
-		GRAPHIC_CONFIG_NOTE_TAIL_5("Note tail 6"), //
-		GRAPHIC_CONFIG_NOTE_ACCENT_5("Note accent 6"), //
-
-		GRAPHIC_CONFIG_LANE_6("Lane 7"), //
-		GRAPHIC_CONFIG_LANE_BRIGHT_6("Lane bright 7"), //
 		GRAPHIC_CONFIG_NOTE_6("Note 7"), //
-		GRAPHIC_CONFIG_NOTE_TAIL_6("Note tail 7"), //
-		GRAPHIC_CONFIG_NOTE_ACCENT_6("Note accent 7"), //
-
-		GRAPHIC_CONFIG_LANE_7("Lane 8"), //
-		GRAPHIC_CONFIG_LANE_BRIGHT_7("Lane bright 8"), //
 		GRAPHIC_CONFIG_NOTE_7("Note 8"), //
-		GRAPHIC_CONFIG_NOTE_TAIL_7("Note tail 8"), //
-		GRAPHIC_CONFIG_NOTE_ACCENT_7("Note accent 8"), //
-
-		GRAPHIC_CONFIG_LANE_8("Lane 9"), //
-		GRAPHIC_CONFIG_LANE_BRIGHT_8("Lane bright 9"), //
 		GRAPHIC_CONFIG_NOTE_8("Note 9"), //
-		GRAPHIC_CONFIG_NOTE_TAIL_8("Note tail 9"), //
-		GRAPHIC_CONFIG_NOTE_ACCENT_8("Note accent 9"), //
 
 		GRAPHIC_CONFIG_ANCHOR("Anchor"), //
 		GRAPHIC_CONFIG_HAND_SHAPE("Hand shape"), //
@@ -184,6 +143,7 @@ public class Localization {
 		FILE_MENU_SAVE_AS("Save as..."), //
 		FILE_MENU_OPTIONS("Options"), //
 		FILE_MENU_GRAPHIC_OPTIONS("Graphic options"), //
+		FILE_MENU_TEXTURING_OPTIONS("Texturing options"), //
 		FILE_MENU_EXIT("Exit"), //
 
 		GRID_PANE("Grid options"), //

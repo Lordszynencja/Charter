@@ -45,8 +45,8 @@ public class Preview3DFingeringDrawer {
 
 	private void addQuad(final BaseTextureShaderDrawData drawData, final double x0, final double x1, final double y0,
 			final double y1, final Point2D textureBase) {
-		drawData.addZQuad(x0, x1, y0, y1, -0.01, textureBase.x, textureBase.x + 0.25, textureBase.y,
-				textureBase.y + 0.25);
+		drawData.addZQuad(x0, x1, y0, y1, -0.01, textureBase.x + 0.001, textureBase.x + 0.249, textureBase.y + 0.001,
+				textureBase.y + 0.249);
 	}
 
 	private void addFingerSpot(final BaseTextureShaderDrawData drawData, final int fret, final int string,

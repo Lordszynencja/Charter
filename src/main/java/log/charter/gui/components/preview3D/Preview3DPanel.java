@@ -183,4 +183,8 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 			error.printStackTrace();
 		}
 	}
+
+	public void reloadTextures() {
+		texturesHolder.reloadTextures();
+	}
 }

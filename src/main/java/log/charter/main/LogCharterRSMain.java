@@ -8,7 +8,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
 
 public class LogCharterRSMain {
-	public static final String VERSION = "0.12.3";
+	public static final String VERSION = "0.12.4";
 	public static final String VERSION_DATE = "2024.01.31";
 	public static final String TITLE = "LoG Charter RS " + VERSION;
 

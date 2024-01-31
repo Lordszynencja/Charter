@@ -360,6 +360,7 @@
 									<directory>${basedir}</directory>
 									<includes>
 										<include>images/**</include>
+										<include>inlays/**</include>
 										<include>textures/**</include>
 										<include>languages/**</include>
 										<include>rubberband/**</include>

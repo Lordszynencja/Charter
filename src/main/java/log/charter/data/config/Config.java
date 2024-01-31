@@ -108,8 +108,10 @@ public class Config {
 	public static int gridSize = 4;
 	public static boolean audioFolderChosenForNewSong = false;
 
+	public static String inlay = "default";
+	public static String texturePack = "default";
+
 	public static boolean debugLogging = false;
-	public static boolean debugDrawing = false;
 
 	private static boolean changed = false;
 
@@ -175,6 +177,9 @@ public class Config {
 		valueAccessors.put("gridSize", ValueAccessor.forInteger(v -> gridSize = v, () -> gridSize));
 		valueAccessors.put("audioFolderChosenForNewSong",
 				ValueAccessor.forBoolean(v -> audioFolderChosenForNewSong = v, () -> audioFolderChosenForNewSong));
+
+		valueAccessors.put("inlay", ValueAccessor.forString(v -> inlay = v, () -> inlay));
+		valueAccessors.put("textures", ValueAccessor.forString(v -> texturePack = v, () -> texturePack));
 
 		valueAccessors.put("debugLogging", ValueAccessor.forBoolean(v -> debugLogging = v, () -> debugLogging));
 
