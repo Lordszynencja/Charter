@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -34,6 +35,39 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	private CharterFrame frame;
 	private ModeManager modeManager;
 
+	private BufferedImage background = null;
+
+	private BufferedImage createBackground() {
+		final BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+		final Graphics g = img.getGraphics();
+
+		g.setColor(ColorLabel.BASE_BG_4.color());
+		g.fillRect(0, 0, getWidth(), getHeight());
+		if (data.isEmpty) {
+			return img;
+		}
+
+		switch (modeManager.editMode) {
+		case TEMPO_MAP:
+			drawBars(g);
+			break;
+		case VOCALS:
+			drawVocalLines(g);
+			break;
+		case GUITAR:
+			drawPhrases(g);
+			drawSections(g);
+			drawNotes(g);
+			break;
+		default:
+			break;
+		}
+
+		drawBookmarks(g);
+
+		return img;
+	}
+
 	public void init(final ChartPanel chartPanel, final ChartData data, final CharterFrame frame,
 			final ModeManager modeManager) {
 		this.chartPanel = chartPanel;
@@ -46,10 +80,22 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 		setFocusable(false);
 		addMouseListener(this);
 		addMouseMotionListener(this);
+
+		new Thread(() -> {
+			while (true) {
+				background = createBackground();
+
+				try {
+					Thread.sleep(1000);
+				} catch (final InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 
 	private int positionToTime(final int p) {
-		int time = p * data.songChart.beatsMap.songLengthMs / (getWidth() - 1);
+		int time = (int) ((long) p * data.songChart.beatsMap.songLengthMs / (getWidth() - 1));
 		if (time < 0) {
 			time = 0;
 		}
@@ -61,7 +107,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	}
 
 	private int timeToPosition(final int t) {
-		return t * (getWidth() - 1) / data.songChart.beatsMap.songLengthMs;
+		return (int) ((long) t * (getWidth() - 1) / data.songChart.beatsMap.songLengthMs);
 	}
 
 	private void drawBars(final Graphics g) {
@@ -182,29 +228,16 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 
 	@Override
 	public void paint(final Graphics g) {
-		g.setColor(ColorLabel.BASE_BG_4.color());
-		g.fillRect(0, 0, getWidth(), getHeight());
+		if (background == null) {
+			return;
+		}
+
+		g.drawImage(background, 0, 0, null);
+
 		if (data.isEmpty) {
 			return;
 		}
 
-		switch (modeManager.editMode) {
-		case TEMPO_MAP:
-			drawBars(g);
-			break;
-		case VOCALS:
-			drawVocalLines(g);
-			break;
-		case GUITAR:
-			drawPhrases(g);
-			drawSections(g);
-			drawNotes(g);
-			break;
-		default:
-			break;
-		}
-
-		drawBookmarks(g);
 		drawMarkerAndViewArea(g);
 	}
 

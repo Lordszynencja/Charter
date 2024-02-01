@@ -40,7 +40,6 @@ public class Chord extends GuitarSound {
 		super(arrangementChord.time, mapInteger(arrangementChord.accent), mapInteger(arrangementChord.ignore));
 		templateId = arrangementChord.chordId;
 		final Mute mute = Mute.fromArrangmentChord(arrangementChord);
-		final boolean linkNext = mapInteger(arrangementChord.linkNext);
 
 		if (arrangementChord.chordNotes != null) {
 			for (final ArrangementChordNote arrangementNote : arrangementChord.chordNotes) {
@@ -88,7 +87,7 @@ public class Chord extends GuitarSound {
 					}
 				}
 
-				chordNote.linkNext = linkNext || mapInteger(arrangementNote.linkNext);
+				chordNote.linkNext = mapInteger(arrangementNote.linkNext);
 
 				chordNotes.put(arrangementNote.string, chordNote);
 			}

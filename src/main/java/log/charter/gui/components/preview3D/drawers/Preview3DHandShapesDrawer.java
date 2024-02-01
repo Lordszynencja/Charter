@@ -24,6 +24,7 @@ import log.charter.song.HandShape;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DHandShapesDrawer {
+	private static final double lineThickness = 0.012;
 	private ChartData data;
 
 	public void init(final ChartData data) {
@@ -41,10 +42,10 @@ public class Preview3DHandShapesDrawer {
 	private void addThickLine(final BaseShaderDrawData drawData, final int fret, final double y, final double z0,
 			final double z1, final Color color, final Color alpha) {
 		final double x = getFretPosition(fret);
-		final double x0 = x - 0.02;
-		final double x1 = x - 0.01;
-		final double x2 = x + 0.01;
-		final double x3 = x + 0.02;
+		final double x0 = x - lineThickness;
+		final double x1 = x - lineThickness / 2;
+		final double x2 = x + lineThickness / 2;
+		final double x3 = x + lineThickness;
 
 		addSquare(drawData, x0, x1, y, z0, z1, alpha, color);
 		addSquare(drawData, x1, x2, y, z0, z1, color, color);

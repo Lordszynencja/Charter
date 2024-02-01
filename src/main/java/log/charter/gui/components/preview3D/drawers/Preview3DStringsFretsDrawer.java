@@ -1,5 +1,6 @@
 package log.charter.gui.components.preview3D.drawers;
 
+import static java.lang.Math.max;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
@@ -51,10 +52,13 @@ public class Preview3DStringsFretsDrawer {
 		final boolean[] active = new boolean[Config.frets + 1];
 		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 		final int idFrom = findLastIdBefore(anchors, data.time);
+		if (idFrom < 0) {
+			return active;
+		}
 		final int idTo = findLastIdBefore(anchors, data.time + activeTime);
 		for (int i = idFrom; i <= idTo; i++) {
 			final Anchor anchor = anchors.get(i);
-			for (int fret = anchor.fret - 1; fret <= anchor.topFret(); fret++) {
+			for (int fret = max(0, anchor.fret - 1); fret <= Math.min(Config.frets, anchor.topFret()); fret++) {
 				active[fret] = true;
 			}
 		}
@@ -67,6 +71,9 @@ public class Preview3DStringsFretsDrawer {
 		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
 		final int idFrom = findFirstIdAfter(sounds, data.time - highlightTime);
+		if (idFrom < 0) {
+			return new double[highlightValues.length];
+		}
 		final int idTo = findLastIdBefore(sounds, data.time);
 		for (int i = idFrom; i <= idTo; i++) {
 			final ChordOrNote sound = sounds.get(i);

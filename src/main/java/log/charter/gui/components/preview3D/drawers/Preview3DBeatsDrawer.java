@@ -27,8 +27,8 @@ import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
 import log.charter.song.Beat;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.Pair;
 import log.charter.util.ColorUtils;
-import log.charter.util.IntRange;
 
 public class Preview3DBeatsDrawer {
 	private ChartData data;
@@ -41,21 +41,21 @@ public class Preview3DBeatsDrawer {
 		this.textTexturesHolder = textTexturesHolder;
 	}
 
-	private IntRange getBeatIdsRange() {
+	private Pair<Integer, Integer> getBeatIdsRange() {
 		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
 		int beatsFrom = findFirstIdAfterEqual(beats, data.time);
-		if (beatsFrom == -1) {
+		if (beatsFrom < 0) {
 			beatsFrom = 0;
 		}
 		final int beatsTo = findLastIdBeforeEqual(beats, data.time + visibility);
 
-		return new IntRange(beatsFrom, beatsTo);
+		return new Pair<>(beatsFrom, beatsTo);
 	}
 
 	private void drawBeats(final ShadersHolder shadersHolder) {
 		final BaseShaderDrawData drawData = shadersHolder.new BaseShaderDrawData();
 		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
-		final IntRange beatIdsRange = getBeatIdsRange();
+		final Pair<Integer, Integer> beatIdsRange = getBeatIdsRange();
 
 		final double x0 = getFretPosition(0);
 		final double x1 = getFretPosition(Config.frets);
@@ -63,7 +63,7 @@ public class Preview3DBeatsDrawer {
 		final Color color = ColorLabel.PREVIEW_3D_BEAT.color();
 		final Color alpha = ColorUtils.transparent(color);
 
-		for (int i = beatIdsRange.min; i <= beatIdsRange.max; i++) {
+		for (int i = beatIdsRange.a; i <= beatIdsRange.b; i++) {
 			final Beat beat = beats.get(i);
 			final int beatTime = beat.position() - data.time;
 			final Color beatColor = beatTime > closeDistance ? color
@@ -97,7 +97,6 @@ public class Preview3DBeatsDrawer {
 						.addVertex(new Point3D(x1, y, z + 0.1), alpha)//
 						.addVertex(new Point3D(x0, y, z + 0.1), alpha);
 			}
-
 		}
 
 		drawData.draw(GL30.GL_QUADS, Matrix4.identity);
@@ -121,12 +120,12 @@ public class Preview3DBeatsDrawer {
 
 	private void drawFretNumbers(final ShadersHolder shadersHolder) {
 		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
-		final IntRange beatIdsRange = getBeatIdsRange();
+		final Pair<Integer, Integer> beatIdsRange = getBeatIdsRange();
 
 		final double y = getChartboardYPosition(data.currentStrings());
 
 		GL30.glDisable(GL30.GL_DEPTH_TEST);
-		for (int i = beatIdsRange.min; i <= beatIdsRange.max; i++) {
+		for (int i = beatIdsRange.a; i <= beatIdsRange.b; i++) {
 			final Beat beat = beats.get(i);
 			if (!beat.firstInMeasure) {
 				continue;

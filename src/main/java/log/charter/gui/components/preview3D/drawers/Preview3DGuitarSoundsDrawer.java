@@ -2,6 +2,7 @@ package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
@@ -12,6 +13,7 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosit
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.visibility;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationZMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
 import static log.charter.song.notes.IPosition.findLastBeforeEqual;
 import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
@@ -280,24 +282,24 @@ public class Preview3DGuitarSoundsDrawer {
 	}
 
 	private void drawMuteForSingleNote(final ShadersHolder shadersHolder, final double x, final double y,
-			final double z, final Mute mute) {
+			final double z, final Mute mute, final Matrix4 modelMatrix) {
 		final Model model = NoteStatusModels.mutesModels.get(mute);
 		final Color color = NoteStatusModels.mutesColors.get(mute).color();
-		shadersHolder.new BaseShaderDrawData().addModel(model, color).draw(model.getDrawMode(), moveMatrix(x, y, z));
+		shadersHolder.new BaseShaderDrawData().addModel(model, color).draw(model.getDrawMode(), modelMatrix);
 	}
 
 	private void drawHOPO(final ShadersHolder shadersHolder, final double x, final double y, final double z,
-			final HOPO hopo) {
+			final HOPO hopo, final Matrix4 modelMatrix) {
 		final Model model = NoteStatusModels.hoposModels.get(hopo);
 		final Color color = NoteStatusModels.hoposColors.get(hopo).color();
-		shadersHolder.new BaseShaderDrawData().addModel(model, color).draw(model.getDrawMode(), moveMatrix(x, y, z));
+		shadersHolder.new BaseShaderDrawData().addModel(model, color).draw(model.getDrawMode(), modelMatrix);
 	}
 
 	private void drawHarmonic(final ShadersHolder shadersHolder, final double x, final double y, final double z,
-			final Harmonic harmonic) {
+			final Harmonic harmonic, final Matrix4 modelMatrix) {
 		final Model model = NoteStatusModels.harmonicsModels.get(harmonic);
 		final Color color = NoteStatusModels.harmonicsColors.get(harmonic).color();
-		shadersHolder.new BaseShaderDrawData().addModel(model, color).draw(model.getDrawMode(), moveMatrix(x, y, z));
+		shadersHolder.new BaseShaderDrawData().addModel(model, color).draw(model.getDrawMode(), modelMatrix);
 	}
 
 	private void drawOpenStringNoteHead(final ShadersHolder shadersHolder, final int position,
@@ -325,13 +327,13 @@ public class Preview3DGuitarSoundsDrawer {
 
 			final double middleX = (getFretPosition(anchor.topFret()) + x) / 2;
 			if (note.mute != Mute.NONE) {
-				drawMuteForSingleNote(shadersHolder, middleX, y, z, note.mute);
+				drawMuteForSingleNote(shadersHolder, middleX, y, z, note.mute, modelMatrix);
 			}
 			if (note.hopo != HOPO.NONE) {
-				drawHOPO(shadersHolder, middleX, y, z, note.hopo);
+				drawHOPO(shadersHolder, middleX, y, z, note.hopo, modelMatrix);
 			}
 			if (note.harmonic != Harmonic.NONE) {
-				drawHarmonic(shadersHolder, middleX, y, z, note.harmonic);
+				drawHarmonic(shadersHolder, middleX, y, z, note.harmonic, modelMatrix);
 			}
 
 			return;
@@ -357,27 +359,33 @@ public class Preview3DGuitarSoundsDrawer {
 		final double y = getStringPositionWithBend(note.string, data.currentStrings(), note.prebend);
 		final double z = getTimePosition(position - data.time);
 
+		final double rotation = (note.isChordNote || note.fret == 0) ? 0
+				: max(-Math.PI / 2, min(0, -Math.PI * (note.position - data.time) / 1000.0));
+		final Matrix4 modelMatrix = moveMatrix(x, y, z)//
+				.multiply(scaleMatrix(0.1, 1, 0.5))//
+				.multiply(rotationZMatrix(rotation))//
+				.multiply(scaleMatrix(10, 1, 2));
+
 		if (!note.accent) {
 			shadersHolder.new BaseShaderDrawData()//
 					.addModel(FrettedNoteModel.instance, color)//
-					.draw(FrettedNoteModel.instance.getDrawMode(), Matrix4.moveMatrix(x, y, z));
+					.draw(FrettedNoteModel.instance.getDrawMode(), modelMatrix);
 		} else {
 			final Color accentColor = getStringBasedColor(StringColorLabelType.NOTE_ACCENT, note.string,
 					data.currentStrings());
-			final Matrix4 modelMatrix = moveMatrix(x, y, z).multiply(scaleMatrix(1.1, 1.1, 1));
 			shadersHolder.new BaseShaderDrawData()//
 					.addModel(FrettedNoteModel.instance, accentColor)//
 					.draw(FrettedNoteModel.instance.getDrawMode(), modelMatrix);
 		}
 
 		if (note.mute != Mute.NONE) {
-			drawMuteForSingleNote(shadersHolder, x, y, z, note.mute);
+			drawMuteForSingleNote(shadersHolder, x, y, z, note.mute, modelMatrix);
 		}
 		if (note.hopo != HOPO.NONE) {
-			drawHOPO(shadersHolder, x, y, z, note.hopo);
+			drawHOPO(shadersHolder, x, y, z, note.hopo, modelMatrix);
 		}
 		if (note.harmonic != Harmonic.NONE) {
-			drawHarmonic(shadersHolder, x, y, z, note.harmonic);
+			drawHarmonic(shadersHolder, x, y, z, note.harmonic, modelMatrix);
 		}
 
 		if (!hit && !note.isChordNote) {

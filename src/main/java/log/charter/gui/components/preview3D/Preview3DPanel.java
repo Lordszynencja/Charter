@@ -30,6 +30,7 @@ import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shapes.Texture;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.io.Logger;
+import log.charter.util.Timer;
 
 public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 	private static final long serialVersionUID = 1L;
@@ -144,6 +145,7 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 	@Override
 	public void paintGL() {
 		try {
+			final Timer timer = new Timer();
 			GL30.glViewport(0, 0, getWidth(), getHeight());
 
 			final Color backgroundColor = ColorLabel.PREVIEW_3D_BACKGROUND.color();
@@ -155,20 +157,31 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 				swapBuffers();
 				return;
 			}
+			timer.addTimestamp("clearing");
 
 			cameraHandler.updateCamera(1.0 * getWidth() / getHeight(), ((double) mouseX) / getWidth(),
 					((double) mouseY) / getHeight());
 			shadersHolder.setSceneMatrix(cameraHandler.currentMatrix);
+			timer.addTimestamp("updating camera");
 
 			// videoDrawer.draw(shadersHolder, getWidth(), getHeight());
+			timer.addTimestamp("videoDrawer");
 			stringsFretsDrawer.draw(shadersHolder);
+			timer.addTimestamp("stringsFretsDrawer");
 			laneBordersDrawer.draw(shadersHolder);
+			timer.addTimestamp("laneBordersDrawer");
 			anchorsDrawer.draw(shadersHolder);
+			timer.addTimestamp("anchorsDrawer");
 			handShapesDrawer.draw(shadersHolder);
+			timer.addTimestamp("handShapesDrawer");
 			beatsDrawer.draw(shadersHolder);
+			timer.addTimestamp("beatsDrawer");
 			guitarSoundsDrawer.draw(shadersHolder);
+			timer.addTimestamp("guitarSoundsDrawer");
 			inlayDrawer.draw(shadersHolder);
+			timer.addTimestamp("inlayDrawer");
 			fingeringDrawer.draw(shadersHolder);
+			timer.addTimestamp("fingeringDrawer");
 
 			lyricsDrawer.draw(shadersHolder, 1.0 * getHeight() / getWidth(),
 					getHeight() < 500 ? 500.0 / getHeight() : 1);
@@ -176,6 +189,9 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 			shadersHolder.clearShader();
 
 			swapBuffers();
+			timer.addTimestamp("finish");
+
+			// timer.print("paintGL timings:", "%20s: %d");
 		} catch (final Exception e) {
 			Logger.error("Exception in paintGL", e);
 			throw e;

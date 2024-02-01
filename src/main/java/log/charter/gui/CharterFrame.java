@@ -232,8 +232,6 @@ public class CharterFrame extends JFrame {
 
 			data.time = (int) data.nextTime;
 
-			repaint();
-
 			if (windowedPreviewFrame.isShowing()) {
 				windowedPreviewFrame.repaint();
 				windowedPreview3DPanel.repaint();
@@ -241,6 +239,9 @@ public class CharterFrame extends JFrame {
 			if (preview3DPanel.isShowing()) {
 				preview3DPanel.repaint();
 			}
+
+			repaint();
+
 		} catch (final Exception e) {
 			Logger.error("Exception in frame()", e);
 		}
@@ -332,6 +333,7 @@ public class CharterFrame extends JFrame {
 		}
 
 		setTitle(title);
+		repaint();
 	}
 
 	public void updateEditAreaSizes() {
