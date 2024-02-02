@@ -1,5 +1,7 @@
 package log.charter.gui.components.preview3D.drawers;
 
+import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
+
 import java.awt.Color;
 
 import org.lwjgl.opengl.GL30;
@@ -9,7 +11,6 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
-import log.charter.song.notes.IPosition;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -74,7 +75,7 @@ public class Preview3DLyricsDrawer {
 	private void drawCurrentLine(final ShadersHolder shadersHolder, final double aspectRatio,
 			final double textSizeMultiplier) {
 		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
-		final int currentVocalId = IPosition.findLastIdBefore(vocals, data.time);
+		final int currentVocalId = findLastIdBefore(vocals, data.time);
 		if (currentVocalId == -1) {
 			return;
 		}
@@ -97,7 +98,7 @@ public class Preview3DLyricsDrawer {
 	private void drawNextLine(final ShadersHolder shadersHolder, final double aspectRatio,
 			final double textSizeMultiplier) {
 		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
-		final int currentVocalId = IPosition.findLastIdBefore(vocals, data.time);
+		final int currentVocalId = findLastIdBefore(vocals, data.time);
 		if (currentVocalId == -1) {
 			return;
 		}

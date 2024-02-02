@@ -3,7 +3,7 @@ package log.charter.data;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.frets;
-import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import log.charter.data.config.Config;
 import log.charter.song.Anchor;

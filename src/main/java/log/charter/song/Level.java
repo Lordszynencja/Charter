@@ -1,6 +1,6 @@
 package log.charter.song;
 
-import static log.charter.song.notes.IPosition.findLastBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
 import static log.charter.util.Utils.mapInteger;
 
 import java.util.List;
@@ -120,8 +120,7 @@ public class Level {
 		for (int j = id - 1; j >= 0; j--) {
 			final ChordOrNote previousSound = chordsAndNotes.get(j);
 			if (previousSound.isNote()//
-					|| previousSound.chord.fullyMuted()//
-					|| previousSound.chord.palmMuted()) {
+					|| previousSound.chord.fullyMuted()) {
 				continue;
 			}
 			if (previousSound.chord.templateId() != handShape.templateId) {

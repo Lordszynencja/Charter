@@ -25,9 +25,9 @@ public class OpenNoteModel implements CompositeModel {
 		final double thickness0 = 0.04;
 		final double thickness1 = 0.05;
 
-		final double x0 = 0;
-		final double x1 = width / 2;
-		final double x2 = width;
+		final double x2 = width / 2;
+		final double x1 = 0;
+		final double x0 = -x2;
 		double y0 = thickness0 * 1;
 		double y1 = thickness1 * 1;
 		double z0 = 0;

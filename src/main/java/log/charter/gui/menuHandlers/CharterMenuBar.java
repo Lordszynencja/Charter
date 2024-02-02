@@ -8,6 +8,7 @@ import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.copySystem.CopyManager;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -44,14 +45,14 @@ public class CharterMenuBar extends JMenuBar {
 	public void init(final ArrangementFixer arrangementFixer, final AudioDrawer audioDrawer,
 			final AudioHandler audioHandler, final CopyManager copyManager, final ChartToolbar chartToolbar,
 			final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final SelectionManager selectionManager,
+			final ModeManager modeManager, final RepeatManager repeatManager, final SelectionManager selectionManager,
 			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
 		arrangementMenuHandler.init(audioDrawer, audioHandler, data, frame, this, modeManager, selectionManager);
 		editMenuHandler.init(copyManager, data, frame, keyboardHandler, selectionManager, undoSystem);
 		fileMenuHandler.init(arrangementFixer, data, frame, this, songFileHandler);
 		guitarMenuHandler.init(data, frame, keyboardHandler, modeManager, selectionManager, undoSystem);
 		infoMenuHandler.init(frame, this);
-		musicMenuHandler.init(audioHandler, data, frame);
+		musicMenuHandler.init(audioHandler, data, frame, repeatManager);
 		notesMenuHandler.init(data, keyboardHandler, modeManager);
 		vocalsMenuHandler.init(data, keyboardHandler, modeManager);
 

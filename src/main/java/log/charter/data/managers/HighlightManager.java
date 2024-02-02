@@ -8,9 +8,10 @@ import static log.charter.data.config.Config.minNoteDistance;
 import static log.charter.data.managers.PositionWithStringOrNoteId.fromNoteId;
 import static log.charter.data.managers.PositionWithStringOrNoteId.fromPosition;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
-import static log.charter.song.notes.IPosition.findClosest;
-import static log.charter.song.notes.IPosition.findFirstIdAfter;
-import static log.charter.song.notes.IPosition.findLastIdBefore;
+import static log.charter.song.notes.IConstantPosition.findClosest;
+import static log.charter.song.notes.IConstantPosition.findClosestPosition;
+import static log.charter.song.notes.IConstantPosition.findFirstIdAfter;
+import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
@@ -20,7 +21,6 @@ import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.song.Beat;
 import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class HighlightManager {
@@ -133,7 +133,7 @@ public class HighlightManager {
 		}
 
 		final int closestGridPosition = data.songChart.beatsMap.getPositionFromGridClosestTo(position);
-		final ChordOrNote closestSound = IPosition.findClosestPosition(data.getCurrentArrangementLevel().chordsAndNotes,
+		final ChordOrNote closestSound = findClosestPosition(data.getCurrentArrangementLevel().chordsAndNotes,
 				position);
 		if (closestSound == null) {
 			return closestGridPosition;

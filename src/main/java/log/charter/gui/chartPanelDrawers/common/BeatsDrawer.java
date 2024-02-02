@@ -26,6 +26,7 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
@@ -53,6 +54,7 @@ public class BeatsDrawer {
 		private final DrawableShapeList beats = new DrawableShapeList();
 		private final DrawableShapeList sectionsAndPhrases = new DrawableShapeList();
 		private final DrawableShapeList bookmarks = new DrawableShapeList();
+		private final DrawableShapeList repeat = new DrawableShapeList();
 
 		private void addBeatLine(final int x, final Beat beat) {
 			final ColorLabel color = beat.firstInMeasure ? ColorLabel.MAIN_BEAT : ColorLabel.SECONDARY_BEAT;
@@ -162,9 +164,29 @@ public class BeatsDrawer {
 			bookmarks.add(text(new Position2D(x + 2, 12), number + "", ColorLabel.BOOKMARK));
 		}
 
+		public void addRepeatStart(final int x) {
+			repeat.add(lineVertical(x, sectionNamesY, sectionNamesY + 20, ColorLabel.REPEAT_MARKER));
+			final ShapePositionWithSize startPosition = new ShapePositionWithSize(x, sectionNamesY, 10, 3);
+			repeat.add(filledRectangle(startPosition, ColorLabel.REPEAT_MARKER));
+		}
+
+		public void addRepeatEnd(final int x) {
+			repeat.add(lineVertical(x, sectionNamesY, sectionNamesY + 20, ColorLabel.REPEAT_MARKER));
+			final ShapePositionWithSize endPosition = new ShapePositionWithSize(x - 10, sectionNamesY, 10, 3);
+			repeat.add(filledRectangle(endPosition, ColorLabel.REPEAT_MARKER));
+		}
+
+		public void addFullRepeat(final int x0, final int x1) {
+			repeat.add(lineVertical(x0, sectionNamesY, sectionNamesY + 20, ColorLabel.REPEAT_MARKER));
+			repeat.add(lineVertical(x1, sectionNamesY, sectionNamesY + 20, ColorLabel.REPEAT_MARKER));
+			final ShapePositionWithSize fullPosition = new ShapePositionWithSize(x0, sectionNamesY, x1 - x0, 3);
+			repeat.add(filledRectangle(fullPosition, ColorLabel.REPEAT_MARKER));
+		}
+
 		public void draw(final Graphics g) {
 			g.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
 			beats.draw(g);
+			repeat.draw(g);
 			sectionsAndPhrases.draw(g);
 			bookmarks.draw(g);
 		}
@@ -174,15 +196,17 @@ public class BeatsDrawer {
 	private ChartPanel chartPanel;
 	private ModeManager modeManager;
 	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
+	private RepeatManager repeatManager;
 	private SelectionManager selectionManager;
 
 	public void init(final ChartData data, final ChartPanel chartPanel, final ModeManager modeManager,
-			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
+			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final RepeatManager repeatManager,
 			final SelectionManager selectionManager) {
 		this.data = data;
 		this.chartPanel = chartPanel;
 		this.modeManager = modeManager;
 		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
+		this.repeatManager = repeatManager;
 		this.selectionManager = selectionManager;
 	}
 
@@ -221,6 +245,23 @@ public class BeatsDrawer {
 			final boolean selected = selectedBeatIds.contains(i);
 
 			drawingData.addBeat(beat, x, bar, i > 0 ? beats.get(i - 1) : null, bpm, selected);
+		}
+	}
+
+	private void addRepeater(final BeatsDrawingData drawingData) {
+		final int start = repeatManager.getRepeatStart();
+		final int end = repeatManager.getRepeatEnd();
+		if (start >= 0 && end >= 0) {
+			if (start > end) {
+				drawingData.addRepeatStart(timeToX(start, data.time));
+				drawingData.addRepeatEnd(timeToX(end, data.time));
+			} else {
+				drawingData.addFullRepeat(timeToX(start, data.time), timeToX(end, data.time));
+			}
+		} else if (start >= 0) {
+			drawingData.addRepeatStart(timeToX(start, data.time));
+		} else if (end >= 0) {
+			drawingData.addRepeatEnd(timeToX(end, data.time));
 		}
 	}
 
@@ -280,6 +321,7 @@ public class BeatsDrawer {
 		final BeatsDrawingData drawingData = new BeatsDrawingData();
 
 		addBeats(drawingData);
+		addRepeater(drawingData);
 
 		if (Config.showGrid && modeManager.editMode != EditMode.TEMPO_MAP) {
 			addGrid(drawingData);

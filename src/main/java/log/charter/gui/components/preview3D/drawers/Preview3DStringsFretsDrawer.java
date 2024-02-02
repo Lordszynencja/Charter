@@ -6,9 +6,9 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPositio
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance;
 import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
-import static log.charter.song.notes.IPosition.findFirstIdAfter;
-import static log.charter.song.notes.IPosition.findLastBeforeEqual;
-import static log.charter.song.notes.IPosition.findLastIdBefore;
+import static log.charter.song.notes.IConstantPosition.findFirstIdAfter;
+import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
 import static log.charter.util.ColorUtils.mix;
 
 import java.awt.Color;
@@ -83,8 +83,10 @@ public class Preview3DStringsFretsDrawer {
 				highlightValues[sound.note.fret] = highlightValue;
 			} else {
 				final Anchor anchor = findLastBeforeEqual(anchors, sound.position());
-				highlightValues[anchor.fret - 1] = highlightValue;
-				highlightValues[anchor.topFret()] = highlightValue;
+				if (anchor != null) {
+					highlightValues[anchor.fret - 1] = highlightValue;
+					highlightValues[anchor.topFret()] = highlightValue;
+				}
 			}
 		}
 

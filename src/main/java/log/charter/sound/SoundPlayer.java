@@ -32,8 +32,7 @@ public class SoundPlayer {
 		private Player start(final int startMs) {
 			new Thread(() -> {
 				try {
-					int startByte = (int) floor(
-							((musicData.outFormat.getFrameRate() * startMs) / musicData.slowMultiplier()) / 250);
+					int startByte = (int) floor(((musicData.outFormat.getFrameRate() * startMs)) / 250);
 					startByte -= startByte % 4;
 
 					if (stopped) {

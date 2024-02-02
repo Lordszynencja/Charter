@@ -1,7 +1,7 @@
 package log.charter.gui.menuHandlers;
 
-import static log.charter.song.notes.IPosition.findFirstIdAfterEqual;
-import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findFirstIdAfterEqual;
+import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import javax.swing.JMenu;
 

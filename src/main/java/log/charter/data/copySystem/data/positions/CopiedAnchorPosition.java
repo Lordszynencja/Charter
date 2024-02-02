@@ -13,8 +13,9 @@ public class CopiedAnchorPosition extends CopiedPosition<Anchor> {
 	@XStreamAsAttribute
 	public final int width;
 
-	public CopiedAnchorPosition(final BeatsMap beatsMap, final double baseBeatPosition, final Anchor anchor) {
-		super(beatsMap, baseBeatPosition, anchor);
+	public CopiedAnchorPosition(final BeatsMap beatsMap, final int basePosition, final double baseBeatPosition,
+			final Anchor anchor) {
+		super(beatsMap, basePosition, baseBeatPosition, anchor);
 		fret = anchor.fret;
 		width = anchor.width;
 	}

@@ -5,7 +5,6 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static log.charter.sound.SoundPlayer.generateBeep;
-import static log.charter.sound.SoundPlayer.slow;
 import static log.charter.sound.SoundPlayer.toBytes;
 
 import java.io.File;
@@ -92,8 +91,7 @@ public class MusicData {
 
 	public final int[][] data;
 	public final AudioFormat outFormat;
-	private byte[] preparedData;
-	private int slow = 1;
+	private final byte[] preparedData;
 
 	public MusicData(final byte[] b) {
 		this(b, DEF_RATE);
@@ -124,20 +122,6 @@ public class MusicData {
 
 	public int msLength() {
 		return (int) ((data[0].length * 1000.0) / outFormat.getFrameRate());
-	}
-
-	public void setSlow(final int newSlow) {
-		if (newSlow == 0) {
-			return;
-		}
-		if (newSlow != slow) {
-			slow = newSlow;
-			preparedData = toBytes(slow(data, slow));
-		}
-	}
-
-	public double slowMultiplier() {
-		return slow > 0 ? 1.0 / slow : -slow / (-slow + 1.0);
 	}
 
 	public List<Double> positionsOfHighs() {
@@ -223,6 +207,29 @@ public class MusicData {
 			final int[] targetChannel = newData[channel];
 			System.arraycopy(data[channel], 0, targetChannel, 0, data[channel].length);
 			System.arraycopy(other.data[channel], 0, targetChannel, length0, other.data[channel].length);
+		}
+
+		return new MusicData(newData, outFormat.getSampleRate());
+	}
+
+	public MusicData cut(final double startTime, final double endTime) {
+		int length = 0;
+		for (int i = 0; i < data.length; i++) {
+			length = max(length, data[i].length);
+		}
+
+		final int start = (int) (startTime * outFormat.getSampleRate());
+		final int end = (int) (endTime * outFormat.getSampleRate());
+
+		final int[][] newData = new int[data.length][end - start + 1];
+		for (int channel = 0; channel < data.length; channel++) {
+			final int[] src = data[channel];
+			if (src.length < start) {
+				continue;
+			}
+
+			final int toMove = min(end - start + 1, src.length - start);
+			System.arraycopy(src, start, newData[channel], 0, toMove);
 		}
 
 		return new MusicData(newData, outFormat.getSampleRate());

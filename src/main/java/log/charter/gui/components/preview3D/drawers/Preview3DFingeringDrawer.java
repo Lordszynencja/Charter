@@ -3,23 +3,26 @@ package log.charter.gui.components.preview3D.drawers;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance;
+import static log.charter.gui.components.preview3D.data.HandShapeDrawData.getHandShapesForTimeSpanWithRepeats;
+import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
 
+import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.managers.RepeatManager;
+import log.charter.gui.components.preview3D.data.HandShapeDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point2D;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseTextureShaderDrawData;
 import log.charter.song.ChordTemplate;
-import log.charter.song.HandShape;
 import log.charter.song.Level;
 import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.IPosition;
 import log.charter.util.IntRange;
 
 public class Preview3DFingeringDrawer {
@@ -36,10 +39,12 @@ public class Preview3DFingeringDrawer {
 	};
 
 	private ChartData data;
+	private RepeatManager repeatManager;
 	private TexturesHolder texturesHolder;
 
-	public void init(final ChartData data, final TexturesHolder texturesHolder) {
+	public void init(final ChartData data, final RepeatManager repeatManager, final TexturesHolder texturesHolder) {
 		this.data = data;
+		this.repeatManager = repeatManager;
 		this.texturesHolder = texturesHolder;
 	}
 
@@ -116,14 +121,16 @@ public class Preview3DFingeringDrawer {
 	private ChordTemplate findTemplateToUse() {
 		final Level level = data.getCurrentArrangementLevel();
 
-		final HandShape handShape = IPosition.findLastBeforeEqual(level.handShapes, data.time + 20);
-		if (handShape == null || handShape.endPosition() < data.time) {
+		final List<HandShapeDrawData> handShapes = getHandShapesForTimeSpanWithRepeats(data, repeatManager, data.time,
+				data.time + 20);
+		final HandShapeDrawData handShape = findLastBeforeEqual(handShapes, data.time + 20);
+		if (handShape == null || handShape.timeTo < data.time) {
 			return null;
 		}
 
-		final ChordOrNote sound = IPosition.findLastBeforeEqual(level.chordsAndNotes, data.time + 20);
+		final ChordOrNote sound = findLastBeforeEqual(level.chordsAndNotes, data.time + 20);
 		if (sound.position() < handShape.position() || sound.isNote()) {
-			return data.getCurrentArrangement().chordTemplates.get(handShape.templateId);
+			return handShape.template;
 		}
 		if (sound.chord.fullyMuted()) {
 			return null;

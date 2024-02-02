@@ -9,8 +9,9 @@ import log.charter.song.HandShape;
 public class CopiedHandShapePosition extends CopiedPositionWithLength<HandShape> {
 	public final int chordId;
 
-	public CopiedHandShapePosition(final BeatsMap beatsMap, final double baseBeatPosition, final HandShape handShape) {
-		super(beatsMap, baseBeatPosition, handShape);
+	public CopiedHandShapePosition(final BeatsMap beatsMap, final int basePosition, final double baseBeatPosition,
+			final HandShape handShape) {
+		super(beatsMap, basePosition, baseBeatPosition, handShape);
 		chordId = handShape.templateId;
 	}
 

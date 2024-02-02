@@ -8,24 +8,33 @@ import log.charter.song.notes.IPosition;
 public abstract class CopiedPosition<T extends IPosition> {
 
 	@XStreamAsAttribute
-	public final double position;
+	public final int position;
+	@XStreamAsAttribute
+	public final double positionInBeats;
 
-	public CopiedPosition(final BeatsMap beatsMap, final double basePositionInBeats, final T positionWithLength) {
-		position = beatsMap.getPositionInBeats(positionWithLength.position()) - basePositionInBeats;
+	public CopiedPosition(final BeatsMap beatsMap, final int basePosition, final double basePositionInBeats,
+			final T position) {
+		this.position = position.position() - basePosition;
+		positionInBeats = beatsMap.getPositionInBeats(position.position()) - basePositionInBeats;
 	}
 
 	protected abstract T prepareValue();
 
-	public T getValue(final BeatsMap beatsMap, final double basePositionInBeats) {
+	public T getValue(final BeatsMap beatsMap, final int basePosition, final double basePositionInBeats,
+			final boolean convertFromBeats) {
 		final T value = prepareValue();
 
-		final double startBeatPosition = basePositionInBeats + position;
+		if (convertFromBeats) {
+			final double startBeatPosition = basePositionInBeats + positionInBeats;
 
-		if (startBeatPosition < 0 || startBeatPosition > beatsMap.beats.size() - 1) {
-			return null;
+			if (startBeatPosition < 0 || startBeatPosition > beatsMap.beats.size() - 1) {
+				return null;
+			}
+
+			value.position(beatsMap.getPositionForPositionInBeats(startBeatPosition));
+		} else {
+			value.position(basePosition + position);
 		}
-
-		value.position(beatsMap.getPositionForPositionInBeats(startBeatPosition));
 
 		return value;
 	}

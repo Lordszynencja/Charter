@@ -1,7 +1,7 @@
 package log.charter.util.grid;
 
 import static java.lang.Math.floor;
-import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import log.charter.data.config.Config;
 import log.charter.song.Beat;

@@ -1,36 +1,34 @@
 package log.charter.gui.components.preview3D.drawers;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static log.charter.gui.components.preview3D.Preview3DUtils.closeDistance;
 import static log.charter.gui.components.preview3D.Preview3DUtils.closeDistanceZ;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.visibility;
-import static log.charter.song.notes.IPosition.findFirstAfter;
-import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
 import static log.charter.util.Utils.isDottedFret;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
+import log.charter.data.managers.RepeatManager;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.components.preview3D.data.AnchorDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
-import log.charter.song.Anchor;
-import log.charter.song.EventPoint;
-import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DAnchorsDrawer {
 	private ChartData data;
+	private RepeatManager repeatManager;
 
-	public void init(final ChartData data) {
+	public void init(final ChartData data, final RepeatManager repeatManager) {
 		this.data = data;
+		this.repeatManager = repeatManager;
 	}
 
 	private Color getColorWithTransparency(final Color color, final int time) {
@@ -42,18 +40,18 @@ public class Preview3DAnchorsDrawer {
 		return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
 	}
 
-	private void addAnchor(final BaseShaderDrawData drawData, final Anchor anchor, final int anchorEnd) {
-		final double y = getChartboardYPosition(data.currentStrings()) - 0.001;
-		final int t0 = max(0, anchor.position() - data.time);
-		final int t1 = min(visibility, anchorEnd - data.time);
-		final double z0 = getTimePosition(t0);
-		final double z1 = getTimePosition(t1);
-
-		if (z1 < z0) {
+	private void addAnchor(final BaseShaderDrawData drawData, final AnchorDrawData anchor) {
+		if (anchor.timeTo < anchor.timeFrom) {
 			return;
 		}
 
-		for (int fret = anchor.fret; fret < anchor.fret + anchor.width; fret++) {
+		final double y = getChartboardYPosition(data.currentStrings()) - 0.001;
+		final int t0 = anchor.timeFrom - data.time;
+		final int t1 = anchor.timeTo - data.time;
+		final double z0 = getTimePosition(t0);
+		final double z1 = getTimePosition(t1);
+
+		for (int fret = anchor.fretFrom + 1; fret <= anchor.fretTo; fret++) {
 			final double x0 = getFretPosition(fret - 1);
 			final double x1 = getFretPosition(fret);
 			final Color color = (isDottedFret(fret) ? ColorLabel.PREVIEW_3D_LANE_DOTTED : ColorLabel.PREVIEW_3D_LANE)
@@ -88,31 +86,10 @@ public class Preview3DAnchorsDrawer {
 
 	public void draw(final ShadersHolder shadersHolder) {
 		final BaseShaderDrawData drawData = shadersHolder.new BaseShaderDrawData();
-		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
-		int anchorsFrom = findLastIdBeforeEqual(anchors, data.time);
-		if (anchorsFrom == -1) {
-			anchorsFrom = 0;
-		}
-		final int anchorsTo = findLastIdBeforeEqual(anchors, data.time + visibility);
 
-		for (int i = anchorsFrom; i <= anchorsTo; i++) {
-			final Anchor anchor = anchors.get(i);
-
-			int timeTo;
-			if (i < anchors.size() - 1) {
-				timeTo = anchors.get(i + 1).position() - 1;
-			} else {
-				timeTo = data.songChart.beatsMap.songLengthMs;
-			}
-
-			final EventPoint nextPhraseIteration = findFirstAfter(
-					data.getCurrentArrangement().getFilteredEventPoints(p -> p.phrase != null), anchor.position());
-			if (nextPhraseIteration != null) {
-				timeTo = min(timeTo, nextPhraseIteration.position());
-			}
-
-			addAnchor(drawData, anchor, timeTo);
-		}
+		final List<AnchorDrawData> anchorsToDraw = AnchorDrawData.getAnchorsForTimeSpanWithRepeats(data, repeatManager,
+				data.time, data.time + visibility);
+		anchorsToDraw.forEach(anchorToDraw -> addAnchor(drawData, anchorToDraw));
 
 		drawData.draw(GL30.GL_QUADS, Matrix4.identity);
 	}

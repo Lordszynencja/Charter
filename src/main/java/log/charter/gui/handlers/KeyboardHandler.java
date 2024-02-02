@@ -28,6 +28,7 @@ import static java.awt.event.KeyEvent.VK_F2;
 import static java.awt.event.KeyEvent.VK_F3;
 import static java.awt.event.KeyEvent.VK_F4;
 import static java.awt.event.KeyEvent.VK_F5;
+import static java.awt.event.KeyEvent.VK_F6;
 import static java.awt.event.KeyEvent.VK_G;
 import static java.awt.event.KeyEvent.VK_H;
 import static java.awt.event.KeyEvent.VK_HOME;
@@ -64,11 +65,11 @@ import static java.lang.System.nanoTime;
 import static java.util.Arrays.asList;
 import static log.charter.data.ArrangementFixer.fixSoundLength;
 import static log.charter.data.config.Config.frets;
-import static log.charter.song.notes.IPosition.findFirstAfter;
-import static log.charter.song.notes.IPosition.findFirstIdAfter;
-import static log.charter.song.notes.IPosition.findLastBefore;
-import static log.charter.song.notes.IPosition.findLastIdBefore;
-import static log.charter.song.notes.IPosition.getFromTo;
+import static log.charter.song.notes.IConstantPosition.findFirstAfter;
+import static log.charter.song.notes.IConstantPosition.findFirstIdAfter;
+import static log.charter.song.notes.IConstantPosition.findLastBefore;
+import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
+import static log.charter.song.notes.IConstantPosition.getFromTo;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -88,6 +89,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.copySystem.CopyManager;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionAccessor;
@@ -97,6 +99,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
+import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.panes.HandShapePane;
 import log.charter.gui.panes.VocalPane;
 import log.charter.song.ArrangementChart;
@@ -243,11 +246,13 @@ public class KeyboardHandler implements KeyListener {
 	private AudioDrawer audioDrawer;
 	private AudioHandler audioHandler;
 	private ArrangementFixer arrangementFixer;
+	private ChartToolbar chartToolbar;
 	private CopyManager copyManager;
 	private ChartData data;
 	private CharterFrame frame;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
+	private RepeatManager repeatManager;
 	private SelectionManager selectionManager;
 	private SongFileHandler songFileHandler;
 	private UndoSystem undoSystem;
@@ -262,18 +267,20 @@ public class KeyboardHandler implements KeyListener {
 	private int fretNumberTimer = 0;
 
 	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler,
-			final ArrangementFixer arrangementFixer, final CopyManager copyManager, final ChartData data,
-			final CharterFrame frame, final ModeManager modeManager, final MouseHandler mouseHandler,
-			final SelectionManager selectionManager, final SongFileHandler songFileHandler,
-			final UndoSystem undoSystem) {
+			final ArrangementFixer arrangementFixer, final ChartToolbar chartToolbar, final CopyManager copyManager,
+			final ChartData data, final CharterFrame frame, final ModeManager modeManager,
+			final MouseHandler mouseHandler, final RepeatManager repeatManager, final SelectionManager selectionManager,
+			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
 		this.audioDrawer = audioDrawer;
 		this.audioHandler = audioHandler;
 		this.arrangementFixer = arrangementFixer;
+		this.chartToolbar = chartToolbar;
 		this.copyManager = copyManager;
 		this.data = data;
 		this.frame = frame;
 		this.modeManager = modeManager;
 		this.mouseHandler = mouseHandler;
+		this.repeatManager = repeatManager;
 		this.selectionManager = selectionManager;
 		this.songFileHandler = songFileHandler;
 		this.undoSystem = undoSystem;
@@ -1183,6 +1190,8 @@ public class KeyboardHandler implements KeyListener {
 		if (Config.gridSize <= 512) {
 			Config.gridSize *= 2;
 			Config.markChanged();
+
+			chartToolbar.updateValues();
 		}
 	}
 
@@ -1190,6 +1199,8 @@ public class KeyboardHandler implements KeyListener {
 		if (Config.gridSize % 2 == 0) {
 			Config.gridSize /= 2;
 			Config.markChanged();
+
+			chartToolbar.updateValues();
 		}
 	}
 
@@ -1329,7 +1340,7 @@ public class KeyboardHandler implements KeyListener {
 		key(VK_M).function(this::toggleMute);
 		key(VK_N).ctrl().function(songFileHandler::newSong);
 		key(VK_O).function(this::toggleHarmonic);
-		key(VK_O).ctrl().function((Runnable) songFileHandler::open);
+		key(VK_O).ctrl().function(songFileHandler::open);
 		key(VK_R).ctrl().function(undoSystem::redo);
 		key(VK_S).ctrl().function(songFileHandler::save);
 		key(VK_S).ctrl().shift().function(songFileHandler::saveAs);
@@ -1342,6 +1353,8 @@ public class KeyboardHandler implements KeyListener {
 
 		key(VK_COMMA).function(this::halveGridSize);
 		key(VK_PERIOD).function(this::doubleGridSize);
+		key(VK_OPEN_BRACKET).function(() -> repeatManager.toggleRepeatStart(data.time));
+		key(VK_CLOSE_BRACKET).function(() -> repeatManager.toggleRepeatEnd(data.time));
 
 		final int[][] numberKeys = new int[10][];
 		numberKeys[0] = new int[] { VK_0, VK_NUMPAD0 };
@@ -1368,6 +1381,7 @@ public class KeyboardHandler implements KeyListener {
 		key(VK_F3).singleFunction(audioHandler::toggleClaps);
 		key(VK_F4).singleFunction(audioHandler::toggleMetronome);
 		key(VK_F5).singleFunction(audioDrawer::toggle);
+		key(VK_F6).singleFunction(repeatManager::toggle);
 		key(VK_F11).singleFunction(frame::switchWindowedPreview);
 		key(VK_F12).singleFunction(frame::switchBorderlessWindowedPreview);
 	}

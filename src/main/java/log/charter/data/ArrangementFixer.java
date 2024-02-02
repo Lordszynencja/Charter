@@ -4,7 +4,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.minNoteDistance;
 import static log.charter.song.notes.ChordOrNote.findNextSoundOnString;
-import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.HashMap;

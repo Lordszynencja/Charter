@@ -9,12 +9,12 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 public interface ICopyData {
 	static <T extends IPosition, V extends CopiedPosition<T>> void simplePaste(final BeatsMap beatsMap, final int time,
-			final ArrayList2<T> positions, final ArrayList2<V> positionsToPaste) {
+			final ArrayList2<T> positions, final ArrayList2<V> positionsToPaste, final boolean convertFromBeats) {
 		final double basePositionInBeats = beatsMap.getPositionInBeats(time);
 
 		for (final V copiedPosition : positionsToPaste) {
 			try {
-				final T value = copiedPosition.getValue(beatsMap, basePositionInBeats);
+				final T value = copiedPosition.getValue(beatsMap, time, basePositionInBeats, convertFromBeats);
 				if (value != null) {
 					positions.add(value);
 				}
@@ -28,5 +28,5 @@ public interface ICopyData {
 
 	public boolean isEmpty();
 
-	public void paste(ChartData data);
+	public void paste(ChartData data, boolean convertFromBeats);
 }

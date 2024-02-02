@@ -204,6 +204,9 @@ public class Localization {
 		MUSIC_MENU_50("50% speed"), //
 		MUSIC_MENU_75("75% speed"), //
 		MUSIC_MENU_CUSTOM("Custom speed"), //
+		MUSIC_MENU_TOGGLE_REPEATER("Toggle repeater"), //
+		MUSIC_MENU_SET_REPEATER_START("Set repeater start"), //
+		MUSIC_MENU_SET_REPEATER_END("Set repeater end"), //
 
 		NOTES_MENU("Notes"), //
 		NOTES_MENU_GRID_OPTIONS("Grid options"), //
@@ -216,6 +219,7 @@ public class Localization {
 		TOOLBAR_CLAPS("Claps"), //
 		TOOLBAR_METRONOME("Metronome"), //
 		TOOLBAR_WAVEFORM_GRAPH("Waveform graph"), //
+		TOOLBAR_REPEATER("Repeater"), //
 		TOOLBAR_SLOWED_PLAYBACK_SPEED("Slowed speed"), //
 		TOOLBAR_VOLUME("Volume"), //
 		TOOLBAR_MIDI_VOLUME("Midi volume"), //
@@ -307,6 +311,7 @@ public class Localization {
 		TREMOLO("Tremolo"), //
 
 		SPECIAL_GUITAR_PASTE_PANE("Special paste"), //
+		SPECIAL_GUITAR_PASTE_USE_BEATS("Use beats as time"), //
 		SPECIAL_GUITAR_PASTE_SECTIONS("Paste sections"), //
 		SPECIAL_GUITAR_PASTE_PHRASES("Paste phrases"), //
 		SPECIAL_GUITAR_PASTE_EVENTS("Paste events"), //

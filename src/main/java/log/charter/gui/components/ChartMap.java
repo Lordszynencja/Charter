@@ -6,6 +6,7 @@ import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.util.ScalingUtils.xToTimeLength;
 import static log.charter.util.Utils.getStringPosition;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -115,9 +116,10 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 
 		data.songChart.beatsMap.beats.stream()//
 				.filter(beat -> beat.firstInMeasure)//
-				.map(beat -> beat.position())//
-				.forEach(position -> {
-					final int x = timeToPosition(position);
+				.forEach(beat -> {
+					final int x = timeToPosition(beat.position());
+					final Color color = (beat.anchor ? ColorLabel.MAIN_BEAT : ColorLabel.SECONDARY_BEAT).color();
+					g.setColor(color);
 					g.drawLine(x, 0, x, getHeight());
 				});
 	}

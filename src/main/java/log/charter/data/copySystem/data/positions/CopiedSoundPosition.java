@@ -9,8 +9,9 @@ import log.charter.song.notes.ChordOrNote;
 public class CopiedSoundPosition extends CopiedPositionWithLength<ChordOrNote> {
 	public final ChordOrNote sound;
 
-	public CopiedSoundPosition(final BeatsMap beatsMap, final double baseBeatPosition, final ChordOrNote sound) {
-		super(beatsMap, baseBeatPosition, sound);
+	public CopiedSoundPosition(final BeatsMap beatsMap, final int basePosition, final double baseBeatPosition,
+			final ChordOrNote sound) {
+		super(beatsMap, basePosition, baseBeatPosition, sound);
 		this.sound = sound;
 	}
 

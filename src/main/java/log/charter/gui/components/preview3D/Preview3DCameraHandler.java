@@ -7,7 +7,7 @@ import static log.charter.gui.components.preview3D.glUtils.Matrix4.cameraMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationXMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
-import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;

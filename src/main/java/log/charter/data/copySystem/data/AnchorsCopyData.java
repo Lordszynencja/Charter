@@ -22,11 +22,11 @@ public class AnchorsCopyData implements ICopyData {
 	}
 
 	@Override
-	public void paste(final ChartData data) {
+	public void paste(final ChartData data, final boolean convertFromBeats) {
 		final BeatsMap beatsMap = data.songChart.beatsMap;
 		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 
-		ICopyData.simplePaste(beatsMap, data.time, anchors, this.anchors);
+		ICopyData.simplePaste(beatsMap, data.time, anchors, this.anchors, convertFromBeats);
 	}
 
 }

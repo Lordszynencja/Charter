@@ -1,7 +1,6 @@
 package log.charter.song;
 
-import static log.charter.song.notes.IPosition.findLastBefore;
-
+import log.charter.song.notes.IConstantPosition;
 import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -13,7 +12,7 @@ public class OnBeat implements IPosition {
 	}
 
 	protected OnBeat(final ArrayList2<Beat> beats, final int position) {
-		beat = findLastBefore(beats, position + 1);
+		beat = IConstantPosition.findLastBefore(beats, position + 1);
 	}
 
 	public OnBeat(final ArrayList2<Beat> beats, final OnBeat other) {

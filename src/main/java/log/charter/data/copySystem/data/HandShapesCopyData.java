@@ -31,7 +31,7 @@ public class HandShapesCopyData implements ICopyData {
 	}
 
 	@Override
-	public void paste(final ChartData data) {
+	public void paste(final ChartData data, final boolean convertFromBeats) {
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 		final BeatsMap beatsMap = data.songChart.beatsMap;
 		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
@@ -41,7 +41,8 @@ public class HandShapesCopyData implements ICopyData {
 
 		for (final CopiedHandShapePosition copiedPosition : this.handShapes) {
 			try {
-				final HandShape handShape = copiedPosition.getValue(beatsMap, basePositionInBeats);
+				final HandShape handShape = copiedPosition.getValue(beatsMap, data.time, basePositionInBeats,
+						convertFromBeats);
 				if (handShape == null) {
 					continue;
 				}

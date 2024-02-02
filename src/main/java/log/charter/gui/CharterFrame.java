@@ -29,6 +29,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.copySystem.CopyManager;
 import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
@@ -84,6 +85,7 @@ public class CharterFrame extends JFrame {
 	private final ModeManager modeManager = new ModeManager();
 	private final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler = new MouseButtonPressReleaseHandler();
 	private final MouseHandler mouseHandler = new MouseHandler();
+	private final RepeatManager repeatManager = new RepeatManager();
 	private final SongFileHandler songFileHandler = new SongFileHandler();
 	private final SelectionManager selectionManager = new SelectionManager();
 	private final UndoSystem undoSystem = new UndoSystem();
@@ -121,33 +123,35 @@ public class CharterFrame extends JFrame {
 		arrangementFixer.init(data);
 		arrangementValidator.init(data, this);
 		audioDrawer.init(data, chartPanel, chartToolbar);
-		audioHandler.init(chartToolbar, data, this, modeManager);
-		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, selectionManager);
+		audioHandler.init(chartToolbar, data, this, modeManager, repeatManager);
+		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, repeatManager,
+				selectionManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
 		data.init(this, audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
-		keyboardHandler.init(audioDrawer, audioHandler, arrangementFixer, copyManager, data, this, modeManager,
-				mouseHandler, selectionManager, songFileHandler, undoSystem);
+		keyboardHandler.init(audioDrawer, audioHandler, arrangementFixer, chartToolbar, copyManager, data, this,
+				modeManager, mouseHandler, repeatManager, selectionManager, songFileHandler, undoSystem);
 		highlightManager.init(data, modeManager, selectionManager);
 		modeManager.init(currentSelectionEditor, data, this, highlightManager, keyboardHandler, selectionManager,
 				undoSystem);
 		mouseButtonPressReleaseHandler.init(highlightManager);
 		mouseHandler.init(arrangementFixer, data, this, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
 				selectionManager, undoSystem);
+		repeatManager.init(audioHandler, chartToolbar, data);
 		songFileHandler.init(arrangementFixer, arrangementValidator, audioHandler, data, this, charterMenuBar,
 				modeManager, undoSystem);
 		selectionManager.init(data, this, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 
 		charterMenuBar.init(arrangementFixer, audioDrawer, audioHandler, copyManager, chartToolbar, data, this,
-				keyboardHandler, modeManager, selectionManager, songFileHandler, undoSystem);
-		chartToolbar.init(audioDrawer, audioHandler, keyboardHandler);
+				keyboardHandler, modeManager, repeatManager, selectionManager, songFileHandler, undoSystem);
+		chartToolbar.init(audioDrawer, audioHandler, keyboardHandler, repeatManager);
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 		chartMap.init(chartPanel, data, this, modeManager);
 		currentSelectionEditor.init(arrangementFixer, data, this, keyboardHandler, selectionManager, undoSystem);
-		preview3DPanel.init(data, keyboardHandler, modeManager);
+		preview3DPanel.init(data, keyboardHandler, modeManager, repeatManager);
 
-		windowedPreview3DPanel.init(data, keyboardHandler, modeManager);
+		windowedPreview3DPanel.init(data, keyboardHandler, modeManager, repeatManager);
 		windowedPreviewFrame.init(keyboardHandler, windowedPreview3DPanel);
 
 		add(chartToolbar);
@@ -228,6 +232,7 @@ public class CharterFrame extends JFrame {
 	private void frame() {
 		try {
 			keyboardHandler.frame();
+			repeatManager.frame();
 			updateTitle();
 
 			data.time = (int) data.nextTime;

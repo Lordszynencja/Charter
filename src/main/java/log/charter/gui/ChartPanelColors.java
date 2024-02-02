@@ -33,6 +33,7 @@ public class ChartPanelColors {
 		SECONDARY_BEAT(160, 160, 160), //
 		GRID(96, 96, 96), //
 		BOOKMARK(64, 64, 255), //
+		REPEAT_MARKER(0, 255, 255), //
 		MARKER(255, 0, 0), //
 		SECTION_NAME_BG(192, 128, 64), //
 		PHRASE_NAME_BG(192, 0, 192), //

@@ -22,11 +22,11 @@ public class ToneChangesCopyData implements ICopyData {
 	}
 
 	@Override
-	public void paste(final ChartData data) {
+	public void paste(final ChartData data, final boolean convertFromBeats) {
 		final BeatsMap beatsMap = data.songChart.beatsMap;
 		final ArrayList2<ToneChange> toneChanges = data.getCurrentArrangement().toneChanges;
 
-		ICopyData.simplePaste(beatsMap, data.time, toneChanges, this.toneChanges);
+		ICopyData.simplePaste(beatsMap, data.time, toneChanges, this.toneChanges, convertFromBeats);
 	}
 
 }

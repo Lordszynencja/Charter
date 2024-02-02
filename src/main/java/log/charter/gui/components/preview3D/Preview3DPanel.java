@@ -12,6 +12,7 @@ import org.lwjgl.opengl.awt.GLData;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.drawers.Preview3DAnchorsDrawer;
@@ -65,16 +66,17 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		super(prepareGLData());
 	}
 
-	public void init(final ChartData data, final KeyboardHandler keyboardHandler, final ModeManager modeManager) {
+	public void init(final ChartData data, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+			final RepeatManager repeatManager) {
 		this.data = data;
 		this.modeManager = modeManager;
 
-		anchorsDrawer.init(data);
-		beatsDrawer.init(data, textTexturesHolder);
+		anchorsDrawer.init(data, repeatManager);
+		beatsDrawer.init(data, repeatManager, textTexturesHolder);
 		cameraHandler.init(data);
-		fingeringDrawer.init(data, texturesHolder);
-		guitarSoundsDrawer.init(data);
-		handShapesDrawer.init(data);
+		fingeringDrawer.init(data, repeatManager, texturesHolder);
+		guitarSoundsDrawer.init(data, repeatManager);
+		handShapesDrawer.init(data, repeatManager);
 		inlayDrawer.init(data, texturesHolder);
 		laneBordersDrawer.init(data);
 		lyricsDrawer.init(data, textTexturesHolder);
@@ -166,18 +168,19 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 
 			// videoDrawer.draw(shadersHolder, getWidth(), getHeight());
 			timer.addTimestamp("videoDrawer");
-			stringsFretsDrawer.draw(shadersHolder);
-			timer.addTimestamp("stringsFretsDrawer");
+			beatsDrawer.draw(shadersHolder);
+			timer.addTimestamp("beatsDrawer");
 			laneBordersDrawer.draw(shadersHolder);
 			timer.addTimestamp("laneBordersDrawer");
 			anchorsDrawer.draw(shadersHolder);
 			timer.addTimestamp("anchorsDrawer");
+			stringsFretsDrawer.draw(shadersHolder);
+			timer.addTimestamp("stringsFretsDrawer");
 			handShapesDrawer.draw(shadersHolder);
 			timer.addTimestamp("handShapesDrawer");
-			beatsDrawer.draw(shadersHolder);
-			timer.addTimestamp("beatsDrawer");
 			guitarSoundsDrawer.draw(shadersHolder);
 			timer.addTimestamp("guitarSoundsDrawer");
+
 			inlayDrawer.draw(shadersHolder);
 			timer.addTimestamp("inlayDrawer");
 			fingeringDrawer.draw(shadersHolder);

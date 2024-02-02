@@ -11,9 +11,9 @@ public class CopiedToneChangePosition extends CopiedPosition<ToneChange> {
 	@XStreamAsAttribute
 	public final String toneName;
 
-	public CopiedToneChangePosition(final BeatsMap beatsMap, final double baseBeatPosition,
+	public CopiedToneChangePosition(final BeatsMap beatsMap, final int basePosition, final double baseBeatPosition,
 			final ToneChange toneChange) {
-		super(beatsMap, baseBeatPosition, toneChange);
+		super(beatsMap, basePosition, baseBeatPosition, toneChange);
 		toneName = toneChange.toneName;
 	}
 

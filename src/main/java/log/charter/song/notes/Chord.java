@@ -244,7 +244,7 @@ public class Chord extends GuitarSound {
 			return baseVisibility;
 		}
 
-		return (forceAddNotes && !fullyMuted()) ? ChordNotesVisibility.NOTES : ChordNotesVisibility.NONE;
+		return (forceAddNotes && !fullyMuted() && palmMuted()) ? ChordNotesVisibility.NOTES : ChordNotesVisibility.NONE;
 	}
 
 	@Override

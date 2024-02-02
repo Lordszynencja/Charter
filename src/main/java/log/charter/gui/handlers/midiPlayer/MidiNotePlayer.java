@@ -1,7 +1,7 @@
 package log.charter.gui.handlers.midiPlayer;
 
 import static log.charter.data.config.Config.midiVolume;
-import static log.charter.song.notes.IPosition.findLastBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

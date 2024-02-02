@@ -17,6 +17,7 @@ import javax.swing.JToolBar;
 import log.charter.data.config.Config;
 import log.charter.data.config.GridType;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.RepeatManager;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.components.FieldWithLabel;
@@ -36,11 +37,13 @@ public class ChartToolbar extends JToolBar {
 
 	private AudioDrawer audioDrawer;
 	private AudioHandler audioHandler;
+	private RepeatManager repeatManager;
 
 	private FieldWithLabel<JCheckBox> midi;
 	private FieldWithLabel<JCheckBox> claps;
 	private FieldWithLabel<JCheckBox> metronome;
 	private FieldWithLabel<JCheckBox> waveformGraph;
+	private FieldWithLabel<JCheckBox> repeater;
 
 	private FieldWithLabel<TextInputWithValidation> gridSize;
 
@@ -61,20 +64,19 @@ public class ChartToolbar extends JToolBar {
 	}
 
 	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler,
-			final KeyboardHandler keyboardHandler) {
+			final KeyboardHandler keyboardHandler, final RepeatManager repeatManager) {
 		this.audioDrawer = audioDrawer;
 		this.audioHandler = audioHandler;
+		this.repeatManager = repeatManager;
 
 		final AtomicInteger x = new AtomicInteger(0);
 
-		addMidiClapsMetronomeWaveformGraph(x);
-
+		addMidiClapsMetronomeWaveformGraphRepeater(x);
 		x.addAndGet(5);
 		addSeparator(x);
 
 		x.addAndGet(5);
 		addGridOptions(x);
-
 		x.addAndGet(5);
 		addSeparator(x);
 
@@ -102,7 +104,7 @@ public class ChartToolbar extends JToolBar {
 		add(c);
 	}
 
-	private void addMidiClapsMetronomeWaveformGraph(final AtomicInteger x) {
+	private void addMidiClapsMetronomeWaveformGraphRepeater(final AtomicInteger x) {
 		midi = createCheckboxField(Label.TOOLBAR_MIDI, 2, audioHandler::toggleMidiNotes);
 		add(x, midi);
 		x.addAndGet(5);
@@ -117,6 +119,10 @@ public class ChartToolbar extends JToolBar {
 
 		waveformGraph = createCheckboxField(Label.TOOLBAR_WAVEFORM_GRAPH, 2, audioDrawer::toggle);
 		this.add(x, waveformGraph);
+		x.addAndGet(5);
+
+		repeater = createCheckboxField(Label.TOOLBAR_REPEATER, 2, repeatManager::toggle);
+		this.add(x, repeater);
 	}
 
 	private void addGridOptions(final AtomicInteger x) {
@@ -192,8 +198,6 @@ public class ChartToolbar extends JToolBar {
 				Label.TOOLBAR_SLOWED_PLAYBACK_SPEED, LabelPosition.LEFT_PACKED, 0, 30, //
 				Config.stretchedMusicSpeed, 1, 500, false, this::changeSpeed);
 		this.add(x, slowedSpeed);
-
-		// TODO add current playback speed
 
 		final JSlider volumeSlider = new JSlider(0, 100, getVolumeAsInteger(Config.volume));
 		volumeSlider.addChangeListener(e -> {
@@ -302,6 +306,7 @@ public class ChartToolbar extends JToolBar {
 		claps.field.setSelected(audioHandler.claps());
 		metronome.field.setSelected(audioHandler.metronome());
 		waveformGraph.field.setSelected(audioDrawer.drawing());
+		repeater.field.setSelected(repeatManager.isOn());
 
 		gridSize.field.setTextWithoutEvent(Config.gridSize + "");
 		switch (Config.gridType) {
@@ -316,7 +321,6 @@ public class ChartToolbar extends JToolBar {
 			Logger.error("Wrong grid type for toolbar " + Config.gridType);
 			break;
 		}
-
 	}
 
 	@Override

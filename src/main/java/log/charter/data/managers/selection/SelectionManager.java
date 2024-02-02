@@ -1,6 +1,6 @@
 package log.charter.data.managers.selection;
 
-import static log.charter.song.notes.IPosition.findClosestId;
+import static log.charter.song.notes.IConstantPosition.findClosestId;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 

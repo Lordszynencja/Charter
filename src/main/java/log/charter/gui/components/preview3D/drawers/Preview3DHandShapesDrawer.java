@@ -6,29 +6,31 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardY
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.visibility;
-import static log.charter.song.notes.IPosition.findLastBeforeEqual;
-import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
+import static log.charter.gui.components.preview3D.data.HandShapeDrawData.getHandShapesForTimeSpanWithRepeats;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
+import log.charter.data.managers.RepeatManager;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.components.preview3D.data.HandShapeDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
-import log.charter.song.Anchor;
-import log.charter.song.HandShape;
-import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DHandShapesDrawer {
 	private static final double lineThickness = 0.012;
-	private ChartData data;
 
-	public void init(final ChartData data) {
+	private ChartData data;
+	private RepeatManager repeatManager;
+
+	public void init(final ChartData data, final RepeatManager repeatManager) {
 		this.data = data;
+		this.repeatManager = repeatManager;
 	}
 
 	private void addSquare(final BaseShaderDrawData drawData, final double x0, final double x1, final double y,
@@ -52,17 +54,12 @@ public class Preview3DHandShapesDrawer {
 		addSquare(drawData, x2, x3, y, z0, z1, color, alpha);
 	}
 
-	private void addHandShape(final BaseShaderDrawData drawData, final HandShape handShape) {
+	private void addHandShape(final BaseShaderDrawData drawData, final HandShapeDrawData handShape) {
 		final double y = getChartboardYPosition(data.currentStrings()) + 0.0002;
-		final boolean arpeggio = data.getCurrentArrangement().chordTemplates.get(handShape.templateId).arpeggio;
+		final boolean arpeggio = handShape.template.arpeggio;
 
-		Anchor anchor = findLastBeforeEqual(data.getCurrentArrangementLevel().anchors, handShape.position());
-		if (anchor == null) {
-			anchor = new Anchor(0, 0, 0);
-		}
-
-		final int timeFrom = max(0, handShape.position() - data.time);
-		final int timeTo = min(visibility, handShape.endPosition() - data.time);
+		final int timeFrom = max(0, handShape.timeFrom - data.time);
+		final int timeTo = min(visibility, handShape.timeTo - data.time);
 		if (timeTo < 0) {
 			return;
 		}
@@ -72,23 +69,16 @@ public class Preview3DHandShapesDrawer {
 		final Color color = (arpeggio ? ColorLabel.PREVIEW_3D_ARPEGGIO : ColorLabel.PREVIEW_3D_LANE_BORDER).color();
 		final Color alpha = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0);
 
-		addThickLine(drawData, anchor.fret - 1, y, z0, z1, color, alpha);
-		addThickLine(drawData, anchor.topFret(), y, z0, z1, color, alpha);
+		addThickLine(drawData, handShape.fretFrom, y, z0, z1, color, alpha);
+		addThickLine(drawData, handShape.fretTo, y, z0, z1, color, alpha);
 	}
 
 	public void draw(final ShadersHolder shadersHolder) {
 		final BaseShaderDrawData drawData = shadersHolder.new BaseShaderDrawData();
+		final List<HandShapeDrawData> handShapesToDraw = getHandShapesForTimeSpanWithRepeats(data, repeatManager,
+				data.time, data.time + visibility);
 
-		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
-		int idFrom = findLastIdBeforeEqual(handShapes, data.time);
-		if (idFrom == -1) {
-			idFrom = 0;
-		}
-		final int idTo = findLastIdBeforeEqual(handShapes, data.time + visibility);
-
-		for (int i = idFrom; i <= idTo; i++) {
-			addHandShape(drawData, handShapes.get(i));
-		}
+		handShapesToDraw.forEach(handShape -> addHandShape(drawData, handShape));
 
 		drawData.draw(GL30.GL_QUADS, Matrix4.identity);
 	}

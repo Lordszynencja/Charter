@@ -1,8 +1,8 @@
 package log.charter.data.copySystem;
 
 import static java.util.stream.Collectors.toCollection;
-import static log.charter.song.notes.IPosition.findFirstIdAfterEqual;
-import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findFirstIdAfterEqual;
+import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import java.util.function.Function;
 
@@ -50,7 +50,7 @@ import log.charter.util.CollectionUtils.HashMap2;
 
 public class CopyManager {
 	private static interface CopiedPositionMaker<T extends IPosition, V extends CopiedPosition<T>> {
-		V make(BeatsMap beatsMap, double basePositionInBeats, T position);
+		V make(BeatsMap beatsMap, int basePosition, double basePositionInBeats, T position);
 	}
 
 	private ChartData data;
@@ -69,18 +69,21 @@ public class CopyManager {
 	}
 
 	private <T extends IPosition, V extends CopiedPosition<T>> ArrayList2<V> makeCopy(final ArrayList2<T> positions,
-			final double basePositionInBeats, final CopiedPositionMaker<T, V> copiedPositionMaker) {
+			final int basePosition, final double basePositionInBeats,
+			final CopiedPositionMaker<T, V> copiedPositionMaker) {
 		final BeatsMap beatsMap = data.songChart.beatsMap;
 
-		return positions.map(position -> copiedPositionMaker.make(beatsMap, basePositionInBeats, position));
+		return positions
+				.map(position -> copiedPositionMaker.make(beatsMap, basePosition, basePositionInBeats, position));
 	}
 
 	private <T extends IPosition, V extends CopiedPosition<T>> ArrayList2<V> makeCopy(
 			final ArrayList2<Selection<T>> selectedPositions, final CopiedPositionMaker<T, V> copiedPositionMaker) {
 		final BeatsMap beatsMap = data.songChart.beatsMap;
-		final double basePositionInBeats = beatsMap.getPositionInBeats(selectedPositions.get(0).selectable.position());
+		final int basePosition = selectedPositions.get(0).selectable.position();
+		final double basePositionInBeats = beatsMap.getPositionInBeats(basePosition);
 
-		return makeCopy(selectedPositions.map(selected -> selected.selectable), basePositionInBeats,
+		return makeCopy(selectedPositions.map(selected -> selected.selectable), basePosition, basePositionInBeats,
 				copiedPositionMaker);
 	}
 
@@ -102,7 +105,7 @@ public class CopyManager {
 		}
 
 		return positions.stream().skip(fromId).limit(toId - fromId + 1)//
-				.map(position -> copiedPositionMaker.make(beatsMap, basePositionInBeats, position))//
+				.map(position -> copiedPositionMaker.make(beatsMap, from, basePositionInBeats, position))//
 				.collect(toCollection(ArrayList2::new));
 	}
 
@@ -117,8 +120,7 @@ public class CopyManager {
 
 		final HashMap2<String, Phrase> copiedPhrases = arrangement.phrases.map(phraseName -> phraseName, Phrase::new);
 		final ArrayList2<CopiedArrangementEventsPointPosition> copiedArrangementEventsPoints = copyPositionsFromTo(from,
-				to, basePositionInBeats, arrangement.eventPoints,
-				CopiedArrangementEventsPointPosition::new);
+				to, basePositionInBeats, arrangement.eventPoints, CopiedArrangementEventsPointPosition::new);
 		final ArrayList2<ChordTemplate> copiedChordTemplates = data.getCurrentArrangement().chordTemplates
 				.map(ChordTemplate::new);
 		final ArrayList2<CopiedToneChangePosition> copiedToneChanges = copyPositionsFromTo(from, to,
@@ -146,8 +148,7 @@ public class CopyManager {
 
 		final HashMap2<String, Phrase> copiedPhrases = arrangement.phrases.map(phraseName -> phraseName, Phrase::new);
 		final ArrayList2<CopiedArrangementEventsPointPosition> copiedArrangementEventsPoints = copyPositionsFromTo(from,
-				to, basePositionInBeats, arrangement.eventPoints,
-				CopiedArrangementEventsPointPosition::new);
+				to, basePositionInBeats, arrangement.eventPoints, CopiedArrangementEventsPointPosition::new);
 
 		final ICopyData copyData = new EventPointsCopyData(copiedPhrases, copiedArrangementEventsPoints);
 		return new CopyData(copyData, getFullCopyData(from, to));
@@ -296,7 +297,7 @@ public class CopyManager {
 
 		undoSystem.addUndo();
 		selectionManager.clear();
-		selectedCopy.paste(data);
+		selectedCopy.paste(data, true);
 	}
 
 	public void specialPaste() {

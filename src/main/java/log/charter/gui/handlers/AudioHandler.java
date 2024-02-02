@@ -3,7 +3,7 @@ package log.charter.gui.handlers;
 import static java.lang.System.nanoTime;
 import static log.charter.data.config.Config.createDefaultStretchesInBackground;
 import static log.charter.data.config.Config.stretchedMusicSpeed;
-import static log.charter.song.notes.IPosition.findFirstAfter;
+import static log.charter.song.notes.IConstantPosition.findFirstAfter;
 import static log.charter.sound.MusicData.generateSound;
 
 import java.util.function.Supplier;
@@ -12,6 +12,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.RepeatManager;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.midiPlayer.MidiChartNotePlayer;
@@ -60,6 +61,7 @@ public class AudioHandler {
 	private ChartData data;
 	private CharterFrame frame;
 	private ModeManager modeManager;
+	private RepeatManager repeatManager;
 
 	private final StretchedAudioHandler stretchedAudioHandler = new StretchedAudioHandler();
 
@@ -71,6 +73,8 @@ public class AudioHandler {
 	private final MidiChartNotePlayer midiChartNotePlayer = new MidiChartNotePlayer();
 	private Player songPlayer;
 
+	private MusicData lastUncutData = null;
+	private MusicData lastPlayedData = null;
 	private int speed = 100;
 	private int songTimeOnStart = 0;
 	private long playStartTime;
@@ -79,11 +83,12 @@ public class AudioHandler {
 	public boolean midiNotesPlaying = false;
 
 	public void init(final ChartToolbar chartToolbar, final ChartData data, final CharterFrame frame,
-			final ModeManager modeManager) {
+			final ModeManager modeManager, final RepeatManager repeatManager) {
 		this.chartToolbar = chartToolbar;
 		this.data = data;
 		this.frame = frame;
 		this.modeManager = modeManager;
+		this.repeatManager = repeatManager;
 
 		beatTickPlayer = new TickPlayer(new RepeatingPlayer(generateSound(4000, 0.01, 1)), //
 				() -> data.songChart.beatsMap.beats);
@@ -146,8 +151,23 @@ public class AudioHandler {
 	private void playMusic(final MusicData musicData, final int speed) {
 		stop();
 
+		lastUncutData = musicData;
+		int start;
+		if (repeatManager.isRepeating()) {
+			if (data.time > repeatManager.getRepeatEnd()) {
+				rewind(repeatManager.getRepeatStart());
+				return;
+			}
+			final MusicData cutMusic = lastUncutData.cut(data.time / 1000.0, repeatManager.getRepeatEnd() / 1000.0);
+			lastPlayedData = cutMusic.volume(Config.volume);
+			start = 0;
+		} else {
+			lastPlayedData = lastUncutData.volume(Config.volume);
+			start = data.time * 100 / speed;
+		}
+
 		this.speed = speed;
-		songPlayer = SoundPlayer.play(musicData.volume(Config.volume), data.time * 100 / speed);
+		songPlayer = SoundPlayer.play(lastPlayedData, start);
 		songTimeOnStart = data.time;
 		playStartTime = nanoTime() / 1_000_000L;
 
@@ -253,6 +273,28 @@ public class AudioHandler {
 
 		beatTickPlayer.handleFrame(nextTime);
 		noteTickPlayer.handleFrame(nextTime);
-		midiChartNotePlayer.frame();
+
+		if (repeatManager.isRepeating()) {
+			midiChartNotePlayer.frame();
+		}
+	}
+
+	public void rewind(final int t) {
+		stop();
+		data.time = t;
+		frame.setNextTime(t);
+		beatTickPlayer.stop();
+		beatTickPlayer.handleFrame(t);
+		noteTickPlayer.stop();
+		noteTickPlayer.handleFrame(t);
+		if (midiNotesPlaying) {
+			midiChartNotePlayer.stopPlaying();
+		}
+
+		playMusic(lastUncutData, speed);
+	}
+
+	public boolean isPlaying() {
+		return songPlayer != null;
 	}
 }

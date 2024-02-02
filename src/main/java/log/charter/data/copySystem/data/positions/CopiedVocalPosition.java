@@ -11,8 +11,9 @@ public class CopiedVocalPosition extends CopiedPositionWithLength<Vocal> {
 	@XStreamAsAttribute
 	public final String text;
 
-	public CopiedVocalPosition(final BeatsMap beatsMap, final double basePositionInBeats, final Vocal vocal) {
-		super(beatsMap, basePositionInBeats, vocal);
+	public CopiedVocalPosition(final BeatsMap beatsMap, final int basePosition, final double basePositionInBeats,
+			final Vocal vocal) {
+		super(beatsMap, basePosition, basePositionInBeats, vocal);
 		text = vocal.lyric;
 	}
 

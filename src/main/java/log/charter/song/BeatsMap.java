@@ -1,8 +1,8 @@
 package log.charter.song;
 
 import static java.lang.Math.abs;
-import static log.charter.song.notes.IPosition.findClosestId;
-import static log.charter.song.notes.IPosition.findLastIdBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findClosestId;
+import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -288,9 +288,7 @@ public class BeatsMap {
 	}
 
 	public double findBPM(final Beat beat) {
-		final int beatId = findClosestId(beats, beat.position());
-
-		return findBPM(beat, beatId);
+		return findBPM(beat, findClosestId(beats, beat.position()));
 	}
 
 	public double findBPM(final Beat beat, final int beatId) {
@@ -312,14 +310,7 @@ public class BeatsMap {
 	static public int beatLengthFromTempoAndDenominator(final int tempo, final int denominator) {
 		// Example: 60 quarter notes per minute in 4/4 -> 1 beat = 1 second beat length
 		// if converting to 7/8 the beat length will be (1 s / 8/4 ) -> 0.5 s
-		final int beatLengthInFour = (int) (60_000 / tempo);
-		final int beatLength = beatLengthInFour / (denominator / 4);
-		return beatLength;
-	}
-
-	public void alterBeatPosition(final int i, final int beatPositionShift) {
-		final int originalBeatPosition = beats.get(i).position();
-		beats.get(i).position(originalBeatPosition + beatPositionShift);
+		return 60_000 / tempo / (denominator / 4);
 	}
 
 	public void appendLastBeat() {

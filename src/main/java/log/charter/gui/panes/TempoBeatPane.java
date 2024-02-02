@@ -2,7 +2,7 @@ package log.charter.gui.panes;
 
 import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
-import static log.charter.song.notes.IPosition.findClosestId;
+import static log.charter.song.notes.IConstantPosition.findClosestId;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

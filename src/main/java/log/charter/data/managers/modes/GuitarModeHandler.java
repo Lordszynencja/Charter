@@ -2,8 +2,8 @@ package log.charter.data.managers.modes;
 
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
-import static log.charter.song.notes.IPosition.findClosestId;
-import static log.charter.song.notes.IPosition.findLastIdBefore;
+import static log.charter.song.notes.IConstantPosition.findClosestId;
+import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
 import static log.charter.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
 
 import java.util.stream.Collectors;

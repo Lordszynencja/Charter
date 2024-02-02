@@ -6,8 +6,8 @@ import log.charter.data.ChartData;
 import log.charter.data.copySystem.data.positions.CopiedArrangementEventsPointPosition;
 import log.charter.io.Logger;
 import log.charter.song.ArrangementChart;
-import log.charter.song.EventPoint;
 import log.charter.song.BeatsMap;
+import log.charter.song.EventPoint;
 import log.charter.song.Phrase;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
@@ -29,11 +29,12 @@ public class EventPointsCopyData implements ICopyData {
 	}
 
 	@Override
-	public void paste(final ChartData data) {
-		paste(data, true, true, true);
+	public void paste(final ChartData data, final boolean convertFromBeats) {
+		paste(data, true, true, true, convertFromBeats);
 	}
 
-	public void paste(final ChartData data, final boolean sections, final boolean phrases, final boolean events) {
+	public void paste(final ChartData data, final boolean sections, final boolean phrases, final boolean events,
+			final boolean convertFromBeats) {
 		final ArrangementChart arrangement = data.getCurrentArrangement();
 		if (phrases) {
 			for (final CopiedArrangementEventsPointPosition arrangementEventsPoint : arrangementEventsPoints) {
@@ -49,7 +50,8 @@ public class EventPointsCopyData implements ICopyData {
 
 		for (final CopiedArrangementEventsPointPosition copiedPosition : arrangementEventsPoints) {
 			try {
-				final EventPoint value = copiedPosition.getValue(beatsMap, basePositionInBeats);
+				final EventPoint value = copiedPosition.getValue(beatsMap, data.time, basePositionInBeats,
+						convertFromBeats);
 
 				if (value != null) {
 					if (!sections) {
@@ -62,8 +64,7 @@ public class EventPointsCopyData implements ICopyData {
 						value.events = new ArrayList2<>();
 					}
 
-					final EventPoint eventPoint = arrangement
-							.findOrCreateArrangementEventsPoint(value.position());
+					final EventPoint eventPoint = arrangement.findOrCreateArrangementEventsPoint(value.position());
 					eventPoint.merge(value);
 				}
 			} catch (final Exception e) {
