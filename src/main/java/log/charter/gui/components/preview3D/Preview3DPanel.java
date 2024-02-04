@@ -2,8 +2,6 @@ package log.charter.gui.components.preview3D;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL30;
@@ -15,6 +13,7 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.Framer;
 import log.charter.gui.components.preview3D.drawers.Preview3DAnchorsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DBeatsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DFingeringDrawer;
@@ -26,19 +25,20 @@ import log.charter.gui.components.preview3D.drawers.Preview3DLyricsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DStringsFretsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DVideoDrawer;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
+import log.charter.gui.components.preview3D.glUtils.Texture;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
-import log.charter.gui.components.preview3D.shapes.Texture;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.io.Logger;
 import log.charter.util.Timer;
 
-public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
+public class Preview3DPanel extends AWTGLCanvas {
 	private static final long serialVersionUID = 1L;
 
 	private ChartData data;
 	private ModeManager modeManager;
 
+	private Framer cameraUpdater;
 	private final ShadersHolder shadersHolder = new ShadersHolder();
 	private final TextTexturesHolder textTexturesHolder = new TextTexturesHolder();
 	private final TexturesHolder texturesHolder = new TexturesHolder();
@@ -75,7 +75,7 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		beatsDrawer.init(data, repeatManager, textTexturesHolder);
 		cameraHandler.init(data);
 		fingeringDrawer.init(data, repeatManager, texturesHolder);
-		guitarSoundsDrawer.init(data, repeatManager);
+		guitarSoundsDrawer.init(data, repeatManager, texturesHolder);
 		handShapesDrawer.init(data, repeatManager);
 		inlayDrawer.init(data, texturesHolder);
 		laneBordersDrawer.init(data);
@@ -83,15 +83,11 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		stringsFretsDrawer.init(data);
 		videoDrawer.init(data);
 
-		addMouseMotionListener(this);
 		addKeyListener(keyboardHandler);
 
-		mouseX = 500;
-		mouseY = 200;
+		cameraUpdater = new Framer(cameraHandler::updateFretFocus, 100);
+		cameraUpdater.start();
 	}
-
-	private int mouseX = 0;
-	private int mouseY = 0;
 
 	@Override
 	public void paint(final Graphics g) {
@@ -105,18 +101,6 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 		} catch (final Exception e) {
 			Logger.error("Exception in paint", e);
 		}
-	}
-
-	@Override
-	public void mouseDragged(final MouseEvent e) {
-		mouseX = e.getX();
-		mouseY = e.getY();
-	}
-
-	@Override
-	public void mouseMoved(final MouseEvent e) {
-		mouseX = e.getX();
-		mouseY = e.getY();
 	}
 
 	Texture sprite;
@@ -154,6 +138,7 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 			GL30.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
 					backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
 			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
+			GL30.glDepthFunc(GL30.GL_GEQUAL);
 
 			if (data == null || data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
 				swapBuffers();
@@ -161,12 +146,11 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 			}
 			timer.addTimestamp("clearing");
 
-			cameraHandler.updateCamera(1.0 * getWidth() / getHeight(), ((double) mouseX) / getWidth(),
-					((double) mouseY) / getHeight());
+			cameraHandler.updateCamera(1.0 * getWidth() / getHeight());
 			shadersHolder.setSceneMatrix(cameraHandler.currentMatrix);
 			timer.addTimestamp("updating camera");
 
-			// videoDrawer.draw(shadersHolder, getWidth(), getHeight());
+			videoDrawer.draw(shadersHolder, getWidth(), getHeight());
 			timer.addTimestamp("videoDrawer");
 			beatsDrawer.draw(shadersHolder);
 			timer.addTimestamp("beatsDrawer");
@@ -180,7 +164,6 @@ public class Preview3DPanel extends AWTGLCanvas implements MouseMotionListener {
 			timer.addTimestamp("handShapesDrawer");
 			guitarSoundsDrawer.draw(shadersHolder);
 			timer.addTimestamp("guitarSoundsDrawer");
-
 			inlayDrawer.draw(shadersHolder);
 			timer.addTimestamp("inlayDrawer");
 			fingeringDrawer.draw(shadersHolder);

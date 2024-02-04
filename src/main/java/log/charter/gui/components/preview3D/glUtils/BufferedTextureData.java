@@ -3,8 +3,6 @@ package log.charter.gui.components.preview3D.glUtils;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
-import log.charter.gui.components.preview3D.shapes.Texture;
-
 public class BufferedTextureData {
 	public final ByteBuffer buffer;
 	public final int width;

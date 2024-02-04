@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import log.charter.gui.components.preview3D.shapes.Texture;
-
 public class TextTexturesHolder {
 	private static class TextProperties {
 		public final String text;

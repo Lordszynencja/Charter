@@ -42,6 +42,25 @@ public class ChordOrNote implements IPositionWithLength {
 		return null;
 	}
 
+	public static boolean isLinkedToPrevious(final int string, final int id, final ArrayList2<ChordOrNote> sounds) {
+		final ChordOrNote previousSound = findPreviousSoundOnString(string, id - 1, sounds);
+		return previousSound != null && previousSound.linkNext(string);
+	}
+
+	public static boolean isLinkedToPrevious(final ChordOrNote sound, final int id,
+			final ArrayList2<ChordOrNote> sounds) {
+		if (sound.isNote()) {
+			return isLinkedToPrevious(sound.note.string, id, sounds);
+		}
+
+		for (final int string : sound.chord.chordNotes.keySet()) {
+			if (!isLinkedToPrevious(string, id, sounds)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public Chord chord;
 	public Note note;
 

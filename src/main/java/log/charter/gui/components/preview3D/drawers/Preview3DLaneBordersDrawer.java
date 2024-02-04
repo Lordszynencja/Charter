@@ -1,10 +1,10 @@
 package log.charter.gui.components.preview3D.drawers;
 
 import static log.charter.gui.components.preview3D.Preview3DUtils.closeDistanceZ;
+import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.visibilityZ;
-import static log.charter.util.ColorUtils.transparent;
 
 import java.awt.Color;
 
@@ -17,7 +17,6 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
-import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
 
 public class Preview3DLaneBordersDrawer {
 	private ChartData data;
@@ -27,20 +26,25 @@ public class Preview3DLaneBordersDrawer {
 	}
 
 	public void draw(final ShadersHolder shadersHolder) {
-		final BaseShaderDrawData drawData = shadersHolder.new BaseShaderDrawData();
 		final Color color = ColorLabel.PREVIEW_3D_LANE_BORDER.color();
-		final Color transparentColor = transparent(color);
 		final double y = getChartboardYPosition(data.currentStrings());
 
+		GL30.glLineWidth(1);
 		for (int i = 0; i <= Config.frets; i++) {
 			final double x = getFretPosition(i);
-			drawData.addVertex(new Point3D(x, y, visibilityZ), color)//
-					.addVertex(new Point3D(x, y, closeDistanceZ), color)//
-					.addVertex(new Point3D(x, y, closeDistanceZ), color)//
-					.addVertex(new Point3D(x, y, 0), transparentColor);
-		}
+			final double x0 = x - fretThickness;
+			final double x1 = x + fretThickness;
 
-		GL30.glLineWidth(1);
-		drawData.draw(GL33.GL_LINES, Matrix4.identity);
+			shadersHolder.new FadingShaderDrawData()//
+					.addVertex(new Point3D(x, y, visibilityZ), color)//
+					.addVertex(new Point3D(x, y, 0), color)//
+					.draw(GL33.GL_LINES, Matrix4.identity, closeDistanceZ, 0);
+			shadersHolder.new FadingShaderDrawData()//
+					.addVertex(new Point3D(x0, y, visibilityZ), color)//
+					.addVertex(new Point3D(x1, y, visibilityZ), color)//
+					.addVertex(new Point3D(x0, y, 0), color)//
+					.addVertex(new Point3D(x1, y, 0), color)//
+					.draw(GL33.GL_TRIANGLE_STRIP, Matrix4.identity, closeDistanceZ, 0);
+		}
 	}
 }

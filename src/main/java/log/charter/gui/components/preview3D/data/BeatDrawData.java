@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.managers.RepeatManager;
+import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.notes.IConstantPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -22,8 +24,13 @@ public class BeatDrawData implements IConstantPosition {
 		}
 		final int beatsTo = IConstantPosition.findLastIdBeforeEqual(beats, timeTo);
 
+		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
+
 		for (int i = beatsFrom; i <= beatsTo; i++) {
-			beatsToDraw.add(new BeatDrawData(beats.get(i)));
+			final Beat beat = beats.get(i);
+			final Anchor anchor = IConstantPosition.findLastBeforeEqual(anchors, beat.position());
+
+			beatsToDraw.add(new BeatDrawData(beats.get(i), anchor));
 		}
 
 		return beatsToDraw;
@@ -56,7 +63,7 @@ public class BeatDrawData implements IConstantPosition {
 					break;
 				}
 
-				beatsToDraw.add(new BeatDrawData(position, beatDrawData.firstInMeasure));
+				beatsToDraw.add(new BeatDrawData(position, beatDrawData));
 			}
 
 			repeatStart += repeatManager.getRepeatEnd() - repeatManager.getRepeatStart();
@@ -67,14 +74,27 @@ public class BeatDrawData implements IConstantPosition {
 
 	public final int time;
 	public final boolean firstInMeasure;
+	public final int fretFrom;
+	public final int fretTo;
 
-	public BeatDrawData(final Beat beat) {
-		this(beat.position(), beat.firstInMeasure);
+	public BeatDrawData(final Beat beat, final Anchor anchor) {
+		time = beat.position();
+		firstInMeasure = beat.firstInMeasure;
+
+		if (anchor == null) {
+			fretFrom = 0;
+			fretTo = Config.frets;
+		} else {
+			fretFrom = anchor.fret - 1;
+			fretTo = anchor.topFret();
+		}
 	}
 
-	public BeatDrawData(final int time, final boolean firstInMeasure) {
+	public BeatDrawData(final int time, final BeatDrawData other) {
 		this.time = time;
-		this.firstInMeasure = firstInMeasure;
+		firstInMeasure = other.firstInMeasure;
+		fretFrom = other.fretFrom;
+		fretTo = other.fretTo;
 	}
 
 	@Override

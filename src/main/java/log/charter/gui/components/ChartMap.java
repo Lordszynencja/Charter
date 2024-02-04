@@ -24,6 +24,7 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
+import log.charter.io.Logger;
 import log.charter.song.EventPoint;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.vocals.Vocal;
@@ -84,7 +85,11 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 
 		new Thread(() -> {
 			while (true) {
-				background = createBackground();
+				try {
+					background = createBackground();
+				} catch (final Exception e) {
+					Logger.error("Couldn't create background for chart map", e);
+				}
 
 				try {
 					Thread.sleep(1000);

@@ -47,8 +47,7 @@ public class VideoShader extends Shader {
 	}
 
 	public void setColorMultiplier(final Color color) {
-		setUniform4fv("colorMultiplier", new float[] { color.getRed() / 255f, color.getGreen() / 255f,
-				color.getBlue() / 255f, color.getAlpha() / 255f });
+		setUniformColorRGBA("colorMultiplier", color);
 	}
 
 	public void setPosition(final Point2D[] points) {

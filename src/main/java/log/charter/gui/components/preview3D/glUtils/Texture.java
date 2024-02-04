@@ -1,4 +1,4 @@
-package log.charter.gui.components.preview3D.shapes;
+package log.charter.gui.components.preview3D.glUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL30;
 
-import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.io.Logger;
 
 public class Texture {

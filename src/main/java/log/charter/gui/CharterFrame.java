@@ -128,7 +128,7 @@ public class CharterFrame extends JFrame {
 				selectionManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
 		data.init(this, audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
-		keyboardHandler.init(audioDrawer, audioHandler, arrangementFixer, chartToolbar, copyManager, data, this,
+		keyboardHandler.init(audioDrawer, audioHandler, arrangementFixer, chartToolbar, copyManager, data, this, framer,
 				modeManager, mouseHandler, repeatManager, selectionManager, songFileHandler, undoSystem);
 		highlightManager.init(data, modeManager, selectionManager);
 		modeManager.init(currentSelectionEditor, data, this, highlightManager, keyboardHandler, selectionManager,
@@ -142,7 +142,7 @@ public class CharterFrame extends JFrame {
 		selectionManager.init(data, this, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
 
-		charterMenuBar.init(arrangementFixer, audioDrawer, audioHandler, copyManager, chartToolbar, data, this,
+		charterMenuBar.init(arrangementFixer, audioDrawer, audioHandler, copyManager, chartToolbar, data, this, framer,
 				keyboardHandler, modeManager, repeatManager, selectionManager, songFileHandler, undoSystem);
 		chartToolbar.init(audioDrawer, audioHandler, keyboardHandler, repeatManager);
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,

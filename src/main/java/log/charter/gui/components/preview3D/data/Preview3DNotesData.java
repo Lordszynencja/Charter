@@ -1,7 +1,7 @@
 package log.charter.gui.components.preview3D.data;
 
 import static java.lang.Math.min;
-import static log.charter.song.notes.ChordOrNote.findPreviousSoundOnString;
+import static log.charter.song.notes.ChordOrNote.isLinkedToPrevious;
 import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
 import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
@@ -31,11 +31,6 @@ public class Preview3DNotesData {
 			anchor = new Anchor(0, 1);
 		}
 		return new IntRange(anchor.fret - 1, anchor.topFret());
-	}
-
-	private static boolean isLinkedToPrevious(final int string, final int id, final ArrayList2<ChordOrNote> sounds) {
-		final ChordOrNote previousSound = findPreviousSoundOnString(string, id - 1, sounds);
-		return previousSound != null && previousSound.linkNext(string);
 	}
 
 	private static void addChord(final List<ChordBoxDrawData> chords, final List<List<NoteDrawData>> notes,
@@ -89,7 +84,7 @@ public class Preview3DNotesData {
 
 			if (sound.isNote()) {
 				final Note note = sound.note;
-				final IntRange frets = note.string == 0 ? getFretSpan(level.anchors, note.position())
+				final IntRange frets = note.fret == 0 ? getFretSpan(level.anchors, note.position())
 						: new IntRange(note.fret, note.fret);
 				notes.get(note.string).add(
 						new NoteDrawData(timeFrom, timeTo, note, isLinkedToPrevious(note.string, i, sounds), frets));

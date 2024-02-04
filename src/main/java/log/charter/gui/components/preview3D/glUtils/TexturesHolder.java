@@ -10,7 +10,6 @@ import java.util.function.Supplier;
 import javax.imageio.ImageIO;
 
 import log.charter.data.config.Config;
-import log.charter.gui.components.preview3D.shapes.Texture;
 import log.charter.io.Logger;
 
 public class TexturesHolder {
@@ -29,9 +28,13 @@ public class TexturesHolder {
 	}
 
 	private static final Map<String, Supplier<String>> textureFileSupplier = new HashMap<>();
+	private static final Map<String, Supplier<String>> defaultTextureFileSupplier = new HashMap<>();
 	static {
 		textureFileSupplier.put("fingering", () -> texturePacksPath + Config.texturePack + "/fingering.png");
 		textureFileSupplier.put("inlay", () -> inlaysPath + Config.inlay + ".png");
+
+		defaultTextureFileSupplier.put("fingering", () -> texturePacksPath + "default/fingering.png");
+		defaultTextureFileSupplier.put("inlay", () -> inlaysPath + "default.png");
 	}
 
 	private Texture errorTexture;
@@ -42,10 +45,17 @@ public class TexturesHolder {
 
 	public void initGL() {
 		errorTexture = new Texture();
+		textures.put("error", errorTexture);
 
 		textureFileSupplier.forEach((texture, pathMaker) -> {
-			final String path = pathMaker.get();
-			textures.put(texture, new Texture(new File(path)));
+			String path = pathMaker.get();
+			File f = new File(path);
+			if (!f.exists()) {
+				path = defaultTextureFileSupplier.get(texture).get();
+				f = new File(path);
+			}
+
+			textures.put(texture, new Texture(f));
 			lastTexturePaths.put(texture, path);
 		});
 	}
@@ -57,7 +67,12 @@ public class TexturesHolder {
 	public int getTextureId(final String name) {
 		if (reloadNeeded) {
 			textureFileSupplier.forEach((texture, pathMaker) -> {
-				final String path = pathMaker.get();
+				String path = pathMaker.get();
+				File f = new File(path);
+				if (!f.exists()) {
+					path = defaultTextureFileSupplier.get(texture).get();
+					f = new File(path);
+				}
 				if (path.equals(lastTexturePaths.get(texture))) {
 					return;
 				}
@@ -75,5 +90,15 @@ public class TexturesHolder {
 		}
 
 		return textures.containsKey(name) ? textures.get(name).textureId : errorTexture.textureId;
+	}
+
+	public int addTexture(final String name, final BufferedImage img, final boolean replace) {
+		if (!textures.containsKey(name)) {
+			textures.put(name, new Texture(img));
+		} else if (replace) {
+			textures.get(name).replaceTexture(img);
+		}
+
+		return getTextureId(name);
 	}
 }

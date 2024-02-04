@@ -7,14 +7,14 @@ import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
 import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
+import log.charter.gui.components.preview3D.glUtils.Texture;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
-import log.charter.gui.components.preview3D.shapes.Texture;
 
 public class Preview3DVideoDrawer {
 	@SuppressWarnings("unused")
 	private ChartData data;
 
-	private final BufferedImage image = new BufferedImage(16, 9, BufferedImage.TYPE_INT_RGB);
+	private final BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 	private final boolean imageChanged = true;
 	private BufferedTextureData bufferData = null;
 	private Texture texture = null;

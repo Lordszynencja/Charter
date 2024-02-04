@@ -2,10 +2,12 @@ package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.max;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
+import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance;
 import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
+import static log.charter.song.notes.ChordOrNote.isLinkedToPrevious;
 import static log.charter.song.notes.IConstantPosition.findFirstIdAfter;
 import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
 import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
@@ -28,7 +30,7 @@ import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DStringsFretsDrawer {
-	private static final int highlightTime = 250;
+	private static final int highlightTime = 100;
 	private static final int activeTime = 500;
 	private ChartData data;
 
@@ -74,9 +76,14 @@ public class Preview3DStringsFretsDrawer {
 		if (idFrom < 0) {
 			return new double[highlightValues.length];
 		}
+
 		final int idTo = findLastIdBefore(sounds, data.time);
 		for (int i = idFrom; i <= idTo; i++) {
 			final ChordOrNote sound = sounds.get(i);
+			if (isLinkedToPrevious(sound, i, sounds)) {
+				continue;
+			}
+
 			final int highlightValue = highlightTime - data.time + sound.position();
 			if (sound.isNote() && sound.note.fret != 0) {
 				highlightValues[sound.note.fret - 1] = highlightValue;
@@ -111,10 +118,10 @@ public class Preview3DStringsFretsDrawer {
 
 		for (int fret = 0; fret <= Config.frets; fret++) {
 			Color fretColor = activeFrets[fret] ? activeColor : inactiveColor;
-			double offset = 0.0015;
+			double offset = fretThickness;
 			if (fretHighlight[fret] > 0) {
 				fretColor = mix(fretColor, highlightColor, fretHighlight[fret]);
-				offset *= 1 + fretHighlight[fret];
+				offset *= 1 + 3 * fretHighlight[fret];
 			}
 
 			final double x = getFretPosition(fret);

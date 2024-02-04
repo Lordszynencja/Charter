@@ -148,25 +148,33 @@ public class AudioHandler {
 		return beatTickPlayer.on;
 	}
 
+	private int getSlowedMs(final int t) {
+		return t * 100 / speed;
+	}
+
 	private void playMusic(final MusicData musicData, final int speed) {
 		stop();
 
 		lastUncutData = musicData;
+		this.speed = speed;
+
 		int start;
 		if (repeatManager.isRepeating()) {
 			if (data.time > repeatManager.getRepeatEnd()) {
 				rewind(repeatManager.getRepeatStart());
 				return;
 			}
-			final MusicData cutMusic = lastUncutData.cut(data.time / 1000.0, repeatManager.getRepeatEnd() / 1000.0);
+
+			final double cutStart = getSlowedMs(data.time) / 1000.0;
+			final double cutEnd = getSlowedMs(repeatManager.getRepeatEnd()) / 1000.0;
+			final MusicData cutMusic = lastUncutData.cut(cutStart, cutEnd);
 			lastPlayedData = cutMusic.volume(Config.volume);
 			start = 0;
 		} else {
 			lastPlayedData = lastUncutData.volume(Config.volume);
-			start = data.time * 100 / speed;
+			start = getSlowedMs(data.time);
 		}
 
-		this.speed = speed;
 		songPlayer = SoundPlayer.play(lastPlayedData, start);
 		songTimeOnStart = data.time;
 		playStartTime = nanoTime() / 1_000_000L;
@@ -264,6 +272,13 @@ public class AudioHandler {
 			return;
 		}
 		if (songPlayer.isStopped()) {
+			if (repeatManager.isRepeating()) {
+				final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed / 100);
+				final int nextTime = songTimeOnStart + timePassed;
+				frame.setNextTime(nextTime);
+				return;
+			}
+
 			stopMusic();
 		}
 
@@ -274,7 +289,7 @@ public class AudioHandler {
 		beatTickPlayer.handleFrame(nextTime);
 		noteTickPlayer.handleFrame(nextTime);
 
-		if (repeatManager.isRepeating()) {
+		if (!repeatManager.isRepeating()) {
 			midiChartNotePlayer.frame();
 		}
 	}

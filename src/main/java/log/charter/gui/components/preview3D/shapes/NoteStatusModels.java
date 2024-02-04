@@ -1,254 +1,246 @@
 package log.charter.gui.components.preview3D.shapes;
 
-import java.util.ArrayList;
+import static java.lang.Math.min;
+import static log.charter.data.config.Config.texturePack;
+import static log.charter.gui.components.preview3D.glUtils.TexturesHolder.texturePacksPath;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import org.lwjgl.opengl.GL30;
+import javax.imageio.ImageIO;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.preview3D.glUtils.Point3D;
+import log.charter.gui.components.preview3D.data.NoteDrawData;
+import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
+import log.charter.io.Logger;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 
 public class NoteStatusModels {
-	private static class FullMuteModel implements Model {
-		private static final List<Point3D> points = new ArrayList<>();
-		static {
-			final double width = FrettedNoteModel.height * 0.1;
-			final double x = FrettedNoteModel.height * 0.05;
-			final double y = FrettedNoteModel.height * 0.5;
-			final double z = -FrettedNoteModel.depth / 2 - 0.01;
+	private static class NoteStatusData {
+		public final HOPO hopo;
+		public final Mute mute;
+		public final Harmonic harmonic;
 
-			points.add(new Point3D(-x - width / 10, y, z));
-			points.add(new Point3D(-x, y + width, z));
-			points.add(new Point3D(x + width / 10, -y, z));
-			points.add(new Point3D(x, -y - width, z));
+		public NoteStatusData(final NoteDrawData note) {
+			hopo = note.hopo;
+			mute = note.mute;
+			harmonic = note.harmonic;
+		}
 
-			points.add(new Point3D(x + width / 10, y, z));
-			points.add(new Point3D(x, y + width, z));
-			points.add(new Point3D(-x - width / 10, -y, z));
-			points.add(new Point3D(-x, -y - width, z));
+		public String name() {
+			return "note_" + hopo + "_" + mute + "_" + harmonic;
+		}
+
+		public String onlyStatusesName() {
+			return "status_" + hopo + "_" + mute + "_" + harmonic;
 		}
 
 		@Override
-		public List<Point3D> getPoints() {
-			return points;
+		public int hashCode() {
+			return Objects.hash(harmonic, hopo, mute);
 		}
 
 		@Override
-		public int getDrawMode() {
-			return GL30.GL_QUADS;
+		public boolean equals(final Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final NoteStatusData other = (NoteStatusData) obj;
+			return harmonic == other.harmonic && hopo == other.hopo && mute == other.mute;
 		}
 	}
 
-	private static class PalmMuteModel implements Model {
-		private static final List<Point3D> points = new ArrayList<>();
-		static {
-			final double width = FrettedNoteModel.height * 0.15;
-			final double x = FrettedNoteModel.width * 0.5;
-			final double y = FrettedNoteModel.height * 0.5;
-			final double z = -FrettedNoteModel.depth / 2 - 0.01;
+	private TexturesHolder texturesHolder;
 
-			points.add(new Point3D(-x - width / 10, y, z));
-			points.add(new Point3D(-x, y + width, z));
-			points.add(new Point3D(x + width / 10, -y, z));
-			points.add(new Point3D(x, -y - width, z));
+	private int size = 1;
+	private final BufferedImage[][] noteStatusesTextureAtlas = new BufferedImage[4][4];
+	private final Map<NoteStatusData, Integer> noteStatusesTextures = new HashMap<>();
+	private final Map<NoteStatusData, Integer> noteOnlyStatusesTextures = new HashMap<>();
+	private Integer noteAnticipationTextureId = null;
 
-			points.add(new Point3D(x + width / 10, y, z));
-			points.add(new Point3D(x, y + width, z));
-			points.add(new Point3D(-x - width / 10, -y, z));
-			points.add(new Point3D(-x, -y - width, z));
+	public void reload() {
+		String path = texturePacksPath + texturePack + "/notes.png";
+		File f = new File(path);
+		if (!f.exists()) {
+			path = texturePacksPath + "default/notes.png";
+			f = new File(path);
 		}
 
-		@Override
-		public List<Point3D> getPoints() {
-			return points;
+		BufferedImage noteStatusesTexture;
+		try {
+			noteStatusesTexture = ImageIO.read(f);
+		} catch (final IOException e) {
+			Logger.error("Couldn't read notes texture atlas! path: " + path, e);
+			noteStatusesTexture = new BufferedImage(4, 4, BufferedImage.TYPE_INT_RGB);
 		}
 
-		@Override
-		public int getDrawMode() {
-			return GL30.GL_QUADS;
+		size = noteStatusesTexture.getWidth() / 4;
+		for (int i = 0; i < 4; i++) {
+			final int x = size * i;
+			for (int j = 0; j < 4; j++) {
+				final int y = size * j;
+				noteStatusesTextureAtlas[i][j] = noteStatusesTexture.getSubimage(x, y, size, size);
+			}
+		}
+
+		noteStatusesTextures.clear();
+		noteAnticipationTextureId = null;
+	}
+
+	public void init(final TexturesHolder texturesHolder) {
+		this.texturesHolder = texturesHolder;
+		reload();
+	}
+
+	private int joinPixel(final int rgb0, final int rgb1) {
+		final int r0 = (rgb0 >> 16) & 0xFF;
+		final int g0 = (rgb0 >> 8) & 0xFF;
+		final int b0 = rgb0 & 0xFF;
+		final int r1 = (rgb1 >> 16) & 0xFF;
+		final int g1 = (rgb1 >> 8) & 0xFF;
+		final int b1 = rgb1 & 0xFF;
+
+		if (rgb1 != -16777216) {
+		}
+
+		final int multA = (255 - b1);
+		final int b = min(255, b0 * multA / 255 + b1);
+
+		final int multB = multA * b0;
+		final int r = min(255, r0 * multB / 255 / 255 + r1 * b1 / 255);
+		final int g = min(255, g0 * multB / 255 / 255 + g1 * b1 / 255);
+
+		return ((r << 16) & 0xFF0000) | ((g << 8) & 0xFF00) | (b & 0xFF);
+	}
+
+	private void addImage(final BufferedImage img0, final BufferedImage img1) {
+		if (img1 == null) {
+			return;
+		}
+
+		try {
+			final File f = new File("C:/users/szymon/desktop/test0.png");
+			if (!f.exists()) {
+				ImageIO.write(img1, "png", f);
+			}
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+
+		for (int x = 0; x < size; x++) {
+			for (int y = 0; y < size; y++) {
+				img0.setRGB(x, y, joinPixel(img0.getRGB(x, y), img1.getRGB(x, y)));
+			}
 		}
 	}
 
-	private static class HOModel implements Model {
-		private static final List<Point3D> points = new ArrayList<>();
-		static {
-			final double x = FrettedNoteModel.width * 0.2;
-			final double y = FrettedNoteModel.height * 0.5;
-			final double z = -FrettedNoteModel.depth / 2 - 0.01;
+	private BufferedImage copyImage(final BufferedImage source) {
+		final BufferedImage copy = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
+		final Graphics g = copy.getGraphics();
+		g.drawImage(source, 0, 0, null);
+		g.dispose();
 
-			points.add(new Point3D(-x, y, z));
-			points.add(new Point3D(0, -y, z));
-			points.add(new Point3D(x, y, z));
-		}
+		return copy;
+	}
 
-		@Override
-		public List<Point3D> getPoints() {
-			return points;
-		}
-
-		@Override
-		public int getDrawMode() {
-			return GL30.GL_TRIANGLES;
+	private BufferedImage getImage(final HOPO hopo) {
+		switch (hopo) {
+		case HAMMER_ON:
+			return noteStatusesTextureAtlas[0][1];
+		case PULL_OFF:
+			return noteStatusesTextureAtlas[1][1];
+		case TAP:
+			return noteStatusesTextureAtlas[2][1];
+		case NONE:
+		default:
+			return null;
 		}
 	}
 
-	private static class POModel implements Model {
-		private static final List<Point3D> points = new ArrayList<>();
-		static {
-			final double x = FrettedNoteModel.width * 0.2;
-			final double y = FrettedNoteModel.height * 0.5;
-			final double z = -FrettedNoteModel.depth / 2 - 0.01;
-
-			points.add(new Point3D(-x, -y, z));
-			points.add(new Point3D(0, y, z));
-			points.add(new Point3D(x, -y, z));
-		}
-
-		@Override
-		public List<Point3D> getPoints() {
-			return points;
-		}
-
-		@Override
-		public int getDrawMode() {
-			return GL30.GL_TRIANGLES;
+	private BufferedImage getImage(final Mute mute) {
+		switch (mute) {
+		case PALM:
+			return noteStatusesTextureAtlas[0][2];
+		case FULL:
+			return noteStatusesTextureAtlas[1][2];
+		case NONE:
+		default:
+			return null;
 		}
 	}
 
-	private static class TapModel implements Model {
-		private static final List<Point3D> points = new ArrayList<>();
-		static {
-
-			final double x = FrettedNoteModel.width * 0.5;
-			final double y = FrettedNoteModel.height * 0.5;
-			final double z = -FrettedNoteModel.depth / 2 - 0.01;
-
-			points.add(new Point3D(-x, y, z));
-			points.add(new Point3D(-x, y - 0.1, z));
-			points.add(new Point3D(0, -y + 0.1, z));
-			points.add(new Point3D(0, -y, z));
-			points.add(new Point3D(x, y, z));
-			points.add(new Point3D(x, y - 0.1, z));
-		}
-
-		@Override
-		public List<Point3D> getPoints() {
-			return points;
-		}
-
-		@Override
-		public int getDrawMode() {
-			return GL30.GL_TRIANGLE_STRIP;
+	private BufferedImage getImage(final Harmonic harmonic) {
+		switch (harmonic) {
+		case NORMAL:
+			return noteStatusesTextureAtlas[0][3];
+		case PINCH:
+			return noteStatusesTextureAtlas[1][3];
+		case NONE:
+		default:
+			return null;
 		}
 	}
 
-	private static class HarmonicModel implements Model {
-		private static final List<Point3D> points = new ArrayList<>();
-		static {
-			final double d0 = FrettedNoteModel.height * 0.45;
-			final double d1 = FrettedNoteModel.height * 0.6;
-			final double z = -FrettedNoteModel.depth / 2 - 0.01;
-
-			points.add(new Point3D(d0 / 10, 0, z));
-			points.add(new Point3D(d1 / 10, 0, z));
-			points.add(new Point3D(0, d0, z));
-			points.add(new Point3D(0, d1, z));
-			points.add(new Point3D(-d0 / 10, 0, z));
-			points.add(new Point3D(-d1 / 10, 0, z));
-			points.add(new Point3D(0, -d0, z));
-			points.add(new Point3D(0, -d1, z));
-			points.add(new Point3D(d0 / 10, 0, z));
-			points.add(new Point3D(d1 / 10, 0, z));
+	public int getTextureId(final NoteDrawData note) {
+		final NoteStatusData noteStatusData = new NoteStatusData(note);
+		if (noteStatusesTextures.containsKey(noteStatusData)) {
+			return noteStatusesTextures.get(noteStatusData);
 		}
 
-		@Override
-		public List<Point3D> getPoints() {
-			return points;
+		BufferedImage img;
+		if (noteStatusData.hopo == HOPO.NONE && noteStatusData.mute == Mute.NONE
+				&& noteStatusData.harmonic == Harmonic.NONE) {
+			img = noteStatusesTextureAtlas[0][0];
+		} else {
+			img = copyImage(noteStatusesTextureAtlas[2][0]);
+
+			addImage(img, getImage(noteStatusData.hopo));
+			addImage(img, getImage(noteStatusData.mute));
+			addImage(img, getImage(noteStatusData.harmonic));
 		}
 
-		@Override
-		public int getDrawMode() {
-			return GL30.GL_TRIANGLE_STRIP;
-		}
+		final int textureId = texturesHolder.addTexture(noteStatusData.name(), img, true);
+		noteStatusesTextures.put(noteStatusData, textureId);
+		return textureId;
 	}
 
-	private static class PinchHarmonicModel implements Model {
-		private static final List<Point3D> points = new ArrayList<>();
-		static {
-			final double x0 = FrettedNoteModel.width * 0.3;
-			final double x1 = FrettedNoteModel.width * 0.6;
-			final double y0 = FrettedNoteModel.height * 0.3;
-			final double y1 = FrettedNoteModel.height * 0.6;
-			final double z = -FrettedNoteModel.depth / 2 - 0.01;
-
-			points.add(new Point3D(x0, 0, z));
-			points.add(new Point3D(x1, 0, z));
-			points.add(new Point3D(0, y0, z));
-			points.add(new Point3D(0, y1, z));
-			points.add(new Point3D(-x0, 0, z));
-			points.add(new Point3D(-x1, 0, z));
-			points.add(new Point3D(0, -y0, z));
-			points.add(new Point3D(0, -y1, z));
-			points.add(new Point3D(x0, 0, z));
-			points.add(new Point3D(x1, 0, z));
+	public int getTextureIdForOnlyStatuses(final NoteDrawData note) {
+		if (note.hopo == HOPO.NONE && note.mute == Mute.NONE && note.harmonic == Harmonic.NONE) {
+			return texturesHolder.getTextureId("error");
 		}
 
-		@Override
-		public List<Point3D> getPoints() {
-			return points;
+		final NoteStatusData noteStatusData = new NoteStatusData(note);
+		if (noteOnlyStatusesTextures.containsKey(noteStatusData)) {
+			return noteOnlyStatusesTextures.get(noteStatusData);
 		}
 
-		@Override
-		public int getDrawMode() {
-			return GL30.GL_TRIANGLE_STRIP;
+		final BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
+		addImage(img, getImage(noteStatusData.hopo));
+		addImage(img, getImage(noteStatusData.mute));
+		addImage(img, getImage(noteStatusData.harmonic));
+
+		final int textureId = texturesHolder.addTexture(noteStatusData.onlyStatusesName(), img, true);
+		noteOnlyStatusesTextures.put(noteStatusData, textureId);
+		return textureId;
+	}
+
+	public int getNoteAnticipationTextureId() {
+		if (noteAnticipationTextureId != null) {
+			return noteAnticipationTextureId;
 		}
-	}
 
-	public static final Model fullMuteModel = new FullMuteModel();
-	public static final Model palmMuteModel = new PalmMuteModel();
-
-	public static final Map<Mute, Model> mutesModels = new HashMap<>();
-	public static final Map<Mute, ColorLabel> mutesColors = new HashMap<>();
-	static {
-		mutesModels.put(Mute.FULL, fullMuteModel);
-		mutesColors.put(Mute.FULL, ColorLabel.PREVIEW_3D_FULL_MUTE);
-
-		mutesModels.put(Mute.PALM, palmMuteModel);
-		mutesColors.put(Mute.PALM, ColorLabel.PREVIEW_3D_PALM_MUTE);
-	}
-
-	public static final Model hoModel = new HOModel();
-	public static final Model poModel = new POModel();
-	public static final Model tapModel = new TapModel();
-
-	public static final Map<HOPO, Model> hoposModels = new HashMap<>();
-	public static final Map<HOPO, ColorLabel> hoposColors = new HashMap<>();
-	static {
-		hoposModels.put(HOPO.HAMMER_ON, hoModel);
-		hoposColors.put(HOPO.HAMMER_ON, ColorLabel.HAMMER_ON);
-
-		hoposModels.put(HOPO.PULL_OFF, poModel);
-		hoposColors.put(HOPO.PULL_OFF, ColorLabel.PULL_OFF);
-
-		hoposModels.put(HOPO.TAP, tapModel);
-		hoposColors.put(HOPO.TAP, ColorLabel.TAP);
-	}
-
-	public static final Model harmonicModel = new HarmonicModel();
-	public static final Model pinchHarmonicModel = new PinchHarmonicModel();
-
-	public static final Map<Harmonic, Model> harmonicsModels = new HashMap<>();
-	public static final Map<Harmonic, ColorLabel> harmonicsColors = new HashMap<>();
-	static {
-		harmonicsModels.put(Harmonic.NORMAL, harmonicModel);
-		harmonicsColors.put(Harmonic.NORMAL, ColorLabel.HARMONIC);
-
-		harmonicsModels.put(Harmonic.PINCH, pinchHarmonicModel);
-		harmonicsColors.put(Harmonic.PINCH, ColorLabel.PINCH_HARMONIC);
+		return texturesHolder.addTexture("note_anticipation", noteStatusesTextureAtlas[1][0], true);
 	}
 }

@@ -4,17 +4,22 @@ import log.charter.data.config.Config;
 
 public class Preview3DUtils {
 	public static final int visibility = 3_000;
-	private static final double timeZMultiplier = 0.01;
+	public static final double timeZMultiplier = 0.01;
 	public static final double visibilityZ = getTimePosition(visibility);
 	public static final double topStringPosition = 0;
+	public static final double fretThickness = 0.025;
+	public static final double firstFretDistance = 1.2;
+	public static final double noteHalfWidth = firstFretDistance / 3;
+	public static final double tailHalfWidth = noteHalfWidth * 0.33;
 	public static final double stringDistance = 0.35;
+	public static final double bendHalfstepDistance = stringDistance * 0.8;
 	public static final int closeDistance = 200;
-	public static final double closeDistanceZ = getTimePosition(closeDistance);
-	private static double fretLengthMultiplier = 1;// Math.pow(0.5, 1 / 12.0);
+	public static final float closeDistanceZ = (float) getTimePosition(closeDistance);
+	public static double fretLengthMultiplier = 1;// Math.pow(0.5, 1 / 12.0);
 
 	private static double[] fretPositions = new double[Config.frets + 1];
 	static {
-		double fretLength = 0.1;
+		double fretLength = firstFretDistance;
 		fretPositions[0] = 0;
 		for (int fret = 1; fret <= Config.frets; fret++) {
 			fretPositions[fret] = fretPositions[fret - 1] + fretLength;
@@ -53,7 +58,7 @@ public class Preview3DUtils {
 	}
 
 	public static double getStringPositionWithBend(final int string, final int strings, final double bendValue) {
-		return getStringPosition(string, strings) + bendValue * 0.3;
+		return getStringPosition(string, strings) + bendValue * bendHalfstepDistance;
 	}
 
 	public static double getTimePosition(final int time) {

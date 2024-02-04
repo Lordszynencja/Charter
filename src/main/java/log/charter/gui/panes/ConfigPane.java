@@ -32,6 +32,7 @@ public final class ConfigPane extends ParamsPane {
 	}
 
 	private final CharterFrame frame;
+	private final Framer framer;
 
 	private final JTextField musicFolderInput;
 	private final JTextField songsFolderInput;
@@ -57,9 +58,10 @@ public final class ConfigPane extends ParamsPane {
 
 	private Theme theme = Config.theme;
 
-	public ConfigPane(final CharterFrame frame) {
+	public ConfigPane(final CharterFrame frame, final Framer framer) {
 		super(frame, Label.CONFIG_PANE, getSizes());
 		this.frame = frame;
+		this.framer = framer;
 
 		int row = 0;
 
@@ -165,6 +167,7 @@ public final class ConfigPane extends ParamsPane {
 
 		frame.updateEditAreaSizes();
 		frame.resize();
-		Framer.frameLength = 1000.0 / FPS;
+
+		framer.setFPS(FPS);
 	}
 }

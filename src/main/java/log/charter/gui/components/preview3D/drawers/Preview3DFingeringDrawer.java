@@ -26,6 +26,8 @@ import log.charter.song.notes.ChordOrNote;
 import log.charter.util.IntRange;
 
 public class Preview3DFingeringDrawer {
+	private static final double size = stringDistance / 2;
+
 	private static final Point2D fingerShapeSingle = new Point2D(0, 0);
 	private static final Point2D fingerShapeEnd = new Point2D(0.25, 0);
 	private static final Point2D fingerShapeMiddle = new Point2D(0.5, 0);
@@ -57,12 +59,12 @@ public class Preview3DFingeringDrawer {
 	private void addFingerSpot(final BaseTextureShaderDrawData drawData, final int fret, final int string,
 			final Point2D fingerShapePosition, final boolean invertShape, final Point2D fingerNamePosition) {
 		final double x = (getFretPosition(fret - 1) + getFretPosition(fret)) / 2;
-		final double x0 = x - 0.04;
-		final double x1 = x + 0.04;
+		final double x0 = x - size;
+		final double x1 = x + size;
 
 		final double yString = getStringPosition(string, data.currentStrings());
-		final double y0 = yString + stringDistance / 2;
-		final double y1 = yString - stringDistance / 2;
+		final double y0 = yString + size;
+		final double y1 = yString - size;
 
 		if (invertShape) {
 			addQuad(drawData, x0, x1, y1, y0, fingerShapePosition);
@@ -129,7 +131,7 @@ public class Preview3DFingeringDrawer {
 		}
 
 		final ChordOrNote sound = findLastBeforeEqual(level.chordsAndNotes, data.time + 20);
-		if (sound.position() < handShape.position() || sound.isNote()) {
+		if (sound == null || sound.position() < handShape.position() || sound.isNote()) {
 			return handShape.template;
 		}
 		if (sound.chord.fullyMuted()) {

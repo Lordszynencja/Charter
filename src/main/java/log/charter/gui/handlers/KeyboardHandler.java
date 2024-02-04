@@ -250,6 +250,7 @@ public class KeyboardHandler implements KeyListener {
 	private CopyManager copyManager;
 	private ChartData data;
 	private CharterFrame frame;
+	private Framer framer;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
 	private RepeatManager repeatManager;
@@ -268,7 +269,7 @@ public class KeyboardHandler implements KeyListener {
 
 	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler,
 			final ArrangementFixer arrangementFixer, final ChartToolbar chartToolbar, final CopyManager copyManager,
-			final ChartData data, final CharterFrame frame, final ModeManager modeManager,
+			final ChartData data, final CharterFrame frame, final Framer framer, final ModeManager modeManager,
 			final MouseHandler mouseHandler, final RepeatManager repeatManager, final SelectionManager selectionManager,
 			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
 		this.audioDrawer = audioDrawer;
@@ -278,6 +279,7 @@ public class KeyboardHandler implements KeyListener {
 		this.copyManager = copyManager;
 		this.data = data;
 		this.frame = frame;
+		this.framer = framer;
 		this.modeManager = modeManager;
 		this.mouseHandler = mouseHandler;
 		this.repeatManager = repeatManager;
@@ -306,7 +308,7 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int speed = (int) (Framer.frameLength * (shift ? 20 : 4) / (ctrl ? 4 : 1));
+		final int speed = (int) (framer.frameLength * (shift ? 20 : 4) / (ctrl ? 4 : 1));
 		int nextTime = data.nextTime - (left ? speed : 0) + (right ? speed : 0);
 		nextTime = max(0, min(data.music.msLength(), nextTime));
 		frame.setNextTime(nextTime);

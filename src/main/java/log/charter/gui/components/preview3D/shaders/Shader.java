@@ -106,8 +106,20 @@ public abstract class Shader {
 		GL30.glUniform1ui(uniforms.get(uniformName), value);
 	}
 
-	protected void setUniform4fv(final String uniformName, final float[] values) {
-		GL30.glUniform4fv(uniforms.get(uniformName), values);
+	protected void setUniform1f(final String uniformName, final float value) {
+		GL30.glUniform1f(uniforms.get(uniformName), value);
+	}
+
+	protected void setUniform4fv(final String uniformName, final float[] v) {
+		if (v.length != 4) {
+			throw new IllegalArgumentException("wrong size of uniform4 values array: " + v.length);
+		}
+
+		GL30.glUniform4fv(uniforms.get(uniformName), v);
+	}
+
+	protected void setUniformColorRGBA(final String uniformName, final Color color) {
+		setUniform4fv(uniformName, color.getComponents(null));
 	}
 
 	protected void setUniformMatrix4fv(final String uniformName, final Matrix4 matrix) {

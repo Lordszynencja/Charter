@@ -12,7 +12,7 @@ import log.charter.main.LogCharterRSMain;
 
 class InfoMenuHandler extends CharterMenuHandler {
 	private static final String infoText = "Lords of Games Rocksmith Charter\n"//
-			+ "Created by Lordszynencja\n\n"//
+			+ "Created by Lordszynencja and friends from Customs Forge\n\n"//
 			+ "Current version: " + LogCharterRSMain.VERSION + " - " + LogCharterRSMain.VERSION_DATE;
 
 	private CharterFrame frame;

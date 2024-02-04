@@ -9,6 +9,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.Framer;
 import log.charter.gui.components.SpecialMenuItem;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.panes.ConfigPane;
@@ -23,14 +24,16 @@ public class FileMenuHandler extends CharterMenuHandler {
 	private ArrangementFixer arrangementFixer;
 	private ChartData data;
 	private CharterFrame frame;
+	private Framer framer;
 	private CharterMenuBar charterMenuBar;
 	private SongFileHandler songFileHandler;
 
 	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final CharterFrame frame,
-			final CharterMenuBar charterMenuBar, final SongFileHandler songFileHandler) {
+			final Framer framer, final CharterMenuBar charterMenuBar, final SongFileHandler songFileHandler) {
 		this.arrangementFixer = arrangementFixer;
 		this.data = data;
 		this.frame = frame;
+		this.framer = framer;
 		this.charterMenuBar = charterMenuBar;
 		this.songFileHandler = songFileHandler;
 	}
@@ -63,7 +66,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_SAVE_AS, "Ctrl-Shift-S", songFileHandler::saveAs));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPTIONS, null, () -> new ConfigPane(frame)));
+		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPTIONS, null, () -> new ConfigPane(frame, framer)));
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_GRAPHIC_OPTIONS, null, () -> new GraphicConfigPane(frame)));
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_TEXTURING_OPTIONS, null, () -> new TexturesSettingsPane(frame)));
 

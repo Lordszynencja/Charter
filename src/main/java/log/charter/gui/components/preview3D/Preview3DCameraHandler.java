@@ -1,6 +1,7 @@
 package log.charter.gui.components.preview3D;
 
 import static java.lang.Math.min;
+import static java.lang.Math.pow;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.cameraMatrix;
@@ -16,9 +17,12 @@ import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DCameraHandler {
+	private static final Matrix4 baseCameraPerspectiveMatrix = cameraMatrix(-0.3, -0.3, -0.3, -1)//
+			.multiply(scaleMatrix(1, 1, -1));
+
 	private final static int fretFocusWindowStartOffset = 1000;
 	private final static int fretFocusWindowEndOffset = 5000;
-	private final static double focusingSpeedMultiplier = 0.002;
+	private static final double focusingSpeed = pow(0.99, 0.2);
 
 	private final static double minScreenScaleX = 0.5;
 	private final static double screenScaleXMultiplier = 1;
@@ -36,7 +40,11 @@ public class Preview3DCameraHandler {
 		this.data = data;
 	}
 
-	private void updateFretFocus() {
+	public void updateFretFocus() {
+		if (data.getCurrentArrangementLevel() == null) {
+			return;
+		}
+
 		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 		int minFret = Config.frets;
 		int maxFret = 1;
@@ -60,15 +68,12 @@ public class Preview3DCameraHandler {
 			}
 		}
 
-		final double focusingSpeed = Math.pow(0.99, Config.FPS * focusingSpeedMultiplier);
 		camX = camX * focusingSpeed
 				+ (getFretPosition(maxFret) + getFretPosition(minFret - 1)) / 2 * (1 - focusingSpeed);
 		fretSpan = fretSpan * focusingSpeed + (maxFret - minFret + 1) * (1 - focusingSpeed);
 	}
 
-	public void updateCamera(final double aspectRatio, final double x, final double y) {
-		updateFretFocus();
-
+	public void updateCamera(final double aspectRatio) {
 		final double camY = 1 + topStringPosition + (fretSpan - 4) * 0.2;
 		final double camZ = -3.6 + (fretSpan - 4) * 0.005;
 		final double camRotationX = 0.2 + (fretSpan - 4) * 0.01;
@@ -77,10 +82,8 @@ public class Preview3DCameraHandler {
 		final double screenScaleY = min(minScreenScaleY, screenScaleYMultiplier * aspectRatio);
 
 		currentMatrix = scaleMatrix(screenScaleX, screenScaleY, 1 / 10.0)//
-				.multiply(cameraMatrix(-0.3, -0.3, -0.3, -1))//
-				.multiply(scaleMatrix(10, 1, -1))//
+				.multiply(baseCameraPerspectiveMatrix)//
 				.multiply(rotationXMatrix(camRotationX))//
-				.multiply(moveMatrix(-camX, -camY, -camZ))//
-				.multiply(scaleMatrix(1, 1, 1));
+				.multiply(moveMatrix(-camX, -camY, -camZ));
 	}
 }
