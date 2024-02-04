@@ -14,6 +14,7 @@ import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.Framer;
+import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.drawers.Preview3DAnchorsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DBeatsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DFingeringDrawer;
@@ -39,6 +40,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 	private ModeManager modeManager;
 
 	private Framer cameraUpdater;
+	private RepeatManager repeatManager;
 	private final ShadersHolder shadersHolder = new ShadersHolder();
 	private final TextTexturesHolder textTexturesHolder = new TextTexturesHolder();
 	private final TexturesHolder texturesHolder = new TexturesHolder();
@@ -69,14 +71,15 @@ public class Preview3DPanel extends AWTGLCanvas {
 	public void init(final ChartData data, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
 			final RepeatManager repeatManager) {
 		this.data = data;
+		this.repeatManager = repeatManager;
 		this.modeManager = modeManager;
 
-		anchorsDrawer.init(data, repeatManager);
-		beatsDrawer.init(data, repeatManager, textTexturesHolder);
+		anchorsDrawer.init(data);
+		beatsDrawer.init(data, textTexturesHolder);
 		cameraHandler.init(data);
-		fingeringDrawer.init(data, repeatManager, texturesHolder);
-		guitarSoundsDrawer.init(data, repeatManager, texturesHolder);
-		handShapesDrawer.init(data, repeatManager);
+		fingeringDrawer.init(data, texturesHolder);
+		guitarSoundsDrawer.init(data, texturesHolder);
+		handShapesDrawer.init(data);
 		inlayDrawer.init(data, texturesHolder);
 		laneBordersDrawer.init(data);
 		lyricsDrawer.init(data, textTexturesHolder);
@@ -152,21 +155,25 @@ public class Preview3DPanel extends AWTGLCanvas {
 
 			videoDrawer.draw(shadersHolder, getWidth(), getHeight());
 			timer.addTimestamp("videoDrawer");
-			beatsDrawer.draw(shadersHolder);
+
+			final Preview3DDrawData drawData = new Preview3DDrawData(data, repeatManager);
+			timer.addTimestamp("preparing draw data");
+
+			beatsDrawer.draw(shadersHolder, drawData);
 			timer.addTimestamp("beatsDrawer");
-			laneBordersDrawer.draw(shadersHolder);
+			laneBordersDrawer.draw(shadersHolder, drawData);
 			timer.addTimestamp("laneBordersDrawer");
-			anchorsDrawer.draw(shadersHolder);
+			anchorsDrawer.draw(shadersHolder, drawData);
 			timer.addTimestamp("anchorsDrawer");
 			stringsFretsDrawer.draw(shadersHolder);
 			timer.addTimestamp("stringsFretsDrawer");
-			handShapesDrawer.draw(shadersHolder);
+			handShapesDrawer.draw(shadersHolder, drawData);
 			timer.addTimestamp("handShapesDrawer");
-			guitarSoundsDrawer.draw(shadersHolder);
+			guitarSoundsDrawer.draw(shadersHolder, drawData);
 			timer.addTimestamp("guitarSoundsDrawer");
 			inlayDrawer.draw(shadersHolder);
 			timer.addTimestamp("inlayDrawer");
-			fingeringDrawer.draw(shadersHolder);
+			fingeringDrawer.draw(shadersHolder, drawData);
 			timer.addTimestamp("fingeringDrawer");
 
 			lyricsDrawer.draw(shadersHolder, 1.0 * getHeight() / getWidth(),

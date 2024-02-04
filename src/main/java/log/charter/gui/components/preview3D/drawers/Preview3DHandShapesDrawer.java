@@ -3,22 +3,21 @@ package log.charter.gui.components.preview3D.drawers;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.gui.components.preview3D.Preview3DUtils.closeDistanceZ;
+import static log.charter.gui.components.preview3D.Preview3DUtils.fadedDistanceZ;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.visibility;
-import static log.charter.gui.components.preview3D.data.HandShapeDrawData.getHandShapesForTimeSpanWithRepeats;
 
 import java.awt.Color;
-import java.util.List;
 
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.RepeatManager;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.data.HandShapeDrawData;
+import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
@@ -29,11 +28,9 @@ public class Preview3DHandShapesDrawer {
 	private static final double lineThickness1 = fretThickness * 6;
 
 	private ChartData data;
-	private RepeatManager repeatManager;
 
-	public void init(final ChartData data, final RepeatManager repeatManager) {
+	public void init(final ChartData data) {
 		this.data = data;
-		this.repeatManager = repeatManager;
 	}
 
 	private void addSquare(final FadingShaderDrawData drawData, final double x0, final double x1, final double y,
@@ -76,13 +73,11 @@ public class Preview3DHandShapesDrawer {
 		addThickLine(drawData, handShape.fretTo, y, z0, z1, color, alpha);
 	}
 
-	public void draw(final ShadersHolder shadersHolder) {
-		final FadingShaderDrawData drawData = shadersHolder.new FadingShaderDrawData();
-		final List<HandShapeDrawData> handShapesToDraw = getHandShapesForTimeSpanWithRepeats(data, repeatManager,
-				data.time, data.time + visibility);
+	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
+		final FadingShaderDrawData shaderDrawData = shadersHolder.new FadingShaderDrawData();
 
-		handShapesToDraw.forEach(handShape -> addHandShape(drawData, handShape));
+		drawData.handShapes.forEach(handShape -> addHandShape(shaderDrawData, handShape));
 
-		drawData.draw(GL30.GL_QUADS, Matrix4.identity, closeDistanceZ, 0);
+		shaderDrawData.draw(GL30.GL_QUADS, Matrix4.identity, closeDistanceZ, fadedDistanceZ);
 	}
 }

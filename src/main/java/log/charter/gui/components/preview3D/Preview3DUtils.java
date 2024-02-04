@@ -13,8 +13,11 @@ public class Preview3DUtils {
 	public static final double tailHalfWidth = noteHalfWidth * 0.33;
 	public static final double stringDistance = 0.35;
 	public static final double bendHalfstepDistance = stringDistance * 0.8;
-	public static final int closeDistance = 200;
+	public static final int closeDistance = 250;
 	public static final float closeDistanceZ = (float) getTimePosition(closeDistance);
+	public static final int fadedDistance = 50;
+	public static final float fadedDistanceZ = (float) getTimePosition(fadedDistance);
+
 	public static double fretLengthMultiplier = 1;// Math.pow(0.5, 1 / 12.0);
 
 	private static double[] fretPositions = new double[Config.frets + 1];

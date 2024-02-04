@@ -32,6 +32,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class Preview3DStringsFretsDrawer {
 	private static final int highlightTime = 100;
 	private static final int activeTime = 500;
+
 	private ChartData data;
 
 	public void init(final ChartData data) {

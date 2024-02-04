@@ -17,7 +17,6 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePositio
 import static log.charter.gui.components.preview3D.Preview3DUtils.noteHalfWidth;
 import static log.charter.gui.components.preview3D.Preview3DUtils.tailHalfWidth;
 import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
-import static log.charter.gui.components.preview3D.Preview3DUtils.visibility;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationZMatrix;
 import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
@@ -34,12 +33,11 @@ import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
-import log.charter.data.managers.RepeatManager;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.data.ChordBoxDrawData;
 import log.charter.gui.components.preview3D.data.NoteDrawData;
-import log.charter.gui.components.preview3D.data.Preview3DNotesData;
+import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
@@ -128,7 +126,6 @@ public class Preview3DGuitarSoundsDrawer {
 
 	private ChartData data;
 	private final NoteStatusModels noteStatusModels = new NoteStatusModels();
-	private RepeatManager repeatManager;
 
 	private static double lastFretLengthMultiplier = fretLengthMultiplier;
 	private final static Map<Integer, CompositeModel> openNoteSameFretsModels = new HashMap<>();
@@ -165,9 +162,8 @@ public class Preview3DGuitarSoundsDrawer {
 		return currentMap.get(fret0).get(fret1);
 	}
 
-	public void init(final ChartData data, final RepeatManager repeatManager, final TexturesHolder texturesHolder) {
+	public void init(final ChartData data, final TexturesHolder texturesHolder) {
 		this.data = data;
-		this.repeatManager = repeatManager;
 
 		noteStatusModels.init(texturesHolder);
 	}
@@ -583,19 +579,16 @@ public class Preview3DGuitarSoundsDrawer {
 		}
 	}
 
-	public void draw(final ShadersHolder shadersHolder) {
-		final Preview3DNotesData notesData = Preview3DNotesData.getNotesForTimeSpanWithRepeats(data, repeatManager,
-				data.time, data.time + visibility);
-
+	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
 		final List<SoundDrawObject> objectsToDraw = new ArrayList<>(1000);
 
 		for (int string = 0; string < data.currentStrings(); string++) {
 			final boolean shouldBendDownwards = invertBend(string);
 
-			notesData.notes.get(string)
+			drawData.notes.notes.get(string)
 					.forEach(note -> objectsToDraw.add(new NoteDrawObject(note, shouldBendDownwards)));
 		}
-		notesData.chords.forEach(chordBox -> objectsToDraw.add(new ChordBoxDrawObject(chordBox)));
+		drawData.notes.chords.forEach(chordBox -> objectsToDraw.add(new ChordBoxDrawObject(chordBox)));
 
 		objectsToDraw.sort(null);
 		objectsToDraw.forEach(object -> object.draw(shadersHolder));
