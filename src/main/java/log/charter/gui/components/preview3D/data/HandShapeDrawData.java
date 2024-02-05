@@ -8,7 +8,6 @@ import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.RepeatManager;
-import log.charter.song.Anchor;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.notes.IConstantPosition;
@@ -20,7 +19,6 @@ public class HandShapeDrawData implements IConstantPositionWithLength {
 			final int timeTo) {
 		final List<HandShapeDrawData> handShapesToDraw = new ArrayList<>();
 		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
-		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 		final ArrayList2<ChordTemplate> chordTemplates = data.getCurrentArrangement().chordTemplates;
 
 		int handShapesFrom = IConstantPosition.findLastIdBeforeEqual(handShapes, timeFrom);
@@ -31,13 +29,15 @@ public class HandShapeDrawData implements IConstantPositionWithLength {
 
 		for (int i = handShapesFrom; i <= handShapesTo; i++) {
 			final HandShape handShape = handShapes.get(i);
+			if (handShape.templateId == -1) {
+				continue;
+			}
 
 			final int handShapeTimeFrom = max(handShape.position(), timeFrom);
 			final int handShapeTimeTo = min(handShape.endPosition(), timeTo);
-			final Anchor anchor = IConstantPosition.findLastBeforeEqual(anchors, handShape.position());
 
-			handShapesToDraw.add(new HandShapeDrawData(handShapeTimeFrom, handShapeTimeTo, anchor.fret - 1,
-					anchor.topFret(), chordTemplates.get(handShape.templateId)));
+			handShapesToDraw.add(new HandShapeDrawData(handShapeTimeFrom, handShapeTimeTo,
+					chordTemplates.get(handShape.templateId)));
 		}
 
 		return handShapesToDraw;
@@ -83,26 +83,22 @@ public class HandShapeDrawData implements IConstantPositionWithLength {
 		return handShapesToDraw;
 	}
 
+	public final int originalPosition;
 	public final int timeFrom;
 	public final int timeTo;
-	public final int fretFrom;
-	public final int fretTo;
 	public final ChordTemplate template;
 
-	public HandShapeDrawData(final int timeFrom, final int timeTo, final int fretFrom, final int fretTo,
-			final ChordTemplate template) {
+	public HandShapeDrawData(final int timeFrom, final int timeTo, final ChordTemplate template) {
+		originalPosition = timeFrom;
 		this.timeFrom = timeFrom;
 		this.timeTo = timeTo;
-		this.fretFrom = fretFrom;
-		this.fretTo = fretTo;
 		this.template = template;
 	}
 
 	public HandShapeDrawData(final int timeFrom, final int timeTo, final HandShapeDrawData other) {
+		originalPosition = other.originalPosition;
 		this.timeFrom = timeFrom;
 		this.timeTo = timeTo;
-		fretFrom = other.fretFrom;
-		fretTo = other.fretTo;
 		template = other.template;
 	}
 

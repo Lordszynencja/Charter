@@ -22,6 +22,40 @@ import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 
 public class NoteStatusModels {
+	public enum TextureAtlasPosition {
+		NOTE_HEAD(0, 0, "note_head"), //
+		NOTE_ANTICIPATION(1, 0, "note_anticipation"), //
+		TECH_NOTE_HEAD(2, 0, "tech_note_head"), //
+		ARPEGGIO_FRET_BRACKET(3, 0, "arpeggio_fret_bracket"), //
+
+		HAMMER_ON(0, 1, "hammer_on"), //
+		PULL_OFF(1, 1, "pull_off"), //
+		TAP(2, 1, "tap"), //
+		ARPEGGIO_OPEN_BRACKET(3, 1, "arpeggio_open_bracket"), //
+
+		PALM_MUTE(0, 2, "palm_mute"), //
+		FULL_MUTE(1, 2, "full_mute"), //
+		ACCENT(2, 2, "accent"), //
+		EMPTY_A(3, 2, "empty_A"), //
+
+		HARMONIC(0, 3, "harmonic"), //
+		PINCH_HARMONIC(1, 3, "pinch_harmonic"), //
+		EMPTY_B(2, 3, "empty_B"), //
+		EMPTY_C(3, 3, "empty_C"),//
+		;
+
+		public final int x;
+		public final int y;
+		public final String textureName;
+
+		TextureAtlasPosition(final int x, final int y, final String textureName) {
+			this.x = x;
+			this.y = y;
+			this.textureName = textureName;
+		}
+
+	}
+
 	private static class NoteStatusData {
 		public final boolean palmMute;
 		public final Harmonic harmonic;
@@ -92,13 +126,8 @@ public class NoteStatusModels {
 	 */
 	private final BufferedImage[][] noteStatusesTextureAtlas = new BufferedImage[4][4];
 
-	private final Map<NoteStatusData, Integer> noteStatusesTextures = new HashMap<>();
-
-	private Integer fullMuteTextureId = null;
-	private Integer palmMuteTextureId = null;
-	private Integer noteAnticipationTextureId = null;
-	private Integer hammerOnTextureId = null;
-	private Integer pullOffTextureId = null;
+	private final Map<NoteStatusData, Integer> noteStatusesTextureIds = new HashMap<>();
+	private final Map<TextureAtlasPosition, Integer> textureIds = new HashMap<>();
 
 	private static BufferedImage loadTextureAtlas() {
 		String path = texturePacksPath + texturePack + "/notes.png";
@@ -117,13 +146,8 @@ public class NoteStatusModels {
 	}
 
 	private void clear() {
-		noteStatusesTextures.clear();
-
-		fullMuteTextureId = null;
-		palmMuteTextureId = null;
-		noteAnticipationTextureId = null;
-		hammerOnTextureId = null;
-		pullOffTextureId = null;
+		noteStatusesTextureIds.clear();
+		textureIds.clear();
 	}
 
 	public void reload() {
@@ -197,56 +221,16 @@ public class NoteStatusModels {
 		return copy;
 	}
 
-	private BufferedImage getNoteHeadImage() {
-		return noteStatusesTextureAtlas[0][0];
-	}
-
-	private BufferedImage getNoteAnticipationImage() {
-		return noteStatusesTextureAtlas[1][0];
-	}
-
-	private BufferedImage getTechNoteHeadImage() {
-		return noteStatusesTextureAtlas[2][0];
-	}
-
-	private BufferedImage getArpeggioFrettedNoteBracketImage() {
-		return noteStatusesTextureAtlas[3][0];
-	}
-
-	private BufferedImage getHammerOnImage() {
-		return noteStatusesTextureAtlas[0][1];
-	}
-
-	private BufferedImage getPullOffImage() {
-		return noteStatusesTextureAtlas[1][1];
-	}
-
-	private BufferedImage getTapImage() {
-		return noteStatusesTextureAtlas[2][1];
-	}
-
-	private BufferedImage getArpeggioOpenNoteBracketImage() {
-		return noteStatusesTextureAtlas[3][1];
-	}
-
-	private BufferedImage getPalmMuteImage() {
-		return noteStatusesTextureAtlas[0][2];
-	}
-
-	private BufferedImage getFullMuteImage() {
-		return noteStatusesTextureAtlas[1][2];
-	}
-
-	private BufferedImage getAccentImage() {
-		return noteStatusesTextureAtlas[2][2];
+	private BufferedImage getImage(final TextureAtlasPosition atlasPosition) {
+		return noteStatusesTextureAtlas[atlasPosition.x][atlasPosition.y];
 	}
 
 	private BufferedImage getHarmonicImage(final Harmonic harmonic) {
 		switch (harmonic) {
 		case NORMAL:
-			return noteStatusesTextureAtlas[0][3];
+			return getImage(TextureAtlasPosition.HARMONIC);
 		case PINCH:
-			return noteStatusesTextureAtlas[1][3];
+			return getImage(TextureAtlasPosition.PINCH_HARMONIC);
 		case NONE:
 		default:
 			return null;
@@ -254,78 +238,45 @@ public class NoteStatusModels {
 	}
 
 	private BufferedImage getBaseNoteImage(final NoteStatusData noteStatusData) {
-		BufferedImage img = noteStatusData.isLeftHandTechniquePresent// ;
-				? getTechNoteHeadImage()//
-				: getNoteHeadImage();
+		final TextureAtlasPosition baseNotePosition = noteStatusData.isLeftHandTechniquePresent//
+				? TextureAtlasPosition.TECH_NOTE_HEAD//
+				: TextureAtlasPosition.NOTE_HEAD;
 
-		img = copyImage(img);
-
-		return img;
+		return copyImage(getImage(baseNotePosition));
 	}
 
 	private void addTechImages(final BufferedImage img, final NoteStatusData noteStatusData) {
 		addImage(img, getHarmonicImage(noteStatusData.harmonic));
 		if (noteStatusData.palmMute) {
-			addImage(img, getPalmMuteImage());
+			addImage(img, getImage(TextureAtlasPosition.PALM_MUTE));
 		}
 		if (noteStatusData.tap) {
-			addImage(img, getTapImage());
+			addImage(img, getImage(TextureAtlasPosition.TAP));
 		}
 		if (noteStatusData.accent) {
-			addImage(img, getAccentImage());
+			addImage(img, getImage(TextureAtlasPosition.ACCENT));
 		}
 	}
 
-	public int getTextureId(final NoteDrawData note) {
+	public int getFrettedNoteTextureId(final NoteDrawData note) {
 		final NoteStatusData noteStatusData = new NoteStatusData(note);
-		if (!noteStatusesTextures.containsKey(noteStatusData)) {
+		if (!noteStatusesTextureIds.containsKey(noteStatusData)) {
 			final BufferedImage img = getBaseNoteImage(noteStatusData);
 			addTechImages(img, noteStatusData);
 
-			noteStatusesTextures.put(noteStatusData, texturesHolder.addTexture(noteStatusData.name(), img, true));
+			noteStatusesTextureIds.put(noteStatusData, texturesHolder.addTexture(noteStatusData.name(), img, true));
 		}
 
-		return noteStatusesTextures.get(noteStatusData);
+		return noteStatusesTextureIds.get(noteStatusData);
 	}
 
-	public int getPalmMuteTextureId() {
-		if (palmMuteTextureId == null) {
-			palmMuteTextureId = texturesHolder.addTexture("palm_mute", getPalmMuteImage(), true);
+	public int getTextureId(final TextureAtlasPosition atlasPosition) {
+		if (!textureIds.containsKey(atlasPosition)) {
+			final int textureId = texturesHolder.addTexture(atlasPosition.textureName,
+					noteStatusesTextureAtlas[atlasPosition.x][atlasPosition.y], true);
+			textureIds.put(atlasPosition, textureId);
 		}
 
-		return palmMuteTextureId;
-	}
-
-	public int getFullMuteTextureId() {
-		if (fullMuteTextureId == null) {
-			fullMuteTextureId = texturesHolder.addTexture("full_mute", getFullMuteImage(), true);
-		}
-
-		return fullMuteTextureId;
-	}
-
-	public int getHammerOnTextureId() {
-		if (hammerOnTextureId == null) {
-			hammerOnTextureId = texturesHolder.addTexture("hammer_on", getHammerOnImage(), true);
-		}
-
-		return hammerOnTextureId;
-	}
-
-	public int getPullOffTextureId() {
-		if (pullOffTextureId == null) {
-			pullOffTextureId = texturesHolder.addTexture("pull_off", getPullOffImage(), true);
-		}
-
-		return pullOffTextureId;
-	}
-
-	public int getNoteAnticipationTextureId() {
-		if (noteAnticipationTextureId == null) {
-			noteAnticipationTextureId = texturesHolder.addTexture("note_anticipation", getNoteAnticipationImage(),
-					true);
-		}
-
-		return noteAnticipationTextureId;
+		return textureIds.get(atlasPosition);
 	}
 }

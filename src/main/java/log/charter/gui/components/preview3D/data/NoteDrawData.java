@@ -10,7 +10,6 @@ import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.IntRange;
 
 public class NoteDrawData {
 	public final int position;
@@ -29,22 +28,20 @@ public class NoteDrawData {
 	public final boolean tremolo;
 	public final boolean linkPrevious;
 
-	public final int truePosition;
+	public final int originalPosition;
 	public final int trueLength;
 	public final boolean withoutHead;
 	public final boolean isChordNote;
-	public final IntRange frets;
 
-	public NoteDrawData(final int minPosition, final int maxPosition, final Note note, final boolean linkPrevious,
-			final IntRange frets) {
-		truePosition = note.position();
+	public NoteDrawData(final int minPosition, final int maxPosition, final Note note, final boolean linkPrevious) {
+		originalPosition = note.position();
 		trueLength = note.length();
 
-		if (truePosition < minPosition) {
+		if (originalPosition < minPosition) {
 			position = minPosition;
 			withoutHead = true;
 		} else {
-			position = truePosition;
+			position = originalPosition;
 			withoutHead = linkPrevious;
 		}
 		endPosition = min(maxPosition, note.endPosition());
@@ -62,7 +59,6 @@ public class NoteDrawData {
 		this.linkPrevious = linkPrevious;
 
 		isChordNote = false;
-		this.frets = frets;
 
 		prebend = !bendValues.isEmpty() && bendValues.get(0).position() == 0 //
 				? bendValues.get(0).bendValue.doubleValue()//
@@ -70,16 +66,15 @@ public class NoteDrawData {
 	}
 
 	public NoteDrawData(final int minPosition, final int maxPosition, final Chord chord, final int string,
-			final int fret, final ChordNote chordNote, final boolean linkPrevious, final boolean shouldHaveLength,
-			final IntRange frets) {
-		truePosition = chord.position();
+			final int fret, final ChordNote chordNote, final boolean linkPrevious, final boolean shouldHaveLength) {
+		originalPosition = chord.position();
 		trueLength = shouldHaveLength ? chordNote.length : 0;
 
-		if (truePosition < minPosition) {
+		if (originalPosition < minPosition) {
 			position = minPosition;
 			withoutHead = true;
 		} else {
-			position = truePosition;
+			position = originalPosition;
 			withoutHead = linkPrevious;
 		}
 		endPosition = min(maxPosition, chord.endPosition());
@@ -97,7 +92,6 @@ public class NoteDrawData {
 		this.linkPrevious = linkPrevious;
 
 		isChordNote = !chord.splitIntoNotes;
-		this.frets = frets;
 
 		prebend = !bendValues.isEmpty() && bendValues.get(0).position() == 0 //
 				? bendValues.get(0).bendValue.doubleValue()//
@@ -105,7 +99,7 @@ public class NoteDrawData {
 	}
 
 	public NoteDrawData(final int truePosition, final int position, final int endPosition, final NoteDrawData note) {
-		this.truePosition = truePosition;
+		this.originalPosition = truePosition;
 		trueLength = note.trueLength;
 
 		this.position = position;
@@ -127,6 +121,5 @@ public class NoteDrawData {
 		linkPrevious = note.linkPrevious;
 		isChordNote = note.isChordNote;
 		prebend = note.prebend;
-		frets = note.frets;
 	}
 }

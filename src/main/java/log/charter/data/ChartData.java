@@ -91,6 +91,7 @@ public class ChartData {
 		if (modeManager.editMode != EditMode.GUITAR) {
 			return -1;
 		}
+
 		return getCurrentArrangement().tuning.strings;
 	}
 

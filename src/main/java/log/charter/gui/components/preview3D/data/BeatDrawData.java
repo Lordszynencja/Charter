@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.managers.RepeatManager;
-import log.charter.song.Anchor;
 import log.charter.song.Beat;
 import log.charter.song.notes.IConstantPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -24,19 +22,8 @@ public class BeatDrawData implements IConstantPosition {
 		}
 		final int beatsTo = IConstantPosition.findLastIdBeforeEqual(beats, timeTo);
 
-		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
-
 		for (int i = beatsFrom; i <= beatsTo; i++) {
-			final Beat beat = beats.get(i);
-			Anchor anchor = IConstantPosition.findLastBeforeEqual(anchors, beat.position());
-			if (anchor == null) {
-				anchor = IConstantPosition.findFirstAfter(anchors, beat.position());
-			}
-			if (anchor == null) {
-				anchor = new Anchor(0, 1);
-			}
-
-			beatsToDraw.add(new BeatDrawData(beats.get(i), anchor));
+			beatsToDraw.add(new BeatDrawData(beats.get(i)));
 		}
 
 		return beatsToDraw;
@@ -78,29 +65,20 @@ public class BeatDrawData implements IConstantPosition {
 		return beatsToDraw;
 	}
 
+	public final int originalTime;
 	public final int time;
 	public final boolean firstInMeasure;
-	public final int fretFrom;
-	public final int fretTo;
 
-	public BeatDrawData(final Beat beat, final Anchor anchor) {
-		time = beat.position();
+	public BeatDrawData(final Beat beat) {
+		originalTime = beat.position();
+		time = originalTime;
 		firstInMeasure = beat.firstInMeasure;
-
-		if (anchor == null) {
-			fretFrom = 0;
-			fretTo = Config.frets;
-		} else {
-			fretFrom = anchor.fret - 1;
-			fretTo = anchor.topFret();
-		}
 	}
 
 	public BeatDrawData(final int time, final BeatDrawData other) {
+		originalTime = other.originalTime;
 		this.time = time;
 		firstInMeasure = other.firstInMeasure;
-		fretFrom = other.fretFrom;
-		fretTo = other.fretTo;
 	}
 
 	@Override

@@ -14,6 +14,7 @@ import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.Framer;
+import log.charter.gui.components.preview3D.camera.Preview3DCameraHandler;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.drawers.Preview3DAnchorsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DBeatsDrawer;
@@ -84,7 +85,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 		anchorsDrawer.init(data);
 		beatsDrawer.init(data, textTexturesHolder);
 		cameraHandler.init(data);
-		fingeringDrawer.init(data, texturesHolder);
+		fingeringDrawer.init(data, noteStatusModels, texturesHolder);
 		guitarSoundsDrawer.init(data, noteStatusModels, texturesHolder);
 		handShapesDrawer.init(data);
 		inlayDrawer.init(data, texturesHolder);

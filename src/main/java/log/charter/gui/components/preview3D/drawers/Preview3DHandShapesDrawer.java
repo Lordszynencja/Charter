@@ -22,6 +22,7 @@ import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.FadingShaderDrawData;
+import log.charter.util.IntRange;
 
 public class Preview3DHandShapesDrawer {
 	private static final double lineThickness0 = fretThickness * 2;
@@ -54,7 +55,8 @@ public class Preview3DHandShapesDrawer {
 		addSquare(drawData, x2, x3, y, z0, z1, color, alpha);
 	}
 
-	private void addHandShape(final FadingShaderDrawData drawData, final HandShapeDrawData handShape) {
+	private void addHandShape(final Preview3DDrawData drawData, final FadingShaderDrawData shaderDrawData,
+			final HandShapeDrawData handShape) {
 		final double y = getChartboardYPosition(data.currentStrings()) + 0.0002;
 		final boolean arpeggio = handShape.template.arpeggio;
 
@@ -69,14 +71,16 @@ public class Preview3DHandShapesDrawer {
 		final Color color = (arpeggio ? ColorLabel.PREVIEW_3D_ARPEGGIO : ColorLabel.PREVIEW_3D_LANE_BORDER).color();
 		final Color alpha = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0);
 
-		addThickLine(drawData, handShape.fretFrom, y, z0, z1, color, alpha);
-		addThickLine(drawData, handShape.fretTo, y, z0, z1, color, alpha);
+		final IntRange frets = drawData.getFrets(handShape.originalPosition);
+
+		addThickLine(shaderDrawData, frets.min - 1, y, z0, z1, color, alpha);
+		addThickLine(shaderDrawData, frets.max, y, z0, z1, color, alpha);
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
 		final FadingShaderDrawData shaderDrawData = shadersHolder.new FadingShaderDrawData();
 
-		drawData.handShapes.forEach(handShape -> addHandShape(shaderDrawData, handShape));
+		drawData.handShapes.forEach(handShape -> addHandShape(drawData, shaderDrawData, handShape));
 
 		shaderDrawData.draw(GL30.GL_QUADS, Matrix4.identity, closeDistanceZ, fadedDistanceZ);
 	}

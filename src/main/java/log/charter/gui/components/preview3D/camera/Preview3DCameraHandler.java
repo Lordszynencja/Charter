@@ -1,4 +1,4 @@
-package log.charter.gui.components.preview3D;
+package log.charter.gui.components.preview3D.camera;
 
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
@@ -17,11 +17,12 @@ import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DCameraHandler {
+
 	private static final Matrix4 baseCameraPerspectiveMatrix = cameraMatrix(-0.3, -0.3, -0.3, -1)//
 			.multiply(scaleMatrix(1, 1, -1));
 
-	private final static int fretFocusWindowStartOffset = 1000;
-	private final static int fretFocusWindowEndOffset = 5000;
+	private final static int fretFocusWindowStartOffset = 0;
+	private final static int fretFocusWindowEndOffset = 3000;
 	private static final double focusingSpeed = pow(0.99, 0.2);
 
 	private final static double minScreenScaleX = 0.5;
@@ -57,6 +58,7 @@ public class Preview3DCameraHandler {
 		if (anchorsTo == -1) {
 			return;
 		}
+		// TODO add weighted average instead of focusing speed
 
 		for (int i = anchorsFrom; i <= anchorsTo; i++) {
 			final Anchor anchor = anchors.get(i);

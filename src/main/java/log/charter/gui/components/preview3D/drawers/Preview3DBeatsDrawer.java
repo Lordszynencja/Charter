@@ -7,7 +7,6 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardY
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretMiddlePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
-import static log.charter.song.notes.IConstantPosition.findFirstAfter;
 import static log.charter.util.ColorUtils.setAlpha;
 import static log.charter.util.ColorUtils.transparent;
 
@@ -29,8 +28,6 @@ import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.FadingShaderDrawData;
-import log.charter.song.Anchor;
-import log.charter.song.notes.IConstantPosition;
 import log.charter.util.IntRange;
 
 public class Preview3DBeatsDrawer {
@@ -54,34 +51,35 @@ public class Preview3DBeatsDrawer {
 				.addVertex(new Point3D(x0, y, z1), color1);
 	}
 
-	private void drawBeats(final ShadersHolder shadersHolder, final List<BeatDrawData> drawnBeatsData) {
-		final FadingShaderDrawData drawData = shadersHolder.new FadingShaderDrawData();
-		final FadingShaderDrawData lineDrawData = shadersHolder.new FadingShaderDrawData();
+	private void drawBeats(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
+		final FadingShaderDrawData shaderDrawData = shadersHolder.new FadingShaderDrawData();
+		final FadingShaderDrawData shaderLineDrawData = shadersHolder.new FadingShaderDrawData();
 
 		final double y = getChartboardYPosition(data.currentStrings()) + 0.0001;
 		final Color color = ColorLabel.PREVIEW_3D_BEAT.color();
 		final Color alpha = transparent(color);
 
-		for (final BeatDrawData beat : drawnBeatsData) {
-			final double x0 = getFretPosition(beat.fretFrom);
-			final double x1 = getFretPosition(beat.fretTo);
+		for (final BeatDrawData beat : drawData.beats) {
+			final IntRange frets = drawData.getFrets(beat.originalTime);
+			final double x0 = getFretPosition(frets.min - 1);
+			final double x1 = getFretPosition(frets.max);
 			final double z = getTimePosition(beat.time - data.time);
 
-			lineDrawData.addVertex(new Point3D(x0, y, z), color)//
+			shaderLineDrawData.addVertex(new Point3D(x0, y, z), color)//
 					.addVertex(new Point3D(x1, y, z), color);
 			if (beat.firstInMeasure) {
-				addQuad(drawData, x0, x1, y, z - 0.2, z - 0.1, alpha, color);
-				addQuad(drawData, x0, x1, y, z - 0.1, z + 0.1, color, color);
-				addQuad(drawData, x0, x1, y, z + 0.1, z + 0.2, color, alpha);
+				addQuad(shaderDrawData, x0, x1, y, z - 0.2, z - 0.1, alpha, color);
+				addQuad(shaderDrawData, x0, x1, y, z - 0.1, z + 0.1, color, color);
+				addQuad(shaderDrawData, x0, x1, y, z + 0.1, z + 0.2, color, alpha);
 			} else {
-				addQuad(drawData, x0, x1, y, z - 0.1, z, alpha, color);
-				addQuad(drawData, x0, x1, y, z, z + 0.1, color, alpha);
+				addQuad(shaderDrawData, x0, x1, y, z - 0.1, z, alpha, color);
+				addQuad(shaderDrawData, x0, x1, y, z, z + 0.1, color, alpha);
 			}
 		}
 
 		GL30.glLineWidth(1f);
-		lineDrawData.draw(GL30.GL_LINES, Matrix4.identity, closeDistanceZ, fadedDistanceZ);
-		drawData.draw(GL30.GL_QUADS, Matrix4.identity, closeDistanceZ, fadedDistanceZ);
+		shaderLineDrawData.draw(GL30.GL_LINES, Matrix4.identity, closeDistanceZ, fadedDistanceZ);
+		shaderDrawData.draw(GL30.GL_QUADS, Matrix4.identity, closeDistanceZ, fadedDistanceZ);
 	}
 
 	private void drawFretNumberWithFade(final ShadersHolder shadersHolder, final int fret, final double y,
@@ -143,32 +141,17 @@ public class Preview3DBeatsDrawer {
 		}
 	}
 
-	private IntRange getFretsRangeForTime(final List<AnchorDrawData> anchors, final int t) {
-		final AnchorDrawData anchor = IConstantPosition.findLastBeforeEqual(anchors, t);
-		if (anchor != null) {
-			return new IntRange(anchor.fretFrom + 1, anchor.fretTo);
-		}
-
-		final Anchor songAnchor = IConstantPosition.findFirstAfter(data.getCurrentArrangementLevel().anchors, t);
-		if (songAnchor != null) {
-			return new IntRange(songAnchor.fret, songAnchor.topFret());
-		}
-
-		return new IntRange(1, 4);
-	}
-
-	private void drawFretNumbers(final ShadersHolder shadersHolder, final List<BeatDrawData> drawnBeatsData,
-			final List<AnchorDrawData> anchors) {
+	private void drawFretNumbers(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
 		final double y = getChartboardYPosition(data.currentStrings());
 
 		final List<FretDrawData> fretsToDraw = new ArrayList<>(100);
 
-		for (final BeatDrawData beat : drawnBeatsData) {
+		for (final BeatDrawData beat : drawData.beats) {
 			if (!beat.firstInMeasure) {
 				continue;
 			}
 
-			final IntRange fretsRange = getFretsRangeForTime(anchors, beat.time);
+			final IntRange fretsRange = drawData.getFrets(beat.originalTime);
 			int fret = 0;
 			int i = 0;
 			while (fret <= Config.frets) {
@@ -178,20 +161,10 @@ public class Preview3DBeatsDrawer {
 			}
 		}
 
-		IntRange currentFrets = null;
-		for (final AnchorDrawData anchor : anchors) {
-			if (anchor.timeFrom <= data.time) {
-				currentFrets = new IntRange(anchor.fretFrom + 1, anchor.fretTo);
-			} else {
+		final IntRange currentFrets = drawData.getFrets(data.time);
+		for (final AnchorDrawData anchor : drawData.anchors) {
+			if (anchor.timeFrom > data.time) {
 				fretsToDraw.add(new FretDrawData(anchor.timeFrom, anchor.fretFrom + 1, true, true));
-			}
-		}
-		if (currentFrets == null) {
-			final Anchor anchor = findFirstAfter(data.getCurrentArrangementLevel().anchors, data.time);
-			if (anchor == null) {
-				currentFrets = new IntRange(1, 4);
-			} else {
-				currentFrets = new IntRange(anchor.fret, anchor.topFret());
 			}
 		}
 
@@ -215,10 +188,10 @@ public class Preview3DBeatsDrawer {
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
-		drawBeats(shadersHolder, drawData.beats);
+		drawBeats(shadersHolder, drawData);
 
 		GL30.glDisable(GL30.GL_DEPTH_TEST);
-		drawFretNumbers(shadersHolder, drawData.beats, drawData.anchors);
+		drawFretNumbers(shadersHolder, drawData);
 		GL30.glEnable(GL30.GL_DEPTH_TEST);
 	}
 }
