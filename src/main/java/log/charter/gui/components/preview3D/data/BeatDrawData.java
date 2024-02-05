@@ -28,7 +28,13 @@ public class BeatDrawData implements IConstantPosition {
 
 		for (int i = beatsFrom; i <= beatsTo; i++) {
 			final Beat beat = beats.get(i);
-			final Anchor anchor = IConstantPosition.findLastBeforeEqual(anchors, beat.position());
+			Anchor anchor = IConstantPosition.findLastBeforeEqual(anchors, beat.position());
+			if (anchor == null) {
+				anchor = IConstantPosition.findFirstAfter(anchors, beat.position());
+			}
+			if (anchor == null) {
+				anchor = new Anchor(0, 1);
+			}
 
 			beatsToDraw.add(new BeatDrawData(beats.get(i), anchor));
 		}

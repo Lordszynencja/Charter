@@ -61,6 +61,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 		final GLData data = new GLData();
 		data.majorVersion = 3;
 		data.minorVersion = 0;
+		data.samples = 16;
 		return data;
 	}
 
@@ -125,6 +126,8 @@ public class Preview3DPanel extends AWTGLCanvas {
 
 			GL30.glEnable(GL30.GL_BLEND);
 			GL30.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
+			GL30.glEnable(GL30.GL_MULTISAMPLE);
 		} catch (final Exception e) {
 			Logger.error("Exception in initGL", e);
 			throw e;
