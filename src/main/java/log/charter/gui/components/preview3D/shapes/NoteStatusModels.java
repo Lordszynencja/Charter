@@ -23,27 +23,28 @@ import log.charter.song.enums.Mute;
 
 public class NoteStatusModels {
 	private static class NoteStatusData {
-		public final HOPO hopo;
-		public final Mute mute;
+		public final boolean palmMute;
 		public final Harmonic harmonic;
+		public final boolean tap;
+		public final boolean accent;
+		public final boolean isLeftHandTechniquePresent;
 
 		public NoteStatusData(final NoteDrawData note) {
-			hopo = note.hopo;
-			mute = note.mute;
+			palmMute = note.mute == Mute.PALM;
 			harmonic = note.harmonic;
+			tap = note.hopo == HOPO.TAP;
+			accent = note.accent;
+			isLeftHandTechniquePresent = note.mute == Mute.FULL || note.harmonic == Harmonic.NORMAL
+					|| note.hopo == HOPO.HAMMER_ON || note.hopo == HOPO.PULL_OFF;
 		}
 
 		public String name() {
-			return "note_" + hopo + "_" + mute + "_" + harmonic;
-		}
-
-		public String onlyStatusesName() {
-			return "status_" + hopo + "_" + mute + "_" + harmonic;
+			return "note_" + palmMute + "_" + harmonic + "_" + tap + "_" + accent + "_" + isLeftHandTechniquePresent;
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(harmonic, hopo, mute);
+			return Objects.hash(palmMute, harmonic, tap, accent, isLeftHandTechniquePresent);
 		}
 
 		@Override
@@ -57,20 +58,49 @@ public class NoteStatusModels {
 			if (getClass() != obj.getClass()) {
 				return false;
 			}
+
 			final NoteStatusData other = (NoteStatusData) obj;
-			return harmonic == other.harmonic && hopo == other.hopo && mute == other.mute;
+			return palmMute == other.palmMute && harmonic == other.harmonic && tap == other.tap
+					&& accent == other.accent && isLeftHandTechniquePresent == other.isLeftHandTechniquePresent;
 		}
 	}
 
 	private TexturesHolder texturesHolder;
 
 	private int size = 1;
+	/**
+	 * atlas description:<br>
+	 * (0, 0) - standard note head<br>
+	 * (1, 0) - note anticipation<br>
+	 * (2, 0) - tech note head<br>
+	 * (3, 0) - arpeggio fretted note bracket<br>
+	 * <br>
+	 * (0, 1) - hammer on<br>
+	 * (1, 1) - pull off<br>
+	 * (2, 1) - tap<br>
+	 * (3, 1) - arpeggio open note bracket<br>
+	 * <br>
+	 * (0, 2) - palm mute<br>
+	 * (1, 2) - full mute<br>
+	 * (2, 2) - accent<br>
+	 * (3, 2) -<br>
+	 * <br>
+	 * (0, 3) - harmonic<br>
+	 * (1, 3) - pinch harmonic<br>
+	 * (2, 3) -<br>
+	 * (3, 3) -
+	 */
 	private final BufferedImage[][] noteStatusesTextureAtlas = new BufferedImage[4][4];
-	private final Map<NoteStatusData, Integer> noteStatusesTextures = new HashMap<>();
-	private final Map<NoteStatusData, Integer> noteOnlyStatusesTextures = new HashMap<>();
-	private Integer noteAnticipationTextureId = null;
 
-	public void reload() {
+	private final Map<NoteStatusData, Integer> noteStatusesTextures = new HashMap<>();
+
+	private Integer fullMuteTextureId = null;
+	private Integer palmMuteTextureId = null;
+	private Integer noteAnticipationTextureId = null;
+	private Integer hammerOnTextureId = null;
+	private Integer pullOffTextureId = null;
+
+	private static BufferedImage loadTextureAtlas() {
 		String path = texturePacksPath + texturePack + "/notes.png";
 		File f = new File(path);
 		if (!f.exists()) {
@@ -78,13 +108,26 @@ public class NoteStatusModels {
 			f = new File(path);
 		}
 
-		BufferedImage noteStatusesTexture;
 		try {
-			noteStatusesTexture = ImageIO.read(f);
+			return ImageIO.read(f);
 		} catch (final IOException e) {
 			Logger.error("Couldn't read notes texture atlas! path: " + path, e);
-			noteStatusesTexture = new BufferedImage(4, 4, BufferedImage.TYPE_INT_RGB);
+			return new BufferedImage(4, 4, BufferedImage.TYPE_INT_RGB);
 		}
+	}
+
+	private void clear() {
+		noteStatusesTextures.clear();
+
+		fullMuteTextureId = null;
+		palmMuteTextureId = null;
+		noteAnticipationTextureId = null;
+		hammerOnTextureId = null;
+		pullOffTextureId = null;
+	}
+
+	public void reload() {
+		final BufferedImage noteStatusesTexture = loadTextureAtlas();
 
 		size = noteStatusesTexture.getWidth() / 4;
 		for (int i = 0; i < 4; i++) {
@@ -95,8 +138,7 @@ public class NoteStatusModels {
 			}
 		}
 
-		noteStatusesTextures.clear();
-		noteAnticipationTextureId = null;
+		clear();
 	}
 
 	public void init(final TexturesHolder texturesHolder) {
@@ -155,33 +197,51 @@ public class NoteStatusModels {
 		return copy;
 	}
 
-	private BufferedImage getImage(final HOPO hopo) {
-		switch (hopo) {
-		case HAMMER_ON:
-			return noteStatusesTextureAtlas[0][1];
-		case PULL_OFF:
-			return noteStatusesTextureAtlas[1][1];
-		case TAP:
-			return noteStatusesTextureAtlas[2][1];
-		case NONE:
-		default:
-			return null;
-		}
+	private BufferedImage getNoteHeadImage() {
+		return noteStatusesTextureAtlas[0][0];
 	}
 
-	private BufferedImage getImage(final Mute mute) {
-		switch (mute) {
-		case PALM:
-			return noteStatusesTextureAtlas[0][2];
-		case FULL:
-			return noteStatusesTextureAtlas[1][2];
-		case NONE:
-		default:
-			return null;
-		}
+	private BufferedImage getNoteAnticipationImage() {
+		return noteStatusesTextureAtlas[1][0];
 	}
 
-	private BufferedImage getImage(final Harmonic harmonic) {
+	private BufferedImage getTechNoteHeadImage() {
+		return noteStatusesTextureAtlas[2][0];
+	}
+
+	private BufferedImage getArpeggioFrettedNoteBracketImage() {
+		return noteStatusesTextureAtlas[3][0];
+	}
+
+	private BufferedImage getHammerOnImage() {
+		return noteStatusesTextureAtlas[0][1];
+	}
+
+	private BufferedImage getPullOffImage() {
+		return noteStatusesTextureAtlas[1][1];
+	}
+
+	private BufferedImage getTapImage() {
+		return noteStatusesTextureAtlas[2][1];
+	}
+
+	private BufferedImage getArpeggioOpenNoteBracketImage() {
+		return noteStatusesTextureAtlas[3][1];
+	}
+
+	private BufferedImage getPalmMuteImage() {
+		return noteStatusesTextureAtlas[0][2];
+	}
+
+	private BufferedImage getFullMuteImage() {
+		return noteStatusesTextureAtlas[1][2];
+	}
+
+	private BufferedImage getAccentImage() {
+		return noteStatusesTextureAtlas[2][2];
+	}
+
+	private BufferedImage getHarmonicImage(final Harmonic harmonic) {
 		switch (harmonic) {
 		case NORMAL:
 			return noteStatusesTextureAtlas[0][3];
@@ -193,54 +253,79 @@ public class NoteStatusModels {
 		}
 	}
 
-	public int getTextureId(final NoteDrawData note) {
-		final NoteStatusData noteStatusData = new NoteStatusData(note);
-		if (noteStatusesTextures.containsKey(noteStatusData)) {
-			return noteStatusesTextures.get(noteStatusData);
-		}
+	private BufferedImage getBaseNoteImage(final NoteStatusData noteStatusData) {
+		BufferedImage img = noteStatusData.isLeftHandTechniquePresent// ;
+				? getTechNoteHeadImage()//
+				: getNoteHeadImage();
 
-		BufferedImage img;
-		if (noteStatusData.hopo == HOPO.NONE && noteStatusData.mute == Mute.NONE
-				&& noteStatusData.harmonic == Harmonic.NONE) {
-			img = noteStatusesTextureAtlas[0][0];
-		} else {
-			img = copyImage(noteStatusesTextureAtlas[2][0]);
+		img = copyImage(img);
 
-			addImage(img, getImage(noteStatusData.hopo));
-			addImage(img, getImage(noteStatusData.mute));
-			addImage(img, getImage(noteStatusData.harmonic));
-		}
-
-		final int textureId = texturesHolder.addTexture(noteStatusData.name(), img, true);
-		noteStatusesTextures.put(noteStatusData, textureId);
-		return textureId;
+		return img;
 	}
 
-	public int getTextureIdForOnlyStatuses(final NoteDrawData note) {
-		if (note.hopo == HOPO.NONE && note.mute == Mute.NONE && note.harmonic == Harmonic.NONE) {
-			return texturesHolder.getTextureId("error");
+	private void addTechImages(final BufferedImage img, final NoteStatusData noteStatusData) {
+		addImage(img, getHarmonicImage(noteStatusData.harmonic));
+		if (noteStatusData.palmMute) {
+			addImage(img, getPalmMuteImage());
 		}
+		if (noteStatusData.tap) {
+			addImage(img, getTapImage());
+		}
+		if (noteStatusData.accent) {
+			addImage(img, getAccentImage());
+		}
+	}
 
+	public int getTextureId(final NoteDrawData note) {
 		final NoteStatusData noteStatusData = new NoteStatusData(note);
-		if (noteOnlyStatusesTextures.containsKey(noteStatusData)) {
-			return noteOnlyStatusesTextures.get(noteStatusData);
+		if (!noteStatusesTextures.containsKey(noteStatusData)) {
+			final BufferedImage img = getBaseNoteImage(noteStatusData);
+			addTechImages(img, noteStatusData);
+
+			noteStatusesTextures.put(noteStatusData, texturesHolder.addTexture(noteStatusData.name(), img, true));
 		}
 
-		final BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
-		addImage(img, getImage(noteStatusData.hopo));
-		addImage(img, getImage(noteStatusData.mute));
-		addImage(img, getImage(noteStatusData.harmonic));
+		return noteStatusesTextures.get(noteStatusData);
+	}
 
-		final int textureId = texturesHolder.addTexture(noteStatusData.onlyStatusesName(), img, true);
-		noteOnlyStatusesTextures.put(noteStatusData, textureId);
-		return textureId;
+	public int getPalmMuteTextureId() {
+		if (palmMuteTextureId == null) {
+			palmMuteTextureId = texturesHolder.addTexture("palm_mute", getPalmMuteImage(), true);
+		}
+
+		return palmMuteTextureId;
+	}
+
+	public int getFullMuteTextureId() {
+		if (fullMuteTextureId == null) {
+			fullMuteTextureId = texturesHolder.addTexture("full_mute", getFullMuteImage(), true);
+		}
+
+		return fullMuteTextureId;
+	}
+
+	public int getHammerOnTextureId() {
+		if (hammerOnTextureId == null) {
+			hammerOnTextureId = texturesHolder.addTexture("hammer_on", getHammerOnImage(), true);
+		}
+
+		return hammerOnTextureId;
+	}
+
+	public int getPullOffTextureId() {
+		if (pullOffTextureId == null) {
+			pullOffTextureId = texturesHolder.addTexture("pull_off", getPullOffImage(), true);
+		}
+
+		return pullOffTextureId;
 	}
 
 	public int getNoteAnticipationTextureId() {
-		if (noteAnticipationTextureId != null) {
-			return noteAnticipationTextureId;
+		if (noteAnticipationTextureId == null) {
+			noteAnticipationTextureId = texturesHolder.addTexture("note_anticipation", getNoteAnticipationImage(),
+					true);
 		}
 
-		return texturesHolder.addTexture("note_anticipation", noteStatusesTextureAtlas[1][0], true);
+		return noteAnticipationTextureId;
 	}
 }

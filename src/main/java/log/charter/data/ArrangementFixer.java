@@ -34,7 +34,7 @@ public class ArrangementFixer {
 
 	public void init(final ChartData data) {
 		this.data = data;
-	}
+	} 
 
 	private void removeDuplicates(final List<? extends IPosition> positions) {
 		final List<IPosition> positionsToRemove = new ArrayList<>();
@@ -50,7 +50,7 @@ public class ArrangementFixer {
 	private void addMissingHandShapes(final Level level) {
 		final LinkedList<Chord> chordsForHandShapes = level.chordsAndNotes.stream()//
 				.filter(chordOrNote -> chordOrNote.isChord() && !chordOrNote.chord.splitIntoNotes)//
-				.map(chordOrNote -> chordOrNote.chord)//
+				.map(chordOrNote -> chordOrNote.chord)//  
 				.collect(Collectors.toCollection(LinkedList::new));
 		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
 		for (final HandShape handShape : level.handShapes) {

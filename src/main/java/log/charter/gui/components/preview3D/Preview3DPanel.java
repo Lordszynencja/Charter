@@ -29,6 +29,7 @@ import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.glUtils.Texture;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
+import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.io.Logger;
 import log.charter.util.Timer;
@@ -41,6 +42,9 @@ public class Preview3DPanel extends AWTGLCanvas {
 
 	private Framer cameraUpdater;
 	private RepeatManager repeatManager;
+
+	private final NoteStatusModels noteStatusModels = new NoteStatusModels();
+
 	private final ShadersHolder shadersHolder = new ShadersHolder();
 	private final TextTexturesHolder textTexturesHolder = new TextTexturesHolder();
 	private final TexturesHolder texturesHolder = new TexturesHolder();
@@ -75,11 +79,13 @@ public class Preview3DPanel extends AWTGLCanvas {
 		this.repeatManager = repeatManager;
 		this.modeManager = modeManager;
 
+		noteStatusModels.init(texturesHolder);
+
 		anchorsDrawer.init(data);
 		beatsDrawer.init(data, textTexturesHolder);
 		cameraHandler.init(data);
 		fingeringDrawer.init(data, texturesHolder);
-		guitarSoundsDrawer.init(data, texturesHolder);
+		guitarSoundsDrawer.init(data, noteStatusModels, texturesHolder);
 		handShapesDrawer.init(data);
 		inlayDrawer.init(data, texturesHolder);
 		laneBordersDrawer.init(data);
@@ -197,6 +203,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 	}
 
 	public void reloadTextures() {
+		noteStatusModels.reload();
 		texturesHolder.reloadTextures();
 	}
 }

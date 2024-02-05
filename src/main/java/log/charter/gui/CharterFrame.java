@@ -152,7 +152,7 @@ public class CharterFrame extends JFrame {
 		preview3DPanel.init(data, keyboardHandler, modeManager, repeatManager);
 
 		windowedPreview3DPanel.init(data, keyboardHandler, modeManager, repeatManager);
-		windowedPreviewFrame.init(keyboardHandler, windowedPreview3DPanel);
+		windowedPreviewFrame.init(this, keyboardHandler, windowedPreview3DPanel);
 
 		add(chartToolbar);
 		add(chartPanel);

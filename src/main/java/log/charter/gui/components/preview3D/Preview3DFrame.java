@@ -6,6 +6,7 @@ import java.awt.event.ComponentListener;
 import javax.swing.JFrame;
 
 import log.charter.data.config.Config;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.CharterFrameWindowFocusListener;
 import log.charter.gui.handlers.KeyboardHandler;
 
@@ -15,7 +16,10 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 	public Preview3DFrame() {
 	}
 
-	public void init(final KeyboardHandler keyboardHandler, final Preview3DPanel preview3DPanel) {
+	public void init(final CharterFrame frame, final KeyboardHandler keyboardHandler,
+			final Preview3DPanel preview3DPanel) {
+		setIconImages(frame.getIconImages());
+
 		addKeyListener(keyboardHandler);
 		addWindowFocusListener(new CharterFrameWindowFocusListener(keyboardHandler));
 		addComponentListener(this);

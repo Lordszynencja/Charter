@@ -48,7 +48,6 @@ import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
 import log.charter.gui.components.preview3D.shapes.OpenNoteModel;
 import log.charter.song.BendValue;
 import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.util.CollectionUtils.Pair;
 
@@ -125,7 +124,7 @@ public class Preview3DGuitarSoundsDrawer {
 	private static final int highlightWindow = 50;
 
 	private ChartData data;
-	private final NoteStatusModels noteStatusModels = new NoteStatusModels();
+	private NoteStatusModels noteStatusModels;
 
 	private static double lastFretLengthMultiplier = fretLengthMultiplier;
 	private final static Map<Integer, CompositeModel> openNoteSameFretsModels = new HashMap<>();
@@ -162,10 +161,10 @@ public class Preview3DGuitarSoundsDrawer {
 		return currentMap.get(fret0).get(fret1);
 	}
 
-	public void init(final ChartData data, final TexturesHolder texturesHolder) {
+	public void init(final ChartData data, final NoteStatusModels noteStatusModels,
+			final TexturesHolder texturesHolder) {
 		this.data = data;
-
-		noteStatusModels.init(texturesHolder);
+		this.noteStatusModels = noteStatusModels;
 	}
 
 	private boolean invertBend(final int string) {
@@ -368,30 +367,22 @@ public class Preview3DGuitarSoundsDrawer {
 				.draw(GL30.GL_TRIANGLE_FAN, Matrix4.identity);
 	}
 
-	private Color getNoteHeadColor(final NoteDrawData note, final boolean hit) {
-		if (note.accent) {
-			return getStringBasedColor(StringColorLabelType.NOTE_ACCENT, note.string, data.currentStrings());
-		}
-
-		Color color = getStringBasedColor(StringColorLabelType.NOTE, note.string, data.currentStrings());
-		if (hit) {
-			color = color.brighter();
-		}
-		return color;
+	private Color getNoteHeadColor(final NoteDrawData note) {
+		return getStringBasedColor(StringColorLabelType.NOTE, note.string, data.currentStrings());
 	}
 
-	private void drawNoteStatusesTexture(final ShadersHolder shadersHolder, final Matrix4 modelMatrix,
-			final NoteDrawData note, final boolean hit, final int textureId) {
-		final Color color = getNoteHeadColor(note, hit);
+	private void drawNoteStatusesTexture(final ShadersHolder shadersHolder, final Matrix4 modelMatrix, final double z,
+			final NoteDrawData note, final int textureId) {
+		final Color color = getNoteHeadColor(note);
 
 		shadersHolder.new ShadowHighlightTextureShaderDrawData()//
-				.addZQuad(-noteHalfWidth, noteHalfWidth, noteHalfWidth, -noteHalfWidth, -0.01, 0, 1, 0, 1)//
+				.addZQuad(-noteHalfWidth, noteHalfWidth, noteHalfWidth, -noteHalfWidth, z, 0, 1, 0, 1)//
 				.draw(GL30.GL_QUADS, modelMatrix, textureId, color);
 	}
 
 	private void drawOpenStringNoteHead(final ShadersHolder shadersHolder, final int position, final NoteDrawData note,
 			final boolean hit) {
-		final Color color = getNoteHeadColor(note, hit);
+		final Color color = getNoteHeadColor(note);
 
 		final double x = (getFretPosition(note.frets.min) + getFretPosition(note.frets.max)) / 2;
 		final double y = getStringPositionWithBend(note.string, data.currentStrings(), note.prebend);
@@ -408,20 +399,24 @@ public class Preview3DGuitarSoundsDrawer {
 			drawData.draw(points.a, modelMatrix);
 		}
 
-		if (note.hopo != HOPO.NONE || note.mute != Mute.NONE || note.harmonic != Harmonic.NONE) {
-			final int textureId = noteStatusModels.getTextureIdForOnlyStatuses(note);
-			drawNoteStatusesTexture(shadersHolder, modelMatrix, note, hit, textureId);
+		if (note.hopo == HOPO.PULL_OFF) {
+			drawNoteStatusesTexture(shadersHolder, modelMatrix, -0.01, note, noteStatusModels.getPullOffTextureId());
+		}
+
+		if (note.mute == Mute.PALM) {
+			drawNoteStatusesTexture(shadersHolder, modelMatrix, -0.01, note, noteStatusModels.getPalmMuteTextureId());
+		} else if (note.mute == Mute.FULL) {
+			drawNoteStatusesTexture(shadersHolder, modelMatrix, -0.01, note, noteStatusModels.getFullMuteTextureId());
 		}
 	}
 
-	private Matrix4 getFrettedNoteModelMatrix(final double x, final double y, final double z, final NoteDrawData note) {
-		Matrix4 modelMatrix = moveMatrix(x, y, z);
-		if (!note.isChordNote) {
-			final double rotation = max(-Math.PI / 2, min(0, -Math.PI * (note.position - data.time - 100) / 1000.0));
-			modelMatrix = modelMatrix.multiply(rotationZMatrix(rotation));
+	private Matrix4 getFrettedNoteRotatedModelMatrix(final Matrix4 baseMatrix, final NoteDrawData note) {
+		if (note.isChordNote) {
+			return baseMatrix;
 		}
 
-		return modelMatrix;
+		final double rotation = max(-Math.PI / 2, min(0, -Math.PI * (note.position - data.time - 100) / 1000.0));
+		return baseMatrix.multiply(rotationZMatrix(rotation));
 	}
 
 	private void drawFrettedNoteHeadBase(final ShadersHolder shadersHolder, final NoteDrawData note,
@@ -432,10 +427,22 @@ public class Preview3DGuitarSoundsDrawer {
 		final double y = getStringPositionWithBend(note.string, data.currentStrings(), note.prebend);
 		final double z = getTimePosition(note.position - data.time);
 
-		final Matrix4 modelMatrix = getFrettedNoteModelMatrix(x, y, z, note);
+		final Matrix4 modelMatrix = moveMatrix(x, y, z);
+		final Matrix4 baseNoteMatrix = getFrettedNoteRotatedModelMatrix(modelMatrix, note);
 
 		final int textureId = noteStatusModels.getTextureId(note);
-		drawNoteStatusesTexture(shadersHolder, modelMatrix, note, hit, textureId);
+		drawNoteStatusesTexture(shadersHolder, baseNoteMatrix, 0, note, textureId);
+
+		if (note.mute == Mute.FULL) {
+			drawNoteStatusesTexture(shadersHolder, modelMatrix, -0.01, note, noteStatusModels.getFullMuteTextureId());
+		}
+
+		if (note.hopo == HOPO.HAMMER_ON) {
+			drawNoteStatusesTexture(shadersHolder, modelMatrix, -0.01, note, noteStatusModels.getHammerOnTextureId());
+		} else if (note.hopo == HOPO.PULL_OFF) {
+			drawNoteStatusesTexture(shadersHolder, modelMatrix, -0.01, note, noteStatusModels.getPullOffTextureId());
+
+		}
 	}
 
 	private void drawNoteHead(final ShadersHolder shadersHolder, final int position, final NoteDrawData note,
@@ -449,7 +456,7 @@ public class Preview3DGuitarSoundsDrawer {
 		}
 
 		if (!hit && !note.isChordNote) {
-			drawNoteShadow(shadersHolder, note, getNoteHeadColor(note, hit));
+			drawNoteShadow(shadersHolder, note, getNoteHeadColor(note));
 		}
 
 		drawFrettedNoteHeadBase(shadersHolder, note, hit);
