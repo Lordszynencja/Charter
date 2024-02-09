@@ -65,7 +65,7 @@ public class ParamsPane extends JDialog {
 
 	private static final int OPTIONS_MAX_INPUT_WIDTH = 500;
 
-	private final CharterFrame frame;
+	protected final CharterFrame frame;
 
 	protected final ArrayList2<Component> components = new ArrayList2<>();
 
@@ -108,7 +108,7 @@ public class ParamsPane extends JDialog {
 				Config.windowPosY + frame.getHeight() / 2 - h / 2);
 	}
 
-	protected int getY(final int row) {
+	public int getY(final int row) {
 		return sizes.getY(row);
 	}
 

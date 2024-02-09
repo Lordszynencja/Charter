@@ -130,7 +130,7 @@ public class SelectionManager {
 	}
 
 	public PositionWithIdAndType findExistingPosition(final int x, final int y) {
-		final PositionType positionType = PositionType.fromY(y, modeManager.editMode);
+		final PositionType positionType = PositionType.fromY(y, modeManager.getMode());
 		final ArrayList2<PositionWithIdAndType> positions = positionType.manager.getPositionsWithIdsAndTypes(data);
 
 		if (positionType == PositionType.HAND_SHAPE || positionType == PositionType.VOCAL) {
@@ -200,9 +200,9 @@ public class SelectionManager {
 			return;
 		}
 
-		if (modeManager.editMode == EditMode.GUITAR) {
+		if (modeManager.getMode() == EditMode.GUITAR) {
 			chordsNotesManager.addAll();
-		} else if (modeManager.editMode == EditMode.VOCALS) {
+		} else if (modeManager.getMode() == EditMode.VOCALS) {
 			vocalsManager.addAll();
 		}
 

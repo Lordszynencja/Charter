@@ -1,6 +1,7 @@
 package log.charter.gui.components.preview3D.data;
 
 import static java.lang.Math.min;
+import static log.charter.data.config.Config.maxStrings;
 import static log.charter.song.notes.ChordOrNote.isLinkedToPrevious;
 import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
@@ -50,6 +51,16 @@ public class Preview3DNotesData {
 	}
 
 	public static Preview3DNotesData getNotesForTimeSpan(final ChartData data, final int timeFrom, final int timeTo) {
+		if (data.getCurrentArrangementLevel() == null) {
+			final List<List<NoteDrawData>> notes = new ArrayList<>();
+			for (int i = 0; i < maxStrings; i++) {
+				notes.add(new ArrayList<>());
+			}
+			final List<ChordBoxDrawData> chords = new ArrayList<>();
+
+			return new Preview3DNotesData(notes, chords);
+		}
+
 		final List<ChordBoxDrawData> chords = new ArrayList<>();
 		final List<List<NoteDrawData>> notes = new ArrayList<>();
 		final ArrangementChart arrangement = data.getCurrentArrangement();

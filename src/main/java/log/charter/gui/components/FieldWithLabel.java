@@ -23,6 +23,7 @@ public class FieldWithLabel<T extends Component> extends Container {
 
 	private static final long serialVersionUID = 1L;
 
+	private final LabelPosition labelPosition;
 	public final JLabel label;
 	public final T field;
 
@@ -31,44 +32,45 @@ public class FieldWithLabel<T extends Component> extends Container {
 		super();
 		setLayout(null);
 
+		this.labelPosition = labelPosition;
 		this.field = field;
 		int totalSize = 0;
 
 		switch (labelPosition) {
-		case LEFT:
-			this.label = addLabel(label, 0, labelWidth, height, SwingConstants.LEFT);
-			this.addField(field, labelWidth + 5, inputWidth, height);
-			totalSize = labelWidth + inputWidth + 5;
-			break;
-		case LEFT_CLOSE:
-			this.label = addLabel(label, 0, labelWidth, height, SwingConstants.RIGHT);
-			this.addField(field, labelWidth + 5, inputWidth, height);
-			totalSize = labelWidth + inputWidth + 5;
-			break;
-		case LEFT_PACKED:
-			this.label = addLabel(label, 0, 999, height, SwingConstants.LEFT);
-			labelWidth += getTextWidth();
-			this.label.setSize(labelWidth, height);
-			this.addField(field, labelWidth, inputWidth, height);
-			totalSize = labelWidth + inputWidth;
-			break;
-		case RIGHT_PACKED:
-			this.addField(field, 0, inputWidth, height);
-			this.label = addLabel(label, inputWidth + labelWidth, 999, height, SwingConstants.LEFT);
-			totalSize = inputWidth + labelWidth + getTextWidth();
-			break;
-		case RIGHT_CLOSE:
-			this.addField(field, 0, inputWidth, height);
-			this.label = addLabel(label, inputWidth + 2, labelWidth, height, SwingConstants.LEFT);
-			totalSize = labelWidth + inputWidth + 2;
-			break;
-		case RIGHT:
-			this.addField(field, 0, inputWidth, height);
-			this.label = addLabel(label, inputWidth + 2, labelWidth, height, SwingConstants.RIGHT);
-			totalSize = labelWidth + inputWidth + 2;
-			break;
-		default:
-			throw new RuntimeException("Unknown label position " + labelPosition);
+			case LEFT:
+				this.label = addLabel(label, 0, labelWidth, height, SwingConstants.LEFT);
+				this.addField(field, labelWidth + 5, inputWidth, height);
+				totalSize = labelWidth + inputWidth + 5;
+				break;
+			case LEFT_CLOSE:
+				this.label = addLabel(label, 0, labelWidth, height, SwingConstants.RIGHT);
+				this.addField(field, labelWidth + 5, inputWidth, height);
+				totalSize = labelWidth + inputWidth + 5;
+				break;
+			case LEFT_PACKED:
+				this.label = addLabel(label, 0, 999, height, SwingConstants.LEFT);
+				labelWidth += getTextWidth();
+				this.label.setSize(labelWidth, height);
+				this.addField(field, labelWidth, inputWidth, height);
+				totalSize = labelWidth + inputWidth;
+				break;
+			case RIGHT_PACKED:
+				this.addField(field, 0, inputWidth, height);
+				this.label = addLabel(label, inputWidth + labelWidth, 999, height, SwingConstants.LEFT);
+				totalSize = inputWidth + labelWidth + getTextWidth();
+				break;
+			case RIGHT_CLOSE:
+				this.addField(field, 0, inputWidth, height);
+				this.label = addLabel(label, inputWidth + 2, labelWidth, height, SwingConstants.LEFT);
+				totalSize = labelWidth + inputWidth + 2;
+				break;
+			case RIGHT:
+				this.addField(field, 0, inputWidth, height);
+				this.label = addLabel(label, inputWidth + 2, labelWidth, height, SwingConstants.RIGHT);
+				totalSize = labelWidth + inputWidth + 2;
+				break;
+			default:
+				throw new RuntimeException("Unknown label position " + labelPosition);
 		}
 
 		this.setSize(totalSize, height);
@@ -156,6 +158,8 @@ public class FieldWithLabel<T extends Component> extends Container {
 	public void paint(final Graphics g) {
 		super.paint(g);
 
-		label.setSize(getTextWidth() + 1, label.getHeight());
+		if (labelPosition != LabelPosition.LEFT_CLOSE) {
+			label.setSize(getTextWidth() + 1, label.getHeight());
+		}
 	}
 }

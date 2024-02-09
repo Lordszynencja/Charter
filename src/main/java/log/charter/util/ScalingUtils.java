@@ -14,7 +14,7 @@ public class ScalingUtils {
 	}
 
 	public static int timeToX(final int pos, final int t) {
-		return (int) ((pos - t) * Zoom.zoom) + Config.markerOffset;
+		return timeToXLength(pos) - timeToXLength(t) + Config.markerOffset;
 	}
 
 	public static int timeToX(final IPosition position, final int t) {
@@ -22,10 +22,14 @@ public class ScalingUtils {
 	}
 
 	public static int timeToX(final double pos, final int t) {
-		return (int) ((pos - t) * Zoom.zoom) + Config.markerOffset;
+		return (int) (pos * Zoom.zoom - t * Zoom.zoom) + Config.markerOffset;
 	}
 
 	public static int timeToXLength(final int length) {
 		return (int) (length * Zoom.zoom);
+	}
+
+	public static int timeToXLength(final int position, final int length) {
+		return timeToXLength(position + length) - timeToXLength(position);
 	}
 }

@@ -1,4 +1,4 @@
-package log.charter.gui.chartPanelDrawers.instruments.guitar;
+package log.charter.gui.chartPanelDrawers.data;
 
 import static java.lang.Math.max;
 import static log.charter.util.ScalingUtils.timeToXLength;
@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
+import log.charter.song.enums.BassPickingTechnique;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
@@ -18,8 +19,8 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class EditorNoteDrawingData {
 	public static EditorNoteDrawingData fromNote(final int x, final Note note, final boolean selected,
 			final boolean lastWasLinkNext, final boolean wrongLinkNext) {
-		return new EditorNoteDrawingData(x, timeToXLength(note.length()), note, selected, lastWasLinkNext,
-				wrongLinkNext);
+		return new EditorNoteDrawingData(x, timeToXLength(note.position(), note.length()), note, selected,
+				lastWasLinkNext, wrongLinkNext);
 	}
 
 	public static EditorNoteDrawingData fromChordNote(final int x, final Chord chord, final ChordTemplate chordTemplate,
@@ -30,8 +31,8 @@ public class EditorNoteDrawingData {
 		final String fretDescription = fret
 				+ (ctrl && finger != null ? "(" + (finger == 0 ? "T" : finger.toString()) + ")" : "");
 
-		return new EditorNoteDrawingData(x, timeToXLength(chordNote.length), string, fret, fretDescription, chord,
-				chordNote, selected, lastWasLinkNext, wrongLinkNext);
+		return new EditorNoteDrawingData(x, timeToXLength(chord.position(), chordNote.length), string, fret,
+				fretDescription, chord, chordNote, selected, lastWasLinkNext, wrongLinkNext);
 	}
 
 	public static ArrayList2<EditorNoteDrawingData> fromChord(final Chord chord, final ChordTemplate chordTemplate,
@@ -58,6 +59,7 @@ public class EditorNoteDrawingData {
 	public final Mute mute;
 	public final HOPO hopo;
 	public final Harmonic harmonic;
+	public final BassPickingTechnique bassPickingTech;
 	public final ArrayList2<BendValue> bendValues;
 	public final Integer slideTo;
 	public final boolean unpitchedSlide;
@@ -73,8 +75,8 @@ public class EditorNoteDrawingData {
 			final boolean lastWasLinkNext, final boolean wrongLink) {
 		this(note.position(), x, length, //
 				note.string, note.fret, note.fret + "", //
-				note.accent, note.mute, note.hopo, note.harmonic, note.bendValues, note.slideTo, note.unpitchedSlide,
-				note.vibrato, note.tremolo, //
+				note.accent, note.mute, note.hopo, note.harmonic, note.bassPicking, note.bendValues, note.slideTo,
+				note.unpitchedSlide, note.vibrato, note.tremolo, //
 				selected, lastWasLinkNext, wrongLink);
 	}
 
@@ -83,17 +85,17 @@ public class EditorNoteDrawingData {
 			final boolean lastWasLinkNext, final boolean wrongLink) {
 		this(chord.position(), x, length, //
 				string, fret, fretDescription, //
-				chord.accent, chordNote.mute, chordNote.hopo, chordNote.harmonic, chordNote.bendValues,
-				chordNote.slideTo, chordNote.unpitchedSlide, chordNote.vibrato, chordNote.tremolo, //
+				chord.accent, chordNote.mute, chordNote.hopo, chordNote.harmonic, BassPickingTechnique.NONE,
+				chordNote.bendValues, chordNote.slideTo, chordNote.unpitchedSlide, chordNote.vibrato, chordNote.tremolo, //
 				selected, lastWasLinkNext, wrongLink);
 	}
 
 	private EditorNoteDrawingData(final int position, final int x, final int length, //
 			final int string, final int fretNumber, final String fret, //
 			final boolean accent, final Mute mute, final HOPO hopo, final Harmonic harmonic,
-			final ArrayList2<BendValue> bendValues, final Integer slideTo, final boolean unpitchedSlide,
-			final boolean vibrato, final boolean tremolo, final boolean selected, final boolean lastWasLinkNext,
-			final boolean wrongLink) {
+			final BassPickingTechnique bassPickingTech, final ArrayList2<BendValue> bendValues, final Integer slideTo,
+			final boolean unpitchedSlide, final boolean vibrato, final boolean tremolo, final boolean selected,
+			final boolean lastWasLinkNext, final boolean wrongLink) {
 		this.position = position;
 		this.x = x;
 		this.length = lastWasLinkNext ? max(5, length) : length;
@@ -105,6 +107,7 @@ public class EditorNoteDrawingData {
 		this.mute = mute;
 		this.hopo = hopo;
 		this.harmonic = harmonic;
+		this.bassPickingTech = bassPickingTech;
 		this.bendValues = bendValues == null ? new ArrayList2<>() : bendValues;
 		this.slideTo = slideTo;
 		this.unpitchedSlide = unpitchedSlide;

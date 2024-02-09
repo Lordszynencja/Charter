@@ -57,9 +57,12 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private UndoSystem undoSystem;
 
 	private ChordTemplate chordTemplate = new ChordTemplate();
+
+	private int lastStringsAmount = maxStrings;
 	private List<JCheckBox> strings;
 	private FieldWithLabel<TextInputWithValidation> string;
 	private FieldWithLabel<TextInputWithValidation> fret;
+
 	private RadioButtonGroupInRow<Mute> mute;
 	private RadioButtonGroupInRow<HOPO> hopo;
 	private RadioButtonGroupInRow<BassPickingTechnique> bassPickingTechnique;
@@ -374,8 +377,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private void changeBassPickingTechnique(final BassPickingTechnique newBassPickingTechnique) {
 		undoSystem.addUndo();
 		changeSelectedChordsToNotes();
-		changeValueForSelected(n -> n.bassPicking = newBassPickingTechnique, n -> {
-		});
+		changeValueForSelected(n -> n.bassPicking = newBassPickingTechnique, n -> {});
 	}
 
 	private void changeHarmonic(final Harmonic newHarmonic) {
@@ -602,7 +604,9 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	public void showFields() {
 		super.showFields();
 
-		strings.forEach(s -> s.setVisible(true));
+		for (int string = 0; string < data.currentStrings(); string++) {
+			strings.get(string).setVisible(true);
+		}
 		string.setVisible(true);
 		fret.setVisible(true);
 		mute.setVisible(true);
@@ -740,8 +744,22 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		string.field.setTextWithoutEvent(stringValue == null ? "" : ((stringValue + 1) + ""));
 	}
 
+	private void changeAvailableStrings() {
+		if (data.currentStrings() == lastStringsAmount) {
+			return;
+		}
+
+		lastStringsAmount = data.currentStrings();
+		for (int string = 0; string < lastStringsAmount; string++) {
+			strings.get(string)
+					.setForeground(getStringBasedColor(StringColorLabelType.NOTE, string, lastStringsAmount));
+		}
+	}
+
 	public void selectionChanged(final SelectionAccessor<ChordOrNote> selectedChordOrNotesAccessor,
 			final boolean stringsCouldChange) {
+		changeAvailableStrings();
+
 		if (stringsCouldChange) {
 			strings.forEach(string -> string.setSelected(true));
 		}

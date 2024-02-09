@@ -3,17 +3,21 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar;
 import static java.lang.Math.round;
 import static java.lang.Math.sin;
 import static log.charter.data.config.Config.maxBendValue;
-import static log.charter.data.config.Config.noteHeight;
-import static log.charter.data.config.Config.noteWidth;
 import static log.charter.data.config.Config.showChordIds;
+import static log.charter.data.config.GraphicalConfig.anchorInfoHeight;
+import static log.charter.data.config.GraphicalConfig.handShapesHeight;
+import static log.charter.data.config.GraphicalConfig.noteHeight;
+import static log.charter.data.config.GraphicalConfig.noteWidth;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.tailHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
+import static log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.fromChord;
+import static log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.fromNote;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackgroundAndBorder.getExpectedSize;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.clippedShapes;
@@ -26,11 +30,8 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lin
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedTriangle;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.text;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.textWithBackground;
-import static log.charter.gui.chartPanelDrawers.instruments.guitar.EditorNoteDrawingData.fromChord;
-import static log.charter.gui.chartPanelDrawers.instruments.guitar.EditorNoteDrawingData.fromNote;
 import static log.charter.util.ScalingUtils.timeToX;
+import static log.charter.util.ScalingUtils.xToTimeLength;
 import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.Color;
@@ -51,17 +52,20 @@ import javax.imageio.ImageIO;
 import log.charter.data.config.Zoom;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
+import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
+import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackground;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
+import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
+import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
+import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;
 import log.charter.io.Logger;
 import log.charter.song.Anchor;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.ToneChange;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.Note;
@@ -95,6 +99,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	protected final Font anchorFont;
 	protected final Font bendValueFont;
 	protected final Font fretFont;
+	protected final Font handShapesFont;
 
 	protected final BufferedImage palmMuteImage;
 	protected final BufferedImage muteImage;
@@ -117,7 +122,9 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	protected final DrawableShapeList slideFrets;
 	protected final DrawableShapeList toneChanges;
 
-	public DefaultHighwayDrawer(final int strings, final int time) {
+	protected final Graphics g;
+
+	public DefaultHighwayDrawer(final Graphics g, final int strings, final int time) {
 		this.strings = strings;
 		this.time = time;
 
@@ -137,6 +144,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		anchorFont = defineAnchorFont();
 		bendValueFont = defineBendFont();
 		fretFont = defineFretFont();
+		handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, handShapesHeight);
 
 		palmMuteImage = definePalmMuteImage();
 		muteImage = defineMuteImage();
@@ -153,10 +161,12 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		selects = new DrawableShapeList();
 		slideFrets = new DrawableShapeList();
 		toneChanges = new DrawableShapeList();
+
+		this.g = g;
 	}
 
 	protected Font defineAnchorFont() {
-		return new Font(Font.DIALOG, Font.BOLD, 13);
+		return new Font(Font.DIALOG, Font.BOLD, anchorInfoHeight);
 	}
 
 	protected Font defineBendFont() {
@@ -316,7 +326,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		notes.add(centeredImage(new Position2D(note.x, y), palmMuteImage));
 	}
 
-	protected void addMute(final EditorNoteDrawingData note, final int y) {
+	protected void addFullMute(final EditorNoteDrawingData note, final int y) {
 		notes.add(centeredImage(new Position2D(note.x, y), muteImage));
 	}
 
@@ -387,7 +397,8 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 			noteTails.add(filledTriangle(a, b, c, color));
 		}
 
-		slideFrets.add(centeredTextWithBackground(c, note.slideTo + "", backgroundColor, fretColor));
+		slideFrets.add(
+				centeredTextWithBackground(c, fretFont, note.slideTo + "", fretColor, backgroundColor, Color.BLACK));
 		if (note.selected) {
 			noteTailSelects.add(strokedTriangle(a, b, c, selectColor));
 		}
@@ -532,24 +543,45 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		}
 
 		final int bendOffset = bendValue.multiply(new BigDecimal(tailHeight * 2 / 3))
-				.divide(new BigDecimal(3), RoundingMode.HALF_UP).intValue();
+				.divide(new BigDecimal(maxBendValue), RoundingMode.HALF_UP).intValue();
 		return y + tailHeight / 3 - bendOffset;
 	}
 
+	private void addBendValueIcon(final int position, final int x, final int y, final BigDecimal bendValue,
+			final boolean linked) {
+		if (linked) {
+			return;
+		}
+
+		final String text = "ノ" + formatBendValue(bendValue);
+		final ShapeSize expectedIconSize = getExpectedSize(g, bendValueFont, text);
+		final int minBendPositionAfterHead = xToTimeLength(noteWidth / 2 + expectedIconSize.width / 2);
+
+		Position2D iconPosition;
+		if (position > minBendPositionAfterHead) {
+			iconPosition = new Position2D(x, y);
+		} else {
+			final int bendY = y - noteHeight / 2 - expectedIconSize.height / 2;
+			iconPosition = new Position2D(x, bendY);
+		}
+		final DrawableShape bendValueIcon = new CenteredTextWithBackground(iconPosition, bendValueFont, text,
+				Color.WHITE, Color.BLACK);
+		bendValues.add(bendValueIcon);
+	}
+
 	protected void addBendValues(final EditorNoteDrawingData note, final int y) {
+		if (note.bendValues == null || note.bendValues.isEmpty()) {
+			return;
+		}
+
 		Position2D lastBendLinePosition = new Position2D(note.x, getBendLineY(y, BigDecimal.ZERO));
-
 		for (final BendValue bendValue : note.bendValues) {
-			final int bendX = timeToX(note.position + bendValue.position(), time);
-			final int bendY = bendX > note.x + noteWidth ? y : y - 26;
+			final int x = timeToX(note.position + bendValue.position(), time);
 
-			final Position2D lineTo = new Position2D(bendX, getBendLineY(y, bendValue.bendValue));
-
-			final Position2D position = new Position2D(bendX, bendY);
-			final String text = "ノ" + formatBendValue(bendValue.bendValue);
-
+			final Position2D lineTo = new Position2D(x, getBendLineY(y, bendValue.bendValue));
 			noteTails.add(line(lastBendLinePosition, lineTo, Color.WHITE));
-			bendValues.add(centeredTextWithBackground(position, text, Color.BLACK, Color.WHITE));
+
+			addBendValueIcon(bendValue.position(), x, y, bendValue.bendValue, note.linkPrevious);
 
 			lastBendLinePosition = lineTo;
 		}
@@ -559,6 +591,10 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	protected void addNoteTail(final EditorNoteDrawingData note, final int y) {
+		if (note.length == 0) {
+			return;
+		}
+
 		if (note.slideTo != null) {
 			if (note.unpitchedSlide) {
 				addUnpitchedSlideNoteTailShape(note, y);
@@ -568,43 +604,50 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		} else {
 			addNormalNoteTailShape(note, y);
 		}
-
-		if (note.bendValues != null && !note.bendValues.isEmpty()) {
-			addBendValues(note, y);
-		}
 	}
 
 	protected void addNoteShape(final EditorNoteDrawingData note, final int y) {
-		if (note.hopo == HOPO.NONE) {
-			addNormalNoteShape(y, note);
-		} else if (note.hopo == HOPO.HAMMER_ON) {
-			addHammerOnShape(y, note);
-		} else if (note.hopo == HOPO.PULL_OFF) {
-			addPullOffShape(y, note);
-		} else if (note.hopo == HOPO.TAP) {
-			addTapShape(y, note);
+		switch (note.hopo) {
+			case HAMMER_ON:
+				addHammerOnShape(y, note);
+				break;
+			case PULL_OFF:
+				addPullOffShape(y, note);
+				break;
+			case TAP:
+				addTapShape(y, note);
+				break;
+			case NONE:
+			default:
+				addNormalNoteShape(y, note);
+				break;
 		}
 
-		if (note.harmonic == Harmonic.NORMAL) {
-			addHarmonicShape(y, note);
-		} else if (note.harmonic == Harmonic.PINCH) {
-			addPinchHarmonicShape(y, note);
+		switch (note.harmonic) {
+			case NORMAL:
+				addHarmonicShape(y, note);
+				break;
+			case PINCH:
+				addPinchHarmonicShape(y, note);
+				break;
+			case NONE:
+			default:
+				break;
 		}
 
 		if (!note.linkPrevious || note.wrongLink) {
 			if (note.mute == Mute.PALM) {
 				addPalmMute(note, y);
 			} else if (note.mute == Mute.FULL) {
-				addMute(note, y);
+				addFullMute(note, y);
 			}
 
-			noteFrets.add(centeredTextWithBackground(new Position2D(note.x, y), note.fret, Color.WHITE,
-					note.mute == Mute.FULL ? Color.GRAY : Color.BLACK));
+			noteFrets.add(centeredTextWithBackground(new Position2D(note.x, y), fretFont, note.fret,
+					note.mute == Mute.FULL ? Color.GRAY : Color.BLACK, Color.WHITE, Color.BLACK));
 		}
 
-		if (note.length > 0) {
-			addNoteTail(note, y);
-		}
+		addNoteTail(note, y);
+		addBendValues(note, y);
 	}
 
 	protected void addSimpleNote(final EditorNoteDrawingData note) {
@@ -636,32 +679,54 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 					: chordName + " [" + chord.templateId() + "]";
 		}
 		if (chordName != null) {
-			chordNames.add(text(new Position2D(x + 2, lanesTop - 1), chordName, ColorLabel.BASE_DARK_TEXT));
+			chordNames
+					.add(new Text(new Position2D(x + 2, lanesTop - 1), fretFont, chordName, ColorLabel.BASE_DARK_TEXT));
 		}
 	}
 
-	@Override
-	public void addAnchor(final Anchor anchor, final int x, final boolean selected) {
+	protected void addAnchorLine(final int x) {
 		anchors.add(lineVertical(x, anchorY, lanesBottom, ColorLabel.ANCHOR));
-		final String anchorText = anchor.width == 4 ? anchor.fret + "" : anchor.fret + " - " + anchor.topFret();
-		anchors.add(text(new Position2D(x + 4, anchorTextY), anchorText, ColorLabel.ANCHOR));
+	}
 
-		if (selected) {
-			final int top = anchorY - 1;
-			final int bottom = lanesBottom + 1;
-			final ShapePositionWithSize anchorPosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
-			selects.add(strokedRectangle(anchorPosition, selectColor));
+	protected void addAnchorText(final Anchor anchor, final int x) {
+		final String anchorText = anchor.width == 4 ? anchor.fret + "" : anchor.fret + " - " + anchor.topFret();
+		anchors.add(new Text(new Position2D(x + 4, anchorY + 1), anchorFont, anchorText, ColorLabel.ANCHOR));
+	}
+
+	protected void addAnchorBox(final int x, final ColorLabel color) {
+		final int top = anchorY - 1;
+		final int bottom = lanesBottom + 1;
+		final ShapePositionWithSize anchorPosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
+		selects.add(strokedRectangle(anchorPosition, color));
+	}
+
+	@Override
+	public void addAnchor(final Anchor anchor, final int x, final boolean selected, final boolean highlighted) {
+		addAnchorLine(x);
+		addAnchorText(anchor, x);
+
+		if (highlighted) {
+			addAnchorBox(x, ColorLabel.HIGHLIGHT);
+		} else if (selected) {
+			addAnchorBox(x, ColorLabel.SELECT);
 		}
 	}
 
 	@Override
-	public void addHandShape(final int x, final int length, final boolean selected, final HandShape handShape,
-			final ChordTemplate chordTemplate) {
-		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom, length, 10);
+	public void addAnchorHighlight(final int x) {
+		anchors.add(lineVertical(x, anchorY, lanesBottom, ColorLabel.HIGHLIGHT.color()));
+	}
+
+	@Override
+	public void addHandShape(final int x, final int length, final boolean selected, final boolean highlighted,
+			final HandShape handShape, final ChordTemplate chordTemplate) {
+		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length, handShapesHeight);
 		final ColorLabel fillColor = chordTemplate.arpeggio ? ColorLabel.HAND_SHAPE_ARPEGGIO : ColorLabel.HAND_SHAPE;
 		handShapes.add(filledRectangle(position, fillColor));
 
-		if (selected) {
+		if (highlighted) {
+			selects.add(strokedRectangle(position, ColorLabel.HIGHLIGHT));
+		} else if (selected) {
 			selects.add(strokedRectangle(position, selectColor));
 		}
 
@@ -671,22 +736,42 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 					: chordName + " [" + handShape.templateId + "]";
 		}
 		if (chordName != null) {
-			chordNames.add(text(new Position2D(x + 2, lanesBottom + 21), chordName, ColorLabel.BASE_DARK_TEXT));
+			handShapes.add(new Text(new Position2D(x + 2, lanesBottom + 1), handShapesFont, chordName,
+					ColorLabel.BASE_DARK_TEXT));
 		}
 	}
 
 	@Override
-	public void addToneChange(final ToneChange toneChange, final int x, final boolean selected) {
-		toneChanges.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.TONE_CHANGE));
-		toneChanges.add(textWithBackground(new Position2D(x + 4, toneChangeY + 12), "" + toneChange.toneName,
-				ColorLabel.TONE_CHANGE, ColorLabel.BASE_TEXT));
+	public void addHandShapeHighlight(final int x, final int length) {
+		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length - 1,
+				handShapesHeight - 1);
+		handShapes.add(strokedRectangle(position, ColorLabel.HIGHLIGHT));
+	}
 
-		if (selected) {
-			final int top = toneChangeY - 1;
-			final int bottom = lanesBottom + 1;
-			final ShapePositionWithSize toneChangePosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
-			selects.add(strokedRectangle(toneChangePosition, selectColor));
+	private void addToneChangeBox(final int x, final ColorLabel color) {
+		final int top = toneChangeY - 1;
+		final int bottom = lanesBottom + 1;
+		final ShapePositionWithSize toneChangePosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
+		toneChanges.add(strokedRectangle(toneChangePosition, color));
+	}
+
+	@Override
+	public void addToneChange(final ToneChange toneChange, final int x, final boolean selected,
+			final boolean highlighted) {
+		toneChanges.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.TONE_CHANGE));
+		toneChanges.add(new TextWithBackground(new Position2D(x, toneChangeY), anchorFont, "" + toneChange.toneName,
+				ColorLabel.TONE_CHANGE, ColorLabel.BASE_TEXT, 2));
+
+		if (highlighted) {
+			addToneChangeBox(x, ColorLabel.HIGHLIGHT);
+		} else if (selected) {
+			addToneChangeBox(x, ColorLabel.SELECT);
 		}
+	}
+
+	@Override
+	public void addToneChangeHighlight(final int x) {
+		anchors.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.HIGHLIGHT));
 	}
 
 	@Override

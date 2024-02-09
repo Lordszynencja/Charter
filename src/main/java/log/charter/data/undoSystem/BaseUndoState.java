@@ -2,21 +2,24 @@ package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.modes.EditMode;
 
 public class BaseUndoState extends UndoState {
 	private final UndoState internalUndoState;
 	private final int markerPosition;
 
 	public BaseUndoState(final ModeManager modeManager, final ChartData data) {
-		if (modeManager.editMode == EditMode.GUITAR) {
+		switch (modeManager.getMode()) {
+		case GUITAR:
 			internalUndoState = new GuitarModeUndoState(data);
-		} else if (modeManager.editMode == EditMode.TEMPO_MAP) {
+			break;
+		case TEMPO_MAP:
 			internalUndoState = new TempoMapUndoState(data);
-		} else if (modeManager.editMode == EditMode.VOCALS) {
+			break;
+		case VOCALS:
 			internalUndoState = new VocalUndoState(data);
-		} else {
-			throw new RuntimeException("wrong edit mode " + modeManager.editMode);
+			break;
+		default:
+			throw new RuntimeException("wrong edit mode " + modeManager.getMode());
 		}
 
 		markerPosition = data.time;

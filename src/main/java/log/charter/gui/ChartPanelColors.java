@@ -125,9 +125,9 @@ public class ChartPanelColors {
 
 		switch (type) {
 		case LANE:
-			return ColorUtils.multiplyColor(base, 0.5);
+			return ColorUtils.multiplyColor(base, 0.8);
 		case LANE_BRIGHT:
-			return ColorUtils.multiplyColor(base, 0.66);
+			return ColorUtils.multiplyColor(base, 0.95);
 		case NOTE:
 			return base;
 		case NOTE_TAIL:

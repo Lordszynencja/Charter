@@ -34,9 +34,9 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
+import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
 import log.charter.gui.components.ChartMap;
 import log.charter.gui.components.preview3D.Preview3DFrame;
 import log.charter.gui.components.preview3D.Preview3DPanel;
@@ -75,7 +75,7 @@ public class CharterFrame extends JFrame {
 
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
 	private final ArrangementValidator arrangementValidator = new ArrangementValidator();
-	private final AudioDrawer audioDrawer = new AudioDrawer();
+	private final WaveFormDrawer audioDrawer = new WaveFormDrawer();
 	private final AudioHandler audioHandler = new AudioHandler();
 	private final BeatsDrawer beatsDrawer = new BeatsDrawer();
 	private final CopyManager copyManager = new CopyManager();
@@ -122,7 +122,7 @@ public class CharterFrame extends JFrame {
 
 		arrangementFixer.init(data);
 		arrangementValidator.init(data, this);
-		audioDrawer.init(data, chartPanel, chartToolbar);
+		audioDrawer.init(data, chartPanel, chartToolbar, modeManager);
 		audioHandler.init(chartToolbar, data, this, modeManager, repeatManager);
 		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, repeatManager,
 				selectionManager);
@@ -131,8 +131,8 @@ public class CharterFrame extends JFrame {
 		keyboardHandler.init(audioDrawer, audioHandler, arrangementFixer, chartToolbar, copyManager, data, this, framer,
 				modeManager, mouseHandler, repeatManager, selectionManager, songFileHandler, undoSystem);
 		highlightManager.init(data, modeManager, selectionManager);
-		modeManager.init(currentSelectionEditor, data, this, highlightManager, keyboardHandler, selectionManager,
-				undoSystem);
+		modeManager.init(chartToolbar, currentSelectionEditor, data, this, highlightManager, keyboardHandler,
+				selectionManager, undoSystem);
 		mouseButtonPressReleaseHandler.init(highlightManager);
 		mouseHandler.init(arrangementFixer, data, this, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
 				selectionManager, undoSystem);
@@ -144,7 +144,7 @@ public class CharterFrame extends JFrame {
 
 		charterMenuBar.init(arrangementFixer, audioDrawer, audioHandler, copyManager, chartToolbar, data, this, framer,
 				keyboardHandler, modeManager, repeatManager, selectionManager, songFileHandler, undoSystem);
-		chartToolbar.init(audioDrawer, audioHandler, keyboardHandler, repeatManager);
+		chartToolbar.init(audioDrawer, audioHandler, keyboardHandler, modeManager, repeatManager);
 		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 		chartMap.init(chartPanel, data, this, modeManager);
@@ -342,7 +342,7 @@ public class CharterFrame extends JFrame {
 	}
 
 	public void updateEditAreaSizes() {
-		final EditMode editMode = modeManager.editMode;
+		final EditMode editMode = modeManager.getMode();
 
 		ArrangementType arrangementType = null;
 		int strings = 1;
@@ -363,12 +363,19 @@ public class CharterFrame extends JFrame {
 		String title = LogCharterRSMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title
 				+ " : ";
 
-		if (modeManager.editMode == EditMode.GUITAR) {
+		switch (modeManager.getMode()) {
+		case GUITAR:
 			title += data.getCurrentArrangement().getTypeNameLabel();
-		} else if (modeManager.editMode == EditMode.TEMPO_MAP) {
+			break;
+		case TEMPO_MAP:
 			title += "Tempo map";
-		} else if (modeManager.editMode == EditMode.VOCALS) {
+			break;
+		case VOCALS:
 			title += "Vocals";
+			break;
+		default:
+			title += "Surprise mode! (contact dev for fix)";
+			break;
 		}
 
 		title += undoSystem.isSaved() ? "" : "*";

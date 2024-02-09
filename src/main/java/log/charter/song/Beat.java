@@ -46,8 +46,8 @@ public class Beat extends Position {
 	public Beat(final int pos, final int beatsInMeasure, final int noteDenominator, final boolean firstInMeasure) {
 		super(pos);
 		this.beatsInMeasure = beatsInMeasure;
-		this.firstInMeasure = firstInMeasure;
 		this.noteDenominator = noteDenominator;
+		this.firstInMeasure = firstInMeasure;
 	}
 
 	private Beat(final EBeat ebeat) {
@@ -58,8 +58,8 @@ public class Beat extends Position {
 	public Beat(final Beat other) {
 		super(other);
 		beatsInMeasure = other.beatsInMeasure;
-		firstInMeasure = other.firstInMeasure;
 		noteDenominator = other.noteDenominator;
+		firstInMeasure = other.firstInMeasure;
 		anchor = other.anchor;
 	}
 

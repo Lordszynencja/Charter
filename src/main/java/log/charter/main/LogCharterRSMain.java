@@ -3,6 +3,7 @@ package log.charter.main;
 import java.io.IOException;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
@@ -14,6 +15,7 @@ public class LogCharterRSMain {
 
 	public static void main(final String[] args) throws InterruptedException, IOException {
 		Config.init();
+		GraphicalConfig.init();
 
 		String pathToOpen = Config.lastPath;
 		if (args.length > 0) {
@@ -30,6 +32,8 @@ public class LogCharterRSMain {
 			try {
 				while (true) {
 					Config.save();
+					GraphicalConfig.save();
+
 					Thread.sleep(1000);
 				}
 			} catch (final InterruptedException e) {

@@ -27,9 +27,6 @@ public class Localization {
 		CONFIG_SOUND_DELAY("Sound delay (ms)"), //
 		CONFIG_MIDI_DELAY("Midi sound delay (ms)"), //
 		CONFIG_MARKER_POSITION("Marker position (px)"), //
-		CONFIG_NOTE_WIDTH("Note width (px)"), //
-		CONFIG_NOTE_HEIGHT("Note height (px)"), //
-		CONFIG_CHART_MAP_HEIGHT_MULTIPLIER("Chart map size"), //
 		CONFIG_INVERT_STRINGS("Invert strings"), //
 		CONFIG_LEFT_HANDED("Left handed"), //
 		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
@@ -38,14 +35,27 @@ public class Localization {
 		CONFIG_FPS("FPS"), //
 		CONFIG_BACKUP_DELAY("Backup delay (s)"), //
 		CONFIG_MAX_STRINGS("Max strings"), //
-		CONFIG_THEME("Graphical theme"), //
-		CONFIG_THEME_DEFAULT("Default"), //
+		CONFIG_THEME_BASIC("Basic"), //
 		CONFIG_THEME_ROCKSMITH("Rocksmith"), //
+		CONFIG_THEME_MODERN("Modern"), //
 
-		TEXTURES_SETTINGS_PANE_INLAY("Inlay"), //
-		TEXTURES_SETTINGS_PANE_TEXTURE_PACK("Texture pack"), //
+		GRAPHIC_CONFIG_THEME_PAGE("Theme"), //
+		GRAPHIC_CONFIG_THEME("Theme"), //
+		GRAPHIC_CONFIG_TONE_CHANGE_HEIGHT("Tone change height"), //
+		GRAPHIC_CONFIG_ANCHOR_INFO_HEIGHT("Anchor info height"), //
+		GRAPHIC_CONFIG_NOTE_HEIGHT("Note height (px)"), //
+		GRAPHIC_CONFIG_NOTE_WIDTH("Note width (px)"), //
+		GRAPHIC_CONFIG_HAND_SHAPES_HEIGHT("Hand shapes height"), //
+		GRAPHIC_CONFIG_TIMING_HEIGHT("Timing height"), //
 
-		GRAPHIC_CONFIG_PANE("Graphic config pane"), //
+		GRAPHIC_CONFIG_TEXTURES_PAGE("Textures"), //
+		GRAPHIC_CONFIG_INLAY("Inlay"), //
+		GRAPHIC_CONFIG_TEXTURE_PACK("Texture pack"), //
+
+		GRAPHIC_CONFIG_CHART_MAP_PAGE("Chart map"), //
+		GRAPHIC_CONFIG_CHART_MAP_HEIGHT_MULTIPLIER("Chart map size"), //
+
+		GRAPHIC_CONFIG_PANE("Graphic config"), //
 		GRAPHIC_CONFIG_BASE_1("Base 1"), //
 		GRAPHIC_CONFIG_BASE_2("Base 2"), //
 
@@ -129,6 +139,7 @@ public class Localization {
 		EDIT_MENU_SONG_OPTIONS("Song options"), //
 		EDIT_MENU_ADD_SILENCE("Add silence in the beginning"), //
 		EDIT_MENU_ADD_DEFAULT_SILENCE("Add default silence based on bars"), //
+		EDIT_MENU_ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
 
 		FILE_MENU("File"), //
 		FILE_MENU_NEW("New"), //
@@ -143,6 +154,7 @@ public class Localization {
 		FILE_MENU_SAVE_AS("Save as..."), //
 		FILE_MENU_OPTIONS("Options"), //
 		FILE_MENU_GRAPHIC_OPTIONS("Graphic options"), //
+		FILE_MENU_COLOR_OPTIONS("Color options"), //
 		FILE_MENU_TEXTURING_OPTIONS("Texturing options"), //
 		FILE_MENU_EXIT("Exit"), //
 
@@ -243,6 +255,9 @@ public class Localization {
 
 		ADD_DEFAULT_SILENCE_PANE("Add silence"), //
 		ADD_DEFAULT_SILENCE_BARS("Add this many bars of silence after 10s:"), //
+
+		ADD_BEATS_PANE("Add beats"), //
+		ADD_BEATS("Add this many beats:"), //
 
 		ARRANGEMENT_OPTIONS_PANE("Arrangement options"), //
 		ARRANGEMENT_OPTIONS_TYPE("Arrangement type"), //

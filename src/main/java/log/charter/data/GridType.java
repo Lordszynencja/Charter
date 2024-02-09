@@ -1,4 +1,4 @@
-package log.charter.data.config;
+package log.charter.data;
 
 public enum GridType {
 	MEASURE((b, n) -> b), //

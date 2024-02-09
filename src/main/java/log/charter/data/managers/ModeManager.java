@@ -13,10 +13,13 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
+import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.KeyboardHandler;
 
 public class ModeManager {
-	public EditMode editMode = EditMode.TEMPO_MAP;
+	private ChartToolbar chartToolbar;
+
+	private EditMode editMode = EditMode.TEMPO_MAP;
 
 	private final GuitarModeHandler guitarModeHandler = new GuitarModeHandler();
 	private final TempoMapModeHandler tempoMapModeHandler = new TempoMapModeHandler();
@@ -30,9 +33,12 @@ public class ModeManager {
 		modeHandlers.put(EditMode.VOCALS, vocalModeHandler);
 	}
 
-	public void init(final CurrentSelectionEditor currentSelectionEditor, final ChartData data,
-			final CharterFrame frame, final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+	public void init(final ChartToolbar chartToolbar, final CurrentSelectionEditor currentSelectionEditor,
+			final ChartData data, final CharterFrame frame, final HighlightManager highlightManager,
+			final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
+			final UndoSystem undoSystem) {
+		this.chartToolbar = chartToolbar;
+
 		guitarModeHandler.init(currentSelectionEditor, data, frame, highlightManager, keyboardHandler, selectionManager,
 				undoSystem);
 		tempoMapModeHandler.init(data, frame, selectionManager, undoSystem);
@@ -41,5 +47,15 @@ public class ModeManager {
 
 	public ModeHandler getHandler() {
 		return modeHandlers.get(editMode);
+	}
+
+	public void setMode(final EditMode editMode) {
+		this.editMode = editMode;
+
+		chartToolbar.updateValues();
+	}
+
+	public EditMode getMode() {
+		return editMode;
 	}
 }

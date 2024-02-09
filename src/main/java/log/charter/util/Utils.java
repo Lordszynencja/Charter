@@ -13,11 +13,11 @@ public class Utils {
 		}
 
 		final int offset = strings - 6;
-		if (string < offset) {
-			return 6 + string;
+		if (string >= offset) {
+			return string - offset;
 		}
 
-		return string - offset;
+		return strings - string - 1;
 	}
 
 	public static int getStringPosition(final int stringId, final int strings) {

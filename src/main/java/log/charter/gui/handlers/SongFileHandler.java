@@ -442,7 +442,7 @@ public class SongFileHandler {
 					data.songChart.beatsMap.beats);
 			data.songChart.arrangements.add(arrangementChart);
 
-			modeManager.editMode = EditMode.GUITAR;
+			modeManager.setMode(EditMode.GUITAR);
 			data.currentArrangement = data.songChart.arrangements.size() - 1;
 			save();
 

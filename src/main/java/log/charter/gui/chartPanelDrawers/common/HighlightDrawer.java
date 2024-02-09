@@ -1,22 +1,17 @@
 package log.charter.gui.chartPanelDrawers.common;
 
 import static java.lang.Math.abs;
-import static log.charter.data.config.Config.noteHeight;
-import static log.charter.data.config.Config.noteWidth;
+import static log.charter.data.config.GraphicalConfig.noteHeight;
+import static log.charter.data.config.GraphicalConfig.noteWidth;
 import static log.charter.data.types.PositionType.BEAT;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.line;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
-import static log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer.getVocalNotePosition;
 import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.ScalingUtils.xToTime;
 import static log.charter.util.Utils.getStringPosition;
 
@@ -43,7 +38,6 @@ import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressData;
 import log.charter.gui.handlers.MouseHandler;
 import log.charter.song.ChordTemplate;
-import log.charter.song.HandShape;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
@@ -99,27 +93,6 @@ public class HighlightDrawer {
 		this.selectionManager = selectionManager;
 	}
 
-	private void drawAnchorHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
-			final int y) {
-		final int anchorX = timeToX(highlight.position(), data.time);
-		final int top = anchorY - 1;
-		final int bottom = lanesBottom + 1;
-		final ShapePositionWithSize beatPosition = new ShapePositionWithSize(anchorX - 1, top, 2, bottom - top);
-		strokedRectangle(beatPosition, ColorLabel.HIGHLIGHT.color()).draw(g);
-	}
-
-	private void drawBeatHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x, final int y) {
-		if (highlight.beat == null) {
-			return;
-		}
-
-		final int beatX = timeToX(highlight.beat.position(), data.time);
-		final int top = beatTextY - 1;
-		final int bottom = lanesBottom + 1;
-		final ShapePositionWithSize beatPosition = new ShapePositionWithSize(beatX - 1, top, 2, bottom - top);
-		strokedRectangle(beatPosition, ColorLabel.HIGHLIGHT.color()).draw(g);
-	}
-
 	private void drawEventPointHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
 			final int y) {
 		final int eventPointX = timeToX(highlight.position(), data.time);
@@ -153,53 +126,11 @@ public class HighlightDrawer {
 		drawNoteHighlight(g, lane, highlight.position(), strings);
 	}
 
-	private ShapePositionWithSize getHandShapeHighlightPosition(final PositionWithIdAndType highlight) {
-		if (highlight.handShape == null) {
-			final int x = timeToX(highlight.position(), data.time);
-			return new ShapePositionWithSize(x, lanesBottom, 50, 10);
-		}
-
-		final HandShape handShape = highlight.handShape;
-		final int x = timeToX(handShape.position(), data.time);
-		final int length = timeToXLength(handShape.length());
-		return new ShapePositionWithSize(x, lanesBottom, length, 10);
-	}
-
-	private void drawHandShapeHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
-			final int y) {
-		strokedRectangle(getHandShapeHighlightPosition(highlight), ColorLabel.HIGHLIGHT.color()).draw(g);
-	}
-
-	private void drawNoneHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x, final int y) {
-	}
-
-	private void drawToneChangeHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x,
-			final int y) {
-		final int toneChangeX = timeToX(highlight.position(), data.time);
-		final int top = toneChangeY - 1;
-		final int bottom = lanesBottom + 1;
-		final ShapePositionWithSize beatPosition = new ShapePositionWithSize(toneChangeX - 1, top, 2, bottom - top);
-		strokedRectangle(beatPosition, ColorLabel.HIGHLIGHT.color()).draw(g);
-	}
-
-	private void drawVocalHighlight(final Graphics g, final PositionWithIdAndType highlight, final int x, final int y) {
-		final int position = highlight.position();
-		final int length = highlight.vocal == null ? 50 : highlight.vocal.length();
-		final ShapePositionWithSize vocalNotePosition = getVocalNotePosition(position, length, data.time);
-		strokedRectangle(vocalNotePosition.resized(-1, -1, 1, 1), ColorLabel.HIGHLIGHT.color()).draw(g);
-	}
-
 	private final Map<PositionType, HighlightTypeDrawer> highlightDrawers = new HashMap<>();
 
 	{
-		highlightDrawers.put(PositionType.ANCHOR, this::drawAnchorHighlight);
-		highlightDrawers.put(PositionType.BEAT, this::drawBeatHighlight);
 		highlightDrawers.put(PositionType.EVENT_POINT, this::drawEventPointHighlight);
 		highlightDrawers.put(PositionType.GUITAR_NOTE, this::drawGuitarNoteHighlight);
-		highlightDrawers.put(PositionType.HAND_SHAPE, this::drawHandShapeHighlight);
-		highlightDrawers.put(PositionType.NONE, this::drawNoneHighlight);
-		highlightDrawers.put(PositionType.TONE_CHANGE, this::drawToneChangeHighlight);
-		highlightDrawers.put(PositionType.VOCAL, this::drawVocalHighlight);
 	}
 
 	private void moveSelectedPositions(final Collection<? extends IPosition> positions,
@@ -221,22 +152,6 @@ public class HighlightDrawer {
 		moveSelectedPositions(positions, press, x);
 
 		positions.forEach(position -> shapeGenerator.apply(timeToX(position, data.time)).draw(g));
-	}
-
-	private DrawableShape makeDraggedAnchorShape(final int x) {
-		return lineVertical(x, anchorY, lanesBottom, ColorLabel.HIGHLIGHT.color());
-	}
-
-	private void drawAnchorDrag(final Graphics g, final MouseButtonPressData press, final int x) {
-		drawSimpleDraggedHighlight(g, press, x, this::makeDraggedAnchorShape);
-	}
-
-	private void drawBeatDrag(final Graphics g, final MouseButtonPressData press, final int x) {
-		if (press.highlight.beat == null) {
-			return;
-		}
-
-		lineVertical(x, beatTextY, lanesBottom, ColorLabel.HIGHLIGHT.color()).draw(g);
 	}
 
 	private DrawableShape makeDraggedEventPointShape(final int x) {
@@ -273,54 +188,15 @@ public class HighlightDrawer {
 		}
 	}
 
-	private DrawableShape makeDraggedHandShapeShape(final CopiedPositionData<HandShape> position) {
-		final int drawX = timeToX(position.position(), data.time);
-		final int length = timeToXLength(position.object.length());
-		final ShapePositionWithSize handShapeDragHighlightPosition = new ShapePositionWithSize(drawX, lanesBottom,
-				length, 10);
-		return strokedRectangle(handShapeDragHighlightPosition, ColorLabel.HIGHLIGHT.color());
-	}
-
-	private void drawHandShapeDrag(final Graphics g, final MouseButtonPressData press, final int x) {
-		final HashSet2<CopiedPositionData<HandShape>> positions = selectionManager
-				.getSelectedAccessor(PositionType.HAND_SHAPE).getSelectedSet()//
-				.map(selection -> new CopiedPositionData<>((HandShape) selection.selectable));
-		if (positions.isEmpty()) {
-			return;
-		}
-
-		moveSelectedPositions(positions, press, x);
-
-		positions.forEach(position -> makeDraggedHandShapeShape(position).draw(g));
-	}
-
-	private void drawNoneDrag(final Graphics g, final MouseButtonPressData press, final int x) {
-	}
-
-	private void drawVocalDrag(final Graphics g, final MouseButtonPressData press, final int x) {
-		if (press.highlight.vocal == null) {
-			return;
-		}
-
-		final int position = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
-		final int dragX = timeToX(position, data.time);
-		lineVertical(dragX, anchorY, lanesBottom, ColorLabel.HIGHLIGHT.color()).draw(g);
-	}
-
 	private final Map<PositionType, DragTypeDrawer> dragDrawers = new HashMap<>();
 
 	{
-		dragDrawers.put(PositionType.ANCHOR, this::drawAnchorDrag);
-		dragDrawers.put(PositionType.BEAT, this::drawBeatDrag);
 		dragDrawers.put(PositionType.EVENT_POINT, this::drawEventPointDrag);
 		dragDrawers.put(PositionType.GUITAR_NOTE, this::drawGuitarNoteDrag);
-		dragDrawers.put(PositionType.HAND_SHAPE, this::drawHandShapeDrag);
-		dragDrawers.put(PositionType.NONE, this::drawNoneDrag);
-		dragDrawers.put(PositionType.VOCAL, this::drawVocalDrag);
 	}
 
 	private void drawNoteAdditionHighlight(final Graphics g, final int x, final int y) {
-		if (modeManager.editMode == EditMode.VOCALS) {
+		if (modeManager.getMode() == EditMode.VOCALS) {
 			return;
 		}
 
@@ -353,18 +229,18 @@ public class HighlightDrawer {
 		}
 
 		if (leftPressPosition.highlight.type == BEAT) {
-			if (modeManager.editMode != EditMode.TEMPO_MAP) {
+			if (modeManager.getMode() != EditMode.TEMPO_MAP) {
 				return false;
 			}
 
-			final DragTypeDrawer drawer = dragDrawers.get(leftPressPosition.highlight.type);
-			drawer.drawDrag(g, leftPressPosition, mouseHandler.getMouseX());
 			return true;
 		}
 
 		if (abs(leftPressPosition.position.x - mouseHandler.getMouseX()) > 5) {
 			final DragTypeDrawer drawer = dragDrawers.get(leftPressPosition.highlight.type);
-			drawer.drawDrag(g, leftPressPosition, mouseHandler.getMouseX());
+			if (drawer != null) {
+				drawer.drawDrag(g, leftPressPosition, mouseHandler.getMouseX());
+			}
 			return true;
 		}
 
@@ -379,7 +255,12 @@ public class HighlightDrawer {
 		final int x = mouseHandler.getMouseX();
 		final int y = mouseHandler.getMouseY();
 		final PositionWithIdAndType highlight = highlightManager.getHighlight(x, y);
-		highlightDrawers.get(highlight.type).drawHighlight(g, highlight, x, y);
+
+		if (highlight.type != BEAT && highlight.type != PositionType.VOCAL && highlight.type != PositionType.ANCHOR
+				&& highlight.type != PositionType.TONE_CHANGE && highlight.type != PositionType.HAND_SHAPE
+				&& highlight.type != PositionType.NONE) {
+			highlightDrawers.get(highlight.type).drawHighlight(g, highlight, x, y);
+		}
 
 		drawNoteAdditionHighlight(g, x, y);
 	}

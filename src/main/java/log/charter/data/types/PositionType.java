@@ -2,9 +2,9 @@ package log.charter.data.types;
 
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.handShapesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.timingY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
 
 import log.charter.data.ChartData;
@@ -47,10 +47,10 @@ public enum PositionType {
 		if (y < lanesTop) {
 			return ANCHOR;
 		}
-		if (y >= lanesTop && y < lanesBottom) {
+		if (y < lanesBottom) {
 			return GUITAR_NOTE;
 		}
-		if (y >= lanesBottom && y < handShapesY) {
+		if (y < timingY + 2) {
 			return HAND_SHAPE;
 		}
 

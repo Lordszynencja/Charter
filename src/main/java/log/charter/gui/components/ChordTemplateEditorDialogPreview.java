@@ -4,7 +4,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledDiamond;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineHorizontal;
@@ -26,6 +25,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
+import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.song.ChordTemplate;
@@ -192,8 +192,8 @@ public class ChordTemplateEditorDialogPreview extends JComponent
 			frets.add(lineVertical(fretPosition.position - 1, fretStart, getHeight(), ColorLabel.BASE_BG_2.color()));
 			frets.add(lineVertical(fretPosition.position, fretStart, getHeight(), ColorLabel.BASE_BG_4.color()));
 			frets.add(lineVertical(fretPosition.position + 1, fretStart, getHeight(), ColorLabel.BASE_BG_2.color()));
-			frets.add(centeredTextWithBackground(new Position2D(fretPosition.position, 10), fretPosition.fret + "",
-					null, ColorLabel.BASE_DARK_TEXT.color()));
+			frets.add(new CenteredText(new Position2D(fretPosition.position, 10), g.getFont(), fretPosition.fret + "",
+					ColorLabel.BASE_DARK_TEXT.color()));
 
 			if (fretPosition.fret % 12 == 0 && fretPosition.fret >= 12) {
 				addFretDotDouble(frets, fretPosition);
@@ -252,7 +252,7 @@ public class ChordTemplateEditorDialogPreview extends JComponent
 
 			final Integer finger = chordTemplate.fingers.get(i);
 			final String fingerText = finger == null ? "" : finger == 0 ? "T" : finger.toString();
-			pressMarks.add(centeredTextWithBackground(position, fingerText, null, ColorLabel.BASE_TEXT.color()));
+			pressMarks.add(new CenteredText(position, g.getFont(), fingerText, ColorLabel.BASE_TEXT.color()));
 		}
 
 		pressMarks.draw(g);

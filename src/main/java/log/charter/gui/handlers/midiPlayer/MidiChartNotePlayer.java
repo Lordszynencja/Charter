@@ -149,7 +149,7 @@ public class MidiChartNotePlayer {
 	}
 
 	public void frame() {
-		if (!playing || modeManager.editMode != EditMode.GUITAR) {
+		if (!playing || modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 
@@ -207,7 +207,7 @@ public class MidiChartNotePlayer {
 
 	public void startPlaying(final int speed) {
 		this.speed = speed;
-		if (modeManager.editMode != EditMode.GUITAR) {
+		if (modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 
@@ -233,7 +233,7 @@ public class MidiChartNotePlayer {
 	}
 
 	public void stopPlaying() {
-		if (modeManager.editMode != EditMode.GUITAR) {
+		if (modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 

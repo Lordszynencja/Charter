@@ -1,6 +1,7 @@
 package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
@@ -9,7 +10,6 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance
 import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
 import static log.charter.song.notes.ChordOrNote.isLinkedToPrevious;
 import static log.charter.song.notes.IConstantPosition.findFirstIdAfter;
-import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
 import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
 import static log.charter.util.ColorUtils.mix;
 
@@ -21,13 +21,15 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
+import log.charter.gui.components.preview3D.data.AnchorDrawData;
+import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
-import log.charter.song.Anchor;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.IntRange;
 
 public class Preview3DStringsFretsDrawer {
 	private static final int highlightTime = 100;
@@ -51,31 +53,35 @@ public class Preview3DStringsFretsDrawer {
 		}
 	}
 
-	private boolean[] getActiveFrets() {
+	private boolean[] getActiveFrets(final Preview3DDrawData drawData) {
 		final boolean[] active = new boolean[Config.frets + 1];
-		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
-		final int idFrom = findLastIdBefore(anchors, data.time);
-		if (idFrom < 0) {
-			return active;
-		}
-		final int idTo = findLastIdBefore(anchors, data.time + activeTime);
-		for (int i = idFrom; i <= idTo; i++) {
-			final Anchor anchor = anchors.get(i);
-			for (int fret = max(0, anchor.fret - 1); fret <= Math.min(Config.frets, anchor.topFret()); fret++) {
+
+		final int idTo = findLastIdBefore(drawData.anchors, data.time + activeTime);
+		for (int i = 0; i <= idTo; i++) {
+			final AnchorDrawData anchor = drawData.anchors.get(i);
+			for (int fret = max(0, anchor.fretFrom); fret <= min(Config.frets, anchor.fretTo); fret++) {
 				active[fret] = true;
 			}
+		}
+
+		final IntRange frets = drawData.getFrets(data.time);
+		for (int fret = frets.min - 1; fret <= frets.max; fret++) {
+			active[fret] = true;
 		}
 
 		return active;
 	}
 
-	private double[] getFretHighlight() {
+	private double[] getFretHighlight(final Preview3DDrawData drawData) {
+		if (data.getCurrentArrangementLevel() == null) {
+			return new double[Config.frets + 1];
+		}
+
 		final int[] highlightValues = new int[Config.frets + 1];
-		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
 		final int idFrom = findFirstIdAfter(sounds, data.time - highlightTime);
 		if (idFrom < 0) {
-			return new double[highlightValues.length];
+			return new double[Config.frets + 1];
 		}
 
 		final int idTo = findLastIdBefore(sounds, data.time);
@@ -90,11 +96,9 @@ public class Preview3DStringsFretsDrawer {
 				highlightValues[sound.note.fret - 1] = highlightValue;
 				highlightValues[sound.note.fret] = highlightValue;
 			} else {
-				final Anchor anchor = findLastBeforeEqual(anchors, sound.position());
-				if (anchor != null) {
-					highlightValues[anchor.fret - 1] = highlightValue;
-					highlightValues[anchor.topFret()] = highlightValue;
-				}
+				final IntRange frets = drawData.getFrets(sound.position());
+				highlightValues[frets.min - 1] = highlightValue;
+				highlightValues[frets.max] = highlightValue;
 			}
 		}
 
@@ -106,10 +110,10 @@ public class Preview3DStringsFretsDrawer {
 		return highlight;
 	}
 
-	private void addFrets(final ShadersHolder shadersHolder) {
-		final BaseShaderDrawData drawData = shadersHolder.new BaseShaderDrawData();
-		final boolean[] activeFrets = getActiveFrets();
-		final double[] fretHighlight = getFretHighlight();
+	private void addFrets(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
+		final BaseShaderDrawData shaderdrawData = shadersHolder.new BaseShaderDrawData();
+		final boolean[] activeFrets = getActiveFrets(drawData);
+		final double[] fretHighlight = getFretHighlight(drawData);
 		final Color inactiveColor = ColorLabel.PREVIEW_3D_FRET.color();
 		final Color activeColor = ColorLabel.PREVIEW_3D_ACTIVE_FRET.color();
 		final Color highlightColor = ColorLabel.PREVIEW_3D_HIGHLIGHTED_FRET.color();
@@ -127,22 +131,22 @@ public class Preview3DStringsFretsDrawer {
 
 			final double x = getFretPosition(fret);
 
-			drawData.addVertex(new Point3D(x - offset, y0, -0.01), fretColor)//
+			shaderdrawData.addVertex(new Point3D(x - offset, y0, -0.01), fretColor)//
 					.addVertex(new Point3D(x - offset, y1, -0.01), fretColor)//
 					.addVertex(new Point3D(x + offset, y1, -0.01), fretColor)//
 					.addVertex(new Point3D(x + offset, y0, -0.01), fretColor);
 		}
 
-		drawData.draw(GL30.GL_QUADS, Matrix4.identity);
+		shaderdrawData.draw(GL30.GL_QUADS, Matrix4.identity);
 	}
 
-	public void draw(final ShadersHolder shadersHolder) {
-		final BaseShaderDrawData drawData = shadersHolder.new BaseShaderDrawData();
+	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
+		final BaseShaderDrawData shaderDrawData = shadersHolder.new BaseShaderDrawData();
 
-		addStrings(drawData);
-		addFrets(shadersHolder);
+		addStrings(shaderDrawData);
+		addFrets(shadersHolder, drawData);
 
 		GL30.glLineWidth(2);
-		drawData.draw(GL30.GL_LINES, Matrix4.identity);
+		shaderDrawData.draw(GL30.GL_LINES, Matrix4.identity);
 	}
 }

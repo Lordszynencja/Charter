@@ -32,7 +32,11 @@ public class Preview3DDrawData {
 		final int timeFrom = data.time;
 		final int timeTo = data.time + visibility;
 
-		levelAnchors = data.getCurrentArrangementLevel().anchors;
+		if (data.getCurrentArrangementLevel() == null) {
+			levelAnchors = new ArrayList2<>(new Anchor(0, 1));
+		} else {
+			levelAnchors = data.getCurrentArrangementLevel().anchors;
+		}
 
 		anchors = getAnchorsForTimeSpanWithRepeats(data, repeatManager, timeFrom, timeTo);
 		beats = getBeatsForTimeSpanWithRepeats(data, repeatManager, timeFrom, timeTo);

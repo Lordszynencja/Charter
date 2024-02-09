@@ -8,7 +8,7 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
+import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
 import log.charter.gui.components.SpecialMenuItem;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.panes.ArrangementSettingsPane;
@@ -17,7 +17,7 @@ import log.charter.song.ArrangementChart;
 import log.charter.util.CollectionUtils.HashMap2;
 
 class ArrangementMenuHandler extends CharterMenuHandler {
-	private AudioDrawer audioDrawer;
+	private WaveFormDrawer audioDrawer;
 	private AudioHandler audioHandler;
 	private ChartData data;
 	private CharterFrame frame;
@@ -25,7 +25,7 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 
-	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler, final ChartData data,
+	public void init(final WaveFormDrawer audioDrawer, final AudioHandler audioHandler, final ChartData data,
 			final CharterFrame frame, final CharterMenuBar charterMenuBar, final ModeManager modeManager,
 			final SelectionManager selectionManager) {
 		this.audioDrawer = audioDrawer;
@@ -73,7 +73,7 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 		addArrangementsList(menu);
 		menu.add(createItem("New arrangement...", this::addArrangement));
 
-		if (modeManager.editMode == EditMode.GUITAR) {
+		if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
 			menu.add(createItem(Label.ARRANGEMENT_MENU_OPTIONS, this::editOptions));
 
@@ -93,7 +93,7 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 	private void changeEditMode(final EditMode editMode) {
 		audioHandler.stopMusic();
 		selectionManager.clear();
-		modeManager.editMode = editMode;
+		modeManager.setMode(editMode);
 
 		charterMenuBar.refreshMenus();
 
@@ -110,7 +110,7 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 
 	private void addArrangement() {
 		final int previousArrangement = data.currentArrangement;
-		final EditMode previousEditMode = modeManager.editMode;
+		final EditMode previousEditMode = modeManager.getMode();
 		final int previousDifficulty = data.currentLevel;
 		data.currentArrangement = data.songChart.arrangements.size();
 		data.changeDifficulty(0);

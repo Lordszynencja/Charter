@@ -35,7 +35,7 @@ public class RocksmithChartProject {
 	}
 
 	public RocksmithChartProject(final ModeManager modeManager, final ChartData data, final SongChart songChart) {
-		editMode = modeManager.editMode;
+		editMode = modeManager.getMode();
 		arrangement = data.currentArrangement;
 		level = data.currentLevel;
 		time = data.time;

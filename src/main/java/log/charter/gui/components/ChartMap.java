@@ -1,8 +1,9 @@
 package log.charter.gui.components;
 
 import static java.lang.Math.max;
-import static log.charter.data.config.Config.chartMapHeightMultiplier;
+import static log.charter.data.config.GraphicalConfig.chartMapHeightMultiplier;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.chartMapHeight;
 import static log.charter.util.ScalingUtils.xToTimeLength;
 import static log.charter.util.Utils.getStringPosition;
 
@@ -23,7 +24,6 @@ import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.io.Logger;
 import log.charter.song.EventPoint;
 import log.charter.song.notes.ChordOrNote;
@@ -49,20 +49,20 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 			return img;
 		}
 
-		switch (modeManager.editMode) {
-		case TEMPO_MAP:
-			drawBars(g);
-			break;
-		case VOCALS:
-			drawVocalLines(g);
-			break;
-		case GUITAR:
-			drawPhrases(g);
-			drawSections(g);
-			drawNotes(g);
-			break;
-		default:
-			break;
+		switch (modeManager.getMode()) {
+			case TEMPO_MAP:
+				drawBars(g);
+				break;
+			case VOCALS:
+				drawVocalLines(g);
+				break;
+			case GUITAR:
+				drawPhrases(g);
+				drawSections(g);
+				drawNotes(g);
+				break;
+			default:
+				break;
 		}
 
 		drawBookmarks(g);
@@ -77,7 +77,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 		this.frame = frame;
 		this.modeManager = modeManager;
 
-		setSize(frame.getWidth(), DrawerUtils.chartMapHeight);
+		setSize(frame.getWidth(), chartMapHeight);
 
 		setFocusable(false);
 		addMouseListener(this);
@@ -92,7 +92,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 				}
 
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(100);
 				} catch (final InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -202,9 +202,8 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 			if (sound.isNote()) {
 				drawNote(g, sound.note.string, sound.position(), sound.length());
 			} else {
-				sound.chord.chordNotes.forEach((string, chordNote) -> {
-					drawNote(g, string, sound.position(), chordNote.length);
-				});
+				sound.chord.chordNotes
+						.forEach((string, chordNote) -> { drawNote(g, string, sound.position(), chordNote.length); });
 			}
 		}
 	}
@@ -235,14 +234,17 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 
 	@Override
 	public void paint(final Graphics g) {
-		if (background == null) {
+		if (data.isEmpty) {
+			g.setColor(ColorLabel.BASE_BG_4.color());
+			g.fillRect(0, 0, getWidth(), getHeight());
 			return;
 		}
 
-		g.drawImage(background, 0, 0, null);
-
-		if (data.isEmpty) {
-			return;
+		if (background != null) {
+			g.drawImage(background, 0, 0, null);
+		} else {
+			g.setColor(ColorLabel.BASE_BG_4.color());
+			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 
 		drawMarkerAndViewArea(g);

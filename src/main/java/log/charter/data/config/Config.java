@@ -14,13 +14,13 @@ import java.util.function.Supplier;
 
 import javax.swing.JFrame;
 
+import log.charter.data.GridType;
 import log.charter.io.Logger;
 import log.charter.util.RW;
 
 public class Config {
 	private static class ValueAccessor {
-		public static ValueAccessor empty = new ValueAccessor(s -> {
-		}, () -> null);
+		public static ValueAccessor empty = new ValueAccessor(s -> {}, () -> null);
 
 		public static ValueAccessor forString(final Consumer<String> setter, final Supplier<String> getter) {
 			return new ValueAccessor(setter, getter);
@@ -72,18 +72,14 @@ public class Config {
 	public static int midiDelay = 200;
 	public static double midiVolume = 1;
 	public static int markerOffset = 300;
-	public static Theme theme = Theme.ROCKSMITH;
-	public static int noteWidth = 15;
-	public static int noteHeight = 25;
-	public static int chartMapHeightMultiplier = 3;
 
 	public static boolean invertStrings = false;
 	public static boolean leftHanded = false;
-	public static boolean showChordIds = false;
+	public static boolean showChordIds = true;
 	public static boolean createDefaultStretchesInBackground = true;
 	public static int frets = 24;
 	public static int maxStrings = 9;
-	public static int maxBendValue = 3;
+	public static int maxBendValue = 4;
 	public static int FPS = 60;
 	public static int backupDelay = 600;
 
@@ -108,9 +104,6 @@ public class Config {
 	public static int gridSize = 4;
 	public static boolean audioFolderChosenForNewSong = false;
 
-	public static String inlay = "default";
-	public static String texturePack = "default";
-
 	public static boolean debugLogging = false;
 
 	private static boolean changed = false;
@@ -132,10 +125,6 @@ public class Config {
 		valueAccessors.put("midiDelay", ValueAccessor.forInteger(v -> midiDelay = v, () -> midiDelay));
 		valueAccessors.put("midiVolume", ValueAccessor.forDouble(v -> midiVolume = v, () -> midiVolume));
 		valueAccessors.put("markerOffset", ValueAccessor.forInteger(v -> markerOffset = v, () -> markerOffset));
-		valueAccessors.put("noteWidth", ValueAccessor.forInteger(v -> noteWidth = v, () -> noteWidth));
-		valueAccessors.put("noteHeight", ValueAccessor.forInteger(v -> noteHeight = v, () -> noteHeight));
-		valueAccessors.put("chartMapHeightMultiplier",
-				ValueAccessor.forInteger(v -> chartMapHeightMultiplier = v, () -> chartMapHeightMultiplier));
 
 		valueAccessors.put("invertStrings", ValueAccessor.forBoolean(v -> invertStrings = v, () -> invertStrings));
 		valueAccessors.put("leftHanded", ValueAccessor.forBoolean(v -> leftHanded = v, () -> leftHanded));
@@ -145,8 +134,6 @@ public class Config {
 		valueAccessors.put("frets", ValueAccessor.forInteger(v -> frets = v, () -> frets));
 		valueAccessors.put("FPS", ValueAccessor.forInteger(v -> FPS = v, () -> FPS));
 		valueAccessors.put("backupDelay", ValueAccessor.forInteger(v -> backupDelay = v, () -> backupDelay));
-
-		valueAccessors.put("theme", ValueAccessor.forString(v -> theme = Theme.valueOf(v), () -> theme.name()));
 
 		valueAccessors.put("windowPosX", ValueAccessor.forInteger(v -> windowPosX = v, () -> windowPosX));
 		valueAccessors.put("windowPosY", ValueAccessor.forInteger(v -> windowPosY = v, () -> windowPosY));
@@ -177,9 +164,6 @@ public class Config {
 		valueAccessors.put("gridSize", ValueAccessor.forInteger(v -> gridSize = v, () -> gridSize));
 		valueAccessors.put("audioFolderChosenForNewSong",
 				ValueAccessor.forBoolean(v -> audioFolderChosenForNewSong = v, () -> audioFolderChosenForNewSong));
-
-		valueAccessors.put("inlay", ValueAccessor.forString(v -> inlay = v, () -> inlay));
-		valueAccessors.put("textures", ValueAccessor.forString(v -> texturePack = v, () -> texturePack));
 
 		valueAccessors.put("debugLogging", ValueAccessor.forBoolean(v -> debugLogging = v, () -> debugLogging));
 

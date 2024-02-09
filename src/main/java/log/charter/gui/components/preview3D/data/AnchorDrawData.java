@@ -2,6 +2,7 @@ package log.charter.gui.components.preview3D.data;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,10 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class AnchorDrawData implements IConstantPositionWithLength {
 	public static List<AnchorDrawData> getAnchorsForTimeSpan(final ChartData data, final int timeFrom,
 			final int timeTo) {
+		if (data.getCurrentArrangementLevel() == null) {
+			return asList(new AnchorDrawData(timeFrom, timeTo, 0, 4));
+		}
+
 		final List<AnchorDrawData> anchorsToDraw = new ArrayList<>();
 		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 

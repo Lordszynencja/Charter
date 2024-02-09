@@ -1,10 +1,10 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
-import static log.charter.data.config.Config.noteHeight;
-import static log.charter.data.config.Config.noteWidth;
+import static log.charter.data.config.GraphicalConfig.anchorInfoHeight;
+import static log.charter.data.config.GraphicalConfig.noteHeight;
+import static log.charter.data.config.GraphicalConfig.noteWidth;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledOval;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledPolygon;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
@@ -14,28 +14,28 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.str
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
+import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
+import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackgroundAndBorder;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
-import log.charter.song.enums.Mute;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.IntRange;
 import log.charter.util.Position2D;
 
 class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
-	public RocksmithHighwayDrawer(final int strings, final int time) {
-		super(strings, time);
+	public RocksmithHighwayDrawer(final Graphics g, final int strings, final int time) {
+		super(g, strings, time);
 	}
 
 	@Override
 	protected Font defineAnchorFont() {
-		return new Font(Font.DIALOG, Font.BOLD, 12);
+		return new Font(Font.DIALOG, Font.BOLD, anchorInfoHeight);
 	}
 
 	@Override
@@ -84,38 +84,53 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
-		if (note.length > 0) {
-			addNoteTail(note, y);
-		}
+		addNoteTail(note, y);
+		addBendValues(note, y);
 
 		addNormalNoteShape(y, note);
 
 		if (!note.linkPrevious || note.wrongLink) {
-			if (note.hopo == HOPO.HAMMER_ON) {
-				addHammerOnShape(y, note);
-			} else if (note.hopo == HOPO.PULL_OFF) {
-				addPullOffShape(y, note);
-			} else if (note.hopo == HOPO.TAP) {
-				addTapShape(y, note);
+			switch (note.hopo) {
+				case HAMMER_ON:
+					addHammerOnShape(y, note);
+					break;
+				case PULL_OFF:
+					addPullOffShape(y, note);
+					break;
+				case TAP:
+					addTapShape(y, note);
+					break;
+				case NONE:
+				default:
+					break;
 			}
 
-			if (note.harmonic == Harmonic.NORMAL) {
-				addHarmonicShape(y, note);
-			} else if (note.harmonic == Harmonic.PINCH) {
-				addPinchHarmonicShape(y, note);
+			switch (note.harmonic) {
+				case NORMAL:
+					addHarmonicShape(y, note);
+					break;
+				case PINCH:
+					addPinchHarmonicShape(y, note);
+					break;
+				case NONE:
+				default:
+					break;
 			}
 
-			if (note.mute == Mute.PALM) {
-				addPalmMute(note, y);
+			switch (note.mute) {
+				case PALM:
+					addPalmMute(note, y);
+					break;
+				case FULL:
+					addFullMute(note, y);
+					break;
+				case NONE:
+				default:
+					break;
 			}
 
-			if (note.mute == Mute.PALM) {
-				addPalmMute(note, y);
-			} else if (note.mute == Mute.FULL) {
-				addMute(note, y);
-			}
-
-			noteFrets.add(centeredTextWithBackground(new Position2D(note.x, y), note.fret, Color.WHITE, Color.BLACK));
+			noteFrets.add(new CenteredTextWithBackgroundAndBorder(new Position2D(note.x + 1, y), fretFont, note.fret,
+					Color.BLACK, Color.WHITE, Color.BLACK));
 
 			if (note.accent) {
 				final Color accentColor = getStringBasedColor(StringColorLabelType.NOTE_ACCENT, note.string, strings);
@@ -220,12 +235,11 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 	}
 
 	@Override
-	protected void addMute(final EditorNoteDrawingData note, final int y) {
+	protected void addFullMute(final EditorNoteDrawingData note, final int y) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 
 		notes.add(filledRectangle(position.resized(2, 2, -4, -4), Color.BLACK));
-
 		notes.add(centeredImage(new Position2D(note.x, y), muteImage));
 	}
 
@@ -245,6 +259,7 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 		final int lineEndYOffset = -lineStartYOffset;
 		notes.add(line(slideStart.move(0, lineStartYOffset), slideEnd.move(0, lineEndYOffset), Color.BLACK, 2));
 
-		slideFrets.add(centeredTextWithBackground(slideEnd, note.slideTo + "", outlineColor, fretColor));
+		slideFrets.add(new CenteredTextWithBackgroundAndBorder(slideEnd, fretFont, note.slideTo + "", fretColor,
+				outlineColor, Color.BLACK));
 	}
 }

@@ -22,7 +22,7 @@ class NotesMenuHandler extends CharterMenuHandler {
 
 	@Override
 	boolean isApplicable() {
-		return !data.isEmpty && modeManager.editMode != EditMode.TEMPO_MAP;
+		return !data.isEmpty && modeManager.getMode() != EditMode.TEMPO_MAP;
 	}
 
 	@Override

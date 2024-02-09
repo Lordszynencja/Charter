@@ -44,7 +44,7 @@ class GuitarMenuHandler extends CharterMenuHandler {
 
 	@Override
 	boolean isApplicable() {
-		return !data.isEmpty && modeManager.editMode == EditMode.GUITAR;
+		return !data.isEmpty && modeManager.getMode() == EditMode.GUITAR;
 	}
 
 	@Override

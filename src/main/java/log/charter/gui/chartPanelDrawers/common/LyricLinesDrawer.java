@@ -1,50 +1,58 @@
 package log.charter.gui.chartPanelDrawers.common;
 
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lyricLinesY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.text;
 import static log.charter.util.ScalingUtils.timeToX;
 
+import java.awt.Font;
 import java.awt.Graphics;
 
 import log.charter.data.ChartData;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
+import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.Position2D;
 
 public class LyricLinesDrawer {
+	private static int height = beatTextY - lyricLinesY;
+	private static Font lyricLineFont = new Font(Font.DIALOG, Font.PLAIN, height - 3);
+
+	public static void reloadSizes() {
+		height = beatTextY - lyricLinesY;
+		lyricLineFont = new Font(Font.DIALOG, Font.PLAIN, (int) (height * 0.9));
+	}
+
 	private static class VocalLinesDrawingData {
 		private final DrawableShapeList backgrounds = new DrawableShapeList();
 		private final DrawableShapeList texts = new DrawableShapeList();
 
 		public void addLyricLine(final String text, final int x, final int lengthPx) {
-			final ShapePositionWithSize backgroundPosition = new ShapePositionWithSize(x, lyricLinesY - 4, lengthPx,
-					19);
+			final ShapePositionWithSize backgroundPosition = new ShapePositionWithSize(x, lyricLinesY, lengthPx,
+					height);
 			backgrounds.add(filledRectangle(backgroundPosition, ColorLabel.VOCAL_LINE_BACKGROUND.color()));
-			final Position2D textPosition = new Position2D(x + 3, lyricLinesY + 11);
-			texts.add(text(textPosition, text, ColorLabel.VOCAL_LINE_TEXT.color()));
+
+			final Position2D textPosition = new Position2D(x + 3, lyricLinesY + height / 20);
+			texts.add(new Text(textPosition, lyricLineFont, text, ColorLabel.VOCAL_LINE_TEXT.color()));
 		}
 
 		public void draw(final Graphics g) {
+			reloadSizes();
 			backgrounds.draw(g);
 			texts.draw(g);
 		}
 	}
 
-	private boolean initiated;
-
 	private ChartData data;
 
 	public void init(final ChartData data) {
 		this.data = data;
-
-		initiated = true;
 	}
 
 	public void draw(final Graphics g) {
-		if (!initiated || data.isEmpty) {
+		if (data == null || data.isEmpty) {
 			return;
 		}
 

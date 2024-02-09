@@ -1,7 +1,7 @@
 package log.charter.gui.components.preview3D.shapes;
 
 import static java.lang.Math.min;
-import static log.charter.data.config.Config.texturePack;
+import static log.charter.data.config.GraphicalConfig.texturePack;
 import static log.charter.gui.components.preview3D.glUtils.TexturesHolder.texturePacksPath;
 
 import java.awt.Graphics;
@@ -196,15 +196,6 @@ public class NoteStatusModels {
 			return;
 		}
 
-		try {
-			final File f = new File("C:/users/szymon/desktop/test0.png");
-			if (!f.exists()) {
-				ImageIO.write(img1, "png", f);
-			}
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
 				img0.setRGB(x, y, joinPixel(img0.getRGB(x, y), img1.getRGB(x, y)));
@@ -227,13 +218,13 @@ public class NoteStatusModels {
 
 	private BufferedImage getHarmonicImage(final Harmonic harmonic) {
 		switch (harmonic) {
-		case NORMAL:
-			return getImage(TextureAtlasPosition.HARMONIC);
-		case PINCH:
-			return getImage(TextureAtlasPosition.PINCH_HARMONIC);
-		case NONE:
-		default:
-			return null;
+			case NORMAL:
+				return getImage(TextureAtlasPosition.HARMONIC);
+			case PINCH:
+				return getImage(TextureAtlasPosition.PINCH_HARMONIC);
+			case NONE:
+			default:
+				return null;
 		}
 	}
 

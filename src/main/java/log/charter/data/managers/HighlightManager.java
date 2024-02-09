@@ -148,7 +148,7 @@ public class HighlightManager {
 	}
 
 	public PositionWithIdAndType getHighlight(final int x, final int y) {
-		final PositionType positionType = PositionType.fromY(y, modeManager.editMode);
+		final PositionType positionType = PositionType.fromY(y, modeManager.getMode());
 
 		final PositionWithIdAndType existingPosition = selectionManager.findExistingPosition(x, y);
 		if (existingPosition != null) {

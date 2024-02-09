@@ -2,13 +2,18 @@ package log.charter.gui.chartPanelDrawers.common;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.data.config.Config.chartMapHeightMultiplier;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.Config.noteHeight;
+import static log.charter.data.config.GraphicalConfig.anchorInfoHeight;
+import static log.charter.data.config.GraphicalConfig.chartMapHeightMultiplier;
+import static log.charter.data.config.GraphicalConfig.handShapesHeight;
+import static log.charter.data.config.GraphicalConfig.noteHeight;
+import static log.charter.data.config.GraphicalConfig.timingHeight;
+import static log.charter.data.config.GraphicalConfig.toneChangeHeight;
 import static log.charter.util.Utils.getStringPosition;
 
-import log.charter.data.config.Config;
 import log.charter.data.managers.modes.EditMode;
+import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
 import log.charter.io.rs.xml.song.ArrangementType;
 
 public class DrawerUtils {
@@ -19,52 +24,55 @@ public class DrawerUtils {
 	public static int beatTextY = lyricLinesY + 15;
 	public static int beatSizeTextY = beatTextY + 15;
 	public static int toneChangeY = beatSizeTextY + 10;
-	public static int anchorY = toneChangeY + 15;
-	public static int anchorTextY = anchorY + 11;
-	public static int lanesTop = anchorTextY + 15;
+	public static int anchorY = toneChangeY + toneChangeHeight;
+	public static int lanesTop = anchorY + anchorInfoHeight;
 	public static int laneHeight;
 	public static int lanesHeight;
 	public static int lanesBottom;
-	public static int handShapesY;
+	public static int timingY;
 	public static int editAreaHeight;
 
-	public static int chartMapHeight = 20;
+	public static int chartMapHeight = chartMapHeightMultiplier * 5;
 
 	public static int tailHeight;
 
 	static {
-		updateEditAreaSizes(EditMode.TEMPO_MAP, null, 1);
+		updateEditAreaSizes(EditMode.TEMPO_MAP, null, 0);
 	}
 
 	private static void setEditAreaSizesForTempoMap() {
+		lanesTop = beatSizeTextY + 15;
 		laneHeight = 100;
 		tailHeight = 100;
 		lanesHeight = 100;
 		lanesBottom = lanesTop + lanesHeight;
-		handShapesY = lanesBottom;
-		editAreaHeight = handShapesY;
+		timingY = lanesBottom;
+		editAreaHeight = timingY + timingHeight;
 
-		chartMapHeight = 15;
+		chartMapHeight = chartMapHeightMultiplier * 5;
 	}
 
 	private static void setEditAreaSizesForVocals() {
+		lanesTop = beatSizeTextY + 15;
 		laneHeight = 100;
 		tailHeight = 100;
 		lanesHeight = 100;
 		lanesBottom = lanesTop + lanesHeight;
-		handShapesY = lanesBottom;
-		editAreaHeight = handShapesY;
+		timingY = lanesBottom;
+		editAreaHeight = timingY + timingHeight;
 
-		chartMapHeight = Config.chartMapHeightMultiplier * 5;
+		chartMapHeight = chartMapHeightMultiplier * 5;
 	}
 
 	private static void setEditAreaSizesForGuitar(final ArrangementType arrangementType, final int strings) {
+		anchorY = toneChangeY + toneChangeHeight;
+		lanesTop = anchorY + anchorInfoHeight;
 		laneHeight = (int) (noteHeight * (arrangementType == ArrangementType.Bass ? 2 : 1.5));
 		tailHeight = getAsOdd(noteHeight * 3 / 4);
 		lanesHeight = laneHeight * strings;
 		lanesBottom = lanesTop + lanesHeight;
-		handShapesY = lanesBottom + 30;
-		editAreaHeight = handShapesY + 20;
+		timingY = lanesBottom + handShapesHeight;
+		editAreaHeight = timingY + timingHeight;
 
 		chartMapHeight = 2 * chartMapHeightMultiplier + 1 + maxStrings * chartMapHeightMultiplier;
 	}
@@ -72,18 +80,15 @@ public class DrawerUtils {
 	public static void updateEditAreaSizes(final EditMode editMode, final ArrangementType arrangementType,
 			final int strings) {
 		switch (editMode) {
-		case GUITAR:
-			setEditAreaSizesForGuitar(arrangementType, strings);
-			break;
-		case VOCALS:
-			setEditAreaSizesForVocals();
-			break;
-		case TEMPO_MAP:
-		default:
-			setEditAreaSizesForTempoMap();
-			break;
-
+			case GUITAR -> setEditAreaSizesForGuitar(arrangementType, strings);
+			case VOCALS -> setEditAreaSizesForVocals();
+			default -> setEditAreaSizesForTempoMap();
 		}
+
+		BackgroundDrawer.reloadSizes();
+		GuitarDrawer.reloadSizes();
+		LyricLinesDrawer.reloadSizes();
+		VocalsDrawer.reloadSizes();
 	}
 
 	public static int getAsOdd(final int x) {

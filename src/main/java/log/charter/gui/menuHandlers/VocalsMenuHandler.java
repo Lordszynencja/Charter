@@ -23,7 +23,7 @@ class VocalsMenuHandler extends CharterMenuHandler {
 
 	@Override
 	boolean isApplicable() {
-		return !data.isEmpty && modeManager.editMode == EditMode.VOCALS;
+		return !data.isEmpty && modeManager.getMode() == EditMode.VOCALS;
 	}
 
 	@Override

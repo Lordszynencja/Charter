@@ -1,5 +1,6 @@
 package log.charter.gui.chartPanelDrawers.common;
 
+import static log.charter.data.config.Config.showGrid;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatSizeTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaHeight;
@@ -12,8 +13,6 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.fil
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.text;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.textWithBackground;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
@@ -24,7 +23,6 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
@@ -32,8 +30,11 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
+import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
+import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressData;
@@ -48,7 +49,8 @@ import log.charter.util.Position2D;
 import log.charter.util.grid.GridPosition;
 
 public class BeatsDrawer {
-	private static final NumberFormat bpmFormat = new DecimalFormat("##0.0");
+	private static final Font beatFont = new Font(Font.DIALOG, Font.BOLD, 12);
+	private static final NumberFormat bpmFormat = new DecimalFormat("##0.00");
 
 	private static class BeatsDrawingData {
 		private final DrawableShapeList beats = new DrawableShapeList();
@@ -70,22 +72,22 @@ public class BeatsDrawer {
 
 		private void addBeatBarNumber(final int x, final int barNumber) {
 			final String text = "" + barNumber;
-			beats.add(text(new Position2D(x + 3, beatTextY + 11), text, ColorLabel.MAIN_BEAT));
+			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.MAIN_BEAT));
 		}
 
 		private void addBeatBarNumber(final int x, final int barNumber, final String bpmValue) {
 			final String text = "" + barNumber + " (" + bpmValue + " BPM)";
-			beats.add(text(new Position2D(x + 3, beatTextY + 11), text, ColorLabel.MAIN_BEAT));
+			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.MAIN_BEAT));
 		}
 
 		private void addBPMNumber(final int x, final String bpmValue) {
 			final String text = "(" + bpmValue + " BPM)";
-			beats.add(text(new Position2D(x + 3, beatTextY + 11), text, ColorLabel.SECONDARY_BEAT));
+			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.SECONDARY_BEAT));
 		}
 
 		private void addMeasureChange(final int x, final Beat beat) {
-			beats.add(text(new Position2D(x + 3, beatSizeTextY + 11), beat.beatsInMeasure + "/" + beat.noteDenominator,
-					ColorLabel.MAIN_BEAT));
+			beats.add(new Text(new Position2D(x + 3, beatSizeTextY + 1), beatFont,
+					beat.beatsInMeasure + "/" + beat.noteDenominator, ColorLabel.MAIN_BEAT));
 		}
 
 		private void addSelect(final int x) {
@@ -117,25 +119,36 @@ public class BeatsDrawer {
 			}
 		}
 
+		public void addHighlightForBeat(final int x) {
+			final int top = beatTextY - 1;
+			final int bottom = lanesBottom + 1;
+			final ShapePositionWithSize beatPosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
+			beats.add(strokedRectangle(beatPosition, ColorLabel.HIGHLIGHT));
+		}
+
+		public void addHighlightForPosition(final int x) {
+			beats.add(lineVertical(x, beatTextY, lanesBottom, ColorLabel.HIGHLIGHT));
+		}
+
 		public void addGrid(final int x) {
 			beats.add(lineVertical(x, lanesTop, lanesBottom, ColorLabel.GRID));
 		}
 
 		private void addSection(final SectionType section, final int x) {
-			sectionsAndPhrases.add(textWithBackground(new Position2D(x, sectionNamesY + 11), section.label,
+			sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, sectionNamesY), beatFont, section.label,
 					ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT));
 		}
 
 		private void addPhrase(final Phrase phrase, final String phraseName, final int x) {
 			final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
 					+ (phrase.solo ? "[Solo]" : "");
-			sectionsAndPhrases.add(textWithBackground(new Position2D(x, phraseNamesY + 11), phraseLabel,
+			sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, phraseNamesY), beatFont, phraseLabel,
 					ColorLabel.PHRASE_NAME_BG, ColorLabel.BASE_DARK_TEXT));
 		}
 
 		private void addEvents(final ArrayList2<EventType> events, final int x) {
 			final String eventsName = String.join(", ", events.map(event -> event.label));
-			sectionsAndPhrases.add(textWithBackground(new Position2D(x, eventNamesY + 11), eventsName,
+			sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, eventNamesY), beatFont, eventsName,
 					ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT));
 		}
 
@@ -161,25 +174,25 @@ public class BeatsDrawer {
 
 		public void addBookmark(final int number, final int x) {
 			bookmarks.add(lineVertical(x, 0, editAreaHeight, ColorLabel.BOOKMARK));
-			bookmarks.add(text(new Position2D(x + 2, 12), number + "", ColorLabel.BOOKMARK));
+			bookmarks.add(new Text(new Position2D(x + 2, 1), beatFont, number + "", ColorLabel.BOOKMARK));
 		}
 
 		public void addRepeatStart(final int x) {
-			repeat.add(lineVertical(x, sectionNamesY, sectionNamesY + 20, ColorLabel.REPEAT_MARKER));
+			repeat.add(lineVertical(x, beatTextY, beatTextY, ColorLabel.REPEAT_MARKER));
 			final ShapePositionWithSize startPosition = new ShapePositionWithSize(x, sectionNamesY, 10, 3);
 			repeat.add(filledRectangle(startPosition, ColorLabel.REPEAT_MARKER));
 		}
 
 		public void addRepeatEnd(final int x) {
-			repeat.add(lineVertical(x, sectionNamesY, sectionNamesY + 20, ColorLabel.REPEAT_MARKER));
+			repeat.add(lineVertical(x, beatTextY, beatTextY, ColorLabel.REPEAT_MARKER));
 			final ShapePositionWithSize endPosition = new ShapePositionWithSize(x - 10, sectionNamesY, 10, 3);
 			repeat.add(filledRectangle(endPosition, ColorLabel.REPEAT_MARKER));
 		}
 
 		public void addFullRepeat(final int x0, final int x1) {
-			repeat.add(lineVertical(x0, sectionNamesY, sectionNamesY + 20, ColorLabel.REPEAT_MARKER));
-			repeat.add(lineVertical(x1, sectionNamesY, sectionNamesY + 20, ColorLabel.REPEAT_MARKER));
-			final ShapePositionWithSize fullPosition = new ShapePositionWithSize(x0, sectionNamesY, x1 - x0, 3);
+			repeat.add(lineVertical(x0, 0, beatTextY, ColorLabel.REPEAT_MARKER));
+			repeat.add(lineVertical(x1, 0, beatTextY, ColorLabel.REPEAT_MARKER));
+			final ShapePositionWithSize fullPosition = new ShapePositionWithSize(x0, 0, x1 - x0, 3);
 			repeat.add(filledRectangle(fullPosition, ColorLabel.REPEAT_MARKER));
 		}
 
@@ -317,21 +330,30 @@ public class BeatsDrawer {
 		});
 	}
 
-	public void draw(final Graphics g) {
+	public void draw(final Graphics g, final HighlightData highlightData) {
 		final BeatsDrawingData drawingData = new BeatsDrawingData();
 
 		addBeats(drawingData);
 		addRepeater(drawingData);
 
-		if (Config.showGrid && modeManager.editMode != EditMode.TEMPO_MAP) {
+		if (showGrid && modeManager.getMode() != EditMode.TEMPO_MAP) {
 			addGrid(drawingData);
 		}
-
-		if (modeManager.editMode == EditMode.GUITAR) {
+		if (modeManager.getMode() == EditMode.GUITAR) {
 			addEventPoints(drawingData);
 		}
 
 		addBookmarks(drawingData);
+
+		if (highlightData.highlightType == PositionType.BEAT) {
+			if (highlightData.highlightedId != null) {
+				final Beat beat = data.songChart.beatsMap.beats.get(highlightData.highlightedId);
+				drawingData.addHighlightForBeat(timeToX(beat.position(), data.time));
+			} else {
+				highlightData.highlightedNonIdPositions.forEach(highlightPosition -> drawingData
+						.addHighlightForPosition(timeToX(highlightPosition.position, data.time)));
+			}
+		}
 
 		drawingData.draw(g);
 	}

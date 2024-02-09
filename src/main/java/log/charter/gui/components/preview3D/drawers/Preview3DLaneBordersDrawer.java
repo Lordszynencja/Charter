@@ -22,8 +22,7 @@ import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
-import log.charter.song.Anchor;
-import log.charter.song.notes.IConstantPosition;
+import log.charter.util.IntRange;
 
 public class Preview3DLaneBordersDrawer {
 	private ChartData data;
@@ -54,28 +53,16 @@ public class Preview3DLaneBordersDrawer {
 			fretsOpacity[fret] = 32;
 		}
 
-		boolean activeAnchorFound = false;
-		for (final AnchorDrawData anchor : drawData.anchors) {
-			int opacity = 96;
-			if (anchor.timeFrom <= data.time && anchor.timeTo >= data.time) {
-				activeAnchorFound = true;
-				opacity = 255;
-			}
+		final IntRange activeFrets = drawData.getFrets(data.time);
 
+		for (final AnchorDrawData anchor : drawData.anchors) {
 			for (int fret = anchor.fretFrom; fret <= anchor.fretTo; fret++) {
-				fretsOpacity[fret] = max(fretsOpacity[fret], opacity);
+				fretsOpacity[fret] = max(fretsOpacity[fret], 96);
 			}
 		}
 
-		if (!activeAnchorFound) {
-			Anchor nextAnchor = IConstantPosition.findFirstAfter(data.getCurrentArrangementLevel().anchors, data.time);
-			if (nextAnchor == null) {
-				nextAnchor = new Anchor(0, 1);
-			}
-
-			for (int fret = nextAnchor.fret - 1; fret <= nextAnchor.topFret(); fret++) {
-				fretsOpacity[fret] = 96;
-			}
+		for (int fret = activeFrets.min - 1; fret <= activeFrets.max; fret++) {
+			fretsOpacity[fret] = 255;
 		}
 
 		final Color color = ColorLabel.PREVIEW_3D_LANE_BORDER.color();

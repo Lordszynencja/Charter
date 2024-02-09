@@ -110,7 +110,7 @@ public class CopyManager {
 	}
 
 	private FullCopyData getFullCopyData(final int from, final int to) {
-		if (modeManager.editMode != EditMode.GUITAR) {
+		if (modeManager.getMode() != EditMode.GUITAR) {
 			return null;
 		}
 
@@ -225,19 +225,15 @@ public class CopyManager {
 	}
 
 	private CopyData getCopyData() {
-		if (modeManager.editMode == EditMode.GUITAR) {
+		switch (modeManager.getMode()) {
+		case GUITAR:
 			return getGuitarCopyData();
-		}
-
-		if (modeManager.editMode == EditMode.TEMPO_MAP) {
+		case VOCALS:
+			return getCopyData(PositionType.VOCAL, CopiedVocalPosition::new, VocalsCopyData::new);
+		case TEMPO_MAP:
+		default:
 			return null;
 		}
-
-		if (modeManager.editMode == EditMode.VOCALS) {
-			return getCopyData(PositionType.VOCAL, CopiedVocalPosition::new, VocalsCopyData::new);
-		}
-
-		return null;
 	}
 
 	public void copy() {
@@ -286,10 +282,10 @@ public class CopyManager {
 		if (selectedCopy.isEmpty()) {
 			return;
 		}
-		if (modeManager.editMode == EditMode.TEMPO_MAP) {
+		if (modeManager.getMode() == EditMode.TEMPO_MAP) {
 			return;
 		}
-		final boolean isVocalsEditMode = modeManager.editMode == EditMode.VOCALS;
+		final boolean isVocalsEditMode = modeManager.getMode() == EditMode.VOCALS;
 		final boolean isVocalsCopyData = selectedCopy instanceof VocalsCopyData;
 		if (isVocalsEditMode != isVocalsCopyData) {
 			return;
@@ -301,10 +297,7 @@ public class CopyManager {
 	}
 
 	public void specialPaste() {
-		if (data.isEmpty) {
-			return;
-		}
-		if (modeManager.editMode != EditMode.GUITAR) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 

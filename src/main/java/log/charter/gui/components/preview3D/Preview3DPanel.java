@@ -153,7 +153,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
 			GL30.glDepthFunc(GL30.GL_GEQUAL);
 
-			if (data == null || data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+			if (data == null) {
 				swapBuffers();
 				return;
 			}
@@ -175,16 +175,24 @@ public class Preview3DPanel extends AWTGLCanvas {
 			timer.addTimestamp("laneBordersDrawer");
 			anchorsDrawer.draw(shadersHolder, drawData);
 			timer.addTimestamp("anchorsDrawer");
-			stringsFretsDrawer.draw(shadersHolder);
+
+			if (modeManager.getMode() == EditMode.GUITAR) {
+				handShapesDrawer.draw(shadersHolder, drawData);
+				timer.addTimestamp("handShapesDrawer");
+				guitarSoundsDrawer.draw(shadersHolder, drawData);
+				timer.addTimestamp("guitarSoundsDrawer");
+			}
+
+			stringsFretsDrawer.draw(shadersHolder, drawData);
 			timer.addTimestamp("stringsFretsDrawer");
-			handShapesDrawer.draw(shadersHolder, drawData);
-			timer.addTimestamp("handShapesDrawer");
-			guitarSoundsDrawer.draw(shadersHolder, drawData);
-			timer.addTimestamp("guitarSoundsDrawer");
+
 			inlayDrawer.draw(shadersHolder);
 			timer.addTimestamp("inlayDrawer");
-			fingeringDrawer.draw(shadersHolder, drawData);
-			timer.addTimestamp("fingeringDrawer");
+
+			if (modeManager.getMode() == EditMode.GUITAR) {
+				fingeringDrawer.draw(shadersHolder, drawData);
+				timer.addTimestamp("fingeringDrawer");
+			}
 
 			lyricsDrawer.draw(shadersHolder, 1.0 * getHeight() / getWidth(),
 					getHeight() < 500 ? 500.0 / getHeight() : 1);

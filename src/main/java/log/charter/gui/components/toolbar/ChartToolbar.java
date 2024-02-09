@@ -14,12 +14,14 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JToolBar;
 
+import log.charter.data.GridType;
 import log.charter.data.config.Config;
-import log.charter.data.config.GridType;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
+import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
 import log.charter.gui.components.FieldWithLabel;
 import log.charter.gui.components.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.TextInputWithValidation;
@@ -35,8 +37,9 @@ public class ChartToolbar extends JToolBar {
 
 	public static final int height = 20;
 
-	private AudioDrawer audioDrawer;
+	private WaveFormDrawer audioDrawer;
 	private AudioHandler audioHandler;
+	private ModeManager modeManager;
 	private RepeatManager repeatManager;
 
 	private FieldWithLabel<JCheckBox> midi;
@@ -63,10 +66,11 @@ public class ChartToolbar extends JToolBar {
 		setBackground(ColorLabel.BASE_BG_3.color());
 	}
 
-	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler,
-			final KeyboardHandler keyboardHandler, final RepeatManager repeatManager) {
+	public void init(final WaveFormDrawer audioDrawer, final AudioHandler audioHandler,
+			final KeyboardHandler keyboardHandler, final ModeManager modeManager, final RepeatManager repeatManager) {
 		this.audioDrawer = audioDrawer;
 		this.audioHandler = audioHandler;
+		this.modeManager = modeManager;
 		this.repeatManager = repeatManager;
 
 		final AtomicInteger x = new AtomicInteger(0);
@@ -306,6 +310,7 @@ public class ChartToolbar extends JToolBar {
 		claps.field.setSelected(audioHandler.claps());
 		metronome.field.setSelected(audioHandler.metronome());
 		waveformGraph.field.setSelected(audioDrawer.drawing());
+		waveformGraph.field.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
 		repeater.field.setSelected(repeatManager.isOn());
 
 		gridSize.field.setTextWithoutEvent(Config.gridSize + "");

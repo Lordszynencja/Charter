@@ -16,7 +16,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ParamsPane;
 import log.charter.util.CollectionUtils.Pair;
 
-public class GraphicConfigPane extends ParamsPane {
+public class ColorConfigPane extends ParamsPane {
 	private static final long serialVersionUID = 1L;
 
 	private class EmployeeTableModel extends AbstractTableModel {
@@ -103,7 +103,7 @@ public class GraphicConfigPane extends ParamsPane {
 
 	private final List<Pair<ColorLabel, Color>> colors = new ArrayList<>();
 
-	public GraphicConfigPane(final CharterFrame frame) {
+	public ColorConfigPane(final CharterFrame frame) {
 		super(frame, Label.GRAPHIC_CONFIG_PANE, getSizes());
 
 		for (final ColorLabel colorLabel : ColorLabel.values()) {

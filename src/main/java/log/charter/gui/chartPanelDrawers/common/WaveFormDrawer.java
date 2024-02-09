@@ -13,10 +13,12 @@ import java.awt.Graphics;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Zoom;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.components.toolbar.ChartToolbar;
 
-public class AudioDrawer {
+public class WaveFormDrawer {
 	private static class RMSCalculator {
 		private int counter = 0;
 		private final float[] values;
@@ -52,23 +54,25 @@ public class AudioDrawer {
 	private ChartData data;
 	private ChartPanel chartPanel;
 	private ChartToolbar chartToolbar;
+	private ModeManager modeManager;
 
-	private boolean drawAudio;
+	private boolean drawWaveForm;
 
-	public void init(final ChartData data, final ChartPanel chartPanel, final ChartToolbar chartToolbar) {
+	public void init(final ChartData data, final ChartPanel chartPanel, final ChartToolbar chartToolbar,
+			final ModeManager modeManager) {
 		this.data = data;
 		this.chartPanel = chartPanel;
 		this.chartToolbar = chartToolbar;
+		this.modeManager = modeManager;
 	}
 
 	public void toggle() {
-		drawAudio = !drawAudio;
-
+		drawWaveForm = !drawWaveForm;
 		chartToolbar.updateValues();
 	}
 
 	public boolean drawing() {
-		return drawAudio;
+		return drawWaveForm || modeManager.getMode() == EditMode.TEMPO_MAP;
 	}
 
 	private void drawApproximate(final Graphics g) {
@@ -148,7 +152,7 @@ public class AudioDrawer {
 	}
 
 	public void draw(final Graphics g) {
-		if (!drawAudio) {
+		if (!drawing()) {
 			return;
 		}
 

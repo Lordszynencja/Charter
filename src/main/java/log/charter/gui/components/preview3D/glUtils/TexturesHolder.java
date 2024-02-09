@@ -1,5 +1,8 @@
 package log.charter.gui.components.preview3D.glUtils;
 
+import static log.charter.data.config.GraphicalConfig.inlay;
+import static log.charter.data.config.GraphicalConfig.texturePack;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +12,6 @@ import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
 
-import log.charter.data.config.Config;
 import log.charter.io.Logger;
 
 public class TexturesHolder {
@@ -30,8 +32,8 @@ public class TexturesHolder {
 	private static final Map<String, Supplier<String>> textureFileSupplier = new HashMap<>();
 	private static final Map<String, Supplier<String>> defaultTextureFileSupplier = new HashMap<>();
 	static {
-		textureFileSupplier.put("fingering", () -> texturePacksPath + Config.texturePack + "/fingering.png");
-		textureFileSupplier.put("inlay", () -> inlaysPath + Config.inlay + ".png");
+		textureFileSupplier.put("fingering", () -> texturePacksPath + texturePack + "/fingering.png");
+		textureFileSupplier.put("inlay", () -> inlaysPath + inlay + ".png");
 
 		defaultTextureFileSupplier.put("fingering", () -> texturePacksPath + "default/fingering.png");
 		defaultTextureFileSupplier.put("inlay", () -> inlaysPath + "default.png");

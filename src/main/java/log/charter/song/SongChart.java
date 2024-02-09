@@ -233,6 +233,7 @@ public class SongChart {
 		final List<IPosition> positionsToMove = new LinkedList<>();
 		positionsToMove.addAll(beatsMap.beats);
 		for (final ArrangementChart arrangement : arrangements) {
+			positionsToMove.addAll(arrangement.eventPoints);
 			positionsToMove.addAll(arrangement.toneChanges);
 			for (final Level level : arrangement.levels.values()) {
 				positionsToMove.addAll(level.anchors);

@@ -28,4 +28,8 @@ public class ShapePositionWithSize extends Position2D {
 			final int heightOffset) {
 		return new ShapePositionWithSize(x + xOffset, y + yOffset, width + widthOffset, height + heightOffset);
 	}
+
+	public ShapePositionWithSizeDouble asDouble() {
+		return new ShapePositionWithSizeDouble(x, y, width, height);
+	}
 }

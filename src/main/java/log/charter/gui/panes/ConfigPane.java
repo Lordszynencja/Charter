@@ -6,17 +6,13 @@ import static log.charter.gui.components.TextInputWithValidation.ValueValidator.
 import java.io.File;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.config.Theme;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.components.ParamsPane;
-import log.charter.util.CollectionUtils;
 import log.charter.util.FileChooseUtils;
 
 public final class ConfigPane extends ParamsPane {
@@ -45,9 +41,6 @@ public final class ConfigPane extends ParamsPane {
 	private int delay = Config.delay;
 	private int midiDelay = Config.midiDelay;
 	private int markerOffset = Config.markerOffset;
-	private int noteWidth = Config.noteWidth;
-	private int noteHeight = Config.noteHeight;
-	private int chartMapHeightMultiplier = Config.chartMapHeightMultiplier;
 	private boolean invertStrings = Config.invertStrings;
 	private boolean leftHanded = Config.leftHanded;
 	private boolean showChordIds = Config.showChordIds;
@@ -55,8 +48,6 @@ public final class ConfigPane extends ParamsPane {
 	private boolean createDefaultStretchesInBackground = Config.createDefaultStretchesInBackground;
 	private int FPS = Config.FPS;
 	private int backupDelay = Config.backupDelay;
-
-	private Theme theme = Config.theme;
 
 	public ConfigPane(final CharterFrame frame, final Framer framer) {
 		super(frame, Label.CONFIG_PANE, getSizes());
@@ -91,13 +82,6 @@ public final class ConfigPane extends ParamsPane {
 		addConfigValue(row++, 20, 0, Label.CONFIG_MARKER_POSITION, markerOffset + "", 50,
 				createIntValidator(1, 1000, false), //
 				val -> markerOffset = Integer.valueOf(val), false);
-		addConfigValue(row++, 20, 0, Label.CONFIG_NOTE_WIDTH, noteWidth + "", 50, createIntValidator(1, 1000, false), //
-				val -> noteWidth = Integer.valueOf(val), false);
-		addConfigValue(row++, 20, 0, Label.CONFIG_NOTE_HEIGHT, noteHeight + "", 50, createIntValidator(1, 1000, false), //
-				val -> noteHeight = Integer.valueOf(val), false);
-		addConfigValue(row++, 20, 0, Label.CONFIG_CHART_MAP_HEIGHT_MULTIPLIER, chartMapHeightMultiplier + "", 50,
-				createIntValidator(1, 100, false), //
-				val -> chartMapHeightMultiplier = Integer.valueOf(val), false);
 		addConfigCheckbox(row, 20, 0, Label.CONFIG_INVERT_STRINGS, invertStrings, val -> invertStrings = val);
 		addConfigCheckbox(row++, 180, 0, Label.CONFIG_LEFT_HANDED, leftHanded, val -> leftHanded = val);
 		addConfigCheckbox(row++, 20, 0, Label.CONFIG_SHOW_CHORD_IDS, showChordIds, val -> showChordIds = val);
@@ -109,14 +93,6 @@ public final class ConfigPane extends ParamsPane {
 		addConfigValue(row++, 20, 0, Label.CONFIG_BACKUP_DELAY, backupDelay + "", 50,
 				createIntValidator(1, 3600, false), //
 				val -> backupDelay = Integer.valueOf(val), false);
-
-		// Theme selection
-		final JLabel themeLabel = new JLabel(Label.CONFIG_THEME.label(), SwingConstants.LEFT);
-		add(themeLabel, 20, getY(row++), themeLabel.getPreferredSize().width, 20);
-		final CollectionUtils.ArrayList2<CollectionUtils.Pair<Theme, Label>> availableThemes = new CollectionUtils.ArrayList2<>(//
-				new CollectionUtils.Pair<>(Theme.DEFAULT, Label.CONFIG_THEME_DEFAULT), //
-				new CollectionUtils.Pair<>(Theme.ROCKSMITH, Label.CONFIG_THEME_ROCKSMITH));
-		addConfigRadioButtons(row++, 20, 100, theme, val -> theme = val, availableThemes);
 
 		row++;
 		addDefaultFinish(row, this::saveAndExit);
@@ -149,9 +125,6 @@ public final class ConfigPane extends ParamsPane {
 		Config.delay = delay;
 		Config.midiDelay = midiDelay;
 		Config.markerOffset = markerOffset;
-		Config.noteWidth = noteWidth;
-		Config.noteHeight = noteHeight;
-		Config.chartMapHeightMultiplier = chartMapHeightMultiplier;
 
 		Config.invertStrings = invertStrings;
 		Config.leftHanded = leftHanded;
@@ -159,8 +132,6 @@ public final class ConfigPane extends ParamsPane {
 		Config.showGrid = showGrid;
 
 		Config.FPS = FPS;
-
-		Config.theme = theme;
 
 		Config.markChanged();
 		Config.save();

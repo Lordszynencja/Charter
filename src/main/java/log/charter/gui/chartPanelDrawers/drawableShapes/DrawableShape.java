@@ -1,6 +1,7 @@
 package log.charter.gui.chartPanelDrawers.drawableShapes;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -16,7 +17,8 @@ public interface DrawableShape {
 		return new Line(startPosition, endPosition, color);
 	}
 
-	public static DrawableShape line(final Position2D startPosition, final Position2D endPosition, final Color color, final int thickness) {
+	public static DrawableShape line(final Position2D startPosition, final Position2D endPosition, final Color color,
+			final int thickness) {
 		return new Line(startPosition, endPosition, color, thickness);
 	}
 
@@ -49,7 +51,7 @@ public interface DrawableShape {
 	}
 
 	public static DrawableShape strokedTriangle(final Position2D a, final Position2D b, final Position2D c,
-												final Color color, final int thickness) {
+			final Color color, final int thickness) {
 		return new StrokedTriangle(a, b, c, color, thickness);
 	}
 
@@ -70,7 +72,8 @@ public interface DrawableShape {
 		return strokedRectangle(position, color.color());
 	}
 
-	public static DrawableShape strokedRectangle(final ShapePositionWithSize position, final Color color, final int thickness) {
+	public static DrawableShape strokedRectangle(final ShapePositionWithSize position, final Color color,
+			final int thickness) {
 		return new StrokedRectangle(position, color, thickness);
 	}
 
@@ -112,22 +115,10 @@ public interface DrawableShape {
 	}
 
 	// Texts
-	public static DrawableShape text(final Position2D position, final String text, final ColorLabel color) {
-		return text(position, text, color.color());
-	}
-
-	public static DrawableShape text(final Position2D position, final String text, final Color color) {
-		return new Text(position, text, color);
-	}
-
-	public static DrawableShape textWithBackground(final Position2D position, final String text,
-			final ColorLabel backgroundColor, final ColorLabel textColor) {
-		return new TextWithBackground(position, text, backgroundColor.color(), textColor.color());
-	}
-
-	public static DrawableShape centeredTextWithBackground(final Position2D position, final String text,
-			final Color backgroundColor, final Color textColor) {
-		return new CenteredTextWithBackground(position, text, backgroundColor, textColor);
+	public static CenteredTextWithBackgroundAndBorder centeredTextWithBackground(final Position2D position,
+			final Font font, final String text, final Color textColor, final Color backgroundColor,
+			final Color borderColor) {
+		return new CenteredTextWithBackgroundAndBorder(position, font, text, backgroundColor, textColor, borderColor);
 	}
 
 	// Images

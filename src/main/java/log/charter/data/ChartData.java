@@ -1,5 +1,7 @@
 package log.charter.data;
 
+import static log.charter.data.config.Config.maxStrings;
+
 import java.io.File;
 
 import log.charter.data.config.Config;
@@ -65,7 +67,7 @@ public class ChartData {
 
 		selectionManager.clear();
 		changeDifficulty(level);
-		modeManager.editMode = editMode;
+		modeManager.setMode(editMode);
 
 		charterMenuBar.refreshMenus();
 		frame.updateEditAreaSizes();
@@ -88,15 +90,15 @@ public class ChartData {
 	}
 
 	public int currentStrings() {
-		if (modeManager.editMode != EditMode.GUITAR) {
-			return -1;
+		if (modeManager.getMode() != EditMode.GUITAR) {
+			return maxStrings;
 		}
 
 		return getCurrentArrangement().tuning.strings;
 	}
 
 	public ArrangementChart getCurrentArrangement() {
-		if (modeManager.editMode != EditMode.GUITAR) {
+		if (modeManager.getMode() != EditMode.GUITAR) {
 			return null;
 		}
 		if (songChart.arrangements.isEmpty()) {
@@ -107,9 +109,10 @@ public class ChartData {
 	}
 
 	public Level getCurrentArrangementLevel() {
-		if (modeManager.editMode != EditMode.GUITAR) {
+		if (modeManager.getMode() != EditMode.GUITAR) {
 			return null;
 		}
+
 		return songChart.arrangements.get(currentArrangement).levels.get(currentLevel);
 	}
 

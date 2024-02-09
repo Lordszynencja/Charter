@@ -17,6 +17,10 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class HandShapeDrawData implements IConstantPositionWithLength {
 	public static List<HandShapeDrawData> getHandShapesForTimeSpan(final ChartData data, final int timeFrom,
 			final int timeTo) {
+		if (data.getCurrentArrangementLevel() == null) {
+			return new ArrayList<>();
+		}
+
 		final List<HandShapeDrawData> handShapesToDraw = new ArrayList<>();
 		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
 		final ArrayList2<ChordTemplate> chordTemplates = data.getCurrentArrangement().chordTemplates;

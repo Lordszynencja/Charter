@@ -113,6 +113,42 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		mouseButtonPressReleaseHandler.press(e);
 	}
 
+	private void leftClickGuitar(final MouseButtonPressReleaseData clickData) {
+		if (!clickData.isXDrag()) {
+			selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
+			return;
+		}
+
+		if (clickData.pressHighlight.type == PositionType.EVENT_POINT) {
+			dragPositions(PositionType.EVENT_POINT, clickData, data.getCurrentArrangement().eventPoints);
+		}
+		if (clickData.pressHighlight.type == PositionType.TONE_CHANGE) {
+			dragPositions(PositionType.TONE_CHANGE, clickData, data.getCurrentArrangement().toneChanges);
+		}
+		if (clickData.pressHighlight.type == PositionType.ANCHOR) {
+			dragPositions(PositionType.ANCHOR, clickData, data.getCurrentArrangementLevel().anchors);
+		}
+		if (clickData.pressHighlight.type == PositionType.GUITAR_NOTE) {
+			dragNotes(clickData, data.getCurrentArrangementLevel().chordsAndNotes);
+		}
+		if (clickData.pressHighlight.type == PositionType.HAND_SHAPE) {
+			dragPositionsWithLength(PositionType.HAND_SHAPE, clickData, data.getCurrentArrangementLevel().handShapes);
+		}
+	}
+
+	private void leftClickVocals(final MouseButtonPressReleaseData clickData, final boolean wasDoubleClick) {
+		if (!clickData.isXDrag()) {
+			selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
+		} else if (clickData.pressHighlight.type == PositionType.VOCAL) {
+			dragPositionsWithLength(PositionType.VOCAL, clickData, data.songChart.vocals.vocals);
+		}
+
+		if (wasDoubleClick && clickData.pressHighlight.vocal != null) {
+			new VocalPane(clickData.pressHighlight.id, clickData.pressHighlight.vocal, data, frame, selectionManager,
+					undoSystem);
+		}
+	}
+
 	@Override
 	public void mouseReleased(final MouseEvent e) {
 		mouseMoved(e);
@@ -132,59 +168,32 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 
 		switch (clickData.button) {
-		case LEFT_BUTTON:
-			final boolean wasLeftDoubleClick = lastClickId != null && lastClickId.equals(clickData.pressHighlight.id) //
-					&& System.currentTimeMillis() - lastLeftClickTime < 300;
-			lastLeftClickTime = System.currentTimeMillis();
-			lastClickId = clickData.pressHighlight.id;
-			switch (modeManager.editMode) {
-			case GUITAR:
-				if (!clickData.isXDrag()) {
-					selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
-					break;
-				}
+			case LEFT_BUTTON:
+				final boolean wasLeftDoubleClick = lastClickId != null
+						&& lastClickId.equals(clickData.pressHighlight.id) //
+						&& System.currentTimeMillis() - lastLeftClickTime < 300;
+				lastLeftClickTime = System.currentTimeMillis();
+				lastClickId = clickData.pressHighlight.id;
 
-				if (clickData.pressHighlight.type == PositionType.EVENT_POINT) {
-					dragPositions(PositionType.EVENT_POINT, clickData, data.getCurrentArrangement().eventPoints);
-				}
-				if (clickData.pressHighlight.type == PositionType.TONE_CHANGE) {
-					dragPositions(PositionType.TONE_CHANGE, clickData, data.getCurrentArrangement().toneChanges);
-				}
-				if (clickData.pressHighlight.type == PositionType.ANCHOR) {
-					dragPositions(PositionType.ANCHOR, clickData, data.getCurrentArrangementLevel().anchors);
-				}
-				if (clickData.pressHighlight.type == PositionType.GUITAR_NOTE) {
-					dragNotes(clickData, data.getCurrentArrangementLevel().chordsAndNotes);
-				}
-				if (clickData.pressHighlight.type == PositionType.HAND_SHAPE) {
-					dragPositionsWithLength(PositionType.HAND_SHAPE, clickData,
-							data.getCurrentArrangementLevel().handShapes);
+				switch (modeManager.getMode()) {
+					case GUITAR:
+						leftClickGuitar(clickData);
+						break;
+					case TEMPO_MAP:
+						dragTempo(clickData);
+						break;
+					case VOCALS:
+						leftClickVocals(clickData, wasLeftDoubleClick);
+						break;
+					default:
+						break;
 				}
 				break;
-			case TEMPO_MAP:
-				dragTempo(clickData);
-				break;
-			case VOCALS:
-				if (!clickData.isXDrag()) {
-					selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
-				} else if (clickData.pressHighlight.type == PositionType.VOCAL) {
-					dragPositionsWithLength(PositionType.VOCAL, clickData, data.songChart.vocals.vocals);
-				}
-
-				if (wasLeftDoubleClick && clickData.pressHighlight.vocal != null) {
-					new VocalPane(clickData.pressHighlight.id, clickData.pressHighlight.vocal, data, frame,
-							selectionManager, undoSystem);
-				}
+			case RIGHT_BUTTON:
+				modeManager.getHandler().rightClick(clickData);
 				break;
 			default:
 				break;
-			}
-			break;
-		case RIGHT_BUTTON:
-			modeManager.getHandler().rightClick(clickData);
-			break;
-		default:
-			break;
 		}
 
 		mouseButtonPressReleaseHandler.remove(e);
@@ -248,13 +257,13 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	}
 
 	private void dragTempo(final MouseButtonPressReleaseData clickData) {
-		if (modeManager.editMode != EditMode.TEMPO_MAP || !clickData.pressHighlight.existingPosition) {
+		if (modeManager.getMode() != EditMode.TEMPO_MAP || !clickData.pressHighlight.existingPosition) {
 			return;
 		}
 
 		undoSystem.addUndo();
 
-		if (clickData.pressHighlight.id != null && clickData.pressHighlight.id == 0) {
+		if (clickData.pressHighlight.id != null && clickData.pressHighlight.id == 0 || keyboardHandler.alt()) {
 			final int positionBefore = clickData.pressHighlight.position();
 			final int positionAfter = max(0,
 					min(data.music.msLength(), xToTime(clickData.releasePosition.x, data.time)));
@@ -331,12 +340,16 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	private void dragPositions(final PositionType type, final MouseButtonPressReleaseData clickData,
 			final List<? extends IPosition> allPositions) {
-		final ArrayList2<Selection<IPosition>> selectedPositions = selectionManager
+		ArrayList2<Selection<IPosition>> selectedPositions = selectionManager
 				.getSelectedAccessor(clickData.pressHighlight.type).getSortedSelected();
 
-		final int dragStartPosition = clickData.pressHighlight.position();
-		final int dragEndPosition = clickData.releaseHighlight.position();
-
+		if (clickData.pressHighlight.existingPosition//
+				&& !selectedPositions.contains(selection -> selection.id == clickData.pressHighlight.id)) {
+			selectionManager.clear();
+			selectionManager.addSelection(clickData.pressHighlight.type, clickData.pressHighlight.id);
+			selectedPositions = selectionManager.getSelectedAccessor(clickData.pressHighlight.type)//
+					.getSortedSelected();
+		}
 		if (selectedPositions.isEmpty()) {
 			return;
 		}
@@ -344,7 +357,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		final ArrayList2<IPosition> positions = selectedPositions.map(p -> p.selectable);
 		undoSystem.addUndo();
 
-		data.songChart.beatsMap.movePositions(dragStartPosition, dragEndPosition, positions);
+		final int dragFrom = clickData.pressHighlight.position();
+		final int dragTo = data.songChart.beatsMap
+				.getPositionFromGridClosestTo(xToTime(clickData.releasePosition.x, data.time));
+		data.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
 
 		allPositions.sort(null);
 
@@ -353,20 +369,29 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	private void dragPositionsWithLength(final PositionType type, final MouseButtonPressReleaseData clickData,
 			final ArrayList2<? extends IPositionWithLength> allPositions) {
-		final ArrayList2<Selection<IPosition>> selectedPositions = selectionManager
-				.getSelectedAccessor(clickData.pressHighlight.type).getSortedSelected();
+		ArrayList2<Selection<IPosition>> selectedPositions = selectionManager
+				.getSelectedAccessor(clickData.pressHighlight.type)//
+				.getSortedSelected();
 
-		final int dragStartPosition = clickData.pressHighlight.position();
-		final int dragEndPosition = clickData.releaseHighlight.position();
-
+		if (clickData.pressHighlight.existingPosition//
+				&& !selectedPositions.contains(selection -> selection.id == clickData.pressHighlight.id)) {
+			selectionManager.clear();
+			selectionManager.addSelection(clickData.pressHighlight.type, clickData.pressHighlight.id);
+			selectedPositions = selectionManager.getSelectedAccessor(clickData.pressHighlight.type)//
+					.getSortedSelected();
+		}
 		if (selectedPositions.isEmpty()) {
 			return;
 		}
 
 		final ArrayList2<IPosition> positions = selectedPositions.map(p -> p.selectable);
+
 		undoSystem.addUndo();
 
-		data.songChart.beatsMap.movePositions(dragStartPosition, dragEndPosition, positions);
+		final int dragFrom = clickData.pressHighlight.position();
+		final int dragTo = data.songChart.beatsMap
+				.getPositionFromGridClosestTo(xToTime(clickData.releasePosition.x, data.time));
+		data.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
 
 		allPositions.sort(null);
 
@@ -376,12 +401,16 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	}
 
 	private void dragNotes(final MouseButtonPressReleaseData clickData, final ArrayList2<ChordOrNote> allPositions) {
-		final ArrayList2<Selection<IPosition>> selectedPositions = selectionManager
+		ArrayList2<Selection<IPosition>> selectedPositions = selectionManager
 				.getSelectedAccessor(clickData.pressHighlight.type).getSortedSelected();
 
-		final int dragStartPosition = clickData.pressHighlight.position();
-		final int dragEndPosition = clickData.releaseHighlight.position();
-
+		if (clickData.pressHighlight.existingPosition//
+				&& !selectedPositions.contains(selection -> selection.id == clickData.pressHighlight.id)) {
+			selectionManager.clear();
+			selectionManager.addSelection(clickData.pressHighlight.type, clickData.pressHighlight.id);
+			selectedPositions = selectionManager.getSelectedAccessor(clickData.pressHighlight.type)//
+					.getSortedSelected();
+		}
 		if (selectedPositions.isEmpty()) {
 			return;
 		}
@@ -389,7 +418,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		final ArrayList2<ChordOrNote> positions = selectedPositions.map(p -> (ChordOrNote) p.selectable);
 		undoSystem.addUndo();
 
-		data.songChart.beatsMap.movePositions(dragStartPosition, dragEndPosition, positions);
+		final int dragFrom = clickData.pressHighlight.position();
+		final int dragTo = data.songChart.beatsMap
+				.getPositionFromGridClosestTo(xToTime(clickData.releasePosition.x, data.time));
+		data.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
 
 		allPositions.sort(null);
 

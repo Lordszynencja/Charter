@@ -98,7 +98,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
-import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
+import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.panes.HandShapePane;
 import log.charter.gui.panes.VocalPane;
@@ -243,7 +243,7 @@ public class KeyboardHandler implements KeyListener {
 		}
 	}
 
-	private AudioDrawer audioDrawer;
+	private WaveFormDrawer audioDrawer;
 	private AudioHandler audioHandler;
 	private ArrangementFixer arrangementFixer;
 	private ChartToolbar chartToolbar;
@@ -267,7 +267,7 @@ public class KeyboardHandler implements KeyListener {
 	private int lastFretNumber = 0;
 	private int fretNumberTimer = 0;
 
-	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler,
+	public void init(final WaveFormDrawer audioDrawer, final AudioHandler audioHandler,
 			final ArrangementFixer arrangementFixer, final ChartToolbar chartToolbar, final CopyManager copyManager,
 			final ChartData data, final CharterFrame frame, final Framer framer, final ModeManager modeManager,
 			final MouseHandler mouseHandler, final RepeatManager repeatManager, final SelectionManager selectionManager,
@@ -674,7 +674,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public void toggleMute() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 
@@ -705,7 +705,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public void toggleHOPO() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 
@@ -739,7 +739,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public void toggleHarmonic() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 
@@ -771,7 +771,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public void toggleAccent() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 
@@ -780,7 +780,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public void toggleVibrato() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 
@@ -800,7 +800,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public void toggleTremolo() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 
@@ -820,7 +820,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public void toggleLinkNext() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 
@@ -869,7 +869,7 @@ public class KeyboardHandler implements KeyListener {
 
 		for (final PositionType type : PositionType.values()) {
 			if (type == PositionType.NONE
-					|| (type == PositionType.BEAT && modeManager.editMode != EditMode.TEMPO_MAP)) {
+					|| (type == PositionType.BEAT && modeManager.getMode() != EditMode.TEMPO_MAP)) {
 				continue;
 			}
 
@@ -1029,11 +1029,11 @@ public class KeyboardHandler implements KeyListener {
 		final int from = selected.get(0).selectable.position();
 		final int to = selected.getLast().selectable.position();
 
-		if (modeManager.editMode == EditMode.TEMPO_MAP) {
+		if (modeManager.getMode() == EditMode.TEMPO_MAP) {
 			return;
 		}
 
-		if (modeManager.editMode == EditMode.VOCALS) {
+		if (modeManager.getMode() == EditMode.VOCALS) {
 			undoSystem.addUndo();
 
 			snapPositionsWithLength(getFromTo(data.songChart.vocals.vocals, from, to), data.songChart.vocals.vocals);
@@ -1042,7 +1042,7 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		if (modeManager.editMode == EditMode.GUITAR) {
+		if (modeManager.getMode() == EditMode.GUITAR) {
 			undoSystem.addUndo();
 
 			final ArrangementChart arrangement = data.getCurrentArrangement();
@@ -1058,7 +1058,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public void editVocals() {
-		if (data.isEmpty || modeManager.editMode != EditMode.VOCALS) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.VOCALS) {
 			return;
 		}
 
@@ -1074,7 +1074,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public void toggleWordPart() {
-		if (data.isEmpty || modeManager.editMode != EditMode.VOCALS) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.VOCALS) {
 			return;
 		}
 
@@ -1094,7 +1094,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public void togglePhraseEnd() {
-		if (data.isEmpty || modeManager.editMode != EditMode.VOCALS) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.VOCALS) {
 			return;
 		}
 
@@ -1114,7 +1114,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public void markHandShape() {
-		if (data.isEmpty || modeManager.editMode != EditMode.GUITAR) {
+		if (data.isEmpty || modeManager.getMode() != EditMode.GUITAR) {
 			return;
 		}
 
@@ -1167,23 +1167,23 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		if (modeManager.editMode == EditMode.VOCALS) {
+		if (modeManager.getMode() == EditMode.VOCALS) {
 			togglePhraseEnd();
 		}
 	}
 
 	private void handleL() {
-		if (modeManager.editMode == EditMode.VOCALS) {
+		if (modeManager.getMode() == EditMode.VOCALS) {
 			editVocals();
 		}
 
-		if (modeManager.editMode == EditMode.GUITAR) {
+		if (modeManager.getMode() == EditMode.GUITAR) {
 			toggleLinkNext();
 		}
 	}
 
 	private void handleW() {
-		if (modeManager.editMode == EditMode.VOCALS) {
+		if (modeManager.getMode() == EditMode.VOCALS) {
 			toggleWordPart();
 		}
 	}

@@ -100,7 +100,7 @@ public class AudioHandler {
 	}
 
 	private ArrayList2<? extends IPosition> getCurrentClapPositions() {
-		switch (modeManager.editMode) {
+		switch (modeManager.getMode()) {
 		case GUITAR:
 			return data.getCurrentArrangementLevel().chordsAndNotes;
 		case TEMPO_MAP:
