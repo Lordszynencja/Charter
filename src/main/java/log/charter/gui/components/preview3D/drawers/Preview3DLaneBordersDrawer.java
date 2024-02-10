@@ -6,7 +6,7 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.fadedDistanceZ
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
-import static log.charter.gui.components.preview3D.Preview3DUtils.visibilityZ;
+import static log.charter.gui.components.preview3D.Preview3DUtils.getVisibilityZ;
 import static log.charter.util.ColorUtils.setAlpha;
 
 import java.awt.Color;
@@ -36,12 +36,12 @@ public class Preview3DLaneBordersDrawer {
 		final double x1 = x + fretThickness;
 
 		shadersHolder.new FadingShaderDrawData()//
-				.addVertex(new Point3D(x, y, visibilityZ), color)//
+				.addVertex(new Point3D(x, y, getVisibilityZ()), color)//
 				.addVertex(new Point3D(x, y, 0), color)//
 				.draw(GL33.GL_LINES, Matrix4.identity, closeDistanceZ, 0);
 		shadersHolder.new FadingShaderDrawData()//
-				.addVertex(new Point3D(x0, y, visibilityZ), color)//
-				.addVertex(new Point3D(x1, y, visibilityZ), color)//
+				.addVertex(new Point3D(x0, y, getVisibilityZ()), color)//
+				.addVertex(new Point3D(x1, y, getVisibilityZ()), color)//
 				.addVertex(new Point3D(x0, y, 0), color)//
 				.addVertex(new Point3D(x1, y, 0), color)//
 				.draw(GL33.GL_TRIANGLE_STRIP, Matrix4.identity, closeDistanceZ, fadedDistanceZ);

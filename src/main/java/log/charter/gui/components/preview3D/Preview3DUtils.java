@@ -1,11 +1,9 @@
 package log.charter.gui.components.preview3D;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
 
 public class Preview3DUtils {
-	public static final int visibility = 3_000;
-	public static final double timeZMultiplier = 0.01;
-	public static final double visibilityZ = getTimePosition(visibility);
 	public static final double topStringPosition = 0;
 	public static final double fretThickness = 0.025;
 	public static final double firstFretDistance = 1.2;
@@ -44,6 +42,15 @@ public class Preview3DUtils {
 		return fretPositions[fret];
 	}
 
+	// Gives similar visibility to Rocksmith, 1.3 -> 4 bars at 120 bpm, 1.0 -> 3 bars at 120 bpm
+	public static int getVisibility() {
+		return (int)(1_600 * GraphicalConfig.previewWindowScrollSpeed);
+	}
+
+	public static double getVisibilityZ() {
+		return getTimePosition(getVisibility());
+	}
+
 	public static double getFretMiddlePosition(final int fret) {
 		return (getFretPosition(fret - 1) + getFretPosition(fret)) / 2;
 	}
@@ -65,6 +72,7 @@ public class Preview3DUtils {
 	}
 
 	public static double getTimePosition(final int time) {
-		return time * timeZMultiplier;
+		// 0.02 is subjective and might need adjustments if camera perspective is edited
+		return (time * 0.02) / GraphicalConfig.previewWindowScrollSpeed;
 	}
 }

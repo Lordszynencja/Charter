@@ -3,6 +3,7 @@ package log.charter.gui.panes.graphicalConfig;
 import static java.util.Arrays.asList;
 import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
+import java.math.BigDecimal;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
@@ -15,6 +16,7 @@ import log.charter.gui.components.FieldWithLabel;
 import log.charter.gui.components.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.Page;
 import log.charter.gui.components.TextInputWithValidation;
+import log.charter.gui.components.TextInputWithValidation.BigDecimalValueValidator;
 import log.charter.gui.components.TextInputWithValidation.IntegerValueValidator;
 
 public class GraphicThemeConfigPage implements Page {
@@ -41,6 +43,7 @@ public class GraphicThemeConfigPage implements Page {
 	private int noteWidth = GraphicalConfig.noteWidth;
 	private int handShapesHeight = GraphicalConfig.handShapesHeight;
 	private int timingHeight = GraphicalConfig.timingHeight;
+	private BigDecimal previewScrollSpeed = BigDecimal.valueOf(GraphicalConfig.previewWindowScrollSpeed);
 
 	private FieldWithLabel<JComboBox<ThemeHolder>> themeField;
 	private FieldWithLabel<TextInputWithValidation> noteHeightField;
@@ -49,6 +52,7 @@ public class GraphicThemeConfigPage implements Page {
 	private FieldWithLabel<TextInputWithValidation> anchorInfoHeightField;
 	private FieldWithLabel<TextInputWithValidation> handShapesHeightField;
 	private FieldWithLabel<TextInputWithValidation> timingHeightField;
+	private FieldWithLabel<TextInputWithValidation> previewScrollSpeedField;
 
 	public void init(final GraphicConfigPane parent, int row) {
 		addThemePicker(parent, row++);
@@ -61,6 +65,7 @@ public class GraphicThemeConfigPage implements Page {
 
 		addHandShapesHeightFieldField(parent, row);
 		addTimingHeightFieldField(parent, row++);
+		addScrollSpeedFieldField(parent, row);
 
 		hide();
 	}
@@ -175,6 +180,18 @@ public class GraphicThemeConfigPage implements Page {
 		parent.add(timingHeightField);
 	}
 
+	private void addScrollSpeedFieldField(final GraphicConfigPane parent, final int row) {
+		final TextInputWithValidation input = new TextInputWithValidation(previewScrollSpeed, 20,
+				new BigDecimalValueValidator(new BigDecimal("0.1"), new BigDecimal("2.0"), false), i -> previewScrollSpeed = i, false);
+		input.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(input);
+
+		previewScrollSpeedField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_PREVIEW_SCROLL_SPEED, 120, 30, 20, input,
+				LabelPosition.LEFT_CLOSE);
+				previewScrollSpeedField.setLocation(10, parent.getY(row));
+		parent.add(previewScrollSpeedField);
+	}
+
 	@Override
 	public void show() {
 		themeField.setVisible(true);
@@ -184,6 +201,7 @@ public class GraphicThemeConfigPage implements Page {
 		noteWidthField.setVisible(theme != Theme.MODERN);
 		handShapesHeightField.setVisible(true);
 		timingHeightField.setVisible(true);
+		previewScrollSpeedField.setVisible(true);
 	}
 
 	@Override
@@ -195,6 +213,7 @@ public class GraphicThemeConfigPage implements Page {
 		noteWidthField.setVisible(false);
 		handShapesHeightField.setVisible(false);
 		timingHeightField.setVisible(false);
+		previewScrollSpeedField.setVisible(false);
 	}
 
 	public void save() {
@@ -205,5 +224,6 @@ public class GraphicThemeConfigPage implements Page {
 		GraphicalConfig.noteWidth = noteWidth;
 		GraphicalConfig.handShapesHeight = handShapesHeight;
 		GraphicalConfig.timingHeight = timingHeight;
+		GraphicalConfig.previewWindowScrollSpeed = previewScrollSpeed.doubleValue();
 	}
 }
