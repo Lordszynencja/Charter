@@ -1,6 +1,6 @@
 package log.charter.gui.components.preview3D.data;
 
-import static log.charter.gui.components.preview3D.Preview3DUtils.visibility;
+import static log.charter.gui.components.preview3D.Preview3DUtils.getVisibility;
 import static log.charter.gui.components.preview3D.data.AnchorDrawData.getAnchorsForTimeSpanWithRepeats;
 import static log.charter.gui.components.preview3D.data.BeatDrawData.getBeatsForTimeSpanWithRepeats;
 import static log.charter.gui.components.preview3D.data.HandShapeDrawData.getHandShapesForTimeSpanWithRepeats;
@@ -30,7 +30,7 @@ public class Preview3DDrawData {
 
 	public Preview3DDrawData(final ChartData data, final RepeatManager repeatManager) {
 		final int timeFrom = data.time;
-		final int timeTo = data.time + visibility;
+		final int timeTo = data.time + getVisibility();
 
 		if (data.getCurrentArrangementLevel() == null) {
 			levelAnchors = new ArrayList2<>(new Anchor(0, 1));

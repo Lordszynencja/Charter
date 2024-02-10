@@ -47,6 +47,7 @@ public class Localization {
 		GRAPHIC_CONFIG_NOTE_WIDTH("Note width (px)"), //
 		GRAPHIC_CONFIG_HAND_SHAPES_HEIGHT("Hand shapes height"), //
 		GRAPHIC_CONFIG_TIMING_HEIGHT("Timing height"), //
+		GRAPHIC_CONFIG_PREVIEW_SCROLL_SPEED("Preview scroll speed"), //
 
 		GRAPHIC_CONFIG_TEXTURES_PAGE("Textures"), //
 		GRAPHIC_CONFIG_INLAY("Inlay"), //

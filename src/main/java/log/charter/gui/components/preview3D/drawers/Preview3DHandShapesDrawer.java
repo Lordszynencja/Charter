@@ -8,7 +8,7 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
-import static log.charter.gui.components.preview3D.Preview3DUtils.visibility;
+import static log.charter.gui.components.preview3D.Preview3DUtils.getVisibility;
 
 import java.awt.Color;
 
@@ -61,7 +61,7 @@ public class Preview3DHandShapesDrawer {
 		final boolean arpeggio = handShape.template.arpeggio;
 
 		final int timeFrom = max(0, handShape.timeFrom - data.time);
-		final int timeTo = min(visibility, handShape.timeTo - data.time);
+		final int timeTo = min(getVisibility(), handShape.timeTo - data.time);
 		if (timeTo < 0) {
 			return;
 		}
