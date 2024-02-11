@@ -1,6 +1,5 @@
 package log.charter.gui.components.toolbar;
 
-import java.awt.Button;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -13,15 +12,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JToolBar;
+import javax.swing.JButton;
 
-import log.charter.data.GridType;
 import log.charter.data.config.Config;
+import log.charter.data.config.GridType;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
-import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
+import log.charter.gui.chartPanelDrawers.common.AudioDrawer;
 import log.charter.gui.components.FieldWithLabel;
 import log.charter.gui.components.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.TextInputWithValidation;
@@ -29,17 +27,17 @@ import log.charter.gui.components.TextInputWithValidation.IntegerValueSetter;
 import log.charter.gui.components.TextInputWithValidation.IntegerValueValidator;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.lookAndFeel.CharterButtonUI;
 import log.charter.gui.lookAndFeel.CharterSliderUI;
 import log.charter.io.Logger;
 
 public class ChartToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
-	public static final int height = 20;
+	public static final int height = 34; // 20
 
-	private WaveFormDrawer audioDrawer;
+	private AudioDrawer audioDrawer;
 	private AudioHandler audioHandler;
-	private ModeManager modeManager;
 	private RepeatManager repeatManager;
 
 	private FieldWithLabel<JCheckBox> midi;
@@ -49,28 +47,26 @@ public class ChartToolbar extends JToolBar {
 	private FieldWithLabel<JCheckBox> repeater;
 
 	private FieldWithLabel<TextInputWithValidation> gridSize;
+	private FieldWithLabel<TextInputWithValidation> slowedSpeed;
 
 	private FieldWithLabel<JRadioButton> beatGridType;
 	private FieldWithLabel<JRadioButton> noteGridType;
-
+	
 	private int newSpeed = Config.stretchedMusicSpeed;
 
 	public ChartToolbar() {
 		super();
 		setSize(getWidth(), 20);
 
-		setLayout(null);
-
 		setFocusable(true);
 		setFloatable(false);
-		setBackground(ColorLabel.BASE_BG_3.color());
+		setBackground(ColorLabel.BASE_BG_1.color());
 	}
 
-	public void init(final WaveFormDrawer audioDrawer, final AudioHandler audioHandler,
-			final KeyboardHandler keyboardHandler, final ModeManager modeManager, final RepeatManager repeatManager) {
+	public void init(final AudioDrawer audioDrawer, final AudioHandler audioHandler,
+			final KeyboardHandler keyboardHandler, final RepeatManager repeatManager) {
 		this.audioDrawer = audioDrawer;
 		this.audioHandler = audioHandler;
-		this.modeManager = modeManager;
 		this.repeatManager = repeatManager;
 
 		final AtomicInteger x = new AtomicInteger(0);
@@ -136,25 +132,14 @@ public class ChartToolbar extends JToolBar {
 					Config.markChanged();
 				});
 		add(x, gridSize);
-		x.addAndGet(1);
+		x.addAndGet(10);
 
-		final Font miniFont = new Font(Font.DIALOG, Font.PLAIN, 7);
+		final Font miniFont = new Font(Font.DIALOG, Font.PLAIN, 9);
 
-		final Button doubleGridButton = new Button("* 2");
-		doubleGridButton.setSize(20, 10);
-		doubleGridButton.setFont(miniFont);
-		doubleGridButton.setFocusable(false);
-		doubleGridButton.addActionListener(a -> {
-			if (Config.gridSize <= 64) {
-				Config.gridSize *= 2;
-				Config.markChanged();
-				updateValues();
-			}
-		});
-		addPartialComponent(x, 0, doubleGridButton);
 
-		final Button halveGridButton = new Button("/ 2");
-		halveGridButton.setSize(doubleGridButton.getSize());
+		final JButton halveGridButton = new JButton("-");
+		halveGridButton.setUI(new CharterButtonUI());
+		halveGridButton.setSize(24, 20);
 		halveGridButton.setFont(miniFont);
 		halveGridButton.setFocusable(false);
 		halveGridButton.addActionListener(a -> {
@@ -166,6 +151,20 @@ public class ChartToolbar extends JToolBar {
 		});
 		addPartialComponent(x, 10, halveGridButton);
 
+		final JButton doubleGridButton = new JButton("+");
+		doubleGridButton.setUI(new CharterButtonUI());
+		doubleGridButton.setSize(24, 20);
+		doubleGridButton.setFont(miniFont);
+		doubleGridButton.setFocusable(false);
+		doubleGridButton.addActionListener(a -> {
+			if (Config.gridSize <= 64) {
+				Config.gridSize *= 2;
+				Config.markChanged();
+				updateValues();
+			}
+		});
+		addPartialComponent(x, 0, doubleGridButton);
+		
 		x.addAndGet(doubleGridButton.getWidth() + 5);
 
 		beatGridType = createRadioButtonField(Label.GRID_PANE_BEAT_TYPE, 2, () -> {
@@ -198,11 +197,12 @@ public class ChartToolbar extends JToolBar {
 	}
 
 	private void addPlaybackOptions(final AtomicInteger x) {
-		final FieldWithLabel<TextInputWithValidation> slowedSpeed = createNumberField(
+		slowedSpeed = createNumberField(
 				Label.TOOLBAR_SLOWED_PLAYBACK_SPEED, LabelPosition.LEFT_PACKED, 0, 30, //
 				Config.stretchedMusicSpeed, 1, 500, false, this::changeSpeed);
 		this.add(x, slowedSpeed);
 
+		
 		final JSlider volumeSlider = new JSlider(0, 100, getVolumeAsInteger(Config.volume));
 		volumeSlider.addChangeListener(e -> {
 			Config.volume = volumeSlider.getValue() / 100.0;
@@ -211,7 +211,7 @@ public class ChartToolbar extends JToolBar {
 		volumeSlider.setFocusable(false);
 		volumeSlider.setBackground(getBackground());
 		volumeSlider.setUI(new CharterSliderUI());
-
+		
 		final FieldWithLabel<JSlider> volume = new FieldWithLabel<JSlider>("Volume", 0, 101, 20, volumeSlider,
 				LabelPosition.LEFT_PACKED);
 		add(x, volume);
@@ -253,14 +253,14 @@ public class ChartToolbar extends JToolBar {
 	}
 
 	private void setComponentBounds(final Component c, final int x, final int y, final int w, final int h) {
-		final Dimension newSize = new Dimension(w, h);
+	    final Dimension newSize = new Dimension(w, h);
 
-		c.setMinimumSize(newSize);
-		c.setPreferredSize(newSize);
-		c.setMaximumSize(newSize);
-		c.setBounds(x, y, w, h);
-		c.validate();
-		c.repaint();
+	    c.setMinimumSize(newSize);
+	    c.setPreferredSize(newSize);
+	    c.setMaximumSize(newSize);
+	    c.setBounds(x, y, w, h);
+	    c.validate();
+	    c.repaint();
 	}
 
 	private FieldWithLabel<JRadioButton> createRadioButtonField(final Label label, final int separationWidth,
@@ -310,7 +310,6 @@ public class ChartToolbar extends JToolBar {
 		claps.field.setSelected(audioHandler.claps());
 		metronome.field.setSelected(audioHandler.metronome());
 		waveformGraph.field.setSelected(audioDrawer.drawing());
-		waveformGraph.field.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
 		repeater.field.setSelected(repeatManager.isOn());
 
 		gridSize.field.setTextWithoutEvent(Config.gridSize + "");
