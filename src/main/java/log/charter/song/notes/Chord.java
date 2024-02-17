@@ -11,9 +11,13 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+
 import log.charter.io.rs.xml.song.ArrangementBendValue;
 import log.charter.io.rs.xml.song.ArrangementChord;
 import log.charter.io.rs.xml.song.ArrangementChordNote;
+import log.charter.io.rsc.xml.converters.ChordConverter;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
 import log.charter.song.enums.HOPO;
@@ -21,6 +25,8 @@ import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.util.CollectionUtils.HashMap2;
 
+@XStreamAlias("chord")
+@XStreamConverter(ChordConverter.class)
 public class Chord extends GuitarSound {
 	public enum ChordNotesVisibility {
 		NONE, NOTES, TAILS;
@@ -29,6 +35,11 @@ public class Chord extends GuitarSound {
 	private int templateId;
 	public boolean splitIntoNotes = false;
 	public HashMap2<Integer, ChordNote> chordNotes = new HashMap2<>();
+
+	public Chord(final int pos, final int templateId) {
+		super(pos);
+		this.templateId = templateId;
+	}
 
 	public Chord(final int pos, final int templateId, final ChordTemplate template) {
 		super(pos);

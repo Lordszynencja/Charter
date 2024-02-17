@@ -1,13 +1,16 @@
 package log.charter.song;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.io.rs.xml.song.ArrangementAnchor;
 import log.charter.song.notes.Position;
 
 @XStreamAlias("anchor")
 public class Anchor extends Position {
+	@XStreamAsAttribute
 	public int fret;
+	@XStreamAsAttribute
 	public int width;
 
 	public Anchor(final int position, final int fret) {

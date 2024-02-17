@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import log.charter.data.ChartData;
 import log.charter.data.copySystem.data.positions.CopiedHandShapePosition;
 import log.charter.io.Logger;
-import log.charter.song.ArrangementChart;
+import log.charter.song.Arrangement;
 import log.charter.song.BeatsMap;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
@@ -32,7 +32,7 @@ public class HandShapesCopyData implements ICopyData {
 
 	@Override
 	public void paste(final ChartData data, final boolean convertFromBeats) {
-		final ArrangementChart arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.getCurrentArrangement();
 		final BeatsMap beatsMap = data.songChart.beatsMap;
 		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
 

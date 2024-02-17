@@ -20,7 +20,7 @@ public class LyricLinesDrawer {
 	private static int height = beatTextY - lyricLinesY;
 	private static Font lyricLineFont = new Font(Font.DIALOG, Font.PLAIN, height - 3);
 
-	public static void reloadSizes() {
+	public static void reloadGraphics() {
 		height = beatTextY - lyricLinesY;
 		lyricLineFont = new Font(Font.DIALOG, Font.PLAIN, (int) (height * 0.9));
 	}
@@ -39,7 +39,7 @@ public class LyricLinesDrawer {
 		}
 
 		public void draw(final Graphics g) {
-			reloadSizes();
+			reloadGraphics();
 			backgrounds.draw(g);
 			texts.draw(g);
 		}

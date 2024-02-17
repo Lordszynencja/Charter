@@ -2,7 +2,11 @@ package log.charter.song.notes;
 
 import static log.charter.util.Utils.mapInteger;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+
 import log.charter.io.rs.xml.song.ArrangementNote;
+import log.charter.io.rsc.xml.converters.NoteConverter;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
 import log.charter.song.enums.BassPickingTechnique;
@@ -11,9 +15,11 @@ import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.util.CollectionUtils.ArrayList2;
 
+@XStreamAlias("note")
+@XStreamConverter(NoteConverter.class)
 public class Note extends GuitarSound {
-	public int string;
-	public int fret;
+	public int string = 0;
+	public int fret = 0;
 	public BassPickingTechnique bassPicking = BassPickingTechnique.NONE;
 	public Mute mute = Mute.NONE;
 	public HOPO hopo = HOPO.NONE;

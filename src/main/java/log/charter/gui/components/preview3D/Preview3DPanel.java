@@ -153,7 +153,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
 			GL30.glDepthFunc(GL30.GL_GEQUAL);
 
-			if (data == null) {
+			if (data == null || data.isEmpty) {
 				swapBuffers();
 				return;
 			}
@@ -205,9 +205,8 @@ public class Preview3DPanel extends AWTGLCanvas {
 			// timer.print("paintGL timings:", "%20s: %d");
 		} catch (final Exception e) {
 			Logger.error("Exception in paintGL", e);
-			throw e;
 		} catch (final Error error) {
-			error.printStackTrace();
+			Logger.error("Exception in paintGL", error);
 		}
 	}
 

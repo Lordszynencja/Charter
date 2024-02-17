@@ -9,14 +9,13 @@ import log.charter.song.Level;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
 
 @XStreamAlias("level")
 public class ArrangementLevel {
-	public static ArrayList2<ArrangementLevel> fromLevels(final HashMap2<Integer, Level> levels,
+	public static ArrayList2<ArrangementLevel> fromLevels(final ArrayList2<Level> levels,
 			final ArrayList2<ChordTemplate> chordTemplates) {
 		final ArrayList2<ArrangementLevel> arrangementLevels = levels
-				.map((difficulty, level) -> new ArrangementLevel(difficulty, level, chordTemplates));
+				.mapWithId((difficulty, level) -> new ArrangementLevel(difficulty, level, chordTemplates));
 
 		arrangementLevels.sort((a, b) -> Integer.compare(a.difficulty, b.difficulty));
 
@@ -48,7 +47,7 @@ public class ArrangementLevel {
 	private void setChordsAndNotes(final Level level, final ArrayList2<ChordTemplate> chordTemplates) {
 		notes = new CountedList<>();
 		chords = new CountedList<>();
-		final ArrayList2<ChordOrNote> chordsAndNotes = level.chordsAndNotes;
+		final ArrayList2<ChordOrNote> chordsAndNotes = level.sounds;
 
 		for (int i = 0; i < chordsAndNotes.size(); i++) {
 			final ChordOrNote sound = chordsAndNotes.get(i);

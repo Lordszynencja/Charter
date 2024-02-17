@@ -25,8 +25,8 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
-import log.charter.gui.panes.VocalPane;
-import log.charter.song.ArrangementChart;
+import log.charter.gui.panes.songEdits.VocalPane;
+import log.charter.song.Arrangement;
 import log.charter.song.Beat;
 import log.charter.song.Level;
 import log.charter.song.notes.ChordOrNote;
@@ -129,7 +129,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			dragPositions(PositionType.ANCHOR, clickData, data.getCurrentArrangementLevel().anchors);
 		}
 		if (clickData.pressHighlight.type == PositionType.GUITAR_NOTE) {
-			dragNotes(clickData, data.getCurrentArrangementLevel().chordsAndNotes);
+			dragNotes(clickData, data.getCurrentArrangementLevel().sounds);
 		}
 		if (clickData.pressHighlight.type == PositionType.HAND_SHAPE) {
 			dragPositionsWithLength(PositionType.HAND_SHAPE, clickData, data.getCurrentArrangementLevel().handShapes);
@@ -221,11 +221,11 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			final List<IPosition> left, final List<IPosition> right) {
 		splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, data.songChart.vocals.vocals);
 
-		for (final ArrangementChart arrangement : data.songChart.arrangements) {
+		for (final Arrangement arrangement : data.songChart.arrangements) {
 			splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, arrangement.toneChanges);
-			for (final Level level : arrangement.levels.values()) {
+			for (final Level level : arrangement.levels) {
 				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.anchors);
-				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.chordsAndNotes);
+				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.sounds);
 				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.handShapes);
 			}
 		}

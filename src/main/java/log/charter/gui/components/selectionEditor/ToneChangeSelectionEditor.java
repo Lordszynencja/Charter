@@ -22,7 +22,7 @@ import log.charter.gui.components.AutocompleteInput;
 import log.charter.gui.components.FieldWithLabel;
 import log.charter.gui.components.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.TextInputWithValidation;
-import log.charter.song.ArrangementChart;
+import log.charter.song.Arrangement;
 import log.charter.song.ToneChange;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
@@ -109,7 +109,7 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 
 		final String name = toneNameField.field.getText();
 
-		final ArrangementChart arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.getCurrentArrangement();
 		if (name.isBlank()) {
 			setError(TONE_NAME_CANT_BE_EMPTY);
 			return;

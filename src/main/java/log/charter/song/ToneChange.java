@@ -1,20 +1,13 @@
 package log.charter.song;
 
-import static java.util.stream.Collectors.toCollection;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import java.util.List;
-
-import log.charter.io.rs.xml.song.ArrangementTone;
 import log.charter.song.notes.Position;
-import log.charter.util.CollectionUtils.ArrayList2;
 
+@XStreamAlias("toneChange")
 public class ToneChange extends Position {
-	public static ArrayList2<ToneChange> fromArrangementTones(final List<ArrangementTone> arrangementTones) {
-		return arrangementTones.stream()//
-				.map(arrangementTone -> new ToneChange(arrangementTone))//
-				.collect(toCollection(ArrayList2::new));
-	}
-
+	@XStreamAsAttribute
 	public String toneName;
 
 	public ToneChange() {
@@ -29,10 +22,5 @@ public class ToneChange extends Position {
 	public ToneChange(final ToneChange other) {
 		super(other);
 		toneName = other.toneName;
-	}
-
-	public ToneChange(final ArrangementTone arrangementTone) {
-		super(arrangementTone.time);
-		toneName = arrangementTone.name;
 	}
 }

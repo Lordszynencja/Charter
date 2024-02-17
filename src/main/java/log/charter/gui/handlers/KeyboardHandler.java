@@ -100,9 +100,9 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
 import log.charter.gui.components.toolbar.ChartToolbar;
-import log.charter.gui.panes.HandShapePane;
-import log.charter.gui.panes.VocalPane;
-import log.charter.song.ArrangementChart;
+import log.charter.gui.panes.songEdits.HandShapePane;
+import log.charter.gui.panes.songEdits.VocalPane;
+import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
@@ -414,7 +414,7 @@ public class KeyboardHandler implements KeyListener {
 		undoSystem.addUndo();
 
 		final Map<Integer, Integer> movedChordTemplates = new HashMap<>();
-		final ArrangementChart arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.getCurrentArrangement();
 		final ArrayList2<ChordTemplate> chordTemplates = arrangement.chordTemplates;
 
 		for (final Selection<ChordOrNote> selection : selectedSounds) {
@@ -468,7 +468,7 @@ public class KeyboardHandler implements KeyListener {
 
 		final int strings = data.currentStrings();
 		final Map<Integer, Integer> movedChordTemplates = new HashMap<>();
-		final ArrangementChart arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.getCurrentArrangement();
 		final ArrayList2<ChordTemplate> chordTemplates = arrangement.chordTemplates;
 
 		for (final Selection<ChordOrNote> selection : selectedSounds) {
@@ -519,7 +519,7 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final ArrangementChart arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.getCurrentArrangement();
 		final Map<Integer, Integer> stringDifferences = new HashMap<>();
 		for (int i = 0; i < strings; i++) {
 			stringDifferences.put(i, arrangement.tuning.getStringOffset(i) - arrangement.tuning.getStringOffset(i + 1));
@@ -593,7 +593,7 @@ public class KeyboardHandler implements KeyListener {
 		}
 
 		final int strings = data.currentStrings();
-		final ArrangementChart arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.getCurrentArrangement();
 		final Map<Integer, Integer> stringDifferences = new HashMap<>();
 		for (int i = 1; i < strings; i++) {
 			stringDifferences.put(i, arrangement.tuning.getStringOffset(i) - arrangement.tuning.getStringOffset(i - 1));
@@ -833,7 +833,7 @@ public class KeyboardHandler implements KeyListener {
 		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
 		final ChordOrNote sound = selected.get(0).selectable;
 		final boolean newValue = sound.isNote() ? !sound.note.linkNext : !sound.chord.linkNext();
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
 
 		undoSystem.addUndo();
 		selected.forEach(selectedValue -> {
@@ -959,7 +959,7 @@ public class KeyboardHandler implements KeyListener {
 	private void snapNotePositions(final Collection<ChordOrNote> positions) {
 		snapPositions(positions);
 
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
 		for (int i = 1; i < sounds.size(); i++) {
 			while (i < sounds.size() && sounds.get(i).position() == sounds.get(i - 1).position()) {
 				sounds.remove(i);
@@ -1045,12 +1045,12 @@ public class KeyboardHandler implements KeyListener {
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			undoSystem.addUndo();
 
-			final ArrangementChart arrangement = data.getCurrentArrangement();
+			final Arrangement arrangement = data.getCurrentArrangement();
 			final Level level = data.getCurrentArrangementLevel();
 			snapPositions(getFromTo(arrangement.eventPoints, from, to));
 			snapPositions(getFromTo(arrangement.toneChanges, from, to));
 			snapPositions(getFromTo(level.anchors, from, to));
-			snapNotePositions(getFromTo(level.chordsAndNotes, from, to));
+			snapNotePositions(getFromTo(level.sounds, from, to));
 			snapPositionsWithLength(getFromTo(level.handShapes, from, to), level.handShapes);
 
 			reselectAfterSnapping(accessor.type, selected);

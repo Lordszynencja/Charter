@@ -15,7 +15,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.KeyboardHandler;
-import log.charter.song.ArrangementChart;
+import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.util.CollectionUtils.HashSet2;
@@ -62,7 +62,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	private void templateEdited() {
 		undoSystem.addUndo();
 
-		final ArrangementChart arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.getCurrentArrangement();
 		final int templateId = arrangement.getChordTemplateIdWithSave(chordTemplate);
 
 		final SelectionAccessor<HandShape> selectionAccessor = selectionManager

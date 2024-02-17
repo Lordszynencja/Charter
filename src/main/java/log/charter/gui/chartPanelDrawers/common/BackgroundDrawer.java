@@ -32,7 +32,7 @@ public class BackgroundDrawer {
 	private static int textY = timingY + 30;
 	private static Font timeFont = new Font(Font.SANS_SERIF, Font.BOLD, 14);
 
-	public static void reloadSizes() {
+	public static void reloadGraphics() {
 		final int y1 = timingY;
 		final int y2 = editAreaHeight;
 
@@ -44,7 +44,7 @@ public class BackgroundDrawer {
 	}
 
 	static {
-		reloadSizes();
+		reloadGraphics();
 	}
 
 	private ChartData data;
@@ -124,5 +124,11 @@ public class BackgroundDrawer {
 
 		drawLanesBackground(g);
 		drawTimeScale(g);
+
+		g.setColor(ColorLabel.MARKER.color());
+		final int startX = timeToX(0, data.time);
+		g.drawLine(startX, lanesTop + 30, startX, lanesBottom - 30);
+		final int endX = timeToX(data.songChart.beatsMap.songLengthMs, data.time);
+		g.drawLine(endX, lanesTop + 30, endX, lanesBottom - 30);
 	}
 }

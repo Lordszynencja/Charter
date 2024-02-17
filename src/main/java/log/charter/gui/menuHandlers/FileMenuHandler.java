@@ -15,9 +15,12 @@ import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.panes.ColorConfigPane;
 import log.charter.gui.panes.ConfigPane;
 import log.charter.gui.panes.graphicalConfig.GraphicConfigPane;
+import log.charter.gui.panes.imports.GP5ImportOptions;
 import log.charter.io.Logger;
-import log.charter.io.gp.gp5.GP5File;
 import log.charter.io.gp.gp5.GP5FileReader;
+import log.charter.io.gp.gp5.data.GP5File;
+import log.charter.io.gp.gp5.transformers.GP5FileToSongChart;
+import log.charter.song.SongChart;
 import log.charter.util.FileChooseUtils;
 
 public class FileMenuHandler extends CharterMenuHandler {
@@ -86,10 +89,13 @@ public class FileMenuHandler extends CharterMenuHandler {
 
 		try {
 			final GP5File gp5File = GP5FileReader.importGPFile(file);
-			data.songChart.addGP5Arrangements(gp5File);
-			arrangementFixer.fixArrangement();
 
-			charterMenuBar.refreshMenus();
+			final int startPosition = data.songChart.beatsMap.beats.get(0).position();
+
+			final SongChart temporaryChart = GP5FileToSongChart.transform(data.songChart.beatsMap.songLengthMs,
+					startPosition, gp5File);
+
+			new GP5ImportOptions(frame, arrangementFixer, charterMenuBar, data, temporaryChart);
 		} catch (final Exception e) {
 			Logger.error("Couldn't import gp5 file " + file.getAbsolutePath(), e);
 		}

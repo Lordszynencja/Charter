@@ -9,12 +9,27 @@ import log.charter.util.RW;
 
 public class Localization {
 	public enum Label {
+		ARRANGEMENT_TYPE_COMBO("Combo"), //
+		ARRANGEMENT_TYPE_LEAD("Lead"), //
+		ARRANGEMENT_TYPE_RHYTHM("Rhythm"), //
+		ARRANGEMENT_TYPE_BASS("Bass"), //
+
+		ARRANGEMENT_SUBTYPE_MAIN("Main"), //
+		ARRANGEMENT_SUBTYPE_BONUS("Bonus"), //
+		ARRANGEMENT_SUBTYPE_ALTERNATE("Alternate"), //
+
 		ARRANGEMENT_MENU("Arrangement"), //
+		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
+		ARRANGEMENT_MENU_VOCALS("Vocals"), //
 		ARRANGEMENT_MENU_OPTIONS("Arrangement options"), //
 		ARRANGEMENT_MENU_TOGGLE_MIDI_NOTES("Toggle midi notes"), //
 		ARRANGEMENT_MENU_TOGGLE_CLAPS("Toggle claps on note"), //
 		ARRANGEMENT_MENU_TOGGLE_METRONOME("Toggle metronome"), //
 		ARRANGEMENT_MENU_TOGGLE_WAVEFORM("Toggle waveform drawing"), //
+		ARRANGEMENT_MENU_DELETE_ARRANGEMENT("Delete arrangement"), //
+
+		DELETE_ARRANGEMENT_TITLE("Delete arrangement"), //
+		DELETE_ARRANGEMENT_MSG("Are you sure you want to delete arrangement %s?"), //
 
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
@@ -201,6 +216,13 @@ public class Localization {
 		GUITAR_MENU_AUTOCREATE_FHP("Autocreate Fret Hand Positions"), //
 		GUITAR_MENU_WINDOWED_PREVIEW("Windowed preview"), //
 		GUITAR_MENU_BORDERLESS_WINDOWED_PREVIEW("Borderless windowed preview"), //
+
+		GP5_IMPORT("GP5 Import options"), //
+		GP5_IMPORT_BEAT_MAP_CHANGE("Import beat map"), //
+		GP5_IMPORT_ARRANGEMENT_NAME("Arrangement %d, %s:"), //
+		GP5_IMPORT_SKIP_ARRANGEMENT("Skip arrangement"), //
+		GP5_IMPORT_TO_NEW_ARRANGEMENT("To new arrangement"), //
+		GP5_IMPORT_TO_EXISTING_ARRANGEMENT("To arrangement %d, %s"), //
 
 		TEMPO_BEAT_PANE("Tempo beat options"), //
 		TEMPO_BEAT_PANE_BPM("BPM"), //

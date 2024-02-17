@@ -55,6 +55,7 @@ import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.main.LogCharterRSMain;
+import log.charter.song.Arrangement;
 import log.charter.sound.StretchedFileLoader;
 import net.sf.image4j.codec.ico.ICODecoder;
 
@@ -124,8 +125,7 @@ public class CharterFrame extends JFrame {
 		arrangementValidator.init(data, this);
 		audioDrawer.init(data, chartPanel, chartToolbar, modeManager);
 		audioHandler.init(chartToolbar, data, this, modeManager, repeatManager);
-		beatsDrawer.init(data, chartPanel, modeManager, mouseButtonPressReleaseHandler, repeatManager,
-				selectionManager);
+		beatsDrawer.init(data, chartPanel, modeManager, repeatManager, selectionManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
 		data.init(this, audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
 		keyboardHandler.init(audioDrawer, audioHandler, arrangementFixer, chartToolbar, copyManager, data, this, framer,
@@ -355,6 +355,15 @@ public class CharterFrame extends JFrame {
 		resize();
 	}
 
+	private String getArrangementTitlePart() {
+		final int number = data.currentArrangement + 1;
+		final Arrangement arrangement = data.getCurrentArrangement();
+		final String arrangementTypeName = arrangement.getTypeNameLabel();
+		final String tuning = arrangement.getTuningName("%s - %s");
+
+		return "[%d] %s (%s)".formatted(number, arrangementTypeName, tuning);
+	}
+
 	private String makeTitle() {
 		if (data.isEmpty) {
 			return LogCharterRSMain.TITLE + " : " + Label.NO_PROJECT.label();
@@ -364,18 +373,18 @@ public class CharterFrame extends JFrame {
 				+ " : ";
 
 		switch (modeManager.getMode()) {
-		case GUITAR:
-			title += data.getCurrentArrangement().getTypeNameLabel();
-			break;
-		case TEMPO_MAP:
-			title += "Tempo map";
-			break;
-		case VOCALS:
-			title += "Vocals";
-			break;
-		default:
-			title += "Surprise mode! (contact dev for fix)";
-			break;
+			case GUITAR:
+				title += getArrangementTitlePart();
+				break;
+			case TEMPO_MAP:
+				title += "Tempo map";
+				break;
+			case VOCALS:
+				title += "Vocals";
+				break;
+			default:
+				title += "Surprise mode! (contact dev for fix)";
+				break;
 		}
 
 		title += undoSystem.isSaved() ? "" : "*";

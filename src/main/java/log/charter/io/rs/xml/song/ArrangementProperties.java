@@ -1,7 +1,11 @@
 package log.charter.io.rs.xml.song;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+import log.charter.song.Arrangement.ArrangementSubtype;
+
+@XStreamAlias("arrangementProperties")
 public class ArrangementProperties {
 	/**
 	 * is main arrangement
@@ -68,4 +72,56 @@ public class ArrangementProperties {
 	public int pathRhythm;
 	@XStreamAsAttribute
 	public int pathBass;
+
+	public ArrangementType getType() {
+		if (pathLead == 1) {
+			return ArrangementType.Lead;
+		}
+		if (pathBass == 1) {
+			return ArrangementType.Bass;
+		}
+		if (pathRhythm == 1) {
+			return ArrangementType.Rhythm;
+		}
+
+		return ArrangementType.Combo;
+	}
+
+	public void setType(final ArrangementType type) {
+		switch (type) {
+			case Bass:
+				pathBass = 1;
+				break;
+			case Lead:
+				pathLead = 1;
+				break;
+			case Rhythm:
+				pathRhythm = 1;
+				break;
+			case Combo:
+			default:
+				break;
+		}
+	}
+
+	public ArrangementSubtype getSubtype() {
+		if (represent == 1) {
+			return ArrangementSubtype.MAIN;
+		} else if (bonusArr == 1) {
+			return ArrangementSubtype.BONUS;
+		}
+
+		return ArrangementSubtype.ALTERNATE;
+	}
+
+	public void setSubtype(final ArrangementSubtype subType) {
+		represent = 0;
+		bonusArr = 0;
+
+		if (subType == ArrangementSubtype.MAIN) {
+			represent = 1;
+		} else if (subType == ArrangementSubtype.BONUS) {
+			bonusArr = 1;
+		}
+	}
 }

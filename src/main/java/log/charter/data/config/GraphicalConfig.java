@@ -55,7 +55,7 @@ public class GraphicalConfig {
 
 	public static Theme theme = Theme.MODERN;
 	public static int toneChangeHeight = 15;
-	public static int anchorInfoHeight = 15;
+	public static int anchorInfoHeight = 20;
 	public static int noteWidth = 25;
 	public static int noteHeight = 25;
 	public static int handShapesHeight = 12;

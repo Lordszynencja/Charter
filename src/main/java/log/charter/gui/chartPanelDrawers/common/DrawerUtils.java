@@ -20,11 +20,11 @@ public class DrawerUtils {
 	public static final int sectionNamesY = 5;
 	public static final int phraseNamesY = sectionNamesY + 15;
 	public static final int eventNamesY = phraseNamesY + 15;
-	public static final int lyricLinesY = eventNamesY + 20;
+	public static final int lyricLinesY = eventNamesY + 15;
 	public static int beatTextY = lyricLinesY + 15;
 	public static int beatSizeTextY = beatTextY + 15;
 	public static int toneChangeY = beatSizeTextY + 10;
-	public static int anchorY = toneChangeY + toneChangeHeight;
+	public static int anchorY = toneChangeY + toneChangeHeight + 2;
 	public static int lanesTop = anchorY + anchorInfoHeight;
 	public static int laneHeight;
 	public static int lanesHeight;
@@ -65,7 +65,7 @@ public class DrawerUtils {
 	}
 
 	private static void setEditAreaSizesForGuitar(final ArrangementType arrangementType, final int strings) {
-		anchorY = toneChangeY + toneChangeHeight;
+		anchorY = toneChangeY + toneChangeHeight + 2;
 		lanesTop = anchorY + anchorInfoHeight;
 		laneHeight = (int) (noteHeight * (arrangementType == ArrangementType.Bass ? 2 : 1.5));
 		tailHeight = getAsOdd(noteHeight * 3 / 4);
@@ -85,10 +85,10 @@ public class DrawerUtils {
 			default -> setEditAreaSizesForTempoMap();
 		}
 
-		BackgroundDrawer.reloadSizes();
-		GuitarDrawer.reloadSizes();
-		LyricLinesDrawer.reloadSizes();
-		VocalsDrawer.reloadSizes();
+		BackgroundDrawer.reloadGraphics();
+		GuitarDrawer.reloadGraphics();
+		LyricLinesDrawer.reloadGraphics();
+		VocalsDrawer.reloadGraphics();
 	}
 
 	public static int getAsOdd(final int x) {

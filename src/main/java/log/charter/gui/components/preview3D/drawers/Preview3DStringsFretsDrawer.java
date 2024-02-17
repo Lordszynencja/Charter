@@ -78,7 +78,7 @@ public class Preview3DStringsFretsDrawer {
 		}
 
 		final int[] highlightValues = new int[Config.frets + 1];
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
 		final int idFrom = findFirstIdAfter(sounds, data.time - highlightTime);
 		if (idFrom < 0) {
 			return new double[Config.frets + 1];

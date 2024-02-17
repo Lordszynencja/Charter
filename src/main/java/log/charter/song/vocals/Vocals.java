@@ -7,7 +7,7 @@ import log.charter.io.rs.xml.vocals.ArrangementVocals;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("vocals")
-@XStreamInclude(value = { Vocal.class })
+@XStreamInclude(Vocal.class)
 public class Vocals {
 
 	public ArrayList2<Vocal> vocals = new ArrayList2<>();

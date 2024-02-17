@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 import log.charter.io.rs.xml.song.SongArrangement;
-import log.charter.io.rsc.xml.RocksmithChartProject;
+import log.charter.io.rsc.xml.ChartProject;
 import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.grid.GridPosition;
@@ -19,10 +19,16 @@ public class BeatsMap {
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 
 	/**
-	 * creates beats map for new project
+	 * creates base beats map
 	 */
 	public BeatsMap(final int songLength) {
 		this(songLength, true);
+	}
+
+	public BeatsMap(final int songLength, final int startFrom) {
+		songLengthMs = songLength;
+		beats.add(new Beat(startFrom, 4, 4, true));
+		makeBeatsUntilSongEnd();
 	}
 
 	public BeatsMap(final int songLength, final boolean fillBeatsForSong) {
@@ -36,7 +42,7 @@ public class BeatsMap {
 	/**
 	 * creates beats map for existing project
 	 */
-	public BeatsMap(final int songLengthMs, final RocksmithChartProject rocksmithChartProject) {
+	public BeatsMap(final int songLengthMs, final ChartProject rocksmithChartProject) {
 		this.songLengthMs = songLengthMs;
 
 		beats = rocksmithChartProject.beats;

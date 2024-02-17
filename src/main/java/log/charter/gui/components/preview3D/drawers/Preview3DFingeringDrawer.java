@@ -184,7 +184,7 @@ public class Preview3DFingeringDrawer {
 		}
 
 		final Level level = data.getCurrentArrangementLevel();
-		final ChordOrNote sound = findLastBeforeEqual(level.chordsAndNotes, data.time + 20);
+		final ChordOrNote sound = findLastBeforeEqual(level.sounds, data.time + 20);
 		if (sound == null || sound.position() < handShape.position() || sound.isNote()) {
 			return handShape.template;
 		}

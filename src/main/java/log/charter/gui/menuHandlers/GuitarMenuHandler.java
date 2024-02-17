@@ -84,7 +84,7 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		undoSystem.addUndo();
 
 		final Level level = data.getCurrentArrangementLevel();
-		ArrayList2<ChordOrNote> sounds = level.chordsAndNotes;
+		ArrayList2<ChordOrNote> sounds = level.sounds;
 		for (final PositionType positionType : PositionType.values()) {
 			if (positionType == PositionType.NONE) {
 				continue;

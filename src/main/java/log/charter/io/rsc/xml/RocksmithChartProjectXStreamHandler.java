@@ -7,9 +7,21 @@ import com.thoughtworks.xstream.converters.collections.MapConverter;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
+import log.charter.song.Anchor;
+import log.charter.song.Arrangement;
 import log.charter.song.Beat;
+import log.charter.song.ChordTemplate;
+import log.charter.song.EventPoint;
+import log.charter.song.HandShape;
+import log.charter.song.Level;
+import log.charter.song.Phrase;
+import log.charter.song.ToneChange;
+import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.Note;
+import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.CollectionUtils.HashSet2;
 
 public class RocksmithChartProjectXStreamHandler {
 	private static XStream xstream = prepareXStream();
@@ -18,18 +30,31 @@ public class RocksmithChartProjectXStreamHandler {
 		final XStream xstream = new XStream();
 		xstream.registerConverter(new NullSafeIntegerConverter());
 		xstream.registerConverter(new CollectionConverter(xstream.getMapper(), ArrayList2.class));
-		xstream.registerConverter(new MapConverter(xstream.getMapper(), HashMap2.class));
+		xstream.registerConverter(new CollectionConverter(xstream.getMapper(), HashSet2.class));
+		xstream.registerConverter(new MapConverter(xstream.getMapper(), HashMap2.class), 0);
+		xstream.alias("beat", Beat.class);
 		xstream.ignoreUnknownElements();
-		xstream.processAnnotations(RocksmithChartProject.class);
+		xstream.processAnnotations(ChartProject.class);
 		xstream.allowTypes(new Class[] { //
-				RocksmithChartProject.class, //
-				Beat.class });
+				Anchor.class, //
+				Arrangement.class, //
+				Beat.class, //
+				ChordOrNote.class, //
+				ChordTemplate.class, //
+				EventPoint.class, //
+				HandShape.class, //
+				Level.class, //
+				Note.class, //
+				Phrase.class, //
+				ChartProject.class, //
+				ToneChange.class, //
+				Vocal.class });
 
 		return xstream;
 	}
 
-	public static RocksmithChartProject readProject(final String xml) {
-		final RocksmithChartProject project = (RocksmithChartProject) xstream.fromXML(xml);
+	public static ChartProject readProject(final String xml) {
+		final ChartProject project = (ChartProject) xstream.fromXML(xml);
 
 		if (project.chartFormatVersion == 1) {
 			project.editMode = EditMode.GUITAR;
@@ -43,7 +68,7 @@ public class RocksmithChartProjectXStreamHandler {
 		return project;
 	}
 
-	public static String saveProject(final RocksmithChartProject rocksmithChartProject) {
+	public static String saveProject(final ChartProject rocksmithChartProject) {
 		return XMLHandler.generateXML(xstream, rocksmithChartProject);
 	}
 }

@@ -35,12 +35,14 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SongFolderSelectPane;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
+import log.charter.io.rs.xml.RSXMLToArrangement;
+import log.charter.io.rs.xml.RSXMLToSongChart;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
 import log.charter.io.rs.xml.vocals.ArrangementVocals;
 import log.charter.io.rs.xml.vocals.VocalsXStreamHandler;
-import log.charter.io.rsc.xml.RocksmithChartProject;
-import log.charter.song.ArrangementChart;
+import log.charter.io.rsc.xml.ChartProject;
+import log.charter.song.Arrangement;
 import log.charter.song.SongChart;
 import log.charter.song.vocals.Vocals;
 import log.charter.sound.MusicData;
@@ -122,10 +124,6 @@ public class SongFileHandler {
 
 		final List<String> filesToBackup = new ArrayList<>();
 		filesToBackup.add(data.projectFileName);
-		for (int i = 0; i < data.songChart.arrangements.size(); i++) {
-			filesToBackup.add(data.songChart.arrangements.get(i).getFileName(i + 1));
-		}
-		filesToBackup.add(vocalsFileName);
 		System.out.println("Doing backup of " + data.path + ", files: " + filesToBackup);
 
 		makeBackups(data.path, filesToBackup);
@@ -298,38 +296,65 @@ public class SongFileHandler {
 		return songFolder;
 	}
 
-	private void openInternal(final LoadingDialog loadingDialog, final String path) {
-		loadingDialog.setProgress(0, Label.LOADING_PROJECT_FILE.label());
-
-		final File projectFileChosen = new File(path);
-		final String dir = projectFileChosen.getParent() + File.separator;
+	private ChartProject loadProjectFile(final LoadingDialog loadingDialog, final int progressAfter,
+			final File projectFileChosen) {
 		final String name = projectFileChosen.getName().toLowerCase();
-
 		if (!name.endsWith(".rscp")) {
 			frame.showPopup(Label.UNSUPPORTED_FILE_TYPE.label());
 			error("unsupported file: " + projectFileChosen.getName());
-			return;
+			return null;
 		}
-		final RocksmithChartProject project;
+		final ChartProject project;
 		try {
 			project = readProject(RW.read(projectFileChosen));
 			if (project.chartFormatVersion > 2) {
+				Logger.error("project has wrong version");
 				frame.showPopup(Label.PROJECT_IS_NEWER_VERSION.label());
-				return;
+				return null;
 			}
 		} catch (final Exception e) {
+			Logger.error("Error when reading project", e);
 			frame.showPopup(String.format(Label.MISSING_ARRANGEMENT_FILE.label(), projectFileChosen.getAbsolutePath()));
-			return;
+			return null;
 		}
-		loadingDialog.setProgress(1, Label.LOADING_MUSIC_FILE.label());
 
+		loadingDialog.setProgress(progressAfter, Label.LOADING_MUSIC_FILE.label());
+
+		return project;
+	}
+
+	private MusicData loadMusicData(final LoadingDialog loadingDialog, final int progressAfter,
+			final ChartProject project, final String dir) {
 		final MusicData musicData = MusicData.readFile(new File(dir, project.musicFileName));
 		if (musicData == null) {
 			frame.showPopup(Label.WRONG_MUSIC_FILE.label());
+			return null;
+		}
+
+		loadingDialog.setProgress(progressAfter, Label.LOADING_ARRANGEMENTS.label());
+
+		return musicData;
+	}
+
+	private void openInternal(final LoadingDialog loadingDialog, final String path) {
+		loadingDialog.setProgress(0, Label.LOADING_PROJECT_FILE.label());
+
+		final List<String> filesToBackup = new ArrayList<>();
+		final File projectFileChosen = new File(path);
+		final ChartProject project = loadProjectFile(loadingDialog, 1, projectFileChosen);
+		if (project == null) {
+			return;
+		}
+		filesToBackup.add(projectFileChosen.getName());
+		filesToBackup.addAll(project.arrangementFiles);
+		filesToBackup.add(vocalsFileName);
+
+		final String dir = projectFileChosen.getParent() + File.separator;
+		final MusicData musicData = loadMusicData(loadingDialog, 2, project, dir);
+		if (musicData == null) {
 			return;
 		}
 
-		loadingDialog.setProgress(2, Label.LOADING_ARRANGEMENTS.label());
 		final SongChart songChart;
 		try {
 			songChart = new SongChart(musicData.msLength(), project, dir);
@@ -338,10 +363,6 @@ public class SongFileHandler {
 			return;
 		}
 
-		final List<String> filesToBackup = new ArrayList<>();
-		filesToBackup.add(projectFileChosen.getName());
-		filesToBackup.addAll(project.arrangementFiles);
-		filesToBackup.add(vocalsFileName);
 		makeBackups(dir, filesToBackup);
 
 		data.setSong(dir, songChart, musicData, projectFileChosen.getName(), project.editMode, project.arrangement,
@@ -420,7 +441,8 @@ public class SongFileHandler {
 		loadingDialog = new LoadingDialog(frame, 1);
 		loadingDialog.setProgress(0, Label.LOADING_ARRANGEMENTS.label());
 		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(arrangementFile));
-		final SongChart songChart = new SongChart(musicData.msLength(), songName, songArrangement);
+		final SongChart songChart = RSXMLToSongChart.makeSongChartForArrangement(musicData.msLength(), songName,
+				songArrangement);
 
 		data.setSong(dir, songChart, musicData, "project.rscp", EditMode.GUITAR, 0, 0, 0);
 		loadingDialog.dispose();
@@ -438,7 +460,7 @@ public class SongFileHandler {
 
 		try {
 			final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(arrangementFile));
-			final ArrangementChart arrangementChart = new ArrangementChart(songArrangement,
+			final Arrangement arrangementChart = RSXMLToArrangement.toArrangement(songArrangement,
 					data.songChart.beatsMap.beats);
 			data.songChart.arrangements.add(arrangementChart);
 
@@ -472,35 +494,48 @@ public class SongFileHandler {
 		}
 	}
 
+	private static String generateArrangementFileName(final int id, final Arrangement arrangementChart) {
+		return id + "_" + arrangementChart.arrangementType.name() + "_" + arrangementChart.arrangementSubtype.name()
+				+ "_RS2.xml";
+	}
+
+	private void saveRSXML() {
+		final File dir = new File(data.path, "RS XML");
+		dir.mkdirs();
+		for (final File f : dir.listFiles()) {
+			if (f.isFile()) {
+				f.delete();
+			}
+		}
+
+		int id = 1;
+		for (final Arrangement arrangement : data.songChart.arrangements) {
+			final String arrangementFileName = generateArrangementFileName(id, arrangement);
+			final SongArrangement songArrangement = new SongArrangement(data.songChart, arrangement);
+			RW.write(new File(dir, arrangementFileName), SongArrangementXStreamHandler.saveSong(songArrangement));
+			id++;
+		}
+
+		if (!data.songChart.vocals.vocals.isEmpty()) {
+			RW.write(new File(dir, vocalsFileName), saveVocals(new ArrangementVocals(data.songChart.vocals)), "UTF-8");
+		}
+	}
+
 	public void save() {
 		if (data.isEmpty) {
 			return;
 		}
 
-		arrangementFixer.fixArrangement();
+		arrangementFixer.fixArrangements();
 		if (!arrangementValidator.validate()) {
 			return;
 		}
 
-		final RocksmithChartProject project = new RocksmithChartProject(modeManager, data, data.songChart);
-
-		int id = 1;
-		for (final ArrangementChart arrangementChart : data.songChart.arrangements) {
-			final String arrangementFileName = arrangementChart.getFileName(id);
-			project.arrangementFiles.add(arrangementFileName);
-			final SongArrangement songArrangement = new SongArrangement(data.songChart, arrangementChart);
-			RW.write(new File(data.path, arrangementFileName), SongArrangementXStreamHandler.saveSong(songArrangement));
-			id++;
-		}
-
-		if (!data.songChart.vocals.vocals.isEmpty()) {
-			RW.write(new File(data.path, vocalsFileName), saveVocals(new ArrangementVocals(data.songChart.vocals)),
-					"UTF-8");
-		}
-
+		final ChartProject project = new ChartProject(modeManager, data, data.songChart);
 		RW.write(new File(data.path, data.projectFileName), saveProject(project));
-		undoSystem.onSave();
+		saveRSXML();
 
+		undoSystem.onSave();
 		Config.markChanged();
 	}
 
@@ -509,7 +544,7 @@ public class SongFileHandler {
 			return;
 		}
 
-		arrangementFixer.fixArrangement();
+		arrangementFixer.fixArrangements();
 		if (!arrangementValidator.validate()) {
 			return;
 		}

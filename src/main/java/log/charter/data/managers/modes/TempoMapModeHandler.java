@@ -5,7 +5,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
-import log.charter.gui.panes.TempoBeatPane;
+import log.charter.gui.panes.songEdits.TempoBeatPane;
 
 public class TempoMapModeHandler extends ModeHandler {
 	private ChartData data;

@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import log.charter.data.ChartData;
 import log.charter.data.copySystem.data.positions.CopiedArrangementEventsPointPosition;
 import log.charter.io.Logger;
-import log.charter.song.ArrangementChart;
+import log.charter.song.Arrangement;
 import log.charter.song.BeatsMap;
 import log.charter.song.EventPoint;
 import log.charter.song.Phrase;
@@ -35,7 +35,7 @@ public class EventPointsCopyData implements ICopyData {
 
 	public void paste(final ChartData data, final boolean sections, final boolean phrases, final boolean events,
 			final boolean convertFromBeats) {
-		final ArrangementChart arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.getCurrentArrangement();
 		if (phrases) {
 			for (final CopiedArrangementEventsPointPosition arrangementEventsPoint : arrangementEventsPoints) {
 				final String phraseName = arrangementEventsPoint.phrase;

@@ -21,10 +21,10 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
-import log.charter.gui.panes.AnchorPane;
-import log.charter.gui.panes.GuitarEventPointPane;
-import log.charter.gui.panes.HandShapePane;
-import log.charter.gui.panes.ToneChangePane;
+import log.charter.gui.panes.songEdits.AnchorPane;
+import log.charter.gui.panes.songEdits.GuitarEventPointPane;
+import log.charter.gui.panes.songEdits.HandShapePane;
+import log.charter.gui.panes.songEdits.ToneChangePane;
 import log.charter.song.Anchor;
 import log.charter.song.ChordTemplate;
 import log.charter.song.EventPoint;
@@ -62,7 +62,7 @@ public class GuitarModeHandler extends ModeHandler {
 
 	@Override
 	public void handleEnd() {
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
 		if (!sounds.isEmpty()) {
 			frame.setNextTime(sounds.getLast().position());
 		}
@@ -70,7 +70,7 @@ public class GuitarModeHandler extends ModeHandler {
 
 	@Override
 	public void handleHome() {
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
 
 		if (!sounds.isEmpty()) {
 			frame.setNextTime(sounds.get(0).position());
@@ -143,7 +143,7 @@ public class GuitarModeHandler extends ModeHandler {
 	}
 
 	private ChordOrNote addSound(final Note note) {
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
 		final ChordOrNote sound = new ChordOrNote(note);
 		sounds.add(new ChordOrNote(note));
 		sounds.sort(null);
@@ -170,7 +170,7 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 
 		if (chordOrNote.isNote() && chordOrNote.note.string == string) {
-			data.getCurrentArrangementLevel().chordsAndNotes.remove((int) id);
+			data.getCurrentArrangementLevel().sounds.remove((int) id);
 			return -1;
 		}
 
@@ -304,7 +304,7 @@ public class GuitarModeHandler extends ModeHandler {
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 
 		IPositionWithLength.changeSoundsLength(data.songChart.beatsMap, selectedNotes.getSortedSelected(),
-				data.getCurrentArrangementLevel().chordsAndNotes, change, !keyboardHandler.alt(),
+				data.getCurrentArrangementLevel().sounds, change, !keyboardHandler.alt(),
 				currentSelectionEditor.getSelectedStrings());
 	}
 

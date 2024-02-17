@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.RepeatManager;
-import log.charter.song.ArrangementChart;
+import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.Level;
 import log.charter.song.enums.Mute;
@@ -24,7 +24,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DNotesData {
 	private static void addChord(final List<ChordBoxDrawData> chords, final List<List<NoteDrawData>> notes,
-			final ArrangementChart arrangement, final Level level, final ArrayList2<ChordOrNote> sounds, final int id,
+			final Arrangement arrangement, final Level level, final ArrayList2<ChordOrNote> sounds, final int id,
 			final Chord chord, final int timeFrom, final int timeTo) {
 		final ChordNotesVisibility chordNotesVisibility = chord.chordNotesVisibility(level.shouldChordShowNotes(id));
 
@@ -63,12 +63,12 @@ public class Preview3DNotesData {
 
 		final List<ChordBoxDrawData> chords = new ArrayList<>();
 		final List<List<NoteDrawData>> notes = new ArrayList<>();
-		final ArrangementChart arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.getCurrentArrangement();
 		final Level level = data.getCurrentArrangementLevel();
 		for (int i = 0; i < arrangement.tuning.strings; i++) {
 			notes.add(new ArrayList<>());
 		}
-		final ArrayList2<ChordOrNote> sounds = level.chordsAndNotes;
+		final ArrayList2<ChordOrNote> sounds = level.sounds;
 
 		final int soundsTo = findLastIdBeforeEqual(sounds, timeTo);
 

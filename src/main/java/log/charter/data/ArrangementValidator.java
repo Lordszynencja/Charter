@@ -6,7 +6,7 @@ import javax.swing.JOptionPane;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.song.ArrangementChart;
+import log.charter.song.Arrangement;
 import log.charter.song.EventPoint;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -49,7 +49,7 @@ public class ArrangementValidator {
 		return true;
 	}
 
-	private boolean validateCountPhrases(final int arrangementId, final ArrangementChart arrangement) {
+	private boolean validateCountPhrases(final int arrangementId, final Arrangement arrangement) {
 		final ArrayList2<EventPoint> countPhrases = arrangement.eventPoints.stream()//
 				.filter(eventPoint -> eventPoint.phrase != null && eventPoint.phrase.equals("COUNT"))//
 				.collect(Collectors.toCollection(ArrayList2::new));
@@ -70,7 +70,7 @@ public class ArrangementValidator {
 		return true;
 	}
 
-	private boolean validateEndPhrases(final int arrangementId, final ArrangementChart arrangement) {
+	private boolean validateEndPhrases(final int arrangementId, final Arrangement arrangement) {
 		final ArrayList2<EventPoint> endPhrases = arrangement.eventPoints.stream()//
 				.filter(eventPoint -> eventPoint.phrase != null && eventPoint.phrase.equals("END"))//
 				.collect(Collectors.toCollection(ArrayList2::new));
@@ -95,9 +95,9 @@ public class ArrangementValidator {
 	 * @return true if validation passed
 	 */
 	public boolean validate() {
-		final ArrayList2<ArrangementChart> arrangements = data.songChart.arrangements;
+		final ArrayList2<Arrangement> arrangements = data.songChart.arrangements;
 		for (int i = 0; i < arrangements.size(); i++) {
-			final ArrangementChart arrangement = arrangements.get(i);
+			final Arrangement arrangement = arrangements.get(i);
 			if (!validateCountPhrases(i, arrangement)) {
 				return false;
 			}

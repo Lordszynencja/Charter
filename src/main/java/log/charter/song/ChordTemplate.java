@@ -5,13 +5,15 @@ import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.io.rs.xml.song.ArrangementChordTemplate;
+import log.charter.io.rsc.xml.converters.ChordTemplateConverter;
 import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.IntRange;
 
 @XStreamAlias("chordTemplate")
+@XStreamConverter(ChordTemplateConverter.class)
 public class ChordTemplate {
 	public static final HashMap2<String, Integer> fingerIds = new HashMap2<>();
 	public static final HashMap2<Integer, String> fingerNames = new HashMap2<>();
@@ -27,9 +29,7 @@ public class ChordTemplate {
 		fingerNames.put(null, "");
 	}
 
-	@XStreamAsAttribute
 	public String chordName = "";
-	@XStreamAsAttribute
 	public boolean arpeggio;
 	public HashMap2<Integer, Integer> fingers = new HashMap2<>();
 	public HashMap2<Integer, Integer> frets = new HashMap2<>();
@@ -49,6 +49,14 @@ public class ChordTemplate {
 		arpeggio = other.arpeggio;
 		fingers = new HashMap2<>(other.fingers);
 		frets = new HashMap2<>(other.frets);
+	}
+
+	public ChordTemplate(final String chordName, final boolean arpeggio, final HashMap2<Integer, Integer> fingers,
+			final HashMap2<Integer, Integer> frets) {
+		this.chordName = chordName;
+		this.arpeggio = arpeggio;
+		this.fingers = fingers;
+		this.frets = frets;
 	}
 
 	public IntRange getStringRange() {

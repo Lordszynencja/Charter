@@ -34,10 +34,10 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.panes.GuitarSpecialPastePane;
+import log.charter.gui.panes.songEdits.GuitarSpecialPastePane;
 import log.charter.io.ClipboardHandler;
 import log.charter.io.Logger;
-import log.charter.song.ArrangementChart;
+import log.charter.song.Arrangement;
 import log.charter.song.Beat;
 import log.charter.song.BeatsMap;
 import log.charter.song.ChordTemplate;
@@ -114,7 +114,7 @@ public class CopyManager {
 			return null;
 		}
 
-		final ArrangementChart arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.getCurrentArrangement();
 		final BeatsMap beatsMap = data.songChart.beatsMap;
 		final double basePositionInBeats = beatsMap.getPositionInBeats(from);
 
@@ -128,7 +128,7 @@ public class CopyManager {
 		final ArrayList2<CopiedAnchorPosition> copiedAnchors = copyPositionsFromTo(from, to, basePositionInBeats,
 				data.getCurrentArrangementLevel().anchors, CopiedAnchorPosition::new);
 		final ArrayList2<CopiedSoundPosition> copiedSounds = copyPositionsFromTo(from, to, basePositionInBeats,
-				data.getCurrentArrangementLevel().chordsAndNotes, CopiedSoundPosition::new);
+				data.getCurrentArrangementLevel().sounds, CopiedSoundPosition::new);
 		final ArrayList2<CopiedHandShapePosition> copiedHandShapes = copyPositionsFromTo(from, to, basePositionInBeats,
 				data.getCurrentArrangementLevel().handShapes, CopiedHandShapePosition::new);
 
@@ -144,7 +144,7 @@ public class CopyManager {
 		final int from = selectedBeats.get(0).selectable.position();
 		final int to = selectedBeats.getLast().selectable.position();
 		final double basePositionInBeats = data.songChart.beatsMap.getPositionInBeats(from);
-		final ArrangementChart arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.getCurrentArrangement();
 
 		final HashMap2<String, Phrase> copiedPhrases = arrangement.phrases.map(phraseName -> phraseName, Phrase::new);
 		final ArrayList2<CopiedArrangementEventsPointPosition> copiedArrangementEventsPoints = copyPositionsFromTo(from,

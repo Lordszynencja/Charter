@@ -14,7 +14,7 @@ import log.charter.io.rs.xml.converters.ArrangementTypeConverter;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.io.rs.xml.converters.DateTimeConverter;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.ArrangementChart;
+import log.charter.song.Arrangement;
 import log.charter.song.Beat;
 import log.charter.song.SongChart;
 import log.charter.song.ToneChange;
@@ -56,14 +56,14 @@ public class SongArrangement {
 	public CountedList<ArrangementPhraseIteration> phraseIterations;
 	public CountedList<String> phraseProperties = new CountedList<>();
 	public CountedList<ArrangementChordTemplate> chordTemplates;
-	public CountedList<ArrangementChordTemplate> fretHandMuteTemplates;
+	public CountedList<ArrangementChordTemplate> fretHandMuteTemplates = new CountedList<>();
 	public CountedList<EBeat> ebeats;
 	public CountedList<ArrangementSection> sections;
 	public CountedList<ArrangementEvent> events;
 	public TranscriptionTrack transcriptionTrack = new TranscriptionTrack();
 	public CountedList<ArrangementLevel> levels;
 
-	public SongArrangement(final SongChart songChart, final ArrangementChart arrangementChart) {
+	public SongArrangement(final SongChart songChart, final Arrangement arrangementChart) {
 		final List<Beat> beatsTmp = songChart.beatsMap.beats;
 
 		title = songChart.title;
@@ -82,14 +82,12 @@ public class SongArrangement {
 		artistNameSort = songChart.artistNameSort;
 		albumName = songChart.albumName;
 		albumYear = songChart.albumYear;
-		arrangementProperties = arrangementChart.arrangementProperties;
+		setArrangementProperties(arrangementChart);
 		setTones(arrangementChart);
 		phrases = new CountedList<ArrangementPhrase>(arrangementChart.phrases.map(ArrangementPhrase::new));
 		phraseIterations = new CountedList<>(ArrangementPhraseIteration.fromPhraseIterations(phrases.list,
 				arrangementChart.getFilteredEventPoints(p -> p.phrase != null)));
 		chordTemplates = new CountedList<>(arrangementChart.chordTemplates.map(ArrangementChordTemplate::new));
-		fretHandMuteTemplates = new CountedList<>(
-				arrangementChart.fretHandMuteTemplates.map(ArrangementChordTemplate::new));
 		ebeats = new CountedList<>(songChart.beatsMap.beats.map(EBeat::new));
 		sections = new CountedList<>(
 				ArrangementSection.fromSections(arrangementChart.getFilteredEventPoints(p -> p.section != null)));
@@ -101,7 +99,13 @@ public class SongArrangement {
 		fixMeasureNumbers();
 	}
 
-	private void setTones(final ArrangementChart arrangementChart) {
+	private void setArrangementProperties(final Arrangement arrangementChart) {
+		arrangementProperties = new ArrangementProperties();
+		arrangementProperties.setType(arrangementChart.arrangementType);
+		arrangementProperties.setSubtype(arrangementChart.arrangementSubtype);
+	}
+
+	private void setTones(final Arrangement arrangementChart) {
 		tonebase = arrangementChart.baseTone;
 		final ArrayList2<String> tonesList = new ArrayList2<>();
 		for (final ToneChange toneChange : arrangementChart.toneChanges) {

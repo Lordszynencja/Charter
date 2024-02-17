@@ -1,7 +1,7 @@
 package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
-import log.charter.song.ArrangementChart;
+import log.charter.song.Arrangement;
 import log.charter.song.Beat;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -20,9 +20,9 @@ public class TempoMapUndoState extends UndoState {
 	public TempoMapUndoState(final ChartData data) {
 		guitarUndoStates = new ArrayList2<>();
 		for (int arrangementId = 0; arrangementId < data.songChart.arrangements.size(); arrangementId++) {
-			final ArrangementChart arrangement = data.songChart.arrangements.get(arrangementId);
-			for (final Integer levelId : arrangement.levels.keySet()) {
-				guitarUndoStates.add(new GuitarUndoState(data, arrangementId, levelId));
+			final Arrangement arrangement = data.songChart.arrangements.get(arrangementId);
+			for (int level = 0; level < arrangement.levels.size(); level++) {
+				guitarUndoStates.add(new GuitarUndoState(data, arrangementId, level));
 			}
 		}
 

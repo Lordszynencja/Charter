@@ -12,10 +12,10 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SpecialMenuItem;
 import log.charter.gui.handlers.KeyboardHandler;
-import log.charter.gui.panes.AddBeatsAtTheStartPane;
-import log.charter.gui.panes.AddDefaultSilencePane;
-import log.charter.gui.panes.AddSilencePane;
-import log.charter.gui.panes.SongOptionsPane;
+import log.charter.gui.panes.songEdits.AddBeatsAtTheStartPane;
+import log.charter.gui.panes.songEdits.AddDefaultSilencePane;
+import log.charter.gui.panes.songEdits.AddSilencePane;
+import log.charter.gui.panes.songSettings.SongOptionsPane;
 
 class EditMenuHandler extends CharterMenuHandler {
 	private CopyManager copyManager;

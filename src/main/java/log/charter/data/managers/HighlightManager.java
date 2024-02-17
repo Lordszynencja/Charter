@@ -71,7 +71,7 @@ public class HighlightManager {
 		}
 
 		private void addGuitarNotePositions() {
-			final ArrayList2<ChordOrNote> chordsAndNotes = data.getCurrentArrangementLevel().chordsAndNotes;
+			final ArrayList2<ChordOrNote> chordsAndNotes = data.getCurrentArrangementLevel().sounds;
 			int idFrom = findLastIdBefore(chordsAndNotes, fromPosition);
 			int idTo = findFirstIdAfter(chordsAndNotes, toPosition);
 			if (idFrom == -1) {
@@ -133,7 +133,7 @@ public class HighlightManager {
 		}
 
 		final int closestGridPosition = data.songChart.beatsMap.getPositionFromGridClosestTo(position);
-		final ChordOrNote closestSound = findClosestPosition(data.getCurrentArrangementLevel().chordsAndNotes,
+		final ChordOrNote closestSound = findClosestPosition(data.getCurrentArrangementLevel().sounds,
 				position);
 		if (closestSound == null) {
 			return closestGridPosition;

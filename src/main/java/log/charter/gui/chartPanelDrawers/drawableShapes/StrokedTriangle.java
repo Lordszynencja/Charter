@@ -6,21 +6,22 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.util.Position2D;
 
-class StrokedTriangle implements DrawableShape {
+public class StrokedTriangle implements DrawableShape {
 	private final Position2D a;
 	private final Position2D b;
 	private final Position2D c;
 	private final Color color;
 	private final int thickness;
 
+	public StrokedTriangle(final Position2D a, final Position2D b, final Position2D c, final ColorLabel color) {
+		this(a, b, c, color.color(), 1);
+	}
+
 	public StrokedTriangle(final Position2D a, final Position2D b, final Position2D c, final Color color) {
-		this.a = a;
-		this.b = b;
-		this.c = c;
-		this.color = color;
-		thickness = 1;
+		this(a, b, c, color, 1);
 	}
 
 	public StrokedTriangle(final Position2D a, final Position2D b, final Position2D c, final Color color,

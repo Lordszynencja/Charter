@@ -67,7 +67,7 @@ public class MidiChartNotePlayer {
 		midiNotePlayer.playSound(nextSound.sound);
 		sounds.add(nextSound);
 		final int newNextSoundId = nextSound.noteId + 1;
-		final ArrayList2<ChordOrNote> chartSounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		final ArrayList2<ChordOrNote> chartSounds = data.getCurrentArrangementLevel().sounds;
 		if (chartSounds.size() > newNextSoundId) {
 			nextSound = makeNoteData(newNextSoundId);
 		} else {
@@ -162,13 +162,13 @@ public class MidiChartNotePlayer {
 	}
 
 	private MidiChartNotePlayerNoteData makeNoteData(final int noteId) {
-		final ChordOrNote sound = data.getCurrentArrangementLevel().chordsAndNotes.get(noteId);
+		final ChordOrNote sound = data.getCurrentArrangementLevel().sounds.get(noteId);
 		int soundEndTime = sound.endPosition();
 		int maxEndTime = data.songChart.beatsMap.songLengthMs;
 		if (sound.isChord() && sound.length() < 50) {
 			Integer newEndTime = null;
-			if (noteId + 1 < data.getCurrentArrangementLevel().chordsAndNotes.size()) {
-				newEndTime = data.getCurrentArrangementLevel().chordsAndNotes.get(noteId + 1).position() - 5;
+			if (noteId + 1 < data.getCurrentArrangementLevel().sounds.size()) {
+				newEndTime = data.getCurrentArrangementLevel().sounds.get(noteId + 1).position() - 5;
 				maxEndTime = min(newEndTime, maxEndTime);
 			}
 
@@ -188,14 +188,14 @@ public class MidiChartNotePlayer {
 		}
 		if (sound.isNote()) {
 			final ChordOrNote nextNote = ChordOrNote.findNextSoundOnString(sound.note.string, noteId + 1,
-					data.getCurrentArrangementLevel().chordsAndNotes);
+					data.getCurrentArrangementLevel().sounds);
 			if (nextNote != null) {
 				soundEndTime = min(soundEndTime, nextNote.position() - 5);
 			}
 		} else {
 			for (final int string : sound.chord.chordNotes.keySet()) {
 				final ChordOrNote nextNote = ChordOrNote.findNextSoundOnString(string, noteId + 1,
-						data.getCurrentArrangementLevel().chordsAndNotes);
+						data.getCurrentArrangementLevel().sounds);
 				if (nextNote != null) {
 					soundEndTime = min(soundEndTime, nextNote.position() - 5);
 				}
@@ -212,7 +212,7 @@ public class MidiChartNotePlayer {
 		}
 
 		playing = true;
-		final ArrayList2<ChordOrNote> chartSounds = data.getCurrentArrangementLevel().chordsAndNotes;
+		final ArrayList2<ChordOrNote> chartSounds = data.getCurrentArrangementLevel().sounds;
 
 		final int currentNoteId = findLastIdBeforeEqual(chartSounds, getCurrentTime());
 		if (currentNoteId != -1) {

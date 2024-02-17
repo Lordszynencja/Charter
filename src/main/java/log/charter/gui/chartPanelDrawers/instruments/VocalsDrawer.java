@@ -34,7 +34,7 @@ public class VocalsDrawer {
 	private static final Font vocalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 	private static int vocalNoteY = (lanesTop + lanesBottom) / 2;
 
-	public static void reloadSizes() {
+	public static void reloadGraphics() {
 		vocalNoteY = (lanesTop + lanesBottom) / 2;
 	}
 

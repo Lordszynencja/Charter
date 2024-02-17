@@ -1,6 +1,7 @@
 package log.charter.song;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.io.rs.xml.song.ArrangementHandShape;
 import log.charter.song.notes.Chord;
@@ -8,6 +9,7 @@ import log.charter.song.notes.PositionWithLength;
 
 @XStreamAlias("handShape")
 public class HandShape extends PositionWithLength {
+	@XStreamAsAttribute
 	public int templateId;
 
 	public HandShape(final int position, final int length) {

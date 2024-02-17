@@ -13,7 +13,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
@@ -39,6 +38,7 @@ public class SelectionBendEditor extends RowedPanel {
 
 	private ButtonGroup stringsGroup;
 	private List<JRadioButton> strings;
+	private int lastStringsAmount = maxStrings;
 
 	private ChordOrNote getCurrentlySelectedSound() {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
@@ -93,21 +93,17 @@ public class SelectionBendEditor extends RowedPanel {
 
 	private void doActionOnStringButtons(final boolean[] shouldActionBeDone,
 			final BiConsumer<JRadioButton, Integer> action) {
-		final int stringsAmount = shouldActionBeDone.length;
-		final int stringOffset = stringsAmount > 6 ? 9 - stringsAmount : (Config.maxStrings - 6);
-		for (int i = 0; i < stringsAmount; i++) {
+		for (int i = 0; i < maxStrings; i++) {
 			if (shouldActionBeDone[i]) {
-				action.accept(strings.get(i + stringOffset), i);
+				action.accept(strings.get(i), i);
 			}
 		}
 	}
 
 	private void doActionOnStringButtons(final boolean[] shouldActionBeDone, final Consumer<JRadioButton> action) {
-		final int stringsAmount = shouldActionBeDone.length;
-		final int stringOffset = stringsAmount > 6 ? 9 - stringsAmount : (Config.maxStrings - 6);
-		for (int i = 0; i < stringsAmount; i++) {
+		for (int i = 0; i < maxStrings; i++) {
 			if (shouldActionBeDone[i]) {
-				action.accept(strings.get(i + stringOffset));
+				action.accept(strings.get(i));
 			}
 		}
 	}
@@ -115,7 +111,7 @@ public class SelectionBendEditor extends RowedPanel {
 	private void enableAndSelectStringsForNote(final Note note) {
 		final int string = note.string;
 
-		final boolean[] stringsForAction = new boolean[data.currentStrings()];
+		final boolean[] stringsForAction = new boolean[maxStrings];
 		stringsForAction[string] = true;
 		doActionOnStringButtons(stringsForAction, button -> {
 			button.setEnabled(true);
@@ -125,39 +121,30 @@ public class SelectionBendEditor extends RowedPanel {
 		for (int i = 0; i < stringsForAction.length; i++) {
 			stringsForAction[i] = !stringsForAction[i];
 		}
-		doActionOnStringButtons(stringsForAction, button -> {
-			button.setEnabled(false);
-		});
+		doActionOnStringButtons(stringsForAction, button -> button.setEnabled(false));
 
-		bendEditorGraph.setNote(note, stringsForAction.length);
+		bendEditorGraph.setNote(note, data.currentStrings());
 	}
 
 	private void enableAndSelectStringsForChord(final Chord chord) {
 		final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
-		final int string = chordTemplate.frets.keySet().stream().min(Integer::compare).get();
+		final int lowestString = chordTemplate.frets.keySet().stream().min(Integer::compare).get();
 
-		final boolean[] stringsForAction = new boolean[data.currentStrings()];
-		stringsForAction[string] = true;
-		doActionOnStringButtons(stringsForAction, button -> {
-			button.setEnabled(true);
-			button.setSelected(true);
-		});
+		final boolean[] stringsForAction = new boolean[maxStrings];
+		stringsForAction[lowestString] = true;
+		doActionOnStringButtons(stringsForAction, button -> button.setSelected(true));
 
-		for (int i = 0; i < stringsForAction.length; i++) {
-			stringsForAction[i] = chordTemplate.frets.containsKey(i);
+		for (final int string : chordTemplate.frets.keySet()) {
+			stringsForAction[string] = true;
 		}
-		doActionOnStringButtons(stringsForAction, button -> {
-			button.setEnabled(true);
-		});
+		doActionOnStringButtons(stringsForAction, button -> button.setEnabled(true));
 
-		for (int i = 0; i < stringsForAction.length; i++) {
-			stringsForAction[i] = !stringsForAction[i];
+		for (int string = 0; string < stringsForAction.length; string++) {
+			stringsForAction[string] = !stringsForAction[string];
 		}
-		doActionOnStringButtons(stringsForAction, button -> {
-			button.setEnabled(false);
-		});
+		doActionOnStringButtons(stringsForAction, button -> button.setEnabled(false));
 
-		bendEditorGraph.setChord(chord, string, data.currentStrings());
+		bendEditorGraph.setChord(chord, lowestString, data.currentStrings());
 	}
 
 	public void enableAndSelectStrings(final ChordOrNote sound) {
@@ -169,20 +156,38 @@ public class SelectionBendEditor extends RowedPanel {
 		enableAndSelectStringsForChord(sound.chord);
 	}
 
+	private void resetColors() {
+		if (lastStringsAmount != data.currentStrings()) {
+			lastStringsAmount = data.currentStrings();
+			final boolean[] stringsForAction = new boolean[maxStrings];
+			for (int i = 0; i < lastStringsAmount; i++) {
+				stringsForAction[i] = true;
+			}
+			doActionOnStringButtons(stringsForAction, (button, i) -> {
+				button.setForeground(getStringBasedColor(StringColorLabelType.NOTE, i, lastStringsAmount));
+			});
+		}
+	}
+
+	private void resetVisibleStrings() {
+		final boolean[] stringsForAction = new boolean[maxStrings];
+		for (int i = 0; i < lastStringsAmount; i++) {
+			stringsForAction[i] = true;
+		}
+		doActionOnStringButtons(stringsForAction, button -> button.setVisible(true));
+		for (int i = 0; i < maxStrings; i++) {
+			stringsForAction[i] = !stringsForAction[i];
+		}
+		doActionOnStringButtons(stringsForAction, button -> button.setVisible(false));
+	}
+
 	public void onChangeSelection(final ChordOrNote selected) {
 		bendEditorGraph.setBeatsMap(data.songChart.beatsMap);
 
 		strings.forEach(button -> button.setVisible(false));
 
-		final boolean[] stringsForAction = new boolean[data.currentStrings()];
-		for (int i = 0; i < stringsForAction.length; i++) {
-			stringsForAction[i] = true;
-		}
-		doActionOnStringButtons(stringsForAction, (button, i) -> {
-			button.setVisible(true);
-			button.setForeground(getStringBasedColor(StringColorLabelType.NOTE, i, stringsForAction.length));
-		});
-
+		resetColors();
+		resetVisibleStrings();
 		enableAndSelectStrings(selected);
 	}
 

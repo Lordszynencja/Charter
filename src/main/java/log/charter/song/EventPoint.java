@@ -1,11 +1,21 @@
 package log.charter.song;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+
+import log.charter.io.rsc.xml.converters.SimpleCollectionToStringConverter.EventTypesList;
 import log.charter.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
+@XStreamAlias("eventPoint")
 public class EventPoint extends Position {
+	@XStreamAsAttribute
 	public SectionType section;
+	@XStreamAsAttribute
 	public String phrase;
+	@XStreamAsAttribute
+	@XStreamConverter(EventTypesList.class)
 	public ArrayList2<EventType> events = new ArrayList2<>();
 
 	public EventPoint() {

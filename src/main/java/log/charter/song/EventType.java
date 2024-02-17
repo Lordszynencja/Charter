@@ -1,5 +1,8 @@
 package log.charter.song;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("eventType")
 public enum EventType {
 	HIGH_PITCH_TICK("B0", "High pitch tick"), //
 	LOW_PITCH_TICK("B1", "Low pitch tick"), //

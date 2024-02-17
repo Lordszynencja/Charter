@@ -12,7 +12,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.menuHandlers.CharterMenuBar;
-import log.charter.song.ArrangementChart;
+import log.charter.song.Arrangement;
 import log.charter.song.Level;
 import log.charter.song.SongChart;
 import log.charter.sound.MusicData;
@@ -97,7 +97,7 @@ public class ChartData {
 		return getCurrentArrangement().tuning.strings;
 	}
 
-	public ArrangementChart getCurrentArrangement() {
+	public Arrangement getCurrentArrangement() {
 		if (modeManager.getMode() != EditMode.GUITAR) {
 			return null;
 		}
@@ -113,7 +113,7 @@ public class ChartData {
 			return null;
 		}
 
-		return songChart.arrangements.get(currentArrangement).levels.get(currentLevel);
+		return songChart.arrangements.get(currentArrangement).getLevel(currentLevel);
 	}
 
 	public void setNextTime(final int t) {

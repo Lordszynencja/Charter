@@ -8,7 +8,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class GuitarNotePositionTypeManager implements PositionTypeManager<ChordOrNote> {
 	@Override
 	public ArrayList2<ChordOrNote> getPositions(final ChartData data) {
-		return data.getCurrentArrangementLevel().chordsAndNotes;
+		return data.getCurrentArrangementLevel().sounds;
 	}
 
 	@Override

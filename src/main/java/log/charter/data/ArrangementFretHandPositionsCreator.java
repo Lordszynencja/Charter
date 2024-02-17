@@ -132,5 +132,4 @@ public class ArrangementFretHandPositionsCreator {
 			addFHPIfNeeded(fretRange, anchors);
 		}
 	}
-
 }

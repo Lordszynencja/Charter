@@ -135,19 +135,37 @@ public class ParamsPane extends JDialog {
 	/**
 	 * @return width of created label
 	 */
-	protected int addLabel(final int row, final int x, final Label label) {
+	protected int addLabel(final int row, final int x, final String label) {
 		return addLabelExact(getY(row), x, label);
 	}
 
 	/**
 	 * @return width of created label
 	 */
-	protected int addLabelExact(final int y, final int x, final Label label) {
+	protected int addLabel(final int row, final int x, final Label label) {
+		return addLabelExact(x, getY(row), label);
+	}
+
+	/**
+	 * @return width of created label
+	 */
+	protected int addLabelExact(final int x, final int y, final Label label) {
 		if (label == null) {
 			return 0;
 		}
 
-		final JLabel labelComponent = new JLabel(label.label(), SwingConstants.LEFT);
+		return addLabelExact(y, x, label.label());
+	}
+
+	/**
+	 * @return width of created label
+	 */
+	protected int addLabelExact(final int y, final int x, final String label) {
+		if (label == null) {
+			return 0;
+		}
+
+		final JLabel labelComponent = new JLabel(label, SwingConstants.LEFT);
 		final int labelWidth = labelComponent.getPreferredSize().width;
 		add(labelComponent, x, y, labelWidth, 20);
 
@@ -279,7 +297,7 @@ public class ParamsPane extends JDialog {
 			group.add(radioButton);
 			add(radioButton, x, y, 20, 20);
 
-			addLabelExact(y, x + 20, value.b);
+			addLabelExact(x + 20, y, value.b);
 
 			x += optionWidth;
 		}

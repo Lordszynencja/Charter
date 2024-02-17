@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 import log.charter.data.config.Config;
 import log.charter.song.Anchor;
-import log.charter.song.ArrangementChart;
+import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.EventPoint;
 import log.charter.song.HandShape;
@@ -34,7 +34,17 @@ public class ArrangementFixer {
 
 	public void init(final ChartData data) {
 		this.data = data;
-	} 
+	}
+
+	private void removeWrongPositions(final Arrangement arrangement, final int start, final int end) {
+		arrangement.eventPoints.removeIf(p -> p.position() < start || p.position() > end);
+		arrangement.toneChanges.removeIf(p -> p.position() < start || p.position() > end);
+		for (final Level level : arrangement.levels) {
+			level.anchors.removeIf(p -> p.position() < start || p.position() > end);
+			level.sounds.removeIf(p -> p.position() < start || p.position() > end);
+			level.handShapes.removeIf(p -> p.position() < start || p.position() > end);
+		}
+	}
 
 	private void removeDuplicates(final List<? extends IPosition> positions) {
 		final List<IPosition> positionsToRemove = new ArrayList<>();
@@ -48,9 +58,9 @@ public class ArrangementFixer {
 	}
 
 	private void addMissingHandShapes(final Level level) {
-		final LinkedList<Chord> chordsForHandShapes = level.chordsAndNotes.stream()//
+		final LinkedList<Chord> chordsForHandShapes = level.sounds.stream()//
 				.filter(chordOrNote -> chordOrNote.isChord() && !chordOrNote.chord.splitIntoNotes)//
-				.map(chordOrNote -> chordOrNote.chord)//  
+				.map(chordOrNote -> chordOrNote.chord)//
 				.collect(Collectors.toCollection(LinkedList::new));
 		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
 		for (final HandShape handShape : level.handShapes) {
@@ -74,7 +84,7 @@ public class ArrangementFixer {
 		level.handShapes.sort(null);
 	}
 
-	private void addMissingAnchors(final ArrangementChart arrangement, final Level level) {
+	private void addMissingAnchors(final Arrangement arrangement, final Level level) {
 		final List<EventPoint> sections = arrangement.eventPoints.stream().filter(p -> p.section != null)
 				.collect(Collectors.toList());
 
@@ -173,32 +183,32 @@ public class ArrangementFixer {
 		lastPosition.endPosition(min(data.songChart.beatsMap.songLengthMs - 1, lastPosition.endPosition()));
 	}
 
-	private void fixLevel(final ArrangementChart arrangement, final Level level) {
-		level.chordsAndNotes//
+	private void fixLevel(final Arrangement arrangement, final Level level) {
+		level.sounds//
 				.stream().filter(chordOrNote -> chordOrNote.isNote())//
 				.map(chordOrNote -> chordOrNote.note)//
 				.forEach(note -> note.length(note.length() >= Config.minTailLength ? note.length() : 0));
 
-		level.chordsAndNotes
+		level.sounds
 				.removeIf(sound -> sound.isChord() && sound.chord.templateId() >= arrangement.chordTemplates.size());
 
 		removeDuplicates(level.anchors);
-		removeDuplicates(level.chordsAndNotes);
+		removeDuplicates(level.sounds);
 		removeDuplicates(level.handShapes);
 
 		addMissingAnchors(arrangement, level);
 		addMissingHandShapes(level);
 
-		fixNoteLengths(level.chordsAndNotes);
+		fixNoteLengths(level.sounds);
 
 		fixLengths(level.handShapes);
 	}
 
-	private void removeChordTemplate(final ArrangementChart arrangementChart, final int removedId,
+	private void removeChordTemplate(final Arrangement arrangementChart, final int removedId,
 			final int replacementId) {
 		arrangementChart.chordTemplates.remove(removedId);
-		for (final Level level : arrangementChart.levels.values()) {
-			for (final ChordOrNote chordOrNote : level.chordsAndNotes) {
+		for (final Level level : arrangementChart.levels) {
+			for (final ChordOrNote chordOrNote : level.sounds) {
 				if (!chordOrNote.isChord() || chordOrNote.chord.templateId() != removedId) {
 					continue;
 				}
@@ -215,7 +225,7 @@ public class ArrangementFixer {
 		}
 	}
 
-	public void fixDuplicatedChordTemplates(final ArrangementChart arrangementChart) {
+	public void fixDuplicatedChordTemplates(final Arrangement arrangementChart) {
 		final List<ChordTemplate> templates = arrangementChart.chordTemplates;
 		for (int i = 0; i < templates.size(); i++) {
 			final ChordTemplate template = templates.get(i);
@@ -231,9 +241,9 @@ public class ArrangementFixer {
 		}
 	}
 
-	private boolean isTemplateUsed(final ArrangementChart arrangementChart, final int templateId) {
-		for (final Level level : arrangementChart.levels.values()) {
-			for (final ChordOrNote sound : level.chordsAndNotes) {
+	private boolean isTemplateUsed(final Arrangement arrangementChart, final int templateId) {
+		for (final Level level : arrangementChart.levels) {
+			for (final ChordOrNote sound : level.sounds) {
 				if (sound.isChord() && sound.chord.templateId() == templateId) {
 					return true;
 				}
@@ -249,7 +259,7 @@ public class ArrangementFixer {
 		return false;
 	}
 
-	public void removeUnusedChordTemplates(final ArrangementChart arrangementChart) {
+	public void removeUnusedChordTemplates(final Arrangement arrangementChart) {
 		final Map<Integer, Integer> templateIdsMap = new HashMap<>();
 
 		final int templatesAmount = arrangementChart.chordTemplates.size();
@@ -262,8 +272,8 @@ public class ArrangementFixer {
 			}
 		}
 
-		for (final Level level : arrangementChart.levels.values()) {
-			for (final ChordOrNote sound : level.chordsAndNotes) {
+		for (final Level level : arrangementChart.levels) {
+			for (final ChordOrNote sound : level.sounds) {
 				if (sound.isChord()) {
 					final int newTemplateId = templateIdsMap.get(sound.chord.templateId());
 					final ChordTemplate template = arrangementChart.chordTemplates.get(newTemplateId);
@@ -277,7 +287,7 @@ public class ArrangementFixer {
 		}
 	}
 
-	private void fixMissingFingersOnChordTemplates(final ArrangementChart arrangementChart) {
+	private void fixMissingFingersOnChordTemplates(final Arrangement arrangementChart) {
 		arrangementChart.chordTemplates.forEach(chordTemplate -> {
 			for (final int string : new HashSet<>(chordTemplate.fingers.keySet())) {
 				if (chordTemplate.fingers.get(string) == null) {
@@ -287,9 +297,13 @@ public class ArrangementFixer {
 		});
 	}
 
-	public void fixArrangement() {
-		for (final ArrangementChart arrangement : data.songChart.arrangements) {
-			for (final Level level : arrangement.levels.values()) {
+	public void fixArrangements() {
+		final int start = data.songChart.beatsMap.beats.get(0).position();
+		final int end = data.songChart.beatsMap.songLengthMs;
+
+		for (final Arrangement arrangement : data.songChart.arrangements) {
+			removeWrongPositions(arrangement, start, end);
+			for (final Level level : arrangement.levels) {
 				fixLevel(arrangement, level);
 			}
 

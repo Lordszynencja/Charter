@@ -1,6 +1,7 @@
 package log.charter.song.vocals;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.data.config.Config;
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
@@ -8,6 +9,7 @@ import log.charter.song.notes.PositionWithLength;
 
 @XStreamAlias("vocal")
 public class Vocal extends PositionWithLength {
+	@XStreamAsAttribute
 	public String lyric;
 
 	public Vocal(final int position) {

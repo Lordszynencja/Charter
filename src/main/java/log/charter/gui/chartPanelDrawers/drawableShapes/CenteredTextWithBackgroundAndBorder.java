@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.util.Position2D;
 
 public class CenteredTextWithBackgroundAndBorder implements DrawableShape {
@@ -21,6 +22,11 @@ public class CenteredTextWithBackgroundAndBorder implements DrawableShape {
 
 	private final CenteredTextWithBackground centeredTextWithBackground;
 	private final Color borderColor;
+
+	public CenteredTextWithBackgroundAndBorder(final Position2D position, final Font font, final String text,
+			final ColorLabel textColor, final ColorLabel backgroundColor, final ColorLabel borderColor) {
+		this(position, font, text, textColor.color(), backgroundColor.color(), borderColor.color());
+	}
 
 	public CenteredTextWithBackgroundAndBorder(final Position2D position, final Font font, final String text,
 			final Color textColor, final Color backgroundColor, final Color borderColor) {
@@ -42,7 +48,7 @@ public class CenteredTextWithBackgroundAndBorder implements DrawableShape {
 	public void draw(final Graphics2D g, final ShapePositionWithSize positionAndSize) {
 		if (borderColor != null) {
 			g.setColor(borderColor);
-			g.fillRect(positionAndSize.x, positionAndSize.y, positionAndSize.width, positionAndSize.height);
+			g.drawRect(positionAndSize.x, positionAndSize.y, positionAndSize.width - 1, positionAndSize.height - 1);
 		}
 
 		centeredTextWithBackground.draw(g, positionAndSize.resized(1, 1, -2, -2));

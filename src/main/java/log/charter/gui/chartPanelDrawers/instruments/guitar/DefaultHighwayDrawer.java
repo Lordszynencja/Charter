@@ -10,13 +10,14 @@ import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.data.config.GraphicalConfig.noteWidth;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.phraseNamesY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.tailHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
-import static log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.fromChord;
-import static log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.fromNote;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackgroundAndBorder.getExpectedSize;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
@@ -31,6 +32,7 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lin
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedTriangle;
 import static log.charter.util.ScalingUtils.timeToX;
+import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.ScalingUtils.xToTimeLength;
 import static log.charter.util.Utils.getStringPosition;
 
@@ -56,18 +58,24 @@ import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackground;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
+import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
+import log.charter.gui.chartPanelDrawers.drawableShapes.StrokedTriangle;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;
 import log.charter.io.Logger;
 import log.charter.song.Anchor;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
+import log.charter.song.EventPoint;
+import log.charter.song.EventType;
 import log.charter.song.HandShape;
+import log.charter.song.Phrase;
+import log.charter.song.SectionType;
 import log.charter.song.ToneChange;
 import log.charter.song.enums.Mute;
-import log.charter.song.notes.Chord;
+import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.IntRange;
@@ -109,6 +117,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	protected final int time;
 	protected final int[] stringPositions;
 
+	protected final DrawableShapeList sectionsAndPhrases;
 	protected final DrawableShapeList anchors;
 	protected final DrawableShapeList bendValues;
 	protected final DrawableShapeList chordNames;
@@ -149,6 +158,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		palmMuteImage = definePalmMuteImage();
 		muteImage = defineMuteImage();
 
+		sectionsAndPhrases = new DrawableShapeList();
 		anchors = new DrawableShapeList();
 		bendValues = new DrawableShapeList();
 		chordNames = new DrawableShapeList();
@@ -208,6 +218,56 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		return note.wrongLink ? applyWrongLink(color) : color;
 	}
 
+	private void addSection(final SectionType section, final int x) {
+		sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, sectionNamesY), anchorFont, section.label,
+				ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT));
+	}
+
+	private void addPhrase(final Phrase phrase, final String phraseName, final int x) {
+		final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
+				+ (phrase.solo ? "[Solo]" : "");
+		sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, phraseNamesY), anchorFont, phraseLabel,
+				ColorLabel.PHRASE_NAME_BG, ColorLabel.BASE_DARK_TEXT));
+	}
+
+	private void addEvents(final ArrayList2<EventType> events, final int x) {
+		final String eventsName = String.join(", ", events.map(event -> event.label));
+		sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, eventNamesY), anchorFont, eventsName,
+				ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT));
+	}
+
+	private void addEventPointBox(final int x, final ColorLabel color) {
+		final int top = sectionNamesY - 1;
+		final int bottom = lanesBottom + 1;
+		final ShapePositionWithSize beatPosition = new ShapePositionWithSize(x - 1, top, 3, bottom - top);
+		selects.add(filledRectangle(beatPosition, color));
+	}
+
+	@Override
+	public void addEventPoint(final EventPoint eventPoint, final Phrase phrase, final int x, final boolean selected,
+			final boolean highlighted) {
+		if (eventPoint.section != null) {
+			addSection(eventPoint.section, x);
+		}
+		if (eventPoint.phrase != null) {
+			addPhrase(phrase, eventPoint.phrase, x);
+		}
+		if (!eventPoint.events.isEmpty()) {
+			addEvents(eventPoint.events, x);
+		}
+
+		if (highlighted) {
+			addEventPointBox(x, ColorLabel.HIGHLIGHT);
+		} else if (selected) {
+			addEventPointBox(x, ColorLabel.SELECT);
+		}
+	}
+
+	@Override
+	public void addEventPointHighlight(final int x) {
+		selects.add(lineVertical(x, sectionNamesY, lanesBottom, ColorLabel.HIGHLIGHT));
+	}
+
 	protected void addNormalNoteShape(final int y, final EditorNoteDrawingData note) {
 		if (note.linkPrevious && !note.wrongLink) {
 			return;
@@ -223,7 +283,9 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 			notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor));
 		}
 
-		if (note.selected) {
+		if (note.highlighted) {
+			selects.add(strokedRectangle(position, ColorLabel.HIGHLIGHT, 2));
+		} else if (note.selected) {
 			selects.add(strokedRectangle(position, selectColor, 2));
 		}
 	}
@@ -243,7 +305,9 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 			notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor));
 		}
 
-		if (note.selected) {
+		if (note.highlighted) {
+			selects.add(strokedRectangle(position, ColorLabel.HIGHLIGHT, 2));
+		} else if (note.selected) {
 			selects.add(strokedRectangle(position, selectColor, 2));
 		}
 	}
@@ -263,7 +327,9 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 			notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor));
 		}
 
-		if (note.selected) {
+		if (note.highlighted) {
+			selects.add(strokedRectangle(position, ColorLabel.HIGHLIGHT, 2));
+		} else if (note.selected) {
 			selects.add(strokedRectangle(position, selectColor, 2));
 		}
 	}
@@ -297,7 +363,9 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 			notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor));
 		}
 
-		if (note.selected) {
+		if (note.highlighted) {
+			selects.add(strokedRectangle(position, ColorLabel.HIGHLIGHT, 2));
+		} else if (note.selected) {
 			selects.add(strokedRectangle(position, selectColor, 2));
 		}
 	}
@@ -399,7 +467,10 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 		slideFrets.add(
 				centeredTextWithBackground(c, fretFont, note.slideTo + "", fretColor, backgroundColor, Color.BLACK));
-		if (note.selected) {
+
+		if (note.highlighted) {
+			noteTailSelects.add(new StrokedTriangle(a, b, c, ColorLabel.HIGHLIGHT));
+		} else if (note.selected) {
 			noteTailSelects.add(strokedTriangle(a, b, c, selectColor));
 		}
 	}
@@ -489,7 +560,11 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 			noteTails.add(filledRectangle(position, color));
 		}
 
-		if (note.selected) {
+		if (note.highlighted) {
+			final ShapePositionWithSize position = new ShapePositionWithSize(x, topBottom.min - 1, length,
+					topBottom.max - topBottom.min + 1);
+			noteTailSelects.add(strokedRectangle(position, ColorLabel.HIGHLIGHT));
+		} else if (note.selected) {
 			final ShapePositionWithSize position = new ShapePositionWithSize(x, topBottom.min - 1, length,
 					topBottom.max - topBottom.min + 1);
 			noteTailSelects.add(strokedRectangle(position, selectColor));
@@ -650,7 +725,8 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		addBendValues(note, y);
 	}
 
-	protected void addSimpleNote(final EditorNoteDrawingData note) {
+	@Override
+	public void addNote(final EditorNoteDrawingData note) {
 		if (note.string >= stringPositions.length) {
 			return;
 		}
@@ -660,28 +736,45 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addNote(final Note note, final int x, final boolean selected, final boolean lastWasLinkNext,
-			final boolean wrongLinkNext) {
-		addSimpleNote(fromNote(x, note, selected, lastWasLinkNext, wrongLinkNext));
+	public void addChordName(final int x, final String chordName) {
+		chordNames.add(new Text(new Position2D(x + 2, lanesTop - 1), fretFont, chordName, ColorLabel.BASE_DARK_TEXT));
+	}
+
+	private void addNoteHighlight(final int x, final int length, final int string) {
+		final int y = getLaneY(getStringPosition(string, strings));
+
+		if (length > 0) {
+			final IntRange topBottom = getDefaultTailTopBottom(y);
+			final ShapePositionWithSize position = new ShapePositionWithSize(x, topBottom.min - 1, length,
+					topBottom.max - topBottom.min + 1);
+			noteTailSelects.add(strokedRectangle(position, ColorLabel.HIGHLIGHT));
+		}
+
+		final ShapePositionWithSize notePosition = new ShapePositionWithSize(x, y, noteWidth, noteHeight)//
+				.centered().resized(-1, -1, 1, 1);
+		notes.add(strokedRectangle(notePosition, ColorLabel.HIGHLIGHT));
 	}
 
 	@Override
-	public void addChord(final Chord chord, final ChordTemplate chordTemplate, final int x, final int length,
-			final boolean selected, final boolean lastWasLinkNext, final boolean wrongLinkNext, final boolean ctrl) {
-		for (final EditorNoteDrawingData noteData : fromChord(chord, chordTemplate, x, selected, lastWasLinkNext,
-				wrongLinkNext, ctrl)) {
-			addSimpleNote(noteData);
+	public void addSoundHighlight(final int x, final ChordOrNote originalSound, final ChordTemplate template,
+			final int string) {
+		if (originalSound == null) {
+			addNoteHighlight(x, 0, string);
+			return;
 		}
 
-		String chordName = chordTemplate.chordName;
-		if (showChordIds) {
-			chordName = (chordName == null || chordName.isBlank()) ? "[" + chord.templateId() + "]"
-					: chordName + " [" + chord.templateId() + "]";
+		if (originalSound.isNote()) {
+			final Note note = originalSound.note;
+			addNoteHighlight(x, timeToXLength(note.length(), note.position()), note.string);
+			return;
 		}
-		if (chordName != null) {
-			chordNames
-					.add(new Text(new Position2D(x + 2, lanesTop - 1), fretFont, chordName, ColorLabel.BASE_DARK_TEXT));
-		}
+
+		originalSound.chord.chordNotes.keySet().forEach(chordString -> addNoteHighlight(x, 0, chordString));
+	}
+
+	@Override
+	public void addNoteAdditionLine(final Position2D from, final Position2D to) {
+		notes.add(new Line(from, to, ColorLabel.NOTE_ADD_LINE));
 	}
 
 	protected void addAnchorLine(final int x) {

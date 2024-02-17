@@ -1,11 +1,10 @@
 package log.charter.gui.chartPanelDrawers.data;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.min;
 import static java.util.Arrays.asList;
-import static log.charter.data.config.Config.maxStrings;
 import static log.charter.data.types.PositionType.BEAT;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
-import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.util.ArrayList;
@@ -36,45 +35,40 @@ import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.Position2D;
 
 public class HighlightData {
-	private static final boolean[] emptyStrings = new boolean[maxStrings];
-
 	public static class TemporaryHighlighPosition implements IPositionWithLength {
 		private int position;
 		private int length;
-		private final boolean[] strings;
+		private final ChordOrNote originalSound;
+		private final int string;
 
 		public TemporaryHighlighPosition(final IPosition position) {
-			this(position.position(), 0, emptyStrings);
+			this(position.position(), 0, 0);
 		}
 
 		public TemporaryHighlighPosition(final IPositionWithLength positionWithLength) {
-			this(positionWithLength.position(), positionWithLength.length(), emptyStrings);
+			this(positionWithLength.position(), positionWithLength.length(), 0);
 		}
 
 		public TemporaryHighlighPosition(final ChordOrNote sound) {
 			position = sound.position();
 			length = sound.length();
-
-			strings = new boolean[maxStrings];
-			if (sound.isNote()) {
-				strings[sound.note.string] = true;
-			} else {
-				sound.chord.chordNotes.keySet().forEach(string -> strings[string] = true);
-			}
+			originalSound = sound;
+			string = 0;
 		}
 
 		public TemporaryHighlighPosition(final int position) {
-			this(position, 0, emptyStrings);
+			this(position, 0, 0);
 		}
 
 		public TemporaryHighlighPosition(final int position, final int length) {
-			this(position, length, emptyStrings);
+			this(position, length, 0);
 		}
 
-		public TemporaryHighlighPosition(final int position, final int length, final boolean[] strings) {
+		public TemporaryHighlighPosition(final int position, final int length, final int string) {
 			this.position = position;
 			this.length = length;
-			this.strings = strings;
+			originalSound = null;
+			this.string = string;
 		}
 
 		@Override
@@ -98,7 +92,7 @@ public class HighlightData {
 		}
 
 		public HighlightPosition asConstant() {
-			return new HighlightPosition(position, length, strings);
+			return new HighlightPosition(position, length, originalSound, string);
 		}
 
 	}
@@ -106,23 +100,23 @@ public class HighlightData {
 	public static class HighlightPosition implements IConstantPositionWithLength {
 		public final int position;
 		public final int length;
-		public final boolean[] strings;
+		public final ChordOrNote originalSound;
+		public final int string;
+
+		public HighlightPosition(final int position, final int length) {
+			this(position, length, null, 0);
+		}
 
 		public HighlightPosition(final int position) {
-			this(position, 0, emptyStrings);
+			this(position, 0, null, 0);
 		}
 
-		public HighlightPosition(final int position, final int length, final int string) {
+		public HighlightPosition(final int position, final int length, final ChordOrNote originalSound,
+				final int string) {
 			this.position = position;
 			this.length = length;
-			strings = new boolean[maxStrings];
-			strings[string] = true;
-		}
-
-		public HighlightPosition(final int position, final int length, final boolean[] strings) {
-			this.position = position;
-			this.length = length;
-			this.strings = strings;
+			this.originalSound = originalSound;
+			this.string = string;
 		}
 
 		@Override
@@ -224,17 +218,16 @@ public class HighlightData {
 			return null;
 		}
 
-		final int pressXTime = pressPosition.highlight.position();
-		final int pressX = timeToX(pressXTime, data.time);
+		final int pressXTime = min(pressPosition.highlight.position(), xToTime(pressPosition.position.x, data.time));
 		final int pressY = pressPosition.position.y;
 
-		final Position2D startPosition = new Position2D(pressX, pressY);
+		final Position2D startPosition = pressPosition.position;
 		final Position2D endPosition = new Position2D(x, y);
 		final PositionWithIdAndType highlight = highlightManager.getHighlight(x, y);
 
 		final ArrayList2<HighlightPosition> dragPositions = highlightManager
 				.getPositionsWithStrings(pressXTime, highlight.position(), pressY, y)//
-				.map(position -> new HighlightPosition(position.position(), 0, position.string));
+				.map(position -> new HighlightPosition(position.position(), 0, null, position.string));
 
 		return new HighlightData(PositionType.GUITAR_NOTE, dragPositions, startPosition, endPosition);
 	}
@@ -261,19 +254,18 @@ public class HighlightData {
 			return new HighlightData(highlight.type, highlight.id);
 		}
 
+		final PositionType type = highlight.type;
 		final int position = highlight.position();
-		int length = 0;
-		int string = 0;
-		if (highlight.type == PositionType.HAND_SHAPE) {
-			length = data.songChart.beatsMap.getNextPositionFromGridAfter(position) - position;
-		}
 		if (highlight.type == PositionType.GUITAR_NOTE) {
-			string = yToString(y, data.currentStrings());
+			final int string = yToString(y, data.currentStrings());
+			return new HighlightData(type, new HighlightPosition(position, 0, null, string));
 		}
-		if (highlight.type == PositionType.VOCAL) {
-			length = 50;
+		if (highlight.type == PositionType.HAND_SHAPE || highlight.type == PositionType.VOCAL) {
+			final int length = data.songChart.beatsMap.getNextPositionFromGridAfter(position) - position;
+			return new HighlightData(type, new HighlightPosition(position, length));
 		}
-		return new HighlightData(highlight.type, new HighlightPosition(position, length, string));
+
+		return new HighlightData(type, new HighlightPosition(position));
 	}
 
 	public final PositionType highlightType;

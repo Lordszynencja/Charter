@@ -101,4 +101,16 @@ public class Logger {
 			e.printStackTrace(System.out);
 		}
 	}
+
+	public static void error(String msg, final Error e) {
+		msg = getLine("ERROR", msg);
+
+		out.println(msg);
+		e.printStackTrace(out);
+
+		if (out != System.out) {
+			System.out.println(msg);
+			e.printStackTrace(System.out);
+		}
+	}
 }

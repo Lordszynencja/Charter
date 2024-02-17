@@ -20,6 +20,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackgroundAndBorder;
@@ -87,68 +88,68 @@ class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
 		addNoteTail(note, y);
 		addBendValues(note, y);
 
+		if (note.linkPrevious && !note.wrongLink) {
+			return;
+		}
+
 		addNormalNoteShape(y, note);
 
-		if (!note.linkPrevious || note.wrongLink) {
-			switch (note.hopo) {
-				case HAMMER_ON:
-					addHammerOnShape(y, note);
-					break;
-				case PULL_OFF:
-					addPullOffShape(y, note);
-					break;
-				case TAP:
-					addTapShape(y, note);
-					break;
-				case NONE:
-				default:
-					break;
-			}
+		switch (note.hopo) {
+			case HAMMER_ON:
+				addHammerOnShape(y, note);
+				break;
+			case PULL_OFF:
+				addPullOffShape(y, note);
+				break;
+			case TAP:
+				addTapShape(y, note);
+				break;
+			case NONE:
+			default:
+				break;
+		}
 
-			switch (note.harmonic) {
-				case NORMAL:
-					addHarmonicShape(y, note);
-					break;
-				case PINCH:
-					addPinchHarmonicShape(y, note);
-					break;
-				case NONE:
-				default:
-					break;
-			}
+		switch (note.harmonic) {
+			case NORMAL:
+				addHarmonicShape(y, note);
+				break;
+			case PINCH:
+				addPinchHarmonicShape(y, note);
+				break;
+			case NONE:
+			default:
+				break;
+		}
 
-			switch (note.mute) {
-				case PALM:
-					addPalmMute(note, y);
-					break;
-				case FULL:
-					addFullMute(note, y);
-					break;
-				case NONE:
-				default:
-					break;
-			}
+		switch (note.mute) {
+			case PALM:
+				addPalmMute(note, y);
+				break;
+			case FULL:
+				addFullMute(note, y);
+				break;
+			case NONE:
+			default:
+				break;
+		}
 
-			noteFrets.add(new CenteredTextWithBackgroundAndBorder(new Position2D(note.x + 1, y), fretFont, note.fret,
-					Color.BLACK, Color.WHITE, Color.BLACK));
+		noteFrets.add(new CenteredTextWithBackgroundAndBorder(new Position2D(note.x + 1, y), fretFont, note.fret,
+				Color.BLACK, Color.WHITE, Color.BLACK));
 
-			if (note.accent) {
-				final Color accentColor = getStringBasedColor(StringColorLabelType.NOTE_ACCENT, note.string, strings);
-				notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor, 1));
-			}
+		if (note.accent) {
+			final Color accentColor = getStringBasedColor(StringColorLabelType.NOTE_ACCENT, note.string, strings);
+			notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor, 1));
+		}
 
-			if (note.selected) {
-				selects.add(strokedRectangle(position.resized(0, 0, -1, -1), selectColor, 2));
-			}
+		if (note.highlighted) {
+			selects.add(strokedRectangle(position.resized(0, 0, -1, -1), ColorLabel.HIGHLIGHT, 2));
+		} else if (note.selected) {
+			selects.add(strokedRectangle(position.resized(0, 0, -1, -1), selectColor, 2));
 		}
 	}
 
 	@Override
 	protected void addNormalNoteShape(final int y, final EditorNoteDrawingData note) {
-		if (note.linkPrevious && !note.wrongLink) {
-			return;
-		}
-
 		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteWidth, noteHeight)//
 				.centered();
 

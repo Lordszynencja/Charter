@@ -72,6 +72,11 @@ public interface DrawableShape {
 		return strokedRectangle(position, color.color());
 	}
 
+	public static DrawableShape strokedRectangle(final ShapePositionWithSize position, final ColorLabel color,
+			final int thickness) {
+		return strokedRectangle(position, color.color(), thickness);
+	}
+
 	public static DrawableShape strokedRectangle(final ShapePositionWithSize position, final Color color,
 			final int thickness) {
 		return new StrokedRectangle(position, color, thickness);

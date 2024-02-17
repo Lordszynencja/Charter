@@ -4,11 +4,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+import log.charter.io.rsc.xml.converters.ChordOrNoteConverter;
 import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("sound")
+@XStreamConverter(ChordOrNoteConverter.class)
 public class ChordOrNote implements IPositionWithLength {
 	public static ChordOrNote findNextSoundOnString(final int string, final int startFromId,
 			final ArrayList2<ChordOrNote> sounds) {
@@ -61,7 +65,9 @@ public class ChordOrNote implements IPositionWithLength {
 		return true;
 	}
 
+	@XStreamOmitField
 	public Chord chord;
+	@XStreamOmitField
 	public Note note;
 
 	public ChordOrNote(final Chord chord) {

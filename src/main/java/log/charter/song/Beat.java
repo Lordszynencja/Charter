@@ -6,13 +6,15 @@ import static java.util.stream.Collectors.toCollection;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.io.rs.xml.song.EBeat;
+import log.charter.io.rsc.xml.converters.BeatConverter;
 import log.charter.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-@XStreamAlias("beat")
+@XStreamAlias("beat2")
+@XStreamConverter(BeatConverter.class)
 public class Beat extends Position {
 	public static ArrayList2<Beat> fromEbeats(final List<EBeat> ebeats) {
 		final ArrayList2<Beat> beats = ebeats.stream()//
@@ -34,14 +36,19 @@ public class Beat extends Position {
 		return beats;
 	}
 
-	@XStreamAsAttribute
 	public int beatsInMeasure = 4;
-	@XStreamAsAttribute
 	public int noteDenominator = 4;
-	@XStreamAsAttribute
 	public boolean firstInMeasure = false;
-	@XStreamAsAttribute
 	public boolean anchor = false;
+
+	public Beat(final int position, final int beatsInMeasure, final int noteDenominator, final boolean firstInMeasure,
+			final boolean anchor) {
+		super(position);
+		this.beatsInMeasure = beatsInMeasure;
+		this.noteDenominator = noteDenominator;
+		this.firstInMeasure = firstInMeasure;
+		this.anchor = anchor;
+	}
 
 	public Beat(final int pos, final int beatsInMeasure, final int noteDenominator, final boolean firstInMeasure) {
 		super(pos);
