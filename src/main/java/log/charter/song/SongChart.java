@@ -38,15 +38,15 @@ public class SongChart {
 	public HashMap2<Integer, Integer> bookmarks = new HashMap2<>();
 
 	/**
-	 * creates empty chart
+	 * creates empty chart for music file
 	 */
 	public SongChart(final int songLengthMs, final String musicFileName) {
 		this.musicFileName = musicFileName;
 		beatsMap = new BeatsMap(songLengthMs);
 	}
 
-	public SongChart(final int songLengthMs, final int beatMapStart) {
-		beatsMap = new BeatsMap(songLengthMs, beatMapStart);
+	public SongChart(final BeatsMap beatsMap) {
+		this.beatsMap = beatsMap;
 	}
 
 	public SongChart(final String musicFileName, final String artistName, final String artistNameSort,

@@ -25,6 +25,11 @@ public class BeatsMap {
 		this(songLength, true);
 	}
 
+	public BeatsMap(final int songLength, final ArrayList2<Beat> beats) {
+		songLengthMs = songLength;
+		this.beats = beats;
+	}
+
 	public BeatsMap(final int songLength, final int startFrom) {
 		songLengthMs = songLength;
 		beats.add(new Beat(startFrom, 4, 4, true));

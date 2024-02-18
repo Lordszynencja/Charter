@@ -43,29 +43,38 @@ public class Directions {
 		daDoubleCoda = 0;
 	}
 
+	public Directions(final Directions other) {
+		coda = other.coda;
+		doubleCoda = other.doubleCoda;
+		segno = other.segno;
+		segnoSegno = other.segnoSegno;
+		fine = other.fine;
+		daCapo = other.daCapo;
+		daCapoAlCoda = other.daCapoAlCoda;
+		daCapoAlDoubleCoda = other.daCapoAlDoubleCoda;
+		daCapoAlFine = other.daCapoAlFine;
+		daSegno = other.daSegno;
+		daSegnoAlCoda = other.daSegnoAlCoda;
+		daSegnoAlDoubleCoda = other.daSegnoAlDoubleCoda;
+		daSegnoAlFine = other.daSegnoAlFine;
+		daSegnoSegno = other.daSegnoSegno;
+		daSegnoSegnoAlCoda = other.daSegnoSegnoAlCoda;
+		daSegnoSegnoAlDoubleCoda = other.daSegnoSegnoAlDoubleCoda;
+		daSegnoSegnoAlFine = other.daSegnoSegnoAlFine;
+		daCoda = other.daCoda;
+		daDoubleCoda = other.daDoubleCoda;
+	}
+
 	@Override
 	public String toString() {
-		return "Directions [" +
-			   "coda=" + coda +
-			   ", doubleCoda=" + doubleCoda +
-			   ", segno=" + segno +
-			   ", segnoSegno=" + segnoSegno +
-			   ", fine=" + fine +
-			   ", daCapo=" + daCapo +
-			   ", daCapoAlCoda=" + daCapoAlCoda +
-			   ", daCapoAlDoubleCoda=" + daCapoAlDoubleCoda +
-			   ", daCapoAlFine=" + daCapoAlFine +
-			   ", daSegno=" + daSegno +
-			   ", daSegnoAlCoda=" + daSegnoAlCoda +
-			   ", daSegnoAlDoubleCoda=" + daSegnoAlDoubleCoda +
-			   ", daSegnoAlFine=" + daSegnoAlFine +
-			   ", daSegnoSegno=" + daSegnoSegno +
-			   ", daSegnoSegnoAlCoda=" + daSegnoSegnoAlCoda +
-			   ", daSegnoSegnoAlDoubleCoda=" + daSegnoSegnoAlDoubleCoda +
-			   ", daSegnoSegnoAlFine=" + daSegnoSegnoAlFine +
-			   ", daCoda=" + daCoda +
-			   ", daDoubleCoda=" + daDoubleCoda +
-			   "]";
+		return "Directions [" + "coda=" + coda + ", doubleCoda=" + doubleCoda + ", segno=" + segno + ", segnoSegno="
+				+ segnoSegno + ", fine=" + fine + ", daCapo=" + daCapo + ", daCapoAlCoda=" + daCapoAlCoda
+				+ ", daCapoAlDoubleCoda=" + daCapoAlDoubleCoda + ", daCapoAlFine=" + daCapoAlFine + ", daSegno="
+				+ daSegno + ", daSegnoAlCoda=" + daSegnoAlCoda + ", daSegnoAlDoubleCoda=" + daSegnoAlDoubleCoda
+				+ ", daSegnoAlFine=" + daSegnoAlFine + ", daSegnoSegno=" + daSegnoSegno + ", daSegnoSegnoAlCoda="
+				+ daSegnoSegnoAlCoda + ", daSegnoSegnoAlDoubleCoda=" + daSegnoSegnoAlDoubleCoda
+				+ ", daSegnoSegnoAlFine=" + daSegnoSegnoAlFine + ", daCoda=" + daCoda + ", daDoubleCoda=" + daDoubleCoda
+				+ "]";
 	}
 
 }

@@ -1,8 +1,13 @@
 package log.charter.gui.menuHandlers;
 
+import static log.charter.io.gp.gp5.transformers.GP5BarOrderExtractor.getBarsOrder;
+import static log.charter.io.gp.gp5.transformers.GP5FileTempoMapExtractor.getTempoMap;
+
 import java.io.File;
+import java.util.List;
 
 import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 
 import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
@@ -20,6 +25,7 @@ import log.charter.io.Logger;
 import log.charter.io.gp.gp5.GP5FileReader;
 import log.charter.io.gp.gp5.data.GP5File;
 import log.charter.io.gp.gp5.transformers.GP5FileToSongChart;
+import log.charter.song.BeatsMap;
 import log.charter.song.SongChart;
 import log.charter.util.FileChooseUtils;
 
@@ -79,21 +85,37 @@ public class FileMenuHandler extends CharterMenuHandler {
 		return menu;
 	}
 
-	private void importGPFile() {
+	private File chooseGP5File() {
 		final String dir = data.isEmpty ? Config.songsPath : data.path;
 		final File file = FileChooseUtils.chooseFile(frame, dir, new String[] { ".gp3", ".gp4", "gp5" },
 				Label.GP_FILE.label());
+
+		return file;
+	}
+
+	private boolean askUserAboutUsingExistingTempoMap() {
+		final int result = JOptionPane.showConfirmDialog(frame, "Do you want to use existing tempo map for the import?",
+				"GP5 import tempo map", JOptionPane.YES_NO_OPTION);
+		return JOptionPane.YES_OPTION == result;
+	}
+
+	private void importGPFile() {
+		final File file = chooseGP5File();
 		if (file == null) {
 			return;
 		}
 
+		final boolean useExistingTempoMap = askUserAboutUsingExistingTempoMap();
+
 		try {
 			final GP5File gp5File = GP5FileReader.importGPFile(file);
+			final List<Integer> barsOrder = getBarsOrder(gp5File.directions, gp5File.masterBars);
 
 			final int startPosition = data.songChart.beatsMap.beats.get(0).position();
+			final BeatsMap beatsMap = useExistingTempoMap ? data.songChart.beatsMap
+					: getTempoMap(gp5File, startPosition, data.songChart.beatsMap.songLengthMs, barsOrder);
 
-			final SongChart temporaryChart = GP5FileToSongChart.transform(data.songChart.beatsMap.songLengthMs,
-					startPosition, gp5File);
+			final SongChart temporaryChart = GP5FileToSongChart.transform(gp5File, beatsMap, barsOrder);
 
 			new GP5ImportOptions(frame, arrangementFixer, charterMenuBar, data, temporaryChart);
 		} catch (final Exception e) {

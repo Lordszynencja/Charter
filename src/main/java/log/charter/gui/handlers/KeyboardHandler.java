@@ -103,6 +103,7 @@ import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.song.Arrangement;
+import log.charter.song.Beat;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
@@ -122,8 +123,7 @@ import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.chordRecognition.ChordNameSuggester;
 
 public class KeyboardHandler implements KeyListener {
-	private static Consumer<KeyEvent> emptyHandler = e -> {
-	};
+	private static Consumer<KeyEvent> emptyHandler = e -> {};
 
 	private static int modifierKeysValue(final boolean ctrl, final boolean alt, final boolean shift) {
 		return ((ctrl ? 1 : 0) << 2)//
@@ -157,9 +157,7 @@ public class KeyboardHandler implements KeyListener {
 		}
 
 		public void singleFunction(final Runnable function) {
-			this.function = e -> {
-				function.run();
-			};
+			this.function = e -> { function.run(); };
 
 			addSingle();
 		}
@@ -171,9 +169,7 @@ public class KeyboardHandler implements KeyListener {
 		}
 
 		public void function(final Runnable function) {
-			this.function = e -> {
-				function.run();
-			};
+			this.function = e -> { function.run(); };
 
 			add();
 		}
@@ -354,8 +350,13 @@ public class KeyboardHandler implements KeyListener {
 			return;
 		}
 
-		final int newTime = ctrl ? data.songChart.beatsMap.getPositionWithRemovedGrid(data.time, 1)//
-				: findLastBefore(data.songChart.beatsMap.beats, data.time).position();
+		int newTime;
+		if (ctrl) {
+			newTime = data.songChart.beatsMap.getPositionWithRemovedGrid(data.time, 1);
+		} else {
+			final Beat beat = findLastBefore(data.songChart.beatsMap.beats, data.time);
+			newTime = (beat == null ? data.songChart.beatsMap.beats.get(0) : beat).position();
+		}
 		frame.setNextTime(newTime);
 	}
 
@@ -686,14 +687,14 @@ public class KeyboardHandler implements KeyListener {
 				mute = sound.chord.chordNotesValue(n -> n.mute, Mute.NONE);
 			}
 			switch (mute) {
-			case NONE:
-				return Mute.PALM;
-			case PALM:
-				return Mute.FULL;
-			case FULL:
-				return Mute.NONE;
-			default:
-				return Mute.NONE;
+				case NONE:
+					return Mute.PALM;
+				case PALM:
+					return Mute.FULL;
+				case FULL:
+					return Mute.NONE;
+				default:
+					return Mute.NONE;
 			}
 		}, (sound, mute) -> {
 			if (sound.isNote()) {
@@ -718,16 +719,16 @@ public class KeyboardHandler implements KeyListener {
 			}
 
 			switch (hopo) {
-			case HAMMER_ON:
-				return HOPO.PULL_OFF;
-			case NONE:
-				return HOPO.HAMMER_ON;
-			case PULL_OFF:
-				return HOPO.TAP;
-			case TAP:
-				return HOPO.NONE;
-			default:
-				return HOPO.NONE;
+				case HAMMER_ON:
+					return HOPO.PULL_OFF;
+				case NONE:
+					return HOPO.HAMMER_ON;
+				case PULL_OFF:
+					return HOPO.TAP;
+				case TAP:
+					return HOPO.NONE;
+				default:
+					return HOPO.NONE;
 			}
 		}, (sound, hopo) -> {
 			if (sound.isNote()) {
@@ -752,14 +753,14 @@ public class KeyboardHandler implements KeyListener {
 			}
 
 			switch (harmonic) {
-			case NONE:
-				return Harmonic.NORMAL;
-			case NORMAL:
-				return Harmonic.PINCH;
-			case PINCH:
-				return Harmonic.NONE;
-			default:
-				return Harmonic.NONE;
+				case NONE:
+					return Harmonic.NORMAL;
+				case NORMAL:
+					return Harmonic.PINCH;
+				case PINCH:
+					return Harmonic.NONE;
+				default:
+					return Harmonic.NONE;
 			}
 		}, (sound, harmonic) -> {
 			if (sound.isNote()) {
@@ -996,24 +997,24 @@ public class KeyboardHandler implements KeyListener {
 		final HashSet2<Selection<IPosition>> selected = accessor.getSelectedSet();
 
 		switch (accessor.type) {
-		case EVENT_POINT:
-		case ANCHOR:
-		case TONE_CHANGE:
-			snapPositions(selected.map(selection -> selection.selectable));
-			break;
-		case GUITAR_NOTE:
-			snapNotePositions(selected.map(selection -> (ChordOrNote) selection.selectable));
-			break;
-		case HAND_SHAPE:
-			snapPositionsWithLength(selected.map(selection -> (HandShape) selection.selectable),
-					data.getCurrentArrangementLevel().handShapes);
-			break;
-		case VOCAL:
-			snapPositionsWithLength(selected.map(selection -> (Vocal) selection.selectable),
-					data.songChart.vocals.vocals);
-			break;
-		default:
-			break;
+			case EVENT_POINT:
+			case ANCHOR:
+			case TONE_CHANGE:
+				snapPositions(selected.map(selection -> selection.selectable));
+				break;
+			case GUITAR_NOTE:
+				snapNotePositions(selected.map(selection -> (ChordOrNote) selection.selectable));
+				break;
+			case HAND_SHAPE:
+				snapPositionsWithLength(selected.map(selection -> (HandShape) selection.selectable),
+						data.getCurrentArrangementLevel().handShapes);
+				break;
+			case VOCAL:
+				snapPositionsWithLength(selected.map(selection -> (Vocal) selection.selectable),
+						data.songChart.vocals.vocals);
+				break;
+			default:
+				break;
 		}
 
 		reselectAfterSnapping(accessor.type, selected);
@@ -1442,26 +1443,26 @@ public class KeyboardHandler implements KeyListener {
 	@Override
 	public void keyReleased(final KeyEvent e) {
 		switch (e.getKeyCode()) {
-		case KeyEvent.VK_LEFT:
-			left = false;
-			break;
-		case KeyEvent.VK_RIGHT:
-			right = false;
-			break;
-		case KeyEvent.VK_CONTROL:
-			ctrl = false;
-			break;
-		case KeyEvent.VK_ALT:
-			alt = false;
-			break;
-		case KeyEvent.VK_SHIFT:
-			shift = false;
-			break;
-		case KeyEvent.VK_F10:
-			keyUsed(e);
-			break;
-		default:
-			break;
+			case KeyEvent.VK_LEFT:
+				left = false;
+				break;
+			case KeyEvent.VK_RIGHT:
+				right = false;
+				break;
+			case KeyEvent.VK_CONTROL:
+				ctrl = false;
+				break;
+			case KeyEvent.VK_ALT:
+				alt = false;
+				break;
+			case KeyEvent.VK_SHIFT:
+				shift = false;
+				break;
+			case KeyEvent.VK_F10:
+				keyUsed(e);
+				break;
+			default:
+				break;
 		}
 	}
 

@@ -65,7 +65,7 @@ public class Arrangement {
 		phrases.put("COUNT", new Phrase(0, false));
 		phrases.put("END", new Phrase(0, false));
 
-		final EventPoint count = new EventPoint(0);
+		final EventPoint count = new EventPoint(beats.get(0).position());
 		count.phrase = "COUNT";
 		eventPoints.add(0, count);
 
@@ -91,6 +91,7 @@ public class Arrangement {
 	public Arrangement(final ArrangementType arrangementType, final ArrayList2<Beat> beats) {
 		this(beats);
 		this.arrangementType = arrangementType;
+		setLevel(0, new Level());
 	}
 
 	public Level getLevel(final int id) {

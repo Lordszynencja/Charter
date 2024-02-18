@@ -53,7 +53,6 @@ public class GP5ImportOptions extends ParamsPane {
 	private final ChartData data;
 	private final SongChart imported;
 
-	private boolean importBeatMap = false;
 	private final ArrangementImportSetting[] arrangementImportSettings;
 
 	public GP5ImportOptions(final CharterFrame frame, final ArrangementFixer arrangementFixer,
@@ -67,7 +66,6 @@ public class GP5ImportOptions extends ParamsPane {
 
 		int row = 0;
 
-		addBeatMapImportCheckbox(row++);
 		int arrangementId = 0;
 		arrangementImportSettings = new ArrangementImportSetting[imported.arrangements.size()];
 		for (final Arrangement arrangement : imported.arrangements) {
@@ -76,10 +74,6 @@ public class GP5ImportOptions extends ParamsPane {
 
 		row++;
 		addDefaultFinish(row, this::saveAndExit);
-	}
-
-	private void addBeatMapImportCheckbox(final int row) {
-		addConfigCheckbox(row, 10, 110, Label.GP5_IMPORT_BEAT_MAP_CHANGE, importBeatMap, b -> importBeatMap = b);
 	}
 
 	private void addArrangementOptions(final int row, final int id, final Arrangement arrangement) {
@@ -103,10 +97,22 @@ public class GP5ImportOptions extends ParamsPane {
 		this.add(themeSelect, 200, getY(row), 200, 20);
 	}
 
-	private void saveAndExit() {
-		if (importBeatMap) {
-			data.songChart.beatsMap = imported.beatsMap;
+	private void updateSongInformation() {
+		if (data.songChart.artistName == null || data.songChart.artistName.isBlank()) {
+			data.songChart.artistName = imported.artistName;
 		}
+		if (data.songChart.title == null || data.songChart.title.isBlank()) {
+			data.songChart.title = imported.title;
+		}
+		if (data.songChart.albumName == null || data.songChart.albumName.isBlank()) {
+			data.songChart.albumName = imported.albumName;
+		}
+	}
+
+	private void saveAndExit() {
+		updateSongInformation();
+
+		data.songChart.beatsMap = imported.beatsMap;
 
 		for (int i = 0; i < arrangementImportSettings.length; i++) {
 			final ArrangementImportSetting setting = arrangementImportSettings[i];
