@@ -3,10 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
-	<artifactId>RS_Charter</artifactId>
-	<version>0.9.4-SNAPSHOT</version>
+	<artifactId>Charter</artifactId>
+	<version>0.15.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>RS Charter</name>
+	<name>Charter</name>
 	<description>Charting program for guitar</description>
 	
 	<properties>
@@ -114,7 +114,6 @@
 			<artifactId>lwjgl3-awt</artifactId>
 			<version>${lwjgl3-awt.version}</version>
 		</dependency>
-		<!-- junit 5, unit test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -235,7 +234,7 @@
 	</profiles>
 	
 	<build>
-		<finalName>RS Charter</finalName>
+		<finalName>Charter</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -268,7 +267,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>log.charter.main.LogCharterRSMain</mainClass>
+							<mainClass>log.charter.main.CharterMain</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -305,12 +304,12 @@
 						</goals>
 						<configuration>
 							<headerType>gui</headerType>
-							<outfile>target/RS Charter/RS Charter.exe</outfile>
-							<jar>target/RS Charter.jar</jar>
+							<outfile>target/Charter/Charter.exe</outfile>
+							<jar>target/Charter.jar</jar>
 							<icon>src/main/resources/icon.ico</icon>
-							<errTitle>RSC</errTitle>
+							<errTitle>Charter</errTitle>
 							<classPath>
-								<mainClass>log.charter.main.LogCharterRSMain</mainClass>
+								<mainClass>log.charter.main.CharterMain</mainClass>
 								<addDependencies>true</addDependencies>
 								<preCp>anything</preCp>
 							</classPath>
@@ -325,9 +324,9 @@
 								<copyright>BSD 3-Clause</copyright>
 								<productVersion>0.8.0.0</productVersion>
 								<txtProductVersion>txt product version</txtProductVersion>
-								<productName>RS Charter</productName>
-								<internalName>RSC</internalName>
-								<originalFilename>RS Charter.exe</originalFilename>
+								<productName>Charter</productName>
+								<internalName>Charter</internalName>
+								<originalFilename>Charter.exe</originalFilename>
 							</versionInfo>
 						</configuration>
 					</execution>
@@ -344,7 +343,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/target/RS Charter</outputDirectory>
+							<outputDirectory>${basedir}/target/Charter</outputDirectory>
 							<resources>
 								<resource>
 									<directory>${basedir}/src/main/resources/</directory>
@@ -352,8 +351,8 @@
 								</resource>
 								<resource>
 									<directory>${basedir}/target</directory>
-									<include>RS Charter.jar</include>
-									<targetPath>${basedir}/target/RS Charter</targetPath>
+									<include>Charter.jar</include>
+									<targetPath>${basedir}/target/Charter</targetPath>
 									<filtering>false</filtering>
 								</resource>
 								<resource>
@@ -390,10 +389,10 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-					<mainClass>log.charter.main.LogCharterRSMain</mainClass>
+					<mainClass>log.charter.main.CharterMain</mainClass>
 					<iconFile>src/main/resources/icon.ico</iconFile>
 					<generateDiskImageFile>true</generateDiskImageFile>
-					<buildDirectory>${basedir}/target/RS Charter</buildDirectory>
+					<buildDirectory>${basedir}/target/Charter</buildDirectory>
 				</configuration>
 				<executions>
 					<execution>

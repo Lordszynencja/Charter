@@ -11,7 +11,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
 
 public class CharterTheme extends DefaultMetalTheme {
-	public static final String name = "RS charter";
+	public static final String name = "Charter";
 
 	public static void install(final CharterFrame frame) {
 		MetalLookAndFeel.setCurrentTheme(new CharterTheme());

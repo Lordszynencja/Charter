@@ -5,7 +5,6 @@ import static log.charter.io.Logger.error;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.saveVocals;
 import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.readProject;
 import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.saveProject;
-import static log.charter.song.SongChart.vocalsFileName;
 import static log.charter.util.FileChooseUtils.chooseFile;
 
 import java.io.File;
@@ -50,6 +49,8 @@ import log.charter.util.FileChooseUtils;
 import log.charter.util.RW;
 
 public class SongFileHandler {
+	public static final String vocalsFileName = "Vocals_RS2.xml";
+
 	private static class LoadingDialog extends JDialog {
 		private static final long serialVersionUID = 1L;
 

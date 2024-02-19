@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.gui.handlers.SongFileHandler;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.RSXMLToArrangement;
 import log.charter.io.rs.xml.song.SongArrangement;
@@ -21,8 +22,6 @@ import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.RW;
 
 public class SongChart {
-	public static final String vocalsFileName = "Vocals_RS2.xml";
-
 	public String musicFileName;
 
 	public String artistName;
@@ -97,7 +96,7 @@ public class SongChart {
 		if (project.vocals != null) {
 			vocals = project.vocals;
 		} else {
-			vocals = new Vocals(readVocals(RW.read(dir + vocalsFileName)));
+			vocals = new Vocals(readVocals(RW.read(dir + SongFileHandler.vocalsFileName)));
 		}
 
 		bookmarks = project.bookmarks;

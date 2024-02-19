@@ -20,14 +20,4 @@ public enum EventType {
 		this.rsName = rsName;
 		this.label = label + " (" + rsName + ")";
 	}
-
-	public static EventType findByRSName(final String rsName) {
-		for (final EventType eventType : values()) {
-			if (eventType.rsName.equals(rsName)) {
-				return eventType;
-			}
-		}
-
-		return HIGH_PITCH_TICK;
-	}
 }

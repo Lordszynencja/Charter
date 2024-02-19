@@ -40,14 +40,4 @@ public enum SectionType {
 		this.rsName = rsName;
 		this.label = label;
 	}
-
-	public static SectionType findByRSName(final String rsName) {
-		for (final SectionType sectionType : values()) {
-			if (sectionType.rsName.equals(rsName)) {
-				return sectionType;
-			}
-		}
-
-		return null;
-	}
 }

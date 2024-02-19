@@ -49,6 +49,26 @@ public class RSXMLToArrangement {
 				.collect(toCollection(ArrayList2::new));
 	}
 
+	private static SectionType findSectionByRSName(final String rsName) {
+		for (final SectionType sectionType : SectionType.values()) {
+			if (sectionType.rsName.equals(rsName)) {
+				return sectionType;
+			}
+		}
+
+		return null;
+	}
+
+	private static EventType findEventByRSName(final String rsName) {
+		for (final EventType eventType : EventType.values()) {
+			if (eventType.rsName.equals(rsName)) {
+				return eventType;
+			}
+		}
+
+		return EventType.HIGH_PITCH_TICK;
+	}
+
 	public static Arrangement toArrangement(final SongArrangement arrangementData, final ArrayList2<Beat> beats) {
 		final Arrangement arrangement = new Arrangement();
 
@@ -67,7 +87,7 @@ public class RSXMLToArrangement {
 		arrangementData.sections.list.forEach(arrangementSection -> {
 			final EventPoint arrangementEventsPoint = arrangement
 					.findOrCreateArrangementEventsPoint(arrangementSection.startTime);
-			arrangementEventsPoint.section = SectionType.findByRSName(arrangementSection.name);
+			arrangementEventsPoint.section = findSectionByRSName(arrangementSection.name);
 		});
 		arrangement.phrases = Phrase.fromArrangementPhrases(arrangementData.phrases.list);
 		arrangementData.phraseIterations.list.forEach(arrangementPhraseIteration -> {
@@ -90,7 +110,7 @@ public class RSXMLToArrangement {
 
 			final EventPoint arrangementEventsPoint = arrangement
 					.findOrCreateArrangementEventsPoint(arrangementEvent.time);
-			arrangementEventsPoint.events.add(EventType.findByRSName(arrangementEvent.code));
+			arrangementEventsPoint.events.add(findEventByRSName(arrangementEvent.code));
 		});
 
 		arrangement.levels = RSXMLLevelTransformer.fromArrangementDataLevels(arrangement, arrangementData.levels.list);

@@ -1,10 +1,10 @@
 CD target
-RENAME "RS Charter" "RS Charter - Windows"
-CD "RS Charter - Windows"
-DEL "RS Charter.jar"
-RMDIR "RS Charter.app" /S /Q
+RENAME "Charter" "Charter - Windows"
+CD "Charter - Windows"
+DEL "Charter.jar"
+RMDIR "Charter.app" /S /Q
 CD rubberband
 RMDIR "rubberband-3.1.2-gpl-executable-macos" /S /Q
 CD ../../
-tar.exe -a -cf "RS Charter - Windows.zip" "RS Charter - Windows"
-move "RS Charter - Windows.zip" ../
+tar.exe -a -cf "Charter - Windows.zip" "Charter - Windows"
+move "Charter - Windows.zip" ../
