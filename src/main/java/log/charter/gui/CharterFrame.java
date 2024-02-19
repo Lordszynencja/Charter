@@ -122,7 +122,7 @@ public class CharterFrame extends JFrame {
 		setExtendedState(windowExtendedState);
 
 		arrangementFixer.init(data);
-		arrangementValidator.init(data, this);
+		arrangementValidator.init(data, this, modeManager);
 		audioHandler.init(chartToolbar, data, this, modeManager, repeatManager);
 		beatsDrawer.init(data, chartPanel, modeManager, repeatManager, selectionManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
@@ -130,8 +130,8 @@ public class CharterFrame extends JFrame {
 		keyboardHandler.init(waveFormDrawer, audioHandler, arrangementFixer, chartToolbar, copyManager, data, this,
 				framer, modeManager, mouseHandler, repeatManager, selectionManager, songFileHandler, undoSystem);
 		highlightManager.init(data, modeManager, selectionManager);
-		modeManager.init(chartToolbar, currentSelectionEditor, data, this, highlightManager, keyboardHandler,
-				selectionManager, undoSystem);
+		modeManager.init(audioHandler, charterMenuBar, chartToolbar, currentSelectionEditor, data, this,
+				highlightManager, keyboardHandler, selectionManager, undoSystem);
 		mouseButtonPressReleaseHandler.init(highlightManager);
 		mouseHandler.init(arrangementFixer, data, this, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
 				selectionManager, undoSystem);

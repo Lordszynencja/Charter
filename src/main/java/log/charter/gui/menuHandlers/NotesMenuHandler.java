@@ -34,6 +34,18 @@ class NotesMenuHandler extends CharterMenuHandler {
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_HALVE_GRID, ",", keyboardHandler::halveGridSize));
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_DOUBLE_GRID, ".", keyboardHandler::doubleGridSize));
 
+		menu.addSeparator();
+		menu.add(new SpecialMenuItem(Label.NOTES_MENU_PREVIOUS_NOTE, "Alt-Left", keyboardHandler::handleAltLeft));
+		menu.add(new SpecialMenuItem(Label.NOTES_MENU_PREVIOUS_GRID_POSITION, "Ctrl-Alt-Left",
+				keyboardHandler::handleCtrlAltLeft));
+		menu.add(new SpecialMenuItem(Label.NOTES_MENU_PREVIOUS_BEAT, "Shift-Alt-Left",
+				keyboardHandler::handleShiftAltLeft));
+		menu.add(new SpecialMenuItem(Label.NOTES_MENU_NEXT_NOTE, "Alt-Right", keyboardHandler::handleAltRight));
+		menu.add(new SpecialMenuItem(Label.NOTES_MENU_NEXT_GRID_POSITION, "Ctrl-Alt-Right",
+				keyboardHandler::handleCtrlAltRight));
+		menu.add(new SpecialMenuItem(Label.NOTES_MENU_NEXT_BEAT, "Shift-Alt-Right",
+				keyboardHandler::handleShiftAltRight));
+
 		return menu;
 	}
 }

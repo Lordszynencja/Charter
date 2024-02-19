@@ -14,10 +14,17 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.menuHandlers.CharterMenuBar;
 
 public class ModeManager {
+	private AudioHandler audioHandler;
+	private CharterMenuBar charterMenuBar;
 	private ChartToolbar chartToolbar;
+	private ChartData data;
+	private CharterFrame frame;
+	private SelectionManager selectionManager;
 
 	private EditMode editMode = EditMode.TEMPO_MAP;
 
@@ -33,11 +40,16 @@ public class ModeManager {
 		modeHandlers.put(EditMode.VOCALS, vocalModeHandler);
 	}
 
-	public void init(final ChartToolbar chartToolbar, final CurrentSelectionEditor currentSelectionEditor,
-			final ChartData data, final CharterFrame frame, final HighlightManager highlightManager,
-			final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
+	public void init(final AudioHandler audioHandler, final CharterMenuBar charterMenuBar,
+			final ChartToolbar chartToolbar, final CurrentSelectionEditor currentSelectionEditor, final ChartData data,
+			final CharterFrame frame, final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
+			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+		this.audioHandler = audioHandler;
+		this.charterMenuBar = charterMenuBar;
 		this.chartToolbar = chartToolbar;
+		this.data = data;
+		this.frame = frame;
+		this.selectionManager = selectionManager;
 
 		guitarModeHandler.init(currentSelectionEditor, data, frame, highlightManager, keyboardHandler, selectionManager,
 				undoSystem);
@@ -50,9 +62,30 @@ public class ModeManager {
 	}
 
 	public void setMode(final EditMode editMode) {
+		if (editMode == this.editMode) {
+			return;
+		}
+
+		audioHandler.stopMusic();
+		selectionManager.clear();
+
 		this.editMode = editMode;
 
 		chartToolbar.updateValues();
+		charterMenuBar.refreshMenus();
+		frame.updateEditAreaSizes();
+	}
+
+	public void setArrangement(final int arrangementId) {
+		data.currentArrangement = arrangementId;
+		setLevel(0);
+		setMode(EditMode.GUITAR);
+
+		frame.updateEditAreaSizes();
+	}
+
+	public void setLevel(final int level) {
+		data.currentLevel = level;
 	}
 
 	public EditMode getMode() {

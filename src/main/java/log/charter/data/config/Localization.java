@@ -249,6 +249,12 @@ public class Localization {
 		NOTES_MENU_SNAP_ALL("Snap all items between to grid"), //
 		NOTES_MENU_DOUBLE_GRID("Double grid resolution"), //
 		NOTES_MENU_HALVE_GRID("Halve grid resolution"), //
+		NOTES_MENU_PREVIOUS_NOTE("Previous note"), //
+		NOTES_MENU_PREVIOUS_GRID_POSITION("Previous grid position"), //
+		NOTES_MENU_PREVIOUS_BEAT("Previous beat"), //
+		NOTES_MENU_NEXT_NOTE("Next note"), //
+		NOTES_MENU_NEXT_GRID_POSITION("Next grid position"), //
+		NOTES_MENU_NEXT_BEAT("Next beat"), //
 
 		TOOLBAR_MIDI("Midi"), //
 		TOOLBAR_CLAPS("Claps"), //

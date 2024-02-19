@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.ModeManager;
 import log.charter.gui.CharterFrame;
 import log.charter.song.Arrangement;
 import log.charter.song.EventPoint;
@@ -13,16 +14,17 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class ArrangementValidator {
 	private ChartData data;
 	private CharterFrame frame;
+	private ModeManager modeManager;
 
-	public void init(final ChartData data, final CharterFrame frame) {
+	public void init(final ChartData data, final CharterFrame frame, final ModeManager modeManager) {
 		this.data = data;
 		this.frame = frame;
+		this.modeManager = modeManager;
 	}
 
 	private Runnable moveToTimeOnArrangement(final int arrangementId, final int time) {
 		return () -> {
-			data.currentArrangement = arrangementId;
-			data.currentLevel = 0;
+			modeManager.setArrangement(arrangementId);
 			data.setNextTime(time);
 
 			frame.updateEditAreaSizes();

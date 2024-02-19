@@ -46,10 +46,6 @@ public class ChartData {
 		this.undoSystem = undoSystem;
 	}
 
-	public void changeDifficulty(final int newDiff) {
-		currentLevel = newDiff;
-	}
-
 	public void setNewSong(final File songFolder, final SongChart song, final MusicData musicData,
 			final String projectFileName) {
 		setSong(songFolder.getAbsolutePath(), song, musicData, projectFileName, EditMode.TEMPO_MAP, 0, 0, 0);
@@ -66,7 +62,7 @@ public class ChartData {
 		music = musicData;
 
 		selectionManager.clear();
-		changeDifficulty(level);
+		currentLevel = level;
 		modeManager.setMode(editMode);
 
 		charterMenuBar.refreshMenus();

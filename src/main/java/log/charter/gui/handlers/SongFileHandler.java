@@ -465,12 +465,10 @@ public class SongFileHandler {
 					data.songChart.beatsMap.beats);
 			data.songChart.arrangements.add(arrangementChart);
 
-			modeManager.setMode(EditMode.GUITAR);
-			data.currentArrangement = data.songChart.arrangements.size() - 1;
-			save();
-
 			charterMenuBar.refreshMenus();
-			frame.updateEditAreaSizes();
+
+			modeManager.setArrangement(data.songChart.arrangements.size() - 1);
+			save();
 		} catch (final Exception e) {
 			Logger.error("Couldn't load arrangement", e);
 			frame.showPopup(Label.COULDNT_LOAD_ARRANGEMENT.label() + ":\n" + e.getMessage());

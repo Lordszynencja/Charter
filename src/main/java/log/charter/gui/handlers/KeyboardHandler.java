@@ -103,7 +103,6 @@ import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.song.Arrangement;
-import log.charter.song.Beat;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
@@ -113,6 +112,7 @@ import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.IConstantPosition;
 import log.charter.song.notes.IPosition;
 import log.charter.song.notes.IPositionWithLength;
 import log.charter.song.notes.Note;
@@ -344,20 +344,100 @@ public class KeyboardHandler implements KeyListener {
 		shift = true;
 	}
 
+	private int getPrevious(final List<? extends IConstantPosition> positions) {
+		final IConstantPosition position = findLastBefore(positions, data.time);
+		if (position == null) {
+			return data.time;
+		}
+
+		return position.position();
+	}
+
+	public void handleShiftAltLeft() {
+		if (data.isEmpty) {
+			return;
+		}
+
+		frame.setNextTime(getPrevious(data.songChart.beatsMap.beats));
+	}
+
+	public void handleCtrlAltLeft() {
+		if (data.isEmpty) {
+			return;
+		}
+
+		frame.setNextTime(data.songChart.beatsMap.getPositionWithRemovedGrid(data.time, 1));
+	}
+
+	public void handleAltLeft() {
+		if (data.isEmpty) {
+			return;
+		}
+
+		frame.setNextTime(getPrevious(data.getCurrentArrangementLevel().sounds));
+	}
+
 	private void handleLeft() {
 		if (!alt) {
 			left = true;
 			return;
 		}
 
-		int newTime;
-		if (ctrl) {
-			newTime = data.songChart.beatsMap.getPositionWithRemovedGrid(data.time, 1);
+		if (shift) {
+			handleShiftAltLeft();
+		} else if (ctrl) {
+			handleCtrlAltLeft();
 		} else {
-			final Beat beat = findLastBefore(data.songChart.beatsMap.beats, data.time);
-			newTime = (beat == null ? data.songChart.beatsMap.beats.get(0) : beat).position();
+			handleAltLeft();
 		}
-		frame.setNextTime(newTime);
+	}
+
+	private int getNext(final ArrayList2<? extends IConstantPosition> positions) {
+		final IConstantPosition position = findFirstAfter(positions, data.time);
+		if (position == null) {
+			return data.time;
+		}
+
+		return position.position();
+	}
+
+	public void handleShiftAltRight() {
+		if (data.isEmpty) {
+			return;
+		}
+
+		frame.setNextTime(getNext(data.songChart.beatsMap.beats));
+	}
+
+	public void handleCtrlAltRight() {
+		if (data.isEmpty) {
+			return;
+		}
+
+		frame.setNextTime(data.songChart.beatsMap.getPositionWithAddedGrid(data.time, 1));
+	}
+
+	public void handleAltRight() {
+		if (data.isEmpty) {
+			return;
+		}
+
+		frame.setNextTime(getNext(data.getCurrentArrangementLevel().sounds));
+	}
+
+	private void handleRight() {
+		if (!alt) {
+			right = true;
+			return;
+		}
+
+		if (shift) {
+			handleShiftAltRight();
+		} else if (ctrl) {
+			handleCtrlAltRight();
+		} else {
+			handleAltRight();
+		}
 	}
 
 	private boolean containsString(final ArrayList2<Selection<ChordOrNote>> selectedSounds, final int string) {
@@ -933,21 +1013,6 @@ public class KeyboardHandler implements KeyListener {
 		}
 
 		modeManager.getHandler().handleEnd();
-	}
-
-	private void handleRight() {
-		if (!alt) {
-			right = true;
-			return;
-		}
-
-		if (data.isEmpty) {
-			return;
-		}
-
-		final int newTime = ctrl ? data.songChart.beatsMap.getPositionWithAddedGrid(data.time, 1)//
-				: findFirstAfter(data.songChart.beatsMap.beats, data.time).position();
-		frame.setNextTime(newTime);
 	}
 
 	private void snapPositions(final Collection<? extends IPosition> positions) {

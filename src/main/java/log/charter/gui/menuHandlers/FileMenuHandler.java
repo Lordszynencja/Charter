@@ -57,16 +57,15 @@ public class FileMenuHandler extends CharterMenuHandler {
 		final JMenu menu = new JMenu(Label.FILE_MENU.label());
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_NEW, "Ctrl-N", songFileHandler::newSong));
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPEN, "Ctrl-O", songFileHandler::open));
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPEN_RS, null,
-				songFileHandler::openSongWithImportFromArrangementXML));
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPEN_AUDIO, null, songFileHandler::openAudioFile));
+		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPEN_RS, songFileHandler::openSongWithImportFromArrangementXML));
+		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPEN_AUDIO, songFileHandler::openAudioFile));
 
 		final JMenu importSubmenu = new JMenu(Label.FILE_MENU_IMPORT.label());
+		importSubmenu
+				.add(new SpecialMenuItem(Label.FILE_MENU_IMPORT_RS_GUITAR, songFileHandler::importRSArrangementXML));
 		importSubmenu.add(
-				new SpecialMenuItem(Label.FILE_MENU_IMPORT_RS_GUITAR, null, songFileHandler::importRSArrangementXML));
-		importSubmenu.add(new SpecialMenuItem(Label.FILE_MENU_IMPORT_RS_VOCALS, null,
-				songFileHandler::importRSVocalsArrangementXML));
-		importSubmenu.add(new SpecialMenuItem(Label.FILE_MENU_IMPORT_GP, null, this::importGPFile));
+				new SpecialMenuItem(Label.FILE_MENU_IMPORT_RS_VOCALS, songFileHandler::importRSVocalsArrangementXML));
+		importSubmenu.add(new SpecialMenuItem(Label.FILE_MENU_IMPORT_GP, this::importGPFile));
 		importSubmenu.setEnabled(!data.isEmpty);
 		menu.add(importSubmenu);
 
@@ -75,9 +74,9 @@ public class FileMenuHandler extends CharterMenuHandler {
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_SAVE_AS, "Ctrl-Shift-S", songFileHandler::saveAs));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPTIONS, null, () -> new ConfigPane(frame, framer)));
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_GRAPHIC_OPTIONS, null, () -> new GraphicConfigPane(frame)));
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_COLOR_OPTIONS, null, () -> new ColorConfigPane(frame)));
+		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPTIONS, () -> new ConfigPane(frame, framer)));
+		menu.add(new SpecialMenuItem(Label.FILE_MENU_GRAPHIC_OPTIONS, () -> new GraphicConfigPane(frame)));
+		menu.add(new SpecialMenuItem(Label.FILE_MENU_COLOR_OPTIONS, () -> new ColorConfigPane(frame)));
 
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.FILE_MENU_EXIT, "Esc", frame::exit));

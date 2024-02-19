@@ -17,7 +17,7 @@ import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.Arrangement;
 import log.charter.util.CollectionUtils.HashMap2;
 
-class ArrangementMenuHandler extends CharterMenuHandler {
+public class ArrangementMenuHandler extends CharterMenuHandler {
 	private AudioHandler audioHandler;
 	private ChartData data;
 	private CharterFrame frame;
@@ -55,14 +55,14 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 			}
 
 			final int arrangementId = i;
-			menu.add(createItem(arrangementName, () -> changeArrangement(arrangementId)));
+			menu.add(createItem(arrangementName, () -> modeManager.setArrangement(arrangementId)));
 		}
 	}
 
 	private void createLevelMenuItems(final JMenu menu) {
 		for (int level = 0; level < data.getCurrentArrangement().levels.size(); level++) {
 			final int levelToChangeTo = level;
-			menu.add(createItem("Level " + level, () -> changeLevel(levelToChangeTo)));
+			menu.add(createItem("Level " + level, () -> modeManager.setLevel(levelToChangeTo)));
 		}
 	}
 
@@ -70,8 +70,8 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 	JMenu prepareMenu() {
 		final JMenu menu = new JMenu(Label.ARRANGEMENT_MENU.label());
 
-		menu.add(createItem(Label.ARRANGEMENT_MENU_TEMPO_MAP, () -> changeEditMode(EditMode.TEMPO_MAP)));
-		menu.add(createItem(Label.ARRANGEMENT_MENU_VOCALS, () -> changeEditMode(EditMode.VOCALS)));
+		menu.add(createItem(Label.ARRANGEMENT_MENU_TEMPO_MAP, () -> modeManager.setMode(EditMode.TEMPO_MAP)));
+		menu.add(createItem(Label.ARRANGEMENT_MENU_VOCALS, () -> modeManager.setMode(EditMode.VOCALS)));
 		addArrangementsList(menu);
 		menu.add(createItem("New arrangement...", this::addArrangement));
 
@@ -97,39 +97,24 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 		return menu;
 	}
 
-	private void changeEditMode(final EditMode editMode) {
-		audioHandler.stopMusic();
-		selectionManager.clear();
-		modeManager.setMode(editMode);
-
-		charterMenuBar.refreshMenus();
-
-		frame.updateEditAreaSizes();
-	}
-
-	private void changeArrangement(final int arrangementId) {
-		data.currentArrangement = arrangementId;
-		data.changeDifficulty(0);
-		changeEditMode(EditMode.GUITAR);
-
-		frame.updateEditAreaSizes();
-	}
-
 	private void addArrangement() {
 		final int previousArrangement = data.currentArrangement;
 		final EditMode previousEditMode = modeManager.getMode();
 		final int previousDifficulty = data.currentLevel;
 		data.currentArrangement = data.songChart.arrangements.size();
-		data.changeDifficulty(0);
 		data.songChart.arrangements.add(new Arrangement(ArrangementType.Lead, data.songChart.beatsMap.beats));
-		changeEditMode(EditMode.GUITAR);
+		modeManager.setArrangement(data.songChart.arrangements.size() - 1);
 
 		new ArrangementSettingsPane(charterMenuBar, data, frame, selectionManager, () -> {
-			data.currentArrangement = previousArrangement;
-			data.changeDifficulty(previousDifficulty);
+			if (previousEditMode == EditMode.GUITAR) {
+				modeManager.setArrangement(previousArrangement);
+				modeManager.setLevel(previousDifficulty);
+			} else {
+				modeManager.setMode(previousEditMode);
+			}
+
 			data.songChart.arrangements.remove(data.songChart.arrangements.size() - 1);
 
-			changeEditMode(previousEditMode);
 			charterMenuBar.refreshMenus();
 		}, true);
 	}
@@ -154,18 +139,12 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 
 		if (data.songChart.arrangements.size() > 0) {
 			if (data.songChart.arrangements.size() == arrangementToRemove) {
-				changeArrangement(arrangementToRemove - 1);
+				modeManager.setArrangement(arrangementToRemove - 1);
 			} else {
-				changeArrangement(arrangementToRemove);
+				modeManager.setArrangement(arrangementToRemove);
 			}
 		} else {
-			changeEditMode(EditMode.VOCALS);
+			modeManager.setMode(EditMode.VOCALS);
 		}
 	}
-
-	private void changeLevel(final int levelId) {
-		data.currentLevel = levelId;
-		changeEditMode(EditMode.GUITAR);
-	}
-
 }

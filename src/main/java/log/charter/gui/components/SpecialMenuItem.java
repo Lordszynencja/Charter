@@ -27,16 +27,26 @@ public class SpecialMenuItem extends JMenuItem {
 		}
 	}
 
+	public SpecialMenuItem(final Label label, final Runnable onClick) {
+		this(label, null, onClick);
+	}
+
+	private void paintShortcut(final Graphics g) {
+		if (shortcut == null) {
+			return;
+		}
+
+		final Font shortcutFont = new Font(Font.DIALOG, Font.PLAIN, 10);
+		final FontMetrics fontMetrics = getFontMetrics(shortcutFont);
+		g.setFont(shortcutFont);
+		g.setColor(ColorLabel.BASE_DARK_TEXT.color());
+		g.drawString(shortcut, getWidth() - 60, 2 + fontMetrics.getAscent());
+	}
+
 	@Override
 	public void paint(final Graphics g) {
 		super.paint(g);
 
-		if (shortcut != null) {
-			final Font shortcutFont = new Font(Font.DIALOG, Font.PLAIN, 10);
-			final FontMetrics fontMetrics = getFontMetrics(shortcutFont);
-			g.setFont(shortcutFont);
-			g.setColor(ColorLabel.BASE_DARK_TEXT.color());
-			g.drawString(shortcut, getWidth() - 60, 2 + fontMetrics.getAscent());
-		}
+		paintShortcut(g);
 	}
 }

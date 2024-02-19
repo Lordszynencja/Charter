@@ -58,13 +58,13 @@ class EditMenuHandler extends CharterMenuHandler {
 		menu.add(new SpecialMenuItem(Label.EDIT_MENU_SPECIAL_PASTE, "Ctrl-Shift-V", copyManager::specialPaste));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_SONG_OPTIONS, null, this::songOptions));
+		menu.add(new SpecialMenuItem(Label.EDIT_MENU_SONG_OPTIONS, this::songOptions));
 
 		if (modeManager.getMode() == EditMode.TEMPO_MAP) {
 			menu.addSeparator();
-			menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_SILENCE, null, this::addSilence));
-			menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_DEFAULT_SILENCE, null, this::addDefaultSilence));
-			menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_BEATS_AT_THE_START, null, this::addBeatsAtTheStart));
+			menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_SILENCE, this::addSilence));
+			menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_DEFAULT_SILENCE, this::addDefaultSilence));
+			menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_BEATS_AT_THE_START, this::addBeatsAtTheStart));
 		}
 
 		return menu;

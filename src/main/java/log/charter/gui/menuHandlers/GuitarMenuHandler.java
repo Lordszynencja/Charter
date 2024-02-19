@@ -70,7 +70,7 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_MARK_HAND_SHAPE, "Shift-H", keyboardHandler::markHandShape));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_AUTOCREATE_FHP, null, this::addFHP));
+		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_AUTOCREATE_FHP, this::addFHP));
 
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_WINDOWED_PREVIEW, "F11", frame::switchWindowedPreview));
