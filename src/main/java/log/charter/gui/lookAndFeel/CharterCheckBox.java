@@ -1,106 +1,83 @@
 package log.charter.gui.lookAndFeel;
 
-import static log.charter.util.ColorUtils.mix;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Path2D;
+import java.awt.geom.RoundRectangle2D;
 
-import javax.swing.ButtonModel;
 import javax.swing.JCheckBox;
 import javax.swing.UIManager;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
 
 class CharterCheckBox {
-	private static class CheckBoxIcon extends SimpleIcon {
-		/**
-		 * 0 - empty<br/>
-		 * 1 - interior<br/>
-		 * 2 - edge<br/>
-		 * 3 - edgeHighlight<br/>
-		 * 4 - edgeShadow
-		 */
-		private static final int[][] colorMap = { //
-				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }, //
-				{ 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2 }, //
-				{ 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2 }, //
-				{ 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2 }, //
-				{ 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2 }, //
-				{ 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2 }, //
-				{ 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2 }, //
-				{ 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2 }, //
-				{ 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2 }, //
-				{ 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2 }, //
-				{ 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2 }, //
-				{ 2, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 2 }, //
-				{ 2, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2 }, //
-				{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },//
-		};
 
-		private final Color interiorColor;
-		private final Color disabledInteriorColor;
-		private final Color armedInteriorColor;
-		private final Color edgeColor;
-		private final Color edgeHighlightColor;
-		private final Color edgeShadowColor;
-		private final Color selectColor;
+    private static class CheckBoxIcon extends SimpleIcon {
+        private final Color backgroundColor;
+        private final Color disabledBackgroundColor;
+        private final Color borderColor;
+        private final Color selectColor;
+        
+        public CheckBoxIcon(Color backgroundColor, Color disabledBackgroundColor, Color edgeColor, Color selectColor) {
+        	super(14, 14);
+            this.backgroundColor = backgroundColor;
+            this.disabledBackgroundColor = disabledBackgroundColor;
+            this.borderColor = edgeColor;
+            this.selectColor = selectColor;
+        }
 
-		public CheckBoxIcon(final Color interiorColor, final Color disabledInteriorColor, final Color edgeColor,
-				final Color selectColor) {
-			super(14, 14);
-			this.interiorColor = interiorColor;
-			this.disabledInteriorColor = disabledInteriorColor;
-			armedInteriorColor = mix(interiorColor, disabledInteriorColor, 0.5);
-			this.edgeColor = edgeColor;
-			edgeHighlightColor = mix(interiorColor, Color.WHITE, 0.5);
-			edgeShadowColor = mix(edgeColor, Color.BLACK, 0.5);
-			this.selectColor = selectColor;
-		}
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            JCheckBox checkBox = (JCheckBox) c;
+            Graphics2D g2d = (Graphics2D) g;
+            setupGraphics(g2d);
 
-		private Color getFillColor(final ButtonModel model) {
-			if (!model.isEnabled()) {
-				return disabledInteriorColor;
-			}
+            // check box fill
+            RoundRectangle2D.Double roundedRectangle = new RoundRectangle2D.Double(x, y, width - 1, height - 1, 5, 5);
+            if (!checkBox.isEnabled()) {
+                g2d.setColor(disabledBackgroundColor);
+                g2d.fill(new RoundRectangle2D.Double(x, y, width - 1, height - 1, 5, 5));
+            } else {
+                g2d.setColor(checkBox.isSelected() ? selectColor : backgroundColor);
+                g2d.fill(new RoundRectangle2D.Double(x, y, width - 1, height - 1, 5, 5));
+            }
 
-			if (model.isArmed()) {
-				return armedInteriorColor;
-			}
+            // check box border
+            g2d.setColor(checkBox.isSelected() ? selectColor : borderColor);
+            g2d.draw(roundedRectangle);
 
-			return interiorColor;
-		}
+            // check box icon
+            if (checkBox.isSelected()) {
+                g2d.setColor(Color.WHITE);
+                g2d.setStroke(new java.awt.BasicStroke(1.5f));
 
-		@Override
-		public void paintIcon(final Component c, final Graphics g, final int x, final int y) {
-			final JCheckBox checkBox = (JCheckBox) c;
+                Path2D.Double checkmark = createCheckmark(x, y);
+                g2d.draw(checkmark);
+            }
+        }
 
-			final Color fillColor = getFillColor(checkBox.getModel());
+        private void setupGraphics(Graphics2D g2d) {
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        }
 
-			final Color[] colors = new Color[] { //
-					new Color(0, 0, 0, 0), //
-					fillColor, //
-					edgeColor, //
-					edgeHighlightColor, //
-					edgeShadowColor };
+        private Path2D.Double createCheckmark(int x, int y) {
+            Path2D.Double checkmark = new Path2D.Double();
+            checkmark.moveTo(x + 3, y + 7);
+            checkmark.lineTo(x + 6, y + 10);
+            checkmark.lineTo(x + 11, y + 5);
+            return checkmark;
+        }
+    }
 
-			g.translate(x, y);
-			g.drawImage(IconMaker.createIcon(width, height, colorMap, colors), 0, 0, null);
+    static void install() {
+        final Color backgroundColor = new Color(45, 45, 45);
+        final Color disabledBackgroundColor = ColorLabel.BASE_BG_2.color();
+        final Color borderColor = ColorLabel.BASE_BORDER.color();
+        final Color selectColor  = ColorLabel.BASE_HIGHLIGHT.color();
 
-			if (checkBox.isSelected()) {
-				g.setColor(selectColor);
-				g.fillRect(5, 5, 4, 4);
-			}
-
-			g.translate(-x, -y);
-		}
-	}
-
-	static void install() {
-		final Color interiorColor = ColorLabel.BASE_BG_3.color();
-		final Color disabledInteriorColor = ColorLabel.BASE_BG_2.color();
-		final Color edgeColor = ColorLabel.BASE_BG_2.color();
-		final Color selectColor = ColorLabel.BASE_BG_1.color();
-
-		UIManager.put("CheckBox.icon", new CheckBoxIcon(interiorColor, disabledInteriorColor, edgeColor, selectColor));
-	}
+        UIManager.put("CheckBox.icon", new CheckBoxIcon(backgroundColor, disabledBackgroundColor, borderColor, selectColor));
+    }
 }
