@@ -43,12 +43,12 @@ public class CharterMenuBar extends JMenuBar {
 			guitarMenuHandler, //
 			infoMenuHandler);
 
-	public void init(final ArrangementFixer arrangementFixer, final WaveFormDrawer audioDrawer,
-			final AudioHandler audioHandler, final CopyManager copyManager, final ChartToolbar chartToolbar,
-			final ChartData data, final CharterFrame frame, final Framer framer, final KeyboardHandler keyboardHandler,
+	public void init(final ArrangementFixer arrangementFixer, final AudioHandler audioHandler,
+			final CopyManager copyManager, final ChartToolbar chartToolbar, final ChartData data,
+			final CharterFrame frame, final Framer framer, final KeyboardHandler keyboardHandler,
 			final ModeManager modeManager, final RepeatManager repeatManager, final SelectionManager selectionManager,
-			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
-		arrangementMenuHandler.init(audioDrawer, audioHandler, data, frame, this, modeManager, selectionManager);
+			final SongFileHandler songFileHandler, final UndoSystem undoSystem, final WaveFormDrawer waveFormDrawer) {
+		arrangementMenuHandler.init(audioHandler, data, frame, this, modeManager, selectionManager, waveFormDrawer);
 		editMenuHandler.init(copyManager, data, frame, keyboardHandler, modeManager, selectionManager, undoSystem);
 		fileMenuHandler.init(arrangementFixer, data, frame, framer, this, songFileHandler);
 		guitarMenuHandler.init(data, frame, keyboardHandler, modeManager, selectionManager, undoSystem);

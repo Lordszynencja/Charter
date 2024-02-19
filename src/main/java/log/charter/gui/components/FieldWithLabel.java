@@ -134,6 +134,8 @@ public class FieldWithLabel<T extends Component> extends Container {
 	private JLabel addLabel(final String label, final int x, final int w, final int h, final int labelAlignment) {
 		final JLabel labelComponent = new JLabel(label, labelAlignment);
 		labelComponent.setBounds(x, 0, w, h);
+		labelComponent.setAlignmentY(CENTER_ALIGNMENT);
+
 		final Dimension size = new Dimension(w, h);
 		labelComponent.setMinimumSize(size);
 		labelComponent.setPreferredSize(size);

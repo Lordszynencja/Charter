@@ -70,7 +70,7 @@ public class Config {
 	public static int delay = 25;
 	public static double volume = 1;
 	public static int midiDelay = 200;
-	public static double midiVolume = 1;
+	public static double sfxVolume = 1;
 	public static int markerOffset = 300;
 
 	public static boolean invertStrings = false;
@@ -123,7 +123,7 @@ public class Config {
 		valueAccessors.put("delay", ValueAccessor.forInteger(v -> delay = v, () -> delay));
 		valueAccessors.put("volume", ValueAccessor.forDouble(v -> volume = v, () -> volume));
 		valueAccessors.put("midiDelay", ValueAccessor.forInteger(v -> midiDelay = v, () -> midiDelay));
-		valueAccessors.put("midiVolume", ValueAccessor.forDouble(v -> midiVolume = v, () -> midiVolume));
+		valueAccessors.put("sfxVolume", ValueAccessor.forDouble(v -> sfxVolume = v, () -> sfxVolume));
 		valueAccessors.put("markerOffset", ValueAccessor.forInteger(v -> markerOffset = v, () -> markerOffset));
 
 		valueAccessors.put("invertStrings", ValueAccessor.forBoolean(v -> invertStrings = v, () -> invertStrings));

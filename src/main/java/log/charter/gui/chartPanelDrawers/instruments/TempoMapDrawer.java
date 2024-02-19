@@ -7,16 +7,16 @@ import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 
 public class TempoMapDrawer {
-	private WaveFormDrawer audioDrawer;
 	private BeatsDrawer beatsDrawer;
+	private WaveFormDrawer waveFormDrawer;
 
-	public void init(final WaveFormDrawer audioDrawer, final BeatsDrawer beatsDrawer) {
-		this.audioDrawer = audioDrawer;
+	public void init(final BeatsDrawer beatsDrawer, final WaveFormDrawer waveFormDrawer) {
 		this.beatsDrawer = beatsDrawer;
+		this.waveFormDrawer = waveFormDrawer;
 	}
 
 	public void draw(final Graphics g, final HighlightData highlightData) {
-		audioDrawer.draw(g);
+		waveFormDrawer.draw(g);
 		beatsDrawer.draw(g, highlightData);
 	}
 }

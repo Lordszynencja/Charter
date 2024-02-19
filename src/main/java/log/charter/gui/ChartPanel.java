@@ -42,10 +42,10 @@ public class ChartPanel extends JComponent {
 		setSize(getWidth(), editAreaHeight);
 	}
 
-	public void init(final WaveFormDrawer audioDrawer, final BeatsDrawer beatsDrawer, final ChartData data,
-			final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
-			final MouseHandler mouseHandler, final SelectionManager selectionManager) {
+	public void init(final BeatsDrawer beatsDrawer, final ChartData data, final HighlightManager highlightManager,
+			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final MouseHandler mouseHandler,
+			final SelectionManager selectionManager, final WaveFormDrawer waveFormDrawer) {
 		this.data = data;
 		this.highlightManager = highlightManager;
 		this.modeManager = modeManager;
@@ -54,8 +54,8 @@ public class ChartPanel extends JComponent {
 		this.selectionManager = selectionManager;
 
 		backgroundDrawer.init(data, this);
-		arrangementDrawer.init(audioDrawer, beatsDrawer, this, data, keyboardHandler, lyricLinesDrawer, modeManager,
-				selectionManager);
+		arrangementDrawer.init(beatsDrawer, this, data, keyboardHandler, lyricLinesDrawer, modeManager,
+				selectionManager, waveFormDrawer);
 		lyricLinesDrawer.init(data);
 		markerDrawer.init();
 

@@ -67,24 +67,24 @@ public class GuitarDrawer {
 		return x + length >= 0;
 	}
 
-	private WaveFormDrawer audioDrawer;
 	private BeatsDrawer beatsDrawer;
 	private ChartData data;
 	private ChartPanel chartPanel;
 	private KeyboardHandler keyboardHandler;
 	private LyricLinesDrawer lyricLinesDrawer;
 	private SelectionManager selectionManager;
+	private WaveFormDrawer waveFormDrawer;
 
-	public void init(final WaveFormDrawer audioDrawer, final BeatsDrawer beatsDrawer, final ChartData data,
-			final ChartPanel chartPanel, final KeyboardHandler keyboardHandler, final LyricLinesDrawer lyricLinesDrawer,
-			final SelectionManager selectionManager) {
-		this.audioDrawer = audioDrawer;
+	public void init(final BeatsDrawer beatsDrawer, final ChartData data, final ChartPanel chartPanel,
+			final KeyboardHandler keyboardHandler, final LyricLinesDrawer lyricLinesDrawer,
+			final SelectionManager selectionManager, final WaveFormDrawer waveFormDrawer) {
 		this.beatsDrawer = beatsDrawer;
 		this.data = data;
 		this.chartPanel = chartPanel;
 		this.keyboardHandler = keyboardHandler;
 		this.lyricLinesDrawer = lyricLinesDrawer;
 		this.selectionManager = selectionManager;
+		this.waveFormDrawer = waveFormDrawer;
 	}
 
 	private HashSet2<Integer> getSelectedIds(final PositionType positionType) {
@@ -427,7 +427,7 @@ public class GuitarDrawer {
 		try {
 			beatsDrawer.draw(g, highlightData);
 			lyricLinesDrawer.draw(g);
-			audioDrawer.draw(g);
+			waveFormDrawer.draw(g);
 			drawGuitar(g, highlightData);
 			drawStringNames(g);
 		} catch (final Exception e) {

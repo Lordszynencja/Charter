@@ -2,6 +2,8 @@ package log.charter.sound;
 
 import static javax.sound.sampled.AudioSystem.getLine;
 
+import java.util.function.Supplier;
+
 import javax.sound.sampled.DataLine.Info;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
@@ -11,14 +13,16 @@ import log.charter.io.Logger;
 public class RepeatingPlayer implements IPlayer {
 	private static final int BUFF_SIZE = 1024 * 128;
 
-	private final MusicData musicData;
+	private final Supplier<MusicData> musicDataSupplier;
 	private final SourceDataLine line;
 
 	private boolean playAgain = false;
 	private boolean stopped = false;
 
-	public RepeatingPlayer(final MusicData musicData) {
-		this.musicData = musicData;
+	public RepeatingPlayer(final Supplier<MusicData> musicDataSupplier) {
+		this.musicDataSupplier = musicDataSupplier;
+
+		final MusicData musicData = musicDataSupplier.get();
 		final Info info = new Info(SourceDataLine.class, musicData.outFormat);
 		SourceDataLine sourceDataLine;
 		try {
@@ -48,7 +52,7 @@ public class RepeatingPlayer implements IPlayer {
 
 	private void playSound() {
 		line.flush();
-		final byte[] data = musicData.getData();
+		final byte[] data = musicDataSupplier.get().getData();
 		int startByte = 0;
 
 		while ((data.length - startByte) > BUFF_SIZE) {

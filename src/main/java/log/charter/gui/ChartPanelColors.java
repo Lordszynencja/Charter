@@ -17,19 +17,19 @@ public class ChartPanelColors {
 		BASE_2(32, 128, 128), //
 
 		BASE_BG_0(0, 0, 0), //
-		BASE_BG_1(52, 52, 52), // #242424
+		BASE_BG_1(52, 52, 52), //
 		BASE_BG_2(64, 64, 64), //
 		BASE_BG_3(96, 96, 96), //
 		BASE_BG_4(128, 128, 128), //
 		BASE_BG_5(255, 255, 255), //
 
-		BASE_DARK_TEXT(102, 102, 102), // #666666
-		BASE_TEXT(194, 194, 194), //  #c2c2c2
-		
-		BASE_HIGHLIGHT(53, 116, 240), // #3574f0
-		BASE_BUTTON(112, 112, 112), // #707070
-		BASE_BORDER(82, 82, 82), // #525252
-		
+		BASE_DARK_TEXT(64, 192, 192), //
+		BASE_TEXT(96, 224, 224), //
+
+		BASE_HIGHLIGHT(64, 192, 192), //
+		BASE_BUTTON(112, 112, 112), //
+		BASE_BORDER(82, 82, 82), //
+
 		NOTE_BACKGROUND(16, 16, 16), //
 		NOTE_ADD_LINE(0, 255, 0), //
 		LANE(128, 128, 128), //
@@ -128,18 +128,18 @@ public class ChartPanelColors {
 		final Color base = ColorLabel.valueOf("NOTE_" + stringId).color();
 
 		switch (type) {
-		case LANE:
-			return ColorUtils.multiplyColor(base, 0.5);
-		case LANE_BRIGHT:
-			return ColorUtils.multiplyColor(base, 0.66);
-		case NOTE:
-			return base;
-		case NOTE_TAIL:
-			return ColorUtils.multiplyColor(base, 1.2);
-		case NOTE_ACCENT:
-			return ColorUtils.multiplyColor(base, 1.5);
-		default:
-			return base;
+			case LANE:
+				return ColorUtils.multiplyColor(base, 0.5);
+			case LANE_BRIGHT:
+				return ColorUtils.multiplyColor(base, 0.66);
+			case NOTE:
+				return base;
+			case NOTE_TAIL:
+				return ColorUtils.multiplyColor(base, 1.2);
+			case NOTE_ACCENT:
+				return ColorUtils.multiplyColor(base, 1.5);
+			default:
+				return base;
 		}
 	}
 

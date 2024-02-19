@@ -2,6 +2,7 @@ package log.charter.gui.handlers;
 
 import static java.lang.System.nanoTime;
 import static log.charter.data.config.Config.createDefaultStretchesInBackground;
+import static log.charter.data.config.Config.sfxVolume;
 import static log.charter.data.config.Config.stretchedMusicSpeed;
 import static log.charter.song.notes.IConstantPosition.findFirstAfter;
 import static log.charter.sound.MusicData.generateSound;
@@ -33,8 +34,19 @@ public class AudioHandler {
 		public boolean on = false;
 		private int nextTime = -1;
 
-		public TickPlayer(final IPlayer tickPlayer, final Supplier<ArrayList2<? extends IPosition>> positionsSupplier) {
-			this.tickPlayer = tickPlayer;
+		public TickPlayer(final MusicData tick, final Supplier<ArrayList2<? extends IPosition>> positionsSupplier) {
+			this(tick, 1, positionsSupplier);
+		}
+
+		public TickPlayer(final MusicData tick, final int players,
+				final Supplier<ArrayList2<? extends IPosition>> positionsSupplier) {
+			final Supplier<MusicData> tickSupplier = () -> tick.volume(sfxVolume);
+			if (players == 1) {
+				tickPlayer = new RepeatingPlayer(tickSupplier);
+			} else {
+				tickPlayer = new RotatingRepeatingPlayer(tickSupplier, players);
+			}
+
 			this.positionsSupplier = positionsSupplier;
 		}
 
@@ -90,10 +102,9 @@ public class AudioHandler {
 		this.modeManager = modeManager;
 		this.repeatManager = repeatManager;
 
-		beatTickPlayer = new TickPlayer(new RepeatingPlayer(generateSound(4000, 0.01, 1)), //
-				() -> data.songChart.beatsMap.beats);
-		noteTickPlayer = new TickPlayer(new RotatingRepeatingPlayer(generateSound(1000, 0.02, 0.8), 4), //
-				this::getCurrentClapPositions);
+		beatTickPlayer = new TickPlayer(generateSound(500, 0.02, 1), () -> data.songChart.beatsMap.beats);
+		noteTickPlayer = new TickPlayer(generateSound(1000, 0.01, 1), 4, this::getCurrentClapPositions);
+
 		midiChartNotePlayer.init(data, modeManager);
 
 		stretchedAudioHandler.init();
@@ -101,14 +112,14 @@ public class AudioHandler {
 
 	private ArrayList2<? extends IPosition> getCurrentClapPositions() {
 		switch (modeManager.getMode()) {
-		case GUITAR:
-			return data.getCurrentArrangementLevel().sounds;
-		case TEMPO_MAP:
-			return data.songChart.beatsMap.beats;
-		case VOCALS:
-			return data.songChart.vocals.vocals;
-		default:
-			return new ArrayList2<>();
+			case GUITAR:
+				return data.getCurrentArrangementLevel().sounds;
+			case TEMPO_MAP:
+				return data.songChart.beatsMap.beats;
+			case VOCALS:
+				return data.songChart.vocals.vocals;
+			default:
+				return new ArrayList2<>();
 		}
 	}
 

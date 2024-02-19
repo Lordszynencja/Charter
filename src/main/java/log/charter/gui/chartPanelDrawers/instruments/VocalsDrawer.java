@@ -109,22 +109,22 @@ public class VocalsDrawer {
 		}
 	}
 
-	private WaveFormDrawer audioDrawer;
 	private BeatsDrawer beatsDrawer;
 	private ChartData data;
 	private ChartPanel chartPanel;
 	private LyricLinesDrawer lyricLinesDrawer;
 	private SelectionManager selectionManager;
+	private WaveFormDrawer waveFormDrawer;
 
-	public void init(final WaveFormDrawer audioDrawer, final BeatsDrawer beatsDrawer, final ChartData data,
-			final ChartPanel chartPanel, final LyricLinesDrawer lyricLinesDrawer,
-			final SelectionManager selectionManager) {
-		this.audioDrawer = audioDrawer;
+	public void init(final BeatsDrawer beatsDrawer, final ChartData data, final ChartPanel chartPanel,
+			final LyricLinesDrawer lyricLinesDrawer, final SelectionManager selectionManager,
+			final WaveFormDrawer waveFormDrawer) {
 		this.beatsDrawer = beatsDrawer;
 		this.data = data;
 		this.chartPanel = chartPanel;
 		this.lyricLinesDrawer = lyricLinesDrawer;
 		this.selectionManager = selectionManager;
+		this.waveFormDrawer = waveFormDrawer;
 	}
 
 	private void drawVocals(final Graphics g, final HighlightData highlightData) {
@@ -177,7 +177,7 @@ public class VocalsDrawer {
 			return;
 		}
 
-		audioDrawer.draw(g);
+		waveFormDrawer.draw(g);
 		beatsDrawer.draw(g, highlightData);
 		drawVocals(g, highlightData);
 		lyricLinesDrawer.draw(g);

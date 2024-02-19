@@ -257,7 +257,7 @@ public class Localization {
 		TOOLBAR_REPEATER("Repeater"), //
 		TOOLBAR_SLOWED_PLAYBACK_SPEED("Slowed speed"), //
 		TOOLBAR_VOLUME("Volume"), //
-		TOOLBAR_MIDI_VOLUME("Midi volume"), //
+		TOOLBAR_SFX_VOLUME("SFX volume"), //
 
 		SLIDE_PANE("Slide options"), //
 		SLIDE_PANE_FRET("Slide to"), //

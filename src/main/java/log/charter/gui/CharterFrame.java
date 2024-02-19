@@ -76,7 +76,7 @@ public class CharterFrame extends JFrame {
 
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
 	private final ArrangementValidator arrangementValidator = new ArrangementValidator();
-	private final WaveFormDrawer audioDrawer = new WaveFormDrawer();
+	private final WaveFormDrawer waveFormDrawer = new WaveFormDrawer();
 	private final AudioHandler audioHandler = new AudioHandler();
 	private final BeatsDrawer beatsDrawer = new BeatsDrawer();
 	private final CopyManager copyManager = new CopyManager();
@@ -123,13 +123,12 @@ public class CharterFrame extends JFrame {
 
 		arrangementFixer.init(data);
 		arrangementValidator.init(data, this);
-		audioDrawer.init(data, chartPanel, chartToolbar, modeManager);
 		audioHandler.init(chartToolbar, data, this, modeManager, repeatManager);
 		beatsDrawer.init(data, chartPanel, modeManager, repeatManager, selectionManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
 		data.init(this, audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
-		keyboardHandler.init(audioDrawer, audioHandler, arrangementFixer, chartToolbar, copyManager, data, this, framer,
-				modeManager, mouseHandler, repeatManager, selectionManager, songFileHandler, undoSystem);
+		keyboardHandler.init(waveFormDrawer, audioHandler, arrangementFixer, chartToolbar, copyManager, data, this,
+				framer, modeManager, mouseHandler, repeatManager, selectionManager, songFileHandler, undoSystem);
 		highlightManager.init(data, modeManager, selectionManager);
 		modeManager.init(chartToolbar, currentSelectionEditor, data, this, highlightManager, keyboardHandler,
 				selectionManager, undoSystem);
@@ -141,12 +140,14 @@ public class CharterFrame extends JFrame {
 				modeManager, undoSystem);
 		selectionManager.init(data, this, modeManager, mouseButtonPressReleaseHandler);
 		undoSystem.init(data, modeManager, selectionManager);
+		waveFormDrawer.init(data, chartPanel, chartToolbar, modeManager);
 
-		charterMenuBar.init(arrangementFixer, audioDrawer, audioHandler, copyManager, chartToolbar, data, this, framer,
-				keyboardHandler, modeManager, repeatManager, selectionManager, songFileHandler, undoSystem);
-		chartToolbar.init(audioDrawer, audioHandler, keyboardHandler, modeManager, repeatManager);
-		chartPanel.init(audioDrawer, beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
-				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
+		charterMenuBar.init(arrangementFixer, audioHandler, copyManager, chartToolbar, data, this, framer,
+				keyboardHandler, modeManager, repeatManager, selectionManager, songFileHandler, undoSystem,
+				waveFormDrawer);
+		chartToolbar.init(audioHandler, keyboardHandler, modeManager, repeatManager, waveFormDrawer);
+		chartPanel.init(beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
+				mouseButtonPressReleaseHandler, mouseHandler, selectionManager, waveFormDrawer);
 		chartMap.init(chartPanel, data, this, modeManager);
 		currentSelectionEditor.init(arrangementFixer, data, this, keyboardHandler, selectionManager, undoSystem);
 		preview3DPanel.init(data, keyboardHandler, modeManager, repeatManager);
@@ -205,7 +206,7 @@ public class CharterFrame extends JFrame {
 		final int height = windowHeight - insets.top - insets.bottom - charterMenuBar.getHeight();
 
 		final AtomicInteger y = new AtomicInteger(0);
-		resizeComponent(y, chartToolbar, width, ChartToolbar.height);
+		resizeComponent(y, chartToolbar, width, chartToolbar.getHeight());
 		resizeComponent(y, chartPanel, width, DrawerUtils.editAreaHeight);
 		resizeComponent(y, chartMap, width, DrawerUtils.chartMapHeight);
 		changeComponentBounds(tabs, 0, y.get(), width, height - y.get());

@@ -18,24 +18,24 @@ import log.charter.song.Arrangement;
 import log.charter.util.CollectionUtils.HashMap2;
 
 class ArrangementMenuHandler extends CharterMenuHandler {
-	private WaveFormDrawer audioDrawer;
 	private AudioHandler audioHandler;
 	private ChartData data;
 	private CharterFrame frame;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
+	private WaveFormDrawer waveFormDrawer;
 
-	public void init(final WaveFormDrawer audioDrawer, final AudioHandler audioHandler, final ChartData data,
-			final CharterFrame frame, final CharterMenuBar charterMenuBar, final ModeManager modeManager,
-			final SelectionManager selectionManager) {
-		this.audioDrawer = audioDrawer;
+	public void init(final AudioHandler audioHandler, final ChartData data, final CharterFrame frame,
+			final CharterMenuBar charterMenuBar, final ModeManager modeManager, final SelectionManager selectionManager,
+			final WaveFormDrawer waveFormDrawer) {
 		this.audioHandler = audioHandler;
 		this.data = data;
 		this.frame = frame;
 		this.charterMenuBar = charterMenuBar;
 		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
+		this.waveFormDrawer = waveFormDrawer;
 	}
 
 	@Override
@@ -87,7 +87,7 @@ class ArrangementMenuHandler extends CharterMenuHandler {
 		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_MIDI_NOTES, "F2", audioHandler::toggleMidiNotes));
 		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_CLAPS, "F3", audioHandler::toggleClaps));
 		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_METRONOME, "F4", audioHandler::toggleMetronome));
-		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_WAVEFORM, "F5", audioDrawer::toggle));
+		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_WAVEFORM, "F5", waveFormDrawer::toggle));
 
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();

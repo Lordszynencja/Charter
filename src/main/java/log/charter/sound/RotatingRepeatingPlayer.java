@@ -1,14 +1,16 @@
 package log.charter.sound;
 
+import java.util.function.Supplier;
+
 public class RotatingRepeatingPlayer implements IPlayer {
 
 	private int nextPlayer = 0;
 	private final RepeatingPlayer[] players;
 
-	public RotatingRepeatingPlayer(final MusicData musicData, final int players) {
+	public RotatingRepeatingPlayer(final Supplier<MusicData> musicDataSupplier, final int players) {
 		this.players = new RepeatingPlayer[players];
 		for (int i = 0; i < players; i++) {
-			this.players[i] = new RepeatingPlayer(musicData);
+			this.players[i] = new RepeatingPlayer(musicDataSupplier);
 		}
 	}
 

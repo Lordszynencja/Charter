@@ -1,6 +1,6 @@
 package log.charter.gui.handlers.midiPlayer;
 
-import static log.charter.data.config.Config.midiVolume;
+import static log.charter.data.config.Config.sfxVolume;
 import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
 
 import java.math.BigDecimal;
@@ -193,7 +193,7 @@ public class MidiNotePlayer {
 
 	public void updateVolume() {
 		for (final MidiChannel channel : channels) {
-			channel.controlChange(7, (int) (midiVolume * 127.0));
+			channel.controlChange(7, (int) (sfxVolume * 127.0));
 		}
 	}
 

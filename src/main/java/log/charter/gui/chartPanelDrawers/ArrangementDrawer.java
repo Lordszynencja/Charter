@@ -22,15 +22,16 @@ public class ArrangementDrawer {
 	private final GuitarDrawer guitarDrawer = new GuitarDrawer();
 	private final VocalsDrawer vocalsDrawer = new VocalsDrawer();
 
-	public void init(final WaveFormDrawer audioDrawer, final BeatsDrawer beatsDrawer, final ChartPanel chartPanel,
-			final ChartData data, final KeyboardHandler keyboardHandler, final LyricLinesDrawer lyricLinesDrawer,
-			final ModeManager modeManager, final SelectionManager selectionManager) {
+	public void init(final BeatsDrawer beatsDrawer, final ChartPanel chartPanel, final ChartData data,
+			final KeyboardHandler keyboardHandler, final LyricLinesDrawer lyricLinesDrawer,
+			final ModeManager modeManager, final SelectionManager selectionManager,
+			final WaveFormDrawer waveFormDrawer) {
 		this.modeManager = modeManager;
 
-		tempoMapDrawer.init(audioDrawer, beatsDrawer);
-		guitarDrawer.init(audioDrawer, beatsDrawer, data, chartPanel, keyboardHandler, lyricLinesDrawer,
-				selectionManager);
-		vocalsDrawer.init(audioDrawer, beatsDrawer, data, chartPanel, lyricLinesDrawer, selectionManager);
+		tempoMapDrawer.init(beatsDrawer, waveFormDrawer);
+		guitarDrawer.init(beatsDrawer, data, chartPanel, keyboardHandler, lyricLinesDrawer, selectionManager,
+				waveFormDrawer);
+		vocalsDrawer.init(beatsDrawer, data, chartPanel, lyricLinesDrawer, selectionManager, waveFormDrawer);
 	}
 
 	public void draw(final Graphics g, final HighlightData highlightData) {

@@ -8,7 +8,7 @@ public class NoteBasedGridPosition extends GridPosition<Beat> {
 		super(beats, position);
 
 		int lastMeasureBeatId = positionId;
-		while (!beats.get(lastMeasureBeatId).firstInMeasure) {
+		while (lastMeasureBeatId > 0 && !beats.get(lastMeasureBeatId).firstInMeasure) {
 			lastMeasureBeatId--;
 		}
 
