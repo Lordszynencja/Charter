@@ -47,10 +47,10 @@ public class BeatsMap {
 	/**
 	 * creates beats map for existing project
 	 */
-	public BeatsMap(final int songLengthMs, final ChartProject rocksmithChartProject) {
+	public BeatsMap(final int songLengthMs, final ChartProject chartProject) {
 		this.songLengthMs = songLengthMs;
 
-		beats = rocksmithChartProject.beats;
+		beats = chartProject.beats;
 	}
 
 	/**

@@ -3,8 +3,8 @@ package log.charter.gui.handlers;
 import static log.charter.io.Logger.debug;
 import static log.charter.io.Logger.error;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.saveVocals;
-import static log.charter.io.rsc.xml.RocksmithChartProjectXStreamHandler.readProject;
-import static log.charter.io.rsc.xml.RocksmithChartProjectXStreamHandler.saveProject;
+import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.readProject;
+import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.saveProject;
 import static log.charter.song.SongChart.vocalsFileName;
 import static log.charter.util.FileChooseUtils.chooseFile;
 
@@ -386,7 +386,7 @@ public class SongFileHandler {
 		}
 
 		final File projectFileChosen = chooseFile(frame, startingDir, new String[] { ".rscp" },
-				new String[] { Label.ROCKSMITH_CHART_PROJECT.label() });
+				new String[] { Label.CHART_PROJECT.label() });
 		if (projectFileChosen == null) {
 			return;
 		}

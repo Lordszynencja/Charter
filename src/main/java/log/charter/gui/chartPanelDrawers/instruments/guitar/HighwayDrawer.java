@@ -22,7 +22,7 @@ public interface HighwayDrawer {
 	public static HighwayDrawer getHighwayDrawer(final Graphics g, final int strings, final int time) {
 		return switch (GraphicalConfig.theme) {
 			case BASIC -> new DefaultHighwayDrawer(g, strings, time);
-			case ROCKSMITH -> new RocksmithHighwayDrawer(g, strings, time);
+			case SQUARE -> new SquareHighwayDrawer(g, strings, time);
 			case MODERN -> new ModernHighwayDrawer(g, strings, time);
 		};
 	}

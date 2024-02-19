@@ -73,7 +73,7 @@ public class GraphicThemeConfigPage implements Page {
 	private void addThemePicker(final GraphicConfigPane parent, final int row) {
 		final Vector<ThemeHolder> themes = new Vector<>(asList(//
 				new ThemeHolder(Theme.MODERN, Label.CONFIG_THEME_MODERN), //
-				new ThemeHolder(Theme.ROCKSMITH, Label.CONFIG_THEME_ROCKSMITH), //
+				new ThemeHolder(Theme.SQUARE, Label.CONFIG_THEME_SQUARE), //
 				new ThemeHolder(Theme.BASIC, Label.CONFIG_THEME_BASIC)));
 
 		final JComboBox<ThemeHolder> themeSelect = new JComboBox<>(themes);

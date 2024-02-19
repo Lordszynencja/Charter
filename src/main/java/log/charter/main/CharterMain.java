@@ -8,10 +8,10 @@ import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
 
-public class LogCharterRSMain {
-	public static final String VERSION = "0.15.0";
+public class CharterMain {
+	public static final String VERSION = "0.15.1";
 	public static final String VERSION_DATE = "2024.02.18";
-	public static final String TITLE = "LoG Charter RS " + VERSION;
+	public static final String TITLE = "Charter " + VERSION;
 
 	public static void main(final String[] args) throws InterruptedException, IOException {
 		Config.init();
@@ -23,9 +23,9 @@ public class LogCharterRSMain {
 		}
 
 		if (pathToOpen != null && !pathToOpen.isEmpty()) {
-			new CharterFrame(LogCharterRSMain.TITLE + " : Loading project...", pathToOpen);
+			new CharterFrame(TITLE + " : Loading project...", pathToOpen);
 		} else {
-			new CharterFrame(LogCharterRSMain.TITLE + " : " + Label.NO_PROJECT.label());
+			new CharterFrame(TITLE + " : " + Label.NO_PROJECT.label());
 		}
 
 		new Thread(() -> {

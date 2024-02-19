@@ -54,7 +54,7 @@ import log.charter.gui.lookAndFeel.CharterTheme;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.song.ArrangementType;
-import log.charter.main.LogCharterRSMain;
+import log.charter.main.CharterMain;
 import log.charter.song.Arrangement;
 import log.charter.sound.StretchedFileLoader;
 import net.sf.image4j.codec.ico.ICODecoder;
@@ -366,11 +366,10 @@ public class CharterFrame extends JFrame {
 
 	private String makeTitle() {
 		if (data.isEmpty) {
-			return LogCharterRSMain.TITLE + " : " + Label.NO_PROJECT.label();
+			return CharterMain.TITLE + " : " + Label.NO_PROJECT.label();
 		}
 
-		String title = LogCharterRSMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title
-				+ " : ";
+		String title = CharterMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title + " : ";
 
 		switch (modeManager.getMode()) {
 			case GUITAR:

@@ -7,7 +7,7 @@
 	<version>0.9.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>RS Charter</name>
-	<description>Charting program for Rocksmith 2014</description>
+	<description>Charting program for guitar</description>
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

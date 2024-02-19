@@ -51,7 +51,7 @@ public class Localization {
 		CONFIG_BACKUP_DELAY("Backup delay (s)"), //
 		CONFIG_MAX_STRINGS("Max strings"), //
 		CONFIG_THEME_BASIC("Basic"), //
-		CONFIG_THEME_ROCKSMITH("Rocksmith"), //
+		CONFIG_THEME_SQUARE("Square"), //
 		CONFIG_THEME_MODERN("Modern"), //
 
 		GRAPHIC_CONFIG_THEME_PAGE("Theme"), //
@@ -392,7 +392,7 @@ public class Localization {
 		NOT_MP3_OGG("Not an Mp3 or Ogg file!"), //
 		OPERATION_CANCELLED("Operation cancelled"), //
 		PROJECT_IS_NEWER_VERSION("Project is newer version than program handles"), //
-		ROCKSMITH_CHART_PROJECT("Rocksmith Chart Project"), //
+		CHART_PROJECT("Chart Project"), //
 		RS_ARRANGEMENT_FILE("RS arrangment file (XML)"), //
 		SELECT_FOLDER("Select"), //
 		TONE_NAME_CANT_BE_EMPTY("Tone name can't be empty"), //

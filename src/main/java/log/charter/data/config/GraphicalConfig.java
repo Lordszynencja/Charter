@@ -60,7 +60,7 @@ public class GraphicalConfig {
 	public static int noteHeight = 25;
 	public static int handShapesHeight = 12;
 	public static int timingHeight = 40;
-	public static double previewWindowScrollSpeed = 1.3; // Same as default for Rocksmith
+	public static double previewWindowScrollSpeed = 1.3;
 
 	public static String inlay = "default";
 	public static String texturePack = "default";

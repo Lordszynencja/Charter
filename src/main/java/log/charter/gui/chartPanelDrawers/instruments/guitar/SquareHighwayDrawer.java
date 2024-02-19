@@ -29,8 +29,8 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.IntRange;
 import log.charter.util.Position2D;
 
-class RocksmithHighwayDrawer extends DefaultHighwayDrawer {
-	public RocksmithHighwayDrawer(final Graphics g, final int strings, final int time) {
+class SquareHighwayDrawer extends DefaultHighwayDrawer {
+	public SquareHighwayDrawer(final Graphics g, final int strings, final int time) {
 		super(g, strings, time);
 	}
 

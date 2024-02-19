@@ -8,12 +8,12 @@ import javax.swing.JOptionPane;
 import log.charter.data.config.Localization;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.main.LogCharterRSMain;
+import log.charter.main.CharterMain;
 
 class InfoMenuHandler extends CharterMenuHandler {
-	private static final String infoText = "Lords of Games Rocksmith Charter\n"//
+	private static final String infoText = "Charter\n"//
 			+ "Created by Lordszynencja and friends from Customs Forge\n\n"//
-			+ "Current version: " + LogCharterRSMain.VERSION + " - " + LogCharterRSMain.VERSION_DATE;
+			+ "Current version: " + CharterMain.VERSION + " - " + CharterMain.VERSION_DATE;
 
 	private CharterFrame frame;
 	private CharterMenuBar charterMenuBar;

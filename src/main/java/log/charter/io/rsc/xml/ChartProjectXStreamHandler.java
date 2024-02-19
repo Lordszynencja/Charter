@@ -23,7 +23,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.CollectionUtils.HashSet2;
 
-public class RocksmithChartProjectXStreamHandler {
+public class ChartProjectXStreamHandler {
 	private static XStream xstream = prepareXStream();
 
 	private static XStream prepareXStream() {
@@ -68,7 +68,7 @@ public class RocksmithChartProjectXStreamHandler {
 		return project;
 	}
 
-	public static String saveProject(final ChartProject rocksmithChartProject) {
-		return XMLHandler.generateXML(xstream, rocksmithChartProject);
+	public static String saveProject(final ChartProject chartProject) {
+		return XMLHandler.generateXML(xstream, chartProject);
 	}
 }
