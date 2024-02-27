@@ -57,9 +57,10 @@ public class WaveFormDrawer {
 	private ModeManager modeManager;
 
 	private boolean drawWaveForm;
+	private boolean showIntensityRMS; // add
 
 	public void init(final ChartData data, final ChartPanel chartPanel, final ChartToolbar chartToolbar,
-			final ModeManager modeManager) {
+					 final ModeManager modeManager) {
 		this.data = data;
 		this.chartPanel = chartPanel;
 		this.chartToolbar = chartToolbar;
@@ -70,7 +71,14 @@ public class WaveFormDrawer {
 		drawWaveForm = !drawWaveForm;
 		chartToolbar.updateValues();
 	}
+	public void toggleIntensityRMS() {  //
+		showIntensityRMS = !showIntensityRMS;
+		chartToolbar.updateValues();
+	}
 
+	public boolean isIntensityRMSVisible() {  //
+		return showIntensityRMS;
+	}
 	public boolean drawing() {
 		return drawWaveForm || modeManager.getMode() == EditMode.TEMPO_MAP;
 	}
@@ -115,7 +123,7 @@ public class WaveFormDrawer {
 			}
 
 			rmsCalculator.addValue(musicValues[frame]);
-			if (!highIntensity && rmsCalculator.getRMS() > 4) {
+			if (!showIntensityRMS && rmsCalculator.getRMS() > 4) {
 				highIntensity = true;
 			}
 		}

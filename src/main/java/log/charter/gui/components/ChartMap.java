@@ -43,7 +43,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 		final BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		final Graphics g = img.getGraphics();
 
-		g.setColor(ColorLabel.BASE_BG_4.color());
+		g.setColor(ColorLabel.BASE_BG_1.color());
 		g.fillRect(0, 0, getWidth(), getHeight());
 		if (data.isEmpty) {
 			return img;
@@ -223,7 +223,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 
 		final int x0 = markerPosition - timeToPosition(xToTimeLength(Config.markerOffset));
 		final int x1 = markerPosition + timeToPosition(xToTimeLength(chartPanel.getWidth() - Config.markerOffset));
-		g.setColor(ColorLabel.SELECT.color());
+		g.setColor(ColorLabel.MARKER_VIEW_AREA.color()); // changed
 		g.drawRect(x0, 0, x1 - x0, getHeight() - 1);
 
 		g.setColor(ColorLabel.MARKER.color());
@@ -235,7 +235,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	@Override
 	public void paint(final Graphics g) {
 		if (data.isEmpty) {
-			g.setColor(ColorLabel.BASE_BG_4.color());
+			g.setColor(ColorLabel.BASE_BG_0.color());
 			g.fillRect(0, 0, getWidth(), getHeight());
 			return;
 		}
@@ -243,7 +243,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 		if (background != null) {
 			g.drawImage(background, 0, 0, null);
 		} else {
-			g.setColor(ColorLabel.BASE_BG_4.color());
+			g.setColor(ColorLabel.BASE_BG_0.color());
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
 

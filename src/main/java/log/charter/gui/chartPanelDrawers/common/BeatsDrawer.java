@@ -38,7 +38,7 @@ import log.charter.util.Position2D;
 import log.charter.util.grid.GridPosition;
 
 public class BeatsDrawer {
-	private static final Font beatFont = new Font(Font.DIALOG, Font.BOLD, 12);
+	private static final Font beatFont = new Font(Font.DIALOG, Font.BOLD, 9); // changed
 	private static final NumberFormat bpmFormat = new DecimalFormat("##0.00");
 
 	private static class BeatsDrawingData {
@@ -61,17 +61,17 @@ public class BeatsDrawer {
 
 		private void addBeatBarNumber(final int x, final int barNumber) {
 			final String text = "" + barNumber;
-			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.MAIN_BEAT));
+			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.BASE_TEXT)); // changed
 		}
 
 		private void addBeatBarNumber(final int x, final int barNumber, final String bpmValue) {
 			final String text = "" + barNumber + " (" + bpmValue + " BPM)";
-			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.MAIN_BEAT));
+			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.BASE_TEXT)); // changed
 		}
 
 		private void addBPMNumber(final int x, final String bpmValue) {
 			final String text = "(" + bpmValue + " BPM)";
-			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.SECONDARY_BEAT));
+			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.BASE_TEXT)); // changed
 		}
 
 		private void addMeasureChange(final int x, final Beat beat) {

@@ -142,6 +142,6 @@ public class Arrangement {
 	}
 
 	public String[] getSimpleStringNames() {
-		return tuning.getStringNames(false, arrangementType == ArrangementType.Bass);
+		return tuning.getStringNames(true, arrangementType == ArrangementType.Bass); // changed
 	}
 }

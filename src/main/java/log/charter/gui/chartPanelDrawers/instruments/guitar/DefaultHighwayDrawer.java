@@ -220,20 +220,20 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 	private void addSection(final SectionType section, final int x) {
 		sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, sectionNamesY), anchorFont, section.label,
-				ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT));
+				ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color()));
 	}
 
 	private void addPhrase(final Phrase phrase, final String phraseName, final int x) {
 		final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
 				+ (phrase.solo ? "[Solo]" : "");
 		sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, phraseNamesY), anchorFont, phraseLabel,
-				ColorLabel.PHRASE_NAME_BG, ColorLabel.BASE_DARK_TEXT));
+				ColorLabel.PHRASE_NAME_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color()));
 	}
 
 	private void addEvents(final ArrayList2<EventType> events, final int x) {
 		final String eventsName = String.join(", ", events.map(event -> event.label));
 		sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, eventNamesY), anchorFont, eventsName,
-				ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT));
+				ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color()));
 	}
 
 	private void addEventPointBox(final int x, final ColorLabel color) {
@@ -853,7 +853,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 			final boolean highlighted) {
 		toneChanges.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.TONE_CHANGE));
 		toneChanges.add(new TextWithBackground(new Position2D(x, toneChangeY), anchorFont, "" + toneChange.toneName,
-				ColorLabel.TONE_CHANGE, ColorLabel.BASE_TEXT, 2));
+				ColorLabel.TONE_CHANGE, ColorLabel.BASE_TEXT, 2, ColorLabel.BASE_BORDER.color()));
 
 		if (highlighted) {
 			addToneChangeBox(x, ColorLabel.HIGHLIGHT);

@@ -4,13 +4,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.util.List;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -143,4 +137,25 @@ public class RowedPanel extends JPanel {
 
 		return group;
 	}
+
+	// added for togglebuttons
+	public <T extends Enum<T>> ButtonGroup addToggleButtonsExact(final int y, int x, final int optionWidth, final T val,
+				 final ValueSetter<T> setter, final List<Pair<T, Label>> values) {
+		final ButtonGroup group = new ButtonGroup();
+
+		for (int i = 0; i < values.size(); i++) {
+			final Pair<T, Label> value = values.get(i);
+			final JToggleButton toggleButton = new JToggleButton(value.b.label());
+			toggleButton.setActionCommand(value.a.name());
+			toggleButton.setSelected(value.a.equals(val));
+			toggleButton.addActionListener(a -> setter.setValue(value.a));
+			group.add(toggleButton);
+			add(toggleButton, x, y, optionWidth, 20);
+
+			x += optionWidth;
+		}
+
+		return group;
+	}
+
 }

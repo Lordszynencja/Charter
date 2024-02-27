@@ -34,6 +34,7 @@ import log.charter.gui.components.FieldWithLabel;
 import log.charter.gui.components.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.RadioButtonGroupInRow;
 import log.charter.gui.components.TextInputWithValidation;
+import log.charter.gui.components.ToggleButtonGroupInRow;
 import log.charter.gui.components.selectionEditor.subEditors.SelectionBendEditor;
 import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.song.Arrangement;
@@ -63,10 +64,10 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private FieldWithLabel<TextInputWithValidation> string;
 	private FieldWithLabel<TextInputWithValidation> fret;
 
-	private RadioButtonGroupInRow<Mute> mute;
-	private RadioButtonGroupInRow<HOPO> hopo;
-	private RadioButtonGroupInRow<BassPickingTechnique> bassPickingTechnique;
-	private RadioButtonGroupInRow<Harmonic> harmonic;
+	private ToggleButtonGroupInRow<Mute> mute; // changed
+	private ToggleButtonGroupInRow<HOPO> hopo; // changed
+	private ToggleButtonGroupInRow<BassPickingTechnique> bassPickingTechnique; // changed
+	private ToggleButtonGroupInRow<Harmonic> harmonic; // changed
 	private FieldWithLabel<JCheckBox> accent;
 	private FieldWithLabel<JCheckBox> linkNext;
 	private FieldWithLabel<JCheckBox> splitIntoNotes;
@@ -118,33 +119,34 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void addMuteInputs(final CurrentSelectionEditor parent, final AtomicInteger row) {
-		mute = new RadioButtonGroupInRow<>(parent, 20, row, 65, 200, Label.MUTE, this::changeMute, //
-				asList(new Pair<>(Mute.FULL, Label.MUTE_FULL), //
-						new Pair<>(Mute.PALM, Label.MUTE_PALM), //
-						new Pair<>(Mute.NONE, Label.MUTE_NONE)));
+		mute = new ToggleButtonGroupInRow<>(parent, 20, row, 65, 270, Label.MUTE, this::changeMute, //
+				asList(new Pair<>(Mute.NONE, Label.MUTE_NONE), // moved to start
+						new Pair<>(Mute.FULL, Label.MUTE_FULL), //
+						new Pair<>(Mute.PALM, Label.MUTE_PALM)));
 	}
 
+
 	private void addHOPOInputs(final CurrentSelectionEditor parent, final AtomicInteger row) {
-		hopo = new RadioButtonGroupInRow<>(parent, 20, row, 65, 270, Label.HOPO, this::changeHOPO, //
-				asList(new Pair<>(HOPO.HAMMER_ON, Label.HOPO_HAMMER_ON), //
+		hopo = new ToggleButtonGroupInRow<>(parent, 20, row, 65, 270, Label.HOPO, this::changeHOPO, //
+				asList(new Pair<>(HOPO.NONE, Label.HOPO_NONE), // moved to start
+						new Pair<>(HOPO.HAMMER_ON, Label.HOPO_HAMMER_ON), //
 						new Pair<>(HOPO.PULL_OFF, Label.HOPO_PULL_OFF), //
-						new Pair<>(HOPO.TAP, Label.HOPO_TAP), //
-						new Pair<>(HOPO.NONE, Label.HOPO_NONE)));
+						new Pair<>(HOPO.TAP, Label.HOPO_TAP)));
 	}
 
 	private void addBassPickingTechniqueInputs(final CurrentSelectionEditor parent, final AtomicInteger row) {
-		bassPickingTechnique = new RadioButtonGroupInRow<>(parent, 20, row, 65, 270, Label.BASS_PICKING_TECHNIQUE,
+		bassPickingTechnique = new ToggleButtonGroupInRow<>(parent, 20, row, 65, 270, Label.BASS_PICKING_TECHNIQUE,
 				this::changeBassPickingTechnique, //
-				asList(new Pair<>(BassPickingTechnique.POP, Label.BASS_PICKING_POP), //
-						new Pair<>(BassPickingTechnique.SLAP, Label.BASS_PICKING_SLAP), //
-						new Pair<>(BassPickingTechnique.NONE, Label.BASS_PICKING_NONE)));
+				asList(new Pair<>(BassPickingTechnique.NONE, Label.BASS_PICKING_NONE), // moved to start
+						new Pair<>(BassPickingTechnique.POP, Label.BASS_PICKING_POP), //
+						new Pair<>(BassPickingTechnique.SLAP, Label.BASS_PICKING_SLAP)));
 	}
 
 	private void addHarmonicInputs(final CurrentSelectionEditor parent, final AtomicInteger row) {
-		harmonic = new RadioButtonGroupInRow<>(parent, 20, row, 65, 270, Label.HARMONIC, this::changeHarmonic, //
-				asList(new Pair<>(Harmonic.NORMAL, Label.HARMONIC_NORMAL), //
-						new Pair<>(Harmonic.PINCH, Label.HARMONIC_PINCH), //
-						new Pair<>(Harmonic.NONE, Label.HARMONIC_NONE)));
+		harmonic = new ToggleButtonGroupInRow<>(parent, 20, row, 65, 270, Label.HARMONIC, this::changeHarmonic, //
+				asList(new Pair<>(Harmonic.NONE, Label.HARMONIC_NONE), // moved to start
+						new Pair<>(Harmonic.NORMAL, Label.HARMONIC_NORMAL), //
+						new Pair<>(Harmonic.PINCH, Label.HARMONIC_PINCH)));
 	}
 
 	private void addAccentLinkNextInputs(final CurrentSelectionEditor parent, final AtomicInteger row) {

@@ -277,7 +277,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	}
 
 	private void paintBackground(final Graphics g) {
-		g.setColor(getBackground());
+		g.setColor(ColorLabel.BASE_BG_1.color());
 		g.fillRect(0, 0, getWidth(), getHeight());
 
 		g.setColor(getStringBasedColor(StringColorLabelType.NOTE, string, strings));
@@ -286,14 +286,14 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		g.fillRect(noteX0, getYFromBendValue(maxBendInternalValue + 1), noteX1 - noteX0,
 				getYFromBendValue(maxBendInternalValue) - getYFromBendValue(maxBendInternalValue + 1));
 
-		g.setColor(ColorLabel.BASE_2.color());
+		g.setColor(ColorLabel.MAIN_BEAT.color());
 		for (int i = 0; i <= lastBeatId - firstBeatId; i++) {
 			final int x = getXFromBendPosition(i);
 			g.drawLine(x, 10, x, height - 10);
 		}
 
 		for (int i = 0; i <= maxBendInternalValue; i++) {
-			g.setColor((i % 4 == 0 ? ColorLabel.BASE_2 : ColorLabel.BASE_1).color());
+			g.setColor((i % 4 == 0 ? ColorLabel.SECONDARY_BEAT.color() : ColorLabel.MAIN_BEAT.color()));
 			final int y = getYFromBendValue(i);
 			g.drawLine(10, y, getWidth(), y);
 		}

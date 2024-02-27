@@ -57,10 +57,9 @@ public class ModernThemeNotes implements ThemeNotes {
 	private static BufferedImage palmMuteIcon = null;
 	private static BufferedImage fullMuteIcon = null;
 
-	private static Font chordNameFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
-	private static Font fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight * 2 / 3);
+	private static Font chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, noteHeight * 2 / 5); // changed
+	private static Font fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2 ); // changed
 	private static Font smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
-
 	private static BufferedImage generateNoteIcon(final Color innerColor, final Color borderColor) {
 		final int size = noteHeight;
 
@@ -274,8 +273,8 @@ public class ModernThemeNotes implements ThemeNotes {
 		palmMuteIcon = generatePalmMuteIcon();
 		fullMuteIcon = generateFullMuteIcon();
 
-		chordNameFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
-		fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight * 2 / 3);
+		chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, noteHeight * 2 / 5); // changed
+		fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight  / 2); // changed
 		smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
 		ModernThemeBends.reloadGraphics();

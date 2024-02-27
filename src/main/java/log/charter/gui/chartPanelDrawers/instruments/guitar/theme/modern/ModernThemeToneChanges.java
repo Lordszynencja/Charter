@@ -18,10 +18,10 @@ import log.charter.util.Position2D;
 
 public class ModernThemeToneChanges implements ThemeToneChanges {
 
-	private static Font toneChangeFont = new Font(Font.SANS_SERIF, Font.ITALIC, toneChangeHeight);
+	private static Font toneChangeFont = new Font(Font.SANS_SERIF, Font.PLAIN, toneChangeHeight * 4 / 5);
 
 	public static void reloadSizes() {
-		toneChangeFont = new Font(Font.SANS_SERIF, Font.ITALIC, toneChangeHeight);
+		toneChangeFont = new Font(Font.SANS_SERIF, Font.PLAIN, toneChangeHeight * 4 / 5);
 	}
 
 	private final HighwayDrawerData data;
@@ -42,7 +42,7 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 			final boolean highlighted) {
 		data.toneChanges.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.TONE_CHANGE));
 		data.toneChanges.add(new TextWithBackground(new Position2D(x, toneChangeY), toneChangeFont,
-				"" + toneChange.toneName, ColorLabel.TONE_CHANGE, ColorLabel.BASE_TEXT, 2));
+				"" + toneChange.toneName, ColorLabel.BASE_TEXT, ColorLabel.TONE_CHANGE, 2, ColorLabel.BASE_BORDER.color())); // changed
 
 		if (highlighted) {
 			addToneChangeBox(x, ColorLabel.HIGHLIGHT);

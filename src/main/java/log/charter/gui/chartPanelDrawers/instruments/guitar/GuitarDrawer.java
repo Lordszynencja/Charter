@@ -218,6 +218,7 @@ public class GuitarDrawer {
 		}
 		if (chordName != null) {
 			highwayDrawer.addChordName(x, chordName);
+
 		}
 
 		return true;
@@ -404,17 +405,17 @@ public class GuitarDrawer {
 	private void drawStringNames(final Graphics g) {
 		final String[] stringNames = data.getCurrentArrangement().getSimpleStringNames();
 
-		final int fontSize = (int) (noteHeight * 0.6);
-		final Font stringNameFont = new Font(Font.DIALOG, Font.BOLD, fontSize);
+		final int fontSize = (int) (noteHeight * 0.5);
+		final Font stringNameFont = new Font(Font.DIALOG, Font.PLAIN, fontSize);
 		final int x = fontSize * 5 / 6;
 
 		final int width = fontSize * 5 / 3;
 
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setColor(ColorLabel.BASE_BG_2.color());
+		g.setColor(ColorLabel.BASE_BG_1.color());
 		g.fillRect(0, lanesTop, width, lanesHeight + 1);
-		g.setColor(ColorLabel.BASE_BG_4.color());
-		g.drawRect(0, lanesTop, width - 1, lanesHeight);
+		//g.setColor(ColorLabel.BASE_BG_4.color());
+		//g.drawRect(0, lanesTop, width - 1, lanesHeight);
 
 		for (int string = 0; string < stringNames.length; string++) {
 			final int stringPosition = getStringPosition(string, stringNames.length);
@@ -425,9 +426,9 @@ public class GuitarDrawer {
 
 	public void draw(final Graphics g, final HighlightData highlightData) {
 		try {
+			waveFormDrawer.draw(g); // moved behind
 			beatsDrawer.draw(g, highlightData);
 			lyricLinesDrawer.draw(g);
-			waveFormDrawer.draw(g);
 			drawGuitar(g, highlightData);
 			drawStringNames(g);
 		} catch (final Exception e) {

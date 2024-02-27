@@ -415,7 +415,8 @@ public class Localization {
 
 		SONG_FOLDER_SELECT("Create song folder"), //
 		SONG_FOLDER_AUDIO_FILE_FOLDER("Use audio file folder (%s)"), //
-		SONG_FOLDER_CREATE_NEW("Create new folder in %s");
+		SONG_FOLDER_CREATE_NEW("Create new folder in %s"),
+		RMS_INDICATOR("RMS"); // ADDED rms
 
 		private final String defaultLabel;
 

@@ -1,6 +1,6 @@
 package log.charter.gui.panes.graphicalConfig;
 
-import javax.swing.JButton;
+import javax.swing.*;
 
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
@@ -23,23 +23,26 @@ public final class GraphicConfigPane extends ParamsPane {
 	private final GraphicTexturesConfigPage texturesConfig = new GraphicTexturesConfigPage();
 	private final GraphicChartMapConfigPage chartMapConfig = new GraphicChartMapConfigPage();
 
-	private void addPageSwitch(final int buttonPosition, final int row, final Label label, final Page page) {
-		final JButton themeConfigSwitch = new JButton(label.label());
+	private void addPageSwitch(final int buttonPosition, final int row, final Label label, final Page page, ButtonGroup buttonGroup) {
+		final JToggleButton themeConfigSwitch = new JToggleButton(label.label()); // changed to togglebutton
 		themeConfigSwitch.addActionListener(e -> {
 			hideAll();
 			page.show();
 		});
+		buttonGroup.add(themeConfigSwitch);
 		this.add(themeConfigSwitch, 10 + 120 * buttonPosition, getY(row), 100, 20);
 	}
 
 	public GraphicConfigPane(final CharterFrame frame) {
 		super(frame, Label.GRAPHIC_CONFIG_PANE, getSizes());
 
+		ButtonGroup buttonGroup = new ButtonGroup();
+
 		int row = 0;
 		int buttonPosition = 0;
-		addPageSwitch(buttonPosition++, row, Label.GRAPHIC_CONFIG_THEME_PAGE, themeConfig);
-		addPageSwitch(buttonPosition++, row, Label.GRAPHIC_CONFIG_TEXTURES_PAGE, texturesConfig);
-		addPageSwitch(buttonPosition++, row, Label.GRAPHIC_CONFIG_CHART_MAP_PAGE, chartMapConfig);
+		addPageSwitch(buttonPosition++, row, Label.GRAPHIC_CONFIG_THEME_PAGE, themeConfig, buttonGroup);
+		addPageSwitch(buttonPosition++, row, Label.GRAPHIC_CONFIG_TEXTURES_PAGE, texturesConfig, buttonGroup);
+		addPageSwitch(buttonPosition++, row, Label.GRAPHIC_CONFIG_CHART_MAP_PAGE, chartMapConfig, buttonGroup);
 
 		row++;
 		row++;

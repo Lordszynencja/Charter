@@ -12,8 +12,8 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 public class CharterSliderUI extends MetalSliderUI {
 	@Override
 	protected void calculateThumbSize() {
-		thumbRect.setSize(8, 8);
-	}
+		thumbRect.setSize(11, 11);
+	} // changed
 
 	private void setupGraphics(final Graphics2D g2d) {
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -46,10 +46,10 @@ public class CharterSliderUI extends MetalSliderUI {
 
 		// before thumb
 		g2d.setColor(ColorLabel.BASE_HIGHLIGHT.color());
-		g2d.fillRect(x0, y, x1 - x0, 2);
+		g2d.fillRect(x0, y, x1 - x0, 3); // changed
 
 		// after thumb
 		g2d.setColor(ColorLabel.BASE_BORDER.color());
-		g2d.fillRect(x1, y, x2 - x1, 2);
+		g2d.fillRect(x1, y, x2 - x1, 3); // changed
 	}
 }

@@ -30,7 +30,7 @@ public class BackgroundDrawer {
 	private static int nonsecondsMarkerBottom = timingY + 12;
 	private static int secondsMarkerBottom = timingY + 24;
 	private static int textY = timingY + 30;
-	private static Font timeFont = new Font(Font.SANS_SERIF, Font.BOLD, 14);
+	private static Font timeFont = new Font(Font.SANS_SERIF, Font.BOLD, 12);
 
 	public static void reloadGraphics() {
 		final int y1 = timingY;
@@ -56,7 +56,7 @@ public class BackgroundDrawer {
 	}
 
 	private void drawBackground(final Graphics g) {
-		g.setColor(ColorLabel.BASE_BG_2.color());
+		g.setColor(ColorLabel.BASE_BG_0.color()); // changed
 		g.fillRect(0, 0, chartPanel.getWidth(), chartPanel.getHeight());
 	}
 
@@ -89,13 +89,13 @@ public class BackgroundDrawer {
 	private void drawTimestamp(final Graphics g, final int time) {
 		final int x = timeToX(time, data.time);
 		if (time % 1000 == 0) {
-			filledRectangle(new ShapePositionWithSize(x, lanesBottom + 1, 2, secondsMarkerBottom - lanesBottom - 1),
-					Color.WHITE).draw(g);
+			filledRectangle(new ShapePositionWithSize(x, lanesBottom + 1, 1, secondsMarkerBottom - lanesBottom - 1),
+					ColorLabel.BASE_DARK_TEXT).draw(g); // changed
 
 			final String formattedTime = formatTime(time / 1000);
-			new CenteredText(new Position2D(x, textY), timeFont, formattedTime, Color.WHITE).draw(g);
+			new CenteredText(new Position2D(x, textY), timeFont, formattedTime, ColorLabel.BASE_DARK_TEXT).draw(g); // changed
 		} else {
-			lineVertical(x, lanesBottom + 1, nonsecondsMarkerBottom, Color.WHITE).draw(g);
+			lineVertical(x, lanesBottom + 1, nonsecondsMarkerBottom, ColorLabel.BASE_DARK_TEXT).draw(g); // changed
 		}
 	}
 

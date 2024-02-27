@@ -18,11 +18,10 @@ import log.charter.song.HandShape;
 import log.charter.util.Position2D;
 
 public class ModernThemeHandShapes implements ThemeHandShapes {
-	private static Font handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, handShapesHeight);
+	private static Font handShapesFont = new Font(Font.SANS_SERIF, Font.PLAIN, handShapesHeight);
 
 	public static void reloadGraphics() {
-		handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, handShapesHeight);
-	}
+		handShapesFont = new Font(Font.SANS_SERIF, Font.PLAIN, handShapesHeight); }
 
 	private final HighwayDrawerData data;
 
@@ -50,7 +49,7 @@ public class ModernThemeHandShapes implements ThemeHandShapes {
 		}
 		if (chordName != null) {
 			data.handShapes.add(new Text(new Position2D(x + 2, lanesBottom + 1), handShapesFont, chordName,
-					ColorLabel.BASE_DARK_TEXT));
+					ColorLabel.BASE_TEXT));
 		}
 	}
 

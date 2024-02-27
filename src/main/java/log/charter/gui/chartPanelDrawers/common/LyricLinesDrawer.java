@@ -18,11 +18,11 @@ import log.charter.util.Position2D;
 
 public class LyricLinesDrawer {
 	private static int height = beatTextY - lyricLinesY;
-	private static Font lyricLineFont = new Font(Font.DIALOG, Font.PLAIN, height - 3);
+	private static Font lyricLineFont = new Font(Font.DIALOG, Font.ITALIC, height - 4);
 
 	public static void reloadGraphics() {
 		height = beatTextY - lyricLinesY;
-		lyricLineFont = new Font(Font.DIALOG, Font.PLAIN, (int) (height * 0.9));
+		lyricLineFont = new Font(Font.DIALOG, Font.ITALIC, (int) (height * 0.9));
 	}
 
 	private static class VocalLinesDrawingData {
