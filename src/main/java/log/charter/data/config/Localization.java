@@ -168,6 +168,7 @@ public class Localization {
 		FILE_MENU_IMPORT_RS_GUITAR("RS guitar arrangement XML"), //
 		FILE_MENU_IMPORT_RS_VOCALS("RS vocals arrangement XML"), //
 		FILE_MENU_IMPORT_GP("Guitar Pro file"), //
+		FILE_MENU_IMPORT_MIDI_TEMPO("Tempo from Midi file"), //
 		FILE_MENU_SAVE("Save"), //
 		FILE_MENU_SAVE_AS("Save as..."), //
 		FILE_MENU_OPTIONS("Options"), //
@@ -389,8 +390,9 @@ public class Localization {
 		LOADING_DONE("Loading done"), //
 		LOADING_MUSIC_FILE("Loading music file"), //
 		LOADING_PROJECT_FILE("Loading project file"), //
-		MP3_OR_OGG_FILE("Mp3 (.mp3) or Ogg (.ogg) file"), //
+		MIDI_FILE("Midi file (.mid)"), //
 		MISSING_ARRANGEMENT_FILE("Missing arrangement file %s"), //
+		MP3_OR_OGG_FILE("Mp3 (.mp3) or Ogg (.ogg) file"), //
 		MUSIC_FILE_COULDNT_BE_LOADED("Music file couldn't be loaded"), //
 		MUSIC_DATA_NOT_FOUND(
 				"Music file not found in song folder, something went wrong with copying or the file is invalid"), //
@@ -417,8 +419,7 @@ public class Localization {
 
 		SONG_FOLDER_SELECT("Create song folder"), //
 		SONG_FOLDER_AUDIO_FILE_FOLDER("Use audio file folder (%s)"), //
-		SONG_FOLDER_CREATE_NEW("Create new folder in %s"),
-		RMS_INDICATOR("RMS"); // ADDED rms
+		SONG_FOLDER_CREATE_NEW("Create new folder in %s"), RMS_INDICATOR("RMS"); // ADDED rms
 
 		private final String defaultLabel;
 

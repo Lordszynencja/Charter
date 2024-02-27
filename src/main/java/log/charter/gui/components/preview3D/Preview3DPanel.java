@@ -1,5 +1,6 @@
 package log.charter.gui.components.preview3D;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -9,6 +10,7 @@ import org.lwjgl.opengl.awt.AWTGLCanvas;
 import org.lwjgl.opengl.awt.GLData;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
@@ -62,11 +64,14 @@ public class Preview3DPanel extends AWTGLCanvas {
 	private final Preview3DStringsFretsDrawer stringsFretsDrawer = new Preview3DStringsFretsDrawer();
 	private final Preview3DVideoDrawer videoDrawer = new Preview3DVideoDrawer();
 
+	private boolean active = true;
+
 	private static GLData prepareGLData() {
 		final GLData data = new GLData();
 		data.majorVersion = 3;
 		data.minorVersion = 0;
-		data.samples = 16;
+		data.samples = Config.antialiasingSamples;
+
 		return data;
 	}
 
@@ -102,6 +107,10 @@ public class Preview3DPanel extends AWTGLCanvas {
 
 	@Override
 	public void paint(final Graphics g) {
+		if (!active) {
+			return;
+		}
+
 		try {
 			if (!isValid()) {
 				GL.setCapabilities(null);
@@ -111,6 +120,10 @@ public class Preview3DPanel extends AWTGLCanvas {
 			render();
 		} catch (final Exception e) {
 			Logger.error("Exception in paint", e);
+			if (e instanceof AWTException) {
+				Logger.error("stopping painting of GL component");
+				active = false;
+			}
 		}
 	}
 
@@ -134,7 +147,9 @@ public class Preview3DPanel extends AWTGLCanvas {
 			GL30.glEnable(GL30.GL_BLEND);
 			GL30.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
-			GL30.glEnable(GL30.GL_MULTISAMPLE);
+			if (Config.antialiasingSamples > 1) {
+				GL30.glEnable(GL30.GL_MULTISAMPLE);
+			}
 		} catch (final Exception e) {
 			Logger.error("Exception in initGL", e);
 			throw e;
@@ -206,7 +221,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 		} catch (final Exception e) {
 			Logger.error("Exception in paintGL", e);
 		} catch (final Error error) {
-			Logger.error("Exception in paintGL", error);
+			Logger.error("Error in paintGL", error);
 		}
 	}
 

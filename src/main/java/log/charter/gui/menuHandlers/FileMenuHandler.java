@@ -25,6 +25,7 @@ import log.charter.io.Logger;
 import log.charter.io.gp.gp5.GP5FileReader;
 import log.charter.io.gp.gp5.data.GP5File;
 import log.charter.io.gp.gp5.transformers.GP5FileToSongChart;
+import log.charter.io.midi.MidiToBeatsMap;
 import log.charter.song.BeatsMap;
 import log.charter.song.SongChart;
 import log.charter.util.FileChooseUtils;
@@ -66,6 +67,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 		importSubmenu.add(
 				new SpecialMenuItem(Label.FILE_MENU_IMPORT_RS_VOCALS, songFileHandler::importRSVocalsArrangementXML));
 		importSubmenu.add(new SpecialMenuItem(Label.FILE_MENU_IMPORT_GP, this::importGPFile));
+		importSubmenu.add(new SpecialMenuItem(Label.FILE_MENU_IMPORT_MIDI_TEMPO, this::importMidiTempo));
 		importSubmenu.setEnabled(!data.isEmpty);
 		menu.add(importSubmenu);
 
@@ -93,8 +95,9 @@ public class FileMenuHandler extends CharterMenuHandler {
 	}
 
 	private boolean askUserAboutUsingExistingTempoMap() {
-		final int result = JOptionPane.showConfirmDialog(frame, "Do you want to use the tempo map from the imported project?",
-				"GP5 import tempo map", JOptionPane.YES_NO_OPTION);
+		final int result = JOptionPane.showConfirmDialog(frame,
+				"Do you want to use the tempo map from the imported project?", "GP5 import tempo map",
+				JOptionPane.YES_NO_OPTION);
 		return JOptionPane.NO_OPTION == result; // when no is selected, use existing tempo map
 	}
 
@@ -120,5 +123,22 @@ public class FileMenuHandler extends CharterMenuHandler {
 		} catch (final Exception e) {
 			Logger.error("Couldn't import gp5 file " + file.getAbsolutePath(), e);
 		}
+	}
+
+	private void importMidiTempo() {
+		final String dir = data.isEmpty ? Config.songsPath : data.path;
+		final File file = FileChooseUtils.chooseFile(frame, dir, new String[] { ".mid" }, Label.MIDI_FILE.label());
+		if (file == null) {
+			return;
+		}
+
+		final BeatsMap beatsMap = MidiToBeatsMap.getBeatsMap(file.getAbsolutePath(),
+				data.songChart.beatsMap.songLengthMs);
+		if (beatsMap == null) {
+			Logger.error("Couldn't import tempo from midi file " + file.getAbsolutePath());
+			return;
+		}
+
+		data.songChart.beatsMap = beatsMap;
 	}
 }

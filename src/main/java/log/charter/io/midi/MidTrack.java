@@ -2,7 +2,6 @@ package log.charter.io.midi;
 
 import static java.lang.Math.round;
 import static java.util.Arrays.copyOfRange;
-import static log.charter.io.Logger.debug;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,23 +62,19 @@ public class MidTrack {
 			final MidiEvent e = t.get(i);
 			final byte[] msg = e.getMessage().getMessage();
 
-			debug(e.getTick() + ", " + Arrays.toString(msg));
 			if ((msg[0] == -1) && (msg[1] == 3)) {
 				trackType = TrackType.from(new String(copyOfRange(msg, 3, msg.length)));
 			} else if ((msg[0] != -1) || (msg[1] != 47) || (msg[2] != 0)) {
-				events.add(new MidEvent(ms(e, scaler), msg));
+				final long time = round(e.getTick() * scaler);
+				events.add(new MidEvent(time, msg));
 			}
 		}
+
 		type = isTempo ? TrackType.TEMPO : trackType;
-		debug("Track " + type + " ended");
 	}
 
 	public MidTrack(final TrackType type, final List<MidEvent> events) {
 		this.type = type;
 		this.events = events;
-	}
-
-	private long ms(final MidiEvent e, final double scaler) {
-		return round(e.getTick() * scaler);
 	}
 }

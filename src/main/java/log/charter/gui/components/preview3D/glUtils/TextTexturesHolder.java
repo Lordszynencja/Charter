@@ -84,7 +84,7 @@ public class TextTexturesHolder {
 	}
 
 	private void addText(final TextProperties properties) {
-		if (textures.size() > 100) {
+		if (textures.size() > 1000) {
 			removeTexture(textures.get(0));
 		}
 

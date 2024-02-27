@@ -65,6 +65,7 @@ public class Config {
 	public static String rubberbandPath;
 	public static String oggEncPath;
 	public static int audioBufferSize = 128;
+	public static int antialiasingSamples = 16;
 
 	public static int minNoteDistance = 50;
 	public static int minTailLength = 50;
@@ -78,7 +79,7 @@ public class Config {
 	public static boolean leftHanded = false;
 	public static boolean showChordIds = true;
 	public static boolean createDefaultStretchesInBackground = true;
-	public static int frets = 24;
+	public static int frets = 28;
 	public static int maxStrings = 9;
 	public static int maxBendValue = 4;
 	public static int FPS = 60;
@@ -119,6 +120,8 @@ public class Config {
 		valueAccessors.put("songsPath", ValueAccessor.forString(v -> songsPath = v, () -> songsPath));
 		valueAccessors.put("audioBufferSize",
 				ValueAccessor.forInteger(v -> audioBufferSize = v, () -> audioBufferSize));
+		valueAccessors.put("antialiasingSamples",
+				ValueAccessor.forInteger(v -> antialiasingSamples = v, () -> antialiasingSamples));
 
 		valueAccessors.put("minNoteDistance",
 				ValueAccessor.forInteger(v -> minNoteDistance = v, () -> minNoteDistance));

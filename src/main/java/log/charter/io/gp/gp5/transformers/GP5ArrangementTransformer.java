@@ -53,15 +53,16 @@ public class GP5ArrangementTransformer {
 	}
 
 	private static void addNote(final GP5SoundsTransformer noteTransformer, final GPBeat gpBeat,
-			final FractionalPosition position, final boolean[] wasHOPOStart, final int[] hopoFrom) {
+			final FractionalPosition position, final FractionalPosition endPosition, final boolean[] wasHOPOStart,
+			final int[] hopoFrom) {
 		if (gpBeat.notes.isEmpty()) {
 			return;
 		}
 
 		if (gpBeat.notes.size() == 1) {
-			noteTransformer.addNote(gpBeat, position, wasHOPOStart, hopoFrom);
+			noteTransformer.addNote(gpBeat, position, endPosition, wasHOPOStart, hopoFrom);
 		} else if (gpBeat.notes.size() > 1) {
-			noteTransformer.addChord(gpBeat, position, wasHOPOStart, hopoFrom);
+			noteTransformer.addChord(gpBeat, position, endPosition, wasHOPOStart, hopoFrom);
 		}
 
 		for (final GPNote note : gpBeat.notes) {
@@ -89,9 +90,10 @@ public class GP5ArrangementTransformer {
 			for (final List<GPBeat> voice : bars.get(barId - 1).voices) {
 				FractionalPosition position = new FractionalPosition(beatsMap.beats, barBeatId);
 				for (final GPBeat gpBeat : voice) {
-					addNote(noteTransformer, gpBeat, position, wasHOPOStart, hopoFrom);
-					position = position.move(gpBeat.duration, gpBeat.tupletNumerator, gpBeat.tupletDenominator,
-							gpBeat.dots);
+					final FractionalPosition endPosition = position.move(gpBeat.duration, gpBeat.tupletNumerator,
+							gpBeat.tupletDenominator, gpBeat.dots);
+					addNote(noteTransformer, gpBeat, position, endPosition, wasHOPOStart, hopoFrom);
+					position = endPosition;
 				}
 			}
 

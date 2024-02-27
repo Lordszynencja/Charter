@@ -81,13 +81,12 @@ public class GuitarModeHandler extends ModeHandler {
 		selectionManager.clear();
 
 		if (anchorPosition.anchor != null) {
-			new AnchorPane(data, frame, undoSystem, anchorPosition.anchor, () -> {
-			});
+			new AnchorPane(data, frame, undoSystem, anchorPosition.anchor, () -> {});
 			return;
 		}
 
 		undoSystem.addUndo();
-		final Anchor anchor = new Anchor(anchorPosition.position(), 0);
+		final Anchor anchor = new Anchor(anchorPosition.position(), 1);
 		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 		anchors.add(anchor);
 		anchors.sort(null);
@@ -102,8 +101,7 @@ public class GuitarModeHandler extends ModeHandler {
 		selectionManager.clear();
 
 		if (eventPointPosition.eventPoint != null) {
-			new GuitarEventPointPane(data, frame, undoSystem, eventPointPosition.eventPoint, () -> {
-			});
+			new GuitarEventPointPane(data, frame, undoSystem, eventPointPosition.eventPoint, () -> {});
 			return;
 		}
 
@@ -240,8 +238,7 @@ public class GuitarModeHandler extends ModeHandler {
 		selectionManager.clear();
 
 		if (toneChangePosition.toneChange != null) {
-			new ToneChangePane(data, frame, undoSystem, toneChangePosition.toneChange, () -> {
-			});
+			new ToneChangePane(data, frame, undoSystem, toneChangePosition.toneChange, () -> {});
 			return;
 		}
 

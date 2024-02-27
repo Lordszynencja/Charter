@@ -1,7 +1,5 @@
 package log.charter.io.midi;
 
-import static log.charter.io.Logger.debug;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,21 +10,18 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
-import log.charter.song.TempoMap;
+import log.charter.io.midi.MidTrack.TrackType;
 
 public final class MidiReader {
-
-	public static final int ticksPerBeat = 1;
-
 	public static TempoMap readMidi(final String path) throws InvalidMidiDataException, IOException {
-		return new MidiReader(path).read();
+		return new MidiReader(path).readTempoMap();
 	}
 
 	private final List<MidTrack> tracks;
 
 	private MidiReader(final String path) throws InvalidMidiDataException, IOException {
 		final Sequence seq = MidiSystem.getSequence(new File(path));
-		final double scaler = ((double) ticksPerBeat) / seq.getResolution();
+		final double scaler = 1.0 / seq.getResolution();
 
 		tracks = new ArrayList<>(seq.getTracks().length);
 		boolean isTempo = true;
@@ -34,25 +29,20 @@ public final class MidiReader {
 			tracks.add(new MidTrack(t, isTempo, scaler));
 			isTempo = false;
 		}
-		debug("Sequence loaded from " + path);
 	}
 
-	private TempoMap read() {
-		TempoMap tempoMap = new TempoMap();
-
+	private TempoMap readTempoMap() {
 		for (final MidTrack t : tracks) {
-			switch (t.type) {
-			case TEMPO:
-				tempoMap = new TempoMap(TempoReader.read(t));
-				tempoMap.join();
-				break;
-			default:
-				break;
+			if (t.type != TrackType.TEMPO) {
+				continue;
 			}
+
+			final TempoMap tempoMap = new TempoMap(MidiTempoReader.read(t));
+			tempoMap.join();
+			tempoMap.convertToMs();
+			return tempoMap;
 		}
 
-		tempoMap.convertToMs();
-
-		return tempoMap;
+		return new TempoMap();
 	}
 }
