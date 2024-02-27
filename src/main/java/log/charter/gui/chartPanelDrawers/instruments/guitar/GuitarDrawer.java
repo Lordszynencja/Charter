@@ -413,7 +413,7 @@ public class GuitarDrawer {
 
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(ColorLabel.BASE_BG_1.color());
-		g.fillRect(0, lanesTop, width, lanesHeight + 1);
+		g.fillRect(0, lanesTop, width + 3, lanesHeight + 1);
 		//g.setColor(ColorLabel.BASE_BG_4.color());
 		//g.drawRect(0, lanesTop, width - 1, lanesHeight);
 

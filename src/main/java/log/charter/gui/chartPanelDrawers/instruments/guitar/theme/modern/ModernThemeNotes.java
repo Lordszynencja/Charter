@@ -4,8 +4,7 @@ import static java.lang.Math.max;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.*;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.util.ScalingUtils.timeToXLength;
@@ -430,7 +429,7 @@ public class ModernThemeNotes implements ThemeNotes {
 	@Override
 	public void addChordName(final int x, final String chordName) {
 		data.chordNames.add(
-				new Text(new Position2D(x + 2, lanesTop - 1), chordNameFont, chordName, ColorLabel.BASE_DARK_TEXT));
+				new Text(new Position2D(x + 2, anchorY + 15 - 1), chordNameFont, chordName, ColorLabel.BASE_DARK_TEXT));
 	}
 
 	@Override

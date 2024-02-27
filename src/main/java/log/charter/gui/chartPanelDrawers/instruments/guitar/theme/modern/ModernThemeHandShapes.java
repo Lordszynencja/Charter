@@ -56,7 +56,7 @@ public class ModernThemeHandShapes implements ThemeHandShapes {
 	@Override
 	public void addHandShapeHighlight(final int x, final int length) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length - 1,
-				handShapesHeight - 1);
+				handShapesHeight); // changed
 		data.handShapes.add(strokedRectangle(position, ColorLabel.HIGHLIGHT));
 	}
 }

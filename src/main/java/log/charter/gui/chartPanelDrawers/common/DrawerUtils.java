@@ -3,12 +3,7 @@ package log.charter.gui.chartPanelDrawers.common;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.GraphicalConfig.anchorInfoHeight;
-import static log.charter.data.config.GraphicalConfig.chartMapHeightMultiplier;
-import static log.charter.data.config.GraphicalConfig.handShapesHeight;
-import static log.charter.data.config.GraphicalConfig.noteHeight;
-import static log.charter.data.config.GraphicalConfig.timingHeight;
-import static log.charter.data.config.GraphicalConfig.toneChangeHeight;
+import static log.charter.data.config.GraphicalConfig.*;
 import static log.charter.util.Utils.getStringPosition;
 
 import log.charter.data.managers.modes.EditMode;
@@ -17,15 +12,15 @@ import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
 import log.charter.io.rs.xml.song.ArrangementType;
 
 public class DrawerUtils {
-	public static final int sectionNamesY = 5;
+	public static int beatTextY = 15;
+	public static int beatSizeTextY = beatTextY + 15;
+	public static final int lyricLinesY = beatSizeTextY + 15;
+	public static final int sectionNamesY = lyricLinesY + 25;
 	public static final int phraseNamesY = sectionNamesY + 15;
 	public static final int eventNamesY = phraseNamesY + 15;
-	public static final int lyricLinesY = eventNamesY + 15;
-	public static int beatTextY = lyricLinesY + 15;
-	public static int beatSizeTextY = beatTextY + 15;
-	public static int toneChangeY = beatSizeTextY + 10;
-	public static int anchorY = toneChangeY + toneChangeHeight + 2;
-	public static int lanesTop = anchorY + anchorInfoHeight;
+	public static int toneChangeY = eventNamesY + 15;
+	public static int anchorY = toneChangeY + toneChangeHeight + 15;
+	public static int lanesTop = anchorY + anchorInfoHeight + 15;
 	public static int laneHeight;
 	public static int lanesHeight;
 	public static int lanesBottom;
@@ -65,8 +60,8 @@ public class DrawerUtils {
 	}
 
 	private static void setEditAreaSizesForGuitar(final ArrangementType arrangementType, final int strings) {
-		anchorY = toneChangeY + toneChangeHeight + 2;
-		lanesTop = anchorY + anchorInfoHeight;
+		anchorY = toneChangeY + toneChangeHeight + 15;
+		lanesTop = anchorY + anchorInfoHeight + 15;
 		laneHeight = (int) (noteHeight * (arrangementType == ArrangementType.Bass ? 2 : 1.5));
 		tailHeight = getAsOdd(noteHeight * 3 / 4);
 		lanesHeight = laneHeight * strings;

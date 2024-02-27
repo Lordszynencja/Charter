@@ -56,10 +56,10 @@ public class GraphicalConfig {
 	public static Theme theme = Theme.MODERN;
 	public static int eventsChangeHeight = 12; // added
 	public static int toneChangeHeight = 12;
-	public static int anchorInfoHeight = 20;
+	public static int anchorInfoHeight = 10; // changed
 	public static int noteWidth = 25;
 	public static int noteHeight = 25;
-	public static int handShapesHeight = 10;
+	public static int handShapesHeight = 10; // changed
 	public static int timingHeight = 24;
 	public static double previewWindowScrollSpeed = 1.3;
 

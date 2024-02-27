@@ -17,10 +17,10 @@ import log.charter.song.Anchor;
 import log.charter.util.Position2D;
 
 public class ModernThemeAnchors implements ThemeAnchors {
-	private static Font anchorFont = new Font(Font.SANS_SERIF, Font.BOLD, anchorInfoHeight - 2);
+	private static Font anchorFont = new Font(Font.SANS_SERIF, Font.BOLD, anchorInfoHeight); // changed
 
 	public static void reloadGraphics() {
-		anchorFont = new Font(Font.SANS_SERIF, Font.BOLD, anchorInfoHeight - 2);
+		anchorFont = new Font(Font.SANS_SERIF, Font.BOLD, anchorInfoHeight); // changed
 	}
 
 	private final HighwayDrawerData data;

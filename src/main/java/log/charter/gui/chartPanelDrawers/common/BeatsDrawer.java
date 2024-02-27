@@ -76,7 +76,7 @@ public class BeatsDrawer {
 
 		private void addMeasureChange(final int x, final Beat beat) {
 			beats.add(new Text(new Position2D(x + 3, beatSizeTextY + 1), beatFont,
-					beat.beatsInMeasure + "/" + beat.noteDenominator, ColorLabel.MAIN_BEAT));
+					beat.beatsInMeasure + "/" + beat.noteDenominator, ColorLabel.BASE_TEXT));
 		}
 
 		private void addBeatBox(final int x, final ColorLabel color) {
@@ -119,7 +119,7 @@ public class BeatsDrawer {
 		}
 
 		public void addGrid(final int x) {
-			beats.add(lineVertical(x, lanesTop, lanesBottom, ColorLabel.GRID));
+			beats.add(lineVertical(x, beatTextY + beatSizeTextY, lanesBottom, ColorLabel.GRID));
 		}
 
 		public void addBookmark(final int number, final int x) {
