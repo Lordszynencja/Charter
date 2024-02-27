@@ -18,10 +18,10 @@ import log.charter.util.Position2D;
 
 public class ModernThemeToneChanges implements ThemeToneChanges {
 
-	private static Font toneChangeFont = new Font(Font.SANS_SERIF, Font.PLAIN, toneChangeHeight * 4 / 5);
+	private static Font toneChangeFont = new Font(Font.SANS_SERIF, Font.BOLD, toneChangeHeight);
 
 	public static void reloadSizes() {
-		toneChangeFont = new Font(Font.SANS_SERIF, Font.PLAIN, toneChangeHeight * 4 / 5);
+		toneChangeFont = new Font(Font.SANS_SERIF, Font.BOLD, toneChangeHeight);
 	}
 
 	private final HighwayDrawerData data;

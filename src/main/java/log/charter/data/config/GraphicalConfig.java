@@ -54,11 +54,12 @@ public class GraphicalConfig {
 			.getAbsolutePath();
 
 	public static Theme theme = Theme.MODERN;
-	public static int eventsChangeHeight = 12; // added
-	public static int toneChangeHeight = 12;
+	public static int eventsChangeHeight = 10; // added
+	public static int toneChangeHeight = 10;
 	public static int anchorInfoHeight = 10; // changed
 	public static int noteWidth = 25;
 	public static int noteHeight = 25;
+	public static int chordHeight = 12; // added
 	public static int handShapesHeight = 10; // changed
 	public static int timingHeight = 24;
 	public static double previewWindowScrollSpeed = 1.3;
@@ -73,12 +74,15 @@ public class GraphicalConfig {
 
 	static {
 		valueAccessors.put("theme", ValueAccessor.forString(v -> theme = Theme.valueOf(v), () -> theme.name()));
+		valueAccessors.put("eventsChangeHeight",
+				ValueAccessor.forInteger(v -> eventsChangeHeight = v, () -> eventsChangeHeight));
 		valueAccessors.put("toneChangeHeight",
 				ValueAccessor.forInteger(v -> toneChangeHeight = v, () -> toneChangeHeight));
 		valueAccessors.put("anchorInfoHeight",
 				ValueAccessor.forInteger(v -> anchorInfoHeight = v, () -> anchorInfoHeight));
 		valueAccessors.put("noteWidth", ValueAccessor.forInteger(v -> noteWidth = v, () -> noteWidth));
 		valueAccessors.put("noteHeight", ValueAccessor.forInteger(v -> noteHeight = v, () -> noteHeight));
+		valueAccessors.put("chordHeight", ValueAccessor.forInteger(v -> chordHeight = v, () -> chordHeight));
 		valueAccessors.put("handShapesHeight",
 				ValueAccessor.forInteger(v -> handShapesHeight = v, () -> handShapesHeight));
 		valueAccessors.put("timingHeight", ValueAccessor.forInteger(v -> timingHeight = v, () -> timingHeight));

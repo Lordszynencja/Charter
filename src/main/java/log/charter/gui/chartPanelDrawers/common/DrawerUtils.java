@@ -15,12 +15,12 @@ public class DrawerUtils {
 	public static int beatTextY = 15;
 	public static int beatSizeTextY = beatTextY + 15;
 	public static final int lyricLinesY = beatSizeTextY + 15;
-	public static final int sectionNamesY = lyricLinesY + 25;
-	public static final int phraseNamesY = sectionNamesY + 19;
-	public static final int eventNamesY = phraseNamesY + 19;
-	public static int toneChangeY = eventNamesY + 19;
-	public static int anchorY = toneChangeY + toneChangeHeight + 15;
-	public static int lanesTop = anchorY + anchorInfoHeight + 15;
+	public static final int sectionNamesY = lyricLinesY + eventsChangeHeight + 15;
+	public static final int phraseNamesY = sectionNamesY + eventsChangeHeight + 15;
+	public static final int eventNamesY = phraseNamesY + eventsChangeHeight + 15;
+	public static int toneChangeY = eventNamesY + toneChangeHeight + 15;
+	public static int anchorY = toneChangeY + toneChangeHeight + 19;
+	public static int lanesTop = anchorY + anchorInfoHeight + chordHeight + 2;
 	public static int laneHeight;
 	public static int lanesHeight;
 	public static int lanesBottom;
@@ -61,7 +61,7 @@ public class DrawerUtils {
 
 	private static void setEditAreaSizesForGuitar(final ArrangementType arrangementType, final int strings) {
 		anchorY = toneChangeY + toneChangeHeight + 15;
-		lanesTop = anchorY + anchorInfoHeight + 15;
+		lanesTop = anchorY + anchorInfoHeight + chordHeight + 2;
 		laneHeight = (int) (noteHeight * (arrangementType == ArrangementType.Bass ? 2 : 1.5));
 		tailHeight = getAsOdd(noteHeight * 3 / 4);
 		lanesHeight = laneHeight * strings;

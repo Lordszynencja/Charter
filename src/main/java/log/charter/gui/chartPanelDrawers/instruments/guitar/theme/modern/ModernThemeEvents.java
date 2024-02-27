@@ -23,10 +23,10 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.Position2D;
 
 public class ModernThemeEvents implements ThemeEvents {
-	private static Font eventFont = new Font(Font.SANS_SERIF, Font.PLAIN, eventsChangeHeight * 4 / 5);
+	private static Font eventFont = new Font(Font.SANS_SERIF, Font.BOLD, eventsChangeHeight);
 
 	public static void reloadSizes() {
-		eventFont = new Font(Font.SANS_SERIF, Font.PLAIN, eventsChangeHeight * 4 / 5);
+		eventFont = new Font(Font.SANS_SERIF, Font.BOLD, eventsChangeHeight);
 	}
 
 	private final HighwayDrawerData data;

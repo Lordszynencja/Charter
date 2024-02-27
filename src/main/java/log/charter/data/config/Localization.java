@@ -56,10 +56,12 @@ public class Localization {
 
 		GRAPHIC_CONFIG_THEME_PAGE("Theme"), //
 		GRAPHIC_CONFIG_THEME("Theme"), //
-		GRAPHIC_CONFIG_TONE_CHANGE_HEIGHT("Tone change height"), //
+		GRAPHIC_CONFIG_EVENTS_CHANGE_HEIGHT("Events height"), //
+		GRAPHIC_CONFIG_TONE_CHANGE_HEIGHT("Tone height"), //
 		GRAPHIC_CONFIG_ANCHOR_INFO_HEIGHT("Anchor info height"), //
 		GRAPHIC_CONFIG_NOTE_HEIGHT("Note height (px)"), //
 		GRAPHIC_CONFIG_NOTE_WIDTH("Note width (px)"), //
+		GRAPHIC_CONFIG_CHORD_HEIGHT("Chord height"), //
 		GRAPHIC_CONFIG_HAND_SHAPES_HEIGHT("Hand shapes height"), //
 		GRAPHIC_CONFIG_TIMING_HEIGHT("Timing height"), //
 		GRAPHIC_CONFIG_PREVIEW_SCROLL_SPEED("Preview scroll speed"), //

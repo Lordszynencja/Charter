@@ -2,7 +2,7 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
 import static java.lang.Math.max;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.GraphicalConfig.noteHeight;
+import static log.charter.data.config.GraphicalConfig.*;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.*;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
@@ -56,7 +56,7 @@ public class ModernThemeNotes implements ThemeNotes {
 	private static BufferedImage palmMuteIcon = null;
 	private static BufferedImage fullMuteIcon = null;
 
-	private static Font chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, noteHeight * 2 / 5); // changed
+	private static Font chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, chordHeight); // changed
 	private static Font fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2 ); // changed
 	private static Font smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 	private static BufferedImage generateNoteIcon(final Color innerColor, final Color borderColor) {
@@ -272,7 +272,7 @@ public class ModernThemeNotes implements ThemeNotes {
 		palmMuteIcon = generatePalmMuteIcon();
 		fullMuteIcon = generateFullMuteIcon();
 
-		chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, noteHeight * 2 / 5); // changed
+		chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, chordHeight); // changed
 		fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight  / 2); // changed
 		smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
@@ -429,7 +429,7 @@ public class ModernThemeNotes implements ThemeNotes {
 	@Override
 	public void addChordName(final int x, final String chordName) {
 		data.chordNames.add(
-				new Text(new Position2D(x + 2, anchorY + 15 - 1), chordNameFont, chordName, ColorLabel.BASE_DARK_TEXT));
+				new Text(new Position2D(x + 2, anchorY + anchorInfoHeight), chordNameFont, chordName, ColorLabel.BASE_DARK_TEXT));
 	}
 
 	@Override
