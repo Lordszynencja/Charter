@@ -5,7 +5,6 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatSizeTextY
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
