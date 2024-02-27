@@ -406,7 +406,7 @@ public class GuitarDrawer {
 		final String[] stringNames = data.getCurrentArrangement().getSimpleStringNames();
 
 		final int fontSize = (int) (noteHeight * 0.5);
-		final Font stringNameFont = new Font(Font.DIALOG, Font.PLAIN, fontSize);
+		final Font stringNameFont = new Font(Font.DIALOG, Font.BOLD, fontSize);
 		final int x = fontSize * 5 / 6;
 
 		final int width = fontSize * 5 / 3;
@@ -414,13 +414,14 @@ public class GuitarDrawer {
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setColor(ColorLabel.BASE_BG_1.color());
 		g.fillRect(0, lanesTop, width + 3, lanesHeight + 1);
-		//g.setColor(ColorLabel.BASE_BG_4.color());
-		//g.drawRect(0, lanesTop, width - 1, lanesHeight);
+		//g.setColor(ColorLabel.BASE_BG_2.color());
+		//g.drawRect(0, lanesTop, width + 1, lanesHeight);
 
 		for (int string = 0; string < stringNames.length; string++) {
-			final int stringPosition = getStringPosition(string, stringNames.length);
-			final int y = getLaneY(stringPosition);
-			new CenteredText(new Position2D(x, y), stringNameFont, stringNames[string], ColorLabel.BASE_TEXT).draw(g);
+			final int lanes = data.getCurrentArrangement().tuning.strings;
+				final int stringPosition = getStringPosition(string, stringNames.length);
+				final int y = getLaneY(stringPosition);
+				new CenteredText(new Position2D(x, y), stringNameFont, stringNames[string], getStringBasedColor(StringColorLabelType.LANE, string, lanes)).draw(g);
 		}
 	}
 
