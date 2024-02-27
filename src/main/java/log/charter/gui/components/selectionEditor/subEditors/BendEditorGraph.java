@@ -276,22 +276,38 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		return new BendPositionWithId(getXFromBendPosition(closestGrid * gridLength), -1);
 	}
 
-	private void paintBackground(final Graphics g) {
+	private void drawBackground(final Graphics g) {
 		g.setColor(getBackground());
 		g.fillRect(0, 0, getWidth(), getHeight());
+	}
 
+	private void drawNoteLength(final Graphics g) {
 		g.setColor(getStringBasedColor(StringColorLabelType.NOTE, string, strings));
 		final int noteX0 = getXFromBendPosition(noteStartPosition);
 		final int noteX1 = getXFromBendPosition(noteEndPosition);
 		g.fillRect(noteX0, getYFromBendValue(maxBendInternalValue + 1), noteX1 - noteX0,
 				getYFromBendValue(maxBendInternalValue) - getYFromBendValue(maxBendInternalValue + 1));
+	}
 
+	private void drawGrid(final Graphics g) {
+		g.setColor(ColorLabel.BASE_1.color());
+		for (int i = 0; i <= lastBeatId - firstBeatId; i++) {
+			for (int j = 1; j < gridSize; j++) {
+				final int x = getXFromBendPosition(i + (double) j / gridSize);
+				g.drawLine(x, 10, x, height - 10);
+			}
+		}
+	}
+
+	private void drawBeats(final Graphics g) {
 		g.setColor(ColorLabel.BASE_2.color());
 		for (int i = 0; i <= lastBeatId - firstBeatId; i++) {
 			final int x = getXFromBendPosition(i);
 			g.drawLine(x, 10, x, height - 10);
 		}
+	}
 
+	private void drawBendValues(final Graphics g) {
 		for (int i = 0; i <= maxBendInternalValue; i++) {
 			g.setColor((i % 4 == 0 ? ColorLabel.BASE_2 : ColorLabel.BASE_1).color());
 			final int y = getYFromBendValue(i);
@@ -304,6 +320,14 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 			final int y = getYFromBendValue(i * 4) + 4;
 			g.drawString(i + "", 2, y);
 		}
+	}
+
+	private void paintBackground(final Graphics g) {
+		drawBackground(g);
+		drawNoteLength(g);
+		drawBeats(g);
+		drawGrid(g);
+		drawBendValues(g);
 	}
 
 	private void paintBends(final Graphics g) {

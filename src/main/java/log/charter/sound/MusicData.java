@@ -116,7 +116,7 @@ public class MusicData {
 		outFormat = new AudioFormat(Encoding.PCM_SIGNED, rate, 16, 2, 4, rate, false);
 	}
 
-	public byte[] getData() {
+	public byte[] getStereoData() {
 		return preparedData;
 	}
 

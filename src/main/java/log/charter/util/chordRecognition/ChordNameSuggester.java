@@ -1,5 +1,7 @@
 package log.charter.util.chordRecognition;
 
+import static log.charter.util.SoundUtils.soundToSimpleName;
+
 import java.util.Arrays;
 import java.util.Map.Entry;
 
@@ -8,29 +10,6 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 
 public class ChordNameSuggester {
-	private static final String[] toneNames = { //
-			"E", // 0
-			"F", // 1
-			"F#", // 2
-			"G", // 3
-			"G#", // 4
-			"A", // 5
-			"A#", // 6
-			"B", // 7
-			"C", // 8
-			"C#", // 9
-			"D", // 10
-			"D#"// 11
-	};
-
-	public static String getToneName(int tone) {
-		while (tone < 0) {
-			tone += 12;
-		}
-		tone = tone % 12;
-		return toneNames[tone];
-	}
-
 	private static ArrayList2<Integer> soundsToNotes(final int[] sounds) {
 		final ArrayList2<Integer> notes = new ArrayList2<>();
 		for (int i = 0; i < sounds.length; i++) {
@@ -51,7 +30,7 @@ public class ChordNameSuggester {
 	private static ArrayList2<String> recognizeChord(final int[] sounds) {
 		final ArrayList2<Integer> notes = soundsToNotes(sounds);
 		if (notes.size() == 1) {
-			return new ArrayList2<>(getToneName(notes.get(0)));
+			return new ArrayList2<>(soundToSimpleName(notes.get(0), true));
 		}
 
 		final ArrayList2<String> foundNames = new ArrayList2<>();
@@ -59,7 +38,8 @@ public class ChordNameSuggester {
 			final int root = notes.get(i);
 			ArrayList2<String> foundNamesForRoot = ChordNameAdder.getSuggestedChordNames(root, notes);
 			if (root != sounds[0] % 12) {
-				foundNamesForRoot = foundNamesForRoot.map(chordName -> chordName + "/" + getToneName(sounds[0]));
+				foundNamesForRoot = foundNamesForRoot
+						.map(chordName -> chordName + "/" + soundToSimpleName(sounds[0], true));
 			}
 			foundNames.addAll(foundNamesForRoot);
 		}
@@ -94,7 +74,7 @@ public class ChordNameSuggester {
 		Arrays.sort(sounds);
 
 		if (sounds.length == 1) {
-			return new ArrayList2<>(getToneName(sounds[0]));
+			return new ArrayList2<>(soundToSimpleName(sounds[0], true));
 		}
 
 		return recognizeChord(sounds);

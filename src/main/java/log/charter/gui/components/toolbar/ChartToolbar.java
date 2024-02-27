@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.DoubleConsumer;
 
@@ -232,18 +234,39 @@ public class ChartToolbar extends JToolBar {
 				return;
 			}
 
-			Config.stretchedMusicSpeed = newSpeed;
-			Config.markChanged();
-
-			audioHandler.clear();
-			audioHandler.addSpeedToStretch();
+			setSpeed(newSpeed);
 		}).start();
+	}
+
+	private void setSpeed(final int newSpeed) {
+		if (Config.stretchedMusicSpeed == newSpeed) {
+			return;
+		}
+
+		Config.stretchedMusicSpeed = newSpeed;
+		Config.markChanged();
+
+		audioHandler.clear();
+		audioHandler.addSpeedToStretch();
 	}
 
 	private void addSlowedSpeed(final AtomicInteger x) {
 		slowedSpeed = createNumberField(Label.TOOLBAR_SLOWED_PLAYBACK_SPEED, LabelPosition.LEFT_PACKED, 30, //
 				Config.stretchedMusicSpeed, 1, 500, false, this::changeSpeed);
 		this.add(x, slowedSpeed);
+
+		slowedSpeed.field.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(final FocusEvent e) {
+			}
+
+			@Override
+			public void focusLost(final FocusEvent e) {
+				setSpeed(newSpeed);
+			}
+
+		});
 	}
 
 	private int getVolumeAsInteger(final double volume) {

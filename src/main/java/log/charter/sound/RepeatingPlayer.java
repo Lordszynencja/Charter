@@ -52,7 +52,7 @@ public class RepeatingPlayer implements IPlayer {
 
 	private void playSound() {
 		line.flush();
-		final byte[] data = musicDataSupplier.get().getData();
+		final byte[] data = musicDataSupplier.get().getStereoData();
 		int startByte = 0;
 
 		while ((data.length - startByte) > BUFF_SIZE) {

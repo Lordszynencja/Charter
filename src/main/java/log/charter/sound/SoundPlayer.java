@@ -1,19 +1,20 @@
 package log.charter.sound;
 
 import static java.lang.Math.floor;
+import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.System.arraycopy;
 import static javax.sound.sampled.AudioSystem.getLine;
+import static log.charter.data.config.Config.audioBufferSize;
+
+import java.util.Arrays;
 
 import javax.sound.sampled.DataLine.Info;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 public class SoundPlayer {
-
 	public static class Player {
-		private static final int BUFF_SIZE = 1024 * 128;
-
 		private final MusicData musicData;
 		private final SourceDataLine line;
 		private boolean stopped;
@@ -41,21 +42,22 @@ public class SoundPlayer {
 
 					line.open(musicData.outFormat);
 					line.start();
-					final byte[] data = musicData.getData();
-					startTime = System.nanoTime();
-					if (stopped) {
-						while ((data.length - startByte) > BUFF_SIZE) {
-							if (stopped) {
-								return;
-							}
-							line.write(data, startByte, BUFF_SIZE);
-							startByte += BUFF_SIZE;
+					final byte[] data = musicData.getStereoData();
+
+					while (startByte < data.length) {
+						if (stopped) {
+							startTime = System.nanoTime();
+							return;
 						}
+
+						final byte[] buffer = Arrays.copyOfRange(data, startByte,
+								min(data.length, startByte + audioBufferSize));
+						if (startTime < 0) {
+							startTime = System.nanoTime();
+						}
+						startByte += line.write(buffer, 0, buffer.length);
 					}
 
-					if ((data.length - startByte) > 0) {
-						line.write(data, startByte, data.length - startByte);
-					}
 					line.drain();
 					line.stop();
 					stopped = true;

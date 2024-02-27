@@ -158,7 +158,7 @@ public class BeatsMap {
 
 	public int getPositionWithRemovedGrid(final int position, int gridRemovals) {
 		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
-		if (gridPosition.position() != position) {
+		if (gridPosition.position() < position) {
 			gridRemovals--;
 		}
 		for (int i = 0; i < gridRemovals; i++) {

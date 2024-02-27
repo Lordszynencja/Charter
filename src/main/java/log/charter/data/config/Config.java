@@ -64,6 +64,7 @@ public class Config {
 	public static String songsPath = System.getProperty("user.home") + File.separator + "Documents";
 	public static String rubberbandPath;
 	public static String oggEncPath;
+	public static int audioBufferSize = 128;
 
 	public static int minNoteDistance = 50;
 	public static int minTailLength = 50;
@@ -97,7 +98,7 @@ public class Config {
 	public static boolean previewWindowBorderless = false;
 
 	public static int zoomLvl = 100;
-	public static int stretchedMusicSpeed = 50;
+	public static int stretchedMusicSpeed = 100;
 
 	public static boolean showGrid = true;
 	public static GridType gridType = GridType.BEAT;
@@ -116,6 +117,8 @@ public class Config {
 		valueAccessors.put("lastPath", ValueAccessor.forString(v -> lastPath = v, () -> lastPath));
 		valueAccessors.put("musicPath", ValueAccessor.forString(v -> musicPath = v, () -> musicPath));
 		valueAccessors.put("songsPath", ValueAccessor.forString(v -> songsPath = v, () -> songsPath));
+		valueAccessors.put("audioBufferSize",
+				ValueAccessor.forInteger(v -> audioBufferSize = v, () -> audioBufferSize));
 
 		valueAccessors.put("minNoteDistance",
 				ValueAccessor.forInteger(v -> minNoteDistance = v, () -> minNoteDistance));

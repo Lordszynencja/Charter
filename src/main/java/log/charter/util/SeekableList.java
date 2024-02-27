@@ -11,6 +11,7 @@ public class SeekableList<T extends IPosition> {
 		if (list == null) {
 			throw new NullPointerException("list can't be null");
 		}
+
 		this.list = list;
 	}
 

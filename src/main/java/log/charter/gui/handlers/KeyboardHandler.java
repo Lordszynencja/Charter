@@ -1387,8 +1387,7 @@ public class KeyboardHandler implements KeyListener {
 		key(VK_END).function(this::moveToEnd);
 		key(VK_END).ctrl().function(this::handleCtrlEnd);
 
-		key(VK_SPACE).function(audioHandler::togglePlayNormalSpeed);
-		key(VK_SPACE).ctrl().function(audioHandler::togglePlaySetSpeed);
+		key(VK_SPACE).function(audioHandler::togglePlaySetSpeed);
 		key(VK_LEFT).singleFunction(this::handleLeft);
 		key(VK_RIGHT).singleFunction(this::handleRight);
 		key(VK_UP).function(this::moveNotesUpKeepFrets);

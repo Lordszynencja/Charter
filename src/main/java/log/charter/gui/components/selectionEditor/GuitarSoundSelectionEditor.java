@@ -218,9 +218,15 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		parent.add(tremolo);
 	}
 
-	private void addBendEditor() {
+	private void addChordTemplateEditorParts(final int x) {
+		addChordNameSuggestionButton(x + 100, 0);
+		addChordNameInput(x + 100, 1);
+		addChordTemplateEditor(x, 3);
+	}
+
+	private void addBendEditor(final int x) {
 		selectionBendEditor = new SelectionBendEditor(parent, data, selectionManager, undoSystem);
-		selectionBendEditor.setLocation(850, parent.rowHeight * 2);
+		selectionBendEditor.setLocation(x, parent.rowHeight * 2);
 		parent.add(selectionBendEditor);
 	}
 
@@ -247,12 +253,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		addPassOtherNotesInputs(selectionEditor, row);
 		addSlideInputs(selectionEditor, row);
 		addVibratoTremoloInput(selectionEditor, row);
-
-		addChordNameSuggestionButton(400, 0);
-		addChordNameInput(400, 1);
-		addChordTemplateEditor(300, 3);
-
-		addBendEditor();
+		addChordTemplateEditorParts(380);
+		addBendEditor(1000);
 
 		hideFields();
 	}
