@@ -44,7 +44,7 @@ public class ChartPanelColors {
 		PHRASE_NAME_BG(179, 118, 54), // changed
 		SECTION_COLOR(165, 54, 178), // changed
 		PHRASE_COLOR(179, 118, 54), // changed
-		EVENT_BG(128, 0, 0), //
+		EVENT_BG(98, 72, 94), // changed
 		HIGHLIGHT(122, 122, 122), // changed
 		SELECT(41, 188, 254), // changed
 		VOCAL_SELECT(41, 188, 254), // changed
@@ -74,7 +74,7 @@ public class ChartPanelColors {
 		ANCHOR(208, 57, 57), // changed
 		HAND_SHAPE(49, 87, 167), // changed
 		HAND_SHAPE_ARPEGGIO(133, 89, 183), // changed
-		TONE_CHANGE(128, 128, 0), //
+		TONE_CHANGE(182, 182, 182), // changed
 
 		VOCAL_LINE_BACKGROUND(56, 56, 64), // changed
 		VOCAL_LINE_TEXT(255, 255, 255), // changed

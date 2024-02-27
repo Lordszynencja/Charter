@@ -16,9 +16,9 @@ public class DrawerUtils {
 	public static int beatSizeTextY = beatTextY + 15;
 	public static final int lyricLinesY = beatSizeTextY + 15;
 	public static final int sectionNamesY = lyricLinesY + 25;
-	public static final int phraseNamesY = sectionNamesY + 15;
-	public static final int eventNamesY = phraseNamesY + 15;
-	public static int toneChangeY = eventNamesY + 15;
+	public static final int phraseNamesY = sectionNamesY + 19;
+	public static final int eventNamesY = phraseNamesY + 19;
+	public static int toneChangeY = eventNamesY + 19;
 	public static int anchorY = toneChangeY + toneChangeHeight + 15;
 	public static int lanesTop = anchorY + anchorInfoHeight + 15;
 	public static int laneHeight;

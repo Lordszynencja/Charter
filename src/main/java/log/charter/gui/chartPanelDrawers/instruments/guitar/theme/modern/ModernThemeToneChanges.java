@@ -42,7 +42,7 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 			final boolean highlighted) {
 		data.toneChanges.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.TONE_CHANGE));
 		data.toneChanges.add(new TextWithBackground(new Position2D(x, toneChangeY), toneChangeFont,
-				"" + toneChange.toneName, ColorLabel.BASE_TEXT, ColorLabel.TONE_CHANGE, 2, ColorLabel.BASE_BORDER.color())); // changed
+				"" + toneChange.toneName, ColorLabel.BASE_DARK_TEXT, ColorLabel.TONE_CHANGE, 2, ColorLabel.BASE_BORDER.color())); // changed
 
 		if (highlighted) {
 			addToneChangeBox(x, ColorLabel.HIGHLIGHT);
