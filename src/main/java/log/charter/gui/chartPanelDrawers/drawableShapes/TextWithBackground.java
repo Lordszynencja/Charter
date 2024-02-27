@@ -1,10 +1,7 @@
 package log.charter.gui.chartPanelDrawers.drawableShapes;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.util.Position2D;
@@ -13,27 +10,29 @@ public class TextWithBackground implements DrawableShape {
 	private final Text text;
 	private final Color backgroundColor;
 	private final int space;
+	//private final Color borderColor; // Added gray border color
 
 	public TextWithBackground(final Position2D position, final Font font, final String text, final ColorLabel textColor,
-			final ColorLabel backgroundColor) {
-		this(position, font, text, textColor.color(), backgroundColor.color(), 1);
+							  final ColorLabel backgroundColor, final Color borderColor) {
+		this(position, font, text, textColor.color(), backgroundColor.color(), 1, borderColor);
 	}
 
 	public TextWithBackground(final Position2D position, final Font font, final String text, final ColorLabel textColor,
-			final ColorLabel backgroundColor, final int space) {
-		this(position, font, text, textColor.color(), backgroundColor.color(), space);
+							  final ColorLabel backgroundColor, final int space, final Color borderColor) {
+		this(position, font, text, textColor.color(), backgroundColor.color(), space, borderColor);
 	}
 
 	public TextWithBackground(final Position2D position, final Font font, final String text, final Color textColor,
-			final Color backgroundColor) {
-		this(position, font, text, textColor, backgroundColor, 1);
+							  final Color backgroundColor, final Color borderColor) {
+		this(position, font, text, textColor, backgroundColor, 1, borderColor);
 	}
 
 	public TextWithBackground(final Position2D position, final Font font, final String text, final Color textColor,
-			final Color backgroundColor, final int space) {
+							  final Color backgroundColor, final int space, final Color borderColor) {
 		this.text = new Text(position.move(space, space), font, text, textColor);
 		this.backgroundColor = backgroundColor;
 		this.space = space;
+		//this.borderColor = borderColor;
 	}
 
 	@Override
@@ -48,10 +47,20 @@ public class TextWithBackground implements DrawableShape {
 	}
 
 	public void draw(final Graphics2D g, final ShapePositionWithSize positionAndSize) {
+		Shape roundedRect = new RoundRectangle2D.Double(
+				positionAndSize.x - space + 2, positionAndSize.y - space,
+				positionAndSize.width + 2 * space, positionAndSize.height + 2 * space,
+				5, 5);
+
+		// background
 		g.setColor(backgroundColor);
-		g.fillRect(positionAndSize.x, positionAndSize.y, positionAndSize.width, positionAndSize.height);
+		g.fill(roundedRect);
 
-		text.draw(g, positionAndSize.resized(space, space, -2 * space, -2 * space - 1));
+		// border
+		//g.setColor(borderColor);
+		//g.draw(roundedRect);
+
+		// text
+		text.draw(g, positionAndSize.resized(space + 2, space, -2 * space, -2 * space - 1));
 	}
-
 }

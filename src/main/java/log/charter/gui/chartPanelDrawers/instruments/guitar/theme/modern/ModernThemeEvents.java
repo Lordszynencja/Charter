@@ -1,5 +1,6 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
+import static log.charter.data.config.GraphicalConfig.eventsChangeHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.phraseNamesY;
@@ -22,10 +23,10 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.Position2D;
 
 public class ModernThemeEvents implements ThemeEvents {
-	private static Font eventFont = new Font(Font.SANS_SERIF, Font.PLAIN, 13);
+	private static Font eventFont = new Font(Font.SANS_SERIF, Font.BOLD, eventsChangeHeight);
 
 	public static void reloadSizes() {
-		eventFont = new Font(Font.SANS_SERIF, Font.PLAIN, 13);
+		eventFont = new Font(Font.SANS_SERIF, Font.BOLD, eventsChangeHeight);
 	}
 
 	private final HighwayDrawerData data;
@@ -36,20 +37,21 @@ public class ModernThemeEvents implements ThemeEvents {
 
 	private void addSection(final SectionType section, final int x) {
 		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, sectionNamesY), eventFont, section.label,
-				ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT));
+				ColorLabel.BASE_TEXT, ColorLabel.SECTION_NAME_BG, 2, ColorLabel.BASE_BORDER.color())); // changed
 	}
 
 	private void addPhrase(final Phrase phrase, final String phraseName, final int x) {
 		final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
 				+ (phrase.solo ? "[Solo]" : "");
+		Font boldFont = eventFont.deriveFont(Font.BOLD);
 		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, phraseNamesY), eventFont, phraseLabel,
-				ColorLabel.PHRASE_NAME_BG, ColorLabel.BASE_DARK_TEXT));
+				ColorLabel.BASE_TEXT, ColorLabel.PHRASE_NAME_BG, 2, ColorLabel.BASE_BORDER.color())); // changed
 	}
 
 	private void addEvents(final ArrayList2<EventType> events, final int x) {
 		final String eventsName = String.join(", ", events.map(event -> event.label));
 		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, eventNamesY), eventFont, eventsName,
-				ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT));
+				ColorLabel.BASE_TEXT, ColorLabel.EVENT_BG, 2, ColorLabel.BASE_BORDER.color())); // changed
 	}
 
 	private void addEventPointBox(final int x, final ColorLabel color) {

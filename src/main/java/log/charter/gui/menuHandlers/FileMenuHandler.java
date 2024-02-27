@@ -93,9 +93,9 @@ public class FileMenuHandler extends CharterMenuHandler {
 	}
 
 	private boolean askUserAboutUsingExistingTempoMap() {
-		final int result = JOptionPane.showConfirmDialog(frame, "Do you want to use existing tempo map for the import?",
+		final int result = JOptionPane.showConfirmDialog(frame, "Do you want to use the tempo map from the imported project?",
 				"GP5 import tempo map", JOptionPane.YES_NO_OPTION);
-		return JOptionPane.YES_OPTION == result;
+		return JOptionPane.NO_OPTION == result; // when no is selected, use existing tempo map
 	}
 
 	private void importGPFile() {

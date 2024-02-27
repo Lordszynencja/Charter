@@ -74,7 +74,7 @@ class CharterRadioButton {
     }
 
     static void install() {
-        final Color backgroundColor = new Color(45, 45, 45);
+        final Color backgroundColor = ColorLabel.BASE_BG_1.color();
         final Color disabledBackgroundColor = ColorLabel.BASE_BG_2.color();
         final Color borderColor = ColorLabel.BASE_BORDER.color();
         final Color selectColor = ColorLabel.BASE_HIGHLIGHT.color();

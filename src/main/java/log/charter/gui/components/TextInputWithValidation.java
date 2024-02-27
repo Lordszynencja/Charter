@@ -154,7 +154,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 
     private boolean error;
     private Color normalBackgroundColor = new Color(45, 45, 45); // bg fill
-    
+
     private ValueValidator validator;
     private final StringValueSetter setter;
     private final boolean allowWrongValues;
@@ -169,8 +169,8 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
         this.setter = setter;
 
         getDocument().addDocumentListener(this);
-        setBorder(new LineBorder(textFieldBorder, 1)); // border 1px
-        setBackground(normalBackgroundColor);
+        setBorder(new LineBorder(textFieldBorder, 0)); // border 1px
+        //setBackground(normalBackgroundColor);
         addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -178,7 +178,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
             }
         });
     }
-    
+
     public TextInputWithValidation(final Integer value, final int length, final IntegerValueValidator validator,
             final IntegerValueSetter setter, final boolean allowWrongValues) {
         this(value == null ? "" : (value + ""), length, validator, (final String s) -> {
@@ -215,7 +215,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
     private void clearError() {
         error = false;
         setToolTipText(null);
-        setBorder(new LineBorder(textFieldBorder, 1)); // border color instead of fill
+        setBorder(new LineBorder(textFieldBorder, 0)); // border color instead of fill
     }
 
     private void validateValue() {

@@ -1,7 +1,6 @@
 package log.charter.gui.chartPanelDrawers.common;
 
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lyricLinesY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.*;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.util.ScalingUtils.timeToX;
 
@@ -17,12 +16,12 @@ import log.charter.song.vocals.Vocal;
 import log.charter.util.Position2D;
 
 public class LyricLinesDrawer {
-	private static int height = beatTextY - lyricLinesY;
-	private static Font lyricLineFont = new Font(Font.DIALOG, Font.PLAIN, height - 3);
+	private static int height = lyricLinesY - beatSizeTextY;
+	private static Font lyricLineFont = new Font(Font.DIALOG, Font.ITALIC, height - 3);
 
 	public static void reloadGraphics() {
-		height = beatTextY - lyricLinesY;
-		lyricLineFont = new Font(Font.DIALOG, Font.PLAIN, (int) (height * 0.9));
+		height = lyricLinesY - beatSizeTextY;
+		lyricLineFont = new Font(Font.DIALOG, Font.ITALIC, height - 3);
 	}
 
 	private static class VocalLinesDrawingData {
@@ -30,11 +29,11 @@ public class LyricLinesDrawer {
 		private final DrawableShapeList texts = new DrawableShapeList();
 
 		public void addLyricLine(final String text, final int x, final int lengthPx) {
-			final ShapePositionWithSize backgroundPosition = new ShapePositionWithSize(x, lyricLinesY, lengthPx,
+			final ShapePositionWithSize backgroundPosition = new ShapePositionWithSize(x, lyricLinesY + 3, lengthPx,
 					height);
 			backgrounds.add(filledRectangle(backgroundPosition, ColorLabel.VOCAL_LINE_BACKGROUND.color()));
 
-			final Position2D textPosition = new Position2D(x + 3, lyricLinesY + height / 20);
+			final Position2D textPosition = new Position2D(x + 3, lyricLinesY + 6);
 			texts.add(new Text(textPosition, lyricLineFont, text, ColorLabel.VOCAL_LINE_TEXT.color()));
 		}
 

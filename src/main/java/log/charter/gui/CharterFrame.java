@@ -50,6 +50,7 @@ import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.MouseHandler;
 import log.charter.gui.handlers.SongFileHandler;
+import log.charter.gui.lookAndFeel.CharterTabbedPaneUI;
 import log.charter.gui.lookAndFeel.CharterTheme;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
@@ -279,7 +280,9 @@ public class CharterFrame extends JFrame {
 		textArea.setCaretColor(ColorLabel.BASE_TEXT.color());
 
 		final JTabbedPane tabs = new JTabbedPane(JTabbedPane.TOP);
-		tabs.addTab("Quick edit", new JScrollPane(currentSelectionEditor));
+		tabs.setUI(new CharterTabbedPaneUI()); // added
+
+		tabs.addTab("Quick Edit", new JScrollPane(currentSelectionEditor));
 		tabs.addTab("Help", helpLabel);
 		tabs.addTab("Text", new JScrollPane(textArea));
 		tabs.addTab("3D Preview", preview3DPanel);

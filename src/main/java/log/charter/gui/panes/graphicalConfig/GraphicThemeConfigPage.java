@@ -1,6 +1,8 @@
 package log.charter.gui.panes.graphicalConfig;
 
 import static java.util.Arrays.asList;
+import static log.charter.data.config.GraphicalConfig.chordHeight;
+import static log.charter.data.config.GraphicalConfig.eventsChangeHeight;
 import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.math.BigDecimal;
@@ -37,10 +39,12 @@ public class GraphicThemeConfigPage implements Page {
 
 	private Theme theme = GraphicalConfig.theme;
 
+	private int eventsChangeHeight = GraphicalConfig.eventsChangeHeight;
 	private int toneChangeHeight = GraphicalConfig.toneChangeHeight;
 	private int anchorInfoHeight = GraphicalConfig.anchorInfoHeight;
 	private int noteHeight = GraphicalConfig.noteHeight;
 	private int noteWidth = GraphicalConfig.noteWidth;
+	private int chordHeight = GraphicalConfig.chordHeight;
 	private int handShapesHeight = GraphicalConfig.handShapesHeight;
 	private int timingHeight = GraphicalConfig.timingHeight;
 	private BigDecimal previewScrollSpeed = BigDecimal.valueOf(GraphicalConfig.previewWindowScrollSpeed);
@@ -48,6 +52,8 @@ public class GraphicThemeConfigPage implements Page {
 	private FieldWithLabel<JComboBox<ThemeHolder>> themeField;
 	private FieldWithLabel<TextInputWithValidation> noteHeightField;
 	private FieldWithLabel<TextInputWithValidation> noteWidthField;
+	private FieldWithLabel<TextInputWithValidation> chordHeightField;
+	private FieldWithLabel<TextInputWithValidation> eventsChangeHeightField;
 	private FieldWithLabel<TextInputWithValidation> toneChangeHeightField;
 	private FieldWithLabel<TextInputWithValidation> anchorInfoHeightField;
 	private FieldWithLabel<TextInputWithValidation> handShapesHeightField;
@@ -57,14 +63,18 @@ public class GraphicThemeConfigPage implements Page {
 	public void init(final GraphicConfigPane parent, int row) {
 		addThemePicker(parent, row++);
 
-		addToneChangeHeightField(parent, row);
-		addAnchorInfoHeightField(parent, row++);
-
 		addNoteHeightInput(parent, row);
 		addNoteWidthInput(parent, row++);
 
+		addEventsChangeHeightField(parent, row);
+		addToneChangeHeightField(parent, row++);
+
+		addAnchorInfoHeightField(parent, row);
+		addChordHeightField(parent, row++);
+
 		addHandShapesHeightFieldField(parent, row);
 		addTimingHeightFieldField(parent, row++);
+
 		addScrollSpeedFieldField(parent, row);
 
 		hide();
@@ -101,6 +111,18 @@ public class GraphicThemeConfigPage implements Page {
 		}
 	}
 
+	private void addEventsChangeHeightField(final GraphicConfigPane parent, final int row) {
+		final TextInputWithValidation input = new TextInputWithValidation(eventsChangeHeight, 20,
+				new IntegerValueValidator(1, 100, false), i -> eventsChangeHeight = i, false);
+		input.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(input);
+
+		eventsChangeHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_EVENTS_CHANGE_HEIGHT, 120, 30, 20, input,
+				LabelPosition.LEFT_CLOSE);
+		eventsChangeHeightField.setLocation(10, parent.getY(row));
+		parent.add(eventsChangeHeightField);
+	}
+
 	private void addToneChangeHeightField(final GraphicConfigPane parent, final int row) {
 		final TextInputWithValidation input = new TextInputWithValidation(toneChangeHeight, 20,
 				new IntegerValueValidator(1, 100, false), i -> toneChangeHeight = i, false);
@@ -109,7 +131,7 @@ public class GraphicThemeConfigPage implements Page {
 
 		toneChangeHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_TONE_CHANGE_HEIGHT, 120, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
-		toneChangeHeightField.setLocation(10, parent.getY(row));
+		toneChangeHeightField.setLocation(170, parent.getY(row));
 		parent.add(toneChangeHeightField);
 	}
 
@@ -121,7 +143,7 @@ public class GraphicThemeConfigPage implements Page {
 
 		anchorInfoHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_ANCHOR_INFO_HEIGHT, 120, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
-		anchorInfoHeightField.setLocation(170, parent.getY(row));
+		anchorInfoHeightField.setLocation(10, parent.getY(row));
 		parent.add(anchorInfoHeightField);
 	}
 
@@ -131,7 +153,7 @@ public class GraphicThemeConfigPage implements Page {
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
-		noteHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_NOTE_HEIGHT, 100, 30, 20, input,
+		noteHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_NOTE_HEIGHT, 120, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
 		noteHeightField.setLocation(10, parent.getY(row));
 		parent.add(noteHeightField);
@@ -144,15 +166,27 @@ public class GraphicThemeConfigPage implements Page {
 		}
 	}
 
+	private void addChordHeightField(final GraphicConfigPane parent, final int row) {
+		final TextInputWithValidation input = new TextInputWithValidation(chordHeight, 20,
+				new IntegerValueValidator(1, 100, false), i -> chordHeight = i, false);
+		input.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(input);
+
+		chordHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_CHORD_HEIGHT, 120, 30, 20, input,
+				LabelPosition.LEFT_CLOSE);
+		chordHeightField.setLocation(170, parent.getY(row));
+		parent.add(chordHeightField);
+	}
+
 	private void addNoteWidthInput(final GraphicConfigPane parent, final int row) {
 		final TextInputWithValidation input = new TextInputWithValidation(noteWidth, 20,
 				new IntegerValueValidator(1, 100, false), i -> noteWidth = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
-		noteWidthField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_NOTE_WIDTH, 100, 30, 20, input,
+		noteWidthField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_NOTE_WIDTH, 120, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
-		noteWidthField.setLocation(160, parent.getY(row));
+		noteWidthField.setLocation(170, parent.getY(row));
 		parent.add(noteWidthField);
 	}
 
@@ -195,10 +229,12 @@ public class GraphicThemeConfigPage implements Page {
 	@Override
 	public void show() {
 		themeField.setVisible(true);
+		eventsChangeHeightField.setVisible(true);
 		toneChangeHeightField.setVisible(true);
 		anchorInfoHeightField.setVisible(true);
 		noteHeightField.setVisible(true);
 		noteWidthField.setVisible(theme != Theme.MODERN);
+		chordHeightField.setVisible(true);
 		handShapesHeightField.setVisible(true);
 		timingHeightField.setVisible(true);
 		previewScrollSpeedField.setVisible(true);
@@ -207,10 +243,12 @@ public class GraphicThemeConfigPage implements Page {
 	@Override
 	public void hide() {
 		themeField.setVisible(false);
+		eventsChangeHeightField.setVisible(false);
 		toneChangeHeightField.setVisible(false);
 		anchorInfoHeightField.setVisible(false);
 		noteHeightField.setVisible(false);
 		noteWidthField.setVisible(false);
+		chordHeightField.setVisible(false);
 		handShapesHeightField.setVisible(false);
 		timingHeightField.setVisible(false);
 		previewScrollSpeedField.setVisible(false);
@@ -218,10 +256,12 @@ public class GraphicThemeConfigPage implements Page {
 
 	public void save() {
 		GraphicalConfig.theme = theme;
+		GraphicalConfig.eventsChangeHeight = eventsChangeHeight;
 		GraphicalConfig.toneChangeHeight = toneChangeHeight;
 		GraphicalConfig.anchorInfoHeight = anchorInfoHeight;
 		GraphicalConfig.noteHeight = noteHeight;
 		GraphicalConfig.noteWidth = noteWidth;
+		GraphicalConfig.chordHeight = chordHeight;
 		GraphicalConfig.handShapesHeight = handShapesHeight;
 		GraphicalConfig.timingHeight = timingHeight;
 		GraphicalConfig.previewWindowScrollSpeed = previewScrollSpeed.doubleValue();
