@@ -163,6 +163,10 @@ public class AudioHandler {
 		return t * 100 / speed;
 	}
 
+	private void playMusic(final MusicData musicData) {
+		playMusic(musicData, 100);
+	}
+
 	private void playMusic(final MusicData musicData, final int speed) {
 		stop();
 
@@ -240,19 +244,6 @@ public class AudioHandler {
 		stretchedAudioHandler.addSpeedToGenerate(stretchedMusicSpeed);
 	}
 
-	public void togglePlayNormalSpeed() {
-		if (data.isEmpty) {
-			return;
-		}
-
-		if (songPlayer != null) {
-			stopMusic();
-			return;
-		}
-
-		playMusic(data.music, 100);
-	}
-
 	public void togglePlaySetSpeed() {
 		if (data.isEmpty) {
 			return;
@@ -260,6 +251,11 @@ public class AudioHandler {
 
 		if (songPlayer != null) {
 			stopMusic();
+			return;
+		}
+
+		if (stretchedMusicSpeed == 100) {
+			playMusic(data.music);
 			return;
 		}
 

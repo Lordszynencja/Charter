@@ -70,7 +70,7 @@ public class ChordTemplate {
 		return new IntRange(minString, maxString);
 	}
 
-	public String getNameWithFrets(final int strings) {
+	public String getTemplateFrets(final int strings) {
 		boolean allFretsBelow10 = true;
 		final String[] fretNames = new String[strings];
 		for (int string = 0; string < strings; string++) {
@@ -81,9 +81,40 @@ public class ChordTemplate {
 			}
 		}
 
+		return String.join(allFretsBelow10 ? "" : " ", fretNames);
+	}
+
+	public String getTemplateFrets(final int strings, final int width) {
+		final String numberFormat = "%" + width + "d";
+		final String empty = " ".repeat(width - 1) + "-";
+
+		final String[] fretNames = new String[strings];
+		for (int string = 0; string < strings; string++) {
+			final Integer fret = frets.get(string);
+			fretNames[string] = fret == null ? empty : numberFormat.formatted(fret);
+		}
+
+		return String.join(" ", fretNames);
+	}
+
+	public String getTemplateFingers(final int strings) {
+		final String[] fingers = new String[strings];
+		for (int string = 0; string < strings; string++) {
+			final Integer finger = this.fingers.get(string);
+			fingers[string] = finger == null ? " " : fingerNames.get(finger);
+		}
+
+		return String.join("", fingers);
+	}
+
+	public String name() {
+		return chordName + (arpeggio ? "(arp)" : "");
+	}
+
+	public String getNameWithFrets(final int strings) {
 		return chordName //
 				+ (arpeggio ? "(arpeggio)" : "")//
-				+ " (" + String.join(allFretsBelow10 ? "" : " ", fretNames) + ")";
+				+ " (" + getTemplateFrets(strings) + ")";
 	}
 
 	public boolean equals(final ChordTemplate other) {

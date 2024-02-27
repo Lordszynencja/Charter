@@ -7,6 +7,7 @@ import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.*;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
+import static log.charter.util.ColorUtils.setAlpha;
 import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.Utils.getStringPosition;
 import static log.charter.util.Utils.stringId;
@@ -41,6 +42,7 @@ import log.charter.util.Position2D;
 
 public class ModernThemeNotes implements ThemeNotes {
 	private static BufferedImage noteIcons[] = new BufferedImage[maxStrings];
+	private static BufferedImage linkedNoteIcons[] = new BufferedImage[maxStrings];
 	private static BufferedImage noteSelectIcon = null;
 	private static BufferedImage noteHighlightIcon = null;
 	private static BufferedImage harmonicNoteIcons[] = new BufferedImage[maxStrings];
@@ -255,6 +257,7 @@ public class ModernThemeNotes implements ThemeNotes {
 			final Color borderColor = getStringBasedColor(StringColorLabelType.LANE, string, maxStrings);
 			final Color innerColor = borderColor.darker().darker();
 			noteIcons[stringId] = generateNoteIcon(innerColor, borderColor);
+			linkedNoteIcons[stringId] = generateNoteIcon(setAlpha(innerColor, 128), setAlpha(borderColor, 128));
 			harmonicNoteIcons[stringId] = generateHarmonicNoteIcon(innerColor, borderColor);
 		}
 
@@ -345,6 +348,24 @@ public class ModernThemeNotes implements ThemeNotes {
 		data.notes.add(new CenteredImage(new Position2D(x, y), icon));
 	}
 
+	private void addLinkedNoteHeadShape(final EditorNoteDrawingData note, final int y) {
+		final int stringId = stringId(note.string, data.strings);
+		final BufferedImage icon = linkedNoteIcons[stringId];
+
+		data.notes.add(new CenteredImage(new Position2D(note.x, y), icon));
+
+		if (note.highlighted) {
+			addNoteHighlight(note.harmonic, note.x, y);
+		} else if (note.selected) {
+			addNoteSelection(note.harmonic, note.x, y);
+		}
+	}
+
+	private void addLinkedFretNumber(final EditorNoteDrawingData note, final int y) {
+		final Font font = note.fretNumber < 10 ? fretFont : smallFretFont;
+		data.notes.add(new CenteredText(new Position2D(note.x, y), font, note.fretNumber + "", Color.WHITE));
+	}
+
 	private void addNoteHeadShape(final EditorNoteDrawingData note, final int y) {
 		final int stringId = stringId(note.string, data.strings);
 		final BufferedImage icon = switch (note.harmonic) {
@@ -402,6 +423,8 @@ public class ModernThemeNotes implements ThemeNotes {
 		bends.addBendValues(note, y);
 
 		if (note.linkPrevious && !note.wrongLink) {
+			addLinkedNoteHeadShape(note, y);
+			addLinkedFretNumber(note, y);
 			return;
 		}
 

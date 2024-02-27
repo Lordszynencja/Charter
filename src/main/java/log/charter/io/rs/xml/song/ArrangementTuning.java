@@ -1,5 +1,7 @@
 package log.charter.io.rs.xml.song;
 
+import static java.lang.Math.min;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.song.configs.Tuning;
@@ -28,17 +30,17 @@ public class ArrangementTuning {
 	public int strings;
 
 	public ArrangementTuning(final Tuning tuning) {
-		final int[] tuningValues = tuning.getTuning(9);
+		final int[] tuningValues = tuning.getTuning(6);
 		string0 = tuningValues[0];
 		string1 = tuningValues[1];
 		string2 = tuningValues[2];
 		string3 = tuningValues[3];
 		string4 = tuningValues[4];
 		string5 = tuningValues[5];
-		string6 = tuningValues[6];
-		string7 = tuningValues[7];
-		string8 = tuningValues[8];
+		string6 = string5;
+		string7 = string5;
+		string8 = string5;
 
-		strings = tuning.strings;
+		strings = min(6, tuning.strings);
 	}
 }

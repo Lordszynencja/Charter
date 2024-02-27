@@ -67,6 +67,9 @@ public class ModernThemeNoteTails {
 		final Position2D b = new Position2D(note.x, topBottom.max);
 		final int tailEndY = note.slideTo < note.fretNumber ? topBottom.max : topBottom.min;
 		final Position2D c = new Position2D(note.x + note.length, tailEndY);
+		final int tailEndFretTextY = note.slideTo < note.fretNumber ? topBottom.max + noteHeight / 3
+				: topBottom.min - noteHeight / 3;
+		final Position2D fretTextPosition = new Position2D(note.x + note.length, tailEndFretTextY);
 		final Color color = noteTailColors[stringId(note.string, data.strings)];
 
 		if (note.vibrato || note.tremolo) {
@@ -120,8 +123,8 @@ public class ModernThemeNoteTails {
 			data.noteTails.add(filledTriangle(a, b, c, color));
 		}
 
-		data.slideFrets.add(centeredTextWithBackground(c, slideFretFont, note.slideTo + "", fretColor, backgroundColor,
-				Color.BLACK));
+		data.slideFrets.add(centeredTextWithBackground(fretTextPosition, slideFretFont, note.slideTo + "", fretColor,
+				backgroundColor, Color.BLACK));
 
 		if (note.highlighted) {
 			addSlideBox(a, b, c, ColorLabel.HIGHLIGHT);

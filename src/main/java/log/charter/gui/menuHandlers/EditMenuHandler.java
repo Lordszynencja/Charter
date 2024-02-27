@@ -5,8 +5,6 @@ import javax.swing.JMenu;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.copySystem.CopyManager;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -22,18 +20,16 @@ class EditMenuHandler extends CharterMenuHandler {
 	private ChartData data;
 	private CharterFrame frame;
 	private KeyboardHandler keyboardHandler;
-	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
 	void init(final CopyManager copyManager, final ChartData data, final CharterFrame frame,
-			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+			final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
+			final UndoSystem undoSystem) {
 		this.copyManager = copyManager;
 		this.data = data;
 		this.frame = frame;
 		this.keyboardHandler = keyboardHandler;
-		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 	}
@@ -60,12 +56,10 @@ class EditMenuHandler extends CharterMenuHandler {
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.EDIT_MENU_SONG_OPTIONS, this::songOptions));
 
-		if (modeManager.getMode() == EditMode.TEMPO_MAP) {
-			menu.addSeparator();
-			menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_SILENCE, this::addSilence));
-			menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_DEFAULT_SILENCE, this::addDefaultSilence));
-			menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_BEATS_AT_THE_START, this::addBeatsAtTheStart));
-		}
+		menu.addSeparator();
+		menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_SILENCE, this::addSilence));
+		menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_DEFAULT_SILENCE, this::addDefaultSilence));
+		menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_BEATS_AT_THE_START, this::addBeatsAtTheStart));
 
 		return menu;
 	}
