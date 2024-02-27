@@ -47,21 +47,20 @@ public class TextWithBackground implements DrawableShape {
 	}
 
 	public void draw(final Graphics2D g, final ShapePositionWithSize positionAndSize) {
-		// Draw the rounded rectangle background
 		Shape roundedRect = new RoundRectangle2D.Double(
-				positionAndSize.x - space, positionAndSize.y - space,
+				positionAndSize.x - space + 2, positionAndSize.y - space,
 				positionAndSize.width + 2 * space, positionAndSize.height + 2 * space,
 				5, 5);
 
-		/* Draw the gray border
-		g.setColor(borderColor);
-		g.draw(roundedRect); */
-
-		// Draw the background
+		// background
 		g.setColor(backgroundColor);
 		g.fill(roundedRect);
 
-		// Draw the text
-		text.draw(g, positionAndSize.resized(space, space, -2 * space, -2 * space - 1));
+		// border
+		//g.setColor(borderColor);
+		//g.draw(roundedRect);
+
+		// text
+		text.draw(g, positionAndSize.resized(space + 2, space, -2 * space, -2 * space - 1));
 	}
 }
