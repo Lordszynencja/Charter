@@ -17,7 +17,7 @@ public class ChartPanelColors {
 		BASE_2(32, 128, 128), //
 
 		BASE_BG_0(11, 12, 13), // changed
-		BASE_BG_1(16, 16, 18), // changed
+		BASE_BG_1(20, 21, 23), // changed
 		BASE_BG_2(31, 32, 35), // changed
 		BASE_BG_3(78, 81, 87), // changed
 		BASE_BG_4(128, 128, 128), //
