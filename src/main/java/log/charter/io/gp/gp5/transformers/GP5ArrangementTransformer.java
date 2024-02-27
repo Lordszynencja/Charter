@@ -14,6 +14,7 @@ import log.charter.io.gp.gp5.data.GPTrackData;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.Arrangement;
 import log.charter.song.BeatsMap;
+import log.charter.song.FractionalPosition;
 import log.charter.song.Level;
 import log.charter.song.configs.Tuning;
 import log.charter.song.configs.Tuning.TuningType;
@@ -52,7 +53,7 @@ public class GP5ArrangementTransformer {
 	}
 
 	private static void addNote(final GP5SoundsTransformer noteTransformer, final GPBeat gpBeat,
-			final MusicalNotePositionIn64s position, final boolean[] wasHOPOStart, final int[] hopoFrom) {
+			final FractionalPosition position, final boolean[] wasHOPOStart, final int[] hopoFrom) {
 		if (gpBeat.notes.isEmpty()) {
 			return;
 		}
@@ -86,12 +87,12 @@ public class GP5ArrangementTransformer {
 			}
 
 			for (final List<GPBeat> voice : bars.get(barId - 1).voices) {
-				MusicalNotePositionIn64s position = new MusicalNotePositionIn64s(beatsMap.beats, barBeatId);
+				FractionalPosition position = new FractionalPosition(beatsMap.beats, barBeatId);
 				for (final GPBeat gpBeat : voice) {
 					addNote(noteTransformer, gpBeat, position, wasHOPOStart, hopoFrom);
-					position = position.move(gpBeat.duration, gpBeat.tupletNumerator, gpBeat.tupletDenominator);
+					position = position.move(gpBeat.duration, gpBeat.tupletNumerator, gpBeat.tupletDenominator,
+							gpBeat.dots);
 				}
-
 			}
 
 			barBeatId += beatsMap.beats.get(barBeatId).beatsInMeasure;

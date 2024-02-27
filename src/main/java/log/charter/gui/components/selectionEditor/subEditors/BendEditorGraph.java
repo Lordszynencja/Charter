@@ -290,7 +290,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	}
 
 	private void drawGrid(final Graphics g) {
-		g.setColor(ColorLabel.BASE_1.color());
+		g.setColor(ColorLabel.SECONDARY_BEAT.color());
 		for (int i = 0; i <= lastBeatId - firstBeatId; i++) {
 			for (int j = 1; j < gridSize; j++) {
 				final int x = getXFromBendPosition(i + (double) j / gridSize);
@@ -300,7 +300,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	}
 
 	private void drawBeats(final Graphics g) {
-		g.setColor(ColorLabel.BASE_2.color());
+		g.setColor(ColorLabel.MAIN_BEAT.color());
 		for (int i = 0; i <= lastBeatId - firstBeatId; i++) {
 			final int x = getXFromBendPosition(i);
 			g.drawLine(x, 10, x, height - 10);

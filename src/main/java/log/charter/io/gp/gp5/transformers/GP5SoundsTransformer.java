@@ -20,6 +20,7 @@ import log.charter.io.gp.gp5.transformers.CombinedGPBars.GPBeatUnwrapper;
 import log.charter.song.Arrangement;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
+import log.charter.song.FractionalPosition;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
 import log.charter.song.enums.HOPO;
@@ -277,7 +278,7 @@ public class GP5SoundsTransformer {
 		}
 	}
 
-	private void addGraceNote(final GPBeat gpBeat, final MusicalNotePositionIn64s position, final GPNoteEffects effects,
+	private void addGraceNote(final GPBeat gpBeat, final FractionalPosition position, final GPNoteEffects effects,
 			final Note note) {
 		if (effects.graceNote == null) {
 			return;
@@ -360,7 +361,7 @@ public class GP5SoundsTransformer {
 		lastHandShape = null;
 	}
 
-	public void addNote(final GPBeat gpBeat, final MusicalNotePositionIn64s position, final boolean[] wasHOPOStart,
+	public void addNote(final GPBeat gpBeat, final FractionalPosition position, final boolean[] wasHOPOStart,
 			final int[] hopoFrom) {
 		if (gpBeat.notes.size() != 1) {
 			return;
@@ -562,7 +563,7 @@ public class GP5SoundsTransformer {
 		}
 	}
 
-	public void addChord(final GPBeat gpBeat, final MusicalNotePositionIn64s position, final boolean[] wasHOPOStart,
+	public void addChord(final GPBeat gpBeat, final FractionalPosition position, final boolean[] wasHOPOStart,
 			final int[] hOPOFrom) {
 		final ChordTemplate chordTemplate = new ChordTemplate();
 		chordTemplate.chordName = gpBeat.chord == null ? "" : gpBeat.chord.chordName;
