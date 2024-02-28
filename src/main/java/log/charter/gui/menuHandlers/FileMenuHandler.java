@@ -13,10 +13,13 @@ import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
-import log.charter.gui.components.SpecialMenuItem;
 import log.charter.gui.handlers.SongFileHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.Action;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.panes.ColorConfigPane;
 import log.charter.gui.panes.ConfigPane;
 import log.charter.gui.panes.graphicalConfig.GraphicConfigPane;
@@ -36,15 +39,20 @@ public class FileMenuHandler extends CharterMenuHandler {
 	private CharterFrame frame;
 	private Framer framer;
 	private CharterMenuBar charterMenuBar;
+	private KeyboardHandler keyboardHandler;
+	private ModeManager modeManager;
 	private SongFileHandler songFileHandler;
 
 	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final CharterFrame frame,
-			final Framer framer, final CharterMenuBar charterMenuBar, final SongFileHandler songFileHandler) {
+			final Framer framer, final CharterMenuBar charterMenuBar, final KeyboardHandler keyboardHandler,
+			final ModeManager modeManager, final SongFileHandler songFileHandler) {
 		this.arrangementFixer = arrangementFixer;
 		this.data = data;
 		this.frame = frame;
 		this.framer = framer;
 		this.charterMenuBar = charterMenuBar;
+		this.keyboardHandler = keyboardHandler;
+		this.modeManager = modeManager;
 		this.songFileHandler = songFileHandler;
 	}
 
@@ -56,32 +64,33 @@ public class FileMenuHandler extends CharterMenuHandler {
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = new JMenu(Label.FILE_MENU.label());
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_NEW, "Ctrl-N", songFileHandler::newSong));
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPEN, "Ctrl-O", songFileHandler::open));
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPEN_RS, songFileHandler::openSongWithImportFromArrangementXML));
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPEN_AUDIO, songFileHandler::openAudioFile));
+		menu.add(createItem(keyboardHandler, Action.NEW_PROJECT));
+		menu.add(createItem(keyboardHandler, Action.OPEN_PROJECT));
+		menu.add(createItem(Label.MAKE_PROJECT_FROM_RS_XML, songFileHandler::openSongWithImportFromArrangementXML));
 
-		final JMenu importSubmenu = new JMenu(Label.FILE_MENU_IMPORT.label());
-		importSubmenu
-				.add(new SpecialMenuItem(Label.FILE_MENU_IMPORT_RS_GUITAR, songFileHandler::importRSArrangementXML));
-		importSubmenu.add(
-				new SpecialMenuItem(Label.FILE_MENU_IMPORT_RS_VOCALS, songFileHandler::importRSVocalsArrangementXML));
-		importSubmenu.add(new SpecialMenuItem(Label.FILE_MENU_IMPORT_GP, this::importGPFile));
-		importSubmenu.add(new SpecialMenuItem(Label.FILE_MENU_IMPORT_MIDI_TEMPO, this::importMidiTempo));
-		importSubmenu.setEnabled(!data.isEmpty);
-		menu.add(importSubmenu);
+		if (modeManager.getMode() != EditMode.EMPTY) {
+			menu.add(createItem(Label.FILE_MENU_OPEN_AUDIO, songFileHandler::openAudioFile));
 
-		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_SAVE, "Ctrl-S", songFileHandler::save));
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_SAVE_AS, "Ctrl-Shift-S", songFileHandler::saveAs));
+			final JMenu importSubmenu = new JMenu(Label.FILE_MENU_IMPORT.label());
+			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_GUITAR, songFileHandler::importRSArrangementXML));
+			importSubmenu
+					.add(createItem(Label.FILE_MENU_IMPORT_RS_VOCALS, songFileHandler::importRSVocalsArrangementXML));
+			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_GP, this::importGPFile));
+			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_MIDI_TEMPO, this::importMidiTempo));
+			menu.add(importSubmenu);
 
-		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_OPTIONS, () -> new ConfigPane(frame, framer)));
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_GRAPHIC_OPTIONS, () -> new GraphicConfigPane(frame)));
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_COLOR_OPTIONS, () -> new ColorConfigPane(frame)));
+			menu.addSeparator();
+			menu.add(createItem(keyboardHandler, Action.SAVE));
+			menu.add(createItem(keyboardHandler, Action.SAVE_AS));
+		}
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.FILE_MENU_EXIT, "Esc", frame::exit));
+		menu.add(createItem(Label.FILE_MENU_OPTIONS, () -> new ConfigPane(frame, framer)));
+		menu.add(createItem(Label.FILE_MENU_GRAPHIC_OPTIONS, () -> new GraphicConfigPane(frame)));
+		menu.add(createItem(Label.FILE_MENU_COLOR_OPTIONS, () -> new ColorConfigPane(frame)));
+
+		menu.addSeparator();
+		menu.add(createItem(keyboardHandler, Action.EXIT));
 
 		return menu;
 	}

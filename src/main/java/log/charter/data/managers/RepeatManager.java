@@ -33,16 +33,16 @@ public class RepeatManager {
 		return repeatStart;
 	}
 
-	public void toggleRepeatStart(final int t) {
-		repeatStart = (repeatStart < 0 || repeatStart != t) ? t : -1;
+	public void toggleRepeatStart() {
+		repeatStart = (repeatStart < 0 || repeatStart != data.time) ? data.time : -1;
 	}
 
 	public int getRepeatEnd() {
 		return repeatEnd;
 	}
 
-	public void toggleRepeatEnd(final int t) {
-		repeatEnd = (repeatEnd < 0 || repeatEnd != t) ? t : -1;
+	public void toggleRepeatEnd() {
+		repeatEnd = (repeatEnd < 0 || repeatEnd != data.time) ? data.time : -1;
 	}
 
 	public void frame() {

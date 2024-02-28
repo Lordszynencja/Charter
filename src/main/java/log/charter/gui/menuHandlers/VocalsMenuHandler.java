@@ -6,7 +6,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
-import log.charter.gui.components.SpecialMenuItem;
+import log.charter.gui.handlers.mouseAndKeyboard.Action;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 
 class VocalsMenuHandler extends CharterMenuHandler {
@@ -29,10 +29,9 @@ class VocalsMenuHandler extends CharterMenuHandler {
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = new JMenu(Label.VOCALS_MENU.label());
-
-		menu.add(new SpecialMenuItem(Label.VOCALS_MENU_EDIT_VOCALS, "L", keyboardHandler::editVocals));
-		menu.add(new SpecialMenuItem(Label.VOCALS_MENU_TOGGLE_WORD_PART, "W", keyboardHandler::toggleWordPart));
-		menu.add(new SpecialMenuItem(Label.VOCALS_MENU_TOGGLE_PHRASE_END, "E", keyboardHandler::togglePhraseEnd));
+		menu.add(createItem(keyboardHandler, Action.EDIT_VOCALS));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_WORD_PART));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_PHRASE_END));
 
 		return menu;
 	}

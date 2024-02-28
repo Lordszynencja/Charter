@@ -10,7 +10,6 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lin
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.text.DecimalFormat;

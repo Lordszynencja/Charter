@@ -22,10 +22,10 @@ public class Localization {
 		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
 		ARRANGEMENT_MENU_VOCALS("Vocals"), //
 		ARRANGEMENT_MENU_OPTIONS("Arrangement options"), //
-		ARRANGEMENT_MENU_TOGGLE_MIDI_NOTES("Toggle midi notes"), //
-		ARRANGEMENT_MENU_TOGGLE_CLAPS("Toggle claps on note"), //
-		ARRANGEMENT_MENU_TOGGLE_METRONOME("Toggle metronome"), //
-		ARRANGEMENT_MENU_TOGGLE_WAVEFORM("Toggle waveform drawing"), //
+		TOGGLE_MIDI("Toggle midi notes"), //
+		TOGGLE_CLAPS("Toggle claps on note"), //
+		TOGGLE_METRONOME("Toggle metronome"), //
+		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //
 		ARRANGEMENT_MENU_DELETE_ARRANGEMENT("Delete arrangement"), //
 
 		DELETE_ARRANGEMENT_TITLE("Delete arrangement"), //
@@ -148,35 +148,35 @@ public class Localization {
 		STRETCH_PANE_VALUE("Song speed (%)"), //
 
 		EDIT_MENU("Edit"), //
-		EDIT_MENU_UNDO("Undo"), //
-		EDIT_MENU_REDO("Redo"), //
-		EDIT_MENU_SELECT_ALL("Select all notes"), //
+		UNDO("Undo"), //
+		REDO("Redo"), //
+		SELECT_ALL_NOTES("Select all notes"), //
 		DELETE("Delete"), //
-		EDIT_MENU_COPY("Copy"), //
-		EDIT_MENU_PASTE("Paste"), //
-		EDIT_MENU_SPECIAL_PASTE("Special paste"), //
+		COPY("Copy"), //
+		PASTE("Paste"), //
+		SPECIAL_PASTE("Special paste"), //
 		EDIT_MENU_SONG_OPTIONS("Song options"), //
 		EDIT_MENU_ADD_SILENCE("Add silence in the beginning"), //
 		EDIT_MENU_ADD_DEFAULT_SILENCE("Add default silence based on bars"), //
 		EDIT_MENU_ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
 
 		FILE_MENU("File"), //
-		FILE_MENU_NEW("New"), //
-		FILE_MENU_OPEN("Open"), //
-		FILE_MENU_OPEN_RS("Create song based on RS arrangement XML"), //
+		NEW_PROJECT("New project"), //
+		OPEN_PROJECT("Open project"), //
+		MAKE_PROJECT_FROM_RS_XML("Create project from RS arrangement XML"), //
 		FILE_MENU_OPEN_AUDIO("Temporary open an audio file"), //
 		FILE_MENU_IMPORT("Import"), //
 		FILE_MENU_IMPORT_RS_GUITAR("RS guitar arrangement XML"), //
 		FILE_MENU_IMPORT_RS_VOCALS("RS vocals arrangement XML"), //
 		FILE_MENU_IMPORT_GP("Guitar Pro file"), //
 		FILE_MENU_IMPORT_MIDI_TEMPO("Tempo from Midi file"), //
-		FILE_MENU_SAVE("Save"), //
-		FILE_MENU_SAVE_AS("Save as..."), //
+		SAVE_PROJECT("Save project"), //
+		SAVE_PROJECT_AS("Save project as..."), //
 		FILE_MENU_OPTIONS("Options"), //
 		FILE_MENU_GRAPHIC_OPTIONS("Graphic options"), //
 		FILE_MENU_COLOR_OPTIONS("Color options"), //
 		FILE_MENU_TEXTURING_OPTIONS("Texturing options"), //
-		FILE_MENU_EXIT("Exit"), //
+		EXIT("Exit"), //
 
 		GRID_PANE("Grid options"), //
 		GRID_PANE_GRID_SIZE("Grid size 1/"), //
@@ -194,18 +194,22 @@ public class Localization {
 		GUITAR_BEAT_PANE_EVENT_REMOVE("Remove event"), //
 
 		GUITAR_MENU("Guitar"), //
-		GUITAR_MENU_STRING_UP("Move notes string up"), //
-		GUITAR_MENU_STRING_DOWN("Move notes string down"), //
-		GUITAR_MENU_STRING_UP_KEEP_FRETS("Move notes string up keeping the frets"), //
-		GUITAR_MENU_STRING_DOWN_KEEP_FRETS("Move notes string down keeping the frets"), //
-		GUITAR_MENU_TOGGLE_MUTES("Toggle mutes"), //
-		GUITAR_MENU_TOGGLE_HOPO("Toggle HO/PO"), //
-		GUITAR_MENU_TOGGLE_HARMONIC("Toggle harmonic"), //
+		MOVE_TO_START("Move to start"), //
+		MOVE_TO_END("Move to end"), //
+		MOVE_TO_FIRST_NOTE("Move to first note"), //
+		MOVE_TO_LAST_NOTE("Move to last note"), //
+		MOVE_STRING_UP("Move notes string up"), //
+		MOVE_STRING_DOWN("Move notes string down"), //
+		MOVE_STRING_UP_SIMPLE("Move notes string up keeping the frets"), //
+		MOVE_STRING_DOWN_SIMPLE("Move notes string down keeping the frets"), //
+		TOGGLE_MUTE("Toggle mutes"), //
+		TOGGLE_HOPO("Toggle HO/PO"), //
+		TOGGLE_HARMONIC("Toggle harmonic"), //
 		GUITAR_MENU_SET_SLIDE("Set slide"), //
-		GUITAR_MENU_TOGGLE_ACCENT("Toggle accent"), //
-		GUITAR_MENU_TOGGLE_VIBRATO("Toggle vibrato"), //
-		GUITAR_MENU_TOGGLE_TREMOLO("Toggle tremolo"), //
-		GUITAR_MENU_TOGGLE_LINK_NEXT("Toggle link next"), //
+		TOGGLE_ACCENT("Toggle accent"), //
+		TOGGLE_VIBRATO("Toggle vibrato"), //
+		TOGGLE_TREMOLO("Toggle tremolo"), //
+		TOGGLE_LINK_NEXT("Toggle link next"), //
 		GUITAR_MENU_SET_FRET("Set fret"), //
 		GUITAR_MENU_EDIT_NOTE("Edit note"), //
 		GUITAR_MENU_EDIT_NOTE_TOOLTIP("Opens notes for edit as chord or single note based on first note selected"), //
@@ -216,11 +220,11 @@ public class Localization {
 		GUITAR_MENU_EDIT_AS_CHORD_TOOLTIP(
 				"Opens notes for edit as chord, will change selected single notes into chords"), //
 		GUITAR_MENU_EDIT_BEND("Edit bend"), //
-		GUITAR_MENU_MARK_HAND_SHAPE("Mark hand shape"), //
+		MARK_HAND_SHAPE("Mark hand shape"), //
 		GUITAR_MENU_EDIT_HAND_SHAPE("Edit hand shape"), //
 		GUITAR_MENU_AUTOCREATE_FHP("Autocreate Fret Hand Positions"), //
-		GUITAR_MENU_WINDOWED_PREVIEW("Windowed preview"), //
-		GUITAR_MENU_BORDERLESS_WINDOWED_PREVIEW("Borderless windowed preview"), //
+		TOGGLE_PREVIEW_WINDOW("Windowed preview"), //
+		TOGGLE_BORDERLESS_PREVIEW_WINDOW("Borderless windowed preview"), //
 
 		GP5_IMPORT("GP5 Import options"), //
 		GP5_IMPORT_BEAT_MAP_CHANGE("Import beat map"), //
@@ -243,22 +247,22 @@ public class Localization {
 		MUSIC_MENU_50("50% speed"), //
 		MUSIC_MENU_75("75% speed"), //
 		MUSIC_MENU_CUSTOM("Custom speed"), //
-		MUSIC_MENU_TOGGLE_REPEATER("Toggle repeater"), //
-		MUSIC_MENU_SET_REPEATER_START("Set repeater start"), //
-		MUSIC_MENU_SET_REPEATER_END("Set repeater end"), //
+		TOGGLE_REPEATER("Toggle repeater"), //
+		TOGGLE_REPEAT_START("Set repeater start"), //
+		TOGGLE_REPEAT_END("Set repeater end"), //
 
 		NOTES_MENU("Notes"), //
 		NOTES_MENU_GRID_OPTIONS("Grid options"), //
-		NOTES_MENU_SNAP("Snap notes to grid"), //
-		NOTES_MENU_SNAP_ALL("Snap all items between to grid"), //
-		NOTES_MENU_DOUBLE_GRID("Double grid resolution"), //
-		NOTES_MENU_HALVE_GRID("Halve grid resolution"), //
-		NOTES_MENU_PREVIOUS_NOTE("Previous note"), //
-		NOTES_MENU_PREVIOUS_GRID_POSITION("Previous grid position"), //
-		NOTES_MENU_PREVIOUS_BEAT("Previous beat"), //
-		NOTES_MENU_NEXT_NOTE("Next note"), //
-		NOTES_MENU_NEXT_GRID_POSITION("Next grid position"), //
-		NOTES_MENU_NEXT_BEAT("Next beat"), //
+		SNAP_ALL("Snap all items inbetween to grid"), //
+		SNAP_SELECTED("Snap selected items to grid"), //
+		DOUBLE_GRID("Double grid resolution"), //
+		HALVE_GRID("Halve grid resolution"), //
+		PREVIOUS_NOTE("Previous note"), //
+		PREVIOUS_GRID_POSITION("Previous grid position"), //
+		PREVIOUS_BEAT("Previous beat"), //
+		NEXT_NOTE("Next note"), //
+		NEXT_GRID_POSITION("Next grid position"), //
+		NEXT_BEAT("Next beat"), //
 
 		TOOLBAR_MIDI("Midi"), //
 		TOOLBAR_CLAPS("Claps"), //
@@ -308,9 +312,9 @@ public class Localization {
 		VOCAL_PANE_PHRASE_END("Phrase end"), //
 
 		VOCALS_MENU("Vocals"), //
-		VOCALS_MENU_EDIT_VOCALS("Edit selected vocals"), //
-		VOCALS_MENU_TOGGLE_WORD_PART("Toggle word part"), //
-		VOCALS_MENU_TOGGLE_PHRASE_END("Toggle phrase end"), //
+		EDIT_VOCALS("Edit selected vocals"), //
+		TOGGLE_WORD_PART("Toggle word part"), //
+		TOGGLE_PHRASE_END("Toggle phrase end"), //
 
 		ANCHOR_PANE("Anchor edit"), //
 		ANCHOR_WIDTH("Anchor width"), //

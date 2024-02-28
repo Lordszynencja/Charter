@@ -12,7 +12,7 @@ import log.charter.main.CharterMain;
 
 class InfoMenuHandler extends CharterMenuHandler {
 	private static final String infoText = "Charter\n"//
-			+ "Created by Lordszynencja and friends from Customs Forge\n\n"//
+			+ "Created by Lord Sai and friends from Customs Forge\n\n"//
 			+ "Current version: " + CharterMain.VERSION + " - " + CharterMain.VERSION_DATE;
 
 	private CharterFrame frame;
@@ -28,21 +28,25 @@ class InfoMenuHandler extends CharterMenuHandler {
 		return true;
 	}
 
-	@Override
-	JMenu prepareMenu() {
-		final JMenu languageMenu = new JMenu(Label.INFO_MENU_LANGUAGE.label());
+	private JMenu prepareLanguagesSubmenu() {
+		final JMenu languagesMenu = new JMenu(Label.INFO_MENU_LANGUAGE.label());
 		final File languagesFolder = new File(Localization.languagesFolder);
 		if (languagesFolder.isDirectory()) {
 			for (final String fileName : languagesFolder.list((dir, name) -> name.endsWith(".txt"))) {
 				final String language = fileName.substring(0, fileName.lastIndexOf('.'));
-				languageMenu.add(createItem(language, () -> Localization.changeLanguage(language, charterMenuBar)));
+				languagesMenu.add(createItem(language, () -> Localization.changeLanguage(language, charterMenuBar)));
 			}
 		}
 
+		return languagesMenu;
+	}
+
+	@Override
+	JMenu prepareMenu() {
 		final JMenu menu = new JMenu(Label.INFO_MENU.label());
 
 		menu.add(createItem(Label.INFO_MENU_VERSION, this::showVersion));
-		menu.add(languageMenu);
+		menu.add(prepareLanguagesSubmenu());
 
 		return menu;
 	}

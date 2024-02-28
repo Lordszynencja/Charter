@@ -4,11 +4,12 @@ import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.copySystem.CopyManager;
-import log.charter.data.managers.selection.SelectionManager;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SpecialMenuItem;
+import log.charter.gui.handlers.mouseAndKeyboard.Action;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.panes.songEdits.AddBeatsAtTheStartPane;
 import log.charter.gui.panes.songEdits.AddDefaultSilencePane;
@@ -16,42 +17,42 @@ import log.charter.gui.panes.songEdits.AddSilencePane;
 import log.charter.gui.panes.songSettings.SongOptionsPane;
 
 class EditMenuHandler extends CharterMenuHandler {
-	private CopyManager copyManager;
 	private ChartData data;
 	private CharterFrame frame;
 	private KeyboardHandler keyboardHandler;
-	private SelectionManager selectionManager;
+	private ModeManager modeManager;
 	private UndoSystem undoSystem;
 
-	void init(final CopyManager copyManager, final ChartData data, final CharterFrame frame,
-			final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
-		this.copyManager = copyManager;
+	void init(final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
+			final ModeManager modeManager, final UndoSystem undoSystem) {
 		this.data = data;
 		this.frame = frame;
 		this.keyboardHandler = keyboardHandler;
-		this.selectionManager = selectionManager;
+		this.modeManager = modeManager;
 		this.undoSystem = undoSystem;
 	}
 
 	@Override
 	boolean isApplicable() {
-		return !data.isEmpty;
+		return modeManager.getMode() != EditMode.EMPTY;
 	}
 
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = new JMenu(Label.EDIT_MENU.label());
-
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_UNDO, "Ctrl-Z", undoSystem::undo));
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_REDO, "Ctrl-R", undoSystem::redo));
+		menu.add(createItem(keyboardHandler, Action.UNDO));
+		menu.add(createItem(keyboardHandler, Action.REDO));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_SELECT_ALL, "Ctrl-A", selectionManager::selectAllNotes));
-		menu.add(new SpecialMenuItem(Label.DELETE, "Del", keyboardHandler::delete));
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_COPY, "Ctrl-C", copyManager::copy));
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_PASTE, "Ctrl-V", copyManager::paste));
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_SPECIAL_PASTE, "Ctrl-Shift-V", copyManager::specialPaste));
+		if (modeManager.getMode() == EditMode.VOCALS || modeManager.getMode() == EditMode.GUITAR) {
+			menu.add(createItem(keyboardHandler, Action.SELECT_ALL_NOTES));
+			menu.add(createItem(keyboardHandler, Action.DELETE));
+			menu.add(createItem(keyboardHandler, Action.COPY));
+			menu.add(createItem(keyboardHandler, Action.PASTE));
+			if (modeManager.getMode() == EditMode.GUITAR) {
+				menu.add(createItem(keyboardHandler, Action.SPECIAL_PASTE));
+			}
+		}
 
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.EDIT_MENU_SONG_OPTIONS, this::songOptions));

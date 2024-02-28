@@ -8,7 +8,6 @@ import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.copySystem.CopyManager;
 import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -46,15 +45,16 @@ public class CharterMenuBar extends JMenuBar {
 	public void init(final ArrangementFixer arrangementFixer, final AudioHandler audioHandler,
 			final CopyManager copyManager, final ChartToolbar chartToolbar, final ChartData data,
 			final CharterFrame frame, final Framer framer, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final RepeatManager repeatManager, final SelectionManager selectionManager,
+			final ModeManager modeManager, final SelectionManager selectionManager,
 			final SongFileHandler songFileHandler, final UndoSystem undoSystem, final WaveFormDrawer waveFormDrawer) {
-		arrangementMenuHandler.init(audioHandler, data, frame, this, modeManager, selectionManager, waveFormDrawer);
-		editMenuHandler.init(copyManager, data, frame, keyboardHandler, selectionManager, undoSystem);
-		fileMenuHandler.init(arrangementFixer, data, frame, framer, this, songFileHandler);
-		guitarMenuHandler.init(data, frame, keyboardHandler, modeManager, selectionManager, undoSystem);
+		arrangementMenuHandler.init(data, frame, this, keyboardHandler, modeManager, selectionManager);
+		editMenuHandler.init(data, frame, keyboardHandler, modeManager, undoSystem);
+		fileMenuHandler.init(arrangementFixer, data, frame, framer, this, keyboardHandler, modeManager,
+				songFileHandler);
+		guitarMenuHandler.init(data, keyboardHandler, modeManager, selectionManager, undoSystem);
 		infoMenuHandler.init(frame, this);
-		musicMenuHandler.init(audioHandler, data, frame, repeatManager);
-		notesMenuHandler.init(data, keyboardHandler, modeManager);
+		musicMenuHandler.init(audioHandler, data, frame, keyboardHandler);
+		notesMenuHandler.init(keyboardHandler, modeManager);
 		vocalsMenuHandler.init(data, keyboardHandler, modeManager);
 
 		final Dimension size = new Dimension(100, 20);

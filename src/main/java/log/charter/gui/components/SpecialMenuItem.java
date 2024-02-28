@@ -12,6 +12,7 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class SpecialMenuItem extends JMenuItem {
 	private static final long serialVersionUID = 1L;
+	private static final int textOffset = 80;
 
 	private final String shortcut;
 
@@ -22,7 +23,7 @@ public class SpecialMenuItem extends JMenuItem {
 
 		if (shortcut != null) {
 			final Dimension preferredSize = getPreferredSize();
-			preferredSize.width += 60;
+			preferredSize.width += textOffset;
 			setPreferredSize(preferredSize);
 		}
 	}
@@ -40,7 +41,7 @@ public class SpecialMenuItem extends JMenuItem {
 		final FontMetrics fontMetrics = getFontMetrics(shortcutFont);
 		g.setFont(shortcutFont);
 		g.setColor(ColorLabel.BASE_DARK_TEXT.color());
-		g.drawString(shortcut, getWidth() - 60, 2 + fontMetrics.getAscent());
+		g.drawString(shortcut, getWidth() - textOffset, 2 + fontMetrics.getAscent());
 	}
 
 	@Override

@@ -15,8 +15,7 @@ import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.CharterFrame;
-import log.charter.gui.components.SpecialMenuItem;
+import log.charter.gui.handlers.mouseAndKeyboard.Action;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.song.Level;
@@ -26,16 +25,14 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 class GuitarMenuHandler extends CharterMenuHandler {
 	private ChartData data;
-	private CharterFrame frame;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final SelectionManager selectionManager, final UndoSystem undoSystem) {
+	public void init(final ChartData data, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+			final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this.data = data;
-		this.frame = frame;
 		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
@@ -50,32 +47,29 @@ class GuitarMenuHandler extends CharterMenuHandler {
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = new JMenu(Label.GUITAR_MENU.label());
-
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_STRING_UP, "Up", keyboardHandler::moveNotesUpKeepFrets));
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_STRING_DOWN, "Down", keyboardHandler::moveNotesDownKeepFrets));
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_STRING_UP_KEEP_FRETS, "Ctrl-Up", keyboardHandler::moveNotesUp));
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_STRING_DOWN_KEEP_FRETS, "Ctrl-Down",
-				keyboardHandler::moveNotesDown));
+		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_UP));
+		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_DOWN));
+		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_UP_SIMPLE));
+		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_DOWN_SIMPLE));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_TOGGLE_MUTES, "M", keyboardHandler::toggleMute));
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_TOGGLE_HOPO, "H", keyboardHandler::toggleHOPO));
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_TOGGLE_HARMONIC, "O", keyboardHandler::toggleHarmonic));
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_TOGGLE_ACCENT, "A", keyboardHandler::toggleAccent));
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_TOGGLE_VIBRATO, "V", keyboardHandler::toggleVibrato));
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_TOGGLE_TREMOLO, "T", keyboardHandler::toggleTremolo));
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_TOGGLE_LINK_NEXT, "L", keyboardHandler::toggleLinkNext));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_MUTE));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_HOPO));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_HARMONIC));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_ACCENT));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_VIBRATO));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_TREMOLO));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_LINK_NEXT));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_MARK_HAND_SHAPE, "Shift-H", keyboardHandler::markHandShape));
+		menu.add(createItem(keyboardHandler, Action.MARK_HAND_SHAPE));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_AUTOCREATE_FHP, this::addFHP));
+		menu.add(createItem(Label.GUITAR_MENU_AUTOCREATE_FHP, this::addFHP));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_WINDOWED_PREVIEW, "F11", frame::switchWindowedPreview));
-		menu.add(new SpecialMenuItem(Label.GUITAR_MENU_BORDERLESS_WINDOWED_PREVIEW, "F12",
-				frame::switchBorderlessWindowedPreview));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_PREVIEW_WINDOW));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW));
 
 		return menu;
 	}

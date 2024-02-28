@@ -9,33 +9,29 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
-import log.charter.gui.components.SpecialMenuItem;
-import log.charter.gui.handlers.AudioHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.Action;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.panes.songSettings.ArrangementSettingsPane;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.Arrangement;
-import log.charter.util.CollectionUtils.HashMap2;
 
 public class ArrangementMenuHandler extends CharterMenuHandler {
-	private AudioHandler audioHandler;
 	private ChartData data;
 	private CharterFrame frame;
 	private CharterMenuBar charterMenuBar;
+	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
-	private WaveFormDrawer waveFormDrawer;
 
-	public void init(final AudioHandler audioHandler, final ChartData data, final CharterFrame frame,
-			final CharterMenuBar charterMenuBar, final ModeManager modeManager, final SelectionManager selectionManager,
-			final WaveFormDrawer waveFormDrawer) {
-		this.audioHandler = audioHandler;
+	public void init(final ChartData data, final CharterFrame frame, final CharterMenuBar charterMenuBar,
+			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+			final SelectionManager selectionManager) {
 		this.data = data;
 		this.frame = frame;
 		this.charterMenuBar = charterMenuBar;
+		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
-		this.waveFormDrawer = waveFormDrawer;
 	}
 
 	@Override
@@ -44,15 +40,9 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 	}
 
 	private void addArrangementsList(final JMenu menu) {
-		final HashMap2<String, Integer> arrangementNumbers = new HashMap2<>();
 		for (int i = 0; i < data.songChart.arrangements.size(); i++) {
 			final Arrangement arrangement = data.songChart.arrangements.get(i);
-			String arrangementName = arrangement.getTypeNameLabel();
-			final int arrangementNumber = arrangementNumbers.getOrDefault(arrangementName, 1);
-			arrangementNumbers.put(arrangementName, arrangementNumber + 1);
-			if (arrangementNumber > 1) {
-				arrangementName += " " + arrangementNumber;
-			}
+			final String arrangementName = "[" + i + "] " + arrangement.getTypeNameLabel();
 
 			final int arrangementId = i;
 			menu.add(createItem(arrangementName, () -> modeManager.setArrangement(arrangementId)));
@@ -84,10 +74,10 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		}
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_MIDI_NOTES, "F2", audioHandler::toggleMidiNotes));
-		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_CLAPS, "F3", audioHandler::toggleClaps));
-		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_METRONOME, "F4", audioHandler::toggleMetronome));
-		menu.add(new SpecialMenuItem(Label.ARRANGEMENT_MENU_TOGGLE_WAVEFORM, "F5", waveFormDrawer::toggle));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_MIDI));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_CLAPS));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_METRONOME));
+		menu.add(createItem(keyboardHandler, Action.TOGGLE_WAVEFORM_GRAPH));
 
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();

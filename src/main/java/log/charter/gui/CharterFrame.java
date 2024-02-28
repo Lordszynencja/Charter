@@ -144,8 +144,7 @@ public class CharterFrame extends JFrame {
 		waveFormDrawer.init(data, chartPanel, chartToolbar, modeManager);
 
 		charterMenuBar.init(arrangementFixer, audioHandler, copyManager, chartToolbar, data, this, framer,
-				keyboardHandler, modeManager, repeatManager, selectionManager, songFileHandler, undoSystem,
-				waveFormDrawer);
+				keyboardHandler, modeManager, selectionManager, songFileHandler, undoSystem, waveFormDrawer);
 		chartToolbar.init(audioHandler, keyboardHandler, modeManager, repeatManager, waveFormDrawer);
 		chartPanel.init(beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager, waveFormDrawer);

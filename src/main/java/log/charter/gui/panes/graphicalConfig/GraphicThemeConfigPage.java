@@ -1,8 +1,6 @@
 package log.charter.gui.panes.graphicalConfig;
 
 import static java.util.Arrays.asList;
-import static log.charter.data.config.GraphicalConfig.chordHeight;
-import static log.charter.data.config.GraphicalConfig.eventsChangeHeight;
 import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.math.BigDecimal;
@@ -216,13 +214,14 @@ public class GraphicThemeConfigPage implements Page {
 
 	private void addScrollSpeedFieldField(final GraphicConfigPane parent, final int row) {
 		final TextInputWithValidation input = new TextInputWithValidation(previewScrollSpeed, 20,
-				new BigDecimalValueValidator(new BigDecimal("0.1"), new BigDecimal("2.0"), false), i -> previewScrollSpeed = i, false);
+				new BigDecimalValueValidator(new BigDecimal("0.1"), new BigDecimal("2.0"), false),
+				i -> previewScrollSpeed = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
 		previewScrollSpeedField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_PREVIEW_SCROLL_SPEED, 120, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
-				previewScrollSpeedField.setLocation(10, parent.getY(row));
+		previewScrollSpeedField.setLocation(10, parent.getY(row));
 		parent.add(previewScrollSpeedField);
 	}
 

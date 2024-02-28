@@ -43,7 +43,6 @@ public class ModernThemeEvents implements ThemeEvents {
 	private void addPhrase(final Phrase phrase, final String phraseName, final int x) {
 		final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
 				+ (phrase.solo ? "[Solo]" : "");
-		Font boldFont = eventFont.deriveFont(Font.BOLD);
 		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, phraseNamesY), eventFont, phraseLabel,
 				ColorLabel.BASE_TEXT, ColorLabel.PHRASE_NAME_BG, 2, ColorLabel.BASE_BORDER.color())); // changed
 	}
@@ -61,6 +60,7 @@ public class ModernThemeEvents implements ThemeEvents {
 		data.sectionsAndPhrases.add(filledRectangle(beatPosition, color));
 	}
 
+	@Override
 	public void addEventPoint(final EventPoint eventPoint, final Phrase phrase, final int x, final boolean selected,
 			final boolean highlighted) {
 		if (eventPoint.section != null) {
@@ -80,6 +80,7 @@ public class ModernThemeEvents implements ThemeEvents {
 		}
 	}
 
+	@Override
 	public void addEventPointHighlight(final int x) {
 		data.sectionsAndPhrases.add(lineVertical(x, sectionNamesY, lanesBottom, ColorLabel.HIGHLIGHT));
 	}

@@ -1,15 +1,14 @@
 package log.charter.gui.lookAndFeel;
 
-import javax.swing.*;
+import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
+
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
-
-import java.awt.*;
 
 public class CharterTheme extends DefaultMetalTheme {
 	public static final String name = "Charter";
@@ -38,7 +37,7 @@ public class CharterTheme extends DefaultMetalTheme {
 		CharterTextFieldUI.install(); // add
 		CharterScrollBarUI.install(); // TODO doesn't work but the custom ui is already designed
 
-		//UIManager.put("Label.font", new Font("SansSerif", Font.PLAIN, 12));
+		// UIManager.put("Label.font", new Font("SansSerif", Font.PLAIN, 12));
 	}
 
 	@Override
@@ -104,7 +103,7 @@ public class CharterTheme extends DefaultMetalTheme {
 	@Override
 	public ColorUIResource getDesktopColor() {
 		return new ColorUIResource(ColorLabel.BASE_HIGHLIGHT.color());
-	} //changed
+	} // changed
 
 	/**
 	 * dropdown arrows
@@ -219,7 +218,9 @@ public class CharterTheme extends DefaultMetalTheme {
 	}
 
 	@Override
-	public ColorUIResource getSystemTextColor() { return new ColorUIResource(ColorLabel.BASE_TEXT.color()); } // changed
+	public ColorUIResource getSystemTextColor() {
+		return new ColorUIResource(ColorLabel.BASE_TEXT.color());
+	} // changed
 
 	@Override
 	public ColorUIResource getTextHighlightColor() {

@@ -32,7 +32,6 @@ import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.FieldWithLabel;
 import log.charter.gui.components.FieldWithLabel.LabelPosition;
-import log.charter.gui.components.RadioButtonGroupInRow;
 import log.charter.gui.components.TextInputWithValidation;
 import log.charter.gui.components.ToggleButtonGroupInRow;
 import log.charter.gui.components.selectionEditor.subEditors.SelectionBendEditor;
@@ -124,7 +123,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 						new Pair<>(Mute.FULL, Label.MUTE_FULL), //
 						new Pair<>(Mute.PALM, Label.MUTE_PALM)));
 	}
-
 
 	private void addHOPOInputs(final CurrentSelectionEditor parent, final AtomicInteger row) {
 		hopo = new ToggleButtonGroupInRow<>(parent, 20, row, 65, 270, Label.HOPO, this::changeHOPO, //

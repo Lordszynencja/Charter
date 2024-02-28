@@ -5,6 +5,7 @@ import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.modes.EditMode;
+import log.charter.data.managers.modes.EmptyModeHandler;
 import log.charter.data.managers.modes.GuitarModeHandler;
 import log.charter.data.managers.modes.ModeHandler;
 import log.charter.data.managers.modes.TempoMapModeHandler;
@@ -26,8 +27,9 @@ public class ModeManager {
 	private CharterFrame frame;
 	private SelectionManager selectionManager;
 
-	private EditMode editMode = EditMode.TEMPO_MAP;
+	private EditMode editMode = EditMode.EMPTY;
 
+	private final EmptyModeHandler emptyModeHandler = new EmptyModeHandler();
 	private final GuitarModeHandler guitarModeHandler = new GuitarModeHandler();
 	private final TempoMapModeHandler tempoMapModeHandler = new TempoMapModeHandler();
 	private final VocalModeHandler vocalModeHandler = new VocalModeHandler();
@@ -35,6 +37,7 @@ public class ModeManager {
 	private final Map<EditMode, ModeHandler> modeHandlers = new HashMap<>();
 
 	public ModeManager() {
+		modeHandlers.put(EditMode.EMPTY, emptyModeHandler);
 		modeHandlers.put(EditMode.GUITAR, guitarModeHandler);
 		modeHandlers.put(EditMode.TEMPO_MAP, tempoMapModeHandler);
 		modeHandlers.put(EditMode.VOCALS, vocalModeHandler);
@@ -51,6 +54,7 @@ public class ModeManager {
 		this.frame = frame;
 		this.selectionManager = selectionManager;
 
+		emptyModeHandler.init();
 		guitarModeHandler.init(currentSelectionEditor, data, frame, highlightManager, keyboardHandler, selectionManager,
 				undoSystem);
 		tempoMapModeHandler.init(data, frame, selectionManager, undoSystem);

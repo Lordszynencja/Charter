@@ -1,6 +1,7 @@
 package log.charter.data.managers.modes;
 
 public enum EditMode {
+	EMPTY("empty"), //
 	GUITAR("Guitar"), //
 	TEMPO_MAP("Tempo map"), //
 	VOCALS("Vocals");

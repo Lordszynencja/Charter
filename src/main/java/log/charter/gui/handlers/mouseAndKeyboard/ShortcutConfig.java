@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import log.charter.data.managers.modes.EditMode;
 import log.charter.io.Logger;
 import log.charter.util.RW;
 
@@ -13,15 +14,20 @@ public class ShortcutConfig {
 			.getAbsolutePath();
 
 	private static Map<Action, Shortcut> shortcuts = new HashMap<>();
-	private static Map<Shortcut, Action> actions = new HashMap<>();
+	private static Map<EditMode, Map<Shortcut, Action>> actions = new HashMap<>();
+	static {
+		for (final EditMode editMode : EditMode.values()) {
+			actions.put(editMode, new HashMap<>());
+		}
+	}
 
 	private static boolean changed = false;
 
 	public static void setShortcut(final Action action, final Shortcut shortcut) {
 		shortcuts.put(action, shortcut);
-		actions.put(shortcut, action);
-
-		changed = true;
+		for (final EditMode editMode : action.editModes) {
+			actions.get(editMode).put(shortcut, action);
+		}
 	}
 
 	public static void init() {
@@ -44,6 +50,7 @@ public class ShortcutConfig {
 			setShortcut(action, action.defaultShortcut);
 		}
 
+		setChanged();
 		save();
 	}
 
@@ -59,8 +66,15 @@ public class ShortcutConfig {
 		changed = false;
 	}
 
-	public static Action getAction(final Shortcut shortcut) {
-		return actions.get(shortcut);
+	public static Action getAction(final EditMode editMode, final Shortcut shortcut) {
+		return actions.get(editMode).get(shortcut);
 	}
 
+	public static Shortcut getShortcut(final Action action) {
+		return shortcuts.get(action);
+	}
+
+	public static void setChanged() {
+		changed = true;
+	}
 }
