@@ -50,7 +50,7 @@ public class ShortcutConfig {
 			setShortcut(action, action.defaultShortcut);
 		}
 
-		setChanged();
+		markChanged();
 		save();
 	}
 
@@ -74,7 +74,7 @@ public class ShortcutConfig {
 		return shortcuts.get(action);
 	}
 
-	public static void setChanged() {
+	public static void markChanged() {
 		changed = true;
 	}
 }

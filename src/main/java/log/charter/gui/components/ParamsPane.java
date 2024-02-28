@@ -173,33 +173,38 @@ public class ParamsPane extends JDialog {
 	}
 
 	protected void addDefaultFinish(final int row, final Runnable onSave) {
-		addDefaultFinish(row, () -> {
-			if (onSave != null) {
-				onSave.run();
-			}
+		addDefaultFinish(row, getDefaultAction(onSave));
+	}
+
+	protected SaverWithStatus getDefaultAction(final Runnable action) {
+		if (action == null) {
+			return getDefaultAction();
+		}
+
+		return () -> {
+			action.run();
 			return true;
-		});
+		};
+	}
+
+	protected SaverWithStatus getDefaultAction() {
+		return () -> true;
 	}
 
 	protected void addDefaultFinish(final int row, final SaverWithStatus onSave) {
-		addDefaultFinish(row, onSave, () -> true);
+		addDefaultFinish(row, onSave, getDefaultAction());
 	}
 
 	protected void addDefaultFinish(final int row, final Runnable onSave, final Runnable onCancel) {
-		addDefaultFinish(row, () -> {
-			if (onSave != null) {
-				onSave.run();
-			}
-			return true;
-		}, () -> {
-			if (onCancel != null) {
-				onCancel.run();
-			}
-			return true;
-		});
+		addDefaultFinish(row, getDefaultAction(onSave), getDefaultAction(onCancel));
 	}
 
 	protected void addDefaultFinish(final int row, final SaverWithStatus onSave, final SaverWithStatus onCancel) {
+		addDefaultFinish(row, onSave, onCancel, true);
+	}
+
+	protected void addDefaultFinish(final int row, final SaverWithStatus onSave, final SaverWithStatus onCancel,
+			final boolean setVisible) {
 		final Runnable paneOnSave = () -> {
 			if (onSave.save()) {
 				dispose();
@@ -220,7 +225,9 @@ public class ParamsPane extends JDialog {
 		setSizeWithInsets(sizes.width, 2 * sizes.uSpace + row * sizes.rowHeight);
 
 		validate();
-		setVisible(true);
+		if (setVisible) {
+			setVisible(true);
+		}
 	}
 
 	protected void addButtons(final int row, final Runnable onSave) {

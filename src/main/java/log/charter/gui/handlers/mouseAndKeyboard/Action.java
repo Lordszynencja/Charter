@@ -16,11 +16,12 @@ public enum Action {
 	DOUBLE_GRID(new Shortcut(KeyEvent.VK_PERIOD), Label.DOUBLE_GRID, VOCALS, GUITAR), //
 	EDIT_VOCALS(new Shortcut(KeyEvent.VK_L), Label.EDIT_VOCALS, VOCALS), //
 	EXIT(new Shortcut(KeyEvent.VK_ESCAPE), Label.EXIT, EMPTY, TEMPO_MAP, VOCALS, GUITAR), //
-	FAST_LEFT(new Shortcut(KeyEvent.VK_LEFT).shift(), null, TEMPO_MAP, VOCALS, GUITAR), //
-	FAST_RIGHT(new Shortcut(KeyEvent.VK_RIGHT).shift(), null, TEMPO_MAP, VOCALS, GUITAR), //
+	FAST_BACKWARD(new Shortcut(KeyEvent.VK_LEFT).shift(), Label.FAST_BACKWARD, TEMPO_MAP, VOCALS, GUITAR), //
+	FAST_FORWARD(new Shortcut(KeyEvent.VK_RIGHT).shift(), Label.FAST_FORWARD, TEMPO_MAP, VOCALS, GUITAR), //
 	HALVE_GRID(new Shortcut(KeyEvent.VK_COMMA), Label.HALVE_GRID, VOCALS, GUITAR), //
-	LEFT(new Shortcut(KeyEvent.VK_LEFT), null, TEMPO_MAP, VOCALS, GUITAR), //
 	MARK_HAND_SHAPE(new Shortcut(KeyEvent.VK_H).ctrl(), Label.MARK_HAND_SHAPE, GUITAR), //
+	MOVE_BACKWARD(new Shortcut(KeyEvent.VK_LEFT), Label.MOVE_BACKWARD, TEMPO_MAP, VOCALS, GUITAR), //
+	MOVE_FORWARD(new Shortcut(KeyEvent.VK_RIGHT), Label.MOVE_FORWARD, TEMPO_MAP, VOCALS, GUITAR), //
 	MOVE_STRING_DOWN(new Shortcut(KeyEvent.VK_DOWN), Label.MOVE_STRING_DOWN, GUITAR), //
 	MOVE_STRING_DOWN_SIMPLE(new Shortcut(KeyEvent.VK_DOWN).ctrl(), Label.MOVE_STRING_DOWN_SIMPLE, GUITAR), //
 	MOVE_STRING_UP(new Shortcut(KeyEvent.VK_UP), Label.MOVE_STRING_UP, GUITAR), //
@@ -35,17 +36,16 @@ public enum Action {
 	NEXT_SOUND(new Shortcut(KeyEvent.VK_RIGHT).alt(), Label.NEXT_NOTE, VOCALS, GUITAR), //
 	OPEN_PROJECT(new Shortcut(KeyEvent.VK_O).ctrl(), Label.OPEN_PROJECT, EMPTY, TEMPO_MAP, VOCALS, GUITAR), //
 	PASTE(new Shortcut(KeyEvent.VK_V).ctrl(), Label.PASTE, VOCALS, GUITAR), //
-	PLAY_AUDIO(new Shortcut(KeyEvent.VK_SPACE), null, TEMPO_MAP, VOCALS, GUITAR), //
+	PLAY_AUDIO(new Shortcut(KeyEvent.VK_SPACE), Label.PLAY_AUDIO, TEMPO_MAP, VOCALS, GUITAR), //
 	PREVIOUS_BEAT(new Shortcut(KeyEvent.VK_LEFT).shift().alt(), Label.PREVIOUS_BEAT, VOCALS, GUITAR), //
 	PREVIOUS_GRID(new Shortcut(KeyEvent.VK_LEFT).ctrl().alt(), Label.PREVIOUS_GRID_POSITION, VOCALS, GUITAR), //
 	PREVIOUS_SOUND(new Shortcut(KeyEvent.VK_LEFT).alt(), Label.PREVIOUS_NOTE, VOCALS, GUITAR), //
 	REDO(new Shortcut(KeyEvent.VK_R).ctrl(), Label.REDO, TEMPO_MAP, VOCALS, GUITAR), //
-	RIGHT(new Shortcut(KeyEvent.VK_RIGHT), null, TEMPO_MAP, VOCALS, GUITAR), //
 	SAVE(new Shortcut(KeyEvent.VK_S).ctrl(), Label.SAVE_PROJECT, TEMPO_MAP, VOCALS, GUITAR), //
 	SAVE_AS(new Shortcut(KeyEvent.VK_S).ctrl().shift(), Label.SAVE_PROJECT_AS, TEMPO_MAP, VOCALS, GUITAR), //
 	SELECT_ALL_NOTES(new Shortcut(KeyEvent.VK_A).ctrl(), Label.SELECT_ALL_NOTES), //
-	SLOW_LEFT(new Shortcut(KeyEvent.VK_LEFT).ctrl(), null, TEMPO_MAP, VOCALS, GUITAR), //
-	SLOW_RIGHT(new Shortcut(KeyEvent.VK_RIGHT).ctrl(), null, TEMPO_MAP, VOCALS, GUITAR), //
+	SLOW_BACKWARD(new Shortcut(KeyEvent.VK_LEFT).ctrl(), Label.SLOW_BACKWARD, TEMPO_MAP, VOCALS, GUITAR), //
+	SLOW_FORWARD(new Shortcut(KeyEvent.VK_RIGHT).ctrl(), Label.SLOW_FORWARD, TEMPO_MAP, VOCALS, GUITAR), //
 	SNAP_ALL(new Shortcut(KeyEvent.VK_G).ctrl().shift(), Label.SNAP_ALL, VOCALS, GUITAR), //
 	SNAP_SELECTED(new Shortcut(KeyEvent.VK_G).ctrl(), Label.SNAP_SELECTED, VOCALS, GUITAR), //
 	SPECIAL_PASTE(new Shortcut(KeyEvent.VK_V).ctrl().shift(), Label.SPECIAL_PASTE, GUITAR), //

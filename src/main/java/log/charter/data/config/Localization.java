@@ -55,6 +55,13 @@ public class Localization {
 		CONFIG_THEME_SQUARE("Square"), //
 		CONFIG_THEME_MODERN("Modern"), //
 
+		SHORTCUT_CONFIG_PANE("Shortcut config"), //
+		TIME_MOVEMENT("Time movement"), //
+		EDITING("Editing"), //
+		VOCAL_EDITING("Vocal editing"), //
+		GUITAR_EDITING("Guitar editing"), //
+		OTHER("Other"), //
+
 		GRAPHIC_CONFIG_THEME_PAGE("Theme"), //
 		GRAPHIC_CONFIG_THEME("Theme"), //
 		GRAPHIC_CONFIG_EVENTS_CHANGE_HEIGHT("Events height"), //
@@ -173,6 +180,7 @@ public class Localization {
 		SAVE_PROJECT("Save project"), //
 		SAVE_PROJECT_AS("Save project as..."), //
 		FILE_MENU_OPTIONS("Options"), //
+		SHORTCUT_CONFIG("Shortcut config"), //
 		FILE_MENU_GRAPHIC_OPTIONS("Graphic options"), //
 		FILE_MENU_COLOR_OPTIONS("Color options"), //
 		FILE_MENU_TEXTURING_OPTIONS("Texturing options"), //
@@ -373,6 +381,7 @@ public class Localization {
 		TONE_CHANGE_PANE("Tone change options"), //
 		TONE_CHANGE_TONE_NAME("Tone name"), //
 
+		CHART_PROJECT("Chart Project"), //
 		CHOOSE_FOLDER_NAME("Choose folder name"), //
 		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement"), //
 		COUNT_PHRASE_MISSING(
@@ -385,9 +394,13 @@ public class Localization {
 				"End phrase is placed in multiple places, do you want to move to the first position to fix it?"), //
 		EXIT_POPUP("Exit"), //
 		EXIT_MESSAGE("Are you sure you want to exit?"), //
+		FAST_BACKWARD("fast backward"), //
+		FAST_FORWARD("fast forward"), //
 		FOLDER_EXISTS_CHOOSE_DIFFERENT("Given folder already exists, choose different name"), //
 		GENERATING_SLOWED_SOUND("Playback speed added to queue"), //
 		GP_FILE("GP file (.gp3, .gp4, .gp5)"), //
+		MOVE_BACKWARD("Move backward"), //
+		MOVE_FORWARD("Move forward"), //
 		LOADING("Please wait, loading..."), //
 		LOADING_ARRANGEMENTS("Loading arrangements"), //
 		LOADING_DONE("Loading done"), //
@@ -404,10 +417,12 @@ public class Localization {
 		NOT_A_FOLDER("Given path is not a folder"), //
 		NOT_MP3_OGG("Not an Mp3 or Ogg file!"), //
 		OPERATION_CANCELLED("Operation cancelled"), //
+		PLAY_AUDIO("Play audio"), //
 		PROJECT_IS_NEWER_VERSION("Project is newer version than program handles"), //
-		CHART_PROJECT("Chart Project"), //
 		RS_ARRANGEMENT_FILE("RS arrangment file (XML)"), //
 		SELECT_FOLDER("Select"), //
+		SLOW_BACKWARD("Slow backward"), //
+		SLOW_FORWARD("Slow forward"), //
 		TONE_NAME_CANT_BE_EMPTY("Tone name can't be empty"), //
 		TONE_NAME_PAST_LIMIT("There are already 4 tones, can't add another tone"), //
 		UNSAVED_CHANGES_POPUP("Unsaved changes"), //

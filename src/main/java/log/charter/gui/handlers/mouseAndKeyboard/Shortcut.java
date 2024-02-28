@@ -22,6 +22,13 @@ public class Shortcut {
 	public Shortcut() {
 	}
 
+	public Shortcut(final Shortcut other) {
+		ctrl = other.ctrl;
+		shift = other.shift;
+		alt = other.alt;
+		key = other.key;
+	}
+
 	public Shortcut(final boolean ctrl, final boolean shift, final boolean alt, final int key) {
 		this.ctrl = ctrl;
 		this.shift = shift;

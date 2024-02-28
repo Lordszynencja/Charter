@@ -27,6 +27,11 @@ public class FieldWithLabel<T extends Component> extends Container {
 	public final JLabel label;
 	public final T field;
 
+	public FieldWithLabel(final Label label, final int labelWidth, final int inputWidth, final int height,
+			final T field, final LabelPosition labelPosition) {
+		this(label.label(), labelWidth, inputWidth, height, field, labelPosition);
+	}
+
 	public FieldWithLabel(final String label, int labelWidth, final int inputWidth, final int height, final T field,
 			final LabelPosition labelPosition) {
 		super();
@@ -124,11 +129,6 @@ public class FieldWithLabel<T extends Component> extends Container {
 		final double w = rect.getWidth();
 		gs.dispose();
 		return (int) w;
-	}
-
-	public FieldWithLabel(final Label label, final int labelWidth, final int inputWidth, final int height,
-			final T field, final LabelPosition labelPosition) {
-		this(label.label(), labelWidth, inputWidth, height, field, labelPosition);
 	}
 
 	private JLabel addLabel(final String label, final int x, final int w, final int h, final int labelAlignment) {

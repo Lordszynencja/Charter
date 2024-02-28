@@ -22,6 +22,7 @@ import log.charter.gui.handlers.mouseAndKeyboard.Action;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.panes.ColorConfigPane;
 import log.charter.gui.panes.ConfigPane;
+import log.charter.gui.panes.ShortcutConfigPane;
 import log.charter.gui.panes.graphicalConfig.GraphicConfigPane;
 import log.charter.gui.panes.imports.GP5ImportOptions;
 import log.charter.io.Logger;
@@ -86,6 +87,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 
 		menu.addSeparator();
 		menu.add(createItem(Label.FILE_MENU_OPTIONS, () -> new ConfigPane(frame, framer)));
+		menu.add(createItem(Label.SHORTCUT_CONFIG, () -> new ShortcutConfigPane(frame)));
 		menu.add(createItem(Label.FILE_MENU_GRAPHIC_OPTIONS, () -> new GraphicConfigPane(frame)));
 		menu.add(createItem(Label.FILE_MENU_COLOR_OPTIONS, () -> new ColorConfigPane(frame)));
 

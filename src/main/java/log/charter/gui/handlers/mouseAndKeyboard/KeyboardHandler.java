@@ -226,22 +226,22 @@ public class KeyboardHandler implements KeyListener {
 
 		double speed;
 		switch (heldAction) {
-			case FAST_LEFT:
+			case FAST_BACKWARD:
 				speed = -framer.frameLength * 32;
 				break;
-			case FAST_RIGHT:
+			case FAST_FORWARD:
 				speed = framer.frameLength * 32;
 				break;
-			case LEFT:
+			case MOVE_BACKWARD:
 				speed = -framer.frameLength * 4;
 				break;
-			case RIGHT:
+			case MOVE_FORWARD:
 				speed = framer.frameLength * 4;
 				break;
-			case SLOW_LEFT:
+			case SLOW_BACKWARD:
 				speed = -framer.frameLength;
 				break;
-			case SLOW_RIGHT:
+			case SLOW_FORWARD:
 				speed = framer.frameLength;
 				break;
 			default:
@@ -1298,15 +1298,15 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	private static final List<Action> actionsNotClearingMousePress = asList(//
-			Action.FAST_LEFT, //
-			Action.FAST_RIGHT, //
-			Action.LEFT, //
+			Action.FAST_BACKWARD, //
+			Action.FAST_FORWARD, //
+			Action.MOVE_BACKWARD, //
 			Action.PREVIOUS_BEAT, //
 			Action.PREVIOUS_GRID, //
 			Action.PREVIOUS_SOUND, //
-			Action.RIGHT, //
-			Action.SLOW_LEFT, //
-			Action.SLOW_RIGHT);
+			Action.MOVE_FORWARD, //
+			Action.SLOW_BACKWARD, //
+			Action.SLOW_FORWARD);
 	private static final List<Action> actionsNotStoppingAudio = asList(//
 			Action.PLAY_AUDIO, //
 			Action.TOGGLE_CLAPS, //
