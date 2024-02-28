@@ -33,9 +33,9 @@ public class ChartPanelColors {
 		NOTE_BACKGROUND(16, 16, 16), //
 		NOTE_ADD_LINE(0, 255, 0), //
 		LANE(128, 128, 128), //
-		MAIN_BEAT(222, 222, 255 ,50), // changed
-		SECONDARY_BEAT(222, 222, 255 ,50), // changed
-		GRID(222, 222, 255 ,25), // changed
+		MAIN_BEAT(222, 222, 255, 50), // changed
+		SECONDARY_BEAT(222, 222, 255, 50), // changed
+		GRID(222, 222, 255, 25), // changed
 		BOOKMARK(64, 64, 255), //
 		REPEAT_MARKER(33, 217, 245), // changed
 		MARKER(255, 255, 255), // changed

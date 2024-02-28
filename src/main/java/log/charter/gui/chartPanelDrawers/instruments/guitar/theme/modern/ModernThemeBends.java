@@ -25,10 +25,14 @@ import log.charter.song.BendValue;
 import log.charter.util.Position2D;
 
 public class ModernThemeBends {
-	private static Font bendValueFont = new Font(Font.DIALOG, Font.BOLD, noteHeight / 4);
+	private static Font bendValueFont;
+
+	static {
+		reloadGraphics();
+	}
 
 	public static void reloadGraphics() {
-		bendValueFont = new Font(Font.DIALOG, Font.PLAIN, noteHeight / 4);
+		bendValueFont = new Font(Font.DIALOG, Font.PLAIN, Math.max(10, noteHeight / 4));
 	}
 
 	private static String formatBendValue(final BigDecimal bendValue) {
@@ -85,7 +89,7 @@ public class ModernThemeBends {
 	private final HighwayDrawerData data;
 
 	public ModernThemeBends(final HighwayDrawerData highwayDrawerData) {
-		this.data = highwayDrawerData;
+		data = highwayDrawerData;
 	}
 
 	private void addBendValueIcon(final EditorNoteDrawingData note, final int position, final int x, final int y,
@@ -106,8 +110,7 @@ public class ModernThemeBends {
 			iconPosition = new Position2D(x, bendY);
 		}
 
-		final Color backgroundColor = getStringBasedColor(StringColorLabelType.LANE, note.string,
-				data.strings);
+		final Color backgroundColor = getStringBasedColor(StringColorLabelType.LANE, note.string, data.strings);
 		final DrawableShape bendValueIcon = new CenteredTextWithBackground(iconPosition, bendValueFont, text,
 				Color.WHITE, backgroundColor);
 		data.bendValues.add(bendValueIcon);

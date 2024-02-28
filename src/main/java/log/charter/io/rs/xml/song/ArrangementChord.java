@@ -48,6 +48,11 @@ public class ArrangementChord implements IPosition {
 		accent = chord.accent ? 1 : null;
 		linkNext = chord.linkNext() ? 1 : null;
 		ignore = chord.ignore ? 1 : null;
+		for (final int fret : chordTemplate.frets.values()) {
+			if (fret > 22) {
+				ignore = 1;
+			}
+		}
 
 		final ChordNotesVisibility chordNotesVisibility = chord.chordNotesVisibility(forceAddNotes);
 		if (chordNotesVisibility == ChordNotesVisibility.NONE) {

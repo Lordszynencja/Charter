@@ -88,7 +88,7 @@ public class ArrangementNote {
 						note.bendValues.map(bendValue -> new ArrangementBendValue(bendValue, note.position())));
 
 		linkNext = note.linkNext ? 1 : null;
-		ignore = note.ignore ? 1 : null;
+		ignore = note.ignore || note.fret > 22 ? 1 : null;
 
 		setUpMute(note);
 		setUpHOPO(note);

@@ -30,7 +30,7 @@ public class ArrangementChordNote extends ArrangementNote {
 				: new CountedList<>(chordNote.bendValues.map(bendValue -> new ArrangementBendValue(bendValue, time)));
 
 		linkNext = chordNote.linkNext ? 1 : null;
-		this.ignore = ignore ? 1 : null;
+		this.ignore = ignore || fret > 22 ? 1 : null;
 
 		setUpMute(chordNote);
 		setUpHOPO(chordNote);

@@ -44,6 +44,6 @@ public class CharterMain {
 			}
 		}).start();
 
-		Logger.info("Program started");
+		Logger.info("Charter started");
 	}
 }

@@ -82,7 +82,7 @@ public class Config {
 	public static boolean createDefaultStretchesInBackground = true;
 	public static int frets = 28;
 	public static int maxStrings = 9;
-	public static int maxBendValue = 4;
+	public static int maxBendValue = 6;
 	public static int FPS = 60;
 	public static int backupDelay = 600;
 
@@ -141,6 +141,7 @@ public class Config {
 		valueAccessors.put("createDefaultStretchesInBackground", ValueAccessor
 				.forBoolean(v -> createDefaultStretchesInBackground = v, () -> createDefaultStretchesInBackground));
 		valueAccessors.put("frets", ValueAccessor.forInteger(v -> frets = v, () -> frets));
+		valueAccessors.put("maxBendValue", ValueAccessor.forInteger(v -> maxBendValue = v, () -> maxBendValue));
 		valueAccessors.put("FPS", ValueAccessor.forInteger(v -> FPS = v, () -> FPS));
 		valueAccessors.put("backupDelay", ValueAccessor.forInteger(v -> backupDelay = v, () -> backupDelay));
 

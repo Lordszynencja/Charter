@@ -35,22 +35,21 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.Position2D;
 
 public class BendEditorGraph extends JComponent implements MouseListener, MouseMotionListener {
-	private static final int beatWidth = 200;
-	public static final int height = 40 + 40 * maxBendValue;
-	private static final int maxBendInternalValue = maxBendValue * 4;
+	private static final int beatWidth = 100;
+	private static final int labelsWidth = 30;
+	private static final int maxBendInternalValue = maxBendValue * 2;
+	public static final int height = 20 + 10 * maxBendInternalValue;
 
-	private static int getXFromBendPosition(final double position) {
-		return 20 + (int) round(position * beatWidth);
+	private static int getDefaultXFromBendPosition(final double position) {
+		return labelsWidth + (int) round(position * beatWidth);
+	}
+
+	private static int getZoomedXFromBendPosition(final double position) {
+		return labelsWidth + (int) round(2 * position * beatWidth);
 	}
 
 	private static int getYFromBendValue(final int value) {
-		return height - 20 - (int) round(value * 10);
-	}
-
-	private static double getPositionFromX(final int x) {
-		final int x0 = getXFromBendPosition(0);
-		final int x1 = getXFromBendPosition(1);
-		return 1.0 * (x - x0) / (x1 - x0);
+		return height - 5 - (int) round(value * 10);
 	}
 
 	private static int getValueFromY(final int y) {
@@ -62,11 +61,21 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		return value;
 	}
 
+	private int getXFromBendPosition(final double position) {
+		if (isZoomed()) {
+			return getZoomedXFromBendPosition(position);
+		}
+		return getDefaultXFromBendPosition(position);
+	}
+
+	private double getPositionFromX(final int x) {
+		final int x0 = getXFromBendPosition(0);
+		final int x1 = getXFromBendPosition(1);
+		return 1.0 * (x - x0) / (x1 - x0);
+	}
+
 	private class EditorBendValue {
 		public double position;
-		/**
-		 * in quarter steps, maximum is 16 = 4 full steps
-		 */
 		public int value;
 
 		public EditorBendValue(final double position, final int value) {
@@ -76,7 +85,6 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	}
 
 	private static class BendPositionWithId {
-
 		public final int x;
 		public int value;
 		public final Integer id;
@@ -136,8 +144,13 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		this.beatsMap = beatsMap;
 	}
 
+	private boolean isZoomed() {
+		return noteEndPosition - noteStartPosition < 1;
+	}
+
 	private void calculateSize() {
-		final int width = max(141, 41 + (lastBeatId - firstBeatId) * beatWidth);
+		final int width = max(labelsWidth + 21 + beatWidth * 2,
+				labelsWidth + 21 + (lastBeatId - firstBeatId) * beatWidth * (isZoomed() ? 2 : 1));
 		final Dimension size = new Dimension(width, height);
 		setMinimumSize(size);
 		setMaximumSize(size);
@@ -197,7 +210,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 				final double positionInBeats = beatsMap.getPositionInBeats(fullPosition);
 				final double position = positionInBeats - firstBeatId;
-				int value = (int) round(bendValueToEdit.bendValue.doubleValue() * 4);
+				int value = (int) round(bendValueToEdit.bendValue.doubleValue() * 2);
 				value = max(0, min(maxBendInternalValue, value));
 
 				bendValues.add(new EditorBendValue(position, value));
@@ -291,34 +304,52 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 	private void drawGrid(final Graphics g) {
 		g.setColor(ColorLabel.SECONDARY_BEAT.color());
+		final int y0 = getYFromBendValue(0);
+		final int y1 = getYFromBendValue(maxBendInternalValue);
 		for (int i = 0; i <= lastBeatId - firstBeatId; i++) {
 			for (int j = 1; j < gridSize; j++) {
 				final int x = getXFromBendPosition(i + (double) j / gridSize);
-				g.drawLine(x, 10, x, height - 10);
+				g.drawLine(x, y0, x, y1);
 			}
 		}
 	}
 
 	private void drawBeats(final Graphics g) {
-		g.setColor(ColorLabel.MAIN_BEAT.color());
+		g.setColor(ColorLabel.MAIN_BEAT.color().brighter().brighter());
+		final int y0 = getYFromBendValue(-1);
+		final int y1 = getYFromBendValue(maxBendInternalValue + 1);
 		for (int i = 0; i <= lastBeatId - firstBeatId; i++) {
 			final int x = getXFromBendPosition(i);
-			g.drawLine(x, 10, x, height - 10);
+			g.drawLine(x, y0, x, y1);
 		}
+	}
+
+	private String bendValueToString(final int bendHalfSteps) {
+		if (bendHalfSteps <= 0) {
+			return "0";
+		}
+		if (bendHalfSteps == 1) {
+			return "½";
+		}
+		if (bendHalfSteps == 2) {
+			return "Full";
+		}
+
+		return bendHalfSteps / 2 + (bendHalfSteps % 2 == 1 ? " ½" : "");
 	}
 
 	private void drawBendValues(final Graphics g) {
 		for (int i = 0; i <= maxBendInternalValue; i++) {
 			g.setColor((i % 4 == 0 ? ColorLabel.SECONDARY_BEAT.color() : ColorLabel.MAIN_BEAT.color()));
 			final int y = getYFromBendValue(i);
-			g.drawLine(10, y, getWidth(), y);
+			g.drawLine(labelsWidth, y, getWidth(), y);
 		}
 
 		g.setColor(ColorLabel.BASE_TEXT.color());
 		g.setFont(new Font(Font.DIALOG, Font.PLAIN, 10));
 		for (int i = 0; i <= maxBendValue; i++) {
-			final int y = getYFromBendValue(i * 4) + 4;
-			g.drawString(i + "", 2, y);
+			final int y = getYFromBendValue(i * 2) + 4;
+			g.drawString(bendValueToString(i), 2, y);
 		}
 	}
 
