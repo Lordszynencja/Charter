@@ -1,46 +1,35 @@
 package log.charter.song;
 
 import log.charter.io.gp.gp5.data.GPDuration;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.util.Fraction;
 
 public class FractionalPosition {
-	private final ArrayList2<Beat> beats;
+	private final ImmutableBeatsMap beats;
 	private final int beatId;
 	private final Fraction fraction;
 
-	public FractionalPosition(final ArrayList2<Beat> beats, final int beatId) {
+	public FractionalPosition(final ImmutableBeatsMap beats, final int beatId) {
 		this(beats, beatId, new Fraction(0, 1));
 	}
 
-	public FractionalPosition(final ArrayList2<Beat> beats, final int beatId, final Fraction fraction) {
+	public FractionalPosition(final ImmutableBeatsMap beats, final int beatId, final Fraction fraction) {
 		this.beats = beats;
 		this.beatId = beatId;
 		this.fraction = fraction;
 	}
 
-	private Beat getBeatSafe(final int beatId) {
-		if (beatId < 0) {
-			return beats.get(0);
-		}
-		if (beatId >= beats.size()) {
-			return beats.getLast();
-		}
-
-		return beats.get(beatId);
-	}
-
 	private FractionalPosition recalculateBeat(Fraction newFraction) {
 		int newBeatId = beatId;
-		Beat beat = getBeatSafe(newBeatId);
+		Beat beat = beats.get(newBeatId);
 		while (newFraction.numerator < 0) {
 			newBeatId--;
-			beat = getBeatSafe(newBeatId);
+			beat = beats.get(newBeatId);
 			newFraction = newFraction.add(1, beat.noteDenominator);
 		}
 		while (newFraction.add(-1, beat.noteDenominator).numerator >= 0) {
 			newBeatId++;
-			beat = getBeatSafe(newBeatId);
+			beat = beats.get(newBeatId);
 			newFraction = newFraction.add(-1, beat.noteDenominator);
 		}
 

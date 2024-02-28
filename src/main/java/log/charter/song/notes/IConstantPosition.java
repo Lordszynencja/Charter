@@ -2,6 +2,7 @@ package log.charter.song.notes;
 
 import static java.lang.Math.abs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -177,6 +178,10 @@ public interface IConstantPosition extends Comparable<IConstantPosition> {
 		fromId = fromId == -1 ? 0 : fromId;
 		int toId = findLastIdBeforeEqual(list, to);
 		toId = toId == -1 ? list.size() : (toId + 1);
+		if (toId < fromId) {
+			return new ArrayList<>();
+		}
+
 		return list.subList(fromId, toId);
 	}
 

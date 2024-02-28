@@ -76,6 +76,7 @@ public class Config {
 	public static int markerOffset = 300;
 
 	public static boolean invertStrings = false;
+	public static boolean invertStrings3D = false;
 	public static boolean leftHanded = false;
 	public static boolean showChordIds = true;
 	public static boolean createDefaultStretchesInBackground = true;
@@ -133,6 +134,8 @@ public class Config {
 		valueAccessors.put("markerOffset", ValueAccessor.forInteger(v -> markerOffset = v, () -> markerOffset));
 
 		valueAccessors.put("invertStrings", ValueAccessor.forBoolean(v -> invertStrings = v, () -> invertStrings));
+		valueAccessors.put("invertStrings3D",
+				ValueAccessor.forBoolean(v -> invertStrings3D = v, () -> invertStrings3D));
 		valueAccessors.put("leftHanded", ValueAccessor.forBoolean(v -> leftHanded = v, () -> leftHanded));
 		valueAccessors.put("showChordIds", ValueAccessor.forBoolean(v -> showChordIds = v, () -> showChordIds));
 		valueAccessors.put("createDefaultStretchesInBackground", ValueAccessor

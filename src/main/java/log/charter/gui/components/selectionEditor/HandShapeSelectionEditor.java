@@ -2,6 +2,7 @@ package log.charter.gui.components.selectionEditor;
 
 import static log.charter.gui.components.selectionEditor.CurrentSelectionEditor.getSingleValue;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
@@ -18,10 +19,14 @@ import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
+import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.IConstantPosition;
+import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 
 public class HandShapeSelectionEditor extends ChordTemplateEditor {
 
+	private JButton setTemplateButton;
 	private JLabel arpeggioLabel;
 	private JCheckBox arpeggioCheckBox;
 
@@ -47,6 +52,8 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		this.undoSystem = undoSystem;
 
 		addChordNameSuggestionButton(100, 0);
+		addSetTemplateButton(300, 0);
+
 		addChordNameInput(100, 1);
 		parent.addCheckbox(2, 20, 70, Label.ARPEGGIO, false, val -> {
 			chordTemplate.arpeggio = val;
@@ -57,6 +64,13 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		addChordTemplateEditor(20, 4);
 
 		hideFields();
+	}
+
+	private void addSetTemplateButton(final int x, final int row) {
+		setTemplateButton = new JButton(Label.SET_TEMPLATE_ON_CHORDS.label());
+		setTemplateButton.addActionListener(a -> setTemplateForChordsInsideSelectedHandShapes());
+
+		parent.add(setTemplateButton, x, parent.getY(row), 150, 20);
 	}
 
 	private void templateEdited() {
@@ -75,10 +89,32 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		arrangementFixer.removeUnusedChordTemplates(arrangement);
 	}
 
+	private void setTemplateForChordsIn(final HandShape handShape) {
+		final ChordTemplate template = data.getCurrentArrangement().chordTemplates.get(handShape.templateId);
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
+		for (final ChordOrNote sound : IConstantPosition.getFromTo(sounds, handShape.position(),
+				handShape.endPosition())) {
+			if (!sound.isChord()) {
+				continue;
+			}
+
+			sound.chord.updateTemplate(handShape.templateId, template);
+		}
+	}
+
+	private void setTemplateForChordsInsideSelectedHandShapes() {
+		final SelectionAccessor<HandShape> selectionAccessor = selectionManager
+				.getSelectedAccessor(PositionType.HAND_SHAPE);
+		for (final Selection<HandShape> selection : selectionAccessor.getSelectedSet()) {
+			setTemplateForChordsIn(selection.selectable);
+		}
+	}
+
 	@Override
 	public void showFields() {
 		super.showFields();
 
+		setTemplateButton.setVisible(true);
 		arpeggioLabel.setVisible(true);
 		arpeggioCheckBox.setVisible(true);
 	}
@@ -87,23 +123,28 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	public void hideFields() {
 		super.hideFields();
 
+		setTemplateButton.setVisible(false);
 		arpeggioLabel.setVisible(false);
 		arpeggioCheckBox.setVisible(false);
+	}
+
+	private void setEmptyTemplate() {
+		chordTemplate = new ChordTemplate();
+		setCurrentValuesInInputs();
+		arpeggioCheckBox.setSelected(false);
 	}
 
 	public void selectionChanged(final SelectionAccessor<HandShape> selectedHandShapesAccessor) {
 		final HashSet2<Selection<HandShape>> selected = selectedHandShapesAccessor.getSelectedSet();
 
 		final Integer templateId = getSingleValue(selected, selection -> selection.selectable.templateId, null);
-		if (templateId != null) {
-			chordTemplate = new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(templateId));
-			setCurrentValuesInInputs();
-			arpeggioCheckBox.setSelected(chordTemplate.arpeggio);
+		if (templateId == null) {
+			setEmptyTemplate();
 			return;
 		}
 
-		chordTemplate = new ChordTemplate();
+		chordTemplate = new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(templateId));
 		setCurrentValuesInInputs();
-		arpeggioCheckBox.setSelected(false);
+		arpeggioCheckBox.setSelected(chordTemplate.arpeggio);
 	}
 }

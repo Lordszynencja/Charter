@@ -35,6 +35,7 @@ import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
+import log.charter.gui.chartPanelDrawers.drawableShapes.FilledRectangle;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.components.selectionEditor.ChordTemplateEditor;
 import log.charter.gui.handlers.KeyboardHandler;
@@ -210,11 +211,17 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		final DrawableShapeList frets = new DrawableShapeList();
 
 		for (final FretPosition fretPosition : fretPositions) {
-			frets.add(lineVertical(fretPosition.position - 1, fretStart, getHeight(), ColorLabel.BASE_BG_2.color()));
-			frets.add(lineVertical(fretPosition.position, fretStart, getHeight(), ColorLabel.BASE_BG_4.color()));
-			frets.add(lineVertical(fretPosition.position + 1, fretStart, getHeight(), ColorLabel.BASE_BG_2.color()));
 			frets.add(new CenteredText(new Position2D(fretPosition.position, 10), g.getFont(), fretPosition.fret + "",
 					ColorLabel.BASE_DARK_TEXT));
+
+			final int fretWidth = fretPosition.fret == 0 ? 3 : 1;
+			final int x0 = fretPosition.position - fretWidth;
+			final int x1 = x0 + 1;
+			final int x3 = fretPosition.position + fretWidth;
+			final int x2 = x3 - 1;
+			frets.add(lineVertical(x0, fretStart, getHeight(), ColorLabel.BASE_BG_2.color()));
+			frets.add(new FilledRectangle(x1, fretStart, x2 - x1 + 1, getHeight() - fretStart, ColorLabel.BASE_BG_4));
+			frets.add(lineVertical(x3, fretStart, getHeight(), ColorLabel.BASE_BG_2.color()));
 
 			if (fretPosition.fret % 12 == 0 && fretPosition.fret >= 12) {
 				addFretDotDouble(frets, fretPosition);
@@ -309,23 +316,23 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 
 		Integer fingerId;
 		switch (e.getKeyCode()) {
-		case VK_T:
-			fingerId = 0;
-			break;
-		case VK_1:
-			fingerId = 1;
-			break;
-		case VK_2:
-			fingerId = 2;
-			break;
-		case VK_3:
-			fingerId = 3;
-			break;
-		case VK_4:
-			fingerId = 4;
-			break;
-		default:
-			return;
+			case VK_T:
+				fingerId = 0;
+				break;
+			case VK_1:
+				fingerId = 1;
+				break;
+			case VK_2:
+				fingerId = 2;
+				break;
+			case VK_3:
+				fingerId = 3;
+				break;
+			case VK_4:
+				fingerId = 4;
+				break;
+			default:
+				return;
 		}
 
 		chordTemplateSupplier.get().fingers.put(mouseString, fingerId);

@@ -36,10 +36,10 @@ public class ChordNameSuggester {
 		final ArrayList2<String> foundNames = new ArrayList2<>();
 		for (int i = 0; i < notes.size(); i++) {
 			final int root = notes.get(i);
-			ArrayList2<String> foundNamesForRoot = ChordNameAdder.getSuggestedChordNames(root, notes);
+			final ArrayList2<String> foundNamesForRoot = ChordNameAdder.getSuggestedChordNames(root, notes);
 			if (root != sounds[0] % 12) {
-				foundNamesForRoot = foundNamesForRoot
-						.map(chordName -> chordName + "/" + soundToSimpleName(sounds[0], true));
+				foundNamesForRoot.addAll(
+						foundNamesForRoot.map(chordName -> chordName + "/" + soundToSimpleName(sounds[0], true)));
 			}
 			foundNames.addAll(foundNamesForRoot);
 		}

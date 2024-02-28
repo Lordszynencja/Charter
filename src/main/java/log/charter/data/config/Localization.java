@@ -43,6 +43,7 @@ public class Localization {
 		CONFIG_MIDI_DELAY("Midi sound delay (ms)"), //
 		CONFIG_MARKER_POSITION("Marker position (px)"), //
 		CONFIG_INVERT_STRINGS("Invert strings"), //
+		CONFIG_INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
 		CONFIG_LEFT_HANDED("Left handed"), //
 		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
 		CONFIG_SHOW_GRID("Show grid"), //
@@ -314,13 +315,11 @@ public class Localization {
 		ANCHOR_PANE("Anchor edit"), //
 		ANCHOR_WIDTH("Anchor width"), //
 
-		CHORD_OPTIONS_PANE("Chord options"), //
 		HAND_SHAPE_PANE("Hand shape edit"), //
-		NOTE_OPTIONS_PANE("Note options"), //
-		BEND_OPTIONS_PANE("Bend options"), //
 
 		CHORD_NAME("Chord name"), //
 		CHORD_NAME_ADVICE("Chord name advice"), //
+		SET_TEMPLATE_ON_CHORDS("Set template on chords"), //
 
 		STRING("String"), //
 		FRET("Fret"), //

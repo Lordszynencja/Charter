@@ -42,6 +42,7 @@ public final class ConfigPane extends ParamsPane {
 	private int midiDelay = Config.midiDelay;
 	private int markerOffset = Config.markerOffset;
 	private boolean invertStrings = Config.invertStrings;
+	private boolean invertStrings3D = Config.invertStrings3D;
 	private boolean leftHanded = Config.leftHanded;
 	private boolean showChordIds = Config.showChordIds;
 	private boolean showGrid = Config.showGrid;
@@ -83,7 +84,9 @@ public final class ConfigPane extends ParamsPane {
 				createIntValidator(1, 1000, false), //
 				val -> markerOffset = Integer.valueOf(val), false);
 		addConfigCheckbox(row, 20, 0, Label.CONFIG_INVERT_STRINGS, invertStrings, val -> invertStrings = val);
-		addConfigCheckbox(row++, 180, 0, Label.CONFIG_LEFT_HANDED, leftHanded, val -> leftHanded = val);
+		addConfigCheckbox(row, 180, 0, Label.CONFIG_INVERT_STRINGS_IN_PREVIEW, invertStrings3D,
+				val -> invertStrings3D = val);
+		addConfigCheckbox(row++, 380, 0, Label.CONFIG_LEFT_HANDED, leftHanded, val -> leftHanded = val);
 		addConfigCheckbox(row++, 20, 0, Label.CONFIG_SHOW_CHORD_IDS, showChordIds, val -> showChordIds = val);
 		addConfigCheckbox(row++, 20, 0, Label.CONFIG_SHOW_GRID, showGrid, val -> showGrid = val);
 		addConfigCheckbox(row++, 20, 0, Label.CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND,
@@ -127,6 +130,7 @@ public final class ConfigPane extends ParamsPane {
 		Config.markerOffset = markerOffset;
 
 		Config.invertStrings = invertStrings;
+		Config.invertStrings3D = invertStrings3D;
 		Config.leftHanded = leftHanded;
 		Config.showChordIds = showChordIds;
 		Config.showGrid = showGrid;

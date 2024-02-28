@@ -60,7 +60,7 @@ public class Preview3DUtils {
 	}
 
 	private static int invertStrings(final int string, final int strings) {
-		return Config.invertStrings ? strings - string - 1 : string;
+		return Config.invertStrings3D ? strings - string - 1 : string;
 	}
 
 	public static double getStringPosition(final int string, final int strings) {

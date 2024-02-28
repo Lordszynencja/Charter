@@ -83,12 +83,12 @@ public class GP5ArrangementTransformer {
 		int barBeatId = 0;
 		for (final int barId : barsOrder) {
 			if (bars.size() <= barId - 1) {
-				barBeatId += beatsMap.beats.get(barBeatId).beatsInMeasure;
+				barBeatId += beatsMap.getBeatSafe(barBeatId).beatsInMeasure;
 				continue;
 			}
 
 			for (final List<GPBeat> voice : bars.get(barId - 1).voices) {
-				FractionalPosition position = new FractionalPosition(beatsMap.beats, barBeatId);
+				FractionalPosition position = new FractionalPosition(beatsMap.immutable(), barBeatId);
 				for (final GPBeat gpBeat : voice) {
 					final FractionalPosition endPosition = position.move(gpBeat.duration, gpBeat.tupletNumerator,
 							gpBeat.tupletDenominator, gpBeat.dots);
@@ -97,7 +97,7 @@ public class GP5ArrangementTransformer {
 				}
 			}
 
-			barBeatId += beatsMap.beats.get(barBeatId).beatsInMeasure;
+			barBeatId += beatsMap.getBeatSafe(barBeatId).beatsInMeasure;
 		}
 
 		createFretHandPositions(arrangement.chordTemplates, level.sounds, level.anchors);
