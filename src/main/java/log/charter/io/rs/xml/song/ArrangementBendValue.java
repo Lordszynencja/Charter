@@ -11,6 +11,8 @@ import log.charter.song.BendValue;
 
 @XStreamAlias("bendValue")
 public class ArrangementBendValue {
+	private static BigDecimal maxValue = new BigDecimal(3);
+
 	@XStreamAsAttribute
 	@XStreamConverter(TimeConverter.class)
 	public int time;
@@ -20,8 +22,19 @@ public class ArrangementBendValue {
 	public ArrangementBendValue() {
 	}
 
+	private BigDecimal getStep(final BigDecimal bendValue) {
+		if (bendValue.compareTo(BigDecimal.ZERO) == 0) {
+			return null;
+		}
+		if (bendValue.compareTo(maxValue) > 0) {
+			return maxValue;
+		}
+
+		return bendValue;
+	}
+
 	public ArrangementBendValue(final BendValue bendValue, final int notePosition) {
 		time = notePosition + bendValue.position();
-		step = bendValue.bendValue.compareTo(BigDecimal.ZERO) == 0 ? null : bendValue.bendValue;
+		step = getStep(bendValue.bendValue);
 	}
 }

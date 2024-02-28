@@ -40,7 +40,7 @@ public class ModernThemeBends {
 			return "0";
 		}
 
-		final int value = (int) round(bendValue.doubleValue() * 4);
+		final int value = (int) round(bendValue.doubleValue() * 2);
 		final int fullSteps = value / 4;
 		final int quarterSteps = value % 4;
 

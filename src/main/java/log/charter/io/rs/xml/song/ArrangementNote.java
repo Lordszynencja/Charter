@@ -1,6 +1,9 @@
 package log.charter.io.rs.xml.song;
 
-import java.util.stream.Collectors;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
+import java.math.BigDecimal;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -9,11 +12,13 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.io.rs.xml.converters.TimeConverter;
+import log.charter.song.BendValue;
 import log.charter.song.enums.BassPickingTechnique;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.Note;
+import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("note")
 @XStreamInclude(ArrangementBendValue.class)
@@ -70,6 +75,30 @@ public class ArrangementNote {
 	public ArrangementNote() {
 	}
 
+	private Integer bend(final ArrayList2<BendValue> bendValues) {
+		if (bendValues.isEmpty()) {
+			return null;
+		}
+
+		int bend = 0;
+		for (final BendValue bendValue : bendValues) {
+			if (bendValue.bendValue.compareTo(BigDecimal.ZERO) == 0) {
+				continue;
+			}
+			bend = max(1, min(3, max(bend, bendValue.bendValue.intValue())));
+		}
+
+		return bend;
+	}
+
+	private CountedList<ArrangementBendValue> bendValues(final ArrayList2<BendValue> bendValues) {
+		if (bendValues.isEmpty()) {
+			return null;
+		}
+
+		return new CountedList<>(bendValues.map(bendValue -> new ArrangementBendValue(bendValue, time)));
+	}
+
 	public ArrangementNote(final Note note) {
 		time = note.position();
 		string = note.string;
@@ -79,13 +108,8 @@ public class ArrangementNote {
 		tremolo = note.tremolo ? 1 : null;
 		accent = note.accent ? 1 : null;
 
-		bend = note.bendValues.isEmpty() ? null
-				: note.bendValues.stream()
-						.map(bendValue -> bendValue.bendValue == null ? 0 : bendValue.bendValue.intValue())
-						.collect(Collectors.maxBy(Integer::compare)).orElse(null);
-		bendValues = note.bendValues.isEmpty() ? null
-				: new CountedList<>(
-						note.bendValues.map(bendValue -> new ArrangementBendValue(bendValue, note.position())));
+		bend = bend(note.bendValues);
+		bendValues = bendValues(note.bendValues);
 
 		linkNext = note.linkNext ? 1 : null;
 		ignore = note.ignore || note.fret > 22 ? 1 : null;

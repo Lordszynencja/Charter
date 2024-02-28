@@ -37,7 +37,8 @@ import log.charter.util.Position2D;
 public class BendEditorGraph extends JComponent implements MouseListener, MouseMotionListener {
 	private static final int beatWidth = 100;
 	private static final int labelsWidth = 30;
-	private static final int maxBendInternalValue = maxBendValue * 2;
+	private static final int bendValueDenominator = 2;
+	private static final int maxBendInternalValue = maxBendValue * bendValueDenominator;
 	public static final int height = 20 + 10 * maxBendInternalValue;
 
 	private static int getDefaultXFromBendPosition(final double position) {
@@ -210,7 +211,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 				final double positionInBeats = beatsMap.getPositionInBeats(fullPosition);
 				final double position = positionInBeats - firstBeatId;
-				int value = (int) round(bendValueToEdit.bendValue.doubleValue() * 2);
+				int value = (int) round(bendValueToEdit.bendValue.doubleValue() * bendValueDenominator);
 				value = max(0, min(maxBendInternalValue, value));
 
 				bendValues.add(new EditorBendValue(position, value));
@@ -226,7 +227,8 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		for (final EditorBendValue bendValue : bendValues) {
 			final int position = min(notesLengths[string],
 					beatsMap.getPositionForPositionInBeats(bendValue.position + firstBeatId) - notePosition);
-			final BigDecimal value = new BigDecimal(bendValue.value / 4.0).setScale(2, RoundingMode.HALF_UP);
+			final BigDecimal value = new BigDecimal(bendValue.value / (double) bendValueDenominator).setScale(2,
+					RoundingMode.HALF_UP);
 			bendValuesForNote.add(new BendValue(position, value));
 		}
 
@@ -235,7 +237,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 	private BendPositionWithId getBendPosition() {
 		final double gridLength = 1.0 / gridSize;
-		final double mousePosition = (mouseX - getXFromBendPosition(0)) * 1.0 / beatWidth;
+		final double mousePosition = getPositionFromX(mouseX);
 		if (mousePosition > noteEndPosition + gridLength / 2 || mousePosition < noteStartPosition - gridLength / 2) {
 			return null;
 		}
@@ -361,7 +363,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		drawBendValues(g);
 	}
 
-	private void paintBends(final Graphics g) {
+	private void paintHighlightedBend(final Graphics g) {
 		final BendPositionWithId highlightedBend = selectedBend == null ? getBendPosition() : selectedBend;
 		if (highlightedBend != null) {
 			g.setColor(ColorLabel.HIGHLIGHT.color());
@@ -374,7 +376,9 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 				g.fillRect(x, y, 5, 5);
 			}
 		}
+	}
 
+	private List<Position2D> getBendPointsToDraw() {
 		final List<Position2D> pointsToDraw = new ArrayList<>();
 		int lastBendX = getXFromBendPosition(noteStartPosition);
 		int lastBendY = getYFromBendValue(0);
@@ -395,6 +399,14 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 		final int endX = getXFromBendPosition(noteEndPosition);
 		pointsToDraw.add(new Position2D(endX, lastBendY));
+
+		return pointsToDraw;
+	}
+
+	private void paintBends(final Graphics g) {
+		paintHighlightedBend(g);
+
+		final List<Position2D> pointsToDraw = getBendPointsToDraw();
 
 		g.setColor(ColorLabel.BASE_TEXT.color());
 		Position2D previousPoint = null;
