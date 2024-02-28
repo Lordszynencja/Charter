@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import log.charter.data.config.Config;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.handlers.CharterFrameWindowFocusListener;
-import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 
 public class Preview3DFrame extends JFrame implements ComponentListener {
 	private static final long serialVersionUID = 7948615183140664734L;

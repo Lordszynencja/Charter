@@ -6,6 +6,7 @@ import log.charter.data.config.Config;
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
 import log.charter.io.Logger;
 
 public class CharterMain {
@@ -16,6 +17,7 @@ public class CharterMain {
 	public static void main(final String[] args) throws InterruptedException, IOException {
 		Config.init();
 		GraphicalConfig.init();
+		ShortcutConfig.init();
 
 		String pathToOpen = Config.lastPath;
 		if (args.length > 0) {
@@ -33,6 +35,7 @@ public class CharterMain {
 				while (true) {
 					Config.save();
 					GraphicalConfig.save();
+					ShortcutConfig.save();
 
 					Thread.sleep(1000);
 				}

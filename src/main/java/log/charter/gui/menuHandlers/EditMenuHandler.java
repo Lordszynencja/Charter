@@ -9,7 +9,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SpecialMenuItem;
-import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.panes.songEdits.AddBeatsAtTheStartPane;
 import log.charter.gui.panes.songEdits.AddDefaultSilencePane;
 import log.charter.gui.panes.songEdits.AddSilencePane;
@@ -48,7 +48,7 @@ class EditMenuHandler extends CharterMenuHandler {
 
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.EDIT_MENU_SELECT_ALL, "Ctrl-A", selectionManager::selectAllNotes));
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_DELETE, "Del", keyboardHandler::delete));
+		menu.add(new SpecialMenuItem(Label.DELETE, "Del", keyboardHandler::delete));
 		menu.add(new SpecialMenuItem(Label.EDIT_MENU_COPY, "Ctrl-C", copyManager::copy));
 		menu.add(new SpecialMenuItem(Label.EDIT_MENU_PASTE, "Ctrl-V", copyManager::paste));
 		menu.add(new SpecialMenuItem(Label.EDIT_MENU_SPECIAL_PASTE, "Ctrl-Shift-V", copyManager::specialPaste));

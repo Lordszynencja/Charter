@@ -32,7 +32,7 @@ import log.charter.gui.components.TextInputWithValidation;
 import log.charter.gui.components.TextInputWithValidation.IntegerValueSetter;
 import log.charter.gui.components.TextInputWithValidation.IntegerValueValidator;
 import log.charter.gui.handlers.AudioHandler;
-import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 //import log.charter.gui.lookAndFeel.CharterButtonUI;
 import log.charter.gui.lookAndFeel.CharterSliderUI;
 import log.charter.io.Logger;

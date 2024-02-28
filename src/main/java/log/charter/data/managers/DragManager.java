@@ -4,9 +4,9 @@ import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
-import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
-import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButton;
-import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressData;
+import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButton;
+import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressData;
 
 public class DragManager {
 	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;

@@ -13,7 +13,7 @@ import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.instruments.TempoMapDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
-import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 
 public class ArrangementDrawer {
 	private ModeManager modeManager;

@@ -1,4 +1,4 @@
-package log.charter.gui.handlers;
+package log.charter.gui.handlers.mouseAndKeyboard;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -24,7 +24,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
+import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.song.Arrangement;
 import log.charter.song.Beat;

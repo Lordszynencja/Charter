@@ -3,6 +3,8 @@ package log.charter.gui.handlers;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
+
 public class CharterFrameWindowFocusListener implements WindowFocusListener {
 	private final KeyboardHandler keyboardHandler;
 

@@ -15,7 +15,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.AudioHandler;
-import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 
 public class ModeManager {

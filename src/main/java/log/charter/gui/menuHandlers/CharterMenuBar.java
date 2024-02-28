@@ -17,8 +17,8 @@ import log.charter.gui.Framer;
 import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.AudioHandler;
-import log.charter.gui.handlers.KeyboardHandler;
 import log.charter.gui.handlers.SongFileHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class CharterMenuBar extends JMenuBar {

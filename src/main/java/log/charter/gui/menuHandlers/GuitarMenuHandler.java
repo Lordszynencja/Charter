@@ -17,7 +17,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SpecialMenuItem;
-import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.song.Level;
 import log.charter.song.notes.ChordOrNote;

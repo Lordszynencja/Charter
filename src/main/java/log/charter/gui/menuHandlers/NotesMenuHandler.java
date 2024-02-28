@@ -7,7 +7,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.components.SpecialMenuItem;
-import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 
 class NotesMenuHandler extends CharterMenuHandler {
 	private ChartData data;
@@ -35,16 +35,16 @@ class NotesMenuHandler extends CharterMenuHandler {
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_DOUBLE_GRID, ".", keyboardHandler::doubleGridSize));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.NOTES_MENU_PREVIOUS_NOTE, "Alt-Left", keyboardHandler::handleAltLeft));
+		menu.add(new SpecialMenuItem(Label.NOTES_MENU_PREVIOUS_NOTE, "Alt-Left", keyboardHandler::handlePreviousSound));
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_PREVIOUS_GRID_POSITION, "Ctrl-Alt-Left",
-				keyboardHandler::handleCtrlAltLeft));
+				keyboardHandler::handlePreviousGrid));
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_PREVIOUS_BEAT, "Shift-Alt-Left",
-				keyboardHandler::handleShiftAltLeft));
-		menu.add(new SpecialMenuItem(Label.NOTES_MENU_NEXT_NOTE, "Alt-Right", keyboardHandler::handleAltRight));
+				keyboardHandler::handlePreviousBeat));
+		menu.add(new SpecialMenuItem(Label.NOTES_MENU_NEXT_NOTE, "Alt-Right", keyboardHandler::handleNextSound));
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_NEXT_GRID_POSITION, "Ctrl-Alt-Right",
-				keyboardHandler::handleCtrlAltRight));
+				keyboardHandler::handleNextGrid));
 		menu.add(new SpecialMenuItem(Label.NOTES_MENU_NEXT_BEAT, "Shift-Alt-Right",
-				keyboardHandler::handleShiftAltRight));
+				keyboardHandler::handleNextBeat));
 
 		return menu;
 	}

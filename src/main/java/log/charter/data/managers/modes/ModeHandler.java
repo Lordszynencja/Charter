@@ -1,6 +1,6 @@
 package log.charter.data.managers.modes;
 
-import log.charter.gui.handlers.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
+import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 
 public abstract class ModeHandler {
 	public abstract void handleEnd();

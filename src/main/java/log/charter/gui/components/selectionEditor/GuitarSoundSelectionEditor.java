@@ -36,7 +36,7 @@ import log.charter.gui.components.RadioButtonGroupInRow;
 import log.charter.gui.components.TextInputWithValidation;
 import log.charter.gui.components.ToggleButtonGroupInRow;
 import log.charter.gui.components.selectionEditor.subEditors.SelectionBendEditor;
-import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.enums.BassPickingTechnique;

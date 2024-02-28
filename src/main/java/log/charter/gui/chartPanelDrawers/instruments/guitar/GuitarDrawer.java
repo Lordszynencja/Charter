@@ -34,7 +34,7 @@ import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
-import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Anchor;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;

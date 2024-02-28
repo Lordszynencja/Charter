@@ -151,7 +151,7 @@ public class Localization {
 		EDIT_MENU_UNDO("Undo"), //
 		EDIT_MENU_REDO("Redo"), //
 		EDIT_MENU_SELECT_ALL("Select all notes"), //
-		EDIT_MENU_DELETE("Delete"), //
+		DELETE("Delete"), //
 		EDIT_MENU_COPY("Copy"), //
 		EDIT_MENU_PASTE("Paste"), //
 		EDIT_MENU_SPECIAL_PASTE("Special paste"), //

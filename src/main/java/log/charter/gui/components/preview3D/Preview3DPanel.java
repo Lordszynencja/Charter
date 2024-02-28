@@ -33,7 +33,7 @@ import log.charter.gui.components.preview3D.glUtils.Texture;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
-import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.io.Logger;
 import log.charter.util.Timer;
 

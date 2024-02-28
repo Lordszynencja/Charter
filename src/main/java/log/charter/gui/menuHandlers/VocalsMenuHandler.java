@@ -7,7 +7,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.components.SpecialMenuItem;
-import log.charter.gui.handlers.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 
 class VocalsMenuHandler extends CharterMenuHandler {
 

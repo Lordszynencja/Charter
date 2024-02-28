@@ -17,9 +17,9 @@ import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.common.MarkerDrawer;
 import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
-import log.charter.gui.handlers.KeyboardHandler;
-import log.charter.gui.handlers.MouseButtonPressReleaseHandler;
-import log.charter.gui.handlers.MouseHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
 
 public class ChartPanel extends JComponent {
 	private static final long serialVersionUID = -3439446235287039031L;

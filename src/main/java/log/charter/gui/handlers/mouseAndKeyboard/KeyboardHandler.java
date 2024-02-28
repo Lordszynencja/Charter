@@ -1,4 +1,4 @@
-package log.charter.gui.handlers;
+package log.charter.gui.handlers.mouseAndKeyboard;
 
 import static java.awt.event.KeyEvent.VK_0;
 import static java.awt.event.KeyEvent.VK_1;
@@ -13,11 +13,9 @@ import static java.awt.event.KeyEvent.VK_9;
 import static java.awt.event.KeyEvent.VK_A;
 import static java.awt.event.KeyEvent.VK_ALT;
 import static java.awt.event.KeyEvent.VK_C;
-import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
 import static java.awt.event.KeyEvent.VK_CLOSE_BRACKET;
 import static java.awt.event.KeyEvent.VK_COMMA;
 import static java.awt.event.KeyEvent.VK_CONTROL;
-import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_E;
 import static java.awt.event.KeyEvent.VK_END;
@@ -33,7 +31,6 @@ import static java.awt.event.KeyEvent.VK_G;
 import static java.awt.event.KeyEvent.VK_H;
 import static java.awt.event.KeyEvent.VK_HOME;
 import static java.awt.event.KeyEvent.VK_L;
-import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_M;
 import static java.awt.event.KeyEvent.VK_N;
 import static java.awt.event.KeyEvent.VK_NUMPAD0;
@@ -50,10 +47,8 @@ import static java.awt.event.KeyEvent.VK_O;
 import static java.awt.event.KeyEvent.VK_OPEN_BRACKET;
 import static java.awt.event.KeyEvent.VK_PERIOD;
 import static java.awt.event.KeyEvent.VK_R;
-import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_S;
 import static java.awt.event.KeyEvent.VK_SHIFT;
-import static java.awt.event.KeyEvent.VK_SPACE;
 import static java.awt.event.KeyEvent.VK_T;
 import static java.awt.event.KeyEvent.VK_UP;
 import static java.awt.event.KeyEvent.VK_V;
@@ -100,6 +95,8 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
 import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.gui.handlers.AudioHandler;
+import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.song.Arrangement;
@@ -156,26 +153,9 @@ public class KeyboardHandler implements KeyListener {
 			return this;
 		}
 
-		public void singleFunction(final Runnable function) {
-			this.function = e -> { function.run(); };
-
-			addSingle();
-		}
-
-		public void singleFunction(final Consumer<KeyEvent> function) {
-			this.function = function;
-
-			addSingle();
-		}
-
 		public void function(final Runnable function) {
-			this.function = e -> { function.run(); };
-
+			this.function = e -> function.run();
 			add();
-		}
-
-		private void addSingle() {
-			keyHandlers.put(key, new SingleFunctionForKey(function));
 		}
 
 		private void add() {
@@ -197,25 +177,6 @@ public class KeyboardHandler implements KeyListener {
 		void setFunction(final int modifiersValue, final Consumer<KeyEvent> function);
 
 		void fireFunction(final KeyEvent e);
-	}
-
-	private class SingleFunctionForKey implements KeyHandler {
-		public final Consumer<KeyEvent> function;
-
-		public SingleFunctionForKey(final Consumer<KeyEvent> function) {
-			this.function = function;
-		}
-
-		@Override
-		public void setFunction(final int modifiersValue, final Consumer<KeyEvent> function) {
-			throw new IllegalArgumentException("can't set function for modifiers for single function!");
-		}
-
-		@Override
-		public void fireFunction(final KeyEvent e) {
-			function.accept(e);
-			e.consume();
-		}
 	}
 
 	private class ModifierBasedFunctionsForKey implements KeyHandler {
@@ -257,8 +218,7 @@ public class KeyboardHandler implements KeyListener {
 	private boolean ctrl = false;
 	private boolean alt = false;
 	private boolean shift = false;
-	private boolean left = false;
-	private boolean right = false;
+	private Action heldAction = null;
 
 	private int lastFretNumber = 0;
 	private int fretNumberTimer = 0;
@@ -290,8 +250,7 @@ public class KeyboardHandler implements KeyListener {
 		ctrl = false;
 		alt = false;
 		shift = false;
-		left = false;
-		right = false;
+		heldAction = null;
 	}
 
 	public void clearFretNumber() {
@@ -300,12 +259,35 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	private void moveFromArrowKeys() {
-		if (!left && !right) {
+		if (heldAction == null) {
 			return;
 		}
 
-		final int speed = (int) (framer.frameLength * (shift ? 20 : 4) / (ctrl ? 4 : 1));
-		int nextTime = data.nextTime - (left ? speed : 0) + (right ? speed : 0);
+		double speed;
+		switch (heldAction) {
+			case FAST_LEFT:
+				speed = -framer.frameLength * 32;
+				break;
+			case FAST_RIGHT:
+				speed = framer.frameLength * 32;
+				break;
+			case LEFT:
+				speed = -framer.frameLength * 4;
+				break;
+			case RIGHT:
+				speed = framer.frameLength * 4;
+				break;
+			case SLOW_LEFT:
+				speed = -framer.frameLength;
+				break;
+			case SLOW_RIGHT:
+				speed = framer.frameLength;
+				break;
+			default:
+				return;
+		}
+
+		int nextTime = data.nextTime + (int) speed;
 		nextTime = max(0, min(data.music.msLength(), nextTime));
 		frame.setNextTime(nextTime);
 	}
@@ -331,19 +313,6 @@ public class KeyboardHandler implements KeyListener {
 		return shift;
 	}
 
-	private void handleCtrl() {
-		ctrl = true;
-	}
-
-	private void handleAlt(final KeyEvent e) {
-		alt = true;
-		e.consume();
-	}
-
-	private void handleShift() {
-		shift = true;
-	}
-
 	private int getPrevious(final List<? extends IConstantPosition> positions) {
 		final IConstantPosition position = findLastBefore(positions, data.time);
 		if (position == null) {
@@ -353,7 +322,7 @@ public class KeyboardHandler implements KeyListener {
 		return position.position();
 	}
 
-	public void handleShiftAltLeft() {
+	public void handlePreviousBeat() {
 		if (data.isEmpty) {
 			return;
 		}
@@ -361,7 +330,7 @@ public class KeyboardHandler implements KeyListener {
 		frame.setNextTime(getPrevious(data.songChart.beatsMap.beats));
 	}
 
-	public void handleCtrlAltLeft() {
+	public void handlePreviousGrid() {
 		if (data.isEmpty) {
 			return;
 		}
@@ -369,27 +338,12 @@ public class KeyboardHandler implements KeyListener {
 		frame.setNextTime(data.songChart.beatsMap.getPositionWithRemovedGrid(data.time, 1));
 	}
 
-	public void handleAltLeft() {
+	public void handlePreviousSound() {
 		if (data.isEmpty) {
 			return;
 		}
 
 		frame.setNextTime(getPrevious(data.getCurrentArrangementLevel().sounds));
-	}
-
-	private void handleLeft() {
-		if (!alt) {
-			left = true;
-			return;
-		}
-
-		if (shift) {
-			handleShiftAltLeft();
-		} else if (ctrl) {
-			handleCtrlAltLeft();
-		} else {
-			handleAltLeft();
-		}
 	}
 
 	private int getNext(final ArrayList2<? extends IConstantPosition> positions) {
@@ -401,7 +355,7 @@ public class KeyboardHandler implements KeyListener {
 		return position.position();
 	}
 
-	public void handleShiftAltRight() {
+	public void handleNextBeat() {
 		if (data.isEmpty) {
 			return;
 		}
@@ -409,7 +363,7 @@ public class KeyboardHandler implements KeyListener {
 		frame.setNextTime(getNext(data.songChart.beatsMap.beats));
 	}
 
-	public void handleCtrlAltRight() {
+	public void handleNextGrid() {
 		if (data.isEmpty) {
 			return;
 		}
@@ -417,27 +371,12 @@ public class KeyboardHandler implements KeyListener {
 		frame.setNextTime(data.songChart.beatsMap.getPositionWithAddedGrid(data.time, 1));
 	}
 
-	public void handleAltRight() {
+	public void handleNextSound() {
 		if (data.isEmpty) {
 			return;
 		}
 
 		frame.setNextTime(getNext(data.getCurrentArrangementLevel().sounds));
-	}
-
-	private void handleRight() {
-		if (!alt) {
-			right = true;
-			return;
-		}
-
-		if (shift) {
-			handleShiftAltRight();
-		} else if (ctrl) {
-			handleCtrlAltRight();
-		} else {
-			handleAltRight();
-		}
 	}
 
 	private boolean containsString(final ArrayList2<Selection<ChordOrNote>> selectedSounds, final int string) {
@@ -1373,23 +1312,25 @@ public class KeyboardHandler implements KeyListener {
 		data.setNextTime(bookmark);
 	}
 
+	private final Map<Action, Runnable> actionHandlers = new HashMap<>();
 	private final Map<Integer, KeyHandler> keyHandlers = new HashMap<>();
 
 	private void prepareHandlers() {
-		key(VK_CONTROL).singleFunction(this::handleCtrl);
-		key(VK_ALT).singleFunction(this::handleAlt);
-		key(VK_SHIFT).singleFunction(this::handleShift);
+		actionHandlers.put(Action.DELETE, this::delete);
+		actionHandlers.put(Action.NEXT_BEAT, this::handleNextBeat);
+		actionHandlers.put(Action.NEXT_GRID, this::handleNextGrid);
+		actionHandlers.put(Action.NEXT_SOUND, this::handleNextSound);
+		actionHandlers.put(Action.PLAY_AUDIO, audioHandler::togglePlaySetSpeed);
+		actionHandlers.put(Action.PREVIOUS_BEAT, this::handlePreviousBeat);
+		actionHandlers.put(Action.PREVIOUS_GRID, this::handlePreviousGrid);
+		actionHandlers.put(Action.PREVIOUS_SOUND, this::handlePreviousSound);
 
 		key(VK_ESCAPE).function(frame::exit);
-		key(VK_DELETE).function(this::delete);
 		key(VK_HOME).function(this::moveToBeginning);
 		key(VK_HOME).ctrl().function(this::handleCtrlHome);
 		key(VK_END).function(this::moveToEnd);
 		key(VK_END).ctrl().function(this::handleCtrlEnd);
 
-		key(VK_SPACE).function(audioHandler::togglePlaySetSpeed);
-		key(VK_LEFT).singleFunction(this::handleLeft);
-		key(VK_RIGHT).singleFunction(this::handleRight);
 		key(VK_UP).function(this::moveNotesUpKeepFrets);
 		key(VK_UP).ctrl().function(this::moveNotesUp);
 		key(VK_DOWN).function(this::moveNotesDownKeepFrets);
@@ -1444,90 +1385,112 @@ public class KeyboardHandler implements KeyListener {
 			}
 		}
 
-		key(VK_F2).singleFunction(audioHandler::toggleMidiNotes);
-		key(VK_F3).singleFunction(audioHandler::toggleClaps);
-		key(VK_F4).singleFunction(audioHandler::toggleMetronome);
-		key(VK_F5).singleFunction(audioDrawer::toggle);
-		key(VK_F6).singleFunction(repeatManager::toggle);
-		key(VK_F11).singleFunction(frame::switchWindowedPreview);
-		key(VK_F12).singleFunction(frame::switchBorderlessWindowedPreview);
+		key(VK_F2).function(audioHandler::toggleMidiNotes);
+		key(VK_F3).function(audioHandler::toggleClaps);
+		key(VK_F4).function(audioHandler::toggleMetronome);
+		key(VK_F5).function(audioDrawer::toggle);
+		key(VK_F6).function(repeatManager::toggle);
+		key(VK_F11).function(frame::switchWindowedPreview);
+		key(VK_F12).function(frame::switchBorderlessWindowedPreview);
 	}
 
-	private static final List<Integer> keysNotClearingMousePressesOnPress = asList(//
-			VK_CONTROL, //
-			VK_ALT, //
-			VK_SHIFT, //
-			VK_CAPS_LOCK, //
-			VK_LEFT, //
-			VK_RIGHT);
 	private static final List<Integer> keysNotStoppingMusicOnPress = asList(//
-			VK_CONTROL, //
-			VK_ALT, //
-			VK_SHIFT, //
-			VK_CAPS_LOCK, //
 			VK_F2, //
 			VK_F3, //
 			VK_F4, //
-			VK_F5, //
-			VK_SPACE, //
-			VK_OPEN_BRACKET, //
-			VK_CLOSE_BRACKET);
+			VK_F5);
+
+	private static final List<Action> actionsNotClearingMousePress = asList(//
+			Action.FAST_LEFT, //
+			Action.FAST_RIGHT, //
+			Action.LEFT, //
+			Action.PREVIOUS_BEAT, //
+			Action.PREVIOUS_GRID, //
+			Action.PREVIOUS_SOUND, //
+			Action.RIGHT, //
+			Action.SLOW_LEFT, //
+			Action.SLOW_RIGHT, //
+
+			Action.LEFT);
+	private static final List<Action> actionsNotStoppingAudio = asList(//
+			Action.PLAY_AUDIO);
+
+	private void fireAction(final Action action) {
+		if (!actionsNotClearingMousePress.contains(action)) {
+			mouseHandler.cancelAllActions();
+		}
+		if (!actionsNotStoppingAudio.contains(action)) {
+			audioHandler.stopMusic();
+		}
+
+		final Runnable actionHandler = actionHandlers.get(action);
+		if (actionHandler != null) {
+			actionHandler.run();
+		}
+	}
 
 	private void keyUsed(final KeyEvent e) {
 		final int keyCode = e.getKeyCode();
 		if (keyCode == KeyEvent.VK_UNDEFINED) {
 			return;
 		}
-
-		if (!keysNotClearingMousePressesOnPress.contains(keyCode)) {
-			mouseHandler.cancelAllActions();
+		if (keyCode == VK_CONTROL) {
+			ctrl = true;
+			return;
 		}
-
-		if (!keysNotStoppingMusicOnPress.contains(keyCode)) {
-			audioHandler.stopMusic();
+		if (keyCode == VK_SHIFT) {
+			shift = true;
+			return;
 		}
-
-		final KeyHandler keyHandler = keyHandlers.get(keyCode);
-		if (keyHandler == null) {
+		if (keyCode == VK_ALT) {
+			alt = true;
 			return;
 		}
 
-		keyHandler.fireFunction(e);
+		final Action action = ShortcutConfig.getAction(new Shortcut(ctrl, shift, alt, keyCode));
+		if (action != null) {
+			heldAction = action;
+			fireAction(action);
+			return;
+		}
+
+		final KeyHandler keyHandler = keyHandlers.get(keyCode);
+		if (keyHandler != null) {
+			if (!keysNotStoppingMusicOnPress.contains(keyCode)) {
+				audioHandler.stopMusic();
+			}
+			keyHandler.fireFunction(e);
+			return;
+		}
 	}
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_F10) {
-			return;
-		}
-
 		keyUsed(e);
+		e.consume();
 	}
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
 		switch (e.getKeyCode()) {
-			case KeyEvent.VK_LEFT:
-				left = false;
-				break;
-			case KeyEvent.VK_RIGHT:
-				right = false;
-				break;
 			case KeyEvent.VK_CONTROL:
 				ctrl = false;
-				break;
-			case KeyEvent.VK_ALT:
-				alt = false;
 				break;
 			case KeyEvent.VK_SHIFT:
 				shift = false;
 				break;
-			case KeyEvent.VK_F10:
-				keyUsed(e);
+			case KeyEvent.VK_ALT:
+				alt = false;
 				break;
 			default:
 				break;
 		}
+
+		if (heldAction == ShortcutConfig.getAction(new Shortcut(ctrl, shift, alt, e.getKeyCode()))) {
+			heldAction = null;
+		}
+
+		e.consume();
 	}
 
 	@Override

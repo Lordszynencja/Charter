@@ -1,4 +1,4 @@
-package log.charter.gui.handlers;
+package log.charter.gui.handlers.mouseAndKeyboard;
 
 import static java.lang.Math.abs;
 
