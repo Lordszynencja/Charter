@@ -33,9 +33,10 @@ public class ChartPanelColors {
 		NOTE_BACKGROUND(16, 16, 16), //
 		NOTE_ADD_LINE(0, 255, 0), //
 		LANE(128, 128, 128), //
-		MAIN_BEAT(222, 222, 255, 50), // changed
-		SECONDARY_BEAT(222, 222, 255, 50), // changed
-		GRID(222, 222, 255, 25), // changed
+		MAIN_BEAT(222, 222, 255 ,50), // changed
+		SECONDARY_BEAT(222, 222, 255 ,50), // changed
+		BEAT_MARKER(222, 222, 0),
+		GRID(222, 222, 255 ,25), // changed
 		BOOKMARK(64, 64, 255), //
 		REPEAT_MARKER(33, 217, 245), // changed
 		MARKER(255, 255, 255), // changed
@@ -48,6 +49,8 @@ public class ChartPanelColors {
 		HIGHLIGHT(122, 122, 122), // changed
 		SELECT(41, 188, 254), // changed
 		VOCAL_SELECT(41, 188, 254), // changed
+		WAVEFORM_COLOR(64, 128, 128),
+		WAVEFORM_RMS_COLOR(255, 128, 255),
 
 		NOTE_FLAG_MARKER(255, 255, 255), //
 		SLIDE_NORMAL_FRET_BG(255, 255, 255), //
@@ -116,6 +119,11 @@ public class ChartPanelColors {
 
 		public void setColor(final Color color) {
 			colors.put(this, color);
+		}
+
+		public Color colorWithAlpha(int alpha) {
+			Color baseColor = color();
+			return new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), alpha);
 		}
 	}
 

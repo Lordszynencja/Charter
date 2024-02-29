@@ -3,10 +3,11 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 import static log.charter.data.config.Config.showChordIds;
 import static log.charter.data.config.GraphicalConfig.handShapesHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 
-import java.awt.Font;
+import java.awt.*;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
@@ -18,10 +19,10 @@ import log.charter.song.HandShape;
 import log.charter.util.Position2D;
 
 public class ModernThemeHandShapes implements ThemeHandShapes {
-	private static Font handShapesFont = new Font(Font.SANS_SERIF, Font.PLAIN, handShapesHeight);
+	private static Font handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, handShapesHeight);
 
 	public static void reloadGraphics() {
-		handShapesFont = new Font(Font.SANS_SERIF, Font.PLAIN, handShapesHeight); }
+		handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, handShapesHeight); }
 
 	private final HighwayDrawerData data;
 
@@ -32,6 +33,13 @@ public class ModernThemeHandShapes implements ThemeHandShapes {
 	@Override
 	public void addHandShape(final int x, final int length, final boolean selected, final boolean highlighted,
 			final HandShape handShape, final ChordTemplate chordTemplate) {
+		final ShapePositionWithSize positionTop = new ShapePositionWithSize(x, lanesTop, length, lanesBottom - lanesTop);
+		final Color fillColorAlpha = chordTemplate.arpeggio
+				? ColorLabel.HAND_SHAPE_ARPEGGIO.colorWithAlpha(32)
+				: ColorLabel.HAND_SHAPE.colorWithAlpha(32);
+
+		data.handShapes.add(filledRectangle(positionTop, fillColorAlpha));
+
 		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length, handShapesHeight);
 		final ColorLabel fillColor = chordTemplate.arpeggio ? ColorLabel.HAND_SHAPE_ARPEGGIO : ColorLabel.HAND_SHAPE;
 		data.handShapes.add(filledRectangle(position, fillColor));

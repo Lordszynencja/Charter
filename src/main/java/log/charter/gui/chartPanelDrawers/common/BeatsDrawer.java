@@ -51,10 +51,10 @@ public class BeatsDrawer {
 			beats.add(lineVertical(x, beatTextY, lanesBottom, color));
 
 			if (beat.anchor) {
-				final Position2D leftCorner = new Position2D(x - 4, beatTextY);
-				final Position2D rightCorner = new Position2D(x + 5, beatTextY);
+				final Position2D leftCorner = new Position2D(x - 2, beatTextY);
+				final Position2D rightCorner = new Position2D(x + 3, beatTextY);
 				final Position2D bottomCorner = new Position2D(x, beatTextY + 4);
-				beats.add(filledTriangle(leftCorner, rightCorner, bottomCorner, color));
+				beats.add(filledTriangle(leftCorner, rightCorner, bottomCorner, ColorLabel.BEAT_MARKER));
 			}
 		}
 

@@ -16,6 +16,7 @@ import log.charter.data.config.Zoom;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanel;
+import log.charter.gui.ChartPanelColors;
 import log.charter.gui.components.toolbar.ChartToolbar;
 
 public class WaveFormDrawer {
@@ -46,10 +47,10 @@ public class WaveFormDrawer {
 		}
 	}
 
-	private static final Color normalColor = new Color(64, 128, 128);
-	private static final Color highIntensityColor = new Color(255, 128, 255);
-	private static final Color normalColorZoomed = new Color(64, 128, 128, 32);
-	private static final Color highIntensityColorZoomed = new Color(255, 128, 255, 64);
+	private static final Color normalColor = ChartPanelColors.ColorLabel.WAVEFORM_COLOR.color();
+	private static final Color highIntensityColor = ChartPanelColors.ColorLabel.WAVEFORM_RMS_COLOR.color();
+	private static final Color normalColorZoomed = ChartPanelColors.ColorLabel.WAVEFORM_COLOR.colorWithAlpha(32);
+	private static final Color highIntensityColorZoomed = ChartPanelColors.ColorLabel.WAVEFORM_RMS_COLOR.colorWithAlpha(64);
 
 	private ChartData data;
 	private ChartPanel chartPanel;

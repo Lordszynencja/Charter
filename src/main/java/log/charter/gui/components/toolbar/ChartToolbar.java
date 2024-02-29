@@ -10,13 +10,7 @@ import java.awt.event.FocusListener;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.DoubleConsumer;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
-import javax.swing.JSlider;
-import javax.swing.JToolBar;
+import javax.swing.*;
 
 import log.charter.data.GridType;
 import log.charter.data.config.Config;
@@ -41,7 +35,7 @@ public class ChartToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
 	private static final int checkboxLabelSpacing = 1;
-	private static final int verticalSpacing = 4;
+	private static final int verticalSpacing = 8;
 	private static final int elementHeight = 20;
 	public static final int height = elementHeight + 2 * verticalSpacing;
 
@@ -52,12 +46,12 @@ public class ChartToolbar extends JToolBar {
 	private RepeatManager repeatManager;
 	private WaveFormDrawer waveFormDrawer;
 
-	private FieldWithLabel<JCheckBox> midi;
-	private FieldWithLabel<JCheckBox> claps;
-	private FieldWithLabel<JCheckBox> metronome;
+	private JToggleButton midi;
+	private JToggleButton claps;
+	private JToggleButton metronome;
 	private FieldWithLabel<JCheckBox> waveformGraph;
-	private FieldWithLabel<JCheckBox> intensityRMSIndicator; // add
-	private FieldWithLabel<JCheckBox> repeater;
+	private FieldWithLabel<JCheckBox> intensityRMSIndicator;
+	private JToggleButton repeater;
 
 	private FieldWithLabel<TextInputWithValidation> gridSize;
 	private FieldWithLabel<TextInputWithValidation> slowedSpeed;
@@ -120,6 +114,17 @@ public class ChartToolbar extends JToolBar {
 		return field;
 	}
 
+	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Runnable onClick) {
+		final JToggleButton toggleButton = new JToggleButton(label.label());
+		toggleButton.addActionListener(a -> onClick.run());
+		toggleButton.setFocusable(false);
+
+		toggleButton.setBounds(x.get(), 0, toggleButton.getPreferredSize().width, elementHeight);
+		add(x, toggleButton);
+
+		return toggleButton;
+	}
+
 	private FieldWithLabel<JRadioButton> createRadioButtonField(final Label label, final int separationWidth,
 			final Runnable onClick) {
 		final JRadioButton radioButton = new JRadioButton();
@@ -145,7 +150,8 @@ public class ChartToolbar extends JToolBar {
 	private void addSeparator(final AtomicInteger x) {
 		x.addAndGet(horizontalSpacing);
 		final JSeparator separator = new JSeparator(JSeparator.VERTICAL);
-		separator.setSize(2, elementHeight);
+		separator.setForeground(ColorLabel.BASE_BG_2.color());
+		separator.setSize(4, elementHeight);
 		add(x, separator);
 		x.addAndGet(horizontalSpacing);
 	}
@@ -295,12 +301,12 @@ public class ChartToolbar extends JToolBar {
 			final DoubleConsumer volumeSetter) {
 		final JSlider volumeSlider = new JSlider(0, 100, getVolumeAsInteger(value));
 		volumeSlider.addChangeListener(e -> volumeSetter.accept(volumeSlider.getValue() / 100.0));
-		volumeSlider.setSize(101, elementHeight);
+		volumeSlider.setSize(72, elementHeight);
 		volumeSlider.setFocusable(false);
 		volumeSlider.setBackground(getBackground());
 		volumeSlider.setUI(new CharterSliderUI());
 
-		final FieldWithLabel<JSlider> volume = new FieldWithLabel<>(label, 0, 101, elementHeight, volumeSlider,
+		final FieldWithLabel<JSlider> volume = new FieldWithLabel<>(label, 0, 72, elementHeight, volumeSlider,
 				LabelPosition.LEFT_PACKED);
 		add(x, volume);
 	}
@@ -312,14 +318,21 @@ public class ChartToolbar extends JToolBar {
 		this.repeatManager = repeatManager;
 		this.waveFormDrawer = waveFormDrawer;
 
-		final AtomicInteger x = new AtomicInteger(0);
+		final AtomicInteger x = new AtomicInteger(5);
 
-		midi = addCheckbox(x, Label.TOOLBAR_MIDI, audioHandler::toggleMidiNotes);
-		claps = addCheckbox(x, Label.TOOLBAR_CLAPS, audioHandler::toggleClaps);
-		metronome = addCheckbox(x, Label.TOOLBAR_METRONOME, audioHandler::toggleMetronome);
+		midi = addToggleButton(x, Label.TOOLBAR_MIDI, audioHandler::toggleMidiNotes);
+		claps = addToggleButton(x, Label.TOOLBAR_CLAPS, audioHandler::toggleClaps);
+		metronome = addToggleButton(x, Label.TOOLBAR_METRONOME, audioHandler::toggleMetronome);
+
+		addSeparator(x);
+
 		waveformGraph = addCheckbox(x, Label.TOOLBAR_WAVEFORM_GRAPH, waveFormDrawer::toggle);
 		intensityRMSIndicator = addCheckbox(x, Label.RMS_INDICATOR, waveFormDrawer::toggleIntensityRMS);
-		repeater = addCheckbox(x, Label.TOOLBAR_REPEATER, repeatManager::toggle);
+		intensityRMSIndicator.field.setEnabled(false);
+
+		addSeparator(x);
+
+		repeater = addToggleButton(x, Label.TOOLBAR_REPEATER, repeatManager::toggle);
 
 		addSeparator(x);
 
@@ -329,9 +342,9 @@ public class ChartToolbar extends JToolBar {
 
 		addSeparator(x);
 
-		addSlowedSpeed(x);
 		addVolumeSlider(x, Label.TOOLBAR_VOLUME, Config.volume, this::changeVolume);
 		addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, Config.sfxVolume, this::changeSFXVolume);
+		addSlowedSpeed(x);
 
 		updateValues();
 
@@ -339,14 +352,14 @@ public class ChartToolbar extends JToolBar {
 	}
 
 	public void updateValues() {
-		midi.field.setSelected(audioHandler.midiNotesPlaying);
-		claps.field.setSelected(audioHandler.claps());
-		metronome.field.setSelected(audioHandler.metronome());
+		midi.setSelected(audioHandler.midiNotesPlaying);
+		claps.setSelected(audioHandler.claps());
+		metronome.setSelected(audioHandler.metronome());
 		waveformGraph.field.setSelected(waveFormDrawer.drawing());
 		waveformGraph.field.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
 		intensityRMSIndicator.field.setEnabled(waveFormDrawer.drawing());
 		intensityRMSIndicator.field.setSelected(!waveFormDrawer.isIntensityRMSVisible());
-		repeater.field.setSelected(repeatManager.isOn());
+		repeater.setSelected(repeatManager.isOn());
 
 		gridSize.field.setTextWithoutEvent(Config.gridSize + "");
 		switch (Config.gridType) {

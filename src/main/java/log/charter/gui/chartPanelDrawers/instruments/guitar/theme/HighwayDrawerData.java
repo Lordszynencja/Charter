@@ -30,12 +30,12 @@ public class HighwayDrawerData {
 		toneChanges = new DrawableShapeList();
 		anchors = new DrawableShapeList();
 		chordNames = new DrawableShapeList();
+		highlights = new DrawableShapeList();
 		noteTails = new DrawableShapeList();
 		notes = new DrawableShapeList();
 		slideFrets = new DrawableShapeList();
 		bendValues = new DrawableShapeList();
 		handShapes = new DrawableShapeList();
-		highlights = new DrawableShapeList();
 		 noteIds = new DrawableShapeList();
 
 		this.g = g;
@@ -46,11 +46,11 @@ public class HighwayDrawerData {
 		toneChanges.draw(g);
 		anchors.draw(g);
 		chordNames.draw(g);
+		handShapes.draw(g);
 		noteTails.draw(g);
 		notes.draw(g);
 		slideFrets.draw(g);
 		bendValues.draw(g);
-		handShapes.draw(g);
 		highlights.draw(g);
 		noteIds.draw(g);
 	}

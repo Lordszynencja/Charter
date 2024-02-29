@@ -2,12 +2,9 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
 import static java.lang.Math.max;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.GraphicalConfig.anchorInfoHeight;
-import static log.charter.data.config.GraphicalConfig.chordHeight;
-import static log.charter.data.config.GraphicalConfig.noteHeight;
+import static log.charter.data.config.GraphicalConfig.*;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.*;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.util.ColorUtils.setAlpha;
@@ -22,6 +19,7 @@ import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -62,10 +60,10 @@ public class ModernThemeNotes implements ThemeNotes {
 	private static BufferedImage fullMuteIcon = null;
 
 	private static Font chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, chordHeight); // changed
-	private static Font fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2); // changed
+	private static Font fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2 ); // changed
 	private static Font smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
-	private static BufferedImage generateNoteIcon(final Color innerColor, final Color borderColor) {
+    private static BufferedImage generateNoteIcon(final Color innerColor, final Color borderInnerColor, final Color borderOuterColor) {
 		final int size = noteHeight;
 
 		final BufferedImage icon = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
@@ -73,26 +71,37 @@ public class ModernThemeNotes implements ThemeNotes {
 
 		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		final int borderSize = max(2, size / 15);
-		final Ellipse2D inner = new Ellipse2D.Double(borderSize, borderSize, size - 2 * borderSize,
-				size - 2 * borderSize);
+		final int borderSize = max(1, size / 15);
+		final int borderInnerSize = borderSize * 2;
+
+		final Ellipse2D inner = new Ellipse2D.Double(borderInnerSize, borderInnerSize, size - 2 * borderInnerSize,
+				size - 2 * borderInnerSize);
 		if (innerColor != null) {
 			graphics.setColor(innerColor);
 			graphics.fill(inner);
 		}
 
-		if (borderColor != null) {
-			final Ellipse2D outer = new Ellipse2D.Double(0, 0, size, size);
-			final Area area = new Area(outer);
-			area.subtract(new Area(inner));
-			graphics.setColor(borderColor);
-			graphics.fill(area);
+		if (borderOuterColor != null) {
+			final Ellipse2D outer1 = new Ellipse2D.Double(0, 0, size, size);
+			final Area area1 = new Area(outer1);
+			area1.subtract(new Area(inner));
+			graphics.setColor(borderOuterColor);
+			graphics.fill(area1);
+		}
+
+		if (borderInnerColor != null) {
+			final Ellipse2D outer2 = new Ellipse2D.Double(borderSize, borderSize, size - 2 * borderSize,
+					size - 2 * borderSize);
+			final Area area2 = new Area(outer2);
+			area2.subtract(new Area(inner));
+			graphics.setColor(borderInnerColor);
+			graphics.fill(area2);
 		}
 
 		return icon;
 	}
 
-	private static BufferedImage generateHarmonicNoteIcon(final Color innerColor, final Color borderColor) {
+	private static BufferedImage generateHarmonicNoteIcon(final Color innerColor, final Color borderInnerColor, final Color borderOuterColor) {
 		final int size = noteHeight;
 
 		final BufferedImage icon = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
@@ -100,19 +109,47 @@ public class ModernThemeNotes implements ThemeNotes {
 
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+		final int borderSize = Math.max(1, size / 15);
+		final int borderInnerSize = borderSize * 2;
+
+		final GeneralPath inner = new GeneralPath();
+		inner.moveTo(size / 2, borderInnerSize);
+		inner.lineTo(size - borderInnerSize, size / 2);
+		inner.lineTo(size / 2, size - borderInnerSize);
+		inner.lineTo(borderInnerSize, size / 2);
+		inner.closePath();
+
 		if (innerColor != null) {
 			g.setColor(innerColor);
-			g.fill(new Polygon(new int[] { 1, size / 2, size - 1, size / 2 },
-					new int[] { size / 2, size - 1, size / 2, 1 }, 4));
+			g.fill(inner);
 		}
 
-		if (borderColor != null) {
-			final Area area = new Area(new Polygon(new int[] { 0, size / 2, size, size / 2 },
-					new int[] { size / 2, size, size / 2, 0 }, 4));
-			area.subtract(new Area(new Polygon(new int[] { 2, size / 2, size - 2, size / 2 },
-					new int[] { size / 2, size - 2, size / 2, 2 }, 4)));
-			g.setColor(borderColor);
-			g.fill(area);
+		if (borderOuterColor != null) {
+			final GeneralPath outer1 = new GeneralPath();
+			outer1.moveTo(size / 2, 0);
+			outer1.lineTo(size, size / 2);
+			outer1.lineTo(size / 2, size);
+			outer1.lineTo(0, size / 2);
+			outer1.closePath();
+
+			final Area area1 = new Area(outer1);
+			area1.subtract(new Area(inner));
+			g.setColor(borderOuterColor);
+			g.fill(area1);
+		}
+
+		if (borderInnerColor != null) {
+			final GeneralPath outer2 = new GeneralPath();
+			outer2.moveTo(size / 2, borderSize);
+			outer2.lineTo(size - borderSize, size / 2);
+			outer2.lineTo(size / 2, size - borderSize);
+			outer2.lineTo(borderSize, size / 2);
+			outer2.closePath();
+
+			final Area area2 = new Area(outer2);
+			area2.subtract(new Area(inner));
+			g.setColor(borderInnerColor);
+			g.fill(area2);
 		}
 
 		return icon;
@@ -258,17 +295,18 @@ public class ModernThemeNotes implements ThemeNotes {
 		for (int string = 0; string < maxStrings; string++) {
 
 			final int stringId = stringId(string, maxStrings);
-			final Color borderColor = getStringBasedColor(StringColorLabelType.LANE, string, maxStrings);
-			final Color innerColor = borderColor.darker().darker();
-			noteIcons[stringId] = generateNoteIcon(innerColor, borderColor);
-			linkedNoteIcons[stringId] = generateNoteIcon(setAlpha(innerColor, 128), setAlpha(borderColor, 128));
-			harmonicNoteIcons[stringId] = generateHarmonicNoteIcon(innerColor, borderColor);
+			final Color borderInnerColor = getStringBasedColor(StringColorLabelType.LANE, string, maxStrings);
+			final Color innerColor = borderInnerColor.darker().darker();
+			final Color borderOuterColor = Color.BLACK;
+			noteIcons[stringId] = generateNoteIcon(innerColor, borderInnerColor, borderOuterColor);
+			linkedNoteIcons[stringId] = generateNoteIcon(innerColor.darker().darker(), borderInnerColor, borderOuterColor);
+			harmonicNoteIcons[stringId] = generateHarmonicNoteIcon(innerColor, borderInnerColor, borderOuterColor);
 		}
 
-		noteSelectIcon = generateNoteIcon(null, ColorLabel.SELECT.color());
-		noteHighlightIcon = generateNoteIcon(null, ColorLabel.HIGHLIGHT.color());
-		harmonicNoteSelectIcon = generateHarmonicNoteIcon(null, ColorLabel.SELECT.color());
-		harmonicNoteHighlightIcon = generateHarmonicNoteIcon(null, ColorLabel.HIGHLIGHT.color());
+		noteSelectIcon = generateNoteIcon(null, null, ColorLabel.SELECT.color());
+		noteHighlightIcon = generateNoteIcon(null, null, ColorLabel.HIGHLIGHT.color());
+		harmonicNoteSelectIcon = generateHarmonicNoteIcon(null, null, ColorLabel.SELECT.color());
+		harmonicNoteHighlightIcon = generateHarmonicNoteIcon(null, null, ColorLabel.HIGHLIGHT.color());
 
 		hammerOnIcon = generateHammerOnIcon();
 		pullOffIcon = generatePullOffIcon();
@@ -279,8 +317,8 @@ public class ModernThemeNotes implements ThemeNotes {
 		palmMuteIcon = generatePalmMuteIcon();
 		fullMuteIcon = generateFullMuteIcon();
 
-		chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, chordHeight); // changed
-		fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2); // changed
+		chordNameFont = new Font(Font.SANS_SERIF, Font.BOLD, chordHeight); //
+		fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight  / 2); // changed
 		smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
 		ModernThemeBends.reloadGraphics();
@@ -367,7 +405,7 @@ public class ModernThemeNotes implements ThemeNotes {
 
 	private void addLinkedFretNumber(final EditorNoteDrawingData note, final int y) {
 		final Font font = note.fretNumber < 10 ? fretFont : smallFretFont;
-		data.notes.add(new CenteredText(new Position2D(note.x, y), font, note.fretNumber + "", Color.WHITE));
+		data.notes.add(new CenteredText(new Position2D(note.x, y), font, "\uD83D\uDD17", Color.WHITE));
 	}
 
 	private void addNoteHeadShape(final EditorNoteDrawingData note, final int y) {
