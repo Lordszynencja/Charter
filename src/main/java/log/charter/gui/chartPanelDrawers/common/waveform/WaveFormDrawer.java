@@ -1,8 +1,7 @@
-package log.charter.gui.chartPanelDrawers.common;
+package log.charter.gui.chartPanelDrawers.common.waveform;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.Math.sqrt;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.util.ScalingUtils.timeToX;
@@ -18,39 +17,14 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.sound.data.MusicDataInt;
 
 public class WaveFormDrawer {
-	private static class RMSCalculator {
-		private int counter = 0;
-		private final float[] values;
-
-		public RMSCalculator(final int[] musicValues, final int frameRate, final int start) {
-			values = new float[frameRate];
-
-			for (int i = 0; i < frameRate; i++) {
-				final int position = max(0, min(musicValues.length - 1, start - frameRate + i));
-				addValue(musicValues[position]);
-			}
-		}
-
-		public void addValue(final int val) {
-			values[counter++ % values.length] = val * val;
-		}
-
-		public double getRMS() {
-			float sum = 0;
-			for (final float value : values) {
-				sum += value;
-			}
-
-			return sqrt(sum) / 0x7FFF;
-		}
-	}
-
 	private static final Color normalColor = ChartPanelColors.ColorLabel.WAVEFORM_COLOR.color();
 	private static final Color highIntensityColor = ChartPanelColors.ColorLabel.WAVEFORM_RMS_COLOR.color();
 	private static final Color normalColorZoomed = ChartPanelColors.ColorLabel.WAVEFORM_COLOR.colorWithAlpha(32);
-	private static final Color highIntensityColorZoomed = ChartPanelColors.ColorLabel.WAVEFORM_RMS_COLOR.colorWithAlpha(64);
+	private static final Color highIntensityColorZoomed = ChartPanelColors.ColorLabel.WAVEFORM_RMS_COLOR
+			.colorWithAlpha(64);
 
 	private ChartData data;
 	private ChartPanel chartPanel;
@@ -58,10 +32,10 @@ public class WaveFormDrawer {
 	private ModeManager modeManager;
 
 	private boolean drawWaveForm;
-	private boolean showIntensityRMS; // add
+	private boolean showIntensityRMS;
 
 	public void init(final ChartData data, final ChartPanel chartPanel, final ChartToolbar chartToolbar,
-					 final ModeManager modeManager) {
+			final ModeManager modeManager) {
 		this.data = data;
 		this.chartPanel = chartPanel;
 		this.chartToolbar = chartToolbar;
@@ -72,14 +46,16 @@ public class WaveFormDrawer {
 		drawWaveForm = !drawWaveForm;
 		chartToolbar.updateValues();
 	}
-	public void toggleIntensityRMS() {  //
+
+	public void toggleIntensityRMS() { //
 		showIntensityRMS = !showIntensityRMS;
 		chartToolbar.updateValues();
 	}
 
-	public boolean isIntensityRMSVisible() {  //
+	public boolean isIntensityRMSVisible() { //
 		return showIntensityRMS;
 	}
+
 	public boolean drawing() {
 		return drawWaveForm || modeManager.getMode() == EditMode.TEMPO_MAP;
 	}
@@ -90,9 +66,9 @@ public class WaveFormDrawer {
 		int minValue = 0;
 		boolean highIntensity = false;
 
-		final float timeToFrameMultiplier = data.music.outFormat.getFrameRate() / 1000;
+		final float timeToFrameMultiplier = data.music.frameRate() / 1000;
 
-		final int[] musicValues = data.music.data[0];
+		final short[] musicValues = data.music.data[0];
 		int start = (int) (xToTime(0, data.time) * timeToFrameMultiplier);
 		start = max(1, start);
 		int end = (int) (xToTime(chartPanel.getWidth(), data.time) * timeToFrameMultiplier);
@@ -100,7 +76,7 @@ public class WaveFormDrawer {
 
 		final int midY = (lanesBottom + lanesTop) / 2;
 		final int yScale = (lanesBottom - lanesTop) * 9 / 20;
-		final RMSCalculator rmsCalculator = new RMSCalculator(musicValues, (int) timeToFrameMultiplier, start);
+		final RMSCalculator rmsCalculator = new RMSCalculator((int) timeToFrameMultiplier);
 
 		for (int frame = start; frame < end; frame++) {
 			final int newPosition = timeToX(frame / timeToFrameMultiplier, data.time);
@@ -123,7 +99,7 @@ public class WaveFormDrawer {
 				minValue = newHeight;
 			}
 
-			rmsCalculator.addValue(musicValues[frame]);
+			rmsCalculator.addValue((float) musicValues[frame] / MusicDataInt.maxValue);
 			if (!showIntensityRMS && rmsCalculator.getRMS() > 4) {
 				highIntensity = true;
 			}
@@ -131,9 +107,9 @@ public class WaveFormDrawer {
 	}
 
 	private void drawFull(final Graphics g) {
-		final float timeToFrameMultiplier = data.music.outFormat.getFrameRate() / 1000;
+		final float timeToFrameMultiplier = data.music.frameRate() / 1000;
 
-		final int[] musicValues = data.music.data[0];
+		final short[] musicValues = data.music.data[0];
 		int start = (int) (xToTime(0, data.time) * timeToFrameMultiplier);
 		start = max(1, start);
 		int end = (int) (xToTime(chartPanel.getWidth(), data.time) * timeToFrameMultiplier);
@@ -145,7 +121,7 @@ public class WaveFormDrawer {
 		int x1 = timeToX((int) ((start - 1) / timeToFrameMultiplier), data.time);
 		int y0 = 0;
 		int y1 = musicValues[start - 1] * yScale / 0x8000;
-		final RMSCalculator rmsCalculator = new RMSCalculator(musicValues, (int) timeToFrameMultiplier, start);
+		final RMSCalculator rmsCalculator = new RMSCalculator((int) timeToFrameMultiplier);
 
 		for (int frame = start; frame < end; frame++) {
 			x0 = x1;
@@ -153,7 +129,7 @@ public class WaveFormDrawer {
 			y0 = y1;
 			y1 = musicValues[frame] * yScale / 0x8000;
 
-			rmsCalculator.addValue(musicValues[frame]);
+			rmsCalculator.addValue((float) musicValues[frame] / MusicDataInt.maxValue);
 
 			g.setColor(rmsCalculator.getRMS() > 4 ? highIntensityColorZoomed : normalColorZoomed);
 			g.drawLine(x0, midY + y0, x1, midY + y1);

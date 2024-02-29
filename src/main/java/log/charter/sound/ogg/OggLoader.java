@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -21,22 +22,38 @@ import com.jcraft.jorbis.DspState;
 import com.jcraft.jorbis.Info;
 
 import log.charter.io.Logger;
-import log.charter.sound.MusicData;
+import log.charter.sound.data.MusicDataShort;
 import log.charter.util.RW;
 
 /**
  * Based on ExamplePlayer by Jon Kristensen
  */
 public class OggLoader {
+	private static final class LoadingResult {
+		public final byte[] bytes;
+		public final float rate;
+		public final int channels;
+
+		public LoadingResult(final byte[] bytes, final float rate, final int channels) {
+			this.bytes = bytes;
+			this.rate = rate;
+			this.channels = channels;
+		}
+	}
+
 	private static final int BUF_SIZE = 2048;
 
-	public static MusicData load(final String path) {
+	private static <T> T load(final String path, final Function<LoadingResult, T> transformer) {
 		try {
-			return new OggLoader(path).load();
+			return transformer.apply(new OggLoader(path).load());
 		} catch (final IOException | UnsupportedAudioFileException e) {
 			error("Couldnt load ogg file " + path, e);
+			return null;
 		}
-		return null;
+	}
+
+	public static MusicDataShort load(final String path) {
+		return load(path, result -> new MusicDataShort(result.bytes, result.rate, result.channels, 2));
 	}
 
 	private byte[] buffer = null;
@@ -137,15 +154,13 @@ public class OggLoader {
 		pcmIndex = new int[jorbisInfo.channels];
 	}
 
-	private MusicData load() throws UnsupportedAudioFileException, IOException {
+	private LoadingResult load() throws UnsupportedAudioFileException, IOException {
 		initializeJOrbis();
 
 		readHeader();
 		initializeSound();
 		readBody();
 		cleanUp();
-
-		final float rate = jorbisInfo.rate;
 
 		int length = 0;
 		for (final byte[] bytes : bytesList) {
@@ -159,7 +174,7 @@ public class OggLoader {
 			last += bytes.length;
 		}
 
-		return new MusicData(buffer, rate);
+		return new LoadingResult(buffer, jorbisInfo.rate, jorbisInfo.channels);
 	}
 
 	private void readBody() {
@@ -167,33 +182,33 @@ public class OggLoader {
 
 		while (needMoreData && !stopped) {
 			switch (joggSyncState.pageout(joggPage)) {
-			case -1:
-			case 0:
-				break;
-			case 1:
-				joggStreamState.pagein(joggPage);
-
-				if (joggPage.granulepos() == 0) {
-					needMoreData = false;
+				case -1:
+				case 0:
 					break;
-				}
+				case 1:
+					joggStreamState.pagein(joggPage);
 
-				processPackets: while (!stopped) {
-					switch (joggStreamState.packetout(joggPacket)) {
-					case -1:
-					case 0:
-						break processPackets;
-					case 1:
-						decodeCurrentPacket();
+					if (joggPage.granulepos() == 0) {
+						needMoreData = false;
+						break;
 					}
-				}
 
-				if (joggPage.eos() != 0) {
-					needMoreData = false;
-				}
-				if (stopped) {
-					return;
-				}
+					processPackets: while (!stopped) {
+						switch (joggStreamState.packetout(joggPacket)) {
+							case -1:
+							case 0:
+								break processPackets;
+							case 1:
+								decodeCurrentPacket();
+						}
+					}
+
+					if (joggPage.eos() != 0) {
+						needMoreData = false;
+					}
+					if (stopped) {
+						return;
+					}
 			}
 
 			if (needMoreData) {
@@ -234,68 +249,68 @@ public class OggLoader {
 			joggSyncState.wrote(count);
 
 			switch (packet) {
-			case 1:
-				switch (joggSyncState.pageout(joggPage)) {
-				case -1:
-					throw new RuntimeException("There is a hole in the first packet data.");
-				case 0:
-					break;
 				case 1:
-					joggStreamState.init(joggPage.serialno());
-					joggStreamState.reset();
+					switch (joggSyncState.pageout(joggPage)) {
+						case -1:
+							throw new RuntimeException("There is a hole in the first packet data.");
+						case 0:
+							break;
+						case 1:
+							joggStreamState.init(joggPage.serialno());
+							joggStreamState.reset();
 
-					jorbisInfo.init();
-					jorbisComment.init();
+							jorbisInfo.init();
+							jorbisComment.init();
 
-					if (joggStreamState.pagein(joggPage) == -1) {
-						throw new RuntimeException("We got an error while reading the first header page.");
+							if (joggStreamState.pagein(joggPage) == -1) {
+								throw new RuntimeException("We got an error while reading the first header page.");
+							}
+
+							if (joggStreamState.packetout(joggPacket) != 1) {
+								throw new RuntimeException("We got an error while reading the first header packet.");
+							}
+
+							if (jorbisInfo.synthesis_headerin(jorbisComment, joggPacket) < 0) {
+								throw new RuntimeException(
+										"We got an error while interpreting the first packet. Apparently, it's not Vorbis data.");
+							}
+
+							packet++;
+							break;
 					}
 
-					if (joggStreamState.packetout(joggPacket) != 1) {
-						throw new RuntimeException("We got an error while reading the first header packet.");
-					}
-
-					if (jorbisInfo.synthesis_headerin(jorbisComment, joggPacket) < 0) {
-						throw new RuntimeException(
-								"We got an error while interpreting the first packet. Apparently, it's not Vorbis data.");
-					}
-
-					packet++;
-					break;
-				}
-
-				if (packet == 1) {
-					break;
-				}
-			case 2:
-			case 3:
-				switch (joggSyncState.pageout(joggPage)) {
-				case -1:
-					throw new RuntimeException("There is a hole in the second or third packet data.");
-				case 0:
-					break;
-				case 1:
-					joggStreamState.pagein(joggPage);
-
-					switch (joggStreamState.packetout(joggPacket)) {
-					case -1:
-						throw new RuntimeException("There is a hole in the first packet data.");
-					case 0:
-						break;
-					case 1:
-						jorbisInfo.synthesis_headerin(jorbisComment, joggPacket);
-						packet++;
-
-						if (packet == 4) {
-							needMoreData = false;
-						}
-						break;
-					default:
+					if (packet == 1) {
 						break;
 					}
+				case 2:
+				case 3:
+					switch (joggSyncState.pageout(joggPage)) {
+						case -1:
+							throw new RuntimeException("There is a hole in the second or third packet data.");
+						case 0:
+							break;
+						case 1:
+							joggStreamState.pagein(joggPage);
+
+							switch (joggStreamState.packetout(joggPacket)) {
+								case -1:
+									throw new RuntimeException("There is a hole in the first packet data.");
+								case 0:
+									break;
+								case 1:
+									jorbisInfo.synthesis_headerin(jorbisComment, joggPacket);
+									packet++;
+
+									if (packet == 4) {
+										needMoreData = false;
+									}
+									break;
+								default:
+									break;
+							}
+							break;
+					}
 					break;
-				}
-				break;
 			}
 
 			index = joggSyncState.buffer(BUF_SIZE);

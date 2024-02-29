@@ -1,7 +1,10 @@
 package log.charter.sound;
 
+import static java.lang.Math.min;
 import static javax.sound.sampled.AudioSystem.getLine;
+import static log.charter.data.config.Config.audioBufferSize;
 
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 import javax.sound.sampled.DataLine.Info;
@@ -9,25 +12,24 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 import log.charter.io.Logger;
+import log.charter.sound.data.MusicData;
 
 public class RepeatingPlayer implements IPlayer {
-	private static final int BUFF_SIZE = 1024 * 128;
-
-	private final Supplier<MusicData> musicDataSupplier;
+	private final Supplier<MusicData<?>> musicDataSupplier;
 	private final SourceDataLine line;
 
 	private boolean playAgain = false;
 	private boolean stopped = false;
 
-	public RepeatingPlayer(final Supplier<MusicData> musicDataSupplier) {
+	public RepeatingPlayer(final Supplier<MusicData<?>> musicDataSupplier) {
 		this.musicDataSupplier = musicDataSupplier;
 
-		final MusicData musicData = musicDataSupplier.get();
-		final Info info = new Info(SourceDataLine.class, musicData.outFormat);
+		final MusicData<?> musicData = musicDataSupplier.get();
+		final Info info = new Info(SourceDataLine.class, musicData.format());
 		SourceDataLine sourceDataLine;
 		try {
 			sourceDataLine = (SourceDataLine) getLine(info);
-			sourceDataLine.open(musicData.outFormat);
+			sourceDataLine.open(musicData.format());
 		} catch (final LineUnavailableException e) {
 			Logger.error("Couldn't open line for repeating player", e);
 			sourceDataLine = null;
@@ -52,16 +54,16 @@ public class RepeatingPlayer implements IPlayer {
 
 	private void playSound() {
 		line.flush();
-		final byte[] data = musicDataSupplier.get().getStereoData();
+		final byte[] data = musicDataSupplier.get().getBytes();
 		int startByte = 0;
 
-		while ((data.length - startByte) > BUFF_SIZE) {
-			line.write(data, startByte, BUFF_SIZE);
-			startByte += BUFF_SIZE;
-		}
+		while (startByte < data.length) {
+			if (stopped) {
+				return;
+			}
 
-		if ((data.length - startByte) > 0) {
-			line.write(data, startByte, data.length - startByte);
+			final byte[] buffer = Arrays.copyOfRange(data, startByte, min(data.length, startByte + audioBufferSize));
+			startByte += line.write(buffer, 0, buffer.length);
 		}
 
 		playAgain = false;

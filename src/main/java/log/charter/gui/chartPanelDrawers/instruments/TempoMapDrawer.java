@@ -3,7 +3,7 @@ package log.charter.gui.chartPanelDrawers.instruments;
 import java.awt.Graphics;
 
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
-import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
+import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 
 public class TempoMapDrawer {

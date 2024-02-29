@@ -8,7 +8,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
-import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
+import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.instruments.TempoMapDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;

@@ -45,7 +45,7 @@ public enum Action {
 	REDO(new Shortcut(KeyEvent.VK_R).ctrl(), Label.REDO, TEMPO_MAP, VOCALS, GUITAR), //
 	SAVE(new Shortcut(KeyEvent.VK_S).ctrl(), Label.SAVE_PROJECT, TEMPO_MAP, VOCALS, GUITAR), //
 	SAVE_AS(new Shortcut(KeyEvent.VK_S).ctrl().shift(), Label.SAVE_PROJECT_AS, TEMPO_MAP, VOCALS, GUITAR), //
-	SELECT_ALL_NOTES(new Shortcut(KeyEvent.VK_A).ctrl(), Label.SELECT_ALL_NOTES), //
+	SELECT_ALL_NOTES(new Shortcut(KeyEvent.VK_A).ctrl(), Label.SELECT_ALL_NOTES, VOCALS, GUITAR), //
 	SLOW_BACKWARD(new Shortcut(KeyEvent.VK_LEFT).ctrl(), Label.SLOW_BACKWARD, TEMPO_MAP, VOCALS, GUITAR), //
 	SLOW_FORWARD(new Shortcut(KeyEvent.VK_RIGHT).ctrl(), Label.SLOW_FORWARD, TEMPO_MAP, VOCALS, GUITAR), //
 	SNAP_ALL(new Shortcut(KeyEvent.VK_G).ctrl().shift(), Label.SNAP_ALL, VOCALS, GUITAR), //

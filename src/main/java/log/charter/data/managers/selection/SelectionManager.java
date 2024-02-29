@@ -196,10 +196,6 @@ public class SelectionManager {
 	}
 
 	public void selectAllNotes() {
-		if (data.isEmpty) {
-			return;
-		}
-
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			chordsNotesManager.addAll();
 		} else if (modeManager.getMode() == EditMode.VOCALS) {

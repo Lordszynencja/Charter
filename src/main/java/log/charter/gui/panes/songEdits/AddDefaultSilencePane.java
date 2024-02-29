@@ -2,6 +2,7 @@ package log.charter.gui.panes.songEdits;
 
 import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
+import static log.charter.sound.data.AudioUtils.generateSilence;
 
 import java.io.File;
 
@@ -12,8 +13,8 @@ import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ParamsPane;
 import log.charter.song.Beat;
-import log.charter.sound.MusicData;
 import log.charter.sound.StretchedFileLoader;
+import log.charter.sound.data.MusicDataShort;
 import log.charter.sound.ogg.OggWriter;
 import log.charter.util.RW;
 
@@ -58,10 +59,10 @@ public class AddDefaultSilencePane extends ParamsPane {
 			return;
 		}
 
-		final MusicData songMusicData = data.music;
-		final MusicData silenceMusicData = MusicData.generateSilence(movement / 1000.0,
-				songMusicData.outFormat.getSampleRate());
-		final MusicData joined = silenceMusicData.join(songMusicData);
+		final MusicDataShort songMusicData = data.music;
+		final MusicDataShort silenceMusicData = generateSilence(movement / 1000.0, songMusicData.sampleRate(),
+				songMusicData.channels());
+		final MusicDataShort joined = silenceMusicData.join(songMusicData);
 		data.music = joined;
 		data.songChart.beatsMap.songLengthMs = joined.msLength();
 

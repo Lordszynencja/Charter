@@ -29,7 +29,7 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
-import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
+import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;

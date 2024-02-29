@@ -26,7 +26,7 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
+import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.FieldWithLabel;
 import log.charter.gui.components.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.TextInputWithValidation;

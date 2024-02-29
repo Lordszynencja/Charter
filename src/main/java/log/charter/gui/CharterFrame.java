@@ -36,7 +36,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
-import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
+import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.ChartMap;
 import log.charter.gui.components.preview3D.Preview3DFrame;
 import log.charter.gui.components.preview3D.Preview3DPanel;

@@ -6,11 +6,11 @@ import java.io.InputStream;
 
 import log.charter.data.config.Config;
 import log.charter.io.Logger;
-import log.charter.sound.MusicData;
+import log.charter.sound.data.MusicDataShort;
 import log.charter.sound.wav.WavWriter;
 
 public class OggWriter {
-	public static void writeOgg(final String path, final MusicData musicData) {
+	public static void writeOgg(final String path, final MusicDataShort musicData) {
 		final File wav = new File(path + "_tmp_" + System.currentTimeMillis() + ".wav");
 		WavWriter.write(musicData, wav);
 		final File ogg = new File(path);

@@ -44,7 +44,7 @@ import log.charter.io.rsc.xml.ChartProject;
 import log.charter.song.Arrangement;
 import log.charter.song.SongChart;
 import log.charter.song.vocals.Vocals;
-import log.charter.sound.MusicData;
+import log.charter.sound.data.MusicDataShort;
 import log.charter.util.FileChooseUtils;
 import log.charter.util.RW;
 
@@ -238,7 +238,7 @@ public class SongFileHandler {
 		final File musicFile = new File(songFolder, musicFileName);
 		RW.writeB(musicFile, RW.readB(songFile));
 
-		final MusicData musicData = MusicData.readFile(musicFile);
+		final MusicDataShort musicData = MusicDataShort.readFile(musicFile);
 		if (musicData == null) {
 			frame.showPopup(Label.MUSIC_DATA_NOT_FOUND.label());
 			return;
@@ -261,13 +261,13 @@ public class SongFileHandler {
 		audioHandler.setSong();
 	}
 
-	public MusicData chooseMusicFile(final String startingDir) {
+	public MusicDataShort chooseMusicFile(final String startingDir) {
 		final File musicFile = FileChooseUtils.chooseMusicFile(frame, startingDir);
 		if (musicFile == null) {
 			return null;
 		}
 
-		return MusicData.readFile(musicFile);
+		return MusicDataShort.readFile(musicFile);
 	}
 
 	public File chooseSongFolder(final String audioFileDirectory, final String defaultFolderName) {
@@ -324,9 +324,9 @@ public class SongFileHandler {
 		return project;
 	}
 
-	private MusicData loadMusicData(final LoadingDialog loadingDialog, final int progressAfter,
+	private MusicDataShort loadMusicData(final LoadingDialog loadingDialog, final int progressAfter,
 			final ChartProject project, final String dir) {
-		final MusicData musicData = MusicData.readFile(new File(dir, project.musicFileName));
+		final MusicDataShort musicData = MusicDataShort.readFile(new File(dir, project.musicFileName));
 		if (musicData == null) {
 			frame.showPopup(Label.WRONG_MUSIC_FILE.label());
 			return null;
@@ -351,7 +351,7 @@ public class SongFileHandler {
 		filesToBackup.add(vocalsFileName);
 
 		final String dir = projectFileChosen.getParent() + File.separator;
-		final MusicData musicData = loadMusicData(loadingDialog, 2, project, dir);
+		final MusicDataShort musicData = loadMusicData(loadingDialog, 2, project, dir);
 		if (musicData == null) {
 			return;
 		}
@@ -401,7 +401,7 @@ public class SongFileHandler {
 			return;
 		}
 
-		final MusicData musicData = MusicData.readFile(musicFile);
+		final MusicDataShort musicData = MusicDataShort.readFile(musicFile);
 		if (musicData != null) {
 			data.music = musicData;
 			data.songChart.musicFileName = musicFile.getName();
@@ -424,7 +424,7 @@ public class SongFileHandler {
 
 		LoadingDialog loadingDialog = new LoadingDialog(frame, 1);
 		loadingDialog.setProgress(0, Label.LOADING_MUSIC_FILE.label());
-		final MusicData musicData = MusicData.readFile(songFile);
+		final MusicDataShort musicData = MusicDataShort.readFile(songFile);
 		if (musicData == null) {
 			loadingDialog.dispose();
 			frame.showPopup(Label.MUSIC_FILE_COULDNT_BE_LOADED.label());

@@ -13,17 +13,18 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
 
-import log.charter.sound.MusicData;
+import log.charter.sound.data.MusicDataShort;
 import log.charter.util.RW;
 
 public class Mp3Loader {
-	public static MusicData load(final String path) {
+	public static MusicDataShort load(final String path) {
 		try {
-			final AudioInputStream in = getAudioInputStream(new BufferedInputStream(new ByteArrayInputStream(RW.readB(
-					path))));
-
+			final AudioInputStream in = getAudioInputStream(
+					new BufferedInputStream(new ByteArrayInputStream(RW.readB(path))));
+			final int channels = in.getFormat().getChannels();
 			final float rate = in.getFormat().getSampleRate();
-			final AudioFormat outFormat = new AudioFormat(Encoding.PCM_SIGNED, rate, 16, 2, 4, rate, false);
+			final AudioFormat outFormat = new AudioFormat(Encoding.PCM_SIGNED, rate, 16, channels, 2 * channels, rate,
+					false);
 			final AudioInputStream formattedIn = getAudioInputStream(outFormat, in);
 
 			final List<byte[]> bytesList = new ArrayList<>();
@@ -46,7 +47,7 @@ public class Mp3Loader {
 				last += bytes.length;
 			}
 
-			return new MusicData(buffer, rate);
+			return new MusicDataShort(buffer, rate, channels, 2);
 		} catch (final Exception e) {
 			error("Couldnt load mp3 file " + path, e);
 		}

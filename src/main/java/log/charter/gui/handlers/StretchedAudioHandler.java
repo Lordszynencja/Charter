@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import log.charter.io.Logger;
-import log.charter.sound.MusicData;
 import log.charter.sound.StretchedFileLoader;
+import log.charter.sound.data.MusicDataShort;
 
 public class StretchedAudioHandler {
 	private String dir;
-	private MusicData musicData;
+	private MusicDataShort musicData;
 
 	private List<Integer> speedsToGenerate = new ArrayList<>();
 	private Map<Integer, Boolean> readySpeeds = new HashMap<>();
@@ -29,13 +29,13 @@ public class StretchedAudioHandler {
 		new Thread(this::run).start();
 	}
 
-	public void setData(final String dir, final MusicData musicData) {
+	public void setData(final String dir, final MusicDataShort musicData) {
 		this.dir = dir;
 		this.musicData = musicData;
 	}
 
-	public MusicData get(final int speed) {
-		final MusicData result = new StretchedFileLoader(musicData, dir, speed).quickLoad();
+	public MusicDataShort get(final int speed) {
+		final MusicDataShort result = new StretchedFileLoader(musicData, dir, speed).quickLoad();
 		if (result != null) {
 			readySpeeds.put(speed, true);
 			synchronized (speedsToGenerate) {

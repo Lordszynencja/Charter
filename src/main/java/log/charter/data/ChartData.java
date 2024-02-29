@@ -15,14 +15,14 @@ import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.song.Arrangement;
 import log.charter.song.Level;
 import log.charter.song.SongChart;
-import log.charter.sound.MusicData;
+import log.charter.sound.data.MusicDataShort;
 
 public class ChartData {
 	public String path = Config.lastDir;
 	public String projectFileName = "project.rscp";
 	public boolean isEmpty = true;
 	public SongChart songChart = null;
-	public MusicData music = new MusicData(new byte[0], 44100);
+	public MusicDataShort music = new MusicDataShort();
 
 	public int currentArrangement = 0;
 	public int currentLevel = 0;
@@ -46,13 +46,14 @@ public class ChartData {
 		this.undoSystem = undoSystem;
 	}
 
-	public void setNewSong(final File songFolder, final SongChart song, final MusicData musicData,
+	public void setNewSong(final File songFolder, final SongChart song, final MusicDataShort musicData,
 			final String projectFileName) {
 		setSong(songFolder.getAbsolutePath(), song, musicData, projectFileName, EditMode.TEMPO_MAP, 0, 0, 0);
 	}
 
-	public void setSong(final String dir, final SongChart song, final MusicData musicData, final String projectFileName,
-			final EditMode editMode, final int arrangement, final int level, final int time) {
+	public void setSong(final String dir, final SongChart song, final MusicDataShort musicData,
+			final String projectFileName, final EditMode editMode, final int arrangement, final int level,
+			final int time) {
 		currentArrangement = arrangement;
 		this.time = time;
 		nextTime = time;

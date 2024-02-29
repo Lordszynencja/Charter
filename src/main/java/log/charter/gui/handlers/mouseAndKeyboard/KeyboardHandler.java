@@ -51,7 +51,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
-import log.charter.gui.chartPanelDrawers.common.WaveFormDrawer;
+import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.SongFileHandler;
