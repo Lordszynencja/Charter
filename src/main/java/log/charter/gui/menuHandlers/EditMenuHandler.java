@@ -39,7 +39,7 @@ class EditMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu(Label.EDIT_MENU.label());
+		final JMenu menu = createMenu(Label.EDIT_MENU);
 		menu.add(createItem(keyboardHandler, Action.UNDO));
 		menu.add(createItem(keyboardHandler, Action.REDO));
 

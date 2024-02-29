@@ -46,7 +46,7 @@ class GuitarMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu(Label.GUITAR_MENU.label());
+		final JMenu menu = createMenu(Label.GUITAR_MENU);
 		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_UP));
 		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_DOWN));
 		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_UP_SIMPLE));
@@ -55,7 +55,7 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(keyboardHandler, Action.MOVE_FRET_DOWN));
 
 		menu.addSeparator();
-		final JMenu noteStatusOperationsSubMenu = new JMenu(Label.NOTE_STATUS_OPERATIONS.label());
+		final JMenu noteStatusOperationsSubMenu = createMenu(Label.NOTE_STATUS_OPERATIONS);
 		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_MUTE));
 		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_MUTE_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_HOPO));

@@ -64,7 +64,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu(Label.FILE_MENU.label());
+		final JMenu menu = createMenu(Label.FILE_MENU);
 		menu.add(createItem(keyboardHandler, Action.NEW_PROJECT));
 		menu.add(createItem(keyboardHandler, Action.OPEN_PROJECT));
 		menu.add(createItem(Label.MAKE_PROJECT_FROM_RS_XML, songFileHandler::openSongWithImportFromArrangementXML));
@@ -72,7 +72,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 		if (modeManager.getMode() != EditMode.EMPTY) {
 			menu.add(createItem(Label.FILE_MENU_OPEN_AUDIO, songFileHandler::openAudioFile));
 
-			final JMenu importSubmenu = new JMenu(Label.FILE_MENU_IMPORT.label());
+			final JMenu importSubmenu = createMenu(Label.FILE_MENU_IMPORT);
 			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_GUITAR, songFileHandler::importRSArrangementXML));
 			importSubmenu
 					.add(createItem(Label.FILE_MENU_IMPORT_RS_VOCALS, songFileHandler::importRSVocalsArrangementXML));

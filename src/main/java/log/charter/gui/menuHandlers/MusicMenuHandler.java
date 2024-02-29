@@ -31,7 +31,7 @@ class MusicMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu(Label.MUSIC_MENU.label());
+		final JMenu menu = createMenu(Label.MUSIC_MENU);
 		menu.add(createItem(keyboardHandler, Action.TOGGLE_REPEATER));
 		menu.add(createItem(keyboardHandler, Action.TOGGLE_REPEAT_START));
 		menu.add(createItem(keyboardHandler, Action.TOGGLE_REPEAT_END));

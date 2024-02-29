@@ -24,7 +24,7 @@ class NotesMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu(Label.NOTES_MENU.label());
+		final JMenu menu = createMenu(Label.NOTES_MENU);
 		menu.add(createItem(keyboardHandler, Action.SNAP_SELECTED));
 		menu.add(createItem(keyboardHandler, Action.SNAP_ALL));
 		menu.add(createItem(keyboardHandler, Action.DOUBLE_GRID));

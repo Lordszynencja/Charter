@@ -29,7 +29,7 @@ class InfoMenuHandler extends CharterMenuHandler {
 	}
 
 	private JMenu prepareLanguagesSubmenu() {
-		final JMenu languagesMenu = new JMenu(Label.INFO_MENU_LANGUAGE.label());
+		final JMenu languagesMenu = createMenu(Label.INFO_MENU_LANGUAGE);
 		final File languagesFolder = new File(Localization.languagesFolder);
 		if (languagesFolder.isDirectory()) {
 			for (final String fileName : languagesFolder.list((dir, name) -> name.endsWith(".txt"))) {
@@ -43,7 +43,7 @@ class InfoMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu(Label.INFO_MENU.label());
+		final JMenu menu = createMenu(Label.INFO_MENU);
 
 		menu.add(createItem(Label.INFO_MENU_VERSION, this::showVersion));
 		menu.add(prepareLanguagesSubmenu());

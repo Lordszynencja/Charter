@@ -267,15 +267,15 @@ public class Localization {
 		TOOLBAR_MIDI("MIDI"), //
 		TOOLBAR_CLAPS("Claps"), //
 		TOOLBAR_METRONOME("Metronome"), //
-        TOOLBAR_WAVEFORM_GRAPH("Waveform"), //
+		TOOLBAR_WAVEFORM_GRAPH("Waveform"), //
 		RMS_INDICATOR("RMS"), //
-        TOOLBAR_REPEATER("\uD83D\uDD01"), // Repeater
-        TOOLBAR_SLOWED_PLAYBACK_SPEED("Playback speed"), //
+		TOOLBAR_REPEATER("\uD83D\uDD01"), // Repeater
+		TOOLBAR_SLOWED_PLAYBACK_SPEED("Playback speed"), //
 		GRID_SIZE("Grid Size: 1/"), //
 		NOTE_GRID_TYPE("\uD83C\uDFB5"), //
 		BEAT_GRID_TYPE("\uD83E\uDD41"), //
-        TOOLBAR_VOLUME("\uD83D\uDD08"), // Volume
-        TOOLBAR_SFX_VOLUME("\uD83C\uDFB8"), // SFX
+		TOOLBAR_VOLUME("\uD83D\uDD08"), // Volume
+		TOOLBAR_SFX_VOLUME("\uD83C\uDFB8"), // SFX
 
 		SLIDE_PANE("Slide options"), //
 		SLIDE_PANE_FRET("Slide to"), //
@@ -433,7 +433,7 @@ public class Localization {
 
 		SONG_FOLDER_SELECT("Create song folder"), //
 		SONG_FOLDER_AUDIO_FILE_FOLDER("Use audio file folder (%s)"), //
-		SONG_FOLDER_CREATE_NEW("Create new folder in %s"), RMS_INDICATOR("RMS"); // ADDED rms
+		SONG_FOLDER_CREATE_NEW("Create new folder in %s");
 
 		private final String defaultLabel;
 

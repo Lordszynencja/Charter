@@ -36,7 +36,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 
 	@Override
 	boolean isApplicable() {
-		return !data.isEmpty;
+		return modeManager.getMode() != EditMode.EMPTY;
 	}
 
 	private void addArrangementsList(final JMenu menu) {
@@ -58,7 +58,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = new JMenu(Label.ARRANGEMENT_MENU.label());
+		final JMenu menu = createMenu(Label.ARRANGEMENT_MENU);
 
 		menu.add(createItem(Label.ARRANGEMENT_MENU_TEMPO_MAP, () -> modeManager.setMode(EditMode.TEMPO_MAP)));
 		menu.add(createItem(Label.ARRANGEMENT_MENU_VOCALS, () -> modeManager.setMode(EditMode.VOCALS)));
