@@ -165,7 +165,7 @@ public class ChartToolbar extends JToolBar {
 	}
 
 	private void addGridSizeInput(final AtomicInteger x) {
-		gridSize = createNumberField(Label.GRID_PANE_GRID_SIZE, LabelPosition.LEFT_PACKED, 25, //
+		gridSize = createNumberField(Label.GRID_SIZE, LabelPosition.LEFT_PACKED, 25, //
 				Config.gridSize, 1, 128, false, newGridSize -> {
 					Config.gridSize = newGridSize;
 					Config.markChanged();
@@ -176,7 +176,7 @@ public class ChartToolbar extends JToolBar {
 	private void addGridSizeButton(final AtomicInteger x, final int horizontalSpacing, final Font font,
 			final String text, final ActionListener actionListener) {
 		final JButton halveGridButton = new JButton(text);
-		//halveGridButton.setUI(new CharterButtonUI());
+		// halveGridButton.setUI(new CharterButtonUI());
 		halveGridButton.setSize(24, elementHeight);
 		halveGridButton.setFont(font);
 		halveGridButton.setFocusable(false);
@@ -216,8 +216,8 @@ public class ChartToolbar extends JToolBar {
 	}
 
 	private void addGridTypes(final AtomicInteger x) {
-		beatGridType = addRadioButton(x, Label.GRID_PANE_BEAT_TYPE, () -> onGridTypeChange(GridType.BEAT));
-		noteGridType = addRadioButton(x, Label.GRID_PANE_NOTE_TYPE, () -> onGridTypeChange(GridType.NOTE));
+		beatGridType = addRadioButton(x, Label.BEAT_GRID_TYPE, () -> onGridTypeChange(GridType.BEAT));
+		noteGridType = addRadioButton(x, Label.NOTE_GRID_TYPE, () -> onGridTypeChange(GridType.NOTE));
 
 		final ButtonGroup gridTypeGroup = new ButtonGroup();
 		gridTypeGroup.add(beatGridType.field);
@@ -318,8 +318,7 @@ public class ChartToolbar extends JToolBar {
 		claps = addCheckbox(x, Label.TOOLBAR_CLAPS, audioHandler::toggleClaps);
 		metronome = addCheckbox(x, Label.TOOLBAR_METRONOME, audioHandler::toggleMetronome);
 		waveformGraph = addCheckbox(x, Label.TOOLBAR_WAVEFORM_GRAPH, waveFormDrawer::toggle);
-		intensityRMSIndicator = addCheckbox(x, Label.RMS_INDICATOR, waveFormDrawer::toggleIntensityRMS); // add
-		intensityRMSIndicator.field.setEnabled(false); // add
+		intensityRMSIndicator = addCheckbox(x, Label.RMS_INDICATOR, waveFormDrawer::toggleIntensityRMS);
 		repeater = addCheckbox(x, Label.TOOLBAR_REPEATER, repeatManager::toggle);
 
 		addSeparator(x);
@@ -345,8 +344,8 @@ public class ChartToolbar extends JToolBar {
 		metronome.field.setSelected(audioHandler.metronome());
 		waveformGraph.field.setSelected(waveFormDrawer.drawing());
 		waveformGraph.field.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
-		intensityRMSIndicator.field.setEnabled(waveFormDrawer.drawing()); // added
-		intensityRMSIndicator.field.setSelected(!waveFormDrawer.isIntensityRMSVisible()); // added
+		intensityRMSIndicator.field.setEnabled(waveFormDrawer.drawing());
+		intensityRMSIndicator.field.setSelected(!waveFormDrawer.isIntensityRMSVisible());
 		repeater.field.setSelected(repeatManager.isOn());
 
 		gridSize.field.setTextWithoutEvent(Config.gridSize + "");

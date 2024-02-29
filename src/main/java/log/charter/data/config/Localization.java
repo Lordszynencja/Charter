@@ -186,13 +186,6 @@ public class Localization {
 		FILE_MENU_TEXTURING_OPTIONS("Texturing options"), //
 		EXIT("Exit"), //
 
-		GRID_PANE("Grid options"), //
-		GRID_PANE_GRID_SIZE("Grid size 1/"), //
-		GRID_PANE_USE_GRID("Use grid"), //
-		GRID_PANE_NOTE_TYPE("Note"), //
-		GRID_PANE_BEAT_TYPE("Beat"), //
-		GRID_PANE_MEASURE_TYPE("Measure"), //
-
 		GUITAR_BEAT_PANE("Guitar beat options"), //
 		GUITAR_BEAT_PANE_SECTION_TYPE("Section"), //
 		GUITAR_BEAT_PANE_PHRASE_NAME("Phrase name"), //
@@ -204,32 +197,30 @@ public class Localization {
 		GUITAR_MENU("Guitar"), //
 		MOVE_TO_START("Move to start"), //
 		MOVE_TO_END("Move to end"), //
-		MOVE_TO_FIRST_NOTE("Move to first note"), //
-		MOVE_TO_LAST_NOTE("Move to last note"), //
+		MOVE_TO_FIRST_ITEM("Move to first item"), //
+		MOVE_TO_LAST_ITEM("Move to last item"), //
 		MOVE_STRING_UP("Move notes string up"), //
 		MOVE_STRING_DOWN("Move notes string down"), //
 		MOVE_STRING_UP_SIMPLE("Move notes string up keeping the frets"), //
 		MOVE_STRING_DOWN_SIMPLE("Move notes string down keeping the frets"), //
+		MOVE_FRET_UP("Move notes one fret up"), //
+		MOVE_FRET_DOWN("Move notes one fret down"), //
+		NOTE_STATUS_OPERATIONS("Note status operations"), //
 		TOGGLE_MUTE("Toggle mutes"), //
+		TOGGLE_MUTE_INDEPENDENTLY("Toggle mutes independently"), //
 		TOGGLE_HOPO("Toggle HO/PO"), //
+		TOGGLE_HOPO_INDEPENDENTLY("Toggle HO/PO independently"), //
 		TOGGLE_HARMONIC("Toggle harmonic"), //
-		GUITAR_MENU_SET_SLIDE("Set slide"), //
+		TOGGLE_HARMONIC_INDEPENDENTLY("Toggle harmonic independently"), //
 		TOGGLE_ACCENT("Toggle accent"), //
+		TOGGLE_ACCENT_INDEPENDENTLY("Toggle accent independently"), //
 		TOGGLE_VIBRATO("Toggle vibrato"), //
+		TOGGLE_VIBRATO_INDEPENDENTLY("Toggle vibrato independently"), //
 		TOGGLE_TREMOLO("Toggle tremolo"), //
+		TOGGLE_TREMOLO_INDEPENDENTLY("Toggle tremolo independently"), //
 		TOGGLE_LINK_NEXT("Toggle link next"), //
-		GUITAR_MENU_SET_FRET("Set fret"), //
-		GUITAR_MENU_EDIT_NOTE("Edit note"), //
-		GUITAR_MENU_EDIT_NOTE_TOOLTIP("Opens notes for edit as chord or single note based on first note selected"), //
-		GUITAR_MENU_EDIT_AS_SINGLE_NOTE("Edit as single note"), //
-		GUITAR_MENU_EDIT_AS_SINGLE_NOTE_TOOLTIP(
-				"Opens notes for edit as single note, will change selected chords into single notes"), //
-		GUITAR_MENU_EDIT_AS_CHORD("Edit as chord"), //
-		GUITAR_MENU_EDIT_AS_CHORD_TOOLTIP(
-				"Opens notes for edit as chord, will change selected single notes into chords"), //
-		GUITAR_MENU_EDIT_BEND("Edit bend"), //
+		TOGGLE_LINK_NEXT_INDEPENDENTLY("Toggle link next independently"), //
 		MARK_HAND_SHAPE("Mark hand shape"), //
-		GUITAR_MENU_EDIT_HAND_SHAPE("Edit hand shape"), //
 		GUITAR_MENU_AUTOCREATE_FHP("Autocreate Fret Hand Positions"), //
 		TOGGLE_PREVIEW_WINDOW("Windowed preview"), //
 		TOGGLE_BORDERLESS_PREVIEW_WINDOW("Borderless windowed preview"), //
@@ -251,10 +242,6 @@ public class Localization {
 		INFO_MENU_LANGUAGE("Language"), //
 
 		MUSIC_MENU("Music"), //
-		MUSIC_MENU_25("25% speed"), //
-		MUSIC_MENU_50("50% speed"), //
-		MUSIC_MENU_75("75% speed"), //
-		MUSIC_MENU_CUSTOM("Custom speed"), //
 		TOGGLE_REPEATER("Toggle repeater"), //
 		TOGGLE_REPEAT_START("Set repeater start"), //
 		TOGGLE_REPEAT_END("Set repeater end"), //
@@ -265,10 +252,10 @@ public class Localization {
 		SNAP_SELECTED("Snap selected items to grid"), //
 		DOUBLE_GRID("Double grid resolution"), //
 		HALVE_GRID("Halve grid resolution"), //
-		PREVIOUS_NOTE("Previous note"), //
+		PREVIOUS_ITEM("Previous item"), //
 		PREVIOUS_GRID_POSITION("Previous grid position"), //
 		PREVIOUS_BEAT("Previous beat"), //
-		NEXT_NOTE("Next note"), //
+		NEXT_ITEM("Next item"), //
 		NEXT_GRID_POSITION("Next grid position"), //
 		NEXT_BEAT("Next beat"), //
 
@@ -276,8 +263,12 @@ public class Localization {
 		TOOLBAR_CLAPS("Claps"), //
 		TOOLBAR_METRONOME("Metronome"), //
 		TOOLBAR_WAVEFORM_GRAPH("Waveform graph"), //
+		RMS_INDICATOR("RMS"), //
 		TOOLBAR_REPEATER("Repeater"), //
 		TOOLBAR_SLOWED_PLAYBACK_SPEED("Slowed speed"), //
+		GRID_SIZE("Grid size 1/"), //
+		NOTE_GRID_TYPE("Note"), //
+		BEAT_GRID_TYPE("Beat"), //
 		TOOLBAR_VOLUME("Volume"), //
 		TOOLBAR_SFX_VOLUME("SFX volume"), //
 
@@ -437,7 +428,7 @@ public class Localization {
 
 		SONG_FOLDER_SELECT("Create song folder"), //
 		SONG_FOLDER_AUDIO_FILE_FOLDER("Use audio file folder (%s)"), //
-		SONG_FOLDER_CREATE_NEW("Create new folder in %s"), RMS_INDICATOR("RMS"); // ADDED rms
+		SONG_FOLDER_CREATE_NEW("Create new folder in %s");
 
 		private final String defaultLabel;
 

@@ -47,6 +47,7 @@ import log.charter.gui.handlers.CharterFrameComponentListener;
 import log.charter.gui.handlers.CharterFrameWindowFocusListener;
 import log.charter.gui.handlers.CharterFrameWindowListener;
 import log.charter.gui.handlers.SongFileHandler;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
@@ -77,9 +78,9 @@ public class CharterFrame extends JFrame {
 
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
 	private final ArrangementValidator arrangementValidator = new ArrangementValidator();
-	private final WaveFormDrawer waveFormDrawer = new WaveFormDrawer();
 	private final AudioHandler audioHandler = new AudioHandler();
 	private final BeatsDrawer beatsDrawer = new BeatsDrawer();
+	private final ChartTimeHandler chartTimeHandler = new ChartTimeHandler();
 	private final CopyManager copyManager = new CopyManager();
 	private final ChartData data = new ChartData();
 	private final HighlightManager highlightManager = new HighlightManager();
@@ -91,6 +92,7 @@ public class CharterFrame extends JFrame {
 	private final SongFileHandler songFileHandler = new SongFileHandler();
 	private final SelectionManager selectionManager = new SelectionManager();
 	private final UndoSystem undoSystem = new UndoSystem();
+	private final WaveFormDrawer waveFormDrawer = new WaveFormDrawer();
 
 	private final Framer framer = new Framer(this::frame);
 	private final Thread audioFramer = new Thread(() -> {
@@ -124,15 +126,17 @@ public class CharterFrame extends JFrame {
 
 		arrangementFixer.init(data);
 		arrangementValidator.init(data, this, modeManager);
-		audioHandler.init(chartToolbar, data, this, modeManager, repeatManager);
+		audioHandler.init(chartTimeHandler, chartToolbar, data, this, modeManager, repeatManager);
 		beatsDrawer.init(data, chartPanel, modeManager, repeatManager, selectionManager);
+		chartTimeHandler.init(data, modeManager);
 		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
 		data.init(this, audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
-		keyboardHandler.init(waveFormDrawer, audioHandler, arrangementFixer, chartToolbar, copyManager, data, this,
-				framer, modeManager, mouseHandler, repeatManager, selectionManager, songFileHandler, undoSystem);
+		keyboardHandler.init(waveFormDrawer, audioHandler, arrangementFixer, chartTimeHandler, chartToolbar,
+				copyManager, data, this, framer, modeManager, mouseHandler, repeatManager, selectionManager,
+				songFileHandler, undoSystem);
 		highlightManager.init(data, modeManager, selectionManager);
-		modeManager.init(audioHandler, charterMenuBar, chartToolbar, currentSelectionEditor, data, this,
-				highlightManager, keyboardHandler, selectionManager, undoSystem);
+		modeManager.init(audioHandler, charterMenuBar, chartTimeHandler, chartToolbar, currentSelectionEditor, data,
+				this, highlightManager, keyboardHandler, selectionManager, undoSystem);
 		mouseButtonPressReleaseHandler.init(highlightManager);
 		mouseHandler.init(arrangementFixer, data, this, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
 				selectionManager, undoSystem);
@@ -290,7 +294,7 @@ public class CharterFrame extends JFrame {
 	}
 
 	public void setNextTime(final int t) {
-		data.setNextTime(t);
+		chartTimeHandler.setNextTime(t);
 	}
 
 	public void setGuitarHelp() {

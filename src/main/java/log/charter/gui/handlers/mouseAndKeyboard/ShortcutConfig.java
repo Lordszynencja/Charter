@@ -24,9 +24,16 @@ public class ShortcutConfig {
 	private static boolean changed = false;
 
 	public static void setShortcut(final Action action, final Shortcut shortcut) {
+
 		shortcuts.put(action, shortcut);
 		for (final EditMode editMode : action.editModes) {
-			actions.get(editMode).put(shortcut, action);
+			final Map<Shortcut, Action> editModeActions = actions.get(editMode);
+			if (editModeActions.containsKey(shortcut)) {
+				Logger.error("doubled shortcut %s: %s and %s".formatted(shortcut.name("-"),
+						editModeActions.get(shortcut).label.label(), action.label.label()));
+			}
+
+			editModeActions.put(shortcut, action);
 		}
 	}
 

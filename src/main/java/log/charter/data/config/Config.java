@@ -82,7 +82,7 @@ public class Config {
 	public static boolean createDefaultStretchesInBackground = true;
 	public static int frets = 28;
 	public static int maxStrings = 9;
-	public static int maxBendValue = 6;
+	public static int maxBendValue = 6;// in half steps
 	public static int FPS = 60;
 	public static int backupDelay = 600;
 

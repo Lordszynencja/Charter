@@ -27,4 +27,37 @@ public class Utils {
 	public static boolean isDottedFret(final int fret) {
 		return fret % 12 == 0 || fret % 12 == 3 || fret % 12 == 5 || fret % 12 == 7 || fret % 12 == 9;
 	}
+
+	public static String formatBendValue(final int quarterStepsCount) {
+		final int fullSteps = quarterStepsCount / 4;
+		final int quarters = quarterStepsCount % 4;
+
+		if (fullSteps == 0) {
+			if (quarters == 0) {
+				return "0";
+			}
+			if (quarters == 1) {
+				return "¼";
+			}
+			if (quarters == 2) {
+				return "½";
+			}
+			if (quarters == 3) {
+				return "¾";
+			}
+		}
+
+		String text = fullSteps + "";
+		if (quarters == 1) {
+			text += " ¼";
+		}
+		if (quarters == 2) {
+			text += " ½";
+		}
+		if (quarters == 3) {
+			text += " ¾";
+		}
+
+		return text;
+	}
 }

@@ -12,7 +12,6 @@ import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.song.vocals.Vocal;
-import log.charter.util.CollectionUtils.ArrayList2;
 
 public class VocalModeHandler extends ModeHandler {
 	private static final long scrollTimeoutForUndo = 1000;
@@ -32,22 +31,6 @@ public class VocalModeHandler extends ModeHandler {
 		this.keyboardHandler = keyboardHandler;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
-	}
-
-	@Override
-	public void handleEnd() {
-		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
-		if (!vocals.isEmpty()) {
-			frame.setNextTime(vocals.getLast().position());
-		}
-	}
-
-	@Override
-	public void handleHome() {
-		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
-		if (!vocals.isEmpty()) {
-			frame.setNextTime(vocals.get(0).position());
-		}
 	}
 
 	@Override

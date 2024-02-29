@@ -7,14 +7,6 @@ public class EmptyModeHandler extends ModeHandler {
 	}
 
 	@Override
-	public void handleEnd() {
-	}
-
-	@Override
-	public void handleHome() {
-	}
-
-	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
 	}
 

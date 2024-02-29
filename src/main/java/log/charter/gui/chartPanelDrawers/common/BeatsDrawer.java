@@ -73,7 +73,7 @@ public class BeatsDrawer {
 			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.BASE_TEXT)); // changed
 		}
 
-		private void addMeasureChange(final int x, final Beat beat) {
+		private void addTimeSignatureChange(final int x, final Beat beat) {
 			beats.add(new Text(new Position2D(x + 3, beatSizeTextY + 1), beatFont,
 					beat.beatsInMeasure + "/" + beat.noteDenominator, ColorLabel.BASE_TEXT));
 		}
@@ -99,8 +99,9 @@ public class BeatsDrawer {
 				addBPMNumber(x, bpmFormat.format(bpm));
 			}
 
-			if (previousBeat == null || beat.beatsInMeasure != previousBeat.beatsInMeasure) {
-				addMeasureChange(x, beat);
+			if (previousBeat == null || beat.beatsInMeasure != previousBeat.beatsInMeasure
+					|| beat.noteDenominator != previousBeat.noteDenominator) {
+				addTimeSignatureChange(x, beat);
 			}
 
 			if (highlighted) {

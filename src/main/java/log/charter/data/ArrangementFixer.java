@@ -162,10 +162,14 @@ public class ArrangementFixer {
 		}
 	}
 
-	public void fixNoteLengths(final ArrayList2<ChordOrNote> sounds) {
-		for (int i = 0; i < sounds.size(); i++) {
+	public void fixNoteLengths(final ArrayList2<ChordOrNote> sounds, final int from, final int to) {
+		for (int i = from; i <= to; i++) {
 			fixSoundLength(i, sounds);
 		}
+	}
+
+	public void fixNoteLengths(final ArrayList2<ChordOrNote> sounds) {
+		fixNoteLengths(sounds, 0, sounds.size() - 1);
 	}
 
 	public void fixLengths(final ArrayList2<? extends IPositionWithLength> positions) {
@@ -204,8 +208,7 @@ public class ArrangementFixer {
 		fixLengths(level.handShapes);
 	}
 
-	private void removeChordTemplate(final Arrangement arrangementChart, final int removedId,
-			final int replacementId) {
+	private void removeChordTemplate(final Arrangement arrangementChart, final int removedId, final int replacementId) {
 		arrangementChart.chordTemplates.remove(removedId);
 		for (final Level level : arrangementChart.levels) {
 			for (final ChordOrNote chordOrNote : level.sounds) {

@@ -26,6 +26,7 @@ import log.charter.gui.components.ParamsPane;
 import log.charter.gui.components.ShortcutEditor;
 import log.charter.gui.handlers.mouseAndKeyboard.Action;
 import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
+import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.util.CollectionUtils.Pair;
 
 public final class ShortcutConfigPane extends ParamsPane implements ComponentListener {
@@ -44,10 +45,10 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 				Action.SLOW_FORWARD, //
 				Action.MOVE_TO_START, //
 				Action.MOVE_TO_END, //
-				Action.MOVE_TO_FIRST_NOTE, //
-				Action.MOVE_TO_LAST_NOTE, //
-				Action.NEXT_SOUND, //
-				Action.PREVIOUS_SOUND, //
+				Action.MOVE_TO_FIRST_ITEM, //
+				Action.MOVE_TO_LAST_ITEM, //
+				Action.NEXT_ITEM, //
+				Action.PREVIOUS_ITEM, //
 				Action.NEXT_GRID, //
 				Action.PREVIOUS_GRID, //
 				Action.NEXT_BEAT, //
@@ -79,12 +80,19 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 				Action.SNAP_SELECTED, //
 				Action.SNAP_ALL, //
 				Action.TOGGLE_ACCENT, //
+				Action.TOGGLE_ACCENT_INDEPENDENTLY, //
 				Action.TOGGLE_HARMONIC, //
+				Action.TOGGLE_HARMONIC_INDEPENDENTLY, //
 				Action.TOGGLE_HOPO, //
+				Action.TOGGLE_HOPO_INDEPENDENTLY, //
 				Action.TOGGLE_LINK_NEXT, //
+				Action.TOGGLE_LINK_NEXT_INDEPENDENTLY, //
 				Action.TOGGLE_MUTE, //
+				Action.TOGGLE_MUTE_INDEPENDENTLY, //
 				Action.TOGGLE_TREMOLO, //
-				Action.TOGGLE_VIBRATO)));
+				Action.TOGGLE_TREMOLO_INDEPENDENTLY, //
+				Action.TOGGLE_VIBRATO, //
+				Action.TOGGLE_VIBRATO_INDEPENDENTLY)));
 		actionGroups.add(new Pair<>(Label.OTHER, asList(//
 				Action.NEW_PROJECT, //
 				Action.OPEN_PROJECT, //
@@ -108,6 +116,8 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		return sizes;
 	}
 
+	private final CharterMenuBar charterMenuBar;
+
 	private final JScrollPane scrollPane;
 	private final Map<Action, ShortcutEditor> editors = new HashMap<>();
 
@@ -122,8 +132,9 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		component.setMaximumSize(size);
 	}
 
-	public ShortcutConfigPane(final CharterFrame frame) {
+	public ShortcutConfigPane(final CharterMenuBar charterMenuBar, final CharterFrame frame) {
 		super(frame, Label.SHORTCUT_CONFIG_PANE, getSizes());
+		this.charterMenuBar = charterMenuBar;
 
 		final JPanel panel = new JPanel(null);
 		panel.setOpaque(true);
@@ -177,6 +188,7 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 
 		editors.forEach((action, editor) -> { ShortcutConfig.setShortcut(action, editor.shortcut); });
 		ShortcutConfig.markChanged();
+		charterMenuBar.refreshMenus();
 
 		return true;
 	}

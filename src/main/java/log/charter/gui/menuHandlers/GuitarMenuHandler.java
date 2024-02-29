@@ -41,7 +41,7 @@ class GuitarMenuHandler extends CharterMenuHandler {
 
 	@Override
 	boolean isApplicable() {
-		return !data.isEmpty && modeManager.getMode() == EditMode.GUITAR;
+		return modeManager.getMode() == EditMode.GUITAR;
 	}
 
 	@Override
@@ -51,15 +51,26 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_DOWN));
 		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_UP_SIMPLE));
 		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_DOWN_SIMPLE));
+		menu.add(createItem(keyboardHandler, Action.MOVE_FRET_UP));
+		menu.add(createItem(keyboardHandler, Action.MOVE_FRET_DOWN));
 
 		menu.addSeparator();
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_MUTE));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_HOPO));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_HARMONIC));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_ACCENT));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_VIBRATO));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_TREMOLO));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_LINK_NEXT));
+		final JMenu noteStatusOperationsSubMenu = new JMenu(Label.NOTE_STATUS_OPERATIONS.label());
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_MUTE));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_MUTE_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_HOPO));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_HOPO_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_HARMONIC));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_HARMONIC_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_ACCENT));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_ACCENT_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_VIBRATO));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_VIBRATO_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_TREMOLO));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_TREMOLO_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_LINK_NEXT));
+		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_LINK_NEXT_INDEPENDENTLY));
+		menu.add(noteStatusOperationsSubMenu);
 
 		menu.addSeparator();
 		menu.add(createItem(keyboardHandler, Action.MARK_HAND_SHAPE));

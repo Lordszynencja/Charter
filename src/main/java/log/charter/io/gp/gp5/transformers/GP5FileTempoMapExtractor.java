@@ -33,7 +33,7 @@ public class GP5FileTempoMapExtractor {
 			final int noteDenominator = masterBar.timeSignatureDenominator;
 			for (int i = 0; i < beatsInMeasure; i++) {
 				beats.add(new Beat((int) position, beatsInMeasure, noteDenominator, i == 0, anchor));
-				position += 60_000.0 / tempo;
+				position += 60_000.0 * 4 / noteDenominator / tempo;
 				anchor = false;
 			}
 		}

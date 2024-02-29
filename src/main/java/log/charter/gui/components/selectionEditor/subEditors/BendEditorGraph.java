@@ -10,6 +10,7 @@ import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.song.notes.IConstantPosition.findFirstIdAfterEqual;
 import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.util.Utils.formatBendValue;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -326,20 +327,6 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		}
 	}
 
-	private String bendValueToString(final int bendHalfSteps) {
-		if (bendHalfSteps <= 0) {
-			return "0";
-		}
-		if (bendHalfSteps == 1) {
-			return "½";
-		}
-		if (bendHalfSteps == 2) {
-			return "Full";
-		}
-
-		return bendHalfSteps / 2 + (bendHalfSteps % 2 == 1 ? " ½" : "");
-	}
-
 	private void drawBendValues(final Graphics g) {
 		for (int i = 0; i <= maxBendInternalValue; i++) {
 			g.setColor((i % 4 == 0 ? ColorLabel.SECONDARY_BEAT.color() : ColorLabel.MAIN_BEAT.color()));
@@ -349,9 +336,10 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 		g.setColor(ColorLabel.BASE_TEXT.color());
 		g.setFont(new Font(Font.DIALOG, Font.PLAIN, 10));
-		for (int i = 0; i <= maxBendValue; i++) {
-			final int y = getYFromBendValue(i * 2) + 4;
-			g.drawString(bendValueToString(i), 2, y);
+		for (int halfSteps = 0; halfSteps <= maxBendValue; halfSteps++) {
+			final int bendValue = halfSteps * 2;
+			final int y = getYFromBendValue(bendValue) + 4;
+			g.drawString(formatBendValue(bendValue), 2, y);
 		}
 	}
 

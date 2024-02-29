@@ -60,23 +60,6 @@ public class GuitarModeHandler extends ModeHandler {
 		this.undoSystem = undoSystem;
 	}
 
-	@Override
-	public void handleEnd() {
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
-		if (!sounds.isEmpty()) {
-			frame.setNextTime(sounds.getLast().position());
-		}
-	}
-
-	@Override
-	public void handleHome() {
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
-
-		if (!sounds.isEmpty()) {
-			frame.setNextTime(sounds.get(0).position());
-		}
-	}
-
 	private void rightClickAnchor(final PositionWithIdAndType anchorPosition) {
 		selectionManager.clear();
 

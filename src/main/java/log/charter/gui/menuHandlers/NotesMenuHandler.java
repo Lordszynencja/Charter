@@ -31,18 +31,18 @@ class NotesMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(keyboardHandler, Action.HALVE_GRID));
 
 		menu.addSeparator();
-		menu.add(createItem(keyboardHandler, Action.PREVIOUS_SOUND));
+		menu.add(createItem(keyboardHandler, Action.PREVIOUS_ITEM));
 		menu.add(createItem(keyboardHandler, Action.PREVIOUS_GRID));
 		menu.add(createItem(keyboardHandler, Action.PREVIOUS_BEAT));
-		menu.add(createItem(keyboardHandler, Action.NEXT_SOUND));
+		menu.add(createItem(keyboardHandler, Action.NEXT_ITEM));
 		menu.add(createItem(keyboardHandler, Action.NEXT_GRID));
 		menu.add(createItem(keyboardHandler, Action.NEXT_BEAT));
 
 		menu.addSeparator();
 		menu.add(createItem(keyboardHandler, Action.MOVE_TO_START));
 		menu.add(createItem(keyboardHandler, Action.MOVE_TO_END));
-		menu.add(createItem(keyboardHandler, Action.MOVE_TO_FIRST_NOTE));
-		menu.add(createItem(keyboardHandler, Action.MOVE_TO_LAST_NOTE));
+		menu.add(createItem(keyboardHandler, Action.MOVE_TO_FIRST_ITEM));
+		menu.add(createItem(keyboardHandler, Action.MOVE_TO_LAST_ITEM));
 
 		return menu;
 	}

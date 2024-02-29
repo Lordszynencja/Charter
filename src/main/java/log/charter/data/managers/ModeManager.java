@@ -16,6 +16,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.AudioHandler;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 
@@ -44,8 +45,9 @@ public class ModeManager {
 	}
 
 	public void init(final AudioHandler audioHandler, final CharterMenuBar charterMenuBar,
-			final ChartToolbar chartToolbar, final CurrentSelectionEditor currentSelectionEditor, final ChartData data,
-			final CharterFrame frame, final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
+			final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar,
+			final CurrentSelectionEditor currentSelectionEditor, final ChartData data, final CharterFrame frame,
+			final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this.audioHandler = audioHandler;
 		this.charterMenuBar = charterMenuBar;
@@ -57,7 +59,7 @@ public class ModeManager {
 		emptyModeHandler.init();
 		guitarModeHandler.init(currentSelectionEditor, data, frame, highlightManager, keyboardHandler, selectionManager,
 				undoSystem);
-		tempoMapModeHandler.init(data, frame, selectionManager, undoSystem);
+		tempoMapModeHandler.init(data, frame, undoSystem);
 		vocalModeHandler.init(data, frame, keyboardHandler, selectionManager, undoSystem);
 	}
 

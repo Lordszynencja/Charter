@@ -16,6 +16,7 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.midiPlayer.MidiChartNotePlayer;
 import log.charter.song.notes.IPosition;
 import log.charter.sound.IPlayer;
@@ -69,6 +70,7 @@ public class AudioHandler {
 		}
 	}
 
+	private ChartTimeHandler chartTimeHandler;
 	private ChartToolbar chartToolbar;
 	private ChartData data;
 	private CharterFrame frame;
@@ -94,8 +96,9 @@ public class AudioHandler {
 	private final boolean ignoreStops = false;
 	public boolean midiNotesPlaying = false;
 
-	public void init(final ChartToolbar chartToolbar, final ChartData data, final CharterFrame frame,
-			final ModeManager modeManager, final RepeatManager repeatManager) {
+	public void init(final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar, final ChartData data,
+			final CharterFrame frame, final ModeManager modeManager, final RepeatManager repeatManager) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.chartToolbar = chartToolbar;
 		this.data = data;
 		this.frame = frame;
@@ -282,7 +285,7 @@ public class AudioHandler {
 			if (repeatManager.isRepeating()) {
 				final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed / 100);
 				final int nextTime = songTimeOnStart + timePassed;
-				frame.setNextTime(nextTime);
+				chartTimeHandler.setNextTime(nextTime);
 				return;
 			}
 
@@ -291,7 +294,7 @@ public class AudioHandler {
 
 		final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed / 100);
 		final int nextTime = songTimeOnStart + timePassed;
-		frame.setNextTime(nextTime);
+		chartTimeHandler.setNextTime(nextTime);
 
 		beatTickPlayer.handleFrame(nextTime);
 		noteTickPlayer.handleFrame(nextTime);
@@ -304,7 +307,7 @@ public class AudioHandler {
 	public void rewind(final int t) {
 		stop();
 		data.time = t;
-		frame.setNextTime(t);
+		chartTimeHandler.setNextTime(t);
 		beatTickPlayer.stop();
 		beatTickPlayer.handleFrame(t);
 		noteTickPlayer.stop();

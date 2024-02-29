@@ -23,6 +23,7 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawerData;
 import log.charter.song.BendValue;
 import log.charter.util.Position2D;
+import log.charter.util.Utils;
 
 public class ModernThemeBends {
 	private static Font bendValueFont;
@@ -40,37 +41,7 @@ public class ModernThemeBends {
 			return "0";
 		}
 
-		final int value = (int) round(bendValue.doubleValue() * 2);
-		final int fullSteps = value / 4;
-		final int quarterSteps = value % 4;
-
-		if (fullSteps == 0) {
-			if (quarterSteps == 0) {
-				return "0";
-			}
-			if (quarterSteps == 1) {
-				return "¼";
-			}
-			if (quarterSteps == 2) {
-				return "½";
-			}
-			if (quarterSteps == 3) {
-				return "¾";
-			}
-		}
-
-		String text = fullSteps + "";
-		if (quarterSteps == 1) {
-			text += " ¼";
-		}
-		if (quarterSteps == 2) {
-			text += " ½";
-		}
-		if (quarterSteps == 3) {
-			text += " ¾";
-		}
-
-		return text;
+		return Utils.formatBendValue((int) round(bendValue.doubleValue() * 2));
 	}
 
 	private static int getBendLineY(final int y, BigDecimal bendValue) {
