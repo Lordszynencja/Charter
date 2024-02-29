@@ -1,25 +1,29 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
-import static java.lang.Math.max;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.GraphicalConfig.*;
+import static log.charter.data.config.GraphicalConfig.anchorInfoHeight;
+import static log.charter.data.config.GraphicalConfig.chordHeight;
+import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.*;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
-import static log.charter.util.ColorUtils.setAlpha;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.AccentIconGenerator.generateAccentIcon;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.AccentIconGenerator.generateHarmonicAccentIcon;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.HOPOIconGenerator.generateHammerOnIcon;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.HOPOIconGenerator.generatePullOffIcon;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.HOPOIconGenerator.generateSingleLetterIcon;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.HOPOIconGenerator.generateTapIcon;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.MuteIconGenerator.generateFullMuteIcon;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.MuteIconGenerator.generatePalmMuteIcon;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.NoteHeadIconGenerator.generateHarmonicNoteIcon;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.NoteHeadIconGenerator.generateNoteIcon;
 import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.Utils.getStringPosition;
 import static log.charter.util.Utils.stringId;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.RenderingHints;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -29,7 +33,6 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredImage;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackgroundAndBorder;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
-import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawerData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeNotes;
@@ -42,13 +45,15 @@ import log.charter.song.notes.Note;
 import log.charter.util.Position2D;
 
 public class ModernThemeNotes implements ThemeNotes {
-	private static BufferedImage noteIcons[] = new BufferedImage[maxStrings];
-	private static BufferedImage linkedNoteIcons[] = new BufferedImage[maxStrings];
+	private static BufferedImage[] noteIcons = new BufferedImage[maxStrings];
+	private static BufferedImage[] linkedNoteIcons = new BufferedImage[maxStrings];
 	private static BufferedImage noteSelectIcon = null;
 	private static BufferedImage noteHighlightIcon = null;
-	private static BufferedImage harmonicNoteIcons[] = new BufferedImage[maxStrings];
+	private static BufferedImage[] harmonicNoteIcons = new BufferedImage[maxStrings];
 	private static BufferedImage harmonicNoteSelectIcon = null;
 	private static BufferedImage harmonicNoteHighlightIcon = null;
+	private static BufferedImage[] accentIcons = new BufferedImage[maxStrings];
+	private static BufferedImage[] harmonicAccentIcons = new BufferedImage[maxStrings];
 
 	private static BufferedImage hammerOnIcon = null;
 	private static BufferedImage pullOffIcon = null;
@@ -59,248 +64,24 @@ public class ModernThemeNotes implements ThemeNotes {
 	private static BufferedImage palmMuteIcon = null;
 	private static BufferedImage fullMuteIcon = null;
 
-	private static Font chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, chordHeight); // changed
-	private static Font fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2 ); // changed
+	private static Font chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, chordHeight);
+	private static Font fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 	private static Font smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
-
-    private static BufferedImage generateNoteIcon(final Color innerColor, final Color borderInnerColor, final Color borderOuterColor) {
-		final int size = noteHeight;
-
-		final BufferedImage icon = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
-		final Graphics2D graphics = (Graphics2D) icon.getGraphics();
-
-		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		final int borderSize = max(1, size / 15);
-		final int borderInnerSize = borderSize * 2;
-
-		final Ellipse2D inner = new Ellipse2D.Double(borderInnerSize, borderInnerSize, size - 2 * borderInnerSize,
-				size - 2 * borderInnerSize);
-		if (innerColor != null) {
-			graphics.setColor(innerColor);
-			graphics.fill(inner);
-		}
-
-		if (borderOuterColor != null) {
-			final Ellipse2D outer1 = new Ellipse2D.Double(0, 0, size, size);
-			final Area area1 = new Area(outer1);
-			area1.subtract(new Area(inner));
-			graphics.setColor(borderOuterColor);
-			graphics.fill(area1);
-		}
-
-		if (borderInnerColor != null) {
-			final Ellipse2D outer2 = new Ellipse2D.Double(borderSize, borderSize, size - 2 * borderSize,
-					size - 2 * borderSize);
-			final Area area2 = new Area(outer2);
-			area2.subtract(new Area(inner));
-			graphics.setColor(borderInnerColor);
-			graphics.fill(area2);
-		}
-
-		return icon;
-	}
-
-	private static BufferedImage generateHarmonicNoteIcon(final Color innerColor, final Color borderInnerColor, final Color borderOuterColor) {
-		final int size = noteHeight;
-
-		final BufferedImage icon = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
-		final Graphics2D g = (Graphics2D) icon.getGraphics();
-
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		final int borderSize = Math.max(1, size / 15);
-		final int borderInnerSize = borderSize * 2;
-
-		final GeneralPath inner = new GeneralPath();
-		inner.moveTo(size / 2, borderInnerSize);
-		inner.lineTo(size - borderInnerSize, size / 2);
-		inner.lineTo(size / 2, size - borderInnerSize);
-		inner.lineTo(borderInnerSize, size / 2);
-		inner.closePath();
-
-		if (innerColor != null) {
-			g.setColor(innerColor);
-			g.fill(inner);
-		}
-
-		if (borderOuterColor != null) {
-			final GeneralPath outer1 = new GeneralPath();
-			outer1.moveTo(size / 2, 0);
-			outer1.lineTo(size, size / 2);
-			outer1.lineTo(size / 2, size);
-			outer1.lineTo(0, size / 2);
-			outer1.closePath();
-
-			final Area area1 = new Area(outer1);
-			area1.subtract(new Area(inner));
-			g.setColor(borderOuterColor);
-			g.fill(area1);
-		}
-
-		if (borderInnerColor != null) {
-			final GeneralPath outer2 = new GeneralPath();
-			outer2.moveTo(size / 2, borderSize);
-			outer2.lineTo(size - borderSize, size / 2);
-			outer2.lineTo(size / 2, size - borderSize);
-			outer2.lineTo(borderSize, size / 2);
-			outer2.closePath();
-
-			final Area area2 = new Area(outer2);
-			area2.subtract(new Area(inner));
-			g.setColor(borderInnerColor);
-			g.fill(area2);
-		}
-
-		return icon;
-	}
-
-	private static BufferedImage generateHammerOnIcon() {
-		final int w = noteHeight / 2;
-		final int h = noteHeight * 2 / 5;
-		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
-		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		g.setColor(Color.WHITE);
-		g.fill(new Polygon(new int[] { 1, w / 2, w - 1 }, new int[] { 1, h - 1, 1 }, 3));
-
-		final Area area = new Area(new Polygon(new int[] { 0, w / 2, w }, new int[] { 0, h, 0 }, 3));
-		area.subtract(new Area(new Polygon(new int[] { 2, w / 2, w - 2 }, new int[] { 1, h - 2, 1 }, 3)));
-		g.setColor(Color.BLACK);
-		g.fill(area);
-
-		return icon;
-	}
-
-	private static BufferedImage generatePullOffIcon() {
-		final int w = noteHeight / 2;
-		final int h = noteHeight * 2 / 5;
-		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
-		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		g.setColor(Color.WHITE);
-		g.fill(new Polygon(new int[] { 1, w / 2, w - 1 }, new int[] { h - 1, 1, h - 1 }, 3));
-
-		final Area area = new Area(new Polygon(new int[] { 0, w / 2, w }, new int[] { h, 0, h }, 3));
-		area.subtract(new Area(new Polygon(new int[] { 2, w / 2, w - 2 }, new int[] { h - 1, 2, h - 1 }, 3)));
-		g.setColor(Color.BLACK);
-		g.fill(area);
-
-		return icon;
-	}
-
-	private static BufferedImage generateTapIcon() {
-		final int w = noteHeight / 2;
-		final int h = noteHeight * 2 / 5;
-		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
-		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		g.setColor(Color.BLACK);
-		g.fill(new Polygon(new int[] { 1, w / 2, w - 1 }, new int[] { 1, h - 1, 1 }, 3));
-
-		final Area area = new Area(new Polygon(new int[] { 0, w / 2, w }, new int[] { 0, h, 0 }, 3));
-		area.subtract(new Area(new Polygon(new int[] { 2, w / 2, w - 2 }, new int[] { 1, h - 2, 1 }, 3)));
-		g.setColor(Color.LIGHT_GRAY);
-		g.fill(area);
-		return icon;
-	}
-
-	private static BufferedImage generateSingleLetterIcon(final String letter, final Color color) {
-		final int w = noteHeight / 2;
-		final int h = noteHeight * 2 / 5;
-		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
-		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		g.setColor(color);
-		g.setFont(new Font(Font.DIALOG, Font.BOLD, h + 1));
-		g.drawString(letter, 0, h - 1);
-
-		return icon;
-	}
-
-	private static Polygon generateX(final int size, final int space) {
-		return new Polygon(new int[] { //
-				0, size / 2 - space, 0, //
-				space, size / 2, size - space - 1, //
-				size - 1, size / 2 + space, size - 1, //
-				size - space - 1, size / 2, space,//
-		}, //
-				new int[] { //
-						space, size / 2, size - space - 1, //
-						size - 1, size / 2 + space, size - 1, //
-						size - space - 1, size / 2, space, //
-						0, size / 2 - space, 0, //
-				}, 12);
-	}
-
-	private static BufferedImage generatePalmMuteIcon() {
-		final int size = max(16, noteHeight);
-		final int space = max(2, size / 8);
-		final int borderWidth = max(1, space / 3);
-		final Color borderColor = Color.GRAY;
-		final Color innerColor = Color.BLACK.brighter().brighter().brighter();
-
-		final BufferedImage icon = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
-		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		final Polygon inner = generateX(size - 2, space - 1);
-		inner.translate(1, 1);
-		g.setColor(innerColor);
-		g.fill(inner);
-
-		final Polygon outer = generateX(size, space);
-		final Polygon outerSubtract = generateX(size - 4, space - borderWidth);
-		outerSubtract.translate(2, 2);
-		final Area borderArea = new Area(outer);
-		borderArea.subtract(new Area(outerSubtract));
-		g.setColor(borderColor);
-		g.fill(borderArea);
-
-		return icon;
-	}
-
-	private static BufferedImage generateFullMuteIcon() {
-		final int size = max(16, noteHeight);
-		final int space = max(2, size / 8);
-		final int borderWidth = max(1, space / 3);
-		final Color borderColor = Color.GRAY;
-		final Color innerColor = Color.WHITE;
-
-		final BufferedImage icon = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
-		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-		final Polygon inner = generateX(size - 2, space - 1);
-		inner.translate(1, 1);
-		g.setColor(innerColor);
-		g.fill(inner);
-
-		final Polygon outer = generateX(size, space);
-		final Polygon outerSubtract = generateX(size - 4, space - borderWidth);
-		outerSubtract.translate(2, 2);
-		final Area borderArea = new Area(outer);
-		borderArea.subtract(new Area(outerSubtract));
-		g.setColor(borderColor);
-		g.fill(borderArea);
-
-		return icon;
-	}
 
 	public static void reloadGraphics() {
 		for (int string = 0; string < maxStrings; string++) {
-
 			final int stringId = stringId(string, maxStrings);
 			final Color borderInnerColor = getStringBasedColor(StringColorLabelType.LANE, string, maxStrings);
 			final Color innerColor = borderInnerColor.darker().darker();
 			final Color borderOuterColor = Color.BLACK;
 			noteIcons[stringId] = generateNoteIcon(innerColor, borderInnerColor, borderOuterColor);
-			linkedNoteIcons[stringId] = generateNoteIcon(innerColor.darker().darker(), borderInnerColor, borderOuterColor);
+			linkedNoteIcons[stringId] = generateNoteIcon(innerColor.darker().darker(), borderInnerColor,
+					borderOuterColor);
 			harmonicNoteIcons[stringId] = generateHarmonicNoteIcon(innerColor, borderInnerColor, borderOuterColor);
+
+			final Color accentColor = borderInnerColor.brighter().brighter();
+			accentIcons[stringId] = generateAccentIcon(accentColor);
+			harmonicAccentIcons[stringId] = generateHarmonicAccentIcon(accentColor);
 		}
 
 		noteSelectIcon = generateNoteIcon(null, null, ColorLabel.SELECT.color());
@@ -317,8 +98,8 @@ public class ModernThemeNotes implements ThemeNotes {
 		palmMuteIcon = generatePalmMuteIcon();
 		fullMuteIcon = generateFullMuteIcon();
 
-		chordNameFont = new Font(Font.SANS_SERIF, Font.BOLD, chordHeight); //
-		fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight  / 2); // changed
+		chordNameFont = new Font(Font.SANS_SERIF, Font.BOLD, chordHeight);
+		fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 		smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
 		ModernThemeBends.reloadGraphics();
@@ -408,6 +189,16 @@ public class ModernThemeNotes implements ThemeNotes {
 		data.notes.add(new CenteredText(new Position2D(note.x, y), font, "\uD83D\uDD17", Color.WHITE));
 	}
 
+	private void addAccent(final EditorNoteDrawingData note, final int y) {
+		if (!note.accent) {
+			return;
+		}
+
+		final int stringId = stringId(note.string, data.strings);
+		final BufferedImage accentIcon = (note.harmonic == Harmonic.NONE ? accentIcons : harmonicAccentIcons)[stringId];
+		data.notes.add(new CenteredImage(new Position2D(note.x, y), accentIcon));
+	}
+
 	private void addNoteHeadShape(final EditorNoteDrawingData note, final int y) {
 		final int stringId = stringId(note.string, data.strings);
 		final BufferedImage icon = switch (note.harmonic) {
@@ -417,18 +208,19 @@ public class ModernThemeNotes implements ThemeNotes {
 		};
 
 		data.notes.add(new CenteredImage(new Position2D(note.x, y), icon));
-		if (note.harmonic == Harmonic.PINCH) {
-			final int x0 = note.x - noteHeight / 2;
-			final int y0 = y - noteHeight / 2;
-			final int y1 = y + noteHeight / 2;
-			final Color color = getStringBasedColor(StringColorLabelType.LANE, note.string, data.strings);
-			data.notes.add(new Line(new Position2D(x0, y0), new Position2D(x0, y1), color, 3));
-		}
 
 		if (note.highlighted) {
 			addNoteHighlight(note.harmonic, note.x, y);
 		} else if (note.selected) {
 			addNoteSelection(note.harmonic, note.x, y);
+		}
+
+		if (note.harmonic == Harmonic.PINCH) {
+			final int x0 = note.x - noteHeight / 2;
+			final int y0 = y - noteHeight / 2;
+			final int y1 = y + noteHeight / 2;
+			final Color color = getStringBasedColor(StringColorLabelType.LANE, note.string, data.strings).brighter();
+			data.notes.add(new Line(new Position2D(x0, y0), new Position2D(x0, y1), color, 3));
 		}
 	}
 
@@ -458,9 +250,6 @@ public class ModernThemeNotes implements ThemeNotes {
 	}
 
 	private void addNoteShape(final EditorNoteDrawingData note, final int y) {
-		final ShapePositionWithSize position = new ShapePositionWithSize(note.x, y, noteHeight, noteHeight)//
-				.centered();
-
 		noteTails.addNoteTail(note, y);
 		bends.addBendValues(note, y);
 
@@ -470,15 +259,12 @@ public class ModernThemeNotes implements ThemeNotes {
 			return;
 		}
 
+		addAccent(note, y);
 		addNoteHeadShape(note, y);
 		addMuteIcon(note, y);
 		addFretNumber(note, y);
 		addHopoOrBassTechIcon(note, y);
 
-		if (note.accent) {
-			final Color accentColor = getStringBasedColor(StringColorLabelType.NOTE_ACCENT, note.string, data.strings);
-			data.notes.add(strokedRectangle(position.resized(-2, -2, 3, 3), accentColor, 1));
-		}
 	}
 
 	@Override

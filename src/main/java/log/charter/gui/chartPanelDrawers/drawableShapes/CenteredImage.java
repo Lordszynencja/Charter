@@ -20,7 +20,10 @@ public class CenteredImage implements DrawableShape {
 	public void draw(final Graphics g) {
 		final Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.drawImage(image, position.x - image.getWidth() / 2, position.y - image.getHeight() / 2, null);
+
+		final int x = position.x - image.getWidth() / 2;
+		final int y = position.y - image.getHeight() / 2;
+		g2.drawImage(image, x, y, null);
 	}
 
 }
