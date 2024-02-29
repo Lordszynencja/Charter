@@ -7,6 +7,7 @@ import static log.charter.data.config.Config.maxStrings;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.config.Config;
 import log.charter.io.rs.xml.song.ArrangementChordTemplate;
 import log.charter.io.rsc.xml.converters.ChordTemplateConverter;
 import log.charter.util.CollectionUtils.HashMap2;
@@ -68,6 +69,40 @@ public class ChordTemplate {
 		}
 
 		return new IntRange(minString, maxString);
+	}
+
+	public int getLowestFret() {
+		int lowestFret = Config.frets;
+
+		for (final int fret : frets.values()) {
+			lowestFret = min(lowestFret, fret);
+		}
+
+		return lowestFret;
+	}
+
+	public int getLowestNonzeroFret() {
+		int lowestFret = Config.frets;
+
+		for (final int fret : frets.values()) {
+			if (fret == 0) {
+				continue;
+			}
+
+			lowestFret = min(lowestFret, fret);
+		}
+
+		return lowestFret;
+	}
+
+	public int getHighestFret() {
+		int highestFret = 0;
+
+		for (final int fret : frets.values()) {
+			highestFret = max(highestFret, fret);
+		}
+
+		return highestFret;
 	}
 
 	public String getTemplateFrets(final int strings) {

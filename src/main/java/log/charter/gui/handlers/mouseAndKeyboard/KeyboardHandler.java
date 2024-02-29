@@ -296,10 +296,12 @@ public class KeyboardHandler implements KeyListener {
 		actionHandlers.put(Action.EXIT, frame::exit);
 		actionHandlers.put(Action.HALVE_GRID, this::halveGridSize);
 		actionHandlers.put(Action.MARK_HAND_SHAPE, this::markHandShape);
-		actionHandlers.put(Action.MOVE_STRING_DOWN, guitarSoundsHandler::moveNotesDown);
-		actionHandlers.put(Action.MOVE_STRING_DOWN_SIMPLE, guitarSoundsHandler::moveNotesDownKeepFrets);
-		actionHandlers.put(Action.MOVE_STRING_UP, guitarSoundsHandler::moveNotesUp);
-		actionHandlers.put(Action.MOVE_STRING_UP_SIMPLE, guitarSoundsHandler::moveNotesUpKeepFrets);
+		actionHandlers.put(Action.MOVE_STRING_DOWN, () -> guitarSoundsHandler.moveStringsWithFretChange(-1));
+		actionHandlers.put(Action.MOVE_STRING_DOWN_SIMPLE, () -> guitarSoundsHandler.moveStringsWithoutFretChange(-1));
+		actionHandlers.put(Action.MOVE_STRING_UP, () -> guitarSoundsHandler.moveStringsWithFretChange(1));
+		actionHandlers.put(Action.MOVE_STRING_UP_SIMPLE, () -> guitarSoundsHandler.moveStringsWithoutFretChange(1));
+		actionHandlers.put(Action.MOVE_FRET_DOWN, () -> guitarSoundsHandler.moveFret(-1));
+		actionHandlers.put(Action.MOVE_FRET_UP, () -> guitarSoundsHandler.moveFret(1));
 		actionHandlers.put(Action.MOVE_TO_END, chartTimeHandler::moveToEnd);
 		actionHandlers.put(Action.MOVE_TO_FIRST_ITEM, chartTimeHandler::moveToFirstItem);
 		actionHandlers.put(Action.MOVE_TO_LAST_ITEM, chartTimeHandler::moveToLastItem);

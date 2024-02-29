@@ -20,6 +20,10 @@ public class IntRange {
 		return new IntRange(newMin, newMax);
 	}
 
+	public boolean inRange(final int value) {
+		return value >= min && value <= max;
+	}
+
 	@Override
 	public String toString() {
 		return "IntRange [min=" + min + ", max=" + max + "]";

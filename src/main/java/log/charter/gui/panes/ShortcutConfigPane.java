@@ -74,6 +74,8 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 				Action.MOVE_STRING_DOWN, //
 				Action.MOVE_STRING_UP_SIMPLE, //
 				Action.MOVE_STRING_DOWN_SIMPLE, //
+				Action.MOVE_FRET_UP, //
+				Action.MOVE_FRET_DOWN, //
 				Action.MARK_HAND_SHAPE, //
 				Action.DOUBLE_GRID, //
 				Action.HALVE_GRID, //
