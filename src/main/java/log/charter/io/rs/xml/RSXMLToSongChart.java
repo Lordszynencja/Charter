@@ -7,9 +7,9 @@ import log.charter.song.SongChart;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class RSXMLToSongChart {
-	public static SongChart makeSongChartForArrangement(final int songLengthMs, final String musicFileName,
+	public static SongChart makeSongChartForArrangement(final String musicFileName,
 			final SongArrangement songArrangement) {
-		final BeatsMap beatsMap = new BeatsMap(songLengthMs, songArrangement);
+		final BeatsMap beatsMap = new BeatsMap(songArrangement);
 		final Arrangement arrangements = RSXMLToArrangement.toArrangement(songArrangement, beatsMap.beats);
 
 		return new SongChart(musicFileName, songArrangement.artistName, songArrangement.artistNameSort,

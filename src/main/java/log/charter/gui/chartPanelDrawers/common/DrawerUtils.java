@@ -3,7 +3,14 @@ package log.charter.gui.chartPanelDrawers.common;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.GraphicalConfig.*;
+import static log.charter.data.config.GraphicalConfig.anchorInfoHeight;
+import static log.charter.data.config.GraphicalConfig.chartMapHeightMultiplier;
+import static log.charter.data.config.GraphicalConfig.chordHeight;
+import static log.charter.data.config.GraphicalConfig.eventsChangeHeight;
+import static log.charter.data.config.GraphicalConfig.handShapesHeight;
+import static log.charter.data.config.GraphicalConfig.noteHeight;
+import static log.charter.data.config.GraphicalConfig.timingHeight;
+import static log.charter.data.config.GraphicalConfig.toneChangeHeight;
 import static log.charter.util.Utils.getStringPosition;
 
 import log.charter.data.managers.modes.EditMode;
@@ -35,23 +42,11 @@ public class DrawerUtils {
 		updateEditAreaSizes(EditMode.TEMPO_MAP, null, 0);
 	}
 
-	private static void setEditAreaSizesForTempoMap() {
+	private static void setEditAreaSizesForTempoMapAndVocals() {
 		lanesTop = beatSizeTextY + 15;
-		laneHeight = 100;
-		tailHeight = 100;
-		lanesHeight = 100;
-		lanesBottom = lanesTop + lanesHeight;
-		timingY = lanesBottom;
-		editAreaHeight = timingY + timingHeight;
-
-		chartMapHeight = chartMapHeightMultiplier * 5;
-	}
-
-	private static void setEditAreaSizesForVocals() {
-		lanesTop = beatSizeTextY + 15;
-		laneHeight = 100;
-		tailHeight = 100;
-		lanesHeight = 100;
+		laneHeight = (int) (noteHeight * 7.5);
+		tailHeight = noteHeight;
+		lanesHeight = laneHeight;
 		lanesBottom = lanesTop + lanesHeight;
 		timingY = lanesBottom;
 		editAreaHeight = timingY + timingHeight;
@@ -76,8 +71,7 @@ public class DrawerUtils {
 			final int strings) {
 		switch (editMode) {
 			case GUITAR -> setEditAreaSizesForGuitar(arrangementType, strings);
-			case VOCALS -> setEditAreaSizesForVocals();
-			default -> setEditAreaSizesForTempoMap();
+			default -> setEditAreaSizesForTempoMapAndVocals();
 		}
 
 		BackgroundDrawer.reloadGraphics();

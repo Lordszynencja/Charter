@@ -87,15 +87,30 @@ public class WaveFormDrawer {
 		final Pair<Integer, List<WaveformInformation>> level = map.getLevel(pixelTimeLength());
 		final int timeSpan = getFrameTimeSpan(level.a);
 
+		final int width = chartPanel.getWidth();
 		final int y = (lanesBottom + lanesTop) / 2;
 		final int fullHeight = (lanesBottom - lanesTop) / 2;
 		final int start = max(0, xToTime(0, time) / timeSpan);
 		final int end = min(level.b.size() - 1, xToTime(chartPanel.getWidth(), time) / timeSpan);
+
+		final int[] heights = new int[width];
+		final boolean[] rms = new boolean[width];
+
 		for (int i = start; i <= end; i++) {
 			final WaveformInformation information = level.b.get(i);
 			final int x = timeToX(i * timeSpan, time);
+			if (x < 0 || x >= width) {
+				continue;
+			}
+
 			final int height = (int) (information.height * fullHeight);
-			g.setColor(showRMS && information.rms ? highIntensityColor : normalColor);
+			heights[x] = Math.max(heights[x], height);
+			rms[x] |= showRMS && information.rms;
+		}
+
+		for (int x = 0; x < width; x++) {
+			g.setColor(rms[x] ? highIntensityColor : normalColor);
+			final int height = heights[x];
 			g.fillRect(x, y - height, 1, 2 * height);
 		}
 	}

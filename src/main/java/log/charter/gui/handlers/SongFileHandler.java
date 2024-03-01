@@ -366,7 +366,7 @@ public class SongFileHandler {
 
 		final SongChart songChart;
 		try {
-			songChart = new SongChart(musicData.msLength(), project, dir);
+			songChart = new SongChart(project, dir);
 		} catch (final Exception e) {
 			frame.showPopup(e.getMessage());
 			return;
@@ -451,8 +451,7 @@ public class SongFileHandler {
 		loadingDialog = new LoadingDialog(frame, 1);
 		loadingDialog.setProgress(0, Label.LOADING_ARRANGEMENTS.label());
 		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(arrangementFile));
-		final SongChart songChart = RSXMLToSongChart.makeSongChartForArrangement(musicData.msLength(), songName,
-				songArrangement);
+		final SongChart songChart = RSXMLToSongChart.makeSongChartForArrangement(songName, songArrangement);
 
 		projectAudioHandler.setAudio(musicData);
 		chartTimeHandler.setNextTime(0);

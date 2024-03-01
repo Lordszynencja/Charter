@@ -34,36 +34,25 @@ public class BeatsMap {
 	 * creates base beats map
 	 */
 	public BeatsMap(final int audioLength) {
-		this(audioLength, true);
+		beats.add(new Beat(0, 4, 4, true));
+		makeBeatsUntilSongEnd(audioLength);
 	}
 
 	public BeatsMap(final ArrayList2<Beat> beats) {
 		this.beats = beats;
 	}
 
-	public BeatsMap(final int audioLength, final int startFrom) {
-		beats.add(new Beat(startFrom, 4, 4, true));
-		makeBeatsUntilSongEnd(audioLength);
-	}
-
-	public BeatsMap(final int audioLength, final boolean fillBeatsForSong) {
-		if (fillBeatsForSong) {
-			beats.add(new Beat(0, 4, 4, true));
-			makeBeatsUntilSongEnd(audioLength);
-		}
-	}
-
 	/**
 	 * creates beats map for existing project
 	 */
-	public BeatsMap(final int audioLength, final ChartProject chartProject) {
+	public BeatsMap(final ChartProject chartProject) {
 		beats = chartProject.beats;
 	}
 
 	/**
 	 * creates beats map for rs xml import
 	 */
-	public BeatsMap(final int audioLength, final SongArrangement songArrangement) {
+	public BeatsMap(final SongArrangement songArrangement) {
 		beats = Beat.fromEbeats(songArrangement.ebeats.list);
 
 		int beatsInMeasure = -1;
@@ -81,10 +70,6 @@ public class BeatsMap {
 
 			beatCount++;
 		}
-	}
-
-	public BeatsMap(final BeatsMap other) {
-		beats = other.beats.map(Beat::new);
 	}
 
 	public void makeBeatsUntilSongEnd(final int audioLength) {

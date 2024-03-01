@@ -141,7 +141,7 @@ public class CharterFrame extends JFrame {
 				this, highlightManager, keyboardHandler, selectionManager, undoSystem);
 		mouseButtonPressReleaseHandler.init(highlightManager);
 		mouseHandler.init(arrangementFixer, chartTimeHandler, data, this, keyboardHandler, modeManager,
-				mouseButtonPressReleaseHandler, projectAudioHandler, selectionManager, undoSystem);
+				mouseButtonPressReleaseHandler, selectionManager, undoSystem);
 		projectAudioHandler.init(waveFormDrawer);
 		repeatManager.init(audioHandler, chartTimeHandler, chartToolbar);
 		songFileHandler.init(arrangementFixer, arrangementValidator, audioHandler, chartTimeHandler, data, this,

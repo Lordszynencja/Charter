@@ -66,7 +66,7 @@ public class SongChart {
 	/**
 	 * creates chart from loaded project
 	 */
-	public SongChart(final int songLengthMs, final ChartProject project, final String dir) throws IOException {
+	public SongChart(final ChartProject project, final String dir) throws IOException {
 		musicFileName = project.musicFileName;
 
 		artistName = project.artistName;
@@ -75,7 +75,7 @@ public class SongChart {
 		albumName = project.albumName;
 		albumYear = project.albumYear;
 
-		beatsMap = new BeatsMap(songLengthMs, project);
+		beatsMap = new BeatsMap(project);
 
 		if (project.arrangements != null) {
 			arrangements = project.arrangements;

@@ -44,7 +44,7 @@ public class WaveformInformationGenerator {
 			rmsCalculator.addValue(value);
 		}
 
-		level.add(new WaveformInformation(height, rmsCalculator.getRMS() > 4));
+		level.add(new WaveformInformation(height, rmsCalculator.getRMS() > 3.9));
 	}
 
 	public List<WaveformInformation> getLevel() {
