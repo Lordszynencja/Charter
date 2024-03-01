@@ -8,4 +8,8 @@ public class WaveformInformation {
 		this.height = height;
 		this.rms = rms;
 	}
+
+	public WaveformInformation add(final WaveformInformation other) {
+		return new WaveformInformation(Math.max(height, other.height), rms || other.rms);
+	}
 }

@@ -4,6 +4,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
+import static log.charter.gui.chartPanelDrawers.common.waveform.WaveformMap.getSpanForLevel;
 import static log.charter.util.ScalingUtils.pixelTimeLength;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
@@ -70,22 +71,13 @@ public class WaveFormDrawer {
 		return drawWaveForm || modeManager.getMode() == EditMode.TEMPO_MAP;
 	}
 
-	private static int getFrameTimeSpan(final int level) {
-		int timeSpan = 1;
-		for (int i = 0; i < level; i++) {
-			timeSpan *= 2;
-		}
-
-		return timeSpan;
-	}
-
 	private void drawFromMap(final Graphics g, final int time) {
 		if (map == null) {
 			return;
 		}
 
 		final Pair<Integer, List<WaveformInformation>> level = map.getLevel(pixelTimeLength());
-		final int timeSpan = getFrameTimeSpan(level.a);
+		final int timeSpan = getSpanForLevel(level.a);
 
 		final int width = chartPanel.getWidth();
 		final int y = (lanesBottom + lanesTop) / 2;
