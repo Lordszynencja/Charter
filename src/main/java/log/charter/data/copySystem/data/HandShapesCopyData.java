@@ -31,17 +31,17 @@ public class HandShapesCopyData implements ICopyData {
 	}
 
 	@Override
-	public void paste(final ChartData data, final boolean convertFromBeats) {
+	public void paste(final int time, final ChartData data, final boolean convertFromBeats) {
 		final Arrangement arrangement = data.getCurrentArrangement();
 		final BeatsMap beatsMap = data.songChart.beatsMap;
 		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
 
-		final double basePositionInBeats = beatsMap.getPositionInBeats(data.time);
+		final double basePositionInBeats = beatsMap.getPositionInBeats(time);
 		final Map<Integer, Integer> chordIdsMap = new HashMap<>();
 
 		for (final CopiedHandShapePosition copiedPosition : this.handShapes) {
 			try {
-				final HandShape handShape = copiedPosition.getValue(beatsMap, data.time, basePositionInBeats,
+				final HandShape handShape = copiedPosition.getValue(beatsMap, time, basePositionInBeats,
 						convertFromBeats);
 				if (handShape == null) {
 					continue;

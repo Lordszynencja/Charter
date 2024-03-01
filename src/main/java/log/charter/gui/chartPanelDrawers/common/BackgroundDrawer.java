@@ -19,6 +19,7 @@ import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.util.Position2D;
 
 public class BackgroundDrawer {
@@ -46,10 +47,12 @@ public class BackgroundDrawer {
 		reloadGraphics();
 	}
 
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private ChartPanel chartPanel;
 
-	public void init(final ChartData data, final ChartPanel chartPanel) {
+	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final ChartPanel chartPanel) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.chartPanel = chartPanel;
 	}
@@ -85,36 +88,36 @@ public class BackgroundDrawer {
 		return formatted;
 	}
 
-	private void drawTimestamp(final Graphics g, final int time) {
-		final int x = timeToX(time, data.time);
-		if (time % 1000 == 0) {
+	private void drawTimestamp(final Graphics g, final int time, final int timestampTime) {
+		final int x = timeToX(timestampTime, time);
+		if (timestampTime % 1000 == 0) {
 			filledRectangle(new ShapePositionWithSize(x, lanesBottom + 1, 1, secondsMarkerBottom - lanesBottom - 1),
-					ColorLabel.BASE_DARK_TEXT).draw(g); // changed
+					ColorLabel.BASE_DARK_TEXT).draw(g);
 
-			final String formattedTime = formatTime(time / 1000);
-			new CenteredText(new Position2D(x, textY), timeFont, formattedTime, ColorLabel.BASE_DARK_TEXT).draw(g); // changed
+			final String formattedTime = formatTime(timestampTime / 1000);
+			new CenteredText(new Position2D(x, textY), timeFont, formattedTime, ColorLabel.BASE_DARK_TEXT).draw(g);
 		} else {
-			lineVertical(x, lanesBottom + 1, nonsecondsMarkerBottom, ColorLabel.BASE_DARK_TEXT).draw(g); // changed
+			lineVertical(x, lanesBottom + 1, nonsecondsMarkerBottom, ColorLabel.BASE_DARK_TEXT).draw(g);
 		}
 	}
 
-	private void drawTimeScale(final Graphics g) {
-		int time = xToTime(-20, data.time);
-		if (time < 0) {
-			time = 0;
+	private void drawTimeScale(final Graphics g, final int time) {
+		int timestampTime = xToTime(-20, time);
+		if (timestampTime < 0) {
+			timestampTime = 0;
 		}
 
-		final int endTime = xToTime(chartPanel.getWidth() + 20, data.time);
-		final int jump = calculateJump(time, endTime);
-		time -= time % jump;
+		final int endTime = xToTime(chartPanel.getWidth() + 20, time);
+		final int jump = calculateJump(timestampTime, endTime);
+		timestampTime -= timestampTime % jump;
 
-		while (time <= endTime && time < data.songChart.beatsMap.songLengthMs) {
-			drawTimestamp(g, time);
-			time += jump;
+		while (timestampTime <= endTime && timestampTime < chartTimeHandler.audioLength()) {
+			drawTimestamp(g, time, timestampTime);
+			timestampTime += jump;
 		}
 	}
 
-	public void draw(final Graphics g) {
+	public void draw(final Graphics g, final int time) {
 		drawBackground(g);
 
 		if (data.isEmpty) {
@@ -122,12 +125,12 @@ public class BackgroundDrawer {
 		}
 
 		drawLanesBackground(g);
-		drawTimeScale(g);
+		drawTimeScale(g, time);
 
 		g.setColor(ColorLabel.MARKER.color());
-		final int startX = timeToX(0, data.time);
+		final int startX = timeToX(0, chartTimeHandler.time());
 		g.drawLine(startX, lanesTop + 30, startX, lanesBottom - 30);
-		final int endX = timeToX(data.songChart.beatsMap.songLengthMs, data.time);
+		final int endX = timeToX(chartTimeHandler.audioLength(), chartTimeHandler.time());
 		g.drawLine(endX, lanesTop + 30, endX, lanesBottom - 30);
 	}
 }

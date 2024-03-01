@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
@@ -25,8 +26,10 @@ import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class MidiChartNotePlayer {
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private ModeManager modeManager;
+
 	private final MidiNotePlayer midiNotePlayer = new MidiNotePlayer();
 
 	private boolean playing = false;
@@ -34,15 +37,16 @@ public class MidiChartNotePlayer {
 	private final List<MidiChartNotePlayerNoteData> sounds = new ArrayList<>();
 	private MidiChartNotePlayerNoteData nextSound;
 
-	public void init(final ChartData data, final ModeManager modeManager) {
+	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final ModeManager modeManager) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.modeManager = modeManager;
 
 		midiNotePlayer.init(data);
 	}
 
-	private int getCurrentTime() {
-		return data.nextTime + midiDelay * speed / 100;
+	private int getTime() {
+		return chartTimeHandler.time() + midiDelay * speed / 100;
 	}
 
 	private void stopSound(final MidiChartNotePlayerNoteData sound) {
@@ -75,12 +79,13 @@ public class MidiChartNotePlayer {
 		}
 	}
 
-	private double getBendValue(final List<BendValue> bendValues, final int position, final int length) {
+	private double getBendValue(final int time, final List<BendValue> bendValues, final int position,
+			final int length) {
 		if (bendValues.isEmpty()) {
 			return 0;
 		}
 
-		final int insidePosition = getCurrentTime() - position;
+		final int insidePosition = time - position;
 		final int bendPointId = findLastIdBeforeEqual(bendValues, insidePosition);
 		BendValue bendPointA;
 		BendValue bendPointB;
@@ -101,9 +106,9 @@ public class MidiChartNotePlayer {
 		return weight * (bendValueB - bendValueA) + bendValueA;
 	}
 
-	private double getSlideValue(final int position, final int length, final int slideLength,
+	private double getSlideValue(final int time, final int position, final int length, final int slideLength,
 			final boolean unpitchedSlide) {
-		final double progress = 1.0 * (getCurrentTime() - position) / length;
+		final double progress = 1.0 * (time - position) / length;
 
 		final double weight = unpitchedSlide//
 				? 1 - sin((1 - progress) * Math.PI / 2)//
@@ -111,27 +116,27 @@ public class MidiChartNotePlayer {
 		return slideLength * weight;
 	}
 
-	private void updateBend(final int position, final int length, final int string, final List<BendValue> bendValues,
-			final int fret, final Integer slideTo, final boolean unpitchedSlide) {
-		double bendValue = getBendValue(bendValues, position, length);
+	private void updateBend(final int time, final int position, final int length, final int string,
+			final List<BendValue> bendValues, final int fret, final Integer slideTo, final boolean unpitchedSlide) {
+		double bendValue = getBendValue(time, bendValues, position, length);
 
 		if (slideTo != null) {
-			bendValue += getSlideValue(position, length, slideTo - fret, unpitchedSlide);
+			bendValue += getSlideValue(time, position, length, slideTo - fret, unpitchedSlide);
 		}
 
 		midiNotePlayer.updateBend(string, fret, bendValue);
 	}
 
-	private void updateSoundingSounds() {
+	private void updateSoundingSounds(final int time) {
 		for (final MidiChartNotePlayerNoteData sound : sounds) {
-			if (sound.endPosition < getCurrentTime()) {
+			if (sound.endPosition < time) {
 				stopSound(sound);
 				continue;
 			}
 
 			if (sound.sound.isNote()) {
 				final Note note = sound.sound.note;
-				updateBend(note.position(), note.length(), note.string, note.bendValues, note.fret, note.slideTo,
+				updateBend(time, note.position(), note.length(), note.string, note.bendValues, note.fret, note.slideTo,
 						note.unpitchedSlide);
 			} else {
 				final Chord chord = sound.sound.chord;
@@ -139,13 +144,13 @@ public class MidiChartNotePlayer {
 				for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
 					final int string = chordNoteEntry.getKey();
 					final ChordNote chordNote = chordNoteEntry.getValue();
-					updateBend(chord.position(), chordNote.length, string, chordNote.bendValues,
+					updateBend(time, chord.position(), chordNote.length, string, chordNote.bendValues,
 							chordTemplate.frets.get(string), chordNote.slideTo, chordNote.unpitchedSlide);
 				}
 			}
 		}
 
-		sounds.removeIf(sound -> sound.endPosition < getCurrentTime());
+		sounds.removeIf(sound -> sound.endPosition < time);
 	}
 
 	public void frame() {
@@ -153,10 +158,12 @@ public class MidiChartNotePlayer {
 			return;
 		}
 
-		midiNotePlayer.updateVolume();
-		updateSoundingSounds();
+		final int time = getTime();
 
-		if (nextSound != null && nextSound.sound.position() <= getCurrentTime()) {
+		midiNotePlayer.updateVolume();
+		updateSoundingSounds(time);
+
+		if (nextSound != null && nextSound.sound.position() <= time) {
 			playNextSound();
 		}
 	}
@@ -164,7 +171,7 @@ public class MidiChartNotePlayer {
 	private MidiChartNotePlayerNoteData makeNoteData(final int noteId) {
 		final ChordOrNote sound = data.getCurrentArrangementLevel().sounds.get(noteId);
 		int soundEndTime = sound.endPosition();
-		int maxEndTime = data.songChart.beatsMap.songLengthMs;
+		int maxEndTime = chartTimeHandler.audioLength();
 		if (sound.isChord() && sound.length() < 50) {
 			Integer newEndTime = null;
 			if (noteId + 1 < data.getCurrentArrangementLevel().sounds.size()) {
@@ -211,13 +218,15 @@ public class MidiChartNotePlayer {
 			return;
 		}
 
+		final int time = getTime();
+
 		playing = true;
 		final ArrayList2<ChordOrNote> chartSounds = data.getCurrentArrangementLevel().sounds;
 
-		final int currentNoteId = findLastIdBeforeEqual(chartSounds, getCurrentTime());
+		final int currentNoteId = findLastIdBeforeEqual(chartSounds, time);
 		if (currentNoteId != -1) {
 			nextSound = makeNoteData(currentNoteId);
-			if (nextSound.endPosition >= getCurrentTime()) {
+			if (nextSound.endPosition >= time) {
 				playNextSound();
 			} else {
 				final int nextSoundId = nextSound.noteId + 1;

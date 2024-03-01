@@ -53,7 +53,7 @@ public class Preview3DLaneBordersDrawer {
 			fretsOpacity[fret] = 32;
 		}
 
-		final IntRange activeFrets = drawData.getFrets(data.time);
+		final IntRange activeFrets = drawData.getFrets(drawData.time);
 
 		for (final AnchorDrawData anchor : drawData.anchors) {
 			for (int fret = anchor.fretFrom; fret <= anchor.fretTo; fret++) {

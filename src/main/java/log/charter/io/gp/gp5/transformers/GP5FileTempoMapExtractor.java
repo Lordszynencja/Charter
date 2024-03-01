@@ -11,7 +11,7 @@ import log.charter.song.BeatsMap;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class GP5FileTempoMapExtractor {
-	public static BeatsMap getTempoMap(final GP5File gp5File, final int start, final int musicLength,
+	public static BeatsMap getTempoMap(final GP5File gp5File, final int start, final int audioLength,
 			final List<Integer> barsOrder) {
 		final List<GPBar> track = gp5File.trackBars.get(0);
 		final ArrayList2<Beat> beats = new ArrayList2<>();
@@ -39,8 +39,8 @@ public class GP5FileTempoMapExtractor {
 		}
 		beats.getLast().anchor = true;
 
-		final BeatsMap beatsMap = new BeatsMap(musicLength, beats);
-		beatsMap.makeBeatsUntilSongEnd();
+		final BeatsMap beatsMap = new BeatsMap(beats);
+		beatsMap.makeBeatsUntilSongEnd(audioLength);
 		beatsMap.fixFirstBeatInMeasures();
 
 		return beatsMap;

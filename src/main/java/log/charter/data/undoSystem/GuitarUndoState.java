@@ -3,6 +3,7 @@ package log.charter.data.undoSystem;
 import static java.util.stream.Collectors.toCollection;
 
 import log.charter.data.ChartData;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.song.Anchor;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
@@ -51,7 +52,7 @@ public class GuitarUndoState extends UndoState {
 	}
 
 	@Override
-	public GuitarUndoState undo(final ChartData data) {
+	public GuitarUndoState undo(final ChartData data, final ChartTimeHandler chartTimeHandler) {
 		final GuitarUndoState redo = new GuitarUndoState(data, arrangementId, levelId);
 
 		final Arrangement arrangement = data.songChart.arrangements.get(arrangementId);

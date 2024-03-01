@@ -28,50 +28,42 @@ public class BeatsMap {
 		}
 	}
 
-	public int songLengthMs;
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 
 	/**
 	 * creates base beats map
 	 */
-	public BeatsMap(final int songLength) {
-		this(songLength, true);
+	public BeatsMap(final int audioLength) {
+		this(audioLength, true);
 	}
 
-	public BeatsMap(final int songLength, final ArrayList2<Beat> beats) {
-		songLengthMs = songLength;
+	public BeatsMap(final ArrayList2<Beat> beats) {
 		this.beats = beats;
 	}
 
-	public BeatsMap(final int songLength, final int startFrom) {
-		songLengthMs = songLength;
+	public BeatsMap(final int audioLength, final int startFrom) {
 		beats.add(new Beat(startFrom, 4, 4, true));
-		makeBeatsUntilSongEnd();
+		makeBeatsUntilSongEnd(audioLength);
 	}
 
-	public BeatsMap(final int songLength, final boolean fillBeatsForSong) {
-		songLengthMs = songLength;
+	public BeatsMap(final int audioLength, final boolean fillBeatsForSong) {
 		if (fillBeatsForSong) {
 			beats.add(new Beat(0, 4, 4, true));
-			makeBeatsUntilSongEnd();
+			makeBeatsUntilSongEnd(audioLength);
 		}
 	}
 
 	/**
 	 * creates beats map for existing project
 	 */
-	public BeatsMap(final int songLengthMs, final ChartProject chartProject) {
-		this.songLengthMs = songLengthMs;
-
+	public BeatsMap(final int audioLength, final ChartProject chartProject) {
 		beats = chartProject.beats;
 	}
 
 	/**
 	 * creates beats map for rs xml import
 	 */
-	public BeatsMap(final int songLengthMs, final SongArrangement songArrangement) {
-		this.songLengthMs = songLengthMs;
-
+	public BeatsMap(final int audioLength, final SongArrangement songArrangement) {
 		beats = Beat.fromEbeats(songArrangement.ebeats.list);
 
 		int beatsInMeasure = -1;
@@ -92,14 +84,13 @@ public class BeatsMap {
 	}
 
 	public BeatsMap(final BeatsMap other) {
-		songLengthMs = other.songLengthMs;
 		beats = other.beats.map(Beat::new);
 	}
 
-	public void makeBeatsUntilSongEnd() {
+	public void makeBeatsUntilSongEnd(final int audioLength) {
 		final Beat current = beats.getLast();
-		if (current.position() > songLengthMs) {
-			beats.removeIf(beat -> beat.position() > songLengthMs);
+		if (current.position() > audioLength) {
+			beats.removeIf(beat -> beat.position() > audioLength);
 			return;
 		}
 
@@ -126,7 +117,7 @@ public class BeatsMap {
 		}
 
 		final int beatsInMeasure = current.beatsInMeasure;
-		while (pos < songLengthMs) {
+		while (pos < audioLength) {
 			beatInMeasure++;
 			beats.add(new Beat(pos, beatsInMeasure, current.noteDenominator, beatInMeasure == beatsInMeasure));
 
@@ -244,7 +235,7 @@ public class BeatsMap {
 		return (int) (beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0));
 	}
 
-	public void setBPM(final int beatId, final double newBPM) {
+	public void setBPM(final int beatId, final double newBPM, final int audioLength) {
 		for (int i = beats.size() - 1; i > beatId; i--) {
 			beats.remove(i);
 		}
@@ -253,7 +244,7 @@ public class BeatsMap {
 		final int startPosition = startBeat.position();
 		int position = (int) (startPosition + 60_000 / newBPM);
 		int createdBeatId = 1;
-		while (position <= songLengthMs) {
+		while (position <= audioLength) {
 			final Beat newBeat = new Beat(position, startBeat.beatsInMeasure, startBeat.noteDenominator, false);
 			beats.add(newBeat);
 			createdBeatId++;

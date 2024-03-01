@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import log.charter.data.config.Config;
 import log.charter.io.Logger;
-import log.charter.sound.data.MusicDataShort;
+import log.charter.sound.data.AudioDataShort;
 import log.charter.sound.wav.WavLoader;
 import log.charter.sound.wav.WavWriter;
 
@@ -30,21 +30,21 @@ public class StretchedFileLoader {
 		}
 	}
 
-	private final MusicDataShort musicData;
+	private final AudioDataShort musicData;
 	private final String dir;
 	private final int speed;
 	private final File targetFile;
 
-	public StretchedFileLoader(final MusicDataShort musicData, final String dir, final int speed) {
+	public StretchedFileLoader(final AudioDataShort musicData, final String dir, final int speed) {
 		this.musicData = musicData;
 		this.dir = dir;
 		this.speed = speed;
 		targetFile = new File(dir, getResultFileName(speed));
 	}
 
-	public MusicDataShort quickLoad() {
+	public AudioDataShort quickLoad() {
 		if (targetFile.exists()) {
-			final MusicDataShort result = loadResult();
+			final AudioDataShort result = loadResult();
 
 			if (result != null && result.data.length > 0) {
 				return result;
@@ -123,7 +123,7 @@ public class StretchedFileLoader {
 		}
 	}
 
-	private MusicDataShort loadResult() {
+	private AudioDataShort loadResult() {
 		return WavLoader.load(targetFile);
 	}
 }

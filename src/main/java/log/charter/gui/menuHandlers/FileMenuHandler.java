@@ -18,6 +18,7 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.handlers.SongFileHandler;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.Action;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.panes.ColorConfigPane;
@@ -36,6 +37,7 @@ import log.charter.util.FileChooseUtils;
 
 public class FileMenuHandler extends CharterMenuHandler {
 	private ArrangementFixer arrangementFixer;
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private CharterFrame frame;
 	private Framer framer;
@@ -44,9 +46,10 @@ public class FileMenuHandler extends CharterMenuHandler {
 	private ModeManager modeManager;
 	private SongFileHandler songFileHandler;
 
-	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final CharterFrame frame,
-			final Framer framer, final CharterMenuBar charterMenuBar, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final SongFileHandler songFileHandler) {
+	public void init(final ArrangementFixer arrangementFixer, final ChartTimeHandler chartTimeHandler,
+			final ChartData data, final CharterFrame frame, final Framer framer, final CharterMenuBar charterMenuBar,
+			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+			final SongFileHandler songFileHandler) {
 		this.arrangementFixer = arrangementFixer;
 		this.data = data;
 		this.frame = frame;
@@ -126,7 +129,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 
 			final int startPosition = data.songChart.beatsMap.beats.get(0).position();
 			final BeatsMap beatsMap = useExistingTempoMap ? data.songChart.beatsMap
-					: getTempoMap(gp5File, startPosition, data.songChart.beatsMap.songLengthMs, barsOrder);
+					: getTempoMap(gp5File, startPosition, chartTimeHandler.audioLength(), barsOrder);
 
 			final SongChart temporaryChart = GP5FileToSongChart.transform(gp5File, beatsMap, barsOrder);
 
@@ -143,8 +146,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 			return;
 		}
 
-		final BeatsMap beatsMap = MidiToBeatsMap.getBeatsMap(file.getAbsolutePath(),
-				data.songChart.beatsMap.songLengthMs);
+		final BeatsMap beatsMap = MidiToBeatsMap.getBeatsMap(file.getAbsolutePath(), chartTimeHandler.audioLength());
 		if (beatsMap == null) {
 			Logger.error("Couldn't import tempo from midi file " + file.getAbsolutePath());
 			return;

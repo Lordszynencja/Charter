@@ -15,8 +15,8 @@ public class TempoMapDrawer {
 		this.waveFormDrawer = waveFormDrawer;
 	}
 
-	public void draw(final Graphics g, final HighlightData highlightData) {
-		waveFormDrawer.draw(g);
-		beatsDrawer.draw(g, highlightData);
+	public void draw(final Graphics g, final int time, final HighlightData highlightData) {
+		waveFormDrawer.draw(g, time);
+		beatsDrawer.draw(g, time, highlightData);
 	}
 }

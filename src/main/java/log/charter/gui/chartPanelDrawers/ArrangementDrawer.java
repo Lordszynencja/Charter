@@ -34,16 +34,16 @@ public class ArrangementDrawer {
 		vocalsDrawer.init(beatsDrawer, data, chartPanel, lyricLinesDrawer, selectionManager, waveFormDrawer);
 	}
 
-	public void draw(final Graphics g, final HighlightData highlightData) {
+	public void draw(final Graphics g, final int time, final HighlightData highlightData) {
 		switch (modeManager.getMode()) {
 			case GUITAR:
-				guitarDrawer.draw(g, highlightData);
+				guitarDrawer.draw(g, time, highlightData);
 				break;
 			case TEMPO_MAP:
-				tempoMapDrawer.draw(g, highlightData);
+				tempoMapDrawer.draw(g, time, highlightData);
 				break;
 			case VOCALS:
-				vocalsDrawer.draw(g, highlightData);
+				vocalsDrawer.draw(g, time, highlightData);
 				break;
 			default:
 				break;

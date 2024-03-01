@@ -10,7 +10,7 @@ import log.charter.song.BeatsMap;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class MidiToBeatsMap {
-	public static BeatsMap getBeatsMap(final String path, final int songLength) {
+	public static BeatsMap getBeatsMap(final String path, final int audioLength) {
 		try {
 			final TempoMap tempoMap = MidiReader.readMidi(path);
 
@@ -34,8 +34,8 @@ public class MidiToBeatsMap {
 				id = tempo.id;
 			}
 
-			final BeatsMap beatsMap = new BeatsMap(songLength, beats);
-			beatsMap.makeBeatsUntilSongEnd();
+			final BeatsMap beatsMap = new BeatsMap(beats);
+			beatsMap.makeBeatsUntilSongEnd(audioLength);
 			beatsMap.fixFirstBeatInMeasures();
 
 			return beatsMap;

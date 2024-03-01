@@ -17,11 +17,11 @@ import log.charter.sound.HighPassFilter.PassType;
 import log.charter.sound.mp3.Mp3Loader;
 import log.charter.sound.ogg.OggLoader;
 
-public class MusicDataShort extends MusicData<MusicDataShort> {
+public class AudioDataShort extends AudioData<AudioDataShort> {
 	public static final short minValue = -0x8000;
 	public static final short maxValue = 0x7FFF;
 
-	public static MusicDataShort readFile(final File file) {
+	public static AudioDataShort readFile(final File file) {
 		try {
 			if (file.getName().endsWith(".mp3")) {
 				if (file.exists()) {
@@ -43,19 +43,19 @@ public class MusicDataShort extends MusicData<MusicDataShort> {
 	public final AudioFormat format;
 	private final byte[] bytes;
 
-	public MusicDataShort() {
+	public AudioDataShort() {
 		this(new short[2][0], new byte[0], AudioUtils.DEF_RATE, 2, 2);
 	}
 
-	public MusicDataShort(final byte[] bytes, final float rate, final int channels, final int sampleBytes) {
+	public AudioDataShort(final byte[] bytes, final float rate, final int channels, final int sampleBytes) {
 		this(splitAudioShort(bytes, channels, sampleBytes), bytes, rate, channels, sampleBytes);
 	}
 
-	public MusicDataShort(final short[][] data, final float rate) {
+	public AudioDataShort(final short[][] data, final float rate) {
 		this(data, toBytes(data, data.length, 2), rate, data.length, 2);
 	}
 
-	private MusicDataShort(final short[][] data, final byte[] bytes, final float rate, final int channels,
+	private AudioDataShort(final short[][] data, final byte[] bytes, final float rate, final int channels,
 			final int sampleBytes) {
 		this.data = data;
 		format = new AudioFormat(Encoding.PCM_SIGNED, rate, sampleBytes * 8, channels, channels * sampleBytes, rate,
@@ -78,7 +78,7 @@ public class MusicDataShort extends MusicData<MusicDataShort> {
 		return (int) ((data[0].length * 1000.0) / format.getFrameRate());
 	}
 
-	public MusicDataShort pass(final float frequency, final float resonance, final PassType type) {
+	public AudioDataShort pass(final float frequency, final float resonance, final PassType type) {
 		final float rate = format.getSampleRate();
 		final short[][] newData = new short[data.length][];
 		final int valueRange = maxValue - minValue;
@@ -94,11 +94,11 @@ public class MusicDataShort extends MusicData<MusicDataShort> {
 			}
 		}
 
-		return new MusicDataShort(newData, rate);
+		return new AudioDataShort(newData, rate);
 	}
 
 	@Override
-	public MusicDataShort join(final MusicDataShort other) {
+	public AudioDataShort join(final AudioDataShort other) {
 		int length0 = 0;
 		for (int i = 0; i < data.length; i++) {
 			length0 = max(length0, data[i].length);
@@ -116,11 +116,11 @@ public class MusicDataShort extends MusicData<MusicDataShort> {
 			System.arraycopy(other.data[channel], 0, targetChannel, length0, other.data[channel].length);
 		}
 
-		return new MusicDataShort(newData, format.getSampleRate());
+		return new AudioDataShort(newData, format.getSampleRate());
 	}
 
 	@Override
-	public MusicDataShort cut(final double startTime, final double endTime) {
+	public AudioDataShort cut(final double startTime, final double endTime) {
 		int length = 0;
 		for (int i = 0; i < data.length; i++) {
 			length = max(length, data[i].length);
@@ -140,11 +140,11 @@ public class MusicDataShort extends MusicData<MusicDataShort> {
 			System.arraycopy(src, start, newData[channel], 0, toMove);
 		}
 
-		return new MusicDataShort(newData, format.getSampleRate());
+		return new AudioDataShort(newData, format.getSampleRate());
 	}
 
 	@Override
-	public MusicDataShort remove(final double time) {
+	public AudioDataShort remove(final double time) {
 		int length = 0;
 		for (int i = 0; i < data.length; i++) {
 			length = max(length, data[i].length);
@@ -162,11 +162,11 @@ public class MusicDataShort extends MusicData<MusicDataShort> {
 			System.arraycopy(src, samplesRemoved, dest, 0, toMove);
 		}
 
-		return new MusicDataShort(newData, format.getSampleRate());
+		return new AudioDataShort(newData, format.getSampleRate());
 	}
 
 	@Override
-	public MusicDataShort volume(final double volume) {
+	public AudioDataShort volume(final double volume) {
 		final short[][] newData = new short[data.length][];
 		for (int channel = 0; channel < data.length; channel++) {
 			newData[channel] = Arrays.copyOf(data[channel], data[channel].length);
@@ -175,6 +175,6 @@ public class MusicDataShort extends MusicData<MusicDataShort> {
 			}
 		}
 
-		return new MusicDataShort(newData, format.getSampleRate());
+		return new AudioDataShort(newData, format.getSampleRate());
 	}
 }

@@ -6,29 +6,29 @@ import static java.lang.Math.sin;
 public class AudioUtils {
 	public static final int DEF_RATE = 44100;
 
-	public static MusicDataShort generateSound(final double pitchHz, final double lengthSeconds,
+	public static AudioDataShort generateSound(final double pitchHz, final double lengthSeconds,
 			final double loudness) {
 		return generateSound(pitchHz, lengthSeconds, loudness, DEF_RATE);
 	}
 
-	public static MusicDataShort generateSound(final double pitchHz, final double lengthSeconds, final double loudness,
+	public static AudioDataShort generateSound(final double pitchHz, final double lengthSeconds, final double loudness,
 			final float sampleRate) {
 		final short[] data = new short[(int) (lengthSeconds * sampleRate)];
 		for (int i = 0; i < data.length; i++) {
 			data[i] = (short) (pow(sin((pitchHz * Math.PI * i) / sampleRate), 2) * loudness * 32767);
 		}
 
-		return new MusicDataShort(new short[][] { data }, sampleRate);
+		return new AudioDataShort(new short[][] { data }, sampleRate);
 	}
 
-	public static MusicDataShort generateSilence(final double lengthSeconds, final float sampleRate,
+	public static AudioDataShort generateSilence(final double lengthSeconds, final float sampleRate,
 			final int channels) {
 		final short[] data = new short[(int) (lengthSeconds * sampleRate)];
 		final short[][] dataChannels = new short[channels][];
 		for (int i = 0; i < channels; i++) {
 			dataChannels[i] = data;
 		}
-		return new MusicDataShort(dataChannels, sampleRate);
+		return new AudioDataShort(dataChannels, sampleRate);
 	}
 
 	private static short fromBytes(final byte b0, final byte b1) {

@@ -31,6 +31,8 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	private final SelectionManager selectionManager;
 	private final UndoSystem undoSystem;
 
+	private final int time;
+
 	private final FullGuitarCopyData copyData;
 
 	private boolean pasteUsingBeats = true;
@@ -44,13 +46,15 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	private boolean pasteHandShapes = pasteHandShapesDefault;
 
 	public GuitarSpecialPastePane(final ChartData data, final CharterFrame frame,
-			final SelectionManager selectionManager, final UndoSystem undoSystem,
+			final SelectionManager selectionManager, final UndoSystem undoSystem, final int time,
 			final FullGuitarCopyData fullGuitarCopyData) {
 		super(frame, Label.SPECIAL_GUITAR_PASTE_PANE, getSizes());
 
 		this.data = data;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
+
+		this.time = time;
 
 		copyData = fullGuitarCopyData;
 
@@ -91,19 +95,19 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		pasteHandShapesDefault = pasteHandShapes;
 
 		if (pasteSections || pastePhrases || pasteEvents) {
-			copyData.beats.paste(data, pasteSections, pastePhrases, pasteEvents, pasteUsingBeats);
+			copyData.beats.paste(time, data, pasteSections, pastePhrases, pasteEvents, pasteUsingBeats);
 		}
 		if (pasteToneChanges) {
-			copyData.toneChanges.paste(data, pasteUsingBeats);
+			copyData.toneChanges.paste(time, data, pasteUsingBeats);
 		}
 		if (pasteAnchors) {
-			copyData.anchors.paste(data, pasteUsingBeats);
+			copyData.anchors.paste(time, data, pasteUsingBeats);
 		}
 		if (pasteSounds) {
-			copyData.sounds.paste(data, pasteUsingBeats);
+			copyData.sounds.paste(time, data, pasteUsingBeats);
 		}
 		if (pasteHandShapes) {
-			copyData.handShapes.paste(data, pasteUsingBeats);
+			copyData.handShapes.paste(time, data, pasteUsingBeats);
 		}
 	}
 }

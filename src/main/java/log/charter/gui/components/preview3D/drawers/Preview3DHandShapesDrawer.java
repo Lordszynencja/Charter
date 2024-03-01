@@ -60,8 +60,8 @@ public class Preview3DHandShapesDrawer {
 		final double y = getChartboardYPosition(data.currentStrings()) + 0.0002;
 		final boolean arpeggio = handShape.template.arpeggio;
 
-		final int timeFrom = max(0, handShape.timeFrom - data.time);
-		final int timeTo = min(getVisibility(), handShape.timeTo - data.time);
+		final int timeFrom = max(0, handShape.timeFrom - drawData.time);
+		final int timeTo = min(getVisibility(), handShape.timeTo - drawData.time);
 		if (timeTo < 0) {
 			return;
 		}

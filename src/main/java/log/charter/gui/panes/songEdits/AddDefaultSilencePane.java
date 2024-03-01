@@ -12,9 +12,11 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.ParamsPane;
+import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.song.Beat;
 import log.charter.sound.StretchedFileLoader;
-import log.charter.sound.data.MusicDataShort;
+import log.charter.sound.data.AudioDataShort;
 import log.charter.sound.ogg.OggWriter;
 import log.charter.util.RW;
 
@@ -29,13 +31,18 @@ public class AddDefaultSilencePane extends ParamsPane {
 		return sizes;
 	}
 
+	private final ChartTimeHandler chartTimeHandler;
 	private final ChartData data;
+	private final ProjectAudioHandler projectAudioHandler;
 
 	private int bars = 2;
 
-	public AddDefaultSilencePane(final CharterFrame frame, final ChartData data) {
+	public AddDefaultSilencePane(final CharterFrame frame, final ChartTimeHandler chartTimeHandler,
+			final ChartData data, final ProjectAudioHandler projectAudioHandler) {
 		super(frame, Label.ADD_DEFAULT_SILENCE_PANE, getSizes());
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
+		this.projectAudioHandler = projectAudioHandler;
 
 		addLabel(0, 20, Label.ADD_DEFAULT_SILENCE_BARS);
 
@@ -47,10 +54,10 @@ public class AddDefaultSilencePane extends ParamsPane {
 	}
 
 	private void removeAudio(final int movement) {
-		data.music = data.music.remove(movement / 1000.0);
-		data.songChart.beatsMap.songLengthMs = data.music.msLength();
+		final AudioDataShort editedAudio = projectAudioHandler.getAudio().remove(movement / 1000.0);
 
-		data.songChart.moveEverything(-movement);
+		projectAudioHandler.setAudio(editedAudio);
+		data.songChart.moveEverything(chartTimeHandler.audioLength(), -movement);
 	}
 
 	private void addSilence(final int movement) {
@@ -59,14 +66,13 @@ public class AddDefaultSilencePane extends ParamsPane {
 			return;
 		}
 
-		final MusicDataShort songMusicData = data.music;
-		final MusicDataShort silenceMusicData = generateSilence(movement / 1000.0, songMusicData.sampleRate(),
+		final AudioDataShort songMusicData = projectAudioHandler.getAudio();
+		final AudioDataShort silenceMusicData = generateSilence(movement / 1000.0, songMusicData.sampleRate(),
 				songMusicData.channels());
-		final MusicDataShort joined = silenceMusicData.join(songMusicData);
-		data.music = joined;
-		data.songChart.beatsMap.songLengthMs = joined.msLength();
+		final AudioDataShort joined = silenceMusicData.join(songMusicData);
 
-		data.songChart.moveEverything(movement);
+		projectAudioHandler.setAudio(joined);
+		data.songChart.moveEverything(chartTimeHandler.audioLength(), movement);
 	}
 
 	private void addSilenceAndBars() {
@@ -118,7 +124,8 @@ public class AddDefaultSilencePane extends ParamsPane {
 			addSilenceAndBars();
 		}
 
-		OggWriter.writeOgg(new File(data.path, data.songChart.musicFileName).getAbsolutePath(), data.music);
+		final String oggPath = new File(data.path, data.songChart.musicFileName).getAbsolutePath();
+		OggWriter.writeOgg(oggPath, projectAudioHandler.getAudio());
 
 		cleanUp();
 	}

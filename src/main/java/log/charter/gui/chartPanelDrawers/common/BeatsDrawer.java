@@ -170,7 +170,7 @@ public class BeatsDrawer {
 		this.selectionManager = selectionManager;
 	}
 
-	private void addBeats(final BeatsDrawingData drawingData, final HighlightData highlightData) {
+	private void addBeats(final int time, final BeatsDrawingData drawingData, final HighlightData highlightData) {
 		final List<Beat> beats = data.songChart.beatsMap.beats;
 		final HashSet2<Integer> selectedBeatIds = selectionManager.getSelectedAccessor(PositionType.BEAT)//
 				.getSelectedSet().map(selection -> selection.id);
@@ -188,7 +188,7 @@ public class BeatsDrawer {
 				bpm = data.songChart.beatsMap.findBPM(beat, i);
 			}
 
-			final int x = timeToX(beat.position(), data.time);
+			final int x = timeToX(beat.position(), time);
 			if (x < -1000) {
 				continue;
 			}
@@ -203,60 +203,59 @@ public class BeatsDrawer {
 
 		if (highlightData.highlightType == PositionType.BEAT) {
 			highlightData.highlightedNonIdPositions.forEach(
-					highlightPosition -> drawingData.addBeatHighlight(timeToX(highlightPosition.position, data.time)));
+					highlightPosition -> drawingData.addBeatHighlight(timeToX(highlightPosition.position, time)));
 		}
 	}
 
-	private void addRepeater(final BeatsDrawingData drawingData) {
+	private void addRepeater(final int time, final BeatsDrawingData drawingData) {
 		final int start = repeatManager.getRepeatStart();
 		final int end = repeatManager.getRepeatEnd();
 		if (start >= 0 && end >= 0) {
 			if (start > end) {
-				drawingData.addRepeatStart(timeToX(start, data.time));
-				drawingData.addRepeatEnd(timeToX(end, data.time));
+				drawingData.addRepeatStart(timeToX(start, time));
+				drawingData.addRepeatEnd(timeToX(end, time));
 			} else {
-				drawingData.addFullRepeat(timeToX(start, data.time), timeToX(end, data.time));
+				drawingData.addFullRepeat(timeToX(start, time), timeToX(end, time));
 			}
 		} else if (start >= 0) {
-			drawingData.addRepeatStart(timeToX(start, data.time));
+			drawingData.addRepeatStart(timeToX(start, time));
 		} else if (end >= 0) {
-			drawingData.addRepeatEnd(timeToX(end, data.time));
+			drawingData.addRepeatEnd(timeToX(end, time));
 		}
 	}
 
-	private void addGrid(final BeatsDrawingData drawingData) {
-		final GridPosition<Beat> gridPosition = GridPosition.create(data.songChart.beatsMap.beats,
-				xToTime(0, data.time));
-		final int maxTime = xToTime(chartPanel.getWidth() + 1, data.time);
+	private void addGrid(final int time, final BeatsDrawingData drawingData) {
+		final GridPosition<Beat> gridPosition = GridPosition.create(data.songChart.beatsMap.beats, xToTime(0, time));
+		final int maxTime = xToTime(chartPanel.getWidth() + 1, time);
 		while (gridPosition.position() < maxTime) {
 			if (gridPosition.positionId >= data.songChart.beatsMap.beats.size() - 1) {
 				break;
 			}
 			if (gridPosition.gridId != 0) {
-				drawingData.addGrid(timeToX(gridPosition.position(), data.time));
+				drawingData.addGrid(timeToX(gridPosition.position(), time));
 			}
 			gridPosition.next();
 		}
 	}
 
-	private void addBookmarks(final BeatsDrawingData drawingData) {
+	private void addBookmarks(final int time, final BeatsDrawingData drawingData) {
 		data.songChart.bookmarks.forEach((number, position) -> {
-			final int x = timeToX(position, data.time);
+			final int x = timeToX(position, time);
 			drawingData.addBookmark(number, x);
 		});
 	}
 
-	public void draw(final Graphics g, final HighlightData highlightData) {
+	public void draw(final Graphics g, final int time, final HighlightData highlightData) {
 		final BeatsDrawingData drawingData = new BeatsDrawingData();
 
-		addBeats(drawingData, highlightData);
-		addRepeater(drawingData);
+		addBeats(time, drawingData, highlightData);
+		addRepeater(time, drawingData);
 
 		if (showGrid && modeManager.getMode() != EditMode.TEMPO_MAP) {
-			addGrid(drawingData);
+			addGrid(time, drawingData);
 		}
 
-		addBookmarks(drawingData);
+		addBookmarks(time, drawingData);
 
 		drawingData.draw(g);
 	}

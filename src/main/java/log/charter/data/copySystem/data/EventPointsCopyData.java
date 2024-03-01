@@ -29,12 +29,12 @@ public class EventPointsCopyData implements ICopyData {
 	}
 
 	@Override
-	public void paste(final ChartData data, final boolean convertFromBeats) {
-		paste(data, true, true, true, convertFromBeats);
+	public void paste(final int time, final ChartData data, final boolean convertFromBeats) {
+		paste(time, data, true, true, true, convertFromBeats);
 	}
 
-	public void paste(final ChartData data, final boolean sections, final boolean phrases, final boolean events,
-			final boolean convertFromBeats) {
+	public void paste(final int time, final ChartData data, final boolean sections, final boolean phrases,
+			final boolean events, final boolean convertFromBeats) {
 		final Arrangement arrangement = data.getCurrentArrangement();
 		if (phrases) {
 			for (final CopiedArrangementEventsPointPosition arrangementEventsPoint : arrangementEventsPoints) {
@@ -46,12 +46,11 @@ public class EventPointsCopyData implements ICopyData {
 		}
 
 		final BeatsMap beatsMap = data.songChart.beatsMap;
-		final double basePositionInBeats = beatsMap.getPositionInBeats(data.time);
+		final double basePositionInBeats = beatsMap.getPositionInBeats(time);
 
 		for (final CopiedArrangementEventsPointPosition copiedPosition : arrangementEventsPoints) {
 			try {
-				final EventPoint value = copiedPosition.getValue(beatsMap, data.time, basePositionInBeats,
-						convertFromBeats);
+				final EventPoint value = copiedPosition.getValue(beatsMap, time, basePositionInBeats, convertFromBeats);
 
 				if (value != null) {
 					if (!sections) {

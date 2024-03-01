@@ -63,7 +63,7 @@ public class Preview3DBeatsDrawer {
 			final IntRange frets = drawData.getFrets(beat.originalTime);
 			final double x0 = getFretPosition(frets.min - 1);
 			final double x1 = getFretPosition(frets.max);
-			final double z = getTimePosition(beat.time - data.time);
+			final double z = getTimePosition(beat.time - drawData.time);
 
 			shaderLineDrawData.addVertex(new Point3D(x0, y, z), color)//
 					.addVertex(new Point3D(x1, y, z), color);
@@ -141,11 +141,7 @@ public class Preview3DBeatsDrawer {
 		}
 	}
 
-	private void drawFretNumbers(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
-		final double y = getChartboardYPosition(data.currentStrings());
-
-		final List<FretDrawData> fretsToDraw = new ArrayList<>(100);
-
+	private void addFretsToDrawForMeasures(final Preview3DDrawData drawData, final List<FretDrawData> fretsToDraw) {
 		for (final BeatDrawData beat : drawData.beats) {
 			if (!beat.firstInMeasure) {
 				continue;
@@ -160,10 +156,26 @@ public class Preview3DBeatsDrawer {
 						new FretDrawData(beat.time, fret, false, fret >= fretsRange.min && fret <= fretsRange.max));
 			}
 		}
+	}
 
-		final IntRange currentFrets = drawData.getFrets(data.time);
+	private void drawActiveFretNumbers(final ShadersHolder shadersHolder, final IntRange currentFrets, final double y) {
+		final Color anchorFretColor = new Color(255, 160, 0);
+		for (int fret = currentFrets.min; fret <= currentFrets.max; fret++) {
+			final double z = getTimePosition(0);
+			drawFretNumber(shadersHolder, fret, y, z, anchorFretColor);
+		}
+	}
+
+	private void drawFretNumbers(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
+		final double y = getChartboardYPosition(data.currentStrings());
+
+		final List<FretDrawData> fretsToDraw = new ArrayList<>(100);
+
+		addFretsToDrawForMeasures(drawData, fretsToDraw);
+
+		final IntRange currentFrets = drawData.getFrets(drawData.time);
 		for (final AnchorDrawData anchor : drawData.anchors) {
-			if (anchor.timeFrom > data.time) {
+			if (anchor.timeFrom > drawData.time) {
 				fretsToDraw.add(new FretDrawData(anchor.timeFrom, anchor.fretFrom + 1, true, true));
 			}
 		}
@@ -175,16 +187,13 @@ public class Preview3DBeatsDrawer {
 		final Color anchorFretColor = new Color(255, 160, 0);
 
 		fretsToDraw.forEach(fretToDraw -> {
-			final double z = getTimePosition(fretToDraw.position - data.time);
+			final double z = getTimePosition(fretToDraw.position - drawData.time);
 			final Color color = fretToDraw.fromAnchor ? anchorFretColor //
 					: fretToDraw.active ? beatActiveFretColor : beatFretColor;
 			drawFretNumberWithFade(shadersHolder, fretToDraw.fret, y, z, color);
 		});
 
-		for (int fret = currentFrets.min; fret <= currentFrets.max; fret++) {
-			final double z = getTimePosition(0);
-			drawFretNumber(shadersHolder, fret, y, z, anchorFretColor);
-		}
+		drawActiveFretNumbers(shadersHolder, currentFrets, y);
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {

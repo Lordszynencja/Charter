@@ -33,6 +33,7 @@ import log.charter.gui.components.preview3D.glUtils.Texture;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.io.Logger;
 import log.charter.util.Timer;
@@ -40,6 +41,7 @@ import log.charter.util.Timer;
 public class Preview3DPanel extends AWTGLCanvas {
 	private static final long serialVersionUID = 1L;
 
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private ModeManager modeManager;
 
@@ -79,8 +81,9 @@ public class Preview3DPanel extends AWTGLCanvas {
 		super(prepareGLData());
 	}
 
-	public void init(final ChartData data, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
-			final RepeatManager repeatManager) {
+	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data,
+			final KeyboardHandler keyboardHandler, final ModeManager modeManager, final RepeatManager repeatManager) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.repeatManager = repeatManager;
 		this.modeManager = modeManager;
@@ -89,7 +92,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 
 		anchorsDrawer.init(data);
 		beatsDrawer.init(data, textTexturesHolder);
-		cameraHandler.init(data);
+		cameraHandler.init(chartTimeHandler, data);
 		fingeringDrawer.init(data, noteStatusModels, texturesHolder);
 		guitarSoundsDrawer.init(data, noteStatusModels, texturesHolder);
 		handShapesDrawer.init(data);
@@ -181,7 +184,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 			videoDrawer.draw(shadersHolder, getWidth(), getHeight());
 			timer.addTimestamp("videoDrawer");
 
-			final Preview3DDrawData drawData = new Preview3DDrawData(data, repeatManager);
+			final Preview3DDrawData drawData = new Preview3DDrawData(chartTimeHandler, data, repeatManager);
 			timer.addTimestamp("preparing draw data");
 
 			beatsDrawer.draw(shadersHolder, drawData);
@@ -209,7 +212,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 				timer.addTimestamp("fingeringDrawer");
 			}
 
-			lyricsDrawer.draw(shadersHolder, 1.0 * getHeight() / getWidth(),
+			lyricsDrawer.draw(shadersHolder, drawData.time, 1.0 * getHeight() / getWidth(),
 					getHeight() < 500 ? 500.0 / getHeight() : 1);
 
 			shadersHolder.clearShader();

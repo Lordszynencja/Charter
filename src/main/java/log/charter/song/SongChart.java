@@ -105,7 +105,7 @@ public class SongChart {
 		}
 	}
 
-	public void moveEverything(final int positionDifference) {
+	public void moveEverything(final int audioLength, final int positionDifference) {
 		final List<IPosition> positionsToMove = new LinkedList<>();
 		positionsToMove.addAll(beatsMap.beats);
 		for (final Arrangement arrangement : arrangements) {
@@ -120,9 +120,9 @@ public class SongChart {
 		positionsToMove.addAll(vocals.vocals);
 
 		for (final IPosition positionToMove : positionsToMove) {
-			positionToMove.position(min(beatsMap.songLengthMs, max(0, positionToMove.position() + positionDifference)));
+			positionToMove.position(min(audioLength, max(0, positionToMove.position() + positionDifference)));
 		}
 
-		beatsMap.makeBeatsUntilSongEnd();
+		beatsMap.makeBeatsUntilSongEnd(audioLength);
 	}
 }

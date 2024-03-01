@@ -16,8 +16,8 @@ import log.charter.song.notes.IConstantPositionWithLength;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class AnchorDrawData implements IConstantPositionWithLength {
-	public static List<AnchorDrawData> getAnchorsForTimeSpan(final ChartData data, final int timeFrom,
-			final int timeTo) {
+	public static List<AnchorDrawData> getAnchorsForTimeSpan(final ChartData data, final int audioLength,
+			final int timeFrom, final int timeTo) {
 		if (data.getCurrentArrangementLevel() == null) {
 			return asList(new AnchorDrawData(timeFrom, timeTo, 0, 4));
 		}
@@ -39,7 +39,7 @@ public class AnchorDrawData implements IConstantPositionWithLength {
 			if (i < anchors.size() - 1) {
 				anchorTimeTo = anchors.get(i + 1).position() - 1;
 			} else {
-				anchorTimeTo = data.songChart.beatsMap.songLengthMs;
+				anchorTimeTo = audioLength;
 			}
 
 			final EventPoint nextPhraseIteration = IConstantPosition.findFirstAfter(
@@ -56,20 +56,20 @@ public class AnchorDrawData implements IConstantPositionWithLength {
 	}
 
 	public static List<AnchorDrawData> getAnchorsForTimeSpanWithRepeats(final ChartData data,
-			final RepeatManager repeatManager, final int timeFrom, final int timeTo) {
+			final RepeatManager repeatManager, final int audioLength, final int timeFrom, final int timeTo) {
 		int maxTime = timeTo;
 		if (repeatManager.isRepeating()) {
 			maxTime = min(maxTime, repeatManager.getRepeatEnd() - 1);
 		}
 
-		final List<AnchorDrawData> anchorsToDraw = getAnchorsForTimeSpan(data, timeFrom, maxTime);
+		final List<AnchorDrawData> anchorsToDraw = getAnchorsForTimeSpan(data, audioLength, timeFrom, maxTime);
 
 		if (!repeatManager.isRepeating()) {
 			return anchorsToDraw;
 		}
 
-		final List<AnchorDrawData> repeatedAnchors = getAnchorsForTimeSpan(data, repeatManager.getRepeatStart(),
-				repeatManager.getRepeatEnd() - 1);
+		final List<AnchorDrawData> repeatedAnchors = getAnchorsForTimeSpan(data, audioLength,
+				repeatManager.getRepeatStart(), repeatManager.getRepeatEnd() - 1);
 		int repeatStart = repeatManager.getRepeatEnd();
 		while (repeatStart < timeFrom) {
 			repeatStart += repeatManager.getRepeatEnd() - repeatManager.getRepeatStart();

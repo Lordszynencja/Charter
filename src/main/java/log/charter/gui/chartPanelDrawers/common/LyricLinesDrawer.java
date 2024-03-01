@@ -1,6 +1,7 @@
 package log.charter.gui.chartPanelDrawers.common;
 
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.*;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatSizeTextY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lyricLinesY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.util.ScalingUtils.timeToX;
 
@@ -8,6 +9,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 import log.charter.data.ChartData;
+import log.charter.data.managers.ModeManager;
+import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
@@ -45,13 +48,15 @@ public class LyricLinesDrawer {
 	}
 
 	private ChartData data;
+	private ModeManager modeManager;
 
-	public void init(final ChartData data) {
+	public void init(final ChartData data, final ModeManager modeManager) {
 		this.data = data;
+		this.modeManager = modeManager;
 	}
 
-	public void draw(final Graphics g) {
-		if (data == null || data.isEmpty) {
+	public void draw(final Graphics g, final int time) {
+		if (modeManager.getMode() == EditMode.EMPTY) {
 			return;
 		}
 
@@ -63,7 +68,7 @@ public class LyricLinesDrawer {
 		for (final Vocal vocal : data.songChart.vocals.vocals) {
 			if (!started) {
 				started = true;
-				x = timeToX(vocal.position(), data.time);
+				x = timeToX(vocal.position(), time);
 			}
 
 			currentLine += vocal.getText();
@@ -72,7 +77,7 @@ public class LyricLinesDrawer {
 			}
 
 			if (vocal.isPhraseEnd()) {
-				drawingData.addLyricLine(currentLine, x, timeToX(vocal.position() + vocal.length(), data.time) - x);
+				drawingData.addLyricLine(currentLine, x, timeToX(vocal.position() + vocal.length(), time) - x);
 				currentLine = "";
 				started = false;
 			}

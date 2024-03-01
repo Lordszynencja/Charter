@@ -48,6 +48,7 @@ import log.charter.gui.handlers.CharterFrameWindowFocusListener;
 import log.charter.gui.handlers.CharterFrameWindowListener;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
@@ -88,6 +89,7 @@ public class CharterFrame extends JFrame {
 	private final ModeManager modeManager = new ModeManager();
 	private final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler = new MouseButtonPressReleaseHandler();
 	private final MouseHandler mouseHandler = new MouseHandler();
+	private final ProjectAudioHandler projectAudioHandler = new ProjectAudioHandler();
 	private final RepeatManager repeatManager = new RepeatManager();
 	private final SongFileHandler songFileHandler = new SongFileHandler();
 	private final SelectionManager selectionManager = new SelectionManager();
@@ -124,39 +126,41 @@ public class CharterFrame extends JFrame {
 		setLocation(Config.windowPosX, Config.windowPosY);
 		setExtendedState(windowExtendedState);
 
-		arrangementFixer.init(data);
-		arrangementValidator.init(data, this, modeManager);
-		audioHandler.init(chartTimeHandler, chartToolbar, data, this, modeManager, repeatManager);
+		arrangementFixer.init(chartTimeHandler, data);
+		arrangementValidator.init(chartTimeHandler, data, this, modeManager);
+		audioHandler.init(chartTimeHandler, chartToolbar, data, this, modeManager, projectAudioHandler, repeatManager);
 		beatsDrawer.init(data, chartPanel, modeManager, repeatManager, selectionManager);
-		chartTimeHandler.init(data, modeManager);
-		copyManager.init(data, this, modeManager, selectionManager, undoSystem);
+		chartTimeHandler.init(data, modeManager, projectAudioHandler);
+		copyManager.init(chartTimeHandler, data, this, modeManager, selectionManager, undoSystem);
 		data.init(this, audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
 		keyboardHandler.init(waveFormDrawer, audioHandler, arrangementFixer, chartTimeHandler, chartToolbar,
-				copyManager, data, this, framer, modeManager, mouseHandler, repeatManager, selectionManager,
-				songFileHandler, undoSystem);
-		highlightManager.init(data, modeManager, selectionManager);
+				copyManager, data, this, framer, modeManager, mouseHandler, projectAudioHandler, repeatManager,
+				selectionManager, songFileHandler, undoSystem);
+		highlightManager.init(chartTimeHandler, data, modeManager, selectionManager);
 		modeManager.init(audioHandler, charterMenuBar, chartTimeHandler, chartToolbar, currentSelectionEditor, data,
 				this, highlightManager, keyboardHandler, selectionManager, undoSystem);
 		mouseButtonPressReleaseHandler.init(highlightManager);
-		mouseHandler.init(arrangementFixer, data, this, keyboardHandler, modeManager, mouseButtonPressReleaseHandler,
-				selectionManager, undoSystem);
-		repeatManager.init(audioHandler, chartToolbar, data);
-		songFileHandler.init(arrangementFixer, arrangementValidator, audioHandler, data, this, charterMenuBar,
-				modeManager, undoSystem);
-		selectionManager.init(data, this, modeManager, mouseButtonPressReleaseHandler);
-		undoSystem.init(data, modeManager, selectionManager);
-		waveFormDrawer.init(data, chartPanel, chartToolbar, modeManager);
+		mouseHandler.init(arrangementFixer, chartTimeHandler, data, this, keyboardHandler, modeManager,
+				mouseButtonPressReleaseHandler, projectAudioHandler, selectionManager, undoSystem);
+		projectAudioHandler.init(waveFormDrawer);
+		repeatManager.init(audioHandler, chartTimeHandler, chartToolbar);
+		songFileHandler.init(arrangementFixer, arrangementValidator, audioHandler, chartTimeHandler, data, this,
+				charterMenuBar, modeManager, projectAudioHandler, undoSystem);
+		selectionManager.init(chartTimeHandler, data, this, modeManager, mouseButtonPressReleaseHandler);
+		undoSystem.init(chartTimeHandler, data, modeManager, selectionManager);
+		waveFormDrawer.init(chartPanel, chartToolbar, modeManager, projectAudioHandler);
 
-		charterMenuBar.init(arrangementFixer, audioHandler, copyManager, chartToolbar, data, this, framer,
-				keyboardHandler, modeManager, selectionManager, songFileHandler, undoSystem, waveFormDrawer);
+		charterMenuBar.init(arrangementFixer, audioHandler, chartTimeHandler, chartToolbar, copyManager, data, this,
+				framer, keyboardHandler, modeManager, projectAudioHandler, selectionManager, songFileHandler,
+				undoSystem, waveFormDrawer);
 		chartToolbar.init(audioHandler, keyboardHandler, modeManager, repeatManager, waveFormDrawer);
-		chartPanel.init(beatsDrawer, data, highlightManager, keyboardHandler, modeManager,
+		chartPanel.init(beatsDrawer, chartTimeHandler, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager, waveFormDrawer);
-		chartMap.init(chartPanel, data, this, modeManager);
+		chartMap.init(chartTimeHandler, chartPanel, data, this, modeManager);
 		currentSelectionEditor.init(arrangementFixer, data, this, keyboardHandler, selectionManager, undoSystem);
-		preview3DPanel.init(data, keyboardHandler, modeManager, repeatManager);
+		preview3DPanel.init(chartTimeHandler, data, keyboardHandler, modeManager, repeatManager);
 
-		windowedPreview3DPanel.init(data, keyboardHandler, modeManager, repeatManager);
+		windowedPreview3DPanel.init(chartTimeHandler, data, keyboardHandler, modeManager, repeatManager);
 		windowedPreviewFrame.init(this, keyboardHandler, windowedPreview3DPanel);
 
 		add(chartToolbar);
@@ -240,7 +244,7 @@ public class CharterFrame extends JFrame {
 			repeatManager.frame();
 			updateTitle();
 
-			data.time = (int) data.nextTime;
+			chartTimeHandler.frame();
 
 			if (windowedPreviewFrame.isShowing()) {
 				windowedPreviewFrame.repaint();
@@ -251,7 +255,6 @@ public class CharterFrame extends JFrame {
 			}
 
 			repaint();
-
 		} catch (final Exception e) {
 			Logger.error("Exception in frame()", e);
 		}
@@ -291,10 +294,6 @@ public class CharterFrame extends JFrame {
 		tabs.addTab("3D Preview", preview3DPanel);
 
 		return tabs;
-	}
-
-	public void setNextTime(final int t) {
-		chartTimeHandler.setNextTime(t);
 	}
 
 	public void setGuitarHelp() {

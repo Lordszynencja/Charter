@@ -1,6 +1,7 @@
 package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.song.Arrangement;
 import log.charter.song.Beat;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -32,9 +33,10 @@ public class TempoMapUndoState extends UndoState {
 	}
 
 	@Override
-	public TempoMapUndoState undo(final ChartData data) {
-		final ArrayList2<GuitarUndoState> guitarRedoStates = guitarUndoStates.map(state -> state.undo(data));
-		final VocalUndoState vocalRedoState = vocalUndoState.undo(data);
+	public TempoMapUndoState undo(final ChartData data, final ChartTimeHandler chartTimeHandler) {
+		final ArrayList2<GuitarUndoState> guitarRedoStates = guitarUndoStates
+				.map(state -> state.undo(data, chartTimeHandler));
+		final VocalUndoState vocalRedoState = vocalUndoState.undo(data, chartTimeHandler);
 		final ArrayList2<Beat> beatsRedo = data.songChart.beatsMap.beats.map(Beat::new);
 		data.songChart.beatsMap.beats = beats;
 

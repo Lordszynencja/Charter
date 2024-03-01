@@ -97,8 +97,8 @@ public class VocalsDrawer {
 			}
 		}
 
-		public void addHighlight(final int position, final int length) {
-			final ShapePositionWithSize positionAndSize = getVocalNotePosition(position, length, data.time);
+		public void addHighlight(final int time, final int position, final int length) {
+			final ShapePositionWithSize positionAndSize = getVocalNotePosition(position, length, time);
 			notes.add(strokedRectangle(positionAndSize.resized(-1, -1, 1, 1), ColorLabel.HIGHLIGHT));
 		}
 
@@ -127,16 +127,16 @@ public class VocalsDrawer {
 		this.waveFormDrawer = waveFormDrawer;
 	}
 
-	private void drawVocals(final Graphics g, final HighlightData highlightData) {
-		final VocalNotesDrawingData drawingData = new VocalNotesDrawingData(g, data.time);
+	private void drawVocals(final Graphics g, final int time, final HighlightData highlightData) {
+		final VocalNotesDrawingData drawingData = new VocalNotesDrawingData(g, time);
 
 		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
 		final int width = chartPanel.getWidth();
 		final HashSet2<Integer> selectedVocalIds = selectionManager.getSelectedAccessor(PositionType.VOCAL)//
 				.getSelectedSet().map(selection -> selection.id);
 
-		final int timeFrom = xToTime(-1, data.time);
-		final int timeTo = xToTime(width + 1, data.time);
+		final int timeFrom = xToTime(-1, time);
+		final int timeTo = xToTime(width + 1, time);
 
 		for (int i = 0; i < vocals.size(); i++) {
 			final Vocal vocal = vocals.get(i);
@@ -153,7 +153,7 @@ public class VocalsDrawer {
 				continue;
 			}
 
-			final int x = timeToX(vocal.position(), data.time);
+			final int x = timeToX(vocal.position(), time);
 			final int length = max(2, timeToXLength(vocal.position(), vocal.length()));
 			final boolean selected = selectedVocalIds.contains(i);
 			drawingData.addVocal(vocal, next, x, length, selected);
@@ -162,24 +162,24 @@ public class VocalsDrawer {
 		if (highlightData.highlightType == PositionType.VOCAL) {
 			if (highlightData.highlightedId != null) {
 				final Vocal vocal = vocals.get(highlightData.highlightedId);
-				drawingData.addHighlight(vocal.position(), vocal.length());
+				drawingData.addHighlight(time, vocal.position(), vocal.length());
 			} else {
-				highlightData.highlightedNonIdPositions.forEach(highlightPosition -> drawingData
-						.addHighlight(highlightPosition.position, highlightPosition.length));
+				highlightData.highlightedNonIdPositions.forEach(highlightPosition -> drawingData.addHighlight(time,
+						highlightPosition.position, highlightPosition.length));
 			}
 		}
 
 		drawingData.draw(g);
 	}
 
-	public void draw(final Graphics g, final HighlightData highlightData) {
+	public void draw(final Graphics g, final int time, final HighlightData highlightData) {
 		if (data == null || data.isEmpty) {
 			return;
 		}
 
-		waveFormDrawer.draw(g);
-		beatsDrawer.draw(g, highlightData);
-		drawVocals(g, highlightData);
-		lyricLinesDrawer.draw(g);
+		waveFormDrawer.draw(g, time);
+		beatsDrawer.draw(g, time, highlightData);
+		drawVocals(g, time, highlightData);
+		lyricLinesDrawer.draw(g, time);
 	}
 }

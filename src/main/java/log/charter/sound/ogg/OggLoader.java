@@ -22,7 +22,7 @@ import com.jcraft.jorbis.DspState;
 import com.jcraft.jorbis.Info;
 
 import log.charter.io.Logger;
-import log.charter.sound.data.MusicDataShort;
+import log.charter.sound.data.AudioDataShort;
 import log.charter.util.RW;
 
 /**
@@ -52,8 +52,8 @@ public class OggLoader {
 		}
 	}
 
-	public static MusicDataShort load(final String path) {
-		return load(path, result -> new MusicDataShort(result.bytes, result.rate, result.channels, 2));
+	public static AudioDataShort load(final String path) {
+		return load(path, result -> new AudioDataShort(result.bytes, result.rate, result.channels, 2));
 	}
 
 	private byte[] buffer = null;

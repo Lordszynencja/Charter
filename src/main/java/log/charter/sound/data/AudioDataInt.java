@@ -13,7 +13,7 @@ import javax.sound.sampled.AudioFormat.Encoding;
 import log.charter.sound.HighPassFilter;
 import log.charter.sound.HighPassFilter.PassType;
 
-public class MusicDataInt extends MusicData<MusicDataInt> {
+public class AudioDataInt extends AudioData<AudioDataInt> {
 	public static final int minValue = -0x8000;
 	public static final int maxValue = 0x7FFF;
 
@@ -21,15 +21,15 @@ public class MusicDataInt extends MusicData<MusicDataInt> {
 	public final AudioFormat format;
 	private final byte[] bytes;
 
-	public MusicDataInt(final byte[] bytes, final float rate, final int channels, final int sampleBytes) {
+	public AudioDataInt(final byte[] bytes, final float rate, final int channels, final int sampleBytes) {
 		this(splitAudioInt(bytes, channels, sampleBytes), bytes, rate, channels, sampleBytes);
 	}
 
-	public MusicDataInt(final int[][] data, final float rate) {
+	public AudioDataInt(final int[][] data, final float rate) {
 		this(data, toBytes(data, data.length, 2), rate, data.length, 2);
 	}
 
-	private MusicDataInt(final int[][] data, final byte[] bytes, final float rate, final int channels,
+	private AudioDataInt(final int[][] data, final byte[] bytes, final float rate, final int channels,
 			final int sampleBytes) {
 		this.data = data;
 		format = new AudioFormat(Encoding.PCM_SIGNED, rate, sampleBytes * 8, channels, channels * sampleBytes, rate,
@@ -53,7 +53,7 @@ public class MusicDataInt extends MusicData<MusicDataInt> {
 		return (int) ((data[0].length * 1000.0) / format.getFrameRate());
 	}
 
-	public MusicDataInt pass(final float frequency, final float resonance, final PassType type) {
+	public AudioDataInt pass(final float frequency, final float resonance, final PassType type) {
 		final float rate = format.getSampleRate();
 		final int[][] newData = new int[data.length][];
 		final int valueRange = maxValue - minValue;
@@ -69,11 +69,11 @@ public class MusicDataInt extends MusicData<MusicDataInt> {
 			}
 		}
 
-		return new MusicDataInt(newData, rate);
+		return new AudioDataInt(newData, rate);
 	}
 
 	@Override
-	public MusicDataInt join(final MusicDataInt other) {
+	public AudioDataInt join(final AudioDataInt other) {
 		int length0 = 0;
 		for (int i = 0; i < data.length; i++) {
 			length0 = max(length0, data[i].length);
@@ -91,11 +91,11 @@ public class MusicDataInt extends MusicData<MusicDataInt> {
 			System.arraycopy(other.data[channel], 0, targetChannel, length0, other.data[channel].length);
 		}
 
-		return new MusicDataInt(newData, format.getSampleRate());
+		return new AudioDataInt(newData, format.getSampleRate());
 	}
 
 	@Override
-	public MusicDataInt cut(final double startTime, final double endTime) {
+	public AudioDataInt cut(final double startTime, final double endTime) {
 		int length = 0;
 		for (int i = 0; i < data.length; i++) {
 			length = max(length, data[i].length);
@@ -115,11 +115,11 @@ public class MusicDataInt extends MusicData<MusicDataInt> {
 			System.arraycopy(src, start, newData[channel], 0, toMove);
 		}
 
-		return new MusicDataInt(newData, format.getSampleRate());
+		return new AudioDataInt(newData, format.getSampleRate());
 	}
 
 	@Override
-	public MusicDataInt remove(final double time) {
+	public AudioDataInt remove(final double time) {
 		int length = 0;
 		for (int i = 0; i < data.length; i++) {
 			length = max(length, data[i].length);
@@ -137,11 +137,11 @@ public class MusicDataInt extends MusicData<MusicDataInt> {
 			System.arraycopy(src, samplesRemoved, dest, 0, toMove);
 		}
 
-		return new MusicDataInt(newData, format.getSampleRate());
+		return new AudioDataInt(newData, format.getSampleRate());
 	}
 
 	@Override
-	public MusicDataInt volume(final double volume) {
+	public AudioDataInt volume(final double volume) {
 		final int[][] newData = new int[data.length][];
 		for (int channel = 0; channel < data.length; channel++) {
 			newData[channel] = Arrays.copyOf(data[channel], data[channel].length);
@@ -150,6 +150,6 @@ public class MusicDataInt extends MusicData<MusicDataInt> {
 			}
 		}
 
-		return new MusicDataInt(newData, format.getSampleRate());
+		return new AudioDataInt(newData, format.getSampleRate());
 	}
 }

@@ -72,17 +72,17 @@ public class Preview3DLyricsDrawer {
 		return text;
 	}
 
-	private void drawCurrentLine(final ShadersHolder shadersHolder, final double aspectRatio,
+	private void drawCurrentLine(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
 			final double textSizeMultiplier) {
 		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
-		final int currentVocalId = findLastIdBefore(vocals, data.time);
+		final int currentVocalId = findLastIdBefore(vocals, time);
 		if (currentVocalId == -1) {
 			return;
 		}
 
 		final int currentLineStart = findLineStart(vocals, currentVocalId);
 		final int currentLineEnd = findLineEnd(vocals, currentVocalId);
-		if (vocals.get(currentLineEnd).endPosition() < data.time - 100) {
+		if (vocals.get(currentLineEnd).endPosition() < time - 100) {
 			return;
 		}
 
@@ -95,10 +95,10 @@ public class Preview3DLyricsDrawer {
 				aspectRatio);
 	}
 
-	private void drawNextLine(final ShadersHolder shadersHolder, final double aspectRatio,
+	private void drawNextLine(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
 			final double textSizeMultiplier) {
 		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
-		final int currentVocalId = findLastIdBefore(vocals, data.time);
+		final int currentVocalId = findLastIdBefore(vocals, time);
 		if (currentVocalId == -1) {
 			return;
 		}
@@ -109,11 +109,12 @@ public class Preview3DLyricsDrawer {
 				0.1 * textSizeMultiplier, aspectRatio);
 	}
 
-	public void draw(final ShadersHolder shadersHolder, final double aspectRatio, final double textSizeMultiplier) {
+	public void draw(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
+			final double textSizeMultiplier) {
 		GL30.glDisable(GL30.GL_DEPTH_TEST);
 
-		drawCurrentLine(shadersHolder, aspectRatio, textSizeMultiplier);
-		drawNextLine(shadersHolder, aspectRatio, textSizeMultiplier);
+		drawCurrentLine(shadersHolder, time, aspectRatio, textSizeMultiplier);
+		drawNextLine(shadersHolder, time, aspectRatio, textSizeMultiplier);
 
 		GL30.glEnable(GL30.GL_DEPTH_TEST);
 	}

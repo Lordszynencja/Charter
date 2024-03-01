@@ -11,16 +11,16 @@ import javax.sound.sampled.DataLine.Info;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
-import log.charter.sound.data.MusicData;
+import log.charter.sound.data.AudioData;
 
 public class SoundPlayer {
 	public static class Player {
-		private final MusicData<?> musicData;
+		private final AudioData<?> musicData;
 		private final SourceDataLine line;
 		private boolean stopped;
 		public long startTime = -1;
 
-		private Player(final MusicData<?> musicData) throws LineUnavailableException {
+		private Player(final AudioData<?> musicData) throws LineUnavailableException {
 			this.musicData = musicData;
 			final Info info = new Info(SourceDataLine.class, musicData.format());
 			line = (SourceDataLine) getLine(info);
@@ -80,7 +80,7 @@ public class SoundPlayer {
 		}
 	}
 
-	public static Player play(final MusicData<?> musicData, final int startMs) {
+	public static Player play(final AudioData<?> musicData, final int startMs) {
 		try {
 			return new Player(musicData).start(startMs);
 		} catch (final LineUnavailableException e) {

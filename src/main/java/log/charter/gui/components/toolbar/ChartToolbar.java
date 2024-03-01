@@ -334,7 +334,7 @@ public class ChartToolbar extends JToolBar {
 		addSeparator(x);
 
 		waveformGraph = addCheckbox(x, Label.TOOLBAR_WAVEFORM_GRAPH, waveFormDrawer::toggle);
-		intensityRMSIndicator = addCheckbox(x, Label.RMS_INDICATOR, waveFormDrawer::toggleIntensityRMS);
+		intensityRMSIndicator = addCheckbox(x, Label.RMS_INDICATOR, waveFormDrawer::toggleRMS);
 		intensityRMSIndicator.field.setEnabled(false);
 
 		addSeparator(x);
@@ -365,7 +365,7 @@ public class ChartToolbar extends JToolBar {
 		waveformGraph.field.setSelected(waveFormDrawer.drawing());
 		waveformGraph.field.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
 		intensityRMSIndicator.field.setEnabled(waveFormDrawer.drawing());
-		intensityRMSIndicator.field.setSelected(!waveFormDrawer.isIntensityRMSVisible());
+		intensityRMSIndicator.field.setSelected(waveFormDrawer.rms());
 		repeater.setSelected(repeatManager.isOn());
 
 		gridSize.field.setTextWithoutEvent(Config.gridSize + "");

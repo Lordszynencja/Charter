@@ -13,11 +13,11 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
 
-import log.charter.sound.data.MusicDataShort;
+import log.charter.sound.data.AudioDataShort;
 import log.charter.util.RW;
 
 public class Mp3Loader {
-	public static MusicDataShort load(final String path) {
+	public static AudioDataShort load(final String path) {
 		try {
 			final AudioInputStream in = getAudioInputStream(
 					new BufferedInputStream(new ByteArrayInputStream(RW.readB(path))));
@@ -47,7 +47,7 @@ public class Mp3Loader {
 				last += bytes.length;
 			}
 
-			return new MusicDataShort(buffer, rate, channels, 2);
+			return new AudioDataShort(buffer, rate, channels, 2);
 		} catch (final Exception e) {
 			error("Couldnt load mp3 file " + path, e);
 		}

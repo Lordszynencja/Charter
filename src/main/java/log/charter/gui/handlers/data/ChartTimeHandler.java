@@ -1,5 +1,7 @@
 package log.charter.gui.handlers.data;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static log.charter.song.notes.IConstantPosition.findFirstAfter;
 import static log.charter.song.notes.IConstantPosition.findLastBefore;
 
@@ -13,18 +15,32 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class ChartTimeHandler {
 	private ChartData data;
 	private ModeManager modeManager;
+	private ProjectAudioHandler projectAudioHandler;
 
-	public void init(final ChartData data, final ModeManager modeManager) {
+	private int time = 0;
+	private int nextTime = 0;
+
+	public void init(final ChartData data, final ModeManager modeManager,
+			final ProjectAudioHandler projectAudioHandler) {
 		this.data = data;
 		this.modeManager = modeManager;
+		this.projectAudioHandler = projectAudioHandler;
+	}
+
+	public int nextTime() {
+		return nextTime;
 	}
 
 	public void setNextTime(final int t) {
-		data.setNextTime(t);
+		nextTime = max(0, min(audioLength(), t));
 	}
 
-	public long getTime() {
-		return data.time;
+	public int time() {
+		return time;
+	}
+
+	public int audioLength() {
+		return projectAudioHandler.getAudio().msLength();
 	}
 
 	private ArrayList2<? extends IConstantPosition> getCurrentItems() {
@@ -41,9 +57,9 @@ public class ChartTimeHandler {
 	}
 
 	private int getPrevious(final List<? extends IConstantPosition> positions) {
-		final IConstantPosition position = findLastBefore(positions, data.time);
+		final IConstantPosition position = findLastBefore(positions, time);
 		if (position == null) {
-			return data.time;
+			return time;
 		}
 
 		return position.position();
@@ -58,7 +74,7 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToPreviousGrid() {
-		setNextTime(data.songChart.beatsMap.getPositionWithRemovedGrid(data.time, 1));
+		setNextTime(data.songChart.beatsMap.getPositionWithRemovedGrid(time, 1));
 	}
 
 	public void moveToPreviousItem() {
@@ -75,16 +91,16 @@ public class ChartTimeHandler {
 	}
 
 	private int getNext(final ArrayList2<? extends IConstantPosition> positions) {
-		final IConstantPosition position = findFirstAfter(positions, data.time);
+		final IConstantPosition position = findFirstAfter(positions, time);
 		if (position == null) {
-			return data.time;
+			return time;
 		}
 
 		return position.position();
 	}
 
 	public void moveToEnd() {
-		setNextTime(data.songChart.beatsMap.songLengthMs);
+		setNextTime(audioLength());
 	}
 
 	public void moveToNextBeat() {
@@ -92,7 +108,7 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToNextGrid() {
-		setNextTime(data.songChart.beatsMap.getPositionWithAddedGrid(data.time, 1));
+		setNextTime(data.songChart.beatsMap.getPositionWithAddedGrid(time, 1));
 	}
 
 	public void moveToNextItem() {
@@ -106,5 +122,9 @@ public class ChartTimeHandler {
 		}
 
 		setNextTime(items.getLast().position());
+	}
+
+	public void frame() {
+		time = nextTime;
 	}
 }

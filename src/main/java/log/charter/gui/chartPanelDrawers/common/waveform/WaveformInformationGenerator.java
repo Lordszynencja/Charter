@@ -6,40 +6,40 @@ import static java.lang.Math.min;
 import java.util.ArrayList;
 import java.util.List;
 
-import log.charter.sound.data.MusicDataInt;
+import log.charter.sound.data.AudioDataShort;
 
 public class WaveformInformationGenerator {
 	private List<WaveformInformation> level = null;
-	private final float rate;
+	private final AudioDataShort audio;
 
-	public WaveformInformationGenerator(final float rate) {
-		this.rate = rate;
+	public WaveformInformationGenerator(final AudioDataShort audio) {
+		this.audio = audio;
 	}
 
-	private float getValue(final int sample) {
+	private float getValue(final short sample) {
 		if (sample >= 0) {
-			return (float) sample / MusicDataInt.maxValue;
+			return (float) sample / AudioDataShort.maxValue;
 		}
 
-		return (float) sample / MusicDataInt.minValue;
+		return (float) sample / AudioDataShort.minValue;
 	}
 
-	private float getValue(final int[][] musicValues, final int position) {
+	private float getValue(final int position) {
 		float value = 0;
-		for (int i = 0; i < musicValues.length; i++) {
-			value = max(value, getValue(musicValues[i][position]));
+		for (int i = 0; i < audio.data.length; i++) {
+			value = max(value, getValue(audio.data[i][position]));
 		}
 		return value;
 	}
 
-	private void addFrame(final int[][] musicValues, final int t) {
-		final int start = (int) (t * rate / 1000);
-		final int end = min(musicValues.length, (int) ((t + 1) * rate / 1000));
+	private void addFrame(final int t) {
+		final int start = (int) (t * audio.sampleRate() / 1000);
+		final int end = min(audio.data[0].length, (int) ((t + 1) * audio.sampleRate() / 1000));
 
 		float height = 0;
 		final RMSCalculator rmsCalculator = new RMSCalculator(end - start);
 		for (int i = start; i < end; i++) {
-			final float value = getValue(musicValues, i);
+			final float value = getValue(i);
 			height = Math.max(height, value);
 			rmsCalculator.addValue(value);
 		}
@@ -47,15 +47,16 @@ public class WaveformInformationGenerator {
 		level.add(new WaveformInformation(height, rmsCalculator.getRMS() > 4));
 	}
 
-	public List<WaveformInformation> getLevel(final int audioLength, final int[][] musicValues) {
+	public List<WaveformInformation> getLevel() {
 		if (level != null) {
 			return level;
 		}
 
-		level = new ArrayList<>(audioLength);
+		final int length = audio.msLength();
+		level = new ArrayList<>(length);
 
-		for (int t = 0; t < audioLength; t++) {
-			addFrame(musicValues, t);
+		for (int t = 0; t < length; t++) {
+			addFrame(t);
 		}
 
 		return level;

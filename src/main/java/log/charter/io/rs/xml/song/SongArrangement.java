@@ -63,14 +63,14 @@ public class SongArrangement {
 	public TranscriptionTrack transcriptionTrack = new TranscriptionTrack();
 	public CountedList<ArrangementLevel> levels;
 
-	public SongArrangement(final SongChart songChart, final Arrangement arrangementChart) {
+	public SongArrangement(final int audioLength, final SongChart songChart, final Arrangement arrangementChart) {
 		final List<Beat> beatsTmp = songChart.beatsMap.beats;
 
 		title = songChart.title;
 		arrangement = arrangementChart.arrangementType;
 		offset = -beatsTmp.get(0).position();
 		centOffset = arrangementChart.centOffset;
-		songLength = songChart.beatsMap.songLengthMs;
+		songLength = audioLength;
 		lastConversionDateTime = LocalDateTime.now();
 		startBeat = -offset;
 		averageTempo = new BigDecimal(

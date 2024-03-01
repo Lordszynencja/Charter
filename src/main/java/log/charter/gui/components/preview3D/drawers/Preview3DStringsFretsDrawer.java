@@ -56,7 +56,7 @@ public class Preview3DStringsFretsDrawer {
 	private boolean[] getActiveFrets(final Preview3DDrawData drawData) {
 		final boolean[] active = new boolean[Config.frets + 1];
 
-		final int idTo = findLastIdBefore(drawData.anchors, data.time + activeTime);
+		final int idTo = findLastIdBefore(drawData.anchors, drawData.time + activeTime);
 		for (int i = 0; i <= idTo; i++) {
 			final AnchorDrawData anchor = drawData.anchors.get(i);
 			for (int fret = max(0, anchor.fretFrom); fret <= min(Config.frets, anchor.fretTo); fret++) {
@@ -64,7 +64,7 @@ public class Preview3DStringsFretsDrawer {
 			}
 		}
 
-		final IntRange frets = drawData.getFrets(data.time);
+		final IntRange frets = drawData.getFrets(drawData.time);
 		for (int fret = frets.min - 1; fret <= frets.max; fret++) {
 			active[fret] = true;
 		}
@@ -79,19 +79,19 @@ public class Preview3DStringsFretsDrawer {
 
 		final int[] highlightValues = new int[Config.frets + 1];
 		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
-		final int idFrom = findFirstIdAfter(sounds, data.time - highlightTime);
+		final int idFrom = findFirstIdAfter(sounds, drawData.time - highlightTime);
 		if (idFrom < 0) {
 			return new double[Config.frets + 1];
 		}
 
-		final int idTo = findLastIdBefore(sounds, data.time);
+		final int idTo = findLastIdBefore(sounds, drawData.time);
 		for (int i = idFrom; i <= idTo; i++) {
 			final ChordOrNote sound = sounds.get(i);
 			if (isLinkedToPrevious(sound, i, sounds)) {
 				continue;
 			}
 
-			final int highlightValue = highlightTime - data.time + sound.position();
+			final int highlightValue = highlightTime - drawData.time + sound.position();
 			if (sound.isNote() && sound.note.fret != 0) {
 				highlightValues[sound.note.fret - 1] = highlightValue;
 				highlightValues[sound.note.fret] = highlightValue;

@@ -31,17 +31,17 @@ public class SoundsCopyData implements ICopyData {
 	}
 
 	@Override
-	public void paste(final ChartData data, final boolean convertFromBeats) {
+	public void paste(final int time, final ChartData data, final boolean convertFromBeats) {
 		final Arrangement arrangement = data.getCurrentArrangement();
 		final BeatsMap beatsMap = data.songChart.beatsMap;
 		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
 
-		final double basePositionInBeats = beatsMap.getPositionInBeats(data.time);
+		final double basePositionInBeats = beatsMap.getPositionInBeats(time);
 		final Map<Integer, Integer> chordIdsMap = new HashMap<>();
 
 		for (final CopiedSoundPosition copiedPosition : this.sounds) {
 			try {
-				final ChordOrNote sound = copiedPosition.getValue(beatsMap, data.time, basePositionInBeats,
+				final ChordOrNote sound = copiedPosition.getValue(beatsMap, time, basePositionInBeats,
 						convertFromBeats);
 				if (sound == null) {
 					continue;

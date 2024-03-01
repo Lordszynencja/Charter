@@ -13,7 +13,7 @@ public class EmptyCopyData implements ICopyData, FullCopyData {
 	}
 
 	@Override
-	public void paste(final ChartData data, final boolean convertFromBeats) {
+	public void paste(final int time, final ChartData data, final boolean convertFromBeats) {
 	}
 
 }

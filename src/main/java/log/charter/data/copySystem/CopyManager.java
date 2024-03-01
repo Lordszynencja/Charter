@@ -34,6 +34,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.panes.songEdits.GuitarSpecialPastePane;
 import log.charter.io.ClipboardHandler;
 import log.charter.io.Logger;
@@ -53,14 +54,16 @@ public class CopyManager {
 		V make(BeatsMap beatsMap, int basePosition, double basePositionInBeats, T position);
 	}
 
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private CharterFrame frame;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData data, final CharterFrame frame, final ModeManager modeManager,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final CharterFrame frame,
+			final ModeManager modeManager, final SelectionManager selectionManager, final UndoSystem undoSystem) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.frame = frame;
 		this.modeManager = modeManager;
@@ -226,21 +229,17 @@ public class CopyManager {
 
 	private CopyData getCopyData() {
 		switch (modeManager.getMode()) {
-		case GUITAR:
-			return getGuitarCopyData();
-		case VOCALS:
-			return getCopyData(PositionType.VOCAL, CopiedVocalPosition::new, VocalsCopyData::new);
-		case TEMPO_MAP:
-		default:
-			return null;
+			case GUITAR:
+				return getGuitarCopyData();
+			case VOCALS:
+				return getCopyData(PositionType.VOCAL, CopiedVocalPosition::new, VocalsCopyData::new);
+			case TEMPO_MAP:
+			default:
+				return null;
 		}
 	}
 
 	public void copy() {
-		if (data.isEmpty) {
-			return;
-		}
-
 		final CopyData copyData = getCopyData();
 		if (copyData == null) {
 			return;
@@ -269,10 +268,6 @@ public class CopyManager {
 	}
 
 	public void paste() {
-		if (data.isEmpty) {
-			return;
-		}
-
 		final CopyData copyData = getDataFromClipboard();
 		if (copyData == null || copyData.selectedCopy == null) {
 			return;
@@ -293,14 +288,10 @@ public class CopyManager {
 
 		undoSystem.addUndo();
 		selectionManager.clear();
-		selectedCopy.paste(data, true);
+		selectedCopy.paste(chartTimeHandler.time(), data, true);
 	}
 
 	public void specialPaste() {
-		if (data.isEmpty || modeManager.getMode() != EditMode.GUITAR) {
-			return;
-		}
-
 		final CopyData copyData = getDataFromClipboard();
 		if (copyData == null || copyData.selectedCopy == null) {
 			return;
@@ -312,7 +303,8 @@ public class CopyManager {
 		}
 
 		if (fullCopy instanceof FullGuitarCopyData) {
-			new GuitarSpecialPastePane(data, frame, selectionManager, undoSystem, (FullGuitarCopyData) fullCopy);
+			new GuitarSpecialPastePane(data, frame, selectionManager, undoSystem, chartTimeHandler.time(),
+					(FullGuitarCopyData) fullCopy);
 			return;
 		}
 	}

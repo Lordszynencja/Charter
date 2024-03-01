@@ -9,6 +9,8 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SpecialMenuItem;
+import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.Action;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.panes.songEdits.AddBeatsAtTheStartPane;
@@ -17,18 +19,23 @@ import log.charter.gui.panes.songEdits.AddSilencePane;
 import log.charter.gui.panes.songSettings.SongOptionsPane;
 
 class EditMenuHandler extends CharterMenuHandler {
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private CharterFrame frame;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
+	private ProjectAudioHandler projectAudioHandler;
 	private UndoSystem undoSystem;
 
-	void init(final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final UndoSystem undoSystem) {
+	void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final CharterFrame frame,
+			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+			final ProjectAudioHandler projectAudioHandler, final UndoSystem undoSystem) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.frame = frame;
 		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
+		this.projectAudioHandler = projectAudioHandler;
 		this.undoSystem = undoSystem;
 	}
 
@@ -70,11 +77,11 @@ class EditMenuHandler extends CharterMenuHandler {
 	}
 
 	private void addSilence() {
-		new AddSilencePane(frame, data);
+		new AddSilencePane(frame, chartTimeHandler, data, projectAudioHandler);
 	}
 
 	private void addDefaultSilence() {
-		new AddDefaultSilencePane(frame, data);
+		new AddDefaultSilencePane(frame, chartTimeHandler, data, projectAudioHandler);
 	}
 
 	private void addBeatsAtTheStart() {

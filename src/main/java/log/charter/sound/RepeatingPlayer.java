@@ -12,19 +12,19 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 import log.charter.io.Logger;
-import log.charter.sound.data.MusicData;
+import log.charter.sound.data.AudioData;
 
 public class RepeatingPlayer implements IPlayer {
-	private final Supplier<MusicData<?>> musicDataSupplier;
+	private final Supplier<AudioData<?>> musicDataSupplier;
 	private final SourceDataLine line;
 
 	private boolean playAgain = false;
 	private boolean stopped = false;
 
-	public RepeatingPlayer(final Supplier<MusicData<?>> musicDataSupplier) {
+	public RepeatingPlayer(final Supplier<AudioData<?>> musicDataSupplier) {
 		this.musicDataSupplier = musicDataSupplier;
 
-		final MusicData<?> musicData = musicDataSupplier.get();
+		final AudioData<?> musicData = musicDataSupplier.get();
 		final Info info = new Info(SourceDataLine.class, musicData.format());
 		SourceDataLine sourceDataLine;
 		try {

@@ -28,5 +28,5 @@ public interface ICopyData {
 
 	public boolean isEmpty();
 
-	public void paste(ChartData data, boolean convertFromBeats);
+	public void paste(int time, ChartData data, boolean convertFromBeats);
 }

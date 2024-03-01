@@ -7,16 +7,20 @@ import javax.swing.JOptionPane;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.song.Arrangement;
 import log.charter.song.EventPoint;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ArrangementValidator {
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private CharterFrame frame;
 	private ModeManager modeManager;
 
-	public void init(final ChartData data, final CharterFrame frame, final ModeManager modeManager) {
+	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final CharterFrame frame,
+			final ModeManager modeManager) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.frame = frame;
 		this.modeManager = modeManager;
@@ -25,7 +29,7 @@ public class ArrangementValidator {
 	private Runnable moveToTimeOnArrangement(final int arrangementId, final int time) {
 		return () -> {
 			modeManager.setArrangement(arrangementId);
-			data.setNextTime(time);
+			chartTimeHandler.setNextTime(time);
 
 			frame.updateEditAreaSizes();
 		};

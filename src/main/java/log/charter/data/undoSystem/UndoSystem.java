@@ -5,10 +5,12 @@ import java.util.LinkedList;
 import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.selection.SelectionManager;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 
 public class UndoSystem {
 	public static int nextId = 1;
 
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
@@ -17,14 +19,16 @@ public class UndoSystem {
 	private final LinkedList<UndoState> redo = new LinkedList<>();
 	private int savePosition = 0;
 
-	public void init(final ChartData data, final ModeManager modeManager, final SelectionManager selectionManager) {
+	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final ModeManager modeManager,
+			final SelectionManager selectionManager) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
 	}
 
 	private UndoState createUndoState() {
-		return new BaseUndoState(modeManager, data);
+		return new BaseUndoState(chartTimeHandler, modeManager, data);
 	}
 
 	public void addUndo(final UndoState undoState) {
@@ -53,7 +57,7 @@ public class UndoSystem {
 		selectionManager.clear();
 		savePosition--;
 		final UndoState lastUndo = undo.removeLast();
-		redo.add(lastUndo.undo(data));
+		redo.add(lastUndo.undo(data, chartTimeHandler));
 	}
 
 	public void redo() {
@@ -66,7 +70,7 @@ public class UndoSystem {
 
 		selectionManager.clear();
 		savePosition++;
-		undo.add(redo.removeLast().undo(data));
+		undo.add(redo.removeLast().undo(data, chartTimeHandler));
 	}
 
 	public void clear() {

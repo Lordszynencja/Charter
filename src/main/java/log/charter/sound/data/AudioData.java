@@ -2,7 +2,7 @@ package log.charter.sound.data;
 
 import javax.sound.sampled.AudioFormat;
 
-public abstract class MusicData<T extends MusicData<T>> {
+public abstract class AudioData<T extends AudioData<T>> {
 	public abstract AudioFormat format();
 
 	public int channels() {

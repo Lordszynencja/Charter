@@ -17,6 +17,7 @@ import log.charter.data.managers.RepeatManager;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.gui.handlers.midiPlayer.MidiChartNotePlayer;
 import log.charter.song.notes.IPosition;
 import log.charter.sound.IPlayer;
@@ -24,8 +25,8 @@ import log.charter.sound.RepeatingPlayer;
 import log.charter.sound.RotatingRepeatingPlayer;
 import log.charter.sound.SoundPlayer;
 import log.charter.sound.SoundPlayer.Player;
-import log.charter.sound.data.MusicData;
-import log.charter.sound.data.MusicDataShort;
+import log.charter.sound.data.AudioData;
+import log.charter.sound.data.AudioDataShort;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class AudioHandler {
@@ -36,14 +37,14 @@ public class AudioHandler {
 		public boolean on = false;
 		private int nextTime = -1;
 
-		public TickPlayer(final MusicDataShort tick,
+		public TickPlayer(final AudioDataShort tick,
 				final Supplier<ArrayList2<? extends IPosition>> positionsSupplier) {
 			this(tick, 1, positionsSupplier);
 		}
 
-		public TickPlayer(final MusicDataShort tick, final int players,
+		public TickPlayer(final AudioDataShort tick, final int players,
 				final Supplier<ArrayList2<? extends IPosition>> positionsSupplier) {
-			final Supplier<MusicData<?>> tickSupplier = () -> tick.volume(sfxVolume);
+			final Supplier<AudioData<?>> tickSupplier = () -> tick.volume(sfxVolume);
 			if (players == 1) {
 				tickPlayer = new RepeatingPlayer(tickSupplier);
 			} else {
@@ -77,11 +78,12 @@ public class AudioHandler {
 	private ChartData data;
 	private CharterFrame frame;
 	private ModeManager modeManager;
+	private ProjectAudioHandler projectAudioHandler;
 	private RepeatManager repeatManager;
 
 	private final StretchedAudioHandler stretchedAudioHandler = new StretchedAudioHandler();
 
-	private MusicDataShort slowedDownSong;
+	private AudioDataShort slowedDownSong;
 	private int currentlyLoadedSpecialSpeed = 100;
 
 	private TickPlayer beatTickPlayer;
@@ -89,8 +91,8 @@ public class AudioHandler {
 	private final MidiChartNotePlayer midiChartNotePlayer = new MidiChartNotePlayer();
 	private Player songPlayer;
 
-	private MusicDataShort lastUncutData = null;
-	private MusicDataShort lastPlayedData = null;
+	private AudioDataShort lastUncutData = null;
+	private AudioDataShort lastPlayedData = null;
 	private int speed = 100;
 	private int songTimeOnStart = 0;
 	private long playStartTime;
@@ -99,18 +101,20 @@ public class AudioHandler {
 	public boolean midiNotesPlaying = false;
 
 	public void init(final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar, final ChartData data,
-			final CharterFrame frame, final ModeManager modeManager, final RepeatManager repeatManager) {
+			final CharterFrame frame, final ModeManager modeManager, final ProjectAudioHandler projectAudioHandler,
+			final RepeatManager repeatManager) {
 		this.chartTimeHandler = chartTimeHandler;
 		this.chartToolbar = chartToolbar;
 		this.data = data;
 		this.frame = frame;
 		this.modeManager = modeManager;
+		this.projectAudioHandler = projectAudioHandler;
 		this.repeatManager = repeatManager;
 
 		beatTickPlayer = new TickPlayer(generateSound(500, 0.02, 1), () -> data.songChart.beatsMap.beats);
 		noteTickPlayer = new TickPlayer(generateSound(1000, 0.01, 1), 4, this::getCurrentClapPositions);
 
-		midiChartNotePlayer.init(data, modeManager);
+		midiChartNotePlayer.init(chartTimeHandler, data, modeManager);
 
 		stretchedAudioHandler.init();
 	}
@@ -168,11 +172,7 @@ public class AudioHandler {
 		return t * 100 / speed;
 	}
 
-	private void playMusic(final MusicDataShort musicData) {
-		playMusic(musicData, 100);
-	}
-
-	private void playMusic(final MusicDataShort musicData, final int speed) {
+	private void playMusic(final AudioDataShort musicData, final int speed) {
 		stop();
 
 		lastUncutData = musicData;
@@ -180,23 +180,23 @@ public class AudioHandler {
 
 		int start;
 		if (repeatManager.isRepeating()) {
-			if (data.time > repeatManager.getRepeatEnd()) {
+			if (chartTimeHandler.nextTime() > repeatManager.getRepeatEnd()) {
 				rewind(repeatManager.getRepeatStart());
 				return;
 			}
 
-			final double cutStart = getSlowedMs(data.time) / 1000.0;
+			final double cutStart = getSlowedMs(chartTimeHandler.time()) / 1000.0;
 			final double cutEnd = getSlowedMs(repeatManager.getRepeatEnd()) / 1000.0;
-			final MusicDataShort cutMusic = lastUncutData.cut(cutStart, cutEnd);
+			final AudioDataShort cutMusic = lastUncutData.cut(cutStart, cutEnd);
 			lastPlayedData = cutMusic.volume(Config.volume);
 			start = 0;
 		} else {
 			lastPlayedData = lastUncutData.volume(Config.volume);
-			start = getSlowedMs(data.time);
+			start = getSlowedMs(chartTimeHandler.time());
 		}
 
 		songPlayer = SoundPlayer.play(lastPlayedData, start);
-		songTimeOnStart = data.time;
+		songTimeOnStart = chartTimeHandler.time();
 		playStartTime = nanoTime() / 1_000_000L;
 
 		if (midiNotesPlaying) {
@@ -235,7 +235,7 @@ public class AudioHandler {
 
 	public void setSong() {
 		stretchedAudioHandler.clear();
-		stretchedAudioHandler.setData(data.path, data.music);
+		stretchedAudioHandler.setData(data.path, projectAudioHandler.getAudio());
 
 		if (createDefaultStretchesInBackground) {
 			stretchedAudioHandler.addSpeedToGenerate(stretchedMusicSpeed);
@@ -260,7 +260,7 @@ public class AudioHandler {
 		}
 
 		if (stretchedMusicSpeed == 100) {
-			playMusic(data.music);
+			playMusic(projectAudioHandler.getAudio(), 100);
 			return;
 		}
 
@@ -308,8 +308,9 @@ public class AudioHandler {
 
 	public void rewind(final int t) {
 		stop();
-		data.time = t;
+
 		chartTimeHandler.setNextTime(t);
+
 		beatTickPlayer.stop();
 		beatTickPlayer.handleFrame(t);
 		noteTickPlayer.stop();

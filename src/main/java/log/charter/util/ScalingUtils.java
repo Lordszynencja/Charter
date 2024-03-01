@@ -10,7 +10,11 @@ public class ScalingUtils {
 	}
 
 	public static int xToTimeLength(final int x) {
-		return (int) (x / Zoom.zoom);
+		return (int) (x * pixelTimeLength());
+	}
+
+	public static double pixelTimeLength() {
+		return 1 / Zoom.zoom;
 	}
 
 	public static int timeToX(final int pos, final int t) {

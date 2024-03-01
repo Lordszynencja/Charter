@@ -27,14 +27,14 @@ public class Preview3DAnchorsDrawer {
 		this.data = data;
 	}
 
-	private void addAnchor(final FadingShaderDrawData shaderDrawData, final AnchorDrawData anchor) {
+	private void addAnchor(final FadingShaderDrawData shaderDrawData, final AnchorDrawData anchor, final int time) {
 		if (anchor.timeTo < anchor.timeFrom) {
 			return;
 		}
 
 		final double y = getChartboardYPosition(data.currentStrings()) - 0.001;
-		final int t0 = anchor.timeFrom - data.time;
-		final int t1 = anchor.timeTo - data.time;
+		final int t0 = anchor.timeFrom - time;
+		final int t1 = anchor.timeTo - time;
 		final double z0 = getTimePosition(t0);
 		final double z1 = getTimePosition(t1);
 
@@ -54,7 +54,7 @@ public class Preview3DAnchorsDrawer {
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
 		final FadingShaderDrawData shaderDrawData = shadersHolder.new FadingShaderDrawData();
 
-		drawData.anchors.forEach(anchorToDraw -> addAnchor(shaderDrawData, anchorToDraw));
+		drawData.anchors.forEach(anchorToDraw -> addAnchor(shaderDrawData, anchorToDraw, drawData.time));
 
 		shaderDrawData.draw(GL30.GL_QUADS, Matrix4.identity, closeDistanceZ, fadedDistanceZ);
 	}

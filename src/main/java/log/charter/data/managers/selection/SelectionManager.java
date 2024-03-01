@@ -13,6 +13,7 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.song.Anchor;
@@ -28,6 +29,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 
 public class SelectionManager {
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private CharterFrame frame;
 	private ModeManager modeManager;
@@ -43,8 +45,9 @@ public class SelectionManager {
 
 	private final Map<PositionType, TypeSelectionManager<?>> typeSelectionManagers = new HashMap2<>();
 
-	public void init(final ChartData data, final CharterFrame frame, final ModeManager modeManager,
-			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
+	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final CharterFrame frame,
+			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.frame = frame;
 		this.modeManager = modeManager;
@@ -99,14 +102,15 @@ public class SelectionManager {
 
 	private PositionWithIdAndType findExistingLong(final int x, final ArrayList2<PositionWithIdAndType> positions) {
 		final ArrayList2<PositionWithLink> positionsWithLinks = PositionWithLink.fromPositionsWithIdAndType(positions);
-		final int position = xToTime(x, data.time);
+		final int position = xToTime(x, chartTimeHandler.time());
 		final Integer id = findClosestId(positionsWithLinks, position);
 		if (id == null) {
 			return null;
 		}
 
 		final PositionWithIdAndType closest = positionsWithLinks.get(id).link;
-		if (x - timeToX(closest.position(), data.time) < -20 || x - timeToX(closest.endPosition, data.time) > 20) {
+		if (x - timeToX(closest.position(), chartTimeHandler.time()) < -20
+				|| x - timeToX(closest.endPosition, chartTimeHandler.time()) > 20) {
 			return null;
 		}
 
@@ -115,14 +119,15 @@ public class SelectionManager {
 
 	private PositionWithIdAndType findClosestExistingPoint(final int x,
 			final ArrayList2<PositionWithIdAndType> positions) {
-		final int position = xToTime(x, data.time);
+		final int position = xToTime(x, chartTimeHandler.time());
 		final Integer id = findClosestId(positions, position);
 		if (id == null) {
 			return null;
 		}
 
 		final PositionWithIdAndType closest = positions.get(id);
-		if (x - timeToX(closest.position(), data.time) < -20 || x - timeToX(closest.position(), data.time) > 20) {
+		if (x - timeToX(closest.position(), chartTimeHandler.time()) < -20
+				|| x - timeToX(closest.position(), chartTimeHandler.time()) > 20) {
 			return null;
 		}
 

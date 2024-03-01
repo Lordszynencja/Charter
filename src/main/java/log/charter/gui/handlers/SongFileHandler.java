@@ -32,6 +32,8 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.SongFolderSelectPane;
+import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.RSXMLToArrangement;
@@ -44,7 +46,7 @@ import log.charter.io.rsc.xml.ChartProject;
 import log.charter.song.Arrangement;
 import log.charter.song.SongChart;
 import log.charter.song.vocals.Vocals;
-import log.charter.sound.data.MusicDataShort;
+import log.charter.sound.data.AudioDataShort;
 import log.charter.util.FileChooseUtils;
 import log.charter.util.RW;
 
@@ -146,22 +148,27 @@ public class SongFileHandler {
 	private ArrangementFixer arrangementFixer;
 	private ArrangementValidator arrangementValidator;
 	private AudioHandler audioHandler;
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private CharterFrame frame;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
+	private ProjectAudioHandler projectAudioHandler;
 	private UndoSystem undoSystem;
 
 	public void init(final ArrangementFixer arrangementFixer, final ArrangementValidator arrangementValidator,
-			final AudioHandler audioHandler, final ChartData data, final CharterFrame frame,
-			final CharterMenuBar charterMenuBar, final ModeManager modeManager, final UndoSystem undoSystem) {
+			final AudioHandler audioHandler, final ChartTimeHandler chartTimeHandler, final ChartData data,
+			final CharterFrame frame, final CharterMenuBar charterMenuBar, final ModeManager modeManager,
+			final ProjectAudioHandler projectAudioHandler, final UndoSystem undoSystem) {
 		this.arrangementFixer = arrangementFixer;
 		this.arrangementValidator = arrangementValidator;
 		this.audioHandler = audioHandler;
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.frame = frame;
 		this.charterMenuBar = charterMenuBar;
 		this.modeManager = modeManager;
+		this.projectAudioHandler = projectAudioHandler;
 		this.undoSystem = undoSystem;
 
 		new Thread(() -> {
@@ -238,7 +245,7 @@ public class SongFileHandler {
 		final File musicFile = new File(songFolder, musicFileName);
 		RW.writeB(musicFile, RW.readB(songFile));
 
-		final MusicDataShort musicData = MusicDataShort.readFile(musicFile);
+		final AudioDataShort musicData = AudioDataShort.readFile(musicFile);
 		if (musicData == null) {
 			frame.showPopup(Label.MUSIC_DATA_NOT_FOUND.label());
 			return;
@@ -254,20 +261,21 @@ public class SongFileHandler {
 			songChart.albumYear = null;
 		}
 
-		data.setNewSong(songFolder, songChart, musicData, "project.rscp");
+		projectAudioHandler.setAudio(musicData);
+		data.setNewSong(songFolder, songChart, "project.rscp");
 		save();
 
 		audioHandler.clear();
 		audioHandler.setSong();
 	}
 
-	public MusicDataShort chooseMusicFile(final String startingDir) {
+	public AudioDataShort chooseMusicFile(final String startingDir) {
 		final File musicFile = FileChooseUtils.chooseMusicFile(frame, startingDir);
 		if (musicFile == null) {
 			return null;
 		}
 
-		return MusicDataShort.readFile(musicFile);
+		return AudioDataShort.readFile(musicFile);
 	}
 
 	public File chooseSongFolder(final String audioFileDirectory, final String defaultFolderName) {
@@ -324,9 +332,9 @@ public class SongFileHandler {
 		return project;
 	}
 
-	private MusicDataShort loadMusicData(final LoadingDialog loadingDialog, final int progressAfter,
+	private AudioDataShort loadMusicData(final LoadingDialog loadingDialog, final int progressAfter,
 			final ChartProject project, final String dir) {
-		final MusicDataShort musicData = MusicDataShort.readFile(new File(dir, project.musicFileName));
+		final AudioDataShort musicData = AudioDataShort.readFile(new File(dir, project.musicFileName));
 		if (musicData == null) {
 			frame.showPopup(Label.WRONG_MUSIC_FILE.label());
 			return null;
@@ -351,7 +359,7 @@ public class SongFileHandler {
 		filesToBackup.add(vocalsFileName);
 
 		final String dir = projectFileChosen.getParent() + File.separator;
-		final MusicDataShort musicData = loadMusicData(loadingDialog, 2, project, dir);
+		final AudioDataShort musicData = loadMusicData(loadingDialog, 2, project, dir);
 		if (musicData == null) {
 			return;
 		}
@@ -366,8 +374,9 @@ public class SongFileHandler {
 
 		makeBackups(dir, filesToBackup);
 
-		data.setSong(dir, songChart, musicData, projectFileChosen.getName(), project.editMode, project.arrangement,
-				project.level, project.time);
+		projectAudioHandler.setAudio(musicData);
+		chartTimeHandler.setNextTime(project.time);
+		data.setSong(dir, songChart, projectFileChosen.getName(), project.editMode, project.arrangement, project.level);
 
 		loadingDialog.setProgress(3, Label.LOADING_DONE.label());
 	}
@@ -401,9 +410,9 @@ public class SongFileHandler {
 			return;
 		}
 
-		final MusicDataShort musicData = MusicDataShort.readFile(musicFile);
+		final AudioDataShort musicData = AudioDataShort.readFile(musicFile);
 		if (musicData != null) {
-			data.music = musicData;
+			projectAudioHandler.setAudio(musicData);
 			data.songChart.musicFileName = musicFile.getName();
 		}
 	}
@@ -424,7 +433,7 @@ public class SongFileHandler {
 
 		LoadingDialog loadingDialog = new LoadingDialog(frame, 1);
 		loadingDialog.setProgress(0, Label.LOADING_MUSIC_FILE.label());
-		final MusicDataShort musicData = MusicDataShort.readFile(songFile);
+		final AudioDataShort musicData = AudioDataShort.readFile(songFile);
 		if (musicData == null) {
 			loadingDialog.dispose();
 			frame.showPopup(Label.MUSIC_FILE_COULDNT_BE_LOADED.label());
@@ -445,7 +454,9 @@ public class SongFileHandler {
 		final SongChart songChart = RSXMLToSongChart.makeSongChartForArrangement(musicData.msLength(), songName,
 				songArrangement);
 
-		data.setSong(dir, songChart, musicData, "project.rscp", EditMode.GUITAR, 0, 0, 0);
+		projectAudioHandler.setAudio(musicData);
+		chartTimeHandler.setNextTime(0);
+		data.setSong(dir, songChart, "project.rscp", EditMode.GUITAR, 0, 0);
 		loadingDialog.dispose();
 
 		save();
@@ -510,7 +521,8 @@ public class SongFileHandler {
 		int id = 1;
 		for (final Arrangement arrangement : data.songChart.arrangements) {
 			final String arrangementFileName = generateArrangementFileName(id, arrangement);
-			final SongArrangement songArrangement = new SongArrangement(data.songChart, arrangement);
+			final SongArrangement songArrangement = new SongArrangement(chartTimeHandler.audioLength(), data.songChart,
+					arrangement);
 			RW.write(new File(dir, arrangementFileName), SongArrangementXStreamHandler.saveSong(songArrangement));
 			id++;
 		}
@@ -530,7 +542,8 @@ public class SongFileHandler {
 			return;
 		}
 
-		final ChartProject project = new ChartProject(modeManager, data, data.songChart);
+		final ChartProject project = new ChartProject(chartTimeHandler.time(), modeManager.getMode(), data,
+				data.songChart);
 		RW.write(new File(data.path, data.projectFileName), saveProject(project));
 		saveRSXML();
 

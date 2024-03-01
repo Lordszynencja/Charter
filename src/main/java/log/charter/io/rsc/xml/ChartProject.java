@@ -4,7 +4,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.song.Arrangement;
 import log.charter.song.Beat;
@@ -40,11 +39,11 @@ public class ChartProject {
 	public ChartProject() {
 	}
 
-	public ChartProject(final ModeManager modeManager, final ChartData data, final SongChart songChart) {
-		editMode = modeManager.getMode();
+	public ChartProject(final int time, final EditMode editMode, final ChartData data, final SongChart songChart) {
+		this.editMode = editMode;
 		arrangement = data.currentArrangement;
 		level = data.currentLevel;
-		time = data.time;
+		this.time = time;
 
 		artistName = songChart.artistName;
 		artistNameSort = songChart.artistNameSort;

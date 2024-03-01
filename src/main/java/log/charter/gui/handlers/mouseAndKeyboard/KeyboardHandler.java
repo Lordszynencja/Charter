@@ -59,6 +59,7 @@ import log.charter.gui.handlers.data.ChartItemsHandler;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.data.GuitarSoundsHandler;
 import log.charter.gui.handlers.data.GuitarSoundsStatusesHandler;
+import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.gui.handlers.data.VocalsHandler;
 import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.song.ChordTemplate;
@@ -76,6 +77,7 @@ public class KeyboardHandler implements KeyListener {
 	private Framer framer;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
+	private ProjectAudioHandler projectAudioHandler;
 	private RepeatManager repeatManager;
 	private SelectionManager selectionManager;
 	private SongFileHandler songFileHandler;
@@ -101,7 +103,8 @@ public class KeyboardHandler implements KeyListener {
 			final ArrangementFixer arrangementFixer, final ChartTimeHandler chartTimeHandler,
 			final ChartToolbar chartToolbar, final CopyManager copyManager, final ChartData data,
 			final CharterFrame frame, final Framer framer, final ModeManager modeManager,
-			final MouseHandler mouseHandler, final RepeatManager repeatManager, final SelectionManager selectionManager,
+			final MouseHandler mouseHandler, final ProjectAudioHandler projectAudioHandler,
+			final RepeatManager repeatManager, final SelectionManager selectionManager,
 			final SongFileHandler songFileHandler, final UndoSystem undoSystem) {
 		this.audioHandler = audioHandler;
 		this.chartTimeHandler = chartTimeHandler;
@@ -112,6 +115,7 @@ public class KeyboardHandler implements KeyListener {
 		this.framer = framer;
 		this.modeManager = modeManager;
 		this.mouseHandler = mouseHandler;
+		this.projectAudioHandler = projectAudioHandler;
 		this.repeatManager = repeatManager;
 		this.selectionManager = selectionManager;
 		this.songFileHandler = songFileHandler;
@@ -168,9 +172,9 @@ public class KeyboardHandler implements KeyListener {
 				return;
 		}
 
-		int nextTime = data.nextTime + (int) speed;
-		nextTime = max(0, min(data.music.msLength(), nextTime));
-		frame.setNextTime(nextTime);
+		int nextTime = chartTimeHandler.time() + (int) speed;
+		nextTime = max(0, min(projectAudioHandler.getAudio().msLength(), nextTime));
+		chartTimeHandler.setNextTime(nextTime);
 	}
 
 	private void decreaseNumberTimer() {
@@ -270,8 +274,8 @@ public class KeyboardHandler implements KeyListener {
 
 	private void toggleBookmark(final int number) {
 		final Integer currentBookmark = data.songChart.bookmarks.get(number);
-		if (currentBookmark == null || currentBookmark != data.time) {
-			data.songChart.bookmarks.put(number, data.time);
+		if (currentBookmark == null || currentBookmark != chartTimeHandler.time()) {
+			data.songChart.bookmarks.put(number, chartTimeHandler.time());
 		} else {
 			data.songChart.bookmarks.remove(number);
 		}

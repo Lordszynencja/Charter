@@ -19,6 +19,7 @@ import log.charter.data.ChartData;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.song.Beat;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -114,11 +115,14 @@ public class HighlightManager {
 		}
 	}
 
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 
-	public void init(final ChartData data, final ModeManager modeManager, final SelectionManager selectionManager) {
+	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final ModeManager modeManager,
+			final SelectionManager selectionManager) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
@@ -133,8 +137,7 @@ public class HighlightManager {
 		}
 
 		final int closestGridPosition = data.songChart.beatsMap.getPositionFromGridClosestTo(position);
-		final ChordOrNote closestSound = findClosestPosition(data.getCurrentArrangementLevel().sounds,
-				position);
+		final ChordOrNote closestSound = findClosestPosition(data.getCurrentArrangementLevel().sounds, position);
 		if (closestSound == null) {
 			return closestGridPosition;
 		}
@@ -154,7 +157,7 @@ public class HighlightManager {
 		if (existingPosition != null) {
 			return existingPosition;
 		}
-		int position = xToTime(x, data.time);
+		int position = xToTime(x, chartTimeHandler.time());
 		if (positionType == PositionType.BEAT) {
 			return PositionWithIdAndType.create(position, positionType);
 		}
@@ -163,7 +166,7 @@ public class HighlightManager {
 		position = max(0, min(data.songChart.beatsMap.beats.getLast().position(), position));
 
 		final PositionWithIdAndType existingPositionCloseToGrid = selectionManager
-				.findExistingPosition(timeToX(position, data.time), y);
+				.findExistingPosition(timeToX(position, chartTimeHandler.time()), y);
 		if (existingPositionCloseToGrid != null) {
 			return existingPositionCloseToGrid;
 		}

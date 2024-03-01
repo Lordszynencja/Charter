@@ -14,6 +14,7 @@ import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.RepeatManager;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.IntRange;
@@ -23,14 +24,15 @@ public class Preview3DDrawData {
 	private final ArrayList2<Anchor> levelAnchors;
 	private final Map<Integer, IntRange> fretsCache = new HashMap<>();
 
+	public final int time;
 	public final List<AnchorDrawData> anchors;
 	public final List<BeatDrawData> beats;
 	public final List<HandShapeDrawData> handShapes;
 	public final Preview3DNotesData notes;
 
-	public Preview3DDrawData(final ChartData data, final RepeatManager repeatManager) {
-		final int timeFrom = data.time;
-		final int timeTo = data.time + getVisibility();
+	public Preview3DDrawData(final ChartTimeHandler chartTimeHandler, final ChartData data,
+			final RepeatManager repeatManager) {
+		time = chartTimeHandler.time();
 
 		if (data.getCurrentArrangementLevel() == null) {
 			levelAnchors = new ArrayList2<>(new Anchor(0, 1));
@@ -38,10 +40,11 @@ public class Preview3DDrawData {
 			levelAnchors = data.getCurrentArrangementLevel().anchors;
 		}
 
-		anchors = getAnchorsForTimeSpanWithRepeats(data, repeatManager, timeFrom, timeTo);
-		beats = getBeatsForTimeSpanWithRepeats(data, repeatManager, timeFrom, timeTo);
-		handShapes = getHandShapesForTimeSpanWithRepeats(data, repeatManager, timeFrom, timeTo);
-		notes = getNotesForTimeSpanWithRepeats(data, repeatManager, timeFrom, timeTo);
+		final int timeTo = time + getVisibility();
+		anchors = getAnchorsForTimeSpanWithRepeats(data, repeatManager, chartTimeHandler.audioLength(), time, timeTo);
+		beats = getBeatsForTimeSpanWithRepeats(data, repeatManager, time, timeTo);
+		handShapes = getHandShapesForTimeSpanWithRepeats(data, repeatManager, time, timeTo);
+		notes = getNotesForTimeSpanWithRepeats(data, repeatManager, time, timeTo);
 	}
 
 	public IntRange getFrets(final int t) {

@@ -14,12 +14,14 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
+import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.SongFileHandler;
+import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -48,14 +50,16 @@ public class CharterMenuBar extends JMenuBar {
 			infoMenuHandler);
 
 	public void init(final ArrangementFixer arrangementFixer, final AudioHandler audioHandler,
-			final CopyManager copyManager, final ChartToolbar chartToolbar, final ChartData data,
-			final CharterFrame frame, final Framer framer, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final SelectionManager selectionManager,
-			final SongFileHandler songFileHandler, final UndoSystem undoSystem, final WaveFormDrawer waveFormDrawer) {
+			final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar, final CopyManager copyManager,
+			final ChartData data, final CharterFrame frame, final Framer framer, final KeyboardHandler keyboardHandler,
+			final ModeManager modeManager, final ProjectAudioHandler projectAudioHandler,
+			final SelectionManager selectionManager, final SongFileHandler songFileHandler, final UndoSystem undoSystem,
+			final WaveFormDrawer waveFormDrawer) {
 		arrangementMenuHandler.init(data, frame, this, keyboardHandler, modeManager, selectionManager);
-		editMenuHandler.init(data, frame, keyboardHandler, modeManager, undoSystem);
-		fileMenuHandler.init(arrangementFixer, data, frame, framer, this, keyboardHandler, modeManager,
-				songFileHandler);
+		editMenuHandler.init(chartTimeHandler, data, frame, keyboardHandler, modeManager, projectAudioHandler,
+				undoSystem);
+		fileMenuHandler.init(arrangementFixer, chartTimeHandler, data, frame, framer, this, keyboardHandler,
+				modeManager, songFileHandler);
 		guitarMenuHandler.init(data, keyboardHandler, modeManager, selectionManager, undoSystem);
 		infoMenuHandler.init(frame, this);
 		musicMenuHandler.init(audioHandler, data, frame, keyboardHandler);

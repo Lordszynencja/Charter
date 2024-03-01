@@ -1,6 +1,7 @@
 package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 
 public class GuitarModeUndoState extends UndoState {
 	private final GuitarUndoState guitarUndoState;
@@ -14,8 +15,8 @@ public class GuitarModeUndoState extends UndoState {
 	}
 
 	@Override
-	public GuitarModeUndoState undo(final ChartData data) {
-		final GuitarModeUndoState redo = new GuitarModeUndoState(guitarUndoState.undo(data));
+	public GuitarModeUndoState undo(final ChartData data, final ChartTimeHandler chartTimeHandler) {
+		final GuitarModeUndoState redo = new GuitarModeUndoState(guitarUndoState.undo(data, chartTimeHandler));
 		return redo;
 	}
 }

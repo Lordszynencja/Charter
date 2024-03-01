@@ -17,6 +17,7 @@ import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.common.MarkerDrawer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
@@ -24,6 +25,7 @@ import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
 public class ChartPanel extends JComponent {
 	private static final long serialVersionUID = -3439446235287039031L;
 
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 	private HighlightManager highlightManager;
 	private ModeManager modeManager;
@@ -42,10 +44,12 @@ public class ChartPanel extends JComponent {
 		setSize(getWidth(), editAreaHeight);
 	}
 
-	public void init(final BeatsDrawer beatsDrawer, final ChartData data, final HighlightManager highlightManager,
-			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
-			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final MouseHandler mouseHandler,
-			final SelectionManager selectionManager, final WaveFormDrawer waveFormDrawer) {
+	public void init(final BeatsDrawer beatsDrawer, final ChartTimeHandler chartTimeHandler, final ChartData data,
+			final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
+			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
+			final MouseHandler mouseHandler, final SelectionManager selectionManager,
+			final WaveFormDrawer waveFormDrawer) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.highlightManager = highlightManager;
 		this.modeManager = modeManager;
@@ -53,10 +57,10 @@ public class ChartPanel extends JComponent {
 		this.mouseHandler = mouseHandler;
 		this.selectionManager = selectionManager;
 
-		backgroundDrawer.init(data, this);
+		backgroundDrawer.init(chartTimeHandler, data, this);
 		arrangementDrawer.init(beatsDrawer, this, data, keyboardHandler, lyricLinesDrawer, modeManager,
 				selectionManager, waveFormDrawer);
-		lyricLinesDrawer.init(data);
+		lyricLinesDrawer.init(data, modeManager);
 		markerDrawer.init();
 
 		addMouseListener(mouseHandler);
@@ -70,16 +74,18 @@ public class ChartPanel extends JComponent {
 
 	@Override
 	public void paintComponent(final Graphics g) {
-		backgroundDrawer.draw(g);
+		final int time = chartTimeHandler.time();
+
+		backgroundDrawer.draw(g, time);
 
 		if (data.isEmpty) {
 			return;
 		}
 
-		final HighlightData highlightData = HighlightData.getCurrentHighlight(data, highlightManager, modeManager,
+		final HighlightData highlightData = HighlightData.getCurrentHighlight(time, data, highlightManager, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 
-		arrangementDrawer.draw(g, highlightData);
+		arrangementDrawer.draw(g, time, highlightData);
 		markerDrawer.draw(g);
 	}
 }

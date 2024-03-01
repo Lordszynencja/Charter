@@ -59,7 +59,7 @@ public class ModeManager {
 		emptyModeHandler.init();
 		guitarModeHandler.init(currentSelectionEditor, data, frame, highlightManager, keyboardHandler, selectionManager,
 				undoSystem);
-		tempoMapModeHandler.init(data, frame, undoSystem);
+		tempoMapModeHandler.init(chartTimeHandler, data, frame, undoSystem);
 		vocalModeHandler.init(data, frame, keyboardHandler, selectionManager, undoSystem);
 	}
 

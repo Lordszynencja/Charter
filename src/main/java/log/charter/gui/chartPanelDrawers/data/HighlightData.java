@@ -21,9 +21,9 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressData;
+import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
 import log.charter.song.HandShape;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IConstantPositionWithLength;
@@ -130,15 +130,15 @@ public class HighlightData {
 		}
 	}
 
-	private static void moveSelectedPositions(final ChartData data, final Collection<? extends IPosition> positions,
-			final MouseButtonPressData press, final int x) {
+	private static void moveSelectedPositions(final int time, final ChartData data,
+			final Collection<? extends IPosition> positions, final MouseButtonPressData press, final int x) {
 		final int dragFrom = press.highlight.position();
-		final int dragTo = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, data.time));
+		final int dragTo = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, time));
 		data.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
 	}
 
-	private static HighlightData getDraggedPositions(final ChartData data, final SelectionManager selectionManager,
-			final MouseButtonPressData press, final int x) {
+	private static HighlightData getDraggedPositions(final int time, final ChartData data,
+			final SelectionManager selectionManager, final MouseButtonPressData press, final int x) {
 		if (press.highlight.type == PositionType.NONE || press.highlight.type == BEAT) {
 			return null;
 		}
@@ -168,7 +168,7 @@ public class HighlightData {
 		};
 		final HashSet2<TemporaryHighlighPosition> positions = selectedPositions.map(mapper);
 
-		moveSelectedPositions(data, positions, press, x);
+		moveSelectedPositions(time, data, positions, press, x);
 
 		final ArrayList<HighlightPosition> highlightedPositions = new ArrayList<>(
 				positions.map(TemporaryHighlighPosition::asConstant));
@@ -176,12 +176,12 @@ public class HighlightData {
 		return new HighlightData(press.highlight.type, null, highlightedPositions);
 	}
 
-	private static HighlightData getDraggedBeats(final ChartData data, final MouseHandler mouseHandler) {
-		final int position = xToTime(mouseHandler.getMouseX(), data.time);
+	private static HighlightData getDraggedBeats(final int time, final MouseHandler mouseHandler) {
+		final int position = xToTime(mouseHandler.getMouseX(), time);
 		return new HighlightData(PositionType.BEAT, new HighlightPosition(position));
 	}
 
-	private static HighlightData getDragHighlight(final ChartData data, final ModeManager modeManager,
+	private static HighlightData getDragHighlight(final int time, final ChartData data, final ModeManager modeManager,
 			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final MouseHandler mouseHandler,
 			final SelectionManager selectionManager) {
 		final MouseButtonPressData leftPressPosition = mouseButtonPressReleaseHandler
@@ -195,17 +195,17 @@ public class HighlightData {
 				return null;
 			}
 
-			return getDraggedBeats(data, mouseHandler);
+			return getDraggedBeats(time, mouseHandler);
 		}
 
 		if (abs(leftPressPosition.position.x - mouseHandler.getMouseX()) > 5) {
-			return getDraggedPositions(data, selectionManager, leftPressPosition, mouseHandler.getMouseX());
+			return getDraggedPositions(time, data, selectionManager, leftPressPosition, mouseHandler.getMouseX());
 		}
 
 		return null;
 	}
 
-	private static HighlightData getNoteAdditionHighlight(final ChartData data, final HighlightManager highlightManager,
+	private static HighlightData getNoteAdditionHighlight(final int time, final HighlightManager highlightManager,
 			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
 			final int x, final int y) {
 		if (modeManager.getMode() != EditMode.GUITAR) {
@@ -218,7 +218,7 @@ public class HighlightData {
 			return null;
 		}
 
-		final int pressXTime = min(pressPosition.highlight.position(), xToTime(pressPosition.position.x, data.time));
+		final int pressXTime = min(pressPosition.highlight.position(), xToTime(pressPosition.position.x, time));
 		final int pressY = pressPosition.position.y;
 
 		final Position2D startPosition = pressPosition.position;
@@ -232,10 +232,11 @@ public class HighlightData {
 		return new HighlightData(PositionType.GUITAR_NOTE, dragPositions, startPosition, endPosition);
 	}
 
-	public static HighlightData getCurrentHighlight(final ChartData data, final HighlightManager highlightManager,
-			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
-			final MouseHandler mouseHandler, final SelectionManager selectionManager) {
-		final HighlightData dragHighlight = getDragHighlight(data, modeManager, mouseButtonPressReleaseHandler,
+	public static HighlightData getCurrentHighlight(final int time, final ChartData data,
+			final HighlightManager highlightManager, final ModeManager modeManager,
+			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final MouseHandler mouseHandler,
+			final SelectionManager selectionManager) {
+		final HighlightData dragHighlight = getDragHighlight(time, data, modeManager, mouseButtonPressReleaseHandler,
 				mouseHandler, selectionManager);
 		if (dragHighlight != null) {
 			return dragHighlight;
@@ -243,7 +244,7 @@ public class HighlightData {
 
 		final int x = mouseHandler.getMouseX();
 		final int y = mouseHandler.getMouseY();
-		final HighlightData noteAddDragHighlight = getNoteAdditionHighlight(data, highlightManager, modeManager,
+		final HighlightData noteAddDragHighlight = getNoteAdditionHighlight(time, highlightManager, modeManager,
 				mouseButtonPressReleaseHandler, x, y);
 		if (noteAddDragHighlight != null) {
 			return noteAddDragHighlight;

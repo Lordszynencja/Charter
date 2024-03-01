@@ -35,6 +35,8 @@ public class TempoBeatPane extends ParamsPane {
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
+	private final int audioLength;
+
 	private final Beat beat;
 
 	private BigDecimal bpm;
@@ -49,10 +51,13 @@ public class TempoBeatPane extends ParamsPane {
 		return roundBPM(new BigDecimal(data.songChart.beatsMap.findBPM(beat)));
 	}
 
-	public TempoBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem, final Beat beat) {
+	public TempoBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
+			final int audioLength, final Beat beat) {
 		super(frame, Label.TEMPO_BEAT_PANE, getSizes());
 		this.data = data;
 		this.undoSystem = undoSystem;
+
+		this.audioLength = audioLength;
 
 		this.beat = beat;
 		beatsInMeasure = beat.beatsInMeasure;
@@ -88,7 +93,7 @@ public class TempoBeatPane extends ParamsPane {
 
 		if (bpm.compareTo(calculateBPM(beat)) != 0) {
 			beat.anchor = true;
-			data.songChart.beatsMap.setBPM(beatId, bpm.doubleValue());
+			data.songChart.beatsMap.setBPM(beatId, bpm.doubleValue(), audioLength);
 		}
 
 		final int currentBeatsInMeasure = beat.beatsInMeasure;

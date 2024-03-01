@@ -175,8 +175,8 @@ public class Preview3DFingeringDrawer {
 	}
 
 	private ChordTemplate findTemplateToUse(final Preview3DDrawData drawData) {
-		final HandShapeDrawData handShape = findLastBeforeEqual(drawData.handShapes, data.time + 20);
-		if (handShape == null || handShape.timeTo < data.time) {
+		final HandShapeDrawData handShape = findLastBeforeEqual(drawData.handShapes, drawData.time + 20);
+		if (handShape == null || handShape.timeTo < drawData.time) {
 			return null;
 		}
 		if (handShape.template.arpeggio) {
@@ -184,7 +184,7 @@ public class Preview3DFingeringDrawer {
 		}
 
 		final Level level = data.getCurrentArrangementLevel();
-		final ChordOrNote sound = findLastBeforeEqual(level.sounds, data.time + 20);
+		final ChordOrNote sound = findLastBeforeEqual(level.sounds, drawData.time + 20);
 		if (sound == null || sound.position() < handShape.position() || sound.isNote()) {
 			return handShape.template;
 		}

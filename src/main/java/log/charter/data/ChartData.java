@@ -15,19 +15,15 @@ import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.song.Arrangement;
 import log.charter.song.Level;
 import log.charter.song.SongChart;
-import log.charter.sound.data.MusicDataShort;
 
 public class ChartData {
 	public String path = Config.lastDir;
 	public String projectFileName = "project.rscp";
 	public boolean isEmpty = true;
 	public SongChart songChart = null;
-	public MusicDataShort music = new MusicDataShort();
 
 	public int currentArrangement = 0;
 	public int currentLevel = 0;
-	public int time = 0;
-	public int nextTime = 0;
 
 	private CharterFrame frame;
 	private AudioHandler audioHandler;
@@ -46,21 +42,16 @@ public class ChartData {
 		this.undoSystem = undoSystem;
 	}
 
-	public void setNewSong(final File songFolder, final SongChart song, final MusicDataShort musicData,
-			final String projectFileName) {
-		setSong(songFolder.getAbsolutePath(), song, musicData, projectFileName, EditMode.TEMPO_MAP, 0, 0, 0);
+	public void setNewSong(final File songFolder, final SongChart song, final String projectFileName) {
+		setSong(songFolder.getAbsolutePath(), song, projectFileName, EditMode.TEMPO_MAP, 0, 0);
 	}
 
-	public void setSong(final String dir, final SongChart song, final MusicDataShort musicData,
-			final String projectFileName, final EditMode editMode, final int arrangement, final int level,
-			final int time) {
+	public void setSong(final String dir, final SongChart song, final String projectFileName, final EditMode editMode,
+			final int arrangement, final int level) {
 		currentArrangement = arrangement;
-		this.time = time;
-		nextTime = time;
 		isEmpty = false;
 
 		songChart = song;
-		music = musicData;
 
 		selectionManager.clear();
 		currentLevel = level;
@@ -111,15 +102,5 @@ public class ChartData {
 		}
 
 		return songChart.arrangements.get(currentArrangement).getLevel(currentLevel);
-	}
-
-	public void setNextTime(final int t) {
-		nextTime = t;
-		if (nextTime < 0) {
-			nextTime = 0;
-		}
-		if (nextTime > music.msLength()) {
-			nextTime = music.msLength();
-		}
 	}
 }

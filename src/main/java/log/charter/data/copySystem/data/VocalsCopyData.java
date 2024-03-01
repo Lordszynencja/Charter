@@ -22,11 +22,11 @@ public class VocalsCopyData implements ICopyData {
 	}
 
 	@Override
-	public void paste(final ChartData data, final boolean convertFromBeats) {
+	public void paste(final int time, final ChartData data, final boolean convertFromBeats) {
 		final BeatsMap beatsMap = data.songChart.beatsMap;
 		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
 
-		ICopyData.simplePaste(beatsMap, data.time, vocals, this.vocals, convertFromBeats);
+		ICopyData.simplePaste(beatsMap, time, vocals, this.vocals, convertFromBeats);
 	}
 
 }

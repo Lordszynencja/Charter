@@ -13,6 +13,7 @@ import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -30,6 +31,7 @@ public class Preview3DCameraHandler {
 	private final static double minScreenScaleY = 1;
 	private final static double screenScaleYMultiplier = 0.5;
 
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 
 	private double camX = 2;
@@ -37,7 +39,8 @@ public class Preview3DCameraHandler {
 
 	public Matrix4 currentMatrix;
 
-	public void init(final ChartData data) {
+	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 	}
 
@@ -50,11 +53,11 @@ public class Preview3DCameraHandler {
 		int minFret = Config.frets;
 		int maxFret = 1;
 
-		int anchorsFrom = findLastIdBeforeEqual(anchors, data.time + fretFocusWindowStartOffset);
+		int anchorsFrom = findLastIdBeforeEqual(anchors, chartTimeHandler.time() + fretFocusWindowStartOffset);
 		if (anchorsFrom == -1) {
 			anchorsFrom = 0;
 		}
-		final int anchorsTo = findLastIdBeforeEqual(anchors, data.time + fretFocusWindowEndOffset);
+		final int anchorsTo = findLastIdBeforeEqual(anchors, chartTimeHandler.time() + fretFocusWindowEndOffset);
 		if (anchorsTo == -1) {
 			return;
 		}

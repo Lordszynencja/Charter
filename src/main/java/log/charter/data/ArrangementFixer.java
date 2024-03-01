@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import log.charter.data.config.Config;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.song.Anchor;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
@@ -30,9 +31,11 @@ import log.charter.song.notes.IPositionWithLength;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ArrangementFixer {
+	private ChartTimeHandler chartTimeHandler;
 	private ChartData data;
 
-	public void init(final ChartData data) {
+	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data) {
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 	}
 
@@ -184,7 +187,7 @@ public class ArrangementFixer {
 		}
 
 		final IPositionWithLength lastPosition = positions.getLast();
-		lastPosition.endPosition(min(data.songChart.beatsMap.songLengthMs - 1, lastPosition.endPosition()));
+		lastPosition.endPosition(min(chartTimeHandler.audioLength(), lastPosition.endPosition()));
 	}
 
 	private void fixLevel(final Arrangement arrangement, final Level level) {
@@ -302,7 +305,7 @@ public class ArrangementFixer {
 
 	public void fixArrangements() {
 		final int start = data.songChart.beatsMap.beats.get(0).position();
-		final int end = data.songChart.beatsMap.songLengthMs;
+		final int end = chartTimeHandler.audioLength();
 
 		for (final Arrangement arrangement : data.songChart.arrangements) {
 			removeWrongPositions(arrangement, start, end);
@@ -315,7 +318,7 @@ public class ArrangementFixer {
 			fixMissingFingersOnChordTemplates(arrangement);
 		}
 
-		data.songChart.beatsMap.makeBeatsUntilSongEnd();
+		data.songChart.beatsMap.makeBeatsUntilSongEnd(end);
 		data.songChart.beatsMap.fixFirstBeatInMeasures();
 	}
 }

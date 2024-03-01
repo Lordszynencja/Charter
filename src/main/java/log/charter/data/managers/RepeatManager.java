@@ -1,8 +1,8 @@
 package log.charter.data.managers;
 
-import log.charter.data.ChartData;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.AudioHandler;
+import log.charter.gui.handlers.data.ChartTimeHandler;
 
 public class RepeatManager {
 	private boolean repeatingOn = true;
@@ -10,13 +10,14 @@ public class RepeatManager {
 	private int repeatEnd = -1;
 
 	private AudioHandler audioHandler;
+	private ChartTimeHandler chartTimeHandler;
 	private ChartToolbar chartToolbar;
-	private ChartData data;
 
-	public void init(final AudioHandler audioHandler, final ChartToolbar chartToolbar, final ChartData data) {
+	public void init(final AudioHandler audioHandler, final ChartTimeHandler chartTimeHandler,
+			final ChartToolbar chartToolbar) {
 		this.audioHandler = audioHandler;
+		this.chartTimeHandler = chartTimeHandler;
 		this.chartToolbar = chartToolbar;
-		this.data = data;
 	}
 
 	public boolean isOn() {
@@ -34,7 +35,7 @@ public class RepeatManager {
 	}
 
 	public void toggleRepeatStart() {
-		repeatStart = (repeatStart < 0 || repeatStart != data.time) ? data.time : -1;
+		repeatStart = (repeatStart < 0 || repeatStart != chartTimeHandler.time()) ? chartTimeHandler.time() : -1;
 	}
 
 	public int getRepeatEnd() {
@@ -42,7 +43,7 @@ public class RepeatManager {
 	}
 
 	public void toggleRepeatEnd() {
-		repeatEnd = (repeatEnd < 0 || repeatEnd != data.time) ? data.time : -1;
+		repeatEnd = (repeatEnd < 0 || repeatEnd != chartTimeHandler.time()) ? chartTimeHandler.time() : -1;
 	}
 
 	public void frame() {
@@ -50,14 +51,13 @@ public class RepeatManager {
 			return;
 		}
 
-		if (data.nextTime >= repeatEnd) {
+		if (chartTimeHandler.nextTime() >= repeatEnd) {
 			audioHandler.rewind(repeatStart);
-			data.setNextTime(repeatStart);
+			chartTimeHandler.setNextTime(repeatStart);
 		}
 	}
 
 	public boolean isRepeating() {
 		return repeatingOn && repeatStart >= 0 && repeatEnd >= 0 && repeatEnd > repeatStart;
 	}
-
 }
