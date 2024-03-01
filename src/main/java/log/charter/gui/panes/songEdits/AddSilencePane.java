@@ -27,14 +27,6 @@ import log.charter.util.RW;
 public class AddSilencePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.labelWidth = 80;
-		sizes.width = 300;
-
-		return sizes;
-	}
-
 	private final ChartTimeHandler chartTimeHandler;
 	private final ChartData data;
 	private final ProjectAudioHandler projectAudioHandler;
@@ -45,7 +37,7 @@ public class AddSilencePane extends ParamsPane {
 
 	public AddSilencePane(final CharterFrame frame, final ChartTimeHandler chartTimeHandler, final ChartData data,
 			final ProjectAudioHandler projectAudioHandler) {
-		super(frame, Label.ADD_SILENCE_PANE, getSizes());
+		super(frame, Label.ADD_SILENCE_PANE, 300);
 		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.projectAudioHandler = projectAudioHandler;

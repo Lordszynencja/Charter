@@ -1,8 +1,7 @@
 package log.charter.io.gp.gp5.transformers;
 
-import static java.lang.Math.max;
 import static log.charter.data.ArrangementFretHandPositionsCreator.createFretHandPositions;
-import static log.charter.song.configs.Tuning.standardStringDistances;
+import static log.charter.song.configs.Tuning.getStringDistance;
 
 import java.util.List;
 
@@ -39,13 +38,12 @@ public class GP5ArrangementTransformer {
 		final int strings = gpTuning.length;
 		final int[] convertedTuning = new int[strings];
 
-		final int offset = standardStringDistances.length - max(6, strings);
-		for (int i = 0; i < strings; i++) {
+		for (int string = 0; string < strings; string++) {
 			// A default E standard is offset by 40 from the Tuning E standard, and ordered
 			// in the opposite order
-			final int gpStringPosition = strings - 1 - i;
+			final int gpStringPosition = strings - 1 - string;
 
-			convertedTuning[i] = gpTuning[gpStringPosition] - 40 - standardStringDistances[i + offset] + capo;
+			convertedTuning[string] = gpTuning[gpStringPosition] - 40 - getStringDistance(string, strings) + capo;
 		}
 		final TuningType tuningType = TuningType.fromTuning(convertedTuning);
 

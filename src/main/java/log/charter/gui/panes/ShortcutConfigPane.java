@@ -2,8 +2,6 @@ package log.charter.gui.panes;
 
 import static java.util.Arrays.asList;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ComponentEvent;
@@ -109,15 +107,6 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 				Action.EXIT)));
 	}
 
-	private static final int labelWidth = 200;
-
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.width = 420;
-
-		return sizes;
-	}
-
 	private final CharterMenuBar charterMenuBar;
 
 	private final JScrollPane scrollPane;
@@ -126,16 +115,8 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 	private final JButton saveButton;
 	private final JButton cancelButton;
 
-	private void setComponentBounds(final Component component, final int x, final int y, final int w, final int h) {
-		component.setBounds(x, y, w, h);
-		final Dimension size = new Dimension(w, h);
-		component.setMinimumSize(size);
-		component.setPreferredSize(size);
-		component.setMaximumSize(size);
-	}
-
 	public ShortcutConfigPane(final CharterMenuBar charterMenuBar, final CharterFrame frame) {
-		super(frame, Label.SHORTCUT_CONFIG_PANE, getSizes());
+		super(frame, Label.SHORTCUT_CONFIG_PANE, 420);
 		this.charterMenuBar = charterMenuBar;
 
 		final JPanel panel = new JPanel(null);
@@ -170,8 +151,8 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 
 	private void addEditFor(final JPanel panel, final Action action, final int row) {
 		final ShortcutEditor editor = new ShortcutEditor(action);
-		final FieldWithLabel<ShortcutEditor> fieldWithLabel = new FieldWithLabel<>(action.label, labelWidth, 150, 20,
-				editor, LabelPosition.LEFT);
+		final FieldWithLabel<ShortcutEditor> fieldWithLabel = new FieldWithLabel<>(action.label, 200, 150, 20, editor,
+				LabelPosition.LEFT);
 		setComponentBounds(fieldWithLabel, 20, getY(row), 360, 20);
 		panel.add(fieldWithLabel);
 

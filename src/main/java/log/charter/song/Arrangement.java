@@ -138,10 +138,14 @@ public class Arrangement {
 	}
 
 	public String getTuningName(final String format) {
-		return tuning.getFullName(format, arrangementType == ArrangementType.Bass);
+		return tuning.getFullName(format, isBass());
 	}
 
 	public String[] getSimpleStringNames() {
-		return tuning.getStringNames(true, arrangementType == ArrangementType.Bass); // changed
+		return tuning.getStringNames(true, isBass());
+	}
+
+	public boolean isBass() {
+		return arrangementType == ArrangementType.Bass || tuning.strings() < 6;
 	}
 }

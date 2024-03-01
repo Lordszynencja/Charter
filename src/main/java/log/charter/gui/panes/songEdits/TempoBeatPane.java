@@ -24,14 +24,6 @@ public class TempoBeatPane extends ParamsPane {
 	private static final BigDecimal minBPM = new BigDecimal(1);
 	private static final BigDecimal maxBPM = new BigDecimal(999);
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.labelWidth = 80;
-		sizes.width = 250;
-
-		return sizes;
-	}
-
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
@@ -53,7 +45,7 @@ public class TempoBeatPane extends ParamsPane {
 
 	public TempoBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final int audioLength, final Beat beat) {
-		super(frame, Label.TEMPO_BEAT_PANE, getSizes());
+		super(frame, Label.TEMPO_BEAT_PANE, 250);
 		this.data = data;
 		this.undoSystem = undoSystem;
 

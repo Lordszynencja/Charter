@@ -61,14 +61,6 @@ public class GuitarEventPointPane extends ParamsPane {
 		}
 	}
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.labelWidth = 80;
-		sizes.width = 400;
-
-		return sizes;
-	}
-
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
@@ -86,7 +78,7 @@ public class GuitarEventPointPane extends ParamsPane {
 
 	public GuitarEventPointPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final EventPoint eventPoint, final Runnable onCancel) {
-		super(frame, Label.GUITAR_BEAT_PANE, getSizes());
+		super(frame, Label.GUITAR_BEAT_PANE, 400);
 		this.data = data;
 		this.undoSystem = undoSystem;
 
@@ -190,9 +182,7 @@ public class GuitarEventPointPane extends ParamsPane {
 		this.add(scrollTable, 50, getY(row.getAndIncrement()), 170, 120);
 
 		final JButton rowAddButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_ADD.label());
-		rowAddButton.addActionListener(e -> {
-			tableModel.addRow(new Vector<Object>());
-		});
+		rowAddButton.addActionListener(e -> { tableModel.addRow(new Vector<Object>()); });
 		this.add(rowAddButton, 230, getY(row.getAndAdd(2)), 150, 20);
 
 		final JButton rowRemoveButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_REMOVE.label());

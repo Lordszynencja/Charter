@@ -20,4 +20,8 @@ public enum ArrangementType {
 	public String toString() {
 		return name();
 	}
+
+	public boolean isBass(final int strings) {
+		return this == Bass || strings < 6;
+	}
 }

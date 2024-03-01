@@ -29,12 +29,23 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 
 public class ParamsPane extends JDialog {
+	public static final int uSpace = 10;
+
 	public static class PaneSizes {
 		public int width = 700;
-		public int lSpace = 20;
-		public int uSpace = 10;
-		public int labelWidth = 200;
 		public int rowHeight = 25;
+
+		public PaneSizes() {
+		}
+
+		public PaneSizes(final int width) {
+			this.width = width;
+		}
+
+		public PaneSizes rowHeight(final int rowHeight) {
+			this.rowHeight = rowHeight;
+			return this;
+		}
 
 		public int getY(final int row) {
 			return uSpace + row * rowHeight;
@@ -77,6 +88,10 @@ public class ParamsPane extends JDialog {
 		this(frame, title, new PaneSizes());
 	}
 
+	public ParamsPane(final CharterFrame frame, final Label title, final int width) {
+		this(frame, title, new PaneSizes(width));
+	}
+
 	public ParamsPane(final CharterFrame frame, final Label title, final PaneSizes sizes) {
 		super(frame, title.label(), true);
 
@@ -102,7 +117,7 @@ public class ParamsPane extends JDialog {
 	private void setSizeWithInsets(final int newWidth, final int newHeight) {
 		final Insets insets = getInsets();
 		width = newWidth + insets.left + insets.right;
-		final int h = newHeight + insets.top + insets.bottom + (sizes.uSpace * 2);
+		final int h = newHeight + insets.top + insets.bottom + (uSpace * 2);
 		setSize(width, h);
 		setLocation(Config.windowPosX + frame.getWidth() / 2 - width / 2,
 				Config.windowPosY + frame.getHeight() / 2 - h / 2);
@@ -112,7 +127,7 @@ public class ParamsPane extends JDialog {
 		return sizes.getY(row);
 	}
 
-	private void setComponentBounds(final Component component, final int x, final int y, final int w, final int h) {
+	protected void setComponentBounds(final Component component, final int x, final int y, final int w, final int h) {
 		component.setBounds(x, y, w, h);
 		final Dimension size = new Dimension(w, h);
 		component.setMinimumSize(size);
@@ -222,7 +237,7 @@ public class ParamsPane extends JDialog {
 		getRootPane().registerKeyboardAction(e -> paneOnSave.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-		setSizeWithInsets(sizes.width, 2 * sizes.uSpace + row * sizes.rowHeight);
+		setSizeWithInsets(sizes.width, 2 * uSpace + row * sizes.rowHeight);
 
 		validate();
 		if (setVisible) {
@@ -255,11 +270,6 @@ public class ParamsPane extends JDialog {
 		final JButton button2 = new JButton(button2Label.label());
 		button2.addActionListener(e -> on2.run());
 		add(button2, x1, getY(row), 100, 20);
-	}
-
-	protected void addConfigCheckbox(final int row, final Label label, final boolean val,
-			final BooleanValueSetter setter) {
-		addConfigCheckbox(row, sizes.lSpace, sizes.labelWidth, label, val, setter);
 	}
 
 	protected void addConfigCheckbox(final int row, final int x, int labelWidth, final Label label, final boolean val,
@@ -334,11 +344,6 @@ public class ParamsPane extends JDialog {
 						setter.setValue(null);
 					}
 				}, allowWrong);
-	}
-
-	protected void addConfigValue(final int row, final Label label, final String val, final int inputLength,
-			final ValueValidator validator, final StringValueSetter setter, final boolean allowWrong) {
-		addConfigValue(row, sizes.lSpace, sizes.labelWidth, label, val, inputLength, validator, setter, allowWrong);
 	}
 
 	protected void addConfigValue(final int row, final int x, int labelWidth, final Label label, final String val,

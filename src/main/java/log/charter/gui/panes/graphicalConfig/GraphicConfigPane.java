@@ -1,6 +1,7 @@
 package log.charter.gui.panes.graphicalConfig;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JToggleButton;
 
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
@@ -11,20 +12,13 @@ import log.charter.gui.components.ParamsPane;
 public final class GraphicConfigPane extends ParamsPane {
 	private static final long serialVersionUID = -3193534671039163160L;
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.lSpace = 20;
-		sizes.width = 600;
-
-		return sizes;
-	}
-
 	private final GraphicThemeConfigPage themeConfig = new GraphicThemeConfigPage();
 	private final GraphicTexturesConfigPage texturesConfig = new GraphicTexturesConfigPage();
 	private final GraphicChartMapConfigPage chartMapConfig = new GraphicChartMapConfigPage();
 
-	private void addPageSwitch(final int buttonPosition, final int row, final Label label, final Page page, ButtonGroup buttonGroup) {
-		final JToggleButton themeConfigSwitch = new JToggleButton(label.label()); // changed to togglebutton
+	private void addPageSwitch(final int buttonPosition, final int row, final Label label, final Page page,
+			final ButtonGroup buttonGroup) {
+		final JToggleButton themeConfigSwitch = new JToggleButton(label.label());
 		themeConfigSwitch.addActionListener(e -> {
 			hideAll();
 			page.show();
@@ -34,9 +28,9 @@ public final class GraphicConfigPane extends ParamsPane {
 	}
 
 	public GraphicConfigPane(final CharterFrame frame) {
-		super(frame, Label.GRAPHIC_CONFIG_PANE, getSizes());
+		super(frame, Label.GRAPHIC_CONFIG_PANE, 600);
 
-		ButtonGroup buttonGroup = new ButtonGroup();
+		final ButtonGroup buttonGroup = new ButtonGroup();
 
 		int row = 0;
 		int buttonPosition = 0;

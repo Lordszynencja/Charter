@@ -37,8 +37,8 @@ public class ChordTemplateEditorDialog extends ParamsPane implements MouseListen
 	private ChordTemplateEditorDialogPreview chordTemplatePreview;
 
 	protected ChordTemplateEditorDialog(final ChartData data, final CharterFrame frame, final Label title,
-			final PaneSizes sizes, final ChordTemplate chordTemplate) {
-		super(frame, title, sizes);
+			final int width, final ChordTemplate chordTemplate) {
+		super(frame, title, width);
 		this.data = data;
 		this.chordTemplate = chordTemplate;
 
@@ -66,7 +66,7 @@ public class ChordTemplateEditorDialog extends ParamsPane implements MouseListen
 			onTemplateChange.accept(newTemplate);
 		};
 
-		final int strings = data.getCurrentArrangement().tuning.strings;
+		final int strings = data.getCurrentArrangement().tuning.strings();
 		final Function<ChordTemplate, String> formatter = chordTemplate -> chordTemplate.getNameWithFrets(strings);
 		chordNameInput = new AutocompleteInputDialog<>(this, 80, chordTemplate.chordName, this::getPossibleChords,
 				formatter, inputOnTemplateChange);
@@ -116,7 +116,7 @@ public class ChordTemplateEditorDialog extends ParamsPane implements MouseListen
 
 	public void addChordTemplateEditor(final int row) {
 		int x = 20;
-		final int strings = data.getCurrentArrangement().tuning.strings;
+		final int strings = data.getCurrentArrangement().tuning.strings();
 
 		final int fretLabelWidth = addLabel(row, x, Label.FRET);
 		final int fretInputX = x + fretLabelWidth / 2 - 15;
@@ -151,7 +151,7 @@ public class ChordTemplateEditorDialog extends ParamsPane implements MouseListen
 		x += 5 + max(fingerLabelWidth, 20);
 
 		final int y = getY(row);
-		final int height = 22 + getY(row + data.getCurrentArrangement().tuning.strings) - y;
+		final int height = 22 + getY(row + data.getCurrentArrangement().tuning.strings()) - y;
 		chordTemplatePreview = new ChordTemplateEditorDialogPreview(this, data, chordTemplate, height);
 		add(chordTemplatePreview, x, y, 240, height);
 	}

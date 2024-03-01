@@ -1,6 +1,7 @@
 package log.charter.gui.handlers.midiPlayer;
 
 import static log.charter.data.config.Config.sfxVolume;
+import static log.charter.song.configs.Tuning.getStringDistanceFromC0;
 import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
 
 import java.math.BigDecimal;
@@ -17,7 +18,6 @@ import javax.sound.midi.Synthesizer;
 
 import log.charter.data.ChartData;
 import log.charter.io.Logger;
-import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
 import log.charter.song.ToneChange;
@@ -45,44 +45,9 @@ public class MidiNotePlayer {
 
 	}
 
-	private static final int baseGuitarNote = 40;
-	private static final int baseBassNote = 28;
+	private static final int midiZeroDistanceFromC0 = -12;
 	private static final int pitchBendBaseValue = 8192;
 	private static final int pitchBendRange = 8191;
-
-	private static int getGuitarMidiNote(int string, final int fret, final int strings) {
-		string = string - (strings - 6);
-
-		final int stringOffset = switch (string) {
-		case -3 -> -14;
-		case -2 -> -9;
-		case -1 -> -5;
-		case 0 -> 0;
-		case 1 -> 5;
-		case 2 -> 10;
-		case 3 -> 15;
-		case 4 -> 19;
-		case 5 -> 24;
-		default -> 0;
-		};
-
-		return baseGuitarNote + stringOffset + fret;
-	}
-
-	private static int getBassMidiNote(final int string, final int fret, final int strings) {
-		final int stringOffset = switch (string) {
-		case 0 -> 0;
-		case 1 -> 5;
-		case 2 -> 10;
-		case 3 -> 15;
-		case 4 -> 19;
-		case 5 -> 24;
-		case 6 -> 29;
-		default -> 0;
-		};
-
-		return baseBassNote + stringOffset + fret;
-	}
 
 	private boolean available = true;
 	private ChartData data;
@@ -126,8 +91,8 @@ public class MidiNotePlayer {
 	}
 
 	private int getMidiNote(final int string, final int fret, final int strings) {
-		final boolean isBass = data.getCurrentArrangement().arrangementType == ArrangementType.Bass || strings < 6;
-		return isBass ? getBassMidiNote(string, fret, strings) : getGuitarMidiNote(string, fret, strings);
+		final boolean bass = data.getCurrentArrangement().isBass();
+		return getStringDistanceFromC0(string, strings, bass) + fret - midiZeroDistanceFromC0;
 	}
 
 	private int getPitchBend(double bendStep) {
@@ -212,7 +177,7 @@ public class MidiNotePlayer {
 			soundType = GuitarSoundType.CLEAN;
 		}
 
-		final int strings = data.getCurrentArrangement().tuning.strings;
+		final int strings = data.currentStrings();
 		final int midiNote = getMidiNote(string, fret, strings)
 				+ data.getCurrentArrangement().tuning.getTuning()[string];
 

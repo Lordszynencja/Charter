@@ -14,20 +14,12 @@ import log.charter.gui.handlers.AudioHandler;
 public class StretchPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.labelWidth = 55;
-		sizes.width = 250;
-
-		return sizes;
-	}
-
 	private final AudioHandler audioHandler;
 
 	private int stretchedMusicSpeed = Config.stretchedMusicSpeed;
 
 	public StretchPane(final AudioHandler audioHandler, final CharterFrame frame) {
-		super(frame, Label.STRETCH_PANE, getSizes());
+		super(frame, Label.STRETCH_PANE, 250);
 
 		this.audioHandler = audioHandler;
 

@@ -21,7 +21,7 @@ public class TuningConverter implements Converter {
 	public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		final Tuning tuning = (Tuning) source;
 		writer.addAttribute("type", tuning.tuningType.name());
-		writer.addAttribute("strings", tuning.strings + "");
+		writer.addAttribute("strings", tuning.strings() + "");
 
 		if (tuning.tuningType != TuningType.CUSTOM) {
 			return;

@@ -16,14 +16,6 @@ import log.charter.song.Anchor;
 public class AnchorPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.labelWidth = 80;
-		sizes.width = 250;
-
-		return sizes;
-	}
-
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
@@ -34,7 +26,7 @@ public class AnchorPane extends ParamsPane {
 
 	public AnchorPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem, final Anchor anchor,
 			final Runnable onCancel) {
-		super(frame, Label.ANCHOR_PANE, getSizes());
+		super(frame, Label.ANCHOR_PANE, 250);
 		this.data = data;
 		this.undoSystem = undoSystem;
 

@@ -41,6 +41,6 @@ public class ArrangementTuning {
 		string7 = string5;
 		string8 = string5;
 
-		strings = min(6, tuning.strings);
+		strings = min(6, tuning.strings());
 	}
 }

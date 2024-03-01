@@ -17,14 +17,6 @@ import log.charter.song.vocals.Vocal;
 public class VocalPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.labelWidth = 70;
-		sizes.width = 360;
-
-		return sizes;
-	}
-
 	private String text;
 	private boolean wordPart;
 	private boolean phraseEnd;
@@ -36,7 +28,7 @@ public class VocalPane extends ParamsPane {
 
 	private VocalPane(final Label label, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		super(frame, label, getSizes());
+		super(frame, label, 360);
 		this.data = data;
 		this.frame = frame;
 		this.selectionManager = selectionManager;
@@ -78,8 +70,8 @@ public class VocalPane extends ParamsPane {
 	}
 
 	private void createElementsAndShow(final Runnable onSave) {
-		addConfigValue(0, Label.VOCAL_PANE_LYRIC, text, 200, null, val -> text = val, true);
-		addConfigCheckbox(1, Label.VOCAL_PANE_WORD_PART, wordPart, val -> {
+		addConfigValue(0, 20, 70, Label.VOCAL_PANE_LYRIC, text, 200, null, val -> text = val, true);
+		addConfigCheckbox(1, 20, 70, Label.VOCAL_PANE_WORD_PART, wordPart, val -> {
 			wordPart = val;
 
 			phraseEnd = false;
@@ -87,7 +79,7 @@ public class VocalPane extends ParamsPane {
 			phraseEndCheckbox.setSelected(false);
 			phraseEndCheckbox.setEnabled(!val);
 		});
-		addConfigCheckbox(2, Label.VOCAL_PANE_PHRASE_END, phraseEnd, val -> {
+		addConfigCheckbox(2, 20, 70, Label.VOCAL_PANE_PHRASE_END, phraseEnd, val -> {
 			phraseEnd = val;
 
 			wordPart = false;

@@ -36,11 +36,11 @@ import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.AutocompleteInput;
 import log.charter.gui.components.AutocompleteInput.PopupComponentMouseListener;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.components.ChordNameAdviceButton;
 import log.charter.gui.components.ChordTemplatePreview;
 import log.charter.gui.components.RowedPanel;
 import log.charter.gui.components.TextInputWithValidation;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
@@ -519,11 +519,11 @@ public class ChordTemplateEditor implements MouseListener {
 		fretsLabel.setVisible(true);
 		fingersLabel.setVisible(true);
 
-		for (int i = 0; i < data.getCurrentArrangement().tuning.strings; i++) {
+		for (int i = 0; i < data.getCurrentArrangement().tuning.strings(); i++) {
 			fretInputs.get(i).setVisible(true);
 			fingerInputs.get(i).setVisible(true);
 		}
-		for (int i = data.getCurrentArrangement().tuning.strings; i < maxStrings; i++) {
+		for (int i = data.getCurrentArrangement().tuning.strings(); i < maxStrings; i++) {
 			fretInputs.get(i).setVisible(false);
 			fingerInputs.get(i).setVisible(false);
 		}

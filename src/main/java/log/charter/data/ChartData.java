@@ -82,7 +82,7 @@ public class ChartData {
 			return maxStrings;
 		}
 
-		return getCurrentArrangement().tuning.strings;
+		return getCurrentArrangement().tuning.strings();
 	}
 
 	public Arrangement getCurrentArrangement() {

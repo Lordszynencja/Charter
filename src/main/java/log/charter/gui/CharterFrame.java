@@ -56,7 +56,6 @@ import log.charter.gui.lookAndFeel.CharterTabbedPaneUI;
 import log.charter.gui.lookAndFeel.CharterTheme;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
-import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.main.CharterMain;
 import log.charter.song.Arrangement;
 import log.charter.sound.StretchedFileLoader;
@@ -350,14 +349,15 @@ public class CharterFrame extends JFrame {
 	public void updateEditAreaSizes() {
 		final EditMode editMode = modeManager.getMode();
 
-		ArrangementType arrangementType = null;
+		boolean bass = false;
 		int strings = 1;
 		if (editMode == EditMode.GUITAR) {
-			arrangementType = data.getCurrentArrangement().arrangementType;
-			strings = data.getCurrentArrangement().tuning.strings;
+			final Arrangement arrangement = data.getCurrentArrangement();
+			bass = arrangement.isBass();
+			strings = arrangement.tuning.strings();
 		}
 
-		DrawerUtils.updateEditAreaSizes(editMode, arrangementType, strings);
+		DrawerUtils.updateEditAreaSizes(editMode, bass, strings);
 		resize();
 	}
 

@@ -16,7 +16,6 @@ import static log.charter.util.Utils.getStringPosition;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
-import log.charter.io.rs.xml.song.ArrangementType;
 
 public class DrawerUtils {
 	public static int beatTextY = 15;
@@ -39,7 +38,7 @@ public class DrawerUtils {
 	public static int tailHeight;
 
 	static {
-		updateEditAreaSizes(EditMode.TEMPO_MAP, null, 0);
+		updateEditAreaSizes(EditMode.TEMPO_MAP, false, 1);
 	}
 
 	private static void setEditAreaSizesForTempoMapAndVocals() {
@@ -54,10 +53,10 @@ public class DrawerUtils {
 		chartMapHeight = chartMapHeightMultiplier * 5;
 	}
 
-	private static void setEditAreaSizesForGuitar(final ArrangementType arrangementType, final int strings) {
+	private static void setEditAreaSizesForGuitar(final boolean bass, final int strings) {
 		anchorY = toneChangeY + toneChangeHeight + 15;
 		lanesTop = anchorY + anchorInfoHeight + chordHeight + 2;
-		laneHeight = (int) (noteHeight * (arrangementType == ArrangementType.Bass ? 2 : 1.5));
+		laneHeight = (int) (noteHeight * (bass ? 2 : 1.5));
 		tailHeight = getAsOdd(noteHeight * 3 / 4);
 		lanesHeight = laneHeight * strings;
 		lanesBottom = lanesTop + lanesHeight;
@@ -67,10 +66,9 @@ public class DrawerUtils {
 		chartMapHeight = 2 * chartMapHeightMultiplier + 1 + maxStrings * chartMapHeightMultiplier;
 	}
 
-	public static void updateEditAreaSizes(final EditMode editMode, final ArrangementType arrangementType,
-			final int strings) {
+	public static void updateEditAreaSizes(final EditMode editMode, final boolean bass, final int strings) {
 		switch (editMode) {
-			case GUITAR -> setEditAreaSizesForGuitar(arrangementType, strings);
+			case GUITAR -> setEditAreaSizesForGuitar(bass, strings);
 			default -> setEditAreaSizesForTempoMapAndVocals();
 		}
 

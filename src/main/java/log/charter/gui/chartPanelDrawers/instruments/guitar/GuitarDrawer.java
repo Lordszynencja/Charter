@@ -180,7 +180,7 @@ public class GuitarDrawer {
 	}
 
 	private void drawGuitarLanes(final Graphics g, final int time) {
-		final int lanes = data.getCurrentArrangement().tuning.strings;
+		final int lanes = data.getCurrentArrangement().tuning.strings();
 		final int width = chartPanel.getWidth();
 
 		final int x = max(0, timeToX(0, time));
@@ -387,7 +387,7 @@ public class GuitarDrawer {
 	private void drawGuitar(final Graphics g, final int time, final HighlightData highlightData) {
 		final Level level = data.getCurrentArrangementLevel();
 		final Arrangement arrangement = data.getCurrentArrangement();
-		final int strings = data.getCurrentArrangement().tuning.strings;
+		final int strings = data.getCurrentArrangement().tuning.strings();
 		final HighwayDrawer highwayDrawer = getHighwayDrawer(g, strings, time);
 
 		final int panelWidth = chartPanel.getWidth();
@@ -415,8 +415,8 @@ public class GuitarDrawer {
 		g.setColor(ColorLabel.BASE_BG_1.color());
 		g.fillRect(0, lanesTop, width + 3, lanesHeight + 1);
 
+		final int lanes = data.currentStrings();
 		for (int string = 0; string < stringNames.length; string++) {
-			final int lanes = data.getCurrentArrangement().tuning.strings;
 			final int stringPosition = getStringPosition(string, stringNames.length);
 			final int y = getLaneY(stringPosition);
 			new CenteredText(new Position2D(x, y), stringNameFont, stringNames[string],

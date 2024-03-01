@@ -46,11 +46,11 @@ public class HighlightManager {
 			final int distance = position - fromPosition;
 			final int maxDistance = toPosition - fromPosition;
 			if (distance == 0) {
-				return yToString(fromY, data.getCurrentArrangement().tuning.strings);
+				return yToString(fromY, data.getCurrentArrangement().tuning.strings());
 			}
 
 			final int y = fromY + (toY - fromY) * distance / maxDistance;
-			return yToString(y, data.getCurrentArrangement().tuning.strings);
+			return yToString(y, data.getCurrentArrangement().tuning.strings());
 		}
 
 		private void addAvailablePositions() {

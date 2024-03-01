@@ -18,15 +18,6 @@ import log.charter.util.FileChooseUtils;
 public final class ConfigPane extends ParamsPane {
 	private static final long serialVersionUID = -3193534671039163160L;
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.lSpace = 20;
-		sizes.labelWidth = 300;
-		sizes.width = 600;
-
-		return sizes;
-	}
-
 	private final CharterFrame frame;
 	private final Framer framer;
 
@@ -51,7 +42,7 @@ public final class ConfigPane extends ParamsPane {
 	private int backupDelay = Config.backupDelay;
 
 	public ConfigPane(final CharterFrame frame, final Framer framer) {
-		super(frame, Label.CONFIG_PANE, getSizes());
+		super(frame, Label.CONFIG_PANE, 600);
 		this.frame = frame;
 		this.framer = framer;
 

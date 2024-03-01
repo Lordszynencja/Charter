@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.data.config.Config;
@@ -18,7 +17,22 @@ import log.charter.io.rsc.xml.converters.TuningConverter;
 @XStreamAlias("tuning")
 @XStreamConverter(TuningConverter.class)
 public class Tuning {
-	public static final int[] standardStringDistances = { -15, -10, -5, 0, 5, 10, 15, 19, 24 };
+	private static final int[] standardStringDistances = { -15, -10, -5, 0, 5, 10, 15, 19, 24 };
+	private static final int distanceFromC0 = 28;
+	private static final int bassDistanceFromC0 = 16;
+
+	public static int getDistanceFromC0(final boolean bass) {
+		return bass ? bassDistanceFromC0 : distanceFromC0;
+	}
+
+	public static int getStringDistance(final int string, final int strings) {
+		final int offset = standardStringDistances.length - max(6, strings);
+		return standardStringDistances[string + offset];
+	}
+
+	public static int getStringDistanceFromC0(final int string, final int strings, final boolean bass) {
+		return getStringDistance(string, strings) + getDistanceFromC0(bass);
+	}
 
 	private static int[] getTuningValues(final int[] tuning, final int strings) {
 		final int[] fullTuning = getFullTuning(tuning);
@@ -117,11 +131,13 @@ public class Tuning {
 		}
 	}
 
-	@XStreamAsAttribute
 	public TuningType tuningType = TuningType.E_STANDARD;
-	@XStreamAsAttribute
-	public int strings = 6;
+	private int strings = 6;
 	private int[] tuning = new int[strings];
+
+	public int strings() {
+		return strings;
+	}
 
 	public void strings(final int newStrings) {
 		if (tuningType == TuningType.CUSTOM) {
@@ -175,18 +191,15 @@ public class Tuning {
 			return 0;
 		}
 
-		final int offset = standardStringDistances.length - max(6, strings);
-		return standardStringDistances[string + offset] + tuning[string];
+		return getStringDistance(string, strings) + tuning[string];
 	}
 
 	public String[] getStringNames(final boolean withScaleNumber, final boolean bass) {
 		final String[] stringSoundNames = new String[strings];
-		final int[] tuningValues = getTuning();
-		final int baseDistance = bass ? 16 : 28;
+		final int[] tuning = getTuning();
 
-		final int offset = standardStringDistances.length - max(6, strings);
 		for (int string = 0; string < strings; string++) {
-			final int distanceFromC0 = tuningValues[string] + standardStringDistances[string + offset] + baseDistance;
+			final int distanceFromC0 = getStringDistanceFromC0(string, strings, bass) + tuning[string];
 			stringSoundNames[string] = withScaleNumber ? soundToFullName(distanceFromC0, false)
 					: soundToSimpleName(distanceFromC0, false);
 		}

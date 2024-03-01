@@ -17,21 +17,13 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class AddBeatsAtTheStartPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.labelWidth = 80;
-		sizes.width = 300;
-
-		return sizes;
-	}
-
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
 	private int beatsToGenerate = 4;
 
 	public AddBeatsAtTheStartPane(final CharterFrame frame, final ChartData data, final UndoSystem undoSystem) {
-		super(frame, Label.ADD_BEATS_PANE, getSizes());
+		super(frame, Label.ADD_BEATS_PANE, 300);
 		this.data = data;
 		this.undoSystem = undoSystem;
 

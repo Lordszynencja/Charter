@@ -20,14 +20,6 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class ToneChangePane extends ParamsPane implements DocumentListener {
 	private static final long serialVersionUID = -4754359602173894487L;
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.labelWidth = 80;
-		sizes.width = 250;
-
-		return sizes;
-	}
-
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
@@ -41,7 +33,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 
 	public ToneChangePane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final ToneChange toneChange, final Runnable onCancel) {
-		super(frame, Label.TONE_CHANGE_PANE, getSizes());
+		super(frame, Label.TONE_CHANGE_PANE, 250);
 		this.data = data;
 		this.undoSystem = undoSystem;
 

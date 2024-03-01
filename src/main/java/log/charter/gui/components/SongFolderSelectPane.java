@@ -17,7 +17,7 @@ public class SongFolderSelectPane extends ParamsPane {
 
 	public SongFolderSelectPane(final CharterFrame frame, final String songsDirectory, final String audioFolder,
 			final String defaultFolderName) {
-		super(frame, Label.SONG_FOLDER_SELECT);
+		super(frame, Label.SONG_FOLDER_SELECT, 700);
 
 		final ButtonGroup group = new ButtonGroup();
 		final JTextField folderNameInput = new JTextField(200);

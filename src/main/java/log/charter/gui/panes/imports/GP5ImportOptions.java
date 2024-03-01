@@ -41,13 +41,6 @@ public class GP5ImportOptions extends ParamsPane {
 
 	private static final long serialVersionUID = -4754359602173894487L;
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.width = 450;
-
-		return sizes;
-	}
-
 	private final ArrangementFixer arrangementFixer;
 	private final CharterMenuBar charterMenuBar;
 	private final ChartData data;
@@ -57,7 +50,7 @@ public class GP5ImportOptions extends ParamsPane {
 
 	public GP5ImportOptions(final CharterFrame frame, final ArrangementFixer arrangementFixer,
 			final CharterMenuBar charterMenuBar, final ChartData data, final SongChart imported) {
-		super(frame, Label.GP5_IMPORT, getSizes());
+		super(frame, Label.GP5_IMPORT, 450);
 
 		this.arrangementFixer = arrangementFixer;
 		this.charterMenuBar = charterMenuBar;

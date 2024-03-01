@@ -65,7 +65,7 @@ public class Preview3DNotesData {
 		final List<List<NoteDrawData>> notes = new ArrayList<>();
 		final Arrangement arrangement = data.getCurrentArrangement();
 		final Level level = data.getCurrentArrangementLevel();
-		for (int i = 0; i < arrangement.tuning.strings; i++) {
+		for (int i = 0; i < arrangement.tuning.strings(); i++) {
 			notes.add(new ArrayList<>());
 		}
 		final ArrayList2<ChordOrNote> sounds = level.sounds;

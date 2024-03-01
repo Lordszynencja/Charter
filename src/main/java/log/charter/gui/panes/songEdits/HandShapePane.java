@@ -12,13 +12,6 @@ import log.charter.song.HandShape;
 public class HandShapePane extends ChordTemplateEditorDialog {
 	private static final long serialVersionUID = -4754359602173894487L;
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.width = 400;
-
-		return sizes;
-	}
-
 	private static ChordTemplate prepareTemplateFromData(final ChartData data, final HandShape handShape) {
 		return handShape.templateId == -1 ? new ChordTemplate()
 				: new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(handShape.templateId));
@@ -30,7 +23,7 @@ public class HandShapePane extends ChordTemplateEditorDialog {
 
 	public HandShapePane(final ChartData data, final CharterFrame frame, final HandShape handShape,
 			final Runnable onCancel) {
-		super(data, frame, Label.HAND_SHAPE_PANE, getSizes(), prepareTemplateFromData(data, handShape));
+		super(data, frame, Label.HAND_SHAPE_PANE, 400, prepareTemplateFromData(data, handShape));
 
 		this.handShape = handShape;
 
@@ -40,7 +33,7 @@ public class HandShapePane extends ChordTemplateEditorDialog {
 		arpeggioCheckBox = (JCheckBox) components.getLast();
 		addChordTemplateEditor(4);
 
-		addDefaultFinish(7 + data.getCurrentArrangement().tuning.strings, this::saveAndExit, onCancel);
+		addDefaultFinish(7 + data.getCurrentArrangement().tuning.strings(), this::saveAndExit, onCancel);
 	}
 
 	private void onChordTemplateChange(final ChordTemplate newTemplate) {

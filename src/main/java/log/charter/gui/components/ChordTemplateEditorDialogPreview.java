@@ -82,7 +82,7 @@ public class ChordTemplateEditorDialogPreview extends JComponent
 		this.data = data;
 		this.chordTemplate = chordTemplate;
 
-		stringPositions = getStringPositions(data.getCurrentArrangement().tuning.strings, height);
+		stringPositions = getStringPositions(data.getCurrentArrangement().tuning.strings(), height);
 
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -279,23 +279,23 @@ public class ChordTemplateEditorDialogPreview extends JComponent
 
 		Integer fingerId;
 		switch (e.getKeyCode()) {
-		case KeyEvent.VK_T:
-			fingerId = 0;
-			break;
-		case KeyEvent.VK_1:
-			fingerId = 1;
-			break;
-		case KeyEvent.VK_2:
-			fingerId = 2;
-			break;
-		case KeyEvent.VK_3:
-			fingerId = 3;
-			break;
-		case KeyEvent.VK_4:
-			fingerId = 4;
-			break;
-		default:
-			return;
+			case KeyEvent.VK_T:
+				fingerId = 0;
+				break;
+			case KeyEvent.VK_1:
+				fingerId = 1;
+				break;
+			case KeyEvent.VK_2:
+				fingerId = 2;
+				break;
+			case KeyEvent.VK_3:
+				fingerId = 3;
+				break;
+			case KeyEvent.VK_4:
+				fingerId = 4;
+				break;
+			default:
+				return;
 		}
 
 		chordTemplate.fingers.put(mouseString, fingerId);

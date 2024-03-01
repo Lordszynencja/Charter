@@ -19,14 +19,6 @@ public class GuitarSpecialPastePane extends ParamsPane {
 
 	private static final long serialVersionUID = -4754359602173894487L;
 
-	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.labelWidth = 80;
-		sizes.width = 300;
-
-		return sizes;
-	}
-
 	private final ChartData data;
 	private final SelectionManager selectionManager;
 	private final UndoSystem undoSystem;
@@ -48,7 +40,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	public GuitarSpecialPastePane(final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem, final int time,
 			final FullGuitarCopyData fullGuitarCopyData) {
-		super(frame, Label.SPECIAL_GUITAR_PASTE_PANE, getSizes());
+		super(frame, Label.SPECIAL_GUITAR_PASTE_PANE, 300);
 
 		this.data = data;
 		this.selectionManager = selectionManager;

@@ -94,11 +94,7 @@ public class ColorConfigPane extends ParamsPane {
 	}
 
 	private static PaneSizes getSizes() {
-		final PaneSizes sizes = new PaneSizes();
-		sizes.rowHeight = 20;
-		sizes.width = 400;
-
-		return sizes;
+		return new PaneSizes(400).rowHeight(20);
 	}
 
 	private final List<Pair<ColorLabel, Color>> colors = new ArrayList<>();
