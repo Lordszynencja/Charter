@@ -55,7 +55,8 @@ public class WaveFormDrawer {
 	}
 
 	public void recalculateMap() {
-		map = new WaveformMap(projectAudioHandler.getAudio());
+		map = null;
+		new Thread(() -> map = new WaveformMap(projectAudioHandler.getAudio())).start();
 	}
 
 	public void toggleRMS() { //
@@ -72,6 +73,7 @@ public class WaveFormDrawer {
 	}
 
 	private void drawFromMap(final Graphics g, final int time) {
+		final WaveformMap map = this.map;
 		if (map == null) {
 			return;
 		}
