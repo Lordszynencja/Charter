@@ -2,7 +2,6 @@ eclipse.preferences.version=1
 encoding//src/main/java=UTF-8
 encoding//src/main/java/log/charter/gui/CharterFrame.java=UTF-8
 encoding//src/main/java/log/charter/gui/chartPanelDrawers/instruments/guitar/GuitarDrawer.java=UTF-8
-encoding//src/main/java/log/charter/gui/components/chordTemplatePane/ChordNameAdviceButtonStatic.java=UTF-8
 encoding//src/main/java/log/charter/gui/components/selectionEditor/chords/ChordNameAdviceButton.java=UTF-8
 encoding//src/main/java/log/charter/util/chordRecognition/ChordNameAdder.java=UTF-8
 encoding//src/main/java/log/charter/util/chordRecognition/ChordNameSuggester.java=UTF-8

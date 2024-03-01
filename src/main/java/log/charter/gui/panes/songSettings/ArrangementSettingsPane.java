@@ -24,8 +24,8 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.FieldWithLabel;
-import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.Arrangement;
@@ -125,7 +125,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 			arrangementType = (ArrangementType) arrangementTypeInput.getSelectedItem();
 			setTuningLabels();
 		});
-		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_TYPE);
+		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_TYPE, 0);
 		add(arrangementTypeInput, 150, getY(row.getAndIncrement()), 100, 20);
 	}
 
@@ -135,7 +135,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 		arrangementSubtypeInput.addActionListener(e -> {
 			arrangementSubtype = (ArrangementSubtype) arrangementSubtypeInput.getSelectedItem();
 		});
-		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_SUBTYPE);
+		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_SUBTYPE, 0);
 		add(arrangementSubtypeInput, 150, getY(row.getAndIncrement()), 100, 20);
 	}
 
@@ -145,7 +145,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 		tuningSelect.setSelectedIndex(tuning.tuningType.ordinal());
 		tuningSelect.addActionListener(
 				e -> onTuningSelected(((TuningTypeHolder) tuningSelect.getSelectedItem()).tuningType));
-		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_TUNING_TYPE);
+		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_TUNING_TYPE, 0);
 		this.add(tuningSelect, 75, getY(row.getAndIncrement()), 200, 20);
 	}
 
@@ -153,14 +153,14 @@ public class ArrangementSettingsPane extends ParamsPane {
 		addIntegerConfigValue(row.get(), 20, 0, Label.ARRANGEMENT_OPTIONS_STRINGS, tuning.strings(), 20,
 				createIntValidator(1, maxStrings, false), //
 				this::onTuningStringsChanged, false);
-		final TextInputWithValidation stringsInput = (TextInputWithValidation) components.getLast();
+		final TextInputWithValidation stringsInput = (TextInputWithValidation) getLastPart();
 		stringsInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(stringsInput);
 
 		addIntegerConfigValue(row.getAndIncrement(), 120, 0, Label.ARRANGEMENT_OPTIONS_CAPO, capo, 30,
 				createIntValidator(0, Config.frets, false), //
 				val -> capo = val, false);
-		final TextInputWithValidation capoInput = (TextInputWithValidation) components.getLast();
+		final TextInputWithValidation capoInput = (TextInputWithValidation) getLastPart();
 		capoInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(capoInput);
 	}
@@ -173,7 +173,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 			addIntegerConfigValue(tuningInputsRow, x, 0, null, 0, inputWidth, createIntValidator(-48, 48, false), //
 					val -> onTuningValueChanged(string, val), false);
-			final TextInputWithValidation tuningInput = (TextInputWithValidation) components.getLast();
+			final TextInputWithValidation tuningInput = (TextInputWithValidation) getLastPart();
 			tuningInput.setHorizontalAlignment(JTextField.CENTER);
 			addSelectTextOnFocus(tuningInput);
 			tuningInputs.add(tuningInput);

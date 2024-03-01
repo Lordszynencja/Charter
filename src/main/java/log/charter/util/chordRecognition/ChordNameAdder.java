@@ -40,10 +40,6 @@ public class ChordNameAdder {
 				return false;
 			}
 
-			if (requiredTones[0] == 4 && requiredTones[1] == 7) {
-				System.out.println(1);
-			}
-
 			for (final int requiredTone : requiredTones) {
 				if (!notes.contains((root + requiredTone) % 12)) {
 					return false;

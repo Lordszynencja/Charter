@@ -13,8 +13,8 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.FieldWithLabel;
-import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.TextInputWithValidation.ValueValidator;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.HashSet2;
@@ -39,21 +39,21 @@ public class VocalSelectionEditor {
 		vocalTextInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(vocalTextInput);
 		vocalText = new FieldWithLabel<>(Label.VOCAL_PANE_LYRIC, 100, 100, 20, vocalTextInput, LabelPosition.LEFT);
-		vocalText.setLocation(10, selectionEditor.getY(row++));
+		vocalText.setLocation(10, selectionEditor.sizes.getY(row++));
 		selectionEditor.add(vocalText);
 
 		final JCheckBox vocalWordPartInput = new JCheckBox();
 		vocalWordPartInput.addActionListener(a -> changeWordPart(vocalWordPartInput.isSelected()));
 		vocalWordPart = new FieldWithLabel<>(Label.VOCAL_PANE_WORD_PART, 100, 20, 20, vocalWordPartInput,
 				LabelPosition.LEFT);
-		vocalWordPart.setLocation(10, selectionEditor.getY(row++));
+		vocalWordPart.setLocation(10, selectionEditor.sizes.getY(row++));
 		selectionEditor.add(vocalWordPart);
 
 		final JCheckBox vocalPhraseEndInput = new JCheckBox();
 		vocalPhraseEndInput.addActionListener(a -> changePhraseEnd(vocalPhraseEndInput.isSelected()));
 		vocalPhraseEnd = new FieldWithLabel<>(Label.VOCAL_PANE_PHRASE_END, 100, 20, 20, vocalPhraseEndInput,
 				LabelPosition.LEFT);
-		vocalPhraseEnd.setLocation(10, selectionEditor.getY(row++));
+		vocalPhraseEnd.setLocation(10, selectionEditor.sizes.getY(row++));
 		selectionEditor.add(vocalPhraseEnd);
 
 		hideFields();

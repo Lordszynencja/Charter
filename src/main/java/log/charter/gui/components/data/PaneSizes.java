@@ -1,26 +1,18 @@
 package log.charter.gui.components.data;
 
 public class PaneSizes {
-	public int width = 700;
-	public int verticalSpace = 10;
-	public int rowHeight = 20;
-	public int rowSpacing = 5;
+	public final int width;
+	public final int verticalSpace;
+	public final int rowHeight;
+	public final int rowSpacing;
+	public final int rowDistance;
 
-	public PaneSizes() {
-	}
-
-	public PaneSizes(final int width) {
+	public PaneSizes(final int width, final int verticalSpace, final int rowHeight, final int rowSpacing) {
 		this.width = width;
-	}
-
-	public PaneSizes rowHeight(final int rowHeight) {
+		this.verticalSpace = verticalSpace;
 		this.rowHeight = rowHeight;
-		return this;
-	}
-
-	public PaneSizes rowSpacing(final int rowSpacing) {
 		this.rowSpacing = rowSpacing;
-		return this;
+		rowDistance = rowHeight + rowSpacing;
 	}
 
 	public int getY(final int row) {

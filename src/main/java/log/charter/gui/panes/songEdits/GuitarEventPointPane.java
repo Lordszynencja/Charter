@@ -112,23 +112,23 @@ public class GuitarEventPointPane extends ParamsPane {
 		sectionTypeInput
 				.addItemListener(e -> section = ((SectionTypeListValue) sectionTypeInput.getSelectedItem()).type);
 
-		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_SECTION_TYPE);
+		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_SECTION_TYPE, 0);
 		this.add(sectionTypeInput, 100, getY(row.getAndIncrement()), 200, 20);
 	}
 
 	private void preparePhraseInputs(final AtomicInteger row, final String phrase) {
-		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_PHRASE_NAME);
+		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_PHRASE_NAME, 0);
 		phraseNameInput = new AutocompleteInputForPane<>(this, 100, phrase, this::getPossiblePhraseNames, s -> s,
 				this::onPhraseNameSelected);
 		this.add(phraseNameInput, 100, getY(row.getAndIncrement()), 100, 20);
 
 		addIntegerConfigValue(row.get(), 50, 45, Label.GUITAR_BEAT_PANE_PHRASE_LEVEL, phraseLevel, 30,
 				createIntValidator(0, 100, false), val -> phraseLevel = val, false);
-		phraseLevelInput = (JTextField) components.getLast();
+		phraseLevelInput = (JTextField) getLastPart();
 
 		addConfigCheckbox(row.getAndIncrement(), 150, 0, Label.GUITAR_BEAT_PANE_PHRASE_SOLO, phraseSolo,
 				val -> phraseSolo = val);
-		phraseSoloInput = (JCheckBox) components.getLast();
+		phraseSoloInput = (JCheckBox) getLastPart();
 	}
 
 	private ArrayList2<String> getPossiblePhraseNames(final String text) {

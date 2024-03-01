@@ -45,7 +45,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		toneNameInput = new AutocompleteInputForPane<>(this, 100, toneName, this::getPossibleValues, s -> s,
 				this::onSelect);
 		toneNameInput.getDocument().addDocumentListener(this);
-		final int labelWidth = addLabel(row, 20, Label.TONE_CHANGE_TONE_NAME);
+		final int labelWidth = addLabel(row, 20, Label.TONE_CHANGE_TONE_NAME, 0);
 		add(toneNameInput, 20 + labelWidth + 3, getY(row++), 100, 20);
 
 		row++;

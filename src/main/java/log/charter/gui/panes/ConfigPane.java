@@ -50,14 +50,14 @@ public final class ConfigPane extends ParamsPane {
 
 		addConfigValue(row, 20, 150, Label.CONFIG_MUSIC_FOLDER, musicPath, 300, dirValidator, //
 				val -> musicPath = val, false);
-		musicFolderInput = (JTextField) components.getLast();
+		musicFolderInput = (JTextField) getLastPart();
 		final JButton musicFolderPickerButton = new JButton(Label.SELECT_FOLDER.label());
 		musicFolderPickerButton.addActionListener(e -> selectMusicFolder());
 		this.add(musicFolderPickerButton, 480, getY(row++), 100, 20);
 
 		addConfigValue(row, 20, 150, Label.CONFIG_SONGS_FOLDER, songsPath, 300, dirValidator, //
 				val -> songsPath = val, false);
-		songsFolderInput = (JTextField) components.getLast();
+		songsFolderInput = (JTextField) getLastPart();
 		final JButton songsFolderPickerButton = new JButton(Label.SELECT_FOLDER.label());
 		songsFolderPickerButton.addActionListener(e -> selectSongsFolder());
 		this.add(songsFolderPickerButton, 480, getY(row++), 100, 20);

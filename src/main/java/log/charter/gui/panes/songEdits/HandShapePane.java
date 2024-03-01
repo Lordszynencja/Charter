@@ -5,11 +5,12 @@ import javax.swing.JCheckBox;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.chordTemplatePane.ChordTemplateEditorDialog;
+import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.selectionEditor.chords.ChordTemplateEditor;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 
-public class HandShapePane extends ChordTemplateEditorDialog {
+public class HandShapePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private static ChordTemplate prepareTemplateFromData(final ChartData data, final HandShape handShape) {
@@ -17,30 +18,45 @@ public class HandShapePane extends ChordTemplateEditorDialog {
 				: new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(handShape.templateId));
 	}
 
-	private final HandShape handShape;
+	private final ChartData data;
 
+	private final HandShape handShape;
+	private final ChordTemplate template;
+
+	private final ChordTemplateEditor editor;
 	private final JCheckBox arpeggioCheckBox;
 
 	public HandShapePane(final ChartData data, final CharterFrame frame, final HandShape handShape,
 			final Runnable onCancel) {
-		super(data, frame, Label.HAND_SHAPE_PANE, 400, prepareTemplateFromData(data, handShape));
+		super(frame, Label.HAND_SHAPE_PANE, 600);
+
+		this.data = data;
 
 		this.handShape = handShape;
+		template = prepareTemplateFromData(data, handShape);
 
-		addChordNameSuggestionButton(100, 0);
-		addChordNameInput(100, 1, this::onChordTemplateChange);
-		addConfigCheckbox(2, 20, 70, Label.ARPEGGIO, chordTemplate.arpeggio, val -> chordTemplate.arpeggio = val);
-		arpeggioCheckBox = (JCheckBox) components.getLast();
-		addChordTemplateEditor(4);
+		editor = new ChordTemplateEditor(this.new RowedPanelEmulator());
+		editor.init(data, frame, null, () -> template, this::onChordTemplateChange);
 
-		addDefaultFinish(7 + data.getCurrentArrangement().tuning.strings(), this::saveAndExit, onCancel);
+		editor.addChordNameSuggestionButton(100, 0);
+		editor.addChordNameInput(100, 1);
+
+		addConfigCheckbox(2, 20, 70, Label.ARPEGGIO, template.arpeggio, val -> template.arpeggio = val);
+		arpeggioCheckBox = (JCheckBox) getLastPart();
+
+		editor.addChordTemplateEditor(20, 4);
+		editor.hideFields();
+		editor.showFields();
+		editor.setCurrentValuesInInputs();
+
+		addDefaultFinish(6 + data.getCurrentArrangement().tuning.strings(), this::saveAndExit, onCancel);
 	}
 
-	private void onChordTemplateChange(final ChordTemplate newTemplate) {
-		arpeggioCheckBox.setSelected(newTemplate.arpeggio);
+	private void onChordTemplateChange() {
+		arpeggioCheckBox.setSelected(template.arpeggio);
 	}
 
 	private void saveAndExit() {
-		handShape.templateId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
+		handShape.templateId = data.getCurrentArrangement().getChordTemplateIdWithSave(template);
 	}
 }

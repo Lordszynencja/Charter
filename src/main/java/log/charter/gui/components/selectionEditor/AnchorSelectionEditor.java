@@ -13,8 +13,8 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.FieldWithLabel;
-import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
 import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.HashSet2;
@@ -37,7 +37,7 @@ public class AnchorSelectionEditor {
 		anchorFretInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(anchorFretInput);
 		anchorFret = new FieldWithLabel<>(Label.FRET, 100, 30, 20, anchorFretInput, LabelPosition.LEFT);
-		anchorFret.setLocation(10, selectionEditor.getY(row++));
+		anchorFret.setLocation(10, selectionEditor.sizes.getY(row++));
 		selectionEditor.add(anchorFret);
 
 		final TextInputWithValidation anchorWidthInput = new TextInputWithValidation(null, 20,
@@ -45,7 +45,7 @@ public class AnchorSelectionEditor {
 		anchorWidthInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(anchorWidthInput);
 		anchorWidth = new FieldWithLabel<>(Label.ANCHOR_WIDTH, 100, 30, 20, anchorWidthInput, LabelPosition.LEFT);
-		anchorWidth.setLocation(10, selectionEditor.getY(row++));
+		anchorWidth.setLocation(10, selectionEditor.sizes.getY(row++));
 		selectionEditor.add(anchorWidth);
 
 		hideFields();

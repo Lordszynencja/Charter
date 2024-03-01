@@ -14,6 +14,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.gui.components.data.PaneSizes;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 
@@ -41,41 +42,49 @@ public class RowedPanel extends JPanel {
 
 	private static final long serialVersionUID = -3193534671039163160L;
 
-	public final int rowHeight;
+	public final PaneSizes sizes;
 
-	public final ArrayList2<Component> components = new ArrayList2<>();
+	private final ArrayList2<Component> parts = new ArrayList2<>();
 
-	public RowedPanel(final int width, final int rowHeight, final int rows) {
-		this.rowHeight = rowHeight;
+	public RowedPanel(final PaneSizes sizes, final int rows) {
+		this.sizes = sizes;
 
 		setLayout(null);
-		setSize(width, getY(rows) + rowHeight);
+		setSize(sizes.width, sizes.getHeight(rows));
 		setMinimumSize(getSize());
 		setPreferredSize(getSize());
 		setMaximumSize(getSize());
 	}
 
-	public int getY(final int row) {
-		return rowHeight / 2 + rowHeight * row;
+	public Component getPart(final int id) {
+		return parts.get(id);
+	}
+
+	public Component getLastPart() {
+		return parts.getLast();
+	}
+
+	public int getPartsSize() {
+		return parts.size();
 	}
 
 	public void add(final JComponent component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
 		add(component);
-		components.add(component);
+		parts.add(component);
 	}
 
 	public void addTop(final JComponent component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
 		add(component, 0);
-		components.add(component);
+		parts.add(component);
 	}
 
 	/**
 	 * @return width of created label
 	 */
 	public int addLabel(final int row, final int x, final Label label, final int width) {
-		return addLabelExact(getY(row), x, label, width);
+		return addLabelExact(sizes.getY(row), x, label, width);
 	}
 
 	/**
@@ -97,17 +106,13 @@ public class RowedPanel extends JPanel {
 
 	public void addCheckbox(final int row, final int x, int labelWidth, final Label label, final boolean val,
 			final BooleanValueSetter setter) {
-		final int actualLabelWidth = addLabel(row, x, label, labelWidth);
-
-		if (labelWidth == 0) {
-			labelWidth = actualLabelWidth;
-		}
+		labelWidth = addLabel(row, x, label, labelWidth);
 		final int checkboxX = x + labelWidth + 3;
 		addCheckbox(row, checkboxX, val, setter);
 	}
 
 	public void addCheckbox(final int row, final int x, final boolean val, final BooleanValueSetter setter) {
-		addCheckboxExact(getY(row), x, val, setter);
+		addCheckboxExact(sizes.getY(row), x, val, setter);
 	}
 
 	public void addCheckboxExact(final int y, final int x, final boolean val, final BooleanValueSetter setter) {
@@ -121,7 +126,7 @@ public class RowedPanel extends JPanel {
 
 	public <T extends Enum<T>> ButtonGroup addRadioButtons(final int row, final int x, final int optionWidth,
 			final T val, final ValueSetter<T> setter, final List<Pair<T, Label>> values) {
-		return addRadioButtonsExact(getY(row), x, optionWidth, val, setter, values);
+		return addRadioButtonsExact(sizes.getY(row), x, optionWidth, val, setter, values);
 	}
 
 	public <T extends Enum<T>> ButtonGroup addRadioButtonsExact(final int y, int x, final int optionWidth, final T val,

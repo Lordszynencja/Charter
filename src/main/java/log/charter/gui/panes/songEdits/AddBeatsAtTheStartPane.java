@@ -27,11 +27,11 @@ public class AddBeatsAtTheStartPane extends ParamsPane {
 		this.data = data;
 		this.undoSystem = undoSystem;
 
-		addLabel(0, 20, Label.ADD_BEATS);
+		addLabel(0, 20, Label.ADD_BEATS, 0);
 
 		addIntegerConfigValue(1, 20, 0, null, beatsToGenerate, 100, createIntValidator(1, 100, false),
 				val -> beatsToGenerate = val, false);
-		final JTextField input = (JTextField) components.getLast();
+		final JTextField input = (JTextField) getLastPart();
 		addSelectTextOnFocus(input);
 
 		addDefaultFinish(3, this::saveAndExit);

@@ -63,13 +63,13 @@ public class TempoBeatPane extends ParamsPane {
 
 		addIntegerConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_BEATS_IN_MEASURE, beatsInMeasure, 30,
 				createIntValidator(1, 99, false), val -> beatsInMeasure = val, false);
-		final JTextField beatsInMeasureInput = (JTextField) components.getLast();
+		final JTextField beatsInMeasureInput = (JTextField) getLastPart();
 		beatsInMeasureInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(beatsInMeasureInput);
 
 		addIntegerConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_NOTE_DENOMINATOR, noteDenominator, 30,
 				createIntValidator(1, 99, false), val -> noteDenominator = val, false);
-		final JTextField noteDenominatorInput = (JTextField) components.getLast();
+		final JTextField noteDenominatorInput = (JTextField) getLastPart();
 		noteDenominatorInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(noteDenominatorInput);
 

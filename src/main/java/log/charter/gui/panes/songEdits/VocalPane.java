@@ -75,7 +75,7 @@ public class VocalPane extends ParamsPane {
 			wordPart = val;
 
 			phraseEnd = false;
-			final JCheckBox phraseEndCheckbox = (JCheckBox) components.get(5);
+			final JCheckBox phraseEndCheckbox = (JCheckBox) getPart(5);
 			phraseEndCheckbox.setSelected(false);
 			phraseEndCheckbox.setEnabled(!val);
 		});
@@ -83,7 +83,7 @@ public class VocalPane extends ParamsPane {
 			phraseEnd = val;
 
 			wordPart = false;
-			final JCheckBox wordPartCheckbox = (JCheckBox) components.get(3);
+			final JCheckBox wordPartCheckbox = (JCheckBox) getPart(3);
 			wordPartCheckbox.setSelected(false);
 			wordPartCheckbox.setEnabled(!val);
 		});

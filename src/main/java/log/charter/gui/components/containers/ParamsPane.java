@@ -23,6 +23,7 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.data.PaneSizes;
+import log.charter.gui.components.data.PaneSizesBuilder;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.TextInputWithValidation.BigDecimalValueValidator;
 import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
@@ -32,6 +33,54 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 
 public class ParamsPane extends JDialog {
+
+	public class RowedPanelEmulator extends RowedPanel {
+		private static final long serialVersionUID = 1L;
+
+		public RowedPanelEmulator() {
+			super(ParamsPane.this.sizes, 0);
+		}
+
+		@Override
+		public Component getPart(final int id) {
+			return ParamsPane.this.getPart(id);
+		}
+
+		@Override
+		public Component getLastPart() {
+			return ParamsPane.this.getLastPart();
+		}
+
+		@Override
+		public int getPartsSize() {
+			return ParamsPane.this.getPartsSize();
+		}
+
+		@Override
+		public void remove(final Component comp) {
+			ParamsPane.this.remove(comp);
+		}
+
+		@Override
+		public void repaint() {
+			ParamsPane.this.repaint();
+		}
+
+		@Override
+		public void add(final JComponent component, final int x, final int y, final int w, final int h) {
+			ParamsPane.this.add(component, x, y, w, h);
+		}
+
+		@Override
+		public void addTop(final JComponent component, final int x, final int y, final int w, final int h) {
+			ParamsPane.this.addTop(component, x, y, w, h);
+		}
+
+		@Override
+		public int addLabel(final int row, final int x, final Label label, final int width) {
+			return ParamsPane.this.addLabel(row, x, label, width);
+		}
+	}
 
 	public static interface ValueSetter<T> {
 		void setValue(T val);
@@ -59,16 +108,16 @@ public class ParamsPane extends JDialog {
 
 	protected final CharterFrame frame;
 
-	protected final ArrayList2<Component> components = new ArrayList2<>();
+	private final ArrayList2<Component> parts = new ArrayList2<>();
 
-	protected final PaneSizes sizes;
+	public final PaneSizes sizes;
 
 	public ParamsPane(final CharterFrame frame, final Label title) {
-		this(frame, title, new PaneSizes());
+		this(frame, title, 700);
 	}
 
 	public ParamsPane(final CharterFrame frame, final Label title, final int width) {
-		this(frame, title, new PaneSizes(width));
+		this(frame, title, new PaneSizesBuilder(width).build());
 	}
 
 	public ParamsPane(final CharterFrame frame, final Label title, final PaneSizes sizes) {
@@ -84,6 +133,18 @@ public class ParamsPane extends JDialog {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(true);
 		setLayout(null);
+	}
+
+	public Component getPart(final int id) {
+		return parts.get(id);
+	}
+
+	public Component getLastPart() {
+		return parts.getLast();
+	}
+
+	public int getPartsSize() {
+		return parts.size();
 	}
 
 	private void setSizeWithInsets(final int newWidth, final int newHeight) {
@@ -105,53 +166,55 @@ public class ParamsPane extends JDialog {
 	public void add(final Component component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
 		add(component);
-		components.add(component);
+		parts.add(component);
 	}
 
 	public void addTop(final Component component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
 		add(component, 0);
-		components.add(component);
+		parts.add(component);
 	}
 
 	/**
 	 * @return width of created label
 	 */
-	protected int addLabel(final int row, final int x, final String label) {
-		return addLabelExact(getY(row), x, label);
+	protected int addLabel(final int row, final int x, final String label, final int width) {
+		return addLabelExact(getY(row), x, label, width);
 	}
 
 	/**
 	 * @return width of created label
 	 */
-	protected int addLabel(final int row, final int x, final Label label) {
-		return addLabelExact(x, getY(row), label);
+	protected int addLabel(final int row, final int x, final Label label, final int width) {
+		return addLabelExact(x, getY(row), label, width);
 	}
 
 	/**
 	 * @return width of created label
 	 */
-	protected int addLabelExact(final int x, final int y, final Label label) {
+	protected int addLabelExact(final int x, final int y, final Label label, final int width) {
 		if (label == null) {
 			return 0;
 		}
 
-		return addLabelExact(y, x, label.label());
+		return addLabelExact(y, x, label.label(), width);
 	}
 
 	/**
 	 * @return width of created label
 	 */
-	protected int addLabelExact(final int y, final int x, final String label) {
+	protected int addLabelExact(final int y, final int x, final String label, int width) {
 		if (label == null) {
 			return 0;
 		}
 
 		final JLabel labelComponent = new JLabel(label, SwingConstants.LEFT);
-		final int labelWidth = labelComponent.getPreferredSize().width;
-		add(labelComponent, x, y, labelWidth, 20);
+		if (width == 0) {
+			width = labelComponent.getPreferredSize().width;
+		}
+		add(labelComponent, x, y, width, 20);
 
-		return labelWidth;
+		return width;
 	}
 
 	protected void addDefaultFinish(final int row, final Runnable onSave) {
@@ -242,7 +305,7 @@ public class ParamsPane extends JDialog {
 
 	protected void addConfigCheckbox(final int row, final int x, int labelWidth, final Label label, final boolean val,
 			final BooleanValueSetter setter) {
-		final int actualLabelWidth = addLabel(row, x, label);
+		final int actualLabelWidth = addLabel(row, x, label, 0);
 
 		if (labelWidth == 0) {
 			labelWidth = actualLabelWidth;
@@ -282,7 +345,7 @@ public class ParamsPane extends JDialog {
 			group.add(radioButton);
 			add(radioButton, x, y, 20, 20);
 
-			addLabelExact(x + 20, y, value.b);
+			addLabelExact(x + 20, y, value.b, optionWidth - 20);
 
 			x += optionWidth;
 		}

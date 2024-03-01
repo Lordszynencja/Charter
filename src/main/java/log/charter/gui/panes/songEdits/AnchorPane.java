@@ -38,13 +38,13 @@ public class AnchorPane extends ParamsPane {
 		int row = 0;
 		addIntegerConfigValue(row++, 20, 100, Label.FRET, fret, 30, createIntValidator(1, Config.frets, true),
 				val -> fret = val, false);
-		final JTextField input = (JTextField) components.getLast();
+		final JTextField input = (JTextField) getLastPart();
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
 		addIntegerConfigValue(row++, 20, 100, Label.ANCHOR_WIDTH, width, 30, createIntValidator(1, Config.frets, false),
 				val -> width = val, false);
-		final JTextField AnchorWidthInput = (JTextField) components.getLast();
+		final JTextField AnchorWidthInput = (JTextField) getLastPart();
 		AnchorWidthInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(AnchorWidthInput);
 

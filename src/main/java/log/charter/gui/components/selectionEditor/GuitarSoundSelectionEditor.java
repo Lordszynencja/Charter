@@ -33,9 +33,9 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.selectionEditor.bends.SelectionBendEditor;
 import log.charter.gui.components.selectionEditor.chords.ChordTemplateEditor;
 import log.charter.gui.components.simple.FieldWithLabel;
+import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.ToggleButtonGroupInRow;
-import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
@@ -96,7 +96,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			final JCheckBox stringCheckbox = new JCheckBox((string + 1) + "");
 			stringCheckbox.setForeground(getStringBasedColor(StringColorLabelType.NOTE, string, maxStrings));
 			stringCheckbox.addActionListener(e -> updateStringSelectionDependentValues());
-			parent.add(stringCheckbox, 20 + 40 * i, parent.getY(row.get()), 40, 20);
+			parent.add(stringCheckbox, 20 + 40 * i, parent.sizes.getY(row.get()), 40, 20);
 
 			strings.add(stringCheckbox);
 		}
@@ -108,13 +108,13 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final TextInputWithValidation stringInput = new TextInputWithValidation(null, 30,
 				createIntValidator(1, 1, false), (final Integer val) -> changeString(val - 1), false);
 		string = new FieldWithLabel<>(Label.STRING, 40, 30, 20, stringInput, LabelPosition.LEFT_CLOSE);
-		string.setLocation(20, parent.getY(row.get()));
+		string.setLocation(20, parent.sizes.getY(row.get()));
 		parent.add(string);
 
 		final TextInputWithValidation fretInput = new TextInputWithValidation(null, 30,
 				createIntValidator(0, frets, false), (final Integer val) -> changeFret(val), false);
 		fret = new FieldWithLabel<>(Label.FRET, 40, 30, 20, fretInput, LabelPosition.LEFT_CLOSE);
-		fret.setLocation(110, parent.getY(row.getAndIncrement()));
+		fret.setLocation(110, parent.sizes.getY(row.getAndIncrement()));
 		parent.add(fret);
 	}
 
@@ -153,14 +153,14 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final JCheckBox accentInput = new JCheckBox();
 		accentInput.addActionListener(a -> changeAccent(accentInput.isSelected()));
 		accent = new FieldWithLabel<>(Label.ACCENT, 50, 20, 20, accentInput, LabelPosition.LEFT_CLOSE);
-		accent.setLocation(x, parent.getY(row.get()));
+		accent.setLocation(x, parent.sizes.getY(row.get()));
 		parent.add(accent);
 
 		x += 90;
 		final JCheckBox linkNextInput = new JCheckBox();
 		linkNextInput.addActionListener(a -> changeLinkNext(linkNextInput.isSelected()));
 		linkNext = new FieldWithLabel<>(Label.LINK_NEXT, 60, 20, 20, linkNextInput, LabelPosition.LEFT_CLOSE);
-		linkNext.setLocation(x, parent.getY(row.getAndIncrement()));
+		linkNext.setLocation(x, parent.sizes.getY(row.getAndIncrement()));
 		parent.add(linkNext);
 	}
 
@@ -170,14 +170,14 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		splitIntoNotesInput.addActionListener(a -> changeSplitIntoNotes(splitIntoNotesInput.isSelected()));
 		splitIntoNotes = new FieldWithLabel<>(Label.SPLIT_INTO_NOTES, 50, 20, 20, splitIntoNotesInput,
 				LabelPosition.LEFT_CLOSE);
-		splitIntoNotes.setLocation(x, parent.getY(row.get()));
+		splitIntoNotes.setLocation(x, parent.sizes.getY(row.get()));
 		parent.add(splitIntoNotes);
 
 		x += 90;
 		final JCheckBox ignoreInput = new JCheckBox();
 		ignoreInput.addActionListener(a -> changeIgnore(ignoreInput.isSelected()));
 		ignore = new FieldWithLabel<>(Label.IGNORE_NOTE, 60, 20, 20, ignoreInput, LabelPosition.LEFT_CLOSE);
-		ignore.setLocation(x, parent.getY(row.getAndIncrement()));
+		ignore.setLocation(x, parent.sizes.getY(row.getAndIncrement()));
 		parent.add(ignore);
 	}
 
@@ -186,7 +186,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		passOtherNotesInput.addActionListener(a -> changePassOtherNotes(passOtherNotesInput.isSelected()));
 		passOtherNotes = new FieldWithLabel<>(Label.PASS_OTHER_NOTES, 120, 20, 20, passOtherNotesInput,
 				LabelPosition.LEFT_CLOSE);
-		passOtherNotes.setLocation(50, parent.getY(row.getAndIncrement()));
+		passOtherNotes.setLocation(50, parent.sizes.getY(row.getAndIncrement()));
 		parent.add(passOtherNotes);
 	}
 
@@ -194,14 +194,14 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final TextInputWithValidation slideFretInput = new TextInputWithValidation(null, 30,
 				createIntValidator(1, frets, true), (final Integer val) -> changeSlideFret(val), false);
 		slideFret = new FieldWithLabel<>(Label.SLIDE_PANE_FRET, 60, 30, 20, slideFretInput, LabelPosition.LEFT);
-		slideFret.setLocation(20, parent.getY(row.get()));
+		slideFret.setLocation(20, parent.sizes.getY(row.get()));
 		parent.add(slideFret);
 
 		final JCheckBox unpitchedSlideInput = new JCheckBox();
 		unpitchedSlideInput.addActionListener(a -> changeUnpitchedSlide(unpitchedSlideInput.isSelected()));
 		unpitchedSlide = new FieldWithLabel<>(Label.SLIDE_PANE_UNPITCHED, 80, 20, 20, unpitchedSlideInput,
 				LabelPosition.RIGHT_CLOSE);
-		unpitchedSlide.setLocation(115, parent.getY(row.getAndIncrement()));
+		unpitchedSlide.setLocation(115, parent.sizes.getY(row.getAndIncrement()));
 		parent.add(unpitchedSlide);
 	}
 
@@ -209,13 +209,13 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final JCheckBox vibratoInput = new JCheckBox();
 		vibratoInput.addActionListener(a -> changeVibrato(vibratoInput.isSelected()));
 		vibrato = new FieldWithLabel<>(Label.VIBRATO, 60, 30, 20, vibratoInput, LabelPosition.LEFT_CLOSE);
-		vibrato.setLocation(20, parent.getY(row.get()));
+		vibrato.setLocation(20, parent.sizes.getY(row.get()));
 		parent.add(vibrato);
 
 		final JCheckBox tremoloInput = new JCheckBox();
 		tremoloInput.addActionListener(a -> changeTremolo(tremoloInput.isSelected()));
 		tremolo = new FieldWithLabel<>(Label.TREMOLO, 50, 20, 20, tremoloInput, LabelPosition.LEFT_CLOSE);
-		tremolo.setLocation(120, parent.getY(row.getAndIncrement()));
+		tremolo.setLocation(120, parent.sizes.getY(row.getAndIncrement()));
 		parent.add(tremolo);
 	}
 
@@ -227,7 +227,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void addBendEditor(final int x) {
 		selectionBendEditor = new SelectionBendEditor(parent, data, selectionManager, undoSystem);
-		selectionBendEditor.setLocation(x, parent.rowHeight * 2);
+		selectionBendEditor.setLocation(x, parent.sizes.getY(2));
 		parent.add(selectionBendEditor);
 	}
 

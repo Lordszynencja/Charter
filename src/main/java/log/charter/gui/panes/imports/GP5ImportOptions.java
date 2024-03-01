@@ -72,7 +72,7 @@ public class GP5ImportOptions extends ParamsPane {
 	private void addArrangementOptions(final int row, final int id, final Arrangement arrangement) {
 		final String name = Label.GP5_IMPORT_ARRANGEMENT_NAME.label().formatted(id + 1, arrangement.getTypeNameLabel());
 
-		addLabel(row, 10, name);
+		addLabel(row, 10, name, 0);
 		final Vector<ArrangementImportSetting> options = new Vector<>(asList(//
 				new ArrangementImportSetting(false, Label.GP5_IMPORT_TO_NEW_ARRANGEMENT.label()), //
 				new ArrangementImportSetting(true, Label.GP5_IMPORT_SKIP_ARRANGEMENT.label())));

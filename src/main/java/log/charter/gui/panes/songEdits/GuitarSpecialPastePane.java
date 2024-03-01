@@ -52,23 +52,23 @@ public class GuitarSpecialPastePane extends ParamsPane {
 
 		int row = 0;
 		addConfigCheckbox(row, 20, 0, null, pasteUsingBeats, val -> pasteUsingBeats = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_USE_BEATS);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_USE_BEATS, 0);
 		row++;
 
 		addConfigCheckbox(row, 20, 0, null, pasteSections, val -> pasteSections = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_SECTIONS);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_SECTIONS, 0);
 		addConfigCheckbox(row, 20, 0, null, pastePhrases, val -> pastePhrases = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_PHRASES);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_PHRASES, 0);
 		addConfigCheckbox(row, 20, 0, null, pasteEvents, val -> pasteEvents = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_EVENTS);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_EVENTS, 0);
 		addConfigCheckbox(row, 20, 0, null, pasteToneChanges, val -> pasteToneChanges = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_TONE_CHANGES);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_TONE_CHANGES, 0);
 		addConfigCheckbox(row, 20, 0, null, pasteAnchors, val -> pasteAnchors = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_ANCHORS);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_ANCHORS, 0);
 		addConfigCheckbox(row, 20, 0, null, pasteSounds, val -> pasteSounds = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_SOUNDS);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_SOUNDS, 0);
 		addConfigCheckbox(row, 20, 0, null, pasteHandShapes, val -> pasteHandShapes = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_HAND_SHAPES);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_HAND_SHAPES, 0);
 
 		row++;
 		addDefaultFinish(row, this::saveAndExit);

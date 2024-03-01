@@ -36,10 +36,10 @@ public class AddDefaultSilencePane extends ParamsPane {
 		this.data = data;
 		this.projectAudioHandler = projectAudioHandler;
 
-		addLabel(0, 20, Label.ADD_DEFAULT_SILENCE_BARS);
+		addLabel(0, 20, Label.ADD_DEFAULT_SILENCE_BARS, 0);
 
 		addIntegerConfigValue(1, 20, 0, null, 2, 100, createIntValidator(0, 10, false), val -> bars = val, false);
-		final JTextField input = (JTextField) components.getLast();
+		final JTextField input = (JTextField) getLastPart();
 		addSelectTextOnFocus(input);
 
 		addDefaultFinish(3, this::saveAndExit);

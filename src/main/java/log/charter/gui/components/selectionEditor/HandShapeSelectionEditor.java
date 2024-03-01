@@ -60,8 +60,8 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 			chordTemplate.arpeggio = val;
 			templateEdited();
 		});
-		arpeggioLabel = (JLabel) parent.components.get(parent.components.size() - 2);
-		arpeggioCheckBox = (JCheckBox) parent.components.getLast();
+		arpeggioLabel = (JLabel) parent.getPart(parent.getPartsSize() - 2);
+		arpeggioCheckBox = (JCheckBox) parent.getLastPart();
 		addChordTemplateEditor(20, 4);
 
 		hideFields();
@@ -71,7 +71,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		setTemplateButton = new JButton(Label.SET_TEMPLATE_ON_CHORDS.label());
 		setTemplateButton.addActionListener(a -> setTemplateForChordsInsideSelectedHandShapes());
 
-		parent.add(setTemplateButton, x, parent.getY(row), 150, 20);
+		parent.add(setTemplateButton, x, parent.sizes.getY(row), 150, 20);
 	}
 
 	private void templateEdited() {

@@ -21,8 +21,8 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.containers.ScrollableRowedPanel;
 import log.charter.gui.components.simple.FieldWithLabel;
-import log.charter.gui.components.simple.ShortcutEditor;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.ShortcutEditor;
 import log.charter.gui.handlers.mouseAndKeyboard.Action;
 import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
 import log.charter.gui.menuHandlers.CharterMenuBar;
@@ -132,8 +132,8 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		this.add(panel);
 
 		addDefaultFinish(10, this.getDefaultAction(this::validateSaveAndExit), getDefaultAction(), false);
-		saveButton = (JButton) components.get(components.size() - 2);
-		cancelButton = (JButton) components.get(components.size() - 1);
+		saveButton = (JButton) getPart(getPartsSize() - 2);
+		cancelButton = (JButton) getLastPart();
 
 		resize();
 		addComponentListener(this);

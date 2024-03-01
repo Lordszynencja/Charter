@@ -20,8 +20,8 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.AutocompleteInput;
 import log.charter.gui.components.simple.FieldWithLabel;
-import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.song.Arrangement;
 import log.charter.song.ToneChange;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -51,7 +51,7 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 
 		toneNameField = new FieldWithLabel<>(Label.TONE_CHANGE_TONE_NAME, 100, 200, 20, toneNameInput,
 				LabelPosition.LEFT);
-		toneNameField.setLocation(10, selectionEditor.getY(row++));
+		toneNameField.setLocation(10, selectionEditor.sizes.getY(row++));
 		selectionEditor.add(toneNameField);
 
 		hideFields();

@@ -19,6 +19,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.containers.RowedPanel;
+import log.charter.gui.components.data.PaneSizesBuilder;
 import log.charter.song.BeatsMap;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
@@ -48,7 +49,7 @@ public class SelectionBendEditor extends RowedPanel {
 
 	public SelectionBendEditor(final RowedPanel parent, final ChartData data, final SelectionManager selectionManager,
 			final UndoSystem undoSystem) {
-		super(500, 25, 2);
+		super(new PaneSizesBuilder(500).build(), 2);
 
 		this.data = data;
 		this.selectionManager = selectionManager;
@@ -61,9 +62,9 @@ public class SelectionBendEditor extends RowedPanel {
 		final JScrollPane scrollPane = new JScrollPane(bendEditorGraph, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.validate();
-		this.add(scrollPane, 20, getY(1), 440, BendEditorGraph.height + 20);
+		this.add(scrollPane, 20, sizes.getY(1), 440, BendEditorGraph.height + 20);
 
-		setSize(500, getY(2) + BendEditorGraph.height);
+		setSize(500, sizes.getY(2) + BendEditorGraph.height);
 		setMinimumSize(getSize());
 		setPreferredSize(getSize());
 		setMaximumSize(getSize());
@@ -77,7 +78,7 @@ public class SelectionBendEditor extends RowedPanel {
 			final JRadioButton radioButton = new JRadioButton((string + 1) + "");
 			radioButton.setForeground(getStringBasedColor(StringColorLabelType.NOTE, string, maxStrings));
 			radioButton.addActionListener(e -> onSelectString(string));
-			this.add(radioButton, 20 + 40 * i, getY(0), 40, 20);
+			this.add(radioButton, 20 + 40 * i, sizes.getY(0), 40, 20);
 
 			stringsGroup.add(radioButton);
 			strings.add(radioButton);

@@ -42,12 +42,12 @@ public class AddSilencePane extends ParamsPane {
 		this.data = data;
 		this.projectAudioHandler = projectAudioHandler;
 
-		addLabel(0, 20, Label.ADD_SILENCE_SECONDS);
+		addLabel(0, 20, Label.ADD_SILENCE_SECONDS, 0);
 
 		addConfigValue(1, 20, 0, null, "", 100,
 				createBigDecimalValidator(new BigDecimal(0.1), new BigDecimal(60), false),
 				val -> time = new BigDecimal(val), false);
-		final JTextField input = (JTextField) components.getLast();
+		final JTextField input = (JTextField) getLastPart();
 		addSelectTextOnFocus(input);
 
 		addTypeSelector();

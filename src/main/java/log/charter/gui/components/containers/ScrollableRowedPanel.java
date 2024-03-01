@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import log.charter.gui.components.data.PaneSizes;
+import log.charter.gui.components.data.PaneSizesBuilder;
 
 public class ScrollableRowedPanel extends JScrollPane {
 	private static final long serialVersionUID = 7451891986721556918L;
@@ -24,7 +25,7 @@ public class ScrollableRowedPanel extends JScrollPane {
 	private final JPanel panel;
 
 	public ScrollableRowedPanel(final int width, final int rows) {
-		this(new PaneSizes(width), rows);
+		this(new PaneSizesBuilder(width).build(), rows);
 	}
 
 	public ScrollableRowedPanel(final PaneSizes sizes, final int rows) {

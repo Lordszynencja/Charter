@@ -19,8 +19,9 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.containers.RowedPanel;
+import log.charter.gui.components.data.PaneSizesBuilder;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Anchor;
 import log.charter.song.HandShape;
@@ -63,7 +64,7 @@ public class CurrentSelectionEditor extends RowedPanel {
 	private final VocalSelectionEditor vocalSelectionEditor = new VocalSelectionEditor();
 
 	public CurrentSelectionEditor() {
-		super(700, 25, 14);
+		super(new PaneSizesBuilder(700).build(), 14);
 
 		setOpaque(true);
 		setBackground(ColorLabel.BASE_BG_2.color());
