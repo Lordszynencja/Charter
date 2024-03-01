@@ -1,4 +1,4 @@
-package log.charter.gui.components;
+package log.charter.gui.components.chordTemplatePane;
 
 import static java.awt.event.KeyEvent.VK_1;
 import static java.awt.event.KeyEvent.VK_2;
@@ -37,7 +37,8 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.FilledRectangle;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
-import log.charter.gui.components.selectionEditor.ChordTemplateEditor;
+import log.charter.gui.components.containers.RowedPanel;
+import log.charter.gui.components.selectionEditor.chords.ChordTemplateEditor;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;

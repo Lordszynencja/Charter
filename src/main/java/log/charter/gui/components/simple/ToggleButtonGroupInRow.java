@@ -1,4 +1,4 @@
-package log.charter.gui.components;
+package log.charter.gui.components.simple;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -6,7 +6,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.ButtonGroup;
 
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.components.RowedPanel.ValueSetter;
+import log.charter.gui.components.containers.RowedPanel;
+import log.charter.gui.components.containers.RowedPanel.ValueSetter;
 import log.charter.util.CollectionUtils.Pair;
 
 public class ToggleButtonGroupInRow<T extends Enum<T>> {

@@ -1,4 +1,4 @@
-package log.charter.gui.components;
+package log.charter.gui.components.containers;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
@@ -7,7 +7,8 @@ import javax.swing.JTextField;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.FieldWithLabel;
+import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 
 public class SongFolderSelectPane extends ParamsPane {
 	private static final long serialVersionUID = 8709914106065183780L;

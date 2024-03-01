@@ -55,6 +55,8 @@ public class Localization {
 		CONFIG_THEME_SQUARE("Square"), //
 		CONFIG_THEME_MODERN("Modern"), //
 
+		CHOOSE_COLOR("Choose color for %s"), //
+
 		SHORTCUT_CONFIG_PANE("Shortcut config"), //
 		TIME_MOVEMENT("Time movement"), //
 		EDITING("Editing"), //

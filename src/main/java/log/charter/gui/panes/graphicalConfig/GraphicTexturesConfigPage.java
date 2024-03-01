@@ -7,10 +7,10 @@ import javax.swing.JComboBox;
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.FieldWithLabel;
-import log.charter.gui.components.FieldWithLabel.LabelPosition;
-import log.charter.gui.components.Page;
+import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
+import log.charter.gui.components.simple.FieldWithLabel;
+import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 
 public class GraphicTexturesConfigPage implements Page {
 	private String inlay = GraphicalConfig.inlay;

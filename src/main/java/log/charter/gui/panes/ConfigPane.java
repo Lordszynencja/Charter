@@ -1,7 +1,7 @@
 package log.charter.gui.panes;
 
-import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
-import static log.charter.gui.components.TextInputWithValidation.ValueValidator.dirValidator;
+import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createIntValidator;
+import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.dirValidator;
 
 import java.io.File;
 
@@ -12,7 +12,7 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
-import log.charter.gui.components.ParamsPane;
+import log.charter.gui.components.containers.ParamsPane;
 import log.charter.util.FileChooseUtils;
 
 public final class ConfigPane extends ParamsPane {

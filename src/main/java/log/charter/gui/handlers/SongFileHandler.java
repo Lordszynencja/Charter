@@ -31,7 +31,7 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.SongFolderSelectPane;
+import log.charter.gui.components.containers.SongFolderSelectPane;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.gui.menuHandlers.CharterMenuBar;

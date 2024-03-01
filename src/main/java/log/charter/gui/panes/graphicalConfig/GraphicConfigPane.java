@@ -6,8 +6,8 @@ import javax.swing.JToggleButton;
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.Page;
-import log.charter.gui.components.ParamsPane;
+import log.charter.gui.components.containers.Page;
+import log.charter.gui.components.containers.ParamsPane;
 
 public final class GraphicConfigPane extends ParamsPane {
 	private static final long serialVersionUID = -3193534671039163160L;

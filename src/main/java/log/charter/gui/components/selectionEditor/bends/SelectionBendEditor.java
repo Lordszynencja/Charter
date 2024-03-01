@@ -1,4 +1,4 @@
-package log.charter.gui.components.selectionEditor.subEditors;
+package log.charter.gui.components.selectionEditor.bends;
 
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
@@ -18,7 +18,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
-import log.charter.gui.components.RowedPanel;
+import log.charter.gui.components.containers.RowedPanel;
 import log.charter.song.BeatsMap;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;

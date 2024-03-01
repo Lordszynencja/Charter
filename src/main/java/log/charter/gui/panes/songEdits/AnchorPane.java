@@ -1,7 +1,7 @@
 package log.charter.gui.panes.songEdits;
 
-import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
-import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
+import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createIntValidator;
+import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import javax.swing.JTextField;
 
@@ -10,7 +10,7 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.ParamsPane;
+import log.charter.gui.components.containers.ParamsPane;
 import log.charter.song.Anchor;
 
 public class AnchorPane extends ParamsPane {

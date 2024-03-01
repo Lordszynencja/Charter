@@ -1,4 +1,4 @@
-package log.charter.gui.components;
+package log.charter.gui.components.utils;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;

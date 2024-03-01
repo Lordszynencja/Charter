@@ -1,4 +1,4 @@
-package log.charter.gui.components;
+package log.charter.gui.components.selectionEditor.chords;
 
 import static log.charter.util.chordRecognition.ChordNameSuggester.suggestChordNames;
 
@@ -16,6 +16,7 @@ import javax.swing.border.LineBorder;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.components.containers.RowedPanel;
 import log.charter.song.configs.Tuning;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;

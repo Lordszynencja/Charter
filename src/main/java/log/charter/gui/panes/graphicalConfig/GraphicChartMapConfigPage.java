@@ -1,16 +1,16 @@
 package log.charter.gui.panes.graphicalConfig;
 
-import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
+import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import javax.swing.JTextField;
 
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.components.FieldWithLabel;
-import log.charter.gui.components.FieldWithLabel.LabelPosition;
-import log.charter.gui.components.Page;
-import log.charter.gui.components.TextInputWithValidation;
-import log.charter.gui.components.TextInputWithValidation.IntegerValueValidator;
+import log.charter.gui.components.containers.Page;
+import log.charter.gui.components.simple.FieldWithLabel;
+import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
 
 public class GraphicChartMapConfigPage implements Page {
 	private int chartMapHeightMultiplier = GraphicalConfig.chartMapHeightMultiplier;

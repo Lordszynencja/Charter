@@ -1,8 +1,8 @@
-package log.charter.gui.components;
+package log.charter.gui.components.chordTemplatePane;
 
 import static java.lang.Math.max;
-import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
-import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
+import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createIntValidator;
+import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.song.ChordTemplate.fingerIds;
 import static log.charter.song.ChordTemplate.fingerNames;
 import static log.charter.util.Utils.getStringPosition;
@@ -21,6 +21,9 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.simple.AutocompleteInputForPane;
+import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
@@ -31,7 +34,7 @@ public class ChordTemplateEditorDialog extends ParamsPane implements MouseListen
 	protected final ChartData data;
 	protected final ChordTemplate chordTemplate;
 
-	private AutocompleteInputDialog<ChordTemplate> chordNameInput;
+	private AutocompleteInputForPane<ChordTemplate> chordNameInput;
 	private final ArrayList2<TextInputWithValidation> fretInputs = new ArrayList2<>();
 	private final ArrayList2<TextInputWithValidation> fingerInputs = new ArrayList2<>();
 	private ChordTemplateEditorDialogPreview chordTemplatePreview;
@@ -68,7 +71,7 @@ public class ChordTemplateEditorDialog extends ParamsPane implements MouseListen
 
 		final int strings = data.getCurrentArrangement().tuning.strings();
 		final Function<ChordTemplate, String> formatter = chordTemplate -> chordTemplate.getNameWithFrets(strings);
-		chordNameInput = new AutocompleteInputDialog<>(this, 80, chordTemplate.chordName, this::getPossibleChords,
+		chordNameInput = new AutocompleteInputForPane<>(this, 80, chordTemplate.chordName, this::getPossibleChords,
 				formatter, inputOnTemplateChange);
 		chordNameInput.getDocument().addDocumentListener(new DocumentListener() {
 

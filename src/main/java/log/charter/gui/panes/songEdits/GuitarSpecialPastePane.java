@@ -6,7 +6,7 @@ import log.charter.data.copySystem.data.FullGuitarCopyData;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.ParamsPane;
+import log.charter.gui.components.containers.ParamsPane;
 
 public class GuitarSpecialPastePane extends ParamsPane {
 	private static boolean pasteSectionsDefault = true;

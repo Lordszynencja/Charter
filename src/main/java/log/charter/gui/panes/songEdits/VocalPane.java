@@ -11,7 +11,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.ParamsPane;
+import log.charter.gui.components.containers.ParamsPane;
 import log.charter.song.vocals.Vocal;
 
 public class VocalPane extends ParamsPane {

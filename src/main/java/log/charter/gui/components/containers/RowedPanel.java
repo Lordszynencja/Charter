@@ -1,4 +1,4 @@
-package log.charter.gui.components;
+package log.charter.gui.components.containers;
 
 import java.awt.Component;
 import java.awt.Dimension;

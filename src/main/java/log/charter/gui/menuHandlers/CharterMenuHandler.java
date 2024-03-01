@@ -5,7 +5,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.components.SpecialMenuItem;
+import log.charter.gui.components.simple.SpecialMenuItem;
 import log.charter.gui.handlers.mouseAndKeyboard.Action;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;

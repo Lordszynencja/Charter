@@ -1,7 +1,8 @@
-package log.charter.gui.components;
+package log.charter.gui.components.containers;
+
+import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
@@ -21,36 +22,16 @@ import javax.swing.WindowConstants;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.TextInputWithValidation.BigDecimalValueValidator;
-import log.charter.gui.components.TextInputWithValidation.IntegerValueValidator;
-import log.charter.gui.components.TextInputWithValidation.StringValueSetter;
-import log.charter.gui.components.TextInputWithValidation.ValueValidator;
+import log.charter.gui.components.data.PaneSizes;
+import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.gui.components.simple.TextInputWithValidation.BigDecimalValueValidator;
+import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
+import log.charter.gui.components.simple.TextInputWithValidation.StringValueSetter;
+import log.charter.gui.components.simple.TextInputWithValidation.ValueValidator;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 
 public class ParamsPane extends JDialog {
-	public static final int uSpace = 10;
-
-	public static class PaneSizes {
-		public int width = 700;
-		public int rowHeight = 25;
-
-		public PaneSizes() {
-		}
-
-		public PaneSizes(final int width) {
-			this.width = width;
-		}
-
-		public PaneSizes rowHeight(final int rowHeight) {
-			this.rowHeight = rowHeight;
-			return this;
-		}
-
-		public int getY(final int row) {
-			return uSpace + row * rowHeight;
-		}
-	}
 
 	public static interface ValueSetter<T> {
 		void setValue(T val);
@@ -82,8 +63,6 @@ public class ParamsPane extends JDialog {
 
 	protected final PaneSizes sizes;
 
-	private int width;
-
 	public ParamsPane(final CharterFrame frame, final Label title) {
 		this(frame, title, new PaneSizes());
 	}
@@ -100,39 +79,27 @@ public class ParamsPane extends JDialog {
 
 		pack();
 
-		setWidthWithInsets(sizes.width);
-		setSize(width, 100);
+		setSizeWithInsets(sizes.width, 100);
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setResizable(true);
 		setLayout(null);
 	}
 
-	private void setWidthWithInsets(final int newWidth) {
-		final Insets insets = getInsets();
-		width = newWidth + insets.left + insets.right;
-		setSize(width, getHeight());
-	}
-
 	private void setSizeWithInsets(final int newWidth, final int newHeight) {
 		final Insets insets = getInsets();
-		width = newWidth + insets.left + insets.right;
-		final int h = newHeight + insets.top + insets.bottom + (uSpace * 2);
-		setSize(width, h);
-		setLocation(Config.windowPosX + frame.getWidth() / 2 - width / 2,
-				Config.windowPosY + frame.getHeight() / 2 - h / 2);
+		final int width = newWidth + insets.left + insets.right;
+		final int height = newHeight + insets.top + insets.bottom;
+		setSize(width, height);
+	}
+
+	private void setLocation() {
+		setLocation(Config.windowPosX + frame.getWidth() / 2 - getWidth() / 2,
+				Config.windowPosY + frame.getHeight() / 2 - getHeight() / 2);
 	}
 
 	public int getY(final int row) {
 		return sizes.getY(row);
-	}
-
-	protected void setComponentBounds(final Component component, final int x, final int y, final int w, final int h) {
-		component.setBounds(x, y, w, h);
-		final Dimension size = new Dimension(w, h);
-		component.setMinimumSize(size);
-		component.setPreferredSize(size);
-		component.setMaximumSize(size);
 	}
 
 	public void add(final Component component, final int x, final int y, final int w, final int h) {
@@ -237,7 +204,8 @@ public class ParamsPane extends JDialog {
 		getRootPane().registerKeyboardAction(e -> paneOnSave.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-		setSizeWithInsets(sizes.width, 2 * uSpace + row * sizes.rowHeight);
+		setSizeWithInsets(sizes.width, sizes.getHeight(row + 1));
+		setLocation();
 
 		validate();
 		if (setVisible) {

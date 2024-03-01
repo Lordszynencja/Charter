@@ -1,4 +1,4 @@
-package log.charter.gui.components;
+package log.charter.gui.components.simple;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;

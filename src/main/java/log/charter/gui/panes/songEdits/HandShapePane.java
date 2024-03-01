@@ -5,7 +5,7 @@ import javax.swing.JCheckBox;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.ChordTemplateEditorDialog;
+import log.charter.gui.components.chordTemplatePane.ChordTemplateEditorDialog;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 

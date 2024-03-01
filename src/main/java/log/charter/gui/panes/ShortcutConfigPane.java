@@ -1,6 +1,7 @@
 package log.charter.gui.panes;
 
 import static java.util.Arrays.asList;
+import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
 
 import java.awt.Font;
 import java.awt.Insets;
@@ -10,18 +11,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.FieldWithLabel;
-import log.charter.gui.components.FieldWithLabel.LabelPosition;
-import log.charter.gui.components.ParamsPane;
-import log.charter.gui.components.ShortcutEditor;
+import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.containers.ScrollableRowedPanel;
+import log.charter.gui.components.simple.FieldWithLabel;
+import log.charter.gui.components.simple.ShortcutEditor;
+import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.handlers.mouseAndKeyboard.Action;
 import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
 import log.charter.gui.menuHandlers.CharterMenuBar;
@@ -109,7 +110,7 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 
 	private final CharterMenuBar charterMenuBar;
 
-	private final JScrollPane scrollPane;
+	private final ScrollableRowedPanel panel;
 	private final Map<Action, ShortcutEditor> editors = new HashMap<>();
 
 	private final JButton saveButton;
@@ -119,19 +120,16 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		super(frame, Label.SHORTCUT_CONFIG_PANE, 420);
 		this.charterMenuBar = charterMenuBar;
 
-		final JPanel panel = new JPanel(null);
-		panel.setOpaque(true);
 		int row = 0;
+		panel = makePanel();
 		for (final Pair<Label, List<Action>> group : actionGroups) {
-			addLabel(panel, group.a, row++);
+			addLabel(group.a, row++);
 			for (final Action action : group.b) {
-				addEditFor(panel, action, row++);
+				addEditFor(action, row++);
 			}
 		}
-		setComponentBounds(panel, 0, 0, 400, getY(row));
 
-		scrollPane = new JScrollPane(panel);
-		this.add(scrollPane);
+		this.add(panel);
 
 		addDefaultFinish(10, this.getDefaultAction(this::validateSaveAndExit), getDefaultAction(), false);
 		saveButton = (JButton) components.get(components.size() - 2);
@@ -142,19 +140,22 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		setVisible(true);
 	}
 
-	private void addLabel(final JPanel panel, final Label label, final int row) {
-		final JLabel groupLabel = new JLabel(label.label(), JLabel.CENTER);
-		groupLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
-		setComponentBounds(groupLabel, 20, getY(row), 360, 20);
-		panel.add(groupLabel);
+	private ScrollableRowedPanel makePanel() {
+		final int rows = actionGroups.stream().collect(Collectors.summingInt(group -> 1 + group.b.size()));
+		return new ScrollableRowedPanel(400, rows);
 	}
 
-	private void addEditFor(final JPanel panel, final Action action, final int row) {
+	private void addLabel(final Label label, final int row) {
+		final JLabel groupLabel = new JLabel(label.label(), JLabel.CENTER);
+		groupLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
+		panel.add(groupLabel, 20, row, 360, 20);
+	}
+
+	private void addEditFor(final Action action, final int row) {
 		final ShortcutEditor editor = new ShortcutEditor(action);
 		final FieldWithLabel<ShortcutEditor> fieldWithLabel = new FieldWithLabel<>(action.label, 200, 150, 20, editor,
 				LabelPosition.LEFT);
-		setComponentBounds(fieldWithLabel, 20, getY(row), 360, 20);
-		panel.add(fieldWithLabel);
+		panel.add(fieldWithLabel, 20, row, 360, 20);
 
 		editors.put(action, fieldWithLabel.field);
 	}
@@ -182,7 +183,7 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		final int middleX = w / 2;
 		final int scrollEndY = getHeight() - 50 - insets.top - insets.bottom;
 
-		setComponentBounds(scrollPane, 0, 0, w, scrollEndY);
+		setComponentBounds(panel, 0, 0, w, scrollEndY);
 
 		setComponentBounds(saveButton, middleX - 110, scrollEndY + 20, 100, 20);
 		setComponentBounds(cancelButton, middleX + 10, scrollEndY + 20, 100, 20);

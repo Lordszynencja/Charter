@@ -1,4 +1,4 @@
-package log.charter.gui.components;
+package log.charter.gui.components.simple;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

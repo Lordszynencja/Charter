@@ -1,7 +1,7 @@
 package log.charter.gui.components.selectionEditor;
 
-import static log.charter.gui.components.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.gui.components.selectionEditor.CurrentSelectionEditor.getSingleValue;
+import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
@@ -12,10 +12,10 @@ import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.components.FieldWithLabel;
-import log.charter.gui.components.FieldWithLabel.LabelPosition;
-import log.charter.gui.components.TextInputWithValidation;
-import log.charter.gui.components.TextInputWithValidation.ValueValidator;
+import log.charter.gui.components.simple.FieldWithLabel;
+import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.TextInputWithValidation.ValueValidator;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.HashSet2;
 

@@ -1,4 +1,4 @@
-package log.charter.gui.components;
+package log.charter.gui.components.simple;
 
 import java.awt.Color;
 import java.awt.event.FocusAdapter;
@@ -13,7 +13,7 @@ import javax.swing.event.DocumentListener;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.ParamsPane.BigDecimalValueSetter;
+import log.charter.gui.components.containers.ParamsPane.BigDecimalValueSetter;
 
 public class TextInputWithValidation extends JTextField implements DocumentListener {
 	private static final long serialVersionUID = 1L;

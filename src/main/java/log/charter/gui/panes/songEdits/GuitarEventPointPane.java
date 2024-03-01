@@ -1,6 +1,6 @@
 package log.charter.gui.panes.songEdits;
 
-import static log.charter.gui.components.TextInputWithValidation.ValueValidator.createIntValidator;
+import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createIntValidator;
 
 import java.awt.Dimension;
 import java.util.Vector;
@@ -23,8 +23,8 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.AutocompleteInputDialog;
-import log.charter.gui.components.ParamsPane;
+import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.simple.AutocompleteInputForPane;
 import log.charter.song.Arrangement;
 import log.charter.song.EventPoint;
 import log.charter.song.EventType;
@@ -64,7 +64,7 @@ public class GuitarEventPointPane extends ParamsPane {
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
-	private AutocompleteInputDialog<String> phraseNameInput;
+	private AutocompleteInputForPane<String> phraseNameInput;
 	private JTextField phraseLevelInput;
 	private JCheckBox phraseSoloInput;
 	private JTable eventsTable;
@@ -118,7 +118,7 @@ public class GuitarEventPointPane extends ParamsPane {
 
 	private void preparePhraseInputs(final AtomicInteger row, final String phrase) {
 		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_PHRASE_NAME);
-		phraseNameInput = new AutocompleteInputDialog<>(this, 100, phrase, this::getPossiblePhraseNames, s -> s,
+		phraseNameInput = new AutocompleteInputForPane<>(this, 100, phrase, this::getPossiblePhraseNames, s -> s,
 				this::onPhraseNameSelected);
 		this.add(phraseNameInput, 100, getY(row.getAndIncrement()), 100, 20);
 

@@ -1,4 +1,4 @@
-package log.charter.gui.components;
+package log.charter.gui.components.chordTemplatePane;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +15,7 @@ import javax.swing.border.LineBorder;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.components.containers.ParamsPane;
 import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.chordRecognition.ChordNameSuggester;
