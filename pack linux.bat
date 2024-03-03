@@ -8,3 +8,4 @@ RMDIR "rubberband-3.1.2-gpl-executable-macos" /S /Q
 CD ../../
 tar.exe -a -cf "Charter - Linux.zip" "Charter - Linux"
 move "Charter - Linux.zip" ../
+cd ../

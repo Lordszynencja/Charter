@@ -1,0 +1,8 @@
+call "build windows.bat"
+call "pack windows.bat"
+call "build linux.bat"
+call "pack linux.bat"
+call "build mac.bat"
+call "pack mac.bat"
+call "build mac arm.bat"
+call "pack mac arm.bat"
