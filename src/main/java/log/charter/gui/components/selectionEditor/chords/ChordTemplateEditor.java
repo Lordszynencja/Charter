@@ -244,9 +244,9 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	}
 
 	private String formatChordTemplateName(final ChordTemplate template) {
-		final String id = ("%" + chordIdWidth + "d")
+		final String id = ("%" + max(1, chordIdWidth) + "d")
 				.formatted(data.getCurrentArrangement().chordTemplates.indexOf(template));
-		final String name = ("%-" + chordNameWidth + "s").formatted(template.name());
+		final String name = ("%-" + max(1, chordNameWidth) + "s").formatted(template.name());
 		final String frets = template.getTemplateFrets(data.currentStrings(), chordFretsWidth);
 		final String fingers = template.getTemplateFingers(data.currentStrings());
 		final String format = "[%s] %s (%s) {%s}";

@@ -9,8 +9,8 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.handlers.mouseAndKeyboard.Action;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
+import log.charter.gui.handlers.Action;
+import log.charter.gui.handlers.ActionHandler;
 import log.charter.gui.panes.songSettings.ArrangementSettingsPane;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.Arrangement;
@@ -19,17 +19,16 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 	private ChartData data;
 	private CharterFrame frame;
 	private CharterMenuBar charterMenuBar;
-	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 
-	public void init(final ChartData data, final CharterFrame frame, final CharterMenuBar charterMenuBar,
-			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+	public void init(final ActionHandler actionHandler, final ChartData data, final CharterFrame frame,
+			final CharterMenuBar charterMenuBar, final ModeManager modeManager,
 			final SelectionManager selectionManager) {
+		super.init(actionHandler);
 		this.data = data;
 		this.frame = frame;
 		this.charterMenuBar = charterMenuBar;
-		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
 	}
@@ -74,10 +73,10 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		}
 
 		menu.addSeparator();
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_MIDI));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_CLAPS));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_METRONOME));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_WAVEFORM_GRAPH));
+		menu.add(createItem(Action.TOGGLE_MIDI));
+		menu.add(createItem(Action.TOGGLE_CLAPS));
+		menu.add(createItem(Action.TOGGLE_METRONOME));
+		menu.add(createItem(Action.TOGGLE_WAVEFORM_GRAPH));
 
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();

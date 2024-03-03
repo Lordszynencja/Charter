@@ -3,6 +3,7 @@ package log.charter.gui;
 import static log.charter.data.config.Config.windowExtendedState;
 import static log.charter.data.config.Config.windowHeight;
 import static log.charter.data.config.Config.windowWidth;
+import static log.charter.gui.components.utils.ComponentUtils.askYesNoCancel;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -42,6 +43,8 @@ import log.charter.gui.components.preview3D.Preview3DPanel;
 import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.simple.ChartMap;
 import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
+import log.charter.gui.handlers.ActionHandler;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.CharterFrameComponentListener;
 import log.charter.gui.handlers.CharterFrameWindowFocusListener;
@@ -76,6 +79,7 @@ public class CharterFrame extends JFrame {
 	private final Preview3DFrame windowedPreviewFrame = new Preview3DFrame();
 	private final Preview3DPanel windowedPreview3DPanel = new Preview3DPanel();
 
+	private final ActionHandler actionHandler = new ActionHandler();
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
 	private final ArrangementValidator arrangementValidator = new ArrangementValidator();
 	private final AudioHandler audioHandler = new AudioHandler();
@@ -125,6 +129,9 @@ public class CharterFrame extends JFrame {
 		setLocation(Config.windowPosX, Config.windowPosY);
 		setExtendedState(windowExtendedState);
 
+		actionHandler.init(audioHandler, arrangementFixer, chartTimeHandler, chartToolbar, copyManager, data, null,
+				modeManager, mouseHandler, repeatManager, selectionManager, songFileHandler, undoSystem,
+				waveFormDrawer);
 		arrangementFixer.init(chartTimeHandler, data);
 		arrangementValidator.init(chartTimeHandler, data, this, modeManager);
 		audioHandler.init(chartTimeHandler, chartToolbar, data, this, modeManager, projectAudioHandler, repeatManager);
@@ -132,9 +139,7 @@ public class CharterFrame extends JFrame {
 		chartTimeHandler.init(data, modeManager, projectAudioHandler);
 		copyManager.init(chartTimeHandler, data, this, modeManager, selectionManager, undoSystem);
 		data.init(this, audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
-		keyboardHandler.init(waveFormDrawer, audioHandler, arrangementFixer, chartTimeHandler, chartToolbar,
-				copyManager, data, this, framer, modeManager, mouseHandler, projectAudioHandler, repeatManager,
-				selectionManager, songFileHandler, undoSystem);
+		keyboardHandler.init(actionHandler, chartTimeHandler, framer, modeManager);
 		highlightManager.init(chartTimeHandler, data, modeManager, selectionManager);
 		modeManager.init(audioHandler, charterMenuBar, chartTimeHandler, chartToolbar, currentSelectionEditor, data,
 				this, highlightManager, keyboardHandler, selectionManager, undoSystem);
@@ -149,9 +154,9 @@ public class CharterFrame extends JFrame {
 		undoSystem.init(chartTimeHandler, data, modeManager, selectionManager);
 		waveFormDrawer.init(chartPanel, chartToolbar, modeManager, projectAudioHandler);
 
-		charterMenuBar.init(arrangementFixer, audioHandler, chartTimeHandler, chartToolbar, copyManager, data, this,
-				framer, keyboardHandler, modeManager, projectAudioHandler, selectionManager, songFileHandler,
-				undoSystem, waveFormDrawer);
+		charterMenuBar.init(actionHandler, arrangementFixer, audioHandler, chartTimeHandler, chartToolbar, copyManager,
+				data, this, framer, modeManager, projectAudioHandler, selectionManager, songFileHandler, undoSystem,
+				waveFormDrawer);
 		chartToolbar.init(audioHandler, keyboardHandler, modeManager, repeatManager, waveFormDrawer);
 		chartPanel.init(beatsDrawer, chartTimeHandler, data, highlightManager, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager, waveFormDrawer);
@@ -172,8 +177,6 @@ public class CharterFrame extends JFrame {
 		addKeyListener(keyboardHandler);
 		addWindowFocusListener(new CharterFrameWindowFocusListener(keyboardHandler));
 		addWindowListener(new CharterFrameWindowListener(this));
-
-		setGuitarHelp();
 
 		validate();
 		setVisible(true);
@@ -239,6 +242,7 @@ public class CharterFrame extends JFrame {
 
 	private void frame() {
 		try {
+			actionHandler.frame();
 			keyboardHandler.frame();
 			repeatManager.frame();
 			updateTitle();
@@ -285,7 +289,7 @@ public class CharterFrame extends JFrame {
 		textArea.setCaretColor(ColorLabel.BASE_TEXT.color());
 
 		final JTabbedPane tabs = new JTabbedPane(JTabbedPane.TOP);
-		tabs.setUI(new CharterTabbedPaneUI()); // added
+		tabs.setUI(new CharterTabbedPaneUI());
 
 		tabs.addTab("Quick Edit", new JScrollPane(currentSelectionEditor));
 		tabs.addTab("Help", helpLabel);
@@ -295,33 +299,21 @@ public class CharterFrame extends JFrame {
 		return tabs;
 	}
 
-	public void setGuitarHelp() {
-		helpLabel.setText("<html>TEST BUILD<br>"//
-				+ "</html>");
-	}
-
-	public void setLyricsHelp() {
-		helpLabel.setText("<html>TEST BUILD</html>");
-	}
-
 	public boolean checkChanged() {
 		if (undoSystem.isSaved()) {
 			return true;
 		}
 
-		final int result = JOptionPane.showConfirmDialog(this, Label.UNSAVED_CHANGES_MESSAGE.label(),
-				Label.UNSAVED_CHANGES_POPUP.label(), JOptionPane.YES_NO_CANCEL_OPTION);
+		final ConfirmAnswer answer = askYesNoCancel(this, Label.UNSAVED_CHANGES_POPUP, Label.UNSAVED_CHANGES_MESSAGE);
 
-		if (result == JOptionPane.YES_OPTION) {
-			songFileHandler.save();
-			return true;
+		switch (answer) {
+			case YES:
+				songFileHandler.save();
+			case NO:
+				return true;
+			default:
+				return false;
 		}
-
-		if (result == JOptionPane.NO_OPTION) {
-			return true;
-		}
-
-		return false;
 	}
 
 	public void showPopup(final String msg) {

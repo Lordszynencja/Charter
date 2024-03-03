@@ -153,8 +153,38 @@ public class Localization {
 		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_FULL_MUTE("Full mute chord"), //
 		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_PALM_MUTE("Palm mute chord"), //
 
-		STRETCH_PANE("Custom music stretch"), //
-		STRETCH_PANE_VALUE("Song speed (%)"), //
+		FRET_0("Fret 0"), //
+		FRET_1("Fret 1"), //
+		FRET_2("Fret 2"), //
+		FRET_3("Fret 3"), //
+		FRET_4("Fret 4"), //
+		FRET_5("Fret 5"), //
+		FRET_6("Fret 6"), //
+		FRET_7("Fret 7"), //
+		FRET_8("Fret 8"), //
+		FRET_9("Fret 9"), //
+
+		MARK_BOOKMARK_0("Mark bookmark 0"), //
+		MARK_BOOKMARK_1("Mark bookmark 1"), //
+		MARK_BOOKMARK_2("Mark bookmark 2"), //
+		MARK_BOOKMARK_3("Mark bookmark 3"), //
+		MARK_BOOKMARK_4("Mark bookmark 4"), //
+		MARK_BOOKMARK_5("Mark bookmark 5"), //
+		MARK_BOOKMARK_6("Mark bookmark 6"), //
+		MARK_BOOKMARK_7("Mark bookmark 7"), //
+		MARK_BOOKMARK_8("Mark bookmark 8"), //
+		MARK_BOOKMARK_9("Mark bookmark 9"), //
+
+		MOVE_TO_BOOKMARK_0("Move to bookmark 0"), //
+		MOVE_TO_BOOKMARK_1("Move to bookmark 1"), //
+		MOVE_TO_BOOKMARK_2("Move to bookmark 2"), //
+		MOVE_TO_BOOKMARK_3("Move to bookmark 3"), //
+		MOVE_TO_BOOKMARK_4("Move to bookmark 4"), //
+		MOVE_TO_BOOKMARK_5("Move to bookmark 5"), //
+		MOVE_TO_BOOKMARK_6("Move to bookmark 6"), //
+		MOVE_TO_BOOKMARK_7("Move to bookmark 7"), //
+		MOVE_TO_BOOKMARK_8("Move to bookmark 8"), //
+		MOVE_TO_BOOKMARK_9("Move to bookmark 9"), //
 
 		EDIT_MENU("Edit"), //
 		UNDO("Undo"), //
@@ -207,6 +237,7 @@ public class Localization {
 		MOVE_STRING_DOWN_SIMPLE("Move notes string down keeping the frets"), //
 		MOVE_FRET_UP("Move notes one fret up"), //
 		MOVE_FRET_DOWN("Move notes one fret down"), //
+		NOTE_FRET_OPERATIONS("Note fret operations"), //
 		NOTE_STATUS_OPERATIONS("Note status operations"), //
 		TOGGLE_MUTE("Toggle mutes"), //
 		TOGGLE_MUTE_INDEPENDENTLY("Toggle mutes independently"), //
@@ -426,6 +457,8 @@ public class Localization {
 		UNSAVED_CHANGES_POPUP("Unsaved changes"), //
 		UNSAVED_CHANGES_MESSAGE("You have unsaved changes. Do you want to save?"), //
 		UNSUPPORTED_FILE_TYPE("This file type is not supported"), //
+		USE_EXISTING_TEMPO_MAP_MESSAGE("Do you want to use the tempo map from the imported project?"), //
+		GP5_USE_EXISTING_TEMPO_MAP_TITLE("GP5 import tempo map"), //
 		VALUE_CANT_BE_EMPTY("Value must not be empty"), //
 		VALUE_MUST_BE_GE("Value must be greater or equal to %s"), //
 		VALUE_MUST_BE_LE("Value must be lesser or equal to %s"), //

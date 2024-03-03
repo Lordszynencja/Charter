@@ -5,15 +5,14 @@ import javax.swing.JMenu;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
-import log.charter.gui.handlers.mouseAndKeyboard.Action;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
+import log.charter.gui.handlers.Action;
+import log.charter.gui.handlers.ActionHandler;
 
 class NotesMenuHandler extends CharterMenuHandler {
-	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 
-	public void init(final KeyboardHandler keyboardHandler, final ModeManager modeManager) {
-		this.keyboardHandler = keyboardHandler;
+	public void init(final ActionHandler actionHandler, final ModeManager modeManager) {
+		super.init(actionHandler);
 		this.modeManager = modeManager;
 	}
 
@@ -25,24 +24,24 @@ class NotesMenuHandler extends CharterMenuHandler {
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.NOTES_MENU);
-		menu.add(createItem(keyboardHandler, Action.SNAP_SELECTED));
-		menu.add(createItem(keyboardHandler, Action.SNAP_ALL));
-		menu.add(createItem(keyboardHandler, Action.DOUBLE_GRID));
-		menu.add(createItem(keyboardHandler, Action.HALVE_GRID));
+		menu.add(createItem(Action.SNAP_SELECTED));
+		menu.add(createItem(Action.SNAP_ALL));
+		menu.add(createItem(Action.DOUBLE_GRID));
+		menu.add(createItem(Action.HALVE_GRID));
 
 		menu.addSeparator();
-		menu.add(createItem(keyboardHandler, Action.PREVIOUS_ITEM));
-		menu.add(createItem(keyboardHandler, Action.PREVIOUS_GRID));
-		menu.add(createItem(keyboardHandler, Action.PREVIOUS_BEAT));
-		menu.add(createItem(keyboardHandler, Action.NEXT_ITEM));
-		menu.add(createItem(keyboardHandler, Action.NEXT_GRID));
-		menu.add(createItem(keyboardHandler, Action.NEXT_BEAT));
+		menu.add(createItem(Action.PREVIOUS_ITEM));
+		menu.add(createItem(Action.PREVIOUS_GRID));
+		menu.add(createItem(Action.PREVIOUS_BEAT));
+		menu.add(createItem(Action.NEXT_ITEM));
+		menu.add(createItem(Action.NEXT_GRID));
+		menu.add(createItem(Action.NEXT_BEAT));
 
 		menu.addSeparator();
-		menu.add(createItem(keyboardHandler, Action.MOVE_TO_START));
-		menu.add(createItem(keyboardHandler, Action.MOVE_TO_END));
-		menu.add(createItem(keyboardHandler, Action.MOVE_TO_FIRST_ITEM));
-		menu.add(createItem(keyboardHandler, Action.MOVE_TO_LAST_ITEM));
+		menu.add(createItem(Action.MOVE_TO_START));
+		menu.add(createItem(Action.MOVE_TO_END));
+		menu.add(createItem(Action.MOVE_TO_FIRST_ITEM));
+		menu.add(createItem(Action.MOVE_TO_LAST_ITEM));
 
 		return menu;
 	}

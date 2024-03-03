@@ -17,8 +17,8 @@ public class ChartTimeHandler {
 	private ModeManager modeManager;
 	private ProjectAudioHandler projectAudioHandler;
 
-	private int time = 0;
-	private int nextTime = 0;
+	private double time = 0;
+	private double nextTime = 0;
 
 	public void init(final ChartData data, final ModeManager modeManager,
 			final ProjectAudioHandler projectAudioHandler) {
@@ -27,16 +27,20 @@ public class ChartTimeHandler {
 		this.projectAudioHandler = projectAudioHandler;
 	}
 
-	public int nextTime() {
+	public double nextTime() {
 		return nextTime;
 	}
 
-	public void setNextTime(final int t) {
+	public void setNextTime(final double t) {
 		nextTime = max(0, min(audioLength(), t));
 	}
 
-	public int time() {
+	public double preciseTime() {
 		return time;
+	}
+
+	public int time() {
+		return (int) time;
 	}
 
 	public int audioLength() {
@@ -57,9 +61,9 @@ public class ChartTimeHandler {
 	}
 
 	private int getPrevious(final List<? extends IConstantPosition> positions) {
-		final IConstantPosition position = findLastBefore(positions, time);
+		final IConstantPosition position = findLastBefore(positions, time());
 		if (position == null) {
-			return time;
+			return time();
 		}
 
 		return position.position();
@@ -74,7 +78,7 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToPreviousGrid() {
-		setNextTime(data.songChart.beatsMap.getPositionWithRemovedGrid(time, 1));
+		setNextTime(data.songChart.beatsMap.getPositionWithRemovedGrid(time(), 1));
 	}
 
 	public void moveToPreviousItem() {
@@ -91,9 +95,9 @@ public class ChartTimeHandler {
 	}
 
 	private int getNext(final ArrayList2<? extends IConstantPosition> positions) {
-		final IConstantPosition position = findFirstAfter(positions, time);
+		final IConstantPosition position = findFirstAfter(positions, time());
 		if (position == null) {
-			return time;
+			return time();
 		}
 
 		return position.position();
@@ -108,7 +112,7 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToNextGrid() {
-		setNextTime(data.songChart.beatsMap.getPositionWithAddedGrid(time, 1));
+		setNextTime(data.songChart.beatsMap.getPositionWithAddedGrid(time(), 1));
 	}
 
 	public void moveToNextItem() {

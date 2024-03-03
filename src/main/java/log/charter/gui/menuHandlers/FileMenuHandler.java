@@ -1,5 +1,6 @@
 package log.charter.gui.menuHandlers;
 
+import static log.charter.gui.components.utils.ComponentUtils.askYesNo;
 import static log.charter.io.gp.gp5.transformers.GP5BarOrderExtractor.getBarsOrder;
 import static log.charter.io.gp.gp5.transformers.GP5FileTempoMapExtractor.getTempoMap;
 
@@ -7,7 +8,6 @@ import java.io.File;
 import java.util.List;
 
 import javax.swing.JMenu;
-import javax.swing.JOptionPane;
 
 import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
@@ -17,10 +17,10 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
+import log.charter.gui.handlers.Action;
+import log.charter.gui.handlers.ActionHandler;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.handlers.data.ChartTimeHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.Action;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.panes.ConfigPane;
 import log.charter.gui.panes.ShortcutConfigPane;
 import log.charter.gui.panes.colorConfig.ColorConfigPane;
@@ -42,20 +42,19 @@ public class FileMenuHandler extends CharterMenuHandler {
 	private CharterFrame frame;
 	private Framer framer;
 	private CharterMenuBar charterMenuBar;
-	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 	private SongFileHandler songFileHandler;
 
-	public void init(final ArrangementFixer arrangementFixer, final ChartTimeHandler chartTimeHandler,
-			final ChartData data, final CharterFrame frame, final Framer framer, final CharterMenuBar charterMenuBar,
-			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+	public void init(final ActionHandler actionHandler, final ArrangementFixer arrangementFixer,
+			final ChartTimeHandler chartTimeHandler, final ChartData data, final CharterFrame frame,
+			final Framer framer, final CharterMenuBar charterMenuBar, final ModeManager modeManager,
 			final SongFileHandler songFileHandler) {
+		super.init(actionHandler);
 		this.arrangementFixer = arrangementFixer;
 		this.data = data;
 		this.frame = frame;
 		this.framer = framer;
 		this.charterMenuBar = charterMenuBar;
-		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
 		this.songFileHandler = songFileHandler;
 	}
@@ -68,8 +67,8 @@ public class FileMenuHandler extends CharterMenuHandler {
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.FILE_MENU);
-		menu.add(createItem(keyboardHandler, Action.NEW_PROJECT));
-		menu.add(createItem(keyboardHandler, Action.OPEN_PROJECT));
+		menu.add(createItem(Action.NEW_PROJECT));
+		menu.add(createItem(Action.OPEN_PROJECT));
 		menu.add(createItem(Label.MAKE_PROJECT_FROM_RS_XML, songFileHandler::openSongWithImportFromArrangementXML));
 
 		if (modeManager.getMode() != EditMode.EMPTY) {
@@ -84,8 +83,8 @@ public class FileMenuHandler extends CharterMenuHandler {
 			menu.add(importSubmenu);
 
 			menu.addSeparator();
-			menu.add(createItem(keyboardHandler, Action.SAVE));
-			menu.add(createItem(keyboardHandler, Action.SAVE_AS));
+			menu.add(createItem(Action.SAVE));
+			menu.add(createItem(Action.SAVE_AS));
 		}
 
 		menu.addSeparator();
@@ -95,7 +94,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Label.FILE_MENU_COLOR_OPTIONS, () -> new ColorConfigPane(frame)));
 
 		menu.addSeparator();
-		menu.add(createItem(keyboardHandler, Action.EXIT));
+		menu.add(createItem(Action.EXIT));
 
 		return menu;
 	}
@@ -109,10 +108,10 @@ public class FileMenuHandler extends CharterMenuHandler {
 	}
 
 	private boolean askUserAboutUsingExistingTempoMap() {
-		final int result = JOptionPane.showConfirmDialog(frame,
-				"Do you want to use the tempo map from the imported project?", "GP5 import tempo map",
-				JOptionPane.YES_NO_OPTION);
-		return JOptionPane.NO_OPTION == result; // when no is selected, use existing tempo map
+		return switch (askYesNo(frame, Label.GP5_USE_EXISTING_TEMPO_MAP_TITLE, Label.USE_EXISTING_TEMPO_MAP_MESSAGE)) {
+			case YES -> true;
+			default -> false;
+		};
 	}
 
 	private void importGPFile() {

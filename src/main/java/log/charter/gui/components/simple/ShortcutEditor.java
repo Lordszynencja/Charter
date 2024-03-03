@@ -10,7 +10,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JButton;
 import javax.swing.KeyStroke;
 
-import log.charter.gui.handlers.mouseAndKeyboard.Action;
+import log.charter.gui.handlers.Action;
 import log.charter.gui.handlers.mouseAndKeyboard.Shortcut;
 import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
 

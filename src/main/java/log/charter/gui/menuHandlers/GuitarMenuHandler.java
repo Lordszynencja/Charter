@@ -15,8 +15,8 @@ import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.handlers.mouseAndKeyboard.Action;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
+import log.charter.gui.handlers.Action;
+import log.charter.gui.handlers.ActionHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.song.Level;
 import log.charter.song.notes.ChordOrNote;
@@ -25,15 +25,14 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 class GuitarMenuHandler extends CharterMenuHandler {
 	private ChartData data;
-	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData data, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+	public void init(final ActionHandler actionHandler, final ChartData data, final ModeManager modeManager,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+		super.init(actionHandler);
 		this.data = data;
-		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
@@ -47,40 +46,53 @@ class GuitarMenuHandler extends CharterMenuHandler {
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.GUITAR_MENU);
-		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_UP));
-		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_DOWN));
-		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_UP_SIMPLE));
-		menu.add(createItem(keyboardHandler, Action.MOVE_STRING_DOWN_SIMPLE));
-		menu.add(createItem(keyboardHandler, Action.MOVE_FRET_UP));
-		menu.add(createItem(keyboardHandler, Action.MOVE_FRET_DOWN));
+		menu.add(createItem(Action.MOVE_STRING_UP));
+		menu.add(createItem(Action.MOVE_STRING_DOWN));
+		menu.add(createItem(Action.MOVE_STRING_UP_SIMPLE));
+		menu.add(createItem(Action.MOVE_STRING_DOWN_SIMPLE));
+		menu.add(createItem(Action.MOVE_FRET_UP));
+		menu.add(createItem(Action.MOVE_FRET_DOWN));
+		menu.addSeparator();
+		final JMenu noteFretOperationsSubMenu = createMenu(Label.NOTE_FRET_OPERATIONS);
+		noteFretOperationsSubMenu.add(createItem(Action.FRET_0));
+		noteFretOperationsSubMenu.add(createItem(Action.FRET_1));
+		noteFretOperationsSubMenu.add(createItem(Action.FRET_2));
+		noteFretOperationsSubMenu.add(createItem(Action.FRET_3));
+		noteFretOperationsSubMenu.add(createItem(Action.FRET_4));
+		noteFretOperationsSubMenu.add(createItem(Action.FRET_5));
+		noteFretOperationsSubMenu.add(createItem(Action.FRET_6));
+		noteFretOperationsSubMenu.add(createItem(Action.FRET_7));
+		noteFretOperationsSubMenu.add(createItem(Action.FRET_8));
+		noteFretOperationsSubMenu.add(createItem(Action.FRET_9));
+		menu.add(noteFretOperationsSubMenu);
 
 		menu.addSeparator();
 		final JMenu noteStatusOperationsSubMenu = createMenu(Label.NOTE_STATUS_OPERATIONS);
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_MUTE));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_MUTE_INDEPENDENTLY));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_HOPO));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_HOPO_INDEPENDENTLY));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_HARMONIC));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_HARMONIC_INDEPENDENTLY));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_ACCENT));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_ACCENT_INDEPENDENTLY));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_VIBRATO));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_VIBRATO_INDEPENDENTLY));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_TREMOLO));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_TREMOLO_INDEPENDENTLY));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_LINK_NEXT));
-		noteStatusOperationsSubMenu.add(createItem(keyboardHandler, Action.TOGGLE_LINK_NEXT_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_MUTE));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_MUTE_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HOPO));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HOPO_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HARMONIC));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HARMONIC_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_VIBRATO));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_VIBRATO_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_TREMOLO));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_TREMOLO_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_LINK_NEXT));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_LINK_NEXT_INDEPENDENTLY));
 		menu.add(noteStatusOperationsSubMenu);
 
 		menu.addSeparator();
-		menu.add(createItem(keyboardHandler, Action.MARK_HAND_SHAPE));
+		menu.add(createItem(Action.MARK_HAND_SHAPE));
 
 		menu.addSeparator();
 		menu.add(createItem(Label.GUITAR_MENU_AUTOCREATE_FHP, this::addFHP));
 
 		menu.addSeparator();
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_PREVIEW_WINDOW));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW));
+		menu.add(createItem(Action.TOGGLE_PREVIEW_WINDOW));
+		menu.add(createItem(Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW));
 
 		return menu;
 	}

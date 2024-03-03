@@ -279,26 +279,32 @@ public class SongFileHandler {
 	}
 
 	public File chooseSongFolder(final String audioFileDirectory, final String defaultFolderName) {
-		final SongFolderSelectPane songFolderSelectPane = new SongFolderSelectPane(frame, Config.songsPath,
-				audioFileDirectory, defaultFolderName);
+		File songFolder = null;
 
-		if (songFolderSelectPane.isAudioFolderChosen()) {
-			return new File(audioFileDirectory);
-		}
+		while (songFolder == null) {
+			final SongFolderSelectPane songFolderSelectPane = new SongFolderSelectPane(frame, Config.songsPath,
+					audioFileDirectory, defaultFolderName);
+			songFolderSelectPane.setVisible(true);
 
-		String folderName = songFolderSelectPane.getFolderName();
-		if (folderName == null || folderName.isBlank()) {
-			return null;
-		}
+			if (songFolderSelectPane.isAudioFolderChosen()) {
+				return new File(audioFileDirectory);
+			}
 
-		File songFolder = new File(Config.songsPath, folderName);
-		while (songFolder.exists()) {
-			folderName = frame.showInputDialog(Label.FOLDER_EXISTS_CHOOSE_DIFFERENT.label(), folderName);
-			if (folderName == null) {
+			String folderName = songFolderSelectPane.getFolderName();
+			if (folderName == null || folderName.isBlank()) {
 				return null;
 			}
 
 			songFolder = new File(Config.songsPath, folderName);
+
+			if (songFolder.exists()) {
+				folderName = frame.showInputDialog(Label.FOLDER_EXISTS_CHOOSE_DIFFERENT.label(), folderName);
+				if (folderName == null) {
+					return null;
+				}
+
+				songFolder = new File(Config.songsPath, folderName);
+			}
 		}
 		songFolder.mkdir();
 

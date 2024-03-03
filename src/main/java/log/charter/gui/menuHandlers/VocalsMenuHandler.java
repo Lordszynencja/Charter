@@ -5,15 +5,14 @@ import javax.swing.JMenu;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
-import log.charter.gui.handlers.mouseAndKeyboard.Action;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
+import log.charter.gui.handlers.Action;
+import log.charter.gui.handlers.ActionHandler;
 
 class VocalsMenuHandler extends CharterMenuHandler {
-	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 
-	public void init(final KeyboardHandler keyboardHandler, final ModeManager modeManager) {
-		this.keyboardHandler = keyboardHandler;
+	public void init(final ActionHandler actionHandler, final ModeManager modeManager) {
+		super.init(actionHandler);
 		this.modeManager = modeManager;
 	}
 
@@ -25,9 +24,9 @@ class VocalsMenuHandler extends CharterMenuHandler {
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.VOCALS_MENU);
-		menu.add(createItem(keyboardHandler, Action.EDIT_VOCALS));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_WORD_PART));
-		menu.add(createItem(keyboardHandler, Action.TOGGLE_PHRASE_END));
+		menu.add(createItem(Action.EDIT_VOCALS));
+		menu.add(createItem(Action.TOGGLE_WORD_PART));
+		menu.add(createItem(Action.TOGGLE_PHRASE_END));
 
 		return menu;
 	}

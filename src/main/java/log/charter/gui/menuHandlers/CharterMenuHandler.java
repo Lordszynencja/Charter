@@ -6,11 +6,12 @@ import javax.swing.JMenuItem;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.simple.SpecialMenuItem;
-import log.charter.gui.handlers.mouseAndKeyboard.Action;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
+import log.charter.gui.handlers.Action;
+import log.charter.gui.handlers.ActionHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
 
 abstract class CharterMenuHandler {
+
 	private static void setDefaultColors(final JComponent component) {
 		component.setBackground(CharterMenuBar.backgroundColor.color());
 	}
@@ -32,10 +33,16 @@ abstract class CharterMenuHandler {
 		return item;
 	}
 
-	protected static JMenuItem createItem(final KeyboardHandler keyboardHandler, final Action action) {
+	protected ActionHandler actionHandler;
+
+	protected void init(final ActionHandler actionHandler) {
+		this.actionHandler = actionHandler;
+	}
+
+	protected JMenuItem createItem(final Action action) {
 		final Label label = action.label;
 		final String shortcutName = ShortcutConfig.getShortcut(action).name("-");
-		final JMenuItem item = new SpecialMenuItem(label, shortcutName, () -> keyboardHandler.fireAction(action));
+		final JMenuItem item = new SpecialMenuItem(label, shortcutName, () -> actionHandler.fireAction(action));
 		setDefaultColors(item);
 		return item;
 	}

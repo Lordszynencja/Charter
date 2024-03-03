@@ -66,7 +66,7 @@ public class SongFolderSelectPane extends ParamsPane {
 			folderName = null;
 
 			return true;
-		});
+		}, false);
 	}
 
 	public boolean isAudioFolderChosen() {

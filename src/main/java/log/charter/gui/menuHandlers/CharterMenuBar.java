@@ -18,11 +18,11 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.gui.handlers.ActionHandler;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.data.ProjectAudioHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class CharterMenuBar extends JMenuBar {
@@ -49,22 +49,22 @@ public class CharterMenuBar extends JMenuBar {
 			guitarMenuHandler, //
 			infoMenuHandler);
 
-	public void init(final ArrangementFixer arrangementFixer, final AudioHandler audioHandler,
-			final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar, final CopyManager copyManager,
-			final ChartData data, final CharterFrame frame, final Framer framer, final KeyboardHandler keyboardHandler,
+	public void init(final ActionHandler actionHandler, final ArrangementFixer arrangementFixer,
+			final AudioHandler audioHandler, final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar,
+			final CopyManager copyManager, final ChartData data, final CharterFrame frame, final Framer framer,
 			final ModeManager modeManager, final ProjectAudioHandler projectAudioHandler,
 			final SelectionManager selectionManager, final SongFileHandler songFileHandler, final UndoSystem undoSystem,
 			final WaveFormDrawer waveFormDrawer) {
-		arrangementMenuHandler.init(data, frame, this, keyboardHandler, modeManager, selectionManager);
-		editMenuHandler.init(chartTimeHandler, data, frame, keyboardHandler, modeManager, projectAudioHandler,
+		arrangementMenuHandler.init(actionHandler, data, frame, this, modeManager, selectionManager);
+		editMenuHandler.init(actionHandler, chartTimeHandler, data, frame, modeManager, projectAudioHandler,
 				undoSystem);
-		fileMenuHandler.init(arrangementFixer, chartTimeHandler, data, frame, framer, this, keyboardHandler,
-				modeManager, songFileHandler);
-		guitarMenuHandler.init(data, keyboardHandler, modeManager, selectionManager, undoSystem);
+		fileMenuHandler.init(actionHandler, arrangementFixer, chartTimeHandler, data, frame, framer, this, modeManager,
+				songFileHandler);
+		guitarMenuHandler.init(actionHandler, data, modeManager, selectionManager, undoSystem);
 		infoMenuHandler.init(frame, this);
-		musicMenuHandler.init(data, keyboardHandler);
-		notesMenuHandler.init(keyboardHandler, modeManager);
-		vocalsMenuHandler.init(keyboardHandler, modeManager);
+		musicMenuHandler.init(actionHandler, modeManager);
+		notesMenuHandler.init(actionHandler, modeManager);
+		vocalsMenuHandler.init(actionHandler, modeManager);
 
 		final Dimension size = new Dimension(100, 20);
 		setMinimumSize(size);
