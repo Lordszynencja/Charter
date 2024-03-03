@@ -271,6 +271,10 @@ public class BeatsMap {
 	}
 
 	public Beat getBeatSafe(final int beatId) {
+		if (beats.isEmpty()) {
+			return new Beat(0);
+		}
+
 		if (beatId < 0) {
 			return beats.get(0);
 		}

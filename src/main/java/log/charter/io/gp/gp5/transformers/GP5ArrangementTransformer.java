@@ -106,7 +106,9 @@ public class GP5ArrangementTransformer {
 	public static Arrangement makeArrangement(final BeatsMap beatsMap, final List<Integer> barsOrder,
 			final GPTrackData trackData, final List<GPBar> bars) {
 		final ArrangementType arrangementType = getGPArrangementType(trackData);
-		final Arrangement arrangement = new Arrangement(arrangementType, beatsMap.beats);
+		final int startPosition = beatsMap.getBeatSafe(0).position();
+		final int endPosition = beatsMap.getBeatSafe(beatsMap.beats.size() - 1).position();
+		final Arrangement arrangement = new Arrangement(arrangementType, startPosition, endPosition);
 
 		arrangement.capo = trackData.capo;
 		arrangement.tuning = getTuningFromGPTuning(trackData.tuning, arrangement.capo);

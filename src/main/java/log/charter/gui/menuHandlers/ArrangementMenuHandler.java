@@ -14,6 +14,7 @@ import log.charter.gui.handlers.ActionHandler;
 import log.charter.gui.panes.songSettings.ArrangementSettingsPane;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.Arrangement;
+import log.charter.song.BeatsMap;
 
 public class ArrangementMenuHandler extends CharterMenuHandler {
 	private ChartData data;
@@ -87,11 +88,15 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 	}
 
 	private void addArrangement() {
+		final BeatsMap beatsMap = data.songChart.beatsMap;
+
 		final int previousArrangement = data.currentArrangement;
 		final EditMode previousEditMode = modeManager.getMode();
 		final int previousDifficulty = data.currentLevel;
 		data.currentArrangement = data.songChart.arrangements.size();
-		data.songChart.arrangements.add(new Arrangement(ArrangementType.Lead, data.songChart.beatsMap.beats));
+		data.songChart.arrangements.add(new Arrangement(ArrangementType.Lead, //
+				beatsMap.getBeatSafe(0).position(), //
+				beatsMap.getBeatSafe(beatsMap.beats.size() - 1).position()));
 		modeManager.setArrangement(data.songChart.arrangements.size() - 1);
 
 		new ArrangementSettingsPane(charterMenuBar, data, frame, selectionManager, () -> {

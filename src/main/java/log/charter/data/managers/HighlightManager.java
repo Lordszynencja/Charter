@@ -9,7 +9,6 @@ import static log.charter.data.managers.PositionWithStringOrNoteId.fromNoteId;
 import static log.charter.data.managers.PositionWithStringOrNoteId.fromPosition;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.song.notes.IConstantPosition.findClosest;
-import static log.charter.song.notes.IConstantPosition.findClosestPosition;
 import static log.charter.song.notes.IConstantPosition.findFirstIdAfter;
 import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
 import static log.charter.util.ScalingUtils.timeToX;
@@ -130,14 +129,15 @@ public class HighlightManager {
 
 	private int snapPosition(final PositionType positionType, final int position) {
 		if (positionType == PositionType.BEAT) {
-			return findClosest(data.songChart.beatsMap.beats, position);
+			final Beat beat = findClosest(data.songChart.beatsMap.beats, position);
+			return beat == null ? position : beat.position();
 		}
 		if (positionType != PositionType.ANCHOR) {
 			return data.songChart.beatsMap.getPositionFromGridClosestTo(position);
 		}
 
 		final int closestGridPosition = data.songChart.beatsMap.getPositionFromGridClosestTo(position);
-		final ChordOrNote closestSound = findClosestPosition(data.getCurrentArrangementLevel().sounds, position);
+		final ChordOrNote closestSound = findClosest(data.getCurrentArrangementLevel().sounds, position);
 		if (closestSound == null) {
 			return closestGridPosition;
 		}

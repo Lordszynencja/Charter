@@ -59,13 +59,8 @@ public class ArrangementValidator {
 		final ArrayList2<EventPoint> countPhrases = arrangement.eventPoints.stream()//
 				.filter(eventPoint -> eventPoint.phrase != null && eventPoint.phrase.equals("COUNT"))//
 				.collect(Collectors.toCollection(ArrayList2::new));
-		if (countPhrases.isEmpty()) {
-			final boolean warningStoppedValidation = !showWarning(Label.COUNT_PHRASE_MISSING,
-					moveToTimeOnArrangement(arrangementId, 0));
-			if (warningStoppedValidation) {
-				return false;
-			}
-		} else if (countPhrases.size() > 1) {
+
+		if (countPhrases.size() > 1) {
 			final boolean warningStoppedValidation = !showWarning(Label.COUNT_PHRASE_MULTIPLE,
 					moveToTimeOnArrangement(arrangementId, countPhrases.getLast().position()));
 			if (warningStoppedValidation) {
@@ -80,13 +75,7 @@ public class ArrangementValidator {
 		final ArrayList2<EventPoint> endPhrases = arrangement.eventPoints.stream()//
 				.filter(eventPoint -> eventPoint.phrase != null && eventPoint.phrase.equals("END"))//
 				.collect(Collectors.toCollection(ArrayList2::new));
-		if (endPhrases.isEmpty()) {
-			final boolean warningStoppedValidation = !showWarning(Label.END_PHRASE_MISSING,
-					moveToTimeOnArrangement(arrangementId, data.songChart.beatsMap.beats.getLast().position()));
-			if (warningStoppedValidation) {
-				return false;
-			}
-		} else if (endPhrases.size() > 1) {
+		if (endPhrases.size() > 1) {
 			final boolean warningStoppedValidation = !showWarning(Label.END_PHRASE_MULTIPLE,
 					moveToTimeOnArrangement(arrangementId, endPhrases.get(0).position()));
 			if (warningStoppedValidation) {

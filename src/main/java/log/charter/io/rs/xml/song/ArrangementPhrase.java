@@ -10,16 +10,21 @@ public class ArrangementPhrase {
 	@XStreamAsAttribute
 	public String name;
 	@XStreamAsAttribute
-	public int maxDifficulty;
+	public int maxDifficulty = 0;
 	@XStreamAsAttribute
-	public Integer solo;
+	public Integer solo = null;
 
-	public ArrangementPhrase() {
+	public ArrangementPhrase(final String name) {
+		this.name = name;
+		maxDifficulty = 0;
+		solo = null;
 	}
 
 	public ArrangementPhrase(final String name, final Phrase phrase) {
 		this.name = name;
 		maxDifficulty = phrase.maxDifficulty;
-		solo = phrase.solo ? 1 : null;
+		if (phrase.solo) {
+			solo = 1;
+		}
 	}
 }

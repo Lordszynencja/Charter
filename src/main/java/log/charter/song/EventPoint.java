@@ -11,9 +11,9 @@ import log.charter.util.CollectionUtils.ArrayList2;
 @XStreamAlias("eventPoint")
 public class EventPoint extends Position {
 	@XStreamAsAttribute
-	public SectionType section;
+	public SectionType section = null;
 	@XStreamAsAttribute
-	public String phrase;
+	public String phrase = null;
 	@XStreamAsAttribute
 	@XStreamConverter(EventTypesList.class)
 	public ArrayList2<EventType> events = new ArrayList2<>();
@@ -41,5 +41,9 @@ public class EventPoint extends Position {
 			phrase = other.phrase;
 		}
 		events.addAll(other.events);
+	}
+
+	public boolean hasPhrase() {
+		return phrase != null;
 	}
 }

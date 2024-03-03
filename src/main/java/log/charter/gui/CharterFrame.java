@@ -129,7 +129,7 @@ public class CharterFrame extends JFrame {
 		setLocation(Config.windowPosX, Config.windowPosY);
 		setExtendedState(windowExtendedState);
 
-		actionHandler.init(audioHandler, arrangementFixer, chartTimeHandler, chartToolbar, copyManager, data, null,
+		actionHandler.init(audioHandler, arrangementFixer, data, this, chartTimeHandler, chartToolbar, copyManager,
 				modeManager, mouseHandler, repeatManager, selectionManager, songFileHandler, undoSystem,
 				waveFormDrawer);
 		arrangementFixer.init(chartTimeHandler, data);

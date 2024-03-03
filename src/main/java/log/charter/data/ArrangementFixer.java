@@ -211,15 +211,15 @@ public class ArrangementFixer {
 		fixLengths(level.handShapes);
 	}
 
-	private void removeChordTemplate(final Arrangement arrangementChart, final int removedId, final int replacementId) {
-		arrangementChart.chordTemplates.remove(removedId);
-		for (final Level level : arrangementChart.levels) {
+	private void removeChordTemplate(final Arrangement arrangement, final int removedId, final int replacementId) {
+		arrangement.chordTemplates.remove(removedId);
+		for (final Level level : arrangement.levels) {
 			for (final ChordOrNote chordOrNote : level.sounds) {
 				if (!chordOrNote.isChord() || chordOrNote.chord.templateId() != removedId) {
 					continue;
 				}
 
-				chordOrNote.chord.updateTemplate(replacementId, arrangementChart.chordTemplates.get(replacementId));
+				chordOrNote.chord.updateTemplate(replacementId, arrangement.chordTemplates.get(replacementId));
 			}
 			for (final HandShape handShape : level.handShapes) {
 				if (handShape.templateId != removedId) {
@@ -231,14 +231,14 @@ public class ArrangementFixer {
 		}
 	}
 
-	public void fixDuplicatedChordTemplates(final Arrangement arrangementChart) {
-		final List<ChordTemplate> templates = arrangementChart.chordTemplates;
+	public void fixDuplicatedChordTemplates(final Arrangement arrangement) {
+		final List<ChordTemplate> templates = arrangement.chordTemplates;
 		for (int i = 0; i < templates.size(); i++) {
 			final ChordTemplate template = templates.get(i);
 			for (int j = i + 1; j < templates.size(); j++) {
 				ChordTemplate otherTemplate = templates.get(j);
 				while (template.equals(otherTemplate) && j < templates.size()) {
-					removeChordTemplate(arrangementChart, j, i);
+					removeChordTemplate(arrangement, j, i);
 					if (j < templates.size()) {
 						otherTemplate = templates.get(j);
 					}
@@ -247,8 +247,8 @@ public class ArrangementFixer {
 		}
 	}
 
-	private boolean isTemplateUsed(final Arrangement arrangementChart, final int templateId) {
-		for (final Level level : arrangementChart.levels) {
+	private boolean isTemplateUsed(final Arrangement arrangement, final int templateId) {
+		for (final Level level : arrangement.levels) {
 			for (final ChordOrNote sound : level.sounds) {
 				if (sound.isChord() && sound.chord.templateId() == templateId) {
 					return true;
@@ -265,24 +265,24 @@ public class ArrangementFixer {
 		return false;
 	}
 
-	public void removeUnusedChordTemplates(final Arrangement arrangementChart) {
+	public void removeUnusedChordTemplates(final Arrangement arrangement) {
 		final Map<Integer, Integer> templateIdsMap = new HashMap<>();
 
-		final int templatesAmount = arrangementChart.chordTemplates.size();
+		final int templatesAmount = arrangement.chordTemplates.size();
 		int usedTemplatesCounter = 0;
 		for (int i = 0; i < templatesAmount; i++) {
-			if (isTemplateUsed(arrangementChart, i)) {
+			if (isTemplateUsed(arrangement, i)) {
 				templateIdsMap.put(i, usedTemplatesCounter++);
 			} else {
-				arrangementChart.chordTemplates.remove(usedTemplatesCounter);
+				arrangement.chordTemplates.remove(usedTemplatesCounter);
 			}
 		}
 
-		for (final Level level : arrangementChart.levels) {
+		for (final Level level : arrangement.levels) {
 			for (final ChordOrNote sound : level.sounds) {
 				if (sound.isChord()) {
 					final int newTemplateId = templateIdsMap.get(sound.chord.templateId());
-					final ChordTemplate template = arrangementChart.chordTemplates.get(newTemplateId);
+					final ChordTemplate template = arrangement.chordTemplates.get(newTemplateId);
 					sound.chord.updateTemplate(newTemplateId, template);
 				}
 			}
@@ -293,8 +293,8 @@ public class ArrangementFixer {
 		}
 	}
 
-	private void fixMissingFingersOnChordTemplates(final Arrangement arrangementChart) {
-		arrangementChart.chordTemplates.forEach(chordTemplate -> {
+	private void fixMissingFingersOnChordTemplates(final Arrangement arrangement) {
+		arrangement.chordTemplates.forEach(chordTemplate -> {
 			for (final int string : new HashSet<>(chordTemplate.fingers.keySet())) {
 				if (chordTemplate.fingers.get(string) == null) {
 					chordTemplate.fingers.remove(string);
@@ -307,6 +307,9 @@ public class ArrangementFixer {
 		final int start = data.songChart.beatsMap.beats.get(0).position();
 		final int end = chartTimeHandler.audioLength();
 
+		data.songChart.beatsMap.makeBeatsUntilSongEnd(end);
+		data.songChart.beatsMap.fixFirstBeatInMeasures();
+
 		for (final Arrangement arrangement : data.songChart.arrangements) {
 			removeWrongPositions(arrangement, start, end);
 			for (final Level level : arrangement.levels) {
@@ -318,7 +321,5 @@ public class ArrangementFixer {
 			fixMissingFingersOnChordTemplates(arrangement);
 		}
 
-		data.songChart.beatsMap.makeBeatsUntilSongEnd(end);
-		data.songChart.beatsMap.fixFirstBeatInMeasures();
 	}
 }

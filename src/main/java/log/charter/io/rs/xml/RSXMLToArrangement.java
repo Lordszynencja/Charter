@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toCollection;
 import java.util.Arrays;
 import java.util.List;
 
+import log.charter.io.rs.xml.song.ArrangementPhrase;
 import log.charter.io.rs.xml.song.ArrangementTone;
 import log.charter.io.rs.xml.song.ArrangementTuning;
 import log.charter.io.rs.xml.song.ArrangementType;
@@ -21,7 +22,9 @@ import log.charter.song.SectionType;
 import log.charter.song.ToneChange;
 import log.charter.song.configs.Tuning;
 import log.charter.song.configs.Tuning.TuningType;
+import log.charter.util.CollectionUtils;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.CollectionUtils.HashSet2;
 
 public class RSXMLToArrangement {
@@ -41,6 +44,15 @@ public class RSXMLToArrangement {
 		final TuningType tuningType = TuningType.fromTuning(tuning);
 
 		return new Tuning(tuningType, strings, tuning);
+	}
+
+	public static HashMap2<String, Phrase> getArrangementPhrases(final List<ArrangementPhrase> arrangementPhrases) {
+		return new HashMap2<>(CollectionUtils.toMap(arrangementPhrases, (map, arrangementPhrase) -> {
+			final String name = arrangementPhrase.name;
+			final int maxDifficulty = arrangementPhrase.maxDifficulty;
+			final boolean solo = arrangementPhrase.solo != null && arrangementPhrase.solo == 1;
+			map.put(name, new Phrase(maxDifficulty, solo));
+		}));
 	}
 
 	private static ArrayList2<ToneChange> getToneChanges(final List<ArrangementTone> arrangementTones) {
@@ -89,7 +101,7 @@ public class RSXMLToArrangement {
 					.findOrCreateArrangementEventsPoint(arrangementSection.startTime);
 			arrangementEventsPoint.section = findSectionByRSName(arrangementSection.name);
 		});
-		arrangement.phrases = Phrase.fromArrangementPhrases(arrangementData.phrases.list);
+		arrangement.phrases = getArrangementPhrases(arrangementData.phrases.list);
 		arrangementData.phraseIterations.list.forEach(arrangementPhraseIteration -> {
 			final EventPoint arrangementEventsPoint = arrangement
 					.findOrCreateArrangementEventsPoint(arrangementPhraseIteration.time);

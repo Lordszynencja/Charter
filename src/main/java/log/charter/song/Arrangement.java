@@ -1,6 +1,7 @@
 package log.charter.song;
 
-import static log.charter.song.notes.IConstantPosition.findClosestPosition;
+import static log.charter.song.notes.IConstantPosition.findClosest;
+import static log.charter.song.notes.IConstantPosition.findClosestId;
 
 import java.math.BigDecimal;
 import java.util.function.Predicate;
@@ -61,35 +62,13 @@ public class Arrangement {
 	public ArrayList2<ChordTemplate> chordTemplates = new ArrayList2<>();
 	public ArrayList2<Level> levels = new ArrayList2<>();
 
-	private void addCountEndPhrases(final ArrayList2<Beat> beats) {
-		phrases.put("COUNT", new Phrase(0, false));
-		phrases.put("END", new Phrase(0, false));
-
-		final EventPoint count = new EventPoint(beats.get(0).position());
-		count.phrase = "COUNT";
-		eventPoints.add(0, count);
-
-		final EventPoint end = new EventPoint(beats.getLast().position());
-		end.phrase = "END";
-		eventPoints.add(end);
-	}
-
 	public Arrangement() {
 		setLevel(0, new Level());
 	}
 
-	public Arrangement(final ArrayList2<Beat> beats) {
-		addCountEndPhrases(beats);
-		setLevel(0, new Level());
-	}
-
-	public Arrangement(final ArrangementType arrangementType) {
-		this.arrangementType = arrangementType;
-		setLevel(0, new Level());
-	}
-
-	public Arrangement(final ArrangementType arrangementType, final ArrayList2<Beat> beats) {
-		this(beats);
+	public Arrangement(final ArrangementType arrangementType, final int songStart, final int songEnd) {
+		setPhrase(songStart, "COUNT");
+		setPhrase(songEnd, "END");
 		this.arrangementType = arrangementType;
 		setLevel(0, new Level());
 	}
@@ -107,7 +86,7 @@ public class Arrangement {
 	}
 
 	public EventPoint findOrCreateArrangementEventsPoint(final int position) {
-		EventPoint arrangementEventsPoint = findClosestPosition(eventPoints, position);
+		EventPoint arrangementEventsPoint = findClosest(eventPoints, position);
 		if (arrangementEventsPoint == null || arrangementEventsPoint.position() != position) {
 			arrangementEventsPoint = new EventPoint(position);
 			eventPoints.add(arrangementEventsPoint);
@@ -147,5 +126,29 @@ public class Arrangement {
 
 	public boolean isBass() {
 		return arrangementType == ArrangementType.Bass || tuning.strings() < 6;
+	}
+
+	public void setPhrase(final int position, final String name) {
+		if (!phrases.containsKey(name)) {
+			phrases.put(name, new Phrase());
+		}
+
+		final Integer closestId = findClosestId(eventPoints, position);
+		if (closestId == null) {
+			final EventPoint count = new EventPoint(position);
+			count.phrase = name;
+			eventPoints.add(count);
+			return;
+		}
+
+		final EventPoint closestEventPoint = eventPoints.get(closestId);
+		if (closestEventPoint.position() != position) {
+			final EventPoint count = new EventPoint(position);
+			count.phrase = name;
+
+			eventPoints.add(closestEventPoint.position() < position ? closestId + 1 : closestId, count);
+		} else {
+			closestEventPoint.phrase = name;
+		}
 	}
 }

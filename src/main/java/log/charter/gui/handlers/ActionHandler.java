@@ -48,8 +48,8 @@ public class ActionHandler {
 	private final HandShapesHandler handShapesHandler = new HandShapesHandler();
 	private final VocalsHandler vocalsHandler = new VocalsHandler();
 
-	public void init(final AudioHandler audioHandler, final ChartData chartData, final CharterFrame charterFrame,
-			final ArrangementFixer arrangementFixer, final ChartTimeHandler chartTimeHandler,
+	public void init(final AudioHandler audioHandler, final ArrangementFixer arrangementFixer,
+			final ChartData chartData, final CharterFrame charterFrame, final ChartTimeHandler chartTimeHandler,
 			final ChartToolbar chartToolbar, final CopyManager copyManager, final ModeManager modeManager,
 			final MouseHandler mouseHandler, final RepeatManager repeatManager, final SelectionManager selectionManager,
 			final SongFileHandler songFileHandler, final UndoSystem undoSystem, final WaveFormDrawer waveFormDrawer) {

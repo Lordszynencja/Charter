@@ -8,6 +8,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.simple.SpecialMenuItem;
 import log.charter.gui.handlers.Action;
 import log.charter.gui.handlers.ActionHandler;
+import log.charter.gui.handlers.mouseAndKeyboard.Shortcut;
 import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
 
 abstract class CharterMenuHandler {
@@ -41,7 +42,8 @@ abstract class CharterMenuHandler {
 
 	protected JMenuItem createItem(final Action action) {
 		final Label label = action.label;
-		final String shortcutName = ShortcutConfig.getShortcut(action).name("-");
+		final Shortcut shortcut = ShortcutConfig.getShortcut(action);
+		final String shortcutName = shortcut == null ? null : shortcut.name("-");
 		final JMenuItem item = new SpecialMenuItem(label, shortcutName, () -> actionHandler.fireAction(action));
 		setDefaultColors(item);
 		return item;

@@ -41,6 +41,10 @@ public class Beat extends Position {
 	public boolean firstInMeasure = false;
 	public boolean anchor = false;
 
+	public Beat(final int position) {
+		super(position);
+	}
+
 	public Beat(final int position, final int beatsInMeasure, final int noteDenominator, final boolean firstInMeasure,
 			final boolean anchor) {
 		super(position);

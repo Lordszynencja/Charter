@@ -16,11 +16,9 @@ public class ShortcutConfig {
 			.getAbsolutePath();
 
 	private static Map<Action, Shortcut> defaultShortcuts = new HashMap<>();
-	private static Map<Action, EditMode[]> defaultModes = new HashMap<>();
 
 	private static void addDefaultShortcut(final Action action, final Shortcut shortcut, final EditMode... editModes) {
-		addDefaultShortcut(action, shortcut);
-		defaultModes.put(action, editModes);
+		defaultShortcuts.put(action, shortcut);
 	}
 
 	static {
@@ -103,6 +101,10 @@ public class ShortcutConfig {
 	private static boolean changed = false;
 
 	public static void setShortcut(final Action action, final Shortcut shortcut) {
+		if (shortcut == null) {
+			return;
+		}
+
 		shortcuts.put(action, shortcut);
 		for (final EditMode editMode : action.editModes) {
 			final Map<Shortcut, Action> editModeActions = actions.get(editMode);
