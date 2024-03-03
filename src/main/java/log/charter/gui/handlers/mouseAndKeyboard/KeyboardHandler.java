@@ -1,34 +1,13 @@
 package log.charter.gui.handlers.mouseAndKeyboard;
 
-import static java.awt.event.KeyEvent.VK_0;
-import static java.awt.event.KeyEvent.VK_1;
-import static java.awt.event.KeyEvent.VK_2;
-import static java.awt.event.KeyEvent.VK_3;
-import static java.awt.event.KeyEvent.VK_4;
-import static java.awt.event.KeyEvent.VK_5;
-import static java.awt.event.KeyEvent.VK_6;
-import static java.awt.event.KeyEvent.VK_7;
-import static java.awt.event.KeyEvent.VK_8;
-import static java.awt.event.KeyEvent.VK_9;
 import static java.awt.event.KeyEvent.VK_ALT;
 import static java.awt.event.KeyEvent.VK_CONTROL;
-import static java.awt.event.KeyEvent.VK_NUMPAD0;
-import static java.awt.event.KeyEvent.VK_NUMPAD1;
-import static java.awt.event.KeyEvent.VK_NUMPAD2;
-import static java.awt.event.KeyEvent.VK_NUMPAD3;
-import static java.awt.event.KeyEvent.VK_NUMPAD4;
-import static java.awt.event.KeyEvent.VK_NUMPAD5;
-import static java.awt.event.KeyEvent.VK_NUMPAD6;
-import static java.awt.event.KeyEvent.VK_NUMPAD7;
-import static java.awt.event.KeyEvent.VK_NUMPAD8;
-import static java.awt.event.KeyEvent.VK_NUMPAD9;
 import static java.awt.event.KeyEvent.VK_SHIFT;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.Framer;
 import log.charter.gui.handlers.Action;
 import log.charter.gui.handlers.ActionHandler;
@@ -107,63 +86,6 @@ public class KeyboardHandler implements KeyListener {
 		return shift;
 	}
 
-	private int getKeyNumber(final int code) {
-		return switch (code) {
-			case VK_0 -> 0;
-			case VK_NUMPAD0 -> 0;
-			case VK_1 -> 1;
-			case VK_NUMPAD1 -> 1;
-			case VK_2 -> 2;
-			case VK_NUMPAD2 -> 2;
-			case VK_3 -> 3;
-			case VK_NUMPAD3 -> 3;
-			case VK_4 -> 4;
-			case VK_NUMPAD4 -> 4;
-			case VK_5 -> 5;
-			case VK_NUMPAD5 -> 5;
-			case VK_6 -> 6;
-			case VK_NUMPAD6 -> 6;
-			case VK_7 -> 7;
-			case VK_NUMPAD7 -> 7;
-			case VK_8 -> 8;
-			case VK_NUMPAD8 -> 8;
-			case VK_9 -> 0;
-			case VK_NUMPAD9 -> 0;
-			default -> -1;
-		};
-	}
-
-	private static final String markBookmarkActionName = Action.MARK_BOOKMARK_0.name().substring(0,
-			Action.MARK_BOOKMARK_0.name().length() - 1);
-	private static final String moveToBookmarkActionName = Action.MOVE_TO_BOOKMARK_0.name().substring(0,
-			Action.MOVE_TO_BOOKMARK_0.name().length() - 1);
-	private static final String fretActionName = Action.MOVE_TO_BOOKMARK_0.name().substring(0,
-			Action.MOVE_TO_BOOKMARK_0.name().length() - 1);
-
-	private void tryKeyNumber(final int keyCode) {
-		if (modeManager.getMode() == EditMode.EMPTY) {
-			return;
-		}
-
-		final int number = getKeyNumber(keyCode);
-		if (number < 0 || number > 9) {
-			return;
-		}
-
-		String actionName;
-		if (ctrl) {
-			actionName = markBookmarkActionName;
-		} else if (shift) {
-			actionName = moveToBookmarkActionName;
-		} else if (modeManager.getMode() == EditMode.GUITAR) {
-			actionName = fretActionName;
-		} else {
-			return;
-		}
-
-		actionHandler.fireAction(Action.valueOf(actionName + number));
-	}
-
 	private void replaceHeldAction() {
 		heldAction = ShortcutConfig.getAction(modeManager.getMode(),
 				new Shortcut(ctrl, shift, alt, heldNonModifierKey));
@@ -195,10 +117,7 @@ public class KeyboardHandler implements KeyListener {
 		replaceHeldAction();
 		if (heldAction != null) {
 			actionHandler.fireAction(heldAction);
-			return;
 		}
-
-		tryKeyNumber(keyCode);
 	}
 
 	@Override

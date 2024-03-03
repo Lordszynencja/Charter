@@ -29,7 +29,27 @@ public class ShortcutConfig {
 		addDefaultShortcut(Action.EXIT, new Shortcut(KeyEvent.VK_ESCAPE));
 		addDefaultShortcut(Action.FAST_BACKWARD, new Shortcut(KeyEvent.VK_LEFT).shift());
 		addDefaultShortcut(Action.FAST_FORWARD, new Shortcut(KeyEvent.VK_RIGHT).shift());
+		addDefaultShortcut(Action.FRET_0, new Shortcut(KeyEvent.VK_0));
+		addDefaultShortcut(Action.FRET_1, new Shortcut(KeyEvent.VK_1));
+		addDefaultShortcut(Action.FRET_2, new Shortcut(KeyEvent.VK_2));
+		addDefaultShortcut(Action.FRET_3, new Shortcut(KeyEvent.VK_3));
+		addDefaultShortcut(Action.FRET_4, new Shortcut(KeyEvent.VK_4));
+		addDefaultShortcut(Action.FRET_5, new Shortcut(KeyEvent.VK_5));
+		addDefaultShortcut(Action.FRET_6, new Shortcut(KeyEvent.VK_6));
+		addDefaultShortcut(Action.FRET_7, new Shortcut(KeyEvent.VK_7));
+		addDefaultShortcut(Action.FRET_8, new Shortcut(KeyEvent.VK_8));
+		addDefaultShortcut(Action.FRET_9, new Shortcut(KeyEvent.VK_9));
 		addDefaultShortcut(Action.HALVE_GRID, new Shortcut(KeyEvent.VK_COMMA));
+		addDefaultShortcut(Action.MARK_BOOKMARK_0, new Shortcut(KeyEvent.VK_0).ctrl());
+		addDefaultShortcut(Action.MARK_BOOKMARK_1, new Shortcut(KeyEvent.VK_1).ctrl());
+		addDefaultShortcut(Action.MARK_BOOKMARK_2, new Shortcut(KeyEvent.VK_2).ctrl());
+		addDefaultShortcut(Action.MARK_BOOKMARK_3, new Shortcut(KeyEvent.VK_3).ctrl());
+		addDefaultShortcut(Action.MARK_BOOKMARK_4, new Shortcut(KeyEvent.VK_4).ctrl());
+		addDefaultShortcut(Action.MARK_BOOKMARK_5, new Shortcut(KeyEvent.VK_5).ctrl());
+		addDefaultShortcut(Action.MARK_BOOKMARK_6, new Shortcut(KeyEvent.VK_6).ctrl());
+		addDefaultShortcut(Action.MARK_BOOKMARK_7, new Shortcut(KeyEvent.VK_7).ctrl());
+		addDefaultShortcut(Action.MARK_BOOKMARK_8, new Shortcut(KeyEvent.VK_8).ctrl());
+		addDefaultShortcut(Action.MARK_BOOKMARK_9, new Shortcut(KeyEvent.VK_9).ctrl());
 		addDefaultShortcut(Action.MARK_HAND_SHAPE, new Shortcut(KeyEvent.VK_H).ctrl());
 		addDefaultShortcut(Action.MOVE_BACKWARD, new Shortcut(KeyEvent.VK_LEFT));
 		addDefaultShortcut(Action.MOVE_FORWARD, new Shortcut(KeyEvent.VK_RIGHT));
@@ -39,6 +59,16 @@ public class ShortcutConfig {
 		addDefaultShortcut(Action.MOVE_STRING_DOWN_SIMPLE, new Shortcut(KeyEvent.VK_DOWN).ctrl());
 		addDefaultShortcut(Action.MOVE_STRING_UP, new Shortcut(KeyEvent.VK_UP));
 		addDefaultShortcut(Action.MOVE_STRING_UP_SIMPLE, new Shortcut(KeyEvent.VK_UP).ctrl());
+		addDefaultShortcut(Action.MOVE_TO_BOOKMARK_0, new Shortcut(KeyEvent.VK_0).shift());
+		addDefaultShortcut(Action.MOVE_TO_BOOKMARK_1, new Shortcut(KeyEvent.VK_1).shift());
+		addDefaultShortcut(Action.MOVE_TO_BOOKMARK_2, new Shortcut(KeyEvent.VK_2).shift());
+		addDefaultShortcut(Action.MOVE_TO_BOOKMARK_3, new Shortcut(KeyEvent.VK_3).shift());
+		addDefaultShortcut(Action.MOVE_TO_BOOKMARK_4, new Shortcut(KeyEvent.VK_4).shift());
+		addDefaultShortcut(Action.MOVE_TO_BOOKMARK_5, new Shortcut(KeyEvent.VK_5).shift());
+		addDefaultShortcut(Action.MOVE_TO_BOOKMARK_6, new Shortcut(KeyEvent.VK_6).shift());
+		addDefaultShortcut(Action.MOVE_TO_BOOKMARK_7, new Shortcut(KeyEvent.VK_7).shift());
+		addDefaultShortcut(Action.MOVE_TO_BOOKMARK_8, new Shortcut(KeyEvent.VK_8).shift());
+		addDefaultShortcut(Action.MOVE_TO_BOOKMARK_9, new Shortcut(KeyEvent.VK_9).shift());
 		addDefaultShortcut(Action.MOVE_TO_END, new Shortcut(KeyEvent.VK_END));
 		addDefaultShortcut(Action.MOVE_TO_FIRST_ITEM, new Shortcut(KeyEvent.VK_HOME).ctrl());
 		addDefaultShortcut(Action.MOVE_TO_LAST_ITEM, new Shortcut(KeyEvent.VK_END).ctrl());
@@ -100,6 +130,29 @@ public class ShortcutConfig {
 
 	private static boolean changed = false;
 
+	private static void addNumberShortcutAlias(final Action action, final Shortcut shortcut) {
+		final Shortcut alias = switch (shortcut.key) {
+			case KeyEvent.VK_0 -> new Shortcut(shortcut).key(KeyEvent.VK_NUMPAD0);
+			case KeyEvent.VK_1 -> new Shortcut(shortcut).key(KeyEvent.VK_NUMPAD1);
+			case KeyEvent.VK_2 -> new Shortcut(shortcut).key(KeyEvent.VK_NUMPAD2);
+			case KeyEvent.VK_3 -> new Shortcut(shortcut).key(KeyEvent.VK_NUMPAD3);
+			case KeyEvent.VK_4 -> new Shortcut(shortcut).key(KeyEvent.VK_NUMPAD4);
+			case KeyEvent.VK_5 -> new Shortcut(shortcut).key(KeyEvent.VK_NUMPAD5);
+			case KeyEvent.VK_6 -> new Shortcut(shortcut).key(KeyEvent.VK_NUMPAD6);
+			case KeyEvent.VK_7 -> new Shortcut(shortcut).key(KeyEvent.VK_NUMPAD7);
+			case KeyEvent.VK_8 -> new Shortcut(shortcut).key(KeyEvent.VK_NUMPAD8);
+			case KeyEvent.VK_9 -> new Shortcut(shortcut).key(KeyEvent.VK_NUMPAD9);
+			default -> null;
+		};
+		if (alias == null) {
+			return;
+		}
+
+		for (final EditMode editMode : action.editModes) {
+			actions.get(editMode).put(alias, action);
+		}
+	}
+
 	public static void setShortcut(final Action action, final Shortcut shortcut) {
 		if (shortcut == null) {
 			return;
@@ -115,6 +168,8 @@ public class ShortcutConfig {
 
 			editModeActions.put(shortcut, action);
 		}
+
+		addNumberShortcutAlias(action, shortcut);
 	}
 
 	public static void init() {
