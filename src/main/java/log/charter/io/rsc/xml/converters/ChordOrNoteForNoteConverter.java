@@ -7,32 +7,24 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.ChordOrNote.ChordOrNoteForNote;
 
-public class ChordOrNoteConverter implements Converter {
-	private static final ChordConverter chordConverter = new ChordConverter();
+public class ChordOrNoteForNoteConverter implements Converter {
 	private static final NoteConverter noteConverter = new NoteConverter();
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean canConvert(final Class type) {
-		return type.equals(ChordOrNote.class);
+		return type.equals(ChordOrNoteForNote.class);
 	}
 
 	@Override
 	public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-	}
-
-	private boolean readBoolean(final String s) {
-		return s == null ? false : "T".equals(s);
+		noteConverter.marshal(((ChordOrNote) source).note(), writer, context);
 	}
 
 	@Override
-	public ChordOrNote unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-		final boolean isChord = readBoolean(reader.getAttribute("chord"));
-		if (isChord) {
-			return ChordOrNote.from(chordConverter.unmarshal(reader, context));
-		}
-
+	public ChordOrNoteForNote unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		return ChordOrNote.from(noteConverter.unmarshal(reader, context));
 	}
 

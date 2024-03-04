@@ -1,6 +1,7 @@
 package log.charter.song.configs;
 
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.util.SoundUtils.soundToFullName;
 import static log.charter.util.SoundUtils.soundToSimpleName;
@@ -66,7 +67,7 @@ public class Tuning {
 		E_FLAT_STANDARD("Eb standard", new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1 }), //
 		E_FLAT_DROP_D_FLAT("Eb drop Db", new int[] { -1, -1, -1, -3, -1, -1, -1, -1, -1 }), //
 		D_STANDARD("D standard", new int[] { -2, -2, -2, -2, -2, -2, -2, -2, -2 }), //
-		D_DROP_C("D drop C", new int[] { -2, -2, -2, -2, -4, -2, -2, -2, -2 }), //
+		D_DROP_C("D drop C", new int[] { -2, -2, -2, -4, -2, -2, -2, -2, -2 }), //
 		C_SHARP_STANDARD("Db standard", new int[] { -3, -3, -3, -3, -3, -3, -3, -3, -3 }), //
 		C_SHARP_DROP_B("Db drop B", new int[] { -3, -3, -3, -5, -3, -3, -3, -3, -3 }), //
 		C_STANDARD("C standard", new int[] { -4, -4, -4, -4, -4, -4, -4, -4, -4 }), //
@@ -108,7 +109,11 @@ public class Tuning {
 			return name + " (" + String.join(",", values) + ")";
 		}
 
-		private boolean isFullTuning(final int[] tuning) {
+		public boolean isFullTuning(final int[] tuning) {
+			if (tuning.length != Config.maxStrings) {
+				return isFullTuning(getFullTuning(tuning));
+			}
+
 			for (int i = 0; i < tuning.length; i++) {
 				if (tuning[i] != this.tuning[i]) {
 					return false;
@@ -118,13 +123,85 @@ public class Tuning {
 			return true;
 		}
 
-		public static TuningType fromTuning(final int[] tuning) {
-			final int[] fullTuning = getFullTuning(tuning);
-
-			for (final TuningType type : values()) {
-				if (type.isFullTuning(fullTuning)) {
-					return type;
+		private static TuningType fromStandardOrDropTuning(final int[] tuning) {
+			final int dropString = tuning.length - min(6, tuning.length);
+			final int lastStringTuning = tuning[tuning.length - 1];
+			for (int string = 0; string < tuning.length - 1; string++) {
+				if (string != dropString && tuning[string] != lastStringTuning) {
+					return null;
 				}
+			}
+
+			final int droppedStringTuning = tuning[dropString];
+			return switch (droppedStringTuning - lastStringTuning) {
+				case 0 -> switch (lastStringTuning) {
+					case 0 -> E_STANDARD;
+					case -1 -> E_FLAT_STANDARD;
+					case -2 -> D_STANDARD;
+					case -3 -> C_SHARP_STANDARD;
+					case -4 -> C_STANDARD;
+					case -5 -> B_STANDARD;
+					case -6 -> A_SHARP_STANDARD;
+					case -7 -> A_STANDARD;
+					case -8 -> G_SHARP_STANDARD;
+					case -9 -> G_STANDARD;
+					case -10 -> F_SHARP_STANDARD;
+					case -11 -> F_STANDARD;
+					default -> CUSTOM;
+				};
+				case 2 -> switch (lastStringTuning) {
+					case 0 -> E_DROP_D;
+					case -1 -> E_FLAT_DROP_D_FLAT;
+					case -2 -> D_DROP_C;
+					case -3 -> C_SHARP_DROP_B;
+					default -> CUSTOM;
+				};
+				case 4 -> switch (lastStringTuning) {
+					case 0 -> E_DROP_C;
+					default -> CUSTOM;
+				};
+				default -> CUSTOM;
+			};
+		}
+
+		private static boolean isOpenD(final int[] tuning) {
+			if (tuning.length > 6) {
+				return false;
+			}
+
+			for (int string = 0; string < tuning.length; string++) {
+				if (tuning[string] != OPEN_D.tuning[3 + string]) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		private static boolean isOpenG(final int[] tuning) {
+			if (tuning.length > 6) {
+				return false;
+			}
+
+			for (int string = 0; string < tuning.length; string++) {
+				if (tuning[string] != OPEN_G.tuning[3 + string]) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		public static TuningType fromTuning(final int[] tuning) {
+			final TuningType type = fromStandardOrDropTuning(tuning);
+			if (type != null) {
+				return type;
+			}
+			if (isOpenD(tuning)) {
+				return OPEN_D;
+			}
+			if (isOpenG(tuning)) {
+				return OPEN_G;
 			}
 
 			return CUSTOM;

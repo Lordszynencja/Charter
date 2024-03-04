@@ -10,13 +10,17 @@ import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
 import log.charter.song.Anchor;
 import log.charter.song.Arrangement;
 import log.charter.song.Beat;
+import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
 import log.charter.song.EventPoint;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
 import log.charter.song.Phrase;
 import log.charter.song.ToneChange;
+import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.ChordOrNote.ChordOrNoteForChord;
+import log.charter.song.notes.ChordOrNote.ChordOrNoteForNote;
 import log.charter.song.notes.Note;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -39,7 +43,11 @@ public class ChartProjectXStreamHandler {
 				Anchor.class, //
 				Arrangement.class, //
 				Beat.class, //
+				BendValue.class, //
+				ChordNote.class, //
 				ChordOrNote.class, //
+				ChordOrNoteForChord.class, //
+				ChordOrNoteForNote.class, //
 				ChordTemplate.class, //
 				EventPoint.class, //
 				HandShape.class, //
@@ -69,6 +77,6 @@ public class ChartProjectXStreamHandler {
 	}
 
 	public static String saveProject(final ChartProject chartProject) {
-		return XMLHandler.generateXML(xstream, chartProject);
+		return XMLHandler.generateXML(prepareXStream(), chartProject);
 	}
 }

@@ -251,13 +251,17 @@ public class Chord extends GuitarSound {
 		return ChordNotesVisibility.NONE;
 	}
 
-	public ChordNotesVisibility chordNotesVisibility(final boolean forceAddNotes) {
+	public ChordNotesVisibility chordNotesVisibility(final boolean shouldAddNotesByDefault) {
+		if (forceNoNotes) {
+			return ChordNotesVisibility.NONE;
+		}
+
 		final ChordNotesVisibility baseVisibility = chordNotesVisibility();
 		if (baseVisibility != ChordNotesVisibility.NONE) {
 			return baseVisibility;
 		}
 
-		return (forceAddNotes && !fullyMuted()) ? ChordNotesVisibility.NOTES : ChordNotesVisibility.NONE;
+		return (shouldAddNotesByDefault && !fullyMuted()) ? ChordNotesVisibility.NOTES : ChordNotesVisibility.NONE;
 	}
 
 	@Override

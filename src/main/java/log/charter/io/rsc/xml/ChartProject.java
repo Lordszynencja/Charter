@@ -13,7 +13,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 
 @XStreamAlias("project")
-@XStreamInclude(value = { Vocals.class })
+@XStreamInclude(value = { Arrangement.class, Beat.class, Vocals.class })
 public class ChartProject {
 	public int chartFormatVersion = 2;
 	public EditMode editMode = EditMode.TEMPO_MAP;

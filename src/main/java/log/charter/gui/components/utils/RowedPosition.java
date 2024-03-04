@@ -19,11 +19,19 @@ public class RowedPosition {
 	}
 
 	public RowedPosition(final int baseX, final PaneSizes sizes) {
-		startX = 20;
+		startX = baseX;
 		startY = sizes.getY(0);
 		rowHeight = sizes.rowDistance;
 		x = startX;
 		y = startY;
+	}
+
+	public RowedPosition(final int x, final int y, final int rowHeight) {
+		startX = x;
+		startY = y;
+		this.rowHeight = rowHeight;
+		this.x = x;
+		this.y = y;
 	}
 
 	public int getX() {

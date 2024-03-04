@@ -6,13 +6,19 @@ import java.util.stream.Stream;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.io.rsc.xml.converters.ChordOrNoteConverter;
+import log.charter.io.rsc.xml.converters.ChordOrNoteForChordConverter;
+import log.charter.io.rsc.xml.converters.ChordOrNoteForNoteConverter;
 import log.charter.song.ChordTemplate;
+import log.charter.song.notes.ChordOrNote.ChordOrNoteForChord;
+import log.charter.song.notes.ChordOrNote.ChordOrNoteForNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("sound")
 @XStreamConverter(ChordOrNoteConverter.class)
+@XStreamInclude({ ChordOrNoteForChord.class, ChordOrNoteForNote.class })
 public interface ChordOrNote extends IPositionWithLength {
 	public static ChordOrNote findNextSoundOnString(final int string, final int startFromId,
 			final ArrayList2<ChordOrNote> sounds) {
@@ -65,89 +71,8 @@ public interface ChordOrNote extends IPositionWithLength {
 		return true;
 	}
 
-	public static class ChordOrNoteForNote implements ChordOrNote {
-		private final Note note;
-
-		public ChordOrNoteForNote(final Note note) {
-			this.note = note;
-		}
-
-		@Override
-		public boolean isNote() {
-			return true;
-		}
-
-		@Override
-		public Note note() {
-			return note;
-		}
-
-		@Override
-		public GuitarSound asGuitarSound() {
-			return note;
-		}
-
-		@Override
-		public int position() {
-			return asGuitarSound().position();
-		}
-
-		@Override
-		public void position(final int newPosition) {
-			asGuitarSound().position(newPosition);
-		}
-
-		@Override
-		public int length() {
-			return asGuitarSound().length();
-		}
-
-		@Override
-		public void length(final int newLength) {
-			asGuitarSound().length(newLength);
-		}
-
-		@Override
-		public boolean linkNext(final int string) {
-			return note.string == string && note.linkNext;
-		}
-
-		@Override
-		public ChordOrNote turnToNote(final ChordTemplate chordTemplate) {
-			return this;
-		}
-
-		@Override
-		public ChordOrNote turnToChord(final int chordId, final ChordTemplate chordTemplate) {
-			return new ChordOrNoteForChord(new Chord(chordId, note, chordTemplate));
-		}
-
-		@Override
-		public Optional<NoteInterface> getString(final int string) {
-			return note.string == string ? Optional.of(note) : Optional.empty();
-		}
-
-		@Override
-		public Stream<? extends NoteInterface> noteInterfaces() {
-			return Stream.of(note);
-		}
-
-		@Override
-		public Stream<CommonNote> notes() {
-			return Stream.of(CommonNote.create(note));
-		}
-
-		@Override
-		public Stream<CommonNoteWithFret> notesWithFrets(final List<ChordTemplate> chordTemplates) {
-			return Stream.of(CommonNoteWithFret.create(note));
-		}
-
-		@Override
-		public Stream<CommonNoteWithFret> notesWithFrets(final ChordTemplate chordTemplate) {
-			return Stream.of(CommonNoteWithFret.create(note));
-		}
-	}
-
+	@XStreamAlias("soundChord")
+	@XStreamConverter(ChordOrNoteForChordConverter.class)
 	public static class ChordOrNoteForChord implements ChordOrNote {
 		private final Chord chord;
 
@@ -196,12 +121,12 @@ public interface ChordOrNote extends IPositionWithLength {
 		}
 
 		@Override
-		public ChordOrNote turnToNote(final ChordTemplate chordTemplate) {
+		public ChordOrNote asNote(final ChordTemplate chordTemplate) {
 			return new ChordOrNoteForNote(new Note(chord, chordTemplate));
 		}
 
 		@Override
-		public ChordOrNote turnToChord(final int chordId, final ChordTemplate chordTemplate) {
+		public ChordOrNote asChord(final int chordId, final ChordTemplate chordTemplate) {
 			return this;
 		}
 
@@ -233,11 +158,96 @@ public interface ChordOrNote extends IPositionWithLength {
 		}
 	}
 
-	public static ChordOrNote from(final Chord chord) {
+	@XStreamAlias("soundNote")
+	@XStreamConverter(ChordOrNoteForNoteConverter.class)
+	public static class ChordOrNoteForNote implements ChordOrNote {
+		private final Note note;
+
+		public ChordOrNoteForNote(final Note note) {
+			this.note = note;
+		}
+
+		@Override
+		public boolean isNote() {
+			return true;
+		}
+
+		@Override
+		public Note note() {
+			return note;
+		}
+
+		@Override
+		public GuitarSound asGuitarSound() {
+			return note;
+		}
+
+		@Override
+		public int position() {
+			return asGuitarSound().position();
+		}
+
+		@Override
+		public void position(final int newPosition) {
+			asGuitarSound().position(newPosition);
+		}
+
+		@Override
+		public int length() {
+			return asGuitarSound().length();
+		}
+
+		@Override
+		public void length(final int newLength) {
+			asGuitarSound().length(newLength);
+		}
+
+		@Override
+		public boolean linkNext(final int string) {
+			return note.string == string && note.linkNext;
+		}
+
+		@Override
+		public ChordOrNote asNote(final ChordTemplate chordTemplate) {
+			return this;
+		}
+
+		@Override
+		public ChordOrNote asChord(final int chordId, final ChordTemplate chordTemplate) {
+			return new ChordOrNoteForChord(new Chord(chordId, note, chordTemplate));
+		}
+
+		@Override
+		public Optional<NoteInterface> getString(final int string) {
+			return note.string == string ? Optional.of(note) : Optional.empty();
+		}
+
+		@Override
+		public Stream<? extends NoteInterface> noteInterfaces() {
+			return Stream.of(note);
+		}
+
+		@Override
+		public Stream<CommonNote> notes() {
+			return Stream.of(CommonNote.create(note));
+		}
+
+		@Override
+		public Stream<CommonNoteWithFret> notesWithFrets(final List<ChordTemplate> chordTemplates) {
+			return Stream.of(CommonNoteWithFret.create(note));
+		}
+
+		@Override
+		public Stream<CommonNoteWithFret> notesWithFrets(final ChordTemplate chordTemplate) {
+			return Stream.of(CommonNoteWithFret.create(note));
+		}
+	}
+
+	public static ChordOrNoteForChord from(final Chord chord) {
 		return new ChordOrNoteForChord(chord);
 	}
 
-	public static ChordOrNote from(final Note note) {
+	public static ChordOrNoteForNote from(final Note note) {
 		return new ChordOrNoteForNote(note);
 	}
 
@@ -272,9 +282,9 @@ public interface ChordOrNote extends IPositionWithLength {
 
 	boolean linkNext(final int string);
 
-	ChordOrNote turnToNote(final ChordTemplate chordTemplate);
+	ChordOrNote asNote(final ChordTemplate chordTemplate);
 
-	ChordOrNote turnToChord(final int chordId, final ChordTemplate chordTemplate);
+	ChordOrNote asChord(final int chordId, final ChordTemplate chordTemplate);
 
 	Optional<NoteInterface> getString(int string);
 

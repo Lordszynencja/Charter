@@ -117,10 +117,6 @@ public class ArrangementFixer {
 	}
 
 	private static void fixLinkedNote(final CommonNote note, final int id, final ArrayList2<ChordOrNote> sounds) {
-		if (!note.linkNext()) {
-			return;
-		}
-
 		final ChordOrNote nextSound = findNextSoundOnString(note.string(), id + 1, sounds);
 		if (nextSound == null) {
 			return;

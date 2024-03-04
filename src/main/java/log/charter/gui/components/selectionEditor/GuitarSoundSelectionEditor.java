@@ -110,16 +110,16 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void addMuteInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
-		mute = new ToggleButtonGroupInRow<Mute>(parent, position, 65, 270, Label.MUTE, //
-				makeChangeForNoteInterfaces(
-						(final NoteInterface noteInterface, final Mute value) -> noteInterface.mute(value)), //
+		mute = new ToggleButtonGroupInRow<Mute>(parent, position, 65, Label.MUTE, //
+				makeChangeForNoteInterfaces(NoteInterface::mute), //
 				asList(new Pair<>(Mute.NONE, Label.MUTE_NONE), //
 						new Pair<>(Mute.FULL, Label.MUTE_FULL), //
 						new Pair<>(Mute.PALM, Label.MUTE_PALM)));
 	}
 
 	private void addHOPOInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
-		hopo = new ToggleButtonGroupInRow<>(parent, position, 65, 270, Label.HOPO, this::changeHOPO, //
+		hopo = new ToggleButtonGroupInRow<>(parent, position, 65, Label.HOPO, //
+				makeChangeForNoteInterfaces(NoteInterface::hopo), //
 				asList(new Pair<>(HOPO.NONE, Label.HOPO_NONE), //
 						new Pair<>(HOPO.HAMMER_ON, Label.HOPO_HAMMER_ON), //
 						new Pair<>(HOPO.PULL_OFF, Label.HOPO_PULL_OFF), //
@@ -127,15 +127,16 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void addBassPickingTechniqueInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
-		bassPickingTechnique = new ToggleButtonGroupInRow<>(parent, position, 65, 270, Label.BASS_PICKING_TECHNIQUE,
-				this::changeBassPickingTechnique, //
+		bassPickingTechnique = new ToggleButtonGroupInRow<>(parent, position, 65, Label.BASS_PICKING_TECHNIQUE, //
+				makeChangeForNoteInterfaces(NoteInterface::bassPicking), //
 				asList(new Pair<>(BassPickingTechnique.NONE, Label.BASS_PICKING_NONE), //
 						new Pair<>(BassPickingTechnique.POP, Label.BASS_PICKING_POP), //
 						new Pair<>(BassPickingTechnique.SLAP, Label.BASS_PICKING_SLAP)));
 	}
 
 	private void addHarmonicInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
-		harmonic = new ToggleButtonGroupInRow<>(parent, position, 65, 270, Label.HARMONIC, this::changeHarmonic, //
+		harmonic = new ToggleButtonGroupInRow<>(parent, position, 65, Label.HARMONIC, //
+				makeChangeForNoteInterfaces(NoteInterface::harmonic), //
 				asList(new Pair<>(Harmonic.NONE, Label.HARMONIC_NONE), //
 						new Pair<>(Harmonic.NORMAL, Label.HARMONIC_NORMAL), //
 						new Pair<>(Harmonic.PINCH, Label.HARMONIC_PINCH)));
@@ -154,20 +155,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		unpitchedSlide = new FieldWithLabel<>(Label.SLIDE_PANE_UNPITCHED, 80, 20, 20, unpitchedSlideInput,
 				LabelPosition.RIGHT_CLOSE);
 		parent.add(unpitchedSlide, position, 90);
-	}
-
-	private void addVibratoInput(final CurrentSelectionEditor parent, final RowedPosition position) {
-		final JCheckBox vibratoInput = new JCheckBox();
-		vibratoInput.addActionListener(a -> changeVibrato(vibratoInput.isSelected()));
-		vibrato = new FieldWithLabel<>(Label.VIBRATO, 60, 30, 20, vibratoInput, LabelPosition.LEFT_CLOSE);
-		parent.add(vibrato, position, 90);
-	}
-
-	private void addTremoloInput(final CurrentSelectionEditor parent, final RowedPosition position) {
-		final JCheckBox tremoloInput = new JCheckBox();
-		tremoloInput.addActionListener(a -> changeTremolo(tremoloInput.isSelected()));
-		tremolo = new FieldWithLabel<>(Label.TREMOLO, 50, 20, 20, tremoloInput, LabelPosition.LEFT_CLOSE);
-		parent.add(tremolo, position, 90);
 	}
 
 	private void addChordTemplateEditorParts(final int x) {
@@ -225,7 +212,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 		ignore = BasicCheckboxInput.addField(parent, Label.IGNORE, position,
 				makeChangeForGuitarSounds(GuitarSound::ignore));
-		passOtherNotes = BasicCheckboxInput.addField(parent, Label.PASS_OTHER_NOTES, position,
+		passOtherNotes = BasicCheckboxInput.addField(parent, Label.PASS_OTHER_NOTES, position, 120,
 				makeChangeForGuitarSounds(GuitarSound::passOtherNotes));
 		position.newRow();
 
@@ -233,8 +220,10 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		addUnpitchedSlideInput(selectionEditor, position);
 		position.newRow();
 
-		addVibratoInput(selectionEditor, position);
-		addTremoloInput(selectionEditor, position);
+		vibrato = BasicCheckboxInput.addField(parent, Label.VIBRATO, position,
+				makeChangeForNoteInterfaces(NoteInterface::vibrato));
+		tremolo = BasicCheckboxInput.addField(parent, Label.TREMOLO, position,
+				makeChangeForNoteInterfaces(NoteInterface::tremolo));
 
 		addChordTemplateEditorParts(380);
 		addBendEditor(1000);
@@ -242,11 +231,12 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		hideFields();
 	}
 
-	private void changeToChordsOnly() {
+	private void changeSelectedToChords() {
 		string.field.setTextWithoutEvent("");
 		fret.field.setTextWithoutEvent("");
 
 		final Arrangement arrangement = data.getCurrentArrangement();
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
 		final int templateId = arrangement.getChordTemplateIdWithSave(chordTemplate);
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
@@ -257,7 +247,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				continue;
 			}
 
-			selection.selectable.turnToChord(templateId, arrangement.chordTemplates.get(templateId));
+			final ChordTemplate template = arrangement.chordTemplates.get(templateId);
+			sounds.set(selection.id, selection.selectable.asChord(templateId, template));
 		}
 
 		if (selected.size() == 1) {
@@ -267,6 +258,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void changeSelectedChordsToNotes() {
 		final Arrangement arrangement = data.getCurrentArrangement();
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
@@ -279,7 +271,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			}
 
 			final ChordTemplate template = arrangement.chordTemplates.get(selection.selectable.chord().templateId());
-			selection.selectable.turnToNote(template);
+			sounds.set(selection.id, selection.selectable.asNote(template));
 		}
 
 		if (selected.size() == 1) {
@@ -381,22 +373,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		return makeChange(stream -> stream//
 				.flatMap(selection -> selection.selectable.noteInterfaces()), //
 				onChange);
-	}
-
-	private void changeHOPO(final HOPO newHOPO) {
-		undoSystem.addUndo();
-		changeValueForSelected(n -> n.hopo = newHOPO, n -> n.hopo = newHOPO);
-	}
-
-	private void changeBassPickingTechnique(final BassPickingTechnique newBassPickingTechnique) {
-		undoSystem.addUndo();
-		changeSelectedChordsToNotes();
-		changeValueForSelected(n -> n.bassPicking = newBassPickingTechnique, n -> {});
-	}
-
-	private void changeHarmonic(final Harmonic newHarmonic) {
-		undoSystem.addUndo();
-		changeValueForSelected(n -> n.harmonic = newHarmonic, n -> n.harmonic = newHarmonic);
 	}
 
 	private void changeLinkNext(final boolean newLinkNext) {
@@ -513,16 +489,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		changeValueForSelected(n -> n.unpitchedSlide = newUnpitchedSlide, n -> n.unpitchedSlide = newUnpitchedSlide);
 	}
 
-	private void changeVibrato(final boolean newVibrato) {
-		undoSystem.addUndo();
-		changeValueForSelected(n -> n.vibrato = newVibrato, n -> n.vibrato = newVibrato);
-	}
-
-	private void changeTremolo(final boolean newTremolo) {
-		undoSystem.addUndo();
-		changeValueForSelected(n -> n.tremolo = newTremolo, n -> n.tremolo = newTremolo);
-	}
-
 	private void templateEdited() {
 		if (chordTemplate.frets.isEmpty()) {
 			return;
@@ -563,7 +529,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				}
 			}
 
-			changeToChordsOnly();
+			changeSelectedToChords();
 		}
 
 		arrangementFixer.fixDuplicatedChordTemplates(arrangement);

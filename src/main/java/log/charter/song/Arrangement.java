@@ -21,7 +21,7 @@ import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.CollectionUtils.HashSet2;
 
 @XStreamAlias("arrangement")
-@XStreamInclude({ EventPoint.class, Phrase.class, ToneChange.class })
+@XStreamInclude({ ChordTemplate.class, EventPoint.class, Level.class, Phrase.class, ToneChange.class })
 public class Arrangement {
 	public enum ArrangementSubtype {
 		MAIN(Label.ARRANGEMENT_SUBTYPE_MAIN), //

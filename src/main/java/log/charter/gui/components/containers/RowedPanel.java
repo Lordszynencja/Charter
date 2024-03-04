@@ -51,10 +51,17 @@ public class RowedPanel extends JPanel {
 		this.sizes = sizes;
 
 		setLayout(null);
-		setSize(sizes.width, sizes.getHeight(rows));
-		setMinimumSize(getSize());
-		setPreferredSize(getSize());
-		setMaximumSize(getSize());
+		resizeToFit(sizes.width, sizes.getHeight(rows));
+	}
+
+	private void resizeToFit(final int width, final int height) {
+		Dimension size = getPreferredSize();
+		size = new Dimension(Math.max(width, size.width), Math.max(height, size.height));
+
+		setSize(size);
+		setMinimumSize(size);
+		setPreferredSize(size);
+		setMaximumSize(size);
 	}
 
 	public Component getPart(final int id) {
@@ -79,6 +86,7 @@ public class RowedPanel extends JPanel {
 
 	public void add(final Component component, final RowedPosition position, final int width) {
 		component.setLocation(position.getAndAddX(width), position.getY());
+		resizeToFit(position.getX(), position.getY() + sizes.rowHeight + sizes.verticalSpace);
 		add(component);
 	}
 
@@ -89,6 +97,7 @@ public class RowedPanel extends JPanel {
 
 	public void add(final Component component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
+		resizeToFit(x + 2, y + h + sizes.verticalSpace);
 		add(component);
 	}
 
@@ -179,41 +188,17 @@ public class RowedPanel extends JPanel {
 		return toggleButton;
 	}
 
-	public <T extends Enum<T>> ButtonGroup addToggleButtonsExact(final int y, int x, final int optionWidth, final T val,
-			final Consumer<T> setter, final List<Pair<T, Label>> values) {
-		final ButtonGroup group = new ButtonGroup();
-
-		for (int i = 0; i < values.size(); i++) {
-			final Pair<T, Label> value = values.get(i);
-
-			final JToggleButton toggleButton = new JToggleButton(value.b.label());
-			toggleButton.setActionCommand(value.a.name());
-			toggleButton.setSelected(value.a.equals(val));
-			toggleButton.addActionListener(a -> setter.accept(value.a));
-			group.add(toggleButton);
-			add(toggleButton, x, y, optionWidth, 20);
-
-			x += optionWidth;
-		}
-
-		return group;
-	}
-
 	public <T extends Enum<T>> ButtonGroup addToggleButtons(final RowedPosition position, final int optionWidth,
 			final T val, final Consumer<T> setter, final List<Pair<T, Label>> values) {
-		final RowedPosition temporaryPosition = position.copy();
 		final ButtonGroup group = new ButtonGroup();
 
 		for (int i = 0; i < values.size(); i++) {
 			final Pair<T, Label> value = values.get(i);
 			final boolean selected = value.a.equals(val);
 
-			addToggleButton(group, temporaryPosition, optionWidth, value, setter, selected);
-
-			position.getAndAddX(optionWidth);
+			addToggleButton(group, position, optionWidth, value, setter, selected);
 		}
 
 		return group;
 	}
-
 }
