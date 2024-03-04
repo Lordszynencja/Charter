@@ -1,8 +1,9 @@
 package log.charter.gui.components.simple;
 
+import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
+
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -15,6 +16,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class FieldWithLabel<T extends Component> extends Container {
 	public enum LabelPosition {
@@ -22,6 +24,8 @@ public class FieldWithLabel<T extends Component> extends Container {
 	}
 
 	private static final long serialVersionUID = 1L;
+
+	public ColorLabel backgroundColor = null;
 
 	private final LabelPosition labelPosition;
 	public final JLabel label;
@@ -133,35 +137,30 @@ public class FieldWithLabel<T extends Component> extends Container {
 
 	private JLabel addLabel(final String label, final int x, final int w, final int h, final int labelAlignment) {
 		final JLabel labelComponent = new JLabel(label, labelAlignment);
-		labelComponent.setBounds(x, 0, w, h);
 		labelComponent.setAlignmentY(CENTER_ALIGNMENT);
 
-		final Dimension size = new Dimension(w, h);
-		labelComponent.setMinimumSize(size);
-		labelComponent.setPreferredSize(size);
-		labelComponent.setMaximumSize(size);
-
+		setComponentBounds(labelComponent, x, 0, w, h);
 		this.add(labelComponent);
 
 		return labelComponent;
 	}
 
 	private void addField(final T field, final int x, final int w, final int h) {
-		field.setBounds(x, 0, w, h);
-		final Dimension size = new Dimension(w, h);
-		field.setMinimumSize(size);
-		field.setPreferredSize(size);
-		field.setMaximumSize(size);
-
+		setComponentBounds(field, x, 0, w, h);
 		this.add(field);
 	}
 
 	@Override
 	public void paint(final Graphics g) {
-		super.paint(g);
-
 		if (labelPosition != LabelPosition.LEFT_CLOSE) {
 			label.setSize(getTextWidth() + 1, label.getHeight());
 		}
+
+		if (backgroundColor != null) {
+			g.setColor(backgroundColor.color());
+			g.fillRect(0, 0, getWidth(), getHeight());
+		}
+
+		super.paint(g);
 	}
 }

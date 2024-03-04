@@ -174,7 +174,7 @@ public class CharterTheme extends DefaultMetalTheme {
 	 */
 	@Override
 	public ColorUIResource getPrimaryControl() {
-		return new ColorUIResource(ColorLabel.BASE_HIGHLIGHT.color()); // changed
+		return new ColorUIResource(ColorLabel.BASE_HIGHLIGHT.color());
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class CharterTheme extends DefaultMetalTheme {
 	 */
 	@Override
 	public ColorUIResource getPrimaryControlDarkShadow() {
-		return new ColorUIResource(ColorLabel.BASE_BORDER.color()); // changed
+		return new ColorUIResource(ColorLabel.BASE_BORDER.color());
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class CharterTheme extends DefaultMetalTheme {
 	 */
 	@Override
 	public ColorUIResource getPrimaryControlHighlight() {
-		return new ColorUIResource(ColorLabel.BASE_BG_2.color()); // changed
+		return new ColorUIResource(ColorLabel.BASE_BG_2.color());
 	}
 
 	/**
@@ -198,7 +198,7 @@ public class CharterTheme extends DefaultMetalTheme {
 	 */
 	@Override
 	public ColorUIResource getPrimaryControlShadow() {
-		return new ColorUIResource(ColorLabel.BASE_HIGHLIGHT.color()); // changed
+		return new ColorUIResource(ColorLabel.BASE_HIGHLIGHT.color());
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class CharterTheme extends DefaultMetalTheme {
 	 */
 	@Override
 	public ColorUIResource getSeparatorBackground() {
-		return new ColorUIResource(ColorLabel.BASE_BG_2.color()); // changed
+		return new ColorUIResource(ColorLabel.BASE_BG_2.color());
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class CharterTheme extends DefaultMetalTheme {
 	 */
 	@Override
 	public ColorUIResource getSeparatorForeground() {
-		return new ColorUIResource(ColorLabel.BASE_BORDER.color()); // changed
+		return new ColorUIResource(ColorLabel.BASE_BORDER.color());
 	}
 
 	@Override

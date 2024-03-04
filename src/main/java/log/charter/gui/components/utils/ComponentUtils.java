@@ -1,7 +1,11 @@
 package log.charter.gui.components.utils;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.JOptionPane;
 
@@ -46,6 +50,52 @@ public class ComponentUtils {
 
 	public static String askForInput(final Component parent, final Label message, final String initialValue) {
 		return JOptionPane.showInputDialog(parent, message.label(), initialValue);
+	}
+
+	public static class ComponentWithOffset {
+		private final Component component;
+		private final int offset;
+
+		public ComponentWithOffset(final Component component, final int offset) {
+			this.component = component;
+			this.offset = offset;
+		}
+
+		public void setLocationFor(final int middle) {
+			component.setLocation(getX(middle), component.getY());
+		}
+
+		public int getX(final int middle) {
+			return middle - component.getWidth() / 2 - offset;
+		}
+	}
+
+	public static void addComponentCenteringOnResize(final Container parent, final ComponentWithOffset... components) {
+		parent.addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentShown(final ComponentEvent e) {
+			}
+
+			@Override
+			public void componentResized(final ComponentEvent e) {
+				final Insets insets = parent.getInsets();
+				final int w = parent.getWidth() - insets.left - insets.right;
+				final int middleX = w / 2;
+
+				for (final ComponentWithOffset component : components) {
+					component.setLocationFor(middleX);
+				}
+			}
+
+			@Override
+			public void componentMoved(final ComponentEvent e) {
+			}
+
+			@Override
+			public void componentHidden(final ComponentEvent e) {
+			}
+		});
 	}
 
 }

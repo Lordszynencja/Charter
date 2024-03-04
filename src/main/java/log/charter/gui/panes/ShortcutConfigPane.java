@@ -170,7 +170,7 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 			return false;
 		}
 
-		editors.forEach((action, editor) -> { ShortcutConfig.setShortcut(action, editor.shortcut); });
+		editors.forEach((action, editor) -> ShortcutConfig.setShortcut(action, editor.shortcut));
 		ShortcutConfig.markChanged();
 		charterMenuBar.refreshMenus();
 
@@ -184,7 +184,6 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		final int scrollEndY = getHeight() - 50 - insets.top - insets.bottom;
 
 		setComponentBounds(panel, 0, 0, w, scrollEndY);
-
 		setComponentBounds(saveButton, middleX - 110, scrollEndY + 20, 100, 20);
 		setComponentBounds(cancelButton, middleX + 10, scrollEndY + 20, 100, 20);
 	}
