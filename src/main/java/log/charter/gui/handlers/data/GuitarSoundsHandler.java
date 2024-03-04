@@ -40,25 +40,9 @@ public class GuitarSoundsHandler {
 	}
 
 	private boolean stringsInRange(final ArrayList2<ChordOrNote> sounds, final IntRange stringRange) {
-		final ArrayList2<ChordTemplate> chordTemplates = data.getCurrentArrangement().chordTemplates;
-
-		for (final ChordOrNote sound : sounds) {
-			if (sound.isNote()) {
-				if (!stringRange.inRange(sound.note.string)) {
-					return false;
-				}
-
-				continue;
-			}
-
-			for (final int string : chordTemplates.get(sound.chord.templateId()).frets.keySet()) {
-				if (!stringRange.inRange(string)) {
-					return false;
-				}
-			}
-		}
-
-		return true;
+		return !sounds.stream()//
+				.flatMap(ChordOrNote::notes)//
+				.anyMatch(note -> !stringRange.inRange(note.string()));
 	}
 
 	private ArrayList2<ChordOrNote> getSelectedSounds() {
@@ -149,33 +133,33 @@ public class GuitarSoundsHandler {
 
 		for (final ChordOrNote sound : sounds) {
 			if (sound.isNote()) {
-				final int newFret = sound.note.fret + stringDifferences.get(sound.note.string);
+				final int newFret = sound.note().fret + stringDifferences.get(sound.note().string);
 				if (newFret >= 0 && newFret <= Config.frets) {
-					sound.note.fret = newFret;
-					sound.note.string += stringChange;
+					sound.note().fret = newFret;
+					sound.note().string += stringChange;
 				}
 				continue;
 			}
 
-			if (movedChordTemplates.containsKey(sound.chord.templateId())) {
-				moveChordStrings(stringRange, sound.chord.chordNotes, stringChange);
-				final int newTemplateId = movedChordTemplates.get(sound.chord.templateId());
+			if (movedChordTemplates.containsKey(sound.chord().templateId())) {
+				moveChordStrings(stringRange, sound.chord().chordNotes, stringChange);
+				final int newTemplateId = movedChordTemplates.get(sound.chord().templateId());
 				final ChordTemplate chordTemplate = chordTemplates.get(newTemplateId);
-				sound.chord.updateTemplate(newTemplateId, chordTemplate);
+				sound.chord().updateTemplate(newTemplateId, chordTemplate);
 				continue;
 			}
 
-			final ChordTemplate oldTemplate = chordTemplates.get(sound.chord.templateId());
+			final ChordTemplate oldTemplate = chordTemplates.get(sound.chord().templateId());
 			final ChordTemplate newChordTemplate = moveChordTemplateStrings(stringRange, stringDifferences, oldTemplate,
 					stringChange);
 			if (newChordTemplate == null) {
 				continue;
 			}
 
-			moveChordStrings(stringRange, sound.chord.chordNotes, stringChange);
+			moveChordStrings(stringRange, sound.chord().chordNotes, stringChange);
 			final int newTemplateId = arrangement.getChordTemplateIdWithSave(newChordTemplate);
-			movedChordTemplates.put(sound.chord.templateId(), newTemplateId);
-			sound.chord.updateTemplate(newTemplateId, newChordTemplate);
+			movedChordTemplates.put(sound.chord().templateId(), newTemplateId);
+			sound.chord().updateTemplate(newTemplateId, newChordTemplate);
 		}
 
 		frame.selectionChanged(true);
@@ -227,13 +211,13 @@ public class GuitarSoundsHandler {
 
 		for (final ChordOrNote sound : sounds) {
 			if (sound.isNote()) {
-				if (!fretRange.inRange(sound.note.fret)) {
+				if (!fretRange.inRange(sound.note().fret)) {
 					return false;
 				}
 				continue;
 			}
 
-			final Chord chord = sound.chord;
+			final Chord chord = sound.chord();
 			final ChordTemplate template = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
 			for (final int fret : template.frets.values()) {
 				if (!fretRange.inRange(fret)) {
@@ -267,11 +251,11 @@ public class GuitarSoundsHandler {
 
 	private void moveFret(final ChordOrNote sound, final int fretChange) {
 		if (sound.isNote()) {
-			sound.note.fret += fretChange;
+			sound.note().fret += fretChange;
 			return;
 		}
 
-		final Chord chord = sound.chord;
+		final Chord chord = sound.chord();
 		final ChordTemplate oldTemplate = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
 		final ChordTemplate newTemplate = moveTemplateFrets(oldTemplate, fretChange);
 
@@ -304,11 +288,11 @@ public class GuitarSoundsHandler {
 
 		for (final ChordOrNote sound : sounds) {
 			if (sound.isNote()) {
-				sound.note.fret = fret;
+				sound.note().fret = fret;
 				continue;
 			}
 
-			final Chord chord = sound.chord;
+			final Chord chord = sound.chord();
 			final ChordTemplate oldTemplate = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
 			final int fretChange = fret - oldTemplate.getLowestFret();
 			if (fretChange == 0 || oldTemplate.getHighestFret() + fretChange > frets) {

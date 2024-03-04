@@ -234,9 +234,9 @@ public class MidiNotePlayer {
 		}
 
 		if (sound.isNote()) {
-			playNote(sound.note);
+			playNote(sound.note());
 		} else {
-			playChord(sound.chord);
+			playChord(sound.chord());
 		}
 	}
 

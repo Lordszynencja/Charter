@@ -17,7 +17,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("note")
 @XStreamConverter(NoteConverter.class)
-public class Note extends GuitarSound {
+public class Note extends GuitarSound implements NoteInterface {
 	public int string = 0;
 	public int fret = 0;
 	public BassPickingTechnique bassPicking = BassPickingTechnique.NONE;
@@ -90,5 +90,105 @@ public class Note extends GuitarSound {
 		slideTo = chordNote.slideTo;
 		unpitchedSlide = chordNote.unpitchedSlide;
 		bendValues = chordNote.bendValues.map(BendValue::new);
+	}
+
+	@Override
+	public BassPickingTechnique bassPicking() {
+		return bassPicking;
+	}
+
+	@Override
+	public void bassPicking(final BassPickingTechnique value) {
+		bassPicking = value;
+	}
+
+	@Override
+	public Mute mute() {
+		return mute;
+	}
+
+	@Override
+	public void mute(final Mute value) {
+		mute = value;
+	}
+
+	@Override
+	public HOPO hopo() {
+		return hopo;
+	}
+
+	@Override
+	public void hopo(final HOPO value) {
+		hopo = value;
+	}
+
+	@Override
+	public Harmonic harmonic() {
+		return harmonic;
+	}
+
+	@Override
+	public void harmonic(final Harmonic value) {
+		harmonic = value;
+	}
+
+	@Override
+	public boolean vibrato() {
+		return vibrato;
+	}
+
+	@Override
+	public void vibrato(final boolean value) {
+		vibrato = value;
+	}
+
+	@Override
+	public boolean tremolo() {
+		return tremolo;
+	}
+
+	@Override
+	public void tremolo(final boolean value) {
+		tremolo = value;
+	}
+
+	@Override
+	public boolean linkNext() {
+		return linkNext;
+	}
+
+	@Override
+	public void linkNext(final boolean value) {
+		linkNext = value;
+	}
+
+	@Override
+	public Integer slideTo() {
+		return slideTo;
+	}
+
+	@Override
+	public void slideTo(final Integer value) {
+		slideTo = value;
+	}
+
+	@Override
+	public boolean unpitchedSlide() {
+		return unpitchedSlide;
+	}
+
+	@Override
+	public void unpitchedSlide(final boolean value) {
+		unpitchedSlide = value;
+	}
+
+	@Override
+	public ArrayList2<BendValue> bendValues() {
+		return bendValues;
+	}
+
+	@Override
+	public void bendValues(final ArrayList2<BendValue> value) {
+		bendValues = value;
 	}
 }

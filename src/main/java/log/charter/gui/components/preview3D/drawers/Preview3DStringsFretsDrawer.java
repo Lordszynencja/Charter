@@ -92,9 +92,9 @@ public class Preview3DStringsFretsDrawer {
 			}
 
 			final int highlightValue = highlightTime - drawData.time + sound.position();
-			if (sound.isNote() && sound.note.fret != 0) {
-				highlightValues[sound.note.fret - 1] = highlightValue;
-				highlightValues[sound.note.fret] = highlightValue;
+			if (sound.isNote() && sound.note().fret != 0) {
+				highlightValues[sound.note().fret - 1] = highlightValue;
+				highlightValues[sound.note().fret] = highlightValue;
 			} else {
 				final IntRange frets = drawData.getFrets(sound.position());
 				highlightValues[frets.min - 1] = highlightValue;

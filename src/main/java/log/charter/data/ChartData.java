@@ -86,21 +86,14 @@ public class ChartData {
 	}
 
 	public Arrangement getCurrentArrangement() {
-		if (modeManager.getMode() != EditMode.GUITAR) {
-			return null;
-		}
-		if (songChart.arrangements.isEmpty()) {
-			return null;
+		if (songChart == null || currentArrangement < 0 || currentArrangement >= songChart.arrangements.size()) {
+			return new Arrangement();
 		}
 
 		return songChart.arrangements.get(currentArrangement);
 	}
 
 	public Level getCurrentArrangementLevel() {
-		if (modeManager.getMode() != EditMode.GUITAR) {
-			return null;
-		}
-
-		return songChart.arrangements.get(currentArrangement).getLevel(currentLevel);
+		return getCurrentArrangement().getLevel(currentLevel);
 	}
 }

@@ -313,12 +313,14 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 			arrangement.levels.forEach(level -> {
 				level.sounds.forEach(sound -> {
-					if (sound.isNote()) {
-						if (sound.note.string >= tuning.strings()) {
-							sound.note.string = tuning.strings() - 1;
-						} else {
-							sound.note.fret = max(0, sound.note.fret + fretsDifference[sound.note.string]);
-						}
+					if (!sound.isNote()) {
+						return;
+					}
+
+					if (sound.note().string >= tuning.strings()) {
+						sound.note().string = tuning.strings() - 1;
+					} else {
+						sound.note().fret = max(0, sound.note().fret + fretsDifference[sound.note().string]);
 					}
 				});
 			});

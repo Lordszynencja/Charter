@@ -17,6 +17,6 @@ public class CopiedSoundPosition extends CopiedPositionWithLength<ChordOrNote> {
 
 	@Override
 	protected ChordOrNote prepareValue() {
-		return new ChordOrNote(sound);
+		return ChordOrNote.from(sound);
 	}
 }

@@ -41,7 +41,7 @@ public class DrawerUtils {
 		updateEditAreaSizes(EditMode.TEMPO_MAP, false, 1);
 	}
 
-	private static void setEditAreaSizesForTempoMapAndVocals() {
+	private static void setEditAreaSizesForVocals() {
 		lanesTop = beatSizeTextY + 15;
 		laneHeight = (int) (noteHeight * 7.5);
 		tailHeight = noteHeight;
@@ -69,7 +69,8 @@ public class DrawerUtils {
 	public static void updateEditAreaSizes(final EditMode editMode, final boolean bass, final int strings) {
 		switch (editMode) {
 			case GUITAR -> setEditAreaSizesForGuitar(bass, strings);
-			default -> setEditAreaSizesForTempoMapAndVocals();
+			case TEMPO_MAP -> setEditAreaSizesForGuitar(bass, strings);
+			default -> setEditAreaSizesForVocals();
 		}
 
 		BackgroundDrawer.reloadGraphics();

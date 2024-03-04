@@ -188,11 +188,11 @@ public class Preview3DFingeringDrawer {
 		if (sound == null || sound.position() < handShape.position() || sound.isNote()) {
 			return handShape.template;
 		}
-		if (sound.chord.fullyMuted()) {
+		if (sound.chord().fullyMuted()) {
 			return null;
 		}
 
-		return data.getCurrentArrangement().chordTemplates.get(sound.chord.templateId());
+		return data.getCurrentArrangement().chordTemplates.get(sound.chord().templateId());
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {

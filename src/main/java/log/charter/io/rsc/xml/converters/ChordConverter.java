@@ -86,6 +86,7 @@ public class ChordConverter implements Converter {
 		writer.addAttribute("position", chord.position() + "");
 		writer.addAttribute("templateId", chord.templateId() + "");
 		writeBoolean(writer, "splitIntoNotes", chord.splitIntoNotes);
+		writeBoolean(writer, "forceNoNotes", chord.forceNoNotes);
 		writeBoolean(writer, "accent", chord.accent);
 		writeBoolean(writer, "ignore", chord.ignore);
 		writeBoolean(writer, "crazy", chord.passOtherNotes);
@@ -156,12 +157,13 @@ public class ChordConverter implements Converter {
 	}
 
 	@Override
-	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+	public Chord unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		final int position = Integer.valueOf(reader.getAttribute("position"));
 		final int templateId = Integer.valueOf(reader.getAttribute("templateId"));
 		final Chord chord = new Chord(position, templateId);
 
 		chord.splitIntoNotes = readBoolean(reader.getAttribute("splitIntoNotes"));
+		chord.forceNoNotes = readBoolean(reader.getAttribute("forceNoNotes"));
 		chord.accent = readBoolean(reader.getAttribute("accent"));
 		chord.ignore = readBoolean(reader.getAttribute("ignore"));
 		chord.passOtherNotes = readBoolean(reader.getAttribute("crazy"));

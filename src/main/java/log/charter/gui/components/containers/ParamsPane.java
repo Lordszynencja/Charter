@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -27,13 +28,11 @@ import log.charter.gui.components.data.PaneSizesBuilder;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.TextInputWithValidation.BigDecimalValueValidator;
 import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
-import log.charter.gui.components.simple.TextInputWithValidation.StringValueSetter;
 import log.charter.gui.components.simple.TextInputWithValidation.ValueValidator;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 
 public class ParamsPane extends JDialog {
-
 	public class RowedPanelEmulator extends RowedPanel {
 		private static final long serialVersionUID = 1L;
 
@@ -67,12 +66,12 @@ public class ParamsPane extends JDialog {
 		}
 
 		@Override
-		public void add(final JComponent component, final int x, final int y, final int w, final int h) {
+		public void add(final Component component, final int x, final int y, final int w, final int h) {
 			ParamsPane.this.add(component, x, y, w, h);
 		}
 
 		@Override
-		public void addTop(final JComponent component, final int x, final int y, final int w, final int h) {
+		public void addTop(final Component component, final int x, final int y, final int w, final int h) {
 			ParamsPane.this.addTop(component, x, y, w, h);
 		}
 
@@ -378,7 +377,7 @@ public class ParamsPane extends JDialog {
 	}
 
 	protected void addConfigValue(final int row, final int x, int labelWidth, final Label label, final String val,
-			final int inputLength, final ValueValidator validator, final StringValueSetter setter,
+			final int inputLength, final ValueValidator validator, final Consumer<String> setter,
 			final boolean allowWrong) {
 		final int y = getY(row);
 		if (label != null) {

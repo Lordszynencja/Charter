@@ -50,17 +50,11 @@ public class MidiChartNotePlayer {
 	}
 
 	private void stopSound(final MidiChartNotePlayerNoteData sound) {
-		if (sound.sound.isNote()) {
-			if (!sound.sound.note.linkNext) {
-				midiNotePlayer.stopSound(sound.sound.note.string);
+		sound.sound.notes().forEach(note -> {
+			if (!note.linkNext()) {
+				midiNotePlayer.stopSound(note.string());
 			}
-		} else {
-			sound.sound.chord.chordNotes.forEach((string, chordNote) -> {
-				if (!chordNote.linkNext) {
-					midiNotePlayer.stopSound(string);
-				}
-			});
-		}
+		});
 	}
 
 	private void playNextSound() {
@@ -134,12 +128,18 @@ public class MidiChartNotePlayer {
 				continue;
 			}
 
+			sound.sound.notesWithFrets(data.getCurrentArrangement().chordTemplates)//
+					.forEach(note -> {
+						updateBend(time, note.position(), note.length(), note.string(), note.bendValues(), note.fret(),
+								note.slideTo(), note.unpitchedSlide());
+					});
+
 			if (sound.sound.isNote()) {
-				final Note note = sound.sound.note;
+				final Note note = sound.sound.note();
 				updateBend(time, note.position(), note.length(), note.string, note.bendValues, note.fret, note.slideTo,
 						note.unpitchedSlide);
 			} else {
-				final Chord chord = sound.sound.chord;
+				final Chord chord = sound.sound.chord();
 				final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
 				for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
 					final int string = chordNoteEntry.getKey();
@@ -194,13 +194,13 @@ public class MidiChartNotePlayer {
 			soundEndTime = min(maxEndTime, sound.position() + 100);
 		}
 		if (sound.isNote()) {
-			final ChordOrNote nextNote = ChordOrNote.findNextSoundOnString(sound.note.string, noteId + 1,
+			final ChordOrNote nextNote = ChordOrNote.findNextSoundOnString(sound.note().string, noteId + 1,
 					data.getCurrentArrangementLevel().sounds);
 			if (nextNote != null) {
 				soundEndTime = min(soundEndTime, nextNote.position() - 5);
 			}
 		} else {
-			for (final int string : sound.chord.chordNotes.keySet()) {
+			for (final int string : sound.chord().chordNotes.keySet()) {
 				final ChordOrNote nextNote = ChordOrNote.findNextSoundOnString(string, noteId + 1,
 						data.getCurrentArrangementLevel().sounds);
 				if (nextNote != null) {

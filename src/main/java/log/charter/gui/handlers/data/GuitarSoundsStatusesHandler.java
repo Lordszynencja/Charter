@@ -78,12 +78,10 @@ public class GuitarSoundsStatusesHandler {
 
 	private <T> T getNewValueNotes(final Map<T, T> cycleMap, final ChordOrNote sound,
 			final Function<CommonNote, T> getter, final T defaultValue) {
-		final List<CommonNote> notes = sound.notes();
-		if (notes.isEmpty()) {
-			return defaultValue;
-		}
-
-		return cycleMap.get(getter.apply(notes.get(0)));
+		return sound.notes()//
+				.findFirst()//
+				.map(getter)//
+				.orElse(defaultValue);
 	}
 
 	public <T> void cyclicalToggleNotes(final Map<T, T> cycleMap, final Function<CommonNote, T> getter,

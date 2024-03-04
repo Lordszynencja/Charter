@@ -34,6 +34,7 @@ public class Chord extends GuitarSound {
 
 	private int templateId;
 	public boolean splitIntoNotes = false;
+	public boolean forceNoNotes = false;
 	public HashMap2<Integer, ChordNote> chordNotes = new HashMap2<>();
 
 	public Chord(final int pos, final int templateId) {
@@ -135,6 +136,7 @@ public class Chord extends GuitarSound {
 		templateId = other.templateId;
 		accent = other.accent;
 		splitIntoNotes = other.splitIntoNotes;
+		forceNoNotes = other.forceNoNotes;
 		chordNotes = other.chordNotes.map(i -> i, ChordNote::new);
 	}
 
@@ -269,6 +271,14 @@ public class Chord extends GuitarSound {
 
 	public boolean linkNext() {
 		return chordNotes.values().stream().anyMatch(n -> n.linkNext);
+	}
+
+	public void splitIntoNotes(final boolean value) {
+		splitIntoNotes = value;
+	}
+
+	public void forceNoNotes(final boolean value) {
+		forceNoNotes = value;
 	}
 
 }

@@ -99,14 +99,14 @@ public class GP5SoundsTransformer {
 			return;
 		}
 
-		final Note note = lastSound.note;
+		final Note note = lastSound.note();
 
 		if (gpNote.tied) {
 			note.linkNext = true;
 		}
 
 		if (addSlideToLastSound) {
-			lastSound.note.slideTo = gpNote.fret;
+			lastSound.note().slideTo = gpNote.fret;
 			addSlideToLastSound = false;
 		}
 	}
@@ -270,7 +270,7 @@ public class GP5SoundsTransformer {
 		}
 
 		if (graceNote != null) {
-			level.sounds.add(new ChordOrNote(graceNote));
+			level.sounds.add(ChordOrNote.from(graceNote));
 		}
 	}
 
@@ -311,8 +311,8 @@ public class GP5SoundsTransformer {
 		addSlideIn(effects, note, afterNotes);
 		addGraceNote(gpBeat, position, effects, note);
 
-		level.sounds.add(new ChordOrNote(note));
-		afterNotes.forEach(afterNote -> level.sounds.add(new ChordOrNote(afterNote)));
+		level.sounds.add(ChordOrNote.from(note));
+		afterNotes.forEach(afterNote -> level.sounds.add(ChordOrNote.from(afterNote)));
 
 		lastSound = level.sounds.getLast();
 		lastSoundTemplate = null;
@@ -325,7 +325,7 @@ public class GP5SoundsTransformer {
 			return;
 		}
 
-		final Chord chord = lastSound.chord;
+		final Chord chord = lastSound.chord();
 		for (final GPNote gpNote : gpBeat.notes) {
 			if (gpNote.tied) {
 				chord.chordNotes.values().forEach(n -> n.linkNext = true);
@@ -437,7 +437,7 @@ public class GP5SoundsTransformer {
 
 			final ChordNote chordNote = new ChordNote();
 			chord.chordNotes.put(string, chordNote);
-			setStatuses(CommonNote.create(chord, string, chordNote), gpBeat, gpNote, wasHOPOStart, hOPOFrom);
+			setStatuses(CommonNote.create(chord, string), gpBeat, gpNote, wasHOPOStart, hOPOFrom);
 			if (chordNote.vibrato || chordNote.tremolo) {
 				chordAddingData.setLength = true;
 			}
@@ -457,7 +457,7 @@ public class GP5SoundsTransformer {
 
 		final int templateId = arrangement.getChordTemplateIdWithSave(chordTemplate);
 		chord.updateTemplate(templateId, chordTemplate);
-		level.sounds.add(new ChordOrNote(chord));
+		level.sounds.add(ChordOrNote.from(chord));
 
 		lastSound = level.sounds.getLast();
 		lastSoundTemplate = chordTemplate;

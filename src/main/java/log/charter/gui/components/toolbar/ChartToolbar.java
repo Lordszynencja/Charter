@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 
 import javax.swing.ButtonGroup;
@@ -30,7 +31,6 @@ import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueSetter;
 import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
@@ -165,7 +165,7 @@ public class ChartToolbar extends JToolBar {
 	private FieldWithLabel<TextInputWithValidation> createNumberField(final Label label,
 			final LabelPosition labelPosition, final int inputWidth, //
 			final Integer value, final int min, final int max, final boolean allowEmpty,
-			final IntegerValueSetter onChange) {
+			final Consumer<Integer> onChange) {
 		final TextInputWithValidation input = new TextInputWithValidation(value, inputWidth,
 				new IntegerValueValidator(min, max, allowEmpty), onChange, false);
 

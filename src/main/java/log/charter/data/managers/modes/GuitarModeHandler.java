@@ -125,8 +125,8 @@ public class GuitarModeHandler extends ModeHandler {
 
 	private ChordOrNote addSound(final Note note) {
 		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
-		final ChordOrNote sound = new ChordOrNote(note);
-		sounds.add(new ChordOrNote(note));
+		final ChordOrNote sound = ChordOrNote.from(note);
+		sounds.add(sound);
 		sounds.sort(null);
 
 		final int previousId = findLastIdBefore(sounds, note.position());
@@ -150,14 +150,14 @@ public class GuitarModeHandler extends ModeHandler {
 			return 1;
 		}
 
-		if (chordOrNote.isNote() && chordOrNote.note.string == string) {
+		if (chordOrNote.isNote() && chordOrNote.note().string == string) {
 			data.getCurrentArrangementLevel().sounds.remove((int) id);
 			return -1;
 		}
 
 		if (chordOrNote.isChord()) {
 			final ChordTemplate chordTemplate = new ChordTemplate(
-					data.getCurrentArrangement().chordTemplates.get(chordOrNote.chord.templateId()));
+					data.getCurrentArrangement().chordTemplates.get(chordOrNote.chord().templateId()));
 			if (chordTemplate.frets.containsKey(string)) {
 				chordTemplate.frets.remove(string);
 			} else {
@@ -169,14 +169,14 @@ public class GuitarModeHandler extends ModeHandler {
 			setSuggestedFingers(chordTemplate);
 
 			final int newTemplateId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
-			chordOrNote.chord.updateTemplate(newTemplateId, chordTemplate);
+			chordOrNote.chord().updateTemplate(newTemplateId, chordTemplate);
 			if (chordTemplate.frets.size() == 1) {
 				chordOrNote.turnToNote(chordTemplate);
 			}
 		} else {
 			final ChordTemplate chordTemplate = new ChordTemplate();
-			chordTemplate.frets.put(chordOrNote.note.string, chordOrNote.note.fret);
-			chordTemplate.frets.put(string, chordOrNote.note.fret);
+			chordTemplate.frets.put(chordOrNote.note().string, chordOrNote.note().fret);
+			chordTemplate.frets.put(string, chordOrNote.note().fret);
 			setSuggestedFingers(chordTemplate);
 
 			final int chordId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);

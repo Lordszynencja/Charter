@@ -52,8 +52,8 @@ public class RSXMLLevelTransformer {
 		level.handShapes = arrangementLevel.handShapes.list.map(HandShape::new);
 
 		for (final ArrangementChord arrangementChord : arrangementLevel.chords.list) {
-			level.sounds.add(new ChordOrNote(
-					new Chord(arrangementChord, arrangement.chordTemplates.get(arrangementChord.chordId))));
+			level.sounds.add(ChordOrNote
+					.from(new Chord(arrangementChord, arrangement.chordTemplates.get(arrangementChord.chordId))));
 		}
 
 		final HashMap2<Integer, ArrayList2<ArrangementNote>> arrangementNotesMap = new HashMap2<>();
@@ -69,7 +69,7 @@ public class RSXMLLevelTransformer {
 
 		for (final Entry<Integer, ArrayList2<ArrangementNote>> notesPosition : arrangementNotesMap.entrySet()) {
 			if (notesPosition.getValue().size() == 1) {
-				level.sounds.add(new ChordOrNote(new Note(notesPosition.getValue().get(0))));
+				level.sounds.add(ChordOrNote.from(new Note(notesPosition.getValue().get(0))));
 				continue;
 			}
 
@@ -101,7 +101,7 @@ public class RSXMLLevelTransformer {
 				}
 			}
 
-			level.sounds.add(new ChordOrNote(chord));
+			level.sounds.add(ChordOrNote.from(chord));
 		}
 
 		level.sounds.sort(null);

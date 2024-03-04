@@ -16,7 +16,7 @@ public class PaneSizes {
 	}
 
 	public int getY(final int row) {
-		return verticalSpace + row * (rowHeight + rowSpacing);
+		return verticalSpace + row * rowDistance;
 	}
 
 	public int getHeight(final int rows) {

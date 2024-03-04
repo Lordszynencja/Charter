@@ -40,7 +40,7 @@ public class BeatConverter implements Converter {
 	}
 
 	@Override
-	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+	public Beat unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		if (reader.getNodeName().equals("beat")) {
 			return readOldBeat(reader);
 		}

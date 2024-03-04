@@ -392,7 +392,8 @@ public class Localization {
 		ACCENT("Accent"), //
 		LINK_NEXT("Link next"), //
 		SPLIT_INTO_NOTES("Split"), //
-		IGNORE_NOTE("Ignore"), //
+		FORCE_NO_NOTES("No notes"), //
+		IGNORE("Ignore"), //
 		PASS_OTHER_NOTES("Crazy/Arpeggiato"), //
 		VIBRATO("Vibrato"), //
 		TREMOLO("Tremolo"), //

@@ -115,7 +115,7 @@ public class NoteConverter implements Converter {
 	}
 
 	@Override
-	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+	public Note unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		final int position = Integer.valueOf(reader.getAttribute("position"));
 		final int string = Integer.valueOf(reader.getAttribute("string"));
 		final int fret = Integer.valueOf(reader.getAttribute("fret"));

@@ -5,6 +5,7 @@ import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSele
 
 import java.math.BigDecimal;
 import java.util.Vector;
+import java.util.function.IntConsumer;
 
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
@@ -14,8 +15,8 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.config.Theme;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.simple.FieldWithLabel;
-import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.TextInputWithValidation.BigDecimalValueValidator;
 import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
 
@@ -111,7 +112,7 @@ public class GraphicThemeConfigPage implements Page {
 
 	private void addEventsChangeHeightField(final GraphicConfigPane parent, final int row) {
 		final TextInputWithValidation input = new TextInputWithValidation(eventsChangeHeight, 20,
-				new IntegerValueValidator(1, 100, false), i -> eventsChangeHeight = i, false);
+				new IntegerValueValidator(1, 100, false), (final int i) -> eventsChangeHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -123,7 +124,7 @@ public class GraphicThemeConfigPage implements Page {
 
 	private void addToneChangeHeightField(final GraphicConfigPane parent, final int row) {
 		final TextInputWithValidation input = new TextInputWithValidation(toneChangeHeight, 20,
-				new IntegerValueValidator(1, 100, false), i -> toneChangeHeight = i, false);
+				new IntegerValueValidator(1, 100, false), (final int i) -> toneChangeHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -135,7 +136,7 @@ public class GraphicThemeConfigPage implements Page {
 
 	private void addAnchorInfoHeightField(final GraphicConfigPane parent, final int row) {
 		final TextInputWithValidation input = new TextInputWithValidation(anchorInfoHeight, 20,
-				new IntegerValueValidator(1, 100, false), i -> anchorInfoHeight = i, false);
+				new IntegerValueValidator(1, 100, false), (final int i) -> anchorInfoHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -147,7 +148,7 @@ public class GraphicThemeConfigPage implements Page {
 
 	private void addNoteHeightInput(final GraphicConfigPane parent, final int row) {
 		final TextInputWithValidation input = new TextInputWithValidation(noteHeight, 20,
-				new IntegerValueValidator(1, 100, false), this::onNoteHeightChange, false);
+				new IntegerValueValidator(1, 100, false), (IntConsumer) this::onNoteHeightChange, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -166,7 +167,7 @@ public class GraphicThemeConfigPage implements Page {
 
 	private void addChordHeightField(final GraphicConfigPane parent, final int row) {
 		final TextInputWithValidation input = new TextInputWithValidation(chordHeight, 20,
-				new IntegerValueValidator(1, 100, false), i -> chordHeight = i, false);
+				new IntegerValueValidator(1, 100, false), (final int i) -> chordHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -178,7 +179,7 @@ public class GraphicThemeConfigPage implements Page {
 
 	private void addNoteWidthInput(final GraphicConfigPane parent, final int row) {
 		final TextInputWithValidation input = new TextInputWithValidation(noteWidth, 20,
-				new IntegerValueValidator(1, 100, false), i -> noteWidth = i, false);
+				new IntegerValueValidator(1, 100, false), (final int i) -> noteWidth = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -190,7 +191,7 @@ public class GraphicThemeConfigPage implements Page {
 
 	private void addHandShapesHeightFieldField(final GraphicConfigPane parent, final int row) {
 		final TextInputWithValidation input = new TextInputWithValidation(handShapesHeight, 20,
-				new IntegerValueValidator(1, 100, false), i -> handShapesHeight = i, false);
+				new IntegerValueValidator(1, 100, false), (final int i) -> handShapesHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -202,7 +203,7 @@ public class GraphicThemeConfigPage implements Page {
 
 	private void addTimingHeightFieldField(final GraphicConfigPane parent, final int row) {
 		final TextInputWithValidation input = new TextInputWithValidation(timingHeight, 20,
-				new IntegerValueValidator(1, 200, false), i -> timingHeight = i, false);
+				new IntegerValueValidator(1, 200, false), (final int i) -> timingHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 

@@ -61,7 +61,7 @@ public class HandShapesHandler {
 		ChordTemplate chordTemplate = new ChordTemplate();
 		if (selected.get(0).selectable.isChord()) {
 			chordTemplate = chartData.getCurrentArrangement().chordTemplates
-					.get(selected.get(0).selectable.chord.templateId());
+					.get(selected.get(0).selectable.chord().templateId());
 		}
 
 		final HandShape handShape = new HandShape(position, endPosition - position);

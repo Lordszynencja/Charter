@@ -3,10 +3,10 @@ package log.charter.gui.components.containers;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -15,6 +15,7 @@ import javax.swing.SwingConstants;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.data.PaneSizes;
+import log.charter.gui.components.utils.RowedPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 
@@ -31,7 +32,7 @@ public class RowedPanel extends JPanel {
 		void setValue(Integer val);
 	}
 
-	public static void setComponentBounds(final JComponent component, final int x, final int y, final int w,
+	public static void setComponentBounds(final Component component, final int x, final int y, final int w,
 			final int h) {
 		component.setBounds(x, y, w, h);
 		final Dimension size = new Dimension(w, h);
@@ -68,16 +69,32 @@ public class RowedPanel extends JPanel {
 		return parts.size();
 	}
 
-	public void add(final JComponent component, final int x, final int y, final int w, final int h) {
-		setComponentBounds(component, x, y, w, h);
-		add(component);
+	@Override
+	public Component add(final Component component) {
+		super.add(component);
 		parts.add(component);
+
+		return component;
 	}
 
-	public void addTop(final JComponent component, final int x, final int y, final int w, final int h) {
+	public void add(final Component component, final RowedPosition position, final int width) {
+		component.setLocation(position.getAndAddX(width), position.getY());
+		add(component);
+	}
+
+	public void addWithSettingSize(final Component component, final RowedPosition position, final int width,
+			final int space, final int height) {
+		add(component, position.getAndAddX(width + space), position.getY(), width, height);
+	}
+
+	public void add(final Component component, final int x, final int y, final int w, final int h) {
+		setComponentBounds(component, x, y, w, h);
+		add(component);
+	}
+
+	public void addTop(final Component component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
 		add(component, 0);
-		parts.add(component);
 	}
 
 	/**
@@ -150,21 +167,50 @@ public class RowedPanel extends JPanel {
 		return group;
 	}
 
-	// added for togglebuttons
+	private <T extends Enum<T>> JToggleButton addToggleButton(final ButtonGroup group, final RowedPosition position,
+			final int width, final Pair<T, Label> value, final Consumer<T> setter, final boolean selected) {
+		final JToggleButton toggleButton = new JToggleButton(value.b.label());
+		toggleButton.setActionCommand(value.a.name());
+		toggleButton.addActionListener(a -> setter.accept(value.a));
+		toggleButton.setSelected(selected);
+		group.add(toggleButton);
+		addWithSettingSize(toggleButton, position, width, 0, 20);
+
+		return toggleButton;
+	}
+
 	public <T extends Enum<T>> ButtonGroup addToggleButtonsExact(final int y, int x, final int optionWidth, final T val,
-			final ValueSetter<T> setter, final List<Pair<T, Label>> values) {
+			final Consumer<T> setter, final List<Pair<T, Label>> values) {
 		final ButtonGroup group = new ButtonGroup();
 
 		for (int i = 0; i < values.size(); i++) {
 			final Pair<T, Label> value = values.get(i);
+
 			final JToggleButton toggleButton = new JToggleButton(value.b.label());
 			toggleButton.setActionCommand(value.a.name());
 			toggleButton.setSelected(value.a.equals(val));
-			toggleButton.addActionListener(a -> setter.setValue(value.a));
+			toggleButton.addActionListener(a -> setter.accept(value.a));
 			group.add(toggleButton);
 			add(toggleButton, x, y, optionWidth, 20);
 
 			x += optionWidth;
+		}
+
+		return group;
+	}
+
+	public <T extends Enum<T>> ButtonGroup addToggleButtons(final RowedPosition position, final int optionWidth,
+			final T val, final Consumer<T> setter, final List<Pair<T, Label>> values) {
+		final RowedPosition temporaryPosition = position.copy();
+		final ButtonGroup group = new ButtonGroup();
+
+		for (int i = 0; i < values.size(); i++) {
+			final Pair<T, Label> value = values.get(i);
+			final boolean selected = value.a.equals(val);
+
+			addToggleButton(group, temporaryPosition, optionWidth, value, setter, selected);
+
+			position.getAndAddX(optionWidth);
 		}
 
 		return group;

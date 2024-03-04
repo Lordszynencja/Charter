@@ -245,12 +245,12 @@ public class GuitarDrawer {
 	private boolean addChordOrNote(final int time, final HighwayDrawer highwayDrawer, final Arrangement arrangement,
 			final int panelWidth, final ChordOrNote chordOrNote, final boolean selected, final boolean highlighted,
 			final boolean lastWasLinkNext, final boolean wrongLinkNext) {
-		if (chordOrNote.chord != null) {
-			return addChord(time, highwayDrawer, arrangement, panelWidth, chordOrNote.chord, selected, highlighted,
+		if (chordOrNote.isChord()) {
+			return addChord(time, highwayDrawer, arrangement, panelWidth, chordOrNote.chord(), selected, highlighted,
 					lastWasLinkNext, wrongLinkNext);
 		}
-		if (chordOrNote.note != null) {
-			return addNote(time, highwayDrawer, panelWidth, chordOrNote.note, selected, highlighted, lastWasLinkNext,
+		if (chordOrNote.isNote()) {
+			return addNote(time, highwayDrawer, panelWidth, chordOrNote.note(), selected, highlighted, lastWasLinkNext,
 					wrongLinkNext);
 		}
 
@@ -265,14 +265,14 @@ public class GuitarDrawer {
 			return true;
 		}
 		if (previousSound.isChord()) {
-			final ChordNote chordNote = previousSound.chord.chordNotes.get(string);
+			final ChordNote chordNote = previousSound.chord().chordNotes.get(string);
 			if (chordNote == null) {
 				return true;
 			}
 
 			if (chordNote.slideTo == null) {
 				final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates
-						.get(previousSound.chord.templateId());
+						.get(previousSound.chord().templateId());
 				if (chordTemplate.frets.getOrDefault(string, -1) != fret) {
 					return true;
 				}
@@ -285,18 +285,18 @@ public class GuitarDrawer {
 				}
 			}
 		} else {
-			if (previousSound.note.string != string) {
+			if (previousSound.note().string != string) {
 				return true;
 			}
-			if (previousSound.note.slideTo == null) {
-				if (previousSound.note.fret != fret) {
+			if (previousSound.note().slideTo == null) {
+				if (previousSound.note().fret != fret) {
 					return true;
 				}
 			} else {
-				if (previousSound.note.unpitchedSlide) {
+				if (previousSound.note().unpitchedSlide) {
 					return true;
 				}
-				if (previousSound.note.slideTo != fret) {
+				if (previousSound.note().slideTo != fret) {
 					return true;
 				}
 			}
@@ -317,7 +317,7 @@ public class GuitarDrawer {
 			final ChordOrNote sound = chordsAndNotes.get(i);
 			final boolean wrongLinkNext;
 			if (sound.isNote() && lastWasLinkNext) {
-				wrongLinkNext = isLinkNextIncorrect(i, sound.note.string, sound.note.fret);
+				wrongLinkNext = isLinkNextIncorrect(i, sound.note().string, sound.note().fret);
 			} else {
 				wrongLinkNext = false;
 			}
@@ -327,7 +327,7 @@ public class GuitarDrawer {
 			addChordOrNote(time, highwayDrawer, arrangement, panelWidth, sound, selected, highlighted, lastWasLinkNext,
 					wrongLinkNext);
 
-			lastWasLinkNext = sound.chord != null ? sound.chord.linkNext() : sound.note.linkNext;
+			lastWasLinkNext = sound.chord() != null ? sound.chord().linkNext() : sound.note().linkNext;
 		}
 
 		if (highlightData.highlightType == PositionType.GUITAR_NOTE) {
@@ -336,7 +336,7 @@ public class GuitarDrawer {
 				final int x = timeToX(highlightPosition.position, time);
 				final ChordOrNote sound = highlightPosition.originalSound;
 				final ChordTemplate template = sound != null && sound.isChord()
-						? templates.get(sound.chord.templateId())
+						? templates.get(sound.chord().templateId())
 						: null;
 				highwayDrawer.addSoundHighlight(x, sound, template, highlightPosition.string);
 			}

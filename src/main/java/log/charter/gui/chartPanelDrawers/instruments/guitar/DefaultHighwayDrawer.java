@@ -735,12 +735,12 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		}
 
 		if (originalSound.isNote()) {
-			final Note note = originalSound.note;
+			final Note note = originalSound.note();
 			addNoteHighlight(x, timeToXLength(note.length(), note.position()), note.string);
 			return;
 		}
 
-		originalSound.chord.chordNotes.keySet().forEach(chordString -> addNoteHighlight(x, 0, chordString));
+		originalSound.chord().chordNotes.keySet().forEach(chordString -> addNoteHighlight(x, 0, chordString));
 	}
 
 	@Override

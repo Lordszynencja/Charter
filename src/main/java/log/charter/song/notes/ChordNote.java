@@ -1,12 +1,13 @@
 package log.charter.song.notes;
 
 import log.charter.song.BendValue;
+import log.charter.song.enums.BassPickingTechnique;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class ChordNote {
+public class ChordNote implements NoteInterface {
 	public int length;
 	public Mute mute = Mute.NONE;
 	public HOPO hopo = HOPO.NONE;
@@ -45,5 +46,114 @@ public class ChordNote {
 		slideTo = note.slideTo;
 		unpitchedSlide = note.unpitchedSlide;
 		bendValues = note.bendValues.map(BendValue::new);
+	}
+
+	@Override
+	public int length() {
+		return length;
+	}
+
+	@Override
+	public void length(final int value) {
+		length = value;
+	}
+
+	@Override
+	public BassPickingTechnique bassPicking() {
+		return BassPickingTechnique.NONE;
+	}
+
+	@Override
+	public void bassPicking(final BassPickingTechnique value) {
+	}
+
+	@Override
+	public Mute mute() {
+		return mute;
+	}
+
+	@Override
+	public void mute(final Mute value) {
+		mute = value;
+	}
+
+	@Override
+	public HOPO hopo() {
+		return hopo;
+	}
+
+	@Override
+	public void hopo(final HOPO value) {
+		hopo = value;
+	}
+
+	@Override
+	public Harmonic harmonic() {
+		return harmonic;
+	}
+
+	@Override
+	public void harmonic(final Harmonic value) {
+		harmonic = value;
+	}
+
+	@Override
+	public boolean vibrato() {
+		return vibrato;
+	}
+
+	@Override
+	public void vibrato(final boolean value) {
+		vibrato = value;
+	}
+
+	@Override
+	public boolean tremolo() {
+		return tremolo;
+	}
+
+	@Override
+	public void tremolo(final boolean value) {
+		tremolo = value;
+	}
+
+	@Override
+	public boolean linkNext() {
+		return linkNext;
+	}
+
+	@Override
+	public void linkNext(final boolean value) {
+		linkNext = value;
+	}
+
+	@Override
+	public Integer slideTo() {
+		return slideTo;
+	}
+
+	@Override
+	public void slideTo(final Integer value) {
+		slideTo = value;
+	}
+
+	@Override
+	public boolean unpitchedSlide() {
+		return unpitchedSlide;
+	}
+
+	@Override
+	public void unpitchedSlide(final boolean value) {
+		unpitchedSlide = value;
+	}
+
+	@Override
+	public ArrayList2<BendValue> bendValues() {
+		return bendValues;
+	}
+
+	@Override
+	public void bendValues(final ArrayList2<BendValue> value) {
+		bendValues = value;
 	}
 }

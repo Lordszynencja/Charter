@@ -99,7 +99,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 				continue;
 			}
 
-			sound.chord.updateTemplate(handShape.templateId, template);
+			sound.chord().updateTemplate(handShape.templateId, template);
 		}
 	}
 

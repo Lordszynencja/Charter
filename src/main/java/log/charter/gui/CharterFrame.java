@@ -341,13 +341,9 @@ public class CharterFrame extends JFrame {
 	public void updateEditAreaSizes() {
 		final EditMode editMode = modeManager.getMode();
 
-		boolean bass = false;
-		int strings = 1;
-		if (editMode == EditMode.GUITAR) {
-			final Arrangement arrangement = data.getCurrentArrangement();
-			bass = arrangement.isBass();
-			strings = arrangement.tuning.strings();
-		}
+		final Arrangement arrangement = data.getCurrentArrangement();
+		final boolean bass = arrangement.isBass();
+		final int strings = arrangement.tuning.strings();
 
 		DrawerUtils.updateEditAreaSizes(editMode, bass, strings);
 		resize();

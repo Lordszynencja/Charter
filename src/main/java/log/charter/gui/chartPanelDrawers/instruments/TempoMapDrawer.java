@@ -2,21 +2,17 @@ package log.charter.gui.chartPanelDrawers.instruments;
 
 import java.awt.Graphics;
 
-import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
-import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
 
 public class TempoMapDrawer {
-	private BeatsDrawer beatsDrawer;
-	private WaveFormDrawer waveFormDrawer;
+	private GuitarDrawer guitarDrawer;
 
-	public void init(final BeatsDrawer beatsDrawer, final WaveFormDrawer waveFormDrawer) {
-		this.beatsDrawer = beatsDrawer;
-		this.waveFormDrawer = waveFormDrawer;
+	public void init(final GuitarDrawer guitarDrawer) {
+		this.guitarDrawer = guitarDrawer;
 	}
 
 	public void draw(final Graphics g, final int time, final HighlightData highlightData) {
-		waveFormDrawer.draw(g, time);
-		beatsDrawer.draw(g, time, highlightData);
+		guitarDrawer.draw(g, time, highlightData);
 	}
 }

@@ -5,6 +5,8 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
@@ -13,24 +15,11 @@ import javax.swing.event.DocumentListener;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.containers.ParamsPane.BigDecimalValueSetter;
 
 public class TextInputWithValidation extends JTextField implements DocumentListener {
 	private static final long serialVersionUID = 1L;
-	public static final Color errorBackground = new Color(160, 64, 64); // #993333
+	public static final Color errorBackground = new Color(160, 64, 64);
 	public static final Color textFieldBorder = ColorLabel.BASE_BORDER.color();
-
-	public static interface StringValueSetter {
-		void setValue(String val);
-	}
-
-	public static interface BooleanValueSetter {
-		void setValue(boolean val);
-	}
-
-	public static interface IntegerValueSetter {
-		void setValue(Integer val);
-	}
 
 	public static interface ValueValidator {
 		public static final ValueValidator dirValidator = val -> {
@@ -155,13 +144,13 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 	private boolean error;
 
 	private ValueValidator validator;
-	private final StringValueSetter setter;
+	private final Consumer<String> setter;
 	private final boolean allowWrongValues;
 
 	private boolean disableEvents;
 
 	public TextInputWithValidation(final String text, final int length, final ValueValidator validator,
-			final StringValueSetter setter, final boolean allowWrongValues) {
+			final Consumer<String> setter, final boolean allowWrongValues) {
 		super(text, length);
 		this.allowWrongValues = allowWrongValues;
 		this.validator = validator;
@@ -179,23 +168,33 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 	}
 
 	public TextInputWithValidation(final Integer value, final int length, final IntegerValueValidator validator,
-			final IntegerValueSetter setter, final boolean allowWrongValues) {
+			final Consumer<Integer> setter, final boolean allowWrongValues) {
 		this(value == null ? "" : (value + ""), length, validator, (final String s) -> {
 			try {
-				setter.setValue(Integer.valueOf(s));
+				setter.accept(Integer.valueOf(s));
 			} catch (final NumberFormatException e) {
-				setter.setValue(null);
+				setter.accept(null);
+			}
+		}, allowWrongValues);
+	}
+
+	public TextInputWithValidation(final Integer value, final int length, final IntegerValueValidator validator,
+			final IntConsumer setter, final boolean allowWrongValues) {
+		this(value == null ? "" : (value + ""), length, validator, (final String s) -> {
+			try {
+				setter.accept(Integer.valueOf(s));
+			} catch (final NumberFormatException e) {
 			}
 		}, allowWrongValues);
 	}
 
 	public TextInputWithValidation(final BigDecimal value, final int length, final BigDecimalValueValidator validator,
-			final BigDecimalValueSetter setter, final boolean allowWrongValues) {
+			final Consumer<BigDecimal> setter, final boolean allowWrongValues) {
 		this(value == null ? "" : value.toString(), length, validator, (final String s) -> {
 			try {
-				setter.setValue(new BigDecimal(s));
+				setter.accept(new BigDecimal(s));
 			} catch (final NumberFormatException e) {
-				setter.setValue(null);
+				setter.accept(null);
 			}
 		}, allowWrongValues);
 	}
@@ -220,7 +219,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		final String val = getText();
 		final String validation = validator.validateValue(val);
 		if (validation == null) {
-			setter.setValue(val);
+			setter.accept(val);
 			return;
 		}
 
@@ -228,7 +227,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		setToolTipText(validation);
 		setBorder(new LineBorder(errorBackground, 2)); // border color instead of fill
 		if (allowWrongValues) {
-			setter.setValue(val);
+			setter.accept(val);
 		}
 	}
 
@@ -239,7 +238,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		}
 
 		if (validator == null) {
-			setter.setValue(getText());
+			setter.accept(getText());
 			return;
 		}
 

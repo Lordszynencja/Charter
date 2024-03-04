@@ -43,7 +43,7 @@ public class GuitarUndoState extends UndoState {
 		toneChanges = arrangement.toneChanges.map(ToneChange::new);
 
 		anchors = level.anchors.map(Anchor::new);
-		chordsAndNotes = level.sounds.map(ChordOrNote::new);
+		chordsAndNotes = level.sounds.map(ChordOrNote::from);
 		handShapes = level.handShapes.map(HandShape::new);
 	}
 

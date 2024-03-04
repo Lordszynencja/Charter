@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
@@ -22,14 +23,18 @@ import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.data.PaneSizesBuilder;
 import log.charter.song.BeatsMap;
 import log.charter.song.BendValue;
-import log.charter.song.ChordTemplate;
-import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.Note;
+import log.charter.song.notes.CommonNoteWithFret;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class SelectionBendEditor extends RowedPanel {
 	private static final long serialVersionUID = 6095874968137603127L;
+
+	private static void invert(final boolean[] values) {
+		for (int i = 0; i < values.length; i++) {
+			values[i] = !values[i];
+		}
+	}
 
 	private final ChartData data;
 	private final SelectionManager selectionManager;
@@ -88,7 +93,7 @@ public class SelectionBendEditor extends RowedPanel {
 	private void onSelectString(final int string) {
 		final ChordOrNote sound = getCurrentlySelectedSound();
 		if (sound.isChord()) {
-			bendEditorGraph.setBendValues(string, sound.chord.chordNotes.get(string).bendValues);
+			bendEditorGraph.setBendValues(string, sound.chord().chordNotes.get(string).bendValues);
 		}
 	}
 
@@ -109,52 +114,25 @@ public class SelectionBendEditor extends RowedPanel {
 		}
 	}
 
-	private void enableAndSelectStringsForNote(final Note note) {
-		final int string = note.string;
-
-		final boolean[] stringsForAction = new boolean[maxStrings];
-		stringsForAction[string] = true;
-		doActionOnStringButtons(stringsForAction, button -> {
-			button.setEnabled(true);
-			button.setSelected(true);
-		});
-
-		for (int i = 0; i < stringsForAction.length; i++) {
-			stringsForAction[i] = !stringsForAction[i];
-		}
-		doActionOnStringButtons(stringsForAction, button -> button.setEnabled(false));
-
-		bendEditorGraph.setNote(note, data.currentStrings());
-	}
-
-	private void enableAndSelectStringsForChord(final Chord chord) {
-		final ChordTemplate chordTemplate = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
-		final int lowestString = chordTemplate.frets.keySet().stream().min(Integer::compare).get();
-
-		final boolean[] stringsForAction = new boolean[maxStrings];
-		stringsForAction[lowestString] = true;
-		doActionOnStringButtons(stringsForAction, button -> button.setSelected(true));
-
-		for (final int string : chordTemplate.frets.keySet()) {
-			stringsForAction[string] = true;
-		}
-		doActionOnStringButtons(stringsForAction, button -> button.setEnabled(true));
-
-		for (int string = 0; string < stringsForAction.length; string++) {
-			stringsForAction[string] = !stringsForAction[string];
-		}
-		doActionOnStringButtons(stringsForAction, button -> button.setEnabled(false));
-
-		bendEditorGraph.setChord(chord, lowestString, data.currentStrings());
-	}
-
 	public void enableAndSelectStrings(final ChordOrNote sound) {
-		if (sound.isNote()) {
-			enableAndSelectStringsForNote(sound.note);
-			return;
-		}
+		final boolean[] stringsForAction = new boolean[maxStrings];
+		final int lowestString = sound.notesWithFrets(data.getCurrentArrangement().chordTemplates)//
+				.map(CommonNoteWithFret::string)//
+				.peek(string -> stringsForAction[string] = true)//
+				.collect(Collectors.minBy(Integer::compare)).get();
 
-		enableAndSelectStringsForChord(sound.chord);
+		doActionOnStringButtons(stringsForAction, button -> button.setEnabled(true));
+		invert(stringsForAction);
+		doActionOnStringButtons(stringsForAction, button -> button.setEnabled(false));
+
+		strings.get(lowestString).setSelected(true);
+
+		if (sound.isNote()) {
+			bendEditorGraph.setNote(sound.note(), data.currentStrings());
+			return;
+		} else {
+			bendEditorGraph.setChord(sound.chord(), lowestString, data.currentStrings());
+		}
 	}
 
 	private void resetColors() {
@@ -195,11 +173,6 @@ public class SelectionBendEditor extends RowedPanel {
 	private void onChangeBends(final int string, final ArrayList2<BendValue> newBends) {
 		undoSystem.addUndo();
 
-		final ChordOrNote sound = getCurrentlySelectedSound();
-		if (sound.isNote()) {
-			sound.note.bendValues = newBends;
-		} else {
-			sound.chord.chordNotes.get(string).bendValues = newBends;
-		}
+		getCurrentlySelectedSound().getString(string).ifPresent(note -> note.bendValues(newBends));
 	}
 }

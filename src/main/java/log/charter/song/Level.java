@@ -25,7 +25,7 @@ public class Level {
 			return true;
 		}
 
-		final Chord chord = sound.chord;
+		final Chord chord = sound.chord();
 		final HandShape handShape = findLastBeforeEqual(handShapes, chord.position());
 		if (handShape == null) {
 			return true;
@@ -37,10 +37,10 @@ public class Level {
 		for (int j = id - 1; j >= 0; j--) {
 			final ChordOrNote previousSound = sounds.get(j);
 			if (previousSound.isNote()//
-					|| previousSound.chord.fullyMuted()) {
+					|| previousSound.chord().fullyMuted()) {
 				continue;
 			}
-			if (previousSound.chord.templateId() != handShape.templateId) {
+			if (previousSound.chord().templateId() != handShape.templateId) {
 				return true;
 			}
 			if (previousSound.position() < handShape.position()) {

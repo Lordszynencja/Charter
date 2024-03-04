@@ -36,6 +36,9 @@ public class Preview3DNotesData {
 		if (!chord.splitIntoNotes) {
 			chords.add(new ChordBoxDrawData(chord.position(), Mute.NONE, false));
 		}
+		if (chord.forceNoNotes) {
+			return;
+		}
 
 		final ChordTemplate chordTemplate = arrangement.chordTemplates.get(chord.templateId());
 		final boolean shouldHaveLength = chordNotesVisibility == ChordNotesVisibility.TAILS;
@@ -79,11 +82,11 @@ public class Preview3DNotesData {
 			}
 
 			if (sound.isNote()) {
-				final Note note = sound.note;
+				final Note note = sound.note();
 				notes.get(note.string)
 						.add(new NoteDrawData(timeFrom, timeTo, note, isLinkedToPrevious(note.string, i, sounds)));
 			} else {
-				addChord(chords, notes, arrangement, level, sounds, i, sound.chord, timeFrom, timeTo);
+				addChord(chords, notes, arrangement, level, sounds, i, sound.chord(), timeFrom, timeTo);
 			}
 		}
 

@@ -1,22 +1,14 @@
 package log.charter.song.notes;
 
-import log.charter.song.BendValue;
-import log.charter.song.enums.BassPickingTechnique;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
-import log.charter.song.enums.Mute;
-import log.charter.util.CollectionUtils.ArrayList2;
-
-public interface CommonNote {
-	static class CommonChordNoteNote implements CommonNote {
+public interface CommonNote extends NoteInterface {
+	static class CommonChordNoteNote extends ChordNote implements CommonNote {
 		private final Chord chord;
 		private final int string;
-		private final ChordNote note;
 
-		public CommonChordNoteNote(final Chord chord, final int string, final ChordNote note) {
+		public CommonChordNoteNote(final Chord chord, final int string) {
+			super(chord.chordNotes.get(string));
 			this.chord = chord;
 			this.string = string;
-			this.note = note;
 		}
 
 		@Override
@@ -25,13 +17,13 @@ public interface CommonNote {
 		}
 
 		@Override
-		public int length() {
-			return note.length;
+		public int endPosition() {
+			return position() + length();
 		}
 
 		@Override
-		public void length(final int length) {
-			note.length = length;
+		public void endPosition(final int endPosition) {
+			length(endPosition - position());
 		}
 
 		@Override
@@ -40,283 +32,52 @@ public interface CommonNote {
 		}
 
 		@Override
-		public BassPickingTechnique bassPicking() {
-			return BassPickingTechnique.NONE;
-		}
-
-		@Override
-		public void bassPicking(final BassPickingTechnique bassPicking) {
-		}
-
-		@Override
-		public Mute mute() {
-			return note.mute;
-		}
-
-		@Override
-		public void mute(final Mute mute) {
-			note.mute = mute;
-		}
-
-		@Override
-		public HOPO hopo() {
-			return note.hopo;
-		}
-
-		@Override
-		public void hopo(final HOPO hopo) {
-			note.hopo = hopo;
-		}
-
-		@Override
-		public Harmonic harmonic() {
-			return note.harmonic;
-		}
-
-		@Override
-		public void harmonic(final Harmonic harmonic) {
-			note.harmonic = harmonic;
-		}
-
-		@Override
-		public boolean vibrato() {
-			return note.vibrato;
-		}
-
-		@Override
-		public void vibrato(final boolean vibrato) {
-			note.vibrato = vibrato;
-		}
-
-		@Override
-		public boolean tremolo() {
-			return note.tremolo;
-		}
-
-		@Override
-		public void tremolo(final boolean tremolo) {
-			note.tremolo = tremolo;
-		}
-
-		@Override
-		public boolean linkNext() {
-			return note.linkNext;
-		}
-
-		@Override
-		public void linkNext(final boolean linkNext) {
-			note.linkNext = linkNext;
-		}
-
-		@Override
-		public boolean unpitchedSlide() {
-			return note.unpitchedSlide;
-		}
-
-		@Override
-		public void unpitchedSlide(final boolean unpitchedSlide) {
-			note.unpitchedSlide = unpitchedSlide;
-		}
-
-		@Override
-		public ArrayList2<BendValue> bendValues() {
-			return note.bendValues;
-		}
-
-		@Override
-		public void bendValues(final ArrayList2<BendValue> bendValues) {
-			note.bendValues = bendValues;
-		}
-
-		@Override
 		public boolean passOtherNotes() {
 			return chord.passOtherNotes;
 		}
 	}
 
-	static class CommonNoteNote implements CommonNote {
-		private final Note note;
-
+	static class CommonNoteNote extends Note implements CommonNote {
 		public CommonNoteNote(final Note note) {
-			this.note = note;
-		}
-
-		@Override
-		public int position() {
-			return note.position();
-		}
-
-		@Override
-		public int length() {
-			return note.length();
-		}
-
-		@Override
-		public void length(final int length) {
-			note.length(length);
+			super(note);
 		}
 
 		@Override
 		public int string() {
-			return note.string;
-		}
-
-		@Override
-		public BassPickingTechnique bassPicking() {
-			return note.bassPicking;
-		}
-
-		@Override
-		public void bassPicking(final BassPickingTechnique bassPicking) {
-			note.bassPicking = bassPicking;
-		}
-
-		@Override
-		public Mute mute() {
-			return note.mute;
-		}
-
-		@Override
-		public void mute(final Mute mute) {
-			note.mute = mute;
-		}
-
-		@Override
-		public HOPO hopo() {
-			return note.hopo;
-		}
-
-		@Override
-		public void hopo(final HOPO hopo) {
-			note.hopo = hopo;
-		}
-
-		@Override
-		public Harmonic harmonic() {
-			return note.harmonic;
-		}
-
-		@Override
-		public void harmonic(final Harmonic harmonic) {
-			note.harmonic = harmonic;
-		}
-
-		@Override
-		public boolean vibrato() {
-			return note.vibrato;
-		}
-
-		@Override
-		public void vibrato(final boolean vibrato) {
-			note.vibrato = vibrato;
-		}
-
-		@Override
-		public boolean tremolo() {
-			return note.tremolo;
-		}
-
-		@Override
-		public void tremolo(final boolean tremolo) {
-			note.tremolo = tremolo;
-		}
-
-		@Override
-		public boolean linkNext() {
-			return note.linkNext;
-		}
-
-		@Override
-		public void linkNext(final boolean linkNext) {
-			note.linkNext = linkNext;
-		}
-
-		@Override
-		public boolean unpitchedSlide() {
-			return note.unpitchedSlide;
-		}
-
-		@Override
-		public void unpitchedSlide(final boolean unpitchedSlide) {
-			note.unpitchedSlide = unpitchedSlide;
-		}
-
-		@Override
-		public ArrayList2<BendValue> bendValues() {
-			return note.bendValues;
-		}
-
-		@Override
-		public void bendValues(final ArrayList2<BendValue> bendValues) {
-			note.bendValues = bendValues;
+			return string;
 		}
 
 		@Override
 		public boolean passOtherNotes() {
-			return note.passOtherNotes;
+			return passOtherNotes;
 		}
 
+		@Override
+		public int endPosition() {
+			return position() + length();
+		}
+
+		@Override
+		public void endPosition(final int endPosition) {
+			length(endPosition - position());
+		}
 	}
 
-	static CommonNote create(final Note note) {
+	public static CommonNote create(final Note note) {
 		return new CommonNoteNote(note);
 	}
 
-	static CommonNote create(final Chord chord, final int string, final ChordNote chordNote) {
-		return new CommonChordNoteNote(chord, string, chordNote);
+	public static CommonNote create(final Chord chord, final int string) {
+		return new CommonChordNoteNote(chord, string);
 	}
 
 	public int position();
 
-	public int length();
+	public int endPosition();
 
-	public void length(int length);
-
-	public default int endPosition() {
-		return position() + length();
-	}
-
-	public default void endPosition(final int endPosition) {
-		length(endPosition - position());
-	}
+	public void endPosition(final int endPosition);
 
 	public int string();
 
-	public BassPickingTechnique bassPicking();
-
-	public void bassPicking(BassPickingTechnique bassPicking);
-
-	public Mute mute();
-
-	public void mute(Mute mute);
-
-	public HOPO hopo();
-
-	public void hopo(HOPO hopo);
-
-	public Harmonic harmonic();
-
-	public void harmonic(Harmonic harmonic);
-
-	public boolean vibrato();
-
-	public void vibrato(boolean vibrato);
-
-	public boolean tremolo();
-
-	public void tremolo(boolean tremolo);
-
-	public boolean linkNext();
-
-	public void linkNext(boolean linkNext);
-
-	public boolean unpitchedSlide();
-
-	public void unpitchedSlide(boolean unpitchedSlide);
-
-	public ArrayList2<BendValue> bendValues();
-
-	public void bendValues(ArrayList2<BendValue> bendValues);
-
-	public boolean passOtherNotes();
+	boolean passOtherNotes();
 }

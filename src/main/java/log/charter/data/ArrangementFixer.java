@@ -62,8 +62,8 @@ public class ArrangementFixer {
 
 	private void addMissingHandShapes(final Level level) {
 		final LinkedList<Chord> chordsForHandShapes = level.sounds.stream()//
-				.filter(chordOrNote -> chordOrNote.isChord() && !chordOrNote.chord.splitIntoNotes)//
-				.map(chordOrNote -> chordOrNote.chord)//
+				.filter(chordOrNote -> chordOrNote.isChord() && !chordOrNote.chord().splitIntoNotes)//
+				.map(chordOrNote -> chordOrNote.chord())//
 				.collect(Collectors.toCollection(LinkedList::new));
 		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
 		for (final HandShape handShape : level.handShapes) {
@@ -127,7 +127,7 @@ public class ArrangementFixer {
 		}
 
 		if (nextSound.isChord()) {
-			nextSound.chord.splitIntoNotes = true;
+			nextSound.chord().splitIntoNotes = true;
 		}
 
 		note.length(nextSound.position() - note.position() - 1);
@@ -155,14 +155,7 @@ public class ArrangementFixer {
 	}
 
 	public static void fixSoundLength(final int id, final ArrayList2<ChordOrNote> sounds) {
-		final ChordOrNote sound = sounds.get(id);
-		if (sound.isNote()) {
-			fixNoteLength(CommonNote.create(sound.note), id, sounds);
-		} else {
-			sound.chord.chordNotes.forEach((string, chordNote) -> {
-				fixNoteLength(CommonNote.create(sound.chord, string, chordNote), id, sounds);
-			});
-		}
+		sounds.get(id).notes().forEach(note -> { fixNoteLength(note, id, sounds); });
 	}
 
 	public void fixNoteLengths(final ArrayList2<ChordOrNote> sounds, final int from, final int to) {
@@ -193,11 +186,11 @@ public class ArrangementFixer {
 	private void fixLevel(final Arrangement arrangement, final Level level) {
 		level.sounds//
 				.stream().filter(chordOrNote -> chordOrNote.isNote())//
-				.map(chordOrNote -> chordOrNote.note)//
+				.map(chordOrNote -> chordOrNote.note())//
 				.forEach(note -> note.length(note.length() >= Config.minTailLength ? note.length() : 0));
 
 		level.sounds
-				.removeIf(sound -> sound.isChord() && sound.chord.templateId() >= arrangement.chordTemplates.size());
+				.removeIf(sound -> sound.isChord() && sound.chord().templateId() >= arrangement.chordTemplates.size());
 
 		removeDuplicates(level.anchors);
 		removeDuplicates(level.sounds);
@@ -215,11 +208,11 @@ public class ArrangementFixer {
 		arrangement.chordTemplates.remove(removedId);
 		for (final Level level : arrangement.levels) {
 			for (final ChordOrNote chordOrNote : level.sounds) {
-				if (!chordOrNote.isChord() || chordOrNote.chord.templateId() != removedId) {
+				if (!chordOrNote.isChord() || chordOrNote.chord().templateId() != removedId) {
 					continue;
 				}
 
-				chordOrNote.chord.updateTemplate(replacementId, arrangement.chordTemplates.get(replacementId));
+				chordOrNote.chord().updateTemplate(replacementId, arrangement.chordTemplates.get(replacementId));
 			}
 			for (final HandShape handShape : level.handShapes) {
 				if (handShape.templateId != removedId) {
@@ -250,7 +243,7 @@ public class ArrangementFixer {
 	private boolean isTemplateUsed(final Arrangement arrangement, final int templateId) {
 		for (final Level level : arrangement.levels) {
 			for (final ChordOrNote sound : level.sounds) {
-				if (sound.isChord() && sound.chord.templateId() == templateId) {
+				if (sound.isChord() && sound.chord().templateId() == templateId) {
 					return true;
 				}
 			}
@@ -281,9 +274,9 @@ public class ArrangementFixer {
 		for (final Level level : arrangement.levels) {
 			for (final ChordOrNote sound : level.sounds) {
 				if (sound.isChord()) {
-					final int newTemplateId = templateIdsMap.get(sound.chord.templateId());
+					final int newTemplateId = templateIdsMap.get(sound.chord().templateId());
 					final ChordTemplate template = arrangement.chordTemplates.get(newTemplateId);
-					sound.chord.updateTemplate(newTemplateId, template);
+					sound.chord().updateTemplate(newTemplateId, template);
 				}
 			}
 

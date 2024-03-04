@@ -195,14 +195,9 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	}
 
 	private void drawNotes(final Graphics g) {
-		for (final ChordOrNote sound : data.getCurrentArrangementLevel().sounds) {
-			if (sound.isNote()) {
-				drawNote(g, sound.note.string, sound.position(), sound.length());
-			} else {
-				sound.chord.chordNotes
-						.forEach((string, chordNote) -> { drawNote(g, string, sound.position(), chordNote.length); });
-			}
-		}
+		data.getCurrentArrangementLevel().sounds.stream()//
+				.flatMap(ChordOrNote::notes)//
+				.forEach(note -> drawNote(g, note.string(), note.position(), note.length()));
 	}
 
 	private void drawBookmarks(final Graphics g) {

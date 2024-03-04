@@ -27,4 +27,28 @@ public abstract class GuitarSound extends PositionWithLength {
 		ignore = other.ignore;
 		passOtherNotes = other.passOtherNotes;
 	}
+
+	public boolean accent() {
+		return accent;
+	}
+
+	public void accent(final boolean value) {
+		accent = value;
+	}
+
+	public boolean ignore() {
+		return ignore;
+	}
+
+	public void ignore(final boolean value) {
+		ignore = value;
+	}
+
+	public boolean passOtherNotes() {
+		return passOtherNotes;
+	}
+
+	public void passOtherNotes(final boolean value) {
+		passOtherNotes = value;
+	}
 }

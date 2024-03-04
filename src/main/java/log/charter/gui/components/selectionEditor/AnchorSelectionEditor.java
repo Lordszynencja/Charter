@@ -4,6 +4,8 @@ import static log.charter.data.config.Config.frets;
 import static log.charter.gui.components.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
+import java.util.function.IntConsumer;
+
 import javax.swing.JTextField;
 
 import log.charter.data.config.Localization.Label;
@@ -16,6 +18,7 @@ import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
+import log.charter.gui.components.utils.RowedPosition;
 import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.HashSet2;
 
@@ -31,27 +34,26 @@ public class AnchorSelectionEditor {
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 
-		int row = 0;
+		final RowedPosition position = new RowedPosition(10, selectionEditor.sizes);
 		final TextInputWithValidation anchorFretInput = new TextInputWithValidation(null, 20,
-				new IntegerValueValidator(1, frets, false), this::changeAnchorFret, false);
+				new IntegerValueValidator(1, frets, false), (IntConsumer) this::changeAnchorFret, false);
 		anchorFretInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(anchorFretInput);
 		anchorFret = new FieldWithLabel<>(Label.FRET, 100, 30, 20, anchorFretInput, LabelPosition.LEFT);
-		anchorFret.setLocation(10, selectionEditor.sizes.getY(row++));
-		selectionEditor.add(anchorFret);
+		selectionEditor.add(anchorFret, position, 140);
+		position.newRow();
 
 		final TextInputWithValidation anchorWidthInput = new TextInputWithValidation(null, 20,
-				new IntegerValueValidator(1, frets, false), this::changeAnchorWidth, false);
+				new IntegerValueValidator(4, frets, false), (IntConsumer) this::changeAnchorWidth, false);
 		anchorWidthInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(anchorWidthInput);
 		anchorWidth = new FieldWithLabel<>(Label.ANCHOR_WIDTH, 100, 30, 20, anchorWidthInput, LabelPosition.LEFT);
-		anchorWidth.setLocation(10, selectionEditor.sizes.getY(row++));
-		selectionEditor.add(anchorWidth);
+		selectionEditor.add(anchorWidth, position, 140);
 
 		hideFields();
 	}
 
-	private void changeAnchorFret(final Integer newFret) {
+	private void changeAnchorFret(final int newFret) {
 		undoSystem.addUndo();
 
 		final SelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager
@@ -61,7 +63,7 @@ public class AnchorSelectionEditor {
 		}
 	}
 
-	private void changeAnchorWidth(final Integer newWidth) {
+	private void changeAnchorWidth(final int newWidth) {
 		undoSystem.addUndo();
 
 		final SelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager

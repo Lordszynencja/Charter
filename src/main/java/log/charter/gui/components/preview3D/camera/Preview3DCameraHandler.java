@@ -45,10 +45,6 @@ public class Preview3DCameraHandler {
 	}
 
 	public void updateFretFocus() {
-		if (data.getCurrentArrangementLevel() == null) {
-			return;
-		}
-
 		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 		int minFret = Config.frets;
 		int maxFret = 1;

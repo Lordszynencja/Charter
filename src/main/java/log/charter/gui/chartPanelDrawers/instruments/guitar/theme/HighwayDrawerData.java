@@ -36,7 +36,7 @@ public class HighwayDrawerData {
 		slideFrets = new DrawableShapeList();
 		bendValues = new DrawableShapeList();
 		handShapes = new DrawableShapeList();
-		 noteIds = new DrawableShapeList();
+		noteIds = new DrawableShapeList();
 
 		this.g = g;
 	}

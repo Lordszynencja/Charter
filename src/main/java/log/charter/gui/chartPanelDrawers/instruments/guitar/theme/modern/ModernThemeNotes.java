@@ -41,7 +41,6 @@ import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.Note;
 import log.charter.util.Position2D;
 
 public class ModernThemeNotes implements ThemeNotes {
@@ -291,27 +290,16 @@ public class ModernThemeNotes implements ThemeNotes {
 			return;
 		}
 
-		if (originalSound.isNote()) {
-			final Note note = originalSound.note;
-			final int length = timeToXLength(note.position(), note.length());
-			final int y = stringPositions[originalSound.note.string];
-			final boolean slide = note.slideTo != null;
-			final boolean slideUp = slide && note.slideTo >= note.fret;
-			noteTails.addTailShapeBox(x, length, y, ColorLabel.HIGHLIGHT, slide, slideUp);
-			addNoteHighlight(originalSound.note.harmonic, x, y);
-			return;
-		}
+		originalSound.notesWithFrets(template)//
+				.forEach(note -> {
+					final int length = timeToXLength(note.position(), note.length());
+					final int y = stringPositions[note.string()];
+					final boolean slide = note.slideTo() != null;
+					final boolean slideUp = slide && note.slideTo() >= note.fret();
 
-		final int chordPosition = originalSound.chord.position();
-		originalSound.chord.chordNotes.forEach((chordString, chordNote) -> {
-			final int length = timeToXLength(chordPosition, chordNote.length);
-			final int y = stringPositions[chordString];
-			final boolean slide = chordNote.slideTo != null;
-			final boolean slideUp = slide && chordNote.slideTo >= template.frets.get(chordString);
-			noteTails.addTailShapeBox(x, length, y, ColorLabel.HIGHLIGHT, slide, slideUp);
-
-			addNoteHighlight(chordNote.harmonic, x, stringPositions[chordString]);
-		});
+					noteTails.addTailShapeBox(x, length, y, ColorLabel.HIGHLIGHT, slide, slideUp);
+					addNoteHighlight(note.harmonic(), x, y);
+				});
 	}
 
 	@Override

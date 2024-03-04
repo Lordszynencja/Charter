@@ -52,11 +52,11 @@ public class ArrangementLevel {
 		for (int i = 0; i < chordsAndNotes.size(); i++) {
 			final ChordOrNote sound = chordsAndNotes.get(i);
 			if (sound.isNote()) {
-				notes.list.add(new ArrangementNote(sound.note));
+				notes.list.add(new ArrangementNote(sound.note()));
 				continue;
 			}
 
-			final Chord chord = sound.chord;
+			final Chord chord = sound.chord();
 			final ChordTemplate chordTemplate = chordTemplates.get(chord.templateId());
 			final boolean forceAddNotes = level.shouldChordShowNotes(i);
 			final int nextPosition = i + 1 < chordsAndNotes.size() ? chordsAndNotes.get(i + 1).position()

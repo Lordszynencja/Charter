@@ -26,7 +26,8 @@ public class PositionWithLength extends Position implements IPositionWithLength 
 	}
 
 	@Override
-	public void length(final int newLength) {
-		length = newLength;
+	public void length(final int value) {
+		length = value;
 	}
+
 }
