@@ -28,8 +28,8 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.simple.FieldWithLabel;
-import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueSetter;
 import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
 import log.charter.gui.handlers.AudioHandler;
@@ -72,11 +72,10 @@ public class ChartToolbar extends JToolBar {
 		super();
 
 		setLayout(null);
-		setSize(getWidth(), height);
 
 		setFocusable(true);
 		setFloatable(false);
-		setBackground(ColorLabel.BASE_BG_2.color()); // changed
+		setBackground(ColorLabel.BASE_BG_2.color());
 	}
 
 	private void setComponentBounds(final Component c, final int x, final int y, final int w, final int h) {
@@ -354,6 +353,7 @@ public class ChartToolbar extends JToolBar {
 		addSlowedSpeed(x);
 
 		updateValues();
+		setSize(getWidth(), height);
 
 		addKeyListener(keyboardHandler);
 	}

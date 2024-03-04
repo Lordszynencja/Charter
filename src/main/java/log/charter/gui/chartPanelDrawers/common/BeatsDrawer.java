@@ -20,9 +20,7 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
-import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
@@ -157,15 +155,13 @@ public class BeatsDrawer {
 
 	private ChartData data;
 	private ChartPanel chartPanel;
-	private ModeManager modeManager;
 	private RepeatManager repeatManager;
 	private SelectionManager selectionManager;
 
-	public void init(final ChartData data, final ChartPanel chartPanel, final ModeManager modeManager,
-			final RepeatManager repeatManager, final SelectionManager selectionManager) {
+	public void init(final ChartData data, final ChartPanel chartPanel, final RepeatManager repeatManager,
+			final SelectionManager selectionManager) {
 		this.data = data;
 		this.chartPanel = chartPanel;
-		this.modeManager = modeManager;
 		this.repeatManager = repeatManager;
 		this.selectionManager = selectionManager;
 	}
@@ -251,7 +247,7 @@ public class BeatsDrawer {
 		addBeats(time, drawingData, highlightData);
 		addRepeater(time, drawingData);
 
-		if (showGrid && modeManager.getMode() != EditMode.TEMPO_MAP) {
+		if (showGrid) {
 			addGrid(time, drawingData);
 		}
 
