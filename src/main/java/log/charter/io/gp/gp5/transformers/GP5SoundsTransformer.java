@@ -295,7 +295,7 @@ public class GP5SoundsTransformer {
 		final int noteLength = endPosition.getPosition() - note.position();
 		final GPNoteEffects effects = gpNote.effects;
 
-		setStatuses(CommonNote.create(note), gpBeat, gpNote, wasHOPOStart, hopoFrom);
+		setStatuses(new CommonNote(note), gpBeat, gpNote, wasHOPOStart, hopoFrom);
 		if (note.vibrato || note.tremolo) {
 			note.length(noteLength);
 		}
@@ -437,7 +437,7 @@ public class GP5SoundsTransformer {
 
 			final ChordNote chordNote = new ChordNote();
 			chord.chordNotes.put(string, chordNote);
-			setStatuses(CommonNote.create(chord, string), gpBeat, gpNote, wasHOPOStart, hOPOFrom);
+			setStatuses(new CommonNote(chord, string), gpBeat, gpNote, wasHOPOStart, hOPOFrom);
 			if (chordNote.vibrato || chordNote.tremolo) {
 				chordAddingData.setLength = true;
 			}

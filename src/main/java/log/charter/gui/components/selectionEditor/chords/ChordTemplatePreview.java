@@ -230,14 +230,13 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	}
 
 	private void drawStrings(final Graphics g) {
-		final int strings = data.currentStrings();
 		final int width = getWidth();
 		final DrawableShapeList stringLines = new DrawableShapeList();
 
-		for (int i = 0; i < strings; i++) {
-			final Color color = getStringBasedColor(StringColorLabelType.LANE, i, strings);
+		for (int i = 0; i < stringPositions.length; i++) {
+			final Color color = getStringBasedColor(StringColorLabelType.LANE, i, stringPositions.length);
 			stringLines.add(lineHorizontal(0, width, stringPositions[i], color));
-			final Color color2 = getStringBasedColor(StringColorLabelType.LANE_BRIGHT, i, strings);
+			final Color color2 = getStringBasedColor(StringColorLabelType.LANE_BRIGHT, i, stringPositions.length);
 			stringLines.add(lineHorizontal(0, width, stringPositions[i] + 1, color2));
 		}
 

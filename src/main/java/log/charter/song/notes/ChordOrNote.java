@@ -143,7 +143,7 @@ public interface ChordOrNote extends IPositionWithLength {
 		@Override
 		public Stream<CommonNote> notes() {
 			return chord.chordNotes.keySet().stream()//
-					.map(string -> CommonNote.create(chord, string));
+					.map(string -> new CommonNote(chord, string));
 		}
 
 		@Override
@@ -154,7 +154,7 @@ public interface ChordOrNote extends IPositionWithLength {
 		@Override
 		public Stream<CommonNoteWithFret> notesWithFrets(final ChordTemplate chordTemplate) {
 			return chord.chordNotes.keySet().stream()//
-					.map(string -> CommonNoteWithFret.create(chord, string, chordTemplate.frets.get(string)));
+					.map(string -> new CommonNoteWithFret(chord, string, chordTemplate.frets.get(string)));
 		}
 	}
 
@@ -229,17 +229,17 @@ public interface ChordOrNote extends IPositionWithLength {
 
 		@Override
 		public Stream<CommonNote> notes() {
-			return Stream.of(CommonNote.create(note));
+			return Stream.of(new CommonNote(note));
 		}
 
 		@Override
 		public Stream<CommonNoteWithFret> notesWithFrets(final List<ChordTemplate> chordTemplates) {
-			return Stream.of(CommonNoteWithFret.create(note));
+			return Stream.of(new CommonNoteWithFret(note));
 		}
 
 		@Override
 		public Stream<CommonNoteWithFret> notesWithFrets(final ChordTemplate chordTemplate) {
-			return Stream.of(CommonNoteWithFret.create(note));
+			return Stream.of(new CommonNoteWithFret(note));
 		}
 	}
 

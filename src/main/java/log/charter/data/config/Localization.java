@@ -429,6 +429,7 @@ public class Localization {
 		FOLDER_EXISTS_CHOOSE_DIFFERENT("Given folder already exists, choose different name"), //
 		GENERATING_SLOWED_SOUND("Playback speed added to queue"), //
 		GP_FILE("GP file (.gp3, .gp4, .gp5)"), //
+		GP5_IMPORT_TEMPO_MAP("GP5 import tempo map"), //
 		MOVE_BACKWARD("Move backward"), //
 		MOVE_FORWARD("Move forward"), //
 		LOADING("Please wait, loading..."), //
@@ -458,8 +459,7 @@ public class Localization {
 		UNSAVED_CHANGES_POPUP("Unsaved changes"), //
 		UNSAVED_CHANGES_MESSAGE("You have unsaved changes. Do you want to save?"), //
 		UNSUPPORTED_FILE_TYPE("This file type is not supported"), //
-		USE_EXISTING_TEMPO_MAP_MESSAGE("Do you want to use the tempo map from the imported project?"), //
-		GP5_USE_EXISTING_TEMPO_MAP_TITLE("GP5 import tempo map"), //
+		USE_TEMPO_MAP_FROM_IMPORT("Do you want to use the tempo map from the imported project?"), //
 		VALUE_CANT_BE_EMPTY("Value must not be empty"), //
 		VALUE_MUST_BE_GE("Value must be greater or equal to %s"), //
 		VALUE_MUST_BE_LE("Value must be lesser or equal to %s"), //

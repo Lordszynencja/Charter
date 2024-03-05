@@ -155,6 +155,8 @@ public class GuitarModeHandler extends ModeHandler {
 			return -1;
 		}
 
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
+
 		if (chordOrNote.isChord()) {
 			final ChordTemplate chordTemplate = new ChordTemplate(
 					data.getCurrentArrangement().chordTemplates.get(chordOrNote.chord().templateId()));
@@ -171,7 +173,7 @@ public class GuitarModeHandler extends ModeHandler {
 			final int newTemplateId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
 			chordOrNote.chord().updateTemplate(newTemplateId, chordTemplate);
 			if (chordTemplate.frets.size() == 1) {
-				chordOrNote.asNote(chordTemplate);
+				sounds.set(id, chordOrNote.asNote(chordTemplate));
 			}
 		} else {
 			final ChordTemplate chordTemplate = new ChordTemplate();
@@ -180,7 +182,7 @@ public class GuitarModeHandler extends ModeHandler {
 			setSuggestedFingers(chordTemplate);
 
 			final int chordId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
-			chordOrNote.asChord(chordId, chordTemplate);
+			sounds.set(id, chordOrNote.asChord(chordId, chordTemplate));
 		}
 
 		selectionManager.addSoundSelection(id);

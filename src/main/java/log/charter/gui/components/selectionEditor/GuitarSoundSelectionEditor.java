@@ -51,6 +51,7 @@ import log.charter.song.enums.Mute;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.CommonNote;
 import log.charter.song.notes.GuitarSound;
 import log.charter.song.notes.Note;
 import log.charter.song.notes.NoteInterface;
@@ -111,7 +112,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void addMuteInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
 		mute = new ToggleButtonGroupInRow<Mute>(parent, position, 65, Label.MUTE, //
-				makeChangeForNoteInterfaces(NoteInterface::mute), //
+				makeChangeForCommonNotes(NoteInterface::mute), //
 				asList(new Pair<>(Mute.NONE, Label.MUTE_NONE), //
 						new Pair<>(Mute.FULL, Label.MUTE_FULL), //
 						new Pair<>(Mute.PALM, Label.MUTE_PALM)));
@@ -119,7 +120,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void addHOPOInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
 		hopo = new ToggleButtonGroupInRow<>(parent, position, 65, Label.HOPO, //
-				makeChangeForNoteInterfaces(NoteInterface::hopo), //
+				makeChangeForCommonNotes(NoteInterface::hopo), //
 				asList(new Pair<>(HOPO.NONE, Label.HOPO_NONE), //
 						new Pair<>(HOPO.HAMMER_ON, Label.HOPO_HAMMER_ON), //
 						new Pair<>(HOPO.PULL_OFF, Label.HOPO_PULL_OFF), //
@@ -128,7 +129,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void addBassPickingTechniqueInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
 		bassPickingTechnique = new ToggleButtonGroupInRow<>(parent, position, 65, Label.BASS_PICKING_TECHNIQUE, //
-				makeChangeForNoteInterfaces(NoteInterface::bassPicking), //
+				makeChangeForCommonNotes(NoteInterface::bassPicking), //
 				asList(new Pair<>(BassPickingTechnique.NONE, Label.BASS_PICKING_NONE), //
 						new Pair<>(BassPickingTechnique.POP, Label.BASS_PICKING_POP), //
 						new Pair<>(BassPickingTechnique.SLAP, Label.BASS_PICKING_SLAP)));
@@ -136,7 +137,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void addHarmonicInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
 		harmonic = new ToggleButtonGroupInRow<>(parent, position, 65, Label.HARMONIC, //
-				makeChangeForNoteInterfaces(NoteInterface::harmonic), //
+				makeChangeForCommonNotes(NoteInterface::harmonic), //
 				asList(new Pair<>(Harmonic.NONE, Label.HARMONIC_NONE), //
 						new Pair<>(Harmonic.NORMAL, Label.HARMONIC_NORMAL), //
 						new Pair<>(Harmonic.PINCH, Label.HARMONIC_PINCH)));
@@ -221,9 +222,9 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		position.newRow();
 
 		vibrato = BasicCheckboxInput.addField(parent, Label.VIBRATO, position,
-				makeChangeForNoteInterfaces(NoteInterface::vibrato));
+				makeChangeForCommonNotes(NoteInterface::vibrato));
 		tremolo = BasicCheckboxInput.addField(parent, Label.TREMOLO, position,
-				makeChangeForNoteInterfaces(NoteInterface::tremolo));
+				makeChangeForCommonNotes(NoteInterface::tremolo));
 
 		addChordTemplateEditorParts(380);
 		addBendEditor(1000);
@@ -369,9 +370,11 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				onChange);
 	}
 
-	private <T> Consumer<T> makeChangeForNoteInterfaces(final BiConsumer<NoteInterface, T> onChange) {
+	private <T> Consumer<T> makeChangeForCommonNotes(final BiConsumer<CommonNote, T> onChange) {
 		return makeChange(stream -> stream//
-				.flatMap(selection -> selection.selectable.noteInterfaces()), //
+				.flatMap(selection -> selection.selectable.notes())//
+				.filter(note -> isSelected(note.string())), //
+
 				onChange);
 	}
 

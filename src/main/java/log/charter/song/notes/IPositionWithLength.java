@@ -50,20 +50,6 @@ public interface IPositionWithLength extends IPosition, IConstantPositionWithLen
 		}
 	}
 
-	private static boolean soundHasStringFromSelected(final List<Integer> selectedStrings, final ChordOrNote sound) {
-		if (sound.isNote()) {
-			return selectedStrings.contains(sound.note().string);
-		}
-
-		for (final int string : sound.chord().chordNotes.keySet()) {
-			if (selectedStrings.contains(string)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	private static void changeNoteLength(final BeatsMap beatsMap, final ArrayList2<ChordOrNote> allPositions,
 			final CommonNote note, final int id, final int change) {
 		if (note.linkNext()) {
@@ -82,23 +68,13 @@ public interface IPositionWithLength extends IPosition, IConstantPositionWithLen
 			final ArrayList2<ChordOrNote> allPositions, final int change, final boolean cutBeforeNext,
 			final List<Integer> selectedStrings) {
 		for (final Selection<ChordOrNote> selected : toChange) {
-			final ChordOrNote sound = selected.selectable;
-			if (!soundHasStringFromSelected(selectedStrings, sound)) {
-				continue;
-			}
+			selected.selectable.notes().forEach(note -> {
+				if (!selectedStrings.contains(note.string())) {
+					return;
+				}
 
-			if (sound.isNote()) {
-				changeNoteLength(beatsMap, allPositions, CommonNote.create(sound.note()), selected.id, change);
-			} else {
-				sound.chord().chordNotes.forEach((string, chordNote) -> {
-					if (!selectedStrings.contains(string)) {
-						return;
-					}
-
-					changeNoteLength(beatsMap, allPositions, CommonNote.create(sound.chord(), string), selected.id,
-							change);
-				});
-			}
+				changeNoteLength(beatsMap, allPositions, note, selected.id, change);
+			});
 		}
 	}
 

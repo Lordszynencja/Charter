@@ -51,6 +51,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 			final SongFileHandler songFileHandler) {
 		super.init(actionHandler);
 		this.arrangementFixer = arrangementFixer;
+		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.frame = frame;
 		this.framer = framer;
@@ -107,8 +108,8 @@ public class FileMenuHandler extends CharterMenuHandler {
 		return file;
 	}
 
-	private boolean askUserAboutUsingExistingTempoMap() {
-		return switch (askYesNo(frame, Label.GP5_USE_EXISTING_TEMPO_MAP_TITLE, Label.USE_EXISTING_TEMPO_MAP_MESSAGE)) {
+	private boolean askUserAboutUsingImportTempoMap() {
+		return switch (askYesNo(frame, Label.GP5_IMPORT_TEMPO_MAP, Label.USE_TEMPO_MAP_FROM_IMPORT)) {
 			case YES -> true;
 			default -> false;
 		};
@@ -120,15 +121,19 @@ public class FileMenuHandler extends CharterMenuHandler {
 			return;
 		}
 
-		final boolean useExistingTempoMap = askUserAboutUsingExistingTempoMap();
+		final boolean useImportTempoMap = askUserAboutUsingImportTempoMap();
 
 		try {
 			final GP5File gp5File = GP5FileReader.importGPFile(file);
 			final List<Integer> barsOrder = getBarsOrder(gp5File.directions, gp5File.masterBars);
 
 			final int startPosition = data.songChart.beatsMap.beats.get(0).position();
-			final BeatsMap beatsMap = useExistingTempoMap ? data.songChart.beatsMap
-					: getTempoMap(gp5File, startPosition, chartTimeHandler.audioLength(), barsOrder);
+			final BeatsMap beatsMap;
+			if (useImportTempoMap) {
+				beatsMap = getTempoMap(gp5File, startPosition, chartTimeHandler.audioLength(), barsOrder);
+			} else {
+				beatsMap = data.songChart.beatsMap;
+			}
 
 			final SongChart temporaryChart = GP5FileToSongChart.transform(gp5File, beatsMap, barsOrder);
 
