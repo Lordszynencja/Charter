@@ -11,7 +11,6 @@ import com.thoughtworks.xstream.io.StreamException;
 import log.charter.data.ChartData;
 import log.charter.data.copySystem.data.AnchorsCopyData;
 import log.charter.data.copySystem.data.CopyData;
-import log.charter.data.copySystem.data.CopyDataXStreamHandler;
 import log.charter.data.copySystem.data.EventPointsCopyData;
 import log.charter.data.copySystem.data.FullCopyData;
 import log.charter.data.copySystem.data.FullGuitarCopyData;
@@ -38,6 +37,7 @@ import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.panes.songEdits.GuitarSpecialPastePane;
 import log.charter.io.ClipboardHandler;
 import log.charter.io.Logger;
+import log.charter.io.rsc.xml.ChartProjectXStreamHandler;
 import log.charter.song.Arrangement;
 import log.charter.song.Beat;
 import log.charter.song.BeatsMap;
@@ -245,7 +245,7 @@ public class CopyManager {
 			return;
 		}
 
-		final String xml = CopyDataXStreamHandler.saveProject(copyData);
+		final String xml = ChartProjectXStreamHandler.writeCopyData(copyData);
 		ClipboardHandler.setClipboardBytes(xml.getBytes());
 	}
 
@@ -256,7 +256,7 @@ public class CopyManager {
 		}
 
 		try {
-			return CopyDataXStreamHandler.readProject(xml);
+			return ChartProjectXStreamHandler.readCopyData(xml);
 		} catch (final Exception e) {
 			if (e instanceof StreamException) {
 				return null;

@@ -34,7 +34,7 @@ public class GP5ArrangementTransformer {
 		return ArrangementType.Lead;
 	}
 
-	private static final Tuning getTuningFromGPTuning(final int[] gpTuning, final int capo) {
+	private static final Tuning getTuningFromGPTuning(final int[] gpTuning, final int capo, final boolean bass) {
 		final int strings = gpTuning.length;
 		final int[] convertedTuning = new int[strings];
 
@@ -43,7 +43,8 @@ public class GP5ArrangementTransformer {
 			// in the opposite order
 			final int gpStringPosition = strings - 1 - string;
 
-			convertedTuning[string] = gpTuning[gpStringPosition] - 40 - getStringDistance(string, strings) + capo;
+			convertedTuning[string] = gpTuning[gpStringPosition] - 40 - getStringDistance(string, strings) + capo
+					+ (bass ? 12 : 0);
 		}
 		final TuningType tuningType = TuningType.fromTuning(convertedTuning);
 
@@ -111,7 +112,8 @@ public class GP5ArrangementTransformer {
 		final Arrangement arrangement = new Arrangement(arrangementType, startPosition, endPosition);
 
 		arrangement.capo = trackData.capo;
-		arrangement.tuning = getTuningFromGPTuning(trackData.tuning, arrangement.capo);
+		arrangement.tuning = getTuningFromGPTuning(trackData.tuning, arrangement.capo,
+				arrangementType == ArrangementType.Bass);
 		arrangement.setLevel(0, generateLevel(beatsMap, arrangement, barsOrder, bars));
 
 		return arrangement;

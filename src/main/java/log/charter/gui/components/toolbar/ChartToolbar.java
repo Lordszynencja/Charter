@@ -1,5 +1,7 @@
 package log.charter.gui.components.toolbar;
 
+import static log.charter.gui.components.utils.ComponentUtils.setIcon;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -7,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -37,6 +40,7 @@ import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 //import log.charter.gui.lookAndFeel.CharterButtonUI;
 import log.charter.gui.lookAndFeel.CharterSliderUI;
 import log.charter.io.Logger;
+import log.charter.util.ImageUtils;
 
 public class ChartToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
@@ -47,6 +51,12 @@ public class ChartToolbar extends JToolBar {
 	public static final int height = elementHeight + 2 * verticalSpacing;
 
 	private static final int horizontalSpacing = 5;
+
+	private static final BufferedImage repeaterIcon = ImageUtils.loadSafe("images/toolbarRepeater.png");
+	private static final BufferedImage gridBeatTypeIcon = ImageUtils.loadSafe("images/toolbarGridTypeBeat.png");
+	private static final BufferedImage gridNoteTypeIcon = ImageUtils.loadSafe("images/toolbarGridTypeNote.png");
+	private static final BufferedImage volumeIcon = ImageUtils.loadSafe("images/toolbarVolume.png");
+	private static final BufferedImage sfxVolumeIcon = ImageUtils.loadSafe("images/toolbarSFXVolume.png");
 
 	private AudioHandler audioHandler;
 	private ModeManager modeManager;
@@ -131,6 +141,14 @@ public class ChartToolbar extends JToolBar {
 		return toggleButton;
 	}
 
+	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final BufferedImage icon,
+			final Runnable onClick) {
+		final JToggleButton toggleButton = addToggleButton(x, label, onClick);
+		setIcon(toggleButton, icon);
+
+		return toggleButton;
+	}
+
 	private FieldWithLabel<JRadioButton> createRadioButtonField(final Label label, final int separationWidth,
 			final Runnable onClick) {
 		final JRadioButton radioButton = new JRadioButton();
@@ -188,7 +206,6 @@ public class ChartToolbar extends JToolBar {
 	private void addGridSizeButton(final AtomicInteger x, final int horizontalSpacing, final Font font,
 			final String text, final ActionListener actionListener) {
 		final JButton halveGridButton = new JButton(text);
-		// halveGridButton.setUI(new CharterButtonUI());
 		halveGridButton.setSize(24, elementHeight);
 		halveGridButton.setFont(font);
 		halveGridButton.setFocusable(false);
@@ -229,7 +246,9 @@ public class ChartToolbar extends JToolBar {
 
 	private void addGridTypes(final AtomicInteger x) {
 		beatGridType = addRadioButton(x, Label.BEAT_GRID_TYPE, () -> onGridTypeChange(GridType.BEAT));
+		setIcon(beatGridType.label, gridBeatTypeIcon);
 		noteGridType = addRadioButton(x, Label.NOTE_GRID_TYPE, () -> onGridTypeChange(GridType.NOTE));
+		setIcon(noteGridType.label, gridNoteTypeIcon);
 
 		final ButtonGroup gridTypeGroup = new ButtonGroup();
 		gridTypeGroup.add(beatGridType.field);
@@ -303,7 +322,7 @@ public class ChartToolbar extends JToolBar {
 		Config.markChanged();
 	}
 
-	private void addVolumeSlider(final AtomicInteger x, final Label label, final double value,
+	private void addVolumeSlider(final AtomicInteger x, final Label label, final BufferedImage icon, final double value,
 			final DoubleConsumer volumeSetter) {
 		final JSlider volumeSlider = new JSlider(0, 100, getVolumeAsInteger(value));
 		volumeSlider.addChangeListener(e -> volumeSetter.accept(volumeSlider.getValue() / 100.0));
@@ -314,6 +333,8 @@ public class ChartToolbar extends JToolBar {
 
 		final FieldWithLabel<JSlider> volume = new FieldWithLabel<>(label, 0, 72, elementHeight, volumeSlider,
 				LabelPosition.LEFT_PACKED);
+		setIcon(volume.label, icon);
+
 		add(x, volume);
 	}
 
@@ -338,7 +359,7 @@ public class ChartToolbar extends JToolBar {
 
 		addSeparator(x);
 
-		repeater = addToggleButton(x, Label.TOOLBAR_REPEATER, repeatManager::toggle);
+		repeater = addToggleButton(x, Label.TOOLBAR_REPEATER, repeaterIcon, repeatManager::toggle);
 
 		addSeparator(x);
 
@@ -348,8 +369,8 @@ public class ChartToolbar extends JToolBar {
 
 		addSeparator(x);
 
-		addVolumeSlider(x, Label.TOOLBAR_VOLUME, Config.volume, this::changeVolume);
-		addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, Config.sfxVolume, this::changeSFXVolume);
+		addVolumeSlider(x, Label.TOOLBAR_VOLUME, volumeIcon, Config.volume, this::changeVolume);
+		addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, sfxVolumeIcon, Config.sfxVolume, this::changeSFXVolume);
 		addSlowedSpeed(x);
 
 		updateValues();
@@ -376,7 +397,6 @@ public class ChartToolbar extends JToolBar {
 			case NOTE:
 				noteGridType.field.setSelected(true);
 				break;
-			case MEASURE:
 			default:
 				Logger.error("Wrong grid type for toolbar " + Config.gridType);
 				break;

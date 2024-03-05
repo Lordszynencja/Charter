@@ -1,8 +1,17 @@
 package log.charter.data.config;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.util.RW;
@@ -479,6 +488,34 @@ public class Localization {
 
 		public String label() {
 			return labels.getOrDefault(name(), defaultLabel);
+		}
+
+		public BufferedImage exportAsImage(final Color color, final Font font) {
+			final String label = label();
+
+			BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D graphics = (Graphics2D) img.getGraphics();
+			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			graphics.setFont(font);
+			final Rectangle2D bounds = graphics.getFontMetrics().getStringBounds(label(), graphics);
+
+			img = new BufferedImage((int) bounds.getWidth() + 1, (int) bounds.getHeight() + 1,
+					BufferedImage.TYPE_INT_ARGB);
+			graphics = (Graphics2D) img.getGraphics();
+			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			graphics.setFont(font);
+			graphics.setColor(color);
+			graphics.drawString(label, 0, (int) -bounds.getY());
+
+			return img;
+		}
+
+		public void saveAsPng(final String dir, final Color color, final Font font) {
+			try {
+				ImageIO.write(exportAsImage(color, font), "png", new File(dir, name() + ".png"));
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

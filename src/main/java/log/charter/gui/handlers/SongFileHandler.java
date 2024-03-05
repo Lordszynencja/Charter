@@ -3,8 +3,8 @@ package log.charter.gui.handlers;
 import static log.charter.io.Logger.debug;
 import static log.charter.io.Logger.error;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.saveVocals;
-import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.readProject;
-import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.saveProject;
+import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.readChartProject;
+import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.writeChartProject;
 import static log.charter.util.FileChooseUtils.chooseFile;
 
 import java.io.File;
@@ -321,7 +321,7 @@ public class SongFileHandler {
 		}
 		final ChartProject project;
 		try {
-			project = readProject(RW.read(projectFileChosen));
+			project = readChartProject(RW.read(projectFileChosen));
 			if (project.chartFormatVersion > 2) {
 				Logger.error("project has wrong version");
 				frame.showPopup(Label.PROJECT_IS_NEWER_VERSION.label());
@@ -549,7 +549,7 @@ public class SongFileHandler {
 
 		final ChartProject project = new ChartProject(chartTimeHandler.time(), modeManager.getMode(), data,
 				data.songChart);
-		RW.write(new File(data.path, data.projectFileName), saveProject(project));
+		RW.write(new File(data.path, data.projectFileName), writeChartProject(project));
 		saveRSXML();
 
 		undoSystem.onSave();

@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
@@ -150,11 +151,22 @@ public class FieldWithLabel<T extends Component> extends Container {
 		this.add(field);
 	}
 
+	private int getLabelWidth() {
+		final Icon icon = label.getIcon();
+		if (icon != null) {
+			return icon.getIconWidth();
+		}
+
+		if (labelPosition == LabelPosition.LEFT_CLOSE) {
+			return label.getWidth();
+		}
+
+		return getTextWidth();
+	}
+
 	@Override
 	public void paint(final Graphics g) {
-		if (labelPosition != LabelPosition.LEFT_CLOSE) {
-			label.setSize(getTextWidth() + 1, label.getHeight());
-		}
+		label.setSize(getLabelWidth(), label.getHeight());
 
 		if (backgroundColor != null) {
 			g.setColor(backgroundColor.color());

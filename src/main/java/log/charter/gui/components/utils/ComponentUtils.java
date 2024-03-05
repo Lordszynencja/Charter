@@ -6,7 +6,11 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.image.BufferedImage;
 
+import javax.swing.AbstractButton;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import log.charter.data.config.Localization.Label;
@@ -98,4 +102,21 @@ public class ComponentUtils {
 		});
 	}
 
+	public static void setIcon(final JLabel label, final BufferedImage icon) {
+		if (icon == null) {
+			return;
+		}
+
+		label.setText(null);
+		label.setIcon(new ImageIcon(icon));
+	}
+
+	public static void setIcon(final AbstractButton button, final BufferedImage icon) {
+		if (icon == null) {
+			return;
+		}
+
+		button.setText(null);
+		button.setIcon(new ImageIcon(icon));
+	}
 }

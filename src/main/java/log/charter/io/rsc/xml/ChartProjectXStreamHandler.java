@@ -4,6 +4,19 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
 
+import log.charter.data.copySystem.data.AnchorsCopyData;
+import log.charter.data.copySystem.data.CopyData;
+import log.charter.data.copySystem.data.EventPointsCopyData;
+import log.charter.data.copySystem.data.FullGuitarCopyData;
+import log.charter.data.copySystem.data.HandShapesCopyData;
+import log.charter.data.copySystem.data.SoundsCopyData;
+import log.charter.data.copySystem.data.VocalsCopyData;
+import log.charter.data.copySystem.data.positions.CopiedAnchorPosition;
+import log.charter.data.copySystem.data.positions.CopiedArrangementEventsPointPosition;
+import log.charter.data.copySystem.data.positions.CopiedHandShapePosition;
+import log.charter.data.copySystem.data.positions.CopiedSoundPosition;
+import log.charter.data.copySystem.data.positions.CopiedToneChangePosition;
+import log.charter.data.copySystem.data.positions.CopiedVocalPosition;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
@@ -21,6 +34,7 @@ import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.ChordOrNote.ChordOrNoteForChord;
 import log.charter.song.notes.ChordOrNote.ChordOrNoteForNote;
+import log.charter.song.notes.GuitarSound;
 import log.charter.song.notes.Note;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -39,8 +53,10 @@ public class ChartProjectXStreamHandler {
 		xstream.alias("beat", Beat.class);
 		xstream.ignoreUnknownElements();
 		xstream.processAnnotations(ChartProject.class);
+		xstream.processAnnotations(CopyData.class);
 		xstream.allowTypes(new Class[] { //
 				Anchor.class, //
+				AnchorsCopyData.class, //
 				Arrangement.class, //
 				Beat.class, //
 				BendValue.class, //
@@ -49,20 +65,38 @@ public class ChartProjectXStreamHandler {
 				ChordOrNoteForChord.class, //
 				ChordOrNoteForNote.class, //
 				ChordTemplate.class, //
+				CopiedAnchorPosition.class, //
+				CopiedArrangementEventsPointPosition.class, //
+				CopiedHandShapePosition.class, //
+				CopiedSoundPosition.class, //
+				CopiedToneChangePosition.class, //
+				CopiedVocalPosition.class, //
+				CopyData.class, //
 				EventPoint.class, //
+				EventPointsCopyData.class, //
+				FullGuitarCopyData.class, //
+				GuitarSound.class, //
 				HandShape.class, //
+				HandShapesCopyData.class, //
 				Level.class, //
 				Note.class, //
 				Phrase.class, //
 				ChartProject.class, //
+				SoundsCopyData.class, //
 				ToneChange.class, //
-				Vocal.class });
+				Vocal.class, //
+				VocalsCopyData.class });
 
 		return xstream;
 	}
 
-	public static ChartProject readProject(final String xml) {
-		final ChartProject project = (ChartProject) xstream.fromXML(xml);
+	public static ChartProject readChartProject(final String xml) {
+		final Object o = xstream.fromXML(xml);
+		if (!o.getClass().isAssignableFrom(ChartProject.class)) {
+			return null;
+		}
+
+		final ChartProject project = (ChartProject) o;
 
 		if (project.chartFormatVersion == 1) {
 			project.editMode = EditMode.GUITAR;
@@ -76,7 +110,20 @@ public class ChartProjectXStreamHandler {
 		return project;
 	}
 
-	public static String saveProject(final ChartProject chartProject) {
-		return XMLHandler.generateXML(prepareXStream(), chartProject);
+	public static CopyData readCopyData(final String xml) {
+		final Object o = xstream.fromXML(xml);
+		if (!o.getClass().isAssignableFrom(CopyData.class)) {
+			return null;
+		}
+
+		return (CopyData) o;
+	}
+
+	public static String writeChartProject(final ChartProject chartProject) {
+		return XMLHandler.generateXML(xstream, chartProject);
+	}
+
+	public static String writeCopyData(final CopyData copyData) {
+		return XMLHandler.generateXML(xstream, copyData);
 	}
 }
