@@ -384,7 +384,7 @@ public class GuitarDrawer {
 		}
 	}
 
-	private void drawGuitar(final Graphics g, final int time, final HighlightData highlightData) {
+	public void drawGuitar(final Graphics g, final int time, final HighlightData highlightData) {
 		final Level level = data.getCurrentArrangementLevel();
 		final Arrangement arrangement = data.getCurrentArrangement();
 		final int strings = data.getCurrentArrangement().tuning.strings();
@@ -402,7 +402,7 @@ public class GuitarDrawer {
 		highwayDrawer.draw(g);
 	}
 
-	private void drawStringNames(final Graphics g) {
+	public void drawStringNames(final Graphics g) {
 		final String[] stringNames = data.getCurrentArrangement().getSimpleStringNames();
 
 		final int fontSize = (int) (noteHeight * 0.5);

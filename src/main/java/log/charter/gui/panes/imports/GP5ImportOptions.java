@@ -91,14 +91,14 @@ public class GP5ImportOptions extends ParamsPane {
 	}
 
 	private void updateSongInformation() {
-		if (data.songChart.artistName == null || data.songChart.artistName.isBlank()) {
-			data.songChart.artistName = imported.artistName;
+		if (data.songChart.artistName() == null || data.songChart.artistName().isBlank()) {
+			data.songChart.artistName(imported.artistName());
 		}
-		if (data.songChart.title == null || data.songChart.title.isBlank()) {
-			data.songChart.title = imported.title;
+		if (data.songChart.title() == null || data.songChart.title().isBlank()) {
+			data.songChart.title(imported.title());
 		}
-		if (data.songChart.albumName == null || data.songChart.albumName.isBlank()) {
-			data.songChart.albumName = imported.albumName;
+		if (data.songChart.albumName() == null || data.songChart.albumName().isBlank()) {
+			data.songChart.albumName(imported.albumName());
 		}
 	}
 

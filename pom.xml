@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
 	<artifactId>Charter</artifactId>
-	<version>0.15.10</version>
+	<version>0.15.11</version>
 	<packaging>jar</packaging>
 	<name>Charter</name>
 	<description>Charting program for guitar</description>
@@ -358,9 +358,7 @@
 								<resource>
 									<directory>${basedir}</directory>
 									<includes>
-										<include>images/**</include>
-										<include>inlays/**</include>
-										<include>textures/**</include>
+										<include>graphics/**</include>
 										<include>languages/**</include>
 										<include>rubberband/**</include>
 										<include>oggenc/**</include>

@@ -2,22 +2,20 @@ package log.charter.gui.components.preview3D.glUtils;
 
 import static log.charter.data.config.GraphicalConfig.inlay;
 import static log.charter.data.config.GraphicalConfig.texturePack;
+import static log.charter.util.FileUtils.inlaysFolder;
+import static log.charter.util.FileUtils.texturesFolder;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
 
 import log.charter.io.Logger;
 
 public class TexturesHolder {
-	public static final String texturePacksPath = "textures/";
-	public static final String inlaysPath = "inlays/";
-
 	private static final int errorTextureResolution = 64;
 	private static final BufferedImage emptyTexture = new BufferedImage(errorTextureResolution, errorTextureResolution,
 			BufferedImage.TYPE_4BYTE_ABGR);
@@ -29,14 +27,11 @@ public class TexturesHolder {
 		}
 	}
 
-	private static final Map<String, Supplier<String>> textureFileSupplier = new HashMap<>();
-	private static final Map<String, Supplier<String>> defaultTextureFileSupplier = new HashMap<>();
+	private static final Map<String, TextureFileSupplier> textureFileSuppliers = new HashMap<>();
 	static {
-		textureFileSupplier.put("fingering", () -> texturePacksPath + texturePack + "/fingering.png");
-		textureFileSupplier.put("inlay", () -> inlaysPath + inlay + ".png");
-
-		defaultTextureFileSupplier.put("fingering", () -> texturePacksPath + "default/fingering.png");
-		defaultTextureFileSupplier.put("inlay", () -> inlaysPath + "default.png");
+		textureFileSuppliers.put("fingering",
+				new TextureFileSupplier(texturesFolder, () -> texturePack, name -> name + "/fingering.png"));
+		textureFileSuppliers.put("inlay", new TextureFileSupplier(inlaysFolder, () -> inlay, name -> name + ".png"));
 	}
 
 	private Texture errorTexture;
@@ -49,16 +44,10 @@ public class TexturesHolder {
 		errorTexture = new Texture();
 		textures.put("error", errorTexture);
 
-		textureFileSupplier.forEach((texture, pathMaker) -> {
-			String path = pathMaker.get();
-			File f = new File(path);
-			if (!f.exists()) {
-				path = defaultTextureFileSupplier.get(texture).get();
-				f = new File(path);
-			}
-
+		textureFileSuppliers.forEach((texture, fileSupplier) -> {
+			final File f = fileSupplier.getFile();
 			textures.put(texture, new Texture(f));
-			lastTexturePaths.put(texture, path);
+			lastTexturePaths.put(texture, f.getPath());
 		});
 	}
 
@@ -68,23 +57,18 @@ public class TexturesHolder {
 
 	public int getTextureId(final String name) {
 		if (reloadNeeded) {
-			textureFileSupplier.forEach((texture, pathMaker) -> {
-				String path = pathMaker.get();
-				File f = new File(path);
-				if (!f.exists()) {
-					path = defaultTextureFileSupplier.get(texture).get();
-					f = new File(path);
-				}
-				if (path.equals(lastTexturePaths.get(texture))) {
+			textureFileSuppliers.forEach((texture, fileSupplier) -> {
+				final File f = fileSupplier.getFile();
+				if (f.getPath().equals(lastTexturePaths.get(texture))) {
 					return;
 				}
 
 				try {
-					final BufferedImage image = ImageIO.read(new File(path));
+					final BufferedImage image = ImageIO.read(f);
 					textures.get(texture).replaceTexture(image);
-					lastTexturePaths.put(texture, path);
+					lastTexturePaths.put(texture, f.getPath());
 				} catch (final IOException e) {
-					Logger.error("Couldn't reload texture " + texture + " with path " + path, e);
+					Logger.error("Couldn't reload texture " + texture + " with path " + f.getPath(), e);
 				}
 			});
 

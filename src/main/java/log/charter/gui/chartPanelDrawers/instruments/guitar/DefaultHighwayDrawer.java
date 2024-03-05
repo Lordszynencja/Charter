@@ -31,6 +31,7 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lin
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedTriangle;
+import static log.charter.util.FileUtils.imagesFolder;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.ScalingUtils.xToTimeLength;
@@ -43,13 +44,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import log.charter.data.config.Zoom;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -64,7 +62,6 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.StrokedTriangle;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;
-import log.charter.io.Logger;
 import log.charter.song.Anchor;
 import log.charter.song.BendValue;
 import log.charter.song.ChordTemplate;
@@ -78,6 +75,7 @@ import log.charter.song.enums.Mute;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.ImageUtils;
 import log.charter.util.IntRange;
 import log.charter.util.Position2D;
 import log.charter.util.RW;
@@ -85,20 +83,14 @@ import log.charter.util.Utils;
 
 public class DefaultHighwayDrawer implements HighwayDrawer {
 	public static BufferedImage loadImage(final String path) {
-		try {
-			return ImageIO.read(new File(RW.getProgramDirectory(), path));
-		} catch (final IOException e) {
-			try {
-				return ImageIO.read(new File(path));
-			} catch (final IOException e2) {
-				Logger.error("Couldn't load image " + path, e);
-				return new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
-			}
-		}
+		final BufferedImage image = ImageUtils.loadSafe(path, //
+				new File(RW.getProgramDirectory(), path), //
+				new File(path));
+		return image == null ? new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR) : image;
 	}
 
-	protected static final BufferedImage palmMuteMarker = loadImage("images/palmMute.png");
-	protected static final BufferedImage muteMarker = loadImage("images/mute.png");
+	protected static final BufferedImage palmMuteMarker = loadImage(imagesFolder + "palmMute.png");
+	protected static final BufferedImage muteMarker = loadImage(imagesFolder + "mute.png");
 
 	protected final Color selectColor = ColorLabel.SELECT.color();
 	protected final Color[] noteColors;

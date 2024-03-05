@@ -19,7 +19,7 @@ public class StringInput {
 				(final Integer val) -> onChange.accept(val - 1), false);
 		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(Label.STRING, 40, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
-		parent.add(field, position, 90);
+		parent.add(field, position);
 
 		return field;
 	}

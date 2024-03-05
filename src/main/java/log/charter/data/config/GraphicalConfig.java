@@ -28,6 +28,10 @@ public class GraphicalConfig {
 			return new ValueAccessor(s -> setter.accept(Integer.valueOf(s)), () -> getter.get() + "");
 		}
 
+		public static ValueAccessor forFloat(final Consumer<Float> setter, final Supplier<Float> getter) {
+			return new ValueAccessor(s -> setter.accept(Float.valueOf(s)), () -> getter.get() + "");
+		}
+
 		@SuppressWarnings("unused")
 		public static ValueAccessor forDouble(final Consumer<Double> setter, final Supplier<Double> getter) {
 			return new ValueAccessor(s -> setter.accept(Double.valueOf(s)), () -> getter.get() + "");
@@ -54,20 +58,22 @@ public class GraphicalConfig {
 			.getAbsolutePath();
 
 	public static Theme theme = Theme.MODERN;
-	public static int eventsChangeHeight = 10; // added
+	public static int eventsChangeHeight = 10;
 	public static int toneChangeHeight = 10;
-	public static int anchorInfoHeight = 10; // changed
+	public static int anchorInfoHeight = 10;
 	public static int noteWidth = 25;
 	public static int noteHeight = 25;
-	public static int chordHeight = 10; // added
-	public static int handShapesHeight = 10; // changed
+	public static int chordHeight = 10;
+	public static int handShapesHeight = 10;
 	public static int timingHeight = 24;
 	public static double previewWindowScrollSpeed = 1.3;
 
+	public static int chartMapHeightMultiplier = 3;
+	public static float tempoMapGhostNotesTransparency = 0.66f;
+
+	public static String colorSet = "default";
 	public static String inlay = "default";
 	public static String texturePack = "default";
-
-	public static int chartMapHeightMultiplier = 3;
 
 	private static final Map<String, ValueAccessor> valueAccessors = new HashMap<>();
 	private static boolean changed = false;
@@ -89,6 +95,8 @@ public class GraphicalConfig {
 
 		valueAccessors.put("chartMapHeightMultiplier",
 				ValueAccessor.forInteger(v -> chartMapHeightMultiplier = v, () -> chartMapHeightMultiplier));
+		valueAccessors.put("tempoMapGhostNotesTransparency",
+				ValueAccessor.forFloat(v -> tempoMapGhostNotesTransparency = v, () -> tempoMapGhostNotesTransparency));
 
 		valueAccessors.put("inlay", ValueAccessor.forString(v -> inlay = v, () -> inlay));
 		valueAccessors.put("textures", ValueAccessor.forString(v -> texturePack = v, () -> texturePack));

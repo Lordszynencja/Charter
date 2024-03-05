@@ -1,9 +1,9 @@
 package log.charter.gui.components.toolbar;
 
 import static log.charter.gui.components.utils.ComponentUtils.setIcon;
+import static log.charter.util.FileUtils.imagesFolder;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
@@ -35,6 +35,7 @@ import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 //import log.charter.gui.lookAndFeel.CharterButtonUI;
@@ -52,11 +53,11 @@ public class ChartToolbar extends JToolBar {
 
 	private static final int horizontalSpacing = 5;
 
-	private static final BufferedImage repeaterIcon = ImageUtils.loadSafe("images/toolbarRepeater.png");
-	private static final BufferedImage gridBeatTypeIcon = ImageUtils.loadSafe("images/toolbarGridTypeBeat.png");
-	private static final BufferedImage gridNoteTypeIcon = ImageUtils.loadSafe("images/toolbarGridTypeNote.png");
-	private static final BufferedImage volumeIcon = ImageUtils.loadSafe("images/toolbarVolume.png");
-	private static final BufferedImage sfxVolumeIcon = ImageUtils.loadSafe("images/toolbarSFXVolume.png");
+	private static final BufferedImage repeaterIcon = ImageUtils.loadSafe(imagesFolder + "toolbarRepeater.png");
+	private static final BufferedImage gridBeatTypeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarGridTypeBeat.png");
+	private static final BufferedImage gridNoteTypeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarGridTypeNote.png");
+	private static final BufferedImage volumeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarVolume.png");
+	private static final BufferedImage sfxVolumeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarSFXVolume.png");
 
 	private AudioHandler audioHandler;
 	private ModeManager modeManager;
@@ -89,12 +90,7 @@ public class ChartToolbar extends JToolBar {
 	}
 
 	private void setComponentBounds(final Component c, final int x, final int y, final int w, final int h) {
-		final Dimension newSize = new Dimension(w, h);
-
-		c.setMinimumSize(newSize);
-		c.setPreferredSize(newSize);
-		c.setMaximumSize(newSize);
-		c.setBounds(x, y, w, h);
+		ComponentUtils.setComponentBounds(c, x, y, w, h);
 		c.validate();
 		c.repaint();
 	}
@@ -203,14 +199,14 @@ public class ChartToolbar extends JToolBar {
 		add(x, 1, gridSize);
 	}
 
-	private void addGridSizeButton(final AtomicInteger x, final int horizontalSpacing, final Font font,
-			final String text, final ActionListener actionListener) {
-		final JButton halveGridButton = new JButton(text);
-		halveGridButton.setSize(24, elementHeight);
-		halveGridButton.setFont(font);
-		halveGridButton.setFocusable(false);
-		halveGridButton.addActionListener(actionListener);
-		add(x, horizontalSpacing, halveGridButton);
+	private JButton generateGridSizeButton(final Font font, final String text, final ActionListener actionListener) {
+		final JButton gridChangeButton = new JButton(text);
+		gridChangeButton.setSize(24, elementHeight / 2);
+		gridChangeButton.setFont(font);
+		gridChangeButton.setFocusable(false);
+		gridChangeButton.addActionListener(actionListener);
+
+		return gridChangeButton;
 	}
 
 	private void halveGridSize() {
@@ -234,9 +230,18 @@ public class ChartToolbar extends JToolBar {
 	}
 
 	private void addGridSizeButtons(final AtomicInteger x) {
-		final Font miniFont = new Font(Font.DIALOG, Font.PLAIN, 13);
-		addGridSizeButton(x, 1, miniFont, "-", a -> halveGridSize());
-		addGridSizeButton(x, horizontalSpacing, miniFont, "+", a -> doubleGridSize());
+		final Font miniFont = new Font(Font.DIALOG, Font.PLAIN, 8);
+
+		final JButton gridDoubleButton = generateGridSizeButton(miniFont, "+", a -> doubleGridSize());
+		setComponentBounds(gridDoubleButton, x.get(), verticalSpacing, gridDoubleButton.getWidth(),
+				gridDoubleButton.getHeight());
+		add(gridDoubleButton);
+
+		final JButton gridHalveButton = generateGridSizeButton(miniFont, "-", a -> halveGridSize());
+		setComponentBounds(gridHalveButton, x.getAndAdd(gridHalveButton.getWidth() + horizontalSpacing),
+				verticalSpacing + gridDoubleButton.getHeight(), gridHalveButton.getWidth(),
+				gridHalveButton.getHeight());
+		add(gridHalveButton);
 	}
 
 	private void onGridTypeChange(final GridType newGridType) {

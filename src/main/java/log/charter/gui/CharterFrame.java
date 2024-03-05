@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
@@ -38,6 +37,7 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
+import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.preview3D.Preview3DFrame;
 import log.charter.gui.components.preview3D.Preview3DPanel;
 import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
@@ -291,9 +291,9 @@ public class CharterFrame extends JFrame {
 		final JTabbedPane tabs = new JTabbedPane(JTabbedPane.TOP);
 		tabs.setUI(new CharterTabbedPaneUI());
 
-		tabs.addTab("Quick Edit", new JScrollPane(currentSelectionEditor));
+		tabs.addTab("Quick Edit", new CharterScrollPane(currentSelectionEditor));
 		tabs.addTab("Help", helpLabel);
-		tabs.addTab("Text", new JScrollPane(textArea));
+		tabs.addTab("Text", new CharterScrollPane(textArea));
 		tabs.addTab("3D Preview", preview3DPanel);
 
 		return tabs;
@@ -363,7 +363,7 @@ public class CharterFrame extends JFrame {
 			return CharterMain.TITLE + " : " + Label.NO_PROJECT.label();
 		}
 
-		String title = CharterMain.TITLE + " : " + data.songChart.artistName + " - " + data.songChart.title + " : ";
+		String title = CharterMain.TITLE + " : " + data.songChart.artistName() + " - " + data.songChart.title() + " : ";
 
 		switch (modeManager.getMode()) {
 			case GUITAR:

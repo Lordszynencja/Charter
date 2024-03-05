@@ -1,5 +1,8 @@
 package log.charter.gui.components.containers;
 
+import static java.lang.Math.max;
+import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.List;
@@ -32,20 +35,17 @@ public class RowedPanel extends JPanel {
 		void setValue(Integer val);
 	}
 
-	public static void setComponentBounds(final Component component, final int x, final int y, final int w,
-			final int h) {
-		component.setBounds(x, y, w, h);
-		final Dimension size = new Dimension(w, h);
-		component.setMinimumSize(size);
-		component.setPreferredSize(size);
-		component.setMaximumSize(size);
-	}
-
 	private static final long serialVersionUID = -3193534671039163160L;
 
 	public final PaneSizes sizes;
 
 	private final ArrayList2<Component> parts = new ArrayList2<>();
+
+	public RowedPanel(final PaneSizes sizes) {
+		this.sizes = sizes;
+
+		setLayout(null);
+	}
 
 	public RowedPanel(final PaneSizes sizes, final int rows) {
 		this.sizes = sizes;
@@ -54,9 +54,9 @@ public class RowedPanel extends JPanel {
 		resizeToFit(sizes.width, sizes.getHeight(rows));
 	}
 
-	private void resizeToFit(final int width, final int height) {
+	protected void resizeToFit(final int width, final int height) {
 		Dimension size = getPreferredSize();
-		size = new Dimension(Math.max(width, size.width), Math.max(height, size.height));
+		size = new Dimension(max(width, size.width), max(height, size.height));
 
 		setSize(size);
 		setMinimumSize(size);
@@ -84,24 +84,33 @@ public class RowedPanel extends JPanel {
 		return component;
 	}
 
+	public void add(final Component component, final RowedPosition position) {
+		addWithSpace(component, position, component.getWidth(), 10);
+	}
+
 	public void add(final Component component, final RowedPosition position, final int width) {
-		component.setLocation(position.getAndAddX(width), position.getY());
+		addWithSpace(component, position, width, 10);
+	}
+
+	public void addWithSpace(final Component component, final RowedPosition position, final int width,
+			final int space) {
+		component.setLocation(position.getAndAddX(width + space), position.getY());
 		resizeToFit(position.getX(), position.getY() + sizes.rowHeight + sizes.verticalSpace);
 		add(component);
 	}
 
 	public void addWithSettingSize(final Component component, final RowedPosition position, final int width,
 			final int space, final int height) {
-		add(component, position.getAndAddX(width + space), position.getY(), width, height);
+		addWithSettingSize(component, position.getAndAddX(width + space), position.getY(), width, height);
 	}
 
-	public void add(final Component component, final int x, final int y, final int w, final int h) {
+	public void addWithSettingSize(final Component component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
-		resizeToFit(x + 2, y + h + sizes.verticalSpace);
+		resizeToFit(x + w, y + h + sizes.verticalSpace);
 		add(component);
 	}
 
-	public void addTop(final Component component, final int x, final int y, final int w, final int h) {
+	public void addWithSettingSizeTop(final Component component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
 		add(component, 0);
 	}
@@ -125,7 +134,7 @@ public class RowedPanel extends JPanel {
 		if (width == 0) {
 			width = labelComponent.getPreferredSize().width;
 		}
-		add(labelComponent, x, y, width, 20);
+		addWithSettingSize(labelComponent, x, y, width, 20);
 
 		return width;
 	}
@@ -147,7 +156,7 @@ public class RowedPanel extends JPanel {
 		checkbox.addActionListener(a -> setter.setValue(checkbox.isSelected()));
 		checkbox.setFocusable(false);
 
-		add(checkbox, x, y, 20, 20);
+		addWithSettingSize(checkbox, x, y, 20, 20);
 	}
 
 	public <T extends Enum<T>> ButtonGroup addRadioButtons(final int row, final int x, final int optionWidth,
@@ -166,7 +175,7 @@ public class RowedPanel extends JPanel {
 			radioButton.setSelected(value.a.equals(val));
 			radioButton.addActionListener(a -> setter.setValue(value.a));
 			group.add(radioButton);
-			add(radioButton, x, y, 20, 20);
+			addWithSettingSize(radioButton, x, y, 20, 20);
 
 			addLabelExact(y, x + 20, value.b, optionWidth - 20);
 

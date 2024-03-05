@@ -104,7 +104,7 @@ public class ChordNameAdviceButton extends JButton implements ActionListener, Mo
 		label.setOpaque(true);
 		label.setBorder(new LineBorder(ColorLabel.BASE_BG_4.color()));
 		label.addMouseListener(new PopupLabelMouseListener(label, value));
-		parent.addTop(label, x, y, getWidth(), 20);
+		parent.addWithSettingSizeTop(label, x, y, getWidth(), 20);
 		popups.add(label);
 	}
 

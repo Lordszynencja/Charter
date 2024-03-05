@@ -32,9 +32,9 @@ public class CharterTheme extends DefaultMetalTheme {
 	private static void CharterThemeInstall() {
 		CharterRadioButton.install();
 		CharterCheckBox.install();
-		CharterButtonUI.install(); // add
-		CharterToggleButtonUI.install(); // add
-		CharterTextFieldUI.install(); // add
+		CharterButtonUI.install();
+		CharterToggleButtonUI.install();
+		CharterTextFieldUI.install();
 		CharterScrollBarUI.install(); // TODO doesn't work but the custom ui is already designed
 
 		// UIManager.put("Label.font", new Font("SansSerif", Font.PLAIN, 12));

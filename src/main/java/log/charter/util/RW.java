@@ -128,6 +128,10 @@ public class RW {
 	}
 
 	public static void writeConfig(final String filename, final Map<String, String> config) {
+		writeConfig(new File(filename), config);
+	}
+
+	public static void writeConfig(final File file, final Map<String, String> config) {
 		final List<String> lines = new ArrayList<>(config.size());
 
 		for (final Entry<String, String> entry : config.entrySet()) {
@@ -135,6 +139,6 @@ public class RW {
 		}
 		lines.sort(null);
 
-		writeB(filename, String.join("\r\n", lines).getBytes());
+		writeB(file, String.join("\r\n", lines).getBytes());
 	}
 }

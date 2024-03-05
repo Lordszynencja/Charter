@@ -45,10 +45,10 @@ public class ChartProject {
 		level = data.currentLevel;
 		this.time = time;
 
-		artistName = songChart.artistName;
-		artistNameSort = songChart.artistNameSort;
-		title = songChart.title;
-		albumName = songChart.albumName;
+		artistName = songChart.artistName();
+		artistNameSort = songChart.artistNameSort();
+		title = songChart.title();
+		albumName = songChart.albumName();
 		albumYear = songChart.albumYear;
 
 		musicFileName = songChart.musicFileName;

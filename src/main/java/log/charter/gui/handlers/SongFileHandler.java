@@ -252,9 +252,9 @@ public class SongFileHandler {
 		}
 
 		final SongChart songChart = new SongChart(musicData.msLength(), musicFileName);
-		songChart.artistName = songData.getOrDefault("artist", "");
-		songChart.title = songData.getOrDefault("title", "");
-		songChart.albumName = songData.getOrDefault("album", "");
+		songChart.artistName(songData.getOrDefault("artist", ""));
+		songChart.title(songData.getOrDefault("title", ""));
+		songChart.albumName(songData.getOrDefault("album", ""));
 		try {
 			songChart.albumYear = Integer.valueOf(songData.getOrDefault("year", ""));
 		} catch (final NumberFormatException e) {

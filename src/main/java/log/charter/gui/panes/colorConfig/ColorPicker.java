@@ -34,6 +34,11 @@ public class ColorPicker extends JComponent implements MouseListener {
 		return color;
 	}
 
+	public void color(final Color value) {
+		color = value;
+		repaint();
+	}
+
 	@Override
 	public void paintComponent(final Graphics g) {
 		final int w = getWidth();
@@ -52,8 +57,7 @@ public class ColorPicker extends JComponent implements MouseListener {
 		final Color newColor = JColorChooser.showDialog(this, title, color);
 
 		if (newColor != null) {
-			color = newColor;
-			repaint();
+			color(newColor);
 		}
 	}
 

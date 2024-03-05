@@ -71,7 +71,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		setTemplateButton = new JButton(Label.SET_TEMPLATE_ON_CHORDS.label());
 		setTemplateButton.addActionListener(a -> setTemplateForChordsInsideSelectedHandShapes());
 
-		parent.add(setTemplateButton, x, parent.sizes.getY(row), 150, 20);
+		parent.addWithSettingSize(setTemplateButton, x, parent.sizes.getY(row), 150, 20);
 	}
 
 	private void templateEdited() {

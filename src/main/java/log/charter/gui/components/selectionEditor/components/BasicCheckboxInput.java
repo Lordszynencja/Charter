@@ -22,7 +22,7 @@ public class BasicCheckboxInput {
 		input.addActionListener(a -> onChange.accept(input.isSelected()));
 		final FieldWithLabel<JCheckBox> field = new FieldWithLabel<>(label, labelWidth, 20, 20, input,
 				LabelPosition.LEFT_CLOSE);
-		parent.add(field, position, labelWidth + 30);
+		parent.add(field, position);
 
 		return field;
 	}

@@ -75,7 +75,7 @@ public class SongArrangement {
 	public SongArrangement(final int audioLength, final SongChart songChart, final Arrangement arrangement) {
 		final List<Beat> beatsTmp = songChart.beatsMap.beats;
 
-		title = songChart.title;
+		title = songChart.title();
 		this.arrangement = arrangement.arrangementType;
 		offset = -beatsTmp.get(0).position();
 		centOffset = arrangement.centOffset;
@@ -87,9 +87,9 @@ public class SongArrangement {
 				.setScale(3, RoundingMode.HALF_UP);
 		tuning = new ArrangementTuning(arrangement.tuning);
 		capo = arrangement.capo;
-		artistName = songChart.artistName;
-		artistNameSort = songChart.artistNameSort;
-		albumName = songChart.albumName;
+		artistName = songChart.artistName();
+		artistNameSort = songChart.artistNameSort();
+		albumName = songChart.albumName();
 		albumYear = songChart.albumYear;
 		setArrangementProperties(arrangement);
 

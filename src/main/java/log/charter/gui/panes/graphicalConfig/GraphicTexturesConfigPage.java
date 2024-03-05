@@ -1,75 +1,57 @@
 package log.charter.gui.panes.graphicalConfig;
 
-import java.io.File;
+import static log.charter.util.FileUtils.listDirectories;
+import static log.charter.util.FileUtils.listFiles;
 
-import javax.swing.JComboBox;
+import java.util.List;
+import java.util.stream.Stream;
 
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.Page;
-import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
+import log.charter.gui.components.containers.RowedPanel;
+import log.charter.gui.components.simple.CharterSelect;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.utils.RowedPosition;
+import log.charter.util.FileUtils;
 
 public class GraphicTexturesConfigPage implements Page {
-	private String inlay = GraphicalConfig.inlay;
-	private String texturePack = GraphicalConfig.texturePack;
+	private FieldWithLabel<CharterSelect<String>> inlayField;
+	private FieldWithLabel<CharterSelect<String>> texturePackField;
 
-	private FieldWithLabel<JComboBox<String>> inlayField;
-	private FieldWithLabel<JComboBox<String>> texturePackField;
+	@Override
+	public Label label() {
+		return Label.GRAPHIC_CONFIG_TEXTURES_PAGE;
+	}
 
-	public void init(final GraphicConfigPane parent, int row) {
-		addInlaySelect(parent, row++);
-		addTexturePackSelect(parent, row++);
+	@Override
+	public void init(final RowedPanel panel, final RowedPosition position) {
+		addInlaySelect(panel, position);
+		position.newRow();
+
+		addTexturePackSelect(panel, position);
 
 		hide();
 	}
 
-	private void addInlaySelect(final GraphicConfigPane parent, final int row) {
-		final File[] files = new File(TexturesHolder.inlaysPath)
-				.listFiles((final File file) -> file.isFile() && file.getName().endsWith(".png"));
+	private void addInlaySelect(final RowedPanel panel, final RowedPosition position) {
+		final Stream<String> names = listFiles(FileUtils.inlaysFolder, f -> f.getName().endsWith(".png"))//
+				.map(name -> name.substring(0, name.length() - 4));
 
-		int selected = 0;
-		final String[] fileNames = new String[files.length];
-		for (int i = 0; i < files.length; i++) {
-			final String name = files[i].getName();
-			fileNames[i] = name.substring(0, name.length() - 4);
-			if (fileNames[i].equals(inlay)) {
-				selected = i;
-			}
-		}
-
-		final JComboBox<String> inlaySelect = new JComboBox<>(fileNames);
-		inlaySelect.setSelectedIndex(selected);
-		inlaySelect.addActionListener(e -> inlay = (String) inlaySelect.getSelectedItem());
-
+		final CharterSelect<String> inlaySelect = new CharterSelect<>(names, GraphicalConfig.inlay);
 		inlayField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_INLAY, 90, 150, 20, inlaySelect, LabelPosition.LEFT);
-		inlayField.setLocation(10, parent.getY(row));
-		parent.add(inlayField);
+		panel.add(inlayField, position);
 	}
 
-	private void addTexturePackSelect(final GraphicConfigPane parent, final int row) {
-		final File[] files = new File(TexturesHolder.texturePacksPath)
-				.listFiles((final File file) -> file.isDirectory());
+	private void addTexturePackSelect(final RowedPanel panel, final RowedPosition position) {
+		final List<String> names = listDirectories(FileUtils.texturesFolder);
 
-		int selected = 0;
-		final String[] fileNames = new String[files.length];
-		for (int i = 0; i < files.length; i++) {
-			fileNames[i] = files[i].getName();
-			if (fileNames[i].equals(inlay)) {
-				selected = i;
-			}
-		}
-
-		final JComboBox<String> texturePackSelect = new JComboBox<>(fileNames);
-		texturePackSelect.setSelectedIndex(selected);
-		texturePackSelect.addActionListener(e -> texturePack = (String) texturePackSelect.getSelectedItem());
-
+		final CharterSelect<String> texturePackSelect = new CharterSelect<>(names, GraphicalConfig.texturePack);
 		texturePackField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_TEXTURE_PACK, 90, 150, 20, texturePackSelect,
 				LabelPosition.LEFT);
-		texturePackField.setLocation(10, parent.getY(row));
-		parent.add(texturePackField);
+		panel.add(texturePackField, position);
 	}
 
 	@Override
@@ -86,12 +68,12 @@ public class GraphicTexturesConfigPage implements Page {
 
 	public void save(final CharterFrame frame) {
 		boolean texturesChanged = false;
-		if (!inlay.equals(GraphicalConfig.inlay)) {
-			GraphicalConfig.inlay = inlay;
+		if (!inlayField.field.getSelectedItem().equals(GraphicalConfig.inlay)) {
+			GraphicalConfig.inlay = inlayField.field.getSelectedItem();
 			texturesChanged = true;
 		}
-		if (!texturePack.equals(GraphicalConfig.texturePack)) {
-			GraphicalConfig.texturePack = texturePack;
+		if (!texturePackField.field.getSelectedItem().equals(GraphicalConfig.texturePack)) {
+			GraphicalConfig.texturePack = texturePackField.field.getSelectedItem();
 			texturesChanged = true;
 		}
 

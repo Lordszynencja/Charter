@@ -48,29 +48,43 @@ public class RowedPosition {
 		return value;
 	}
 
-	public void newRows(final int rows) {
+	public RowedPosition newRows(final int rows) {
 		x = startX;
 		y += rowHeight * rows;
+
+		return this;
 	}
 
-	public void newRow() {
+	public RowedPosition newRow() {
 		newRows(1);
+
+		return this;
 	}
 
-	public void newRowsInPlace(final int rows) {
+	public RowedPosition newRowsInPlace(final int rows) {
 		y += rowHeight * rows;
+
+		return this;
 	}
 
-	public void newRowInPlace() {
+	public RowedPosition newRowInPlace() {
 		newRowsInPlace(1);
+
+		return this;
 	}
 
-	public void setPosition(final int offset, final int row) {
+	public RowedPosition setPosition(final int offset, final int row) {
 		x = startX + offset;
 		y = startY + rowHeight * row;
+
+		return this;
 	}
 
 	public RowedPosition copy() {
 		return new RowedPosition(startX, startY, rowHeight, x, y);
+	}
+
+	public RowedPosition startFromHere() {
+		return new RowedPosition(x, y, rowHeight);
 	}
 }

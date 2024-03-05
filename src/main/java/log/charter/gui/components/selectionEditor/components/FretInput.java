@@ -19,7 +19,7 @@ public class FretInput {
 				onChange, false);
 		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(Label.FRET, 40, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
-		parent.add(field, position, 90);
+		parent.add(field, position);
 
 		return field;
 	}

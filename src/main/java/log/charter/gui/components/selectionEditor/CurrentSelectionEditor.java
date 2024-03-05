@@ -64,7 +64,7 @@ public class CurrentSelectionEditor extends RowedPanel {
 	private final VocalSelectionEditor vocalSelectionEditor = new VocalSelectionEditor();
 
 	public CurrentSelectionEditor() {
-		super(new PaneSizesBuilder(0).build(), 0);
+		super(new PaneSizesBuilder(0).build());
 
 		setOpaque(true);
 		setBackground(ColorLabel.BASE_BG_2.color());

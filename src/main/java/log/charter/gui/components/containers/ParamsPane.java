@@ -66,12 +66,12 @@ public class ParamsPane extends JDialog {
 		}
 
 		@Override
-		public void add(final Component component, final int x, final int y, final int w, final int h) {
+		public void addWithSettingSize(final Component component, final int x, final int y, final int w, final int h) {
 			ParamsPane.this.add(component, x, y, w, h);
 		}
 
 		@Override
-		public void addTop(final Component component, final int x, final int y, final int w, final int h) {
+		public void addWithSettingSizeTop(final Component component, final int x, final int y, final int w, final int h) {
 			ParamsPane.this.addTop(component, x, y, w, h);
 		}
 
@@ -95,10 +95,6 @@ public class ParamsPane extends JDialog {
 
 	public static interface BigDecimalValueSetter {
 		void setValue(BigDecimal val);
-	}
-
-	public static interface SaverWithStatus {
-		boolean save();
 	}
 
 	private static final long serialVersionUID = -3193534671039163160L;

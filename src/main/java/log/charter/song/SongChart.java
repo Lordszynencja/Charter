@@ -22,12 +22,16 @@ import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.RW;
 
 public class SongChart {
+	private static String cleanString(final String s) {
+		return s.replace("\u0000", "");
+	}
+
 	public String musicFileName;
 
-	public String artistName;
-	public String artistNameSort;
-	public String title;
-	public String albumName;
+	private String artistName;
+	private String artistNameSort;
+	private String title;
+	private String albumName;
 	public Integer albumYear;
 
 	public BeatsMap beatsMap;
@@ -53,10 +57,10 @@ public class SongChart {
 			final ArrayList2<Arrangement> arrangements) {
 		this.musicFileName = musicFileName;
 
-		this.artistName = artistName;
-		this.artistNameSort = artistNameSort;
-		this.title = title;
-		this.albumName = albumName;
+		this.artistName(artistName);
+		this.artistNameSort(artistNameSort);
+		this.title(title);
+		this.albumName(albumName);
 		this.albumYear = albumYear;
 
 		this.beatsMap = beatsMap;
@@ -69,10 +73,10 @@ public class SongChart {
 	public SongChart(final ChartProject project, final String dir) throws IOException {
 		musicFileName = project.musicFileName;
 
-		artistName = project.artistName;
-		artistNameSort = project.artistNameSort;
-		title = project.title;
-		albumName = project.albumName;
+		artistName(project.artistName);
+		artistNameSort(project.artistNameSort);
+		title(project.title);
+		albumName(project.albumName);
 		albumYear = project.albumYear;
 
 		beatsMap = new BeatsMap(project);
@@ -103,6 +107,38 @@ public class SongChart {
 		if (bookmarks == null) {
 			bookmarks = new HashMap2<>();
 		}
+	}
+
+	public String artistName() {
+		return artistName;
+	}
+
+	public void artistName(final String value) {
+		artistName = cleanString(value);
+	}
+
+	public String artistNameSort() {
+		return artistNameSort;
+	}
+
+	public void artistNameSort(final String value) {
+		artistNameSort = cleanString(value);
+	}
+
+	public String title() {
+		return title;
+	}
+
+	public void title(final String value) {
+		title = cleanString(value);
+	}
+
+	public String albumName() {
+		return albumName;
+	}
+
+	public void albumName(final String value) {
+		albumName = cleanString(value);
 	}
 
 	public void moveEverything(final int audioLength, final int positionDifference) {

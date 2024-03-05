@@ -24,10 +24,10 @@ public final class SongOptionsPane extends ParamsPane {
 
 		songChart = data.songChart;
 
-		title = songChart.title;
-		artistName = songChart.artistName;
-		artistNameSort = songChart.artistNameSort;
-		albumName = songChart.albumName;
+		title = songChart.title();
+		artistName = songChart.artistName();
+		artistNameSort = songChart.artistNameSort();
+		albumName = songChart.albumName();
 		albumYear = songChart.albumYear;
 
 		addConfigValue(0, 20, 130, Label.SONG_OPTIONS_TITLE, title, 300, null, //
@@ -46,10 +46,10 @@ public final class SongOptionsPane extends ParamsPane {
 	}
 
 	private void saveAndExit() {
-		songChart.title = title;
-		songChart.artistName = artistName;
-		songChart.artistNameSort = artistNameSort;
-		songChart.albumName = albumName;
+		songChart.title(title);
+		songChart.artistName(artistName);
+		songChart.artistNameSort(artistNameSort);
+		songChart.albumName(albumName);
 		songChart.albumYear = albumYear;
 	}
 }

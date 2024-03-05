@@ -2,7 +2,7 @@ package log.charter.gui.components.preview3D.shapes;
 
 import static java.lang.Math.min;
 import static log.charter.data.config.GraphicalConfig.texturePack;
-import static log.charter.gui.components.preview3D.glUtils.TexturesHolder.texturePacksPath;
+import static log.charter.util.FileUtils.texturesFolder;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -15,6 +15,7 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 
 import log.charter.gui.components.preview3D.data.NoteDrawData;
+import log.charter.gui.components.preview3D.glUtils.TextureFileSupplier;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.io.Logger;
 import log.charter.song.enums.HOPO;
@@ -129,18 +130,16 @@ public class NoteStatusModels {
 	private final Map<NoteStatusData, Integer> noteStatusesTextureIds = new HashMap<>();
 	private final Map<TextureAtlasPosition, Integer> textureIds = new HashMap<>();
 
+	private static final TextureFileSupplier textureAtlasSupplier = new TextureFileSupplier(texturesFolder,
+			() -> texturePack, name -> name + "/notes.png");
+
 	private static BufferedImage loadTextureAtlas() {
-		String path = texturePacksPath + texturePack + "/notes.png";
-		File f = new File(path);
-		if (!f.exists()) {
-			path = texturePacksPath + "default/notes.png";
-			f = new File(path);
-		}
+		final File f = textureAtlasSupplier.getFile();
 
 		try {
 			return ImageIO.read(f);
 		} catch (final IOException e) {
-			Logger.error("Couldn't read notes texture atlas! path: " + path, e);
+			Logger.error("Couldn't read notes texture atlas! path: " + f.getPath(), e);
 			return new BufferedImage(4, 4, BufferedImage.TYPE_INT_RGB);
 		}
 	}

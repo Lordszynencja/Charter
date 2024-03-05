@@ -11,7 +11,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -23,6 +22,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInputForPane;
 import log.charter.song.Arrangement;
@@ -169,7 +169,7 @@ public class GuitarEventPointPane extends ParamsPane {
 		final TableColumn column = eventsTable.getColumnModel().getColumn(0);
 		column.setCellEditor(new DefaultCellEditor(eventTypeComboBox));
 
-		final JScrollPane scrollTable = new JScrollPane(eventsTable);
+		final CharterScrollPane scrollTable = new CharterScrollPane(eventsTable);
 		scrollTable.setColumnHeader(null);
 		scrollTable.setMinimumSize(new Dimension(100, 80));
 

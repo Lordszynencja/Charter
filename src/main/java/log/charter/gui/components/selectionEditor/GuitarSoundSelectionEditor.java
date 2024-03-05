@@ -105,7 +105,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			final JCheckBox stringCheckbox = new JCheckBox((string + 1) + "");
 			stringCheckbox.setForeground(getStringBasedColor(StringColorLabelType.NOTE, string, maxStrings));
 			stringCheckbox.addActionListener(e -> updateStringSelectionDependentValues());
-			parent.add(stringCheckbox, position.getAndAddX(40), position.getY(), 40, 20);
+			parent.addWithSettingSize(stringCheckbox, position.getAndAddX(40), position.getY(), 40, 20);
 			strings.add(stringCheckbox);
 		}
 	}
@@ -147,7 +147,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final TextInputWithValidation slideFretInput = new TextInputWithValidation(null, 30,
 				createIntValidator(1, frets, true), (final Integer val) -> changeSlideFret(val), false);
 		slideFret = new FieldWithLabel<>(Label.SLIDE_PANE_FRET, 60, 30, 20, slideFretInput, LabelPosition.LEFT);
-		parent.add(slideFret, position, 100);
+		parent.add(slideFret, position);
 	}
 
 	private void addUnpitchedSlideInput(final CurrentSelectionEditor parent, final RowedPosition position) {
@@ -155,7 +155,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		unpitchedSlideInput.addActionListener(a -> changeUnpitchedSlide(unpitchedSlideInput.isSelected()));
 		unpitchedSlide = new FieldWithLabel<>(Label.SLIDE_PANE_UNPITCHED, 80, 20, 20, unpitchedSlideInput,
 				LabelPosition.RIGHT_CLOSE);
-		parent.add(unpitchedSlide, position, 90);
+		parent.add(unpitchedSlide, position);
 	}
 
 	private void addChordTemplateEditorParts(final int x) {

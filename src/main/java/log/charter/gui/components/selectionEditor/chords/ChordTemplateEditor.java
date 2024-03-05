@@ -5,8 +5,8 @@ import static java.lang.Math.min;
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.gui.components.containers.RowedPanel.setComponentBounds;
 import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createIntValidator;
+import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.song.ChordTemplate.fingerIds;
 import static log.charter.song.ChordTemplate.fingerNames;
@@ -232,7 +232,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		chordNameAdviceButton = new ChordNameAdviceButton(Label.CHORD_NAME_ADVICE, parent,
 				() -> data.getCurrentArrangement().tuning, () -> chordTemplateSupplier.get().frets,
 				this::onChordNameSelect);
-		parent.add(chordNameAdviceButton, x, parent.sizes.getY(row), 150, 20);
+		parent.addWithSettingSize(chordNameAdviceButton, x, parent.sizes.getY(row), 150, 20);
 	}
 
 	public void onChordNameSelect(final String newName) {
@@ -288,7 +288,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			}
 		});
 
-		parent.add(chordNameInput, x, parent.sizes.getY(row), 150, 20);
+		parent.addWithSettingSize(chordNameInput, x, parent.sizes.getY(row), 150, 20);
 	}
 
 	private String templateSearchName(final ChordTemplate template) {
@@ -394,7 +394,8 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			addSelectTextOnFocus(input);
 
 			fretInputs.add(input);
-			parent.add(input, fretInputX, parent.sizes.getY(row + 1 + getStringPosition(i, maxStrings)), 30, 20);
+			parent.addWithSettingSize(input, fretInputX, parent.sizes.getY(row + 1 + getStringPosition(i, maxStrings)),
+					30, 20);
 		}
 
 		x += 5 + max(fretLabelWidth, 40);
@@ -414,12 +415,12 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 			fingerInputs.add(input);
 			final int y = parent.sizes.getY(row + 1 + getStringPosition(string, maxStrings));
-			parent.add(input, fingerInputX, y, 20, 20);
+			parent.addWithSettingSize(input, fingerInputX, y, 20, 20);
 		}
 		x += 5 + max(fingerLabelWidth, 20);
 
 		final int y = parent.sizes.getY(row);
-		parent.add(chordTemplatePreview, x, y, width, calculatePreviewHeight(maxStrings));
+		parent.addWithSettingSize(chordTemplatePreview, x, y, width, calculatePreviewHeight(maxStrings));
 	}
 
 	private String validateFinger(final String val) {

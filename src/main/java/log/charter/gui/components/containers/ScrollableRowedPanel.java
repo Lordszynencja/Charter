@@ -5,12 +5,11 @@ import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds
 import java.awt.Component;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import log.charter.gui.components.data.PaneSizes;
 import log.charter.gui.components.data.PaneSizesBuilder;
 
-public class ScrollableRowedPanel extends JScrollPane {
+public class ScrollableRowedPanel extends CharterScrollPane {
 	private static final long serialVersionUID = 7451891986721556918L;
 
 	private static JPanel preparePanel(final PaneSizes sizes, final int rows) {

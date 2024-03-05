@@ -30,6 +30,15 @@ public class WaveFormDrawer {
 	private static final Color highIntensityColorZoomed = ChartPanelColors.ColorLabel.WAVEFORM_RMS_COLOR
 			.colorWithAlpha(64);
 
+	
+	private static int getMiddle() {
+		return (lanesBottom + lanesTop) / 2;
+	}
+	
+	private static int getHeight() {
+		return (lanesBottom - lanesTop) / 2;
+	}
+	
 	private ChartPanel chartPanel;
 	private ChartToolbar chartToolbar;
 	private ModeManager modeManager;
@@ -82,8 +91,8 @@ public class WaveFormDrawer {
 		final int timeSpan = getSpanForLevel(level.a);
 
 		final int width = chartPanel.getWidth();
-		final int y = (lanesBottom + lanesTop) / 2;
-		final int fullHeight = (lanesBottom - lanesTop) / 2;
+		final int y = getMiddle();
+		final int fullHeight = getHeight();
 		final int start = max(0, xToTime(0, time) / timeSpan);
 		final int end = min(level.b.size() - 1, xToTime(chartPanel.getWidth(), time) / timeSpan);
 
@@ -118,8 +127,8 @@ public class WaveFormDrawer {
 		int end = (int) (xToTime(chartPanel.getWidth(), time) * timeToFrameMultiplier);
 		end = min(musicValues.length, end);
 
-		final int midY = (lanesBottom + lanesTop) / 2;
-		final int yScale = (lanesBottom - lanesTop) / 2;
+		final int midY = getMiddle();
+		final int yScale = getHeight();
 		int x0 = 0;
 		int x1 = timeToX((int) ((start - 1) / timeToFrameMultiplier), time);
 		int y0 = 0;

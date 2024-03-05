@@ -28,7 +28,7 @@ public class ArrangementDrawer {
 			final WaveFormDrawer waveFormDrawer) {
 		this.modeManager = modeManager;
 
-		tempoMapDrawer.init(guitarDrawer);
+		tempoMapDrawer.init(beatsDrawer, guitarDrawer, lyricLinesDrawer, waveFormDrawer);
 		guitarDrawer.init(beatsDrawer, data, chartPanel, keyboardHandler, lyricLinesDrawer, selectionManager,
 				waveFormDrawer);
 		vocalsDrawer.init(beatsDrawer, data, chartPanel, lyricLinesDrawer, selectionManager, waveFormDrawer);

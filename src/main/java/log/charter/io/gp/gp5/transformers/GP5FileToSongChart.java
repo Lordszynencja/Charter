@@ -13,9 +13,9 @@ import log.charter.song.SongChart;
 
 public class GP5FileToSongChart {
 	private static void addSongData(final GP5File gp5File, final SongChart chart) {
-		chart.artistName = gp5File.scoreInformation.artist;
-		chart.title = gp5File.scoreInformation.title;
-		chart.albumName = gp5File.scoreInformation.album;
+		chart.artistName(gp5File.scoreInformation.artist);
+		chart.title(gp5File.scoreInformation.title);
+		chart.albumName(gp5File.scoreInformation.album);
 	}
 
 	private static void addGP5Arrangements(final GP5File gp5File, final List<Integer> barsOrder,

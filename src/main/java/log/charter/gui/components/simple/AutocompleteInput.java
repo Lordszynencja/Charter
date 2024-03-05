@@ -190,7 +190,7 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 
 	private void addLabel(final int x, final AtomicInteger y, final AutocompleteValue<T> autocompleteValue) {
 		final JComponent label = labelGenerator.apply(autocompleteValue);
-		parent.addTop(label, x, y.getAndAdd(label.getHeight()), label.getWidth(), label.getHeight());
+		parent.addWithSettingSizeTop(label, x, y.getAndAdd(label.getHeight()), label.getWidth(), label.getHeight());
 		popups.add(label);
 	}
 
