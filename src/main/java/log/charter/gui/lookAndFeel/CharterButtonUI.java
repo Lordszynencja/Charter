@@ -1,92 +1,89 @@
 package log.charter.gui.lookAndFeel;
 
-import log.charter.gui.ChartPanelColors;
-
-import javax.swing.*;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.basic.BasicButtonUI;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 
+import javax.swing.AbstractButton;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.UIManager;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.basic.BasicButtonUI;
+
+import log.charter.gui.ChartPanelColors.ColorLabel;
+
 public class CharterButtonUI extends BasicButtonUI {
-    private static Color backgroundColor;
-    private static Color disabledBackgroundColor;
-    private static Color selectColor;
+	public static final CharterButtonUI buttonUI = new CharterButtonUI();
 
-    static {
-        updateColors();
-    }
+	public static ComponentUI createUI(final JComponent c) {
+		return buttonUI;
+	}
 
-    public static final CharterButtonUI buttonUI = new CharterButtonUI();
+	@Override
+	public void installUI(final JComponent c) {
+		super.installUI(c);
+		final AbstractButton button = (AbstractButton) c;
+		button.setContentAreaFilled(false);
+		button.setFocusPainted(false);
+		button.setBorderPainted(false);
+		button.setOpaque(false);
+	}
 
-    public static ComponentUI createUI(JComponent c) {
-        return buttonUI;
-    }
+	@Override
+	public void paint(final Graphics g, final JComponent c) {
+		final AbstractButton button = (AbstractButton) c;
+		final Graphics2D g2d = (Graphics2D) g.create();
+		setupGraphics(g2d, c);
 
-    public static void updateColors() {
-        backgroundColor = ChartPanelColors.ColorLabel.BASE_BUTTON.color();
-        disabledBackgroundColor = ChartPanelColors.ColorLabel.BASE_BG_2.color();
-        selectColor = ChartPanelColors.ColorLabel.BASE_HIGHLIGHT.color();
-    }
+		// button fill
+		final RoundRectangle2D.Double roundedRectangle = new RoundRectangle2D.Double(0, 0, c.getWidth() - 1,
+				c.getHeight() - 1, 5, 5);
+		if (!button.isEnabled()) {
+			g2d.setColor(ColorLabel.BASE_BG_2.color());
+		} else if (button.getModel().isPressed()) {
+			g2d.setColor(ColorLabel.BASE_HIGHLIGHT.color());
+		} else {
+			g2d.setColor(ColorLabel.BASE_BUTTON.color());
+		}
+		g2d.fill(roundedRectangle);
 
-    @Override
-    public void installUI(JComponent c) {
-        super.installUI(c);
-        AbstractButton button = (AbstractButton) c;
-        button.setContentAreaFilled(false);
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setOpaque(false);
-    }
+		// button icon
+		if (button.getIcon() != null) {
+			final Icon icon = button.getIcon();
+			final int iconX = (c.getWidth() - icon.getIconWidth()) / 2;
+			final int iconY = (c.getHeight() - icon.getIconHeight()) / 2;
+			icon.paintIcon(c, g2d, iconX, iconY);
+		}
 
-    @Override
-    public void paint(Graphics g, JComponent c) {
-        AbstractButton button = (AbstractButton) c;
-        Graphics2D g2d = (Graphics2D) g.create();
-        setupGraphics(g2d, c);
+		// button text
+		if (button.getText() != null && !button.getText().isEmpty()) {
+			if (button.isEnabled()) {
+				g2d.setColor(button.getForeground());
+			} else {
+				g2d.setColor(button.getForeground().darker());
+			}
+			g2d.drawString(button.getText(),
+					(int) (c.getWidth() - g2d.getFontMetrics().getStringBounds(button.getText(), g2d).getWidth()) / 2,
+					(int) ((c.getHeight() - g2d.getFontMetrics().getAscent() - g2d.getFontMetrics().getDescent()) / 2)
+							+ g2d.getFontMetrics().getAscent());
+		}
 
-        // button fill
-        RoundRectangle2D.Double roundedRectangle = new RoundRectangle2D.Double(0, 0, c.getWidth() - 1, c.getHeight() - 1, 5, 5);
-        if (!button.isEnabled()) {
-            g2d.setColor(disabledBackgroundColor);
-            g2d.fill(roundedRectangle);
-        } else {
-            g2d.setColor(button.getModel().isPressed() ? selectColor : backgroundColor);
-            g2d.fill(roundedRectangle);
-        }
+		g2d.dispose();
+	}
 
-        // button icon
-        if (button.getIcon() != null) {
-            Icon icon = button.getIcon();
-            int iconX = (c.getWidth() - icon.getIconWidth()) / 2;
-            int iconY = (c.getHeight() - icon.getIconHeight()) / 2;
-            icon.paintIcon(c, g2d, iconX, iconY);
-        }
+	private void setupGraphics(final Graphics2D g2d, final JComponent c) {
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // button text
-        if (button.getText() != null && !button.getText().isEmpty()) {
-            if (button.isEnabled()) {
-                g2d.setColor(button.getForeground());
-            } else {
-                g2d.setColor(button.getForeground().darker());
-            }
-            g2d.drawString(button.getText(), (int) (c.getWidth() - g2d.getFontMetrics().getStringBounds(button.getText(), g2d).getWidth()) / 2,
-                    (int) ((c.getHeight() - g2d.getFontMetrics().getAscent() - g2d.getFontMetrics().getDescent()) / 2) + g2d.getFontMetrics().getAscent());
-        }
+		// label font
+		final Font originalFont = g2d.getFont();
+		final Font plainFont = originalFont.deriveFont(Font.PLAIN);
+		g2d.setFont(plainFont);
+	}
 
-        g2d.dispose();
-    }
-
-    private void setupGraphics(Graphics2D g2d, JComponent c) {
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // label font
-        Font originalFont = g2d.getFont();
-        Font plainFont = originalFont.deriveFont(Font.PLAIN);
-        g2d.setFont(plainFont);
-    }
-
-    static void install() {
-        UIManager.put("ButtonUI", CharterButtonUI.class.getName());
-    }
+	static void install() {
+		UIManager.put("ButtonUI", CharterButtonUI.class.getName());
+	}
 }

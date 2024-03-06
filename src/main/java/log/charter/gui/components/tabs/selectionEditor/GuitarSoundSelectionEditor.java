@@ -13,7 +13,6 @@ import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEd
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -673,8 +672,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 		lastStringsAmount = data.currentStrings();
 		for (int string = 0; string < lastStringsAmount; string++) {
-			strings.get(string)
-					.setIcon(new CharterCheckBox.CheckBoxIcon(getStringBasedColor(StringColorLabelType.NOTE, string, lastStringsAmount)));
+			strings.get(string).setIcon(new CharterCheckBox.CheckBoxIcon(
+					getStringBasedColor(StringColorLabelType.NOTE, string, lastStringsAmount)));
 		}
 	}
 

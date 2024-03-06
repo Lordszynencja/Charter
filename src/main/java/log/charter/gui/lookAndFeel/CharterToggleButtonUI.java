@@ -1,6 +1,5 @@
 package log.charter.gui.lookAndFeel;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,39 +13,25 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicToggleButtonUI;
 
-import log.charter.gui.ChartPanelColors;
+import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class CharterToggleButtonUI extends BasicToggleButtonUI {
-	 private static Color backgroundColor;
-    private static Color disabledBackgroundColor;
-    private static Color selectColor;
-
-    static {
-        updateColors();
-    }
-
 	private static final CharterToggleButtonUI toggleButtonUI = new CharterToggleButtonUI();
 
 	public static ComponentUI createUI(final JComponent c) {
 		return toggleButtonUI;
 	}
 
-    public static void updateColors() {
-        backgroundColor = ChartPanelColors.ColorLabel.BASE_BUTTON.color();
-        disabledBackgroundColor = ChartPanelColors.ColorLabel.BASE_BG_3.color();
-        selectColor = ChartPanelColors.ColorLabel.BASE_HIGHLIGHT.color();
-    }
-
-    @Override
-    public void installUI(JComponent c) {
-        super.installUI(c);
-        AbstractButton button = (AbstractButton) c;
-        button.setContentAreaFilled(false);
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setOpaque(false);
-        button.setFont(button.getFont().deriveFont(Font.PLAIN));
-    }
+	@Override
+	public void installUI(final JComponent c) {
+		super.installUI(c);
+		final AbstractButton button = (AbstractButton) c;
+		button.setContentAreaFilled(false);
+		button.setFocusPainted(false);
+		button.setBorderPainted(false);
+		button.setOpaque(false);
+		button.setFont(button.getFont().deriveFont(Font.PLAIN));
+	}
 
 	@Override
 	public void paint(final Graphics g, final JComponent c) {
@@ -58,12 +43,13 @@ public class CharterToggleButtonUI extends BasicToggleButtonUI {
 		final RoundRectangle2D.Double roundedRectangle = new RoundRectangle2D.Double(0, 0, c.getWidth() - 1,
 				c.getHeight() - 1, 5, 5);
 		if (!button.isEnabled()) {
-			g2d.setColor(disabledBackgroundColor);
-			g2d.fill(roundedRectangle);
+			g2d.setColor(ColorLabel.BASE_BG_3.color());
+		} else if (button.getModel().isSelected()) {
+			g2d.setColor(ColorLabel.BASE_HIGHLIGHT.color());
 		} else {
-			g2d.setColor(button.getModel().isSelected() ? selectColor : backgroundColor);
-			g2d.fill(roundedRectangle);
+			g2d.setColor(ColorLabel.BASE_BUTTON.color());
 		}
+		g2d.fill(roundedRectangle);
 
 		// button icon
 		if (button.getIcon() != null) {
@@ -73,16 +59,18 @@ public class CharterToggleButtonUI extends BasicToggleButtonUI {
 			icon.paintIcon(c, g2d, iconX, iconY);
 		}
 
-        // button text
-        if (button.getText() != null && !button.getText().isEmpty()) {
-            if (button.isEnabled()) {
-                g2d.setColor(button.getForeground());
-            } else {
-                g2d.setColor(button.getForeground().darker());
-            }
-            g2d.drawString(button.getText(), (int) (c.getWidth() - g2d.getFontMetrics().getStringBounds(button.getText(), g2d).getWidth()) / 2,
-                    (int) ((c.getHeight() - g2d.getFontMetrics().getAscent() - g2d.getFontMetrics().getDescent()) / 2) + g2d.getFontMetrics().getAscent());
-        }
+		// button text
+		if (button.getText() != null && !button.getText().isEmpty()) {
+			if (button.isEnabled()) {
+				g2d.setColor(button.getForeground());
+			} else {
+				g2d.setColor(button.getForeground().darker());
+			}
+			g2d.drawString(button.getText(),
+					(int) (c.getWidth() - g2d.getFontMetrics().getStringBounds(button.getText(), g2d).getWidth()) / 2,
+					(int) ((c.getHeight() - g2d.getFontMetrics().getAscent() - g2d.getFontMetrics().getDescent()) / 2)
+							+ g2d.getFontMetrics().getAscent());
+		}
 
 		g2d.dispose();
 	}

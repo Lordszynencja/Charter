@@ -3,10 +3,7 @@ package log.charter.gui;
 import static log.charter.util.ColorUtils.setAlpha;
 
 import java.awt.Color;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,7 +32,7 @@ public class ChartPanelColors {
 		BASE_TEXT(255, 255, 255), //
 		BASE_TEXT_INPUT(255, 255, 255),
 
-		BASE_BG_INPUT(14, 15, 17),
+		BASE_BG_INPUT(14, 15, 17), //
 		BASE_HIGHLIGHT(53, 116, 240), //
 		BASE_BUTTON(112, 112, 112), //
 		BASE_BORDER(82, 82, 82), //
@@ -50,7 +47,7 @@ public class ChartPanelColors {
 		REPEAT_MARKER(33, 217, 245), //
 		MARKER(255, 255, 255), //
 		MARKER_VIEW_AREA(122, 122, 122), //
-		ARRANGEMENT_TEXT(255, 255, 255),
+		ARRANGEMENT_TEXT(255, 255, 255), //
 		SECTION_NAME_BG(165, 54, 178), //
 		PHRASE_NAME_BG(179, 118, 54), //
 		SECTION_COLOR(165, 54, 178), //
@@ -59,7 +56,8 @@ public class ChartPanelColors {
 		HIGHLIGHT(122, 122, 122), //
 		SELECT(41, 188, 254), //
 		VOCAL_SELECT(41, 188, 254), //
-		WAVEFORM_COLOR(64, 128, 128), WAVEFORM_RMS_COLOR(255, 128, 255),
+		WAVEFORM_COLOR(64, 128, 128), //
+		WAVEFORM_RMS_COLOR(255, 128, 255),
 
 		NOTE_FLAG_MARKER(255, 255, 255), //
 		SLIDE_NORMAL_FRET_BG(255, 255, 255), //
@@ -86,7 +84,7 @@ public class ChartPanelColors {
 		ANCHOR(208, 57, 57), //
 		HAND_SHAPE(49, 87, 167), //
 		HAND_SHAPE_ARPEGGIO(133, 89, 183), //
-		HAND_SHAPE_TEXT(255,255,255),
+		HAND_SHAPE_TEXT(255, 255, 255), //
 		TONE_CHANGE(182, 182, 182), //
 		TONE_CHANGE_TEXT(78, 81, 87), //
 
@@ -112,7 +110,7 @@ public class ChartPanelColors {
 		PREVIEW_3D_LANE_BORDER(7, 146, 143), //
 		PREVIEW_3D_ARPEGGIO(192, 64, 255), //
 		PREVIEW_3D_BEAT(15, 59, 94), //
-		PREVIEW_3D_BEAT_NUMBER_ACTIVE_COLOR(135, 221, 246),
+		PREVIEW_3D_BEAT_NUMBER_ACTIVE_COLOR(135, 221, 246), //
 		PREVIEW_3D_LYRICS(255, 255, 255), //
 		PREVIEW_3D_LYRICS_PASSED(13, 162, 255); //
 
