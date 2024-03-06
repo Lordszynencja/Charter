@@ -3,7 +3,10 @@ package log.charter.gui;
 import static log.charter.util.ColorUtils.setAlpha;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,14 +33,16 @@ public class ChartPanelColors {
 
 		BASE_DARK_TEXT(78, 81, 87), //
 		BASE_TEXT(255, 255, 255), //
+		BASE_TEXT_INPUT(255, 255, 255),
 
+		BASE_BG_INPUT(14, 15, 17),
 		BASE_HIGHLIGHT(53, 116, 240), //
 		BASE_BUTTON(112, 112, 112), //
 		BASE_BORDER(82, 82, 82), //
 
 		NOTE_BACKGROUND(16, 16, 16), //
 		NOTE_ADD_LINE(0, 255, 0), //
-		LANE(128, 128, 128), //
+		LANE(20, 21, 23), //
 		MAIN_BEAT(222, 222, 255, 50), //
 		SECONDARY_BEAT(222, 222, 255, 50), //
 		BEAT_MARKER(222, 222, 0), GRID(222, 222, 255, 25), //
@@ -45,6 +50,7 @@ public class ChartPanelColors {
 		REPEAT_MARKER(33, 217, 245), //
 		MARKER(255, 255, 255), //
 		MARKER_VIEW_AREA(122, 122, 122), //
+		ARRANGEMENT_TEXT(255, 255, 255),
 		SECTION_NAME_BG(165, 54, 178), //
 		PHRASE_NAME_BG(179, 118, 54), //
 		SECTION_COLOR(165, 54, 178), //
@@ -80,12 +86,14 @@ public class ChartPanelColors {
 		ANCHOR(208, 57, 57), //
 		HAND_SHAPE(49, 87, 167), //
 		HAND_SHAPE_ARPEGGIO(133, 89, 183), //
+		HAND_SHAPE_TEXT(255,255,255),
 		TONE_CHANGE(182, 182, 182), //
+		TONE_CHANGE_TEXT(78, 81, 87), //
 
 		VOCAL_LINE_BACKGROUND(56, 56, 64), //
 		VOCAL_LINE_TEXT(255, 255, 255), //
 		VOCAL_TEXT(210, 210, 210), //
-		VOCAL_NOTE(221, 114, 41), //
+		VOCAL_NOTE(13, 162, 255), //
 		VOCAL_NOTE_WORD_PART(173, 89, 33, 192), //
 
 		PREVIEW_3D_BACKGROUND(0, 0, 0), //
@@ -98,13 +106,15 @@ public class ChartPanelColors {
 		PREVIEW_3D_CHORD_FULL_MUTE(0, 128, 160), //
 		PREVIEW_3D_CHORD_PALM_MUTE(0, 128, 160), //
 		PREVIEW_3D_ANCHOR(0, 0, 255, 64), //
+		PREVIEW_3D_ANCHOR_FRET_COLOR(255, 168, 33), //
 		PREVIEW_3D_LANE(37, 144, 232, 64), //
 		PREVIEW_3D_LANE_DOTTED(24, 92, 148, 64), //
 		PREVIEW_3D_LANE_BORDER(7, 146, 143), //
 		PREVIEW_3D_ARPEGGIO(192, 64, 255), //
 		PREVIEW_3D_BEAT(15, 59, 94), //
+		PREVIEW_3D_BEAT_NUMBER_ACTIVE_COLOR(135, 221, 246),
 		PREVIEW_3D_LYRICS(255, 255, 255), //
-		PREVIEW_3D_LYRICS_PASSED(221, 114, 41); //
+		PREVIEW_3D_LYRICS_PASSED(13, 162, 255); //
 
 		private final Color defaultColor;
 

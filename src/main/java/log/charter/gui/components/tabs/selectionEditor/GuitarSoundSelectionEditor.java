@@ -13,6 +13,7 @@ import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEd
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -44,6 +45,7 @@ import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.handlers.data.ChartItemsHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
+import log.charter.gui.lookAndFeel.CharterCheckBox;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.enums.BassPickingTechnique;
@@ -106,7 +108,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		for (int i = 0; i < maxStrings; i++) {
 			final int string = i;
 			final JCheckBox stringCheckbox = new JCheckBox((string + 1) + "");
-			stringCheckbox.setForeground(getStringBasedColor(StringColorLabelType.NOTE, string, maxStrings));
 			stringCheckbox.addActionListener(e -> updateStringSelectionDependentValues());
 			parent.addWithSettingSize(stringCheckbox, position.getAndAddX(40), position.getY(), 40, 20);
 			strings.add(stringCheckbox);
@@ -122,7 +123,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void addHOPOInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
-		hopo = new ToggleButtonGroupInRow<>(parent, position, 65, Label.HOPO, //
+		hopo = new ToggleButtonGroupInRow<>(parent, position, 49, Label.HOPO, //
 				makeChangeForCommonNotes(NoteInterface::hopo), //
 				asList(new Pair<>(HOPO.NONE, Label.HOPO_NONE), //
 						new Pair<>(HOPO.HAMMER_ON, Label.HOPO_HAMMER_ON), //
@@ -673,7 +674,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		lastStringsAmount = data.currentStrings();
 		for (int string = 0; string < lastStringsAmount; string++) {
 			strings.get(string)
-					.setForeground(getStringBasedColor(StringColorLabelType.NOTE, string, lastStringsAmount));
+					.setIcon(new CharterCheckBox.CheckBoxIcon(getStringBasedColor(StringColorLabelType.NOTE, string, lastStringsAmount)));
 		}
 	}
 

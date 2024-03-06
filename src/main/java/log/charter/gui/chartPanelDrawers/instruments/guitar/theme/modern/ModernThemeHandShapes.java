@@ -32,7 +32,7 @@ public class ModernThemeHandShapes implements ThemeHandShapes {
 
 	@Override
 	public void addHandShape(final int x, final int length, final boolean selected, final boolean highlighted,
-			final HandShape handShape, final ChordTemplate chordTemplate) {
+							 final HandShape handShape, final ChordTemplate chordTemplate) {
 		final ShapePositionWithSize positionTop = new ShapePositionWithSize(x, lanesTop, length, lanesBottom - lanesTop);
 		final Color fillColorAlpha = chordTemplate.arpeggio
 				? ColorLabel.HAND_SHAPE_ARPEGGIO.colorWithAlpha(32)
@@ -42,7 +42,7 @@ public class ModernThemeHandShapes implements ThemeHandShapes {
 
 		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length, handShapesHeight);
 		final ColorLabel fillColor = chordTemplate.arpeggio ? ColorLabel.HAND_SHAPE_ARPEGGIO : ColorLabel.HAND_SHAPE;
-		data.handShapes.add(filledRectangle(position, fillColor));
+		data.handShapes.add(filledRectangle(position, fillColor, true));
 
 		if (highlighted) {
 			data.handShapes.add(strokedRectangle(position.resized(-1, -1, 1, 1), ColorLabel.HIGHLIGHT));
@@ -57,14 +57,14 @@ public class ModernThemeHandShapes implements ThemeHandShapes {
 		}
 		if (chordName != null) {
 			data.handShapes.add(new Text(new Position2D(x + 2, lanesBottom + 1), handShapesFont, chordName,
-					ColorLabel.BASE_TEXT));
+					ColorLabel.HAND_SHAPE_TEXT));
 		}
 	}
 
 	@Override
 	public void addHandShapeHighlight(final int x, final int length) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length - 1,
-				handShapesHeight); // changed
+				handShapesHeight);
 		data.handShapes.add(strokedRectangle(position, ColorLabel.HIGHLIGHT));
 	}
 }

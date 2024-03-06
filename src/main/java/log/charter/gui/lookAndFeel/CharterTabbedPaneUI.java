@@ -3,12 +3,31 @@ package log.charter.gui.lookAndFeel;
 import log.charter.gui.ChartPanelColors;
 
 import javax.swing.*;
+import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.metal.MetalTabbedPaneUI;
 import java.awt.*;
 
-// TODO TabPanelUI override to all instances
-
 public class CharterTabbedPaneUI extends MetalTabbedPaneUI {
+
+    private static Color backgroundColor;
+    private static Color highlightColor;
+    private static Color selectColor;
+
+    static {
+        updateColors();
+    }
+
+    private static final CharterTabbedPaneUI tabbedPaneUI = new CharterTabbedPaneUI();
+
+    public static ComponentUI createUI(JComponent c) {
+        return tabbedPaneUI;
+    }
+
+    public static void updateColors() {
+        backgroundColor = ChartPanelColors.ColorLabel.BASE_BG_2.color();
+        highlightColor = ChartPanelColors.ColorLabel.BASE_HIGHLIGHT.color();
+        selectColor = ChartPanelColors.ColorLabel.BASE_BG_3.color();
+    }
 
     @Override
     public void installUI(JComponent c) {
@@ -19,7 +38,7 @@ public class CharterTabbedPaneUI extends MetalTabbedPaneUI {
 
     @Override
     protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
-        g.setColor(isSelected ? ChartPanelColors.ColorLabel.BASE_BG_3.color() : ChartPanelColors.ColorLabel.BASE_BG_2.color());
+        g.setColor(isSelected ? selectColor : backgroundColor);
         g.fillRect(x, y, w, h);
     }
 
@@ -29,7 +48,7 @@ public class CharterTabbedPaneUI extends MetalTabbedPaneUI {
 
         if (tabIndex == tabPane.getSelectedIndex()) {
             int bottomY = rects[tabIndex].y + rects[tabIndex].height - 1;
-            g.setColor(ChartPanelColors.ColorLabel.BASE_HIGHLIGHT.color());
+            g.setColor(highlightColor);
             g.fillRect(rects[tabIndex].x, bottomY - 3, rects[tabIndex].width, 3);
         }
     }
@@ -41,7 +60,7 @@ public class CharterTabbedPaneUI extends MetalTabbedPaneUI {
         int w = tabPane.getWidth() - insets.right - insets.left;
         int h = calculateTabAreaHeight(tabPlacement, runCount, maxTabHeight);
 
-        g.setColor(ChartPanelColors.ColorLabel.BASE_BG_2.color());
+        g.setColor(backgroundColor);
         g.fillRect(x, y, w, h);
         super.paintTabArea(g, tabPlacement, selectedIndex);
     }
@@ -108,8 +127,12 @@ public class CharterTabbedPaneUI extends MetalTabbedPaneUI {
             }
         }
 
-        g.setColor(ChartPanelColors.ColorLabel.BASE_BG_2.color());
+        g.setColor(backgroundColor);
         g.fillRect(x, y, w, h);
+    }
+
+    @Override
+    protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect, boolean isSelected) {
     }
 
     @Override
@@ -120,5 +143,9 @@ public class CharterTabbedPaneUI extends MetalTabbedPaneUI {
     @Override
     protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
         return super.calculateTabHeight(tabPlacement, tabIndex, fontHeight) + 10;
+    }
+
+    static void install() {
+        UIManager.put("TabbedPaneUI", CharterTabbedPaneUI.class.getName());
     }
 }

@@ -58,12 +58,12 @@ public class BackgroundDrawer {
 	}
 
 	private void drawBackground(final Graphics g) {
-		g.setColor(ColorLabel.BASE_BG_0.color()); // changed
+		g.setColor(ColorLabel.BASE_BG_0.color());
 		g.fillRect(0, 0, chartPanel.getWidth(), chartPanel.getHeight());
 	}
 
 	private void drawLanesBackground(final Graphics g) {
-		g.setColor(ColorLabel.BASE_BG_1.color());
+		g.setColor(ColorLabel.LANE.color());
 		g.fillRect(0, lanesTop, chartPanel.getWidth(), lanesHeight + 1);
 	}
 

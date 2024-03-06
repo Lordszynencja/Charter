@@ -267,11 +267,11 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 			final Position2D position = new Position2D(fretPosition.position - fretPosition.length / 2,
 					stringPositions[i]);
 			pressMarks.add(
-					filledDiamond(position.move(1, 0), 10, getStringBasedColor(StringColorLabelType.NOTE, i, strings)));
+					filledDiamond(position.move(1, 0), 10, getStringBasedColor(StringColorLabelType.NOTE, i, strings).darker()));
 
 			final Integer finger = chordTemplateSupplier.get().fingers.get(i);
 			final String fingerText = finger == null ? "" : finger == 0 ? "T" : finger.toString();
-			pressMarks.add(new CenteredText(position, g.getFont(), fingerText, ColorLabel.BASE_TEXT));
+			pressMarks.add(new CenteredText(position, g.getFont(), fingerText, ColorLabel.BASE_TEXT_INPUT));
 		}
 
 		pressMarks.draw(g);

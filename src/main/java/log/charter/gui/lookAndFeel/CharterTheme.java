@@ -1,6 +1,6 @@
 package log.charter.gui.lookAndFeel;
 
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.metal.DefaultMetalTheme;
@@ -10,12 +10,16 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
 
+import java.awt.*;
+import java.util.Enumeration;
+
 public class CharterTheme extends DefaultMetalTheme {
 	public static final String name = "Charter";
 
 	public static void install(final CharterFrame frame) {
 		MetalLookAndFeel.setCurrentTheme(new CharterTheme());
 		CharterThemeInstall();
+		setMenuFont();
 
 		try {
 			for (final LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -35,9 +39,22 @@ public class CharterTheme extends DefaultMetalTheme {
 		CharterButtonUI.install();
 		CharterToggleButtonUI.install();
 		CharterTextFieldUI.install();
-		CharterScrollBarUI.install(); // TODO doesn't work but the custom ui is already designed
+		CharterTabbedPaneUI.install();
+		CharterScrollBarUI.install();
 
-		// UIManager.put("Label.font", new Font("SansSerif", Font.PLAIN, 12));
+		UIManager.put("Label.font", new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+	}
+
+	private static void setMenuFont() {
+		Font font = new Font("SansSerif", Font.PLAIN, 12);
+
+		Enumeration<Object> keys = UIManager.getDefaults().keys();
+		while (keys.hasMoreElements()) {
+			Object key = keys.nextElement();
+			if (key instanceof String && ((String) key).endsWith(".font") && ((String) key).contains("Menu")) {
+				UIManager.put(key, font);
+			}
+		}
 	}
 
 	@Override
@@ -74,12 +91,12 @@ public class CharterTheme extends DefaultMetalTheme {
 	 */
 	@Override
 	public ColorUIResource getControlDarkShadow() {
-		return new ColorUIResource(ColorLabel.BASE_BG_4.color());
+		return new ColorUIResource(ColorLabel.BASE_BG_2.color());
 	}
 
 	@Override
 	public ColorUIResource getControlDisabled() {
-		return new ColorUIResource(ColorLabel.BASE_BG_2.color());
+		return new ColorUIResource(ColorLabel.BASE_BG_0.color());
 	}
 
 	/**
@@ -87,13 +104,13 @@ public class CharterTheme extends DefaultMetalTheme {
 	 */
 	@Override
 	public ColorUIResource getControlHighlight() {
-		return new ColorUIResource(ColorLabel.BASE_BG_1.color());
+		return new ColorUIResource(ColorLabel.BASE_BG_2.color());
 	}
 
 	@Override
 	public ColorUIResource getControlShadow() {
 		return new ColorUIResource(ColorLabel.BASE_BG_2.color());
-	} // changed
+	}
 
 	@Override
 	public ColorUIResource getControlTextColor() {
@@ -103,23 +120,23 @@ public class CharterTheme extends DefaultMetalTheme {
 	@Override
 	public ColorUIResource getDesktopColor() {
 		return new ColorUIResource(ColorLabel.BASE_HIGHLIGHT.color());
-	} // changed
+	}
 
 	/**
 	 * dropdown arrows
 	 */
 	@Override
 	public ColorUIResource getControlInfo() {
-		return new ColorUIResource(ColorLabel.BASE_HIGHLIGHT.color());
-	} // changed
+		return new ColorUIResource(ColorLabel.BASE_TEXT.color());
+	}
 
 	/**
 	 * focus box on buttons color
 	 */
 	@Override
 	public ColorUIResource getFocusColor() {
-		return new ColorUIResource(ColorLabel.BASE_HIGHLIGHT.color());
-	} // changed
+		return new ColorUIResource(new Color(0, 0, 0, 0));
+	}
 
 	/**
 	 * highlighted text color
@@ -182,7 +199,7 @@ public class CharterTheme extends DefaultMetalTheme {
 	 */
 	@Override
 	public ColorUIResource getPrimaryControlDarkShadow() {
-		return new ColorUIResource(ColorLabel.BASE_BORDER.color());
+		return new ColorUIResource(ColorLabel.BASE_BG_3.color());
 	}
 
 	/**
@@ -220,23 +237,23 @@ public class CharterTheme extends DefaultMetalTheme {
 	@Override
 	public ColorUIResource getSystemTextColor() {
 		return new ColorUIResource(ColorLabel.BASE_TEXT.color());
-	} // changed
+	}
 
 	@Override
 	public ColorUIResource getTextHighlightColor() {
-		return new ColorUIResource(ColorLabel.BASE_BG_4.color());
+		return new ColorUIResource(ColorLabel.BASE_HIGHLIGHT.color());
 	}
 
 	@Override
 	public ColorUIResource getUserTextColor() {
 		return new ColorUIResource(ColorLabel.BASE_TEXT.color());
-	} // changed
+	}
 
 	/**
 	 * background of a window color, for example file select
 	 */
 	@Override
 	public ColorUIResource getWindowBackground() {
-		return new ColorUIResource(ColorLabel.BASE_BG_2.color());
+		return new ColorUIResource(ColorLabel.BASE_BG_1.color());
 	}
 }

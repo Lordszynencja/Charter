@@ -310,8 +310,8 @@ public class Localization {
 		TOOLBAR_CLAPS("Claps"), //
 		TOOLBAR_METRONOME("Metronome"), //
 		TOOLBAR_WAVEFORM_GRAPH("Waveform"), //
-		RMS_INDICATOR("RMS"), //
-		TOOLBAR_REPEATER("\uD83D\uDD01"), // Repeater
+		TOOLBAR_RMS_INDICATOR("RMS"), //
+		TOOLBAR_REPEATER("\uE1CA"), // Repeater
 		TOOLBAR_SLOWED_PLAYBACK_SPEED("Playback speed"), //
 		GRID_SIZE("Grid Size: 1/"), //
 		NOTE_GRID_TYPE("\uD83C\uDFB5"), //

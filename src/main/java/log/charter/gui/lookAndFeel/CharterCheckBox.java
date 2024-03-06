@@ -13,20 +13,35 @@ import javax.swing.UIManager;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
 
-class CharterCheckBox {
+public class CharterCheckBox {
+    public static Color backgroundColor = ColorLabel.BASE_BG_INPUT.color();
+    public static Color disabledBackgroundColor = ColorLabel.BASE_BG_2.color();
+    public static Color borderColor = ColorLabel.BASE_BORDER.color();
+    public static Color selectColor = ColorLabel.BASE_HIGHLIGHT.color();
+    public static Color iconColor = ColorLabel.BASE_TEXT_INPUT.color();
 
-    private static class CheckBoxIcon extends SimpleIcon {
+    public static class CheckBoxIcon extends SimpleIcon {
         private final Color backgroundColor;
         private final Color disabledBackgroundColor;
         private final Color borderColor;
         private final Color selectColor;
-        
-        public CheckBoxIcon(Color backgroundColor, Color disabledBackgroundColor, Color edgeColor, Color selectColor) {
-        	super(14, 14);
-            this.backgroundColor = backgroundColor;
-            this.disabledBackgroundColor = disabledBackgroundColor;
-            this.borderColor = edgeColor;
-            this.selectColor = selectColor;
+        private final Color iconColor;
+
+        public CheckBoxIcon(Color backgroundColor, Color disabledBackgroundColor, Color edgeColor, Color selectColor, Color iconColor) {
+            super(14, 14);
+            this.backgroundColor = getDefault(backgroundColor, CharterCheckBox.backgroundColor);
+            this.disabledBackgroundColor = getDefault(disabledBackgroundColor, CharterCheckBox.disabledBackgroundColor);
+            this.borderColor = getDefault(edgeColor, CharterCheckBox.borderColor);
+            this.selectColor = getDefault(selectColor, CharterCheckBox.selectColor);
+            this.iconColor = iconColor;
+        }
+
+        public CheckBoxIcon(Color selectColor) {
+            this(null, null, selectColor, selectColor, null);
+        }
+
+        private Color getDefault(Color inputColor, Color defaultColor) {
+            return (inputColor != null) ? inputColor : defaultColor;
         }
 
         @Override
@@ -39,10 +54,10 @@ class CharterCheckBox {
             RoundRectangle2D.Double roundedRectangle = new RoundRectangle2D.Double(x, y, width - 1, height - 1, 5, 5);
             if (!checkBox.isEnabled()) {
                 g2d.setColor(disabledBackgroundColor);
-                g2d.fill(new RoundRectangle2D.Double(x, y, width - 1, height - 1, 5, 5));
+                g2d.fill(new RoundRectangle2D.Double(x + 1, y + 1, width - 2, height - 2, 0, 0));
             } else {
                 g2d.setColor(checkBox.isSelected() ? selectColor : backgroundColor);
-                g2d.fill(new RoundRectangle2D.Double(x, y, width - 1, height - 1, 5, 5));
+                g2d.fill(new RoundRectangle2D.Double(x + 1, y + 1, width - 2, height - 2, 0, 0));
             }
 
             // check box border
@@ -51,7 +66,7 @@ class CharterCheckBox {
 
             // check box icon
             if (checkBox.isSelected()) {
-                g2d.setColor(Color.WHITE);
+                g2d.setColor(iconColor);
                 g2d.setStroke(new java.awt.BasicStroke(1.5f));
 
                 Path2D.Double checkmark = createCheckmark(x, y);
@@ -73,11 +88,6 @@ class CharterCheckBox {
     }
 
     static void install() {
-        final Color backgroundColor = ColorLabel.BASE_BG_1.color();
-        final Color disabledBackgroundColor = ColorLabel.BASE_BG_2.color();
-        final Color borderColor = ColorLabel.BASE_BORDER.color();
-        final Color selectColor  = ColorLabel.BASE_HIGHLIGHT.color();
-
-        UIManager.put("CheckBox.icon", new CheckBoxIcon(backgroundColor, disabledBackgroundColor, borderColor, selectColor));
+        UIManager.put("CheckBox.icon", new CheckBoxIcon(backgroundColor, disabledBackgroundColor, borderColor, selectColor, iconColor));
     }
 }

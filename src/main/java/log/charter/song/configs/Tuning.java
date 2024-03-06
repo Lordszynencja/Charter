@@ -79,7 +79,10 @@ public class Tuning {
 		F_SHARP_STANDARD("Gb standard", new int[] { -10, -10, -10, -10, -10, -10, -10, -10, -10 }), //
 		F_STANDARD("Gb standard", new int[] { -11, -11, -11, -11, -11, -11, -11, -11, -11 }), //
 		OPEN_D("Open D", new int[] { 0, 0, 0, -2, 0, 0, -1, -2, -2 }), //
+		OPEN_E("Open E", new int[] { 0, 0, 0, 0, 2, 2, 1, 0, 0 }), //
 		OPEN_G("Open G", new int[] { 0, 0, 0, -2, -2, 0, 0, 0, -2 }), //
+		OPEN_A("Open A", new int[] { 0, 0, 0, 0, 0, 2, 2, 2, 0 }), //
+		DADGAD("DADGAD", new int[] { 0, 0, 0, -2, 0, 0, 0, -2, -2 }), //
 		CUSTOM("Custom", new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
 		public final String name;

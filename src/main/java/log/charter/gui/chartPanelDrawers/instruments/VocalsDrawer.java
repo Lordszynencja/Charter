@@ -63,7 +63,7 @@ public class VocalsDrawer {
 
 		private void addVocal(final Vocal vocal, final int x, final int length, final boolean selected) {
 			final ShapePositionWithSize positionAndSize = getVocalNotePosition(x, length);
-			notes.add(filledRectangle(positionAndSize, ColorLabel.VOCAL_NOTE));
+			notes.add(filledRectangle(positionAndSize, ColorLabel.VOCAL_NOTE, true));
 			if (selected) {
 				notes.add(strokedRectangle(positionAndSize.resized(-1, -1, 1, 1), ColorLabel.VOCAL_SELECT));
 			}
@@ -82,7 +82,7 @@ public class VocalsDrawer {
 			final int nextStart = timeToX(next.position(), time);
 			final ShapePositionWithSize position = new ShapePositionWithSize(x, vocalNoteY, nextStart - x, 4)//
 					.centeredY();
-			wordConnections.add(filledRectangle(position, ColorLabel.VOCAL_NOTE_WORD_PART));
+			wordConnections.add(filledRectangle(position, ColorLabel.VOCAL_NOTE.colorWithAlpha(192)));
 		}
 
 		public void addVocal(final Vocal vocal, final Vocal next, final int x, final int length,

@@ -37,20 +37,20 @@ public class ModernThemeEvents implements ThemeEvents {
 
 	private void addSection(final SectionType section, final int x) {
 		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, sectionNamesY), eventFont, section.label,
-				ColorLabel.BASE_TEXT, ColorLabel.SECTION_NAME_BG, 2, ColorLabel.BASE_BORDER.color())); // changed
+				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.SECTION_NAME_BG, 2, ColorLabel.BASE_BORDER.color()));
 	}
 
 	private void addPhrase(final Phrase phrase, final String phraseName, final int x) {
 		final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
 				+ (phrase.solo ? "[Solo]" : "");
 		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, phraseNamesY), eventFont, phraseLabel,
-				ColorLabel.BASE_TEXT, ColorLabel.PHRASE_NAME_BG, 2, ColorLabel.BASE_BORDER.color())); // changed
+				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.PHRASE_NAME_BG, 2, ColorLabel.BASE_BORDER.color()));
 	}
 
 	private void addEvents(final ArrayList2<EventType> events, final int x) {
 		final String eventsName = String.join(", ", events.map(event -> event.label));
 		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, eventNamesY), eventFont, eventsName,
-				ColorLabel.BASE_TEXT, ColorLabel.EVENT_BG, 2, ColorLabel.BASE_BORDER.color())); // changed
+				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.EVENT_BG, 2, ColorLabel.BASE_BORDER.color()));
 	}
 
 	private void addEventPointBox(final int x, final ColorLabel color) {

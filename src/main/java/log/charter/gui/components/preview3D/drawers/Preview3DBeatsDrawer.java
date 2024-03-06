@@ -159,7 +159,7 @@ public class Preview3DBeatsDrawer {
 	}
 
 	private void drawActiveFretNumbers(final ShadersHolder shadersHolder, final IntRange currentFrets, final double y) {
-		final Color anchorFretColor = new Color(255, 160, 0);
+		final Color anchorFretColor = ColorLabel.PREVIEW_3D_ANCHOR_FRET_COLOR.color();
 		for (int fret = currentFrets.min; fret <= currentFrets.max; fret++) {
 			final double z = getTimePosition(0);
 			drawFretNumber(shadersHolder, fret, y, z, anchorFretColor);
@@ -182,9 +182,9 @@ public class Preview3DBeatsDrawer {
 
 		fretsToDraw.sort(null);
 
-		final Color beatActiveFretColor = new Color(160, 160, 255);
-		final Color beatFretColor = setAlpha(beatActiveFretColor, 128);
-		final Color anchorFretColor = new Color(255, 160, 0);
+		final Color beatActiveFretColor = ColorLabel.PREVIEW_3D_BEAT_NUMBER_ACTIVE_COLOR.color();
+		final Color beatFretColor = setAlpha(ColorLabel.PREVIEW_3D_LANE_BORDER.color(), 128);
+		final Color anchorFretColor = ColorLabel.PREVIEW_3D_ANCHOR_FRET_COLOR.color();
 
 		fretsToDraw.forEach(fretToDraw -> {
 			final double z = getTimePosition(fretToDraw.position - drawData.time);
