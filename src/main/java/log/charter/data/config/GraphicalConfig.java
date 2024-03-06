@@ -66,10 +66,10 @@ public class GraphicalConfig {
 	public static int chordHeight = 10;
 	public static int handShapesHeight = 10;
 	public static int timingHeight = 24;
-	public static double previewWindowScrollSpeed = 1.3;
-
 	public static int chartMapHeightMultiplier = 3;
+
 	public static float tempoMapGhostNotesTransparency = 0.66f;
+	public static double previewWindowScrollSpeed = 1.3;
 
 	public static String colorSet = "default";
 	public static String inlay = "default";
@@ -92,16 +92,17 @@ public class GraphicalConfig {
 		valueAccessors.put("handShapesHeight",
 				ValueAccessor.forInteger(v -> handShapesHeight = v, () -> handShapesHeight));
 		valueAccessors.put("timingHeight", ValueAccessor.forInteger(v -> timingHeight = v, () -> timingHeight));
-
 		valueAccessors.put("chartMapHeightMultiplier",
 				ValueAccessor.forInteger(v -> chartMapHeightMultiplier = v, () -> chartMapHeightMultiplier));
+
 		valueAccessors.put("tempoMapGhostNotesTransparency",
 				ValueAccessor.forFloat(v -> tempoMapGhostNotesTransparency = v, () -> tempoMapGhostNotesTransparency));
-
-		valueAccessors.put("inlay", ValueAccessor.forString(v -> inlay = v, () -> inlay));
-		valueAccessors.put("textures", ValueAccessor.forString(v -> texturePack = v, () -> texturePack));
 		valueAccessors.put("previewWindowScrollSpeed",
 				ValueAccessor.forDouble(v -> previewWindowScrollSpeed = v, () -> previewWindowScrollSpeed));
+
+		valueAccessors.put("colorSet", ValueAccessor.forString(v -> colorSet = v, () -> colorSet));
+		valueAccessors.put("inlay", ValueAccessor.forString(v -> inlay = v, () -> inlay));
+		valueAccessors.put("textures", ValueAccessor.forString(v -> texturePack = v, () -> texturePack));
 	}
 
 	public static void init() {
