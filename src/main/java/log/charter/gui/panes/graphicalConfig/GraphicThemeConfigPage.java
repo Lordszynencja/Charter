@@ -1,11 +1,12 @@
 package log.charter.gui.panes.graphicalConfig;
 
 import static java.util.Arrays.asList;
+import static log.charter.gui.components.simple.TextInputWithValidation.generateForBigDecimal;
+import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.math.BigDecimal;
 import java.util.Vector;
-import java.util.function.IntConsumer;
 
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
@@ -18,11 +19,16 @@ import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.gui.components.simple.TextInputWithValidation.BigDecimalValueValidator;
-import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
+import log.charter.gui.components.utils.BigDecimalValueValidator;
+import log.charter.gui.components.utils.IntValueValidator;
 import log.charter.gui.components.utils.RowedPosition;
 
 public class GraphicThemeConfigPage implements Page {
+	private static final IntValueValidator editorPartHeightValidator = new IntValueValidator(1, 100);
+	private static final IntValueValidator timingHeightValidator = new IntValueValidator(1, 200);
+	private static final BigDecimalValueValidator scrollSpeedValidator = new BigDecimalValueValidator(
+			new BigDecimal("0.1"), new BigDecimal("2.0"), false);
+
 	private static class ThemeHolder {
 		public final Theme theme;
 		public final Label label;
@@ -123,8 +129,8 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	private void addEventsChangeHeightField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = new TextInputWithValidation(eventsChangeHeight, 20,
-				new IntegerValueValidator(1, 100, false), (final int i) -> eventsChangeHeight = i, false);
+		final TextInputWithValidation input = generateForInt(eventsChangeHeight, 20, //
+				editorPartHeightValidator, i -> eventsChangeHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -135,8 +141,8 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	private void addToneChangeHeightField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = new TextInputWithValidation(toneChangeHeight, 20,
-				new IntegerValueValidator(1, 100, false), (final int i) -> toneChangeHeight = i, false);
+		final TextInputWithValidation input = generateForInt(toneChangeHeight, 20, //
+				editorPartHeightValidator, i -> toneChangeHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -146,8 +152,8 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	private void addAnchorInfoHeightField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = new TextInputWithValidation(anchorInfoHeight, 20,
-				new IntegerValueValidator(1, 100, false), (final int i) -> anchorInfoHeight = i, false);
+		final TextInputWithValidation input = generateForInt(anchorInfoHeight, 20, editorPartHeightValidator,
+				i -> anchorInfoHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -157,8 +163,8 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	private void addNoteHeightInput(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = new TextInputWithValidation(noteHeight, 20,
-				new IntegerValueValidator(1, 100, false), (IntConsumer) this::onNoteHeightChange, false);
+		final TextInputWithValidation input = generateForInt(noteHeight, 20, //
+				editorPartHeightValidator, this::onNoteHeightChange, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -175,8 +181,8 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	private void addChordHeightField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = new TextInputWithValidation(chordHeight, 20,
-				new IntegerValueValidator(1, 100, false), (final int i) -> chordHeight = i, false);
+		final TextInputWithValidation input = generateForInt(chordHeight, 20, //
+				editorPartHeightValidator, i -> chordHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -186,8 +192,8 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	private void addNoteWidthInput(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = new TextInputWithValidation(noteWidth, 20,
-				new IntegerValueValidator(1, 100, false), (final int i) -> noteWidth = i, false);
+		final TextInputWithValidation input = generateForInt(noteWidth, 20, //
+				editorPartHeightValidator, i -> noteWidth = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -197,8 +203,8 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	private void addHandShapesHeightFieldField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = new TextInputWithValidation(handShapesHeight, 20,
-				new IntegerValueValidator(1, 100, false), (final int i) -> handShapesHeight = i, false);
+		final TextInputWithValidation input = generateForInt(handShapesHeight, 20, //
+				editorPartHeightValidator, i -> handShapesHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -208,8 +214,8 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	private void addTimingHeightFieldField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = new TextInputWithValidation(timingHeight, 20,
-				new IntegerValueValidator(1, 200, false), (final int i) -> timingHeight = i, false);
+		final TextInputWithValidation input = generateForInt(timingHeight, 20, //
+				timingHeightValidator, i -> timingHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
@@ -219,9 +225,8 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	private void addScrollSpeedFieldField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = new TextInputWithValidation(previewScrollSpeed, 20,
-				new BigDecimalValueValidator(new BigDecimal("0.1"), new BigDecimal("2.0"), false),
-				i -> previewScrollSpeed = i, false);
+		final TextInputWithValidation input = generateForBigDecimal(previewScrollSpeed, 20, //
+				scrollSpeedValidator, i -> previewScrollSpeed = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 

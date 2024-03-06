@@ -1,7 +1,5 @@
 package log.charter.gui.panes.songEdits;
 
-import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createIntValidator;
-
 import java.awt.Dimension;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,6 +23,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInputForPane;
+import log.charter.gui.components.utils.IntValueValidator;
 import log.charter.song.Arrangement;
 import log.charter.song.EventPoint;
 import log.charter.song.EventType;
@@ -122,8 +121,8 @@ public class GuitarEventPointPane extends ParamsPane {
 				this::onPhraseNameSelected);
 		this.add(phraseNameInput, 100, getY(row.getAndIncrement()), 100, 20);
 
-		addIntegerConfigValue(row.get(), 50, 45, Label.GUITAR_BEAT_PANE_PHRASE_LEVEL, phraseLevel, 30,
-				createIntValidator(0, 100, false), val -> phraseLevel = val, false);
+		addIntConfigValue(row.get(), 50, 45, Label.GUITAR_BEAT_PANE_PHRASE_LEVEL, phraseLevel, 30, //
+				new IntValueValidator(0, 100), v -> phraseLevel = v, false);
 		phraseLevelInput = (JTextField) getLastPart();
 
 		addConfigCheckbox(row.getAndIncrement(), 150, 0, Label.GUITAR_BEAT_PANE_PHRASE_SOLO, phraseSolo,

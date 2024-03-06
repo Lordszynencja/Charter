@@ -2,9 +2,8 @@ package log.charter.gui.components.selectionEditor;
 
 import static log.charter.data.config.Config.frets;
 import static log.charter.gui.components.selectionEditor.CurrentSelectionEditor.getSingleValue;
+import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
-
-import java.util.function.IntConsumer;
 
 import javax.swing.JTextField;
 
@@ -17,7 +16,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
+import log.charter.gui.components.utils.IntValueValidator;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.HashSet2;
@@ -35,16 +34,18 @@ public class AnchorSelectionEditor {
 		this.undoSystem = undoSystem;
 
 		final RowedPosition position = new RowedPosition(10, selectionEditor.sizes);
-		final TextInputWithValidation anchorFretInput = new TextInputWithValidation(null, 20,
-				new IntegerValueValidator(1, frets, false), (IntConsumer) this::changeAnchorFret, false);
+		final TextInputWithValidation anchorFretInput = generateForInt(1, 20, //
+				new IntValueValidator(1, frets), this::changeAnchorFret, false);
 		anchorFretInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(anchorFretInput);
 		anchorFret = new FieldWithLabel<>(Label.FRET, 100, 30, 20, anchorFretInput, LabelPosition.LEFT);
 		selectionEditor.add(anchorFret, position, 140);
 		position.newRow();
 
-		final TextInputWithValidation anchorWidthInput = new TextInputWithValidation(null, 20,
-				new IntegerValueValidator(4, frets, false), (IntConsumer) this::changeAnchorWidth, false);
+		final TextInputWithValidation anchorWidthInput = generateForInt(4, 20, //
+				new IntValueValidator(4, frets), //
+				this::changeAnchorWidth, //
+				false);
 		anchorWidthInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(anchorWidthInput);
 		anchorWidth = new FieldWithLabel<>(Label.ANCHOR_WIDTH, 100, 30, 20, anchorWidthInput, LabelPosition.LEFT);

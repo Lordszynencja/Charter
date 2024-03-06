@@ -22,7 +22,7 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.data.PaneSizesBuilder;
-import log.charter.gui.components.selectionEditor.bends.BendEditorGraph;
+import log.charter.gui.handlers.data.ChartItemsHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Anchor;
 import log.charter.song.HandShape;
@@ -31,8 +31,6 @@ import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.HashSet2;
-
-import javax.swing.*;
 
 public class CurrentSelectionEditor extends RowedPanel {
 	private static final long serialVersionUID = 1L;
@@ -74,13 +72,13 @@ public class CurrentSelectionEditor extends RowedPanel {
 	}
 
 	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final CharterFrame frame,
-			final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
+			final ChartItemsHandler chartItemsHandler, final KeyboardHandler keyboardHandler,
+			final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this.selectionManager = selectionManager;
 
 		anchorSelectionEditor.init(this, selectionManager, undoSystem);
-		guitarSoundSelectionEditor.init(this, arrangementFixer, data, frame, keyboardHandler, selectionManager,
-				undoSystem);
+		guitarSoundSelectionEditor.init(this, arrangementFixer, data, frame, chartItemsHandler, keyboardHandler,
+				selectionManager, undoSystem);
 		handShapeSelectionEditor.init(this, arrangementFixer, data, frame, keyboardHandler, selectionManager,
 				undoSystem);
 		toneChangeSelectionEditor.init(this, data, selectionManager, undoSystem);

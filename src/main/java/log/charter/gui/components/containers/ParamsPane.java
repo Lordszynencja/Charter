@@ -1,5 +1,8 @@
 package log.charter.gui.components.containers;
 
+import static log.charter.gui.components.simple.TextInputWithValidation.generateForBigDecimal;
+import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
+import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
 
 import java.awt.Component;
@@ -8,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -26,9 +30,10 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.data.PaneSizes;
 import log.charter.gui.components.data.PaneSizesBuilder;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.gui.components.simple.TextInputWithValidation.BigDecimalValueValidator;
-import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
-import log.charter.gui.components.simple.TextInputWithValidation.ValueValidator;
+import log.charter.gui.components.utils.BigDecimalValueValidator;
+import log.charter.gui.components.utils.IntValueValidator;
+import log.charter.gui.components.utils.IntegerValueValidator;
+import log.charter.gui.components.utils.ValueValidator;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 
@@ -71,8 +76,9 @@ public class ParamsPane extends JDialog {
 		}
 
 		@Override
-		public void addWithSettingSizeTop(final Component component, final int x, final int y, final int w, final int h) {
-			ParamsPane.this.addTop(component, x, y, w, h);
+		public void addWithSettingSizeTop(final Component component, final int x, final int y, final int w,
+				final int h) {
+			addTop(component, x, y, w, h);
 		}
 
 		@Override
@@ -361,33 +367,35 @@ public class ParamsPane extends JDialog {
 
 	protected void addBigDecimalConfigValue(final int row, final int x, final int labelWidth, final Label label,
 			final BigDecimal value, final int inputLength, final BigDecimalValueValidator validator,
-			final BigDecimalValueSetter setter, final boolean allowWrong) {
-		addConfigValue(row, x, labelWidth, label, value == null ? "" : value.toString(), inputLength, validator,
-				val -> {
-					try {
-						setter.setValue(new BigDecimal(val));
-					} catch (final NumberFormatException e) {
-						setter.setValue(null);
-					}
-				}, allowWrong);
+			final Consumer<BigDecimal> setter, final boolean allowWrong) {
+		final TextInputWithValidation input = generateForBigDecimal(value, inputLength, validator, setter, allowWrong);
+		addConfigValue(row, x, labelWidth, label, input, inputLength);
+	}
+
+	protected void addIntConfigValue(final int row, final int x, final int labelWidth, final Label label,
+			final int value, final int inputLength, final IntValueValidator validator, final IntConsumer setter,
+			final boolean allowWrong) {
+		final TextInputWithValidation input = generateForInt(value, inputLength, validator, setter, allowWrong);
+		addConfigValue(row, x, labelWidth, label, input, inputLength);
 	}
 
 	protected void addIntegerConfigValue(final int row, final int x, final int labelWidth, final Label label,
 			final Integer value, final int inputLength, final IntegerValueValidator validator,
-			final IntegerValueSetter setter, final boolean allowWrong) {
-		addConfigValue(row, x, labelWidth, label, value == null ? "" : value.toString(), inputLength, validator,
-				val -> {
-					try {
-						setter.setValue(Integer.valueOf(val));
-					} catch (final NumberFormatException e) {
-						setter.setValue(null);
-					}
-				}, allowWrong);
+			final Consumer<Integer> setter, final boolean allowWrong) {
+		final TextInputWithValidation input = generateForInteger(value, inputLength, validator, setter, allowWrong);
+		addConfigValue(row, x, labelWidth, label, input, inputLength);
 	}
 
-	protected void addConfigValue(final int row, final int x, int labelWidth, final Label label, final String val,
-			final int inputLength, final ValueValidator validator, final Consumer<String> setter,
+	protected void addStringConfigValue(final int row, final int x, final int labelWidth, final Label label,
+			final String value, final int inputLength, final ValueValidator validator, final Consumer<String> setter,
 			final boolean allowWrong) {
+		final TextInputWithValidation input = new TextInputWithValidation(value, inputLength, validator, setter,
+				allowWrong);
+		addConfigValue(row, x, labelWidth, label, input, inputLength);
+	}
+
+	protected void addConfigValue(final int row, final int x, int labelWidth, final Label label,
+			final TextInputWithValidation input, final int inputLength) {
 		final int y = getY(row);
 		if (label != null) {
 			final JLabel labelComponent = new JLabel(label.label(), SwingConstants.LEFT);
@@ -399,9 +407,6 @@ public class ParamsPane extends JDialog {
 
 			add(labelComponent, x, y, labelWidth, 20);
 		}
-
-		final TextInputWithValidation input = new TextInputWithValidation(val, inputLength, validator, setter,
-				allowWrong);
 
 		final int fieldX = x + labelWidth;
 		final int length = inputLength > OPTIONS_MAX_INPUT_WIDTH ? OPTIONS_MAX_INPUT_WIDTH : inputLength;

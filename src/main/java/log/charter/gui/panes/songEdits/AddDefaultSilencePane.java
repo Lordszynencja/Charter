@@ -1,6 +1,5 @@
 package log.charter.gui.panes.songEdits;
 
-import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createIntValidator;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.sound.data.AudioUtils.generateSilence;
 
@@ -12,6 +11,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.utils.IntValueValidator;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.song.Beat;
@@ -38,7 +38,8 @@ public class AddDefaultSilencePane extends ParamsPane {
 
 		addLabel(0, 20, Label.ADD_DEFAULT_SILENCE_BARS, 0);
 
-		addIntegerConfigValue(1, 20, 0, null, 2, 100, createIntValidator(0, 10, false), val -> bars = val, false);
+		addIntConfigValue(1, 20, 0, null, 2, 100, //
+				new IntValueValidator(0, 5), val -> bars = val, false);
 		final JTextField input = (JTextField) getLastPart();
 		addSelectTextOnFocus(input);
 

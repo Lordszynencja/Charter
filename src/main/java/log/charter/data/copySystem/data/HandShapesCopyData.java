@@ -1,12 +1,16 @@
 package log.charter.data.copySystem.data;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.data.ChartData;
 import log.charter.data.copySystem.data.positions.CopiedHandShapePosition;
+import log.charter.data.managers.selection.SelectionManager;
+import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
 import log.charter.song.Arrangement;
 import log.charter.song.BeatsMap;
@@ -31,10 +35,12 @@ public class HandShapesCopyData implements ICopyData {
 	}
 
 	@Override
-	public void paste(final int time, final ChartData data, final boolean convertFromBeats) {
-		final Arrangement arrangement = data.getCurrentArrangement();
-		final BeatsMap beatsMap = data.songChart.beatsMap;
-		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
+	public void paste(final ChartData chartData, final SelectionManager selectionManager, final int time,
+			final boolean convertFromBeats) {
+		final Arrangement arrangement = chartData.getCurrentArrangement();
+		final BeatsMap beatsMap = chartData.songChart.beatsMap;
+		final ArrayList2<HandShape> handShapes = chartData.getCurrentArrangementLevel().handShapes;
+		final Set<Integer> positionsToSelect = new HashSet<>(this.handShapes.size());
 
 		final double basePositionInBeats = beatsMap.getPositionInBeats(time);
 		final Map<Integer, Integer> chordIdsMap = new HashMap<>();
@@ -54,11 +60,13 @@ public class HandShapesCopyData implements ICopyData {
 				handShape.templateId = chordIdsMap.get(templateId);
 
 				handShapes.add(handShape);
+				positionsToSelect.add(handShape.position());
 			} catch (final Exception e) {
 				Logger.error("Couldn't paste hand shape", e);
 			}
 		}
 
 		handShapes.sort(null);
+		selectionManager.addSelectionForPositions(PositionType.HAND_SHAPE, positionsToSelect);
 	}
 }

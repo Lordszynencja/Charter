@@ -177,6 +177,10 @@ public class SelectionManager {
 		frame.selectionChanged(true);
 	}
 
+	public void refresh(final PositionType type) {
+		typeSelectionManagers.get(type).refresh();
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T extends IPosition> SelectionAccessor<T> getSelectedAccessor(final PositionType type) {
 		final TypeSelectionManager<?> typeSelectionManager = typeSelectionManagers.get(type);

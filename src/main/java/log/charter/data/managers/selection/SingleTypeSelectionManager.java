@@ -60,6 +60,12 @@ abstract class SingleTypeSelectionManager<T extends IPosition> implements TypeSe
 		selectionList.clear();
 	}
 
+	public void refresh() {
+		final ArrayList2<Integer> ids = selectionList.selected.map(selection -> selection.id);
+		clear();
+		add(ids);
+	}
+
 	abstract protected Selection<T> makeSelection(int id, T selectable);
 
 	abstract protected Selection<T> getTemporarySelect();

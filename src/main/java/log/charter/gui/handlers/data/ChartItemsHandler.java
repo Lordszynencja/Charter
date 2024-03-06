@@ -4,7 +4,9 @@ import static java.util.Arrays.asList;
 import static log.charter.song.notes.IConstantPosition.getFromTo;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import log.charter.data.ArrangementFixer;
@@ -44,40 +46,45 @@ public class ChartItemsHandler {
 	}
 
 	public void delete() {
-		boolean undoAdded = false;
+		boolean nonEmptyFound = false;
 
 		for (final PositionType type : PositionType.values()) {
-			if (type == PositionType.NONE
-					|| (type == PositionType.BEAT && modeManager.getMode() != EditMode.TEMPO_MAP)) {
+			if (type == PositionType.NONE || type == PositionType.BEAT) {
 				continue;
 			}
 
 			final SelectionAccessor<Position> selectedTypeAccessor = selectionManager.getSelectedAccessor(type);
-			if (selectedTypeAccessor.isSelected()) {
-				if (!undoAdded) {
-					undoSystem.addUndo();
-					undoAdded = true;
-				}
-
-				final ArrayList2<Selection<Position>> selected = selectedTypeAccessor.getSortedSelected();
-				final ArrayList2<IPosition> positions = type.getPositions(data);
-				for (int i = selected.size() - 1; i >= 0; i--) {
-					positions.remove(selected.get(i).id);
-				}
-
-				if (type == PositionType.BEAT) {
-					data.songChart.beatsMap.fixFirstBeatInMeasures();
-				}
-				if (type == PositionType.TONE_CHANGE) {
-					data.getCurrentArrangement().tones = data.getCurrentArrangement().toneChanges.stream()//
-							.map(toneChange -> toneChange.toneName)//
-							.collect(Collectors.toCollection(HashSet2::new));
-				}
-
+			if (!selectedTypeAccessor.isSelected()) {
+				continue;
 			}
+
+			final ArrayList2<Selection<Position>> selected = selectedTypeAccessor.getSortedSelected();
+			if (!nonEmptyFound) {
+				undoSystem.addUndo();
+				selectionManager.clear();
+				nonEmptyFound = true;
+			}
+
+			delete(type, selected.map(selection -> selection.id));
+		}
+	}
+
+	public void delete(final PositionType type, final List<Integer> idsToDelete) {
+		if (type == PositionType.NONE || type == PositionType.BEAT//
+				|| idsToDelete.isEmpty()) {
+			return;
 		}
 
-		selectionManager.clear();
+		idsToDelete.sort((a, b) -> -Integer.compare(a, b));
+
+		final ArrayList2<IPosition> positions = type.getPositions(data);
+		idsToDelete.forEach(id -> positions.remove((int) id));
+
+		if (type == PositionType.TONE_CHANGE) {
+			data.getCurrentArrangement().tones = data.getCurrentArrangement().toneChanges.stream()//
+					.map(toneChange -> toneChange.toneName)//
+					.collect(Collectors.toCollection(HashSet2::new));
+		}
 	}
 
 	private void snapPositions(final Collection<? extends IPosition> positions) {
@@ -186,5 +193,18 @@ public class ChartItemsHandler {
 
 			reselectAfterSnapping(accessor.type, selected);
 		}
+	}
+
+	public void mapSounds(final Function<ChordOrNote, ChordOrNote> mapper) {
+		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
+		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
+				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+
+		for (final Selection<ChordOrNote> selection : selected) {
+			sounds.set(selection.id, mapper.apply(selection.selectable));
+		}
+
+		selectionManager.refresh(PositionType.GUITAR_NOTE);
 	}
 }

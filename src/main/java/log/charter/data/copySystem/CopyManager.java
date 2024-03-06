@@ -280,6 +280,7 @@ public class CopyManager {
 		if (modeManager.getMode() == EditMode.TEMPO_MAP) {
 			return;
 		}
+
 		final boolean isVocalsEditMode = modeManager.getMode() == EditMode.VOCALS;
 		final boolean isVocalsCopyData = selectedCopy instanceof VocalsCopyData;
 		if (isVocalsEditMode != isVocalsCopyData) {
@@ -288,7 +289,7 @@ public class CopyManager {
 
 		undoSystem.addUndo();
 		selectionManager.clear();
-		selectedCopy.paste(chartTimeHandler.time(), data, true);
+		selectedCopy.paste(data, selectionManager, chartTimeHandler.time(), true);
 	}
 
 	public void specialPaste() {

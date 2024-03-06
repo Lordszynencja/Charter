@@ -1,7 +1,6 @@
 package log.charter.gui.panes;
 
-import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createIntValidator;
-import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.dirValidator;
+import static log.charter.gui.components.utils.ValueValidator.dirValidator;
 
 import java.io.File;
 
@@ -13,6 +12,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.Framer;
 import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.utils.IntValueValidator;
 import log.charter.util.FileChooseUtils;
 
 public final class ConfigPane extends ParamsPane {
@@ -48,32 +48,30 @@ public final class ConfigPane extends ParamsPane {
 
 		int row = 0;
 
-		addConfigValue(row, 20, 150, Label.CONFIG_MUSIC_FOLDER, musicPath, 300, dirValidator, //
+		addStringConfigValue(row, 20, 150, Label.CONFIG_MUSIC_FOLDER, musicPath, 300, dirValidator, //
 				val -> musicPath = val, false);
 		musicFolderInput = (JTextField) getLastPart();
 		final JButton musicFolderPickerButton = new JButton(Label.SELECT_FOLDER.label());
 		musicFolderPickerButton.addActionListener(e -> selectMusicFolder());
 		this.add(musicFolderPickerButton, 480, getY(row++), 100, 20);
 
-		addConfigValue(row, 20, 150, Label.CONFIG_SONGS_FOLDER, songsPath, 300, dirValidator, //
+		addStringConfigValue(row, 20, 150, Label.CONFIG_SONGS_FOLDER, songsPath, 300, dirValidator, //
 				val -> songsPath = val, false);
 		songsFolderInput = (JTextField) getLastPart();
 		final JButton songsFolderPickerButton = new JButton(Label.SELECT_FOLDER.label());
 		songsFolderPickerButton.addActionListener(e -> selectSongsFolder());
 		this.add(songsFolderPickerButton, 480, getY(row++), 100, 20);
 
-		addConfigValue(row++, 20, 0, Label.CONFIG_MINIMAL_NOTE_DISTANCE, minNoteDistance + "", 50,
-				createIntValidator(1, 1000, false), val -> minNoteDistance = Integer.valueOf(val), false);
-		addConfigValue(row++, 20, 0, Label.CONFIG_MINIMAL_TAIL_LENGTH, minTailLength + "", 50,
-				createIntValidator(1, 1000, false), //
-				val -> minTailLength = Integer.valueOf(val), false);
-		addConfigValue(row++, 20, 0, Label.CONFIG_SOUND_DELAY, delay + "", 50, createIntValidator(1, 10000, false), //
-				val -> delay = Integer.valueOf(val), false);
-		addConfigValue(row++, 20, 0, Label.CONFIG_MIDI_DELAY, midiDelay + "", 50, createIntValidator(1, 10000, false), //
-				val -> midiDelay = Integer.valueOf(val), false);
-		addConfigValue(row++, 20, 0, Label.CONFIG_MARKER_POSITION, markerOffset + "", 50,
-				createIntValidator(1, 1000, false), //
-				val -> markerOffset = Integer.valueOf(val), false);
+		addIntConfigValue(row++, 20, 0, Label.CONFIG_MINIMAL_NOTE_DISTANCE, minNoteDistance, 50, //
+				new IntValueValidator(1, 1000), v -> minNoteDistance = v, false);
+		addIntConfigValue(row++, 20, 0, Label.CONFIG_MINIMAL_TAIL_LENGTH, minTailLength, 50,
+				new IntValueValidator(1, 1000), v -> minTailLength = v, false);
+		addIntConfigValue(row++, 20, 0, Label.CONFIG_SOUND_DELAY, delay, 50, //
+				new IntValueValidator(1, 10000), v -> delay = v, false);
+		addIntConfigValue(row++, 20, 0, Label.CONFIG_MIDI_DELAY, midiDelay, 50, //
+				new IntValueValidator(1, 10000), v -> midiDelay = v, false);
+		addIntConfigValue(row++, 20, 0, Label.CONFIG_MARKER_POSITION, markerOffset, 50, //
+				new IntValueValidator(-10_000, 10_000), v -> markerOffset = v, false);
 		addConfigCheckbox(row, 20, 0, Label.CONFIG_INVERT_STRINGS, invertStrings, val -> invertStrings = val);
 		addConfigCheckbox(row, 180, 0, Label.CONFIG_INVERT_STRINGS_IN_PREVIEW, invertStrings3D,
 				val -> invertStrings3D = val);
@@ -82,11 +80,10 @@ public final class ConfigPane extends ParamsPane {
 		addConfigCheckbox(row++, 20, 0, Label.CONFIG_SHOW_GRID, showGrid, val -> showGrid = val);
 		addConfigCheckbox(row++, 20, 0, Label.CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND,
 				createDefaultStretchesInBackground, val -> createDefaultStretchesInBackground = val);
-		addConfigValue(row++, 20, 0, Label.CONFIG_FPS, FPS + "", 50, createIntValidator(1, 1000, false), //
-				val -> FPS = Integer.valueOf(val), false);
-		addConfigValue(row++, 20, 0, Label.CONFIG_BACKUP_DELAY, backupDelay + "", 50,
-				createIntValidator(1, 3600, false), //
-				val -> backupDelay = Integer.valueOf(val), false);
+		addIntConfigValue(row++, 20, 0, Label.CONFIG_FPS, FPS, 50, //
+				new IntValueValidator(1, 1000), v -> FPS = v, false);
+		addIntConfigValue(row++, 20, 0, Label.CONFIG_BACKUP_DELAY, backupDelay, 50, //
+				new IntValueValidator(1, 3600), v -> backupDelay = v, false);
 
 		row++;
 		addDefaultFinish(row, this::saveAndExit);
