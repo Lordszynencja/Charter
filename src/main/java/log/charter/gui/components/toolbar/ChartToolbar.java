@@ -1,5 +1,6 @@
 package log.charter.gui.components.toolbar;
 
+import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.utils.ComponentUtils.setIcon;
 import static log.charter.util.FileUtils.imagesFolder;
 
@@ -34,8 +35,8 @@ import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueValidator;
 import log.charter.gui.components.utils.ComponentUtils;
+import log.charter.gui.components.utils.IntegerValueValidator;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 //import log.charter.gui.lookAndFeel.CharterButtonUI;
@@ -180,7 +181,7 @@ public class ChartToolbar extends JToolBar {
 			final LabelPosition labelPosition, final int inputWidth, //
 			final Integer value, final int min, final int max, final boolean allowEmpty,
 			final Consumer<Integer> onChange) {
-		final TextInputWithValidation input = new TextInputWithValidation(value, inputWidth,
+		final TextInputWithValidation input = generateForInteger(value, inputWidth, //
 				new IntegerValueValidator(min, max, allowEmpty), onChange, false);
 
 		final FieldWithLabel<TextInputWithValidation> field = //

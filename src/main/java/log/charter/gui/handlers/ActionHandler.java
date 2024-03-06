@@ -31,6 +31,7 @@ public class ActionHandler {
 	private AudioHandler audioHandler;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
+	private ChartItemsHandler chartItemsHandler;
 	private ChartTimeHandler chartTimeHandler;
 	private ChartToolbar chartToolbar;
 	private CopyManager copyManager;
@@ -42,20 +43,21 @@ public class ActionHandler {
 	private UndoSystem undoSystem;
 	private WaveFormDrawer waveFormDrawer;
 
-	private final ChartItemsHandler chartItemsHandler = new ChartItemsHandler();
 	private final GuitarSoundsHandler guitarSoundsHandler = new GuitarSoundsHandler();
 	private final GuitarSoundsStatusesHandler guitarSoundsStatusesHandler = new GuitarSoundsStatusesHandler();
 	private final HandShapesHandler handShapesHandler = new HandShapesHandler();
 	private final VocalsHandler vocalsHandler = new VocalsHandler();
 
 	public void init(final AudioHandler audioHandler, final ArrangementFixer arrangementFixer,
-			final ChartData chartData, final CharterFrame charterFrame, final ChartTimeHandler chartTimeHandler,
-			final ChartToolbar chartToolbar, final CopyManager copyManager, final ModeManager modeManager,
-			final MouseHandler mouseHandler, final RepeatManager repeatManager, final SelectionManager selectionManager,
-			final SongFileHandler songFileHandler, final UndoSystem undoSystem, final WaveFormDrawer waveFormDrawer) {
+			final ChartData chartData, final CharterFrame charterFrame, final ChartItemsHandler chartItemsHandler,
+			final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar, final CopyManager copyManager,
+			final ModeManager modeManager, final MouseHandler mouseHandler, final RepeatManager repeatManager,
+			final SelectionManager selectionManager, final SongFileHandler songFileHandler, final UndoSystem undoSystem,
+			final WaveFormDrawer waveFormDrawer) {
 		this.audioHandler = audioHandler;
 		this.chartData = chartData;
 		this.charterFrame = charterFrame;
+		this.chartItemsHandler = chartItemsHandler;
 		this.chartTimeHandler = chartTimeHandler;
 		this.chartToolbar = chartToolbar;
 		this.copyManager = copyManager;
@@ -67,7 +69,6 @@ public class ActionHandler {
 		this.undoSystem = undoSystem;
 		this.waveFormDrawer = waveFormDrawer;
 
-		chartItemsHandler.init(arrangementFixer, chartData, modeManager, selectionManager, undoSystem);
 		guitarSoundsHandler.init(chartData, charterFrame, selectionManager, undoSystem);
 		guitarSoundsStatusesHandler.init(chartData, charterFrame, selectionManager, undoSystem);
 		handShapesHandler.init(chartData, charterFrame, selectionManager, undoSystem);

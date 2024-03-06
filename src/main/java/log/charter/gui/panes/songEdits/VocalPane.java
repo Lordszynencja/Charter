@@ -70,7 +70,7 @@ public class VocalPane extends ParamsPane {
 	}
 
 	private void createElementsAndShow(final Runnable onSave) {
-		addConfigValue(0, 20, 70, Label.VOCAL_PANE_LYRIC, text, 200, null, val -> text = val, true);
+		addStringConfigValue(0, 20, 70, Label.VOCAL_PANE_LYRIC, text, 200, null, val -> text = val, true);
 		addConfigCheckbox(1, 20, 70, Label.VOCAL_PANE_WORD_PART, wordPart, val -> {
 			wordPart = val;
 

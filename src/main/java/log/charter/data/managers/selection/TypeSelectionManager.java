@@ -14,11 +14,13 @@ public interface TypeSelectionManager<T extends IPosition> {
 
 	public void addAll();
 
-	public void clear();
-
 	public void add(int id);
 
 	public void add(ArrayList2<Integer> ids);
 
 	public void addPositions(Set<Integer> positions);
+
+	public void clear();
+
+	public void refresh();
 }

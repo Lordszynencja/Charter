@@ -1,6 +1,5 @@
 package log.charter.gui.panes.songEdits;
 
-import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createBigDecimalValidator;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.sound.data.AudioUtils.generateSilence;
 
@@ -17,6 +16,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.utils.BigDecimalValueValidator;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.sound.StretchedFileLoader;
@@ -33,7 +33,7 @@ public class AddSilencePane extends ParamsPane {
 
 	private boolean addTime = true;
 
-	private BigDecimal time;
+	private BigDecimal time = null;
 
 	public AddSilencePane(final CharterFrame frame, final ChartTimeHandler chartTimeHandler, final ChartData data,
 			final ProjectAudioHandler projectAudioHandler) {
@@ -44,9 +44,8 @@ public class AddSilencePane extends ParamsPane {
 
 		addLabel(0, 20, Label.ADD_SILENCE_SECONDS, 0);
 
-		addConfigValue(1, 20, 0, null, "", 100,
-				createBigDecimalValidator(new BigDecimal(0.1), new BigDecimal(60), false),
-				val -> time = new BigDecimal(val), false);
+		addBigDecimalConfigValue(1, 20, 0, null, time, 100, //
+				new BigDecimalValueValidator(new BigDecimal(0.1), new BigDecimal(60), false), val -> time = val, false);
 		final JTextField input = (JTextField) getLastPart();
 		addSelectTextOnFocus(input);
 

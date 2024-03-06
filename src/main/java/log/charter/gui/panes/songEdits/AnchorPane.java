@@ -1,6 +1,5 @@
 package log.charter.gui.panes.songEdits;
 
-import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createIntValidator;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import javax.swing.JTextField;
@@ -11,6 +10,8 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.utils.IntValueValidator;
+import log.charter.gui.components.utils.IntegerValueValidator;
 import log.charter.song.Anchor;
 
 public class AnchorPane extends ParamsPane {
@@ -36,14 +37,14 @@ public class AnchorPane extends ParamsPane {
 		width = anchor.width;
 
 		int row = 0;
-		addIntegerConfigValue(row++, 20, 100, Label.FRET, fret, 30, createIntValidator(1, Config.frets, true),
-				val -> fret = val, false);
+		addIntegerConfigValue(row++, 20, 100, Label.FRET, fret, 30, //
+				new IntegerValueValidator(1, Config.frets, true), v -> fret = v, false);
 		final JTextField input = (JTextField) getLastPart();
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
-		addIntegerConfigValue(row++, 20, 100, Label.ANCHOR_WIDTH, width, 30, createIntValidator(1, Config.frets, false),
-				val -> width = val, false);
+		addIntConfigValue(row++, 20, 100, Label.ANCHOR_WIDTH, width, 30, //
+				new IntValueValidator(1, Config.frets), v -> width = v, false);
 		final JTextField AnchorWidthInput = (JTextField) getLastPart();
 		AnchorWidthInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(AnchorWidthInput);

@@ -3,7 +3,6 @@ package log.charter.gui.components.simple;
 import java.awt.Color;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
@@ -13,132 +12,66 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import log.charter.data.config.Localization.Label;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.components.utils.BigDecimalValueValidator;
+import log.charter.gui.components.utils.IntValueValidator;
+import log.charter.gui.components.utils.IntegerValueValidator;
+import log.charter.gui.components.utils.ValueValidator;
 
 public class TextInputWithValidation extends JTextField implements DocumentListener {
 	private static final long serialVersionUID = 1L;
 	public static final Color errorBackground = new Color(160, 64, 64);
 	public static final Color textFieldBorder = ColorLabel.BASE_BORDER.color();
 
-	public static interface ValueValidator {
-		public static final ValueValidator dirValidator = val -> {
-			final File f = new File(val);
-			if (!f.exists()) {
-				return Label.DIRECTORY_DOESNT_EXIST.label();
-			}
-
-			if (!f.isDirectory()) {
-				return Label.NOT_A_FOLDER.label();
-			}
-
-			return null;
-		};
-
-		public static ValueValidator createBigDecimalValidator(final BigDecimal minVal, final BigDecimal maxVal,
-				final boolean acceptEmpty) {
-			return val -> {
-				if (((val == null) || val.isEmpty()) && acceptEmpty) {
-					return null;
-				}
-
-				final BigDecimal number;
-				try {
-					number = new BigDecimal(val);
-				} catch (final Exception e) {
-					return Label.VALUE_NUMBER_EXPECTED.label();
-				}
-
-				if (number.compareTo(minVal) < 0) {
-					return String.format(Label.VALUE_MUST_BE_GE.label(), minVal.toString());
-				}
-				if (number.compareTo(maxVal) > 0) {
-					return String.format(Label.VALUE_MUST_BE_LE.label(), maxVal.toString());
-				}
-
-				return null;
-			};
-		}
-
-		public static IntegerValueValidator createIntValidator(final int minVal, final int maxVal,
-				final boolean acceptEmpty) {
-			return new IntegerValueValidator(minVal, maxVal, acceptEmpty);
-		}
-
-		String validateValue(String val);
+	public static TextInputWithValidation generateForInteger(final Integer value, final int length,
+			final IntegerValueValidator validator, final Consumer<Integer> setter, final boolean allowWrongValues) {
+		return new TextInputWithValidation(value == null ? "" : (value + ""), length, validator,
+				setterForInteger(setter), allowWrongValues);
 	}
 
-	public static class IntegerValueValidator implements ValueValidator {
-		private final int minValue;
-		private final int maxValue;
-		private final boolean acceptEmpty;
-
-		public IntegerValueValidator(final int minValue, final int maxValue, final boolean acceptEmpty) {
-			this.minValue = minValue;
-			this.maxValue = maxValue;
-			this.acceptEmpty = acceptEmpty;
-		}
-
-		@Override
-		public String validateValue(final String val) {
-			if (((val == null) || val.isEmpty()) && acceptEmpty) {
-				return null;
-			}
-
-			final int i;
+	private static Consumer<String> setterForInteger(final Consumer<Integer> setter) {
+		return s -> {
+			Integer value;
 			try {
-				i = Integer.parseInt(val);
-			} catch (final Exception e) {
-				return Label.VALUE_NUMBER_EXPECTED.label();
-			}
-
-			if (i < minValue) {
-				return String.format(Label.VALUE_MUST_BE_GE.label(), minValue + "");
-			}
-
-			if (i > maxValue) {
-				return String.format(Label.VALUE_MUST_BE_LE.label(), maxValue + "");
-			}
-
-			return null;
-		}
-	}
-
-	public static class BigDecimalValueValidator implements ValueValidator {
-		private final BigDecimal minValue;
-		private final BigDecimal maxValue;
-		private final boolean acceptEmpty;
-
-		public BigDecimalValueValidator(final BigDecimal minValue, final BigDecimal maxValue,
-				final boolean acceptEmpty) {
-			this.minValue = minValue;
-			this.maxValue = maxValue;
-			this.acceptEmpty = acceptEmpty;
-		}
-
-		@Override
-		public String validateValue(final String val) {
-			if (((val == null) || val.isEmpty()) && acceptEmpty) {
-				return null;
-			}
-
-			final BigDecimal i;
-			try {
-				i = new BigDecimal(val);
+				value = Integer.valueOf(s);
 			} catch (final NumberFormatException e) {
-				return Label.VALUE_NUMBER_EXPECTED.label();
+				value = null;
 			}
+			setter.accept(value);
+		};
+	}
 
-			if (i.compareTo(minValue) < 0) {
-				return String.format(Label.VALUE_MUST_BE_GE.label(), minValue.toString());
+	public static TextInputWithValidation generateForInt(final int value, final int length,
+			final IntValueValidator validator, final IntConsumer setter, final boolean allowWrongValues) {
+		return new TextInputWithValidation(value + "", length, validator, setterForInt(setter), allowWrongValues);
+	}
+
+	private static Consumer<String> setterForInt(final IntConsumer setter) {
+		return s -> {
+			try {
+				setter.accept(Integer.valueOf(s));
+			} catch (final NumberFormatException e) {
 			}
+		};
+	}
 
-			if (i.compareTo(maxValue) > 0) {
-				return String.format(Label.VALUE_MUST_BE_LE.label(), maxValue.toString());
+	public static TextInputWithValidation generateForBigDecimal(final BigDecimal value, final int length,
+			final BigDecimalValueValidator validator, final Consumer<BigDecimal> setter,
+			final boolean allowWrongValues) {
+		return new TextInputWithValidation(value + "", length, validator, setterForBigDecimal(setter),
+				allowWrongValues);
+	}
+
+	private static Consumer<String> setterForBigDecimal(final Consumer<BigDecimal> setter) {
+		return s -> {
+			BigDecimal value;
+			try {
+				value = new BigDecimal(s);
+			} catch (final NumberFormatException e) {
+				value = null;
 			}
-
-			return null;
-		}
+			setter.accept(value);
+		};
 	}
 
 	private boolean error;
@@ -151,14 +84,13 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 
 	public TextInputWithValidation(final String text, final int length, final ValueValidator validator,
 			final Consumer<String> setter, final boolean allowWrongValues) {
-		super(text, length);
+		super(new ComponentDocument(), text, length);
 		this.allowWrongValues = allowWrongValues;
 		this.validator = validator;
 		this.setter = setter;
 
 		getDocument().addDocumentListener(this);
-		setBorder(new LineBorder(textFieldBorder, 0)); // border 1px
-		// setBackground(normalBackgroundColor);
+		setBorder(new LineBorder(textFieldBorder, 0));
 		addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(final FocusEvent e) {
@@ -167,36 +99,28 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		});
 	}
 
-	public TextInputWithValidation(final Integer value, final int length, final IntegerValueValidator validator,
-			final Consumer<Integer> setter, final boolean allowWrongValues) {
-		this(value == null ? "" : (value + ""), length, validator, (final String s) -> {
-			try {
-				setter.accept(Integer.valueOf(s));
-			} catch (final NumberFormatException e) {
-				setter.accept(null);
-			}
-		}, allowWrongValues);
+	private void clearError() {
+		error = false;
+		setToolTipText(null);
+		setBorder(new LineBorder(textFieldBorder, 0));
 	}
 
-	public TextInputWithValidation(final Integer value, final int length, final IntegerValueValidator validator,
-			final IntConsumer setter, final boolean allowWrongValues) {
-		this(value == null ? "" : (value + ""), length, validator, (final String s) -> {
-			try {
-				setter.accept(Integer.valueOf(s));
-			} catch (final NumberFormatException e) {
-			}
-		}, allowWrongValues);
-	}
+	private void validateValue(final String value) {
+		if (error) {
+			clearError();
+		}
+		if (validator == null) {
+			return;
+		}
 
-	public TextInputWithValidation(final BigDecimal value, final int length, final BigDecimalValueValidator validator,
-			final Consumer<BigDecimal> setter, final boolean allowWrongValues) {
-		this(value == null ? "" : value.toString(), length, validator, (final String s) -> {
-			try {
-				setter.accept(new BigDecimal(s));
-			} catch (final NumberFormatException e) {
-				setter.accept(null);
-			}
-		}, allowWrongValues);
+		final String validation = validator.validateValue(value);
+		if (validation == null) {
+			return;
+		}
+
+		error = true;
+		setToolTipText(validation);
+		setBorder(new LineBorder(errorBackground, 2));
 	}
 
 	@Override
@@ -209,43 +133,18 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		changedUpdate(e);
 	}
 
-	private void clearError() {
-		error = false;
-		setToolTipText(null);
-		setBorder(new LineBorder(textFieldBorder, 0)); // border color instead of fill
-	}
-
-	private void validateValue() {
-		final String val = getText();
-		final String validation = validator.validateValue(val);
-		if (validation == null) {
-			setter.accept(val);
-			return;
-		}
-
-		error = true;
-		setToolTipText(validation);
-		setBorder(new LineBorder(errorBackground, 2)); // border color instead of fill
-		if (allowWrongValues) {
-			setter.accept(val);
-		}
-	}
-
 	@Override
 	public void changedUpdate(final DocumentEvent e) {
 		if (disableEvents) {
 			return;
 		}
 
-		if (validator == null) {
-			setter.accept(getText());
-			return;
-		}
+		final String value = getText();
+		validateValue(value);
 
-		if (error) {
-			clearError();
+		if (!error || allowWrongValues) {
+			setter.accept(value);
 		}
-		validateValue();
 
 		repaint();
 	}

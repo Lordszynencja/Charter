@@ -121,8 +121,8 @@ public interface ChordOrNote extends IPositionWithLength {
 		}
 
 		@Override
-		public ChordOrNote asNote(final ChordTemplate chordTemplate) {
-			return new ChordOrNoteForNote(new Note(chord, chordTemplate));
+		public ChordOrNote asNote(final List<ChordTemplate> chordTemplates) {
+			return new ChordOrNoteForNote(new Note(chord, chordTemplates.get(chord.templateId())));
 		}
 
 		@Override
@@ -208,7 +208,7 @@ public interface ChordOrNote extends IPositionWithLength {
 		}
 
 		@Override
-		public ChordOrNote asNote(final ChordTemplate chordTemplate) {
+		public ChordOrNote asNote(final List<ChordTemplate> chordTemplates) {
 			return this;
 		}
 
@@ -282,7 +282,7 @@ public interface ChordOrNote extends IPositionWithLength {
 
 	boolean linkNext(final int string);
 
-	ChordOrNote asNote(final ChordTemplate chordTemplate);
+	ChordOrNote asNote(final List<ChordTemplate> chordTemplates);
 
 	ChordOrNote asChord(final int chordId, final ChordTemplate chordTemplate);
 

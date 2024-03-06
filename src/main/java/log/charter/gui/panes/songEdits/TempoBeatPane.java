@@ -1,6 +1,5 @@
 package log.charter.gui.panes.songEdits;
 
-import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createIntValidator;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.song.notes.IConstantPosition.findClosestId;
 
@@ -14,7 +13,8 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
-import log.charter.gui.components.simple.TextInputWithValidation.BigDecimalValueValidator;
+import log.charter.gui.components.utils.BigDecimalValueValidator;
+import log.charter.gui.components.utils.IntValueValidator;
 import log.charter.song.Beat;
 import log.charter.util.CollectionUtils.ArrayList2;
 
@@ -61,14 +61,14 @@ public class TempoBeatPane extends ParamsPane {
 		addBigDecimalConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_BPM, bpm, 60,
 				new BigDecimalValueValidator(minBPM, maxBPM, false), val -> bpm = roundBPM(val), false);
 
-		addIntegerConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_BEATS_IN_MEASURE, beatsInMeasure, 30,
-				createIntValidator(1, 99, false), val -> beatsInMeasure = val, false);
+		addIntConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_BEATS_IN_MEASURE, beatsInMeasure, 30, //
+				new IntValueValidator(1, 128), v -> beatsInMeasure = v, false);
 		final JTextField beatsInMeasureInput = (JTextField) getLastPart();
 		beatsInMeasureInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(beatsInMeasureInput);
 
-		addIntegerConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_NOTE_DENOMINATOR, noteDenominator, 30,
-				createIntValidator(1, 99, false), val -> noteDenominator = val, false);
+		addIntConfigValue(row++, 20, 0, Label.TEMPO_BEAT_PANE_NOTE_DENOMINATOR, noteDenominator, 30, //
+				new IntValueValidator(1, 32), v -> noteDenominator = v, false);
 		final JTextField noteDenominatorInput = (JTextField) getLastPart();
 		noteDenominatorInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(noteDenominatorInput);

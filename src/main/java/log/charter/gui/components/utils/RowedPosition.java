@@ -48,6 +48,11 @@ public class RowedPosition {
 		return value;
 	}
 
+	public RowedPosition addX(final int offset) {
+		x += offset;
+		return this;
+	}
+
 	public RowedPosition newRows(final int rows) {
 		x = startX;
 		y += rowHeight * rows;

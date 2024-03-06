@@ -24,10 +24,6 @@ public class NoneTypeSelectionManager implements TypeSelectionManager<IPosition>
 	}
 
 	@Override
-	public void clear() {
-	}
-
-	@Override
 	public void add(final int id) {
 	}
 
@@ -37,6 +33,14 @@ public class NoneTypeSelectionManager implements TypeSelectionManager<IPosition>
 
 	@Override
 	public void addPositions(final Set<Integer> positions) {
+	}
+
+	@Override
+	public void clear() {
+	}
+
+	@Override
+	public void refresh() {
 	}
 
 }

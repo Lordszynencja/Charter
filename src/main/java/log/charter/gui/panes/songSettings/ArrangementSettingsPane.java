@@ -3,7 +3,6 @@ package log.charter.gui.panes.songSettings;
 import static java.lang.Math.max;
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.gui.components.simple.TextInputWithValidation.ValueValidator.createIntValidator;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.song.configs.Tuning.getStringDistanceFromC0;
 import static log.charter.util.SoundUtils.soundToFullName;
@@ -26,6 +25,7 @@ import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.gui.components.utils.IntegerValueValidator;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.Arrangement;
@@ -90,7 +90,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 		addArrangmentType(row);
 		addArrangmentSubtype(row);
 
-		addConfigValue(row.getAndIncrement(), 20, 0, Label.ARRANGEMENT_OPTIONS_BASE_TONE, baseTone, 100,
+		addStringConfigValue(row.getAndIncrement(), 20, 0, Label.ARRANGEMENT_OPTIONS_BASE_TONE, baseTone, 100,
 				this::validateBaseTone, val -> baseTone = val, false);
 
 		row.incrementAndGet();
@@ -151,15 +151,16 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 	private void addStringsCapo(final AtomicInteger row) {
 		addIntegerConfigValue(row.get(), 20, 0, Label.ARRANGEMENT_OPTIONS_STRINGS, tuning.strings(), 20,
-				createIntValidator(1, maxStrings, false), //
+				new IntegerValueValidator(1, maxStrings, false), //
 				this::onTuningStringsChanged, false);
 		final TextInputWithValidation stringsInput = (TextInputWithValidation) getLastPart();
 		stringsInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(stringsInput);
 
 		addIntegerConfigValue(row.getAndIncrement(), 120, 0, Label.ARRANGEMENT_OPTIONS_CAPO, capo, 30,
-				createIntValidator(0, Config.frets, false), //
-				val -> capo = val, false);
+				new IntegerValueValidator(0, Config.frets, false), //
+				val -> capo = val, //
+				false);
 		final TextInputWithValidation capoInput = (TextInputWithValidation) getLastPart();
 		capoInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(capoInput);
@@ -171,8 +172,10 @@ public class ArrangementSettingsPane extends ParamsPane {
 			final int string = i;
 			final int x = 20 + i * 40;
 
-			addIntegerConfigValue(tuningInputsRow, x, 0, null, 0, inputWidth, createIntValidator(-48, 48, false), //
-					val -> onTuningValueChanged(string, val), false);
+			addIntegerConfigValue(tuningInputsRow, x, 0, null, 0, inputWidth, //
+					new IntegerValueValidator(-48, 48, false), //
+					val -> onTuningValueChanged(string, val), //
+					false);
 			final TextInputWithValidation tuningInput = (TextInputWithValidation) getLastPart();
 			tuningInput.setHorizontalAlignment(JTextField.CENTER);
 			addSelectTextOnFocus(tuningInput);

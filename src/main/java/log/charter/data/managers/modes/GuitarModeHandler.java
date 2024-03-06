@@ -158,8 +158,8 @@ public class GuitarModeHandler extends ModeHandler {
 		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
 
 		if (chordOrNote.isChord()) {
-			final ChordTemplate chordTemplate = new ChordTemplate(
-					data.getCurrentArrangement().chordTemplates.get(chordOrNote.chord().templateId()));
+			final ArrayList2<ChordTemplate> chordTemplates = data.getCurrentArrangement().chordTemplates;
+			final ChordTemplate chordTemplate = new ChordTemplate(chordTemplates.get(chordOrNote.chord().templateId()));
 			if (chordTemplate.frets.containsKey(string)) {
 				chordTemplate.frets.remove(string);
 			} else {
@@ -173,7 +173,7 @@ public class GuitarModeHandler extends ModeHandler {
 			final int newTemplateId = data.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
 			chordOrNote.chord().updateTemplate(newTemplateId, chordTemplate);
 			if (chordTemplate.frets.size() == 1) {
-				sounds.set(id, chordOrNote.asNote(chordTemplate));
+				sounds.set(id, chordOrNote.asNote(chordTemplates));
 			}
 		} else {
 			final ChordTemplate chordTemplate = new ChordTemplate();
