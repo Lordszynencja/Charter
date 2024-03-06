@@ -22,6 +22,7 @@ import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.utils.ComponentUtils.ComponentWithOffset;
 import log.charter.gui.components.utils.RowedPosition;
+import log.charter.gui.lookAndFeel.*;
 import log.charter.util.FileUtils;
 
 public class ColorConfigPane extends ParamsPane {
@@ -103,6 +104,11 @@ public class ColorConfigPane extends ParamsPane {
 		GraphicalConfig.colorSet = fileSelect.getSelectedItem();
 		colorPickers.forEach(colorPicker -> colorPicker.colorLabel.setColor(colorPicker.color()));
 		ChartPanelColors.save();
+		CharterButtonUI.updateColors();
+		CharterScrollBarUI.updateColors();
+		CharterTabbedPaneUI.updateColors();
+		CharterTextFieldUI.updateColors();
+		CharterToggleButtonUI.updateColors();
 	}
 
 }
