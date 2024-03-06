@@ -7,6 +7,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -14,13 +15,16 @@ import log.charter.util.CollectionUtils.ArrayList2;
 public class VocalsHandler {
 	private ChartData data;
 	private CharterFrame frame;
+	private CurrentSelectionEditor currentSelectionEditor;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData data, final CharterFrame frame, final SelectionManager selectionManager,
+	public void init(final ChartData data, final CharterFrame frame,
+			final CurrentSelectionEditor currentSelectionEditor, final SelectionManager selectionManager,
 			final UndoSystem undoSystem) {
 		this.data = data;
 		this.frame = frame;
+		this.currentSelectionEditor = currentSelectionEditor;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 	}
@@ -50,7 +54,7 @@ public class VocalsHandler {
 			vocalSelection.selectable.setWordPart(!vocalSelection.selectable.isWordPart());
 		}
 
-		frame.selectionChanged(false);
+		currentSelectionEditor.selectionChanged(false);
 	}
 
 	public void togglePhraseEnd() {
@@ -66,6 +70,6 @@ public class VocalsHandler {
 			selectedVocal.selectable.setPhraseEnd(!selectedVocal.selectable.isPhraseEnd());
 		}
 
-		frame.selectionChanged(false);
+		currentSelectionEditor.selectionChanged(false);
 	}
 }

@@ -1,4 +1,4 @@
-package log.charter.gui.components.selectionEditor.components;
+package log.charter.gui.components.tabs.selectionEditor.simpleComponents;
 
 import java.util.function.Consumer;
 

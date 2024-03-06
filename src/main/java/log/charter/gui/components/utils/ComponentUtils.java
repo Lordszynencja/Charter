@@ -38,6 +38,25 @@ public class ComponentUtils {
 		component.setMaximumSize(size);
 	}
 
+	public static void setComponentBoundsWithValidateRepaint(final Component component, final int x, final int y,
+			final int w, final int h) {
+		setComponentBounds(component, x, y, w, h);
+		component.validate();
+		component.repaint();
+	}
+
+	public static void showPopup(final Component parent, final Label message, final String... messageParams) {
+		if (messageParams.length > 0) {
+			showPopup(parent, message.label().formatted((Object[]) messageParams));
+		} else {
+			showPopup(parent, message.label());
+		}
+	}
+
+	public static void showPopup(final Component parent, final String message) {
+		JOptionPane.showMessageDialog(parent, message);
+	}
+
 	public static ConfirmAnswer askYesNo(final Component parent, final Label title, final Label message) {
 		final int result = JOptionPane.showConfirmDialog(parent, message.label(), title.label(),
 				JOptionPane.YES_NO_OPTION);

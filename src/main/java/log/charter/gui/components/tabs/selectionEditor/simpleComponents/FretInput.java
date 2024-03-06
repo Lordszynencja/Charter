@@ -1,4 +1,4 @@
-package log.charter.gui.components.selectionEditor.components;
+package log.charter.gui.components.tabs.selectionEditor.simpleComponents;
 
 import static log.charter.data.config.Config.frets;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
@@ -6,12 +6,12 @@ import static log.charter.gui.components.simple.TextInputWithValidation.generate
 import java.util.function.IntConsumer;
 
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.gui.components.utils.IntValueValidator;
 import log.charter.gui.components.utils.RowedPosition;
+import log.charter.gui.components.utils.validators.IntValueValidator;
 
 public class FretInput {
 	public static FieldWithLabel<TextInputWithValidation> addField(final CurrentSelectionEditor parent,

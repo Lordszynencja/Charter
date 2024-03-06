@@ -12,8 +12,8 @@ import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.gui.components.utils.IntValueValidator;
 import log.charter.gui.components.utils.RowedPosition;
+import log.charter.gui.components.utils.validators.IntValueValidator;
 
 public class GraphicChartMapConfigPage implements Page {
 	private int chartMapHeightMultiplier = GraphicalConfig.chartMapHeightMultiplier;

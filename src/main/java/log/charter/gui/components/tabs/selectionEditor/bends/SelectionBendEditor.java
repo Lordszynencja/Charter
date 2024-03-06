@@ -1,4 +1,4 @@
-package log.charter.gui.components.selectionEditor.bends;
+package log.charter.gui.components.tabs.selectionEditor.bends;
 
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
@@ -21,8 +21,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.RowedPanel;
-import log.charter.gui.components.data.PaneSizesBuilder;
-import log.charter.gui.lookAndFeel.CharterCheckBox;
+import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.lookAndFeel.CharterRadioButton;
 import log.charter.song.BeatsMap;
 import log.charter.song.BendValue;
@@ -145,7 +144,8 @@ public class SelectionBendEditor extends RowedPanel {
 				stringsForAction[i] = true;
 			}
 			doActionOnStringButtons(stringsForAction, (button, i) -> {
-				button.setIcon(new CharterRadioButton.RadioIcon(getStringBasedColor(StringColorLabelType.NOTE, i, lastStringsAmount)));
+				button.setIcon(new CharterRadioButton.RadioIcon(
+						getStringBasedColor(StringColorLabelType.NOTE, i, lastStringsAmount)));
 			});
 		}
 	}

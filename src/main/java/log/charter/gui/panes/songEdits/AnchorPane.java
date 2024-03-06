@@ -10,8 +10,8 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
-import log.charter.gui.components.utils.IntValueValidator;
-import log.charter.gui.components.utils.IntegerValueValidator;
+import log.charter.gui.components.utils.validators.IntValueValidator;
+import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.song.Anchor;
 
 public class AnchorPane extends ParamsPane {

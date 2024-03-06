@@ -10,6 +10,8 @@ import static log.charter.util.ScalingUtils.xToTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.function.Function;
 
 import log.charter.data.ChartData;
@@ -100,7 +102,7 @@ public class HighlightData {
 	public static class HighlightPosition implements IConstantPositionWithLength {
 		public final int position;
 		public final int length;
-		public final ChordOrNote originalSound;
+		public final Optional<ChordOrNote> originalSound;
 		public final int string;
 
 		public HighlightPosition(final int position, final int length) {
@@ -115,7 +117,7 @@ public class HighlightData {
 				final int string) {
 			this.position = position;
 			this.length = length;
-			this.originalSound = originalSound;
+			this.originalSound = Optional.ofNullable(originalSound);
 			this.string = string;
 		}
 
@@ -127,6 +129,31 @@ public class HighlightData {
 		@Override
 		public int length() {
 			return length;
+		}
+	}
+
+	public static class IdHighlightPosition {
+		public final int id;
+		public final OptionalInt string;
+
+		public IdHighlightPosition(final int id, final int string) {
+			this.id = id;
+			this.string = OptionalInt.of(string);
+		}
+
+		public IdHighlightPosition(final int id) {
+			this.id = id;
+			string = OptionalInt.empty();
+		}
+	}
+
+	public static class HighlightLine {
+		public final Position2D lineStart;
+		public final Position2D lineEnd;
+
+		public HighlightLine(final Position2D lineStart, final Position2D lineEnd) {
+			this.lineStart = lineStart;
+			this.lineEnd = lineEnd;
 		}
 	}
 
@@ -229,7 +256,8 @@ public class HighlightData {
 				.getPositionsWithStrings(pressXTime, highlight.position(), pressY, y)//
 				.map(position -> new HighlightPosition(position.position(), 0, null, position.string));
 
-		return new HighlightData(PositionType.GUITAR_NOTE, dragPositions, startPosition, endPosition);
+		return new HighlightData(PositionType.GUITAR_NOTE, dragPositions,
+				new HighlightLine(startPosition, endPosition));
 	}
 
 	public static HighlightData getCurrentHighlight(final int time, final ChartData data,
@@ -252,7 +280,11 @@ public class HighlightData {
 
 		final PositionWithIdAndType highlight = highlightManager.getHighlight(x, y);
 		if (highlight.existingPosition) {
-			return new HighlightData(highlight.type, highlight.id);
+			final IdHighlightPosition id = switch (highlight.type) {
+				case GUITAR_NOTE -> new IdHighlightPosition(highlight.id, yToString(y, data.currentStrings()));
+				default -> new IdHighlightPosition(highlight.id);
+			};
+			return new HighlightData(highlight.type, id);
 		}
 
 		final PositionType type = highlight.type;
@@ -269,44 +301,50 @@ public class HighlightData {
 		return new HighlightData(type, new HighlightPosition(position));
 	}
 
-	public final PositionType highlightType;
-	public final Integer highlightedId;
+	public final PositionType type;
+	public final Optional<IdHighlightPosition> id;
 	public final List<HighlightPosition> highlightedNonIdPositions;
-	public final Position2D highlightLineStart;
-	public final Position2D highlightLineEnd;
+	public final Optional<HighlightLine> line;
 
-	public HighlightData(final PositionType highlightType, final Integer highlightedId) {
-		this.highlightType = highlightType;
-		this.highlightedId = highlightedId;
+	public HighlightData(final PositionType type, final IdHighlightPosition id) {
+		this.type = type;
+		this.id = Optional.of(id);
 		highlightedNonIdPositions = new ArrayList<>();
-		highlightLineStart = null;
-		highlightLineEnd = null;
+		line = Optional.empty();
 	}
 
-	public HighlightData(final PositionType highlightType, final HighlightPosition highlightPosition) {
-		this.highlightType = highlightType;
-		highlightedId = null;
+	public HighlightData(final PositionType type, final HighlightPosition highlightPosition) {
+		this.type = type;
+		id = Optional.empty();
 		highlightedNonIdPositions = asList(highlightPosition);
-		highlightLineStart = null;
-		highlightLineEnd = null;
+		line = Optional.empty();
 	}
 
-	public HighlightData(final PositionType highlightType, final Integer highlightedId,
+	public HighlightData(final PositionType type, final IdHighlightPosition id,
 			final List<HighlightPosition> highlightedNonIdPositions) {
-		this.highlightType = highlightType;
-		this.highlightedId = highlightedId;
+		this.type = type;
+		this.id = Optional.of(id);
 		this.highlightedNonIdPositions = highlightedNonIdPositions;
-		highlightLineStart = null;
-		highlightLineEnd = null;
+		line = Optional.empty();
 	}
 
-	public HighlightData(final PositionType highlightType,
-			final ArrayList2<HighlightPosition> highlightedNonIdPositions, final Position2D highlightLineStart,
-			final Position2D highlightLineEnd) {
-		this.highlightType = highlightType;
-		highlightedId = null;
+	public HighlightData(final PositionType type, final List<HighlightPosition> highlightedNonIdPositions,
+			final HighlightLine line) {
+		this.type = type;
+		id = Optional.empty();
 		this.highlightedNonIdPositions = highlightedNonIdPositions;
-		this.highlightLineStart = highlightLineStart;
-		this.highlightLineEnd = highlightLineEnd;
+		this.line = Optional.of(line);
+	}
+
+	public int getId(final PositionType type) {
+		if (this.type != type) {
+			return -1;
+		}
+
+		return id.map(id -> id.id).orElse(-1);
+	}
+
+	public boolean hasStringOf(final ChordOrNote sound) {
+		return id.map(id -> sound.hasString(id.string.orElse(-1))).orElse(false);
 	}
 }

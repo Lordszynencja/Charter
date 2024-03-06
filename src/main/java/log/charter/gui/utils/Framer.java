@@ -1,4 +1,4 @@
-package log.charter.gui;
+package log.charter.gui.utils;
 
 import static java.lang.Math.max;
 
@@ -12,6 +12,7 @@ public class Framer {
 	private int framesDone = 0;
 
 	private final Runnable runnable;
+	private Thread thread;
 
 	public Framer(final Runnable runnable) {
 		this(runnable, Config.FPS);
@@ -34,25 +35,35 @@ public class Framer {
 		return max(1, (long) (nextFrameTime - getCurrentTime()));
 	}
 
+	private void frame() {
+		while (nextFrameTime <= getCurrentTime()) {
+			nextFrameTime += frameLength;
+			currentFrame++;
+		}
+
+		while (currentFrame > framesDone) {
+			runnable.run();
+			framesDone++;
+		}
+	}
+
 	public void start() {
-		new Thread(() -> {
+		thread = new Thread(() -> {
 			try {
 				while (true) {
-					while (nextFrameTime <= getCurrentTime()) {
-						nextFrameTime += frameLength;
-						currentFrame++;
-					}
-
-					while (currentFrame > framesDone) {
-						runnable.run();
-						framesDone++;
-					}
+					frame();
 
 					Thread.sleep(getSleepLength());
 				}
 			} catch (final InterruptedException e) {
-				e.printStackTrace();
 			}
-		}).start();
+		});
+		thread.start();
+	}
+
+	public void stop() {
+		if (thread != null) {
+			thread.interrupt();
+		}
 	}
 }

@@ -15,7 +15,6 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.Framer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.ActionHandler;
@@ -23,6 +22,7 @@ import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.data.ProjectAudioHandler;
+import log.charter.gui.utils.Framer;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class CharterMenuBar extends JMenuBar {

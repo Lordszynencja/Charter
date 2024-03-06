@@ -15,7 +15,7 @@ import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.CharterFrame;
+import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
@@ -46,15 +46,15 @@ public class GuitarSoundsStatusesHandler {
 	}
 
 	private ArrangementFixer arrangementFixer;
-	private ChartData data;
-	private CharterFrame frame;
+	private ChartData chartData;
+	private CurrentSelectionEditor currentSelectionEditor;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData data, final CharterFrame frame, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
-		this.data = data;
-		this.frame = frame;
+	public void init(final ChartData chartData, final CurrentSelectionEditor currentSelectionEditor,
+			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+		this.chartData = chartData;
+		this.currentSelectionEditor = currentSelectionEditor;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 	}
@@ -73,7 +73,7 @@ public class GuitarSoundsStatusesHandler {
 		undoSystem.addUndo();
 		selected.forEach(selectedValue -> handler.accept(selectedValue.selectable, baseValue));
 
-		frame.selectionChanged(false);
+		currentSelectionEditor.selectionChanged(false);
 	}
 
 	private <T> T getNewValueNotes(final Map<T, T> cycleMap, final ChordOrNote sound,
@@ -98,7 +98,7 @@ public class GuitarSoundsStatusesHandler {
 		undoSystem.addUndo();
 		selected.forEach(selectedValue -> selectedValue.selectable.notes()//
 				.forEach(note -> setter.accept(note, valueToSet)));
-		frame.selectionChanged(false);
+		currentSelectionEditor.selectionChanged(false);
 	}
 
 	public <T> void independentCyclicalToggleNotes(final Map<T, T> cycleMap, final Function<CommonNote, T> getter,
@@ -115,7 +115,7 @@ public class GuitarSoundsStatusesHandler {
 
 		selected.forEach(selectedValue -> selectedValue.selectable.notes()//
 				.forEach(note -> setter.accept(note, cycleMap.get(getter.apply(note)))));
-		frame.selectionChanged(false);
+		currentSelectionEditor.selectionChanged(false);
 	}
 
 	public <T> void cyclicalToggleSound(final Map<T, T> cycleMap, final Function<GuitarSound, T> getter,
@@ -131,7 +131,7 @@ public class GuitarSoundsStatusesHandler {
 
 		undoSystem.addUndo();
 		selected.forEach(selectedValue -> setter.accept(selectedValue.selectable.asGuitarSound(), valueToSet));
-		frame.selectionChanged(false);
+		currentSelectionEditor.selectionChanged(false);
 	}
 
 	public <T> void independentCyclicalToggleSound(final Map<T, T> cycleMap, final Function<GuitarSound, T> getter,
@@ -149,7 +149,7 @@ public class GuitarSoundsStatusesHandler {
 			final GuitarSound sound = selectedValue.selectable.asGuitarSound();
 			setter.accept(sound, cycleMap.get(getter.apply(sound)));
 		});
-		frame.selectionChanged(false);
+		currentSelectionEditor.selectionChanged(false);
 	}
 
 	public void toggleMute() {
@@ -211,7 +211,7 @@ public class GuitarSoundsStatusesHandler {
 		cyclicalToggleNotes(booleanCycleMap, CommonNote::linkNext, CommonNote::linkNext, false);
 
 		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
-		arrangementFixer.fixNoteLengths(data.getCurrentArrangementLevel().sounds, selected.get(0).id,
+		arrangementFixer.fixNoteLengths(chartData.getCurrentArrangementLevel().sounds, selected.get(0).id,
 				selected.getLast().id);
 	}
 
@@ -225,7 +225,7 @@ public class GuitarSoundsStatusesHandler {
 		independentCyclicalToggleNotes(booleanCycleMap, CommonNote::linkNext, CommonNote::linkNext);
 
 		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
-		arrangementFixer.fixNoteLengths(data.getCurrentArrangementLevel().sounds, selected.get(0).id,
+		arrangementFixer.fixNoteLengths(chartData.getCurrentArrangementLevel().sounds, selected.get(0).id,
 				selected.getLast().id);
 	}
 }

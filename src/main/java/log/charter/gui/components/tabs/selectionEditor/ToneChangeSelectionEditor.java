@@ -1,8 +1,8 @@
-package log.charter.gui.components.selectionEditor;
+package log.charter.gui.components.tabs.selectionEditor;
 
 import static log.charter.data.config.Localization.Label.TONE_NAME_CANT_BE_EMPTY;
 import static log.charter.data.config.Localization.Label.TONE_NAME_PAST_LIMIT;
-import static log.charter.gui.components.selectionEditor.CurrentSelectionEditor.getSingleValue;
+import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.awt.Color;

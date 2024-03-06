@@ -11,7 +11,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
-import log.charter.gui.components.utils.IntValueValidator;
+import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.song.Beat;

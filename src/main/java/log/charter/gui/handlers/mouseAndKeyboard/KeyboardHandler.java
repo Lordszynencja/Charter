@@ -8,10 +8,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import log.charter.data.managers.ModeManager;
-import log.charter.gui.Framer;
 import log.charter.gui.handlers.Action;
 import log.charter.gui.handlers.ActionHandler;
 import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.gui.utils.Framer;
 
 public class KeyboardHandler implements KeyListener {
 	private ActionHandler actionHandler;

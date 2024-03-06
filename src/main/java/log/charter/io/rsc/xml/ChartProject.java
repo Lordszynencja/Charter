@@ -35,11 +35,10 @@ public class ChartProject {
 	public Vocals vocals = new Vocals();
 
 	public HashMap2<Integer, Integer> bookmarks = new HashMap2<>();
+	public String text;
 
-	public ChartProject() {
-	}
-
-	public ChartProject(final int time, final EditMode editMode, final ChartData data, final SongChart songChart) {
+	public ChartProject(final int time, final EditMode editMode, final ChartData data, final SongChart songChart,
+			final String text) {
 		this.editMode = editMode;
 		arrangement = data.currentArrangement;
 		level = data.currentLevel;
@@ -58,5 +57,6 @@ public class ChartProject {
 		vocals = songChart.vocals;
 
 		bookmarks = songChart.bookmarks;
+		this.text = text;
 	}
 }

@@ -1,5 +1,7 @@
 package log.charter.gui.handlers;
 
+import static log.charter.gui.components.utils.ComponentUtils.askForInput;
+import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import static log.charter.io.Logger.debug;
 import static log.charter.io.Logger.error;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.saveVocals;
@@ -206,7 +208,7 @@ public class SongFileHandler {
 	}
 
 	public void newSong() {
-		if (!frame.checkChanged()) {
+		if (!frame.askToSaveChanged()) {
 			return;
 		}
 
@@ -219,7 +221,7 @@ public class SongFileHandler {
 		final int dotIndex = songName.lastIndexOf('.');
 		final String extension = songName.substring(dotIndex + 1).toLowerCase();
 		if (!extension.equals("mp3") && !extension.equals("ogg")) {
-			frame.showPopup(Label.NOT_MP3_OGG.label());
+			showPopup(frame, Label.NOT_MP3_OGG);
 			return;
 		}
 
@@ -247,7 +249,7 @@ public class SongFileHandler {
 
 		final AudioDataShort musicData = AudioDataShort.readFile(musicFile);
 		if (musicData == null) {
-			frame.showPopup(Label.MUSIC_DATA_NOT_FOUND.label());
+			showPopup(frame, Label.MUSIC_DATA_NOT_FOUND);
 			return;
 		}
 
@@ -298,7 +300,7 @@ public class SongFileHandler {
 			songFolder = new File(Config.songsPath, folderName);
 
 			if (songFolder.exists()) {
-				folderName = frame.showInputDialog(Label.FOLDER_EXISTS_CHOOSE_DIFFERENT.label(), folderName);
+				folderName = askForInput(frame, Label.FOLDER_EXISTS_CHOOSE_DIFFERENT, folderName);
 				if (folderName == null) {
 					return null;
 				}
@@ -315,7 +317,7 @@ public class SongFileHandler {
 			final File projectFileChosen) {
 		final String name = projectFileChosen.getName().toLowerCase();
 		if (!name.endsWith(".rscp")) {
-			frame.showPopup(Label.UNSUPPORTED_FILE_TYPE.label());
+			showPopup(frame, Label.UNSUPPORTED_FILE_TYPE);
 			error("unsupported file: " + projectFileChosen.getName());
 			return null;
 		}
@@ -324,12 +326,12 @@ public class SongFileHandler {
 			project = readChartProject(RW.read(projectFileChosen));
 			if (project.chartFormatVersion > 2) {
 				Logger.error("project has wrong version");
-				frame.showPopup(Label.PROJECT_IS_NEWER_VERSION.label());
+				showPopup(frame, Label.PROJECT_IS_NEWER_VERSION);
 				return null;
 			}
 		} catch (final Exception e) {
 			Logger.error("Error when reading project", e);
-			frame.showPopup(String.format(Label.MISSING_ARRANGEMENT_FILE.label(), projectFileChosen.getAbsolutePath()));
+			showPopup(frame, Label.MISSING_ARRANGEMENT_FILE, projectFileChosen.getAbsolutePath());
 			return null;
 		}
 
@@ -342,7 +344,7 @@ public class SongFileHandler {
 			final ChartProject project, final String dir) {
 		final AudioDataShort musicData = AudioDataShort.readFile(new File(dir, project.musicFileName));
 		if (musicData == null) {
-			frame.showPopup(Label.WRONG_MUSIC_FILE.label());
+			showPopup(frame, Label.WRONG_MUSIC_FILE);
 			return null;
 		}
 
@@ -374,7 +376,7 @@ public class SongFileHandler {
 		try {
 			songChart = new SongChart(project, dir);
 		} catch (final Exception e) {
-			frame.showPopup(e.getMessage());
+			showPopup(frame, Label.COULDNT_LOAD_PROJECT, e.getMessage());
 			return;
 		}
 
@@ -392,7 +394,7 @@ public class SongFileHandler {
 	}
 
 	public void open() {
-		if (!frame.checkChanged()) {
+		if (!frame.askToSaveChanged()) {
 			return;
 		}
 
@@ -433,7 +435,7 @@ public class SongFileHandler {
 		final int dotIndex = songName.lastIndexOf('.');
 		final String extension = songName.substring(dotIndex + 1).toLowerCase();
 		if (!extension.equals("mp3") && !extension.equals("ogg")) {
-			frame.showPopup(Label.NOT_MP3_OGG.label());
+			showPopup(frame, Label.NOT_MP3_OGG);
 			return;
 		}
 
@@ -442,7 +444,7 @@ public class SongFileHandler {
 		final AudioDataShort musicData = AudioDataShort.readFile(songFile);
 		if (musicData == null) {
 			loadingDialog.dispose();
-			frame.showPopup(Label.MUSIC_FILE_COULDNT_BE_LOADED.label());
+			showPopup(frame, Label.MUSIC_FILE_COULDNT_BE_LOADED);
 			return;
 		}
 		loadingDialog.dispose();
@@ -487,7 +489,7 @@ public class SongFileHandler {
 			save();
 		} catch (final Exception e) {
 			Logger.error("Couldn't load arrangement", e);
-			frame.showPopup(Label.COULDNT_LOAD_ARRANGEMENT.label() + ":\n" + e.getMessage());
+			showPopup(frame, Label.COULDNT_LOAD_ARRANGEMENT, e.getMessage());
 		}
 	}
 
@@ -505,7 +507,7 @@ public class SongFileHandler {
 			save();
 		} catch (final Exception e) {
 			Logger.error("Couldn't load arrangement", e);
-			frame.showPopup(Label.COULDNT_LOAD_ARRANGEMENT.label() + ":\n" + e.getMessage());
+			showPopup(frame, Label.COULDNT_LOAD_ARRANGEMENT, e.getMessage());
 		}
 	}
 
@@ -548,12 +550,11 @@ public class SongFileHandler {
 		}
 
 		final ChartProject project = new ChartProject(chartTimeHandler.time(), modeManager.getMode(), data,
-				data.songChart);
+				data.songChart, frame.getTitle());
 		RW.write(new File(data.path, data.projectFileName), writeChartProject(project));
 		saveRSXML();
 
 		undoSystem.onSave();
-		Config.markChanged();
 	}
 
 	public void saveAs() {
@@ -575,8 +576,8 @@ public class SongFileHandler {
 		Config.lastDir = data.path;
 		Config.lastPath = new File(data.path, data.projectFileName).getAbsolutePath();
 		Config.markChanged();
+		Config.save();
 
 		save();
-		Config.save();
 	}
 }

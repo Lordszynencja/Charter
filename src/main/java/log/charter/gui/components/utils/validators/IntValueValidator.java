@@ -1,4 +1,4 @@
-package log.charter.gui.components.utils;
+package log.charter.gui.components.utils.validators;
 
 import log.charter.data.config.Localization.Label;
 

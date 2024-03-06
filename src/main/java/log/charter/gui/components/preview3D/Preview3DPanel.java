@@ -15,7 +15,6 @@ import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.Framer;
 import log.charter.gui.components.preview3D.camera.Preview3DCameraHandler;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.drawers.Preview3DAnchorsDrawer;
@@ -35,6 +34,7 @@ import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
+import log.charter.gui.utils.Framer;
 import log.charter.io.Logger;
 import log.charter.util.Timer;
 
@@ -42,7 +42,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 	private static final long serialVersionUID = 1L;
 
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
+	private ChartData chartData;
 	private ModeManager modeManager;
 
 	private Framer cameraUpdater;
@@ -81,26 +81,26 @@ public class Preview3DPanel extends AWTGLCanvas {
 		super(prepareGLData());
 	}
 
-	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data,
+	public void init(final ChartData chartData, final ChartTimeHandler chartTimeHandler,
 			final KeyboardHandler keyboardHandler, final ModeManager modeManager, final RepeatManager repeatManager) {
 		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
+		this.chartData = chartData;
 		this.repeatManager = repeatManager;
 		this.modeManager = modeManager;
 
 		noteStatusModels.init(texturesHolder);
 
-		anchorsDrawer.init(data);
-		beatsDrawer.init(data, textTexturesHolder);
-		cameraHandler.init(chartTimeHandler, data);
-		fingeringDrawer.init(data, noteStatusModels, texturesHolder);
-		guitarSoundsDrawer.init(data, noteStatusModels, texturesHolder);
-		handShapesDrawer.init(data);
-		inlayDrawer.init(data, texturesHolder);
-		laneBordersDrawer.init(data);
-		lyricsDrawer.init(data, textTexturesHolder);
-		stringsFretsDrawer.init(data);
-		videoDrawer.init(data);
+		anchorsDrawer.init(chartData);
+		beatsDrawer.init(chartData, textTexturesHolder);
+		cameraHandler.init(chartTimeHandler, chartData);
+		fingeringDrawer.init(chartData, noteStatusModels, texturesHolder);
+		guitarSoundsDrawer.init(chartData, noteStatusModels, texturesHolder);
+		handShapesDrawer.init(chartData);
+		inlayDrawer.init(chartData, texturesHolder);
+		laneBordersDrawer.init(chartData);
+		lyricsDrawer.init(chartData, textTexturesHolder);
+		stringsFretsDrawer.init(chartData);
+		videoDrawer.init(chartData);
 
 		addKeyListener(keyboardHandler);
 
@@ -171,7 +171,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
 			GL30.glDepthFunc(GL30.GL_GEQUAL);
 
-			if (data == null || data.isEmpty) {
+			if (chartData == null || chartData.isEmpty) {
 				swapBuffers();
 				return;
 			}
@@ -184,7 +184,7 @@ public class Preview3DPanel extends AWTGLCanvas {
 			videoDrawer.draw(shadersHolder, getWidth(), getHeight());
 			timer.addTimestamp("videoDrawer");
 
-			final Preview3DDrawData drawData = new Preview3DDrawData(chartTimeHandler, data, repeatManager);
+			final Preview3DDrawData drawData = new Preview3DDrawData(chartTimeHandler, chartData, repeatManager);
 			timer.addTimestamp("preparing draw data");
 
 			beatsDrawer.draw(shadersHolder, drawData);

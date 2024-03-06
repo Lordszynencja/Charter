@@ -1,4 +1,4 @@
-package log.charter.gui.components.selectionEditor.chords;
+package log.charter.gui.components.tabs.selectionEditor.chords;
 
 import static java.awt.event.KeyEvent.VK_1;
 import static java.awt.event.KeyEvent.VK_2;

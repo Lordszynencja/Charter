@@ -1,4 +1,4 @@
-package log.charter.gui.components.selectionEditor.chords;
+package log.charter.gui.components.tabs.selectionEditor.chords;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -38,8 +38,8 @@ import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.AutocompleteInput;
 import log.charter.gui.components.simple.AutocompleteInput.PopupComponentMouseListener;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.gui.components.utils.IntegerValueValidator;
 import log.charter.gui.components.utils.RowedPosition;
+import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;

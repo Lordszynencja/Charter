@@ -1,4 +1,4 @@
-package log.charter.gui.components.selectionEditor;
+package log.charter.gui.components.tabs.selectionEditor;
 
 import static log.charter.data.types.PositionType.ANCHOR;
 import static log.charter.data.types.PositionType.GUITAR_NOTE;
@@ -21,7 +21,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedPanel;
-import log.charter.gui.components.data.PaneSizesBuilder;
+import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.handlers.data.ChartItemsHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Anchor;

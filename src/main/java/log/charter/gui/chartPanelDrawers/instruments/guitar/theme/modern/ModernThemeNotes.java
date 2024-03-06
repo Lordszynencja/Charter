@@ -25,6 +25,7 @@ import static log.charter.util.Utils.stringId;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
@@ -41,6 +42,7 @@ import log.charter.song.enums.HOPO;
 import log.charter.song.enums.Harmonic;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.ChordOrNote;
+import log.charter.song.notes.CommonNoteWithFret;
 import log.charter.util.Position2D;
 
 public class ModernThemeNotes implements ThemeNotes {
@@ -282,24 +284,26 @@ public class ModernThemeNotes implements ThemeNotes {
 				ColorLabel.BASE_DARK_TEXT));
 	}
 
+	private void drawHighlightForNote(final int x, final CommonNoteWithFret note) {
+		final int length = timeToXLength(note.position(), note.length());
+		final int y = stringPositions[note.string()];
+		final boolean slide = note.slideTo() != null;
+		final boolean slideUp = slide && note.slideTo() >= note.fret();
+
+		noteTails.addTailShapeBox(x, length, y, ColorLabel.HIGHLIGHT, slide, slideUp);
+		addNoteHighlight(note.harmonic(), x, y);
+	}
+
+	private void drawHighlightWithoutNote(final int x, final int string) {
+		addNoteHighlight(Harmonic.NONE, x, stringPositions[string]);
+	}
+
 	@Override
-	public void addSoundHighlight(final int x, final ChordOrNote originalSound, final ChordTemplate template,
-			final int string) {
-		if (originalSound == null) {
-			addNoteHighlight(Harmonic.NONE, x, stringPositions[string]);
-			return;
-		}
-
-		originalSound.notesWithFrets(template)//
-				.forEach(note -> {
-					final int length = timeToXLength(note.position(), note.length());
-					final int y = stringPositions[note.string()];
-					final boolean slide = note.slideTo() != null;
-					final boolean slideUp = slide && note.slideTo() >= note.fret();
-
-					noteTails.addTailShapeBox(x, length, y, ColorLabel.HIGHLIGHT, slide, slideUp);
-					addNoteHighlight(note.harmonic(), x, y);
-				});
+	public void addSoundHighlight(final int x, final Optional<ChordOrNote> originalSound,
+			final Optional<ChordTemplate> template, final int string) {
+		originalSound.flatMap(sound -> sound.noteWithFrets(string, template.orElse(null)))//
+				.ifPresentOrElse(note -> drawHighlightForNote(x, note), //
+						() -> drawHighlightWithoutNote(x, string));
 	}
 
 	@Override

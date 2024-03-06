@@ -422,7 +422,8 @@ public class Localization {
 
 		CHART_PROJECT("Chart Project"), //
 		CHOOSE_FOLDER_NAME("Choose folder name"), //
-		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement"), //
+		COULDNT_LOAD_PROJECT("Couldn't load project, reason:\n"), //
+		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement, reason:\n"), //
 		COUNT_PHRASE_MISSING(
 				"Count phrase is missing, do you want to move to the beginning of the arrangement to place it?"), //
 		COUNT_PHRASE_MULTIPLE(

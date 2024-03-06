@@ -13,10 +13,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.utils.BigDecimalValueValidator;
-import log.charter.gui.components.utils.IntValueValidator;
-import log.charter.gui.components.utils.IntegerValueValidator;
-import log.charter.gui.components.utils.ValueValidator;
+import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
+import log.charter.gui.components.utils.validators.IntValueValidator;
+import log.charter.gui.components.utils.validators.IntegerValueValidator;
+import log.charter.gui.components.utils.validators.ValueValidator;
 
 public class TextInputWithValidation extends JTextField implements DocumentListener {
 	private static final long serialVersionUID = 1L;

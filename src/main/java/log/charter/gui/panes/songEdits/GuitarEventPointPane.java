@@ -23,7 +23,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInputForPane;
-import log.charter.gui.components.utils.IntValueValidator;
+import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.song.Arrangement;
 import log.charter.song.EventPoint;
 import log.charter.song.EventType;

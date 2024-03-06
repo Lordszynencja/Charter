@@ -159,9 +159,9 @@ public class VocalsDrawer {
 			drawingData.addVocal(vocal, next, x, length, selected);
 		}
 
-		if (highlightData.highlightType == PositionType.VOCAL) {
-			if (highlightData.highlightedId != null) {
-				final Vocal vocal = vocals.get(highlightData.highlightedId);
+		if (highlightData.type == PositionType.VOCAL) {
+			if (highlightData.id.isPresent()) {
+				final Vocal vocal = vocals.get(highlightData.id.get().id);
 				drawingData.addHighlight(time, vocal.position(), vocal.length());
 			} else {
 				highlightData.highlightedNonIdPositions.forEach(highlightPosition -> drawingData.addHighlight(time,

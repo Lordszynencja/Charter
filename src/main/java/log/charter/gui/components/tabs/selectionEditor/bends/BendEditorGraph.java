@@ -1,4 +1,4 @@
-package log.charter.gui.components.selectionEditor.bends;
+package log.charter.gui.components.tabs.selectionEditor.bends;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;

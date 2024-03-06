@@ -16,7 +16,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
-import log.charter.gui.components.utils.BigDecimalValueValidator;
+import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.sound.StretchedFileLoader;
