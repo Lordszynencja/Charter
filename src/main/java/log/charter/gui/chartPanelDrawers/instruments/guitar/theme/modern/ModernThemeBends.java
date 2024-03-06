@@ -81,7 +81,7 @@ public class ModernThemeBends {
 			iconPosition = new Position2D(x, bendY);
 		}
 
-		final Color backgroundColor = getStringBasedColor(StringColorLabelType.LANE, note.string, data.strings);
+		final Color backgroundColor = getStringBasedColor(StringColorLabelType.LANE, note.string, data.strings).darker().darker();
 		final DrawableShape bendValueIcon = new CenteredTextWithBackground(iconPosition, bendValueFont, text,
 				Color.WHITE, backgroundColor);
 		data.bendValues.add(bendValueIcon);

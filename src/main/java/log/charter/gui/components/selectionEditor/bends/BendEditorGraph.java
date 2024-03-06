@@ -334,7 +334,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 			g.drawLine(labelsWidth, y, getWidth(), y);
 		}
 
-		g.setColor(ColorLabel.BASE_TEXT.color());
+		g.setColor(ColorLabel.BASE_TEXT_INPUT.color());
 		g.setFont(new Font(Font.DIALOG, Font.PLAIN, 10));
 		for (int halfSteps = 0; halfSteps <= maxBendValue; halfSteps++) {
 			final int bendValue = halfSteps * 2;
@@ -396,7 +396,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 		final List<Position2D> pointsToDraw = getBendPointsToDraw();
 
-		g.setColor(ColorLabel.BASE_TEXT.color());
+		g.setColor(ColorLabel.BASE_TEXT_INPUT.color());
 		Position2D previousPoint = null;
 		for (final Position2D point : pointsToDraw) {
 			if (previousPoint != null) {

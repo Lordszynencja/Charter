@@ -34,7 +34,7 @@ public class LyricLinesDrawer {
 		public void addLyricLine(final String text, final int x, final int lengthPx) {
 			final ShapePositionWithSize backgroundPosition = new ShapePositionWithSize(x, lyricLinesY + 3, lengthPx,
 					height);
-			backgrounds.add(filledRectangle(backgroundPosition, ColorLabel.VOCAL_LINE_BACKGROUND.color()));
+			backgrounds.add(filledRectangle(backgroundPosition, ColorLabel.VOCAL_LINE_BACKGROUND.color(), true));
 
 			final Position2D textPosition = new Position2D(x + 3, lyricLinesY + 6);
 			texts.add(new Text(textPosition, lyricLineFont, text, ColorLabel.VOCAL_LINE_TEXT.color()));

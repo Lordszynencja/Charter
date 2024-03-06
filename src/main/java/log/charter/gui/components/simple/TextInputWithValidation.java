@@ -157,8 +157,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		this.setter = setter;
 
 		getDocument().addDocumentListener(this);
-		setBorder(new LineBorder(textFieldBorder, 0)); // border 1px
-		// setBackground(normalBackgroundColor);
+		setBorder(new LineBorder(textFieldBorder, 0));
 		addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(final FocusEvent e) {

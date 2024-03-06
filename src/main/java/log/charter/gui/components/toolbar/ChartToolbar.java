@@ -4,6 +4,7 @@ import static log.charter.gui.components.utils.ComponentUtils.setIcon;
 import static log.charter.util.FileUtils.imagesFolder;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
@@ -38,7 +39,6 @@ import log.charter.gui.components.simple.TextInputWithValidation.IntegerValueVal
 import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
-//import log.charter.gui.lookAndFeel.CharterButtonUI;
 import log.charter.gui.lookAndFeel.CharterSliderUI;
 import log.charter.io.Logger;
 import log.charter.util.ImageUtils;
@@ -67,15 +67,15 @@ public class ChartToolbar extends JToolBar {
 	private JToggleButton midi;
 	private JToggleButton claps;
 	private JToggleButton metronome;
-	private FieldWithLabel<JCheckBox> waveformGraph;
-	private FieldWithLabel<JCheckBox> intensityRMSIndicator;
+	private JToggleButton waveformGraph;
+	private JToggleButton intensityRMSIndicator;
 	private JToggleButton repeater;
 
 	private FieldWithLabel<TextInputWithValidation> gridSize;
 	private FieldWithLabel<TextInputWithValidation> slowedSpeed;
 
-	private FieldWithLabel<JRadioButton> beatGridType;
-	private FieldWithLabel<JRadioButton> noteGridType;
+	private JToggleButton beatGridType;
+	private JToggleButton noteGridType;
 
 	private int newSpeed = Config.stretchedMusicSpeed;
 
@@ -87,6 +87,10 @@ public class ChartToolbar extends JToolBar {
 		setFocusable(true);
 		setFloatable(false);
 		setBackground(ColorLabel.BASE_BG_2.color());
+	}
+
+	private void setFont(Component c, Font font) {
+		c.setFont(font);
 	}
 
 	private void setComponentBounds(final Component c, final int x, final int y, final int w, final int h) {
@@ -126,15 +130,26 @@ public class ChartToolbar extends JToolBar {
 		return field;
 	}
 
-	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Runnable onClick) {
+	private JToggleButton addToggleButton(final AtomicInteger x, final int horizontalSpacing, final Label label, final Runnable onClick, int buttonWidth) {
 		final JToggleButton toggleButton = new JToggleButton(label.label());
 		toggleButton.addActionListener(a -> onClick.run());
 		toggleButton.setFocusable(false);
 
-		toggleButton.setBounds(x.get(), 0, toggleButton.getPreferredSize().width, elementHeight);
-		add(x, toggleButton);
+		int width = (buttonWidth > 0) ? buttonWidth : toggleButton.getPreferredSize().width;
+		toggleButton.setBounds(x.get(), 0, width, elementHeight);
+		add(x, horizontalSpacing, toggleButton);
 
 		return toggleButton;
+	}
+
+	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Runnable onClick, int buttonWidth) {
+		final JToggleButton toggleButton = addToggleButton(x, horizontalSpacing, label, onClick, buttonWidth);
+
+		return toggleButton;
+	}
+
+	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Runnable onClick) {
+		return addToggleButton(x, label, onClick, 0);
 	}
 
 	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final BufferedImage icon,
@@ -250,14 +265,15 @@ public class ChartToolbar extends JToolBar {
 	}
 
 	private void addGridTypes(final AtomicInteger x) {
-		beatGridType = addRadioButton(x, Label.BEAT_GRID_TYPE, () -> onGridTypeChange(GridType.BEAT));
-		setIcon(beatGridType.label, gridBeatTypeIcon);
-		noteGridType = addRadioButton(x, Label.NOTE_GRID_TYPE, () -> onGridTypeChange(GridType.NOTE));
-		setIcon(noteGridType.label, gridNoteTypeIcon);
+        beatGridType = addToggleButton(x, 1, Label.BEAT_GRID_TYPE, () -> onGridTypeChange(GridType.BEAT), 25);
+        setIcon(beatGridType, gridBeatTypeIcon);
+
+        noteGridType = addToggleButton(x, Label.NOTE_GRID_TYPE, () -> onGridTypeChange(GridType.NOTE), 25);
+        setIcon(noteGridType, gridNoteTypeIcon);
 
 		final ButtonGroup gridTypeGroup = new ButtonGroup();
-		gridTypeGroup.add(beatGridType.field);
-		gridTypeGroup.add(noteGridType.field);
+		gridTypeGroup.add(beatGridType);
+		gridTypeGroup.add(noteGridType);
 	}
 
 	private void changeSpeed(final int newSpeed) {
@@ -358,9 +374,9 @@ public class ChartToolbar extends JToolBar {
 
 		addSeparator(x);
 
-		waveformGraph = addCheckbox(x, Label.TOOLBAR_WAVEFORM_GRAPH, waveFormDrawer::toggle);
-		intensityRMSIndicator = addCheckbox(x, Label.RMS_INDICATOR, waveFormDrawer::toggleRMS);
-		intensityRMSIndicator.field.setEnabled(false);
+		waveformGraph = addToggleButton(x, Label.TOOLBAR_WAVEFORM_GRAPH, waveFormDrawer::toggle);
+		intensityRMSIndicator = addToggleButton(x, Label.TOOLBAR_RMS_INDICATOR, waveFormDrawer::toggleRMS);
+		intensityRMSIndicator.setEnabled(false);
 
 		addSeparator(x);
 
@@ -386,21 +402,22 @@ public class ChartToolbar extends JToolBar {
 
 	public void updateValues() {
 		midi.setSelected(audioHandler.midiNotesPlaying);
+		midi.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
 		claps.setSelected(audioHandler.claps());
 		metronome.setSelected(audioHandler.metronome());
-		waveformGraph.field.setSelected(waveFormDrawer.drawing());
-		waveformGraph.field.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
-		intensityRMSIndicator.field.setEnabled(waveFormDrawer.drawing());
-		intensityRMSIndicator.field.setSelected(waveFormDrawer.rms());
+		waveformGraph.setSelected(waveFormDrawer.drawing());
+		waveformGraph.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
+		intensityRMSIndicator.setEnabled(waveFormDrawer.drawing());
+		intensityRMSIndicator.setSelected(waveFormDrawer.rms());
 		repeater.setSelected(repeatManager.isOn());
 
 		gridSize.field.setTextWithoutEvent(Config.gridSize + "");
 		switch (Config.gridType) {
 			case BEAT:
-				beatGridType.field.setSelected(true);
+				beatGridType.setSelected(true);
 				break;
 			case NOTE:
-				noteGridType.field.setSelected(true);
+				noteGridType.setSelected(true);
 				break;
 			default:
 				Logger.error("Wrong grid type for toolbar " + Config.gridType);

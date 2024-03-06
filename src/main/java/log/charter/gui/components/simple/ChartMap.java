@@ -47,7 +47,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 		final BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		final Graphics g = img.getGraphics();
 
-		g.setColor(ColorLabel.BASE_BG_1.color());
+		g.setColor(ColorLabel.LANE.color());
 		g.fillRect(0, 0, getWidth(), getHeight());
 		if (data.isEmpty) {
 			return img;
@@ -154,7 +154,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	}
 
 	private void drawEventPoints(final Graphics g, final int y, final ColorLabel color,
-			final Predicate<EventPoint> filter) {
+								 final Predicate<EventPoint> filter) {
 		final List<EventPoint> points = data.getCurrentArrangement().getFilteredEventPoints(filter);
 
 		for (int i = 0; i < points.size(); i++) {
@@ -173,11 +173,11 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	}
 
 	private void drawPhrases(final Graphics g) {
-		drawEventPoints(g, 0, ColorLabel.PHRASE_COLOR, ep -> ep.phrase != null);
+		drawEventPoints(g, chartMapHeightMultiplier, ColorLabel.PHRASE_NAME_BG, ep -> ep.phrase != null);
 	}
 
 	private void drawSections(final Graphics g) {
-		drawEventPoints(g, chartMapHeightMultiplier, ColorLabel.SECTION_COLOR, ep -> ep.section != null);
+		drawEventPoints(g, 0, ColorLabel.SECTION_NAME_BG, ep -> ep.section != null);
 	}
 
 	private void drawNote(final Graphics g, final int string, final int position, final int length) {

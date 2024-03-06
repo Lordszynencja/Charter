@@ -1,79 +1,94 @@
 package log.charter.gui.lookAndFeel;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.geom.RoundRectangle2D;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JScrollBar;
-import javax.swing.UIManager;
-import javax.swing.plaf.metal.MetalScrollBarUI;
-
 import log.charter.gui.ChartPanelColors;
 
-public class CharterScrollBarUI extends MetalScrollBarUI {
-	private static final Color trackColor = ChartPanelColors.ColorLabel.BASE_BUTTON.color();
-	private static final Color thumbColor = ChartPanelColors.ColorLabel.BASE_HIGHLIGHT.color();
-	private static final int SCROLLBAR_WIDTH = 12;
+import javax.swing.*;
+import javax.swing.plaf.ComponentUI;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 
-	@Override
-	protected void paintThumb(final Graphics g, final JComponent c, final Rectangle thumbBounds) {
-		super.paintThumb(g, c, thumbBounds);
-		final Graphics2D g2d = (Graphics2D) g.create();
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+public class CharterScrollBarUI extends BasicScrollBarUI {
 
-		g2d.setColor(thumbColor);
+    private static Color trackColor;
+    private static Color thumbColor;
+    private static final int SCROLLBAR_WIDTH = 17;
 
-		final int thumbWidth = (scrollbar.getOrientation() == JScrollBar.VERTICAL) ? SCROLLBAR_WIDTH
-				: thumbBounds.width;
-		final int thumbHeight = (scrollbar.getOrientation() == JScrollBar.VERTICAL) ? thumbBounds.height
-				: SCROLLBAR_WIDTH;
+    static {
+        updateColors();
+    }
 
-		// thumb
-		final RoundRectangle2D thumbRect = new RoundRectangle2D.Double(thumbBounds.x, thumbBounds.y, thumbWidth,
-				thumbHeight, 10, 10);
-		g2d.fill(thumbRect);
+    public static ComponentUI createUI(JComponent c) {
+        return new CharterScrollBarUI();
+    }
 
-		g2d.dispose();
-	}
+    public static void updateColors() {
+        trackColor = ChartPanelColors.ColorLabel.BASE_BG_1.color();
+        thumbColor = ChartPanelColors.ColorLabel.BASE_HIGHLIGHT.color();
+    }
 
-	@Override
-	protected void paintTrack(final Graphics g, final JComponent c, final Rectangle trackBounds) {
-		super.paintTrack(g, c, trackBounds);
-		final Graphics2D g2d = (Graphics2D) g.create();
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    @Override
+    public void installUI(JComponent c) {
+        super.installUI(c);
+        if (c instanceof JScrollPane) {
+            JScrollPane scrollPane = (JScrollPane) c;
+            scrollPane.getVerticalScrollBar().setUI(this);
+            scrollPane.getHorizontalScrollBar().setUI(this);
 
-		g2d.setColor(trackColor);
+            scrollPane.setOpaque(false);
+        }
+    }
 
-		g2d.fillRect(trackBounds.x, trackBounds.y, trackBounds.width, trackBounds.height);
+    @Override
+    protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
+        super.paintThumb(g, c, thumbBounds);
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		g2d.dispose();
-	}
+        g2d.setColor(thumbColor);
 
-	@Override
-	protected JButton createDecreaseButton(final int orientation) {
-		return createZeroButton();
-	}
+        int thumbWidth = (scrollbar.getOrientation() == JScrollBar.VERTICAL) ? SCROLLBAR_WIDTH : thumbBounds.width;
+        int thumbHeight = (scrollbar.getOrientation() == JScrollBar.VERTICAL) ? thumbBounds.height : SCROLLBAR_WIDTH;
 
-	@Override
-	protected JButton createIncreaseButton(final int orientation) {
-		return createZeroButton();
-	}
+        // thumb
+        RoundRectangle2D thumbRect = new RoundRectangle2D.Double(thumbBounds.x, thumbBounds.y, thumbWidth, thumbHeight, 0, 0);
+        g2d.fill(thumbRect);
 
-	private JButton createZeroButton() {
-		final JButton button = new JButton();
-		button.setPreferredSize(new Dimension(0, 0));
-		button.setMinimumSize(new Dimension(0, 0));
-		button.setMaximumSize(new Dimension(0, 0));
-		return button;
-	}
+        g2d.dispose();
+    }
 
-	static void install() {
-		UIManager.put("ScrollBarUI", CharterScrollBarUI.class.getName());
-	}
+    @Override
+    protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
+        super.paintTrack(g, c, trackBounds);
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2d.setColor(trackColor);
+
+        g2d.fillRect(trackBounds.x, trackBounds.y, trackBounds.width, trackBounds.height);
+
+        g2d.dispose();
+    }
+
+    @Override
+    protected JButton createDecreaseButton(int orientation) {
+        return createZeroButton();
+    }
+
+    @Override
+    protected JButton createIncreaseButton(int orientation) {
+        return createZeroButton();
+    }
+
+    private JButton createZeroButton() {
+        JButton button = new JButton();
+        button.setPreferredSize(new Dimension(0, 0));
+        button.setMinimumSize(new Dimension(0, 0));
+        button.setMaximumSize(new Dimension(0, 0));
+        return button;
+    }
+
+    public static void install() {
+        UIManager.put("ScrollBarUI", CharterScrollBarUI.class.getName());
+    }
 }

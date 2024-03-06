@@ -412,7 +412,7 @@ public class GuitarDrawer {
 		final int width = fontSize * 5 / 3;
 
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setColor(ColorLabel.BASE_BG_1.color());
+		g.setColor(ColorLabel.LANE.color());
 		g.fillRect(0, lanesTop, width + 3, lanesHeight + 1);
 
 		final int lanes = data.currentStrings();

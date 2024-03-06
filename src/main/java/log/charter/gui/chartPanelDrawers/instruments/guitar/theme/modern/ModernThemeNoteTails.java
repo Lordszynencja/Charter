@@ -123,7 +123,7 @@ public class ModernThemeNoteTails {
 			data.noteTails.add(filledTriangle(a, b, c, color));
 		}
 
-		data.slideFrets.add(centeredTextWithBackground(fretTextPosition, slideFretFont, note.slideTo + "", Color.BLACK,
+		data.slideFrets.add(centeredTextWithBackground(fretTextPosition, slideFretFont, note.slideTo + "", color.darker().darker().darker(),
 				backgroundColor, noteTailColors[stringId(note.string, data.strings)]));
 
 		if (note.highlighted) {

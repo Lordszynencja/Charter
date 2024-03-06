@@ -126,7 +126,7 @@ public class ParamsPane extends JDialog {
 		setSizeWithInsets(sizes.width, 100);
 
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setResizable(true);
+		setResizable(false);
 		setLayout(null);
 	}
 

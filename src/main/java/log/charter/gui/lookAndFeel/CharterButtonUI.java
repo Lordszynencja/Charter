@@ -9,14 +9,24 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
 public class CharterButtonUI extends BasicButtonUI {
-    private static final Color backgroundColor = ChartPanelColors.ColorLabel.BASE_BUTTON.color();
-    private static final Color disabledBackgroundColor = ChartPanelColors.ColorLabel.BASE_BG_2.color();
-    private static final Color selectColor = ChartPanelColors.ColorLabel.BASE_HIGHLIGHT.color();
+    private static Color backgroundColor;
+    private static Color disabledBackgroundColor;
+    private static Color selectColor;
 
-    private static final CharterButtonUI buttonUI = new CharterButtonUI();
+    static {
+        updateColors();
+    }
+
+    public static final CharterButtonUI buttonUI = new CharterButtonUI();
 
     public static ComponentUI createUI(JComponent c) {
         return buttonUI;
+    }
+
+    public static void updateColors() {
+        backgroundColor = ChartPanelColors.ColorLabel.BASE_BUTTON.color();
+        disabledBackgroundColor = ChartPanelColors.ColorLabel.BASE_BG_2.color();
+        selectColor = ChartPanelColors.ColorLabel.BASE_HIGHLIGHT.color();
     }
 
     @Override
@@ -55,7 +65,11 @@ public class CharterButtonUI extends BasicButtonUI {
 
         // button text
         if (button.getText() != null && !button.getText().isEmpty()) {
-            g2d.setColor(button.getForeground());
+            if (button.isEnabled()) {
+                g2d.setColor(button.getForeground());
+            } else {
+                g2d.setColor(button.getForeground().darker());
+            }
             g2d.drawString(button.getText(), (int) (c.getWidth() - g2d.getFontMetrics().getStringBounds(button.getText(), g2d).getWidth()) / 2,
                     (int) ((c.getHeight() - g2d.getFontMetrics().getAscent() - g2d.getFontMetrics().getDescent()) / 2) + g2d.getFontMetrics().getAscent());
         }

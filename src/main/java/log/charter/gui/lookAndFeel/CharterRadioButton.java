@@ -5,29 +5,40 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.swing.ButtonModel;
-import javax.swing.JRadioButton;
-import javax.swing.UIManager;
+import javax.swing.*;
 
+import log.charter.data.config.Localization;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 
-class CharterRadioButton {
+public class CharterRadioButton {
 
-    private static class RadioIcon extends SimpleIcon {
+    public static class RadioIcon extends SimpleIcon {
 
         private final Color backgroundColor;
         private final Color disabledBackgroundColor;
         private final Color borderColor;
         private final Color selectColor;
+        private final Color iconColor;
 
         public RadioIcon(final Color backgroundColor, final Color disabledBackgroundColor,
-                final Color borderColor, final Color selectColor) {
+                         final Color borderColor, final Color selectColor, final Color iconColor) {
             super(14, 14);
-            this.backgroundColor = backgroundColor;
-            this.disabledBackgroundColor = disabledBackgroundColor;
-            this.borderColor = borderColor;
-            this.selectColor = selectColor;
+            this.backgroundColor = getDefault(backgroundColor, CharterRadioButton.backgroundColor);
+            this.disabledBackgroundColor = getDefault(disabledBackgroundColor, CharterRadioButton.disabledBackgroundColor);
+            this.borderColor = getDefault(borderColor, CharterRadioButton.borderColor);
+            this.selectColor = getDefault(selectColor, CharterRadioButton.selectColor);
+            this.iconColor = iconColor;
+        }
+
+        public RadioIcon(final Color selectColor) {
+            this(null, null, selectColor, selectColor, null);
+        }
+
+
+        private Color getDefault(Color inputColor, Color defaultColor) {
+            return (inputColor != null) ? inputColor : defaultColor;
         }
 
         private Color getFillColor(final ButtonModel model) {
@@ -55,7 +66,7 @@ class CharterRadioButton {
 
             // Radio button fill
             g2d.setColor(fillColor);
-            g2d.fillOval(x, y, width - 1, height - 1);
+            g2d.fillOval(x + 1, y + 1, width - 2, height - 2);
 
             // Radio button border
             g2d.setColor(borderColor);
@@ -63,7 +74,7 @@ class CharterRadioButton {
 
             // Radio icon
             if (model.isSelected()) {
-                g2d.setColor(Color.WHITE);
+                g2d.setColor(iconColor);
                 g2d.fillOval(x + 4, y + 4, 6, 6); // Adjusted size
             }
         }
@@ -73,12 +84,13 @@ class CharterRadioButton {
         }
     }
 
-    static void install() {
-        final Color backgroundColor = ColorLabel.BASE_BG_1.color();
-        final Color disabledBackgroundColor = ColorLabel.BASE_BG_2.color();
-        final Color borderColor = ColorLabel.BASE_BORDER.color();
-        final Color selectColor = ColorLabel.BASE_HIGHLIGHT.color();
+    public static Color backgroundColor = ColorLabel.BASE_BG_INPUT.color();
+    public static Color disabledBackgroundColor = ColorLabel.BASE_BG_2.color();
+    public static Color borderColor = ColorLabel.BASE_BORDER.color();
+    public static Color selectColor = ColorLabel.BASE_HIGHLIGHT.color();
+    public static Color iconColor  = ColorLabel.BASE_TEXT.color();
 
-        UIManager.put("RadioButton.icon", new RadioIcon(backgroundColor, disabledBackgroundColor, borderColor, selectColor));
+    static void install() {
+        UIManager.put("RadioButton.icon", new RadioIcon(backgroundColor, disabledBackgroundColor, borderColor, selectColor, iconColor));
     }
 }

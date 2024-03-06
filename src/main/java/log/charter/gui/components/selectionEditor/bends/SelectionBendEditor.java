@@ -22,6 +22,8 @@ import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.data.PaneSizesBuilder;
+import log.charter.gui.lookAndFeel.CharterCheckBox;
+import log.charter.gui.lookAndFeel.CharterRadioButton;
 import log.charter.song.BeatsMap;
 import log.charter.song.BendValue;
 import log.charter.song.notes.ChordOrNote;
@@ -82,7 +84,6 @@ public class SelectionBendEditor extends RowedPanel {
 		for (int i = 0; i < maxStrings; i++) {
 			final int string = i;
 			final JRadioButton radioButton = new JRadioButton((string + 1) + "");
-			radioButton.setForeground(getStringBasedColor(StringColorLabelType.NOTE, string, maxStrings));
 			radioButton.addActionListener(e -> onSelectString(string));
 			this.addWithSettingSize(radioButton, 20 + 40 * i, sizes.getY(0), 40, 20);
 
@@ -144,7 +145,7 @@ public class SelectionBendEditor extends RowedPanel {
 				stringsForAction[i] = true;
 			}
 			doActionOnStringButtons(stringsForAction, (button, i) -> {
-				button.setForeground(getStringBasedColor(StringColorLabelType.NOTE, i, lastStringsAmount));
+				button.setIcon(new CharterRadioButton.RadioIcon(getStringBasedColor(StringColorLabelType.NOTE, i, lastStringsAmount)));
 			});
 		}
 	}
