@@ -126,14 +126,14 @@ public class BeatsDrawer {
 		}
 
 		public void addRepeatStart(final int x) {
-			repeat.add(lineVertical(x, beatTextY, beatTextY, ColorLabel.REPEAT_MARKER));
-			final ShapePositionWithSize startPosition = new ShapePositionWithSize(x, sectionNamesY, 10, 3);
+			repeat.add(lineVertical(x, 0, beatTextY, ColorLabel.REPEAT_MARKER));
+			final ShapePositionWithSize startPosition = new ShapePositionWithSize(x, 0, 10, 3);
 			repeat.add(filledRectangle(startPosition, ColorLabel.REPEAT_MARKER));
 		}
 
 		public void addRepeatEnd(final int x) {
-			repeat.add(lineVertical(x, beatTextY, beatTextY, ColorLabel.REPEAT_MARKER));
-			final ShapePositionWithSize endPosition = new ShapePositionWithSize(x - 10, sectionNamesY, 10, 3);
+			repeat.add(lineVertical(x, 0, beatTextY, ColorLabel.REPEAT_MARKER));
+			final ShapePositionWithSize endPosition = new ShapePositionWithSize(x - 10, 0, 10, 3);
 			repeat.add(filledRectangle(endPosition, ColorLabel.REPEAT_MARKER));
 		}
 

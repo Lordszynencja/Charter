@@ -13,6 +13,7 @@ public class CharterTextFieldUI extends BasicTextFieldUI {
     private static final String CHARTER_TEXT_FIELD_UI = "CharterTextFieldUI";
 
     private static Color backgroundColor;
+    private static Color disabledBackgroundColor;
     private static Color borderColor;
     private static Color textColor;
 
@@ -26,6 +27,7 @@ public class CharterTextFieldUI extends BasicTextFieldUI {
 
     public static void updateColors() {
         backgroundColor = ChartPanelColors.ColorLabel.BASE_BG_INPUT.color();
+        disabledBackgroundColor = ChartPanelColors.ColorLabel.BASE_BG_2.color();
         borderColor = ChartPanelColors.ColorLabel.BASE_BORDER.color();
         textColor = ChartPanelColors.ColorLabel.BASE_TEXT_INPUT.color();
     }
@@ -59,7 +61,11 @@ public class CharterTextFieldUI extends BasicTextFieldUI {
 
         // Textfield fill
         RoundRectangle2D.Double roundedRectangle = new RoundRectangle2D.Double(1, 1, getComponent().getWidth() - 2, getComponent().getHeight() - 2, 5, 5);
-        g2d.setColor(backgroundColor);
+        if (!getComponent().isEnabled()) {
+            g2d.setColor(disabledBackgroundColor);
+        } else {
+            g2d.setColor(backgroundColor);
+        }
         g2d.fill(roundedRectangle);
 
         super.paintSafely(g);

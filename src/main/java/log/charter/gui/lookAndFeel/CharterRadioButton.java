@@ -75,7 +75,7 @@ public class CharterRadioButton {
             // Radio icon
             if (model.isSelected()) {
                 g2d.setColor(iconColor);
-                g2d.fillOval(x + 4, y + 4, 6, 6); // Adjusted size
+                g2d.fillOval(x + 4, y + 4, 6, 6);
             }
         }
 
