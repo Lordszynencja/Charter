@@ -16,8 +16,8 @@ import javax.swing.WindowConstants;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.data.PaneSizes;
-import log.charter.gui.components.data.PaneSizesBuilder;
+import log.charter.gui.components.utils.PaneSizes;
+import log.charter.gui.components.utils.PaneSizesBuilder;
 
 public class RowedDialog extends JDialog implements ComponentListener {
 	private static final long serialVersionUID = -3193534671039163160L;

@@ -36,7 +36,7 @@ import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.ComponentUtils;
-import log.charter.gui.components.utils.IntegerValueValidator;
+import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 //import log.charter.gui.lookAndFeel.CharterButtonUI;

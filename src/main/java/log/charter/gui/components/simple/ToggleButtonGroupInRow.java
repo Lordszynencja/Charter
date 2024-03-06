@@ -8,8 +8,8 @@ import javax.swing.JLabel;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.containers.RowedPanel;
-import log.charter.gui.components.data.PaneSizes;
-import log.charter.gui.components.data.PaneSizesBuilder;
+import log.charter.gui.components.utils.PaneSizes;
+import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.util.CollectionUtils.Pair;
 

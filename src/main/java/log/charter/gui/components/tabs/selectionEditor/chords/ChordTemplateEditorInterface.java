@@ -1,4 +1,4 @@
-package log.charter.gui.components.selectionEditor.chords;
+package log.charter.gui.components.tabs.selectionEditor.chords;
 
 public interface ChordTemplateEditorInterface {
 

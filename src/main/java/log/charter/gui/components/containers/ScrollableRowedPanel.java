@@ -6,8 +6,8 @@ import java.awt.Component;
 
 import javax.swing.JPanel;
 
-import log.charter.gui.components.data.PaneSizes;
-import log.charter.gui.components.data.PaneSizesBuilder;
+import log.charter.gui.components.utils.PaneSizes;
+import log.charter.gui.components.utils.PaneSizesBuilder;
 
 public class ScrollableRowedPanel extends CharterScrollPane {
 	private static final long serialVersionUID = 7451891986721556918L;

@@ -48,11 +48,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import log.charter.data.config.Zoom;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
+import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightLine;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackground;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
@@ -73,7 +75,7 @@ import log.charter.song.SectionType;
 import log.charter.song.ToneChange;
 import log.charter.song.enums.Mute;
 import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.Note;
+import log.charter.song.notes.CommonNoteWithFret;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.ImageUtils;
 import log.charter.util.IntRange;
@@ -718,26 +720,25 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		notes.add(strokedRectangle(notePosition, ColorLabel.HIGHLIGHT));
 	}
 
-	@Override
-	public void addSoundHighlight(final int x, final ChordOrNote originalSound, final ChordTemplate template,
-			final int string) {
-		if (originalSound == null) {
-			addNoteHighlight(x, 0, string);
-			return;
-		}
+	private void drawHighlightForNote(final int x, final CommonNoteWithFret note) {
+		addNoteHighlight(x, timeToXLength(note.length(), note.position()), note.string());
+	}
 
-		if (originalSound.isNote()) {
-			final Note note = originalSound.note();
-			addNoteHighlight(x, timeToXLength(note.length(), note.position()), note.string);
-			return;
-		}
-
-		originalSound.chord().chordNotes.keySet().forEach(chordString -> addNoteHighlight(x, 0, chordString));
+	private void drawHighlightWithoutNote(final int x, final int string) {
+		addNoteHighlight(x, 0, string);
 	}
 
 	@Override
-	public void addNoteAdditionLine(final Position2D from, final Position2D to) {
-		notes.add(new Line(from, to, ColorLabel.NOTE_ADD_LINE));
+	public void addSoundHighlight(final int x, final Optional<ChordOrNote> originalSound,
+			final Optional<ChordTemplate> template, final int string) {
+		originalSound.map(sound -> sound.noteWithFrets(string, template.orElse(null)))//
+				.ifPresentOrElse(note -> drawHighlightForNote(x, note.get()), //
+						() -> drawHighlightWithoutNote(x, string));
+	}
+
+	@Override
+	public void addNoteAdditionLine(final HighlightLine line) {
+		notes.add(new Line(line.lineStart, line.lineEnd, ColorLabel.NOTE_ADD_LINE));
 	}
 
 	protected void addAnchorLine(final int x) {

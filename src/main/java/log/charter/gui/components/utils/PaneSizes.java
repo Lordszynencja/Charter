@@ -1,4 +1,4 @@
-package log.charter.gui.components.data;
+package log.charter.gui.components.utils;
 
 public class PaneSizes {
 	public final int width;

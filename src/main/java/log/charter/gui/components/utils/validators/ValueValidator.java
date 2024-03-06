@@ -1,4 +1,4 @@
-package log.charter.gui.components.utils;
+package log.charter.gui.components.utils.validators;
 
 import java.io.File;
 import java.math.BigDecimal;

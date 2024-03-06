@@ -131,12 +131,17 @@ public interface ChordOrNote extends IPositionWithLength {
 		}
 
 		@Override
-		public Optional<NoteInterface> getString(final int string) {
+		public boolean hasString(final int string) {
+			return chord.chordNotes.containsKey(string);
+		}
+
+		@Override
+		public Optional<ChordNote> getString(final int string) {
 			return Optional.ofNullable(chord.chordNotes.get(string));
 		}
 
 		@Override
-		public Stream<? extends NoteInterface> noteInterfaces() {
+		public Stream<ChordNote> noteInterfaces() {
 			return chord.chordNotes.values().stream();
 		}
 
@@ -155,6 +160,20 @@ public interface ChordOrNote extends IPositionWithLength {
 		public Stream<CommonNoteWithFret> notesWithFrets(final ChordTemplate chordTemplate) {
 			return chord.chordNotes.keySet().stream()//
 					.map(string -> new CommonNoteWithFret(chord, string, chordTemplate.frets.get(string)));
+		}
+
+		@Override
+		public Optional<CommonNoteWithFret> noteWithFrets(final int string, final List<ChordTemplate> chordTemplates) {
+			return noteWithFrets(string, chordTemplates.get(chord.templateId()));
+		}
+
+		@Override
+		public Optional<CommonNoteWithFret> noteWithFrets(final int string, final ChordTemplate chordTemplate) {
+			if (!chord.chordNotes.containsKey(string)) {
+				return Optional.empty();
+			}
+
+			return Optional.of(new CommonNoteWithFret(chord, string, chordTemplate.frets.get(string)));
 		}
 	}
 
@@ -218,12 +237,17 @@ public interface ChordOrNote extends IPositionWithLength {
 		}
 
 		@Override
-		public Optional<NoteInterface> getString(final int string) {
+		public boolean hasString(final int string) {
+			return note.string == string;
+		}
+
+		@Override
+		public Optional<Note> getString(final int string) {
 			return note.string == string ? Optional.of(note) : Optional.empty();
 		}
 
 		@Override
-		public Stream<? extends NoteInterface> noteInterfaces() {
+		public Stream<Note> noteInterfaces() {
 			return Stream.of(note);
 		}
 
@@ -240,6 +264,16 @@ public interface ChordOrNote extends IPositionWithLength {
 		@Override
 		public Stream<CommonNoteWithFret> notesWithFrets(final ChordTemplate chordTemplate) {
 			return Stream.of(new CommonNoteWithFret(note));
+		}
+
+		@Override
+		public Optional<CommonNoteWithFret> noteWithFrets(final int string, final List<ChordTemplate> chordTemplates) {
+			return getString(string).map(CommonNoteWithFret::new);
+		}
+
+		@Override
+		public Optional<CommonNoteWithFret> noteWithFrets(final int string, final ChordTemplate chordTemplate) {
+			return getString(string).map(CommonNoteWithFret::new);
 		}
 	}
 
@@ -286,13 +320,19 @@ public interface ChordOrNote extends IPositionWithLength {
 
 	ChordOrNote asChord(final int chordId, final ChordTemplate chordTemplate);
 
-	Optional<NoteInterface> getString(int string);
+	boolean hasString(int string);
+
+	Optional<? extends NoteInterface> getString(int string);
 
 	Stream<? extends NoteInterface> noteInterfaces();
 
-	Stream<CommonNote> notes();
+	Stream<? extends CommonNote> notes();
 
-	Stream<CommonNoteWithFret> notesWithFrets(List<ChordTemplate> chordTemplates);
+	Stream<? extends CommonNoteWithFret> notesWithFrets(List<ChordTemplate> chordTemplates);
 
-	Stream<CommonNoteWithFret> notesWithFrets(ChordTemplate chordTemplate);
+	Stream<? extends CommonNoteWithFret> notesWithFrets(ChordTemplate chordTemplate);
+
+	Optional<? extends CommonNoteWithFret> noteWithFrets(int string, List<ChordTemplate> chordTemplates);
+
+	Optional<? extends CommonNoteWithFret> noteWithFrets(int string, ChordTemplate chordTemplate);
 }

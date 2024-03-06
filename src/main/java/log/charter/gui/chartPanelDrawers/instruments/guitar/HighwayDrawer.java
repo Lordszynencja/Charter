@@ -1,9 +1,11 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
 import java.awt.Graphics;
+import java.util.Optional;
 
 import log.charter.data.config.GraphicalConfig;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
+import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightLine;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.ModernHighwayDrawer;
 import log.charter.song.Anchor;
 import log.charter.song.ChordTemplate;
@@ -12,7 +14,6 @@ import log.charter.song.HandShape;
 import log.charter.song.Phrase;
 import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
-import log.charter.util.Position2D;
 
 public interface HighwayDrawer {
 	public static void reloadGraphics() {
@@ -43,9 +44,9 @@ public interface HighwayDrawer {
 
 	void addNote(final EditorNoteDrawingData note);
 
-	void addSoundHighlight(int x, ChordOrNote originalSound, ChordTemplate template, int string);
+	void addSoundHighlight(int x, Optional<ChordOrNote> originalSound, Optional<ChordTemplate> template, int string);
 
-	void addNoteAdditionLine(Position2D from, Position2D to);
+	void addNoteAdditionLine(HighlightLine line);
 
 	void addHandShape(int x, int length, boolean selected, boolean highlighted, HandShape handShape,
 			ChordTemplate chordTemplate);

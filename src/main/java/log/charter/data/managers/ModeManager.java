@@ -13,7 +13,7 @@ import log.charter.data.managers.modes.VocalModeHandler;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
+import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.handlers.data.ChartTimeHandler;
@@ -22,10 +22,10 @@ import log.charter.gui.menuHandlers.CharterMenuBar;
 
 public class ModeManager {
 	private AudioHandler audioHandler;
+	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private CharterMenuBar charterMenuBar;
 	private ChartToolbar chartToolbar;
-	private ChartData data;
-	private CharterFrame frame;
 	private SelectionManager selectionManager;
 
 	private EditMode editMode = EditMode.EMPTY;
@@ -46,21 +46,23 @@ public class ModeManager {
 
 	public void init(final AudioHandler audioHandler, final CharterMenuBar charterMenuBar,
 			final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar,
-			final CurrentSelectionEditor currentSelectionEditor, final ChartData data, final CharterFrame frame,
-			final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+			final CurrentSelectionEditor currentSelectionEditor, final ChartData chartData,
+			final CharterFrame charterFrame, final HighlightManager highlightManager,
+			final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
+			final UndoSystem undoSystem) {
 		this.audioHandler = audioHandler;
+		this.chartData = chartData;
+		this.charterFrame = charterFrame;
 		this.charterMenuBar = charterMenuBar;
 		this.chartToolbar = chartToolbar;
-		this.data = data;
-		this.frame = frame;
 		this.selectionManager = selectionManager;
 
 		emptyModeHandler.init();
-		guitarModeHandler.init(currentSelectionEditor, data, frame, highlightManager, keyboardHandler, selectionManager,
+		guitarModeHandler.init(currentSelectionEditor, chartData, charterFrame, highlightManager, keyboardHandler,
+				selectionManager, undoSystem);
+		tempoMapModeHandler.init(chartTimeHandler, chartData, charterFrame, undoSystem);
+		vocalModeHandler.init(chartData, charterFrame, currentSelectionEditor, keyboardHandler, selectionManager,
 				undoSystem);
-		tempoMapModeHandler.init(chartTimeHandler, data, frame, undoSystem);
-		vocalModeHandler.init(data, frame, keyboardHandler, selectionManager, undoSystem);
 	}
 
 	public ModeHandler getHandler() {
@@ -79,19 +81,19 @@ public class ModeManager {
 
 		chartToolbar.updateValues();
 		charterMenuBar.refreshMenus();
-		frame.updateEditAreaSizes();
+		charterFrame.updateEditAreaSizes();
 	}
 
 	public void setArrangement(final int arrangementId) {
-		data.currentArrangement = arrangementId;
+		chartData.currentArrangement = arrangementId;
 		setLevel(0);
 		setMode(EditMode.GUITAR);
 
-		frame.updateEditAreaSizes();
+		charterFrame.updateEditAreaSizes();
 	}
 
 	public void setLevel(final int level) {
-		data.currentLevel = level;
+		chartData.currentLevel = level;
 	}
 
 	public EditMode getMode() {

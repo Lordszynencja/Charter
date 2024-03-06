@@ -170,8 +170,7 @@ public class BeatsDrawer {
 		final List<Beat> beats = data.songChart.beatsMap.beats;
 		final HashSet2<Integer> selectedBeatIds = selectionManager.getSelectedAccessor(PositionType.BEAT)//
 				.getSelectedSet().map(selection -> selection.id);
-		final boolean canBeHighlighted = highlightData.highlightType == PositionType.BEAT
-				&& highlightData.highlightedId != null;
+		final int highlightId = highlightData.getId(PositionType.BEAT);
 
 		double bpm = 120;
 		int bar = 0;
@@ -193,11 +192,11 @@ public class BeatsDrawer {
 			}
 
 			final boolean selected = selectedBeatIds.contains(i);
-			final boolean highlighted = canBeHighlighted && i == highlightData.highlightedId;
+			final boolean highlighted = i == highlightId;
 			drawingData.addBeat(beat, x, bar, i > 0 ? beats.get(i - 1) : null, bpm, selected, highlighted);
 		}
 
-		if (highlightData.highlightType == PositionType.BEAT) {
+		if (highlightData.type == PositionType.BEAT) {
 			highlightData.highlightedNonIdPositions.forEach(
 					highlightPosition -> drawingData.addBeatHighlight(timeToX(highlightPosition.position, time)));
 		}

@@ -1,7 +1,5 @@
 package log.charter.gui.components.utils;
 
-import log.charter.gui.components.data.PaneSizes;
-
 public class RowedPosition {
 	private final int startX;
 	private final int startY;

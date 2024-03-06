@@ -18,6 +18,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
+import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.data.ChartItemsHandler;
 import log.charter.gui.handlers.data.ChartTimeHandler;
@@ -51,9 +52,9 @@ public class ActionHandler {
 	public void init(final AudioHandler audioHandler, final ArrangementFixer arrangementFixer,
 			final ChartData chartData, final CharterFrame charterFrame, final ChartItemsHandler chartItemsHandler,
 			final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar, final CopyManager copyManager,
-			final ModeManager modeManager, final MouseHandler mouseHandler, final RepeatManager repeatManager,
-			final SelectionManager selectionManager, final SongFileHandler songFileHandler, final UndoSystem undoSystem,
-			final WaveFormDrawer waveFormDrawer) {
+			final CurrentSelectionEditor currentSelectionEditor, final ModeManager modeManager,
+			final MouseHandler mouseHandler, final RepeatManager repeatManager, final SelectionManager selectionManager,
+			final SongFileHandler songFileHandler, final UndoSystem undoSystem, final WaveFormDrawer waveFormDrawer) {
 		this.audioHandler = audioHandler;
 		this.chartData = chartData;
 		this.charterFrame = charterFrame;
@@ -69,10 +70,10 @@ public class ActionHandler {
 		this.undoSystem = undoSystem;
 		this.waveFormDrawer = waveFormDrawer;
 
-		guitarSoundsHandler.init(chartData, charterFrame, selectionManager, undoSystem);
-		guitarSoundsStatusesHandler.init(chartData, charterFrame, selectionManager, undoSystem);
+		guitarSoundsHandler.init(chartData, currentSelectionEditor, selectionManager, undoSystem);
+		guitarSoundsStatusesHandler.init(chartData, currentSelectionEditor, selectionManager, undoSystem);
 		handShapesHandler.init(chartData, charterFrame, selectionManager, undoSystem);
-		vocalsHandler.init(chartData, charterFrame, selectionManager, undoSystem);
+		vocalsHandler.init(chartData, charterFrame, currentSelectionEditor, selectionManager, undoSystem);
 
 		prepareHandlers();
 	}
@@ -259,9 +260,5 @@ public class ActionHandler {
 		if (actionHandler != null) {
 			actionHandler.run();
 		}
-	}
-
-	public void frame() {
-		fretNumberTimer--;
 	}
 }

@@ -6,7 +6,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
-import log.charter.gui.components.selectionEditor.chords.ChordTemplateEditor;
+import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 

@@ -8,6 +8,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.songEdits.VocalPane;
@@ -16,18 +17,21 @@ import log.charter.song.vocals.Vocal;
 public class VocalModeHandler extends ModeHandler {
 	private static final long scrollTimeoutForUndo = 1000;
 
-	private ChartData data;
-	private CharterFrame frame;
+	private ChartData chartData;
+	private CharterFrame charterFrame;
+	private CurrentSelectionEditor currentSelectionEditor;
 	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
 	private long lastScrollTime = -scrollTimeoutForUndo;
 
-	public void init(final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
+	public void init(final ChartData chartData, final CharterFrame charterFrame,
+			final CurrentSelectionEditor currentSelectionEditor, final KeyboardHandler keyboardHandler,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this.data = data;
-		this.frame = frame;
+		this.chartData = chartData;
+		this.charterFrame = charterFrame;
+		this.currentSelectionEditor = currentSelectionEditor;
 		this.keyboardHandler = keyboardHandler;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
@@ -43,11 +47,11 @@ public class VocalModeHandler extends ModeHandler {
 			undoSystem.addUndo();
 
 			selectionManager.clear();
-			data.songChart.vocals.removeNote(clickData.pressHighlight.id);
+			chartData.songChart.vocals.removeNote(clickData.pressHighlight.id);
 			return;
 		}
 
-		new VocalPane(clickData.pressHighlight.position(), data, frame, selectionManager, undoSystem);
+		new VocalPane(clickData.pressHighlight.position(), chartData, charterFrame, selectionManager, undoSystem);
 	}
 
 	@Override
@@ -61,10 +65,10 @@ public class VocalModeHandler extends ModeHandler {
 		}
 
 		final SelectionAccessor<Vocal> selectedNotes = selectionManager.getSelectedAccessor(PositionType.VOCAL);
-		changePositionsWithLengthsLength(data.songChart.beatsMap, selectedNotes.getSortedSelected(),
-				data.songChart.vocals.vocals, change);
+		changePositionsWithLengthsLength(chartData.songChart.beatsMap, selectedNotes.getSortedSelected(),
+				chartData.songChart.vocals.vocals, change);
 
-		frame.selectionChanged(false);
+		currentSelectionEditor.selectionChanged(false);
 		lastScrollTime = System.currentTimeMillis();
 	}
 }

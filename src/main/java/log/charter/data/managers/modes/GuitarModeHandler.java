@@ -18,7 +18,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.selectionEditor.CurrentSelectionEditor;
+import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.gui.panes.songEdits.AnchorPane;
@@ -310,7 +310,7 @@ public class GuitarModeHandler extends ModeHandler {
 		changeNotesLength(change);
 		changeHandShapesLength(change);
 
-		frame.selectionChanged(false);
+		currentSelectionEditor.selectionChanged(false);
 		lastScrollTime = System.currentTimeMillis();
 	}
 }

@@ -1,6 +1,6 @@
-package log.charter.gui.components.selectionEditor;
+package log.charter.gui.components.tabs.selectionEditor;
 
-import static log.charter.gui.components.selectionEditor.CurrentSelectionEditor.getSingleValue;
+import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -15,7 +15,7 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.selectionEditor.chords.ChordTemplateEditor;
+import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;

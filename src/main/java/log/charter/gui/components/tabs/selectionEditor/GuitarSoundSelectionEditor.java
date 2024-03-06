@@ -1,4 +1,4 @@
-package log.charter.gui.components.selectionEditor;
+package log.charter.gui.components.tabs.selectionEditor;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -7,8 +7,8 @@ import static log.charter.data.ArrangementFixer.fixSoundLength;
 import static log.charter.data.config.Config.frets;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.gui.components.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
+import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +31,17 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.selectionEditor.bends.SelectionBendEditor;
-import log.charter.gui.components.selectionEditor.chords.ChordTemplateEditor;
-import log.charter.gui.components.selectionEditor.components.BasicCheckboxInput;
-import log.charter.gui.components.selectionEditor.components.FretInput;
-import log.charter.gui.components.selectionEditor.components.StringInput;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.ToggleButtonGroupInRow;
-import log.charter.gui.components.utils.IntegerValueValidator;
+import log.charter.gui.components.tabs.selectionEditor.bends.SelectionBendEditor;
+import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
+import log.charter.gui.components.tabs.selectionEditor.simpleComponents.BasicCheckboxInput;
+import log.charter.gui.components.tabs.selectionEditor.simpleComponents.FretInput;
+import log.charter.gui.components.tabs.selectionEditor.simpleComponents.StringInput;
 import log.charter.gui.components.utils.RowedPosition;
+import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.handlers.data.ChartItemsHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Arrangement;
@@ -344,9 +344,10 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				onChange);
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T> Consumer<T> makeChangeForCommonNotes(final BiConsumer<CommonNote, T> onChange) {
 		return makeChange(stream -> stream//
-				.flatMap(selection -> selection.selectable.notes())//
+				.flatMap(selection -> (Stream<CommonNote>) selection.selectable.notes())//
 				.filter(note -> isSelected(note.string())), //
 
 				onChange);

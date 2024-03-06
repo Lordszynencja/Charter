@@ -4,6 +4,7 @@ import static java.lang.System.nanoTime;
 import static log.charter.data.config.Config.createDefaultStretchesInBackground;
 import static log.charter.data.config.Config.sfxVolume;
 import static log.charter.data.config.Config.stretchedMusicSpeed;
+import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import static log.charter.song.notes.IConstantPosition.findFirstAfter;
 import static log.charter.sound.data.AudioUtils.generateSound;
 
@@ -275,7 +276,7 @@ public class AudioHandler {
 			playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
 		} else {
 			stretchedAudioHandler.addSpeedToGenerate(currentlyLoadedSpecialSpeed);
-			frame.showPopup(Label.GENERATING_SLOWED_SOUND.label());
+			showPopup(frame, Label.GENERATING_SLOWED_SOUND);
 		}
 	}
 

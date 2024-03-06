@@ -23,7 +23,7 @@ import log.charter.util.RW;
 
 public class SongChart {
 	private static String cleanString(final String s) {
-		return s == null ? s : s.replace("\u0000", "");
+		return s == null ? "" : s.replace("\u0000", "");
 	}
 
 	public String musicFileName;

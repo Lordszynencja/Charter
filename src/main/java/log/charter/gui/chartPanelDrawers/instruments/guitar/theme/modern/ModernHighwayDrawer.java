@@ -1,8 +1,10 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
 import java.awt.Graphics;
+import java.util.Optional;
 
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
+import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightLine;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.HighwayDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawerData;
 import log.charter.song.Anchor;
@@ -12,7 +14,6 @@ import log.charter.song.HandShape;
 import log.charter.song.Phrase;
 import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
-import log.charter.util.Position2D;
 
 public class ModernHighwayDrawer implements HighwayDrawer {
 	public static void reloadGraphics() {
@@ -88,14 +89,14 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addSoundHighlight(final int x, final ChordOrNote originalSound, final ChordTemplate template,
-			final int string) {
+	public void addSoundHighlight(final int x, final Optional<ChordOrNote> originalSound,
+			final Optional<ChordTemplate> template, final int string) {
 		notes.addSoundHighlight(x, originalSound, template, string);
 	}
 
 	@Override
-	public void addNoteAdditionLine(final Position2D from, final Position2D to) {
-		notes.addNoteAdditionLine(from, to);
+	public void addNoteAdditionLine(final HighlightLine line) {
+		notes.addNoteAdditionLine(line.lineStart, line.lineEnd);
 	}
 
 	@Override

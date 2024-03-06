@@ -19,9 +19,9 @@ import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.gui.components.utils.BigDecimalValueValidator;
-import log.charter.gui.components.utils.IntValueValidator;
 import log.charter.gui.components.utils.RowedPosition;
+import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
+import log.charter.gui.components.utils.validators.IntValueValidator;
 
 public class GraphicThemeConfigPage implements Page {
 	private static final IntValueValidator editorPartHeightValidator = new IntValueValidator(1, 100);

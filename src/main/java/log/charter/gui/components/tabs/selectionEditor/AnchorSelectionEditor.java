@@ -1,8 +1,8 @@
-package log.charter.gui.components.selectionEditor;
+package log.charter.gui.components.tabs.selectionEditor;
 
 import static log.charter.data.config.Config.frets;
-import static log.charter.gui.components.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
+import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import javax.swing.JTextField;
@@ -16,8 +16,8 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.gui.components.utils.IntValueValidator;
 import log.charter.gui.components.utils.RowedPosition;
+import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.HashSet2;
 
