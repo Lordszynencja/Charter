@@ -10,7 +10,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.fromChord;
 import static log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.fromNote;
-import static log.charter.gui.chartPanelDrawers.instruments.guitar.HighwayDrawer.getHighwayDrawer;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer.getHighwayDrawer;
 import static log.charter.song.notes.ChordOrNote.findPreviousSoundOnString;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
@@ -35,13 +35,13 @@ import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Anchor;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
 import log.charter.song.Level;
-import log.charter.song.ToneChange;
 import log.charter.song.notes.Chord;
 import log.charter.song.notes.ChordNote;
 import log.charter.song.notes.ChordOrNote;
@@ -90,38 +90,18 @@ public class GuitarDrawer {
 
 	private void addEventPoints(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
 			final Arrangement arrangement, final int time, final HighlightData highlightData) {
-		final HashSet2<Integer> selectedEventPointIds = selectionManager.getSelectedAccessor(PositionType.EVENT_POINT)//
+		final HashSet2<Integer> selectedIds = selectionManager.getSelectedAccessor(PositionType.EVENT_POINT)//
 				.getSelectedSet().map(selection -> selection.id);
 		GuitarEventPointsDrawer.addEventPoints(g, panelWidth, highwayDrawer, arrangement.eventPoints,
-				arrangement.phrases, time, selectedEventPointIds, highlightData);
+				arrangement.phrases, time, selectedIds, highlightData);
 	}
 
-	private void addToneChanges(final int time, final HighwayDrawer highwayDrawer, final HighlightData highlightData,
-			final Arrangement arrangement, final int panelWidth) {
-		final HashSet2<Integer> selectedToneChangeIds = getSelectedIds(PositionType.TONE_CHANGE);
-		final ArrayList2<ToneChange> toneChanges = arrangement.toneChanges;
-		final int highlightId = highlightData.getId(PositionType.TONE_CHANGE);
-
-		for (int i = 0; i < toneChanges.size(); i++) {
-			final ToneChange toneChange = toneChanges.get(i);
-			final int x = timeToX(toneChange.position(), time);
-			if (isPastRightEdge(x, panelWidth)) {
-				break;
-			}
-
-			if (!isOnScreen(x, 100)) {
-				continue;
-			}
-
-			final boolean selected = selectedToneChangeIds.contains(i);
-			final boolean highlighted = i == highlightId;
-			highwayDrawer.addToneChange(toneChange, x, selected, highlighted);
-		}
-
-		if (highlightData.type == PositionType.TONE_CHANGE) {
-			highlightData.highlightedNonIdPositions.forEach(highlightPosition -> highwayDrawer
-					.addToneChangeHighlight(timeToX(highlightPosition.position, time)));
-		}
+	private void addToneChanges(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
+			final Arrangement arrangement, final int time, final HighlightData highlightData) {
+		final HashSet2<Integer> selectedIds = selectionManager.getSelectedAccessor(PositionType.TONE_CHANGE)//
+				.getSelectedSet().map(selection -> selection.id);
+		GuitarToneChangeDrawer.addToneChanges(g, panelWidth, highwayDrawer, arrangement.baseTone,
+				arrangement.toneChanges, time, selectedIds, highlightData);
 	}
 
 	private void addAnchors(final int time, final HighwayDrawer highwayDrawer, final HighlightData highlightData,
@@ -374,7 +354,7 @@ public class GuitarDrawer {
 		final int panelWidth = chartPanel.getWidth();
 
 		addEventPoints(g, panelWidth, highwayDrawer, arrangement, time, highlightData);
-		addToneChanges(time, highwayDrawer, highlightData, arrangement, panelWidth);
+		addToneChanges(g, panelWidth, highwayDrawer, arrangement, time, highlightData);
 		addAnchors(time, highwayDrawer, highlightData, level, panelWidth);
 		drawGuitarLanes(g, arrangement.tuning.strings(), time);
 		addGuitarNotes(level.sounds, arrangement.chordTemplates, time, highwayDrawer, highlightData, arrangement,

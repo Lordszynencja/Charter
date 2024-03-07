@@ -1,4 +1,4 @@
-package log.charter.gui.chartPanelDrawers.instruments.guitar;
+package log.charter.gui.chartPanelDrawers.instruments.guitar.highway;
 
 import static java.lang.Math.round;
 import static java.lang.Math.sin;
@@ -834,6 +834,14 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length - 1,
 				handShapesHeight - 1);
 		handShapes.add(strokedRectangle(position, ColorLabel.HIGHLIGHT));
+	}
+
+	@Override
+	public void addCurrentTone(final Graphics2D g, final String tone) {
+	}
+
+	@Override
+	public void addCurrentTone(final Graphics2D g, final String tone, final int nextToneChangeX) {
 	}
 
 	private void addToneChangeBox(final int x, final ColorLabel color) {

@@ -9,6 +9,8 @@ import java.util.Map;
 
 import log.charter.data.types.PositionType;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
+import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
 import log.charter.song.EventPoint;
 import log.charter.song.Phrase;
 import log.charter.util.CollectionUtils.ArrayList2;
@@ -71,17 +73,21 @@ public class GuitarEventPointsDrawer {
 		highwayDrawer.addCurrentPhrase(g, phrases.get(section.phrase), section.phrase);
 	}
 
-	private static void drawHighlightedNonPositions(final HighwayDrawer highwayDrawer, final int time,
+	private static void drawHighlightedPositions(final HighwayDrawer highwayDrawer, final int time,
 			final HighlightData highlightData) {
-		if (highlightData.type == PositionType.EVENT_POINT) {
-			highlightData.highlightedNonIdPositions.forEach(highlightPosition -> highwayDrawer
-					.addEventPointHighlight(timeToX(highlightPosition.position, time)));
+		if (highlightData.type != PositionType.EVENT_POINT) {
+			return;
+		}
+
+		for (final HighlightPosition highlightPosition : highlightData.highlightedNonIdPositions) {
+			final int x = timeToX(highlightPosition.position, time);
+			highwayDrawer.addEventPointHighlight(x);
 		}
 	}
 
 	public static void addEventPoints(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
 			final ArrayList2<EventPoint> eventPoints, final HashMap2<String, Phrase> phrases, final int time,
-			final HashSet2<Integer> selectedEventPointIds, final HighlightData highlightData) {
+			final HashSet2<Integer> selectedIds, final HighlightData highlightData) {
 		final int highlightId = highlightData.getId(PositionType.EVENT_POINT);
 		final int leftScreenEdgeTime = xToTime(0, time);
 
@@ -97,18 +103,16 @@ public class GuitarEventPointsDrawer {
 				break;
 			}
 
-			final boolean selected = selectedEventPointIds.contains(i);
+			final boolean selected = selectedIds.contains(i);
 			final boolean highlighted = i == highlightId;
 			highwayDrawer.addEventPoint(g, eventPoint, phrases.get(eventPoint.phrase), x, selected, highlighted);
-			if (x > 0) {
-				if (eventPoint.section != null && !currentSectionDrawn) {
-					drawCurrentSection(g, highwayDrawer, eventPoints, leftScreenEdgeTime, x);
-					currentSectionDrawn = true;
-				}
-				if (eventPoint.phrase != null && !currentPhraseDrawn) {
-					drawCurrentPhrase(g, highwayDrawer, phrases, eventPoints, leftScreenEdgeTime, x);
-					currentPhraseDrawn = true;
-				}
+			if (eventPoint.section != null && !currentSectionDrawn) {
+				drawCurrentSection(g, highwayDrawer, eventPoints, leftScreenEdgeTime, x);
+				currentSectionDrawn = true;
+			}
+			if (eventPoint.phrase != null && !currentPhraseDrawn) {
+				drawCurrentPhrase(g, highwayDrawer, phrases, eventPoints, leftScreenEdgeTime, x);
+				currentPhraseDrawn = true;
 			}
 		}
 		if (!currentSectionDrawn) {
@@ -118,6 +122,6 @@ public class GuitarEventPointsDrawer {
 			drawCurrentPhrase(g, highwayDrawer, phrases, eventPoints, leftScreenEdgeTime);
 		}
 
-		drawHighlightedNonPositions(highwayDrawer, time, highlightData);
+		drawHighlightedPositions(highwayDrawer, time, highlightData);
 	}
 }

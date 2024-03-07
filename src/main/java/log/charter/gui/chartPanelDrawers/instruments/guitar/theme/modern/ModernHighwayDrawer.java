@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightLine;
-import log.charter.gui.chartPanelDrawers.instruments.guitar.HighwayDrawer;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.song.Anchor;
 import log.charter.song.ChordTemplate;
@@ -77,6 +77,16 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	@Override
 	public void addEventPointHighlight(final int x) {
 		themeEvents.addEventPointHighlight(x);
+	}
+
+	@Override
+	public void addCurrentTone(final Graphics2D g, final String tone) {
+		toneChanges.addCurrentTone(g, tone);
+	}
+
+	@Override
+	public void addCurrentTone(final Graphics2D g, final String tone, final int nextToneChangeX) {
+		toneChanges.addCurrentTone(g, tone, nextToneChangeX);
 	}
 
 	@Override

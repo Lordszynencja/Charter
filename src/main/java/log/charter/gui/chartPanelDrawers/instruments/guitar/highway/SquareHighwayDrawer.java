@@ -1,4 +1,4 @@
-package log.charter.gui.chartPanelDrawers.instruments.guitar;
+package log.charter.gui.chartPanelDrawers.instruments.guitar.highway;
 
 import static log.charter.data.config.GraphicalConfig.anchorInfoHeight;
 import static log.charter.data.config.GraphicalConfig.noteHeight;

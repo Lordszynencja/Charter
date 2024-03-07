@@ -1,4 +1,4 @@
-package log.charter.gui.chartPanelDrawers.instruments.guitar;
+package log.charter.gui.chartPanelDrawers.instruments.guitar.highway;
 
 import java.awt.Graphics2D;
 import java.util.Optional;
@@ -41,6 +41,10 @@ public interface HighwayDrawer {
 			boolean highlighted);
 
 	void addEventPointHighlight(int x);
+
+	void addCurrentTone(Graphics2D g, String tone);
+
+	void addCurrentTone(Graphics2D g, String tone, int nextToneChangeX);
 
 	void addToneChange(ToneChange toneChange, int x, boolean selected, boolean highlighted);
 
