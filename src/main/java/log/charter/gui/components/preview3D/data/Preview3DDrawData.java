@@ -6,7 +6,7 @@ import static log.charter.gui.components.preview3D.data.BeatDrawData.getBeatsFor
 import static log.charter.gui.components.preview3D.data.HandShapeDrawData.getHandShapesForTimeSpanWithRepeats;
 import static log.charter.gui.components.preview3D.data.Preview3DNotesData.getNotesForTimeSpanWithRepeats;
 import static log.charter.song.notes.IConstantPosition.findFirstAfter;
-import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastBeforeEquals;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +41,7 @@ public class Preview3DDrawData {
 		}
 
 		final int timeTo = time + getVisibility();
-		anchors = getAnchorsForTimeSpanWithRepeats(data, repeatManager, chartTimeHandler.audioLength(), time, timeTo);
+		anchors = getAnchorsForTimeSpanWithRepeats(data, repeatManager, chartTimeHandler.maxTime(), time, timeTo);
 		beats = getBeatsForTimeSpanWithRepeats(data, repeatManager, time, timeTo);
 		handShapes = getHandShapesForTimeSpanWithRepeats(data, repeatManager, time, timeTo);
 		notes = getNotesForTimeSpanWithRepeats(data, repeatManager, time, timeTo);
@@ -49,7 +49,7 @@ public class Preview3DDrawData {
 
 	public IntRange getFrets(final int t) {
 		if (!fretsCache.containsKey(t)) {
-			Anchor anchor = findLastBeforeEqual(levelAnchors, t);
+			Anchor anchor = findLastBeforeEquals(levelAnchors, t);
 			if (anchor == null) {
 				anchor = findFirstAfter(levelAnchors, t);
 			}

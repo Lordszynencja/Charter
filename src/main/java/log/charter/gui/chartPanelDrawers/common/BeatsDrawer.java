@@ -5,7 +5,6 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatSizeTextY
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
@@ -14,7 +13,7 @@ import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
@@ -144,7 +143,7 @@ public class BeatsDrawer {
 			repeat.add(filledRectangle(fullPosition, ColorLabel.REPEAT_MARKER));
 		}
 
-		public void draw(final Graphics g) {
+		public void draw(final Graphics2D g) {
 			g.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
 			beats.draw(g);
 			repeat.draw(g);
@@ -240,7 +239,7 @@ public class BeatsDrawer {
 		});
 	}
 
-	public void draw(final Graphics g, final int time, final HighlightData highlightData) {
+	public void draw(final Graphics2D g, final int time, final HighlightData highlightData) {
 		final BeatsDrawingData drawingData = new BeatsDrawingData();
 
 		addBeats(time, drawingData, highlightData);

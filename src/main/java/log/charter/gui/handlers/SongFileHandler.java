@@ -383,7 +383,7 @@ public class SongFileHandler {
 		makeBackups(dir, filesToBackup);
 
 		projectAudioHandler.setAudio(musicData);
-		chartTimeHandler.setNextTime(project.time);
+		chartTimeHandler.nextTime(project.time);
 		data.setSong(dir, songChart, projectFileChosen.getName(), project.editMode, project.arrangement, project.level);
 
 		loadingDialog.setProgress(3, Label.LOADING_DONE.label());
@@ -462,7 +462,7 @@ public class SongFileHandler {
 		final SongChart songChart = RSXMLToSongChart.makeSongChartForArrangement(songName, songArrangement);
 
 		projectAudioHandler.setAudio(musicData);
-		chartTimeHandler.setNextTime(0);
+		chartTimeHandler.nextTime(0);
 		data.setSong(dir, songChart, "project.rscp", EditMode.GUITAR, 0, 0);
 		loadingDialog.dispose();
 
@@ -528,8 +528,8 @@ public class SongFileHandler {
 		int id = 1;
 		for (final Arrangement arrangement : data.songChart.arrangements) {
 			final String arrangementFileName = generateArrangementFileName(id, arrangement);
-			final SongArrangement songArrangement = new SongArrangement(chartTimeHandler.audioLength(), data.songChart,
-					arrangement);
+			final SongArrangement songArrangement = new SongArrangement(projectAudioHandler.getAudio().msLength(),
+					data.songChart, arrangement);
 			RW.write(new File(dir, arrangementFileName), SongArrangementXStreamHandler.saveSong(songArrangement));
 			id++;
 		}

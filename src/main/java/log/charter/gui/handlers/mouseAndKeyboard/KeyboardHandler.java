@@ -6,17 +6,14 @@ import static java.awt.event.KeyEvent.VK_SHIFT;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Optional;
 
 import log.charter.data.managers.ModeManager;
 import log.charter.gui.handlers.Action;
 import log.charter.gui.handlers.ActionHandler;
-import log.charter.gui.handlers.data.ChartTimeHandler;
-import log.charter.gui.utils.Framer;
 
 public class KeyboardHandler implements KeyListener {
 	private ActionHandler actionHandler;
-	private ChartTimeHandler chartTimeHandler;
-	private Framer framer;
 	private ModeManager modeManager;
 
 	private boolean ctrl = false;
@@ -26,11 +23,8 @@ public class KeyboardHandler implements KeyListener {
 	private int heldNonModifierKey = -1;
 	private Action heldAction = null;
 
-	public void init(final ActionHandler actionHandler, final ChartTimeHandler chartTimeHandler, final Framer framer,
-			final ModeManager modeManager) {
+	public void init(final ActionHandler actionHandler, final ModeManager modeManager) {
 		this.actionHandler = actionHandler;
-		this.chartTimeHandler = chartTimeHandler;
-		this.framer = framer;
 		this.modeManager = modeManager;
 	}
 
@@ -42,36 +36,8 @@ public class KeyboardHandler implements KeyListener {
 		heldAction = null;
 	}
 
-	public void frame() {
-		if (heldAction == null) {
-			return;
-		}
-
-		double speed;
-		switch (heldAction) {
-			case FAST_BACKWARD:
-				speed = -framer.frameLength * 32;
-				break;
-			case FAST_FORWARD:
-				speed = framer.frameLength * 32;
-				break;
-			case MOVE_BACKWARD:
-				speed = -framer.frameLength * 4;
-				break;
-			case MOVE_FORWARD:
-				speed = framer.frameLength * 4;
-				break;
-			case SLOW_BACKWARD:
-				speed = -framer.frameLength;
-				break;
-			case SLOW_FORWARD:
-				speed = framer.frameLength;
-				break;
-			default:
-				return;
-		}
-
-		chartTimeHandler.setNextTime(chartTimeHandler.time() + speed);
+	public Optional<Action> heldAction() {
+		return Optional.ofNullable(heldAction);
 	}
 
 	public boolean alt() {

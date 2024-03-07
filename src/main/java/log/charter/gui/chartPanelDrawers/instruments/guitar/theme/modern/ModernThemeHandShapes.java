@@ -12,7 +12,7 @@ import java.awt.*;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
-import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawerData;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeHandShapes;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
@@ -24,9 +24,9 @@ public class ModernThemeHandShapes implements ThemeHandShapes {
 	public static void reloadGraphics() {
 		handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, handShapesHeight); }
 
-	private final HighwayDrawerData data;
+	private final HighwayDrawData data;
 
-	public ModernThemeHandShapes(final HighwayDrawerData data) {
+	public ModernThemeHandShapes(final HighwayDrawData data) {
 		this.data = data;
 	}
 

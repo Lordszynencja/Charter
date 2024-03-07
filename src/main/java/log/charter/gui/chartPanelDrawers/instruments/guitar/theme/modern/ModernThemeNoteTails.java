@@ -26,7 +26,7 @@ import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.StrokedTriangle;
-import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawerData;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.util.IntRange;
 import log.charter.util.Position2D;
 
@@ -43,9 +43,9 @@ public class ModernThemeNoteTails {
 		slideFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 	}
 
-	private final HighwayDrawerData data;
+	private final HighwayDrawData data;
 
-	public ModernThemeNoteTails(final HighwayDrawerData data) {
+	public ModernThemeNoteTails(final HighwayDrawData data) {
 		this.data = data;
 	}
 

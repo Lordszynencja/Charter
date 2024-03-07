@@ -125,7 +125,7 @@ public class ActionHandler {
 			return;
 		}
 
-		chartTimeHandler.setNextTime(bookmark);
+		chartTimeHandler.nextTime(bookmark);
 	}
 
 	private final Map<Action, Runnable> actionHandlers = new HashMap<>();

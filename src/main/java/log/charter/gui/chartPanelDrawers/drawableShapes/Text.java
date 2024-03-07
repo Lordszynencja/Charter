@@ -2,7 +2,6 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
@@ -10,13 +9,11 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.util.Position2D;
 
 public class Text implements DrawableShape {
-	public static ShapeSize getExpectedSize(final Graphics g, final Font font, final String text) {
-		final Graphics2D g2 = (Graphics2D) g;
+	public static ShapeSize getExpectedSize(final Graphics2D g, final Font font, final String text) {
 		g.setFont(font);
 
-		final int width = g2.getFontMetrics().stringWidth(text) + (font.isItalic() ? 1 : 0);
-		final int height = g2.getFontMetrics().getAscent() - g2.getFontMetrics().getDescent()
-				- (font.isItalic() ? 1 : 0);
+		final int width = g.getFontMetrics().stringWidth(text) + (font.isItalic() ? 1 : 0);
+		final int height = g.getFontMetrics().getAscent() - g.getFontMetrics().getDescent() - (font.isItalic() ? 1 : 0);
 
 		return new ShapeSize(width, height);
 	}
@@ -38,13 +35,12 @@ public class Text implements DrawableShape {
 	}
 
 	@Override
-	public void draw(final Graphics g) {
-		final Graphics2D g2 = (Graphics2D) g;
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		draw(g2, getPositionWithSize(g));
+	public void draw(final Graphics2D g) {
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		draw(g, getPositionWithSize(g));
 	}
 
-	public ShapePositionWithSize getPositionWithSize(final Graphics g) {
+	public ShapePositionWithSize getPositionWithSize(final Graphics2D g) {
 		final ShapeSize size = getExpectedSize(g, font, text);
 		return new ShapePositionWithSize(position.x, position.y, size.width, size.height);
 	}

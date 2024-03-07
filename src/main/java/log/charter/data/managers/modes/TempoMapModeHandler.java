@@ -27,7 +27,7 @@ public class TempoMapModeHandler extends ModeHandler {
 			return;
 		}
 
-		new TempoBeatPane(data, frame, undoSystem, chartTimeHandler.audioLength(), clickData.pressHighlight.beat);
+		new TempoBeatPane(data, frame, undoSystem, chartTimeHandler.maxTime(), clickData.pressHighlight.beat);
 	}
 
 	@Override

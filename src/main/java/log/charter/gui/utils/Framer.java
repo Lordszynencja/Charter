@@ -1,59 +1,57 @@
 package log.charter.gui.utils;
 
-import static java.lang.Math.max;
+import java.util.function.DoubleConsumer;
 
 import log.charter.data.config.Config;
 
 public class Framer {
-	public double frameLength = 1000.0 / Config.FPS;
+	private static final double scale = 1_000_000_000.0;
 
-	private double nextFrameTime = System.nanoTime() / 1_000_000;
-	private int currentFrame = 0;
-	private int framesDone = 0;
+	private double frameLength;
 
-	private final Runnable runnable;
+	private long frameTime = System.nanoTime();
+	private long previousFrameTime = System.nanoTime();
+
+	private final DoubleConsumer runnable;
 	private Thread thread;
 
-	public Framer(final Runnable runnable) {
+	public Framer(final DoubleConsumer runnable) {
 		this(runnable, Config.FPS);
 	}
 
-	public Framer(final Runnable runnable, final int fps) {
+	public Framer(final DoubleConsumer runnable, final int fps) {
 		this.runnable = runnable;
 		setFPS(fps);
 	}
 
 	public void setFPS(final int fps) {
-		frameLength = 1000.0 / fps;
+		frameLength = scale / fps;
 	}
 
-	private long getCurrentTime() {
-		return System.nanoTime() / 1_000_000;
-	}
-
-	private long getSleepLength() {
-		return max(1, (long) (nextFrameTime - getCurrentTime()));
-	}
-
-	private void frame() {
-		while (nextFrameTime <= getCurrentTime()) {
-			nextFrameTime += frameLength;
-			currentFrame++;
+	private void sleepUntilNextFrame() throws InterruptedException {
+		previousFrameTime = frameTime;
+		frameTime += frameLength;
+		final long currentTime = System.nanoTime();
+		if (frameTime <= currentTime) {
+			frameTime = currentTime;
 		}
 
-		while (currentFrame > framesDone) {
-			runnable.run();
-			framesDone++;
+		final long sleepLength = (long) (frameTime - currentTime);
+		if (sleepLength <= 0) {
+			return;
 		}
+
+		final long milis = sleepLength / 1_000_000;
+		final int nanos = (int) (sleepLength % 1_000_000);
+		Thread.sleep(milis, nanos);
 	}
 
 	public void start() {
 		thread = new Thread(() -> {
 			try {
 				while (true) {
-					frame();
-
-					Thread.sleep(getSleepLength());
+					runnable.accept((frameTime - previousFrameTime) / scale);
+					sleepUntilNextFrame();
 				}
 			} catch (final InterruptedException e) {
 			}

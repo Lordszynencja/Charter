@@ -79,14 +79,14 @@ public class AddSilencePane extends ParamsPane {
 		final AudioDataShort joined = silenceMusicData.join(songMusicData);
 
 		projectAudioHandler.setAudio(joined);
-		data.songChart.moveEverything(chartTimeHandler.audioLength(), (int) (time * 1000));
+		data.songChart.moveEverything(chartTimeHandler.maxTime(), (int) (time * 1000));
 	}
 
 	private void removeAudio(final double time) {
 		final AudioDataShort editedAudio = projectAudioHandler.getAudio().remove(time);
 
 		projectAudioHandler.setAudio(editedAudio);
-		data.songChart.moveEverything(chartTimeHandler.audioLength(), (int) -(time * 1000));
+		data.songChart.moveEverything(chartTimeHandler.maxTime(), (int) -(time * 1000));
 	}
 
 	private void changeMusicFileNameAndMakeBackupIfNeeded() {

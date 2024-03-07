@@ -13,6 +13,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class CollectionUtils {
@@ -168,13 +169,16 @@ public class CollectionUtils {
 		}
 	}
 
-	public static int[] arrayOf(final int... values) {
-		return values;
-	}
-
 	public static <T, U, V> Map<U, V> toMap(final List<T> list, final BiConsumer<Map<U, V>, T> adder) {
 		final Map<U, V> map = new HashMap<>();
 		list.forEach(element -> adder.accept(map, element));
 		return map;
+	}
+
+	public static <L extends List<E>, E> L filter(final Supplier<L> listGenerator, final L list,
+			final Predicate<E> filter) {
+		return list.stream()//
+				.filter(filter)//
+				.collect(Collectors.toCollection(listGenerator));
 	}
 }

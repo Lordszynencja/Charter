@@ -1,7 +1,6 @@
 package log.charter.gui.chartPanelDrawers.drawableShapes;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
@@ -24,22 +23,21 @@ public class FilledRectangle implements DrawableShape {
 		this(position, color, false);
 	}
 
-	public FilledRectangle(final ShapePositionWithSize position, final Color color, boolean rounded) {
+	public FilledRectangle(final ShapePositionWithSize position, final Color color, final boolean rounded) {
 		this.position = position;
 		this.color = color;
 		this.rounded = rounded;
 	}
 
 	@Override
-	public void draw(final Graphics g) {
-		final Graphics2D g2 = (Graphics2D) g;
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.setColor(color);
+	public void draw(final Graphics2D g) {
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setColor(color);
 
 		if (rounded) {
-			g2.fillRoundRect(position.x - 2, position.y - 2, position.width + 4, position.height + 4, 5, 5);
+			g.fillRoundRect(position.x - 2, position.y - 2, position.width + 4, position.height + 4, 5, 5);
 		} else {
-			g2.fillRect(position.x, position.y, position.width, position.height);
+			g.fillRect(position.x, position.y, position.width, position.height);
 		}
 	}
 

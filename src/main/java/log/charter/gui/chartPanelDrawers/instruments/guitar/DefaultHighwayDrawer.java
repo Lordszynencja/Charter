@@ -39,7 +39,7 @@ import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -126,9 +126,9 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	protected final DrawableShapeList slideFrets;
 	protected final DrawableShapeList toneChanges;
 
-	protected final Graphics g;
+	protected final Graphics2D g;
 
-	public DefaultHighwayDrawer(final Graphics g, final int strings, final int time) {
+	public DefaultHighwayDrawer(final Graphics2D g, final int strings, final int time) {
 		this.strings = strings;
 		this.time = time;
 
@@ -213,22 +213,36 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		return note.wrongLink ? applyWrongLink(color) : color;
 	}
 
-	private void addSection(final SectionType section, final int x) {
-		sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, sectionNamesY), anchorFont, section.label,
-				ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color()));
+	private void addEventPointTextIfOnScreen(final TextWithBackground text) {
+		if (text.getPositionWithSize(g).getRightX() < 0) {
+			return;
+		}
+
+		sectionsAndPhrases.add(text);
+	}
+
+	private void addSection(final Graphics2D g, final SectionType section, final int x) {
+		final TextWithBackground text = new TextWithBackground(new Position2D(x, sectionNamesY), anchorFont,
+				section.label, ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color());
+
+		addEventPointTextIfOnScreen(text);
 	}
 
 	private void addPhrase(final Phrase phrase, final String phraseName, final int x) {
 		final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
 				+ (phrase.solo ? "[Solo]" : "");
-		sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, phraseNamesY), anchorFont, phraseLabel,
-				ColorLabel.PHRASE_NAME_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color()));
+		final TextWithBackground text = new TextWithBackground(new Position2D(x, phraseNamesY), anchorFont, phraseLabel,
+				ColorLabel.PHRASE_NAME_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER);
+
+		addEventPointTextIfOnScreen(text);
 	}
 
 	private void addEvents(final ArrayList2<EventType> events, final int x) {
 		final String eventsName = String.join(", ", events.map(event -> event.label));
-		sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, eventNamesY), anchorFont, eventsName,
-				ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color()));
+		final TextWithBackground text = new TextWithBackground(new Position2D(x, eventNamesY), anchorFont, eventsName,
+				ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color());
+
+		addEventPointTextIfOnScreen(text);
 	}
 
 	private void addEventPointBox(final int x, final ColorLabel color) {
@@ -239,10 +253,27 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addEventPoint(final EventPoint eventPoint, final Phrase phrase, final int x, final boolean selected,
-			final boolean highlighted) {
+	public void addCurrentSection(final Graphics2D g, final SectionType section) {
+	}
+
+	@Override
+	public void addCurrentSection(final Graphics2D g, final SectionType section, final int nextSectionX) {
+	}
+
+	@Override
+	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName,
+			final int nextEventPointX) {
+	}
+
+	@Override
+	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName) {
+	}
+
+	@Override
+	public void addEventPoint(final Graphics2D g, final EventPoint eventPoint, final Phrase phrase, final int x,
+			final boolean selected, final boolean highlighted) {
 		if (eventPoint.section != null) {
-			addSection(eventPoint.section, x);
+			addSection(g, eventPoint.section, x);
 		}
 		if (eventPoint.phrase != null) {
 			addPhrase(phrase, eventPoint.phrase, x);
@@ -832,7 +863,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void draw(final Graphics g) {
+	public void draw(final Graphics2D g) {
 		g.setFont(anchorFont);
 		toneChanges.draw(g);
 		anchors.draw(g);
@@ -856,4 +887,5 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		g.setFont(bendValueFont);
 		noteIds.draw(g);
 	}
+
 }

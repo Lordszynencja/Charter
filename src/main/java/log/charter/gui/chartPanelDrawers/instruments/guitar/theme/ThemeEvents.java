@@ -1,11 +1,24 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme;
 
+import java.awt.Graphics2D;
+
 import log.charter.song.EventPoint;
 import log.charter.song.Phrase;
+import log.charter.song.SectionType;
 
 public interface ThemeEvents {
-	void addEventPoint(final EventPoint eventPoint, final Phrase phrase, final int x, final boolean selected,
-			final boolean highlighted);
+
+	void addCurrentSection(Graphics2D g, SectionType section);
+
+	void addCurrentSection(Graphics2D g, SectionType section, int nextSectionX);
+
+	void addCurrentPhrase(Graphics2D g, Phrase phrase, String phraseName);
+
+	void addCurrentPhrase(Graphics2D g, Phrase phrase, String phraseName, int nextSectionX);
+
+	void addEventPoint(Graphics2D g, final EventPoint eventPoint, final Phrase phrase, final int x,
+			final boolean selected, final boolean highlighted);
 
 	void addEventPointHighlight(final int x);
+
 }

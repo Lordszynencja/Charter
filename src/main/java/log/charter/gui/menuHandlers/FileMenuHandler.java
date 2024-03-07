@@ -130,7 +130,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 			final int startPosition = data.songChart.beatsMap.beats.get(0).position();
 			final BeatsMap beatsMap;
 			if (useImportTempoMap) {
-				beatsMap = getTempoMap(gp5File, startPosition, chartTimeHandler.audioLength(), barsOrder);
+				beatsMap = getTempoMap(gp5File, startPosition, chartTimeHandler.maxTime(), barsOrder);
 			} else {
 				beatsMap = data.songChart.beatsMap;
 			}
@@ -150,7 +150,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 			return;
 		}
 
-		final BeatsMap beatsMap = MidiToBeatsMap.getBeatsMap(file.getAbsolutePath(), chartTimeHandler.audioLength());
+		final BeatsMap beatsMap = MidiToBeatsMap.getBeatsMap(file.getAbsolutePath(), chartTimeHandler.maxTime());
 		if (beatsMap == null) {
 			Logger.error("Couldn't import tempo from midi file " + file.getAbsolutePath());
 			return;

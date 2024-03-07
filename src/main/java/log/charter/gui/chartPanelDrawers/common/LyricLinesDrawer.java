@@ -6,7 +6,7 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.fil
 import static log.charter.util.ScalingUtils.timeToX;
 
 import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
@@ -40,7 +40,7 @@ public class LyricLinesDrawer {
 			texts.add(new Text(textPosition, lyricLineFont, text, ColorLabel.VOCAL_LINE_TEXT.color()));
 		}
 
-		public void draw(final Graphics g) {
+		public void draw(final Graphics2D g) {
 			reloadGraphics();
 			backgrounds.draw(g);
 			texts.draw(g);
@@ -55,7 +55,7 @@ public class LyricLinesDrawer {
 		this.modeManager = modeManager;
 	}
 
-	public void draw(final Graphics g, final int time) {
+	public void draw(final Graphics2D g, final int time) {
 		if (modeManager.getMode() == EditMode.EMPTY) {
 			return;
 		}

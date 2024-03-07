@@ -8,4 +8,8 @@ public class ShapeSize {
 		this.width = width;
 		this.height = height;
 	}
+
+	public ShapeSize resizeBy(final int widthOffset, final int heightOffset) {
+		return new ShapeSize(width + widthOffset, height + heightOffset);
+	}
 }

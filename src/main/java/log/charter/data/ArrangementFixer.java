@@ -176,7 +176,7 @@ public class ArrangementFixer {
 		}
 
 		final IPositionWithLength lastPosition = positions.getLast();
-		lastPosition.endPosition(min(chartTimeHandler.audioLength(), lastPosition.endPosition()));
+		lastPosition.endPosition(min(chartTimeHandler.maxTime(), lastPosition.endPosition()));
 	}
 
 	private void fixLevel(final Arrangement arrangement, final Level level) {
@@ -294,7 +294,7 @@ public class ArrangementFixer {
 
 	public void fixArrangements() {
 		final int start = data.songChart.beatsMap.beats.get(0).position();
-		final int end = chartTimeHandler.audioLength();
+		final int end = chartTimeHandler.maxTime();
 
 		data.songChart.beatsMap.makeBeatsUntilSongEnd(end);
 		data.songChart.beatsMap.fixFirstBeatInMeasures();

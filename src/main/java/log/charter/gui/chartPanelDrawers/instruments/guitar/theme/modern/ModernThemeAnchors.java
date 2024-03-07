@@ -11,7 +11,7 @@ import java.awt.Font;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
-import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawerData;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeAnchors;
 import log.charter.song.Anchor;
 import log.charter.util.Position2D;
@@ -23,9 +23,9 @@ public class ModernThemeAnchors implements ThemeAnchors {
 		anchorFont = new Font(Font.SANS_SERIF, Font.BOLD, anchorInfoHeight);
 	}
 
-	private final HighwayDrawerData data;
+	private final HighwayDrawData data;
 
-	public ModernThemeAnchors(final HighwayDrawerData highwayDrawerData) {
+	public ModernThemeAnchors(final HighwayDrawData highwayDrawerData) {
 		data = highwayDrawerData;
 	}
 

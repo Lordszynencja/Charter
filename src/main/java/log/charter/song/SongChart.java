@@ -141,7 +141,7 @@ public class SongChart {
 		albumName = cleanString(value);
 	}
 
-	public void moveEverything(final int audioLength, final int positionDifference) {
+	public void moveEverything(final int chartLength, final int positionDifference) {
 		final List<IPosition> positionsToMove = new LinkedList<>();
 		positionsToMove.addAll(beatsMap.beats);
 		for (final Arrangement arrangement : arrangements) {
@@ -156,9 +156,9 @@ public class SongChart {
 		positionsToMove.addAll(vocals.vocals);
 
 		for (final IPosition positionToMove : positionsToMove) {
-			positionToMove.position(min(audioLength, max(0, positionToMove.position() + positionDifference)));
+			positionToMove.position(max(0, min(chartLength, positionToMove.position() + positionDifference)));
 		}
 
-		beatsMap.makeBeatsUntilSongEnd(audioLength);
+		beatsMap.makeBeatsUntilSongEnd(chartLength);
 	}
 }

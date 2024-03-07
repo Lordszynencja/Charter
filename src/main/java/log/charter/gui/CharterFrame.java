@@ -137,10 +137,10 @@ public class CharterFrame extends JFrame {
 		audioHandler.init(chartTimeHandler, chartToolbar, data, this, modeManager, projectAudioHandler, repeatManager);
 		beatsDrawer.init(data, chartPanel, repeatManager, selectionManager);
 		chartItemsHandler.init(arrangementFixer, data, modeManager, selectionManager, undoSystem);
-		chartTimeHandler.init(data, modeManager, projectAudioHandler);
+		chartTimeHandler.init(data, keyboardHandler, modeManager, projectAudioHandler);
 		copyManager.init(chartTimeHandler, data, this, modeManager, selectionManager, undoSystem);
 		data.init(this, audioHandler, charterMenuBar, modeManager, selectionManager, undoSystem);
-		keyboardHandler.init(actionHandler, chartTimeHandler, framer, modeManager);
+		keyboardHandler.init(actionHandler, modeManager);
 		highlightManager.init(chartTimeHandler, data, modeManager, selectionManager);
 		modeManager.init(audioHandler, charterMenuBar, chartTimeHandler, chartToolbar, currentSelectionEditor, data,
 				this, highlightManager, keyboardHandler, selectionManager, undoSystem);
@@ -230,12 +230,12 @@ public class CharterFrame extends JFrame {
 		windowedPreviewHandler.switchBorderlessWindowedPreview();
 	}
 
-	private void frame() {
+	private void frame(final double frameTime) {
 		try {
+
 			titleUpdater.updateTitle();
-			keyboardHandler.frame();
 			repeatManager.frame();
-			chartTimeHandler.frame();
+			chartTimeHandler.frame(frameTime);
 
 			windowedPreviewHandler.paintFrame();
 			if (preview3DPanel.isShowing()) {

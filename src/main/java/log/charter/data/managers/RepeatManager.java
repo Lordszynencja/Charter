@@ -53,7 +53,7 @@ public class RepeatManager {
 
 		if (chartTimeHandler.nextTime() >= repeatEnd) {
 			audioHandler.rewind(repeatStart);
-			chartTimeHandler.setNextTime(repeatStart);
+			chartTimeHandler.nextTime(repeatStart);
 		}
 	}
 

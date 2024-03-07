@@ -2,7 +2,6 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
@@ -10,12 +9,12 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.util.Position2D;
 
 public class CenteredTextWithBackgroundAndBorder implements DrawableShape {
-	public static ShapePositionWithSize getExpectedPositionAndSize(final Graphics g, final Position2D position,
+	public static ShapePositionWithSize getExpectedPositionAndSize(final Graphics2D g, final Position2D position,
 			final Font font, final String text) {
 		return CenteredTextWithBackground.getExpectedPositionAndSize(g, position, font, text).resized(-1, -1, 2, 2);
 	}
 
-	public static ShapeSize getExpectedSize(final Graphics g, final Font font, final String text) {
+	public static ShapeSize getExpectedSize(final Graphics2D g, final Font font, final String text) {
 		final ShapeSize innerSize = CenteredTextWithBackground.getExpectedSize(g, font, text);
 		return new ShapeSize(innerSize.width + 2, innerSize.height + 2);
 	}
@@ -35,13 +34,12 @@ public class CenteredTextWithBackgroundAndBorder implements DrawableShape {
 	}
 
 	@Override
-	public void draw(final Graphics g) {
-		final Graphics2D g2 = (Graphics2D) g;
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		draw(g2, getPositionAndSize(g));
+	public void draw(final Graphics2D g) {
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		draw(g, getPositionAndSize(g));
 	}
 
-	public ShapePositionWithSize getPositionAndSize(final Graphics g) {
+	public ShapePositionWithSize getPositionAndSize(final Graphics2D g) {
 		return centeredTextWithBackground.getPositionAndSize(g).resized(-1, -1, 2, 2);
 	}
 

@@ -18,6 +18,7 @@ import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -175,7 +176,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		return fretPositions;
 	}
 
-	private void drawBackground(final Graphics g) {
+	private void drawBackground(final Graphics2D g) {
 		g.setColor(ColorLabel.BASE_BG_1.color());
 		g.fillRect(0, 0, getWidth(), getHeight());
 	}
@@ -199,7 +200,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		addFretDotHigh(frets, fretPosition);
 	}
 
-	private void drawFrets(final Graphics g, final FretPosition[] fretPositions) {
+	private void drawFrets(final Graphics2D g, final FretPosition[] fretPositions) {
 		final DrawableShapeList frets = new DrawableShapeList();
 
 		for (final FretPosition fretPosition : fretPositions) {
@@ -229,7 +230,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		frets.draw(g);
 	}
 
-	private void drawStrings(final Graphics g) {
+	private void drawStrings(final Graphics2D g) {
 		final int width = getWidth();
 		final DrawableShapeList stringLines = new DrawableShapeList();
 
@@ -243,7 +244,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		stringLines.draw(g);
 	}
 
-	private void drawFretPressMarks(final Graphics g, final FretPosition[] fretPositions) {
+	private void drawFretPressMarks(final Graphics2D g, final FretPosition[] fretPositions) {
 		final int strings = data.currentStrings();
 		final int baseFret = fretPositions[0].fret;
 		final DrawableShapeList pressMarks = new DrawableShapeList();
@@ -266,8 +267,8 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 			final FretPosition fretPosition = fretPositions[fret - baseFret];
 			final Position2D position = new Position2D(fretPosition.position - fretPosition.length / 2,
 					stringPositions[i]);
-			pressMarks.add(
-					filledDiamond(position.move(1, 0), 10, getStringBasedColor(StringColorLabelType.NOTE, i, strings).darker()));
+			pressMarks.add(filledDiamond(position.move(1, 0), 10,
+					getStringBasedColor(StringColorLabelType.NOTE, i, strings).darker()));
 
 			final Integer finger = chordTemplateSupplier.get().fingers.get(i);
 			final String fingerText = finger == null ? "" : finger == 0 ? "T" : finger.toString();
@@ -277,13 +278,19 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		pressMarks.draw(g);
 	}
 
-	@Override
-	protected void paintComponent(final Graphics g) {
+	private void paintComponent2D(final Graphics2D g) {
 		final FretPosition[] fretPositions = getFretPositions();
 		drawBackground(g);
 		drawFrets(g, fretPositions);
 		drawStrings(g);
 		drawFretPressMarks(g, fretPositions);
+	}
+
+	@Override
+	protected void paintComponent(final Graphics g) {
+		if (g instanceof Graphics2D) {
+			paintComponent2D((Graphics2D) g);
+		}
 	}
 
 	@Override

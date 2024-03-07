@@ -12,6 +12,7 @@ import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.text.DecimalFormat;
 
 import log.charter.data.ChartData;
@@ -88,7 +89,7 @@ public class BackgroundDrawer {
 		return formatted;
 	}
 
-	private void drawTimestamp(final Graphics g, final int time, final int timestampTime) {
+	private void drawTimestamp(final Graphics2D g, final int time, final int timestampTime) {
 		final int x = timeToX(timestampTime, time);
 		if (timestampTime % 1000 == 0) {
 			filledRectangle(new ShapePositionWithSize(x, lanesBottom + 1, 1, secondsMarkerBottom - lanesBottom - 1),
@@ -101,7 +102,7 @@ public class BackgroundDrawer {
 		}
 	}
 
-	private void drawTimeScale(final Graphics g, final int time) {
+	private void drawTimeScale(final Graphics2D g, final int time) {
 		int timestampTime = xToTime(-20, time);
 		if (timestampTime < 0) {
 			timestampTime = 0;
@@ -111,13 +112,13 @@ public class BackgroundDrawer {
 		final int jump = calculateJump(timestampTime, endTime);
 		timestampTime -= timestampTime % jump;
 
-		while (timestampTime <= endTime && timestampTime < chartTimeHandler.audioLength()) {
+		while (timestampTime <= endTime && timestampTime < chartTimeHandler.maxTime()) {
 			drawTimestamp(g, time, timestampTime);
 			timestampTime += jump;
 		}
 	}
 
-	public void draw(final Graphics g, final int time) {
+	public void draw(final Graphics2D g, final int time) {
 		drawBackground(g);
 
 		if (data.isEmpty) {
@@ -130,7 +131,7 @@ public class BackgroundDrawer {
 		g.setColor(ColorLabel.MARKER.color());
 		final int startX = timeToX(0, chartTimeHandler.time());
 		g.drawLine(startX, lanesTop + 30, startX, lanesBottom - 30);
-		final int endX = timeToX(chartTimeHandler.audioLength(), chartTimeHandler.time());
+		final int endX = timeToX(chartTimeHandler.maxTime(), chartTimeHandler.time());
 		g.drawLine(endX, lanesTop + 30, endX, lanesBottom - 30);
 	}
 }

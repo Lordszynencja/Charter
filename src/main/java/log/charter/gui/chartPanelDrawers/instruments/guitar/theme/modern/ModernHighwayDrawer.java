@@ -1,17 +1,18 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.Optional;
 
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightLine;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.HighwayDrawer;
-import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawerData;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.song.Anchor;
 import log.charter.song.ChordTemplate;
 import log.charter.song.EventPoint;
 import log.charter.song.HandShape;
 import log.charter.song.Phrase;
+import log.charter.song.SectionType;
 import log.charter.song.ToneChange;
 import log.charter.song.notes.ChordOrNote;
 
@@ -28,7 +29,7 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 		reloadGraphics();
 	}
 
-	private final HighwayDrawerData data;
+	private final HighwayDrawData data;
 
 	private final ModernThemeEvents themeEvents;
 	private final ModernThemeToneChanges toneChanges;
@@ -36,8 +37,8 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	private final ModernThemeNotes notes;
 	private final ModernThemeHandShapes handShapes;
 
-	public ModernHighwayDrawer(final Graphics g, final int strings, final int time) {
-		data = new HighwayDrawerData(g, strings, time);
+	public ModernHighwayDrawer(final Graphics2D g, final int strings, final int time) {
+		data = new HighwayDrawData(g, strings, time);
 
 		themeEvents = new ModernThemeEvents(data);
 		toneChanges = new ModernThemeToneChanges(data);
@@ -47,9 +48,30 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addEventPoint(final EventPoint eventPoint, final Phrase phrase, final int x, final boolean selected,
-			final boolean highlighted) {
-		themeEvents.addEventPoint(eventPoint, phrase, x, selected, highlighted);
+	public void addCurrentSection(final Graphics2D g, final SectionType section) {
+		themeEvents.addCurrentSection(g, section);
+	}
+
+	@Override
+	public void addCurrentSection(final Graphics2D g, final SectionType section, final int nextSectionX) {
+		themeEvents.addCurrentSection(g, section, nextSectionX);
+	}
+
+	@Override
+	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName) {
+		themeEvents.addCurrentPhrase(g, phrase, phraseName);
+	}
+
+	@Override
+	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName,
+			final int nextSectionX) {
+		themeEvents.addCurrentPhrase(g, phrase, phraseName, nextSectionX);
+	}
+
+	@Override
+	public void addEventPoint(final Graphics2D g, final EventPoint eventPoint, final Phrase phrase, final int x,
+			final boolean selected, final boolean highlighted) {
+		themeEvents.addEventPoint(g, eventPoint, phrase, x, selected, highlighted);
 	}
 
 	@Override
@@ -111,7 +133,7 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void draw(final Graphics g) {
+	public void draw(final Graphics2D g) {
 		data.draw();
 	}
 }

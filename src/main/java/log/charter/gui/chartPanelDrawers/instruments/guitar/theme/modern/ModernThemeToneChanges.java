@@ -11,7 +11,7 @@ import java.awt.Font;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;
-import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawerData;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeToneChanges;
 import log.charter.song.ToneChange;
 import log.charter.util.Position2D;
@@ -24,9 +24,9 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 		toneChangeFont = new Font(Font.SANS_SERIF, Font.BOLD, toneChangeHeight);
 	}
 
-	private final HighwayDrawerData data;
+	private final HighwayDrawData data;
 
-	public ModernThemeToneChanges(final HighwayDrawerData highwayDrawerData) {
+	public ModernThemeToneChanges(final HighwayDrawData highwayDrawerData) {
 		data = highwayDrawerData;
 	}
 

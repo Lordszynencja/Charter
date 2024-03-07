@@ -12,6 +12,14 @@ public class ShapePositionWithSize extends Position2D {
 		this.height = height;
 	}
 
+	public int getBottomY() {
+		return y + height;
+	}
+
+	public int getRightX() {
+		return x + width;
+	}
+
 	public ShapePositionWithSize centered() {
 		return new ShapePositionWithSize(x - width / 2, y - height / 2, width, height);
 	}

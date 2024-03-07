@@ -2,7 +2,7 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -10,7 +10,7 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.util.Position2D;
 
 public interface DrawableShape {
-	public void draw(final Graphics g);
+	public void draw(final Graphics2D g);
 
 	// Lines
 	public static DrawableShape line(final Position2D startPosition, final Position2D endPosition, final Color color) {
@@ -64,11 +64,13 @@ public interface DrawableShape {
 		return filledRectangle(position, color.color());
 	}
 
-	public static DrawableShape filledRectangle(final ShapePositionWithSize position, final Color color, boolean rounded) {
+	public static DrawableShape filledRectangle(final ShapePositionWithSize position, final Color color,
+			final boolean rounded) {
 		return new FilledRectangle(position, color, rounded);
 	}
 
-	public static DrawableShape filledRectangle(final ShapePositionWithSize position, final ColorLabel color, boolean rounded) {
+	public static DrawableShape filledRectangle(final ShapePositionWithSize position, final ColorLabel color,
+			final boolean rounded) {
 		return filledRectangle(position, color.color(), rounded);
 	}
 

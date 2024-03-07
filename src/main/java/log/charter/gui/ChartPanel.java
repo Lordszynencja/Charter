@@ -3,6 +3,7 @@ package log.charter.gui;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaHeight;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.JComponent;
 
@@ -13,10 +14,8 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.chartPanelDrawers.ArrangementDrawer;
 import log.charter.gui.chartPanelDrawers.common.BackgroundDrawer;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
-import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.common.MarkerDrawer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
-import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
@@ -26,16 +25,10 @@ public class ChartPanel extends JComponent {
 	private static final long serialVersionUID = -3439446235287039031L;
 
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
-	private HighlightManager highlightManager;
-	private ModeManager modeManager;
-	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
-	private MouseHandler mouseHandler;
-	private SelectionManager selectionManager;
+	private ChartData chartData;
 
 	private final ArrangementDrawer arrangementDrawer = new ArrangementDrawer();
 	private final BackgroundDrawer backgroundDrawer = new BackgroundDrawer();
-	private final LyricLinesDrawer lyricLinesDrawer = new LyricLinesDrawer();
 	private final MarkerDrawer markerDrawer = new MarkerDrawer();
 
 	public ChartPanel() {
@@ -44,23 +37,17 @@ public class ChartPanel extends JComponent {
 		setSize(getWidth(), editAreaHeight);
 	}
 
-	public void init(final BeatsDrawer beatsDrawer, final ChartTimeHandler chartTimeHandler, final ChartData data,
+	public void init(final BeatsDrawer beatsDrawer, final ChartTimeHandler chartTimeHandler, final ChartData chartData,
 			final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
 			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
 			final MouseHandler mouseHandler, final SelectionManager selectionManager,
 			final WaveFormDrawer waveFormDrawer) {
 		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
-		this.highlightManager = highlightManager;
-		this.modeManager = modeManager;
-		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
-		this.mouseHandler = mouseHandler;
-		this.selectionManager = selectionManager;
+		this.chartData = chartData;
 
-		backgroundDrawer.init(chartTimeHandler, data, this);
-		arrangementDrawer.init(beatsDrawer, this, data, keyboardHandler, lyricLinesDrawer, modeManager,
-				selectionManager, waveFormDrawer);
-		lyricLinesDrawer.init(data, modeManager);
+		backgroundDrawer.init(chartTimeHandler, chartData, this);
+		arrangementDrawer.init(beatsDrawer, chartData, this, highlightManager, keyboardHandler, modeManager,
+				mouseButtonPressReleaseHandler, mouseHandler, selectionManager, waveFormDrawer);
 		markerDrawer.init();
 
 		addMouseListener(mouseHandler);
@@ -72,20 +59,23 @@ public class ChartPanel extends JComponent {
 		setFocusable(true);
 	}
 
-	@Override
-	public void paintComponent(final Graphics g) {
+	private void paintComponent2D(final Graphics2D g) {
 		final int time = chartTimeHandler.time();
 
 		backgroundDrawer.draw(g, time);
 
-		if (data.isEmpty) {
+		if (chartData.isEmpty) {
 			return;
 		}
 
-		final HighlightData highlightData = HighlightData.getCurrentHighlight(time, data, highlightManager, modeManager,
-				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
-
-		arrangementDrawer.draw(g, time, highlightData);
+		arrangementDrawer.draw(g, time);
 		markerDrawer.draw(g);
+	}
+
+	@Override
+	public void paintComponent(final Graphics g) {
+		if (g instanceof Graphics2D) {
+			paintComponent2D((Graphics2D) g);
+		}
 	}
 }

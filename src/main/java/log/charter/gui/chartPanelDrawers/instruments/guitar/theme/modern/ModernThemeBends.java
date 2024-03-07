@@ -20,7 +20,7 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackgrou
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
-import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawerData;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.song.BendValue;
 import log.charter.util.Position2D;
 import log.charter.util.Utils;
@@ -57,9 +57,9 @@ public class ModernThemeBends {
 		return y + tailHeight / 3 - bendOffset;
 	}
 
-	private final HighwayDrawerData data;
+	private final HighwayDrawData data;
 
-	public ModernThemeBends(final HighwayDrawerData highwayDrawerData) {
+	public ModernThemeBends(final HighwayDrawData highwayDrawerData) {
 		data = highwayDrawerData;
 	}
 

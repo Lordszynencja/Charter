@@ -10,7 +10,7 @@ import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.selection.SelectionManager;
@@ -53,10 +53,10 @@ public class VocalsDrawer {
 		private final DrawableShapeList notes = new DrawableShapeList();
 		private final DrawableShapeList wordConnections = new DrawableShapeList();
 
-		private final Graphics g;
+		private final Graphics2D g;
 		private final int time;
 
-		public VocalNotesDrawingData(final Graphics g, final int time) {
+		public VocalNotesDrawingData(final Graphics2D g, final int time) {
 			this.g = g;
 			this.time = time;
 		}
@@ -102,7 +102,7 @@ public class VocalsDrawer {
 			notes.add(strokedRectangle(positionAndSize.resized(-1, -1, 1, 1), ColorLabel.HIGHLIGHT));
 		}
 
-		public void draw(final Graphics g) {
+		public void draw(final Graphics2D g) {
 			wordConnections.draw(g);
 			notes.draw(g);
 			texts.draw(g);
@@ -127,7 +127,7 @@ public class VocalsDrawer {
 		this.waveFormDrawer = waveFormDrawer;
 	}
 
-	private void drawVocals(final Graphics g, final int time, final HighlightData highlightData) {
+	private void drawVocals(final Graphics2D g, final int time, final HighlightData highlightData) {
 		final VocalNotesDrawingData drawingData = new VocalNotesDrawingData(g, time);
 
 		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
@@ -172,7 +172,7 @@ public class VocalsDrawer {
 		drawingData.draw(g);
 	}
 
-	public void draw(final Graphics g, final int time, final HighlightData highlightData) {
+	public void draw(final Graphics2D g, final int time, final HighlightData highlightData) {
 		if (data == null || data.isEmpty) {
 			return;
 		}

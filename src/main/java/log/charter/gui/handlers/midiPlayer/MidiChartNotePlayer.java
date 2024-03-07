@@ -4,7 +4,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static log.charter.data.config.Config.midiDelay;
-import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastBeforeEquals;
 import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import java.math.BigDecimal;
@@ -171,7 +171,7 @@ public class MidiChartNotePlayer {
 	private MidiChartNotePlayerNoteData makeNoteData(final int noteId) {
 		final ChordOrNote sound = data.getCurrentArrangementLevel().sounds.get(noteId);
 		int soundEndTime = sound.endPosition();
-		int maxEndTime = chartTimeHandler.audioLength();
+		int maxEndTime = chartTimeHandler.maxTime();
 		if (sound.isChord() && sound.length() < 50) {
 			Integer newEndTime = null;
 			if (noteId + 1 < data.getCurrentArrangementLevel().sounds.size()) {
@@ -179,7 +179,7 @@ public class MidiChartNotePlayer {
 				maxEndTime = min(newEndTime, maxEndTime);
 			}
 
-			final HandShape handShape = findLastBeforeEqual(data.getCurrentArrangementLevel().handShapes,
+			final HandShape handShape = findLastBeforeEquals(data.getCurrentArrangementLevel().handShapes,
 					sound.position());
 			if (handShape != null && (newEndTime == null || handShape.endPosition() < newEndTime)) {
 				newEndTime = handShape.endPosition();

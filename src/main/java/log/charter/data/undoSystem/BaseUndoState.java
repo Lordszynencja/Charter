@@ -35,7 +35,7 @@ public class BaseUndoState extends UndoState {
 	public UndoState undo(final ChartData data, final ChartTimeHandler chartTimeHandler) {
 		final BaseUndoState redo = new BaseUndoState(markerPosition, internalUndoState.undo(data, chartTimeHandler));
 
-		chartTimeHandler.setNextTime(markerPosition);
+		chartTimeHandler.nextTime(markerPosition);
 
 		return redo;
 	}

@@ -1,6 +1,6 @@
 package log.charter.song;
 
-import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastBeforeEquals;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
@@ -26,7 +26,7 @@ public class Level {
 		}
 
 		final Chord chord = sound.chord();
-		final HandShape handShape = findLastBeforeEqual(handShapes, chord.position());
+		final HandShape handShape = findLastBeforeEquals(handShapes, chord.position());
 		if (handShape == null) {
 			return true;
 		}

@@ -107,11 +107,11 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 
 	private int positionToTime(int p) {
 		p = max(0, min(getWidth() - 1, p));
-		return (int) ((double) p * chartTimeHandler.audioLength() / (getWidth() - 1));
+		return (int) ((double) p * chartTimeHandler.maxTime() / (getWidth() - 1));
 	}
 
 	private int timeToPosition(final int t) {
-		return (int) ((long) t * (getWidth() - 1) / chartTimeHandler.audioLength());
+		return (int) ((long) t * (getWidth() - 1) / chartTimeHandler.maxTime());
 	}
 
 	private void drawBars(final Graphics g) {
@@ -162,7 +162,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 			final EventPoint nextPoint = i + 1 < points.size() ? points.get(i + 1) : null;
 
 			final int x0 = timeToPosition(point.position());
-			final int x1 = timeToPosition(nextPoint == null ? chartTimeHandler.audioLength() : nextPoint.position());
+			final int x1 = timeToPosition(nextPoint == null ? chartTimeHandler.maxTime() : nextPoint.position());
 			final int width = max(1, x1 - x0 - 2);
 
 			g.setColor(color.color());
@@ -248,7 +248,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 
 	@Override
 	public void mousePressed(final MouseEvent e) {
-		chartTimeHandler.setNextTime(positionToTime(e.getX()));
+		chartTimeHandler.nextTime(positionToTime(e.getX()));
 	}
 
 	@Override
@@ -267,7 +267,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 
 	@Override
 	public void mouseDragged(final MouseEvent e) {
-		chartTimeHandler.setNextTime(positionToTime(e.getX()));
+		chartTimeHandler.nextTime(positionToTime(e.getX()));
 	}
 
 	@Override

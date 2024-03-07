@@ -1,5 +1,6 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
+import static java.lang.Math.min;
 import static log.charter.data.config.GraphicalConfig.eventsChangeHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
@@ -9,11 +10,13 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.fil
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 
 import java.awt.Font;
+import java.awt.Graphics2D;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
+import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;
-import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawerData;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeEvents;
 import log.charter.song.EventPoint;
 import log.charter.song.EventType;
@@ -23,28 +26,41 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.Position2D;
 
 public class ModernThemeEvents implements ThemeEvents {
+	private static final int sectionTextSpace = 2;
+
 	private static Font eventFont = new Font(Font.SANS_SERIF, Font.BOLD, eventsChangeHeight);
 
 	public static void reloadSizes() {
 		eventFont = new Font(Font.SANS_SERIF, Font.BOLD, eventsChangeHeight);
 	}
 
-	private final HighwayDrawerData data;
+	private final HighwayDrawData data;
 
-	public ModernThemeEvents(final HighwayDrawerData highwayDrawerData) {
+	public ModernThemeEvents(final HighwayDrawData highwayDrawerData) {
 		data = highwayDrawerData;
 	}
 
-	private void addSection(final SectionType section, final int x) {
-		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, sectionNamesY), eventFont, section.label,
-				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.SECTION_NAME_BG, 2, ColorLabel.BASE_BORDER.color()));
+	private TextWithBackground generateSectionText(final SectionType section, final int x) {
+		return new TextWithBackground(new Position2D(x, sectionNamesY), eventFont, section.label,
+				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.SECTION_NAME_BG, 2, ColorLabel.BASE_BORDER);
 	}
 
-	private void addPhrase(final Phrase phrase, final String phraseName, final int x) {
-		final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
+	private String generatePhraseLabel(final Phrase phrase, final String phraseName) {
+		return phraseName + " (" + phrase.maxDifficulty + ")"//
 				+ (phrase.solo ? "[Solo]" : "");
-		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, phraseNamesY), eventFont, phraseLabel,
-				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.PHRASE_NAME_BG, 2, ColorLabel.BASE_BORDER.color()));
+	}
+
+	private TextWithBackground generatePhraseText(final String text, final int x) {
+		return new TextWithBackground(new Position2D(x, phraseNamesY), eventFont, text, ColorLabel.ARRANGEMENT_TEXT,
+				ColorLabel.PHRASE_NAME_BG, 2, ColorLabel.BASE_BORDER);
+	}
+
+	private void addSectionsAndPhrasesText(final Graphics2D g, final TextWithBackground text) {
+		if (text.getPositionWithSize(g).getRightX() < 0) {
+			return;
+		}
+
+		data.sectionsAndPhrases.add(text);
 	}
 
 	private void addEvents(final ArrayList2<EventType> events, final int x) {
@@ -61,13 +77,50 @@ public class ModernThemeEvents implements ThemeEvents {
 	}
 
 	@Override
-	public void addEventPoint(final EventPoint eventPoint, final Phrase phrase, final int x, final boolean selected,
-			final boolean highlighted) {
+	public void addCurrentSection(final Graphics2D g, final SectionType section) {
+		data.sectionsAndPhrases.add(generateSectionText(section, 0));
+	}
+
+	@Override
+	public void addCurrentSection(final Graphics2D g, final SectionType section, final int nextSectionX) {
+		if (nextSectionX <= 0) {
+			return;
+		}
+
+		final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, section.label,
+				sectionTextSpace);
+		final int x = min(0, nextSectionX - expectedSize.width);
+
+		data.sectionsAndPhrases.add(generateSectionText(section, x));
+	}
+
+	@Override
+	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName) {
+		data.sectionsAndPhrases.add(generatePhraseText(generatePhraseLabel(phrase, phraseName), 0));
+	}
+
+	@Override
+	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName,
+			final int nextPhraseX) {
+		if (nextPhraseX <= 0) {
+			return;
+		}
+
+		final String label = generatePhraseLabel(phrase, phraseName);
+		final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, label, sectionTextSpace);
+		final int x = min(0, nextPhraseX - expectedSize.width);
+
+		data.sectionsAndPhrases.add(generatePhraseText(label, x));
+	}
+
+	@Override
+	public void addEventPoint(final Graphics2D g, final EventPoint eventPoint, final Phrase phrase, final int x,
+			final boolean selected, final boolean highlighted) {
 		if (eventPoint.section != null) {
-			addSection(eventPoint.section, x);
+			addSectionsAndPhrasesText(g, generateSectionText(eventPoint.section, x));
 		}
 		if (eventPoint.phrase != null) {
-			addPhrase(phrase, eventPoint.phrase, x);
+			addSectionsAndPhrasesText(g, generatePhraseText(generatePhraseLabel(phrase, eventPoint.phrase), x));
 		}
 		if (!eventPoint.events.isEmpty()) {
 			addEvents(eventPoint.events, x);

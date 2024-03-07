@@ -9,20 +9,23 @@ import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.managers.ModeManager;
+import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.notes.IConstantPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ChartTimeHandler {
-	private ChartData data;
+	private ChartData chartData;
+	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 	private ProjectAudioHandler projectAudioHandler;
 
 	private double time = 0;
 	private double nextTime = 0;
 
-	public void init(final ChartData data, final ModeManager modeManager,
+	public void init(final ChartData chartData, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
 			final ProjectAudioHandler projectAudioHandler) {
-		this.data = data;
+		this.chartData = chartData;
+		this.keyboardHandler = keyboardHandler;
 		this.modeManager = modeManager;
 		this.projectAudioHandler = projectAudioHandler;
 	}
@@ -31,8 +34,8 @@ public class ChartTimeHandler {
 		return nextTime;
 	}
 
-	public void setNextTime(final double t) {
-		nextTime = max(0, min(audioLength(), t));
+	public void nextTime(final double t) {
+		nextTime = max(0, min(maxTime(), t));
 	}
 
 	public double preciseTime() {
@@ -43,18 +46,18 @@ public class ChartTimeHandler {
 		return (int) time;
 	}
 
-	public int audioLength() {
+	public int maxTime() {
 		return projectAudioHandler.getAudio().msLength();
 	}
 
 	private ArrayList2<? extends IConstantPosition> getCurrentItems() {
 		switch (modeManager.getMode()) {
 			case GUITAR:
-				return data.getCurrentArrangementLevel().sounds;
+				return chartData.getCurrentArrangementLevel().sounds;
 			case TEMPO_MAP:
-				return data.songChart.beatsMap.beats;
+				return chartData.songChart.beatsMap.beats;
 			case VOCALS:
-				return data.songChart.vocals.vocals;
+				return chartData.songChart.vocals.vocals;
 			default:
 				return new ArrayList2<>();
 		}
@@ -70,19 +73,19 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToBeginning() {
-		setNextTime(0);
+		nextTime(0);
 	}
 
 	public void moveToPreviousBeat() {
-		setNextTime(getPrevious(data.songChart.beatsMap.beats));
+		nextTime(getPrevious(chartData.songChart.beatsMap.beats));
 	}
 
 	public void moveToPreviousGrid() {
-		setNextTime(data.songChart.beatsMap.getPositionWithRemovedGrid(time(), 1));
+		nextTime(chartData.songChart.beatsMap.getPositionWithRemovedGrid(time(), 1));
 	}
 
 	public void moveToPreviousItem() {
-		setNextTime(getPrevious(getCurrentItems()));
+		nextTime(getPrevious(getCurrentItems()));
 	}
 
 	public void moveToFirstItem() {
@@ -91,7 +94,7 @@ public class ChartTimeHandler {
 			return;
 		}
 
-		setNextTime(items.get(0).position());
+		nextTime(items.get(0).position());
 	}
 
 	private int getNext(final ArrayList2<? extends IConstantPosition> positions) {
@@ -104,19 +107,19 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToEnd() {
-		setNextTime(audioLength());
+		nextTime(maxTime());
 	}
 
 	public void moveToNextBeat() {
-		setNextTime(getNext(data.songChart.beatsMap.beats));
+		nextTime(getNext(chartData.songChart.beatsMap.beats));
 	}
 
 	public void moveToNextGrid() {
-		setNextTime(data.songChart.beatsMap.getPositionWithAddedGrid(time(), 1));
+		nextTime(chartData.songChart.beatsMap.getPositionWithAddedGrid(time(), 1));
 	}
 
 	public void moveToNextItem() {
-		setNextTime(getNext(getCurrentItems()));
+		nextTime(getNext(getCurrentItems()));
 	}
 
 	public void moveToLastItem() {
@@ -125,10 +128,23 @@ public class ChartTimeHandler {
 			return;
 		}
 
-		setNextTime(items.getLast().position());
+		nextTime(items.getLast().position());
 	}
 
-	public void frame() {
-		time = nextTime;
+	public void frame(final double frameTime) {
+		double speed = keyboardHandler.heldAction()//
+				.map(action -> switch (action) {
+					case FAST_BACKWARD -> -32.0;
+					case FAST_FORWARD -> 32.0;
+					case MOVE_BACKWARD -> -4.0;
+					case MOVE_FORWARD -> 4.0;
+					case SLOW_BACKWARD -> -0.25;
+					case SLOW_FORWARD -> 0.25;
+					default -> 0.0;
+				}).orElse(0.0);
+		speed *= frameTime * 1000;
+
+		time = max(0, min(maxTime(), nextTime + speed));
+		nextTime = time;
 	}
 }

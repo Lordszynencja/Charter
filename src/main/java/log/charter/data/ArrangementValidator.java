@@ -29,7 +29,7 @@ public class ArrangementValidator {
 	private Runnable moveToTimeOnArrangement(final int arrangementId, final int time) {
 		return () -> {
 			modeManager.setArrangement(arrangementId);
-			chartTimeHandler.setNextTime(time);
+			chartTimeHandler.nextTime(time);
 
 			frame.updateEditAreaSizes();
 		};

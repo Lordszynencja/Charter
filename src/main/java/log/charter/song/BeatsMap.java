@@ -75,7 +75,7 @@ public class BeatsMap {
 	public void makeBeatsUntilSongEnd(final int audioLength) {
 		final Beat current = beats.getLast();
 		if (current.position() > audioLength) {
-			beats.removeIf(beat -> beat.position() > audioLength);
+			// beats.removeIf(beat -> beat.position() > audioLength);
 			return;
 		}
 

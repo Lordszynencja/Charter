@@ -1,10 +1,10 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 
-public class HighwayDrawerData {
+public class HighwayDrawData {
 	public final int strings;
 	public final int time;
 
@@ -20,9 +20,9 @@ public class HighwayDrawerData {
 	public final DrawableShapeList highlights;
 	public final DrawableShapeList noteIds;
 
-	public final Graphics g;
+	public final Graphics2D g;
 
-	public HighwayDrawerData(final Graphics g, final int strings, final int time) {
+	public HighwayDrawData(final Graphics2D g, final int strings, final int time) {
 		this.strings = strings;
 		this.time = time;
 

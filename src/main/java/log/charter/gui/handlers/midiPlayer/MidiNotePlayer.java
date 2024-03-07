@@ -2,7 +2,7 @@ package log.charter.gui.handlers.midiPlayer;
 
 import static log.charter.data.config.Config.sfxVolume;
 import static log.charter.song.configs.Tuning.getStringDistanceFromC0;
-import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastBeforeEquals;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -194,7 +194,7 @@ public class MidiNotePlayer {
 	}
 
 	private String getToneName(final int position) {
-		final ToneChange lastToneChange = findLastBeforeEqual(data.getCurrentArrangement().toneChanges, position);
+		final ToneChange lastToneChange = findLastBeforeEquals(data.getCurrentArrangement().toneChanges, position);
 		if (lastToneChange != null) {
 			return lastToneChange.toneName;
 		}

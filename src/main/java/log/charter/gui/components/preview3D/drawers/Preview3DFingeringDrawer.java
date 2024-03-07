@@ -6,7 +6,7 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosit
 import static log.charter.gui.components.preview3D.Preview3DUtils.noteHalfWidth;
 import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
-import static log.charter.song.notes.IConstantPosition.findLastBeforeEqual;
+import static log.charter.song.notes.IConstantPosition.findLastBeforeEquals;
 
 import java.awt.Color;
 
@@ -175,7 +175,7 @@ public class Preview3DFingeringDrawer {
 	}
 
 	private ChordTemplate findTemplateToUse(final Preview3DDrawData drawData) {
-		final HandShapeDrawData handShape = findLastBeforeEqual(drawData.handShapes, drawData.time + 20);
+		final HandShapeDrawData handShape = findLastBeforeEquals(drawData.handShapes, drawData.time + 20);
 		if (handShape == null || handShape.timeTo < drawData.time) {
 			return null;
 		}
@@ -184,7 +184,7 @@ public class Preview3DFingeringDrawer {
 		}
 
 		final Level level = data.getCurrentArrangementLevel();
-		final ChordOrNote sound = findLastBeforeEqual(level.sounds, drawData.time + 20);
+		final ChordOrNote sound = findLastBeforeEquals(level.sounds, drawData.time + 20);
 		if (sound == null || sound.position() < handShape.position() || sound.isNote()) {
 			return handShape.template;
 		}

@@ -38,8 +38,7 @@ public interface IConstantPosition extends Comparable<IConstantPosition> {
 		return findClosestId(positions, position.position());
 	}
 
-	public static <T extends IConstantPosition> T findClosest(final ArrayList2<T> positions,
-			final int position) {
+	public static <T extends IConstantPosition> T findClosest(final ArrayList2<T> positions, final int position) {
 		final Integer id = findClosestId(positions, position);
 		if (id == null) {
 			return null;
@@ -153,7 +152,7 @@ public interface IConstantPosition extends Comparable<IConstantPosition> {
 		return list.get(maxId).position() > position ? minId : maxId;
 	}
 
-	public static <T extends IConstantPosition> T findLastBeforeEqual(final List<T> list, final int position) {
+	public static <T extends IConstantPosition> T findLastBeforeEquals(final List<T> list, final int position) {
 		final int id = findLastIdBeforeEqual(list, position);
 		return id < 0 ? null : list.get(id);
 	}

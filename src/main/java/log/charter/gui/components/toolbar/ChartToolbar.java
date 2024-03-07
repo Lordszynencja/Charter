@@ -5,7 +5,6 @@ import static log.charter.gui.components.utils.ComponentUtils.setIcon;
 import static log.charter.util.FileUtils.imagesFolder;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
@@ -18,8 +17,6 @@ import java.util.function.DoubleConsumer;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JToggleButton;
@@ -47,7 +44,6 @@ import log.charter.util.ImageUtils;
 public class ChartToolbar extends JToolBar {
 	private static final long serialVersionUID = 1L;
 
-	private static final int checkboxLabelSpacing = 1;
 	private static final int verticalSpacing = 8;
 	private static final int elementHeight = 20;
 	public static final int height = elementHeight + 2 * verticalSpacing;
@@ -90,10 +86,6 @@ public class ChartToolbar extends JToolBar {
 		setBackground(ColorLabel.BASE_BG_2.color());
 	}
 
-	private void setFont(Component c, Font font) {
-		c.setFont(font);
-	}
-
 	private void setComponentBounds(final Component c, final int x, final int y, final int w, final int h) {
 		ComponentUtils.setComponentBounds(c, x, y, w, h);
 		c.validate();
@@ -110,40 +102,21 @@ public class ChartToolbar extends JToolBar {
 		add(x, horizontalSpacing, c);
 	}
 
-	private FieldWithLabel<JCheckBox> createCheckboxField(final Label label, final int separationWidth,
-			final Runnable onClick) {
-		final JCheckBox checkbox = new JCheckBox();
-		checkbox.addActionListener(a -> onClick.run());
-		checkbox.setBackground(getBackground());
-		checkbox.setFocusable(false);
-
-		final FieldWithLabel<JCheckBox> field = new FieldWithLabel<>(label, separationWidth, elementHeight,
-				elementHeight, checkbox, LabelPosition.RIGHT_PACKED);
-		field.setBackground(getBackground());
-
-		return field;
-	}
-
-	private FieldWithLabel<JCheckBox> addCheckbox(final AtomicInteger x, final Label label, final Runnable onClick) {
-		final FieldWithLabel<JCheckBox> field = createCheckboxField(label, checkboxLabelSpacing, onClick);
-		add(x, field);
-
-		return field;
-	}
-
-	private JToggleButton addToggleButton(final AtomicInteger x, final int horizontalSpacing, final Label label, final Runnable onClick, int buttonWidth) {
+	private JToggleButton addToggleButton(final AtomicInteger x, final int horizontalSpacing, final Label label,
+			final Runnable onClick, final int buttonWidth) {
 		final JToggleButton toggleButton = new JToggleButton(label.label());
 		toggleButton.addActionListener(a -> onClick.run());
 		toggleButton.setFocusable(false);
 
-		int width = (buttonWidth > 0) ? buttonWidth : toggleButton.getPreferredSize().width;
+		final int width = (buttonWidth > 0) ? buttonWidth : toggleButton.getPreferredSize().width;
 		toggleButton.setBounds(x.get(), 0, width, elementHeight);
 		add(x, horizontalSpacing, toggleButton);
 
 		return toggleButton;
 	}
 
-	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Runnable onClick, int buttonWidth) {
+	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Runnable onClick,
+			final int buttonWidth) {
 		final JToggleButton toggleButton = addToggleButton(x, horizontalSpacing, label, onClick, buttonWidth);
 
 		return toggleButton;
@@ -159,28 +132,6 @@ public class ChartToolbar extends JToolBar {
 		setIcon(toggleButton, icon);
 
 		return toggleButton;
-	}
-
-	private FieldWithLabel<JRadioButton> createRadioButtonField(final Label label, final int separationWidth,
-			final Runnable onClick) {
-		final JRadioButton radioButton = new JRadioButton();
-		radioButton.addActionListener(a -> onClick.run());
-		radioButton.setBackground(getBackground());
-		radioButton.setFocusable(false);
-
-		final FieldWithLabel<JRadioButton> field = new FieldWithLabel<>(label, separationWidth, elementHeight,
-				elementHeight, radioButton, LabelPosition.RIGHT_PACKED);
-		field.setBackground(getBackground());
-
-		return field;
-	}
-
-	private FieldWithLabel<JRadioButton> addRadioButton(final AtomicInteger x, final Label label,
-			final Runnable onClick) {
-		final FieldWithLabel<JRadioButton> field = createRadioButtonField(label, 2, onClick);
-		add(x, field);
-
-		return field;
 	}
 
 	private void addSeparator(final AtomicInteger x) {
@@ -266,11 +217,11 @@ public class ChartToolbar extends JToolBar {
 	}
 
 	private void addGridTypes(final AtomicInteger x) {
-        beatGridType = addToggleButton(x, 1, Label.BEAT_GRID_TYPE, () -> onGridTypeChange(GridType.BEAT), 25);
-        setIcon(beatGridType, gridBeatTypeIcon);
+		beatGridType = addToggleButton(x, 1, Label.BEAT_GRID_TYPE, () -> onGridTypeChange(GridType.BEAT), 25);
+		setIcon(beatGridType, gridBeatTypeIcon);
 
-        noteGridType = addToggleButton(x, Label.NOTE_GRID_TYPE, () -> onGridTypeChange(GridType.NOTE), 25);
-        setIcon(noteGridType, gridNoteTypeIcon);
+		noteGridType = addToggleButton(x, Label.NOTE_GRID_TYPE, () -> onGridTypeChange(GridType.NOTE), 25);
+		setIcon(noteGridType, gridNoteTypeIcon);
 
 		final ButtonGroup gridTypeGroup = new ButtonGroup();
 		gridTypeGroup.add(beatGridType);

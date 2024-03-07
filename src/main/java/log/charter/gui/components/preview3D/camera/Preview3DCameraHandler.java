@@ -44,7 +44,11 @@ public class Preview3DCameraHandler {
 		this.data = data;
 	}
 
-	public void updateFretFocus() {
+	private double mix(final double a, final double b, final double mix) {
+		return a * mix + b * (1 - mix);
+	}
+
+	public void updateFretFocus(final double frameTime) {
 		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
 		int minFret = Config.frets;
 		int maxFret = 1;
@@ -69,9 +73,11 @@ public class Preview3DCameraHandler {
 			}
 		}
 
-		camX = camX * focusingSpeed
-				+ (getFretPosition(maxFret) + getFretPosition(minFret - 1)) / 2 * (1 - focusingSpeed);
-		fretSpan = fretSpan * focusingSpeed + (maxFret - minFret + 1) * (1 - focusingSpeed);
+		final double focusSpeed = focusingSpeed * frameTime;
+		final double targetCamX = (getFretPosition(maxFret) + getFretPosition(minFret - 1)) / 2;
+		camX = mix(camX, targetCamX, focusSpeed);
+		final double targetFretSpan = (maxFret - minFret + 1);
+		fretSpan = mix(fretSpan, targetFretSpan, focusSpeed);
 	}
 
 	public void updateCamera(final double aspectRatio) {

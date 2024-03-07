@@ -35,7 +35,7 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackgroundAndBorder;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
-import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawerData;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeNotes;
 import log.charter.song.ChordTemplate;
 import log.charter.song.enums.HOPO;
@@ -107,14 +107,14 @@ public class ModernThemeNotes implements ThemeNotes {
 		ModernThemeNoteTails.reloadGraphics();
 	}
 
-	private final HighwayDrawerData data;
+	private final HighwayDrawData data;
 
 	private final int[] stringPositions;
 
 	private final ModernThemeBends bends;
 	private final ModernThemeNoteTails noteTails;
 
-	public ModernThemeNotes(final HighwayDrawerData data) {
+	public ModernThemeNotes(final HighwayDrawData data) {
 		this.data = data;
 
 		stringPositions = new int[data.strings];

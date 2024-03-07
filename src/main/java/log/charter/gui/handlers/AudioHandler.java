@@ -288,7 +288,7 @@ public class AudioHandler {
 			if (repeatManager.isRepeating()) {
 				final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed / 100);
 				final int nextTime = songTimeOnStart + timePassed;
-				chartTimeHandler.setNextTime(nextTime);
+				chartTimeHandler.nextTime(nextTime);
 				return;
 			}
 
@@ -297,7 +297,7 @@ public class AudioHandler {
 
 		final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed / 100);
 		final int nextTime = songTimeOnStart + timePassed;
-		chartTimeHandler.setNextTime(nextTime);
+		chartTimeHandler.nextTime(nextTime);
 
 		beatTickPlayer.handleFrame(nextTime);
 		noteTickPlayer.handleFrame(nextTime);
@@ -310,7 +310,7 @@ public class AudioHandler {
 	public void rewind(final int t) {
 		stop();
 
-		chartTimeHandler.setNextTime(t);
+		chartTimeHandler.nextTime(t);
 
 		beatTickPlayer.stop();
 		beatTickPlayer.handleFrame(t);
