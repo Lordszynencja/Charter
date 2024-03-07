@@ -772,6 +772,14 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		notes.add(new Line(line.lineStart, line.lineEnd, ColorLabel.NOTE_ADD_LINE));
 	}
 
+	@Override
+	public void addCurrentAnchor(final Graphics2D g, final Anchor anchor) {
+	}
+
+	@Override
+	public void addCurrentAnchor(final Graphics2D g, final Anchor anchor, final int nextAnchorX) {
+	}
+
 	protected void addAnchorLine(final int x) {
 		anchors.add(lineVertical(x, anchorY, lanesBottom, ColorLabel.ANCHOR));
 	}

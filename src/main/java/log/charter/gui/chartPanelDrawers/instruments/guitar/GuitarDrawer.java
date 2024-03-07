@@ -37,7 +37,6 @@ import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
-import log.charter.song.Anchor;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;
@@ -104,31 +103,10 @@ public class GuitarDrawer {
 				arrangement.toneChanges, time, selectedIds, highlightData);
 	}
 
-	private void addAnchors(final int time, final HighwayDrawer highwayDrawer, final HighlightData highlightData,
-			final Level level, final int panelWidth) {
-		final HashSet2<Integer> selectedAnchorIds = getSelectedIds(PositionType.ANCHOR);
-		final int highlightId = highlightData.getId(PositionType.ANCHOR);
-
-		for (int i = 0; i < level.anchors.size(); i++) {
-			final Anchor anchor = level.anchors.get(i);
-			final int x = timeToX(anchor.position(), time);
-			if (isPastRightEdge(x, panelWidth)) {
-				break;
-			}
-
-			if (!isOnScreen(x, 20)) {
-				continue;
-			}
-
-			final boolean selected = selectedAnchorIds.contains(i);
-			final boolean highlighted = i == highlightId;
-			highwayDrawer.addAnchor(anchor, x, selected, highlighted);
-		}
-
-		if (highlightData.type == PositionType.ANCHOR) {
-			highlightData.highlightedNonIdPositions.forEach(
-					highlightPosition -> highwayDrawer.addAnchorHighlight(timeToX(highlightPosition.position, time)));
-		}
+	private void addAnchors(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
+			final Level level, final int time, final HighlightData highlightData) {
+		final HashSet2<Integer> selectedIds = getSelectedIds(PositionType.ANCHOR);
+		GuitarAnchorsDrawer.addAnchors(g, panelWidth, highwayDrawer, level.anchors, time, selectedIds, highlightData);
 	}
 
 	private void drawGuitarLanes(final Graphics g, final int strings, final int time) {
@@ -355,7 +333,7 @@ public class GuitarDrawer {
 
 		addEventPoints(g, panelWidth, highwayDrawer, arrangement, time, highlightData);
 		addToneChanges(g, panelWidth, highwayDrawer, arrangement, time, highlightData);
-		addAnchors(time, highwayDrawer, highlightData, level, panelWidth);
+		addAnchors(g, panelWidth, highwayDrawer, level, time, highlightData);
 		drawGuitarLanes(g, arrangement.tuning.strings(), time);
 		addGuitarNotes(level.sounds, arrangement.chordTemplates, time, highwayDrawer, highlightData, arrangement,
 				panelWidth);

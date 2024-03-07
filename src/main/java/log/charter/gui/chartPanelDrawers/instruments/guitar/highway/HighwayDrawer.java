@@ -50,6 +50,10 @@ public interface HighwayDrawer {
 
 	void addToneChangeHighlight(int x);
 
+	void addCurrentAnchor(Graphics2D g, Anchor anchor);
+
+	void addCurrentAnchor(Graphics2D g, Anchor anchor, int nextAnchorX);
+
 	void addAnchor(Anchor anchor, int x, boolean selected, boolean highlighted);
 
 	void addAnchorHighlight(int x);

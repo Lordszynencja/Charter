@@ -55,18 +55,10 @@ public class ModernThemeEvents implements ThemeEvents {
 				ColorLabel.PHRASE_NAME_BG, 2, ColorLabel.BASE_BORDER);
 	}
 
-	private void addSectionsAndPhrasesText(final Graphics2D g, final TextWithBackground text) {
-		if (text.getPositionWithSize(g).getRightX() < 0) {
-			return;
-		}
-
-		data.sectionsAndPhrases.add(text);
-	}
-
 	private void addEvents(final ArrayList2<EventType> events, final int x) {
 		final String eventsName = String.join(", ", events.map(event -> event.label));
 		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, eventNamesY), eventFont, eventsName,
-				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.EVENT_BG, 2, ColorLabel.BASE_BORDER.color()));
+				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.EVENT_BG, 2, ColorLabel.BASE_BORDER));
 	}
 
 	private void addEventPointBox(final int x, final ColorLabel color) {
@@ -83,10 +75,6 @@ public class ModernThemeEvents implements ThemeEvents {
 
 	@Override
 	public void addCurrentSection(final Graphics2D g, final SectionType section, final int nextSectionX) {
-		if (nextSectionX <= 0) {
-			return;
-		}
-
 		final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, section.label,
 				sectionTextSpace);
 		final int x = min(0, nextSectionX - expectedSize.width);
@@ -117,10 +105,10 @@ public class ModernThemeEvents implements ThemeEvents {
 	public void addEventPoint(final Graphics2D g, final EventPoint eventPoint, final Phrase phrase, final int x,
 			final boolean selected, final boolean highlighted) {
 		if (eventPoint.section != null) {
-			addSectionsAndPhrasesText(g, generateSectionText(eventPoint.section, x));
+			data.sectionsAndPhrases.add(generateSectionText(eventPoint.section, x));
 		}
 		if (eventPoint.phrase != null) {
-			addSectionsAndPhrasesText(g, generatePhraseText(generatePhraseLabel(phrase, eventPoint.phrase), x));
+			data.sectionsAndPhrases.add(generatePhraseText(generatePhraseLabel(phrase, eventPoint.phrase), x));
 		}
 		if (!eventPoint.events.isEmpty()) {
 			addEvents(eventPoint.events, x);

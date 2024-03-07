@@ -101,6 +101,16 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
+	public void addCurrentAnchor(final Graphics2D g, final Anchor anchor) {
+		anchors.addCurrentAnchor(g, anchor);
+	}
+
+	@Override
+	public void addCurrentAnchor(final Graphics2D g, final Anchor anchor, final int nextAnchorX) {
+		anchors.addCurrentAnchor(g, anchor, nextAnchorX);
+	}
+
+	@Override
 	public void addAnchor(final Anchor anchor, final int x, final boolean selected, final boolean highlighted) {
 		anchors.addAnchor(anchor, x, selected, highlighted);
 	}
