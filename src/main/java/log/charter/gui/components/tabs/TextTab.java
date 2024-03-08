@@ -39,4 +39,8 @@ public class TextTab extends CharterScrollPane {
 	public String getText() {
 		return textArea.getText();
 	}
+
+	public void setText(final String text) {
+		textArea.setText(text);
+	}
 }

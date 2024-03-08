@@ -378,6 +378,7 @@ public class SongFileHandler implements Initiable {
 		chartTimeHandler.nextTime(project.time);
 		chartData.setSong(dir, songChart, projectFileChosen.getName(), project.editMode, project.arrangement,
 				project.level);
+		textTab.setText(project.text);
 
 		loadingDialog.setProgress(3, Label.LOADING_DONE.label());
 	}
