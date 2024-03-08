@@ -24,7 +24,7 @@ public class Preview3DCameraHandler {
 
 	private final static int fretFocusWindowStartOffset = 0;
 	private final static int fretFocusWindowEndOffset = 3000;
-	private static final double focusingSpeed = pow(0.99, 0.2);
+	private static final double focusingSpeed = 0.7;
 
 	private final static double minScreenScaleX = 0.5;
 	private final static double screenScaleXMultiplier = 1;
@@ -73,11 +73,11 @@ public class Preview3DCameraHandler {
 			}
 		}
 
-		final double focusSpeed = focusingSpeed * frameTime;
+		final double focusSpeed = 1 - pow(1 - focusingSpeed, frameTime);
 		final double targetCamX = (getFretPosition(maxFret) + getFretPosition(minFret - 1)) / 2;
-		camX = mix(camX, targetCamX, focusSpeed);
+		camX = mix(targetCamX, camX, focusSpeed);
 		final double targetFretSpan = (maxFret - minFret + 1);
-		fretSpan = mix(fretSpan, targetFretSpan, focusSpeed);
+		fretSpan = mix(targetFretSpan, fretSpan, focusSpeed);
 	}
 
 	public void updateCamera(final double aspectRatio) {

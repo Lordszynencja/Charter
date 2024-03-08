@@ -53,8 +53,9 @@ public class CharterFrame extends JFrame implements Initiable {
 	private HelpTab helpTab;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
-	private Preview3DPanel preview3dPanel;
 	private TextTab textTab;
+
+	private final Preview3DPanel preview3DPanel = new Preview3DPanel();
 
 	private CharterMenuBar charterMenuBar;
 	private ChartToolbar chartToolbar;
@@ -79,6 +80,8 @@ public class CharterFrame extends JFrame implements Initiable {
 
 	@Override
 	public void init() {
+		charterContext.initObject(preview3DPanel);
+
 		setSize(Config.windowWidth, Config.windowHeight);
 		setLocation(Config.windowPosX, Config.windowPosY);
 		setExtendedState(windowExtendedState);
@@ -87,7 +90,7 @@ public class CharterFrame extends JFrame implements Initiable {
 				new Tab("Quick Edit", new CharterScrollPane(currentSelectionEditor)), //
 				new Tab("Help", helpTab), //
 				new Tab("Text", textTab), //
-				new Tab("3D Preview", preview3dPanel));
+				new Tab("3D Preview", preview3DPanel));
 
 		add(chartToolbar);
 		add(chartPanel);
@@ -144,6 +147,18 @@ public class CharterFrame extends JFrame implements Initiable {
 
 		DrawerUtils.updateEditAreaSizes(editMode, bass, strings);
 		resize();
+	}
+
+	public void reloadTextures() {
+		preview3DPanel.reloadTextures();
+	}
+
+	@Override
+	public void repaint() {
+		super.repaint();
+		if (preview3DPanel.isShowing()) {
+			preview3DPanel.repaint();
+		}
 	}
 
 	@Override

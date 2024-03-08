@@ -19,7 +19,6 @@ import log.charter.gui.ChartPanel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
-import log.charter.gui.components.preview3D.Preview3DPanel;
 import log.charter.gui.components.simple.ChartMap;
 import log.charter.gui.components.tabs.HelpTab;
 import log.charter.gui.components.tabs.TextTab;
@@ -93,7 +92,6 @@ public class CharterContext {
 	private final CurrentSelectionEditor currentSelectionEditor = new CurrentSelectionEditor();
 	private final HelpTab helpTab = new HelpTab();
 	private final TextTab textTab = new TextTab();
-	private final Preview3DPanel preview3DPanel = new Preview3DPanel();
 
 	private final AudioFramer audioFramer = new AudioFramer();
 	private final Framer framer = new Framer(this::frame);
@@ -194,9 +192,6 @@ public class CharterContext {
 			chartTimeHandler.frame(frameTime);
 
 			windowedPreviewHandler.paintFrame();
-			if (preview3DPanel.isShowing()) {
-				preview3DPanel.repaint();
-			}
 			charterFrame.repaint();
 		} catch (final Exception e) {
 			Logger.error("Exception in frame()", e);
@@ -204,7 +199,7 @@ public class CharterContext {
 	}
 
 	public void reloadTextures() {
-		preview3DPanel.reloadTextures();
+		charterFrame.reloadTextures();
 		windowedPreviewHandler.reloadTextures();
 	}
 
