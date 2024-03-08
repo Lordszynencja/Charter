@@ -36,13 +36,14 @@ public class EditorNoteDrawingData {
 	}
 
 	public static ArrayList2<EditorNoteDrawingData> fromChord(final Chord chord, final ChordTemplate chordTemplate,
-			final int x, final boolean selected, final boolean highlighted, final boolean lastWasLinkNext,
+			final int x, final boolean selected, final int highlightedString, final boolean lastWasLinkNext,
 			final boolean wrongLinkNext, final boolean ctrl) {
 		final ArrayList2<EditorNoteDrawingData> notes = new ArrayList2<>();
 
 		for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
-			notes.add(fromChordNote(x, chord, chordTemplate, chordNoteEntry.getKey(), chordNoteEntry.getValue(),
-					selected, highlighted, lastWasLinkNext, wrongLinkNext, ctrl));
+			final int string = chordNoteEntry.getKey();
+			notes.add(fromChordNote(x, chord, chordTemplate, string, chordNoteEntry.getValue(), selected,
+					highlightedString == string, lastWasLinkNext, wrongLinkNext, ctrl));
 		}
 
 		return notes;

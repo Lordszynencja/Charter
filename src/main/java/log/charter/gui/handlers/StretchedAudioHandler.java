@@ -5,11 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.io.Logger;
 import log.charter.sound.StretchedFileLoader;
 import log.charter.sound.data.AudioDataShort;
 
-public class StretchedAudioHandler {
+public class StretchedAudioHandler implements Initiable {
 	private String dir;
 	private AudioDataShort musicData;
 

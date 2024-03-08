@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.CharterFrame;
+import log.charter.data.managers.CharterContext;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.CharterSelect;
@@ -66,7 +66,7 @@ public class GraphicTexturesConfigPage implements Page {
 		texturePackField.setVisible(false);
 	}
 
-	public void save(final CharterFrame frame) {
+	public void save(final CharterContext context) {
 		boolean texturesChanged = false;
 		if (!inlayField.field.getSelectedItem().equals(GraphicalConfig.inlay)) {
 			GraphicalConfig.inlay = inlayField.field.getSelectedItem();
@@ -78,7 +78,7 @@ public class GraphicTexturesConfigPage implements Page {
 		}
 
 		if (texturesChanged) {
-			frame.reloadTextures();
+			context.reloadTextures();
 		}
 	}
 }

@@ -11,18 +11,15 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import log.charter.data.ArrangementFixer;
-import log.charter.data.ChartData;
+import log.charter.data.managers.CharterContext;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.selection.Selection;
 import log.charter.data.managers.selection.SelectionAccessor;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
-import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;
-import log.charter.gui.handlers.data.ChartItemsHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Anchor;
 import log.charter.song.HandShape;
@@ -32,7 +29,7 @@ import log.charter.song.notes.IPosition;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.HashSet2;
 
-public class CurrentSelectionEditor extends RowedPanel {
+public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 	private static final long serialVersionUID = 1L;
 
 	public static <T extends IPosition, U> U getSingleValue(final HashSet2<Selection<T>> selected,
@@ -56,6 +53,8 @@ public class CurrentSelectionEditor extends RowedPanel {
 		return values.size() == 1 ? values.get(0) : defaultValue;
 	}
 
+	private CharterContext charterContext;
+	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
 
 	private final AnchorSelectionEditor anchorSelectionEditor = new AnchorSelectionEditor();
@@ -71,18 +70,22 @@ public class CurrentSelectionEditor extends RowedPanel {
 		setBackground(ColorLabel.BASE_BG_2.color());
 	}
 
-	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final CharterFrame frame,
-			final ChartItemsHandler chartItemsHandler, final KeyboardHandler keyboardHandler,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this.selectionManager = selectionManager;
+	@Override
+	public void init() {
+		charterContext.initObject(anchorSelectionEditor);
+		anchorSelectionEditor.addTo(this);
 
-		anchorSelectionEditor.init(this, selectionManager, undoSystem);
-		guitarSoundSelectionEditor.init(this, arrangementFixer, data, frame, chartItemsHandler, keyboardHandler,
-				selectionManager, undoSystem);
-		handShapeSelectionEditor.init(this, arrangementFixer, data, frame, keyboardHandler, selectionManager,
-				undoSystem);
-		toneChangeSelectionEditor.init(this, data, selectionManager, undoSystem);
-		vocalSelectionEditor.init(this, selectionManager, undoSystem);
+		charterContext.initObject(guitarSoundSelectionEditor);
+		guitarSoundSelectionEditor.addTo(this);
+
+		charterContext.initObject(handShapeSelectionEditor);
+		handShapeSelectionEditor.addTo(this);
+
+		charterContext.initObject(toneChangeSelectionEditor);
+		toneChangeSelectionEditor.addTo(this);
+
+		charterContext.initObject(vocalSelectionEditor);
+		vocalSelectionEditor.addTo(this);
 
 		addKeyListener(keyboardHandler);
 	}

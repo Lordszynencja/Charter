@@ -8,24 +8,23 @@ import java.awt.Graphics2D;
 import javax.swing.JComponent;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.HighlightManager;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.selection.SelectionManager;
+import log.charter.data.managers.CharterContext;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.gui.chartPanelDrawers.ArrangementDrawer;
 import log.charter.gui.chartPanelDrawers.common.BackgroundDrawer;
-import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.MarkerDrawer;
-import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
 
-public class ChartPanel extends JComponent {
+public class ChartPanel extends JComponent implements Initiable {
 	private static final long serialVersionUID = -3439446235287039031L;
 
-	private ChartTimeHandler chartTimeHandler;
+	private CharterContext charterContext;
 	private ChartData chartData;
+	private ChartTimeHandler chartTimeHandler;
+	private KeyboardHandler keyboardHandler;
+	private MouseHandler mouseHandler;
 
 	private final ArrangementDrawer arrangementDrawer = new ArrangementDrawer();
 	private final BackgroundDrawer backgroundDrawer = new BackgroundDrawer();
@@ -37,18 +36,11 @@ public class ChartPanel extends JComponent {
 		setSize(getWidth(), editAreaHeight);
 	}
 
-	public void init(final BeatsDrawer beatsDrawer, final ChartTimeHandler chartTimeHandler, final ChartData chartData,
-			final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
-			final MouseHandler mouseHandler, final SelectionManager selectionManager,
-			final WaveFormDrawer waveFormDrawer) {
-		this.chartTimeHandler = chartTimeHandler;
-		this.chartData = chartData;
-
-		backgroundDrawer.init(chartTimeHandler, chartData, this);
-		arrangementDrawer.init(beatsDrawer, chartData, this, highlightManager, keyboardHandler, modeManager,
-				mouseButtonPressReleaseHandler, mouseHandler, selectionManager, waveFormDrawer);
-		markerDrawer.init();
+	@Override
+	public void init() {
+		charterContext.initObject(arrangementDrawer);
+		charterContext.initObject(backgroundDrawer);
+		charterContext.initObject(markerDrawer);
 
 		addMouseListener(mouseHandler);
 		addMouseMotionListener(mouseHandler);

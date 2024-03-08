@@ -18,9 +18,6 @@ public class HelpTab extends JLabel {
 		setFocusable(false);
 	}
 
-	public void init() {
-	}
-
 	private final List<Integer> frameTimes = new ArrayList<>();
 
 	public void addFrameTime() {

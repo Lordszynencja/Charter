@@ -48,15 +48,9 @@ public class BackgroundDrawer {
 		reloadGraphics();
 	}
 
-	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
+	private ChartData chartData;
 	private ChartPanel chartPanel;
-
-	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final ChartPanel chartPanel) {
-		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
-		this.chartPanel = chartPanel;
-	}
+	private ChartTimeHandler chartTimeHandler;
 
 	private void drawBackground(final Graphics g) {
 		g.setColor(ColorLabel.BASE_BG_0.color());
@@ -121,7 +115,7 @@ public class BackgroundDrawer {
 	public void draw(final Graphics2D g, final int time) {
 		drawBackground(g);
 
-		if (data.isEmpty) {
+		if (chartData.isEmpty) {
 			return;
 		}
 

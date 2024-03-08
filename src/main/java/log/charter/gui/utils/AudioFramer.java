@@ -1,14 +1,15 @@
 package log.charter.gui.utils;
 
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.gui.handlers.AudioHandler;
 import log.charter.io.Logger;
 
-public class AudioFramer {
+public class AudioFramer implements Initiable {
 	private AudioHandler audioHandler;
 	private Thread thread;
 
-	public void init(final AudioHandler audioHandler) {
-		this.audioHandler = audioHandler;
+	@Override
+	public void init() {
 		thread = new Thread(this::run);
 	}
 

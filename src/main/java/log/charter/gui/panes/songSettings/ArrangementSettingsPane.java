@@ -338,6 +338,6 @@ public class ArrangementSettingsPane extends ParamsPane {
 		selectionManager.clear();
 
 		charterMenuBar.refreshMenus();
-		frame.updateEditAreaSizes();
+		frame.updateSizes();
 	}
 }

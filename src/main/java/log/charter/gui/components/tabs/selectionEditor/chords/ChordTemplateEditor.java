@@ -197,14 +197,14 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		this.parent = parent;
 	}
 
-	public void init(final ChartData chartData, final CharterFrame frame, final KeyboardHandler keyboardHandler,
+	public void init(final ChartData chartData, final CharterFrame charterFrame, final KeyboardHandler keyboardHandler,
 			final Supplier<ChordTemplate> chordTemplateSupplier, final Runnable onChange) {
 		this.onChange = onChange;
 
 		this.chartData = chartData;
 
 		this.chordTemplateSupplier = chordTemplateSupplier;
-		chordTemplatePreview = new ChordTemplatePreview(parent, this, chartData, frame::requestFocusInWindow,
+		chordTemplatePreview = new ChordTemplatePreview(parent, this, chartData, charterFrame::requestFocusInWindow,
 				keyboardHandler, chordTemplateSupplier);
 	}
 

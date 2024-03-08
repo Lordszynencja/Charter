@@ -4,6 +4,7 @@ import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.undoSystem.UndoSystem;
@@ -18,24 +19,17 @@ import log.charter.gui.panes.songEdits.AddDefaultSilencePane;
 import log.charter.gui.panes.songEdits.AddSilencePane;
 import log.charter.gui.panes.songSettings.SongOptionsPane;
 
-class EditMenuHandler extends CharterMenuHandler {
+class EditMenuHandler extends CharterMenuHandler implements Initiable {
+	private ActionHandler actionHandler;
+	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
-	private CharterFrame frame;
 	private ModeManager modeManager;
 	private ProjectAudioHandler projectAudioHandler;
 	private UndoSystem undoSystem;
 
-	void init(final ActionHandler actionHandler, final ChartTimeHandler chartTimeHandler, final ChartData data,
-			final CharterFrame frame, final ModeManager modeManager, final ProjectAudioHandler projectAudioHandler,
-			final UndoSystem undoSystem) {
+	public void init() {
 		super.init(actionHandler);
-		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
-		this.frame = frame;
-		this.modeManager = modeManager;
-		this.projectAudioHandler = projectAudioHandler;
-		this.undoSystem = undoSystem;
 	}
 
 	@Override
@@ -72,18 +66,18 @@ class EditMenuHandler extends CharterMenuHandler {
 	}
 
 	private void songOptions() {
-		new SongOptionsPane(frame, data);
+		new SongOptionsPane(charterFrame, chartData);
 	}
 
 	private void addSilence() {
-		new AddSilencePane(frame, chartTimeHandler, data, projectAudioHandler);
+		new AddSilencePane(charterFrame, chartTimeHandler, chartData, projectAudioHandler);
 	}
 
 	private void addDefaultSilence() {
-		new AddDefaultSilencePane(frame, chartTimeHandler, data, projectAudioHandler);
+		new AddDefaultSilencePane(charterFrame, chartTimeHandler, chartData, projectAudioHandler);
 	}
 
 	private void addBeatsAtTheStart() {
-		new AddBeatsAtTheStartPane(frame, data, undoSystem);
+		new AddBeatsAtTheStartPane(charterFrame, chartData, undoSystem);
 	}
 }

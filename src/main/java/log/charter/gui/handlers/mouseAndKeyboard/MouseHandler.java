@@ -37,9 +37,9 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 public class MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private ArrangementFixer arrangementFixer;
+	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
-	private CharterFrame frame;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
@@ -52,21 +52,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	private int mouseY = -1;
 	private long lastLeftClickTime = 0;
 	private Integer lastClickId = null;
-
-	public void init(final ArrangementFixer arrangementFixer, final ChartTimeHandler chartTimeHandler,
-			final ChartData data, final CharterFrame frame, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this.arrangementFixer = arrangementFixer;
-		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
-		this.frame = frame;
-		this.keyboardHandler = keyboardHandler;
-		this.modeManager = modeManager;
-		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-	}
 
 	/*
 	 * invoked only when it wasn't dragged
@@ -99,7 +84,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		mouseMoved(e);
 
-		if (data.isEmpty) {
+		if (chartData.isEmpty) {
 			return;
 		}
 
@@ -122,19 +107,20 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 
 		if (clickData.pressHighlight.type == PositionType.EVENT_POINT) {
-			dragPositions(PositionType.EVENT_POINT, clickData, data.getCurrentArrangement().eventPoints);
+			dragPositions(PositionType.EVENT_POINT, clickData, chartData.getCurrentArrangement().eventPoints);
 		}
 		if (clickData.pressHighlight.type == PositionType.TONE_CHANGE) {
-			dragPositions(PositionType.TONE_CHANGE, clickData, data.getCurrentArrangement().toneChanges);
+			dragPositions(PositionType.TONE_CHANGE, clickData, chartData.getCurrentArrangement().toneChanges);
 		}
 		if (clickData.pressHighlight.type == PositionType.ANCHOR) {
-			dragPositions(PositionType.ANCHOR, clickData, data.getCurrentArrangementLevel().anchors);
+			dragPositions(PositionType.ANCHOR, clickData, chartData.getCurrentArrangementLevel().anchors);
 		}
 		if (clickData.pressHighlight.type == PositionType.GUITAR_NOTE) {
-			dragNotes(clickData, data.getCurrentArrangementLevel().sounds);
+			dragNotes(clickData, chartData.getCurrentArrangementLevel().sounds);
 		}
 		if (clickData.pressHighlight.type == PositionType.HAND_SHAPE) {
-			dragPositionsWithLength(PositionType.HAND_SHAPE, clickData, data.getCurrentArrangementLevel().handShapes);
+			dragPositionsWithLength(PositionType.HAND_SHAPE, clickData,
+					chartData.getCurrentArrangementLevel().handShapes);
 		}
 	}
 
@@ -142,12 +128,12 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		if (!clickData.isXDrag()) {
 			selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
 		} else if (clickData.pressHighlight.type == PositionType.VOCAL) {
-			dragPositionsWithLength(PositionType.VOCAL, clickData, data.songChart.vocals.vocals);
+			dragPositionsWithLength(PositionType.VOCAL, clickData, chartData.songChart.vocals.vocals);
 		}
 
 		if (wasDoubleClick && clickData.pressHighlight.vocal != null) {
-			new VocalPane(clickData.pressHighlight.id, clickData.pressHighlight.vocal, data, frame, selectionManager,
-					undoSystem);
+			new VocalPane(clickData.pressHighlight.id, clickData.pressHighlight.vocal, chartData, charterFrame,
+					selectionManager, undoSystem);
 		}
 	}
 
@@ -155,7 +141,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	public void mouseReleased(final MouseEvent e) {
 		mouseMoved(e);
 
-		if (data.isEmpty) {
+		if (chartData.isEmpty) {
 			return;
 		}
 
@@ -221,9 +207,9 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	private void getAllLeftRightPositions(final int leftPosition, final int middlePosition, final int rightPosition,
 			final List<IPosition> left, final List<IPosition> right) {
-		splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, data.songChart.vocals.vocals);
+		splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, chartData.songChart.vocals.vocals);
 
-		for (final Arrangement arrangement : data.songChart.arrangements) {
+		for (final Arrangement arrangement : chartData.songChart.arrangements) {
 			splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, arrangement.toneChanges);
 			for (final Level level : arrangement.levels) {
 				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.anchors);
@@ -247,14 +233,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	}
 
 	private void straightenBeats(final int from, final int to) {
-		final int positionFrom = data.songChart.beatsMap.beats.get(from).position();
-		final int positionTo = data.songChart.beatsMap.beats.get(to).position();
+		final int positionFrom = chartData.songChart.beatsMap.beats.get(from).position();
+		final int positionTo = chartData.songChart.beatsMap.beats.get(to).position();
 		final int size = to - from;
 
 		for (int i = 1; i < size; i++) {
 			final int beatId = from + i;
 			final int beatPosition = (positionFrom * (size - i) + positionTo * i) / size;
-			data.songChart.beatsMap.beats.get(beatId).position(beatPosition);
+			chartData.songChart.beatsMap.beats.get(beatId).position(beatPosition);
 		}
 	}
 
@@ -269,17 +255,17 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			final int positionBefore = clickData.pressHighlight.position();
 			final int positionAfter = max(0,
 					min(chartTimeHandler.maxTime(), xToTime(clickData.releasePosition.x, chartTimeHandler.time())));
-			data.songChart.moveEverything(chartTimeHandler.maxTime(), positionAfter - positionBefore);
+			chartData.songChart.moveEverything(chartTimeHandler.maxTime(), positionAfter - positionBefore);
 			return;
 		}
 
 		clickData.pressHighlight.beat.anchor = true;
 
-		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
+		final ArrayList2<Beat> beats = chartData.songChart.beatsMap.beats;
 
-		final int leftId = data.songChart.beatsMap.findPreviousAnchoredBeat(clickData.pressHighlight.id);
+		final int leftId = chartData.songChart.beatsMap.findPreviousAnchoredBeat(clickData.pressHighlight.id);
 		final int middleId = clickData.pressHighlight.id;
-		final Integer rightId = data.songChart.beatsMap.findNextAnchoredBeat(clickData.pressHighlight.id);
+		final Integer rightId = chartData.songChart.beatsMap.findNextAnchoredBeat(clickData.pressHighlight.id);
 
 		final int leftPosition = beats.get(leftId).position();
 		final int minNewPosition = leftPosition + (middleId - leftId) * 10;
@@ -331,7 +317,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			}
 		}
 
-		data.songChart.beatsMap.makeBeatsUntilSongEnd(chartTimeHandler.maxTime());
+		chartData.songChart.beatsMap.makeBeatsUntilSongEnd(chartTimeHandler.maxTime());
 	}
 
 	private void reselectDraggedPositions(final PositionType type, final List<? extends IPosition> moved) {
@@ -360,9 +346,9 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		undoSystem.addUndo();
 
 		final int dragFrom = clickData.pressHighlight.position();
-		final int dragTo = data.songChart.beatsMap
+		final int dragTo = chartData.songChart.beatsMap
 				.getPositionFromGridClosestTo(xToTime(clickData.releasePosition.x, chartTimeHandler.time()));
-		data.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
+		chartData.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
 
 		allPositions.sort(null);
 
@@ -391,9 +377,9 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		undoSystem.addUndo();
 
 		final int dragFrom = clickData.pressHighlight.position();
-		final int dragTo = data.songChart.beatsMap
+		final int dragTo = chartData.songChart.beatsMap
 				.getPositionFromGridClosestTo(xToTime(clickData.releasePosition.x, chartTimeHandler.time()));
-		data.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
+		chartData.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
 
 		allPositions.sort(null);
 
@@ -421,9 +407,9 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		undoSystem.addUndo();
 
 		final int dragFrom = clickData.pressHighlight.position();
-		final int dragTo = data.songChart.beatsMap
+		final int dragTo = chartData.songChart.beatsMap
 				.getPositionFromGridClosestTo(xToTime(clickData.releasePosition.x, chartTimeHandler.time()));
-		data.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
+		chartData.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
 
 		allPositions.sort(null);
 
@@ -457,7 +443,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	@Override
 	public void mouseWheelMoved(final MouseWheelEvent e) {
-		if (data.isEmpty) {
+		if (chartData.isEmpty) {
 			return;
 		}
 

@@ -25,6 +25,7 @@ import javax.swing.JToolBar;
 import log.charter.data.GridType;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
@@ -41,7 +42,7 @@ import log.charter.gui.lookAndFeel.CharterSliderUI;
 import log.charter.io.Logger;
 import log.charter.util.ImageUtils;
 
-public class ChartToolbar extends JToolBar {
+public class ChartToolbar extends JToolBar implements Initiable {
 	private static final long serialVersionUID = 1L;
 
 	private static final int verticalSpacing = 8;
@@ -57,6 +58,7 @@ public class ChartToolbar extends JToolBar {
 	private static final BufferedImage sfxVolumeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarSFXVolume.png");
 
 	private AudioHandler audioHandler;
+	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 	private RepeatManager repeatManager;
 	private WaveFormDrawer waveFormDrawer;
@@ -311,13 +313,8 @@ public class ChartToolbar extends JToolBar {
 		add(x, volume);
 	}
 
-	public void init(final AudioHandler audioHandler, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final RepeatManager repeatManager, final WaveFormDrawer waveFormDrawer) {
-		this.audioHandler = audioHandler;
-		this.modeManager = modeManager;
-		this.repeatManager = repeatManager;
-		this.waveFormDrawer = waveFormDrawer;
-
+	@Override
+	public void init() {
 		final AtomicInteger x = new AtomicInteger(5);
 
 		midi = addToggleButton(x, Label.TOOLBAR_MIDI, audioHandler::toggleMidiNotes);

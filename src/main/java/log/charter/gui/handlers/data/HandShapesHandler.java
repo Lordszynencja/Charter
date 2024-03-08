@@ -22,14 +22,6 @@ public class HandShapesHandler {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData chartData, final CharterFrame charterFrame,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this.chartData = chartData;
-		this.charterFrame = charterFrame;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-	}
-
 	public void markHandShape() {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);

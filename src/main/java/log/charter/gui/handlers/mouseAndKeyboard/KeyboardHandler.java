@@ -23,11 +23,6 @@ public class KeyboardHandler implements KeyListener {
 	private int heldNonModifierKey = -1;
 	private Action heldAction = null;
 
-	public void init(final ActionHandler actionHandler, final ModeManager modeManager) {
-		this.actionHandler = actionHandler;
-		this.modeManager = modeManager;
-	}
-
 	public void clearKeys() {
 		ctrl = false;
 		alt = false;

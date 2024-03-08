@@ -8,10 +8,6 @@ public class ProjectAudioHandler {
 
 	private AudioDataShort audio = new AudioDataShort();
 
-	public void init(final WaveFormDrawer waveFormDrawer) {
-		this.waveFormDrawer = waveFormDrawer;
-	}
-
 	public void setAudio(final AudioDataShort audio) {
 		this.audio = audio;
 

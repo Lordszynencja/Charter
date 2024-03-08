@@ -24,13 +24,12 @@ public class TempoMapDrawer {
 	private LyricLinesDrawer lyricLinesDrawer;
 	private WaveFormDrawer waveFormDrawer;
 
-	public void init(final BeatsDrawer beatsDrawer, final ChartData chartData, final GuitarDrawer guitarDrawer,
-			final LyricLinesDrawer lyricLinesDrawer, final WaveFormDrawer waveFormDrawer) {
-		this.beatsDrawer = beatsDrawer;
-		this.chartData = chartData;
+	public void guitarDrawer(final GuitarDrawer guitarDrawer) {
 		this.guitarDrawer = guitarDrawer;
+	}
+
+	public void lyricLinesDrawer(final LyricLinesDrawer lyricLinesDrawer) {
 		this.lyricLinesDrawer = lyricLinesDrawer;
-		this.waveFormDrawer = waveFormDrawer;
 	}
 
 	private void drawGhostNotes(final Graphics2D g, final int time, final HighlightData highlightData) {

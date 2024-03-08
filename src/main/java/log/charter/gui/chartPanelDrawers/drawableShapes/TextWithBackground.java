@@ -68,6 +68,6 @@ public class TextWithBackground implements DrawableShape {
 		g.setColor(backgroundColor);
 		g.fill(roundedRect);
 
-		text.draw(g, positionAndSize.resized(2 * space + 2, 2 * space, -4 * space, -4 * space - 1));
+		text.draw(g, positionAndSize.resized(2 * space, 2 * space, -4 * space, -4 * space - 1));
 	}
 }

@@ -25,22 +25,12 @@ public class ChartData {
 	public int currentArrangement = 0;
 	public int currentLevel = 0;
 
-	private CharterFrame frame;
 	private AudioHandler audioHandler;
+	private CharterFrame charterFrame;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
-
-	public void init(final CharterFrame frame, final AudioHandler audioHandler, final CharterMenuBar charterMenuBar,
-			final ModeManager modeManager, final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this.frame = frame;
-		this.audioHandler = audioHandler;
-		this.charterMenuBar = charterMenuBar;
-		this.modeManager = modeManager;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-	}
 
 	public void setNewSong(final File songFolder, final SongChart song, final String projectFileName) {
 		setSong(songFolder.getAbsolutePath(), song, projectFileName, EditMode.TEMPO_MAP, 0, 0);
@@ -58,7 +48,7 @@ public class ChartData {
 		modeManager.setMode(editMode);
 
 		charterMenuBar.refreshMenus();
-		frame.updateEditAreaSizes();
+		charterFrame.updateSizes();
 
 		path = dir;
 		this.projectFileName = projectFileName;

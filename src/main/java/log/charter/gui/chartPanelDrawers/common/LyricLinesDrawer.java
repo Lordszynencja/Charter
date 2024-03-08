@@ -47,13 +47,8 @@ public class LyricLinesDrawer {
 		}
 	}
 
-	private ChartData data;
+	private ChartData chartData;
 	private ModeManager modeManager;
-
-	public void init(final ChartData data, final ModeManager modeManager) {
-		this.data = data;
-		this.modeManager = modeManager;
-	}
 
 	public void draw(final Graphics2D g, final int time) {
 		if (modeManager.getMode() == EditMode.EMPTY) {
@@ -65,7 +60,7 @@ public class LyricLinesDrawer {
 		boolean started = false;
 		int x = 0;
 
-		for (final Vocal vocal : data.songChart.vocals.vocals) {
+		for (final Vocal vocal : chartData.songChart.vocals.vocals) {
 			if (!started) {
 				started = true;
 				x = timeToX(vocal.position(), time);

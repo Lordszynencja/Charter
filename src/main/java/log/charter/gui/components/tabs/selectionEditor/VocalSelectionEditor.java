@@ -14,8 +14,8 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
-import log.charter.gui.components.utils.validators.ValueValidator;
 import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.gui.components.utils.validators.ValueValidator;
 import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.HashSet2;
 
@@ -27,11 +27,7 @@ public class VocalSelectionEditor {
 	private FieldWithLabel<JCheckBox> vocalWordPart;
 	private FieldWithLabel<JCheckBox> vocalPhraseEnd;
 
-	public void init(final CurrentSelectionEditor selectionEditor, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-
+	public void addTo(final CurrentSelectionEditor selectionEditor) {
 		int row = 0;
 		final ValueValidator textValidator = s -> s == null || s.isBlank() ? "" : null;
 		final TextInputWithValidation vocalTextInput = new TextInputWithValidation("", 100, textValidator,

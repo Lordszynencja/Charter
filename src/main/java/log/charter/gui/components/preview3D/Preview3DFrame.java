@@ -13,12 +13,11 @@ import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 public class Preview3DFrame extends JFrame implements ComponentListener {
 	private static final long serialVersionUID = 7948615183140664734L;
 
-	public Preview3DFrame() {
-	}
+	private CharterFrame charterFrame;
+	private KeyboardHandler keyboardHandler;
 
-	public void init(final CharterFrame frame, final KeyboardHandler keyboardHandler,
-			final Preview3DPanel preview3DPanel) {
-		setIconImages(frame.getIconImages());
+	public void initWith(final Preview3DPanel preview3DPanel) {
+		setIconImages(charterFrame.getIconImages());
 
 		addKeyListener(keyboardHandler);
 		addWindowFocusListener(new CharterFrameWindowFocusListener(keyboardHandler));

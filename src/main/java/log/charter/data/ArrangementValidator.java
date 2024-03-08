@@ -13,25 +13,17 @@ import log.charter.song.EventPoint;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ArrangementValidator {
+	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
-	private CharterFrame frame;
 	private ModeManager modeManager;
-
-	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final CharterFrame frame,
-			final ModeManager modeManager) {
-		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
-		this.frame = frame;
-		this.modeManager = modeManager;
-	}
 
 	private Runnable moveToTimeOnArrangement(final int arrangementId, final int time) {
 		return () -> {
 			modeManager.setArrangement(arrangementId);
 			chartTimeHandler.nextTime(time);
 
-			frame.updateEditAreaSizes();
+			charterFrame.updateSizes();
 		};
 	}
 
@@ -39,7 +31,8 @@ public class ArrangementValidator {
 	 * @return true if validation should continue
 	 */
 	private boolean showWarning(final Label msg, final Runnable onYes) {
-		final int result = JOptionPane.showConfirmDialog(frame, msg.label(), "", JOptionPane.YES_NO_CANCEL_OPTION);
+		final int result = JOptionPane.showConfirmDialog(charterFrame, msg.label(), "",
+				JOptionPane.YES_NO_CANCEL_OPTION);
 
 		if (result == JOptionPane.YES_OPTION) {
 			onYes.run();
@@ -90,7 +83,7 @@ public class ArrangementValidator {
 	 * @return true if validation passed
 	 */
 	public boolean validate() {
-		final ArrayList2<Arrangement> arrangements = data.songChart.arrangements;
+		final ArrayList2<Arrangement> arrangements = chartData.songChart.arrangements;
 		for (int i = 0; i < arrangements.size(); i++) {
 			final Arrangement arrangement = arrangements.get(i);
 			if (!validateCountPhrases(i, arrangement)) {

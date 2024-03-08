@@ -32,7 +32,9 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	private JCheckBox arpeggioCheckBox;
 
 	private ArrangementFixer arrangementFixer;
-	private ChartData data;
+	private ChartData chartData;
+	private CharterFrame charterFrame;
+	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
@@ -42,15 +44,8 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		super(parent);
 	}
 
-	public void init(final CurrentSelectionEditor parent, final ArrangementFixer arrangementFixer, final ChartData data,
-			final CharterFrame frame, final KeyboardHandler keyboardHandler, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
-		super.init(data, frame, keyboardHandler, () -> chordTemplate, this::templateEdited);
-
-		this.arrangementFixer = arrangementFixer;
-		this.data = data;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
+	public void addTo(final CurrentSelectionEditor parent) {
+		super.init(chartData, charterFrame, keyboardHandler, () -> chordTemplate, this::templateEdited);
 
 		addChordNameSuggestionButton(100, 0);
 		addSetTemplateButton(300, 0);
@@ -77,7 +72,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	private void templateEdited() {
 		undoSystem.addUndo();
 
-		final Arrangement arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = chartData.getCurrentArrangement();
 		final int templateId = arrangement.getChordTemplateIdWithSave(chordTemplate);
 
 		final SelectionAccessor<HandShape> selectionAccessor = selectionManager
@@ -91,8 +86,8 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void setTemplateForChordsIn(final HandShape handShape) {
-		final ChordTemplate template = data.getCurrentArrangement().chordTemplates.get(handShape.templateId);
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
+		final ChordTemplate template = chartData.getCurrentArrangement().chordTemplates.get(handShape.templateId);
+		final ArrayList2<ChordOrNote> sounds = chartData.getCurrentArrangementLevel().sounds;
 		for (final ChordOrNote sound : IConstantPosition.getFromTo(sounds, handShape.position(),
 				handShape.endPosition())) {
 			if (!sound.isChord()) {
@@ -144,7 +139,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 			return;
 		}
 
-		chordTemplate = new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(templateId));
+		chordTemplate = new ChordTemplate(chartData.getCurrentArrangement().chordTemplates.get(templateId));
 		setCurrentValuesInInputs();
 		arpeggioCheckBox.setSelected(chordTemplate.arpeggio);
 	}

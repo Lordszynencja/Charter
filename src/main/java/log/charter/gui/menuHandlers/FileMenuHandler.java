@@ -13,6 +13,8 @@ import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.CharterContext;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.CharterFrame;
@@ -35,34 +37,26 @@ import log.charter.song.BeatsMap;
 import log.charter.song.SongChart;
 import log.charter.util.FileChooseUtils;
 
-public class FileMenuHandler extends CharterMenuHandler {
+public class FileMenuHandler extends CharterMenuHandler implements Initiable {
+	private ActionHandler actionHandler;
 	private ArrangementFixer arrangementFixer;
+	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
-	private CharterFrame frame;
+	private CharterContext context;
 	private Framer framer;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
 	private SongFileHandler songFileHandler;
 
-	public void init(final ActionHandler actionHandler, final ArrangementFixer arrangementFixer,
-			final ChartTimeHandler chartTimeHandler, final ChartData data, final CharterFrame frame,
-			final Framer framer, final CharterMenuBar charterMenuBar, final ModeManager modeManager,
-			final SongFileHandler songFileHandler) {
-		super.init(actionHandler);
-		this.arrangementFixer = arrangementFixer;
-		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
-		this.frame = frame;
-		this.framer = framer;
-		this.charterMenuBar = charterMenuBar;
-		this.modeManager = modeManager;
-		this.songFileHandler = songFileHandler;
-	}
-
 	@Override
 	boolean isApplicable() {
 		return true;
+	}
+
+	@Override
+	public void init() {
+		super.init(actionHandler);
 	}
 
 	@Override
@@ -89,10 +83,10 @@ public class FileMenuHandler extends CharterMenuHandler {
 		}
 
 		menu.addSeparator();
-		menu.add(createItem(Label.FILE_MENU_OPTIONS, () -> new ConfigPane(frame, framer)));
-		menu.add(createItem(Label.SHORTCUT_CONFIG, () -> new ShortcutConfigPane(charterMenuBar, frame)));
-		menu.add(createItem(Label.FILE_MENU_GRAPHIC_OPTIONS, () -> new GraphicConfigPane(frame)));
-		menu.add(createItem(Label.FILE_MENU_COLOR_OPTIONS, () -> new ColorConfigPane(frame)));
+		menu.add(createItem(Label.FILE_MENU_OPTIONS, () -> new ConfigPane(charterFrame, framer)));
+		menu.add(createItem(Label.SHORTCUT_CONFIG, () -> new ShortcutConfigPane(charterMenuBar, charterFrame)));
+		menu.add(createItem(Label.FILE_MENU_GRAPHIC_OPTIONS, () -> new GraphicConfigPane(charterFrame, context)));
+		menu.add(createItem(Label.FILE_MENU_COLOR_OPTIONS, () -> new ColorConfigPane(charterFrame)));
 
 		menu.addSeparator();
 		menu.add(createItem(Action.EXIT));
@@ -101,15 +95,15 @@ public class FileMenuHandler extends CharterMenuHandler {
 	}
 
 	private File chooseGP5File() {
-		final String dir = data.isEmpty ? Config.songsPath : data.path;
-		final File file = FileChooseUtils.chooseFile(frame, dir, new String[] { ".gp3", ".gp4", "gp5" },
+		final String dir = chartData.isEmpty ? Config.songsPath : chartData.path;
+		final File file = FileChooseUtils.chooseFile(charterFrame, dir, new String[] { ".gp3", ".gp4", "gp5" },
 				Label.GP_FILE.label());
 
 		return file;
 	}
 
 	private boolean askUserAboutUsingImportTempoMap() {
-		return switch (askYesNo(frame, Label.GP5_IMPORT_TEMPO_MAP, Label.USE_TEMPO_MAP_FROM_IMPORT)) {
+		return switch (askYesNo(charterFrame, Label.GP5_IMPORT_TEMPO_MAP, Label.USE_TEMPO_MAP_FROM_IMPORT)) {
 			case YES -> true;
 			default -> false;
 		};
@@ -127,25 +121,26 @@ public class FileMenuHandler extends CharterMenuHandler {
 			final GP5File gp5File = GP5FileReader.importGPFile(file);
 			final List<Integer> barsOrder = getBarsOrder(gp5File.directions, gp5File.masterBars);
 
-			final int startPosition = data.songChart.beatsMap.beats.get(0).position();
+			final int startPosition = chartData.songChart.beatsMap.beats.get(0).position();
 			final BeatsMap beatsMap;
 			if (useImportTempoMap) {
 				beatsMap = getTempoMap(gp5File, startPosition, chartTimeHandler.maxTime(), barsOrder);
 			} else {
-				beatsMap = data.songChart.beatsMap;
+				beatsMap = chartData.songChart.beatsMap;
 			}
 
 			final SongChart temporaryChart = GP5FileToSongChart.transform(gp5File, beatsMap, barsOrder);
 
-			new GP5ImportOptions(frame, arrangementFixer, charterMenuBar, data, temporaryChart);
+			new GP5ImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart);
 		} catch (final Exception e) {
 			Logger.error("Couldn't import gp5 file " + file.getAbsolutePath(), e);
 		}
 	}
 
 	private void importMidiTempo() {
-		final String dir = data.isEmpty ? Config.songsPath : data.path;
-		final File file = FileChooseUtils.chooseFile(frame, dir, new String[] { ".mid" }, Label.MIDI_FILE.label());
+		final String dir = chartData.isEmpty ? Config.songsPath : chartData.path;
+		final File file = FileChooseUtils.chooseFile(charterFrame, dir, new String[] { ".mid" },
+				Label.MIDI_FILE.label());
 		if (file == null) {
 			return;
 		}
@@ -156,6 +151,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 			return;
 		}
 
-		data.songChart.beatsMap = beatsMap;
+		chartData.songChart.beatsMap = beatsMap;
 	}
+
 }

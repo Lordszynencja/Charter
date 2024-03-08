@@ -71,15 +71,8 @@ public class GuitarDrawer {
 	private SelectionManager selectionManager;
 	private WaveFormDrawer waveFormDrawer;
 
-	public void init(final BeatsDrawer beatsDrawer, final ChartPanel chartPanel, final KeyboardHandler keyboardHandler,
-			final LyricLinesDrawer lyricLinesDrawer, final SelectionManager selectionManager,
-			final WaveFormDrawer waveFormDrawer) {
-		this.beatsDrawer = beatsDrawer;
-		this.chartPanel = chartPanel;
-		this.keyboardHandler = keyboardHandler;
+	public void lyricLinesDrawer(final LyricLinesDrawer lyricLinesDrawer) {
 		this.lyricLinesDrawer = lyricLinesDrawer;
-		this.selectionManager = selectionManager;
-		this.waveFormDrawer = waveFormDrawer;
 	}
 
 	private HashSet2<Integer> getSelectedIds(final PositionType positionType) {
@@ -122,7 +115,7 @@ public class GuitarDrawer {
 	}
 
 	private boolean addChord(final int time, final HighwayDrawer highwayDrawer, final Arrangement arrangement,
-			final int panelWidth, final Chord chord, final boolean selected, final boolean highlighted,
+			final int panelWidth, final Chord chord, final boolean selected, final int highlightedString,
 			final boolean lastWasLinkNext, final boolean wrongLinkNext) {
 		final int x = timeToX(chord.position(), time);
 		if (isPastRightEdge(x, panelWidth)) {
@@ -135,7 +128,7 @@ public class GuitarDrawer {
 		}
 
 		final ChordTemplate chordTemplate = arrangement.chordTemplates.get(chord.templateId());
-		for (final EditorNoteDrawingData noteData : fromChord(chord, chordTemplate, x, selected, highlighted,
+		for (final EditorNoteDrawingData noteData : fromChord(chord, chordTemplate, x, selected, highlightedString,
 				lastWasLinkNext, wrongLinkNext, keyboardHandler.ctrl())) {
 			highwayDrawer.addNote(noteData);
 		}
@@ -172,15 +165,15 @@ public class GuitarDrawer {
 	}
 
 	private boolean addChordOrNote(final int time, final HighwayDrawer highwayDrawer, final Arrangement arrangement,
-			final int panelWidth, final ChordOrNote chordOrNote, final boolean selected, final boolean highlighted,
+			final int panelWidth, final ChordOrNote chordOrNote, final boolean selected, final int highlightedString,
 			final boolean lastWasLinkNext, final boolean wrongLinkNext) {
 		if (chordOrNote.isChord()) {
-			return addChord(time, highwayDrawer, arrangement, panelWidth, chordOrNote.chord(), selected, highlighted,
-					lastWasLinkNext, wrongLinkNext);
+			return addChord(time, highwayDrawer, arrangement, panelWidth, chordOrNote.chord(), selected,
+					highlightedString, lastWasLinkNext, wrongLinkNext);
 		}
 		if (chordOrNote.isNote()) {
-			return addNote(time, highwayDrawer, panelWidth, chordOrNote.note(), selected, highlighted, lastWasLinkNext,
-					wrongLinkNext);
+			return addNote(time, highwayDrawer, panelWidth, chordOrNote.note(), selected,
+					highlightedString == chordOrNote.note().string, lastWasLinkNext, wrongLinkNext);
 		}
 
 		return true;
@@ -269,13 +262,14 @@ public class GuitarDrawer {
 			}
 
 			final boolean selected = selectedNoteIds.contains(i);
-			final boolean highlighted = i == highlightId && highlightData.hasStringOf(sound);
-			addChordOrNote(time, highwayDrawer, arrangement, panelWidth, sound, selected, highlighted, lastWasLinkNext,
-					wrongLinkNext);
+			final int highlightedString = i != highlightId ? -1//
+					: highlightData.id.map(id -> id.string.orElse(-1)).orElse(-1);
+			addChordOrNote(time, highwayDrawer, arrangement, panelWidth, sound, selected, highlightedString,
+					lastWasLinkNext, wrongLinkNext);
 
 			lastWasLinkNext = sound.chord() != null ? sound.chord().linkNext() : sound.note().linkNext;
 
-			if (i == highlightId && !highlighted) {
+			if (i == highlightId && !highlightData.hasStringOf(sound)) {
 				final int x = timeToX(sound.position(), time);
 				final Optional<ChordTemplate> template = sound.isChord()//
 						? Optional.of(chordTemplates.get(sound.chord().templateId()))//

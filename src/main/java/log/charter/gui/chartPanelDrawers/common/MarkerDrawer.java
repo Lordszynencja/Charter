@@ -1,16 +1,17 @@
 package log.charter.gui.chartPanelDrawers.common;
 
-import java.awt.*;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
+
+import java.awt.BasicStroke;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
 
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.*;
-
 public class MarkerDrawer {
-	public void init() {
-	}
-
 	public void draw(final Graphics g) {
 		g.setColor(ColorLabel.MARKER.color());
 		final Graphics2D g2 = (Graphics2D) g;
@@ -18,8 +19,8 @@ public class MarkerDrawer {
 		g.drawLine(Config.markerOffset, beatTextY - 5, Config.markerOffset, lanesBottom);
 
 		// Draw arrowhead
-		int arrowSize = 8;
-		Polygon arrowhead = new Polygon();
+		final int arrowSize = 8;
+		final Polygon arrowhead = new Polygon();
 		arrowhead.addPoint(Config.markerOffset - arrowSize / 2, beatTextY - 10);
 		arrowhead.addPoint(Config.markerOffset + arrowSize / 2, beatTextY - 10);
 		arrowhead.addPoint(Config.markerOffset, beatTextY - 10 + arrowSize);

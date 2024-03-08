@@ -14,14 +14,6 @@ public class TitleUpdater {
 	private ModeManager modeManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData chartData, final CharterFrame charterFrame, final ModeManager modeManager,
-			final UndoSystem undoSystem) {
-		this.chartData = chartData;
-		this.charterFrame = charterFrame;
-		this.modeManager = modeManager;
-		this.undoSystem = undoSystem;
-	}
-
 	private String getSongData() {
 		return chartData.songChart.artistName() + " - " + chartData.songChart.title();
 	}

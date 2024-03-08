@@ -45,15 +45,15 @@ public class HighlightManager {
 			final int distance = position - fromPosition;
 			final int maxDistance = toPosition - fromPosition;
 			if (distance == 0) {
-				return yToString(fromY, data.getCurrentArrangement().tuning.strings());
+				return yToString(fromY, chartData.getCurrentArrangement().tuning.strings());
 			}
 
 			final int y = fromY + (toY - fromY) * distance / maxDistance;
-			return yToString(y, data.getCurrentArrangement().tuning.strings());
+			return yToString(y, chartData.getCurrentArrangement().tuning.strings());
 		}
 
 		private void addAvailablePositions() {
-			final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
+			final ArrayList2<Beat> beats = chartData.songChart.beatsMap.beats;
 			final int beatIdFrom = max(0, findLastIdBefore(beats, fromPosition));
 			final int beatIdTo = min(beats.size(), findFirstIdAfter(beats, toPosition));
 
@@ -71,7 +71,7 @@ public class HighlightManager {
 		}
 
 		private void addGuitarNotePositions() {
-			final ArrayList2<ChordOrNote> chordsAndNotes = data.getCurrentArrangementLevel().sounds;
+			final ArrayList2<ChordOrNote> chordsAndNotes = chartData.getCurrentArrangementLevel().sounds;
 			int idFrom = findLastIdBefore(chordsAndNotes, fromPosition);
 			int idTo = findFirstIdAfter(chordsAndNotes, toPosition);
 			if (idFrom == -1) {
@@ -114,30 +114,22 @@ public class HighlightManager {
 		}
 	}
 
+	private ChartData chartData;
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 
-	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final ModeManager modeManager,
-			final SelectionManager selectionManager) {
-		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
-		this.modeManager = modeManager;
-		this.selectionManager = selectionManager;
-	}
-
 	private int snapPosition(final PositionType positionType, final int position) {
 		if (positionType == PositionType.BEAT) {
-			final Beat beat = findClosest(data.songChart.beatsMap.beats, position);
+			final Beat beat = findClosest(chartData.songChart.beatsMap.beats, position);
 			return beat == null ? position : beat.position();
 		}
 		if (positionType != PositionType.ANCHOR) {
-			return data.songChart.beatsMap.getPositionFromGridClosestTo(position);
+			return chartData.songChart.beatsMap.getPositionFromGridClosestTo(position);
 		}
 
-		final int closestGridPosition = data.songChart.beatsMap.getPositionFromGridClosestTo(position);
-		final ChordOrNote closestSound = findClosest(data.getCurrentArrangementLevel().sounds, position);
+		final int closestGridPosition = chartData.songChart.beatsMap.getPositionFromGridClosestTo(position);
+		final ChordOrNote closestSound = findClosest(chartData.getCurrentArrangementLevel().sounds, position);
 		if (closestSound == null) {
 			return closestGridPosition;
 		}
@@ -163,7 +155,7 @@ public class HighlightManager {
 		}
 
 		position = snapPosition(positionType, position);
-		position = max(0, min(data.songChart.beatsMap.beats.getLast().position(), position));
+		position = max(0, min(chartData.songChart.beatsMap.beats.getLast().position(), position));
 
 		final PositionWithIdAndType existingPositionCloseToGrid = selectionManager
 				.findExistingPosition(timeToX(position, chartTimeHandler.time()), y);

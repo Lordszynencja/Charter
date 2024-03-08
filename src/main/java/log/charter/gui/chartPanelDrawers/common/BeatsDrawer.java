@@ -152,21 +152,13 @@ public class BeatsDrawer {
 		}
 	}
 
-	private ChartData data;
+	private ChartData chartData;
 	private ChartPanel chartPanel;
 	private RepeatManager repeatManager;
 	private SelectionManager selectionManager;
 
-	public void init(final ChartData data, final ChartPanel chartPanel, final RepeatManager repeatManager,
-			final SelectionManager selectionManager) {
-		this.data = data;
-		this.chartPanel = chartPanel;
-		this.repeatManager = repeatManager;
-		this.selectionManager = selectionManager;
-	}
-
 	private void addBeats(final int time, final BeatsDrawingData drawingData, final HighlightData highlightData) {
-		final List<Beat> beats = data.songChart.beatsMap.beats;
+		final List<Beat> beats = chartData.songChart.beatsMap.beats;
 		final HashSet2<Integer> selectedBeatIds = selectionManager.getSelectedAccessor(PositionType.BEAT)//
 				.getSelectedSet().map(selection -> selection.id);
 		final int highlightId = highlightData.getId(PositionType.BEAT);
@@ -179,7 +171,7 @@ public class BeatsDrawer {
 				bar++;
 			}
 			if (i == 0 || (beat.anchor && i < beats.size() - 1)) {
-				bpm = data.songChart.beatsMap.findBPM(beat, i);
+				bpm = chartData.songChart.beatsMap.findBPM(beat, i);
 			}
 
 			final int x = timeToX(beat.position(), time);
@@ -219,10 +211,11 @@ public class BeatsDrawer {
 	}
 
 	private void addGrid(final int time, final BeatsDrawingData drawingData) {
-		final GridPosition<Beat> gridPosition = GridPosition.create(data.songChart.beatsMap.beats, xToTime(0, time));
+		final GridPosition<Beat> gridPosition = GridPosition.create(chartData.songChart.beatsMap.beats,
+				xToTime(0, time));
 		final int maxTime = xToTime(chartPanel.getWidth() + 1, time);
 		while (gridPosition.position() < maxTime) {
-			if (gridPosition.positionId >= data.songChart.beatsMap.beats.size() - 1) {
+			if (gridPosition.positionId >= chartData.songChart.beatsMap.beats.size() - 1) {
 				break;
 			}
 			if (gridPosition.gridId != 0) {
@@ -233,7 +226,7 @@ public class BeatsDrawer {
 	}
 
 	private void addBookmarks(final int time, final BeatsDrawingData drawingData) {
-		data.songChart.bookmarks.forEach((number, position) -> {
+		chartData.songChart.bookmarks.forEach((number, position) -> {
 			final int x = timeToX(position, time);
 			drawingData.addBookmark(number, x);
 		});

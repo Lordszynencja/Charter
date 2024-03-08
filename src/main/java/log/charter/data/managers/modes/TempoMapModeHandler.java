@@ -8,18 +8,10 @@ import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler.
 import log.charter.gui.panes.songEdits.TempoBeatPane;
 
 public class TempoMapModeHandler extends ModeHandler {
+	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
-	private CharterFrame frame;
 	private UndoSystem undoSystem;
-
-	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final CharterFrame frame,
-			final UndoSystem undoSystem) {
-		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
-		this.frame = frame;
-		this.undoSystem = undoSystem;
-	}
 
 	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
@@ -27,7 +19,8 @@ public class TempoMapModeHandler extends ModeHandler {
 			return;
 		}
 
-		new TempoBeatPane(data, frame, undoSystem, chartTimeHandler.maxTime(), clickData.pressHighlight.beat);
+		new TempoBeatPane(chartData, charterFrame, undoSystem, chartTimeHandler.maxTime(),
+				clickData.pressHighlight.beat);
 	}
 
 	@Override

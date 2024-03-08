@@ -28,8 +28,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 
 public class ToneChangeSelectionEditor implements DocumentListener {
-
-	private ChartData data;
+	private ChartData chartData;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
@@ -37,12 +36,7 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 	private boolean error;
 	private Color toneNameInputBackgroundColor;
 
-	public void init(final CurrentSelectionEditor selectionEditor, final ChartData data,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this.data = data;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-
+	public void addTo(final CurrentSelectionEditor selectionEditor) {
 		int row = 0;
 		final AutocompleteInput<String> toneNameInput = new AutocompleteInput<String>(selectionEditor, 200, "",
 				this::getPossibleValues, s -> s, this::onSelect);
@@ -73,7 +67,7 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 	}
 
 	private ArrayList2<String> getPossibleValues(final String name) {
-		return data.getCurrentArrangement().tones.stream()//
+		return chartData.getCurrentArrangement().tones.stream()//
 				.filter(toneName -> toneName.toLowerCase().contains(name.toLowerCase()))//
 				.collect(Collectors.toCollection(ArrayList2::new));
 	}
@@ -109,7 +103,7 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 
 		final String name = toneNameField.field.getText();
 
-		final Arrangement arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = chartData.getCurrentArrangement();
 		if (name.isBlank()) {
 			setError(TONE_NAME_CANT_BE_EMPTY);
 			return;

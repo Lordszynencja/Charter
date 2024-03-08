@@ -26,17 +26,6 @@ public class VocalModeHandler extends ModeHandler {
 
 	private long lastScrollTime = -scrollTimeoutForUndo;
 
-	public void init(final ChartData chartData, final CharterFrame charterFrame,
-			final CurrentSelectionEditor currentSelectionEditor, final KeyboardHandler keyboardHandler,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this.chartData = chartData;
-		this.charterFrame = charterFrame;
-		this.currentSelectionEditor = currentSelectionEditor;
-		this.keyboardHandler = keyboardHandler;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-	}
-
 	@Override
 	public void rightClick(final MouseButtonPressReleaseData clickData) {
 		if (clickData.pressHighlight.type != PositionType.VOCAL) {

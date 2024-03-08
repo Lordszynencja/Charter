@@ -30,15 +30,14 @@ public class WaveFormDrawer {
 	private static final Color highIntensityColorZoomed = ChartPanelColors.ColorLabel.WAVEFORM_RMS_COLOR
 			.colorWithAlpha(64);
 
-	
 	private static int getMiddle() {
 		return (lanesBottom + lanesTop) / 2;
 	}
-	
+
 	private static int getHeight() {
 		return (lanesBottom - lanesTop) / 2;
 	}
-	
+
 	private ChartPanel chartPanel;
 	private ChartToolbar chartToolbar;
 	private ModeManager modeManager;
@@ -47,16 +46,6 @@ public class WaveFormDrawer {
 	private WaveformMap map = null;
 	private boolean drawWaveForm;
 	private boolean showRMS;
-
-	public void init(final ChartPanel chartPanel, final ChartToolbar chartToolbar, final ModeManager modeManager,
-			final ProjectAudioHandler projectAudioHandler) {
-		this.chartPanel = chartPanel;
-		this.chartToolbar = chartToolbar;
-		this.modeManager = modeManager;
-		this.projectAudioHandler = projectAudioHandler;
-
-		map = new WaveformMap(projectAudioHandler.getAudio());
-	}
 
 	public void toggle() {
 		drawWaveForm = !drawWaveForm;

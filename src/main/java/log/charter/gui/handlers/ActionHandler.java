@@ -8,17 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.copySystem.CopyManager;
+import log.charter.data.managers.CharterContext;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
-import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.data.ChartItemsHandler;
 import log.charter.gui.handlers.data.ChartTimeHandler;
@@ -27,56 +26,28 @@ import log.charter.gui.handlers.data.GuitarSoundsStatusesHandler;
 import log.charter.gui.handlers.data.HandShapesHandler;
 import log.charter.gui.handlers.data.VocalsHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
+import log.charter.gui.handlers.windows.WindowedPreviewHandler;
 
-public class ActionHandler {
+public class ActionHandler implements Initiable {
 	private AudioHandler audioHandler;
 	private ChartData chartData;
-	private CharterFrame charterFrame;
 	private ChartItemsHandler chartItemsHandler;
 	private ChartTimeHandler chartTimeHandler;
 	private ChartToolbar chartToolbar;
+	private CharterContext charterContext;
 	private CopyManager copyManager;
+	private GuitarSoundsHandler guitarSoundsHandler;
+	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
+	private HandShapesHandler handShapesHandler;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
 	private RepeatManager repeatManager;
 	private SelectionManager selectionManager;
 	private SongFileHandler songFileHandler;
 	private UndoSystem undoSystem;
+	private VocalsHandler vocalsHandler;
 	private WaveFormDrawer waveFormDrawer;
-
-	private final GuitarSoundsHandler guitarSoundsHandler = new GuitarSoundsHandler();
-	private final GuitarSoundsStatusesHandler guitarSoundsStatusesHandler = new GuitarSoundsStatusesHandler();
-	private final HandShapesHandler handShapesHandler = new HandShapesHandler();
-	private final VocalsHandler vocalsHandler = new VocalsHandler();
-
-	public void init(final AudioHandler audioHandler, final ArrangementFixer arrangementFixer,
-			final ChartData chartData, final CharterFrame charterFrame, final ChartItemsHandler chartItemsHandler,
-			final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar, final CopyManager copyManager,
-			final CurrentSelectionEditor currentSelectionEditor, final ModeManager modeManager,
-			final MouseHandler mouseHandler, final RepeatManager repeatManager, final SelectionManager selectionManager,
-			final SongFileHandler songFileHandler, final UndoSystem undoSystem, final WaveFormDrawer waveFormDrawer) {
-		this.audioHandler = audioHandler;
-		this.chartData = chartData;
-		this.charterFrame = charterFrame;
-		this.chartItemsHandler = chartItemsHandler;
-		this.chartTimeHandler = chartTimeHandler;
-		this.chartToolbar = chartToolbar;
-		this.copyManager = copyManager;
-		this.modeManager = modeManager;
-		this.mouseHandler = mouseHandler;
-		this.repeatManager = repeatManager;
-		this.selectionManager = selectionManager;
-		this.songFileHandler = songFileHandler;
-		this.undoSystem = undoSystem;
-		this.waveFormDrawer = waveFormDrawer;
-
-		guitarSoundsHandler.init(chartData, currentSelectionEditor, selectionManager, undoSystem);
-		guitarSoundsStatusesHandler.init(chartData, currentSelectionEditor, selectionManager, undoSystem);
-		handShapesHandler.init(chartData, charterFrame, selectionManager, undoSystem);
-		vocalsHandler.init(chartData, charterFrame, currentSelectionEditor, selectionManager, undoSystem);
-
-		prepareHandlers();
-	}
+	private WindowedPreviewHandler windowedPreviewHandler;
 
 	private int lastFretNumber = 0;
 	private int fretNumberTimer = 0;
@@ -130,12 +101,13 @@ public class ActionHandler {
 
 	private final Map<Action, Runnable> actionHandlers = new HashMap<>();
 
-	private void prepareHandlers() {
+	@Override
+	public void init() {
 		actionHandlers.put(Action.COPY, copyManager::copy);
 		actionHandlers.put(Action.DELETE, chartItemsHandler::delete);
 		actionHandlers.put(Action.DOUBLE_GRID, this::doubleGridSize);
 		actionHandlers.put(Action.EDIT_VOCALS, vocalsHandler::editVocals);
-		actionHandlers.put(Action.EXIT, charterFrame::exit);
+		actionHandlers.put(Action.EXIT, charterContext::exit);
 		actionHandlers.put(Action.FRET_0, () -> handleFretNumber(0));
 		actionHandlers.put(Action.FRET_1, () -> handleFretNumber(1));
 		actionHandlers.put(Action.FRET_2, () -> handleFretNumber(2));
@@ -197,7 +169,8 @@ public class ActionHandler {
 		actionHandlers.put(Action.SPECIAL_PASTE, copyManager::specialPaste);
 		actionHandlers.put(Action.TOGGLE_ACCENT, guitarSoundsStatusesHandler::toggleAccent);
 		actionHandlers.put(Action.TOGGLE_ACCENT_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleAccentIndependently);
-		actionHandlers.put(Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW, charterFrame::switchBorderlessWindowedPreview);
+		actionHandlers.put(Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW,
+				windowedPreviewHandler::switchBorderlessWindowedPreview);
 		actionHandlers.put(Action.TOGGLE_CLAPS, audioHandler::toggleClaps);
 		actionHandlers.put(Action.TOGGLE_HARMONIC, guitarSoundsStatusesHandler::toggleHarmonic);
 		actionHandlers.put(Action.TOGGLE_HARMONIC_INDEPENDENTLY,
@@ -212,7 +185,7 @@ public class ActionHandler {
 		actionHandlers.put(Action.TOGGLE_MUTE, guitarSoundsStatusesHandler::toggleMute);
 		actionHandlers.put(Action.TOGGLE_MUTE_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleMuteIndependently);
 		actionHandlers.put(Action.TOGGLE_PHRASE_END, vocalsHandler::togglePhraseEnd);
-		actionHandlers.put(Action.TOGGLE_PREVIEW_WINDOW, charterFrame::switchWindowedPreview);
+		actionHandlers.put(Action.TOGGLE_PREVIEW_WINDOW, windowedPreviewHandler::switchWindowedPreview);
 		actionHandlers.put(Action.TOGGLE_REPEAT_START, repeatManager::toggleRepeatStart);
 		actionHandlers.put(Action.TOGGLE_REPEAT_END, repeatManager::toggleRepeatEnd);
 		actionHandlers.put(Action.TOGGLE_REPEATER, repeatManager::toggle);

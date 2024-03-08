@@ -4,8 +4,7 @@ import java.io.IOException;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.GraphicalConfig;
-import log.charter.data.config.Localization.Label;
-import log.charter.gui.CharterFrame;
+import log.charter.data.managers.CharterContext;
 import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
 import log.charter.io.Logger;
 
@@ -24,25 +23,12 @@ public class CharterMain {
 			pathToOpen = args[0];
 		}
 
+		final CharterContext context = new CharterContext();
+		context.init();
+
 		if (pathToOpen != null && !pathToOpen.isEmpty()) {
-			new CharterFrame(TITLE + " : Loading project...", pathToOpen);
-		} else {
-			new CharterFrame(TITLE + " : " + Label.NO_PROJECT.label());
+			context.openProject(pathToOpen);
 		}
-
-		new Thread(() -> {
-			try {
-				while (true) {
-					Config.save();
-					GraphicalConfig.save();
-					ShortcutConfig.save();
-
-					Thread.sleep(1000);
-				}
-			} catch (final InterruptedException e) {
-				Logger.error("Error in config save thread", e);
-			}
-		}).start();
 
 		Logger.info("Charter started");
 	}

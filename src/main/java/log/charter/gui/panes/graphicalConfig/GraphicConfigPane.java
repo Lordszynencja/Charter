@@ -2,26 +2,32 @@ package log.charter.gui.panes.graphicalConfig;
 
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.CharterContext;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.PagedDialog;
 
 public final class GraphicConfigPane extends PagedDialog {
 	private static final long serialVersionUID = -3193534671039163160L;
 
+	private final CharterContext context;
+
 	private final GraphicThemeConfigPage themeConfig;
 	private final GraphicTexturesConfigPage texturesConfig;
 	private final GraphicChartMapConfigPage chartMapConfig;
 
-	public GraphicConfigPane(final CharterFrame frame) {
-		this(frame, new GraphicThemeConfigPage(), //
+	public GraphicConfigPane(final CharterFrame charterFrame, final CharterContext context) {
+		this(charterFrame, context, new GraphicThemeConfigPage(), //
 				new GraphicTexturesConfigPage(), //
 				new GraphicChartMapConfigPage()//
 		);
 	}
 
-	private GraphicConfigPane(final CharterFrame frame, final GraphicThemeConfigPage themeConfig,
-			final GraphicTexturesConfigPage texturesConfig, final GraphicChartMapConfigPage chartMapConfig) {
-		super(frame, Label.GRAPHIC_CONFIG_PANE, themeConfig, texturesConfig, chartMapConfig);
+	private GraphicConfigPane(final CharterFrame charterFrame, final CharterContext context,
+			final GraphicThemeConfigPage themeConfig, final GraphicTexturesConfigPage texturesConfig,
+			final GraphicChartMapConfigPage chartMapConfig) {
+		super(charterFrame, Label.GRAPHIC_CONFIG_PANE, themeConfig, texturesConfig, chartMapConfig);
+
+		this.context = context;
 
 		this.themeConfig = themeConfig;
 		this.texturesConfig = texturesConfig;
@@ -33,13 +39,13 @@ public final class GraphicConfigPane extends PagedDialog {
 	@Override
 	protected boolean save() {
 		themeConfig.save();
-		texturesConfig.save(frame);
+		texturesConfig.save(context);
 		chartMapConfig.save();
 
 		GraphicalConfig.markChanged();
 		GraphicalConfig.save();
 
-		frame.updateEditAreaSizes();
+		frame.updateSizes();
 		frame.resize();
 
 		return true;

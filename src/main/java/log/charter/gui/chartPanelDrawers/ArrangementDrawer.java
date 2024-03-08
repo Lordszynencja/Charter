@@ -3,22 +3,21 @@ package log.charter.gui.chartPanelDrawers;
 import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
+import log.charter.data.managers.CharterContext;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.selection.SelectionManager;
-import log.charter.gui.ChartPanel;
-import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
-import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.instruments.TempoMapDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
 
-public class ArrangementDrawer {
+public class ArrangementDrawer implements Initiable {
+	private CharterContext charterContext;
 	private ChartData chartData;
 	private HighlightManager highlightManager;
 	private ModeManager modeManager;
@@ -26,29 +25,21 @@ public class ArrangementDrawer {
 	private MouseHandler mouseHandler;
 	private SelectionManager selectionManager;
 
-	private final LyricLinesDrawer lyricLinesDrawer = new LyricLinesDrawer();
-
-	private final TempoMapDrawer tempoMapDrawer = new TempoMapDrawer();
 	private final GuitarDrawer guitarDrawer = new GuitarDrawer();
+	private final LyricLinesDrawer lyricLinesDrawer = new LyricLinesDrawer();
+	private final TempoMapDrawer tempoMapDrawer = new TempoMapDrawer();
 	private final VocalsDrawer vocalsDrawer = new VocalsDrawer();
 
-	public void init(final BeatsDrawer beatsDrawer, final ChartData chartData, final ChartPanel chartPanel,
-			final HighlightManager highlightManager, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
-			final MouseHandler mouseHandler, final SelectionManager selectionManager,
-			final WaveFormDrawer waveFormDrawer) {
-		this.chartData = chartData;
-		this.highlightManager = highlightManager;
-		this.modeManager = modeManager;
-		this.mouseButtonPressReleaseHandler = mouseButtonPressReleaseHandler;
-		this.mouseHandler = mouseHandler;
-		this.selectionManager = selectionManager;
-
-		lyricLinesDrawer.init(chartData, modeManager);
-
-		tempoMapDrawer.init(beatsDrawer, chartData, guitarDrawer, lyricLinesDrawer, waveFormDrawer);
-		guitarDrawer.init(beatsDrawer, chartPanel, keyboardHandler, lyricLinesDrawer, selectionManager, waveFormDrawer);
-		vocalsDrawer.init(beatsDrawer, chartData, chartPanel, lyricLinesDrawer, selectionManager, waveFormDrawer);
+	@Override
+	public void init() {
+		charterContext.initObject(guitarDrawer);
+		guitarDrawer.lyricLinesDrawer(lyricLinesDrawer);
+		charterContext.initObject(lyricLinesDrawer);
+		charterContext.initObject(tempoMapDrawer);
+		tempoMapDrawer.guitarDrawer(guitarDrawer);
+		tempoMapDrawer.lyricLinesDrawer(lyricLinesDrawer);
+		charterContext.initObject(vocalsDrawer);
+		vocalsDrawer.lyricLinesDrawer(lyricLinesDrawer);
 	}
 
 	private HighlightData generateHighlightData(final int time) {

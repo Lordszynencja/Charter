@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanel;
@@ -32,13 +33,13 @@ import log.charter.song.EventPoint;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.vocals.Vocal;
 
-public class ChartMap extends Component implements MouseListener, MouseMotionListener {
+public class ChartMap extends Component implements Initiable, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 
-	private ChartTimeHandler chartTimeHandler;
+	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private ChartPanel chartPanel;
-	private ChartData data;
-	private CharterFrame frame;
+	private ChartTimeHandler chartTimeHandler;
 	private ModeManager modeManager;
 
 	private BufferedImage background = null;
@@ -49,7 +50,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 
 		g.setColor(ColorLabel.LANE.color());
 		g.fillRect(0, 0, getWidth(), getHeight());
-		if (data.isEmpty) {
+		if (chartData.isEmpty) {
 			return img;
 		}
 
@@ -74,15 +75,9 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 		return img;
 	}
 
-	public void init(final ChartTimeHandler chartTimeHandler, final ChartPanel chartPanel, final ChartData data,
-			final CharterFrame frame, final ModeManager modeManager) {
-		this.chartTimeHandler = chartTimeHandler;
-		this.chartPanel = chartPanel;
-		this.data = data;
-		this.frame = frame;
-		this.modeManager = modeManager;
-
-		setSize(frame.getWidth(), chartMapHeight);
+	@Override
+	public void init() {
+		setSize(charterFrame.getWidth(), chartMapHeight);
 
 		setFocusable(false);
 		addMouseListener(this);
@@ -117,7 +112,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	private void drawBars(final Graphics g) {
 		g.setColor(ColorLabel.MAIN_BEAT.color());
 
-		data.songChart.beatsMap.beats.stream()//
+		chartData.songChart.beatsMap.beats.stream()//
 				.filter(beat -> beat.firstInMeasure)//
 				.forEach(beat -> {
 					final int x = timeToPosition(beat.position());
@@ -136,7 +131,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 		boolean started = false;
 		int x = 0;
 
-		for (final Vocal vocal : data.songChart.vocals.vocals) {
+		for (final Vocal vocal : chartData.songChart.vocals.vocals) {
 			if (!started) {
 				started = true;
 				x = timeToPosition(vocal.position());
@@ -154,8 +149,8 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	}
 
 	private void drawEventPoints(final Graphics g, final int y, final ColorLabel color,
-								 final Predicate<EventPoint> filter) {
-		final List<EventPoint> points = data.getCurrentArrangement().getFilteredEventPoints(filter);
+			final Predicate<EventPoint> filter) {
+		final List<EventPoint> points = chartData.getCurrentArrangement().getFilteredEventPoints(filter);
 
 		for (int i = 0; i < points.size(); i++) {
 			final EventPoint point = points.get(i);
@@ -181,12 +176,12 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	}
 
 	private void drawNote(final Graphics g, final int string, final int position, final int length) {
-		g.setColor(getStringBasedColor(StringColorLabelType.NOTE, string, data.currentStrings()));
+		g.setColor(getStringBasedColor(StringColorLabelType.NOTE, string, chartData.currentStrings()));
 
 		final int x0 = timeToPosition(position);
 		final int x1 = timeToPosition(position + length);
 		final int y0 = 2 * chartMapHeightMultiplier + 1
-				+ getStringPosition(string, data.currentStrings()) * chartMapHeightMultiplier;
+				+ getStringPosition(string, chartData.currentStrings()) * chartMapHeightMultiplier;
 		final int y1 = y0 + chartMapHeightMultiplier - 1;
 		g.drawLine(x0, y0, x0, y1);
 		if (x1 > x0) {
@@ -195,7 +190,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	}
 
 	private void drawNotes(final Graphics g) {
-		data.getCurrentArrangementLevel().sounds.stream()//
+		chartData.getCurrentArrangementLevel().sounds.stream()//
 				.flatMap(ChordOrNote::notes)//
 				.forEach(note -> drawNote(g, note.string(), note.position(), note.length()));
 	}
@@ -203,7 +198,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 	private void drawBookmarks(final Graphics g) {
 		g.setColor(ColorLabel.BOOKMARK.color());
 
-		data.songChart.bookmarks.forEach((number, position) -> {
+		chartData.songChart.bookmarks.forEach((number, position) -> {
 			final int x = timeToPosition(position);
 			g.drawLine(x, 0, x, getHeight());
 			g.drawString(number + "", x + 2, 10);
@@ -262,7 +257,7 @@ public class ChartMap extends Component implements MouseListener, MouseMotionLis
 
 	@Override
 	public void mouseExited(final MouseEvent e) {
-		frame.requestFocusInWindow();
+		charterFrame.requestFocusInWindow();
 	}
 
 	@Override

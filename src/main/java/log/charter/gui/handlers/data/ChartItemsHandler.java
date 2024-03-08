@@ -31,19 +31,10 @@ import log.charter.util.CollectionUtils.HashSet2;
 
 public class ChartItemsHandler {
 	private ArrangementFixer arrangementFixer;
-	private ChartData data;
+	private ChartData chartData;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
-
-	public void init(final ArrangementFixer arrangementFixer, final ChartData data, final ModeManager modeManager,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this.arrangementFixer = arrangementFixer;
-		this.data = data;
-		this.modeManager = modeManager;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-	}
 
 	public void delete() {
 		boolean nonEmptyFound = false;
@@ -77,11 +68,11 @@ public class ChartItemsHandler {
 
 		idsToDelete.sort((a, b) -> -Integer.compare(a, b));
 
-		final ArrayList2<IPosition> positions = type.getPositions(data);
+		final ArrayList2<IPosition> positions = type.getPositions(chartData);
 		idsToDelete.forEach(id -> positions.remove((int) id));
 
 		if (type == PositionType.TONE_CHANGE) {
-			data.getCurrentArrangement().tones = data.getCurrentArrangement().toneChanges.stream()//
+			chartData.getCurrentArrangement().tones = chartData.getCurrentArrangement().toneChanges.stream()//
 					.map(toneChange -> toneChange.toneName)//
 					.collect(Collectors.toCollection(HashSet2::new));
 		}
@@ -89,7 +80,7 @@ public class ChartItemsHandler {
 
 	private void snapPositions(final Collection<? extends IPosition> positions) {
 		for (final IPosition position : positions) {
-			final int newPosition = data.songChart.beatsMap.getPositionFromGridClosestTo(position.position());
+			final int newPosition = chartData.songChart.beatsMap.getPositionFromGridClosestTo(position.position());
 			position.position(newPosition);
 		}
 	}
@@ -97,7 +88,7 @@ public class ChartItemsHandler {
 	private void snapNotePositions(final Collection<ChordOrNote> positions) {
 		snapPositions(positions);
 
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
+		final ArrayList2<ChordOrNote> sounds = chartData.getCurrentArrangementLevel().sounds;
 		for (int i = 1; i < sounds.size(); i++) {
 			while (i < sounds.size() && sounds.get(i).position() == sounds.get(i - 1).position()) {
 				sounds.remove(i);
@@ -144,11 +135,11 @@ public class ChartItemsHandler {
 				break;
 			case HAND_SHAPE:
 				snapPositionsWithLength(selected.map(selection -> (HandShape) selection.selectable),
-						data.getCurrentArrangementLevel().handShapes);
+						chartData.getCurrentArrangementLevel().handShapes);
 				break;
 			case VOCAL:
 				snapPositionsWithLength(selected.map(selection -> (Vocal) selection.selectable),
-						data.songChart.vocals.vocals);
+						chartData.songChart.vocals.vocals);
 				break;
 			default:
 				break;
@@ -174,7 +165,8 @@ public class ChartItemsHandler {
 		if (modeManager.getMode() == EditMode.VOCALS) {
 			undoSystem.addUndo();
 
-			snapPositionsWithLength(getFromTo(data.songChart.vocals.vocals, from, to), data.songChart.vocals.vocals);
+			snapPositionsWithLength(getFromTo(chartData.songChart.vocals.vocals, from, to),
+					chartData.songChart.vocals.vocals);
 
 			reselectAfterSnapping(accessor.type, selected);
 			return;
@@ -183,8 +175,8 @@ public class ChartItemsHandler {
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			undoSystem.addUndo();
 
-			final Arrangement arrangement = data.getCurrentArrangement();
-			final Level level = data.getCurrentArrangementLevel();
+			final Arrangement arrangement = chartData.getCurrentArrangement();
+			final Level level = chartData.getCurrentArrangementLevel();
 			snapPositions(getFromTo(arrangement.eventPoints, from, to));
 			snapPositions(getFromTo(arrangement.toneChanges, from, to));
 			snapPositions(getFromTo(level.anchors, from, to));
@@ -196,7 +188,7 @@ public class ChartItemsHandler {
 	}
 
 	public void mapSounds(final Function<ChordOrNote, ChordOrNote> mapper) {
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
+		final ArrayList2<ChordOrNote> sounds = chartData.getCurrentArrangementLevel().sounds;
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();

@@ -128,7 +128,7 @@ public final class ConfigPane extends ParamsPane {
 		Config.markChanged();
 		Config.save();
 
-		frame.updateEditAreaSizes();
+		frame.updateSizes();
 		frame.resize();
 
 		framer.setFPS(FPS);

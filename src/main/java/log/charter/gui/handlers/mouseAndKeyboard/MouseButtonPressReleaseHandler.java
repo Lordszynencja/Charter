@@ -65,10 +65,6 @@ public class MouseButtonPressReleaseHandler {
 
 	private final Map<MouseButton, MouseButtonPressData> pressedButtons = new HashMap<>();
 
-	public void init(final HighlightManager highlightManager) {
-		this.highlightManager = highlightManager;
-	}
-
 	public void press(final MouseEvent e) {
 		final MouseButton button = MouseButton.fromEvent(e);
 		if (button != null) {

@@ -3,13 +3,13 @@ package log.charter.gui.handlers;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-import log.charter.gui.CharterFrame;
+import log.charter.data.managers.CharterContext;
 
 public class CharterFrameWindowListener implements WindowListener {
-	private final CharterFrame frame;
+	private final CharterContext context;
 
-	public CharterFrameWindowListener(final CharterFrame frame) {
-		this.frame = frame;
+	public CharterFrameWindowListener(final CharterContext context) {
+		this.context = context;
 	}
 
 	@Override
@@ -22,7 +22,7 @@ public class CharterFrameWindowListener implements WindowListener {
 
 	@Override
 	public void windowClosing(final WindowEvent e) {
-		frame.exit();
+		context.exit();
 	}
 
 	@Override

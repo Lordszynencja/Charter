@@ -3,17 +3,19 @@ package log.charter.gui.menuHandlers;
 import javax.swing.JMenu;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.handlers.Action;
 import log.charter.gui.handlers.ActionHandler;
 
-class VocalsMenuHandler extends CharterMenuHandler {
+class VocalsMenuHandler extends CharterMenuHandler implements Initiable {
+	private ActionHandler actionHandler;
 	private ModeManager modeManager;
 
-	public void init(final ActionHandler actionHandler, final ModeManager modeManager) {
+	@Override
+	public void init() {
 		super.init(actionHandler);
-		this.modeManager = modeManager;
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import log.charter.gui.handlers.mouseAndKeyboard.Shortcut;
 import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
 
 abstract class CharterMenuHandler {
-
 	private static void setDefaultColors(final JComponent component) {
 		component.setBackground(CharterMenuBar.backgroundColor.color());
 	}

@@ -32,12 +32,7 @@ import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ArrangementFixer {
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
-
-	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data) {
-		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
-	}
+	private ChartData chartData;
 
 	private void removeWrongPositions(final Arrangement arrangement, final int start, final int end) {
 		arrangement.eventPoints.removeIf(p -> p.position() < start || p.position() > end);
@@ -293,13 +288,13 @@ public class ArrangementFixer {
 	}
 
 	public void fixArrangements() {
-		final int start = data.songChart.beatsMap.beats.get(0).position();
+		final int start = chartData.songChart.beatsMap.beats.get(0).position();
 		final int end = chartTimeHandler.maxTime();
 
-		data.songChart.beatsMap.makeBeatsUntilSongEnd(end);
-		data.songChart.beatsMap.fixFirstBeatInMeasures();
+		chartData.songChart.beatsMap.makeBeatsUntilSongEnd(end);
+		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
 
-		for (final Arrangement arrangement : data.songChart.arrangements) {
+		for (final Arrangement arrangement : chartData.songChart.arrangements) {
 			removeWrongPositions(arrangement, start, end);
 			for (final Level level : arrangement.levels) {
 				fixLevel(arrangement, level);

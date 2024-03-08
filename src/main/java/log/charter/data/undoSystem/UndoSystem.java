@@ -10,8 +10,8 @@ import log.charter.gui.handlers.data.ChartTimeHandler;
 public class UndoSystem {
 	public static int nextId = 1;
 
+	private ChartData chartData;
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 
@@ -19,16 +19,8 @@ public class UndoSystem {
 	private final LinkedList<UndoState> redo = new LinkedList<>();
 	private int savePosition = 0;
 
-	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final ModeManager modeManager,
-			final SelectionManager selectionManager) {
-		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
-		this.modeManager = modeManager;
-		this.selectionManager = selectionManager;
-	}
-
 	private UndoState createUndoState() {
-		return new BaseUndoState(chartTimeHandler, modeManager, data);
+		return new BaseUndoState(chartTimeHandler, modeManager, chartData);
 	}
 
 	public void addUndo(final UndoState undoState) {
@@ -47,7 +39,7 @@ public class UndoSystem {
 	}
 
 	public void undo() {
-		if (data.isEmpty) {
+		if (chartData.isEmpty) {
 			return;
 		}
 		if (undo.isEmpty()) {
@@ -57,11 +49,11 @@ public class UndoSystem {
 		selectionManager.clear();
 		savePosition--;
 		final UndoState lastUndo = undo.removeLast();
-		redo.add(lastUndo.undo(data, chartTimeHandler));
+		redo.add(lastUndo.undo(chartData, chartTimeHandler));
 	}
 
 	public void redo() {
-		if (data.isEmpty) {
+		if (chartData.isEmpty) {
 			return;
 		}
 		if (redo.isEmpty()) {
@@ -70,7 +62,7 @@ public class UndoSystem {
 
 		selectionManager.clear();
 		savePosition++;
-		undo.add(redo.removeLast().undo(data, chartTimeHandler));
+		undo.add(redo.removeLast().undo(chartData, chartTimeHandler));
 	}
 
 	public void clear() {

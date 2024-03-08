@@ -5,6 +5,7 @@ import javax.swing.JOptionPane;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
@@ -16,22 +17,17 @@ import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.song.Arrangement;
 import log.charter.song.BeatsMap;
 
-public class ArrangementMenuHandler extends CharterMenuHandler {
-	private ChartData data;
-	private CharterFrame frame;
+public class ArrangementMenuHandler extends CharterMenuHandler implements Initiable {
+	private ActionHandler actionHandler;
+	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 
-	public void init(final ActionHandler actionHandler, final ChartData data, final CharterFrame frame,
-			final CharterMenuBar charterMenuBar, final ModeManager modeManager,
-			final SelectionManager selectionManager) {
+	@Override
+	public void init() {
 		super.init(actionHandler);
-		this.data = data;
-		this.frame = frame;
-		this.charterMenuBar = charterMenuBar;
-		this.modeManager = modeManager;
-		this.selectionManager = selectionManager;
 	}
 
 	@Override
@@ -40,8 +36,8 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 	}
 
 	private void addArrangementsList(final JMenu menu) {
-		for (int i = 0; i < data.songChart.arrangements.size(); i++) {
-			final Arrangement arrangement = data.songChart.arrangements.get(i);
+		for (int i = 0; i < chartData.songChart.arrangements.size(); i++) {
+			final Arrangement arrangement = chartData.songChart.arrangements.get(i);
 			final String arrangementName = "[" + i + "] " + arrangement.getTypeNameLabel();
 
 			final int arrangementId = i;
@@ -50,7 +46,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 	}
 
 	private void createLevelMenuItems(final JMenu menu) {
-		for (int level = 0; level < data.getCurrentArrangement().levels.size(); level++) {
+		for (int level = 0; level < chartData.getCurrentArrangement().levels.size(); level++) {
 			final int levelToChangeTo = level;
 			menu.add(createItem("Level " + level, () -> modeManager.setLevel(levelToChangeTo)));
 		}
@@ -88,18 +84,18 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 	}
 
 	private void addArrangement() {
-		final BeatsMap beatsMap = data.songChart.beatsMap;
+		final BeatsMap beatsMap = chartData.songChart.beatsMap;
 
-		final int previousArrangement = data.currentArrangement;
+		final int previousArrangement = chartData.currentArrangement;
 		final EditMode previousEditMode = modeManager.getMode();
-		final int previousDifficulty = data.currentLevel;
-		data.currentArrangement = data.songChart.arrangements.size();
-		data.songChart.arrangements.add(new Arrangement(ArrangementType.Lead, //
+		final int previousDifficulty = chartData.currentLevel;
+		chartData.currentArrangement = chartData.songChart.arrangements.size();
+		chartData.songChart.arrangements.add(new Arrangement(ArrangementType.Lead, //
 				beatsMap.getBeatSafe(0).position(), //
 				beatsMap.getBeatSafe(beatsMap.beats.size() - 1).position()));
-		modeManager.setArrangement(data.songChart.arrangements.size() - 1);
+		modeManager.setArrangement(chartData.songChart.arrangements.size() - 1);
 
-		new ArrangementSettingsPane(charterMenuBar, data, frame, selectionManager, () -> {
+		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, () -> {
 			if (previousEditMode == EditMode.GUITAR) {
 				modeManager.setArrangement(previousArrangement);
 				modeManager.setLevel(previousDifficulty);
@@ -107,32 +103,32 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 				modeManager.setMode(previousEditMode);
 			}
 
-			data.songChart.arrangements.remove(data.songChart.arrangements.size() - 1);
+			chartData.songChart.arrangements.remove(chartData.songChart.arrangements.size() - 1);
 
 			charterMenuBar.refreshMenus();
 		}, true);
 	}
 
 	private void editOptions() {
-		new ArrangementSettingsPane(charterMenuBar, data, frame, selectionManager, null, false);
+		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, null, false);
 	}
 
 	private void deleteArrangement() {
-		final String arrangementName = "[" + (data.currentArrangement + 1) + "] "
-				+ data.getCurrentArrangement().getTypeNameLabel();
+		final String arrangementName = "[" + (chartData.currentArrangement + 1) + "] "
+				+ chartData.getCurrentArrangement().getTypeNameLabel();
 		final String msg = Label.DELETE_ARRANGEMENT_MSG.label().formatted(arrangementName);
-		final int option = JOptionPane.showConfirmDialog(frame, msg, Label.DELETE_ARRANGEMENT_TITLE.label(),
+		final int option = JOptionPane.showConfirmDialog(charterFrame, msg, Label.DELETE_ARRANGEMENT_TITLE.label(),
 				JOptionPane.YES_NO_OPTION);
 
 		if (option != JOptionPane.YES_OPTION) {
 			return;
 		}
 
-		final int arrangementToRemove = data.currentArrangement;
-		data.songChart.arrangements.remove(arrangementToRemove);
+		final int arrangementToRemove = chartData.currentArrangement;
+		chartData.songChart.arrangements.remove(arrangementToRemove);
 
-		if (data.songChart.arrangements.size() > 0) {
-			if (data.songChart.arrangements.size() == arrangementToRemove) {
+		if (chartData.songChart.arrangements.size() > 0) {
+			if (chartData.songChart.arrangements.size() == arrangementToRemove) {
 				modeManager.setArrangement(arrangementToRemove - 1);
 			} else {
 				modeManager.setArrangement(arrangementToRemove);

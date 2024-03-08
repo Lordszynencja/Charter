@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
 import log.charter.gui.CharterFrame;
@@ -30,7 +31,7 @@ import log.charter.sound.data.AudioData;
 import log.charter.sound.data.AudioDataShort;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class AudioHandler {
+public class AudioHandler implements Initiable {
 	private static class TickPlayer {
 		private final IPlayer tickPlayer;
 		private final Supplier<ArrayList2<? extends IPosition>> positionsSupplier;
@@ -76,20 +77,19 @@ public class AudioHandler {
 
 	private ChartTimeHandler chartTimeHandler;
 	private ChartToolbar chartToolbar;
-	private ChartData data;
+	private ChartData chartData;
 	private CharterFrame frame;
+	private MidiChartNotePlayer midiChartNotePlayer;
 	private ModeManager modeManager;
 	private ProjectAudioHandler projectAudioHandler;
 	private RepeatManager repeatManager;
-
-	private final StretchedAudioHandler stretchedAudioHandler = new StretchedAudioHandler();
+	private StretchedAudioHandler stretchedAudioHandler;
 
 	private AudioDataShort slowedDownSong;
 	private int currentlyLoadedSpecialSpeed = 100;
 
 	private TickPlayer beatTickPlayer;
 	private TickPlayer noteTickPlayer;
-	private final MidiChartNotePlayer midiChartNotePlayer = new MidiChartNotePlayer();
 	private Player songPlayer;
 
 	private AudioDataShort lastUncutData = null;
@@ -101,33 +101,20 @@ public class AudioHandler {
 	private final boolean ignoreStops = false;
 	public boolean midiNotesPlaying = false;
 
-	public void init(final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar, final ChartData data,
-			final CharterFrame frame, final ModeManager modeManager, final ProjectAudioHandler projectAudioHandler,
-			final RepeatManager repeatManager) {
-		this.chartTimeHandler = chartTimeHandler;
-		this.chartToolbar = chartToolbar;
-		this.data = data;
-		this.frame = frame;
-		this.modeManager = modeManager;
-		this.projectAudioHandler = projectAudioHandler;
-		this.repeatManager = repeatManager;
-
-		beatTickPlayer = new TickPlayer(generateSound(500, 0.02, 1), () -> data.songChart.beatsMap.beats);
+	@Override
+	public void init() {
+		beatTickPlayer = new TickPlayer(generateSound(500, 0.02, 1), () -> chartData.songChart.beatsMap.beats);
 		noteTickPlayer = new TickPlayer(generateSound(1000, 0.01, 1), 4, this::getCurrentClapPositions);
-
-		midiChartNotePlayer.init(chartTimeHandler, data, modeManager);
-
-		stretchedAudioHandler.init();
 	}
 
 	private ArrayList2<? extends IPosition> getCurrentClapPositions() {
 		switch (modeManager.getMode()) {
 			case GUITAR:
-				return data.getCurrentArrangementLevel().sounds;
+				return chartData.getCurrentArrangementLevel().sounds;
 			case TEMPO_MAP:
-				return data.songChart.beatsMap.beats;
+				return chartData.songChart.beatsMap.beats;
 			case VOCALS:
-				return data.songChart.vocals.vocals;
+				return chartData.songChart.vocals.vocals;
 			default:
 				return new ArrayList2<>();
 		}
@@ -236,7 +223,7 @@ public class AudioHandler {
 
 	public void setSong() {
 		stretchedAudioHandler.clear();
-		stretchedAudioHandler.setData(data.path, projectAudioHandler.getAudio());
+		stretchedAudioHandler.setData(chartData.path, projectAudioHandler.getAudio());
 
 		if (createDefaultStretchesInBackground) {
 			stretchedAudioHandler.addSpeedToGenerate(stretchedMusicSpeed);
@@ -251,7 +238,7 @@ public class AudioHandler {
 	}
 
 	public void togglePlaySetSpeed() {
-		if (data.isEmpty) {
+		if (chartData.isEmpty) {
 			return;
 		}
 

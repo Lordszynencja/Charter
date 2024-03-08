@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import log.charter.data.ChartData;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.types.PositionType;
@@ -28,11 +29,12 @@ import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 
-public class SelectionManager {
-	private ChartData data;
+public class SelectionManager implements Initiable {
+	private ChartData chartData;
 	private ChartTimeHandler chartTimeHandler;
 	private CurrentSelectionEditor currentSelectionEditor;
 	private ModeManager modeManager;
+	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
 
 	private TypeSelectionManager<Anchor> anchorsManager;
 	private TypeSelectionManager<Beat> beatsManager;
@@ -45,14 +47,8 @@ public class SelectionManager {
 
 	private final Map<PositionType, TypeSelectionManager<?>> typeSelectionManagers = new HashMap2<>();
 
-	public void init(final ChartData chartData, final ChartTimeHandler chartTimeHandler,
-			final CurrentSelectionEditor currentSelectionEditor, final ModeManager modeManager,
-			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler) {
-		data = chartData;
-		this.chartTimeHandler = chartTimeHandler;
-		this.currentSelectionEditor = currentSelectionEditor;
-		this.modeManager = modeManager;
-
+	@Override
+	public void init() {
 		anchorsManager = new AnchorsSelectionManager(chartData, mouseButtonPressReleaseHandler);
 		beatsManager = new BeatsSelectionManager(chartData, mouseButtonPressReleaseHandler);
 		chordsNotesManager = new ChordsNotesSelectionManager(chartData, mouseButtonPressReleaseHandler);
@@ -137,7 +133,7 @@ public class SelectionManager {
 
 	public PositionWithIdAndType findExistingPosition(final int x, final int y) {
 		final PositionType positionType = PositionType.fromY(y, modeManager.getMode());
-		final ArrayList2<PositionWithIdAndType> positions = positionType.manager.getPositionsWithIdsAndTypes(data);
+		final ArrayList2<PositionWithIdAndType> positions = positionType.manager.getPositionsWithIdsAndTypes(chartData);
 
 		if (positionType == PositionType.HAND_SHAPE || positionType == PositionType.VOCAL) {
 			return findExistingLong(x, positions);
@@ -147,7 +143,7 @@ public class SelectionManager {
 	}
 
 	public void click(final MouseButtonPressReleaseData clickData, final boolean ctrl, final boolean shift) {
-		if (data.isEmpty) {
+		if (chartData.isEmpty) {
 			return;
 		}
 

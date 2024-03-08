@@ -7,28 +7,19 @@ import java.util.stream.Collectors;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
-import log.charter.data.ArrangementFixer;
-import log.charter.data.ChartData;
-import log.charter.data.copySystem.CopyManager;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.selection.SelectionManager;
-import log.charter.data.undoSystem.UndoSystem;
+import log.charter.data.managers.CharterContext;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
-import log.charter.gui.components.toolbar.ChartToolbar;
-import log.charter.gui.handlers.ActionHandler;
-import log.charter.gui.handlers.AudioHandler;
-import log.charter.gui.handlers.SongFileHandler;
-import log.charter.gui.handlers.data.ChartTimeHandler;
-import log.charter.gui.handlers.data.ProjectAudioHandler;
-import log.charter.gui.utils.Framer;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-public class CharterMenuBar extends JMenuBar {
+public class CharterMenuBar extends JMenuBar implements Initiable {
 	private static final long serialVersionUID = -5784270027920161709L;
 
 	public static final ColorLabel backgroundColor = ColorLabel.BASE_BG_2;
+
+	private CharterContext charterContext;
+	private CharterFrame charterFrame;
 
 	private final ArrangementMenuHandler arrangementMenuHandler = new ArrangementMenuHandler();
 	private final EditMenuHandler editMenuHandler = new EditMenuHandler();
@@ -49,24 +40,18 @@ public class CharterMenuBar extends JMenuBar {
 			guitarMenuHandler, //
 			infoMenuHandler);
 
-	public void init(final ActionHandler actionHandler, final ArrangementFixer arrangementFixer,
-			final AudioHandler audioHandler, final ChartTimeHandler chartTimeHandler, final ChartToolbar chartToolbar,
-			final CopyManager copyManager, final ChartData data, final CharterFrame frame, final Framer framer,
-			final ModeManager modeManager, final ProjectAudioHandler projectAudioHandler,
-			final SelectionManager selectionManager, final SongFileHandler songFileHandler, final UndoSystem undoSystem,
-			final WaveFormDrawer waveFormDrawer) {
-		arrangementMenuHandler.init(actionHandler, data, frame, this, modeManager, selectionManager);
-		editMenuHandler.init(actionHandler, chartTimeHandler, data, frame, modeManager, projectAudioHandler,
-				undoSystem);
-		fileMenuHandler.init(actionHandler, arrangementFixer, chartTimeHandler, data, frame, framer, this, modeManager,
-				songFileHandler);
-		guitarMenuHandler.init(actionHandler, data, modeManager, selectionManager, undoSystem);
-		infoMenuHandler.init(frame, this);
-		musicMenuHandler.init(actionHandler, modeManager);
-		notesMenuHandler.init(actionHandler, modeManager);
-		vocalsMenuHandler.init(actionHandler, modeManager);
+	@Override
+	public void init() {
+		charterContext.initObject(arrangementMenuHandler);
+		charterContext.initObject(editMenuHandler);
+		charterContext.initObject(fileMenuHandler);
+		charterContext.initObject(guitarMenuHandler);
+		charterContext.initObject(infoMenuHandler);
+		charterContext.initObject(musicMenuHandler);
+		charterContext.initObject(notesMenuHandler);
+		charterContext.initObject(vocalsMenuHandler);
 
-		final Dimension size = new Dimension(100, 20);
+		final Dimension size = new Dimension(1, 20);
 		setMinimumSize(size);
 		setSize(size);
 		setMaximumSize(size);
@@ -76,7 +61,7 @@ public class CharterMenuBar extends JMenuBar {
 
 		refreshMenus();
 
-		frame.setJMenuBar(this);
+		charterFrame.setJMenuBar(this);
 	}
 
 	public void refreshMenus() {

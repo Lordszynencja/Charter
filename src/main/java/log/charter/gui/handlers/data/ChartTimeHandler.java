@@ -22,14 +22,6 @@ public class ChartTimeHandler {
 	private double time = 0;
 	private double nextTime = 0;
 
-	public void init(final ChartData chartData, final KeyboardHandler keyboardHandler, final ModeManager modeManager,
-			final ProjectAudioHandler projectAudioHandler) {
-		this.chartData = chartData;
-		this.keyboardHandler = keyboardHandler;
-		this.modeManager = modeManager;
-		this.projectAudioHandler = projectAudioHandler;
-	}
-
 	public double nextTime() {
 		return nextTime;
 	}

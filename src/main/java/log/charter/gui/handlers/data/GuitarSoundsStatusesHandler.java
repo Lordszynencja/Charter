@@ -51,14 +51,6 @@ public class GuitarSoundsStatusesHandler {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData chartData, final CurrentSelectionEditor currentSelectionEditor,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this.chartData = chartData;
-		this.currentSelectionEditor = currentSelectionEditor;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-	}
-
 	public <T> void singleToggleOnAllSelectedNotesWithBaseValue(final Function<ChordOrNote, T> baseValueGetter,
 			final BiConsumer<ChordOrNote, T> handler) {
 		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager

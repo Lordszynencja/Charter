@@ -13,13 +13,6 @@ public class RepeatManager {
 	private ChartTimeHandler chartTimeHandler;
 	private ChartToolbar chartToolbar;
 
-	public void init(final AudioHandler audioHandler, final ChartTimeHandler chartTimeHandler,
-			final ChartToolbar chartToolbar) {
-		this.audioHandler = audioHandler;
-		this.chartTimeHandler = chartTimeHandler;
-		this.chartToolbar = chartToolbar;
-	}
-
 	public boolean isOn() {
 		return repeatingOn;
 	}

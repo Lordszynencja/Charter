@@ -8,6 +8,7 @@ import javax.swing.JMenu;
 import log.charter.data.ArrangementFretHandPositionsCreator;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.Selection;
@@ -16,26 +17,21 @@ import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.handlers.Action;
-import log.charter.gui.handlers.ActionHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.song.Level;
 import log.charter.song.notes.ChordOrNote;
 import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
-class GuitarMenuHandler extends CharterMenuHandler {
-	private ChartData data;
+class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
+	private ChartData chartData;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ActionHandler actionHandler, final ChartData data, final ModeManager modeManager,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+	@Override
+	public void init() {
 		super.init(actionHandler);
-		this.data = data;
-		this.modeManager = modeManager;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
 	}
 
 	@Override
@@ -100,7 +96,7 @@ class GuitarMenuHandler extends CharterMenuHandler {
 	private void addFHP() {
 		undoSystem.addUndo();
 
-		final Level level = data.getCurrentArrangementLevel();
+		final Level level = chartData.getCurrentArrangementLevel();
 		ArrayList2<ChordOrNote> sounds = level.sounds;
 		for (final PositionType positionType : PositionType.values()) {
 			if (positionType == PositionType.NONE) {
@@ -121,7 +117,7 @@ class GuitarMenuHandler extends CharterMenuHandler {
 			}
 		}
 
-		final ArrayList2<ChordTemplate> chordTemplates = data.getCurrentArrangement().chordTemplates;
+		final ArrayList2<ChordTemplate> chordTemplates = chartData.getCurrentArrangement().chordTemplates;
 		selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE);
 
 		ArrangementFretHandPositionsCreator.createFretHandPositions(chordTemplates, sounds, level.anchors);

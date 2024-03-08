@@ -13,21 +13,11 @@ import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class VocalsHandler {
-	private ChartData data;
-	private CharterFrame frame;
+	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private CurrentSelectionEditor currentSelectionEditor;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
-
-	public void init(final ChartData data, final CharterFrame frame,
-			final CurrentSelectionEditor currentSelectionEditor, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
-		this.data = data;
-		this.frame = frame;
-		this.currentSelectionEditor = currentSelectionEditor;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-	}
 
 	public void editVocals() {
 		final SelectionAccessor<Vocal> selectedAccessor = selectionManager.getSelectedAccessor(PositionType.VOCAL);
@@ -37,8 +27,8 @@ public class VocalsHandler {
 
 		final ArrayList2<Selection<Vocal>> selectedVocals = selectedAccessor.getSortedSelected();
 		final Selection<Vocal> firstSelectedVocal = selectedVocals.remove(0);
-		new VocalPane(firstSelectedVocal.id, firstSelectedVocal.selectable, data, frame, selectionManager, undoSystem,
-				selectedVocals);
+		new VocalPane(firstSelectedVocal.id, firstSelectedVocal.selectable, chartData, charterFrame, selectionManager,
+				undoSystem, selectedVocals);
 	}
 
 	public void toggleWordPart() {

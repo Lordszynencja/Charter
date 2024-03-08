@@ -30,14 +30,6 @@ public class GuitarSoundsHandler {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartData chartData, final CurrentSelectionEditor currentSelectionEditor,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this.chartData = chartData;
-		this.currentSelectionEditor = currentSelectionEditor;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-	}
-
 	private boolean stringsInRange(final ArrayList2<ChordOrNote> sounds, final IntRange stringRange) {
 		return !sounds.stream()//
 				.flatMap(ChordOrNote::notes)//

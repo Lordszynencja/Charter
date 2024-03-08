@@ -1,24 +1,22 @@
 package log.charter.gui.handlers.windows;
 
-import log.charter.data.ChartData;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.RepeatManager;
-import log.charter.gui.CharterFrame;
+import log.charter.data.managers.CharterContext;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.gui.components.preview3D.Preview3DFrame;
 import log.charter.gui.components.preview3D.Preview3DPanel;
-import log.charter.gui.handlers.data.ChartTimeHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.io.Logger;
 
-public class WindowedPreviewHandler {
+public class WindowedPreviewHandler implements Initiable {
+	private CharterContext charterContext;
+
 	private final Preview3DFrame windowedPreviewFrame = new Preview3DFrame();
 	private final Preview3DPanel windowedPreview3DPanel = new Preview3DPanel();
 
-	public void init(final ChartData chartData, final CharterFrame charterFrame,
-			final ChartTimeHandler chartTimeHandler, final KeyboardHandler keyboardHandler,
-			final ModeManager modeManager, final RepeatManager repeatManager) {
-		windowedPreview3DPanel.init(chartData, chartTimeHandler, keyboardHandler, modeManager, repeatManager);
-		windowedPreviewFrame.init(charterFrame, keyboardHandler, windowedPreview3DPanel);
+	@Override
+	public void init() {
+		charterContext.initObject(windowedPreview3DPanel);
+		charterContext.initObject(windowedPreviewFrame);
+		windowedPreviewFrame.initWith(windowedPreview3DPanel);
 	}
 
 	public void reloadTextures() {

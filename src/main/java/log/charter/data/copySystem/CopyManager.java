@@ -54,27 +54,17 @@ public class CopyManager {
 		V make(BeatsMap beatsMap, int basePosition, double basePositionInBeats, T position);
 	}
 
+	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
-	private CharterFrame frame;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data, final CharterFrame frame,
-			final ModeManager modeManager, final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
-		this.frame = frame;
-		this.modeManager = modeManager;
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-	}
-
 	private <T extends IPosition, V extends CopiedPosition<T>> ArrayList2<V> makeCopy(final ArrayList2<T> positions,
 			final int basePosition, final double basePositionInBeats,
 			final CopiedPositionMaker<T, V> copiedPositionMaker) {
-		final BeatsMap beatsMap = data.songChart.beatsMap;
+		final BeatsMap beatsMap = chartData.songChart.beatsMap;
 
 		return positions
 				.map(position -> copiedPositionMaker.make(beatsMap, basePosition, basePositionInBeats, position));
@@ -82,7 +72,7 @@ public class CopyManager {
 
 	private <T extends IPosition, V extends CopiedPosition<T>> ArrayList2<V> makeCopy(
 			final ArrayList2<Selection<T>> selectedPositions, final CopiedPositionMaker<T, V> copiedPositionMaker) {
-		final BeatsMap beatsMap = data.songChart.beatsMap;
+		final BeatsMap beatsMap = chartData.songChart.beatsMap;
 		final int basePosition = selectedPositions.get(0).selectable.position();
 		final double basePositionInBeats = beatsMap.getPositionInBeats(basePosition);
 
@@ -93,7 +83,7 @@ public class CopyManager {
 	private <T extends IPosition, V extends CopiedPosition<T>> ArrayList2<V> copyPositionsFromTo(final int from,
 			final int to, final double basePositionInBeats, final ArrayList2<T> positions,
 			final CopiedPositionMaker<T, V> copiedPositionMaker) {
-		final BeatsMap beatsMap = data.songChart.beatsMap;
+		final BeatsMap beatsMap = chartData.songChart.beatsMap;
 
 		int fromId = findFirstIdAfterEqual(positions, from);
 		if (fromId == -1) {
@@ -117,23 +107,23 @@ public class CopyManager {
 			return null;
 		}
 
-		final Arrangement arrangement = data.getCurrentArrangement();
-		final BeatsMap beatsMap = data.songChart.beatsMap;
+		final Arrangement arrangement = chartData.getCurrentArrangement();
+		final BeatsMap beatsMap = chartData.songChart.beatsMap;
 		final double basePositionInBeats = beatsMap.getPositionInBeats(from);
 
 		final HashMap2<String, Phrase> copiedPhrases = arrangement.phrases.map(phraseName -> phraseName, Phrase::new);
 		final ArrayList2<CopiedArrangementEventsPointPosition> copiedArrangementEventsPoints = copyPositionsFromTo(from,
 				to, basePositionInBeats, arrangement.eventPoints, CopiedArrangementEventsPointPosition::new);
-		final ArrayList2<ChordTemplate> copiedChordTemplates = data.getCurrentArrangement().chordTemplates
+		final ArrayList2<ChordTemplate> copiedChordTemplates = chartData.getCurrentArrangement().chordTemplates
 				.map(ChordTemplate::new);
 		final ArrayList2<CopiedToneChangePosition> copiedToneChanges = copyPositionsFromTo(from, to,
 				basePositionInBeats, arrangement.toneChanges, CopiedToneChangePosition::new);
 		final ArrayList2<CopiedAnchorPosition> copiedAnchors = copyPositionsFromTo(from, to, basePositionInBeats,
-				data.getCurrentArrangementLevel().anchors, CopiedAnchorPosition::new);
+				chartData.getCurrentArrangementLevel().anchors, CopiedAnchorPosition::new);
 		final ArrayList2<CopiedSoundPosition> copiedSounds = copyPositionsFromTo(from, to, basePositionInBeats,
-				data.getCurrentArrangementLevel().sounds, CopiedSoundPosition::new);
+				chartData.getCurrentArrangementLevel().sounds, CopiedSoundPosition::new);
 		final ArrayList2<CopiedHandShapePosition> copiedHandShapes = copyPositionsFromTo(from, to, basePositionInBeats,
-				data.getCurrentArrangementLevel().handShapes, CopiedHandShapePosition::new);
+				chartData.getCurrentArrangementLevel().handShapes, CopiedHandShapePosition::new);
 
 		return new FullGuitarCopyData(copiedPhrases, copiedArrangementEventsPoints, copiedChordTemplates,
 				copiedToneChanges, copiedAnchors, copiedSounds, copiedHandShapes);
@@ -146,8 +136,8 @@ public class CopyManager {
 		final ArrayList2<Selection<Beat>> selectedBeats = selectedBeatsAccessor.getSortedSelected();
 		final int from = selectedBeats.get(0).selectable.position();
 		final int to = selectedBeats.getLast().selectable.position();
-		final double basePositionInBeats = data.songChart.beatsMap.getPositionInBeats(from);
-		final Arrangement arrangement = data.getCurrentArrangement();
+		final double basePositionInBeats = chartData.songChart.beatsMap.getPositionInBeats(from);
+		final Arrangement arrangement = chartData.getCurrentArrangement();
 
 		final HashMap2<String, Phrase> copiedPhrases = arrangement.phrases.map(phraseName -> phraseName, Phrase::new);
 		final ArrayList2<CopiedArrangementEventsPointPosition> copiedArrangementEventsPoints = copyPositionsFromTo(from,
@@ -162,7 +152,7 @@ public class CopyManager {
 				.getSelectedAccessor(PositionType.GUITAR_NOTE);
 		final ArrayList2<Selection<ChordOrNote>> selectedSounds = selectedSoundsAccessor.getSortedSelected();
 
-		final ArrayList2<ChordTemplate> copiedChordTemplates = data.getCurrentArrangement().chordTemplates
+		final ArrayList2<ChordTemplate> copiedChordTemplates = chartData.getCurrentArrangement().chordTemplates
 				.map(ChordTemplate::new);
 		final ArrayList2<CopiedSoundPosition> copiedSounds = makeCopy(selectedSounds, CopiedSoundPosition::new);
 		final int from = selectedSounds.get(0).selectable.position();
@@ -177,7 +167,7 @@ public class CopyManager {
 				.getSelectedAccessor(PositionType.HAND_SHAPE);
 		final ArrayList2<Selection<HandShape>> selectedHandShapes = selectedHandShapesAccessor.getSortedSelected();
 
-		final ArrayList2<ChordTemplate> copiedChordTemplates = data.getCurrentArrangement().chordTemplates
+		final ArrayList2<ChordTemplate> copiedChordTemplates = chartData.getCurrentArrangement().chordTemplates
 				.map(ChordTemplate::new);
 		final ArrayList2<CopiedHandShapePosition> copiedHandShapes = makeCopy(selectedHandShapes,
 				CopiedHandShapePosition::new);
@@ -289,7 +279,7 @@ public class CopyManager {
 
 		undoSystem.addUndo();
 		selectionManager.clear();
-		selectedCopy.paste(data, selectionManager, chartTimeHandler.time(), true);
+		selectedCopy.paste(chartData, selectionManager, chartTimeHandler.time(), true);
 	}
 
 	public void specialPaste() {
@@ -304,7 +294,7 @@ public class CopyManager {
 		}
 
 		if (fullCopy instanceof FullGuitarCopyData) {
-			new GuitarSpecialPastePane(data, frame, selectionManager, undoSystem, chartTimeHandler.time(),
+			new GuitarSpecialPastePane(chartData, charterFrame, selectionManager, undoSystem, chartTimeHandler.time(),
 					(FullGuitarCopyData) fullCopy);
 			return;
 		}

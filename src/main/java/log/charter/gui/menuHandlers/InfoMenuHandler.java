@@ -15,13 +15,8 @@ class InfoMenuHandler extends CharterMenuHandler {
 			+ "Created by Lord Sai and friends from Customs Forge\n\n"//
 			+ "Current version: " + CharterMain.VERSION + " - " + CharterMain.VERSION_DATE;
 
-	private CharterFrame frame;
+	private CharterFrame charterFrame;
 	private CharterMenuBar charterMenuBar;
-
-	public void init(final CharterFrame frame, final CharterMenuBar charterMenuBar) {
-		this.frame = frame;
-		this.charterMenuBar = charterMenuBar;
-	}
 
 	@Override
 	boolean isApplicable() {
@@ -52,6 +47,6 @@ class InfoMenuHandler extends CharterMenuHandler {
 	}
 
 	private void showVersion() {
-		JOptionPane.showMessageDialog(frame, infoText);
+		JOptionPane.showMessageDialog(charterFrame, infoText);
 	}
 }

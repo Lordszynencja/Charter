@@ -28,18 +28,14 @@ public class AnchorSelectionEditor {
 	private FieldWithLabel<TextInputWithValidation> anchorFret;
 	private FieldWithLabel<TextInputWithValidation> anchorWidth;
 
-	public void init(final CurrentSelectionEditor selectionEditor, final SelectionManager selectionManager,
-			final UndoSystem undoSystem) {
-		this.selectionManager = selectionManager;
-		this.undoSystem = undoSystem;
-
-		final RowedPosition position = new RowedPosition(10, selectionEditor.sizes);
+	public void addTo(final CurrentSelectionEditor currentSelectionEditor) {
+		final RowedPosition position = new RowedPosition(10, currentSelectionEditor.sizes);
 		final TextInputWithValidation anchorFretInput = generateForInt(1, 20, //
 				new IntValueValidator(1, frets), this::changeAnchorFret, false);
 		anchorFretInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(anchorFretInput);
 		anchorFret = new FieldWithLabel<>(Label.FRET, 100, 30, 20, anchorFretInput, LabelPosition.LEFT);
-		selectionEditor.add(anchorFret, position, 140);
+		currentSelectionEditor.add(anchorFret, position, 140);
 		position.newRow();
 
 		final TextInputWithValidation anchorWidthInput = generateForInt(4, 20, //
@@ -49,7 +45,7 @@ public class AnchorSelectionEditor {
 		anchorWidthInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(anchorWidthInput);
 		anchorWidth = new FieldWithLabel<>(Label.ANCHOR_WIDTH, 100, 30, 20, anchorWidthInput, LabelPosition.LEFT);
-		selectionEditor.add(anchorWidth, position, 140);
+		currentSelectionEditor.add(anchorWidth, position, 140);
 
 		hideFields();
 	}

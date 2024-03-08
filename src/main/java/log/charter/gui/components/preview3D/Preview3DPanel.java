@@ -11,6 +11,7 @@ import org.lwjgl.opengl.awt.GLData;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.modes.EditMode;
@@ -38,11 +39,12 @@ import log.charter.gui.utils.Framer;
 import log.charter.io.Logger;
 import log.charter.util.Timer;
 
-public class Preview3DPanel extends AWTGLCanvas {
+public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	private static final long serialVersionUID = 1L;
 
 	private ChartTimeHandler chartTimeHandler;
 	private ChartData chartData;
+	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 
 	private Framer cameraUpdater;
@@ -81,13 +83,8 @@ public class Preview3DPanel extends AWTGLCanvas {
 		super(prepareGLData());
 	}
 
-	public void init(final ChartData chartData, final ChartTimeHandler chartTimeHandler,
-			final KeyboardHandler keyboardHandler, final ModeManager modeManager, final RepeatManager repeatManager) {
-		this.chartTimeHandler = chartTimeHandler;
-		this.chartData = chartData;
-		this.repeatManager = repeatManager;
-		this.modeManager = modeManager;
-
+	@Override
+	public void init() {
 		noteStatusModels.init(texturesHolder);
 
 		anchorsDrawer.init(chartData);
