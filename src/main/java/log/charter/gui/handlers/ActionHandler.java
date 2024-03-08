@@ -13,9 +13,12 @@ import log.charter.data.config.Config;
 import log.charter.data.copySystem.CopyManager;
 import log.charter.data.managers.CharterContext;
 import log.charter.data.managers.CharterContext.Initiable;
+import log.charter.data.managers.HighlightManager;
 import log.charter.data.managers.ModeManager;
 import log.charter.data.managers.RepeatManager;
 import log.charter.data.managers.selection.SelectionManager;
+import log.charter.data.types.PositionType;
+import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.toolbar.ChartToolbar;
@@ -39,6 +42,7 @@ public class ActionHandler implements Initiable {
 	private GuitarSoundsHandler guitarSoundsHandler;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private HandShapesHandler handShapesHandler;
+	private HighlightManager highlightManager;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
 	private RepeatManager repeatManager;
@@ -79,6 +83,17 @@ public class ActionHandler implements Initiable {
 
 			chartToolbar.updateValues();
 		}
+	}
+
+	private void toggleAnchor() {
+		final PositionWithIdAndType highlight = highlightManager.getHighlight(mouseHandler.getMouseX(),
+				mouseHandler.getMouseY());
+		if (!highlight.existingPosition || highlight.type != PositionType.BEAT) {
+			return;
+		}
+
+		undoSystem.addUndo();
+		highlight.beat.anchor = !highlight.beat.anchor;
 	}
 
 	private void toggleBookmark(final int number) {
@@ -169,6 +184,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.SPECIAL_PASTE, copyManager::specialPaste);
 		actionHandlers.put(Action.TOGGLE_ACCENT, guitarSoundsStatusesHandler::toggleAccent);
 		actionHandlers.put(Action.TOGGLE_ACCENT_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleAccentIndependently);
+		actionHandlers.put(Action.TOGGLE_ANCHOR, this::toggleAnchor);
 		actionHandlers.put(Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW,
 				windowedPreviewHandler::switchBorderlessWindowedPreview);
 		actionHandlers.put(Action.TOGGLE_CLAPS, audioHandler::toggleClaps);

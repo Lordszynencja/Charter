@@ -42,13 +42,13 @@ public final class ConfigPane extends ParamsPane {
 	private int backupDelay = Config.backupDelay;
 
 	public ConfigPane(final CharterFrame frame, final Framer framer) {
-		super(frame, Label.CONFIG_PANE, 600);
+		super(frame, Label.CONFIG_PANE_TITLE, 600);
 		this.frame = frame;
 		this.framer = framer;
 
 		int row = 0;
 
-		addStringConfigValue(row, 20, 150, Label.CONFIG_MUSIC_FOLDER, musicPath, 300, dirValidator, //
+		addStringConfigValue(row, 20, 150, Label.MUSIC_FOLDER, musicPath, 300, dirValidator, //
 				val -> musicPath = val, false);
 		musicFolderInput = (JTextField) getLastPart();
 		final JButton musicFolderPickerButton = new JButton(Label.SELECT_FOLDER.label());

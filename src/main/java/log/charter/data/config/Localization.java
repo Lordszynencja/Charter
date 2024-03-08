@@ -18,33 +18,30 @@ import log.charter.util.RW;
 
 public class Localization {
 	public enum Label {
+		ARRANGEMENT_MENU("Arrangement"), //
+		ARRANGEMENT_OPTIONS("Arrangement options"), //
+		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
+		ARRANGEMENT_MENU_VOCALS("Vocals"), //
+		ARRANGEMENT_SUBTYPE_ALTERNATE("Alternate"), //
+		ARRANGEMENT_SUBTYPE_BONUS("Bonus"), //
+		ARRANGEMENT_SUBTYPE_MAIN("Main"), //
+		ARRANGEMENT_TYPE_BASS("Bass"), //
 		ARRANGEMENT_TYPE_COMBO("Combo"), //
 		ARRANGEMENT_TYPE_LEAD("Lead"), //
 		ARRANGEMENT_TYPE_RHYTHM("Rhythm"), //
-		ARRANGEMENT_TYPE_BASS("Bass"), //
-
-		ARRANGEMENT_SUBTYPE_MAIN("Main"), //
-		ARRANGEMENT_SUBTYPE_BONUS("Bonus"), //
-		ARRANGEMENT_SUBTYPE_ALTERNATE("Alternate"), //
-
-		ARRANGEMENT_MENU("Arrangement"), //
-		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
-		ARRANGEMENT_MENU_VOCALS("Vocals"), //
-		ARRANGEMENT_MENU_OPTIONS("Arrangement options"), //
-		TOGGLE_MIDI("Toggle midi notes"), //
-		TOGGLE_CLAPS("Toggle claps on note"), //
-		TOGGLE_METRONOME("Toggle metronome"), //
-		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //
-		ARRANGEMENT_MENU_DELETE_ARRANGEMENT("Delete arrangement"), //
-
-		DELETE_ARRANGEMENT_TITLE("Delete arrangement"), //
-		DELETE_ARRANGEMENT_MSG("Are you sure you want to delete arrangement %s?"), //
-
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
+		CONFIG_PANE_TITLE("Config"), //
+		DELETE_ARRANGEMENT("Delete arrangement"), //
+		DELETE_ARRANGEMENT_POPUP_MSG("Are you sure you want to delete arrangement %s?"), //
+		DELETE_ARRANGEMENT_POPUP_TITLE("Delete arrangement?"), //
+		TOGGLE_ANCHOR("Toggle anchor"), //
+		TOGGLE_CLAPS("Toggle claps"), //
+		TOGGLE_METRONOME("Toggle metronome"), //
+		TOGGLE_MIDI("Toggle midi notes"), //
+		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //
 
-		CONFIG_PANE("Config"), //
-		CONFIG_MUSIC_FOLDER("Music folder"), //
+		MUSIC_FOLDER("Music folder"), //
 		CONFIG_SONGS_FOLDER("Songs folder"), //
 		CONFIG_MINIMAL_NOTE_DISTANCE("Minimal note distance (ms)"), //
 		CONFIG_MINIMAL_TAIL_LENGTH("Minimal note tail length (ms)"), //
@@ -281,17 +278,13 @@ public class Localization {
 		TEMPO_BEAT_PANE_NOTE_DENOMINATOR("Note denominator"), //
 
 		INFO_MENU("Info"), //
-		INFO_MENU_VERSION("Version"), //
 		INFO_MENU_LANGUAGE("Language"), //
+		INFO_MENU_VERSION("Version"), //
 
 		MUSIC_MENU("Music"), //
-		MUSIC_MENU_25("25% speed"), //
-		MUSIC_MENU_50("50% speed"), //
-		MUSIC_MENU_75("75% speed"), //
-		MUSIC_MENU_CUSTOM("Custom speed"), //
-		TOGGLE_REPEATER("Toggle repeater"), //
-		TOGGLE_REPEAT_START("Set repeater start"), //
 		TOGGLE_REPEAT_END("Set repeater end"), //
+		TOGGLE_REPEAT_START("Set repeater start"), //
+		TOGGLE_REPEATER("Toggle repeater"), //
 
 		NOTES_MENU("Notes"), //
 		NOTES_MENU_GRID_OPTIONS("Grid options"), //

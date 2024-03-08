@@ -94,6 +94,7 @@ public class ShortcutConfig {
 		addDefaultShortcut(Action.SPECIAL_PASTE, new Shortcut(KeyEvent.VK_V).ctrl().shift());
 		addDefaultShortcut(Action.TOGGLE_ACCENT, new Shortcut(KeyEvent.VK_A));
 		addDefaultShortcut(Action.TOGGLE_ACCENT_INDEPENDENTLY, new Shortcut(KeyEvent.VK_A).alt());
+		addDefaultShortcut(Action.TOGGLE_ANCHOR, new Shortcut(KeyEvent.VK_A));
 		addDefaultShortcut(Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW, new Shortcut(KeyEvent.VK_F12));
 		addDefaultShortcut(Action.TOGGLE_CLAPS, new Shortcut(KeyEvent.VK_F3));
 		addDefaultShortcut(Action.TOGGLE_HARMONIC, new Shortcut(KeyEvent.VK_O));

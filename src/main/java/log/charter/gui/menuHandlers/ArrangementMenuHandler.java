@@ -63,7 +63,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
-			menu.add(createItem(Label.ARRANGEMENT_MENU_OPTIONS, this::editOptions));
+			menu.add(createItem(Label.ARRANGEMENT_OPTIONS, this::editOptions));
 
 			menu.addSeparator();
 			createLevelMenuItems(menu);
@@ -77,7 +77,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
-			menu.add(createItem(Label.ARRANGEMENT_MENU_DELETE_ARRANGEMENT, this::deleteArrangement));
+			menu.add(createItem(Label.DELETE_ARRANGEMENT, this::deleteArrangement));
 		}
 
 		return menu;
@@ -116,8 +116,8 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 	private void deleteArrangement() {
 		final String arrangementName = "[" + (chartData.currentArrangement + 1) + "] "
 				+ chartData.getCurrentArrangement().getTypeNameLabel();
-		final String msg = Label.DELETE_ARRANGEMENT_MSG.label().formatted(arrangementName);
-		final int option = JOptionPane.showConfirmDialog(charterFrame, msg, Label.DELETE_ARRANGEMENT_TITLE.label(),
+		final String msg = Label.DELETE_ARRANGEMENT_POPUP_MSG.label().formatted(arrangementName);
+		final int option = JOptionPane.showConfirmDialog(charterFrame, msg, Label.DELETE_ARRANGEMENT_POPUP_TITLE.label(),
 				JOptionPane.YES_NO_OPTION);
 
 		if (option != JOptionPane.YES_OPTION) {
