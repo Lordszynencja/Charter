@@ -1,2 +1,2 @@
 cd %~dp0
-"build and pack all.bat"
+"build_pack_all.bat"
