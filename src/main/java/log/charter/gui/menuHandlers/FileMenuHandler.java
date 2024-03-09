@@ -55,10 +55,10 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 		final JMenu menu = createMenu(Label.FILE_MENU);
 		menu.add(createItem(Action.NEW_PROJECT));
 		menu.add(createItem(Action.OPEN_PROJECT));
-		menu.add(createItem(Label.MAKE_PROJECT_FROM_RS_XML, songFileHandler::openSongWithImportFromArrangementXML));
+		menu.add(createItem(Label.CREATE_PROJECT_FROM_RS_XML, songFileHandler::openSongWithImportFromArrangementXML));
 
 		if (modeManager.getMode() != EditMode.EMPTY) {
-			menu.add(createItem(Label.FILE_MENU_OPEN_AUDIO, this::openAudioFile));
+			menu.add(createItem(Label.CHANGE_AUDIO, this::openAudioFile));
 
 			final JMenu importSubmenu = createMenu(Label.FILE_MENU_IMPORT);
 			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_GUITAR, this::importRSArrangementXML));

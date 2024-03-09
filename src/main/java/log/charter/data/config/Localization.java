@@ -36,18 +36,22 @@ public class Localization {
 		BACKUP_DELAY_S("Backup delay (s)"), //
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
+		CHANGE_AUDIO("Change audio"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CONFIG_PANE_TITLE("Config"), //
 		COPY("Copy"), //
 		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 5 file"), //
 		COULDNT_IMPORT_MIDI_TEMPO("Couldn't properly import tempo map from %s"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
+		CREATE_PROJECT_FROM_RS_XML("Create project from RS arrangement XML"), //
 		DELETE("Delete"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
 		DELETE_ARRANGEMENT_POPUP_MSG("Are you sure you want to delete arrangement %s?"), //
 		DELETE_ARRANGEMENT_POPUP_TITLE("Delete arrangement?"), //
 		EDIT_MENU("Edit"), //
 		EDITING("Editing"), //
+		EXIT("Exit"), //
+		FILE_MENU("File"), //
 		FPS("FPS"), //
 		FRET_0("Fret 0"), //
 		FRET_1("Fret 1"), //
@@ -89,6 +93,8 @@ public class Localization {
 		MOVE_TO_BOOKMARK_8("Move to bookmark 8"), //
 		MOVE_TO_BOOKMARK_9("Move to bookmark 9"), //
 		MUSIC_FOLDER("Music folder"), //
+		NEW_PROJECT("New project"), //
+		OPEN_PROJECT("Open project"), //
 		PASTE("Paste"), //
 		REDO("Redo"), //
 		SELECT_ALL_NOTES("Select all notes"), //
@@ -113,11 +119,6 @@ public class Localization {
 		XML_IMPORT_TYPE("XML import type"), //
 		XML_IMPORT_AS("Choose what to import the XML as"), //
 
-		FILE_MENU("File"), //
-		NEW_PROJECT("New project"), //
-		OPEN_PROJECT("Open project"), //
-		MAKE_PROJECT_FROM_RS_XML("Create project from RS arrangement XML"), //
-		FILE_MENU_OPEN_AUDIO("Temporary open an audio file"), //
 		FILE_MENU_IMPORT("Import"), //
 		FILE_MENU_IMPORT_RS_GUITAR("RS guitar arrangement XML"), //
 		FILE_MENU_IMPORT_RS_VOCALS("RS vocals arrangement XML"), //
@@ -130,7 +131,6 @@ public class Localization {
 		FILE_MENU_GRAPHIC_OPTIONS("Graphic options"), //
 		FILE_MENU_COLOR_OPTIONS("Color options"), //
 		FILE_MENU_TEXTURING_OPTIONS("Texturing options"), //
-		EXIT("Exit"), //
 
 		GUITAR_BEAT_PANE("Guitar beat options"), //
 		GUITAR_BEAT_PANE_SECTION_TYPE("Section"), //
