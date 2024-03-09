@@ -11,8 +11,9 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.cen
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.AccentIconGenerator.generateAccentIcon;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.AccentIconGenerator.generateHarmonicAccentIcon;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.HOPOIconGenerator.generateHammerOnIcon;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.HOPOIconGenerator.generatePopIcon;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.HOPOIconGenerator.generatePullOffIcon;
-import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.HOPOIconGenerator.generateSingleLetterIcon;
+import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.HOPOIconGenerator.generateSlapIcon;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.HOPOIconGenerator.generateTapIcon;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.MuteIconGenerator.generateFullMuteIcon;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.MuteIconGenerator.generatePalmMuteIcon;
@@ -94,8 +95,8 @@ public class ModernThemeNotes implements ThemeNotes {
 		hammerOnIcon = generateHammerOnIcon();
 		pullOffIcon = generatePullOffIcon();
 		tapIcon = generateTapIcon();
-		slapIcon = generateSingleLetterIcon("S", Color.BLACK);
-		popIcon = generateSingleLetterIcon("P", Color.BLACK);
+		slapIcon = generateSlapIcon();
+		popIcon = generatePopIcon();
 
 		palmMuteIcon = generatePalmMuteIcon();
 		fullMuteIcon = generateFullMuteIcon();

@@ -61,6 +61,7 @@ public class HOPOIconGenerator {
 		area.subtract(new Area(new Polygon(new int[] { 2, w / 2, w - 2 }, new int[] { 1, h - 2, 1 }, 3)));
 		g.setColor(Color.LIGHT_GRAY);
 		g.fill(area);
+
 		return icon;
 	}
 
@@ -74,6 +75,50 @@ public class HOPOIconGenerator {
 		g.setColor(color);
 		g.setFont(new Font(Font.DIALOG, Font.BOLD, h + 1));
 		g.drawString(letter, 0, h - 1);
+
+		return icon;
+	}
+
+	public static BufferedImage generateSlapIcon() {
+		final int w = noteHeight / 2;
+		final int h = noteHeight * 2 / 5;
+		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
+		final Graphics2D g = (Graphics2D) icon.getGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g.setColor(Color.BLACK);
+		g.fill(new Polygon(new int[] { 1, w / 2, w - 1 }, new int[] { 1, h - 1, 1 }, 3));
+
+		final Area area = new Area(new Polygon(new int[] { 0, w / 2, w }, new int[] { 0, h, 0 }, 3));
+		area.subtract(new Area(new Polygon(new int[] { 2, w / 2, w - 2 }, new int[] { 1, h - 2, 1 }, 3)));
+		g.setColor(Color.LIGHT_GRAY);
+		g.fill(area);
+
+		g.setColor(Color.WHITE);
+		g.setFont(new Font(Font.DIALOG, Font.BOLD, h * 9 / 10));
+		g.drawString("S", w / 2 - h * 3 / 10, h * 7 / 10);
+
+		return icon;
+	}
+
+	public static BufferedImage generatePopIcon() {
+		final int w = noteHeight / 2;
+		final int h = noteHeight * 2 / 5;
+		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
+		final Graphics2D g = (Graphics2D) icon.getGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g.setColor(Color.BLACK);
+		g.fill(new Polygon(new int[] { 1, w / 2, w - 1 }, new int[] { h - 1, 1, h - 1 }, 3));
+
+		final Area area = new Area(new Polygon(new int[] { 0, w / 2, w }, new int[] { h, 0, h }, 3));
+		area.subtract(new Area(new Polygon(new int[] { 2, w / 2, w - 2 }, new int[] { h - 1, 2, h - 1 }, 3)));
+		g.setColor(Color.LIGHT_GRAY);
+		g.fill(area);
+
+		g.setColor(Color.WHITE);
+		g.setFont(new Font(Font.DIALOG, Font.BOLD, h * 9 / 10));
+		g.drawString("P", w / 2 - h * 3 / 10, h * 9 / 10);
 
 		return icon;
 	}
