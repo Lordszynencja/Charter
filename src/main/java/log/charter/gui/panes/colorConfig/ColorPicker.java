@@ -53,7 +53,7 @@ public class ColorPicker extends JComponent implements MouseListener {
 
 	@Override
 	public void mouseClicked(final MouseEvent e) {
-		final String title = Label.CHOOSE_COLOR.label().formatted(colorLabel.label());
+		final String title = Label.CHOOSE_COLOR_FOR.label().formatted(colorLabel.label());
 		final Color newColor = JColorChooser.showDialog(this, title, color);
 
 		if (newColor != null) {

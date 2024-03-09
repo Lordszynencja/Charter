@@ -69,7 +69,7 @@ public class GraphicThemeConfigPage implements Page {
 
 	@Override
 	public Label label() {
-		return Label.GRAPHIC_CONFIG_THEME_PAGE;
+		return Label.PAGE_THEME;
 	}
 
 	@Override
@@ -100,9 +100,9 @@ public class GraphicThemeConfigPage implements Page {
 
 	private void addThemePicker(final RowedPanel panel, final RowedPosition position) {
 		final Vector<ThemeHolder> themes = new Vector<>(asList(//
-				new ThemeHolder(Theme.MODERN, Label.CONFIG_THEME_MODERN), //
-				new ThemeHolder(Theme.SQUARE, Label.CONFIG_THEME_SQUARE), //
-				new ThemeHolder(Theme.BASIC, Label.CONFIG_THEME_BASIC)));
+				new ThemeHolder(Theme.MODERN, Label.THEME_MODERN), //
+				new ThemeHolder(Theme.SQUARE, Label.THEME_SQUARE), //
+				new ThemeHolder(Theme.BASIC, Label.THEME_BASIC)));
 
 		final JComboBox<ThemeHolder> themeSelect = new JComboBox<>(themes);
 		for (int i = 0; i < themes.size(); i++) {

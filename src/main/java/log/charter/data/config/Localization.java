@@ -19,6 +19,9 @@ import log.charter.util.RW;
 public class Localization {
 	public enum Label {
 		ACCENT("Accent"), //
+		ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
+		ADD_DEFAULT_SILENCE("Add default silence based on bars"), //
+		ADD_SILENCE("Add silence in the beginning"), //
 		ARRANGEMENT_MENU("Arrangement"), //
 		ARRANGEMENT_OPTIONS("Arrangement options"), //
 		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
@@ -30,14 +33,22 @@ public class Localization {
 		ARRANGEMENT_TYPE_COMBO("Combo"), //
 		ARRANGEMENT_TYPE_LEAD("Lead"), //
 		ARRANGEMENT_TYPE_RHYTHM("Rhythm"), //
+		BACKUP_DELAY_S("Backup delay (s)"), //
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
+		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CONFIG_PANE_TITLE("Config"), //
+		COPY("Copy"), //
 		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 5 file"), //
 		COULDNT_IMPORT_MIDI_TEMPO("Couldn't properly import tempo map from %s"), //
+		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
+		DELETE("Delete"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
 		DELETE_ARRANGEMENT_POPUP_MSG("Are you sure you want to delete arrangement %s?"), //
 		DELETE_ARRANGEMENT_POPUP_TITLE("Delete arrangement?"), //
+		EDIT_MENU("Edit"), //
+		EDITING("Editing"), //
+		FPS("FPS"), //
 		FRET_0("Fret 0"), //
 		FRET_1("Fret 1"), //
 		FRET_2("Fret 2"), //
@@ -48,136 +59,10 @@ public class Localization {
 		FRET_7("Fret 7"), //
 		FRET_8("Fret 8"), //
 		FRET_9("Fret 9"), //
-		UNSUPPORTED_MUSIC_FORMAT("Unsupported music format!"), //
-		SUPPORTED_MUSIC_FILE("Mp3, Ogg or Wav file"), //
-		TOGGLE_ANCHOR("Toggle anchor"), //
-		TOGGLE_CLAPS("Toggle claps"), //
-		TOGGLE_METRONOME("Toggle metronome"), //
-		TOGGLE_MIDI("Toggle midi notes"), //
-		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //
-		XML_IMPORT_TYPE("XML import type"), //
-		XML_IMPORT_AS("Choose what to import the XML as"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
-		VOCAL_ARRANGEMENT("Vocal arrangement"), //
-
-		MUSIC_FOLDER("Music folder"), //
-		CONFIG_SONGS_FOLDER("Songs folder"), //
-		CONFIG_MINIMAL_NOTE_DISTANCE("Minimal note distance (ms)"), //
-		CONFIG_MINIMAL_TAIL_LENGTH("Minimal note tail length (ms)"), //
-		CONFIG_SOUND_DELAY("Sound delay (ms)"), //
-		CONFIG_MIDI_DELAY("Midi sound delay (ms)"), //
-		CONFIG_MARKER_POSITION("Marker position (px)"), //
-		CONFIG_INVERT_STRINGS("Invert strings"), //
-		CONFIG_INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
-		CONFIG_LEFT_HANDED("Left handed"), //
-		CONFIG_SHOW_CHORD_IDS("Show chord ids"), //
-		CONFIG_SHOW_GRID("Show grid"), //
-		CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
-		CONFIG_FPS("FPS"), //
-		CONFIG_BACKUP_DELAY("Backup delay (s)"), //
-		CONFIG_MAX_STRINGS("Max strings"), //
-		CONFIG_THEME_BASIC("Basic"), //
-		CONFIG_THEME_SQUARE("Square"), //
-		CONFIG_THEME_MODERN("Modern"), //
-
-		CHOOSE_COLOR("Choose color for %s"), //
-
-		SHORTCUT_CONFIG_PANE("Shortcut config"), //
-		TIME_MOVEMENT("Time movement"), //
-		EDITING("Editing"), //
-		VOCAL_EDITING("Vocal editing"), //
-		GUITAR_EDITING("Guitar editing"), //
-		OTHER("Other"), //
-
-		GRAPHIC_CONFIG_THEME_PAGE("Theme"), //
-		GRAPHIC_CONFIG_THEME("Theme"), //
-		GRAPHIC_CONFIG_EVENTS_CHANGE_HEIGHT("Events height"), //
-		GRAPHIC_CONFIG_TONE_CHANGE_HEIGHT("Tone height"), //
-		GRAPHIC_CONFIG_ANCHOR_INFO_HEIGHT("Anchor info height"), //
-		GRAPHIC_CONFIG_NOTE_HEIGHT("Note height (px)"), //
-		GRAPHIC_CONFIG_NOTE_WIDTH("Note width (px)"), //
-		GRAPHIC_CONFIG_CHORD_HEIGHT("Chord height"), //
-		GRAPHIC_CONFIG_HAND_SHAPES_HEIGHT("Hand shapes height"), //
-		GRAPHIC_CONFIG_TIMING_HEIGHT("Timing height"), //
-		GRAPHIC_CONFIG_PREVIEW_SCROLL_SPEED("Preview scroll speed"), //
-
-		GRAPHIC_CONFIG_TEXTURES_PAGE("Textures"), //
-		GRAPHIC_CONFIG_INLAY("Inlay"), //
-		GRAPHIC_CONFIG_TEXTURE_PACK("Texture pack"), //
-
-		GRAPHIC_CONFIG_CHART_MAP_PAGE("Chart map"), //
-		GRAPHIC_CONFIG_CHART_MAP_HEIGHT_MULTIPLIER("Chart map size"), //
-
-		GRAPHIC_CONFIG_PANE("Graphic config"), //
-		GRAPHIC_CONFIG_BASE_1("Base 1"), //
-		GRAPHIC_CONFIG_BASE_2("Base 2"), //
-
-		GRAPHIC_CONFIG_BASE_BG_0("Base background 0"), //
-		GRAPHIC_CONFIG_BASE_BG_1("Base background 1"), //
-		GRAPHIC_CONFIG_BASE_BG_2("Base background 2"), //
-		GRAPHIC_CONFIG_BASE_BG_3("Base background 3"), //
-		GRAPHIC_CONFIG_BASE_BG_4("Base background 4"), //
-		GRAPHIC_CONFIG_BASE_BG_5("Base background 5"), //
-
-		GRAPHIC_CONFIG_BASE_DARK_TEXT("Dark text"), //
-		GRAPHIC_CONFIG_BASE_TEXT("Text"), //
-
-		GRAPHIC_CONFIG_NOTE_BACKGROUND("Note background"), //
-		GRAPHIC_CONFIG_NOTE_ADD_LINE("Note add line"), //
-		GRAPHIC_CONFIG_LANE("Lane"), //
-		GRAPHIC_CONFIG_MAIN_BEAT("Main beat"), //
-		GRAPHIC_CONFIG_SECONDARY_BEAT("Secondary beat"), //
-		GRAPHIC_CONFIG_GRID("Grid"), //
-		GRAPHIC_CONFIG_MARKER("Marker"), //
-		GRAPHIC_CONFIG_SECTION_NAME_BG("Section name background"), //
-		GRAPHIC_CONFIG_PHRASE_NAME_BG("Phrase name background"), //
-		GRAPHIC_CONFIG_EVENT_BG("Event background"), //
-		GRAPHIC_CONFIG_HIGHLIGHT("Highlight"), //
-		GRAPHIC_CONFIG_SELECT("Select"), //
-
-		GRAPHIC_CONFIG_NOTE_FLAG_MARKER("Note flag marker"), //
-		GRAPHIC_CONFIG_SLIDE_NORMAL_FRET_BG("Normal slide fret background"), //
-		GRAPHIC_CONFIG_SLIDE_NORMAL_FRET_TEXT("Normal slide fret text"), //
-		GRAPHIC_CONFIG_SLIDE_UNPITCHED_FRET_BG("Unpitched slide fret background"), //
-		GRAPHIC_CONFIG_SLIDE_UNPITCHED_FRET_TEXT("Unpitched slide fret text"), //
-		GRAPHIC_CONFIG_NOTE_FULL_MUTE("Full mute"), //
-		GRAPHIC_CONFIG_HAMMER_ON("Hammer on"), //
-		GRAPHIC_CONFIG_PULL_OFF("Pull off"), //
-		GRAPHIC_CONFIG_TAP("Tap"), //
-		GRAPHIC_CONFIG_HARMONIC("Harmonic"), //
-		GRAPHIC_CONFIG_PINCH_HARMONIC("Pinch harmonic"), //
-
-		GRAPHIC_CONFIG_NOTE_0("Note 1"), //
-		GRAPHIC_CONFIG_NOTE_1("Note 2"), //
-		GRAPHIC_CONFIG_NOTE_2("Note 3"), //
-		GRAPHIC_CONFIG_NOTE_3("Note 4"), //
-		GRAPHIC_CONFIG_NOTE_4("Note 5"), //
-		GRAPHIC_CONFIG_NOTE_5("Note 6"), //
-		GRAPHIC_CONFIG_NOTE_6("Note 7"), //
-		GRAPHIC_CONFIG_NOTE_7("Note 8"), //
-		GRAPHIC_CONFIG_NOTE_8("Note 9"), //
-
-		GRAPHIC_CONFIG_ANCHOR("Anchor"), //
-		GRAPHIC_CONFIG_HAND_SHAPE("Hand shape"), //
-		GRAPHIC_CONFIG_HAND_SHAPE_ARPEGGIO("Arpeggio"), //
-		GRAPHIC_CONFIG_TONE_CHANGE("Tone change"), //
-
-		GRAPHIC_CONFIG_VOCAL_LINE_BACKGROUND("Vocal line background"), //
-		GRAPHIC_CONFIG_VOCAL_LINE_TEXT("Vocal line text"), //
-		GRAPHIC_CONFIG_VOCAL_TEXT("Vocal text"), //
-		GRAPHIC_CONFIG_VOCAL_NOTE("Vocal note"), //
-		GRAPHIC_CONFIG_VOCAL_NOTE_WORD_PART("Vocal note word part"), //
-		GRAPHIC_CONFIG_VOCAL_SELECT("Vocal selection"), //
-
-		GRAPHIC_CONFIG_PREVIEW_3D_FULL_MUTE("3D preview full mute"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_PALM_MUTE("3D preview palm mute"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_ANCHOR("3D preview anchor"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_FRET_LANE("3D preview fret lane"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_BEAT("3D preview beat"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_BOX("Chord box"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_FULL_MUTE("Full mute chord"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_PALM_MUTE("Palm mute chord"), //
-
+		INVERT_STRINGS("Invert strings"), //
+		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
+		LEFT_HANDED("Left handed"), //
 		MARK_BOOKMARK_0("Mark bookmark 0"), //
 		MARK_BOOKMARK_1("Mark bookmark 1"), //
 		MARK_BOOKMARK_2("Mark bookmark 2"), //
@@ -188,7 +73,11 @@ public class Localization {
 		MARK_BOOKMARK_7("Mark bookmark 7"), //
 		MARK_BOOKMARK_8("Mark bookmark 8"), //
 		MARK_BOOKMARK_9("Mark bookmark 9"), //
-
+		MARKER_POSITION_PX("Marker position (px)"), //
+		MAX_STRINGS("Max strings"), //
+		MIDI_SOUND_DELAY("Midi sound delay (ms)"), //
+		MINIMAL_NOTE_DISTANCE("Minimal note distance"), //
+		MINIMAL_TAIL_LENGTH("Minimal note tail length"), //
 		MOVE_TO_BOOKMARK_0("Move to bookmark 0"), //
 		MOVE_TO_BOOKMARK_1("Move to bookmark 1"), //
 		MOVE_TO_BOOKMARK_2("Move to bookmark 2"), //
@@ -199,19 +88,30 @@ public class Localization {
 		MOVE_TO_BOOKMARK_7("Move to bookmark 7"), //
 		MOVE_TO_BOOKMARK_8("Move to bookmark 8"), //
 		MOVE_TO_BOOKMARK_9("Move to bookmark 9"), //
-
-		EDIT_MENU("Edit"), //
-		UNDO("Undo"), //
+		MUSIC_FOLDER("Music folder"), //
+		PASTE("Paste"), //
 		REDO("Redo"), //
 		SELECT_ALL_NOTES("Select all notes"), //
-		DELETE("Delete"), //
-		COPY("Copy"), //
-		PASTE("Paste"), //
+		SHOW_CHORD_IDS("Show chord ids"), //
+		SHOW_GRID("Show grid"), //
+		SONG_OPTIONS("Song options"), //
+		SONGS_FOLDER("Songs folder"), //
+		SOUND_DELAY("Sound delay (ms)"), //
 		SPECIAL_PASTE("Special paste"), //
-		EDIT_MENU_SONG_OPTIONS("Song options"), //
-		EDIT_MENU_ADD_SILENCE("Add silence in the beginning"), //
-		EDIT_MENU_ADD_DEFAULT_SILENCE("Add default silence based on bars"), //
-		EDIT_MENU_ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
+		SUPPORTED_MUSIC_FILE("Mp3, Ogg or Wav file"), //
+		THEME_BASIC("Basic"), //
+		THEME_MODERN("Modern"), //
+		THEME_SQUARE("Square"), //
+		TOGGLE_ANCHOR("Toggle anchor"), //
+		TOGGLE_CLAPS("Toggle claps"), //
+		TOGGLE_METRONOME("Toggle metronome"), //
+		TOGGLE_MIDI("Toggle midi notes"), //
+		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //
+		UNDO("Undo"), //
+		UNSUPPORTED_MUSIC_FORMAT("Unsupported music format!"), //
+		VOCAL_ARRANGEMENT("Vocal arrangement"), //
+		XML_IMPORT_TYPE("XML import type"), //
+		XML_IMPORT_AS("Choose what to import the XML as"), //
 
 		FILE_MENU("File"), //
 		NEW_PROJECT("New project"), //
@@ -477,7 +377,102 @@ public class Localization {
 
 		SONG_FOLDER_SELECT("Create song folder"), //
 		SONG_FOLDER_AUDIO_FILE_FOLDER("Use audio file folder (%s)"), //
-		SONG_FOLDER_CREATE_NEW("Create new folder in %s");
+		SONG_FOLDER_CREATE_NEW("Create new folder in %s"), //
+		SHORTCUT_CONFIG_PANE("Shortcut config"), //
+		TIME_MOVEMENT("Time movement"), //
+		VOCAL_EDITING("Vocal editing"), //
+		GUITAR_EDITING("Guitar editing"), //
+		OTHER("Other"), //
+
+		PAGE_TEXTURES("Textures"), //
+		PAGE_THEME("Theme"), //
+		GRAPHIC_CONFIG_THEME("Theme"), //
+		GRAPHIC_CONFIG_EVENTS_CHANGE_HEIGHT("Events height"), //
+		GRAPHIC_CONFIG_TONE_CHANGE_HEIGHT("Tone height"), //
+		GRAPHIC_CONFIG_ANCHOR_INFO_HEIGHT("Anchor info height"), //
+		GRAPHIC_CONFIG_NOTE_HEIGHT("Note height (px)"), //
+		GRAPHIC_CONFIG_NOTE_WIDTH("Note width (px)"), //
+		GRAPHIC_CONFIG_CHORD_HEIGHT("Chord height"), //
+		GRAPHIC_CONFIG_HAND_SHAPES_HEIGHT("Hand shapes height"), //
+		GRAPHIC_CONFIG_TIMING_HEIGHT("Timing height"), //
+		GRAPHIC_CONFIG_PREVIEW_SCROLL_SPEED("Preview scroll speed"), //
+
+		GRAPHIC_CONFIG_INLAY("Inlay"), //
+		GRAPHIC_CONFIG_TEXTURE_PACK("Texture pack"), //
+
+		GRAPHIC_CONFIG_CHART_MAP_PAGE("Chart map"), //
+		GRAPHIC_CONFIG_CHART_MAP_HEIGHT_MULTIPLIER("Chart map size"), //
+
+		GRAPHIC_CONFIG_PANE("Graphic config"), //
+
+		COLOR_BASE_1("Base 1"), //
+		COLOR_BASE_2("Base 2"), //
+		COLOR_BASE_BG_0("Base background 0"), //
+		COLOR_BASE_BG_1("Base background 1"), //
+		COLOR_BASE_BG_2("Base background 2"), //
+		COLOR_BASE_BG_3("Base background 3"), //
+		COLOR_BASE_BG_4("Base background 4"), //
+		COLOR_BASE_BG_5("Base background 5"), //
+
+		GRAPHIC_CONFIG_BASE_DARK_TEXT("Dark text"), //
+		GRAPHIC_CONFIG_BASE_TEXT("Text"), //
+
+		GRAPHIC_CONFIG_NOTE_BACKGROUND("Note background"), //
+		GRAPHIC_CONFIG_NOTE_ADD_LINE("Note add line"), //
+		GRAPHIC_CONFIG_LANE("Lane"), //
+		GRAPHIC_CONFIG_MAIN_BEAT("Main beat"), //
+		GRAPHIC_CONFIG_SECONDARY_BEAT("Secondary beat"), //
+		GRAPHIC_CONFIG_GRID("Grid"), //
+		GRAPHIC_CONFIG_MARKER("Marker"), //
+		GRAPHIC_CONFIG_SECTION_NAME_BG("Section name background"), //
+		GRAPHIC_CONFIG_PHRASE_NAME_BG("Phrase name background"), //
+		GRAPHIC_CONFIG_EVENT_BG("Event background"), //
+		GRAPHIC_CONFIG_HIGHLIGHT("Highlight"), //
+		GRAPHIC_CONFIG_SELECT("Select"), //
+
+		GRAPHIC_CONFIG_NOTE_FLAG_MARKER("Note flag marker"), //
+		GRAPHIC_CONFIG_SLIDE_NORMAL_FRET_BG("Normal slide fret background"), //
+		GRAPHIC_CONFIG_SLIDE_NORMAL_FRET_TEXT("Normal slide fret text"), //
+		GRAPHIC_CONFIG_SLIDE_UNPITCHED_FRET_BG("Unpitched slide fret background"), //
+		GRAPHIC_CONFIG_SLIDE_UNPITCHED_FRET_TEXT("Unpitched slide fret text"), //
+		GRAPHIC_CONFIG_NOTE_FULL_MUTE("Full mute"), //
+		GRAPHIC_CONFIG_HAMMER_ON("Hammer on"), //
+		GRAPHIC_CONFIG_PULL_OFF("Pull off"), //
+		GRAPHIC_CONFIG_TAP("Tap"), //
+		GRAPHIC_CONFIG_HARMONIC("Harmonic"), //
+		GRAPHIC_CONFIG_PINCH_HARMONIC("Pinch harmonic"), //
+
+		GRAPHIC_CONFIG_NOTE_0("Note 1"), //
+		GRAPHIC_CONFIG_NOTE_1("Note 2"), //
+		GRAPHIC_CONFIG_NOTE_2("Note 3"), //
+		GRAPHIC_CONFIG_NOTE_3("Note 4"), //
+		GRAPHIC_CONFIG_NOTE_4("Note 5"), //
+		GRAPHIC_CONFIG_NOTE_5("Note 6"), //
+		GRAPHIC_CONFIG_NOTE_6("Note 7"), //
+		GRAPHIC_CONFIG_NOTE_7("Note 8"), //
+		GRAPHIC_CONFIG_NOTE_8("Note 9"), //
+
+		GRAPHIC_CONFIG_ANCHOR("Anchor"), //
+		GRAPHIC_CONFIG_HAND_SHAPE("Hand shape"), //
+		GRAPHIC_CONFIG_HAND_SHAPE_ARPEGGIO("Arpeggio"), //
+		GRAPHIC_CONFIG_TONE_CHANGE("Tone change"), //
+
+		GRAPHIC_CONFIG_VOCAL_LINE_BACKGROUND("Vocal line background"), //
+		GRAPHIC_CONFIG_VOCAL_LINE_TEXT("Vocal line text"), //
+		GRAPHIC_CONFIG_VOCAL_TEXT("Vocal text"), //
+		GRAPHIC_CONFIG_VOCAL_NOTE("Vocal note"), //
+		GRAPHIC_CONFIG_VOCAL_NOTE_WORD_PART("Vocal note word part"), //
+		GRAPHIC_CONFIG_VOCAL_SELECT("Vocal selection"), //
+
+		GRAPHIC_CONFIG_PREVIEW_3D_FULL_MUTE("3D preview full mute"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_PALM_MUTE("3D preview palm mute"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_ANCHOR("3D preview anchor"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_FRET_LANE("3D preview fret lane"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_BEAT("3D preview beat"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_BOX("Chord box"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_FULL_MUTE("Full mute chord"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_PALM_MUTE("Palm mute chord") //
+		;
 
 		private final String defaultLabel;
 

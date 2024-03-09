@@ -23,7 +23,7 @@ public class GraphicTexturesConfigPage implements Page {
 
 	@Override
 	public Label label() {
-		return Label.GRAPHIC_CONFIG_TEXTURES_PAGE;
+		return Label.PAGE_TEXTURES;
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import log.charter.io.rs.xml.song.EBeat;
 import log.charter.io.rsc.xml.converters.BeatConverter;
 import log.charter.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.TimeSignature;
 
 @XStreamAlias("beat2")
 @XStreamConverter(BeatConverter.class)
@@ -43,6 +44,15 @@ public class Beat extends Position {
 
 	public Beat(final int position) {
 		super(position);
+	}
+
+	public Beat(final int position, final TimeSignature timeSignature, final boolean firstInMeasure,
+			final boolean anchor) {
+		super(position);
+		beatsInMeasure = timeSignature.numerator;
+		noteDenominator = timeSignature.denominator;
+		this.firstInMeasure = firstInMeasure;
+		this.anchor = anchor;
 	}
 
 	public Beat(final int position, final int beatsInMeasure, final int noteDenominator, final boolean firstInMeasure,

@@ -55,34 +55,34 @@ public final class ConfigPane extends ParamsPane {
 		musicFolderPickerButton.addActionListener(e -> selectMusicFolder());
 		this.add(musicFolderPickerButton, 480, getY(row++), 100, 20);
 
-		addStringConfigValue(row, 20, 150, Label.CONFIG_SONGS_FOLDER, songsPath, 300, dirValidator, //
+		addStringConfigValue(row, 20, 150, Label.SONGS_FOLDER, songsPath, 300, dirValidator, //
 				val -> songsPath = val, false);
 		songsFolderInput = (JTextField) getLastPart();
 		final JButton songsFolderPickerButton = new JButton(Label.SELECT_FOLDER.label());
 		songsFolderPickerButton.addActionListener(e -> selectSongsFolder());
 		this.add(songsFolderPickerButton, 480, getY(row++), 100, 20);
 
-		addIntConfigValue(row++, 20, 0, Label.CONFIG_MINIMAL_NOTE_DISTANCE, minNoteDistance, 50, //
+		addIntConfigValue(row++, 20, 0, Label.MINIMAL_NOTE_DISTANCE, minNoteDistance, 50, //
 				new IntValueValidator(1, 1000), v -> minNoteDistance = v, false);
-		addIntConfigValue(row++, 20, 0, Label.CONFIG_MINIMAL_TAIL_LENGTH, minTailLength, 50,
+		addIntConfigValue(row++, 20, 0, Label.MINIMAL_TAIL_LENGTH, minTailLength, 50,
 				new IntValueValidator(1, 1000), v -> minTailLength = v, false);
-		addIntConfigValue(row++, 20, 0, Label.CONFIG_SOUND_DELAY, delay, 50, //
+		addIntConfigValue(row++, 20, 0, Label.SOUND_DELAY, delay, 50, //
 				new IntValueValidator(1, 10000), v -> delay = v, false);
-		addIntConfigValue(row++, 20, 0, Label.CONFIG_MIDI_DELAY, midiDelay, 50, //
+		addIntConfigValue(row++, 20, 0, Label.MIDI_SOUND_DELAY, midiDelay, 50, //
 				new IntValueValidator(1, 10000), v -> midiDelay = v, false);
-		addIntConfigValue(row++, 20, 0, Label.CONFIG_MARKER_POSITION, markerOffset, 50, //
+		addIntConfigValue(row++, 20, 0, Label.MARKER_POSITION_PX, markerOffset, 50, //
 				new IntValueValidator(-10_000, 10_000), v -> markerOffset = v, false);
-		addConfigCheckbox(row, 20, 0, Label.CONFIG_INVERT_STRINGS, invertStrings, val -> invertStrings = val);
-		addConfigCheckbox(row, 180, 0, Label.CONFIG_INVERT_STRINGS_IN_PREVIEW, invertStrings3D,
+		addConfigCheckbox(row, 20, 0, Label.INVERT_STRINGS, invertStrings, val -> invertStrings = val);
+		addConfigCheckbox(row, 180, 0, Label.INVERT_STRINGS_IN_PREVIEW, invertStrings3D,
 				val -> invertStrings3D = val);
-		addConfigCheckbox(row++, 380, 0, Label.CONFIG_LEFT_HANDED, leftHanded, val -> leftHanded = val);
-		addConfigCheckbox(row++, 20, 0, Label.CONFIG_SHOW_CHORD_IDS, showChordIds, val -> showChordIds = val);
-		addConfigCheckbox(row++, 20, 0, Label.CONFIG_SHOW_GRID, showGrid, val -> showGrid = val);
-		addConfigCheckbox(row++, 20, 0, Label.CONFIG_CREATE_DEFAULT_STRETCHES_IN_BACKGROUND,
+		addConfigCheckbox(row++, 380, 0, Label.LEFT_HANDED, leftHanded, val -> leftHanded = val);
+		addConfigCheckbox(row++, 20, 0, Label.SHOW_CHORD_IDS, showChordIds, val -> showChordIds = val);
+		addConfigCheckbox(row++, 20, 0, Label.SHOW_GRID, showGrid, val -> showGrid = val);
+		addConfigCheckbox(row++, 20, 0, Label.CREATE_DEFAULT_STRETCHES_IN_BACKGROUND,
 				createDefaultStretchesInBackground, val -> createDefaultStretchesInBackground = val);
-		addIntConfigValue(row++, 20, 0, Label.CONFIG_FPS, FPS, 50, //
+		addIntConfigValue(row++, 20, 0, Label.FPS, FPS, 50, //
 				new IntValueValidator(1, 1000), v -> FPS = v, false);
-		addIntConfigValue(row++, 20, 0, Label.CONFIG_BACKUP_DELAY, backupDelay, 50, //
+		addIntConfigValue(row++, 20, 0, Label.BACKUP_DELAY_S, backupDelay, 50, //
 				new IntValueValidator(1, 3600), v -> backupDelay = v, false);
 
 		row++;

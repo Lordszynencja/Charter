@@ -55,12 +55,12 @@ class EditMenuHandler extends CharterMenuHandler implements Initiable {
 		}
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_SONG_OPTIONS, this::songOptions));
+		menu.add(new SpecialMenuItem(Label.SONG_OPTIONS, this::songOptions));
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_SILENCE, this::addSilence));
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_DEFAULT_SILENCE, this::addDefaultSilence));
-		menu.add(new SpecialMenuItem(Label.EDIT_MENU_ADD_BEATS_AT_THE_START, this::addBeatsAtTheStart));
+		menu.add(new SpecialMenuItem(Label.ADD_SILENCE, this::addSilence));
+		menu.add(new SpecialMenuItem(Label.ADD_DEFAULT_SILENCE, this::addDefaultSilence));
+		menu.add(new SpecialMenuItem(Label.ADD_BEATS_AT_THE_START, this::addBeatsAtTheStart));
 
 		return menu;
 	}
