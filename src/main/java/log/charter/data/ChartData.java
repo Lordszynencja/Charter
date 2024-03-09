@@ -10,7 +10,6 @@ import log.charter.data.managers.modes.EditMode;
 import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.handlers.AudioHandler;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.song.Arrangement;
 import log.charter.song.Level;
@@ -25,7 +24,6 @@ public class ChartData {
 	public int currentArrangement = 0;
 	public int currentLevel = 0;
 
-	private AudioHandler audioHandler;
 	private CharterFrame charterFrame;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
@@ -58,9 +56,6 @@ public class ChartData {
 
 		selectionManager.clear();
 		undoSystem.clear();
-
-		audioHandler.clear();
-		audioHandler.setSong();
 	}
 
 	public void undo() {

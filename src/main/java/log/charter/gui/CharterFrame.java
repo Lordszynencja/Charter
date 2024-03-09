@@ -9,6 +9,7 @@ import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.dnd.DropTarget;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -35,6 +36,7 @@ import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.handlers.CharterFrameComponentListener;
 import log.charter.gui.handlers.CharterFrameWindowFocusListener;
 import log.charter.gui.handlers.CharterFrameWindowListener;
+import log.charter.gui.handlers.files.FileDropHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.lookAndFeel.CharterTheme;
 import log.charter.gui.menuHandlers.CharterMenuBar;
@@ -50,6 +52,7 @@ public class CharterFrame extends JFrame implements Initiable {
 	private ChartData chartData;
 	private CharterContext charterContext;
 	private CurrentSelectionEditor currentSelectionEditor;
+	private FileDropHandler fileDropHandler;
 	private HelpTab helpTab;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
@@ -101,6 +104,7 @@ public class CharterFrame extends JFrame implements Initiable {
 		addKeyListener(keyboardHandler);
 		addWindowFocusListener(new CharterFrameWindowFocusListener(keyboardHandler));
 		addWindowListener(new CharterFrameWindowListener(charterContext));
+		setDropTarget(new DropTarget(this, fileDropHandler));
 	}
 
 	public void finishInitAndShow() {

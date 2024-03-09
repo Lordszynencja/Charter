@@ -39,6 +39,10 @@ public class ChartTimeHandler {
 	}
 
 	public int maxTime() {
+		return max(1, projectAudioHandler.getAudio().msLength());
+	}
+
+	public int audioTime() {
 		return projectAudioHandler.getAudio().msLength();
 	}
 

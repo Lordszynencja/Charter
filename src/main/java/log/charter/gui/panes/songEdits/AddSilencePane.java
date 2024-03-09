@@ -78,14 +78,14 @@ public class AddSilencePane extends ParamsPane {
 				songMusicData.channels());
 		final AudioDataShort joined = silenceMusicData.join(songMusicData);
 
-		projectAudioHandler.setAudio(joined);
+		projectAudioHandler.setAudio(joined, true);
 		data.songChart.moveEverything(chartTimeHandler.maxTime(), (int) (time * 1000));
 	}
 
 	private void removeAudio(final double time) {
 		final AudioDataShort editedAudio = projectAudioHandler.getAudio().remove(time);
 
-		projectAudioHandler.setAudio(editedAudio);
+		projectAudioHandler.setAudio(editedAudio, true);
 		data.songChart.moveEverything(chartTimeHandler.maxTime(), (int) -(time * 1000));
 	}
 

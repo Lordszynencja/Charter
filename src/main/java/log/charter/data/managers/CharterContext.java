@@ -28,7 +28,6 @@ import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.gui.components.utils.TitleUpdater;
 import log.charter.gui.handlers.ActionHandler;
 import log.charter.gui.handlers.AudioHandler;
-import log.charter.gui.handlers.SongFileHandler;
 import log.charter.gui.handlers.StretchedAudioHandler;
 import log.charter.gui.handlers.data.ChartItemsHandler;
 import log.charter.gui.handlers.data.ChartTimeHandler;
@@ -37,6 +36,14 @@ import log.charter.gui.handlers.data.GuitarSoundsStatusesHandler;
 import log.charter.gui.handlers.data.HandShapesHandler;
 import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.gui.handlers.data.VocalsHandler;
+import log.charter.gui.handlers.files.ExistingProjectImporter;
+import log.charter.gui.handlers.files.FileDropHandler;
+import log.charter.gui.handlers.files.GP5FileImporter;
+import log.charter.gui.handlers.files.MidiImporter;
+import log.charter.gui.handlers.files.NewProjectCreator;
+import log.charter.gui.handlers.files.RSXMLImporter;
+import log.charter.gui.handlers.files.SongFileHandler;
+import log.charter.gui.handlers.files.SongFilesBackuper;
 import log.charter.gui.handlers.midiPlayer.MidiChartNotePlayer;
 import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
@@ -64,18 +71,25 @@ public class CharterContext {
 	private final ChartItemsHandler chartItemsHandler = new ChartItemsHandler();
 	private final ChartTimeHandler chartTimeHandler = new ChartTimeHandler();
 	private final CopyManager copyManager = new CopyManager();
+	private final ExistingProjectImporter existingProjectImporter = new ExistingProjectImporter();
+	private final FileDropHandler fileDropHandler = new FileDropHandler();
+	private final GP5FileImporter gp5FileImporter = new GP5FileImporter();
 	private final GuitarSoundsHandler guitarSoundsHandler = new GuitarSoundsHandler();
 	private final GuitarSoundsStatusesHandler guitarSoundsStatusesHandler = new GuitarSoundsStatusesHandler();
 	private final HandShapesHandler handShapesHandler = new HandShapesHandler();
 	private final HighlightManager highlightManager = new HighlightManager();
 	private final KeyboardHandler keyboardHandler = new KeyboardHandler();
 	private final MidiChartNotePlayer midiChartNotePlayer = new MidiChartNotePlayer();
+	private final MidiImporter midiImporter = new MidiImporter();
 	private final ModeManager modeManager = new ModeManager();
 	private final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler = new MouseButtonPressReleaseHandler();
 	private final MouseHandler mouseHandler = new MouseHandler();
+	private final NewProjectCreator newProjectCreator = new NewProjectCreator();
 	private final ProjectAudioHandler projectAudioHandler = new ProjectAudioHandler();
 	private final RepeatManager repeatManager = new RepeatManager();
+	private final RSXMLImporter rsXMLImporter = new RSXMLImporter();
 	private final SongFileHandler songFileHandler = new SongFileHandler();
+	private final SongFilesBackuper songFilesBackuper = new SongFilesBackuper();
 	private final SelectionManager selectionManager = new SelectionManager();
 	private final StretchedAudioHandler stretchedAudioHandler = new StretchedAudioHandler();
 	private final TitleUpdater titleUpdater = new TitleUpdater();
@@ -182,7 +196,7 @@ public class CharterContext {
 	}
 
 	public void openProject(final String path) {
-		songFileHandler.open(path);
+		existingProjectImporter.open(path);
 	}
 
 	private void frame(final double frameTime) {

@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.handlers.SongFileHandler;
+import log.charter.gui.handlers.files.SongFileHandler;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.RSXMLToArrangement;
 import log.charter.io.rs.xml.song.SongArrangement;
@@ -39,14 +39,6 @@ public class SongChart {
 	public Vocals vocals = new Vocals();
 
 	public HashMap2<Integer, Integer> bookmarks = new HashMap2<>();
-
-	/**
-	 * creates empty chart for music file
-	 */
-	public SongChart(final int songLengthMs, final String musicFileName) {
-		this.musicFileName = musicFileName;
-		beatsMap = new BeatsMap(songLengthMs);
-	}
 
 	public SongChart(final BeatsMap beatsMap) {
 		this.beatsMap = beatsMap;

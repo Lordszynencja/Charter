@@ -11,14 +11,17 @@ import log.charter.sound.wav.WavWriter;
 
 public class OggWriter {
 	public static void writeOgg(final String path, final AudioDataShort musicData) {
-		final File wav = new File(path + "_tmp_" + System.currentTimeMillis() + ".wav");
+		writeOgg(new File(path), musicData);
+	}
+
+	public static void writeOgg(final File output, final AudioDataShort musicData) {
+		final File wav = new File(output.getAbsolutePath() + "_tmp_" + System.currentTimeMillis() + ".wav");
 		WavWriter.write(musicData, wav);
-		final File ogg = new File(path);
-		runOggEnc(wav, ogg);
+		runOggEnc(wav, output);
 		wav.delete();
 	}
 
-	private static void runOggEnc(final File input, final File output) {
+	public static void runOggEnc(final File input, final File output) {
 		final String exe = Config.oggEncPath;
 		final String inputPath = input.getAbsolutePath();
 		final String outputPath = output.getAbsolutePath();

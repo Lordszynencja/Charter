@@ -49,7 +49,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 	private void removeAudio(final int movement) {
 		final AudioDataShort editedAudio = projectAudioHandler.getAudio().remove(movement / 1000.0);
 
-		projectAudioHandler.setAudio(editedAudio);
+		projectAudioHandler.setAudio(editedAudio, true);
 		data.songChart.moveEverything(chartTimeHandler.maxTime(), -movement);
 	}
 
@@ -64,7 +64,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 				songMusicData.channels());
 		final AudioDataShort joined = silenceMusicData.join(songMusicData);
 
-		projectAudioHandler.setAudio(joined);
+		projectAudioHandler.setAudio(joined, true);
 		data.songChart.moveEverything(chartTimeHandler.maxTime(), movement);
 	}
 

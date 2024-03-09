@@ -53,6 +53,26 @@ public class ComponentUtils {
 		}
 	}
 
+	public static int showOptionsPopup(final Component parent, final Label title, final Label message,
+			final Label... options) {
+		final String[] optionStrings = new String[options.length];
+		for (int i = 0; i < options.length; i++) {
+			optionStrings[i] = options[i].label();
+		}
+
+		return showOptionsPopup(parent, title, message, optionStrings);
+	}
+
+	public static int showOptionsPopup(final Component parent, final Label title, final Label message,
+			final String... options) {
+		if (options.length == 0) {
+			return -1;
+		}
+
+		return JOptionPane.showOptionDialog(parent, message.label(), title.label(), JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+	}
+
 	public static void showPopup(final Component parent, final String message) {
 		JOptionPane.showMessageDialog(parent, message);
 	}

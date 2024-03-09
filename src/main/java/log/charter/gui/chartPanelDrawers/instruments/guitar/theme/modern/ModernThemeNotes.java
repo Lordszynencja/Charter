@@ -72,7 +72,8 @@ public class ModernThemeNotes implements ThemeNotes {
 	public static void reloadGraphics() {
 		for (int string = 0; string < maxStrings; string++) {
 			final int stringId = stringId(string, maxStrings);
-			final Color borderInnerColor = getStringBasedColor(StringColorLabelType.LANE, string, maxStrings).brighter();
+			final Color borderInnerColor = getStringBasedColor(StringColorLabelType.LANE, string, maxStrings)
+					.brighter();
 			final Color innerColor = borderInnerColor.darker().darker();
 			final Color borderOuterColor = ColorLabel.NOTE_BACKGROUND.color();
 			noteIcons[stringId] = generateNoteIcon(innerColor, borderInnerColor, borderOuterColor);
@@ -265,7 +266,6 @@ public class ModernThemeNotes implements ThemeNotes {
 		addMuteIcon(note, y);
 		addFretNumber(note, y);
 		addHopoOrBassTechIcon(note, y);
-
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import log.charter.sound.HighPassFilter;
 import log.charter.sound.HighPassFilter.PassType;
 import log.charter.sound.mp3.Mp3Loader;
 import log.charter.sound.ogg.OggLoader;
+import log.charter.sound.wav.WavLoader;
 
 public class AudioDataShort extends AudioData<AudioDataShort> {
 	public static final short minValue = -0x8000;
@@ -30,6 +31,10 @@ public class AudioDataShort extends AudioData<AudioDataShort> {
 			} else if (file.getName().endsWith(".ogg")) {
 				if (file.exists()) {
 					return OggLoader.load(file.getAbsolutePath());
+				}
+			} else if (file.getName().endsWith(".wav")) {
+				if (file.exists()) {
+					return WavLoader.load(file);
 				}
 			}
 		} catch (final Exception e) {

@@ -28,6 +28,8 @@ import log.charter.gui.handlers.data.GuitarSoundsHandler;
 import log.charter.gui.handlers.data.GuitarSoundsStatusesHandler;
 import log.charter.gui.handlers.data.HandShapesHandler;
 import log.charter.gui.handlers.data.VocalsHandler;
+import log.charter.gui.handlers.files.NewProjectCreator;
+import log.charter.gui.handlers.files.SongFileHandler;
 import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
 import log.charter.gui.handlers.windows.WindowedPreviewHandler;
 
@@ -45,6 +47,7 @@ public class ActionHandler implements Initiable {
 	private HighlightManager highlightManager;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
+	private NewProjectCreator newProjectCreator;
 	private RepeatManager repeatManager;
 	private SelectionManager selectionManager;
 	private SongFileHandler songFileHandler;
@@ -165,7 +168,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.MOVE_TO_FIRST_ITEM, chartTimeHandler::moveToFirstItem);
 		actionHandlers.put(Action.MOVE_TO_LAST_ITEM, chartTimeHandler::moveToLastItem);
 		actionHandlers.put(Action.MOVE_TO_START, chartTimeHandler::moveToBeginning);
-		actionHandlers.put(Action.NEW_PROJECT, songFileHandler::newSong);
+		actionHandlers.put(Action.NEW_PROJECT, newProjectCreator::newSong);
 		actionHandlers.put(Action.NEXT_BEAT, chartTimeHandler::moveToNextBeat);
 		actionHandlers.put(Action.NEXT_GRID, chartTimeHandler::moveToNextGrid);
 		actionHandlers.put(Action.NEXT_ITEM, chartTimeHandler::moveToNextItem);

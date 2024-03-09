@@ -18,6 +18,7 @@ import log.charter.util.RW;
 
 public class Localization {
 	public enum Label {
+		ACCENT("Accent"), //
 		ARRANGEMENT_MENU("Arrangement"), //
 		ARRANGEMENT_OPTIONS("Arrangement options"), //
 		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
@@ -32,14 +33,32 @@ public class Localization {
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
 		CONFIG_PANE_TITLE("Config"), //
+		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 5 file"), //
+		COULDNT_IMPORT_MIDI_TEMPO("Couldn't properly import tempo map from %s"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
 		DELETE_ARRANGEMENT_POPUP_MSG("Are you sure you want to delete arrangement %s?"), //
 		DELETE_ARRANGEMENT_POPUP_TITLE("Delete arrangement?"), //
+		FRET_0("Fret 0"), //
+		FRET_1("Fret 1"), //
+		FRET_2("Fret 2"), //
+		FRET_3("Fret 3"), //
+		FRET_4("Fret 4"), //
+		FRET_5("Fret 5"), //
+		FRET_6("Fret 6"), //
+		FRET_7("Fret 7"), //
+		FRET_8("Fret 8"), //
+		FRET_9("Fret 9"), //
+		UNSUPPORTED_MUSIC_FORMAT("Unsupported music format!"), //
+		SUPPORTED_MUSIC_FILE("Mp3, Ogg or Wav file"), //
 		TOGGLE_ANCHOR("Toggle anchor"), //
 		TOGGLE_CLAPS("Toggle claps"), //
 		TOGGLE_METRONOME("Toggle metronome"), //
 		TOGGLE_MIDI("Toggle midi notes"), //
 		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //
+		XML_IMPORT_TYPE("XML import type"), //
+		XML_IMPORT_AS("Choose what to import the XML as"), //
+		GUITAR_ARRANGEMENT("Guitar arrangement"), //
+		VOCAL_ARRANGEMENT("Vocal arrangement"), //
 
 		MUSIC_FOLDER("Music folder"), //
 		CONFIG_SONGS_FOLDER("Songs folder"), //
@@ -158,17 +177,6 @@ public class Localization {
 		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_BOX("Chord box"), //
 		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_FULL_MUTE("Full mute chord"), //
 		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_PALM_MUTE("Palm mute chord"), //
-
-		FRET_0("Fret 0"), //
-		FRET_1("Fret 1"), //
-		FRET_2("Fret 2"), //
-		FRET_3("Fret 3"), //
-		FRET_4("Fret 4"), //
-		FRET_5("Fret 5"), //
-		FRET_6("Fret 6"), //
-		FRET_7("Fret 7"), //
-		FRET_8("Fret 8"), //
-		FRET_9("Fret 9"), //
 
 		MARK_BOOKMARK_0("Mark bookmark 0"), //
 		MARK_BOOKMARK_1("Mark bookmark 1"), //
@@ -391,7 +399,6 @@ public class Localization {
 		HARMONIC_PINCH("Pinch"), //
 		HARMONIC_NONE("None"), //
 
-		ACCENT("Accent"), //
 		LINK_NEXT("Link next"), //
 		SPLIT_INTO_NOTES("Split"), //
 		FORCE_NO_NOTES("No notes"), //
@@ -442,14 +449,12 @@ public class Localization {
 		LOADING_PROJECT_FILE("Loading project file"), //
 		MIDI_FILE("Midi file (.mid)"), //
 		MISSING_ARRANGEMENT_FILE("Missing arrangement file %s"), //
-		MP3_OR_OGG_FILE("Mp3 (.mp3) or Ogg (.ogg) file"), //
 		MUSIC_FILE_COULDNT_BE_LOADED("Music file couldn't be loaded"), //
 		MUSIC_DATA_NOT_FOUND(
 				"Music file not found in song folder, something went wrong with copying or the file is invalid"), //
 		MUSIC_FILE_NOT_FOUND_PICK_NEW("Music file not found in song folder, please choose new file"), //
 		NO_PROJECT("No project"), //
 		NOT_A_FOLDER("Given path is not a folder"), //
-		NOT_MP3_OGG("Not an Mp3 or Ogg file!"), //
 		OPERATION_CANCELLED("Operation cancelled"), //
 		PLAY_AUDIO("Play audio"), //
 		PROJECT_IS_NEWER_VERSION("Project is newer version than program handles"), //

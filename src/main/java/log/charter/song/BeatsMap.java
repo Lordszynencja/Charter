@@ -75,7 +75,6 @@ public class BeatsMap {
 	public void makeBeatsUntilSongEnd(final int audioLength) {
 		final Beat current = beats.getLast();
 		if (current.position() > audioLength) {
-			// beats.removeIf(beat -> beat.position() > audioLength);
 			return;
 		}
 
@@ -111,6 +110,10 @@ public class BeatsMap {
 				beatInMeasure = 0;
 			}
 		}
+	}
+
+	public void truncate(final int audioLength) {
+		beats.removeIf(beat -> beat.position() > audioLength);
 	}
 
 	public void fixFirstBeatInMeasures() {
