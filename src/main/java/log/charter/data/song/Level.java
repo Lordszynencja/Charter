@@ -1,6 +1,6 @@
 package log.charter.data.song;
 
-import static log.charter.data.song.notes.IConstantPosition.findLastBeforeEquals;
+import static log.charter.data.song.position.IConstantPosition.findLastBeforeEquals;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;

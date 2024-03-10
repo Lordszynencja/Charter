@@ -9,8 +9,8 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
-import log.charter.data.song.notes.IConstantPosition;
-import log.charter.data.song.notes.IConstantPositionWithLength;
+import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.IConstantPositionWithLength;
 import log.charter.services.RepeatManager;
 import log.charter.util.CollectionUtils.ArrayList2;
 

@@ -1,6 +1,6 @@
 package log.charter.services.data.selection;
 
-import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.position.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Selection<T extends IPosition> {

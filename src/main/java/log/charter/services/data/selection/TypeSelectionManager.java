@@ -3,7 +3,7 @@ package log.charter.services.data.selection;
 import java.util.Set;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.position.IPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;

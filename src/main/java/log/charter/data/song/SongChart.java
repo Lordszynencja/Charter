@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import log.charter.data.config.Localization.Label;
-import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.position.IPosition;
 import log.charter.data.song.vocals.Vocals;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.RSXMLToArrangement;

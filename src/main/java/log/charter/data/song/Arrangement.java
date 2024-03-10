@@ -1,7 +1,7 @@
 package log.charter.data.song;
 
-import static log.charter.data.song.notes.IConstantPosition.findClosest;
-import static log.charter.data.song.notes.IConstantPosition.findClosestId;
+import static log.charter.data.song.position.IConstantPosition.findClosest;
+import static log.charter.data.song.position.IConstantPosition.findClosestId;
 
 import java.math.BigDecimal;
 import java.util.function.Predicate;

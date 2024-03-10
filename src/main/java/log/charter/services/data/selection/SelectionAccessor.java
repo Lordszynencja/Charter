@@ -2,7 +2,7 @@ package log.charter.services.data.selection;
 
 import java.util.function.Supplier;
 
-import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.position.IPosition;
 import log.charter.data.types.PositionType;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;

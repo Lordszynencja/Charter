@@ -11,6 +11,7 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForChord;
 import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForNote;
+import log.charter.data.song.position.IPositionWithLength;
 import log.charter.io.rsc.xml.converters.ChordOrNoteConverter;
 import log.charter.io.rsc.xml.converters.ChordOrNoteForChordConverter;
 import log.charter.io.rsc.xml.converters.ChordOrNoteForNoteConverter;

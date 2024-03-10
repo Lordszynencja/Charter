@@ -1,5 +1,7 @@
 package log.charter.data.song.notes;
 
+import log.charter.data.song.position.PositionWithLength;
+
 public abstract class GuitarSound extends PositionWithLength {
 	public boolean accent = false;
 	public boolean ignore = false;

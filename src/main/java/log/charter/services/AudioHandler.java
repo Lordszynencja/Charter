@@ -4,7 +4,7 @@ import static java.lang.System.nanoTime;
 import static log.charter.data.config.Config.createDefaultStretchesInBackground;
 import static log.charter.data.config.Config.sfxVolume;
 import static log.charter.data.config.Config.stretchedMusicSpeed;
-import static log.charter.data.song.notes.IConstantPosition.findFirstAfter;
+import static log.charter.data.song.position.IConstantPosition.findFirstAfter;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import static log.charter.sound.data.AudioUtils.generateSound;
 
@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.position.IPosition;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.CharterContext.Initiable;

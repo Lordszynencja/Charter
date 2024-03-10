@@ -12,7 +12,7 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.notes.IConstantPosition;
+import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;

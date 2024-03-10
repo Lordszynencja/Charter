@@ -7,8 +7,8 @@ import static java.lang.Math.round;
 import static log.charter.data.config.Config.gridSize;
 import static log.charter.data.config.Config.maxBendValue;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.song.notes.IConstantPosition.findFirstIdAfterEqual;
-import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.position.IConstantPosition.findFirstIdAfterEqual;
+import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.util.Utils.formatBendValue;
 

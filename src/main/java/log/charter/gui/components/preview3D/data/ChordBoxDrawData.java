@@ -1,7 +1,7 @@
 package log.charter.gui.components.preview3D.data;
 
 import log.charter.data.song.enums.Mute;
-import log.charter.data.song.notes.IConstantPosition;
+import log.charter.data.song.position.IConstantPosition;
 
 public class ChordBoxDrawData implements IConstantPosition {
 	public final int originalPosition;

@@ -10,7 +10,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
 import java.util.function.BiFunction;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.position.IPosition;
 import log.charter.services.editModes.EditMode;
 import log.charter.util.CollectionUtils.ArrayList2;
 

@@ -1,7 +1,7 @@
 package log.charter.io.rs.xml.song;
 
-import static log.charter.data.song.notes.IConstantPosition.findClosestId;
-import static log.charter.data.song.notes.IConstantPosition.findFirstIdAfterEqual;
+import static log.charter.data.song.position.IConstantPosition.findClosestId;
+import static log.charter.data.song.position.IConstantPosition.findFirstIdAfterEqual;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

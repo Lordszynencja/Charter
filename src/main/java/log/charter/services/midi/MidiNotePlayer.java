@@ -2,7 +2,7 @@ package log.charter.services.midi;
 
 import static log.charter.data.config.Config.sfxVolume;
 import static log.charter.data.song.configs.Tuning.getStringDistanceFromC0;
-import static log.charter.data.song.notes.IConstantPosition.findLastBeforeEquals;
+import static log.charter.data.song.position.IConstantPosition.findLastBeforeEquals;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

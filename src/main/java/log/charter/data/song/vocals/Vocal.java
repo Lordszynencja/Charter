@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.data.config.Config;
-import log.charter.data.song.notes.PositionWithLength;
+import log.charter.data.song.position.PositionWithLength;
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
 
 @XStreamAlias("vocal")

@@ -6,7 +6,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.util.Arrays.asList;
-import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.bendHalfstepDistance;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretLengthMultiplier;

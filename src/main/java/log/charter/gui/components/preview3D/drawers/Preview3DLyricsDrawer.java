@@ -1,6 +1,6 @@
 package log.charter.gui.components.preview3D.drawers;
 
-import static log.charter.data.song.notes.IConstantPosition.findLastIdBefore;
+import static log.charter.data.song.position.IConstantPosition.findLastIdBefore;
 
 import java.awt.Color;
 

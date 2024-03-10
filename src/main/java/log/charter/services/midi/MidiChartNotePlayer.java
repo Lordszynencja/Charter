@@ -4,8 +4,8 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static log.charter.data.config.Config.midiDelay;
-import static log.charter.data.song.notes.IConstantPosition.findLastBeforeEquals;
-import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.position.IConstantPosition.findLastBeforeEquals;
+import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

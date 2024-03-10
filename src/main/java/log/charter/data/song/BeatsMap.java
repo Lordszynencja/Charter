@@ -1,14 +1,14 @@
 package log.charter.data.song;
 
 import static java.lang.Math.abs;
-import static log.charter.data.song.notes.IConstantPosition.findClosestId;
-import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.position.IConstantPosition.findClosestId;
+import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.position.IPosition;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.ChartProject;
 import log.charter.util.CollectionUtils.ArrayList2;

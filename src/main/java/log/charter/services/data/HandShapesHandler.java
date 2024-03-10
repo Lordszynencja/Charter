@@ -1,7 +1,7 @@
 package log.charter.services.data;
 
-import static log.charter.data.song.notes.IConstantPosition.findFirstIdAfter;
-import static log.charter.data.song.notes.IConstantPosition.findLastIdBefore;
+import static log.charter.data.song.position.IConstantPosition.findFirstIdAfter;
+import static log.charter.data.song.position.IConstantPosition.findLastIdBefore;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.ChordTemplate;

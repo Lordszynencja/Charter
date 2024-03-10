@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.Chord;
-import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.position.IPosition;
 import log.charter.io.rs.xml.converters.TimeConverter;
 
 @XStreamAlias("handShape")

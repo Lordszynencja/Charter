@@ -3,7 +3,7 @@ package log.charter.services.data.fixers;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.minNoteDistance;
-import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -22,8 +22,8 @@ import log.charter.data.song.SectionType;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
-import log.charter.data.song.notes.IPosition;
-import log.charter.data.song.notes.IPositionWithLength;
+import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.IPositionWithLength;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.util.CollectionUtils.ArrayList2;
 

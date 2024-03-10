@@ -10,8 +10,8 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.song.Anchor;
 import log.charter.data.song.EventPoint;
-import log.charter.data.song.notes.IConstantPosition;
-import log.charter.data.song.notes.IConstantPositionWithLength;
+import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.IConstantPositionWithLength;
 import log.charter.services.RepeatManager;
 import log.charter.util.CollectionUtils.ArrayList2;
 

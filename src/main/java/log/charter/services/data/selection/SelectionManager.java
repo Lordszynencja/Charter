@@ -1,6 +1,6 @@
 package log.charter.services.data.selection;
 
-import static log.charter.data.song.notes.IConstantPosition.findClosestId;
+import static log.charter.data.song.position.IConstantPosition.findClosestId;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.notes.IPosition;
-import log.charter.data.song.notes.Position;
+import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.Position;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;

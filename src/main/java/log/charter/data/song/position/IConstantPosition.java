@@ -1,4 +1,4 @@
-package log.charter.data.song.notes;
+package log.charter.data.song.position;
 
 import static java.lang.Math.abs;
 

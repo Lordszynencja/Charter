@@ -3,36 +3,42 @@ package log.charter.services;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.frets;
-import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 
 import log.charter.data.config.Config;
 import log.charter.data.song.Anchor;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.notes.IPosition;
-import log.charter.data.song.notes.Position;
+import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.IntRange;
 
 public class ArrangementFretHandPositionsCreator {
-	private static class FretRange extends Position {
+	private static class FretRange implements IConstantPosition {
+		public final int position;
 		public final boolean isNote;
 		public final boolean isTap;
 		public final IntRange fretRange;
 
 		public FretRange(final IPosition position, final int fret, final boolean isTap) {
-			super(position);
+			this.position = position.position();
 			isNote = true;
 			this.isTap = isTap;
 			fretRange = new IntRange(fret, fret);
 		}
 
 		public FretRange(final IPosition position, final int minFret, final int maxFret) {
-			super(position);
+			this.position = position.position();
 			isNote = false;
 			isTap = false;
 			fretRange = new IntRange(minFret, maxFret);
+		}
+
+		@Override
+		public int position() {
+			return position;
 		}
 	}
 

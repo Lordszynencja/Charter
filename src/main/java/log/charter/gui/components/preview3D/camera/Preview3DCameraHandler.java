@@ -2,7 +2,7 @@ package log.charter.gui.components.preview3D.camera;
 
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
-import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.cameraMatrix;

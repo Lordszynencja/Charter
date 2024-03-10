@@ -267,7 +267,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>log.charter.main.CharterMain</mainClass>
+							<mainClass>log.charter.CharterMain</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -309,7 +309,7 @@
 							<icon>src/main/resources/icon.ico</icon>
 							<errTitle>Charter</errTitle>
 							<classPath>
-								<mainClass>log.charter.main.CharterMain</mainClass>
+								<mainClass>log.charter.CharterMain</mainClass>
 								<addDependencies>true</addDependencies>
 								<preCp>anything</preCp>
 							</classPath>
@@ -387,7 +387,7 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-					<mainClass>log.charter.main.CharterMain</mainClass>
+					<mainClass>log.charter.CharterMain</mainClass>
 					<iconFile>src/main/resources/icon.ico</iconFile>
 					<generateDiskImageFile>true</generateDiskImageFile>
 					<buildDirectory>${basedir}/target/Charter</buildDirectory>

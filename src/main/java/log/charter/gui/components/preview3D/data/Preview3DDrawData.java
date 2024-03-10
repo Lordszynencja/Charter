@@ -1,7 +1,7 @@
 package log.charter.gui.components.preview3D.data;
 
-import static log.charter.data.song.notes.IConstantPosition.findFirstAfter;
-import static log.charter.data.song.notes.IConstantPosition.findLastBeforeEquals;
+import static log.charter.data.song.position.IConstantPosition.findFirstAfter;
+import static log.charter.data.song.position.IConstantPosition.findLastBeforeEquals;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getVisibility;
 import static log.charter.gui.components.preview3D.data.AnchorDrawData.getAnchorsForTimeSpanWithRepeats;
 import static log.charter.gui.components.preview3D.data.BeatDrawData.getBeatsForTimeSpanWithRepeats;

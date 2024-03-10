@@ -1,6 +1,6 @@
 package log.charter.gui.components.preview3D.drawers;
 
-import static log.charter.data.song.notes.IConstantPosition.findLastBeforeEquals;
+import static log.charter.data.song.position.IConstantPosition.findLastBeforeEquals;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretMiddlePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;

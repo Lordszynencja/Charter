@@ -2,7 +2,7 @@ package log.charter.data.song;
 
 import java.math.BigDecimal;
 
-import log.charter.data.song.notes.Position;
+import log.charter.data.song.position.Position;
 import log.charter.io.rs.xml.song.ArrangementBendValue;
 
 public class BendValue extends Position {

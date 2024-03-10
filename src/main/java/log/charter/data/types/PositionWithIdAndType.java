@@ -6,7 +6,7 @@ import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.notes.Position;
+import log.charter.data.song.position.Position;
 import log.charter.data.song.vocals.Vocal;
 
 public class PositionWithIdAndType extends Position {

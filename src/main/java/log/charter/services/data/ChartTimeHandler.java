@@ -2,15 +2,15 @@ package log.charter.services.data;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.data.song.notes.IConstantPosition.findFirstAfter;
-import static log.charter.data.song.notes.IConstantPosition.findLastBefore;
+import static log.charter.data.song.position.IConstantPosition.findFirstAfter;
+import static log.charter.data.song.position.IConstantPosition.findLastBefore;
 
 import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Level;
-import log.charter.data.song.notes.IConstantPosition;
+import log.charter.data.song.position.IConstantPosition;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;

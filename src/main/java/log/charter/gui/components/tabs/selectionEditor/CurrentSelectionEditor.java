@@ -15,7 +15,7 @@ import log.charter.data.song.Anchor;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.position.IPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanelColors.ColorLabel;

@@ -1,7 +1,7 @@
 package log.charter.services.data;
 
 import static java.util.Arrays.asList;
-import static log.charter.data.song.notes.IConstantPosition.getFromTo;
+import static log.charter.data.song.position.IConstantPosition.getFromTo;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,9 +14,9 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.notes.IPosition;
-import log.charter.data.song.notes.IPositionWithLength;
-import log.charter.data.song.notes.Position;
+import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.IPositionWithLength;
+import log.charter.data.song.position.Position;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;

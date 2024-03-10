@@ -1,6 +1,6 @@
 package log.charter.gui.panes.songEdits;
 
-import static log.charter.data.song.notes.IConstantPosition.findClosestId;
+import static log.charter.data.song.position.IConstantPosition.findClosestId;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.math.BigDecimal;

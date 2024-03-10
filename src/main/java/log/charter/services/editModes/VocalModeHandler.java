@@ -1,6 +1,6 @@
 package log.charter.services.editModes;
 
-import static log.charter.data.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
+import static log.charter.data.song.position.IPositionWithLength.changePositionsWithLengthsLength;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.vocals.Vocal;

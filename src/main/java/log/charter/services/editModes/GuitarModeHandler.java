@@ -1,9 +1,9 @@
 package log.charter.services.editModes;
 
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
-import static log.charter.data.song.notes.IConstantPosition.findClosestId;
-import static log.charter.data.song.notes.IConstantPosition.findLastIdBefore;
-import static log.charter.data.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
+import static log.charter.data.song.position.IConstantPosition.findClosestId;
+import static log.charter.data.song.position.IConstantPosition.findLastIdBefore;
+import static log.charter.data.song.position.IPositionWithLength.changePositionsWithLengthsLength;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 
 import java.util.stream.Collectors;
@@ -15,8 +15,8 @@ import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.notes.IPositionWithLength;
 import log.charter.data.song.notes.Note;
+import log.charter.data.song.position.IPositionWithLength;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;

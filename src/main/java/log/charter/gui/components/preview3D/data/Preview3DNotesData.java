@@ -3,7 +3,7 @@ package log.charter.gui.components.preview3D.data;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.data.song.notes.ChordOrNote.isLinkedToPrevious;
-import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.List;
