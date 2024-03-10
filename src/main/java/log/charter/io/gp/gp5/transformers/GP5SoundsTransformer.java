@@ -10,26 +10,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.config.Config;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.BendValue;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.FractionalPosition;
+import log.charter.data.song.HandShape;
+import log.charter.data.song.Level;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Harmonic;
+import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordNote;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.CommonNote;
+import log.charter.data.song.notes.Note;
 import log.charter.io.gp.gp5.data.GPBeat;
 import log.charter.io.gp.gp5.data.GPBend;
 import log.charter.io.gp.gp5.data.GPDuration;
 import log.charter.io.gp.gp5.data.GPGraceNote;
 import log.charter.io.gp.gp5.data.GPNote;
 import log.charter.io.gp.gp5.data.GPNoteEffects;
-import log.charter.song.Arrangement;
-import log.charter.song.BendValue;
-import log.charter.song.ChordTemplate;
-import log.charter.song.FractionalPosition;
-import log.charter.song.HandShape;
-import log.charter.song.Level;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
-import log.charter.song.enums.Mute;
-import log.charter.song.notes.Chord;
-import log.charter.song.notes.ChordNote;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.CommonNote;
-import log.charter.song.notes.Note;
 
 public class GP5SoundsTransformer {
 	private static class ChordAddingData {

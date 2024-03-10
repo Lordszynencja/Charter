@@ -2,8 +2,8 @@ package log.charter.services.data.copy.data.positions;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import log.charter.song.BeatsMap;
-import log.charter.song.HandShape;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.HandShape;
 
 @XStreamAlias("copiedHandShape")
 public class CopiedHandShapePosition extends CopiedPositionWithLength<HandShape> {

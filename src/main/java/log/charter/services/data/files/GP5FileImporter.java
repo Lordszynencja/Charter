@@ -9,6 +9,8 @@ import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.menuHandlers.CharterMenuBar;
@@ -19,8 +21,6 @@ import log.charter.io.gp.gp5.data.GP5File;
 import log.charter.io.gp.gp5.transformers.GP5FileToSongChart;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
-import log.charter.song.BeatsMap;
-import log.charter.song.SongChart;
 
 public class GP5FileImporter {
 	private ArrangementFixer arrangementFixer;

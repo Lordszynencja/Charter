@@ -1,8 +1,9 @@
 package log.charter.services.editModes;
 
-import static log.charter.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
+import static log.charter.data.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -12,7 +13,6 @@ import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
-import log.charter.song.vocals.Vocal;
 
 public class VocalModeHandler extends ModeHandler {
 	private static final long scrollTimeoutForUndo = 1000;

@@ -13,6 +13,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -25,7 +26,6 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.Position2D;

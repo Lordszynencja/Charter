@@ -2,10 +2,10 @@ package log.charter.gui.panes.songSettings;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
-import log.charter.song.SongChart;
 
 public final class SongOptionsPane extends ParamsPane {
 	private static final long serialVersionUID = -3193534671039163160L;

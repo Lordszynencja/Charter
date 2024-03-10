@@ -5,6 +5,8 @@ import javax.swing.JOptionPane;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.BeatsMap;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.songSettings.ArrangementSettingsPane;
 import log.charter.io.rs.xml.song.ArrangementType;
@@ -14,8 +16,6 @@ import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.song.Arrangement;
-import log.charter.song.BeatsMap;
 
 public class ArrangementMenuHandler extends CharterMenuHandler implements Initiable {
 	private ActionHandler actionHandler;

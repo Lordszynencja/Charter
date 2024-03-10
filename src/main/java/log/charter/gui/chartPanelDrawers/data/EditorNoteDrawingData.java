@@ -5,15 +5,15 @@ import static log.charter.util.ScalingUtils.timeToXLength;
 
 import java.util.Map.Entry;
 
-import log.charter.song.BendValue;
-import log.charter.song.ChordTemplate;
-import log.charter.song.enums.BassPickingTechnique;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
-import log.charter.song.enums.Mute;
-import log.charter.song.notes.Chord;
-import log.charter.song.notes.ChordNote;
-import log.charter.song.notes.Note;
+import log.charter.data.song.BendValue;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.enums.BassPickingTechnique;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Harmonic;
+import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordNote;
+import log.charter.data.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class EditorNoteDrawingData {

@@ -6,14 +6,14 @@ import java.util.Set;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.Phrase;
 import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
 import log.charter.services.data.copy.data.positions.CopiedArrangementEventsPointPosition;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.song.Arrangement;
-import log.charter.song.BeatsMap;
-import log.charter.song.EventPoint;
-import log.charter.song.Phrase;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 

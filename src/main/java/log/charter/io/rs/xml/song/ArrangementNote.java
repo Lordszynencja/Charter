@@ -11,13 +11,13 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
+import log.charter.data.song.BendValue;
+import log.charter.data.song.enums.BassPickingTechnique;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Harmonic;
+import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.Note;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.BendValue;
-import log.charter.song.enums.BassPickingTechnique;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
-import log.charter.song.enums.Mute;
-import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("note")

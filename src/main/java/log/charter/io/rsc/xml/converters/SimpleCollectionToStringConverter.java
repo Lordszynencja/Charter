@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 
-import log.charter.song.EventType;
+import log.charter.data.song.EventType;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class SimpleCollectionToStringConverter<C extends Collection<T>, T> implements SingleValueConverter {

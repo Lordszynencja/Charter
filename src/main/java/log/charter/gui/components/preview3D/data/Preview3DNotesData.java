@@ -2,24 +2,24 @@ package log.charter.gui.components.preview3D.data;
 
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.song.notes.ChordOrNote.isLinkedToPrevious;
-import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.notes.ChordOrNote.isLinkedToPrevious;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.Level;
+import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordNote;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.Note;
+import log.charter.data.song.notes.Chord.ChordNotesVisibility;
 import log.charter.services.RepeatManager;
-import log.charter.song.Arrangement;
-import log.charter.song.ChordTemplate;
-import log.charter.song.Level;
-import log.charter.song.enums.Mute;
-import log.charter.song.notes.Chord;
-import log.charter.song.notes.Chord.ChordNotesVisibility;
-import log.charter.song.notes.ChordNote;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DNotesData {

@@ -1,8 +1,8 @@
 package log.charter.services.midi;
 
 import static log.charter.data.config.Config.sfxVolume;
-import static log.charter.song.configs.Tuning.getStringDistanceFromC0;
-import static log.charter.song.notes.IConstantPosition.findLastBeforeEquals;
+import static log.charter.data.song.configs.Tuning.getStringDistanceFromC0;
+import static log.charter.data.song.notes.IConstantPosition.findLastBeforeEquals;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -17,16 +17,16 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.BendValue;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.ToneChange;
+import log.charter.data.song.enums.Harmonic;
+import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordNote;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.Note;
 import log.charter.io.Logger;
-import log.charter.song.BendValue;
-import log.charter.song.ChordTemplate;
-import log.charter.song.ToneChange;
-import log.charter.song.enums.Harmonic;
-import log.charter.song.enums.Mute;
-import log.charter.song.notes.Chord;
-import log.charter.song.notes.ChordNote;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class MidiNotePlayer {

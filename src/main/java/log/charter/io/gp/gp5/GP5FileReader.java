@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import log.charter.data.song.enums.BassPickingTechnique;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Harmonic;
 import log.charter.io.Logger;
 import log.charter.io.gp.gp5.data.Directions;
 import log.charter.io.gp.gp5.data.GP5File;
@@ -40,9 +43,6 @@ import log.charter.io.gp.gp5.data.KeySignature;
 import log.charter.io.gp.gp5.data.KeySignatureType;
 import log.charter.io.gp.gp5.data.ScoreInformation;
 import log.charter.io.gp.gp5.data.TripletFeel;
-import log.charter.song.enums.BassPickingTechnique;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.RW;
 

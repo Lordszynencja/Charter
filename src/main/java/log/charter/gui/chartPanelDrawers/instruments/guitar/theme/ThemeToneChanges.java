@@ -2,7 +2,7 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar.theme;
 
 import java.awt.Graphics2D;
 
-import log.charter.song.ToneChange;
+import log.charter.data.song.ToneChange;
 
 public interface ThemeToneChanges {
 	void addCurrentTone(Graphics2D g, String tone, int nextToneChangeX);

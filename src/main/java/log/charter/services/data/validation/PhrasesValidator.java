@@ -4,11 +4,11 @@ import static log.charter.gui.components.utils.ComponentUtils.askYesNoCancel;
 import static log.charter.util.CollectionUtils.filter;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.EventPoint;
 import log.charter.gui.CharterFrame;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.editModes.ModeManager;
-import log.charter.song.Arrangement;
-import log.charter.song.EventPoint;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class PhrasesValidator {

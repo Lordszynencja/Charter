@@ -1,9 +1,9 @@
 package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.Beat;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.song.Arrangement;
-import log.charter.song.Beat;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class TempoMapUndoState extends UndoState {

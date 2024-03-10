@@ -4,8 +4,8 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static log.charter.data.config.Config.midiDelay;
-import static log.charter.song.notes.IConstantPosition.findLastBeforeEquals;
-import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.notes.IConstantPosition.findLastBeforeEquals;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,17 +13,17 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.BendValue;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.HandShape;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordNote;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.Note;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.song.BendValue;
-import log.charter.song.ChordTemplate;
-import log.charter.song.HandShape;
-import log.charter.song.notes.Chord;
-import log.charter.song.notes.ChordNote;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class MidiChartNotePlayer implements Initiable {

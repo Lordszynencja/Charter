@@ -9,7 +9,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import log.charter.song.ChordTemplate;
+import log.charter.data.song.ChordTemplate;
 import log.charter.util.CollectionUtils.HashMap2;
 
 public class ChordTemplateConverter implements Converter {

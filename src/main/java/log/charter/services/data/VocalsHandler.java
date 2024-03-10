@@ -1,6 +1,7 @@
 package log.charter.services.data;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -9,7 +10,6 @@ import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class VocalsHandler {

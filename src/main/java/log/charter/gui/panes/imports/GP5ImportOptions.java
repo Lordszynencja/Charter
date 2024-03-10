@@ -8,12 +8,12 @@ import javax.swing.JComboBox;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.services.data.fixers.ArrangementFixer;
-import log.charter.song.Arrangement;
-import log.charter.song.SongChart;
 
 public class GP5ImportOptions extends ParamsPane {
 	private static class ArrangementImportSetting {

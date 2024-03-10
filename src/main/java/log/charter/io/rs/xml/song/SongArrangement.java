@@ -1,7 +1,7 @@
 package log.charter.io.rs.xml.song;
 
-import static log.charter.song.notes.IConstantPosition.findClosestId;
-import static log.charter.song.notes.IConstantPosition.findFirstIdAfterEqual;
+import static log.charter.data.song.notes.IConstantPosition.findClosestId;
+import static log.charter.data.song.notes.IConstantPosition.findFirstIdAfterEqual;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,17 +16,17 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.Beat;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.SectionType;
+import log.charter.data.song.SongChart;
+import log.charter.data.song.ToneChange;
 import log.charter.io.rs.xml.converters.ArrangementTypeConverter;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.io.rs.xml.converters.DateTimeConverter;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.Arrangement;
-import log.charter.song.Beat;
-import log.charter.song.BeatsMap;
-import log.charter.song.EventPoint;
-import log.charter.song.SectionType;
-import log.charter.song.SongChart;
-import log.charter.song.ToneChange;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("song")

@@ -2,18 +2,35 @@ package log.charter.services.data;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.song.notes.IConstantPosition.findFirstAfter;
-import static log.charter.song.notes.IConstantPosition.findLastBefore;
+import static log.charter.data.song.notes.IConstantPosition.findFirstAfter;
+import static log.charter.data.song.notes.IConstantPosition.findLastBefore;
 
 import java.util.List;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.Level;
+import log.charter.data.song.notes.IConstantPosition;
+import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.song.notes.IConstantPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ChartTimeHandler {
+	private static class MaxPositionAccumulator {
+		public int maxTime = 1;
+
+		public void add(final int time) {
+			maxTime = max(maxTime, time);
+		}
+
+		public void add(final ArrayList2<? extends IConstantPosition> positions) {
+			if (!positions.isEmpty()) {
+				maxTime = max(maxTime, positions.getLast().position());
+			}
+		}
+	}
+
 	private ChartData chartData;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
@@ -39,7 +56,25 @@ public class ChartTimeHandler {
 	}
 
 	public int maxTime() {
-		return max(1, projectAudioHandler.getAudio().msLength());
+		final MaxPositionAccumulator accumulator = new MaxPositionAccumulator();
+
+		if (modeManager.getMode() != EditMode.EMPTY) {
+			accumulator.add(audioTime());
+			accumulator.add(chartData.songChart.beatsMap.beats);
+
+			for (final Arrangement arrangement : chartData.songChart.arrangements) {
+				accumulator.add(arrangement.eventPoints);
+				accumulator.add(arrangement.toneChanges);
+
+				for (final Level level : arrangement.levels) {
+					accumulator.add(level.anchors);
+					accumulator.add(level.sounds);
+					accumulator.add(level.handShapes);
+				}
+			}
+		}
+
+		return accumulator.maxTime;
 	}
 
 	public int audioTime() {

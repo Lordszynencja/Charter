@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import log.charter.song.Beat;
+import log.charter.data.song.Beat;
 
 public class BeatConverter implements Converter {
 

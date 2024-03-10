@@ -15,9 +15,9 @@ import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.configs.Tuning;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.containers.RowedPanel;
-import log.charter.song.configs.Tuning;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 

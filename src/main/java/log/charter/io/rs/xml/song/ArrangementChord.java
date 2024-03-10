@@ -8,13 +8,13 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordNote;
+import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.notes.Chord.ChordNotesVisibility;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.ChordTemplate;
-import log.charter.song.enums.Mute;
-import log.charter.song.notes.Chord;
-import log.charter.song.notes.Chord.ChordNotesVisibility;
-import log.charter.song.notes.ChordNote;
-import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("chord")

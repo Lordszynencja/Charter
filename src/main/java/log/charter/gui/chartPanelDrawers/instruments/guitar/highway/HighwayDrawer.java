@@ -4,17 +4,17 @@ import java.awt.Graphics2D;
 import java.util.Optional;
 
 import log.charter.data.config.GraphicalConfig;
+import log.charter.data.song.Anchor;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.HandShape;
+import log.charter.data.song.Phrase;
+import log.charter.data.song.SectionType;
+import log.charter.data.song.ToneChange;
+import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightLine;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.ModernHighwayDrawer;
-import log.charter.song.Anchor;
-import log.charter.song.ChordTemplate;
-import log.charter.song.EventPoint;
-import log.charter.song.HandShape;
-import log.charter.song.Phrase;
-import log.charter.song.SectionType;
-import log.charter.song.ToneChange;
-import log.charter.song.notes.ChordOrNote;
 
 public interface HighwayDrawer {
 	public static void reloadGraphics() {

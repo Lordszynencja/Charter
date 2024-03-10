@@ -1,21 +1,21 @@
 package log.charter.gui.components.preview3D.data;
 
+import static log.charter.data.song.notes.IConstantPosition.findFirstAfter;
+import static log.charter.data.song.notes.IConstantPosition.findLastBeforeEquals;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getVisibility;
 import static log.charter.gui.components.preview3D.data.AnchorDrawData.getAnchorsForTimeSpanWithRepeats;
 import static log.charter.gui.components.preview3D.data.BeatDrawData.getBeatsForTimeSpanWithRepeats;
 import static log.charter.gui.components.preview3D.data.HandShapeDrawData.getHandShapesForTimeSpanWithRepeats;
 import static log.charter.gui.components.preview3D.data.Preview3DNotesData.getNotesForTimeSpanWithRepeats;
-import static log.charter.song.notes.IConstantPosition.findFirstAfter;
-import static log.charter.song.notes.IConstantPosition.findLastBeforeEquals;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Anchor;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.IntRange;
 

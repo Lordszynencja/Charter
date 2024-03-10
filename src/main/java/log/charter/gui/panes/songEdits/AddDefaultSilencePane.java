@@ -9,12 +9,12 @@ import javax.swing.JTextField;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Beat;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.song.Beat;
 import log.charter.sound.StretchedFileLoader;
 import log.charter.sound.data.AudioDataShort;
 import log.charter.sound.ogg.OggWriter;

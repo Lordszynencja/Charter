@@ -3,7 +3,7 @@ package log.charter.io.rs.xml.song;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.song.Arrangement.ArrangementSubtype;
+import log.charter.data.song.Arrangement.ArrangementSubtype;
 
 @XStreamAlias("arrangementProperties")
 public class ArrangementProperties {

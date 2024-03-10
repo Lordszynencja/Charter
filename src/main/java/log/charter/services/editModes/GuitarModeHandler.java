@@ -1,14 +1,22 @@
 package log.charter.services.editModes;
 
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
+import static log.charter.data.song.notes.IConstantPosition.findClosestId;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBefore;
+import static log.charter.data.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
-import static log.charter.song.notes.IConstantPosition.findClosestId;
-import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
-import static log.charter.song.notes.IPositionWithLength.changePositionsWithLengthsLength;
 
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Anchor;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.HandShape;
+import log.charter.data.song.ToneChange;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.IPositionWithLength;
+import log.charter.data.song.notes.Note;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;
@@ -25,14 +33,6 @@ import log.charter.services.mouseAndKeyboard.HighlightManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
-import log.charter.song.Anchor;
-import log.charter.song.ChordTemplate;
-import log.charter.song.EventPoint;
-import log.charter.song.HandShape;
-import log.charter.song.ToneChange;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.IPositionWithLength;
-import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class GuitarModeHandler extends ModeHandler {

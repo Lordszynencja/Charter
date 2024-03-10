@@ -5,15 +5,15 @@ import static log.charter.data.config.Config.maxStrings;
 import java.io.File;
 
 import log.charter.data.config.Config;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.Level;
+import log.charter.data.song.SongChart;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.song.Arrangement;
-import log.charter.song.Level;
-import log.charter.song.SongChart;
 
 public class ChartData {
 	public String path = Config.lastDir;

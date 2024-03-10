@@ -3,12 +3,12 @@ package log.charter.services.data.selection;
 import java.util.Set;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.notes.IPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressData;
-import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 
@@ -36,7 +36,8 @@ public class TypeSelectionManager<T extends IPosition> {
 
 	private Selection<T> getTemporarySelect() {
 		final MouseButtonPressData pressData = mouseButtonPressReleaseHandler.getPressPosition(MouseButton.LEFT_BUTTON);
-		if (pressData == null || pressData.highlight.type != selectionList.type) {
+		if (pressData == null || pressData.highlight.type != selectionList.type
+				|| !pressData.highlight.existingPosition) {
 			return null;
 		}
 

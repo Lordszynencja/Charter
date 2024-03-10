@@ -23,6 +23,19 @@ import javax.swing.JCheckBox;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.enums.BassPickingTechnique;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Harmonic;
+import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordNote;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.CommonNote;
+import log.charter.data.song.notes.GuitarSound;
+import log.charter.data.song.notes.Note;
+import log.charter.data.song.notes.NoteInterface;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
@@ -40,30 +53,17 @@ import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.lookAndFeel.CharterCheckBox;
 import log.charter.services.data.ChartItemsHandler;
-import log.charter.services.data.fixers.ArrangementFixer;
+import log.charter.services.data.fixers.DuplicatedChordTemplatesRemover;
+import log.charter.services.data.fixers.UnusedChordTemplatesRemover;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.song.Arrangement;
-import log.charter.song.ChordTemplate;
-import log.charter.song.enums.BassPickingTechnique;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
-import log.charter.song.enums.Mute;
-import log.charter.song.notes.Chord;
-import log.charter.song.notes.ChordNote;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.CommonNote;
-import log.charter.song.notes.GuitarSound;
-import log.charter.song.notes.Note;
-import log.charter.song.notes.NoteInterface;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.CollectionUtils.Pair;
 
 public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
-	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartItemsHandler chartItemsHandler;
@@ -508,8 +508,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			changeSelectedToChords();
 		}
 
-		arrangementFixer.fixDuplicatedChordTemplates(arrangement);
-		arrangementFixer.removeUnusedChordTemplates(arrangement);
+		DuplicatedChordTemplatesRemover.remove(arrangement);
+		UnusedChordTemplatesRemover.remove(arrangement);
 	}
 
 	@Override

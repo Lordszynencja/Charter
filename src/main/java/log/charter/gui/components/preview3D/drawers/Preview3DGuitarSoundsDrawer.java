@@ -6,6 +6,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.util.Arrays.asList;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.bendHalfstepDistance;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretLengthMultiplier;
@@ -20,7 +21,6 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosit
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationZMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
-import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 import static log.charter.util.ColorUtils.setAlpha;
 import static log.charter.util.ColorUtils.transparent;
 
@@ -34,6 +34,9 @@ import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.song.BendValue;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Mute;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.data.ChordBoxDrawData;
@@ -48,9 +51,6 @@ import log.charter.gui.components.preview3D.shapes.CompositeModel;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels.TextureAtlasPosition;
 import log.charter.gui.components.preview3D.shapes.OpenNoteModel;
-import log.charter.song.BendValue;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Mute;
 import log.charter.util.CollectionUtils.Pair;
 import log.charter.util.IntRange;
 

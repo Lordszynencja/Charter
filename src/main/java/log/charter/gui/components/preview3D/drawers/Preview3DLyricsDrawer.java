@@ -1,17 +1,17 @@
 package log.charter.gui.components.preview3D.drawers;
 
-import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBefore;
 
 import java.awt.Color;
 
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.vocals.Vocal;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
-import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DLyricsDrawer {

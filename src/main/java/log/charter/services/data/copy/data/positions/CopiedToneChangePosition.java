@@ -3,8 +3,8 @@ package log.charter.services.data.copy.data.positions;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.song.BeatsMap;
-import log.charter.song.ToneChange;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.ToneChange;
 
 @XStreamAlias("copiedToneChange")
 public class CopiedToneChangePosition extends CopiedPosition<ToneChange> {

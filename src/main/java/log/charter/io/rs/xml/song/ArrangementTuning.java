@@ -4,7 +4,7 @@ import static java.lang.Math.min;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.song.configs.Tuning;
+import log.charter.data.song.configs.Tuning;
 
 public class ArrangementTuning {
 	@XStreamAsAttribute

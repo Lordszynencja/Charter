@@ -100,10 +100,17 @@ public class WaveFormDrawer {
 			rms[x] |= showRMS && information.rms;
 		}
 
-		for (int x = 0; x < width; x++) {
+		final int xStart = max(0, timeToX(0, time));
+		final int xEnd = min(width - 1, timeToX(projectAudioHandler.getAudio().msLength(), time));
+		for (int x = xStart; x <= xEnd; x++) {
 			g.setColor(rms[x] ? highIntensityColor : normalColor);
 			final int height = heights[x];
-			g.fillRect(x, y - height, 1, 2 * height);
+
+			if (height > 0) {
+				g.fillRect(x, y - height, 1, 2 * height + 1);
+			} else {
+				g.fillRect(x, y, 1, 1);
+			}
 		}
 	}
 

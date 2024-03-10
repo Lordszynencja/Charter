@@ -2,13 +2,13 @@ package log.charter.services.data.copy.data;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.Phrase;
 import log.charter.services.data.copy.data.positions.CopiedAnchorPosition;
 import log.charter.services.data.copy.data.positions.CopiedArrangementEventsPointPosition;
 import log.charter.services.data.copy.data.positions.CopiedHandShapePosition;
 import log.charter.services.data.copy.data.positions.CopiedSoundPosition;
 import log.charter.services.data.copy.data.positions.CopiedToneChangePosition;
-import log.charter.song.ChordTemplate;
-import log.charter.song.Phrase;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 

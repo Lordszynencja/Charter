@@ -7,9 +7,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.SectionType;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.EventPoint;
-import log.charter.song.SectionType;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("section")

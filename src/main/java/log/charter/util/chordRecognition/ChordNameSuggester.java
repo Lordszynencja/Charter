@@ -5,7 +5,7 @@ import static log.charter.util.SoundUtils.soundToSimpleName;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
-import log.charter.song.configs.Tuning;
+import log.charter.data.song.configs.Tuning;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 

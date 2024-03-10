@@ -9,13 +9,13 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.Level;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
-import log.charter.song.Arrangement;
-import log.charter.song.Level;
 
 public class TempoMapDrawer {
 	private BeatsDrawer beatsDrawer;

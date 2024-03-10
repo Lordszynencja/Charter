@@ -14,13 +14,13 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Harmonic;
+import log.charter.data.song.enums.Mute;
 import log.charter.gui.components.preview3D.data.NoteDrawData;
 import log.charter.gui.components.preview3D.glUtils.TextureFileSupplier;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.io.Logger;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
-import log.charter.song.enums.Mute;
 
 public class NoteStatusModels {
 	public enum TextureAtlasPosition {

@@ -3,8 +3,8 @@ package log.charter.gui.panes.songSettings;
 import static java.lang.Math.max;
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.data.config.Config.maxStrings;
+import static log.charter.data.song.configs.Tuning.getStringDistanceFromC0;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
-import static log.charter.song.configs.Tuning.getStringDistanceFromC0;
 import static log.charter.util.SoundUtils.soundToFullName;
 
 import java.util.ArrayList;
@@ -19,6 +19,11 @@ import javax.swing.JTextField;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.Arrangement.ArrangementSubtype;
+import log.charter.data.song.configs.Tuning;
+import log.charter.data.song.configs.Tuning.TuningType;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.FieldWithLabel;
@@ -28,11 +33,6 @@ import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.song.Arrangement;
-import log.charter.song.Arrangement.ArrangementSubtype;
-import log.charter.song.ChordTemplate;
-import log.charter.song.configs.Tuning;
-import log.charter.song.configs.Tuning.TuningType;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ArrangementSettingsPane extends ParamsPane {

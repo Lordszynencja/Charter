@@ -4,11 +4,11 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.Beat;
+import log.charter.data.song.SongChart;
+import log.charter.data.song.vocals.Vocals;
 import log.charter.services.editModes.EditMode;
-import log.charter.song.Arrangement;
-import log.charter.song.Beat;
-import log.charter.song.SongChart;
-import log.charter.song.vocals.Vocals;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 

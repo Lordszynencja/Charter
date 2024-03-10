@@ -35,8 +35,8 @@ import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.lookAndFeel.CharterSliderUI;
 import log.charter.io.Logger;
 import log.charter.services.AudioHandler;
-import log.charter.services.RepeatManager;
 import log.charter.services.CharterContext.Initiable;
+import log.charter.services.RepeatManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
@@ -304,13 +304,14 @@ public class ChartToolbar extends JToolBar implements Initiable {
 		volumeSlider.setSize(72, elementHeight);
 		volumeSlider.setFocusable(false);
 		volumeSlider.setBackground(getBackground());
-		volumeSlider.setUI(new CharterSliderUI());
 
 		final FieldWithLabel<JSlider> volume = new FieldWithLabel<>(label, 0, 72, elementHeight, volumeSlider,
 				LabelPosition.LEFT_PACKED);
 		setIcon(volume.label, icon);
 
 		add(x, volume);
+
+		volumeSlider.setUI(new CharterSliderUI());
 	}
 
 	@Override

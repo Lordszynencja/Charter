@@ -4,11 +4,11 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.song.Beat;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.EventType;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.Beat;
-import log.charter.song.BeatsMap;
-import log.charter.song.EventPoint;
-import log.charter.song.EventType;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("event")

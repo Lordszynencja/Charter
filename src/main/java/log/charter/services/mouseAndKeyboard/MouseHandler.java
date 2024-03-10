@@ -16,6 +16,12 @@ import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Zoom;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.Beat;
+import log.charter.data.song.Level;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.notes.IPositionWithLength;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -27,12 +33,6 @@ import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
-import log.charter.song.Arrangement;
-import log.charter.song.Beat;
-import log.charter.song.Level;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.IPosition;
-import log.charter.song.notes.IPositionWithLength;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener {

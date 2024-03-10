@@ -2,7 +2,7 @@ package log.charter.util;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Zoom;
-import log.charter.song.notes.IPosition;
+import log.charter.data.song.notes.IPosition;
 
 public class ScalingUtils {
 	public static int xToTime(final int x, final int t) {

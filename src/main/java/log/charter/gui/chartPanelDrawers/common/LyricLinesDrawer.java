@@ -9,13 +9,13 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.vocals.Vocal;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.song.vocals.Vocal;
 import log.charter.util.Position2D;
 
 public class LyricLinesDrawer {

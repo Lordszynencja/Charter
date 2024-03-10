@@ -6,8 +6,8 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.ChordOrNote.ChordOrNoteForChord;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForChord;
 
 public class ChordOrNoteForChordConverter implements Converter {
 	private static final ChordConverter chordConverter = new ChordConverter();

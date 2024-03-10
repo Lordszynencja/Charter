@@ -8,20 +8,21 @@ import javax.swing.JLabel;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.HandShape;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.IConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
-import log.charter.services.data.fixers.ArrangementFixer;
+import log.charter.services.data.fixers.DuplicatedChordTemplatesRemover;
+import log.charter.services.data.fixers.UnusedChordTemplatesRemover;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.song.Arrangement;
-import log.charter.song.ChordTemplate;
-import log.charter.song.HandShape;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.IConstantPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 
@@ -31,7 +32,6 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	private JLabel arpeggioLabel;
 	private JCheckBox arpeggioCheckBox;
 
-	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private KeyboardHandler keyboardHandler;
@@ -81,8 +81,8 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 			selection.selectable.templateId = templateId;
 		}
 
-		arrangementFixer.fixDuplicatedChordTemplates(arrangement);
-		arrangementFixer.removeUnusedChordTemplates(arrangement);
+		DuplicatedChordTemplatesRemover.remove(arrangement);
+		UnusedChordTemplatesRemover.remove(arrangement);
 	}
 
 	private void setTemplateForChordsIn(final HandShape handShape) {

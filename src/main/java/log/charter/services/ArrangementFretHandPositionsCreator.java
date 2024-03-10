@@ -3,15 +3,15 @@ package log.charter.services;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.frets;
-import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import log.charter.data.config.Config;
-import log.charter.song.Anchor;
-import log.charter.song.ChordTemplate;
-import log.charter.song.enums.HOPO;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.IPosition;
-import log.charter.song.notes.Position;
+import log.charter.data.song.Anchor;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.notes.Position;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.IntRange;
 

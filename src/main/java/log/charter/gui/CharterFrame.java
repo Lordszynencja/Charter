@@ -16,9 +16,11 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import log.charter.CharterMain;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Arrangement;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.CharterTabbedPane;
@@ -32,7 +34,6 @@ import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.lookAndFeel.CharterTheme;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
-import log.charter.main.CharterMain;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterFrameComponentListener;
 import log.charter.services.CharterFrameWindowFocusListener;
@@ -42,7 +43,6 @@ import log.charter.services.data.files.FileDropHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.song.Arrangement;
 import log.charter.util.CollectionUtils.Pair;
 import net.sf.image4j.codec.ico.ICODecoder;
 

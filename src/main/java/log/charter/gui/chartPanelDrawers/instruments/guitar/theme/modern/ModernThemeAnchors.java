@@ -10,13 +10,13 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.str
 import java.awt.Font;
 import java.awt.Graphics2D;
 
+import log.charter.data.song.Anchor;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeAnchors;
-import log.charter.song.Anchor;
 import log.charter.util.Position2D;
 
 public class ModernThemeAnchors implements ThemeAnchors {

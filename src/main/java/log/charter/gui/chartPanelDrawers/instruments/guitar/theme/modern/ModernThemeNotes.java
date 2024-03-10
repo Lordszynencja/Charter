@@ -28,6 +28,12 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Harmonic;
+import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.CommonNoteWithFret;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
@@ -38,12 +44,6 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeNotes;
-import log.charter.song.ChordTemplate;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
-import log.charter.song.enums.Mute;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.CommonNoteWithFret;
 import log.charter.util.Position2D;
 
 public class ModernThemeNotes implements ThemeNotes {

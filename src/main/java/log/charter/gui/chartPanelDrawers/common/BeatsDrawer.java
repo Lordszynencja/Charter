@@ -19,6 +19,7 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Beat;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -28,7 +29,6 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.song.Beat;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.Position2D;
 import log.charter.util.grid.GridPosition;

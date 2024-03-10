@@ -2,9 +2,9 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar.theme;
 
 import java.util.Optional;
 
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
-import log.charter.song.ChordTemplate;
-import log.charter.song.notes.ChordOrNote;
 import log.charter.util.Position2D;
 
 public interface ThemeNotes {

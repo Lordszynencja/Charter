@@ -12,16 +12,16 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lin
 import java.awt.Font;
 import java.awt.Graphics2D;
 
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.EventType;
+import log.charter.data.song.Phrase;
+import log.charter.data.song.SectionType;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeEvents;
-import log.charter.song.EventPoint;
-import log.charter.song.EventType;
-import log.charter.song.Phrase;
-import log.charter.song.SectionType;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.Position2D;
 

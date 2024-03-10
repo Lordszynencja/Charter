@@ -3,9 +3,9 @@ package log.charter.io.gp.gp5.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import log.charter.song.enums.BassPickingTechnique;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
+import log.charter.data.song.enums.BassPickingTechnique;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Harmonic;
 
 public class GPBeatEffects {
 	public final boolean vibrato;

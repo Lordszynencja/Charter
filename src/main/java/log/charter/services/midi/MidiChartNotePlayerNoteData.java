@@ -1,6 +1,6 @@
 package log.charter.services.midi;
 
-import log.charter.song.notes.ChordOrNote;
+import log.charter.data.song.notes.ChordOrNote;
 
 public class MidiChartNotePlayerNoteData {
 	public final int noteId;

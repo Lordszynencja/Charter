@@ -7,6 +7,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.FieldWithLabel;
@@ -16,7 +17,6 @@ import log.charter.gui.components.utils.validators.ValueValidator;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.HashSet2;
 
 public class VocalSelectionEditor {

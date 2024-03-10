@@ -4,12 +4,12 @@ import static log.charter.io.gp.gp5.transformers.GP5ArrangementTransformer.makeA
 
 import java.util.List;
 
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.SongChart;
 import log.charter.io.gp.gp5.data.GP5File;
 import log.charter.io.gp.gp5.data.GPBar;
 import log.charter.io.gp.gp5.data.GPTrackData;
-import log.charter.song.Arrangement;
-import log.charter.song.BeatsMap;
-import log.charter.song.SongChart;
 
 public class GP5FileToSongChart {
 	private static void addSongData(final GP5File gp5File, final SongChart chart) {

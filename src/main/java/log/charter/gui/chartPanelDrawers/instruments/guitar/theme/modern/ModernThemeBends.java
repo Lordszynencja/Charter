@@ -14,6 +14,7 @@ import java.awt.Font;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import log.charter.data.song.BendValue;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackground;
@@ -21,7 +22,6 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
-import log.charter.song.BendValue;
 import log.charter.util.Position2D;
 import log.charter.util.Utils;
 

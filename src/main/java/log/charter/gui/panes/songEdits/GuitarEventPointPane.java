@@ -18,17 +18,17 @@ import javax.swing.table.TableColumn;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.EventType;
+import log.charter.data.song.Phrase;
+import log.charter.data.song.SectionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInputForPane;
 import log.charter.gui.components.utils.validators.IntValueValidator;
-import log.charter.song.Arrangement;
-import log.charter.song.EventPoint;
-import log.charter.song.EventType;
-import log.charter.song.Phrase;
-import log.charter.song.SectionType;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class GuitarEventPointPane extends ParamsPane {

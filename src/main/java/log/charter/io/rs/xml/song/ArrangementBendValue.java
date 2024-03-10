@@ -6,8 +6,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.song.BendValue;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.BendValue;
 
 @XStreamAlias("bendValue")
 public class ArrangementBendValue {

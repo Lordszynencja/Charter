@@ -1,12 +1,12 @@
 package log.charter.gui.components.utils;
 
+import log.charter.CharterMain;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Arrangement;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.main.CharterMain;
 import log.charter.services.editModes.ModeManager;
-import log.charter.song.Arrangement;
 
 public class TitleUpdater {
 	private ChartData chartData;

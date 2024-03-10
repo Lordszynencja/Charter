@@ -1,14 +1,22 @@
 package log.charter.services.data.copy;
 
 import static java.util.stream.Collectors.toCollection;
-import static log.charter.song.notes.IConstantPosition.findFirstIdAfterEqual;
-import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.notes.IConstantPosition.findFirstIdAfterEqual;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import java.util.function.Function;
 
 import com.thoughtworks.xstream.io.StreamException;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.Beat;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.HandShape;
+import log.charter.data.song.Phrase;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.IPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -38,14 +46,6 @@ import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.song.Arrangement;
-import log.charter.song.Beat;
-import log.charter.song.BeatsMap;
-import log.charter.song.ChordTemplate;
-import log.charter.song.HandShape;
-import log.charter.song.Phrase;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 

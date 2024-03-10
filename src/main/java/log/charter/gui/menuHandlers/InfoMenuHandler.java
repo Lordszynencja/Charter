@@ -5,10 +5,10 @@ import java.io.File;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 
+import log.charter.CharterMain;
 import log.charter.data.config.Localization;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.main.CharterMain;
 
 class InfoMenuHandler extends CharterMenuHandler {
 	private static final String infoText = "Charter\n"//

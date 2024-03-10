@@ -3,11 +3,11 @@ package log.charter.io.rs.xml.song;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.Level;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordOrNote;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
-import log.charter.song.ChordTemplate;
-import log.charter.song.Level;
-import log.charter.song.notes.Chord;
-import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("level")

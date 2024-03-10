@@ -7,9 +7,9 @@ import static java.lang.Math.round;
 import static log.charter.data.config.Config.gridSize;
 import static log.charter.data.config.Config.maxBendValue;
 import static log.charter.data.config.Config.maxStrings;
+import static log.charter.data.song.notes.IConstantPosition.findFirstIdAfterEqual;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.song.notes.IConstantPosition.findFirstIdAfterEqual;
-import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 import static log.charter.util.Utils.formatBendValue;
 
 import java.awt.Dimension;
@@ -26,12 +26,12 @@ import java.util.function.BiConsumer;
 
 import javax.swing.JComponent;
 
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.BendValue;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.Note;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
-import log.charter.song.BeatsMap;
-import log.charter.song.BendValue;
-import log.charter.song.notes.Chord;
-import log.charter.song.notes.Note;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.Position2D;
 

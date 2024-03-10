@@ -9,6 +9,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Harmonic;
+import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.CommonNote;
+import log.charter.data.song.notes.GuitarSound;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
@@ -16,12 +22,6 @@ import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
-import log.charter.song.enums.Mute;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.CommonNote;
-import log.charter.song.notes.GuitarSound;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class GuitarSoundsStatusesHandler {

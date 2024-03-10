@@ -1,12 +1,12 @@
 package log.charter.gui.components.preview3D.drawers;
 
+import static log.charter.data.song.notes.IConstantPosition.findLastBeforeEquals;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretMiddlePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.noteHalfWidth;
 import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
-import static log.charter.song.notes.IConstantPosition.findLastBeforeEquals;
 
 import java.awt.Color;
 
@@ -14,6 +14,9 @@ import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.Level;
+import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.data.HandShapeDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
@@ -24,9 +27,6 @@ import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseTextureShaderDrawData;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels.TextureAtlasPosition;
-import log.charter.song.ChordTemplate;
-import log.charter.song.Level;
-import log.charter.song.notes.ChordOrNote;
 import log.charter.util.IntRange;
 
 public class Preview3DFingeringDrawer {

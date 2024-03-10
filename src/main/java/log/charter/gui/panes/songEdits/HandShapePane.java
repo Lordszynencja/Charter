@@ -4,11 +4,11 @@ import javax.swing.JCheckBox;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.HandShape;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
-import log.charter.song.ChordTemplate;
-import log.charter.song.HandShape;
 
 public class HandShapePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;

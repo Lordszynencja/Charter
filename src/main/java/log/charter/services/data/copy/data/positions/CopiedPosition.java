@@ -2,8 +2,8 @@ package log.charter.services.data.copy.data.positions;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.song.BeatsMap;
-import log.charter.song.notes.IPosition;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.notes.IPosition;
 
 public abstract class CopiedPosition<T extends IPosition> {
 

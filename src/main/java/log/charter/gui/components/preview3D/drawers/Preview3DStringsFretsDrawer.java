@@ -2,15 +2,15 @@ package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.data.song.notes.ChordOrNote.isLinkedToPrevious;
+import static log.charter.data.song.notes.IConstantPosition.findFirstIdAfter;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBefore;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance;
 import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
-import static log.charter.song.notes.ChordOrNote.isLinkedToPrevious;
-import static log.charter.song.notes.IConstantPosition.findFirstIdAfter;
-import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
 import static log.charter.util.ColorUtils.mix;
 
 import java.awt.Color;
@@ -19,6 +19,7 @@ import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.data.AnchorDrawData;
@@ -27,7 +28,6 @@ import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
-import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.IntRange;
 

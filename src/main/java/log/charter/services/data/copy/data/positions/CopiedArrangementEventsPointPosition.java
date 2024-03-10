@@ -3,10 +3,10 @@ package log.charter.services.data.copy.data.positions;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.song.BeatsMap;
-import log.charter.song.EventPoint;
-import log.charter.song.EventType;
-import log.charter.song.SectionType;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.EventType;
+import log.charter.data.song.SectionType;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("copiedArrangementEventsPointPosition")

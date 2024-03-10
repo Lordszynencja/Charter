@@ -1,13 +1,13 @@
 package log.charter.data.types;
 
-import log.charter.song.Anchor;
-import log.charter.song.Beat;
-import log.charter.song.EventPoint;
-import log.charter.song.HandShape;
-import log.charter.song.ToneChange;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.Position;
-import log.charter.song.vocals.Vocal;
+import log.charter.data.song.Anchor;
+import log.charter.data.song.Beat;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.HandShape;
+import log.charter.data.song.ToneChange;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.Position;
+import log.charter.data.song.vocals.Vocal;
 
 public class PositionWithIdAndType extends Position {
 	public static PositionWithIdAndType forNone() {

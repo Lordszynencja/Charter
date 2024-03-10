@@ -2,19 +2,19 @@ package log.charter.gui.components.preview3D.camera;
 
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.cameraMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationXMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
-import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.song.Anchor;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class Preview3DCameraHandler {

@@ -2,9 +2,9 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar.theme;
 
 import java.awt.Graphics2D;
 
-import log.charter.song.EventPoint;
-import log.charter.song.Phrase;
-import log.charter.song.SectionType;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.Phrase;
+import log.charter.data.song.SectionType;
 
 public interface ThemeEvents {
 

@@ -14,6 +14,10 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.BendValue;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.CommonNoteWithFret;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
@@ -23,10 +27,6 @@ import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.lookAndFeel.CharterRadioButton;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.song.BeatsMap;
-import log.charter.song.BendValue;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.CommonNoteWithFret;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class SelectionBendEditor extends RowedPanel {

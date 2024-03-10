@@ -4,12 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.notes.IPosition;
 import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
 import log.charter.services.data.copy.data.positions.CopiedPosition;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.song.BeatsMap;
-import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public interface ICopyData {

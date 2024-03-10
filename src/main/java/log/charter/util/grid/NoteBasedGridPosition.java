@@ -1,6 +1,6 @@
 package log.charter.util.grid;
 
-import log.charter.song.Beat;
+import log.charter.data.song.Beat;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class NoteBasedGridPosition extends GridPosition<Beat> {

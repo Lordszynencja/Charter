@@ -2,12 +2,12 @@ package log.charter.io.gp.gp5.transformers;
 
 import java.util.List;
 
+import log.charter.data.song.Beat;
+import log.charter.data.song.BeatsMap;
 import log.charter.io.gp.gp5.data.GP5File;
 import log.charter.io.gp.gp5.data.GPBar;
 import log.charter.io.gp.gp5.data.GPBeat;
 import log.charter.io.gp.gp5.data.GPMasterBar;
-import log.charter.song.Beat;
-import log.charter.song.BeatsMap;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class GP5FileTempoMapExtractor {

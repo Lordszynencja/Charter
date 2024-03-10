@@ -3,7 +3,7 @@ package log.charter.io.rs.xml.song;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.song.Phrase;
+import log.charter.data.song.Phrase;
 
 @XStreamAlias("phrase")
 public class ArrangementPhrase {

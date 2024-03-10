@@ -31,6 +31,7 @@ import javax.swing.JComponent;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.song.ChordTemplate;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
@@ -39,7 +40,6 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.FilledRectangle;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashSet2;
 import log.charter.util.IntRange;

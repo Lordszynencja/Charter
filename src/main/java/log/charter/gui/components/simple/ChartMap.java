@@ -20,6 +20,9 @@ import java.util.function.Predicate;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.vocals.Vocal;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
@@ -29,9 +32,6 @@ import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.song.EventPoint;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.vocals.Vocal;
 
 public class ChartMap extends Component implements Initiable, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;

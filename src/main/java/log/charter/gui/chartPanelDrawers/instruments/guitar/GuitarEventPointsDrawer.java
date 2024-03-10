@@ -7,12 +7,12 @@ import static log.charter.util.ScalingUtils.xToTime;
 import java.awt.Graphics2D;
 import java.util.Map;
 
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.Phrase;
 import log.charter.data.types.PositionType;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
-import log.charter.song.EventPoint;
-import log.charter.song.Phrase;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;
 import log.charter.util.CollectionUtils.HashSet2;

@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Anchor;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.notes.IConstantPosition;
+import log.charter.data.song.notes.IConstantPositionWithLength;
 import log.charter.services.RepeatManager;
-import log.charter.song.Anchor;
-import log.charter.song.EventPoint;
-import log.charter.song.notes.IConstantPosition;
-import log.charter.song.notes.IConstantPositionWithLength;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class AnchorDrawData implements IConstantPositionWithLength {

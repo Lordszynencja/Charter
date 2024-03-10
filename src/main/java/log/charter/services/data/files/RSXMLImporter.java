@@ -6,6 +6,8 @@ import java.io.File;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.vocals.Vocals;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
@@ -15,8 +17,6 @@ import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
 import log.charter.io.rs.xml.vocals.ArrangementVocals;
 import log.charter.io.rs.xml.vocals.VocalsXStreamHandler;
 import log.charter.services.editModes.ModeManager;
-import log.charter.song.Arrangement;
-import log.charter.song.vocals.Vocals;
 import log.charter.util.RW;
 
 public class RSXMLImporter {

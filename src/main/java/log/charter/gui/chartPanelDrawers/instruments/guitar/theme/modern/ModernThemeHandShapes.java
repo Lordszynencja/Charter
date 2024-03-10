@@ -9,13 +9,13 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.str
 
 import java.awt.*;
 
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.HandShape;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeHandShapes;
-import log.charter.song.ChordTemplate;
-import log.charter.song.HandShape;
 import log.charter.util.Position2D;
 
 public class ModernThemeHandShapes implements ThemeHandShapes {

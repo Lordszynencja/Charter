@@ -9,12 +9,12 @@ import java.util.Map;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.SongFolderSelectPane;
 import log.charter.services.AudioHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.song.BeatsMap;
-import log.charter.song.SongChart;
 import log.charter.sound.data.AudioDataShort;
 import log.charter.util.FileChooseUtils;
 

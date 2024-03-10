@@ -8,13 +8,13 @@ import javax.swing.event.DocumentListener;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.ToneChange;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInputForPane;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.song.Arrangement;
-import log.charter.song.ToneChange;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ToneChangePane extends ParamsPane implements DocumentListener {

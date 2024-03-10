@@ -4,8 +4,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.song.Beat;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.Beat;
 
 @XStreamAlias("ebeat")
 public class EBeat {

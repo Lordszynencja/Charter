@@ -9,11 +9,11 @@ import javax.sound.midi.InvalidMidiDataException;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.BeatsMap;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
 import log.charter.io.midi.MidiReader;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.song.BeatsMap;
 
 public class MidiImporter {
 	private ChartData chartData;

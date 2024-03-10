@@ -1,22 +1,22 @@
 package log.charter.io.gp.gp5.transformers;
 
+import static log.charter.data.song.configs.Tuning.getStringDistance;
 import static log.charter.services.ArrangementFretHandPositionsCreator.createFretHandPositions;
-import static log.charter.song.configs.Tuning.getStringDistance;
 
 import java.util.List;
 
 import log.charter.data.config.Config;
+import log.charter.data.song.Arrangement;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.FractionalPosition;
+import log.charter.data.song.Level;
+import log.charter.data.song.configs.Tuning;
+import log.charter.data.song.configs.Tuning.TuningType;
 import log.charter.io.gp.gp5.data.GPBar;
 import log.charter.io.gp.gp5.data.GPBeat;
 import log.charter.io.gp.gp5.data.GPNote;
 import log.charter.io.gp.gp5.data.GPTrackData;
 import log.charter.io.rs.xml.song.ArrangementType;
-import log.charter.song.Arrangement;
-import log.charter.song.BeatsMap;
-import log.charter.song.FractionalPosition;
-import log.charter.song.Level;
-import log.charter.song.configs.Tuning;
-import log.charter.song.configs.Tuning.TuningType;
 
 public class GP5ArrangementTransformer {
 	private static ArrangementType getGPArrangementType(final GPTrackData trackData) {

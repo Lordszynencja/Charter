@@ -1,12 +1,16 @@
 package log.charter.gui.menuHandlers;
 
-import static log.charter.song.notes.IConstantPosition.findFirstIdAfterEqual;
-import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.notes.IConstantPosition.findFirstIdAfterEqual;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.Level;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.IPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.services.Action;
@@ -17,10 +21,6 @@ import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.song.ChordTemplate;
-import log.charter.song.Level;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 class GuitarMenuHandler extends CharterMenuHandler implements Initiable {

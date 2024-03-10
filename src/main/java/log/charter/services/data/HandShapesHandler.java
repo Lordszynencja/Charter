@@ -1,9 +1,12 @@
 package log.charter.services.data;
 
-import static log.charter.song.notes.IConstantPosition.findFirstIdAfter;
-import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
+import static log.charter.data.song.notes.IConstantPosition.findFirstIdAfter;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBefore;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.HandShape;
+import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -11,9 +14,6 @@ import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.song.ChordTemplate;
-import log.charter.song.HandShape;
-import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class HandShapesHandler {

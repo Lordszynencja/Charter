@@ -2,7 +2,7 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar.theme;
 
 import java.awt.Graphics2D;
 
-import log.charter.song.Anchor;
+import log.charter.data.song.Anchor;
 
 public interface ThemeAnchors {
 	void addCurrentAnchor(Graphics2D g, Anchor anchor);

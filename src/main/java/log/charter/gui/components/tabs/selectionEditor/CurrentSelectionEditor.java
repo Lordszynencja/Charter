@@ -11,6 +11,12 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import log.charter.data.song.Anchor;
+import log.charter.data.song.HandShape;
+import log.charter.data.song.ToneChange;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.IPosition;
+import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.containers.RowedPanel;
@@ -21,12 +27,6 @@ import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.song.Anchor;
-import log.charter.song.HandShape;
-import log.charter.song.ToneChange;
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.IPosition;
-import log.charter.song.vocals.Vocal;
 import log.charter.util.CollectionUtils.HashSet2;
 
 public class CurrentSelectionEditor extends RowedPanel implements Initiable {

@@ -6,10 +6,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.song.HandShape;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.IPosition;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.song.HandShape;
-import log.charter.song.notes.Chord;
-import log.charter.song.notes.IPosition;
 
 @XStreamAlias("handShape")
 public class ArrangementHandShape implements IPosition {

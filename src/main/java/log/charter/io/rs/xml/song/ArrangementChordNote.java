@@ -4,11 +4,11 @@ import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Harmonic;
+import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.ChordNote;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
-import log.charter.song.enums.HOPO;
-import log.charter.song.enums.Harmonic;
-import log.charter.song.enums.Mute;
-import log.charter.song.notes.ChordNote;
 
 @XStreamAlias("chordNote")
 public class ArrangementChordNote extends ArrangementNote {

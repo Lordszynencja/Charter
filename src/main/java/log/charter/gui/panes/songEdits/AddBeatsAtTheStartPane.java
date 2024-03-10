@@ -6,12 +6,12 @@ import javax.swing.JTextField;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Beat;
+import log.charter.data.song.BeatsMap;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.utils.validators.IntValueValidator;
-import log.charter.song.Beat;
-import log.charter.song.BeatsMap;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class AddBeatsAtTheStartPane extends ParamsPane {

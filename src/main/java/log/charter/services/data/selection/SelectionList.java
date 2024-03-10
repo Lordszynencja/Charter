@@ -3,8 +3,8 @@ package log.charter.services.data.selection;
 import java.util.HashSet;
 import java.util.Set;
 
+import log.charter.data.song.notes.IPosition;
 import log.charter.data.types.PositionType;
-import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.Pair;
 

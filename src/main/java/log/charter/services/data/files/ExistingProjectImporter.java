@@ -11,6 +11,7 @@ import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.TextTab;
 import log.charter.io.Logger;
@@ -18,7 +19,6 @@ import log.charter.io.rsc.xml.ChartProject;
 import log.charter.services.AudioHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.song.SongChart;
 import log.charter.sound.data.AudioDataShort;
 import log.charter.util.RW;
 

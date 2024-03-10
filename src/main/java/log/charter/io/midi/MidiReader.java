@@ -12,8 +12,8 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 
-import log.charter.song.Beat;
-import log.charter.song.BeatsMap;
+import log.charter.data.song.Beat;
+import log.charter.data.song.BeatsMap;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public final class MidiReader {

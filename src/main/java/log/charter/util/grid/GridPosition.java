@@ -1,11 +1,11 @@
 package log.charter.util.grid;
 
 import static java.lang.Math.floor;
-import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import log.charter.data.config.Config;
-import log.charter.song.Beat;
-import log.charter.song.notes.IPosition;
+import log.charter.data.song.Beat;
+import log.charter.data.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class GridPosition<T extends IPosition> {

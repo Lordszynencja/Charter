@@ -6,7 +6,7 @@ import static java.lang.Math.min;
 import java.util.List;
 
 import log.charter.data.config.Config;
-import log.charter.song.ChordTemplate;
+import log.charter.data.song.ChordTemplate;
 
 public class ChordTemplateFingerSetter {
 

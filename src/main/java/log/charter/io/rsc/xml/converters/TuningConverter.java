@@ -6,8 +6,8 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import log.charter.song.configs.Tuning;
-import log.charter.song.configs.Tuning.TuningType;
+import log.charter.data.song.configs.Tuning;
+import log.charter.data.song.configs.Tuning.TuningType;
 
 public class TuningConverter implements Converter {
 

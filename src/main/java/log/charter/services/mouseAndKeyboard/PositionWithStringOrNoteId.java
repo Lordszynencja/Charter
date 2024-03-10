@@ -1,7 +1,7 @@
 package log.charter.services.mouseAndKeyboard;
 
-import log.charter.song.notes.ChordOrNote;
-import log.charter.song.notes.Position;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.Position;
 
 public class PositionWithStringOrNoteId extends Position {
 	public static PositionWithStringOrNoteId fromNoteId(final int noteId, final ChordOrNote sound, final int string) {

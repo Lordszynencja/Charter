@@ -5,23 +5,23 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.gridSize;
 import static log.charter.data.config.Config.minNoteDistance;
+import static log.charter.data.song.notes.IConstantPosition.findClosest;
+import static log.charter.data.song.notes.IConstantPosition.findFirstIdAfter;
+import static log.charter.data.song.notes.IConstantPosition.findLastIdBefore;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId.fromNoteId;
 import static log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId.fromPosition;
-import static log.charter.song.notes.IConstantPosition.findClosest;
-import static log.charter.song.notes.IConstantPosition.findFirstIdAfter;
-import static log.charter.song.notes.IConstantPosition.findLastIdBefore;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Beat;
+import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.ModeManager;
-import log.charter.song.Beat;
-import log.charter.song.notes.ChordOrNote;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class HighlightManager {

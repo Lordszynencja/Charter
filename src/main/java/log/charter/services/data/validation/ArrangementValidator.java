@@ -1,9 +1,9 @@
 package log.charter.services.data.validation;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Arrangement;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
-import log.charter.song.Arrangement;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public class ArrangementValidator implements Initiable {
