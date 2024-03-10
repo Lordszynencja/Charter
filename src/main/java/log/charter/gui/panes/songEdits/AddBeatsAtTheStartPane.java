@@ -27,7 +27,7 @@ public class AddBeatsAtTheStartPane extends ParamsPane {
 		this.data = data;
 		this.undoSystem = undoSystem;
 
-		addLabel(0, 20, Label.ADD_BEATS, 0);
+		addLabel(0, 20, Label.ADD_BEATS_AMOUNT, 0);
 
 		addIntConfigValue(1, 20, 0, null, beatsToGenerate, 100, //
 				new IntValueValidator(1, 100), v -> beatsToGenerate = v, false);

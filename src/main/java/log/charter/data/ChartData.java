@@ -78,6 +78,10 @@ public class ChartData {
 		return songChart.arrangements.get(currentArrangement);
 	}
 
+	public String getCurrentArrangementName() {
+		return getCurrentArrangement().getTypeNameLabel(currentArrangement);
+	}
+
 	public Level getCurrentArrangementLevel() {
 		return getCurrentArrangement().getLevel(currentLevel);
 	}

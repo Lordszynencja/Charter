@@ -67,8 +67,6 @@ public class Arrangement {
 	}
 
 	public Arrangement(final ArrangementType arrangementType, final int songStart, final int songEnd) {
-		setPhrase(songStart, "COUNT");
-		setPhrase(songEnd, "END");
 		this.arrangementType = arrangementType;
 		setLevel(0, new Level());
 	}
@@ -98,6 +96,10 @@ public class Arrangement {
 
 	public String getTypeNameLabel() {
 		return arrangementType.label.label() + " " + arrangementSubtype.label.label();
+	}
+
+	public String getTypeNameLabel(final int id) {
+		return "[%d] %s".formatted(id + 1, getTypeNameLabel());
 	}
 
 	public int getChordTemplateIdWithSave(final ChordTemplate chordTemplate) {

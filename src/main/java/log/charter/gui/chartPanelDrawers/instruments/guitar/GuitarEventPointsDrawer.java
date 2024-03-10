@@ -19,8 +19,8 @@ import log.charter.util.CollectionUtils.HashSet2;
 
 public class GuitarEventPointsDrawer {
 	private static EventPoint findCurrentSection(final ArrayList2<EventPoint> eventPoints, final int time) {
-		final ArrayList2<EventPoint> sections = filter(ArrayList2::new, eventPoints, //
-				eventPoint -> eventPoint.section != null && eventPoint.position() < time);
+		final ArrayList2<EventPoint> sections = filter(eventPoints, //
+				eventPoint -> eventPoint.section != null && eventPoint.position() < time, ArrayList2::new);
 
 		return sections.isEmpty() ? null : sections.getLast();
 	}
@@ -46,8 +46,8 @@ public class GuitarEventPointsDrawer {
 	}
 
 	private static EventPoint findCurrentPhrase(final ArrayList2<EventPoint> eventPoints, final int time) {
-		final ArrayList2<EventPoint> sections = filter(ArrayList2::new, eventPoints, //
-				eventPoint -> eventPoint.hasPhrase() && eventPoint.position() < time);
+		final ArrayList2<EventPoint> sections = filter(eventPoints, //
+				eventPoint -> eventPoint.hasPhrase() && eventPoint.position() < time, ArrayList2::new);
 
 		return sections.isEmpty() ? null : sections.getLast();
 	}

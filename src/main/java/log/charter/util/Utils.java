@@ -1,8 +1,44 @@
 package log.charter.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import log.charter.data.config.Config;
 
 public class Utils {
+	public enum TimeUnit {
+		MILISECONDS(1000, "%d", ".%03d"), //
+		SECONDS(60, "%d", ":%02d"), //
+		MINUTES(60, "%d", ":%02d"), //
+		HOURS(24, "%d", " %02d"), //
+		DAYS(365, "%dd", " %3dd"), //
+		YEARS(365, "%dy", " %dy");
+
+		private static Map<TimeUnit, TimeUnit> nextUnits = new HashMap<>();
+		static {
+			nextUnits.put(MILISECONDS, SECONDS);
+			nextUnits.put(SECONDS, MINUTES);
+			nextUnits.put(MINUTES, HOURS);
+			nextUnits.put(HOURS, DAYS);
+			nextUnits.put(DAYS, YEARS);
+			nextUnits.put(YEARS, YEARS);
+		}
+
+		public final int max;
+		public final String fullFormat;
+		public final String partialFormat;
+
+		private TimeUnit(final int max, final String fullFormat, final String partialFormat) {
+			this.max = max;
+			this.fullFormat = fullFormat;
+			this.partialFormat = partialFormat;
+		}
+
+		public TimeUnit next() {
+			return nextUnits.get(this);
+		}
+	}
+
 	public static boolean mapInteger(final Integer value) {
 		return value != null && value != 0;
 	}
@@ -59,5 +95,15 @@ public class Utils {
 		}
 
 		return text;
+	}
+
+	public static String formatTime(final int time, final TimeUnit unit, final TimeUnit minUnitShown,
+			final TimeUnit maxUnitShown) {
+		if (minUnitShown.compareTo(unit) > 0 || (maxUnitShown.compareTo(unit) > 0 && time >= unit.max)) {
+			return formatTime(time / unit.max, unit.next(), minUnitShown, maxUnitShown)
+					+ unit.partialFormat.formatted(time % unit.max);
+		}
+
+		return unit.fullFormat.formatted(time);
 	}
 }

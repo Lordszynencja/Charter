@@ -160,7 +160,7 @@ public class ChartToolbar extends JToolBar implements Initiable {
 	}
 
 	private void addGridSizeInput(final AtomicInteger x) {
-		gridSize = createNumberField(Label.GRID_SIZE, LabelPosition.LEFT_PACKED, 25, //
+		gridSize = createNumberField(Label.TOOLBAR_GRID_SIZE, LabelPosition.LEFT_PACKED, 25, //
 				Config.gridSize, 1, 128, false, newGridSize -> {
 					Config.gridSize = newGridSize;
 					Config.markChanged();

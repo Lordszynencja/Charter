@@ -1,8 +1,8 @@
 package log.charter.data;
 
-import java.util.stream.Collectors;
-
-import javax.swing.JOptionPane;
+import static log.charter.gui.components.utils.ComponentUtils.askYesNoCancel;
+import static log.charter.util.CollectionUtils.filter;
+import static log.charter.util.Utils.formatTime;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.data.managers.ModeManager;
@@ -11,6 +11,7 @@ import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.song.Arrangement;
 import log.charter.song.EventPoint;
 import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.Utils.TimeUnit;
 
 public class ArrangementValidator {
 	private ChartData chartData;
@@ -18,62 +19,150 @@ public class ArrangementValidator {
 	private ChartTimeHandler chartTimeHandler;
 	private ModeManager modeManager;
 
-	private Runnable moveToTimeOnArrangement(final int arrangementId, final int time) {
-		return () -> {
-			modeManager.setArrangement(arrangementId);
-			chartTimeHandler.nextTime(time);
-
-			charterFrame.updateSizes();
-		};
+	private void moveToTimeOnArrangement(final int arrangementId, final int time) {
+		modeManager.setArrangement(arrangementId);
+		chartTimeHandler.nextTime(time);
 	}
 
-	/**
-	 * @return true if validation should continue
-	 */
-	private boolean showWarning(final Label msg, final Runnable onYes) {
-		final int result = JOptionPane.showConfirmDialog(charterFrame, msg.label(), "",
-				JOptionPane.YES_NO_CANCEL_OPTION);
+	private boolean validateCountPhrases(final ArrayList2<EventPoint> phrases, final int arrangementId,
+			final String arrangementName) {
+		final ArrayList2<EventPoint> countPhrases = filter(phrases, phrase -> phrase.phrase.equals("COUNT"),
+				ArrayList2::new);
 
-		if (result == JOptionPane.YES_OPTION) {
-			onYes.run();
-			return false;
-		}
-		if (result == JOptionPane.NO_OPTION) {
+		if (countPhrases.size() <= 1) {
 			return true;
 		}
-		if (result == JOptionPane.CANCEL_OPTION) {
+
+		switch (askYesNoCancel(charterFrame, Label.WARNING, Label.MULTIPLE_COUNT_PHRASES_MOVE_TO_LAST_QUESTION,
+				arrangementName)) {
+			case YES:
+				moveToTimeOnArrangement(arrangementId, countPhrases.getLast().position());
+				return false;
+			case NO:
+				return true;
+			case CANCEL:
+			case EXIT:
+			default:
+				return false;
+		}
+	}
+
+	private boolean validateEndPhrases(final ArrayList2<EventPoint> phrases, final int arrangementId,
+			final String arrangementName) {
+		final ArrayList2<EventPoint> endPhrases = filter(phrases, phrase -> phrase.phrase.equals("END"),
+				ArrayList2::new);
+
+		if (endPhrases.size() <= 1) {
+			return true;
+		}
+
+		switch (askYesNoCancel(charterFrame, Label.WARNING, Label.MULTIPLE_END_PHRASES_MOVE_TO_FIRST_QUESTION,
+				arrangementName)) {
+			case YES:
+				moveToTimeOnArrangement(arrangementId, endPhrases.get(0).position());
+				return false;
+			case NO:
+				return true;
+			case CANCEL:
+			case EXIT:
+			default:
+				return false;
+		}
+	}
+
+	private boolean validatePhrasesAmount(final ArrayList2<EventPoint> phrases, final int arrangementId,
+			final String arrangementName) {
+		if (!phrases.isEmpty()) {
+			return true;
+		}
+
+		switch (askYesNoCancel(charterFrame, Label.WARNING, Label.NO_PHRASES_MOVE_TO_ARRANGEMENT_QUESTION,
+				arrangementName)) {
+			case YES:
+				modeManager.setArrangement(arrangementId);
+				return false;
+			case NO:
+				return true;
+			case CANCEL:
+			case EXIT:
+			default:
+				return false;
+		}
+	}
+
+	private boolean validatePhrases(final int arrangementId, final Arrangement arrangement) {
+		final ArrayList2<EventPoint> phrases = filter(arrangement.eventPoints, EventPoint::hasPhrase, ArrayList2::new);
+		final String arrangementName = arrangement.getTypeNameLabel(arrangementId);
+
+		if (!validateCountPhrases(phrases, arrangementId, arrangementName)) {
+			return false;
+		}
+		if (!validateEndPhrases(phrases, arrangementId, arrangementName)) {
+			return false;
+		}
+		if (!validatePhrasesAmount(phrases, arrangementId, arrangementName)) {
 			return false;
 		}
 
 		return true;
 	}
 
-	private boolean validateCountPhrases(final int arrangementId, final Arrangement arrangement) {
-		final ArrayList2<EventPoint> countPhrases = arrangement.eventPoints.stream()//
-				.filter(eventPoint -> eventPoint.phrase != null && eventPoint.phrase.equals("COUNT"))//
-				.collect(Collectors.toCollection(ArrayList2::new));
+	private boolean validateSectionsAmount(final ArrayList2<EventPoint> sections, final int arrangementId,
+			final String arrangementName) {
+		if (!sections.isEmpty()) {
+			return true;
+		}
 
-		if (countPhrases.size() > 1) {
-			final boolean warningStoppedValidation = !showWarning(Label.COUNT_PHRASE_MULTIPLE,
-					moveToTimeOnArrangement(arrangementId, countPhrases.getLast().position()));
-			if (warningStoppedValidation) {
+		switch (askYesNoCancel(charterFrame, Label.WARNING, Label.NO_SECTIONS_MOVE_TO_ARRANGEMENT_QUESTION,
+				arrangementName)) {
+			case YES:
+				modeManager.setArrangement(arrangementId);
 				return false;
+			case NO:
+				return true;
+			case CANCEL:
+			case EXIT:
+			default:
+				return false;
+		}
+	}
+
+	private boolean validateSectionsContainPhrases(final ArrayList2<EventPoint> sections, final int arrangementId,
+			final String arrangementName) {
+		for (final EventPoint section : sections) {
+			if (section.hasPhrase()) {
+				continue;
+			}
+
+			switch (askYesNoCancel(charterFrame, Label.WARNING, Label.SECTION_WITHOUT_PHRASE_MOVE_QUESTION,
+					section.section.label,
+					formatTime(section.position(), TimeUnit.MILISECONDS, TimeUnit.MINUTES, TimeUnit.YEARS),
+					arrangementName)) {
+				case YES:
+					moveToTimeOnArrangement(arrangementId, section.position());
+					return false;
+				case NO:
+					return true;
+				case CANCEL:
+				case EXIT:
+				default:
+					return false;
 			}
 		}
 
 		return true;
 	}
 
-	private boolean validateEndPhrases(final int arrangementId, final Arrangement arrangement) {
-		final ArrayList2<EventPoint> endPhrases = arrangement.eventPoints.stream()//
-				.filter(eventPoint -> eventPoint.phrase != null && eventPoint.phrase.equals("END"))//
-				.collect(Collectors.toCollection(ArrayList2::new));
-		if (endPhrases.size() > 1) {
-			final boolean warningStoppedValidation = !showWarning(Label.END_PHRASE_MULTIPLE,
-					moveToTimeOnArrangement(arrangementId, endPhrases.get(0).position()));
-			if (warningStoppedValidation) {
-				return false;
-			}
+	private boolean validateSections(final int arrangementId, final Arrangement arrangement) {
+		final ArrayList2<EventPoint> sections = filter(arrangement.eventPoints, p -> p.section != null,
+				ArrayList2::new);
+		final String arrangementName = arrangement.getTypeNameLabel(arrangementId);
+
+		if (!validateSectionsAmount(sections, arrangementId, arrangementName)) {
+			return false;
+		}
+		if (!validateSectionsContainPhrases(sections, arrangementId, arrangementName)) {
+			return false;
 		}
 
 		return true;
@@ -86,10 +175,10 @@ public class ArrangementValidator {
 		final ArrayList2<Arrangement> arrangements = chartData.songChart.arrangements;
 		for (int i = 0; i < arrangements.size(); i++) {
 			final Arrangement arrangement = arrangements.get(i);
-			if (!validateCountPhrases(i, arrangement)) {
+			if (!validatePhrases(i, arrangement)) {
 				return false;
 			}
-			if (!validateEndPhrases(i, arrangement)) {
+			if (!validateSections(i, arrangement)) {
 				return false;
 			}
 		}

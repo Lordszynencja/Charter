@@ -16,8 +16,8 @@ import log.charter.util.CollectionUtils.HashSet2;
 
 public class GuitarAnchorsDrawer {
 	private static Anchor findCurrentAnchor(final ArrayList2<Anchor> anchors, final int time) {
-		final ArrayList2<Anchor> previousAnchors = filter(ArrayList2::new, anchors, //
-				anchor -> anchor.position() < time);
+		final ArrayList2<Anchor> previousAnchors = filter(anchors, //
+				anchor -> anchor.position() < time, ArrayList2::new);
 
 		return previousAnchors.isEmpty() ? null : previousAnchors.getLast();
 	}

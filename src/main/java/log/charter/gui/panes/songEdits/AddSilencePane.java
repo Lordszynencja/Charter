@@ -60,14 +60,14 @@ public class AddSilencePane extends ParamsPane {
 		addButton.setSelected(true);
 		addButton.addActionListener(e -> addTime = true);
 		group.add(addButton);
-		final FieldWithLabel<JRadioButton> addField = new FieldWithLabel<JRadioButton>(Label.ADD_SILENCE_ADD, 5, 20, 20,
+		final FieldWithLabel<JRadioButton> addField = new FieldWithLabel<JRadioButton>(Label.ADD_SILENCE_TYPE_ADD, 5, 20, 20,
 				addButton, LabelPosition.RIGHT_PACKED);
 		add(addField, 20, getY(2), 100, 20);
 
 		final JRadioButton setButton = new JRadioButton();
 		setButton.addActionListener(e -> addTime = false);
 		group.add(setButton);
-		final FieldWithLabel<JRadioButton> setField = new FieldWithLabel<JRadioButton>(Label.ADD_SILENCE_SET, 5, 20, 20,
+		final FieldWithLabel<JRadioButton> setField = new FieldWithLabel<JRadioButton>(Label.ADD_SILENCE_TYPE_SET, 5, 20, 20,
 				setButton, LabelPosition.RIGHT_PACKED);
 		add(setField, 120, getY(2), 100, 20);
 	}

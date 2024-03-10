@@ -175,10 +175,10 @@ public class CollectionUtils {
 		return map;
 	}
 
-	public static <L extends List<E>, E> L filter(final Supplier<L> listGenerator, final L list,
-			final Predicate<E> filter) {
-		return list.stream()//
+	public static <L extends Collection<E>, E> L filter(final Collection<E> items, final Predicate<E> filter,
+			final Supplier<L> collectionGenerator) {
+		return items.stream()//
 				.filter(filter)//
-				.collect(Collectors.toCollection(listGenerator));
+				.collect(Collectors.toCollection(collectionGenerator));
 	}
 }

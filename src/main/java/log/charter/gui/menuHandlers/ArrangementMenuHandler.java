@@ -38,7 +38,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 	private void addArrangementsList(final JMenu menu) {
 		for (int i = 0; i < chartData.songChart.arrangements.size(); i++) {
 			final Arrangement arrangement = chartData.songChart.arrangements.get(i);
-			final String arrangementName = "[" + i + "] " + arrangement.getTypeNameLabel();
+			final String arrangementName = arrangement.getTypeNameLabel(i);
 
 			final int arrangementId = i;
 			menu.add(createItem(arrangementName, () -> modeManager.setArrangement(arrangementId)));
@@ -114,11 +114,10 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 	}
 
 	private void deleteArrangement() {
-		final String arrangementName = "[" + (chartData.currentArrangement + 1) + "] "
-				+ chartData.getCurrentArrangement().getTypeNameLabel();
+		final String arrangementName = chartData.getCurrentArrangementName();
 		final String msg = Label.DELETE_ARRANGEMENT_POPUP_MSG.label().formatted(arrangementName);
-		final int option = JOptionPane.showConfirmDialog(charterFrame, msg, Label.DELETE_ARRANGEMENT_POPUP_TITLE.label(),
-				JOptionPane.YES_NO_OPTION);
+		final int option = JOptionPane.showConfirmDialog(charterFrame, msg,
+				Label.DELETE_ARRANGEMENT_POPUP_TITLE.label(), JOptionPane.YES_NO_OPTION);
 
 		if (option != JOptionPane.YES_OPTION) {
 			return;

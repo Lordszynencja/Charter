@@ -19,9 +19,14 @@ import log.charter.util.RW;
 public class Localization {
 	public enum Label {
 		ACCENT("Accent"), //
+		ADD_BEATS_AMOUNT("Add this many beats:"), //
 		ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
+		ADD_BEATS_PANE("Add beats"), //
 		ADD_DEFAULT_SILENCE("Add default silence based on bars"), //
 		ADD_SILENCE("Add silence in the beginning"), //
+		ANCHOR_PANE("Anchor"), //
+		ANCHOR_WIDTH("Anchor width"), //
+		ARPEGGIO("Arpeggio"), //
 		ARRANGEMENT_MENU("Arrangement"), //
 		ARRANGEMENT_OPTIONS("Arrangement options"), //
 		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
@@ -48,11 +53,13 @@ public class Localization {
 		DELETE_ARRANGEMENT("Delete arrangement"), //
 		DELETE_ARRANGEMENT_POPUP_MSG("Are you sure you want to delete arrangement %s?"), //
 		DELETE_ARRANGEMENT_POPUP_TITLE("Delete arrangement?"), //
+		DIRECTORY_DOESNT_EXIST("Directory doesn't exist"), //
 		EDIT_MENU("Edit"), //
 		EDITING("Editing"), //
 		EXIT("Exit"), //
 		FILE_MENU("File"), //
 		FPS("FPS"), //
+		FRET("Fret"), //
 		FRET_0("Fret 0"), //
 		FRET_1("Fret 1"), //
 		FRET_2("Fret 2"), //
@@ -113,9 +120,20 @@ public class Localization {
 		TOGGLE_METRONOME("Toggle metronome"), //
 		TOGGLE_MIDI("Toggle midi notes"), //
 		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //
+		TOOLBAR_CLAPS("Claps"), //
+		TOOLBAR_GRID_SIZE("Grid Size: 1/"), //
+		TOOLBAR_METRONOME("Metronome"), //
+		TOOLBAR_MIDI("MIDI"), //
+		TOOLBAR_REPEATER("Repeater"), //
+		TOOLBAR_RMS_INDICATOR("RMS"), //
+		TOOLBAR_SFX_VOLUME("SFX"), //
+		TOOLBAR_SLOWED_PLAYBACK_SPEED("Playback speed"), //
+		TOOLBAR_VOLUME("Volume"), //
+		TOOLBAR_WAVEFORM_GRAPH("Waveform"), //
 		UNDO("Undo"), //
 		UNSUPPORTED_MUSIC_FORMAT("Unsupported music format!"), //
 		VOCAL_ARRANGEMENT("Vocal arrangement"), //
+		WARNING("Warning"), //
 		XML_IMPORT_TYPE("XML import type"), //
 		XML_IMPORT_AS("Choose what to import the XML as"), //
 
@@ -207,18 +225,8 @@ public class Localization {
 		NEXT_GRID_POSITION("Next grid position"), //
 		NEXT_BEAT("Next beat"), //
 
-		TOOLBAR_MIDI("MIDI"), //
-		TOOLBAR_CLAPS("Claps"), //
-		TOOLBAR_METRONOME("Metronome"), //
-		TOOLBAR_WAVEFORM_GRAPH("Waveform"), //
-		TOOLBAR_RMS_INDICATOR("RMS"), //
-		TOOLBAR_REPEATER("\uE1CA"), // Repeater
-		TOOLBAR_SLOWED_PLAYBACK_SPEED("Playback speed"), //
-		GRID_SIZE("Grid Size: 1/"), //
-		NOTE_GRID_TYPE("\uD83C\uDFB5"), //
-		BEAT_GRID_TYPE("\uD83E\uDD41"), //
-		TOOLBAR_VOLUME("\uD83D\uDD08"), // Volume
-		TOOLBAR_SFX_VOLUME("\uD83C\uDFB8"), // SFX
+		BEAT_GRID_TYPE("Beat"), //
+		NOTE_GRID_TYPE("Note"), //
 
 		SLIDE_PANE("Slide options"), //
 		SLIDE_PANE_FRET("Slide to"), //
@@ -234,14 +242,11 @@ public class Localization {
 
 		ADD_SILENCE_PANE("Add silence"), //
 		ADD_SILENCE_SECONDS("Add this many seconds of silence:"), //
-		ADD_SILENCE_ADD("Add silence"), //
-		ADD_SILENCE_SET("Set silence"), //
+		ADD_SILENCE_TYPE_ADD("Add silence"), //
+		ADD_SILENCE_TYPE_SET("Set silence"), //
 
 		ADD_DEFAULT_SILENCE_PANE("Add silence"), //
 		ADD_DEFAULT_SILENCE_BARS("Add this many bars of silence after 10s:"), //
-
-		ADD_BEATS_PANE("Add beats"), //
-		ADD_BEATS("Add this many beats:"), //
 
 		ARRANGEMENT_OPTIONS_PANE("Arrangement options"), //
 		ARRANGEMENT_OPTIONS_TYPE("Arrangement type"), //
@@ -263,9 +268,6 @@ public class Localization {
 		TOGGLE_WORD_PART("Toggle word part"), //
 		TOGGLE_PHRASE_END("Toggle phrase end"), //
 
-		ANCHOR_PANE("Anchor edit"), //
-		ANCHOR_WIDTH("Anchor width"), //
-
 		HAND_SHAPE_PANE("Hand shape edit"), //
 
 		CHORD_NAME("Chord name"), //
@@ -273,10 +275,7 @@ public class Localization {
 		SET_TEMPLATE_ON_CHORDS("Set template on chords"), //
 
 		STRING("String"), //
-		FRET("Fret"), //
 		CHORD_TEMPLATE_FINGER("Finger"), //
-
-		ARPEGGIO("Arpeggio"), //
 
 		MUTE("Mute:"), //
 		MUTE_FULL("Full"), //
@@ -324,14 +323,14 @@ public class Localization {
 		CHOOSE_FOLDER_NAME("Choose folder name"), //
 		COULDNT_LOAD_PROJECT("Couldn't load project, reason:\n"), //
 		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement, reason:\n"), //
-		COUNT_PHRASE_MISSING(
-				"Count phrase is missing, do you want to move to the beginning of the arrangement to place it?"), //
-		COUNT_PHRASE_MULTIPLE(
-				"Count phrase is placed in multiple places, do you want to move to the last position to fix it?"), //
-		DIRECTORY_DOESNT_EXIST("Directory doesn't exist"), //
+		MULTIPLE_COUNT_PHRASES_MOVE_TO_LAST_QUESTION(
+				"Count phrase is placed in multiple places on arrangement %s, do you want to move to the last position to fix it?"), //
+		MULTIPLE_END_PHRASES_MOVE_TO_FIRST_QUESTION(
+				"End phrase is placed in multiple places on arrangement %s, do you want to move to the first position to fix it?"), //
+		NO_PHRASES_MOVE_TO_ARRANGEMENT_QUESTION("There are no phrases placed for arrangment %s, move to it?"), //
+		NO_SECTIONS_MOVE_TO_ARRANGEMENT_QUESTION("There are no sections placed for arrangment %s, move to it?"), //
+		SECTION_WITHOUT_PHRASE_MOVE_QUESTION("Section %s [%s] on arrangement %s has no phrase, move to it?"), //
 		END_PHRASE_MISSING("End phrase is missing, do you want to move to the end of the arrangement to place it?"), //
-		END_PHRASE_MULTIPLE(
-				"End phrase is placed in multiple places, do you want to move to the first position to fix it?"), //
 		EXIT_POPUP("Exit"), //
 		EXIT_MESSAGE("Are you sure you want to exit?"), //
 		FAST_BACKWARD("fast backward"), //
@@ -405,6 +404,7 @@ public class Localization {
 
 		GRAPHIC_CONFIG_PANE("Graphic config"), //
 
+		// COLORS
 		COLOR_BASE_1("Base 1"), //
 		COLOR_BASE_2("Base 2"), //
 		COLOR_BASE_BG_0("Base background 0"), //

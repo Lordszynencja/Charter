@@ -84,8 +84,13 @@ public class ComponentUtils {
 		return ConfirmAnswer.fromJOptionPaneResult(result);
 	}
 
-	public static ConfirmAnswer askYesNoCancel(final Component parent, final Label title, final Label message) {
-		final int result = JOptionPane.showConfirmDialog(parent, message.label(), title.label(),
+	public static ConfirmAnswer askYesNoCancel(final Component parent, final Label title, final Label message,
+			final Object... messageParams) {
+		String formattedMessage = message.label();
+		if (messageParams.length > 0) {
+			formattedMessage = formattedMessage.formatted((Object[]) messageParams);
+		}
+		final int result = JOptionPane.showConfirmDialog(parent, formattedMessage, title.label(),
 				JOptionPane.YES_NO_CANCEL_OPTION);
 
 		return ConfirmAnswer.fromJOptionPaneResult(result);

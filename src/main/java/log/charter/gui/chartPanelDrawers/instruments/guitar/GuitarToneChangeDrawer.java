@@ -17,8 +17,8 @@ import log.charter.util.CollectionUtils.HashSet2;
 public class GuitarToneChangeDrawer {
 	private static String findCurrentTone(final String baseTone, final ArrayList2<ToneChange> toneChanges,
 			final int time) {
-		final ArrayList2<ToneChange> tones = filter(ArrayList2::new, toneChanges, //
-				eventPoint -> eventPoint.position() < time);
+		final ArrayList2<ToneChange> tones = filter(toneChanges, //
+				eventPoint -> eventPoint.position() < time, ArrayList2::new);
 
 		return tones.isEmpty() ? baseTone : tones.getLast().toneName;
 	}

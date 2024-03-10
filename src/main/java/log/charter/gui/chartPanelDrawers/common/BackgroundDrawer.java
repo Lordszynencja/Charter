@@ -9,11 +9,11 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.fil
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.Utils.formatTime;
 
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.text.DecimalFormat;
 
 import log.charter.data.ChartData;
 import log.charter.gui.ChartPanel;
@@ -22,11 +22,11 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.handlers.data.ChartTimeHandler;
 import log.charter.util.Position2D;
+import log.charter.util.Utils.TimeUnit;
 
 public class BackgroundDrawer {
 	private static final int[] jumpDistances = { 100, 250, 1000, 2000, 5000, 10_000, 30_000, 60_000, 120_000, 300_000,
 			600_000, 3_600_000 };
-	private static final DecimalFormat twoDigitsFormat = new DecimalFormat("00");
 
 	private static int nonsecondsMarkerBottom = timingY + 12;
 	private static int secondsMarkerBottom = timingY + 24;
@@ -75,21 +75,14 @@ public class BackgroundDrawer {
 		return jumpDistances[jumpDistances.length - 1];
 	}
 
-	private String formatTime(final int t) {
-		String formatted = twoDigitsFormat.format(t / 60) + ":" + twoDigitsFormat.format(t % 60);
-		if (t > 3600) {
-			formatted = t / 3600 + ":" + formatted;
-		}
-		return formatted;
-	}
-
 	private void drawTimestamp(final Graphics2D g, final int time, final int timestampTime) {
 		final int x = timeToX(timestampTime, time);
 		if (timestampTime % 1000 == 0) {
 			filledRectangle(new ShapePositionWithSize(x, lanesBottom + 1, 1, secondsMarkerBottom - lanesBottom - 1),
 					ColorLabel.BASE_DARK_TEXT).draw(g);
 
-			final String formattedTime = formatTime(timestampTime / 1000);
+			final String formattedTime = formatTime(timestampTime / 1000, TimeUnit.SECONDS, TimeUnit.MINUTES,
+					TimeUnit.HOURS);
 			new CenteredText(new Position2D(x, textY), timeFont, formattedTime, ColorLabel.BASE_DARK_TEXT).draw(g);
 		} else {
 			lineVertical(x, lanesBottom + 1, nonsecondsMarkerBottom, ColorLabel.BASE_DARK_TEXT).draw(g);
