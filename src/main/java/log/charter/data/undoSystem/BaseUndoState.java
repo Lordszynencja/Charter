@@ -1,8 +1,8 @@
 package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.ModeManager;
-import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.services.data.ChartTimeHandler;
+import log.charter.services.editModes.ModeManager;
 
 public class BaseUndoState extends UndoState {
 	private final UndoState internalUndoState;

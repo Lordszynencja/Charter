@@ -13,14 +13,14 @@ import javax.swing.event.DocumentListener;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.selection.Selection;
-import log.charter.data.managers.selection.SelectionAccessor;
-import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.AutocompleteInput;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.services.data.selection.Selection;
+import log.charter.services.data.selection.SelectionAccessor;
+import log.charter.services.data.selection.SelectionManager;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.song.Arrangement;
 import log.charter.song.ToneChange;

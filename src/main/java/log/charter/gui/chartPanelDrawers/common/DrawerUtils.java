@@ -13,9 +13,9 @@ import static log.charter.data.config.GraphicalConfig.timingHeight;
 import static log.charter.data.config.GraphicalConfig.toneChangeHeight;
 import static log.charter.util.Utils.getStringPosition;
 
-import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
+import log.charter.services.editModes.EditMode;
 
 public class DrawerUtils {
 	public static int beatTextY = 15;

@@ -10,11 +10,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.handlers.files.SongFileHandler;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.RSXMLToArrangement;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.ChartProject;
+import log.charter.services.data.files.SongFileHandler;
 import log.charter.song.notes.IPosition;
 import log.charter.song.vocals.Vocals;
 import log.charter.util.CollectionUtils.ArrayList2;

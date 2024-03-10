@@ -12,7 +12,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.utils.validators.IntValueValidator;
-import log.charter.gui.utils.Framer;
+import log.charter.services.utils.Framer;
 import log.charter.util.FileChooseUtils;
 
 public final class ConfigPane extends ParamsPane {

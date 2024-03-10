@@ -330,7 +330,6 @@ public class Localization {
 		NO_PHRASES_MOVE_TO_ARRANGEMENT_QUESTION("There are no phrases placed for arrangment %s, move to it?"), //
 		NO_SECTIONS_MOVE_TO_ARRANGEMENT_QUESTION("There are no sections placed for arrangment %s, move to it?"), //
 		SECTION_WITHOUT_PHRASE_MOVE_QUESTION("Section %s [%s] on arrangement %s has no phrase, move to it?"), //
-		END_PHRASE_MISSING("End phrase is missing, do you want to move to the end of the arrangement to place it?"), //
 		EXIT_POPUP("Exit"), //
 		EXIT_MESSAGE("Are you sure you want to exit?"), //
 		FAST_BACKWARD("fast backward"), //

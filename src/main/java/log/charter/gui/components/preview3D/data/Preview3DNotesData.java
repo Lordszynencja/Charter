@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.RepeatManager;
+import log.charter.services.RepeatManager;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.Level;

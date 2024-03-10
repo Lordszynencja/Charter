@@ -4,20 +4,20 @@ import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.CharterContext.Initiable;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.modes.EditMode;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.simple.SpecialMenuItem;
-import log.charter.gui.handlers.Action;
-import log.charter.gui.handlers.ActionHandler;
-import log.charter.gui.handlers.data.ChartTimeHandler;
-import log.charter.gui.handlers.data.ProjectAudioHandler;
 import log.charter.gui.panes.songEdits.AddBeatsAtTheStartPane;
 import log.charter.gui.panes.songEdits.AddDefaultSilencePane;
 import log.charter.gui.panes.songEdits.AddSilencePane;
 import log.charter.gui.panes.songSettings.SongOptionsPane;
+import log.charter.services.Action;
+import log.charter.services.ActionHandler;
+import log.charter.services.CharterContext.Initiable;
+import log.charter.services.data.ChartTimeHandler;
+import log.charter.services.data.ProjectAudioHandler;
+import log.charter.services.editModes.EditMode;
+import log.charter.services.editModes.ModeManager;
 
 class EditMenuHandler extends CharterMenuHandler implements Initiable {
 	private ActionHandler actionHandler;

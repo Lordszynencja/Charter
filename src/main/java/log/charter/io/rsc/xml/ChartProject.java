@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.modes.EditMode;
+import log.charter.services.editModes.EditMode;
 import log.charter.song.Arrangement;
 import log.charter.song.Beat;
 import log.charter.song.SongChart;

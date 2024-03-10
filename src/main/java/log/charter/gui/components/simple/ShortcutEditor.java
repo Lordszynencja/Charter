@@ -10,9 +10,9 @@ import java.awt.event.KeyListener;
 import javax.swing.JButton;
 import javax.swing.KeyStroke;
 
-import log.charter.gui.handlers.Action;
-import log.charter.gui.handlers.mouseAndKeyboard.Shortcut;
-import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
+import log.charter.services.Action;
+import log.charter.services.mouseAndKeyboard.Shortcut;
+import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 
 public class ShortcutEditor extends JButton implements ActionListener, FocusListener, KeyListener {
 	private static final long serialVersionUID = -8841476344526552242L;

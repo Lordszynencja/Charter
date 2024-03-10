@@ -23,9 +23,9 @@ import log.charter.gui.components.containers.ScrollableRowedPanel;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.ShortcutEditor;
-import log.charter.gui.handlers.Action;
-import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
 import log.charter.gui.menuHandlers.CharterMenuBar;
+import log.charter.services.Action;
+import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 import log.charter.util.CollectionUtils.Pair;
 
 public final class ShortcutConfigPane extends ParamsPane implements ComponentListener {

@@ -3,11 +3,11 @@ package log.charter.gui.menuHandlers;
 import javax.swing.JMenu;
 
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.CharterContext.Initiable;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.modes.EditMode;
-import log.charter.gui.handlers.Action;
-import log.charter.gui.handlers.ActionHandler;
+import log.charter.services.Action;
+import log.charter.services.ActionHandler;
+import log.charter.services.CharterContext.Initiable;
+import log.charter.services.editModes.EditMode;
+import log.charter.services.editModes.ModeManager;
 
 class MusicMenuHandler extends CharterMenuHandler implements Initiable {
 	private ActionHandler actionHandler;

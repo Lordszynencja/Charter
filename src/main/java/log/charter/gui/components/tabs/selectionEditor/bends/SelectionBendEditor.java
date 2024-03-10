@@ -14,8 +14,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.selection.SelectionAccessor;
-import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
@@ -23,6 +21,8 @@ import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.lookAndFeel.CharterRadioButton;
+import log.charter.services.data.selection.SelectionAccessor;
+import log.charter.services.data.selection.SelectionManager;
 import log.charter.song.BeatsMap;
 import log.charter.song.BendValue;
 import log.charter.song.notes.ChordOrNote;

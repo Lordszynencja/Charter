@@ -3,12 +3,12 @@ package log.charter.gui.components.tabs.selectionEditor;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
-import static log.charter.data.ArrangementFixer.fixSoundLength;
 import static log.charter.data.config.Config.frets;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
+import static log.charter.services.data.fixers.ArrangementFixer.fixSoundLength;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +21,8 @@ import java.util.stream.Stream;
 
 import javax.swing.JCheckBox;
 
-import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.selection.Selection;
-import log.charter.data.managers.selection.SelectionAccessor;
-import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
@@ -42,9 +38,13 @@ import log.charter.gui.components.tabs.selectionEditor.simpleComponents.FretInpu
 import log.charter.gui.components.tabs.selectionEditor.simpleComponents.StringInput;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
-import log.charter.gui.handlers.data.ChartItemsHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.lookAndFeel.CharterCheckBox;
+import log.charter.services.data.ChartItemsHandler;
+import log.charter.services.data.fixers.ArrangementFixer;
+import log.charter.services.data.selection.Selection;
+import log.charter.services.data.selection.SelectionAccessor;
+import log.charter.services.data.selection.SelectionManager;
+import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.enums.BassPickingTechnique;

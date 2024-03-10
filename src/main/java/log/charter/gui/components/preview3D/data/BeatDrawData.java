@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.RepeatManager;
+import log.charter.services.RepeatManager;
 import log.charter.song.Beat;
 import log.charter.song.notes.IConstantPosition;
 import log.charter.util.CollectionUtils.ArrayList2;

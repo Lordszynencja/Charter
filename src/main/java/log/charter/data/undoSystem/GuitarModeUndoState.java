@@ -1,7 +1,7 @@
 package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
-import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.services.data.ChartTimeHandler;
 
 public class GuitarModeUndoState extends UndoState {
 	private final GuitarUndoState guitarUndoState;

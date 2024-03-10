@@ -5,18 +5,18 @@ import static log.charter.song.notes.IConstantPosition.findLastIdBeforeEqual;
 
 import javax.swing.JMenu;
 
-import log.charter.data.ArrangementFretHandPositionsCreator;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.CharterContext.Initiable;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.modes.EditMode;
-import log.charter.data.managers.selection.Selection;
-import log.charter.data.managers.selection.SelectionAccessor;
-import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.handlers.Action;
+import log.charter.services.Action;
+import log.charter.services.ArrangementFretHandPositionsCreator;
+import log.charter.services.CharterContext.Initiable;
+import log.charter.services.data.selection.Selection;
+import log.charter.services.data.selection.SelectionAccessor;
+import log.charter.services.data.selection.SelectionManager;
+import log.charter.services.editModes.EditMode;
+import log.charter.services.editModes.ModeManager;
 import log.charter.song.ChordTemplate;
 import log.charter.song.Level;
 import log.charter.song.notes.ChordOrNote;

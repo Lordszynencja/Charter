@@ -40,7 +40,7 @@ import log.charter.gui.components.simple.AutocompleteInput.PopupComponentMouseLi
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
+import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.ChordTemplate;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.CollectionUtils.HashMap2;

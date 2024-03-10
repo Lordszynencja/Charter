@@ -25,10 +25,6 @@ import javax.swing.JToolBar;
 import log.charter.data.GridType;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.CharterContext.Initiable;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.RepeatManager;
-import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.simple.FieldWithLabel;
@@ -36,10 +32,14 @@ import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
-import log.charter.gui.handlers.AudioHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
 import log.charter.gui.lookAndFeel.CharterSliderUI;
 import log.charter.io.Logger;
+import log.charter.services.AudioHandler;
+import log.charter.services.RepeatManager;
+import log.charter.services.CharterContext.Initiable;
+import log.charter.services.editModes.EditMode;
+import log.charter.services.editModes.ModeManager;
+import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.util.ImageUtils;
 
 public class ChartToolbar extends JToolBar implements Initiable {

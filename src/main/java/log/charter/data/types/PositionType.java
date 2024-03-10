@@ -7,34 +7,35 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.timingY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
 
+import java.util.function.BiFunction;
+
 import log.charter.data.ChartData;
-import log.charter.data.managers.modes.EditMode;
-import log.charter.data.types.positions.AnchorPositionTypeManager;
-import log.charter.data.types.positions.BeatPositionTypeManager;
-import log.charter.data.types.positions.EventPointPositionTypeManager;
-import log.charter.data.types.positions.GuitarNotePositionTypeManager;
-import log.charter.data.types.positions.HandShapePositionTypeManager;
-import log.charter.data.types.positions.NonePositionTypeManager;
-import log.charter.data.types.positions.PositionTypeManager;
-import log.charter.data.types.positions.ToneChangePositionTypeManager;
-import log.charter.data.types.positions.VocalPositionTypeManager;
+import log.charter.services.editModes.EditMode;
 import log.charter.song.notes.IPosition;
 import log.charter.util.CollectionUtils.ArrayList2;
 
 public enum PositionType {
-	ANCHOR(new AnchorPositionTypeManager()), //
-	BEAT(new BeatPositionTypeManager()), //
-	EVENT_POINT(new EventPointPositionTypeManager()), //
-	GUITAR_NOTE(new GuitarNotePositionTypeManager()), //
-	HAND_SHAPE(new HandShapePositionTypeManager()), //
-	NONE(new NonePositionTypeManager()), //
-	TONE_CHANGE(new ToneChangePositionTypeManager()), //
-	VOCAL(new VocalPositionTypeManager());
+	ANCHOR(chartData -> chartData.getCurrentArrangementLevel().anchors, PositionWithIdAndType::new), //
+	BEAT(chartData -> chartData.songChart.beatsMap.beats, PositionWithIdAndType::new), //
+	EVENT_POINT(chartData -> chartData.getCurrentArrangement().eventPoints, PositionWithIdAndType::new), //
+	GUITAR_NOTE(chartData -> chartData.getCurrentArrangementLevel().sounds, PositionWithIdAndType::new), //
+	HAND_SHAPE(chartData -> chartData.getCurrentArrangementLevel().handShapes, PositionWithIdAndType::new), //
+	NONE(chartData -> new ArrayList2<>(), (id, item) -> PositionWithIdAndType.forNone()), //
+	TONE_CHANGE(chartData -> chartData.getCurrentArrangement().toneChanges, PositionWithIdAndType::new), //
+	VOCAL(chartData -> chartData.songChart.vocals.vocals, PositionWithIdAndType::new);
 
-	public final PositionTypeManager<?> manager;
+	private static interface PositionTypeItemsSupplier<T> {
+		ArrayList2<T> items(ChartData chartData);
+	}
 
-	private <T extends IPosition> PositionType(final PositionTypeManager<T> manager) {
-		this.manager = manager;
+	private final PositionTypeItemsSupplier<IPosition> itemsSupplier;
+	private final BiFunction<Integer, IPosition, PositionWithIdAndType> itemMapper;
+
+	@SuppressWarnings("unchecked")
+	private <T extends IPosition> PositionType(final PositionTypeItemsSupplier<T> itemsSupplier,
+			final BiFunction<Integer, T, PositionWithIdAndType> itemMapper) {
+		this.itemsSupplier = (PositionTypeItemsSupplier<IPosition>) itemsSupplier;
+		this.itemMapper = (BiFunction<Integer, IPosition, PositionWithIdAndType>) itemMapper;
 	}
 
 	private static PositionType fromYGuitar(final int y) {
@@ -61,7 +62,6 @@ public enum PositionType {
 		if (y < beatTextY) {
 			return NONE;
 		}
-
 		if (y < lanesBottom) {
 			return BEAT;
 		}
@@ -81,23 +81,21 @@ public enum PositionType {
 	}
 
 	public static PositionType fromY(final int y, final EditMode mode) {
-		if (mode == EditMode.GUITAR) {
-			return fromYGuitar(y);
-		}
-
-		if (mode == EditMode.TEMPO_MAP) {
-			return fromYTempoMap(y);
-		}
-
-		if (mode == EditMode.VOCALS) {
-			return fromYVocals(y);
-		}
-
-		return NONE;
+		return switch (mode) {
+			case GUITAR -> fromYGuitar(y);
+			case TEMPO_MAP -> fromYTempoMap(y);
+			case VOCALS -> fromYVocals(y);
+			case EMPTY -> NONE;
+			default -> NONE;
+		};
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends IPosition> ArrayList2<T> getPositions(final ChartData data) {
-		return (ArrayList2<T>) manager.getPositions(data);
+		return (ArrayList2<T>) itemsSupplier.items(data);
+	}
+
+	public ArrayList2<PositionWithIdAndType> getPositionsWithIdsAndTypes(final ChartData data) {
+		return getPositions(data).mapWithId((BiFunction<Integer, IPosition, PositionWithIdAndType>) itemMapper);
 	}
 }

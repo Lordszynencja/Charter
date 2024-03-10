@@ -10,36 +10,8 @@ import log.charter.song.notes.Position;
 import log.charter.song.vocals.Vocal;
 
 public class PositionWithIdAndType extends Position {
-	public static PositionWithIdAndType create(final int position, final PositionType type) {
-		return new TemporaryValue(position, type).transform();
-	}
-
-	public static PositionWithIdAndType create(final int id, final Anchor anchor) {
-		return new TemporaryValue(id, anchor).transform();
-	}
-
-	public static PositionWithIdAndType create(final int id, final Beat beat) {
-		return new TemporaryValue(id, beat).transform();
-	}
-
-	public static PositionWithIdAndType create(final int id, final ChordOrNote chordOrNote) {
-		return new TemporaryValue(id, chordOrNote).transform();
-	}
-
-	public static PositionWithIdAndType create(final int id, final EventPoint eventPoint) {
-		return new TemporaryValue(id, eventPoint).transform();
-	}
-
-	public static PositionWithIdAndType create(final int id, final HandShape handShape) {
-		return new TemporaryValue(id, handShape).transform();
-	}
-
-	public static PositionWithIdAndType create(final int id, final ToneChange toneChange) {
-		return new TemporaryValue(id, toneChange).transform();
-	}
-
-	public static PositionWithIdAndType create(final int id, final Vocal vocal) {
-		return new TemporaryValue(id, vocal).transform();
+	public static PositionWithIdAndType forNone() {
+		return new PositionWithIdAndType(0, PositionType.NONE);
 	}
 
 	public final int endPosition;
@@ -49,15 +21,15 @@ public class PositionWithIdAndType extends Position {
 
 	public final Anchor anchor;
 	public final Beat beat;
-	public final ChordOrNote chordOrNote;
 	public final EventPoint eventPoint;
+	public final ChordOrNote chordOrNote;
 	public final HandShape handShape;
 	public final ToneChange toneChange;
 	public final Vocal vocal;
 
-	PositionWithIdAndType(final int position, final int endPosition, final Integer id, final PositionType type,
-			final boolean existingPosition, final Anchor anchor, final Beat beat, final ChordOrNote chordOrNote,
-			final EventPoint eventPoint, final HandShape handShape, final ToneChange toneChange, final Vocal vocal) {
+	public PositionWithIdAndType(final int position, final int endPosition, final Integer id, final PositionType type,
+			final boolean existingPosition, final Anchor anchor, final Beat beat, final EventPoint eventPoint,
+			final ChordOrNote chordOrNote, final HandShape handShape, final ToneChange toneChange, final Vocal vocal) {
 		super(position);
 		this.endPosition = endPosition;
 		this.id = id;
@@ -66,10 +38,63 @@ public class PositionWithIdAndType extends Position {
 
 		this.anchor = anchor;
 		this.beat = beat;
-		this.chordOrNote = chordOrNote;
 		this.eventPoint = eventPoint;
+		this.chordOrNote = chordOrNote;
 		this.handShape = handShape;
 		this.toneChange = toneChange;
 		this.vocal = vocal;
+	}
+
+	public PositionWithIdAndType(final int position, final PositionType type) {
+		this(position, position, null, type, false, null, null, null, null, null, null, null);
+	}
+
+	public PositionWithIdAndType(final int id, final Anchor anchor) {
+		this(anchor.position(), anchor.position(), id, PositionType.ANCHOR, true, anchor, null, null, null, null, null,
+				null);
+	}
+
+	public PositionWithIdAndType(final int id, final Beat beat) {
+		this(beat.position(), beat.position(), id, PositionType.BEAT, true, null, beat, null, null, null, null, null);
+	}
+
+	public PositionWithIdAndType(final int id, final EventPoint eventPoint) {
+		this(eventPoint.position(), eventPoint.position(), id, PositionType.EVENT_POINT, true, null, null, eventPoint,
+				null, null, null, null);
+	}
+
+	public PositionWithIdAndType(final int id, final ChordOrNote chordOrNote) {
+		this(chordOrNote.position(), chordOrNote.endPosition(), id, PositionType.GUITAR_NOTE, true, null, null, null,
+				chordOrNote, null, null, null);
+	}
+
+	public PositionWithIdAndType(final int id, final HandShape handShape) {
+		this(handShape.position(), handShape.endPosition(), id, PositionType.HAND_SHAPE, true, null, null, null, null,
+				handShape, null, null);
+	}
+
+	public PositionWithIdAndType(final int id, final ToneChange toneChange) {
+		this(toneChange.position(), toneChange.position(), id, PositionType.TONE_CHANGE, true, null, null, null, null,
+				null, toneChange, null);
+	}
+
+	public PositionWithIdAndType(final int id, final Vocal vocal) {
+		this(vocal.position(), vocal.endPosition(), id, PositionType.VOCAL, true, null, null, null, null, null, null,
+				vocal);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T get() {
+		return switch (type) {
+			case ANCHOR -> (T) anchor;
+			case BEAT -> (T) beat;
+			case EVENT_POINT -> (T) eventPoint;
+			case GUITAR_NOTE -> (T) chordOrNote;
+			case HAND_SHAPE -> (T) handShape;
+			case NONE -> null;
+			case TONE_CHANGE -> (T) toneChange;
+			case VOCAL -> (T) vocal;
+			default -> null;
+		};
 	}
 }

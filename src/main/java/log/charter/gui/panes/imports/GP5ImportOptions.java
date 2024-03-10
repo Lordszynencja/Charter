@@ -6,12 +6,12 @@ import java.util.Vector;
 
 import javax.swing.JComboBox;
 
-import log.charter.data.ArrangementFixer;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.menuHandlers.CharterMenuBar;
+import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.song.Arrangement;
 import log.charter.song.SongChart;
 

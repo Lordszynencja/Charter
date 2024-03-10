@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.GraphicalConfig;
-import log.charter.data.managers.CharterContext;
-import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
 import log.charter.io.Logger;
+import log.charter.services.CharterContext;
+import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 
 public class CharterMain {
 	public static final String VERSION = "0.15.13";

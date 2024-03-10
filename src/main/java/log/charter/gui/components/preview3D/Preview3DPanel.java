@@ -11,10 +11,6 @@ import org.lwjgl.opengl.awt.GLData;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
-import log.charter.data.managers.CharterContext.Initiable;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.RepeatManager;
-import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.camera.Preview3DCameraHandler;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
@@ -33,10 +29,14 @@ import log.charter.gui.components.preview3D.glUtils.Texture;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
-import log.charter.gui.handlers.data.ChartTimeHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
-import log.charter.gui.utils.Framer;
 import log.charter.io.Logger;
+import log.charter.services.RepeatManager;
+import log.charter.services.CharterContext.Initiable;
+import log.charter.services.data.ChartTimeHandler;
+import log.charter.services.editModes.EditMode;
+import log.charter.services.editModes.ModeManager;
+import log.charter.services.mouseAndKeyboard.KeyboardHandler;
+import log.charter.services.utils.Framer;
 import log.charter.util.Timer;
 
 public class Preview3DPanel extends AWTGLCanvas implements Initiable {

@@ -1,7 +1,7 @@
 package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
-import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.services.data.ChartTimeHandler;
 import log.charter.song.Arrangement;
 import log.charter.song.Beat;
 import log.charter.util.CollectionUtils.ArrayList2;

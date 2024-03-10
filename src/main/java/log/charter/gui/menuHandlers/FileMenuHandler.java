@@ -5,25 +5,24 @@ import java.io.File;
 import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.CharterContext;
-import log.charter.data.managers.CharterContext.Initiable;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.handlers.Action;
-import log.charter.gui.handlers.ActionHandler;
-import log.charter.gui.handlers.data.ProjectAudioHandler;
-import log.charter.gui.handlers.files.GP5FileImporter;
-import log.charter.gui.handlers.files.MidiImporter;
-import log.charter.gui.handlers.files.RSXMLImporter;
-import log.charter.gui.handlers.files.SongFileHandler;
 import log.charter.gui.panes.ConfigPane;
 import log.charter.gui.panes.ShortcutConfigPane;
 import log.charter.gui.panes.colorConfig.ColorConfigPane;
 import log.charter.gui.panes.graphicalConfig.GraphicConfigPane;
-import log.charter.gui.utils.Framer;
+import log.charter.services.Action;
+import log.charter.services.ActionHandler;
+import log.charter.services.CharterContext;
+import log.charter.services.CharterContext.Initiable;
+import log.charter.services.data.ProjectAudioHandler;
+import log.charter.services.data.files.GP5FileImporter;
+import log.charter.services.data.files.MidiImporter;
+import log.charter.services.data.files.RSXMLImporter;
+import log.charter.services.data.files.SongFileHandler;
+import log.charter.services.editModes.EditMode;
+import log.charter.services.editModes.ModeManager;
+import log.charter.services.utils.Framer;
 import log.charter.util.FileChooseUtils;
 
 public class FileMenuHandler extends CharterMenuHandler implements Initiable {
@@ -55,7 +54,7 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 		final JMenu menu = createMenu(Label.FILE_MENU);
 		menu.add(createItem(Action.NEW_PROJECT));
 		menu.add(createItem(Action.OPEN_PROJECT));
-		menu.add(createItem(Label.CREATE_PROJECT_FROM_RS_XML, songFileHandler::openSongWithImportFromArrangementXML));
+		menu.add(createItem(Label.CREATE_PROJECT_FROM_RS_XML, songFileHandler::createSongWithImportFromArrangementXML));
 
 		if (modeManager.getMode() != EditMode.EMPTY) {
 			menu.add(createItem(Label.CHANGE_AUDIO, this::openAudioFile));
@@ -95,8 +94,7 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 	}
 
 	private void importRSArrangementXML() {
-		final String dir = chartData.isEmpty ? Config.songsPath : chartData.path;
-		final File file = FileChooseUtils.chooseFile(charterFrame, dir, new String[] { ".xml" },
+		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".xml" },
 				new String[] { Label.RS_ARRANGEMENT_FILE.label() });
 		if (file == null) {
 			return;
@@ -106,8 +104,7 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 	}
 
 	public void importRSVocalsXML() {
-		final String dir = chartData.isEmpty ? Config.songsPath : chartData.path;
-		final File file = FileChooseUtils.chooseFile(charterFrame, dir, new String[] { ".xml" },
+		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".xml" },
 				new String[] { Label.RS_ARRANGEMENT_FILE.label() });
 		if (file == null) {
 			return;
@@ -116,16 +113,9 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 		rsXMLImporter.importRSVocalsXML(file);
 	}
 
-	private File chooseGP5File() {
-		final String dir = chartData.isEmpty ? Config.songsPath : chartData.path;
-		final File file = FileChooseUtils.chooseFile(charterFrame, dir, new String[] { ".gp3", ".gp4", "gp5" },
-				Label.GP_FILE.label());
-
-		return file;
-	}
-
 	private void importGPFile() {
-		final File file = chooseGP5File();
+		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path,
+				new String[] { ".gp3", ".gp4", "gp5" }, Label.GP_FILE.label());
 		if (file == null) {
 			return;
 		}
@@ -134,8 +124,7 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 	}
 
 	private void importMidiTempo() {
-		final String dir = chartData.isEmpty ? Config.songsPath : chartData.path;
-		final File file = FileChooseUtils.chooseFile(charterFrame, dir, new String[] { ".mid" },
+		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".mid" },
 				Label.MIDI_FILE.label());
 		if (file == null) {
 			return;

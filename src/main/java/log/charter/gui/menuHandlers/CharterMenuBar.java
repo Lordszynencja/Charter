@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
-import log.charter.data.managers.CharterContext;
-import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.services.CharterContext;
+import log.charter.services.CharterContext.Initiable;
 import log.charter.gui.CharterFrame;
 import log.charter.util.CollectionUtils.ArrayList2;
 

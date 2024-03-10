@@ -6,10 +6,10 @@ import javax.swing.JMenuItem;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.simple.SpecialMenuItem;
-import log.charter.gui.handlers.Action;
-import log.charter.gui.handlers.ActionHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.Shortcut;
-import log.charter.gui.handlers.mouseAndKeyboard.ShortcutConfig;
+import log.charter.services.Action;
+import log.charter.services.ActionHandler;
+import log.charter.services.mouseAndKeyboard.Shortcut;
+import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 
 abstract class CharterMenuHandler {
 	private static void setDefaultColors(final JComponent component) {

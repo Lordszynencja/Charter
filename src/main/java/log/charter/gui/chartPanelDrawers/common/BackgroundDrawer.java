@@ -20,7 +20,7 @@ import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
-import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.services.data.ChartTimeHandler;
 import log.charter.util.Position2D;
 import log.charter.util.Utils.TimeUnit;
 

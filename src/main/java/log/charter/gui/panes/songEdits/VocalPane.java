@@ -6,12 +6,12 @@ import javax.swing.JCheckBox;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.selection.Selection;
-import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
+import log.charter.services.data.selection.Selection;
+import log.charter.services.data.selection.SelectionManager;
 import log.charter.song.vocals.Vocal;
 
 public class VocalPane extends ParamsPane {

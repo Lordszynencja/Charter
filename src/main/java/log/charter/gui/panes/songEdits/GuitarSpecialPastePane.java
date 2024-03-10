@@ -2,11 +2,11 @@ package log.charter.gui.panes.songEdits;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.copySystem.data.FullGuitarCopyData;
-import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
+import log.charter.services.data.copy.data.FullGuitarCopyData;
+import log.charter.services.data.selection.SelectionManager;
 
 public class GuitarSpecialPastePane extends ParamsPane {
 	private static boolean pasteSectionsDefault = true;

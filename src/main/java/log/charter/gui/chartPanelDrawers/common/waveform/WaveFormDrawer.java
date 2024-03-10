@@ -14,12 +14,12 @@ import java.awt.Graphics;
 import java.util.List;
 
 import log.charter.data.config.Zoom;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.modes.EditMode;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.components.toolbar.ChartToolbar;
-import log.charter.gui.handlers.data.ProjectAudioHandler;
+import log.charter.services.data.ProjectAudioHandler;
+import log.charter.services.editModes.EditMode;
+import log.charter.services.editModes.ModeManager;
 import log.charter.sound.data.AudioDataInt;
 import log.charter.util.CollectionUtils.Pair;
 

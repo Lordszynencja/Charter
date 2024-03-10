@@ -2,9 +2,9 @@ package log.charter.gui.panes.graphicalConfig;
 
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.CharterContext;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.PagedDialog;
+import log.charter.services.CharterContext;
 
 public final class GraphicConfigPane extends PagedDialog {
 	private static final long serialVersionUID = -3193534671039163160L;

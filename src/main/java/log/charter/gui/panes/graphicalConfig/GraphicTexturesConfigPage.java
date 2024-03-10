@@ -8,13 +8,13 @@ import java.util.stream.Stream;
 
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.managers.CharterContext;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.CharterSelect;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.utils.RowedPosition;
+import log.charter.services.CharterContext;
 import log.charter.util.FileUtils;
 
 public class GraphicTexturesConfigPage implements Page {

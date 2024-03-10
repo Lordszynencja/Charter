@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.RepeatManager;
-import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.services.RepeatManager;
+import log.charter.services.data.ChartTimeHandler;
 import log.charter.song.Anchor;
 import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.IntRange;

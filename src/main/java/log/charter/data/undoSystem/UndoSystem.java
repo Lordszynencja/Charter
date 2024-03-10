@@ -3,9 +3,9 @@ package log.charter.data.undoSystem;
 import java.util.LinkedList;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.selection.SelectionManager;
-import log.charter.gui.handlers.data.ChartTimeHandler;
+import log.charter.services.data.ChartTimeHandler;
+import log.charter.services.data.selection.SelectionManager;
+import log.charter.services.editModes.ModeManager;
 
 public class UndoSystem {
 	public static int nextId = 1;

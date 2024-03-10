@@ -23,7 +23,6 @@ import java.awt.RenderingHints;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import log.charter.data.managers.selection.SelectionManager;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -36,7 +35,8 @@ import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
+import log.charter.services.data.selection.SelectionManager;
+import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.song.Arrangement;
 import log.charter.song.ChordTemplate;
 import log.charter.song.HandShape;

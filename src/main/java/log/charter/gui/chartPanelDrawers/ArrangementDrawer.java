@@ -3,18 +3,18 @@ package log.charter.gui.chartPanelDrawers;
 import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.CharterContext;
-import log.charter.data.managers.CharterContext.Initiable;
-import log.charter.data.managers.HighlightManager;
-import log.charter.data.managers.ModeManager;
-import log.charter.data.managers.selection.SelectionManager;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.instruments.TempoMapDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
-import log.charter.gui.handlers.mouseAndKeyboard.MouseButtonPressReleaseHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
+import log.charter.services.CharterContext;
+import log.charter.services.CharterContext.Initiable;
+import log.charter.services.data.selection.SelectionManager;
+import log.charter.services.editModes.ModeManager;
+import log.charter.services.mouseAndKeyboard.HighlightManager;
+import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
+import log.charter.services.mouseAndKeyboard.MouseHandler;
 
 public class ArrangementDrawer implements Initiable {
 	private CharterContext charterContext;

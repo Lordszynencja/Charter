@@ -1,6 +1,6 @@
 package log.charter.io.gp.gp5.transformers;
 
-import static log.charter.data.ArrangementFretHandPositionsCreator.createFretHandPositions;
+import static log.charter.services.ArrangementFretHandPositionsCreator.createFretHandPositions;
 import static log.charter.song.configs.Tuning.getStringDistance;
 
 import java.util.List;

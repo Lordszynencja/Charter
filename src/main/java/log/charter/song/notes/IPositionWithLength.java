@@ -1,12 +1,12 @@
 package log.charter.song.notes;
 
 import static java.lang.Math.max;
-import static log.charter.data.ArrangementFixer.fixNoteLength;
 import static log.charter.data.config.Config.minNoteDistance;
+import static log.charter.services.data.fixers.ArrangementFixer.fixNoteLength;
 
 import java.util.List;
 
-import log.charter.data.managers.selection.Selection;
+import log.charter.services.data.selection.Selection;
 import log.charter.song.BeatsMap;
 import log.charter.util.CollectionUtils.ArrayList2;
 

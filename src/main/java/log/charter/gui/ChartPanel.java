@@ -8,14 +8,14 @@ import java.awt.Graphics2D;
 import javax.swing.JComponent;
 
 import log.charter.data.ChartData;
-import log.charter.data.managers.CharterContext;
-import log.charter.data.managers.CharterContext.Initiable;
 import log.charter.gui.chartPanelDrawers.ArrangementDrawer;
 import log.charter.gui.chartPanelDrawers.common.BackgroundDrawer;
 import log.charter.gui.chartPanelDrawers.common.MarkerDrawer;
-import log.charter.gui.handlers.data.ChartTimeHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.KeyboardHandler;
-import log.charter.gui.handlers.mouseAndKeyboard.MouseHandler;
+import log.charter.services.CharterContext;
+import log.charter.services.CharterContext.Initiable;
+import log.charter.services.data.ChartTimeHandler;
+import log.charter.services.mouseAndKeyboard.KeyboardHandler;
+import log.charter.services.mouseAndKeyboard.MouseHandler;
 
 public class ChartPanel extends JComponent implements Initiable {
 	private static final long serialVersionUID = -3439446235287039031L;
