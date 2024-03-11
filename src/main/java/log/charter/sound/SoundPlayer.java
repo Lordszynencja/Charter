@@ -117,7 +117,6 @@ public class SoundPlayer {
 							return;
 						}
 
-						System.out.println(bufferSize - line.available());
 						startByte = writeBuffer(data, startByte);
 
 						if (playingStartTime < 0) {

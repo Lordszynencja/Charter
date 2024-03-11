@@ -90,14 +90,4 @@ public class Fraction implements Comparable<Fraction> {
 				: difference < 0 ? -1//
 						: 0;
 	}
-
-	private static void test(final Fraction a, final Fraction b) {
-		System.out.println("a: " + a + ", b: " + b + ", compare: " + a.compareTo(b));
-	}
-
-	static {
-		test(new Fraction(1, 1), new Fraction(1, 2));
-		test(new Fraction(1, 3), new Fraction(1, 2));
-		test(new Fraction(1, 3), new Fraction(2, 6));
-	}
 }
