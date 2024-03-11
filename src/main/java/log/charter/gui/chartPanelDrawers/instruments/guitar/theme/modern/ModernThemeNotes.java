@@ -44,7 +44,7 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeNotes;
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 public class ModernThemeNotes implements ThemeNotes {
 	private static BufferedImage[] noteIcons = new BufferedImage[maxStrings];

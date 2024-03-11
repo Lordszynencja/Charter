@@ -18,7 +18,7 @@ import javax.swing.event.DocumentListener;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.containers.RowedPanel;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class AutocompleteInput<T> extends JTextField implements DocumentListener, MouseListener {
 	public static class AutocompleteValue<T> {

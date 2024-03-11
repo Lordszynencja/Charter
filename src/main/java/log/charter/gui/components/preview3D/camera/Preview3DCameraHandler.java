@@ -15,7 +15,7 @@ import log.charter.data.config.Config;
 import log.charter.data.song.Anchor;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class Preview3DCameraHandler {
 

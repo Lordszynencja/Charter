@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import log.charter.io.rs.xml.vocals.ArrangementVocal;
 import log.charter.io.rs.xml.vocals.ArrangementVocals;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class VocalsConverter implements Converter {
 	@SuppressWarnings("rawtypes")

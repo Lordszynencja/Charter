@@ -16,7 +16,7 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeHandShapes;
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 public class ModernThemeHandShapes implements ThemeHandShapes {
 	private static Font handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, handShapesHeight);

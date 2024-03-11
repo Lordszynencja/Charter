@@ -30,6 +30,7 @@ public final class ConfigPane extends ParamsPane {
 	private int minNoteDistance = Config.minNoteDistance;
 	private int minTailLength = Config.minTailLength;
 	private int delay = Config.delay;
+	private int audioBufferMs = Config.audioBufferMs;
 	private int midiDelay = Config.midiDelay;
 	private int markerOffset = Config.markerOffset;
 	private boolean invertStrings = Config.invertStrings;
@@ -64,17 +65,18 @@ public final class ConfigPane extends ParamsPane {
 
 		addIntConfigValue(row++, 20, 0, Label.MINIMAL_NOTE_DISTANCE, minNoteDistance, 50, //
 				new IntValueValidator(1, 1000), v -> minNoteDistance = v, false);
-		addIntConfigValue(row++, 20, 0, Label.MINIMAL_TAIL_LENGTH, minTailLength, 50,
-				new IntValueValidator(1, 1000), v -> minTailLength = v, false);
-		addIntConfigValue(row++, 20, 0, Label.SOUND_DELAY, delay, 50, //
+		addIntConfigValue(row++, 20, 0, Label.MINIMAL_TAIL_LENGTH, minTailLength, 50, new IntValueValidator(1, 1000),
+				v -> minTailLength = v, false);
+		addIntConfigValue(row, 20, 0, Label.SOUND_DELAY, delay, 50, //
 				new IntValueValidator(1, 10000), v -> delay = v, false);
+		addIntConfigValue(row++, 220, 0, Label.BUFFER_SIZE_MS, delay, 50, //
+				new IntValueValidator(1, 250), v -> audioBufferMs = v, false);
 		addIntConfigValue(row++, 20, 0, Label.MIDI_SOUND_DELAY, midiDelay, 50, //
 				new IntValueValidator(1, 10000), v -> midiDelay = v, false);
 		addIntConfigValue(row++, 20, 0, Label.MARKER_POSITION_PX, markerOffset, 50, //
 				new IntValueValidator(-10_000, 10_000), v -> markerOffset = v, false);
 		addConfigCheckbox(row, 20, 0, Label.INVERT_STRINGS, invertStrings, val -> invertStrings = val);
-		addConfigCheckbox(row, 180, 0, Label.INVERT_STRINGS_IN_PREVIEW, invertStrings3D,
-				val -> invertStrings3D = val);
+		addConfigCheckbox(row, 180, 0, Label.INVERT_STRINGS_IN_PREVIEW, invertStrings3D, val -> invertStrings3D = val);
 		addConfigCheckbox(row++, 380, 0, Label.LEFT_HANDED, leftHanded, val -> leftHanded = val);
 		addConfigCheckbox(row++, 20, 0, Label.SHOW_CHORD_IDS, showChordIds, val -> showChordIds = val);
 		addConfigCheckbox(row++, 20, 0, Label.SHOW_GRID, showGrid, val -> showGrid = val);
@@ -114,6 +116,7 @@ public final class ConfigPane extends ParamsPane {
 		Config.minNoteDistance = minNoteDistance;
 		Config.minTailLength = minTailLength;
 		Config.delay = delay;
+		Config.audioBufferMs = audioBufferMs;
 		Config.midiDelay = midiDelay;
 		Config.markerOffset = markerOffset;
 

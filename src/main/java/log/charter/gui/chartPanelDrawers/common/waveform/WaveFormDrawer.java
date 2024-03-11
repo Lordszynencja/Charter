@@ -21,7 +21,7 @@ import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.sound.data.AudioDataInt;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.Pair;
 
 public class WaveFormDrawer {
 	private static final Color normalColor = ChartPanelColors.ColorLabel.WAVEFORM_COLOR.color();

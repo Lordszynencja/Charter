@@ -13,7 +13,6 @@ import log.charter.data.config.Config;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
-import log.charter.data.song.FractionalPosition;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.enums.HOPO;
@@ -24,6 +23,7 @@ import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
 import log.charter.data.song.notes.Note;
+import log.charter.io.gp.gp5.GP5FractionalPosition;
 import log.charter.io.gp.gp5.data.GPBeat;
 import log.charter.io.gp.gp5.data.GPBend;
 import log.charter.io.gp.gp5.data.GPDuration;
@@ -237,7 +237,7 @@ public class GP5SoundsTransformer {
 		}
 	}
 
-	private void addGraceNote(final GPBeat gpBeat, final FractionalPosition position, final GPNoteEffects effects,
+	private void addGraceNote(final GPBeat gpBeat, final GP5FractionalPosition position, final GPNoteEffects effects,
 			final Note note) {
 		if (effects.graceNote == null) {
 			return;
@@ -274,8 +274,8 @@ public class GP5SoundsTransformer {
 		}
 	}
 
-	public void addNote(final GPBeat gpBeat, final FractionalPosition position, final FractionalPosition endPosition,
-			final boolean[] wasHOPOStart, final int[] hopoFrom) {
+	public void addNote(final GPBeat gpBeat, final GP5FractionalPosition position,
+			final GP5FractionalPosition endPosition, final boolean[] wasHOPOStart, final int[] hopoFrom) {
 		if (gpBeat.notes.size() != 1) {
 			return;
 		}
@@ -417,8 +417,8 @@ public class GP5SoundsTransformer {
 		});
 	}
 
-	public void addChord(final GPBeat gpBeat, final FractionalPosition position, final FractionalPosition endPosition,
-			final boolean[] wasHOPOStart, final int[] hOPOFrom) {
+	public void addChord(final GPBeat gpBeat, final GP5FractionalPosition position,
+			final GP5FractionalPosition endPosition, final boolean[] wasHOPOStart, final int[] hOPOFrom) {
 		final ChordTemplate chordTemplate = new ChordTemplate();
 		chordTemplate.chordName = gpBeat.chord == null ? "" : gpBeat.chord.chordName;
 		if (chordTemplate.chordName == null) {

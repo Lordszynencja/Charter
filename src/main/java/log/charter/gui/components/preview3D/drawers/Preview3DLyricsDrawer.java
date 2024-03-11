@@ -12,7 +12,7 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class Preview3DLyricsDrawer {
 	private ChartData data;

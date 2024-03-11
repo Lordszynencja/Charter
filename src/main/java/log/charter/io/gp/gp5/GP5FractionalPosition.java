@@ -1,25 +1,26 @@
-package log.charter.data.song;
+package log.charter.io.gp.gp5;
 
+import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.io.gp.gp5.data.GPDuration;
-import log.charter.util.Fraction;
+import log.charter.util.data.Fraction;
 
-public class FractionalPosition {
+public class GP5FractionalPosition {
 	private final ImmutableBeatsMap beats;
 	private final int beatId;
 	private final Fraction fraction;
 
-	public FractionalPosition(final ImmutableBeatsMap beats, final int beatId) {
+	public GP5FractionalPosition(final ImmutableBeatsMap beats, final int beatId) {
 		this(beats, beatId, new Fraction(0, 1));
 	}
 
-	public FractionalPosition(final ImmutableBeatsMap beats, final int beatId, final Fraction fraction) {
+	public GP5FractionalPosition(final ImmutableBeatsMap beats, final int beatId, final Fraction fraction) {
 		this.beats = beats;
 		this.beatId = beatId;
 		this.fraction = fraction;
 	}
 
-	private FractionalPosition recalculateBeat(Fraction newFraction) {
+	private GP5FractionalPosition recalculateBeat(Fraction newFraction) {
 		int newBeatId = beatId;
 		Beat beat = beats.get(newBeatId);
 		while (newFraction.numerator < 0) {
@@ -33,22 +34,22 @@ public class FractionalPosition {
 			newFraction = newFraction.add(-1, beat.noteDenominator);
 		}
 
-		return new FractionalPosition(beats, newBeatId, newFraction);
+		return new GP5FractionalPosition(beats, newBeatId, newFraction);
 	}
 
-	private FractionalPosition add(final Fraction fraction) {
+	public GP5FractionalPosition add(final Fraction fraction) {
 		return recalculateBeat(this.fraction.add(fraction));
 	}
 
-	public FractionalPosition move(final GPDuration duration) {
+	public GP5FractionalPosition move(final GPDuration duration) {
 		return add(new Fraction(1, duration.denominator));
 	}
 
-	public FractionalPosition moveBackwards(final GPDuration duration) {
+	public GP5FractionalPosition moveBackwards(final GPDuration duration) {
 		return add(new Fraction(-1, duration.denominator));
 	}
 
-	public FractionalPosition move(final GPDuration duration, final int tupletNumerator, final int tupletDenominator,
+	public GP5FractionalPosition move(final GPDuration duration, final int tupletNumerator, final int tupletDenominator,
 			final int dots) {
 		Fraction addFraction = new Fraction(1, duration.denominator);
 		if (tupletDenominator != tupletNumerator) {

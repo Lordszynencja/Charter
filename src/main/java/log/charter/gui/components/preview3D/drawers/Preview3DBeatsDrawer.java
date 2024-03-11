@@ -28,7 +28,7 @@ import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.FadingShaderDrawData;
-import log.charter.util.IntRange;
+import log.charter.util.data.IntRange;
 
 public class Preview3DBeatsDrawer {
 	private static final int[] dottedFretDistances = { 3, 2, 2, 2, 3 };

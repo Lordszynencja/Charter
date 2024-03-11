@@ -59,9 +59,9 @@ import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashSet2;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashSet2;
+import log.charter.util.collections.Pair;
 
 public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private ChartData chartData;

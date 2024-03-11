@@ -34,8 +34,8 @@ import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.components.utils.validators.ValueValidator;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.Pair;
 
 public class ParamsPane extends JDialog {
 	public class RowedPanelEmulator extends RowedPanel {

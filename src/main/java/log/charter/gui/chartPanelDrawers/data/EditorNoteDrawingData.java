@@ -14,7 +14,7 @@ import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.Note;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class EditorNoteDrawingData {
 	public static EditorNoteDrawingData fromNote(final int x, final Note note, final boolean selected,

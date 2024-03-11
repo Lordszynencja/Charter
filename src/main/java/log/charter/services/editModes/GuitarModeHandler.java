@@ -1,10 +1,10 @@
 package log.charter.services.editModes;
 
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
-import static log.charter.data.song.position.IConstantPosition.findClosestId;
 import static log.charter.data.song.position.IConstantPosition.findLastIdBefore;
 import static log.charter.data.song.position.IPositionWithLength.changePositionsWithLengthsLength;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
+import static log.charter.util.CollectionUtils.findClosestId;
 
 import java.util.stream.Collectors;
 
@@ -31,9 +31,9 @@ import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.HighlightManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId;
+import log.charter.util.collections.ArrayList2;
 
 public class GuitarModeHandler extends ModeHandler {
 	private static final long scrollTimeoutForUndo = 1000;
@@ -122,7 +122,7 @@ public class GuitarModeHandler extends ModeHandler {
 			ArrangementFixer.fixSoundLength(previousId, sounds);
 		}
 
-		selectionManager.addSoundSelection(findClosestId(sounds, note));
+		selectionManager.addSoundSelection(findClosestId(sounds, note, a -> a.position()));
 
 		return sound;
 	}

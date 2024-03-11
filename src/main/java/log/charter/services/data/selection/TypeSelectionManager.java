@@ -9,8 +9,8 @@ import log.charter.data.types.PositionWithIdAndType;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressData;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.Pair;
 
 public class TypeSelectionManager<T extends IPosition> {
 	private final ChartData chartData;

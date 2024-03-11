@@ -12,7 +12,7 @@ import log.charter.data.song.HandShape;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IConstantPositionWithLength;
 import log.charter.services.RepeatManager;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class HandShapeDrawData implements IConstantPositionWithLength {
 	public static List<HandShapeDrawData> getHandShapesForTimeSpan(final ChartData data, final int timeFrom,

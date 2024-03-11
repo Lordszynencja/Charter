@@ -11,8 +11,8 @@ import log.charter.io.rs.xml.converters.ArrangementChordTemplateConverter;
 import log.charter.io.rs.xml.converters.CountedListConverter;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
 import log.charter.io.rs.xml.converters.VocalsConverter;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashMap2;
 
 public class VocalsXStreamHandler {
 	private static XStream xstream = prepareXStream();

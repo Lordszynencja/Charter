@@ -1,7 +1,7 @@
 package log.charter.util.grid;
 
 import log.charter.data.song.Beat;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class MeasureBasedGridPosition extends GridPosition<Beat> {
 	public MeasureBasedGridPosition(final ArrayList2<Beat> beats, final int position) {

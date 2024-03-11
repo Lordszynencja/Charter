@@ -3,7 +3,7 @@ package log.charter.services;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.frets;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.util.CollectionUtils.findLastIdBeforeEqual;
 
 import log.charter.data.config.Config;
 import log.charter.data.song.Anchor;
@@ -12,8 +12,8 @@ import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IPosition;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.IntRange;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.data.IntRange;
 
 public class ArrangementFretHandPositionsCreator {
 	private static class FretRange implements IConstantPosition {

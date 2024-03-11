@@ -22,8 +22,8 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeEvents;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.Position2D;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.data.Position2D;
 
 public class ModernThemeEvents implements ThemeEvents {
 	private static final int sectionTextSpace = 2;

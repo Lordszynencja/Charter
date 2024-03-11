@@ -1,6 +1,7 @@
 package log.charter.services;
 
 import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ChartTimeHandler;
 
 public class RepeatManager {

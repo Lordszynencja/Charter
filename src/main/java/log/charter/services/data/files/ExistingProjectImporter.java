@@ -16,7 +16,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.TextTab;
 import log.charter.io.Logger;
 import log.charter.io.rsc.xml.ChartProject;
-import log.charter.services.AudioHandler;
+import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.sound.data.AudioDataShort;

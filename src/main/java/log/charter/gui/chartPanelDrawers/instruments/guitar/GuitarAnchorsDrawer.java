@@ -11,8 +11,8 @@ import log.charter.data.types.PositionType;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashSet2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashSet2;
 
 public class GuitarAnchorsDrawer {
 	private static Anchor findCurrentAnchor(final ArrayList2<Anchor> anchors, final int time) {

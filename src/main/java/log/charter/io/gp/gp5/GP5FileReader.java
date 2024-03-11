@@ -43,8 +43,8 @@ import log.charter.io.gp.gp5.data.KeySignature;
 import log.charter.io.gp.gp5.data.KeySignatureType;
 import log.charter.io.gp.gp5.data.ScoreInformation;
 import log.charter.io.gp.gp5.data.TripletFeel;
-import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.RW;
+import log.charter.util.collections.ArrayList2;
 
 public class GP5FileReader {
 	private static final String versionString = "FICHIER GUITAR PRO";

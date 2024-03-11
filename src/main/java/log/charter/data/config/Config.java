@@ -65,6 +65,7 @@ public class Config {
 	public static String rubberbandPath;
 	public static String oggEncPath;
 	public static int audioBufferSize = 128;
+	public static int audioBufferMs = 10;
 	public static int antialiasingSamples = 16;
 
 	public static int minNoteDistance = 50;
@@ -121,6 +122,7 @@ public class Config {
 		valueAccessors.put("songsPath", ValueAccessor.forString(v -> songsPath = v, () -> songsPath));
 		valueAccessors.put("audioBufferSize",
 				ValueAccessor.forInteger(v -> audioBufferSize = v, () -> audioBufferSize));
+		valueAccessors.put("audioBufferMs", ValueAccessor.forInteger(v -> audioBufferMs = v, () -> audioBufferMs));
 		valueAccessors.put("antialiasingSamples",
 				ValueAccessor.forInteger(v -> antialiasingSamples = v, () -> antialiasingSamples));
 

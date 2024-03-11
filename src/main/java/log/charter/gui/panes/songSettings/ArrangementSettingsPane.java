@@ -33,7 +33,7 @@ import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class ArrangementSettingsPane extends ParamsPane {
 	private static final long serialVersionUID = -3193534671039163160L;

@@ -23,9 +23,9 @@ import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashSet2;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashSet2;
 
 public class ToneChangeSelectionEditor implements DocumentListener {
 	private ChartData chartData;

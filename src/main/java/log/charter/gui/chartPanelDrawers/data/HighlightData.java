@@ -32,9 +32,9 @@ import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressData;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashSet2;
-import log.charter.util.Position2D;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashSet2;
+import log.charter.util.data.Position2D;
 
 public class HighlightData {
 	public static class TemporaryHighlighPosition implements IPositionWithLength {

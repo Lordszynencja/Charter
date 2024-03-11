@@ -2,7 +2,7 @@ package log.charter.util.chordRecognition;
 
 import static log.charter.util.SoundUtils.soundToSimpleName;
 
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class ChordNameAdder {
 	public static String min = "m";

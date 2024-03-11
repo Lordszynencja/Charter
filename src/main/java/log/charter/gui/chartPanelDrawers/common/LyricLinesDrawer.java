@@ -16,7 +16,7 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 public class LyricLinesDrawer {
 	private static int height = lyricLinesY - beatSizeTextY;

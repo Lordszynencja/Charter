@@ -1,8 +1,13 @@
 package log.charter.data.song.notes;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.PositionWithLength;
 
 public abstract class GuitarSound extends PositionWithLength {
+
+	private final FractionalPosition start = new FractionalPosition((ImmutableBeatsMap) null, 0);
+	private FractionalPosition end;
 	public boolean accent = false;
 	public boolean ignore = false;
 	public boolean passOtherNotes = false;

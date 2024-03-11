@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 
 import log.charter.data.song.configs.Tuning;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashMap2;
 
 public class ChordNameSuggester {
 	private static ArrayList2<Integer> soundsToNotes(final int[] sounds) {

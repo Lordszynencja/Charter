@@ -9,7 +9,7 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
-import log.charter.util.TimeSignature;
+import log.charter.util.data.TimeSignature;
 
 public class MidiTempoEvent {
 	public static final int defaultKiloBeatsPerMinute = 120_000;

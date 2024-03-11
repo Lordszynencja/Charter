@@ -6,7 +6,7 @@ import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeE
 import log.charter.data.config.Config;
 import log.charter.data.song.Beat;
 import log.charter.data.song.position.IPosition;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class GridPosition<T extends IPosition> {
 

@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 class FilledDiamond implements DrawableShape {
 	private final Position2D position;

@@ -26,7 +26,7 @@ import log.charter.gui.components.simple.ShortcutEditor;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.services.Action;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.Pair;
 
 public final class ShortcutConfigPane extends ParamsPane implements ComponentListener {
 	private static final long serialVersionUID = -3193534671039163160L;

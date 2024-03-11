@@ -10,7 +10,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.gui.components.preview3D.glUtils.Point3D;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.Pair;
 
 public class OpenNoteModel implements CompositeModel {
 	private static final int details = 6;

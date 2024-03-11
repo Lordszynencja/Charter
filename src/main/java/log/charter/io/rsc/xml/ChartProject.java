@@ -9,8 +9,8 @@ import log.charter.data.song.Beat;
 import log.charter.data.song.SongChart;
 import log.charter.data.song.vocals.Vocals;
 import log.charter.services.editModes.EditMode;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashMap2;
 
 @XStreamAlias("project")
 @XStreamInclude(value = { Arrangement.class, Beat.class, Vocals.class })

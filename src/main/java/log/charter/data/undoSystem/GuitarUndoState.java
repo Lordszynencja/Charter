@@ -13,9 +13,9 @@ import log.charter.data.song.Phrase;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
-import log.charter.util.CollectionUtils.HashSet2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashMap2;
+import log.charter.util.collections.HashSet2;
 
 public class GuitarUndoState extends UndoState {
 	private final int arrangementId;

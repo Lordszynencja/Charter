@@ -1,6 +1,6 @@
 package log.charter.gui.chartPanelDrawers.drawableShapes;
 
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 public class ShapePositionWithSize extends Position2D {
 	public final int width;

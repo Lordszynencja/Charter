@@ -2,7 +2,7 @@ package log.charter.data.song;
 
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IPosition;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class OnBeat implements IPosition {
 	public Beat beat;

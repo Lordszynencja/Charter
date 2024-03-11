@@ -39,6 +39,10 @@ public class Utils {
 		}
 	}
 
+	public static <T> T nvl(final T value, final T defaultValue) {
+		return value == null ? defaultValue : value;
+	}
+
 	public static boolean mapInteger(final Integer value) {
 		return value != null && value != 0;
 	}

@@ -29,8 +29,8 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.CollectionUtils.HashSet2;
-import log.charter.util.Position2D;
+import log.charter.util.collections.HashSet2;
+import log.charter.util.data.Position2D;
 import log.charter.util.grid.GridPosition;
 
 public class BeatsDrawer {

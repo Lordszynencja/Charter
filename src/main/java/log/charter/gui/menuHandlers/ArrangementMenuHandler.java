@@ -6,7 +6,6 @@ import javax.swing.JOptionPane;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
-import log.charter.data.song.BeatsMap;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.songSettings.ArrangementSettingsPane;
 import log.charter.io.rs.xml.song.ArrangementType;
@@ -84,15 +83,11 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 	}
 
 	private void addArrangement() {
-		final BeatsMap beatsMap = chartData.songChart.beatsMap;
-
 		final int previousArrangement = chartData.currentArrangement;
 		final EditMode previousEditMode = modeManager.getMode();
 		final int previousDifficulty = chartData.currentLevel;
 		chartData.currentArrangement = chartData.songChart.arrangements.size();
-		chartData.songChart.arrangements.add(new Arrangement(ArrangementType.Lead, //
-				beatsMap.getBeatSafe(0).position(), //
-				beatsMap.getBeatSafe(beatsMap.beats.size() - 1).position()));
+		chartData.songChart.arrangements.add(new Arrangement(ArrangementType.Lead));
 		modeManager.setArrangement(chartData.songChart.arrangements.size() - 1);
 
 		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, () -> {

@@ -32,8 +32,8 @@ import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.Note;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.Position2D;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.data.Position2D;
 
 public class BendEditorGraph extends JComponent implements MouseListener, MouseMotionListener {
 	private static final int beatWidth = 100;

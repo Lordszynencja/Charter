@@ -16,9 +16,9 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.song.configs.Tuning;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.io.rsc.xml.converters.PhraseDataConverter;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
-import log.charter.util.CollectionUtils.HashSet2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashMap2;
+import log.charter.util.collections.HashSet2;
 
 @XStreamAlias("arrangement")
 @XStreamInclude({ ChordTemplate.class, EventPoint.class, Level.class, Phrase.class, ToneChange.class })
@@ -66,7 +66,7 @@ public class Arrangement {
 		setLevel(0, new Level());
 	}
 
-	public Arrangement(final ArrangementType arrangementType, final int songStart, final int songEnd) {
+	public Arrangement(final ArrangementType arrangementType) {
 		this.arrangementType = arrangementType;
 		setLevel(0, new Level());
 	}

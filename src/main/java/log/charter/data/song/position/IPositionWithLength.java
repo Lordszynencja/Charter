@@ -10,7 +10,7 @@ import log.charter.data.song.BeatsMap;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
 import log.charter.services.data.selection.Selection;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public interface IPositionWithLength extends IPosition, IConstantPositionWithLength {
 	public static class EndPosition implements IPosition {

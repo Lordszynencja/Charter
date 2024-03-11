@@ -17,7 +17,7 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeToneChanges;
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 public class ModernThemeToneChanges implements ThemeToneChanges {
 	private static final int toneChangeSpace = 2;

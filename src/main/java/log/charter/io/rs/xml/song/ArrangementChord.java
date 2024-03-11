@@ -15,7 +15,7 @@ import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.Chord.ChordNotesVisibility;
 import log.charter.data.song.position.IPosition;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("chord")
 @XStreamInclude(ArrangementChordNote.class)

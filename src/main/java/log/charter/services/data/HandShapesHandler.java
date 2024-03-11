@@ -14,7 +14,7 @@ import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class HandShapesHandler {
 	private ChartData chartData;

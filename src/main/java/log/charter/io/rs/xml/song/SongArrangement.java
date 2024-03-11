@@ -25,9 +25,9 @@ import log.charter.data.song.SongChart;
 import log.charter.data.song.ToneChange;
 import log.charter.io.rs.xml.converters.ArrangementTypeConverter;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
+import log.charter.util.collections.ArrayList2;
 import log.charter.io.rs.xml.converters.DateTimeConverter;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.util.CollectionUtils.ArrayList2;
 
 @XStreamAlias("song")
 @XStreamInclude({ ArrangementTuning.class, ArrangementProperties.class, TranscriptionTrack.class })

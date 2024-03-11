@@ -3,7 +3,6 @@ package log.charter.services.data.fixers;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.minNoteDistance;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -25,7 +24,8 @@ import log.charter.data.song.notes.CommonNote;
 import log.charter.data.song.position.IPosition;
 import log.charter.data.song.position.IPositionWithLength;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils;
+import log.charter.util.collections.ArrayList2;
 
 public class ArrangementFixer {
 	private ChartTimeHandler chartTimeHandler;
@@ -90,12 +90,12 @@ public class ArrangementFixer {
 				continue;
 			}
 
-			final int sectionId = findLastIdBeforeEqual(sections, eventPoint);
+			final int sectionId = CollectionUtils.findLastIdBeforeEqual(sections, eventPoint);
 			if (sectionId != -1 && sections.get(sectionId).section == SectionType.NO_GUITAR) {
 				continue;
 			}
 
-			final int lastAnchorId = findLastIdBeforeEqual(level.anchors, eventPoint);
+			final int lastAnchorId = CollectionUtils.findLastIdBeforeEqual(level.anchors, eventPoint);
 			if (lastAnchorId == -1) {
 				continue;
 			}

@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 public class CenteredTextWithBackgroundAndBorder implements DrawableShape {
 	public static ShapePositionWithSize getExpectedPositionAndSize(final Graphics2D g, final Position2D position,

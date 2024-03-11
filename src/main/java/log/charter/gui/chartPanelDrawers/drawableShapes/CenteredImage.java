@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 public class CenteredImage implements DrawableShape {
 	private final Position2D position;

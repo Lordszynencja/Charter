@@ -1,7 +1,7 @@
 package log.charter.services.data.selection;
 
 import log.charter.data.song.position.IPosition;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class Selection<T extends IPosition> {
 	public static <T extends IPosition> ArrayList2<Selection<T>> getSortedCopy(final ArrayList2<Selection<T>> list) {

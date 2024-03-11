@@ -27,7 +27,7 @@ import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseTextureShaderDrawData;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels.TextureAtlasPosition;
-import log.charter.util.IntRange;
+import log.charter.util.data.IntRange;
 
 public class Preview3DFingeringDrawer {
 	private static final double size = stringDistance / 2;

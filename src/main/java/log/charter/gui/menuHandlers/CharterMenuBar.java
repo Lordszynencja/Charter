@@ -10,8 +10,8 @@ import javax.swing.JMenuBar;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
+import log.charter.util.collections.ArrayList2;
 import log.charter.gui.CharterFrame;
-import log.charter.util.CollectionUtils.ArrayList2;
 
 public class CharterMenuBar extends JMenuBar implements Initiable {
 	private static final long serialVersionUID = -5784270027920161709L;

@@ -10,7 +10,7 @@ import log.charter.io.gp.gp5.data.GPChord;
 import log.charter.io.gp.gp5.data.GPDuration;
 import log.charter.io.gp.gp5.data.GPMasterBar;
 import log.charter.io.gp.gp5.data.GPNote;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class CombinedGPBars {
 	public static class GPBeatUnwrapper extends GPBeat {

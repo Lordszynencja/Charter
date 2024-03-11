@@ -11,8 +11,8 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 import log.charter.data.song.position.Position;
 import log.charter.io.rs.xml.song.EBeat;
 import log.charter.io.rsc.xml.converters.BeatConverter;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.TimeSignature;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.data.TimeSignature;
 
 @XStreamAlias("beat2")
 @XStreamConverter(BeatConverter.class)

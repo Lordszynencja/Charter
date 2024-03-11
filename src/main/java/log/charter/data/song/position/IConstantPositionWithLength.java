@@ -2,7 +2,7 @@ package log.charter.data.song.position;
 
 import java.util.List;
 
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public interface IConstantPositionWithLength extends IConstantPosition {
 	public static <T extends IConstantPositionWithLength> int findFirstIdAfterEqual(final ArrayList2<T> list,

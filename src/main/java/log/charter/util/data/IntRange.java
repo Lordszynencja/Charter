@@ -1,4 +1,4 @@
-package log.charter.util;
+package log.charter.util.data;
 
 public class IntRange {
 	public final int min;

@@ -1,8 +1,8 @@
 package log.charter.services.utils;
 
 import log.charter.io.Logger;
-import log.charter.services.AudioHandler;
 import log.charter.services.CharterContext.Initiable;
+import log.charter.services.audio.AudioHandler;
 
 public class AudioFramer implements Initiable {
 	private AudioHandler audioHandler;

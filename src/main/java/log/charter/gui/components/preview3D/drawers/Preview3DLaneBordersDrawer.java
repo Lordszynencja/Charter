@@ -22,7 +22,7 @@ import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
-import log.charter.util.IntRange;
+import log.charter.util.data.IntRange;
 
 public class Preview3DLaneBordersDrawer {
 	private ChartData data;

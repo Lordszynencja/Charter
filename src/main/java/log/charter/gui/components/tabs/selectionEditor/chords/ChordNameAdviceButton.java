@@ -18,8 +18,8 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.song.configs.Tuning;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.containers.RowedPanel;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashMap2;
 
 public class ChordNameAdviceButton extends JButton implements ActionListener, MouseListener {
 	private static final long serialVersionUID = 1L;

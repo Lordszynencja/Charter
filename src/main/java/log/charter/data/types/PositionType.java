@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
 import log.charter.data.ChartData;
 import log.charter.data.song.position.IPosition;
 import log.charter.services.editModes.EditMode;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public enum PositionType {
 	ANCHOR(chartData -> chartData.getCurrentArrangementLevel().anchors, PositionWithIdAndType::new), //

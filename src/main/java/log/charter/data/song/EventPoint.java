@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.data.song.position.Position;
 import log.charter.io.rsc.xml.converters.SimpleCollectionToStringConverter.EventTypesList;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("eventPoint")
 public class EventPoint extends Position {

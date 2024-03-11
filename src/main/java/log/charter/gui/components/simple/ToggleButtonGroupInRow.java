@@ -11,7 +11,7 @@ import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizes;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.components.utils.RowedPosition;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.Pair;
 
 public class ToggleButtonGroupInRow<T extends Enum<T>> {
 	private final RowedPanel panel;

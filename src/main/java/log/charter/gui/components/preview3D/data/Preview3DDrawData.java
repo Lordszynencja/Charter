@@ -1,12 +1,13 @@
 package log.charter.gui.components.preview3D.data;
 
-import static log.charter.data.song.position.IConstantPosition.findFirstAfter;
-import static log.charter.data.song.position.IConstantPosition.findLastBeforeEquals;
+import static java.util.Arrays.asList;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getVisibility;
 import static log.charter.gui.components.preview3D.data.AnchorDrawData.getAnchorsForTimeSpanWithRepeats;
 import static log.charter.gui.components.preview3D.data.BeatDrawData.getBeatsForTimeSpanWithRepeats;
 import static log.charter.gui.components.preview3D.data.HandShapeDrawData.getHandShapesForTimeSpanWithRepeats;
 import static log.charter.gui.components.preview3D.data.Preview3DNotesData.getNotesForTimeSpanWithRepeats;
+import static log.charter.util.CollectionUtils.findFirstAfter;
+import static log.charter.util.CollectionUtils.findLastBeforeEquals;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,14 +15,13 @@ import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Anchor;
+import log.charter.data.song.position.Position;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.IntRange;
+import log.charter.util.data.IntRange;
 
 public class Preview3DDrawData {
-
-	private final ArrayList2<Anchor> levelAnchors;
+	private final List<Anchor> levelAnchors;
 	private final Map<Integer, IntRange> fretsCache = new HashMap<>();
 
 	public final int time;
@@ -35,7 +35,7 @@ public class Preview3DDrawData {
 		time = chartTimeHandler.time();
 
 		if (data.getCurrentArrangementLevel() == null) {
-			levelAnchors = new ArrayList2<>(new Anchor(0, 1));
+			levelAnchors = asList(new Anchor(0, 1));
 		} else {
 			levelAnchors = data.getCurrentArrangementLevel().anchors;
 		}
@@ -49,9 +49,10 @@ public class Preview3DDrawData {
 
 	public IntRange getFrets(final int t) {
 		if (!fretsCache.containsKey(t)) {
-			Anchor anchor = findLastBeforeEquals(levelAnchors, t);
+			final Position p = new Position(t);
+			Anchor anchor = findLastBeforeEquals(levelAnchors, p);
 			if (anchor == null) {
-				anchor = findFirstAfter(levelAnchors, t);
+				anchor = findFirstAfter(levelAnchors, p);
 			}
 			if (anchor == null) {
 				anchor = new Anchor(0, 1);

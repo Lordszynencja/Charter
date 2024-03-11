@@ -7,9 +7,9 @@ import log.charter.data.ChartData;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.menuHandlers.CharterMenuBar;
-import log.charter.services.AudioHandler;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
+import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.selection.SelectionManager;
 
 public class ModeManager implements Initiable {

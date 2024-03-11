@@ -9,8 +9,8 @@ import log.charter.services.data.copy.data.positions.CopiedArrangementEventsPoin
 import log.charter.services.data.copy.data.positions.CopiedHandShapePosition;
 import log.charter.services.data.copy.data.positions.CopiedSoundPosition;
 import log.charter.services.data.copy.data.positions.CopiedToneChangePosition;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashMap2;
 
 @XStreamAlias("fullGuitarCopyData")
 public class FullGuitarCopyData implements FullCopyData {

@@ -9,7 +9,7 @@ import log.charter.data.song.BeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.EventType;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("event")
 public class ArrangementEvent {

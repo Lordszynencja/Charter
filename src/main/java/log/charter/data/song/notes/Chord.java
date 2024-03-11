@@ -23,7 +23,7 @@ import log.charter.io.rs.xml.song.ArrangementBendValue;
 import log.charter.io.rs.xml.song.ArrangementChord;
 import log.charter.io.rs.xml.song.ArrangementChordNote;
 import log.charter.io.rsc.xml.converters.ChordConverter;
-import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.collections.HashMap2;
 
 @XStreamAlias("chord")
 @XStreamConverter(ChordConverter.class)

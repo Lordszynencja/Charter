@@ -10,8 +10,8 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 import log.charter.data.config.Config;
 import log.charter.io.rs.xml.song.ArrangementChordTemplate;
 import log.charter.io.rsc.xml.converters.ChordTemplateConverter;
-import log.charter.util.CollectionUtils.HashMap2;
-import log.charter.util.IntRange;
+import log.charter.util.collections.HashMap2;
+import log.charter.util.data.IntRange;
 
 @XStreamAlias("chordTemplate")
 @XStreamConverter(ChordTemplateConverter.class)

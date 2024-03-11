@@ -1,4 +1,4 @@
-package log.charter.util;
+package log.charter.util.data;
 
 public class Position2D {
 	public final int x;

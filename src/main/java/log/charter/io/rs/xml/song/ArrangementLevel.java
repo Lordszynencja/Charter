@@ -8,7 +8,7 @@ import log.charter.data.song.Level;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("level")
 public class ArrangementLevel {

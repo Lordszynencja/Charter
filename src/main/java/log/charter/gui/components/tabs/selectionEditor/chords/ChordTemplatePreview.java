@@ -40,10 +40,10 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.FilledRectangle;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashSet2;
-import log.charter.util.IntRange;
-import log.charter.util.Position2D;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashSet2;
+import log.charter.util.data.IntRange;
+import log.charter.util.data.Position2D;
 
 public class ChordTemplatePreview extends JComponent implements MouseListener, MouseMotionListener, KeyListener {
 	private static final long serialVersionUID = 1L;

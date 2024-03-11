@@ -11,14 +11,11 @@ import java.util.List;
 import log.charter.data.song.position.IPosition;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.ChartProject;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 import log.charter.util.grid.GridPosition;
 
 public class BeatsMap {
 	public class ImmutableBeatsMap {
-		private ImmutableBeatsMap() {
-		}
-
 		public int size() {
 			return beats.size();
 		}
@@ -27,6 +24,8 @@ public class BeatsMap {
 			return getBeatSafe(beatId);
 		}
 	}
+
+	public final ImmutableBeatsMap immutable = new ImmutableBeatsMap();
 
 	public ArrayList2<Beat> beats = new ArrayList2<>();
 
@@ -286,9 +285,5 @@ public class BeatsMap {
 		}
 
 		return beats.get(beatId);
-	}
-
-	public ImmutableBeatsMap immutable() {
-		return new ImmutableBeatsMap();
 	}
 }

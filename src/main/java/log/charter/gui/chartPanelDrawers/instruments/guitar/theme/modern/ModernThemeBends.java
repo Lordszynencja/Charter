@@ -22,8 +22,8 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
-import log.charter.util.Position2D;
 import log.charter.util.Utils;
+import log.charter.util.data.Position2D;
 
 public class ModernThemeBends {
 	private static Font bendValueFont;

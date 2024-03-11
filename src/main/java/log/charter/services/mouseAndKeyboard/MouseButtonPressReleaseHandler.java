@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import log.charter.data.types.PositionWithIdAndType;
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 public class MouseButtonPressReleaseHandler {
 	public enum MouseButton {

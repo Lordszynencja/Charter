@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.sound.data.AudioDataShort;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.Pair;
 
 public class WaveformMap {
 	private static final int levelDenominator = 2;

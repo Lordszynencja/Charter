@@ -4,7 +4,7 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap;
 import log.charter.data.song.SongChart;
 import log.charter.io.rs.xml.song.SongArrangement;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class RSXMLToSongChart {
 	public static SongChart makeSongChartForArrangement(final String musicFileName,

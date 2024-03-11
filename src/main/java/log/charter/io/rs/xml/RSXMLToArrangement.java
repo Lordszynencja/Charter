@@ -23,9 +23,9 @@ import log.charter.io.rs.xml.song.ArrangementTuning;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.util.CollectionUtils;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
-import log.charter.util.CollectionUtils.HashSet2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashMap2;
+import log.charter.util.collections.HashSet2;
 
 public class RSXMLToArrangement {
 	private static Tuning getTuning(final ArrangementTuning arrangementTuning, final ArrangementType arrangementType) {

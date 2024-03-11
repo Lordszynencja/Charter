@@ -11,8 +11,8 @@ import log.charter.data.types.PositionType;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashSet2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashSet2;
 
 public class GuitarToneChangeDrawer {
 	private static String findCurrentTone(final String baseTone, final ArrayList2<ToneChange> toneChanges,

@@ -13,16 +13,19 @@ import static log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId.f
 import static log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId.fromPosition;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.Utils.nvl;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Beat;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.Position;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.ModeManager;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.CollectionUtils;
+import log.charter.util.collections.ArrayList2;
 
 public class HighlightManager {
 	private class PositionsWithStringsCalculator {
@@ -55,8 +58,8 @@ public class HighlightManager {
 
 		private void addAvailablePositions() {
 			final ArrayList2<Beat> beats = chartData.songChart.beatsMap.beats;
-			final int beatIdFrom = max(0, findLastIdBefore(beats, fromPosition));
-			final int beatIdTo = min(beats.size(), findFirstIdAfter(beats, toPosition));
+			final int beatIdFrom = max(0, CollectionUtils.findLastIdBefore(beats, new Position(fromPosition)));
+			final int beatIdTo = min(beats.size(), nvl(findFirstIdAfter(beats, toPosition), beats.size()));
 
 			for (int beatId = beatIdFrom; beatId < beatIdTo; beatId++) {
 				final Beat beat = beats.get(beatId);

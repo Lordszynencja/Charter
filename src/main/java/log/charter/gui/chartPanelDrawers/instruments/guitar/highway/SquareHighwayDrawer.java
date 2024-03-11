@@ -25,9 +25,9 @@ import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackgroundAndBorder;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.IntRange;
-import log.charter.util.Position2D;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.data.IntRange;
+import log.charter.util.data.Position2D;
 
 class SquareHighwayDrawer extends DefaultHighwayDrawer {
 	public SquareHighwayDrawer(final Graphics2D g, final int strings, final int time) {

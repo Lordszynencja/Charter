@@ -9,7 +9,7 @@ import log.charter.data.song.EventPoint;
 import log.charter.gui.CharterFrame;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.editModes.ModeManager;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class PhrasesValidator {
 	private CharterFrame charterFrame;

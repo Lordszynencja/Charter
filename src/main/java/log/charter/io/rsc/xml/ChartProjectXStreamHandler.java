@@ -37,9 +37,9 @@ import log.charter.services.data.copy.data.positions.CopiedSoundPosition;
 import log.charter.services.data.copy.data.positions.CopiedToneChangePosition;
 import log.charter.services.data.copy.data.positions.CopiedVocalPosition;
 import log.charter.services.editModes.EditMode;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
-import log.charter.util.CollectionUtils.HashSet2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashMap2;
+import log.charter.util.collections.HashSet2;
 
 public class ChartProjectXStreamHandler {
 	private static XStream xstream = prepareXStream();

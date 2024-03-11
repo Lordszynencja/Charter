@@ -13,7 +13,7 @@ import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
 import log.charter.io.rs.xml.song.ArrangementNote;
 import log.charter.io.rsc.xml.converters.NoteConverter;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("note")
 @XStreamConverter(NoteConverter.class)

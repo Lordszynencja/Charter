@@ -6,6 +6,20 @@ import static java.lang.Math.sin;
 public class AudioUtils {
 	public static final int DEF_RATE = 44100;
 
+	public static short clipShort(final double value) {
+		return clipShort((int) value);
+	}
+
+	public static short clipShort(final int value) {
+		if (value > AudioDataShort.maxValue) {
+			return AudioDataShort.maxValue;
+		}
+		if (value < AudioDataShort.minValue) {
+			return AudioDataShort.minValue;
+		}
+		return (short) value;
+	}
+
 	public static AudioDataShort generateSound(final double pitchHz, final double lengthSeconds,
 			final double loudness) {
 		return generateSound(pitchHz, lengthSeconds, loudness, DEF_RATE);
@@ -35,16 +49,19 @@ public class AudioUtils {
 		return (short) (((b0 & 0xFF) | (b1 << 8)) & 0xFFFF);
 	}
 
+	public static short fromBytes(final byte[] bytes, final int position, final int length) {
+		if (length == 1) {
+			return (short) (bytes[position] & 0xFF);
+		}
+
+		return fromBytes(bytes[position * 2], bytes[position * 2 + 1]);
+	}
+
 	public static short[][] splitStereoAudioShort(final byte[] b) {
 		final short[][] d = new short[2][b.length / 4];
 		for (int i = 0; i < d[0].length; i++) {
-			final byte b0 = b[i * 4];
-			final byte b1 = b[i * 4 + 1];
-			final byte b2 = b[i * 4 + 2];
-			final byte b3 = b[i * 4 + 3];
-
-			d[0][i] = fromBytes(b0, b1);
-			d[1][i] = fromBytes(b2, b3);
+			d[0][i] = fromBytes(b, i * 2, 2);
+			d[1][i] = fromBytes(b, i * 2 + 1, 2);
 		}
 
 		return d;
@@ -86,7 +103,13 @@ public class AudioUtils {
 		return data;
 	}
 
-	public static byte[] toBytes(final short[][] data, final int channels, final int sampleBytes) {
+	public static void writeBytes(final byte[] bytes, final int position, final short sample, final int sampleSize) {
+		for (int i = 0; i < sampleSize; i++) {
+			bytes[position + i] = (byte) ((sample >> (i * 8)) & 0xFF);
+		}
+	}
+
+	public static byte[] toBytes(final short[][] data, final int channels, final int sampleSize) {
 		if (data.length < channels) {
 			return new byte[0];
 		}
@@ -97,15 +120,13 @@ public class AudioUtils {
 		}
 
 		final int l = data[0].length;
-		final byte[] bytes = new byte[l * channels * sampleBytes];
+		final byte[] bytes = new byte[l * channels * sampleSize];
 
 		for (int i = 0; i < l; i++) {
-			final int offset = i * channels * sampleBytes;
+			final int offset = i * channels * sampleSize;
 			for (int channel = 0; channel < channels; channel++) {
-				final int channelOffset = offset + channel * sampleBytes;
-				for (int j = 0; j < sampleBytes; j++) {
-					bytes[channelOffset + j] = (byte) ((data[channel][i] >> (j * 8)) & 0xFF);
-				}
+				final int channelOffset = offset + channel * sampleSize;
+				writeBytes(bytes, channelOffset, data[channel][i], sampleSize);
 			}
 		}
 

@@ -15,7 +15,7 @@ import log.charter.data.song.position.IPositionWithLength;
 import log.charter.io.rsc.xml.converters.ChordOrNoteConverter;
 import log.charter.io.rsc.xml.converters.ChordOrNoteForChordConverter;
 import log.charter.io.rsc.xml.converters.ChordOrNoteForNoteConverter;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("sound")
 @XStreamConverter(ChordOrNoteConverter.class)

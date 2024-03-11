@@ -2,8 +2,8 @@ package log.charter.services.data;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.data.song.position.IConstantPosition.findFirstAfter;
 import static log.charter.data.song.position.IConstantPosition.findLastBefore;
+import static log.charter.util.CollectionUtils.findFirstAfter;
 
 import java.util.List;
 
@@ -11,10 +11,11 @@ import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Level;
 import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.Position;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class ChartTimeHandler {
 	private static class MaxPositionAccumulator {
@@ -120,7 +121,7 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToFirstItem() {
-		final ArrayList2<? extends IConstantPosition> items = getCurrentItems();
+		final List<? extends IConstantPosition> items = getCurrentItems();
 		if (items.isEmpty()) {
 			return;
 		}
@@ -128,8 +129,8 @@ public class ChartTimeHandler {
 		nextTime(items.get(0).position());
 	}
 
-	private int getNext(final ArrayList2<? extends IConstantPosition> positions) {
-		final IConstantPosition position = findFirstAfter(positions, time());
+	private int getNext(final List<? extends IConstantPosition> positions) {
+		final IConstantPosition position = findFirstAfter(positions, new Position(time()));
 		if (position == null) {
 			return time();
 		}

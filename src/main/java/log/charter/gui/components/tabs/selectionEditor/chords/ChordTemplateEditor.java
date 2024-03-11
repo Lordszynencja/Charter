@@ -42,8 +42,8 @@ import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashMap2;
 
 public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseListener {
 	private static class ChordSuggestion extends JComponent {

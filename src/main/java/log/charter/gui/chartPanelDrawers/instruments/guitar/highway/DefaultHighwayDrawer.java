@@ -76,12 +76,12 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.StrokedTriangle;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;
-import log.charter.util.CollectionUtils.ArrayList2;
 import log.charter.util.ImageUtils;
-import log.charter.util.IntRange;
-import log.charter.util.Position2D;
 import log.charter.util.RW;
 import log.charter.util.Utils;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.data.IntRange;
+import log.charter.util.data.Position2D;
 
 public class DefaultHighwayDrawer implements HighwayDrawer {
 	public static BufferedImage loadImage(final String path) {

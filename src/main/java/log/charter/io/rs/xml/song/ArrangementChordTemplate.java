@@ -3,7 +3,7 @@ package log.charter.io.rs.xml.song;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.data.song.ChordTemplate;
-import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.collections.HashMap2;
 
 @XStreamAlias("chordTemplate")
 public class ArrangementChordTemplate {

@@ -3,7 +3,7 @@ package log.charter.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.Pair;
 
 public class Timer {
 	private long t = System.nanoTime();

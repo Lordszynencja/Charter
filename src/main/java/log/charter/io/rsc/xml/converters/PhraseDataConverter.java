@@ -10,7 +10,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.mapper.Mapper;
 
 import log.charter.data.song.Phrase;
-import log.charter.util.CollectionUtils.HashMap2;
+import log.charter.util.collections.HashMap2;
 
 public class PhraseDataConverter extends AbstractCollectionConverter {
 

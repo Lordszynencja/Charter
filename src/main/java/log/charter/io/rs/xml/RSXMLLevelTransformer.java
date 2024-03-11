@@ -19,9 +19,9 @@ import log.charter.io.rs.xml.song.ArrangementBendValue;
 import log.charter.io.rs.xml.song.ArrangementChord;
 import log.charter.io.rs.xml.song.ArrangementLevel;
 import log.charter.io.rs.xml.song.ArrangementNote;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.HashMap2;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.HashMap2;
+import log.charter.util.collections.Pair;
 
 public class RSXMLLevelTransformer {
 	public static ArrayList2<Level> fromArrangementDataLevels(final Arrangement arrangement,

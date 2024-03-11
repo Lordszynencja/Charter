@@ -21,8 +21,8 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.util.Position2D;
 import log.charter.util.Utils.TimeUnit;
+import log.charter.util.data.Position2D;
 
 public class BackgroundDrawer {
 	private static final int[] jumpDistances = { 100, 250, 1000, 2000, 5000, 10_000, 30_000, 60_000, 120_000, 300_000,

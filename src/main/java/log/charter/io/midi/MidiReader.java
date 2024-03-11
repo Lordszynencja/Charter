@@ -14,7 +14,7 @@ import javax.sound.midi.Sequence;
 
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public final class MidiReader {
 	private static class BeatsAdder {

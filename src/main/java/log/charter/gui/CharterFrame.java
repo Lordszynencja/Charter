@@ -43,7 +43,7 @@ import log.charter.services.data.files.FileDropHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.Pair;
 import net.sf.image4j.codec.ico.ICODecoder;
 
 public class CharterFrame extends JFrame implements Initiable {

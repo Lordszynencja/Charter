@@ -1,4 +1,4 @@
-package log.charter.services.midi;
+package log.charter.services.audio;
 
 import log.charter.data.song.notes.ChordOrNote;
 

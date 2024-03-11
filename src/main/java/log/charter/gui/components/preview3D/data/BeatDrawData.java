@@ -9,7 +9,7 @@ import log.charter.data.ChartData;
 import log.charter.data.song.Beat;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.services.RepeatManager;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class BeatDrawData implements IConstantPosition {
 	public static List<BeatDrawData> getBeatsForTimeSpan(final ChartData data, final int timeFrom, final int timeTo) {

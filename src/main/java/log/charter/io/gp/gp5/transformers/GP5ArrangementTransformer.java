@@ -8,10 +8,10 @@ import java.util.List;
 import log.charter.data.config.Config;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap;
-import log.charter.data.song.FractionalPosition;
 import log.charter.data.song.Level;
 import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.configs.Tuning.TuningType;
+import log.charter.io.gp.gp5.GP5FractionalPosition;
 import log.charter.io.gp.gp5.data.GPBar;
 import log.charter.io.gp.gp5.data.GPBeat;
 import log.charter.io.gp.gp5.data.GPNote;
@@ -52,7 +52,7 @@ public class GP5ArrangementTransformer {
 	}
 
 	private static void addNote(final GP5SoundsTransformer noteTransformer, final GPBeat gpBeat,
-			final FractionalPosition position, final FractionalPosition endPosition, final boolean[] wasHOPOStart,
+			final GP5FractionalPosition position, final GP5FractionalPosition endPosition, final boolean[] wasHOPOStart,
 			final int[] hopoFrom) {
 		if (gpBeat.notes.isEmpty()) {
 			return;
@@ -87,9 +87,9 @@ public class GP5ArrangementTransformer {
 			}
 
 			for (final List<GPBeat> voice : bars.get(barId - 1).voices) {
-				FractionalPosition position = new FractionalPosition(beatsMap.immutable(), barBeatId);
+				GP5FractionalPosition position = new GP5FractionalPosition(beatsMap.immutable, barBeatId);
 				for (final GPBeat gpBeat : voice) {
-					final FractionalPosition endPosition = position.move(gpBeat.duration, gpBeat.tupletNumerator,
+					final GP5FractionalPosition endPosition = position.move(gpBeat.duration, gpBeat.tupletNumerator,
 							gpBeat.tupletDenominator, gpBeat.dots);
 					addNote(noteTransformer, gpBeat, position, endPosition, wasHOPOStart, hopoFrom);
 					position = endPosition;
@@ -107,9 +107,7 @@ public class GP5ArrangementTransformer {
 	public static Arrangement makeArrangement(final BeatsMap beatsMap, final List<Integer> barsOrder,
 			final GPTrackData trackData, final List<GPBar> bars) {
 		final ArrangementType arrangementType = getGPArrangementType(trackData);
-		final int startPosition = beatsMap.getBeatSafe(0).position();
-		final int endPosition = beatsMap.getBeatSafe(beatsMap.beats.size() - 1).position();
-		final Arrangement arrangement = new Arrangement(arrangementType, startPosition, endPosition);
+		final Arrangement arrangement = new Arrangement(arrangementType);
 
 		arrangement.capo = trackData.capo;
 		arrangement.tuning = getTuningFromGPTuning(trackData.tuning, arrangement.capo,

@@ -34,9 +34,11 @@ import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.lookAndFeel.CharterSliderUI;
 import log.charter.io.Logger;
-import log.charter.services.AudioHandler;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.RepeatManager;
+import log.charter.services.audio.AudioHandler;
+import log.charter.services.audio.ClapsHandler;
+import log.charter.services.audio.MetronomeHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
@@ -58,7 +60,9 @@ public class ChartToolbar extends JToolBar implements Initiable {
 	private static final BufferedImage sfxVolumeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarSFXVolume.png");
 
 	private AudioHandler audioHandler;
+	private ClapsHandler clapsHandler;
 	private KeyboardHandler keyboardHandler;
+	private MetronomeHandler metronomeHandler;
 	private ModeManager modeManager;
 	private RepeatManager repeatManager;
 	private WaveFormDrawer waveFormDrawer;
@@ -301,16 +305,14 @@ public class ChartToolbar extends JToolBar implements Initiable {
 			final DoubleConsumer volumeSetter) {
 		final JSlider volumeSlider = new JSlider(0, 100, getVolumeAsInteger(value));
 		volumeSlider.addChangeListener(e -> volumeSetter.accept(volumeSlider.getValue() / 100.0));
-		volumeSlider.setSize(72, elementHeight);
 		volumeSlider.setFocusable(false);
 		volumeSlider.setBackground(getBackground());
 
-		final FieldWithLabel<JSlider> volume = new FieldWithLabel<>(label, 0, 72, elementHeight, volumeSlider,
-				LabelPosition.LEFT_PACKED);
+		final FieldWithLabel<JSlider> volume = new FieldWithLabel<>(label, icon.getWidth(), 72, elementHeight,
+				volumeSlider, LabelPosition.LEFT_CLOSE);
 		setIcon(volume.label, icon);
 
 		add(x, volume);
-
 		volumeSlider.setUI(new CharterSliderUI());
 	}
 
@@ -319,8 +321,8 @@ public class ChartToolbar extends JToolBar implements Initiable {
 		final AtomicInteger x = new AtomicInteger(5);
 
 		midi = addToggleButton(x, Label.TOOLBAR_MIDI, audioHandler::toggleMidiNotes);
-		claps = addToggleButton(x, Label.TOOLBAR_CLAPS, audioHandler::toggleClaps);
-		metronome = addToggleButton(x, Label.TOOLBAR_METRONOME, audioHandler::toggleMetronome);
+		claps = addToggleButton(x, Label.TOOLBAR_CLAPS, clapsHandler::toggleClaps);
+		metronome = addToggleButton(x, Label.TOOLBAR_METRONOME, metronomeHandler::toggleMetronome);
 
 		addSeparator(x);
 
@@ -353,8 +355,8 @@ public class ChartToolbar extends JToolBar implements Initiable {
 	public void updateValues() {
 		midi.setSelected(audioHandler.midiNotesPlaying);
 		midi.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
-		claps.setSelected(audioHandler.claps());
-		metronome.setSelected(audioHandler.metronome());
+		claps.setSelected(clapsHandler.claps());
+		metronome.setSelected(metronomeHandler.metronome());
 		waveformGraph.setSelected(waveFormDrawer.drawing());
 		waveformGraph.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
 		intensityRMSIndicator.setEnabled(waveFormDrawer.drawing());

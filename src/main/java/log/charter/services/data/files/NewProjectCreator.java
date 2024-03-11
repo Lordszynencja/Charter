@@ -13,7 +13,7 @@ import log.charter.data.song.BeatsMap;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.SongFolderSelectPane;
-import log.charter.services.AudioHandler;
+import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.sound.data.AudioDataShort;
 import log.charter.util.FileChooseUtils;

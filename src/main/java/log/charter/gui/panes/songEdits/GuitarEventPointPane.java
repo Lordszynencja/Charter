@@ -29,7 +29,7 @@ import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInputForPane;
 import log.charter.gui.components.utils.validators.IntValueValidator;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class GuitarEventPointPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;

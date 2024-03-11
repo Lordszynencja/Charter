@@ -16,6 +16,9 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.CharterContext.Initiable;
+import log.charter.services.audio.AudioHandler;
+import log.charter.services.audio.ClapsHandler;
+import log.charter.services.audio.MetronomeHandler;
 import log.charter.services.data.ChartItemsHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.GuitarSoundsHandler;
@@ -37,11 +40,13 @@ public class ActionHandler implements Initiable {
 	private ChartTimeHandler chartTimeHandler;
 	private ChartToolbar chartToolbar;
 	private CharterContext charterContext;
+	private ClapsHandler clapsHandler;
 	private CopyManager copyManager;
 	private GuitarSoundsHandler guitarSoundsHandler;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private HandShapesHandler handShapesHandler;
 	private HighlightManager highlightManager;
+	private MetronomeHandler metronomeHandler;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
 	private NewProjectCreator newProjectCreator;
@@ -187,7 +192,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.TOGGLE_ANCHOR, this::toggleAnchor);
 		actionHandlers.put(Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW,
 				windowedPreviewHandler::switchBorderlessWindowedPreview);
-		actionHandlers.put(Action.TOGGLE_CLAPS, audioHandler::toggleClaps);
+		actionHandlers.put(Action.TOGGLE_CLAPS, clapsHandler::toggleClaps);
 		actionHandlers.put(Action.TOGGLE_HARMONIC, guitarSoundsStatusesHandler::toggleHarmonic);
 		actionHandlers.put(Action.TOGGLE_HARMONIC_INDEPENDENTLY,
 				guitarSoundsStatusesHandler::toggleHarmonicIndependently);
@@ -196,7 +201,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.TOGGLE_LINK_NEXT, guitarSoundsStatusesHandler::toggleLinkNext);
 		actionHandlers.put(Action.TOGGLE_LINK_NEXT_INDEPENDENTLY,
 				guitarSoundsStatusesHandler::toggleLinkNextIndependently);
-		actionHandlers.put(Action.TOGGLE_METRONOME, audioHandler::toggleMetronome);
+		actionHandlers.put(Action.TOGGLE_METRONOME, metronomeHandler::toggleMetronome);
 		actionHandlers.put(Action.TOGGLE_MIDI, audioHandler::toggleMidiNotes);
 		actionHandlers.put(Action.TOGGLE_MUTE, guitarSoundsStatusesHandler::toggleMute);
 		actionHandlers.put(Action.TOGGLE_MUTE_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleMuteIndependently);

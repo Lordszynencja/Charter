@@ -3,6 +3,7 @@ package log.charter.gui.components.preview3D.data;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
+import static log.charter.util.CollectionUtils.findFirstAfter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import log.charter.data.song.EventPoint;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IConstantPositionWithLength;
 import log.charter.services.RepeatManager;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class AnchorDrawData implements IConstantPositionWithLength {
 	public static List<AnchorDrawData> getAnchorsForTimeSpan(final ChartData data, final int audioLength,
@@ -42,8 +43,8 @@ public class AnchorDrawData implements IConstantPositionWithLength {
 				anchorTimeTo = audioLength;
 			}
 
-			final EventPoint nextPhraseIteration = IConstantPosition.findFirstAfter(
-					data.getCurrentArrangement().getFilteredEventPoints(p -> p.phrase != null), anchor.position());
+			final EventPoint nextPhraseIteration = findFirstAfter(
+					data.getCurrentArrangement().getFilteredEventPoints(p -> p.hasPhrase()), anchor);
 			if (nextPhraseIteration != null) {
 				anchorTimeTo = min(anchorTimeTo, nextPhraseIteration.position());
 			}

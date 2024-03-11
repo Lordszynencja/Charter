@@ -20,7 +20,7 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.notes.Chord.ChordNotesVisibility;
 import log.charter.services.RepeatManager;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class Preview3DNotesData {
 	private static void addChord(final List<ChordBoxDrawData> chords, final List<List<NoteDrawData>> notes,

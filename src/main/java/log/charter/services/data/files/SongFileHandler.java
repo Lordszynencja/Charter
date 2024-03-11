@@ -22,7 +22,7 @@ import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
 import log.charter.io.rs.xml.vocals.ArrangementVocals;
 import log.charter.io.rsc.xml.ChartProject;
-import log.charter.services.AudioHandler;
+import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.data.fixers.ArrangementFixer;

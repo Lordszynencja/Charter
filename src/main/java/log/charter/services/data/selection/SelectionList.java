@@ -5,8 +5,8 @@ import java.util.Set;
 
 import log.charter.data.song.position.IPosition;
 import log.charter.data.types.PositionType;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.Pair;
 
 class SelectionList<T extends IPosition> {
 	static interface SelectionMaker<T extends IPosition> {

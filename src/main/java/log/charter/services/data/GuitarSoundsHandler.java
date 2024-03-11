@@ -20,9 +20,9 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.IntRange;
 import log.charter.util.chordRecognition.ChordNameSuggester;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.data.IntRange;
 
 public class GuitarSoundsHandler {
 	private ChartData chartData;

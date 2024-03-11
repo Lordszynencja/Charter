@@ -27,7 +27,7 @@ import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.CollectionUtils.HashSet2;
+import log.charter.util.collections.HashSet2;
 
 public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 	private static final long serialVersionUID = 1L;

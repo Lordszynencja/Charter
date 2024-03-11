@@ -39,6 +39,7 @@ public class Localization {
 		ARRANGEMENT_TYPE_LEAD("Lead"), //
 		ARRANGEMENT_TYPE_RHYTHM("Rhythm"), //
 		BACKUP_DELAY_S("Backup delay (s)"), //
+		BUFFER_SIZE_MS("Audio buffer size to fill (ms)"), //
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
 		CHANGE_AUDIO("Change audio"), //

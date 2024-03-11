@@ -51,8 +51,8 @@ import log.charter.gui.components.preview3D.shapes.CompositeModel;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels.TextureAtlasPosition;
 import log.charter.gui.components.preview3D.shapes.OpenNoteModel;
-import log.charter.util.CollectionUtils.Pair;
-import log.charter.util.IntRange;
+import log.charter.util.collections.Pair;
+import log.charter.util.data.IntRange;
 
 public class Preview3DGuitarSoundsDrawer {
 	private static final int tailBumpLength = 100;

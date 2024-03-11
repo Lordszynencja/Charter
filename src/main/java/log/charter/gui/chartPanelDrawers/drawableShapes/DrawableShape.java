@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 public interface DrawableShape {
 	public void draw(final Graphics2D g);

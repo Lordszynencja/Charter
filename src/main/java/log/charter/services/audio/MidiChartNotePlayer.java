@@ -1,4 +1,4 @@
-package log.charter.services.midi;
+package log.charter.services.audio;
 
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
@@ -24,7 +24,7 @@ import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class MidiChartNotePlayer implements Initiable {
 	private ChartTimeHandler chartTimeHandler;

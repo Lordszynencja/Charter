@@ -8,7 +8,7 @@ import log.charter.io.gp.gp5.data.GP5File;
 import log.charter.io.gp.gp5.data.GPBar;
 import log.charter.io.gp.gp5.data.GPBeat;
 import log.charter.io.gp.gp5.data.GPMasterBar;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class GP5FileTempoMapExtractor {
 	public static BeatsMap getTempoMap(final GP5File gp5File, final int start, final int audioLength,

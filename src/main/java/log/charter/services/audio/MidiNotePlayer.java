@@ -1,4 +1,4 @@
-package log.charter.services.midi;
+package log.charter.services.audio;
 
 import static log.charter.data.config.Config.sfxVolume;
 import static log.charter.data.song.configs.Tuning.getStringDistanceFromC0;
@@ -27,7 +27,7 @@ import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
 import log.charter.io.Logger;
-import log.charter.util.CollectionUtils.ArrayList2;
+import log.charter.util.collections.ArrayList2;
 
 public class MidiNotePlayer {
 	private enum GuitarSoundType {

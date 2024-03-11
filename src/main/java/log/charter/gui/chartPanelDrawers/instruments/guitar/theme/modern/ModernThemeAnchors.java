@@ -17,7 +17,7 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeAnchors;
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 public class ModernThemeAnchors implements ThemeAnchors {
 	private static Font anchorFont = new Font(Font.SANS_SERIF, Font.BOLD, anchorInfoHeight);

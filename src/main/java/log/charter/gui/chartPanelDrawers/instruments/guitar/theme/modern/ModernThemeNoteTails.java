@@ -27,8 +27,8 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.StrokedTriangle;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
-import log.charter.util.IntRange;
-import log.charter.util.Position2D;
+import log.charter.util.data.IntRange;
+import log.charter.util.data.Position2D;
 
 public class ModernThemeNoteTails {
 	private static final Color[] noteTailColors = new Color[maxStrings];

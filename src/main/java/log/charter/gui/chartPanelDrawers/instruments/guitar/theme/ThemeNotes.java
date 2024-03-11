@@ -5,7 +5,7 @@ import java.util.Optional;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
-import log.charter.util.Position2D;
+import log.charter.util.data.Position2D;
 
 public interface ThemeNotes {
 	void addNote(final EditorNoteDrawingData note);

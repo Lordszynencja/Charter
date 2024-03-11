@@ -19,8 +19,8 @@ import javax.swing.SwingConstants;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.utils.PaneSizes;
 import log.charter.gui.components.utils.RowedPosition;
-import log.charter.util.CollectionUtils.ArrayList2;
-import log.charter.util.CollectionUtils.Pair;
+import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.Pair;
 
 public class RowedPanel extends JPanel {
 	public static interface ValueSetter<T> {
