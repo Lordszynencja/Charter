@@ -8,13 +8,11 @@
 	<packaging>jar</packaging>
 	<name>Charter</name>
 	<description>Charting program for guitar</description>
-	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<lwjgl.version>3.3.2</lwjgl.version>
 		<lwjgl3-awt.version>0.1.8</lwjgl3-awt.version>
 	</properties>
-	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -26,7 +24,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
 	<dependencies>
 		<dependency>
 			<groupId>com.googlecode.soundlibs</groupId>
@@ -114,14 +111,18 @@
 			<artifactId>lwjgl3-awt</artifactId>
 			<version>${lwjgl3-awt.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.3.1</version>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.3.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-archiver</artifactId>
+			<version>[4.8.0,)</version>
+		</dependency>
 	</dependencies>
-	
 	<profiles>
 		<profile>
 			<id>lwjgl-natives-linux-amd64</id>
@@ -232,7 +233,6 @@
 			</properties>
 		</profile>
 	</profiles>
-	
 	<build>
 		<finalName>Charter</finalName>
 		<plugins>
@@ -287,10 +287,10 @@
 				</executions>
 			</plugin>
 			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
-            </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.0</version>
+			</plugin>
 			<plugin>
 				<groupId>com.akathist.maven.plugins.launch4j</groupId>
 				<artifactId>launch4j-maven-plugin</artifactId>
