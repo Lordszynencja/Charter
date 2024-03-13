@@ -28,10 +28,10 @@ public class CollectionUtils {
 				.collect(Collectors.toCollection(collectionGenerator));
 	}
 
-	public static <E extends Comparable<E>, T extends E, D extends Comparable<D>> Integer findClosestId(
+	public static <E extends Comparable<E>, T extends E, D extends Comparable<D>> int findClosestId(
 			final List<T> positions, final E position, final BiFunction<T, E, D> distanceCalculator) {
 		if (positions.isEmpty()) {
-			return null;
+			return -1;
 		}
 		if (positions.size() == 1) {
 			return 0;
@@ -53,7 +53,7 @@ public class CollectionUtils {
 		return leftDistance.compareTo(rightDistance) < 0 ? left : right;
 	}
 
-	public static <E extends Comparable<E>, T extends E, D extends Comparable<D>> Integer findClosestId(
+	public static <E extends Comparable<E>, T extends E, D extends Comparable<D>> int findClosestId(
 			final List<T> positions, final E position, final ToIntFunction<E> positionCalculator) {
 		return findClosestId(positions, position,
 				(a, b) -> abs(positionCalculator.applyAsInt(a) - positionCalculator.applyAsInt(b)));
@@ -61,14 +61,13 @@ public class CollectionUtils {
 
 	public static <E extends Comparable<E>, T extends E, D extends Comparable<D>> T findClosest(final List<T> positions,
 			final E position, final BiFunction<T, E, D> distanceCalculator) {
-		final Integer id = findClosestId(positions, position, distanceCalculator);
-		return id == null ? null : positions.get(id);
+		final int id = findClosestId(positions, position, distanceCalculator);
+		return id == -1 ? null : positions.get(id);
 	}
 
-	public static <E extends Comparable<E>, T extends E> Integer findFirstIdAfter(final List<T> list,
-			final E position) {
+	public static <E extends Comparable<E>, T extends E> int findFirstIdAfter(final List<T> list, final E position) {
 		if (list.isEmpty() || position.compareTo(list.get(list.size() - 1)) >= 0) {
-			return null;
+			return -1;
 		}
 
 		int minId = 0;
@@ -86,14 +85,14 @@ public class CollectionUtils {
 	}
 
 	public static <E extends Comparable<E>, T extends E> T findFirstAfter(final List<T> list, final E position) {
-		final Integer id = findFirstIdAfter(list, position);
-		return id == null ? null : list.get(id);
+		final int id = findFirstIdAfter(list, position);
+		return id == -1 ? null : list.get(id);
 	}
 
-	public static <E extends Comparable<E>, T extends E> Integer findFirstIdAfterEqual(final List<T> list,
+	public static <E extends Comparable<E>, T extends E> int findFirstIdAfterEqual(final List<T> list,
 			final E position) {
 		if (list.isEmpty() || position.compareTo(list.get(list.size() - 1)) > 0) {
-			return null;
+			return -1;
 		}
 
 		int minId = 0;
@@ -111,14 +110,13 @@ public class CollectionUtils {
 	}
 
 	public static <E extends Comparable<E>, T extends E> T findFirstAfterEqual(final List<T> list, final E position) {
-		final Integer id = findFirstIdAfterEqual(list, position);
-		return id == null ? null : list.get(id);
+		final int id = findFirstIdAfterEqual(list, position);
+		return id == -1 ? null : list.get(id);
 	}
 
-	public static <E extends Comparable<E>, T extends E> Integer findLastIdBefore(final List<T> list,
-			final E position) {
+	public static <E extends Comparable<E>, T extends E> int findLastIdBefore(final List<T> list, final E position) {
 		if (list.isEmpty() || position.compareTo(list.get(0)) <= 0) {
-			return null;
+			return -1;
 		}
 
 		int minId = 0;
@@ -136,14 +134,14 @@ public class CollectionUtils {
 	}
 
 	public static <E extends Comparable<E>, T extends E> T findLastBefore(final List<T> list, final E position) {
-		final Integer id = findLastIdBefore(list, position);
-		return id == null ? null : list.get(id);
+		final int id = findLastIdBefore(list, position);
+		return id == -1 ? null : list.get(id);
 	}
 
-	public static <E extends Comparable<E>, T extends E> Integer findLastIdBeforeEqual(final List<T> list,
+	public static <E extends Comparable<E>, T extends E> int findLastIdBeforeEqual(final List<T> list,
 			final E position) {
 		if (list.isEmpty() || position.compareTo(list.get(0)) < 0) {
-			return null;
+			return -1;
 		}
 
 		int minId = 0;
@@ -162,7 +160,7 @@ public class CollectionUtils {
 
 	public static <E extends Comparable<E>, T extends E> T findLastBeforeEquals(final List<T> list, final E position) {
 		final Integer id = findLastIdBeforeEqual(list, position);
-		return id == null ? null : list.get(id);
+		return id == -1 ? null : list.get(id);
 	}
 
 	public static <E extends Comparable<E>, T extends E> List<T> getFromTo(final List<T> list, final E from,
