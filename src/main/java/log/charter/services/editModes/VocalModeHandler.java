@@ -9,7 +9,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.panes.songEdits.VocalPane;
-import log.charter.services.data.selection.SelectionAccessor;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
@@ -53,9 +53,9 @@ public class VocalModeHandler extends ModeHandler {
 			undoSystem.addUndo();
 		}
 
-		final SelectionAccessor<Vocal> selectedNotes = selectionManager.getSelectedAccessor(PositionType.VOCAL);
-		changePositionsWithLengthsLength(chartData.songChart.beatsMap, selectedNotes.getSortedSelected(),
-				chartData.songChart.vocals.vocals, change);
+		final ISelectionAccessor<Vocal> selectedNotes = selectionManager.accessor(PositionType.VOCAL);
+		changePositionsWithLengthsLength(chartData.beats(), selectedNotes.getSortedSelected(),
+				chartData.currentVocals().vocals, change);
 
 		currentSelectionEditor.selectionChanged(false);
 		lastScrollTime = System.currentTimeMillis();

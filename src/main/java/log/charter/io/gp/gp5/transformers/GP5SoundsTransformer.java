@@ -314,7 +314,7 @@ public class GP5SoundsTransformer {
 		level.sounds.add(ChordOrNote.from(note));
 		afterNotes.forEach(afterNote -> level.sounds.add(ChordOrNote.from(afterNote)));
 
-		lastSound = level.sounds.getLast();
+		lastSound = level.sounds.get(level.sounds.size() - 1);
 		lastSoundTemplate = null;
 		lastHandShape = null;
 	}
@@ -459,7 +459,7 @@ public class GP5SoundsTransformer {
 		chord.updateTemplate(templateId, chordTemplate);
 		level.sounds.add(ChordOrNote.from(chord));
 
-		lastSound = level.sounds.getLast();
+		lastSound = level.sounds.get(level.sounds.size() - 1);
 		lastSoundTemplate = chordTemplate;
 
 		final int handshapeEndPosition = endPosition.moveBackwards(GPDuration.NOTE_32).getPosition();

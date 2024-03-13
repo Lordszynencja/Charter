@@ -6,7 +6,6 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.util.Arrays.asList;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.bendHalfstepDistance;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretLengthMultiplier;
@@ -37,6 +36,7 @@ import log.charter.data.config.Config;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Mute;
+import log.charter.data.song.position.Position;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.data.ChordBoxDrawData;
@@ -51,6 +51,7 @@ import log.charter.gui.components.preview3D.shapes.CompositeModel;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels.TextureAtlasPosition;
 import log.charter.gui.components.preview3D.shapes.OpenNoteModel;
+import log.charter.util.CollectionUtils;
 import log.charter.util.collections.Pair;
 import log.charter.util.data.IntRange;
 
@@ -172,33 +173,40 @@ public class Preview3DGuitarSoundsDrawer {
 		return string < data.currentStrings() - 2 && (string <= 2 || string > data.currentStrings() / 2);
 	}
 
+	private double getBendValue(final NoteDrawData note, final int dt) {
+		if (note.bendValues.isEmpty()) {
+			return 0;
+		}
+
+		final Integer lastBendId = CollectionUtils.lastBeforeEqual(note.bendValues, new Position(dt)).findId();
+
+		if (lastBendId == null) {
+			return 0;
+		}
+
+		final BendValue bend = note.bendValues.get(lastBendId);
+
+		if (lastBendId >= note.bendValues.size() - 1) {
+			return bend.bendValue.doubleValue();
+		}
+
+		final double bendAValue = bend.bendValue.doubleValue();
+		final int bendAPosition = bend.position();
+
+		final BendValue nextBend = note.bendValues.get(lastBendId + 1);
+		final double bendBValue = nextBend.bendValue.doubleValue();
+		final int bendBPosition = nextBend.position();
+		final double scale = 1.0 * (dt - bendAPosition) / (bendBPosition - bendAPosition);
+		return bendAValue * (1 - scale) + (bendBValue) * scale;
+	}
+
 	private double getNoteHeightAtTime(final NoteDrawData note, final int t, final boolean invertBend) {
 		final int dt = t - note.originalPosition;
 
-		double bendValue = 0;
-		if (!note.bendValues.isEmpty()) {
-			final int lastBendId = findLastIdBeforeEqual(note.bendValues, dt);
-			double bendAValue = 0;
-			int bendAPosition = 0;
-			if (lastBendId != -1) {
-				final BendValue bend = note.bendValues.get(lastBendId);
-				bendAValue = bend.bendValue.doubleValue();
-				bendAPosition = bend.position();
-			}
-			if (lastBendId < note.bendValues.size() - 1) {
-				final BendValue nextBend = note.bendValues.get(lastBendId + 1);
-				final double bendBValue = nextBend.bendValue.doubleValue();
-				final int bendBPosition = nextBend.position();
-				final double scale = 1.0 * (dt - bendAPosition) / (bendBPosition - bendAPosition);
-				bendValue = bendAValue * (1 - scale) + (bendBValue) * scale;
-			} else {
-				bendValue = bendAValue;
-			}
-		}
+		double bendValue = getBendValue(note, dt);
 		if (invertBend) {
 			bendValue = -bendValue;
 		}
-
 		if (note.vibrato) {
 			bendValue += sin(dt * Math.PI / tailBumpLength) * bendHalfstepDistance / 2;
 		}
@@ -257,6 +265,10 @@ public class Preview3DGuitarSoundsDrawer {
 	private void drawChordBox(final ShadersHolder shadersHolder, final Preview3DDrawData drawData,
 			final ChordBoxDrawData chordBox) {
 		final IntRange frets = drawData.getFrets(chordBox.position);
+		if (frets == null) {
+			return;
+		}
+
 		final double x0 = getFretPosition(frets.min - 1);
 		final double x1 = getFretPosition(frets.max);
 		final double y0 = getChartboardYPosition(data.currentStrings());
@@ -338,6 +350,9 @@ public class Preview3DGuitarSoundsDrawer {
 			final int position, final NoteDrawData note, final boolean hit) {
 		final Color color = getNoteHeadColor(note);
 		final IntRange frets = drawData.getFrets(note.originalPosition);
+		if (frets == null) {
+			return;
+		}
 
 		final double x = (getFretPosition(frets.min - 1) + getFretPosition(frets.max)) / 2;
 		final double y = getStringPositionWithBend(note.string, data.currentStrings(), note.prebend);
@@ -511,6 +526,10 @@ public class Preview3DGuitarSoundsDrawer {
 	private void drawOpenNoteTail(final ShadersHolder shadersHolder, final Preview3DDrawData drawData,
 			final NoteDrawData note) {
 		final IntRange frets = drawData.getFrets(note.originalPosition);
+		if (frets == null) {
+			return;
+		}
+
 		final double x0 = getFretPosition(frets.min - 1) + 0.2;
 		final double x1 = x0 + 0.2;
 		final double x3 = getFretPosition(frets.max) - 0.2;

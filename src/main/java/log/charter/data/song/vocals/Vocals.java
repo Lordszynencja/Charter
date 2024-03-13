@@ -1,36 +1,40 @@
 package log.charter.data.song.vocals;
 
+import static log.charter.util.CollectionUtils.map;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.io.rs.xml.vocals.ArrangementVocals;
-import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("vocals")
 @XStreamInclude(Vocal.class)
 public class Vocals {
 
-	public ArrayList2<Vocal> vocals = new ArrayList2<>();
+	public List<Vocal> vocals = new ArrayList<>();
 
 	public Vocals() {
 	}
 
-	public Vocals(final ArrayList2<Vocal> vocals) {
+	public Vocals(final List<Vocal> vocals) {
 		this.vocals = vocals;
 	}
 
 	public Vocals(final ArrangementVocals arrangementVocals) {
-		vocals = arrangementVocals.vocals.map(Vocal::new);
+		vocals = map(arrangementVocals.vocals, Vocal::new);
 	}
 
 	public Vocals(final Vocals other) {
-		vocals = other.vocals.map(Vocal::new);
+		vocals = map(other.vocals, Vocal::new);
 	}
 
 	public int insertNote(final int position, final String text, final boolean wordPart, final boolean phraseEnd) {
 		final Vocal vocal = new Vocal(position, text, wordPart, phraseEnd);
 
-		if (vocals.isEmpty() || vocals.getLast().position() < position) {
+		if (vocals.isEmpty() || vocals.get(vocals.size() - 1).position() < position) {
 			vocals.add(vocal);
 			return vocals.size() - 1;
 		}

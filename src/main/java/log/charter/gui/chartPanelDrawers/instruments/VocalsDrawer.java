@@ -11,8 +11,9 @@ import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.List;
+import java.util.Set;
 
-import log.charter.data.ChartData;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
@@ -20,14 +21,11 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
-import log.charter.gui.chartPanelDrawers.data.HighlightData;
+import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
-import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashSet2;
 import log.charter.util.data.Position2D;
 
 public class VocalsDrawer {
@@ -110,26 +108,23 @@ public class VocalsDrawer {
 	}
 
 	private BeatsDrawer beatsDrawer;
-	private ChartData data;
 	private ChartPanel chartPanel;
 	private LyricLinesDrawer lyricLinesDrawer;
-	private SelectionManager selectionManager;
 	private WaveFormDrawer waveFormDrawer;
 
 	public void lyricLinesDrawer(final LyricLinesDrawer lyricLinesDrawer) {
 		this.lyricLinesDrawer = lyricLinesDrawer;
 	}
 
-	private void drawVocals(final Graphics2D g, final int time, final HighlightData highlightData) {
-		final VocalNotesDrawingData drawingData = new VocalNotesDrawingData(g, time);
+	private void drawVocals(final FrameData frameData) {
+		final VocalNotesDrawingData drawingData = new VocalNotesDrawingData(frameData.g, frameData.time);
 
-		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
+		final List<Vocal> vocals = frameData.vocals.vocals;
 		final int width = chartPanel.getWidth();
-		final HashSet2<Integer> selectedVocalIds = selectionManager.getSelectedAccessor(PositionType.VOCAL)//
-				.getSelectedSet().map(selection -> selection.id);
+		final Set<Integer> selectedVocalIds = frameData.selection.getSelectedIds(PositionType.VOCAL);
 
-		final int timeFrom = xToTime(-1, time);
-		final int timeTo = xToTime(width + 1, time);
+		final int timeFrom = xToTime(-1, frameData.time);
+		final int timeTo = xToTime(width + 1, frameData.time);
 
 		for (int i = 0; i < vocals.size(); i++) {
 			final Vocal vocal = vocals.get(i);
@@ -146,34 +141,30 @@ public class VocalsDrawer {
 				continue;
 			}
 
-			final int x = timeToX(vocal.position(), time);
+			final int x = timeToX(vocal.position(), frameData.time);
 			final int length = max(2, timeToXLength(vocal.position(), vocal.length()));
 			final boolean selected = selectedVocalIds.contains(i);
 			drawingData.addVocal(vocal, next, x, length, selected);
 		}
 
-		if (highlightData.type == PositionType.VOCAL) {
-			if (highlightData.id.isPresent()) {
-				final Vocal vocal = vocals.get(highlightData.id.get().id);
-				drawingData.addHighlight(time, vocal.position(), vocal.length());
+		if (frameData.highlightData.type == PositionType.VOCAL) {
+			if (frameData.highlightData.id.isPresent()) {
+				final Vocal vocal = vocals.get(frameData.highlightData.id.get().id);
+				drawingData.addHighlight(frameData.time, vocal.position(), vocal.length());
 			} else {
-				highlightData.highlightedNonIdPositions.forEach(highlightPosition -> drawingData.addHighlight(time,
-						highlightPosition.position, highlightPosition.length));
+				frameData.highlightData.highlightedNonIdPositions.forEach(highlightPosition -> drawingData
+						.addHighlight(frameData.time, highlightPosition.position, highlightPosition.length));
 			}
 		}
 
-		drawingData.draw(g);
+		drawingData.draw(frameData.g);
 	}
 
-	public void draw(final Graphics2D g, final int time, final HighlightData highlightData) {
-		if (data == null || data.isEmpty) {
-			return;
-		}
-
-		waveFormDrawer.draw(g, time);
-		beatsDrawer.draw(g, time, highlightData);
-		drawVocals(g, time, highlightData);
-		lyricLinesDrawer.draw(g, time);
+	public void draw(final FrameData frameData) {
+		waveFormDrawer.draw(frameData);
+		beatsDrawer.draw(frameData);
+		drawVocals(frameData);
+		lyricLinesDrawer.draw(frameData);
 	}
 
 }

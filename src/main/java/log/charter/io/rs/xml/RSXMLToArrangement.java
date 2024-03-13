@@ -4,11 +4,13 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.stream.Collectors.toCollection;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import log.charter.data.song.Arrangement;
-import log.charter.data.song.Beat;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.EventType;
@@ -81,7 +83,7 @@ public class RSXMLToArrangement {
 		return EventType.HIGH_PITCH_TICK;
 	}
 
-	public static Arrangement toArrangement(final SongArrangement arrangementData, final ArrayList2<Beat> beats) {
+	public static Arrangement toArrangement(final SongArrangement arrangementData, final ImmutableBeatsMap beats) {
 		final Arrangement arrangement = new Arrangement();
 
 		arrangement.arrangementType = arrangementData.arrangementProperties.getType();
@@ -93,8 +95,12 @@ public class RSXMLToArrangement {
 		arrangement.baseTone = arrangementData.tonebase == null ? "" : arrangementData.tonebase;
 		arrangement.toneChanges = arrangementData.tones == null ? new ArrayList2<>()
 				: getToneChanges(arrangementData.tones.list);
-		arrangement.tones = new HashSet2<>(arrangement.toneChanges.map(toneChange -> toneChange.toneName));
-		arrangement.chordTemplates = arrangementData.chordTemplates.list.map(ChordTemplate::new);
+		arrangement.tones = arrangement.toneChanges.stream()//
+				.map(toneChange -> toneChange.toneName)//
+				.collect(Collectors.toCollection(HashSet2::new));
+		arrangement.chordTemplates = arrangementData.chordTemplates.list.stream()//
+				.map(ChordTemplate::new)//
+				.collect(Collectors.toCollection(ArrayList::new));
 
 		arrangementData.sections.list.forEach(arrangementSection -> {
 			final EventPoint arrangementEventsPoint = arrangement
@@ -125,7 +131,8 @@ public class RSXMLToArrangement {
 			arrangementEventsPoint.events.add(findEventByRSName(arrangementEvent.code));
 		});
 
-		arrangement.levels = RSXMLLevelTransformer.fromArrangementDataLevels(arrangement, arrangementData.levels.list);
+		arrangement.levels = RSXMLLevelTransformer.fromArrangementDataLevels(arrangement, arrangementData.levels.list,
+				beats);
 
 		return arrangement;
 	}

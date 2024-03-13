@@ -1,12 +1,13 @@
 package log.charter.gui.components.preview3D.drawers;
 
-import static log.charter.data.song.position.IConstantPosition.findLastBeforeEquals;
+import static log.charter.data.song.position.IConstantPosition.positionComparator;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretMiddlePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.noteHalfWidth;
 import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.awt.Color;
 
@@ -17,6 +18,7 @@ import log.charter.data.config.Config;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.Position;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.data.HandShapeDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
@@ -83,6 +85,9 @@ public class Preview3DFingeringDrawer {
 	private void drawArpeggioOpen(final ShadersHolder shadersHolder, final Preview3DDrawData drawData, final int string,
 			final int fret) {
 		final IntRange frets = drawData.getFrets(0);
+		if (frets == null) {
+			return;
+		}
 
 		drawArpeggioPart(shadersHolder, string, frets.min, TextureAtlasPosition.ARPEGGIO_OPEN_BRACKET, noteHalfWidth,
 				noteHalfWidth);
@@ -175,7 +180,8 @@ public class Preview3DFingeringDrawer {
 	}
 
 	private ChordTemplate findTemplateToUse(final Preview3DDrawData drawData) {
-		final HandShapeDrawData handShape = findLastBeforeEquals(drawData.handShapes, drawData.time + 20);
+		final HandShapeDrawData handShape = lastBeforeEqual(drawData.handShapes, new Position(drawData.time + 20),
+				positionComparator).find();
 		if (handShape == null || handShape.timeTo < drawData.time) {
 			return null;
 		}
@@ -183,8 +189,8 @@ public class Preview3DFingeringDrawer {
 			return handShape.template;
 		}
 
-		final Level level = data.getCurrentArrangementLevel();
-		final ChordOrNote sound = findLastBeforeEquals(level.sounds, drawData.time + 20);
+		final Level level = data.currentArrangementLevel();
+		final ChordOrNote sound = lastBeforeEqual(level.sounds, new Position(drawData.time + 20)).find();
 		if (sound == null || sound.position() < handShape.position() || sound.isNote()) {
 			return handShape.template;
 		}
@@ -192,7 +198,7 @@ public class Preview3DFingeringDrawer {
 			return null;
 		}
 
-		return data.getCurrentArrangement().chordTemplates.get(sound.chord().templateId());
+		return data.currentArrangement().chordTemplates.get(sound.chord().templateId());
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {

@@ -6,8 +6,11 @@ import static log.charter.io.rs.xml.song.SongArrangementXStreamHandler.readSong;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.readVocals;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.position.IPosition;
@@ -35,10 +38,10 @@ public class SongChart {
 	public Integer albumYear;
 
 	public BeatsMap beatsMap;
-	public ArrayList2<Arrangement> arrangements = new ArrayList2<>();
+	public List<Arrangement> arrangements = new ArrayList<>();
 	public Vocals vocals = new Vocals();
 
-	public HashMap2<Integer, Integer> bookmarks = new HashMap2<>();
+	public Map<Integer, Integer> bookmarks = new HashMap<>();
 
 	public SongChart(final BeatsMap beatsMap) {
 		this.beatsMap = beatsMap;
@@ -81,7 +84,7 @@ public class SongChart {
 			try {
 				final String xml = RW.read(dir + filename);
 				final SongArrangement songArrangement = readSong(xml);
-				arrangements.add(RSXMLToArrangement.toArrangement(songArrangement, beatsMap.beats));
+				arrangements.add(RSXMLToArrangement.toArrangement(songArrangement, beatsMap.immutable));
 			} catch (final Exception e) {
 				Logger.error("Couldn't load arrangement file " + filename, e);
 				throw new IOException(String.format(Label.MISSING_ARRANGEMENT_FILE.label(), filename));
@@ -133,14 +136,13 @@ public class SongChart {
 		albumName = cleanString(value);
 	}
 
-	public void moveEverything(final int chartLength, final int positionDifference) {
+	public void moveEverythingWithBeats(final int chartLength, final int positionDifference) {
 		final List<IPosition> positionsToMove = new LinkedList<>();
 		positionsToMove.addAll(beatsMap.beats);
 		for (final Arrangement arrangement : arrangements) {
 			positionsToMove.addAll(arrangement.eventPoints);
 			positionsToMove.addAll(arrangement.toneChanges);
 			for (final Level level : arrangement.levels) {
-				positionsToMove.addAll(level.anchors);
 				positionsToMove.addAll(level.sounds);
 				positionsToMove.addAll(level.handShapes);
 			}

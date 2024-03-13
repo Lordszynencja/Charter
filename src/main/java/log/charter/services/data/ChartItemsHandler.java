@@ -1,9 +1,11 @@
 package log.charter.services.data;
 
 import static java.util.Arrays.asList;
-import static log.charter.data.song.position.IConstantPosition.getFromTo;
+import static log.charter.data.song.position.IConstantPosition.positionComparator;
+import static log.charter.util.CollectionUtils.getFromTo;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -14,19 +16,19 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.IFractionalPosition;
 import log.charter.data.song.position.IPosition;
 import log.charter.data.song.position.IPositionWithLength;
-import log.charter.data.song.position.Position;
+import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.services.data.fixers.ArrangementFixer;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
-import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.HashSet2;
 
 public class ChartItemsHandler {
@@ -36,7 +38,7 @@ public class ChartItemsHandler {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public void delete() {
+	public <T extends IVirtualConstantPosition & Comparable<? super T>> void delete() {
 		boolean nonEmptyFound = false;
 
 		for (final PositionType type : PositionType.values()) {
@@ -44,19 +46,19 @@ public class ChartItemsHandler {
 				continue;
 			}
 
-			final SelectionAccessor<Position> selectedTypeAccessor = selectionManager.getSelectedAccessor(type);
+			final ISelectionAccessor<T> selectedTypeAccessor = selectionManager.accessor(type);
 			if (!selectedTypeAccessor.isSelected()) {
 				continue;
 			}
 
-			final ArrayList2<Selection<Position>> selected = selectedTypeAccessor.getSortedSelected();
+			final List<Selection<T>> selected = selectedTypeAccessor.getSortedSelected();
 			if (!nonEmptyFound) {
 				undoSystem.addUndo();
 				selectionManager.clear();
 				nonEmptyFound = true;
 			}
 
-			delete(type, selected.map(selection -> selection.id));
+			delete(type, selected.stream().map(selection -> selection.id).collect(Collectors.toList()));
 		}
 	}
 
@@ -67,131 +69,165 @@ public class ChartItemsHandler {
 		}
 
 		idsToDelete.sort((a, b) -> -Integer.compare(a, b));
-
-		final ArrayList2<IPosition> positions = type.getPositions(chartData);
-		idsToDelete.forEach(id -> positions.remove((int) id));
+		final List<?> items = type.manager().getItems(chartData);
+		idsToDelete.forEach(id -> items.remove((int) id));
 
 		if (type == PositionType.TONE_CHANGE) {
-			chartData.getCurrentArrangement().tones = chartData.getCurrentArrangement().toneChanges.stream()//
+			chartData.currentArrangement().tones = chartData.currentArrangement().toneChanges.stream()//
 					.map(toneChange -> toneChange.toneName)//
 					.collect(Collectors.toCollection(HashSet2::new));
 		}
 	}
 
-	private void snapPositions(final Collection<? extends IPosition> positions) {
-		for (final IPosition position : positions) {
-			final int newPosition = chartData.songChart.beatsMap.getPositionFromGridClosestTo(position.position());
-			position.position(newPosition);
+	private <T extends IVirtualConstantPosition & Comparable<? super T>> void snapPositions(final Collection<T> positions) {
+		for (final T position : positions) {
+			chartData.beats().snap(position);
+		}
+	}
+
+	private void snapFractionalPositions(final Collection<? extends IFractionalPosition> positions) {
+		for (final IFractionalPosition position : positions) {
+			final FractionalPosition newPosition = chartData.songChart.beatsMap
+					.getPositionFromGridClosestTo(position.fractionalPosition());
+			position.fractionalPosition(newPosition);
+		}
+	}
+
+	private <T extends Comparable<T>> void clearRepeatedPositions(final List<? extends IVirtualConstantPosition> positions) {
+		if (positions.isEmpty()) {
+			return;
+		}
+
+		final List<T> comparablePositions = IVirtualConstantPosition.listAsPositions(positions);
+		for (int i = positions.size() - 1; i > 0; i++) {
+			if (comparablePositions.get(i).compareTo(comparablePositions.get(i - 1)) == 0) {
+				positions.remove(i);
+				comparablePositions.remove(i);
+			}
 		}
 	}
 
 	private void snapNotePositions(final Collection<ChordOrNote> positions) {
 		snapPositions(positions);
 
-		final ArrayList2<ChordOrNote> sounds = chartData.getCurrentArrangementLevel().sounds;
-		for (int i = 1; i < sounds.size(); i++) {
-			while (i < sounds.size() && sounds.get(i).position() == sounds.get(i - 1).position()) {
-				sounds.remove(i);
-			}
-		}
-
+		final List<ChordOrNote> sounds = chartData.currentArrangementLevel().sounds;
+		clearRepeatedPositions(sounds);
 		arrangementFixer.fixNoteLengths(sounds);
 	}
 
 	private <T extends IPositionWithLength> void snapPositionsWithLength(final Collection<T> positions,
-			final ArrayList2<T> allPositions) {
+			final List<T> allPositions) {
 		snapPositions(positions);
+		clearRepeatedPositions(allPositions);
 		arrangementFixer.fixLengths(allPositions);
 	}
 
-	private void reselectAfterSnapping(final PositionType type, final Collection<Selection<IPosition>> selected) {
-		final Set<Integer> selectedPositions = selected.stream()//
-				.map(selection -> selection.selectable.position())//
-				.collect(Collectors.toSet());
+	private <C extends IVirtualConstantPosition & Comparable<? super C>, P extends C, T extends P> void reselectAfterSnapping(
+			final PositionType type, final Collection<Selection<T>> selected) {
+		final List<C> selectedPositions = type.<C, P, T>manager().asConstant(selected.stream().map(s -> s.selectable));
 
 		selectionManager.clear();
 		selectionManager.addSelectionForPositions(type, selectedPositions);
 	}
 
-	public void snapSelected() {
-		final SelectionAccessor<IPosition> accessor = selectionManager.getCurrentlySelectedAccessor();
-		if (!accessor.isSelected() || !asList(PositionType.EVENT_POINT, PositionType.TONE_CHANGE, PositionType.ANCHOR,
-				PositionType.GUITAR_NOTE, PositionType.HAND_SHAPE, PositionType.VOCAL).contains(accessor.type)) {
+	public <T extends IVirtualConstantPosition & Comparable<? super T>> void snapSelected() {
+		final ISelectionAccessor<T> accessor = selectionManager.selectedAccessor();
+		if (!accessor.isSelected() || asList(PositionType.BEAT, PositionType.NONE).contains(accessor.type())) {
 			return;
 		}
 
 		undoSystem.addUndo();
 
-		final HashSet2<Selection<IPosition>> selected = accessor.getSelectedSet();
-
-		switch (accessor.type) {
+		final Set<Selection<T>> selected = accessor.getSelectedSet();
+		switch (accessor.type()) {
 			case EVENT_POINT:
+				snapPositions(selected.stream().flatMap(selection -> selection.selectable.asPosition().stream())
+						.collect(Collectors.toList()));
 			case ANCHOR:
+				snapFractionalPositions(selected.stream()
+						.flatMap(selection -> selection.selectable.asFraction().stream()).collect(Collectors.toList()));
 			case TONE_CHANGE:
-				snapPositions(selected.map(selection -> selection.selectable));
+				snapPositions(selected.stream().flatMap(selection -> selection.selectable.asPosition().stream())
+						.collect(Collectors.toList()));
 				break;
 			case GUITAR_NOTE:
-				snapNotePositions(selected.map(selection -> (ChordOrNote) selection.selectable));
+				snapNotePositions(selected.stream().map(selection -> (ChordOrNote) selection.selectable)
+						.collect(Collectors.toList()));
 				break;
 			case HAND_SHAPE:
-				snapPositionsWithLength(selected.map(selection -> (HandShape) selection.selectable),
-						chartData.getCurrentArrangementLevel().handShapes);
+				snapPositionsWithLength(selected.stream().map(selection -> (HandShape) selection.selectable)
+						.collect(Collectors.toList()), chartData.currentArrangementLevel().handShapes);
 				break;
 			case VOCAL:
-				snapPositionsWithLength(selected.map(selection -> (Vocal) selection.selectable),
+				snapPositionsWithLength(
+						selected.stream().map(selection -> (Vocal) selection.selectable).collect(Collectors.toList()),
 						chartData.songChart.vocals.vocals);
 				break;
 			default:
 				break;
 		}
 
-		reselectAfterSnapping(accessor.type, selected);
+		reselectAfterSnapping(accessor.type(), selected);
 	}
 
-	public void snapAll() {
-		final SelectionAccessor<IPosition> accessor = selectionManager.getCurrentlySelectedAccessor();
+	private void snapAllOnVocals(final ISelectionAccessor<Vocal> accessor) {
+		undoSystem.addUndo();
+
+		final List<Selection<Vocal>> selected = accessor.getSortedSelected();
+		final IPosition from = selected.get(0).selectable;
+		final IPosition to = selected.get(selected.size() - 1).selectable;
+		snapPositionsWithLength(getFromTo(chartData.songChart.vocals.vocals, from, to, positionComparator),
+				chartData.songChart.vocals.vocals);
+
+		reselectAfterSnapping(accessor.type(), selected);
+	}
+
+	private <T extends IVirtualConstantPosition & Comparable<? super T>> void snapAllOnGuitar(
+			final ISelectionAccessor<T> accessor) {
+		undoSystem.addUndo();
+
+		final List<Selection<T>> selected = accessor.getSortedSelected();
+		final T from = selected.get(0).selectable;
+		final T to = selected.get(selected.size() - 1).selectable;
+		final Arrangement arrangement = chartData.currentArrangement();
+		final Level level = chartData.currentArrangementLevel();
+		final Comparator<IVirtualConstantPosition> comparator = IVirtualConstantPosition.comparator(chartData.beats());
+
+		snapPositions(getFromTo(arrangement.eventPoints, from, to, comparator));
+		snapPositions(getFromTo(arrangement.toneChanges, from, to, comparator));
+		snapPositions(getFromTo(level.anchors, from, to, comparator));
+		snapNotePositions(getFromTo(level.sounds, from, to, comparator));
+		snapPositionsWithLength(getFromTo(level.handShapes, from, to, comparator), level.handShapes);
+
+		reselectAfterSnapping(accessor.type(), selected);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends IVirtualConstantPosition & Comparable<? super T>> void snapAll() {
+		final ISelectionAccessor<T> accessor = selectionManager.selectedAccessor();
 		if (!accessor.isSelected()) {
 			return;
 		}
 
-		final ArrayList2<Selection<IPosition>> selected = accessor.getSortedSelected();
-		final int from = selected.get(0).selectable.position();
-		final int to = selected.getLast().selectable.position();
-
-		if (modeManager.getMode() == EditMode.TEMPO_MAP) {
-			return;
-		}
-
-		if (modeManager.getMode() == EditMode.VOCALS) {
-			undoSystem.addUndo();
-
-			snapPositionsWithLength(getFromTo(chartData.songChart.vocals.vocals, from, to),
-					chartData.songChart.vocals.vocals);
-
-			reselectAfterSnapping(accessor.type, selected);
-			return;
-		}
-
-		if (modeManager.getMode() == EditMode.GUITAR) {
-			undoSystem.addUndo();
-
-			final Arrangement arrangement = chartData.getCurrentArrangement();
-			final Level level = chartData.getCurrentArrangementLevel();
-			snapPositions(getFromTo(arrangement.eventPoints, from, to));
-			snapPositions(getFromTo(arrangement.toneChanges, from, to));
-			snapPositions(getFromTo(level.anchors, from, to));
-			snapNotePositions(getFromTo(level.sounds, from, to));
-			snapPositionsWithLength(getFromTo(level.handShapes, from, to), level.handShapes);
-
-			reselectAfterSnapping(accessor.type, selected);
+		switch (modeManager.getMode()) {
+			case GUITAR:
+				snapAllOnGuitar(accessor);
+				break;
+			case VOCALS:
+				snapAllOnVocals((ISelectionAccessor<Vocal>) accessor);
+				break;
+			case TEMPO_MAP:
+			case EMPTY:
+			default:
+				break;
 		}
 	}
 
 	public void mapSounds(final Function<ChordOrNote, ChordOrNote> mapper) {
-		final ArrayList2<ChordOrNote> sounds = chartData.getCurrentArrangementLevel().sounds;
-		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+		final List<ChordOrNote> sounds = chartData.currentArrangementLevel().sounds;
+		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
+				.accessor(PositionType.GUITAR_NOTE);
+		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
 
 		for (final Selection<ChordOrNote> selection : selected) {
 			sounds.set(selection.id, mapper.apply(selection.selectable));

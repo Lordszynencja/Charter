@@ -1,14 +1,17 @@
 package log.charter.services.data.selection;
 
-import static log.charter.data.song.position.IConstantPosition.findClosestId;
+import static log.charter.util.CollectionUtils.closest;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.song.position.Position;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
@@ -18,7 +21,6 @@ import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.HashMap2;
@@ -29,22 +31,20 @@ public class SelectionManager implements Initiable {
 	private ChartTimeHandler chartTimeHandler;
 	private CurrentSelectionEditor currentSelectionEditor;
 	private ModeManager modeManager;
-	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
 
-	private final Map<PositionType, TypeSelectionManager<?>> typeSelectionManagers = new HashMap2<>();
+	private final Map<PositionType, SelectionList<?, ?, ?>> selectionLists = new HashMap2<>();
 
 	@Override
 	public void init() {
 		for (final PositionType type : PositionType.values()) {
-			final TypeSelectionManager<?> typeSelectionManager = new TypeSelectionManager<>(type, chartData,
-					mouseButtonPressReleaseHandler);
+			final SelectionList<?, ?, ?> typeSelectionManager = new SelectionList<>(type);
 			charterContext.initObject(typeSelectionManager);
-			typeSelectionManagers.put(type, typeSelectionManager);
+			selectionLists.put(type, typeSelectionManager);
 		}
 	}
 
 	private void clearSelectionsExcept(final PositionType typeNotToClear) {
-		typeSelectionManagers.forEach((type, manager) -> {
+		selectionLists.forEach((type, manager) -> {
 			if (type != typeNotToClear) {
 				manager.clear();
 			}
@@ -52,9 +52,8 @@ public class SelectionManager implements Initiable {
 	}
 
 	private static class PositionWithLink extends Position {
-		public static ArrayList2<PositionWithLink> fromPositionsWithIdAndType(
-				final ArrayList2<PositionWithIdAndType> positions) {
-			final ArrayList2<PositionWithLink> newPositions = new ArrayList2<>(positions.size() * 2);
+		public static List<PositionWithLink> fromPositionsWithIdAndType(final List<PositionWithIdAndType> positions) {
+			final List<PositionWithLink> newPositions = new ArrayList<>(positions.size() * 2);
 
 			for (final PositionWithIdAndType position : positions) {
 				newPositions.add(new PositionWithLink(position.position(), position));
@@ -72,10 +71,11 @@ public class SelectionManager implements Initiable {
 		}
 	}
 
-	private PositionWithIdAndType findExistingLong(final int x, final ArrayList2<PositionWithIdAndType> positions) {
-		final ArrayList2<PositionWithLink> positionsWithLinks = PositionWithLink.fromPositionsWithIdAndType(positions);
+	private PositionWithIdAndType findExistingLong(final int x, final List<PositionWithIdAndType> positions) {
+		final List<PositionWithLink> positionsWithLinks = PositionWithLink.fromPositionsWithIdAndType(positions);
 		final int position = xToTime(x, chartTimeHandler.time());
-		final Integer id = findClosestId(positionsWithLinks, position);
+		final Integer id = closest(positionsWithLinks, new Position(position), IConstantPosition::compareTo,
+				p -> p.position()).findId();
 		if (id == null) {
 			return null;
 		}
@@ -89,10 +89,10 @@ public class SelectionManager implements Initiable {
 		return closest;
 	}
 
-	private PositionWithIdAndType findClosestExistingPoint(final int x,
-			final ArrayList2<PositionWithIdAndType> positions) {
+	private PositionWithIdAndType findClosestExistingPoint(final int x, final List<PositionWithIdAndType> positions) {
 		final int position = xToTime(x, chartTimeHandler.time());
-		final Integer id = findClosestId(positions, position);
+		final Integer id = closest(positions, new Position(position), IConstantPosition::compareTo, p -> p.position())
+				.findId();
 		if (id == null) {
 			return null;
 		}
@@ -108,7 +108,7 @@ public class SelectionManager implements Initiable {
 
 	public PositionWithIdAndType findExistingPosition(final int x, final int y) {
 		final PositionType positionType = PositionType.fromY(y, modeManager.getMode());
-		final ArrayList2<PositionWithIdAndType> positions = positionType.getPositionsWithIdsAndTypes(chartData);
+		final List<PositionWithIdAndType> positions = positionType.getPositionsWithIdsAndTypes(chartData);
 
 		if (positionType == PositionType.HAND_SHAPE || positionType == PositionType.VOCAL) {
 			return findExistingLong(x, positions);
@@ -133,14 +133,13 @@ public class SelectionManager implements Initiable {
 
 		clearSelectionsExcept(clickData.pressHighlight.type);
 
-		final TypeSelectionManager<?> manager = typeSelectionManagers.get(clickData.pressHighlight.type);
-		if (manager == null) {
+		final SelectionList<?, ?, ?> selectionList = selectionLists.get(clickData.pressHighlight.type);
+		if (selectionList == null) {
 			currentSelectionEditor.selectionChanged(true);
 			return;
 		}
 
-		manager.addSelection(clickData.pressHighlight, clickData.pressPosition.x, clickData.pressPosition.y, ctrl,
-				shift);
+		selectionList.addSelectablesWithModifiers(clickData.pressHighlight.id, ctrl, shift);
 		currentSelectionEditor.selectionChanged(true);
 	}
 
@@ -150,43 +149,43 @@ public class SelectionManager implements Initiable {
 	}
 
 	public void refresh(final PositionType type) {
-		typeSelectionManagers.get(type).refresh();
+		selectionLists.get(type).refresh();
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends IPosition> SelectionAccessor<T> getSelectedAccessor(final PositionType type) {
-		final TypeSelectionManager<?> typeSelectionManager = typeSelectionManagers.get(type);
-		if (typeSelectionManager == null) {
-			return new SelectionAccessor<>(PositionType.NONE, () -> new ArrayList2<>());
+	public <T extends IVirtualConstantPosition> ISelectionAccessor<T> accessor(final PositionType type) {
+		final SelectionList<?, ?, ?> selectionList = selectionLists.get(type);
+		if (selectionList == null) {
+			return new NoneSelectionAccessor<>();
 		}
 
-		return (SelectionAccessor<T>) typeSelectionManager.getAccessor();
+		return (SelectionAccessor<T>) selectionList.getAccessor();
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends IPosition> SelectionAccessor<T> getCurrentlySelectedAccessor() {
-		for (final TypeSelectionManager<?> typeSelectionManager : typeSelectionManagers.values()) {
-			final SelectionAccessor<T> accessor = (SelectionAccessor<T>) typeSelectionManager.getAccessor();
+	public <T extends IVirtualConstantPosition> ISelectionAccessor<T> selectedAccessor() {
+		for (final SelectionList<?, ?, ?> selectionList : selectionLists.values()) {
+			final ISelectionAccessor<T> accessor = (ISelectionAccessor<T>) selectionList.getAccessor();
 			if (accessor.isSelected()) {
 				return accessor;
 			}
 		}
 
-		return (SelectionAccessor<T>) typeSelectionManagers.get(PositionType.NONE).getAccessor();
+		return new NoneSelectionAccessor<T>();
 	}
 
 	public void selectAllNotes() {
 		if (modeManager.getMode() == EditMode.GUITAR) {
-			typeSelectionManagers.get(PositionType.GUITAR_NOTE).addAll();
+			selectionLists.get(PositionType.GUITAR_NOTE).addAll();
 		} else if (modeManager.getMode() == EditMode.VOCALS) {
-			typeSelectionManagers.get(PositionType.VOCAL).addAll();
+			selectionLists.get(PositionType.VOCAL).addAll();
 		}
 
 		currentSelectionEditor.selectionChanged(true);
 	}
 
 	public void addSelection(final PositionType type, final int id) {
-		typeSelectionManagers.get(type).add(id);
+		selectionLists.get(type).add(id);
 		currentSelectionEditor.selectionChanged(true);
 	}
 
@@ -195,12 +194,14 @@ public class SelectionManager implements Initiable {
 	}
 
 	public void addSoundSelection(final ArrayList2<Integer> ids) {
-		typeSelectionManagers.get(PositionType.GUITAR_NOTE).add(ids);
+		selectionLists.get(PositionType.GUITAR_NOTE).add(ids);
 		currentSelectionEditor.selectionChanged(true);
 	}
 
-	public void addSelectionForPositions(final PositionType type, final Set<Integer> positions) {
-		typeSelectionManagers.get(type).addPositions(positions);
+	@SuppressWarnings("unchecked")
+	public <C extends IVirtualConstantPosition> void addSelectionForPositions(final PositionType type,
+			final Collection<C> positions) {
+		((SelectionList<C, ?, ?>) selectionLists.get(type)).addPositions(positions);
 		currentSelectionEditor.selectionChanged(type == PositionType.GUITAR_NOTE);
 	}
 

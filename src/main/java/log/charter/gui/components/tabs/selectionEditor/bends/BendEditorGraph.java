@@ -7,9 +7,9 @@ import static java.lang.Math.round;
 import static log.charter.data.config.Config.gridSize;
 import static log.charter.data.config.Config.maxBendValue;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.song.position.IConstantPosition.findFirstIdAfterEqual;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
+import static log.charter.util.CollectionUtils.firstAfterEqual;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 import static log.charter.util.Utils.formatBendValue;
 
 import java.awt.Dimension;
@@ -30,6 +30,7 @@ import log.charter.data.song.BeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.Note;
+import log.charter.data.song.position.Position;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.util.collections.ArrayList2;
@@ -163,8 +164,9 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	}
 
 	private void calculateBeatPositions() {
-		firstBeatId = findLastIdBeforeEqual(beatsMap.beats, notePosition);
-		lastBeatId = findFirstIdAfterEqual(beatsMap.beats, notePosition + notesLengths[string]);
+		firstBeatId = lastBeforeEqual(beatsMap.beats, new Position(notePosition)).findId(0);
+		lastBeatId = firstAfterEqual(beatsMap.beats, new Position(notePosition + notesLengths[string]))
+				.findId(beatsMap.beats.size() - 1);
 
 		noteStartPosition = beatsMap.getPositionInBeats(notePosition) - firstBeatId;
 		noteEndPosition = beatsMap.getPositionInBeats(notePosition + notesLengths[string]) - firstBeatId;

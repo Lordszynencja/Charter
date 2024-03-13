@@ -13,6 +13,7 @@ import static log.charter.services.data.fixers.ArrangementFixer.fixSoundLength;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -59,8 +60,6 @@ import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashSet2;
 import log.charter.util.collections.Pair;
 
 public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
@@ -236,8 +235,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void refreshBendEditorStrings() {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+				.accessor(PositionType.GUITAR_NOTE);
+		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
 		if (selected.size() == 1) {
 			selectionBendEditor.enableAndSelectStrings(selected.stream().findAny().get().selectable);
 		}
@@ -247,7 +246,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		string.field.setTextWithoutEvent("");
 		fret.field.setTextWithoutEvent("");
 
-		final Arrangement arrangement = chartData.getCurrentArrangement();
+		final Arrangement arrangement = chartData.currentArrangement();
 		final int templateId = arrangement.getChordTemplateIdWithSave(chordTemplate);
 
 		chartItemsHandler.mapSounds(sound -> sound.asChord(templateId, chordTemplate));
@@ -258,8 +257,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private void changeSelectedChordsToNotes() {
 		clearChordName();
 
-		final Arrangement arrangement = chartData.getCurrentArrangement();
-		final ArrayList2<ChordTemplate> chordTemplates = arrangement.chordTemplates;
+		final Arrangement arrangement = chartData.currentArrangement();
+		final List<ChordTemplate> chordTemplates = arrangement.chordTemplates;
 
 		chartItemsHandler.mapSounds(sound -> sound.asNote(chordTemplates));
 
@@ -277,8 +276,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		}
 
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+				.accessor(PositionType.GUITAR_NOTE);
+		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
 		for (final Selection<ChordOrNote> selection : selected) {
 			selection.selectable.note().string = newString;
 		}
@@ -301,7 +300,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		}
 
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+				.accessor(PositionType.GUITAR_NOTE);
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
 			selection.selectable.note().fret = newFret;
 		}
@@ -315,7 +314,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			undoSystem.addUndo();
 
 			final Stream<Selection<ChordOrNote>> stream = selectionManager
-					.<ChordOrNote>getSelectedAccessor(PositionType.GUITAR_NOTE)//
+					.<ChordOrNote>accessor(PositionType.GUITAR_NOTE)//
 					.getSelectedSet()//
 					.stream();
 
@@ -350,9 +349,9 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		undoSystem.addUndo();
 
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		final ArrayList2<ChordOrNote> sounds = chartData.getCurrentArrangementLevel().sounds;
-		final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+				.accessor(PositionType.GUITAR_NOTE);
+		final List<ChordOrNote> sounds = chartData.currentArrangementLevel().sounds;
+		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
 		for (final Selection<ChordOrNote> selection : selected) {
 			if (selection.selectable.isNote()) {
 				if (isSelected(selection.selectable.note().string)) {
@@ -384,7 +383,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void cleanSlide() {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+				.accessor(PositionType.GUITAR_NOTE);
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
 			if (selection.selectable.isNote()) {
 				final Note note = selection.selectable.note();
@@ -392,7 +391,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 				if (note.linkNext) {
 					final ChordOrNote nextSound = ChordOrNote.findNextSoundOnString(note.string, selection.id + 1,
-							chartData.getCurrentArrangementLevel().sounds);
+							chartData.currentArrangementLevel().sounds);
 					if (nextSound != null && nextSound.isNote()) {
 						nextSound.note().fret = note.fret;
 					}
@@ -405,8 +404,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void setSlide(final int newSlideFret) {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		final ArrayList2<ChordTemplate> chordTemplates = chartData.getCurrentArrangement().chordTemplates;
+				.accessor(PositionType.GUITAR_NOTE);
+		final List<ChordTemplate> chordTemplates = chartData.currentArrangement().chordTemplates;
 
 		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
 			if (selection.selectable.isNote()) {
@@ -415,7 +414,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 				if (note.linkNext) {
 					final ChordOrNote nextSound = ChordOrNote.findNextSoundOnString(note.string, selection.id + 1,
-							chartData.getCurrentArrangementLevel().sounds);
+							chartData.currentArrangementLevel().sounds);
 					if (nextSound != null && nextSound.isNote()) {
 						nextSound.note().fret = note.slideTo;
 					}
@@ -462,12 +461,15 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 		undoSystem.addUndo();
 
-		final Arrangement arrangement = chartData.getCurrentArrangement();
+		final Arrangement arrangement = chartData.currentArrangement();
 
 		if (chordTemplate.frets.size() == 0) {
 			final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-					.getSelectedAccessor(PositionType.GUITAR_NOTE);
-			final List<Integer> selected = selectionAccessor.getSortedSelected().map(selection -> selection.id);
+					.accessor(PositionType.GUITAR_NOTE);
+			final List<Integer> selected = selectionAccessor.getSortedSelected()//
+					.stream()//
+					.map(selection -> selection.id)//
+					.collect(Collectors.toList());
 
 			selectionManager.clear();
 			chartItemsHandler.delete(PositionType.GUITAR_NOTE, selected);
@@ -478,8 +480,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			changeSelectedChordsToNotes();
 
 			final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-					.getSelectedAccessor(PositionType.GUITAR_NOTE);
-			final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+					.accessor(PositionType.GUITAR_NOTE);
+			final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
 
 			for (final Entry<Integer, Integer> entry : chordTemplate.frets.entrySet()) {
 				string.field.setTextWithoutEvent(entry.getKey() + "");
@@ -496,8 +498,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		} else {
 			final int templateId = arrangement.getChordTemplateIdWithSave(chordTemplate);
 			final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-					.getSelectedAccessor(PositionType.GUITAR_NOTE);
-			final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+					.accessor(PositionType.GUITAR_NOTE);
+			final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
 
 			for (final Selection<ChordOrNote> selection : selected) {
 				if (selection.selectable.isChord()) {
@@ -564,7 +566,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private <T> T getValueFromSelectedStrings(final Function<Note, T> noteValueGetter,
 			final Function<ChordNote, T> chordNoteValueGetter, final T defaultValue,
-			final HashSet2<Selection<ChordOrNote>> selected) {
+			final Set<Selection<ChordOrNote>> selected) {
 		T value = null;
 
 		for (final Selection<ChordOrNote> selection : selected) {
@@ -599,8 +601,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void updateStringSelectionDependentValues() {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		final HashSet2<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+				.accessor(PositionType.GUITAR_NOTE);
+		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
 
 		mute.setSelected(getValueFromSelectedStrings(n -> n.mute, n -> n.mute, Mute.NONE, selected));
 		hopo.setSelected(getValueFromSelectedStrings(n -> n.hopo, n -> n.hopo, HOPO.NONE, selected));
@@ -632,11 +634,11 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		slideFret.field.setTextWithoutEvent(slideFretValue == null ? "" : (slideFretValue + ""));
 	}
 
-	private void setFretsOnSelectionChange(final HashSet2<Selection<ChordOrNote>> selected) {
+	private void setFretsOnSelectionChange(final Set<Selection<ChordOrNote>> selected) {
 		final Integer templateId = getSingleValue(selected,
 				selection -> selection.selectable.isChord() ? selection.selectable.chord().templateId() : null, null);
 		if (templateId != null) {
-			chordTemplate = new ChordTemplate(chartData.getCurrentArrangement().chordTemplates.get(templateId));
+			chordTemplate = new ChordTemplate(chartData.currentArrangement().chordTemplates.get(templateId));
 			setCurrentValuesInInputs();
 			fret.field.setTextWithoutEvent("");
 			string.field.setTextWithoutEvent("");
@@ -678,7 +680,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			strings.forEach(string -> string.setSelected(true));
 		}
 
-		final HashSet2<Selection<ChordOrNote>> selected = selectedChordOrNotesAccessor.getSelectedSet();
+		final Set<Selection<ChordOrNote>> selected = selectedChordOrNotesAccessor.getSelectedSet();
 		setFretsOnSelectionChange(selected);
 		string.field.setValidator(new IntegerValueValidator(1, chartData.currentStrings(), false));
 

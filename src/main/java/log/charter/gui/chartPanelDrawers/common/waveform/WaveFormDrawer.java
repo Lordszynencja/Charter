@@ -16,6 +16,7 @@ import java.util.List;
 import log.charter.data.config.Zoom;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
+import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.editModes.EditMode;
@@ -144,15 +145,15 @@ public class WaveFormDrawer {
 		}
 	}
 
-	public void draw(final Graphics g, final int time) {
+	public void draw(final FrameData frameData) {
 		if (!drawing()) {
 			return;
 		}
 
 		if (Zoom.zoom > 1) {
-			drawFull(g, time);
+			drawFull(frameData.g, frameData.time);
 		} else {
-			drawFromMap(g, time);
+			drawFromMap(frameData.g, frameData.time);
 		}
 	}
 }

@@ -3,6 +3,7 @@ package log.charter.services.data.fixers;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.minNoteDistance;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -21,6 +22,8 @@ import log.charter.data.song.SectionType;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
+import log.charter.data.song.position.IConstantFractionalPosition;
+import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IPosition;
 import log.charter.data.song.position.IPositionWithLength;
 import log.charter.services.data.ChartTimeHandler;
@@ -32,21 +35,32 @@ public class ArrangementFixer {
 	private ChartData chartData;
 
 	private void removeWrongPositions(final Arrangement arrangement, final int start, final int end) {
-		final Predicate<IPosition> invalidPositionCheck = p -> p.position() < start || p.position() > end;
+		final Predicate<IConstantPosition> invalidPositionCheck = p -> p.position() < start || p.position() > end;
 
 		arrangement.eventPoints.removeIf(invalidPositionCheck);
 		arrangement.toneChanges.removeIf(invalidPositionCheck);
 		for (final Level level : arrangement.levels) {
-			level.anchors.removeIf(invalidPositionCheck);
+			level.anchors.removeIf(anchor -> invalidPositionCheck.test(anchor.positionAsPosition(chartData.beats())));
 			level.sounds.removeIf(invalidPositionCheck);
 			level.handShapes.removeIf(invalidPositionCheck);
 		}
 	}
 
-	private void removeDuplicates(final List<? extends IPosition> positions) {
-		final List<IPosition> positionsToRemove = new ArrayList<>();
+	private void removeDuplicates(final List<? extends IConstantPosition> positions) {
+		final List<IConstantPosition> positionsToRemove = new ArrayList<>();
 		for (int i = 1; i < positions.size(); i++) {
 			if (positions.get(i).position() == positions.get(i - 1).position()) {
+				positionsToRemove.add(positions.get(i));
+			}
+		}
+
+		positions.removeAll(positionsToRemove);
+	}
+
+	private void removeDuplicatesFractional(final List<? extends IConstantFractionalPosition> positions) {
+		final List<IConstantFractionalPosition> positionsToRemove = new ArrayList<>();
+		for (int i = 1; i < positions.size(); i++) {
+			if (positions.get(i).fractionalPosition().equals(positions.get(i - 1).fractionalPosition())) {
 				positionsToRemove.add(positions.get(i));
 			}
 		}
@@ -90,27 +104,28 @@ public class ArrangementFixer {
 				continue;
 			}
 
-			final int sectionId = CollectionUtils.findLastIdBeforeEqual(sections, eventPoint);
-			if (sectionId != -1 && sections.get(sectionId).section == SectionType.NO_GUITAR) {
+			final Integer sectionId = lastBeforeEqual(sections, eventPoint).findId(minNoteDistance);
+			if (sectionId != null && sections.get(sectionId).section == SectionType.NO_GUITAR) {
 				continue;
 			}
 
-			final int lastAnchorId = CollectionUtils.findLastIdBeforeEqual(level.anchors, eventPoint);
-			if (lastAnchorId == -1) {
+			final Integer lastAnchorId = CollectionUtils
+					.lastBeforeEqual(level.anchors, eventPoint.positionAsFraction(chartData.beats())).findId();
+			if (lastAnchorId == null) {
 				continue;
 			}
 
 			final Anchor lastAnchor = level.anchors.get(lastAnchorId);
-			if (lastAnchor.position() != eventPoint.position()) {
+			if (lastAnchor.position(chartData.beats()) != eventPoint.position()) {
 				final Anchor newAnchor = new Anchor(lastAnchor);
-				newAnchor.position(eventPoint.position());
+				newAnchor.fractionalPosition(eventPoint.positionAsFraction(chartData.beats()));
 				level.anchors.add(newAnchor);
 				level.anchors.sort(null);
 			}
 		}
 	}
 
-	public static void fixNoteLength(final CommonNote note, final int id, final ArrayList2<ChordOrNote> sounds) {
+	public static void fixNoteLength(final CommonNote note, final int id, final List<ChordOrNote> sounds) {
 		if (note.linkNext()) {
 			LinkedNotesFixer.fixLinkedNote(note, id, sounds);
 			return;
@@ -131,21 +146,21 @@ public class ArrangementFixer {
 		note.endPosition(max(note.position(), endPosition));
 	}
 
-	public static void fixSoundLength(final int id, final ArrayList2<ChordOrNote> sounds) {
+	public static void fixSoundLength(final int id, final List<ChordOrNote> sounds) {
 		sounds.get(id).notes().forEach(note -> fixNoteLength(note, id, sounds));
 	}
 
-	public void fixNoteLengths(final ArrayList2<ChordOrNote> sounds, final int from, final int to) {
+	public void fixNoteLengths(final List<ChordOrNote> sounds, final int from, final int to) {
 		for (int i = from; i <= to; i++) {
 			fixSoundLength(i, sounds);
 		}
 	}
 
-	public void fixNoteLengths(final ArrayList2<ChordOrNote> sounds) {
+	public void fixNoteLengths(final List<ChordOrNote> sounds) {
 		fixNoteLengths(sounds, 0, sounds.size() - 1);
 	}
 
-	public void fixLengths(final ArrayList2<? extends IPositionWithLength> positions) {
+	public void fixLengths(final List<? extends IPositionWithLength> positions) {
 		if (positions.isEmpty()) {
 			return;
 		}
@@ -156,7 +171,7 @@ public class ArrangementFixer {
 			position.endPosition(min(nextPosition.position() - Config.minNoteDistance, position.endPosition()));
 		}
 
-		final IPositionWithLength lastPosition = positions.getLast();
+		final IPositionWithLength lastPosition = positions.get(positions.size() - 1);
 		lastPosition.endPosition(min(chartTimeHandler.maxTime(), lastPosition.endPosition()));
 	}
 
@@ -169,7 +184,7 @@ public class ArrangementFixer {
 		level.sounds
 				.removeIf(sound -> sound.isChord() && sound.chord().templateId() >= arrangement.chordTemplates.size());
 
-		removeDuplicates(level.anchors);
+		removeDuplicatesFractional(level.anchors);
 		removeDuplicates(level.sounds);
 		removeDuplicates(level.handShapes);
 

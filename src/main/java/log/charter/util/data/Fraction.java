@@ -17,6 +17,11 @@ public class Fraction implements Comparable<Fraction> {
 		return gcd(a - b, b);
 	}
 
+	public static Fraction fromString(final String value) {
+		final String[] tokens = value.split("/");
+		return new Fraction(Long.valueOf(tokens[0]), Long.valueOf(tokens[1]));
+	}
+
 	public final long numerator;
 	public final long denominator;
 
@@ -31,8 +36,16 @@ public class Fraction implements Comparable<Fraction> {
 		this.denominator = denominator / gcd;
 	}
 
-	public Fraction negative() {
+	public Fraction negate() {
 		return new Fraction(-numerator, denominator);
+	}
+
+	public Fraction absolute() {
+		return numerator >= 0 ? this : negate();
+	}
+
+	public boolean negative() {
+		return numerator < 0 != denominator < 0;
 	}
 
 	public Fraction add(final long number) {
@@ -83,11 +96,16 @@ public class Fraction implements Comparable<Fraction> {
 		return numerator + "/" + denominator;
 	}
 
+	public String asString() {
+		return numerator + "/" + denominator;
+	}
+
 	@Override
 	public int compareTo(final Fraction o) {
-		final long difference = this.add(o.negative()).numerator;
+		final long difference = this.add(o.negate()).numerator;
 		return difference > 0 ? 1//
 				: difference < 0 ? -1//
 						: 0;
 	}
+
 }

@@ -9,6 +9,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import log.charter.util.CollectionUtils;
+
 public class ArrayList2<T> extends ArrayList<T> {
 	private static final long serialVersionUID = 1L;
 
@@ -43,11 +45,7 @@ public class ArrayList2<T> extends ArrayList<T> {
 	}
 
 	public <U> ArrayList2<U> mapWithId(final BiFunction<Integer, T, U> mapper) {
-		final ArrayList2<U> list = new ArrayList2<>(size());
-		for (int i = 0; i < size(); i++) {
-			list.add(mapper.apply(i, get(i)));
-		}
-		return list;
+		return CollectionUtils.mapWithId(this, new ArrayList2<>(size()), mapper);
 	}
 
 	public <U, V> HashMap2<U, V> toMap(final Function<T, Pair<U, V>> mapper) {

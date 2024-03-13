@@ -1,38 +1,55 @@
 package log.charter.services.data.selection;
 
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashSet2;
 
-public class SelectionAccessor<T extends IPosition> {
-	public final PositionType type;
-	private final Supplier<ArrayList2<Selection<T>>> selectedSupplier;
+class SelectionAccessor<T extends IVirtualConstantPosition> implements ISelectionAccessor<T> {
+	private final SelectionList<?, ?, T> selectionList;
+	private final Comparator<IVirtualConstantPosition> comparator;
 
-	SelectionAccessor(final PositionType type, final Supplier<ArrayList2<Selection<T>>> selectedSupplier) {
-		this.type = type;
-		this.selectedSupplier = selectedSupplier;
+	SelectionAccessor(final SelectionList<?, ?, T> selectionList) {
+		this.selectionList = selectionList;
+		comparator = selectionList.type.manager().comparator();
 	}
 
-	private ArrayList2<Selection<T>> getSortedCopy(final ArrayList2<Selection<T>> list) {
-		final ArrayList2<Selection<T>> copy = new ArrayList2<>(list);
-		copy.sort((selection0, selection1) -> Integer.compare(selection0.selectable.position(),
-				selection1.selectable.position()));
+	@Override
+	public PositionType type() {
+		return selectionList.type;
+	}
 
+	private List<Selection<T>> getSortedCopy(final List<Selection<T>> list) {
+		final List<Selection<T>> copy = new ArrayList<>(list);
+		copy.sort((a, b) -> comparator.compare(a.selectable, b.selectable));
 		return copy;
 	}
 
-	public ArrayList2<Selection<T>> getSortedSelected() {
-		return getSortedCopy(selectedSupplier.get());
+	@Override
+	public List<Selection<T>> getSortedSelected() {
+		return getSortedCopy(selectionList.getSelectionWithTemporary());
 	}
 
-	public HashSet2<Selection<T>> getSelectedSet() {
-		return new HashSet2<>(selectedSupplier.get());
+	@Override
+	public Set<Selection<T>> getSelectedSet() {
+		return new HashSet<>(selectionList.getSelectionWithTemporary());
 	}
 
+	@Override
+	public Set<Integer> getSelectedIds(final PositionType forType) {
+		if (selectionList.type != forType) {
+			return new HashSet<>();
+		}
+
+		return selectionList.getSelectedIdsSet();
+	}
+
+	@Override
 	public boolean isSelected() {
-		return !selectedSupplier.get().isEmpty();
+		return !selectionList.getSelectionWithTemporary().isEmpty();
 	}
 }

@@ -207,6 +207,8 @@ public class Localization {
 		INFO_MENU("Info"), //
 		INFO_MENU_LANGUAGE("Language"), //
 		INFO_MENU_VERSION("Version"), //
+		LICENSES("Licenses"), //
+		LIBRARIES_USED("Libraries used:\n%s"), //
 
 		MUSIC_MENU("Music"), //
 		TOGGLE_REPEAT_END("Set repeater end"), //
@@ -482,6 +484,10 @@ public class Localization {
 
 		public String label() {
 			return labels.getOrDefault(name(), defaultLabel);
+		}
+
+		public String format(final Object... args) {
+			return label().formatted(args);
 		}
 
 		public BufferedImage exportAsImage(final Color color, final Font font) {

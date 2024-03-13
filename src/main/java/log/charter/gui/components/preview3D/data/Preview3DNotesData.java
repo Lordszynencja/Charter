@@ -3,7 +3,7 @@ package log.charter.gui.components.preview3D.data;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.data.song.notes.ChordOrNote.isLinkedToPrevious;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,16 +15,16 @@ import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Level;
 import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.Chord.ChordNotesVisibility;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
-import log.charter.data.song.notes.Chord.ChordNotesVisibility;
+import log.charter.data.song.position.Position;
 import log.charter.services.RepeatManager;
-import log.charter.util.collections.ArrayList2;
 
 public class Preview3DNotesData {
 	private static void addChord(final List<ChordBoxDrawData> chords, final List<List<NoteDrawData>> notes,
-			final Arrangement arrangement, final Level level, final ArrayList2<ChordOrNote> sounds, final int id,
+			final Arrangement arrangement, final Level level, final List<ChordOrNote> sounds, final int id,
 			final Chord chord, final int timeFrom, final int timeTo) {
 		final ChordNotesVisibility chordNotesVisibility = chord.chordNotesVisibility(level.shouldChordShowNotes(id));
 
@@ -54,7 +54,7 @@ public class Preview3DNotesData {
 	}
 
 	public static Preview3DNotesData getNotesForTimeSpan(final ChartData data, final int timeFrom, final int timeTo) {
-		if (data.getCurrentArrangementLevel() == null) {
+		if (data.currentArrangementLevel() == null) {
 			final List<List<NoteDrawData>> notes = new ArrayList<>();
 			for (int i = 0; i < maxStrings; i++) {
 				notes.add(new ArrayList<>());
@@ -66,14 +66,17 @@ public class Preview3DNotesData {
 
 		final List<ChordBoxDrawData> chords = new ArrayList<>();
 		final List<List<NoteDrawData>> notes = new ArrayList<>();
-		final Arrangement arrangement = data.getCurrentArrangement();
-		final Level level = data.getCurrentArrangementLevel();
+		final Arrangement arrangement = data.currentArrangement();
+		final Level level = data.currentArrangementLevel();
 		for (int i = 0; i < maxStrings; i++) {
 			notes.add(new ArrayList<>());
 		}
-		final ArrayList2<ChordOrNote> sounds = level.sounds;
+		final List<ChordOrNote> sounds = level.sounds;
 
-		final int soundsTo = findLastIdBeforeEqual(sounds, timeTo);
+		final Integer soundsTo = lastBeforeEqual(sounds, new Position(timeTo)).findId();
+		if (soundsTo == null) {
+			return new Preview3DNotesData(notes, chords);
+		}
 
 		for (int i = 0; i <= soundsTo; i++) {
 			final ChordOrNote sound = sounds.get(i);
@@ -97,7 +100,7 @@ public class Preview3DNotesData {
 			final RepeatManager repeatManager, final int timeFrom, final int timeTo) {
 		int maxTime = timeTo;
 		if (repeatManager.isRepeating()) {
-			maxTime = min(maxTime, repeatManager.getRepeatEnd() - 1);
+			maxTime = min(maxTime, repeatManager.repeatEnd() - 1);
 		}
 
 		final Preview3DNotesData notesToDraw = getNotesForTimeSpan(data, timeFrom, maxTime);
@@ -106,11 +109,11 @@ public class Preview3DNotesData {
 			return notesToDraw;
 		}
 
-		final Preview3DNotesData repeatedNotes = getNotesForTimeSpan(data, repeatManager.getRepeatStart(),
-				repeatManager.getRepeatEnd() - 1);
-		int repeatStart = repeatManager.getRepeatEnd();
+		final Preview3DNotesData repeatedNotes = getNotesForTimeSpan(data, repeatManager.repeatStart(),
+				repeatManager.repeatEnd() - 1);
+		int repeatStart = repeatManager.repeatEnd();
 		while (repeatStart < timeFrom) {
-			repeatStart += repeatManager.getRepeatEnd() - repeatManager.getRepeatStart();
+			repeatStart += repeatManager.repeatEnd() - repeatManager.repeatStart();
 		}
 
 		while (repeatStart < timeTo) {
@@ -118,8 +121,8 @@ public class Preview3DNotesData {
 				final List<NoteDrawData> stringNotesToDraw = notesToDraw.notes.get(string);
 
 				for (final NoteDrawData note : repeatedNotes.notes.get(string)) {
-					final int truePosition = note.originalPosition - repeatManager.getRepeatStart() + repeatStart;
-					final int start = note.position - repeatManager.getRepeatStart() + repeatStart;
+					final int truePosition = note.originalPosition - repeatManager.repeatStart() + repeatStart;
+					final int start = note.position - repeatManager.repeatStart() + repeatStart;
 					int end = start + note.endPosition - note.position;
 					if (start > timeTo) {
 						break;
@@ -133,7 +136,7 @@ public class Preview3DNotesData {
 			}
 
 			for (final ChordBoxDrawData chord : repeatedNotes.chords) {
-				final int start = chord.position - repeatManager.getRepeatStart() + repeatStart;
+				final int start = chord.position - repeatManager.repeatStart() + repeatStart;
 				if (start > timeTo) {
 					break;
 				}
@@ -141,7 +144,7 @@ public class Preview3DNotesData {
 				notesToDraw.chords.add(new ChordBoxDrawData(start, chord));
 			}
 
-			repeatStart += repeatManager.getRepeatEnd() - repeatManager.getRepeatStart();
+			repeatStart += repeatManager.repeatEnd() - repeatManager.repeatStart();
 		}
 
 		return notesToDraw;

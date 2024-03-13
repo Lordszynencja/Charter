@@ -9,7 +9,7 @@ import log.charter.services.CharterContext;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 
 public class CharterMain {
-	public static final String VERSION = "0.15.14";
+	public static final String VERSION = "0.16.0";
 	public static final String VERSION_DATE = "2024.03.11";
 	public static final String TITLE = "Charter " + VERSION;
 

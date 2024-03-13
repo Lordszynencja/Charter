@@ -50,7 +50,7 @@ public class SelectionBendEditor extends RowedPanel {
 
 	private ChordOrNote getCurrentlySelectedSound() {
 		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+				.accessor(PositionType.GUITAR_NOTE);
 		return selectionAccessor.getSortedSelected().get(0).selectable;
 	}
 
@@ -117,7 +117,7 @@ public class SelectionBendEditor extends RowedPanel {
 
 	public void enableAndSelectStrings(final ChordOrNote sound) {
 		final boolean[] stringsForAction = new boolean[maxStrings];
-		final int lowestString = sound.notesWithFrets(data.getCurrentArrangement().chordTemplates)//
+		final int lowestString = sound.notesWithFrets(data.currentArrangement().chordTemplates)//
 				.map(CommonNoteWithFret::string)//
 				.peek(string -> stringsForAction[string] = true)//
 				.collect(Collectors.minBy(Integer::compare)).get();

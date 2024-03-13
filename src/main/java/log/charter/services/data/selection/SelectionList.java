@@ -1,98 +1,119 @@
 package log.charter.services.data.selection;
 
+import static java.util.Arrays.asList;
+import static log.charter.util.CollectionUtils.contains;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import log.charter.data.song.position.IPosition;
+import log.charter.data.ChartData;
+import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.Pair;
+import log.charter.data.types.PositionType.PositionTypeManager;
+import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
+import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButton;
+import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressData;
 
-class SelectionList<T extends IPosition> {
-	static interface SelectionMaker<T extends IPosition> {
+class SelectionList<C extends IVirtualConstantPosition, P extends C, T extends P> {
+	static interface SelectionMaker<T extends IVirtualConstantPosition> {
 		Selection<T> make(int id, T selectable);
 	}
 
-	static interface TemporarySelectionSupplier<T extends IPosition> {
+	static interface TemporarySelectionSupplier<T extends IVirtualConstantPosition> {
 		Selection<T> make();
 	}
 
 	public final PositionType type;
-	private final TemporarySelectionSupplier<T> temporarySelectionSupplier;
+	private final PositionTypeManager<C, P, T> positionTypeManager;
 
-	final ArrayList2<Selection<T>> selected = new ArrayList2<>();
+	private ChartData chartData;
+	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
 
-	SelectionList(final PositionType type, final TemporarySelectionSupplier<T> temporarySelectionSupplier) {
+	final List<Selection<T>> selected = new ArrayList<>();
+
+	SelectionList(final PositionType type) {
 		this.type = type;
-		this.temporarySelectionSupplier = temporarySelectionSupplier;
+		positionTypeManager = type.manager();
 	}
 
-	private void addSelectables(final ArrayList2<T> available, final int fromId, final int toId) {
-		final Set<Integer> selectedSignatures = new HashSet<>(
-				selected.map(selection -> selection.selectable.position()));
+	private void addSelectables(final int fromId, final int toId) {
+		final Set<Integer> ids = new HashSet<>();
 
 		for (int i = fromId; i <= toId; i++) {
-			final T selectable = available.get(i);
-			if (!selectedSignatures.contains(selectable.position())) {
-				selected.add(new Selection<>(i, selectable));
-			}
+			ids.add(i);
 		}
+
+		add(ids);
 	}
 
-	private void addSelectables(final ArrayList2<T> available, int toId) {
-		int fromId = selected.isEmpty() ? toId : selected.getLast().id;
+	private void addSelectablesUntil(int toId) {
+		int fromId = selected.isEmpty() ? toId : selected.get(selected.size() - 1).id;
 		if (fromId > toId) {
 			final int tmp = fromId;
 			fromId = toId;
 			toId = tmp;
 		}
 
-		addSelectables(available, fromId, toId);
+		addSelectables(fromId, toId);
 	}
 
-	private void switchSelectable(final ArrayList2<T> available, final int id) {
+	private void switchSelectable(final int id) {
 		if (!selected.removeIf(selection -> selection.id == id)) {
-			selected.add(new Selection<>(id, available.get(id)));
+			add(id);
 		}
 	}
 
-	private void setSelectable(final ArrayList2<T> available, final int id) {
+	private void setSelectable(final int id) {
 		selected.clear();
-		selected.add(new Selection<>(id, available.get(id)));
+		add(id);
 	}
 
-	void addSelectablesWithModifiers(final ArrayList2<T> available, final int id, final boolean ctrl,
-			final boolean shift) {
+	public void addSelectablesWithModifiers(final int id, final boolean ctrl, final boolean shift) {
 		if (ctrl) {
-			switchSelectable(available, id);
+			switchSelectable(id);
 			return;
 		}
-
 		if (shift) {
-			addSelectables(available, id);
+			addSelectablesUntil(id);
 			return;
 		}
 
-		setSelectable(available, id);
+		setSelectable(id);
 	}
 
-	public void addAll(final ArrayList2<T> available) {
+	public void addAll() {
+		final List<T> items = positionTypeManager.getItems(chartData);
 		clear();
 
-		for (int i = 0; i < available.size(); i++) {
-			final T selectable = available.get(i);
-			selected.add(new Selection<>(i, selectable));
+		for (int i = 0; i < items.size(); i++) {
+			selected.add(new Selection<>(i, items.get(i)));
 		}
 	}
 
-	public void add(final int id, final T selectable) {
-		selected.add(new Selection<>(id, selectable));
+	public void add(final int id) {
+		if (!contains(selected, s -> s.id == id)) {
+			selected.add(new Selection<>(id, positionTypeManager.getItems(chartData).get(id)));
+		}
 	}
 
-	public void add(final ArrayList2<Pair<Integer, T>> toAdd) {
-		toAdd.stream()//
-				.map(pair -> new Selection<>(pair.a, pair.b))//
-				.forEach(selected::add);
+	public void add(final Collection<Integer> ids) {
+		ids.forEach(this::add);
+	}
+
+	public void addPositions(final Collection<C> positions) {
+		add(positionTypeManager.getIdsForPositions(chartData, positions));
+	}
+
+	public Set<Integer> getSelectedIdsSet() {
+		return selected.stream().map(s -> s.id).collect(Collectors.toSet());
+	}
+
+	public List<Integer> getSelectedIds() {
+		return selected.stream().map(s -> s.id).collect(Collectors.toList());
 	}
 
 	public void clear() {
@@ -101,20 +122,36 @@ class SelectionList<T extends IPosition> {
 		}
 	}
 
-	private ArrayList2<Selection<T>> getSelectionWithTemporary() {
+	private Selection<T> getTemporarySelect() {
+		final MouseButtonPressData pressData = mouseButtonPressReleaseHandler.getPressPosition(MouseButton.LEFT_BUTTON);
+		if (pressData == null || pressData.highlight.type != type || !pressData.highlight.existingPosition) {
+			return null;
+		}
+
+		return new Selection<>(pressData.highlight.id, pressData.highlight.get());
+	}
+
+	public List<Selection<T>> getSelectionWithTemporary() {
 		if (!selected.isEmpty()) {
 			return selected;
 		}
 
-		final Selection<T> temporarySelection = temporarySelectionSupplier.make();
+		final Selection<T> temporarySelection = getTemporarySelect();
 		if (temporarySelection == null) {
-			return new ArrayList2<>();
+			return new ArrayList<>();
 		}
 
-		return new ArrayList2<>(temporarySelection);
+		return asList(temporarySelection);
 	}
 
 	public SelectionAccessor<T> getAccessor() {
-		return new SelectionAccessor<>(type, this::getSelectionWithTemporary);
+		return new SelectionAccessor<>(this);
 	}
+
+	public void refresh() {
+		final List<Integer> ids = getSelectedIds();
+		clear();
+		add(ids);
+	}
+
 }

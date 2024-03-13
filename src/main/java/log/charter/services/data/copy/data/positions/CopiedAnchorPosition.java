@@ -4,7 +4,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.data.song.Anchor;
-import log.charter.data.song.BeatsMap;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.FractionalPosition;
 
 @XStreamAlias("copiedAnchor")
 public class CopiedAnchorPosition extends CopiedPosition<Anchor> {
@@ -13,9 +14,9 @@ public class CopiedAnchorPosition extends CopiedPosition<Anchor> {
 	@XStreamAsAttribute
 	public final int width;
 
-	public CopiedAnchorPosition(final BeatsMap beatsMap, final int basePosition, final double baseBeatPosition,
+	public CopiedAnchorPosition(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
 			final Anchor anchor) {
-		super(beatsMap, basePosition, baseBeatPosition, anchor);
+		super(beats, basePosition, anchor);
 		fret = anchor.fret;
 		width = anchor.width;
 	}

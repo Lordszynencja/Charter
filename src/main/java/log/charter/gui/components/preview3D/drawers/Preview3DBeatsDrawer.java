@@ -61,6 +61,10 @@ public class Preview3DBeatsDrawer {
 
 		for (final BeatDrawData beat : drawData.beats) {
 			final IntRange frets = drawData.getFrets(beat.originalTime);
+			if (frets == null) {
+				return;
+			}
+
 			final double x0 = getFretPosition(frets.min - 1);
 			final double x1 = getFretPosition(frets.max);
 			final double z = getTimePosition(beat.time - drawData.time);
@@ -152,8 +156,8 @@ public class Preview3DBeatsDrawer {
 			int i = 0;
 			while (fret <= Config.frets) {
 				fret += dottedFretDistances[i = (i + 1) % dottedFretDistances.length];
-				fretsToDraw.add(
-						new FretDrawData(beat.time, fret, false, fret >= fretsRange.min && fret <= fretsRange.max));
+				final boolean fretHighlight = fretsRange != null && fret >= fretsRange.min && fret <= fretsRange.max;
+				fretsToDraw.add(new FretDrawData(beat.time, fret, false, fretHighlight));
 			}
 		}
 	}
@@ -173,7 +177,6 @@ public class Preview3DBeatsDrawer {
 
 		addFretsToDrawForMeasures(drawData, fretsToDraw);
 
-		final IntRange currentFrets = drawData.getFrets(drawData.time);
 		for (final AnchorDrawData anchor : drawData.anchors) {
 			if (anchor.timeFrom > drawData.time) {
 				fretsToDraw.add(new FretDrawData(anchor.timeFrom, anchor.fretFrom + 1, true, true));
@@ -193,7 +196,10 @@ public class Preview3DBeatsDrawer {
 			drawFretNumberWithFade(shadersHolder, fretToDraw.fret, y, z, color);
 		});
 
-		drawActiveFretNumbers(shadersHolder, currentFrets, y);
+		final IntRange currentFrets = drawData.getFrets(drawData.time);
+		if (currentFrets != null) {
+			drawActiveFretNumbers(shadersHolder, currentFrets, y);
+		}
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {

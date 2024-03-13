@@ -56,7 +56,7 @@ public class AnchorPane extends ParamsPane {
 		undoSystem.addUndo();
 
 		if (fret == null) {
-			data.getCurrentArrangementLevel().anchors.remove(anchor);
+			data.currentArrangementLevel().anchors.remove(anchor);
 			return;
 		}
 

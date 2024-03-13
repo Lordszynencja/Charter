@@ -74,13 +74,13 @@ public class AudioHandler {
 
 		int start;
 		if (repeatManager.isRepeating()) {
-			if (chartTimeHandler.nextTime() > repeatManager.getRepeatEnd()) {
-				rewind(repeatManager.getRepeatStart());
+			if (chartTimeHandler.nextTime() > repeatManager.repeatEnd()) {
+				rewind(repeatManager.repeatStart());
 				return;
 			}
 
 			final double cutStart = getSlowedMs(chartTimeHandler.time()) / 1000.0;
-			final double cutEnd = getSlowedMs(repeatManager.getRepeatEnd()) / 1000.0;
+			final double cutEnd = getSlowedMs(repeatManager.repeatEnd()) / 1000.0;
 			final AudioDataShort cutMusic = lastUncutData.cut(cutStart, cutEnd);
 			lastPlayedData = cutMusic;
 			start = 0;

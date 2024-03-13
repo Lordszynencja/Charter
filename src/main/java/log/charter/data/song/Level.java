@@ -1,20 +1,23 @@
 package log.charter.data.song;
 
-import static log.charter.data.song.position.IConstantPosition.findLastBeforeEquals;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.util.collections.ArrayList2;
+import log.charter.data.song.position.IConstantPosition;
 
 @XStreamAlias("level")
 @XStreamInclude({ Anchor.class, ChordOrNote.class, HandShape.class })
 public class Level {
-	public ArrayList2<Anchor> anchors = new ArrayList2<>();
-	public ArrayList2<ChordOrNote> sounds = new ArrayList2<>();
-	public ArrayList2<HandShape> handShapes = new ArrayList2<>();
+	public List<Anchor> anchors = new ArrayList<>();
+	public List<ChordOrNote> sounds = new ArrayList<>();
+	public List<HandShape> handShapes = new ArrayList<>();
 
 	public Level() {
 	}
@@ -26,7 +29,7 @@ public class Level {
 		}
 
 		final Chord chord = sound.chord();
-		final HandShape handShape = findLastBeforeEquals(handShapes, chord.position());
+		final HandShape handShape = lastBeforeEqual(handShapes, chord, IConstantPosition::compareTo).find();
 		if (handShape == null) {
 			return true;
 		}

@@ -3,11 +3,12 @@ package log.charter.services;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ChartTimeHandler;
+import log.charter.util.collections.Pair;
 
 public class RepeatManager {
 	private boolean repeatingOn = true;
-	private int repeatStart = -1;
-	private int repeatEnd = -1;
+	private Integer repeatStart = null;
+	private Integer repeatEnd = null;
 
 	private AudioHandler audioHandler;
 	private ChartTimeHandler chartTimeHandler;
@@ -23,20 +24,24 @@ public class RepeatManager {
 		chartToolbar.updateValues();
 	}
 
-	public int getRepeatStart() {
+	public Integer repeatStart() {
 		return repeatStart;
 	}
 
 	public void toggleRepeatStart() {
-		repeatStart = (repeatStart < 0 || repeatStart != chartTimeHandler.time()) ? chartTimeHandler.time() : -1;
+		repeatStart = (repeatStart == null || repeatStart != chartTimeHandler.time()) ? chartTimeHandler.time() : null;
 	}
 
-	public int getRepeatEnd() {
+	public Integer repeatEnd() {
 		return repeatEnd;
 	}
 
 	public void toggleRepeatEnd() {
-		repeatEnd = (repeatEnd < 0 || repeatEnd != chartTimeHandler.time()) ? chartTimeHandler.time() : -1;
+		repeatEnd = (repeatEnd == null || repeatEnd != chartTimeHandler.time()) ? chartTimeHandler.time() : null;
+	}
+
+	public Pair<Integer, Integer> repeatSpan() {
+		return new Pair<>(repeatStart, repeatEnd);
 	}
 
 	public void frame() {
@@ -51,6 +56,6 @@ public class RepeatManager {
 	}
 
 	public boolean isRepeating() {
-		return repeatingOn && repeatStart >= 0 && repeatEnd >= 0 && repeatEnd > repeatStart;
+		return repeatingOn && repeatStart != null && repeatEnd != null && repeatEnd > repeatStart;
 	}
 }

@@ -3,6 +3,8 @@ package log.charter.gui.components.tabs.selectionEditor;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
+import java.util.Set;
+
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
@@ -17,7 +19,6 @@ import log.charter.gui.components.utils.validators.ValueValidator;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.HashSet2;
 
 public class VocalSelectionEditor {
 	private SelectionManager selectionManager;
@@ -59,7 +60,7 @@ public class VocalSelectionEditor {
 		undoSystem.addUndo();
 
 		final SelectionAccessor<Vocal> vocalSelectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.VOCAL);
+				.accessor(PositionType.VOCAL);
 		for (final Selection<Vocal> anchorSelection : vocalSelectionAccessor.getSelectedSet()) {
 			final boolean phraseEnd = anchorSelection.selectable.isPhraseEnd();
 			final boolean wordPart = anchorSelection.selectable.isWordPart();
@@ -71,7 +72,7 @@ public class VocalSelectionEditor {
 
 	private void setWordPart(final boolean newWordPart) {
 		final SelectionAccessor<Vocal> vocalSelectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.VOCAL);
+				.accessor(PositionType.VOCAL);
 		for (final Selection<Vocal> anchorSelection : vocalSelectionAccessor.getSelectedSet()) {
 			anchorSelection.selectable.setWordPart(newWordPart);
 		}
@@ -79,7 +80,7 @@ public class VocalSelectionEditor {
 
 	private void setPhraseEnd(final boolean newWordPart) {
 		final SelectionAccessor<Vocal> vocalSelectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.VOCAL);
+				.accessor(PositionType.VOCAL);
 		for (final Selection<Vocal> anchorSelection : vocalSelectionAccessor.getSelectedSet()) {
 			anchorSelection.selectable.setPhraseEnd(newWordPart);
 		}
@@ -123,7 +124,7 @@ public class VocalSelectionEditor {
 	}
 
 	public void selectionChanged(final SelectionAccessor<Vocal> selectedVocalsAccessor) {
-		final HashSet2<Selection<Vocal>> selectedVocals = selectedVocalsAccessor.getSelectedSet();
+		final Set<Selection<Vocal>> selectedVocals = selectedVocalsAccessor.getSelectedSet();
 		if (selectedVocals.size() == 1) {
 			final String text = selectedVocals.stream().findFirst().get().selectable.getText();
 			vocalText.field.setTextWithoutEvent(text);

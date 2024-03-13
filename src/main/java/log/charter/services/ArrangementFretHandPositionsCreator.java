@@ -3,16 +3,19 @@ package log.charter.services;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.frets;
-import static log.charter.util.CollectionUtils.findLastIdBeforeEqual;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
+
+import java.util.List;
 
 import log.charter.data.config.Config;
 import log.charter.data.song.Anchor;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.IConstantFractionalPosition;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IPosition;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.data.IntRange;
 
 public class ArrangementFretHandPositionsCreator {
@@ -42,8 +45,7 @@ public class ArrangementFretHandPositionsCreator {
 		}
 	}
 
-	private static FretRange fretRangeFromSound(final ArrayList2<ChordTemplate> chordTemplates,
-			final ChordOrNote sound) {
+	private static FretRange fretRangeFromSound(final List<ChordTemplate> chordTemplates, final ChordOrNote sound) {
 		if (sound.isNote()) {
 			return new FretRange(sound, sound.note().fret, sound.note().hopo == HOPO.TAP);
 		}
@@ -67,7 +69,8 @@ public class ArrangementFretHandPositionsCreator {
 		return new FretRange(sound, minFret, maxFret);
 	}
 
-	private static void addFHP(final FretRange fretRange, final int index, final ArrayList2<Anchor> anchors) {
+	private static void addFHP(final ImmutableBeatsMap beats, final FretRange fretRange, final int index,
+			final List<Anchor> anchors) {
 		int baseFret = Math.min(frets - 3, max(1, fretRange.fretRange.min));
 
 		if (baseFret <= 0) {
@@ -78,7 +81,7 @@ public class ArrangementFretHandPositionsCreator {
 		}
 		final int width = 1 + max(3, fretRange.fretRange.max - fretRange.fretRange.min);
 
-		anchors.add(index, new Anchor(fretRange.position(), baseFret, width));
+		anchors.add(index, new Anchor(fretRange.positionAsFraction(beats), baseFret, width));
 	}
 
 	private static boolean canBeExtended(final Anchor anchor, final int fret) {
@@ -96,10 +99,12 @@ public class ArrangementFretHandPositionsCreator {
 		return fret <= anchor.fret + maxWidth;
 	}
 
-	private static void addFHPIfNeeded(final FretRange fretRange, final ArrayList2<Anchor> anchors) {
-		final int currentAnchorId = findLastIdBeforeEqual(anchors, fretRange);
-		if (currentAnchorId == -1) {
-			addFHP(fretRange, 0, anchors);
+	private static void addFHPIfNeeded(final ImmutableBeatsMap beats, final FretRange fretRange,
+			final List<Anchor> anchors) {
+		final Integer currentAnchorId = lastBeforeEqual(anchors, fretRange.positionAsFraction(beats),
+				IConstantFractionalPosition::compareTo).findId();
+		if (currentAnchorId == null) {
+			addFHP(beats, fretRange, 0, anchors);
 			return;
 		}
 
@@ -114,7 +119,7 @@ public class ArrangementFretHandPositionsCreator {
 				if (fretRange.isTap || (fret > current.fret && canBeExtended(current, fret))) {
 					current.width = fret - current.fret + 1;
 				} else {
-					addFHP(fretRange, currentAnchorId + 1, anchors);
+					addFHP(beats, fretRange, currentAnchorId + 1, anchors);
 				}
 			}
 
@@ -122,7 +127,7 @@ public class ArrangementFretHandPositionsCreator {
 		}
 
 		if (current.fret != fretRange.fretRange.min) {
-			addFHP(fretRange, currentAnchorId + 1, anchors);
+			addFHP(beats, fretRange, currentAnchorId + 1, anchors);
 			return;
 		}
 
@@ -131,11 +136,11 @@ public class ArrangementFretHandPositionsCreator {
 		}
 	}
 
-	public static void createFretHandPositions(final ArrayList2<ChordTemplate> chordTemplates,
-			final ArrayList2<ChordOrNote> sounds, final ArrayList2<Anchor> anchors) {
+	public static void createFretHandPositions(final ImmutableBeatsMap beats, final List<ChordTemplate> chordTemplates,
+			final List<ChordOrNote> sounds, final List<Anchor> anchors) {
 		for (final ChordOrNote sound : sounds) {
 			final FretRange fretRange = fretRangeFromSound(chordTemplates, sound);
-			addFHPIfNeeded(fretRange, anchors);
+			addFHPIfNeeded(beats, fretRange, anchors);
 		}
 	}
 }

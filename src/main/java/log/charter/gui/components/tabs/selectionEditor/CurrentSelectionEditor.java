@@ -8,6 +8,7 @@ import static log.charter.data.types.PositionType.TONE_CHANGE;
 import static log.charter.data.types.PositionType.VOCAL;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,8 +33,8 @@ import log.charter.util.collections.HashSet2;
 public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 	private static final long serialVersionUID = 1L;
 
-	public static <T extends IPosition, U> U getSingleValue(final HashSet2<Selection<T>> selected,
-			final Function<Selection<T>, U> mapper, final U defaultValue) {
+	public static <T, U> U getSingleValue(final Set<Selection<T>> selected, final Function<Selection<T>, U> mapper,
+			final U defaultValue) {
 		final List<U> values = selected.stream()//
 				.map(mapper)//
 				.distinct()//
@@ -124,32 +125,32 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 
 	@SuppressWarnings("unchecked")
 	public void selectionChanged(final boolean stringsCouldChange) {
-		final SelectionAccessor<IPosition> selected = selectionManager.getCurrentlySelectedAccessor();
+		final SelectionAccessor<?> selected = selectionManager.selectedAccessor();
 		if (selected == null || !selected.isSelected()) {
 			hideAllfieldsExcept(NONE);
 		}
 
 		hideAllfieldsExcept(selected.type);
 
-		if (selected.type == ANCHOR) {
-			final SelectionAccessor<Anchor> selectedAnchorsAccessor = (SelectionAccessor<Anchor>) (SelectionAccessor<?>) selected;
-			anchorSelectionEditor.selectionChanged(selectedAnchorsAccessor);
-		}
-		if (selected.type == GUITAR_NOTE) {
-			final SelectionAccessor<ChordOrNote> selectedChordsOrNotesAccessor = (SelectionAccessor<ChordOrNote>) (SelectionAccessor<?>) selected;
-			guitarSoundSelectionEditor.selectionChanged(selectedChordsOrNotesAccessor, stringsCouldChange);
-		}
-		if (selected.type == HAND_SHAPE) {
-			final SelectionAccessor<HandShape> selectedAnchorsAccessor = (SelectionAccessor<HandShape>) (SelectionAccessor<?>) selected;
-			handShapeSelectionEditor.selectionChanged(selectedAnchorsAccessor);
-		}
-		if (selected.type == TONE_CHANGE) {
-			final SelectionAccessor<ToneChange> selectedToneChangesAccessor = (SelectionAccessor<ToneChange>) (SelectionAccessor<?>) selected;
-			toneChangeSelectionEditor.selectionChanged(selectedToneChangesAccessor);
-		}
-		if (selected.type == VOCAL) {
-			final SelectionAccessor<Vocal> selectedAnchorsAccessor = (SelectionAccessor<Vocal>) (SelectionAccessor<?>) selected;
-			vocalSelectionEditor.selectionChanged(selectedAnchorsAccessor);
+		switch (selected.type) {
+			case ANCHOR:
+				anchorSelectionEditor.selectionChanged((SelectionAccessor<Anchor>) selected);
+				break;
+			case GUITAR_NOTE:
+				guitarSoundSelectionEditor.selectionChanged((SelectionAccessor<ChordOrNote>) selected,
+						stringsCouldChange);
+				break;
+			case HAND_SHAPE:
+				handShapeSelectionEditor.selectionChanged((SelectionAccessor<HandShape>) selected);
+				break;
+			case TONE_CHANGE:
+				toneChangeSelectionEditor.selectionChanged((SelectionAccessor<ToneChange>) selected);
+				break;
+			case VOCAL:
+				vocalSelectionEditor.selectionChanged((SelectionAccessor<Vocal>) selected);
+				break;
+			default:
+				break;
 		}
 
 		repaint();

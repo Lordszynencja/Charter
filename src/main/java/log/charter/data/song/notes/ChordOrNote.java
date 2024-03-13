@@ -11,18 +11,18 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForChord;
 import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForNote;
+import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IPositionWithLength;
 import log.charter.io.rsc.xml.converters.ChordOrNoteConverter;
 import log.charter.io.rsc.xml.converters.ChordOrNoteForChordConverter;
 import log.charter.io.rsc.xml.converters.ChordOrNoteForNoteConverter;
-import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("sound")
 @XStreamConverter(ChordOrNoteConverter.class)
 @XStreamInclude({ ChordOrNoteForChord.class, ChordOrNoteForNote.class })
 public interface ChordOrNote extends IPositionWithLength {
 	public static ChordOrNote findNextSoundOnString(final int string, final int startFromId,
-			final ArrayList2<ChordOrNote> sounds) {
+			final List<ChordOrNote> sounds) {
 		for (int i = startFromId; i < sounds.size(); i++) {
 			final ChordOrNote sound = sounds.get(i);
 			if (sound.isNote()) {
@@ -38,7 +38,7 @@ public interface ChordOrNote extends IPositionWithLength {
 	}
 
 	public static ChordOrNote findPreviousSoundOnString(final int string, final int startFromId,
-			final ArrayList2<ChordOrNote> sounds) {
+			final List<ChordOrNote> sounds) {
 		for (int i = startFromId; i >= 0; i--) {
 			final ChordOrNote sound = sounds.get(i);
 			if (sound.isNote()) {
@@ -53,13 +53,12 @@ public interface ChordOrNote extends IPositionWithLength {
 		return null;
 	}
 
-	public static boolean isLinkedToPrevious(final int string, final int id, final ArrayList2<ChordOrNote> sounds) {
+	public static boolean isLinkedToPrevious(final int string, final int id, final List<ChordOrNote> sounds) {
 		final ChordOrNote previousSound = findPreviousSoundOnString(string, id - 1, sounds);
 		return previousSound != null && previousSound.linkNext(string);
 	}
 
-	public static boolean isLinkedToPrevious(final ChordOrNote sound, final int id,
-			final ArrayList2<ChordOrNote> sounds) {
+	public static boolean isLinkedToPrevious(final ChordOrNote sound, final int id, final List<ChordOrNote> sounds) {
 		if (sound.isNote()) {
 			return isLinkedToPrevious(sound.note().string, id, sounds);
 		}
@@ -176,6 +175,11 @@ public interface ChordOrNote extends IPositionWithLength {
 
 			return Optional.of(new CommonNoteWithFret(chord, string, chordTemplate.frets.get(string)));
 		}
+
+		@Override
+		public int compareTo(final IConstantPosition o) {
+			return Integer.compare(chord.position(), o.position());
+		}
 	}
 
 	@XStreamAlias("soundNote")
@@ -275,6 +279,11 @@ public interface ChordOrNote extends IPositionWithLength {
 		@Override
 		public Optional<CommonNoteWithFret> noteWithFrets(final int string, final ChordTemplate chordTemplate) {
 			return getString(string).map(CommonNoteWithFret::new);
+		}
+
+		@Override
+		public int compareTo(final IConstantPosition o) {
+			return Integer.compare(note.position(), o.position());
 		}
 	}
 

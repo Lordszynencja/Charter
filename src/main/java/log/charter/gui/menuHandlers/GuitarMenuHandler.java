@@ -1,7 +1,11 @@
 package log.charter.gui.menuHandlers;
 
-import static log.charter.data.song.position.IConstantPosition.findFirstIdAfterEqual;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.position.IConstantPosition.positionComparator;
+import static log.charter.util.CollectionUtils.firstAfterEqual;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JMenu;
 
@@ -10,7 +14,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.services.Action;
@@ -21,7 +25,6 @@ import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.util.collections.ArrayList2;
 
 class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 	private ChartData chartData;
@@ -93,33 +96,48 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 		return menu;
 	}
 
+	private <T extends IVirtualConstantPosition & Comparable<? super T>> List<ChordOrNote> handleSelection(
+			final SelectionAccessor<T> selectionAccessor, final List<ChordOrNote> sounds) {
+		final List<Selection<T>> selected = selectionAccessor.getSortedSelected();
+
+		final Integer fromId = firstAfterEqual(sounds, selected.get(0).selectable.positionAsPosition(chartData.beats()),
+				positionComparator).findId();
+		final Integer toId = lastBeforeEqual(sounds,
+				selected.get(selected.size() - 1).selectable.positionAsPosition(chartData.beats()), positionComparator)
+				.findId();
+
+		if (fromId == null || toId == null) {
+			return new ArrayList<>();
+		}
+
+		final List<ChordOrNote> selectedSounds = new ArrayList<>();
+		for (int i = fromId; i <= toId; i++) {
+			selectedSounds.add(sounds.get(i));
+		}
+
+		return selectedSounds;
+	}
+
 	private void addFHP() {
 		undoSystem.addUndo();
 
-		final Level level = chartData.getCurrentArrangementLevel();
-		ArrayList2<ChordOrNote> sounds = level.sounds;
+		final Level level = chartData.currentArrangementLevel();
+		List<ChordOrNote> sounds = level.sounds;
 		for (final PositionType positionType : PositionType.values()) {
 			if (positionType == PositionType.NONE) {
 				continue;
 			}
 
-			final SelectionAccessor<IPosition> selectionAccessor = selectionManager.getSelectedAccessor(positionType);
+			final SelectionAccessor<?> selectionAccessor = selectionManager.accessor(positionType);
 			if (selectionAccessor.isSelected()) {
-				final ArrayList2<Selection<IPosition>> selected = selectionAccessor.getSortedSelected();
-				final int fromId = findFirstIdAfterEqual(sounds, selected.get(0).selectable.position());
-				final int toId = findLastIdBeforeEqual(sounds, selected.getLast().selectable.position());
-				final ArrayList2<ChordOrNote> selectedSounds = new ArrayList2<>();
-				for (int i = fromId; i <= toId; i++) {
-					selectedSounds.add(sounds.get(i));
-				}
-				sounds = selectedSounds;
+				sounds = handleSelection(selectionAccessor, sounds);
 				break;
 			}
 		}
 
-		final ArrayList2<ChordTemplate> chordTemplates = chartData.getCurrentArrangement().chordTemplates;
-		selectionManager.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		final List<ChordTemplate> chordTemplates = chartData.currentArrangement().chordTemplates;
 
-		ArrangementFretHandPositionsCreator.createFretHandPositions(chordTemplates, sounds, level.anchors);
+		ArrangementFretHandPositionsCreator.createFretHandPositions(chartData.beats(), chordTemplates, sounds,
+				level.anchors);
 	}
 }

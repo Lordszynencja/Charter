@@ -2,6 +2,8 @@ package log.charter.data.song.notes;
 
 import static log.charter.util.Utils.mapInteger;
 
+import java.util.stream.Collectors;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
@@ -53,8 +55,9 @@ public class Note extends GuitarSound implements NoteInterface {
 		slideTo = arrangementNote.slideTo == null ? arrangementNote.slideUnpitchTo : arrangementNote.slideTo;
 		unpitchedSlide = arrangementNote.slideUnpitchTo != null;
 		bendValues = arrangementNote.bendValues == null ? new ArrayList2<>()
-				: arrangementNote.bendValues.list
-						.map(arrangementBendValue -> new BendValue(arrangementBendValue, arrangementNote.time));
+				: arrangementNote.bendValues.list.stream()//
+						.map(arrangementBendValue -> new BendValue(arrangementBendValue, arrangementNote.time))//
+						.collect(Collectors.toCollection(ArrayList2::new));
 	}
 
 	public Note(final Note other) {

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
 	<artifactId>Charter</artifactId>
-	<version>0.15.14</version>
+	<version>0.16.0</version>
 	<packaging>jar</packaging>
 	<name>Charter</name>
 	<description>Charting program for guitar</description>
@@ -117,12 +117,14 @@
 			<version>5.3.1</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.codehaus.plexus</groupId>
-			<artifactId>plexus-archiver</artifactId>
-			<version>[4.8.0,)</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.codehaus.plexus</groupId>-->
+<!--			<artifactId>plexus-archiver</artifactId>-->
+<!--			<version>[4.8.0,)</version>-->
+<!--			<scope>compile</scope>-->
+<!--		</dependency>-->
 	</dependencies>
+	
 	<profiles>
 		<profile>
 			<id>lwjgl-natives-linux-amd64</id>
@@ -233,6 +235,7 @@
 			</properties>
 		</profile>
 	</profiles>
+	
 	<build>
 		<finalName>Charter</finalName>
 		<plugins>
@@ -275,7 +278,7 @@
 					</descriptorRefs>
 					<appendAssemblyId>false</appendAssemblyId>
 					<outputDirectory>${project.build.directory}</outputDirectory>
-				</configuration>
+				</configuration>				
 				<executions>
 					<execution>
 						<id>make-assembly</id>

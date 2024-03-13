@@ -6,6 +6,7 @@ import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.Graphics2D;
 import java.util.Map;
+import java.util.Set;
 
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.Phrase;
@@ -15,7 +16,6 @@ import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
 import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.HashMap2;
-import log.charter.util.collections.HashSet2;
 
 public class GuitarEventPointsDrawer {
 	private static EventPoint findCurrentSection(final ArrayList2<EventPoint> eventPoints, final int time) {
@@ -87,7 +87,7 @@ public class GuitarEventPointsDrawer {
 
 	public static void addEventPoints(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
 			final ArrayList2<EventPoint> eventPoints, final HashMap2<String, Phrase> phrases, final int time,
-			final HashSet2<Integer> selectedIds, final HighlightData highlightData) {
+			final Set<Integer> selectedIds, final HighlightData highlightData) {
 		final int highlightId = highlightData.getId(PositionType.EVENT_POINT);
 		final int leftScreenEdgeTime = xToTime(0, time);
 

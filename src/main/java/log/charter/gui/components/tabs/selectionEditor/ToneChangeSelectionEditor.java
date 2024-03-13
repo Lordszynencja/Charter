@@ -6,6 +6,7 @@ import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEd
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.awt.Color;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.event.DocumentEvent;
@@ -20,12 +21,12 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.AutocompleteInput;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.HashSet2;
-import log.charter.gui.components.simple.TextInputWithValidation;
 
 public class ToneChangeSelectionEditor implements DocumentListener {
 	private ChartData chartData;
@@ -60,14 +61,14 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 	}
 
 	public void selectionChanged(final SelectionAccessor<ToneChange> selectedToneChangesAccessor) {
-		final HashSet2<Selection<ToneChange>> selectedToneChanges = selectedToneChangesAccessor.getSelectedSet();
+		final Set<Selection<ToneChange>> selectedToneChanges = selectedToneChangesAccessor.getSelectedSet();
 
 		final String toneName = getSingleValue(selectedToneChanges, selection -> selection.selectable.toneName, "");
 		toneNameField.field.setTextWithoutUpdate(toneName == null ? "" : toneName);
 	}
 
 	private ArrayList2<String> getPossibleValues(final String name) {
-		return chartData.getCurrentArrangement().tones.stream()//
+		return chartData.currentArrangement().tones.stream()//
 				.filter(toneName -> toneName.toLowerCase().contains(name.toLowerCase()))//
 				.collect(Collectors.toCollection(ArrayList2::new));
 	}
@@ -103,7 +104,7 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 
 		final String name = toneNameField.field.getText();
 
-		final Arrangement arrangement = chartData.getCurrentArrangement();
+		final Arrangement arrangement = chartData.currentArrangement();
 		if (name.isBlank()) {
 			setError(TONE_NAME_CANT_BE_EMPTY);
 			return;
@@ -116,11 +117,13 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 		undoSystem.addUndo();
 
 		final SelectionAccessor<ToneChange> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.TONE_CHANGE);
+				.accessor(PositionType.TONE_CHANGE);
 		for (final Selection<ToneChange> a : selectionAccessor.getSelectedSet()) {
 			a.selectable.toneName = name;
 		}
-		arrangement.tones = new HashSet2<>(arrangement.toneChanges.map(t -> t.toneName));
+		arrangement.tones = arrangement.toneChanges.stream()//
+				.map(t -> t.toneName)//
+				.collect(Collectors.toCollection(HashSet2::new));
 	}
 
 	private void onSelect(final String name) {

@@ -761,7 +761,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 	@Override
 	public void addSoundHighlight(final int x, final Optional<ChordOrNote> originalSound,
-			final Optional<ChordTemplate> template, final int string) {
+			final Optional<ChordTemplate> template, final int string, final boolean drawOriginalStrings) {
 		originalSound.map(sound -> sound.noteWithFrets(string, template.orElse(null)))//
 				.ifPresentOrElse(note -> drawHighlightForNote(x, note.get()), //
 						() -> drawHighlightWithoutNote(x, string));

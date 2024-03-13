@@ -1,7 +1,7 @@
 package log.charter.gui.panes.songEdits;
 
-import static log.charter.data.song.position.IConstantPosition.findClosestId;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -81,8 +81,7 @@ public class TempoBeatPane extends ParamsPane {
 		undoSystem.addUndo();
 
 		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
-		final int beatId = findClosestId(beats, beat.position());
-
+		final int beatId = lastBeforeEqual(beats, beat).findId(0);
 		if (bpm.compareTo(calculateBPM(beat)) != 0) {
 			beat.anchor = true;
 			data.songChart.beatsMap.setBPM(beatId, bpm.doubleValue(), audioLength);

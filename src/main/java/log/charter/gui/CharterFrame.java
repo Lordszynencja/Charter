@@ -145,7 +145,7 @@ public class CharterFrame extends JFrame implements Initiable {
 
 	public void updateSizes() {
 		final EditMode editMode = modeManager.getMode();
-		final Arrangement arrangement = chartData.getCurrentArrangement();
+		final Arrangement arrangement = chartData.currentArrangement();
 		final boolean bass = arrangement.isBass();
 		final int strings = arrangement.tuning.strings();
 

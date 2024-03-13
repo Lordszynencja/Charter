@@ -83,7 +83,7 @@ public class GuitarEventPointPane extends ParamsPane {
 
 		this.eventPoint = eventPoint;
 
-		final Arrangement arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.currentArrangement();
 
 		section = eventPoint.section;
 		final Phrase phrase = arrangement.phrases.get(eventPoint.phrase);
@@ -131,7 +131,7 @@ public class GuitarEventPointPane extends ParamsPane {
 	}
 
 	private ArrayList2<String> getPossiblePhraseNames(final String text) {
-		return data.getCurrentArrangement().phrases.keySet().stream()//
+		return data.currentArrangement().phrases.keySet().stream()//
 				.filter(phraseName -> !phraseName.equals("COUNT") && !phraseName.equals("END")
 						&& phraseName.toLowerCase().contains(text.toLowerCase()))//
 				.sorted()//
@@ -141,7 +141,7 @@ public class GuitarEventPointPane extends ParamsPane {
 	private void onPhraseNameSelected(final String phraseName) {
 		phraseNameInput.setTextWithoutUpdate(phraseName);
 
-		final Phrase phrase = data.getCurrentArrangement().phrases.get(phraseName);
+		final Phrase phrase = data.currentArrangement().phrases.get(phraseName);
 		phraseLevel = phrase.maxDifficulty;
 		phraseLevelInput.setText(phraseLevel + "");
 		phraseSolo = phrase.solo;
@@ -231,7 +231,7 @@ public class GuitarEventPointPane extends ParamsPane {
 	private void saveAndExit() {
 		undoSystem.addUndo();
 
-		final Arrangement arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.currentArrangement();
 		final String phraseName = phraseNameInput.getText();
 
 		if (!hasValues()) {

@@ -2,6 +2,7 @@ package log.charter.gui.components.preview3D.data;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,27 +10,27 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
-import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IConstantPositionWithLength;
+import log.charter.data.song.position.Position;
 import log.charter.services.RepeatManager;
-import log.charter.util.collections.ArrayList2;
 
 public class HandShapeDrawData implements IConstantPositionWithLength {
 	public static List<HandShapeDrawData> getHandShapesForTimeSpan(final ChartData data, final int timeFrom,
 			final int timeTo) {
-		if (data.getCurrentArrangementLevel() == null) {
+		if (data.currentArrangementLevel() == null) {
 			return new ArrayList<>();
 		}
 
 		final List<HandShapeDrawData> handShapesToDraw = new ArrayList<>();
-		final ArrayList2<HandShape> handShapes = data.getCurrentArrangementLevel().handShapes;
-		final ArrayList2<ChordTemplate> chordTemplates = data.getCurrentArrangement().chordTemplates;
+		final List<HandShape> handShapes = data.currentArrangementLevel().handShapes;
+		final List<ChordTemplate> chordTemplates = data.currentArrangement().chordTemplates;
 
-		int handShapesFrom = IConstantPosition.findLastIdBeforeEqual(handShapes, timeFrom);
-		if (handShapesFrom == -1) {
-			handShapesFrom = 0;
+		final Integer handShapesFrom = lastBeforeEqual(handShapes, new Position(timeFrom)).findId();
+		final Integer handShapesTo = lastBeforeEqual(handShapes, new Position(timeTo)).findId();
+
+		if (handShapesFrom == null || handShapesTo == null) {
+			return handShapesToDraw;
 		}
-		final int handShapesTo = IConstantPosition.findLastIdBeforeEqual(handShapes, timeTo);
 
 		for (int i = handShapesFrom; i <= handShapesTo; i++) {
 			final HandShape handShape = handShapes.get(i);
@@ -51,7 +52,7 @@ public class HandShapeDrawData implements IConstantPositionWithLength {
 			final RepeatManager repeatManager, final int timeFrom, final int timeTo) {
 		int maxTime = timeTo;
 		if (repeatManager.isRepeating()) {
-			maxTime = min(maxTime, repeatManager.getRepeatEnd() - 1);
+			maxTime = min(maxTime, repeatManager.repeatEnd() - 1);
 		}
 
 		final List<HandShapeDrawData> handShapesToDraw = getHandShapesForTimeSpan(data, timeFrom, maxTime);
@@ -60,16 +61,16 @@ public class HandShapeDrawData implements IConstantPositionWithLength {
 			return handShapesToDraw;
 		}
 
-		final List<HandShapeDrawData> repeatedHandShapes = getHandShapesForTimeSpan(data,
-				repeatManager.getRepeatStart(), repeatManager.getRepeatEnd() - 1);
-		int repeatStart = repeatManager.getRepeatEnd();
+		final List<HandShapeDrawData> repeatedHandShapes = getHandShapesForTimeSpan(data, repeatManager.repeatStart(),
+				repeatManager.repeatEnd() - 1);
+		int repeatStart = repeatManager.repeatEnd();
 		while (repeatStart < timeFrom) {
-			repeatStart += repeatManager.getRepeatEnd() - repeatManager.getRepeatStart();
+			repeatStart += repeatManager.repeatEnd() - repeatManager.repeatStart();
 		}
 
 		while (repeatStart < timeTo) {
 			for (final HandShapeDrawData handShapeDrawData : repeatedHandShapes) {
-				final int start = handShapeDrawData.timeFrom - repeatManager.getRepeatStart() + repeatStart;
+				final int start = handShapeDrawData.timeFrom - repeatManager.repeatStart() + repeatStart;
 				int end = start + handShapeDrawData.timeTo - handShapeDrawData.timeFrom;
 				if (start > timeTo) {
 					break;
@@ -81,7 +82,7 @@ public class HandShapeDrawData implements IConstantPositionWithLength {
 				handShapesToDraw.add(new HandShapeDrawData(start, end, handShapeDrawData));
 			}
 
-			repeatStart += repeatManager.getRepeatEnd() - repeatManager.getRepeatStart();
+			repeatStart += repeatManager.repeatEnd() - repeatManager.repeatStart();
 		}
 
 		return handShapesToDraw;

@@ -2,38 +2,40 @@ package log.charter.services.data.copy.data.positions;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.data.song.BeatsMap;
-import log.charter.data.song.position.IPosition;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.IVirtualConstantPosition;
 
-public abstract class CopiedPosition<T extends IPosition> {
-
+public abstract class CopiedPosition<T extends IVirtualConstantPosition> {
 	@XStreamAsAttribute
-	public final int position;
+	public final int p;
 	@XStreamAsAttribute
-	public final double positionInBeats;
+	public final FractionalPosition fp;
 
-	public CopiedPosition(final BeatsMap beatsMap, final int basePosition, final double basePositionInBeats,
-			final T position) {
-		this.position = position.position() - basePosition;
-		positionInBeats = beatsMap.getPositionInBeats(position.position()) - basePositionInBeats;
+	public CopiedPosition(final ImmutableBeatsMap beats, final FractionalPosition basePosition, final T item) {
+		this.p = item.positionAsPosition(beats).position() - basePosition.position(beats);
+		fp = item.positionAsFraction(beats).fractionalPosition().add(basePosition.negate());
 	}
 
 	protected abstract T prepareValue();
 
-	public T getValue(final BeatsMap beatsMap, final int basePosition, final double basePositionInBeats,
+	public T getValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
 			final boolean convertFromBeats) {
 		final T value = prepareValue();
+		if (value == null) {
+			return null;
+		}
 
-		if (convertFromBeats) {
-			final double startBeatPosition = basePositionInBeats + positionInBeats;
+		if (convertFromBeats || value.isFractionalPosition()) {
+			final FractionalPosition position = basePosition.add(fp);
 
-			if (startBeatPosition < 0 || startBeatPosition > beatsMap.beats.size() - 1) {
-				return null;
+			if (value.isFractionalPosition()) {
+				value.asFraction().get().fractionalPosition(position);
+			} else {
+				value.asPosition().get().position(position.getPosition(beats));
 			}
-
-			value.position(beatsMap.getPositionForPositionInBeats(startBeatPosition));
-		} else {
-			value.position(basePosition + position);
+		} else if (value.isPosition()) {
+			value.asPosition().get().position(basePosition.position(beats) + p);
 		}
 
 		return value;

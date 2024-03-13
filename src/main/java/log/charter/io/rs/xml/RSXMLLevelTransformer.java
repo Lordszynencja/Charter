@@ -2,11 +2,16 @@ package log.charter.io.rs.xml;
 
 import static log.charter.util.Utils.mapInteger;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import log.charter.data.song.Anchor;
 import log.charter.data.song.Arrangement;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
@@ -15,6 +20,8 @@ import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.io.rs.xml.song.ArrangementAnchor;
 import log.charter.io.rs.xml.song.ArrangementBendValue;
 import log.charter.io.rs.xml.song.ArrangementChord;
 import log.charter.io.rs.xml.song.ArrangementLevel;
@@ -25,10 +32,10 @@ import log.charter.util.collections.Pair;
 
 public class RSXMLLevelTransformer {
 	public static ArrayList2<Level> fromArrangementDataLevels(final Arrangement arrangement,
-			final List<ArrangementLevel> arrangementLevels) {
+			final List<ArrangementLevel> arrangementLevels, final ImmutableBeatsMap beats) {
 		final HashMap2<Integer, Level> levelsMap = new ArrayList2<>(arrangementLevels)//
 				.toMap(arrangementLevel -> new Pair<>(arrangementLevel.difficulty,
-						toLevel(arrangementLevel, arrangement)));
+						toLevel(arrangementLevel, arrangement, beats)));
 
 		final ArrayList2<Level> levels = new ArrayList2<>();
 		levelsMap.forEach((id, level) -> {
@@ -46,28 +53,41 @@ public class RSXMLLevelTransformer {
 		return levels;
 	}
 
-	private static Level toLevel(final ArrangementLevel arrangementLevel, final Arrangement arrangement) {
+	private static Anchor anchor(final ImmutableBeatsMap beats, final ArrangementAnchor arrangementAnchor) {
+		final FractionalPosition position = FractionalPosition.fromTime(beats, arrangementAnchor.time, true);
+		final int fret = arrangementAnchor.fret;
+		final int width = arrangementAnchor.width == null ? 4 : arrangementAnchor.width.intValue();
+
+		return new Anchor(position, fret, width);
+	}
+
+	private static Level toLevel(final ArrangementLevel arrangementLevel, final Arrangement arrangement,
+			final ImmutableBeatsMap beats) {
 		final Level level = new Level();
-		level.anchors = arrangementLevel.anchors.list.map(Anchor::new);
-		level.handShapes = arrangementLevel.handShapes.list.map(HandShape::new);
+		level.anchors = arrangementLevel.anchors.list.stream()//
+				.map(arrangementAnchor -> anchor(beats, arrangementAnchor))//
+				.collect(Collectors.toCollection(ArrayList::new));
+		level.handShapes = arrangementLevel.handShapes.list.stream()//
+				.map(HandShape::new)//
+				.collect(Collectors.toCollection(ArrayList::new));
 
 		for (final ArrangementChord arrangementChord : arrangementLevel.chords.list) {
 			level.sounds.add(ChordOrNote
 					.from(new Chord(arrangementChord, arrangement.chordTemplates.get(arrangementChord.chordId))));
 		}
 
-		final HashMap2<Integer, ArrayList2<ArrangementNote>> arrangementNotesMap = new HashMap2<>();
+		final Map<Integer, List<ArrangementNote>> arrangementNotesMap = new HashMap<>();
 		for (final ArrangementNote arrangementNote : arrangementLevel.notes.list) {
-			ArrayList2<ArrangementNote> positionNotes = arrangementNotesMap.get(arrangementNote.time);
+			List<ArrangementNote> positionNotes = arrangementNotesMap.get(arrangementNote.time);
 			if (positionNotes == null) {
-				positionNotes = new ArrayList2<>();
+				positionNotes = new ArrayList<>();
 				arrangementNotesMap.put(arrangementNote.time, positionNotes);
 			}
 
 			positionNotes.add(arrangementNote);
 		}
 
-		for (final Entry<Integer, ArrayList2<ArrangementNote>> notesPosition : arrangementNotesMap.entrySet()) {
+		for (final Entry<Integer, List<ArrangementNote>> notesPosition : arrangementNotesMap.entrySet()) {
 			if (notesPosition.getValue().size() == 1) {
 				level.sounds.add(ChordOrNote.from(new Note(notesPosition.getValue().get(0))));
 				continue;

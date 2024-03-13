@@ -45,7 +45,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 	}
 
 	private void createLevelMenuItems(final JMenu menu) {
-		for (int level = 0; level < chartData.getCurrentArrangement().levels.size(); level++) {
+		for (int level = 0; level < chartData.currentArrangement().levels.size(); level++) {
 			final int levelToChangeTo = level;
 			menu.add(createItem("Level " + level, () -> modeManager.setLevel(levelToChangeTo)));
 		}

@@ -1,27 +1,193 @@
 package log.charter.data.song;
 
-import static java.lang.Math.abs;
-import static log.charter.data.song.position.IConstantPosition.findClosestId;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.position.IVirtualConstantPosition.distance;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.IVirtualConstantPosition;
+import log.charter.data.song.position.IVirtualPosition;
+import log.charter.data.song.position.Position;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.ChartProject;
 import log.charter.util.collections.ArrayList2;
 import log.charter.util.grid.GridPosition;
 
 public class BeatsMap {
-	public class ImmutableBeatsMap {
+	public class ImmutableBeatsMap implements List<Beat> {
+		@Override
 		public int size() {
 			return beats.size();
 		}
 
+		@Override
 		public Beat get(final int beatId) {
 			return getBeatSafe(beatId);
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return beats.isEmpty();
+		}
+
+		@Override
+		public boolean contains(final Object o) {
+			return beats.contains(o);
+		}
+
+		@Override
+		public Iterator<Beat> iterator() {
+			return beats.iterator();
+		}
+
+		@Override
+		public Object[] toArray() {
+			return beats.toArray();
+		}
+
+		@Override
+		public <T> T[] toArray(final T[] a) {
+			return beats.toArray(a);
+		}
+
+		@Override
+		public boolean add(final Beat e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean remove(final Object o) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean containsAll(final Collection<?> c) {
+			return beats.containsAll(c);
+		}
+
+		@Override
+		public boolean addAll(final Collection<? extends Beat> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean addAll(final int index, final Collection<? extends Beat> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean removeAll(final Collection<?> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean retainAll(final Collection<?> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void clear() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Beat set(final int index, final Beat element) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void add(final int index, final Beat element) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Beat remove(final int index) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public int indexOf(final Object o) {
+			return beats.indexOf(o);
+		}
+
+		@Override
+		public int lastIndexOf(final Object o) {
+			return beats.lastIndexOf(o);
+		}
+
+		@Override
+		public ListIterator<Beat> listIterator() {
+			return beats.listIterator();
+		}
+
+		@Override
+		public ListIterator<Beat> listIterator(final int index) {
+			return beats.listIterator(index);
+		}
+
+		@Override
+		public List<Beat> subList(final int fromIndex, final int toIndex) {
+			return beats.subList(fromIndex, toIndex);
+		}
+
+		public double findBPM(final Beat beat) {
+			return BeatsMap.this.findBPM(beat);
+		}
+
+		public double findBPM(final Beat beat, final int beatId) {
+			return BeatsMap.this.findBPM(beat, beatId);
+		}
+
+		public void snap(final IVirtualPosition position) {
+
+			if (position.isPosition()) {
+				final IPosition p = position.asPosition().get();
+				p.position(this, getPositionFromGridClosestTo(p));
+			}
+		}
+
+		public int getPositionWithAddedGrid(final int position, final int gridAdditions) {
+			return BeatsMap.this.getPositionWithAddedGrid(position, gridAdditions);
+		}
+
+		public int getPositionWithRemovedGrid(final int position, final int gridRemovals) {
+			return BeatsMap.this.getPositionWithRemovedGrid(position, gridRemovals);
+		}
+
+		public int getNextPositionFromGrid(final int position) {
+			return getPositionWithAddedGrid(position, 1);
+		}
+
+		public IVirtualConstantPosition getPositionFromGridClosestTo(final IVirtualConstantPosition position) {
+			final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+			final IVirtualConstantPosition leftPosition = gridPosition;
+			final IVirtualConstantPosition rightPosition = gridPosition.next();
+
+			final IVirtualConstantPosition distanceToLeft = distance(immutable, position, leftPosition);
+			final IVirtualConstantPosition distanceToRight = distance(immutable, position, rightPosition);
+
+			if (IVirtualConstantPosition.compare(immutable, distanceToLeft, distanceToRight) <= 0) {
+				return leftPosition;
+			}
+
+			return rightPosition;
+		}
+
+		public void movePositions(final Collection<? extends IVirtualPosition> positions,
+				final FractionalPosition toAdd) {
+			for (final IVirtualPosition position : positions) {
+				final FractionalPosition newPosition = position.positionAsFraction(immutable).fractionalPosition()
+						.add(toAdd);
+
+				position.position(immutable, newPosition);
+			}
 		}
 	}
 
@@ -159,23 +325,12 @@ public class BeatsMap {
 		return gridPosition.position();
 	}
 
-	public int getNextPositionFromGridAfter(final int position) {
-		return getPositionWithAddedGrid(position, 1);
-	}
-
 	public int getNextPositionFromGrid(final int position) {
 		return getPositionWithAddedGrid(position, 1);
 	}
 
-	public int getPositionFromGridClosestTo(final int position) {
-		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
-		final int leftPosition = gridPosition.position();
-		final int rightPosition = gridPosition.next().position();
-		if (abs(position - leftPosition) < abs(position - rightPosition)) {
-			return leftPosition;
-
-		}
-		return rightPosition;
+	public IVirtualConstantPosition getPositionFromGridClosestTo(final IVirtualConstantPosition position) {
+		return immutable.getPositionFromGridClosestTo(position);
 	}
 
 	public int findPreviousAnchoredBeat(final int beatId) {
@@ -199,9 +354,9 @@ public class BeatsMap {
 	}
 
 	public double getPositionInBeats(final int position) {
-		final int beatId = findLastIdBeforeEqual(beats, position);
-		if (beatId >= beats.size() - 1) {
-			return beatId;
+		final Integer beatId = lastBeforeEqual(beats, new Position(position), IConstantPosition::compareTo).findId();
+		if (beatId == null || beatId >= beats.size() - 1) {
+			return beats.size() - 1;
 		}
 
 		final Beat beat = beats.get(beatId);
@@ -241,19 +396,16 @@ public class BeatsMap {
 		fixFirstBeatInMeasures();
 	}
 
-	public void movePositions(final int start, final int end, final Collection<? extends IPosition> positions) {
-		final double startInBeats = getPositionInBeats(start);
-		final double endInBeats = getPositionInBeats(end);
-		final double add = endInBeats - startInBeats;
-		for (final IPosition position : positions) {
-			final double positionInBeats = getPositionInBeats(position.position());
-			final int newPosition = getPositionForPositionInBeats(positionInBeats + add);
-			position.position(newPosition);
-		}
+	public void movePositions(final Collection<? extends IVirtualPosition> positions,
+			final IVirtualConstantPosition start, final IVirtualConstantPosition end) {
+		final FractionalPosition toAdd = start.positionAsFraction(immutable).fractionalPosition()//
+				.add(end.positionAsFraction(immutable).fractionalPosition());
+
+		immutable.movePositions(positions, toAdd);
 	}
 
 	public double findBPM(final Beat beat) {
-		return findBPM(beat, findClosestId(beats, beat.position()));
+		return findBPM(beat, lastBeforeEqual(beats, beat, IConstantPosition::compareTo).findId(0));
 	}
 
 	public double findBPM(final Beat beat, final int beatId) {

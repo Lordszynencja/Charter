@@ -6,14 +6,13 @@ import static log.charter.services.data.fixers.ArrangementFixer.fixNoteLength;
 
 import java.util.List;
 
-import log.charter.data.song.BeatsMap;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
 import log.charter.services.data.selection.Selection;
-import log.charter.util.collections.ArrayList2;
 
 public interface IPositionWithLength extends IPosition, IConstantPositionWithLength {
-	public static class EndPosition implements IPosition {
+	public static class EndPosition implements IPosition, Comparable<IConstantPosition> {
 		private final IPositionWithLength position;
 
 		public EndPosition(final IPositionWithLength position) {
@@ -29,16 +28,21 @@ public interface IPositionWithLength extends IPosition, IConstantPositionWithLen
 		public void position(final int newPosition) {
 			position.endPosition(newPosition);
 		}
+
+		@Override
+		public int compareTo(final IConstantPosition o) {
+			return Integer.compare(position.endPosition(), o.position());
+		}
 	}
 
 	public static <PwL extends IPositionWithLength, P extends IPosition> void changePositionsWithLengthsLength(
-			final BeatsMap beatsMap, final ArrayList2<Selection<PwL>> toChange, final ArrayList2<P> allPositions,
+			final ImmutableBeatsMap beats, final List<Selection<PwL>> toChange, final List<P> allPositions,
 			final int change) {
 		for (final Selection<PwL> selected : toChange) {
 			final IPositionWithLength positionWithLength = selected.selectable;
 			int endPosition = positionWithLength.endPosition();
-			endPosition = change > 0 ? beatsMap.getPositionWithAddedGrid(endPosition, change)
-					: beatsMap.getPositionWithRemovedGrid(endPosition, -change);
+			endPosition = change > 0 ? beats.getPositionWithAddedGrid(endPosition, change)
+					: beats.getPositionWithRemovedGrid(endPosition, -change);
 
 			if (selected.id + 1 < allPositions.size()) {
 				final IPosition next = allPositions.get(selected.id + 1);
@@ -52,22 +56,22 @@ public interface IPositionWithLength extends IPosition, IConstantPositionWithLen
 		}
 	}
 
-	private static void changeNoteLength(final BeatsMap beatsMap, final ArrayList2<ChordOrNote> allPositions,
+	private static void changeNoteLength(final ImmutableBeatsMap beats, final List<ChordOrNote> allPositions,
 			final CommonNote note, final int id, final int change) {
 		if (note.linkNext()) {
 			fixNoteLength(note, id, allPositions);
 			return;
 		}
 
-		final int newEndPosition = change > 0 ? beatsMap.getPositionWithAddedGrid(note.endPosition(), change)
-				: beatsMap.getPositionWithRemovedGrid(note.endPosition(), -change);
+		final int newEndPosition = change > 0 ? beats.getPositionWithAddedGrid(note.endPosition(), change)
+				: beats.getPositionWithRemovedGrid(note.endPosition(), -change);
 		note.endPosition(newEndPosition);
 
 		fixNoteLength(note, id, allPositions);
 	}
 
-	public static void changeSoundsLength(final BeatsMap beatsMap, final ArrayList2<Selection<ChordOrNote>> toChange,
-			final ArrayList2<ChordOrNote> allPositions, final int change, final boolean cutBeforeNext,
+	public static void changeSoundsLength(final ImmutableBeatsMap beats, final List<Selection<ChordOrNote>> toChange,
+			final List<ChordOrNote> allPositions, final int change, final boolean cutBeforeNext,
 			final List<Integer> selectedStrings) {
 		for (final Selection<ChordOrNote> selected : toChange) {
 			selected.selectable.notes().forEach(note -> {
@@ -75,7 +79,7 @@ public interface IPositionWithLength extends IPosition, IConstantPositionWithLen
 					return;
 				}
 
-				changeNoteLength(beatsMap, allPositions, note, selected.id, change);
+				changeNoteLength(beats, allPositions, note, selected.id, change);
 			});
 		}
 	}
@@ -86,7 +90,7 @@ public interface IPositionWithLength extends IPosition, IConstantPositionWithLen
 		length(newEndPosition - position());
 	}
 
-	default IPosition asEndPosition() {
+	default EndPosition asEndPosition() {
 		return new EndPosition(this);
 	}
 }

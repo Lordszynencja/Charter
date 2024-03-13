@@ -2,7 +2,7 @@ package log.charter.services.audio;
 
 import static log.charter.data.config.Config.sfxVolume;
 import static log.charter.data.song.configs.Tuning.getStringDistanceFromC0;
-import static log.charter.data.song.position.IConstantPosition.findLastBeforeEquals;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -26,6 +26,7 @@ import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
+import log.charter.data.song.position.Position;
 import log.charter.io.Logger;
 import log.charter.util.collections.ArrayList2;
 
@@ -42,7 +43,6 @@ public class MidiNotePlayer {
 		private GuitarSoundType(final String midiInstrumentName) {
 			this.midiInstrumentName = midiInstrumentName;
 		}
-
 	}
 
 	private static final int midiZeroDistanceFromC0 = -12;
@@ -91,7 +91,7 @@ public class MidiNotePlayer {
 	}
 
 	private int getMidiNote(final int string, final int fret, final int strings) {
-		final boolean bass = data.getCurrentArrangement().isBass();
+		final boolean bass = data.currentArrangement().isBass();
 		return getStringDistanceFromC0(string, strings, bass) + fret - midiZeroDistanceFromC0;
 	}
 
@@ -135,7 +135,7 @@ public class MidiNotePlayer {
 
 		int actualNote = lastNotes[string];
 		bendValue += getMidiNote(string, fret, data.currentStrings())
-				+ data.getCurrentArrangement().tuning.getTuning()[string] - actualNote;
+				+ data.currentArrangement().tuning.getTuning()[string] - actualNote;
 		while (bendValue >= 2) {
 			bendValue -= 2;
 			actualNote += 2;
@@ -179,7 +179,7 @@ public class MidiNotePlayer {
 
 		final int strings = data.currentStrings();
 		final int midiNote = getMidiNote(string, fret, strings)
-				+ data.getCurrentArrangement().tuning.getTuning()[string];
+				+ data.currentArrangement().tuning.getTuning()[string];
 
 		double bendValue = 0;
 		if (!bendValues.isEmpty()) {
@@ -188,18 +188,19 @@ public class MidiNotePlayer {
 				bendValue = noteBendValue.bendValue.doubleValue();
 			}
 		}
-		bendValue += data.getCurrentArrangement().centOffset.multiply(new BigDecimal("0.01")).doubleValue();
+		bendValue += data.currentArrangement().centOffset.multiply(new BigDecimal("0.01")).doubleValue();
 
 		playMidiNote(soundType, string, midiNote, bendValue);
 	}
 
 	private String getToneName(final int position) {
-		final ToneChange lastToneChange = findLastBeforeEquals(data.getCurrentArrangement().toneChanges, position);
+		final ToneChange lastToneChange = lastBeforeEqual(data.currentArrangement().toneChanges,
+				new Position(position)).find();
 		if (lastToneChange != null) {
 			return lastToneChange.toneName;
 		}
 
-		return data.getCurrentArrangement().baseTone;
+		return data.currentArrangement().baseTone;
 	}
 
 	private void playNote(final Note note) {
@@ -215,7 +216,7 @@ public class MidiNotePlayer {
 
 	private void playChord(final Chord chord) {
 		final String toneName = getToneName(chord.position());
-		final ChordTemplate template = data.getCurrentArrangement().chordTemplates.get(chord.templateId());
+		final ChordTemplate template = data.currentArrangement().chordTemplates.get(chord.templateId());
 
 		for (final Entry<Integer, ChordNote> chordNoteData : chord.chordNotes.entrySet()) {
 			final int string = chordNoteData.getKey();

@@ -353,7 +353,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	}
 
 	private void updateMouseStringAndFret(final int x, final int y) {
-		final int strings = data.getCurrentArrangement().tuning.strings();
+		final int strings = data.currentArrangement().tuning.strings();
 
 		mouseString = null;
 		for (int i = 0; i < strings; i++) {

@@ -3,23 +3,25 @@ package log.charter.gui.components.preview3D.drawers;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.song.notes.ChordOrNote.isLinkedToPrevious;
-import static log.charter.data.song.position.IConstantPosition.findFirstIdAfter;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBefore;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance;
 import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
+import static log.charter.util.CollectionUtils.firstAfter;
+import static log.charter.util.CollectionUtils.lastBefore;
 import static log.charter.util.ColorUtils.mix;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.Position;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.data.AnchorDrawData;
@@ -28,7 +30,6 @@ import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.data.IntRange;
 
 public class Preview3DStringsFretsDrawer {
@@ -56,7 +57,7 @@ public class Preview3DStringsFretsDrawer {
 	private boolean[] getActiveFrets(final Preview3DDrawData drawData) {
 		final boolean[] active = new boolean[Config.frets + 1];
 
-		final int idTo = findLastIdBefore(drawData.anchors, drawData.time + activeTime);
+		final int idTo = lastBefore(drawData.anchors, new Position(drawData.time + activeTime)).findId(0);
 		for (int i = 0; i <= idTo; i++) {
 			final AnchorDrawData anchor = drawData.anchors.get(i);
 			for (int fret = max(0, anchor.fretFrom); fret <= min(Config.frets, anchor.fretTo); fret++) {
@@ -65,26 +66,28 @@ public class Preview3DStringsFretsDrawer {
 		}
 
 		final IntRange frets = drawData.getFrets(drawData.time);
-		for (int fret = frets.min - 1; fret <= frets.max; fret++) {
-			active[fret] = true;
+		if (frets != null) {
+			for (int fret = frets.min - 1; fret <= frets.max; fret++) {
+				active[fret] = true;
+			}
 		}
 
 		return active;
 	}
 
 	private double[] getFretHighlight(final Preview3DDrawData drawData) {
-		if (data.getCurrentArrangementLevel() == null) {
+		if (data.currentArrangementLevel() == null) {
 			return new double[Config.frets + 1];
 		}
 
 		final int[] highlightValues = new int[Config.frets + 1];
-		final ArrayList2<ChordOrNote> sounds = data.getCurrentArrangementLevel().sounds;
-		final int idFrom = findFirstIdAfter(sounds, drawData.time - highlightTime);
-		if (idFrom < 0) {
+		final List<ChordOrNote> sounds = data.currentArrangementLevel().sounds;
+		final Integer idFrom = firstAfter(sounds, new Position(drawData.time - highlightTime)).findId();
+		final Integer idTo = lastBefore(sounds, new Position(drawData.time)).findId(-1);
+		if (idFrom == null || idTo == null) {
 			return new double[Config.frets + 1];
 		}
 
-		final int idTo = findLastIdBefore(sounds, drawData.time);
 		for (int i = idFrom; i <= idTo; i++) {
 			final ChordOrNote sound = sounds.get(i);
 			if (isLinkedToPrevious(sound, i, sounds)) {
@@ -97,8 +100,10 @@ public class Preview3DStringsFretsDrawer {
 				highlightValues[sound.note().fret] = highlightValue;
 			} else {
 				final IntRange frets = drawData.getFrets(sound.position());
-				highlightValues[frets.min - 1] = highlightValue;
-				highlightValues[frets.max] = highlightValue;
+				if (frets != null) {
+					highlightValues[frets.min - 1] = highlightValue;
+					highlightValues[frets.max] = highlightValue;
+				}
 			}
 		}
 

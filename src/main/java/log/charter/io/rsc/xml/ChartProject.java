@@ -1,5 +1,10 @@
 package log.charter.io.rsc.xml;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
@@ -10,10 +15,9 @@ import log.charter.data.song.SongChart;
 import log.charter.data.song.vocals.Vocals;
 import log.charter.services.editModes.EditMode;
 import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashMap2;
 
 @XStreamAlias("project")
-@XStreamInclude(value = { Arrangement.class, Beat.class, Vocals.class })
+@XStreamInclude({ Arrangement.class, Beat.class, Vocals.class })
 public class ChartProject {
 	public int chartFormatVersion = 2;
 	public EditMode editMode = EditMode.TEMPO_MAP;
@@ -28,13 +32,13 @@ public class ChartProject {
 	public Integer albumYear;
 
 	public String musicFileName;
-	public ArrayList2<String> arrangementFiles = new ArrayList2<>();
+	public List<String> arrangementFiles = new ArrayList<>();
 
 	public ArrayList2<Beat> beats = new ArrayList2<>();
-	public ArrayList2<Arrangement> arrangements = new ArrayList2<>();
+	public List<Arrangement> arrangements = new ArrayList<>();
 	public Vocals vocals = new Vocals();
 
-	public HashMap2<Integer, Integer> bookmarks = new HashMap2<>();
+	public Map<Integer, Integer> bookmarks = new HashMap<>();
 	public String text;
 
 	public ChartProject(final int time, final EditMode editMode, final ChartData data, final SongChart songChart,

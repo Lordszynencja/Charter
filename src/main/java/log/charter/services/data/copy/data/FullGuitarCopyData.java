@@ -1,5 +1,8 @@
 package log.charter.services.data.copy.data;
 
+import java.util.List;
+import java.util.Map;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.data.song.ChordTemplate;
@@ -9,8 +12,6 @@ import log.charter.services.data.copy.data.positions.CopiedArrangementEventsPoin
 import log.charter.services.data.copy.data.positions.CopiedHandShapePosition;
 import log.charter.services.data.copy.data.positions.CopiedSoundPosition;
 import log.charter.services.data.copy.data.positions.CopiedToneChangePosition;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashMap2;
 
 @XStreamAlias("fullGuitarCopyData")
 public class FullGuitarCopyData implements FullCopyData {
@@ -20,11 +21,11 @@ public class FullGuitarCopyData implements FullCopyData {
 	public final SoundsCopyData sounds;
 	public final HandShapesCopyData handShapes;
 
-	public FullGuitarCopyData(final HashMap2<String, Phrase> phrases,
-			final ArrayList2<CopiedArrangementEventsPointPosition> arrangementEventsPoints,
-			final ArrayList2<ChordTemplate> chordTemplates, final ArrayList2<CopiedToneChangePosition> toneChanges,
-			final ArrayList2<CopiedAnchorPosition> anchors, final ArrayList2<CopiedSoundPosition> sounds,
-			final ArrayList2<CopiedHandShapePosition> handShapes) {
+	public FullGuitarCopyData(final Map<String, Phrase> phrases,
+			final List<CopiedArrangementEventsPointPosition> arrangementEventsPoints,
+			final List<ChordTemplate> chordTemplates, final List<CopiedToneChangePosition> toneChanges,
+			final List<CopiedAnchorPosition> anchors, final List<CopiedSoundPosition> sounds,
+			final List<CopiedHandShapePosition> handShapes) {
 		beats = new EventPointsCopyData(phrases, arrangementEventsPoints);
 		this.toneChanges = new ToneChangesCopyData(toneChanges);
 		this.anchors = new AnchorsCopyData(anchors);

@@ -5,6 +5,8 @@ import static log.charter.gui.components.simple.TextInputWithValidation.generate
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
+import java.util.Set;
+
 import javax.swing.JTextField;
 
 import log.charter.data.config.Localization.Label;
@@ -19,7 +21,6 @@ import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.HashSet2;
 
 public class AnchorSelectionEditor {
 	private SelectionManager selectionManager;
@@ -54,7 +55,7 @@ public class AnchorSelectionEditor {
 		undoSystem.addUndo();
 
 		final SelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.ANCHOR);
+				.accessor(PositionType.ANCHOR);
 		for (final Selection<Anchor> anchorSelection : anchorSelectionAccessor.getSelectedSet()) {
 			anchorSelection.selectable.fret = newFret;
 		}
@@ -64,7 +65,7 @@ public class AnchorSelectionEditor {
 		undoSystem.addUndo();
 
 		final SelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.ANCHOR);
+				.accessor(PositionType.ANCHOR);
 		for (final Selection<Anchor> anchorSelection : anchorSelectionAccessor.getSelectedSet()) {
 			anchorSelection.selectable.width = newWidth;
 		}
@@ -81,7 +82,7 @@ public class AnchorSelectionEditor {
 	}
 
 	public void selectionChanged(final SelectionAccessor<Anchor> selectedAnchorsAccessor) {
-		final HashSet2<Selection<Anchor>> selectedAnchors = selectedAnchorsAccessor.getSelectedSet();
+		final Set<Selection<Anchor>> selectedAnchors = selectedAnchorsAccessor.getSelectedSet();
 
 		final Integer fret = getSingleValue(selectedAnchors, selection -> selection.selectable.fret, null);
 		anchorFret.field.setTextWithoutEvent(fret == null ? "" : (fret + ""));

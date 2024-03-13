@@ -150,7 +150,7 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 
 	private void drawEventPoints(final Graphics g, final int y, final ColorLabel color,
 			final Predicate<EventPoint> filter) {
-		final List<EventPoint> points = chartData.getCurrentArrangement().getFilteredEventPoints(filter);
+		final List<EventPoint> points = chartData.currentArrangement().getFilteredEventPoints(filter);
 
 		for (int i = 0; i < points.size(); i++) {
 			final EventPoint point = points.get(i);
@@ -190,7 +190,7 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 	}
 
 	private void drawNotes(final Graphics g) {
-		chartData.getCurrentArrangementLevel().sounds.stream()//
+		chartData.currentArrangementLevel().sounds.stream()//
 				.flatMap(ChordOrNote::notes)//
 				.forEach(note -> drawNote(g, note.string(), note.position(), note.length()));
 	}

@@ -1,10 +1,11 @@
 package log.charter.services.data.validation;
 
+import java.util.List;
+
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
-import log.charter.util.collections.ArrayList2;
 
 public class ArrangementValidator implements Initiable {
 	private CharterContext charterContext;
@@ -23,7 +24,7 @@ public class ArrangementValidator implements Initiable {
 	 * @return true if validation passed
 	 */
 	public boolean validate() {
-		final ArrayList2<Arrangement> arrangements = chartData.songChart.arrangements;
+		final List<Arrangement> arrangements = chartData.songChart.arrangements;
 		for (int i = 0; i < arrangements.size(); i++) {
 			final Arrangement arrangement = arrangements.get(i);
 			if (!phrasesValidator.validatePhrases(i, arrangement)) {

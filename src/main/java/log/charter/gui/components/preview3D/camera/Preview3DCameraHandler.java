@@ -2,20 +2,23 @@ package log.charter.gui.components.preview3D.camera;
 
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.cameraMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationXMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
+
+import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.song.Anchor;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.Position;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.util.collections.ArrayList2;
 
 public class Preview3DCameraHandler {
 
@@ -32,7 +35,7 @@ public class Preview3DCameraHandler {
 	private final static double screenScaleYMultiplier = 0.5;
 
 	private ChartTimeHandler chartTimeHandler;
-	private ChartData data;
+	private ChartData chartData;
 
 	private double camX = 2;
 	private double fretSpan = 4;
@@ -41,7 +44,7 @@ public class Preview3DCameraHandler {
 
 	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data) {
 		this.chartTimeHandler = chartTimeHandler;
-		this.data = data;
+		chartData = data;
 	}
 
 	private double mix(final double a, final double b, final double mix) {
@@ -49,16 +52,18 @@ public class Preview3DCameraHandler {
 	}
 
 	public void updateFretFocus(final double frameTime) {
-		final ArrayList2<Anchor> anchors = data.getCurrentArrangementLevel().anchors;
+		final List<Anchor> anchors = chartData.currentArrangementLevel().anchors;
 		int minFret = Config.frets;
 		int maxFret = 1;
 
-		int anchorsFrom = findLastIdBeforeEqual(anchors, chartTimeHandler.time() + fretFocusWindowStartOffset);
-		if (anchorsFrom == -1) {
-			anchorsFrom = 0;
-		}
-		final int anchorsTo = findLastIdBeforeEqual(anchors, chartTimeHandler.time() + fretFocusWindowEndOffset);
-		if (anchorsTo == -1) {
+		final FractionalPosition start = new Position(chartTimeHandler.time() + fretFocusWindowStartOffset)
+				.positionAsFraction(chartData.beats());
+		final int anchorsFrom = lastBeforeEqual(anchors, start).findId(0);
+
+		final FractionalPosition end = new Position(chartTimeHandler.time() + fretFocusWindowEndOffset)
+				.positionAsFraction(chartData.beats());
+		final Integer anchorsTo = lastBeforeEqual(anchors, end).findId();
+		if (anchorsTo == null) {
 			return;
 		}
 		// TODO add weighted average instead of focusing speed

@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import log.charter.data.ChartData;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
@@ -50,7 +51,7 @@ public class LyricLinesDrawer {
 	private ChartData chartData;
 	private ModeManager modeManager;
 
-	public void draw(final Graphics2D g, final int time) {
+	public void draw(final FrameData frameData) {
 		if (modeManager.getMode() == EditMode.EMPTY) {
 			return;
 		}
@@ -63,7 +64,7 @@ public class LyricLinesDrawer {
 		for (final Vocal vocal : chartData.songChart.vocals.vocals) {
 			if (!started) {
 				started = true;
-				x = timeToX(vocal.position(), time);
+				x = timeToX(vocal.position(), frameData.time);
 			}
 
 			currentLine += vocal.getText();
@@ -72,12 +73,13 @@ public class LyricLinesDrawer {
 			}
 
 			if (vocal.isPhraseEnd()) {
-				drawingData.addLyricLine(currentLine, x, timeToX(vocal.position() + vocal.length(), time) - x);
+				drawingData.addLyricLine(currentLine, x,
+						timeToX(vocal.position() + vocal.length(), frameData.time) - x);
 				currentLine = "";
 				started = false;
 			}
 		}
 
-		drawingData.draw(g);
+		drawingData.draw(frameData.g);
 	}
 }

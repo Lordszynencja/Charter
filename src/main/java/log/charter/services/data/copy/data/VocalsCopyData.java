@@ -1,18 +1,20 @@
 package log.charter.services.data.copy.data;
 
+import java.util.List;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.services.data.copy.data.positions.CopiedVocalPosition;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("vocalsCopyData")
 public class VocalsCopyData implements ICopyData {
-	public final ArrayList2<CopiedVocalPosition> vocals;
+	public final List<CopiedVocalPosition> vocals;
 
-	public VocalsCopyData(final ArrayList2<CopiedVocalPosition> vocals) {
+	public VocalsCopyData(final List<CopiedVocalPosition> vocals) {
 		this.vocals = vocals;
 	}
 
@@ -22,9 +24,9 @@ public class VocalsCopyData implements ICopyData {
 	}
 
 	@Override
-	public void paste(final ChartData chartData, final SelectionManager selectionManager, final int time,
-			final boolean convertFromBeats) {
-		ICopyData.simplePaste(chartData, selectionManager, PositionType.VOCAL, time, vocals, convertFromBeats);
+	public void paste(final ChartData chartData, final SelectionManager selectionManager,
+			final FractionalPosition basePosition, final boolean convertFromBeats) {
+		ICopyData.simplePaste(chartData, selectionManager, PositionType.VOCAL, basePosition, vocals, convertFromBeats);
 	}
 
 }

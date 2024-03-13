@@ -1,6 +1,10 @@
 package log.charter.data.undoSystem;
 
-import static java.util.stream.Collectors.toCollection;
+import static log.charter.util.CollectionUtils.map;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Anchor;
@@ -13,22 +17,19 @@ import log.charter.data.song.Phrase;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashMap2;
-import log.charter.util.collections.HashSet2;
 
 public class GuitarUndoState extends UndoState {
 	private final int arrangementId;
 	private final int levelId;
 
-	private final HashMap2<String, Phrase> phrases;
-	private final ArrayList2<EventPoint> eventPoints;
-	private final ArrayList2<ChordTemplate> chordTemplates;
-	private final ArrayList2<ToneChange> toneChanges;
+	private final Map<String, Phrase> phrases;
+	private final List<EventPoint> eventPoints;
+	private final List<ChordTemplate> chordTemplates;
+	private final List<ToneChange> toneChanges;
 
-	private final ArrayList2<Anchor> anchors;
-	private final ArrayList2<ChordOrNote> chordsAndNotes;
-	private final ArrayList2<HandShape> handShapes;
+	private final List<Anchor> anchors;
+	private final List<ChordOrNote> chordsAndNotes;
+	private final List<HandShape> handShapes;
 
 	public GuitarUndoState(final ChartData data, final int arrangementId, final int levelId) {
 		this.arrangementId = arrangementId;
@@ -37,14 +38,14 @@ public class GuitarUndoState extends UndoState {
 		final Arrangement arrangement = data.songChart.arrangements.get(arrangementId);
 		final Level level = arrangement.getLevel(levelId);
 
-		phrases = arrangement.phrases.map(name -> name, Phrase::new);
-		eventPoints = arrangement.eventPoints.map(EventPoint::new);
-		chordTemplates = arrangement.chordTemplates.map(ChordTemplate::new);
-		toneChanges = arrangement.toneChanges.map(ToneChange::new);
+		phrases = map(arrangement.phrases, name -> name, Phrase::new);
+		eventPoints = map(arrangement.eventPoints, EventPoint::new);
+		chordTemplates = map(arrangement.chordTemplates, ChordTemplate::new);
+		toneChanges = map(arrangement.toneChanges, ToneChange::new);
 
-		anchors = level.anchors.map(Anchor::new);
-		chordsAndNotes = level.sounds.map(ChordOrNote::from);
-		handShapes = level.handShapes.map(HandShape::new);
+		anchors = map(level.anchors, Anchor::new);
+		chordsAndNotes = map(level.sounds, ChordOrNote::from);
+		handShapes = map(level.handShapes, HandShape::new);
 	}
 
 	public GuitarUndoState(final ChartData data) {
@@ -61,8 +62,7 @@ public class GuitarUndoState extends UndoState {
 		arrangement.phrases = phrases;
 		arrangement.eventPoints = eventPoints;
 		arrangement.chordTemplates = chordTemplates;
-		arrangement.tones = toneChanges.stream().map(toneChange -> toneChange.toneName)
-				.collect(toCollection(HashSet2::new));
+		arrangement.tones = new HashSet<>(map(toneChanges, toneChange -> toneChange.toneName));
 
 		arrangement.toneChanges = toneChanges;
 		level.anchors = anchors;

@@ -1,21 +1,27 @@
 package log.charter.io.rs.xml.song;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+import log.charter.data.song.Anchor;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
-import log.charter.util.collections.ArrayList2;
+import log.charter.util.CollectionUtils;
 
 @XStreamAlias("level")
 public class ArrangementLevel {
-	public static ArrayList2<ArrangementLevel> fromLevels(final ArrayList2<Level> levels,
-			final ArrayList2<ChordTemplate> chordTemplates) {
-		final ArrayList2<ArrangementLevel> arrangementLevels = levels
-				.mapWithId((difficulty, level) -> new ArrangementLevel(difficulty, level, chordTemplates));
+	public static List<ArrangementLevel> fromLevels(final ImmutableBeatsMap beats, final List<Level> levels,
+			final List<ChordTemplate> chordTemplates) {
+		final List<ArrangementLevel> arrangementLevels = CollectionUtils.mapWithId(levels,
+				(difficulty, level) -> new ArrangementLevel(beats, difficulty, level, chordTemplates));
 
 		arrangementLevels.sort((a, b) -> Integer.compare(a.difficulty, b.difficulty));
 
@@ -31,23 +37,29 @@ public class ArrangementLevel {
 	public CountedList<ArrangementAnchor> anchors;
 	public CountedList<ArrangementHandShape> handShapes;
 
-	public ArrangementLevel() {
+	private ArrangementAnchor anchor(final ImmutableBeatsMap beats, final Anchor anchor) {
+		return new ArrangementAnchor(anchor.position(beats), anchor.fret, new BigDecimal(anchor.width));
 	}
 
-	private ArrangementLevel(final int difficulty, final Level level, final ArrayList2<ChordTemplate> chordTemplates) {
+	private ArrangementLevel(final ImmutableBeatsMap beats, final int difficulty, final Level level,
+			final List<ChordTemplate> chordTemplates) {
 		this.difficulty = difficulty;
 
 		setChordsAndNotes(level, chordTemplates);
 
 		fretHandMutes = new CountedList<>();
-		anchors = new CountedList<>(level.anchors.map(ArrangementAnchor::new));
-		handShapes = new CountedList<ArrangementHandShape>(level.handShapes.map(ArrangementHandShape::new));
+		anchors = new CountedList<>(level.anchors.stream()//
+				.map(anchor -> anchor(beats, anchor))//
+				.collect(Collectors.toList()));
+		handShapes = new CountedList<ArrangementHandShape>(level.handShapes.stream()//
+				.map(ArrangementHandShape::new)//
+				.collect(Collectors.toList()));
 	}
 
-	private void setChordsAndNotes(final Level level, final ArrayList2<ChordTemplate> chordTemplates) {
+	private void setChordsAndNotes(final Level level, final List<ChordTemplate> chordTemplates) {
 		notes = new CountedList<>();
 		chords = new CountedList<>();
-		final ArrayList2<ChordOrNote> chordsAndNotes = level.sounds;
+		final List<ChordOrNote> chordsAndNotes = level.sounds;
 
 		for (int i = 0; i < chordsAndNotes.size(); i++) {
 			final ChordOrNote sound = chordsAndNotes.get(i);

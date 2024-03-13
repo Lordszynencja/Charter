@@ -5,6 +5,7 @@ import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 import static log.charter.data.types.PositionType.BEAT;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
+import static log.charter.util.CollectionUtils.contains;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.util.ArrayList;
@@ -12,11 +13,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Anchor;
+import log.charter.data.song.Beat;
+import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
+import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IConstantPositionWithLength;
 import log.charter.data.song.position.IPosition;
 import log.charter.data.song.position.IPositionWithLength;
@@ -29,11 +37,10 @@ import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.HighlightManager;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
-import log.charter.services.mouseAndKeyboard.MouseHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressData;
+import log.charter.services.mouseAndKeyboard.MouseHandler;
 import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashSet2;
 import log.charter.util.data.Position2D;
 
 public class HighlightData {
@@ -42,8 +49,9 @@ public class HighlightData {
 		private int length;
 		private final ChordOrNote originalSound;
 		private final int string;
+		private final boolean drawOriginalStrings;
 
-		public TemporaryHighlighPosition(final IPosition position) {
+		public <P extends IConstantPosition> TemporaryHighlighPosition(final P position) {
 			this(position.position(), 0, 0);
 		}
 
@@ -55,7 +63,8 @@ public class HighlightData {
 			position = sound.position();
 			length = sound.length();
 			originalSound = sound;
-			string = 0;
+			string = -1;
+			drawOriginalStrings = true;
 		}
 
 		public TemporaryHighlighPosition(final int position) {
@@ -71,6 +80,7 @@ public class HighlightData {
 			this.length = length;
 			originalSound = null;
 			this.string = string;
+			drawOriginalStrings = false;
 		}
 
 		@Override
@@ -94,7 +104,7 @@ public class HighlightData {
 		}
 
 		public HighlightPosition asConstant() {
-			return new HighlightPosition(position, length, originalSound, string);
+			return new HighlightPosition(position, length, originalSound, string, drawOriginalStrings);
 		}
 
 	}
@@ -104,21 +114,23 @@ public class HighlightData {
 		public final int length;
 		public final Optional<ChordOrNote> originalSound;
 		public final int string;
+		public final boolean drawOriginalStrings;
 
 		public HighlightPosition(final int position, final int length) {
-			this(position, length, null, 0);
+			this(position, length, null, 0, false);
 		}
 
 		public HighlightPosition(final int position) {
-			this(position, 0, null, 0);
+			this(position, 0, null, 0, false);
 		}
 
 		public HighlightPosition(final int position, final int length, final ChordOrNote originalSound,
-				final int string) {
+				final int string, final boolean drawOriginalStrings) {
 			this.position = position;
 			this.length = length;
 			this.originalSound = Optional.ofNullable(originalSound);
 			this.string = string;
+			this.drawOriginalStrings = drawOriginalStrings;
 		}
 
 		@Override
@@ -164,43 +176,48 @@ public class HighlightData {
 		data.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static HighlightData getDraggedPositions(final int time, final ChartData data,
 			final SelectionManager selectionManager, final MouseButtonPressData press, final int x) {
 		if (press.highlight.type == PositionType.NONE || press.highlight.type == BEAT) {
 			return null;
 		}
 
-		HashSet2<Selection<IPosition>> selectedPositions = selectionManager.getSelectedAccessor(press.highlight.type)
+		Set<Selection<?>> selectedPositions = (Set) selectionManager.accessor(press.highlight.type)
 				.getSelectedSet();
 
 		if (press.highlight.existingPosition//
-				&& !selectedPositions.contains(selection -> selection.id == press.highlight.id)) {
+				&& !contains(selectedPositions, selection -> selection.id == press.highlight.id)) {
 			selectionManager.clear();
 			selectionManager.addSelection(press.highlight.type, press.highlight.id);
-			selectedPositions = selectionManager.getSelectedAccessor(press.highlight.type)//
+			selectedPositions = (Set) selectionManager.accessor(press.highlight.type)//
 					.getSelectedSet();
 		}
 		if (selectedPositions.isEmpty()) {
 			return null;
 		}
 
-		final Function<Selection<IPosition>, TemporaryHighlighPosition> mapper = switch (press.highlight.type) {
-			case ANCHOR -> selection -> new TemporaryHighlighPosition(selection.selectable);
-			case EVENT_POINT -> selection -> new TemporaryHighlighPosition(selection.selectable);
-			case GUITAR_NOTE -> selection -> new TemporaryHighlighPosition((ChordOrNote) selection.selectable);
-			case HAND_SHAPE -> selection -> new TemporaryHighlighPosition((HandShape) selection.selectable);
-			case TONE_CHANGE -> selection -> new TemporaryHighlighPosition(selection.selectable);
-			case VOCAL -> selection -> new TemporaryHighlighPosition((Vocal) selection.selectable);
-			default -> selection -> new TemporaryHighlighPosition(selection.selectable.position());
+		final Function<Selection<?>, TemporaryHighlighPosition> mapper = switch (press.highlight.type) {
+			case ANCHOR -> s -> new TemporaryHighlighPosition(((Anchor) s.selectable).position(data.beats()));
+			case BEAT -> s -> new TemporaryHighlighPosition((Beat) s.selectable);
+			case EVENT_POINT -> s -> new TemporaryHighlighPosition((EventPoint) s.selectable);
+			case GUITAR_NOTE -> s -> new TemporaryHighlighPosition((ChordOrNote) s.selectable);
+			case HAND_SHAPE -> s -> new TemporaryHighlighPosition((HandShape) s.selectable);
+			case TONE_CHANGE -> s -> new TemporaryHighlighPosition((ToneChange) s.selectable);
+			case VOCAL -> s -> new TemporaryHighlighPosition((Vocal) s.selectable);
+			default -> s -> new TemporaryHighlighPosition(0);
 		};
-		final HashSet2<TemporaryHighlighPosition> positions = selectedPositions.map(mapper);
+		final Set<TemporaryHighlighPosition> positions = selectedPositions.stream()//
+				.map(mapper)//
+				.collect(Collectors.toSet());
 
 		moveSelectedPositions(time, data, positions, press, x);
 
-		final ArrayList<HighlightPosition> highlightedPositions = new ArrayList<>(
-				positions.map(TemporaryHighlighPosition::asConstant));
+		final List<HighlightPosition> highlightedPositions = positions.stream()//
+				.map(TemporaryHighlighPosition::asConstant)//
+				.collect(Collectors.toList());
 
-		return new HighlightData(press.highlight.type, null, highlightedPositions);
+		return new HighlightData(press.highlight.type, highlightedPositions);
 	}
 
 	private static HighlightData getDraggedBeats(final int time, final MouseHandler mouseHandler) {
@@ -254,7 +271,7 @@ public class HighlightData {
 
 		final ArrayList2<HighlightPosition> dragPositions = highlightManager
 				.getPositionsWithStrings(pressXTime, highlight.position(), pressY, y)//
-				.map(position -> new HighlightPosition(position.position(), 0, null, position.string));
+				.map(position -> new HighlightPosition(position.position(), 0, null, position.string, false));
 
 		return new HighlightData(PositionType.GUITAR_NOTE, dragPositions,
 				new HighlightLine(startPosition, endPosition));
@@ -264,6 +281,10 @@ public class HighlightData {
 			final HighlightManager highlightManager, final ModeManager modeManager,
 			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final MouseHandler mouseHandler,
 			final SelectionManager selectionManager) {
+		if (modeManager.getMode() == EditMode.EMPTY) {
+			return new HighlightData();
+		}
+
 		final HighlightData dragHighlight = getDragHighlight(time, data, modeManager, mouseButtonPressReleaseHandler,
 				mouseHandler, selectionManager);
 		if (dragHighlight != null) {
@@ -291,10 +312,10 @@ public class HighlightData {
 		final int position = highlight.position();
 		if (highlight.type == PositionType.GUITAR_NOTE) {
 			final int string = yToString(y, data.currentStrings());
-			return new HighlightData(type, new HighlightPosition(position, 0, null, string));
+			return new HighlightData(type, new HighlightPosition(position, 0, null, string, false));
 		}
 		if (highlight.type == PositionType.HAND_SHAPE || highlight.type == PositionType.VOCAL) {
-			final int length = data.songChart.beatsMap.getNextPositionFromGridAfter(position) - position;
+			final int length = data.songChart.beatsMap.getNextPositionFromGrid(position) - position;
 			return new HighlightData(type, new HighlightPosition(position, length));
 		}
 
@@ -305,6 +326,13 @@ public class HighlightData {
 	public final Optional<IdHighlightPosition> id;
 	public final List<HighlightPosition> highlightedNonIdPositions;
 	public final Optional<HighlightLine> line;
+
+	public HighlightData() {
+		type = PositionType.NONE;
+		id = Optional.empty();
+		highlightedNonIdPositions = new ArrayList<>();
+		line = Optional.empty();
+	}
 
 	public HighlightData(final PositionType type, final IdHighlightPosition id) {
 		this.type = type;
@@ -324,6 +352,13 @@ public class HighlightData {
 			final List<HighlightPosition> highlightedNonIdPositions) {
 		this.type = type;
 		this.id = Optional.of(id);
+		this.highlightedNonIdPositions = highlightedNonIdPositions;
+		line = Optional.empty();
+	}
+
+	public HighlightData(final PositionType type, final List<HighlightPosition> highlightedNonIdPositions) {
+		this.type = type;
+		id = Optional.empty();
 		this.highlightedNonIdPositions = highlightedNonIdPositions;
 		line = Optional.empty();
 	}

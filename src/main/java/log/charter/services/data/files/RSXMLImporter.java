@@ -30,7 +30,7 @@ public class RSXMLImporter {
 		try {
 			final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(file));
 			final Arrangement arrangementChart = RSXMLToArrangement.toArrangement(songArrangement,
-					chartData.songChart.beatsMap.beats);
+					chartData.songChart.beatsMap.immutable);
 			chartData.songChart.arrangements.add(arrangementChart);
 
 			charterMenuBar.refreshMenus();

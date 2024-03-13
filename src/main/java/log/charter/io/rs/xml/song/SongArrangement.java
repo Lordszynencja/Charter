@@ -1,7 +1,9 @@
 package log.charter.io.rs.xml.song;
 
-import static log.charter.data.song.position.IConstantPosition.findClosestId;
-import static log.charter.data.song.position.IConstantPosition.findFirstIdAfterEqual;
+import static log.charter.data.song.position.IConstantPosition.positionComparator;
+import static log.charter.util.CollectionUtils.closest;
+import static log.charter.util.CollectionUtils.contains;
+import static log.charter.util.CollectionUtils.firstAfterEqual;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -10,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.IntSupplier;
+import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -25,9 +28,9 @@ import log.charter.data.song.SongChart;
 import log.charter.data.song.ToneChange;
 import log.charter.io.rs.xml.converters.ArrangementTypeConverter;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
-import log.charter.util.collections.ArrayList2;
 import log.charter.io.rs.xml.converters.DateTimeConverter;
 import log.charter.io.rs.xml.converters.TimeConverter;
+import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("song")
 @XStreamInclude({ ArrangementTuning.class, ArrangementProperties.class, TranscriptionTrack.class })
@@ -98,11 +101,14 @@ public class SongArrangement {
 				ArrangementSection.fromSections(arrangement.getFilteredEventPoints(p -> p.section != null)));
 		setPhrases(songChart.beatsMap, arrangement);
 		setTones(arrangement);
-		chordTemplates = new CountedList<>(arrangement.chordTemplates.map(ArrangementChordTemplate::new));
+		chordTemplates = new CountedList<>(arrangement.chordTemplates.stream()//
+				.map(ArrangementChordTemplate::new)//
+				.collect(Collectors.toList()));
 		events = new CountedList<>(ArrangementEvent.fromEventsAndBeatMap(
 				arrangement.getFilteredEventPoints(p -> !p.events.isEmpty()), songChart.beatsMap));
 
-		levels = new CountedList<>(ArrangementLevel.fromLevels(arrangement.levels, arrangement.chordTemplates));
+		levels = new CountedList<>(ArrangementLevel.fromLevels(songChart.beatsMap.immutable, arrangement.levels,
+				arrangement.chordTemplates));
 
 		fixMeasureNumbers();
 	}
@@ -123,8 +129,8 @@ public class SongArrangement {
 	}
 
 	private void addPhraseIteration(final ArrangementPhraseIteration phraseIteration) {
-		final int id = findFirstIdAfterEqual(phraseIterations.list, phraseIteration.time);
-		if (id < 0) {
+		final Integer id = firstAfterEqual(phraseIterations.list, phraseIteration, positionComparator).findId();
+		if (id == null) {
 			phraseIterations.list.add(phraseIteration);
 		} else {
 			phraseIterations.list.add(id, phraseIteration);
@@ -133,8 +139,8 @@ public class SongArrangement {
 
 	private void addDefaultPhrase(final Map<String, Integer> phraseIds, final String name,
 			final IntSupplier positionGenerator) {
-		if (phraseIterations.list
-				.contains(phraseIteration -> phrases.list.get(phraseIteration.phraseId).name.equals(name))) {
+		if (contains(phraseIterations.list,
+				phraseIteration -> phrases.list.get(phraseIteration.phraseId).name.equals(name))) {
 			return;
 		}
 
@@ -149,7 +155,7 @@ public class SongArrangement {
 				return beatsMap.getBeatSafe(0).position();
 			}
 
-			Integer beatId = findClosestId(beatsMap.beats, phraseEventPoints.get(0).position());
+			int beatId = closest(beatsMap.beats, phraseEventPoints.get(0), a -> a.position()).findId(0);
 			while (!beatsMap.getBeatSafe(beatId).firstInMeasure && beatId > 0) {
 				beatId--;
 			}
@@ -172,7 +178,8 @@ public class SongArrangement {
 				return beatsMap.getBeatSafe(beatsMap.beats.size() - 1).position();
 			}
 
-			Integer closestBeatId = findClosestId(beatsMap.beats, lastEventPoint.position());
+			int closestBeatId = closest(beatsMap.beats, lastEventPoint, a -> a.position())
+					.findId(beatsMap.beats.size());
 			while (!beatsMap.getBeatSafe(closestBeatId).firstInMeasure && closestBeatId < beatsMap.beats.size()) {
 				closestBeatId++;
 			}
@@ -226,7 +233,9 @@ public class SongArrangement {
 		}
 
 		tones = arrangement.toneChanges.isEmpty() ? null
-				: new CountedList<>(arrangement.toneChanges.map(ArrangementTone::new));
+				: new CountedList<>(arrangement.toneChanges.stream()//
+						.map(ArrangementTone::new)//
+						.collect(Collectors.toList()));
 	}
 
 	private void fixMeasureNumbers() {

@@ -15,9 +15,6 @@ public class EBeat {
 	@XStreamAsAttribute
 	public Integer measure;
 
-	public EBeat() {
-	}
-
 	public EBeat(final Beat beat) {
 		time = beat.position();
 		measure = beat.firstInMeasure ? 1 : null;

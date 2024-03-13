@@ -3,40 +3,45 @@ package log.charter.data.song;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.data.song.position.Position;
-import log.charter.io.rs.xml.song.ArrangementAnchor;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.IConstantFractionalPosition;
+import log.charter.data.song.position.IFractionalPosition;
 
 @XStreamAlias("anchor")
-public class Anchor extends Position {
-	@XStreamAsAttribute
-	public int fret;
-	@XStreamAsAttribute
-	public int width;
+public class Anchor implements IFractionalPosition {
 
-	public Anchor(final int position, final int fret) {
-		super(position);
-		this.fret = fret;
-		width = 4;
+	@XStreamAsAttribute
+	private FractionalPosition fractionalPosition;
+	@XStreamAsAttribute
+	private int position;
+	@XStreamAsAttribute
+	public int fret = 1;
+	@XStreamAsAttribute
+	public int width = 4;
+
+	public Anchor() {
+		fractionalPosition = new FractionalPosition(0);
+		position = 1;
 	}
 
-	public Anchor(final int position, final int fret, final int width) {
-		super(position);
+	public Anchor(final IConstantFractionalPosition fractionalPosition, final int fret) {
+		this.fractionalPosition = fractionalPosition.fractionalPosition();
+		this.fret = fret;
+	}
+
+	public Anchor(final IConstantFractionalPosition fractionalPosition) {
+		this.fractionalPosition = fractionalPosition.fractionalPosition();
+	}
+
+	public Anchor(final IConstantFractionalPosition fractionalPosition, final int fret, final int width) {
+		this.fractionalPosition = fractionalPosition.fractionalPosition();
 		this.fret = fret;
 		this.width = width;
 	}
 
-	public Anchor() {
-		super(1);
-	}
-
-	public Anchor(final ArrangementAnchor arrangementAnchor) {
-		super(arrangementAnchor.time);
-		fret = arrangementAnchor.fret;
-		width = arrangementAnchor.width == null ? 4 : arrangementAnchor.width.intValue();
-	}
-
 	public Anchor(final Anchor other) {
-		super(other);
+		fractionalPosition = other.fractionalPosition;
+		position = other.position;
 		fret = other.fret;
 		width = other.width;
 	}
@@ -44,4 +49,19 @@ public class Anchor extends Position {
 	public int topFret() {
 		return fret + width - 1;
 	}
+
+	@Override
+	public FractionalPosition fractionalPosition() {
+		return fractionalPosition;
+	}
+
+	@Override
+	public void fractionalPosition(final FractionalPosition newPosition) {
+		if (newPosition == null) {
+			throw new IllegalArgumentException("Can't set position to null");
+		}
+
+		fractionalPosition = newPosition;
+	}
+
 }

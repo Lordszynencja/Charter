@@ -21,7 +21,7 @@ public class ClapsHandler {
 	private List<? extends IPosition> getCurrentClapPositions() {
 		switch (modeManager.getMode()) {
 			case GUITAR:
-				return chartData.getCurrentArrangementLevel().sounds;
+				return chartData.currentArrangementLevel().sounds;
 			case TEMPO_MAP:
 				return chartData.songChart.beatsMap.beats;
 			case VOCALS:

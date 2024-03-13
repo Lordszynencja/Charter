@@ -301,10 +301,13 @@ public class ModernThemeNotes implements ThemeNotes {
 
 	@Override
 	public void addSoundHighlight(final int x, final Optional<ChordOrNote> originalSound,
-			final Optional<ChordTemplate> template, final int string) {
-		originalSound.flatMap(sound -> sound.noteWithFrets(string, template.orElse(null)))//
-				.ifPresentOrElse(note -> drawHighlightForNote(x, note), //
-						() -> drawHighlightWithoutNote(x, string));
+			final Optional<ChordTemplate> template, final int string, final boolean drawOriginalStrings) {
+		if (originalSound.isPresent() && drawOriginalStrings) {
+			originalSound.get().notesWithFrets(template.orElse(null))//
+					.forEach(note -> drawHighlightForNote(x, note));
+		} else {
+			drawHighlightWithoutNote(x, string);
+		}
 	}
 
 	@Override

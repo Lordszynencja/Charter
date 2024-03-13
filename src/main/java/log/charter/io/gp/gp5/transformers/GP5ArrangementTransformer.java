@@ -99,7 +99,7 @@ public class GP5ArrangementTransformer {
 			barBeatId += beatsMap.getBeatSafe(barBeatId).beatsInMeasure;
 		}
 
-		createFretHandPositions(arrangement.chordTemplates, level.sounds, level.anchors);
+		createFretHandPositions(beatsMap.immutable, arrangement.chordTemplates, level.sounds, level.anchors);
 
 		return level;
 	}

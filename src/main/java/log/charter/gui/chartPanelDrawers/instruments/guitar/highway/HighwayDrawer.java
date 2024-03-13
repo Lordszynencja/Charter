@@ -62,7 +62,8 @@ public interface HighwayDrawer {
 
 	void addNote(final EditorNoteDrawingData note);
 
-	void addSoundHighlight(int x, Optional<ChordOrNote> originalSound, Optional<ChordTemplate> template, int string);
+	void addSoundHighlight(int x, Optional<ChordOrNote> originalSound, Optional<ChordTemplate> template, int string,
+			final boolean drawOriginalStrings);
 
 	void addNoteAdditionLine(HighlightLine line);
 
