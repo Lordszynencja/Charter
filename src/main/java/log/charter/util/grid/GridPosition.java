@@ -44,7 +44,7 @@ public class GridPosition<T extends Position> implements IConstantPosition, ICon
 
 	public static GridPosition<Beat> create(final List<Beat> beats, final IVirtualConstantPosition position) {
 		if (position.isFractionalPosition()) {
-			return create(beats, position.asConstantFraction().get());
+			return create(beats, position.asConstantFraction().get().fractionalPosition());
 		}
 
 		return create(beats, position.asConstantPosition().get().position());

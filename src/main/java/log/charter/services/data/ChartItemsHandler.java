@@ -36,7 +36,7 @@ public class ChartItemsHandler {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public <T extends IVirtualConstantPosition & Comparable<? super T>> void delete() {
+	public <T extends IVirtualConstantPosition> void delete() {
 		boolean nonEmptyFound = false;
 
 		for (final PositionType type : PositionType.values()) {
@@ -87,7 +87,7 @@ public class ChartItemsHandler {
 		}
 
 		final Comparator<IVirtualConstantPosition> comparator = IVirtualConstantPosition.comparator(chartData.beats());
-		for (int i = positions.size() - 1; i > 0; i++) {
+		for (int i = positions.size() - 1; i > 0; i--) {
 			if (comparator.compare(positions.get(i), positions.get(i - 1)) == 0) {
 				positions.remove(i);
 			}
@@ -129,10 +129,13 @@ public class ChartItemsHandler {
 		switch (accessor.type()) {
 			case EVENT_POINT:
 				snapPositions(selected.stream().map(selection -> selection.selectable));
+				clearRepeatedPositions(chartData.currentEventPoints());
 			case ANCHOR:
 				snapPositions(selected.stream().map(selection -> selection.selectable));
+				clearRepeatedPositions(chartData.currentAnchors());
 			case TONE_CHANGE:
 				snapPositions(selected.stream().map(selection -> selection.selectable));
+				clearRepeatedPositions(chartData.currentToneChanges());
 				break;
 			case GUITAR_NOTE:
 				snapNotePositions(selected.stream().map(selection -> (ChordOrNote) selection.selectable));

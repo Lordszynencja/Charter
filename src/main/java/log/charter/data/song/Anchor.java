@@ -1,27 +1,23 @@
 package log.charter.data.song;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.IConstantFractionalPosition;
 import log.charter.data.song.position.IFractionalPosition;
+import log.charter.io.rsc.xml.converters.AnchorConverter;
 
 @XStreamAlias("anchor")
+@XStreamConverter(AnchorConverter.class)
 public class Anchor implements IFractionalPosition {
 
-	@XStreamAsAttribute
 	private FractionalPosition fractionalPosition;
-	@XStreamAsAttribute
-	private int position;
-	@XStreamAsAttribute
 	public int fret = 1;
-	@XStreamAsAttribute
 	public int width = 4;
 
 	public Anchor() {
 		fractionalPosition = new FractionalPosition(0);
-		position = 1;
 	}
 
 	public Anchor(final IConstantFractionalPosition fractionalPosition, final int fret) {
@@ -41,17 +37,12 @@ public class Anchor implements IFractionalPosition {
 
 	public Anchor(final Anchor other) {
 		fractionalPosition = other.fractionalPosition;
-		position = other.position;
 		fret = other.fret;
 		width = other.width;
 	}
 
 	public int topFret() {
 		return fret + width - 1;
-	}
-
-	public int oldPosition() {
-		return position;
 	}
 
 	@Override

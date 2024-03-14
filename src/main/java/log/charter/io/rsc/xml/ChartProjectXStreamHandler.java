@@ -1,5 +1,8 @@
 package log.charter.io.rsc.xml;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
@@ -22,10 +25,10 @@ import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForChord;
 import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForNote;
 import log.charter.data.song.notes.GuitarSound;
 import log.charter.data.song.notes.Note;
-import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
+import log.charter.io.rsc.xml.converters.AnchorConverter.TemporaryAnchor;
 import log.charter.services.data.copy.data.AnchorsCopyData;
 import log.charter.services.data.copy.data.CopyData;
 import log.charter.services.data.copy.data.EventPointsCopyData;
@@ -106,8 +109,16 @@ public class ChartProjectXStreamHandler {
 		project.chartFormatVersion = 2;
 	}
 
+	private static Anchor transformAnchor(final ImmutableBeatsMap beats, final Anchor anchor) {
+		if (anchor instanceof TemporaryAnchor) {
+			return ((TemporaryAnchor) anchor).transform(beats);
+		}
+
+		return anchor;
+	}
+
 	private static void updateToVersion3(final ChartProject project) {
-		if (project.chartFormatVersion >= 3) {
+		if (project.chartFormatVersion >= 4) {
 			return;
 		}
 
@@ -115,14 +126,8 @@ public class ChartProjectXStreamHandler {
 
 		project.arrangements.stream()//
 				.flatMap(arrangement -> arrangement.levels.stream())//
-				.flatMap(level -> level.anchors.stream())//
-				.forEach(anchor -> {
-					if (anchor.fractionalPosition() != null) {
-						return;
-					}
-
-					anchor.fractionalPosition(FractionalPosition.fromTime(beats, anchor.oldPosition(), true));
-				});
+				.forEach(level -> level.anchors = level.anchors.stream().map(anchor -> transformAnchor(beats, anchor))//
+						.collect(Collectors.toCollection(ArrayList::new)));
 
 		project.chartFormatVersion = 3;
 	}

@@ -112,7 +112,7 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 	private void drawBars(final Graphics g) {
 		g.setColor(ColorLabel.MAIN_BEAT.color());
 
-		chartData.songChart.beatsMap.beats.stream()//
+		chartData.beats().stream()//
 				.filter(beat -> beat.firstInMeasure)//
 				.forEach(beat -> {
 					final int x = timeToPosition(beat.position());

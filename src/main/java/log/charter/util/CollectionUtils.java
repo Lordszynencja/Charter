@@ -351,13 +351,13 @@ public class CollectionUtils {
 
 	public static <C, E extends C, P extends C> List<E> getFromTo(final List<E> list, final P from, final P to,
 			final Comparator<C> comparator) {
-		final int fromId = firstAfterEqual(list, from, comparator).findId(0);
-		final int toId = lastBeforeEqual(list, to, comparator).findId(list.size() - 1) + 1;
-		if (toId <= fromId) {
+		final Integer fromId = firstAfterEqual(list, from, comparator).findId();
+		final Integer toId = lastBeforeEqual(list, to, comparator).findId();
+		if (fromId == null || toId == null) {
 			return new ArrayList<>();
 		}
 
-		return list.subList(fromId, toId);
+		return list.subList(fromId, toId + 1);
 	}
 
 	public static <C extends IConstantPosition, E extends C, P extends C> List<E> getFromTo(final List<E> list,

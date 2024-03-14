@@ -138,7 +138,7 @@ public class FractionalPosition implements IConstantFractionalPosition {
 	}
 
 	public FractionalPosition add(final FractionalPosition other) {
-		return recalculateBeat(beatId + other.beatId, fraction.add(fraction));
+		return recalculateBeat(beatId + other.beatId, fraction.add(other.fraction));
 	}
 
 	private int getPosition(final int beatPosition, final int beatLength) {

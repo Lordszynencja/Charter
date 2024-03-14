@@ -104,7 +104,7 @@ public class ArrangementFixer {
 				continue;
 			}
 
-			final Integer sectionId = lastBeforeEqual(sections, eventPoint).findId(minNoteDistance);
+			final Integer sectionId = lastBeforeEqual(sections, eventPoint).findId();
 			if (sectionId != null && sections.get(sectionId).section == SectionType.NO_GUITAR) {
 				continue;
 			}
