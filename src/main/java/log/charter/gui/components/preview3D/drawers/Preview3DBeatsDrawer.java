@@ -183,7 +183,7 @@ public class Preview3DBeatsDrawer {
 			}
 		}
 
-		fretsToDraw.sort(null);
+		fretsToDraw.sort(FretDrawData::compareTo);
 
 		final Color beatActiveFretColor = ColorLabel.PREVIEW_3D_BEAT_NUMBER_ACTIVE_COLOR.color();
 		final Color beatFretColor = setAlpha(ColorLabel.PREVIEW_3D_LANE_BORDER.color(), 128);

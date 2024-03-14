@@ -43,6 +43,10 @@ public class SongChart {
 
 	public Map<Integer, Integer> bookmarks = new HashMap<>();
 
+	public SongChart() {
+		beatsMap = new BeatsMap(1);
+	}
+
 	public SongChart(final BeatsMap beatsMap) {
 		this.beatsMap = beatsMap;
 	}

@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -90,9 +92,9 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 
 	private final RowedPanel parent;
 
-	private final ArrayList2<JComponent> popups = new ArrayList2<>();
+	private final List<JComponent> popups = new ArrayList<>();
 
-	private final Function<String, ArrayList2<T>> possibleValuesGetter;
+	private final Function<String, List<T>> possibleValuesGetter;
 	private final Function<T, String> formatter;
 	private final Consumer<T> onSelect;
 
@@ -101,7 +103,7 @@ public class AutocompleteInput<T> extends JTextField implements DocumentListener
 	private Function<AutocompleteValue<T>, JComponent> labelGenerator = this::generateDefaultLabel;
 
 	public AutocompleteInput(final RowedPanel parent, final int columns, final String text,
-			final Function<String, ArrayList2<T>> possibleValuesGetter, final Function<T, String> formatter,
+			final Function<String, List<T>> possibleValuesGetter, final Function<T, String> formatter,
 			final Consumer<T> onSelect) {
 		super(columns);
 		this.parent = parent;

@@ -6,9 +6,9 @@ import java.util.Map;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.Level;
-import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.song.vocals.Vocals;
-import log.charter.services.data.selection.SelectionAccessor;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.util.collections.Pair;
 
 public class FrameData {
@@ -18,7 +18,7 @@ public class FrameData {
 	public final Arrangement arrangement;
 	public final Level level;
 	public final Pair<Integer, Integer> repeaterSpan;
-	public final SelectionAccessor<? extends IPosition> selection;
+	public final ISelectionAccessor<? extends IVirtualConstantPosition> selection;
 	public final int time;
 	public final Graphics2D g;
 	public final HighlightData highlightData;
@@ -26,7 +26,7 @@ public class FrameData {
 
 	public FrameData(final ImmutableBeatsMap beats, final Map<Integer, Integer> bookmarks, final Vocals vocals,
 			final Arrangement arrangement, final Level level, final Pair<Integer, Integer> repeaterSpan,
-			final SelectionAccessor<? extends IPosition> selection, final int time, final Graphics2D g,
+			final ISelectionAccessor<? extends IVirtualConstantPosition> selection, final int time, final Graphics2D g,
 			final HighlightData highlightData, final boolean ctrlPressed) {
 		this.beats = beats;
 		this.bookmarks = bookmarks;

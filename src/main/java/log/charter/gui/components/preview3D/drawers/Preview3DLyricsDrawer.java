@@ -3,6 +3,7 @@ package log.charter.gui.components.preview3D.drawers;
 import static log.charter.util.CollectionUtils.lastBefore;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.lwjgl.opengl.GL30;
 
@@ -14,14 +15,13 @@ import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.util.CollectionUtils;
-import log.charter.util.collections.ArrayList2;
 
 public class Preview3DLyricsDrawer {
-	private ChartData data;
+	private ChartData chartData;
 	private TextTexturesHolder textTexturesHolder;
 
-	public void init(final ChartData data, final TextTexturesHolder textTexturesHolder) {
-		this.data = data;
+	public void init(final ChartData chartData, final TextTexturesHolder textTexturesHolder) {
+		this.chartData = chartData;
 		this.textTexturesHolder = textTexturesHolder;
 	}
 
@@ -43,7 +43,7 @@ public class Preview3DLyricsDrawer {
 		return x1;
 	}
 
-	private int findLineStart(final ArrayList2<Vocal> vocals, final int id) {
+	private int findLineStart(final List<Vocal> vocals, final int id) {
 		for (int i = id - 1; i >= 0; i--) {
 			if (vocals.get(i).isPhraseEnd()) {
 				return i + 1;
@@ -53,7 +53,7 @@ public class Preview3DLyricsDrawer {
 		return 0;
 	}
 
-	private int findLineEnd(final ArrayList2<Vocal> vocals, final int id) {
+	private int findLineEnd(final List<Vocal> vocals, final int id) {
 		for (int i = id; i < vocals.size(); i++) {
 			if (vocals.get(i).isPhraseEnd()) {
 				return i;
@@ -64,7 +64,7 @@ public class Preview3DLyricsDrawer {
 	}
 
 	private String getLineFromTo(final int startingId, final int endingId) {
-		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
+		final List<Vocal> vocals = chartData.currentVocals().vocals;
 		String text = "";
 		for (int i = startingId; i <= endingId; i++) {
 			final Vocal vocal = vocals.get(i);
@@ -76,7 +76,7 @@ public class Preview3DLyricsDrawer {
 
 	private void drawCurrentLine(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
 			final double textSizeMultiplier) {
-		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
+		final List<Vocal> vocals = chartData.currentVocals().vocals;
 		final Integer currentVocalId = lastBefore(vocals, new Position(time)).findId();
 		if (currentVocalId == null) {
 			return;
@@ -99,7 +99,7 @@ public class Preview3DLyricsDrawer {
 
 	private void drawNextLine(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
 			final double textSizeMultiplier) {
-		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
+		final List<Vocal> vocals = chartData.currentVocals().vocals;
 		final Integer currentVocalId = CollectionUtils.lastBefore(vocals, new Position(time)).findId();
 		if (currentVocalId == null) {
 			return;

@@ -4,6 +4,8 @@ import static log.charter.gui.components.utils.ComponentUtils.askYesNoCancel;
 import static log.charter.util.CollectionUtils.filter;
 import static log.charter.util.Utils.formatTime;
 
+import java.util.List;
+
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.EventPoint;
@@ -11,7 +13,6 @@ import log.charter.gui.CharterFrame;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.editModes.ModeManager;
 import log.charter.util.Utils.TimeUnit;
-import log.charter.util.collections.ArrayList2;
 
 public class SectionsValidator {
 	private CharterFrame charterFrame;
@@ -23,7 +24,7 @@ public class SectionsValidator {
 		chartTimeHandler.nextTime(time);
 	}
 
-	private boolean validateSectionsAmount(final ArrayList2<EventPoint> sections, final int arrangementId,
+	private boolean validateSectionsAmount(final List<EventPoint> sections, final int arrangementId,
 			final String arrangementName) {
 		if (!sections.isEmpty()) {
 			return true;
@@ -43,7 +44,7 @@ public class SectionsValidator {
 		}
 	}
 
-	private boolean validateSectionsContainPhrases(final ArrayList2<EventPoint> sections, final int arrangementId,
+	private boolean validateSectionsContainPhrases(final List<EventPoint> sections, final int arrangementId,
 			final String arrangementName) {
 		for (final EventPoint section : sections) {
 			if (section.hasPhrase()) {
@@ -70,8 +71,7 @@ public class SectionsValidator {
 	}
 
 	public boolean validateSections(final int arrangementId, final Arrangement arrangement) {
-		final ArrayList2<EventPoint> sections = filter(arrangement.eventPoints, p -> p.section != null,
-				ArrayList2::new);
+		final List<EventPoint> sections = filter(arrangement.eventPoints, p -> p.section != null);
 		final String arrangementName = arrangement.getTypeNameLabel(arrangementId);
 
 		if (!validateSectionsAmount(sections, arrangementId, arrangementName)) {

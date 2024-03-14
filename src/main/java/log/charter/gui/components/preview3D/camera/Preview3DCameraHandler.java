@@ -15,7 +15,7 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.song.Anchor;
-import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.IConstantFractionalPosition;
 import log.charter.data.song.position.Position;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.services.data.ChartTimeHandler;
@@ -56,11 +56,11 @@ public class Preview3DCameraHandler {
 		int minFret = Config.frets;
 		int maxFret = 1;
 
-		final FractionalPosition start = new Position(chartTimeHandler.time() + fretFocusWindowStartOffset)
+		final IConstantFractionalPosition start = new Position(chartTimeHandler.time() + fretFocusWindowStartOffset)
 				.positionAsFraction(chartData.beats());
 		final int anchorsFrom = lastBeforeEqual(anchors, start).findId(0);
 
-		final FractionalPosition end = new Position(chartTimeHandler.time() + fretFocusWindowEndOffset)
+		final IConstantFractionalPosition end = new Position(chartTimeHandler.time() + fretFocusWindowEndOffset)
 				.positionAsFraction(chartData.beats());
 		final Integer anchorsTo = lastBeforeEqual(anchors, end).findId();
 		if (anchorsTo == null) {

@@ -14,6 +14,7 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
 import log.charter.services.data.copy.data.positions.CopiedHandShapePosition;
@@ -37,7 +38,7 @@ public class HandShapesCopyData implements ICopyData {
 
 	@Override
 	public void paste(final ChartData chartData, final SelectionManager selectionManager,
-			final FractionalPosition position, final boolean convertFromBeats) {
+			final FractionalPosition basePosition, final boolean convertFromBeats) {
 		final Arrangement arrangement = chartData.currentArrangement();
 		final ImmutableBeatsMap beats = chartData.beats();
 		final List<HandShape> handShapes = chartData.currentHandShapes();
@@ -46,7 +47,7 @@ public class HandShapesCopyData implements ICopyData {
 
 		for (final CopiedHandShapePosition copiedPosition : this.handShapes) {
 			try {
-				final HandShape handShape = copiedPosition.getValue(beats, position, convertFromBeats);
+				final HandShape handShape = copiedPosition.getValue(beats, basePosition, convertFromBeats);
 				if (handShape == null) {
 					continue;
 				}
@@ -64,7 +65,7 @@ public class HandShapesCopyData implements ICopyData {
 			}
 		}
 
-		handShapes.sort(null);
+		handShapes.sort(IConstantPosition::compareTo);
 		selectionManager.addSelectionForPositions(PositionType.HAND_SHAPE, positionsToSelect);
 	}
 }

@@ -1,6 +1,5 @@
 package log.charter.gui.menuHandlers;
 
-import static log.charter.data.song.position.IConstantPosition.positionComparator;
 import static log.charter.util.CollectionUtils.firstAfterEqual;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
@@ -20,8 +19,8 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.services.Action;
 import log.charter.services.ArrangementFretHandPositionsCreator;
 import log.charter.services.CharterContext.Initiable;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
-import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
@@ -96,15 +95,14 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 		return menu;
 	}
 
-	private <T extends IVirtualConstantPosition & Comparable<? super T>> List<ChordOrNote> handleSelection(
-			final SelectionAccessor<T> selectionAccessor, final List<ChordOrNote> sounds) {
+	private <T extends IVirtualConstantPosition> List<ChordOrNote> handleSelection(
+			final ISelectionAccessor<T> selectionAccessor, final List<ChordOrNote> sounds) {
 		final List<Selection<T>> selected = selectionAccessor.getSortedSelected();
 
-		final Integer fromId = firstAfterEqual(sounds, selected.get(0).selectable.positionAsPosition(chartData.beats()),
-				positionComparator).findId();
-		final Integer toId = lastBeforeEqual(sounds,
-				selected.get(selected.size() - 1).selectable.positionAsPosition(chartData.beats()), positionComparator)
+		final Integer fromId = firstAfterEqual(sounds, selected.get(0).selectable.positionAsPosition(chartData.beats()))
 				.findId();
+		final Integer toId = lastBeforeEqual(sounds,
+				selected.get(selected.size() - 1).selectable.positionAsPosition(chartData.beats())).findId();
 
 		if (fromId == null || toId == null) {
 			return new ArrayList<>();
@@ -118,7 +116,7 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 		return selectedSounds;
 	}
 
-	private void addFHP() {
+	private <T extends IVirtualConstantPosition> void addFHP() {
 		undoSystem.addUndo();
 
 		final Level level = chartData.currentArrangementLevel();
@@ -128,7 +126,7 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 				continue;
 			}
 
-			final SelectionAccessor<?> selectionAccessor = selectionManager.accessor(positionType);
+			final ISelectionAccessor<T> selectionAccessor = selectionManager.accessor(positionType);
 			if (selectionAccessor.isSelected()) {
 				sounds = handleSelection(selectionAccessor, sounds);
 				break;

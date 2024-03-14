@@ -2,8 +2,6 @@ package log.charter.services.data;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.data.song.position.IConstantFractionalPosition.fractionalPositionComparator;
-import static log.charter.data.song.position.IConstantPosition.positionComparator;
 import static log.charter.util.CollectionUtils.firstAfter;
 import static log.charter.util.CollectionUtils.lastBefore;
 
@@ -152,7 +150,7 @@ public class ChartTimeHandler {
 
 	private IConstantPosition getPrevious(final List<? extends IConstantPosition> positions) {
 		final IConstantPosition timePosition = new ConstantPosition(time());
-		final IConstantPosition position = lastBefore(positions, timePosition, positionComparator).find();
+		final IConstantPosition position = lastBefore(positions, timePosition).find();
 		if (position == null) {
 			return timePosition;
 		}
@@ -163,8 +161,7 @@ public class ChartTimeHandler {
 	private IConstantFractionalPosition getPreviousFractional(
 			final List<? extends IConstantFractionalPosition> positions) {
 		final IConstantFractionalPosition timePosition = FractionalPosition.fromTime(chartData.beats(), time(), false);
-		final IConstantFractionalPosition position = lastBefore(positions, timePosition, fractionalPositionComparator)
-				.find();
+		final IConstantFractionalPosition position = lastBefore(positions, timePosition).find();
 		if (position == null) {
 			return timePosition;
 		}
@@ -200,7 +197,7 @@ public class ChartTimeHandler {
 	}
 
 	private int getNext(final List<? extends IConstantPosition> positions) {
-		final IConstantPosition position = firstAfter(positions, new Position(time()), positionComparator).find();
+		final IConstantPosition position = firstAfter(positions, new Position(time())).find();
 		if (position == null) {
 			return time();
 		}
@@ -210,8 +207,7 @@ public class ChartTimeHandler {
 
 	private IConstantFractionalPosition getNextFractional(final List<? extends IConstantFractionalPosition> positions) {
 		final IConstantFractionalPosition timePosition = FractionalPosition.fromTime(chartData.beats(), time(), false);
-		final IConstantFractionalPosition position = firstAfter(positions, timePosition, fractionalPositionComparator)
-				.find();
+		final IConstantFractionalPosition position = firstAfter(positions, timePosition).find();
 		if (position == null) {
 			return timePosition;
 		}

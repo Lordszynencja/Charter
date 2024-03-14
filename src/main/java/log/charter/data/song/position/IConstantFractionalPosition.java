@@ -26,8 +26,12 @@ public interface IConstantFractionalPosition extends IVirtualConstantPosition {
 		return this;
 	}
 
-	default IConstantFractionalPosition distance(final IConstantFractionalPosition other) {
-		return fractionalPosition().add(other.fractionalPosition().negate()).absolute();
+	default FractionalPosition distance(final IConstantFractionalPosition other) {
+		return movementTo(other).absolute();
+	}
+
+	default FractionalPosition movementTo(final IConstantFractionalPosition other) {
+		return fractionalPosition().negate().add(other.fractionalPosition());
 	}
 
 	default int compareTo(final IConstantFractionalPosition other) {

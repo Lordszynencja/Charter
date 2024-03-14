@@ -28,7 +28,7 @@ public class ChartData {
 	public String path = Config.lastDir;
 	public String projectFileName = "project.rscp";
 	public boolean isEmpty = true;
-	public SongChart songChart = null;
+	public SongChart songChart = new SongChart();
 
 	public int currentArrangement = 0;
 	public int currentLevel = 0;

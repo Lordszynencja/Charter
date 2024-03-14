@@ -579,7 +579,7 @@ public class Preview3DGuitarSoundsDrawer {
 		}
 		drawData.notes.chords.forEach(chordBox -> objectsToDraw.add(new ChordBoxDrawObject(chordBox)));
 
-		objectsToDraw.sort(null);
+		objectsToDraw.sort(SoundDrawObject::compareTo);
 		objectsToDraw.forEach(object -> object.draw(shadersHolder, drawData));
 	}
 

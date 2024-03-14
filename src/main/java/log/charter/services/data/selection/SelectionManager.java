@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.song.position.Position;
+import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
@@ -148,10 +150,6 @@ public class SelectionManager implements Initiable {
 		currentSelectionEditor.selectionChanged(true);
 	}
 
-	public void refresh(final PositionType type) {
-		selectionLists.get(type).refresh();
-	}
-
 	@SuppressWarnings("unchecked")
 	public <T extends IVirtualConstantPosition> ISelectionAccessor<T> accessor(final PositionType type) {
 		final SelectionList<?, ?, ?> selectionList = selectionLists.get(type);
@@ -160,6 +158,14 @@ public class SelectionManager implements Initiable {
 		}
 
 		return (SelectionAccessor<T>) selectionList.getAccessor();
+	}
+
+	public List<Selection<Vocal>> getSortedSelectedVocals() {
+		return this.<Vocal>accessor(PositionType.VOCAL).getSortedSelected();
+	}
+
+	public Set<Selection<Vocal>> getSelectedVocals() {
+		return this.<Vocal>accessor(PositionType.VOCAL).getSelectedSet();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -204,5 +210,4 @@ public class SelectionManager implements Initiable {
 		((SelectionList<C, ?, ?>) selectionLists.get(type)).addPositions(positions);
 		currentSelectionEditor.selectionChanged(type == PositionType.GUITAR_NOTE);
 	}
-
 }

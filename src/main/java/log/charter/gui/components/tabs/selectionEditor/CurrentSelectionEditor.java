@@ -17,6 +17,7 @@ import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.IVirtualPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -24,8 +25,8 @@ import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
-import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.util.collections.HashSet2;
@@ -124,30 +125,30 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void selectionChanged(final boolean stringsCouldChange) {
-		final SelectionAccessor<?> selected = selectionManager.selectedAccessor();
+	public <T extends IVirtualPosition> void selectionChanged(final boolean stringsCouldChange) {
+		final ISelectionAccessor<T> selected = selectionManager.selectedAccessor();
 		if (selected == null || !selected.isSelected()) {
 			hideAllfieldsExcept(NONE);
 		}
 
-		hideAllfieldsExcept(selected.type);
+		hideAllfieldsExcept(selected.type());
 
-		switch (selected.type) {
+		switch (selected.type()) {
 			case ANCHOR:
-				anchorSelectionEditor.selectionChanged((SelectionAccessor<Anchor>) selected);
+				anchorSelectionEditor.selectionChanged((ISelectionAccessor<Anchor>) selected);
 				break;
 			case GUITAR_NOTE:
-				guitarSoundSelectionEditor.selectionChanged((SelectionAccessor<ChordOrNote>) selected,
+				guitarSoundSelectionEditor.selectionChanged((ISelectionAccessor<ChordOrNote>) selected,
 						stringsCouldChange);
 				break;
 			case HAND_SHAPE:
-				handShapeSelectionEditor.selectionChanged((SelectionAccessor<HandShape>) selected);
+				handShapeSelectionEditor.selectionChanged((ISelectionAccessor<HandShape>) selected);
 				break;
 			case TONE_CHANGE:
-				toneChangeSelectionEditor.selectionChanged((SelectionAccessor<ToneChange>) selected);
+				toneChangeSelectionEditor.selectionChanged((ISelectionAccessor<ToneChange>) selected);
 				break;
 			case VOCAL:
-				vocalSelectionEditor.selectionChanged((SelectionAccessor<Vocal>) selected);
+				vocalSelectionEditor.selectionChanged((ISelectionAccessor<Vocal>) selected);
 				break;
 			default:
 				break;

@@ -1,6 +1,7 @@
 package log.charter.util;
 
 import static java.lang.Math.abs;
+import static java.util.stream.Collectors.toCollection;
 import static log.charter.util.Utils.nvl;
 
 import java.util.ArrayList;
@@ -85,14 +86,24 @@ public class CollectionUtils {
 		}
 	}
 
-	public static <C extends Comparable<? super C>, E extends C, P extends C> Finder<E, P> firstAfter(
-			final List<E> list, final P position) {
-		return new FirstAfterFinder<>(list, position, Comparable::compareTo);
-	}
-
 	public static <C, E extends C, P extends C> Finder<E, P> firstAfter(final List<E> list, final P position,
 			final Comparator<C> comparator) {
 		return new FirstAfterFinder<>(list, position, comparator);
+	}
+
+	public static <C extends Comparable<? super C>, E extends C, P extends C> Finder<E, P> firstAfter(
+			final List<E> list, final P position) {
+		return firstAfter(list, position, Comparable::compareTo);
+	}
+
+	public static <C extends IConstantPosition, E extends C, P extends C> Finder<E, P> firstAfter(final List<E> list,
+			final P position) {
+		return firstAfter(list, position, IConstantPosition::compareTo);
+	}
+
+	public static <C extends IConstantFractionalPosition, E extends C, P extends C> Finder<E, P> firstAfter(
+			final List<E> list, final P position) {
+		return firstAfter(list, position, IConstantFractionalPosition::compareTo);
 	}
 
 	public static class FirstAfterEqualFinder<C, E extends C, P extends C> extends FinderWithComparator<C, E, P> {
@@ -121,14 +132,24 @@ public class CollectionUtils {
 		}
 	}
 
-	public static <C extends Comparable<? super C>, E extends C, P extends C> Finder<E, P> firstAfterEqual(
-			final List<E> list, final P position) {
-		return new FirstAfterEqualFinder<>(list, position, Comparable::compareTo);
-	}
-
 	public static <C, E extends C, P extends C> Finder<E, P> firstAfterEqual(final List<E> list, final P position,
 			final Comparator<C> comparator) {
 		return new FirstAfterEqualFinder<>(list, position, comparator);
+	}
+
+	public static <C extends Comparable<? super C>, E extends C, P extends C> Finder<E, P> firstAfterEqual(
+			final List<E> list, final P position) {
+		return firstAfterEqual(list, position, Comparable::compareTo);
+	}
+
+	public static <C extends IConstantPosition, E extends C, P extends C> Finder<E, P> firstAfterEqual(
+			final List<E> list, final P position) {
+		return firstAfterEqual(list, position, IConstantPosition::compareTo);
+	}
+
+	public static <C extends IConstantFractionalPosition, E extends C, P extends C> Finder<E, P> firstAfterEqual(
+			final List<E> list, final P position) {
+		return firstAfterEqual(list, position, IConstantFractionalPosition::compareTo);
 	}
 
 	public static class LastBeforeFinder<C, E extends C, P extends C> extends FinderWithComparator<C, E, P> {
@@ -324,6 +345,10 @@ public class CollectionUtils {
 				.collect(Collectors.toCollection(collectionGenerator));
 	}
 
+	public static <E> List<E> filter(final Collection<E> items, final Predicate<E> filter) {
+		return filter(items, filter, ArrayList::new);
+	}
+
 	public static <C, E extends C, P extends C> List<E> getFromTo(final List<E> list, final P from, final P to,
 			final Comparator<C> comparator) {
 		final int fromId = firstAfterEqual(list, from, comparator).findId(0);
@@ -333,6 +358,11 @@ public class CollectionUtils {
 		}
 
 		return list.subList(fromId, toId);
+	}
+
+	public static <C extends IConstantPosition, E extends C, P extends C> List<E> getFromTo(final List<E> list,
+			final P from, final P to) {
+		return getFromTo(list, from, to, IConstantPosition::compareTo);
 	}
 
 	public static <T, U> List<U> map(final Collection<T> collection, final Function<T, U> mapper) {
@@ -347,6 +377,12 @@ public class CollectionUtils {
 		map.entrySet().stream()//
 				.forEach(entry -> newMap.put(keyMapper.apply(entry.getKey()), valueMapper.apply(entry.getValue())));
 		return newMap;
+	}
+
+	public static <K, V, E> List<E> map(final Map<K, V> map, final BiFunction<K, V, E> mapper) {
+		return map.entrySet().stream()//
+				.map(entry -> mapper.apply(entry.getKey(), entry.getValue()))//
+				.collect(toCollection(ArrayList::new));
 	}
 
 	public static <T, U, V extends Collection<U>> V mapWithId(final List<T> list, final V newCollection,

@@ -25,7 +25,7 @@ import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.lookAndFeel.CharterRadioButton;
-import log.charter.services.data.selection.SelectionAccessor;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.util.collections.ArrayList2;
 
@@ -49,8 +49,7 @@ public class SelectionBendEditor extends RowedPanel {
 	private int lastStringsAmount = maxStrings;
 
 	private ChordOrNote getCurrentlySelectedSound() {
-		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.accessor(PositionType.GUITAR_NOTE);
+		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
 		return selectionAccessor.getSortedSelected().get(0).selectable;
 	}
 

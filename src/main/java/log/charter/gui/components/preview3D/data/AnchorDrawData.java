@@ -3,6 +3,7 @@ package log.charter.gui.components.preview3D.data;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
+import static log.charter.util.CollectionUtils.filter;
 import static log.charter.util.CollectionUtils.firstAfter;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Anchor;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IConstantPositionWithLength;
@@ -18,17 +20,19 @@ import log.charter.data.song.position.Position;
 import log.charter.services.RepeatManager;
 
 public class AnchorDrawData implements IConstantPositionWithLength, Comparable<IConstantPosition> {
-	public static List<AnchorDrawData> getAnchorsForTimeSpan(final ChartData data, final int audioLength,
+	public static List<AnchorDrawData> getAnchorsForTimeSpan(final ChartData chartData, final int audioLength,
 			final int timeFrom, final int timeTo) {
-		if (data.currentArrangementLevel() == null) {
+		if (chartData.currentArrangementLevel() == null) {
 			return asList(new AnchorDrawData(timeFrom, timeTo, 0, 4));
 		}
 
-		final List<AnchorDrawData> anchorsToDraw = new ArrayList<>();
-		final List<Anchor> anchors = data.currentArrangementLevel().anchors;
+		final ImmutableBeatsMap beats = chartData.beats();
 
-		final int anchorsFrom = lastBeforeEqual(anchors, new Position(timeFrom).positionAsFraction(data.beats())).findId(0);
-		final Integer anchorsTo = lastBeforeEqual(anchors, new Position(timeTo).positionAsFraction(data.beats())).findId();
+		final List<AnchorDrawData> anchorsToDraw = new ArrayList<>();
+		final List<Anchor> anchors = chartData.currentAnchors();
+
+		final int anchorsFrom = lastBeforeEqual(anchors, new Position(timeFrom).positionAsFraction(beats)).findId(0);
+		final Integer anchorsTo = lastBeforeEqual(anchors, new Position(timeTo).positionAsFraction(beats)).findId();
 		if (anchorsTo == null) {
 			return anchorsToDraw;
 		}
@@ -36,17 +40,16 @@ public class AnchorDrawData implements IConstantPositionWithLength, Comparable<I
 		for (int i = anchorsFrom; i <= anchorsTo; i++) {
 			final Anchor anchor = anchors.get(i);
 
-			final int anchorTimeFrom = max(anchor.position(data.beats()), timeFrom);
+			final int anchorTimeFrom = max(anchor.position(beats), timeFrom);
 			int anchorTimeTo;
 			if (i < anchors.size() - 1) {
-				anchorTimeTo = anchors.get(i + 1).position(data.beats()) - 1;
+				anchorTimeTo = anchors.get(i + 1).position(beats) - 1;
 			} else {
 				anchorTimeTo = audioLength;
 			}
 
-			final List<EventPoint> phrases = data.currentArrangement().getFilteredEventPoints(p -> p.hasPhrase());
-			final EventPoint nextPhraseIteration = firstAfter(phrases, anchor.positionAsPosition(data.beats()),
-					positionComparator).find();
+			final List<EventPoint> phrases = filter(chartData.currentEventPoints(), e -> e.hasPhrase());
+			final EventPoint nextPhraseIteration = firstAfter(phrases, anchor.positionAsPosition(beats)).find();
 			if (nextPhraseIteration != null) {
 				anchorTimeTo = min(anchorTimeTo, nextPhraseIteration.position());
 			}

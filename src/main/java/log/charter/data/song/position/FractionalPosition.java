@@ -34,7 +34,7 @@ public class FractionalPosition implements IConstantFractionalPosition {
 			}
 		}
 
-		fractionsToTryForRounding.sort(null);
+		fractionsToTryForRounding.sort(Fraction::compareTo);
 	}
 
 	private static Fraction generateFractionWithRounding(final int timeInBeat, final int beatLength) {

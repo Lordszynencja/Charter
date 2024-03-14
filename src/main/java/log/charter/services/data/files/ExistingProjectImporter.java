@@ -42,7 +42,7 @@ public class ExistingProjectImporter {
 		final ChartProject project;
 		try {
 			project = readChartProject(RW.read(projectFileChosen));
-			if (project.chartFormatVersion > 2) {
+			if (project.chartFormatVersion > 3) {
 				Logger.error("project has wrong version " + project.chartFormatVersion);
 				showPopup(charterFrame, Label.PROJECT_IS_NEWER_VERSION);
 				return null;
@@ -101,9 +101,9 @@ public class ExistingProjectImporter {
 
 		makeBackups(dir, filesToBackup);
 
-		chartTimeHandler.nextTime(project.time);
 		chartData.setSong(dir, songChart, projectFileChosen.getName(), project.editMode, project.arrangement,
 				project.level);
+		chartTimeHandler.nextTime(project.time);
 		projectAudioHandler.setAudio(musicData, !project.musicFileName.equals("song.ogg"));
 		textTab.setText(project.text);
 

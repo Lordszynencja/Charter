@@ -1,5 +1,6 @@
 package log.charter.io.rs.xml;
 
+import static log.charter.util.CollectionUtils.toMap;
 import static log.charter.util.Utils.mapInteger;
 
 import java.util.ArrayList;
@@ -21,23 +22,20 @@ import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.IConstantPosition;
 import log.charter.io.rs.xml.song.ArrangementAnchor;
 import log.charter.io.rs.xml.song.ArrangementBendValue;
 import log.charter.io.rs.xml.song.ArrangementChord;
 import log.charter.io.rs.xml.song.ArrangementLevel;
 import log.charter.io.rs.xml.song.ArrangementNote;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashMap2;
-import log.charter.util.collections.Pair;
 
 public class RSXMLLevelTransformer {
-	public static ArrayList2<Level> fromArrangementDataLevels(final Arrangement arrangement,
+	public static List<Level> fromArrangementDataLevels(final Arrangement arrangement,
 			final List<ArrangementLevel> arrangementLevels, final ImmutableBeatsMap beats) {
-		final HashMap2<Integer, Level> levelsMap = new ArrayList2<>(arrangementLevels)//
-				.toMap(arrangementLevel -> new Pair<>(arrangementLevel.difficulty,
-						toLevel(arrangementLevel, arrangement, beats)));
+		final Map<Integer, Level> levelsMap = toMap(arrangementLevels, (map, arrangementLevel) -> map
+				.put(arrangementLevel.difficulty, toLevel(arrangementLevel, arrangement, beats)));
 
-		final ArrayList2<Level> levels = new ArrayList2<>();
+		final List<Level> levels = new ArrayList<>();
 		levelsMap.forEach((id, level) -> {
 			while (levels.size() <= id) {
 				levels.add(new Level());
@@ -124,7 +122,7 @@ public class RSXMLLevelTransformer {
 			level.sounds.add(ChordOrNote.from(chord));
 		}
 
-		level.sounds.sort(null);
+		level.sounds.sort(IConstantPosition::compareTo);
 
 		for (int i = 0; i < level.sounds.size() - 1; i++) {
 			final ChordOrNote sound = level.sounds.get(i);

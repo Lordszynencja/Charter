@@ -14,6 +14,7 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
 import log.charter.services.data.copy.data.positions.CopiedSoundPosition;
@@ -36,7 +37,7 @@ public class SoundsCopyData implements ICopyData {
 
 	@Override
 	public void paste(final ChartData chartData, final SelectionManager selectionManager,
-			final FractionalPosition position, final boolean convertFromBeats) {
+			final FractionalPosition basePosition, final boolean convertFromBeats) {
 		final Arrangement arrangement = chartData.currentArrangement();
 		final ImmutableBeatsMap beats = chartData.beats();
 		final List<ChordOrNote> sounds = chartData.currentSounds();
@@ -46,7 +47,7 @@ public class SoundsCopyData implements ICopyData {
 
 		for (final CopiedSoundPosition copiedPosition : this.sounds) {
 			try {
-				final ChordOrNote sound = copiedPosition.getValue(beats, position, convertFromBeats);
+				final ChordOrNote sound = copiedPosition.getValue(beats, basePosition, convertFromBeats);
 				if (sound == null) {
 					continue;
 				}
@@ -70,7 +71,7 @@ public class SoundsCopyData implements ICopyData {
 			}
 		}
 
-		sounds.sort(null);
+		sounds.sort(IConstantPosition::compareTo);
 		selectionManager.addSelectionForPositions(PositionType.GUITAR_NOTE, positionsToSelect);
 	}
 }

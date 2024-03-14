@@ -18,6 +18,7 @@ import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.IConstantFractionalPosition;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IPositionWithLength;
 import log.charter.data.types.PositionType;
@@ -65,7 +66,7 @@ public class GuitarModeHandler extends ModeHandler {
 		final Anchor anchor = new Anchor(position);
 		final List<Anchor> anchors = chartData.currentAnchors();
 		anchors.add(anchor);
-		anchors.sort(null);
+		anchors.sort(IConstantFractionalPosition::compareTo);
 
 		new AnchorPane(chartData, charterFrame, undoSystem, anchor, () -> {
 			undoSystem.undo();
@@ -85,7 +86,7 @@ public class GuitarModeHandler extends ModeHandler {
 		final EventPoint eventPoint = new EventPoint(eventPointPosition.position());
 		final List<EventPoint> eventPoints = chartData.currentEventPoints();
 		eventPoints.add(eventPoint);
-		eventPoints.sort(null);
+		eventPoints.sort(IConstantPosition::compareTo);
 
 		new GuitarEventPointPane(chartData, charterFrame, undoSystem, eventPoint, () -> {
 			undoSystem.undo();
@@ -108,7 +109,7 @@ public class GuitarModeHandler extends ModeHandler {
 				endPosition - handShapePosition.position());
 		final List<HandShape> handShapes = chartData.currentHandShapes();
 		handShapes.add(handShape);
-		handShapes.sort(null);
+		handShapes.sort(IConstantPosition::compareTo);
 
 		new HandShapePane(chartData, charterFrame, handShape, () -> {
 			undoSystem.undo();
@@ -223,7 +224,7 @@ public class GuitarModeHandler extends ModeHandler {
 		final ToneChange toneChange = new ToneChange(toneChangePosition.position(), "");
 		final List<ToneChange> toneChanges = chartData.currentToneChanges();
 		toneChanges.add(toneChange);
-		toneChanges.sort(null);
+		toneChanges.sort(IConstantPosition::compareTo);
 
 		new ToneChangePane(chartData, charterFrame, undoSystem, toneChange, () -> {
 			undoSystem.undo();

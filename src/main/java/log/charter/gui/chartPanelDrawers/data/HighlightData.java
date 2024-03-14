@@ -6,6 +6,7 @@ import static java.util.Arrays.asList;
 import static log.charter.data.types.PositionType.BEAT;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.util.CollectionUtils.contains;
+import static log.charter.util.CollectionUtils.map;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.util.ArrayList;
@@ -24,10 +25,12 @@ import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.IConstantFractionalPosition;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IConstantPositionWithLength;
 import log.charter.data.song.position.IPosition;
 import log.charter.data.song.position.IPositionWithLength;
+import log.charter.data.song.position.Position;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
@@ -40,7 +43,7 @@ import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressData;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
-import log.charter.util.collections.ArrayList2;
+import log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId;
 import log.charter.util.data.Position2D;
 
 public class HighlightData {
@@ -169,11 +172,13 @@ public class HighlightData {
 		}
 	}
 
-	private static void moveSelectedPositions(final int time, final ChartData data,
+	private static void moveSelectedPositions(final int time, final ChartData chartData,
 			final Collection<? extends IPosition> positions, final MouseButtonPressData press, final int x) {
-		final int dragFrom = press.highlight.position();
-		final int dragTo = data.songChart.beatsMap.getPositionFromGridClosestTo(xToTime(x, time));
-		data.songChart.beatsMap.movePositions(dragFrom, dragTo, positions);
+		final IConstantFractionalPosition dragStart = press.highlight.positionAsFraction(chartData.beats());
+		final IConstantFractionalPosition dragEnd = chartData.beats()
+				.getPositionFromGridClosestTo(new Position(xToTime(x, time))).positionAsFraction(chartData.beats());
+
+		chartData.beats().movePositions(positions, dragStart.movementTo(dragEnd));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -183,8 +188,7 @@ public class HighlightData {
 			return null;
 		}
 
-		Set<Selection<?>> selectedPositions = (Set) selectionManager.accessor(press.highlight.type)
-				.getSelectedSet();
+		Set<Selection<?>> selectedPositions = (Set) selectionManager.accessor(press.highlight.type).getSelectedSet();
 
 		if (press.highlight.existingPosition//
 				&& !contains(selectedPositions, selection -> selection.id == press.highlight.id)) {
@@ -269,9 +273,10 @@ public class HighlightData {
 		final Position2D endPosition = new Position2D(x, y);
 		final PositionWithIdAndType highlight = highlightManager.getHighlight(x, y);
 
-		final ArrayList2<HighlightPosition> dragPositions = highlightManager
-				.getPositionsWithStrings(pressXTime, highlight.position(), pressY, y)//
-				.map(position -> new HighlightPosition(position.position(), 0, null, position.string, false));
+		final List<PositionWithStringOrNoteId> positionsWithStrings = highlightManager
+				.getPositionsWithStrings(pressXTime, highlight.position(), pressY, y);
+		final List<HighlightPosition> dragPositions = map(positionsWithStrings,
+				position -> new HighlightPosition(position.position(), 0, null, position.string, false));
 
 		return new HighlightData(PositionType.GUITAR_NOTE, dragPositions,
 				new HighlightLine(startPosition, endPosition));

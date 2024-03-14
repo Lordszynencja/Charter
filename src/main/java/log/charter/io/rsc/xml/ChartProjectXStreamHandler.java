@@ -7,6 +7,8 @@ import com.thoughtworks.xstream.converters.collections.MapConverter;
 import log.charter.data.song.Anchor;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Beat;
+import log.charter.data.song.BeatsMap;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
@@ -20,6 +22,7 @@ import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForChord;
 import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForNote;
 import log.charter.data.song.notes.GuitarSound;
 import log.charter.data.song.notes.Note;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
@@ -90,6 +93,40 @@ public class ChartProjectXStreamHandler {
 		return xstream;
 	}
 
+	private static void updateToVersion2(final ChartProject project) {
+		if (project.chartFormatVersion >= 2) {
+			return;
+		}
+
+		project.editMode = EditMode.GUITAR;
+		project.arrangement = 0;
+		project.level = 0;
+		project.time = 0;
+
+		project.chartFormatVersion = 2;
+	}
+
+	private static void updateToVersion3(final ChartProject project) {
+		if (project.chartFormatVersion >= 3) {
+			return;
+		}
+
+		final ImmutableBeatsMap beats = new BeatsMap(project.beats).immutable;
+
+		project.arrangements.stream()//
+				.flatMap(arrangement -> arrangement.levels.stream())//
+				.flatMap(level -> level.anchors.stream())//
+				.forEach(anchor -> {
+					if (anchor.fractionalPosition() != null) {
+						return;
+					}
+
+					anchor.fractionalPosition(FractionalPosition.fromTime(beats, anchor.oldPosition(), true));
+				});
+
+		project.chartFormatVersion = 3;
+	}
+
 	public static ChartProject readChartProject(final String xml) {
 		final Object o = xstream.fromXML(xml);
 		if (!o.getClass().isAssignableFrom(ChartProject.class)) {
@@ -97,15 +134,8 @@ public class ChartProjectXStreamHandler {
 		}
 
 		final ChartProject project = (ChartProject) o;
-
-		if (project.chartFormatVersion == 1) {
-			project.editMode = EditMode.GUITAR;
-			project.arrangement = 0;
-			project.level = 0;
-			project.time = 0;
-
-			project.chartFormatVersion = 2;
-		}
+		updateToVersion2(project);
+		updateToVersion3(project);
 
 		return project;
 	}

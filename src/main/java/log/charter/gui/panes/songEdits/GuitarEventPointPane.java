@@ -259,6 +259,6 @@ public class GuitarEventPointPane extends ParamsPane {
 				eventPoint.events.add(value.type);
 			}
 		}
-		eventPoint.events.sort(null);
+		eventPoint.events.sort(EventType::compareTo);
 	}
 }

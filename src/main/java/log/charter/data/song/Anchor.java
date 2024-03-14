@@ -50,6 +50,10 @@ public class Anchor implements IFractionalPosition {
 		return fret + width - 1;
 	}
 
+	public int oldPosition() {
+		return position;
+	}
+
 	@Override
 	public FractionalPosition fractionalPosition() {
 		return fractionalPosition;
@@ -63,5 +67,4 @@ public class Anchor implements IFractionalPosition {
 
 		fractionalPosition = newPosition;
 	}
-
 }

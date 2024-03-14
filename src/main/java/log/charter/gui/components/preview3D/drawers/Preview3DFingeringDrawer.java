@@ -1,6 +1,5 @@
 package log.charter.gui.components.preview3D.drawers;
 
-import static log.charter.data.song.position.IConstantPosition.positionComparator;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretMiddlePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
@@ -180,8 +179,8 @@ public class Preview3DFingeringDrawer {
 	}
 
 	private ChordTemplate findTemplateToUse(final Preview3DDrawData drawData) {
-		final HandShapeDrawData handShape = lastBeforeEqual(drawData.handShapes, new Position(drawData.time + 20),
-				positionComparator).find();
+		final HandShapeDrawData handShape = lastBeforeEqual(drawData.handShapes, new Position(drawData.time + 20))
+				.find();
 		if (handShape == null || handShape.timeTo < drawData.time) {
 			return null;
 		}

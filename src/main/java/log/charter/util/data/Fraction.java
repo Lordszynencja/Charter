@@ -3,18 +3,25 @@ package log.charter.util.data;
 import static java.lang.Math.abs;
 
 public class Fraction implements Comparable<Fraction> {
-	private static long gcd(final long a, final long b) {
-		if (b > a) {
-			return gcd(b, a);
+	private static long gcd(long a, long b) {
+		if (a == 0) {
+			return b;
 		}
 		if (b == 0) {
-			return 1;
-		}
-		if (a == b) {
 			return a;
 		}
 
-		return gcd(a - b, b);
+		a = abs(a);
+		b = abs(b);
+		while (b != 0) {
+			a -= b * (a / b);
+
+			final long tmp = b;
+			b = a;
+			a = tmp;
+		}
+
+		return a;
 	}
 
 	public static Fraction fromString(final String value) {
@@ -26,6 +33,12 @@ public class Fraction implements Comparable<Fraction> {
 	public final long denominator;
 
 	public Fraction(long numerator, long denominator) {
+		if (numerator == 0) {
+			this.numerator = 0;
+			this.denominator = 1;
+			return;
+		}
+
 		if (denominator < 0) {
 			numerator = -numerator;
 			denominator = -denominator;

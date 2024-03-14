@@ -137,7 +137,7 @@ public class RW {
 		for (final Entry<String, String> entry : config.entrySet()) {
 			lines.add(entry.getKey() + "=" + entry.getValue());
 		}
-		lines.sort(null);
+		lines.sort(String::compareTo);
 
 		writeB(file, String.join("\r\n", lines).getBytes());
 	}

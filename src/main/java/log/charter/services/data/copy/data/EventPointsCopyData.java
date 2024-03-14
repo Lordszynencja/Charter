@@ -42,7 +42,7 @@ public class EventPointsCopyData implements ICopyData {
 	}
 
 	public void paste(final ChartData chartData, final SelectionManager selectionManager,
-			final FractionalPosition position, final boolean sections, final boolean phrases, final boolean events,
+			final FractionalPosition basePosition, final boolean sections, final boolean phrases, final boolean events,
 			final boolean convertFromBeats) {
 		final Arrangement arrangement = chartData.currentArrangement();
 		if (phrases) {
@@ -59,7 +59,7 @@ public class EventPointsCopyData implements ICopyData {
 
 		for (final CopiedArrangementEventsPointPosition copiedPosition : arrangementEventsPoints) {
 			try {
-				final EventPoint value = copiedPosition.getValue(beats, position, convertFromBeats);
+				final EventPoint value = copiedPosition.getValue(beats, basePosition, convertFromBeats);
 
 				if (value != null) {
 					if (!sections) {

@@ -4,9 +4,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IVirtualConstantPosition;
+import log.charter.data.song.position.IVirtualPosition;
 
-public abstract class CopiedPosition<T extends IVirtualConstantPosition> {
+public abstract class CopiedPosition<T extends IVirtualPosition> {
 	@XStreamAsAttribute
 	public final int p;
 	@XStreamAsAttribute

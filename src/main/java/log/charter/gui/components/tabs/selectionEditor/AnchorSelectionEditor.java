@@ -18,8 +18,8 @@ import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntValueValidator;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
-import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 
 public class AnchorSelectionEditor {
@@ -54,8 +54,7 @@ public class AnchorSelectionEditor {
 	private void changeAnchorFret(final int newFret) {
 		undoSystem.addUndo();
 
-		final SelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager
-				.accessor(PositionType.ANCHOR);
+		final ISelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager.accessor(PositionType.ANCHOR);
 		for (final Selection<Anchor> anchorSelection : anchorSelectionAccessor.getSelectedSet()) {
 			anchorSelection.selectable.fret = newFret;
 		}
@@ -64,8 +63,7 @@ public class AnchorSelectionEditor {
 	private void changeAnchorWidth(final int newWidth) {
 		undoSystem.addUndo();
 
-		final SelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager
-				.accessor(PositionType.ANCHOR);
+		final ISelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager.accessor(PositionType.ANCHOR);
 		for (final Selection<Anchor> anchorSelection : anchorSelectionAccessor.getSelectedSet()) {
 			anchorSelection.selectable.width = newWidth;
 		}
@@ -81,7 +79,7 @@ public class AnchorSelectionEditor {
 		anchorWidth.setVisible(false);
 	}
 
-	public void selectionChanged(final SelectionAccessor<Anchor> selectedAnchorsAccessor) {
+	public void selectionChanged(final ISelectionAccessor<Anchor> selectedAnchorsAccessor) {
 		final Set<Selection<Anchor>> selectedAnchors = selectedAnchorsAccessor.getSelectedSet();
 
 		final Integer fret = getSingleValue(selectedAnchors, selection -> selection.selectable.fret, null);

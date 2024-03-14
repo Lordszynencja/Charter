@@ -95,7 +95,7 @@ public class Arrangement {
 		if (eventPoint == null || eventPoint.position() != position) {
 			eventPoint = new EventPoint(position);
 			eventPoints.add(eventPoint);
-			eventPoints.sort(null);
+			eventPoints.sort(IConstantPosition::compareTo);
 		}
 
 		return eventPoint;

@@ -23,8 +23,8 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
 import log.charter.services.data.fixers.DuplicatedChordTemplatesRemover;
 import log.charter.services.data.fixers.UnusedChordTemplatesRemover;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
-import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 
@@ -77,8 +77,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		final Arrangement arrangement = chartData.currentArrangement();
 		final int templateId = arrangement.getChordTemplateIdWithSave(chordTemplate);
 
-		final SelectionAccessor<HandShape> selectionAccessor = selectionManager
-				.accessor(PositionType.HAND_SHAPE);
+		final ISelectionAccessor<HandShape> selectionAccessor = selectionManager.accessor(PositionType.HAND_SHAPE);
 		for (final Selection<HandShape> selection : selectionAccessor.getSelectedSet()) {
 			selection.selectable.templateId = templateId;
 		}
@@ -108,8 +107,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void setTemplateForChordsInsideSelectedHandShapes() {
-		final SelectionAccessor<HandShape> selectionAccessor = selectionManager
-				.accessor(PositionType.HAND_SHAPE);
+		final ISelectionAccessor<HandShape> selectionAccessor = selectionManager.accessor(PositionType.HAND_SHAPE);
 		for (final Selection<HandShape> selection : selectionAccessor.getSelectedSet()) {
 			setTemplateForChordsIn(selection.selectable);
 		}
@@ -139,7 +137,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		arpeggioCheckBox.setSelected(false);
 	}
 
-	public void selectionChanged(final SelectionAccessor<HandShape> selectedHandShapesAccessor) {
+	public void selectionChanged(final ISelectionAccessor<HandShape> selectedHandShapesAccessor) {
 		final Set<Selection<HandShape>> selected = selectedHandShapesAccessor.getSelectedSet();
 
 		final Integer templateId = getSingleValue(selected, selection -> selection.selectable.templateId, null);

@@ -1,14 +1,14 @@
 package log.charter.services.data.selection;
 
 import static java.util.Arrays.asList;
-import static log.charter.util.CollectionUtils.contains;
+import static log.charter.util.CollectionUtils.map;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.position.IVirtualConstantPosition;
@@ -33,42 +33,35 @@ class SelectionList<C extends IVirtualConstantPosition, P extends C, T extends P
 	private ChartData chartData;
 	private MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler;
 
-	final List<Selection<T>> selected = new ArrayList<>();
+	private Integer lastId = null;
+	private final SortedSet<Integer> selectedIds = new TreeSet<>();
 
 	SelectionList(final PositionType type) {
 		this.type = type;
 		positionTypeManager = type.manager();
 	}
 
-	private void addSelectables(final int fromId, final int toId) {
-		final Set<Integer> ids = new HashSet<>();
-
-		for (int i = fromId; i <= toId; i++) {
-			ids.add(i);
-		}
-
-		add(ids);
-	}
-
-	private void addSelectablesUntil(int toId) {
-		int fromId = selected.isEmpty() ? toId : selected.get(selected.size() - 1).id;
+	private void addSelectablesUntil(final int toId) {
+		final int fromId = lastId == null ? toId : lastId;
 		if (fromId > toId) {
-			final int tmp = fromId;
-			fromId = toId;
-			toId = tmp;
+			for (int i = fromId; i >= toId; i--) {
+				add(i);
+			}
+		} else {
+			for (int i = fromId; i <= toId; i++) {
+				add(i);
+			}
 		}
-
-		addSelectables(fromId, toId);
 	}
 
 	private void switchSelectable(final int id) {
-		if (!selected.removeIf(selection -> selection.id == id)) {
+		if (!selectedIds.remove(id)) {
 			add(id);
 		}
 	}
 
 	private void setSelectable(final int id) {
-		selected.clear();
+		selectedIds.clear();
 		add(id);
 	}
 
@@ -86,18 +79,19 @@ class SelectionList<C extends IVirtualConstantPosition, P extends C, T extends P
 	}
 
 	public void addAll() {
-		final List<T> items = positionTypeManager.getItems(chartData);
+		final int size = positionTypeManager.getItems(chartData).size();
 		clear();
 
-		for (int i = 0; i < items.size(); i++) {
-			selected.add(new Selection<>(i, items.get(i)));
+		for (int i = 0; i < size; i++) {
+			add(i);
 		}
 	}
 
 	public void add(final int id) {
-		if (!contains(selected, s -> s.id == id)) {
-			selected.add(new Selection<>(id, positionTypeManager.getItems(chartData).get(id)));
+		if (!selectedIds.contains(id)) {
+			selectedIds.add(id);
 		}
+		lastId = id;
 	}
 
 	public void add(final Collection<Integer> ids) {
@@ -108,18 +102,13 @@ class SelectionList<C extends IVirtualConstantPosition, P extends C, T extends P
 		add(positionTypeManager.getIdsForPositions(chartData, positions));
 	}
 
-	public Set<Integer> getSelectedIdsSet() {
-		return selected.stream().map(s -> s.id).collect(Collectors.toSet());
-	}
-
-	public List<Integer> getSelectedIds() {
-		return selected.stream().map(s -> s.id).collect(Collectors.toList());
+	public Set<Integer> getSelectedIds() {
+		return new TreeSet<>(selectedIds);
 	}
 
 	public void clear() {
-		if (!selected.isEmpty()) {
-			selected.clear();
-		}
+		selectedIds.clear();
+		lastId = null;
 	}
 
 	private Selection<T> getTemporarySelect() {
@@ -131,9 +120,10 @@ class SelectionList<C extends IVirtualConstantPosition, P extends C, T extends P
 		return new Selection<>(pressData.highlight.id, pressData.highlight.get());
 	}
 
-	public List<Selection<T>> getSelectionWithTemporary() {
-		if (!selected.isEmpty()) {
-			return selected;
+	public Collection<Selection<T>> getSelectionWithTemporary() {
+		if (!selectedIds.isEmpty()) {
+			final List<T> items = positionTypeManager.getItems(chartData);
+			return map(selectedIds, id -> new Selection<>(id, items.get(id)));
 		}
 
 		final Selection<T> temporarySelection = getTemporarySelect();
@@ -146,12 +136,6 @@ class SelectionList<C extends IVirtualConstantPosition, P extends C, T extends P
 
 	public SelectionAccessor<T> getAccessor() {
 		return new SelectionAccessor<>(this);
-	}
-
-	public void refresh() {
-		final List<Integer> ids = getSelectedIds();
-		clear();
-		add(ids);
 	}
 
 }

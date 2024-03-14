@@ -25,8 +25,9 @@ public class AnchorsCopyData implements ICopyData {
 
 	@Override
 	public void paste(final ChartData chartData, final SelectionManager selectionManager,
-			final FractionalPosition position, final boolean convertFromBeats) {
-		ICopyData.simplePaste(chartData, selectionManager, PositionType.ANCHOR, position, anchors, convertFromBeats);
+			final FractionalPosition basePosition, final boolean convertFromBeats) {
+		ICopyData.simplePaste(chartData, selectionManager, PositionType.ANCHOR, basePosition, anchors,
+				convertFromBeats);
 	}
 
 }

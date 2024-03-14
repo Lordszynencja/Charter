@@ -2,6 +2,8 @@ package log.charter.gui.panes.songEdits;
 
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
+import java.util.List;
+
 import javax.swing.JTextField;
 
 import log.charter.data.ChartData;
@@ -12,7 +14,6 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.utils.validators.IntValueValidator;
-import log.charter.util.collections.ArrayList2;
 
 public class AddBeatsAtTheStartPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
@@ -41,7 +42,7 @@ public class AddBeatsAtTheStartPane extends ParamsPane {
 		undoSystem.addUndo();
 
 		final BeatsMap beatsMap = data.songChart.beatsMap;
-		final ArrayList2<Beat> beats = beatsMap.beats;
+		final List<Beat> beats = beatsMap.beats;
 		final Beat firstBeat = beats.get(0);
 		final double bpm = beatsMap.findBPM(firstBeat, 0);
 

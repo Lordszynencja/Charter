@@ -11,13 +11,11 @@ import java.util.ListIterator;
 
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.IConstantPosition;
-import log.charter.data.song.position.IPosition;
 import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.song.position.IVirtualPosition;
 import log.charter.data.song.position.Position;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.ChartProject;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.grid.GridPosition;
 
 public class BeatsMap {
@@ -146,11 +144,7 @@ public class BeatsMap {
 		}
 
 		public void snap(final IVirtualPosition position) {
-
-			if (position.isPosition()) {
-				final IPosition p = position.asPosition().get();
-				p.position(this, getPositionFromGridClosestTo(p));
-			}
+			position.position(immutable, getPositionFromGridClosestTo(position));
 		}
 
 		public int getPositionWithAddedGrid(final int position, final int gridAdditions) {
@@ -165,10 +159,30 @@ public class BeatsMap {
 			return getPositionWithAddedGrid(position, 1);
 		}
 
+		public int findPreviousAnchoredBeat(final int beatId) {
+			for (int i = beatId - 1; i > 0; i--) {
+				if (beats.get(i).anchor) {
+					return i;
+				}
+			}
+
+			return 0;
+		}
+
+		public Integer findNextAnchoredBeat(final int beatId) {
+			for (int i = beatId + 1; i < beats.size(); i++) {
+				if (beats.get(i).anchor) {
+					return i;
+				}
+			}
+
+			return null;
+		}
+
 		public IVirtualConstantPosition getPositionFromGridClosestTo(final IVirtualConstantPosition position) {
 			final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
-			final IVirtualConstantPosition leftPosition = gridPosition;
-			final IVirtualConstantPosition rightPosition = gridPosition.next();
+			final IVirtualConstantPosition leftPosition = gridPosition.fractionalPosition();
+			final IVirtualConstantPosition rightPosition = gridPosition.next().fractionalPosition();
 
 			final IVirtualConstantPosition distanceToLeft = distance(immutable, position, leftPosition);
 			final IVirtualConstantPosition distanceToRight = distance(immutable, position, rightPosition);
@@ -193,7 +207,7 @@ public class BeatsMap {
 
 	public final ImmutableBeatsMap immutable = new ImmutableBeatsMap();
 
-	public ArrayList2<Beat> beats = new ArrayList2<>();
+	public List<Beat> beats = new ArrayList<>();
 
 	/**
 	 * creates base beats map
@@ -203,7 +217,7 @@ public class BeatsMap {
 		makeBeatsUntilSongEnd(audioLength);
 	}
 
-	public BeatsMap(final ArrayList2<Beat> beats) {
+	public BeatsMap(final List<Beat> beats) {
 		this.beats = beats;
 	}
 
@@ -238,7 +252,7 @@ public class BeatsMap {
 	}
 
 	public void makeBeatsUntilSongEnd(final int audioLength) {
-		final Beat current = beats.getLast();
+		final Beat current = beats.get(beats.size() - 1);
 		if (current.position() > audioLength) {
 			return;
 		}
@@ -333,26 +347,6 @@ public class BeatsMap {
 		return immutable.getPositionFromGridClosestTo(position);
 	}
 
-	public int findPreviousAnchoredBeat(final int beatId) {
-		for (int i = beatId - 1; i > 0; i--) {
-			if (beats.get(i).anchor) {
-				return i;
-			}
-		}
-
-		return 0;
-	}
-
-	public Integer findNextAnchoredBeat(final int beatId) {
-		for (int i = beatId + 1; i < beats.size(); i++) {
-			if (beats.get(i).anchor) {
-				return i;
-			}
-		}
-
-		return null;
-	}
-
 	public double getPositionInBeats(final int position) {
 		final Integer beatId = lastBeforeEqual(beats, new Position(position), IConstantPosition::compareTo).findId();
 		if (beatId == null || beatId >= beats.size() - 1) {
@@ -382,7 +376,7 @@ public class BeatsMap {
 			beats.remove(i);
 		}
 
-		final Beat startBeat = beats.getLast();
+		final Beat startBeat = beats.get(beats.size() - 1);
 		final int startPosition = startBeat.position();
 		int position = (int) (startPosition + 60_000 / newBPM);
 		int createdBeatId = 1;
@@ -394,14 +388,6 @@ public class BeatsMap {
 		}
 
 		fixFirstBeatInMeasures();
-	}
-
-	public void movePositions(final Collection<? extends IVirtualPosition> positions,
-			final IVirtualConstantPosition start, final IVirtualConstantPosition end) {
-		final FractionalPosition toAdd = start.positionAsFraction(immutable).fractionalPosition()//
-				.add(end.positionAsFraction(immutable).fractionalPosition());
-
-		immutable.movePositions(positions, toAdd);
 	}
 
 	public double findBPM(final Beat beat) {
@@ -433,7 +419,7 @@ public class BeatsMap {
 			return beats.get(0);
 		}
 		if (beatId >= beats.size()) {
-			return beats.getLast();
+			return beats.get(beats.size() - 1);
 		}
 
 		return beats.get(beatId);

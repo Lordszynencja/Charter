@@ -8,9 +8,11 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.phraseNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
+import static log.charter.util.CollectionUtils.map;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.List;
 
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.EventType;
@@ -22,7 +24,6 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeEvents;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.data.Position2D;
 
 public class ModernThemeEvents implements ThemeEvents {
@@ -55,8 +56,8 @@ public class ModernThemeEvents implements ThemeEvents {
 				ColorLabel.PHRASE_NAME_BG, 2, ColorLabel.BASE_BORDER);
 	}
 
-	private void addEvents(final ArrayList2<EventType> events, final int x) {
-		final String eventsName = String.join(", ", events.map(event -> event.label));
+	private void addEvents(final List<EventType> events, final int x) {
+		final String eventsName = String.join(", ", map(events, event -> event.label));
 		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, eventNamesY), eventFont, eventsName,
 				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.EVENT_BG, 2, ColorLabel.BASE_BORDER));
 	}

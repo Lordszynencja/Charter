@@ -92,7 +92,7 @@ public class ArrangementFixer {
 			level.handShapes.add(handShape);
 		}
 
-		level.handShapes.sort(null);
+		level.handShapes.sort(IConstantPosition::compareTo);
 	}
 
 	private void addMissingAnchors(final Arrangement arrangement, final Level level) {
@@ -118,9 +118,9 @@ public class ArrangementFixer {
 			final Anchor lastAnchor = level.anchors.get(lastAnchorId);
 			if (lastAnchor.position(chartData.beats()) != eventPoint.position()) {
 				final Anchor newAnchor = new Anchor(lastAnchor);
-				newAnchor.fractionalPosition(eventPoint.positionAsFraction(chartData.beats()));
+				newAnchor.fractionalPosition(eventPoint.positionAsFraction(chartData.beats()).fractionalPosition());
 				level.anchors.add(newAnchor);
-				level.anchors.sort(null);
+				level.anchors.sort(IConstantFractionalPosition::compareTo);
 			}
 		}
 	}

@@ -24,6 +24,7 @@ import log.charter.data.song.Phrase;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.IVirtualConstantPosition;
+import log.charter.data.song.position.IVirtualPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -55,7 +56,7 @@ import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
 public class CopyManager {
-	private static interface CopiedPositionMaker<T extends IVirtualConstantPosition, V extends CopiedPosition<T>> {
+	private static interface CopiedPositionMaker<T extends IVirtualPosition, V extends CopiedPosition<T>> {
 		V make(ImmutableBeatsMap beats, FractionalPosition basePosition, T item);
 	}
 
@@ -66,14 +67,14 @@ public class CopyManager {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	private <T extends IVirtualConstantPosition, V extends CopiedPosition<T>> List<V> makeCopy(final Stream<T> positions,
+	private <T extends IVirtualPosition, V extends CopiedPosition<T>> List<V> makeCopy(final Stream<T> positions,
 			final FractionalPosition basePosition, final CopiedPositionMaker<T, V> copiedPositionMaker) {
 		return positions//
 				.map(position -> copiedPositionMaker.make(chartData.beats(), basePosition, position))//
 				.collect(Collectors.toList());
 	}
 
-	private <T extends IVirtualConstantPosition, V extends CopiedPosition<T>> List<V> makeCopy(
+	private <T extends IVirtualPosition, V extends CopiedPosition<T>> List<V> makeCopy(
 			final List<Selection<T>> selectedPositions, final CopiedPositionMaker<T, V> copiedPositionMaker) {
 		final ImmutableBeatsMap beats = chartData.beats();
 		final FractionalPosition basePosition = selectedPositions.get(0).selectable.positionAsFraction(beats)
@@ -83,9 +84,10 @@ public class CopyManager {
 				copiedPositionMaker);
 	}
 
-	private <T extends IVirtualConstantPosition, V extends CopiedPosition<T>> List<V> copyPositionsFromTo(
-			final IVirtualConstantPosition from, final IVirtualConstantPosition to, final FractionalPosition basePosition,
-			final List<T> positions, final CopiedPositionMaker<T, V> copiedPositionMaker) {
+	private <T extends IVirtualPosition, V extends CopiedPosition<T>> List<V> copyPositionsFromTo(
+			final IVirtualConstantPosition from, final IVirtualConstantPosition to,
+			final FractionalPosition basePosition, final List<T> positions,
+			final CopiedPositionMaker<T, V> copiedPositionMaker) {
 		final ImmutableBeatsMap beats = chartData.beats();
 
 		final Comparator<IVirtualConstantPosition> comparator = IVirtualConstantPosition.comparator(beats);
@@ -143,7 +145,7 @@ public class CopyManager {
 		final FractionalPosition basePosition = from.positionAsFraction(chartData.beats()).fractionalPosition();
 		final Arrangement arrangement = chartData.currentArrangement();
 
-		final Map<String, Phrase> copiedPhrases = arrangement.phrases.map(phraseName -> phraseName, Phrase::new);
+		final Map<String, Phrase> copiedPhrases = map(arrangement.phrases, phraseName -> phraseName, Phrase::new);
 		final List<CopiedArrangementEventsPointPosition> copiedArrangementEventsPoints = copyPositionsFromTo(from, to,
 				basePosition, arrangement.eventPoints, CopiedArrangementEventsPointPosition::new);
 
@@ -181,9 +183,8 @@ public class CopyManager {
 		return new CopyData(copyData, getFullCopyData(from, to));
 	}
 
-	private <T extends IVirtualConstantPosition & Comparable<? super T>, V extends CopiedPosition<T>> CopyData getCopyData(
-			final PositionType type, final CopiedPositionMaker<T, V> copiedPositionMaker,
-			final Function<List<V>, ICopyData> copyDataMaker) {
+	private <T extends IVirtualPosition, V extends CopiedPosition<T>> CopyData getCopyData(final PositionType type,
+			final CopiedPositionMaker<T, V> copiedPositionMaker, final Function<List<V>, ICopyData> copyDataMaker) {
 		final ISelectionAccessor<T> selectionAccessor = selectionManager.accessor(type);
 		if (!selectionAccessor.isSelected()) {
 			return null;
@@ -297,8 +298,8 @@ public class CopyManager {
 		}
 
 		if (fullCopy instanceof FullGuitarCopyData) {
-			new GuitarSpecialPastePane(chartData, charterFrame, selectionManager, undoSystem, chartTimeHandler.time(),
-					(FullGuitarCopyData) fullCopy);
+			new GuitarSpecialPastePane(chartData, charterFrame, selectionManager, undoSystem,
+					chartTimeHandler.timeFractional(), (FullGuitarCopyData) fullCopy);
 			return;
 		}
 	}

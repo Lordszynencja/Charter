@@ -1,7 +1,6 @@
 package log.charter.services.audio;
 
 import static log.charter.data.config.Config.sfxVolume;
-import static log.charter.data.song.position.IConstantPosition.positionComparator;
 import static log.charter.util.CollectionUtils.firstAfter;
 
 import java.util.List;
@@ -45,8 +44,7 @@ public class TickPlayer {
 		}
 
 		if (on && nextSoundTime == null) {
-			final IPosition nextPosition = firstAfter(positionsSupplier.get(), new Position(t), positionComparator)
-					.find();
+			final IPosition nextPosition = firstAfter(positionsSupplier.get(), new Position(t)).find();
 			if (nextPosition != null) {
 				nextSoundTime = nextPosition.position();
 			}

@@ -17,7 +17,8 @@ public abstract class CopiedPositionWithLength<T extends IPositionWithLength> ex
 			final T positionWithLength) {
 		super(beats, basePosition, positionWithLength);
 		l = positionWithLength.length();
-		fl = new Position(positionWithLength.endPosition()).positionAsFraction(beats).add(super.fp.negate());
+		fl = new Position(positionWithLength.endPosition()).positionAsFraction(beats).fractionalPosition()
+				.add(super.fp.negate());
 	}
 
 	@Override

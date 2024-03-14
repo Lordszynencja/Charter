@@ -10,6 +10,7 @@ import javax.swing.JTextField;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Beat;
+import log.charter.data.song.position.IConstantPosition;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.utils.validators.IntValueValidator;
@@ -89,7 +90,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 			}
 		}
 
-		data.songChart.beatsMap.beats.sort(null);
+		data.songChart.beatsMap.beats.sort(IConstantPosition::compareTo);
 	}
 
 	private void changeMusicFileNameAndMakeBackupIfNeeded() {

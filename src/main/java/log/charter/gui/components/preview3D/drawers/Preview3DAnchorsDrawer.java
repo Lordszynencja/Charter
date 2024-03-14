@@ -21,10 +21,10 @@ import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.FadingShaderDrawData;
 
 public class Preview3DAnchorsDrawer {
-	private ChartData data;
+	private ChartData chartData;
 
 	public void init(final ChartData data) {
-		this.data = data;
+		this.chartData = data;
 	}
 
 	private void addAnchor(final FadingShaderDrawData shaderDrawData, final AnchorDrawData anchor, final int time) {
@@ -32,7 +32,7 @@ public class Preview3DAnchorsDrawer {
 			return;
 		}
 
-		final double y = getChartboardYPosition(data.currentStrings()) - 0.001;
+		final double y = getChartboardYPosition(chartData.currentStrings()) - 0.001;
 		final int t0 = anchor.timeFrom - time;
 		final int t1 = anchor.timeTo - time;
 		final double z0 = getTimePosition(t0);

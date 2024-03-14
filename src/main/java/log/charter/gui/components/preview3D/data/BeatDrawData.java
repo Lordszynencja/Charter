@@ -9,15 +9,15 @@ import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Beat;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.Position;
 import log.charter.services.RepeatManager;
-import log.charter.util.collections.ArrayList2;
 
 public class BeatDrawData implements IConstantPosition {
 	public static List<BeatDrawData> getBeatsForTimeSpan(final ChartData data, final int timeFrom, final int timeTo) {
 		final List<BeatDrawData> beatsToDraw = new ArrayList<>();
-		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
+		final ImmutableBeatsMap beats = data.beats();
 
 		final Integer beatsFrom = firstAfterEqual(beats, new Position(timeFrom)).findId();
 		final Integer beatsTo = lastBeforeEqual(beats, new Position(timeTo)).findId();

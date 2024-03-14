@@ -31,6 +31,7 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lin
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedTriangle;
+import static log.charter.util.CollectionUtils.map;
 import static log.charter.util.FileUtils.imagesFolder;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
@@ -237,8 +238,8 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		addEventPointTextIfOnScreen(text);
 	}
 
-	private void addEvents(final ArrayList2<EventType> events, final int x) {
-		final String eventsName = String.join(", ", events.map(event -> event.label));
+	private void addEvents(final List<EventType> events, final int x) {
+		final String eventsName = String.join(", ", map(events, event -> event.label));
 		final TextWithBackground text = new TextWithBackground(new Position2D(x, eventNamesY), anchorFont, eventsName,
 				ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color());
 

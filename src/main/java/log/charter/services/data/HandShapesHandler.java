@@ -8,6 +8,7 @@ import log.charter.data.ChartData;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.Position;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
@@ -25,8 +26,7 @@ public class HandShapesHandler {
 	private UndoSystem undoSystem;
 
 	public void markHandShape() {
-		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.accessor(PositionType.GUITAR_NOTE);
+		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
 		if (!selectionAccessor.isSelected()) {
 			return;
 		}
@@ -60,7 +60,7 @@ public class HandShapesHandler {
 		handShape.templateId = chartData.currentArrangement().getChordTemplateIdWithSave(chordTemplate);
 
 		handShapes.add(handShape);
-		handShapes.sort(null);
+		handShapes.sort(IConstantPosition::compareTo);
 		new HandShapePane(chartData, charterFrame, handShape, () -> {
 			undoSystem.undo();
 			undoSystem.removeRedo();

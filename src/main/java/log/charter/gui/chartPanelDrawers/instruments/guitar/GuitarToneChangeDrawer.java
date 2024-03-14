@@ -5,7 +5,6 @@ import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -19,7 +18,7 @@ import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawe
 public class GuitarToneChangeDrawer {
 	private static String findCurrentTone(final String baseTone, final List<ToneChange> toneChanges, final int time) {
 		final List<ToneChange> tones = filter(toneChanges, //
-				eventPoint -> eventPoint.position() < time, ArrayList::new);
+				eventPoint -> eventPoint.position() < time);
 
 		return tones.isEmpty() ? baseTone : tones.get(tones.size() - 1).toneName;
 	}

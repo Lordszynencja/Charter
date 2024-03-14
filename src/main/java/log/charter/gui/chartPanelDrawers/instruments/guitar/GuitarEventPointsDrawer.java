@@ -5,6 +5,7 @@ import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.Graphics2D;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,19 +15,17 @@ import log.charter.data.types.PositionType;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashMap2;
 
 public class GuitarEventPointsDrawer {
-	private static EventPoint findCurrentSection(final ArrayList2<EventPoint> eventPoints, final int time) {
-		final ArrayList2<EventPoint> sections = filter(eventPoints, //
-				eventPoint -> eventPoint.section != null && eventPoint.position() < time, ArrayList2::new);
+	private static EventPoint findCurrentSection(final List<EventPoint> eventPoints, final int time) {
+		final List<EventPoint> sections = filter(eventPoints, //
+				eventPoint -> eventPoint.section != null && eventPoint.position() < time);
 
-		return sections.isEmpty() ? null : sections.getLast();
+		return sections.isEmpty() ? null : sections.get(sections.size() - 1);
 	}
 
 	private static void drawCurrentSection(final Graphics2D g, final HighwayDrawer highwayDrawer,
-			final ArrayList2<EventPoint> eventPoints, final int time, final int nextEventPointX) {
+			final List<EventPoint> eventPoints, final int time, final int nextEventPointX) {
 		final EventPoint section = findCurrentSection(eventPoints, time);
 		if (section == null) {
 			return;
@@ -36,7 +35,7 @@ public class GuitarEventPointsDrawer {
 	}
 
 	private static void drawCurrentSection(final Graphics2D g, final HighwayDrawer highwayDrawer,
-			final ArrayList2<EventPoint> eventPoints, final int time) {
+			final List<EventPoint> eventPoints, final int time) {
 		final EventPoint section = findCurrentSection(eventPoints, time);
 		if (section == null) {
 			return;
@@ -45,15 +44,15 @@ public class GuitarEventPointsDrawer {
 		highwayDrawer.addCurrentSection(g, section.section);
 	}
 
-	private static EventPoint findCurrentPhrase(final ArrayList2<EventPoint> eventPoints, final int time) {
-		final ArrayList2<EventPoint> sections = filter(eventPoints, //
-				eventPoint -> eventPoint.hasPhrase() && eventPoint.position() < time, ArrayList2::new);
+	private static EventPoint findCurrentPhrase(final List<EventPoint> eventPoints, final int time) {
+		final List<EventPoint> sections = filter(eventPoints, //
+				eventPoint -> eventPoint.hasPhrase() && eventPoint.position() < time);
 
-		return sections.isEmpty() ? null : sections.getLast();
+		return sections.isEmpty() ? null : sections.get(sections.size() - 1);
 	}
 
 	private static void drawCurrentPhrase(final Graphics2D g, final HighwayDrawer highwayDrawer,
-			final Map<String, Phrase> phrases, final ArrayList2<EventPoint> eventPoints, final int time,
+			final Map<String, Phrase> phrases, final List<EventPoint> eventPoints, final int time,
 			final int nextEventPointX) {
 		final EventPoint section = findCurrentPhrase(eventPoints, time);
 		if (section == null) {
@@ -64,7 +63,7 @@ public class GuitarEventPointsDrawer {
 	}
 
 	private static void drawCurrentPhrase(final Graphics2D g, final HighwayDrawer highwayDrawer,
-			final Map<String, Phrase> phrases, final ArrayList2<EventPoint> eventPoints, final int time) {
+			final Map<String, Phrase> phrases, final List<EventPoint> eventPoints, final int time) {
 		final EventPoint section = findCurrentPhrase(eventPoints, time);
 		if (section == null) {
 			return;
@@ -86,7 +85,7 @@ public class GuitarEventPointsDrawer {
 	}
 
 	public static void addEventPoints(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
-			final ArrayList2<EventPoint> eventPoints, final HashMap2<String, Phrase> phrases, final int time,
+			final List<EventPoint> eventPoints, final Map<String, Phrase> phrases, final int time,
 			final Set<Integer> selectedIds, final HighlightData highlightData) {
 		final int highlightId = highlightData.getId(PositionType.EVENT_POINT);
 		final int leftScreenEdgeTime = xToTime(0, time);
