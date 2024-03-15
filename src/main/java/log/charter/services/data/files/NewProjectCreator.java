@@ -41,6 +41,7 @@ public class NewProjectCreator {
 			if (folderName == null || folderName.isBlank()) {
 				return null;
 			}
+			folderName = folderName.replaceAll("[^a-zA-Z0-9_- ]", "");
 
 			songFolder = new File(Config.songsPath, folderName);
 
