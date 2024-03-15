@@ -110,7 +110,7 @@ public class VocalsDrawer {
 	}
 
 	private BeatsDrawer beatsDrawer;
-	private ChartData data;
+	private ChartData chartData;
 	private ChartPanel chartPanel;
 	private LyricLinesDrawer lyricLinesDrawer;
 	private SelectionManager selectionManager;
@@ -123,7 +123,7 @@ public class VocalsDrawer {
 	private void drawVocals(final Graphics2D g, final int time, final HighlightData highlightData) {
 		final VocalNotesDrawingData drawingData = new VocalNotesDrawingData(g, time);
 
-		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
+		final ArrayList2<Vocal> vocals = chartData.songChart.vocals.vocals;
 		final int width = chartPanel.getWidth();
 		final HashSet2<Integer> selectedVocalIds = selectionManager.getSelectedAccessor(PositionType.VOCAL)//
 				.getSelectedSet().map(selection -> selection.id);
@@ -166,7 +166,7 @@ public class VocalsDrawer {
 	}
 
 	public void draw(final Graphics2D g, final int time, final HighlightData highlightData) {
-		if (data == null || data.isEmpty) {
+		if (chartData == null || chartData.isEmpty) {
 			return;
 		}
 
