@@ -73,7 +73,7 @@ public class NewProjectCreator {
 		final String artist = songData.get("artist");
 		final String title = songData.get("title");
 
-		final String defaultFolderName;
+		String defaultFolderName;
 		if (artist.isBlank() && title.isBlank()) {
 			final String songFileName = songFile.getName();
 			defaultFolderName = songFileName.substring(0, songFileName.lastIndexOf('.'));
@@ -81,6 +81,7 @@ public class NewProjectCreator {
 			defaultFolderName = "%s - %s".formatted(artist.isBlank() ? "unknown artist" : artist, //
 					title.isBlank() ? "unknown title" : title);
 		}
+		defaultFolderName = defaultFolderName.replaceAll("[^a-zA-Z0-9_- ]", "");
 
 		final File songFolder = chooseSongFolder(songFile.getParent(), defaultFolderName);
 		if (songFolder == null) {
