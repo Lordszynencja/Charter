@@ -1,7 +1,7 @@
 package log.charter.services.data.files;
 
-import static log.charter.gui.components.utils.ComponentUtils.askForInput;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
+import static log.charter.util.FileUtils.cleanFileName;
 
 import java.io.File;
 import java.util.Map;
@@ -41,20 +41,21 @@ public class NewProjectCreator {
 			if (folderName == null || folderName.isBlank()) {
 				return null;
 			}
-			folderName = folderName.replaceAll("[^a-zA-Z0-9_- ]", "");
+			folderName = cleanFileName(folderName);
 
 			songFolder = new File(Config.songsPath, folderName);
 
 			if (songFolder.exists()) {
-				folderName = askForInput(charterFrame, Label.FOLDER_EXISTS_CHOOSE_DIFFERENT, folderName);
-				if (folderName == null) {
-					return null;
-				}
-
-				songFolder = new File(Config.songsPath, folderName);
+				songFolder = null;
+				showPopup(charterFrame, Label.FOLDER_EXISTS_CHOOSE_DIFFERENT);
+				continue;
+			}
+			if (!songFolder.mkdir()) {
+				songFolder = null;
+				showPopup(charterFrame, Label.COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT);
+				continue;
 			}
 		}
-		songFolder.mkdir();
 
 		return songFolder;
 	}
@@ -82,7 +83,7 @@ public class NewProjectCreator {
 			defaultFolderName = "%s - %s".formatted(artist.isBlank() ? "unknown artist" : artist, //
 					title.isBlank() ? "unknown title" : title);
 		}
-		defaultFolderName = defaultFolderName.replaceAll("[^a-zA-Z0-9_- ]", "");
+		defaultFolderName = cleanFileName(defaultFolderName);
 
 		final File songFolder = chooseSongFolder(songFile.getParent(), defaultFolderName);
 		if (songFolder == null) {
