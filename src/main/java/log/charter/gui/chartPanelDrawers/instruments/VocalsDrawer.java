@@ -6,7 +6,6 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.awt.Font;
@@ -14,7 +13,9 @@ import java.awt.Graphics2D;
 import java.util.List;
 import java.util.Set;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.vocals.Vocal;
+import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -40,21 +41,17 @@ public class VocalsDrawer {
 		return new ShapePositionWithSize(x, vocalNoteY - 4, length, 8);
 	}
 
-	public static ShapePositionWithSize getVocalNotePosition(final int position, final int length, final int time) {
-		final int x0 = timeToX(position, time);
-		final int x1 = timeToX(position + length, time);
-		return getVocalNotePosition(x0, x1 - x0);
-	}
-
 	private class VocalNotesDrawingData {
 		private final DrawableShapeList texts = new DrawableShapeList();
 		private final DrawableShapeList notes = new DrawableShapeList();
 		private final DrawableShapeList wordConnections = new DrawableShapeList();
 
+		private final ImmutableBeatsMap beats;
 		private final Graphics2D g;
 		private final int time;
 
-		public VocalNotesDrawingData(final Graphics2D g, final int time) {
+		public VocalNotesDrawingData(final ImmutableBeatsMap beats, final Graphics2D g, final int time) {
+			this.beats = beats;
 			this.g = g;
 			this.time = time;
 		}
@@ -66,7 +63,7 @@ public class VocalsDrawer {
 				notes.add(strokedRectangle(positionAndSize.resized(-1, -1, 1, 1), ColorLabel.VOCAL_SELECT));
 			}
 
-			final String text = vocal.getText() + (vocal.isWordPart() ? "-" : "");
+			final String text = vocal.text() + (vocal.flag() == VocalFlag.WORD_PART ? "-" : "");
 			final ShapeSize expectedTextSize = Text.getExpectedSize(g, vocalFont, text);
 			if (x + expectedTextSize.width <= 0) {
 				return;
@@ -77,7 +74,7 @@ public class VocalsDrawer {
 		}
 
 		private void addConnection(final int x, final Vocal next) {
-			final int nextStart = timeToX(next.position(), time);
+			final int nextStart = timeToX(next.position(beats), time);
 			final ShapePositionWithSize position = new ShapePositionWithSize(x, vocalNoteY, nextStart - x, 4)//
 					.centeredY();
 			wordConnections.add(filledRectangle(position, ColorLabel.VOCAL_NOTE.colorWithAlpha(192)));
@@ -90,13 +87,13 @@ public class VocalsDrawer {
 				addVocal(vocal, x, length, selected);
 			}
 
-			if (vocal.isWordPart() && next != null) {
+			if (vocal.flag() == VocalFlag.WORD_PART && next != null) {
 				addConnection(x1, next);
 			}
 		}
 
-		public void addHighlight(final int time, final int position, final int length) {
-			final ShapePositionWithSize positionAndSize = getVocalNotePosition(position, length, time);
+		public void addHighlight(final int x, final int length) {
+			final ShapePositionWithSize positionAndSize = getVocalNotePosition(x, time);
 			notes.add(strokedRectangle(positionAndSize.resized(-1, -1, 1, 1), ColorLabel.HIGHLIGHT));
 		}
 
@@ -117,7 +114,8 @@ public class VocalsDrawer {
 	}
 
 	private void drawVocals(final FrameData frameData) {
-		final VocalNotesDrawingData drawingData = new VocalNotesDrawingData(frameData.g, frameData.time);
+		final VocalNotesDrawingData drawingData = new VocalNotesDrawingData(frameData.beats, frameData.g,
+				frameData.time);
 
 		final List<Vocal> vocals = frameData.vocals.vocals;
 		final int width = chartPanel.getWidth();
@@ -128,21 +126,21 @@ public class VocalsDrawer {
 
 		for (int i = 0; i < vocals.size(); i++) {
 			final Vocal vocal = vocals.get(i);
-			if (vocal.position() > timeTo) {
+			if (vocal.position(frameData.beats) > timeTo) {
 				break;
 			}
 
 			Vocal next = null;
-			if (vocal.isWordPart()) {
+			if (vocal.flag() == VocalFlag.WORD_PART) {
 				next = vocals.size() > i + 1 ? vocals.get(i + 1) : null;
 			}
-			final int endPosition = next == null ? vocal.endPosition() : next.position();
+			final int endPosition = next == null ? vocal.endPosition(frameData.beats) : next.position(frameData.beats);
 			if (endPosition < timeFrom) {
 				continue;
 			}
 
-			final int x = timeToX(vocal.position(), frameData.time);
-			final int length = max(2, timeToXLength(vocal.position(), vocal.length()));
+			final int x = timeToX(vocal.position(frameData.beats), frameData.time);
+			final int length = max(2, timeToX(vocal.endPosition(frameData.beats), frameData.time) - x);
 			final boolean selected = selectedVocalIds.contains(i);
 			drawingData.addVocal(vocal, next, x, length, selected);
 		}
@@ -150,10 +148,15 @@ public class VocalsDrawer {
 		if (frameData.highlightData.type == PositionType.VOCAL) {
 			if (frameData.highlightData.id.isPresent()) {
 				final Vocal vocal = vocals.get(frameData.highlightData.id.get().id);
-				drawingData.addHighlight(frameData.time, vocal.position(), vocal.length());
+				final int x = timeToX(vocal.position(frameData.beats), frameData.time);
+				final int length = max(2, timeToX(vocal.endPosition(frameData.beats), frameData.time) - x);
+				drawingData.addHighlight(x, length);
 			} else {
-				frameData.highlightData.highlightedNonIdPositions.forEach(highlightPosition -> drawingData
-						.addHighlight(frameData.time, highlightPosition.position, highlightPosition.length));
+				frameData.highlightData.highlightedNonIdPositions.forEach(highlightPosition -> {
+					final int x = timeToX(highlightPosition.position, frameData.time);
+					final int length = max(2, timeToX(highlightPosition.endPosition(), frameData.time) - x);
+					drawingData.addHighlight(x, length);
+				});
 			}
 		}
 

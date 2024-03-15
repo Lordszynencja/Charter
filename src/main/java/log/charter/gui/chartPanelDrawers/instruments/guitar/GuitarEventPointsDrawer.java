@@ -11,21 +11,23 @@ import java.util.Set;
 
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.Phrase;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.types.PositionType;
+import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
 
 public class GuitarEventPointsDrawer {
-	private static EventPoint findCurrentSection(final List<EventPoint> eventPoints, final int time) {
+	private static EventPoint findCurrentSection(final List<EventPoint> eventPoints, final FractionalPosition time) {
 		final List<EventPoint> sections = filter(eventPoints, //
-				eventPoint -> eventPoint.section != null && eventPoint.position() < time);
+				eventPoint -> eventPoint.section != null && eventPoint.compareTo(time) < 0);
 
 		return sections.isEmpty() ? null : sections.get(sections.size() - 1);
 	}
 
 	private static void drawCurrentSection(final Graphics2D g, final HighwayDrawer highwayDrawer,
-			final List<EventPoint> eventPoints, final int time, final int nextEventPointX) {
+			final List<EventPoint> eventPoints, final FractionalPosition time, final int nextEventPointX) {
 		final EventPoint section = findCurrentSection(eventPoints, time);
 		if (section == null) {
 			return;
@@ -35,7 +37,7 @@ public class GuitarEventPointsDrawer {
 	}
 
 	private static void drawCurrentSection(final Graphics2D g, final HighwayDrawer highwayDrawer,
-			final List<EventPoint> eventPoints, final int time) {
+			final List<EventPoint> eventPoints, final FractionalPosition time) {
 		final EventPoint section = findCurrentSection(eventPoints, time);
 		if (section == null) {
 			return;
@@ -44,15 +46,15 @@ public class GuitarEventPointsDrawer {
 		highwayDrawer.addCurrentSection(g, section.section);
 	}
 
-	private static EventPoint findCurrentPhrase(final List<EventPoint> eventPoints, final int time) {
+	private static EventPoint findCurrentPhrase(final List<EventPoint> eventPoints, final FractionalPosition time) {
 		final List<EventPoint> sections = filter(eventPoints, //
-				eventPoint -> eventPoint.hasPhrase() && eventPoint.position() < time);
+				eventPoint -> eventPoint.hasPhrase() && eventPoint.compareTo(time) < 0);
 
 		return sections.isEmpty() ? null : sections.get(sections.size() - 1);
 	}
 
 	private static void drawCurrentPhrase(final Graphics2D g, final HighwayDrawer highwayDrawer,
-			final Map<String, Phrase> phrases, final List<EventPoint> eventPoints, final int time,
+			final Map<String, Phrase> phrases, final List<EventPoint> eventPoints, final FractionalPosition time,
 			final int nextEventPointX) {
 		final EventPoint section = findCurrentPhrase(eventPoints, time);
 		if (section == null) {
@@ -63,7 +65,7 @@ public class GuitarEventPointsDrawer {
 	}
 
 	private static void drawCurrentPhrase(final Graphics2D g, final HighwayDrawer highwayDrawer,
-			final Map<String, Phrase> phrases, final List<EventPoint> eventPoints, final int time) {
+			final Map<String, Phrase> phrases, final List<EventPoint> eventPoints, final FractionalPosition time) {
 		final EventPoint section = findCurrentPhrase(eventPoints, time);
 		if (section == null) {
 			return;
@@ -84,17 +86,20 @@ public class GuitarEventPointsDrawer {
 		}
 	}
 
-	public static void addEventPoints(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
-			final List<EventPoint> eventPoints, final Map<String, Phrase> phrases, final int time,
-			final Set<Integer> selectedIds, final HighlightData highlightData) {
-		final int highlightId = highlightData.getId(PositionType.EVENT_POINT);
-		final int leftScreenEdgeTime = xToTime(0, time);
+	public static void addEventPoints(final FrameData frameData, final int panelWidth,
+			final HighwayDrawer highwayDrawer) {
+		final List<EventPoint> eventPoints = frameData.arrangement.eventPoints;
+		final Map<String, Phrase> phrases = frameData.arrangement.phrases;
+		final Set<Integer> selectedIds = frameData.selection.getSelectedIds(PositionType.EVENT_POINT);
+		final int highlightId = frameData.highlightData.getId(PositionType.EVENT_POINT);
+		final FractionalPosition leftScreenEdgeTime = FractionalPosition.fromTime(frameData.beats,
+				xToTime(0, frameData.time));
 
 		boolean currentSectionDrawn = false;
 		boolean currentPhraseDrawn = false;
-		for (int i = 0; i < eventPoints.size(); i++) {
+		for (int i = 0; i < frameData.arrangement.eventPoints.size(); i++) {
 			final EventPoint eventPoint = eventPoints.get(i);
-			final int x = timeToX(eventPoint.position(), time);
+			final int x = timeToX(eventPoint.position(frameData.beats), frameData.time);
 			if (x < 0) {
 				continue;
 			}
@@ -104,23 +109,24 @@ public class GuitarEventPointsDrawer {
 
 			final boolean selected = selectedIds.contains(i);
 			final boolean highlighted = i == highlightId;
-			highwayDrawer.addEventPoint(g, eventPoint, phrases.get(eventPoint.phrase), x, selected, highlighted);
+			highwayDrawer.addEventPoint(frameData.g, eventPoint, phrases.get(eventPoint.phrase), x, selected,
+					highlighted);
 			if (eventPoint.section != null && !currentSectionDrawn) {
-				drawCurrentSection(g, highwayDrawer, eventPoints, leftScreenEdgeTime, x);
+				drawCurrentSection(frameData.g, highwayDrawer, eventPoints, leftScreenEdgeTime, x);
 				currentSectionDrawn = true;
 			}
 			if (eventPoint.phrase != null && !currentPhraseDrawn) {
-				drawCurrentPhrase(g, highwayDrawer, phrases, eventPoints, leftScreenEdgeTime, x);
+				drawCurrentPhrase(frameData.g, highwayDrawer, phrases, eventPoints, leftScreenEdgeTime, x);
 				currentPhraseDrawn = true;
 			}
 		}
 		if (!currentSectionDrawn) {
-			drawCurrentSection(g, highwayDrawer, eventPoints, leftScreenEdgeTime);
+			drawCurrentSection(frameData.g, highwayDrawer, eventPoints, leftScreenEdgeTime);
 		}
 		if (!currentPhraseDrawn) {
-			drawCurrentPhrase(g, highwayDrawer, phrases, eventPoints, leftScreenEdgeTime);
+			drawCurrentPhrase(frameData.g, highwayDrawer, phrases, eventPoints, leftScreenEdgeTime);
 		}
 
-		drawHighlightedPositions(highwayDrawer, time, highlightData);
+		drawHighlightedPositions(highwayDrawer, frameData.time, frameData.highlightData);
 	}
 }

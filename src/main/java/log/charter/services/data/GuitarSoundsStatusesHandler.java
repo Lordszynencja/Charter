@@ -58,7 +58,7 @@ public class GuitarSoundsStatusesHandler {
 			return;
 		}
 
-		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 		final T baseValue = baseValueGetter.apply(selected.get(0).selectable);
 
 		undoSystem.addUndo();
@@ -83,7 +83,7 @@ public class GuitarSoundsStatusesHandler {
 			return;
 		}
 
-		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 		final T valueToSet = getNewValueNotes(cycleMap, selected.get(0).selectable, getter, defaultValue);
 
 		undoSystem.addUndo();
@@ -100,7 +100,7 @@ public class GuitarSoundsStatusesHandler {
 			return;
 		}
 
-		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 
 		undoSystem.addUndo();
 
@@ -117,7 +117,7 @@ public class GuitarSoundsStatusesHandler {
 			return;
 		}
 
-		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 		final T valueToSet = cycleMap.get(getter.apply(selected.get(0).selectable.asGuitarSound()));
 
 		undoSystem.addUndo();
@@ -133,7 +133,7 @@ public class GuitarSoundsStatusesHandler {
 			return;
 		}
 
-		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 
 		undoSystem.addUndo();
 		selected.forEach(selectedValue -> {
@@ -201,7 +201,7 @@ public class GuitarSoundsStatusesHandler {
 
 		cyclicalToggleNotes(booleanCycleMap, CommonNote::linkNext, CommonNote::linkNext, false);
 
-		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 		arrangementFixer.fixNoteLengths(chartData.currentArrangementLevel().sounds, selected.get(0).id,
 				selected.get(selected.size() - 1).id);
 	}
@@ -215,7 +215,7 @@ public class GuitarSoundsStatusesHandler {
 
 		independentCyclicalToggleNotes(booleanCycleMap, CommonNote::linkNext, CommonNote::linkNext);
 
-		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 		arrangementFixer.fixNoteLengths(chartData.currentArrangementLevel().sounds, selected.get(0).id,
 				selected.get(selected.size() - 1).id);
 	}

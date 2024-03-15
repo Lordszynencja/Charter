@@ -9,8 +9,8 @@ public class MetronomeHandler {
 	private ChartData chartData;
 	private ChartToolbar chartToolbar;
 
-	private final TickPlayer metronomePlayer = new TickPlayer(generateSound(500, 0.02, 1),
-			() -> chartData.songChart.beatsMap.beats);
+	private final TickPlayer metronomePlayer = new TickPlayer(generateSound(500, 0.02, 1), () -> chartData.beats(),
+			() -> chartData.beats());
 
 	public boolean metronome() {
 		return metronomePlayer.on;

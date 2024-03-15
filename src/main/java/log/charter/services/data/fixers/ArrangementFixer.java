@@ -3,9 +3,12 @@ package log.charter.services.data.fixers;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.minNoteDistance;
+import static log.charter.data.song.position.IVirtualConstantPosition.add;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
+import static log.charter.util.CollectionUtils.min;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -15,6 +18,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.song.Anchor;
 import log.charter.data.song.Arrangement;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
@@ -22,10 +26,12 @@ import log.charter.data.song.SectionType;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
+import log.charter.data.song.position.ConstantPosition;
 import log.charter.data.song.position.IConstantFractionalPosition;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IPosition;
-import log.charter.data.song.position.IPositionWithLength;
+import log.charter.data.song.position.IVirtualConstantPosition;
+import log.charter.data.song.position.IVirtualPositionWithEnd;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.util.CollectionUtils;
 import log.charter.util.collections.ArrayList2;
@@ -35,12 +41,15 @@ public class ArrangementFixer {
 	private ChartData chartData;
 
 	private void removeWrongPositions(final Arrangement arrangement, final int start, final int end) {
+		final ImmutableBeatsMap beats = chartData.beats();
 		final Predicate<IConstantPosition> invalidPositionCheck = p -> p.position() < start || p.position() > end;
+		final Predicate<IConstantFractionalPosition> invalidFractionalPositionCheck = p -> p
+				.fractionalPosition().beatId < 0 || p.position(beats) > end;
 
-		arrangement.eventPoints.removeIf(invalidPositionCheck);
-		arrangement.toneChanges.removeIf(invalidPositionCheck);
+		arrangement.eventPoints.removeIf(invalidFractionalPositionCheck);
+		arrangement.toneChanges.removeIf(invalidFractionalPositionCheck);
 		for (final Level level : arrangement.levels) {
-			level.anchors.removeIf(anchor -> invalidPositionCheck.test(anchor.positionAsPosition(chartData.beats())));
+			level.anchors.removeIf(invalidFractionalPositionCheck);
 			level.sounds.removeIf(invalidPositionCheck);
 			level.handShapes.removeIf(invalidPositionCheck);
 		}
@@ -78,15 +87,15 @@ public class ArrangementFixer {
 			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position() < handShape.position()) {
 				chordsWithoutHandShapes.add(chordsForHandShapes.remove(0));
 			}
-			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position() < handShape.endPosition()) {
+			while (!chordsForHandShapes.isEmpty()
+					&& chordsForHandShapes.get(0).position() < handShape.endPosition().position()) {
 				chordsForHandShapes.remove(0);
 			}
 		}
 		chordsWithoutHandShapes.addAll(chordsForHandShapes);
 
 		for (final Chord chord : chordsWithoutHandShapes) {
-			final int endPosition = chord.endPosition();
-
+			final int endPosition = chord.endPosition().position();
 			final int length = max(50, endPosition - chord.position());
 			final HandShape handShape = new HandShape(chord, length);
 			level.handShapes.add(handShape);
@@ -110,15 +119,15 @@ public class ArrangementFixer {
 			}
 
 			final Integer lastAnchorId = CollectionUtils
-					.lastBeforeEqual(level.anchors, eventPoint.positionAsFraction(chartData.beats())).findId();
+					.lastBeforeEqual(level.anchors, eventPoint.toFraction(chartData.beats())).findId();
 			if (lastAnchorId == null) {
 				continue;
 			}
 
 			final Anchor lastAnchor = level.anchors.get(lastAnchorId);
-			if (lastAnchor.position(chartData.beats()) != eventPoint.position()) {
+			if (lastAnchor.fractionalPosition().compareTo(eventPoint) != 0) {
 				final Anchor newAnchor = new Anchor(lastAnchor);
-				newAnchor.fractionalPosition(eventPoint.positionAsFraction(chartData.beats()).fractionalPosition());
+				newAnchor.fractionalPosition(eventPoint.fractionalPosition());
 				level.anchors.add(newAnchor);
 				level.anchors.sort(IConstantFractionalPosition::compareTo);
 			}
@@ -160,19 +169,24 @@ public class ArrangementFixer {
 		fixNoteLengths(sounds, 0, sounds.size() - 1);
 	}
 
-	public void fixLengths(final List<? extends IPositionWithLength> positions) {
+	public <T extends IVirtualPositionWithEnd> void fixLengths(final List<T> positions) {
 		if (positions.isEmpty()) {
 			return;
 		}
 
+		final ImmutableBeatsMap beats = chartData.beats();
+		final Comparator<IVirtualConstantPosition> comparator = IVirtualConstantPosition.comparator(beats);
+
 		for (int i = 0; i < positions.size() - 1; i++) {
-			final IPositionWithLength position = positions.get(i);
-			final IPositionWithLength nextPosition = positions.get(i + 1);
-			position.endPosition(min(nextPosition.position() - Config.minNoteDistance, position.endPosition()));
+			final IVirtualPositionWithEnd position = positions.get(i);
+			final IVirtualConstantPosition maxPosition = add(beats, positions.get(i + 1),
+					new ConstantPosition(Config.minNoteDistance));
+			position.endPosition(beats, min(comparator, position.endPosition(), maxPosition));
 		}
 
-		final IPositionWithLength lastPosition = positions.get(positions.size() - 1);
-		lastPosition.endPosition(min(chartTimeHandler.maxTime(), lastPosition.endPosition()));
+		final IVirtualPositionWithEnd lastPosition = positions.get(positions.size() - 1);
+		final IVirtualConstantPosition maxPosition = new ConstantPosition(chartTimeHandler.maxTime());
+		lastPosition.endPosition(beats, min(comparator, maxPosition, lastPosition.endPosition()));
 	}
 
 	private void fixLevel(final Arrangement arrangement, final Level level) {

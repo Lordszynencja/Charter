@@ -132,13 +132,13 @@ public class HighlightManager {
 		}
 		if (positionType != PositionType.ANCHOR) {
 			return chartData.beats().getPositionFromGridClosestTo(new Position(position))
-					.positionAsPosition(chartData.beats()).position();
+					.toPosition(chartData.beats()).position();
 		}
 
 		final IVirtualConstantPosition closestGridPositionA = chartData.beats()
 				.getPositionFromGridClosestTo(new Position(position));
 
-		final int closestGridPosition = closestGridPositionA.positionAsPosition(chartData.beats()).position();
+		final int closestGridPosition = closestGridPositionA.toPosition(chartData.beats()).position();
 
 		final ChordOrNote closestSound = closest(chartData.currentSounds(), new Position(position),
 				IConstantPosition::compareTo, x -> x.position()).find();

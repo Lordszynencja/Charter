@@ -41,7 +41,7 @@ public class GuitarSoundsHandler {
 
 	private List<ChordOrNote> getSelectedSounds() {
 		final List<Selection<ChordOrNote>> selectedSounds = selectionManager
-				.<ChordOrNote>accessor(PositionType.GUITAR_NOTE).getSortedSelected();
+				.<ChordOrNote>accessor(PositionType.GUITAR_NOTE).getSelected();
 		if (selectedSounds.isEmpty()) {
 			return new ArrayList<>();
 		}

@@ -26,8 +26,8 @@ public class ToneChangesCopyData implements ICopyData {
 	@Override
 	public void paste(final ChartData chartData, final SelectionManager selectionManager,
 			final FractionalPosition basePosition, final boolean convertFromBeats) {
-		ICopyData.simplePaste(chartData, selectionManager, PositionType.TONE_CHANGE, basePosition, toneChanges,
-				convertFromBeats);
+		ICopyData.simplePasteFractional(chartData, selectionManager, PositionType.TONE_CHANGE, basePosition,
+				toneChanges, convertFromBeats);
 	}
 
 }

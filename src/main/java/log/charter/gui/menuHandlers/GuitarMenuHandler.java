@@ -97,12 +97,12 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 
 	private <T extends IVirtualConstantPosition> List<ChordOrNote> handleSelection(
 			final ISelectionAccessor<T> selectionAccessor, final List<ChordOrNote> sounds) {
-		final List<Selection<T>> selected = selectionAccessor.getSortedSelected();
+		final List<Selection<T>> selected = selectionAccessor.getSelected();
 
-		final Integer fromId = firstAfterEqual(sounds, selected.get(0).selectable.positionAsPosition(chartData.beats()))
+		final Integer fromId = firstAfterEqual(sounds, selected.get(0).selectable.toPosition(chartData.beats()))
 				.findId();
 		final Integer toId = lastBeforeEqual(sounds,
-				selected.get(selected.size() - 1).selectable.positionAsPosition(chartData.beats())).findId();
+				selected.get(selected.size() - 1).selectable.toPosition(chartData.beats())).findId();
 
 		if (fromId == null || toId == null) {
 			return new ArrayList<>();

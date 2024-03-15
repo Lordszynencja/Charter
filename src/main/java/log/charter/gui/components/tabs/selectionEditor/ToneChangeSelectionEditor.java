@@ -62,7 +62,7 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 	}
 
 	public void selectionChanged(final ISelectionAccessor<ToneChange> selectedToneChangesAccessor) {
-		final Set<Selection<ToneChange>> selectedToneChanges = selectedToneChangesAccessor.getSelectedSet();
+		final Set<Selection<ToneChange>> selectedToneChanges = selectedToneChangesAccessor.getSelected2();
 
 		final String toneName = getSingleValue(selectedToneChanges, selection -> selection.selectable.toneName, "");
 		toneNameField.field.setTextWithoutUpdate(toneName == null ? "" : toneName);
@@ -117,7 +117,7 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 		undoSystem.addUndo();
 
 		final ISelectionAccessor<ToneChange> selectionAccessor = selectionManager.accessor(PositionType.TONE_CHANGE);
-		for (final Selection<ToneChange> a : selectionAccessor.getSelectedSet()) {
+		for (final Selection<ToneChange> a : selectionAccessor.getSelected2()) {
 			a.selectable.toneName = name;
 		}
 		arrangement.tones = arrangement.toneChanges.stream()//

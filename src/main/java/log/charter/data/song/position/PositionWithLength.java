@@ -29,5 +29,4 @@ public class PositionWithLength extends Position implements IPositionWithLength 
 	public void length(final int value) {
 		length = value;
 	}
-
 }

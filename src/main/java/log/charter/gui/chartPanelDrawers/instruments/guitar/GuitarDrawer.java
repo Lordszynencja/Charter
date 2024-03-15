@@ -68,12 +68,6 @@ public class GuitarDrawer {
 		this.lyricLinesDrawer = lyricLinesDrawer;
 	}
 
-	private void addEventPoints(final FrameData frameData, final int panelWidth, final HighwayDrawer highwayDrawer) {
-		GuitarEventPointsDrawer.addEventPoints(frameData.g, panelWidth, highwayDrawer,
-				frameData.arrangement.eventPoints, frameData.arrangement.phrases, frameData.time,
-				frameData.selection.getSelectedIds(PositionType.EVENT_POINT), frameData.highlightData);
-	}
-
 	private void drawGuitarLanes(final FrameData frameData, final int panelWidth) {
 		final int strings = frameData.arrangement.tuning.strings();
 		final int x = max(0, timeToX(0, frameData.time));
@@ -294,7 +288,7 @@ public class GuitarDrawer {
 		final int panelWidth = chartPanel.getWidth();
 		final HighwayDrawer highwayDrawer = getHighwayDrawer(frameData.g, strings, frameData.time);
 
-		addEventPoints(frameData, panelWidth, highwayDrawer);
+		GuitarEventPointsDrawer.addEventPoints(frameData, panelWidth, highwayDrawer);
 		GuitarToneChangeDrawer.addToneChanges(frameData, panelWidth, highwayDrawer);
 		GuitarAnchorsDrawer.addAnchors(frameData, panelWidth, highwayDrawer);
 		drawGuitarLanes(frameData, panelWidth);

@@ -23,9 +23,9 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.IConstantFractionalPosition;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IPosition;
-import log.charter.data.song.position.IPositionWithLength;
 import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.song.position.IVirtualPosition;
+import log.charter.data.song.position.IVirtualPositionWithEnd;
 import log.charter.data.song.position.Position;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
@@ -131,7 +131,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		if (!clickData.isXDrag()) {
 			selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
 		} else if (clickData.pressHighlight.type == PositionType.VOCAL) {
-			dragPositionsWithLength(PositionType.VOCAL, clickData, chartData.songChart.vocals.vocals);
+			dragPositionsWithLength(PositionType.VOCAL, clickData, chartData.currentVocals().vocals);
 		}
 
 		if (wasDoubleClick && clickData.pressHighlight.vocal != null) {
@@ -210,10 +210,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	private void getAllLeftRightPositions(final int leftPosition, final int middlePosition, final int rightPosition,
 			final List<IPosition> left, final List<IPosition> right) {
-		splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, chartData.songChart.vocals.vocals);
-
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
-			splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, arrangement.toneChanges);
 			for (final Level level : arrangement.levels) {
 				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.sounds);
 				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.handShapes);
@@ -335,14 +332,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	private <T extends IVirtualPosition> void dragPositions(final PositionType type,
 			final MouseButtonPressReleaseData clickData, final List<T> allPositions) {
 		List<Selection<T>> selectedPositions = selectionManager.<T>accessor(clickData.pressHighlight.type)
-				.getSortedSelected();
+				.getSelected();
 
 		if (clickData.pressHighlight.existingPosition//
 				&& !contains(selectedPositions, s -> s.id == clickData.pressHighlight.id)) {
 			selectionManager.clear();
 			selectionManager.addSelection(clickData.pressHighlight.type, clickData.pressHighlight.id);
 			selectedPositions = selectionManager.<T>accessor(clickData.pressHighlight.type)//
-					.getSortedSelected();
+					.getSelected();
 		}
 		if (selectedPositions.isEmpty()) {
 			return;
@@ -351,9 +348,9 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		final List<T> positions = map(selectedPositions, p -> p.selectable);
 		undoSystem.addUndo();
 
-		final IConstantFractionalPosition dragFrom = clickData.pressHighlight.positionAsFraction(chartData.beats());
+		final IConstantFractionalPosition dragFrom = clickData.pressHighlight.toFraction(chartData.beats());
 		final IConstantFractionalPosition dragTo = findGridPositionClosestToX(clickData.releasePosition.x)
-				.positionAsFraction(chartData.beats());
+				.toFraction(chartData.beats());
 		chartData.beats().movePositions(positions, dragFrom.movementTo(dragTo));
 
 		allPositions.sort(IVirtualConstantPosition.comparator(chartData.beats()));
@@ -361,17 +358,17 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		reselectDraggedPositions(type, positions);
 	}
 
-	private <T extends IVirtualPosition> void dragPositionsWithLength(final PositionType type,
-			final MouseButtonPressReleaseData clickData, final List<? extends IPositionWithLength> allPositions) {
+	private <T extends IVirtualPositionWithEnd> void dragPositionsWithLength(final PositionType type,
+			final MouseButtonPressReleaseData clickData, final List<T> allPositions) {
 		List<Selection<T>> selectedPositions = selectionManager.<T>accessor(clickData.pressHighlight.type)//
-				.getSortedSelected();
+				.getSelected();
 
 		if (clickData.pressHighlight.existingPosition//
 				&& !contains(selectedPositions, s -> s.id == clickData.pressHighlight.id)) {
 			selectionManager.clear();
 			selectionManager.addSelection(clickData.pressHighlight.type, clickData.pressHighlight.id);
 			selectedPositions = selectionManager.<T>accessor(clickData.pressHighlight.type)//
-					.getSortedSelected();
+					.getSelected();
 		}
 		if (selectedPositions.isEmpty()) {
 			return;
@@ -381,9 +378,9 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		undoSystem.addUndo();
 
-		final IConstantFractionalPosition dragFrom = clickData.pressHighlight.positionAsFraction(chartData.beats());
+		final IConstantFractionalPosition dragFrom = clickData.pressHighlight.toFraction(chartData.beats());
 		final IConstantFractionalPosition dragTo = findGridPositionClosestToX(clickData.releasePosition.x)
-				.positionAsFraction(chartData.beats());
+				.toFraction(chartData.beats());
 		chartData.beats().movePositions(positions, dragFrom.movementTo(dragTo));
 
 		allPositions.sort(IVirtualConstantPosition.comparator(chartData.beats()));
@@ -395,14 +392,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	private void dragNotes(final MouseButtonPressReleaseData clickData, final List<ChordOrNote> allPositions) {
 		List<Selection<ChordOrNote>> selectedPositions = selectionManager
-				.<ChordOrNote>accessor(clickData.pressHighlight.type).getSortedSelected();
+				.<ChordOrNote>accessor(clickData.pressHighlight.type).getSelected();
 
 		if (clickData.pressHighlight.existingPosition//
 				&& !contains(selectedPositions, s -> s.id == clickData.pressHighlight.id)) {
 			selectionManager.clear();
 			selectionManager.addSelection(clickData.pressHighlight.type, clickData.pressHighlight.id);
 			selectedPositions = selectionManager.<ChordOrNote>accessor(clickData.pressHighlight.type)//
-					.getSortedSelected();
+					.getSelected();
 		}
 		if (selectedPositions.isEmpty()) {
 			return;
@@ -411,9 +408,9 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		final List<ChordOrNote> positions = map(selectedPositions, p -> (ChordOrNote) p.selectable);
 		undoSystem.addUndo();
 
-		final IConstantFractionalPosition dragFrom = clickData.pressHighlight.positionAsFraction(chartData.beats());
+		final IConstantFractionalPosition dragFrom = clickData.pressHighlight.toFraction(chartData.beats());
 		final IConstantFractionalPosition dragTo = findGridPositionClosestToX(clickData.releasePosition.x)
-				.positionAsFraction(chartData.beats());
+				.toFraction(chartData.beats());
 		chartData.beats().movePositions(positions, dragFrom.movementTo(dragTo));
 
 		allPositions.sort(IConstantPosition::compareTo);

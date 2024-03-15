@@ -34,7 +34,7 @@ public class HandShapesHandler {
 		undoSystem.addUndo();
 
 		final List<HandShape> handShapes = chartData.currentHandShapes();
-		final List<Selection<ChordOrNote>> selected = selectionAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectionAccessor.getSelected();
 		final ChordOrNote firstSelected = selected.get(0).selectable;
 		final int position = firstSelected.position();
 		final int endPosition = selected.get(selected.size() - 1).selectable.endPosition();

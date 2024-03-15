@@ -93,7 +93,7 @@ public class SongFileHandler {
 
 		loadingDialog = new LoadingDialog(charterFrame, 1);
 		loadingDialog.setProgress(0, Label.LOADING_ARRANGEMENTS.label());
-		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(arrangementFile));
+		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(arrangementFile);
 		final SongChart songChart = RSXMLToSongChart.makeSongChartForArrangement(songFile.getName(), songArrangement);
 
 		chartTimeHandler.nextTime(0);
@@ -130,9 +130,9 @@ public class SongFileHandler {
 			id++;
 		}
 
-		if (!chartData.songChart.vocals.vocals.isEmpty()) {
-			RW.write(new File(dir, vocalsFileName), saveVocals(new ArrangementVocals(chartData.songChart.vocals)),
-					"UTF-8");
+		if (!chartData.currentVocals().vocals.isEmpty()) {
+			RW.write(new File(dir, vocalsFileName),
+					saveVocals(new ArrangementVocals(chartData.beats(), chartData.songChart.vocals)), "UTF-8");
 		}
 	}
 

@@ -2,11 +2,14 @@ package log.charter.io.rs.xml;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.util.stream.Collectors.toCollection;
+import static log.charter.util.CollectionUtils.map;
+import static log.charter.util.CollectionUtils.toMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import log.charter.data.song.Arrangement;
@@ -19,15 +22,12 @@ import log.charter.data.song.SectionType;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.configs.Tuning.TuningType;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.io.rs.xml.song.ArrangementPhrase;
 import log.charter.io.rs.xml.song.ArrangementTone;
 import log.charter.io.rs.xml.song.ArrangementTuning;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.io.rs.xml.song.SongArrangement;
-import log.charter.util.CollectionUtils;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashMap2;
-import log.charter.util.collections.HashSet2;
 
 public class RSXMLToArrangement {
 	private static Tuning getTuning(final ArrangementTuning arrangementTuning, final ArrangementType arrangementType) {
@@ -48,19 +48,18 @@ public class RSXMLToArrangement {
 		return new Tuning(tuningType, strings, tuning);
 	}
 
-	public static HashMap2<String, Phrase> getArrangementPhrases(final List<ArrangementPhrase> arrangementPhrases) {
-		return new HashMap2<>(CollectionUtils.toMap(arrangementPhrases, (map, arrangementPhrase) -> {
+	public static Map<String, Phrase> getArrangementPhrases(final List<ArrangementPhrase> arrangementPhrases) {
+		return toMap(arrangementPhrases, (map, arrangementPhrase) -> {
 			final String name = arrangementPhrase.name;
 			final int maxDifficulty = arrangementPhrase.maxDifficulty;
 			final boolean solo = arrangementPhrase.solo != null && arrangementPhrase.solo == 1;
 			map.put(name, new Phrase(maxDifficulty, solo));
-		}));
+		});
 	}
 
-	private static ArrayList2<ToneChange> getToneChanges(final List<ArrangementTone> arrangementTones) {
-		return arrangementTones.stream()//
-				.map(arrangementTone -> new ToneChange(arrangementTone.time, arrangementTone.name))//
-				.collect(toCollection(ArrayList2::new));
+	private static List<ToneChange> getToneChanges(final ImmutableBeatsMap beats,
+			final List<ArrangementTone> arrangementTones) {
+		return map(arrangementTones, t -> new ToneChange(FractionalPosition.fromTime(beats, t.time, true), t.name));
 	}
 
 	private static SectionType findSectionByRSName(final String rsName) {
@@ -93,24 +92,22 @@ public class RSXMLToArrangement {
 		arrangement.centOffset = arrangementData.centOffset;
 
 		arrangement.baseTone = arrangementData.tonebase == null ? "" : arrangementData.tonebase;
-		arrangement.toneChanges = arrangementData.tones == null ? new ArrayList2<>()
-				: getToneChanges(arrangementData.tones.list);
-		arrangement.tones = arrangement.toneChanges.stream()//
-				.map(toneChange -> toneChange.toneName)//
-				.collect(Collectors.toCollection(HashSet2::new));
+		arrangement.toneChanges = arrangementData.tones == null ? new ArrayList<>()
+				: getToneChanges(beats, arrangementData.tones.list);
+		arrangement.tones = map(arrangement.toneChanges, toneChange -> toneChange.toneName, new HashSet<>());
 		arrangement.chordTemplates = arrangementData.chordTemplates.list.stream()//
 				.map(ChordTemplate::new)//
 				.collect(Collectors.toCollection(ArrayList::new));
 
 		arrangementData.sections.list.forEach(arrangementSection -> {
-			final EventPoint arrangementEventsPoint = arrangement
-					.findOrCreateArrangementEventsPoint(arrangementSection.startTime);
+			final EventPoint arrangementEventsPoint = arrangement.findOrCreateArrangementEventsPoint(
+					FractionalPosition.fromTime(beats, arrangementSection.startTime, true));
 			arrangementEventsPoint.section = findSectionByRSName(arrangementSection.name);
 		});
 		arrangement.phrases = getArrangementPhrases(arrangementData.phrases.list);
 		arrangementData.phraseIterations.list.forEach(arrangementPhraseIteration -> {
-			final EventPoint arrangementEventsPoint = arrangement
-					.findOrCreateArrangementEventsPoint(arrangementPhraseIteration.time);
+			final EventPoint arrangementEventsPoint = arrangement.findOrCreateArrangementEventsPoint(
+					FractionalPosition.fromTime(beats, arrangementPhraseIteration.time, true));
 			final String phraseName = arrangementData.phrases.list.get(arrangementPhraseIteration.phraseId).name;
 			arrangementEventsPoint.phrase = phraseName;
 		});
@@ -126,8 +123,8 @@ public class RSXMLToArrangement {
 				return;
 			}
 
-			final EventPoint arrangementEventsPoint = arrangement
-					.findOrCreateArrangementEventsPoint(arrangementEvent.time);
+			final EventPoint arrangementEventsPoint = arrangement.findOrCreateArrangementEventsPoint(
+					FractionalPosition.fromTime(beats, arrangementEvent.time, true));
 			arrangementEventsPoint.events.add(findEventByRSName(arrangementEvent.code));
 		});
 

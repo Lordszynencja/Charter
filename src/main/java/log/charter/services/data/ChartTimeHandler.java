@@ -65,7 +65,7 @@ public class ChartTimeHandler {
 
 	public void nextTime(final double t) {
 		nextTime = max(0, min(maxTime(), t));
-		nextFractionalTime = FractionalPosition.fromTime(chartData.beats(), (int) nextTime, false);
+		nextFractionalTime = FractionalPosition.fromTime(chartData.beats(), (int) nextTime);
 	}
 
 	public void nextTime(final IConstantPosition t) {
@@ -82,10 +82,24 @@ public class ChartTimeHandler {
 	}
 
 	public void nextTime(final IVirtualConstantPosition p) {
-		if (p.isFractionalPosition()) {
+		if (p.isFraction()) {
 			nextFractionalTime(p.asConstantFraction().get());
 		} else {
 			nextTime(p.asConstantPosition().get());
+		}
+	}
+
+	public void moveTo(final Integer arrangementId, final Integer levelId, final IVirtualConstantPosition time) {
+		if (arrangementId != null) {
+			modeManager.setArrangement(arrangementId);
+		}
+
+		if (levelId != null) {
+			modeManager.setLevel(levelId);
+		}
+
+		if (time != null) {
+			nextTime(time);
 		}
 	}
 
@@ -105,15 +119,16 @@ public class ChartTimeHandler {
 		final MaxPositionAccumulator accumulator = new MaxPositionAccumulator();
 
 		if (modeManager.getMode() != EditMode.EMPTY) {
+			final ImmutableBeatsMap beats = chartData.beats();
 			accumulator.add(audioTime());
-			accumulator.add(chartData.songChart.beatsMap.beats);
+			accumulator.add(beats);
 
 			for (final Arrangement arrangement : chartData.songChart.arrangements) {
-				accumulator.add(arrangement.eventPoints);
-				accumulator.add(arrangement.toneChanges);
+				accumulator.addFractional(beats, arrangement.eventPoints);
+				accumulator.addFractional(beats, arrangement.toneChanges);
 
 				for (final Level level : arrangement.levels) {
-					accumulator.addFractional(chartData.beats(), level.anchors);
+					accumulator.addFractional(beats, level.anchors);
 					accumulator.add(level.sounds);
 					accumulator.add(level.handShapes);
 				}
@@ -160,7 +175,7 @@ public class ChartTimeHandler {
 
 	private IConstantFractionalPosition getPreviousFractional(
 			final List<? extends IConstantFractionalPosition> positions) {
-		final IConstantFractionalPosition timePosition = FractionalPosition.fromTime(chartData.beats(), time(), false);
+		final IConstantFractionalPosition timePosition = FractionalPosition.fromTime(chartData.beats(), time());
 		final IConstantFractionalPosition position = lastBefore(positions, timePosition).find();
 		if (position == null) {
 			return timePosition;
@@ -180,7 +195,7 @@ public class ChartTimeHandler {
 			return;
 		}
 
-		if (currentItems.get(0).isFractionalPosition()) {
+		if (currentItems.get(0).isFraction()) {
 			nextFractionalTime(getPreviousFractional((List<? extends IConstantFractionalPosition>) currentItems));
 		} else {
 			nextTime(getPrevious((List<? extends IConstantPosition>) currentItems));
@@ -206,7 +221,7 @@ public class ChartTimeHandler {
 	}
 
 	private IConstantFractionalPosition getNextFractional(final List<? extends IConstantFractionalPosition> positions) {
-		final IConstantFractionalPosition timePosition = FractionalPosition.fromTime(chartData.beats(), time(), false);
+		final IConstantFractionalPosition timePosition = FractionalPosition.fromTime(chartData.beats(), time());
 		final IConstantFractionalPosition position = firstAfter(positions, timePosition).find();
 		if (position == null) {
 			return timePosition;
@@ -234,7 +249,7 @@ public class ChartTimeHandler {
 			return;
 		}
 
-		if (currentItems.get(0).isFractionalPosition()) {
+		if (currentItems.get(0).isFraction()) {
 			nextFractionalTime(getNextFractional((List<? extends IConstantFractionalPosition>) currentItems));
 		} else {
 			nextTime(getNext((List<? extends IConstantPosition>) currentItems));

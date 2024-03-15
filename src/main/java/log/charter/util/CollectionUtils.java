@@ -365,10 +365,19 @@ public class CollectionUtils {
 		return getFromTo(list, from, to, IConstantPosition::compareTo);
 	}
 
+	public static <C extends IConstantFractionalPosition, E extends C, P extends C> List<E> getFromTo(
+			final List<E> list, final P from, final P to) {
+		return getFromTo(list, from, to, IConstantFractionalPosition::compareTo);
+	}
+
+	public static <T, U, C extends Collection<U>> C map(final Collection<T> collection, final Function<T, U> mapper,
+			final C resultCollection) {
+		collection.stream().forEach(item -> resultCollection.add(mapper.apply(item)));
+		return resultCollection;
+	}
+
 	public static <T, U> List<U> map(final Collection<T> collection, final Function<T, U> mapper) {
-		final List<U> newList = new ArrayList<>(collection.size());
-		collection.stream().forEach(item -> newList.add(mapper.apply(item)));
-		return newList;
+		return map(collection, mapper, new ArrayList<>(collection.size()));
 	}
 
 	public static <T, U, V, W> Map<V, W> map(final Map<T, U> map, final Function<T, V> keyMapper,
@@ -406,5 +415,54 @@ public class CollectionUtils {
 		}
 
 		return false;
+	}
+
+	@SafeVarargs
+	public static <T> T min(final Comparator<T> comparator, final T... items) {
+		if (items.length == 0) {
+			return null;
+		}
+
+		T min = items[0];
+		for (int i = 1; i < items.length; i++) {
+			min = comparator.compare(min, items[i]) > 0 ? items[i] : min;
+		}
+
+		return min;
+	}
+
+	@SafeVarargs
+	public static <T extends IConstantPosition> T min(final T... items) {
+		return min(IConstantPosition::compareTo, items);
+	}
+
+	@SafeVarargs
+	public static <T extends IConstantFractionalPosition> T min(final T... items) {
+		return min(IConstantFractionalPosition::compareTo, items);
+	}
+
+	@SafeVarargs
+	public static <T extends Comparable<? super T>> T min(final T... items) {
+		return min(T::compareTo, items);
+	}
+
+	@SafeVarargs
+	public static <T> T max(final Comparator<T> comparator, final T... items) {
+		return min(comparator.reversed(), items);
+	}
+
+	@SafeVarargs
+	public static <T extends IConstantPosition> T max(final T... items) {
+		return max(IConstantPosition::compareTo, items);
+	}
+
+	@SafeVarargs
+	public static <T extends IConstantFractionalPosition> T max(final T... items) {
+		return max(IConstantFractionalPosition::compareTo, items);
+	}
+
+	@SafeVarargs
+	public static <T extends Comparable<? super T>> T max(final T... items) {
+		return max(T::compareTo, items);
 	}
 }

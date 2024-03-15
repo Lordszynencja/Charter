@@ -8,13 +8,13 @@ import java.util.List;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.position.Position;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.vocals.Vocal;
+import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
-import log.charter.util.CollectionUtils;
 
 public class Preview3DLyricsDrawer {
 	private ChartData chartData;
@@ -45,7 +45,7 @@ public class Preview3DLyricsDrawer {
 
 	private int findLineStart(final List<Vocal> vocals, final int id) {
 		for (int i = id - 1; i >= 0; i--) {
-			if (vocals.get(i).isPhraseEnd()) {
+			if (vocals.get(i).flag() == VocalFlag.PHRASE_END) {
 				return i + 1;
 			}
 		}
@@ -55,7 +55,7 @@ public class Preview3DLyricsDrawer {
 
 	private int findLineEnd(final List<Vocal> vocals, final int id) {
 		for (int i = id; i < vocals.size(); i++) {
-			if (vocals.get(i).isPhraseEnd()) {
+			if (vocals.get(i).flag() == VocalFlag.PHRASE_END) {
 				return i;
 			}
 		}
@@ -68,7 +68,7 @@ public class Preview3DLyricsDrawer {
 		String text = "";
 		for (int i = startingId; i <= endingId; i++) {
 			final Vocal vocal = vocals.get(i);
-			text += vocal.getText() + (vocal.isWordPart() ? "" : " ");
+			text += vocal.text() + (vocal.flag() == VocalFlag.WORD_PART ? "" : " ");
 		}
 
 		return text;
@@ -77,14 +77,15 @@ public class Preview3DLyricsDrawer {
 	private void drawCurrentLine(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
 			final double textSizeMultiplier) {
 		final List<Vocal> vocals = chartData.currentVocals().vocals;
-		final Integer currentVocalId = lastBefore(vocals, new Position(time)).findId();
+		final Integer currentVocalId = lastBefore(vocals, FractionalPosition.fromTime(chartData.beats(), time))
+				.findId();
 		if (currentVocalId == null) {
 			return;
 		}
 
 		final int currentLineStart = findLineStart(vocals, currentVocalId);
 		final int currentLineEnd = findLineEnd(vocals, currentVocalId);
-		if (vocals.get(currentLineEnd).endPosition() < time - 100) {
+		if (vocals.get(currentLineEnd).endPosition(chartData.beats()) < time - 100) {
 			return;
 		}
 
@@ -100,7 +101,8 @@ public class Preview3DLyricsDrawer {
 	private void drawNextLine(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
 			final double textSizeMultiplier) {
 		final List<Vocal> vocals = chartData.currentVocals().vocals;
-		final Integer currentVocalId = CollectionUtils.lastBefore(vocals, new Position(time)).findId();
+		final Integer currentVocalId = lastBefore(vocals, FractionalPosition.fromTime(chartData.beats(), time))
+				.findId();
 		if (currentVocalId == null) {
 			return;
 		}

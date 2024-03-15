@@ -147,16 +147,32 @@ public class BeatsMap {
 			position.position(immutable, getPositionFromGridClosestTo(position));
 		}
 
-		public int getPositionWithAddedGrid(final int position, final int gridAdditions) {
-			return BeatsMap.this.getPositionWithAddedGrid(position, gridAdditions);
+		public IVirtualConstantPosition getPositionWithAddedGrid(final IVirtualConstantPosition position,
+				final int gridAdditions) {
+			final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+			for (int i = 0; i < gridAdditions; i++) {
+				gridPosition.next();
+			}
+
+			return gridPosition;
 		}
 
-		public int getPositionWithRemovedGrid(final int position, final int gridRemovals) {
-			return BeatsMap.this.getPositionWithRemovedGrid(position, gridRemovals);
+		public IVirtualConstantPosition getPositionWithRemovedGrid(final IVirtualConstantPosition position,
+				int gridRemovals) {
+			final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+			if (gridPosition.compareTo(position) < 0) {
+				gridRemovals--;
+			}
+			for (int i = 0; i < gridRemovals; i++) {
+				gridPosition.previous();
+			}
+
+			return gridPosition;
 		}
 
-		public int getNextPositionFromGrid(final int position) {
-			return getPositionWithAddedGrid(position, 1);
+		public IVirtualConstantPosition addGrid(final IVirtualConstantPosition position, final int steps) {
+			return steps < 0 ? getPositionWithRemovedGrid(position, -steps)//
+					: getPositionWithAddedGrid(position, steps);
 		}
 
 		public int findPreviousAnchoredBeat(final int beatId) {
@@ -197,8 +213,7 @@ public class BeatsMap {
 		public void movePositions(final Collection<? extends IVirtualPosition> positions,
 				final FractionalPosition toAdd) {
 			for (final IVirtualPosition position : positions) {
-				final FractionalPosition newPosition = position.positionAsFraction(immutable).fractionalPosition()
-						.add(toAdd);
+				final FractionalPosition newPosition = position.toFraction(immutable).fractionalPosition().add(toAdd);
 
 				position.position(immutable, newPosition);
 			}
@@ -316,35 +331,6 @@ public class BeatsMap {
 
 			beatsFromPreviousMeasure.add(beat);
 		}
-	}
-
-	public int getPositionWithAddedGrid(final int position, final int gridAdditions) {
-		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
-		for (int i = 0; i < gridAdditions; i++) {
-			gridPosition.next();
-		}
-
-		return gridPosition.position();
-	}
-
-	public int getPositionWithRemovedGrid(final int position, int gridRemovals) {
-		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
-		if (gridPosition.position() < position) {
-			gridRemovals--;
-		}
-		for (int i = 0; i < gridRemovals; i++) {
-			gridPosition.previous();
-		}
-
-		return gridPosition.position();
-	}
-
-	public int getNextPositionFromGrid(final int position) {
-		return getPositionWithAddedGrid(position, 1);
-	}
-
-	public IVirtualConstantPosition getPositionFromGridClosestTo(final IVirtualConstantPosition position) {
-		return immutable.getPositionFromGridClosestTo(position);
 	}
 
 	public double getPositionInBeats(final int position) {

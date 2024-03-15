@@ -6,23 +6,18 @@ import static log.charter.util.Utils.formatTime;
 
 import java.util.List;
 
+import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.EventPoint;
 import log.charter.gui.CharterFrame;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.services.editModes.ModeManager;
 import log.charter.util.Utils.TimeUnit;
 
 public class SectionsValidator {
+	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
-	private ModeManager modeManager;
-
-	private void moveToTimeOnArrangement(final int arrangementId, final int time) {
-		modeManager.setArrangement(arrangementId);
-		chartTimeHandler.nextTime(time);
-	}
 
 	private boolean validateSectionsAmount(final List<EventPoint> sections, final int arrangementId,
 			final String arrangementName) {
@@ -33,7 +28,7 @@ public class SectionsValidator {
 		switch (askYesNoCancel(charterFrame, Label.WARNING, Label.NO_SECTIONS_MOVE_TO_ARRANGEMENT_QUESTION,
 				arrangementName)) {
 			case YES:
-				modeManager.setArrangement(arrangementId);
+				chartTimeHandler.moveTo(arrangementId, null, null);
 				return false;
 			case NO:
 				return true;
@@ -52,11 +47,11 @@ public class SectionsValidator {
 			}
 
 			switch (askYesNoCancel(charterFrame, Label.WARNING, Label.SECTION_WITHOUT_PHRASE_MOVE_QUESTION,
-					section.section.label,
-					formatTime(section.position(), TimeUnit.MILISECONDS, TimeUnit.MINUTES, TimeUnit.YEARS),
+					section.section.label, formatTime(section.position(chartData.beats()), TimeUnit.MILISECONDS,
+							TimeUnit.MINUTES, TimeUnit.YEARS),
 					arrangementName)) {
 				case YES:
-					moveToTimeOnArrangement(arrangementId, section.position());
+					chartTimeHandler.moveTo(arrangementId, null, section.fractionalPosition());
 					return false;
 				case NO:
 					return true;

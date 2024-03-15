@@ -57,11 +57,11 @@ public class Preview3DCameraHandler {
 		int maxFret = 1;
 
 		final IConstantFractionalPosition start = new Position(chartTimeHandler.time() + fretFocusWindowStartOffset)
-				.positionAsFraction(chartData.beats());
+				.toFraction(chartData.beats());
 		final int anchorsFrom = lastBeforeEqual(anchors, start).findId(0);
 
 		final IConstantFractionalPosition end = new Position(chartTimeHandler.time() + fretFocusWindowEndOffset)
-				.positionAsFraction(chartData.beats());
+				.toFraction(chartData.beats());
 		final Integer anchorsTo = lastBeforeEqual(anchors, end).findId();
 		if (anchorsTo == null) {
 			return;

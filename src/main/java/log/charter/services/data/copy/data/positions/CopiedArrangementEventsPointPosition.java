@@ -13,7 +13,7 @@ import log.charter.data.song.SectionType;
 import log.charter.data.song.position.FractionalPosition;
 
 @XStreamAlias("copiedArrangementEventsPointPosition")
-public class CopiedArrangementEventsPointPosition extends CopiedPosition<EventPoint> {
+public class CopiedArrangementEventsPointPosition extends CopiedFractionalPosition<EventPoint> {
 	@XStreamAsAttribute
 	public final SectionType section;
 	@XStreamAsAttribute

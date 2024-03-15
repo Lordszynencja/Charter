@@ -81,7 +81,7 @@ public class ArrangementFretHandPositionsCreator {
 		}
 		final int width = 1 + max(3, fretRange.fretRange.max - fretRange.fretRange.min);
 
-		anchors.add(index, new Anchor(fretRange.positionAsFraction(beats), baseFret, width));
+		anchors.add(index, new Anchor(fretRange.toFraction(beats), baseFret, width));
 	}
 
 	private static boolean canBeExtended(final Anchor anchor, final int fret) {
@@ -101,7 +101,7 @@ public class ArrangementFretHandPositionsCreator {
 
 	private static void addFHPIfNeeded(final ImmutableBeatsMap beats, final FretRange fretRange,
 			final List<Anchor> anchors) {
-		final Integer currentAnchorId = lastBeforeEqual(anchors, fretRange.positionAsFraction(beats),
+		final Integer currentAnchorId = lastBeforeEqual(anchors, fretRange.toFraction(beats),
 				IConstantFractionalPosition::compareTo).findId();
 		if (currentAnchorId == null) {
 			addFHP(beats, fretRange, 0, anchors);

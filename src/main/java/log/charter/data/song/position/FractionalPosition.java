@@ -80,6 +80,10 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		return new FractionalPosition(beatId, fraction);
 	}
 
+	public static FractionalPosition fromTime(final ImmutableBeatsMap beats, final int time) {
+		return fromTime(beats, time, false);
+	}
+
 	public static FractionalPosition fromString(final String value) {
 		if (value == null || value.isBlank()) {
 			return null;

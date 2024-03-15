@@ -1,7 +1,6 @@
 package log.charter.io.rsc.xml;
 
-import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.io.File;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
@@ -10,8 +9,6 @@ import com.thoughtworks.xstream.converters.collections.MapConverter;
 import log.charter.data.song.Anchor;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Beat;
-import log.charter.data.song.BeatsMap;
-import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
@@ -28,7 +25,6 @@ import log.charter.data.song.notes.Note;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
-import log.charter.io.rsc.xml.converters.AnchorConverter.TemporaryAnchor;
 import log.charter.services.data.copy.data.AnchorsCopyData;
 import log.charter.services.data.copy.data.CopyData;
 import log.charter.services.data.copy.data.EventPointsCopyData;
@@ -42,7 +38,7 @@ import log.charter.services.data.copy.data.positions.CopiedHandShapePosition;
 import log.charter.services.data.copy.data.positions.CopiedSoundPosition;
 import log.charter.services.data.copy.data.positions.CopiedToneChangePosition;
 import log.charter.services.data.copy.data.positions.CopiedVocalPosition;
-import log.charter.services.editModes.EditMode;
+import log.charter.util.RW;
 import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.HashMap2;
 import log.charter.util.collections.HashSet2;
@@ -96,51 +92,15 @@ public class ChartProjectXStreamHandler {
 		return xstream;
 	}
 
-	private static void updateToVersion2(final ChartProject project) {
-		if (project.chartFormatVersion >= 2) {
-			return;
-		}
-
-		project.editMode = EditMode.GUITAR;
-		project.arrangement = 0;
-		project.level = 0;
-		project.time = 0;
-
-		project.chartFormatVersion = 2;
-	}
-
-	private static Anchor transformAnchor(final ImmutableBeatsMap beats, final Anchor anchor) {
-		if (anchor instanceof TemporaryAnchor) {
-			return ((TemporaryAnchor) anchor).transform(beats);
-		}
-
-		return anchor;
-	}
-
-	private static void updateToVersion3(final ChartProject project) {
-		if (project.chartFormatVersion >= 4) {
-			return;
-		}
-
-		final ImmutableBeatsMap beats = new BeatsMap(project.beats).immutable;
-
-		project.arrangements.stream()//
-				.flatMap(arrangement -> arrangement.levels.stream())//
-				.forEach(level -> level.anchors = level.anchors.stream().map(anchor -> transformAnchor(beats, anchor))//
-						.collect(Collectors.toCollection(ArrayList::new)));
-
-		project.chartFormatVersion = 3;
-	}
-
-	public static ChartProject readChartProject(final String xml) {
-		final Object o = xstream.fromXML(xml);
+	public static ChartProject readChartProject(final File file) {
+		final Object o = xstream.fromXML(RW.read(file));
 		if (!o.getClass().isAssignableFrom(ChartProject.class)) {
 			return null;
 		}
 
 		final ChartProject project = (ChartProject) o;
-		updateToVersion2(project);
-		updateToVersion3(project);
+		ChartProjectVerion2Updater.update(project);
+		ChartProjectVerion3Updater.update(file, project);
 
 		return project;
 	}

@@ -9,7 +9,9 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.vocals.Vocal;
+import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
@@ -60,21 +62,21 @@ public class LyricLinesDrawer {
 		String currentLine = "";
 		boolean started = false;
 		int x = 0;
+		final ImmutableBeatsMap beats = chartData.beats();
 
-		for (final Vocal vocal : chartData.songChart.vocals.vocals) {
+		for (final Vocal vocal : chartData.currentVocals().vocals) {
 			if (!started) {
 				started = true;
-				x = timeToX(vocal.position(), frameData.time);
+				x = timeToX(vocal.position(beats), frameData.time);
 			}
 
-			currentLine += vocal.getText();
-			if (!vocal.isWordPart()) {
+			currentLine += vocal.text();
+			if (vocal.flag() != VocalFlag.WORD_PART) {
 				currentLine += " ";
 			}
 
-			if (vocal.isPhraseEnd()) {
-				drawingData.addLyricLine(currentLine, x,
-						timeToX(vocal.position() + vocal.length(), frameData.time) - x);
+			if (vocal.flag() == VocalFlag.PHRASE_END) {
+				drawingData.addLyricLine(currentLine, x, timeToX(vocal.endPosition(beats), frameData.time) - x);
 				currentLine = "";
 				started = false;
 			}

@@ -1,6 +1,8 @@
 package log.charter.io.rsc.xml.converters;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -8,7 +10,6 @@ import java.util.stream.Collectors;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 
 import log.charter.data.song.EventType;
-import log.charter.util.collections.ArrayList2;
 
 public class SimpleCollectionToStringConverter<C extends Collection<T>, T> implements SingleValueConverter {
 	private final Supplier<C> collectionConstructor;
@@ -37,9 +38,9 @@ public class SimpleCollectionToStringConverter<C extends Collection<T>, T> imple
 	}
 
 	@Override
-	public Object fromString(final String str) {
+	public C fromString(final String str) {
 		final C collection = collectionConstructor.get();
-		if (str.isBlank()) {
+		if (str == null || str.isBlank()) {
 			return collection;
 		}
 
@@ -50,9 +51,9 @@ public class SimpleCollectionToStringConverter<C extends Collection<T>, T> imple
 		return collection;
 	}
 
-	public static class EventTypesList extends SimpleCollectionToStringConverter<ArrayList2<EventType>, EventType> {
-		public EventTypesList() {
-			super(ArrayList2::new, EventType::valueOf, EventType::name);
+	public static class EventTypesListConverter extends SimpleCollectionToStringConverter<List<EventType>, EventType> {
+		public EventTypesListConverter() {
+			super(ArrayList::new, EventType::valueOf, EventType::name);
 		}
 	}
 

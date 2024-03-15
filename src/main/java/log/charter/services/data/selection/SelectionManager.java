@@ -8,9 +8,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.Anchor;
+import log.charter.data.song.Beat;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.HandShape;
+import log.charter.data.song.ToneChange;
+import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.song.position.Position;
@@ -160,12 +165,44 @@ public class SelectionManager implements Initiable {
 		return (SelectionAccessor<T>) selectionList.getAccessor();
 	}
 
-	public List<Selection<Vocal>> getSortedSelectedVocals() {
-		return this.<Vocal>accessor(PositionType.VOCAL).getSortedSelected();
+	public List<Integer> getSelectedIds(final PositionType type) {
+		return accessor(type).getSelectedIds(type);
 	}
 
-	public Set<Selection<Vocal>> getSelectedVocals() {
-		return this.<Vocal>accessor(PositionType.VOCAL).getSelectedSet();
+	public <T extends IVirtualConstantPosition> List<Selection<T>> getSelected(final PositionType type) {
+		return this.<T>accessor(type).getSelected();
+	}
+
+	public <T extends IVirtualConstantPosition> List<T> getSelectedElements(final PositionType type) {
+		return this.<T>accessor(type).getSelectedElements();
+	}
+
+	public List<Selection<Beat>> getSelectedBeats() {
+		return getSelected(PositionType.BEAT);
+	}
+
+	public List<Selection<Vocal>> getSelectedVocals() {
+		return getSelected(PositionType.VOCAL);
+	}
+
+	public List<Selection<EventPoint>> getSelectedEventPoints() {
+		return getSelected(PositionType.EVENT_POINT);
+	}
+
+	public List<Selection<ToneChange>> getSelectedToneChanges() {
+		return getSelected(PositionType.TONE_CHANGE);
+	}
+
+	public List<Selection<Anchor>> getSelectedAnchors() {
+		return getSelected(PositionType.ANCHOR);
+	}
+
+	public List<Selection<ChordOrNote>> getSelectedSounds() {
+		return getSelected(PositionType.GUITAR_NOTE);
+	}
+
+	public List<Selection<HandShape>> getSelectedHandShapes() {
+		return getSelected(PositionType.HAND_SHAPE);
 	}
 
 	@SuppressWarnings("unchecked")

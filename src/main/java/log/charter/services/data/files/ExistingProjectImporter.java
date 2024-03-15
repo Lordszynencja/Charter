@@ -20,7 +20,6 @@ import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.sound.data.AudioDataShort;
-import log.charter.util.RW;
 
 public class ExistingProjectImporter {
 	private AudioHandler audioHandler;
@@ -41,7 +40,7 @@ public class ExistingProjectImporter {
 
 		final ChartProject project;
 		try {
-			project = readChartProject(RW.read(projectFileChosen));
+			project = readChartProject(projectFileChosen);
 			if (project.chartFormatVersion > 3) {
 				Logger.error("project has wrong version " + project.chartFormatVersion);
 				showPopup(charterFrame, Label.PROJECT_IS_NEWER_VERSION);

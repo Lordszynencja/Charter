@@ -43,11 +43,11 @@ public class GridPosition<T extends Position> implements IConstantPosition, ICon
 	}
 
 	public static GridPosition<Beat> create(final List<Beat> beats, final IVirtualConstantPosition position) {
-		if (position.isFractionalPosition()) {
-			return create(beats, position.asConstantFraction().get().fractionalPosition());
+		if (position.isFraction()) {
+			return create(beats, position.asConstantFraction().fractionalPosition());
 		}
 
-		return create(beats, position.asConstantPosition().get().position());
+		return create(beats, position.asConstantPosition().position());
 	}
 
 	public final int gridSize = Config.gridSize;
@@ -131,12 +131,20 @@ public class GridPosition<T extends Position> implements IConstantPosition, ICon
 	}
 
 	@Override
-	public IConstantPosition positionAsPosition(final ImmutableBeatsMap beats) {
+	public IConstantPosition toPosition(final ImmutableBeatsMap beats) {
 		return this;
 	}
 
 	@Override
-	public IConstantFractionalPosition positionAsFraction(final ImmutableBeatsMap beats) {
+	public IConstantFractionalPosition toFraction(final ImmutableBeatsMap beats) {
 		return this;
+	}
+
+	public int compareTo(final IVirtualConstantPosition position) {
+		if (position.isPosition()) {
+			return IConstantPosition.super.compareTo(position.asConstantPosition());
+		}
+
+		return IConstantFractionalPosition.super.compareTo(position.asConstantFraction());
 	}
 }

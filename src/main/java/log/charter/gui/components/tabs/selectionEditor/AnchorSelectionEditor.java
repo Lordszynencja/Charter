@@ -55,7 +55,7 @@ public class AnchorSelectionEditor {
 		undoSystem.addUndo();
 
 		final ISelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager.accessor(PositionType.ANCHOR);
-		for (final Selection<Anchor> anchorSelection : anchorSelectionAccessor.getSelectedSet()) {
+		for (final Selection<Anchor> anchorSelection : anchorSelectionAccessor.getSelected2()) {
 			anchorSelection.selectable.fret = newFret;
 		}
 	}
@@ -64,7 +64,7 @@ public class AnchorSelectionEditor {
 		undoSystem.addUndo();
 
 		final ISelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager.accessor(PositionType.ANCHOR);
-		for (final Selection<Anchor> anchorSelection : anchorSelectionAccessor.getSelectedSet()) {
+		for (final Selection<Anchor> anchorSelection : anchorSelectionAccessor.getSelected2()) {
 			anchorSelection.selectable.width = newWidth;
 		}
 	}
@@ -80,7 +80,7 @@ public class AnchorSelectionEditor {
 	}
 
 	public void selectionChanged(final ISelectionAccessor<Anchor> selectedAnchorsAccessor) {
-		final Set<Selection<Anchor>> selectedAnchors = selectedAnchorsAccessor.getSelectedSet();
+		final Set<Selection<Anchor>> selectedAnchors = selectedAnchorsAccessor.getSelected2();
 
 		final Integer fret = getSingleValue(selectedAnchors, selection -> selection.selectable.fret, null);
 		anchorFret.field.setTextWithoutEvent(fret == null ? "" : (fret + ""));

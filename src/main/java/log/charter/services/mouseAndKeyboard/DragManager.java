@@ -27,7 +27,7 @@ public class DragManager {
 
 		final ISelectionAccessor<?> selectionAccessor = selectionManager.accessor(pressData.highlight.type);
 		if (selectionAccessor == null || !selectionAccessor.isSelected()//
-				|| contains(selectionAccessor.getSelectedSet(), s -> s.id == pressData.highlight.id)) {
+				|| contains(selectionAccessor.getSelected2(), s -> s.id == pressData.highlight.id)) {
 			return pressData.highlight;
 		}
 

@@ -1,31 +1,18 @@
 package log.charter.data.song.position;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 
 public interface IVirtualPosition extends IVirtualConstantPosition {
-
 	public static interface PositionDataTypeManager<C extends IVirtualConstantPosition, P extends C> {
 		Comparator<C> comparator();
 
-		default List<C> constantOf(final Collection<IVirtualConstantPosition> positions) {
-			return constantOf(positions.stream());
-		}
-
-		default List<P> of(final Collection<IVirtualPosition> positions) {
-			return of(positions.stream());
-		}
-
 		List<C> constantOf(Stream<IVirtualConstantPosition> positions);
-
-		List<P> of(Stream<IVirtualPosition> positions);
 	}
 
 	public static final PositionDataTypeManager<IConstantPosition, IPosition> positionManager = new PositionDataTypeManager<>() {
@@ -37,14 +24,7 @@ public interface IVirtualPosition extends IVirtualConstantPosition {
 		@Override
 		public List<IConstantPosition> constantOf(final Stream<IVirtualConstantPosition> positions) {
 			return positions//
-					.flatMap(p -> p.asConstantPosition().stream())//
-					.collect(Collectors.toList());
-		}
-
-		@Override
-		public List<IPosition> of(final Stream<IVirtualPosition> positions) {
-			return positions//
-					.flatMap(p -> p.asPosition().stream())//
+					.map(p -> p.asConstantPosition())//
 					.collect(Collectors.toList());
 		}
 	};
@@ -58,14 +38,7 @@ public interface IVirtualPosition extends IVirtualConstantPosition {
 		@Override
 		public List<IConstantFractionalPosition> constantOf(final Stream<IVirtualConstantPosition> positions) {
 			return positions//
-					.flatMap(p -> p.asConstantFraction().stream())//
-					.collect(Collectors.toList());
-		}
-
-		@Override
-		public List<IFractionalPosition> of(final Stream<IVirtualPosition> positions) {
-			return positions//
-					.flatMap(p -> p.asFraction().stream())//
+					.map(p -> p.asConstantFraction())//
 					.collect(Collectors.toList());
 		}
 	};
@@ -77,27 +50,27 @@ public interface IVirtualPosition extends IVirtualConstantPosition {
 		}
 
 		final T element = list.get(0);
-		if (element.isFractionalPosition()) {
-			return (List<U>) list.stream().flatMap(p -> p.asConstantFraction().stream()).collect(Collectors.toList());
+		if (element.isFraction()) {
+			return (List<U>) list.stream().map(p -> p.asConstantFraction()).collect(Collectors.toList());
 		}
 
-		return (List<U>) list.stream().flatMap(p -> p.asConstantPosition().stream()).collect(Collectors.toList());
+		return (List<U>) list.stream().map(p -> p.asConstantPosition()).collect(Collectors.toList());
 	}
 
-	default Optional<IPosition> asPosition() {
-		return Optional.empty();
+	default IPosition asPosition() {
+		return null;
 	}
 
-	default Optional<IFractionalPosition> asFraction() {
-		return Optional.empty();
+	default IFractionalPosition asFraction() {
+		return null;
 	}
 
 	default void position(final ImmutableBeatsMap beats, final IVirtualConstantPosition newPosition) {
 		if (isPosition()) {
-			asPosition().get().position(newPosition.positionAsPosition(beats).position());
+			asPosition().position(newPosition.toPosition(beats).position());
 		}
-		if (isFractionalPosition()) {
-			asFraction().get().fractionalPosition(newPosition.positionAsFraction(beats).fractionalPosition());
+		if (isFraction()) {
+			asFraction().fractionalPosition(newPosition.toFraction(beats).fractionalPosition());
 		}
 	}
 }

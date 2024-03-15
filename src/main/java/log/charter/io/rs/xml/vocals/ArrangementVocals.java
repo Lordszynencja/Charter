@@ -8,6 +8,7 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.vocals.Vocals;
 import log.charter.util.collections.ArrayList2;
 
@@ -19,8 +20,12 @@ public class ArrangementVocals {
 	public ArrangementVocals() {
 	}
 
-	public ArrangementVocals(final Vocals vocals) {
-		this.vocals = map(vocals.vocals, ArrangementVocal::new);
+	public ArrangementVocals(final ImmutableBeatsMap beats, final Vocals vocals) {
+		this.vocals = map(vocals.vocals, vocal -> {
+			final int time = vocal.position(beats);
+			final int length = vocal.endPosition(beats) - time;
+			return new ArrangementVocal(time, length, vocal.lyrics());
+		});
 	}
 
 	public ArrangementVocals(final ArrayList2<ArrangementVocal> vocals) {

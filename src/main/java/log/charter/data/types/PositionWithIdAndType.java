@@ -1,7 +1,5 @@
 package log.charter.data.types;
 
-import java.util.Optional;
-
 import log.charter.data.song.Anchor;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
@@ -12,10 +10,11 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.ConstantPosition;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.IConstantFractionalPosition;
+import log.charter.data.song.position.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.vocals.Vocal;
 
-public class PositionWithIdAndType extends ConstantPosition implements IConstantFractionalPosition {
+public class PositionWithIdAndType extends ConstantPosition implements IConstantFractionalPositionWithEnd {
 	public static PositionWithIdAndType none() {
 		return new Builder().build();
 	}
@@ -33,23 +32,24 @@ public class PositionWithIdAndType extends ConstantPosition implements IConstant
 	}
 
 	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int id, final EventPoint eventPoint) {
-		return new Builder(beats, eventPoint.position()).id(id).eventPoint(eventPoint).build();
+		return new Builder(beats, eventPoint.fractionalPosition()).id(id).eventPoint(eventPoint).build();
 	}
 
 	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int id, final ChordOrNote sound) {
-		return new Builder(beats, sound.position(), sound.endPosition()).id(id).sound(sound).build();
+		return new Builder(beats, sound.position(), sound.endPosition().position()).id(id).sound(sound).build();
 	}
 
 	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int id, final HandShape handShape) {
-		return new Builder(beats, handShape.position(), handShape.endPosition()).id(id).handShape(handShape).build();
+		return new Builder(beats, handShape.position(), handShape.endPosition().position()).id(id).handShape(handShape)
+				.build();
 	}
 
 	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int id, final ToneChange toneChange) {
-		return new Builder(beats, toneChange.position()).id(id).toneChange(toneChange).build();
+		return new Builder(beats, toneChange.fractionalPosition()).id(id).toneChange(toneChange).build();
 	}
 
 	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int id, final Vocal vocal) {
-		return new Builder(beats, vocal.position(), vocal.endPosition()).id(id).vocal(vocal).build();
+		return new Builder(beats, vocal.fractionalPosition(), vocal.endPosition()).id(id).vocal(vocal).build();
 	}
 
 	private static class Builder {
@@ -74,14 +74,14 @@ public class PositionWithIdAndType extends ConstantPosition implements IConstant
 
 		public Builder(final ImmutableBeatsMap beats, final int position, final int endPosition) {
 			this.position = position;
-			fractionalPosition = FractionalPosition.fromTime(beats, position, false);
+			fractionalPosition = FractionalPosition.fromTime(beats, position);
 			this.endPosition = endPosition;
-			fractionalEndPosition = FractionalPosition.fromTime(beats, endPosition, false);
+			fractionalEndPosition = FractionalPosition.fromTime(beats, endPosition);
 		}
 
 		public Builder(final ImmutableBeatsMap beats, final int position) {
 			this.position = position;
-			fractionalPosition = FractionalPosition.fromTime(beats, position, false);
+			fractionalPosition = FractionalPosition.fromTime(beats, position);
 			endPosition = position;
 			fractionalEndPosition = fractionalPosition;
 		}
@@ -93,7 +93,6 @@ public class PositionWithIdAndType extends ConstantPosition implements IConstant
 			fractionalEndPosition = fractionalPosition;
 		}
 
-		@SuppressWarnings("unused")
 		public Builder(final ImmutableBeatsMap beats, final FractionalPosition fractionalPosition,
 				final FractionalPosition fractionalEndPosition) {
 			position = fractionalPosition.getPosition(beats);
@@ -222,28 +221,33 @@ public class PositionWithIdAndType extends ConstantPosition implements IConstant
 	}
 
 	@Override
-	public IConstantPosition positionAsPosition(final ImmutableBeatsMap beats) {
+	public IConstantPosition toPosition(final ImmutableBeatsMap beats) {
 		return this;
 	}
 
 	@Override
-	public IConstantFractionalPosition positionAsFraction(final ImmutableBeatsMap beats) {
+	public IConstantFractionalPosition toFraction(final ImmutableBeatsMap beats) {
 		return this;
 	}
 
 	@Override
-	public Optional<IConstantPosition> asConstantPosition() {
-		return Optional.of(this);
+	public IConstantPosition asConstantPosition() {
+		return this;
 	}
 
 	@Override
-	public Optional<IConstantFractionalPosition> asConstantFraction() {
-		return Optional.of(this);
+	public IConstantFractionalPosition asConstantFraction() {
+		return this;
 	}
 
 	@Override
 	public FractionalPosition fractionalPosition() {
 		return fractionalPosition;
+	}
+
+	@Override
+	public FractionalPosition endPosition() {
+		return fractionalEndPosition;
 	}
 
 }

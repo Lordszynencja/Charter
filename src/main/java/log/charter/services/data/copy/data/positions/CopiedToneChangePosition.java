@@ -8,7 +8,7 @@ import log.charter.data.song.ToneChange;
 import log.charter.data.song.position.FractionalPosition;
 
 @XStreamAlias("copiedToneChange")
-public class CopiedToneChangePosition extends CopiedPosition<ToneChange> {
+public class CopiedToneChangePosition extends CopiedFractionalPosition<ToneChange> {
 	@XStreamAsAttribute
 	public final String toneName;
 

@@ -31,8 +31,8 @@ public class AnchorDrawData implements IConstantPositionWithLength, Comparable<I
 		final List<AnchorDrawData> anchorsToDraw = new ArrayList<>();
 		final List<Anchor> anchors = chartData.currentAnchors();
 
-		final int anchorsFrom = lastBeforeEqual(anchors, new Position(timeFrom).positionAsFraction(beats)).findId(0);
-		final Integer anchorsTo = lastBeforeEqual(anchors, new Position(timeTo).positionAsFraction(beats)).findId();
+		final int anchorsFrom = lastBeforeEqual(anchors, new Position(timeFrom).toFraction(beats)).findId(0);
+		final Integer anchorsTo = lastBeforeEqual(anchors, new Position(timeTo).toFraction(beats)).findId();
 		if (anchorsTo == null) {
 			return anchorsToDraw;
 		}
@@ -49,9 +49,9 @@ public class AnchorDrawData implements IConstantPositionWithLength, Comparable<I
 			}
 
 			final List<EventPoint> phrases = filter(chartData.currentEventPoints(), e -> e.hasPhrase());
-			final EventPoint nextPhraseIteration = firstAfter(phrases, anchor.positionAsPosition(beats)).find();
+			final EventPoint nextPhraseIteration = firstAfter(phrases, anchor).find();
 			if (nextPhraseIteration != null) {
-				anchorTimeTo = min(anchorTimeTo, nextPhraseIteration.position());
+				anchorTimeTo = min(anchorTimeTo, nextPhraseIteration.position(beats));
 			}
 			anchorTimeTo = min(anchorTimeTo, timeTo);
 

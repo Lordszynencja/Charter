@@ -10,7 +10,7 @@ import javax.swing.JTextField;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.vocals.Vocal;
-import log.charter.data.types.PositionType;
+import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
@@ -59,26 +59,14 @@ public class VocalSelectionEditor {
 	private void changeText(final String newText) {
 		undoSystem.addUndo();
 
-		for (final Selection<Vocal> anchorSelection : selectionManager.getSelectedVocals()) {
-			final boolean phraseEnd = anchorSelection.selectable.isPhraseEnd();
-			final boolean wordPart = anchorSelection.selectable.isWordPart();
-			anchorSelection.selectable.lyric = newText;
-			anchorSelection.selectable.setPhraseEnd(phraseEnd);
-			anchorSelection.selectable.setWordPart(wordPart);
+		for (final Selection<Vocal> selection : selectionManager.getSelectedVocals()) {
+			selection.selectable.text(newText);
 		}
 	}
 
-	private void setWordPart(final boolean newWordPart) {
-		final ISelectionAccessor<Vocal> vocalSelectionAccessor = selectionManager.accessor(PositionType.VOCAL);
-		for (final Selection<Vocal> anchorSelection : vocalSelectionAccessor.getSelectedSet()) {
-			anchorSelection.selectable.setWordPart(newWordPart);
-		}
-	}
-
-	private void setPhraseEnd(final boolean newWordPart) {
-		final ISelectionAccessor<Vocal> vocalSelectionAccessor = selectionManager.accessor(PositionType.VOCAL);
-		for (final Selection<Vocal> anchorSelection : vocalSelectionAccessor.getSelectedSet()) {
-			anchorSelection.selectable.setPhraseEnd(newWordPart);
+	private void setFlag(final VocalFlag flag) {
+		for (final Selection<Vocal> selection : selectionManager.getSelectedVocals()) {
+			selection.selectable.flag(flag);
 		}
 	}
 
@@ -87,12 +75,11 @@ public class VocalSelectionEditor {
 		if (newWordPart) {
 			vocalPhraseEnd.field.setEnabled(false);
 			vocalPhraseEnd.field.setSelected(false);
-			setPhraseEnd(false);
+			setFlag(VocalFlag.WORD_PART);
 		} else {
 			vocalPhraseEnd.field.setEnabled(true);
+			setFlag(VocalFlag.NONE);
 		}
-
-		setWordPart(newWordPart);
 	}
 
 	private void changePhraseEnd(final boolean newPhraseEnd) {
@@ -100,12 +87,11 @@ public class VocalSelectionEditor {
 		if (newPhraseEnd) {
 			vocalWordPart.field.setEnabled(false);
 			vocalWordPart.field.setSelected(false);
-			setWordPart(false);
+			setFlag(VocalFlag.PHRASE_END);
 		} else {
 			vocalWordPart.field.setEnabled(true);
+			setFlag(VocalFlag.NONE);
 		}
-
-		setPhraseEnd(newPhraseEnd);
 	}
 
 	public void showFields() {
@@ -120,23 +106,21 @@ public class VocalSelectionEditor {
 	}
 
 	public void selectionChanged(final ISelectionAccessor<Vocal> selectedVocalsAccessor) {
-		final Set<Selection<Vocal>> selectedVocals = selectedVocalsAccessor.getSelectedSet();
+		final Set<Selection<Vocal>> selectedVocals = selectedVocalsAccessor.getSelected2();
 		if (selectedVocals.size() == 1) {
-			final String text = selectedVocals.stream().findFirst().get().selectable.getText();
+			final String text = selectedVocals.stream().findFirst().get().selectable.text();
 			vocalText.field.setTextWithoutEvent(text);
 			vocalText.setVisible(true);
 		} else {
 			vocalText.setVisible(false);
 		}
 
-		final Boolean wordPart = getSingleValue(selectedVocals, selection -> selection.selectable.isWordPart(), false);
-		final Boolean phraseEnd = getSingleValue(selectedVocals, selection -> selection.selectable.isPhraseEnd(),
-				false);
+		final VocalFlag flag = getSingleValue(selectedVocals, selection -> selection.selectable.flag(), VocalFlag.NONE);
 
-		vocalWordPart.field.setEnabled(wordPart || !phraseEnd);
-		vocalWordPart.field.setSelected(wordPart);
+		vocalWordPart.field.setEnabled(flag != VocalFlag.PHRASE_END);
+		vocalWordPart.field.setSelected(flag == VocalFlag.WORD_PART);
 
-		vocalPhraseEnd.field.setEnabled(phraseEnd || !wordPart);
-		vocalPhraseEnd.field.setSelected(phraseEnd);
+		vocalPhraseEnd.field.setEnabled(flag != VocalFlag.WORD_PART);
+		vocalPhraseEnd.field.setSelected(flag == VocalFlag.PHRASE_END);
 	}
 }

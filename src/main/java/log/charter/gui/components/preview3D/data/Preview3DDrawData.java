@@ -47,7 +47,7 @@ public class Preview3DDrawData {
 
 	public IntRange getFrets(final int t) {
 		if (!fretsCache.containsKey(t)) {
-			final IConstantFractionalPosition p = new Position(t).positionAsFraction(songBeats);
+			final IConstantFractionalPosition p = new Position(t).toFraction(songBeats);
 			Anchor anchor = lastBeforeEqual(levelAnchors, p, IConstantFractionalPosition::compareTo).find();
 			if (anchor == null) {
 				anchor = firstAfter(levelAnchors, p, IConstantFractionalPosition::compareTo).find();

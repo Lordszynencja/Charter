@@ -8,7 +8,7 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
 
 @XStreamAlias("copiedAnchor")
-public class CopiedAnchorPosition extends CopiedPosition<Anchor> {
+public class CopiedAnchorPosition extends CopiedFractionalPosition<Anchor> {
 	@XStreamAsAttribute
 	public final int fret;
 	@XStreamAsAttribute

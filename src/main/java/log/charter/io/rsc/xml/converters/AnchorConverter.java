@@ -12,7 +12,7 @@ import log.charter.data.song.position.FractionalPosition;
 
 public class AnchorConverter implements Converter {
 	public static class TemporaryAnchor extends Anchor {
-		public final int position;
+		private final int position;
 
 		public TemporaryAnchor(final int position) {
 			this.position = position;
@@ -56,7 +56,7 @@ public class AnchorConverter implements Converter {
 	}
 
 	@Override
-	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+	public Anchor unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		final Anchor anchor = generateAnchorFromPosition(reader);
 		anchor.fret = Integer.valueOf(reader.getAttribute("fret"));
 		anchor.width = readWidth(reader.getAttribute("width"));

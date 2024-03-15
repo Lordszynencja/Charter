@@ -78,7 +78,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		final int templateId = arrangement.getChordTemplateIdWithSave(chordTemplate);
 
 		final ISelectionAccessor<HandShape> selectionAccessor = selectionManager.accessor(PositionType.HAND_SHAPE);
-		for (final Selection<HandShape> selection : selectionAccessor.getSelectedSet()) {
+		for (final Selection<HandShape> selection : selectionAccessor.getSelected2()) {
 			selection.selectable.templateId = templateId;
 		}
 
@@ -108,7 +108,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 
 	private void setTemplateForChordsInsideSelectedHandShapes() {
 		final ISelectionAccessor<HandShape> selectionAccessor = selectionManager.accessor(PositionType.HAND_SHAPE);
-		for (final Selection<HandShape> selection : selectionAccessor.getSelectedSet()) {
+		for (final Selection<HandShape> selection : selectionAccessor.getSelected2()) {
 			setTemplateForChordsIn(selection.selectable);
 		}
 	}
@@ -138,7 +138,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	}
 
 	public void selectionChanged(final ISelectionAccessor<HandShape> selectedHandShapesAccessor) {
-		final Set<Selection<HandShape>> selected = selectedHandShapesAccessor.getSelectedSet();
+		final Set<Selection<HandShape>> selected = selectedHandShapesAccessor.getSelected2();
 
 		final Integer templateId = getSingleValue(selected, selection -> selection.selectable.templateId, null);
 		if (templateId == null) {

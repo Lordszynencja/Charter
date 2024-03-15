@@ -72,7 +72,8 @@ public class EventPointsCopyData implements ICopyData {
 						value.events = new ArrayList2<>();
 					}
 
-					final EventPoint eventPoint = arrangement.findOrCreateArrangementEventsPoint(value.position());
+					final EventPoint eventPoint = arrangement
+							.findOrCreateArrangementEventsPoint(value.fractionalPosition());
 					eventPoint.merge(value);
 					positionsToSelect.add(value);
 				}

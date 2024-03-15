@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import log.charter.data.song.ToneChange;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
@@ -16,21 +17,22 @@ import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
 
 public class GuitarToneChangeDrawer {
-	private static String findCurrentTone(final String baseTone, final List<ToneChange> toneChanges, final int time) {
+	private static String findCurrentTone(final String baseTone, final List<ToneChange> toneChanges,
+			final FractionalPosition time) {
 		final List<ToneChange> tones = filter(toneChanges, //
-				eventPoint -> eventPoint.position() < time);
+				eventPoint -> eventPoint.compareTo(time) < 0);
 
 		return tones.isEmpty() ? baseTone : tones.get(tones.size() - 1).toneName;
 	}
 
 	private static void drawCurrentTone(final Graphics2D g, final HighwayDrawer highwayDrawer, final String baseTone,
-			final List<ToneChange> toneChanges, final int time, final int nextEventPointX) {
+			final List<ToneChange> toneChanges, final FractionalPosition time, final int nextEventPointX) {
 		final String tone = findCurrentTone(baseTone, toneChanges, time);
 		highwayDrawer.addCurrentTone(g, tone, nextEventPointX);
 	}
 
 	private static void drawCurrentTone(final Graphics2D g, final HighwayDrawer highwayDrawer, final String baseTone,
-			final List<ToneChange> toneChanges, final int time) {
+			final List<ToneChange> toneChanges, final FractionalPosition time) {
 		final String tone = findCurrentTone(baseTone, toneChanges, time);
 		highwayDrawer.addCurrentTone(g, tone);
 	}
@@ -51,14 +53,15 @@ public class GuitarToneChangeDrawer {
 			final HighwayDrawer highwayDrawer) {
 		final Set<Integer> selectedIds = frameData.selection.getSelectedIds(PositionType.TONE_CHANGE);
 		final int highlightId = frameData.highlightData.getId(PositionType.TONE_CHANGE);
-		final int leftScreenEdgeTime = xToTime(0, frameData.time);
+		final FractionalPosition leftScreenEdgeTime = FractionalPosition.fromTime(frameData.beats,
+				xToTime(0, frameData.time));
 		final String baseTone = frameData.arrangement.baseTone;
 		final List<ToneChange> toneChanges = frameData.arrangement.toneChanges;
 
 		boolean currentToneDrawn = false;
 		for (int i = 0; i < toneChanges.size(); i++) {
 			final ToneChange toneChange = toneChanges.get(i);
-			final int x = timeToX(toneChange.position(), frameData.time);
+			final int x = timeToX(toneChange.position(frameData.beats), frameData.time);
 			if (x < 0) {
 				continue;
 			}

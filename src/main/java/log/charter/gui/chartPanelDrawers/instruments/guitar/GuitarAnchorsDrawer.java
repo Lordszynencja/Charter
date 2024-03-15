@@ -1,5 +1,6 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
@@ -13,13 +14,12 @@ import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
-import log.charter.util.CollectionUtils;
 
 public class GuitarAnchorsDrawer {
 	private static Anchor findCurrentAnchor(final FrameData frameData, final int edgeTime) {
-		final FractionalPosition edgePosition = FractionalPosition.fromTime(frameData.beats, edgeTime, false);
+		final FractionalPosition edgePosition = FractionalPosition.fromTime(frameData.beats, edgeTime);
 
-		return CollectionUtils.lastBeforeEqual(frameData.level.anchors, edgePosition).find();
+		return lastBeforeEqual(frameData.level.anchors, edgePosition).find();
 	}
 
 	private static void drawCurrentAnchor(final FrameData frameData, final HighwayDrawer highwayDrawer,

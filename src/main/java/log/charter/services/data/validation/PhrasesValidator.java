@@ -10,17 +10,10 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.EventPoint;
 import log.charter.gui.CharterFrame;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.services.editModes.ModeManager;
 
 public class PhrasesValidator {
 	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
-	private ModeManager modeManager;
-
-	private void moveToTimeOnArrangement(final int arrangementId, final int time) {
-		modeManager.setArrangement(arrangementId);
-		chartTimeHandler.nextTime(time);
-	}
 
 	private boolean validateCountPhrases(final List<EventPoint> phrases, final int arrangementId,
 			final String arrangementName) {
@@ -33,7 +26,8 @@ public class PhrasesValidator {
 		switch (askYesNoCancel(charterFrame, Label.WARNING, Label.MULTIPLE_COUNT_PHRASES_MOVE_TO_LAST_QUESTION,
 				arrangementName)) {
 			case YES:
-				moveToTimeOnArrangement(arrangementId, countPhrases.get(countPhrases.size() - 1).position());
+				chartTimeHandler.moveTo(arrangementId, null,
+						countPhrases.get(countPhrases.size() - 1).fractionalPosition());
 				return false;
 			case NO:
 				return true;
@@ -55,7 +49,7 @@ public class PhrasesValidator {
 		switch (askYesNoCancel(charterFrame, Label.WARNING, Label.MULTIPLE_END_PHRASES_MOVE_TO_FIRST_QUESTION,
 				arrangementName)) {
 			case YES:
-				moveToTimeOnArrangement(arrangementId, endPhrases.get(0).position());
+				chartTimeHandler.moveTo(arrangementId, null, endPhrases.get(0).fractionalPosition());
 				return false;
 			case NO:
 				return true;
@@ -75,7 +69,7 @@ public class PhrasesValidator {
 		switch (askYesNoCancel(charterFrame, Label.WARNING, Label.NO_PHRASES_MOVE_TO_ARRANGEMENT_QUESTION,
 				arrangementName)) {
 			case YES:
-				modeManager.setArrangement(arrangementId);
+				chartTimeHandler.moveTo(arrangementId, null, null);
 				return false;
 			case NO:
 				return true;

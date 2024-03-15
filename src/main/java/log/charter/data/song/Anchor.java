@@ -12,31 +12,31 @@ import log.charter.io.rsc.xml.converters.AnchorConverter;
 @XStreamConverter(AnchorConverter.class)
 public class Anchor implements IFractionalPosition {
 
-	private FractionalPosition fractionalPosition;
+	private FractionalPosition position;
 	public int fret = 1;
 	public int width = 4;
 
 	public Anchor() {
-		fractionalPosition = new FractionalPosition(0);
+		position = new FractionalPosition(0);
 	}
 
 	public Anchor(final IConstantFractionalPosition fractionalPosition, final int fret) {
-		this.fractionalPosition = fractionalPosition.fractionalPosition();
+		this.position = fractionalPosition.fractionalPosition();
 		this.fret = fret;
 	}
 
 	public Anchor(final IConstantFractionalPosition fractionalPosition) {
-		this.fractionalPosition = fractionalPosition.fractionalPosition();
+		this.position = fractionalPosition.fractionalPosition();
 	}
 
 	public Anchor(final IConstantFractionalPosition fractionalPosition, final int fret, final int width) {
-		this.fractionalPosition = fractionalPosition.fractionalPosition();
+		this.position = fractionalPosition.fractionalPosition();
 		this.fret = fret;
 		this.width = width;
 	}
 
 	public Anchor(final Anchor other) {
-		fractionalPosition = other.fractionalPosition;
+		position = other.position;
 		fret = other.fret;
 		width = other.width;
 	}
@@ -47,7 +47,7 @@ public class Anchor implements IFractionalPosition {
 
 	@Override
 	public FractionalPosition fractionalPosition() {
-		return fractionalPosition;
+		return position;
 	}
 
 	@Override
@@ -56,6 +56,6 @@ public class Anchor implements IFractionalPosition {
 			throw new IllegalArgumentException("Can't set position to null");
 		}
 
-		fractionalPosition = newPosition;
+		position = newPosition;
 	}
 }

@@ -30,6 +30,7 @@ import log.charter.data.song.BeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.Note;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.Position;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
@@ -168,8 +169,9 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		lastBeatId = firstAfterEqual(beatsMap.beats, new Position(notePosition + notesLengths[string]))
 				.findId(beatsMap.beats.size() - 1);
 
-		noteStartPosition = beatsMap.getPositionInBeats(notePosition) - firstBeatId;
-		noteEndPosition = beatsMap.getPositionInBeats(notePosition + notesLengths[string]) - firstBeatId;
+		noteStartPosition = FractionalPosition.fromTime(beatsMap.immutable, notePosition).doubleValue() - firstBeatId;
+		noteEndPosition = FractionalPosition.fromTime(beatsMap.immutable, notePosition + notesLengths[string])
+				.doubleValue() - firstBeatId;
 
 		calculateSize();
 	}
@@ -212,7 +214,8 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 				}
 				final int fullPosition = notePosition + bendValueToEdit.position();
 
-				final double positionInBeats = beatsMap.getPositionInBeats(fullPosition);
+				final double positionInBeats = FractionalPosition.fromTime(beatsMap.immutable, fullPosition)
+						.doubleValue();
 				final double position = positionInBeats - firstBeatId;
 				int value = (int) round(bendValueToEdit.bendValue.doubleValue() * bendValueDenominator);
 				value = max(0, min(maxBendInternalValue, value));

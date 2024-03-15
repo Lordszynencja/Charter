@@ -1,10 +1,8 @@
 package log.charter.services.data.copy;
 
-import static log.charter.util.CollectionUtils.firstAfterEqual;
-import static log.charter.util.CollectionUtils.lastBeforeEqual;
+import static log.charter.util.CollectionUtils.getFromTo;
 import static log.charter.util.CollectionUtils.map;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -42,10 +40,10 @@ import log.charter.services.data.copy.data.HandShapesCopyData;
 import log.charter.services.data.copy.data.ICopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
+import log.charter.services.data.copy.data.positions.Copied;
 import log.charter.services.data.copy.data.positions.CopiedAnchorPosition;
 import log.charter.services.data.copy.data.positions.CopiedArrangementEventsPointPosition;
 import log.charter.services.data.copy.data.positions.CopiedHandShapePosition;
-import log.charter.services.data.copy.data.positions.CopiedPosition;
 import log.charter.services.data.copy.data.positions.CopiedSoundPosition;
 import log.charter.services.data.copy.data.positions.CopiedToneChangePosition;
 import log.charter.services.data.copy.data.positions.CopiedVocalPosition;
@@ -56,7 +54,7 @@ import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
 public class CopyManager {
-	private static interface CopiedPositionMaker<T extends IVirtualPosition, V extends CopiedPosition<T>> {
+	private static interface CopyMaker<T, V extends Copied<T>> {
 		V make(ImmutableBeatsMap beats, FractionalPosition basePosition, T item);
 	}
 
@@ -67,44 +65,29 @@ public class CopyManager {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	private <T extends IVirtualPosition, V extends CopiedPosition<T>> List<V> makeCopy(final Stream<T> positions,
-			final FractionalPosition basePosition, final CopiedPositionMaker<T, V> copiedPositionMaker) {
+	private <T, V extends Copied<T>> List<V> makeCopy(final Stream<T> positions, final FractionalPosition basePosition,
+			final CopyMaker<T, V> copyMaker) {
 		return positions//
-				.map(position -> copiedPositionMaker.make(chartData.beats(), basePosition, position))//
+				.map(position -> copyMaker.make(chartData.beats(), basePosition, position))//
 				.collect(Collectors.toList());
 	}
 
-	private <T extends IVirtualPosition, V extends CopiedPosition<T>> List<V> makeCopy(
-			final List<Selection<T>> selectedPositions, final CopiedPositionMaker<T, V> copiedPositionMaker) {
+	private <T extends IVirtualPosition, V extends Copied<T>> List<V> makeCopy(
+			final List<Selection<T>> selectedPositions, final CopyMaker<T, V> copyMaker) {
 		final ImmutableBeatsMap beats = chartData.beats();
-		final FractionalPosition basePosition = selectedPositions.get(0).selectable.positionAsFraction(beats)
+		final FractionalPosition basePosition = selectedPositions.get(0).selectable.toFraction(beats)
 				.fractionalPosition();
 
-		return makeCopy(selectedPositions.stream().map(selected -> selected.selectable), basePosition,
-				copiedPositionMaker);
+		return makeCopy(selectedPositions.stream().map(selected -> selected.selectable), basePosition, copyMaker);
 	}
 
-	private <T extends IVirtualPosition, V extends CopiedPosition<T>> List<V> copyPositionsFromTo(
+	private <T extends IVirtualPosition, V extends Copied<T>> List<V> copyPositionsFromTo(
 			final IVirtualConstantPosition from, final IVirtualConstantPosition to,
-			final FractionalPosition basePosition, final List<T> positions,
-			final CopiedPositionMaker<T, V> copiedPositionMaker) {
+			final FractionalPosition basePosition, final List<T> positions, final CopyMaker<T, V> copyMaker) {
 		final ImmutableBeatsMap beats = chartData.beats();
-
 		final Comparator<IVirtualConstantPosition> comparator = IVirtualConstantPosition.comparator(beats);
-		final Integer fromId = firstAfterEqual(positions, from, comparator).findId();
-		if (fromId == null) {
-			return new ArrayList<>();
-		}
-
-		final Integer toId = lastBeforeEqual(positions, to, comparator).findId();
-		if (toId == null || fromId > toId) {
-			return new ArrayList<>();
-		}
-
-		final List<V> list = new ArrayList<>(toId - fromId + 1);
-		for (int i = fromId; i <= toId; i++) {
-			list.add(copiedPositionMaker.make(beats, basePosition, positions.get(i)));
-		}
+		final List<V> list = map(getFromTo(positions, from, to, comparator),
+				p -> copyMaker.make(beats, basePosition, p));
 
 		return list;
 	}
@@ -116,7 +99,7 @@ public class CopyManager {
 
 		final Arrangement arrangement = chartData.currentArrangement();
 		final ImmutableBeatsMap beats = chartData.beats();
-		final FractionalPosition basePosition = from.positionAsFraction(beats).fractionalPosition();
+		final FractionalPosition basePosition = from.toFraction(beats).fractionalPosition();
 
 		final Map<String, Phrase> copiedPhrases = map(arrangement.phrases, k -> k, Phrase::new);
 		final List<CopiedArrangementEventsPointPosition> copiedArrangementEventsPoints = copyPositionsFromTo(from, to,
@@ -139,10 +122,10 @@ public class CopyManager {
 		final ISelectionAccessor<EventPoint> selectedBeatsAccessor = selectionManager
 				.accessor(PositionType.EVENT_POINT);
 
-		final List<Selection<EventPoint>> selectedBeats = selectedBeatsAccessor.getSortedSelected();
+		final List<Selection<EventPoint>> selectedBeats = selectedBeatsAccessor.getSelected();
 		final IVirtualConstantPosition from = selectedBeats.get(0).selectable;
 		final IVirtualConstantPosition to = selectedBeats.get(selectedBeats.size() - 1).selectable;
-		final FractionalPosition basePosition = from.positionAsFraction(chartData.beats()).fractionalPosition();
+		final FractionalPosition basePosition = from.toFraction(chartData.beats()).fractionalPosition();
 		final Arrangement arrangement = chartData.currentArrangement();
 
 		final Map<String, Phrase> copiedPhrases = map(arrangement.phrases, phraseName -> phraseName, Phrase::new);
@@ -156,7 +139,7 @@ public class CopyManager {
 	private CopyData getGuitarCopyDataGuitarNotes() {
 		final ISelectionAccessor<ChordOrNote> selectedSoundsAccessor = selectionManager
 				.accessor(PositionType.GUITAR_NOTE);
-		final List<Selection<ChordOrNote>> selectedSounds = selectedSoundsAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selectedSounds = selectedSoundsAccessor.getSelected();
 
 		final List<ChordTemplate> copiedChordTemplates = chartData.currentArrangement().chordTemplates//
 				.stream().map(ChordTemplate::new).collect(Collectors.toList());
@@ -171,7 +154,7 @@ public class CopyManager {
 	private CopyData getGuitarCopyDataHandShapes() {
 		final ISelectionAccessor<HandShape> selectedHandShapesAccessor = selectionManager
 				.accessor(PositionType.HAND_SHAPE);
-		final List<Selection<HandShape>> selectedHandShapes = selectedHandShapesAccessor.getSortedSelected();
+		final List<Selection<HandShape>> selectedHandShapes = selectedHandShapesAccessor.getSelected();
 
 		final List<ChordTemplate> copiedChordTemplates = map(chartData.currentChordTemplates(), ChordTemplate::new);
 		final List<CopiedHandShapePosition> copiedHandShapes = makeCopy(selectedHandShapes,
@@ -183,14 +166,14 @@ public class CopyManager {
 		return new CopyData(copyData, getFullCopyData(from, to));
 	}
 
-	private <T extends IVirtualPosition, V extends CopiedPosition<T>> CopyData getCopyData(final PositionType type,
-			final CopiedPositionMaker<T, V> copiedPositionMaker, final Function<List<V>, ICopyData> copyDataMaker) {
+	private <T extends IVirtualPosition, V extends Copied<T>> CopyData getCopyData(final PositionType type,
+			final CopyMaker<T, V> copiedPositionMaker, final Function<List<V>, ICopyData> copyDataMaker) {
 		final ISelectionAccessor<T> selectionAccessor = selectionManager.accessor(type);
 		if (!selectionAccessor.isSelected()) {
 			return null;
 		}
 
-		final List<Selection<T>> selected = selectionAccessor.getSortedSelected();
+		final List<Selection<T>> selected = selectionAccessor.getSelected();
 		final List<V> copied = makeCopy(selected, copiedPositionMaker);
 
 		final IVirtualConstantPosition from = selected.get(0).selectable;

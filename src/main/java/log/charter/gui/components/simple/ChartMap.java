@@ -20,9 +20,11 @@ import java.util.function.Predicate;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.vocals.Vocal;
+import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
@@ -125,20 +127,21 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 	private void drawVocalLines(final Graphics g) {
 		g.setColor(ColorLabel.VOCAL_NOTE.color());
 
+		final ImmutableBeatsMap beats = chartData.beats();
 		final int y0 = chartMapHeightMultiplier;
 		final int y2 = getHeight() - chartMapHeightMultiplier - 1;
 		final int y1 = y0 + chartMapHeightMultiplier;
 		boolean started = false;
 		int x = 0;
 
-		for (final Vocal vocal : chartData.songChart.vocals.vocals) {
+		for (final Vocal vocal : chartData.currentVocals().vocals) {
 			if (!started) {
 				started = true;
-				x = timeToPosition(vocal.position());
+				x = timeToPosition(vocal.position(beats));
 			}
 
-			if (vocal.isPhraseEnd()) {
-				final int x1 = timeToPosition(vocal.position() + vocal.length());
+			if (vocal.flag() == VocalFlag.PHRASE_END) {
+				final int x1 = timeToPosition(vocal.endPosition(beats));
 
 				g.fillRect(x, y1, x1 - x, chartMapHeightMultiplier);
 				g.drawLine(x, y0, x, y2);
@@ -150,14 +153,16 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 
 	private void drawEventPoints(final Graphics g, final int y, final ColorLabel color,
 			final Predicate<EventPoint> filter) {
+		final ImmutableBeatsMap beats = chartData.beats();
 		final List<EventPoint> points = chartData.currentArrangement().getFilteredEventPoints(filter);
 
 		for (int i = 0; i < points.size(); i++) {
-			final EventPoint point = points.get(i);
-			final EventPoint nextPoint = i + 1 < points.size() ? points.get(i + 1) : null;
+			final int pointTime = points.get(i).position(beats);
+			final int nextPointTime = i + 1 < points.size() ? points.get(i + 1).position(beats)
+					: chartTimeHandler.maxTime();
 
-			final int x0 = timeToPosition(point.position());
-			final int x1 = timeToPosition(nextPoint == null ? chartTimeHandler.maxTime() : nextPoint.position());
+			final int x0 = timeToPosition(pointTime);
+			final int x1 = timeToPosition(nextPointTime);
 			final int width = max(1, x1 - x0 - 2);
 
 			g.setColor(color.color());

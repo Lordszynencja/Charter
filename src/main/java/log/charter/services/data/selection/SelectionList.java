@@ -6,7 +6,6 @@ import static log.charter.util.CollectionUtils.map;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -102,10 +101,6 @@ class SelectionList<C extends IVirtualConstantPosition, P extends C, T extends P
 		add(positionTypeManager.getIdsForPositions(chartData, positions));
 	}
 
-	public Set<Integer> getSelectedIds() {
-		return new TreeSet<>(selectedIds);
-	}
-
 	public void clear() {
 		selectedIds.clear();
 		lastId = null;
@@ -120,7 +115,7 @@ class SelectionList<C extends IVirtualConstantPosition, P extends C, T extends P
 		return new Selection<>(pressData.highlight.id, pressData.highlight.get());
 	}
 
-	public Collection<Selection<T>> getSelectionWithTemporary() {
+	public List<Selection<T>> getSelected() {
 		if (!selectedIds.isEmpty()) {
 			final List<T> items = positionTypeManager.getItems(chartData);
 			return map(selectedIds, id -> new Selection<>(id, items.get(id)));
@@ -132,6 +127,24 @@ class SelectionList<C extends IVirtualConstantPosition, P extends C, T extends P
 		}
 
 		return asList(temporarySelection);
+	}
+
+	public List<Integer> getSelectedIds() {
+		return new ArrayList<>(selectedIds);
+	}
+
+	public List<T> getSelectedElements() {
+		if (!selectedIds.isEmpty()) {
+			final List<T> items = positionTypeManager.getItems(chartData);
+			return map(selectedIds, id -> items.get(id));
+		}
+
+		final Selection<T> temporarySelection = getTemporarySelect();
+		if (temporarySelection == null) {
+			return new ArrayList<>();
+		}
+
+		return asList(temporarySelection.selectable);
 	}
 
 	public SelectionAccessor<T> getAccessor() {

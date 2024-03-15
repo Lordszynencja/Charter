@@ -28,12 +28,12 @@ import log.charter.services.editModes.EditMode;
 public enum PositionType {
 	ANCHOR(fractionalPositionManager, ChartData::currentAnchors, PositionWithIdAndType::of), //
 	BEAT(positionManager, ChartData::beats, PositionWithIdAndType::of), //
-	EVENT_POINT(positionManager, ChartData::currentEventPoints, PositionWithIdAndType::of), //
+	EVENT_POINT(fractionalPositionManager, ChartData::currentEventPoints, PositionWithIdAndType::of), //
 	GUITAR_NOTE(positionManager, ChartData::currentSounds, PositionWithIdAndType::of), //
 	HAND_SHAPE(positionManager, ChartData::currentHandShapes, PositionWithIdAndType::of), //
 	NONE(positionManager, chartData -> new ArrayList<>(), (beats, id, item) -> PositionWithIdAndType.none()), //
-	TONE_CHANGE(positionManager, ChartData::currentToneChanges, PositionWithIdAndType::of), //
-	VOCAL(positionManager, chartData -> chartData.currentVocals().vocals, PositionWithIdAndType::of);
+	TONE_CHANGE(fractionalPositionManager, ChartData::currentToneChanges, PositionWithIdAndType::of), //
+	VOCAL(fractionalPositionManager, chartData -> chartData.currentVocals().vocals, PositionWithIdAndType::of);
 
 	private static interface PositionTypeItemsSupplier<T> {
 		List<T> items(ChartData chartData);

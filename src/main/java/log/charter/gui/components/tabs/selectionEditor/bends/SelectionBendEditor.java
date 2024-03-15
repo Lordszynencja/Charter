@@ -50,7 +50,7 @@ public class SelectionBendEditor extends RowedPanel {
 
 	private ChordOrNote getCurrentlySelectedSound() {
 		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
-		return selectionAccessor.getSortedSelected().get(0).selectable;
+		return selectionAccessor.getSelected().get(0).selectable;
 	}
 
 	public SelectionBendEditor(final RowedPanel parent, final ChartData data, final SelectionManager selectionManager,

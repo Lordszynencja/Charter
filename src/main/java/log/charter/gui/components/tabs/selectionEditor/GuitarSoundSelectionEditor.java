@@ -235,7 +235,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void refreshBendEditorStrings() {
 		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
-		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelected2();
 		if (selected.size() == 1) {
 			selectionBendEditor.enableAndSelectStrings(selected.stream().findAny().get().selectable);
 		}
@@ -275,7 +275,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		}
 
 		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
-		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelected2();
 		for (final Selection<ChordOrNote> selection : selected) {
 			selection.selectable.note().string = newString;
 		}
@@ -298,7 +298,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		}
 
 		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
-		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
+		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelected2()) {
 			selection.selectable.note().fret = newFret;
 		}
 
@@ -312,7 +312,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 			final Stream<Selection<ChordOrNote>> stream = selectionManager
 					.<ChordOrNote>accessor(PositionType.GUITAR_NOTE)//
-					.getSelectedSet()//
+					.getSelected2()//
 					.stream();
 
 			filterMapper.apply(stream)//
@@ -347,7 +347,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
 		final List<ChordOrNote> sounds = chartData.currentArrangementLevel().sounds;
-		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelected2();
 		for (final Selection<ChordOrNote> selection : selected) {
 			if (selection.selectable.isNote()) {
 				if (isSelected(selection.selectable.note().string)) {
@@ -379,7 +379,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void cleanSlide() {
 		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
-		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
+		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelected2()) {
 			if (selection.selectable.isNote()) {
 				final Note note = selection.selectable.note();
 				note.slideTo = null;
@@ -401,7 +401,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
 		final List<ChordTemplate> chordTemplates = chartData.currentArrangement().chordTemplates;
 
-		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelectedSet()) {
+		for (final Selection<ChordOrNote> selection : selectionAccessor.getSelected2()) {
 			if (selection.selectable.isNote()) {
 				final Note note = selection.selectable.note();
 				note.slideTo = newSlideFret;
@@ -460,7 +460,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		if (chordTemplate.frets.size() == 0) {
 			final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 					.accessor(PositionType.GUITAR_NOTE);
-			final List<Integer> selected = selectionAccessor.getSortedSelected()//
+			final List<Integer> selected = selectionAccessor.getSelected()//
 					.stream()//
 					.map(selection -> selection.id)//
 					.collect(Collectors.toList());
@@ -475,7 +475,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 			final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 					.accessor(PositionType.GUITAR_NOTE);
-			final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+			final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelected2();
 
 			for (final Entry<Integer, Integer> entry : chordTemplate.frets.entrySet()) {
 				string.field.setTextWithoutEvent(entry.getKey() + "");
@@ -493,7 +493,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			final int templateId = arrangement.getChordTemplateIdWithSave(chordTemplate);
 			final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
 					.accessor(PositionType.GUITAR_NOTE);
-			final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+			final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelected2();
 
 			for (final Selection<ChordOrNote> selection : selected) {
 				if (selection.selectable.isChord()) {
@@ -595,7 +595,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void updateStringSelectionDependentValues() {
 		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
-		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelectedSet();
+		final Set<Selection<ChordOrNote>> selected = selectionAccessor.getSelected2();
 
 		mute.setSelected(getValueFromSelectedStrings(n -> n.mute, n -> n.mute, Mute.NONE, selected));
 		hopo.setSelected(getValueFromSelectedStrings(n -> n.hopo, n -> n.hopo, HOPO.NONE, selected));
@@ -673,7 +673,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			strings.forEach(string -> string.setSelected(true));
 		}
 
-		final Set<Selection<ChordOrNote>> selected = selectedChordOrNotesAccessor.getSelectedSet();
+		final Set<Selection<ChordOrNote>> selected = selectedChordOrNotesAccessor.getSelected2();
 		setFretsOnSelectionChange(selected);
 		string.field.setValidator(new IntegerValueValidator(1, chartData.currentStrings(), false));
 

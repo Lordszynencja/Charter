@@ -1,13 +1,11 @@
 package log.charter.data.song.position;
 
-import java.util.Optional;
-
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 
 public interface IConstantFractionalPosition extends IVirtualConstantPosition {
 	@Override
-	default Optional<IConstantFractionalPosition> asConstantFraction() {
-		return Optional.of(this);
+	default IConstantFractionalPosition asConstantFraction() {
+		return this;
 	}
 
 	public FractionalPosition fractionalPosition();
@@ -17,12 +15,12 @@ public interface IConstantFractionalPosition extends IVirtualConstantPosition {
 	}
 
 	@Override
-	default IConstantPosition positionAsPosition(final ImmutableBeatsMap beats) {
+	default IConstantPosition toPosition(final ImmutableBeatsMap beats) {
 		return new ConstantPosition(position(beats));
 	}
 
 	@Override
-	default IConstantFractionalPosition positionAsFraction(final ImmutableBeatsMap beats) {
+	default IConstantFractionalPosition toFraction(final ImmutableBeatsMap beats) {
 		return this;
 	}
 
