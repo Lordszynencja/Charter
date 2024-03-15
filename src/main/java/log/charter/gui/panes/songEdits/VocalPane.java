@@ -6,7 +6,7 @@ import javax.swing.JCheckBox;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.song.position.IConstantFractionalPositionWithEnd;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.data.types.PositionType;

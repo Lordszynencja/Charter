@@ -5,8 +5,8 @@ import java.util.Map;
 
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.Level;
-import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.song.vocals.Vocals;
 import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.util.collections.Pair;

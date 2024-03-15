@@ -1,4 +1,8 @@
-package log.charter.data.song.position;
+package log.charter.data.song.position.time;
+
+import log.charter.data.song.position.ConstantPosition;
+import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
+import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
 
 public interface IPositionWithLength extends IPosition, IConstantPositionWithLength, IVirtualPositionWithEnd {
 	void length(int newLength);
@@ -6,6 +10,11 @@ public interface IPositionWithLength extends IPosition, IConstantPositionWithLen
 	@Override
 	default IPositionWithLength asPositionWithLength() {
 		return this;
+	}
+
+	@Override
+	default IFractionalPositionWithEnd asFractionalPositionWithEnd() {
+		return null;
 	}
 
 	@Override

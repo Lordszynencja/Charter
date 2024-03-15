@@ -17,8 +17,8 @@ import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IConstantFractionalPosition;
-import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;
@@ -274,12 +274,12 @@ public class GuitarModeHandler extends ModeHandler {
 	}
 
 	private void changeNotesLength(final int change) {
-		chartItemsHandler.changeSoundsLength(selectionManager.getSelectedSounds(), change,
+		chartItemsHandler.changeSoundsLength(selectionManager.getSelected(PositionType.GUITAR_NOTE), change,
 				currentSelectionEditor.getSelectedStrings());
 	}
 
 	private void changeHandShapesLength(final int change) {
-		chartItemsHandler.changePositionsWithLengthsByGrid(selectionManager.getSelectedHandShapes(),
+		chartItemsHandler.changePositionsWithLengthsByGrid(selectionManager.getSelected(PositionType.HAND_SHAPE),
 				chartData.currentHandShapes(), change);
 	}
 

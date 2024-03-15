@@ -51,7 +51,7 @@ public class GuitarToneChangeDrawer {
 
 	public static void addToneChanges(final FrameData frameData, final int panelWidth,
 			final HighwayDrawer highwayDrawer) {
-		final Set<Integer> selectedIds = frameData.selection.getSelectedIds(PositionType.TONE_CHANGE);
+		final Set<Integer> selectedIds = frameData.selection.getSelectedIdsSet(PositionType.TONE_CHANGE);
 		final int highlightId = frameData.highlightData.getId(PositionType.TONE_CHANGE);
 		final FractionalPosition leftScreenEdgeTime = FractionalPosition.fromTime(frameData.beats,
 				xToTime(0, frameData.time));

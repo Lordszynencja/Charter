@@ -10,7 +10,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.position.IVirtualConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionType.PositionTypeManager;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.position.IVirtualConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.editModes.ModeManager;
 

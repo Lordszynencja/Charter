@@ -23,7 +23,7 @@ public class VocalConverter implements Converter {
 
 		public Vocal transform(final ImmutableBeatsMap beats) {
 			this.fractionalPosition(FractionalPosition.fromTime(beats, position, true));
-			this.fractionalEndPosition(FractionalPosition.fromTime(beats, endPosition, true));
+			this.endPosition(FractionalPosition.fromTime(beats, endPosition, true));
 
 			return new Vocal(this);
 		}
@@ -40,7 +40,7 @@ public class VocalConverter implements Converter {
 		final Vocal vocal = (Vocal) source;
 
 		writer.addAttribute("p", vocal.fractionalPosition().asString());
-		writer.addAttribute("ep", vocal.fractionalEndPosition().asString());
+		writer.addAttribute("ep", vocal.endPosition().asString());
 		writer.addAttribute("text", vocal.text());
 		if (vocal.flag() != VocalFlag.NONE) {
 			writer.addAttribute("flag", vocal.flag().name());

@@ -2,7 +2,7 @@ package log.charter.services.data;
 
 import static java.util.Arrays.asList;
 import static log.charter.data.config.Config.minNoteDistance;
-import static log.charter.data.song.position.IVirtualConstantPosition.add;
+import static log.charter.data.song.position.virtual.IVirtualConstantPosition.add;
 import static log.charter.services.data.fixers.ArrangementFixer.fixNoteLength;
 import static log.charter.util.CollectionUtils.getFromTo;
 import static log.charter.util.CollectionUtils.map;
@@ -26,10 +26,10 @@ import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
 import log.charter.data.song.position.ConstantPosition;
-import log.charter.data.song.position.IVirtualConstantPosition;
-import log.charter.data.song.position.IVirtualPosition;
-import log.charter.data.song.position.IVirtualPositionWithEnd;
 import log.charter.data.song.position.Position;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualPosition;
+import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
@@ -253,8 +253,9 @@ public class ChartItemsHandler {
 
 	public void mapSounds(final Function<ChordOrNote, ChordOrNote> mapper) {
 		final List<ChordOrNote> sounds = chartData.currentArrangementLevel().sounds;
+		final List<Selection<ChordOrNote>> selected = selectionManager.getSelected(PositionType.GUITAR_NOTE);
 
-		for (final Selection<ChordOrNote> selection : selectionManager.getSelectedSounds()) {
+		for (final Selection<ChordOrNote> selection : selected) {
 			sounds.set(selection.id, mapper.apply(selection.selectable));
 		}
 	}

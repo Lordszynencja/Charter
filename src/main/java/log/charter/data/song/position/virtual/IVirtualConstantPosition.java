@@ -1,4 +1,4 @@
-package log.charter.data.song.position;
+package log.charter.data.song.position.virtual;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.ConstantPosition;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.IConstantPosition;
 
 public interface IVirtualConstantPosition {
 	public static Comparator<IVirtualConstantPosition> comparator(final ImmutableBeatsMap beats) {
@@ -58,13 +62,9 @@ public interface IVirtualConstantPosition {
 		return (List<U>) list.stream().map(p -> p.asConstantPosition()).collect(Collectors.toList());
 	}
 
-	default IConstantPosition asConstantPosition() {
-		return null;
-	}
+	IConstantPosition asConstantPosition();
 
-	default IConstantFractionalPosition asConstantFraction() {
-		return null;
-	}
+	IConstantFractionalPosition asConstantFraction();
 
 	default boolean isPosition() {
 		return asConstantPosition() != null;

@@ -1,6 +1,6 @@
 package log.charter.data.song;
 
-import static log.charter.data.song.position.IVirtualConstantPosition.distance;
+import static log.charter.data.song.position.virtual.IVirtualConstantPosition.distance;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.ArrayList;
@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.ListIterator;
 
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IConstantPosition;
-import log.charter.data.song.position.IVirtualConstantPosition;
-import log.charter.data.song.position.IVirtualPosition;
 import log.charter.data.song.position.Position;
+import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.ChartProject;
 import log.charter.util.grid.GridPosition;

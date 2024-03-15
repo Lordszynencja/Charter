@@ -62,6 +62,10 @@ public class Framer {
 	public void stop() {
 		if (thread != null) {
 			thread.interrupt();
+			try {
+				thread.join();
+			} catch (final InterruptedException e) {
+			}
 		}
 	}
 }

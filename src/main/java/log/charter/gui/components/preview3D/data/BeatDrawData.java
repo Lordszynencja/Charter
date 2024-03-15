@@ -10,8 +10,8 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.position.IConstantPosition;
 import log.charter.data.song.position.Position;
+import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.services.RepeatManager;
 
 public class BeatDrawData implements IConstantPosition {

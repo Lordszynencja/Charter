@@ -7,8 +7,8 @@ import static log.charter.data.types.PositionType.NONE;
 import static log.charter.data.types.PositionType.TONE_CHANGE;
 import static log.charter.data.types.PositionType.VOCAL;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -16,8 +16,7 @@ import log.charter.data.song.Anchor;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.IPosition;
-import log.charter.data.song.position.IVirtualPosition;
+import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -26,15 +25,13 @@ import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.selection.ISelectionAccessor;
-import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.collections.HashSet2;
 
 public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 	private static final long serialVersionUID = 1L;
 
-	public static <T, U> U getSingleValue(final Set<Selection<T>> selected, final Function<Selection<T>, U> mapper,
+	public static <T, U> U getSingleValue(final Collection<T> selected, final Function<T, U> mapper,
 			final U defaultValue) {
 		final List<U> values = selected.stream()//
 				.map(mapper)//
@@ -44,8 +41,8 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		return values.size() == 1 ? values.get(0) : defaultValue;
 	}
 
-	public static <T extends IPosition, U> U getSingleValueWithoutNulls(final HashSet2<Selection<T>> selected,
-			final Function<Selection<T>, U> mapper, final U defaultValue) {
+	public static <T, U> U getSingleValueWithoutNulls(final Collection<T> selected, final Function<T, U> mapper,
+			final U defaultValue) {
 		final List<U> values = selected.stream()//
 				.map(mapper)//
 				.distinct()//

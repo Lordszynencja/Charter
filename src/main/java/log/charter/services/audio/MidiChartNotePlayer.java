@@ -168,7 +168,7 @@ public class MidiChartNotePlayer implements Initiable {
 
 	private MidiChartNotePlayerNoteData makeNoteData(final int noteId) {
 		final ChordOrNote sound = chartData.currentArrangementLevel().sounds.get(noteId);
-		int soundEndTime = sound.endPosition();
+		int soundEnd = sound.endPosition().position();
 		int maxEndTime = chartTimeHandler.maxTime();
 		if (sound.isChord() && sound.length() < 50) {
 			Integer newEndTime = null;
@@ -178,35 +178,35 @@ public class MidiChartNotePlayer implements Initiable {
 			}
 
 			final HandShape handShape = lastBeforeEqual(chartData.currentArrangementLevel().handShapes, sound).find();
-			if (handShape != null && (newEndTime == null || handShape.endPosition() < newEndTime)) {
-				newEndTime = handShape.endPosition();
+			if (handShape != null && (newEndTime == null || handShape.endPosition().position() < newEndTime)) {
+				newEndTime = handShape.endPosition().position();
 			}
 
 			if (newEndTime != null) {
-				soundEndTime = newEndTime;
+				soundEnd = newEndTime;
 			}
 		}
 
-		if (soundEndTime < sound.position() + 100) {
-			soundEndTime = min(maxEndTime, sound.position() + 100);
+		if (soundEnd < sound.position() + 100) {
+			soundEnd = min(maxEndTime, sound.position() + 100);
 		}
 		if (sound.isNote()) {
 			final ChordOrNote nextNote = ChordOrNote.findNextSoundOnString(sound.note().string, noteId + 1,
 					chartData.currentArrangementLevel().sounds);
 			if (nextNote != null) {
-				soundEndTime = min(soundEndTime, nextNote.position() - 5);
+				soundEnd = min(soundEnd, nextNote.position() - 5);
 			}
 		} else {
 			for (final int string : sound.chord().chordNotes.keySet()) {
 				final ChordOrNote nextNote = ChordOrNote.findNextSoundOnString(string, noteId + 1,
 						chartData.currentArrangementLevel().sounds);
 				if (nextNote != null) {
-					soundEndTime = min(soundEndTime, nextNote.position() - 5);
+					soundEnd = min(soundEnd, nextNote.position() - 5);
 				}
 			}
 		}
 
-		return new MidiChartNotePlayerNoteData(noteId, sound, soundEndTime);
+		return new MidiChartNotePlayerNoteData(noteId, sound, soundEnd);
 	}
 
 	public void startPlaying(final int speed) {

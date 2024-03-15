@@ -8,7 +8,6 @@ import static log.charter.util.CollectionUtils.filter;
 
 import java.awt.Color;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.event.DocumentEvent;
@@ -25,7 +24,6 @@ import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.services.data.selection.ISelectionAccessor;
-import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.util.collections.HashSet2;
 
@@ -62,9 +60,9 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 	}
 
 	public void selectionChanged(final ISelectionAccessor<ToneChange> selectedToneChangesAccessor) {
-		final Set<Selection<ToneChange>> selectedToneChanges = selectedToneChangesAccessor.getSelected2();
+		final List<ToneChange> selectedToneChanges = selectedToneChangesAccessor.getSelectedElements();
 
-		final String toneName = getSingleValue(selectedToneChanges, selection -> selection.selectable.toneName, "");
+		final String toneName = getSingleValue(selectedToneChanges, toneChange -> toneChange.toneName, "");
 		toneNameField.field.setTextWithoutUpdate(toneName == null ? "" : toneName);
 	}
 
@@ -116,9 +114,9 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 
 		undoSystem.addUndo();
 
-		final ISelectionAccessor<ToneChange> selectionAccessor = selectionManager.accessor(PositionType.TONE_CHANGE);
-		for (final Selection<ToneChange> a : selectionAccessor.getSelected2()) {
-			a.selectable.toneName = name;
+		final List<ToneChange> selected = selectionManager.getSelectedElements(PositionType.TONE_CHANGE);
+		for (final ToneChange toneChange : selected) {
+			toneChange.toneName = name;
 		}
 		arrangement.tones = arrangement.toneChanges.stream()//
 				.map(t -> t.toneName)//

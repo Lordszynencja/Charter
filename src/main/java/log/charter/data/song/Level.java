@@ -10,7 +10,7 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.time.IConstantPosition;
 
 @XStreamAlias("level")
 @XStreamInclude({ Anchor.class, ChordOrNote.class, HandShape.class })

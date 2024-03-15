@@ -21,7 +21,7 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IConstantFractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.io.rsc.xml.converters.PhraseDataConverter;
 

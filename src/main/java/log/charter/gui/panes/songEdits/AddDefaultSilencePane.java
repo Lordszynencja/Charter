@@ -10,7 +10,7 @@ import javax.swing.JTextField;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Beat;
-import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.utils.validators.IntValueValidator;
@@ -50,7 +50,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 	private void removeAudio(final int movement) {
 		final AudioDataShort editedAudio = projectAudioHandler.getAudio().remove(movement / 1000.0);
 
-		projectAudioHandler.setAudio(editedAudio, true);
+		projectAudioHandler.changeAudio(editedAudio);
 		data.songChart.moveEverythingWithBeats(chartTimeHandler.maxTime(), -movement);
 	}
 
@@ -65,7 +65,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 				songMusicData.channels());
 		final AudioDataShort joined = silenceMusicData.join(songMusicData);
 
-		projectAudioHandler.setAudio(joined, true);
+		projectAudioHandler.changeAudio(joined);
 		data.songChart.moveEverythingWithBeats(chartTimeHandler.maxTime(), movement);
 	}
 
@@ -102,13 +102,6 @@ public class AddDefaultSilencePane extends ParamsPane {
 		}
 	}
 
-	private void cleanUp() {
-		StretchedFileLoader.stopAllProcesses();
-		for (final File oldWav : new File(data.path).listFiles(s -> s.getName().matches("guitar_(tmp|[0-9]*).wav"))) {
-			oldWav.delete();
-		}
-	}
-
 	private void saveAndExit() {
 		changeMusicFileNameAndMakeBackupIfNeeded();
 		if (bars == 0) {
@@ -121,6 +114,6 @@ public class AddDefaultSilencePane extends ParamsPane {
 		final String oggPath = new File(data.path, data.songChart.musicFileName).getAbsolutePath();
 		OggWriter.writeOgg(oggPath, projectAudioHandler.getAudio());
 
-		cleanUp();
+		StretchedFileLoader.removeGeneratedAndClear(data.path);
 	}
 }

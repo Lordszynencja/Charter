@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IFractionalPositionWithEnd;
+import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
 import log.charter.io.rsc.xml.converters.VocalConverter;
 
 @XStreamAlias("vocal")

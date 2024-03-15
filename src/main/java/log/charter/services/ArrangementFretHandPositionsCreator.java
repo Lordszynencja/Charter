@@ -13,9 +13,9 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.IConstantFractionalPosition;
-import log.charter.data.song.position.IConstantPosition;
-import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.time.IPosition;
 import log.charter.util.data.IntRange;
 
 public class ArrangementFretHandPositionsCreator {

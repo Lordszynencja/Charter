@@ -90,7 +90,7 @@ public class GuitarEventPointsDrawer {
 			final HighwayDrawer highwayDrawer) {
 		final List<EventPoint> eventPoints = frameData.arrangement.eventPoints;
 		final Map<String, Phrase> phrases = frameData.arrangement.phrases;
-		final Set<Integer> selectedIds = frameData.selection.getSelectedIds(PositionType.EVENT_POINT);
+		final Set<Integer> selectedIds = frameData.selection.getSelectedIdsSet(PositionType.EVENT_POINT);
 		final int highlightId = frameData.highlightData.getId(PositionType.EVENT_POINT);
 		final FractionalPosition leftScreenEdgeTime = FractionalPosition.fromTime(frameData.beats,
 				xToTime(0, frameData.time));

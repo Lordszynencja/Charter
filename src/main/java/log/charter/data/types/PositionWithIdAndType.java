@@ -9,9 +9,9 @@ import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.ConstantPosition;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IConstantFractionalPosition;
-import log.charter.data.song.position.IConstantFractionalPositionWithEnd;
-import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
+import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.data.song.vocals.Vocal;
 
 public class PositionWithIdAndType extends ConstantPosition implements IConstantFractionalPositionWithEnd {

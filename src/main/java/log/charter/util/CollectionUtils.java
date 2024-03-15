@@ -18,8 +18,8 @@ import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
-import log.charter.data.song.position.IConstantFractionalPosition;
-import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.util.collections.Pair;
 import log.charter.util.data.Fraction;
 

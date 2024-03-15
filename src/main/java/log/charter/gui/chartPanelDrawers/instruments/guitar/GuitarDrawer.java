@@ -214,7 +214,7 @@ public class GuitarDrawer {
 	private void addGuitarNotes(final FrameData frameData, final int panelWidth, final HighwayDrawer highwayDrawer) {
 		final List<ChordOrNote> sounds = frameData.level.sounds;
 		final List<ChordTemplate> chordTemplates = frameData.arrangement.chordTemplates;
-		final Set<Integer> selectedNoteIds = frameData.selection.getSelectedIds(PositionType.GUITAR_NOTE);
+		final Set<Integer> selectedNoteIds = frameData.selection.getSelectedIdsSet(PositionType.GUITAR_NOTE);
 		final int highlightId = frameData.highlightData.getId(PositionType.GUITAR_NOTE);
 
 		boolean lastWasLinkNext = false;
@@ -249,7 +249,7 @@ public class GuitarDrawer {
 	}
 
 	private void addHandShapes(final FrameData frameData, final int panelWidth, final HighwayDrawer highwayDrawer) {
-		final Set<Integer> selectedHandShapeIds = frameData.selection.getSelectedIds(PositionType.HAND_SHAPE);
+		final Set<Integer> selectedHandShapeIds = frameData.selection.getSelectedIdsSet(PositionType.HAND_SHAPE);
 		final int highlightId = frameData.highlightData.getId(PositionType.HAND_SHAPE);
 
 		for (int i = 0; i < frameData.level.handShapes.size(); i++) {

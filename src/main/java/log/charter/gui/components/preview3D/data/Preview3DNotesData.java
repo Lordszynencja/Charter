@@ -80,7 +80,7 @@ public class Preview3DNotesData {
 
 		for (int i = 0; i <= soundsTo; i++) {
 			final ChordOrNote sound = sounds.get(i);
-			if (sound.endPosition() < timeFrom) {
+			if (sound.endPosition().position() < timeFrom) {
 				continue;
 			}
 

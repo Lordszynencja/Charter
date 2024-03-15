@@ -10,7 +10,6 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.panes.songEdits.VocalPane;
-import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 
@@ -22,27 +21,25 @@ public class VocalsHandler {
 	private UndoSystem undoSystem;
 
 	public void editVocals() {
-		final ISelectionAccessor<Vocal> selectedAccessor = selectionManager.accessor(PositionType.VOCAL);
-		if (!selectedAccessor.isSelected()) {
+		final List<Selection<Vocal>> selected = selectionManager.getSelected(PositionType.VOCAL);
+		if (selected.isEmpty()) {
 			return;
 		}
 
-		final List<Selection<Vocal>> selectedVocals = selectedAccessor.getSelected();
-		final Selection<Vocal> firstSelectedVocal = selectedVocals.remove(0);
+		final Selection<Vocal> firstSelectedVocal = selected.remove(0);
 		new VocalPane(firstSelectedVocal.id, firstSelectedVocal.selectable, chartData, charterFrame, selectionManager,
-				undoSystem, selectedVocals);
+				undoSystem, selected);
 	}
 
 	private void toggle(final VocalFlag flag) {
-		final ISelectionAccessor<Vocal> selectedAccessor = selectionManager.accessor(PositionType.VOCAL);
-		if (!selectedAccessor.isSelected()) {
+		final List<Vocal> selected = selectionManager.getSelectedElements(PositionType.VOCAL);
+		if (selected.isEmpty()) {
 			return;
 		}
 
 		undoSystem.addUndo();
 
-		for (final Selection<Vocal> selection : selectedAccessor.getSelected2()) {
-			final Vocal vocal = selection.selectable;
+		for (final Vocal vocal : selected) {
 			vocal.flag(vocal.flag() == flag ? VocalFlag.NONE : flag);
 		}
 

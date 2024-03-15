@@ -21,7 +21,6 @@ import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.sound.StretchedFileLoader;
 import log.charter.sound.data.AudioDataShort;
-import log.charter.sound.ogg.OggWriter;
 import log.charter.util.RW;
 
 public class AddSilencePane extends ParamsPane {
@@ -60,15 +59,15 @@ public class AddSilencePane extends ParamsPane {
 		addButton.setSelected(true);
 		addButton.addActionListener(e -> addTime = true);
 		group.add(addButton);
-		final FieldWithLabel<JRadioButton> addField = new FieldWithLabel<JRadioButton>(Label.ADD_SILENCE_TYPE_ADD, 5, 20, 20,
-				addButton, LabelPosition.RIGHT_PACKED);
+		final FieldWithLabel<JRadioButton> addField = new FieldWithLabel<JRadioButton>(Label.ADD_SILENCE_TYPE_ADD, 5,
+				20, 20, addButton, LabelPosition.RIGHT_PACKED);
 		add(addField, 20, getY(2), 100, 20);
 
 		final JRadioButton setButton = new JRadioButton();
 		setButton.addActionListener(e -> addTime = false);
 		group.add(setButton);
-		final FieldWithLabel<JRadioButton> setField = new FieldWithLabel<JRadioButton>(Label.ADD_SILENCE_TYPE_SET, 5, 20, 20,
-				setButton, LabelPosition.RIGHT_PACKED);
+		final FieldWithLabel<JRadioButton> setField = new FieldWithLabel<JRadioButton>(Label.ADD_SILENCE_TYPE_SET, 5,
+				20, 20, setButton, LabelPosition.RIGHT_PACKED);
 		add(setField, 120, getY(2), 100, 20);
 	}
 
@@ -78,14 +77,15 @@ public class AddSilencePane extends ParamsPane {
 				songMusicData.channels());
 		final AudioDataShort joined = silenceMusicData.join(songMusicData);
 
-		projectAudioHandler.setAudio(joined, true);
+		projectAudioHandler.changeAudio(joined);
 		data.songChart.moveEverythingWithBeats(chartTimeHandler.maxTime(), (int) (time * 1000));
 	}
 
 	private void removeAudio(final double time) {
 		final AudioDataShort editedAudio = projectAudioHandler.getAudio().remove(time);
+		StretchedFileLoader.removeGeneratedAndClear(data.path);
 
-		projectAudioHandler.setAudio(editedAudio, true);
+		projectAudioHandler.changeAudio(editedAudio);
 		data.songChart.moveEverythingWithBeats(chartTimeHandler.maxTime(), (int) -(time * 1000));
 	}
 
@@ -98,30 +98,18 @@ public class AddSilencePane extends ParamsPane {
 		}
 	}
 
-	private void cleanUp() {
-		StretchedFileLoader.stopAllProcesses();
-		for (final File oldWav : new File(data.path).listFiles(s -> s.getName().matches("guitar_(tmp|[0-9]*).wav"))) {
-			oldWav.delete();
-		}
-	}
-
 	private void saveAndExit() {
 		changeMusicFileNameAndMakeBackupIfNeeded();
 
 		if (addTime) {
 			addSilence(time.doubleValue());
 		} else {
-			final double timeToAdd = time.doubleValue() - data.songChart.beatsMap.beats.get(0).position() / 1000.0;
+			final double timeToAdd = time.doubleValue() - data.beats().get(0).position() / 1000.0;
 			if (timeToAdd > 0) {
 				addSilence(timeToAdd);
 			} else {
 				removeAudio(-timeToAdd);
 			}
 		}
-
-		final String oggPath = new File(data.path, data.songChart.musicFileName).getAbsolutePath();
-		OggWriter.writeOgg(oggPath, projectAudioHandler.getAudio());
-
-		cleanUp();
 	}
 }

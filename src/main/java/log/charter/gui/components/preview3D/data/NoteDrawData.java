@@ -44,7 +44,7 @@ public class NoteDrawData {
 			position = originalPosition;
 			withoutHead = linkPrevious;
 		}
-		endPosition = min(maxPosition, note.endPosition());
+		endPosition = min(maxPosition, note.endPosition().position());
 		string = note.string;
 		fret = note.fret;
 		accent = note.accent;
@@ -77,7 +77,7 @@ public class NoteDrawData {
 			position = originalPosition;
 			withoutHead = linkPrevious;
 		}
-		endPosition = min(maxPosition, chord.endPosition());
+		endPosition = min(maxPosition, chord.endPosition().position());
 		this.string = string;
 		this.fret = fret;
 		accent = chord.accent;
@@ -99,7 +99,7 @@ public class NoteDrawData {
 	}
 
 	public NoteDrawData(final int truePosition, final int position, final int endPosition, final NoteDrawData note) {
-		this.originalPosition = truePosition;
+		originalPosition = truePosition;
 		trueLength = note.trueLength;
 
 		this.position = position;

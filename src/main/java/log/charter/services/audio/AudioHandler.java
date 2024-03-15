@@ -4,6 +4,7 @@ import static java.lang.System.nanoTime;
 import static log.charter.data.config.Config.createDefaultStretchesInBackground;
 import static log.charter.data.config.Config.stretchedMusicSpeed;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
+import static log.charter.sound.StretchedFileLoader.loadStretchedAudio;
 
 import javax.sound.sampled.LineUnavailableException;
 
@@ -18,6 +19,7 @@ import log.charter.services.RepeatManager;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.sound.SoundPlayer.Player;
+import log.charter.sound.StretchedFileLoader;
 import log.charter.sound.data.AudioDataShort;
 
 public class AudioHandler {
@@ -30,7 +32,6 @@ public class AudioHandler {
 	private MidiChartNotePlayer midiChartNotePlayer;
 	private ProjectAudioHandler projectAudioHandler;
 	private RepeatManager repeatManager;
-	private StretchedAudioHandler stretchedAudioHandler;
 
 	private AudioDataShort slowedDownSong;
 	private int currentlyLoadedSpecialSpeed = 100;
@@ -133,27 +134,33 @@ public class AudioHandler {
 		stopMusic();
 	}
 
-	public void setSong() {
-		stretchedAudioHandler.clear();
-		stretchedAudioHandler.setData(chartData.path, projectAudioHandler.getAudio());
+	public void audioChanged() {
+		StretchedFileLoader.clear();
 
 		if (createDefaultStretchesInBackground) {
-			stretchedAudioHandler.addSpeedToGenerate(stretchedMusicSpeed);
-			stretchedAudioHandler.addSpeedToGenerate(50);
-			stretchedAudioHandler.addSpeedToGenerate(25);
-			stretchedAudioHandler.addSpeedToGenerate(75);
+			addSpeedToStretch(stretchedMusicSpeed);
+			addSpeedToStretch(50);
+			addSpeedToStretch(25);
+			addSpeedToStretch(75);
 		}
 	}
 
+	public void addSpeedToStretch(final int speed) {
+		if (speed == 100) {
+			return;
+		}
+
+		loadStretchedAudio(projectAudioHandler.getAudio(), chartData.path, speed);
+	}
+
 	public void addSpeedToStretch() {
-		stretchedAudioHandler.addSpeedToGenerate(stretchedMusicSpeed);
+		addSpeedToStretch(stretchedMusicSpeed);
 	}
 
 	public void togglePlaySetSpeed() {
 		if (chartData.isEmpty) {
 			return;
 		}
-
 		if (songPlayer != null) {
 			stopMusic();
 			return;
@@ -163,18 +170,17 @@ public class AudioHandler {
 			playMusic(projectAudioHandler.getAudio(), 100);
 			return;
 		}
-
 		if (currentlyLoadedSpecialSpeed == stretchedMusicSpeed && slowedDownSong != null) {
 			playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
 			return;
 		}
 
 		currentlyLoadedSpecialSpeed = stretchedMusicSpeed;
-		slowedDownSong = stretchedAudioHandler.get(stretchedMusicSpeed);
+		slowedDownSong = loadStretchedAudio(projectAudioHandler.getAudio(), chartData.path, stretchedMusicSpeed);
 		if (slowedDownSong != null) {
 			playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
 		} else {
-			stretchedAudioHandler.addSpeedToGenerate(currentlyLoadedSpecialSpeed);
+			addSpeedToStretch(currentlyLoadedSpecialSpeed);
 			showPopup(charterFrame, Label.GENERATING_SLOWED_SOUND);
 		}
 	}

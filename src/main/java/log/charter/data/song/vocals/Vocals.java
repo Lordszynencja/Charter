@@ -11,7 +11,7 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IConstantFractionalPositionWithEnd;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.io.rs.xml.vocals.ArrangementVocals;
 

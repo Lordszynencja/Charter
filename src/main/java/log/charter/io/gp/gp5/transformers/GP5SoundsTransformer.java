@@ -118,7 +118,7 @@ public class GP5SoundsTransformer {
 		}
 
 		note.length(noteLength);
-		final int endPosition = note.endPosition();
+		final int endPosition = note.endPosition().position();
 
 		Note lastNote = note;
 		int lastBendValue = 0;
@@ -216,7 +216,8 @@ public class GP5SoundsTransformer {
 		switch (effects.slideIn) {
 			case IN_FROM_ABOVE:
 				final Note slideInNoteFromAbove = new Note(note.position() + 50, note.string, note.fret);
-				slideInNoteFromAbove.endPosition(max(slideInNoteFromAbove.position() + 25, note.endPosition()));
+				slideInNoteFromAbove
+						.endPosition(max(slideInNoteFromAbove.position() + 25, note.endPosition().position()));
 				afterNotes.add(slideInNoteFromAbove);
 				note.linkNext = true;
 				note.slideTo = note.fret;
@@ -225,7 +226,8 @@ public class GP5SoundsTransformer {
 				break;
 			case IN_FROM_BELOW:
 				final Note slideInNoteFromBelow = new Note(note.position() + 50, note.string, note.fret);
-				slideInNoteFromBelow.endPosition(max(slideInNoteFromBelow.position() + 25, note.endPosition()));
+				slideInNoteFromBelow
+						.endPosition(max(slideInNoteFromBelow.position() + 25, note.endPosition().position()));
 				afterNotes.add(slideInNoteFromBelow);
 				note.linkNext = true;
 				note.slideTo = note.fret;
@@ -251,7 +253,7 @@ public class GP5SoundsTransformer {
 		} else {
 			graceNote = new Note(note.position(), note.string, graceNoteData.fret);
 
-			final int noteEndPosition = note.endPosition();
+			final int noteEndPosition = note.endPosition().position();
 			note.position(position.move(graceNoteData.duration).getPosition());
 			note.endPosition(noteEndPosition);
 		}

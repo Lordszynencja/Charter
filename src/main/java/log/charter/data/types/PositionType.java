@@ -1,7 +1,7 @@
 package log.charter.data.types;
 
-import static log.charter.data.song.position.IVirtualPosition.fractionalPositionManager;
-import static log.charter.data.song.position.IVirtualPosition.positionManager;
+import static log.charter.data.song.position.virtual.IVirtualPosition.fractionalPositionManager;
+import static log.charter.data.song.position.virtual.IVirtualPosition.positionManager;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
@@ -21,8 +21,8 @@ import java.util.stream.Stream;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.position.IVirtualConstantPosition;
-import log.charter.data.song.position.IVirtualPosition.PositionDataTypeManager;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualPosition.PositionDataTypeManager;
 import log.charter.services.editModes.EditMode;
 
 public enum PositionType {

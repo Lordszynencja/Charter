@@ -16,7 +16,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Set;
+import java.util.List;
 
 import log.charter.data.song.Beat;
 import log.charter.data.types.PositionType;
@@ -151,7 +151,7 @@ public class BeatsDrawer {
 	private ChartPanel chartPanel;
 
 	private void addBeats(final FrameData frameData, final BeatsDrawingData drawingData) {
-		final Set<Integer> selectedBeatIds = frameData.selection.getSelectedIds(PositionType.BEAT);
+		final List<Integer> selectedBeatIds = frameData.selection.getSelectedIds(PositionType.BEAT);
 		final int highlightId = frameData.highlightData.getId(PositionType.BEAT);
 
 		double bpm = 120;

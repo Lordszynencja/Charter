@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.time.IPosition;
 import log.charter.data.song.vocals.Vocals;
 import log.charter.io.rsc.xml.ChartProject;
 import log.charter.util.collections.ArrayList2;

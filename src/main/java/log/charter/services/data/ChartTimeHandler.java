@@ -16,10 +16,10 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.Level;
 import log.charter.data.song.position.ConstantPosition;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IConstantFractionalPosition;
-import log.charter.data.song.position.IConstantPosition;
-import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.song.position.Position;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.services.Action;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
@@ -83,9 +83,9 @@ public class ChartTimeHandler {
 
 	public void nextTime(final IVirtualConstantPosition p) {
 		if (p.isFraction()) {
-			nextFractionalTime(p.asConstantFraction().get());
+			nextFractionalTime(p.asConstantFraction());
 		} else {
-			nextTime(p.asConstantPosition().get());
+			nextTime(p.asConstantPosition());
 		}
 	}
 
@@ -160,7 +160,7 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToPreviousGrid() {
-		nextTime(chartData.songChart.beatsMap.getPositionWithRemovedGrid(time(), 1));
+		nextTime(chartData.beats().addGrid(new Position(time()), -1));
 	}
 
 	private IConstantPosition getPrevious(final List<? extends IConstantPosition> positions) {
@@ -239,7 +239,7 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToNextGrid() {
-		nextTime(chartData.beats().getNextPositionFromGrid(time()));
+		nextTime(chartData.beats().addGrid(new Position(time()), 1));
 	}
 
 	@SuppressWarnings("unchecked")

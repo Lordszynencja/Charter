@@ -3,7 +3,7 @@ package log.charter.gui.components.tabs.selectionEditor;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
@@ -106,16 +106,16 @@ public class VocalSelectionEditor {
 	}
 
 	public void selectionChanged(final ISelectionAccessor<Vocal> selectedVocalsAccessor) {
-		final Set<Selection<Vocal>> selectedVocals = selectedVocalsAccessor.getSelected2();
+		final List<Vocal> selectedVocals = selectedVocalsAccessor.getSelectedElements();
 		if (selectedVocals.size() == 1) {
-			final String text = selectedVocals.stream().findFirst().get().selectable.text();
+			final String text = selectedVocals.get(0).text();
 			vocalText.field.setTextWithoutEvent(text);
 			vocalText.setVisible(true);
 		} else {
 			vocalText.setVisible(false);
 		}
 
-		final VocalFlag flag = getSingleValue(selectedVocals, selection -> selection.selectable.flag(), VocalFlag.NONE);
+		final VocalFlag flag = getSingleValue(selectedVocals, vocal -> vocal.flag(), VocalFlag.NONE);
 
 		vocalWordPart.field.setEnabled(flag != VocalFlag.PHRASE_END);
 		vocalWordPart.field.setSelected(flag == VocalFlag.WORD_PART);

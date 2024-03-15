@@ -102,7 +102,7 @@ public class SongFileHandler {
 		loadingDialog.dispose();
 
 		audioHandler.clear();
-		audioHandler.setSong();
+		audioHandler.audioChanged();
 
 		save();
 	}

@@ -22,7 +22,7 @@ import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.io.rs.xml.song.ArrangementAnchor;
 import log.charter.io.rs.xml.song.ArrangementBendValue;
 import log.charter.io.rs.xml.song.ArrangementChord;
@@ -127,7 +127,7 @@ public class RSXMLLevelTransformer {
 		for (int i = 0; i < level.sounds.size() - 1; i++) {
 			final ChordOrNote sound = level.sounds.get(i);
 			final ChordOrNote nextSound = level.sounds.get(i + 1);
-			if (sound.endPosition() >= nextSound.position()) {
+			if (sound.endPosition().position() >= nextSound.position()) {
 				sound.asGuitarSound().passOtherNotes = true;
 			}
 		}

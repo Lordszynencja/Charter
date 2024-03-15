@@ -119,7 +119,7 @@ public class VocalsDrawer {
 
 		final List<Vocal> vocals = frameData.vocals.vocals;
 		final int width = chartPanel.getWidth();
-		final Set<Integer> selectedVocalIds = frameData.selection.getSelectedIds(PositionType.VOCAL);
+		final Set<Integer> selectedVocalIds = frameData.selection.getSelectedIdsSet(PositionType.VOCAL);
 
 		final int timeFrom = xToTime(-1, frameData.time);
 		final int timeTo = xToTime(width + 1, frameData.time);
@@ -154,7 +154,7 @@ public class VocalsDrawer {
 			} else {
 				frameData.highlightData.highlightedNonIdPositions.forEach(highlightPosition -> {
 					final int x = timeToX(highlightPosition.position, frameData.time);
-					final int length = max(2, timeToX(highlightPosition.endPosition(), frameData.time) - x);
+					final int length = max(2, timeToX(highlightPosition.endPosition().position(), frameData.time) - x);
 					drawingData.addHighlight(x, length);
 				});
 			}

@@ -11,6 +11,8 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.io.xstream.converter.FractionalPositionConverter;
 import log.charter.util.data.Fraction;
 

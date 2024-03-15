@@ -10,8 +10,8 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
-import log.charter.data.song.position.IConstantPositionWithLength;
 import log.charter.data.song.position.Position;
+import log.charter.data.song.position.time.IConstantPositionWithLength;
 import log.charter.services.RepeatManager;
 
 public class HandShapeDrawData implements IConstantPositionWithLength {
@@ -39,7 +39,7 @@ public class HandShapeDrawData implements IConstantPositionWithLength {
 			}
 
 			final int handShapeTimeFrom = max(handShape.position(), timeFrom);
-			final int handShapeTimeTo = min(handShape.endPosition(), timeTo);
+			final int handShapeTimeTo = min(handShape.endPosition().position(), timeTo);
 
 			handShapesToDraw.add(new HandShapeDrawData(handShapeTimeFrom, handShapeTimeTo,
 					chordTemplates.get(handShape.templateId)));

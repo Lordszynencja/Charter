@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IFractionalPosition;
+import log.charter.data.song.position.fractional.IFractionalPosition;
 
 public abstract class CopiedFractionalPosition<T extends IFractionalPosition> extends Copied<T> {
 	@XStreamAsAttribute
@@ -26,7 +26,7 @@ public abstract class CopiedFractionalPosition<T extends IFractionalPosition> ex
 			return null;
 		}
 
-		value.asFraction().get().fractionalPosition(basePosition.add(fp));
+		value.asFraction().fractionalPosition(basePosition.add(fp));
 
 		return value;
 	}

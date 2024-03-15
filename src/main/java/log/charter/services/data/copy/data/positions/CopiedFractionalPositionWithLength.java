@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IFractionalPositionWithEnd;
+import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
 
 public abstract class CopiedFractionalPositionWithLength<T extends IFractionalPositionWithEnd>
 		extends CopiedFractionalPosition<T> {
@@ -14,7 +14,7 @@ public abstract class CopiedFractionalPositionWithLength<T extends IFractionalPo
 	public CopiedFractionalPositionWithLength(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
 			final T position) {
 		super(beats, basePosition, position);
-		ep = position.fractionalEndPosition();
+		ep = position.endPosition();
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public abstract class CopiedFractionalPositionWithLength<T extends IFractionalPo
 			return null;
 		}
 
-		value.fractionalEndPosition(basePosition.add(ep));
+		value.endPosition(basePosition.add(ep));
 
 		return value;
 	}

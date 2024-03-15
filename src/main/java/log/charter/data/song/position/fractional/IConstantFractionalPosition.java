@@ -1,8 +1,17 @@
-package log.charter.data.song.position;
+package log.charter.data.song.position.fractional;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.ConstantPosition;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 
 public interface IConstantFractionalPosition extends IVirtualConstantPosition {
+	@Override
+	default IConstantPosition asConstantPosition() {
+		return null;
+	}
+
 	@Override
 	default IConstantFractionalPosition asConstantFraction() {
 		return this;

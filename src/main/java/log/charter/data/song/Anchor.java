@@ -4,8 +4,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IConstantFractionalPosition;
-import log.charter.data.song.position.IFractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.fractional.IFractionalPosition;
 import log.charter.io.rsc.xml.converters.AnchorConverter;
 
 @XStreamAlias("anchor")

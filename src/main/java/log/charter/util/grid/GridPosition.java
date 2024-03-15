@@ -8,14 +8,15 @@ import java.util.List;
 import log.charter.data.config.Config;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.ConstantPosition;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IConstantFractionalPosition;
-import log.charter.data.song.position.IConstantPosition;
-import log.charter.data.song.position.IVirtualConstantPosition;
 import log.charter.data.song.position.Position;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.util.data.Fraction;
 
-public class GridPosition<T extends Position> implements IConstantPosition, IConstantFractionalPosition {
+public class GridPosition<T extends Position> implements IVirtualConstantPosition {
 	public static GridPosition<Beat> create(final List<Beat> beats, final int position) {
 		switch (Config.gridType) {
 			case NOTE:
@@ -114,7 +115,6 @@ public class GridPosition<T extends Position> implements IConstantPosition, ICon
 		return this;
 	}
 
-	@Override
 	public int position() {
 		final int beatPosition = positions.get(positionId).position();
 		if (gridId == 0) {
@@ -125,26 +125,36 @@ public class GridPosition<T extends Position> implements IConstantPosition, ICon
 		return beatPosition + (nextBeatPosition - beatPosition) * gridId / gridSize;
 	}
 
-	@Override
 	public FractionalPosition fractionalPosition() {
 		return new FractionalPosition(positionId, new Fraction(gridId, gridSize));
 	}
 
 	@Override
+	public IConstantPosition asConstantPosition() {
+		return new ConstantPosition(position());
+	}
+
+	@Override
+	public IConstantFractionalPosition asConstantFraction() {
+		return fractionalPosition();
+	}
+
+	@Override
 	public IConstantPosition toPosition(final ImmutableBeatsMap beats) {
-		return this;
+		return asConstantPosition();
 	}
 
 	@Override
 	public IConstantFractionalPosition toFraction(final ImmutableBeatsMap beats) {
-		return this;
+		return asConstantFraction();
 	}
 
 	public int compareTo(final IVirtualConstantPosition position) {
 		if (position.isPosition()) {
-			return IConstantPosition.super.compareTo(position.asConstantPosition());
+			return position.asConstantPosition().compareTo(new ConstantPosition(position()));
 		}
 
-		return IConstantFractionalPosition.super.compareTo(position.asConstantFraction());
+		return position.asConstantFraction().compareTo(fractionalPosition());
 	}
+
 }

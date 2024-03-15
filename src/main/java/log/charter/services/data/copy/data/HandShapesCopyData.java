@@ -14,7 +14,7 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
 import log.charter.services.data.copy.data.positions.CopiedHandShapePosition;

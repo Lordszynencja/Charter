@@ -58,7 +58,7 @@ public class GuitarAnchorsDrawer {
 		final int highlightId = frameData.highlightData.getId(PositionType.ANCHOR);
 		final int edgeTime = xToTime(0, frameData.time);
 		final List<Anchor> anchors = frameData.level.anchors;
-		final Set<Integer> selectedIds = frameData.selection.getSelectedIds(PositionType.ANCHOR);
+		final Set<Integer> selectedIds = frameData.selection.getSelectedIdsSet(PositionType.ANCHOR);
 
 		boolean currentAnchorDrawn = false;
 		for (int i = 0; i < anchors.size(); i++) {

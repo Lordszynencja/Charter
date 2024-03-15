@@ -1,9 +1,11 @@
 package log.charter.services.data.selection;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import log.charter.data.song.position.IVirtualConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 
 class SelectionAccessor<T extends IVirtualConstantPosition> implements ISelectionAccessor<T> {
@@ -30,6 +32,15 @@ class SelectionAccessor<T extends IVirtualConstantPosition> implements ISelectio
 		}
 
 		return new ArrayList<>(selectionList.getSelectedIds());
+	}
+
+	@Override
+	public Set<Integer> getSelectedIdsSet(final PositionType forType) {
+		if (selectionList.type != forType) {
+			return new HashSet<>();
+		}
+
+		return new HashSet<>(selectionList.getSelectedIds());
 	}
 
 	@Override

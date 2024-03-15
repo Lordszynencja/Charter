@@ -13,7 +13,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.IVirtualConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.services.Action;
