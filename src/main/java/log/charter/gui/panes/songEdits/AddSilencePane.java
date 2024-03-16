@@ -3,7 +3,6 @@ package log.charter.gui.panes.songEdits;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.sound.data.AudioUtils.generateSilence;
 
-import java.io.File;
 import java.math.BigDecimal;
 
 import javax.swing.ButtonGroup;
@@ -21,7 +20,6 @@ import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.sound.StretchedFileLoader;
 import log.charter.sound.data.AudioDataShort;
-import log.charter.util.RW;
 
 public class AddSilencePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
@@ -89,18 +87,7 @@ public class AddSilencePane extends ParamsPane {
 		data.songChart.moveEverythingWithBeats(chartTimeHandler.maxTime(), (int) -(time * 1000));
 	}
 
-	private void changeMusicFileNameAndMakeBackupIfNeeded() {
-		if (!data.songChart.musicFileName.equals("guitar.ogg")) {
-			data.songChart.musicFileName = "guitar.ogg";
-		} else {
-			RW.writeB(new File(data.path, data.songChart.musicFileName + "_old_" + System.currentTimeMillis() + ".ogg"),
-					RW.readB(new File(data.path, data.songChart.musicFileName)));
-		}
-	}
-
 	private void saveAndExit() {
-		changeMusicFileNameAndMakeBackupIfNeeded();
-
 		if (addTime) {
 			addSilence(time.doubleValue());
 		} else {

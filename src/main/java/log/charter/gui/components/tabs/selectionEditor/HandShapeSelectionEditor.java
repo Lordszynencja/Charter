@@ -4,6 +4,7 @@ import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEd
 import static log.charter.util.CollectionUtils.firstAfterEqual;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -16,6 +17,7 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -89,8 +91,9 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		final ChordTemplate template = chartData.currentArrangement().chordTemplates.get(handShape.templateId);
 		final List<ChordOrNote> sounds = chartData.currentArrangementLevel().sounds;
 
-		final Integer from = firstAfterEqual(sounds, handShape).findId();
-		final Integer to = lastBeforeEqual(sounds, handShape.endPosition()).findId();
+		final Comparator<IVirtualConstantPosition> comparator = IVirtualConstantPosition.comparator(chartData.beats());
+		final Integer from = firstAfterEqual(sounds, handShape, comparator).findId();
+		final Integer to = lastBeforeEqual(sounds, handShape.endPosition(), comparator).findId();
 		if (from == null || to == null) {
 			return;
 		}

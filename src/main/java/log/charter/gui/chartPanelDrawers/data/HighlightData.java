@@ -31,7 +31,6 @@ import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
 import log.charter.data.song.position.time.IConstantPosition;
-import log.charter.data.song.position.time.IConstantPositionWithLength;
 import log.charter.data.song.position.time.IPositionWithLength;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
@@ -167,8 +166,9 @@ public class HighlightData {
 
 	}
 
-	public static class HighlightPosition implements IConstantPositionWithLength, IConstantFractionalPosition {
+	public static class HighlightPosition implements IConstantFractionalPositionWithEnd {
 		public final FractionalPosition fractionalPosition;
+		public final FractionalPosition fractionalEndPosition;
 		public final Integer position;
 		public final int length;
 		public final Optional<ChordOrNote> originalSound;
@@ -176,26 +176,30 @@ public class HighlightData {
 		public final boolean drawOriginalStrings;
 
 		public HighlightPosition(final ImmutableBeatsMap beats, final int position, final int length) {
-			this(FractionalPosition.fromTime(beats, position), position, length, null, 0, false);
+			this(FractionalPosition.fromTime(beats, position), FractionalPosition.fromTime(beats, position + length),
+					position, length, null, 0, false);
 		}
 
 		public HighlightPosition(final ImmutableBeatsMap beats, final int position) {
-			this(FractionalPosition.fromTime(beats, position), position, 0, null, 0, false);
+			this(FractionalPosition.fromTime(beats, position), FractionalPosition.fromTime(beats, position), position,
+					0, null, 0, false);
 		}
 
 		public HighlightPosition(final ImmutableBeatsMap beats, final FractionalPosition position) {
-			this(position, position.position(beats), 0, null, 0, false);
+			this(position, position, position.position(beats), 0, null, 0, false);
 		}
 
 		public HighlightPosition(final ImmutableBeatsMap beats, final int position, final int length,
 				final ChordOrNote originalSound, final int string, final boolean drawOriginalStrings) {
-			this(FractionalPosition.fromTime(beats, position), position, length, originalSound, string,
-					drawOriginalStrings);
+			this(FractionalPosition.fromTime(beats, position), FractionalPosition.fromTime(beats, position + length),
+					position, length, originalSound, string, drawOriginalStrings);
 		}
 
-		public HighlightPosition(final FractionalPosition fractionalPosition, final int position, final int length,
+		public HighlightPosition(final FractionalPosition fractionalPosition,
+				final FractionalPosition fractionalEndPosition, final int position, final int length,
 				final ChordOrNote originalSound, final int string, final boolean drawOriginalStrings) {
 			this.fractionalPosition = fractionalPosition;
+			this.fractionalEndPosition = fractionalEndPosition;
 			this.position = position;
 			this.length = length;
 			this.originalSound = Optional.ofNullable(originalSound);
@@ -204,40 +208,14 @@ public class HighlightData {
 		}
 
 		@Override
-		public int position() {
-			return position == null ? 0 : position;
-		}
-
-		@Override
-		public int length() {
-			return length;
-		}
-
-		@Override
 		public FractionalPosition fractionalPosition() {
 			return fractionalPosition;
 		}
 
 		@Override
-		public IConstantPosition asConstantPosition() {
-			return this;
+		public FractionalPosition endPosition() {
+			return fractionalEndPosition;
 		}
-
-		@Override
-		public IConstantFractionalPosition asConstantFraction() {
-			return this;
-		}
-
-		@Override
-		public IConstantPosition toPosition(final ImmutableBeatsMap beats) {
-			return this;
-		}
-
-		@Override
-		public IConstantFractionalPosition toFraction(final ImmutableBeatsMap beats) {
-			return this;
-		}
-
 	}
 
 	public static class IdHighlightPosition {
@@ -298,7 +276,7 @@ public class HighlightData {
 			case BEAT -> s -> new TemporaryHighlightPosition((Beat) s.selectable);
 			case EVENT_POINT -> s -> new TemporaryFractionalHighlighPosition((EventPoint) s.selectable);
 			case GUITAR_NOTE -> s -> new TemporaryHighlightPosition((ChordOrNote) s.selectable);
-			case HAND_SHAPE -> s -> new TemporaryHighlightPosition((HandShape) s.selectable);
+			case HAND_SHAPE -> s -> new TemporaryFractionalHighlighPosition((HandShape) s.selectable);
 			case TONE_CHANGE -> s -> new TemporaryFractionalHighlighPosition((ToneChange) s.selectable);
 			case VOCAL -> s -> new TemporaryFractionalHighlighPosition((Vocal) s.selectable);
 			default -> s -> new TemporaryHighlightPosition(0);

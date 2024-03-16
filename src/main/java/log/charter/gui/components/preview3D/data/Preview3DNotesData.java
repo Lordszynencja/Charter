@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Level;
 import log.charter.data.song.enums.Mute;
@@ -23,10 +24,11 @@ import log.charter.data.song.position.Position;
 import log.charter.services.RepeatManager;
 
 public class Preview3DNotesData {
-	private static void addChord(final List<ChordBoxDrawData> chords, final List<List<NoteDrawData>> notes,
-			final Arrangement arrangement, final Level level, final List<ChordOrNote> sounds, final int id,
-			final Chord chord, final int timeFrom, final int timeTo) {
-		final ChordNotesVisibility chordNotesVisibility = chord.chordNotesVisibility(level.shouldChordShowNotes(id));
+	private static void addChord(final ImmutableBeatsMap beats, final List<ChordBoxDrawData> chords,
+			final List<List<NoteDrawData>> notes, final Arrangement arrangement, final Level level,
+			final List<ChordOrNote> sounds, final int id, final Chord chord, final int timeFrom, final int timeTo) {
+		final ChordNotesVisibility chordNotesVisibility = chord
+				.chordNotesVisibility(level.shouldChordShowNotes(beats, id));
 
 		if (chordNotesVisibility == ChordNotesVisibility.NONE) {
 			chords.add(new ChordBoxDrawData(chord.position(), chord.chordNotesValue(n -> n.mute, Mute.NONE), true));
@@ -89,7 +91,7 @@ public class Preview3DNotesData {
 				notes.get(note.string)
 						.add(new NoteDrawData(timeFrom, timeTo, note, isLinkedToPrevious(note.string, i, sounds)));
 			} else {
-				addChord(chords, notes, arrangement, level, sounds, i, sound.chord(), timeFrom, timeTo);
+				addChord(data.beats(), chords, notes, arrangement, level, sounds, i, sound.chord(), timeFrom, timeTo);
 			}
 		}
 

@@ -39,6 +39,7 @@ import log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId;
 public class GuitarModeHandler extends ModeHandler {
 	private static final long scrollTimeoutForUndo = 1000;
 
+	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
 	private ChartItemsHandler chartItemsHandler;
 	private CharterFrame charterFrame;
@@ -92,28 +93,31 @@ public class GuitarModeHandler extends ModeHandler {
 		});
 	}
 
-	private void rightClickHandShape(final PositionWithIdAndType handShapePosition) {
-		selectionManager.clear();
-		if (handShapePosition.handShape != null) {
-			chartData.currentArrangementLevel().handShapes.remove((int) handShapePosition.id);
-			return;
-		}
+	private void addNewHandShape(final IConstantFractionalPosition position) {
+		final FractionalPosition endPosition = chartData.beats().addGrid(position, 1).toFraction(chartData.beats())
+				.fractionalPosition();
 
-		undoSystem.addUndo();
-
-		final int endPosition = chartData.beats().addGrid(handShapePosition, 1).toPosition(chartData.beats())
-				.position();
-
-		final HandShape handShape = new HandShape(handShapePosition.position(),
-				endPosition - handShapePosition.position());
+		final HandShape handShape = new HandShape(position.fractionalPosition(), endPosition);
 		final List<HandShape> handShapes = chartData.currentHandShapes();
 		handShapes.add(handShape);
-		handShapes.sort(IConstantPosition::compareTo);
+		handShapes.sort(IConstantFractionalPosition::compareTo);
 
 		new HandShapePane(chartData, charterFrame, handShape, () -> {
 			undoSystem.undo();
 			undoSystem.removeRedo();
 		});
+	}
+
+	private void rightClickHandShape(final PositionWithIdAndType handShapePosition) {
+		selectionManager.clear();
+
+		undoSystem.addUndo();
+		if (handShapePosition.handShape != null) {
+			chartData.currentArrangementLevel().handShapes.remove((int) handShapePosition.id);
+			return;
+		}
+
+		addNewHandShape(handShapePosition.fractionalPosition());
 	}
 
 	private ChordOrNote addSound(final Note note) {
@@ -124,7 +128,7 @@ public class GuitarModeHandler extends ModeHandler {
 		sounds.add(id, sound);
 
 		if (previousId != null) {
-			ArrangementFixer.fixSoundLength(previousId, sounds);
+			arrangementFixer.fixSoundLength(previousId, sounds);
 		}
 		selectionManager.addSoundSelection(id);
 
@@ -257,12 +261,10 @@ public class GuitarModeHandler extends ModeHandler {
 			rightClickAnchor(clickData.pressHighlight);
 			return;
 		}
-
 		if (clickData.pressHighlight.type == PositionType.GUITAR_NOTE) {
 			rightClickGuitarNote(clickData);
 			return;
 		}
-
 		if (clickData.pressHighlight.type == PositionType.HAND_SHAPE) {
 			if (clickData.isXDrag()) {
 				return;
@@ -279,8 +281,8 @@ public class GuitarModeHandler extends ModeHandler {
 	}
 
 	private void changeHandShapesLength(final int change) {
-		chartItemsHandler.changePositionsWithLengthsByGrid(selectionManager.getSelected(PositionType.HAND_SHAPE),
-				chartData.currentHandShapes(), change);
+		chartItemsHandler.changePositionsWithLengthsByGrid(
+				selectionManager.getSelectedElements(PositionType.HAND_SHAPE), chartData.currentHandShapes(), change);
 	}
 
 	@Override

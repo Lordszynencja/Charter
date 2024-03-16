@@ -9,7 +9,7 @@ import log.charter.data.ChartData;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -35,11 +35,13 @@ public class HandShapesHandler {
 		final List<HandShape> handShapes = chartData.currentHandShapes();
 		final List<Selection<ChordOrNote>> selected = selectionAccessor.getSelected();
 		final ChordOrNote firstSelected = selected.get(0).selectable;
-		final IConstantPosition endPosition = selected.get(selected.size() - 1).selectable.endPosition();
 
-		int deleteFromId = lastBefore(handShapes, firstSelected).findId(0);
-		if (handShapes.size() > deleteFromId
-				&& handShapes.get(deleteFromId).endPosition().compareTo(firstSelected) < 0) {
+		final IConstantFractionalPosition position = firstSelected.toFraction(chartData.beats());
+		final IConstantFractionalPosition endPosition = selected.get(selected.size() - 1).selectable.endPosition()
+				.toFraction(chartData.beats());
+
+		int deleteFromId = lastBefore(handShapes, position).findId(0);
+		if (handShapes.size() > deleteFromId && handShapes.get(deleteFromId).endPosition().compareTo(position) < 0) {
 			deleteFromId++;
 		}
 
@@ -54,12 +56,10 @@ public class HandShapesHandler {
 					.get(selected.get(0).selectable.chord().templateId());
 		}
 
-		final HandShape handShape = new HandShape(firstSelected.position(),
-				endPosition.position() - firstSelected.position());
+		final HandShape handShape = new HandShape(position.fractionalPosition(), endPosition.fractionalPosition());
 		handShape.templateId = chartData.currentArrangement().getChordTemplateIdWithSave(chordTemplate);
 
-		handShapes.add(handShape);
-		handShapes.sort(IConstantPosition::compareTo);
+		handShapes.add(deleteFromId, handShape);
 		new HandShapePane(chartData, charterFrame, handShape, () -> {
 			undoSystem.undo();
 			undoSystem.removeRedo();

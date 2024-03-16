@@ -150,7 +150,7 @@ public class AudioHandler {
 			return;
 		}
 
-		loadStretchedAudio(projectAudioHandler.getAudio(), chartData.path, speed);
+		loadStretchedAudio(projectAudioHandler.getAudio(), chartData.path, chartData.songChart.musicFileName, speed);
 	}
 
 	public void addSpeedToStretch() {
@@ -176,13 +176,14 @@ public class AudioHandler {
 		}
 
 		currentlyLoadedSpecialSpeed = stretchedMusicSpeed;
-		slowedDownSong = loadStretchedAudio(projectAudioHandler.getAudio(), chartData.path, stretchedMusicSpeed);
-		if (slowedDownSong != null) {
-			playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
-		} else {
-			addSpeedToStretch(currentlyLoadedSpecialSpeed);
+		slowedDownSong = loadStretchedAudio(projectAudioHandler.getAudio(), chartData.path,
+				chartData.songChart.musicFileName, stretchedMusicSpeed);
+		if (slowedDownSong == null) {
 			showPopup(charterFrame, Label.GENERATING_SLOWED_SOUND);
+			return;
 		}
+
+		playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
 	}
 
 	public void frame() {

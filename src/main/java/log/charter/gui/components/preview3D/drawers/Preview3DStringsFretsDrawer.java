@@ -57,11 +57,13 @@ public class Preview3DStringsFretsDrawer {
 	private boolean[] getActiveFrets(final Preview3DDrawData drawData) {
 		final boolean[] active = new boolean[Config.frets + 1];
 
-		final int idTo = lastBefore(drawData.anchors, new Position(drawData.time + activeTime)).findId(0);
-		for (int i = 0; i <= idTo; i++) {
-			final AnchorDrawData anchor = drawData.anchors.get(i);
-			for (int fret = max(0, anchor.fretFrom); fret <= min(Config.frets, anchor.fretTo); fret++) {
-				active[fret] = true;
+		final Integer idTo = lastBefore(drawData.anchors, new Position(drawData.time + activeTime)).findId();
+		if (idTo != null) {
+			for (int i = 0; i <= idTo; i++) {
+				final AnchorDrawData anchor = drawData.anchors.get(i);
+				for (int fret = max(0, anchor.fretFrom); fret <= min(Config.frets, anchor.fretTo); fret++) {
+					active[fret] = true;
+				}
 			}
 		}
 

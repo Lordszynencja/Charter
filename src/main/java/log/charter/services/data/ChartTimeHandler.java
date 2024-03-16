@@ -130,7 +130,7 @@ public class ChartTimeHandler {
 				for (final Level level : arrangement.levels) {
 					accumulator.addFractional(beats, level.anchors);
 					accumulator.add(level.sounds);
-					accumulator.add(level.handShapes);
+					accumulator.addFractional(beats, level.handShapes);
 				}
 			}
 		}

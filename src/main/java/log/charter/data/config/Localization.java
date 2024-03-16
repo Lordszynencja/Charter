@@ -39,6 +39,7 @@ public class Localization {
 		ARRANGEMENT_TYPE_LEAD("Lead"), //
 		ARRANGEMENT_TYPE_RHYTHM("Rhythm"), //
 		BACKUP_DELAY_S("Backup delay (s)"), //
+		BASE_AUDIO_FORMAT("Base audio format"), //
 		BUFFER_SIZE_MS("Audio buffer size to fill (ms)"), //
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
@@ -55,6 +56,9 @@ public class Localization {
 		DELETE_ARRANGEMENT_POPUP_MSG("Are you sure you want to delete arrangement %s?"), //
 		DELETE_ARRANGEMENT_POPUP_TITLE("Delete arrangement?"), //
 		DIRECTORY_DOESNT_EXIST("Directory doesn't exist"), //
+		DISTANCE_TYPE_BEATS("1/x beat"), //
+		DISTANCE_TYPE_MILISECONDS("ms"), //
+		DISTANCE_TYPE_NOTES("1/x note"), //
 		EDIT_MENU("Edit"), //
 		EDITING("Editing"), //
 		EXIT("Exit"), //

@@ -3,7 +3,7 @@ package log.charter.io.gp.gp5.transformers;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.Config.minTailLength;
+import static log.charter.data.config.Config.minTailLengthFactor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
 import log.charter.data.song.notes.Note;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.io.gp.gp5.GP5FractionalPosition;
 import log.charter.io.gp.gp5.data.GPBeat;
 import log.charter.io.gp.gp5.data.GPBend;
@@ -248,13 +249,13 @@ public class GP5SoundsTransformer {
 		Note graceNote = null;
 		final GPGraceNote graceNoteData = effects.graceNote;
 		if (graceNoteData.beforeBeat) {
-			final int graceNotePosition = position.moveBackwards(graceNoteData.duration).getPosition();
+			final int graceNotePosition = position.moveBackwards(graceNoteData.duration).position();
 			graceNote = new Note(graceNotePosition, note.string, graceNoteData.fret);
 		} else {
 			graceNote = new Note(note.position(), note.string, graceNoteData.fret);
 
 			final int noteEndPosition = note.endPosition().position();
-			note.position(position.move(graceNoteData.duration).getPosition());
+			note.position(position.move(graceNoteData.duration).position());
 			note.endPosition(noteEndPosition);
 		}
 
@@ -265,7 +266,7 @@ public class GP5SoundsTransformer {
 			graceNote.slideTo = note.fret;
 			graceNote.linkNext = true;
 			graceNote.endPosition(note.position() - 1);
-			note.length(max(note.length(), minTailLength));
+			note.length(max(note.length(), minTailLengthFactor));
 		}
 		if (graceNoteData.legato) {
 			note.hopo = graceNote.fret < note.fret ? HOPO.HAMMER_ON : HOPO.PULL_OFF;
@@ -292,9 +293,9 @@ public class GP5SoundsTransformer {
 
 		checkPreviousNoteLink(gpNote);
 
-		final int noteStartPosition = position.getPosition();
-		final Note note = new Note(position.getPosition(), gpNote.string - 1, gpNote.fret);
-		final int noteLength = endPosition.getPosition() - note.position();
+		final int noteStartPosition = position.position();
+		final Note note = new Note(position.position(), gpNote.string - 1, gpNote.fret);
+		final int noteLength = endPosition.position() - note.position();
 		final GPNoteEffects effects = gpNote.effects;
 
 		setStatuses(new CommonNote(note), gpBeat, gpNote, wasHOPOStart, hopoFrom);
@@ -419,6 +420,19 @@ public class GP5SoundsTransformer {
 		});
 	}
 
+	private void addHandShape(final GP5FractionalPosition position, final GP5FractionalPosition endPosition,
+			final int templateId) {
+		final FractionalPosition handshapeEndPosition = endPosition.moveBackwards(GPDuration.NOTE_32)
+				.fractionalPosition();
+
+		if (lastHandShape != null && lastHandShape.templateId == templateId) {
+			lastHandShape.endPosition(handshapeEndPosition);
+		} else {
+			lastHandShape = new HandShape(position.fractionalPosition(), handshapeEndPosition, templateId);
+			level.handShapes.add(lastHandShape);
+		}
+	}
+
 	public void addChord(final GPBeat gpBeat, final GP5FractionalPosition position,
 			final GP5FractionalPosition endPosition, final boolean[] wasHOPOStart, final int[] hOPOFrom) {
 		final ChordTemplate chordTemplate = new ChordTemplate();
@@ -428,8 +442,8 @@ public class GP5SoundsTransformer {
 		}
 		checkPreviousSoundForChord(gpBeat);
 
-		final Chord chord = new Chord(position.getPosition(), -1, chordTemplate);
-		final int length = endPosition.getPosition() - chord.position();
+		final Chord chord = new Chord(position.position(), -1, chordTemplate);
+		final int length = endPosition.position() - chord.position();
 		final ChordAddingData chordAddingData = new ChordAddingData();
 
 		for (final GPNote gpNote : gpBeat.notes) {
@@ -464,13 +478,6 @@ public class GP5SoundsTransformer {
 		lastSound = level.sounds.get(level.sounds.size() - 1);
 		lastSoundTemplate = chordTemplate;
 
-		final int handshapeEndPosition = endPosition.moveBackwards(GPDuration.NOTE_32).getPosition();
-
-		if (lastHandShape != null && lastHandShape.templateId == chord.templateId()) {
-			lastHandShape.endPosition(handshapeEndPosition);
-		} else {
-			lastHandShape = new HandShape(chord, handshapeEndPosition - chord.position());
-			level.handShapes.add(lastHandShape);
-		}
+		addHandShape(position, endPosition, templateId);
 	}
 }

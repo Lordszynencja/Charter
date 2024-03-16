@@ -99,7 +99,7 @@ public class ExistingProjectImporter {
 		chartData.setSong(dir, songChart, projectFileChosen.getName(), project.editMode, project.arrangement,
 				project.level);
 		chartTimeHandler.nextTime(project.time);
-		projectAudioHandler.setAudio(musicData, !project.musicFileName.equals("song.ogg"));
+		projectAudioHandler.setAudio(musicData);
 		textTab.setText(project.text);
 
 		audioHandler.clear();

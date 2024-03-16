@@ -9,8 +9,14 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.sound.SoundFileType;
 
 public class FileChooseUtils {
+	private static String extension(final String fileName) {
+		final int dotIndex = fileName.lastIndexOf('.');
+		return fileName.substring(dotIndex + 1).toLowerCase();
+	}
+
 	private static File showDialog(final Component parent, final JFileChooser chooser) {
 		final int chosenOption = chooser.showOpenDialog(parent);
 		if (chosenOption != JFileChooser.APPROVE_OPTION) {
@@ -24,8 +30,11 @@ public class FileChooseUtils {
 		chooser.setFileFilter(new FileFilter() {
 			@Override
 			public boolean accept(final File f) {
-				final String name = f.getName().toLowerCase();
-				return f.isDirectory() || name.endsWith(".mp3") || name.endsWith(".ogg") || name.endsWith(".wav");
+				if (SoundFileType.fromExtension(extension(f.getName())) != null) {
+					return true;
+				}
+
+				return f.isDirectory();
 			}
 
 			@Override
@@ -35,10 +44,7 @@ public class FileChooseUtils {
 		});
 
 		final File file = showDialog(parent, chooser);
-		final String songName = file.getName();
-		final int dotIndex = songName.lastIndexOf('.');
-		final String extension = songName.substring(dotIndex + 1).toLowerCase();
-		if (!extension.equals("mp3") && !extension.equals("ogg") && !extension.equals("wav")) {
+		if (SoundFileType.fromExtension(extension(file.getName())) == null) {
 			showPopup(parent, Label.UNSUPPORTED_MUSIC_FORMAT);
 			return null;
 		}

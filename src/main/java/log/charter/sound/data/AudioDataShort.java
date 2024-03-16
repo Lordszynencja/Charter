@@ -14,9 +14,7 @@ import javax.sound.sampled.AudioFormat.Encoding;
 import log.charter.io.Logger;
 import log.charter.sound.HighPassFilter;
 import log.charter.sound.HighPassFilter.PassType;
-import log.charter.sound.mp3.Mp3Loader;
-import log.charter.sound.ogg.OggLoader;
-import log.charter.sound.wav.WavLoader;
+import log.charter.sound.SoundFileType;
 
 public class AudioDataShort extends AudioData<AudioDataShort> {
 	public static final short minValue = -0x8000;
@@ -24,17 +22,9 @@ public class AudioDataShort extends AudioData<AudioDataShort> {
 
 	public static AudioDataShort readFile(final File file) {
 		try {
-			if (file.getName().endsWith(".mp3")) {
-				if (file.exists()) {
-					return Mp3Loader.load(file.getAbsolutePath());
-				}
-			} else if (file.getName().endsWith(".ogg")) {
-				if (file.exists()) {
-					return OggLoader.load(file.getAbsolutePath());
-				}
-			} else if (file.getName().endsWith(".wav")) {
-				if (file.exists()) {
-					return WavLoader.load(file);
+			for (final SoundFileType fileType : SoundFileType.values()) {
+				if (file.getName().endsWith("." + fileType.extension)) {
+					return fileType.loader.apply(file);
 				}
 			}
 		} catch (final Exception e) {

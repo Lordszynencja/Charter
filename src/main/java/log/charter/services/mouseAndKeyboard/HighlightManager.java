@@ -4,7 +4,6 @@ import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.gridSize;
-import static log.charter.data.config.Config.minNoteDistance;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId.fromNoteId;
 import static log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId.fromPosition;
@@ -102,7 +101,7 @@ public class HighlightManager {
 			for (final PositionWithStringOrNoteId position : positions) {
 				boolean isCloseToNoteOrChord = false;
 				for (final PositionWithStringOrNoteId noteOrChord : noteChordPositions) {
-					if (abs(noteOrChord.position() - position.position()) < minNoteDistance) {
+					if (abs(noteOrChord.position() - position.position()) < 20) {
 						isCloseToNoteOrChord = true;
 						break;
 					}
@@ -131,8 +130,8 @@ public class HighlightManager {
 			return beat == null ? position : beat.position();
 		}
 		if (positionType != PositionType.ANCHOR) {
-			return chartData.beats().getPositionFromGridClosestTo(new Position(position))
-					.toPosition(chartData.beats()).position();
+			return chartData.beats().getPositionFromGridClosestTo(new Position(position)).toPosition(chartData.beats())
+					.position();
 		}
 
 		final IVirtualConstantPosition closestGridPositionA = chartData.beats()

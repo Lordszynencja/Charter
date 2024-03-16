@@ -98,7 +98,7 @@ public class SongFileHandler {
 
 		chartTimeHandler.nextTime(0);
 		chartData.setSong(dir, songChart, "project.rscp", EditMode.GUITAR, 0, 0);
-		projectAudioHandler.setAudio(musicData, !songFile.equals(new File(dir, "song.ogg")));
+		projectAudioHandler.setAudio(musicData);
 		loadingDialog.dispose();
 
 		audioHandler.clear();

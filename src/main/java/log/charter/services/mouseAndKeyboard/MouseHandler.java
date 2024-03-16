@@ -213,7 +213,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
 			for (final Level level : arrangement.levels) {
 				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.sounds);
-				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.handShapes);
 			}
 		}
 	}

@@ -254,12 +254,12 @@ public class GuitarDrawer {
 
 		for (int i = 0; i < frameData.level.handShapes.size(); i++) {
 			final HandShape handShape = frameData.level.handShapes.get(i);
-			final int x = timeToX(handShape.position(), frameData.time);
+			final int x = timeToX(handShape.position(frameData.beats), frameData.time);
 			if (isPastRightEdge(x, panelWidth)) {
 				break;
 			}
 
-			final int length = timeToXLength(handShape.position(), handShape.length());
+			final int length = timeToX(handShape.endPosition(frameData.beats), frameData.time) - x;
 			if (!isOnScreen(x, length)) {
 				continue;
 			}

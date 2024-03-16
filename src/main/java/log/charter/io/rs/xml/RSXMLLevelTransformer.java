@@ -1,5 +1,6 @@
 package log.charter.io.rs.xml;
 
+import static log.charter.util.CollectionUtils.map;
 import static log.charter.util.CollectionUtils.toMap;
 import static log.charter.util.Utils.mapInteger;
 
@@ -8,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import log.charter.data.song.Anchor;
 import log.charter.data.song.Arrangement;
@@ -26,6 +26,7 @@ import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.io.rs.xml.song.ArrangementAnchor;
 import log.charter.io.rs.xml.song.ArrangementBendValue;
 import log.charter.io.rs.xml.song.ArrangementChord;
+import log.charter.io.rs.xml.song.ArrangementHandShape;
 import log.charter.io.rs.xml.song.ArrangementLevel;
 import log.charter.io.rs.xml.song.ArrangementNote;
 
@@ -59,15 +60,18 @@ public class RSXMLLevelTransformer {
 		return new Anchor(position, fret, width);
 	}
 
+	private static HandShape handShape(final ImmutableBeatsMap beats, final ArrangementHandShape arrangementHandShape) {
+		final FractionalPosition position = FractionalPosition.fromTime(beats, arrangementHandShape.startTime, true);
+		final FractionalPosition endPosition = FractionalPosition.fromTime(beats, arrangementHandShape.endTime, true);
+
+		return new HandShape(position, endPosition, arrangementHandShape.chordId);
+	}
+
 	private static Level toLevel(final ArrangementLevel arrangementLevel, final Arrangement arrangement,
 			final ImmutableBeatsMap beats) {
 		final Level level = new Level();
-		level.anchors = arrangementLevel.anchors.list.stream()//
-				.map(arrangementAnchor -> anchor(beats, arrangementAnchor))//
-				.collect(Collectors.toCollection(ArrayList::new));
-		level.handShapes = arrangementLevel.handShapes.list.stream()//
-				.map(HandShape::new)//
-				.collect(Collectors.toCollection(ArrayList::new));
+		level.anchors = map(arrangementLevel.anchors.list, a -> anchor(beats, a));
+		level.handShapes = map(arrangementLevel.handShapes.list, h -> handShape(beats, h));
 
 		for (final ArrangementChord arrangementChord : arrangementLevel.chords.list) {
 			level.sounds.add(ChordOrNote

@@ -14,7 +14,7 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
 import log.charter.services.data.copy.data.positions.CopiedHandShapePosition;
@@ -65,7 +65,7 @@ public class HandShapesCopyData implements ICopyData {
 			}
 		}
 
-		handShapes.sort(IConstantPosition::compareTo);
+		handShapes.sort(IConstantFractionalPosition::compareTo);
 		selectionManager.addSelectionForPositions(PositionType.HAND_SHAPE, positionsToSelect);
 	}
 }

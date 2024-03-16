@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import log.charter.data.config.Config;
+import log.charter.data.config.Localization.Label;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.Position;
 import log.charter.data.song.position.time.IConstantPosition;
@@ -16,9 +18,22 @@ import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.ChartProject;
+import log.charter.util.data.Fraction;
 import log.charter.util.grid.GridPosition;
 
 public class BeatsMap {
+	public enum DistanceType {
+		MILISECONDS(Label.DISTANCE_TYPE_MILISECONDS), //
+		BEATS(Label.DISTANCE_TYPE_BEATS), //
+		NOTES(Label.DISTANCE_TYPE_NOTES);
+
+		public final Label label;
+
+		DistanceType(final Label label) {
+			this.label = label;
+		}
+	}
+
 	public class ImmutableBeatsMap implements List<Beat> {
 		@Override
 		public int size() {
@@ -218,6 +233,96 @@ public class BeatsMap {
 				position.position(immutable, newPosition);
 			}
 		}
+
+		private IVirtualConstantPosition addMiliseconds(final IVirtualConstantPosition position, final int distance) {
+			return IVirtualConstantPosition.add(this, position, new Position(distance));
+		}
+
+		private IVirtualConstantPosition addBeats(final IVirtualConstantPosition position,
+				final FractionalPosition distance) {
+			return IVirtualConstantPosition.add(this, position, distance);
+		}
+
+		private IVirtualConstantPosition removeNote(final IVirtualConstantPosition position, Fraction distance) {
+			FractionalPosition fractionalPosition = position.toFraction(this).fractionalPosition();
+			if (fractionalPosition.fraction.numerator > 0) {
+				final int noteDenominator = get(fractionalPosition.beatId).noteDenominator;
+				final Fraction distanceLeftInBeats = distance.multiply(noteDenominator);
+				if (distanceLeftInBeats.compareTo(fractionalPosition.fraction) <= 0) {
+					return fractionalPosition.add(distanceLeftInBeats.negate());
+				}
+
+				distance = distance.add(fractionalPosition.fraction.divide(noteDenominator));
+				fractionalPosition = new FractionalPosition(fractionalPosition.beatId);
+			}
+
+			int beatId = fractionalPosition.beatId - 1;
+			int noteDenominator = get(beatId).noteDenominator;
+			while (distance.compareTo(new Fraction(1, noteDenominator)) > 0) {
+				distance = distance.add(new Fraction(-1, noteDenominator));
+				beatId--;
+				noteDenominator = get(beatId).noteDenominator;
+			}
+
+			return new FractionalPosition(beatId, new Fraction(1).add(distance.multiply(noteDenominator).negate()));
+		}
+
+		private IVirtualConstantPosition addNote(final IVirtualConstantPosition position, Fraction distance) {
+			if (distance.negative()) {
+				return removeNote(position, distance.negate());
+			}
+
+			FractionalPosition fractionalPosition = position.toFraction(this).fractionalPosition();
+			if (fractionalPosition.fraction.numerator > 0) {
+				final int noteDenominator = get(fractionalPosition.beatId).noteDenominator;
+				final Fraction distanceLeftInBeats = distance.multiply(noteDenominator);
+				final Fraction distanceToNextBeat = new Fraction(1).add(fractionalPosition.fraction).negate();
+				if (distanceLeftInBeats.compareTo(distanceToNextBeat) <= 0) {
+					return fractionalPosition.add(distanceLeftInBeats);
+				}
+
+				distance = distance.add(distanceToNextBeat.divide(noteDenominator));
+				fractionalPosition = new FractionalPosition(fractionalPosition.beatId + 1);
+			}
+
+			int beatId = fractionalPosition.beatId;
+			int noteDenominator = get(beatId).noteDenominator;
+			while (distance.compareTo(new Fraction(1, noteDenominator)) > 0) {
+				distance = distance.add(new Fraction(-1, noteDenominator));
+				beatId++;
+				noteDenominator = get(beatId).noteDenominator;
+			}
+
+			return new FractionalPosition(beatId, new Fraction(1).add(distance.multiply(noteDenominator).negate()));
+		}
+
+		public IVirtualConstantPosition getMaxPositionBefore(final IVirtualConstantPosition position) {
+			if (Config.minNoteDistanceType == DistanceType.MILISECONDS) {
+				return addMiliseconds(position, -Config.minNoteDistanceFactor);
+			}
+			if (Config.minNoteDistanceType == DistanceType.BEATS) {
+				return addBeats(position, new FractionalPosition(new Fraction(-1, Config.minNoteDistanceFactor)));
+			}
+			if (Config.minNoteDistanceType == DistanceType.NOTES) {
+				return removeNote(position, new Fraction(1, Config.minNoteDistanceFactor));
+			}
+
+			return position;
+		};
+
+		public IVirtualConstantPosition getMinEndPositionAfter(final IVirtualConstantPosition position) {
+			if (Config.minNoteDistanceType == DistanceType.MILISECONDS) {
+				return addMiliseconds(position, Config.minTailLengthFactor);
+			}
+			if (Config.minNoteDistanceType == DistanceType.BEATS) {
+				return addBeats(position, new FractionalPosition(new Fraction(1, Config.minTailLengthFactor)));
+			}
+			if (Config.minNoteDistanceType == DistanceType.NOTES) {
+				return addNote(position, new Fraction(1, Config.minTailLengthFactor));
+			}
+
+			return position;
+		};
 	}
 
 	public final ImmutableBeatsMap immutable = new ImmutableBeatsMap();

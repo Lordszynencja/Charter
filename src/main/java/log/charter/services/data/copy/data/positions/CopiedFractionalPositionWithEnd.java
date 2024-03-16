@@ -6,12 +6,12 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
 
-public abstract class CopiedFractionalPositionWithLength<T extends IFractionalPositionWithEnd>
+public abstract class CopiedFractionalPositionWithEnd<T extends IFractionalPositionWithEnd>
 		extends CopiedFractionalPosition<T> {
 	@XStreamAsAttribute
 	public final FractionalPosition ep;
 
-	public CopiedFractionalPositionWithLength(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
+	public CopiedFractionalPositionWithEnd(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
 			final T position) {
 		super(beats, basePosition, position);
 		ep = position.endPosition();

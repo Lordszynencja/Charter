@@ -8,9 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
-import log.charter.data.song.position.Position;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.time.IConstantPositionWithLength;
 import log.charter.services.RepeatManager;
 
@@ -21,25 +22,26 @@ public class HandShapeDrawData implements IConstantPositionWithLength {
 			return new ArrayList<>();
 		}
 
+		final ImmutableBeatsMap beats = data.beats();
 		final List<HandShapeDrawData> handShapesToDraw = new ArrayList<>();
 		final List<HandShape> handShapes = data.currentArrangementLevel().handShapes;
 		final List<ChordTemplate> chordTemplates = data.currentArrangement().chordTemplates;
 
-		final Integer handShapesFrom = lastBeforeEqual(handShapes, new Position(timeFrom)).findId();
-		final Integer handShapesTo = lastBeforeEqual(handShapes, new Position(timeTo)).findId();
-
+		final Integer handShapesFrom = lastBeforeEqual(handShapes, FractionalPosition.fromTime(beats, timeFrom))
+				.findId();
+		final Integer handShapesTo = lastBeforeEqual(handShapes, FractionalPosition.fromTime(beats, timeTo)).findId();
 		if (handShapesFrom == null || handShapesTo == null) {
 			return handShapesToDraw;
 		}
 
 		for (int i = handShapesFrom; i <= handShapesTo; i++) {
 			final HandShape handShape = handShapes.get(i);
-			if (handShape.templateId == -1) {
+			if (handShape.templateId == null || handShape.templateId == -1) {
 				continue;
 			}
 
-			final int handShapeTimeFrom = max(handShape.position(), timeFrom);
-			final int handShapeTimeTo = min(handShape.endPosition().position(), timeTo);
+			final int handShapeTimeFrom = max(handShape.position(beats), timeFrom);
+			final int handShapeTimeTo = min(handShape.endPosition().position(beats), timeTo);
 
 			handShapesToDraw.add(new HandShapeDrawData(handShapeTimeFrom, handShapeTimeTo,
 					chordTemplates.get(handShape.templateId)));

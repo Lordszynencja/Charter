@@ -1,8 +1,9 @@
 package log.charter.io.rs.xml.song;
 
+import static log.charter.util.CollectionUtils.map;
+
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -10,6 +11,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import log.charter.data.song.Anchor;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
@@ -41,22 +43,24 @@ public class ArrangementLevel {
 		return new ArrangementAnchor(anchor.position(beats), anchor.fret, new BigDecimal(anchor.width));
 	}
 
+	private ArrangementHandShape handShape(final ImmutableBeatsMap beats, final HandShape handShape) {
+		return new ArrangementHandShape(handShape.position(beats), handShape.endPosition(beats),
+				handShape.templateId == null ? 0 : handShape.templateId);
+	}
+
 	private ArrangementLevel(final ImmutableBeatsMap beats, final int difficulty, final Level level,
 			final List<ChordTemplate> chordTemplates) {
 		this.difficulty = difficulty;
 
-		setChordsAndNotes(level, chordTemplates);
+		setChordsAndNotes(beats, level, chordTemplates);
 
 		fretHandMutes = new CountedList<>();
-		anchors = new CountedList<>(level.anchors.stream()//
-				.map(anchor -> anchor(beats, anchor))//
-				.collect(Collectors.toList()));
-		handShapes = new CountedList<ArrangementHandShape>(level.handShapes.stream()//
-				.map(ArrangementHandShape::new)//
-				.collect(Collectors.toList()));
+		anchors = new CountedList<>(map(level.anchors, a -> anchor(beats, a)));
+		handShapes = new CountedList<>(map(level.handShapes, h -> handShape(beats, h)));
 	}
 
-	private void setChordsAndNotes(final Level level, final List<ChordTemplate> chordTemplates) {
+	private void setChordsAndNotes(final ImmutableBeatsMap beats, final Level level,
+			final List<ChordTemplate> chordTemplates) {
 		notes = new CountedList<>();
 		chords = new CountedList<>();
 		final List<ChordOrNote> chordsAndNotes = level.sounds;
@@ -70,7 +74,7 @@ public class ArrangementLevel {
 
 			final Chord chord = sound.chord();
 			final ChordTemplate chordTemplate = chordTemplates.get(chord.templateId());
-			final boolean forceAddNotes = level.shouldChordShowNotes(i);
+			final boolean forceAddNotes = level.shouldChordShowNotes(beats, i);
 			final int nextPosition = i + 1 < chordsAndNotes.size() ? chordsAndNotes.get(i + 1).position()
 					: chord.position() + 100;
 			final ArrangementChord arrangementChord = new ArrangementChord(chord, chordTemplate, nextPosition,

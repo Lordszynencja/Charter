@@ -1,28 +1,44 @@
 package log.charter.gui.components.simple;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.swing.JComboBox;
 
-public class CharterSelect<T> extends JComboBox<T> {
-	private static final long serialVersionUID = 1L;
+public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
+	public static class ItemHolder<T> {
+		public final T item;
+		private final String label;
 
-	private static <T> int findSelectedIndex(final T[] items, final T item) {
-		for (int i = 0; i < items.length; i++) {
-			if (Objects.equals(items[i], item)) {
-				return i;
-			}
+		public ItemHolder(final T item) {
+			this.item = item;
+			this.label = item.toString();
 		}
 
-		return 0;
+		public ItemHolder(final T item, final String label) {
+			this.item = item;
+			this.label = label;
+		}
+
+		@Override
+		public String toString() {
+			return label;
+		}
 	}
 
-	private static <T> int findSelectedIndex(final Vector<T> items, final T item) {
+	private static <T> Vector<ItemHolder<T>> pack(final List<T> collection, final Function<T, String> labelGenerator) {
+		return collection.stream().map(e -> new ItemHolder<>(e, labelGenerator.apply(e)))
+				.collect(Collectors.toCollection(Vector::new));
+	}
+
+	private static final long serialVersionUID = 1L;
+
+	private static <T> int findSelectedIndex(final List<T> items, final T item) {
 		for (int i = 0; i < items.size(); i++) {
 			if (Objects.equals(items.get(i), item)) {
 				return i;
@@ -34,48 +50,48 @@ public class CharterSelect<T> extends JComboBox<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T getSelectedItem() {
-		return (T) super.getSelectedItem();
+	public ItemHolder<T> getSelectedItem() {
+		return (ItemHolder<T>) super.getSelectedItem();
 	}
 
-	public CharterSelect(final Vector<T> items, final T item) {
-		super(items);
+	public T getSelectedValue() {
+		return getSelectedItem().item;
+	}
+
+	public CharterSelect(final List<T> items, final T item, final Function<T, String> labelGenerator,
+			final Consumer<T> onPick) {
+		super(pack(items, labelGenerator));
 
 		setSelectedIndex(findSelectedIndex(items, item));
+
+		if (onPick != null) {
+			addActionListener(e -> onPick.accept(getSelectedValue()));
+		}
 	}
 
-	public CharterSelect(final Vector<T> items, final T item, final Consumer<T> onPick) {
-		this(items, item);
-
-		addActionListener(e -> onPick.accept(getSelectedItem()));
+	public CharterSelect(final List<T> items, final T item, final Function<T, String> labelGenerator) {
+		this(items, item, labelGenerator, null);
 	}
 
-	public CharterSelect(final T[] items, final T item) {
-		super(items);
-
-		setSelectedIndex(findSelectedIndex(items, item));
+	public CharterSelect(final List<T> items, final T item) {
+		this(items, item, T::toString);
 	}
 
-	public CharterSelect(final T[] items, final T item, final Consumer<T> onPick) {
-		this(items, item);
-
-		addActionListener(e -> onPick.accept(getSelectedItem()));
+	public CharterSelect(final Stream<T> items, final T item, final Function<T, String> labelGenerator,
+			final Consumer<T> onPick) {
+		this(items.toList(), item, labelGenerator, onPick);
 	}
 
-	public CharterSelect(final Stream<T> items, final T item) {
-		this((Vector<T>) items.collect(Collectors.toCollection(Vector::new)), item);
+	public CharterSelect(final Stream<T> items, final T item, final Function<T, String> labelGenerator) {
+		this(items, item, labelGenerator, null);
 	}
 
 	public CharterSelect(final Stream<T> items, final T item, final Consumer<T> onPick) {
-		this((Vector<T>) items.collect(Collectors.toCollection(Vector::new)), item, onPick);
+		this(items, item, T::toString, onPick);
 	}
 
-	public CharterSelect(final Collection<T> items, final T item) {
-		this(new Vector<>(items), item);
-	}
-
-	public CharterSelect(final Collection<T> items, final T item, final Consumer<T> onPick) {
-		this(new Vector<>(items), item, onPick);
+	public CharterSelect(final Stream<T> items, final T item) {
+		this(items, item, T::toString);
 	}
 
 }

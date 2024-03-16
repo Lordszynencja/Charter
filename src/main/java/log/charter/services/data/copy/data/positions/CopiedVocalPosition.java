@@ -9,7 +9,7 @@ import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
 
 @XStreamAlias("copiedVocal")
-public class CopiedVocalPosition extends CopiedFractionalPositionWithLength<Vocal> {
+public class CopiedVocalPosition extends CopiedFractionalPositionWithEnd<Vocal> {
 	@XStreamAsAttribute
 	public final String text;
 	@XStreamAsAttribute

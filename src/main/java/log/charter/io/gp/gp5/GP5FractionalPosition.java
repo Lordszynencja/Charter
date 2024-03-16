@@ -1,57 +1,47 @@
 package log.charter.io.gp.gp5;
 
-import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.io.gp.gp5.data.GPDuration;
 import log.charter.util.data.Fraction;
 
-public class GP5FractionalPosition {
+public class GP5FractionalPosition implements IConstantFractionalPosition {
 	private final ImmutableBeatsMap beats;
-	private final int beatId;
-	private final Fraction fraction;
+	private final FractionalPosition position;
+
+	public GP5FractionalPosition(final ImmutableBeatsMap beats, final FractionalPosition position) {
+		this.beats = beats;
+		this.position = position;
+	}
 
 	public GP5FractionalPosition(final ImmutableBeatsMap beats, final int beatId) {
-		this(beats, beatId, new Fraction(0, 1));
+		this(beats, new FractionalPosition(beatId, new Fraction(0, 1)));
 	}
 
 	public GP5FractionalPosition(final ImmutableBeatsMap beats, final int beatId, final Fraction fraction) {
-		this.beats = beats;
-		this.beatId = beatId;
-		this.fraction = fraction;
+		this(beats, new FractionalPosition(beatId, fraction));
 	}
 
-	private GP5FractionalPosition recalculateBeat(Fraction newFraction) {
-		int newBeatId = beatId;
-		Beat beat = beats.get(newBeatId);
-		while (newFraction.numerator < 0) {
-			newBeatId--;
-			beat = beats.get(newBeatId);
-			newFraction = newFraction.add(1, beat.noteDenominator);
-		}
-		while (newFraction.add(-1, beat.noteDenominator).numerator >= 0) {
-			newBeatId++;
-			beat = beats.get(newBeatId);
-			newFraction = newFraction.add(-1, beat.noteDenominator);
-		}
-
-		return new GP5FractionalPosition(beats, newBeatId, newFraction);
+	private int getCurrentBeatDenominator() {
+		return beats.get(position.beatId).noteDenominator;
 	}
 
-	public GP5FractionalPosition add(final Fraction fraction) {
-		return recalculateBeat(this.fraction.add(fraction));
+	private GP5FractionalPosition add(final Fraction fraction) {
+		return new GP5FractionalPosition(beats, position.add(fraction));
 	}
 
 	public GP5FractionalPosition move(final GPDuration duration) {
-		return add(new Fraction(1, duration.denominator));
+		return add(new Fraction(getCurrentBeatDenominator(), duration.denominator));
 	}
 
 	public GP5FractionalPosition moveBackwards(final GPDuration duration) {
-		return add(new Fraction(-1, duration.denominator));
+		return add(new Fraction(-getCurrentBeatDenominator(), duration.denominator));
 	}
 
 	public GP5FractionalPosition move(final GPDuration duration, final int tupletNumerator, final int tupletDenominator,
 			final int dots) {
-		Fraction addFraction = new Fraction(1, duration.denominator);
+		Fraction addFraction = new Fraction(getCurrentBeatDenominator(), duration.denominator);
 		if (tupletDenominator != tupletNumerator) {
 			addFraction = addFraction.multiply(tupletDenominator, tupletNumerator);
 		}
@@ -70,28 +60,12 @@ public class GP5FractionalPosition {
 		return add(addFraction);
 	}
 
-	private int getPosition(final int beatPosition, final int beatLength, final int noteDenominator) {
-		final double positionInBeat = (double) fraction.numerator / fraction.denominator * noteDenominator;
-		return beatPosition + (int) (positionInBeat * beatLength);
-	}
-
-	public int getPosition() {
-		if (beatId + 1 < beats.size()) {
-			final Beat beat = beats.get(beatId);
-			final Beat nextBeat = beats.get(beatId + 1);
-			return getPosition(beat.position(), nextBeat.position() - beat.position(), beat.noteDenominator);
-		}
-
-		final int usedBeatId = beats.size() - 2;
-		final Beat beat = beats.get(usedBeatId);
-		final Beat nextBeat = beats.get(usedBeatId + 1);
-		final int beatLength = nextBeat.position() - beat.position();
-		final int beatPosition = beat.position() + beatLength * (beatId - usedBeatId);
-		return getPosition(beatPosition, beatLength, nextBeat.noteDenominator);
+	public int position() {
+		return position(beats);
 	}
 
 	@Override
-	public String toString() {
-		return beatId + " " + fraction;
+	public FractionalPosition fractionalPosition() {
+		return position;
 	}
 }

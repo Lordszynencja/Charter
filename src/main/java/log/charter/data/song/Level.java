@@ -8,9 +8,10 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 
 @XStreamAlias("level")
 @XStreamInclude({ Anchor.class, ChordOrNote.class, HandShape.class })
@@ -22,14 +23,15 @@ public class Level {
 	public Level() {
 	}
 
-	public boolean shouldChordShowNotes(final int id) {
+	public boolean shouldChordShowNotes(final ImmutableBeatsMap beats, final int id) {
 		final ChordOrNote sound = sounds.get(id);
 		if (sound.isNote()) {
 			return true;
 		}
 
 		final Chord chord = sound.chord();
-		final HandShape handShape = lastBeforeEqual(handShapes, chord, IConstantPosition::compareTo).find();
+		final HandShape handShape = lastBeforeEqual(handShapes, chord.toFraction(beats),
+				IConstantFractionalPosition::compareTo).find();
 		if (handShape == null) {
 			return true;
 		}
@@ -46,7 +48,7 @@ public class Level {
 			if (previousSound.chord().templateId() != handShape.templateId) {
 				return true;
 			}
-			if (previousSound.position() < handShape.position()) {
+			if (previousSound.position() < handShape.position(beats)) {
 				break;
 			}
 

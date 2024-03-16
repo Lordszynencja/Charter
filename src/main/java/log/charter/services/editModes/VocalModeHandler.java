@@ -51,7 +51,7 @@ public class VocalModeHandler extends ModeHandler {
 			undoSystem.addUndo();
 		}
 
-		chartItemsHandler.changePositionsWithLengthsByGrid(selectionManager.getSelectedVocals(),
+		chartItemsHandler.changePositionsWithLengthsByGrid(selectionManager.getSelectedElements(PositionType.VOCAL),
 				chartData.currentVocals().vocals, change);
 
 		currentSelectionEditor.selectionChanged(false);

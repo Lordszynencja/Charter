@@ -1,12 +1,8 @@
 package log.charter.services.data;
 
 import static java.util.Arrays.asList;
-import static log.charter.data.config.Config.minNoteDistance;
-import static log.charter.data.song.position.virtual.IVirtualConstantPosition.add;
-import static log.charter.services.data.fixers.ArrangementFixer.fixNoteLength;
 import static log.charter.util.CollectionUtils.getFromTo;
 import static log.charter.util.CollectionUtils.map;
-import static log.charter.util.CollectionUtils.min;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -26,7 +22,6 @@ import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
 import log.charter.data.song.position.ConstantPosition;
-import log.charter.data.song.position.Position;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
@@ -42,35 +37,6 @@ import log.charter.services.editModes.ModeManager;
 import log.charter.util.collections.HashSet2;
 
 public class ChartItemsHandler {
-	private static <P extends IVirtualPositionWithEnd> void changePositionLength(final ImmutableBeatsMap beats,
-			final List<P> allPositions, final Selection<P> selected, final int gridsChange) {
-		final IVirtualPositionWithEnd positionWithLength = selected.selectable;
-
-		IVirtualConstantPosition endPosition = positionWithLength.endPosition();
-		endPosition = beats.addGrid(endPosition, gridsChange);
-
-		if (selected.id + 1 < allPositions.size()) {
-			final P next = allPositions.get(selected.id + 1);
-			final IVirtualConstantPosition maxPosition = add(beats, next, new Position(minNoteDistance));
-			endPosition = min(IVirtualConstantPosition.comparator(beats), endPosition, maxPosition);
-		}
-
-		positionWithLength.endPosition(beats, endPosition);
-	}
-
-	private static void changeNoteLength(final ImmutableBeatsMap beats, final List<ChordOrNote> sounds,
-			final CommonNote note, final int id, final int gridsChange) {
-		if (note.linkNext()) {
-			LinkedNotesFixer.fixLinkedNote(note, id, sounds);
-			return;
-		}
-
-		IVirtualConstantPosition endPosition = new ConstantPosition(note.endPosition());
-		endPosition = beats.addGrid(endPosition, gridsChange);
-		note.endPosition(endPosition.toPosition(beats).position());
-
-		fixNoteLength(note, id, sounds);
-	}
 
 	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
@@ -260,12 +226,33 @@ public class ChartItemsHandler {
 		}
 	}
 
-	public <P extends IVirtualPositionWithEnd> void changePositionsWithLengthsByGrid(final List<Selection<P>> toChange,
+	private <P extends IVirtualPositionWithEnd> void changePositionLength(final ImmutableBeatsMap beats,
+			final P position, final int gridsChange) {
+		position.endPosition(beats, beats.addGrid(position.endPosition(), gridsChange));
+	}
+
+	public <P extends IVirtualPositionWithEnd> void changePositionsWithLengthsByGrid(final List<P> toChange,
 			final List<P> allPositions, final int gridsChange) {
 		final ImmutableBeatsMap beats = chartData.beats();
-		for (final Selection<P> selected : toChange) {
-			changePositionLength(beats, allPositions, selected, gridsChange);
+		for (final P selected : toChange) {
+			changePositionLength(beats, selected, gridsChange);
 		}
+
+		arrangementFixer.fixLengths(allPositions);
+	}
+
+	private void changeNoteLength(final ImmutableBeatsMap beats, final List<ChordOrNote> sounds, final CommonNote note,
+			final int id, final int gridsChange) {
+		if (note.linkNext()) {
+			LinkedNotesFixer.fixLinkedNote(note, id, sounds);
+			return;
+		}
+
+		IVirtualConstantPosition endPosition = new ConstantPosition(note.endPosition());
+		endPosition = beats.addGrid(endPosition, gridsChange);
+		note.endPosition(endPosition.toPosition(beats).position());
+
+		arrangementFixer.fixNoteLength(note, id, sounds);
 	}
 
 	public void changeSoundsLength(final List<Selection<ChordOrNote>> toChange, final int gridsChange,

@@ -104,7 +104,7 @@ public class NewProjectCreator {
 		}
 
 		chartData.setNewSong(songFolder, songChart, "project.rscp");
-		projectAudioHandler.setAudio(musicData, !songFile.equals(new File(songFolder, "song.ogg")));
+		projectAudioHandler.setAudio(musicData);
 		songFileHandler.save();
 
 		audioHandler.clear();

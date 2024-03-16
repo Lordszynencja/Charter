@@ -154,7 +154,8 @@ public class VocalsDrawer {
 			} else {
 				frameData.highlightData.highlightedNonIdPositions.forEach(highlightPosition -> {
 					final int x = timeToX(highlightPosition.position, frameData.time);
-					final int length = max(2, timeToX(highlightPosition.endPosition().position(), frameData.time) - x);
+					final int length = max(2,
+							timeToX(highlightPosition.endPosition().position(frameData.beats), frameData.time) - x);
 					drawingData.addHighlight(x, length);
 				});
 			}

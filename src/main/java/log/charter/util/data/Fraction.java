@@ -32,7 +32,16 @@ public class Fraction implements Comparable<Fraction> {
 	public final long numerator;
 	public final long denominator;
 
+	public Fraction(final long number) {
+		numerator = number;
+		denominator = 1;
+	}
+
 	public Fraction(long numerator, long denominator) {
+		if (denominator == 0) {
+			throw new IllegalArgumentException("can't have fraction with denominator 0");
+		}
+
 		if (numerator == 0) {
 			this.numerator = 0;
 			this.denominator = 1;

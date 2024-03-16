@@ -167,7 +167,7 @@ public class MidiChartNotePlayer implements Initiable {
 	}
 
 	private MidiChartNotePlayerNoteData makeNoteData(final int noteId) {
-		final ChordOrNote sound = chartData.currentArrangementLevel().sounds.get(noteId);
+		final ChordOrNote sound = chartData.currentSounds().get(noteId);
 		int soundEnd = sound.endPosition().position();
 		int maxEndTime = chartTimeHandler.maxTime();
 		if (sound.isChord() && sound.length() < 50) {
@@ -177,9 +177,11 @@ public class MidiChartNotePlayer implements Initiable {
 				maxEndTime = min(newEndTime, maxEndTime);
 			}
 
-			final HandShape handShape = lastBeforeEqual(chartData.currentArrangementLevel().handShapes, sound).find();
-			if (handShape != null && (newEndTime == null || handShape.endPosition().position() < newEndTime)) {
-				newEndTime = handShape.endPosition().position();
+			final HandShape handShape = lastBeforeEqual(chartData.currentHandShapes(),
+					sound.toFraction(chartData.beats())).find();
+			if (handShape != null
+					&& (newEndTime == null || handShape.endPosition().position(chartData.beats()) < newEndTime)) {
+				newEndTime = handShape.endPosition().position(chartData.beats());
 			}
 
 			if (newEndTime != null) {

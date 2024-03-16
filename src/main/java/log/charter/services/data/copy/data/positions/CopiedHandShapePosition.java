@@ -7,7 +7,7 @@ import log.charter.data.song.HandShape;
 import log.charter.data.song.position.FractionalPosition;
 
 @XStreamAlias("copiedHandShape")
-public class CopiedHandShapePosition extends CopiedPositionWithLength<HandShape> {
+public class CopiedHandShapePosition extends CopiedFractionalPositionWithEnd<HandShape> {
 	public final int chordId;
 
 	public CopiedHandShapePosition(final ImmutableBeatsMap beats, final FractionalPosition basePosition,

@@ -121,7 +121,6 @@ public class SongChart {
 		for (final Arrangement arrangement : arrangements) {
 			for (final Level level : arrangement.levels) {
 				positionsToMove.addAll(level.sounds);
-				positionsToMove.addAll(level.handShapes);
 			}
 		}
 

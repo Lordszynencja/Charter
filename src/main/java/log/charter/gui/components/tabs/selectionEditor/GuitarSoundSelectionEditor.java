@@ -8,7 +8,6 @@ import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
-import static log.charter.services.data.fixers.ArrangementFixer.fixSoundLength;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,6 +53,7 @@ import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.lookAndFeel.CharterCheckBox;
 import log.charter.services.data.ChartItemsHandler;
+import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.fixers.DuplicatedChordTemplatesRemover;
 import log.charter.services.data.fixers.UnusedChordTemplatesRemover;
 import log.charter.services.data.selection.ISelectionAccessor;
@@ -63,6 +63,7 @@ import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.util.collections.Pair;
 
 public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
+	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartItemsHandler chartItemsHandler;
@@ -366,7 +367,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				}
 			}
 
-			fixSoundLength(selection.id, sounds);
+			arrangementFixer.fixSoundLength(selection.id, sounds);
 		}
 
 		if (selected.size() == 1) {

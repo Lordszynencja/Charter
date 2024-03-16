@@ -40,7 +40,7 @@ public class PositionWithIdAndType extends ConstantPosition implements IConstant
 	}
 
 	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int id, final HandShape handShape) {
-		return new Builder(beats, handShape.position(), handShape.endPosition().position()).id(id).handShape(handShape)
+		return new Builder(beats, handShape.fractionalPosition(), handShape.endPosition()).id(id).handShape(handShape)
 				.build();
 	}
 

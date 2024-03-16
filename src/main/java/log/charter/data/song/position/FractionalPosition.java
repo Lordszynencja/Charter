@@ -69,6 +69,10 @@ public class FractionalPosition implements IConstantFractionalPosition {
 			return generateOnExistingBeat(beats, beatId, time, round);
 		}
 
+		if (beats.size() < 2) {
+			return new FractionalPosition(0);
+		}
+
 		final int usedBeatId = beats.size() - 2;
 		final Beat beat = beats.get(usedBeatId);
 		final Beat nextBeat = beats.get(usedBeatId + 1);
@@ -98,41 +102,37 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		return new FractionalPosition(beatId, fraction);
 	}
 
-	private static FractionalPosition recalculateBeat(int newBeatId, Fraction newFraction) {
-		final int fullBeats = newFraction.intValue();
-		newBeatId = newBeatId + fullBeats;
-		newFraction = newFraction.add(-fullBeats);
-		if (newFraction.negative()) {
-			newBeatId--;
-			newFraction = newFraction.add(1);
-		}
-
-		return new FractionalPosition(newBeatId, newFraction);
-	}
-
 	public final int beatId;
 	public final Fraction fraction;
-
-	public FractionalPosition(final int beatId) {
-		this(beatId, new Fraction(0, 1));
-	}
-
-	public FractionalPosition(final int beatId, final Fraction fraction) {
-		this.beatId = beatId;
-		this.fraction = fraction;
-	}
 
 	public FractionalPosition(final FractionalPosition other) {
 		beatId = other.beatId;
 		fraction = other.fraction;
 	}
 
-	private FractionalPosition recalculateBeat(final Fraction newFraction) {
-		return recalculateBeat(beatId, newFraction);
+	public FractionalPosition(int beatId, Fraction fraction) {
+		final int fullBeats = fraction.intValue();
+		beatId = beatId + fullBeats;
+		fraction = fraction.add(-fullBeats);
+		if (fraction.negative()) {
+			beatId--;
+			fraction = fraction.add(1);
+		}
+
+		this.beatId = beatId;
+		this.fraction = fraction;
+	}
+
+	public FractionalPosition(final int beatId) {
+		this(beatId, new Fraction(0, 1));
+	}
+
+	public FractionalPosition(final Fraction fraction) {
+		this(0, fraction);
 	}
 
 	public FractionalPosition negate() {
-		return recalculateBeat(-beatId, fraction.negate());
+		return new FractionalPosition(-beatId, fraction.negate());
 	}
 
 	public FractionalPosition absolute() {
@@ -140,11 +140,11 @@ public class FractionalPosition implements IConstantFractionalPosition {
 	}
 
 	public FractionalPosition add(final Fraction fraction) {
-		return recalculateBeat(this.fraction.add(fraction));
+		return new FractionalPosition(beatId, this.fraction.add(fraction));
 	}
 
 	public FractionalPosition add(final FractionalPosition other) {
-		return recalculateBeat(beatId + other.beatId, fraction.add(other.fraction));
+		return new FractionalPosition(beatId + other.beatId, fraction.add(other.fraction));
 	}
 
 	private int getPosition(final int beatPosition, final int beatLength) {

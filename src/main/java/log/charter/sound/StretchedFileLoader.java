@@ -197,7 +197,19 @@ public class StretchedFileLoader {
 		});
 	}
 
-	public static AudioDataShort loadStretchedAudio(final AudioDataShort musicData, final String dir, final int speed) {
+	private static File getSourceFile(final AudioDataShort musicData, final String dir, final String musicFileName) {
+		if (musicFileName.endsWith(".wav")) {
+			return new File(dir, musicFileName);
+		}
+
+		final File source = new File(dir, tmpFileName);
+		createTempFile(source, musicData);
+
+		return source;
+	}
+
+	public static AudioDataShort loadStretchedAudio(final AudioDataShort musicData, final String dir,
+			final String musicFileName, final int speed) {
 		final File target = target(dir, speed);
 		final AudioDataShort audio = load(target);
 		if (audio != null) {
@@ -209,8 +221,8 @@ public class StretchedFileLoader {
 
 		speeds.add(speed);
 
-		final File source = new File(dir, tmpFileName);
-		createTempFile(source, musicData);
+		final File source = getSourceFile(musicData, dir, musicFileName);
+
 		startStretching(source, target, speed);
 
 		return null;
