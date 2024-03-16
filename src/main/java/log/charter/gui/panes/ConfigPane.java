@@ -36,7 +36,7 @@ public final class ConfigPane extends ParamsPane {
 
 	private DistanceType minNoteDistanceType = Config.minNoteDistanceType;
 	private int minNoteDistanceFactor = Config.minNoteDistanceFactor;
-	private final DistanceType minTailLengthType = Config.minTailLengthType;
+	private DistanceType minTailLengthType = Config.minTailLengthType;
 	private int minTailLengthFactor = Config.minTailLengthFactor;
 	private int delay = Config.delay;
 	private int audioBufferMs = Config.audioBufferMs;
@@ -76,8 +76,9 @@ public final class ConfigPane extends ParamsPane {
 				new IntValueValidator(1, 1000), v -> minNoteDistanceFactor = v, false);
 		addMinNoteDistanceTypeSelect(200, row++);
 
-		addIntConfigValue(row++, 20, 0, Label.MINIMAL_TAIL_LENGTH, minTailLengthFactor, 50,
+		addIntConfigValue(row, 20, 0, Label.MINIMAL_TAIL_LENGTH, minTailLengthFactor, 50,
 				new IntValueValidator(1, 1000), v -> minTailLengthFactor = v, false);
+		addMinTailLengthTypeSelect(200, row++);
 
 		addIntConfigValue(row, 20, 0, Label.SOUND_DELAY, delay, 50, //
 				new IntValueValidator(1, 10000), v -> delay = v, false);
@@ -112,6 +113,16 @@ public final class ConfigPane extends ParamsPane {
 
 		final CharterSelect<DistanceType> select = new CharterSelect<>(possibleValues, minNoteDistanceType,
 				t -> t.label.label(), t -> minNoteDistanceType = t);
+
+		add(select, x, getY(row), 200, 20);
+	}
+
+	private void addMinTailLengthTypeSelect(final int x, final int row) {
+		final Stream<DistanceType> possibleValues = Stream.of(DistanceType.MILISECONDS, DistanceType.BEATS,
+				DistanceType.NOTES);
+
+		final CharterSelect<DistanceType> select = new CharterSelect<>(possibleValues, minTailLengthType,
+				t -> t.label.label(), t -> minTailLengthType = t);
 
 		add(select, x, getY(row), 200, 20);
 	}

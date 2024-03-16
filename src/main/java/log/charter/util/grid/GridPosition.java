@@ -151,10 +151,10 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 
 	public int compareTo(final IVirtualConstantPosition position) {
 		if (position.isPosition()) {
-			return position.asConstantPosition().compareTo(new ConstantPosition(position()));
+			return new ConstantPosition(position()).compareTo(position.asConstantPosition());
 		}
 
-		return position.asConstantFraction().compareTo(fractionalPosition());
+		return fractionalPosition().compareTo(position.asConstantFraction());
 	}
 
 }

@@ -71,9 +71,9 @@ public class Config {
 	public static int audioBufferMs = 10;
 	public static int antialiasingSamples = 16;
 
-	public static DistanceType minNoteDistanceType = DistanceType.BEATS;
+	public static DistanceType minNoteDistanceType = DistanceType.NOTES;
 	public static int minNoteDistanceFactor = 32;
-	public static DistanceType minTailLengthType = DistanceType.BEATS;
+	public static DistanceType minTailLengthType = DistanceType.NOTES;
 	public static int minTailLengthFactor = 32;
 	public static int delay = 25;
 	public static double volume = 1;
