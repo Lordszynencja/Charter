@@ -61,8 +61,7 @@ public class GuitarModeHandler extends ModeHandler {
 
 		undoSystem.addUndo();
 
-		final FractionalPosition position = FractionalPosition.fromTime(chartData.beats(), anchorPosition.position());
-		final Anchor anchor = new Anchor(position);
+		final Anchor anchor = new Anchor(anchorPosition.fractionalPosition);
 		final List<Anchor> anchors = chartData.currentAnchors();
 		anchors.add(anchor);
 		anchors.sort(IConstantFractionalPosition::compareTo);

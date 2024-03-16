@@ -12,11 +12,17 @@ import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.vocals.Vocal;
 
 public class PositionWithIdAndType extends ConstantPosition implements IConstantFractionalPositionWithEnd {
 	public static PositionWithIdAndType none() {
 		return new Builder().build();
+	}
+
+	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final IVirtualConstantPosition position,
+			final PositionType type) {
+		return new Builder(beats, position).type(type).build();
 	}
 
 	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int position, final PositionType type) {
@@ -99,6 +105,13 @@ public class PositionWithIdAndType extends ConstantPosition implements IConstant
 			this.fractionalPosition = fractionalPosition;
 			endPosition = fractionalEndPosition.getPosition(beats);
 			this.fractionalEndPosition = fractionalEndPosition;
+		}
+
+		public Builder(final ImmutableBeatsMap beats, final IVirtualConstantPosition position) {
+			this.position = position.toPosition(beats).position();
+			fractionalPosition = position.toFraction(beats).fractionalPosition();
+			endPosition = this.position;
+			fractionalEndPosition = fractionalPosition;
 		}
 
 		public Builder type(final PositionType type) {

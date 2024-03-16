@@ -72,7 +72,7 @@ public class SelectionManager implements Initiable {
 		}
 	}
 
-	private PositionWithIdAndType findExistingLong(final int x, final List<PositionWithIdAndType> positions) {
+	private PositionWithIdAndType findExistingWithEnd(final int x, final List<PositionWithIdAndType> positions) {
 		final List<PositionWithLink> positionsWithLinks = PositionWithLink.fromPositionsWithIdAndType(positions);
 		final int position = xToTime(x, chartTimeHandler.time());
 		final Integer id = closest(positionsWithLinks, new Position(position), IConstantPosition::compareTo,
@@ -112,7 +112,7 @@ public class SelectionManager implements Initiable {
 		final List<PositionWithIdAndType> positions = positionType.getPositionsWithIdsAndTypes(chartData);
 
 		if (positionType == PositionType.HAND_SHAPE || positionType == PositionType.VOCAL) {
-			return findExistingLong(x, positions);
+			return findExistingWithEnd(x, positions);
 		}
 
 		return findClosestExistingPoint(x, positions);
