@@ -18,10 +18,10 @@ public class ArrangementHandShape implements IPosition {
 	@XStreamConverter(TimeConverter.class)
 	public int endTime;
 
-	public ArrangementHandShape(final int chordId, final int startTime, final int endTime) {
-		this.chordId = chordId;
+	public ArrangementHandShape(final int startTime, final int endTime, final int chordId) {
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.chordId = chordId;
 	}
 
 	@Override
