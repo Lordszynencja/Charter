@@ -1,7 +1,6 @@
 package log.charter.data.song;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.data.song.position.FractionalPosition;
@@ -12,7 +11,6 @@ import log.charter.io.rsc.xml.converters.ToneChangeConverter;
 @XStreamConverter(ToneChangeConverter.class)
 public class ToneChange implements IFractionalPosition {
 	private FractionalPosition position;
-	@XStreamAsAttribute
 	public String toneName;
 
 	public ToneChange() {
