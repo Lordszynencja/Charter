@@ -6,11 +6,9 @@ import static java.lang.Math.min;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import log.charter.data.song.position.time.IPosition;
 import log.charter.data.song.vocals.Vocals;
 import log.charter.io.rsc.xml.ChartProject;
 import log.charter.util.collections.ArrayList2;
@@ -116,16 +114,8 @@ public class SongChart {
 	}
 
 	public void moveEverythingWithBeats(final int chartLength, final int positionDifference) {
-		final List<IPosition> positionsToMove = new LinkedList<>();
-		positionsToMove.addAll(beatsMap.beats);
-		for (final Arrangement arrangement : arrangements) {
-			for (final Level level : arrangement.levels) {
-				positionsToMove.addAll(level.sounds);
-			}
-		}
-
-		for (final IPosition positionToMove : positionsToMove) {
-			positionToMove.position(max(0, min(chartLength, positionToMove.position() + positionDifference)));
+		for (final Beat beat : beatsMap.beats) {
+			beat.position(max(0, min(chartLength, beat.position() + positionDifference)));
 		}
 
 		beatsMap.makeBeatsUntilSongEnd(chartLength);

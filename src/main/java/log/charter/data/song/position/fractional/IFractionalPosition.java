@@ -5,7 +5,7 @@ import log.charter.data.song.position.time.IPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 
 public interface IFractionalPosition extends IConstantFractionalPosition, IVirtualPosition {
-	void fractionalPosition(FractionalPosition newPosition);
+	void position(FractionalPosition newPosition);
 
 	@Override
 	default IPosition asPosition() {
@@ -18,7 +18,7 @@ public interface IFractionalPosition extends IConstantFractionalPosition, IVirtu
 	}
 
 	default void move(final FractionalPosition distance) {
-		fractionalPosition(fractionalPosition().add(distance));
+		position(position().add(distance));
 	}
 
 }

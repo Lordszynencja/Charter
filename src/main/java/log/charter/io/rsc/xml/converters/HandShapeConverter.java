@@ -21,8 +21,8 @@ public class HandShapeConverter implements Converter {
 		}
 
 		public HandShape transform(final ImmutableBeatsMap beats) {
-			this.fractionalPosition(FractionalPosition.fromTime(beats, position, true));
-			this.endPosition(FractionalPosition.fromTime(beats, endPosition, true));
+			this.position(FractionalPosition.fromTimeRounded(beats, position));
+			this.endPosition(FractionalPosition.fromTimeRounded(beats, endPosition));
 
 			return new HandShape(this);
 		}
@@ -38,7 +38,7 @@ public class HandShapeConverter implements Converter {
 	public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		final HandShape handShape = (HandShape) source;
 
-		writer.addAttribute("p", handShape.fractionalPosition().asString());
+		writer.addAttribute("p", handShape.position().asString());
 		writer.addAttribute("ep", handShape.endPosition().asString());
 		if (handShape.templateId != null) {
 			writer.addAttribute("templateId", handShape.templateId + "");

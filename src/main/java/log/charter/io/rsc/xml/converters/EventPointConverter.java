@@ -18,11 +18,11 @@ public class EventPointConverter implements Converter {
 
 		public TemporaryEventPoint(final int position) {
 			this.position = position;
-			this.fractionalPosition(new FractionalPosition(0));
+			this.position(new FractionalPosition());
 		}
 
 		public EventPoint transform(final ImmutableBeatsMap beats) {
-			this.fractionalPosition(FractionalPosition.fromTime(beats, position, true));
+			this.position(FractionalPosition.fromTimeRounded(beats, position));
 			return new EventPoint(this);
 		}
 	}
@@ -39,7 +39,7 @@ public class EventPointConverter implements Converter {
 	public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		final EventPoint eventPoint = (EventPoint) source;
 
-		writer.addAttribute("p", eventPoint.fractionalPosition().asString());
+		writer.addAttribute("p", eventPoint.position().asString());
 		if (eventPoint.section != null) {
 			writer.addAttribute("section", eventPoint.section.name());
 		}

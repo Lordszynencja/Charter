@@ -211,6 +211,7 @@ public class BeatsDrawer {
 			if (gridPosition.gridId != 0) {
 				drawingData.addGrid(timeToX(gridPosition.position(), frameData.time));
 			}
+
 			gridPosition.next();
 		}
 	}

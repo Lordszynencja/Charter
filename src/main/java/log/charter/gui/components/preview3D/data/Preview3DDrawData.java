@@ -15,14 +15,16 @@ import java.util.Map;
 import log.charter.data.ChartData;
 import log.charter.data.song.Anchor;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.position.Position;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.Position;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.util.data.IntRange;
 
 public class Preview3DDrawData {
 	private final ImmutableBeatsMap songBeats;
+	private final RepeatManager repeatManager;
+
 	private final List<Anchor> levelAnchors;
 	private final Map<Integer, IntRange> fretsCache = new HashMap<>();
 
@@ -32,31 +34,59 @@ public class Preview3DDrawData {
 	public final List<HandShapeDrawData> handShapes;
 	public final Preview3DNotesData notes;
 
-	public Preview3DDrawData(final ChartTimeHandler chartTimeHandler, final ChartData data,
+	public Preview3DDrawData(final ChartData chartData, final ChartTimeHandler chartTimeHandler,
 			final RepeatManager repeatManager) {
-		songBeats = data.beats();
+		songBeats = chartData.beats();
+		this.repeatManager = repeatManager;
+
 		time = chartTimeHandler.time();
-		levelAnchors = data.currentArrangementLevel().anchors;
+		levelAnchors = chartData.currentArrangementLevel().anchors;
 
 		final int timeTo = time + getVisibility();
-		anchors = getAnchorsForTimeSpanWithRepeats(data, repeatManager, chartTimeHandler.maxTime(), time, timeTo);
-		beats = getBeatsForTimeSpanWithRepeats(data, repeatManager, time, timeTo);
-		handShapes = getHandShapesForTimeSpanWithRepeats(data, repeatManager, time, timeTo);
-		notes = getNotesForTimeSpanWithRepeats(data, repeatManager, time, timeTo);
+		anchors = getAnchorsForTimeSpanWithRepeats(chartData, repeatManager, chartTimeHandler.maxTime(), time, timeTo);
+		beats = getBeatsForTimeSpanWithRepeats(chartData, repeatManager, time, timeTo);
+		handShapes = getHandShapesForTimeSpanWithRepeats(chartData, repeatManager, time, timeTo);
+		notes = getNotesForTimeSpanWithRepeats(chartData, repeatManager, time, timeTo);
 	}
 
-	public IntRange getFrets(final int t) {
+	private int getTimeWithRepeat(int t) {
+		if (repeatManager.isRepeating()) {
+			final int end = repeatManager.repeatEnd();
+			final int length = end - repeatManager.repeatStart();
+			while (t >= end) {
+				t -= length;
+			}
+		}
+
+		return t;
+	}
+
+	private void putAnchorInCache(final int t) {
+		final AnchorDrawData drawnAnchor = lastBeforeEqual(anchors, new Position(t)).find();
+		if (drawnAnchor != null) {
+			fretsCache.put(t, new IntRange(drawnAnchor.fretFrom + 1, drawnAnchor.fretTo));
+			return;
+		}
+
+		final IConstantFractionalPosition p = new Position(t).toFraction(songBeats);
+
+		Anchor anchor = lastBeforeEqual(levelAnchors, p).find();
+		if (anchor == null) {
+			anchor = firstAfter(levelAnchors, p).find();
+		}
+		if (anchor == null) {
+			fretsCache.put(t, null);
+			return;
+		}
+
+		fretsCache.put(t, new IntRange(anchor.fret, anchor.topFret()));
+	}
+
+	public IntRange getFrets(int t) {
+		t = getTimeWithRepeat(t);
+
 		if (!fretsCache.containsKey(t)) {
-			final IConstantFractionalPosition p = new Position(t).toFraction(songBeats);
-			Anchor anchor = lastBeforeEqual(levelAnchors, p, IConstantFractionalPosition::compareTo).find();
-			if (anchor == null) {
-				anchor = firstAfter(levelAnchors, p, IConstantFractionalPosition::compareTo).find();
-			}
-			if (anchor == null) {
-				fretsCache.put(t, null);
-			} else {
-				fretsCache.put(t, new IntRange(anchor.fret, anchor.topFret()));
-			}
+			putAnchorInCache(t);
 		}
 
 		return fretsCache.get(t);

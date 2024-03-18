@@ -14,12 +14,11 @@ import log.charter.data.ChartData;
 import log.charter.data.song.Anchor;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
-import log.charter.data.song.position.Position;
 import log.charter.data.song.position.time.IConstantPosition;
-import log.charter.data.song.position.time.IConstantPositionWithLength;
+import log.charter.data.song.position.time.Position;
 import log.charter.services.RepeatManager;
 
-public class AnchorDrawData implements IConstantPositionWithLength, Comparable<IConstantPosition> {
+public class AnchorDrawData implements IConstantPosition {
 	public static List<AnchorDrawData> getAnchorsForTimeSpan(final ChartData chartData, final int audioLength,
 			final int timeFrom, final int timeTo) {
 		if (chartData.currentArrangementLevel() == null) {
@@ -76,15 +75,17 @@ public class AnchorDrawData implements IConstantPositionWithLength, Comparable<I
 
 		final List<AnchorDrawData> repeatedAnchors = getAnchorsForTimeSpan(data, audioLength,
 				repeatManager.repeatStart(), repeatManager.repeatEnd() - 1);
+		final int repeatLength = repeatManager.repeatEnd() - repeatManager.repeatStart();
 		int repeatStart = repeatManager.repeatEnd();
 		while (repeatStart < timeFrom) {
-			repeatStart += repeatManager.repeatEnd() - repeatManager.repeatStart();
+			repeatStart += repeatLength;
 		}
 
 		while (repeatStart < timeTo) {
+			final int repeatOffset = repeatStart - repeatManager.repeatStart();
 			for (final AnchorDrawData anchorDrawData : repeatedAnchors) {
-				final int start = anchorDrawData.timeFrom - repeatManager.repeatStart() + repeatStart;
-				int end = start + anchorDrawData.timeTo - anchorDrawData.timeFrom;
+				final int start = anchorDrawData.timeFrom + repeatOffset;
+				int end = start + anchorDrawData.timeTo + repeatOffset;
 				if (start > timeTo) {
 					break;
 				}
@@ -94,7 +95,7 @@ public class AnchorDrawData implements IConstantPositionWithLength, Comparable<I
 				anchorsToDraw.add(new AnchorDrawData(start, end, anchorDrawData.fretFrom, anchorDrawData.fretTo));
 			}
 
-			repeatStart += repeatManager.repeatEnd() - repeatManager.repeatStart();
+			repeatStart += repeatLength;
 		}
 
 		return anchorsToDraw;
@@ -117,13 +118,4 @@ public class AnchorDrawData implements IConstantPositionWithLength, Comparable<I
 		return timeFrom;
 	}
 
-	@Override
-	public int length() {
-		return timeTo - timeFrom;
-	}
-
-	@Override
-	public int compareTo(final IConstantPosition o) {
-		return Integer.compare(timeFrom, o.position());
-	}
 }

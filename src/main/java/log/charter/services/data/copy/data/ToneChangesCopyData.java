@@ -7,14 +7,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import log.charter.data.ChartData;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.types.PositionType;
-import log.charter.services.data.copy.data.positions.CopiedToneChangePosition;
+import log.charter.services.data.copy.data.positions.CopiedToneChange;
 import log.charter.services.data.selection.SelectionManager;
 
 @XStreamAlias("toneChangesCopyData")
 public class ToneChangesCopyData implements ICopyData {
-	public final List<CopiedToneChangePosition> toneChanges;
+	public final List<CopiedToneChange> toneChanges;
 
-	public ToneChangesCopyData(final List<CopiedToneChangePosition> toneChanges) {
+	public ToneChangesCopyData(final List<CopiedToneChange> toneChanges) {
 		this.toneChanges = toneChanges;
 	}
 

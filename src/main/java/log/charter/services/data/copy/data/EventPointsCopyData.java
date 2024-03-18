@@ -15,17 +15,17 @@ import log.charter.data.song.Phrase;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
-import log.charter.services.data.copy.data.positions.CopiedArrangementEventsPointPosition;
+import log.charter.services.data.copy.data.positions.CopiedEventPoint;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("eventPointsCopyData")
 public class EventPointsCopyData implements ICopyData {
 	public final Map<String, Phrase> phrases;
-	public final List<CopiedArrangementEventsPointPosition> arrangementEventsPoints;
+	public final List<CopiedEventPoint> arrangementEventsPoints;
 
 	public EventPointsCopyData(final Map<String, Phrase> phrases,
-			final List<CopiedArrangementEventsPointPosition> arrangementEventsPoints) {
+			final List<CopiedEventPoint> arrangementEventsPoints) {
 		this.phrases = phrases;
 		this.arrangementEventsPoints = arrangementEventsPoints;
 	}
@@ -46,7 +46,7 @@ public class EventPointsCopyData implements ICopyData {
 			final boolean convertFromBeats) {
 		final Arrangement arrangement = chartData.currentArrangement();
 		if (phrases) {
-			for (final CopiedArrangementEventsPointPosition arrangementEventsPoint : arrangementEventsPoints) {
+			for (final CopiedEventPoint arrangementEventsPoint : arrangementEventsPoints) {
 				final String phraseName = arrangementEventsPoint.phrase;
 				if (!arrangement.phrases.containsKey(phraseName)) {
 					arrangement.phrases.put(phraseName, this.phrases.get(phraseName));
@@ -57,7 +57,7 @@ public class EventPointsCopyData implements ICopyData {
 		final ImmutableBeatsMap beats = chartData.beats();
 		final Set<EventPoint> positionsToSelect = new HashSet<>(arrangementEventsPoints.size());
 
-		for (final CopiedArrangementEventsPointPosition copiedPosition : arrangementEventsPoints) {
+		for (final CopiedEventPoint copiedPosition : arrangementEventsPoints) {
 			try {
 				final EventPoint value = copiedPosition.getValue(beats, basePosition, convertFromBeats);
 
@@ -73,7 +73,7 @@ public class EventPointsCopyData implements ICopyData {
 					}
 
 					final EventPoint eventPoint = arrangement
-							.findOrCreateArrangementEventsPoint(value.fractionalPosition());
+							.findOrCreateArrangementEventsPoint(value.position());
 					eventPoint.merge(value);
 					positionsToSelect.add(value);
 				}

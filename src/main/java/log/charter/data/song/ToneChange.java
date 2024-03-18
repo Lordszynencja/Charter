@@ -16,7 +16,7 @@ public class ToneChange implements IFractionalPosition {
 	public String toneName;
 
 	public ToneChange() {
-		position = new FractionalPosition(0);
+		position = new FractionalPosition();
 	}
 
 	public ToneChange(final FractionalPosition position) {
@@ -34,12 +34,12 @@ public class ToneChange implements IFractionalPosition {
 	}
 
 	@Override
-	public FractionalPosition fractionalPosition() {
+	public FractionalPosition position() {
 		return position;
 	}
 
 	@Override
-	public void fractionalPosition(final FractionalPosition newPosition) {
+	public void position(final FractionalPosition newPosition) {
 		position = newPosition;
 	}
 }

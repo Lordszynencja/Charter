@@ -2,25 +2,25 @@ package log.charter.io.rsc.xml;
 
 import static log.charter.io.rs.xml.song.SongArrangementXStreamHandler.readSong;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.readVocals;
-import static log.charter.util.CollectionUtils.map;
+import static log.charter.util.CollectionUtils.transform;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import log.charter.data.song.Anchor;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.EventPoint;
 import log.charter.data.song.Level;
-import log.charter.data.song.ToneChange;
-import log.charter.data.song.vocals.Vocal;
+import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.vocals.Vocals;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.RSXMLToArrangement;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.converters.AnchorConverter.TemporaryAnchor;
+import log.charter.io.rsc.xml.converters.ChordConverter.TemporaryChord;
 import log.charter.io.rsc.xml.converters.EventPointConverter.TemporaryEventPoint;
+import log.charter.io.rsc.xml.converters.HandShapeConverter.TemporaryHandShape;
+import log.charter.io.rsc.xml.converters.NoteConverter.TemporaryNote;
 import log.charter.io.rsc.xml.converters.ToneChangeConverter.TemporaryToneChange;
 import log.charter.io.rsc.xml.converters.VocalConverter.TemporaryVocal;
 import log.charter.services.data.files.SongFileHandler;
@@ -53,36 +53,15 @@ public class ChartProjectVerion3Updater {
 		project.arrangementFiles.clear();
 	}
 
-	private static Vocal transformVocal(final ImmutableBeatsMap beats, final Vocal vocal) {
-		if (vocal instanceof TemporaryVocal) {
-			return ((TemporaryVocal) vocal).transform(beats);
+	private static ChordOrNote transformSound(final ImmutableBeatsMap beats, final ChordOrNote sound) {
+		if (sound.isChord() && sound.chord() instanceof TemporaryChord) {
+			return ChordOrNote.from(((TemporaryChord) sound.chord()).transform(beats));
+		}
+		if (sound.isNote() && sound.note() instanceof TemporaryNote) {
+			return ChordOrNote.from(((TemporaryNote) sound.note()).transform(beats));
 		}
 
-		return vocal;
-	}
-
-	private static EventPoint transformEventPoint(final ImmutableBeatsMap beats, final EventPoint eventPoint) {
-		if (eventPoint instanceof TemporaryEventPoint) {
-			return ((TemporaryEventPoint) eventPoint).transform(beats);
-		}
-
-		return eventPoint;
-	}
-
-	private static ToneChange transformToneChange(final ImmutableBeatsMap beats, final ToneChange toneChange) {
-		if (toneChange instanceof TemporaryToneChange) {
-			return ((TemporaryToneChange) toneChange).transform(beats);
-		}
-
-		return toneChange;
-	}
-
-	private static Anchor transformAnchor(final ImmutableBeatsMap beats, final Anchor anchor) {
-		if (anchor instanceof TemporaryAnchor) {
-			return ((TemporaryAnchor) anchor).transform(beats);
-		}
-
-		return anchor;
+		return sound;
 	}
 
 	public static void update(final File file, final ChartProject project) {
@@ -94,13 +73,15 @@ public class ChartProjectVerion3Updater {
 		loadVocalsFromFile(file.getParentFile(), project, beats);
 		loadArrangementsFromFiles(file.getParentFile(), project, beats);
 
-		project.vocals.vocals = map(project.vocals.vocals, e -> transformVocal(beats, e));
+		transform(project.vocals.vocals, TemporaryVocal.class, e -> e.transform(beats));
 
 		for (final Arrangement arrangement : project.arrangements) {
-			arrangement.eventPoints = map(arrangement.eventPoints, e -> transformEventPoint(beats, e));
-			arrangement.toneChanges = map(arrangement.toneChanges, e -> transformToneChange(beats, e));
+			transform(arrangement.eventPoints, TemporaryEventPoint.class, e -> e.transform(beats));
+			transform(arrangement.toneChanges, TemporaryToneChange.class, e -> e.transform(beats));
 			for (final Level level : arrangement.levels) {
-				level.anchors = map(level.anchors, e -> transformAnchor(beats, e));
+				transform(level.anchors, TemporaryAnchor.class, e -> e.transform(beats));
+				transform(level.sounds, e -> transformSound(beats, e));
+				transform(level.handShapes, TemporaryHandShape.class, e -> e.transform(beats));
 			}
 		}
 

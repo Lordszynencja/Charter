@@ -25,7 +25,7 @@ public interface IVirtualPositionWithEnd extends IVirtualPosition, IVirtualConst
 			asPositionWithLength().endPosition(newPosition.toPosition(beats).position());
 		}
 		if (isFraction()) {
-			asFractionalPositionWithEnd().endPosition(newPosition.toFraction(beats).fractionalPosition());
+			asFractionalPositionWithEnd().endPosition(newPosition.toFraction(beats).position());
 		}
 	}
 }

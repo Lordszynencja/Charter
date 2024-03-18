@@ -195,9 +195,11 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 	}
 
 	private void drawNotes(final Graphics g) {
+		final ImmutableBeatsMap beats = chartData.beats();
+
 		chartData.currentArrangementLevel().sounds.stream()//
 				.flatMap(ChordOrNote::notes)//
-				.forEach(note -> drawNote(g, note.string(), note.position(), note.length()));
+				.forEach(note -> drawNote(g, note.string(), note.position(beats), note.length(beats)));
 	}
 
 	private void drawBookmarks(final Graphics g) {

@@ -6,6 +6,7 @@ import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
@@ -13,6 +14,7 @@ import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.time.Position;
 import log.charter.io.xstream.converter.FractionalPositionConverter;
 import log.charter.util.data.Fraction;
 
@@ -59,10 +61,10 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		return new FractionalPosition(beatId, fraction);
 	}
 
-	public static FractionalPosition fromTime(final ImmutableBeatsMap beats, final int time, final boolean round) {
+	private static FractionalPosition fromTime(final ImmutableBeatsMap beats, final int time, final boolean round) {
 		final Integer beatId = lastBeforeEqual(beats, new Position(time), IConstantPosition::compareTo).findId();
 		if (beatId == null) {
-			return new FractionalPosition(0);
+			return new FractionalPosition();
 		}
 
 		if (beatId + 1 < beats.size()) {
@@ -70,7 +72,7 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		}
 
 		if (beats.size() < 2) {
-			return new FractionalPosition(0);
+			return new FractionalPosition();
 		}
 
 		final int usedBeatId = beats.size() - 2;
@@ -88,6 +90,10 @@ public class FractionalPosition implements IConstantFractionalPosition {
 
 	public static FractionalPosition fromTime(final ImmutableBeatsMap beats, final int time) {
 		return fromTime(beats, time, false);
+	}
+
+	public static FractionalPosition fromTimeRounded(final ImmutableBeatsMap beats, final int time) {
+		return fromTime(beats, time, true);
 	}
 
 	public static FractionalPosition fromString(final String value) {
@@ -131,6 +137,10 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		this(0, fraction);
 	}
 
+	public FractionalPosition() {
+		this(0, new Fraction(0, 1));
+	}
+
 	public FractionalPosition negate() {
 		return new FractionalPosition(-beatId, fraction.negate());
 	}
@@ -139,12 +149,42 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		return beatId < 0 ? negate() : this;
 	}
 
+	public FractionalPosition add(final int number) {
+		return new FractionalPosition(beatId + number, fraction);
+	}
+
 	public FractionalPosition add(final Fraction fraction) {
 		return new FractionalPosition(beatId, this.fraction.add(fraction));
 	}
 
 	public FractionalPosition add(final FractionalPosition other) {
 		return new FractionalPosition(beatId + other.beatId, fraction.add(other.fraction));
+	}
+
+	public FractionalPosition multiply(final int number) {
+		return new FractionalPosition(beatId * number, fraction.multiply(number));
+	}
+
+	public FractionalPosition multiply(final Fraction fraction) {
+		return new FractionalPosition(this.fraction.add(new Fraction(beatId, 1).multiply(fraction)));
+	}
+
+	public FractionalPosition round(final Fraction fraction) {
+		if (fraction.numerator == 0) {
+			return new FractionalPosition();
+		}
+
+		final int value = (int) Math
+				.round(multiply(new Fraction(fraction.denominator, fraction.numerator)).doubleValue());
+		return new FractionalPosition(fraction.multiply(value));
+	}
+
+	public FractionalPosition floor() {
+		return new FractionalPosition(beatId);
+	}
+
+	public FractionalPosition ceil() {
+		return new FractionalPosition(fraction.numerator > 0 ? beatId + 1 : beatId);
 	}
 
 	private int getPosition(final int beatPosition, final int beatLength) {
@@ -184,12 +224,43 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		return fraction.compareTo(o.fraction);
 	}
 
+	public int compareTo(final Fraction o) {
+		final int beatDifference = Integer.compare(beatId, 0);
+		if (beatDifference != 0) {
+			return beatDifference;
+		}
+
+		return fraction.compareTo(o);
+	}
+
 	@Override
-	public FractionalPosition fractionalPosition() {
+	public FractionalPosition position() {
 		return this;
 	}
 
 	public double doubleValue() {
 		return beatId + fraction.doubleValue();
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(beatId, fraction);
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+
+		final FractionalPosition other = (FractionalPosition) obj;
+		return beatId == other.beatId && Objects.equals(fraction, other.fraction);
+	}
+
 }

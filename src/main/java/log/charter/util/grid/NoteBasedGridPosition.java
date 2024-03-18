@@ -32,7 +32,7 @@ public class NoteBasedGridPosition extends GridPosition<Beat> {
 	}
 
 	@Override
-	public GridPosition<Beat> next() {
+	public void next() {
 		final int startBeatId = positionId;
 		final int additions = positions.get(positionId).noteDenominator;
 		for (int i = 0; i < additions; i++) {
@@ -41,12 +41,10 @@ public class NoteBasedGridPosition extends GridPosition<Beat> {
 				break;
 			}
 		}
-
-		return this;
 	}
 
 	@Override
-	public GridPosition<Beat> previous() {
+	public void previous() {
 		final int startBeatId = positionId;
 		final int removals = positions.get(positionId > 0 && gridId == 0 ? positionId - 1 : positionId).noteDenominator;
 		for (int i = 0; i < removals; i++) {
@@ -55,7 +53,5 @@ public class NoteBasedGridPosition extends GridPosition<Beat> {
 				break;
 			}
 		}
-
-		return this;
 	}
 }

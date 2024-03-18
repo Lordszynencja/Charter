@@ -42,7 +42,7 @@ public class Vocals {
 	}
 
 	public int insertVocal(final IConstantFractionalPositionWithEnd position, final String text, final VocalFlag flag) {
-		final Vocal vocal = new Vocal(position.fractionalPosition(), position.endPosition(), text, flag);
+		final Vocal vocal = new Vocal(position.position(), position.endPosition(), text, flag);
 		final Integer idAfter = firstAfter(vocals, vocal).findId();
 		if (idAfter != null) {
 			vocals.add(idAfter, vocal);

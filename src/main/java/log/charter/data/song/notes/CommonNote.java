@@ -1,52 +1,46 @@
 package log.charter.data.song.notes;
 
+import java.util.List;
+
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
-import log.charter.util.collections.ArrayList2;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 
 public class CommonNote implements NoteInterface {
-	private final int position;
 	private final int string;
 	private final boolean passOtherNotes;
 	private final NoteInterface note;
 
 	public CommonNote(final Chord chord, final int string) {
-		position = chord.position();
 		this.string = string;
 		passOtherNotes = chord.passOtherNotes;
 		note = chord.chordNotes.get(string);
 	}
 
 	public CommonNote(final Note note) {
-		position = note.position();
 		string = note.string;
 		passOtherNotes = note.passOtherNotes;
 		this.note = note;
 	}
 
-	public int position() {
-		return position;
+	@Override
+	public FractionalPosition position() {
+		return note.position();
 	}
 
 	@Override
-	public int length() {
-		return note.length();
+	public void endPosition(final FractionalPosition newEndPosition) {
+		note.endPosition(newEndPosition);
 	}
 
 	@Override
-	public void length(final int value) {
-		note.length(value);
-	}
-
-	public int endPosition() {
-		return position() + length();
-	}
-
-	public void endPosition(final int endPosition) {
-		length(endPosition - position);
+	public FractionalPosition endPosition() {
+		return note.endPosition();
 	}
 
 	public int string() {
@@ -148,12 +142,18 @@ public class CommonNote implements NoteInterface {
 	}
 
 	@Override
-	public ArrayList2<BendValue> bendValues() {
+	public List<BendValue> bendValues() {
 		return note.bendValues();
 	}
 
 	@Override
-	public void bendValues(final ArrayList2<BendValue> value) {
+	public void bendValues(final List<BendValue> value) {
 		note.bendValues(value);
 	}
+
+	@Override
+	public IConstantFractionalPositionWithEnd toFraction(final ImmutableBeatsMap beats) {
+		return this;
+	}
+
 }

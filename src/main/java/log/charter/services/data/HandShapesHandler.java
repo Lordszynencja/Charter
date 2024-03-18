@@ -56,7 +56,7 @@ public class HandShapesHandler {
 					.get(selected.get(0).selectable.chord().templateId());
 		}
 
-		final HandShape handShape = new HandShape(position.fractionalPosition(), endPosition.fractionalPosition());
+		final HandShape handShape = new HandShape(position.position(), endPosition.position());
 		handShape.templateId = chartData.currentArrangement().getChordTemplateIdWithSave(chordTemplate);
 
 		handShapes.add(deleteFromId, handShape);

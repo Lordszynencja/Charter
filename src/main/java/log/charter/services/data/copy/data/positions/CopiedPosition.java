@@ -6,7 +6,7 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.time.IPosition;
 
-public abstract class CopiedPosition<T extends IPosition> extends Copied<T> {
+public abstract class CopiedPosition<T extends IPosition> implements Copied<T> {
 	@XStreamAsAttribute
 	public final int p;
 	@XStreamAsAttribute
@@ -14,16 +14,13 @@ public abstract class CopiedPosition<T extends IPosition> extends Copied<T> {
 
 	public CopiedPosition(final ImmutableBeatsMap beats, final FractionalPosition basePosition, final T item) {
 		this.p = item.position() - basePosition.position(beats);
-		fp = item.toFraction(beats).fractionalPosition().add(basePosition.negate());
+		fp = item.toFraction(beats).position().add(basePosition.negate());
 	}
-
-	@Override
-	protected abstract T prepareValue();
 
 	@Override
 	public T getValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
 			final boolean convertFromBeats) {
-		final T value = super.getValue(beats, basePosition, convertFromBeats);
+		final T value = Copied.super.getValue(beats, basePosition, convertFromBeats);
 		if (value == null) {
 			return null;
 		}

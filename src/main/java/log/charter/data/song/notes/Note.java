@@ -1,25 +1,29 @@
 package log.charter.data.song.notes;
 
-import static log.charter.util.Utils.mapInteger;
+import static log.charter.util.CollectionUtils.map;
 
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
-import log.charter.io.rs.xml.song.ArrangementNote;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
+import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
 import log.charter.io.rsc.xml.converters.NoteConverter;
-import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("note")
 @XStreamConverter(NoteConverter.class)
-public class Note extends GuitarSound implements NoteInterface {
+public class Note extends GuitarSound implements IFractionalPositionWithEnd, NoteInterface {
+	private FractionalPosition endPosition;
 	public int string = 0;
 	public int fret = 0;
 	public BassPickingTechnique bassPicking = BassPickingTechnique.NONE;
@@ -31,38 +35,27 @@ public class Note extends GuitarSound implements NoteInterface {
 	public boolean linkNext = false;
 	public Integer slideTo = null;
 	public boolean unpitchedSlide = false;
-	public ArrayList2<BendValue> bendValues = new ArrayList2<>();
+	public List<BendValue> bendValues = new ArrayList<>();
 
-	public Note(final int pos, final int string, final int fret) {
-		super(pos);
-		this.string = string;
-		this.fret = fret;
+	public Note() {
 	}
 
-	public Note(final ArrangementNote arrangementNote) {
-		super(arrangementNote.time, arrangementNote.sustain == null ? 0 : arrangementNote.sustain,
-				mapInteger(arrangementNote.accent), mapInteger(arrangementNote.ignore));
+	public Note(final FractionalPosition position, final FractionalPosition endPosition) {
+		super(position);
+		this.endPosition = endPosition;
+	}
 
-		string = arrangementNote.string;
-		fret = arrangementNote.fret;
-		bassPicking = BassPickingTechnique.fromArrangmentNote(arrangementNote);
-		mute = Mute.fromArrangmentNote(arrangementNote);
-		hopo = HOPO.fromArrangmentNote(arrangementNote);
-		harmonic = Harmonic.fromArrangmentNote(arrangementNote);
-		vibrato = mapInteger(arrangementNote.vibrato);
-		tremolo = mapInteger(arrangementNote.tremolo);
-		linkNext = mapInteger(arrangementNote.linkNext);
-		slideTo = arrangementNote.slideTo == null ? arrangementNote.slideUnpitchTo : arrangementNote.slideTo;
-		unpitchedSlide = arrangementNote.slideUnpitchTo != null;
-		bendValues = arrangementNote.bendValues == null ? new ArrayList2<>()
-				: arrangementNote.bendValues.list.stream()//
-						.map(arrangementBendValue -> new BendValue(arrangementBendValue, arrangementNote.time))//
-						.collect(Collectors.toCollection(ArrayList2::new));
+	public Note(final FractionalPosition position, final int string, final int fret) {
+		super(position);
+		endPosition = position;
+		this.string = string;
+		this.fret = fret;
 	}
 
 	public Note(final Note other) {
 		super(other);
 
+		endPosition = other.endPosition;
 		string = other.string;
 		fret = other.fret;
 		bassPicking = other.bassPicking;
@@ -74,7 +67,7 @@ public class Note extends GuitarSound implements NoteInterface {
 		linkNext = other.linkNext;
 		slideTo = other.slideTo;
 		unpitchedSlide = other.unpitchedSlide;
-		bendValues = other.bendValues.map(BendValue::new);
+		bendValues = map(other.bendValues, BendValue::new);
 	}
 
 	public Note(final Chord chord, final ChordTemplate template) {
@@ -84,6 +77,7 @@ public class Note extends GuitarSound implements NoteInterface {
 		fret = template.frets.get(string);
 
 		final ChordNote chordNote = chord.chordNotes.get(string);
+		endPosition = chordNote.endPosition();
 		mute = chordNote.mute;
 		hopo = chordNote.hopo;
 		harmonic = chordNote.harmonic;
@@ -92,7 +86,17 @@ public class Note extends GuitarSound implements NoteInterface {
 		linkNext = chordNote.linkNext;
 		slideTo = chordNote.slideTo;
 		unpitchedSlide = chordNote.unpitchedSlide;
-		bendValues = chordNote.bendValues.map(BendValue::new);
+		bendValues = map(chordNote.bendValues, BendValue::new);
+	}
+
+	@Override
+	public FractionalPosition endPosition() {
+		return endPosition;
+	}
+
+	@Override
+	public void endPosition(final FractionalPosition newEndPosition) {
+		endPosition = newEndPosition;
 	}
 
 	@Override
@@ -186,12 +190,18 @@ public class Note extends GuitarSound implements NoteInterface {
 	}
 
 	@Override
-	public ArrayList2<BendValue> bendValues() {
+	public List<BendValue> bendValues() {
 		return bendValues;
 	}
 
 	@Override
-	public void bendValues(final ArrayList2<BendValue> value) {
+	public void bendValues(final List<BendValue> value) {
 		bendValues = value;
 	}
+
+	@Override
+	public IConstantFractionalPositionWithEnd toFraction(final ImmutableBeatsMap beats) {
+		return this;
+	}
+
 }

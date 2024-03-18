@@ -1,5 +1,6 @@
 package log.charter.data.song.position.virtual;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.position.time.IConstantPositionWithLength;
 
@@ -19,4 +20,10 @@ public interface IVirtualConstantPositionWithEnd extends IVirtualConstantPositio
 	default boolean isFraction() {
 		return asConstantFractionalPositionWithEnd() != null;
 	}
+
+	@Override
+	IConstantPositionWithLength toPosition(ImmutableBeatsMap beats);
+
+	@Override
+	IConstantFractionalPositionWithEnd toFraction(ImmutableBeatsMap beats);
 }

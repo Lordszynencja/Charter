@@ -13,41 +13,42 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
-import log.charter.data.song.position.time.IConstantPosition;
-import log.charter.data.song.position.time.IPosition;
 import log.charter.util.data.IntRange;
 
 public class ArrangementFretHandPositionsCreator {
-	private static class FretRange implements IConstantPosition {
-		public final int position;
+	private static class FretRange implements IConstantFractionalPosition {
+		public final FractionalPosition position;
 		public final boolean isNote;
 		public final boolean isTap;
 		public final IntRange fretRange;
 
-		public FretRange(final IPosition position, final int fret, final boolean isTap) {
-			this.position = position.position();
+		public FretRange(final FractionalPosition position, final int fret, final boolean isTap) {
+			this.position = position;
 			isNote = true;
 			this.isTap = isTap;
 			fretRange = new IntRange(fret, fret);
 		}
 
-		public FretRange(final IPosition position, final int minFret, final int maxFret) {
-			this.position = position.position();
+		public FretRange(final FractionalPosition position, final int minFret, final int maxFret) {
+			this.position = position;
 			isNote = false;
 			isTap = false;
 			fretRange = new IntRange(minFret, maxFret);
 		}
 
 		@Override
-		public int position() {
+		public FractionalPosition position() {
 			return position;
 		}
 	}
 
-	private static FretRange fretRangeFromSound(final List<ChordTemplate> chordTemplates, final ChordOrNote sound) {
+	private static FretRange fretRangeFromSound(final ImmutableBeatsMap beats, final List<ChordTemplate> chordTemplates,
+			final ChordOrNote sound) {
+		final FractionalPosition position = sound.position();
 		if (sound.isNote()) {
-			return new FretRange(sound, sound.note().fret, sound.note().hopo == HOPO.TAP);
+			return new FretRange(position, sound.note().fret, sound.note().hopo == HOPO.TAP);
 		}
 
 		final ChordTemplate template = chordTemplates.get(sound.chord().templateId());
@@ -63,10 +64,10 @@ public class ArrangementFretHandPositionsCreator {
 		}
 
 		if (maxFret == 0) {
-			return new FretRange(sound, 0, false);
+			return new FretRange(position, 0, false);
 		}
 
-		return new FretRange(sound, minFret, maxFret);
+		return new FretRange(position, minFret, maxFret);
 	}
 
 	private static void addFHP(final ImmutableBeatsMap beats, final FretRange fretRange, final int index,
@@ -81,7 +82,7 @@ public class ArrangementFretHandPositionsCreator {
 		}
 		final int width = 1 + max(3, fretRange.fretRange.max - fretRange.fretRange.min);
 
-		anchors.add(index, new Anchor(fretRange.toFraction(beats), baseFret, width));
+		anchors.add(index, new Anchor(fretRange.position(), baseFret, width));
 	}
 
 	private static boolean canBeExtended(final Anchor anchor, final int fret) {
@@ -101,8 +102,7 @@ public class ArrangementFretHandPositionsCreator {
 
 	private static void addFHPIfNeeded(final ImmutableBeatsMap beats, final FretRange fretRange,
 			final List<Anchor> anchors) {
-		final Integer currentAnchorId = lastBeforeEqual(anchors, fretRange.toFraction(beats),
-				IConstantFractionalPosition::compareTo).findId();
+		final Integer currentAnchorId = lastBeforeEqual(anchors, fretRange).findId();
 		if (currentAnchorId == null) {
 			addFHP(beats, fretRange, 0, anchors);
 			return;
@@ -139,7 +139,7 @@ public class ArrangementFretHandPositionsCreator {
 	public static void createFretHandPositions(final ImmutableBeatsMap beats, final List<ChordTemplate> chordTemplates,
 			final List<ChordOrNote> sounds, final List<Anchor> anchors) {
 		for (final ChordOrNote sound : sounds) {
-			final FretRange fretRange = fretRangeFromSound(chordTemplates, sound);
+			final FretRange fretRange = fretRangeFromSound(beats, chordTemplates, sound);
 			addFHPIfNeeded(beats, fretRange, anchors);
 		}
 	}

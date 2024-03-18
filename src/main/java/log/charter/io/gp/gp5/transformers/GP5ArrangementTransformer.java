@@ -61,7 +61,7 @@ public class GP5ArrangementTransformer {
 		if (gpBeat.notes.size() == 1) {
 			noteTransformer.addNote(gpBeat, position, endPosition, wasHOPOStart, hopoFrom);
 		} else if (gpBeat.notes.size() > 1) {
-			noteTransformer.addChord(gpBeat, position, endPosition, wasHOPOStart, hopoFrom);
+			noteTransformer.addChord(gpBeat, position.position(), endPosition.position(), wasHOPOStart, hopoFrom);
 		}
 
 		for (final GPNote note : gpBeat.notes) {

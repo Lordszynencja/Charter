@@ -1,6 +1,8 @@
 package log.charter.services.editModes;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd.ConstantFractionalPositionWithEnd;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -38,7 +40,11 @@ public class VocalModeHandler extends ModeHandler {
 			return;
 		}
 
-		new VocalPane(clickData.pressHighlight, chartData, charterFrame, selectionManager, undoSystem);
+		final FractionalPosition position = clickData.pressHighlight.toFraction(chartData.beats()).position();
+		final FractionalPosition endPosition = chartData.beats().getMinEndPositionAfter(position)
+				.toFraction(chartData.beats()).position();
+		new VocalPane(new ConstantFractionalPositionWithEnd(position, endPosition), chartData, charterFrame,
+				selectionManager, undoSystem);
 	}
 
 	@Override

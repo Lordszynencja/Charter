@@ -1,12 +1,14 @@
 package log.charter.data.song.position.fractional;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.position.ConstantPosition;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 
 public interface IConstantFractionalPosition extends IVirtualConstantPosition {
+	public FractionalPosition position();
+
 	@Override
 	default IConstantPosition asConstantPosition() {
 		return null;
@@ -17,10 +19,8 @@ public interface IConstantFractionalPosition extends IVirtualConstantPosition {
 		return this;
 	}
 
-	public FractionalPosition fractionalPosition();
-
 	default int position(final ImmutableBeatsMap beats) {
-		return fractionalPosition().getPosition(beats);
+		return position().getPosition(beats);
 	}
 
 	@Override
@@ -38,10 +38,10 @@ public interface IConstantFractionalPosition extends IVirtualConstantPosition {
 	}
 
 	default FractionalPosition movementTo(final IConstantFractionalPosition other) {
-		return fractionalPosition().negate().add(other.fractionalPosition());
+		return position().negate().add(other.position());
 	}
 
 	default int compareTo(final IConstantFractionalPosition other) {
-		return fractionalPosition().compareTo(other.fractionalPosition());
+		return position().compareTo(other.position());
 	}
 }

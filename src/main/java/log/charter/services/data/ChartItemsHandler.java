@@ -21,7 +21,6 @@ import log.charter.data.song.Level;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
-import log.charter.data.song.position.ConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
@@ -248,9 +247,9 @@ public class ChartItemsHandler {
 			return;
 		}
 
-		IVirtualConstantPosition endPosition = new ConstantPosition(note.endPosition());
+		IVirtualConstantPosition endPosition = note.endPosition();
 		endPosition = beats.addGrid(endPosition, gridsChange);
-		note.endPosition(endPosition.toPosition(beats).position());
+		note.endPosition(endPosition.toFraction(beats).position());
 
 		arrangementFixer.fixNoteLength(note, id, sounds);
 	}

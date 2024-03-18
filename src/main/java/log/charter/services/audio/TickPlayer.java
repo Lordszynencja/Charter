@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.position.Position;
+import log.charter.data.song.position.time.Position;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.sound.IPlayer;
 import log.charter.sound.RepeatingPlayer;

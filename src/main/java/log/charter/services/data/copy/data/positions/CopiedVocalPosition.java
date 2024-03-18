@@ -15,15 +15,15 @@ public class CopiedVocalPosition extends CopiedFractionalPositionWithEnd<Vocal> 
 	@XStreamAsAttribute
 	public final VocalFlag flag;
 
-	public CopiedVocalPosition(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
-			final Vocal vocal) {
-		super(beats, basePosition, vocal);
+	public CopiedVocalPosition(final FractionalPosition basePosition, final Vocal vocal) {
+		super(basePosition, vocal);
 		text = vocal.text();
 		flag = vocal.flag();
 	}
 
 	@Override
-	protected Vocal prepareValue() {
+	public Vocal prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
+			final boolean convertFromBeats) {
 		return new Vocal(text);
 	}
 }

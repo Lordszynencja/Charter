@@ -2,6 +2,8 @@ package log.charter.util.data;
 
 import static java.lang.Math.abs;
 
+import java.util.Objects;
+
 public class Fraction implements Comparable<Fraction> {
 	private static long gcd(long a, long b) {
 		if (a == 0) {
@@ -128,6 +130,27 @@ public class Fraction implements Comparable<Fraction> {
 		return difference > 0 ? 1//
 				: difference < 0 ? -1//
 						: 0;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(denominator, numerator);
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+
+		final Fraction other = (Fraction) obj;
+		return denominator == other.denominator && numerator == other.numerator;
 	}
 
 }

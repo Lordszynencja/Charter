@@ -20,8 +20,10 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosit
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationZMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 import static log.charter.util.ColorUtils.setAlpha;
 import static log.charter.util.ColorUtils.transparent;
+import static log.charter.util.Utils.mix;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ import log.charter.data.config.Config;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Mute;
-import log.charter.data.song.position.Position;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.data.ChordBoxDrawData;
@@ -51,7 +53,6 @@ import log.charter.gui.components.preview3D.shapes.CompositeModel;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels.TextureAtlasPosition;
 import log.charter.gui.components.preview3D.shapes.OpenNoteModel;
-import log.charter.util.CollectionUtils;
 import log.charter.util.collections.Pair;
 import log.charter.util.data.IntRange;
 
@@ -125,7 +126,7 @@ public class Preview3DGuitarSoundsDrawer {
 		}
 	}
 
-	private ChartData data;
+	private ChartData chartData;
 	private NoteStatusModels noteStatusModels;
 
 	private static double lastFretLengthMultiplier = fretLengthMultiplier;
@@ -163,22 +164,23 @@ public class Preview3DGuitarSoundsDrawer {
 		return currentMap.get(fret0).get(fret1);
 	}
 
-	public void init(final ChartData data, final NoteStatusModels noteStatusModels,
+	public void init(final ChartData chartData, final NoteStatusModels noteStatusModels,
 			final TexturesHolder texturesHolder) {
-		this.data = data;
+		this.chartData = chartData;
 		this.noteStatusModels = noteStatusModels;
 	}
 
 	private boolean invertBend(final int string) {
-		return string < data.currentStrings() - 2 && (string <= 2 || string > data.currentStrings() / 2);
+		return string < chartData.currentStrings() - 2 && (string <= 2 || string > chartData.currentStrings() / 2);
 	}
 
-	private double getBendValue(final NoteDrawData note, final int dt) {
+	private double getBendValue(final NoteDrawData note, final int t) {
 		if (note.bendValues.isEmpty()) {
 			return 0;
 		}
 
-		final Integer lastBendId = CollectionUtils.lastBeforeEqual(note.bendValues, new Position(dt)).findId();
+		final Integer lastBendId = lastBeforeEqual(note.bendValues, FractionalPosition.fromTime(chartData.beats(), t))
+				.findId();
 
 		if (lastBendId == null) {
 			return 0;
@@ -191,27 +193,24 @@ public class Preview3DGuitarSoundsDrawer {
 		}
 
 		final double bendAValue = bend.bendValue.doubleValue();
-		final int bendAPosition = bend.position();
+		final int bendAPosition = bend.position(chartData.beats());
 
 		final BendValue nextBend = note.bendValues.get(lastBendId + 1);
 		final double bendBValue = nextBend.bendValue.doubleValue();
-		final int bendBPosition = nextBend.position();
-		final double scale = 1.0 * (dt - bendAPosition) / (bendBPosition - bendAPosition);
-		return bendAValue * (1 - scale) + (bendBValue) * scale;
+		final int bendBPosition = nextBend.position(chartData.beats());
+		return mix(bendAPosition, bendBPosition, t, bendAValue, bendBValue);
 	}
 
 	private double getNoteHeightAtTime(final NoteDrawData note, final int t, final boolean invertBend) {
-		final int dt = t - note.originalPosition;
-
-		double bendValue = getBendValue(note, dt);
+		double bendValue = getBendValue(note, t);
 		if (invertBend) {
 			bendValue = -bendValue;
 		}
 		if (note.vibrato) {
-			bendValue += sin(dt * Math.PI / tailBumpLength) * bendHalfstepDistance / 2;
+			bendValue += sin(t * Math.PI / tailBumpLength) * bendHalfstepDistance / 2;
 		}
 
-		return getStringPositionWithBend(note.string, data.currentStrings(), bendValue);
+		return getStringPositionWithBend(note.string, chartData.currentStrings(), bendValue);
 	}
 
 	private void drawFullChordMute(final ShadersHolder shadersHolder, final double x0, final double x1, final double y0,
@@ -271,7 +270,7 @@ public class Preview3DGuitarSoundsDrawer {
 
 		final double x0 = getFretPosition(frets.min - 1);
 		final double x1 = getFretPosition(frets.max);
-		final double y0 = getChartboardYPosition(data.currentStrings());
+		final double y0 = getChartboardYPosition(chartData.currentStrings());
 		double y1 = topStringPosition;
 		final double z = max(0, getTimePosition(chordBox.position - drawData.time));
 
@@ -306,10 +305,10 @@ public class Preview3DGuitarSoundsDrawer {
 	private void drawNoteShadow(final ShadersHolder shadersHolder, final int time, final NoteDrawData note,
 			final Color color) {
 		final double x = getFretMiddlePosition(note.fret);
-		final double y = getStringPositionWithBend(note.string, data.currentStrings(), note.prebend);
+		final double y = getStringPositionWithBend(note.string, chartData.currentStrings(), note.prebend);
 		final double z = getTimePosition(note.position - time);
 
-		final double shadowBaseY = getChartboardYPosition(data.currentStrings());
+		final double shadowBaseY = getChartboardYPosition(chartData.currentStrings());
 		final Point3D shadowBaseP0 = new Point3D(x - noteHalfWidth / 2, shadowBaseY, z);
 		final Point3D shadowBaseP1 = new Point3D(x, shadowBaseY, z);
 		final Point3D shadowBaseP2 = new Point3D(x + noteHalfWidth / 2, shadowBaseY, z);
@@ -325,7 +324,7 @@ public class Preview3DGuitarSoundsDrawer {
 	}
 
 	private Color getNoteHeadColor(final NoteDrawData note) {
-		return getStringBasedColor(StringColorLabelType.NOTE, note.string, data.currentStrings());
+		return getStringBasedColor(StringColorLabelType.NOTE, note.string, chartData.currentStrings());
 	}
 
 	private void drawTexture(final ShadersHolder shadersHolder, final Matrix4 modelMatrix, final double z,
@@ -355,7 +354,7 @@ public class Preview3DGuitarSoundsDrawer {
 		}
 
 		final double x = (getFretPosition(frets.min - 1) + getFretPosition(frets.max)) / 2;
-		final double y = getStringPositionWithBend(note.string, data.currentStrings(), note.prebend);
+		final double y = getStringPositionWithBend(note.string, chartData.currentStrings(), note.prebend);
 		final double z = getTimePosition(position - drawData.time);
 
 		final Matrix4 modelMatrix = moveMatrix(x, y, z);
@@ -407,7 +406,7 @@ public class Preview3DGuitarSoundsDrawer {
 	private void drawFrettedNoteHead(final ShadersHolder shadersHolder, final int time, final NoteDrawData note,
 			final boolean hit) {
 		final double x = getFretMiddlePosition(note.fret);
-		final double y = getStringPositionWithBend(note.string, data.currentStrings(), note.prebend);
+		final double y = getStringPositionWithBend(note.string, chartData.currentStrings(), note.prebend);
 		final double z = getTimePosition(note.position - time);
 
 		final Matrix4 modelMatrix = moveMatrix(x, y, z);
@@ -491,7 +490,7 @@ public class Preview3DGuitarSoundsDrawer {
 		final BaseShaderDrawData rightEdgeDrawData = shadersHolder.new BaseShaderDrawData();
 
 		final Color tailEdgeColor = getStringBasedColor(StringColorLabelType.NOTE_TAIL, note.string,
-				data.currentStrings());
+				chartData.currentStrings());
 		final Color tailInnerColor = setAlpha(tailEdgeColor, 192);
 
 		List<Integer> timeValuesToDraw = new ArrayList<>();
@@ -500,12 +499,15 @@ public class Preview3DGuitarSoundsDrawer {
 				timeValuesToDraw.add(t);
 			}
 		} else if (!note.bendValues.isEmpty()) {
-			timeValuesToDraw.add(note.position + 1);
-			final int bendsfrom = note.position - note.originalPosition + 1;
-			final int bendsTo = note.endPosition - note.originalPosition;
+			timeValuesToDraw.add(note.position);
+
+			final int offset = note.position - note.originalPosition;
+			final int bendsFrom = note.position - offset;
+			final int bendsTo = note.endPosition - offset;
 			for (final BendValue bendValue : note.bendValues) {
-				if (bendValue.position() > bendsfrom && bendValue.position() < bendsTo) {
-					timeValuesToDraw.add(note.originalPosition + bendValue.position());
+				final int bendValuePosition = bendValue.position(chartData.beats());
+				if (bendValuePosition > bendsFrom && bendValuePosition < bendsTo) {
+					timeValuesToDraw.add(offset + bendValuePosition);
 				}
 			}
 			timeValuesToDraw.add(note.endPosition);
@@ -571,7 +573,7 @@ public class Preview3DGuitarSoundsDrawer {
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
 		final List<SoundDrawObject> objectsToDraw = new ArrayList<>(1000);
 
-		for (int string = 0; string < data.currentStrings(); string++) {
+		for (int string = 0; string < chartData.currentStrings(); string++) {
 			final boolean shouldBendDownwards = invertBend(string);
 
 			drawData.notes.notes.get(string)

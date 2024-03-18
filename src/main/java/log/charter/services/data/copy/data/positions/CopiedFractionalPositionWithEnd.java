@@ -11,14 +11,10 @@ public abstract class CopiedFractionalPositionWithEnd<T extends IFractionalPosit
 	@XStreamAsAttribute
 	public final FractionalPosition ep;
 
-	public CopiedFractionalPositionWithEnd(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
-			final T position) {
-		super(beats, basePosition, position);
+	public CopiedFractionalPositionWithEnd(final FractionalPosition basePosition, final T position) {
+		super(basePosition, position);
 		ep = position.endPosition();
 	}
-
-	@Override
-	protected abstract T prepareValue();
 
 	@Override
 	public T getValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,

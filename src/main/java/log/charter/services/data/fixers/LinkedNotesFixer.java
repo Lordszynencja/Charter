@@ -18,6 +18,6 @@ public class LinkedNotesFixer {
 			nextSound.chord().splitIntoNotes = true;
 		}
 
-		note.length(nextSound.position() - note.position() - 1);
+		note.endPosition(nextSound.position());
 	}
 }

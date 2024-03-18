@@ -1,14 +1,23 @@
 package log.charter.data.song.notes;
 
+import static log.charter.util.CollectionUtils.map;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
-import log.charter.util.collections.ArrayList2;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
+import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
 
-public class ChordNote implements NoteInterface {
-	public int length;
+public class ChordNote implements NoteInterface, IFractionalPositionWithEnd {
+	public final Chord parent;
+	private FractionalPosition endPosition;
 	public Mute mute = Mute.NONE;
 	public HOPO hopo = HOPO.NONE;
 	public Harmonic harmonic = Harmonic.NONE;
@@ -17,13 +26,21 @@ public class ChordNote implements NoteInterface {
 	public boolean linkNext = false;
 	public Integer slideTo = null;
 	public boolean unpitchedSlide = false;
-	public ArrayList2<BendValue> bendValues = new ArrayList2<>();
+	public List<BendValue> bendValues = new ArrayList<>();
 
-	public ChordNote() {
+	public ChordNote(final Chord parent) {
+		this.parent = parent;
+		endPosition = parent.position();
 	}
 
-	public ChordNote(final ChordNote other) {
-		length = other.length;
+	public ChordNote(final Chord parent, final FractionalPosition endPosition) {
+		this.parent = parent;
+		this.endPosition = endPosition;
+	}
+
+	public ChordNote(final Chord parent, final ChordNote other) {
+		this.parent = parent;
+		endPosition = other.endPosition;
 		mute = other.mute;
 		hopo = other.hopo;
 		harmonic = other.harmonic;
@@ -32,11 +49,12 @@ public class ChordNote implements NoteInterface {
 		linkNext = other.linkNext;
 		slideTo = other.slideTo;
 		unpitchedSlide = other.unpitchedSlide;
-		bendValues = other.bendValues.map(BendValue::new);
+		bendValues = map(other.bendValues, BendValue::new);
 	}
 
-	public ChordNote(final Note note) {
-		length = note.length();
+	public ChordNote(final Chord parent, final Note note) {
+		this.parent = parent;
+		endPosition = note.endPosition();
 		mute = note.mute;
 		hopo = note.hopo;
 		harmonic = note.harmonic;
@@ -45,17 +63,7 @@ public class ChordNote implements NoteInterface {
 		linkNext = note.linkNext;
 		slideTo = note.slideTo;
 		unpitchedSlide = note.unpitchedSlide;
-		bendValues = note.bendValues.map(BendValue::new);
-	}
-
-	@Override
-	public int length() {
-		return length;
-	}
-
-	@Override
-	public void length(final int value) {
-		length = value;
+		bendValues = map(note.bendValues, BendValue::new);
 	}
 
 	@Override
@@ -148,12 +156,38 @@ public class ChordNote implements NoteInterface {
 	}
 
 	@Override
-	public ArrayList2<BendValue> bendValues() {
+	public List<BendValue> bendValues() {
 		return bendValues;
 	}
 
 	@Override
-	public void bendValues(final ArrayList2<BendValue> value) {
+	public void bendValues(final List<BendValue> value) {
 		bendValues = value;
 	}
+
+	@Override
+	public void endPosition(final FractionalPosition newEndPosition) {
+		endPosition = newEndPosition;
+	}
+
+	@Override
+	public FractionalPosition endPosition() {
+		return endPosition;
+	}
+
+	@Override
+	public FractionalPosition position() {
+		return parent.position();
+	}
+
+	@Override
+	public void position(final FractionalPosition newPosition) {
+		throw new UnsupportedOperationException("Can't set position for chord note, should set it on parent");
+	}
+
+	@Override
+	public IConstantFractionalPositionWithEnd toFraction(final ImmutableBeatsMap beats) {
+		return this;
+	}
+
 }

@@ -14,18 +14,18 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
-import log.charter.services.data.copy.data.positions.CopiedSoundPosition;
+import log.charter.services.data.copy.data.positions.CopiedSound;
 import log.charter.services.data.selection.SelectionManager;
 
 @XStreamAlias("soundsCopyData")
 public class SoundsCopyData implements ICopyData {
 	private final List<ChordTemplate> chordTemplates;
-	private final List<CopiedSoundPosition> sounds;
+	private final List<CopiedSound> sounds;
 
-	public SoundsCopyData(final List<ChordTemplate> chordTemplates, final List<CopiedSoundPosition> sounds) {
+	public SoundsCopyData(final List<ChordTemplate> chordTemplates, final List<CopiedSound> sounds) {
 		this.chordTemplates = chordTemplates;
 		this.sounds = sounds;
 	}
@@ -45,7 +45,7 @@ public class SoundsCopyData implements ICopyData {
 
 		final Map<Integer, Integer> chordIdsMap = new HashMap<>();
 
-		for (final CopiedSoundPosition copiedPosition : this.sounds) {
+		for (final CopiedSound copiedPosition : this.sounds) {
 			try {
 				final ChordOrNote sound = copiedPosition.getValue(beats, basePosition, convertFromBeats);
 				if (sound == null) {
@@ -71,7 +71,7 @@ public class SoundsCopyData implements ICopyData {
 			}
 		}
 
-		sounds.sort(IConstantPosition::compareTo);
+		sounds.sort(IConstantFractionalPosition::compareTo);
 		selectionManager.addSelectionForPositions(PositionType.GUITAR_NOTE, positionsToSelect);
 	}
 }

@@ -3,12 +3,10 @@ package log.charter.services.data.copy;
 import static log.charter.util.CollectionUtils.getFromTo;
 import static log.charter.util.CollectionUtils.map;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.thoughtworks.xstream.io.StreamException;
 
@@ -21,8 +19,9 @@ import log.charter.data.song.HandShape;
 import log.charter.data.song.Phrase;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
-import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -41,21 +40,20 @@ import log.charter.services.data.copy.data.ICopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
 import log.charter.services.data.copy.data.positions.Copied;
-import log.charter.services.data.copy.data.positions.CopiedAnchorPosition;
-import log.charter.services.data.copy.data.positions.CopiedArrangementEventsPointPosition;
-import log.charter.services.data.copy.data.positions.CopiedHandShapePosition;
-import log.charter.services.data.copy.data.positions.CopiedSoundPosition;
-import log.charter.services.data.copy.data.positions.CopiedToneChangePosition;
+import log.charter.services.data.copy.data.positions.CopiedAnchor;
+import log.charter.services.data.copy.data.positions.CopiedEventPoint;
+import log.charter.services.data.copy.data.positions.CopiedHandShape;
+import log.charter.services.data.copy.data.positions.CopiedSound;
+import log.charter.services.data.copy.data.positions.CopiedToneChange;
 import log.charter.services.data.copy.data.positions.CopiedVocalPosition;
 import log.charter.services.data.selection.ISelectionAccessor;
-import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
 public class CopyManager {
-	private static interface CopyMaker<T, V extends Copied<T>> {
-		V make(ImmutableBeatsMap beats, FractionalPosition basePosition, T item);
+	private static interface CopyMakerSimple<T, V extends Copied<T>> {
+		V make(FractionalPosition basePosition, T item);
 	}
 
 	private ChartData chartData;
@@ -65,119 +63,116 @@ public class CopyManager {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	private <T, V extends Copied<T>> List<V> makeCopy(final Stream<T> positions, final FractionalPosition basePosition,
-			final CopyMaker<T, V> copyMaker) {
-		return positions//
-				.map(position -> copyMaker.make(chartData.beats(), basePosition, position))//
-				.collect(Collectors.toList());
+	private <T extends IConstantFractionalPosition, V extends Copied<T>> List<V> makeCopy(final List<T> selected,
+			final CopyMakerSimple<T, V> copyMaker) {
+		final FractionalPosition basePosition = selected.get(0).position();
+		return map(selected, e -> copyMaker.make(basePosition, e));
 	}
 
-	private <T extends IVirtualPosition, V extends Copied<T>> List<V> makeCopy(
-			final List<Selection<T>> selectedPositions, final CopyMaker<T, V> copyMaker) {
-		final ImmutableBeatsMap beats = chartData.beats();
-		final FractionalPosition basePosition = selectedPositions.get(0).selectable.toFraction(beats)
-				.fractionalPosition();
-
-		return makeCopy(selectedPositions.stream().map(selected -> selected.selectable), basePosition, copyMaker);
+	private <T extends IConstantFractionalPosition, V extends Copied<T>> List<V> copyPositionsFromTo(
+			final FractionalPosition from, final FractionalPosition to, final List<T> positions,
+			final CopyMakerSimple<T, V> copyMaker) {
+		return map(getFromTo(positions, from, to), p -> copyMaker.make(from, p));
 	}
 
-	private <T extends IVirtualPosition, V extends Copied<T>> List<V> copyPositionsFromTo(
-			final IVirtualConstantPosition from, final IVirtualConstantPosition to,
-			final FractionalPosition basePosition, final List<T> positions, final CopyMaker<T, V> copyMaker) {
-		final ImmutableBeatsMap beats = chartData.beats();
-		final Comparator<IVirtualConstantPosition> comparator = IVirtualConstantPosition.comparator(beats);
-		final List<V> list = map(getFromTo(positions, from, to, comparator),
-				p -> copyMaker.make(beats, basePosition, p));
-
-		return list;
-	}
-
-	private FullCopyData getFullCopyData(final IVirtualConstantPosition from, final IVirtualConstantPosition to) {
+	private FullCopyData getFullCopyData(final IVirtualConstantPosition fromVirtual,
+			final IVirtualConstantPosition toVirtual) {
 		if (modeManager.getMode() != EditMode.GUITAR) {
 			return null;
 		}
 
 		final Arrangement arrangement = chartData.currentArrangement();
 		final ImmutableBeatsMap beats = chartData.beats();
-		final FractionalPosition basePosition = from.toFraction(beats).fractionalPosition();
+		final FractionalPosition from = fromVirtual.toFraction(beats).position();
+		final FractionalPosition to = toVirtual.toFraction(beats).position();
 
 		final Map<String, Phrase> copiedPhrases = map(arrangement.phrases, k -> k, Phrase::new);
-		final List<CopiedArrangementEventsPointPosition> copiedArrangementEventsPoints = copyPositionsFromTo(from, to,
-				basePosition, arrangement.eventPoints, CopiedArrangementEventsPointPosition::new);
+		final List<CopiedEventPoint> copiedArrangementEventsPoints = copyPositionsFromTo(from, to,
+				arrangement.eventPoints, CopiedEventPoint::new);
 		final List<ChordTemplate> copiedChordTemplates = map(chartData.currentChordTemplates(), ChordTemplate::new);
-		final List<CopiedToneChangePosition> copiedToneChanges = copyPositionsFromTo(from, to, basePosition,
-				arrangement.toneChanges, CopiedToneChangePosition::new);
-		final List<CopiedAnchorPosition> copiedAnchors = copyPositionsFromTo(from, to, basePosition,
-				chartData.currentArrangementLevel().anchors, CopiedAnchorPosition::new);
-		final List<CopiedSoundPosition> copiedSounds = copyPositionsFromTo(from, to, basePosition,
-				chartData.currentSounds(), CopiedSoundPosition::new);
-		final List<CopiedHandShapePosition> copiedHandShapes = copyPositionsFromTo(from, to, basePosition,
-				chartData.currentHandShapes(), CopiedHandShapePosition::new);
+		final List<CopiedToneChange> copiedToneChanges = copyPositionsFromTo(from, to, arrangement.toneChanges,
+				CopiedToneChange::new);
+		final List<CopiedAnchor> copiedAnchors = copyPositionsFromTo(from, to,
+				chartData.currentArrangementLevel().anchors, CopiedAnchor::new);
+		final List<CopiedSound> copiedSounds = copyPositionsFromTo(from, to, chartData.currentSounds(),
+				CopiedSound::copy);
+		final List<CopiedHandShape> copiedHandShapes = copyPositionsFromTo(from, to, chartData.currentHandShapes(),
+				CopiedHandShape::new);
 
 		return new FullGuitarCopyData(copiedPhrases, copiedArrangementEventsPoints, copiedChordTemplates,
 				copiedToneChanges, copiedAnchors, copiedSounds, copiedHandShapes);
 	}
 
 	private CopyData getGuitarCopyDataEventPoints() {
-		final ISelectionAccessor<EventPoint> selectedBeatsAccessor = selectionManager
-				.accessor(PositionType.EVENT_POINT);
-
-		final List<Selection<EventPoint>> selectedBeats = selectedBeatsAccessor.getSelected();
-		final IVirtualConstantPosition from = selectedBeats.get(0).selectable;
-		final IVirtualConstantPosition to = selectedBeats.get(selectedBeats.size() - 1).selectable;
-		final FractionalPosition basePosition = from.toFraction(chartData.beats()).fractionalPosition();
+		final List<EventPoint> selected = selectionManager.getSelectedElements(PositionType.EVENT_POINT);
+		final FractionalPosition from = selected.get(0).position();
+		final FractionalPosition to = selected.get(selected.size() - 1).position();
 		final Arrangement arrangement = chartData.currentArrangement();
 
 		final Map<String, Phrase> copiedPhrases = map(arrangement.phrases, phraseName -> phraseName, Phrase::new);
-		final List<CopiedArrangementEventsPointPosition> copiedArrangementEventsPoints = copyPositionsFromTo(from, to,
-				basePosition, arrangement.eventPoints, CopiedArrangementEventsPointPosition::new);
+		final List<CopiedEventPoint> copiedArrangementEventsPoints = copyPositionsFromTo(from, to,
+				arrangement.eventPoints, CopiedEventPoint::new);
 
 		final ICopyData copyData = new EventPointsCopyData(copiedPhrases, copiedArrangementEventsPoints);
 		return new CopyData(copyData, getFullCopyData(from, to));
 	}
 
 	private CopyData getGuitarCopyDataGuitarNotes() {
-		final ISelectionAccessor<ChordOrNote> selectedSoundsAccessor = selectionManager
-				.accessor(PositionType.GUITAR_NOTE);
-		final List<Selection<ChordOrNote>> selectedSounds = selectedSoundsAccessor.getSelected();
+		final List<ChordOrNote> selected = selectionManager.getSelectedElements(PositionType.GUITAR_NOTE);
 
 		final List<ChordTemplate> copiedChordTemplates = chartData.currentArrangement().chordTemplates//
 				.stream().map(ChordTemplate::new).collect(Collectors.toList());
-		final List<CopiedSoundPosition> copiedSounds = makeCopy(selectedSounds, CopiedSoundPosition::new);
-		final IVirtualConstantPosition from = selectedSounds.get(0).selectable;
-		final IVirtualConstantPosition to = selectedSounds.get(selectedSounds.size() - 1).selectable;
+		final List<CopiedSound> copiedSounds = makeCopy(selected, CopiedSound::copy);
+		final FractionalPosition from = selected.get(0).position();
+		final FractionalPosition to = selected.get(selected.size() - 1).endPosition().position();
 
 		final ICopyData copyData = new SoundsCopyData(copiedChordTemplates, copiedSounds);
 		return new CopyData(copyData, getFullCopyData(from, to));
 	}
 
 	private CopyData getGuitarCopyDataHandShapes() {
-		final ISelectionAccessor<HandShape> selectedHandShapesAccessor = selectionManager
-				.accessor(PositionType.HAND_SHAPE);
-		final List<Selection<HandShape>> selectedHandShapes = selectedHandShapesAccessor.getSelected();
+		final List<HandShape> selectedHandShapes = selectionManager.getSelectedElements(PositionType.HAND_SHAPE);
 
 		final List<ChordTemplate> copiedChordTemplates = map(chartData.currentChordTemplates(), ChordTemplate::new);
-		final List<CopiedHandShapePosition> copiedHandShapes = makeCopy(selectedHandShapes,
-				CopiedHandShapePosition::new);
-		final IVirtualConstantPosition from = selectedHandShapes.get(0).selectable;
-		final IVirtualConstantPosition to = selectedHandShapes.get(selectedHandShapes.size() - 1).selectable;
+		final List<CopiedHandShape> copiedHandShapes = makeCopy(selectedHandShapes, CopiedHandShape::new);
+		final FractionalPosition from = selectedHandShapes.get(0).position();
+		final FractionalPosition to = selectedHandShapes.get(selectedHandShapes.size() - 1).endPosition().position();
 
 		final ICopyData copyData = new HandShapesCopyData(copiedChordTemplates, copiedHandShapes);
 		return new CopyData(copyData, getFullCopyData(from, to));
 	}
 
-	private <T extends IVirtualPosition, V extends Copied<T>> CopyData getCopyData(final PositionType type,
-			final CopyMaker<T, V> copiedPositionMaker, final Function<List<V>, ICopyData> copyDataMaker) {
+	private <T extends IConstantFractionalPositionWithEnd, V extends Copied<T>> CopyData getCopyDataWithEnd(
+			final PositionType type, final CopyMakerSimple<T, V> copiedPositionMaker,
+			final Function<List<V>, ICopyData> copyDataMaker) {
 		final ISelectionAccessor<T> selectionAccessor = selectionManager.accessor(type);
 		if (!selectionAccessor.isSelected()) {
 			return null;
 		}
 
-		final List<Selection<T>> selected = selectionAccessor.getSelected();
+		final List<T> selected = selectionAccessor.getSelectedElements();
 		final List<V> copied = makeCopy(selected, copiedPositionMaker);
 
-		final IVirtualConstantPosition from = selected.get(0).selectable;
-		final IVirtualConstantPosition to = selected.get(selected.size() - 1).selectable;
+		final FractionalPosition from = selected.get(0).position();
+		final FractionalPosition to = selected.get(selected.size() - 1).endPosition();
+
+		final FullCopyData fullCopyData = getFullCopyData(from, to);
+
+		return new CopyData(copyDataMaker.apply(copied), fullCopyData);
+	}
+
+	private <T extends IConstantFractionalPosition, V extends Copied<T>> CopyData getCopyData(final PositionType type,
+			final CopyMakerSimple<T, V> copiedPositionMaker, final Function<List<V>, ICopyData> copyDataMaker) {
+		final ISelectionAccessor<T> selectionAccessor = selectionManager.accessor(type);
+		if (!selectionAccessor.isSelected()) {
+			return null;
+		}
+
+		final List<T> selected = selectionAccessor.getSelectedElements();
+		final List<V> copied = makeCopy(selected, copiedPositionMaker);
+
+		final FractionalPosition from = selected.get(0).position();
+		final FractionalPosition to = selected.get(selected.size() - 1).position();
 
 		final FullCopyData fullCopyData = getFullCopyData(from, to);
 
@@ -186,7 +181,7 @@ public class CopyManager {
 
 	private CopyData getGuitarCopyData() {
 		if (selectionManager.accessor(PositionType.ANCHOR).isSelected()) {
-			return getCopyData(PositionType.ANCHOR, CopiedAnchorPosition::new, AnchorsCopyData::new);
+			return getCopyData(PositionType.ANCHOR, CopiedAnchor::new, AnchorsCopyData::new);
 		}
 		if (selectionManager.accessor(PositionType.EVENT_POINT).isSelected()) {
 			return getGuitarCopyDataEventPoints();
@@ -198,7 +193,7 @@ public class CopyManager {
 			return getGuitarCopyDataHandShapes();
 		}
 		if (selectionManager.accessor(PositionType.TONE_CHANGE).isSelected()) {
-			return getCopyData(PositionType.TONE_CHANGE, CopiedAnchorPosition::new, AnchorsCopyData::new);
+			return getCopyData(PositionType.TONE_CHANGE, CopiedAnchor::new, AnchorsCopyData::new);
 		}
 
 		return null;
@@ -209,7 +204,7 @@ public class CopyManager {
 			case GUITAR:
 				return getGuitarCopyData();
 			case VOCALS:
-				return getCopyData(PositionType.VOCAL, CopiedVocalPosition::new, VocalsCopyData::new);
+				return getCopyDataWithEnd(PositionType.VOCAL, CopiedVocalPosition::new, VocalsCopyData::new);
 			case TEMPO_MAP:
 			default:
 				return null;

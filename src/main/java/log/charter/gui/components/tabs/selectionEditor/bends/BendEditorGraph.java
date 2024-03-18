@@ -1,6 +1,5 @@
 package log.charter.gui.components.tabs.selectionEditor.bends;
 
-import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
@@ -8,8 +7,6 @@ import static log.charter.data.config.Config.gridSize;
 import static log.charter.data.config.Config.maxBendValue;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.util.CollectionUtils.firstAfterEqual;
-import static log.charter.util.CollectionUtils.lastBeforeEqual;
 import static log.charter.util.Utils.formatBendValue;
 
 import java.awt.Dimension;
@@ -26,15 +23,14 @@ import java.util.function.BiConsumer;
 
 import javax.swing.JComponent;
 
-import log.charter.data.song.BeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.Position;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
-import log.charter.util.collections.ArrayList2;
+import log.charter.util.data.Fraction;
 import log.charter.util.data.Position2D;
 
 public class BendEditorGraph extends JComponent implements MouseListener, MouseMotionListener {
@@ -43,14 +39,6 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	private static final int bendValueDenominator = 2;
 	private static final int maxBendInternalValue = maxBendValue * bendValueDenominator;
 	public static final int height = 20 + 10 * maxBendInternalValue;
-
-	private static int getDefaultXFromBendPosition(final double position) {
-		return labelsWidth + (int) round(position * beatWidth);
-	}
-
-	private static int getZoomedXFromBendPosition(final double position) {
-		return labelsWidth + (int) round(2 * position * beatWidth);
-	}
 
 	private static int getYFromBendValue(final int value) {
 		return height - 5 - (int) round(value * 10);
@@ -65,42 +53,47 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		return value;
 	}
 
-	private int getXFromBendPosition(final double position) {
-		if (isZoomed()) {
-			return getZoomedXFromBendPosition(position);
-		}
-		return getDefaultXFromBendPosition(position);
+	private static int getXFromBendPosition(final FractionalPosition position) {
+		return labelsWidth + (int) round(position.doubleValue() * beatWidth);
 	}
 
-	private double getPositionFromX(final int x) {
-		final int x0 = getXFromBendPosition(0);
-		final int x1 = getXFromBendPosition(1);
-		return 1.0 * (x - x0) / (x1 - x0);
+	private static FractionalPosition getPositionFromX(final int x) {
+		final int x0 = getXFromBendPosition(new FractionalPosition(0));
+		final int x1 = getXFromBendPosition(new FractionalPosition(1));
+		return new FractionalPosition(new Fraction(x - x0, x1 - x0));
 	}
 
-	private class EditorBendValue {
-		public double position;
+	private static class EditorBendValue implements IConstantFractionalPosition {
+		public FractionalPosition position;
 		public int value;
 
-		public EditorBendValue(final double position, final int value) {
+		public EditorBendValue(final FractionalPosition position, final int value) {
 			this.position = position;
 			this.value = value;
+		}
+
+		@Override
+		public FractionalPosition position() {
+			return position;
 		}
 	}
 
 	private static class BendPositionWithId {
+		public final FractionalPosition position;
 		public final int x;
 		public int value;
 		public final Integer id;
 
-		public BendPositionWithId(final int x, final int value, final int id) {
-			this.x = x;
+		public BendPositionWithId(final FractionalPosition position, final int value, final int id) {
+			this.position = position;
+			x = getXFromBendPosition(position);
 			this.value = value;
 			this.id = id;
 		}
 
-		public BendPositionWithId(final int x, final int value) {
-			this.x = x;
+		public BendPositionWithId(final FractionalPosition position, final int value) {
+			this.position = position;
+			x = getXFromBendPosition(position);
 			this.value = value;
 			id = null;
 		}
@@ -108,33 +101,29 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 	private static final long serialVersionUID = 5796481223743472294L;
 
-	final BiConsumer<Integer, ArrayList2<BendValue>> onChangeBends;
+	final BiConsumer<Integer, List<BendValue>> onChangeBends;
 
-	private BeatsMap beatsMap;
-
-	private int notePosition = 0;
-	private final int[] notesLengths = new int[maxStrings];
+	private FractionalPosition notePosition = new FractionalPosition();
+	private final FractionalPosition[] notesLengths = new FractionalPosition[maxStrings];
 	private int firstBeatId = 0;
 	private int lastBeatId = 1;
-	private double noteStartPosition = 0;
-	private double noteEndPosition = 1;
+	private FractionalPosition noteStartPosition = new FractionalPosition();
+	private FractionalPosition noteEndPosition = new FractionalPosition();
 
 	private int string;
 	private int strings;
-	private final ArrayList2<EditorBendValue> bendValues = new ArrayList2<>();
+	private final List<EditorBendValue> bendValues = new ArrayList<>();
 
 	private int mouseX;
 	private BendPositionWithId selectedBend = null;
 
 	private int initialDragBendValue;
 
-	public BendEditorGraph(final BeatsMap beatsMap, final BiConsumer<Integer, ArrayList2<BendValue>> onChangeBends) {
+	public BendEditorGraph(final BiConsumer<Integer, List<BendValue>> onChangeBends) {
 		super();
 		strings = maxStrings;
 
 		this.onChangeBends = onChangeBends;
-
-		this.beatsMap = beatsMap;
 
 		setBackground(ColorLabel.BASE_BG_3.color());
 
@@ -144,17 +133,9 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		addMouseMotionListener(this);
 	}
 
-	public void setBeatsMap(final BeatsMap beatsMap) {
-		this.beatsMap = beatsMap;
-	}
-
-	private boolean isZoomed() {
-		return noteEndPosition - noteStartPosition < 1;
-	}
-
 	private void calculateSize() {
 		final int width = max(labelsWidth + 21 + beatWidth * 2,
-				labelsWidth + 21 + (lastBeatId - firstBeatId) * beatWidth * (isZoomed() ? 2 : 1));
+				labelsWidth + 21 + (lastBeatId - firstBeatId) * beatWidth);
 		final Dimension size = new Dimension(width, height);
 		setMinimumSize(size);
 		setMaximumSize(size);
@@ -165,13 +146,13 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	}
 
 	private void calculateBeatPositions() {
-		firstBeatId = lastBeforeEqual(beatsMap.beats, new Position(notePosition)).findId(0);
-		lastBeatId = firstAfterEqual(beatsMap.beats, new Position(notePosition + notesLengths[string]))
-				.findId(beatsMap.beats.size() - 1);
+		firstBeatId = notePosition.beatId;
 
-		noteStartPosition = FractionalPosition.fromTime(beatsMap.immutable, notePosition).doubleValue() - firstBeatId;
-		noteEndPosition = FractionalPosition.fromTime(beatsMap.immutable, notePosition + notesLengths[string])
-				.doubleValue() - firstBeatId;
+		final FractionalPosition endPosition = notePosition.add(notesLengths[string]);
+		lastBeatId = endPosition.fraction.numerator > 0 ? endPosition.beatId + 1 : endPosition.beatId;
+
+		noteStartPosition = notePosition.add(-firstBeatId);
+		noteEndPosition = noteStartPosition.add(notesLengths[string]);
 
 		calculateSize();
 	}
@@ -181,7 +162,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		this.strings = strings;
 		notePosition = note.position();
 		for (int i = 0; i < notesLengths.length; i++) {
-			notesLengths[i] = 1;
+			notesLengths[i] = new FractionalPosition();
 		}
 		notesLengths[string] = note.length();
 		calculateBeatPositions();
@@ -194,33 +175,31 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		this.strings = strings;
 		notePosition = chord.position();
 		for (int i = 0; i < notesLengths.length; i++) {
-			notesLengths[i] = 1;
+			notesLengths[i] = new FractionalPosition();
 		}
-		chord.chordNotes.forEach((chordNoteString, chordNote) -> notesLengths[chordNoteString] = chordNote.length);
+		chord.chordNotes.forEach((chordNoteString, chordNote) -> notesLengths[chordNoteString] = chordNote.length());
 		calculateBeatPositions();
 
 		setBendValues(string, chord.chordNotes.get(string).bendValues);
 	}
 
-	public void setBendValues(final int string, final ArrayList2<BendValue> bendValuesToEdit) {
+	public void setBendValues(final int string, final List<BendValue> bendValuesToEdit) {
 		this.string = string;
 
 		bendValues.clear();
 
 		if (bendValuesToEdit != null) {
 			for (final BendValue bendValueToEdit : bendValuesToEdit) {
-				if (bendValueToEdit.position() > notesLengths[string]) {
+				if (bendValueToEdit.position().add(notePosition.negate()).compareTo(notesLengths[string]) > 0) {
 					continue;
 				}
-				final int fullPosition = notePosition + bendValueToEdit.position();
 
-				final double positionInBeats = FractionalPosition.fromTime(beatsMap.immutable, fullPosition)
-						.doubleValue();
-				final double position = positionInBeats - firstBeatId;
+				final FractionalPosition inEditorPosition = bendValueToEdit.position()
+						.add(new FractionalPosition(-firstBeatId));
 				int value = (int) round(bendValueToEdit.bendValue.doubleValue() * bendValueDenominator);
 				value = max(0, min(maxBendInternalValue, value));
 
-				bendValues.add(new EditorBendValue(position, value));
+				bendValues.add(new EditorBendValue(inEditorPosition, value));
 			}
 		}
 
@@ -228,73 +207,70 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		repaint();
 	}
 
-	private ArrayList2<BendValue> getBendValues() {
-		final ArrayList2<BendValue> bendValuesForNote = new ArrayList2<>();
-		for (final EditorBendValue bendValue : bendValues) {
-			final int position = min(notesLengths[string],
-					beatsMap.getPositionForPositionInBeats(bendValue.position + firstBeatId) - notePosition);
-			final BigDecimal value = new BigDecimal(bendValue.value / (double) bendValueDenominator).setScale(2,
+	private List<BendValue> getBendValues() {
+		final List<BendValue> bendValuesForNote = new ArrayList<>();
+		for (final EditorBendValue editorBendValue : bendValues) {
+			final FractionalPosition actualPosition = editorBendValue.position.add(firstBeatId);
+			final BigDecimal value = new BigDecimal(editorBendValue.value / (double) bendValueDenominator).setScale(2,
 					RoundingMode.HALF_UP);
-			bendValuesForNote.add(new BendValue(position, value));
+			bendValuesForNote.add(new BendValue(actualPosition, value));
 		}
 
 		return bendValuesForNote;
 	}
 
 	private BendPositionWithId getBendPosition() {
-		final double gridLength = 1.0 / gridSize;
-		final double mousePosition = getPositionFromX(mouseX);
-		if (mousePosition > noteEndPosition + gridLength / 2 || mousePosition < noteStartPosition - gridLength / 2) {
+		final Fraction gridLength = new Fraction(1, gridSize);
+		final Fraction halfGridLength = gridLength.divide(2);
+		final FractionalPosition mousePosition = getPositionFromX(mouseX);
+		if (mousePosition.compareTo(noteEndPosition.add(halfGridLength)) > 0//
+				|| mousePosition.compareTo(noteStartPosition.add(halfGridLength.negate())) < 0) {
 			return null;
 		}
 
-		final int closestGrid = (int) round(mousePosition * gridSize);
-		if (closestGrid < 0 || closestGrid > (lastBeatId - firstBeatId) * gridSize) {
+		final FractionalPosition gridPosition = mousePosition.round(gridLength);
+		if (gridPosition.beatId < 0 || gridPosition.beatId > lastBeatId - firstBeatId) {
 			return null;
 		}
 
-		final double closestGridPosition = closestGrid * gridLength;
 		Integer closestGridId = null;
 		EditorBendValue closestGridBendValue = null;
 		Integer closestId = null;
 		EditorBendValue closestBendValue = null;
 		for (int i = 0; i < bendValues.size(); i++) {
 			final EditorBendValue bendValue = bendValues.get(i);
-			if (closestId == null || abs(bendValue.position - mousePosition) < abs(
-					bendValues.get(closestId).position - mousePosition)) {
+			if (closestId == null || bendValue.position.distance(mousePosition)
+					.compareTo(bendValues.get(closestId).position.distance(mousePosition)) < 0) {
 				closestId = i;
 				closestBendValue = bendValue;
 			}
 
-			if (abs(closestGridPosition - bendValue.position) < gridLength / 2) {
+			if (gridPosition.distance(bendValue.position).compareTo(halfGridLength) < 0) {
 				closestGridId = i;
 				closestGridBendValue = bendValue;
 			}
 		}
 
-		final double distanceToClosestBendValue = closestBendValue == null ? 2
-				: abs(closestBendValue.position - mousePosition);
-		final double distanceToClosestGrid = abs(1.0 * closestGrid / gridSize - mousePosition);
+		if (closestBendValue != null) {
+			final FractionalPosition closestBendValueDistance = closestBendValue.position.distance(mousePosition);
+			final FractionalPosition gridPositionDistance = gridPosition.distance(mousePosition);
 
-		if (distanceToClosestBendValue < distanceToClosestGrid) {
-			return new BendPositionWithId(getXFromBendPosition(closestBendValue.position), closestBendValue.value,
-					closestId);
+			if (closestBendValueDistance.compareTo(gridPositionDistance) < 0) {
+				return new BendPositionWithId(closestBendValue.position, closestBendValue.value, closestId);
+			}
 		}
-
 		if (closestGridBendValue != null) {
-			return new BendPositionWithId(getXFromBendPosition(closestGridBendValue.position), closestBendValue.value,
-					closestGridId);
+			return new BendPositionWithId(closestGridBendValue.position, closestBendValue.value, closestGridId);
+		}
+		if (noteStartPosition.distance(gridPosition).compareTo(halfGridLength) < 0) {
+			return new BendPositionWithId(noteStartPosition, 0);
+		}
+		if (noteEndPosition.distance(gridPosition).compareTo(halfGridLength) < 0) {
+			return new BendPositionWithId(noteEndPosition,
+					bendValues.isEmpty() ? 0 : bendValues.get(bendValues.size() - 1).value);
 		}
 
-		if (abs(noteStartPosition - closestGridPosition) < gridLength / 2) {
-			return new BendPositionWithId(getXFromBendPosition(noteStartPosition), 0);
-		}
-		if (abs(noteEndPosition - closestGridPosition) < gridLength / 2) {
-			return new BendPositionWithId(getXFromBendPosition(noteEndPosition),
-					bendValues.isEmpty() ? 0 : bendValues.getLast().value);
-		}
-
-		return new BendPositionWithId(getXFromBendPosition(closestGrid * gridLength), -1);
+		return new BendPositionWithId(gridPosition, -1);
 	}
 
 	private void drawBackground(final Graphics g) {
@@ -312,13 +288,16 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 	private void drawGrid(final Graphics g) {
 		g.setColor(ColorLabel.GRID.color());
+
 		final int y0 = getYFromBendValue(0);
 		final int y1 = getYFromBendValue(maxBendInternalValue);
-		for (int i = 0; i <= lastBeatId - firstBeatId; i++) {
-			for (int j = 1; j < gridSize; j++) {
-				final int x = getXFromBendPosition(i + (double) j / gridSize);
-				g.drawLine(x, y0, x, y1);
-			}
+		FractionalPosition gridPosition = new FractionalPosition();
+		final Fraction gridLength = new Fraction(1, gridSize);
+
+		while (gridPosition.beatId <= lastBeatId - firstBeatId) {
+			final int x = getXFromBendPosition(gridPosition);
+			g.drawLine(x, y0, x, y1);
+			gridPosition = gridPosition.add(gridLength);
 		}
 	}
 
@@ -327,7 +306,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		final int y0 = getYFromBendValue(-1);
 		final int y1 = getYFromBendValue(maxBendInternalValue + 1);
 		for (int i = 0; i <= lastBeatId - firstBeatId; i++) {
-			final int x = getXFromBendPosition(i);
+			final int x = getXFromBendPosition(new FractionalPosition(i));
 			g.drawLine(x, y0, x, y1);
 		}
 	}
@@ -451,13 +430,13 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 			final int value = getValueFromY(e.getY());
 			if (selectedBend == null || selectedBend.id == null) {
-				final double position = getPositionFromX(selectedBend.x);
+				final FractionalPosition position = selectedBend.position;
 				final EditorBendValue newBendValue = new EditorBendValue(position, value);
 
 				bendValues.add(newBendValue);
-				bendValues.sort((v0, v1) -> Double.compare(v0.position, v1.position));
+				bendValues.sort(IConstantFractionalPosition::compareTo);
 
-				selectedBend = new BendPositionWithId(selectedBend.x, value, bendValues.indexOf(newBendValue));
+				selectedBend = new BendPositionWithId(position, value, bendValues.indexOf(newBendValue));
 			} else {
 				bendValues.get(selectedBend.id).value = value;
 				selectedBend.value = value;

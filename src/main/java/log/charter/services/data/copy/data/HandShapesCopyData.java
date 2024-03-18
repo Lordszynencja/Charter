@@ -17,16 +17,16 @@ import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
-import log.charter.services.data.copy.data.positions.CopiedHandShapePosition;
+import log.charter.services.data.copy.data.positions.CopiedHandShape;
 import log.charter.services.data.selection.SelectionManager;
 
 @XStreamAlias("handShapesCopyData")
 public class HandShapesCopyData implements ICopyData {
 	private final List<ChordTemplate> chordTemplates;
-	private final List<CopiedHandShapePosition> handShapes;
+	private final List<CopiedHandShape> handShapes;
 
 	public HandShapesCopyData(final List<ChordTemplate> chordTemplates,
-			final List<CopiedHandShapePosition> handShapes) {
+			final List<CopiedHandShape> handShapes) {
 		this.chordTemplates = chordTemplates;
 		this.handShapes = handShapes;
 	}
@@ -45,7 +45,7 @@ public class HandShapesCopyData implements ICopyData {
 		final Set<HandShape> positionsToSelect = new HashSet<>(this.handShapes.size());
 		final Map<Integer, Integer> chordIdsMap = new HashMap<>();
 
-		for (final CopiedHandShapePosition copiedPosition : this.handShapes) {
+		for (final CopiedHandShape copiedPosition : this.handShapes) {
 			try {
 				final HandShape handShape = copiedPosition.getValue(beats, basePosition, convertFromBeats);
 				if (handShape == null) {

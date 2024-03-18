@@ -1,8 +1,6 @@
-package log.charter.data.song.position;
+package log.charter.data.song.position.time;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
-import log.charter.data.song.position.time.IConstantPosition;
 
 public class ConstantPosition implements IConstantPosition {
 	@XStreamAsAttribute

@@ -16,11 +16,8 @@ public abstract class CopiedPositionWithLength<T extends IPositionWithLength> ex
 			final T positionWithLength) {
 		super(beats, basePosition, positionWithLength);
 		l = positionWithLength.length();
-		fl = positionWithLength.endPosition().toFraction(beats).fractionalPosition().add(super.fp.negate());
+		fl = positionWithLength.endPosition().toFraction(beats).position().add(super.fp.negate());
 	}
-
-	@Override
-	protected abstract T prepareValue();
 
 	@Override
 	public T getValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
@@ -30,15 +27,10 @@ public abstract class CopiedPositionWithLength<T extends IPositionWithLength> ex
 			return null;
 		}
 
-		if (convertFromBeats || value.isFraction()) {
+		if (convertFromBeats) {
 			final FractionalPosition endPosition = basePosition.add(fp).add(fl);
 
-			if (value.isFraction()) {
-				value.endPosition(endPosition.getPosition(beats));
-				// value.asFraction().get().fractionalPosition(position);
-			} else {
-				value.endPosition(endPosition.getPosition(beats));
-			}
+			value.endPosition(endPosition.getPosition(beats));
 		} else if (value.isPosition()) {
 			value.endPosition(value.position() + l);
 		}

@@ -26,12 +26,12 @@ import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.Position;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
 import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.data.song.position.time.IPositionWithLength;
+import log.charter.data.song.position.time.Position;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.song.vocals.Vocal;
@@ -125,22 +125,22 @@ public class HighlightData {
 		private FractionalPosition endPosition;
 
 		public <P extends IConstantFractionalPosition> TemporaryFractionalHighlighPosition(final P position) {
-			this.position = position.fractionalPosition();
+			this.position = position.position();
 			endPosition = this.position;
 		}
 
 		public <P extends IConstantFractionalPositionWithEnd> TemporaryFractionalHighlighPosition(final P position) {
-			this.position = position.fractionalPosition();
+			this.position = position.position();
 			endPosition = position.endPosition();
 		}
 
 		@Override
-		public FractionalPosition fractionalPosition() {
+		public FractionalPosition position() {
 			return position;
 		}
 
 		@Override
-		public void fractionalPosition(final FractionalPosition newPosition) {
+		public void position(final FractionalPosition newPosition) {
 			position = newPosition;
 		}
 
@@ -208,7 +208,7 @@ public class HighlightData {
 		}
 
 		@Override
-		public FractionalPosition fractionalPosition() {
+		public FractionalPosition position() {
 			return fractionalPosition;
 		}
 

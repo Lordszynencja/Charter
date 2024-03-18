@@ -10,11 +10,10 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.position.Position;
-import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.time.Position;
 import log.charter.services.RepeatManager;
 
-public class BeatDrawData implements IConstantPosition {
+public class BeatDrawData {
 	public static List<BeatDrawData> getBeatsForTimeSpan(final ChartData data, final int timeFrom, final int timeTo) {
 		final List<BeatDrawData> beatsToDraw = new ArrayList<>();
 		final ImmutableBeatsMap beats = data.beats();
@@ -83,10 +82,5 @@ public class BeatDrawData implements IConstantPosition {
 		originalTime = other.originalTime;
 		this.time = time;
 		firstInMeasure = other.firstInMeasure;
-	}
-
-	@Override
-	public int position() {
-		return time;
 	}
 }

@@ -59,7 +59,7 @@ public class RSXMLToArrangement {
 
 	private static List<ToneChange> getToneChanges(final ImmutableBeatsMap beats,
 			final List<ArrangementTone> arrangementTones) {
-		return map(arrangementTones, t -> new ToneChange(FractionalPosition.fromTime(beats, t.time, true), t.name));
+		return map(arrangementTones, t -> new ToneChange(FractionalPosition.fromTimeRounded(beats, t.time), t.name));
 	}
 
 	private static SectionType findSectionByRSName(final String rsName) {
@@ -101,13 +101,13 @@ public class RSXMLToArrangement {
 
 		arrangementData.sections.list.forEach(arrangementSection -> {
 			final EventPoint arrangementEventsPoint = arrangement.findOrCreateArrangementEventsPoint(
-					FractionalPosition.fromTime(beats, arrangementSection.startTime, true));
+					FractionalPosition.fromTimeRounded(beats, arrangementSection.startTime));
 			arrangementEventsPoint.section = findSectionByRSName(arrangementSection.name);
 		});
 		arrangement.phrases = getArrangementPhrases(arrangementData.phrases.list);
 		arrangementData.phraseIterations.list.forEach(arrangementPhraseIteration -> {
 			final EventPoint arrangementEventsPoint = arrangement.findOrCreateArrangementEventsPoint(
-					FractionalPosition.fromTime(beats, arrangementPhraseIteration.time, true));
+					FractionalPosition.fromTimeRounded(beats, arrangementPhraseIteration.time));
 			final String phraseName = arrangementData.phrases.list.get(arrangementPhraseIteration.phraseId).name;
 			arrangementEventsPoint.phrase = phraseName;
 		});
@@ -124,7 +124,7 @@ public class RSXMLToArrangement {
 			}
 
 			final EventPoint arrangementEventsPoint = arrangement.findOrCreateArrangementEventsPoint(
-					FractionalPosition.fromTime(beats, arrangementEvent.time, true));
+					FractionalPosition.fromTimeRounded(beats, arrangementEvent.time));
 			arrangementEventsPoint.events.add(findEventByRSName(arrangementEvent.code));
 		});
 

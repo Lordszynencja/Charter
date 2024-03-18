@@ -12,8 +12,8 @@ import log.charter.data.song.EventType;
 import log.charter.data.song.SectionType;
 import log.charter.data.song.position.FractionalPosition;
 
-@XStreamAlias("copiedArrangementEventsPointPosition")
-public class CopiedArrangementEventsPointPosition extends CopiedFractionalPosition<EventPoint> {
+@XStreamAlias("copiedEventPoint")
+public class CopiedEventPoint extends CopiedFractionalPosition<EventPoint> {
 	@XStreamAsAttribute
 	public final SectionType section;
 	@XStreamAsAttribute
@@ -21,16 +21,16 @@ public class CopiedArrangementEventsPointPosition extends CopiedFractionalPositi
 	@XStreamAsAttribute
 	public final List<EventType> events;
 
-	public CopiedArrangementEventsPointPosition(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
-			final EventPoint eventPoint) {
-		super(beats, basePosition, eventPoint);
+	public CopiedEventPoint(final FractionalPosition basePosition, final EventPoint eventPoint) {
+		super(basePosition, eventPoint);
 		section = eventPoint.section;
 		phrase = eventPoint.phrase;
 		events = new ArrayList<>(eventPoint.events);
 	}
 
 	@Override
-	protected EventPoint prepareValue() {
+	public EventPoint prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
+			final boolean convertFromBeats) {
 		final EventPoint arrangementEventsPoint = new EventPoint();
 		arrangementEventsPoint.section = section;
 		arrangementEventsPoint.phrase = phrase;

@@ -1,7 +1,6 @@
 package log.charter.services.data.selection;
 
 import static log.charter.util.CollectionUtils.closest;
-import static log.charter.util.ScalingUtils.timeToX;
 import static log.charter.util.ScalingUtils.xToTime;
 
 import java.util.ArrayList;
@@ -10,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.position.Position;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.vocals.Vocal;
@@ -52,55 +52,54 @@ public class SelectionManager implements Initiable {
 		});
 	}
 
-	private static class PositionWithLink extends Position {
-		public static List<PositionWithLink> fromPositionsWithIdAndType(final List<PositionWithIdAndType> positions) {
-			final List<PositionWithLink> newPositions = new ArrayList<>(positions.size() * 2);
-
-			for (final PositionWithIdAndType position : positions) {
-				newPositions.add(new PositionWithLink(position.position(), position));
-				newPositions.add(new PositionWithLink(position.endPosition, position));
-			}
-
-			return newPositions;
-		}
-
+	private class PositionWithLink implements IConstantPosition {
+		private final int position;
 		public final PositionWithIdAndType link;
 
 		public PositionWithLink(final int position, final PositionWithIdAndType link) {
-			super(position);
+			this.position = position;
 			this.link = link;
 		}
+
+		@Override
+		public int position() {
+			return position;
+		}
 	}
 
-	private PositionWithIdAndType findExistingWithEnd(final int x, final List<PositionWithIdAndType> positions) {
-		final List<PositionWithLink> positionsWithLinks = PositionWithLink.fromPositionsWithIdAndType(positions);
-		final int position = xToTime(x, chartTimeHandler.time());
-		final Integer id = closest(positionsWithLinks, new Position(position), IConstantPosition::compareTo,
-				p -> p.position()).findId();
-		if (id == null) {
-			return null;
+	public List<PositionWithLink> generateLinks(final List<PositionWithIdAndType> positions) {
+		final List<PositionWithLink> newPositions = new ArrayList<>(positions.size());
+
+		final ImmutableBeatsMap beats = chartData.beats();
+		for (final PositionWithIdAndType position : positions) {
+			newPositions.add(new PositionWithLink(position.toPosition(beats).position(), position));
 		}
 
-		final PositionWithIdAndType closest = positionsWithLinks.get(id).link;
-		if (x - timeToX(closest.position(), chartTimeHandler.time()) < -20
-				|| x - timeToX(closest.endPosition, chartTimeHandler.time()) > 20) {
-			return null;
-		}
-
-		return closest;
+		return newPositions;
 	}
 
-	private PositionWithIdAndType findClosestExistingPoint(final int x, final List<PositionWithIdAndType> positions) {
+	public List<PositionWithLink> generateLinksWithLength(final List<PositionWithIdAndType> positions) {
+		final List<PositionWithLink> newPositions = new ArrayList<>(positions.size() * 2);
+
+		final ImmutableBeatsMap beats = chartData.beats();
+		for (final PositionWithIdAndType position : positions) {
+			newPositions.add(new PositionWithLink(position.toPosition(beats).position(), position));
+			newPositions.add(new PositionWithLink(position.endPosition().toPosition(beats).position(), position));
+		}
+
+		return newPositions;
+	}
+
+	private PositionWithIdAndType findExisting(final int x, final List<PositionWithLink> positionsWithLinks) {
 		final int position = xToTime(x, chartTimeHandler.time());
-		final Integer id = closest(positions, new Position(position), IConstantPosition::compareTo, p -> p.position())
-				.findId();
-		if (id == null) {
+		final PositionWithLink closestLink = closest(positionsWithLinks, new ConstantPosition(position)).find();
+		if (closestLink == null) {
 			return null;
 		}
 
-		final PositionWithIdAndType closest = positions.get(id);
-		if (x - timeToX(closest.position(), chartTimeHandler.time()) < -20
-				|| x - timeToX(closest.position(), chartTimeHandler.time()) > 20) {
+		final PositionWithIdAndType closest = closestLink.link;
+		if (x - chartTimeHandler.positionToX(closest.asConstantPosition().position()) < -20
+				|| x - chartTimeHandler.positionToX(closest.endPosition().asConstantPosition().position()) > 20) {
 			return null;
 		}
 
@@ -112,10 +111,10 @@ public class SelectionManager implements Initiable {
 		final List<PositionWithIdAndType> positions = positionType.getPositionsWithIdsAndTypes(chartData);
 
 		if (positionType == PositionType.HAND_SHAPE || positionType == PositionType.VOCAL) {
-			return findExistingWithEnd(x, positions);
+			return findExisting(x, generateLinksWithLength(positions));
 		}
 
-		return findClosestExistingPoint(x, positions);
+		return findExisting(x, generateLinks(positions));
 	}
 
 	public void click(final MouseButtonPressReleaseData clickData, final boolean ctrl, final boolean shift) {

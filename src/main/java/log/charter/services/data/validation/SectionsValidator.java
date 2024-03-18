@@ -51,7 +51,7 @@ public class SectionsValidator {
 							TimeUnit.MINUTES, TimeUnit.YEARS),
 					arrangementName)) {
 				case YES:
-					chartTimeHandler.moveTo(arrangementId, null, section.fractionalPosition());
+					chartTimeHandler.moveTo(arrangementId, null, section.position());
 					return false;
 				case NO:
 					return true;

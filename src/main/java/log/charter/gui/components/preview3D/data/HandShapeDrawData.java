@@ -12,10 +12,10 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.time.IConstantPositionWithLength;
+import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.services.RepeatManager;
 
-public class HandShapeDrawData implements IConstantPositionWithLength {
+public class HandShapeDrawData implements IConstantPosition {
 	public static List<HandShapeDrawData> getHandShapesForTimeSpan(final ChartData data, final int timeFrom,
 			final int timeTo) {
 		if (data.currentArrangementLevel() == null) {
@@ -112,10 +112,5 @@ public class HandShapeDrawData implements IConstantPositionWithLength {
 	@Override
 	public int position() {
 		return timeFrom;
-	}
-
-	@Override
-	public int length() {
-		return timeTo - timeFrom;
 	}
 }

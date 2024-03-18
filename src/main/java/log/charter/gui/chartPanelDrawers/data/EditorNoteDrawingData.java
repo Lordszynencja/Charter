@@ -3,6 +3,8 @@ package log.charter.gui.chartPanelDrawers.data;
 import static java.lang.Math.max;
 import static log.charter.util.ScalingUtils.timeToXLength;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map.Entry;
 
 import log.charter.data.song.BendValue;
@@ -17,6 +19,19 @@ import log.charter.data.song.notes.Note;
 import log.charter.util.collections.ArrayList2;
 
 public class EditorNoteDrawingData {
+	private static class EditorBendValueDrawingData {
+		public final int position;
+		public final int x;
+		public final BigDecimal bendValue;
+
+		public EditorBendValueDrawingData(final int position, final int x, final BigDecimal bendValue) {
+			this.position = position;
+			this.x = x;
+			this.bendValue = bendValue;
+		}
+
+	}
+
 	public static EditorNoteDrawingData fromNote(final int x, final Note note, final boolean selected,
 			final boolean highlighted, final boolean lastWasLinkNext, final boolean wrongLinkNext) {
 		return new EditorNoteDrawingData(x, timeToXLength(note.position(), note.length()), note, selected, highlighted,
@@ -61,7 +76,7 @@ public class EditorNoteDrawingData {
 	public final HOPO hopo;
 	public final Harmonic harmonic;
 	public final BassPickingTechnique bassPickingTech;
-	public final ArrayList2<BendValue> bendValues;
+	public final List<BendValue> bendValues;
 	public final Integer slideTo;
 	public final boolean unpitchedSlide;
 	public final boolean vibrato;
@@ -95,7 +110,7 @@ public class EditorNoteDrawingData {
 	private EditorNoteDrawingData(final int position, final int x, final int length, //
 			final int string, final int fretNumber, final String fret, //
 			final boolean accent, final Mute mute, final HOPO hopo, final Harmonic harmonic,
-			final BassPickingTechnique bassPickingTech, final ArrayList2<BendValue> bendValues, final Integer slideTo,
+			final BassPickingTechnique bassPickingTech, final List<BendValue> bendValues, final Integer slideTo,
 			final boolean unpitchedSlide, final boolean vibrato, final boolean tremolo, final boolean selected,
 			final boolean highlighted, final boolean lastWasLinkNext, final boolean wrongLink) {
 		this.position = position;

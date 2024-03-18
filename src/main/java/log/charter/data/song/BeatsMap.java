@@ -12,8 +12,8 @@ import java.util.ListIterator;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.Position;
 import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.time.Position;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.io.rs.xml.song.SongArrangement;
@@ -210,10 +210,11 @@ public class BeatsMap {
 			return null;
 		}
 
-		public IVirtualConstantPosition getPositionFromGridClosestTo(final IVirtualConstantPosition position) {
+		public FractionalPosition getPositionFromGridClosestTo(final IVirtualConstantPosition position) {
 			final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
-			final IVirtualConstantPosition leftPosition = gridPosition.fractionalPosition();
-			final IVirtualConstantPosition rightPosition = gridPosition.next().fractionalPosition();
+			final FractionalPosition leftPosition = gridPosition.fractionalPosition();
+			gridPosition.next();
+			final FractionalPosition rightPosition = gridPosition.fractionalPosition();
 
 			final IVirtualConstantPosition distanceToLeft = distance(immutable, position, leftPosition);
 			final IVirtualConstantPosition distanceToRight = distance(immutable, position, rightPosition);
@@ -228,7 +229,7 @@ public class BeatsMap {
 		public void movePositions(final Collection<? extends IVirtualPosition> positions,
 				final FractionalPosition toAdd) {
 			for (final IVirtualPosition position : positions) {
-				final FractionalPosition newPosition = position.toFraction(immutable).fractionalPosition().add(toAdd);
+				final FractionalPosition newPosition = position.toFraction(immutable).position().add(toAdd);
 
 				position.position(immutable, newPosition);
 			}
@@ -244,7 +245,7 @@ public class BeatsMap {
 		}
 
 		private IVirtualConstantPosition removeNote(final IVirtualConstantPosition position, Fraction distance) {
-			FractionalPosition fractionalPosition = position.toFraction(this).fractionalPosition();
+			FractionalPosition fractionalPosition = position.toFraction(this).position();
 			if (fractionalPosition.fraction.numerator > 0) {
 				final int noteDenominator = get(fractionalPosition.beatId).noteDenominator;
 				final Fraction distanceLeftInBeats = distance.multiply(noteDenominator);
@@ -272,7 +273,7 @@ public class BeatsMap {
 				return removeNote(position, distance.negate());
 			}
 
-			FractionalPosition fractionalPosition = position.toFraction(this).fractionalPosition();
+			FractionalPosition fractionalPosition = position.toFraction(this).position();
 			if (fractionalPosition.fraction.numerator > 0) {
 				final int noteDenominator = get(fractionalPosition.beatId).noteDenominator;
 				final Fraction distanceLeftInBeats = distance.multiply(noteDenominator);

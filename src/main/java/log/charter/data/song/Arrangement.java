@@ -90,7 +90,7 @@ public class Arrangement {
 
 	public EventPoint findOrCreateArrangementEventsPoint(final FractionalPosition position) {
 		EventPoint eventPoint = lastBeforeEqual(eventPoints, position).find();
-		if (eventPoint == null || eventPoint.fractionalPosition().compareTo(position) != 0) {
+		if (eventPoint == null || eventPoint.position().compareTo(position) != 0) {
 			eventPoint = new EventPoint(position);
 			eventPoints.add(eventPoint);
 			eventPoints.sort(IConstantFractionalPosition::compareTo);
@@ -149,11 +149,11 @@ public class Arrangement {
 		}
 
 		final EventPoint closestEventPoint = eventPoints.get(closestId);
-		if (closestEventPoint.fractionalPosition().compareTo(position) != 0) {
+		if (closestEventPoint.position().compareTo(position) != 0) {
 			final EventPoint count = new EventPoint(position);
 			count.phrase = name;
 
-			eventPoints.add(closestEventPoint.fractionalPosition().compareTo(position) < 0 ? closestId + 1 : closestId,
+			eventPoints.add(closestEventPoint.position().compareTo(position) < 0 ? closestId + 1 : closestId,
 					count);
 		} else {
 			closestEventPoint.phrase = name;

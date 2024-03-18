@@ -20,7 +20,7 @@ import log.charter.data.song.notes.Chord.ChordNotesVisibility;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
-import log.charter.data.song.position.Position;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.services.RepeatManager;
 
 public class Preview3DNotesData {
@@ -31,32 +31,36 @@ public class Preview3DNotesData {
 				.chordNotesVisibility(level.shouldChordShowNotes(beats, id));
 
 		if (chordNotesVisibility == ChordNotesVisibility.NONE) {
-			chords.add(new ChordBoxDrawData(chord.position(), chord.chordNotesValue(n -> n.mute, Mute.NONE), true));
+			chords.add(
+					new ChordBoxDrawData(chord.position(beats), chord.chordNotesValue(n -> n.mute, Mute.NONE), true));
 			return;
 		}
 
 		if (!chord.splitIntoNotes) {
-			chords.add(new ChordBoxDrawData(chord.position(), Mute.NONE, false));
+			chords.add(new ChordBoxDrawData(chord.position(beats), Mute.NONE, false));
 		}
 		if (chord.forceNoNotes) {
 			return;
 		}
 
+		final int notePosition = chord.position(beats);
 		final ChordTemplate chordTemplate = arrangement.chordTemplates.get(chord.templateId());
 		final boolean shouldHaveLength = chordNotesVisibility == ChordNotesVisibility.TAILS;
 		for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
 			final int string = chordNoteEntry.getKey();
 			final ChordNote chordNote = chordNoteEntry.getValue();
+			final int noteEndPosition = chordNote.endPosition(beats);
 			final boolean linkPrevious = isLinkedToPrevious(string, id, sounds);
 			final int fret = chordTemplate.frets.get(string);
 
-			notes.get(string).add(
-					new NoteDrawData(timeFrom, timeTo, chord, string, fret, chordNote, linkPrevious, shouldHaveLength));
+			notes.get(string).add(new NoteDrawData(notePosition, noteEndPosition, timeFrom, timeTo, chord, string, fret,
+					chordNote, linkPrevious, shouldHaveLength));
 		}
 	}
 
-	public static Preview3DNotesData getNotesForTimeSpan(final ChartData data, final int timeFrom, final int timeTo) {
-		if (data.currentArrangementLevel() == null) {
+	public static Preview3DNotesData getNotesForTimeSpan(final ChartData chartData, final int timeFrom,
+			final int timeTo) {
+		if (chartData.currentArrangementLevel() == null) {
 			final List<List<NoteDrawData>> notes = new ArrayList<>();
 			for (int i = 0; i < maxStrings; i++) {
 				notes.add(new ArrayList<>());
@@ -66,32 +70,36 @@ public class Preview3DNotesData {
 			return new Preview3DNotesData(notes, chords);
 		}
 
+		final ImmutableBeatsMap beats = chartData.beats();
 		final List<ChordBoxDrawData> chords = new ArrayList<>();
 		final List<List<NoteDrawData>> notes = new ArrayList<>();
-		final Arrangement arrangement = data.currentArrangement();
-		final Level level = data.currentArrangementLevel();
+		final Arrangement arrangement = chartData.currentArrangement();
+		final Level level = chartData.currentArrangementLevel();
 		for (int i = 0; i < maxStrings; i++) {
 			notes.add(new ArrayList<>());
 		}
 		final List<ChordOrNote> sounds = level.sounds;
 
-		final Integer soundsTo = lastBeforeEqual(sounds, new Position(timeTo)).findId();
+		final Integer soundsTo = lastBeforeEqual(sounds, FractionalPosition.fromTime(beats, timeTo)).findId();
 		if (soundsTo == null) {
 			return new Preview3DNotesData(notes, chords);
 		}
 
 		for (int i = 0; i <= soundsTo; i++) {
 			final ChordOrNote sound = sounds.get(i);
-			if (sound.endPosition().position() < timeFrom) {
+			if (sound.endPosition().position(beats) < timeFrom) {
 				continue;
 			}
 
 			if (sound.isNote()) {
 				final Note note = sound.note();
-				notes.get(note.string)
-						.add(new NoteDrawData(timeFrom, timeTo, note, isLinkedToPrevious(note.string, i, sounds)));
+				final int notePosition = note.position(beats);
+				final int noteEndPosition = note.endPosition(beats);
+				notes.get(note.string).add(new NoteDrawData(notePosition, noteEndPosition, timeFrom, timeTo, note,
+						isLinkedToPrevious(note.string, i, sounds)));
 			} else {
-				addChord(data.beats(), chords, notes, arrangement, level, sounds, i, sound.chord(), timeFrom, timeTo);
+				addChord(chartData.beats(), chords, notes, arrangement, level, sounds, i, sound.chord(), timeFrom,
+						timeTo);
 			}
 		}
 
@@ -114,17 +122,19 @@ public class Preview3DNotesData {
 		final Preview3DNotesData repeatedNotes = getNotesForTimeSpan(data, repeatManager.repeatStart(),
 				repeatManager.repeatEnd() - 1);
 		int repeatStart = repeatManager.repeatEnd();
+		final int repeatLength = repeatManager.repeatEnd() - repeatManager.repeatStart();
 		while (repeatStart < timeFrom) {
-			repeatStart += repeatManager.repeatEnd() - repeatManager.repeatStart();
+			repeatStart += repeatLength;
 		}
 
 		while (repeatStart < timeTo) {
+			final int repeatOffset = repeatStart - repeatManager.repeatStart();
 			for (int string = 0; string < repeatedNotes.notes.size(); string++) {
 				final List<NoteDrawData> stringNotesToDraw = notesToDraw.notes.get(string);
 
 				for (final NoteDrawData note : repeatedNotes.notes.get(string)) {
-					final int truePosition = note.originalPosition - repeatManager.repeatStart() + repeatStart;
-					final int start = note.position - repeatManager.repeatStart() + repeatStart;
+					final int truePosition = note.originalPosition + repeatOffset;
+					final int start = note.position + repeatOffset;
 					int end = start + note.endPosition - note.position;
 					if (start > timeTo) {
 						break;
@@ -146,7 +156,7 @@ public class Preview3DNotesData {
 				notesToDraw.chords.add(new ChordBoxDrawData(start, chord));
 			}
 
-			repeatStart += repeatManager.repeatEnd() - repeatManager.repeatStart();
+			repeatStart += repeatLength;
 		}
 
 		return notesToDraw;

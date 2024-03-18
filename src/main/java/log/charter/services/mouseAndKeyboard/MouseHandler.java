@@ -11,19 +11,14 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Zoom;
-import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.Position;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
-import log.charter.data.song.position.time.IConstantPosition;
-import log.charter.data.song.position.time.IPosition;
+import log.charter.data.song.position.time.Position;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
@@ -191,45 +186,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		cancelAllActions();
 	}
 
-	private void splitToLeftRight(final int leftPosition, final int middlePosition, final int rightPosition,
-			final List<IPosition> left, final List<IPosition> right, final List<? extends IPosition> positions) {
-		int id = 0;
-		while (id < positions.size() && positions.get(id).position() < leftPosition) {
-			id++;
-		}
-
-		while (id < positions.size() && positions.get(id).position() < middlePosition) {
-			left.add(positions.get(id));
-			id++;
-		}
-		while (id < positions.size() && positions.get(id).position() < rightPosition) {
-			right.add(positions.get(id));
-			id++;
-		}
-	}
-
-	private void getAllLeftRightPositions(final int leftPosition, final int middlePosition, final int rightPosition,
-			final List<IPosition> left, final List<IPosition> right) {
-		for (final Arrangement arrangement : chartData.songChart.arrangements) {
-			for (final Level level : arrangement.levels) {
-				splitToLeftRight(leftPosition, middlePosition, rightPosition, left, right, level.sounds);
-			}
-		}
-	}
-
-	private void movePositionsBasedOnBeatsChange(final int positionFromBefore, final int positionToBefore,
-			final int positionFromAfter, final int positionToAfter, final List<IPosition> positionsToChange) {
-		final int lengthBefore = positionToBefore - positionFromBefore;
-		final int lengthAfter = positionToAfter - positionFromAfter;
-		for (final IPosition position : positionsToChange) {
-			final double offsetByOldFromPosition = position.position() - positionFromBefore;
-			final double dividedByOldLength = offsetByOldFromPosition / lengthBefore;
-			final double multipliedByNewLength = dividedByOldLength * lengthAfter;
-			final int newPosition = (int) (multipliedByNewLength + positionFromAfter);
-			position.position(newPosition);
-		}
-	}
-
 	private void straightenBeats(final int from, final int to) {
 		final int positionFrom = chartData.songChart.beatsMap.beats.get(from).position();
 		final int positionTo = chartData.songChart.beatsMap.beats.get(to).position();
@@ -248,12 +204,12 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 
 		undoSystem.addUndo();
+		final int pressPosition = clickData.pressHighlight.toPosition(chartData.beats()).position();
 
 		if (clickData.pressHighlight.id != null && clickData.pressHighlight.id == 0 || keyboardHandler.alt()) {
-			final int positionBefore = clickData.pressHighlight.position();
 			final int positionAfter = max(0,
 					min(chartTimeHandler.maxTime(), xToTime(clickData.releasePosition.x, chartTimeHandler.time())));
-			chartData.songChart.moveEverythingWithBeats(chartTimeHandler.maxTime(), positionAfter - positionBefore);
+			chartData.songChart.moveEverythingWithBeats(chartTimeHandler.maxTime(), positionAfter - pressPosition);
 			return;
 		}
 
@@ -267,7 +223,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		final int leftPosition = beats.get(leftId).position();
 		final int minNewPosition = leftPosition + (middleId - leftId) * 10;
-		final int middlePositionBefore = clickData.pressHighlight.position();
+		final int middlePositionBefore = pressPosition;
 		int middlePositionAfter = max(minNewPosition,
 				min(chartTimeHandler.maxTime(), xToTime(clickData.releasePosition.x, chartTimeHandler.time())));
 		final int rightPositionBefore;
@@ -286,19 +242,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		} else {
 			rightPositionBefore = middlePositionBefore;
 			rightPositionAfter = middlePositionAfter;
-		}
-
-		final List<IPosition> left = new ArrayList<>();
-		final List<IPosition> right = new ArrayList<>();
-
-		getAllLeftRightPositions(leftPosition, middlePositionBefore, rightPositionBefore, left, right);
-		if (!left.isEmpty()) {
-			movePositionsBasedOnBeatsChange(leftPosition, middlePositionBefore, leftPosition, middlePositionAfter,
-					left);
-		}
-		if (!right.isEmpty()) {
-			movePositionsBasedOnBeatsChange(middlePositionBefore, rightPositionBefore, middlePositionAfter,
-					rightPositionAfter, right);
 		}
 
 		clickData.pressHighlight.beat.position(middlePositionAfter);
@@ -412,7 +355,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 				.toFraction(chartData.beats());
 		chartData.beats().movePositions(positions, dragFrom.movementTo(dragTo));
 
-		allPositions.sort(IConstantPosition::compareTo);
+		allPositions.sort(IConstantFractionalPosition::compareTo);
 
 		arrangementFixer.fixNoteLengths(allPositions);
 

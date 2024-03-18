@@ -26,9 +26,9 @@ import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
-import log.charter.data.song.position.Position;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.time.Position;
 import log.charter.io.Logger;
-import log.charter.util.collections.ArrayList2;
 
 public class MidiNotePlayer {
 	private enum GuitarSoundType {
@@ -162,8 +162,8 @@ public class MidiNotePlayer {
 		}
 	}
 
-	private void playSimpleNote(final int string, final int fret, final boolean mute, final boolean harmonic,
-			final List<BendValue> bendValues, final String toneName) {
+	private void playSimpleNote(final FractionalPosition position, final int string, final int fret, final boolean mute,
+			final boolean harmonic, final List<BendValue> bendValues, final String toneName) {
 		GuitarSoundType soundType;
 		if (mute) {
 			soundType = GuitarSoundType.MUTE;
@@ -184,7 +184,7 @@ public class MidiNotePlayer {
 		double bendValue = 0;
 		if (!bendValues.isEmpty()) {
 			final BendValue noteBendValue = bendValues.get(0);
-			if (noteBendValue.position() == 0) {
+			if (noteBendValue.position().compareTo(position) == 0) {
 				bendValue = noteBendValue.bendValue.doubleValue();
 			}
 		}
@@ -208,14 +208,14 @@ public class MidiNotePlayer {
 		final int fret = note.fret;
 		final boolean mute = note.mute != Mute.NONE;
 		final boolean harmonic = note.harmonic != Harmonic.NONE;
-		final ArrayList2<BendValue> bendValues = note.bendValues;
-		final String toneName = getToneName(note.position());
+		final List<BendValue> bendValues = note.bendValues;
+		final String toneName = getToneName(note.position(chartData.beats()));
 
-		playSimpleNote(string, fret, mute, harmonic, bendValues, toneName);
+		playSimpleNote(note.position(), string, fret, mute, harmonic, bendValues, toneName);
 	}
 
 	private void playChord(final Chord chord) {
-		final String toneName = getToneName(chord.position());
+		final String toneName = getToneName(chord.position(chartData.beats()));
 		final ChordTemplate template = chartData.currentArrangement().chordTemplates.get(chord.templateId());
 
 		for (final Entry<Integer, ChordNote> chordNoteData : chord.chordNotes.entrySet()) {
@@ -223,9 +223,9 @@ public class MidiNotePlayer {
 			final int fret = template.frets.get(string);
 			final boolean mute = chordNoteData.getValue().mute != Mute.NONE;
 			final boolean harmonic = chordNoteData.getValue().harmonic != Harmonic.NONE;
-			final ArrayList2<BendValue> bendValues = chordNoteData.getValue().bendValues;
+			final List<BendValue> bendValues = chordNoteData.getValue().bendValues;
 
-			playSimpleNote(string, fret, mute, harmonic, bendValues, toneName);
+			playSimpleNote(chord.position(), string, fret, mute, harmonic, bendValues, toneName);
 		}
 	}
 

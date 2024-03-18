@@ -3,7 +3,9 @@ package log.charter.data.song;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
 import log.charter.io.rsc.xml.converters.HandShapeConverter;
 
@@ -29,8 +31,8 @@ public class HandShape implements IFractionalPositionWithEnd {
 	}
 
 	public HandShape(final int templateId) {
-		position = new FractionalPosition(0);
-		endPosition = new FractionalPosition(0);
+		position = new FractionalPosition();
+		endPosition = new FractionalPosition();
 		this.templateId = templateId;
 	}
 
@@ -41,12 +43,12 @@ public class HandShape implements IFractionalPositionWithEnd {
 	}
 
 	@Override
-	public FractionalPosition fractionalPosition() {
+	public FractionalPosition position() {
 		return position;
 	}
 
 	@Override
-	public void fractionalPosition(final FractionalPosition newPosition) {
+	public void position(final FractionalPosition newPosition) {
 		position = newPosition;
 	}
 
@@ -58,5 +60,10 @@ public class HandShape implements IFractionalPositionWithEnd {
 	@Override
 	public void endPosition(final FractionalPosition newEndPosition) {
 		endPosition = newEndPosition;
+	}
+
+	@Override
+	public IConstantFractionalPositionWithEnd toFraction(final ImmutableBeatsMap beats) {
+		return this;
 	}
 }

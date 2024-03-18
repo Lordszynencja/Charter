@@ -1,7 +1,8 @@
 package log.charter.io.rsc.xml.converters;
 
 import java.math.BigDecimal;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -9,28 +10,46 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.Note;
-import log.charter.util.collections.ArrayList2;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.io.rsc.xml.converters.BendValuesConverter.TemporaryBendValue;
 
 public class NoteConverter implements Converter {
+
+	public static class TemporaryNote extends Note {
+		private final int position;
+		private final int endPosition;
+
+		public TemporaryNote(final int position, final int endPosition) {
+			this.position = position;
+			this.endPosition = endPosition;
+		}
+
+		public Note transform(final ImmutableBeatsMap beats) {
+			this.position(FractionalPosition.fromTimeRounded(beats, position));
+			this.endPosition(FractionalPosition.fromTimeRounded(beats, endPosition));
+
+			for (int i = 0; i < bendValues.size(); i++) {
+				final BendValue bendValue = bendValues.get(i);
+				if (bendValue instanceof TemporaryBendValue) {
+					bendValues.set(i, ((TemporaryBendValue) bendValue).transform(beats, position));
+				}
+			}
+
+			return new Note(this);
+		}
+	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean canConvert(final Class type) {
 		return type.equals(Note.class);
-	}
-
-	private void writePositiveInteger(final HierarchicalStreamWriter writer, final String name, final int value) {
-		if (value <= 0) {
-			return;
-		}
-
-		writer.addAttribute(name, value + "");
 	}
 
 	private void writeBoolean(final HierarchicalStreamWriter writer, final String name, final boolean value) {
@@ -42,14 +61,11 @@ public class NoteConverter implements Converter {
 	}
 
 	private void writeBendValues(final HierarchicalStreamWriter writer, final String name,
-			final ArrayList2<BendValue> bendValues) {
-		if (bendValues.isEmpty()) {
+			final List<BendValue> bendValues) {
+		final String bendValuesString = BendValuesConverter.convertToString(bendValues);
+		if (bendValuesString == null) {
 			return;
 		}
-
-		final String bendValuesString = bendValues.stream()//
-				.map(bendValue -> bendValue.position() + "=" + bendValue.bendValue.toString())//
-				.collect(Collectors.joining(";"));
 
 		writer.addAttribute(name, bendValuesString);
 	}
@@ -58,8 +74,8 @@ public class NoteConverter implements Converter {
 	public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		final Note note = (Note) source;
 
-		writer.addAttribute("position", note.position() + "");
-		writePositiveInteger(writer, "length", note.length());
+		writer.addAttribute("p", note.position().asString());
+		writer.addAttribute("ep", note.endPosition().asString());
 		writer.addAttribute("string", note.string + "");
 		writer.addAttribute("fret", note.fret + "");
 		writeBoolean(writer, "accent", note.accent);
@@ -87,28 +103,36 @@ public class NoteConverter implements Converter {
 		writeBendValues(writer, "bendValues", note.bendValues);
 	}
 
-	private int readPositiveInteger(final String s) {
-		if (s == null) {
-			return 0;
+	private Note generateNoteFromPosition(final HierarchicalStreamReader reader) {
+		final String positionString = reader.getAttribute("position");
+		if (positionString != null && !positionString.isBlank()) {
+			final int position = Integer.valueOf(positionString);
+			final String lengthString = reader.getAttribute("length");
+			final int length = lengthString == null || lengthString.isBlank() ? 0 : Integer.valueOf(lengthString);
+			return new TemporaryNote(position, position + length);
 		}
 
-		return Integer.valueOf(s);
+		return new Note(FractionalPosition.fromString(reader.getAttribute("p")),
+				FractionalPosition.fromString(reader.getAttribute("ep")));
 	}
 
 	private boolean readBoolean(final String s) {
 		return s == null ? false : "T".equals(s);
 	}
 
-	private ArrayList2<BendValue> readBendValues(final String s) {
-		final ArrayList2<BendValue> bendValues = new ArrayList2<>();
-
+	private List<BendValue> readBendValues(final String s) {
 		if (s == null) {
-			return bendValues;
+			return new ArrayList<>();
 		}
 
-		for (final String pair : s.split(";")) {
-			final String[] pairValues = pair.split("=");
-			bendValues.add(new BendValue(Integer.valueOf(pairValues[0]), new BigDecimal(pairValues[1])));
+		final String[] bendValuesStrings = s.split(";");
+		final List<BendValue> bendValues = new ArrayList<>();
+
+		for (final String bendValueString : bendValuesStrings) {
+			final String[] pairValues = bendValueString.split("=");
+			final FractionalPosition position = FractionalPosition.fromString(pairValues[0]);
+			final BigDecimal bendValue = new BigDecimal(pairValues[1]);
+			bendValues.add(new BendValue(position, bendValue));
 		}
 
 		return bendValues;
@@ -116,12 +140,10 @@ public class NoteConverter implements Converter {
 
 	@Override
 	public Note unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-		final int position = Integer.valueOf(reader.getAttribute("position"));
-		final int string = Integer.valueOf(reader.getAttribute("string"));
-		final int fret = Integer.valueOf(reader.getAttribute("fret"));
+		final Note note = generateNoteFromPosition(reader);
+		note.string = Integer.valueOf(reader.getAttribute("string"));
+		note.fret = Integer.valueOf(reader.getAttribute("fret"));
 
-		final Note note = new Note(position, string, fret);
-		note.length(readPositiveInteger(reader.getAttribute("length")));
 		note.accent = readBoolean(reader.getAttribute("accent"));
 		note.ignore = readBoolean(reader.getAttribute("ignore"));
 		note.passOtherNotes = readBoolean(reader.getAttribute("crazy"));

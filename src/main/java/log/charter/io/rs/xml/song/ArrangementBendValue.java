@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.io.rs.xml.converters.TimeConverter;
 
@@ -13,16 +14,7 @@ import log.charter.io.rs.xml.converters.TimeConverter;
 public class ArrangementBendValue {
 	private static BigDecimal maxValue = new BigDecimal(3);
 
-	@XStreamAsAttribute
-	@XStreamConverter(TimeConverter.class)
-	public int time;
-	@XStreamAsAttribute
-	public BigDecimal step;
-
-	public ArrangementBendValue() {
-	}
-
-	private BigDecimal getStep(final BigDecimal bendValue) {
+	private static BigDecimal getStep(final BigDecimal bendValue) {
 		if (bendValue.compareTo(BigDecimal.ZERO) == 0) {
 			return null;
 		}
@@ -33,8 +25,14 @@ public class ArrangementBendValue {
 		return bendValue;
 	}
 
-	public ArrangementBendValue(final BendValue bendValue, final int notePosition) {
-		time = notePosition + bendValue.position();
+	@XStreamAsAttribute
+	@XStreamConverter(TimeConverter.class)
+	public int time;
+	@XStreamAsAttribute
+	public BigDecimal step;
+
+	public ArrangementBendValue(final ImmutableBeatsMap beats, final BendValue bendValue) {
+		time = bendValue.position(beats);
 		step = getStep(bendValue.bendValue);
 	}
 }

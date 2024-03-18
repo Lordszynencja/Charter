@@ -80,7 +80,7 @@ public interface IVirtualPosition extends IVirtualConstantPosition {
 			asPosition().position(newPosition.toPosition(beats).position());
 		}
 		if (isFraction()) {
-			asFraction().fractionalPosition(newPosition.toFraction(beats).fractionalPosition());
+			asFraction().position(newPosition.toFraction(beats).position());
 		}
 	}
 }

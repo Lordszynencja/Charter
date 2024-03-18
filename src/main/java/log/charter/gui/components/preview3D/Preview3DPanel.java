@@ -181,7 +181,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 			videoDrawer.draw(shadersHolder, getWidth(), getHeight());
 			timer.addTimestamp("videoDrawer");
 
-			final Preview3DDrawData drawData = new Preview3DDrawData(chartTimeHandler, chartData, repeatManager);
+			final Preview3DDrawData drawData = new Preview3DDrawData(chartData, chartTimeHandler, repeatManager);
 			timer.addTimestamp("preparing draw data");
 
 			beatsDrawer.draw(shadersHolder, drawData);

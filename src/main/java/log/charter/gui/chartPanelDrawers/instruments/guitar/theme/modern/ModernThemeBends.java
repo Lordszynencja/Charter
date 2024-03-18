@@ -81,7 +81,8 @@ public class ModernThemeBends {
 			iconPosition = new Position2D(x, bendY);
 		}
 
-		final Color backgroundColor = getStringBasedColor(StringColorLabelType.LANE, note.string, data.strings).darker().darker();
+		final Color backgroundColor = getStringBasedColor(StringColorLabelType.LANE, note.string, data.strings).darker()
+				.darker();
 		final DrawableShape bendValueIcon = new CenteredTextWithBackground(iconPosition, bendValueFont, text,
 				Color.WHITE, backgroundColor);
 		data.bendValues.add(bendValueIcon);
@@ -95,7 +96,7 @@ public class ModernThemeBends {
 		boolean linesDrawn = false;
 		Position2D lastBendLinePosition = new Position2D(note.x, getBendLineY(y, BigDecimal.ZERO));
 		for (final BendValue bendValue : note.bendValues) {
-			final int x = timeToX(note.position + bendValue.position(), data.time);
+			final int x = timeToX( bendValue.position(data.), data.time);
 
 			final Position2D lineTo = new Position2D(x, getBendLineY(y, bendValue.bendValue));
 			if (bendValue.position() == 0) {

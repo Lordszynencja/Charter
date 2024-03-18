@@ -4,6 +4,8 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.util.CollectionUtils.firstAfter;
 import static log.charter.util.CollectionUtils.lastBefore;
+import static log.charter.util.ScalingUtils.timeToX;
+import static log.charter.util.ScalingUtils.xToTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +16,11 @@ import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.Level;
-import log.charter.data.song.position.ConstantPosition;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.Position;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.time.Position;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.services.Action;
 import log.charter.services.editModes.EditMode;
@@ -44,7 +46,7 @@ public class ChartTimeHandler {
 		public void addFractional(final ImmutableBeatsMap beats,
 				final List<? extends IConstantFractionalPosition> positions) {
 			if (!positions.isEmpty()) {
-				maxTime = max(maxTime, positions.get(positions.size() - 1).fractionalPosition().getPosition(beats));
+				maxTime = max(maxTime, positions.get(positions.size() - 1).position().getPosition(beats));
 			}
 		}
 	}
@@ -55,9 +57,9 @@ public class ChartTimeHandler {
 	private ProjectAudioHandler projectAudioHandler;
 
 	private double time = 0;
-	private FractionalPosition fractionalTime = new FractionalPosition(0);
+	private FractionalPosition fractionalTime = new FractionalPosition();
 	private double nextTime = 0;
-	private FractionalPosition nextFractionalTime = new FractionalPosition(0);
+	private FractionalPosition nextFractionalTime = new FractionalPosition();
 
 	public double nextTime() {
 		return nextTime;
@@ -77,7 +79,7 @@ public class ChartTimeHandler {
 	}
 
 	public void nextFractionalTime(final IConstantFractionalPosition t) {
-		nextFractionalTime = t.fractionalPosition();
+		nextFractionalTime = t.position();
 		nextTime = nextFractionalTime.getPosition(chartData.beats());
 	}
 
@@ -129,7 +131,7 @@ public class ChartTimeHandler {
 
 				for (final Level level : arrangement.levels) {
 					accumulator.addFractional(beats, level.anchors);
-					accumulator.add(level.sounds);
+					accumulator.addFractional(beats, level.sounds);
 					accumulator.addFractional(beats, level.handShapes);
 				}
 			}
@@ -138,8 +140,20 @@ public class ChartTimeHandler {
 		return accumulator.maxTime;
 	}
 
+	public FractionalPosition maxTimeFractional() {
+		return FractionalPosition.fromTime(chartData.beats(), maxTime());
+	}
+
 	public int audioTime() {
 		return projectAudioHandler.getAudio().msLength();
+	}
+
+	public int positionToX(final int position) {
+		return timeToX(position, time());
+	}
+
+	public int xToPosition(final int x) {
+		return xToTime(x, time());
 	}
 
 	private List<? extends IVirtualConstantPosition> getCurrentItems() {

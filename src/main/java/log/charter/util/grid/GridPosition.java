@@ -8,11 +8,11 @@ import java.util.List;
 import log.charter.data.config.Config;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.position.ConstantPosition;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.Position;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.time.Position;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.util.data.Fraction;
 
@@ -45,7 +45,7 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 
 	public static GridPosition<Beat> create(final List<Beat> beats, final IVirtualConstantPosition position) {
 		if (position.isFraction()) {
-			return create(beats, position.asConstantFraction().fractionalPosition());
+			return create(beats, position.asConstantFraction().position());
 		}
 
 		return create(beats, position.asConstantPosition().position());
@@ -83,7 +83,7 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 		gridId = (int) Math.round(position.fraction.multiply(gridSize).doubleValue());
 	}
 
-	public GridPosition<T> next() {
+	public void next() {
 		gridId++;
 
 		if (gridId >= Config.gridSize) {
@@ -95,11 +95,9 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 			positionId = positions.size() - 1;
 			gridId = 0;
 		}
-
-		return this;
 	}
 
-	public GridPosition<T> previous() {
+	public void previous() {
 		gridId--;
 
 		if (gridId < 0) {
@@ -111,8 +109,6 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 			positionId = 0;
 			gridId = 0;
 		}
-
-		return this;
 	}
 
 	public int position() {

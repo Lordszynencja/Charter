@@ -1,5 +1,7 @@
 package log.charter.io.rs.xml.song;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -8,14 +10,14 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.Chord;
-import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.Chord.ChordNotesVisibility;
+import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.position.time.IPosition;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("chord")
 @XStreamInclude(ArrangementChordNote.class)
@@ -36,14 +38,11 @@ public class ArrangementChord implements IPosition {
 	@XStreamAsAttribute
 	public Integer ignore;
 	@XStreamImplicit
-	public ArrayList2<ArrangementChordNote> chordNotes;
+	public List<ArrangementChordNote> chordNotes;
 
-	public ArrangementChord() {
-	}
-
-	public ArrangementChord(final Chord chord, final ChordTemplate chordTemplate, final int nextPosition,
+	public ArrangementChord(final ImmutableBeatsMap beats, final Chord chord, final ChordTemplate chordTemplate,
 			final boolean forceAddNotes) {
-		time = chord.position();
+		time = chord.position(beats);
 		chordId = chord.templateId();
 		accent = chord.accent ? 1 : null;
 		linkNext = chord.linkNext() ? 1 : null;
@@ -58,7 +57,7 @@ public class ArrangementChord implements IPosition {
 		if (chordNotesVisibility == ChordNotesVisibility.NONE) {
 			setUpMute(chord);
 		} else {
-			populateChordNotes(chordTemplate, chord);
+			populateChordNotes(beats, chordTemplate, chord);
 		}
 	}
 
@@ -81,12 +80,13 @@ public class ArrangementChord implements IPosition {
 		time = newPosition;
 	}
 
-	public void populateChordNotes(final ChordTemplate chordTemplate, final Chord chord) {
+	public void populateChordNotes(final ImmutableBeatsMap beats, final ChordTemplate chordTemplate,
+			final Chord chord) {
 		if (chordNotes != null && !chordNotes.isEmpty()) {
 			return;
 		}
 
-		chordNotes = new ArrayList2<>();
+		chordNotes = new ArrayList<>();
 		if (chordTemplate.frets.isEmpty()) {
 			return;
 		}
@@ -96,8 +96,8 @@ public class ArrangementChord implements IPosition {
 			final int fret = chordFret.getValue();
 
 			final ChordNote chordNote = chord.chordNotes.get(string);
-			final ArrangementChordNote arrangementChordNote = new ArrangementChordNote(time, chordNote.length, string,
-					fret, chordNote, chord.ignore);
+			final ArrangementChordNote arrangementChordNote = new ArrangementChordNote(beats, string, fret, chordNote,
+					chord.ignore);
 
 			chordNotes.add(arrangementChordNote);
 		}

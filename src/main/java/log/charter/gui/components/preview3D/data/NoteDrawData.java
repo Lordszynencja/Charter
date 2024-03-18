@@ -2,6 +2,8 @@ package log.charter.gui.components.preview3D.data;
 
 import static java.lang.Math.min;
 
+import java.util.List;
+
 import log.charter.data.song.BendValue;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
@@ -9,7 +11,6 @@ import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.Note;
-import log.charter.util.collections.ArrayList2;
 
 public class NoteDrawData {
 	public final int position;
@@ -21,7 +22,7 @@ public class NoteDrawData {
 	public final HOPO hopo;
 	public final Harmonic harmonic;
 	public final double prebend;
-	public final ArrayList2<BendValue> bendValues;
+	public final List<BendValue> bendValues;
 	public final Integer slideTo;
 	public final boolean unpitchedSlide;
 	public final boolean vibrato;
@@ -33,9 +34,10 @@ public class NoteDrawData {
 	public final boolean withoutHead;
 	public final boolean isChordNote;
 
-	public NoteDrawData(final int minPosition, final int maxPosition, final Note note, final boolean linkPrevious) {
-		originalPosition = note.position();
-		trueLength = note.length();
+	public NoteDrawData(final int notePosition, final int noteEndPosition, final int minPosition, final int maxPosition,
+			final Note note, final boolean linkPrevious) {
+		originalPosition = notePosition;
+		trueLength = noteEndPosition - notePosition;
 
 		if (originalPosition < minPosition) {
 			position = minPosition;
@@ -44,7 +46,8 @@ public class NoteDrawData {
 			position = originalPosition;
 			withoutHead = linkPrevious;
 		}
-		endPosition = min(maxPosition, note.endPosition().position());
+		endPosition = min(maxPosition, noteEndPosition);
+
 		string = note.string;
 		fret = note.fret;
 		accent = note.accent;
@@ -60,15 +63,16 @@ public class NoteDrawData {
 
 		isChordNote = false;
 
-		prebend = !bendValues.isEmpty() && bendValues.get(0).position() == 0 //
+		prebend = !bendValues.isEmpty() && bendValues.get(0).position().compareTo(note.position()) == 0 //
 				? bendValues.get(0).bendValue.doubleValue()//
 				: 0;
 	}
 
-	public NoteDrawData(final int minPosition, final int maxPosition, final Chord chord, final int string,
-			final int fret, final ChordNote chordNote, final boolean linkPrevious, final boolean shouldHaveLength) {
-		originalPosition = chord.position();
-		trueLength = shouldHaveLength ? chordNote.length : 0;
+	public NoteDrawData(final int chordPosition, final int chordNoteEndPosition, final int minPosition,
+			final int maxPosition, final Chord chord, final int string, final int fret, final ChordNote chordNote,
+			final boolean linkPrevious, final boolean shouldHaveLength) {
+		originalPosition = chordPosition;
+		trueLength = shouldHaveLength ? chordNoteEndPosition - chordPosition : 0;
 
 		if (originalPosition < minPosition) {
 			position = minPosition;
@@ -77,7 +81,7 @@ public class NoteDrawData {
 			position = originalPosition;
 			withoutHead = linkPrevious;
 		}
-		endPosition = min(maxPosition, chord.endPosition().position());
+		endPosition = min(maxPosition, chordNoteEndPosition);
 		this.string = string;
 		this.fret = fret;
 		accent = chord.accent;
@@ -93,7 +97,7 @@ public class NoteDrawData {
 
 		isChordNote = !chord.splitIntoNotes;
 
-		prebend = !bendValues.isEmpty() && bendValues.get(0).position() == 0 //
+		prebend = !bendValues.isEmpty() && bendValues.get(0).position().compareTo(chord.position()) == 0 //
 				? bendValues.get(0).bendValue.doubleValue()//
 				: 0;
 	}

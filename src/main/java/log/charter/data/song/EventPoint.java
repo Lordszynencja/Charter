@@ -14,7 +14,6 @@ import log.charter.io.rsc.xml.converters.SimpleCollectionToStringConverter.Event
 @XStreamAlias("eventPoint")
 @XStreamConverter(EventPointConverter.class)
 public class EventPoint implements IFractionalPosition {
-
 	private FractionalPosition position;
 	public SectionType section = null;
 	public String phrase = null;
@@ -22,7 +21,7 @@ public class EventPoint implements IFractionalPosition {
 	public List<EventType> events = new ArrayList<>();
 
 	public EventPoint() {
-		position = new FractionalPosition(0);
+		position = new FractionalPosition();
 	}
 
 	public EventPoint(final FractionalPosition position) {
@@ -51,12 +50,12 @@ public class EventPoint implements IFractionalPosition {
 	}
 
 	@Override
-	public FractionalPosition fractionalPosition() {
+	public FractionalPosition position() {
 		return position;
 	}
 
 	@Override
-	public void fractionalPosition(final FractionalPosition newPosition) {
+	public void position(final FractionalPosition newPosition) {
 		if (newPosition == null) {
 			throw new IllegalArgumentException("new position can't be null");
 		}

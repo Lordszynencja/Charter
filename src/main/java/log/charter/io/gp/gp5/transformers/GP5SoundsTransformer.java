@@ -3,7 +3,7 @@ package log.charter.io.gp.gp5.transformers;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.Config.minTailLengthFactor;
+import static log.charter.util.CollectionUtils.max;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,10 +27,10 @@ import log.charter.data.song.position.FractionalPosition;
 import log.charter.io.gp.gp5.GP5FractionalPosition;
 import log.charter.io.gp.gp5.data.GPBeat;
 import log.charter.io.gp.gp5.data.GPBend;
-import log.charter.io.gp.gp5.data.GPDuration;
 import log.charter.io.gp.gp5.data.GPGraceNote;
 import log.charter.io.gp.gp5.data.GPNote;
 import log.charter.io.gp.gp5.data.GPNoteEffects;
+import log.charter.util.data.Fraction;
 
 public class GP5SoundsTransformer {
 	private static class ChordAddingData {
@@ -112,14 +112,14 @@ public class GP5SoundsTransformer {
 		}
 	}
 
-	private Note addBends(final GPNote gpNote, final Note note, final int noteLength, final List<Note> afterNotes) {
+	private Note addBends(final GPNote gpNote, final Note note, final FractionalPosition endPosition,
+			final FractionalPosition noteLength, final List<Note> afterNotes) {
 		final GPNoteEffects effects = gpNote.effects;
 		if (effects.bends.isEmpty()) {
 			return note;
 		}
 
-		note.length(noteLength);
-		final int endPosition = note.endPosition().position();
+		note.endPosition(endPosition);
 
 		Note lastNote = note;
 		int lastBendValue = 0;
@@ -131,25 +131,24 @@ public class GP5SoundsTransformer {
 				break;
 			}
 
-			final int bendPositionOffset = noteLength * bendPoint.offset / 60;
+			final FractionalPosition bendPosition = note.position()
+					.add(noteLength.multiply(new Fraction(bendPoint.offset, 60)));
 
 			if (bendPoint.vibrato && !lastNote.vibrato) {
 				if (bendPoint.offset == 0) {
 					lastNote.vibrato = bendPoint.vibrato;
 				} else {
-					final Note split = new Note(note.position() + bendPositionOffset, note.string, note.fret);
+					final Note split = new Note(bendPosition, note.string, note.fret);
 					split.vibrato = bendPoint.vibrato;
 					split.endPosition(endPosition);
 
 					lastNote.linkNext = true;
-					lastNote.endPosition(split.position() - 1);
 
 					lastNote = split;
 					afterNotes.add(split);
 				}
 			}
 
-			final int bendPosition = bendPositionOffset - lastNote.position() + note.position();
 			final BigDecimal bendValue = new BigDecimal("0.02").multiply(new BigDecimal(bendPoint.value));
 			lastNote.bendValues.add(new BendValue(bendPosition, bendValue));
 
@@ -159,30 +158,25 @@ public class GP5SoundsTransformer {
 		return lastNote;
 	}
 
-	private static void addTrill(final GPBeat gpBeat, final GPNote gpNote, final Note note, final int noteStartPosition,
-			final int noteLength, final List<Note> afterNotes) {
+	private static void addTrill(final GPBeat gpBeat, final GPNote gpNote, final Note note,
+			final FractionalPosition noteLength, final List<Note> afterNotes) {
 		final GPNoteEffects effects = gpNote.effects;
 		if (effects.trill == null) {
 			return;
 		}
 
 		final int notes = gpBeat.duration.length / effects.trill.speed.length;
-		int trillNotePosition = (int) ((double) noteStartPosition + noteLength / (double) notes);
-//			NotePositionInformation trillNotePosition = position.move(effects.trill.speed);
 		for (int i = 1; i < notes; i++) {
+			final FractionalPosition position = noteLength.multiply(new Fraction(i, notes));
 			final int fret = gpNote.fret + (i % 2) * effects.trill.value;
-			final Note trillNote = new Note(trillNotePosition, note.string, fret);
-//				final Note trillNote = new Note(trillNotePosition.getPosition(), note.string, fret);
+			final Note trillNote = new Note(position, note.string, fret);
 			trillNote.hopo = i % 2 == 0 ? HOPO.PULL_OFF : HOPO.HAMMER_ON;
 			trillNote.ignore = true;
 			afterNotes.add(trillNote);
-
-			trillNotePosition += (int) (noteLength / (double) notes);
-//				trillNotePosition = trillNotePosition.move(effects.trill.speed);
 		}
 	}
 
-	private void addSlideOut(final GPNoteEffects effects, final Note lastNote, final int endPosition) {
+	private void addSlideOut(final GPNoteEffects effects, final Note lastNote, final FractionalPosition endPosition) {
 		if (effects.slideOut == null) {
 			return;
 		}
@@ -216,24 +210,24 @@ public class GP5SoundsTransformer {
 
 		switch (effects.slideIn) {
 			case IN_FROM_ABOVE:
-				final Note slideInNoteFromAbove = new Note(note.position() + 50, note.string, note.fret);
-				slideInNoteFromAbove
-						.endPosition(max(slideInNoteFromAbove.position() + 25, note.endPosition().position()));
+				final Note slideInNoteFromAbove = new Note(note.position().add(new Fraction(1, 4)), note.string,
+						note.fret);
+				slideInNoteFromAbove.endPosition(
+						max(slideInNoteFromAbove.position().add(new Fraction(1, 8)), note.endPosition().position()));
 				afterNotes.add(slideInNoteFromAbove);
 				note.linkNext = true;
 				note.slideTo = note.fret;
 				note.fret = min(Config.frets, note.fret + 5);
-				note.endPosition(slideInNoteFromAbove.position() - 1);
 				break;
 			case IN_FROM_BELOW:
-				final Note slideInNoteFromBelow = new Note(note.position() + 50, note.string, note.fret);
-				slideInNoteFromBelow
-						.endPosition(max(slideInNoteFromBelow.position() + 25, note.endPosition().position()));
+				final Note slideInNoteFromBelow = new Note(note.position().add(new Fraction(1, 4)), note.string,
+						note.fret);
+				slideInNoteFromBelow.endPosition(
+						max(slideInNoteFromBelow.position().add(new Fraction(1, 8)), note.endPosition().position()));
 				afterNotes.add(slideInNoteFromBelow);
 				note.linkNext = true;
 				note.slideTo = note.fret;
 				note.fret = max(1, note.fret - 5);
-				note.endPosition(slideInNoteFromBelow.position() - 1);
 				break;
 			default:
 				break;
@@ -249,12 +243,12 @@ public class GP5SoundsTransformer {
 		Note graceNote = null;
 		final GPGraceNote graceNoteData = effects.graceNote;
 		if (graceNoteData.beforeBeat) {
-			final int graceNotePosition = position.moveBackwards(graceNoteData.duration).position();
+			final FractionalPosition graceNotePosition = position.moveBackwards(graceNoteData.duration).position();
 			graceNote = new Note(graceNotePosition, note.string, graceNoteData.fret);
 		} else {
 			graceNote = new Note(note.position(), note.string, graceNoteData.fret);
 
-			final int noteEndPosition = note.endPosition().position();
+			final FractionalPosition noteEndPosition = note.endPosition().position();
 			note.position(position.move(graceNoteData.duration).position());
 			note.endPosition(noteEndPosition);
 		}
@@ -265,8 +259,7 @@ public class GP5SoundsTransformer {
 		if (graceNoteData.slide) {
 			graceNote.slideTo = note.fret;
 			graceNote.linkNext = true;
-			graceNote.endPosition(note.position() - 1);
-			note.length(max(note.length(), minTailLengthFactor));
+			note.endPosition(max(note.endPosition(), note.position().add(new Fraction(1, 8))));
 		}
 		if (graceNoteData.legato) {
 			note.hopo = graceNote.fret < note.fret ? HOPO.HAMMER_ON : HOPO.PULL_OFF;
@@ -293,24 +286,23 @@ public class GP5SoundsTransformer {
 
 		checkPreviousNoteLink(gpNote);
 
-		final int noteStartPosition = position.position();
+		final FractionalPosition length = position.distance(endPosition);
 		final Note note = new Note(position.position(), gpNote.string - 1, gpNote.fret);
-		final int noteLength = endPosition.position() - note.position();
 		final GPNoteEffects effects = gpNote.effects;
 
 		setStatuses(new CommonNote(note), gpBeat, gpNote, wasHOPOStart, hopoFrom);
 		if (note.vibrato || note.tremolo) {
-			note.length(noteLength);
+			note.endPosition(endPosition.position());
 		}
 
 		note.accent = gpNote.accent;
 		note.ignore = gpNote.ghost;
 
 		final List<Note> afterNotes = new ArrayList<>();
-		final Note lastNote = addBends(gpNote, note, noteLength, afterNotes);
+		final Note lastNote = addBends(gpNote, note, endPosition.position(), length, afterNotes);
 
-		addTrill(gpBeat, gpNote, note, noteStartPosition, noteLength, afterNotes);
-		addSlideOut(effects, lastNote, noteStartPosition + noteLength);
+		addTrill(gpBeat, gpNote, note, length, afterNotes);
+		addSlideOut(effects, lastNote, endPosition.position());
 		addSlideIn(effects, note, afterNotes);
 		addGraceNote(gpBeat, position, effects, note);
 
@@ -350,12 +342,13 @@ public class GP5SoundsTransformer {
 	}
 
 	private void addChordNoteBends(final GPNoteEffects effects, final ChordAddingData chordAddingData,
-			final ChordNote chordNote, final int length) {
+			final ChordNote chordNote, final FractionalPosition endPosition) {
 		if (effects.bends.isEmpty()) {
 			return;
 		}
 
 		chordAddingData.setLength = true;
+		final FractionalPosition length = chordNote.position().distance(endPosition);
 
 		int lastBendValue = 0;
 		for (final GPBend bendPoint : effects.bends) {
@@ -367,7 +360,7 @@ public class GP5SoundsTransformer {
 			}
 			chordNote.vibrato |= bendPoint.vibrato;
 
-			final int bendPosition = length * bendPoint.offset / 60;
+			final FractionalPosition bendPosition = length.multiply(new Fraction(bendPoint.offset, 60));
 			final BigDecimal bendValue = new BigDecimal("0.02").multiply(new BigDecimal(bendPoint.value));
 			chordNote.bendValues.add(new BendValue(bendPosition, bendValue));
 
@@ -402,9 +395,9 @@ public class GP5SoundsTransformer {
 	}
 
 	private void addChordNotesLengthIfNeeded(final ChordAddingData chordAddingData, final Chord chord,
-			final int length) {
+			final FractionalPosition endPosition) {
 		if (chordAddingData.setLength) {
-			chord.chordNotes.values().forEach(n -> n.length = length);
+			chord.chordNotes.values().forEach(n -> n.endPosition(endPosition));
 		}
 	}
 
@@ -420,21 +413,18 @@ public class GP5SoundsTransformer {
 		});
 	}
 
-	private void addHandShape(final GP5FractionalPosition position, final GP5FractionalPosition endPosition,
+	private void addHandShape(final FractionalPosition position, final FractionalPosition endPosition,
 			final int templateId) {
-		final FractionalPosition handshapeEndPosition = endPosition.moveBackwards(GPDuration.NOTE_32)
-				.fractionalPosition();
-
 		if (lastHandShape != null && lastHandShape.templateId == templateId) {
-			lastHandShape.endPosition(handshapeEndPosition);
+			lastHandShape.endPosition(endPosition);
 		} else {
-			lastHandShape = new HandShape(position.fractionalPosition(), handshapeEndPosition, templateId);
+			lastHandShape = new HandShape(position, endPosition, templateId);
 			level.handShapes.add(lastHandShape);
 		}
 	}
 
-	public void addChord(final GPBeat gpBeat, final GP5FractionalPosition position,
-			final GP5FractionalPosition endPosition, final boolean[] wasHOPOStart, final int[] hOPOFrom) {
+	public void addChord(final GPBeat gpBeat, final FractionalPosition position, final FractionalPosition endPosition,
+			final boolean[] wasHOPOStart, final int[] hOPOFrom) {
 		final ChordTemplate chordTemplate = new ChordTemplate();
 		chordTemplate.chordName = gpBeat.chord == null ? "" : gpBeat.chord.chordName;
 		if (chordTemplate.chordName == null) {
@@ -443,7 +433,6 @@ public class GP5SoundsTransformer {
 		checkPreviousSoundForChord(gpBeat);
 
 		final Chord chord = new Chord(position.position(), -1, chordTemplate);
-		final int length = endPosition.position() - chord.position();
 		final ChordAddingData chordAddingData = new ChordAddingData();
 
 		for (final GPNote gpNote : gpBeat.notes) {
@@ -451,7 +440,7 @@ public class GP5SoundsTransformer {
 			chordTemplate.fingers.put(string, gpNote.finger == -1 ? null : gpNote.finger);
 			chordTemplate.frets.put(string, gpNote.fret);
 
-			final ChordNote chordNote = new ChordNote();
+			final ChordNote chordNote = new ChordNote(chord);
 			chord.chordNotes.put(string, chordNote);
 			setStatuses(new CommonNote(chord, string), gpBeat, gpNote, wasHOPOStart, hOPOFrom);
 			if (chordNote.vibrato || chordNote.tremolo) {
@@ -460,11 +449,11 @@ public class GP5SoundsTransformer {
 			chord.ignore |= gpNote.ghost;
 
 			final GPNoteEffects effects = gpNote.effects;
-			addChordNoteBends(effects, chordAddingData, chordNote, length);
+			addChordNoteBends(effects, chordAddingData, chordNote, endPosition);
 			addChordNoteSlideOut(effects, chordAddingData, chordNote, gpNote.fret);
 		}
 
-		addChordNotesLengthIfNeeded(chordAddingData, chord, length);
+		addChordNotesLengthIfNeeded(chordAddingData, chord, endPosition);
 		if (chordAddingData.unpitchedSlideDown) {
 			addChordUnpitchedSlide(chord, chordTemplate, -5);
 		} else if (chordAddingData.unpitchedSlideUp) {

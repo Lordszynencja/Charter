@@ -287,8 +287,7 @@ public class CollectionUtils {
 	public static <C extends IConstantFractionalPosition, E extends C, P extends C> Finder<E, P> closest(
 			final List<E> list, final P position) {
 		return closest(list, position, IConstantFractionalPosition::compareTo,
-				(a, b) -> a.fractionalPosition().add(b.fractionalPosition().negate()).absolute(),
-				IConstantFractionalPosition::compareTo);
+				(a, b) -> a.position().add(b.position().negate()).absolute(), IConstantFractionalPosition::compareTo);
 	}
 
 	public static <C extends Fraction, E extends C, P extends C> Finder<E, P> closest(final List<E> list,
@@ -407,6 +406,23 @@ public class CollectionUtils {
 		return mapWithId(list, new ArrayList<>(), mapper);
 	}
 
+	public static <T> void transform(final List<T> list, final Function<T, T> mapper) {
+		for (int i = 0; i < list.size(); i++) {
+			list.set(i, mapper.apply(list.get(i)));
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends U, U> void transform(final List<U> list, final Class<T> c, final Function<T, U> mapper) {
+		transform(list, e -> {
+			if (c.isAssignableFrom(e.getClass())) {
+				return mapper.apply((T) e);
+			}
+
+			return e;
+		});
+	}
+
 	public static <T> boolean contains(final Collection<T> collection, final Predicate<T> predicate) {
 		for (final T element : collection) {
 			if (predicate.test(element)) {
@@ -415,6 +431,25 @@ public class CollectionUtils {
 		}
 
 		return false;
+	}
+
+	public static <T> T min(final Comparator<T> comparator, final Collection<T> items) {
+		if (items.isEmpty()) {
+			return null;
+		}
+
+		T min = null;
+		for (final T item : items) {
+			if (min == null || comparator.compare(min, item) > 0) {
+				min = item;
+			}
+		}
+
+		return min;
+	}
+
+	public static <T extends Comparable<? super T>> T min(final Collection<T> items) {
+		return min(T::compareTo, items);
 	}
 
 	@SafeVarargs

@@ -29,7 +29,7 @@ public enum PositionType {
 	ANCHOR(fractionalPositionManager, ChartData::currentAnchors, PositionWithIdAndType::of), //
 	BEAT(positionManager, ChartData::beats, PositionWithIdAndType::of), //
 	EVENT_POINT(fractionalPositionManager, ChartData::currentEventPoints, PositionWithIdAndType::of), //
-	GUITAR_NOTE(positionManager, ChartData::currentSounds, PositionWithIdAndType::of), //
+	GUITAR_NOTE(fractionalPositionManager, ChartData::currentSounds, PositionWithIdAndType::of), //
 	HAND_SHAPE(fractionalPositionManager, ChartData::currentHandShapes, PositionWithIdAndType::of), //
 	NONE(positionManager, chartData -> new ArrayList<>(), (beats, id, item) -> PositionWithIdAndType.none()), //
 	TONE_CHANGE(fractionalPositionManager, ChartData::currentToneChanges, PositionWithIdAndType::of), //

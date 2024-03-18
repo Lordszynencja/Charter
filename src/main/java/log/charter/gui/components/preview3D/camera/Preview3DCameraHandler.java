@@ -15,8 +15,8 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.song.Anchor;
-import log.charter.data.song.position.Position;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.Position;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.services.data.ChartTimeHandler;
 

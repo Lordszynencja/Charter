@@ -17,7 +17,8 @@ import log.charter.data.config.Config;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.Position;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.time.Position;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.data.HandShapeDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
@@ -33,25 +34,29 @@ import log.charter.util.data.IntRange;
 public class Preview3DFingeringDrawer {
 	private static final double size = stringDistance / 2;
 
-	private static final Point2D fingerShapeSingle = new Point2D(0, 0);
-	private static final Point2D fingerShapeEnd = new Point2D(0.25, 0);
-	private static final Point2D fingerShapeMiddle = new Point2D(0.5, 0);
+	private static Point2D textureGrid(final int x, final int y) {
+		return new Point2D(x * 0.25, y * 0.25);
+	}
+
+	private static final Point2D fingerShapeSingle = textureGrid(0, 0);
+	private static final Point2D fingerShapeEnd = textureGrid(1, 0);
+	private static final Point2D fingerShapeMiddle = textureGrid(2, 0);
 
 	private static final Point2D[] fingerTexturePositions = { //
-			new Point2D(0.75, 0), // T
-			new Point2D(0, 0.25), // 1
-			new Point2D(0.25, 0.25), // 2
-			new Point2D(0.5, 0.25), // 3
-			new Point2D(0.75, 0.25)// 4
+			textureGrid(3, 0), // T
+			textureGrid(0, 1), // 1
+			textureGrid(1, 1), // 2
+			textureGrid(2, 1), // 3
+			textureGrid(3, 1)// 4
 	};
 
-	private ChartData data;
+	private ChartData chartData;
 	private NoteStatusModels noteStatusModels;
 	private TexturesHolder texturesHolder;
 
-	public void init(final ChartData data, final NoteStatusModels noteStatusModels,
+	public void init(final ChartData chartData, final NoteStatusModels noteStatusModels,
 			final TexturesHolder texturesHolder) {
-		this.data = data;
+		this.chartData = chartData;
 		this.noteStatusModels = noteStatusModels;
 		this.texturesHolder = texturesHolder;
 	}
@@ -65,10 +70,10 @@ public class Preview3DFingeringDrawer {
 	private void drawArpeggioPart(final ShadersHolder shadersHolder, final int string, final int fret,
 			final TextureAtlasPosition texture, final double width, final double height) {
 		final Matrix4 modelMatrix = moveMatrix(getFretMiddlePosition(fret), //
-				getStringPosition(string, data.currentStrings()), //
+				getStringPosition(string, chartData.currentStrings()), //
 				0);
 
-		final Color color = getStringBasedColor(StringColorLabelType.NOTE, string, data.currentStrings());
+		final Color color = getStringBasedColor(StringColorLabelType.NOTE, string, chartData.currentStrings());
 		final int textureId = noteStatusModels.getTextureId(texture);
 
 		shadersHolder.new ShadowHighlightTextureShaderDrawData()//
@@ -117,7 +122,7 @@ public class Preview3DFingeringDrawer {
 		final double x0 = x - size;
 		final double x1 = x + size;
 
-		final double yString = getStringPosition(string, data.currentStrings());
+		final double yString = getStringPosition(string, chartData.currentStrings());
 		final double y0 = yString + size;
 		final double y1 = yString - size;
 
@@ -188,16 +193,17 @@ public class Preview3DFingeringDrawer {
 			return handShape.template;
 		}
 
-		final Level level = data.currentArrangementLevel();
-		final ChordOrNote sound = lastBeforeEqual(level.sounds, new Position(drawData.time + 20)).find();
-		if (sound == null || sound.position() < handShape.position() || sound.isNote()) {
+		final Level level = chartData.currentArrangementLevel();
+		final ChordOrNote sound = lastBeforeEqual(level.sounds,
+				FractionalPosition.fromTime(chartData.beats(), drawData.time + 20)).find();
+		if (sound == null || sound.position(chartData.beats()) < handShape.timeFrom || sound.isNote()) {
 			return handShape.template;
 		}
 		if (sound.chord().fullyMuted()) {
 			return null;
 		}
 
-		return data.currentArrangement().chordTemplates.get(sound.chord().templateId());
+		return chartData.currentArrangement().chordTemplates.get(sound.chord().templateId());
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {

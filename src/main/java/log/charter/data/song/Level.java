@@ -11,7 +11,6 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 
 @XStreamAlias("level")
 @XStreamInclude({ Anchor.class, ChordOrNote.class, HandShape.class })
@@ -30,8 +29,7 @@ public class Level {
 		}
 
 		final Chord chord = sound.chord();
-		final HandShape handShape = lastBeforeEqual(handShapes, chord.toFraction(beats),
-				IConstantFractionalPosition::compareTo).find();
+		final HandShape handShape = lastBeforeEqual(handShapes, chord).find();
 		if (handShape == null) {
 			return true;
 		}
@@ -48,7 +46,7 @@ public class Level {
 			if (previousSound.chord().templateId() != handShape.templateId) {
 				return true;
 			}
-			if (previousSound.position() < handShape.position(beats)) {
+			if (previousSound.position().compareTo(handShape.position()) < 0) {
 				break;
 			}
 

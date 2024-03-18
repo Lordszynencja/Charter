@@ -19,7 +19,7 @@ public class AnchorConverter implements Converter {
 		}
 
 		public Anchor transform(final ImmutableBeatsMap beats) {
-			this.fractionalPosition(FractionalPosition.fromTime(beats, position, true));
+			this.position(FractionalPosition.fromTimeRounded(beats, position));
 
 			return new Anchor(this);
 		}
@@ -35,7 +35,7 @@ public class AnchorConverter implements Converter {
 	public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		final Anchor anchor = (Anchor) source;
 
-		writer.addAttribute("p", anchor.fractionalPosition().asString());
+		writer.addAttribute("p", anchor.position().asString());
 		writer.addAttribute("fret", anchor.fret + "");
 		if (anchor.width != 4) {
 			writer.addAttribute("width", anchor.width + "");

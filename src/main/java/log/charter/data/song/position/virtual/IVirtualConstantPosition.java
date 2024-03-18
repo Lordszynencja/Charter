@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.position.ConstantPosition;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.time.IConstantPosition;
 
 public interface IVirtualConstantPosition {
@@ -42,8 +42,8 @@ public interface IVirtualConstantPosition {
 			return new ConstantPosition(positionA + positionB);
 		}
 
-		final FractionalPosition positionA = a.toFraction(beats).fractionalPosition();
-		final FractionalPosition positionB = b.toFraction(beats).fractionalPosition();
+		final FractionalPosition positionA = a.toFraction(beats).position();
+		final FractionalPosition positionB = b.toFraction(beats).position();
 
 		return positionA.add(positionB);
 	}

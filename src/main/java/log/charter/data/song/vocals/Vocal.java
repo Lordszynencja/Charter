@@ -3,7 +3,9 @@ package log.charter.data.song.vocals;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
 import log.charter.io.rsc.xml.converters.VocalConverter;
 
@@ -36,7 +38,7 @@ public class Vocal implements IFractionalPositionWithEnd {
 	}
 
 	public Vocal(final String lyric) {
-		this(new FractionalPosition(0), new FractionalPosition(0), lyric, VocalFlag.NONE);
+		this(new FractionalPosition(), new FractionalPosition(), lyric, VocalFlag.NONE);
 	}
 
 	public Vocal(final FractionalPosition position, final FractionalPosition endPosition, final String lyric) {
@@ -44,7 +46,7 @@ public class Vocal implements IFractionalPositionWithEnd {
 	}
 
 	public Vocal() {
-		this(new FractionalPosition(0), new FractionalPosition(0), "", VocalFlag.NONE);
+		this(new FractionalPosition(), new FractionalPosition(), "", VocalFlag.NONE);
 	}
 
 	public String text() {
@@ -92,12 +94,12 @@ public class Vocal implements IFractionalPositionWithEnd {
 	}
 
 	@Override
-	public FractionalPosition fractionalPosition() {
+	public FractionalPosition position() {
 		return position;
 	}
 
 	@Override
-	public void fractionalPosition(final FractionalPosition newPosition) {
+	public void position(final FractionalPosition newPosition) {
 		if (newPosition == null) {
 			throw new IllegalArgumentException("Can't set position to null");
 		}
@@ -117,5 +119,10 @@ public class Vocal implements IFractionalPositionWithEnd {
 		}
 
 		endPosition = newEndPosition;
+	}
+
+	@Override
+	public IConstantFractionalPositionWithEnd toFraction(final ImmutableBeatsMap beats) {
+		return this;
 	}
 }

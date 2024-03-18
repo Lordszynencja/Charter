@@ -68,17 +68,14 @@ public class ArrangementLevel {
 		for (int i = 0; i < chordsAndNotes.size(); i++) {
 			final ChordOrNote sound = chordsAndNotes.get(i);
 			if (sound.isNote()) {
-				notes.list.add(new ArrangementNote(sound.note()));
+				notes.list.add(new ArrangementNote(beats, sound.note()));
 				continue;
 			}
 
 			final Chord chord = sound.chord();
 			final ChordTemplate chordTemplate = chordTemplates.get(chord.templateId());
 			final boolean forceAddNotes = level.shouldChordShowNotes(beats, i);
-			final int nextPosition = i + 1 < chordsAndNotes.size() ? chordsAndNotes.get(i + 1).position()
-					: chord.position() + 100;
-			final ArrangementChord arrangementChord = new ArrangementChord(chord, chordTemplate, nextPosition,
-					forceAddNotes);
+			final ArrangementChord arrangementChord = new ArrangementChord(beats, chord, chordTemplate, forceAddNotes);
 
 			if (chord.splitIntoNotes) {
 				arrangementChord.chordNotes.stream().map(ArrangementNote::new).forEach(notes.list::add);

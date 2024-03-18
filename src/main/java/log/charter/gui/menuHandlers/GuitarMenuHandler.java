@@ -1,26 +1,21 @@
 package log.charter.gui.menuHandlers;
 
-import static log.charter.util.CollectionUtils.firstAfterEqual;
-import static log.charter.util.CollectionUtils.lastBeforeEqual;
+import static log.charter.util.CollectionUtils.getFromTo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.song.ChordTemplate;
-import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
-import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.services.Action;
 import log.charter.services.ArrangementFretHandPositionsCreator;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.selection.ISelectionAccessor;
-import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
@@ -95,47 +90,24 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 		return menu;
 	}
 
-	private <T extends IVirtualConstantPosition> List<ChordOrNote> handleSelection(
-			final ISelectionAccessor<T> selectionAccessor, final List<ChordOrNote> sounds) {
-		final List<Selection<T>> selected = selectionAccessor.getSelected();
-
-		final Integer fromId = firstAfterEqual(sounds, selected.get(0).selectable.toPosition(chartData.beats()))
-				.findId();
-		final Integer toId = lastBeforeEqual(sounds,
-				selected.get(selected.size() - 1).selectable.toPosition(chartData.beats())).findId();
-
-		if (fromId == null || toId == null) {
-			return new ArrayList<>();
-		}
-
-		final List<ChordOrNote> selectedSounds = new ArrayList<>();
-		for (int i = fromId; i <= toId; i++) {
-			selectedSounds.add(sounds.get(i));
-		}
-
-		return selectedSounds;
-	}
-
 	private <T extends IVirtualConstantPosition> void addFHP() {
-		undoSystem.addUndo();
 
-		final Level level = chartData.currentArrangementLevel();
-		List<ChordOrNote> sounds = level.sounds;
-		for (final PositionType positionType : PositionType.values()) {
-			if (positionType == PositionType.NONE) {
-				continue;
-			}
-
-			final ISelectionAccessor<T> selectionAccessor = selectionManager.accessor(positionType);
-			if (selectionAccessor.isSelected()) {
-				sounds = handleSelection(selectionAccessor, sounds);
-				break;
-			}
+		final ISelectionAccessor<IVirtualConstantPosition> selectedAccessor = selectionManager.selectedAccessor();
+		final List<IVirtualConstantPosition> selectedElements = selectedAccessor.getSelectedElements();
+		if (selectedElements.isEmpty()) {
+			return;
 		}
 
-		final List<ChordTemplate> chordTemplates = chartData.currentArrangement().chordTemplates;
+		final IConstantFractionalPosition from = selectedElements.get(0).toFraction(chartData.beats());
+		final IConstantFractionalPosition to = selectedElements.get(selectedElements.size() - 1)
+				.toFraction(chartData.beats());
+		final List<ChordOrNote> soundsToAddFHPFor = getFromTo(chartData.currentSounds(), from, to);
+		if (soundsToAddFHPFor.isEmpty()) {
+			return;
+		}
 
-		ArrangementFretHandPositionsCreator.createFretHandPositions(chartData.beats(), chordTemplates, sounds,
-				level.anchors);
+		undoSystem.addUndo();
+		ArrangementFretHandPositionsCreator.createFretHandPositions(chartData.beats(),
+				chartData.currentChordTemplates(), soundsToAddFHPFor, chartData.currentAnchors());
 	}
 }

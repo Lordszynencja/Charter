@@ -27,7 +27,7 @@ public class PhrasesValidator {
 				arrangementName)) {
 			case YES:
 				chartTimeHandler.moveTo(arrangementId, null,
-						countPhrases.get(countPhrases.size() - 1).fractionalPosition());
+						countPhrases.get(countPhrases.size() - 1).position());
 				return false;
 			case NO:
 				return true;
@@ -49,7 +49,7 @@ public class PhrasesValidator {
 		switch (askYesNoCancel(charterFrame, Label.WARNING, Label.MULTIPLE_END_PHRASES_MOVE_TO_FIRST_QUESTION,
 				arrangementName)) {
 			case YES:
-				chartTimeHandler.moveTo(arrangementId, null, endPhrases.get(0).fractionalPosition());
+				chartTimeHandler.moveTo(arrangementId, null, endPhrases.get(0).position());
 				return false;
 			case NO:
 				return true;

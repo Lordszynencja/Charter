@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Anchor;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
@@ -18,7 +19,6 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
-import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;
@@ -61,7 +61,7 @@ public class GuitarModeHandler extends ModeHandler {
 
 		undoSystem.addUndo();
 
-		final Anchor anchor = new Anchor(anchorPosition.fractionalPosition);
+		final Anchor anchor = new Anchor(anchorPosition.toFraction(chartData.beats()).position());
 		final List<Anchor> anchors = chartData.currentAnchors();
 		anchors.add(anchor);
 		anchors.sort(IConstantFractionalPosition::compareTo);
@@ -81,7 +81,7 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 
 		undoSystem.addUndo();
-		final EventPoint eventPoint = new EventPoint(eventPointPosition.fractionalPosition());
+		final EventPoint eventPoint = new EventPoint(eventPointPosition.toFraction(chartData.beats()).position());
 		final List<EventPoint> eventPoints = chartData.currentEventPoints();
 		eventPoints.add(eventPoint);
 		eventPoints.sort(IConstantFractionalPosition::compareTo);
@@ -92,11 +92,11 @@ public class GuitarModeHandler extends ModeHandler {
 		});
 	}
 
-	private void addNewHandShape(final IConstantFractionalPosition position) {
+	private void addNewHandShape(final FractionalPosition position) {
 		final FractionalPosition endPosition = chartData.beats().addGrid(position, 1).toFraction(chartData.beats())
-				.fractionalPosition();
+				.position();
 
-		final HandShape handShape = new HandShape(position.fractionalPosition(), endPosition);
+		final HandShape handShape = new HandShape(position, endPosition);
 		final List<HandShape> handShapes = chartData.currentHandShapes();
 		handShapes.add(handShape);
 		handShapes.sort(IConstantFractionalPosition::compareTo);
@@ -116,13 +116,13 @@ public class GuitarModeHandler extends ModeHandler {
 			return;
 		}
 
-		addNewHandShape(handShapePosition.fractionalPosition());
+		addNewHandShape(handShapePosition.toFraction(chartData.beats()).position());
 	}
 
 	private ChordOrNote addSound(final Note note) {
 		final List<ChordOrNote> sounds = chartData.currentSounds();
 		final ChordOrNote sound = ChordOrNote.from(note);
-		final Integer previousId = lastBefore(sounds, note, IConstantPosition::compareTo).findId();
+		final Integer previousId = lastBefore(sounds, note).findId();
 		final int id = nvl(previousId, -1) + 1;
 		sounds.add(id, sound);
 
@@ -134,7 +134,7 @@ public class GuitarModeHandler extends ModeHandler {
 		return sound;
 	}
 
-	private int addOrRemoveSingleNote(final int string, final int position, final Integer id,
+	private int addOrRemoveSingleNote(final FractionalPosition position, final int string, final Integer id,
 			final ChordOrNote chordOrNote) {
 		if (string < 0 || string >= chartData.currentStrings()) {
 			return 0;
@@ -185,19 +185,22 @@ public class GuitarModeHandler extends ModeHandler {
 	}
 
 	private void addSingleNote(final MouseButtonPressReleaseData clickData) {
+		final FractionalPosition position = clickData.pressHighlight.toFraction(chartData.beats()).position();
 		final int string = yToString(clickData.pressPosition.y, chartData.currentStrings());
-		addOrRemoveSingleNote(string, clickData.pressHighlight.position(), clickData.pressHighlight.id,
-				clickData.pressHighlight.chordOrNote);
+		addOrRemoveSingleNote(position, string, clickData.pressHighlight.id, clickData.pressHighlight.chordOrNote);
 	}
 
 	private void addMultipleNotes(final MouseButtonPressReleaseData clickData) {
 		final List<PositionWithStringOrNoteId> positions = highlightManager.getPositionsWithStrings(
-				clickData.pressHighlight.position(), clickData.releaseHighlight.position(), clickData.pressPosition.y,
+				clickData.pressHighlight.toPosition(chartData.beats()).position(), //
+				clickData.releaseHighlight.toPosition(chartData.beats()).position(), //
+				clickData.pressPosition.y, //
 				clickData.releasePosition.y);
 
 		int noteIdChange = 0;
+		final ImmutableBeatsMap beats = chartData.beats();
 		for (final PositionWithStringOrNoteId position : positions) {
-			noteIdChange += addOrRemoveSingleNote(position.string, position.position(),
+			noteIdChange += addOrRemoveSingleNote(position.toFraction(beats).position(), position.string,
 					position.noteId == null ? null : (position.noteId + noteIdChange), position.sound);
 		}
 	}
@@ -223,7 +226,7 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 
 		undoSystem.addUndo();
-		final ToneChange toneChange = new ToneChange(toneChangePosition.fractionalPosition(), "");
+		final ToneChange toneChange = new ToneChange(toneChangePosition.toFraction(chartData.beats()).position(), "");
 		final List<ToneChange> toneChanges = chartData.currentToneChanges();
 		toneChanges.add(toneChange);
 		toneChanges.sort(IConstantFractionalPosition::compareTo);

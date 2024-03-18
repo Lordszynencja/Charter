@@ -22,8 +22,8 @@ public class VocalConverter implements Converter {
 		}
 
 		public Vocal transform(final ImmutableBeatsMap beats) {
-			this.fractionalPosition(FractionalPosition.fromTime(beats, position, true));
-			this.endPosition(FractionalPosition.fromTime(beats, endPosition, true));
+			this.position(FractionalPosition.fromTimeRounded(beats, position));
+			this.endPosition(FractionalPosition.fromTimeRounded(beats, endPosition));
 
 			return new Vocal(this);
 		}
@@ -39,7 +39,7 @@ public class VocalConverter implements Converter {
 	public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		final Vocal vocal = (Vocal) source;
 
-		writer.addAttribute("p", vocal.fractionalPosition().asString());
+		writer.addAttribute("p", vocal.position().asString());
 		writer.addAttribute("ep", vocal.endPosition().asString());
 		writer.addAttribute("text", vocal.text());
 		if (vocal.flag() != VocalFlag.NONE) {
@@ -48,11 +48,12 @@ public class VocalConverter implements Converter {
 	}
 
 	private Vocal generateVocalFromPosition(final HierarchicalStreamReader reader) {
-		final String position = reader.getAttribute("position");
-		if (position != null && !position.isBlank()) {
+		final String positionString = reader.getAttribute("position");
+		if (positionString != null && !positionString.isBlank()) {
+			final int position = Integer.valueOf(positionString);
 			final String lengthString = reader.getAttribute("length");
 			final int length = lengthString == null || lengthString.isBlank() ? 0 : Integer.valueOf(lengthString);
-			return new TemporaryVocal(Integer.valueOf(position), length);
+			return new TemporaryVocal(position, position + length);
 		}
 
 		return new Vocal(FractionalPosition.fromString(reader.getAttribute("p")),

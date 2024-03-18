@@ -19,7 +19,7 @@ public class ToneChangeConverter implements Converter {
 		}
 
 		public ToneChange transform(final ImmutableBeatsMap beats) {
-			this.fractionalPosition(FractionalPosition.fromTime(beats, position, true));
+			this.position(FractionalPosition.fromTimeRounded(beats, position));
 
 			return new ToneChange(this);
 		}
@@ -35,7 +35,7 @@ public class ToneChangeConverter implements Converter {
 	public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		final ToneChange toneChange = (ToneChange) source;
 
-		writer.addAttribute("p", toneChange.fractionalPosition().asString());
+		writer.addAttribute("p", toneChange.position().asString());
 		if (toneChange.toneName != null) {
 			writer.addAttribute("tone", toneChange.toneName);
 		}

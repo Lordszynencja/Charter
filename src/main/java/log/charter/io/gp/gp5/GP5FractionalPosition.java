@@ -60,12 +60,8 @@ public class GP5FractionalPosition implements IConstantFractionalPosition {
 		return add(addFraction);
 	}
 
-	public int position() {
-		return position(beats);
-	}
-
 	@Override
-	public FractionalPosition fractionalPosition() {
+	public FractionalPosition position() {
 		return position;
 	}
 }
