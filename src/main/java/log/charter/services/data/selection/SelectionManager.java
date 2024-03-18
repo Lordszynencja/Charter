@@ -155,7 +155,7 @@ public class SelectionManager implements Initiable {
 			return new NoneSelectionAccessor<>();
 		}
 
-		return (SelectionAccessor<T>) selectionList.getAccessor();
+		return (ISelectionAccessor<T>) selectionList.getAccessor();
 	}
 
 	public List<Integer> getSelectedIds(final PositionType type) {

@@ -8,10 +8,10 @@ import java.util.Set;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 
-class SelectionAccessor<T extends IVirtualConstantPosition> implements ISelectionAccessor<T> {
-	private final SelectionList<?, ?, T> selectionList;
+class SelectionAccessor<C extends IVirtualConstantPosition, P extends C, T extends P> implements ISelectionAccessor<T> {
+	private final SelectionList<C, P, T> selectionList;
 
-	SelectionAccessor(final SelectionList<?, ?, T> selectionList) {
+	SelectionAccessor(final SelectionList<C, P, T> selectionList) {
 		this.selectionList = selectionList;
 	}
 

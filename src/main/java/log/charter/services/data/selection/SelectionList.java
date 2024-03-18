@@ -147,7 +147,7 @@ class SelectionList<C extends IVirtualConstantPosition, P extends C, T extends P
 		return asList(temporarySelection.selectable);
 	}
 
-	public SelectionAccessor<T> getAccessor() {
+	public SelectionAccessor<C, P, T> getAccessor() {
 		return new SelectionAccessor<>(this);
 	}
 
