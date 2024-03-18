@@ -53,7 +53,8 @@ public class ToneChangeConverter implements Converter {
 	@Override
 	public ToneChange unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		final ToneChange toneChange = generateAnchorFromPosition(reader);
-		toneChange.toneName = reader.getAttribute("tone");
+		final String oldTone = reader.getAttribute("toneName");
+		toneChange.toneName = oldTone == null ? reader.getAttribute("tone") : oldTone;
 
 		return toneChange;
 	}
