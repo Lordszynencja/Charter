@@ -33,6 +33,7 @@ public class LoadingDialog extends JDialog {
 		};
 
 		mySwingWorker.execute();
+		dialog.setVisible(true);
 	}
 
 	private final JLabel text;
@@ -54,12 +55,13 @@ public class LoadingDialog extends JDialog {
 		progressBar.setBounds(50, 100, getWidth() - 100, 30);
 		add(progressBar);
 
-		setVisible(true);
+		setModalityType(ModalityType.APPLICATION_MODAL);
 	}
 
 	public void setProgress(final int progress, final String description) {
 		progressBar.setValue(progress);
 		text.setText(description);
+		repaint();
 	}
 
 	public void addProgress(final Label label) {

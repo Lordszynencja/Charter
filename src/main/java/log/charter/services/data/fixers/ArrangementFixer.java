@@ -171,14 +171,17 @@ public class ArrangementFixer {
 
 		for (int i = 0; i < positions.size() - 1; i++) {
 			final IVirtualPositionWithEnd position = positions.get(i);
-			final IVirtualConstantPosition maxPosition = max(comparator, position,
-					beats.getMaxPositionBefore(positions.get(i + 1)));
-			position.endPosition(beats, min(comparator, position.endPosition(), maxPosition));
+			final IVirtualConstantPosition maxPositionBeforeNext = beats.getMaxPositionBefore(positions.get(i + 1));
+			final IVirtualConstantPosition minEndPosition = min(comparator, position.endPosition(),
+					maxPositionBeforeNext);
+
+			position.endPosition(beats, max(comparator, position, minEndPosition));
 		}
 
 		final IVirtualPositionWithEnd lastPosition = positions.get(positions.size() - 1);
 		final IVirtualConstantPosition maxPosition = new ConstantPosition(chartTimeHandler.maxTime());
-		lastPosition.endPosition(beats, min(comparator, maxPosition, lastPosition.endPosition()));
+		final IVirtualConstantPosition minEndPosition = min(comparator, lastPosition.endPosition(), maxPosition);
+		lastPosition.endPosition(beats, max(comparator, lastPosition, minEndPosition));
 	}
 
 	private void removeTailsUnderMinLength(final List<ChordOrNote> sounds) {
