@@ -1,8 +1,8 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
 import static log.charter.util.CollectionUtils.filter;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.ScalingUtils.positionToX;
+import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.awt.Graphics2D;
 import java.util.List;
@@ -81,7 +81,7 @@ public class GuitarEventPointsDrawer {
 		}
 
 		for (final HighlightPosition highlightPosition : highlightData.highlightedNonIdPositions) {
-			final int x = timeToX(highlightPosition.position, time);
+			final int x = positionToX(highlightPosition.position, time);
 			highwayDrawer.addEventPointHighlight(x);
 		}
 	}
@@ -93,13 +93,13 @@ public class GuitarEventPointsDrawer {
 		final Set<Integer> selectedIds = frameData.selection.getSelectedIdsSet(PositionType.EVENT_POINT);
 		final int highlightId = frameData.highlightData.getId(PositionType.EVENT_POINT);
 		final FractionalPosition leftScreenEdgeTime = FractionalPosition.fromTime(frameData.beats,
-				xToTime(0, frameData.time));
+				xToPosition(0, frameData.time));
 
 		boolean currentSectionDrawn = false;
 		boolean currentPhraseDrawn = false;
 		for (int i = 0; i < frameData.arrangement.eventPoints.size(); i++) {
 			final EventPoint eventPoint = eventPoints.get(i);
-			final int x = timeToX(eventPoint.position(frameData.beats), frameData.time);
+			final int x = positionToX(eventPoint.position(frameData.beats), frameData.time);
 			if (x < 0) {
 				continue;
 			}

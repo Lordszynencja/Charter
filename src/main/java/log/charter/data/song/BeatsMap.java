@@ -340,13 +340,19 @@ public class BeatsMap {
 
 	public BeatsMap(final List<Beat> beats) {
 		this.beats = beats;
+
+		for (int i = beats.size() - 2; i >= 0; i--) {
+			if (beats.get(i).position() == beats.get(i + 1).position()) {
+				beats.remove(i + 1);
+			}
+		}
 	}
 
 	/**
 	 * creates beats map for existing project
 	 */
 	public BeatsMap(final ChartProject chartProject) {
-		beats = chartProject.beats;
+		this(chartProject.beats);
 	}
 
 	/**

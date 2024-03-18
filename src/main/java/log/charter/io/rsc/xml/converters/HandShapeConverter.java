@@ -46,11 +46,12 @@ public class HandShapeConverter implements Converter {
 	}
 
 	private HandShape generateHandShapeFromPosition(final HierarchicalStreamReader reader) {
-		final String position = reader.getAttribute("position");
-		if (position != null && !position.isBlank()) {
+		final String positionString = reader.getAttribute("position");
+		if (positionString != null && !positionString.isBlank()) {
+			final int position = Integer.valueOf(positionString);
 			final String lengthString = reader.getAttribute("length");
 			final int length = lengthString == null || lengthString.isBlank() ? 0 : Integer.valueOf(lengthString);
-			return new TemporaryHandShape(Integer.valueOf(position), length);
+			return new TemporaryHandShape(position, position + length);
 		}
 
 		return new HandShape(FractionalPosition.fromString(reader.getAttribute("p")),

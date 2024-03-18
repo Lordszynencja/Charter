@@ -5,8 +5,8 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.ScalingUtils.positionToX;
+import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -74,7 +74,7 @@ public class VocalsDrawer {
 		}
 
 		private void addConnection(final int x, final Vocal next) {
-			final int nextStart = timeToX(next.position(beats), time);
+			final int nextStart = positionToX(next.position(beats), time);
 			final ShapePositionWithSize position = new ShapePositionWithSize(x, vocalNoteY, nextStart - x, 4)//
 					.centeredY();
 			wordConnections.add(filledRectangle(position, ColorLabel.VOCAL_NOTE.colorWithAlpha(192)));
@@ -121,8 +121,8 @@ public class VocalsDrawer {
 		final int width = chartPanel.getWidth();
 		final Set<Integer> selectedVocalIds = frameData.selection.getSelectedIdsSet(PositionType.VOCAL);
 
-		final int timeFrom = xToTime(-1, frameData.time);
-		final int timeTo = xToTime(width + 1, frameData.time);
+		final int timeFrom = xToPosition(-1, frameData.time);
+		final int timeTo = xToPosition(width + 1, frameData.time);
 
 		for (int i = 0; i < vocals.size(); i++) {
 			final Vocal vocal = vocals.get(i);
@@ -139,8 +139,8 @@ public class VocalsDrawer {
 				continue;
 			}
 
-			final int x = timeToX(vocal.position(frameData.beats), frameData.time);
-			final int length = max(2, timeToX(vocal.endPosition(frameData.beats), frameData.time) - x);
+			final int x = positionToX(vocal.position(frameData.beats), frameData.time);
+			final int length = max(2, positionToX(vocal.endPosition(frameData.beats), frameData.time) - x);
 			final boolean selected = selectedVocalIds.contains(i);
 			drawingData.addVocal(vocal, next, x, length, selected);
 		}
@@ -148,14 +148,14 @@ public class VocalsDrawer {
 		if (frameData.highlightData.type == PositionType.VOCAL) {
 			if (frameData.highlightData.id.isPresent()) {
 				final Vocal vocal = vocals.get(frameData.highlightData.id.get().id);
-				final int x = timeToX(vocal.position(frameData.beats), frameData.time);
-				final int length = max(2, timeToX(vocal.endPosition(frameData.beats), frameData.time) - x);
+				final int x = positionToX(vocal.position(frameData.beats), frameData.time);
+				final int length = max(2, positionToX(vocal.endPosition(frameData.beats), frameData.time) - x);
 				drawingData.addHighlight(x, length);
 			} else {
 				frameData.highlightData.highlightedNonIdPositions.forEach(highlightPosition -> {
-					final int x = timeToX(highlightPosition.position, frameData.time);
+					final int x = positionToX(highlightPosition.position, frameData.time);
 					final int length = max(2,
-							timeToX(highlightPosition.endPosition().position(frameData.beats), frameData.time) - x);
+							positionToX(highlightPosition.endPosition().position(frameData.beats), frameData.time) - x);
 					drawingData.addHighlight(x, length);
 				});
 			}

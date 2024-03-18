@@ -4,7 +4,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.util.CollectionUtils.contains;
 import static log.charter.util.CollectionUtils.map;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -208,7 +208,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		if (clickData.pressHighlight.id != null && clickData.pressHighlight.id == 0 || keyboardHandler.alt()) {
 			final int positionAfter = max(0,
-					min(chartTimeHandler.maxTime(), xToTime(clickData.releasePosition.x, chartTimeHandler.time())));
+					min(chartTimeHandler.maxTime(), xToPosition(clickData.releasePosition.x, chartTimeHandler.time())));
 			chartData.songChart.moveEverythingWithBeats(chartTimeHandler.maxTime(), positionAfter - pressPosition);
 			return;
 		}
@@ -225,7 +225,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		final int minNewPosition = leftPosition + (middleId - leftId) * 10;
 		final int middlePositionBefore = pressPosition;
 		int middlePositionAfter = max(minNewPosition,
-				min(chartTimeHandler.maxTime(), xToTime(clickData.releasePosition.x, chartTimeHandler.time())));
+				min(chartTimeHandler.maxTime(), xToPosition(clickData.releasePosition.x, chartTimeHandler.time())));
 		final int rightPositionBefore;
 		final int rightPositionAfter;
 
@@ -268,7 +268,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	}
 
 	private IVirtualConstantPosition findGridPositionClosestToX(final int x) {
-		return chartData.beats().getPositionFromGridClosestTo(new Position(xToTime(x, chartTimeHandler.time())));
+		return chartData.beats().getPositionFromGridClosestTo(new Position(xToPosition(x, chartTimeHandler.time())));
 	}
 
 	private <T extends IVirtualPosition> void dragPositions(final PositionType type,

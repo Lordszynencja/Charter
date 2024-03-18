@@ -1,7 +1,5 @@
 package log.charter.io.rsc.xml.converters;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -19,6 +17,7 @@ import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.io.rsc.xml.converters.BendValuesConverter.TemporaryBendValue;
+import log.charter.util.CollectionUtils;
 
 public class NoteConverter implements Converter {
 
@@ -35,12 +34,7 @@ public class NoteConverter implements Converter {
 			this.position(FractionalPosition.fromTimeRounded(beats, position));
 			this.endPosition(FractionalPosition.fromTimeRounded(beats, endPosition));
 
-			for (int i = 0; i < bendValues.size(); i++) {
-				final BendValue bendValue = bendValues.get(i);
-				if (bendValue instanceof TemporaryBendValue) {
-					bendValues.set(i, ((TemporaryBendValue) bendValue).transform(beats, position));
-				}
-			}
+			CollectionUtils.transform(bendValues, TemporaryBendValue.class, b -> b.transform(beats, position));
 
 			return new Note(this);
 		}
@@ -120,24 +114,6 @@ public class NoteConverter implements Converter {
 		return s == null ? false : "T".equals(s);
 	}
 
-	private List<BendValue> readBendValues(final String s) {
-		if (s == null) {
-			return new ArrayList<>();
-		}
-
-		final String[] bendValuesStrings = s.split(";");
-		final List<BendValue> bendValues = new ArrayList<>();
-
-		for (final String bendValueString : bendValuesStrings) {
-			final String[] pairValues = bendValueString.split("=");
-			final FractionalPosition position = FractionalPosition.fromString(pairValues[0]);
-			final BigDecimal bendValue = new BigDecimal(pairValues[1]);
-			bendValues.add(new BendValue(position, bendValue));
-		}
-
-		return bendValues;
-	}
-
 	@Override
 	public Note unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		final Note note = generateNoteFromPosition(reader);
@@ -173,7 +149,7 @@ public class NoteConverter implements Converter {
 			note.unpitchedSlide = readBoolean(reader.getAttribute("unpitchedSlide"));
 		}
 
-		note.bendValues = readBendValues(reader.getAttribute("bendValues"));
+		note.bendValues = BendValuesConverter.convertFromString(reader.getAttribute("bendValues"));
 
 		return note;
 	}

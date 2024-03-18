@@ -1,8 +1,8 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.ScalingUtils.positionToX;
+import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.util.List;
 import java.util.Set;
@@ -49,21 +49,21 @@ public class GuitarAnchorsDrawer {
 		}
 
 		for (final HighlightPosition highlightPosition : highlightData.highlightedNonIdPositions) {
-			final int x = timeToX(highlightPosition.position, time);
+			final int x = positionToX(highlightPosition.position, time);
 			highwayDrawer.addAnchorHighlight(x);
 		}
 	}
 
 	public static void addAnchors(final FrameData frameData, final int panelWidth, final HighwayDrawer highwayDrawer) {
 		final int highlightId = frameData.highlightData.getId(PositionType.ANCHOR);
-		final int edgeTime = xToTime(0, frameData.time);
+		final int edgeTime = xToPosition(0, frameData.time);
 		final List<Anchor> anchors = frameData.level.anchors;
 		final Set<Integer> selectedIds = frameData.selection.getSelectedIdsSet(PositionType.ANCHOR);
 
 		boolean currentAnchorDrawn = false;
 		for (int i = 0; i < anchors.size(); i++) {
 			final Anchor anchor = anchors.get(i);
-			final int x = timeToX(anchor.position(frameData.beats), frameData.time);
+			final int x = positionToX(anchor.position(frameData.beats), frameData.time);
 			if (x < 0) {
 				continue;
 			}

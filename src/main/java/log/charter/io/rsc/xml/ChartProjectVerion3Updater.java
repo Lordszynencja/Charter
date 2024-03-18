@@ -85,6 +85,6 @@ public class ChartProjectVerion3Updater {
 			}
 		}
 
-		project.chartFormatVersion = 2;
+		project.chartFormatVersion = 3;
 	}
 }

@@ -10,8 +10,8 @@ import log.charter.util.data.Position2D;
 public interface ThemeNotes {
 	void addNote(final EditorNoteDrawingData note);
 
-	void addSoundHighlight(int x, Optional<ChordOrNote> originalSound, Optional<ChordTemplate> template, int string,
-			boolean drawOriginalStrings);
+	void addSoundHighlight(int x, int length, Optional<ChordOrNote> originalSound, Optional<ChordTemplate> template,
+			int string, boolean drawOriginalStrings);
 
 	void addNoteAdditionLine(final Position2D from, final Position2D to);
 

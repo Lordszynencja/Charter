@@ -9,7 +9,7 @@ import static log.charter.util.CollectionUtils.firstAfter;
 import static log.charter.util.CollectionUtils.lastBefore;
 import static log.charter.util.CollectionUtils.max;
 import static log.charter.util.CollectionUtils.min;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -175,7 +175,7 @@ public class HighlightManager {
 		}
 
 		final ImmutableBeatsMap beats = chartData.beats();
-		final int mouseTime = xToTime(x, chartTimeHandler.time());
+		final int mouseTime = xToPosition(x, chartTimeHandler.time());
 		if (positionType == PositionType.BEAT) {
 			return PositionWithIdAndType.of(beats, mouseTime, positionType);
 		}

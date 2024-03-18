@@ -55,7 +55,7 @@ public class BendValuesConverter {
 			final BendValue bendValue = generateBendValueFromPosition(pairValues[0]);
 			bendValue.bendValue = new BigDecimal(pairValues[1]);
 
-			bendValues.add(new BendValue(bendValue));
+			bendValues.add(bendValue);
 		}
 
 		return bendValues;

@@ -12,7 +12,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.fromChord;
 import static log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.fromNote;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer.getHighwayDrawer;
-import static log.charter.util.ScalingUtils.timeToX;
+import static log.charter.util.ScalingUtils.positionToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.Utils.getStringPosition;
 
@@ -70,7 +70,7 @@ public class GuitarDrawer {
 
 	private void drawGuitarLanes(final FrameData frameData, final int panelWidth) {
 		final int strings = frameData.arrangement.tuning.strings();
-		final int x = max(0, timeToX(0, frameData.time));
+		final int x = max(0, positionToX(0, frameData.time));
 
 		for (int lane = 0; lane < strings; lane++) {
 			frameData.g.setColor(getStringBasedColor(StringColorLabelType.LANE, lane, strings));
@@ -82,19 +82,19 @@ public class GuitarDrawer {
 	private boolean addChord(final FrameData frameData, final HighwayDrawer highwayDrawer, final int panelWidth,
 			final Chord chord, final boolean selected, final int highlightedString, final boolean lastWasLinkNext,
 			final boolean wrongLinkNext) {
-		final int x = timeToX(chord.position(), frameData.time);
+		final int x = positionToX(chord.position(frameData.beats), frameData.time);
 		if (isPastRightEdge(x, panelWidth)) {
 			return false;
 		}
 
-		final int length = timeToXLength(chord.position(), chord.length());
+		final int length = positionToX(chord.endPosition(frameData.beats), frameData.time) - x;
 		if (!isOnScreen(x, length)) {
 			return true;
 		}
 
 		final ChordTemplate chordTemplate = frameData.arrangement.chordTemplates.get(chord.templateId());
-		for (final EditorNoteDrawingData noteData : fromChord(chord, chordTemplate, x, selected, highlightedString,
-				lastWasLinkNext, wrongLinkNext, frameData.ctrlPressed)) {
+		for (final EditorNoteDrawingData noteData : fromChord(frameData.beats, frameData.time, chord, chordTemplate, x,
+				selected, highlightedString, lastWasLinkNext, wrongLinkNext, frameData.ctrlPressed)) {
 			highwayDrawer.addNote(noteData);
 		}
 
@@ -111,20 +111,20 @@ public class GuitarDrawer {
 		return true;
 	}
 
-	private boolean addNote(final int time, final HighwayDrawer highwayDrawer, final int panelWidth, final Note note,
-			final boolean selected, final boolean highlighted, final boolean lastWasLinkNext,
+	private boolean addNote(final FrameData frameData, final HighwayDrawer highwayDrawer, final int panelWidth,
+			final Note note, final boolean selected, final boolean highlighted, final boolean lastWasLinkNext,
 			final boolean wrongLinkNext) {
-		final int x = timeToX(note.position(), time);
-		final int length = timeToXLength(note.position(), note.length());
-		if (isPastRightEdge(x, panelWidth)) {
+		final EditorNoteDrawingData noteDrawData = fromNote(frameData.beats, frameData.time, note, selected,
+				highlighted, lastWasLinkNext, wrongLinkNext);
+		if (isPastRightEdge(noteDrawData.x, panelWidth)) {
 			return false;
 		}
 
-		if (!isOnScreen(x, length)) {
+		if (!isOnScreen(noteDrawData.x, noteDrawData.length)) {
 			return true;
 		}
 
-		highwayDrawer.addNote(fromNote(x, note, selected, highlighted, lastWasLinkNext, wrongLinkNext));
+		highwayDrawer.addNote(noteDrawData);
 
 		return true;
 	}
@@ -137,7 +137,7 @@ public class GuitarDrawer {
 					lastWasLinkNext, wrongLinkNext);
 		}
 		if (chordOrNote.isNote()) {
-			return addNote(frameData.time, highwayDrawer, panelWidth, chordOrNote.note(), selected,
+			return addNote(frameData, highwayDrawer, panelWidth, chordOrNote.note(), selected,
 					highlightedString == chordOrNote.note().string, lastWasLinkNext, wrongLinkNext);
 		}
 
@@ -198,12 +198,14 @@ public class GuitarDrawer {
 		}
 
 		for (final HighlightPosition highlightPosition : highlightData.highlightedNonIdPositions) {
-			final int x = timeToX(highlightPosition.position, time);
+			final int x = positionToX(highlightPosition.position, time);
+			final int length = highlightPosition.length;
 			final Optional<ChordTemplate> template = highlightPosition.originalSound//
 					.filter(ChordOrNote::isChord)//
 					.map(s -> chordTemplates.get(s.chord().templateId()));
-			highwayDrawer.addSoundHighlight(x, highlightPosition.originalSound, template, highlightPosition.string,
-					highlightPosition.drawOriginalStrings);
+
+			highwayDrawer.addSoundHighlight(x, length, highlightPosition.originalSound, template,
+					highlightPosition.string, highlightPosition.drawOriginalStrings);
 		}
 
 		if (highlightData.line.isPresent()) {
@@ -236,11 +238,12 @@ public class GuitarDrawer {
 			lastWasLinkNext = sound.chord() != null ? sound.chord().linkNext() : sound.note().linkNext;
 
 			if (i == highlightId && !frameData.highlightData.hasStringOf(sound)) {
-				final int x = timeToX(sound.position(), frameData.time);
+				final int x = positionToX(sound.position(frameData.beats), frameData.time);
+				final int length = positionToX(sound.endPosition(frameData.beats), frameData.time) - x;
 				final Optional<ChordTemplate> template = sound.isChord()//
 						? Optional.of(chordTemplates.get(sound.chord().templateId()))//
 						: Optional.empty();
-				highwayDrawer.addSoundHighlight(x, Optional.of(sound), template,
+				highwayDrawer.addSoundHighlight(x, length, Optional.of(sound), template,
 						frameData.highlightData.id.get().string.orElse(0), false);
 			}
 		}
@@ -254,12 +257,12 @@ public class GuitarDrawer {
 
 		for (int i = 0; i < frameData.level.handShapes.size(); i++) {
 			final HandShape handShape = frameData.level.handShapes.get(i);
-			final int x = timeToX(handShape.position(frameData.beats), frameData.time);
+			final int x = positionToX(handShape.position(frameData.beats), frameData.time);
 			if (isPastRightEdge(x, panelWidth)) {
 				break;
 			}
 
-			final int length = timeToX(handShape.endPosition(frameData.beats), frameData.time) - x;
+			final int length = positionToX(handShape.endPosition(frameData.beats), frameData.time) - x;
 			if (!isOnScreen(x, length)) {
 				continue;
 			}
@@ -278,7 +281,7 @@ public class GuitarDrawer {
 
 		if (frameData.highlightData.type == PositionType.HAND_SHAPE) {
 			frameData.highlightData.highlightedNonIdPositions.forEach(highlightPosition -> highwayDrawer
-					.addHandShapeHighlight(timeToX(highlightPosition.position, frameData.time),
+					.addHandShapeHighlight(positionToX(highlightPosition.position, frameData.time),
 							timeToXLength(highlightPosition.position, highlightPosition.length)));
 		}
 	}

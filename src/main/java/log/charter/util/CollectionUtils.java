@@ -121,7 +121,7 @@ public class CollectionUtils {
 			int maxId = list.size() - 1;
 			while (maxId - minId > 1) {
 				final int id = (minId + maxId) / 2;
-				if (comparator.compare(position, list.get(id)) < 0) {
+				if (comparator.compare(position, list.get(id)) > 0) {
 					minId = id + 1;
 				} else {
 					maxId = id;

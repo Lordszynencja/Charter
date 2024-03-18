@@ -23,6 +23,7 @@ import log.charter.services.data.ProjectAudioHandler;
 
 public class FileDropHandler implements DropTargetListener, Initiable {
 	private CharterFrame charterFrame;
+	private ExistingProjectImporter existingProjectImporter;
 	private GP5FileImporter gp5FileImporter;
 	private MidiImporter midiImporter;
 	private ProjectAudioHandler projectAudioHandler;
@@ -32,14 +33,15 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 
 	@Override
 	public void init() {
-		fileTypeHandlers.put("xml", this::handleXML);
 		fileTypeHandlers.put("gp3", gp5FileImporter::importGP5File);
 		fileTypeHandlers.put("gp4", gp5FileImporter::importGP5File);
 		fileTypeHandlers.put("gp5", gp5FileImporter::importGP5File);
+		fileTypeHandlers.put("mid", midiImporter::importMidiTempo);
 		fileTypeHandlers.put("mp3", projectAudioHandler::importAudio);
 		fileTypeHandlers.put("ogg", projectAudioHandler::importAudio);
+		fileTypeHandlers.put("rscp", f -> existingProjectImporter.open(f.getAbsolutePath()));
 		fileTypeHandlers.put("wav", projectAudioHandler::importAudio);
-		fileTypeHandlers.put("mid", midiImporter::importMidiTempo);
+		fileTypeHandlers.put("xml", this::handleXML);
 	}
 
 	private void handleXML(final File file) {

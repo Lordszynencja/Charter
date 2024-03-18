@@ -1,8 +1,8 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
 import static log.charter.util.CollectionUtils.filter;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.ScalingUtils.positionToX;
+import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.awt.Graphics2D;
 import java.util.List;
@@ -44,7 +44,7 @@ public class GuitarToneChangeDrawer {
 		}
 
 		for (final HighlightPosition highlightPosition : highlightData.highlightedNonIdPositions) {
-			final int x = timeToX(highlightPosition.position, time);
+			final int x = positionToX(highlightPosition.position, time);
 			highwayDrawer.addToneChangeHighlight(x);
 		}
 	}
@@ -54,14 +54,14 @@ public class GuitarToneChangeDrawer {
 		final Set<Integer> selectedIds = frameData.selection.getSelectedIdsSet(PositionType.TONE_CHANGE);
 		final int highlightId = frameData.highlightData.getId(PositionType.TONE_CHANGE);
 		final FractionalPosition leftScreenEdgeTime = FractionalPosition.fromTime(frameData.beats,
-				xToTime(0, frameData.time));
+				xToPosition(0, frameData.time));
 		final String baseTone = frameData.arrangement.baseTone;
 		final List<ToneChange> toneChanges = frameData.arrangement.toneChanges;
 
 		boolean currentToneDrawn = false;
 		for (int i = 0; i < toneChanges.size(); i++) {
 			final ToneChange toneChange = toneChanges.get(i);
-			final int x = timeToX(toneChange.position(frameData.beats), frameData.time);
+			final int x = positionToX(toneChange.position(frameData.beats), frameData.time);
 			if (x < 0) {
 				continue;
 			}

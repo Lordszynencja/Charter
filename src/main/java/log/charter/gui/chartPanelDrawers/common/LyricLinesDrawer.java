@@ -3,7 +3,7 @@ package log.charter.gui.chartPanelDrawers.common;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatSizeTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lyricLinesY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
-import static log.charter.util.ScalingUtils.timeToX;
+import static log.charter.util.ScalingUtils.positionToX;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -67,7 +67,7 @@ public class LyricLinesDrawer {
 		for (final Vocal vocal : chartData.currentVocals().vocals) {
 			if (!started) {
 				started = true;
-				x = timeToX(vocal.position(beats), frameData.time);
+				x = positionToX(vocal.position(beats), frameData.time);
 			}
 
 			currentLine += vocal.text();
@@ -76,7 +76,7 @@ public class LyricLinesDrawer {
 			}
 
 			if (vocal.flag() == VocalFlag.PHRASE_END) {
-				drawingData.addLyricLine(currentLine, x, timeToX(vocal.endPosition(beats), frameData.time) - x);
+				drawingData.addLyricLine(currentLine, x, positionToX(vocal.endPosition(beats), frameData.time) - x);
 				currentLine = "";
 				started = false;
 			}

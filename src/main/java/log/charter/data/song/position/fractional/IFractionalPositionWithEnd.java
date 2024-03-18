@@ -1,6 +1,5 @@
 package log.charter.data.song.position.fractional;
 
-import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.time.IPositionWithLength;
 import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
@@ -17,10 +16,6 @@ public interface IFractionalPositionWithEnd
 	@Override
 	default IFractionalPositionWithEnd asFractionalPositionWithEnd() {
 		return this;
-	}
-
-	default int endPosition(final ImmutableBeatsMap beats) {
-		return endPosition().position(beats);
 	}
 
 	@Override

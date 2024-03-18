@@ -1,7 +1,7 @@
 package log.charter.services.data.selection;
 
 import static log.charter.util.CollectionUtils.closest;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -91,7 +91,7 @@ public class SelectionManager implements Initiable {
 	}
 
 	private PositionWithIdAndType findExisting(final int x, final List<PositionWithLink> positionsWithLinks) {
-		final int position = xToTime(x, chartTimeHandler.time());
+		final int position = xToPosition(x, chartTimeHandler.time());
 		final PositionWithLink closestLink = closest(positionsWithLinks, new ConstantPosition(position)).find();
 		if (closestLink == null) {
 			return null;

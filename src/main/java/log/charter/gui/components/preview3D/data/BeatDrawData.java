@@ -18,8 +18,8 @@ public class BeatDrawData {
 		final List<BeatDrawData> beatsToDraw = new ArrayList<>();
 		final ImmutableBeatsMap beats = data.beats();
 
-		final Integer beatsFrom = firstAfterEqual(beats, new Position(timeFrom)).findId();
-		final Integer beatsTo = lastBeforeEqual(beats, new Position(timeTo)).findId();
+		final Integer beatsFrom = firstAfterEqual(beats, new Position(timeFrom)).findId(0);
+		final Integer beatsTo = lastBeforeEqual(beats, new Position(timeTo)).findId(beats.size() - 1);
 
 		if (beatsFrom == null || beatsTo == null) {
 			return beatsToDraw;

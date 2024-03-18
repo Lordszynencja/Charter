@@ -25,7 +25,6 @@ import log.charter.gui.components.preview3D.drawers.Preview3DLyricsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DStringsFretsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DVideoDrawer;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
-import log.charter.gui.components.preview3D.glUtils.Texture;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
@@ -127,8 +126,6 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		}
 	}
 
-	Texture sprite;
-
 	@Override
 	public void initGL() {
 		try {
@@ -217,7 +214,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 			swapBuffers();
 			timer.addTimestamp("finish");
 
-			// timer.print("paintGL timings:", "%20s: %d");
+			timer.print("paintGL timings:", "%20s: %d");
 		} catch (final Exception e) {
 			Logger.error("Exception in paintGL", e);
 		} catch (final Error error) {

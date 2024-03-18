@@ -17,6 +17,7 @@ import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.io.rsc.xml.converters.BendValuesConverter.TemporaryBendValue;
+import log.charter.util.CollectionUtils;
 
 public class ChordConverter implements Converter {
 	private static class TemporaryChordNote extends ChordNote {
@@ -30,12 +31,7 @@ public class ChordConverter implements Converter {
 		public ChordNote transform(final ImmutableBeatsMap beats, final int chordPosition) {
 			this.endPosition(FractionalPosition.fromTimeRounded(beats, chordPosition + length));
 
-			for (int i = 0; i < bendValues.size(); i++) {
-				final BendValue bendValue = bendValues.get(i);
-				if (bendValue instanceof TemporaryBendValue) {
-					bendValues.set(i, ((TemporaryBendValue) bendValue).transform(beats, chordPosition));
-				}
-			}
+			CollectionUtils.transform(bendValues, TemporaryBendValue.class, b -> b.transform(beats, chordPosition));
 
 			return new ChordNote(parent, this);
 		}
@@ -60,6 +56,19 @@ public class ChordConverter implements Converter {
 			}
 
 			return new Chord(this);
+		}
+
+		@Override
+		public String toString() {
+			return "TemporaryChord [position=" + position//
+					+ ", templateId=" + templateId() //
+					+ ", splitIntoNotes=" + splitIntoNotes//
+					+ ", forceNoNotes=" + forceNoNotes //
+					+ ", chordNotes=" + chordNotes //
+					+ ", accent=" + accent//
+					+ ", ignore=" + ignore //
+					+ ", passOtherNotes=" + passOtherNotes //
+					+ "]";
 		}
 	}
 
@@ -178,14 +187,14 @@ public class ChordConverter implements Converter {
 	}
 
 	private Chord generateChordFromPosition(final HierarchicalStreamReader reader, final int templateId) {
-		final String positionString = reader.getAttribute("p");
+		String positionString = reader.getAttribute("p");
 		if (positionString != null) {
 			return new Chord(FractionalPosition.fromString(positionString), templateId);
 		}
 
-		final String lengthString = reader.getAttribute("length");
-		final int length = lengthString == null || lengthString.isBlank() ? 0 : Integer.valueOf(lengthString);
-		return new TemporaryChord(templateId, length);
+		positionString = reader.getAttribute("position");
+		final int position = positionString == null || positionString.isBlank() ? 0 : Integer.valueOf(positionString);
+		return new TemporaryChord(templateId, position);
 	}
 
 	@Override

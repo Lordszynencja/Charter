@@ -68,7 +68,13 @@ public class VocalConverter implements Converter {
 	public Vocal unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		final Vocal vocal = generateVocalFromPosition(reader);
 		vocal.flag(readFlag(reader.getAttribute("flag")));
-		vocal.text(reader.getAttribute("text"));
+
+		final String text = reader.getAttribute("text");
+		if (text == null) {
+			vocal.text(reader.getAttribute("lyric"));
+		} else {
+			vocal.text(text);
+		}
 
 		return vocal;
 	}

@@ -131,9 +131,9 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addSoundHighlight(final int x, final Optional<ChordOrNote> originalSound,
+	public void addSoundHighlight(final int x, final int length, final Optional<ChordOrNote> originalSound,
 			final Optional<ChordTemplate> template, final int string, final boolean drawOriginalStrings) {
-		notes.addSoundHighlight(x, originalSound, template, string, drawOriginalStrings);
+		notes.addSoundHighlight(x, length, originalSound, template, string, drawOriginalStrings);
 	}
 
 	@Override

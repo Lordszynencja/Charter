@@ -6,17 +6,15 @@ import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.tailHeight;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackgroundAndBorder.getExpectedSize;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTimeLength;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import log.charter.data.song.BendValue;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
+import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.EditorBendValueDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackground;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
@@ -63,7 +61,7 @@ public class ModernThemeBends {
 		data = highwayDrawerData;
 	}
 
-	private void addBendValueIcon(final EditorNoteDrawingData note, final int position, final int x, final int y,
+	private void addBendValueIcon(final EditorNoteDrawingData note, final int x, final int y,
 			final BigDecimal bendValue) {
 		if (note.linkPrevious) {
 			return;
@@ -71,10 +69,10 @@ public class ModernThemeBends {
 
 		final String text = "ノ" + formatBendValue(bendValue);
 		final ShapeSize expectedIconSize = getExpectedSize(data.g, bendValueFont, text);
-		final int minBendPositionAfterHead = xToTimeLength(noteHeight / 2 + expectedIconSize.width / 2);
+		final int minBendXAfterHead = noteHeight / 2 + expectedIconSize.width / 2;
 
 		Position2D iconPosition;
-		if (position > minBendPositionAfterHead) {
+		if (x > minBendXAfterHead) {
 			iconPosition = new Position2D(x, y - tailHeight / 2);
 		} else {
 			final int bendY = y - noteHeight / 2 - expectedIconSize.height / 2;
@@ -95,14 +93,12 @@ public class ModernThemeBends {
 
 		boolean linesDrawn = false;
 		Position2D lastBendLinePosition = new Position2D(note.x, getBendLineY(y, BigDecimal.ZERO));
-		for (final BendValue bendValue : note.bendValues) {
-			final int x = timeToX( bendValue.position(data.), data.time);
-
-			final Position2D lineTo = new Position2D(x, getBendLineY(y, bendValue.bendValue));
-			if (bendValue.position() == 0) {
+		for (final EditorBendValueDrawingData bendValue : note.bendValues) {
+			final Position2D lineTo = new Position2D(bendValue.x, getBendLineY(y, bendValue.bendValue));
+			if (bendValue.x == note.x) {
 				if (!note.linkPrevious) {
 					data.noteTails.add(new Line(lastBendLinePosition, lineTo, Color.WHITE, 2));
-					addBendValueIcon(note, bendValue.position(), x, lineTo.y, bendValue.bendValue);
+					addBendValueIcon(note, bendValue.x, lineTo.y, bendValue.bendValue);
 				}
 				lastBendLinePosition = lineTo.move(1, 0);
 
@@ -110,7 +106,7 @@ public class ModernThemeBends {
 			}
 
 			data.noteTails.add(new Line(lastBendLinePosition, lineTo, Color.WHITE, 2));
-			addBendValueIcon(note, bendValue.position(), x, lineTo.y, bendValue.bendValue);
+			addBendValueIcon(note, bendValue.x, lineTo.y, bendValue.bendValue);
 			linesDrawn = true;
 			lastBendLinePosition = lineTo.move(1, 0);
 		}

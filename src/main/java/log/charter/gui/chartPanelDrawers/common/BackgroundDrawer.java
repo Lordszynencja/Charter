@@ -7,8 +7,8 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.timingY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.ScalingUtils.positionToX;
+import static log.charter.util.ScalingUtils.xToPosition;
 import static log.charter.util.Utils.formatTime;
 
 import java.awt.Font;
@@ -76,7 +76,7 @@ public class BackgroundDrawer {
 	}
 
 	private void drawTimestamp(final Graphics2D g, final int time, final int timestampTime) {
-		final int x = timeToX(timestampTime, time);
+		final int x = positionToX(timestampTime, time);
 		if (timestampTime % 1000 == 0) {
 			filledRectangle(new ShapePositionWithSize(x, lanesBottom + 1, 1, secondsMarkerBottom - lanesBottom - 1),
 					ColorLabel.BASE_DARK_TEXT).draw(g);
@@ -90,12 +90,12 @@ public class BackgroundDrawer {
 	}
 
 	private void drawTimeScale(final Graphics2D g, final int time) {
-		int timestampTime = xToTime(-20, time);
+		int timestampTime = xToPosition(-20, time);
 		if (timestampTime < 0) {
 			timestampTime = 0;
 		}
 
-		final int endTime = xToTime(chartPanel.getWidth() + 20, time);
+		final int endTime = xToPosition(chartPanel.getWidth() + 20, time);
 		final int jump = calculateJump(timestampTime, endTime);
 		timestampTime -= timestampTime % jump;
 
@@ -116,9 +116,9 @@ public class BackgroundDrawer {
 		drawTimeScale(g, time);
 
 		g.setColor(ColorLabel.MARKER.color());
-		final int startX = timeToX(0, chartTimeHandler.time());
+		final int startX = positionToX(0, chartTimeHandler.time());
 		g.drawLine(startX, lanesTop + 30, startX, lanesBottom - 30);
-		final int endX = timeToX(chartTimeHandler.maxTime(), chartTimeHandler.time());
+		final int endX = positionToX(chartTimeHandler.maxTime(), chartTimeHandler.time());
 		g.drawLine(endX, lanesTop + 30, endX, lanesBottom - 30);
 	}
 }

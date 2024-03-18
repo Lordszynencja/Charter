@@ -203,4 +203,17 @@ public class Chord extends GuitarSound {
 		return this;
 	}
 
+	@Override
+	public String toString() {
+		return "Chord [position=" + position()//
+				+ ", templateId=" + templateId //
+				+ ", splitIntoNotes=" + splitIntoNotes//
+				+ ", forceNoNotes=" + forceNoNotes //
+				+ ", chordNotes=" + chordNotes //
+				+ ", accent=" + accent//
+				+ ", ignore=" + ignore //
+				+ ", passOtherNotes=" + passOtherNotes //
+				+ "]";
+	}
+
 }

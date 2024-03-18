@@ -9,8 +9,8 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.fil
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.ScalingUtils.positionToX;
+import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -165,7 +165,7 @@ public class BeatsDrawer {
 				bpm = frameData.beats.findBPM(beat, i);
 			}
 
-			final int x = timeToX(beat.position(), frameData.time);
+			final int x = positionToX(beat.position(), frameData.time);
 			if (x < -1000) {
 				continue;
 			}
@@ -180,7 +180,7 @@ public class BeatsDrawer {
 
 		if (frameData.highlightData.type == PositionType.BEAT) {
 			frameData.highlightData.highlightedNonIdPositions.forEach(highlightPosition -> drawingData
-					.addBeatHighlight(timeToX(highlightPosition.position, frameData.time)));
+					.addBeatHighlight(positionToX(highlightPosition.position, frameData.time)));
 		}
 	}
 
@@ -189,27 +189,27 @@ public class BeatsDrawer {
 			final int start = frameData.repeaterSpan.a;
 			final int end = frameData.repeaterSpan.b;
 			if (start > end) {
-				drawingData.addRepeatStart(timeToX(start, frameData.time));
-				drawingData.addRepeatEnd(timeToX(end, frameData.time));
+				drawingData.addRepeatStart(positionToX(start, frameData.time));
+				drawingData.addRepeatEnd(positionToX(end, frameData.time));
 			} else {
-				drawingData.addFullRepeat(timeToX(start, frameData.time), timeToX(end, frameData.time));
+				drawingData.addFullRepeat(positionToX(start, frameData.time), positionToX(end, frameData.time));
 			}
 		} else if (frameData.repeaterSpan.a != null) {
-			drawingData.addRepeatStart(timeToX(frameData.repeaterSpan.a, frameData.time));
+			drawingData.addRepeatStart(positionToX(frameData.repeaterSpan.a, frameData.time));
 		} else if (frameData.repeaterSpan.b != null) {
-			drawingData.addRepeatEnd(timeToX(frameData.repeaterSpan.b, frameData.time));
+			drawingData.addRepeatEnd(positionToX(frameData.repeaterSpan.b, frameData.time));
 		}
 	}
 
 	private void addGrid(final FrameData frameData, final BeatsDrawingData drawingData) {
-		final GridPosition<Beat> gridPosition = GridPosition.create(frameData.beats, xToTime(0, frameData.time));
-		final int maxTime = xToTime(chartPanel.getWidth() + 1, frameData.time);
+		final GridPosition<Beat> gridPosition = GridPosition.create(frameData.beats, xToPosition(0, frameData.time));
+		final int maxTime = xToPosition(chartPanel.getWidth() + 1, frameData.time);
 		while (gridPosition.position() < maxTime) {
 			if (gridPosition.positionId >= frameData.beats.size() - 1) {
 				break;
 			}
 			if (gridPosition.gridId != 0) {
-				drawingData.addGrid(timeToX(gridPosition.position(), frameData.time));
+				drawingData.addGrid(positionToX(gridPosition.position(), frameData.time));
 			}
 
 			gridPosition.next();
@@ -218,7 +218,7 @@ public class BeatsDrawer {
 
 	private void addBookmarks(final FrameData frameData, final BeatsDrawingData drawingData) {
 		frameData.bookmarks.forEach((number, position) -> {
-			final int x = timeToX(position, frameData.time);
+			final int x = positionToX(position, frameData.time);
 			drawingData.addBookmark(number, x);
 		});
 	}

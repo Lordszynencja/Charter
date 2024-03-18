@@ -10,6 +10,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.SectionType;
 import log.charter.gui.CharterFrame;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.util.Utils.TimeUnit;
@@ -42,7 +43,7 @@ public class SectionsValidator {
 	private boolean validateSectionsContainPhrases(final List<EventPoint> sections, final int arrangementId,
 			final String arrangementName) {
 		for (final EventPoint section : sections) {
-			if (section.hasPhrase()) {
+			if (section.hasPhrase() || section.section == SectionType.NO_GUITAR) {
 				continue;
 			}
 

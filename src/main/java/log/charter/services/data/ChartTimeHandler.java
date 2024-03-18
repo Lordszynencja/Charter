@@ -4,8 +4,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.util.CollectionUtils.firstAfter;
 import static log.charter.util.CollectionUtils.lastBefore;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +25,7 @@ import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.util.CollectionUtils;
+import log.charter.util.ScalingUtils;
 import log.charter.util.collections.Pair;
 
 public class ChartTimeHandler {
@@ -46,7 +45,10 @@ public class ChartTimeHandler {
 		public void addFractional(final ImmutableBeatsMap beats,
 				final List<? extends IConstantFractionalPosition> positions) {
 			if (!positions.isEmpty()) {
-				maxTime = max(maxTime, positions.get(positions.size() - 1).position().getPosition(beats));
+				try {
+					maxTime = max(maxTime, positions.get(positions.size() - 1).position().getPosition(beats));
+				} catch (final Exception e) {
+				}
 			}
 		}
 	}
@@ -149,11 +151,11 @@ public class ChartTimeHandler {
 	}
 
 	public int positionToX(final int position) {
-		return timeToX(position, time());
+		return ScalingUtils.positionToX(position, time());
 	}
 
 	public int xToPosition(final int x) {
-		return xToTime(x, time());
+		return ScalingUtils.xToPosition(x, time());
 	}
 
 	private List<? extends IVirtualConstantPosition> getCurrentItems() {

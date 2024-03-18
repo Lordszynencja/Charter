@@ -50,12 +50,14 @@ public class Preview3DDrawData {
 	}
 
 	private int getTimeWithRepeat(int t) {
-		if (repeatManager.isRepeating()) {
-			final int end = repeatManager.repeatEnd();
-			final int length = end - repeatManager.repeatStart();
-			while (t >= end) {
-				t -= length;
-			}
+		if (!repeatManager.isRepeating()) {
+			return t;
+		}
+
+		final int end = repeatManager.repeatEnd();
+		final int length = end - repeatManager.repeatStart();
+		while (t >= end) {
+			t -= length;
 		}
 
 		return t;

@@ -177,6 +177,11 @@ public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPos
 		public IConstantFractionalPositionWithEnd toFraction(final ImmutableBeatsMap beats) {
 			return chord;
 		}
+
+		@Override
+		public String toString() {
+			return "ChordOrNoteForChord[chord=" + chord.toString() + "]";
+		}
 	}
 
 	@XStreamAlias("soundNote")

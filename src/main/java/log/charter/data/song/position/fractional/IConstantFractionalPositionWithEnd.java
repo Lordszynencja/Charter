@@ -45,6 +45,10 @@ public interface IConstantFractionalPositionWithEnd
 	@Override
 	public FractionalPosition endPosition();
 
+	default int endPosition(final ImmutableBeatsMap beats) {
+		return endPosition().position(beats);
+	}
+
 	default FractionalPosition length() {
 		return position().distance(endPosition());
 	}

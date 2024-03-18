@@ -33,9 +33,6 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.str
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedTriangle;
 import static log.charter.util.CollectionUtils.map;
 import static log.charter.util.FileUtils.imagesFolder;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.timeToXLength;
-import static log.charter.util.ScalingUtils.xToTimeLength;
 import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.Color;
@@ -53,7 +50,6 @@ import java.util.Optional;
 
 import log.charter.data.config.Zoom;
 import log.charter.data.song.Anchor;
-import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.EventType;
@@ -63,10 +59,10 @@ import log.charter.data.song.SectionType;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.notes.CommonNoteWithFret;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
+import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.EditorBendValueDrawingData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightLine;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackground;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
@@ -619,18 +615,17 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		return y + tailHeight / 3 - bendOffset;
 	}
 
-	private void addBendValueIcon(final int position, final int x, final int y, final BigDecimal bendValue,
-			final boolean linked) {
+	private void addBendValueIcon(final int x, final int y, final BigDecimal bendValue, final boolean linked) {
 		if (linked) {
 			return;
 		}
 
 		final String text = "ノ" + formatBendValue(bendValue);
 		final ShapeSize expectedIconSize = getExpectedSize(g, bendValueFont, text);
-		final int minBendPositionAfterHead = xToTimeLength(noteWidth / 2 + expectedIconSize.width / 2);
+		final int minBendXAfterHead = noteWidth / 2 + expectedIconSize.width / 2;
 
 		Position2D iconPosition;
-		if (position > minBendPositionAfterHead) {
+		if (x > minBendXAfterHead) {
 			iconPosition = new Position2D(x, y);
 		} else {
 			final int bendY = y - noteHeight / 2 - expectedIconSize.height / 2;
@@ -647,13 +642,11 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		}
 
 		Position2D lastBendLinePosition = new Position2D(note.x, getBendLineY(y, BigDecimal.ZERO));
-		for (final BendValue bendValue : note.bendValues) {
-			final int x = timeToX(note.position + bendValue.position(), time);
-
-			final Position2D lineTo = new Position2D(x, getBendLineY(y, bendValue.bendValue));
+		for (final EditorBendValueDrawingData bendValue : note.bendValues) {
+			final Position2D lineTo = new Position2D(bendValue.x, getBendLineY(y, bendValue.bendValue));
 			noteTails.add(line(lastBendLinePosition, lineTo, Color.WHITE));
 
-			addBendValueIcon(bendValue.position(), x, y, bendValue.bendValue, note.linkPrevious);
+			addBendValueIcon(bendValue.x, y, bendValue.bendValue, note.linkPrevious);
 
 			lastBendLinePosition = lineTo;
 		}
@@ -752,20 +745,12 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		notes.add(strokedRectangle(notePosition, ColorLabel.HIGHLIGHT));
 	}
 
-	private void drawHighlightForNote(final int x, final CommonNoteWithFret note) {
-		addNoteHighlight(x, timeToXLength(note.length(), note.position()), note.string());
-	}
-
-	private void drawHighlightWithoutNote(final int x, final int string) {
-		addNoteHighlight(x, 0, string);
-	}
-
 	@Override
-	public void addSoundHighlight(final int x, final Optional<ChordOrNote> originalSound,
+	public void addSoundHighlight(final int x, final int length, final Optional<ChordOrNote> originalSound,
 			final Optional<ChordTemplate> template, final int string, final boolean drawOriginalStrings) {
 		originalSound.map(sound -> sound.noteWithFrets(string, template.orElse(null)))//
-				.ifPresentOrElse(note -> drawHighlightForNote(x, note.get()), //
-						() -> drawHighlightWithoutNote(x, string));
+				.ifPresentOrElse(note -> addNoteHighlight(x, length, note.get().string()), //
+						() -> addNoteHighlight(x, 0, string));
 	}
 
 	@Override
