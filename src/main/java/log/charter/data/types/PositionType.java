@@ -26,14 +26,14 @@ import log.charter.data.song.position.virtual.IVirtualPosition.PositionDataTypeM
 import log.charter.services.editModes.EditMode;
 
 public enum PositionType {
-	ANCHOR(fractionalPositionManager, ChartData::currentAnchors, PositionWithIdAndType::of), //
-	BEAT(positionManager, ChartData::beats, PositionWithIdAndType::of), //
-	EVENT_POINT(fractionalPositionManager, ChartData::currentEventPoints, PositionWithIdAndType::of), //
-	GUITAR_NOTE(fractionalPositionManager, ChartData::currentSounds, PositionWithIdAndType::of), //
-	HAND_SHAPE(fractionalPositionManager, ChartData::currentHandShapes, PositionWithIdAndType::of), //
-	NONE(positionManager, chartData -> new ArrayList<>(), (beats, id, item) -> PositionWithIdAndType.none()), //
-	TONE_CHANGE(fractionalPositionManager, ChartData::currentToneChanges, PositionWithIdAndType::of), //
-	VOCAL(fractionalPositionManager, chartData -> chartData.currentVocals().vocals, PositionWithIdAndType::of);
+	ANCHOR(false, fractionalPositionManager, ChartData::currentAnchors, PositionWithIdAndType::of), //
+	BEAT(false, positionManager, ChartData::beats, PositionWithIdAndType::of), //
+	EVENT_POINT(false, fractionalPositionManager, ChartData::currentEventPoints, PositionWithIdAndType::of), //
+	GUITAR_NOTE(true, fractionalPositionManager, ChartData::currentSounds, PositionWithIdAndType::of), //
+	HAND_SHAPE(true, fractionalPositionManager, ChartData::currentHandShapes, PositionWithIdAndType::of), //
+	NONE(false, positionManager, chartData -> new ArrayList<>(), (beats, id, item) -> PositionWithIdAndType.none()), //
+	TONE_CHANGE(false, fractionalPositionManager, ChartData::currentToneChanges, PositionWithIdAndType::of), //
+	VOCAL(true, fractionalPositionManager, chartData -> chartData.currentVocals().vocals, PositionWithIdAndType::of);
 
 	private static interface PositionTypeItemsSupplier<T> {
 		List<T> items(ChartData chartData);
@@ -97,11 +97,13 @@ public enum PositionType {
 		}
 	}
 
+	public final boolean isWithEnd;
 	private final PositionTypeManager<?, ?, ?> manager;
 
-	private <C extends IVirtualConstantPosition, P extends C, T extends P> PositionType(
+	private <C extends IVirtualConstantPosition, P extends C, T extends P> PositionType(final boolean isWithEnd,
 			final PositionDataTypeManager<C, P> positionDataTypeManager,
 			final PositionTypeItemsSupplier<T> itemsSupplier, final PositionWithIdMapper<T> itemMapper) {
+		this.isWithEnd = isWithEnd;
 		manager = new PositionTypeManager<>(positionDataTypeManager, itemsSupplier, itemMapper);
 	}
 

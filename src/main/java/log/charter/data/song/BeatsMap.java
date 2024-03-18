@@ -11,11 +11,15 @@ import java.util.ListIterator;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.data.song.position.time.Position;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
+import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.ChartProject;
 import log.charter.util.data.Fraction;
@@ -226,12 +230,32 @@ public class BeatsMap {
 			return rightPosition;
 		}
 
+		public void moveSounds(final Collection<ChordOrNote> sounds, final FractionalPosition toAdd) {
+			for (final ChordOrNote sound : sounds) {
+				sound.position(sound.position().add(toAdd));
+
+				if (sound.isChord()) {
+					final Chord chord = sound.chord();
+					chord.chordNotes.values().forEach(n -> n.endPosition(n.endPosition().add(toAdd)));
+				} else {
+					final Note note = sound.note();
+					note.endPosition(note.endPosition().add(toAdd));
+				}
+			}
+		}
+
 		public void movePositions(final Collection<? extends IVirtualPosition> positions,
 				final FractionalPosition toAdd) {
 			for (final IVirtualPosition position : positions) {
 				final FractionalPosition newPosition = position.toFraction(immutable).position().add(toAdd);
-
 				position.position(immutable, newPosition);
+
+				if (IVirtualPositionWithEnd.class.isAssignableFrom(position.getClass())) {
+					final IVirtualPositionWithEnd positionWithEnd = (IVirtualPositionWithEnd) position;
+					final FractionalPosition newEndPosition = positionWithEnd.endPosition().toFraction(immutable)
+							.position().add(toAdd);
+					positionWithEnd.endPosition(immutable, newEndPosition);
+				}
 			}
 		}
 
@@ -277,7 +301,7 @@ public class BeatsMap {
 			if (fractionalPosition.fraction.numerator > 0) {
 				final int noteDenominator = get(fractionalPosition.beatId).noteDenominator;
 				final Fraction distanceLeftInBeats = distance.multiply(noteDenominator);
-				final Fraction distanceToNextBeat = new Fraction(1).add(fractionalPosition.fraction).negate();
+				final Fraction distanceToNextBeat = new Fraction(1).add(fractionalPosition.fraction.negate());
 				if (distanceLeftInBeats.compareTo(distanceToNextBeat) <= 0) {
 					return fractionalPosition.add(distanceLeftInBeats);
 				}

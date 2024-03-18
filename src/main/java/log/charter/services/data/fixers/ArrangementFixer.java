@@ -186,6 +186,7 @@ public class ArrangementFixer {
 
 		sounds.stream()//
 				.flatMap(s -> s.noteInterfaces())//
+				.filter(n -> !n.linkNext())//
 				.forEach(n -> {
 					if (n.endPosition().compareTo(beats.getMinEndPositionAfter(n).toFraction(beats)) < 0) {
 						n.endPosition(n.position());

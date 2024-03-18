@@ -20,7 +20,6 @@ import log.charter.io.rsc.xml.converters.BendValuesConverter.TemporaryBendValue;
 import log.charter.util.CollectionUtils;
 
 public class NoteConverter implements Converter {
-
 	public static class TemporaryNote extends Note {
 		private final int position;
 		private final int endPosition;

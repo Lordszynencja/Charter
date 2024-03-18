@@ -199,7 +199,7 @@ public class GuitarDrawer {
 
 		for (final HighlightPosition highlightPosition : highlightData.highlightedNonIdPositions) {
 			final int x = positionToX(highlightPosition.position, time);
-			final int length = highlightPosition.length;
+			final int length = positionToX(highlightPosition.position + highlightPosition.length, time) - x;
 			final Optional<ChordTemplate> template = highlightPosition.originalSound//
 					.filter(ChordOrNote::isChord)//
 					.map(s -> chordTemplates.get(s.chord().templateId()));
