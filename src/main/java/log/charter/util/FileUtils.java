@@ -36,4 +36,8 @@ public class FileUtils {
 				.map(file -> file.getName())//
 				.sorted();
 	}
+
+	public static String cleanFileName(final String fileName) {
+		return fileName.replaceAll("[^a-zA-Z0-9_\\- ]", "");
+	}
 }

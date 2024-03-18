@@ -47,6 +47,7 @@ public class Localization {
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CONFIG_PANE_TITLE("Config"), //
 		COPY("Copy"), //
+		COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT("Couldn't create folder with this name, please change the name"), //
 		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 5 file"), //
 		COULDNT_IMPORT_MIDI_TEMPO("Couldn't properly import tempo map from %s"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
