@@ -93,8 +93,7 @@ public class VocalsDrawer {
 		}
 
 		public void addHighlight(final int x, final int length) {
-			final ShapePositionWithSize positionAndSize = getVocalNotePosition(x, time);
-			notes.add(strokedRectangle(positionAndSize.resized(-1, -1, 1, 1), ColorLabel.HIGHLIGHT));
+			notes.add(strokedRectangle(getVocalNotePosition(x, length).resized(-1, -1, 1, 1), ColorLabel.HIGHLIGHT));
 		}
 
 		public void draw(final Graphics2D g) {
