@@ -168,7 +168,7 @@ public class RSXMLLevelTransformer {
 			final ArrangementLevel arrangementLevel, final ImmutableBeatsMap beats) {
 		final Map<FractionalPosition, List<ArrangementNote>> arrangementNotesMap = new HashMap<>();
 		for (final ArrangementNote arrangementNote : arrangementLevel.notes.list) {
-			final FractionalPosition position = FractionalPosition.fromTimeRounded(beats, 0);
+			final FractionalPosition position = FractionalPosition.fromTimeRounded(beats, arrangementNote.time);
 			List<ArrangementNote> positionNotes = arrangementNotesMap.get(position);
 			if (positionNotes == null) {
 				positionNotes = new ArrayList<>();
