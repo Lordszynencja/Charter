@@ -63,6 +63,8 @@ public interface ICopyData {
 		selectionManager.addSelectionForPositions(type, positionsToSelect);
 	}
 
+	public PositionType type();
+
 	public boolean isEmpty();
 
 	public void paste(ChartData chartData, SelectionManager selectionManager, FractionalPosition basePosition,

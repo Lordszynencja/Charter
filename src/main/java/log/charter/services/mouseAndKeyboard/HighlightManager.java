@@ -184,8 +184,9 @@ public class HighlightManager {
 		IVirtualConstantPosition position = snapPosition(positionType, mouseTime);
 		position = max(comparator, new FractionalPosition(),
 				min(comparator, new Position(chartTimeHandler.maxTime()), position));
+		final int positionX = chartTimeHandler.positionToX(position.toPosition(beats).position());
 
-		final PositionWithIdAndType existingPositionCloseToGrid = selectionManager.findExistingPosition(x, y);
+		final PositionWithIdAndType existingPositionCloseToGrid = selectionManager.findExistingPosition(positionX, y);
 		if (existingPositionCloseToGrid != null) {
 			return existingPositionCloseToGrid;
 		}

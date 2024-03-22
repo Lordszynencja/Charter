@@ -111,6 +111,7 @@ public class Config {
 	public static boolean showGrid = true;
 	public static GridType gridType = GridType.BEAT;
 	public static int gridSize = 4;
+	public static boolean selectNotesByTails = false;
 	public static boolean audioFolderChosenForNewSong = false;
 
 	public static boolean debugLogging = false;
@@ -186,6 +187,8 @@ public class Config {
 		valueAccessors.put("gridType",
 				ValueAccessor.forString(v -> gridType = GridType.valueOf(v), () -> gridType.name()));
 		valueAccessors.put("gridSize", ValueAccessor.forInteger(v -> gridSize = v, () -> gridSize));
+		valueAccessors.put("selectNotesByTails",
+				ValueAccessor.forBoolean(v -> selectNotesByTails = v, () -> selectNotesByTails));
 		valueAccessors.put("audioFolderChosenForNewSong",
 				ValueAccessor.forBoolean(v -> audioFolderChosenForNewSong = v, () -> audioFolderChosenForNewSong));
 

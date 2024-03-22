@@ -33,9 +33,9 @@ public class ProjectAudioHandler {
 		}
 	}
 
-	private void saveAudio() {
-		if (chartData.songChart.musicFileName == null
-				|| chartData.songChart.musicFileName.equals(defaultAudioFileName())) {
+	private void saveAudio(final boolean force) {
+		if (!force && chartData.songChart.musicFileName != null
+				&& chartData.songChart.musicFileName.equals(defaultAudioFileName())) {
 			return;
 		}
 
@@ -53,7 +53,7 @@ public class ProjectAudioHandler {
 
 		StretchedFileLoader.removeGeneratedAndClear(chartData.path);
 		waveFormDrawer.recalculateMap();
-		saveAudio();
+		saveAudio(true);
 
 		audioHandler.audioChanged();
 	}
@@ -62,7 +62,7 @@ public class ProjectAudioHandler {
 		this.audio = audio;
 
 		waveFormDrawer.recalculateMap();
-		saveAudio();
+		saveAudio(false);
 
 		audioHandler.audioChanged();
 	}

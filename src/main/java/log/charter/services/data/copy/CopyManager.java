@@ -239,17 +239,76 @@ public class CopyManager {
 		}
 	}
 
+	private void pasteVocals(final CopyData copyData) {
+		final ICopyData selectedCopy = copyData.selectedCopy;
+		if (selectedCopy.isEmpty() || selectedCopy.type() != PositionType.VOCAL) {
+			return;
+		}
+
+		undoSystem.addUndo();
+		selectionManager.clear();
+		selectedCopy.paste(chartData, selectionManager, chartTimeHandler.timeFractional(), true);
+	}
+
+	private void pasteGuitar(final CopyData copyData) {
+		final ICopyData selectedCopy = copyData.selectedCopy;
+		if (selectedCopy.isEmpty()) {
+			return;
+		}
+		switch (selectedCopy.type()) {
+			case EVENT_POINT:
+			case TONE_CHANGE:
+			case ANCHOR:
+			case GUITAR_NOTE:
+			case HAND_SHAPE:
+				break;
+			case NONE:
+			case BEAT:
+			case VOCAL:
+			default:
+				return;
+		}
+
+		undoSystem.addUndo();
+		selectionManager.clear();
+
+		final FractionalPosition currentTime = chartTimeHandler.timeFractional();
+		if (selectedCopy.type() == PositionType.GUITAR_NOTE) {
+			final FullCopyData fullCopy = copyData.fullCopy;
+			if (fullCopy instanceof FullGuitarCopyData) {
+				final FullGuitarCopyData fullGuitarCopyData = (FullGuitarCopyData) fullCopy;
+				fullGuitarCopyData.toneChanges.paste(chartData, selectionManager, currentTime, true);
+				fullGuitarCopyData.anchors.paste(chartData, selectionManager, currentTime, true);
+				fullGuitarCopyData.handShapes.paste(chartData, selectionManager, currentTime, true);
+			}
+
+			selectedCopy.paste(chartData, selectionManager, currentTime, true);
+		} else {
+			selectedCopy.paste(chartData, selectionManager, currentTime, true);
+		}
+	}
+
 	public void paste() {
+		if (modeManager.getMode() == EditMode.EMPTY || modeManager.getMode() == EditMode.TEMPO_MAP) {
+			return;
+		}
+
 		final CopyData copyData = getDataFromClipboard();
 		if (copyData == null || copyData.selectedCopy == null) {
 			return;
 		}
 
-		final ICopyData selectedCopy = copyData.selectedCopy;
-		if (selectedCopy.isEmpty()) {
+		if (modeManager.getMode() == EditMode.VOCALS) {
+			pasteVocals(copyData);
 			return;
 		}
-		if (modeManager.getMode() == EditMode.TEMPO_MAP) {
+		if (modeManager.getMode() == EditMode.GUITAR) {
+			pasteGuitar(copyData);
+			return;
+		}
+
+		final ICopyData selectedCopy = copyData.selectedCopy;
+		if (selectedCopy.isEmpty()) {
 			return;
 		}
 

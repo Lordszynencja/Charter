@@ -268,7 +268,7 @@ public class GuitarDrawer {
 			}
 
 			final ChordTemplate chordTemplate;
-			if (handShape.templateId >= 0 && frameData.arrangement.chordTemplates.size() > handShape.templateId) {
+			if (handShape.templateId != null && frameData.arrangement.chordTemplates.size() > handShape.templateId) {
 				chordTemplate = frameData.arrangement.chordTemplates.get(handShape.templateId);
 			} else {
 				chordTemplate = new ChordTemplate();

@@ -814,8 +814,10 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 		String chordName = chordTemplate.chordName;
 		if (showChordIds) {
-			chordName = (chordName == null || chordName.isBlank()) ? "[" + handShape.templateId + "]"
-					: chordName + " [" + handShape.templateId + "]";
+			final String templateIdString = handShape.templateId == null ? "-" : (handShape.templateId + "");
+
+			chordName = (chordName == null || chordName.isBlank()) ? "[" + templateIdString + "]"
+					: chordName + " [" + templateIdString + "]";
 		}
 		if (chordName != null) {
 			handShapes.add(new Text(new Position2D(x + 2, lanesBottom + 1), handShapesFont, chordName,

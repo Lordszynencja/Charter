@@ -31,6 +31,11 @@ public class EventPointsCopyData implements ICopyData {
 	}
 
 	@Override
+	public PositionType type() {
+		return PositionType.EVENT_POINT;
+	}
+
+	@Override
 	public boolean isEmpty() {
 		return arrangementEventsPoints.isEmpty();
 	}
@@ -72,8 +77,7 @@ public class EventPointsCopyData implements ICopyData {
 						value.events = new ArrayList2<>();
 					}
 
-					final EventPoint eventPoint = arrangement
-							.findOrCreateArrangementEventsPoint(value.position());
+					final EventPoint eventPoint = arrangement.findOrCreateArrangementEventsPoint(value.position());
 					eventPoint.merge(value);
 					positionsToSelect.add(value);
 				}

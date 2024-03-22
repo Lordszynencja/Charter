@@ -19,6 +19,11 @@ public class ToneChangesCopyData implements ICopyData {
 	}
 
 	@Override
+	public PositionType type() {
+		return PositionType.TONE_CHANGE;
+	}
+
+	@Override
 	public boolean isEmpty() {
 		return toneChanges.isEmpty();
 	}

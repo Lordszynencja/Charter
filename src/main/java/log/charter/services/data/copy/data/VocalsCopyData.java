@@ -19,6 +19,11 @@ public class VocalsCopyData implements ICopyData {
 	}
 
 	@Override
+	public PositionType type() {
+		return PositionType.VOCAL;
+	}
+
+	@Override
 	public boolean isEmpty() {
 		return vocals.isEmpty();
 	}

@@ -12,16 +12,11 @@ import static log.charter.util.Utils.mix;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.BendValue;
-import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
-import log.charter.data.song.notes.Chord;
-import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartTimeHandler;
@@ -60,7 +55,7 @@ public class MidiChartNotePlayer implements Initiable {
 	}
 
 	private void playNextSound() {
-		if (nextSoundToPlay == null) {
+		if (nextSoundToPlay == null || nextSoundToPlay.sound == null) {
 			return;
 		}
 
@@ -119,11 +114,16 @@ public class MidiChartNotePlayer implements Initiable {
 
 	private void updateBend(final int time, final FractionalPosition position, final FractionalPosition endPosition,
 			final int string, final List<BendValue> bendValues, final int fret, final Integer slideTo,
-			final boolean unpitchedSlide) {
+			final boolean unpitchedSlide, final boolean vibrato) {
 		double bendValue = getBendValue(time, bendValues, position, endPosition);
 
 		if (slideTo != null) {
 			bendValue += getSlideValue(time, position, endPosition, slideTo - fret, unpitchedSlide);
+		}
+		if (vibrato) {
+			final FractionalPosition inNotePosition = position
+					.distance(FractionalPosition.fromTime(chartData.beats(), time));
+			bendValue += (1 + Math.cos(inNotePosition.fraction.doubleValue() * Math.PI * 4)) * 0.25;
 		}
 
 		midiNotePlayer.updateBend(string, fret, bendValue);
@@ -136,27 +136,11 @@ public class MidiChartNotePlayer implements Initiable {
 				continue;
 			}
 
-			sound.sound.notesWithFrets(chartData.currentArrangement().chordTemplates)//
+			sound.sound.notesWithFrets(chartData.currentChordTemplates())//
 					.forEach(note -> {
-						updateBend(time, note.position(), note.length(), note.string(), note.bendValues(), note.fret(),
-								note.slideTo(), note.unpitchedSlide());
+						updateBend(time, note.position(), note.endPosition(), note.string(), note.bendValues(),
+								note.fret(), note.slideTo(), note.unpitchedSlide(), note.vibrato());
 					});
-
-			if (sound.sound.isNote()) {
-				final Note note = sound.sound.note();
-				updateBend(time, note.position(), note.length(), note.string, note.bendValues, note.fret, note.slideTo,
-						note.unpitchedSlide);
-			} else {
-				final Chord chord = sound.sound.chord();
-				final ChordTemplate chordTemplate = chartData.currentArrangement().chordTemplates
-						.get(chord.templateId());
-				for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
-					final int string = chordNoteEntry.getKey();
-					final ChordNote chordNote = chordNoteEntry.getValue();
-					updateBend(time, chord.position(), chordNote.endPosition(), string, chordNote.bendValues,
-							chordTemplate.frets.get(string), chordNote.slideTo, chordNote.unpitchedSlide);
-				}
-			}
 		}
 
 		soundsPlaying.removeIf(sound -> sound.endPosition < time);
@@ -214,6 +198,10 @@ public class MidiChartNotePlayer implements Initiable {
 
 	private void calculateSoundLengthForNotes(final int noteId, final ChordOrNote sound,
 			final SoundEndCalculationData endCalculationData) {
+		if (sound == null) {
+			return;
+		}
+
 		sound.notes()//
 				.forEach(note -> {
 					final ChordOrNote nextNote = findNextSoundOnString(note.string(), noteId + 1,

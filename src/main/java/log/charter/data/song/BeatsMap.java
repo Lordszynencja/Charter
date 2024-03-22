@@ -442,8 +442,8 @@ public class BeatsMap {
 		}
 	}
 
-	public void truncate(final int audioLength) {
-		beats.removeIf(beat -> beat.position() > audioLength);
+	public void truncate(final int maxTime) {
+		beats.removeIf(beat -> beat.position() > maxTime);
 	}
 
 	public void fixFirstBeatInMeasures() {

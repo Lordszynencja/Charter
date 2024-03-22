@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -499,5 +501,16 @@ public class CollectionUtils {
 	@SafeVarargs
 	public static <T extends Comparable<? super T>> T max(final T... items) {
 		return max(T::compareTo, items);
+	}
+
+	@SafeVarargs
+	public static <T> Set<T> set(final T... items) {
+		final Set<T> set = new HashSet<>();
+
+		for (final T item : items) {
+			set.add(item);
+		}
+
+		return set;
 	}
 }

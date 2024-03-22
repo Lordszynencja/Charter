@@ -35,8 +35,6 @@ import log.charter.services.data.copy.data.VocalsCopyData;
 import log.charter.services.data.copy.data.positions.CopiedAnchor;
 import log.charter.services.data.copy.data.positions.CopiedEventPoint;
 import log.charter.services.data.copy.data.positions.CopiedHandShape;
-import log.charter.services.data.copy.data.positions.CopiedSound.CopiedChord;
-import log.charter.services.data.copy.data.positions.CopiedSound.CopiedNote;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundChord;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundNote;
 import log.charter.services.data.copy.data.positions.CopiedToneChange;
@@ -71,10 +69,8 @@ public class ChartProjectXStreamHandler {
 				ChordOrNoteForNote.class, //
 				ChordTemplate.class, //
 				CopiedAnchor.class, //
-				CopiedChord.class, //
 				CopiedEventPoint.class, //
 				CopiedHandShape.class, //
-				CopiedNote.class, //
 				CopiedSoundChord.class, //
 				CopiedSoundNote.class, //
 				CopiedToneChange.class, //

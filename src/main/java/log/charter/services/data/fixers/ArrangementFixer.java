@@ -110,6 +110,10 @@ public class ArrangementFixer {
 			final Integer lastAnchorId = CollectionUtils
 					.lastBeforeEqual(level.anchors, eventPoint.toFraction(chartData.beats())).findId();
 			if (lastAnchorId == null) {
+				final Anchor newAnchor = new Anchor(eventPoint.position());
+				level.anchors.add(newAnchor);
+				level.anchors.sort(IConstantFractionalPosition::compareTo);
+
 				continue;
 			}
 
@@ -232,5 +236,6 @@ public class ArrangementFixer {
 			MissingFingersOnChordTemplatesFixer.fix(arrangement);
 		}
 
+		chartData.songChart.beatsMap.truncate(chartTimeHandler.maxNonBeatTime());
 	}
 }

@@ -62,7 +62,7 @@ public class FractionalPosition implements IConstantFractionalPosition {
 	}
 
 	private static FractionalPosition fromTime(final ImmutableBeatsMap beats, final int time, final boolean round) {
-		final Integer beatId = lastBeforeEqual(beats, new Position(time), IConstantPosition::compareTo).findId();
+		Integer beatId = lastBeforeEqual(beats, new Position(time), IConstantPosition::compareTo).findId();
 		if (beatId == null) {
 			return new FractionalPosition();
 		}
@@ -79,8 +79,14 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		final Beat beat = beats.get(usedBeatId);
 		final Beat nextBeat = beats.get(usedBeatId + 1);
 		final int beatLength = nextBeat.position() - beat.position();
+		if (beatLength > 0) {
+			beatId = (time - beat.position()) / beatLength;
+		}
 		final int beatPosition = beat.position() + beatLength * (beatId - usedBeatId);
 		final int timeInBeat = time - beatPosition;
+		if (beatLength == 0) {
+			return new FractionalPosition(beatId);
+		}
 
 		final Fraction fraction = round ? generateFractionWithRounding(timeInBeat, beatLength)
 				: new Fraction(timeInBeat, beatLength);

@@ -25,10 +25,14 @@ public class HandShapesCopyData implements ICopyData {
 	private final List<ChordTemplate> chordTemplates;
 	private final List<CopiedHandShape> handShapes;
 
-	public HandShapesCopyData(final List<ChordTemplate> chordTemplates,
-			final List<CopiedHandShape> handShapes) {
+	public HandShapesCopyData(final List<ChordTemplate> chordTemplates, final List<CopiedHandShape> handShapes) {
 		this.chordTemplates = chordTemplates;
 		this.handShapes = handShapes;
+	}
+
+	@Override
+	public PositionType type() {
+		return PositionType.HAND_SHAPE;
 	}
 
 	@Override

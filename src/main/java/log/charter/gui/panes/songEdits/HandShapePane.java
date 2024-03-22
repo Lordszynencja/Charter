@@ -14,7 +14,7 @@ public class HandShapePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private static ChordTemplate prepareTemplateFromData(final ChartData data, final HandShape handShape) {
-		return handShape.templateId == -1 ? new ChordTemplate()
+		return handShape.templateId == null ? new ChordTemplate()
 				: new ChordTemplate(data.currentArrangement().chordTemplates.get(handShape.templateId));
 	}
 

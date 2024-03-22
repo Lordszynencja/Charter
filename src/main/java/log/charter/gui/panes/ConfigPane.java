@@ -47,6 +47,7 @@ public final class ConfigPane extends ParamsPane {
 	private boolean leftHanded = Config.leftHanded;
 	private boolean showChordIds = Config.showChordIds;
 	private boolean showGrid = Config.showGrid;
+	private boolean selectNotesByTails = Config.selectNotesByTails;
 	private boolean createDefaultStretchesInBackground = Config.createDefaultStretchesInBackground;
 	private int FPS = Config.FPS;
 	private int backupDelay = Config.backupDelay;
@@ -95,7 +96,11 @@ public final class ConfigPane extends ParamsPane {
 		addConfigCheckbox(row, 180, 0, Label.INVERT_STRINGS_IN_PREVIEW, invertStrings3D, val -> invertStrings3D = val);
 		addConfigCheckbox(row++, 380, 0, Label.LEFT_HANDED, leftHanded, val -> leftHanded = val);
 		addConfigCheckbox(row++, 20, 0, Label.SHOW_CHORD_IDS, showChordIds, val -> showChordIds = val);
-		addConfigCheckbox(row++, 20, 0, Label.SHOW_GRID, showGrid, val -> showGrid = val);
+
+		addConfigCheckbox(row, 20, 0, Label.SHOW_GRID, showGrid, val -> showGrid = val);
+		addConfigCheckbox(row++, 180, 0, Label.SELECT_NOTES_BY_TAILS, selectNotesByTails,
+				val -> selectNotesByTails = val);
+
 		addConfigCheckbox(row++, 20, 0, Label.CREATE_DEFAULT_STRETCHES_IN_BACKGROUND,
 				createDefaultStretchesInBackground, val -> createDefaultStretchesInBackground = val);
 		addIntConfigValue(row++, 20, 0, Label.FPS, FPS, 50, //
@@ -176,6 +181,7 @@ public final class ConfigPane extends ParamsPane {
 		Config.leftHanded = leftHanded;
 		Config.showChordIds = showChordIds;
 		Config.showGrid = showGrid;
+		Config.selectNotesByTails = selectNotesByTails;
 
 		Config.FPS = FPS;
 

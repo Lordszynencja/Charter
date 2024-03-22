@@ -97,6 +97,7 @@ public class NewProjectCreator {
 		}
 
 		final SongChart songChart = new SongChart(new BeatsMap(musicData.msLength()));
+		songChart.musicFileName = songFile.getName();
 		songChart.artistName(songData.getOrDefault("artist", ""));
 		songChart.title(songData.getOrDefault("title", ""));
 		songChart.albumName(songData.getOrDefault("album", ""));

@@ -26,6 +26,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.songEdits.VocalPane;
+import log.charter.services.ActionHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.Selection;
@@ -35,6 +36,7 @@ import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 
 public class MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener {
+	private ActionHandler actionHandler;
 	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
@@ -184,6 +186,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 		mouseButtonPressReleaseHandler.remove(e);
 		cancelAllActions();
+		actionHandler.clearFrets();
 	}
 
 	private void straightenBeats(final int from, final int to) {

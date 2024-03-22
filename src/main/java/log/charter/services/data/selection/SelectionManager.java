@@ -1,5 +1,6 @@
 package log.charter.services.data.selection;
 
+import static log.charter.data.config.Config.selectNotesByTails;
 import static log.charter.util.CollectionUtils.closest;
 import static log.charter.util.ScalingUtils.xToPosition;
 
@@ -98,8 +99,25 @@ public class SelectionManager implements Initiable {
 		}
 
 		final PositionWithIdAndType closest = closestLink.link;
-		if (x - chartTimeHandler.positionToX(closest.asConstantPosition().position()) < -20
-				|| x - chartTimeHandler.positionToX(closest.endPosition().asConstantPosition().position()) > 20) {
+		final int closestX = chartTimeHandler.positionToX(closest.asConstantPosition().position());
+		if (x - closestX < -20 || x - closestX > 20) {
+			return null;
+		}
+
+		return closest;
+	}
+
+	private PositionWithIdAndType findWithLengthExisting(final int x, final List<PositionWithLink> positionsWithLinks) {
+		final int position = xToPosition(x, chartTimeHandler.time());
+		final PositionWithLink closestLink = closest(positionsWithLinks, new ConstantPosition(position)).find();
+		if (closestLink == null) {
+			return null;
+		}
+
+		final PositionWithIdAndType closest = closestLink.link;
+		final int closestX = chartTimeHandler.positionToX(closest.asConstantPosition().position());
+		final int closestEndX = chartTimeHandler.positionToX(closest.endPosition().asConstantPosition().position());
+		if (x - closestX < -20 || x - closestEndX > 20) {
 			return null;
 		}
 
@@ -110,8 +128,10 @@ public class SelectionManager implements Initiable {
 		final PositionType positionType = PositionType.fromY(y, modeManager.getMode());
 		final List<PositionWithIdAndType> positions = positionType.getPositionsWithIdsAndTypes(chartData);
 
-		if (positionType == PositionType.HAND_SHAPE || positionType == PositionType.VOCAL) {
-			return findExisting(x, generateLinksWithLength(positions));
+		if (positionType == PositionType.VOCAL//
+				|| positionType == PositionType.HAND_SHAPE//
+				|| (positionType == PositionType.GUITAR_NOTE && selectNotesByTails)) {
+			return findWithLengthExisting(x, generateLinksWithLength(positions));
 		}
 
 		return findExisting(x, generateLinks(positions));

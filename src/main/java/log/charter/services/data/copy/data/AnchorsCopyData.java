@@ -19,6 +19,11 @@ public class AnchorsCopyData implements ICopyData {
 	}
 
 	@Override
+	public PositionType type() {
+		return PositionType.ANCHOR;
+	}
+
+	@Override
 	public boolean isEmpty() {
 		return anchors.isEmpty();
 	}
@@ -29,5 +34,4 @@ public class AnchorsCopyData implements ICopyData {
 		ICopyData.simplePasteFractional(chartData, selectionManager, PositionType.ANCHOR, basePosition, anchors,
 				convertFromBeats);
 	}
-
 }

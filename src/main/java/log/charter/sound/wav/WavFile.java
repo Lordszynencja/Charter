@@ -475,7 +475,7 @@ public class WavFile {
 	}
 
 	/**
-	 * Read some number of frames from the buffer into a flat int array.
+	 * Read some number of frames from the buffer into a flat short array.
 	 *
 	 * @param sampleBuffer    the buffer to read samples into
 	 * @param numFramesToRead the number of frames to read
@@ -489,7 +489,7 @@ public class WavFile {
 
 	/**
 	 * Read some number of frames from a specific offset in the buffer into a flat
-	 * int array.
+	 * short array.
 	 *
 	 * @param sampleBuffer    the buffer to read samples into
 	 * @param offset          the buffer offset to read from
@@ -520,7 +520,7 @@ public class WavFile {
 	}
 
 	/**
-	 * Read some number of frames from the buffer into a multi-dimensional int
+	 * Read some number of frames from the buffer into a multi-dimensional short
 	 * array.
 	 *
 	 * @param sampleBuffer    the buffer to read samples into
@@ -535,7 +535,7 @@ public class WavFile {
 
 	/**
 	 * Read some number of frames from a specific offset in the buffer into a
-	 * multi-dimensional int array. s
+	 * multi-dimensional short array.
 	 *
 	 * @param sampleBuffer    the buffer to read samples into
 	 * @param offset          the buffer offset to read from
@@ -555,7 +555,13 @@ public class WavFile {
 			}
 
 			for (int c = 0; c < numChannels; c++) {
-				sampleBuffer[c][offset] = (short) readSample();
+				final long sample = readSample();
+				sampleBuffer[c][offset] = (short) switch (bytesPerSample) {
+					case 0 -> 0;
+					case 1 -> sample << 8;
+					case 2 -> sample;
+					default -> sample >> ((bytesPerSample - 2) * 8);
+				};
 			}
 
 			offset++;

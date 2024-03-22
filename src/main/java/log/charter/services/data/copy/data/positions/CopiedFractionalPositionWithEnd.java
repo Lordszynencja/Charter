@@ -13,7 +13,7 @@ public abstract class CopiedFractionalPositionWithEnd<T extends IFractionalPosit
 
 	public CopiedFractionalPositionWithEnd(final FractionalPosition basePosition, final T position) {
 		super(basePosition, position);
-		ep = position.endPosition();
+		ep = position.endPosition().add(basePosition.negate());
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public abstract class CopiedFractionalPositionWithEnd<T extends IFractionalPosit
 			return null;
 		}
 
-		value.endPosition(basePosition.add(ep));
+		value.endPosition(ep.add(basePosition));
 
 		return value;
 	}

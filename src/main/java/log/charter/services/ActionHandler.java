@@ -255,4 +255,8 @@ public class ActionHandler implements Initiable {
 			actionHandler.run();
 		}
 	}
+
+	public void clearFrets() {
+		lastFretNumber = 0;
+	}
 }

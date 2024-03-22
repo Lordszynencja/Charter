@@ -4,10 +4,16 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.types.PositionType;
 import log.charter.services.data.selection.SelectionManager;
 
 @XStreamAlias("emptyCopyData")
 public class EmptyCopyData implements ICopyData, FullCopyData {
+
+	@Override
+	public PositionType type() {
+		return PositionType.NONE;
+	}
 
 	@Override
 	public boolean isEmpty() {

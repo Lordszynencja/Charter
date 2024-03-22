@@ -119,6 +119,28 @@ public class ChartTimeHandler {
 		return fractionalTime;
 	}
 
+	public int maxNonBeatTime() {
+		final MaxPositionAccumulator accumulator = new MaxPositionAccumulator();
+
+		if (modeManager.getMode() != EditMode.EMPTY) {
+			final ImmutableBeatsMap beats = chartData.beats();
+			accumulator.add(audioTime());
+
+			for (final Arrangement arrangement : chartData.songChart.arrangements) {
+				accumulator.addFractional(beats, arrangement.eventPoints);
+				accumulator.addFractional(beats, arrangement.toneChanges);
+
+				for (final Level level : arrangement.levels) {
+					accumulator.addFractional(beats, level.anchors);
+					accumulator.addFractional(beats, level.sounds);
+					accumulator.addFractional(beats, level.handShapes);
+				}
+			}
+		}
+
+		return accumulator.maxTime;
+	}
+
 	public int maxTime() {
 		final MaxPositionAccumulator accumulator = new MaxPositionAccumulator();
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
@@ -21,6 +22,7 @@ import log.charter.services.data.copy.data.positions.CopiedSound;
 import log.charter.services.data.selection.SelectionManager;
 
 @XStreamAlias("soundsCopyData")
+@XStreamInclude(CopiedSound.class)
 public class SoundsCopyData implements ICopyData {
 	private final List<ChordTemplate> chordTemplates;
 	private final List<CopiedSound> sounds;
@@ -28,6 +30,11 @@ public class SoundsCopyData implements ICopyData {
 	public SoundsCopyData(final List<ChordTemplate> chordTemplates, final List<CopiedSound> sounds) {
 		this.chordTemplates = chordTemplates;
 		this.sounds = sounds;
+	}
+
+	@Override
+	public PositionType type() {
+		return PositionType.GUITAR_NOTE;
 	}
 
 	@Override

@@ -136,13 +136,17 @@ public class MidiNotePlayer {
 		int actualNote = lastNotes[string];
 		bendValue += getMidiNote(string, fret, chartData.currentStrings())
 				+ chartData.currentArrangement().tuning.getTuning()[string] - actualNote;
-		while (bendValue >= 2) {
-			bendValue -= 2;
-			actualNote += 2;
+
+		int roundedValue = (int) Math.round(bendValue);
+		while (roundedValue > 0) {
+			roundedValue--;
+			bendValue--;
+			actualNote++;
 		}
 		while (bendValue < 0) {
-			bendValue += 2;
-			actualNote -= 2;
+			roundedValue++;
+			bendValue++;
+			actualNote--;
 		}
 
 		final int pitchBend = getPitchBend(bendValue);

@@ -111,6 +111,7 @@ public class Localization {
 		PASTE("Paste"), //
 		REDO("Redo"), //
 		SELECT_ALL_NOTES("Select all notes"), //
+		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
 		SHOW_CHORD_IDS("Show chord ids"), //
 		SHOW_GRID("Show grid"), //
 		SONG_OPTIONS("Song options"), //
