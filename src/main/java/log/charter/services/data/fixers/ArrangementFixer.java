@@ -57,15 +57,15 @@ public class ArrangementFixer {
 	private void addMissingHandShapes(final Level level) {
 		final LinkedList<Chord> chordsForHandShapes = level.sounds.stream()//
 				.filter(chordOrNote -> chordOrNote.isChord() && !chordOrNote.chord().splitIntoNotes)//
-				.map(chordOrNote -> chordOrNote.chord())//
+				.map(ChordOrNote::chord)//
 				.collect(Collectors.toCollection(LinkedList::new));
 		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
 		for (final HandShape handShape : level.handShapes) {
-			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position() < handShape.position()) {
-				chordsWithoutHandShapes.add(chordsForHandShapes.remove(0));
+			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.getFirst().position() < handShape.position()) {
+				chordsWithoutHandShapes.add(chordsForHandShapes.removeFirst());
 			}
-			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).position() < handShape.endPosition()) {
-				chordsForHandShapes.remove(0);
+			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.getFirst().position() < handShape.endPosition()) {
+				chordsForHandShapes.removeFirst();
 			}
 		}
 		chordsWithoutHandShapes.addAll(chordsForHandShapes);
@@ -90,13 +90,13 @@ public class ArrangementFixer {
 				continue;
 			}
 
-			final int sectionId = CollectionUtils.findLastIdBeforeEqual(sections, eventPoint);
-			if (sectionId != -1 && sections.get(sectionId).section == SectionType.NO_GUITAR) {
+			final Integer sectionId = CollectionUtils.findLastIdBeforeEqual(sections, eventPoint);
+			if (sectionId != null && sections.get(sectionId).section == SectionType.NO_GUITAR) {
 				continue;
 			}
 
-			final int lastAnchorId = CollectionUtils.findLastIdBeforeEqual(level.anchors, eventPoint);
-			if (lastAnchorId == -1) {
+			final Integer lastAnchorId = CollectionUtils.findLastIdBeforeEqual(level.anchors, eventPoint);
+			if (lastAnchorId == null) {
 				continue;
 			}
 
@@ -162,8 +162,8 @@ public class ArrangementFixer {
 
 	private void fixLevel(final Arrangement arrangement, final Level level) {
 		level.sounds//
-				.stream().filter(chordOrNote -> chordOrNote.isNote())//
-				.map(chordOrNote -> chordOrNote.note())//
+				.stream().filter(ChordOrNote::isNote)//
+				.map(ChordOrNote::note)//
 				.forEach(note -> note.length(note.length() >= Config.minTailLength ? note.length() : 0));
 
 		level.sounds
@@ -182,7 +182,7 @@ public class ArrangementFixer {
 	}
 
 	public void fixArrangements() {
-		final int start = chartData.songChart.beatsMap.beats.get(0).position();
+		final int start = chartData.songChart.beatsMap.beats.getFirst().position();
 		final int end = chartTimeHandler.maxTime();
 
 		chartData.songChart.beatsMap.makeBeatsUntilSongEnd(end);
