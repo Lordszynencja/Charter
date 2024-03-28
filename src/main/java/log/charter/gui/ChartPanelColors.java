@@ -155,20 +155,14 @@ public class ChartPanelColors {
 
 		final Color base = ColorLabel.valueOf("NOTE_" + stringId).color();
 
-		switch (type) {
-			case LANE:
-				return ColorUtils.multiplyColor(base, 0.8); //
-			case LANE_BRIGHT:
-				return ColorUtils.multiplyColor(base, 1); //
-			case NOTE:
-				return base;
-			case NOTE_TAIL:
-				return ColorUtils.multiplyColor(base, 0.66); //
-			case NOTE_ACCENT:
-				return ColorUtils.multiplyColor(base, 0.8); //
-			default:
-				return base;
-		}
+        return switch (type) {
+            case LANE -> ColorUtils.multiplyColor(base, 0.8); //
+            case LANE_BRIGHT -> ColorUtils.multiplyColor(base, 1); //
+            case NOTE -> base;
+            case NOTE_TAIL -> ColorUtils.multiplyColor(base, 0.66); //
+            case NOTE_ACCENT -> ColorUtils.multiplyColor(base, 0.8); //
+            default -> base;
+        };
 	}
 
 	private static Map<ColorLabel, Color> colors = new HashMap<>();

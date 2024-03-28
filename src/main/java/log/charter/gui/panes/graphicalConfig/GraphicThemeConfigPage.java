@@ -6,6 +6,7 @@ import static log.charter.gui.components.simple.TextInputWithValidation.generate
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
@@ -111,7 +112,7 @@ public class GraphicThemeConfigPage implements Page {
 				break;
 			}
 		}
-		themeSelect.addActionListener(e -> onThemeChange(((ThemeHolder) themeSelect.getSelectedItem()).theme));
+		themeSelect.addActionListener(e -> onThemeChange(((ThemeHolder) Objects.requireNonNull(themeSelect.getSelectedItem())).theme));
 
 		themeField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_THEME, 60, 150, 20, themeSelect, LabelPosition.LEFT);
 		panel.add(themeField, position);

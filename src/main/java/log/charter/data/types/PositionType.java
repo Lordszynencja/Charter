@@ -73,7 +73,7 @@ public enum PositionType {
 		if (y < lanesTop) {
 			return NONE;
 		}
-		if (y >= lanesTop && y < lanesBottom) {
+		if (y < lanesBottom) {
 			return VOCAL;
 		}
 

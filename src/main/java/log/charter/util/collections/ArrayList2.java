@@ -3,6 +3,7 @@ package log.charter.util.collections;
 import static java.util.stream.Collectors.toCollection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -27,9 +28,7 @@ public class ArrayList2<T> extends ArrayList<T> {
 	@SafeVarargs
 	public ArrayList2(final T... elements) {
 		super();
-		for (final T element : elements) {
-			add(element);
-		}
+        this.addAll(Arrays.asList(elements));
 	}
 
 	public T getLast() {

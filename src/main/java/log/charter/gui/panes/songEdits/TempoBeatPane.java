@@ -40,7 +40,7 @@ public class TempoBeatPane extends ParamsPane {
 	}
 
 	private BigDecimal calculateBPM(final Beat beat) {
-		return roundBPM(new BigDecimal(data.songChart.beatsMap.findBPM(beat)));
+		return roundBPM(BigDecimal.valueOf(data.songChart.beatsMap.findBPM(beat)));
 	}
 
 	public TempoBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
@@ -81,7 +81,10 @@ public class TempoBeatPane extends ParamsPane {
 		undoSystem.addUndo();
 
 		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
-		final int beatId = findClosestId(beats, beat.position());
+		final Integer beatId = findClosestId(beats, beat.position());
+		if (beatId == null) {
+			return;
+		}
 
 		if (bpm.compareTo(calculateBPM(beat)) != 0) {
 			beat.anchor = true;

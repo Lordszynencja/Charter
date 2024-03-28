@@ -1,6 +1,7 @@
 package log.charter.gui.panes.songEdits;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.JCheckBox;
 
@@ -92,7 +93,7 @@ public class VocalPane extends ParamsPane {
 	}
 
 	private void createAndExit(final int position) {
-		if (text == null || "".equals(text)) {
+		if (text == null || text.isEmpty()) {
 			return;
 		}
 
@@ -104,13 +105,13 @@ public class VocalPane extends ParamsPane {
 	}
 
 	private void saveAndExit(final int id, final Vocal vocal) {
-		if (text == null || "".equals(text)) {
+		if (text == null || text.isEmpty()) {
 			undoSystem.addUndo();
 			data.songChart.vocals.removeNote(id);
 			return;
 		}
 
-		if (vocal.getText() != text || vocal.isWordPart() != wordPart || vocal.isPhraseEnd() != phraseEnd) {
+		if (!Objects.equals(vocal.getText(), text) || vocal.isWordPart() != wordPart || vocal.isPhraseEnd() != phraseEnd) {
 			undoSystem.addUndo();
 			vocal.lyric = text;
 			vocal.setWordPart(wordPart);
@@ -119,13 +120,13 @@ public class VocalPane extends ParamsPane {
 	}
 
 	private void saveAndExit(final int id, final Vocal vocal, final List<Selection<Vocal>> remainingVocals) {
-		if (text == null || "".equals(text)) {
+		if (text == null || text.isEmpty()) {
 			undoSystem.addUndo();
 			data.songChart.vocals.removeNote(id);
 			return;
 		}
 
-		if (vocal.getText() != text || vocal.isWordPart() != wordPart || vocal.isPhraseEnd() != phraseEnd) {
+		if (!Objects.equals(vocal.getText(), text) || vocal.isWordPart() != wordPart || vocal.isPhraseEnd() != phraseEnd) {
 			undoSystem.addUndo();
 			vocal.lyric = text;
 			vocal.setWordPart(wordPart);

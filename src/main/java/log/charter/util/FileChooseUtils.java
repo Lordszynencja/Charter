@@ -35,6 +35,9 @@ public class FileChooseUtils {
 		});
 
 		final File file = showDialog(parent, chooser);
+		if (file == null) {
+			return null;
+		}
 		final String songName = file.getName();
 		final int dotIndex = songName.lastIndexOf('.');
 		final String extension = songName.substring(dotIndex + 1).toLowerCase();

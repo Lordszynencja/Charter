@@ -14,7 +14,6 @@ public class VocalUndoState extends UndoState {
 
 	public VocalUndoState(final ChartData data) {
 		this(data, false);
-
 	}
 
 	@Override

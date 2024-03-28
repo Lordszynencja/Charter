@@ -118,24 +118,23 @@ public class BeatsMap {
 	public void fixFirstBeatInMeasures() {
 		final List<Beat> beatsFromPreviousMeasure = new ArrayList<>();
 		int previousBIM = -1;
-		for (int i = 0; i < beats.size(); i++) {
-			final Beat beat = beats.get(i);
-			if (beat.beatsInMeasure != previousBIM) {
-				for (final Beat beatFromPreviousMeasure : beatsFromPreviousMeasure) {
-					beatFromPreviousMeasure.beatsInMeasure = beatsFromPreviousMeasure.size();
-				}
-				beat.firstInMeasure = true;
-				previousBIM = beat.beatsInMeasure;
-				beatsFromPreviousMeasure.clear();
-			} else if (beatsFromPreviousMeasure.size() >= previousBIM) {
-				beatsFromPreviousMeasure.clear();
-				beat.firstInMeasure = true;
-			} else {
-				beat.firstInMeasure = false;
-			}
+        for (final Beat beat : beats) {
+            if (beat.beatsInMeasure != previousBIM) {
+                for (final Beat beatFromPreviousMeasure : beatsFromPreviousMeasure) {
+                    beatFromPreviousMeasure.beatsInMeasure = beatsFromPreviousMeasure.size();
+                }
+                beat.firstInMeasure = true;
+                previousBIM = beat.beatsInMeasure;
+                beatsFromPreviousMeasure.clear();
+            } else if (beatsFromPreviousMeasure.size() >= previousBIM) {
+                beatsFromPreviousMeasure.clear();
+                beat.firstInMeasure = true;
+            } else {
+                beat.firstInMeasure = false;
+            }
 
-			beatsFromPreviousMeasure.add(beat);
-		}
+            beatsFromPreviousMeasure.add(beat);
+        }
 	}
 
 	public int getPositionWithAddedGrid(final int position, final int gridAdditions) {
@@ -223,9 +222,9 @@ public class BeatsMap {
 	}
 
 	public void setBPM(final int beatId, final double newBPM, final int audioLength) {
-		for (int i = beats.size() - 1; i > beatId; i--) {
-			beats.remove(i);
-		}
+        if (beats.size() > beatId + 1) {
+            beats.subList(beatId + 1, beats.size()).clear();
+        }
 
 		final Beat startBeat = beats.getLast();
 		final int startPosition = startBeat.position();
@@ -256,7 +255,10 @@ public class BeatsMap {
 		return findBPM(beat, findClosestId(beats, beat.position()));
 	}
 
-	public double findBPM(final Beat beat, final int beatId) {
+	public double findBPM(final Beat beat, final Integer beatId) {
+		if (beatId == null) {
+			return 0;
+		}
 		int nextAnchorId = beats.size() - 1;
 
 		for (int i = beatId + 1; i < beats.size(); i++) {

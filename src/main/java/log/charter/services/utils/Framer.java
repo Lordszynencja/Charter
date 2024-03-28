@@ -30,7 +30,7 @@ public class Framer {
 
 	private void sleepUntilNextFrame() throws InterruptedException {
 		previousFrameTime = frameTime;
-		frameTime += frameLength;
+		frameTime += (long)frameLength;
 		final long currentTime = System.nanoTime();
 		if (frameTime <= currentTime) {
 			frameTime = currentTime;

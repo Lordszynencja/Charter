@@ -66,7 +66,7 @@ public class ChordNameAdder {
 		return soundToSimpleName(root + 4, true) + additions;
 	}
 
-	private static ArrayList2<ChordNameAdder> adders = new ArrayList2<>(
+	private static final ArrayList2<ChordNameAdder> adders = new ArrayList2<>(
 			new ChordNameAdder(makeSimpleChecker(1, 4, 7, 10), root -> chordName(root, "7(b9)")), //
 			new ChordNameAdder(makeSimpleChecker(1, 4, 8, 10), root -> chordName(root, "7(b9,b13)")), //
 			new ChordNameAdder(makeSimpleChecker(1, 4, 9, 10), root -> chordName(root, "13(b9)")), //

@@ -1,6 +1,7 @@
 package log.charter.gui.menuHandlers;
 
 import java.io.File;
+import java.util.Objects;
 
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
@@ -27,7 +28,7 @@ class InfoMenuHandler extends CharterMenuHandler {
 		final JMenu languagesMenu = createMenu(Label.INFO_MENU_LANGUAGE);
 		final File languagesFolder = new File(Localization.languagesFolder);
 		if (languagesFolder.isDirectory()) {
-			for (final String fileName : languagesFolder.list((dir, name) -> name.endsWith(".txt"))) {
+			for (final String fileName : Objects.requireNonNull(languagesFolder.list((dir, name) -> name.endsWith(".txt")))) {
 				final String language = fileName.substring(0, fileName.lastIndexOf('.'));
 				languagesMenu.add(createItem(language, () -> Localization.changeLanguage(language, charterMenuBar)));
 			}

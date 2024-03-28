@@ -9,6 +9,7 @@ import static log.charter.util.SoundUtils.soundToFullName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JCheckBox;
@@ -144,7 +145,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 		tuningSelect = new JComboBox<>(values.toArray(new TuningTypeHolder[0]));
 		tuningSelect.setSelectedIndex(tuning.tuningType.ordinal());
 		tuningSelect.addActionListener(
-				e -> onTuningSelected(((TuningTypeHolder) tuningSelect.getSelectedItem()).tuningType));
+				e -> onTuningSelected(((TuningTypeHolder) Objects.requireNonNull(tuningSelect.getSelectedItem())).tuningType));
 		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_TUNING_TYPE, 0);
 		this.add(tuningSelect, 75, getY(row.getAndIncrement()), 200, 20);
 	}

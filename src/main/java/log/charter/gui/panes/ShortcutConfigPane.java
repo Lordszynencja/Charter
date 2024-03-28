@@ -141,7 +141,7 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 	}
 
 	private ScrollableRowedPanel makePanel() {
-		final int rows = actionGroups.stream().collect(Collectors.summingInt(group -> 1 + group.b.size()));
+		final int rows = actionGroups.stream().mapToInt(group -> 1 + group.b.size()).sum();
 		return new ScrollableRowedPanel(400, rows);
 	}
 

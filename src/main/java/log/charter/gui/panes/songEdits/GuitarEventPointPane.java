@@ -1,6 +1,7 @@
 package log.charter.gui.panes.songEdits;
 
 import java.awt.Dimension;
+import java.util.Objects;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -109,7 +110,7 @@ public class GuitarEventPointPane extends ParamsPane {
 		}
 		sectionTypeInput.setSelectedIndex(section == null ? 0 : 1 + section.ordinal());
 		sectionTypeInput
-				.addItemListener(e -> section = ((SectionTypeListValue) sectionTypeInput.getSelectedItem()).type);
+				.addItemListener(e -> section = ((SectionTypeListValue) Objects.requireNonNull(sectionTypeInput.getSelectedItem())).type);
 
 		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_SECTION_TYPE, 0);
 		this.add(sectionTypeInput, 100, getY(row.getAndIncrement()), 200, 20);

@@ -23,7 +23,7 @@ public class Timer {
 	public void print(final String label, final String format) {
 		System.out.println(label);
 		timings.forEach(pair -> {
-			System.out.println(String.format(format, pair.a, pair.b));
+			System.out.printf((format) + "%n", pair.a, pair.b);
 		});
 	}
 }

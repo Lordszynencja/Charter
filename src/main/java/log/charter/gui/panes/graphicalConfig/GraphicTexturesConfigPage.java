@@ -4,6 +4,7 @@ import static log.charter.util.FileUtils.listDirectories;
 import static log.charter.util.FileUtils.listFiles;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import log.charter.data.config.GraphicalConfig;
@@ -68,11 +69,11 @@ public class GraphicTexturesConfigPage implements Page {
 
 	public void save(final CharterContext context) {
 		boolean texturesChanged = false;
-		if (!inlayField.field.getSelectedItem().equals(GraphicalConfig.inlay)) {
+		if (!Objects.equals(inlayField.field.getSelectedItem(), GraphicalConfig.inlay)) {
 			GraphicalConfig.inlay = inlayField.field.getSelectedItem();
 			texturesChanged = true;
 		}
-		if (!texturePackField.field.getSelectedItem().equals(GraphicalConfig.texturePack)) {
+		if (!Objects.equals(texturePackField.field.getSelectedItem(), GraphicalConfig.texturePack)) {
 			GraphicalConfig.texturePack = texturePackField.field.getSelectedItem();
 			texturesChanged = true;
 		}

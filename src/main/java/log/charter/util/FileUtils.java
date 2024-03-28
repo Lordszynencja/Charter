@@ -2,6 +2,7 @@ package log.charter.util;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,15 +15,15 @@ public class FileUtils {
 	public static final String inlaysFolder = graphicsFolder + "inlays/";
 
 	public static List<String> listDirectories(final String dir) {
-		return Stream.of(new File(dir).listFiles(f -> f.isDirectory()))//
-				.map(file -> file.getName())//
+		return Stream.of(Objects.requireNonNull(new File(dir).listFiles(File::isDirectory)))//
+				.map(File::getName)//
 				.sorted()//
 				.collect(Collectors.toList());
 	}
 
 	public static Stream<String> listFiles(final String dir) {
-		return Stream.of(new File(dir).listFiles(f -> f.isFile()))//
-				.map(file -> file.getName())//
+		return Stream.of(Objects.requireNonNull(new File(dir).listFiles(File::isFile)))//
+				.map(File::getName)//
 				.sorted();
 	}
 
@@ -31,9 +32,9 @@ public class FileUtils {
 			return listFiles(dir);
 		}
 
-		return Stream.of(new File(dir).listFiles(f -> f.isFile()))//
+		return Stream.of(Objects.requireNonNull(new File(dir).listFiles(File::isFile)))//
 				.filter(filter)//
-				.map(file -> file.getName())//
+				.map(File::getName)//
 				.sorted();
 	}
 

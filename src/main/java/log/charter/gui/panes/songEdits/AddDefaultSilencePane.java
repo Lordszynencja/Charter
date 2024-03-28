@@ -4,6 +4,7 @@ import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSele
 import static log.charter.sound.data.AudioUtils.generateSilence;
 
 import java.io.File;
+import java.util.Objects;
 
 import javax.swing.JTextField;
 
@@ -103,7 +104,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 
 	private void cleanUp() {
 		StretchedFileLoader.stopAllProcesses();
-		for (final File oldWav : new File(data.path).listFiles(s -> s.getName().matches("guitar_(tmp|[0-9]*).wav"))) {
+		for (final File oldWav : Objects.requireNonNull(new File(data.path).listFiles(s -> s.getName().matches("guitar_(tmp|[0-9]*).wav")))) {
 			oldWav.delete();
 		}
 	}

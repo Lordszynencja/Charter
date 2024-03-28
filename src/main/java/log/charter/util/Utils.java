@@ -14,7 +14,7 @@ public class Utils {
 		DAYS(365, "%dd", " %3dd"), //
 		YEARS(365, "%dy", " %dy");
 
-		private static Map<TimeUnit, TimeUnit> nextUnits = new HashMap<>();
+		private static final Map<TimeUnit, TimeUnit> nextUnits = new HashMap<>();
 		static {
 			nextUnits.put(MILISECONDS, SECONDS);
 			nextUnits.put(SECONDS, MINUTES);
