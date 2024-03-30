@@ -174,8 +174,12 @@ public class SongArrangement {
 	private void addDefaultEndPhraseIfNeeded(final ImmutableBeatsMap beats, final Arrangement arrangement,
 			final Map<String, Integer> phraseIds, final List<EventPoint> eventPoints) {
 		final IntSupplier endPositionTimeGenerator = () -> {
+			if (eventPoints.isEmpty()) {
+				return beats.get(beats.size() - 1).position();
+			}
+
 			final EventPoint lastEventPoint = eventPoints.get(eventPoints.size() - 1);
-			if (lastEventPoint == null || lastEventPoint.section != SectionType.NO_GUITAR) {
+			if (lastEventPoint.section != SectionType.NO_GUITAR) {
 				return beats.get(beats.size() - 1).position();
 			}
 

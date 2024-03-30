@@ -318,7 +318,7 @@ public class BeatsMap {
 				noteDenominator = get(beatId).noteDenominator;
 			}
 
-			return new FractionalPosition(beatId, new Fraction(1).add(distance.multiply(noteDenominator).negate()));
+			return new FractionalPosition(beatId, distance.multiply(noteDenominator));
 		}
 
 		public IVirtualConstantPosition getMaxPositionBefore(final IVirtualConstantPosition position) {

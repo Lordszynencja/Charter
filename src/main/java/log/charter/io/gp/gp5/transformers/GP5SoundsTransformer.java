@@ -167,8 +167,8 @@ public class GP5SoundsTransformer {
 
 		final int notes = gpBeat.duration.length / effects.trill.speed.length;
 		for (int i = 1; i < notes; i++) {
-			final FractionalPosition position = noteLength.multiply(new Fraction(i, notes));
-			final int fret = gpNote.fret + (i % 2) * effects.trill.value;
+			final FractionalPosition position = note.position().add(noteLength.multiply(new Fraction(i, notes)));
+			final int fret = (i % 2 == 0 ? note.fret : effects.trill.value);
 			final Note trillNote = new Note(position, note.string, fret);
 			trillNote.hopo = i % 2 == 0 ? HOPO.PULL_OFF : HOPO.HAMMER_ON;
 			trillNote.ignore = true;
