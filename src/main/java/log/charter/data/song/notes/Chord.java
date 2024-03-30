@@ -1,29 +1,27 @@
 package log.charter.data.song.notes;
 
 import static java.lang.Math.min;
-import static log.charter.util.Utils.mapInteger;
+import static log.charter.util.CollectionUtils.map;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-import log.charter.data.song.BendValue;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
-import log.charter.io.rs.xml.song.ArrangementBendValue;
-import log.charter.io.rs.xml.song.ArrangementChord;
-import log.charter.io.rs.xml.song.ArrangementChordNote;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.io.rsc.xml.converters.ChordConverter;
-import log.charter.util.collections.HashMap2;
 
 @XStreamAlias("chord")
 @XStreamConverter(ChordConverter.class)
@@ -35,100 +33,20 @@ public class Chord extends GuitarSound {
 	private int templateId;
 	public boolean splitIntoNotes = false;
 	public boolean forceNoNotes = false;
-	public HashMap2<Integer, ChordNote> chordNotes = new HashMap2<>();
+	public Map<Integer, ChordNote> chordNotes = new HashMap<>();
 
-	public Chord(final int pos, final int templateId) {
-		super(pos);
+	public Chord(final int templateId) {
 		this.templateId = templateId;
 	}
 
-	public Chord(final int pos, final int templateId, final ChordTemplate template) {
-		super(pos);
+	public Chord(final FractionalPosition position, final int templateId) {
+		super(position);
 		this.templateId = templateId;
-		updateChordNotes(template);
 	}
 
-	public Chord(final ArrangementChord arrangementChord, final ChordTemplate template) {
-		super(arrangementChord.time, mapInteger(arrangementChord.accent), mapInteger(arrangementChord.ignore));
-		templateId = arrangementChord.chordId;
-		final Mute mute = Mute.fromArrangmentChord(arrangementChord);
-
-		if (arrangementChord.chordNotes != null) {
-			for (final ArrangementChordNote arrangementNote : arrangementChord.chordNotes) {
-				final ChordNote chordNote = new ChordNote();
-
-				chordNote.length = arrangementNote.sustain == null ? 0 : arrangementNote.sustain;
-				if (mapInteger(arrangementNote.mute)) {
-					chordNote.mute = Mute.FULL;
-				} else if (mapInteger(arrangementNote.palmMute)) {
-					chordNote.mute = Mute.PALM;
-				} else {
-					chordNote.mute = mute;
-				}
-
-				if (arrangementNote.slideTo != null) {
-					chordNote.slideTo = arrangementNote.slideTo;
-				}
-				if (arrangementNote.slideUnpitchTo != null) {
-					chordNote.slideTo = arrangementNote.slideUnpitchTo;
-					chordNote.unpitchedSlide = true;
-				}
-
-				chordNote.vibrato = mapInteger(arrangementNote.vibrato);
-				chordNote.tremolo = mapInteger(arrangementNote.tremolo);
-
-				if (mapInteger(arrangementNote.hammerOn)) {
-					chordNote.hopo = HOPO.HAMMER_ON;
-				}
-				if (mapInteger(arrangementNote.pullOff)) {
-					chordNote.hopo = HOPO.PULL_OFF;
-				}
-				if (mapInteger(arrangementNote.tap)) {
-					chordNote.hopo = HOPO.TAP;
-				}
-				if (mapInteger(arrangementNote.harmonic)) {
-					chordNote.harmonic = Harmonic.NORMAL;
-				}
-				if (mapInteger(arrangementNote.harmonicPinch)) {
-					chordNote.harmonic = Harmonic.PINCH;
-				}
-
-				if (arrangementNote.bendValues != null && !arrangementNote.bendValues.list.isEmpty()) {
-					for (final ArrangementBendValue bendValue : arrangementNote.bendValues.list) {
-						chordNote.bendValues.add(new BendValue(bendValue, arrangementChord.time));
-					}
-				}
-
-				chordNote.linkNext = mapInteger(arrangementNote.linkNext);
-
-				chordNotes.put(arrangementNote.string, chordNote);
-			}
-		}
-
-		Set<Integer> existingChordNoteStrings;
-
-		if (arrangementChord.chordNotes == null || arrangementChord.chordNotes.isEmpty()) {
-			for (final Integer string : template.frets.keySet()) {
-				if (!chordNotes.containsKey(string)) {
-					final ChordNote chordNote = new ChordNote();
-					chordNotes.put(string, chordNote);
-				}
-			}
-
-			existingChordNoteStrings = new HashSet<>();
-		} else {
-			existingChordNoteStrings = arrangementChord.chordNotes.stream()//
-					.map(arrangementChordNote -> arrangementChordNote.string)//
-					.collect(Collectors.toSet());
-		}
-
-		updateChordNotes(template);
-
-		chordNotes.forEach((string, chordNote) -> {
-			if (!existingChordNoteStrings.contains(string)) {
-				chordNote.mute = mute;
-			}
-		});
+	public Chord(final FractionalPosition position, final int templateId, final ChordTemplate template) {
+		super(position);
+		updateTemplate(templateId, template);
 	}
 
 	public Chord(final Chord other) {
@@ -137,14 +55,13 @@ public class Chord extends GuitarSound {
 		accent = other.accent;
 		splitIntoNotes = other.splitIntoNotes;
 		forceNoNotes = other.forceNoNotes;
-		chordNotes = other.chordNotes.map(i -> i, ChordNote::new);
+		chordNotes = map(other.chordNotes, i -> i, n -> new ChordNote(this, n));
 	}
 
-	public Chord(final int templateId, final Note note, final ChordTemplate template) {
+	public Chord(final Note note, final int templateId, final ChordTemplate template) {
 		super(note);
-		this.templateId = templateId;
-		chordNotes.put(note.string, new ChordNote(note));
-		updateChordNotes(template);
+		chordNotes.put(note.string, new ChordNote(this, note));
+		updateTemplate(templateId, template);
 	}
 
 	private <T> List<T> chordNotesValues(final Function<ChordNote, T> getter) {
@@ -196,23 +113,22 @@ public class Chord extends GuitarSound {
 
 	public void updateTemplate(final int templateId, final ChordTemplate template) {
 		this.templateId = templateId;
-		updateChordNotes(template);
+		updateTemplate(template);
 	}
 
-	private void updateChordNotes(final ChordTemplate template) {
+	public void updateTemplate(final ChordTemplate template) {
 		final Mute mute = chordNotesValue(n -> n.mute, Mute.NONE);
 		final HOPO hopo = chordNotesValue(n -> n.hopo, HOPO.NONE);
-		final int length = length();
+		final FractionalPosition endPosition = endPosition();
 		final boolean linkNext = chordNotesValue(n -> n.linkNext, false);
 		final boolean tremolo = chordNotesValue(n -> n.tremolo, false);
 		final boolean vibrato = chordNotesValue(n -> n.vibrato, false);
 
 		for (final Integer string : template.frets.keySet()) {
 			if (!chordNotes.containsKey(string)) {
-				final ChordNote chordNote = new ChordNote();
+				final ChordNote chordNote = new ChordNote(this, endPosition);
 				chordNote.mute = mute;
 				chordNote.hopo = hopo;
-				chordNote.length = length;
 				chordNote.linkNext = linkNext;
 				chordNote.tremolo = tremolo;
 				chordNote.vibrato = vibrato;
@@ -231,7 +147,7 @@ public class Chord extends GuitarSound {
 	public ChordNotesVisibility chordNotesVisibility() {
 		for (final ChordNote chordNote : chordNotes.values()) {
 			if (chordNote.linkNext || chordNote.slideTo != null || chordNote.tremolo || chordNote.vibrato
-					|| !chordNote.bendValues.isEmpty() || chordNote.length > 0) {
+					|| !chordNote.bendValues.isEmpty() || chordNote.endPosition().compareTo(this.position()) > 0) {
 				return ChordNotesVisibility.TAILS;
 			}
 		}
@@ -264,15 +180,6 @@ public class Chord extends GuitarSound {
 		return (shouldAddNotesByDefault && !fullyMuted()) ? ChordNotesVisibility.NOTES : ChordNotesVisibility.NONE;
 	}
 
-	@Override
-	public int length() {
-		return chordNotes.values().stream().map(n -> n.length).collect(Collectors.maxBy(Integer::compareTo)).orElse(0);
-	}
-
-	@Override
-	public void length(final int newLength) {
-	}
-
 	public boolean linkNext() {
 		return chordNotes.values().stream().anyMatch(n -> n.linkNext);
 	}
@@ -283,6 +190,30 @@ public class Chord extends GuitarSound {
 
 	public void forceNoNotes(final boolean value) {
 		forceNoNotes = value;
+	}
+
+	@Override
+	public FractionalPosition endPosition() {
+		return chordNotes.values().stream().map(n -> n.endPosition())
+				.collect(Collectors.maxBy(FractionalPosition::compareTo)).orElse(this.position());
+	}
+
+	@Override
+	public IConstantFractionalPositionWithEnd toFraction(final ImmutableBeatsMap beats) {
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		return "Chord [position=" + position()//
+				+ ", templateId=" + templateId //
+				+ ", splitIntoNotes=" + splitIntoNotes//
+				+ ", forceNoNotes=" + forceNoNotes //
+				+ ", chordNotes=" + chordNotes //
+				+ ", accent=" + accent//
+				+ ", ignore=" + ignore //
+				+ ", passOtherNotes=" + passOtherNotes //
+				+ "]";
 	}
 
 }

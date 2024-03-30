@@ -79,7 +79,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 		this.frame = frame;
 		this.selectionManager = selectionManager;
 
-		final Arrangement arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.currentArrangement();
 		arrangementType = arrangement.arrangementType;
 		arrangementSubtype = arrangement.arrangementSubtype;
 		baseTone = arrangement.baseTone;
@@ -301,7 +301,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 	}
 
 	private void saveAndExit() {
-		final Arrangement arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.currentArrangement();
 
 		if (moveFrets != null && moveFrets.field.isSelected()) {
 			final int[] fretsDifference = new int[tuning.strings()];

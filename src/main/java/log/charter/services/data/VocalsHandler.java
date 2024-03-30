@@ -1,16 +1,17 @@
 package log.charter.services.data;
 
+import java.util.List;
+
 import log.charter.data.ChartData;
 import log.charter.data.song.vocals.Vocal;
+import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.services.data.selection.Selection;
-import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.ArrayList2;
 
 public class VocalsHandler {
 	private ChartData chartData;
@@ -20,46 +21,36 @@ public class VocalsHandler {
 	private UndoSystem undoSystem;
 
 	public void editVocals() {
-		final SelectionAccessor<Vocal> selectedAccessor = selectionManager.getSelectedAccessor(PositionType.VOCAL);
-		if (!selectedAccessor.isSelected()) {
+		final List<Selection<Vocal>> selected = selectionManager.getSelected(PositionType.VOCAL);
+		if (selected.isEmpty()) {
 			return;
 		}
 
-		final ArrayList2<Selection<Vocal>> selectedVocals = selectedAccessor.getSortedSelected();
-		final Selection<Vocal> firstSelectedVocal = selectedVocals.remove(0);
+		final Selection<Vocal> firstSelectedVocal = selected.remove(0);
 		new VocalPane(firstSelectedVocal.id, firstSelectedVocal.selectable, chartData, charterFrame, selectionManager,
-				undoSystem, selectedVocals);
+				undoSystem, selected);
+	}
+
+	private void toggle(final VocalFlag flag) {
+		final List<Vocal> selected = selectionManager.getSelectedElements(PositionType.VOCAL);
+		if (selected.isEmpty()) {
+			return;
+		}
+
+		undoSystem.addUndo();
+
+		for (final Vocal vocal : selected) {
+			vocal.flag(vocal.flag() == flag ? VocalFlag.NONE : flag);
+		}
+
+		currentSelectionEditor.selectionChanged(false);
 	}
 
 	public void toggleWordPart() {
-		final SelectionAccessor<Vocal> selectedAccessor = selectionManager.getSelectedAccessor(PositionType.VOCAL);
-		if (!selectedAccessor.isSelected()) {
-			return;
-		}
-
-		undoSystem.addUndo();
-
-		for (final Selection<Vocal> vocalSelection : selectedAccessor.getSelectedSet()) {
-			vocalSelection.selectable.setPhraseEnd(false);
-			vocalSelection.selectable.setWordPart(!vocalSelection.selectable.isWordPart());
-		}
-
-		currentSelectionEditor.selectionChanged(false);
+		toggle(VocalFlag.WORD_PART);
 	}
 
 	public void togglePhraseEnd() {
-		final SelectionAccessor<Vocal> selectedAccessor = selectionManager.getSelectedAccessor(PositionType.VOCAL);
-		if (!selectedAccessor.isSelected()) {
-			return;
-		}
-
-		undoSystem.addUndo();
-
-		for (final Selection<Vocal> selectedVocal : selectedAccessor.getSelectedSet()) {
-			selectedVocal.selectable.setWordPart(false);
-			selectedVocal.selectable.setPhraseEnd(!selectedVocal.selectable.isPhraseEnd());
-		}
-
-		currentSelectionEditor.selectionChanged(false);
+		toggle(VocalFlag.PHRASE_END);
 	}
 }

@@ -1,16 +1,17 @@
 package log.charter.data.song.notes;
 
+import java.util.List;
+
 import log.charter.data.song.BendValue;
 import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
-import log.charter.util.collections.ArrayList2;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 
-public interface NoteInterface {
-	int length();
-
-	void length(int value);
+public interface NoteInterface extends IConstantFractionalPositionWithEnd {
+	void endPosition(FractionalPosition newEndPosition);
 
 	BassPickingTechnique bassPicking();
 
@@ -48,7 +49,7 @@ public interface NoteInterface {
 
 	void unpitchedSlide(boolean value);
 
-	ArrayList2<BendValue> bendValues();
+	List<BendValue> bendValues();
 
-	void bendValues(ArrayList2<BendValue> value);
+	void bendValues(List<BendValue> value);
 }

@@ -65,13 +65,17 @@ public class Preview3DHandShapesDrawer {
 		if (timeTo < 0) {
 			return;
 		}
+
+		final IntRange frets = drawData.getFrets(handShape.originalPosition);
+		if (frets == null) {
+			return;
+		}
+
 		final double z0 = getTimePosition(timeFrom);
 		final double z1 = getTimePosition(timeTo);
 
 		final Color color = (arpeggio ? ColorLabel.PREVIEW_3D_ARPEGGIO : ColorLabel.PREVIEW_3D_LANE_BORDER).color();
 		final Color alpha = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0);
-
-		final IntRange frets = drawData.getFrets(handShape.originalPosition);
 
 		addThickLine(shaderDrawData, frets.min - 1, y, z0, z1, color, alpha);
 		addThickLine(shaderDrawData, frets.max, y, z0, z1, color, alpha);

@@ -1,4 +1,4 @@
-package log.charter.data.song.position;
+package log.charter.data.song.position.time;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

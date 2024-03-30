@@ -1,5 +1,6 @@
 package log.charter.io.rsc.xml.converters;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -10,7 +11,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.mapper.Mapper;
 
 import log.charter.data.song.Phrase;
-import log.charter.util.collections.HashMap2;
 
 public class PhraseDataConverter extends AbstractCollectionConverter {
 
@@ -54,7 +54,7 @@ public class PhraseDataConverter extends AbstractCollectionConverter {
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-		final Map<String, Phrase> phrases = new HashMap2<>();
+		final Map<String, Phrase> phrases = new HashMap<>();
 
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();

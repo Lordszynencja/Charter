@@ -3,14 +3,17 @@ package log.charter.gui.chartPanelDrawers.common;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatSizeTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lyricLinesY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
-import static log.charter.util.ScalingUtils.timeToX;
+import static log.charter.util.ScalingUtils.positionToX;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.vocals.Vocal;
+import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
@@ -50,7 +53,7 @@ public class LyricLinesDrawer {
 	private ChartData chartData;
 	private ModeManager modeManager;
 
-	public void draw(final Graphics2D g, final int time) {
+	public void draw(final FrameData frameData) {
 		if (modeManager.getMode() == EditMode.EMPTY) {
 			return;
 		}
@@ -59,25 +62,26 @@ public class LyricLinesDrawer {
 		String currentLine = "";
 		boolean started = false;
 		int x = 0;
+		final ImmutableBeatsMap beats = chartData.beats();
 
-		for (final Vocal vocal : chartData.songChart.vocals.vocals) {
+		for (final Vocal vocal : chartData.currentVocals().vocals) {
 			if (!started) {
 				started = true;
-				x = timeToX(vocal.position(), time);
+				x = positionToX(vocal.position(beats), frameData.time);
 			}
 
-			currentLine += vocal.getText();
-			if (!vocal.isWordPart()) {
+			currentLine += vocal.text();
+			if (vocal.flag() != VocalFlag.WORD_PART) {
 				currentLine += " ";
 			}
 
-			if (vocal.isPhraseEnd()) {
-				drawingData.addLyricLine(currentLine, x, timeToX(vocal.position() + vocal.length(), time) - x);
+			if (vocal.flag() == VocalFlag.PHRASE_END) {
+				drawingData.addLyricLine(currentLine, x, positionToX(vocal.endPosition(beats), frameData.time) - x);
 				currentLine = "";
 				started = false;
 			}
 		}
 
-		drawingData.draw(g);
+		drawingData.draw(frameData.g);
 	}
 }

@@ -19,7 +19,7 @@ public class TitleUpdater {
 	}
 
 	private String getArrangementTitlePart() {
-		final Arrangement arrangement = chartData.getCurrentArrangement();
+		final Arrangement arrangement = chartData.currentArrangement();
 		final String arrangementName = arrangement.getTypeNameLabel(chartData.currentArrangement);
 		final String tuning = arrangement.getTuningName("%s - %s");
 

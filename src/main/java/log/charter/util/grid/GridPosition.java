@@ -1,47 +1,74 @@
 package log.charter.util.grid;
 
 import static java.lang.Math.floor;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
+
+import java.util.List;
 
 import log.charter.data.config.Config;
 import log.charter.data.song.Beat;
-import log.charter.data.song.position.IPosition;
-import log.charter.util.collections.ArrayList2;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.ConstantPosition;
+import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.time.Position;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
+import log.charter.util.data.Fraction;
 
-public class GridPosition<T extends IPosition> {
-
-	public static GridPosition<Beat> create(final ArrayList2<Beat> beats, final int position) {
+public class GridPosition<T extends Position> implements IVirtualConstantPosition {
+	public static GridPosition<Beat> create(final List<Beat> beats, final int position) {
 		switch (Config.gridType) {
-		case NOTE:
-			return new NoteBasedGridPosition(beats, position);
-		case BEAT:
-			return new BeatBasedGridPosition(beats, position);
-		case MEASURE:
-			return new MeasureBasedGridPosition(beats, position);
-		default:
-			return new GridPosition<>(beats, position);
+			case NOTE:
+				return new NoteBasedGridPosition(beats, position);
+			case BEAT:
+				return new BeatBasedGridPosition(beats, position);
+			case MEASURE:
+				return new MeasureBasedGridPosition(beats, position);
+			default:
+				return new GridPosition<>(beats, position);
 		}
 	}
 
+	public static GridPosition<Beat> create(final List<Beat> beats, final FractionalPosition position) {
+		switch (Config.gridType) {
+			case NOTE:
+				return new NoteBasedGridPosition(beats, position);
+			case BEAT:
+				return new BeatBasedGridPosition(beats, position);
+			case MEASURE:
+				return new MeasureBasedGridPosition(beats, position);
+			default:
+				return new GridPosition<>(beats, position);
+		}
+	}
+
+	public static GridPosition<Beat> create(final List<Beat> beats, final IVirtualConstantPosition position) {
+		if (position.isFraction()) {
+			return create(beats, position.asConstantFraction().position());
+		}
+
+		return create(beats, position.asConstantPosition().position());
+	}
+
 	public final int gridSize = Config.gridSize;
-	protected final ArrayList2<T> positions;
+	protected final List<T> positions;
 
 	public int positionId;
 	public int gridId;
 
-	public GridPosition(final ArrayList2<T> positions, final int position) {
+	public GridPosition(final List<T> positions, final int position) {
 		this.positions = positions;
-
-		if (position <= positions.get(0).position()) {
+		if (positions.isEmpty() || position <= positions.get(0).position()) {
 			positionId = 0;
 			return;
 		}
-		if (position >= positions.getLast().position()) {
+		if (position >= positions.get(positions.size() - 1).position()) {
 			positionId = positions.size() - 1;
 			return;
 		}
 
-		positionId = findLastIdBeforeEqual(positions, position);
+		positionId = lastBeforeEqual(positions, new Position(position), IConstantPosition::compareTo).findId(0);
 
 		final int currentPosition = positions.get(positionId).position();
 		final int nextPosition = positions.get(positionId + 1).position();
@@ -50,7 +77,13 @@ public class GridPosition<T extends IPosition> {
 		gridId = (int) floor(1.0 * (distanceInBeat + 1) * gridSize / beatLength);
 	}
 
-	public GridPosition<T> next() {
+	public GridPosition(final List<T> positions, final FractionalPosition position) {
+		this.positions = positions;
+		positionId = position.beatId;
+		gridId = (int) Math.round(position.fraction.multiply(gridSize).doubleValue());
+	}
+
+	public void next() {
 		gridId++;
 
 		if (gridId >= Config.gridSize) {
@@ -62,11 +95,9 @@ public class GridPosition<T extends IPosition> {
 			positionId = positions.size() - 1;
 			gridId = 0;
 		}
-
-		return this;
 	}
 
-	public GridPosition<T> previous() {
+	public void previous() {
 		gridId--;
 
 		if (gridId < 0) {
@@ -78,8 +109,6 @@ public class GridPosition<T extends IPosition> {
 			positionId = 0;
 			gridId = 0;
 		}
-
-		return this;
 	}
 
 	public int position() {
@@ -91,4 +120,37 @@ public class GridPosition<T extends IPosition> {
 		final int nextBeatPosition = positions.get(positionId + 1).position();
 		return beatPosition + (nextBeatPosition - beatPosition) * gridId / gridSize;
 	}
+
+	public FractionalPosition fractionalPosition() {
+		return new FractionalPosition(positionId, new Fraction(gridId, gridSize));
+	}
+
+	@Override
+	public IConstantPosition asConstantPosition() {
+		return new ConstantPosition(position());
+	}
+
+	@Override
+	public IConstantFractionalPosition asConstantFraction() {
+		return fractionalPosition();
+	}
+
+	@Override
+	public IConstantPosition toPosition(final ImmutableBeatsMap beats) {
+		return asConstantPosition();
+	}
+
+	@Override
+	public IConstantFractionalPosition toFraction(final ImmutableBeatsMap beats) {
+		return asConstantFraction();
+	}
+
+	public int compareTo(final IVirtualConstantPosition position) {
+		if (position.isPosition()) {
+			return new ConstantPosition(position()).compareTo(position.asConstantPosition());
+		}
+
+		return fractionalPosition().compareTo(position.asConstantFraction());
+	}
+
 }

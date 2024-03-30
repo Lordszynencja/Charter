@@ -1,9 +1,10 @@
 package log.charter.gui.menuHandlers;
 
+import static log.charter.gui.components.utils.ComponentUtils.showPopup;
+
 import java.io.File;
 
 import javax.swing.JMenu;
-import javax.swing.JOptionPane;
 
 import log.charter.CharterMain;
 import log.charter.data.config.Localization;
@@ -14,6 +15,10 @@ class InfoMenuHandler extends CharterMenuHandler {
 	private static final String infoText = "Charter\n"//
 			+ "Created by Lord Sai and friends from Customs Forge\n\n"//
 			+ "Current version: " + CharterMain.VERSION + " - " + CharterMain.VERSION_DATE;
+
+	private static final String librariesUsed = //
+			"part of Widgex made by Joseph Fabisevich\n"//
+					+ "GLAC_library-Java made by Nayuki";
 
 	private CharterFrame charterFrame;
 	private CharterMenuBar charterMenuBar;
@@ -40,13 +45,10 @@ class InfoMenuHandler extends CharterMenuHandler {
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.INFO_MENU);
 
-		menu.add(createItem(Label.INFO_MENU_VERSION, this::showVersion));
+		menu.add(createItem(Label.INFO_MENU_VERSION, () -> showPopup(charterFrame, infoText)));
+		menu.add(createItem(Label.LICENSES, () -> showPopup(charterFrame, Label.LIBRARIES_USED.format(librariesUsed))));
 		menu.add(prepareLanguagesSubmenu());
 
 		return menu;
-	}
-
-	private void showVersion() {
-		JOptionPane.showMessageDialog(charterFrame, infoText);
 	}
 }

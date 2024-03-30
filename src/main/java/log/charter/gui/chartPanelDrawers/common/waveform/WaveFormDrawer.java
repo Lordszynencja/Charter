@@ -5,9 +5,8 @@ import static java.lang.Math.min;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.waveform.WaveformMap.getSpanForLevel;
-import static log.charter.util.ScalingUtils.pixelTimeLength;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.ScalingUtils.positionToX;
+import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -16,6 +15,7 @@ import java.util.List;
 import log.charter.data.config.Zoom;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
+import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.editModes.EditMode;
@@ -76,21 +76,21 @@ public class WaveFormDrawer {
 			return;
 		}
 
-		final Pair<Integer, List<WaveformInformation>> level = map.getLevel(pixelTimeLength());
+		final Pair<Integer, List<WaveformInformation>> level = map.getLevel(1 / Zoom.zoom);
 		final int timeSpan = getSpanForLevel(level.a);
 
 		final int width = chartPanel.getWidth();
 		final int y = getMiddle();
 		final int fullHeight = getHeight();
-		final int start = max(0, xToTime(0, time) / timeSpan);
-		final int end = min(level.b.size() - 1, xToTime(chartPanel.getWidth(), time) / timeSpan);
+		final int start = max(0, xToPosition(0, time) / timeSpan);
+		final int end = min(level.b.size() - 1, xToPosition(chartPanel.getWidth(), time) / timeSpan);
 
 		final int[] heights = new int[width];
 		final boolean[] rms = new boolean[width];
 
 		for (int i = start; i <= end; i++) {
 			final WaveformInformation information = level.b.get(i);
-			final int x = timeToX(i * timeSpan, time);
+			final int x = positionToX(i * timeSpan, time);
 			if (x < 0 || x >= width) {
 				continue;
 			}
@@ -100,8 +100,8 @@ public class WaveFormDrawer {
 			rms[x] |= showRMS && information.rms;
 		}
 
-		final int xStart = max(0, timeToX(0, time));
-		final int xEnd = min(width - 1, timeToX(projectAudioHandler.getAudio().msLength(), time));
+		final int xStart = max(0, positionToX(0, time));
+		final int xEnd = min(width - 1, positionToX(projectAudioHandler.getAudio().msLength(), time));
 		for (int x = xStart; x <= xEnd; x++) {
 			g.setColor(rms[x] ? highIntensityColor : normalColor);
 			final int height = heights[x];
@@ -118,22 +118,22 @@ public class WaveFormDrawer {
 		final float timeToFrameMultiplier = projectAudioHandler.getAudio().frameRate() / 1000;
 
 		final short[] musicValues = projectAudioHandler.getAudio().data[0];
-		int start = (int) (xToTime(0, time) * timeToFrameMultiplier);
+		int start = (int) (xToPosition(0, time) * timeToFrameMultiplier);
 		start = max(1, start);
-		int end = (int) (xToTime(chartPanel.getWidth(), time) * timeToFrameMultiplier);
+		int end = (int) (xToPosition(chartPanel.getWidth(), time) * timeToFrameMultiplier);
 		end = min(musicValues.length, end);
 
 		final int midY = getMiddle();
 		final int yScale = getHeight();
 		int x0 = 0;
-		int x1 = timeToX((int) ((start - 1) / timeToFrameMultiplier), time);
+		int x1 = positionToX((int) ((start - 1) / timeToFrameMultiplier), time);
 		int y0 = 0;
 		int y1 = musicValues[start - 1] * yScale / 0x8000;
 		final RMSCalculator rmsCalculator = new RMSCalculator((int) timeToFrameMultiplier);
 
 		for (int frame = start; frame < end; frame++) {
 			x0 = x1;
-			x1 = timeToX(frame / timeToFrameMultiplier, time);
+			x1 = positionToX(frame / timeToFrameMultiplier, time);
 			y0 = y1;
 			y1 = musicValues[frame] * yScale / 0x8000;
 
@@ -144,15 +144,15 @@ public class WaveFormDrawer {
 		}
 	}
 
-	public void draw(final Graphics g, final int time) {
+	public void draw(final FrameData frameData) {
 		if (!drawing()) {
 			return;
 		}
 
 		if (Zoom.zoom > 1) {
-			drawFull(g, time);
+			drawFull(frameData.g, frameData.time);
 		} else {
-			drawFromMap(g, time);
+			drawFromMap(frameData.g, frameData.time);
 		}
 	}
 }

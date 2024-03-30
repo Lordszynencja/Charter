@@ -39,6 +39,7 @@ public class Localization {
 		ARRANGEMENT_TYPE_LEAD("Lead"), //
 		ARRANGEMENT_TYPE_RHYTHM("Rhythm"), //
 		BACKUP_DELAY_S("Backup delay (s)"), //
+		BASE_AUDIO_FORMAT("Base audio format"), //
 		BUFFER_SIZE_MS("Audio buffer size to fill (ms)"), //
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
@@ -56,6 +57,9 @@ public class Localization {
 		DELETE_ARRANGEMENT_POPUP_MSG("Are you sure you want to delete arrangement %s?"), //
 		DELETE_ARRANGEMENT_POPUP_TITLE("Delete arrangement?"), //
 		DIRECTORY_DOESNT_EXIST("Directory doesn't exist"), //
+		DISTANCE_TYPE_BEATS("1/x beat"), //
+		DISTANCE_TYPE_MILISECONDS("ms"), //
+		DISTANCE_TYPE_NOTES("1/x note"), //
 		EDIT_MENU("Edit"), //
 		EDITING("Editing"), //
 		EXIT("Exit"), //
@@ -107,6 +111,7 @@ public class Localization {
 		PASTE("Paste"), //
 		REDO("Redo"), //
 		SELECT_ALL_NOTES("Select all notes"), //
+		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
 		SHOW_CHORD_IDS("Show chord ids"), //
 		SHOW_GRID("Show grid"), //
 		SONG_OPTIONS("Song options"), //
@@ -208,6 +213,8 @@ public class Localization {
 		INFO_MENU("Info"), //
 		INFO_MENU_LANGUAGE("Language"), //
 		INFO_MENU_VERSION("Version"), //
+		LICENSES("Licenses"), //
+		LIBRARIES_USED("Libraries used:\n%s"), //
 
 		MUSIC_MENU("Music"), //
 		TOGGLE_REPEAT_END("Set repeater end"), //
@@ -483,6 +490,10 @@ public class Localization {
 
 		public String label() {
 			return labels.getOrDefault(name(), defaultLabel);
+		}
+
+		public String format(final Object... args) {
+			return label().formatted(args);
 		}
 
 		public BufferedImage exportAsImage(final Color color, final Font font) {

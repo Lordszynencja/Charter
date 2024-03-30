@@ -15,7 +15,9 @@ import java.util.function.Supplier;
 import javax.swing.JFrame;
 
 import log.charter.data.GridType;
+import log.charter.data.song.BeatsMap.DistanceType;
 import log.charter.io.Logger;
+import log.charter.sound.SoundFileType;
 import log.charter.util.RW;
 
 public class Config {
@@ -64,12 +66,15 @@ public class Config {
 	public static String songsPath = System.getProperty("user.home") + File.separator + "Documents";
 	public static String rubberbandPath;
 	public static String oggEncPath;
+	public static SoundFileType baseAudioFormat = SoundFileType.WAV;
 	public static int audioBufferSize = 128;
 	public static int audioBufferMs = 10;
 	public static int antialiasingSamples = 16;
 
-	public static int minNoteDistance = 50;
-	public static int minTailLength = 50;
+	public static DistanceType minNoteDistanceType = DistanceType.NOTES;
+	public static int minNoteDistanceFactor = 32;
+	public static DistanceType minTailLengthType = DistanceType.NOTES;
+	public static int minTailLengthFactor = 32;
 	public static int delay = 25;
 	public static double volume = 1;
 	public static int midiDelay = 200;
@@ -106,6 +111,7 @@ public class Config {
 	public static boolean showGrid = true;
 	public static GridType gridType = GridType.BEAT;
 	public static int gridSize = 4;
+	public static boolean selectNotesByTails = false;
 	public static boolean audioFolderChosenForNewSong = false;
 
 	public static boolean debugLogging = false;
@@ -120,15 +126,22 @@ public class Config {
 		valueAccessors.put("lastPath", ValueAccessor.forString(v -> lastPath = v, () -> lastPath));
 		valueAccessors.put("musicPath", ValueAccessor.forString(v -> musicPath = v, () -> musicPath));
 		valueAccessors.put("songsPath", ValueAccessor.forString(v -> songsPath = v, () -> songsPath));
+		valueAccessors.put("baseAudioFormat",
+				ValueAccessor.forString(v -> baseAudioFormat = SoundFileType.valueOf(v), () -> baseAudioFormat.name()));
 		valueAccessors.put("audioBufferSize",
 				ValueAccessor.forInteger(v -> audioBufferSize = v, () -> audioBufferSize));
 		valueAccessors.put("audioBufferMs", ValueAccessor.forInteger(v -> audioBufferMs = v, () -> audioBufferMs));
 		valueAccessors.put("antialiasingSamples",
 				ValueAccessor.forInteger(v -> antialiasingSamples = v, () -> antialiasingSamples));
 
-		valueAccessors.put("minNoteDistance",
-				ValueAccessor.forInteger(v -> minNoteDistance = v, () -> minNoteDistance));
-		valueAccessors.put("minTailLength", ValueAccessor.forInteger(v -> minTailLength = v, () -> minTailLength));
+		valueAccessors.put("minNoteDistanceFactor", ValueAccessor
+				.forString(v -> minNoteDistanceType = DistanceType.valueOf(v), () -> minNoteDistanceType.name()));
+		valueAccessors.put("minNoteDistanceFactor",
+				ValueAccessor.forInteger(v -> minNoteDistanceFactor = v, () -> minNoteDistanceFactor));
+		valueAccessors.put("minTailLengthType", ValueAccessor
+				.forString(v -> minTailLengthType = DistanceType.valueOf(v), () -> minTailLengthType.name()));
+		valueAccessors.put("minTailLengthFactor",
+				ValueAccessor.forInteger(v -> minTailLengthFactor = v, () -> minTailLengthFactor));
 		valueAccessors.put("delay", ValueAccessor.forInteger(v -> delay = v, () -> delay));
 		valueAccessors.put("volume", ValueAccessor.forDouble(v -> volume = v, () -> volume));
 		valueAccessors.put("midiDelay", ValueAccessor.forInteger(v -> midiDelay = v, () -> midiDelay));
@@ -174,6 +187,8 @@ public class Config {
 		valueAccessors.put("gridType",
 				ValueAccessor.forString(v -> gridType = GridType.valueOf(v), () -> gridType.name()));
 		valueAccessors.put("gridSize", ValueAccessor.forInteger(v -> gridSize = v, () -> gridSize));
+		valueAccessors.put("selectNotesByTails",
+				ValueAccessor.forBoolean(v -> selectNotesByTails = v, () -> selectNotesByTails));
 		valueAccessors.put("audioFolderChosenForNewSong",
 				ValueAccessor.forBoolean(v -> audioFolderChosenForNewSong = v, () -> audioFolderChosenForNewSong));
 

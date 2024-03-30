@@ -8,21 +8,23 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForChord;
 import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForNote;
-import log.charter.data.song.position.IPositionWithLength;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
+import log.charter.data.song.position.fractional.IFractionalPosition;
 import log.charter.io.rsc.xml.converters.ChordOrNoteConverter;
 import log.charter.io.rsc.xml.converters.ChordOrNoteForChordConverter;
 import log.charter.io.rsc.xml.converters.ChordOrNoteForNoteConverter;
-import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("sound")
 @XStreamConverter(ChordOrNoteConverter.class)
 @XStreamInclude({ ChordOrNoteForChord.class, ChordOrNoteForNote.class })
-public interface ChordOrNote extends IPositionWithLength {
+public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPositionWithEnd {
 	public static ChordOrNote findNextSoundOnString(final int string, final int startFromId,
-			final ArrayList2<ChordOrNote> sounds) {
+			final List<ChordOrNote> sounds) {
 		for (int i = startFromId; i < sounds.size(); i++) {
 			final ChordOrNote sound = sounds.get(i);
 			if (sound.isNote()) {
@@ -38,7 +40,7 @@ public interface ChordOrNote extends IPositionWithLength {
 	}
 
 	public static ChordOrNote findPreviousSoundOnString(final int string, final int startFromId,
-			final ArrayList2<ChordOrNote> sounds) {
+			final List<ChordOrNote> sounds) {
 		for (int i = startFromId; i >= 0; i--) {
 			final ChordOrNote sound = sounds.get(i);
 			if (sound.isNote()) {
@@ -53,13 +55,12 @@ public interface ChordOrNote extends IPositionWithLength {
 		return null;
 	}
 
-	public static boolean isLinkedToPrevious(final int string, final int id, final ArrayList2<ChordOrNote> sounds) {
+	public static boolean isLinkedToPrevious(final int string, final int id, final List<ChordOrNote> sounds) {
 		final ChordOrNote previousSound = findPreviousSoundOnString(string, id - 1, sounds);
 		return previousSound != null && previousSound.linkNext(string);
 	}
 
-	public static boolean isLinkedToPrevious(final ChordOrNote sound, final int id,
-			final ArrayList2<ChordOrNote> sounds) {
+	public static boolean isLinkedToPrevious(final ChordOrNote sound, final int id, final List<ChordOrNote> sounds) {
 		if (sound.isNote()) {
 			return isLinkedToPrevious(sound.note().string, id, sounds);
 		}
@@ -97,23 +98,18 @@ public interface ChordOrNote extends IPositionWithLength {
 		}
 
 		@Override
-		public int position() {
-			return asGuitarSound().position();
+		public FractionalPosition position() {
+			return chord.position();
 		}
 
 		@Override
-		public void position(final int newPosition) {
-			asGuitarSound().position(newPosition);
+		public void position(final FractionalPosition newPosition) {
+			chord.position(newPosition);
 		}
 
 		@Override
-		public int length() {
-			return asGuitarSound().length();
-		}
-
-		@Override
-		public void length(final int newLength) {
-			asGuitarSound().length(newLength);
+		public FractionalPosition endPosition() {
+			return chord.endPosition();
 		}
 
 		@Override
@@ -176,6 +172,16 @@ public interface ChordOrNote extends IPositionWithLength {
 
 			return Optional.of(new CommonNoteWithFret(chord, string, chordTemplate.frets.get(string)));
 		}
+
+		@Override
+		public IConstantFractionalPositionWithEnd toFraction(final ImmutableBeatsMap beats) {
+			return chord;
+		}
+
+		@Override
+		public String toString() {
+			return "ChordOrNoteForChord[chord=" + chord.toString() + "]";
+		}
 	}
 
 	@XStreamAlias("soundNote")
@@ -203,23 +209,18 @@ public interface ChordOrNote extends IPositionWithLength {
 		}
 
 		@Override
-		public int position() {
-			return asGuitarSound().position();
+		public FractionalPosition position() {
+			return note.position();
 		}
 
 		@Override
-		public void position(final int newPosition) {
-			asGuitarSound().position(newPosition);
+		public void position(final FractionalPosition newPosition) {
+			note.position(newPosition);
 		}
 
 		@Override
-		public int length() {
-			return asGuitarSound().length();
-		}
-
-		@Override
-		public void length(final int newLength) {
-			asGuitarSound().length(newLength);
+		public FractionalPosition endPosition() {
+			return note.endPosition();
 		}
 
 		@Override
@@ -234,7 +235,7 @@ public interface ChordOrNote extends IPositionWithLength {
 
 		@Override
 		public ChordOrNote asChord(final int chordId, final ChordTemplate chordTemplate) {
-			return new ChordOrNoteForChord(new Chord(chordId, note, chordTemplate));
+			return new ChordOrNoteForChord(new Chord(note, chordId, chordTemplate));
 		}
 
 		@Override
@@ -275,6 +276,11 @@ public interface ChordOrNote extends IPositionWithLength {
 		@Override
 		public Optional<CommonNoteWithFret> noteWithFrets(final int string, final ChordTemplate chordTemplate) {
 			return getString(string).map(CommonNoteWithFret::new);
+		}
+
+		@Override
+		public IConstantFractionalPositionWithEnd toFraction(final ImmutableBeatsMap beats) {
+			return note;
 		}
 	}
 
@@ -336,4 +342,14 @@ public interface ChordOrNote extends IPositionWithLength {
 	Optional<? extends CommonNoteWithFret> noteWithFrets(int string, List<ChordTemplate> chordTemplates);
 
 	Optional<? extends CommonNoteWithFret> noteWithFrets(int string, ChordTemplate chordTemplate);
+
+	@Override
+	default boolean isFraction() {
+		return true;
+	}
+
+	@Override
+	default boolean isPosition() {
+		return false;
+	}
 }

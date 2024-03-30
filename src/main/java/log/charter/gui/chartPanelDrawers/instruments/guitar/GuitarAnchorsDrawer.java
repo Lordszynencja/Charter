@@ -1,45 +1,45 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
-import static log.charter.util.CollectionUtils.filter;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
+import static log.charter.util.ScalingUtils.positionToX;
+import static log.charter.util.ScalingUtils.xToPosition;
 
-import java.awt.Graphics2D;
+import java.util.List;
+import java.util.Set;
 
 import log.charter.data.song.Anchor;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.types.PositionType;
+import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashSet2;
 
 public class GuitarAnchorsDrawer {
-	private static Anchor findCurrentAnchor(final ArrayList2<Anchor> anchors, final int time) {
-		final ArrayList2<Anchor> previousAnchors = filter(anchors, //
-				anchor -> anchor.position() < time, ArrayList2::new);
+	private static Anchor findCurrentAnchor(final FrameData frameData, final int edgeTime) {
+		final FractionalPosition edgePosition = FractionalPosition.fromTime(frameData.beats, edgeTime);
 
-		return previousAnchors.isEmpty() ? null : previousAnchors.getLast();
+		return lastBeforeEqual(frameData.level.anchors, edgePosition).find();
 	}
 
-	private static void drawCurrentAnchor(final Graphics2D g, final HighwayDrawer highwayDrawer,
-			final ArrayList2<Anchor> anchors, final int time, final int nextAnchorX) {
-		final Anchor anchor = findCurrentAnchor(anchors, time);
+	private static void drawCurrentAnchor(final FrameData frameData, final HighwayDrawer highwayDrawer,
+			final int edgeTime, final int nextAnchorX) {
+		final Anchor anchor = findCurrentAnchor(frameData, edgeTime);
 		if (anchor == null) {
 			return;
 		}
 
-		highwayDrawer.addCurrentAnchor(g, anchor, nextAnchorX);
+		highwayDrawer.addCurrentAnchor(frameData.g, anchor, nextAnchorX);
 	}
 
-	private static void drawCurrentAnchor(final Graphics2D g, final HighwayDrawer highwayDrawer,
-			final ArrayList2<Anchor> anchors, final int time) {
-		final Anchor anchor = findCurrentAnchor(anchors, time);
+	private static void drawCurrentAnchor(final FrameData frameData, final HighwayDrawer highwayDrawer,
+			final int edgeTime) {
+		final Anchor anchor = findCurrentAnchor(frameData, edgeTime);
 		if (anchor == null) {
 			return;
 		}
 
-		highwayDrawer.addCurrentAnchor(g, anchor);
+		highwayDrawer.addCurrentAnchor(frameData.g, anchor);
 	}
 
 	private static void drawHighlightedPositions(final HighwayDrawer highwayDrawer, final int time,
@@ -49,21 +49,21 @@ public class GuitarAnchorsDrawer {
 		}
 
 		for (final HighlightPosition highlightPosition : highlightData.highlightedNonIdPositions) {
-			final int x = timeToX(highlightPosition.position, time);
+			final int x = positionToX(highlightPosition.position, time);
 			highwayDrawer.addAnchorHighlight(x);
 		}
 	}
 
-	public static void addAnchors(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
-			final ArrayList2<Anchor> anchors, final int time, final HashSet2<Integer> selectedIds,
-			final HighlightData highlightData) {
-		final int highlightId = highlightData.getId(PositionType.ANCHOR);
-		final int leftScreenEdgeTime = xToTime(0, time);
+	public static void addAnchors(final FrameData frameData, final int panelWidth, final HighwayDrawer highwayDrawer) {
+		final int highlightId = frameData.highlightData.getId(PositionType.ANCHOR);
+		final int edgeTime = xToPosition(0, frameData.time);
+		final List<Anchor> anchors = frameData.level.anchors;
+		final Set<Integer> selectedIds = frameData.selection.getSelectedIdsSet(PositionType.ANCHOR);
 
 		boolean currentAnchorDrawn = false;
 		for (int i = 0; i < anchors.size(); i++) {
 			final Anchor anchor = anchors.get(i);
-			final int x = timeToX(anchor.position(), time);
+			final int x = positionToX(anchor.position(frameData.beats), frameData.time);
 			if (x < 0) {
 				continue;
 			}
@@ -75,14 +75,14 @@ public class GuitarAnchorsDrawer {
 			final boolean highlighted = i == highlightId;
 			highwayDrawer.addAnchor(anchor, x, selected, highlighted);
 			if (!currentAnchorDrawn) {
-				drawCurrentAnchor(g, highwayDrawer, anchors, leftScreenEdgeTime, x);
+				drawCurrentAnchor(frameData, highwayDrawer, edgeTime, x);
 				currentAnchorDrawn = true;
 			}
 		}
 		if (!currentAnchorDrawn) {
-			drawCurrentAnchor(g, highwayDrawer, anchors, leftScreenEdgeTime);
+			drawCurrentAnchor(frameData, highwayDrawer, edgeTime);
 		}
 
-		drawHighlightedPositions(highwayDrawer, time, highlightData);
+		drawHighlightedPositions(highwayDrawer, frameData.time, frameData.highlightData);
 	}
 }

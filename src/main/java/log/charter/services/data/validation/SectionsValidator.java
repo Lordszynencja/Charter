@@ -4,26 +4,23 @@ import static log.charter.gui.components.utils.ComponentUtils.askYesNoCancel;
 import static log.charter.util.CollectionUtils.filter;
 import static log.charter.util.Utils.formatTime;
 
+import java.util.List;
+
+import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.SectionType;
 import log.charter.gui.CharterFrame;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.services.editModes.ModeManager;
 import log.charter.util.Utils.TimeUnit;
-import log.charter.util.collections.ArrayList2;
 
 public class SectionsValidator {
+	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
-	private ModeManager modeManager;
 
-	private void moveToTimeOnArrangement(final int arrangementId, final int time) {
-		modeManager.setArrangement(arrangementId);
-		chartTimeHandler.nextTime(time);
-	}
-
-	private boolean validateSectionsAmount(final ArrayList2<EventPoint> sections, final int arrangementId,
+	private boolean validateSectionsAmount(final List<EventPoint> sections, final int arrangementId,
 			final String arrangementName) {
 		if (!sections.isEmpty()) {
 			return true;
@@ -32,7 +29,7 @@ public class SectionsValidator {
 		switch (askYesNoCancel(charterFrame, Label.WARNING, Label.NO_SECTIONS_MOVE_TO_ARRANGEMENT_QUESTION,
 				arrangementName)) {
 			case YES:
-				modeManager.setArrangement(arrangementId);
+				chartTimeHandler.moveTo(arrangementId, null, null);
 				return false;
 			case NO:
 				return true;
@@ -43,19 +40,19 @@ public class SectionsValidator {
 		}
 	}
 
-	private boolean validateSectionsContainPhrases(final ArrayList2<EventPoint> sections, final int arrangementId,
+	private boolean validateSectionsContainPhrases(final List<EventPoint> sections, final int arrangementId,
 			final String arrangementName) {
 		for (final EventPoint section : sections) {
-			if (section.hasPhrase()) {
+			if (section.hasPhrase() || section.section == SectionType.NO_GUITAR) {
 				continue;
 			}
 
 			switch (askYesNoCancel(charterFrame, Label.WARNING, Label.SECTION_WITHOUT_PHRASE_MOVE_QUESTION,
-					section.section.label,
-					formatTime(section.position(), TimeUnit.MILISECONDS, TimeUnit.MINUTES, TimeUnit.YEARS),
+					section.section.label, formatTime(section.position(chartData.beats()), TimeUnit.MILISECONDS,
+							TimeUnit.MINUTES, TimeUnit.YEARS),
 					arrangementName)) {
 				case YES:
-					moveToTimeOnArrangement(arrangementId, section.position());
+					chartTimeHandler.moveTo(arrangementId, null, section.position());
 					return false;
 				case NO:
 					return true;
@@ -70,8 +67,7 @@ public class SectionsValidator {
 	}
 
 	public boolean validateSections(final int arrangementId, final Arrangement arrangement) {
-		final ArrayList2<EventPoint> sections = filter(arrangement.eventPoints, p -> p.section != null,
-				ArrayList2::new);
+		final List<EventPoint> sections = filter(arrangement.eventPoints, p -> p.section != null);
 		final String arrangementName = arrangement.getTypeNameLabel(arrangementId);
 
 		if (!validateSectionsAmount(sections, arrangementId, arrangementName)) {

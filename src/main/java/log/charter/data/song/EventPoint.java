@@ -1,36 +1,38 @@
 package log.charter.data.song;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-import log.charter.data.song.position.Position;
-import log.charter.io.rsc.xml.converters.SimpleCollectionToStringConverter.EventTypesList;
-import log.charter.util.collections.ArrayList2;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IFractionalPosition;
+import log.charter.io.rsc.xml.converters.EventPointConverter;
+import log.charter.io.rsc.xml.converters.SimpleCollectionToStringConverter.EventTypesListConverter;
 
 @XStreamAlias("eventPoint")
-public class EventPoint extends Position {
-	@XStreamAsAttribute
+@XStreamConverter(EventPointConverter.class)
+public class EventPoint implements IFractionalPosition {
+	private FractionalPosition position;
 	public SectionType section = null;
-	@XStreamAsAttribute
 	public String phrase = null;
-	@XStreamAsAttribute
-	@XStreamConverter(EventTypesList.class)
-	public ArrayList2<EventType> events = new ArrayList2<>();
+	@XStreamConverter(EventTypesListConverter.class)
+	public List<EventType> events = new ArrayList<>();
 
 	public EventPoint() {
-		super(0);
+		position = new FractionalPosition();
 	}
 
-	public EventPoint(final int position) {
-		super(position);
+	public EventPoint(final FractionalPosition position) {
+		this.position = position;
 	}
 
 	public EventPoint(final EventPoint other) {
-		super(other);
+		position = other.position;
 		section = other.section;
 		phrase = other.phrase;
-		events = new ArrayList2<>(other.events);
+		events = new ArrayList<>(other.events);
 	}
 
 	public void merge(final EventPoint other) {
@@ -45,5 +47,19 @@ public class EventPoint extends Position {
 
 	public boolean hasPhrase() {
 		return phrase != null;
+	}
+
+	@Override
+	public FractionalPosition position() {
+		return position;
+	}
+
+	@Override
+	public void position(final FractionalPosition newPosition) {
+		if (newPosition == null) {
+			throw new IllegalArgumentException("new position can't be null");
+		}
+
+		position = newPosition;
 	}
 }

@@ -1,9 +1,15 @@
 package log.charter.data.song;
 
-import static log.charter.data.song.position.IConstantPosition.findClosest;
-import static log.charter.data.song.position.IConstantPosition.findClosestId;
+import static log.charter.util.CollectionUtils.closest;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -14,11 +20,10 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.configs.Tuning;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.io.rsc.xml.converters.PhraseDataConverter;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashMap2;
-import log.charter.util.collections.HashSet2;
 
 @XStreamAlias("arrangement")
 @XStreamInclude({ ChordTemplate.class, EventPoint.class, Level.class, Phrase.class, ToneChange.class })
@@ -54,13 +59,13 @@ public class Arrangement {
 	@XStreamAsAttribute
 	public String baseTone = "base";
 
-	public ArrayList2<EventPoint> eventPoints = new ArrayList2<>();
+	public List<EventPoint> eventPoints = new ArrayList<>();
 	@XStreamConverter(PhraseDataConverter.class)
-	public HashMap2<String, Phrase> phrases = new HashMap2<>();
-	public HashSet2<String> tones = new HashSet2<>();
-	public ArrayList2<ToneChange> toneChanges = new ArrayList2<>();
-	public ArrayList2<ChordTemplate> chordTemplates = new ArrayList2<>();
-	public ArrayList2<Level> levels = new ArrayList2<>();
+	public Map<String, Phrase> phrases = new HashMap<>();
+	public Set<String> tones = new HashSet<>();
+	public List<ToneChange> toneChanges = new ArrayList<>();
+	public List<ChordTemplate> chordTemplates = new ArrayList<>();
+	public List<Level> levels = new ArrayList<>();
 
 	public Arrangement() {
 		setLevel(0, new Level());
@@ -83,15 +88,15 @@ public class Arrangement {
 		levels.set(id, level);
 	}
 
-	public EventPoint findOrCreateArrangementEventsPoint(final int position) {
-		EventPoint arrangementEventsPoint = findClosest(eventPoints, position);
-		if (arrangementEventsPoint == null || arrangementEventsPoint.position() != position) {
-			arrangementEventsPoint = new EventPoint(position);
-			eventPoints.add(arrangementEventsPoint);
-			eventPoints.sort(null);
+	public EventPoint findOrCreateArrangementEventsPoint(final FractionalPosition position) {
+		EventPoint eventPoint = lastBeforeEqual(eventPoints, position).find();
+		if (eventPoint == null || eventPoint.position().compareTo(position) != 0) {
+			eventPoint = new EventPoint(position);
+			eventPoints.add(eventPoint);
+			eventPoints.sort(IConstantFractionalPosition::compareTo);
 		}
 
-		return arrangementEventsPoint;
+		return eventPoint;
 	}
 
 	public String getTypeNameLabel() {
@@ -114,8 +119,8 @@ public class Arrangement {
 		return chordTemplates.size() - 1;
 	}
 
-	public ArrayList2<EventPoint> getFilteredEventPoints(final Predicate<EventPoint> filter) {
-		return eventPoints.stream().filter(filter).collect(Collectors.toCollection(ArrayList2::new));
+	public List<EventPoint> getFilteredEventPoints(final Predicate<EventPoint> filter) {
+		return eventPoints.stream().filter(filter).collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	public String getTuningName(final String format) {
@@ -130,12 +135,12 @@ public class Arrangement {
 		return arrangementType == ArrangementType.Bass || tuning.strings() < 6;
 	}
 
-	public void setPhrase(final int position, final String name) {
+	public void setPhrase(final FractionalPosition position, final String name) {
 		if (!phrases.containsKey(name)) {
 			phrases.put(name, new Phrase());
 		}
 
-		final Integer closestId = findClosestId(eventPoints, position);
+		final Integer closestId = closest(eventPoints, position).findId();
 		if (closestId == null) {
 			final EventPoint count = new EventPoint(position);
 			count.phrase = name;
@@ -144,11 +149,12 @@ public class Arrangement {
 		}
 
 		final EventPoint closestEventPoint = eventPoints.get(closestId);
-		if (closestEventPoint.position() != position) {
+		if (closestEventPoint.position().compareTo(position) != 0) {
 			final EventPoint count = new EventPoint(position);
 			count.phrase = name;
 
-			eventPoints.add(closestEventPoint.position() < position ? closestId + 1 : closestId, count);
+			eventPoints.add(closestEventPoint.position().compareTo(position) < 0 ? closestId + 1 : closestId,
+					count);
 		} else {
 			closestEventPoint.phrase = name;
 		}

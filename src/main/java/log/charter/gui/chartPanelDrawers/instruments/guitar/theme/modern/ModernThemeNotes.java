@@ -19,7 +19,6 @@ import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.MuteIconGenerator.generatePalmMuteIcon;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.NoteHeadIconGenerator.generateHarmonicNoteIcon;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.NoteHeadIconGenerator.generateNoteIcon;
-import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.Utils.getStringPosition;
 import static log.charter.util.Utils.stringId;
 
@@ -285,8 +284,7 @@ public class ModernThemeNotes implements ThemeNotes {
 				ColorLabel.BASE_DARK_TEXT));
 	}
 
-	private void drawHighlightForNote(final int x, final CommonNoteWithFret note) {
-		final int length = timeToXLength(note.position(), note.length());
+	private void drawHighlightForNote(final int x, final int length, final CommonNoteWithFret note) {
 		final int y = stringPositions[note.string()];
 		final boolean slide = note.slideTo() != null;
 		final boolean slideUp = slide && note.slideTo() >= note.fret();
@@ -300,11 +298,14 @@ public class ModernThemeNotes implements ThemeNotes {
 	}
 
 	@Override
-	public void addSoundHighlight(final int x, final Optional<ChordOrNote> originalSound,
-			final Optional<ChordTemplate> template, final int string) {
-		originalSound.flatMap(sound -> sound.noteWithFrets(string, template.orElse(null)))//
-				.ifPresentOrElse(note -> drawHighlightForNote(x, note), //
-						() -> drawHighlightWithoutNote(x, string));
+	public void addSoundHighlight(final int x, final int length, final Optional<ChordOrNote> originalSound,
+			final Optional<ChordTemplate> template, final int string, final boolean drawOriginalStrings) {
+		if (originalSound.isPresent() && drawOriginalStrings) {
+			originalSound.get().notesWithFrets(template.orElse(null))//
+					.forEach(note -> drawHighlightForNote(x, length, note));
+		} else {
+			drawHighlightWithoutNote(x, string);
+		}
 	}
 
 	@Override

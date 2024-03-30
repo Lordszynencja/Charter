@@ -10,7 +10,7 @@ public class RSXMLToSongChart {
 	public static SongChart makeSongChartForArrangement(final String musicFileName,
 			final SongArrangement songArrangement) {
 		final BeatsMap beatsMap = new BeatsMap(songArrangement);
-		final Arrangement arrangements = RSXMLToArrangement.toArrangement(songArrangement, beatsMap.beats);
+		final Arrangement arrangements = RSXMLToArrangement.toArrangement(songArrangement, beatsMap.immutable);
 
 		return new SongChart(musicFileName, songArrangement.artistName, songArrangement.artistNameSort,
 				songArrangement.title, songArrangement.albumName, songArrangement.albumYear, beatsMap,

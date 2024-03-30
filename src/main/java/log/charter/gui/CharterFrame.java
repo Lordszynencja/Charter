@@ -1,10 +1,6 @@
 package log.charter.gui;
 
 import static java.util.Arrays.asList;
-import static log.charter.data.config.Config.windowExtendedState;
-import static log.charter.data.config.Config.windowHeight;
-import static log.charter.data.config.Config.windowWidth;
-import static log.charter.gui.components.utils.ComponentUtils.setComponentBoundsWithValidateRepaint;
 
 import java.awt.Component;
 import java.awt.Graphics;
@@ -31,14 +27,15 @@ import log.charter.gui.components.tabs.HelpTab;
 import log.charter.gui.components.tabs.TextTab;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.lookAndFeel.CharterTheme;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
 import log.charter.services.CharterContext;
+import log.charter.services.CharterContext.Initiable;
 import log.charter.services.CharterFrameComponentListener;
 import log.charter.services.CharterFrameWindowFocusListener;
 import log.charter.services.CharterFrameWindowListener;
-import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.files.FileDropHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
@@ -87,7 +84,7 @@ public class CharterFrame extends JFrame implements Initiable {
 
 		setSize(Config.windowWidth, Config.windowHeight);
 		setLocation(Config.windowPosX, Config.windowPosY);
-		setExtendedState(windowExtendedState);
+		setExtendedState(Config.windowExtendedState);
 
 		tabs = new CharterTabbedPane(//
 				new Tab("Quick Edit", new CharterScrollPane(currentSelectionEditor)), //
@@ -116,9 +113,9 @@ public class CharterFrame extends JFrame implements Initiable {
 	}
 
 	public void resize() {
-		windowHeight = getHeight();
-		windowWidth = getWidth();
-		windowExtendedState = getExtendedState();
+		Config.windowHeight = getHeight();
+		Config.windowWidth = getWidth();
+		Config.windowExtendedState = getExtendedState();
 		Config.markChanged();
 
 		resizeComponents();
@@ -126,8 +123,8 @@ public class CharterFrame extends JFrame implements Initiable {
 
 	private void resizeComponents() {
 		final Insets insets = getInsets();
-		final int width = windowWidth - insets.left - insets.right;
-		final int height = windowHeight - insets.top - insets.bottom - charterMenuBar.getHeight();
+		final int width = Config.windowWidth - insets.left - insets.right;
+		final int height = Config.windowHeight - insets.top - insets.bottom - charterMenuBar.getHeight();
 
 		final List<Pair<Component, Integer>> componentHeights = asList(//
 				new Pair<>(chartToolbar, chartToolbar.getHeight()), //
@@ -138,14 +135,14 @@ public class CharterFrame extends JFrame implements Initiable {
 
 		int y = 0;
 		for (final Pair<Component, Integer> componentHeight : componentHeights) {
-			setComponentBoundsWithValidateRepaint(componentHeight.a, 0, y, width, componentHeight.b);
+			ComponentUtils.setComponentBoundsWithValidateRepaint(componentHeight.a, 0, y, width, componentHeight.b);
 			y += componentHeight.b;
 		}
 	}
 
 	public void updateSizes() {
 		final EditMode editMode = modeManager.getMode();
-		final Arrangement arrangement = chartData.getCurrentArrangement();
+		final Arrangement arrangement = chartData.currentArrangement();
 		final boolean bass = arrangement.isBass();
 		final int strings = arrangement.tuning.strings();
 

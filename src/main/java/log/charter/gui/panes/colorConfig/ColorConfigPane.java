@@ -100,7 +100,7 @@ public class ColorConfigPane extends ParamsPane {
 	}
 
 	private void onSave() {
-		GraphicalConfig.colorSet = fileSelect.getSelectedItem();
+		GraphicalConfig.colorSet = fileSelect.getSelectedValue();
 		colorPickers.forEach(colorPicker -> colorPicker.colorLabel.setColor(colorPicker.color()));
 
 		GraphicalConfig.markChanged();

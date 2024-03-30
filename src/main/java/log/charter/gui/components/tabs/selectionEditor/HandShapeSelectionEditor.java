@@ -1,6 +1,11 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
+import static log.charter.util.CollectionUtils.firstAfterEqual;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
+
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -12,19 +17,17 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.IConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
 import log.charter.services.data.fixers.DuplicatedChordTemplatesRemover;
 import log.charter.services.data.fixers.UnusedChordTemplatesRemover;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
-import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashSet2;
 
 public class HandShapeSelectionEditor extends ChordTemplateEditor {
 
@@ -72,13 +75,12 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	private void templateEdited() {
 		undoSystem.addUndo();
 
-		final Arrangement arrangement = chartData.getCurrentArrangement();
+		final Arrangement arrangement = chartData.currentArrangement();
 		final int templateId = arrangement.getChordTemplateIdWithSave(chordTemplate);
 
-		final SelectionAccessor<HandShape> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.HAND_SHAPE);
-		for (final Selection<HandShape> selection : selectionAccessor.getSelectedSet()) {
-			selection.selectable.templateId = templateId;
+		final List<HandShape> handShapes = selectionManager.getSelectedElements(PositionType.HAND_SHAPE);
+		for (final HandShape handShape : handShapes) {
+			handShape.templateId = templateId;
 		}
 
 		DuplicatedChordTemplatesRemover.remove(arrangement);
@@ -86,10 +88,18 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void setTemplateForChordsIn(final HandShape handShape) {
-		final ChordTemplate template = chartData.getCurrentArrangement().chordTemplates.get(handShape.templateId);
-		final ArrayList2<ChordOrNote> sounds = chartData.getCurrentArrangementLevel().sounds;
-		for (final ChordOrNote sound : IConstantPosition.getFromTo(sounds, handShape.position(),
-				handShape.endPosition())) {
+		final ChordTemplate template = chartData.currentArrangement().chordTemplates.get(handShape.templateId);
+		final List<ChordOrNote> sounds = chartData.currentArrangementLevel().sounds;
+
+		final Comparator<IVirtualConstantPosition> comparator = IVirtualConstantPosition.comparator(chartData.beats());
+		final Integer from = firstAfterEqual(sounds, handShape, comparator).findId();
+		final Integer to = lastBeforeEqual(sounds, handShape.endPosition(), comparator).findId();
+		if (from == null || to == null) {
+			return;
+		}
+
+		for (int i = from; i <= to; i++) {
+			final ChordOrNote sound = sounds.get(i);
 			if (!sound.isChord()) {
 				continue;
 			}
@@ -99,10 +109,9 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void setTemplateForChordsInsideSelectedHandShapes() {
-		final SelectionAccessor<HandShape> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.HAND_SHAPE);
-		for (final Selection<HandShape> selection : selectionAccessor.getSelectedSet()) {
-			setTemplateForChordsIn(selection.selectable);
+		final List<HandShape> handShapes = selectionManager.getSelectedElements(PositionType.HAND_SHAPE);
+		for (final HandShape handShape : handShapes) {
+			setTemplateForChordsIn(handShape);
 		}
 	}
 
@@ -130,8 +139,8 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		arpeggioCheckBox.setSelected(false);
 	}
 
-	public void selectionChanged(final SelectionAccessor<HandShape> selectedHandShapesAccessor) {
-		final HashSet2<Selection<HandShape>> selected = selectedHandShapesAccessor.getSelectedSet();
+	public void selectionChanged(final ISelectionAccessor<HandShape> selectedHandShapesAccessor) {
+		final List<Selection<HandShape>> selected = selectedHandShapesAccessor.getSelected();
 
 		final Integer templateId = getSingleValue(selected, selection -> selection.selectable.templateId, null);
 		if (templateId == null) {
@@ -139,7 +148,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 			return;
 		}
 
-		chordTemplate = new ChordTemplate(chartData.getCurrentArrangement().chordTemplates.get(templateId));
+		chordTemplate = new ChordTemplate(chartData.currentArrangement().chordTemplates.get(templateId));
 		setCurrentValuesInInputs();
 		arpeggioCheckBox.setSelected(chordTemplate.arpeggio);
 	}

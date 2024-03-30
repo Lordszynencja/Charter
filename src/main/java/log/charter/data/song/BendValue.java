@@ -2,24 +2,38 @@ package log.charter.data.song;
 
 import java.math.BigDecimal;
 
-import log.charter.data.song.position.Position;
-import log.charter.io.rs.xml.song.ArrangementBendValue;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IFractionalPosition;
 
-public class BendValue extends Position {
+public class BendValue implements IFractionalPosition {
+	private FractionalPosition position;
 	public BigDecimal bendValue;
 
-	public BendValue(final int pos, final BigDecimal bendValue) {
-		super(pos);
+	public BendValue() {
+	}
+
+	public BendValue(final FractionalPosition position) {
+		this.position = position;
+		bendValue = BigDecimal.ZERO;
+	}
+
+	public BendValue(final FractionalPosition position, final BigDecimal bendValue) {
+		this.position = position;
 		this.bendValue = bendValue;
 	}
 
-	public BendValue(final ArrangementBendValue arrangementBendValue, final int noteTime) {
-		super(arrangementBendValue.time - noteTime);
-		bendValue = arrangementBendValue.step == null ? BigDecimal.ZERO : arrangementBendValue.step;
+	public BendValue(final BendValue other) {
+		position = other.position;
+		bendValue = other.bendValue;
 	}
 
-	public BendValue(final BendValue other) {
-		super(other);
-		bendValue = other.bendValue;
+	@Override
+	public FractionalPosition position() {
+		return position;
+	}
+
+	@Override
+	public void position(final FractionalPosition newPosition) {
+		position = newPosition;
 	}
 }

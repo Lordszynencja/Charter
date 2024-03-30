@@ -2,43 +2,37 @@ package log.charter.services.data.copy.data.positions;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.data.song.BeatsMap;
-import log.charter.data.song.position.IPositionWithLength;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.time.IPositionWithLength;
 
 public abstract class CopiedPositionWithLength<T extends IPositionWithLength> extends CopiedPosition<T> {
 	@XStreamAsAttribute
-	public final int length;
+	public final int l;
 	@XStreamAsAttribute
-	public final double beatsLength;
+	public final FractionalPosition fl;
 
-	public CopiedPositionWithLength(final BeatsMap beatsMap, final int basePosition, final double basePositionInBeats,
+	public CopiedPositionWithLength(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
 			final T positionWithLength) {
-		super(beatsMap, basePosition, basePositionInBeats, positionWithLength);
-		length = positionWithLength.length();
-		beatsLength = beatsMap.getPositionInBeats(positionWithLength.endPosition()) - positionInBeats
-				- basePositionInBeats;
+		super(beats, basePosition, positionWithLength);
+		l = positionWithLength.length();
+		fl = positionWithLength.endPosition().toFraction(beats).position().add(super.fp.negate());
 	}
 
 	@Override
-	protected abstract T prepareValue();
-
-	@Override
-	public T getValue(final BeatsMap beatsMap, final int basePosition, final double basePositionInBeats,
+	public T getValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
 			final boolean convertFromBeats) {
-		final T value = super.getValue(beatsMap, basePosition, basePositionInBeats, convertFromBeats);
+		final T value = super.getValue(beats, basePosition, convertFromBeats);
 		if (value == null) {
 			return null;
 		}
 
 		if (convertFromBeats) {
-			double endPositionInBeats = basePositionInBeats + positionInBeats + beatsLength;
-			if (endPositionInBeats > beatsMap.beats.size() - 1) {
-				endPositionInBeats = beatsMap.beats.size() - 1;
-			}
+			final FractionalPosition endPosition = basePosition.add(fp).add(fl);
 
-			value.length(beatsMap.getPositionForPositionInBeats(endPositionInBeats) - value.position());
-		} else {
-			value.length(length);
+			value.endPosition(endPosition.getPosition(beats));
+		} else if (value.isPosition()) {
+			value.endPosition(value.position() + l);
 		}
 
 		return value;

@@ -1,46 +1,55 @@
 package log.charter.services.mouseAndKeyboard;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static log.charter.data.config.Config.gridSize;
-import static log.charter.data.config.Config.minNoteDistance;
-import static log.charter.data.song.position.IConstantPosition.findClosest;
-import static log.charter.data.song.position.IConstantPosition.findFirstIdAfter;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBefore;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId.fromNoteId;
 import static log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId.fromPosition;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTime;
-import static log.charter.util.Utils.nvl;
+import static log.charter.util.CollectionUtils.closest;
+import static log.charter.util.CollectionUtils.firstAfter;
+import static log.charter.util.CollectionUtils.lastBefore;
+import static log.charter.util.CollectionUtils.max;
+import static log.charter.util.CollectionUtils.min;
+import static log.charter.util.ScalingUtils.xToPosition;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Beat;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.Position;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.ConstantPosition;
+import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.time.Position;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.ModeManager;
-import log.charter.util.CollectionUtils;
-import log.charter.util.collections.ArrayList2;
+import log.charter.util.grid.GridPosition;
 
 public class HighlightManager {
 	private class PositionsWithStringsCalculator {
 		private final int fromPosition;
 		private final int toPosition;
+		private final FractionalPosition fromPositionFractional;
+		private final FractionalPosition toPositionFractional;
 		private final int fromY;
 		private final int toY;
 
-		private final ArrayList2<PositionWithStringOrNoteId> positions = new ArrayList2<>();
-		private final ArrayList2<PositionWithStringOrNoteId> noteChordPositions = new ArrayList2<>();
+		private final List<PositionWithStringOrNoteId> positions = new ArrayList<>();
+		private final List<PositionWithStringOrNoteId> noteChordPositions = new ArrayList<>();
 
 		public PositionsWithStringsCalculator(final int fromPosition, final int toPosition, final int fromY,
 				final int toY) {
 			this.fromPosition = fromPosition;
 			this.toPosition = toPosition;
+			fromPositionFractional = FractionalPosition.fromTime(chartData.beats(), fromPosition);
+			toPositionFractional = FractionalPosition.fromTime(chartData.beats(), toPosition);
 			this.fromY = fromY;
 			this.toY = toY;
 		}
@@ -49,59 +58,52 @@ public class HighlightManager {
 			final int distance = position - fromPosition;
 			final int maxDistance = toPosition - fromPosition;
 			if (distance == 0) {
-				return yToString(fromY, chartData.getCurrentArrangement().tuning.strings());
+				return yToString(fromY, chartData.currentArrangement().tuning.strings());
 			}
 
 			final int y = fromY + (toY - fromY) * distance / maxDistance;
-			return yToString(y, chartData.getCurrentArrangement().tuning.strings());
+			return yToString(y, chartData.currentArrangement().tuning.strings());
 		}
 
 		private void addAvailablePositions() {
-			final ArrayList2<Beat> beats = chartData.songChart.beatsMap.beats;
-			final int beatIdFrom = max(0, CollectionUtils.findLastIdBefore(beats, new Position(fromPosition)));
-			final int beatIdTo = min(beats.size(), nvl(findFirstIdAfter(beats, toPosition), beats.size()));
+			final ImmutableBeatsMap beats = chartData.beats();
+			final GridPosition<Beat> gridPosition = GridPosition.create(beats, fromPositionFractional);
 
-			for (int beatId = beatIdFrom; beatId < beatIdTo; beatId++) {
-				final Beat beat = beats.get(beatId);
-				final Beat next = beats.get(beatId + 1);
-				for (int gridId = 0; gridId < gridSize; gridId++) {
-					final int gridPosition = beat.position()
-							+ ((next.position() - beat.position()) * gridId / gridSize);
-					if (gridPosition >= fromPosition && gridPosition <= toPosition) {
-						positions.add(fromPosition(gridPosition, getLane(gridPosition)));
-					}
-				}
+			while (gridPosition.compareTo(toPositionFractional) <= 0) {
+				final FractionalPosition position = gridPosition.fractionalPosition();
+				final int lane = getLane(position.toPosition(beats).position());
+				positions.add(fromPosition(position, lane));
+
+				gridPosition.next();
 			}
 		}
 
 		private void addGuitarNotePositions() {
-			final ArrayList2<ChordOrNote> chordsAndNotes = chartData.getCurrentArrangementLevel().sounds;
-			int idFrom = findLastIdBefore(chordsAndNotes, fromPosition);
-			int idTo = findFirstIdAfter(chordsAndNotes, toPosition);
-			if (idFrom == -1) {
-				idFrom = 0;
-			}
-			if (idTo == -1) {
-				idTo = chordsAndNotes.size() - 1;
-			}
+			final List<ChordOrNote> sounds = chartData.currentSounds();
+			final int idFrom = lastBefore(sounds, fromPositionFractional).findId(0);
+			final int idTo = firstAfter(sounds, toPositionFractional).findId(sounds.size() - 1);
+
+			final ImmutableBeatsMap beats = chartData.beats();
 			for (int i = idFrom; i <= idTo; i++) {
-				final ChordOrNote chordOrNote = chordsAndNotes.get(i);
-				if (chordOrNote.position() >= fromPosition && chordOrNote.position() <= toPosition) {
-					noteChordPositions.add(fromNoteId(i, chordOrNote, getLane(chordOrNote.position())));
+				final ChordOrNote chordOrNote = sounds.get(i);
+				if (chordOrNote.compareTo(fromPositionFractional) >= 0
+						&& chordOrNote.compareTo(toPositionFractional) <= 0) {
+					noteChordPositions.add(fromNoteId(i, chordOrNote, getLane(chordOrNote.position(beats))));
 				}
 			}
 		}
 
-		public ArrayList2<PositionWithStringOrNoteId> getPositionsWithStrings() {
+		public List<PositionWithStringOrNoteId> getPositionsWithStrings() {
 			addAvailablePositions();
 			addGuitarNotePositions();
 
-			final ArrayList2<PositionWithStringOrNoteId> finalPositions = new ArrayList2<>();
+			final List<PositionWithStringOrNoteId> finalPositions = new ArrayList<>();
 
+			final ImmutableBeatsMap beats = chartData.beats();
 			for (final PositionWithStringOrNoteId position : positions) {
 				boolean isCloseToNoteOrChord = false;
 				for (final PositionWithStringOrNoteId noteOrChord : noteChordPositions) {
-					if (abs(noteOrChord.position() - position.position()) < minNoteDistance) {
+					if (abs(noteOrChord.position(beats) - position.position(beats)) < 20) {
 						isCloseToNoteOrChord = true;
 						break;
 					}
@@ -112,7 +114,7 @@ public class HighlightManager {
 				}
 			}
 			finalPositions.addAll(noteChordPositions);
-			finalPositions.sort(null);
+			finalPositions.sort(IConstantFractionalPosition::compareTo);
 
 			return finalPositions;
 		}
@@ -123,27 +125,45 @@ public class HighlightManager {
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 
-	private int snapPosition(final PositionType positionType, final int position) {
-		if (positionType == PositionType.BEAT) {
-			final Beat beat = findClosest(chartData.songChart.beatsMap.beats, position);
-			return beat == null ? position : beat.position();
-		}
-		if (positionType != PositionType.ANCHOR) {
-			return chartData.songChart.beatsMap.getPositionFromGridClosestTo(position);
-		}
+	private IConstantPosition snapBeat(final int position) {
+		final Beat beat = closest(chartData.beats(), new Position(position), IConstantPosition::compareTo,
+				p -> p.position()).find();
+		return new ConstantPosition(beat == null ? position : beat.position());
+	}
 
-		final int closestGridPosition = chartData.songChart.beatsMap.getPositionFromGridClosestTo(position);
-		final ChordOrNote closestSound = findClosest(chartData.getCurrentArrangementLevel().sounds, position);
+	private IConstantFractionalPosition snapNotAnchor(final int position) {
+		return chartData.beats().getPositionFromGridClosestTo(new Position(position)).toFraction(chartData.beats());
+	}
+
+	private IConstantFractionalPosition snapAnchor(final int position) {
+		final FractionalPosition closestGridPosition = chartData.beats()
+				.getPositionFromGridClosestTo(new Position(position));
+
+		final ChordOrNote closestSound = closest(chartData.currentSounds(),
+				closestGridPosition.toFraction(chartData.beats())).find();
 		if (closestSound == null) {
 			return closestGridPosition;
 		}
-		final int closestNotePosition = closestSound.position();
 
-		if (abs(closestGridPosition - position) < abs(closestNotePosition - position) + 10) {
+		final FractionalPosition closestNotePosition = closestSound.position();
+
+		if (abs(closestGridPosition.position(chartData.beats()) - position)
+				- abs(closestNotePosition.position(chartData.beats()) - position) < 10) {
 			return closestGridPosition;
 		}
 
 		return closestNotePosition;
+	}
+
+	private IVirtualConstantPosition snapPosition(final PositionType positionType, final int position) {
+		if (positionType == PositionType.BEAT) {
+			return snapBeat(position);
+		}
+		if (positionType != PositionType.ANCHOR) {
+			return snapNotAnchor(position);
+		}
+
+		return snapAnchor(position);
 	}
 
 	public PositionWithIdAndType getHighlight(final int x, final int y) {
@@ -154,22 +174,27 @@ public class HighlightManager {
 			return existingPosition;
 		}
 
-		int position = xToTime(x, chartTimeHandler.time());
-		if (positionType != PositionType.BEAT) {
-			position = snapPosition(positionType, position);
-			position = max(0, min(chartData.songChart.beatsMap.beats.getLast().position(), position));
-
-			final PositionWithIdAndType existingPositionCloseToGrid = selectionManager
-					.findExistingPosition(timeToX(position, chartTimeHandler.time()), y);
-			if (existingPositionCloseToGrid != null) {
-				return existingPositionCloseToGrid;
-			}
+		final ImmutableBeatsMap beats = chartData.beats();
+		final int mouseTime = xToPosition(x, chartTimeHandler.time());
+		if (positionType == PositionType.BEAT) {
+			return PositionWithIdAndType.of(beats, mouseTime, positionType);
 		}
 
-		return new PositionWithIdAndType(position, positionType);
+		final Comparator<IVirtualConstantPosition> comparator = IVirtualConstantPosition.comparator(beats);
+		IVirtualConstantPosition position = snapPosition(positionType, mouseTime);
+		position = max(comparator, new FractionalPosition(),
+				min(comparator, new Position(chartTimeHandler.maxTime()), position));
+		final int positionX = chartTimeHandler.positionToX(position.toPosition(beats).position());
+
+		final PositionWithIdAndType existingPositionCloseToGrid = selectionManager.findExistingPosition(positionX, y);
+		if (existingPositionCloseToGrid != null) {
+			return existingPositionCloseToGrid;
+		}
+
+		return PositionWithIdAndType.of(beats, position, positionType);
 	}
 
-	public ArrayList2<PositionWithStringOrNoteId> getPositionsWithStrings(final int fromPosition, final int toPosition,
+	public List<PositionWithStringOrNoteId> getPositionsWithStrings(final int fromPosition, final int toPosition,
 			final int fromY, final int toY) {
 		final PositionsWithStringsCalculator calculator;
 		if (fromPosition > toPosition) {

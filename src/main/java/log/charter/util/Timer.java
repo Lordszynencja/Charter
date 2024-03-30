@@ -3,6 +3,7 @@ package log.charter.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import log.charter.io.Logger;
 import log.charter.util.collections.Pair;
 
 public class Timer {
@@ -21,9 +22,7 @@ public class Timer {
 	}
 
 	public void print(final String label, final String format) {
-		System.out.println(label);
-		timings.forEach(pair -> {
-			System.out.println(String.format(format, pair.a, pair.b));
-		});
+		Logger.debug(label);
+		timings.forEach(pair -> Logger.debug(String.format(format, pair.a, pair.b)));
 	}
 }

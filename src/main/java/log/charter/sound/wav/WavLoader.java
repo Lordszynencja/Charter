@@ -2,7 +2,6 @@ package log.charter.sound.wav;
 
 import java.io.File;
 
-import log.charter.io.Logger;
 import log.charter.sound.data.AudioDataShort;
 
 public class WavLoader {
@@ -18,10 +17,7 @@ public class WavLoader {
 
 			return new AudioDataShort(sound, wavFile.getSampleRate());
 		} catch (final Exception e) {
-			Logger.error("Couldn't load wav " + file.getAbsolutePath() + ", deleting it", e);
-			file.delete();
+			return null;
 		}
-
-		return null;
 	}
 }

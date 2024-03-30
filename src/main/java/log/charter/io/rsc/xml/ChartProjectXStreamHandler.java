@@ -1,5 +1,7 @@
 package log.charter.io.rsc.xml;
 
+import java.io.File;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
@@ -16,10 +18,10 @@ import log.charter.data.song.Phrase;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.notes.GuitarSound;
-import log.charter.data.song.notes.Note;
 import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForChord;
 import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForNote;
+import log.charter.data.song.notes.GuitarSound;
+import log.charter.data.song.notes.Note;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
@@ -30,13 +32,14 @@ import log.charter.services.data.copy.data.FullGuitarCopyData;
 import log.charter.services.data.copy.data.HandShapesCopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
-import log.charter.services.data.copy.data.positions.CopiedAnchorPosition;
-import log.charter.services.data.copy.data.positions.CopiedArrangementEventsPointPosition;
-import log.charter.services.data.copy.data.positions.CopiedHandShapePosition;
-import log.charter.services.data.copy.data.positions.CopiedSoundPosition;
-import log.charter.services.data.copy.data.positions.CopiedToneChangePosition;
+import log.charter.services.data.copy.data.positions.CopiedAnchor;
+import log.charter.services.data.copy.data.positions.CopiedEventPoint;
+import log.charter.services.data.copy.data.positions.CopiedHandShape;
+import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundChord;
+import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundNote;
+import log.charter.services.data.copy.data.positions.CopiedToneChange;
 import log.charter.services.data.copy.data.positions.CopiedVocalPosition;
-import log.charter.services.editModes.EditMode;
+import log.charter.util.RW;
 import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.HashMap2;
 import log.charter.util.collections.HashSet2;
@@ -65,11 +68,12 @@ public class ChartProjectXStreamHandler {
 				ChordOrNoteForChord.class, //
 				ChordOrNoteForNote.class, //
 				ChordTemplate.class, //
-				CopiedAnchorPosition.class, //
-				CopiedArrangementEventsPointPosition.class, //
-				CopiedHandShapePosition.class, //
-				CopiedSoundPosition.class, //
-				CopiedToneChangePosition.class, //
+				CopiedAnchor.class, //
+				CopiedEventPoint.class, //
+				CopiedHandShape.class, //
+				CopiedSoundChord.class, //
+				CopiedSoundNote.class, //
+				CopiedToneChange.class, //
 				CopiedVocalPosition.class, //
 				CopyData.class, //
 				EventPoint.class, //
@@ -90,22 +94,15 @@ public class ChartProjectXStreamHandler {
 		return xstream;
 	}
 
-	public static ChartProject readChartProject(final String xml) {
-		final Object o = xstream.fromXML(xml);
+	public static ChartProject readChartProject(final File file) {
+		final Object o = xstream.fromXML(RW.read(file));
 		if (!o.getClass().isAssignableFrom(ChartProject.class)) {
 			return null;
 		}
 
 		final ChartProject project = (ChartProject) o;
-
-		if (project.chartFormatVersion == 1) {
-			project.editMode = EditMode.GUITAR;
-			project.arrangement = 0;
-			project.level = 0;
-			project.time = 0;
-
-			project.chartFormatVersion = 2;
-		}
+		ChartProjectVerion2Updater.update(project);
+		ChartProjectVerion3Updater.update(file, project);
 
 		return project;
 	}

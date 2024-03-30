@@ -6,7 +6,9 @@ import javax.swing.JCheckBox;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.vocals.Vocal;
+import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -35,7 +37,7 @@ public class VocalPane extends ParamsPane {
 		this.undoSystem = undoSystem;
 	}
 
-	public VocalPane(final int position, final ChartData data, final CharterFrame frame,
+	public VocalPane(final IConstantFractionalPositionWithEnd position, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this(Label.VOCAL_PANE_CREATION, data, frame, selectionManager, undoSystem);
 
@@ -50,9 +52,9 @@ public class VocalPane extends ParamsPane {
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		this(Label.VOCAL_PANE_EDIT, data, frame, selectionManager, undoSystem);
 
-		text = vocal.getText();
-		wordPart = vocal.isWordPart();
-		phraseEnd = vocal.isPhraseEnd();
+		text = vocal.text();
+		wordPart = vocal.flag() == VocalFlag.WORD_PART;
+		phraseEnd = vocal.flag() == VocalFlag.PHRASE_END;
 
 		createElementsAndShow(() -> saveAndExit(id, vocal));
 	}
@@ -62,9 +64,9 @@ public class VocalPane extends ParamsPane {
 			final List<Selection<Vocal>> remainingVocals) {
 		this(Label.VOCAL_PANE_EDIT, data, frame, selectionManager, undoSystem);
 
-		text = vocal.getText();
-		wordPart = vocal.isWordPart();
-		phraseEnd = vocal.isPhraseEnd();
+		text = vocal.text();
+		wordPart = vocal.flag() == VocalFlag.WORD_PART;
+		phraseEnd = vocal.flag() == VocalFlag.PHRASE_END;
 
 		createElementsAndShow(() -> saveAndExit(id, vocal, remainingVocals));
 	}
@@ -91,7 +93,11 @@ public class VocalPane extends ParamsPane {
 		addDefaultFinish(4, onSave);
 	}
 
-	private void createAndExit(final int position) {
+	private VocalFlag flag() {
+		return phraseEnd ? VocalFlag.PHRASE_END : wordPart ? VocalFlag.WORD_PART : VocalFlag.NONE;
+	}
+
+	private void createAndExit(final IConstantFractionalPositionWithEnd position) {
 		if (text == null || "".equals(text)) {
 			return;
 		}
@@ -99,43 +105,47 @@ public class VocalPane extends ParamsPane {
 		undoSystem.addUndo();
 		selectionManager.clear();
 
-		final int vocalId = data.songChart.vocals.insertNote(position, text, wordPart, phraseEnd);
+		final int vocalId = data.currentVocals().insertVocal(position, text, flag());
 		selectionManager.addSelection(PositionType.VOCAL, vocalId);
+	}
+
+	private void changeValues(final Vocal vocal) {
+		if (vocal.text().equals(text) && vocal.flag() == flag()) {
+			return;
+		}
+
+		undoSystem.addUndo();
+		vocal.flag(flag());
+		vocal.text(text);
 	}
 
 	private void saveAndExit(final int id, final Vocal vocal) {
 		if (text == null || "".equals(text)) {
 			undoSystem.addUndo();
-			data.songChart.vocals.removeNote(id);
+			data.currentVocals().removeNote(id);
 			return;
 		}
 
-		if (vocal.getText() != text || vocal.isWordPart() != wordPart || vocal.isPhraseEnd() != phraseEnd) {
-			undoSystem.addUndo();
-			vocal.lyric = text;
-			vocal.setWordPart(wordPart);
-			vocal.setPhraseEnd(phraseEnd);
-		}
+		changeValues(vocal);
+	}
+
+	private void showNewWindow(final List<Selection<Vocal>> remainingVocals) {
+		final Selection<Vocal> nextSelectedVocal = remainingVocals.remove(0);
+		new VocalPane(nextSelectedVocal.id, nextSelectedVocal.selectable, data, frame, selectionManager, undoSystem,
+				remainingVocals);
 	}
 
 	private void saveAndExit(final int id, final Vocal vocal, final List<Selection<Vocal>> remainingVocals) {
 		if (text == null || "".equals(text)) {
 			undoSystem.addUndo();
-			data.songChart.vocals.removeNote(id);
+			data.currentVocals().removeNote(id);
 			return;
 		}
 
-		if (vocal.getText() != text || vocal.isWordPart() != wordPart || vocal.isPhraseEnd() != phraseEnd) {
-			undoSystem.addUndo();
-			vocal.lyric = text;
-			vocal.setWordPart(wordPart);
-			vocal.setPhraseEnd(phraseEnd);
-		}
+		changeValues(vocal);
 
 		if (!remainingVocals.isEmpty()) {
-			final Selection<Vocal> nextSelectedVocal = remainingVocals.remove(0);
-			new VocalPane(nextSelectedVocal.id, nextSelectedVocal.selectable, data, frame, selectionManager, undoSystem,
-					remainingVocals);
+			showNewWindow(remainingVocals);
 		}
 	}
 

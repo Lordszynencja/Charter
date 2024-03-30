@@ -6,6 +6,7 @@ import static log.charter.io.Logger.error;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import log.charter.sound.data.AudioDataShort;
 import log.charter.util.RW;
 
 public class Mp3Loader {
-	public static AudioDataShort load(final String path) {
+	public static AudioDataShort load(final File path) {
 		try {
 			final AudioInputStream in = getAudioInputStream(
 					new BufferedInputStream(new ByteArrayInputStream(RW.readB(path))));

@@ -1,12 +1,13 @@
 package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.editModes.ModeManager;
 
 public class BaseUndoState extends UndoState {
 	private final UndoState internalUndoState;
-	private final int markerPosition;
+	private final FractionalPosition markerPosition;
 
 	public BaseUndoState(final ChartTimeHandler chartTimeHandler, final ModeManager modeManager, final ChartData data) {
 		switch (modeManager.getMode()) {
@@ -23,10 +24,10 @@ public class BaseUndoState extends UndoState {
 				throw new RuntimeException("wrong edit mode " + modeManager.getMode());
 		}
 
-		markerPosition = chartTimeHandler.time();
+		markerPosition = chartTimeHandler.timeFractional();
 	}
 
-	private BaseUndoState(final int markerPosition, final UndoState internalUndoState) {
+	private BaseUndoState(final FractionalPosition markerPosition, final UndoState internalUndoState) {
 		this.internalUndoState = internalUndoState;
 		this.markerPosition = markerPosition;
 	}

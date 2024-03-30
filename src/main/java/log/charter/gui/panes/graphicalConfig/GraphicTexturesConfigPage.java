@@ -69,11 +69,11 @@ public class GraphicTexturesConfigPage implements Page {
 	public void save(final CharterContext context) {
 		boolean texturesChanged = false;
 		if (!inlayField.field.getSelectedItem().equals(GraphicalConfig.inlay)) {
-			GraphicalConfig.inlay = inlayField.field.getSelectedItem();
+			GraphicalConfig.inlay = inlayField.field.getSelectedValue();
 			texturesChanged = true;
 		}
 		if (!texturePackField.field.getSelectedItem().equals(GraphicalConfig.texturePack)) {
-			GraphicalConfig.texturePack = texturePackField.field.getSelectedItem();
+			GraphicalConfig.texturePack = texturePackField.field.getSelectedValue();
 			texturesChanged = true;
 		}
 

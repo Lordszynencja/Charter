@@ -1,43 +1,72 @@
 package log.charter.services.data.copy.data;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.BeatsMap;
-import log.charter.data.song.position.IPosition;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.fractional.IFractionalPosition;
+import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.time.IPosition;
 import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
+import log.charter.services.data.copy.data.positions.CopiedFractionalPosition;
 import log.charter.services.data.copy.data.positions.CopiedPosition;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.ArrayList2;
 
 public interface ICopyData {
-	static <T extends IPosition, V extends CopiedPosition<T>> void simplePaste(final ChartData chartData,
-			final SelectionManager selectionManager, final PositionType type, final int time,
-			final ArrayList2<V> positionsToPaste, final boolean convertFromBeats) {
-		final BeatsMap beatsMap = chartData.songChart.beatsMap;
-		final ArrayList2<T> positions = type.getPositions(chartData);
-		final double basePositionInBeats = beatsMap.getPositionInBeats(time);
-		final Set<Integer> positionsToSelect = new HashSet<>(positionsToPaste.size());
+	static <C extends IPosition, P extends C, T extends P, V extends CopiedPosition<T>> void simplePaste(
+			final ChartData chartData, final SelectionManager selectionManager, final PositionType type,
+			final FractionalPosition basePosition, final List<V> positionsToPaste, final boolean convertFromBeats) {
+		final ImmutableBeatsMap beats = chartData.beats();
+		final List<T> positions = type.<C, P, T>manager().getItems(chartData);
+		final List<T> positionsToSelect = new ArrayList<>(positionsToPaste.size());
 
-		for (final V copiedPosition : positionsToPaste) {
+		positionsToPaste.forEach(copiedPosition -> {
 			try {
-				final T value = copiedPosition.getValue(beatsMap, time, basePositionInBeats, convertFromBeats);
+				final T value = copiedPosition.getValue(beats, basePosition, convertFromBeats);
 				if (value != null) {
 					positions.add(value);
-					positionsToSelect.add(value.position());
+					positionsToSelect.add(value);
 				}
 			} catch (final Exception e) {
 				Logger.error("Couldn't paste position", e);
 			}
-		}
+		});
 
-		positions.sort(null);
+		positions.sort(IConstantPosition::compareTo);
 		selectionManager.addSelectionForPositions(type, positionsToSelect);
 	}
 
+	static <C extends IFractionalPosition, P extends C, T extends P, V extends CopiedFractionalPosition<T>> void simplePasteFractional(
+			final ChartData chartData, final SelectionManager selectionManager, final PositionType type,
+			final FractionalPosition basePosition, final List<V> positionsToPaste, final boolean convertFromBeats) {
+		final ImmutableBeatsMap beats = chartData.beats();
+		final List<T> positions = type.<C, P, T>manager().getItems(chartData);
+		final List<T> positionsToSelect = new ArrayList<>(positionsToPaste.size());
+
+		positionsToPaste.forEach(copiedPosition -> {
+			try {
+				final T value = copiedPosition.getValue(beats, basePosition, convertFromBeats);
+				if (value != null) {
+					positions.add(value);
+					positionsToSelect.add(value);
+				}
+			} catch (final Exception e) {
+				Logger.error("Couldn't paste position", e);
+			}
+		});
+
+		positions.sort(IConstantFractionalPosition::compareTo);
+		selectionManager.addSelectionForPositions(type, positionsToSelect);
+	}
+
+	public PositionType type();
+
 	public boolean isEmpty();
 
-	public void paste(ChartData chartData, SelectionManager selectionManager, int time, boolean convertFromBeats);
+	public void paste(ChartData chartData, SelectionManager selectionManager, FractionalPosition basePosition,
+			boolean convertFromBeats);
 }

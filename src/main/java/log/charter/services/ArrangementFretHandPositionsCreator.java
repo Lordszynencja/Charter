@@ -3,49 +3,52 @@ package log.charter.services;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.frets;
-import static log.charter.util.CollectionUtils.findLastIdBeforeEqual;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
+
+import java.util.List;
 
 import log.charter.data.config.Config;
 import log.charter.data.song.Anchor;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.position.IConstantPosition;
-import log.charter.data.song.position.IPosition;
-import log.charter.util.collections.ArrayList2;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.util.data.IntRange;
 
 public class ArrangementFretHandPositionsCreator {
-	private static class FretRange implements IConstantPosition {
-		public final int position;
+	private static class FretRange implements IConstantFractionalPosition {
+		public final FractionalPosition position;
 		public final boolean isNote;
 		public final boolean isTap;
 		public final IntRange fretRange;
 
-		public FretRange(final IPosition position, final int fret, final boolean isTap) {
-			this.position = position.position();
+		public FretRange(final FractionalPosition position, final int fret, final boolean isTap) {
+			this.position = position;
 			isNote = true;
 			this.isTap = isTap;
 			fretRange = new IntRange(fret, fret);
 		}
 
-		public FretRange(final IPosition position, final int minFret, final int maxFret) {
-			this.position = position.position();
+		public FretRange(final FractionalPosition position, final int minFret, final int maxFret) {
+			this.position = position;
 			isNote = false;
 			isTap = false;
 			fretRange = new IntRange(minFret, maxFret);
 		}
 
 		@Override
-		public int position() {
+		public FractionalPosition position() {
 			return position;
 		}
 	}
 
-	private static FretRange fretRangeFromSound(final ArrayList2<ChordTemplate> chordTemplates,
+	private static FretRange fretRangeFromSound(final ImmutableBeatsMap beats, final List<ChordTemplate> chordTemplates,
 			final ChordOrNote sound) {
+		final FractionalPosition position = sound.position();
 		if (sound.isNote()) {
-			return new FretRange(sound, sound.note().fret, sound.note().hopo == HOPO.TAP);
+			return new FretRange(position, sound.note().fret, sound.note().hopo == HOPO.TAP);
 		}
 
 		final ChordTemplate template = chordTemplates.get(sound.chord().templateId());
@@ -61,13 +64,14 @@ public class ArrangementFretHandPositionsCreator {
 		}
 
 		if (maxFret == 0) {
-			return new FretRange(sound, 0, false);
+			return new FretRange(position, 0, false);
 		}
 
-		return new FretRange(sound, minFret, maxFret);
+		return new FretRange(position, minFret, maxFret);
 	}
 
-	private static void addFHP(final FretRange fretRange, final int index, final ArrayList2<Anchor> anchors) {
+	private static void addFHP(final ImmutableBeatsMap beats, final FretRange fretRange, final int index,
+			final List<Anchor> anchors) {
 		int baseFret = Math.min(frets - 3, max(1, fretRange.fretRange.min));
 
 		if (baseFret <= 0) {
@@ -96,10 +100,11 @@ public class ArrangementFretHandPositionsCreator {
 		return fret <= anchor.fret + maxWidth;
 	}
 
-	private static void addFHPIfNeeded(final FretRange fretRange, final ArrayList2<Anchor> anchors) {
-		final int currentAnchorId = findLastIdBeforeEqual(anchors, fretRange);
-		if (currentAnchorId == -1) {
-			addFHP(fretRange, 0, anchors);
+	private static void addFHPIfNeeded(final ImmutableBeatsMap beats, final FretRange fretRange,
+			final List<Anchor> anchors) {
+		final Integer currentAnchorId = lastBeforeEqual(anchors, fretRange).findId();
+		if (currentAnchorId == null) {
+			addFHP(beats, fretRange, 0, anchors);
 			return;
 		}
 
@@ -114,7 +119,7 @@ public class ArrangementFretHandPositionsCreator {
 				if (fretRange.isTap || (fret > current.fret && canBeExtended(current, fret))) {
 					current.width = fret - current.fret + 1;
 				} else {
-					addFHP(fretRange, currentAnchorId + 1, anchors);
+					addFHP(beats, fretRange, currentAnchorId + 1, anchors);
 				}
 			}
 
@@ -122,7 +127,7 @@ public class ArrangementFretHandPositionsCreator {
 		}
 
 		if (current.fret != fretRange.fretRange.min) {
-			addFHP(fretRange, currentAnchorId + 1, anchors);
+			addFHP(beats, fretRange, currentAnchorId + 1, anchors);
 			return;
 		}
 
@@ -131,11 +136,11 @@ public class ArrangementFretHandPositionsCreator {
 		}
 	}
 
-	public static void createFretHandPositions(final ArrayList2<ChordTemplate> chordTemplates,
-			final ArrayList2<ChordOrNote> sounds, final ArrayList2<Anchor> anchors) {
+	public static void createFretHandPositions(final ImmutableBeatsMap beats, final List<ChordTemplate> chordTemplates,
+			final List<ChordOrNote> sounds, final List<Anchor> anchors) {
 		for (final ChordOrNote sound : sounds) {
-			final FretRange fretRange = fretRangeFromSound(chordTemplates, sound);
-			addFHPIfNeeded(fretRange, anchors);
+			final FretRange fretRange = fretRangeFromSound(beats, chordTemplates, sound);
+			addFHPIfNeeded(beats, fretRange, anchors);
 		}
 	}
 }

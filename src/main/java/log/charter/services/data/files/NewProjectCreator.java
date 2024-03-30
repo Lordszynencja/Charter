@@ -97,6 +97,7 @@ public class NewProjectCreator {
 		}
 
 		final SongChart songChart = new SongChart(new BeatsMap(musicData.msLength()));
+		songChart.musicFileName = songFile.getName();
 		songChart.artistName(songData.getOrDefault("artist", ""));
 		songChart.title(songData.getOrDefault("title", ""));
 		songChart.albumName(songData.getOrDefault("album", ""));
@@ -107,10 +108,10 @@ public class NewProjectCreator {
 		}
 
 		chartData.setNewSong(songFolder, songChart, "project.rscp");
-		projectAudioHandler.setAudio(musicData, !songFile.equals(new File(songFolder, "song.ogg")));
+		projectAudioHandler.setAudio(musicData);
 		songFileHandler.save();
 
 		audioHandler.clear();
-		audioHandler.setSong();
+		audioHandler.audioChanged();
 	}
 }

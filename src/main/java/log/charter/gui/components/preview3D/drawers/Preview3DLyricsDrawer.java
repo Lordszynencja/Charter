@@ -1,25 +1,27 @@
 package log.charter.gui.components.preview3D.drawers;
 
-import static log.charter.data.song.position.IConstantPosition.findLastIdBefore;
+import static log.charter.util.CollectionUtils.lastBefore;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.vocals.Vocal;
+import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
-import log.charter.util.collections.ArrayList2;
 
 public class Preview3DLyricsDrawer {
-	private ChartData data;
+	private ChartData chartData;
 	private TextTexturesHolder textTexturesHolder;
 
-	public void init(final ChartData data, final TextTexturesHolder textTexturesHolder) {
-		this.data = data;
+	public void init(final ChartData chartData, final TextTexturesHolder textTexturesHolder) {
+		this.chartData = chartData;
 		this.textTexturesHolder = textTexturesHolder;
 	}
 
@@ -41,9 +43,9 @@ public class Preview3DLyricsDrawer {
 		return x1;
 	}
 
-	private int findLineStart(final ArrayList2<Vocal> vocals, final int id) {
+	private int findLineStart(final List<Vocal> vocals, final int id) {
 		for (int i = id - 1; i >= 0; i--) {
-			if (vocals.get(i).isPhraseEnd()) {
+			if (vocals.get(i).flag() == VocalFlag.PHRASE_END) {
 				return i + 1;
 			}
 		}
@@ -51,9 +53,9 @@ public class Preview3DLyricsDrawer {
 		return 0;
 	}
 
-	private int findLineEnd(final ArrayList2<Vocal> vocals, final int id) {
+	private int findLineEnd(final List<Vocal> vocals, final int id) {
 		for (int i = id; i < vocals.size(); i++) {
-			if (vocals.get(i).isPhraseEnd()) {
+			if (vocals.get(i).flag() == VocalFlag.PHRASE_END) {
 				return i;
 			}
 		}
@@ -62,11 +64,11 @@ public class Preview3DLyricsDrawer {
 	}
 
 	private String getLineFromTo(final int startingId, final int endingId) {
-		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
+		final List<Vocal> vocals = chartData.currentVocals().vocals;
 		String text = "";
 		for (int i = startingId; i <= endingId; i++) {
 			final Vocal vocal = vocals.get(i);
-			text += vocal.getText() + (vocal.isWordPart() ? "" : " ");
+			text += vocal.text() + (vocal.flag() == VocalFlag.WORD_PART ? "" : " ");
 		}
 
 		return text;
@@ -74,15 +76,16 @@ public class Preview3DLyricsDrawer {
 
 	private void drawCurrentLine(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
 			final double textSizeMultiplier) {
-		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
-		final int currentVocalId = findLastIdBefore(vocals, time);
-		if (currentVocalId == -1) {
+		final List<Vocal> vocals = chartData.currentVocals().vocals;
+		final Integer currentVocalId = lastBefore(vocals, FractionalPosition.fromTime(chartData.beats(), time))
+				.findId();
+		if (currentVocalId == null) {
 			return;
 		}
 
 		final int currentLineStart = findLineStart(vocals, currentVocalId);
 		final int currentLineEnd = findLineEnd(vocals, currentVocalId);
-		if (vocals.get(currentLineEnd).endPosition() < time - 100) {
+		if (vocals.get(currentLineEnd).endPosition(chartData.beats()) < time - 100) {
 			return;
 		}
 
@@ -97,11 +100,13 @@ public class Preview3DLyricsDrawer {
 
 	private void drawNextLine(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
 			final double textSizeMultiplier) {
-		final ArrayList2<Vocal> vocals = data.songChart.vocals.vocals;
-		final int currentVocalId = findLastIdBefore(vocals, time);
-		if (currentVocalId == -1) {
+		final List<Vocal> vocals = chartData.currentVocals().vocals;
+		final Integer currentVocalId = lastBefore(vocals, FractionalPosition.fromTime(chartData.beats(), time))
+				.findId();
+		if (currentVocalId == null) {
 			return;
 		}
+
 		final int nextLineStart = findLineStart(vocals, findLineEnd(vocals, currentVocalId) + 1);
 		final int nextLineEnd = findLineEnd(vocals, nextLineStart);
 		final String textToDo = getLineFromTo(nextLineStart, nextLineEnd);

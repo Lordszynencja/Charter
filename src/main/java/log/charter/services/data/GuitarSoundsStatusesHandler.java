@@ -19,10 +19,9 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.services.data.fixers.ArrangementFixer;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
-import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.ArrayList2;
 
 public class GuitarSoundsStatusesHandler {
 	private static Map<Mute, Mute> mutesCycleMap = getCycleMap(asList(Mute.NONE, Mute.PALM, Mute.FULL));
@@ -53,13 +52,13 @@ public class GuitarSoundsStatusesHandler {
 
 	public <T> void singleToggleOnAllSelectedNotesWithBaseValue(final Function<ChordOrNote, T> baseValueGetter,
 			final BiConsumer<ChordOrNote, T> handler) {
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		final ISelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
+				.accessor(PositionType.GUITAR_NOTE);
 		if (!selectedAccessor.isSelected()) {
 			return;
 		}
 
-		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 		final T baseValue = baseValueGetter.apply(selected.get(0).selectable);
 
 		undoSystem.addUndo();
@@ -78,13 +77,13 @@ public class GuitarSoundsStatusesHandler {
 
 	public <T> void cyclicalToggleNotes(final Map<T, T> cycleMap, final Function<CommonNote, T> getter,
 			final BiConsumer<CommonNote, T> setter, final T defaultValue) {
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		final ISelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
+				.accessor(PositionType.GUITAR_NOTE);
 		if (!selectedAccessor.isSelected()) {
 			return;
 		}
 
-		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 		final T valueToSet = getNewValueNotes(cycleMap, selected.get(0).selectable, getter, defaultValue);
 
 		undoSystem.addUndo();
@@ -95,13 +94,13 @@ public class GuitarSoundsStatusesHandler {
 
 	public <T> void independentCyclicalToggleNotes(final Map<T, T> cycleMap, final Function<CommonNote, T> getter,
 			final BiConsumer<CommonNote, T> setter) {
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		final ISelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
+				.accessor(PositionType.GUITAR_NOTE);
 		if (!selectedAccessor.isSelected()) {
 			return;
 		}
 
-		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 
 		undoSystem.addUndo();
 
@@ -112,13 +111,13 @@ public class GuitarSoundsStatusesHandler {
 
 	public <T> void cyclicalToggleSound(final Map<T, T> cycleMap, final Function<GuitarSound, T> getter,
 			final BiConsumer<GuitarSound, T> setter) {
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		final ISelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
+				.accessor(PositionType.GUITAR_NOTE);
 		if (!selectedAccessor.isSelected()) {
 			return;
 		}
 
-		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 		final T valueToSet = cycleMap.get(getter.apply(selected.get(0).selectable.asGuitarSound()));
 
 		undoSystem.addUndo();
@@ -128,13 +127,13 @@ public class GuitarSoundsStatusesHandler {
 
 	public <T> void independentCyclicalToggleSound(final Map<T, T> cycleMap, final Function<GuitarSound, T> getter,
 			final BiConsumer<GuitarSound, T> setter) {
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		final ISelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
+				.accessor(PositionType.GUITAR_NOTE);
 		if (!selectedAccessor.isSelected()) {
 			return;
 		}
 
-		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
 
 		undoSystem.addUndo();
 		selected.forEach(selectedValue -> {
@@ -194,30 +193,30 @@ public class GuitarSoundsStatusesHandler {
 	}
 
 	public void toggleLinkNext() {
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		final ISelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
+				.accessor(PositionType.GUITAR_NOTE);
 		if (!selectedAccessor.isSelected()) {
 			return;
 		}
 
 		cyclicalToggleNotes(booleanCycleMap, CommonNote::linkNext, CommonNote::linkNext, false);
 
-		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
-		arrangementFixer.fixNoteLengths(chartData.getCurrentArrangementLevel().sounds, selected.get(0).id,
-				selected.getLast().id);
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
+		arrangementFixer.fixNoteLengths(chartData.currentArrangementLevel().sounds, selected.get(0).id,
+				selected.get(selected.size() - 1).id);
 	}
 
 	public void toggleLinkNextIndependently() {
-		final SelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
+		final ISelectionAccessor<ChordOrNote> selectedAccessor = selectionManager
+				.accessor(PositionType.GUITAR_NOTE);
 		if (!selectedAccessor.isSelected()) {
 			return;
 		}
 
 		independentCyclicalToggleNotes(booleanCycleMap, CommonNote::linkNext, CommonNote::linkNext);
 
-		final ArrayList2<Selection<ChordOrNote>> selected = selectedAccessor.getSortedSelected();
-		arrangementFixer.fixNoteLengths(chartData.getCurrentArrangementLevel().sounds, selected.get(0).id,
-				selected.getLast().id);
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
+		arrangementFixer.fixNoteLengths(chartData.currentArrangementLevel().sounds, selected.get(0).id,
+				selected.get(selected.size() - 1).id);
 	}
 }

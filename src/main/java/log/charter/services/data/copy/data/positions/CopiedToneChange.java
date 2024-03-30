@@ -3,22 +3,23 @@ package log.charter.services.data.copy.data.positions;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.data.song.BeatsMap;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ToneChange;
+import log.charter.data.song.position.FractionalPosition;
 
 @XStreamAlias("copiedToneChange")
-public class CopiedToneChangePosition extends CopiedPosition<ToneChange> {
+public class CopiedToneChange extends CopiedFractionalPosition<ToneChange> {
 	@XStreamAsAttribute
 	public final String toneName;
 
-	public CopiedToneChangePosition(final BeatsMap beatsMap, final int basePosition, final double baseBeatPosition,
-			final ToneChange toneChange) {
-		super(beatsMap, basePosition, baseBeatPosition, toneChange);
+	public CopiedToneChange(final FractionalPosition basePosition, final ToneChange toneChange) {
+		super(basePosition, toneChange);
 		toneName = toneChange.toneName;
 	}
 
 	@Override
-	protected ToneChange prepareValue() {
+	public ToneChange prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
+			final boolean convertFromBeats) {
 		final ToneChange toneChange = new ToneChange();
 		toneChange.toneName = toneName;
 

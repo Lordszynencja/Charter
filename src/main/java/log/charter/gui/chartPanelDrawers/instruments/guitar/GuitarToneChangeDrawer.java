@@ -1,36 +1,38 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
 import static log.charter.util.CollectionUtils.filter;
-import static log.charter.util.ScalingUtils.timeToX;
-import static log.charter.util.ScalingUtils.xToTime;
+import static log.charter.util.ScalingUtils.positionToX;
+import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.awt.Graphics2D;
+import java.util.List;
+import java.util.Set;
 
 import log.charter.data.song.ToneChange;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.types.PositionType;
+import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashSet2;
 
 public class GuitarToneChangeDrawer {
-	private static String findCurrentTone(final String baseTone, final ArrayList2<ToneChange> toneChanges,
-			final int time) {
-		final ArrayList2<ToneChange> tones = filter(toneChanges, //
-				eventPoint -> eventPoint.position() < time, ArrayList2::new);
+	private static String findCurrentTone(final String baseTone, final List<ToneChange> toneChanges,
+			final FractionalPosition time) {
+		final List<ToneChange> tones = filter(toneChanges, //
+				eventPoint -> eventPoint.compareTo(time) < 0);
 
-		return tones.isEmpty() ? baseTone : tones.getLast().toneName;
+		return tones.isEmpty() ? baseTone : tones.get(tones.size() - 1).toneName;
 	}
 
 	private static void drawCurrentTone(final Graphics2D g, final HighwayDrawer highwayDrawer, final String baseTone,
-			final ArrayList2<ToneChange> toneChanges, final int time, final int nextEventPointX) {
+			final List<ToneChange> toneChanges, final FractionalPosition time, final int nextEventPointX) {
 		final String tone = findCurrentTone(baseTone, toneChanges, time);
 		highwayDrawer.addCurrentTone(g, tone, nextEventPointX);
 	}
 
 	private static void drawCurrentTone(final Graphics2D g, final HighwayDrawer highwayDrawer, final String baseTone,
-			final ArrayList2<ToneChange> toneChanges, final int time) {
+			final List<ToneChange> toneChanges, final FractionalPosition time) {
 		final String tone = findCurrentTone(baseTone, toneChanges, time);
 		highwayDrawer.addCurrentTone(g, tone);
 	}
@@ -42,21 +44,24 @@ public class GuitarToneChangeDrawer {
 		}
 
 		for (final HighlightPosition highlightPosition : highlightData.highlightedNonIdPositions) {
-			final int x = timeToX(highlightPosition.position, time);
+			final int x = positionToX(highlightPosition.position, time);
 			highwayDrawer.addToneChangeHighlight(x);
 		}
 	}
 
-	public static void addToneChanges(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
-			final String baseTone, final ArrayList2<ToneChange> toneChanges, final int time,
-			final HashSet2<Integer> selectedIds, final HighlightData highlightData) {
-		final int highlightId = highlightData.getId(PositionType.TONE_CHANGE);
-		final int leftScreenEdgeTime = xToTime(0, time);
+	public static void addToneChanges(final FrameData frameData, final int panelWidth,
+			final HighwayDrawer highwayDrawer) {
+		final Set<Integer> selectedIds = frameData.selection.getSelectedIdsSet(PositionType.TONE_CHANGE);
+		final int highlightId = frameData.highlightData.getId(PositionType.TONE_CHANGE);
+		final FractionalPosition leftScreenEdgeTime = FractionalPosition.fromTime(frameData.beats,
+				xToPosition(0, frameData.time));
+		final String baseTone = frameData.arrangement.baseTone;
+		final List<ToneChange> toneChanges = frameData.arrangement.toneChanges;
 
 		boolean currentToneDrawn = false;
 		for (int i = 0; i < toneChanges.size(); i++) {
 			final ToneChange toneChange = toneChanges.get(i);
-			final int x = timeToX(toneChange.position(), time);
+			final int x = positionToX(toneChange.position(frameData.beats), frameData.time);
 			if (x < 0) {
 				continue;
 			}
@@ -68,15 +73,15 @@ public class GuitarToneChangeDrawer {
 			final boolean highlighted = i == highlightId;
 			highwayDrawer.addToneChange(toneChange, x, selected, highlighted);
 			if (!currentToneDrawn) {
-				drawCurrentTone(g, highwayDrawer, baseTone, toneChanges, leftScreenEdgeTime, x);
+				drawCurrentTone(frameData.g, highwayDrawer, baseTone, toneChanges, leftScreenEdgeTime, x);
 				currentToneDrawn = true;
 			}
 		}
 		if (!currentToneDrawn) {
-			drawCurrentTone(g, highwayDrawer, baseTone, toneChanges, leftScreenEdgeTime);
+			drawCurrentTone(frameData.g, highwayDrawer, baseTone, toneChanges, leftScreenEdgeTime);
 		}
 
-		drawHighlightedPositions(highwayDrawer, time, highlightData);
+		drawHighlightedPositions(highwayDrawer, frameData.time, frameData.highlightData);
 	}
 
 }

@@ -1,5 +1,7 @@
 package log.charter.io.rs.xml.song;
 
+import java.io.File;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
@@ -8,6 +10,7 @@ import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.ArrangementChordTemplateConverter;
 import log.charter.io.rs.xml.converters.CountedListConverter;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
+import log.charter.util.RW;
 import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.HashMap2;
 
@@ -44,8 +47,8 @@ public class SongArrangementXStreamHandler {
 		return xstream;
 	}
 
-	public static SongArrangement readSong(final String xml) {
-		return (SongArrangement) xstream.fromXML(xml);
+	public static SongArrangement readSong(final File file) {
+		return (SongArrangement) xstream.fromXML(RW.read(file));
 	}
 
 	public static String saveSong(final SongArrangement songArrangement) {

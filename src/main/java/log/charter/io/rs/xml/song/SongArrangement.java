@@ -1,15 +1,19 @@
 package log.charter.io.rs.xml.song;
 
-import static log.charter.data.song.position.IConstantPosition.findClosestId;
-import static log.charter.data.song.position.IConstantPosition.findFirstIdAfterEqual;
+import static log.charter.util.CollectionUtils.contains;
+import static log.charter.util.CollectionUtils.firstAfterEqual;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
+import static log.charter.util.CollectionUtils.map;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.IntSupplier;
+import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -18,14 +22,13 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Beat;
-import log.charter.data.song.BeatsMap;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.SectionType;
 import log.charter.data.song.SongChart;
 import log.charter.data.song.ToneChange;
 import log.charter.io.rs.xml.converters.ArrangementTypeConverter;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
-import log.charter.util.collections.ArrayList2;
 import log.charter.io.rs.xml.converters.DateTimeConverter;
 import log.charter.io.rs.xml.converters.TimeConverter;
 
@@ -93,16 +96,20 @@ public class SongArrangement {
 		albumYear = songChart.albumYear;
 		setArrangementProperties(arrangement);
 
-		ebeats = new CountedList<>(songChart.beatsMap.beats.map(EBeat::new));
+		final ImmutableBeatsMap beats = songChart.beatsMap.immutable;
+		ebeats = new CountedList<>(map(songChart.beatsMap.beats, EBeat::new));
 		sections = new CountedList<>(
-				ArrangementSection.fromSections(arrangement.getFilteredEventPoints(p -> p.section != null)));
-		setPhrases(songChart.beatsMap, arrangement);
-		setTones(arrangement);
-		chordTemplates = new CountedList<>(arrangement.chordTemplates.map(ArrangementChordTemplate::new));
-		events = new CountedList<>(ArrangementEvent.fromEventsAndBeatMap(
+				ArrangementSection.fromSections(beats, arrangement.getFilteredEventPoints(p -> p.section != null)));
+		setPhrases(beats, arrangement);
+		setTones(beats, arrangement);
+		chordTemplates = new CountedList<>(arrangement.chordTemplates.stream()//
+				.map(ArrangementChordTemplate::new)//
+				.collect(Collectors.toList()));
+		events = new CountedList<>(ArrangementEvent.fromEventsAndBeatMap(beats,
 				arrangement.getFilteredEventPoints(p -> !p.events.isEmpty()), songChart.beatsMap));
 
-		levels = new CountedList<>(ArrangementLevel.fromLevels(arrangement.levels, arrangement.chordTemplates));
+		levels = new CountedList<>(ArrangementLevel.fromLevels(songChart.beatsMap.immutable, arrangement.levels,
+				arrangement.chordTemplates));
 
 		fixMeasureNumbers();
 	}
@@ -123,8 +130,8 @@ public class SongArrangement {
 	}
 
 	private void addPhraseIteration(final ArrangementPhraseIteration phraseIteration) {
-		final int id = findFirstIdAfterEqual(phraseIterations.list, phraseIteration.time);
-		if (id < 0) {
+		final Integer id = firstAfterEqual(phraseIterations.list, phraseIteration).findId();
+		if (id == null) {
 			phraseIterations.list.add(phraseIteration);
 		} else {
 			phraseIterations.list.add(id, phraseIteration);
@@ -133,8 +140,8 @@ public class SongArrangement {
 
 	private void addDefaultPhrase(final Map<String, Integer> phraseIds, final String name,
 			final IntSupplier positionGenerator) {
-		if (phraseIterations.list
-				.contains(phraseIteration -> phrases.list.get(phraseIteration.phraseId).name.equals(name))) {
+		if (contains(phraseIterations.list,
+				phraseIteration -> phrases.list.get(phraseIteration.phraseId).name.equals(name))) {
 			return;
 		}
 
@@ -142,69 +149,72 @@ public class SongArrangement {
 		addPhraseIteration(new ArrangementPhraseIteration(positionGenerator.getAsInt(), phraseIds.get(name)));
 	}
 
-	private void addDefaultCountPhraseIfNeeded(final BeatsMap beatsMap, final Arrangement arrangement,
-			final Map<String, Integer> phraseIds, final ArrayList2<EventPoint> phraseEventPoints) {
+	private void addDefaultCountPhraseIfNeeded(final ImmutableBeatsMap beats, final Arrangement arrangement,
+			final Map<String, Integer> phraseIds, final List<EventPoint> phraseEventPoints) {
 		final IntSupplier countPositionTimeGenerator = () -> {
 			if (phraseEventPoints.isEmpty()) {
-				return beatsMap.getBeatSafe(0).position();
+				return beats.get(0).position();
 			}
 
-			Integer beatId = findClosestId(beatsMap.beats, phraseEventPoints.get(0).position());
-			while (!beatsMap.getBeatSafe(beatId).firstInMeasure && beatId > 0) {
+			int beatId = lastBeforeEqual(beats, phraseEventPoints.get(0).toPosition(beats)).findId(0);
+			while (!beats.get(beatId).firstInMeasure && beatId > 0) {
 				beatId--;
 			}
 			beatId--;
-			while (!beatsMap.getBeatSafe(beatId).firstInMeasure && beatId > 0) {
+			while (!beats.get(beatId).firstInMeasure && beatId > 0) {
 				beatId--;
 			}
 
-			return beatsMap.getBeatSafe(beatId).position();
+			return beats.get(beatId).position();
 		};
 
 		addDefaultPhrase(phraseIds, "COUNT", countPositionTimeGenerator);
 	}
 
-	private void addDefaultEndPhraseIfNeeded(final BeatsMap beatsMap, final Arrangement arrangement,
-			final Map<String, Integer> phraseIds, final ArrayList2<EventPoint> eventPoints) {
+	private void addDefaultEndPhraseIfNeeded(final ImmutableBeatsMap beats, final Arrangement arrangement,
+			final Map<String, Integer> phraseIds, final List<EventPoint> eventPoints) {
 		final IntSupplier endPositionTimeGenerator = () -> {
-			final EventPoint lastEventPoint = eventPoints.getLast();
-			if (lastEventPoint == null || lastEventPoint.section != SectionType.NO_GUITAR) {
-				return beatsMap.getBeatSafe(beatsMap.beats.size() - 1).position();
+			if (eventPoints.isEmpty()) {
+				return beats.get(beats.size() - 1).position();
 			}
 
-			Integer closestBeatId = findClosestId(beatsMap.beats, lastEventPoint.position());
-			while (!beatsMap.getBeatSafe(closestBeatId).firstInMeasure && closestBeatId < beatsMap.beats.size()) {
+			final EventPoint lastEventPoint = eventPoints.get(eventPoints.size() - 1);
+			if (lastEventPoint.section != SectionType.NO_GUITAR) {
+				return beats.get(beats.size() - 1).position();
+			}
+
+			int closestBeatId = firstAfterEqual(beats, lastEventPoint.toPosition(beats)).findId(beats.size());
+			while (!beats.get(closestBeatId).firstInMeasure && closestBeatId < beats.size()) {
 				closestBeatId++;
 			}
 			closestBeatId++;
-			while (!beatsMap.getBeatSafe(closestBeatId).firstInMeasure && closestBeatId < beatsMap.beats.size()) {
+			while (!beats.get(closestBeatId).firstInMeasure && closestBeatId < beats.size()) {
 				closestBeatId++;
 			}
 
-			return beatsMap.getBeatSafe(closestBeatId).position();
+			return beats.get(closestBeatId).position();
 		};
 
 		addDefaultPhrase(phraseIds, "END", endPositionTimeGenerator);
 	}
 
-	private void setPhrases(final BeatsMap beatsMap, final Arrangement arrangement) {
-		phrases = new CountedList<ArrangementPhrase>(arrangement.phrases.map(ArrangementPhrase::new));
-		final ArrayList2<EventPoint> phraseEventPoints = arrangement.getFilteredEventPoints(EventPoint::hasPhrase);
+	private void setPhrases(final ImmutableBeatsMap beats, final Arrangement arrangement) {
+		phrases = new CountedList<>(map(arrangement.phrases, ArrangementPhrase::new));
+		final List<EventPoint> phraseEventPoints = arrangement.getFilteredEventPoints(EventPoint::hasPhrase);
 		final Map<String, Integer> phraseIds = new HashMap<>();
 		for (int i = 0; i < phrases.list.size(); i++) {
 			phraseIds.put(phrases.list.get(i).name, i);
 		}
-		phraseIterations = new CountedList<>(
-				phraseEventPoints.map(phraseIteration -> new ArrangementPhraseIteration(phraseIteration.position(),
-						phraseIds.get(phraseIteration.phrase))));
+		phraseIterations = new CountedList<>(map(phraseEventPoints,
+				p -> new ArrangementPhraseIteration(p.position(beats), phraseIds.get(p.phrase))));
 
-		addDefaultCountPhraseIfNeeded(beatsMap, arrangement, phraseIds, phraseEventPoints);
-		addDefaultEndPhraseIfNeeded(beatsMap, arrangement, phraseIds, arrangement.eventPoints);
+		addDefaultCountPhraseIfNeeded(beats, arrangement, phraseIds, phraseEventPoints);
+		addDefaultEndPhraseIfNeeded(beats, arrangement, phraseIds, arrangement.eventPoints);
 	}
 
-	private void setTones(final Arrangement arrangement) {
+	private void setTones(final ImmutableBeatsMap beats, final Arrangement arrangement) {
 		tonebase = arrangement.baseTone;
-		final ArrayList2<String> tonesList = new ArrayList2<>();
+		final List<String> tonesList = new ArrayList<>(arrangement.toneChanges.size());
 		for (final ToneChange toneChange : arrangement.toneChanges) {
 			if (!tonesList.contains(toneChange.toneName)) {
 				tonesList.add(toneChange.toneName);
@@ -226,7 +236,8 @@ public class SongArrangement {
 		}
 
 		tones = arrangement.toneChanges.isEmpty() ? null
-				: new CountedList<>(arrangement.toneChanges.map(ArrangementTone::new));
+				: new CountedList<>(map(arrangement.toneChanges, //
+						t -> new ArrangementTone(t.position(beats), t.toneName)));
 	}
 
 	private void fixMeasureNumbers() {

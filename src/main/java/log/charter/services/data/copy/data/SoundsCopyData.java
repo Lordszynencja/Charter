@@ -2,31 +2,39 @@ package log.charter.services.data.copy.data;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
-import log.charter.data.song.BeatsMap;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.io.Logger;
-import log.charter.services.data.copy.data.positions.CopiedSoundPosition;
+import log.charter.services.data.copy.data.positions.CopiedSound;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("soundsCopyData")
+@XStreamInclude(CopiedSound.class)
 public class SoundsCopyData implements ICopyData {
-	private final ArrayList2<ChordTemplate> chordTemplates;
-	private final ArrayList2<CopiedSoundPosition> sounds;
+	private final List<ChordTemplate> chordTemplates;
+	private final List<CopiedSound> sounds;
 
-	public SoundsCopyData(final ArrayList2<ChordTemplate> chordTemplates,
-			final ArrayList2<CopiedSoundPosition> sounds) {
+	public SoundsCopyData(final List<ChordTemplate> chordTemplates, final List<CopiedSound> sounds) {
 		this.chordTemplates = chordTemplates;
 		this.sounds = sounds;
+	}
+
+	@Override
+	public PositionType type() {
+		return PositionType.GUITAR_NOTE;
 	}
 
 	@Override
@@ -35,20 +43,18 @@ public class SoundsCopyData implements ICopyData {
 	}
 
 	@Override
-	public void paste(final ChartData chartData, final SelectionManager selectionManager, final int time,
-			final boolean convertFromBeats) {
-		final Arrangement arrangement = chartData.getCurrentArrangement();
-		final BeatsMap beatsMap = chartData.songChart.beatsMap;
-		final ArrayList2<ChordOrNote> sounds = chartData.getCurrentArrangementLevel().sounds;
-		final Set<Integer> positionsToSelect = new HashSet<>(this.sounds.size());
+	public void paste(final ChartData chartData, final SelectionManager selectionManager,
+			final FractionalPosition basePosition, final boolean convertFromBeats) {
+		final Arrangement arrangement = chartData.currentArrangement();
+		final ImmutableBeatsMap beats = chartData.beats();
+		final List<ChordOrNote> sounds = chartData.currentSounds();
+		final Set<ChordOrNote> positionsToSelect = new HashSet<>(this.sounds.size());
 
-		final double basePositionInBeats = beatsMap.getPositionInBeats(time);
 		final Map<Integer, Integer> chordIdsMap = new HashMap<>();
 
-		for (final CopiedSoundPosition copiedPosition : this.sounds) {
+		for (final CopiedSound copiedPosition : this.sounds) {
 			try {
-				final ChordOrNote sound = copiedPosition.getValue(beatsMap, time, basePositionInBeats,
-						convertFromBeats);
+				final ChordOrNote sound = copiedPosition.getValue(beats, basePosition, convertFromBeats);
 				if (sound == null) {
 					continue;
 				}
@@ -66,13 +72,13 @@ public class SoundsCopyData implements ICopyData {
 				}
 
 				sounds.add(sound);
-				positionsToSelect.add(sound.position());
+				positionsToSelect.add(sound);
 			} catch (final Exception e) {
 				Logger.error("Couldn't paste sound", e);
 			}
 		}
 
-		sounds.sort(null);
+		sounds.sort(IConstantFractionalPosition::compareTo);
 		selectionManager.addSelectionForPositions(PositionType.GUITAR_NOTE, positionsToSelect);
 	}
 }

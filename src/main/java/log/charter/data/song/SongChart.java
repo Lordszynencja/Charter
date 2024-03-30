@@ -2,24 +2,16 @@ package log.charter.data.song;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.io.rs.xml.song.SongArrangementXStreamHandler.readSong;
-import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.readVocals;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import log.charter.data.config.Localization.Label;
-import log.charter.data.song.position.IPosition;
 import log.charter.data.song.vocals.Vocals;
-import log.charter.io.Logger;
-import log.charter.io.rs.xml.RSXMLToArrangement;
-import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.ChartProject;
-import log.charter.services.data.files.SongFileHandler;
-import log.charter.util.RW;
 import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashMap2;
 
 public class SongChart {
 	private static String cleanString(final String s) {
@@ -35,10 +27,14 @@ public class SongChart {
 	public Integer albumYear;
 
 	public BeatsMap beatsMap;
-	public ArrayList2<Arrangement> arrangements = new ArrayList2<>();
 	public Vocals vocals = new Vocals();
+	public List<Arrangement> arrangements = new ArrayList<>();
 
-	public HashMap2<Integer, Integer> bookmarks = new HashMap2<>();
+	public Map<Integer, Integer> bookmarks = new HashMap<>();
+
+	public SongChart() {
+		beatsMap = new BeatsMap(1);
+	}
 
 	public SongChart(final BeatsMap beatsMap) {
 		this.beatsMap = beatsMap;
@@ -73,31 +69,15 @@ public class SongChart {
 
 		beatsMap = new BeatsMap(project);
 
+		if (project.vocals != null) {
+			vocals = project.vocals;
+		}
 		if (project.arrangements != null) {
 			arrangements = project.arrangements;
 		}
 
-		for (final String filename : project.arrangementFiles) {
-			try {
-				final String xml = RW.read(dir + filename);
-				final SongArrangement songArrangement = readSong(xml);
-				arrangements.add(RSXMLToArrangement.toArrangement(songArrangement, beatsMap.beats));
-			} catch (final Exception e) {
-				Logger.error("Couldn't load arrangement file " + filename, e);
-				throw new IOException(String.format(Label.MISSING_ARRANGEMENT_FILE.label(), filename));
-			}
-		}
-		project.arrangementFiles.clear();
-
-		if (project.vocals != null) {
-			vocals = project.vocals;
-		} else {
-			vocals = new Vocals(readVocals(RW.read(dir + SongFileHandler.vocalsFileName)));
-		}
-
-		bookmarks = project.bookmarks;
-		if (bookmarks == null) {
-			bookmarks = new HashMap2<>();
+		if (project.bookmarks != null) {
+			bookmarks = project.bookmarks;
 		}
 	}
 
@@ -133,22 +113,9 @@ public class SongChart {
 		albumName = cleanString(value);
 	}
 
-	public void moveEverything(final int chartLength, final int positionDifference) {
-		final List<IPosition> positionsToMove = new LinkedList<>();
-		positionsToMove.addAll(beatsMap.beats);
-		for (final Arrangement arrangement : arrangements) {
-			positionsToMove.addAll(arrangement.eventPoints);
-			positionsToMove.addAll(arrangement.toneChanges);
-			for (final Level level : arrangement.levels) {
-				positionsToMove.addAll(level.anchors);
-				positionsToMove.addAll(level.sounds);
-				positionsToMove.addAll(level.handShapes);
-			}
-		}
-		positionsToMove.addAll(vocals.vocals);
-
-		for (final IPosition positionToMove : positionsToMove) {
-			positionToMove.position(max(0, min(chartLength, positionToMove.position() + positionDifference)));
+	public void moveEverythingWithBeats(final int chartLength, final int positionDifference) {
+		for (final Beat beat : beatsMap.beats) {
+			beat.position(max(0, min(chartLength, beat.position() + positionDifference)));
 		}
 
 		beatsMap.makeBeatsUntilSongEnd(chartLength);

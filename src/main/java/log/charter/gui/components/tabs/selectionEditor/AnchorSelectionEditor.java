@@ -5,6 +5,8 @@ import static log.charter.gui.components.simple.TextInputWithValidation.generate
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
+import java.util.List;
+
 import javax.swing.JTextField;
 
 import log.charter.data.config.Localization.Label;
@@ -16,10 +18,8 @@ import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntValueValidator;
-import log.charter.services.data.selection.Selection;
-import log.charter.services.data.selection.SelectionAccessor;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.HashSet2;
 
 public class AnchorSelectionEditor {
 	private SelectionManager selectionManager;
@@ -53,20 +53,18 @@ public class AnchorSelectionEditor {
 	private void changeAnchorFret(final int newFret) {
 		undoSystem.addUndo();
 
-		final SelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.ANCHOR);
-		for (final Selection<Anchor> anchorSelection : anchorSelectionAccessor.getSelectedSet()) {
-			anchorSelection.selectable.fret = newFret;
+		final List<Anchor> anchors = selectionManager.getSelectedElements(PositionType.ANCHOR);
+		for (final Anchor anchor : anchors) {
+			anchor.fret = newFret;
 		}
 	}
 
 	private void changeAnchorWidth(final int newWidth) {
 		undoSystem.addUndo();
 
-		final SelectionAccessor<Anchor> anchorSelectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.ANCHOR);
-		for (final Selection<Anchor> anchorSelection : anchorSelectionAccessor.getSelectedSet()) {
-			anchorSelection.selectable.width = newWidth;
+		final List<Anchor> anchors = selectionManager.getSelectedElements(PositionType.ANCHOR);
+		for (final Anchor anchor : anchors) {
+			anchor.width = newWidth;
 		}
 	}
 
@@ -80,13 +78,13 @@ public class AnchorSelectionEditor {
 		anchorWidth.setVisible(false);
 	}
 
-	public void selectionChanged(final SelectionAccessor<Anchor> selectedAnchorsAccessor) {
-		final HashSet2<Selection<Anchor>> selectedAnchors = selectedAnchorsAccessor.getSelectedSet();
+	public void selectionChanged(final ISelectionAccessor<Anchor> selectedAnchorsAccessor) {
+		final List<Anchor> selectedAnchors = selectedAnchorsAccessor.getSelectedElements();
 
-		final Integer fret = getSingleValue(selectedAnchors, selection -> selection.selectable.fret, null);
+		final Integer fret = getSingleValue(selectedAnchors, anchor -> anchor.fret, null);
 		anchorFret.field.setTextWithoutEvent(fret == null ? "" : (fret + ""));
 
-		final Integer width = getSingleValue(selectedAnchors, selection -> selection.selectable.width, null);
+		final Integer width = getSingleValue(selectedAnchors, anchor -> anchor.width, null);
 		anchorWidth.field.setTextWithoutEvent(width == null ? "" : (width + ""));
 	}
 }

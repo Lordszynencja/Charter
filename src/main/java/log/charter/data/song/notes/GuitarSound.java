@@ -1,35 +1,30 @@
 package log.charter.data.song.notes;
 
-import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.data.song.position.PositionWithLength;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
+import log.charter.data.song.position.fractional.IFractionalPosition;
 
-public abstract class GuitarSound extends PositionWithLength {
-
-	private final FractionalPosition start = new FractionalPosition((ImmutableBeatsMap) null, 0);
-	private FractionalPosition end;
+public abstract class GuitarSound implements IFractionalPosition, IConstantFractionalPositionWithEnd {
+	private FractionalPosition position;
 	public boolean accent = false;
 	public boolean ignore = false;
 	public boolean passOtherNotes = false;
 
-	public GuitarSound(final int position) {
-		super(position);
+	public GuitarSound() {
 	}
 
-	public GuitarSound(final int position, final boolean accent, final boolean ignore) {
-		super(position);
-		this.accent = accent;
-		this.ignore = ignore;
+	public GuitarSound(final FractionalPosition position) {
+		this.position = position;
 	}
 
-	public GuitarSound(final int position, final int length, final boolean accent, final boolean ignore) {
-		super(position, length);
+	public GuitarSound(final FractionalPosition position, final boolean accent, final boolean ignore) {
+		this.position = position;
 		this.accent = accent;
 		this.ignore = ignore;
 	}
 
 	public GuitarSound(final GuitarSound other) {
-		super(other);
+		position = other.position;
 		accent = other.accent;
 		ignore = other.ignore;
 		passOtherNotes = other.passOtherNotes;
@@ -57,5 +52,25 @@ public abstract class GuitarSound extends PositionWithLength {
 
 	public void passOtherNotes(final boolean value) {
 		passOtherNotes = value;
+	}
+
+	@Override
+	public FractionalPosition position() {
+		return position;
+	}
+
+	@Override
+	public void position(final FractionalPosition newPosition) {
+		position = newPosition;
+	}
+
+	@Override
+	public boolean isFraction() {
+		return true;
+	}
+
+	@Override
+	public boolean isPosition() {
+		return false;
 	}
 }

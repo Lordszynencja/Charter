@@ -2,6 +2,7 @@ package log.charter.gui.panes.songEdits;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
@@ -23,7 +24,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	private final SelectionManager selectionManager;
 	private final UndoSystem undoSystem;
 
-	private final int time;
+	private final FractionalPosition basePosition;
 
 	private final FullGuitarCopyData copyData;
 
@@ -38,7 +39,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	private boolean pasteHandShapes = pasteHandShapesDefault;
 
 	public GuitarSpecialPastePane(final ChartData data, final CharterFrame frame,
-			final SelectionManager selectionManager, final UndoSystem undoSystem, final int time,
+			final SelectionManager selectionManager, final UndoSystem undoSystem, final FractionalPosition basePosition,
 			final FullGuitarCopyData fullGuitarCopyData) {
 		super(frame, Label.SPECIAL_GUITAR_PASTE_PANE, 300);
 
@@ -46,7 +47,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 
-		this.time = time;
+		this.basePosition = basePosition;
 
 		copyData = fullGuitarCopyData;
 
@@ -87,20 +88,20 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		pasteHandShapesDefault = pasteHandShapes;
 
 		if (pasteSections || pastePhrases || pasteEvents) {
-			copyData.beats.paste(chartData, selectionManager, time, pasteSections, pastePhrases, pasteEvents,
+			copyData.beats.paste(chartData, selectionManager, basePosition, pasteSections, pastePhrases, pasteEvents,
 					pasteUsingBeats);
 		}
 		if (pasteToneChanges) {
-			copyData.toneChanges.paste(chartData, selectionManager, time, pasteUsingBeats);
+			copyData.toneChanges.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
 		}
 		if (pasteAnchors) {
-			copyData.anchors.paste(chartData, selectionManager, time, pasteUsingBeats);
+			copyData.anchors.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
 		}
 		if (pasteHandShapes) {
-			copyData.handShapes.paste(chartData, selectionManager, time, pasteUsingBeats);
+			copyData.handShapes.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
 		}
 		if (pasteSounds) {
-			copyData.sounds.paste(chartData, selectionManager, time, pasteUsingBeats);
+			copyData.sounds.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
 		}
 	}
 }

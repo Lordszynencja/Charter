@@ -1,81 +1,128 @@
 package log.charter.data.song.vocals;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-import log.charter.data.config.Config;
-import log.charter.data.song.position.PositionWithLength;
-import log.charter.io.rs.xml.vocals.ArrangementVocal;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
+import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
+import log.charter.io.rsc.xml.converters.VocalConverter;
 
 @XStreamAlias("vocal")
-public class Vocal extends PositionWithLength {
-	@XStreamAsAttribute
-	public String lyric;
-
-	public Vocal(final int position) {
-		super(position);
+@XStreamConverter(VocalConverter.class)
+public class Vocal implements IFractionalPositionWithEnd {
+	public enum VocalFlag {
+		NONE, WORD_PART, PHRASE_END;
 	}
 
-	public Vocal(final String lyric) {
-		super(0);
-		this.lyric = lyric;
-	}
+	private FractionalPosition position;
+	private FractionalPosition endPosition;
+	private String text;
+	private VocalFlag flag;
 
-	public Vocal(final ArrangementVocal arrangementVocal) {
-		super(arrangementVocal.time, arrangementVocal.length == null ? 0 : arrangementVocal.length);
-		lyric = arrangementVocal.lyric;
-	}
-
-	public Vocal(final int time, final String text, final boolean wordPart, final boolean phraseEnd) {
-		super(time, Config.minTailLength);
-		lyric = text;
-
-		if (wordPart) {
-			lyric += "-";
-		} else if (phraseEnd) {
-			lyric += "+";
-		}
+	public Vocal(final FractionalPosition position, final FractionalPosition endPosition, final String text,
+			final VocalFlag flag) {
+		this.position = position;
+		this.endPosition = endPosition;
+		flag(flag);
+		text(text);
 	}
 
 	public Vocal(final Vocal other) {
-		super(other);
-		lyric = other.lyric;
+		this(other.position, other.endPosition, other.text, other.flag);
 	}
 
-	public boolean isWordPart() {
-		return lyric.endsWith("-");
+	public Vocal(final FractionalPosition position, final FractionalPosition endPosition) {
+		this(position, endPosition, "", VocalFlag.NONE);
 	}
 
-	public void setWordPart(final boolean wordPart) {
-		if (wordPart != isWordPart()) {
-			if (wordPart) {
-				lyric += "-";
-			} else {
-				lyric = lyric.substring(0, lyric.length() - 1);
-			}
-		}
+	public Vocal(final String lyric) {
+		this(new FractionalPosition(), new FractionalPosition(), lyric, VocalFlag.NONE);
 	}
 
-	public boolean isPhraseEnd() {
-		return lyric.endsWith("+");
+	public Vocal(final FractionalPosition position, final FractionalPosition endPosition, final String lyric) {
+		this(position, endPosition, lyric, VocalFlag.NONE);
 	}
 
-	public void setPhraseEnd(final boolean phraseEnd) {
-		if (phraseEnd != isPhraseEnd()) {
-			if (phraseEnd) {
-				lyric += "+";
-			} else {
-				lyric = lyric.substring(0, lyric.length() - 1);
-			}
-		}
+	public Vocal() {
+		this(new FractionalPosition(), new FractionalPosition(), "", VocalFlag.NONE);
 	}
 
-	public String getText() {
-		String text = lyric.replace("+", "");
-		if (text.endsWith("-")) {
-			text = text.substring(0, text.length() - 1);
-		}
-
+	public String text() {
 		return text;
+	}
+
+	public void text(final String text) {
+		if (flag != VocalFlag.NONE) {
+			this.text = text;
+			return;
+		}
+
+		if (text.endsWith("+")) {
+			flag = VocalFlag.PHRASE_END;
+			this.text = text.substring(0, text.length() - 1);
+			return;
+		}
+		if (text.endsWith("-")) {
+			flag = VocalFlag.WORD_PART;
+			this.text = text.substring(0, text.length() - 1);
+			return;
+		}
+
+		this.text = text;
+	}
+
+	public VocalFlag flag() {
+		return flag;
+	}
+
+	public void flag(VocalFlag flag) {
+		if (flag == null) {
+			flag = VocalFlag.NONE;
+		}
+
+		this.flag = flag;
+	}
+
+	public String lyrics() {
+		return text + switch (flag) {
+			case PHRASE_END -> "+";
+			case WORD_PART -> "-";
+			default -> "";
+		};
+	}
+
+	@Override
+	public FractionalPosition position() {
+		return position;
+	}
+
+	@Override
+	public void position(final FractionalPosition newPosition) {
+		if (newPosition == null) {
+			throw new IllegalArgumentException("Can't set position to null");
+		}
+
+		position = newPosition;
+	}
+
+	@Override
+	public FractionalPosition endPosition() {
+		return endPosition;
+	}
+
+	@Override
+	public void endPosition(final FractionalPosition newEndPosition) {
+		if (newEndPosition == null) {
+			throw new IllegalArgumentException("Can't set position to null");
+		}
+
+		endPosition = newEndPosition;
+	}
+
+	@Override
+	public IConstantFractionalPositionWithEnd toFraction(final ImmutableBeatsMap beats) {
+		return this;
 	}
 }

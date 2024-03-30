@@ -15,6 +15,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInputForPane;
 import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.util.CollectionUtils;
 import log.charter.util.collections.ArrayList2;
 
 public class ToneChangePane extends ParamsPane implements DocumentListener {
@@ -56,7 +57,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 	}
 
 	private ArrayList2<String> getPossibleValues(final String name) {
-		return data.getCurrentArrangement().tones.stream()//
+		return data.currentArrangement().tones.stream()//
 				.filter(toneName -> toneName.toLowerCase().contains(name.toLowerCase()))//
 				.collect(Collectors.toCollection(ArrayList2::new));
 	}
@@ -81,7 +82,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 
 		final String name = toneNameInput.getText();
 
-		final Arrangement arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.currentArrangement();
 		if (arrangement.tones.size() >= 4 && !arrangement.tones.contains(name) && !name.isEmpty()) {
 			error = true;
 			toneNameInputBackgroundColor = toneNameInput.getBackground();
@@ -105,10 +106,11 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 
 		undoSystem.addUndo();
 
-		final Arrangement arrangement = data.getCurrentArrangement();
+		final Arrangement arrangement = data.currentArrangement();
 		if (toneName.isEmpty()) {
 			arrangement.toneChanges.remove(toneChange);
-			if (!arrangement.toneChanges.contains(toneChange -> toneChange.toneName.equals(this.toneChange.toneName))) {
+			if (!CollectionUtils.contains(arrangement.toneChanges,
+					toneChange -> toneChange.toneName.equals(this.toneChange.toneName))) {
 				arrangement.tones.remove(toneChange.toneName);
 			}
 			return true;

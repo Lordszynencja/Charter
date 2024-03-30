@@ -1,26 +1,31 @@
 package log.charter.io.rs.xml.song;
 
+import static log.charter.util.CollectionUtils.map;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.SectionType;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("section")
 public class ArrangementSection {
-	public static ArrayList2<ArrangementSection> fromSections(final ArrayList2<EventPoint> sections) {
+	public static List<ArrangementSection> fromSections(final ImmutableBeatsMap beats,
+			final List<EventPoint> sections) {
 		final Map<SectionType, Integer> sectionNumbers = new HashMap<>();
 
-		return sections.map(section -> {
+		return map(sections, section -> {
 			final SectionType sectionType = section.section;
 			sectionNumbers.put(sectionType, sectionNumbers.getOrDefault(sectionType, 0) + 1);
-			return new ArrangementSection(section.position(), sectionType, sectionNumbers.getOrDefault(sectionType, 0));
+			return new ArrangementSection(section.position(beats), sectionType,
+					sectionNumbers.getOrDefault(sectionType, 0));
 		});
 	}
 

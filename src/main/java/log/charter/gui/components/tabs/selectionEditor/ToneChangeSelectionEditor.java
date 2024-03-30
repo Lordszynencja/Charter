@@ -4,8 +4,10 @@ import static log.charter.data.config.Localization.Label.TONE_NAME_CANT_BE_EMPTY
 import static log.charter.data.config.Localization.Label.TONE_NAME_PAST_LIMIT;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
+import static log.charter.util.CollectionUtils.filter;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.event.DocumentEvent;
@@ -20,12 +22,10 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.AutocompleteInput;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
-import log.charter.services.data.selection.Selection;
-import log.charter.services.data.selection.SelectionAccessor;
-import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashSet2;
 import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.services.data.selection.ISelectionAccessor;
+import log.charter.services.data.selection.SelectionManager;
+import log.charter.util.collections.HashSet2;
 
 public class ToneChangeSelectionEditor implements DocumentListener {
 	private ChartData chartData;
@@ -59,17 +59,16 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 		toneNameField.setVisible(false);
 	}
 
-	public void selectionChanged(final SelectionAccessor<ToneChange> selectedToneChangesAccessor) {
-		final HashSet2<Selection<ToneChange>> selectedToneChanges = selectedToneChangesAccessor.getSelectedSet();
+	public void selectionChanged(final ISelectionAccessor<ToneChange> selectedToneChangesAccessor) {
+		final List<ToneChange> selectedToneChanges = selectedToneChangesAccessor.getSelectedElements();
 
-		final String toneName = getSingleValue(selectedToneChanges, selection -> selection.selectable.toneName, "");
+		final String toneName = getSingleValue(selectedToneChanges, toneChange -> toneChange.toneName, "");
 		toneNameField.field.setTextWithoutUpdate(toneName == null ? "" : toneName);
 	}
 
-	private ArrayList2<String> getPossibleValues(final String name) {
-		return chartData.getCurrentArrangement().tones.stream()//
-				.filter(toneName -> toneName.toLowerCase().contains(name.toLowerCase()))//
-				.collect(Collectors.toCollection(ArrayList2::new));
+	private List<String> getPossibleValues(final String name) {
+		return filter(chartData.currentArrangement().tones,
+				toneName -> toneName.toLowerCase().contains(name.toLowerCase()));
 	}
 
 	@Override
@@ -103,7 +102,7 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 
 		final String name = toneNameField.field.getText();
 
-		final Arrangement arrangement = chartData.getCurrentArrangement();
+		final Arrangement arrangement = chartData.currentArrangement();
 		if (name.isBlank()) {
 			setError(TONE_NAME_CANT_BE_EMPTY);
 			return;
@@ -115,12 +114,13 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 
 		undoSystem.addUndo();
 
-		final SelectionAccessor<ToneChange> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.TONE_CHANGE);
-		for (final Selection<ToneChange> a : selectionAccessor.getSelectedSet()) {
-			a.selectable.toneName = name;
+		final List<ToneChange> selected = selectionManager.getSelectedElements(PositionType.TONE_CHANGE);
+		for (final ToneChange toneChange : selected) {
+			toneChange.toneName = name;
 		}
-		arrangement.tones = new HashSet2<>(arrangement.toneChanges.map(t -> t.toneName));
+		arrangement.tones = arrangement.toneChanges.stream()//
+				.map(t -> t.toneName)//
+				.collect(Collectors.toCollection(HashSet2::new));
 	}
 
 	private void onSelect(final String name) {

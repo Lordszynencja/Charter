@@ -20,7 +20,6 @@ import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.sound.data.AudioDataShort;
-import log.charter.util.RW;
 
 public class ExistingProjectImporter {
 	private AudioHandler audioHandler;
@@ -30,8 +29,7 @@ public class ExistingProjectImporter {
 	private ProjectAudioHandler projectAudioHandler;
 	private TextTab textTab;
 
-	private ChartProject loadProjectFile(final LoadingDialog loadingDialog, final int progressAfter,
-			final File projectFileChosen) {
+	private ChartProject loadProjectFile(final File projectFileChosen) {
 		final String name = projectFileChosen.getName().toLowerCase();
 		if (!name.endsWith(".rscp")) {
 			Logger.error("unsupported file: " + projectFileChosen.getName());
@@ -41,8 +39,8 @@ public class ExistingProjectImporter {
 
 		final ChartProject project;
 		try {
-			project = readChartProject(RW.read(projectFileChosen));
-			if (project.chartFormatVersion > 2) {
+			project = readChartProject(projectFileChosen);
+			if (project.chartFormatVersion > 3) {
 				Logger.error("project has wrong version " + project.chartFormatVersion);
 				showPopup(charterFrame, Label.PROJECT_IS_NEWER_VERSION);
 				return null;
@@ -53,20 +51,15 @@ public class ExistingProjectImporter {
 			return null;
 		}
 
-		loadingDialog.setProgress(progressAfter, Label.LOADING_MUSIC_FILE.label());
-
 		return project;
 	}
 
-	private AudioDataShort loadMusicData(final LoadingDialog loadingDialog, final int progressAfter,
-			final ChartProject project, final String dir) {
+	private AudioDataShort loadMusicData(final ChartProject project, final String dir) {
 		final AudioDataShort musicData = AudioDataShort.readFile(new File(dir, project.musicFileName));
 		if (musicData == null) {
 			showPopup(charterFrame, Label.WRONG_MUSIC_FILE);
 			return null;
 		}
-
-		loadingDialog.setProgress(progressAfter, Label.LOADING_ARRANGEMENTS.label());
 
 		return musicData;
 	}
@@ -76,20 +69,22 @@ public class ExistingProjectImporter {
 
 		final List<String> filesToBackup = new ArrayList<>();
 		final File projectFileChosen = new File(path);
-		final ChartProject project = loadProjectFile(loadingDialog, 1, projectFileChosen);
+		final ChartProject project = loadProjectFile(projectFileChosen);
 		if (project == null) {
 			return;
 		}
+		loadingDialog.addProgress(Label.LOADING_MUSIC_FILE);
 
 		filesToBackup.add(projectFileChosen.getName());
 		filesToBackup.addAll(project.arrangementFiles);
 		filesToBackup.add(SongFileHandler.vocalsFileName);
 
 		final String dir = projectFileChosen.getParent() + File.separator;
-		final AudioDataShort musicData = loadMusicData(loadingDialog, 2, project, dir);
+		final AudioDataShort musicData = loadMusicData(project, dir);
 		if (musicData == null) {
 			return;
 		}
+		loadingDialog.addProgress(Label.LOADING_ARRANGEMENTS);
 
 		final SongChart songChart;
 		try {
@@ -101,16 +96,15 @@ public class ExistingProjectImporter {
 
 		makeBackups(dir, filesToBackup);
 
-		chartTimeHandler.nextTime(project.time);
 		chartData.setSong(dir, songChart, projectFileChosen.getName(), project.editMode, project.arrangement,
 				project.level);
-		projectAudioHandler.setAudio(musicData, !project.musicFileName.equals("song.ogg"));
+		chartTimeHandler.nextTime(project.time);
+		projectAudioHandler.setAudio(musicData);
 		textTab.setText(project.text);
 
 		audioHandler.clear();
-		audioHandler.setSong();
 
-		loadingDialog.setProgress(3, Label.LOADING_DONE.label());
+		loadingDialog.addProgress(Label.LOADING_DONE);
 	}
 
 	public void open(final String path) {

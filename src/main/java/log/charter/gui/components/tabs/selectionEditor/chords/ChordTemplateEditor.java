@@ -18,6 +18,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -232,7 +233,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 	public void addChordNameSuggestionButton(final int x, final int row) {
 		chordNameAdviceButton = new ChordNameAdviceButton(Label.CHORD_NAME_ADVICE, parent,
-				() -> chartData.getCurrentArrangement().tuning, () -> chordTemplateSupplier.get().frets,
+				() -> chartData.currentArrangement().tuning, () -> chordTemplateSupplier.get().frets,
 				this::onChordNameSelect);
 		parent.addWithSettingSize(chordNameAdviceButton, x, parent.sizes.getY(row), 150, 20);
 	}
@@ -247,7 +248,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 	private String formatChordTemplateName(final ChordTemplate template) {
 		final String id = ("%" + max(1, chordIdWidth) + "d")
-				.formatted(chartData.getCurrentArrangement().chordTemplates.indexOf(template));
+				.formatted(chartData.currentArrangement().chordTemplates.indexOf(template));
 		final String name = ("%-" + max(1, chordNameWidth) + "s").formatted(template.name());
 		final String frets = template.getTemplateFrets(chartData.currentStrings(), chordFretsWidth);
 		final String fingers = template.getTemplateFingers(chartData.currentStrings());
@@ -294,7 +295,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	}
 
 	private String templateSearchName(final ChordTemplate template) {
-		final int id = chartData.getCurrentArrangement().chordTemplates.indexOf(template);
+		final int id = chartData.currentArrangement().chordTemplates.indexOf(template);
 		return id + " " + template.chordName.toLowerCase() + " "
 				+ template.getTemplateFrets(chartData.currentStrings());
 	}
@@ -302,14 +303,14 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	private ArrayList2<ChordTemplate> getPossibleChords(final String filter) {
 		final String filterLower = filter.toLowerCase();
 
-		return chartData.getCurrentArrangement().chordTemplates.stream()//
+		return chartData.currentArrangement().chordTemplates.stream()//
 				.filter(chordTemplate -> !chordTemplate.equals(chordTemplateSupplier.get())//
 						&& templateSearchName(chordTemplate).contains(filterLower))//
 				.collect(Collectors.toCollection(ArrayList2::new));
 	}
 
 	private void recalculateIdWidth() {
-		final ArrayList2<ChordTemplate> chordTemplates = chartData.getCurrentArrangement().chordTemplates;
+		final List<ChordTemplate> chordTemplates = chartData.currentArrangement().chordTemplates;
 		chordIdWidth = 1;
 		int sizing = 10;
 		while (sizing <= chordTemplates.size()) {
@@ -319,7 +320,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	}
 
 	private void recalculateNameWidth() {
-		final ArrayList2<ChordTemplate> chordTemplates = chartData.getCurrentArrangement().chordTemplates;
+		final List<ChordTemplate> chordTemplates = chartData.currentArrangement().chordTemplates;
 		chordNameWidth = 0;
 		for (final ChordTemplate template : chordTemplates) {
 			chordNameWidth = max(chordNameWidth, template.name().length());
@@ -327,7 +328,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	}
 
 	private void recalculateFretsWidth() {
-		final ArrayList2<ChordTemplate> chordTemplates = chartData.getCurrentArrangement().chordTemplates;
+		final List<ChordTemplate> chordTemplates = chartData.currentArrangement().chordTemplates;
 		chordFretsWidth = 0;
 		for (final ChordTemplate template : chordTemplates) {
 			for (final int fret : template.frets.values()) {
@@ -536,11 +537,11 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		fretsLabel.setVisible(true);
 		fingersLabel.setVisible(true);
 
-		for (int i = 0; i < chartData.getCurrentArrangement().tuning.strings(); i++) {
+		for (int i = 0; i < chartData.currentArrangement().tuning.strings(); i++) {
 			fretInputs.get(i).setVisible(true);
 			fingerInputs.get(i).setVisible(true);
 		}
-		for (int i = chartData.getCurrentArrangement().tuning.strings(); i < maxStrings; i++) {
+		for (int i = chartData.currentArrangement().tuning.strings(); i < maxStrings; i++) {
 			fretInputs.get(i).setVisible(false);
 			fingerInputs.get(i).setVisible(false);
 		}

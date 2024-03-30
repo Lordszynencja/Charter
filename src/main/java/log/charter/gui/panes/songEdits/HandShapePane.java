@@ -14,8 +14,8 @@ public class HandShapePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private static ChordTemplate prepareTemplateFromData(final ChartData data, final HandShape handShape) {
-		return handShape.templateId == -1 ? new ChordTemplate()
-				: new ChordTemplate(data.getCurrentArrangement().chordTemplates.get(handShape.templateId));
+		return handShape.templateId == null ? new ChordTemplate()
+				: new ChordTemplate(data.currentArrangement().chordTemplates.get(handShape.templateId));
 	}
 
 	private final ChartData data;
@@ -49,7 +49,7 @@ public class HandShapePane extends ParamsPane {
 		editor.showFields();
 		editor.setCurrentValuesInInputs();
 
-		addDefaultFinish(6 + data.getCurrentArrangement().tuning.strings(), this::saveAndExit, onCancel);
+		addDefaultFinish(6 + data.currentArrangement().tuning.strings(), this::saveAndExit, onCancel);
 	}
 
 	private void onChordTemplateChange() {
@@ -57,6 +57,6 @@ public class HandShapePane extends ParamsPane {
 	}
 
 	private void saveAndExit() {
-		handShape.templateId = data.getCurrentArrangement().getChordTemplateIdWithSave(template);
+		handShape.templateId = data.currentArrangement().getChordTemplateIdWithSave(template);
 	}
 }

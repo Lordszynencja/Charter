@@ -3,21 +3,22 @@ package log.charter.gui.components.tabs.selectionEditor;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
+import java.util.List;
+
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.vocals.Vocal;
-import log.charter.data.types.PositionType;
+import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.validators.ValueValidator;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
-import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.HashSet2;
 
 public class VocalSelectionEditor {
 	private SelectionManager selectionManager;
@@ -58,30 +59,14 @@ public class VocalSelectionEditor {
 	private void changeText(final String newText) {
 		undoSystem.addUndo();
 
-		final SelectionAccessor<Vocal> vocalSelectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.VOCAL);
-		for (final Selection<Vocal> anchorSelection : vocalSelectionAccessor.getSelectedSet()) {
-			final boolean phraseEnd = anchorSelection.selectable.isPhraseEnd();
-			final boolean wordPart = anchorSelection.selectable.isWordPart();
-			anchorSelection.selectable.lyric = newText;
-			anchorSelection.selectable.setPhraseEnd(phraseEnd);
-			anchorSelection.selectable.setWordPart(wordPart);
+		for (final Selection<Vocal> selection : selectionManager.getSelectedVocals()) {
+			selection.selectable.text(newText);
 		}
 	}
 
-	private void setWordPart(final boolean newWordPart) {
-		final SelectionAccessor<Vocal> vocalSelectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.VOCAL);
-		for (final Selection<Vocal> anchorSelection : vocalSelectionAccessor.getSelectedSet()) {
-			anchorSelection.selectable.setWordPart(newWordPart);
-		}
-	}
-
-	private void setPhraseEnd(final boolean newWordPart) {
-		final SelectionAccessor<Vocal> vocalSelectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.VOCAL);
-		for (final Selection<Vocal> anchorSelection : vocalSelectionAccessor.getSelectedSet()) {
-			anchorSelection.selectable.setPhraseEnd(newWordPart);
+	private void setFlag(final VocalFlag flag) {
+		for (final Selection<Vocal> selection : selectionManager.getSelectedVocals()) {
+			selection.selectable.flag(flag);
 		}
 	}
 
@@ -90,12 +75,11 @@ public class VocalSelectionEditor {
 		if (newWordPart) {
 			vocalPhraseEnd.field.setEnabled(false);
 			vocalPhraseEnd.field.setSelected(false);
-			setPhraseEnd(false);
+			setFlag(VocalFlag.WORD_PART);
 		} else {
 			vocalPhraseEnd.field.setEnabled(true);
+			setFlag(VocalFlag.NONE);
 		}
-
-		setWordPart(newWordPart);
 	}
 
 	private void changePhraseEnd(final boolean newPhraseEnd) {
@@ -103,12 +87,11 @@ public class VocalSelectionEditor {
 		if (newPhraseEnd) {
 			vocalWordPart.field.setEnabled(false);
 			vocalWordPart.field.setSelected(false);
-			setWordPart(false);
+			setFlag(VocalFlag.PHRASE_END);
 		} else {
 			vocalWordPart.field.setEnabled(true);
+			setFlag(VocalFlag.NONE);
 		}
-
-		setPhraseEnd(newPhraseEnd);
 	}
 
 	public void showFields() {
@@ -122,24 +105,22 @@ public class VocalSelectionEditor {
 		vocalPhraseEnd.setVisible(false);
 	}
 
-	public void selectionChanged(final SelectionAccessor<Vocal> selectedVocalsAccessor) {
-		final HashSet2<Selection<Vocal>> selectedVocals = selectedVocalsAccessor.getSelectedSet();
+	public void selectionChanged(final ISelectionAccessor<Vocal> selectedVocalsAccessor) {
+		final List<Vocal> selectedVocals = selectedVocalsAccessor.getSelectedElements();
 		if (selectedVocals.size() == 1) {
-			final String text = selectedVocals.stream().findFirst().get().selectable.getText();
+			final String text = selectedVocals.get(0).text();
 			vocalText.field.setTextWithoutEvent(text);
 			vocalText.setVisible(true);
 		} else {
 			vocalText.setVisible(false);
 		}
 
-		final Boolean wordPart = getSingleValue(selectedVocals, selection -> selection.selectable.isWordPart(), false);
-		final Boolean phraseEnd = getSingleValue(selectedVocals, selection -> selection.selectable.isPhraseEnd(),
-				false);
+		final VocalFlag flag = getSingleValue(selectedVocals, vocal -> vocal.flag(), VocalFlag.NONE);
 
-		vocalWordPart.field.setEnabled(wordPart || !phraseEnd);
-		vocalWordPart.field.setSelected(wordPart);
+		vocalWordPart.field.setEnabled(flag != VocalFlag.PHRASE_END);
+		vocalWordPart.field.setSelected(flag == VocalFlag.WORD_PART);
 
-		vocalPhraseEnd.field.setEnabled(phraseEnd || !wordPart);
-		vocalPhraseEnd.field.setSelected(phraseEnd);
+		vocalPhraseEnd.field.setEnabled(flag != VocalFlag.WORD_PART);
+		vocalPhraseEnd.field.setSelected(flag == VocalFlag.PHRASE_END);
 	}
 }

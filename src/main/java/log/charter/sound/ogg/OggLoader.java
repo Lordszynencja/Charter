@@ -3,6 +3,7 @@ package log.charter.sound.ogg;
 import static log.charter.io.Logger.error;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -52,7 +53,11 @@ public class OggLoader {
 		}
 	}
 
-	public static AudioDataShort load(final String path) {
+	public static AudioDataShort load(final File file) {
+		return load(file.getAbsolutePath());
+	}
+
+	private static AudioDataShort load(final String path) {
 		return load(path, result -> new AudioDataShort(result.bytes, result.rate, result.channels, 2));
 	}
 

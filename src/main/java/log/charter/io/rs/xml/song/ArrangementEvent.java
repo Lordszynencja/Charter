@@ -1,24 +1,27 @@
 package log.charter.io.rs.xml.song;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.EventType;
 import log.charter.io.rs.xml.converters.TimeConverter;
-import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("event")
 public class ArrangementEvent {
-	public static ArrayList2<ArrangementEvent> fromEventsAndBeatMap(final ArrayList2<EventPoint> events,
-			final BeatsMap beatsMap) {
-		final ArrayList2<ArrangementEvent> arrangementEvents = new ArrayList2<>();
+	public static List<ArrangementEvent> fromEventsAndBeatMap(final ImmutableBeatsMap beats,
+			final List<EventPoint> events, final BeatsMap beatsMap) {
+		final List<ArrangementEvent> arrangementEvents = new ArrayList<>();
 		for (final EventPoint eventPoint : events) {
 			for (final EventType eventType : eventPoint.events) {
-				arrangementEvents.add(new ArrangementEvent(eventPoint.position(), eventType));
+				arrangementEvents.add(new ArrangementEvent(eventPoint.position(beats), eventType));
 			}
 		}
 

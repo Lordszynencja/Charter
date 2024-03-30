@@ -28,7 +28,6 @@ import log.charter.services.audio.AudioHandler;
 import log.charter.services.audio.ClapsHandler;
 import log.charter.services.audio.MetronomeHandler;
 import log.charter.services.audio.MidiChartNotePlayer;
-import log.charter.services.audio.StretchedAudioHandler;
 import log.charter.services.data.ChartItemsHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.GuitarSoundsHandler;
@@ -95,7 +94,6 @@ public class CharterContext {
 	private final SongFileHandler songFileHandler = new SongFileHandler();
 	private final SongFilesBackuper songFilesBackuper = new SongFilesBackuper();
 	private final SelectionManager selectionManager = new SelectionManager();
-	private final StretchedAudioHandler stretchedAudioHandler = new StretchedAudioHandler();
 	private final TitleUpdater titleUpdater = new TitleUpdater();
 	private final UndoSystem undoSystem = new UndoSystem();
 	private final VocalsHandler vocalsHandler = new VocalsHandler();
@@ -241,7 +239,7 @@ public class CharterContext {
 
 		audioFramer.stop();
 		framer.stop();
-		StretchedFileLoader.stopAllProcesses();
+		StretchedFileLoader.clear();
 		charterFrame.dispose();
 		System.exit(0);
 	}

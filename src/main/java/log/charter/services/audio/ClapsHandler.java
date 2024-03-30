@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.position.IPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.editModes.ModeManager;
 
@@ -16,16 +16,16 @@ public class ClapsHandler {
 	private ModeManager modeManager;
 
 	private final TickPlayer clapsPlayer = new TickPlayer(generateSound(1000, 0.01, 1), 4,
-			this::getCurrentClapPositions);
+			this::getCurrentClapPositions, () -> chartData.beats());
 
-	private List<? extends IPosition> getCurrentClapPositions() {
+	private List<? extends IVirtualConstantPosition> getCurrentClapPositions() {
 		switch (modeManager.getMode()) {
 			case GUITAR:
-				return chartData.getCurrentArrangementLevel().sounds;
+				return chartData.currentSounds();
 			case TEMPO_MAP:
-				return chartData.songChart.beatsMap.beats;
+				return chartData.beats();
 			case VOCALS:
-				return chartData.songChart.vocals.vocals;
+				return chartData.currentVocals().vocals;
 			default:
 				return new ArrayList<>();
 		}

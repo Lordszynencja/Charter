@@ -93,16 +93,16 @@ public class SongFileHandler {
 
 		loadingDialog = new LoadingDialog(charterFrame, 1);
 		loadingDialog.setProgress(0, Label.LOADING_ARRANGEMENTS.label());
-		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(RW.read(arrangementFile));
+		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(arrangementFile);
 		final SongChart songChart = RSXMLToSongChart.makeSongChartForArrangement(songFile.getName(), songArrangement);
 
 		chartTimeHandler.nextTime(0);
 		chartData.setSong(dir, songChart, "project.rscp", EditMode.GUITAR, 0, 0);
-		projectAudioHandler.setAudio(musicData, !songFile.equals(new File(dir, "song.ogg")));
+		projectAudioHandler.setAudio(musicData);
 		loadingDialog.dispose();
 
 		audioHandler.clear();
-		audioHandler.setSong();
+		audioHandler.audioChanged();
 
 		save();
 	}
@@ -130,9 +130,9 @@ public class SongFileHandler {
 			id++;
 		}
 
-		if (!chartData.songChart.vocals.vocals.isEmpty()) {
-			RW.write(new File(dir, vocalsFileName), saveVocals(new ArrangementVocals(chartData.songChart.vocals)),
-					"UTF-8");
+		if (!chartData.currentVocals().vocals.isEmpty()) {
+			RW.write(new File(dir, vocalsFileName),
+					saveVocals(new ArrangementVocals(chartData.beats(), chartData.songChart.vocals)), "UTF-8");
 		}
 	}
 

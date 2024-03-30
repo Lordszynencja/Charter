@@ -19,6 +19,10 @@ public class AudioFramer implements Initiable {
 
 	public void stop() {
 		thread.interrupt();
+		try {
+			thread.join();
+		} catch (final InterruptedException e) {
+		}
 	}
 
 	private void run() {
@@ -28,7 +32,7 @@ public class AudioFramer implements Initiable {
 				Thread.sleep(0, 100_000);
 			}
 		} catch (final InterruptedException e) {
-			Logger.info("Audio framer exiting", e);
+			Logger.info("Audio framer exiting");
 		}
 	}
 

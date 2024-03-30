@@ -12,21 +12,19 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.fromChord;
 import static log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.fromNote;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer.getHighwayDrawer;
-import static log.charter.util.ScalingUtils.timeToX;
+import static log.charter.util.ScalingUtils.positionToX;
 import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
-import log.charter.data.song.Level;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
@@ -39,14 +37,11 @@ import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
+import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
-import log.charter.services.data.selection.SelectionManager;
-import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashSet2;
 import log.charter.util.data.Position2D;
 
 public class GuitarDrawer {
@@ -66,70 +61,40 @@ public class GuitarDrawer {
 
 	private BeatsDrawer beatsDrawer;
 	private ChartPanel chartPanel;
-	private KeyboardHandler keyboardHandler;
 	private LyricLinesDrawer lyricLinesDrawer;
-	private SelectionManager selectionManager;
 	private WaveFormDrawer waveFormDrawer;
 
 	public void lyricLinesDrawer(final LyricLinesDrawer lyricLinesDrawer) {
 		this.lyricLinesDrawer = lyricLinesDrawer;
 	}
 
-	private HashSet2<Integer> getSelectedIds(final PositionType positionType) {
-		return selectionManager.getSelectedAccessor(positionType)//
-				.getSelectedSet().map(selection -> selection.id);
-	}
-
-	private void addEventPoints(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
-			final Arrangement arrangement, final int time, final HighlightData highlightData) {
-		final HashSet2<Integer> selectedIds = selectionManager.getSelectedAccessor(PositionType.EVENT_POINT)//
-				.getSelectedSet().map(selection -> selection.id);
-		GuitarEventPointsDrawer.addEventPoints(g, panelWidth, highwayDrawer, arrangement.eventPoints,
-				arrangement.phrases, time, selectedIds, highlightData);
-	}
-
-	private void addToneChanges(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
-			final Arrangement arrangement, final int time, final HighlightData highlightData) {
-		final HashSet2<Integer> selectedIds = selectionManager.getSelectedAccessor(PositionType.TONE_CHANGE)//
-				.getSelectedSet().map(selection -> selection.id);
-		GuitarToneChangeDrawer.addToneChanges(g, panelWidth, highwayDrawer, arrangement.baseTone,
-				arrangement.toneChanges, time, selectedIds, highlightData);
-	}
-
-	private void addAnchors(final Graphics2D g, final int panelWidth, final HighwayDrawer highwayDrawer,
-			final Level level, final int time, final HighlightData highlightData) {
-		final HashSet2<Integer> selectedIds = getSelectedIds(PositionType.ANCHOR);
-		GuitarAnchorsDrawer.addAnchors(g, panelWidth, highwayDrawer, level.anchors, time, selectedIds, highlightData);
-	}
-
-	private void drawGuitarLanes(final Graphics g, final int strings, final int time) {
-		final int width = chartPanel.getWidth();
-
-		final int x = max(0, timeToX(0, time));
+	private void drawGuitarLanes(final FrameData frameData, final int panelWidth) {
+		final int strings = frameData.arrangement.tuning.strings();
+		final int x = max(0, positionToX(0, frameData.time));
 
 		for (int lane = 0; lane < strings; lane++) {
-			g.setColor(getStringBasedColor(StringColorLabelType.LANE, lane, strings));
+			frameData.g.setColor(getStringBasedColor(StringColorLabelType.LANE, lane, strings));
 			final int y = getLaneY(getStringPosition(lane, strings));
-			g.drawLine(x, y, width, y);
+			frameData.g.drawLine(x, y, panelWidth, y);
 		}
 	}
 
-	private boolean addChord(final int time, final HighwayDrawer highwayDrawer, final Arrangement arrangement,
-			final int panelWidth, final Chord chord, final boolean selected, final int highlightedString,
-			final boolean lastWasLinkNext, final boolean wrongLinkNext) {
-		final int x = timeToX(chord.position(), time);
+	private boolean addChord(final FrameData frameData, final HighwayDrawer highwayDrawer, final int panelWidth,
+			final Chord chord, final boolean selected, final int highlightedString, final boolean lastWasLinkNext,
+			final boolean wrongLinkNext) {
+		final int x = positionToX(chord.position(frameData.beats), frameData.time);
 		if (isPastRightEdge(x, panelWidth)) {
 			return false;
 		}
 
-		final int length = timeToXLength(chord.position(), chord.length());
+		final int length = positionToX(chord.endPosition(frameData.beats), frameData.time) - x;
 		if (!isOnScreen(x, length)) {
 			return true;
 		}
 
-		final ChordTemplate chordTemplate = arrangement.chordTemplates.get(chord.templateId());
-		for (final EditorNoteDrawingData noteData : fromChord(chord, chordTemplate, x, selected, highlightedString,
-				lastWasLinkNext, wrongLinkNext, keyboardHandler.ctrl())) {
+		final ChordTemplate chordTemplate = frameData.arrangement.chordTemplates.get(chord.templateId());
+		for (final EditorNoteDrawingData noteData : fromChord(frameData.beats, frameData.time, chord, chordTemplate, x,
+				selected, highlightedString, lastWasLinkNext, wrongLinkNext, frameData.ctrlPressed)) {
 			highwayDrawer.addNote(noteData);
 		}
 
@@ -146,41 +111,41 @@ public class GuitarDrawer {
 		return true;
 	}
 
-	private boolean addNote(final int time, final HighwayDrawer highwayDrawer, final int panelWidth, final Note note,
-			final boolean selected, final boolean highlighted, final boolean lastWasLinkNext,
+	private boolean addNote(final FrameData frameData, final HighwayDrawer highwayDrawer, final int panelWidth,
+			final Note note, final boolean selected, final boolean highlighted, final boolean lastWasLinkNext,
 			final boolean wrongLinkNext) {
-		final int x = timeToX(note.position(), time);
-		final int length = timeToXLength(note.position(), note.length());
-		if (isPastRightEdge(x, panelWidth)) {
+		final EditorNoteDrawingData noteDrawData = fromNote(frameData.beats, frameData.time, note, selected,
+				highlighted, lastWasLinkNext, wrongLinkNext);
+		if (isPastRightEdge(noteDrawData.x, panelWidth)) {
 			return false;
 		}
 
-		if (!isOnScreen(x, length)) {
+		if (!isOnScreen(noteDrawData.x, noteDrawData.length)) {
 			return true;
 		}
 
-		highwayDrawer.addNote(fromNote(x, note, selected, highlighted, lastWasLinkNext, wrongLinkNext));
+		highwayDrawer.addNote(noteDrawData);
 
 		return true;
 	}
 
-	private boolean addChordOrNote(final int time, final HighwayDrawer highwayDrawer, final Arrangement arrangement,
-			final int panelWidth, final ChordOrNote chordOrNote, final boolean selected, final int highlightedString,
+	private boolean addChordOrNote(final FrameData frameData, final HighwayDrawer highwayDrawer, final int panelWidth,
+			final ChordOrNote chordOrNote, final boolean selected, final int highlightedString,
 			final boolean lastWasLinkNext, final boolean wrongLinkNext) {
 		if (chordOrNote.isChord()) {
-			return addChord(time, highwayDrawer, arrangement, panelWidth, chordOrNote.chord(), selected,
-					highlightedString, lastWasLinkNext, wrongLinkNext);
+			return addChord(frameData, highwayDrawer, panelWidth, chordOrNote.chord(), selected, highlightedString,
+					lastWasLinkNext, wrongLinkNext);
 		}
 		if (chordOrNote.isNote()) {
-			return addNote(time, highwayDrawer, panelWidth, chordOrNote.note(), selected,
+			return addNote(frameData, highwayDrawer, panelWidth, chordOrNote.note(), selected,
 					highlightedString == chordOrNote.note().string, lastWasLinkNext, wrongLinkNext);
 		}
 
 		return true;
 	}
 
-	private boolean isLinkNextIncorrect(final ArrayList2<ChordOrNote> sounds,
-			final ArrayList2<ChordTemplate> chordTemplates, final int id, final int string, final int fret) {
+	private boolean isLinkNextIncorrect(final List<ChordOrNote> sounds, final List<ChordTemplate> chordTemplates,
+			final int id, final int string, final int fret) {
 		final ChordOrNote previousSound = findPreviousSoundOnString(string, id - 1, sounds);
 
 		if (previousSound == null) {
@@ -226,18 +191,21 @@ public class GuitarDrawer {
 		return false;
 	}
 
-	private void addGuitarNoteAddLineHighlight(final ArrayList2<ChordTemplate> chordTemplates, final int time,
+	private void addGuitarNoteAddLineHighlight(final List<ChordTemplate> chordTemplates, final int time,
 			final HighwayDrawer highwayDrawer, final HighlightData highlightData) {
 		if (highlightData.type != PositionType.GUITAR_NOTE) {
 			return;
 		}
 
 		for (final HighlightPosition highlightPosition : highlightData.highlightedNonIdPositions) {
-			final int x = timeToX(highlightPosition.position, time);
+			final int x = positionToX(highlightPosition.position, time);
+			final int length = positionToX(highlightPosition.position + highlightPosition.length, time) - x;
 			final Optional<ChordTemplate> template = highlightPosition.originalSound//
 					.filter(ChordOrNote::isChord)//
 					.map(s -> chordTemplates.get(s.chord().templateId()));
-			highwayDrawer.addSoundHighlight(x, highlightPosition.originalSound, template, highlightPosition.string);
+
+			highwayDrawer.addSoundHighlight(x, length, highlightPosition.originalSound, template,
+					highlightPosition.string, highlightPosition.drawOriginalStrings);
 		}
 
 		if (highlightData.line.isPresent()) {
@@ -245,11 +213,11 @@ public class GuitarDrawer {
 		}
 	}
 
-	private void addGuitarNotes(final ArrayList2<ChordOrNote> sounds, final ArrayList2<ChordTemplate> chordTemplates,
-			final int time, final HighwayDrawer highwayDrawer, final HighlightData highlightData,
-			final Arrangement arrangement, final int panelWidth) {
-		final HashSet2<Integer> selectedNoteIds = getSelectedIds(PositionType.GUITAR_NOTE);
-		final int highlightId = highlightData.getId(PositionType.GUITAR_NOTE);
+	private void addGuitarNotes(final FrameData frameData, final int panelWidth, final HighwayDrawer highwayDrawer) {
+		final List<ChordOrNote> sounds = frameData.level.sounds;
+		final List<ChordTemplate> chordTemplates = frameData.arrangement.chordTemplates;
+		final Set<Integer> selectedNoteIds = frameData.selection.getSelectedIdsSet(PositionType.GUITAR_NOTE);
+		final int highlightId = frameData.highlightData.getId(PositionType.GUITAR_NOTE);
 
 		boolean lastWasLinkNext = false;
 		for (int i = 0; i < sounds.size(); i++) {
@@ -263,45 +231,45 @@ public class GuitarDrawer {
 
 			final boolean selected = selectedNoteIds.contains(i);
 			final int highlightedString = i != highlightId ? -1//
-					: highlightData.id.map(id -> id.string.orElse(-1)).orElse(-1);
-			addChordOrNote(time, highwayDrawer, arrangement, panelWidth, sound, selected, highlightedString,
-					lastWasLinkNext, wrongLinkNext);
+					: frameData.highlightData.id.map(id -> id.string.orElse(-1)).orElse(-1);
+			addChordOrNote(frameData, highwayDrawer, panelWidth, sound, selected, highlightedString, lastWasLinkNext,
+					wrongLinkNext);
 
 			lastWasLinkNext = sound.chord() != null ? sound.chord().linkNext() : sound.note().linkNext;
 
-			if (i == highlightId && !highlightData.hasStringOf(sound)) {
-				final int x = timeToX(sound.position(), time);
+			if (i == highlightId && !frameData.highlightData.hasStringOf(sound)) {
+				final int x = positionToX(sound.position(frameData.beats), frameData.time);
+				final int length = positionToX(sound.endPosition(frameData.beats), frameData.time) - x;
 				final Optional<ChordTemplate> template = sound.isChord()//
 						? Optional.of(chordTemplates.get(sound.chord().templateId()))//
 						: Optional.empty();
-				highwayDrawer.addSoundHighlight(x, Optional.of(sound), template,
-						highlightData.id.get().string.orElse(0));
+				highwayDrawer.addSoundHighlight(x, length, Optional.of(sound), template,
+						frameData.highlightData.id.get().string.orElse(0), false);
 			}
 		}
 
-		addGuitarNoteAddLineHighlight(chordTemplates, time, highwayDrawer, highlightData);
+		addGuitarNoteAddLineHighlight(chordTemplates, frameData.time, highwayDrawer, frameData.highlightData);
 	}
 
-	private void addHandShapes(final int time, final HighwayDrawer highwayDrawer, final HighlightData highlightData,
-			final Arrangement arrangement, final Level level, final int panelWidth) {
-		final HashSet2<Integer> selectedHandShapeIds = getSelectedIds(PositionType.HAND_SHAPE);
-		final int highlightId = highlightData.getId(PositionType.HAND_SHAPE);
+	private void addHandShapes(final FrameData frameData, final int panelWidth, final HighwayDrawer highwayDrawer) {
+		final Set<Integer> selectedHandShapeIds = frameData.selection.getSelectedIdsSet(PositionType.HAND_SHAPE);
+		final int highlightId = frameData.highlightData.getId(PositionType.HAND_SHAPE);
 
-		for (int i = 0; i < level.handShapes.size(); i++) {
-			final HandShape handShape = level.handShapes.get(i);
-			final int x = timeToX(handShape.position(), time);
+		for (int i = 0; i < frameData.level.handShapes.size(); i++) {
+			final HandShape handShape = frameData.level.handShapes.get(i);
+			final int x = positionToX(handShape.position(frameData.beats), frameData.time);
 			if (isPastRightEdge(x, panelWidth)) {
 				break;
 			}
 
-			final int length = timeToXLength(handShape.position(), handShape.length());
+			final int length = positionToX(handShape.endPosition(frameData.beats), frameData.time) - x;
 			if (!isOnScreen(x, length)) {
 				continue;
 			}
 
 			final ChordTemplate chordTemplate;
-			if (handShape.templateId >= 0 && arrangement.chordTemplates.size() > handShape.templateId) {
-				chordTemplate = arrangement.chordTemplates.get(handShape.templateId);
+			if (handShape.templateId != null && frameData.arrangement.chordTemplates.size() > handShape.templateId) {
+				chordTemplate = frameData.arrangement.chordTemplates.get(handShape.templateId);
 			} else {
 				chordTemplate = new ChordTemplate();
 			}
@@ -311,34 +279,31 @@ public class GuitarDrawer {
 			highwayDrawer.addHandShape(x, length, selected, highlighted, handShape, chordTemplate);
 		}
 
-		if (highlightData.type == PositionType.HAND_SHAPE) {
-			highlightData.highlightedNonIdPositions.forEach(
-					highlightPosition -> highwayDrawer.addHandShapeHighlight(timeToX(highlightPosition.position, time),
+		if (frameData.highlightData.type == PositionType.HAND_SHAPE) {
+			frameData.highlightData.highlightedNonIdPositions.forEach(highlightPosition -> highwayDrawer
+					.addHandShapeHighlight(positionToX(highlightPosition.position, frameData.time),
 							timeToXLength(highlightPosition.position, highlightPosition.length)));
 		}
 	}
 
-	public void drawGuitar(final Graphics2D g, final Arrangement arrangement, final Level level, final int time,
-			final HighlightData highlightData) {
-		final int strings = arrangement.tuning.strings();
-		final HighwayDrawer highwayDrawer = getHighwayDrawer(g, strings, time);
-
+	public void drawGuitar(final FrameData frameData) {
+		final int strings = frameData.arrangement.tuning.strings();
 		final int panelWidth = chartPanel.getWidth();
+		final HighwayDrawer highwayDrawer = getHighwayDrawer(frameData.g, strings, frameData.time);
 
-		addEventPoints(g, panelWidth, highwayDrawer, arrangement, time, highlightData);
-		addToneChanges(g, panelWidth, highwayDrawer, arrangement, time, highlightData);
-		addAnchors(g, panelWidth, highwayDrawer, level, time, highlightData);
-		drawGuitarLanes(g, arrangement.tuning.strings(), time);
-		addGuitarNotes(level.sounds, arrangement.chordTemplates, time, highwayDrawer, highlightData, arrangement,
-				panelWidth);
-		addHandShapes(time, highwayDrawer, highlightData, arrangement, level, panelWidth);
+		GuitarEventPointsDrawer.addEventPoints(frameData, panelWidth, highwayDrawer);
+		GuitarToneChangeDrawer.addToneChanges(frameData, panelWidth, highwayDrawer);
+		GuitarAnchorsDrawer.addAnchors(frameData, panelWidth, highwayDrawer);
+		drawGuitarLanes(frameData, panelWidth);
+		addGuitarNotes(frameData, panelWidth, highwayDrawer);
+		addHandShapes(frameData, panelWidth, highwayDrawer);
 
-		highwayDrawer.draw(g);
+		highwayDrawer.draw(frameData.g);
 	}
 
-	public void drawStringNames(final Graphics2D g, final Arrangement arrangement) {
-		final int strings = arrangement.tuning.strings();
-		final String[] stringNames = arrangement.getSimpleStringNames();
+	public void drawStringNames(final FrameData frameData) {
+		final int strings = frameData.arrangement.tuning.strings();
+		final String[] stringNames = frameData.arrangement.getSimpleStringNames();
 
 		final int fontSize = (int) (noteHeight * 0.5);
 		final Font stringNameFont = new Font(Font.DIALOG, Font.BOLD, fontSize);
@@ -346,27 +311,26 @@ public class GuitarDrawer {
 
 		final int width = fontSize * 5 / 3;
 
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setColor(ColorLabel.LANE.color());
-		g.fillRect(0, lanesTop, width + 3, lanesHeight + 1);
+		frameData.g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		frameData.g.setColor(ColorLabel.LANE.color());
+		frameData.g.fillRect(0, lanesTop, width + 3, lanesHeight + 1);
 
 		for (int string = 0; string < stringNames.length; string++) {
 			final int stringPosition = getStringPosition(string, stringNames.length);
 			final int y = getLaneY(stringPosition);
 			new CenteredText(new Position2D(x, y), stringNameFont, stringNames[string],
-					getStringBasedColor(StringColorLabelType.LANE, string, strings)).draw(g);
+					getStringBasedColor(StringColorLabelType.LANE, string, strings)).draw(frameData.g);
 		}
 	}
 
-	public void draw(final Graphics2D g, final Arrangement arrangement, final Level level, final int time,
-			final HighlightData highlightData) {
+	public void draw(final FrameData frameData) {
 		try {
-			waveFormDrawer.draw(g, time);
-			beatsDrawer.draw(g, time, highlightData);
-			lyricLinesDrawer.draw(g, time);
+			waveFormDrawer.draw(frameData);
+			beatsDrawer.draw(frameData);
+			lyricLinesDrawer.draw(frameData);
 
-			drawGuitar(g, arrangement, level, time, highlightData);
-			drawStringNames(g, arrangement);
+			drawGuitar(frameData);
+			drawStringNames(frameData);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

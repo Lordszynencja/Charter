@@ -14,7 +14,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.BeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNoteWithFret;
@@ -25,9 +24,8 @@ import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.lookAndFeel.CharterRadioButton;
-import log.charter.services.data.selection.SelectionAccessor;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.ArrayList2;
 
 public class SelectionBendEditor extends RowedPanel {
 	private static final long serialVersionUID = 6095874968137603127L;
@@ -49,9 +47,8 @@ public class SelectionBendEditor extends RowedPanel {
 	private int lastStringsAmount = maxStrings;
 
 	private ChordOrNote getCurrentlySelectedSound() {
-		final SelectionAccessor<ChordOrNote> selectionAccessor = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-		return selectionAccessor.getSortedSelected().get(0).selectable;
+		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
+		return selectionAccessor.getSelected().get(0).selectable;
 	}
 
 	public SelectionBendEditor(final RowedPanel parent, final ChartData data, final SelectionManager selectionManager,
@@ -64,7 +61,7 @@ public class SelectionBendEditor extends RowedPanel {
 
 		addRadioButtons();
 
-		bendEditorGraph = new BendEditorGraph(new BeatsMap(1), this::onChangeBends);
+		bendEditorGraph = new BendEditorGraph(this::onChangeBends);
 
 		final CharterScrollPane scrollPane = new CharterScrollPane(bendEditorGraph,
 				JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -117,7 +114,7 @@ public class SelectionBendEditor extends RowedPanel {
 
 	public void enableAndSelectStrings(final ChordOrNote sound) {
 		final boolean[] stringsForAction = new boolean[maxStrings];
-		final int lowestString = sound.notesWithFrets(data.getCurrentArrangement().chordTemplates)//
+		final int lowestString = sound.notesWithFrets(data.currentArrangement().chordTemplates)//
 				.map(CommonNoteWithFret::string)//
 				.peek(string -> stringsForAction[string] = true)//
 				.collect(Collectors.minBy(Integer::compare)).get();
@@ -163,8 +160,6 @@ public class SelectionBendEditor extends RowedPanel {
 	}
 
 	public void onChangeSelection(final ChordOrNote selected) {
-		bendEditorGraph.setBeatsMap(data.songChart.beatsMap);
-
 		strings.forEach(button -> button.setVisible(false));
 
 		resetColors();
@@ -172,7 +167,7 @@ public class SelectionBendEditor extends RowedPanel {
 		enableAndSelectStrings(selected);
 	}
 
-	private void onChangeBends(final int string, final ArrayList2<BendValue> newBends) {
+	private void onChangeBends(final int string, final List<BendValue> newBends) {
 		undoSystem.addUndo();
 
 		getCurrentlySelectedSound().getString(string).ifPresent(note -> note.bendValues(newBends));

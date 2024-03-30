@@ -1,22 +1,24 @@
 package log.charter.services.editModes;
 
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBefore;
-import static log.charter.data.song.position.IPositionWithLength.changePositionsWithLengthsLength;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
-import static log.charter.util.CollectionUtils.findClosestId;
+import static log.charter.util.CollectionUtils.lastBefore;
+import static log.charter.util.Utils.nvl;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Anchor;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
-import log.charter.data.song.position.IPositionWithLength;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;
@@ -26,19 +28,20 @@ import log.charter.gui.panes.songEdits.AnchorPane;
 import log.charter.gui.panes.songEdits.GuitarEventPointPane;
 import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.gui.panes.songEdits.ToneChangePane;
+import log.charter.services.data.ChartItemsHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
-import log.charter.services.data.selection.SelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.HighlightManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId;
-import log.charter.util.collections.ArrayList2;
 
 public class GuitarModeHandler extends ModeHandler {
 	private static final long scrollTimeoutForUndo = 1000;
 
+	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
+	private ChartItemsHandler chartItemsHandler;
 	private CharterFrame charterFrame;
 	private CurrentSelectionEditor currentSelectionEditor;
 	private HighlightManager highlightManager;
@@ -57,10 +60,11 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 
 		undoSystem.addUndo();
-		final Anchor anchor = new Anchor(anchorPosition.position(), 1);
-		final ArrayList2<Anchor> anchors = chartData.getCurrentArrangementLevel().anchors;
+
+		final Anchor anchor = new Anchor(anchorPosition.toFraction(chartData.beats()).position());
+		final List<Anchor> anchors = chartData.currentAnchors();
 		anchors.add(anchor);
-		anchors.sort(null);
+		anchors.sort(IConstantFractionalPosition::compareTo);
 
 		new AnchorPane(chartData, charterFrame, undoSystem, anchor, () -> {
 			undoSystem.undo();
@@ -77,10 +81,10 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 
 		undoSystem.addUndo();
-		final EventPoint eventPoint = new EventPoint(eventPointPosition.position());
-		final ArrayList2<EventPoint> eventPoints = chartData.getCurrentArrangement().eventPoints;
+		final EventPoint eventPoint = new EventPoint(eventPointPosition.toFraction(chartData.beats()).position());
+		final List<EventPoint> eventPoints = chartData.currentEventPoints();
 		eventPoints.add(eventPoint);
-		eventPoints.sort(null);
+		eventPoints.sort(IConstantFractionalPosition::compareTo);
 
 		new GuitarEventPointPane(chartData, charterFrame, undoSystem, eventPoint, () -> {
 			undoSystem.undo();
@@ -88,22 +92,14 @@ public class GuitarModeHandler extends ModeHandler {
 		});
 	}
 
-	private void rightClickHandShape(final PositionWithIdAndType handShapePosition) {
-		selectionManager.clear();
-		if (handShapePosition.handShape != null) {
-			chartData.getCurrentArrangementLevel().handShapes.remove((int) handShapePosition.id);
-			return;
-		}
+	private void addNewHandShape(final FractionalPosition position) {
+		final FractionalPosition endPosition = chartData.beats().addGrid(position, 1).toFraction(chartData.beats())
+				.position();
 
-		undoSystem.addUndo();
-
-		final int endPosition = chartData.songChart.beatsMap.getNextPositionFromGridAfter(handShapePosition.position());
-
-		final HandShape handShape = new HandShape(handShapePosition.position(),
-				endPosition - handShapePosition.position());
-		final ArrayList2<HandShape> handShapes = chartData.getCurrentArrangementLevel().handShapes;
+		final HandShape handShape = new HandShape(position, endPosition);
+		final List<HandShape> handShapes = chartData.currentHandShapes();
 		handShapes.add(handShape);
-		handShapes.sort(null);
+		handShapes.sort(IConstantFractionalPosition::compareTo);
 
 		new HandShapePane(chartData, charterFrame, handShape, () -> {
 			undoSystem.undo();
@@ -111,23 +107,34 @@ public class GuitarModeHandler extends ModeHandler {
 		});
 	}
 
-	private ChordOrNote addSound(final Note note) {
-		final ArrayList2<ChordOrNote> sounds = chartData.getCurrentArrangementLevel().sounds;
-		final ChordOrNote sound = ChordOrNote.from(note);
-		sounds.add(sound);
-		sounds.sort(null);
+	private void rightClickHandShape(final PositionWithIdAndType handShapePosition) {
+		selectionManager.clear();
 
-		final int previousId = findLastIdBefore(sounds, note.position());
-		if (previousId != -1) {
-			ArrangementFixer.fixSoundLength(previousId, sounds);
+		undoSystem.addUndo();
+		if (handShapePosition.handShape != null) {
+			chartData.currentArrangementLevel().handShapes.remove((int) handShapePosition.id);
+			return;
 		}
 
-		selectionManager.addSoundSelection(findClosestId(sounds, note, a -> a.position()));
+		addNewHandShape(handShapePosition.toFraction(chartData.beats()).position());
+	}
+
+	private ChordOrNote addSound(final Note note) {
+		final List<ChordOrNote> sounds = chartData.currentSounds();
+		final ChordOrNote sound = ChordOrNote.from(note);
+		final Integer previousId = lastBefore(sounds, note).findId();
+		final int id = nvl(previousId, -1) + 1;
+		sounds.add(id, sound);
+
+		if (previousId != null) {
+			arrangementFixer.fixSoundLength(previousId, sounds);
+		}
+		selectionManager.addSoundSelection(id);
 
 		return sound;
 	}
 
-	private int addOrRemoveSingleNote(final int string, final int position, final Integer id,
+	private int addOrRemoveSingleNote(final FractionalPosition position, final int string, final Integer id,
 			final ChordOrNote chordOrNote) {
 		if (string < 0 || string >= chartData.currentStrings()) {
 			return 0;
@@ -139,14 +146,14 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 
 		if (chordOrNote.isNote() && chordOrNote.note().string == string) {
-			chartData.getCurrentArrangementLevel().sounds.remove((int) id);
+			chartData.currentArrangementLevel().sounds.remove((int) id);
 			return -1;
 		}
 
-		final ArrayList2<ChordOrNote> sounds = chartData.getCurrentArrangementLevel().sounds;
+		final List<ChordOrNote> sounds = chartData.currentSounds();
 
 		if (chordOrNote.isChord()) {
-			final ArrayList2<ChordTemplate> chordTemplates = chartData.getCurrentArrangement().chordTemplates;
+			final List<ChordTemplate> chordTemplates = chartData.currentChordTemplates();
 			final ChordTemplate chordTemplate = new ChordTemplate(chordTemplates.get(chordOrNote.chord().templateId()));
 			if (chordTemplate.frets.containsKey(string)) {
 				chordTemplate.frets.remove(string);
@@ -158,7 +165,7 @@ public class GuitarModeHandler extends ModeHandler {
 
 			setSuggestedFingers(chordTemplate);
 
-			final int newTemplateId = chartData.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
+			final int newTemplateId = chartData.currentArrangement().getChordTemplateIdWithSave(chordTemplate);
 			chordOrNote.chord().updateTemplate(newTemplateId, chordTemplate);
 			if (chordTemplate.frets.size() == 1) {
 				sounds.set(id, chordOrNote.asNote(chordTemplates));
@@ -169,7 +176,7 @@ public class GuitarModeHandler extends ModeHandler {
 			chordTemplate.frets.put(string, chordOrNote.note().fret);
 			setSuggestedFingers(chordTemplate);
 
-			final int chordId = chartData.getCurrentArrangement().getChordTemplateIdWithSave(chordTemplate);
+			final int chordId = chartData.currentArrangement().getChordTemplateIdWithSave(chordTemplate);
 			sounds.set(id, chordOrNote.asChord(chordId, chordTemplate));
 		}
 
@@ -178,19 +185,22 @@ public class GuitarModeHandler extends ModeHandler {
 	}
 
 	private void addSingleNote(final MouseButtonPressReleaseData clickData) {
+		final FractionalPosition position = clickData.pressHighlight.toFraction(chartData.beats()).position();
 		final int string = yToString(clickData.pressPosition.y, chartData.currentStrings());
-		addOrRemoveSingleNote(string, clickData.pressHighlight.position(), clickData.pressHighlight.id,
-				clickData.pressHighlight.chordOrNote);
+		addOrRemoveSingleNote(position, string, clickData.pressHighlight.id, clickData.pressHighlight.chordOrNote);
 	}
 
 	private void addMultipleNotes(final MouseButtonPressReleaseData clickData) {
-		final ArrayList2<PositionWithStringOrNoteId> positions = highlightManager.getPositionsWithStrings(
-				clickData.pressHighlight.position(), clickData.releaseHighlight.position(), clickData.pressPosition.y,
+		final List<PositionWithStringOrNoteId> positions = highlightManager.getPositionsWithStrings(
+				clickData.pressHighlight.toPosition(chartData.beats()).position(), //
+				clickData.releaseHighlight.toPosition(chartData.beats()).position(), //
+				clickData.pressPosition.y, //
 				clickData.releasePosition.y);
 
 		int noteIdChange = 0;
+		final ImmutableBeatsMap beats = chartData.beats();
 		for (final PositionWithStringOrNoteId position : positions) {
-			noteIdChange += addOrRemoveSingleNote(position.string, position.position(),
+			noteIdChange += addOrRemoveSingleNote(position.toFraction(beats).position(), position.string,
 					position.noteId == null ? null : (position.noteId + noteIdChange), position.sound);
 		}
 	}
@@ -216,10 +226,10 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 
 		undoSystem.addUndo();
-		final ToneChange toneChange = new ToneChange(toneChangePosition.position(), "");
-		final ArrayList2<ToneChange> toneChanges = chartData.getCurrentArrangement().toneChanges;
+		final ToneChange toneChange = new ToneChange(toneChangePosition.toFraction(chartData.beats()).position(), "");
+		final List<ToneChange> toneChanges = chartData.currentToneChanges();
 		toneChanges.add(toneChange);
-		toneChanges.sort(null);
+		toneChanges.sort(IConstantFractionalPosition::compareTo);
 
 		new ToneChangePane(chartData, charterFrame, undoSystem, toneChange, () -> {
 			undoSystem.undo();
@@ -253,12 +263,10 @@ public class GuitarModeHandler extends ModeHandler {
 			rightClickAnchor(clickData.pressHighlight);
 			return;
 		}
-
 		if (clickData.pressHighlight.type == PositionType.GUITAR_NOTE) {
 			rightClickGuitarNote(clickData);
 			return;
 		}
-
 		if (clickData.pressHighlight.type == PositionType.HAND_SHAPE) {
 			if (clickData.isXDrag()) {
 				return;
@@ -270,19 +278,13 @@ public class GuitarModeHandler extends ModeHandler {
 	}
 
 	private void changeNotesLength(final int change) {
-		final SelectionAccessor<ChordOrNote> selectedNotes = selectionManager
-				.getSelectedAccessor(PositionType.GUITAR_NOTE);
-
-		IPositionWithLength.changeSoundsLength(chartData.songChart.beatsMap, selectedNotes.getSortedSelected(),
-				chartData.getCurrentArrangementLevel().sounds, change, !keyboardHandler.alt(),
+		chartItemsHandler.changeSoundsLength(selectionManager.getSelected(PositionType.GUITAR_NOTE), change,
 				currentSelectionEditor.getSelectedStrings());
 	}
 
 	private void changeHandShapesLength(final int change) {
-		final SelectionAccessor<HandShape> selectedNotes = selectionManager
-				.getSelectedAccessor(PositionType.HAND_SHAPE);
-		changePositionsWithLengthsLength(chartData.songChart.beatsMap, selectedNotes.getSortedSelected(),
-				chartData.getCurrentArrangementLevel().handShapes, change);
+		chartItemsHandler.changePositionsWithLengthsByGrid(
+				selectionManager.getSelectedElements(PositionType.HAND_SHAPE), chartData.currentHandShapes(), change);
 	}
 
 	@Override

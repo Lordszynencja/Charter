@@ -53,16 +53,17 @@ public class Preview3DLaneBordersDrawer {
 			fretsOpacity[fret] = 32;
 		}
 
-		final IntRange activeFrets = drawData.getFrets(drawData.time);
-
 		for (final AnchorDrawData anchor : drawData.anchors) {
 			for (int fret = anchor.fretFrom; fret <= anchor.fretTo; fret++) {
 				fretsOpacity[fret] = max(fretsOpacity[fret], 96);
 			}
 		}
 
-		for (int fret = activeFrets.min - 1; fret <= activeFrets.max; fret++) {
-			fretsOpacity[fret] = 255;
+		final IntRange activeFrets = drawData.getFrets(drawData.time);
+		if (activeFrets != null) {
+			for (int fret = activeFrets.min - 1; fret <= activeFrets.max; fret++) {
+				fretsOpacity[fret] = 255;
+			}
 		}
 
 		final Color color = ColorLabel.PREVIEW_3D_LANE_BORDER.color();

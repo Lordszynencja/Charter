@@ -1,7 +1,7 @@
 package log.charter.gui.panes.songEdits;
 
-import static log.charter.data.song.position.IConstantPosition.findClosestId;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,12 +11,12 @@ import javax.swing.JTextField;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Beat;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
 import log.charter.gui.components.utils.validators.IntValueValidator;
-import log.charter.util.collections.ArrayList2;
 
 public class TempoBeatPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
@@ -80,9 +80,8 @@ public class TempoBeatPane extends ParamsPane {
 	private void saveAndExit() {
 		undoSystem.addUndo();
 
-		final ArrayList2<Beat> beats = data.songChart.beatsMap.beats;
-		final int beatId = findClosestId(beats, beat.position());
-
+		final ImmutableBeatsMap beats = data.beats();
+		final int beatId = lastBeforeEqual(beats, beat).findId(0);
 		if (bpm.compareTo(calculateBPM(beat)) != 0) {
 			beat.anchor = true;
 			data.songChart.beatsMap.setBPM(beatId, bpm.doubleValue(), audioLength);

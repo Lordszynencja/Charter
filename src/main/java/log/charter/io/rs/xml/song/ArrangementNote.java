@@ -2,22 +2,24 @@ package log.charter.io.rs.xml.song;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.util.CollectionUtils.map;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
-import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
-import log.charter.util.collections.ArrayList2;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.Note;
+import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.io.rs.xml.converters.TimeConverter;
 
 @XStreamAlias("note")
@@ -75,7 +77,7 @@ public class ArrangementNote {
 	public ArrangementNote() {
 	}
 
-	private Integer bend(final ArrayList2<BendValue> bendValues) {
+	private Integer bend(final List<BendValue> bendValues) {
 		if (bendValues.isEmpty()) {
 			return null;
 		}
@@ -91,25 +93,27 @@ public class ArrangementNote {
 		return bend;
 	}
 
-	private CountedList<ArrangementBendValue> bendValues(final ArrayList2<BendValue> bendValues) {
+	private CountedList<ArrangementBendValue> bendValues(final ImmutableBeatsMap beats,
+			final List<BendValue> bendValues) {
 		if (bendValues.isEmpty()) {
 			return null;
 		}
 
-		return new CountedList<>(bendValues.map(bendValue -> new ArrangementBendValue(bendValue, time)));
+		return new CountedList<>(map(bendValues, b -> new ArrangementBendValue(beats, b)));
 	}
 
-	public ArrangementNote(final Note note) {
-		time = note.position();
+	public ArrangementNote(final ImmutableBeatsMap beats, final Note note) {
+		time = note.position(beats);
 		string = note.string;
 		fret = note.fret;
-		sustain = note.length() > 0 ? note.length() : null;
+		final int length = note.endPosition(beats) - note.position(beats);
+		sustain = length > 0 ? length : null;
 		vibrato = note.vibrato ? 1 : null;
 		tremolo = note.tremolo ? 1 : null;
 		accent = note.accent ? 1 : null;
 
 		bend = bend(note.bendValues);
-		bendValues = bendValues(note.bendValues);
+		bendValues = bendValues(beats, note.bendValues);
 
 		linkNext = note.linkNext ? 1 : null;
 		ignore = note.ignore || note.fret > 22 ? 1 : null;

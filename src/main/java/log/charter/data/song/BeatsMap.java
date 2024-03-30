@@ -1,33 +1,358 @@
 package log.charter.data.song;
 
-import static java.lang.Math.abs;
-import static log.charter.data.song.position.IConstantPosition.findClosestId;
-import static log.charter.data.song.position.IConstantPosition.findLastIdBeforeEqual;
+import static log.charter.data.song.position.virtual.IVirtualConstantPosition.distance;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
-import log.charter.data.song.position.IPosition;
+import log.charter.data.config.Config;
+import log.charter.data.config.Localization.Label;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.Note;
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.time.IConstantPosition;
+import log.charter.data.song.position.time.Position;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
+import log.charter.data.song.position.virtual.IVirtualPosition;
+import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rsc.xml.ChartProject;
-import log.charter.util.collections.ArrayList2;
+import log.charter.util.data.Fraction;
 import log.charter.util.grid.GridPosition;
 
 public class BeatsMap {
-	public class ImmutableBeatsMap {
+	public enum DistanceType {
+		MILISECONDS(Label.DISTANCE_TYPE_MILISECONDS), //
+		BEATS(Label.DISTANCE_TYPE_BEATS), //
+		NOTES(Label.DISTANCE_TYPE_NOTES);
+
+		public final Label label;
+
+		DistanceType(final Label label) {
+			this.label = label;
+		}
+	}
+
+	public class ImmutableBeatsMap implements List<Beat> {
+		@Override
 		public int size() {
 			return beats.size();
 		}
 
+		@Override
 		public Beat get(final int beatId) {
 			return getBeatSafe(beatId);
 		}
+
+		@Override
+		public boolean isEmpty() {
+			return beats.isEmpty();
+		}
+
+		@Override
+		public boolean contains(final Object o) {
+			return beats.contains(o);
+		}
+
+		@Override
+		public Iterator<Beat> iterator() {
+			return beats.iterator();
+		}
+
+		@Override
+		public Object[] toArray() {
+			return beats.toArray();
+		}
+
+		@Override
+		public <T> T[] toArray(final T[] a) {
+			return beats.toArray(a);
+		}
+
+		@Override
+		public boolean add(final Beat e) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean remove(final Object o) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean containsAll(final Collection<?> c) {
+			return beats.containsAll(c);
+		}
+
+		@Override
+		public boolean addAll(final Collection<? extends Beat> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean addAll(final int index, final Collection<? extends Beat> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean removeAll(final Collection<?> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean retainAll(final Collection<?> c) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void clear() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Beat set(final int index, final Beat element) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void add(final int index, final Beat element) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Beat remove(final int index) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public int indexOf(final Object o) {
+			return beats.indexOf(o);
+		}
+
+		@Override
+		public int lastIndexOf(final Object o) {
+			return beats.lastIndexOf(o);
+		}
+
+		@Override
+		public ListIterator<Beat> listIterator() {
+			return beats.listIterator();
+		}
+
+		@Override
+		public ListIterator<Beat> listIterator(final int index) {
+			return beats.listIterator(index);
+		}
+
+		@Override
+		public List<Beat> subList(final int fromIndex, final int toIndex) {
+			return beats.subList(fromIndex, toIndex);
+		}
+
+		public double findBPM(final Beat beat) {
+			return BeatsMap.this.findBPM(beat);
+		}
+
+		public double findBPM(final Beat beat, final int beatId) {
+			return BeatsMap.this.findBPM(beat, beatId);
+		}
+
+		public void snap(final IVirtualPosition position) {
+			position.position(immutable, getPositionFromGridClosestTo(position));
+		}
+
+		public IVirtualConstantPosition getPositionWithAddedGrid(final IVirtualConstantPosition position,
+				final int gridAdditions) {
+			final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+			for (int i = 0; i < gridAdditions; i++) {
+				gridPosition.next();
+			}
+
+			return gridPosition;
+		}
+
+		public IVirtualConstantPosition getPositionWithRemovedGrid(final IVirtualConstantPosition position,
+				int gridRemovals) {
+			final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+			if (gridPosition.compareTo(position) < 0) {
+				gridRemovals--;
+			}
+			for (int i = 0; i < gridRemovals; i++) {
+				gridPosition.previous();
+			}
+
+			return gridPosition;
+		}
+
+		public IVirtualConstantPosition addGrid(final IVirtualConstantPosition position, final int steps) {
+			return steps < 0 ? getPositionWithRemovedGrid(position, -steps)//
+					: getPositionWithAddedGrid(position, steps);
+		}
+
+		public int findPreviousAnchoredBeat(final int beatId) {
+			for (int i = beatId - 1; i > 0; i--) {
+				if (beats.get(i).anchor) {
+					return i;
+				}
+			}
+
+			return 0;
+		}
+
+		public Integer findNextAnchoredBeat(final int beatId) {
+			for (int i = beatId + 1; i < beats.size(); i++) {
+				if (beats.get(i).anchor) {
+					return i;
+				}
+			}
+
+			return null;
+		}
+
+		public FractionalPosition getPositionFromGridClosestTo(final IVirtualConstantPosition position) {
+			final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+			final FractionalPosition leftPosition = gridPosition.fractionalPosition();
+			gridPosition.next();
+			final FractionalPosition rightPosition = gridPosition.fractionalPosition();
+
+			final IVirtualConstantPosition distanceToLeft = distance(immutable, position, leftPosition);
+			final IVirtualConstantPosition distanceToRight = distance(immutable, position, rightPosition);
+
+			if (IVirtualConstantPosition.compare(immutable, distanceToLeft, distanceToRight) <= 0) {
+				return leftPosition;
+			}
+
+			return rightPosition;
+		}
+
+		public void moveSounds(final Collection<ChordOrNote> sounds, final FractionalPosition toAdd) {
+			for (final ChordOrNote sound : sounds) {
+				sound.position(sound.position().add(toAdd));
+
+				if (sound.isChord()) {
+					final Chord chord = sound.chord();
+					chord.chordNotes.values().forEach(n -> n.endPosition(n.endPosition().add(toAdd)));
+				} else {
+					final Note note = sound.note();
+					note.endPosition(note.endPosition().add(toAdd));
+				}
+			}
+		}
+
+		public void movePositions(final Collection<? extends IVirtualPosition> positions,
+				final FractionalPosition toAdd) {
+			for (final IVirtualPosition position : positions) {
+				final FractionalPosition newPosition = position.toFraction(immutable).position().add(toAdd);
+				position.position(immutable, newPosition);
+
+				if (IVirtualPositionWithEnd.class.isAssignableFrom(position.getClass())) {
+					final IVirtualPositionWithEnd positionWithEnd = (IVirtualPositionWithEnd) position;
+					final FractionalPosition newEndPosition = positionWithEnd.endPosition().toFraction(immutable)
+							.position().add(toAdd);
+					positionWithEnd.endPosition(immutable, newEndPosition);
+				}
+			}
+		}
+
+		private IVirtualConstantPosition addMiliseconds(final IVirtualConstantPosition position, final int distance) {
+			return IVirtualConstantPosition.add(this, position, new Position(distance));
+		}
+
+		private IVirtualConstantPosition addBeats(final IVirtualConstantPosition position,
+				final FractionalPosition distance) {
+			return IVirtualConstantPosition.add(this, position, distance);
+		}
+
+		private IVirtualConstantPosition removeNote(final IVirtualConstantPosition position, Fraction distance) {
+			FractionalPosition fractionalPosition = position.toFraction(this).position();
+			if (fractionalPosition.fraction.numerator > 0) {
+				final int noteDenominator = get(fractionalPosition.beatId).noteDenominator;
+				final Fraction distanceLeftInBeats = distance.multiply(noteDenominator);
+				if (distanceLeftInBeats.compareTo(fractionalPosition.fraction) <= 0) {
+					return fractionalPosition.add(distanceLeftInBeats.negate());
+				}
+
+				distance = distance.add(fractionalPosition.fraction.divide(noteDenominator));
+				fractionalPosition = new FractionalPosition(fractionalPosition.beatId);
+			}
+
+			int beatId = fractionalPosition.beatId - 1;
+			int noteDenominator = get(beatId).noteDenominator;
+			while (distance.compareTo(new Fraction(1, noteDenominator)) > 0) {
+				distance = distance.add(new Fraction(-1, noteDenominator));
+				beatId--;
+				noteDenominator = get(beatId).noteDenominator;
+			}
+
+			return new FractionalPosition(beatId, new Fraction(1).add(distance.multiply(noteDenominator).negate()));
+		}
+
+		private IVirtualConstantPosition addNote(final IVirtualConstantPosition position, Fraction distance) {
+			if (distance.negative()) {
+				return removeNote(position, distance.negate());
+			}
+
+			FractionalPosition fractionalPosition = position.toFraction(this).position();
+			if (fractionalPosition.fraction.numerator > 0) {
+				final int noteDenominator = get(fractionalPosition.beatId).noteDenominator;
+				final Fraction distanceLeftInBeats = distance.multiply(noteDenominator);
+				final Fraction distanceToNextBeat = new Fraction(1).add(fractionalPosition.fraction.negate());
+				if (distanceLeftInBeats.compareTo(distanceToNextBeat) <= 0) {
+					return fractionalPosition.add(distanceLeftInBeats);
+				}
+
+				distance = distance.add(distanceToNextBeat.divide(noteDenominator));
+				fractionalPosition = new FractionalPosition(fractionalPosition.beatId + 1);
+			}
+
+			int beatId = fractionalPosition.beatId;
+			int noteDenominator = get(beatId).noteDenominator;
+			while (distance.compareTo(new Fraction(1, noteDenominator)) > 0) {
+				distance = distance.add(new Fraction(-1, noteDenominator));
+				beatId++;
+				noteDenominator = get(beatId).noteDenominator;
+			}
+
+			return new FractionalPosition(beatId, distance.multiply(noteDenominator));
+		}
+
+		public IVirtualConstantPosition getMaxPositionBefore(final IVirtualConstantPosition position) {
+			if (Config.minNoteDistanceType == DistanceType.MILISECONDS) {
+				return addMiliseconds(position, -Config.minNoteDistanceFactor);
+			}
+			if (Config.minNoteDistanceType == DistanceType.BEATS) {
+				return addBeats(position, new FractionalPosition(new Fraction(-1, Config.minNoteDistanceFactor)));
+			}
+			if (Config.minNoteDistanceType == DistanceType.NOTES) {
+				return removeNote(position, new Fraction(1, Config.minNoteDistanceFactor));
+			}
+
+			return position;
+		};
+
+		public IVirtualConstantPosition getMinEndPositionAfter(final IVirtualConstantPosition position) {
+			if (Config.minNoteDistanceType == DistanceType.MILISECONDS) {
+				return addMiliseconds(position, Config.minTailLengthFactor);
+			}
+			if (Config.minNoteDistanceType == DistanceType.BEATS) {
+				return addBeats(position, new FractionalPosition(new Fraction(1, Config.minTailLengthFactor)));
+			}
+			if (Config.minNoteDistanceType == DistanceType.NOTES) {
+				return addNote(position, new Fraction(1, Config.minTailLengthFactor));
+			}
+
+			return position;
+		};
 	}
 
 	public final ImmutableBeatsMap immutable = new ImmutableBeatsMap();
 
-	public ArrayList2<Beat> beats = new ArrayList2<>();
+	public List<Beat> beats = new ArrayList<>();
 
 	/**
 	 * creates base beats map
@@ -37,15 +362,21 @@ public class BeatsMap {
 		makeBeatsUntilSongEnd(audioLength);
 	}
 
-	public BeatsMap(final ArrayList2<Beat> beats) {
+	public BeatsMap(final List<Beat> beats) {
 		this.beats = beats;
+
+		for (int i = beats.size() - 2; i >= 0; i--) {
+			if (beats.get(i).position() == beats.get(i + 1).position()) {
+				beats.remove(i + 1);
+			}
+		}
 	}
 
 	/**
 	 * creates beats map for existing project
 	 */
 	public BeatsMap(final ChartProject chartProject) {
-		beats = chartProject.beats;
+		this(chartProject.beats);
 	}
 
 	/**
@@ -72,7 +403,7 @@ public class BeatsMap {
 	}
 
 	public void makeBeatsUntilSongEnd(final int audioLength) {
-		final Beat current = beats.getLast();
+		final Beat current = beats.get(beats.size() - 1);
 		if (current.position() > audioLength) {
 			return;
 		}
@@ -111,8 +442,8 @@ public class BeatsMap {
 		}
 	}
 
-	public void truncate(final int audioLength) {
-		beats.removeIf(beat -> beat.position() > audioLength);
+	public void truncate(final int maxTime) {
+		beats.removeIf(beat -> beat.position() > maxTime);
 	}
 
 	public void fixFirstBeatInMeasures() {
@@ -138,70 +469,10 @@ public class BeatsMap {
 		}
 	}
 
-	public int getPositionWithAddedGrid(final int position, final int gridAdditions) {
-		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
-		for (int i = 0; i < gridAdditions; i++) {
-			gridPosition.next();
-		}
-
-		return gridPosition.position();
-	}
-
-	public int getPositionWithRemovedGrid(final int position, int gridRemovals) {
-		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
-		if (gridPosition.position() < position) {
-			gridRemovals--;
-		}
-		for (int i = 0; i < gridRemovals; i++) {
-			gridPosition.previous();
-		}
-
-		return gridPosition.position();
-	}
-
-	public int getNextPositionFromGridAfter(final int position) {
-		return getPositionWithAddedGrid(position, 1);
-	}
-
-	public int getNextPositionFromGrid(final int position) {
-		return getPositionWithAddedGrid(position, 1);
-	}
-
-	public int getPositionFromGridClosestTo(final int position) {
-		final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
-		final int leftPosition = gridPosition.position();
-		final int rightPosition = gridPosition.next().position();
-		if (abs(position - leftPosition) < abs(position - rightPosition)) {
-			return leftPosition;
-
-		}
-		return rightPosition;
-	}
-
-	public int findPreviousAnchoredBeat(final int beatId) {
-		for (int i = beatId - 1; i > 0; i--) {
-			if (beats.get(i).anchor) {
-				return i;
-			}
-		}
-
-		return 0;
-	}
-
-	public Integer findNextAnchoredBeat(final int beatId) {
-		for (int i = beatId + 1; i < beats.size(); i++) {
-			if (beats.get(i).anchor) {
-				return i;
-			}
-		}
-
-		return null;
-	}
-
 	public double getPositionInBeats(final int position) {
-		final int beatId = findLastIdBeforeEqual(beats, position);
-		if (beatId >= beats.size() - 1) {
-			return beatId;
+		final Integer beatId = lastBeforeEqual(beats, new Position(position), IConstantPosition::compareTo).findId();
+		if (beatId == null || beatId >= beats.size() - 1) {
+			return beats.size() - 1;
 		}
 
 		final Beat beat = beats.get(beatId);
@@ -227,7 +498,7 @@ public class BeatsMap {
 			beats.remove(i);
 		}
 
-		final Beat startBeat = beats.getLast();
+		final Beat startBeat = beats.get(beats.size() - 1);
 		final int startPosition = startBeat.position();
 		int position = (int) (startPosition + 60_000 / newBPM);
 		int createdBeatId = 1;
@@ -241,19 +512,8 @@ public class BeatsMap {
 		fixFirstBeatInMeasures();
 	}
 
-	public void movePositions(final int start, final int end, final Collection<? extends IPosition> positions) {
-		final double startInBeats = getPositionInBeats(start);
-		final double endInBeats = getPositionInBeats(end);
-		final double add = endInBeats - startInBeats;
-		for (final IPosition position : positions) {
-			final double positionInBeats = getPositionInBeats(position.position());
-			final int newPosition = getPositionForPositionInBeats(positionInBeats + add);
-			position.position(newPosition);
-		}
-	}
-
 	public double findBPM(final Beat beat) {
-		return findBPM(beat, findClosestId(beats, beat.position()));
+		return findBPM(beat, lastBeforeEqual(beats, beat, IConstantPosition::compareTo).findId(0));
 	}
 
 	public double findBPM(final Beat beat, final int beatId) {
@@ -281,7 +541,7 @@ public class BeatsMap {
 			return beats.get(0);
 		}
 		if (beatId >= beats.size()) {
-			return beats.getLast();
+			return beats.get(beats.size() - 1);
 		}
 
 		return beats.get(beatId);

@@ -1,9 +1,12 @@
 package log.charter.io.rs.xml.song;
 
+import static log.charter.util.CollectionUtils.map;
+
 import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
@@ -12,10 +15,10 @@ import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 
 @XStreamAlias("chordNote")
 public class ArrangementChordNote extends ArrangementNote {
-	public ArrangementChordNote(final int time, final int length, final int string, final int fret,
+	public ArrangementChordNote(final ImmutableBeatsMap beats, final int string, final int fret,
 			final ChordNote chordNote, final boolean ignore) {
-		this.time = time;
-		sustain = length;
+		time = chordNote.position(beats);
+		sustain = chordNote.endPosition(beats) - time;
 		this.string = string;
 		this.fret = fret;
 
@@ -27,7 +30,7 @@ public class ArrangementChordNote extends ArrangementNote {
 						.map(bendValue -> bendValue.bendValue == null ? 0 : bendValue.bendValue.intValue())
 						.collect(Collectors.maxBy(Integer::compare)).orElse(null);
 		bendValues = chordNote.bendValues.isEmpty() ? null
-				: new CountedList<>(chordNote.bendValues.map(bendValue -> new ArrangementBendValue(bendValue, time)));
+				: new CountedList<>(map(chordNote.bendValues, b -> new ArrangementBendValue(beats, b)));
 
 		linkNext = chordNote.linkNext ? 1 : null;
 		this.ignore = ignore || fret > 22 ? 1 : null;

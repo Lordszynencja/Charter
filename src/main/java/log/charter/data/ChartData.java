@@ -3,11 +3,20 @@ package log.charter.data;
 import static log.charter.data.config.Config.maxStrings;
 
 import java.io.File;
+import java.util.List;
 
 import log.charter.data.config.Config;
+import log.charter.data.song.Anchor;
 import log.charter.data.song.Arrangement;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.SongChart;
+import log.charter.data.song.ToneChange;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.vocals.Vocals;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.menuHandlers.CharterMenuBar;
@@ -19,7 +28,7 @@ public class ChartData {
 	public String path = Config.lastDir;
 	public String projectFileName = "project.rscp";
 	public boolean isEmpty = true;
-	public SongChart songChart = null;
+	public SongChart songChart = new SongChart();
 
 	public int currentArrangement = 0;
 	public int currentLevel = 0;
@@ -58,8 +67,8 @@ public class ChartData {
 		undoSystem.clear();
 	}
 
-	public void undo() {
-		undoSystem.undo();
+	public ImmutableBeatsMap beats() {
+		return songChart.beatsMap.immutable;
 	}
 
 	public int currentStrings() {
@@ -67,10 +76,14 @@ public class ChartData {
 			return maxStrings;
 		}
 
-		return getCurrentArrangement().tuning.strings();
+		return currentArrangement().tuning.strings();
 	}
 
-	public Arrangement getCurrentArrangement() {
+	public Vocals currentVocals() {
+		return songChart.vocals;
+	}
+
+	public Arrangement currentArrangement() {
 		if (songChart == null || currentArrangement < 0 || currentArrangement >= songChart.arrangements.size()) {
 			return new Arrangement();
 		}
@@ -79,10 +92,35 @@ public class ChartData {
 	}
 
 	public String getCurrentArrangementName() {
-		return getCurrentArrangement().getTypeNameLabel(currentArrangement);
+		return currentArrangement().getTypeNameLabel(currentArrangement);
 	}
 
-	public Level getCurrentArrangementLevel() {
-		return getCurrentArrangement().getLevel(currentLevel);
+	public List<EventPoint> currentEventPoints() {
+		return currentArrangement().eventPoints;
 	}
+
+	public List<ToneChange> currentToneChanges() {
+		return currentArrangement().toneChanges;
+	}
+
+	public List<ChordTemplate> currentChordTemplates() {
+		return currentArrangement().chordTemplates;
+	}
+
+	public Level currentArrangementLevel() {
+		return currentArrangement().getLevel(currentLevel);
+	}
+
+	public List<Anchor> currentAnchors() {
+		return currentArrangementLevel().anchors;
+	}
+
+	public List<ChordOrNote> currentSounds() {
+		return currentArrangementLevel().sounds;
+	}
+
+	public List<HandShape> currentHandShapes() {
+		return currentArrangementLevel().handShapes;
+	}
+
 }
