@@ -6,6 +6,7 @@ import static log.charter.util.CollectionUtils.map;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -33,7 +34,6 @@ import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.ModeManager;
-import log.charter.util.collections.HashSet2;
 
 public class ChartItemsHandler {
 
@@ -80,7 +80,7 @@ public class ChartItemsHandler {
 		if (type == PositionType.TONE_CHANGE) {
 			chartData.currentArrangement().tones = chartData.currentArrangement().toneChanges.stream()//
 					.map(toneChange -> toneChange.toneName)//
-					.collect(Collectors.toCollection(HashSet2::new));
+					.collect(Collectors.toCollection(HashSet::new));
 		}
 	}
 

@@ -13,6 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<lwjgl.version>3.3.2</lwjgl.version>
 		<lwjgl3-awt.version>0.1.8</lwjgl3-awt.version>
+		<jasio-jar.path>${project.basedir}/jasio/JAsioHost.jar</jasio-jar.path>
 	</properties>
 	
 	<dependencyManagement>
@@ -28,6 +29,13 @@
 	</dependencyManagement>
 	
 	<dependencies>
+		<dependency>
+		    <groupId>com.synthbot.jasiohost</groupId>
+		    <artifactId>jasiohost</artifactId>
+		    <version>1.0</version>
+		    <scope>system</scope>
+		    <systemPath>${jasio-jar.path}</systemPath>
+		</dependency>
 		<dependency>
 			<groupId>com.googlecode.soundlibs</groupId>
 			<artifactId>tritonus-share</artifactId>
@@ -119,6 +127,16 @@
 			<artifactId>junit-jupiter-engine</artifactId>
 			<version>5.3.1</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jcodec</groupId>
+			<artifactId>jcodec</artifactId>
+			<version>0.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jcodec</groupId>
+			<artifactId>jcodec-javase</artifactId>
+			<version>0.2.5</version>
 		</dependency>
 	</dependencies>
 	
@@ -362,6 +380,8 @@
 										<include>languages/**</include>
 										<include>rubberband/**</include>
 										<include>oggenc/**</include>
+										<include>jasio/jasiohost32.dll</include>
+										<include>jasio/jasiohost64.dll</include>
 										<include>manual.pdf</include>
 									</includes>
 								</resource>

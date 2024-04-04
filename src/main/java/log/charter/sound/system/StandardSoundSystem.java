@@ -1,0 +1,65 @@
+package log.charter.sound.system;
+
+import static javax.sound.sampled.AudioSystem.getLine;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.DataLine.Info;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+
+import log.charter.data.config.Config;
+import log.charter.io.Logger;
+import log.charter.sound.system.SoundSystem.ISoundSystem;
+
+public class StandardSoundSystem implements ISoundSystem {
+	public class StandardSoundLine implements ISoundLine {
+		private final SourceDataLine line;
+		private final int maxBytes;
+
+		private StandardSoundLine(final AudioFormat format) throws LineUnavailableException {
+			maxBytes = (int) (format.getFrameRate() * format.getFrameSize() * Config.audioBufferMs / 1000);
+
+			final Info info = new Info(SourceDataLine.class, format);
+
+			line = (SourceDataLine) getLine(info);
+			line.open(format);
+			line.start();
+
+			line.start();
+		}
+
+		@Override
+		public int write(final byte[] bytes) {
+			return line.write(bytes, 0, bytes.length);
+		}
+
+		@Override
+		public boolean wantsMoreData() {
+			return line.getBufferSize() - maxBytes > line.available();
+		}
+
+		@Override
+		public void close() {
+			line.drain();
+			line.close();
+		}
+
+		@Override
+		public void stop() {
+			line.flush();
+			line.close();
+		}
+
+	}
+
+	@Override
+	public ISoundLine getNewLine(final AudioFormat format) {
+		try {
+			return new StandardSoundLine(format);
+		} catch (final LineUnavailableException e) {
+			Logger.error("Couldn't open standard line", e);
+			return new EmptySoundLine();
+		}
+	}
+
+}

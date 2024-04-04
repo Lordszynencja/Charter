@@ -24,6 +24,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -40,8 +41,6 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.FilledRectangle;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashSet2;
 import log.charter.util.data.IntRange;
 import log.charter.util.data.Position2D;
 
@@ -50,7 +49,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	private static final double fretsProportion = pow(2, -1.0 / 12);
 	private static final int minFrets = 7;
 	private static final int fretStart = 22;
-	private static final Set<Integer> dotFrets = new HashSet2<>(new ArrayList2<>(3, 5, 7, 9));
+	private static final Set<Integer> dotFrets = new HashSet<>(asList(3, 5, 7, 9));
 
 	private static class FretPosition {
 		public final int fret;
