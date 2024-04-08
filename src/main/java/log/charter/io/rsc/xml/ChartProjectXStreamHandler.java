@@ -42,7 +42,6 @@ import log.charter.services.data.copy.data.positions.CopiedVocalPosition;
 import log.charter.util.RW;
 import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.HashMap2;
-import log.charter.util.collections.HashSet2;
 
 public class ChartProjectXStreamHandler {
 	private static XStream xstream = prepareXStream();
@@ -51,7 +50,6 @@ public class ChartProjectXStreamHandler {
 		final XStream xstream = new XStream();
 		xstream.registerConverter(new NullSafeIntegerConverter());
 		xstream.registerConverter(new CollectionConverter(xstream.getMapper(), ArrayList2.class));
-		xstream.registerConverter(new CollectionConverter(xstream.getMapper(), HashSet2.class));
 		xstream.registerConverter(new MapConverter(xstream.getMapper(), HashMap2.class), 0);
 		xstream.alias("beat", Beat.class);
 		xstream.ignoreUnknownElements();

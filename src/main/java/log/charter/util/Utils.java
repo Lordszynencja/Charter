@@ -117,6 +117,6 @@ public class Utils {
 			return startValue;
 		}
 
-		return (startValue * (position - start) + endValue * (end - position)) / (end - start);
+		return (endValue * (position - start) + startValue * (end - position)) / (end - start);
 	}
 }

@@ -24,6 +24,7 @@ public class MidiImporter {
 		try {
 			final BeatsMap beatsMap = MidiReader.readBeatsMapFromMidi(path);
 			beatsMap.makeBeatsUntilSongEnd(chartTimeHandler.audioTime());
+			beatsMap.fixFirstBeatInMeasures();
 
 			return beatsMap;
 		} catch (InvalidMidiDataException | IOException e) {

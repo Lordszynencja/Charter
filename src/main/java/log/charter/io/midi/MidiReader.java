@@ -6,6 +6,7 @@ import static log.charter.io.midi.MidiTempoEvent.defaultTimeSignature;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -14,12 +15,11 @@ import javax.sound.midi.Sequence;
 
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap;
-import log.charter.util.collections.ArrayList2;
 
 public final class MidiReader {
 	private static class BeatsAdder {
 		private final int resolution;
-		private final ArrayList2<Beat> beats = new ArrayList2<>();
+		private final List<Beat> beats = new ArrayList<>();
 		private double position = 0;
 		private long beatTime = 0;
 		private long time = 0;
@@ -41,8 +41,8 @@ public final class MidiReader {
 		}
 
 		private void addBeat(final boolean anchor) {
-			final int position = (int) (this.position
-					+ (beatTime - time) * 60_000_000.0 / lastEvent.kiloBeatsPerMinute / resolution);
+			final int position = (int) (this.position + (beatTime - time) * 60_000_000.0
+					/ lastEvent.kiloQuarterNotesPerMinute / resolution * 4 / lastEvent.timeSignature.denominator);
 			final boolean firstInMeasure = countBeat();
 			final Beat beat = new Beat(position, lastEvent.timeSignature, firstInMeasure, anchor);
 
@@ -55,7 +55,8 @@ public final class MidiReader {
 				addBeat(beatTime + resolution > tempo.time);
 			}
 
-			position = (position + (tempo.time - time) * 60_000_000.0 / lastEvent.kiloBeatsPerMinute / resolution);
+			position = (position + (tempo.time - time) * 60_000_000.0 / lastEvent.kiloQuarterNotesPerMinute / resolution
+					* 4 / lastEvent.timeSignature.denominator);
 			time = tempo.time;
 			lastEvent = tempo;
 			if (beatTime == tempo.time) {

@@ -96,6 +96,7 @@ public class AudioUtils {
 				for (int j = sampleBytes - 1; j >= 0; j--) {
 					value = (value << 8) | bytes[channelOffset + j] & 0xFF;
 				}
+
 				data[channel][i] = value;
 			}
 		}
@@ -159,16 +160,16 @@ public class AudioUtils {
 		return bytes;
 	}
 
-	public static int[][] setChannels(final int[][] channels, final int desiredLength) {
-		if (channels.length == desiredLength) {
+	public static int[][] setChannels(final int[][] channels, final int desiredChannels) {
+		if (channels.length == desiredChannels) {
 			return channels;
 		}
 		if (channels.length == 0) {
-			return new int[desiredLength][0];
+			return new int[desiredChannels][0];
 		}
 
-		final int[][] newChannels = new int[desiredLength][];
-		for (int i = 0; i < desiredLength; i++) {
+		final int[][] newChannels = new int[desiredChannels][];
+		for (int i = 0; i < desiredChannels; i++) {
 			newChannels[i] = i >= channels.length ? channels[0] : channels[i];
 		}
 

@@ -115,6 +115,10 @@ public class Fraction implements Comparable<Fraction> {
 		return (double) numerator / denominator;
 	}
 
+	public float floatValue() {
+		return (float) numerator / denominator;
+	}
+
 	@Override
 	public String toString() {
 		return numerator + "/" + denominator;

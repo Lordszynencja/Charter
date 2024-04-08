@@ -7,6 +7,7 @@ import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSele
 import static log.charter.util.CollectionUtils.filter;
 
 import java.awt.Color;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,6 @@ import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.collections.HashSet2;
 
 public class ToneChangeSelectionEditor implements DocumentListener {
 	private ChartData chartData;
@@ -120,7 +120,7 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 		}
 		arrangement.tones = arrangement.toneChanges.stream()//
 				.map(t -> t.toneName)//
-				.collect(Collectors.toCollection(HashSet2::new));
+				.collect(Collectors.toCollection(HashSet::new));
 	}
 
 	private void onSelect(final String name) {

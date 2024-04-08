@@ -15,8 +15,8 @@ public class ClapsHandler {
 	private ChartToolbar chartToolbar;
 	private ModeManager modeManager;
 
-	private final TickPlayer clapsPlayer = new TickPlayer(generateSound(1000, 0.01, 1), 4,
-			this::getCurrentClapPositions, () -> chartData.beats());
+	private final TickPlayer clapsPlayer = new TickPlayer(generateSound(1000, 0.01, 1), this::getCurrentClapPositions,
+			() -> chartData.beats());
 
 	private List<? extends IVirtualConstantPosition> getCurrentClapPositions() {
 		switch (modeManager.getMode()) {

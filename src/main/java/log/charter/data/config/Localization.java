@@ -38,6 +38,9 @@ public class Localization {
 		ARRANGEMENT_TYPE_COMBO("Combo"), //
 		ARRANGEMENT_TYPE_LEAD("Lead"), //
 		ARRANGEMENT_TYPE_RHYTHM("Rhythm"), //
+		AUDIO_OUTPUT("Audio output"), //
+		AUDIO_OUTPUT_L_ID("Left output channel id"), //
+		AUDIO_OUTPUT_R_ID("Right output channel id"), //
 		BACKUP_DELAY_S("Backup delay (s)"), //
 		BASE_AUDIO_FORMAT("Base audio format"), //
 		BUFFER_SIZE_MS("Audio buffer size to fill (ms)"), //

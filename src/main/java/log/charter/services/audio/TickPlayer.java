@@ -10,14 +10,11 @@ import java.util.function.Supplier;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.time.Position;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
-import log.charter.sound.IPlayer;
-import log.charter.sound.RepeatingPlayer;
-import log.charter.sound.RotatingRepeatingPlayer;
-import log.charter.sound.data.AudioData;
 import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.system.SoundSystem;
 
 public class TickPlayer {
-	private final IPlayer tickPlayer;
+	private final AudioDataShort tick;
 	private final Supplier<List<? extends IVirtualConstantPosition>> positionsSupplier;
 	private final Supplier<ImmutableBeatsMap> beatsSupplier;
 
@@ -27,26 +24,14 @@ public class TickPlayer {
 	public TickPlayer(final AudioDataShort tick,
 			final Supplier<List<? extends IVirtualConstantPosition>> positionsSupplier,
 			final Supplier<ImmutableBeatsMap> beatsSupplier) {
-		this(tick, 1, positionsSupplier, beatsSupplier);
-	}
-
-	public TickPlayer(final AudioDataShort tick, final int players,
-			final Supplier<List<? extends IVirtualConstantPosition>> positionsSupplier,
-			final Supplier<ImmutableBeatsMap> beatsSupplier) {
-		final Supplier<AudioData<?>> tickSupplier = () -> tick.volume(sfxVolume);
-		if (players == 1) {
-			tickPlayer = new RepeatingPlayer(tickSupplier);
-		} else {
-			tickPlayer = new RotatingRepeatingPlayer(tickSupplier, players);
-		}
-
+		this.tick = tick;
 		this.positionsSupplier = positionsSupplier;
 		this.beatsSupplier = beatsSupplier;
 	}
 
 	public void nextTime(final int t) {
 		if (nextSoundTime != null && nextSoundTime < t) {
-			tickPlayer.play();
+			SoundSystem.play(tick, () -> sfxVolume);
 			nextSoundTime = null;
 		}
 

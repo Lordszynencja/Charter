@@ -3,10 +3,14 @@ package log.charter.gui.panes;
 import static log.charter.gui.components.utils.validators.ValueValidator.dirValidator;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
+
+import com.synthbot.jasiohost.AsioDriver;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
@@ -16,9 +20,13 @@ import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.CharterSelect;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.services.utils.Framer;
 import log.charter.sound.SoundFileType;
+import log.charter.sound.system.AudioSystemType;
+import log.charter.sound.system.SoundSystem;
 import log.charter.util.FileChooseUtils;
 
 public final class ConfigPane extends ParamsPane {
@@ -32,6 +40,11 @@ public final class ConfigPane extends ParamsPane {
 
 	private String musicPath = Config.musicPath;
 	private String songsPath = Config.songsPath;
+
+	private AudioSystemType audioSystemType = Config.audioSystemType;
+	private String audioSystemName = Config.audioSystemName;
+	private int leftOutChannelId = Config.leftOutChannelId;
+	private int rightOutChannelId = Config.rightOutChannelId;
 	private SoundFileType baseAudioFormat = Config.baseAudioFormat;
 
 	private DistanceType minNoteDistanceType = Config.minNoteDistanceType;
@@ -57,21 +70,32 @@ public final class ConfigPane extends ParamsPane {
 		this.frame = frame;
 		this.framer = framer;
 
+		final RowedPosition position = new RowedPosition(20, sizes);
 		int row = 0;
 
 		addStringConfigValue(row, 20, 150, Label.MUSIC_FOLDER, musicPath, 300, dirValidator, //
 				val -> musicPath = val, false);
 		musicFolderInput = (JTextField) getLastPart();
+		position.addX(460);
+
 		final JButton musicFolderPickerButton = new JButton(Label.SELECT_FOLDER.label());
 		musicFolderPickerButton.addActionListener(e -> selectMusicFolder());
-		this.add(musicFolderPickerButton, 480, getY(row++), 100, 20);
+		this.add(musicFolderPickerButton, position.getX(), position.getY(), 100, 20);
+		position.newRow();
+		row++;
 
 		addStringConfigValue(row, 20, 150, Label.SONGS_FOLDER, songsPath, 300, dirValidator, //
 				val -> songsPath = val, false);
 		songsFolderInput = (JTextField) getLastPart();
 		final JButton songsFolderPickerButton = new JButton(Label.SELECT_FOLDER.label());
 		songsFolderPickerButton.addActionListener(e -> selectSongsFolder());
-		this.add(songsFolderPickerButton, 480, getY(row++), 100, 20);
+		this.add(songsFolderPickerButton, 480, position.getY(), 100, 20);
+		position.newRow();
+		row++;
+
+		addAudioOutputSelect(position);
+		row++;
+		row++;
 
 		addIntConfigValue(row, 20, 0, Label.MINIMAL_NOTE_DISTANCE, minNoteDistanceFactor, 50, //
 				new IntValueValidator(1, 1000), v -> minNoteDistanceFactor = v, false);
@@ -110,6 +134,60 @@ public final class ConfigPane extends ParamsPane {
 
 		row++;
 		addDefaultFinish(row, this::saveAndExit);
+	}
+
+	private void addAudioOutputSelect(final RowedPosition position) {
+		class AudioOutputData {
+			private final AudioSystemType type;
+			private final String name;
+
+			public AudioOutputData(final AudioSystemType type, final String name) {
+				this.type = type;
+				this.name = name;
+			}
+
+			@Override
+			public String toString() {
+				return switch (type) {
+					case DEFAULT -> name == null ? "Default" : name;
+					case ASIO -> "ASIO: " + name;
+					default -> "???";
+				};
+			}
+		}
+
+		final List<AudioOutputData> inputs = new ArrayList<>();
+		inputs.add(new AudioOutputData(AudioSystemType.DEFAULT, null));
+
+		for (final String asioDriverName : AsioDriver.getDriverNames()) {
+			inputs.add(new AudioOutputData(AudioSystemType.ASIO, asioDriverName));
+		}
+
+		final AudioOutputData selected = new AudioOutputData(audioSystemType, audioSystemName);
+
+		final CharterSelect<AudioOutputData> select = new CharterSelect<>(inputs, selected, t -> t.toString(), t -> {
+			audioSystemType = t.type;
+			audioSystemName = t.name;
+		});
+
+		final FieldWithLabel<CharterSelect<AudioOutputData>> field = new FieldWithLabel<>(Label.AUDIO_OUTPUT, 100, 200,
+				20, select, LabelPosition.LEFT);
+		add(field, position.getX(), position.getY(), field.getPreferredSize().width, 20);
+		position.newRow();
+
+		final TextInputWithValidation leftOutChannelIdInput = TextInputWithValidation.generateForInt(leftOutChannelId,
+				30, new IntValueValidator(0, 255), i -> leftOutChannelId = i, true);
+		final FieldWithLabel<TextInputWithValidation> leftOutField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_L_ID, 130,
+				30, 20, leftOutChannelIdInput, LabelPosition.LEFT);
+		add(leftOutField, position.getAndAddX(leftOutField.getPreferredSize().width + 20), position.getY(),
+				leftOutField.getPreferredSize().width, 20);
+
+		final TextInputWithValidation rightOutChannelIdInput = TextInputWithValidation.generateForInt(rightOutChannelId,
+				30, new IntValueValidator(0, 255), i -> rightOutChannelId = i, true);
+		final FieldWithLabel<TextInputWithValidation> rightOutField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_R_ID, 130,
+				30, 20, rightOutChannelIdInput, LabelPosition.LEFT);
+		add(rightOutField, position.getX(), position.getY(), rightOutField.getPreferredSize().width, 20);
+		position.newRow();
 	}
 
 	private void addMinNoteDistanceTypeSelect(final int x, final int row) {
@@ -165,6 +243,10 @@ public final class ConfigPane extends ParamsPane {
 	private void saveAndExit() {
 		Config.musicPath = musicPath;
 		Config.songsPath = songsPath;
+		Config.audioSystemType = audioSystemType;
+		Config.audioSystemName = audioSystemName;
+		Config.leftOutChannelId = leftOutChannelId;
+		Config.rightOutChannelId = rightOutChannelId;
 		Config.baseAudioFormat = baseAudioFormat;
 
 		Config.minNoteDistanceType = minNoteDistanceType;
@@ -192,5 +274,6 @@ public final class ConfigPane extends ParamsPane {
 		frame.resize();
 
 		framer.setFPS(FPS);
+		SoundSystem.setCurrentSoundSystem();
 	}
 }

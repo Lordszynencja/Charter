@@ -172,7 +172,7 @@ public class FractionalPosition implements IConstantFractionalPosition {
 	}
 
 	public FractionalPosition multiply(final Fraction fraction) {
-		return new FractionalPosition(this.fraction.add(new Fraction(beatId, 1).multiply(fraction)));
+		return new FractionalPosition(this.fraction.multiply(fraction).add(fraction.multiply(beatId)));
 	}
 
 	public FractionalPosition round(final Fraction fraction) {
@@ -180,9 +180,9 @@ public class FractionalPosition implements IConstantFractionalPosition {
 			return new FractionalPosition();
 		}
 
-		final int value = (int) Math
-				.round(multiply(new Fraction(fraction.denominator, fraction.numerator)).doubleValue());
-		return new FractionalPosition(fraction.multiply(value));
+		final FractionalPosition multiplied = multiply(new Fraction(fraction.denominator, fraction.numerator));
+		final int rounded = (int) Math.round(multiplied.doubleValue());
+		return new FractionalPosition(fraction.multiply(rounded));
 	}
 
 	public FractionalPosition floor() {

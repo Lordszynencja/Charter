@@ -6,21 +6,18 @@ import static log.charter.data.config.Config.stretchedMusicSpeed;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import static log.charter.sound.StretchedFileLoader.loadStretchedAudio;
 
-import javax.sound.sampled.LineUnavailableException;
-
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.toolbar.ChartToolbar;
-import log.charter.gui.components.utils.ComponentUtils;
-import log.charter.io.Logger;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.sound.SoundPlayer.Player;
 import log.charter.sound.StretchedFileLoader;
 import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.system.SoundSystem;
+import log.charter.sound.system.SoundSystem.Player;
 
 public class AudioHandler {
 	private ChartTimeHandler chartTimeHandler;
@@ -90,13 +87,7 @@ public class AudioHandler {
 			start = getSlowedMs(chartTimeHandler.time());
 		}
 
-		try {
-			songPlayer = new Player(lastPlayedData, () -> Config.volume).start(start);
-		} catch (final LineUnavailableException e) {
-			ComponentUtils.showPopup(charterFrame, "No available lines");
-			Logger.error("No available lines", e);
-			return;
-		}
+		songPlayer = SoundSystem.play(lastPlayedData, () -> Config.volume, start);
 		songTimeOnStart = chartTimeHandler.time();
 		playStartTime = nanoTime() / 1_000_000L;
 
