@@ -76,7 +76,8 @@ public class MidiChartNotePlayer implements Initiable {
 			return 0;
 		}
 
-		final Integer bendPointId = lastBeforeEqual(bendValues, position).findId();
+		final Integer bendPointId = lastBeforeEqual(bendValues, FractionalPosition.fromTime(chartData.beats(), time))
+				.findId();
 		BendValue bendPointA;
 		BendValue bendPointB;
 		if (bendPointId == null) {

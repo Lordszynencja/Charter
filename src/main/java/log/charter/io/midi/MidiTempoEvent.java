@@ -18,7 +18,7 @@ public class MidiTempoEvent {
 	private static final int BPM_CHANGE_ID = 81;
 	private static final int TS_CHANGE_ID = 88;
 
-	private static int kiloBeatsPerMinute(final byte[] bytes) {
+	private static int kiloQuarterNotesPerMinute(final byte[] bytes) {
 		if (bytes.length < 6) {
 			return defaultKiloBeatsPerMinute;
 		}
@@ -55,7 +55,7 @@ public class MidiTempoEvent {
 
 		final long time = midiEvent.getTick();
 		return switch (bytes[1]) {
-			case BPM_CHANGE_ID -> new MidiTempoEvent(time, kiloBeatsPerMinute(bytes));
+			case BPM_CHANGE_ID -> new MidiTempoEvent(time, kiloQuarterNotesPerMinute(bytes));
 			case TS_CHANGE_ID -> new MidiTempoEvent(time, timeSignature(bytes));
 			default -> null;
 		};
@@ -92,12 +92,12 @@ public class MidiTempoEvent {
 	}
 
 	public long time;
-	public Integer kiloBeatsPerMinute;
+	public Integer kiloQuarterNotesPerMinute;
 	public TimeSignature timeSignature;
 
 	public MidiTempoEvent(final long time, final Integer kiloBeatsPerMinute, final TimeSignature timeSignature) {
 		this.time = time;
-		this.kiloBeatsPerMinute = kiloBeatsPerMinute;
+		this.kiloQuarterNotesPerMinute = kiloBeatsPerMinute;
 		this.timeSignature = timeSignature;
 	}
 
@@ -110,8 +110,8 @@ public class MidiTempoEvent {
 	}
 
 	public void join(final MidiTempoEvent other) {
-		if (other.kiloBeatsPerMinute != null) {
-			kiloBeatsPerMinute = other.kiloBeatsPerMinute;
+		if (other.kiloQuarterNotesPerMinute != null) {
+			kiloQuarterNotesPerMinute = other.kiloQuarterNotesPerMinute;
 		}
 		if (other.timeSignature != null) {
 			timeSignature = other.timeSignature;
@@ -119,8 +119,8 @@ public class MidiTempoEvent {
 	}
 
 	private void fillEmptyData(final int kiloBeatsPerMinute, final TimeSignature timeSignature) {
-		if (this.kiloBeatsPerMinute == null) {
-			this.kiloBeatsPerMinute = kiloBeatsPerMinute;
+		if (this.kiloQuarterNotesPerMinute == null) {
+			this.kiloQuarterNotesPerMinute = kiloBeatsPerMinute;
 		}
 		if (this.timeSignature == null) {
 			this.timeSignature = timeSignature;
@@ -131,7 +131,7 @@ public class MidiTempoEvent {
 		if (previous == null) {
 			fillEmptyData(defaultKiloBeatsPerMinute, defaultTimeSignature);
 		} else {
-			fillEmptyData(previous.kiloBeatsPerMinute, previous.timeSignature);
+			fillEmptyData(previous.kiloQuarterNotesPerMinute, previous.timeSignature);
 		}
 	}
 }
