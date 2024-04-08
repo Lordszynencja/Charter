@@ -41,13 +41,13 @@ public final class MidiReader {
 		}
 
 		private void addBeat(final boolean anchor) {
-			final int position = (int) (this.position + (beatTime - time) * 60_000_000.0
-					/ lastEvent.kiloQuarterNotesPerMinute / resolution * 4 / lastEvent.timeSignature.denominator);
+			final int position = (int) (this.position
+					+ (beatTime - time) * 60_000_000.0 / lastEvent.kiloQuarterNotesPerMinute / resolution);
 			final boolean firstInMeasure = countBeat();
 			final Beat beat = new Beat(position, lastEvent.timeSignature, firstInMeasure, anchor);
 
 			beats.add(beat);
-			beatTime += resolution;
+			beatTime += resolution * 4 / lastEvent.timeSignature.denominator;
 		}
 
 		public void addBeats(final MidiTempoEvent tempo) {
@@ -55,8 +55,8 @@ public final class MidiReader {
 				addBeat(beatTime + resolution > tempo.time);
 			}
 
-			position = (position + (tempo.time - time) * 60_000_000.0 / lastEvent.kiloQuarterNotesPerMinute / resolution
-					* 4 / lastEvent.timeSignature.denominator);
+			position = (position
+					+ (tempo.time - time) * 60_000_000.0 / lastEvent.kiloQuarterNotesPerMinute / resolution);
 			time = tempo.time;
 			lastEvent = tempo;
 			if (beatTime == tempo.time) {
