@@ -35,7 +35,13 @@ public class StandardSoundSystem implements ISoundSystem {
 
 		@Override
 		public boolean wantsMoreData() {
-			return line.getBufferSize() - maxBytes > line.available();
+			final int bufferSize = line.getBufferSize();
+			if (bufferSize < maxBytes) {
+				return true;
+			}
+
+			final int availableBufferLimit = bufferSize - maxBytes;
+			return availableBufferLimit <= line.available();
 		}
 
 		@Override

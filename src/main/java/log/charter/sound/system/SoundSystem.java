@@ -56,6 +56,13 @@ public class SoundSystem {
 
 	private static ISoundSystem currentSoundSystem = new StandardSoundSystem();
 
+	public static void setCurrentSoundSystem() {
+		currentSoundSystem = switch (Config.audioSystemType) {
+			case ASIO -> new ASIOSoundSystem(Config.audioSystemName, Config.leftOutChannelId, Config.rightOutChannelId);
+			default -> new StandardSoundSystem();
+		};
+	}
+
 	public static ISoundSystem getCurrentSoundSystem() {
 		return currentSoundSystem;
 	}
@@ -84,7 +91,6 @@ public class SoundSystem {
 			}
 			frameSize = musicData.format().getFrameSize();
 
-//			final ISoundSystem soundSystem = new ASIOSoundSystem();
 			final ISoundSystem soundSystem = getCurrentSoundSystem();
 			line = soundSystem.getNewLine(musicData.format());
 		}
@@ -126,7 +132,6 @@ public class SoundSystem {
 		}
 
 		private void finishPlaying() {
-			System.out.println("finishing!");
 			line.close();
 			stopped = true;
 		}

@@ -94,7 +94,13 @@ public class RW {
 		for (final String line : lines) {
 			final int split = line.indexOf('=');
 			if (split != -1) {
-				config.put(line.substring(0, split).trim(), line.substring(split + 1));
+				final String key = line.substring(0, split).trim();
+				String value = line.substring(split + 1);
+				if (value.equals("null")) {
+					value = null;
+				}
+
+				config.put(key, value);
 			}
 		}
 

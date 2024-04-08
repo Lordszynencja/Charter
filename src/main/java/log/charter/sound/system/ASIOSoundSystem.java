@@ -16,21 +16,37 @@ import com.synthbot.jasiohost.AsioChannel;
 import com.synthbot.jasiohost.AsioDriver;
 import com.synthbot.jasiohost.AsioDriverListener;
 
+import log.charter.data.config.Config;
 import log.charter.io.Logger;
+import log.charter.sound.IResampler;
+import log.charter.sound.Resampler;
 import log.charter.sound.system.SoundSystem.ISoundSystem;
 
 public class ASIOSoundSystem implements ISoundSystem {
+	private final String driver;
+	private final int outL;
+	private final int outR;
+
+	public ASIOSoundSystem(final String driver, final int outL, final int outR) {
+		this.driver = driver;
+		this.outL = outL;
+		this.outR = outR;
+	}
+
 	private static class FloatBufferQueue {
 		private final List<float[]> buffers = new LinkedList<>();
 		private float[] buffer;
 		private int position = 0;
 
-		public FloatBufferQueue(final int size) {
+		private final IResampler resampler;
+
+		public FloatBufferQueue(final int size, final int sampleRate, final int targetSampleRate) {
 			if (size <= 0) {
 				throw new IllegalArgumentException("Size must be positive");
 			}
 
 			buffer = new float[size];
+			resampler = Resampler.create(sampleRate, targetSampleRate, this::addResampled);
 		}
 
 		public int available() {
@@ -41,7 +57,11 @@ public class ASIOSoundSystem implements ISoundSystem {
 			return !buffers.isEmpty();
 		}
 
-		public void add(final float f) throws InterruptedException {
+		public void add(final float f) throws Exception {
+			resampler.addSample(f);
+		}
+
+		public void addResampled(final float f) throws InterruptedException {
 			buffer[position++] = f;
 			if (position >= buffer.length) {
 				synchronized (buffers) {
@@ -68,6 +88,8 @@ public class ASIOSoundSystem implements ISoundSystem {
 
 	public class ASIOSoundLine implements ISoundLine {
 		private int bufferSize = 128;
+		private int desiredFill = 1024;
+
 		private final AudioFormat format;
 		private final AsioDriver asioDriver;
 		private final AsioChannel[] channels;
@@ -76,13 +98,8 @@ public class ASIOSoundSystem implements ISoundSystem {
 		private ASIOSoundLine(final AudioFormat format) throws LineUnavailableException {
 			this.format = format;
 
-			// get a list of available ASIO drivers
-//			final List<String> driverNameList = AsioDriver.getDriverNames();
+			asioDriver = AsioDriver.getDriver(driver);
 
-			// load the names ASIO driver
-			asioDriver = AsioDriver.getDriver("Focusrite USB ASIO");
-
-			// add an AsioDriverListener in order to receive callbacks from the driver
 			asioDriver.addAsioDriverListener(new AsioDriverListener() {
 				@Override
 				public void bufferSwitch(final long systemTime, final long samplePosition,
@@ -104,20 +121,15 @@ public class ASIOSoundSystem implements ISoundSystem {
 
 				@Override
 				public void sampleRateDidChange(final double sampleRate) {
-					// TODO Auto-generated method stub
-
+					desiredFill = (int) (Config.audioBufferMs * sampleRate / 1000);
 				}
 
 				@Override
 				public void resetRequest() {
-					// TODO Auto-generated method stub
-
 				}
 
 				@Override
 				public void resyncRequest() {
-					// TODO Auto-generated method stub
-
 				}
 
 				@Override
@@ -131,14 +143,17 @@ public class ASIOSoundSystem implements ISoundSystem {
 			});
 
 			channels = new AsioChannel[2];
-			channels[0] = asioDriver.getChannelOutput(0);
-			channels[1] = asioDriver.getChannelOutput(1);
+			channels[0] = asioDriver.getChannelOutput(outL);
+			channels[1] = asioDriver.getChannelOutput(outR);
 			bufferSize = asioDriver.getBufferPreferredSize();
 
 			queues = new FloatBufferQueue[2];
 			for (int i = 0; i < 2; i++) {
-				queues[i] = new FloatBufferQueue(bufferSize);
+				queues[i] = new FloatBufferQueue(bufferSize, (int) format.getSampleRate(),
+						(int) asioDriver.getSampleRate());
 			}
+
+			desiredFill = (int) (Config.audioBufferMs * asioDriver.getSampleRate() / 1000);
 
 			asioDriver.createBuffers(new HashSet<>(Set.of(channels)));
 
@@ -174,7 +189,7 @@ public class ASIOSoundSystem implements ISoundSystem {
 						queues[channel].add(floatAudioData[channel][frame]);
 					}
 				}
-			} catch (final InterruptedException e) {
+			} catch (final Exception e) {
 			}
 
 			return written;
@@ -182,7 +197,7 @@ public class ASIOSoundSystem implements ISoundSystem {
 
 		@Override
 		public boolean wantsMoreData() {
-			return queues[0].available() < bufferSize * 2;
+			return queues[0].available() < desiredFill;
 		}
 
 		@Override

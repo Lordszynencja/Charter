@@ -4,10 +4,10 @@ import static java.lang.Math.min;
 import static log.charter.util.CollectionUtils.map;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -33,7 +33,7 @@ public class Chord extends GuitarSound {
 	private int templateId;
 	public boolean splitIntoNotes = false;
 	public boolean forceNoNotes = false;
-	public Map<Integer, ChordNote> chordNotes = new HashMap<>();
+	public Map<Integer, ChordNote> chordNotes = new ConcurrentHashMap<>();
 
 	public Chord(final int templateId) {
 		this.templateId = templateId;
