@@ -16,6 +16,14 @@
 		<jasio-jar.path>${project.basedir}/jasio/JAsioHost.jar</jasio-jar.path>
 	</properties>
 	
+	<repositories>
+		<repository>
+			<id>in-project</id>
+			<name>In Project Repo</name>
+			<url>file://${project.basedir}/libs</url>
+		</repository>
+	</repositories>
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -30,11 +38,9 @@
 	
 	<dependencies>
 		<dependency>
-		    <groupId>com.synthbot.jasiohost</groupId>
+		    <groupId>jasiohost</groupId>
 		    <artifactId>jasiohost</artifactId>
-		    <version>1.0</version>
-		    <scope>system</scope>
-		    <systemPath>${jasio-jar.path}</systemPath>
+		    <version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.soundlibs</groupId>
@@ -374,14 +380,18 @@
 									<filtering>false</filtering>
 								</resource>
 								<resource>
+									<directory>${basedir}/jasio</directory>
+									<include>jasiohost64.dll</include>
+									<targetPath>${basedir}/target/Charter</targetPath>
+									<filtering>false</filtering>
+								</resource>
+								<resource>
 									<directory>${basedir}</directory>
 									<includes>
 										<include>graphics/**</include>
 										<include>languages/**</include>
 										<include>rubberband/**</include>
 										<include>oggenc/**</include>
-										<include>jasio/jasiohost32.dll</include>
-										<include>jasio/jasiohost64.dll</include>
 										<include>manual.pdf</include>
 									</includes>
 								</resource>
@@ -407,6 +417,7 @@
 					</dependency>
 				</dependencies>
 				<configuration>
+					<jvmOptions>-Djava.library.path=./jasio/</jvmOptions>
 					<mainClass>log.charter.CharterMain</mainClass>
 					<iconFile>src/main/resources/icon.ico</iconFile>
 					<generateDiskImageFile>true</generateDiskImageFile>
