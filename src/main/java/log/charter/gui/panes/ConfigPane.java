@@ -23,6 +23,7 @@ import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntValueValidator;
+import log.charter.io.Logger;
 import log.charter.services.utils.Framer;
 import log.charter.sound.SoundFileType;
 import log.charter.sound.system.AudioSystemType;
@@ -137,57 +138,64 @@ public final class ConfigPane extends ParamsPane {
 	}
 
 	private void addAudioOutputSelect(final RowedPosition position) {
-		class AudioOutputData {
-			private final AudioSystemType type;
-			private final String name;
+		try {
+			class AudioOutputData {
+				private final AudioSystemType type;
+				private final String name;
 
-			public AudioOutputData(final AudioSystemType type, final String name) {
-				this.type = type;
-				this.name = name;
+				public AudioOutputData(final AudioSystemType type, final String name) {
+					this.type = type;
+					this.name = name;
+				}
+
+				@Override
+				public String toString() {
+					return switch (type) {
+						case DEFAULT -> name == null ? "Default" : name;
+						case ASIO -> "ASIO: " + name;
+						default -> "???";
+					};
+				}
 			}
 
-			@Override
-			public String toString() {
-				return switch (type) {
-					case DEFAULT -> name == null ? "Default" : name;
-					case ASIO -> "ASIO: " + name;
-					default -> "???";
-				};
+			final List<AudioOutputData> inputs = new ArrayList<>();
+			inputs.add(new AudioOutputData(AudioSystemType.DEFAULT, null));
+
+			for (final String asioDriverName : AsioDriver.getDriverNames()) {
+				inputs.add(new AudioOutputData(AudioSystemType.ASIO, asioDriverName));
 			}
+
+			final AudioOutputData selected = new AudioOutputData(audioSystemType, audioSystemName);
+
+			final CharterSelect<AudioOutputData> select = new CharterSelect<>(inputs, selected, t -> t.toString(),
+					t -> {
+						audioSystemType = t.type;
+						audioSystemName = t.name;
+					});
+
+			final FieldWithLabel<CharterSelect<AudioOutputData>> field = new FieldWithLabel<>(Label.AUDIO_OUTPUT, 100,
+					200, 20, select, LabelPosition.LEFT);
+			add(field, position.getX(), position.getY(), field.getPreferredSize().width, 20);
+			position.newRow();
+
+			final TextInputWithValidation leftOutChannelIdInput = TextInputWithValidation.generateForInt(
+					leftOutChannelId, 30, new IntValueValidator(0, 255), i -> leftOutChannelId = i, true);
+			final FieldWithLabel<TextInputWithValidation> leftOutField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_L_ID,
+					130, 30, 20, leftOutChannelIdInput, LabelPosition.LEFT);
+			add(leftOutField, position.getAndAddX(leftOutField.getPreferredSize().width + 20), position.getY(),
+					leftOutField.getPreferredSize().width, 20);
+
+			final TextInputWithValidation rightOutChannelIdInput = TextInputWithValidation.generateForInt(
+					rightOutChannelId, 30, new IntValueValidator(0, 255), i -> rightOutChannelId = i, true);
+			final FieldWithLabel<TextInputWithValidation> rightOutField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_R_ID,
+					130, 30, 20, rightOutChannelIdInput, LabelPosition.LEFT);
+			add(rightOutField, position.getX(), position.getY(), rightOutField.getPreferredSize().width, 20);
+			position.newRow();
+		} catch (final Exception e) {
+			Logger.error("asio library error", e);
+		} catch (final Error e) {
+			Logger.error("asio library error", e);
 		}
-
-		final List<AudioOutputData> inputs = new ArrayList<>();
-		inputs.add(new AudioOutputData(AudioSystemType.DEFAULT, null));
-
-		for (final String asioDriverName : AsioDriver.getDriverNames()) {
-			inputs.add(new AudioOutputData(AudioSystemType.ASIO, asioDriverName));
-		}
-
-		final AudioOutputData selected = new AudioOutputData(audioSystemType, audioSystemName);
-
-		final CharterSelect<AudioOutputData> select = new CharterSelect<>(inputs, selected, t -> t.toString(), t -> {
-			audioSystemType = t.type;
-			audioSystemName = t.name;
-		});
-
-		final FieldWithLabel<CharterSelect<AudioOutputData>> field = new FieldWithLabel<>(Label.AUDIO_OUTPUT, 100, 200,
-				20, select, LabelPosition.LEFT);
-		add(field, position.getX(), position.getY(), field.getPreferredSize().width, 20);
-		position.newRow();
-
-		final TextInputWithValidation leftOutChannelIdInput = TextInputWithValidation.generateForInt(leftOutChannelId,
-				30, new IntValueValidator(0, 255), i -> leftOutChannelId = i, true);
-		final FieldWithLabel<TextInputWithValidation> leftOutField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_L_ID, 130,
-				30, 20, leftOutChannelIdInput, LabelPosition.LEFT);
-		add(leftOutField, position.getAndAddX(leftOutField.getPreferredSize().width + 20), position.getY(),
-				leftOutField.getPreferredSize().width, 20);
-
-		final TextInputWithValidation rightOutChannelIdInput = TextInputWithValidation.generateForInt(rightOutChannelId,
-				30, new IntValueValidator(0, 255), i -> rightOutChannelId = i, true);
-		final FieldWithLabel<TextInputWithValidation> rightOutField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_R_ID, 130,
-				30, 20, rightOutChannelIdInput, LabelPosition.LEFT);
-		add(rightOutField, position.getX(), position.getY(), rightOutField.getPreferredSize().width, 20);
-		position.newRow();
 	}
 
 	private void addMinNoteDistanceTypeSelect(final int x, final int row) {
