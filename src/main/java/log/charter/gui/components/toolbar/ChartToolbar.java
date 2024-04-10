@@ -250,15 +250,15 @@ public class ChartToolbar extends JToolBar implements Initiable {
 	}
 
 	private void setSpeed(final int newSpeed) {
-		if (Config.stretchedMusicSpeed == newSpeed) {
-			return;
-		}
+//		if (Config.stretchedMusicSpeed == newSpeed) {
+//			return;
+//		}
 
 		Config.stretchedMusicSpeed = newSpeed;
-		Config.markChanged();
-
-		audioHandler.clear();
-		audioHandler.addSpeedToStretch();
+//		Config.markChanged();
+//
+//		audioHandler.clear();
+//		audioHandler.addSpeedToStretch();
 	}
 
 	private void addSlowedSpeed(final AtomicInteger x) {

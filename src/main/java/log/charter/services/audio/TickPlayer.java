@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
+import log.charter.data.config.Config;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.time.Position;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
@@ -31,7 +32,7 @@ public class TickPlayer {
 
 	public void nextTime(final int t) {
 		if (nextSoundTime != null && nextSoundTime < t) {
-			SoundSystem.play(tick, () -> sfxVolume);
+			SoundSystem.play(tick, () -> sfxVolume, () -> Config.stretchedMusicSpeed);
 			nextSoundTime = null;
 		}
 

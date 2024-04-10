@@ -7,6 +7,7 @@ import static log.charter.sound.data.AudioUtils.writeBytes;
 
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntSupplier;
 
 import javax.sound.sampled.AudioFormat;
 
@@ -70,6 +71,7 @@ public class SoundSystem {
 	public static class Player {
 		private final AudioData<?> musicData;
 		private final DoubleSupplier volume;
+		private final IntSupplier speed;
 
 		private final int sampleSizeInBits;
 		private final int sampleSize;
@@ -79,9 +81,10 @@ public class SoundSystem {
 
 		public long playingStartTime = -1;
 
-		private Player(final AudioData<?> musicData, final DoubleSupplier volume) {
+		private Player(final AudioData<?> musicData, final DoubleSupplier volume, final IntSupplier speed) {
 			this.musicData = musicData;
 			this.volume = volume;
+			this.speed = speed;
 
 			sampleSizeInBits = musicData.format().getSampleSizeInBits();
 			if (sampleSizeInBits <= 8) {
@@ -116,10 +119,18 @@ public class SoundSystem {
 				writeBytes(buffer, i * sampleSize, sample, sampleSize);
 			}
 		}
+		
+		private byte[] stretch(final byte[] buffer) {
+			System.out.println(this.speed.getAsInt());
+			return buffer;
+		}
 
 		private int writeBuffer(final byte[] data, int startByte) {
 			final byte[] buffer = Arrays.copyOfRange(data, startByte, min(data.length, startByte + audioBufferSize));
+			
 			setVolume(buffer);
+			
+			final byte[] stretchedBuffer = stretch(buffer);
 
 			startByte += line.write(buffer);
 			return startByte;
@@ -185,12 +196,12 @@ public class SoundSystem {
 		}
 	}
 
-	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier) {
-		return play(audioData, volumeSupplier, 0);
+	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier, final IntSupplier speed) {
+		return play(audioData, volumeSupplier, speed, 0);
 	}
 
-	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier,
+	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier, final IntSupplier speed,
 			final double startTime) {
-		return new Player(audioData, volumeSupplier).start(startTime);
+		return new Player(audioData, volumeSupplier, speed).start(startTime);
 	}
 }
