@@ -13,7 +13,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<lwjgl.version>3.3.2</lwjgl.version>
 		<lwjgl3-awt.version>0.1.8</lwjgl3-awt.version>
-		<jasio-jar.path>${project.basedir}/jasio/JAsioHost.jar</jasio-jar.path>
 	</properties>
 	
 	<repositories>
@@ -376,6 +375,12 @@
 								<resource>
 									<directory>${basedir}/target</directory>
 									<include>Charter.jar</include>
+									<targetPath>${basedir}/target/Charter</targetPath>
+									<filtering>false</filtering>
+								</resource>
+								<resource>
+									<directory>${basedir}/rubberband</directory>
+									<include>librubberband-jni.dll</include>
 									<targetPath>${basedir}/target/Charter</targetPath>
 									<filtering>false</filtering>
 								</resource>

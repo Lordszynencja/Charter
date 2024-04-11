@@ -2,8 +2,7 @@ package log.charter.sound.system;
 
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.audioBufferSize;
-import static log.charter.sound.data.AudioUtils.fromBytes;
-import static log.charter.sound.data.AudioUtils.writeBytes;
+import static log.charter.sound.data.AudioUtils.splitStereoAudioFloat;
 
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
@@ -20,52 +19,27 @@ import log.charter.sound.data.AudioUtils;
 import log.charter.sound.system.SoundSystem.ISoundSystem.ISoundLine;
 
 public class SoundSystem {
-	
-	public static float[][] deinterleave(byte[] interleavedAudio) {
-        int numSamples = interleavedAudio.length / 4; // Assuming 16-bit audio (2 bytes per sample per channel)
-        float[][] audioData = new float[2][numSamples]; // 2 channels
-        
-        int byteIndex = 0;
-        for (int i = 0; i < numSamples; i++) {
-            // Extract left channel sample (little-endian)
-            short leftSample = (short) ((interleavedAudio[byteIndex + 1] & 0xFF) << 8 | (interleavedAudio[byteIndex] & 0xFF));
-            // Convert to float and normalize to range [-1, 1]
-            audioData[0][i] = leftSample / 32768.0f;
+	public static byte[] interleave(final float[][] audioData) {
+		final int numSamples = audioData[0].length; // Assuming both channels have the same number of samples
+		final byte[] interleavedAudio = new byte[numSamples * 4]; // 16-bit audio (2 bytes per sample per channel)
 
-            // Extract right channel sample (little-endian)
-            short rightSample = (short) ((interleavedAudio[byteIndex + 3] & 0xFF) << 8 | (interleavedAudio[byteIndex + 2] & 0xFF));
-            // Convert to float and normalize to range [-1, 1]
-            audioData[1][i] = rightSample / 32768.0f;
+		int byteIndex = 0;
+		for (int i = 0; i < numSamples; i++) {
+			// Convert left channel sample to short (16-bit PCM)
+			final short leftSample = (short) (audioData[0][i] * 32768.0f);
+			// Convert right channel sample to short (16-bit PCM)
+			final short rightSample = (short) (audioData[1][i] * 32768.0f);
 
-            // Move to the next sample pair (2 bytes per sample per channel)
-            byteIndex += 4;
-        }
-        
-        return audioData;
-    }
-	
-	public static byte[] interleave(float[][] audioData) {
-        int numSamples = audioData[0].length; // Assuming both channels have the same number of samples
-        byte[] interleavedAudio = new byte[numSamples * 4]; // 16-bit audio (2 bytes per sample per channel)
-        
-        int byteIndex = 0;
-        for (int i = 0; i < numSamples; i++) {
-            // Convert left channel sample to short (16-bit PCM)
-            short leftSample = (short) (audioData[0][i] * 32768.0f);
-            // Convert right channel sample to short (16-bit PCM)
-            short rightSample = (short) (audioData[1][i] * 32768.0f);
-            
-            // Interleave left and right channel samples (little-endian)
-            interleavedAudio[byteIndex++] = (byte) (leftSample & 0xFF);
-            interleavedAudio[byteIndex++] = (byte) ((leftSample >> 8) & 0xFF);
-            interleavedAudio[byteIndex++] = (byte) (rightSample & 0xFF);
-            interleavedAudio[byteIndex++] = (byte) ((rightSample >> 8) & 0xFF);
-        }
-        
-        return interleavedAudio;
-    }
+			// Interleave left and right channel samples (little-endian)
+			interleavedAudio[byteIndex++] = (byte) (leftSample & 0xFF);
+			interleavedAudio[byteIndex++] = (byte) ((leftSample >> 8) & 0xFF);
+			interleavedAudio[byteIndex++] = (byte) (rightSample & 0xFF);
+			interleavedAudio[byteIndex++] = (byte) ((rightSample >> 8) & 0xFF);
+		}
 
-	
+		return interleavedAudio;
+	}
+
 	private static int playerId = 0;
 
 	public interface ISoundSystem {
@@ -127,15 +101,16 @@ public class SoundSystem {
 		private final ISoundLine line;
 		private boolean stopped;
 
-		private RubberBandStretcher rubberBandStretcher;
-		
+		private final RubberBandStretcher rubberBandStretcher;
+
 		public long playingStartTime = -1;
 
 		private Player(final AudioData<?> musicData, final DoubleSupplier volume, final IntSupplier speed) {
 			this.musicData = musicData;
 			this.volume = volume;
 			this.speed = speed;
-			this.rubberBandStretcher = new RubberBandStretcher((int)musicData.sampleRate(), musicData.channels(), RubberBandStretcher.OptionProcessRealTime, 1.0, 1.0);
+			rubberBandStretcher = new RubberBandStretcher((int) musicData.sampleRate(), musicData.channels(),
+					RubberBandStretcher.OptionProcessRealTime, 1.0, 1.0);
 
 			sampleSizeInBits = musicData.format().getSampleSizeInBits();
 			if (sampleSizeInBits <= 8) {
@@ -158,59 +133,59 @@ public class SoundSystem {
 			return startFrame * frameSize;
 		}
 
-		private void setVolume(final byte[] buffer) {
+		private void setVolume(final float[][] samples) {
 			if (volume == null) {
 				return;
 			}
+			final float volumeValue = (float) volume.getAsDouble();
 
-			final int samples = buffer.length / sampleSize;
-			for (int i = 0; i < samples; i++) {
-				short sample = fromBytes(buffer, i, sampleSize);
-				sample = AudioUtils.clipShort(sample * volume.getAsDouble());
-				writeBytes(buffer, i * sampleSize, sample, sampleSize);
+			for (int channel = 0; channel < samples.length; channel++) {
+				for (int i = 0; i < samples[channel].length; i++) {
+					samples[channel][i] *= volumeValue;
+				}
 			}
 		}
-		
-		private byte[] stretch(final byte[] buffer) {
-			float timeRatio = speed.getAsInt() / 100f;
+
+		private float[][] stretch(final float[][] samples) {
+			if (speed.getAsInt() == 100) {
+				return samples;
+			}
+
+			final float timeRatio = speed.getAsInt() / 100f;
 			rubberBandStretcher.setTimeRatio(timeRatio);
-			
-			// Assuming 16-bit audio (2 bytes per sample per channel
-			float[][] input = deinterleave(buffer);
-			
+
 			boolean lastBlock = false;
-			if (input[0].length < audioBufferSize / 4) {
+			if (samples[0].length < audioBufferSize) {
 				lastBlock = true;
 			}
 
-			int samplesRequired = rubberBandStretcher.getSamplesRequired();
-			if (input[0].length < samplesRequired) {
-				System.out.println("Buffer size: " + input[0].length);
-				throw new UnsupportedOperationException("Time stretching requires a minimum buffer size of " + samplesRequired + ".");
+			final int samplesRequired = rubberBandStretcher.getSamplesRequired();
+			if (samples[0].length < samplesRequired) {
+				return samples;
 			}
 
-			rubberBandStretcher.process(input, lastBlock);
-			
+			rubberBandStretcher.process(samples, lastBlock);
+
 			int available = 0;
-			while(available == 0) 
-			{
+			while (available == 0) {
 				available = rubberBandStretcher.available();
 			}
-			
-			float[][] output = new float[2][available];
+
+			final float[][] output = new float[2][available];
 			rubberBandStretcher.retrieve(output);
-			
-			return interleave(output);
+
+			return output;
 		}
 
 		private int writeBuffer(final byte[] data, int startByte) {
-			final byte[] buffer = Arrays.copyOfRange(data, startByte, min(data.length, startByte + audioBufferSize));
-			
-			setVolume(buffer);
-			
-			final byte[] stretchedBuffer = stretch(buffer);
+			final byte[] buffer = Arrays.copyOfRange(data, startByte,
+					min(data.length, startByte + audioBufferSize * 4));
 
-			startByte += line.write(stretchedBuffer);
+			final float[][] samples = splitStereoAudioFloat(buffer);
+			setVolume(samples);
+			final float[][] stretchedSamples = stretch(samples);
+
+			startByte += line.write(AudioUtils.toBytes(stretchedSamples, 2, 2));
 			return startByte;
 		}
 
@@ -274,12 +249,13 @@ public class SoundSystem {
 		}
 	}
 
-	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier, final IntSupplier speed) {
+	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier,
+			final IntSupplier speed) {
 		return play(audioData, volumeSupplier, speed, 0);
 	}
 
-	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier, final IntSupplier speed,
-			final double startTime) {
+	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier,
+			final IntSupplier speed, final double startTime) {
 		return new Player(audioData, volumeSupplier, speed).start(startTime);
 	}
 }

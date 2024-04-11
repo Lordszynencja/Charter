@@ -26,127 +26,137 @@ package com.breakfastquay.rubberband;
 import java.util.Map;
 import java.util.Set;
 
-public class RubberBandStretcher
-{
-    public RubberBandStretcher(int sampleRate, int channels,
-			       int options,
-			       double initialTimeRatio,
-			       double initialPitchScale) {
-	handle = 0;
-	initialise(sampleRate, channels, options,
-		   initialTimeRatio, initialPitchScale);
-    }
+public class RubberBandStretcher {
+	public RubberBandStretcher(final int sampleRate, final int channels, final int options,
+			final double initialTimeRatio, final double initialPitchScale) {
+		handle = 0;
+		initialise(sampleRate, channels, options, initialTimeRatio, initialPitchScale);
+	}
 
-    public native void dispose();
+	public native void dispose();
 
-    public native void reset();
+	public native void reset();
 
-    public native void setTimeRatio(double ratio);
-    public native void setPitchScale(double scale);
+	public native void setTimeRatio(double ratio);
 
-    public native int getChannelCount();
-    public native double getTimeRatio();
-    public native double getPitchScale();
+	public native void setPitchScale(double scale);
 
-    public native int getPreferredStartPad();
-    public native int getStartDelay();
-    public native int getLatency();
+	public native int getChannelCount();
 
-    public native void setTransientsOption(int options);
-    public native void setDetectorOption(int options);
-    public native void setPhaseOption(int options);
-    public native void setFormantOption(int options);
-    public native void setPitchOption(int options);
+	public native double getTimeRatio();
 
-    public native void setExpectedInputDuration(long samples);
-    public native int getProcessSizeLimit();
-    public native void setMaxProcessSize(int samples);
+	public native double getPitchScale();
 
-    public native int getSamplesRequired();
+	public native int getPreferredStartPad();
 
-    public native void setKeyFrameMap(long[] from, long[] to);
-    public void setKeyFrameMap(Map<Long, Long> m) {
-        Set<Long> keys = m.keySet();
-        int n = keys.size();
-        long[] from = new long[n];
-        long[] to = new long[n];
-        int i = 0;
-        for (Long k : keys) {
-            from[i] = k.longValue();
-            to[i] = m.get(k).longValue();
-            ++i;
-        }
-        setKeyFrameMap(from, to);
-    }
+	public native int getStartDelay();
 
-    public native void study(float[][] input, int offset, int n, boolean finalBlock);
-    public void study(float[][] input, boolean finalBlock) {
-	study(input, 0, input[0].length, finalBlock);
-    }
+	public native int getLatency();
 
-    public native void process(float[][] input, int offset, int n, boolean finalBlock);
-    public void process(float[][] input, boolean finalBlock) {
-	process(input, 0, input[0].length, finalBlock);
-    }
+	public native void setTransientsOption(int options);
 
-    public native int available();
+	public native void setDetectorOption(int options);
 
-    public native int retrieve(float[][] output, int offset, int n);
-    public int retrieve(float[][] output) {
-	return retrieve(output, 0, output[0].length);
-    }
+	public native void setPhaseOption(int options);
 
-    private native void initialise(int sampleRate, int channels, int options,
-				   double initialTimeRatio,
-				   double initialPitchScale);
-    private long handle;
+	public native void setFormantOption(int options);
 
-    public static final int OptionProcessOffline       = 0x00000000;
-    public static final int OptionProcessRealTime      = 0x00000001;
+	public native void setPitchOption(int options);
 
-    public static final int OptionStretchElastic       = 0x00000000;
-    public static final int OptionStretchPrecise       = 0x00000010;
-    
-    public static final int OptionTransientsCrisp      = 0x00000000;
-    public static final int OptionTransientsMixed      = 0x00000100;
-    public static final int OptionTransientsSmooth     = 0x00000200;
+	public native void setExpectedInputDuration(long samples);
 
-    public static final int OptionDetectorCompound     = 0x00000000;
-    public static final int OptionDetectorPercussive   = 0x00000400;
-    public static final int OptionDetectorSoft         = 0x00000800;
+	public native int getProcessSizeLimit();
 
-    public static final int OptionPhaseLaminar         = 0x00000000;
-    public static final int OptionPhaseIndependent     = 0x00002000;
-    
-    public static final int OptionThreadingAuto        = 0x00000000;
-    public static final int OptionThreadingNever       = 0x00010000;
-    public static final int OptionThreadingAlways      = 0x00020000;
+	public native void setMaxProcessSize(int samples);
 
-    public static final int OptionWindowStandard       = 0x00000000;
-    public static final int OptionWindowShort          = 0x00100000;
-    public static final int OptionWindowLong           = 0x00200000;
+	public native int getSamplesRequired();
 
-    public static final int OptionSmoothingOff         = 0x00000000;
-    public static final int OptionSmoothingOn          = 0x00800000;
+	public native void setKeyFrameMap(long[] from, long[] to);
 
-    public static final int OptionFormantShifted       = 0x00000000;
-    public static final int OptionFormantPreserved     = 0x01000000;
+	public void setKeyFrameMap(final Map<Long, Long> m) {
+		final Set<Long> keys = m.keySet();
+		final int n = keys.size();
+		final long[] from = new long[n];
+		final long[] to = new long[n];
+		int i = 0;
+		for (final Long k : keys) {
+			from[i] = k.longValue();
+			to[i] = m.get(k).longValue();
+			++i;
+		}
+		setKeyFrameMap(from, to);
+	}
 
-    public static final int OptionPitchHighSpeed       = 0x00000000;
-    public static final int OptionPitchHighQuality     = 0x02000000;
-    public static final int OptionPitchHighConsistency = 0x04000000;
+	public native void study(float[][] input, int offset, int n, boolean finalBlock);
 
-    public static final int OptionChannelsApart        = 0x00000000;
-    public static final int OptionChannelsTogether     = 0x10000000;
+	public void study(final float[][] input, final boolean finalBlock) {
+		study(input, 0, input[0].length, finalBlock);
+	}
 
-    public static final int OptionEngineFaster         = 0x00000000;
-    public static final int OptionEngineFiner          = 0x20000000;
+	public native void process(float[][] input, int offset, int n, boolean finalBlock);
 
-    public static final int DefaultOptions             = 0x00000000;
-    public static final int PercussiveOptions          = 0x00102000;
+	public void process(final float[][] input, final boolean finalBlock) {
+		process(input, 0, input[0].length, finalBlock);
+	}
 
-    static {
-	System.load(System.getProperty("user.dir") + "/rubberband/librubberband-jni.dll");
-    }
+	public native int available();
+
+	public native int retrieve(float[][] output, int offset, int n);
+
+	public int retrieve(final float[][] output) {
+		return retrieve(output, 0, output[0].length);
+	}
+
+	private native void initialise(int sampleRate, int channels, int options, double initialTimeRatio,
+			double initialPitchScale);
+
+	private final long handle;
+
+	public static final int OptionProcessOffline = 0x00000000;
+	public static final int OptionProcessRealTime = 0x00000001;
+
+	public static final int OptionStretchElastic = 0x00000000;
+	public static final int OptionStretchPrecise = 0x00000010;
+
+	public static final int OptionTransientsCrisp = 0x00000000;
+	public static final int OptionTransientsMixed = 0x00000100;
+	public static final int OptionTransientsSmooth = 0x00000200;
+
+	public static final int OptionDetectorCompound = 0x00000000;
+	public static final int OptionDetectorPercussive = 0x00000400;
+	public static final int OptionDetectorSoft = 0x00000800;
+
+	public static final int OptionPhaseLaminar = 0x00000000;
+	public static final int OptionPhaseIndependent = 0x00002000;
+
+	public static final int OptionThreadingAuto = 0x00000000;
+	public static final int OptionThreadingNever = 0x00010000;
+	public static final int OptionThreadingAlways = 0x00020000;
+
+	public static final int OptionWindowStandard = 0x00000000;
+	public static final int OptionWindowShort = 0x00100000;
+	public static final int OptionWindowLong = 0x00200000;
+
+	public static final int OptionSmoothingOff = 0x00000000;
+	public static final int OptionSmoothingOn = 0x00800000;
+
+	public static final int OptionFormantShifted = 0x00000000;
+	public static final int OptionFormantPreserved = 0x01000000;
+
+	public static final int OptionPitchHighSpeed = 0x00000000;
+	public static final int OptionPitchHighQuality = 0x02000000;
+	public static final int OptionPitchHighConsistency = 0x04000000;
+
+	public static final int OptionChannelsApart = 0x00000000;
+	public static final int OptionChannelsTogether = 0x10000000;
+
+	public static final int OptionEngineFaster = 0x00000000;
+	public static final int OptionEngineFiner = 0x20000000;
+
+	public static final int DefaultOptions = 0x00000000;
+	public static final int PercussiveOptions = 0x00102000;
+
+	static {
+		System.loadLibrary("librubberband-jni");
+	}
 };
-

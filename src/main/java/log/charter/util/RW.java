@@ -23,7 +23,7 @@ public class RW {
 			}
 
 			if (file.getAbsolutePath().contains("Charter\\target\\classes")) {
-				return new File("").getAbsoluteFile();
+				return new File("target\\Charter").getAbsoluteFile();
 			}
 
 			return file.getParentFile();
