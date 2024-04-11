@@ -74,7 +74,7 @@ public class Config {
 	public static int leftOutChannelId = 0;
 	public static int rightOutChannelId = 1;
 	public static SoundFileType baseAudioFormat = SoundFileType.WAV;
-	public static int audioBufferSize = 128;
+	public static int audioBufferSize = 8192;
 	public static int audioBufferMs = 10;
 	public static int antialiasingSamples = 16;
 
