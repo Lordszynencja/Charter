@@ -186,10 +186,10 @@ public class SoundSystem {
 	}
 
 	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier) {
-		return play(audioData, volumeSupplier, 0);
+		return new Player(audioData, volumeSupplier).start(0);
 	}
 
-	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier,
+	public static Player playMusic(final AudioData<?> audioData, final DoubleSupplier volumeSupplier,
 			final double startTime) {
 		return new Player(audioData, volumeSupplier).start(startTime);
 	}

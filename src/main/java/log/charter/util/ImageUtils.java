@@ -9,7 +9,7 @@ import log.charter.io.Logger;
 
 public class ImageUtils {
 	public static BufferedImage loadSafe(final String path) {
-		return loadSafe(path, new File(path));
+		return loadSafe(path, new File(RW.getProgramDirectory() + "\\" + path));
 	}
 
 	public static BufferedImage loadSafe(final String name, final File... files) {

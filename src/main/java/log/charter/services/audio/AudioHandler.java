@@ -87,7 +87,7 @@ public class AudioHandler {
 			start = getSlowedMs(chartTimeHandler.time());
 		}
 
-		songPlayer = SoundSystem.play(lastPlayedData, () -> Config.volume, start);
+		songPlayer = SoundSystem.playMusic(lastPlayedData, () -> Config.volume, start);
 		songTimeOnStart = chartTimeHandler.time();
 		playStartTime = nanoTime() / 1_000_000L;
 
@@ -154,15 +154,18 @@ public class AudioHandler {
 		}
 		if (songPlayer != null) {
 			stopMusic();
+			chartToolbar.setPlayButtonIcon();
 			return;
 		}
 
 		if (stretchedMusicSpeed == 100) {
 			playMusic(projectAudioHandler.getAudio(), 100);
+			chartToolbar.setPlayButtonIcon();
 			return;
 		}
 		if (currentlyLoadedSpecialSpeed == stretchedMusicSpeed && slowedDownSong != null) {
 			playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
+			chartToolbar.setPlayButtonIcon();
 			return;
 		}
 
@@ -175,6 +178,7 @@ public class AudioHandler {
 		}
 
 		playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
+		chartToolbar.setPlayButtonIcon();
 	}
 
 	public void frame() {

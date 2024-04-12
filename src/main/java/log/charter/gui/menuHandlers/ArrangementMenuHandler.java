@@ -12,6 +12,7 @@ import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.services.Action;
 import log.charter.services.ActionHandler;
 import log.charter.services.CharterContext.Initiable;
+import log.charter.services.data.LevelSquisher;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
@@ -76,6 +77,8 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
+			menu.add(createItem(Label.SQUASH_LEVELS, this::squashLevels));
+			menu.addSeparator();
 			menu.add(createItem(Label.DELETE_ARRANGEMENT, this::deleteArrangement));
 		}
 
@@ -106,6 +109,11 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 
 	private void editOptions() {
 		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, null, false);
+	}
+
+	private void squashLevels() {
+		LevelSquisher.squish(chartData.currentArrangement());
+		modeManager.setLevel(0);
 	}
 
 	private void deleteArrangement() {
