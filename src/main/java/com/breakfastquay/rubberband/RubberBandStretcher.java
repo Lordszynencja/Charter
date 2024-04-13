@@ -157,6 +157,6 @@ public class RubberBandStretcher {
 	public static final int PercussiveOptions = 0x00102000;
 
 	static {
-		System.loadLibrary("librubberband-jni");
+		System.loadLibrary("rubberband-jni_win64");
 	}
 };
