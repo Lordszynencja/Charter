@@ -151,7 +151,7 @@ public class SoundSystem {
 				return samples;
 			}
 
-			final float timeRatio = 1f / (speed.getAsInt() / 100f);
+			final float timeRatio = 100f / speed.getAsInt();
 			rubberBandStretcher.setTimeRatio(timeRatio);
 
 			boolean lastBlock = false;
