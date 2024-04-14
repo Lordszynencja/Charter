@@ -99,6 +99,11 @@ formats to add:
 - change how chord boxes look
 - full chord box if chord has at least 3 notes
 
+Future things:
+Campaign/Guitarcade
+NAM support/integration (Neural Amp Module)
+Local/Online Multiplayer
+
 </details>
 
 
