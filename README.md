@@ -100,9 +100,9 @@ formats to add:
 - full chord box if chord has at least 3 notes
 
 Future things:
-Campaign/Guitarcade
-NAM support/integration (Neural Amp Module)
-Local/Online Multiplayer
+- Campaign/Guitarcade
+- NAM support/integration (Neural Amp Module)
+- Local/Online Multiplayer
 
 </details>
 
