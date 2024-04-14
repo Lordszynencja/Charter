@@ -16,7 +16,7 @@ A simple viewer, player, and editor for guitar charts. Charter is a Free and Ope
 
 # Screenshots
 
-Usage screenshots and gifs will go here
+![ezgif-6-9bfe91b5f2](https://github.com/Lordszynencja/Charter/assets/106457611/89a3201e-9d40-4947-a8dc-21e528c31251)
 
 ## Download & Install
 
