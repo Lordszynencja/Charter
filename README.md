@@ -43,7 +43,7 @@ Download `Charter-linux-<version>.zip` then unzip it, then run `Charter.jar`.
 
 NOTE: This list is subject to change.
 
-details>
+<details>
   <summary>TODO</summary>
   
 new features:
