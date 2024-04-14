@@ -1,7 +1,7 @@
 # Charter
 ![GitHub License](https://img.shields.io/github/license/Lordszynencja/Charter) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Lordszynencja/Charter/total) [![CodeFactor](https://www.codefactor.io/repository/github/lordszynencja/charter/badge)](https://www.codefactor.io/repository/github/lordszynencja/charter) 
 
- ![java](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/built-with/java_vector.svg) ![github](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg) <img alt="maven" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/built-with/maven_vector.svg"> ![https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-plural_vector.svg](https://discord.gg/JA6Jan3pcx)
+ ![java](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/built-with/java_vector.svg) ![github](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg) <img alt="maven" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/built-with/maven_vector.svg">
 
 A simple viewer, player, and editor for guitar charts. Charter is a Free and Open Source app for Desktop (Windows, MacOS, and Linux.) using Java and jasio.
 
