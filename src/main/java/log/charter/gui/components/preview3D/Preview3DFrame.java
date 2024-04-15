@@ -47,6 +47,8 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 	public void setWindowed() {
 		dispose();
 		setExtendedState(Config.previewWindowExtendedState);
+		setLocation(Config.previewWindowPosX, Config.previewWindowPosY);
+		setSize(Config.previewWindowWidth, Config.previewWindowHeight);
 		setUndecorated(false);
 		setVisible(true);
 
@@ -60,6 +62,10 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 
 	@Override
 	public void componentMoved(final ComponentEvent e) {
+		if (Config.previewWindowBorderless) {
+			return;
+		}
+
 		Config.previewWindowPosX = e.getComponent().getX();
 		Config.previewWindowPosY = e.getComponent().getY();
 		Config.markChanged();
@@ -67,6 +73,10 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 
 	@Override
 	public void componentResized(final ComponentEvent e) {
+		if (Config.previewWindowBorderless) {
+			return;
+		}
+
 		Config.previewWindowExtendedState = getExtendedState();
 		Config.previewWindowWidth = getWidth();
 		Config.previewWindowHeight = getHeight();

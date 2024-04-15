@@ -144,11 +144,6 @@ public class NoteStatusModels {
 		}
 	}
 
-	private void clear() {
-		noteStatusesTextureIds.clear();
-		textureIds.clear();
-	}
-
 	public void reload() {
 		final BufferedImage noteStatusesTexture = loadTextureAtlas();
 
@@ -161,7 +156,8 @@ public class NoteStatusModels {
 			}
 		}
 
-		clear();
+		noteStatusesTextureIds.clear();
+		textureIds.clear();
 	}
 
 	public void init(final TexturesHolder texturesHolder) {
@@ -250,7 +246,7 @@ public class NoteStatusModels {
 
 	public int getFrettedNoteTextureId(final NoteDrawData note) {
 		final NoteStatusData noteStatusData = new NoteStatusData(note);
-		if (!noteStatusesTextureIds.containsKey(noteStatusData)) {
+		if (!noteStatusesTextureIds.containsKey(noteStatusData) || noteStatusesTextureIds.containsKey(noteStatusData)) {
 			final BufferedImage img = getBaseNoteImage(noteStatusData);
 			addTechImages(img, noteStatusData);
 

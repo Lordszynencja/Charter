@@ -212,7 +212,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		if (clickData.pressHighlight.id != null && clickData.pressHighlight.id == 0 || keyboardHandler.alt()) {
 			final int positionAfter = max(0,
 					min(chartTimeHandler.maxTime(), xToPosition(clickData.releasePosition.x, chartTimeHandler.time())));
-			chartData.songChart.moveEverythingWithBeats(chartTimeHandler.maxTime(), positionAfter - pressPosition);
+			chartData.songChart.moveBeats(chartTimeHandler.maxTime(), positionAfter - pressPosition);
 			return;
 		}
 

@@ -21,4 +21,8 @@ public interface IFractionalPosition extends IConstantFractionalPosition, IVirtu
 		position(position().add(distance));
 	}
 
+	default void move(final int beats) {
+		position(position().add(beats));
+	}
+
 }

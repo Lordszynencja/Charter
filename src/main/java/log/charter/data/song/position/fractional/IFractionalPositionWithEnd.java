@@ -28,4 +28,9 @@ public interface IFractionalPositionWithEnd
 		endPosition(endPosition().add(change));
 	}
 
+	@Override
+	default void move(final int beats) {
+		position(position().add(beats));
+		endPosition(endPosition().add(beats));
+	}
 }

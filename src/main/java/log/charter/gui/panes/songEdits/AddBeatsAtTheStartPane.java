@@ -56,5 +56,6 @@ public class AddBeatsAtTheStartPane extends ParamsPane {
 		}
 
 		beatsMap.fixFirstBeatInMeasures();
+		data.songChart.moveContent(beatsToGenerate);
 	}
 }
