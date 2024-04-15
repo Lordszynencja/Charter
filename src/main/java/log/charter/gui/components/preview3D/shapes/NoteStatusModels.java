@@ -246,7 +246,7 @@ public class NoteStatusModels {
 
 	public int getFrettedNoteTextureId(final NoteDrawData note) {
 		final NoteStatusData noteStatusData = new NoteStatusData(note);
-		if (!noteStatusesTextureIds.containsKey(noteStatusData) || noteStatusesTextureIds.containsKey(noteStatusData)) {
+		if (!noteStatusesTextureIds.containsKey(noteStatusData)) {
 			final BufferedImage img = getBaseNoteImage(noteStatusData);
 			addTechImages(img, noteStatusData);
 

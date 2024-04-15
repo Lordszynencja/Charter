@@ -32,7 +32,6 @@ public class WindowedPreviewHandler implements Initiable {
 		} else {
 			windowedPreviewFrame.setBorderlessFullScreen();
 		}
-		reloadTextures();
 	}
 
 	public void paintFrame() {
