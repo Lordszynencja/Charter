@@ -13,6 +13,7 @@ import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.services.Action;
+import log.charter.services.ActionHandler;
 import log.charter.services.ArrangementFretHandPositionsCreator;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.selection.ISelectionAccessor;
@@ -21,6 +22,7 @@ import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
 class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
+	private ActionHandler actionHandler;
 	private ChartData chartData;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
@@ -91,7 +93,6 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 	}
 
 	private <T extends IVirtualConstantPosition> void addFHP() {
-
 		final ISelectionAccessor<IVirtualConstantPosition> selectedAccessor = selectionManager.selectedAccessor();
 		final List<IVirtualConstantPosition> selectedElements = selectedAccessor.getSelectedElements();
 		if (selectedElements.isEmpty()) {
