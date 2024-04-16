@@ -72,7 +72,7 @@ public class AudioHandler {
 		lastUncutData = musicData;
 		this.speed = () -> Config.stretchedMusicSpeed;
 
-		int start;
+		int start = 0;
 		if (repeatManager.isRepeating()) {
 			if (chartTimeHandler.nextTime() > repeatManager.repeatEnd()) {
 				rewind(repeatManager.repeatStart());
@@ -86,7 +86,7 @@ public class AudioHandler {
 			start = 0;
 		} else {
 			lastPlayedData = lastUncutData;
-			start = getSlowedMs(chartTimeHandler.time());
+			start = chartTimeHandler.time();
 		}
 
 		songPlayer = SoundSystem.play(lastPlayedData, () -> Config.volume, speed, start);
@@ -159,27 +159,8 @@ public class AudioHandler {
 			return;
 		}
 
-		//if (stretchedMusicSpeed == 100) {
-			playMusic(projectAudioHandler.getAudio());
-			return;
-		//}
-			
-		/*
-		if (currentlyLoadedSpecialSpeed == stretchedMusicSpeed && slowedDownSong != null) {
-			playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
-			return;
-		}
-
-		currentlyLoadedSpecialSpeed = stretchedMusicSpeed;
-		slowedDownSong = loadStretchedAudio(projectAudioHandler.getAudio(), chartData.path,
-				chartData.songChart.musicFileName, stretchedMusicSpeed);
-		if (slowedDownSong == null) {
-			showPopup(charterFrame, Label.GENERATING_SLOWED_SOUND);
-			return;
-		}
-
-		playMusic(slowedDownSong, currentlyLoadedSpecialSpeed);
-		*/
+		playMusic(projectAudioHandler.getAudio());
+		return;
 	}
 
 	public void frame() {
