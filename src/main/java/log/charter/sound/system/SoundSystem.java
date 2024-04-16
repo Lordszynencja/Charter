@@ -19,27 +19,6 @@ import log.charter.sound.data.AudioUtils;
 import log.charter.sound.system.SoundSystem.ISoundSystem.ISoundLine;
 
 public class SoundSystem {
-	public static byte[] interleave(final float[][] audioData) {
-		final int numSamples = audioData[0].length; // Assuming both channels have the same number of samples
-		final byte[] interleavedAudio = new byte[numSamples * 4]; // 16-bit audio (2 bytes per sample per channel)
-
-		int byteIndex = 0;
-		for (int i = 0; i < numSamples; i++) {
-			// Convert left channel sample to short (16-bit PCM)
-			final short leftSample = (short) (audioData[0][i] * 32768.0f);
-			// Convert right channel sample to short (16-bit PCM)
-			final short rightSample = (short) (audioData[1][i] * 32768.0f);
-
-			// Interleave left and right channel samples (little-endian)
-			interleavedAudio[byteIndex++] = (byte) (leftSample & 0xFF);
-			interleavedAudio[byteIndex++] = (byte) ((leftSample >> 8) & 0xFF);
-			interleavedAudio[byteIndex++] = (byte) (rightSample & 0xFF);
-			interleavedAudio[byteIndex++] = (byte) ((rightSample >> 8) & 0xFF);
-		}
-
-		return interleavedAudio;
-	}
-
 	private static int playerId = 0;
 
 	public interface ISoundSystem {

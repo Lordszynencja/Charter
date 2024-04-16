@@ -6,6 +6,8 @@ import static log.charter.data.config.Config.stretchedMusicSpeed;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import static log.charter.sound.StretchedFileLoader.loadStretchedAudio;
 
+import java.util.function.IntSupplier;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
@@ -37,7 +39,7 @@ public class AudioHandler {
 
 	private AudioDataShort lastUncutData = null;
 	private AudioDataShort lastPlayedData = null;
-	private int speed = 100;
+	private IntSupplier speed;
 	private int songTimeOnStart = 0;
 	private long playStartTime;
 
@@ -52,7 +54,7 @@ public class AudioHandler {
 			midiNotesPlaying = false;
 		} else {
 			if (songPlayer != null) {
-				midiChartNotePlayer.startPlaying(speed);
+				midiChartNotePlayer.startPlaying(speed.getAsInt());
 			}
 			midiNotesPlaying = true;
 		}
@@ -61,14 +63,14 @@ public class AudioHandler {
 	}
 
 	private int getSlowedMs(final int t) {
-		return t * 100 / speed;
+		return t * 100 / speed.getAsInt();
 	}
 
-	private void playMusic(final AudioDataShort musicData, final int speed) {
+	private void playMusic(final AudioDataShort musicData) {
 		stop();
 
 		lastUncutData = musicData;
-		this.speed = speed;
+		this.speed = () -> Config.stretchedMusicSpeed;
 
 		int start;
 		if (repeatManager.isRepeating()) {
@@ -87,12 +89,12 @@ public class AudioHandler {
 			start = getSlowedMs(chartTimeHandler.time());
 		}
 
-		songPlayer = SoundSystem.play(lastPlayedData, () -> Config.volume, () -> Config.stretchedMusicSpeed, start);
+		songPlayer = SoundSystem.play(lastPlayedData, () -> Config.volume, speed, start);
 		songTimeOnStart = chartTimeHandler.time();
 		playStartTime = nanoTime() / 1_000_000L;
 
 		if (midiNotesPlaying) {
-			midiChartNotePlayer.startPlaying(speed);
+			midiChartNotePlayer.startPlaying(speed.getAsInt());
 		}
 	}
 
@@ -158,7 +160,7 @@ public class AudioHandler {
 		}
 
 		//if (stretchedMusicSpeed == 100) {
-			playMusic(projectAudioHandler.getAudio(), 100);
+			playMusic(projectAudioHandler.getAudio());
 			return;
 		//}
 			
@@ -186,7 +188,7 @@ public class AudioHandler {
 		}
 		if (songPlayer.isStopped()) {
 			if (repeatManager.isRepeating()) {
-				final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed / 100);
+				final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed.getAsInt() / 100);
 				final int nextTime = songTimeOnStart + timePassed;
 				chartTimeHandler.nextTime(nextTime);
 				return;
@@ -195,7 +197,7 @@ public class AudioHandler {
 			stopMusic();
 		}
 
-		final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed / 100);
+		final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed.getAsInt() / 100);
 		final int nextTime = songTimeOnStart + timePassed;
 		chartTimeHandler.nextTime(nextTime);
 
@@ -220,7 +222,7 @@ public class AudioHandler {
 			midiChartNotePlayer.stopPlaying();
 		}
 
-		playMusic(lastUncutData, speed);
+		playMusic(lastUncutData);
 	}
 
 	public boolean isPlaying() {
