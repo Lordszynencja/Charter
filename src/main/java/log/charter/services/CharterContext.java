@@ -55,7 +55,6 @@ import log.charter.services.mouseAndKeyboard.MouseHandler;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 import log.charter.services.utils.AudioFramer;
 import log.charter.services.utils.Framer;
-import log.charter.sound.StretchedFileLoader;
 
 @SuppressWarnings("unused")
 public class CharterContext {
@@ -239,7 +238,6 @@ public class CharterContext {
 
 		audioFramer.stop();
 		framer.stop();
-		StretchedFileLoader.clear();
 		charterFrame.dispose();
 		System.exit(0);
 	}

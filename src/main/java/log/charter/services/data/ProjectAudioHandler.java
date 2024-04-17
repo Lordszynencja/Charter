@@ -5,10 +5,8 @@ import java.io.File;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
-import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.files.SongFilesBackuper;
 import log.charter.sound.SoundFileType;
-import log.charter.sound.StretchedFileLoader;
 import log.charter.sound.data.AudioDataShort;
 
 public class ProjectAudioHandler {
@@ -20,7 +18,6 @@ public class ProjectAudioHandler {
 		return "song." + defaultWrittenFileType().extension;
 	}
 
-	private AudioHandler audioHandler;
 	private ChartData chartData;
 	private WaveFormDrawer waveFormDrawer;
 
@@ -50,12 +47,8 @@ public class ProjectAudioHandler {
 
 	public void changeAudio(final AudioDataShort audio) {
 		this.audio = audio;
-
-		StretchedFileLoader.removeGeneratedAndClear(chartData.path);
 		waveFormDrawer.recalculateMap();
 		saveAudio(true);
-
-		audioHandler.audioChanged();
 	}
 
 	public void setAudio(final AudioDataShort audio) {
@@ -63,8 +56,6 @@ public class ProjectAudioHandler {
 
 		waveFormDrawer.recalculateMap();
 		saveAudio(false);
-
-		audioHandler.audioChanged();
 	}
 
 	public AudioDataShort getAudio() {

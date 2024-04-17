@@ -4,7 +4,6 @@ import static java.lang.System.nanoTime;
 import static log.charter.data.config.Config.createDefaultStretchesInBackground;
 import static log.charter.data.config.Config.stretchedMusicSpeed;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
-import static log.charter.sound.StretchedFileLoader.loadStretchedAudio;
 
 import java.util.function.IntSupplier;
 
@@ -16,7 +15,6 @@ import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.sound.StretchedFileLoader;
 import log.charter.sound.data.AudioDataShort;
 import log.charter.sound.system.SoundSystem;
 import log.charter.sound.system.SoundSystem.Player;
@@ -24,16 +22,12 @@ import log.charter.sound.system.SoundSystem.Player;
 public class AudioHandler {
 	private ChartTimeHandler chartTimeHandler;
 	private ChartData chartData;
-	private CharterFrame charterFrame;
 	private ChartToolbar chartToolbar;
 	private ClapsHandler clapsHandler;
 	private MetronomeHandler metronomeHandler;
 	private MidiChartNotePlayer midiChartNotePlayer;
 	private ProjectAudioHandler projectAudioHandler;
 	private RepeatManager repeatManager;
-
-	private AudioDataShort slowedDownSong;
-	private int currentlyLoadedSpecialSpeed = 100;
 
 	private Player songPlayer;
 
@@ -117,32 +111,7 @@ public class AudioHandler {
 	}
 
 	public void clear() {
-		currentlyLoadedSpecialSpeed = 100;
-		slowedDownSong = null;
 		stopMusic();
-	}
-
-	public void audioChanged() {
-		StretchedFileLoader.clear();
-
-		if (createDefaultStretchesInBackground) {
-			addSpeedToStretch(stretchedMusicSpeed);
-			addSpeedToStretch(50);
-			addSpeedToStretch(25);
-			addSpeedToStretch(75);
-		}
-	}
-
-	public void addSpeedToStretch(final int speed) {
-		if (speed == 100) {
-			return;
-		}
-
-		loadStretchedAudio(projectAudioHandler.getAudio(), chartData.path, chartData.songChart.musicFileName, speed);
-	}
-
-	public void addSpeedToStretch() {
-		addSpeedToStretch(stretchedMusicSpeed);
 	}
 
 	public void togglePlaySetSpeed() {
