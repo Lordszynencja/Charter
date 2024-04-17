@@ -164,7 +164,8 @@ public class SoundSystem {
 			setVolume(samples);
 			final float[][] stretchedSamples = stretch(samples);
 
-			startByte += line.write(AudioUtils.toBytes(stretchedSamples, 2, 2));
+			startByte += buffer.length;
+			line.write(AudioUtils.toBytes(stretchedSamples, 2, 2));
 			return startByte;
 		}
 
