@@ -62,10 +62,6 @@ public class AudioHandler {
 		chartToolbar.updateValues();
 	}
 
-	private int getSlowedMs(final int t) {
-		return t * 100 / speed.getAsInt();
-	}
-
 	private void playMusic(final AudioDataShort musicData) {
 		stop();
 
