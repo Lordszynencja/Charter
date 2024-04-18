@@ -1,16 +1,10 @@
 package log.charter.services.audio;
 
 import static java.lang.System.nanoTime;
-import static log.charter.data.config.Config.createDefaultStretchesInBackground;
-import static log.charter.data.config.Config.stretchedMusicSpeed;
-import static log.charter.gui.components.utils.ComponentUtils.showPopup;
-
 import java.util.function.IntSupplier;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
-import log.charter.data.config.Localization.Label;
-import log.charter.gui.CharterFrame;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.ChartTimeHandler;
