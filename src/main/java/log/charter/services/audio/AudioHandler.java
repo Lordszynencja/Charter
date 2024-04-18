@@ -33,7 +33,7 @@ public class AudioHandler {
 
 	private AudioDataShort lastUncutData = null;
 	private AudioDataShort lastPlayedData = null;
-	private IntSupplier speed;
+	private IntSupplier speed = () -> Config.stretchedMusicSpeed;
 	private int lastSpeed = 100;
 	private int songTimeOnStart = 0;
 	private long playStartTime;
@@ -128,8 +128,6 @@ public class AudioHandler {
 	}
 
 	public void frame() {
-		this.speed = () -> Config.stretchedMusicSpeed;
-		
 		if (lastSpeed != speed.getAsInt())
 		{
 			lastSpeed = speed.getAsInt();
