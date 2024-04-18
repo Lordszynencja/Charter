@@ -34,6 +34,7 @@ public class AudioHandler {
 	private AudioDataShort lastUncutData = null;
 	private AudioDataShort lastPlayedData = null;
 	private IntSupplier speed;
+	private int lastSpeed = 100;
 	private int songTimeOnStart = 0;
 	private long playStartTime;
 
@@ -60,7 +61,6 @@ public class AudioHandler {
 		stop();
 
 		lastUncutData = musicData;
-		this.speed = () -> Config.stretchedMusicSpeed;
 
 		int start = chartTimeHandler.time();
 		if (repeatManager.isRepeating()) {
@@ -128,9 +128,19 @@ public class AudioHandler {
 	}
 
 	public void frame() {
+		this.speed = () -> Config.stretchedMusicSpeed;
+		
+		if (lastSpeed != speed.getAsInt())
+		{
+			lastSpeed = speed.getAsInt();
+			togglePlaySetSpeed();
+			togglePlaySetSpeed();
+		}
+		
 		if (songPlayer == null) {
 			return;
 		}
+		
 		if (songPlayer.isStopped()) {
 			if (repeatManager.isRepeating()) {
 				final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed.getAsInt() / 100);
