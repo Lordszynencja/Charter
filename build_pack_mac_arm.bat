@@ -3,6 +3,8 @@ call mvn -P lwjgl-natives-macos-aarch64^
  clean package
 
 DEL "target\Charter\Charter.exe"
-RMDIR "target\Charter\rubberband\rubberband-3.1.2-gpl-executable-windows" /S /Q
+DEL "target\Charter\jasiohost64.dll"
+DEL "target\Charter\librubberband-jni.so"
+DEL "target\Charter\rubberband-jni.dll"
 
 tar.exe -a -cf "Charter-mac-arm-%version%.zip" -C "target" "Charter"
