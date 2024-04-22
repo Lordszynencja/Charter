@@ -113,11 +113,25 @@ public class SongChart {
 		albumName = cleanString(value);
 	}
 
-	public void moveEverythingWithBeats(final int chartLength, final int positionDifference) {
+	public void moveBeats(final int chartLength, final int positionDifference) {
 		for (final Beat beat : beatsMap.beats) {
 			beat.position(max(0, min(chartLength, beat.position() + positionDifference)));
 		}
 
 		beatsMap.makeBeatsUntilSongEnd(chartLength);
+	}
+
+	public void moveContent(final int beatsToAdd) {
+		vocals.vocals.forEach(v -> v.move(beatsToAdd));
+		for (final Arrangement arrangement : arrangements) {
+			arrangement.eventPoints.forEach(ep -> ep.move(beatsToAdd));
+			arrangement.toneChanges.forEach(tc -> tc.move(beatsToAdd));
+
+			for (final Level level : arrangement.levels) {
+				level.anchors.forEach(tc -> tc.move(beatsToAdd));
+				level.sounds.forEach(s -> s.move(beatsToAdd));
+				level.handShapes.forEach(tc -> tc.move(beatsToAdd));
+			}
+		}
 	}
 }

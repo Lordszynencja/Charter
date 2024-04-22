@@ -112,6 +112,7 @@ public class Localization {
 		NEW_PROJECT("New project"), //
 		OPEN_PROJECT("Open project"), //
 		PASTE("Paste"), //
+		SQUASH_LEVELS("Squash levels"), //
 		REDO("Redo"), //
 		SELECT_ALL_NOTES("Select all notes"), //
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //

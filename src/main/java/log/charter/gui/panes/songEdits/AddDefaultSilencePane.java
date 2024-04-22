@@ -46,7 +46,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 		final AudioDataShort editedAudio = projectAudioHandler.getAudio().remove(movement / 1000.0);
 
 		projectAudioHandler.changeAudio(editedAudio);
-		data.songChart.moveEverythingWithBeats(chartTimeHandler.maxTime(), -movement);
+		data.songChart.moveBeats(chartTimeHandler.maxTime(), -movement);
 	}
 
 	private void addSilence(final int movement) {
@@ -61,7 +61,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 		final AudioDataShort joined = silenceMusicData.join(songMusicData);
 
 		projectAudioHandler.changeAudio(joined);
-		data.songChart.moveEverythingWithBeats(chartTimeHandler.maxTime(), movement);
+		data.songChart.moveBeats(chartTimeHandler.maxTime(), movement);
 	}
 
 	private void addSilenceAndBars() {
@@ -76,16 +76,18 @@ public class AddDefaultSilencePane extends ParamsPane {
 		addSilence(movement);
 
 		final int beatsInMeasure = firstBeat.beatsInMeasure;
+		int beatsAdded = 0;
 		for (int bar = 0; bar < bars; bar++) {
 			final int barPosition = firstBeat.position() - barLength * (bars - bar);
 			for (int i = 0; i < beatsInMeasure; i++) {
 				final int beatPosition = barPosition + i * barLength / beatsInMeasure;
-				data.songChart.beatsMap.beats
-						.add(new Beat(beatPosition, beatsInMeasure, firstBeat.noteDenominator, i == 0));
+				data.songChart.beatsMap.beats.add(beatsAdded++,
+						new Beat(beatPosition, beatsInMeasure, firstBeat.noteDenominator, i == 0));
 			}
 		}
 
 		data.songChart.beatsMap.beats.sort(IConstantPosition::compareTo);
+		data.songChart.moveContent(beatsAdded);
 	}
 
 	private void saveAndExit() {

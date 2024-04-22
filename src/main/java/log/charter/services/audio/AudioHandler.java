@@ -101,11 +101,12 @@ public class AudioHandler {
 		}
 		if (songPlayer != null) {
 			stopMusic();
+			chartToolbar.setPlayButtonIcon();
 			return;
 		}
 
 		playMusic(projectAudioHandler.getAudio());
-		return;
+		chartToolbar.setPlayButtonIcon();
 	}
 
 	public void frame() {

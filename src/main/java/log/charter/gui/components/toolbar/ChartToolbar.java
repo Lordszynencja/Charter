@@ -34,6 +34,8 @@ import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.lookAndFeel.CharterSliderUI;
 import log.charter.io.Logger;
+import log.charter.services.Action;
+import log.charter.services.ActionHandler;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.RepeatManager;
 import log.charter.services.audio.AudioHandler;
@@ -59,6 +61,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private static final BufferedImage volumeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarVolume.png");
 	private static final BufferedImage sfxVolumeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarSFXVolume.png");
 
+	private ActionHandler actionHandler;
 	private AudioHandler audioHandler;
 	private ClapsHandler clapsHandler;
 	private KeyboardHandler keyboardHandler;
@@ -79,6 +82,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private JToggleButton beatGridType;
 	private JToggleButton noteGridType;
+
+	private JButton playButton;
 
 	private int newSpeed = Config.stretchedMusicSpeed;
 
@@ -308,6 +313,46 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		});
 	}
 
+	private void addTimeControls(final AtomicInteger x) {
+		final JButton rewindButton = new JButton("⏮");
+		rewindButton.setFocusable(false);
+		rewindButton.setSize(30, 20);
+		rewindButton.addChangeListener(e -> {
+			if (rewindButton.getModel().isPressed()) {
+				keyboardHandler.setRewind();
+			} else {
+				keyboardHandler.clearRewind();
+			}
+		});
+
+		add(x, 0, rewindButton);
+
+		playButton = new JButton();
+		playButton.setFocusable(false);
+		playButton.setSize(30, 20);
+		playButton.addActionListener(e -> actionHandler.fireAction(Action.PLAY_AUDIO));
+		setPlayButtonIcon();
+
+		add(x, 0, playButton);
+
+		final JButton fastForwardButton = new JButton("⏩");
+		fastForwardButton.setFocusable(false);
+		fastForwardButton.setSize(30, 20);
+		fastForwardButton.addChangeListener(e -> {
+			if (fastForwardButton.getModel().isPressed()) {
+				keyboardHandler.setFastForward();
+			} else {
+				keyboardHandler.clearFastForward();
+			}
+		});
+
+		add(x, 0, fastForwardButton);
+	}
+
+	public void setPlayButtonIcon() {
+		playButton.setText(audioHandler.isPlaying() ? "⏸" : "▶️");
+	}
+
 	@Override
 	public void init() {
 		final AtomicInteger x = new AtomicInteger(5);
@@ -337,6 +382,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		addVolumeSlider(x, Label.TOOLBAR_VOLUME, volumeIcon, Config.volume, this::changeVolume);
 		addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, sfxVolumeIcon, Config.sfxVolume, this::changeSFXVolume);
 		addPlaybackSpeed(x);
+		addTimeControls(x);
 
 		updateValues();
 		setSize(getWidth(), height);

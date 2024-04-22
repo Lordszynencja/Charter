@@ -119,6 +119,16 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 			render();
 		} catch (final Exception e) {
 			Logger.error("Exception in paint", e);
+			if (e.getMessage().contains("Exception while creating the OpenGL context")) {
+				if (Config.antialiasingSamples > 1) {
+					Config.antialiasingSamples /= 2;
+					Config.markChanged();
+				} else {
+					Logger.error("stopping painting of GL component");
+					active = false;
+				}
+			}
+
 			if (e instanceof AWTException) {
 				Logger.error("stopping painting of GL component");
 				active = false;

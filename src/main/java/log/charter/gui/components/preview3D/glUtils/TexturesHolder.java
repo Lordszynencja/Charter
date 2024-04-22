@@ -42,6 +42,7 @@ public class TexturesHolder {
 
 	public void initGL() {
 		errorTexture = new Texture();
+		textures.clear();
 		textures.put("error", errorTexture);
 
 		textureFileSuppliers.forEach((texture, fileSupplier) -> {

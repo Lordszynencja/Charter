@@ -93,7 +93,10 @@ public class ChartProjectXStreamHandler {
 	}
 
 	public static ChartProject readChartProject(final File file) {
-		final Object o = xstream.fromXML(RW.read(file));
+		String content = RW.read(file);
+		content = content.replace(" class=\"log.charter.util.collections.HashSet2\"", "");
+
+		final Object o = xstream.fromXML(content);
 		if (!o.getClass().isAssignableFrom(ChartProject.class)) {
 			return null;
 		}

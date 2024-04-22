@@ -2,6 +2,8 @@ package log.charter.services.mouseAndKeyboard;
 
 import static java.awt.event.KeyEvent.VK_ALT;
 import static java.awt.event.KeyEvent.VK_CONTROL;
+import static java.awt.event.KeyEvent.VK_LEFT;
+import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_SHIFT;
 
 import java.awt.event.KeyEvent;
@@ -29,6 +31,30 @@ public class KeyboardHandler implements KeyListener {
 		shift = false;
 		heldNonModifierKey = -1;
 		heldAction = null;
+	}
+
+	public void setRewind() {
+		heldNonModifierKey = VK_LEFT;
+		heldAction = Action.MOVE_BACKWARD;
+	}
+
+	public void clearRewind() {
+		if (heldAction == Action.MOVE_BACKWARD && heldNonModifierKey == VK_LEFT) {
+			heldNonModifierKey = -1;
+			heldAction = null;
+		}
+	}
+
+	public void setFastForward() {
+		heldNonModifierKey = VK_RIGHT;
+		heldAction = Action.MOVE_FORWARD;
+	}
+
+	public void clearFastForward() {
+		if (heldAction == Action.MOVE_FORWARD && heldNonModifierKey == VK_RIGHT) {
+			heldNonModifierKey = -1;
+			heldAction = null;
+		}
 	}
 
 	public Optional<Action> heldAction() {
