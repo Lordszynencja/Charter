@@ -6,7 +6,6 @@ import static log.charter.sound.data.AudioUtils.splitStereoAudioFloat;
 
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
-import java.util.function.IntSupplier;
 
 import javax.sound.sampled.AudioFormat;
 
@@ -72,9 +71,10 @@ public class SoundSystem {
 	public static class Player {
 		private final AudioData<?> musicData;
 		private final DoubleSupplier volume;
-		private final IntSupplier speed;
+		private final int speed;
 
 		private final int sampleSizeInBits;
+		@SuppressWarnings("unused")
 		private final int sampleSize;
 		private final int frameSize;
 		private final ISoundLine line;
@@ -84,12 +84,18 @@ public class SoundSystem {
 
 		public long playingStartTime = -1;
 
-		private Player(final AudioData<?> musicData, final DoubleSupplier volume, final IntSupplier speed) {
+		private Player(final AudioData<?> musicData, final DoubleSupplier volume, final int speed) {
 			this.musicData = musicData;
 			this.volume = volume;
 			this.speed = speed;
 			rubberBandStretcher = new RubberBandStretcher((int) musicData.sampleRate(), musicData.channels(),
-					RubberBandStretcher.OptionProcessRealTime, 1.0, 1.0);
+					RubberBandStretcher.OptionProcessRealTime //
+							| RubberBandStretcher.OptionTransientsSmooth//
+							| RubberBandStretcher.OptionThreadingNever//
+							| RubberBandStretcher.OptionPitchHighQuality//
+							| RubberBandStretcher.OptionStretchPrecise//
+							| RubberBandStretcher.OptionPhaseIndependent, //
+					100f / speed, 1.0);
 
 			sampleSizeInBits = musicData.format().getSampleSizeInBits();
 			if (sampleSizeInBits <= 8) {
@@ -113,10 +119,7 @@ public class SoundSystem {
 		}
 
 		private void setVolume(final float[][] samples) {
-			if (volume == null) {
-				return;
-			}
-			final float volumeValue = (float) volume.getAsDouble();
+			final float volumeValue = volume == null ? 0.5f : (float) volume.getAsDouble() * 0.5f;
 
 			for (int channel = 0; channel < samples.length; channel++) {
 				for (int i = 0; i < samples[channel].length; i++) {
@@ -126,12 +129,9 @@ public class SoundSystem {
 		}
 
 		private float[][] stretch(final float[][] samples) {
-			if (speed.getAsInt() == 100) {
+			if (speed == 100) {
 				return samples;
 			}
-
-			final float timeRatio = 100f / speed.getAsInt();
-			rubberBandStretcher.setTimeRatio(timeRatio);
 
 			boolean lastBlock = false;
 			if (samples[0].length < audioBufferSize) {
@@ -152,6 +152,11 @@ public class SoundSystem {
 
 			final float[][] output = new float[2][available];
 			rubberBandStretcher.retrieve(output);
+			for (final float[] channel : output) {
+				for (int i = 0; i < channel.length; i++) {
+					channel[i] = Math.max(-1f, min(1f, channel[i] * 2f));
+				}
+			}
 
 			return output;
 		}
@@ -229,13 +234,12 @@ public class SoundSystem {
 		}
 	}
 
-	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier,
-			final IntSupplier speed) {
+	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier, final int speed) {
 		return play(audioData, volumeSupplier, speed, 0);
 	}
 
-	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier,
-			final IntSupplier speed, final double startTime) {
+	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier, final int speed,
+			final double startTime) {
 		return new Player(audioData, volumeSupplier, speed).start(startTime);
 	}
 }

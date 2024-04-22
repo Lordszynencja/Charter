@@ -44,7 +44,7 @@ import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.util.ImageUtils;
 
-public class ChartToolbar extends JToolBar implements Initiable {
+public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private static final long serialVersionUID = 1L;
 
 	private static final int verticalSpacing = 8;
@@ -75,7 +75,7 @@ public class ChartToolbar extends JToolBar implements Initiable {
 	private JToggleButton repeater;
 
 	private FieldWithLabel<TextInputWithValidation> gridSize;
-	private FieldWithLabel<TextInputWithValidation> slowedSpeed;
+	private FieldWithLabel<TextInputWithValidation> playbackSpeed;
 
 	private JToggleButton beatGridType;
 	private JToggleButton noteGridType;
@@ -234,52 +234,6 @@ public class ChartToolbar extends JToolBar implements Initiable {
 		gridTypeGroup.add(noteGridType);
 	}
 
-	private void changeSpeed(final int newSpeed) {
-		this.newSpeed = newSpeed;
-		new Thread(() -> {
-			try {
-				Thread.sleep(2000);
-			} catch (final InterruptedException e) {
-			}
-			if (this.newSpeed != newSpeed) {
-				return;
-			}
-
-			setSpeed(newSpeed);
-		}).start();
-	}
-
-	private void setSpeed(final int newSpeed) {
-//		if (Config.stretchedMusicSpeed == newSpeed) {
-//			return;
-//		}
-
-		Config.stretchedMusicSpeed = newSpeed;
-//		Config.markChanged();
-//
-//		audioHandler.clear();
-//		audioHandler.addSpeedToStretch();
-	}
-
-	private void addSlowedSpeed(final AtomicInteger x) {
-		slowedSpeed = createNumberField(Label.TOOLBAR_SLOWED_PLAYBACK_SPEED, LabelPosition.LEFT_PACKED, 30, //
-				Config.stretchedMusicSpeed, 1, 500, false, this::changeSpeed);
-		this.add(x, slowedSpeed);
-
-		slowedSpeed.field.addFocusListener(new FocusListener() {
-
-			@Override
-			public void focusGained(final FocusEvent e) {
-			}
-
-			@Override
-			public void focusLost(final FocusEvent e) {
-				setSpeed(newSpeed);
-			}
-
-		});
-	}
-
 	private int getVolumeAsInteger(final double volume) {
 		if (volume <= 0) {
 			return 0;
@@ -316,6 +270,44 @@ public class ChartToolbar extends JToolBar implements Initiable {
 		volumeSlider.setUI(new CharterSliderUI());
 	}
 
+	private void changeSpeed(final int newSpeed) {
+		this.newSpeed = newSpeed;
+		new Thread(() -> {
+			try {
+				Thread.sleep(2000);
+			} catch (final InterruptedException e) {
+			}
+			if (this.newSpeed != newSpeed) {
+				return;
+			}
+
+			setSpeed(newSpeed);
+		}).start();
+	}
+
+	private void setSpeed(final int newSpeed) {
+		Config.stretchedMusicSpeed = newSpeed;
+		Config.markChanged();
+	}
+
+	private void addPlaybackSpeed(final AtomicInteger x) {
+		playbackSpeed = createNumberField(Label.TOOLBAR_SLOWED_PLAYBACK_SPEED, LabelPosition.LEFT_PACKED, 30, //
+				Config.stretchedMusicSpeed, 1, 500, false, this::changeSpeed);
+		this.add(x, playbackSpeed);
+
+		playbackSpeed.field.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusGained(final FocusEvent e) {
+			}
+
+			@Override
+			public void focusLost(final FocusEvent e) {
+				setSpeed(newSpeed);
+			}
+		});
+	}
+
 	@Override
 	public void init() {
 		final AtomicInteger x = new AtomicInteger(5);
@@ -344,7 +336,7 @@ public class ChartToolbar extends JToolBar implements Initiable {
 
 		addVolumeSlider(x, Label.TOOLBAR_VOLUME, volumeIcon, Config.volume, this::changeVolume);
 		addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, sfxVolumeIcon, Config.sfxVolume, this::changeSFXVolume);
-		addSlowedSpeed(x);
+		addPlaybackSpeed(x);
 
 		updateValues();
 		setSize(getWidth(), height);
@@ -352,6 +344,7 @@ public class ChartToolbar extends JToolBar implements Initiable {
 		addKeyListener(keyboardHandler);
 	}
 
+	@Override
 	public void updateValues() {
 		midi.setSelected(audioHandler.midiNotesPlaying);
 		midi.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
@@ -375,6 +368,8 @@ public class ChartToolbar extends JToolBar implements Initiable {
 				Logger.error("Wrong grid type for toolbar " + Config.gridType);
 				break;
 		}
+
+		playbackSpeed.field.setTextWithoutEvent(Config.stretchedMusicSpeed + "");
 	}
 
 	@Override

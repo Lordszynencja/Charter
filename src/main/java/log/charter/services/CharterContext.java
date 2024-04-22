@@ -111,8 +111,6 @@ public class CharterContext {
 	private final AudioFramer audioFramer = new AudioFramer();
 	private final Framer framer = new Framer(this::frame);
 
-	final Map<String, Object> fields = getFieldsValues();
-
 	private Map<String, Object> getFieldsValues() {
 		final Map<String, Object> fields = new HashMap<>();
 		fields.put("charterContext", this);
@@ -129,10 +127,12 @@ public class CharterContext {
 		return fields;
 	}
 
+	final Map<String, Object> fields = getFieldsValues();
+
 	private void fillFieldsforObject(final Object o) {
 		for (final Field field : o.getClass().getDeclaredFields()) {
 			final Object fieldValue = fields.get(field.getName());
-			if (fieldValue != null && fieldValue.getClass().equals(field.getType())) {
+			if (fieldValue != null && field.getType().isAssignableFrom(fieldValue.getClass())) {
 				try {
 					if (!field.canAccess(o)) {
 						field.setAccessible(true);
