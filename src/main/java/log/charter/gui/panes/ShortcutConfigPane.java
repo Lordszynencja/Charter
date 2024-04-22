@@ -52,6 +52,12 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 				Action.PREVIOUS_GRID, //
 				Action.NEXT_BEAT, //
 				Action.PREVIOUS_BEAT, //
+				Action.SPEED_DECREASE, //
+				Action.SPEED_DECREASE_FAST, //
+				Action.SPEED_DECREASE_PRECISE, //
+				Action.SPEED_INCREASE, //
+				Action.SPEED_INCREASE_FAST, //
+				Action.SPEED_INCREASE_PRECISE, //
 				Action.TOGGLE_REPEATER, //
 				Action.TOGGLE_REPEAT_START, //
 				Action.TOGGLE_REPEAT_END)));

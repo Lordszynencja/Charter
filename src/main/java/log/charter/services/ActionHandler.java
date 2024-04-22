@@ -1,5 +1,8 @@
 package log.charter.services;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.System.nanoTime;
 import static java.util.Arrays.asList;
 import static log.charter.data.config.Config.frets;
@@ -14,7 +17,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
-import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.gui.components.toolbar.IChartToolbar;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.audio.AudioHandler;
 import log.charter.services.audio.ClapsHandler;
@@ -38,7 +41,7 @@ public class ActionHandler implements Initiable {
 	private ChartData chartData;
 	private ChartItemsHandler chartItemsHandler;
 	private ChartTimeHandler chartTimeHandler;
-	private ChartToolbar chartToolbar;
+	private IChartToolbar chartToolbar;
 	private CharterContext charterContext;
 	private ClapsHandler clapsHandler;
 	private CopyManager copyManager;
@@ -119,6 +122,21 @@ public class ActionHandler implements Initiable {
 		chartTimeHandler.nextTime(bookmark);
 	}
 
+	private void changeSpeed(final int change) {
+		final int divideRest = Config.stretchedMusicSpeed % abs(change);
+		if (divideRest != 0) {
+			if (change < 0) {
+				Config.stretchedMusicSpeed = max(1, min(1000, Config.stretchedMusicSpeed - divideRest));
+			} else {
+				Config.stretchedMusicSpeed = max(1, min(1000, Config.stretchedMusicSpeed + change - divideRest));
+			}
+		} else {
+			Config.stretchedMusicSpeed = max(1, min(1000, Config.stretchedMusicSpeed + change));
+		}
+
+		chartToolbar.updateValues();
+	}
+
 	private final Map<Action, Runnable> actionHandlers = new HashMap<>();
 
 	@Override
@@ -187,6 +205,12 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.SNAP_ALL, chartItemsHandler::snapAll);
 		actionHandlers.put(Action.SNAP_SELECTED, chartItemsHandler::snapSelected);
 		actionHandlers.put(Action.SPECIAL_PASTE, copyManager::specialPaste);
+		actionHandlers.put(Action.SPEED_DECREASE, () -> changeSpeed(-5));
+		actionHandlers.put(Action.SPEED_DECREASE_FAST, () -> changeSpeed(-25));
+		actionHandlers.put(Action.SPEED_DECREASE_PRECISE, () -> changeSpeed(-1));
+		actionHandlers.put(Action.SPEED_INCREASE, () -> changeSpeed(5));
+		actionHandlers.put(Action.SPEED_INCREASE_FAST, () -> changeSpeed(25));
+		actionHandlers.put(Action.SPEED_INCREASE_PRECISE, () -> changeSpeed(1));
 		actionHandlers.put(Action.TOGGLE_ACCENT, guitarSoundsStatusesHandler::toggleAccent);
 		actionHandlers.put(Action.TOGGLE_ACCENT_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleAccentIndependently);
 		actionHandlers.put(Action.TOGGLE_ANCHOR, this::toggleAnchor);
@@ -233,6 +257,12 @@ public class ActionHandler implements Initiable {
 			Action.SLOW_FORWARD);
 	private static final List<Action> actionsNotStoppingAudio = asList(//
 			Action.PLAY_AUDIO, //
+			Action.SPEED_DECREASE, //
+			Action.SPEED_DECREASE_FAST, //
+			Action.SPEED_DECREASE_PRECISE, //
+			Action.SPEED_INCREASE, //
+			Action.SPEED_INCREASE_FAST, //
+			Action.SPEED_INCREASE_PRECISE, //
 			Action.TOGGLE_CLAPS, //
 			Action.TOGGLE_METRONOME, //
 			Action.TOGGLE_MIDI, //

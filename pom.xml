@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
 	<artifactId>Charter</artifactId>
-	<version>0.16.4</version>
+	<version>0.17.0</version>
 	<packaging>jar</packaging>
 	<name>Charter</name>
 	<description>Charting program for guitar</description>
@@ -13,7 +13,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<lwjgl.version>3.3.2</lwjgl.version>
 		<lwjgl3-awt.version>0.1.8</lwjgl3-awt.version>
-		<jasio-jar.path>${project.basedir}/jasio/JAsioHost.jar</jasio-jar.path>
 	</properties>
 	
 	<repositories>
@@ -381,18 +380,16 @@
 								</resource>
 								<resource>
 									<directory>${basedir}</directory>
-									<include>jasiohost64.dll</include>
-									<targetPath>${basedir}/target/Charter</targetPath>
-									<filtering>false</filtering>
-								</resource>
-								<resource>
-									<directory>${basedir}</directory>
 									<includes>
 										<include>graphics/**</include>
 										<include>languages/**</include>
 										<include>rubberband/**</include>
 										<include>oggenc/**</include>
 										<include>manual.pdf</include>
+										<include>jasiohost64.dll</include>
+										<include>rubberband-jni.dll</include>
+										<include>librubberband-jni.so</include>
+										<include>librubberband-jni.dylib</include>
 									</includes>
 								</resource>
 							</resources>

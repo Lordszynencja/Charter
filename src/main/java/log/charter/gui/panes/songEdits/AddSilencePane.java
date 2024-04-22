@@ -18,7 +18,6 @@ import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.sound.StretchedFileLoader;
 import log.charter.sound.data.AudioDataShort;
 
 public class AddSilencePane extends ParamsPane {
@@ -81,7 +80,6 @@ public class AddSilencePane extends ParamsPane {
 
 	private void removeAudio(final double time) {
 		final AudioDataShort editedAudio = projectAudioHandler.getAudio().remove(time);
-		StretchedFileLoader.removeGeneratedAndClear(data.path);
 
 		projectAudioHandler.changeAudio(editedAudio);
 		data.songChart.moveBeats(chartTimeHandler.maxTime(), (int) -(time * 1000));

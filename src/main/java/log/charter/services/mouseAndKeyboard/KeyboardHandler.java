@@ -79,7 +79,7 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	private void keyUsed(final KeyEvent e) {
-		final int keyCode = e.getKeyCode();
+		int keyCode = e.getKeyCode();
 		if (keyCode == KeyEvent.VK_UNDEFINED) {
 			return;
 		}
@@ -98,6 +98,12 @@ public class KeyboardHandler implements KeyListener {
 			alt = true;
 			replaceHeldAction();
 			return;
+		}
+		if (keyCode == KeyEvent.VK_ADD) {
+			keyCode = KeyEvent.VK_PLUS;
+		}
+		if (keyCode == KeyEvent.VK_SUBTRACT) {
+			keyCode = KeyEvent.VK_MINUS;
 		}
 
 		heldNonModifierKey = keyCode;

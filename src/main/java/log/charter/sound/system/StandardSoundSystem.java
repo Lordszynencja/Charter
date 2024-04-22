@@ -23,7 +23,6 @@ public class StandardSoundSystem implements ISoundSystem {
 
 			line = (SourceDataLine) getLine(info);
 			line.open(format);
-			line.start();
 
 			line.start();
 		}

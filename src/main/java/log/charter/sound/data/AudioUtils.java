@@ -104,6 +104,28 @@ public class AudioUtils {
 		return data;
 	}
 
+	private static float floatFromBytes(final byte b0, final byte b1) {
+		return (float) fromBytes(b0, b1) / 0x8000;
+	}
+
+	public static float floatFromBytes(final byte[] bytes, final int position, final int length) {
+		if (length == 1) {
+			return (short) (bytes[position] & 0xFF) / 128f - 1;
+		}
+
+		return floatFromBytes(bytes[position * 2], bytes[position * 2 + 1]);
+	}
+
+	public static float[][] splitStereoAudioFloat(final byte[] b) {
+		final float[][] d = new float[2][b.length / 4];
+		for (int i = 0; i < d[0].length; i++) {
+			d[0][i] = floatFromBytes(b, i * 2, 2);
+			d[1][i] = floatFromBytes(b, i * 2 + 1, 2);
+		}
+
+		return d;
+	}
+
 	public static void writeBytes(final byte[] bytes, final int position, final short sample, final int sampleSize) {
 		for (int i = 0; i < sampleSize; i++) {
 			bytes[position + i] = (byte) ((sample >> (i * 8)) & 0xFF);
@@ -154,6 +176,48 @@ public class AudioUtils {
 				for (int j = 0; j < sampleBytes; j++) {
 					bytes[channelOffset + j] = (byte) ((data[channel][i] >> (j * 8)) & 0xFF);
 				}
+			}
+		}
+
+		return bytes;
+	}
+
+	private static void toBytes(final float sample, final byte[] bytes) {
+		switch (bytes.length) {
+			case 1:
+				bytes[0] = (byte) (((sample + 1) / 2) * 255);
+				return;
+			case 2:
+				final short value = (short) (sample * 0x7FFF);
+				bytes[0] = (byte) (value & 0xFF);
+				bytes[1] = (byte) (value >> 8 & 0xFF);
+				return;
+			default:
+				return;
+		}
+	}
+
+	public static byte[] toBytes(final float[][] data, final int channels, final int sampleBytes) {
+		if (data.length < channels) {
+			return new byte[0];
+		}
+		for (int i = 0; i < channels - 1; i++) {
+			if (data[i].length != data[i + 1].length) {
+				throw new IllegalArgumentException("channels have different lengths");
+			}
+		}
+
+		final int l = data[0].length;
+		final byte[] bytes = new byte[l * channels * sampleBytes];
+		final byte[] buffer = new byte[sampleBytes];
+
+		for (int i = 0; i < l; i++) {
+			final int offset = i * channels * sampleBytes;
+			for (int channel = 0; channel < channels; channel++) {
+				final int channelOffset = offset + channel * sampleBytes;
+				toBytes(data[channel][i], buffer);
+
+				System.arraycopy(buffer, 0, bytes, channelOffset, sampleBytes);
 			}
 		}
 

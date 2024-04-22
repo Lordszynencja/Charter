@@ -112,6 +112,5 @@ public class NewProjectCreator {
 		songFileHandler.save();
 
 		audioHandler.clear();
-		audioHandler.audioChanged();
 	}
 }

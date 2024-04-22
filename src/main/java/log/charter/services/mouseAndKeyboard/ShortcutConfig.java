@@ -92,6 +92,12 @@ public class ShortcutConfig {
 		addDefaultShortcut(Action.SNAP_ALL, new Shortcut(KeyEvent.VK_G).ctrl().shift());
 		addDefaultShortcut(Action.SNAP_SELECTED, new Shortcut(KeyEvent.VK_G).ctrl());
 		addDefaultShortcut(Action.SPECIAL_PASTE, new Shortcut(KeyEvent.VK_V).ctrl().shift());
+		addDefaultShortcut(Action.SPEED_DECREASE, new Shortcut(KeyEvent.VK_MINUS));
+		addDefaultShortcut(Action.SPEED_DECREASE_FAST, new Shortcut(KeyEvent.VK_MINUS).shift());
+		addDefaultShortcut(Action.SPEED_DECREASE_PRECISE, new Shortcut(KeyEvent.VK_MINUS).ctrl());
+		addDefaultShortcut(Action.SPEED_INCREASE, new Shortcut(KeyEvent.VK_PLUS));
+		addDefaultShortcut(Action.SPEED_INCREASE_FAST, new Shortcut(KeyEvent.VK_PLUS).shift());
+		addDefaultShortcut(Action.SPEED_INCREASE_PRECISE, new Shortcut(KeyEvent.VK_PLUS).ctrl());
 		addDefaultShortcut(Action.TOGGLE_ACCENT, new Shortcut(KeyEvent.VK_A));
 		addDefaultShortcut(Action.TOGGLE_ACCENT_INDEPENDENTLY, new Shortcut(KeyEvent.VK_A).alt());
 		addDefaultShortcut(Action.TOGGLE_ANCHOR, new Shortcut(KeyEvent.VK_A));

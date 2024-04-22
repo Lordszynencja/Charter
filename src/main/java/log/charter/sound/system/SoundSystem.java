@@ -2,13 +2,14 @@ package log.charter.sound.system;
 
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.audioBufferSize;
-import static log.charter.sound.data.AudioUtils.fromBytes;
-import static log.charter.sound.data.AudioUtils.writeBytes;
+import static log.charter.sound.data.AudioUtils.splitStereoAudioFloat;
 
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 
 import javax.sound.sampled.AudioFormat;
+
+import com.breakfastquay.rubberband.RubberBandStretcher;
 
 import log.charter.data.config.Config;
 import log.charter.io.Logger;
@@ -70,18 +71,31 @@ public class SoundSystem {
 	public static class Player {
 		private final AudioData<?> musicData;
 		private final DoubleSupplier volume;
+		private final int speed;
 
 		private final int sampleSizeInBits;
+		@SuppressWarnings("unused")
 		private final int sampleSize;
 		private final int frameSize;
 		private final ISoundLine line;
 		private boolean stopped;
 
+		private final RubberBandStretcher rubberBandStretcher;
+
 		public long playingStartTime = -1;
 
-		private Player(final AudioData<?> musicData, final DoubleSupplier volume) {
+		private Player(final AudioData<?> musicData, final DoubleSupplier volume, final int speed) {
 			this.musicData = musicData;
 			this.volume = volume;
+			this.speed = speed;
+			rubberBandStretcher = new RubberBandStretcher((int) musicData.sampleRate(), musicData.channels(),
+					RubberBandStretcher.OptionProcessRealTime //
+							| RubberBandStretcher.OptionTransientsSmooth//
+							| RubberBandStretcher.OptionThreadingNever//
+							| RubberBandStretcher.OptionPitchHighQuality//
+							| RubberBandStretcher.OptionStretchPrecise//
+							| RubberBandStretcher.OptionPhaseIndependent, //
+					100f / speed, 1.0);
 
 			sampleSizeInBits = musicData.format().getSampleSizeInBits();
 			if (sampleSizeInBits <= 8) {
@@ -104,24 +118,59 @@ public class SoundSystem {
 			return startFrame * frameSize;
 		}
 
-		private void setVolume(final byte[] buffer) {
-			if (volume == null) {
-				return;
-			}
+		private void setVolume(final float[][] samples) {
+			final float volumeValue = volume == null ? 0.5f : (float) volume.getAsDouble() * 0.5f;
 
-			final int samples = buffer.length / sampleSize;
-			for (int i = 0; i < samples; i++) {
-				short sample = fromBytes(buffer, i, sampleSize);
-				sample = AudioUtils.clipShort(sample * volume.getAsDouble());
-				writeBytes(buffer, i * sampleSize, sample, sampleSize);
+			for (int channel = 0; channel < samples.length; channel++) {
+				for (int i = 0; i < samples[channel].length; i++) {
+					samples[channel][i] *= volumeValue;
+				}
 			}
 		}
 
-		private int writeBuffer(final byte[] data, int startByte) {
-			final byte[] buffer = Arrays.copyOfRange(data, startByte, min(data.length, startByte + audioBufferSize));
-			setVolume(buffer);
+		private float[][] stretch(final float[][] samples) {
+			if (speed == 100) {
+				return samples;
+			}
 
-			startByte += line.write(buffer);
+			boolean lastBlock = false;
+			if (samples[0].length < audioBufferSize) {
+				lastBlock = true;
+			}
+
+			final int samplesRequired = rubberBandStretcher.getSamplesRequired();
+			if (samples[0].length < samplesRequired) {
+				return samples;
+			}
+
+			rubberBandStretcher.process(samples, lastBlock);
+
+			int available = 0;
+			while (available == 0) {
+				available = rubberBandStretcher.available();
+			}
+
+			final float[][] output = new float[2][available];
+			rubberBandStretcher.retrieve(output);
+			for (final float[] channel : output) {
+				for (int i = 0; i < channel.length; i++) {
+					channel[i] = Math.max(-1f, min(1f, channel[i] * 2f));
+				}
+			}
+
+			return output;
+		}
+
+		private int writeBuffer(final byte[] data, int startByte) {
+			final byte[] buffer = Arrays.copyOfRange(data, startByte,
+					min(data.length, startByte + audioBufferSize * 4));
+
+			final float[][] samples = splitStereoAudioFloat(buffer);
+			setVolume(samples);
+			final float[][] stretchedSamples = stretch(samples);
+
+			startByte += buffer.length;
+			line.write(AudioUtils.toBytes(stretchedSamples, 2, 2));
 			return startByte;
 		}
 
@@ -185,12 +234,12 @@ public class SoundSystem {
 		}
 	}
 
-	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier) {
-		return new Player(audioData, volumeSupplier).start(0);
+	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier, final int speed) {
+		return play(audioData, volumeSupplier, speed, 0);
 	}
 
-	public static Player playMusic(final AudioData<?> audioData, final DoubleSupplier volumeSupplier,
+	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier, final int speed,
 			final double startTime) {
-		return new Player(audioData, volumeSupplier).start(startTime);
+		return new Player(audioData, volumeSupplier, speed).start(startTime);
 	}
 }

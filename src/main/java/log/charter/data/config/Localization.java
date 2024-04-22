@@ -122,6 +122,12 @@ public class Localization {
 		SONGS_FOLDER("Songs folder"), //
 		SOUND_DELAY("Sound delay (ms)"), //
 		SPECIAL_PASTE("Special paste"), //
+		SPEED_DECREASE("Decrease speed"), //
+		SPEED_DECREASE_FAST("Decrease speed fast"), //
+		SPEED_DECREASE_PRECISE("Decrease speed precise"), //
+		SPEED_INCREASE("Increase speed"), //
+		SPEED_INCREASE_FAST("Increase speed fast"), //
+		SPEED_INCREASE_PRECISE("Increase speed precise"), //
 		SUPPORTED_MUSIC_FILE("Mp3, Ogg or Wav file"), //
 		THEME_BASIC("Basic"), //
 		THEME_MODERN("Modern"), //
