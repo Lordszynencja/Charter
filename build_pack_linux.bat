@@ -3,7 +3,9 @@ call mvn -P lwjgl-natives-linux-amd64^
  clean package
 
 DEL "target\Charter\Charter.exe"
+DEL "target\Charter\jasiohost64.dll"
+DEL "target\Charter\librubberband-jni.dylib"
+DEL "target\Charter\rubberband-jni.dll"
 RMDIR "target\Charter\Charter.app" /S /Q
-RMDIR "target\Charter\rubberband\rubberband-3.1.2-gpl-executable-macos" /S /Q
 
 tar.exe -a -cf "Charter-linux-%version%.zip" -C "target" "Charter"
