@@ -11,7 +11,7 @@ public class HammingWindow {
 
 		final float[] W = new float[N];
 		for (int n = 0; n < N; ++n) {
-			W[n] = alpha + (1 - alpha) * (float) Math.cos(2 * Math.PI * n / (float) N);
+			W[n] = alpha - (1 - alpha) * (float) Math.cos(2 * Math.PI * n / (float) N);
 		}
 
 		return W;
