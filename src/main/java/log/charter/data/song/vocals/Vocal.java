@@ -37,8 +37,8 @@ public class Vocal implements IFractionalPositionWithEnd {
 		this(position, endPosition, "", VocalFlag.NONE);
 	}
 
-	public Vocal(final String lyric) {
-		this(new FractionalPosition(), new FractionalPosition(), lyric, VocalFlag.NONE);
+	public Vocal(final String lyric, final VocalFlag flag) {
+		this(new FractionalPosition(), new FractionalPosition(), lyric, flag);
 	}
 
 	public Vocal(final FractionalPosition position, final FractionalPosition endPosition, final String lyric) {

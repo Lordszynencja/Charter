@@ -24,6 +24,6 @@ public class CopiedVocalPosition extends CopiedFractionalPositionWithEnd<Vocal> 
 	@Override
 	public Vocal prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
 			final boolean convertFromBeats) {
-		return new Vocal(text);
+		return new Vocal(text, flag);
 	}
 }
