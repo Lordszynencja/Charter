@@ -71,6 +71,8 @@ public class Config {
 
 	public static AudioSystemType audioSystemType = AudioSystemType.DEFAULT;
 	public static String audioSystemName = null;
+	public static int inChannel0Id = 0;
+	public static int inChannel1Id = 1;
 	public static int leftOutChannelId = 0;
 	public static int rightOutChannelId = 1;
 	public static SoundFileType baseAudioFormat = SoundFileType.WAV;
@@ -136,6 +138,8 @@ public class Config {
 		valueAccessors.put("audioSystemType", ValueAccessor.forString(v -> audioSystemType = AudioSystemType.valueOf(v),
 				() -> audioSystemType.name()));
 		valueAccessors.put("audioSystemName", ValueAccessor.forString(v -> audioSystemName = v, () -> audioSystemName));
+		valueAccessors.put("inChannel0Id", ValueAccessor.forInteger(v -> inChannel0Id = v, () -> inChannel0Id));
+		valueAccessors.put("inChannel1Id", ValueAccessor.forInteger(v -> inChannel1Id = v, () -> inChannel1Id));
 		valueAccessors.put("leftOutChannelId",
 				ValueAccessor.forInteger(v -> leftOutChannelId = v, () -> leftOutChannelId));
 		valueAccessors.put("rightOutChannelId",

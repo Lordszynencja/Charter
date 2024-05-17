@@ -13,6 +13,7 @@ import com.breakfastquay.rubberband.RubberBandStretcher;
 
 import log.charter.data.config.Config;
 import log.charter.io.Logger;
+import log.charter.sound.asio.ASIOHandler;
 import log.charter.sound.data.AudioData;
 import log.charter.sound.data.AudioUtils;
 import log.charter.sound.system.SoundSystem.ISoundSystem.ISoundLine;
@@ -59,9 +60,11 @@ public class SoundSystem {
 
 	public static void setCurrentSoundSystem() {
 		currentSoundSystem = switch (Config.audioSystemType) {
-			case ASIO -> new ASIOSoundSystem(Config.audioSystemName, Config.leftOutChannelId, Config.rightOutChannelId);
+			case ASIO -> new ASIOSoundSystem();
 			default -> new StandardSoundSystem();
 		};
+
+		ASIOHandler.refresh();
 	}
 
 	public static ISoundSystem getCurrentSoundSystem() {

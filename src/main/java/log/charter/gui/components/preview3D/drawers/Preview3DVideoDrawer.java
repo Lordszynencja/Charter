@@ -1,6 +1,8 @@
 package log.charter.gui.components.preview3D.drawers;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import org.lwjgl.opengl.GL30;
@@ -9,13 +11,14 @@ import log.charter.data.ChartData;
 import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.Texture;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
+import log.charter.sound.asio.ASIOHandler;
 
 public class Preview3DVideoDrawer {
 	@SuppressWarnings("unused")
 	private ChartData data;
 
-	private final BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-	private final boolean imageChanged = true;
+	private BufferedImage image = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+	private boolean imageChanged = true;
 	private BufferedTextureData bufferData = null;
 	private Texture texture = null;
 
@@ -31,6 +34,46 @@ public class Preview3DVideoDrawer {
 		texture = new Texture(image);
 	}
 
+	private void drawAudio(final Graphics2D graphics) {
+		graphics.setColor(Color.RED);
+		final float[] buffer = ASIOHandler.inputBuffer;
+		for (int i = 0; i < buffer.length - 1; i++) {
+			final int x0 = i * 1000 / (buffer.length - 1);
+			final int x1 = (i + 1) * 1000 / (buffer.length - 1);
+			final int y0 = (int) (buffer[i] * 400) + 500;
+			final int y1 = (int) (buffer[i + 1] * 400) + 500;
+
+			graphics.drawLine(x0, y0, x1, y1);
+		}
+	}
+
+	private void drawFFT(final Graphics2D graphics) {
+		graphics.setColor(Color.GREEN);
+		final double[] buffer = ASIOHandler.fft.magnitudes;
+		for (int i = 0; i < buffer.length - 1; i++) {
+			final int x0 = i * 1000 / (buffer.length - 1);
+			final int x1 = (i + 1) * 1000 / (buffer.length - 1);
+			final int y0 = (int) (buffer[i] * 400) + 500;
+			final int y1 = (int) (buffer[i + 1] * 400) + 500;
+
+			graphics.drawLine(x0, y0, x1, y1);
+		}
+	}
+
+	private void generateImage() {
+		final BufferedImage newImage = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+
+		final Graphics2D graphics = newImage.createGraphics();
+		graphics.clearRect(0, 0, 1000, 1000);
+		graphics.setStroke(new BasicStroke(10));
+
+		// drawAudio(graphics);
+		drawFFT(graphics);
+
+		image = newImage;
+		imageChanged = true;
+	}
+
 	private void playVideo() {
 		long nextFrameTime = System.nanoTime() + 16_666_666;
 
@@ -40,6 +83,8 @@ public class Preview3DVideoDrawer {
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
+
+			generateImage();
 
 			if (imageChanged) {
 				bufferData = new BufferedTextureData(image);

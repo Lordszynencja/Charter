@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
 	<artifactId>Charter</artifactId>
-	<version>0.17.0</version>
+	<version>0.17.1</version>
 	<packaging>jar</packaging>
 	<name>Charter</name>
 	<description>Charting program for guitar</description>
@@ -142,6 +142,16 @@
 			<groupId>org.jcodec</groupId>
 			<artifactId>jcodec-javase</artifactId>
 			<version>0.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>fftw-platform</artifactId>
+			<version>3.3.10-1.5.10</version>
 		</dependency>
 	</dependencies>
 	
