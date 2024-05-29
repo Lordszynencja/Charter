@@ -46,6 +46,7 @@ public abstract class PagedDialog extends RowedDialog {
 
 		this.pages.forEach(Page::hide);
 		if (!this.pages.isEmpty()) {
+			buttonGroup.getElements().nextElement().setSelected(true);
 			this.pages.get(0).show();
 		}
 

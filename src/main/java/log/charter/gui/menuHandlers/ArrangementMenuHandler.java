@@ -38,7 +38,8 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 	private void addArrangementsList(final JMenu menu) {
 		for (int i = 0; i < chartData.songChart.arrangements.size(); i++) {
 			final Arrangement arrangement = chartData.songChart.arrangements.get(i);
-			final String arrangementName = arrangement.getTypeNameLabel(i);
+			final String arrangementName = (i == chartData.currentArrangement ? "> " : "")
+					+ arrangement.getTypeNameLabel(i);
 
 			final int arrangementId = i;
 			menu.add(createItem(arrangementName, () -> modeManager.setArrangement(arrangementId)));
@@ -138,5 +139,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 		} else {
 			modeManager.setMode(EditMode.VOCALS);
 		}
+
+		charterMenuBar.refreshMenus();
 	}
 }

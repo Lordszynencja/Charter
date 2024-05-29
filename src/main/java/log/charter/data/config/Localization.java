@@ -48,6 +48,9 @@ public class Localization {
 		BUTTON_SAVE("Save"), //
 		CHANGE_AUDIO("Change audio"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
+		CONFIG_AUDIO("Audio"), //
+		CONFIG_DISPLAY("Display"), //
+		CONFIG_GENERAL("General"), //
 		CONFIG_PANE_TITLE("Config"), //
 		COPY("Copy"), //
 		COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT("Couldn't create folder with this name, please change the name"), //

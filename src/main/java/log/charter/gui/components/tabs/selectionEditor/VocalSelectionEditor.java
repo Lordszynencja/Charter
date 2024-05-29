@@ -40,6 +40,7 @@ public class VocalSelectionEditor {
 		selectionEditor.add(vocalText);
 
 		final JCheckBox vocalWordPartInput = new JCheckBox();
+		vocalWordPartInput.setFocusable(false);
 		vocalWordPartInput.addActionListener(a -> changeWordPart(vocalWordPartInput.isSelected()));
 		vocalWordPart = new FieldWithLabel<>(Label.VOCAL_PANE_WORD_PART, 100, 20, 20, vocalWordPartInput,
 				LabelPosition.LEFT);
@@ -47,6 +48,7 @@ public class VocalSelectionEditor {
 		selectionEditor.add(vocalWordPart);
 
 		final JCheckBox vocalPhraseEndInput = new JCheckBox();
+		vocalPhraseEndInput.setFocusable(false);
 		vocalPhraseEndInput.addActionListener(a -> changePhraseEnd(vocalPhraseEndInput.isSelected()));
 		vocalPhraseEnd = new FieldWithLabel<>(Label.VOCAL_PANE_PHRASE_END, 100, 20, 20, vocalPhraseEndInput,
 				LabelPosition.LEFT);

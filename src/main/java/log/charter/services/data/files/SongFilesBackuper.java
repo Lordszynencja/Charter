@@ -47,7 +47,9 @@ public class SongFilesBackuper implements Initiable {
 		new Thread(() -> {
 			while (true) {
 				try {
-					Thread.sleep(Config.backupDelay * 1000);
+					if (Config.backupDelay > 0) {
+						Thread.sleep(Config.backupDelay * 1000);
+					}
 				} catch (final InterruptedException e) {
 					e.printStackTrace();
 				}

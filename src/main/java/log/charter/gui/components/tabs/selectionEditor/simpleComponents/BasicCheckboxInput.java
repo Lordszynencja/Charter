@@ -19,6 +19,7 @@ public class BasicCheckboxInput {
 	public static FieldWithLabel<JCheckBox> addField(final RowedPanel parent, final Label label,
 			final RowedPosition position, final int labelWidth, final Consumer<Boolean> onChange) {
 		final JCheckBox input = new JCheckBox();
+		input.setFocusable(false);
 		input.addActionListener(a -> onChange.accept(input.isSelected()));
 		final FieldWithLabel<JCheckBox> field = new FieldWithLabel<>(label, labelWidth, 20, 20, input,
 				LabelPosition.LEFT_CLOSE);

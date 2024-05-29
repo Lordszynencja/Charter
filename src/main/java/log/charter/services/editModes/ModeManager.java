@@ -72,6 +72,7 @@ public class ModeManager implements Initiable {
 		setLevel(0);
 		setMode(EditMode.GUITAR);
 
+		charterMenuBar.refreshMenus();
 		charterFrame.updateSizes();
 	}
 

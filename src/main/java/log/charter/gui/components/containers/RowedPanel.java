@@ -188,6 +188,7 @@ public class RowedPanel extends JPanel {
 	private <T extends Enum<T>> JToggleButton addToggleButton(final ButtonGroup group, final RowedPosition position,
 			final int width, final Pair<T, Label> value, final Consumer<T> setter, final boolean selected) {
 		final JToggleButton toggleButton = new JToggleButton(value.b.label());
+		toggleButton.setFocusable(false);
 		toggleButton.setActionCommand(value.a.name());
 		toggleButton.addActionListener(a -> setter.accept(value.a));
 		toggleButton.setSelected(selected);

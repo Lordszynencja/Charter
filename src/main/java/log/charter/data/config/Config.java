@@ -94,7 +94,6 @@ public class Config {
 	public static boolean invertStrings3D = false;
 	public static boolean leftHanded = false;
 	public static boolean showChordIds = true;
-	public static boolean createDefaultStretchesInBackground = true;
 	public static int frets = 28;
 	public static int maxStrings = 9;
 	public static int maxBendValue = 6;// in half steps
@@ -171,8 +170,6 @@ public class Config {
 				ValueAccessor.forBoolean(v -> invertStrings3D = v, () -> invertStrings3D));
 		valueAccessors.put("leftHanded", ValueAccessor.forBoolean(v -> leftHanded = v, () -> leftHanded));
 		valueAccessors.put("showChordIds", ValueAccessor.forBoolean(v -> showChordIds = v, () -> showChordIds));
-		valueAccessors.put("createDefaultStretchesInBackground", ValueAccessor
-				.forBoolean(v -> createDefaultStretchesInBackground = v, () -> createDefaultStretchesInBackground));
 		valueAccessors.put("frets", ValueAccessor.forInteger(v -> frets = v, () -> frets));
 		valueAccessors.put("maxBendValue", ValueAccessor.forInteger(v -> maxBendValue = v, () -> maxBendValue));
 		valueAccessors.put("FPS", ValueAccessor.forInteger(v -> FPS = v, () -> FPS));

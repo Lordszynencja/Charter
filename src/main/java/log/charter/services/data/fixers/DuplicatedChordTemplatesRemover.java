@@ -14,18 +14,20 @@ public class DuplicatedChordTemplatesRemover {
 		arrangement.chordTemplates.remove(removedId);
 		for (final Level level : arrangement.levels) {
 			for (final ChordOrNote chordOrNote : level.sounds) {
-				if (!chordOrNote.isChord() || chordOrNote.chord().templateId() != removedId) {
+				if (!chordOrNote.isChord() || chordOrNote.chord().templateId() < removedId) {
 					continue;
 				}
 
-				chordOrNote.chord().updateTemplate(replacementId, arrangement.chordTemplates.get(replacementId));
+				final int templateId = chordOrNote.chord().templateId() == removedId ? replacementId
+						: chordOrNote.chord().templateId() - 1;
+				chordOrNote.chord().updateTemplate(templateId, arrangement.chordTemplates.get(templateId));
 			}
 			for (final HandShape handShape : level.handShapes) {
-				if (handShape.templateId != removedId) {
+				if (handShape.templateId < removedId) {
 					continue;
 				}
 
-				handShape.templateId = replacementId;
+				handShape.templateId = handShape.templateId == removedId ? replacementId : handShape.templateId - 1;
 			}
 		}
 	}
