@@ -109,6 +109,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		for (int i = 0; i < maxStrings; i++) {
 			final int string = i;
 			final JCheckBox stringCheckbox = new JCheckBox((string + 1) + "");
+			stringCheckbox.setFocusable(false);
 			stringCheckbox.addActionListener(e -> updateStringSelectionDependentValues());
 			parent.addWithSettingSize(stringCheckbox, position.getAndAddX(40), position.getY(), 40, 20);
 			strings.add(stringCheckbox);
@@ -116,7 +117,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void addMuteInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
-		mute = new ToggleButtonGroupInRow<Mute>(parent, position, 65, Label.MUTE, //
+		mute = new ToggleButtonGroupInRow<>(parent, position, 65, Label.MUTE, //
 				makeChangeForCommonNotes(NoteInterface::mute), //
 				asList(new Pair<>(Mute.NONE, Label.MUTE_NONE), //
 						new Pair<>(Mute.FULL, Label.MUTE_FULL), //
@@ -157,11 +158,13 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void addUnpitchedSlideInput(final CurrentSelectionEditor parent, final RowedPosition position) {
 		final JCheckBox unpitchedSlideInput = new JCheckBox();
+		unpitchedSlideInput.setFocusable(false);
 		final Consumer<Boolean> onInputValueChange = makeChangeForCommonNotes(
 				(final CommonNote note, final Boolean value) -> note.unpitchedSlide(value));
 		unpitchedSlideInput.addActionListener(a -> onInputValueChange.accept(unpitchedSlideInput.isSelected()));
 		unpitchedSlide = new FieldWithLabel<>(Label.SLIDE_PANE_UNPITCHED, 80, 20, 20, unpitchedSlideInput,
 				LabelPosition.RIGHT_CLOSE);
+
 		parent.add(unpitchedSlide, position);
 	}
 

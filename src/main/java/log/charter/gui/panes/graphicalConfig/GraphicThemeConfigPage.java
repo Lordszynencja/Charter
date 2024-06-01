@@ -94,8 +94,6 @@ public class GraphicThemeConfigPage implements Page {
 		position.newRow();
 
 		addScrollSpeedFieldField(panel, position);
-
-		hide();
 	}
 
 	private void addThemePicker(final RowedPanel panel, final RowedPosition position) {
@@ -236,31 +234,17 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	@Override
-	public void show() {
-		themeField.setVisible(true);
-		eventsChangeHeightField.setVisible(true);
-		toneChangeHeightField.setVisible(true);
-		anchorInfoHeightField.setVisible(true);
-		noteHeightField.setVisible(true);
-		noteWidthField.setVisible(theme != Theme.MODERN);
-		chordHeightField.setVisible(true);
-		handShapesHeightField.setVisible(true);
-		timingHeightField.setVisible(true);
-		previewScrollSpeedField.setVisible(true);
-	}
-
-	@Override
-	public void hide() {
-		themeField.setVisible(false);
-		eventsChangeHeightField.setVisible(false);
-		toneChangeHeightField.setVisible(false);
-		anchorInfoHeightField.setVisible(false);
-		noteHeightField.setVisible(false);
-		noteWidthField.setVisible(false);
-		chordHeightField.setVisible(false);
-		handShapesHeightField.setVisible(false);
-		timingHeightField.setVisible(false);
-		previewScrollSpeedField.setVisible(false);
+	public void setVisible(final boolean visibility) {
+		themeField.setVisible(visibility);
+		eventsChangeHeightField.setVisible(visibility);
+		toneChangeHeightField.setVisible(visibility);
+		anchorInfoHeightField.setVisible(visibility);
+		noteHeightField.setVisible(visibility);
+		noteWidthField.setVisible(visibility && theme != Theme.MODERN);
+		chordHeightField.setVisible(visibility);
+		handShapesHeightField.setVisible(visibility);
+		timingHeightField.setVisible(visibility);
+		previewScrollSpeedField.setVisible(visibility);
 	}
 
 	public void save() {

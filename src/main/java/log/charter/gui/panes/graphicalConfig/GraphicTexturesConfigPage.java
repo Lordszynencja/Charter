@@ -32,8 +32,6 @@ public class GraphicTexturesConfigPage implements Page {
 		position.newRow();
 
 		addTexturePackSelect(panel, position);
-
-		hide();
 	}
 
 	private void addInlaySelect(final RowedPanel panel, final RowedPosition position) {
@@ -55,15 +53,9 @@ public class GraphicTexturesConfigPage implements Page {
 	}
 
 	@Override
-	public void show() {
-		inlayField.setVisible(true);
-		texturePackField.setVisible(true);
-	}
-
-	@Override
-	public void hide() {
-		inlayField.setVisible(false);
-		texturePackField.setVisible(false);
+	public void setVisible(final boolean visibility) {
+		inlayField.setVisible(visibility);
+		texturePackField.setVisible(visibility);
 	}
 
 	public void save(final CharterContext context) {

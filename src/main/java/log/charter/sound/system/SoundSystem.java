@@ -59,7 +59,7 @@ public class SoundSystem {
 	private static ISoundSystem currentSoundSystem = new StandardSoundSystem();
 
 	public static void setCurrentSoundSystem() {
-		currentSoundSystem = switch (Config.audioSystemType) {
+		currentSoundSystem = switch (Config.audioOutSystemType) {
 			case ASIO -> new ASIOSoundSystem();
 			default -> new StandardSoundSystem();
 		};

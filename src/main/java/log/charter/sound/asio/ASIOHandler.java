@@ -44,8 +44,8 @@ public class ASIOHandler {
 			asioDriver = null;
 		}
 
-		if (Config.audioSystemName != null) {
-			asioDriver = AsioDriver.getDriver(Config.audioSystemName);
+		if (Config.audioOutSystemName != null) {
+			asioDriver = AsioDriver.getDriver(Config.audioOutSystemName);
 		}
 	}
 
@@ -120,6 +120,7 @@ public class ASIOHandler {
 
 		bufferSize = asioDriver.getBufferPreferredSize();
 		desiredFill = (int) (Config.audioBufferMs * asioDriver.getSampleRate() / 1000);
+		sampleRate = asioDriver.getSampleRate();
 
 		final Set<AsioChannel> channels = new HashSet<>(Set.of(outputChannels));
 		channels.addAll(Set.of(inputChannels));

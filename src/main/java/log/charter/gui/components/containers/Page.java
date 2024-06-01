@@ -8,7 +8,5 @@ public interface Page {
 
 	Label label();
 
-	void show();
-
-	void hide();
+	void setVisible(boolean visibility);
 }
