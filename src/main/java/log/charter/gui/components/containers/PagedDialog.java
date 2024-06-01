@@ -13,14 +13,25 @@ import log.charter.gui.components.utils.RowedPosition;
 public abstract class PagedDialog extends RowedDialog {
 	private static final long serialVersionUID = -3193534671039163160L;
 
+	private Page currentPage = null;
+
 	private final List<Page> pages = new ArrayList<>();
+
+	private void setCurrentPage(final Page page) {
+		if (page == currentPage) {
+			return;
+		}
+
+		if (currentPage != null) {
+			currentPage.setVisible(false);
+		}
+		page.setVisible(true);
+		currentPage = page;
+	}
 
 	private void addPage(final RowedPosition position, final Page page, final ButtonGroup buttonGroup) {
 		final JToggleButton themeConfigSwitch = new JToggleButton(page.label().label());
-		themeConfigSwitch.addActionListener(e -> {
-			pages.forEach(Page::hide);
-			page.show();
-		});
+		themeConfigSwitch.addActionListener(e -> setCurrentPage(page));
 		buttonGroup.add(themeConfigSwitch);
 		panel.addWithSettingSize(themeConfigSwitch, position.getAndAddX(120), position.getY(), 100, 20);
 
@@ -44,10 +55,10 @@ public abstract class PagedDialog extends RowedDialog {
 			position.newRow();
 		}
 
-		this.pages.forEach(Page::hide);
+		this.pages.forEach(p -> p.setVisible(false));
 		if (!this.pages.isEmpty()) {
 			buttonGroup.getElements().nextElement().setSelected(true);
-			this.pages.get(0).show();
+			setCurrentPage(this.pages.get(0));
 		}
 
 		addDefaultFinish(position.getY(), this::save, this::cancel, false);

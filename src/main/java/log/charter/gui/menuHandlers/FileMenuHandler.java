@@ -10,7 +10,6 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.ShortcutConfigPane;
 import log.charter.gui.panes.colorConfig.ColorConfigPane;
 import log.charter.gui.panes.graphicalConfig.GraphicConfigPane;
-import log.charter.gui.panes.programConfig.ConfigPane;
 import log.charter.gui.panes.programConfig.ProgramConfigPane;
 import log.charter.services.Action;
 import log.charter.services.ActionHandler;
@@ -73,7 +72,6 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 		}
 
 		menu.addSeparator();
-		menu.add(createItem(Label.FILE_MENU_OPTIONS, () -> new ConfigPane(charterFrame, framer)));
 		menu.add(
 				createItem(Label.FILE_MENU_OPTIONS, () -> new ProgramConfigPane(charterFrame, charterContext, framer)));
 		menu.add(createItem(Label.SHORTCUT_CONFIG, () -> new ShortcutConfigPane(charterMenuBar, charterFrame)));

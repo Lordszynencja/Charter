@@ -28,8 +28,6 @@ public class GraphicChartMapConfigPage implements Page {
 	@Override
 	public void init(final RowedPanel panel, final RowedPosition position) {
 		addChartMapHeightMultiplierInput(panel, position);
-
-		hide();
 	}
 
 	private void addChartMapHeightMultiplierInput(final RowedPanel panel, final RowedPosition position) {
@@ -44,13 +42,8 @@ public class GraphicChartMapConfigPage implements Page {
 	}
 
 	@Override
-	public void show() {
-		chartMapHeightMultiplierField.setVisible(true);
-	}
-
-	@Override
-	public void hide() {
-		chartMapHeightMultiplierField.setVisible(false);
+	public void setVisible(final boolean visibility) {
+		chartMapHeightMultiplierField.setVisible(visibility);
 	}
 
 	public void save() {

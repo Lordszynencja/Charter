@@ -69,12 +69,17 @@ public class Config {
 	public static String rubberbandPath;
 	public static String oggEncPath;
 
-	public static AudioSystemType audioSystemType = AudioSystemType.DEFAULT;
-	public static String audioSystemName = null;
-	public static int inChannel0Id = 0;
-	public static int inChannel1Id = 1;
+	public static AudioSystemType audioOutSystemType = AudioSystemType.DEFAULT;
+	public static String audioOutSystemName = null;
 	public static int leftOutChannelId = 0;
 	public static int rightOutChannelId = 1;
+	public static AudioSystemType audioIn0SystemType = AudioSystemType.DEFAULT;
+	public static String audioIn0SystemName = null;
+	public static int inChannel0Id = 0;
+	public static AudioSystemType audioIn1SystemType = AudioSystemType.DEFAULT;
+	public static String audioIn1SystemName = null;
+	public static int inChannel1Id = 1;
+
 	public static SoundFileType baseAudioFormat = SoundFileType.WAV;
 	public static int audioBufferSize = 2048;
 	public static int audioBufferMs = 10;
@@ -134,15 +139,24 @@ public class Config {
 		valueAccessors.put("lastPath", ValueAccessor.forString(v -> lastPath = v, () -> lastPath));
 		valueAccessors.put("musicPath", ValueAccessor.forString(v -> musicPath = v, () -> musicPath));
 		valueAccessors.put("songsPath", ValueAccessor.forString(v -> songsPath = v, () -> songsPath));
-		valueAccessors.put("audioSystemType", ValueAccessor.forString(v -> audioSystemType = AudioSystemType.valueOf(v),
-				() -> audioSystemType.name()));
-		valueAccessors.put("audioSystemName", ValueAccessor.forString(v -> audioSystemName = v, () -> audioSystemName));
-		valueAccessors.put("inChannel0Id", ValueAccessor.forInteger(v -> inChannel0Id = v, () -> inChannel0Id));
-		valueAccessors.put("inChannel1Id", ValueAccessor.forInteger(v -> inChannel1Id = v, () -> inChannel1Id));
+		valueAccessors.put("audioOutSystemType", ValueAccessor
+				.forString(v -> audioOutSystemType = AudioSystemType.valueOf(v), () -> audioOutSystemType.name()));
+		valueAccessors.put("audioOutSystemName",
+				ValueAccessor.forString(v -> audioOutSystemName = v, () -> audioOutSystemName));
 		valueAccessors.put("leftOutChannelId",
 				ValueAccessor.forInteger(v -> leftOutChannelId = v, () -> leftOutChannelId));
 		valueAccessors.put("rightOutChannelId",
 				ValueAccessor.forInteger(v -> rightOutChannelId = v, () -> rightOutChannelId));
+		valueAccessors.put("audioIn0SystemType", ValueAccessor
+				.forString(v -> audioIn0SystemType = AudioSystemType.valueOf(v), () -> audioIn0SystemType.name()));
+		valueAccessors.put("audioIn0SystemName",
+				ValueAccessor.forString(v -> audioIn0SystemName = v, () -> audioIn0SystemName));
+		valueAccessors.put("inChannel0Id", ValueAccessor.forInteger(v -> inChannel0Id = v, () -> inChannel0Id));
+		valueAccessors.put("audioIn1SystemType", ValueAccessor
+				.forString(v -> audioIn1SystemType = AudioSystemType.valueOf(v), () -> audioIn1SystemType.name()));
+		valueAccessors.put("audioIn1SystemName",
+				ValueAccessor.forString(v -> audioIn1SystemName = v, () -> audioIn1SystemName));
+		valueAccessors.put("inChannel1Id", ValueAccessor.forInteger(v -> inChannel1Id = v, () -> inChannel1Id));
 		valueAccessors.put("baseAudioFormat",
 				ValueAccessor.forString(v -> baseAudioFormat = SoundFileType.valueOf(v), () -> baseAudioFormat.name()));
 		valueAccessors.put("audioBufferSize",

@@ -182,31 +182,17 @@ public class ProgramGeneralConfigPage implements Page {
 	}
 
 	@Override
-	public void show() {
-		musicPathField.setVisible(true);
-		musicFolderPickerButton.setVisible(true);
-		songsPathField.setVisible(true);
-		songsFolderPickerButton.setVisible(true);
-		minNoteDistanceFactorField.setVisible(true);
-		minNoteDistanceTypeField.setVisible(true);
-		minTailLengthFactorField.setVisible(true);
-		minTailLengthTypeField.setVisible(true);
-		selectNotesByTailsField.setVisible(true);
-		backupDelayField.setVisible(true);
-	}
-
-	@Override
-	public void hide() {
-		musicPathField.setVisible(false);
-		musicFolderPickerButton.setVisible(false);
-		songsPathField.setVisible(false);
-		songsFolderPickerButton.setVisible(false);
-		minNoteDistanceFactorField.setVisible(false);
-		minNoteDistanceTypeField.setVisible(false);
-		minTailLengthFactorField.setVisible(false);
-		minTailLengthTypeField.setVisible(false);
-		selectNotesByTailsField.setVisible(false);
-		backupDelayField.setVisible(false);
+	public void setVisible(final boolean visibility) {
+		musicPathField.setVisible(visibility);
+		musicFolderPickerButton.setVisible(visibility);
+		songsPathField.setVisible(visibility);
+		songsFolderPickerButton.setVisible(visibility);
+		minNoteDistanceFactorField.setVisible(visibility);
+		minNoteDistanceTypeField.setVisible(visibility);
+		minTailLengthFactorField.setVisible(visibility);
+		minTailLengthTypeField.setVisible(visibility);
+		selectNotesByTailsField.setVisible(visibility);
+		backupDelayField.setVisible(visibility);
 	}
 
 	public void save() {

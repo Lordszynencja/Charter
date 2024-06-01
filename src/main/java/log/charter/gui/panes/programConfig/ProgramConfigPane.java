@@ -10,7 +10,6 @@ import log.charter.services.utils.Framer;
 public class ProgramConfigPane extends PagedDialog {
 	private static final long serialVersionUID = -3193534671039163160L;
 
-	private final CharterContext context;
 	private final Framer framer;
 
 	private final ProgramGeneralConfigPage generalConfig;
@@ -27,7 +26,6 @@ public class ProgramConfigPane extends PagedDialog {
 			final ProgramDisplayConfigPage displayConfig) {
 		super(charterFrame, Label.CONFIG_PANE_TITLE, generalConfig, audioConfig, displayConfig);
 
-		this.context = context;
 		this.framer = framer;
 
 		this.generalConfig = generalConfig;

@@ -123,25 +123,14 @@ public class ProgramDisplayConfigPage implements Page {
 	}
 
 	@Override
-	public void show() {
-		markerOffsetField.setVisible(true);
-		invertStringsField.setVisible(true);
-		invertStrings3DField.setVisible(true);
-		leftHandedField.setVisible(true);
-		showChordIdsField.setVisible(true);
-		showGridField.setVisible(true);
-		FPSField.setVisible(true);
-	}
-
-	@Override
-	public void hide() {
-		markerOffsetField.setVisible(false);
-		invertStringsField.setVisible(false);
-		invertStrings3DField.setVisible(false);
-		leftHandedField.setVisible(false);
-		showChordIdsField.setVisible(false);
-		showGridField.setVisible(false);
-		FPSField.setVisible(false);
+	public void setVisible(final boolean visibility) {
+		markerOffsetField.setVisible(visibility);
+		invertStringsField.setVisible(visibility);
+		invertStrings3DField.setVisible(visibility);
+		leftHandedField.setVisible(visibility);
+		showChordIdsField.setVisible(visibility);
+		showGridField.setVisible(visibility);
+		FPSField.setVisible(visibility);
 	}
 
 	public void save() {
