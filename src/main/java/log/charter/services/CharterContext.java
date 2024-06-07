@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
-import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanel;
@@ -52,9 +50,10 @@ import log.charter.services.mouseAndKeyboard.HighlightManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
-import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 import log.charter.services.utils.AudioFramer;
 import log.charter.services.utils.Framer;
+import log.charter.util.ConfigAutoSaver;
+import log.charter.util.ExitActions;
 
 @SuppressWarnings("unused")
 public class CharterContext {
@@ -177,21 +176,11 @@ public class CharterContext {
 		}
 
 		audioFramer.start();
-		framer.start();
+		framer.start("Main frames");
 
-		new Thread(() -> {
-			try {
-				while (true) {
-					Config.save();
-					GraphicalConfig.save();
-					ShortcutConfig.save();
+		ConfigAutoSaver.startConfigSavingThread();
 
-					Thread.sleep(1000);
-				}
-			} catch (final InterruptedException e) {
-				Logger.error("Error in config save thread", e);
-			}
-		}).start();
+		ExitActions.addOnExit(this::onExit);
 
 		charterFrame.finishInitAndShow();
 	}
@@ -201,6 +190,10 @@ public class CharterContext {
 	}
 
 	private void frame(final double frameTime) {
+		if (!charterFrame.isFocused()) {
+			return;
+		}
+
 		try {
 			titleUpdater.updateTitle();
 			repeatManager.frame();
@@ -208,6 +201,7 @@ public class CharterContext {
 
 			windowedPreviewHandler.paintFrame();
 			charterFrame.repaint();
+
 		} catch (final Exception e) {
 			Logger.error("Exception in frame()", e);
 		}
@@ -236,6 +230,10 @@ public class CharterContext {
 			return;
 		}
 
+		onExit();
+	}
+
+	private void onExit() {
 		audioFramer.stop();
 		framer.stop();
 		charterFrame.dispose();

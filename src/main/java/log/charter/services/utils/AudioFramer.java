@@ -11,6 +11,7 @@ public class AudioFramer implements Initiable {
 	@Override
 	public void init() {
 		thread = new Thread(this::run);
+		thread.setName("Audio framer");
 	}
 
 	public void start() {
@@ -26,13 +27,13 @@ public class AudioFramer implements Initiable {
 	}
 
 	private void run() {
-		try {
-			while (true) {
-				audioFrame();
+		while (!thread.isInterrupted()) {
+			audioFrame();
+			try {
 				Thread.sleep(0, 100_000);
+			} catch (final InterruptedException e) {
+				return;
 			}
-		} catch (final InterruptedException e) {
-			Logger.info("Audio framer exiting");
 		}
 	}
 

@@ -30,6 +30,8 @@ public class SoundSystem {
 			void stop();
 
 			boolean wantsMoreData();
+
+			boolean stopped();
 		}
 
 		public static class EmptySoundLine implements ISoundLine {
@@ -48,6 +50,11 @@ public class SoundSystem {
 
 			@Override
 			public boolean wantsMoreData() {
+				return true;
+			}
+
+			@Override
+			public boolean stopped() {
 				return true;
 			}
 

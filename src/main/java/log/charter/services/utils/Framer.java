@@ -46,16 +46,18 @@ public class Framer {
 		Thread.sleep(milis, nanos);
 	}
 
-	public void start() {
+	public void start(final String name) {
 		thread = new Thread(() -> {
-			try {
-				while (true) {
-					runnable.accept((frameTime - previousFrameTime) / scale);
+			while (!thread.isInterrupted()) {
+				runnable.accept((frameTime - previousFrameTime) / scale);
+				try {
 					sleepUntilNextFrame();
+				} catch (final InterruptedException e) {
+					return;
 				}
-			} catch (final InterruptedException e) {
 			}
 		});
+		thread.setName(name);
 		thread.start();
 	}
 
