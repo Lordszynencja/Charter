@@ -130,6 +130,7 @@ public class ArrangementFixer {
 	public void fixNoteLength(final CommonNote note, final int id, final List<ChordOrNote> sounds) {
 		if (note.linkNext()) {
 			LinkedNotesFixer.fixLinkedNote(note, id, sounds);
+			WrongBendPositionRemover.fixBends(note);
 			return;
 		}
 
@@ -149,6 +150,7 @@ public class ArrangementFixer {
 		endPosition = min(endPosition, chartTimeHandler.maxTimeFractional());
 
 		note.endPosition(max(note.position(), endPosition).position());
+		WrongBendPositionRemover.fixBends(note);
 	}
 
 	public void fixSoundLength(final int id, final List<ChordOrNote> sounds) {
