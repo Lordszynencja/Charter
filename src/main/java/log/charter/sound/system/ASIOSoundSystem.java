@@ -16,6 +16,7 @@ public class ASIOSoundSystem implements ISoundSystem {
 	public class ASIOSoundLine implements ISoundLine {
 		private final AudioFormat format;
 		private final FloatQueue[] channels;
+		private boolean stopped = false;
 
 		private ASIOSoundLine(final AudioFormat format) throws LineUnavailableException {
 			this.format = format;
@@ -67,6 +68,8 @@ public class ASIOSoundSystem implements ISoundSystem {
 
 		@Override
 		public void close() {
+			stopped = true;
+
 			for (int i = 0; i < channels.length; i++) {
 				channels[i].close();
 			}
@@ -83,9 +86,16 @@ public class ASIOSoundSystem implements ISoundSystem {
 
 		@Override
 		public void stop() {
+			stopped = true;
+
 			for (int i = 0; i < channels.length; i++) {
 				channels[i].close();
 			}
+		}
+
+		@Override
+		public boolean stopped() {
+			return stopped;
 		}
 	}
 

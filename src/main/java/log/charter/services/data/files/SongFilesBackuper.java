@@ -44,7 +44,7 @@ public class SongFilesBackuper implements Initiable {
 
 	@Override
 	public void init() {
-		new Thread(() -> {
+		final Thread t = new Thread(() -> {
 			while (true) {
 				try {
 					if (Config.backupDelay > 0) {
@@ -56,7 +56,11 @@ public class SongFilesBackuper implements Initiable {
 
 				makeDefaultBackups();
 			}
-		}).start();
+		});
+
+		t.setName("Song files backupper");
+
+		t.start();
 	}
 
 	private void makeDefaultBackups() {

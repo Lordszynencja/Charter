@@ -101,7 +101,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		addKeyListener(keyboardHandler);
 
 		cameraUpdater = new Framer(cameraHandler::updateFretFocus, 100);
-		cameraUpdater.start();
+		cameraUpdater.start("Fret focus updater");
 	}
 
 	@Override

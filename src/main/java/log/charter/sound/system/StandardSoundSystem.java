@@ -15,6 +15,7 @@ public class StandardSoundSystem implements ISoundSystem {
 	public class StandardSoundLine implements ISoundLine {
 		private final SourceDataLine line;
 		private final int maxBytes;
+		private boolean stopped = false;
 
 		private StandardSoundLine(final AudioFormat format) throws LineUnavailableException {
 			maxBytes = (int) (format.getFrameRate() * format.getFrameSize() * Config.audioBufferMs / 1000);
@@ -45,14 +46,23 @@ public class StandardSoundSystem implements ISoundSystem {
 
 		@Override
 		public void close() {
+			stopped = true;
+
 			line.drain();
 			line.close();
 		}
 
 		@Override
 		public void stop() {
+			stopped = true;
+
 			line.flush();
 			line.close();
+		}
+
+		@Override
+		public boolean stopped() {
+			return stopped;
 		}
 
 	}

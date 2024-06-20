@@ -34,6 +34,7 @@ import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
+import log.charter.util.ExitActions;
 
 public class ChartMap extends Component implements Initiable, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
@@ -45,6 +46,8 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 	private ModeManager modeManager;
 
 	private BufferedImage background = null;
+
+	private Thread imageMakerThread;
 
 	private BufferedImage createBackground() {
 		final BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -85,8 +88,8 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 		addMouseListener(this);
 		addMouseMotionListener(this);
 
-		new Thread(() -> {
-			while (true) {
+		imageMakerThread = new Thread(() -> {
+			while (!imageMakerThread.isInterrupted()) {
 				try {
 					background = createBackground();
 				} catch (final Exception e) {
@@ -94,12 +97,16 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 				}
 
 				try {
-					Thread.sleep(100);
+					Thread.sleep(1000);
 				} catch (final InterruptedException e) {
-					e.printStackTrace();
+					return;
 				}
 			}
-		}).start();
+		});
+		imageMakerThread.setName("Chart map painter");
+		imageMakerThread.start();
+
+		ExitActions.addOnExit(() -> imageMakerThread.interrupt());
 	}
 
 	private int positionToTime(int p) {

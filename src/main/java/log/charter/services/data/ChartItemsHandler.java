@@ -16,6 +16,7 @@ import log.charter.data.ChartData;
 import log.charter.data.song.Anchor;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.BendValue;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
@@ -104,7 +105,12 @@ public class ChartItemsHandler {
 
 	private void snapNotePositions(final Stream<ChordOrNote> positions) {
 		final List<ChordOrNote> sounds = chartData.currentSounds();
+		final List<BendValue> bends = sounds.stream()//
+				.flatMap(c -> c.isNote() ? c.note().bendValues.stream()
+						: c.chord().chordNotes.values().stream().flatMap(n -> n.bendValues.stream()))//
+				.collect(Collectors.toList());
 
+		snapPositions(bends.stream(), bends);
 		snapPositions(positions, sounds);
 		arrangementFixer.fixNoteLengths(sounds);
 	}

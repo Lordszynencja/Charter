@@ -155,9 +155,11 @@ public class Preview3DBeatsDrawer {
 			int fret = 0;
 			int i = 0;
 			while (fret <= Config.frets) {
-				fret += dottedFretDistances[i = (i + 1) % dottedFretDistances.length];
+				fret += dottedFretDistances[i];
 				final boolean fretHighlight = fretsRange != null && fret >= fretsRange.min && fret <= fretsRange.max;
 				fretsToDraw.add(new FretDrawData(beat.time, fret, false, fretHighlight));
+
+				i = (i + 1) % dottedFretDistances.length;
 			}
 		}
 	}

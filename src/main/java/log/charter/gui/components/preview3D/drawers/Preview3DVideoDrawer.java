@@ -12,6 +12,7 @@ import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.Texture;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.sound.asio.ASIOHandler;
+import log.charter.util.ExitActions;
 
 public class Preview3DVideoDrawer {
 	@SuppressWarnings("unused")
@@ -21,13 +22,17 @@ public class Preview3DVideoDrawer {
 	private boolean imageChanged = true;
 	private BufferedTextureData bufferData = null;
 	private Texture texture = null;
+	private Thread videoPlayingThread;
 
 	public void init(final ChartData data) {
 		this.data = data;
 
 		image.setRGB(0, 0, 0);
 
-		new Thread(this::playVideo).start();
+		videoPlayingThread = new Thread(this::playVideo, "3D Video drawer");
+		videoPlayingThread.start();
+
+		ExitActions.addOnExit(() -> videoPlayingThread.interrupt());
 	}
 
 	public void initGL() {
@@ -77,17 +82,18 @@ public class Preview3DVideoDrawer {
 	private void playVideo() {
 		long nextFrameTime = System.nanoTime() + 16_666_666;
 
-		while (true) {
+		while (!videoPlayingThread.isInterrupted()) {
 			try {
 				Thread.sleep(Math.max(0, (nextFrameTime - System.nanoTime()) / 1_000_000));
 			} catch (final InterruptedException e) {
-				e.printStackTrace();
+				return;
 			}
 
-			generateImage();
+			// generateImage();
 
 			if (imageChanged) {
 				bufferData = new BufferedTextureData(image);
+				imageChanged = false;
 			}
 			nextFrameTime += 16_666_666;
 		}

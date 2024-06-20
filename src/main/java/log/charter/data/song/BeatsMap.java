@@ -11,7 +11,7 @@ import java.util.ListIterator;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
@@ -235,11 +235,14 @@ public class BeatsMap {
 				sound.position(sound.position().add(toAdd));
 
 				if (sound.isChord()) {
-					final Chord chord = sound.chord();
-					chord.chordNotes.values().forEach(n -> n.endPosition(n.endPosition().add(toAdd)));
+					for (final ChordNote chordNote : sound.chord().chordNotes.values()) {
+						chordNote.endPosition(chordNote.endPosition().add(toAdd));
+						chordNote.bendValues.forEach(b -> b.position(b.position().add(toAdd)));
+					}
 				} else {
 					final Note note = sound.note();
 					note.endPosition(note.endPosition().add(toAdd));
+					note.bendValues.forEach(b -> b.position(b.position().add(toAdd)));
 				}
 			}
 		}
