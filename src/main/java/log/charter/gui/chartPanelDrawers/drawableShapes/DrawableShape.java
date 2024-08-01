@@ -145,4 +145,10 @@ public interface DrawableShape {
 	public static DrawableShape clippedShapes(final ShapePositionWithSize position, final List<DrawableShape> shapes) {
 		return new ClippedShapes(position, shapes);
 	}
+	
+	// Sine
+	public static DrawableShape sine(final Position2D from, final int length, final int amplitude, final int phase, final int period, final Color color, final int thickness)
+	{
+		return new Sine(from, length, amplitude, phase, period, color, thickness);
+	}
 }
