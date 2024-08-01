@@ -139,17 +139,38 @@ public class ModernThemeNoteTails {
 						new Position2D(fragmentX, y2 + 2)));
 				fragmentX += fragmentSize;
 			}
-
-			data.noteTails.add(filledPolygon(color.brighter(), //
-					new Position2D(fragmentX, y0), //
-					new Position2D(x + length, y1), //
-					new Position2D(x + length, y3), //
-					new Position2D(fragmentX, y2)));
-			data.noteTails.add(filledPolygon(color, //
-					new Position2D(fragmentX, y0 - 2), //
-					new Position2D(x + length - 1, y1 - 2), //
-					new Position2D(x + length - 1, y3 + 2), //
-					new Position2D(fragmentX, y2 + 2)));
+			
+			// Add another partial fragment
+			if (fragmentX <= x + length - fragmentSize / 2) {
+				data.noteTails.add(filledPolygon(color.brighter(), //
+						new Position2D(fragmentX, y0), //
+						new Position2D(fragmentX + fragmentSize / 2, y1), //
+						new Position2D(x + length, y0), //
+						new Position2D(x + length, y2), //
+						new Position2D(fragmentX + fragmentSize / 2, y3), //
+						new Position2D(fragmentX, y2)));
+				data.noteTails.add(filledPolygon(color, //
+						new Position2D(fragmentX, y0 - 2), //
+						new Position2D(fragmentX + fragmentSize / 2, y1 - 2), //
+						new Position2D(x + length - 1, y0 - 2), //
+						new Position2D(x + length - 1, y2 + 2), //
+						new Position2D(fragmentX + fragmentSize / 2, y3 + 2), //
+						new Position2D(fragmentX, y2 + 2)));
+			}
+	
+			// Add another partial half fragment
+			else {
+				data.noteTails.add(filledPolygon(color.brighter(), //
+						new Position2D(fragmentX, y0), //
+						new Position2D(x + length, y1), //
+						new Position2D(x + length, y3), //
+						new Position2D(fragmentX, y2)));
+				data.noteTails.add(filledPolygon(color, //
+						new Position2D(fragmentX, y0 - 2), //
+						new Position2D(x + length - 1, y1 - 2), //
+						new Position2D(x + length - 1, y3 + 2), //
+						new Position2D(fragmentX, y2 + 2)));
+			}
 		} else {
 				final ShapePositionWithSize position = new ShapePositionWithSize(x, topBottom.min, length,
 						topBottom.max - topBottom.min);
