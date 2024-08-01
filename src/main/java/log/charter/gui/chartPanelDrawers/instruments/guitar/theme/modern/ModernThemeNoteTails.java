@@ -172,9 +172,9 @@ public class ModernThemeNoteTails {
 						new Position2D(fragmentX, y2 + 2)));
 			}
 		} else {
-				final ShapePositionWithSize position = new ShapePositionWithSize(x, topBottom.min, length,
-						topBottom.max - topBottom.min);
-				data.noteTails.add(filledRectangle(position, color));
+			final ShapePositionWithSize position = new ShapePositionWithSize(x, topBottom.min, length,
+					topBottom.max - topBottom.min);
+			data.noteTails.add(filledRectangle(position, color));
 		}
 		
 		// Define vibrato appearance
