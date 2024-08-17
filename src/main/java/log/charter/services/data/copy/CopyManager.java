@@ -281,11 +281,9 @@ public class CopyManager {
 				fullGuitarCopyData.anchors.paste(chartData, selectionManager, currentTime, true);
 				fullGuitarCopyData.handShapes.paste(chartData, selectionManager, currentTime, true);
 			}
-
-			selectedCopy.paste(chartData, selectionManager, currentTime, true);
-		} else {
-			selectedCopy.paste(chartData, selectionManager, currentTime, true);
 		}
+
+		selectedCopy.paste(chartData, selectionManager, currentTime, true);
 	}
 
 	public void paste() {
