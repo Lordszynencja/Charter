@@ -1,4 +1,5 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
+import static log.charter.data.config.GraphicalConfig.noteHeight;
 
 import static java.lang.Math.sin;
 import static log.charter.data.config.Config.maxStrings;
@@ -12,6 +13,8 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.fil
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedPolygon;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.sine;
 import static log.charter.util.Utils.stringId;
 
 import java.awt.Color;
@@ -24,6 +27,7 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
+import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.StrokedTriangle;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
@@ -55,81 +59,29 @@ public class ModernThemeNoteTails {
 		return new IntRange(topY, bottomY);
 	}
 
-	private void addSlideBox(final Position2D a, final Position2D b, final Position2D c, final ColorLabel color) {
-		data.noteTails.add(new StrokedTriangle(a, b, c, color));
-	}
-
 	private void addSlideCommon(final EditorNoteDrawingData note, final int y, final Color backgroundColor,
 			final Color fretColor) {
+		this.addNormalNoteTailShape(note, y);
+		
+		final int lineThickness = 2;
+		
 		IntRange topBottom = getDefaultTailTopBottom(y);
-		topBottom = new IntRange(topBottom.min - 1, topBottom.max);
-		final Position2D a = new Position2D(note.x, topBottom.min);
-		final Position2D b = new Position2D(note.x, topBottom.max);
-		final int tailEndY = note.slideTo < note.fretNumber ? topBottom.max : topBottom.min;
-		final Position2D c = new Position2D(note.x + note.length, tailEndY);
-		final int tailEndFretTextY = note.slideTo < note.fretNumber ? topBottom.max + noteHeight / 3
-				: topBottom.min - noteHeight / 3;
-		final Position2D fretTextPosition = new Position2D(note.x + note.length, tailEndFretTextY);
-		final Color color = noteTailColors[stringId(note.string, data.strings)];
-
-		if (note.vibrato || note.tremolo) {
-			if (note.vibrato) {
-				final List<DrawableShape> shapes = new ArrayList<>();
-				final int vibratoSpeed = (int) (Zoom.zoom * 100);
-				final int vibratoLineHeight = tailHeight / 2;
-				final int vibratoAmplitude = tailHeight - vibratoLineHeight - 1;
-				final int vibratoOffset = (vibratoAmplitude - tailHeight) / 2;
-				for (int i = 0; i < note.length + 2; i++) {
-					final int segmentY = y
-							+ (int) (vibratoOffset - vibratoAmplitude * sin(i * Math.PI / vibratoSpeed) / 2);
-
-					shapes.add(lineVertical(note.x + i, segmentY, segmentY + vibratoLineHeight, color));
-				}
-				data.noteTails.add(clippedShapes(
-						new ShapePositionWithSize(note.x, y - tailHeight / 2, note.length, tailHeight), shapes));
-			}
-			if (note.tremolo) {
-				int x = note.x + 40;
-				final int totalHeight = topBottom.max - topBottom.min;
-				int middleY = y;
-				int height = totalHeight;
-				while (x < note.x + note.length) {
-					final int distance = x - note.x;
-					final double lengthRatio1 = (distance - 20) * 1.0 / note.length;
-					final double lengthRatio2 = distance * 1.0 / note.length;
-					final int h1 = (int) (totalHeight * (1 - lengthRatio1));
-					final int h2 = (int) (totalHeight * (1 - lengthRatio2));
-					final int middleY1 = (int) (y * (1 - lengthRatio1) + tailEndY * lengthRatio1);
-					final int middleY2 = (int) (y * (1 - lengthRatio2) + tailEndY * lengthRatio2);
-
-					data.noteTails.add(filledPolygon(color, //
-							new Position2D(x - 40, middleY - 2 * height / 3), //
-							new Position2D(x - 20, middleY1 - h1 / 3), //
-							new Position2D(x, middleY2 - 2 * h2 / 3), //
-							new Position2D(x, middleY2 + h2 / 3), //
-							new Position2D(x - 20, middleY1 + 2 * h1 / 3), //
-							new Position2D(x - 40, middleY + height / 3)));
-
-					middleY = middleY2;
-					height = h2;
-					x += 40;
-				}
-
-				data.noteTails.add(filledTriangle(new Position2D(x - 40, middleY - 2 * height / 3),
-						new Position2D(x - 40, middleY + height / 3), new Position2D(note.x + note.length, tailEndY),
-						color));
-			}
-		} else {
-			data.noteTails.add(filledTriangle(a, b, c, color));
-		}
-
-		data.slideFrets.add(centeredTextWithBackground(fretTextPosition, slideFretFont, note.slideTo + "", color.darker().darker().darker(),
-				backgroundColor, noteTailColors[stringId(note.string, data.strings)]));
-
-		if (note.highlighted) {
-			addSlideBox(a, b, c, ColorLabel.HIGHLIGHT);
-		} else if (note.selected) {
-			addSlideBox(a, b, c, ColorLabel.SELECT);
+		final int slideStartY = note.slideTo < note.fretNumber ? topBottom.min + lineThickness / 2 : topBottom.max - lineThickness / 2;
+		final int slideEndY = note.slideTo < note.fretNumber ? topBottom.max - lineThickness / 2 : topBottom.min + lineThickness / 2;
+		final int slideStartX = note.x + noteHeight / 4;
+		final int slideEndX = note.linkNext ? note.x + note.length - lineThickness - noteHeight / 4 : note.x + note.length - lineThickness;
+		final Position2D slideStart = new Position2D(slideStartX, slideStartY);
+		final Position2D slideEnd = new Position2D(slideEndX, slideEndY);
+		
+		data.noteTails.add(new Line(slideStart, slideEnd, Color.WHITE, lineThickness));
+		
+		if (note.unpitchedSlide) {
+			final int tailEndFretTextY = note.slideTo < note.fretNumber ? topBottom.max + noteHeight / 3
+					: topBottom.min - noteHeight / 3;
+			final Position2D fretTextPosition = new Position2D(note.x + note.length, tailEndFretTextY);
+			final Color color = noteTailColors[stringId(note.string, data.strings)];
+			data.slideFrets.add(centeredTextWithBackground(fretTextPosition, slideFretFont, note.slideTo + "", color.darker().darker().darker(),
+					Color.WHITE, noteTailColors[stringId(note.string, data.strings)]));
 		}
 	}
 
@@ -141,13 +93,17 @@ public class ModernThemeNoteTails {
 		addSlideCommon(note, y, ColorLabel.SLIDE_UNPITCHED_FRET_BG.color(),
 				ColorLabel.SLIDE_UNPITCHED_FRET_TEXT.color());
 	}
+	
+	private void addTailBox(final int x, final int length, final int y, final Color color) {
+		addTailBox(x, length, y, color, 1);
+	}
 
-	private void addTailBox(final int x, final int length, final int y, final ColorLabel color) {
+	private void addTailBox(final int x, final int length, final int y, final Color color, final int thickness) {
 		final IntRange topBottom = getDefaultTailTopBottom(y);
 
 		final ShapePositionWithSize position = new ShapePositionWithSize(x, topBottom.min - 1, length,
 				topBottom.max - topBottom.min + 1);
-		data.noteTails.add(strokedRectangle(position, color));
+		data.noteTails.add(strokedRectangle(position, color, thickness));
 	}
 
 	private void addNormalNoteTailShape(final EditorNoteDrawingData note, final int y) {
@@ -156,80 +112,85 @@ public class ModernThemeNoteTails {
 		final int length = note.length + 1;
 		final Color color = noteTailColors[stringId(note.string, data.strings)];
 
-		if (note.vibrato || note.tremolo) {
-			if (note.vibrato && note.tremolo) {
-				final int vibratoSpeed = (int) (Zoom.zoom * 100);
-				final int vibratoLineHeight = tailHeight / 2;
-				final int vibratoAmplitude = tailHeight - vibratoLineHeight - 1;
-				final int vibratoOffset = (vibratoAmplitude - tailHeight) / 2;
-				for (int i = 0; i < note.length + 2; i++) {
-					final int segmentY = y
-							+ (int) (vibratoOffset - vibratoAmplitude * sin(i * Math.PI / vibratoSpeed) / 2);
-
-					data.noteTails.add(lineVertical(x + i, segmentY, y, color));
-				}
-
-				int fragmentX = x;
-				final int y0 = y + tailHeight / 4;
-				final int y1 = y + tailHeight / 2;
-				while (fragmentX <= x + length - 40) {
-					data.noteTails.add(filledPolygon(color, //
-							new Position2D(fragmentX, y), //
-							new Position2D(fragmentX + 40, y), //
-							new Position2D(fragmentX + 40, y1), //
-							new Position2D(fragmentX + 20, y0), //
-							new Position2D(fragmentX, y1)));
-					fragmentX += 40;
-				}
-
+		// Define tremolo appearance
+		if (note.tremolo) {
+			int fragmentX = x;
+			final int intensity = 4;
+			final int y0 = y + tailHeight / 2 - intensity + 1;
+			final int y1 = y + tailHeight / 2 + 1;
+			final int y2 = y - tailHeight / 2 + intensity;
+			final int y3 = y - tailHeight / 2;
+			
+			final int fragmentSize = 8;
+			while (fragmentX <= x + length - fragmentSize) {
+				data.noteTails.add(filledPolygon(color.brighter(), //
+						new Position2D(fragmentX, y0), //
+						new Position2D(fragmentX + fragmentSize / 2, y1), //
+						new Position2D(fragmentX + fragmentSize, y0), //
+						new Position2D(fragmentX + fragmentSize, y2), //
+						new Position2D(fragmentX + fragmentSize / 2, y3), //
+						new Position2D(fragmentX, y2)));
 				data.noteTails.add(filledPolygon(color, //
-						new Position2D(fragmentX, y), //
-						new Position2D(x + length, y), //
-						new Position2D(fragmentX, y1)));
-			} else if (note.vibrato) {
-				final int vibratoSpeed = (int) (Zoom.zoom * 100);
-				final int vibratoLineHeight = topBottom.max - topBottom.min;
-				final int vibratoAmplitude = tailHeight - vibratoLineHeight - 1;
-				final int vibratoOffset = (vibratoAmplitude - tailHeight) / 2;
-				for (int i = 0; i < note.length + 2; i++) {
-					final int segmentY = y
-							+ (int) (vibratoOffset - vibratoAmplitude * sin(i * Math.PI / vibratoSpeed) / 2);
-
-					data.noteTails.add(lineVertical(x + i, segmentY, segmentY + vibratoLineHeight, color));
-				}
-			} else {
-				int fragmentX = x;
-				final int y0 = y + tailHeight / 2;
-				final int y1 = y + tailHeight / 4;
-				final int y2 = y - tailHeight / 4;
-				final int y3 = y - tailHeight / 2;
-				while (fragmentX <= x + length - 40) {
-					data.noteTails.add(filledPolygon(color, //
-							new Position2D(fragmentX, y0), //
-							new Position2D(fragmentX + 20, y1), //
-							new Position2D(fragmentX + 40, y0), //
-							new Position2D(fragmentX + 40, y2), //
-							new Position2D(fragmentX + 20, y3), //
-							new Position2D(fragmentX, y2)));
-					fragmentX += 40;
-				}
-
+						new Position2D(fragmentX, y0 - 2), //
+						new Position2D(fragmentX + fragmentSize / 2, y1 - 2), //
+						new Position2D(fragmentX + fragmentSize, y0 - 2), //
+						new Position2D(fragmentX + fragmentSize, y2 + 2), //
+						new Position2D(fragmentX + fragmentSize / 2, y3 + 2), //
+						new Position2D(fragmentX, y2 + 2)));
+				fragmentX += fragmentSize;
+			}
+			
+			// Add another partial fragment
+			if (fragmentX <= x + length - fragmentSize / 2) {
+				data.noteTails.add(filledPolygon(color.brighter(), //
+						new Position2D(fragmentX, y0), //
+						new Position2D(fragmentX + fragmentSize / 2, y1), //
+						new Position2D(x + length, y0), //
+						new Position2D(x + length, y2), //
+						new Position2D(fragmentX + fragmentSize / 2, y3), //
+						new Position2D(fragmentX, y2)));
 				data.noteTails.add(filledPolygon(color, //
+						new Position2D(fragmentX, y0 - 2), //
+						new Position2D(fragmentX + fragmentSize / 2, y1 - 2), //
+						new Position2D(x + length - 1, y0 - 2), //
+						new Position2D(x + length - 1, y2 + 2), //
+						new Position2D(fragmentX + fragmentSize / 2, y3 + 2), //
+						new Position2D(fragmentX, y2 + 2)));
+			}
+	
+			// Add another partial half fragment
+			else {
+				data.noteTails.add(filledPolygon(color.brighter(), //
 						new Position2D(fragmentX, y0), //
 						new Position2D(x + length, y1), //
 						new Position2D(x + length, y3), //
 						new Position2D(fragmentX, y2)));
+				data.noteTails.add(filledPolygon(color, //
+						new Position2D(fragmentX, y0 - 2), //
+						new Position2D(x + length - 1, y1 - 2), //
+						new Position2D(x + length - 1, y3 + 2), //
+						new Position2D(fragmentX, y2 + 2)));
 			}
 		} else {
 			final ShapePositionWithSize position = new ShapePositionWithSize(x, topBottom.min, length,
 					topBottom.max - topBottom.min);
 			data.noteTails.add(filledRectangle(position, color));
 		}
-
+		
+		// Define vibrato appearance
+		if (note.vibrato) {
+			final Position2D from = new Position2D(x, y);
+			data.noteTails.add(sine(from, length, tailHeight / 2 - 2, -8, 10, Color.GRAY.brighter(), 2));
+		}
+		
+		if (!note.tremolo) {
+			addTailBox(note.x, note.length, y, color.brighter());
+		}
+		
 		if (note.highlighted) {
-			addTailBox(note.x, note.length, y, ColorLabel.HIGHLIGHT);
+			addTailBox(note.x, note.length, y, ColorLabel.HIGHLIGHT.color(), 2);
 		} else if (note.selected) {
-			addTailBox(note.x, note.length, y, ColorLabel.SELECT);
+			addTailBox(note.x, note.length, y, ColorLabel.SELECT.color(), 2);
 		}
 	}
 
