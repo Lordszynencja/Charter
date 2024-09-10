@@ -68,6 +68,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	private final Preview3DVideoDrawer videoDrawer = new Preview3DVideoDrawer();
 
 	private boolean active = true;
+	private boolean repaintActivated = false;
 
 	private static GLData prepareGLData() {
 		final GLData data = new GLData();
@@ -106,6 +107,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 
 	@Override
 	public void paint(final Graphics g) {
+		Logger.info("paint start");
 		if (!active) {
 			return;
 		}
@@ -134,6 +136,8 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 				active = false;
 			}
 		}
+		Logger.info("paint end");
+		repaintActivated = false;
 	}
 
 	@Override
@@ -223,13 +227,23 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 
 			swapBuffers();
 			timer.addTimestamp("finish");
-
 			timer.print("paintGL timings:", "%20s: %d");
 		} catch (final Exception e) {
 			Logger.error("Exception in paintGL", e);
 		} catch (final Error error) {
 			Logger.error("Error in paintGL", error);
 		}
+	}
+
+	@Override
+	public void repaint() {
+		if (repaintActivated) {
+			return;
+		}
+
+		repaintActivated = true;
+		Logger.info("repaint 3D");
+		super.repaint();
 	}
 
 	public void reloadTextures() {

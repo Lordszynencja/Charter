@@ -54,6 +54,7 @@ import log.charter.services.utils.AudioFramer;
 import log.charter.services.utils.Framer;
 import log.charter.util.ConfigAutoSaver;
 import log.charter.util.ExitActions;
+import log.charter.util.Timer;
 
 @SuppressWarnings("unused")
 public class CharterContext {
@@ -193,15 +194,20 @@ public class CharterContext {
 		if (!charterFrame.isFocused()) {
 			return;
 		}
+		Logger.info("frame");
 
 		try {
-			titleUpdater.updateTitle();
+			final Timer timer = new Timer();
 			repeatManager.frame();
+			timer.addTimestamp("repeatManager.frame()");
 			chartTimeHandler.frame(frameTime);
+			timer.addTimestamp("chartTimeHandler.frame()");
 
 			windowedPreviewHandler.paintFrame();
+			timer.addTimestamp("windowedPreviewHandler.paintFrame()");
 			charterFrame.repaint();
-
+			timer.addTimestamp("charterFrame.repaint()");
+			timer.print("frame timings:", "%20s: %d");
 		} catch (final Exception e) {
 			Logger.error("Exception in frame()", e);
 		}
