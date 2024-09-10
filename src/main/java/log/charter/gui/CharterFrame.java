@@ -63,6 +63,8 @@ public class CharterFrame extends JFrame implements Initiable {
 	private ChartMap chartMap;
 	private CharterTabbedPane tabs;
 
+	private boolean paintWaiting = false;
+
 	public CharterFrame() {
 		super(CharterMain.TITLE + " : " + Label.NO_PROJECT.label());
 		try {
@@ -156,7 +158,13 @@ public class CharterFrame extends JFrame implements Initiable {
 
 	@Override
 	public void repaint() {
+		if (paintWaiting) {
+			return;
+		}
+
+		paintWaiting = true;
 		super.repaint();
+
 		if (preview3DPanel.isShowing()) {
 			preview3DPanel.repaint();
 		}
@@ -166,5 +174,7 @@ public class CharterFrame extends JFrame implements Initiable {
 	public void paint(final Graphics g) {
 		super.paint(g);
 		helpTab.addFrameTime();
+
+		paintWaiting = false;
 	}
 }

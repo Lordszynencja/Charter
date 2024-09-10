@@ -35,14 +35,15 @@ public class Logger {
 	}
 
 	public static void debug(String msg) {
+		if (!Config.debugLogging) {
+			return;
+		}
+
 		msg = getLine("DEBUG", msg);
+		out.println(msg);
 
-		if (Config.debugLogging) {
-			out.println(msg);
-
-			if (out != System.out) {
-				System.out.println(msg);
-			}
+		if (out != System.out) {
+			System.out.println(msg);
 		}
 	}
 
