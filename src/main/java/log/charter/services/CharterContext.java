@@ -191,10 +191,9 @@ public class CharterContext {
 	}
 
 	private void frame(final double frameTime) {
-		if (!charterFrame.isFocused()) {
+		if (!charterFrame.isFocused() && !windowedPreviewHandler.isPreviewVisible()) {
 			return;
 		}
-		Logger.info("frame");
 
 		try {
 			final Timer timer = new Timer();

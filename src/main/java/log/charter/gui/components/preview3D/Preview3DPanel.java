@@ -242,7 +242,6 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		}
 
 		repaintActivated = true;
-		Logger.info("repaint 3D");
 		super.repaint();
 	}
 
