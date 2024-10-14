@@ -57,4 +57,8 @@ public class WindowedPreviewHandler implements Initiable {
 	public void restore() {
 		windowedPreviewFrame.setVisible(true);
 	}
+
+	public boolean isPreviewVisible() {
+		return windowedPreviewFrame.isShowing();
+	}
 }

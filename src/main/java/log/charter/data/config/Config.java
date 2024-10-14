@@ -66,7 +66,6 @@ public class Config {
 	public static String lastPath = "";
 	public static String musicPath = System.getProperty("user.home") + File.separator + "Music";
 	public static String songsPath = System.getProperty("user.home") + File.separator + "Documents";
-	public static String rubberbandPath;
 	public static String oggEncPath;
 
 	public static AudioSystemType audioOutSystemType = AudioSystemType.DEFAULT;
@@ -224,11 +223,7 @@ public class Config {
 		valueAccessors.put("debugLogging", ValueAccessor.forBoolean(v -> debugLogging = v, () -> debugLogging));
 
 		final String os = System.getProperty("os.name").toLowerCase();
-		final String osPath = os.startsWith("windows")
-				? "rubberband-3.1.2-gpl-executable-windows" + File.separator + "rubberband.exe" //
-				: os.startsWith("mac") ? "rubberband-3.1.2-gpl-executable-macos" + File.separator + "rubberband"//
-						: "rubberband-3.1.2-gpl-executable-windows" + File.separator + "rubberband.exe";
-		rubberbandPath = new File(RW.getProgramDirectory(), "rubberband" + File.separator + osPath).getAbsolutePath();
+		final String osType = os.startsWith("windows") ? "windows" : os.startsWith("mac") ? "mac" : "linux";
 		oggEncPath = new File(RW.getProgramDirectory(), "oggenc" + File.separator + "oggenc2.exe").getAbsolutePath();
 
 		final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();

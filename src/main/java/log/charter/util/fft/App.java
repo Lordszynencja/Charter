@@ -29,7 +29,8 @@ public class App {
 		for (int bin = 0; bin < output.length; ++bin) {
 			final float mag = (float) Math
 					.sqrt(output[bin].real * output[bin].real + output[bin].imag * output[bin].imag);
-			System.out.println("BIN: " + bin + " Frequency: " + frequencies[bin] + ": " + mag);
+			// System.out.println("BIN: " + bin + " Frequency: " + frequencies[bin] + ": " +
+			// mag);
 		}
 	}
 }

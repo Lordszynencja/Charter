@@ -8,6 +8,7 @@ import com.synthbot.jasiohost.AsioDriver;
 import com.synthbot.jasiohost.AsioDriverListener;
 
 import log.charter.data.config.Config;
+import log.charter.io.Logger;
 import log.charter.sound.data.FloatMixer;
 import log.charter.sound.data.FloatQueue;
 import log.charter.util.fft.FFTTest;
@@ -59,11 +60,11 @@ public class ASIOHandler {
 						outputChannels[channel].write(mixChannels[channel].getNextBuffer());
 					}
 
-					final float[] newInput = new float[bufferSize];
-					inputChannels[0].read(newInput);
-					inputBuffer = newInput;
-
-					fft.addData(newInput);
+//					final float[] newInput = new float[bufferSize];
+//					inputChannels[0].read(newInput);
+//					inputBuffer = newInput;
+//
+//					fft.addData(newInput);
 				} catch (final Exception e) {
 				}
 			}
@@ -109,24 +110,31 @@ public class ASIOHandler {
 	}
 
 	public static void refresh() {
+		Logger.info("audio refresh setDriver");
 		setDriver();
 		if (asioDriver == null) {
 			return;
 		}
 
+		Logger.info("audio refresh setDriverListener");
 		setDriverListener();
-		setInputChannels();
+		// setInputChannels();
+		Logger.info("audio refresh setOutputChannels");
 		setOutputChannels();
 
+		Logger.info("audio refresh getBufferPreferredSize");
 		bufferSize = asioDriver.getBufferPreferredSize();
 		desiredFill = (int) (Config.audioBufferMs * asioDriver.getSampleRate() / 1000);
 		sampleRate = asioDriver.getSampleRate();
 
+		Logger.info("audio refresh channels");
 		final Set<AsioChannel> channels = new HashSet<>(Set.of(outputChannels));
-		channels.addAll(Set.of(inputChannels));
+		// channels.addAll(Set.of(inputChannels));
 		asioDriver.createBuffers(channels);
 
+		Logger.info("audio refresh start");
 		asioDriver.start();
+		Logger.info("audio refresh done");
 	}
 
 	public static FloatQueue createLeftChannelStream(final int sampleRate) {
