@@ -43,6 +43,7 @@ public class Localization {
 		AUDIO_OUTPUT_R_ID("Right output channel id"), //
 		BACKUP_DELAY_S("Backup delay (s)"), //
 		BASE_AUDIO_FORMAT("Base audio format"), //
+		BOOKMARKS_MENU("Bookmarks"), //
 		BUFFER_SIZE_MS("Audio buffer size to fill (ms)"), //
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
@@ -256,9 +257,11 @@ public class Localization {
 		DOUBLE_GRID("Double grid resolution"), //
 		HALVE_GRID("Halve grid resolution"), //
 		PREVIOUS_ITEM("Previous item"), //
+		PREVIOUS_ITEM_WITH_SELECT("Previous item with select"), //
 		PREVIOUS_GRID_POSITION("Previous grid position"), //
 		PREVIOUS_BEAT("Previous beat"), //
 		NEXT_ITEM("Next item"), //
+		NEXT_ITEM_WITH_SELECT("Next item with select"), //
 		NEXT_GRID_POSITION("Next grid position"), //
 		NEXT_BEAT("Next beat"), //
 

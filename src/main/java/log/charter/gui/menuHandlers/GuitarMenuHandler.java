@@ -49,16 +49,9 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 		menu.add(createItem(Action.MOVE_FRET_DOWN));
 		menu.addSeparator();
 		final JMenu noteFretOperationsSubMenu = createMenu(Label.NOTE_FRET_OPERATIONS);
-		noteFretOperationsSubMenu.add(createItem(Action.FRET_0));
-		noteFretOperationsSubMenu.add(createItem(Action.FRET_1));
-		noteFretOperationsSubMenu.add(createItem(Action.FRET_2));
-		noteFretOperationsSubMenu.add(createItem(Action.FRET_3));
-		noteFretOperationsSubMenu.add(createItem(Action.FRET_4));
-		noteFretOperationsSubMenu.add(createItem(Action.FRET_5));
-		noteFretOperationsSubMenu.add(createItem(Action.FRET_6));
-		noteFretOperationsSubMenu.add(createItem(Action.FRET_7));
-		noteFretOperationsSubMenu.add(createItem(Action.FRET_8));
-		noteFretOperationsSubMenu.add(createItem(Action.FRET_9));
+		for (int i = 0; i < 10; i++) {
+			noteFretOperationsSubMenu.add(createItem(Action.valueOf("FRET_" + i)));
+		}
 		menu.add(noteFretOperationsSubMenu);
 
 		menu.addSeparator();
