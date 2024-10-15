@@ -48,6 +48,8 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 				Action.MOVE_TO_LAST_ITEM, //
 				Action.NEXT_ITEM, //
 				Action.PREVIOUS_ITEM, //
+				Action.NEXT_ITEM_WITH_SELECT, //
+				Action.PREVIOUS_ITEM_WITH_SELECT, //
 				Action.NEXT_GRID, //
 				Action.PREVIOUS_GRID, //
 				Action.NEXT_BEAT, //

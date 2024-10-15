@@ -13,6 +13,7 @@ class NotesMenuHandler extends CharterMenuHandler implements Initiable {
 	private ActionHandler actionHandler;
 	private ModeManager modeManager;
 
+	@Override
 	public void init() {
 		super.init(actionHandler);
 	}
@@ -32,9 +33,11 @@ class NotesMenuHandler extends CharterMenuHandler implements Initiable {
 
 		menu.addSeparator();
 		menu.add(createItem(Action.PREVIOUS_ITEM));
+		menu.add(createItem(Action.PREVIOUS_ITEM_WITH_SELECT));
 		menu.add(createItem(Action.PREVIOUS_GRID));
 		menu.add(createItem(Action.PREVIOUS_BEAT));
 		menu.add(createItem(Action.NEXT_ITEM));
+		menu.add(createItem(Action.NEXT_ITEM_WITH_SELECT));
 		menu.add(createItem(Action.NEXT_GRID));
 		menu.add(createItem(Action.NEXT_BEAT));
 
