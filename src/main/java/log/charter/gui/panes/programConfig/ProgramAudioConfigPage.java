@@ -126,6 +126,7 @@ public class ProgramAudioConfigPage implements Page {
 				new IntValueValidator(0, 255), i -> leftOutChannelId = i, true);
 		leftOutChannelIdField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_L_ID, 130, 30, 20, input, LabelPosition.LEFT);
 		panel.add(leftOutChannelIdField, position);
+		leftOutChannelIdField.setVisible(audioOutSystemType == AudioSystemType.ASIO);
 	}
 
 	private void addRightOutChannelId(final RowedPanel panel, final RowedPosition position) {
@@ -133,6 +134,7 @@ public class ProgramAudioConfigPage implements Page {
 				new IntValueValidator(0, 255), i -> rightOutChannelId = i, true);
 		rightOutChannelIdField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_R_ID, 130, 30, 20, input, LabelPosition.LEFT);
 		panel.add(rightOutChannelIdField, position);
+		rightOutChannelIdField.setVisible(audioOutSystemType == AudioSystemType.ASIO);
 	}
 
 	private void addAudioBufferMs(final RowedPanel panel, final RowedPosition position) {

@@ -1,5 +1,9 @@
 package log.charter.data.config;
 
+import static log.charter.data.config.ValueAccessor.forBoolean;
+import static log.charter.data.config.ValueAccessor.forDouble;
+import static log.charter.data.config.ValueAccessor.forInteger;
+import static log.charter.data.config.ValueAccessor.forString;
 import static log.charter.io.Logger.error;
 
 import java.awt.DisplayMode;
@@ -9,8 +13,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import javax.swing.JFrame;
 
@@ -23,42 +25,6 @@ import log.charter.sound.system.SoundSystem;
 import log.charter.util.RW;
 
 public class Config {
-	private static class ValueAccessor {
-		public static ValueAccessor empty = new ValueAccessor(s -> {}, () -> null);
-
-		public static ValueAccessor forString(final Consumer<String> setter, final Supplier<String> getter) {
-			return new ValueAccessor(setter, getter);
-		}
-
-		public static ValueAccessor forBoolean(final Consumer<Boolean> setter, final Supplier<Boolean> getter) {
-			return new ValueAccessor(s -> setter.accept(Boolean.valueOf(s)), () -> getter.get() + "");
-		}
-
-		public static ValueAccessor forInteger(final Consumer<Integer> setter, final Supplier<Integer> getter) {
-			return new ValueAccessor(s -> setter.accept(Integer.valueOf(s)), () -> getter.get() + "");
-		}
-
-		public static ValueAccessor forDouble(final Consumer<Double> setter, final Supplier<Double> getter) {
-			return new ValueAccessor(s -> setter.accept(Double.valueOf(s)), () -> getter.get() + "");
-		}
-
-		private final Consumer<String> setter;
-		private final Supplier<String> getter;
-
-		private ValueAccessor(final Consumer<String> setter, final Supplier<String> getter) {
-			this.setter = setter;
-			this.getter = getter;
-		}
-
-		public void set(final String value) {
-			setter.accept(value);
-		}
-
-		public String get() {
-			return getter.get();
-		}
-	}
-
 	private static final String configPath = new File(RW.getProgramDirectory(), "config.ini").getAbsolutePath();
 
 	public static String language = "English";
@@ -97,6 +63,7 @@ public class Config {
 	public static boolean invertStrings = false;
 	public static boolean invertStrings3D = false;
 	public static boolean leftHanded = false;
+	public static boolean showTempoInsteadOfBPM = false;
 	public static boolean showChordIds = true;
 	public static int frets = 28;
 	public static int maxStrings = 9;
@@ -133,96 +100,82 @@ public class Config {
 	private static final Map<String, ValueAccessor> valueAccessors = new HashMap<>();
 
 	static {
-		valueAccessors.put("language", ValueAccessor.forString(v -> language = v, () -> language));
-		valueAccessors.put("lastDir", ValueAccessor.forString(v -> lastDir = v, () -> lastDir));
-		valueAccessors.put("lastPath", ValueAccessor.forString(v -> lastPath = v, () -> lastPath));
-		valueAccessors.put("musicPath", ValueAccessor.forString(v -> musicPath = v, () -> musicPath));
-		valueAccessors.put("songsPath", ValueAccessor.forString(v -> songsPath = v, () -> songsPath));
-		valueAccessors.put("audioOutSystemType", ValueAccessor
-				.forString(v -> audioOutSystemType = AudioSystemType.valueOf(v), () -> audioOutSystemType.name()));
-		valueAccessors.put("audioOutSystemName",
-				ValueAccessor.forString(v -> audioOutSystemName = v, () -> audioOutSystemName));
-		valueAccessors.put("leftOutChannelId",
-				ValueAccessor.forInteger(v -> leftOutChannelId = v, () -> leftOutChannelId));
-		valueAccessors.put("rightOutChannelId",
-				ValueAccessor.forInteger(v -> rightOutChannelId = v, () -> rightOutChannelId));
-		valueAccessors.put("audioIn0SystemType", ValueAccessor
-				.forString(v -> audioIn0SystemType = AudioSystemType.valueOf(v), () -> audioIn0SystemType.name()));
-		valueAccessors.put("audioIn0SystemName",
-				ValueAccessor.forString(v -> audioIn0SystemName = v, () -> audioIn0SystemName));
-		valueAccessors.put("inChannel0Id", ValueAccessor.forInteger(v -> inChannel0Id = v, () -> inChannel0Id));
-		valueAccessors.put("audioIn1SystemType", ValueAccessor
-				.forString(v -> audioIn1SystemType = AudioSystemType.valueOf(v), () -> audioIn1SystemType.name()));
-		valueAccessors.put("audioIn1SystemName",
-				ValueAccessor.forString(v -> audioIn1SystemName = v, () -> audioIn1SystemName));
-		valueAccessors.put("inChannel1Id", ValueAccessor.forInteger(v -> inChannel1Id = v, () -> inChannel1Id));
+		valueAccessors.put("language", forString(v -> language = v, () -> language));
+		valueAccessors.put("lastDir", forString(v -> lastDir = v, () -> lastDir));
+		valueAccessors.put("lastPath", forString(v -> lastPath = v, () -> lastPath));
+		valueAccessors.put("musicPath", forString(v -> musicPath = v, () -> musicPath));
+		valueAccessors.put("songsPath", forString(v -> songsPath = v, () -> songsPath));
+		valueAccessors.put("audioOutSystemType",
+				forString(v -> audioOutSystemType = AudioSystemType.valueOf(v), () -> audioOutSystemType.name()));
+		valueAccessors.put("audioOutSystemName", forString(v -> audioOutSystemName = v, () -> audioOutSystemName));
+		valueAccessors.put("leftOutChannelId", forInteger(v -> leftOutChannelId = v, () -> leftOutChannelId));
+		valueAccessors.put("rightOutChannelId", forInteger(v -> rightOutChannelId = v, () -> rightOutChannelId));
+		valueAccessors.put("audioIn0SystemType",
+				forString(v -> audioIn0SystemType = AudioSystemType.valueOf(v), () -> audioIn0SystemType.name()));
+		valueAccessors.put("audioIn0SystemName", forString(v -> audioIn0SystemName = v, () -> audioIn0SystemName));
+		valueAccessors.put("inChannel0Id", forInteger(v -> inChannel0Id = v, () -> inChannel0Id));
+		valueAccessors.put("audioIn1SystemType",
+				forString(v -> audioIn1SystemType = AudioSystemType.valueOf(v), () -> audioIn1SystemType.name()));
+		valueAccessors.put("audioIn1SystemName", forString(v -> audioIn1SystemName = v, () -> audioIn1SystemName));
+		valueAccessors.put("inChannel1Id", forInteger(v -> inChannel1Id = v, () -> inChannel1Id));
 		valueAccessors.put("baseAudioFormat",
-				ValueAccessor.forString(v -> baseAudioFormat = SoundFileType.valueOf(v), () -> baseAudioFormat.name()));
-		valueAccessors.put("audioBufferSize",
-				ValueAccessor.forInteger(v -> audioBufferSize = v, () -> audioBufferSize));
-		valueAccessors.put("audioBufferMs", ValueAccessor.forInteger(v -> audioBufferMs = v, () -> audioBufferMs));
-		valueAccessors.put("antialiasingSamples",
-				ValueAccessor.forInteger(v -> antialiasingSamples = v, () -> antialiasingSamples));
+				forString(v -> baseAudioFormat = SoundFileType.valueOf(v), () -> baseAudioFormat.name()));
+		valueAccessors.put("audioBufferSize", forInteger(v -> audioBufferSize = v, () -> audioBufferSize));
+		valueAccessors.put("audioBufferMs", forInteger(v -> audioBufferMs = v, () -> audioBufferMs));
+		valueAccessors.put("antialiasingSamples", forInteger(v -> antialiasingSamples = v, () -> antialiasingSamples));
 
-		valueAccessors.put("minNoteDistanceFactor", ValueAccessor
-				.forString(v -> minNoteDistanceType = DistanceType.valueOf(v), () -> minNoteDistanceType.name()));
 		valueAccessors.put("minNoteDistanceFactor",
-				ValueAccessor.forInteger(v -> minNoteDistanceFactor = v, () -> minNoteDistanceFactor));
-		valueAccessors.put("minTailLengthType", ValueAccessor
-				.forString(v -> minTailLengthType = DistanceType.valueOf(v), () -> minTailLengthType.name()));
-		valueAccessors.put("minTailLengthFactor",
-				ValueAccessor.forInteger(v -> minTailLengthFactor = v, () -> minTailLengthFactor));
-		valueAccessors.put("delay", ValueAccessor.forInteger(v -> delay = v, () -> delay));
-		valueAccessors.put("volume", ValueAccessor.forDouble(v -> volume = v, () -> volume));
-		valueAccessors.put("midiDelay", ValueAccessor.forInteger(v -> midiDelay = v, () -> midiDelay));
-		valueAccessors.put("sfxVolume", ValueAccessor.forDouble(v -> sfxVolume = v, () -> sfxVolume));
-		valueAccessors.put("markerOffset", ValueAccessor.forInteger(v -> markerOffset = v, () -> markerOffset));
+				forString(v -> minNoteDistanceType = DistanceType.valueOf(v), () -> minNoteDistanceType.name()));
+		valueAccessors.put("minNoteDistanceFactor",
+				forInteger(v -> minNoteDistanceFactor = v, () -> minNoteDistanceFactor));
+		valueAccessors.put("minTailLengthType",
+				forString(v -> minTailLengthType = DistanceType.valueOf(v), () -> minTailLengthType.name()));
+		valueAccessors.put("minTailLengthFactor", forInteger(v -> minTailLengthFactor = v, () -> minTailLengthFactor));
+		valueAccessors.put("delay", forInteger(v -> delay = v, () -> delay));
+		valueAccessors.put("volume", forDouble(v -> volume = v, () -> volume));
+		valueAccessors.put("midiDelay", forInteger(v -> midiDelay = v, () -> midiDelay));
+		valueAccessors.put("sfxVolume", forDouble(v -> sfxVolume = v, () -> sfxVolume));
+		valueAccessors.put("markerOffset", forInteger(v -> markerOffset = v, () -> markerOffset));
 
-		valueAccessors.put("invertStrings", ValueAccessor.forBoolean(v -> invertStrings = v, () -> invertStrings));
-		valueAccessors.put("invertStrings3D",
-				ValueAccessor.forBoolean(v -> invertStrings3D = v, () -> invertStrings3D));
-		valueAccessors.put("leftHanded", ValueAccessor.forBoolean(v -> leftHanded = v, () -> leftHanded));
-		valueAccessors.put("showChordIds", ValueAccessor.forBoolean(v -> showChordIds = v, () -> showChordIds));
-		valueAccessors.put("frets", ValueAccessor.forInteger(v -> frets = v, () -> frets));
-		valueAccessors.put("maxBendValue", ValueAccessor.forInteger(v -> maxBendValue = v, () -> maxBendValue));
-		valueAccessors.put("FPS", ValueAccessor.forInteger(v -> FPS = v, () -> FPS));
-		valueAccessors.put("backupDelay", ValueAccessor.forInteger(v -> backupDelay = v, () -> backupDelay));
+		valueAccessors.put("invertStrings", forBoolean(v -> invertStrings = v, () -> invertStrings));
+		valueAccessors.put("invertStrings3D", forBoolean(v -> invertStrings3D = v, () -> invertStrings3D));
+		valueAccessors.put("leftHanded", forBoolean(v -> leftHanded = v, () -> leftHanded));
+		valueAccessors.put("showTempoInsteadOfBPM",
+				forBoolean(v -> showTempoInsteadOfBPM = v, () -> showTempoInsteadOfBPM));
+		valueAccessors.put("showChordIds", forBoolean(v -> showChordIds = v, () -> showChordIds));
+		valueAccessors.put("frets", forInteger(v -> frets = v, () -> frets));
+		valueAccessors.put("maxBendValue", forInteger(v -> maxBendValue = v, () -> maxBendValue));
+		valueAccessors.put("FPS", forInteger(v -> FPS = v, () -> FPS));
+		valueAccessors.put("backupDelay", forInteger(v -> backupDelay = v, () -> backupDelay));
 
-		valueAccessors.put("windowPosX", ValueAccessor.forInteger(v -> windowPosX = v, () -> windowPosX));
-		valueAccessors.put("windowPosY", ValueAccessor.forInteger(v -> windowPosY = v, () -> windowPosY));
-		valueAccessors.put("windowWidth", ValueAccessor.forInteger(v -> windowWidth = v, () -> windowWidth));
-		valueAccessors.put("windowHeight", ValueAccessor.forInteger(v -> windowHeight = v, () -> windowHeight));
-		valueAccessors.put("windowExtendedState",
-				ValueAccessor.forInteger(v -> windowExtendedState = v, () -> windowExtendedState));
+		valueAccessors.put("windowPosX", forInteger(v -> windowPosX = v, () -> windowPosX));
+		valueAccessors.put("windowPosY", forInteger(v -> windowPosY = v, () -> windowPosY));
+		valueAccessors.put("windowWidth", forInteger(v -> windowWidth = v, () -> windowWidth));
+		valueAccessors.put("windowHeight", forInteger(v -> windowHeight = v, () -> windowHeight));
+		valueAccessors.put("windowExtendedState", forInteger(v -> windowExtendedState = v, () -> windowExtendedState));
 
-		valueAccessors.put("previewWindowPosX",
-				ValueAccessor.forInteger(v -> previewWindowPosX = v, () -> previewWindowPosX));
-		valueAccessors.put("previewWindowPosY",
-				ValueAccessor.forInteger(v -> previewWindowPosY = v, () -> previewWindowPosY));
-		valueAccessors.put("previewWindowWidth",
-				ValueAccessor.forInteger(v -> previewWindowWidth = v, () -> previewWindowWidth));
-		valueAccessors.put("previewWindowHeight",
-				ValueAccessor.forInteger(v -> previewWindowHeight = v, () -> previewWindowHeight));
+		valueAccessors.put("previewWindowPosX", forInteger(v -> previewWindowPosX = v, () -> previewWindowPosX));
+		valueAccessors.put("previewWindowPosY", forInteger(v -> previewWindowPosY = v, () -> previewWindowPosY));
+		valueAccessors.put("previewWindowWidth", forInteger(v -> previewWindowWidth = v, () -> previewWindowWidth));
+		valueAccessors.put("previewWindowHeight", forInteger(v -> previewWindowHeight = v, () -> previewWindowHeight));
 		valueAccessors.put("previewWindowExtendedState",
-				ValueAccessor.forInteger(v -> previewWindowExtendedState = v, () -> previewWindowExtendedState));
+				forInteger(v -> previewWindowExtendedState = v, () -> previewWindowExtendedState));
 		valueAccessors.put("previewWindowBorderless",
-				ValueAccessor.forBoolean(v -> previewWindowBorderless = v, () -> previewWindowBorderless));
-		valueAccessors.put("zoomLvl", ValueAccessor.forInteger(v -> zoomLvl = v, () -> zoomLvl));
-		valueAccessors.put("stretchedMusicSpeed",
-				ValueAccessor.forInteger(v -> stretchedMusicSpeed = v, () -> stretchedMusicSpeed));
+				forBoolean(v -> previewWindowBorderless = v, () -> previewWindowBorderless));
+		valueAccessors.put("zoomLvl", forInteger(v -> zoomLvl = v, () -> zoomLvl));
+		valueAccessors.put("stretchedMusicSpeed", forInteger(v -> stretchedMusicSpeed = v, () -> stretchedMusicSpeed));
 
-		valueAccessors.put("showGrid", ValueAccessor.forBoolean(v -> showGrid = v, () -> showGrid));
-		valueAccessors.put("gridType",
-				ValueAccessor.forString(v -> gridType = GridType.valueOf(v), () -> gridType.name()));
-		valueAccessors.put("gridSize", ValueAccessor.forInteger(v -> gridSize = v, () -> gridSize));
-		valueAccessors.put("selectNotesByTails",
-				ValueAccessor.forBoolean(v -> selectNotesByTails = v, () -> selectNotesByTails));
+		valueAccessors.put("showGrid", forBoolean(v -> showGrid = v, () -> showGrid));
+		valueAccessors.put("gridType", forString(v -> gridType = GridType.valueOf(v), () -> gridType.name()));
+		valueAccessors.put("gridSize", forInteger(v -> gridSize = v, () -> gridSize));
+		valueAccessors.put("selectNotesByTails", forBoolean(v -> selectNotesByTails = v, () -> selectNotesByTails));
 		valueAccessors.put("audioFolderChosenForNewSong",
-				ValueAccessor.forBoolean(v -> audioFolderChosenForNewSong = v, () -> audioFolderChosenForNewSong));
+				forBoolean(v -> audioFolderChosenForNewSong = v, () -> audioFolderChosenForNewSong));
 
-		valueAccessors.put("debugLogging", ValueAccessor.forBoolean(v -> debugLogging = v, () -> debugLogging));
+		valueAccessors.put("debugLogging", forBoolean(v -> debugLogging = v, () -> debugLogging));
 
 		final String os = System.getProperty("os.name").toLowerCase();
+		@SuppressWarnings("unused")
 		final String osType = os.startsWith("windows") ? "windows" : os.startsWith("mac") ? "mac" : "linux";
 		oggEncPath = new File(RW.getProgramDirectory(), "oggenc" + File.separator + "oggenc2.exe").getAbsolutePath();
 

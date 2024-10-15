@@ -121,6 +121,7 @@ public class Localization {
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
 		SHOW_CHORD_IDS("Show chord ids"), //
 		SHOW_GRID("Show grid"), //
+		SHOW_TEMPO_INSTEAD_OF_BPM("Show tempo instead of BPM"), //
 		SONG_OPTIONS("Song options"), //
 		SONGS_FOLDER("Songs folder"), //
 		SOUND_DELAY("Sound delay (ms)"), //
