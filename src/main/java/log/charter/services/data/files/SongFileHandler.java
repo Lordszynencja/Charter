@@ -141,9 +141,7 @@ public class SongFileHandler {
 		}
 
 		arrangementFixer.fixArrangements();
-		if (!arrangementValidator.validate()) {
-			return;
-		}
+		arrangementValidator.validate();
 
 		final ChartProject project = new ChartProject(chartTimeHandler.time(), modeManager.getMode(), chartData,
 				chartData.songChart, textTab.getText());

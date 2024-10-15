@@ -5,6 +5,7 @@ import java.awt.Component;
 import javax.swing.Icon;
 import javax.swing.JTabbedPane;
 
+import log.charter.data.config.Localization.Label;
 import log.charter.gui.lookAndFeel.CharterTabbedPaneUI;
 
 public class CharterTabbedPane extends JTabbedPane {
@@ -16,6 +17,10 @@ public class CharterTabbedPane extends JTabbedPane {
 
 		public Icon icon = null;
 		public String tip = null;
+
+		public Tab(final Label label, final Component component) {
+			this(label.label(), component);
+		}
 
 		public Tab(final String name, final Component component) {
 			this.name = name;

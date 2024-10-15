@@ -35,21 +35,35 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 		return modeManager.getMode() != EditMode.EMPTY;
 	}
 
+	private String getNameWithSelect(final String name, final boolean isSelected) {
+		if (isSelected) {
+			return "> " + name;
+		}
+
+		return name;
+	}
+
+	private String getNameWithSelect(final Label label, final boolean isSelected) {
+		return getNameWithSelect(label.label(), isSelected);
+	}
+
 	private void addArrangementsList(final JMenu menu) {
 		for (int i = 0; i < chartData.songChart.arrangements.size(); i++) {
 			final Arrangement arrangement = chartData.songChart.arrangements.get(i);
-			final String arrangementName = (i == chartData.currentArrangement ? "> " : "")
-					+ arrangement.getTypeNameLabel(i);
-
+			final boolean arrangementSelected = i == chartData.currentArrangement
+					&& modeManager.getMode() == EditMode.GUITAR;
+			final String arrangementLabel = getNameWithSelect(arrangement.getTypeNameLabel(i), arrangementSelected);
 			final int arrangementId = i;
-			menu.add(createItem(arrangementName, () -> modeManager.setArrangement(arrangementId)));
+			menu.add(createItem(arrangementLabel, () -> modeManager.setArrangement(arrangementId)));
 		}
 	}
 
 	private void createLevelMenuItems(final JMenu menu) {
 		for (int level = 0; level < chartData.currentArrangement().levels.size(); level++) {
+			final boolean isLevelSelected = level == chartData.currentLevel && modeManager.getMode() == EditMode.GUITAR;
+			final String levelLabel = getNameWithSelect("Level " + level, isLevelSelected);
 			final int levelToChangeTo = level;
-			menu.add(createItem("Level " + level, () -> modeManager.setLevel(levelToChangeTo)));
+			menu.add(createItem(levelLabel, () -> modeManager.setLevel(levelToChangeTo)));
 		}
 	}
 
@@ -57,8 +71,12 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.ARRANGEMENT_MENU);
 
-		menu.add(createItem(Label.ARRANGEMENT_MENU_TEMPO_MAP, () -> modeManager.setMode(EditMode.TEMPO_MAP)));
-		menu.add(createItem(Label.ARRANGEMENT_MENU_VOCALS, () -> modeManager.setMode(EditMode.VOCALS)));
+		final String tempoMapLabel = getNameWithSelect(Label.ARRANGEMENT_MENU_TEMPO_MAP,
+				modeManager.getMode() == EditMode.TEMPO_MAP);
+		menu.add(createItem(tempoMapLabel, () -> modeManager.setMode(EditMode.TEMPO_MAP)));
+		final String vocalsLabel = getNameWithSelect(Label.ARRANGEMENT_MENU_VOCALS,
+				modeManager.getMode() == EditMode.VOCALS);
+		menu.add(createItem(vocalsLabel, () -> modeManager.setMode(EditMode.VOCALS)));
 		addArrangementsList(menu);
 		menu.add(createItem("New arrangement...", this::addArrangement));
 

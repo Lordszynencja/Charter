@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -71,14 +73,14 @@ public class AutocompleteInputForPane<T> extends JTextField implements DocumentL
 
 	private final ArrayList2<JLabel> popups = new ArrayList2<>();
 
-	private final Function<String, ArrayList2<T>> possibleValuesGetter;
+	private final Function<String, List<T>> possibleValuesGetter;
 	private final Function<T, String> formatter;
 	private final Consumer<T> onSelect;
 
 	private boolean disableDocumentUpdateHandling = false;
 
 	public AutocompleteInputForPane(final ParamsPane parent, final int columns, final String text,
-			final Function<String, ArrayList2<T>> possibleValuesGetter, final Function<T, String> formatter,
+			final Function<String, List<T>> possibleValuesGetter, final Function<T, String> formatter,
 			final Consumer<T> onSelect) {
 		super(columns);
 		this.parent = parent;
@@ -166,10 +168,10 @@ public class AutocompleteInputForPane<T> extends JTextField implements DocumentL
 
 		final String text = getText();
 
-		final ArrayList2<AutocompleteValue<T>> valuesToShow = possibleValuesGetter.apply(text).stream()//
+		final List<AutocompleteValue<T>> valuesToShow = possibleValuesGetter.apply(text).stream()//
 				.map(value -> new AutocompleteValue<>(formatter.apply(value), value))//
 				.limit(10)//
-				.collect(Collectors.toCollection(ArrayList2::new));
+				.collect(Collectors.toCollection(ArrayList::new));
 
 		final int x = getX();
 		int y = getY() + getHeight();

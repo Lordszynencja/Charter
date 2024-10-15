@@ -1,6 +1,8 @@
 package log.charter.gui.panes.songEdits;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -29,7 +31,6 @@ import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInputForPane;
 import log.charter.gui.components.utils.validators.IntValueValidator;
-import log.charter.util.collections.ArrayList2;
 
 public class GuitarEventPointPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
@@ -73,7 +74,7 @@ public class GuitarEventPointPane extends ParamsPane {
 	private SectionType section;
 	private int phraseLevel;
 	private boolean phraseSolo;
-	private final ArrayList2<EventType> events;
+	private final List<EventType> events;
 
 	public GuitarEventPointPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final EventPoint eventPoint, final Runnable onCancel) {
@@ -91,7 +92,7 @@ public class GuitarEventPointPane extends ParamsPane {
 			phraseLevel = phrase.maxDifficulty;
 			phraseSolo = phrase.solo;
 		}
-		events = new ArrayList2<>(eventPoint.events);
+		events = new ArrayList<>(eventPoint.events);
 
 		final AtomicInteger row = new AtomicInteger(0);
 		prepareSectionInput(row);
@@ -130,12 +131,23 @@ public class GuitarEventPointPane extends ParamsPane {
 		phraseSoloInput = (JCheckBox) getLastPart();
 	}
 
-	private ArrayList2<String> getPossiblePhraseNames(final String text) {
-		return data.currentArrangement().phrases.keySet().stream()//
+	private List<String> getPossiblePhraseNames(final String text) {
+		final String query = text.toLowerCase();
+
+		final List<String> phraseNames = data.currentArrangement().phrases.keySet().stream()//
 				.filter(phraseName -> !phraseName.equals("COUNT") && !phraseName.equals("END")
-						&& phraseName.toLowerCase().contains(text.toLowerCase()))//
-				.sorted()//
-				.collect(Collectors.toCollection(ArrayList2::new));
+						&& phraseName.toLowerCase().contains(query))//
+				.collect(Collectors.toCollection(ArrayList::new));
+
+		if ("count".contains(query)) {
+			phraseNames.add("COUNT");
+		}
+		if ("end".contains(query)) {
+			phraseNames.add("END");
+		}
+		phraseNames.sort(null);
+
+		return phraseNames;
 	}
 
 	private void onPhraseNameSelected(final String phraseName) {
