@@ -16,6 +16,7 @@ import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.simple.ChartMap;
 import log.charter.gui.components.tabs.HelpTab;
 import log.charter.gui.components.tabs.TextTab;
+import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
@@ -105,6 +106,7 @@ public class CharterContext {
 	private final ChartPanel chartPanel = new ChartPanel();
 	private final ChartMap chartMap = new ChartMap();
 	private final CurrentSelectionEditor currentSelectionEditor = new CurrentSelectionEditor();
+	private final ErrorsTab errorsTab = new ErrorsTab();
 	private final HelpTab helpTab = new HelpTab();
 	private final TextTab textTab = new TextTab();
 

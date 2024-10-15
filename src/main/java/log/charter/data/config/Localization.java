@@ -66,8 +66,13 @@ public class Localization {
 		DISTANCE_TYPE_BEATS("1/x beat"), //
 		DISTANCE_TYPE_MILISECONDS("ms"), //
 		DISTANCE_TYPE_NOTES("1/x note"), //
+		DUPLICATED_COUNT_PHRASE("Duplicated COUNT phrase"), //
+		DUPLICATED_END_PHRASE("Duplicated END phrase"), //
 		EDIT_MENU("Edit"), //
 		EDITING("Editing"), //
+		ERRORS_TAB_DESCRIPTION("Description"), //
+		ERRORS_TAB_POSITION("Position"), //
+		ERRORS_TAB_SEVERITY("Severity"), //
 		EXIT("Exit"), //
 		FILE_MENU("File"), //
 		FPS("FPS"), //
@@ -113,14 +118,17 @@ public class Localization {
 		MOVE_TO_BOOKMARK_9("Move to bookmark 9"), //
 		MUSIC_FOLDER("Music folder"), //
 		NEW_PROJECT("New project"), //
+		NO_PHRASES_IN_ARRANGEMENT("No phrases in arrangement"), //
+		NO_SECTIONS_IN_ARRANGEMENT("No sections in arrangement"), //
 		OPEN_PROJECT("Open project"), //
 		PASTE("Paste"), //
-		SQUASH_LEVELS("Squash levels"), //
 		REDO("Redo"), //
+		SECTION_WITHOUT_PHRASE("Section without phrase"), //
 		SELECT_ALL_NOTES("Select all notes"), //
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
 		SHOW_CHORD_IDS("Show chord ids"), //
 		SHOW_GRID("Show grid"), //
+		SHOW_TEMPO_INSTEAD_OF_BPM("Show tempo instead of BPM"), //
 		SONG_OPTIONS("Song options"), //
 		SONGS_FOLDER("Songs folder"), //
 		SOUND_DELAY("Sound delay (ms)"), //
@@ -131,7 +139,13 @@ public class Localization {
 		SPEED_INCREASE("Increase speed"), //
 		SPEED_INCREASE_FAST("Increase speed fast"), //
 		SPEED_INCREASE_PRECISE("Increase speed precise"), //
+		SQUASH_LEVELS("Squash levels"), //
 		SUPPORTED_MUSIC_FILE("Mp3, Ogg or Wav file"), //
+		TAB_3D_PREVIEW("3D preview"), //
+		TAB_ERRORS("Errors"), //
+		TAB_HELP("Help"), //
+		TAB_QUICK_EDIT("Quick edit"), //
+		TAB_TEXT("Text"), //
 		THEME_BASIC("Basic"), //
 		THEME_MODERN("Modern"), //
 		THEME_SQUARE("Square"), //
@@ -345,13 +359,6 @@ public class Localization {
 		CHOOSE_FOLDER_NAME("Choose folder name"), //
 		COULDNT_LOAD_PROJECT("Couldn't load project, reason:\n"), //
 		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement, reason:\n"), //
-		MULTIPLE_COUNT_PHRASES_MOVE_TO_LAST_QUESTION(
-				"Count phrase is placed in multiple places on arrangement %s, do you want to move to the last position to fix it?"), //
-		MULTIPLE_END_PHRASES_MOVE_TO_FIRST_QUESTION(
-				"End phrase is placed in multiple places on arrangement %s, do you want to move to the first position to fix it?"), //
-		NO_PHRASES_MOVE_TO_ARRANGEMENT_QUESTION("There are no phrases placed for arrangment %s, move to it?"), //
-		NO_SECTIONS_MOVE_TO_ARRANGEMENT_QUESTION("There are no sections placed for arrangment %s, move to it?"), //
-		SECTION_WITHOUT_PHRASE_MOVE_QUESTION("Section %s [%s] on arrangement %s has no phrase, move to it?"), //
 		EXIT_POPUP("Exit"), //
 		EXIT_MESSAGE("Are you sure you want to exit?"), //
 		FAST_BACKWARD("fast backward"), //

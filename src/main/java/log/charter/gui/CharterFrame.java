@@ -25,6 +25,7 @@ import log.charter.gui.components.preview3D.Preview3DPanel;
 import log.charter.gui.components.simple.ChartMap;
 import log.charter.gui.components.tabs.HelpTab;
 import log.charter.gui.components.tabs.TextTab;
+import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.components.utils.ComponentUtils;
@@ -49,6 +50,7 @@ public class CharterFrame extends JFrame implements Initiable {
 	private ChartData chartData;
 	private CharterContext charterContext;
 	private CurrentSelectionEditor currentSelectionEditor;
+	private ErrorsTab errorsTab;
 	private FileDropHandler fileDropHandler;
 	private HelpTab helpTab;
 	private KeyboardHandler keyboardHandler;
@@ -89,10 +91,11 @@ public class CharterFrame extends JFrame implements Initiable {
 		setExtendedState(Config.windowExtendedState);
 
 		tabs = new CharterTabbedPane(//
-				new Tab("Quick Edit", new CharterScrollPane(currentSelectionEditor)), //
-				new Tab("Help", helpTab), //
-				new Tab("Text", textTab), //
-				new Tab("3D Preview", preview3DPanel));
+				new Tab(Label.TAB_QUICK_EDIT, new CharterScrollPane(currentSelectionEditor)), //
+				new Tab(Label.TAB_ERRORS, errorsTab), //
+				new Tab(Label.TAB_3D_PREVIEW, preview3DPanel), //
+				new Tab(Label.TAB_TEXT, textTab), //
+				new Tab(Label.TAB_HELP, helpTab));
 
 		add(chartToolbar);
 		add(chartPanel);

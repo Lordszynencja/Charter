@@ -18,6 +18,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
 
+import log.charter.data.config.Config;
 import log.charter.data.song.Beat;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
@@ -32,6 +33,14 @@ import log.charter.util.grid.GridPosition;
 public class BeatsDrawer {
 	private static final Font beatFont = new Font(Font.DIALOG, Font.BOLD, 9);
 	private static final NumberFormat bpmFormat = new DecimalFormat("##0.00");
+
+	private static String formatBPM(final double bpm, final Beat beat) {
+		if (Config.showTempoInsteadOfBPM) {
+			return bpmFormat.format(bpm / beat.noteDenominator * 4) + " ♪";
+		} else {
+			return bpmFormat.format(bpm) + " BPM";
+		}
+	}
 
 	private static class BeatsDrawingData {
 		private final DrawableShapeList beats = new DrawableShapeList();
@@ -56,13 +65,13 @@ public class BeatsDrawer {
 			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.ARRANGEMENT_TEXT));
 		}
 
-		private void addBeatBarNumber(final int x, final int barNumber, final String bpmValue) {
-			final String text = "" + barNumber + " (" + bpmValue + " BPM)";
+		private void addBeatBarNumber(final int x, final int barNumber, final String tempoString) {
+			final String text = "" + barNumber + " (" + tempoString + ")";
 			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.ARRANGEMENT_TEXT));
 		}
 
-		private void addBPMNumber(final int x, final String bpmValue) {
-			final String text = "(" + bpmValue + " BPM)";
+		private void addTempo(final int x, final String tempoString) {
+			final String text = "(" + tempoString + ")";
 			beats.add(new Text(new Position2D(x + 3, beatTextY + 1), beatFont, text, ColorLabel.ARRANGEMENT_TEXT));
 		}
 
@@ -84,12 +93,12 @@ public class BeatsDrawer {
 
 			if (beat.firstInMeasure) {
 				if (previousBeat == null || beat.anchor) {
-					addBeatBarNumber(x, barNumber, bpmFormat.format(bpm));
+					addBeatBarNumber(x, barNumber, formatBPM(bpm, beat));
 				} else {
 					addBeatBarNumber(x, barNumber);
 				}
 			} else if (beat.anchor) {
-				addBPMNumber(x, bpmFormat.format(bpm));
+				addTempo(x, formatBPM(bpm, beat));
 			}
 
 			if (previousBeat == null || beat.beatsInMeasure != previousBeat.beatsInMeasure

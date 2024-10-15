@@ -20,6 +20,7 @@ public class ProgramDisplayConfigPage implements Page {
 	private boolean invertStrings = Config.invertStrings;
 	private boolean invertStrings3D = Config.invertStrings3D;
 	private boolean leftHanded = Config.leftHanded;
+	private boolean showTempoInsteadOfBPM = Config.showTempoInsteadOfBPM;
 	private boolean showChordIds = Config.showChordIds;
 	private boolean showGrid = Config.showGrid;
 	private int FPS = Config.FPS;
@@ -28,6 +29,7 @@ public class ProgramDisplayConfigPage implements Page {
 	private FieldWithLabel<JCheckBox> invertStringsField;
 	private FieldWithLabel<JCheckBox> invertStrings3DField;
 	private FieldWithLabel<JCheckBox> leftHandedField;
+	private FieldWithLabel<JCheckBox> showTempoInsteadOfBPMField;
 	private FieldWithLabel<JCheckBox> showChordIdsField;
 	private FieldWithLabel<JCheckBox> showGridField;
 	private FieldWithLabel<TextInputWithValidation> FPSField;
@@ -43,6 +45,9 @@ public class ProgramDisplayConfigPage implements Page {
 		position.newRow();
 
 		addLeftHanded(panel, position);
+		position.newRow();
+
+		addshowTempoInsteadOfBPM(panel, position);
 		position.newRow();
 
 		addShowChordIds(panel, position);
@@ -91,6 +96,16 @@ public class ProgramDisplayConfigPage implements Page {
 		panel.add(leftHandedField, position);
 	}
 
+	private void addshowTempoInsteadOfBPM(final RowedPanel panel, final RowedPosition position) {
+		final JCheckBox input = new JCheckBox();
+		input.addActionListener(a -> showTempoInsteadOfBPM = input.isSelected());
+		input.setSelected(showTempoInsteadOfBPM);
+
+		showTempoInsteadOfBPMField = new FieldWithLabel<>(Label.SHOW_TEMPO_INSTEAD_OF_BPM, 175, 20, 20, input,
+				LabelPosition.LEFT);
+		panel.add(showTempoInsteadOfBPMField, position);
+	}
+
 	private void addShowChordIds(final RowedPanel panel, final RowedPosition position) {
 		final JCheckBox input = new JCheckBox();
 		input.addActionListener(a -> showChordIds = input.isSelected());
@@ -128,6 +143,7 @@ public class ProgramDisplayConfigPage implements Page {
 		invertStringsField.setVisible(visibility);
 		invertStrings3DField.setVisible(visibility);
 		leftHandedField.setVisible(visibility);
+		showTempoInsteadOfBPMField.setVisible(visibility);
 		showChordIdsField.setVisible(visibility);
 		showGridField.setVisible(visibility);
 		FPSField.setVisible(visibility);
@@ -138,6 +154,7 @@ public class ProgramDisplayConfigPage implements Page {
 		Config.invertStrings = invertStrings;
 		Config.invertStrings3D = invertStrings3D;
 		Config.leftHanded = leftHanded;
+		Config.showTempoInsteadOfBPM = showTempoInsteadOfBPM;
 		Config.showChordIds = showChordIds;
 		Config.showGrid = showGrid;
 		Config.FPS = FPS;

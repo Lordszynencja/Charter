@@ -1,8 +1,6 @@
 package log.charter.services.data.validation;
 
-import static log.charter.gui.components.utils.ComponentUtils.askYesNoCancel;
 import static log.charter.util.CollectionUtils.filter;
-import static log.charter.util.Utils.formatTime;
 
 import java.util.List;
 
@@ -11,72 +9,39 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.SectionType;
-import log.charter.gui.CharterFrame;
-import log.charter.services.data.ChartTimeHandler;
-import log.charter.util.Utils.TimeUnit;
+import log.charter.gui.components.tabs.errorsTab.ChartError;
+import log.charter.gui.components.tabs.errorsTab.ChartError.ChartErrorSeverity;
+import log.charter.gui.components.tabs.errorsTab.ChartError.ChartPosition;
+import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 
 public class SectionsValidator {
 	private ChartData chartData;
-	private CharterFrame charterFrame;
-	private ChartTimeHandler chartTimeHandler;
+	private ErrorsTab errorsTab;
 
-	private boolean validateSectionsAmount(final List<EventPoint> sections, final int arrangementId,
-			final String arrangementName) {
+	private void validateSectionsAmount(final List<EventPoint> sections, final int arrangementId) {
 		if (!sections.isEmpty()) {
-			return true;
+			return;
 		}
 
-		switch (askYesNoCancel(charterFrame, Label.WARNING, Label.NO_SECTIONS_MOVE_TO_ARRANGEMENT_QUESTION,
-				arrangementName)) {
-			case YES:
-				chartTimeHandler.moveTo(arrangementId, null, null);
-				return false;
-			case NO:
-				return true;
-			case CANCEL:
-			case EXIT:
-			default:
-				return false;
-		}
+		final ChartPosition errorPosition = new ChartPosition(chartData, arrangementId);
+		errorsTab.addError(new ChartError(Label.NO_SECTIONS_IN_ARRANGEMENT, ChartErrorSeverity.ERROR, errorPosition));
 	}
 
-	private boolean validateSectionsContainPhrases(final List<EventPoint> sections, final int arrangementId,
-			final String arrangementName) {
+	private void validateSectionsContainPhrases(final List<EventPoint> sections, final int arrangementId) {
 		for (final EventPoint section : sections) {
 			if (section.hasPhrase() || section.section == SectionType.NO_GUITAR) {
 				continue;
 			}
 
-			switch (askYesNoCancel(charterFrame, Label.WARNING, Label.SECTION_WITHOUT_PHRASE_MOVE_QUESTION,
-					section.section.label, formatTime(section.position(chartData.beats()), TimeUnit.MILISECONDS,
-							TimeUnit.MINUTES, TimeUnit.YEARS),
-					arrangementName)) {
-				case YES:
-					chartTimeHandler.moveTo(arrangementId, null, section.position());
-					return false;
-				case NO:
-					return true;
-				case CANCEL:
-				case EXIT:
-				default:
-					return false;
-			}
+			final ChartPosition errorPosition = new ChartPosition(chartData, arrangementId, section.position());
+			errorsTab.addError(new ChartError(Label.SECTION_WITHOUT_PHRASE, ChartErrorSeverity.ERROR, errorPosition));
 		}
-
-		return true;
 	}
 
-	public boolean validateSections(final int arrangementId, final Arrangement arrangement) {
+	public void validateSections(final int arrangementId, final Arrangement arrangement) {
 		final List<EventPoint> sections = filter(arrangement.eventPoints, p -> p.section != null);
-		final String arrangementName = arrangement.getTypeNameLabel(arrangementId);
 
-		if (!validateSectionsAmount(sections, arrangementId, arrangementName)) {
-			return false;
-		}
-		if (!validateSectionsContainPhrases(sections, arrangementId, arrangementName)) {
-			return false;
-		}
-
-		return true;
+		validateSectionsAmount(sections, arrangementId);
+		validateSectionsContainPhrases(sections, arrangementId);
 	}
 }
