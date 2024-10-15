@@ -28,6 +28,7 @@ class EditMenuHandler extends CharterMenuHandler implements Initiable {
 	private ProjectAudioHandler projectAudioHandler;
 	private UndoSystem undoSystem;
 
+	@Override
 	public void init() {
 		super.init(actionHandler);
 	}
@@ -61,6 +62,17 @@ class EditMenuHandler extends CharterMenuHandler implements Initiable {
 		menu.add(new SpecialMenuItem(Label.ADD_SILENCE, this::addSilence));
 		menu.add(new SpecialMenuItem(Label.ADD_DEFAULT_SILENCE, this::addDefaultSilence));
 		menu.add(new SpecialMenuItem(Label.ADD_BEATS_AT_THE_START, this::addBeatsAtTheStart));
+
+		menu.addSeparator();
+		final JMenu bookmarksSubmenu = createMenu(Label.BOOKMARKS_MENU);
+		for (int i = 0; i < 10; i++) {
+			bookmarksSubmenu.add(createItem(Action.valueOf("MARK_BOOKMARK_" + i)));
+		}
+		bookmarksSubmenu.addSeparator();
+		for (int i = 0; i < 10; i++) {
+			bookmarksSubmenu.add(createItem(Action.valueOf("MOVE_TO_BOOKMARK_" + i)));
+		}
+		menu.add(bookmarksSubmenu);
 
 		return menu;
 	}

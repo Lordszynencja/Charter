@@ -43,6 +43,7 @@ public class Localization {
 		AUDIO_OUTPUT_R_ID("Right output channel id"), //
 		BACKUP_DELAY_S("Backup delay (s)"), //
 		BASE_AUDIO_FORMAT("Base audio format"), //
+		BOOKMARKS_MENU("Bookmarks"), //
 		BUFFER_SIZE_MS("Audio buffer size to fill (ms)"), //
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
