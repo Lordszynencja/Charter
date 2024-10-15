@@ -91,7 +91,7 @@ public class Logger {
 		}
 	}
 
-	public static void error(String msg, final Exception e) {
+	public static void error(String msg, final Throwable e) {
 		msg = getLine("ERROR", msg);
 
 		out.println(msg);

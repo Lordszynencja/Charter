@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
 	<artifactId>Charter</artifactId>
-	<version>0.17.6</version>
+	<version>0.17.7</version>
 	<packaging>jar</packaging>
 	<name>Charter</name>
 	<description>Charting program for guitar</description>
@@ -351,12 +351,12 @@
 								<minVersion>16</minVersion>
 							</jre>
 							<versionInfo>
-								<fileVersion>0.16.3.0</fileVersion>
-								<txtFileVersion>txt file version?</txtFileVersion>
+								<fileVersion>${project.version}</fileVersion>
+								<txtFileVersion>${project.version}</txtFileVersion>
 								<fileDescription>Charter: Charting tool for guitar arrangements</fileDescription>
 								<copyright>BSD 3-Clause</copyright>
-								<productVersion>0.16.3.0</productVersion>
-								<txtProductVersion>txt product version</txtProductVersion>
+								<productVersion>${project.version}</productVersion>
+								<txtProductVersion>${project.version}</txtProductVersion>
 								<productName>Charter</productName>
 								<internalName>Charter</internalName>
 								<originalFilename>Charter.exe</originalFilename>

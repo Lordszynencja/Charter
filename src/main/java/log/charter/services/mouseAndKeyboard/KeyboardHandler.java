@@ -108,6 +108,7 @@ public class KeyboardHandler implements KeyListener {
 
 		heldNonModifierKey = keyCode;
 		replaceHeldAction();
+
 		if (heldAction != null) {
 			actionHandler.fireAction(heldAction);
 		}

@@ -53,7 +53,6 @@ public class ProjectAudioHandler {
 
 	public void setAudio(final AudioDataShort audio) {
 		this.audio = audio;
-
 		waveFormDrawer.recalculateMap();
 		saveAudio(false);
 	}
