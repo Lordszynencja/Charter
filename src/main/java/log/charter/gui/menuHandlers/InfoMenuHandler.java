@@ -2,7 +2,10 @@ package log.charter.gui.menuHandlers;
 
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 
+import java.awt.Desktop;
+import java.awt.Desktop.Action;
 import java.io.File;
+import java.net.URI;
 
 import javax.swing.JMenu;
 
@@ -19,6 +22,8 @@ class InfoMenuHandler extends CharterMenuHandler {
 	private static final String librariesUsed = //
 			"part of Widgex made by Joseph Fabisevich\n"//
 					+ "GLAC_library-Java made by Nayuki";
+
+	private static final String paypalDonationCode = "https://www.paypal.com/donate/?hosted_button_id=YH2SN57E68LK8";
 
 	private CharterFrame charterFrame;
 	private CharterMenuBar charterMenuBar;
@@ -49,6 +54,19 @@ class InfoMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Label.LICENSES, () -> showPopup(charterFrame, Label.LIBRARIES_USED.format(librariesUsed))));
 		menu.add(prepareLanguagesSubmenu());
 
+		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Action.BROWSE)) {
+			menu.addSeparator();
+			menu.add(createItem(Label.INFO_MENU_DONATION, this::openDonationPage));
+		}
+
 		return menu;
+	}
+
+	private void openDonationPage() {
+		try {
+			Desktop.getDesktop().browse(new URI(paypalDonationCode));
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

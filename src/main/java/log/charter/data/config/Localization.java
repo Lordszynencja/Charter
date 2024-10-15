@@ -242,6 +242,7 @@ public class Localization {
 		INFO_MENU_VERSION("Version"), //
 		LICENSES("Licenses"), //
 		LIBRARIES_USED("Libraries used:\n%s"), //
+		INFO_MENU_DONATION("Donate for development"), //
 
 		MUSIC_MENU("Music"), //
 		TOGGLE_REPEAT_END("Set repeater end"), //
