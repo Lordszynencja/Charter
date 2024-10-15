@@ -326,7 +326,6 @@ public class ChartTimeHandler {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void moveToNextItemWithSelect() {
 		final List<? extends IVirtualConstantPosition> currentItems = getCurrentItems();
 		if (currentItems.isEmpty()) {
