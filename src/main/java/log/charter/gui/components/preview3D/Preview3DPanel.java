@@ -107,7 +107,6 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 
 	@Override
 	public void paint(final Graphics g) {
-		Logger.info("paint start");
 		if (!active) {
 			return;
 		}
@@ -136,7 +135,6 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 				active = false;
 			}
 		}
-		Logger.info("paint end");
 		repaintActivated = false;
 	}
 

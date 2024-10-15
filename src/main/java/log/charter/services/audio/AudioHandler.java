@@ -5,6 +5,7 @@ import static java.lang.System.nanoTime;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.io.Logger;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
@@ -59,7 +60,11 @@ public class AudioHandler {
 
 		lastPlayedData = musicData;
 
-		songPlayer = SoundSystem.play(lastPlayedData, () -> Config.volume, speed, start);
+		try {
+			songPlayer = SoundSystem.play(lastPlayedData, () -> Config.volume, speed, start);
+		} catch (final Exception | UnsatisfiedLinkError e) {
+			Logger.error("Couldn't play sound", e);
+		}
 		songTimeOnStart = chartTimeHandler.time();
 		playStartTime = nanoTime() / 1_000_000L;
 

@@ -8,6 +8,7 @@ import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.io.Logger;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.util.RW;
 
@@ -70,7 +71,7 @@ public class SongFilesBackuper implements Initiable {
 
 		final List<String> filesToBackup = new ArrayList<>();
 		filesToBackup.add(chartData.projectFileName);
-		System.out.println("Doing backup of " + chartData.path + ", files: " + filesToBackup);
+		Logger.debug("Doing backup of " + chartData.path + ", files: " + filesToBackup);
 
 		makeBackups(chartData.path, filesToBackup);
 	}
