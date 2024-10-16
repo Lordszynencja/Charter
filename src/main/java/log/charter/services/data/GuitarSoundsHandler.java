@@ -3,21 +3,25 @@ package log.charter.services.data;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.frets;
-import static log.charter.util.CollectionUtils.map;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.Note;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
@@ -25,37 +29,30 @@ import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.util.chordRecognition.ChordNameSuggester;
 import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.Pair;
 import log.charter.util.data.IntRange;
 
 public class GuitarSoundsHandler {
 	private ChartData chartData;
 	private CurrentSelectionEditor currentSelectionEditor;
+	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	private boolean stringsInRange(final List<ChordOrNote> sounds, final IntRange stringRange) {
-		return !sounds.stream()//
-				.flatMap(ChordOrNote::notes)//
+	private boolean stringsInRange(final List<Selection<ChordOrNote>> selected, final IntRange stringRange) {
+		return !selected.stream()//
+				.flatMap(selection -> selection.selectable.notes())//
 				.anyMatch(note -> !stringRange.inRange(note.string()));
 	}
 
-	private List<ChordOrNote> getSelectedSounds() {
-		final List<Selection<ChordOrNote>> selectedSounds = selectionManager
-				.<ChordOrNote>accessor(PositionType.GUITAR_NOTE).getSelected();
-		if (selectedSounds.isEmpty()) {
+	private List<Selection<ChordOrNote>> getSelectedSoundsWithoutStringAboveBelow(final IntRange stringRange) {
+		final List<Selection<ChordOrNote>> selected = selectionManager.<ChordOrNote>accessor(PositionType.GUITAR_NOTE)
+				.getSelected();
+		if (!stringsInRange(selected, stringRange)) {
 			return new ArrayList<>();
 		}
 
-		return map(selectedSounds, selection -> selection.selectable);
-	}
-
-	private List<ChordOrNote> getSelectedSoundsWithoutStringAboveBelow(final IntRange stringRange) {
-		final List<ChordOrNote> sounds = getSelectedSounds();
-		if (!stringsInRange(sounds, stringRange)) {
-			return new ArrayList<>();
-		}
-
-		return sounds;
+		return selected;
 	}
 
 	private Map<Integer, Integer> getStringDifferencesEmpty(final IntRange stringRange) {
@@ -67,12 +64,11 @@ public class GuitarSoundsHandler {
 		return stringDifferences;
 	}
 
-	private Map<Integer, Integer> getStringDifferences(final Arrangement arrangement, final IntRange stringRange,
+	private Map<Integer, Integer> getStringDifferences(final Tuning tuning, final IntRange stringRange,
 			final int stringChange) {
 		final Map<Integer, Integer> stringDifferences = new HashMap<>();
 		for (int i = stringRange.min; i <= stringRange.max; i++) {
-			stringDifferences.put(i,
-					arrangement.tuning.getStringOffset(i) - arrangement.tuning.getStringOffset(i + stringChange));
+			stringDifferences.put(i, tuning.getStringOffset(i) - tuning.getStringOffset(i + stringChange));
 		}
 
 		return stringDifferences;
@@ -118,20 +114,49 @@ public class GuitarSoundsHandler {
 		return newChordTemplate;
 	}
 
-	private void moveStrings(final Arrangement arrangement, final Map<Integer, Integer> stringDifferences,
-			final IntRange stringRange, final List<ChordOrNote> sounds, final int stringChange) {
+	private void moveStrings(final Map<Integer, Integer> stringDifferences, final IntRange stringRange,
+			final List<Selection<ChordOrNote>> selected, final int stringChange) {
 		undoSystem.addUndo();
 
+		final Arrangement arrangement = chartData.currentArrangement();
 		final Map<Integer, Integer> movedChordTemplates = new HashMap<>();
 		final List<ChordTemplate> chordTemplates = arrangement.chordTemplates;
+		final List<ChordOrNote> sounds = chartData.currentSounds();
+		final Set<Integer> idsDone = new HashSet<>();
 
-		for (final ChordOrNote sound : sounds) {
+		for (final Selection<ChordOrNote> selection : selected) {
+			if (idsDone.contains(selection.id)) {
+				continue;
+			}
+
+			final ChordOrNote sound = selection.selectable;
 			if (sound.isNote()) {
 				final int newFret = sound.note().fret + stringDifferences.get(sound.note().string);
 				if (newFret >= 0 && newFret <= Config.frets) {
-					sound.note().fret = newFret;
-					sound.note().string += stringChange;
+					Note currentNote = sound.note();
+					currentNote.fret = newFret;
+
+					final int stringFrom = currentNote.string;
+					int id = selection.id;
+					while (currentNote != null) {
+						currentNote.string += stringChange;
+						idsDone.add(id);
+
+						if (!currentNote.linkNext()) {
+							break;
+						}
+
+						final Pair<Integer, ChordOrNote> nextSoundWithId = ChordOrNote
+								.findNextSoundWithIdOnString(stringFrom, id + 1, sounds);
+						if (nextSoundWithId == null || nextSoundWithId.b.isChord()) {
+							break;
+						}
+
+						currentNote = nextSoundWithId.b.note();
+						id = nextSoundWithId.a;
+					}
 				}
+
 				continue;
 			}
 
@@ -154,7 +179,11 @@ public class GuitarSoundsHandler {
 			final int newTemplateId = arrangement.getChordTemplateIdWithSave(newChordTemplate);
 			movedChordTemplates.put(sound.chord().templateId(), newTemplateId);
 			sound.chord().updateTemplate(newTemplateId, newChordTemplate);
+			idsDone.add(selection.id);
 		}
+
+		guitarSoundsStatusesHandler
+				.updateLinkedNotes(selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
 
 		currentSelectionEditor.selectionChanged(true);
 	}
@@ -162,27 +191,26 @@ public class GuitarSoundsHandler {
 	public void moveStringsWithoutFretChange(final int stringChange) {
 		final int strings = chartData.currentStrings();
 		final IntRange stringRange = new IntRange(max(0, -stringChange), strings - 1 - max(0, stringChange));
-		final List<ChordOrNote> sounds = getSelectedSoundsWithoutStringAboveBelow(stringRange);
-		if (sounds.isEmpty()) {
+		final List<Selection<ChordOrNote>> selected = getSelectedSoundsWithoutStringAboveBelow(stringRange);
+		if (selected.isEmpty()) {
 			return;
 		}
 
-		final Arrangement arrangement = chartData.currentArrangement();
 		final Map<Integer, Integer> stringDifferences = getStringDifferencesEmpty(stringRange);
-		moveStrings(arrangement, stringDifferences, stringRange, sounds, stringChange);
+		moveStrings(stringDifferences, stringRange, selected, stringChange);
 	}
 
 	public void moveStringsWithFretChange(final int stringChange) {
 		final int strings = chartData.currentStrings();
 		final IntRange stringRange = new IntRange(max(0, -stringChange), strings - 1 - max(0, stringChange));
-		final List<ChordOrNote> sounds = getSelectedSoundsWithoutStringAboveBelow(stringRange);
-		if (sounds.isEmpty()) {
+		final List<Selection<ChordOrNote>> selected = getSelectedSoundsWithoutStringAboveBelow(stringRange);
+		if (selected.isEmpty()) {
 			return;
 		}
 
-		final Arrangement arrangement = chartData.currentArrangement();
-		final Map<Integer, Integer> stringDifferences = getStringDifferences(arrangement, stringRange, stringChange);
-		moveStrings(arrangement, stringDifferences, stringRange, sounds, stringChange);
+		final Map<Integer, Integer> stringDifferences = getStringDifferences(chartData.currentArrangement().tuning,
+				stringRange, stringChange);
+		moveStrings(stringDifferences, stringRange, selected, stringChange);
 	}
 
 	private void setChordName(final ChordTemplate template) {
@@ -200,10 +228,11 @@ public class GuitarSoundsHandler {
 		}
 	}
 
-	private boolean validFretChange(final List<ChordOrNote> sounds, final int fretChange) {
+	private boolean validFretChange(final List<Selection<ChordOrNote>> selected, final int fretChange) {
 		final IntRange fretRange = new IntRange(max(0, -fretChange), Config.frets - max(0, fretChange));
 
-		for (final ChordOrNote sound : sounds) {
+		for (final Selection<ChordOrNote> selection : selected) {
+			final ChordOrNote sound = selection.selectable;
 			if (sound.isNote()) {
 				if (!fretRange.inRange(sound.note().fret)) {
 					return false;
@@ -258,29 +287,35 @@ public class GuitarSoundsHandler {
 	}
 
 	public void moveFret(final int fretChange) {
-		final List<ChordOrNote> sounds = getSelectedSounds();
-		if (sounds.isEmpty()) {
+		final List<Selection<ChordOrNote>> selected = selectionManager.<ChordOrNote>accessor(PositionType.GUITAR_NOTE)
+				.getSelected();
+		if (selected.isEmpty()) {
 			return;
 		}
 
-		if (!validFretChange(sounds, fretChange)) {
+		if (!validFretChange(selected, fretChange)) {
 			return;
 		}
 
 		undoSystem.addUndo();
-		sounds.forEach(sound -> moveFret(sound, fretChange));
+		selected.forEach(selection -> moveFret(selection.selectable, fretChange));
+		guitarSoundsStatusesHandler
+				.updateLinkedNotes(selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
+
 		currentSelectionEditor.selectionChanged(false);
 	}
 
 	public void setFret(final int fret) {
-		final List<ChordOrNote> sounds = getSelectedSounds();
-		if (sounds.isEmpty()) {
+		final List<Selection<ChordOrNote>> selected = selectionManager.<ChordOrNote>accessor(PositionType.GUITAR_NOTE)
+				.getSelected();
+		if (selected.isEmpty()) {
 			return;
 		}
 
 		undoSystem.addUndo();
 
-		for (final ChordOrNote sound : sounds) {
+		for (final Selection<ChordOrNote> selection : selected) {
+			final ChordOrNote sound = selection.selectable;
 			if (sound.isNote()) {
 				sound.note().fret = fret;
 				continue;
@@ -298,6 +333,9 @@ public class GuitarSoundsHandler {
 			final int newTemplateId = chartData.currentArrangement().getChordTemplateIdWithSave(newTemplate);
 			chord.updateTemplate(newTemplateId, newTemplate);
 		}
+
+		guitarSoundsStatusesHandler
+				.updateLinkedNotes(selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
 
 		currentSelectionEditor.selectionChanged(false);
 	}

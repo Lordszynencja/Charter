@@ -29,12 +29,14 @@ import log.charter.gui.panes.songEdits.GuitarEventPointPane;
 import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.gui.panes.songEdits.ToneChangePane;
 import log.charter.services.data.ChartItemsHandler;
+import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.HighlightManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId;
+import log.charter.util.collections.Pair;
 
 public class GuitarModeHandler extends ModeHandler {
 	private static final long scrollTimeoutForUndo = 1000;
@@ -44,6 +46,7 @@ public class GuitarModeHandler extends ModeHandler {
 	private ChartItemsHandler chartItemsHandler;
 	private CharterFrame charterFrame;
 	private CurrentSelectionEditor currentSelectionEditor;
+	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private HighlightManager highlightManager;
 	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
@@ -131,6 +134,12 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 		selectionManager.addSoundSelection(id);
 
+		final Pair<Integer, ChordOrNote> previousSound = ChordOrNote.findPreviousSoundWithIdOnString(note.string,
+				id - 1, chartData.currentSounds());
+		if (previousSound != null) {
+			guitarSoundsStatusesHandler.updateLinkedNote(previousSound.a);
+		}
+
 		return sound;
 	}
 
@@ -146,7 +155,14 @@ public class GuitarModeHandler extends ModeHandler {
 		}
 
 		if (chordOrNote.isNote() && chordOrNote.note().string == string) {
-			chartData.currentArrangementLevel().sounds.remove((int) id);
+			chartData.currentSounds().remove((int) id);
+			final Pair<Integer, ChordOrNote> previousSound = ChordOrNote.findPreviousSoundWithIdOnString(string, id - 1,
+					chartData.currentSounds());
+			if (previousSound != null) {
+				arrangementFixer.fixNoteLengths(chartData.currentSounds(), previousSound.a, previousSound.a);
+				guitarSoundsStatusesHandler.updateLinkedNote(previousSound.a);
+			}
+
 			return -1;
 		}
 

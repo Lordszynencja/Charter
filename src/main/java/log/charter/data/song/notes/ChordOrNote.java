@@ -18,11 +18,28 @@ import log.charter.data.song.position.fractional.IFractionalPosition;
 import log.charter.io.rsc.xml.converters.ChordOrNoteConverter;
 import log.charter.io.rsc.xml.converters.ChordOrNoteForChordConverter;
 import log.charter.io.rsc.xml.converters.ChordOrNoteForNoteConverter;
+import log.charter.util.collections.Pair;
 
 @XStreamAlias("sound")
 @XStreamConverter(ChordOrNoteConverter.class)
 @XStreamInclude({ ChordOrNoteForChord.class, ChordOrNoteForNote.class })
 public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPositionWithEnd {
+	public static Pair<Integer, ChordOrNote> findNextSoundWithIdOnString(final int string, final int startFromId,
+			final List<ChordOrNote> sounds) {
+		for (int i = startFromId; i < sounds.size(); i++) {
+			final ChordOrNote sound = sounds.get(i);
+			if (sound.isNote()) {
+				if (sound.note().string == string) {
+					return new Pair<>(i, sound);
+				}
+			} else if (sound.chord().chordNotes.containsKey(string)) {
+				return new Pair<>(i, sound);
+			}
+		}
+
+		return null;
+	}
+
 	public static ChordOrNote findNextSoundOnString(final int string, final int startFromId,
 			final List<ChordOrNote> sounds) {
 		for (int i = startFromId; i < sounds.size(); i++) {
@@ -33,6 +50,22 @@ public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPos
 				}
 			} else if (sound.chord().chordNotes.containsKey(string)) {
 				return sound;
+			}
+		}
+
+		return null;
+	}
+
+	public static Pair<Integer, ChordOrNote> findPreviousSoundWithIdOnString(final int string, final int startFromId,
+			final List<ChordOrNote> sounds) {
+		for (int i = startFromId; i >= 0; i--) {
+			final ChordOrNote sound = sounds.get(i);
+			if (sound.isNote()) {
+				if (sound.note().string == string) {
+					return new Pair<>(i, sound);
+				}
+			} else if (sound.chord().chordNotes.containsKey(string)) {
+				return new Pair<>(i, sound);
 			}
 		}
 

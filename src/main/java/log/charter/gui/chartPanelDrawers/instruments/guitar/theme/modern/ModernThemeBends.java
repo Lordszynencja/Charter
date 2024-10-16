@@ -63,16 +63,12 @@ public class ModernThemeBends {
 
 	private void addBendValueIcon(final EditorNoteDrawingData note, final int x, final int y,
 			final BigDecimal bendValue) {
-		if (note.linkPrevious) {
-			return;
-		}
-
 		final String text = "ノ" + formatBendValue(bendValue);
 		final ShapeSize expectedIconSize = getExpectedSize(data.g, bendValueFont, text);
 		final int minBendXAfterHead = noteHeight / 2 + expectedIconSize.width / 2;
 
 		Position2D iconPosition;
-		if (x > minBendXAfterHead) {
+		if (x > note.x + minBendXAfterHead) {
 			iconPosition = new Position2D(x, y - tailHeight / 2);
 		} else {
 			final int bendY = y - noteHeight / 2 - expectedIconSize.height / 2;
@@ -96,11 +92,12 @@ public class ModernThemeBends {
 		for (final EditorBendValueDrawingData bendValue : note.bendValues) {
 			final Position2D lineTo = new Position2D(bendValue.x, getBendLineY(y, bendValue.bendValue));
 			if (bendValue.x == note.x) {
-				if (!note.linkPrevious) {
+				if (!note.linkPrevious || note.bendValues.size() > 1) {
 					data.noteTails.add(new Line(lastBendLinePosition, lineTo, Color.WHITE, 2));
 					addBendValueIcon(note, bendValue.x, lineTo.y, bendValue.bendValue);
 				}
 				lastBendLinePosition = lineTo.move(1, 0);
+				linesDrawn = true;
 
 				continue;
 			}

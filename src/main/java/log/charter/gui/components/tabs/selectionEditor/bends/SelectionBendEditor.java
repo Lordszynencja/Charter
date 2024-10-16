@@ -24,7 +24,9 @@ import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.lookAndFeel.CharterRadioButton;
+import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.selection.ISelectionAccessor;
+import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 
 public class SelectionBendEditor extends RowedPanel {
@@ -36,7 +38,8 @@ public class SelectionBendEditor extends RowedPanel {
 		}
 	}
 
-	private final ChartData data;
+	private final ChartData chartData;
+	private final GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private final SelectionManager selectionManager;
 	private final UndoSystem undoSystem;
 
@@ -46,16 +49,18 @@ public class SelectionBendEditor extends RowedPanel {
 	private List<JRadioButton> strings;
 	private int lastStringsAmount = maxStrings;
 
-	private ChordOrNote getCurrentlySelectedSound() {
+	private Selection<ChordOrNote> getCurrentSelection() {
 		final ISelectionAccessor<ChordOrNote> selectionAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
-		return selectionAccessor.getSelected().get(0).selectable;
+		return selectionAccessor.getSelected().get(0);
 	}
 
-	public SelectionBendEditor(final RowedPanel parent, final ChartData data, final SelectionManager selectionManager,
+	public SelectionBendEditor(final RowedPanel parent, final ChartData chartData,
+			final GuitarSoundsStatusesHandler guitarSoundsStatusesHandler, final SelectionManager selectionManager,
 			final UndoSystem undoSystem) {
 		super(new PaneSizesBuilder(500).build(), 2);
 
-		this.data = data;
+		this.chartData = chartData;
+		this.guitarSoundsStatusesHandler = guitarSoundsStatusesHandler;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 
@@ -89,9 +94,9 @@ public class SelectionBendEditor extends RowedPanel {
 	}
 
 	private void onSelectString(final int string) {
-		final ChordOrNote sound = getCurrentlySelectedSound();
-		if (sound.isChord()) {
-			bendEditorGraph.setBendValues(string, sound.chord().chordNotes.get(string).bendValues);
+		final Selection<ChordOrNote> selection = getCurrentSelection();
+		if (selection.selectable.isChord()) {
+			bendEditorGraph.setBendValues(string, selection.selectable.chord().chordNotes.get(string).bendValues);
 		}
 	}
 
@@ -114,7 +119,7 @@ public class SelectionBendEditor extends RowedPanel {
 
 	public void enableAndSelectStrings(final ChordOrNote sound) {
 		final boolean[] stringsForAction = new boolean[maxStrings];
-		final int lowestString = sound.notesWithFrets(data.currentArrangement().chordTemplates)//
+		final int lowestString = sound.notesWithFrets(chartData.currentArrangement().chordTemplates)//
 				.map(CommonNoteWithFret::string)//
 				.peek(string -> stringsForAction[string] = true)//
 				.collect(Collectors.minBy(Integer::compare)).get();
@@ -126,16 +131,16 @@ public class SelectionBendEditor extends RowedPanel {
 		strings.get(lowestString).setSelected(true);
 
 		if (sound.isNote()) {
-			bendEditorGraph.setNote(sound.note(), data.currentStrings());
+			bendEditorGraph.setNote(sound.note(), chartData.currentStrings());
 			return;
 		} else {
-			bendEditorGraph.setChord(sound.chord(), lowestString, data.currentStrings());
+			bendEditorGraph.setChord(sound.chord(), lowestString, chartData.currentStrings());
 		}
 	}
 
 	private void resetColors() {
-		if (lastStringsAmount != data.currentStrings()) {
-			lastStringsAmount = data.currentStrings();
+		if (lastStringsAmount != chartData.currentStrings()) {
+			lastStringsAmount = chartData.currentStrings();
 			final boolean[] stringsForAction = new boolean[maxStrings];
 			for (int i = 0; i < lastStringsAmount; i++) {
 				stringsForAction[i] = true;
@@ -170,6 +175,8 @@ public class SelectionBendEditor extends RowedPanel {
 	private void onChangeBends(final int string, final List<BendValue> newBends) {
 		undoSystem.addUndo();
 
-		getCurrentlySelectedSound().getString(string).ifPresent(note -> note.bendValues(newBends));
+		final Selection<ChordOrNote> selection = getCurrentSelection();
+		selection.selectable.getString(string).ifPresent(note -> note.bendValues(newBends));
+		guitarSoundsStatusesHandler.updateLinkedNote(selection.id);
 	}
 }

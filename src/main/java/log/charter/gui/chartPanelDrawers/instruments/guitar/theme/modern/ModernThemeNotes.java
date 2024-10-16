@@ -186,11 +186,6 @@ public class ModernThemeNotes implements ThemeNotes {
 		}
 	}
 
-	private void addLinkedFretNumber(final EditorNoteDrawingData note, final int y) {
-		final Font font = note.fretNumber < 10 ? fretFont : smallFretFont;
-		data.notes.add(new CenteredText(new Position2D(note.x, y), font, note.fretNumber + "", Color.WHITE));
-	}
-
 	private void addAccent(final EditorNoteDrawingData note, final int y) {
 		if (!note.accent) {
 			return;

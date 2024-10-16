@@ -426,7 +426,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	public void mousePressed(final MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			selectedBend = getBendPosition();
-			initialDragBendValue = selectedBend.value;
+			initialDragBendValue = selectedBend == null ? -1 : selectedBend.value;
 
 			final int value = getValueFromY(e.getY());
 			if (selectedBend == null || selectedBend.id == null) {
