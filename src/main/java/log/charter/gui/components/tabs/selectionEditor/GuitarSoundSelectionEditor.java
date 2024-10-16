@@ -53,6 +53,7 @@ import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.lookAndFeel.CharterCheckBox;
 import log.charter.services.data.ChartItemsHandler;
+import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.fixers.DuplicatedChordTemplatesRemover;
 import log.charter.services.data.fixers.UnusedChordTemplatesRemover;
@@ -67,6 +68,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartItemsHandler chartItemsHandler;
+	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
@@ -175,7 +177,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void addBendEditor(final int x) {
-		selectionBendEditor = new SelectionBendEditor(parent, chartData, selectionManager, undoSystem);
+		selectionBendEditor = new SelectionBendEditor(parent, chartData, guitarSoundsStatusesHandler, selectionManager,
+				undoSystem);
 		selectionBendEditor.setLocation(x, parent.sizes.getY(2));
 		parent.add(selectionBendEditor);
 	}
@@ -299,10 +302,13 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			chordTemplate.frets.put(Integer.valueOf(stringValue) - 1, newFret);
 		}
 
-		final List<ChordOrNote> sounds = selectionManager.getSelectedElements(PositionType.GUITAR_NOTE);
-		for (final ChordOrNote sound : sounds) {
-			sound.note().fret = newFret;
+		final List<Selection<ChordOrNote>> selected = selectionManager.getSelected(PositionType.GUITAR_NOTE);
+		for (final Selection<ChordOrNote> selection : selected) {
+			selection.selectable.note().fret = newFret;
 		}
+
+		guitarSoundsStatusesHandler
+				.updateLinkedNotes(selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
 
 		setCurrentValuesInInputs();
 	}
@@ -376,6 +382,9 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		if (selected.size() == 1) {
 			selectionBendEditor.onChangeSelection(selected.stream().findAny().get().selectable);
 		}
+
+		guitarSoundsStatusesHandler
+				.updateLinkedNotes(selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
 	}
 
 	private void cleanSlide() {
@@ -386,18 +395,13 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			if (selection.selectable.isNote()) {
 				final Note note = selection.selectable.note();
 				note.slideTo = null;
-
-				if (note.linkNext) {
-					final ChordOrNote nextSound = ChordOrNote.findNextSoundOnString(note.string, selection.id + 1,
-							chartData.currentArrangementLevel().sounds);
-					if (nextSound != null && nextSound.isNote()) {
-						nextSound.note().fret = note.fret;
-					}
-				}
 			} else {
 				selection.selectable.chord().chordNotes.values().forEach(n -> n.slideTo = null);
 			}
 		}
+
+		guitarSoundsStatusesHandler
+				.updateLinkedNotes(selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
 	}
 
 	private void setSlide(final int newSlideFret) {
@@ -409,14 +413,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			if (selection.selectable.isNote()) {
 				final Note note = selection.selectable.note();
 				note.slideTo = newSlideFret;
-
-				if (note.linkNext) {
-					final ChordOrNote nextSound = ChordOrNote.findNextSoundOnString(note.string, selection.id + 1,
-							chartData.currentArrangementLevel().sounds);
-					if (nextSound != null && nextSound.isNote()) {
-						nextSound.note().fret = note.slideTo;
-					}
-				}
 			} else {
 				final Chord chord = selection.selectable.chord();
 				final ChordTemplate chordTemplate = chordTemplates.get(chord.templateId());
@@ -439,6 +435,9 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				}
 			}
 		}
+
+		guitarSoundsStatusesHandler
+				.updateLinkedNotes(selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
 	}
 
 	private void changeSlideFret(final Integer newSlideFret) {
@@ -474,35 +473,39 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			return;
 		}
 
+		List<Selection<ChordOrNote>> selected;
 		if (chordTemplate.frets.size() == 1) {
 			changeSelectedChordsToNotes();
 
-			final List<ChordOrNote> selected = selectionManager.getSelectedElements(PositionType.GUITAR_NOTE);
+			selected = selectionManager.getSelected(PositionType.GUITAR_NOTE);
 
 			for (final Entry<Integer, Integer> entry : chordTemplate.frets.entrySet()) {
 				string.field.setTextWithoutEvent(entry.getKey() + "");
 				fret.field.setTextWithoutEvent(entry.getValue() + "");
-				for (final ChordOrNote sound : selected) {
-					sound.note().string = entry.getKey();
-					sound.note().fret = entry.getValue();
+				for (final Selection<ChordOrNote> selection : selected) {
+					selection.selectable.note().string = entry.getKey();
+					selection.selectable.note().fret = entry.getValue();
 				}
 			}
 
 			if (selected.size() == 1) {
-				selectionBendEditor.enableAndSelectStrings(selected.get(0));
+				selectionBendEditor.enableAndSelectStrings(selected.get(0).selectable);
 			}
 		} else {
 			final int templateId = arrangement.getChordTemplateIdWithSave(chordTemplate);
-			final List<ChordOrNote> selected = selectionManager.getSelectedElements(PositionType.GUITAR_NOTE);
+			selected = selectionManager.getSelected(PositionType.GUITAR_NOTE);
 
-			for (final ChordOrNote sound : selected) {
-				if (sound.isChord()) {
-					sound.chord().updateTemplate(templateId, chordTemplate);
+			for (final Selection<ChordOrNote> selection : selected) {
+				if (selection.selectable.isChord()) {
+					selection.selectable.chord().updateTemplate(templateId, chordTemplate);
 				}
 			}
 
 			changeSelectedToChords();
 		}
+
+		guitarSoundsStatusesHandler
+				.updateLinkedNotes(selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
 
 		DuplicatedChordTemplatesRemover.remove(arrangement);
 		UnusedChordTemplatesRemover.remove(arrangement);
