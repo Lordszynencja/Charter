@@ -1,6 +1,7 @@
 package log.charter.gui.menuHandlers;
 
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
@@ -73,6 +74,12 @@ class EditMenuHandler extends CharterMenuHandler implements Initiable {
 			bookmarksSubmenu.add(createItem(Action.valueOf("MOVE_TO_BOOKMARK_" + i)));
 		}
 		menu.add(bookmarksSubmenu);
+
+		if (modeManager.getMode() == EditMode.TEMPO_MAP) {
+			final JMenuItem anchorItem = createItem(Action.TOGGLE_ANCHOR);
+			anchorItem.setEnabled(false);
+			menu.add(anchorItem);
+		}
 
 		return menu;
 	}

@@ -185,7 +185,7 @@ public class SoundSystem {
 		}
 
 		private void waitIfNeeded() throws InterruptedException {
-			while (!line.wantsMoreData()) {
+			while (!line.stopped() && !line.wantsMoreData()) {
 				Thread.sleep(1);
 			}
 		}
