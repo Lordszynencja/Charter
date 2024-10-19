@@ -33,6 +33,7 @@ import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
+import log.charter.util.collections.Pair;
 
 public class GuitarSoundsStatusesHandler {
 	private static Map<Mute, Mute> mutesCycleMap = getCycleMap(asList(Mute.NONE, Mute.PALM, Mute.FULL));
@@ -238,19 +239,21 @@ public class GuitarSoundsStatusesHandler {
 		final ChordOrNote sound = sounds.get(id);
 		sound.notesWithFrets(chartData.currentChordTemplates()).forEach(n -> {
 			CommonNoteWithFret currentSound = n;
+			int currentId = id;
 			while (currentSound != null && currentSound.linkNext()) {
-				final ChordOrNote nextSound = ChordOrNote.findNextSoundOnString(n.string(), id + 1, sounds);
+				final Pair<Integer, ChordOrNote> nextSound = ChordOrNote.findNextSoundWithIdOnString(n.string(),
+						currentId + 1, sounds);
 				if (nextSound == null) {
 					return;
 				}
 
-				if (nextSound.isNote()) {
-					final Note nextNote = nextSound.note();
+				if (nextSound.b.isNote()) {
+					final Note nextNote = nextSound.b.note();
 					updateLinkedNotesFrets(currentSound, nextNote);
 					updateLinkedNotesBends(currentSound, nextNote);
 					currentSound = new CommonNoteWithFret(nextNote);
 				} else {
-					final Chord nextChord = nextSound.chord();
+					final Chord nextChord = nextSound.b.chord();
 					final ChordNote nextNote = nextChord.chordNotes.get(n.string());
 					updateLinkedNotesFrets(currentSound, nextChord);
 					updateLinkedNotesBends(currentSound, nextNote);
@@ -259,6 +262,8 @@ public class GuitarSoundsStatusesHandler {
 							.get(n.string());
 					currentSound = new CommonNoteWithFret(nextChord, n.string(), fret);
 				}
+
+				currentId = nextSound.a;
 			}
 		});
 	}

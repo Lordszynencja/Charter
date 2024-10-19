@@ -71,7 +71,8 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 				Action.UNDO, //
 				Action.REDO, //
 				Action.SELECT_ALL_NOTES, //
-				Action.REDO)));
+				Action.REDO, //
+				Action.TOGGLE_ANCHOR)));
 		actionGroups.add(new Pair<>(Label.VOCAL_EDITING, asList(//
 				Action.EDIT_VOCALS, //
 				Action.TOGGLE_PHRASE_END, //
