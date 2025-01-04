@@ -11,8 +11,6 @@ import log.charter.data.song.position.FractionalPosition;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundChord;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundNote;
 
-import java.io.Console;
-
 @XStreamInclude({ CopiedSoundChord.class, CopiedSoundNote.class })
 public interface CopiedSound extends Copied<ChordOrNote> {
 	public static CopiedSound copy(final FractionalPosition basePosition, final ChordOrNote sound) {
