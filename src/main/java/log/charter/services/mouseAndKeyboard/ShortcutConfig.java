@@ -22,6 +22,8 @@ public class ShortcutConfig {
 	}
 
 	static {
+		addDefaultShortcut(Action.ARRANGEMENT_NEXT, new Shortcut(KeyEvent.VK_TAB));
+		addDefaultShortcut(Action.ARRANGEMENT_PREVIOUS, new Shortcut(KeyEvent.VK_TAB).shift());
 		addDefaultShortcut(Action.COPY, new Shortcut(KeyEvent.VK_C).ctrl());
 		addDefaultShortcut(Action.DELETE, new Shortcut(KeyEvent.VK_DELETE));
 		addDefaultShortcut(Action.DOUBLE_GRID, new Shortcut(KeyEvent.VK_PERIOD));

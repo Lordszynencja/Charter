@@ -28,9 +28,11 @@ public class Localization {
 		ANCHOR_WIDTH("Anchor width"), //
 		ARPEGGIO("Arpeggio"), //
 		ARRANGEMENT_MENU("Arrangement"), //
-		ARRANGEMENT_OPTIONS("Arrangement options"), //
 		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
 		ARRANGEMENT_MENU_VOCALS("Vocals"), //
+		ARRANGEMENT_NEXT("Next arrangement"), //
+		ARRANGEMENT_PREVIOUS("Previous arrangement"), //
+		ARRANGEMENT_OPTIONS("Arrangement options"), //
 		ARRANGEMENT_SUBTYPE_ALTERNATE("Alternate"), //
 		ARRANGEMENT_SUBTYPE_BONUS("Bonus"), //
 		ARRANGEMENT_SUBTYPE_MAIN("Main"), //

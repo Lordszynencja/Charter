@@ -107,6 +107,8 @@ public class CharterFrame extends JFrame implements Initiable {
 		addWindowFocusListener(new CharterFrameWindowFocusListener(keyboardHandler));
 		addWindowListener(new CharterFrameWindowListener(charterContext));
 		setDropTarget(new DropTarget(this, fileDropHandler));
+
+		setFocusTraversalKeysEnabled(false);
 	}
 
 	public void finishInitAndShow() {
