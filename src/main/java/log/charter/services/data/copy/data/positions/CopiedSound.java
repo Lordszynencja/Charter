@@ -11,6 +11,8 @@ import log.charter.data.song.position.FractionalPosition;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundChord;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundNote;
 
+import java.io.Console;
+
 @XStreamInclude({ CopiedSoundChord.class, CopiedSoundNote.class })
 public interface CopiedSound extends Copied<ChordOrNote> {
 	public static CopiedSound copy(final FractionalPosition basePosition, final ChordOrNote sound) {
@@ -25,7 +27,10 @@ public interface CopiedSound extends Copied<ChordOrNote> {
 			chord = new Chord(item.chord());
 			chord.position(chord.position().add(basePosition.negate()));
 			chord.chordNotes.values()
-					.forEach(chordNote -> chordNote.endPosition(chordNote.endPosition().add(basePosition.negate())));
+					.forEach(chordNote -> {
+						chordNote.endPosition(chordNote.endPosition().add(basePosition.negate()));
+						chordNote.bendValues.forEach(bend -> bend.position(bend.position().add(basePosition.negate())));
+					});
 		}
 
 		@Override
@@ -33,7 +38,10 @@ public interface CopiedSound extends Copied<ChordOrNote> {
 				final boolean convertFromBeats) {
 			chord.position(chord.position().add(basePosition));
 			chord.chordNotes.values()
-					.forEach(chordNote -> chordNote.endPosition(chordNote.endPosition().add(basePosition)));
+					.forEach(chordNote -> {
+						chordNote.endPosition(chordNote.endPosition().add(basePosition));
+						chordNote.bendValues.forEach(bend -> bend.position(bend.position().add(basePosition)));
+					});
 
 			return ChordOrNote.from(chord);
 		}
@@ -47,6 +55,7 @@ public interface CopiedSound extends Copied<ChordOrNote> {
 			note = new Note(item.note());
 			note.position(note.position().add(basePosition.negate()));
 			note.endPosition(note.endPosition().add(basePosition.negate()));
+			note.bendValues.forEach(bend -> bend.position(bend.position().add(basePosition.negate())));
 		}
 
 		@Override
@@ -54,7 +63,7 @@ public interface CopiedSound extends Copied<ChordOrNote> {
 				final boolean convertFromBeats) {
 			note.position(note.position().add(basePosition));
 			note.endPosition(note.endPosition().add(basePosition));
-
+			note.bendValues.forEach(bend -> bend.position(bend.position().add(basePosition)));
 			return ChordOrNote.from(note);
 		}
 	}
