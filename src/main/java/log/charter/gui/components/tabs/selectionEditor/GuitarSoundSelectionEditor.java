@@ -44,6 +44,7 @@ import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.simple.ToggleButtonGroupInRow;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.selectionEditor.bends.SelectionBendEditor;
 import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
 import log.charter.gui.components.tabs.selectionEditor.simpleComponents.BasicCheckboxInput;
@@ -68,6 +69,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartItemsHandler chartItemsHandler;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
@@ -257,6 +259,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		chartItemsHandler.mapSounds(sound -> sound.asChord(templateId, chordTemplate));
 
 		refreshBendEditorStrings();
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 
 	private void changeSelectedChordsToNotes() {
@@ -509,6 +512,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 		DuplicatedChordTemplatesRemover.remove(arrangement);
 		UnusedChordTemplatesRemover.remove(arrangement);
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 
 	@Override

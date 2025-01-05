@@ -23,6 +23,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.panes.songEdits.AnchorPane;
 import log.charter.gui.panes.songEdits.GuitarEventPointPane;
@@ -45,6 +46,7 @@ public class GuitarModeHandler extends ModeHandler {
 	private ChartData chartData;
 	private ChartItemsHandler chartItemsHandler;
 	private CharterFrame charterFrame;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private CurrentSelectionEditor currentSelectionEditor;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private HighlightManager highlightManager;
@@ -104,7 +106,7 @@ public class GuitarModeHandler extends ModeHandler {
 		handShapes.add(handShape);
 		handShapes.sort(IConstantFractionalPosition::compareTo);
 
-		new HandShapePane(chartData, charterFrame, handShape, () -> {
+		new HandShapePane(chartData, charterFrame, chordTemplatesEditorTab, handShape, () -> {
 			undoSystem.undo();
 			undoSystem.removeRedo();
 		});
@@ -227,10 +229,11 @@ public class GuitarModeHandler extends ModeHandler {
 
 		if (!clickData.isXDrag()) {
 			addSingleNote(clickData);
-			return;
+		} else {
+			addMultipleNotes(clickData);
 		}
 
-		addMultipleNotes(clickData);
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 
 	private void rightClickToneChange(final PositionWithIdAndType toneChangePosition) {

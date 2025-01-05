@@ -25,6 +25,7 @@ import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.panes.songEdits.GuitarSpecialPastePane;
 import log.charter.io.ClipboardHandler;
 import log.charter.io.Logger;
@@ -59,6 +60,7 @@ public class CopyManager {
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
@@ -284,6 +286,8 @@ public class CopyManager {
 		}
 
 		selectedCopy.paste(chartData, selectionManager, currentTime, true);
+
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 
 	public void paste() {
@@ -333,7 +337,7 @@ public class CopyManager {
 		}
 
 		if (fullCopy instanceof FullGuitarCopyData) {
-			new GuitarSpecialPastePane(chartData, charterFrame, selectionManager, undoSystem,
+			new GuitarSpecialPastePane(chartData, charterFrame, chordTemplatesEditorTab, selectionManager, undoSystem,
 					chartTimeHandler.timeFractional(), (FullGuitarCopyData) fullCopy);
 			return;
 		}

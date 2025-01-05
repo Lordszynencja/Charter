@@ -145,6 +145,7 @@ public class Localization {
 		SQUASH_LEVELS("Squash levels"), //
 		SUPPORTED_MUSIC_FILE("Mp3, Ogg or Wav file"), //
 		TAB_3D_PREVIEW("3D preview"), //
+		TAB_CHORD_TEMPLATES_EDITOR("Chord templates"), //
 		TAB_ERRORS("Errors"), //
 		TAB_HELP("Help"), //
 		TAB_QUICK_EDIT("Quick edit"), //

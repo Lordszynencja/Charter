@@ -21,6 +21,7 @@ import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
 import log.charter.services.data.fixers.DuplicatedChordTemplatesRemover;
 import log.charter.services.data.fixers.UnusedChordTemplatesRemover;
@@ -37,6 +38,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 
 	private ChartData chartData;
 	private CharterFrame charterFrame;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
@@ -85,6 +87,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 
 		DuplicatedChordTemplatesRemover.remove(arrangement);
 		UnusedChordTemplatesRemover.remove(arrangement);
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 
 	private void setTemplateForChordsIn(final HandShape handShape) {

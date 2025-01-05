@@ -6,6 +6,7 @@ import java.util.Map;
 import log.charter.data.ChartData;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.simple.ChartMap;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.components.utils.TitleUpdater;
 import log.charter.gui.menuHandlers.CharterMenuBar;
@@ -22,6 +23,7 @@ public class ModeManager implements Initiable {
 	private CharterFrame charterFrame;
 	private CharterMenuBar charterMenuBar;
 	private ChartToolbar chartToolbar;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private SelectionManager selectionManager;
 	private TitleUpdater titleUpdater;
 
@@ -82,6 +84,7 @@ public class ModeManager implements Initiable {
 		charterFrame.updateSizes();
 		titleUpdater.updateTitle();
 		chartMap.triggerRedraw();
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 
 	public void setLevel(final int level) {
