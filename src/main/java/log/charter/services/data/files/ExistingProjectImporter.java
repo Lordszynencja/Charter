@@ -14,6 +14,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.TextTab;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.io.Logger;
 import log.charter.io.rsc.xml.ChartProject;
 import log.charter.services.audio.AudioHandler;
@@ -26,6 +27,7 @@ public class ExistingProjectImporter {
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private ProjectAudioHandler projectAudioHandler;
 	private TextTab textTab;
 
@@ -103,6 +105,7 @@ public class ExistingProjectImporter {
 		textTab.setText(project.text);
 
 		audioHandler.clear();
+		chordTemplatesEditorTab.refreshTemplates();
 
 		loadingDialog.addProgress(Label.LOADING_DONE);
 	}

@@ -16,6 +16,7 @@ import log.charter.data.song.SongChart;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.TextTab;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.io.rs.xml.RSXMLToSongChart;
 import log.charter.io.rs.xml.song.SongArrangement;
@@ -42,6 +43,7 @@ public class SongFileHandler {
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private ExistingProjectImporter existingProjectImporter;
 	private ModeManager modeManager;
 	private ProjectAudioHandler projectAudioHandler;
@@ -102,6 +104,7 @@ public class SongFileHandler {
 		loadingDialog.dispose();
 
 		audioHandler.clear();
+		chordTemplatesEditorTab.refreshTemplates();
 
 		save();
 	}

@@ -28,6 +28,7 @@ import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.util.CollectionUtils;
 import log.charter.util.collections.ArrayList2;
@@ -36,6 +37,7 @@ import log.charter.util.data.Fraction;
 public class ArrangementFixer {
 	private ChartData chartData;
 	private ChartTimeHandler chartTimeHandler;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 
 	private void removeWrongPositions(final Arrangement arrangement, final FractionalPosition end) {
 		final Predicate<IConstantFractionalPosition> invalidPositionCheck = p -> p.position().beatId < 0
@@ -239,5 +241,6 @@ public class ArrangementFixer {
 		}
 
 		chartData.songChart.beatsMap.truncate(chartTimeHandler.maxNonBeatTime());
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 }

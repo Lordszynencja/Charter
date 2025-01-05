@@ -153,8 +153,7 @@ public class Arrangement {
 			final EventPoint count = new EventPoint(position);
 			count.phrase = name;
 
-			eventPoints.add(closestEventPoint.position().compareTo(position) < 0 ? closestId + 1 : closestId,
-					count);
+			eventPoints.add(closestEventPoint.position().compareTo(position) < 0 ? closestId + 1 : closestId, count);
 		} else {
 			closestEventPoint.phrase = name;
 		}

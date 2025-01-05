@@ -282,4 +282,14 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 	@Override
 	public void mouseMoved(final MouseEvent e) {
 	}
+
+	public void triggerRedraw() {
+		new Thread(() -> {
+			try {
+				background = createBackground();
+			} catch (final Exception e) {
+				Logger.error("Couldn't create background for chart map", e);
+			}
+		}).start();
+	}
 }

@@ -6,6 +6,7 @@ import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.services.data.copy.data.FullGuitarCopyData;
 import log.charter.services.data.selection.SelectionManager;
 
@@ -21,6 +22,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private final ChartData chartData;
+	private final ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private final SelectionManager selectionManager;
 	private final UndoSystem undoSystem;
 
@@ -39,11 +41,13 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	private boolean pasteHandShapes = pasteHandShapesDefault;
 
 	public GuitarSpecialPastePane(final ChartData data, final CharterFrame frame,
-			final SelectionManager selectionManager, final UndoSystem undoSystem, final FractionalPosition basePosition,
+			final ChordTemplatesEditorTab chordTemplatesEditorTab, final SelectionManager selectionManager,
+			final UndoSystem undoSystem, final FractionalPosition basePosition,
 			final FullGuitarCopyData fullGuitarCopyData) {
 		super(frame, Label.SPECIAL_GUITAR_PASTE_PANE, 300);
 
 		chartData = data;
+		this.chordTemplatesEditorTab = chordTemplatesEditorTab;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 
@@ -102,6 +106,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		}
 		if (pasteSounds) {
 			copyData.sounds.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
+			chordTemplatesEditorTab.refreshTemplates();
 		}
 	}
 }

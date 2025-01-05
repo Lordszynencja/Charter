@@ -5,7 +5,10 @@ import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.simple.ChartMap;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.gui.components.utils.TitleUpdater;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
@@ -15,11 +18,14 @@ import log.charter.services.data.selection.SelectionManager;
 public class ModeManager implements Initiable {
 	private AudioHandler audioHandler;
 	private ChartData chartData;
+	private ChartMap chartMap;
 	private CharterContext charterContext;
 	private CharterFrame charterFrame;
 	private CharterMenuBar charterMenuBar;
 	private ChartToolbar chartToolbar;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private SelectionManager selectionManager;
+	private TitleUpdater titleUpdater;
 
 	private EditMode editMode = EditMode.EMPTY;
 
@@ -61,6 +67,8 @@ public class ModeManager implements Initiable {
 		chartToolbar.updateValues();
 		charterMenuBar.refreshMenus();
 		charterFrame.updateSizes();
+		titleUpdater.updateTitle();
+		chartMap.triggerRedraw();
 	}
 
 	public void setArrangement(final int arrangementId) {
@@ -74,6 +82,9 @@ public class ModeManager implements Initiable {
 
 		charterMenuBar.refreshMenus();
 		charterFrame.updateSizes();
+		titleUpdater.updateTitle();
+		chartMap.triggerRedraw();
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 
 	public void setLevel(final int level) {

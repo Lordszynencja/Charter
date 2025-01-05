@@ -13,6 +13,8 @@ import log.charter.data.config.Localization.Label;
 import log.charter.services.editModes.EditMode;
 
 public enum Action {
+	ARRANGEMENT_NEXT(Label.ARRANGEMENT_NEXT, TEMPO_MAP, VOCALS, GUITAR), //
+	ARRANGEMENT_PREVIOUS(Label.ARRANGEMENT_PREVIOUS, TEMPO_MAP, VOCALS, GUITAR), //
 	COPY(Label.COPY, TEMPO_MAP, VOCALS, GUITAR), //
 	DELETE(Label.DELETE, TEMPO_MAP, VOCALS, GUITAR), //
 	DOUBLE_GRID(Label.DOUBLE_GRID, VOCALS, GUITAR), //

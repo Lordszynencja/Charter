@@ -8,6 +8,7 @@ import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
 
 public class HandShapePane extends ParamsPane {
@@ -19,6 +20,7 @@ public class HandShapePane extends ParamsPane {
 	}
 
 	private final ChartData data;
+	private final ChordTemplatesEditorTab chordTemplatesEditorTab;
 
 	private final HandShape handShape;
 	private final ChordTemplate template;
@@ -26,11 +28,12 @@ public class HandShapePane extends ParamsPane {
 	private final ChordTemplateEditor editor;
 	private final JCheckBox arpeggioCheckBox;
 
-	public HandShapePane(final ChartData data, final CharterFrame frame, final HandShape handShape,
-			final Runnable onCancel) {
+	public HandShapePane(final ChartData data, final CharterFrame frame,
+			final ChordTemplatesEditorTab chordTemplatesEditorTab, final HandShape handShape, final Runnable onCancel) {
 		super(frame, Label.HAND_SHAPE_PANE, 600);
 
 		this.data = data;
+		this.chordTemplatesEditorTab = chordTemplatesEditorTab;
 
 		this.handShape = handShape;
 		template = prepareTemplateFromData(data, handShape);
@@ -58,5 +61,6 @@ public class HandShapePane extends ParamsPane {
 
 	private void saveAndExit() {
 		handShape.templateId = data.currentArrangement().getChordTemplateIdWithSave(template);
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 }

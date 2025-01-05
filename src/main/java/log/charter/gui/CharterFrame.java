@@ -25,6 +25,7 @@ import log.charter.gui.components.preview3D.Preview3DPanel;
 import log.charter.gui.components.simple.ChartMap;
 import log.charter.gui.components.tabs.HelpTab;
 import log.charter.gui.components.tabs.TextTab;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
@@ -49,6 +50,7 @@ public class CharterFrame extends JFrame implements Initiable {
 
 	private ChartData chartData;
 	private CharterContext charterContext;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private CurrentSelectionEditor currentSelectionEditor;
 	private ErrorsTab errorsTab;
 	private FileDropHandler fileDropHandler;
@@ -92,6 +94,7 @@ public class CharterFrame extends JFrame implements Initiable {
 
 		tabs = new CharterTabbedPane(//
 				new Tab(Label.TAB_QUICK_EDIT, new CharterScrollPane(currentSelectionEditor)), //
+				new Tab(Label.TAB_CHORD_TEMPLATES_EDITOR, new CharterScrollPane(chordTemplatesEditorTab)), //
 				new Tab(Label.TAB_ERRORS, errorsTab), //
 				new Tab(Label.TAB_3D_PREVIEW, preview3DPanel), //
 				new Tab(Label.TAB_TEXT, textTab), //
@@ -107,6 +110,8 @@ public class CharterFrame extends JFrame implements Initiable {
 		addWindowFocusListener(new CharterFrameWindowFocusListener(keyboardHandler));
 		addWindowListener(new CharterFrameWindowListener(charterContext));
 		setDropTarget(new DropTarget(this, fileDropHandler));
+
+		setFocusTraversalKeysEnabled(false);
 	}
 
 	public void finishInitAndShow() {

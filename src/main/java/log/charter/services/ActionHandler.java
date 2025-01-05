@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jcodec.common.logging.Logger;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.types.PositionType;
@@ -32,6 +34,7 @@ import log.charter.services.data.copy.CopyManager;
 import log.charter.services.data.files.NewProjectCreator;
 import log.charter.services.data.files.SongFileHandler;
 import log.charter.services.data.selection.SelectionManager;
+import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.HighlightManager;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
@@ -63,6 +66,50 @@ public class ActionHandler implements Initiable {
 
 	private int lastFretNumber = 0;
 	private int fretNumberTimer = 0;
+
+	private void nextArrangement() {
+		switch (modeManager.getMode()) {
+			case TEMPO_MAP:
+				modeManager.setMode(EditMode.VOCALS);
+				break;
+			case VOCALS:
+				modeManager.setArrangement(0);
+				break;
+			case GUITAR:
+				if (chartData.currentArrangement >= chartData.songChart.arrangements.size() - 1) {
+					modeManager.setMode(EditMode.TEMPO_MAP);
+				} else {
+					modeManager.setArrangement(chartData.currentArrangement + 1);
+				}
+				break;
+			case EMPTY:
+			default:
+				Logger.error("Changed to next arrangement in mode " + modeManager.getMode());
+				break;
+		}
+	}
+
+	private void previousArrangement() {
+		switch (modeManager.getMode()) {
+			case TEMPO_MAP:
+				modeManager.setArrangement(chartData.songChart.arrangements.size() - 1);
+				break;
+			case VOCALS:
+				modeManager.setMode(EditMode.TEMPO_MAP);
+				break;
+			case GUITAR:
+				if (chartData.currentArrangement <= 0) {
+					modeManager.setMode(EditMode.VOCALS);
+				} else {
+					modeManager.setArrangement(chartData.currentArrangement - 1);
+				}
+				break;
+			case EMPTY:
+			default:
+				Logger.error("Changed to next arrangement in mode " + modeManager.getMode());
+				break;
+		}
+	}
 
 	private void handleFretNumber(final int number) {
 		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= frets) {
@@ -141,6 +188,8 @@ public class ActionHandler implements Initiable {
 
 	@Override
 	public void init() {
+		actionHandlers.put(Action.ARRANGEMENT_NEXT, this::nextArrangement);
+		actionHandlers.put(Action.ARRANGEMENT_PREVIOUS, this::previousArrangement);
 		actionHandlers.put(Action.COPY, copyManager::copy);
 		actionHandlers.put(Action.DELETE, chartItemsHandler::delete);
 		actionHandlers.put(Action.DOUBLE_GRID, this::doubleGridSize);

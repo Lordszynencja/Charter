@@ -28,6 +28,7 @@ import log.charter.data.song.notes.NoteInterface;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.ISelectionAccessor;
@@ -58,6 +59,7 @@ public class GuitarSoundsStatusesHandler {
 
 	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private CurrentSelectionEditor currentSelectionEditor;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
@@ -215,6 +217,7 @@ public class GuitarSoundsStatusesHandler {
 		chordTemplate.frets.put(string, fret);
 		nextChord.updateTemplate(chartData.currentArrangement().getChordTemplateIdWithSave(chordTemplate),
 				chordTemplate);
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 
 	private void updateLinkedNotesBends(final CommonNote note, final NoteInterface nextNote) {

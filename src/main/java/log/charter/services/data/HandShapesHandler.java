@@ -13,6 +13,7 @@ import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
@@ -21,6 +22,7 @@ import log.charter.services.data.selection.SelectionManager;
 public class HandShapesHandler {
 	private ChartData chartData;
 	private CharterFrame charterFrame;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
@@ -58,11 +60,13 @@ public class HandShapesHandler {
 
 		final HandShape handShape = new HandShape(position.position(), endPosition.position());
 		handShape.templateId = chartData.currentArrangement().getChordTemplateIdWithSave(chordTemplate);
+		chordTemplatesEditorTab.refreshTemplates();
 
 		handShapes.add(deleteFromId, handShape);
-		new HandShapePane(chartData, charterFrame, handShape, () -> {
+		new HandShapePane(chartData, charterFrame, chordTemplatesEditorTab, handShape, () -> {
 			undoSystem.undo();
 			undoSystem.removeRedo();
+			chordTemplatesEditorTab.refreshTemplates();
 		});
 	}
 }

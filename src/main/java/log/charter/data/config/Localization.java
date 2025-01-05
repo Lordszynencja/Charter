@@ -28,9 +28,11 @@ public class Localization {
 		ANCHOR_WIDTH("Anchor width"), //
 		ARPEGGIO("Arpeggio"), //
 		ARRANGEMENT_MENU("Arrangement"), //
-		ARRANGEMENT_OPTIONS("Arrangement options"), //
 		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
 		ARRANGEMENT_MENU_VOCALS("Vocals"), //
+		ARRANGEMENT_NEXT("Next arrangement"), //
+		ARRANGEMENT_PREVIOUS("Previous arrangement"), //
+		ARRANGEMENT_OPTIONS("Arrangement options"), //
 		ARRANGEMENT_SUBTYPE_ALTERNATE("Alternate"), //
 		ARRANGEMENT_SUBTYPE_BONUS("Bonus"), //
 		ARRANGEMENT_SUBTYPE_MAIN("Main"), //
@@ -143,6 +145,7 @@ public class Localization {
 		SQUASH_LEVELS("Squash levels"), //
 		SUPPORTED_MUSIC_FILE("Mp3, Ogg or Wav file"), //
 		TAB_3D_PREVIEW("3D preview"), //
+		TAB_CHORD_TEMPLATES_EDITOR("Chord templates"), //
 		TAB_ERRORS("Errors"), //
 		TAB_HELP("Help"), //
 		TAB_QUICK_EDIT("Quick edit"), //

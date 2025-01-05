@@ -13,6 +13,7 @@ import log.charter.data.song.BeatsMap;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.SongFolderSelectPane;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.sound.data.AudioDataShort;
@@ -22,6 +23,7 @@ public class NewProjectCreator {
 	private AudioHandler audioHandler;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private ProjectAudioHandler projectAudioHandler;
 	private SongFileHandler songFileHandler;
 
@@ -112,5 +114,6 @@ public class NewProjectCreator {
 		songFileHandler.save();
 
 		audioHandler.clear();
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 }

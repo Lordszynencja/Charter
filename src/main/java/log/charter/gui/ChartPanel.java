@@ -4,6 +4,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaHeigh
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.KeyboardFocusManager;
 
 import javax.swing.JComponent;
 
@@ -42,6 +43,9 @@ public class ChartPanel extends JComponent implements Initiable {
 		charterContext.initObject(backgroundDrawer);
 		charterContext.initObject(markerDrawer);
 
+		setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, null);
+		setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, null);
+
 		addMouseListener(mouseHandler);
 		addMouseMotionListener(mouseHandler);
 		addMouseWheelListener(mouseHandler);
@@ -49,6 +53,7 @@ public class ChartPanel extends JComponent implements Initiable {
 
 		setDoubleBuffered(true);
 		setFocusable(true);
+		setFocusTraversalKeysEnabled(false);
 	}
 
 	private void paintComponent2D(final Graphics2D g) {

@@ -80,6 +80,10 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 		addArrangementsList(menu);
 		menu.add(createItem("New arrangement...", this::addArrangement));
 
+		menu.addSeparator();
+		menu.add(createItem(Action.ARRANGEMENT_NEXT));
+		menu.add(createItem(Action.ARRANGEMENT_PREVIOUS));
+
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
 			menu.add(createItem(Label.ARRANGEMENT_OPTIONS, this::editOptions));

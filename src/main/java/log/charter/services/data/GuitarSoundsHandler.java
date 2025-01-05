@@ -24,6 +24,7 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
@@ -34,6 +35,7 @@ import log.charter.util.data.IntRange;
 
 public class GuitarSoundsHandler {
 	private ChartData chartData;
+	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private CurrentSelectionEditor currentSelectionEditor;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private SelectionManager selectionManager;
@@ -186,6 +188,7 @@ public class GuitarSoundsHandler {
 				.updateLinkedNotes(selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
 
 		currentSelectionEditor.selectionChanged(true);
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 
 	public void moveStringsWithoutFretChange(final int stringChange) {
@@ -284,6 +287,7 @@ public class GuitarSoundsHandler {
 
 		final int newTemplateId = chartData.currentArrangement().getChordTemplateIdWithSave(newTemplate);
 		chord.updateTemplate(newTemplateId, newTemplate);
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 
 	public void moveFret(final int fretChange) {
@@ -338,5 +342,6 @@ public class GuitarSoundsHandler {
 				.updateLinkedNotes(selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
 
 		currentSelectionEditor.selectionChanged(false);
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 }
