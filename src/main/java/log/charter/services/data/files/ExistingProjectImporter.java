@@ -59,7 +59,7 @@ public class ExistingProjectImporter {
 	private AudioDataShort loadMusicData(final ChartProject project, final String dir) {
 		final AudioDataShort musicData = AudioDataShort.readFile(new File(dir, project.musicFileName));
 		if (musicData == null) {
-			showPopup(charterFrame, Label.WRONG_MUSIC_FILE);
+			showPopup(charterFrame, Label.WRONG_MUSIC_FILE, project.musicFileName);
 			return null;
 		}
 

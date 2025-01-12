@@ -49,21 +49,38 @@ public class ASIOHandler {
 		}
 	}
 
+	private static void processInput() throws Exception {
+		final float[] newInput = new float[bufferSize];
+		inputChannels[0].read(newInput);
+		inputBuffer = newInput;
+
+		fft.addData(newInput);
+
+		final FloatQueue queue0 = mixChannels[0].generateQueue((int) sampleRate);
+		final FloatQueue queue1 = mixChannels[1].generateQueue((int) sampleRate);
+		for (final float f : newInput) {
+			queue0.add(f);
+			queue1.add(f);
+		}
+
+		queue0.close();
+		queue1.close();
+	}
+
 	private static void setDriverListener() {
 		asioDriver.addAsioDriverListener(new AsioDriverListener() {
 			@Override
 			public void bufferSwitch(final long systemTime, final long samplePosition,
 					final Set<AsioChannel> channelsSet) {
 				try {
+					if (Config.specialDebugOption) {
+						processInput();
+					}
+
 					for (int channel = 0; channel < outputChannels.length; channel++) {
 						outputChannels[channel].write(mixChannels[channel].getNextBuffer());
 					}
 
-//					final float[] newInput = new float[bufferSize];
-//					inputChannels[0].read(newInput);
-//					inputBuffer = newInput;
-//
-//					fft.addData(newInput);
 				} catch (final Exception e) {
 				}
 			}
@@ -115,7 +132,9 @@ public class ASIOHandler {
 		}
 
 		setDriverListener();
-		// setInputChannels();
+		if (Config.specialDebugOption) {
+			setInputChannels();
+		}
 		setOutputChannels();
 
 		bufferSize = asioDriver.getBufferPreferredSize();
@@ -123,7 +142,9 @@ public class ASIOHandler {
 		sampleRate = asioDriver.getSampleRate();
 
 		final Set<AsioChannel> channels = new HashSet<>(Set.of(outputChannels));
-		// channels.addAll(Set.of(inputChannels));
+		if (Config.specialDebugOption) {
+			channels.addAll(Set.of(inputChannels));
+		}
 		asioDriver.createBuffers(channels);
 
 		asioDriver.start();
