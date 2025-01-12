@@ -33,7 +33,9 @@ public class FloatQueue {
 	}
 
 	public void add(final float f) throws Exception {
-		resampler.addSample(f);
+		if (!closed) {
+			resampler.addSample(f);
+		}
 	}
 
 	private void addResampled(final float f) throws InterruptedException {

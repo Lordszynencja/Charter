@@ -72,7 +72,7 @@ public class Preview3DVideoDrawer {
 		graphics.clearRect(0, 0, 1000, 1000);
 		graphics.setStroke(new BasicStroke(10));
 
-		// drawAudio(graphics);
+		drawAudio(graphics);
 		drawFFT(graphics);
 
 		image = newImage;
@@ -89,7 +89,7 @@ public class Preview3DVideoDrawer {
 				return;
 			}
 
-			// generateImage();
+			generateImage();
 
 			if (imageChanged) {
 				bufferData = new BufferedTextureData(image);

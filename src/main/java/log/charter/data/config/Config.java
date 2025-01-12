@@ -94,6 +94,7 @@ public class Config {
 	public static boolean audioFolderChosenForNewSong = false;
 
 	public static boolean debugLogging = false;
+	public static boolean specialDebugOption = false;
 
 	private static boolean changed = false;
 
@@ -173,6 +174,7 @@ public class Config {
 				forBoolean(v -> audioFolderChosenForNewSong = v, () -> audioFolderChosenForNewSong));
 
 		valueAccessors.put("debugLogging", forBoolean(v -> debugLogging = v, () -> debugLogging));
+		valueAccessors.put("specialDebugOption", forBoolean(v -> specialDebugOption = v, () -> specialDebugOption));
 
 		final String os = System.getProperty("os.name").toLowerCase();
 		@SuppressWarnings("unused")
