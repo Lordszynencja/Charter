@@ -218,12 +218,13 @@ public class Preview3DGuitarSoundsDrawer {
 		final double x = (x0 + x1) / 2;
 		final double y = (y0 + y1) / 2;
 		final double d0y = 0.8 * (y1 - y);
-		final double d1y = 0.9 * (y1 - y);
-		final double d0x = d0y / 10;
-		final double d1x = d1y / 10;
+		final double d1y = 0.95 * (y1 - y);
+		final double d0x = d0y;
+		final double d1x = d1y;
 		z -= 0.001;
 
-		final Color color = ColorLabel.PREVIEW_3D_CHORD_FULL_MUTE.color();
+		final Color color = new Color(128, 216, 255);
+		ColorLabel.PREVIEW_3D_CHORD_FULL_MUTE.color();
 		shadersHolder.new BaseShaderDrawData()//
 				.addVertex(new Point3D(x - d1x, y + d0y, z), color)//
 				.addVertex(new Point3D(x - d0x, y + d1y, z), color)//
