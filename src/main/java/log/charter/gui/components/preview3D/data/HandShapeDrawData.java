@@ -27,11 +27,18 @@ public class HandShapeDrawData implements IConstantPosition {
 		final List<HandShape> handShapes = data.currentArrangementLevel().handShapes;
 		final List<ChordTemplate> chordTemplates = data.currentArrangement().chordTemplates;
 
-		final Integer handShapesFrom = lastBeforeEqual(handShapes, FractionalPosition.fromTime(beats, timeFrom))
-				.findId();
-		final Integer handShapesTo = lastBeforeEqual(handShapes, FractionalPosition.fromTime(beats, timeTo)).findId();
-		if (handShapesFrom == null || handShapesTo == null) {
+		final FractionalPosition fromPosition = FractionalPosition.fromTime(beats, timeFrom);
+		final FractionalPosition toPosition = FractionalPosition.fromTime(beats, timeTo);
+		Integer handShapesFrom = lastBeforeEqual(handShapes, fromPosition).findId();
+		Integer handShapesTo = lastBeforeEqual(handShapes, toPosition).findId();
+		if (handShapesFrom == null && handShapesTo == null) {
 			return handShapesToDraw;
+		}
+		if (handShapesFrom == null) {
+			handShapesFrom = 0;
+		}
+		if (handShapesTo == null) {
+			handShapesTo = handShapes.size() - 1;
 		}
 
 		for (int i = handShapesFrom; i <= handShapesTo; i++) {
