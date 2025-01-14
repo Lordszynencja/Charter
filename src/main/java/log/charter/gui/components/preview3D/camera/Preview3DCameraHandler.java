@@ -7,6 +7,7 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosit
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.cameraMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationXMatrix;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationYMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
@@ -21,7 +22,6 @@ import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.services.data.ChartTimeHandler;
 
 public class Preview3DCameraHandler {
-
 	private static final Matrix4 baseCameraPerspectiveMatrix = cameraMatrix(-0.3, -0.3, -0.3, -1)//
 			.multiply(scaleMatrix(1, 1, -1));
 
@@ -34,10 +34,13 @@ public class Preview3DCameraHandler {
 	private final static double minScreenScaleY = 1;
 	private final static double screenScaleYMultiplier = 0.5;
 
+	private static final double weightedPosition = getFretPosition(Config.frets) * 0.4 + getFretPosition(0) * 0.6;
+	private static final double weightedPositionWeight = 0.1;
+
 	private ChartTimeHandler chartTimeHandler;
 	private ChartData chartData;
 
-	private double camX = 2;
+	private double camX = 2.5;
 	private double fretSpan = 4;
 
 	public Matrix4 currentMatrix;
@@ -79,16 +82,19 @@ public class Preview3DCameraHandler {
 		}
 
 		final double focusSpeed = 1 - pow(1 - focusingSpeed, frameTime);
-		final double targetCamX = (getFretPosition(maxFret) + getFretPosition(minFret - 1)) / 2;
+		final double middleFHPPosition = (getFretPosition(maxFret) + getFretPosition(minFret - 1)) / 2;
+		final double targetCamX = 1 + middleFHPPosition * (1 - weightedPositionWeight)
+				+ weightedPosition * weightedPositionWeight;
 		camX = mix(targetCamX, camX, focusSpeed);
 		final double targetFretSpan = (maxFret - minFret + 1);
 		fretSpan = mix(targetFretSpan, fretSpan, focusSpeed);
 	}
 
 	public void updateCamera(final double aspectRatio) {
-		final double camY = 1 + topStringPosition + (fretSpan - 4) * 0.2;
-		final double camZ = -3.6 + (fretSpan - 4) * 0.005;
-		final double camRotationX = 0.2 + (fretSpan - 4) * 0.01;
+		final double camY = 1.3 + topStringPosition + (fretSpan - 4) * 0.2;
+		final double camZ = -2.5 + (fretSpan - 4) * -0.2;
+		final double camRotationX = 0.2 + Math.sqrt(fretSpan - 4) * 0.01;
+		final double camRotationY = 0.06;
 
 		final double screenScaleX = min(minScreenScaleX, screenScaleXMultiplier / aspectRatio);
 		final double screenScaleY = min(minScreenScaleY, screenScaleYMultiplier * aspectRatio);
@@ -96,6 +102,7 @@ public class Preview3DCameraHandler {
 		currentMatrix = scaleMatrix(screenScaleX, screenScaleY, 1 / 10.0)//
 				.multiply(baseCameraPerspectiveMatrix)//
 				.multiply(rotationXMatrix(camRotationX))//
+				.multiply(rotationYMatrix(camRotationY))//
 				.multiply(moveMatrix(-camX, -camY, -camZ));
 	}
 }

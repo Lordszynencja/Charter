@@ -36,4 +36,9 @@ public class BendValue implements IFractionalPosition {
 	public void position(final FractionalPosition newPosition) {
 		position = newPosition;
 	}
+
+	@Override
+	public String toString() {
+		return "BendValue [position=" + position + ", bendValue=" + bendValue + "]";
+	}
 }
