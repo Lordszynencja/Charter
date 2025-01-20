@@ -20,14 +20,17 @@ import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.io.Logger;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ProjectAudioHandler;
+import log.charter.util.RW;
 
 public class FileDropHandler implements DropTargetListener, Initiable {
 	private CharterFrame charterFrame;
 	private ExistingProjectImporter existingProjectImporter;
 	private GP5FileImporter gp5FileImporter;
+	private LRCImporter lrcImporter;
 	private MidiImporter midiImporter;
 	private ProjectAudioHandler projectAudioHandler;
 	private RSXMLImporter rsXMLImporter;
+	private final USCTxtImporter uscTxtImporter = new USCTxtImporter();
 
 	private final Map<String, Consumer<File>> fileTypeHandlers = new HashMap<>();
 
@@ -36,10 +39,12 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 		fileTypeHandlers.put("gp3", gp5FileImporter::importGP5File);
 		fileTypeHandlers.put("gp4", gp5FileImporter::importGP5File);
 		fileTypeHandlers.put("gp5", gp5FileImporter::importGP5File);
+		fileTypeHandlers.put("lrc", lrcImporter::importLRCFile);
 		fileTypeHandlers.put("mid", midiImporter::importMidiTempo);
 		fileTypeHandlers.put("mp3", projectAudioHandler::importAudio);
 		fileTypeHandlers.put("ogg", projectAudioHandler::importAudio);
 		fileTypeHandlers.put("rscp", f -> existingProjectImporter.open(f.getAbsolutePath()));
+		fileTypeHandlers.put("txt", this::handleTXT);
 		fileTypeHandlers.put("wav", projectAudioHandler::importAudio);
 		fileTypeHandlers.put("xml", this::handleXML);
 	}
@@ -60,6 +65,17 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 			default:
 				break;
 		}
+	}
+
+	private void handleTXT(final File file) {
+		final String data = RW.read(file);
+
+		if (USCTxtImporter.isUSCFile(data)) {
+			uscTxtImporter.importUSCFile(file);
+			return;
+		}
+
+		ComponentUtils.showPopup(charterFrame, Label.COULDNT_READ_TXT, file.getAbsolutePath());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -118,6 +134,7 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 	@SuppressWarnings("unchecked")
 	private File getFile(final DropTargetDropEvent event) {
 		event.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+
 		try {
 			final List<File> files = (List<File>) event.getTransferable()//
 					.getTransferData(DataFlavor.javaFileListFlavor);
