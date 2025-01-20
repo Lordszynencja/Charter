@@ -5,6 +5,7 @@ import static log.charter.gui.components.simple.TextInputWithValidation.generate
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import com.synthbot.jasiohost.AsioDriver;
@@ -41,6 +42,26 @@ public class ProgramAudioConfigPage implements Page {
 				case ASIO -> "ASIO: " + name;
 				default -> "???";
 			};
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(name, type);
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final AudioOutputData other = (AudioOutputData) obj;
+			return Objects.equals(name, other.name) && type == other.type;
 		}
 	}
 
@@ -80,6 +101,8 @@ public class ProgramAudioConfigPage implements Page {
 		addDelay(panel, position);
 		addMidiDelay(panel, position);
 		position.newRow();
+
+		showChannelIdsFields(audioOutSystemType == AudioSystemType.ASIO);
 	}
 
 	private List<AudioOutputData> getASIOOutputsList() {

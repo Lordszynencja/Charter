@@ -31,6 +31,7 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 	private CharterScrollPane scrollTable;
 
 	private final List<ChartError> errors = new ArrayList<>();
+	private List<ChartError> errorsBuffer = new ArrayList<>();
 
 	public ErrorsTab() {
 		super(new PaneSizesBuilder(0).build());
@@ -42,6 +43,32 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 		addComponentListener(this);
 	}
 
+	private void addColumnsToTable() {
+		tableModel.addColumn(Label.ERRORS_TAB_POSITION.label());
+		tableModel.addColumn(Label.ERRORS_TAB_SEVERITY.label());
+		tableModel.addColumn(Label.ERRORS_TAB_DESCRIPTION.label());
+	}
+
+	private void setColumnSizes() {
+		errorsTable.setRowHeight(20);
+		errorsTable.getColumnModel().getColumn(0).setPreferredWidth(200);
+		errorsTable.getColumnModel().getColumn(0).setMinWidth(200);
+		errorsTable.getColumnModel().getColumn(0).setMaxWidth(200);
+		errorsTable.getColumnModel().getColumn(1).setPreferredWidth(100);
+		errorsTable.getColumnModel().getColumn(1).setMinWidth(100);
+		errorsTable.getColumnModel().getColumn(1).setMaxWidth(100);
+		errorsTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+	}
+
+	private void setTableColors() {
+		errorsTable.setOpaque(true);
+		errorsTable.getTableHeader().setOpaque(false);
+		errorsTable.getTableHeader().setBackground(ColorLabel.BASE_BG_3.color());
+		errorsTable.setBackground(ColorLabel.BASE_BG_3.color());
+		errorsTable.setForeground(ColorLabel.BASE_TEXT.color());
+		errorsTable.setGridColor(ColorLabel.BASE_BG_4.color());
+	}
+
 	private void createTable(final RowedPosition position) {
 		tableModel = new DefaultTableModel() {
 			private static final long serialVersionUID = 8030767262155998676L;
@@ -51,27 +78,13 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 				return false;
 			}
 		};
-		tableModel.addColumn(Label.ERRORS_TAB_POSITION.label());
-		tableModel.addColumn(Label.ERRORS_TAB_SEVERITY.label());
-		tableModel.addColumn(Label.ERRORS_TAB_DESCRIPTION.label());
+
+		addColumnsToTable();
 
 		errorsTable = new JTable(tableModel);
 		errorsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		errorsTable.setRowHeight(20);
-		errorsTable.getColumnModel().getColumn(0).setPreferredWidth(200);
-		errorsTable.getColumnModel().getColumn(0).setMinWidth(200);
-		errorsTable.getColumnModel().getColumn(0).setMaxWidth(200);
-		errorsTable.getColumnModel().getColumn(1).setPreferredWidth(100);
-		errorsTable.getColumnModel().getColumn(1).setMinWidth(100);
-		errorsTable.getColumnModel().getColumn(1).setMaxWidth(100);
-		errorsTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-
-		errorsTable.setOpaque(true);
-		errorsTable.getTableHeader().setOpaque(false);
-		errorsTable.getTableHeader().setBackground(ColorLabel.BASE_BG_3.color());
-		errorsTable.setBackground(ColorLabel.BASE_BG_3.color());
-		errorsTable.setForeground(ColorLabel.BASE_TEXT.color());
-		errorsTable.setGridColor(ColorLabel.BASE_BG_4.color());
+		setColumnSizes();
+		setTableColors();
 
 		errorsTable.addMouseListener(new MouseAdapter() {
 			@Override
@@ -88,7 +101,7 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 		this.add(scrollTable, position);
 	}
 
-	public void clearErrors() {
+	private void clearErrors() {
 		if (errorsTable.getCellEditor() != null) {
 			errorsTable.getCellEditor().cancelCellEditing();
 		}
@@ -99,18 +112,36 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 	}
 
 	public void addError(final ChartError chartError) {
-		final Vector<Object> row = new Vector<>();
-		row.add(chartError.position.description);
-		row.add(chartError.severity.name());
-		row.add(chartError.message);
+		errorsBuffer.add(chartError);
+	}
 
-		tableModel.addRow(row);
-		errors.add(chartError);
+	public void swapBuffers() {
+		final List<ChartError> currentBuffer = errorsBuffer;
+		errorsBuffer = new ArrayList<>();
+		final int selected = errorsTable.getSelectedRow();
+		final boolean reselect = currentBuffer.size() == errors.size();
+		clearErrors();
+
+		for (final ChartError chartError : currentBuffer) {
+			final Vector<Object> row = new Vector<>();
+			row.add(chartError.position.description);
+			row.add(chartError.severity.name());
+			row.add(chartError.message);
+
+			tableModel.addRow(row);
+			errors.add(chartError);
+		}
+
+		if (reselect && selected != -1) {
+			errorsTable.addRowSelectionInterval(selected, selected);
+		}
 	}
 
 	@Override
 	public void componentResized(final ComponentEvent e) {
 		scrollTable.setSize(getWidth() - 40, getHeight() - 40);
+
+		repaint();
 	}
 
 	@Override

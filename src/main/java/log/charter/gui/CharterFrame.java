@@ -180,9 +180,14 @@ public class CharterFrame extends JFrame implements Initiable {
 
 	@Override
 	public void paint(final Graphics g) {
-		super.paint(g);
-		helpTab.addFrameTime();
+		try {
+			super.paint(g);
+			helpTab.addFrameTime();
+		} catch (final Exception e) {
+			Logger.error("Error in CharterFrame.paint", e);
+		}
 
 		paintWaiting = false;
+
 	}
 }

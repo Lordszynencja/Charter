@@ -144,7 +144,6 @@ public class SongFileHandler {
 		}
 
 		arrangementFixer.fixArrangements();
-		arrangementValidator.validate();
 
 		final ChartProject project = new ChartProject(chartTimeHandler.time(), modeManager.getMode(), chartData,
 				chartData.songChart, textTab.getText());
@@ -160,9 +159,6 @@ public class SongFileHandler {
 		}
 
 		arrangementFixer.fixArrangements();
-		if (!arrangementValidator.validate()) {
-			return;
-		}
 
 		final File newDir = FileChooseUtils.chooseDirectory(charterFrame, chartData.path);
 		if (newDir == null) {

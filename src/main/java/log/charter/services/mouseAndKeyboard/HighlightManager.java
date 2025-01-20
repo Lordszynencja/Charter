@@ -57,7 +57,7 @@ public class HighlightManager {
 		private int getLane(final int position) {
 			final int distance = position - fromPosition;
 			final int maxDistance = toPosition - fromPosition;
-			if (distance == 0) {
+			if (distance == 0 || maxDistance == 0) {
 				return yToString(fromY, chartData.currentArrangement().tuning.strings());
 			}
 

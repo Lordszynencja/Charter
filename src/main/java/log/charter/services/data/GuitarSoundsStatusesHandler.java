@@ -247,7 +247,7 @@ public class GuitarSoundsStatusesHandler {
 				final Pair<Integer, ChordOrNote> nextSound = ChordOrNote.findNextSoundWithIdOnString(n.string(),
 						currentId + 1, sounds);
 				if (nextSound == null) {
-					return;
+					break;
 				}
 
 				if (nextSound.b.isNote()) {
@@ -267,6 +267,30 @@ public class GuitarSoundsStatusesHandler {
 				}
 
 				currentId = nextSound.a;
+			}
+
+			final ChordOrNote previousSound = ChordOrNote.findPreviousSoundOnString(n.string(), id - 1, sounds);
+			if (previousSound != null && previousSound.linkNext(n.string())) {
+				if (previousSound.isNote()) {
+					final Note previousNote = previousSound.note();
+					if (previousNote.fret == n.fret()) {
+						previousNote.slideTo = null;
+					} else {
+						previousNote.slideTo = n.fret();
+					}
+
+					previousNote.unpitchedSlide = false;
+				} else {
+					final Chord previousChord = previousSound.chord();
+					final ChordNote previousNote = previousChord.chordNotes.get(n.string());
+					final ChordTemplate chordTemplate = chartData.currentChordTemplates()
+							.get(previousChord.templateId());
+					if (chordTemplate.frets.get(n.string()) == n.fret()) {
+						previousNote.slideTo = null;
+					} else {
+						previousNote.slideTo = n.fret();
+					}
+				}
 			}
 		});
 	}

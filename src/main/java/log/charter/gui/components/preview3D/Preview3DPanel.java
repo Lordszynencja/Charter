@@ -91,7 +91,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		beatsDrawer.init(chartData, textTexturesHolder);
 		cameraHandler.init(chartTimeHandler, chartData);
 		fingeringDrawer.init(chartData, noteStatusModels, texturesHolder);
-		guitarSoundsDrawer.init(chartData, noteStatusModels, texturesHolder);
+		guitarSoundsDrawer.init(chartData, noteStatusModels);
 		handShapesDrawer.init(chartData);
 		inlayDrawer.init(chartData, texturesHolder);
 		laneBordersDrawer.init(chartData);

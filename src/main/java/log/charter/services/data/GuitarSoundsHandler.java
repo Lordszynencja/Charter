@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.song.Anchor;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.configs.Tuning;
@@ -309,9 +310,21 @@ public class GuitarSoundsHandler {
 		currentSelectionEditor.selectionChanged(false);
 	}
 
-	public void setFret(final int fret) {
-		final List<Selection<ChordOrNote>> selected = selectionManager.<ChordOrNote>accessor(PositionType.GUITAR_NOTE)
-				.getSelected();
+	private void setFretForFHPs(final int fret) {
+		final List<Selection<Anchor>> selected = selectionManager.getSelected(PositionType.ANCHOR);
+		if (selected.isEmpty()) {
+			return;
+		}
+
+		undoSystem.addUndo();
+
+		for (final Selection<Anchor> anchorSelection : selected) {
+			anchorSelection.selectable.fret = fret;
+		}
+	}
+
+	private void setFretForSounds(final int fret) {
+		final List<Selection<ChordOrNote>> selected = selectionManager.getSelected(PositionType.GUITAR_NOTE);
 		if (selected.isEmpty()) {
 			return;
 		}
@@ -343,5 +356,24 @@ public class GuitarSoundsHandler {
 
 		currentSelectionEditor.selectionChanged(false);
 		chordTemplatesEditorTab.refreshTemplates();
+	}
+
+	public void setFret(final int fret) {
+		switch (selectionManager.selectedType()) {
+			case ANCHOR:
+				setFretForFHPs(fret);
+				break;
+			case GUITAR_NOTE:
+				setFretForSounds(fret);
+				break;
+			case BEAT:
+			case EVENT_POINT:
+			case HAND_SHAPE:
+			case TONE_CHANGE:
+			case NONE:
+			case VOCAL:
+			default:
+				break;
+		}
 	}
 }

@@ -7,12 +7,14 @@ public class ChordBoxDrawData {
 	public final int position;
 	public final Mute mute;
 	public final boolean onlyBox;
+	public final boolean withTop;
 
-	public ChordBoxDrawData(final int position, final Mute mute, final boolean onlyBox) {
+	public ChordBoxDrawData(final int position, final Mute mute, final boolean onlyBox, final boolean withTop) {
 		originalPosition = position;
 		this.position = position;
 		this.mute = mute;
 		this.onlyBox = onlyBox;
+		this.withTop = withTop;
 	}
 
 	public ChordBoxDrawData(final int position, final ChordBoxDrawData other) {
@@ -20,5 +22,6 @@ public class ChordBoxDrawData {
 		this.position = position;
 		mute = other.mute;
 		onlyBox = other.onlyBox;
+		withTop = other.withTop;
 	}
 }

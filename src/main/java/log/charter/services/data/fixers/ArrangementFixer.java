@@ -67,7 +67,7 @@ public class ArrangementFixer {
 		final ImmutableBeatsMap beats = chartData.beats();
 
 		final LinkedList<Chord> chordsForHandShapes = level.sounds.stream()//
-				.filter(chordOrNote -> chordOrNote.isChord() && !chordOrNote.chord().splitIntoNotes)//
+				.filter(chordOrNote -> chordOrNote.isChord())//
 				.map(chordOrNote -> chordOrNote.chord())//
 				.collect(Collectors.toCollection(LinkedList::new));
 		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
