@@ -94,7 +94,7 @@ public class ProgramGeneralConfigPage implements Page {
 			return;
 		}
 
-		field.field.setTextWithoutEvent(newFolder.getAbsolutePath());
+		field.field.setText(newFolder.getAbsolutePath());
 	}
 
 	private JButton addPathSelectButton(final RowedPanel panel, final RowedPosition position, final String path,

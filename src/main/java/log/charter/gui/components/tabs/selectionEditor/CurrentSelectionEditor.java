@@ -7,6 +7,7 @@ import static log.charter.data.types.PositionType.NONE;
 import static log.charter.data.types.PositionType.TONE_CHANGE;
 import static log.charter.data.types.PositionType.VOCAL;
 
+import java.awt.Dimension;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -67,6 +68,8 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 
 		setOpaque(true);
 		setBackground(ColorLabel.BASE_BG_2.color());
+
+		setMinimumSize(new Dimension(925, sizes.getHeight(10)));
 	}
 
 	@Override
