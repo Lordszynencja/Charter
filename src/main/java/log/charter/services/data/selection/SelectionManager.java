@@ -194,6 +194,16 @@ public class SelectionManager implements Initiable {
 		return getSelected(PositionType.VOCAL);
 	}
 
+	public PositionType selectedType() {
+		for (final SelectionList<?, ?, ?> selectionList : selectionLists.values()) {
+			if (selectionList.getAccessor().isSelected()) {
+				return selectionList.type;
+			}
+		}
+
+		return PositionType.NONE;
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T extends IVirtualConstantPosition> ISelectionAccessor<T> selectedAccessor() {
 		for (final SelectionList<?, ?, ?> selectionList : selectionLists.values()) {

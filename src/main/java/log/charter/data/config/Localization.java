@@ -51,6 +51,7 @@ public class Localization {
 		BUTTON_SAVE("Save"), //
 		CHANGE_AUDIO("Change audio"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
+		CHORD_INSIDE_WRONG_HANDSHAPE("Chord is inside hand shape of different chord"), //
 		CONFIG_AUDIO("Audio"), //
 		CONFIG_DISPLAY("Display"), //
 		CONFIG_GENERAL("General"), //
@@ -123,6 +124,10 @@ public class Localization {
 		NEW_PROJECT("New project"), //
 		NO_PHRASES_IN_ARRANGEMENT("No phrases in arrangement"), //
 		NO_SECTIONS_IN_ARRANGEMENT("No sections in arrangement"), //
+		NOTE_SLIDE_FROM_OPEN_STRING("Slide starts on open string"), //
+		NOTE_SLIDE_NOT_LINKED("Pitched note slide is not linked to next note"), //
+		NOTE_SLIDES_INTO_CHORD("Note slide ends on a chord, should end on note"), //
+		NOTE_SLIDES_INTO_WRONG_FRET("Note slide ends on a different fret than next note"), //
 		OPEN_PROJECT("Open project"), //
 		PASTE("Paste"), //
 		REDO("Redo"), //
@@ -169,6 +174,7 @@ public class Localization {
 		TOOLBAR_VOLUME("Volume"), //
 		TOOLBAR_WAVEFORM_GRAPH("Waveform"), //
 		UNDO("Undo"), //
+		UNPITCHED_NOTE_SLIDE_LINKED("Unpitched note slide is linked to next note"), //
 		UNSUPPORTED_MUSIC_FORMAT("Unsupported music format!"), //
 		VOCAL_ARRANGEMENT("Vocal arrangement"), //
 		WARNING("Warning"), //

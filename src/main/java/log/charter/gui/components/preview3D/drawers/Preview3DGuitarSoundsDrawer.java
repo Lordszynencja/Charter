@@ -16,7 +16,6 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosit
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.noteHalfWidth;
 import static log.charter.gui.components.preview3D.Preview3DUtils.tailHalfWidth;
-import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationZMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
@@ -39,14 +38,12 @@ import log.charter.data.song.BendValue;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Mute;
 import log.charter.data.song.position.FractionalPosition;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.data.ChordBoxDrawData;
 import log.charter.gui.components.preview3D.data.NoteDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
-import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDrawData;
 import log.charter.gui.components.preview3D.shapes.CompositeModel;
@@ -124,12 +121,14 @@ public class Preview3DGuitarSoundsDrawer {
 
 		@Override
 		public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
-			drawChordBox(shadersHolder, drawData, chordBox);
+			preview3DChordBoxDrawer.drawChordBox(shadersHolder, drawData, chordBox);
 		}
 	}
 
 	private ChartData chartData;
 	private NoteStatusModels noteStatusModels;
+
+	private final Preview3DChordBoxDrawer preview3DChordBoxDrawer = new Preview3DChordBoxDrawer();
 
 	private static double lastFretLengthMultiplier = fretLengthMultiplier;
 	private final static Map<Integer, CompositeModel> openNoteSameFretsModels = new HashMap<>();
@@ -166,10 +165,11 @@ public class Preview3DGuitarSoundsDrawer {
 		return currentMap.get(fret0).get(fret1);
 	}
 
-	public void init(final ChartData chartData, final NoteStatusModels noteStatusModels,
-			final TexturesHolder texturesHolder) {
+	public void init(final ChartData chartData, final NoteStatusModels noteStatusModels) {
 		this.chartData = chartData;
 		this.noteStatusModels = noteStatusModels;
+
+		preview3DChordBoxDrawer.init(chartData);
 	}
 
 	private boolean invertBend(final int string) {
@@ -217,96 +217,6 @@ public class Preview3DGuitarSoundsDrawer {
 		}
 
 		return getStringPositionWithBend(note.string, chartData.currentStrings(), bendValue);
-	}
-
-	private void drawFullChordMute(final ShadersHolder shadersHolder, final double x0, final double x1, final double y0,
-			final double y1, double z) {
-		final double x = (x0 + x1) / 2;
-		final double y = (y0 + y1) / 2;
-		final double d0y = 0.8 * (y1 - y);
-		final double d1y = 0.95 * (y1 - y);
-		final double d0x = d0y;
-		final double d1x = d1y;
-		z -= 0.001;
-
-		final Color color = new Color(128, 216, 255);
-		ColorLabel.PREVIEW_3D_CHORD_FULL_MUTE.color();
-		shadersHolder.new BaseShaderDrawData()//
-				.addVertex(new Point3D(x - d1x, y + d0y, z), color)//
-				.addVertex(new Point3D(x - d0x, y + d1y, z), color)//
-				.addVertex(new Point3D(x + d1x, y - d0y, z), color)//
-				.addVertex(new Point3D(x + d0x, y - d1y, z), color)//
-
-				.addVertex(new Point3D(x + d1x, y + d0y, z), color)//
-				.addVertex(new Point3D(x - d0x, y - d1y, z), color)//
-				.addVertex(new Point3D(x - d1x, y - d0y, z), color)//
-				.addVertex(new Point3D(x + d0x, y + d1y, z), color)//
-				.draw(GL30.GL_QUADS, Matrix4.identity);
-	}
-
-	private void drawPalmChordMute(final ShadersHolder shadersHolder, final double x0, final double x1, final double y0,
-			final double y1, double z) {
-		final double x = (x0 + x1) / 2;
-		final double y = (y0 + y1) / 2;
-		final double d0x = 0.8 * (x1 - x);
-		final double d1x = 0.9 * (x1 - x);
-		final double d0y = 0.8 * (y1 - y);
-		final double d1y = 0.9 * (y1 - y);
-		z -= 0.001;
-
-		final Color color = ColorLabel.PREVIEW_3D_CHORD_FULL_MUTE.color();
-		shadersHolder.new BaseShaderDrawData()//
-				.addVertex(new Point3D(x - d1x, y + d0y, z), color)//
-				.addVertex(new Point3D(x - d0x, y + d1y, z), color)//
-				.addVertex(new Point3D(x + d1x, y - d0y, z), color)//
-				.addVertex(new Point3D(x + d0x, y - d1y, z), color)//
-
-				.addVertex(new Point3D(x + d1x, y + d0y, z), color)//
-				.addVertex(new Point3D(x - d0x, y - d1y, z), color)//
-				.addVertex(new Point3D(x - d1x, y - d0y, z), color)//
-				.addVertex(new Point3D(x + d0x, y + d1y, z), color)//
-				.draw(GL30.GL_QUADS, Matrix4.identity);
-	}
-
-	private void drawChordBox(final ShadersHolder shadersHolder, final Preview3DDrawData drawData,
-			final ChordBoxDrawData chordBox) {
-		final IntRange frets = drawData.getFrets(chordBox.position);
-		if (frets == null) {
-			return;
-		}
-
-		final double x0 = getFretPosition(frets.min - 1);
-		final double x1 = getFretPosition(frets.max);
-		final double y0 = getChartboardYPosition(chartData.currentStrings());
-		double y1 = topStringPosition;
-		final double z = max(0, getTimePosition(chordBox.position - drawData.time));
-
-		if (chordBox.onlyBox) {
-			y1 = (y0 + y1 * 2) / 3;
-		}
-
-		final Point3D p00 = new Point3D(x0, y0, z);
-		final Point3D p01 = new Point3D((x1 + x0) / 2, y0, z);
-		final Point3D p02 = new Point3D(x1, y0, z);
-		final Point3D p10 = new Point3D(x0, y1, z);
-		final Point3D p12 = new Point3D(x1, y1, z);
-		final Color color = ColorLabel.PREVIEW_3D_CHORD_BOX.color();
-		final Color shadowInvisibleColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 0);
-
-		shadersHolder.new BaseShaderDrawData()//
-				.addVertex(p00, color)//
-				.addVertex(p01, shadowInvisibleColor)//
-				.addVertex(p10, shadowInvisibleColor)//
-				.addVertex(p02, color)//
-				.addVertex(p01, shadowInvisibleColor)//
-				.addVertex(p12, shadowInvisibleColor)//
-				.draw(GL30.GL_TRIANGLES, Matrix4.identity);
-
-		if (chordBox.mute == Mute.FULL) {
-			drawFullChordMute(shadersHolder, x0, x1, y0, y1, z);
-		} else if (chordBox.mute == Mute.PALM) {
-			drawPalmChordMute(shadersHolder, x0, x1, y0, y1, z);
-		}
 	}
 
 	private void drawNoteShadow(final ShadersHolder shadersHolder, final int time, final NoteDrawData note,
@@ -596,7 +506,8 @@ public class Preview3DGuitarSoundsDrawer {
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
-		final List<SoundDrawObject> objectsToDraw = new ArrayList<>(1000);
+		final List<SoundDrawObject> objectsToDraw = new ArrayList<>(100);
+		final List<SoundDrawObject> transparentObjectsToDraw = new ArrayList<>(20);
 
 		for (int string = 0; string < chartData.currentStrings(); string++) {
 			final boolean shouldBendDownwards = invertBend(string);
@@ -604,10 +515,12 @@ public class Preview3DGuitarSoundsDrawer {
 			drawData.notes.notes.get(string)
 					.forEach(note -> objectsToDraw.add(new NoteDrawObject(note, shouldBendDownwards)));
 		}
-		drawData.notes.chords.forEach(chordBox -> objectsToDraw.add(new ChordBoxDrawObject(chordBox)));
+		drawData.notes.chords.forEach(chordBox -> transparentObjectsToDraw.add(new ChordBoxDrawObject(chordBox)));
 
 		objectsToDraw.sort(SoundDrawObject::compareTo);
 		objectsToDraw.forEach(object -> object.draw(shadersHolder, drawData));
+		transparentObjectsToDraw.sort(SoundDrawObject::compareTo);
+		transparentObjectsToDraw.forEach(object -> object.draw(shadersHolder, drawData));
 	}
 
 }

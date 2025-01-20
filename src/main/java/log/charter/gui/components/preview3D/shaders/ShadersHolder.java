@@ -69,15 +69,19 @@ public class ShadersHolder {
 			return this;
 		}
 
-		public BaseShaderDrawData addModel(final Model model, final Color color) {
-			for (final Point3D point : model.getPoints()) {
+		public BaseShaderDrawData addPoints(final List<Point3D> points, final Color color) {
+			for (final Point3D point : points) {
 				addVertex(point, color);
 			}
 
 			return this;
 		}
 
-		public void draw(final int mode, final Matrix4 modelMatrix) {
+		public BaseShaderDrawData addModel(final Model model, final Color color) {
+			return addPoints(model.getPoints(), color);
+		}
+
+		public BaseShaderDrawData draw(final int mode, final Matrix4 modelMatrix) {
 			useShader(BASE_SHADER_NAME);
 
 			baseShader.setModelMatrix(modelMatrix);
@@ -86,6 +90,8 @@ public class ShadersHolder {
 			baseShader.setColors(colors.toArray(new Color[0]));
 
 			GL30.glDrawArrays(mode, 0, points.size());
+
+			return this;
 		}
 	}
 

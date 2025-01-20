@@ -76,6 +76,9 @@ public class ModeManager implements Initiable {
 			return;
 		}
 
+		audioHandler.stopMusic();
+		selectionManager.clear();
+
 		chartData.currentArrangement = arrangementId;
 		setLevel(0);
 		setMode(EditMode.GUITAR);

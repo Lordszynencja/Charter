@@ -31,13 +31,18 @@ public class Preview3DNotesData {
 				.chordNotesVisibility(level.shouldChordShowNotes(beats, id));
 
 		if (chordNotesVisibility == ChordNotesVisibility.NONE) {
-			chords.add(
-					new ChordBoxDrawData(chord.position(beats), chord.chordNotesValue(n -> n.mute, Mute.NONE), true));
+			chords.add(new ChordBoxDrawData(chord.position(beats), //
+					chord.chordNotesValue(n -> n.mute, Mute.NONE), //
+					true, //
+					chord.chordNotes.size() > 2));
 			return;
 		}
 
 		if (!chord.splitIntoNotes) {
-			chords.add(new ChordBoxDrawData(chord.position(beats), Mute.NONE, false));
+			chords.add(new ChordBoxDrawData(chord.position(beats), //
+					Mute.NONE, //
+					false, //
+					chord.chordNotes.size() > 2));
 		}
 		if (chord.forceNoNotes) {
 			return;
