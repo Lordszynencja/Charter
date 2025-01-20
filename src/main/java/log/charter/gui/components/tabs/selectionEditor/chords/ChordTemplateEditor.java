@@ -169,7 +169,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		}
 	}
 
-	private static final int width = 440;
+	public static final int width = 440;
 
 	protected final RowedPanel parent;
 	private boolean parentListenerAdded = false;

@@ -112,6 +112,7 @@ public class RowedPanel extends JPanel {
 
 	public void addWithSettingSizeTop(final Component component, final int x, final int y, final int w, final int h) {
 		setComponentBounds(component, x, y, w, h);
+		resizeToFit(x + w, y + h + sizes.verticalSpace);
 		add(component, 0);
 	}
 

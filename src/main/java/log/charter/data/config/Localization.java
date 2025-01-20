@@ -52,10 +52,10 @@ public class Localization {
 		CHANGE_AUDIO("Change audio"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_INSIDE_WRONG_HANDSHAPE("Chord is inside hand shape of different chord"), //
+		CONFIG("Config"), //
 		CONFIG_AUDIO("Audio"), //
 		CONFIG_DISPLAY("Display"), //
 		CONFIG_GENERAL("General"), //
-		CONFIG_PANE_TITLE("Config"), //
 		COPY("Copy"), //
 		COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT("Couldn't create folder with this name, please change the name"), //
 		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 5 file"), //
@@ -188,7 +188,6 @@ public class Localization {
 		FILE_MENU_IMPORT_MIDI_TEMPO("Tempo from Midi file"), //
 		SAVE_PROJECT("Save project"), //
 		SAVE_PROJECT_AS("Save project as..."), //
-		FILE_MENU_OPTIONS("Options"), //
 		SHORTCUT_CONFIG("Shortcut config"), //
 		FILE_MENU_GRAPHIC_OPTIONS("Graphic options"), //
 		FILE_MENU_COLOR_OPTIONS("Color options"), //

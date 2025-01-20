@@ -1,5 +1,8 @@
 package log.charter.gui.components.tabs.chordEditor;
 
+import static log.charter.data.config.Config.maxStrings;
+
+import java.awt.Dimension;
 import java.util.List;
 
 import javax.swing.JCheckBox;
@@ -23,6 +26,8 @@ import log.charter.services.CharterContext.Initiable;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 
 public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
+	static final int listWidth = 450;
+
 	private static final long serialVersionUID = 1L;
 
 	private final ScrollableRowedPanel chordTemplatesList;
@@ -45,7 +50,7 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 		setOpaque(true);
 		setBackground(ColorLabel.BASE_BG_2.color());
 
-		final PaneSizes listSizes = new PaneSizesBuilder(250)//
+		final PaneSizes listSizes = new PaneSizesBuilder(listWidth - 20)//
 				.verticalSpace(0)//
 				.rowHeight(50)//
 				.rowSpacing(0)//
@@ -54,27 +59,38 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 		chordTemplatesList = new ScrollableRowedPanel(listSizes, 1);
 		chordTemplatesList.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		chordTemplatesList.setBackground(ColorLabel.BASE_BG_4.color());
+		chordTemplatesList.getVerticalScrollBar().setUnitIncrement(25);
+
 		chordTemplateEditor = new ChordTemplateEditor(this);
 	}
 
 	@Override
 	public void init() {
-		addWithSettingSize(chordTemplatesList, 0, 0, 270, 400);
+		final int width = listWidth + ChordTemplateEditor.width + 200;
+		final int height = sizes.getY(maxStrings + 5);
+
+		addWithSettingSize(chordTemplatesList, 0, 0, listWidth, height);
 
 		chordTemplateEditor.init(chartData, charterFrame, keyboardHandler, () -> chordTemplate, this::templateEdited);
 
-		chordTemplateEditor.addChordNameSuggestionButton(400, 0);
+		chordTemplateEditor.addChordNameSuggestionButton(listWidth + 150, 0);
 
-		chordTemplateEditor.addChordNameInput(400, 1);
-		addCheckbox(2, 320, 70, Label.ARPEGGIO, false, val -> {
+		chordTemplateEditor.addChordNameInput(listWidth + 150, 1);
+		addCheckbox(2, listWidth + 70, 70, Label.ARPEGGIO, false, val -> {
 			chordTemplate.arpeggio = val;
 			templateEdited();
 		});
 		arpeggioLabel = (JLabel) getPart(getPartsSize() - 2);
 		arpeggioCheckBox = (JCheckBox) getLastPart();
-		chordTemplateEditor.addChordTemplateEditor(320, 4);
+		chordTemplateEditor.addChordTemplateEditor(listWidth + 70, 4);
 
 		refreshTemplates();
+
+		final Dimension size = new Dimension(width, height);
+		setMinimumSize(size);
+		setMaximumSize(size);
+		setPreferredSize(size);
+		setSize(size);
 	}
 
 	private void templateEdited() {
@@ -101,7 +117,7 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 		chordTemplatesList.getPanel().removeAll();
 
 		final List<ChordTemplate> chordTemplates = chartData.currentChordTemplates();
-		chordTemplatesList.resizePanel(250, chordTemplates.size());
+		chordTemplatesList.resizePanel(listWidth - 20, chordTemplates.size());
 		for (int i = 0; i < chordTemplates.size(); i++) {
 			chordTemplatesList.add(new ChordTemplateInfo(chartData, this, i), 0, i);
 		}

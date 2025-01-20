@@ -84,7 +84,7 @@ public class RowedDialog extends JDialog implements ComponentListener {
 		}
 
 		final Disposer paneOnSave = new Disposer(onSave);
-		final Disposer paneOnCancel = new Disposer(onSave);
+		final Disposer paneOnCancel = new Disposer(onCancel);
 
 		addDefaultButtons(y, paneOnSave, paneOnCancel);
 		addDefaultKeybinds(paneOnSave, paneOnCancel);
