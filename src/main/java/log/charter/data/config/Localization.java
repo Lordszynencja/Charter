@@ -60,6 +60,7 @@ public class Localization {
 		COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT("Couldn't create folder with this name, please change the name"), //
 		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 5 file"), //
 		COULDNT_IMPORT_MIDI_TEMPO("Couldn't properly import tempo map from %s"), //
+		COULDNT_READ_TXT("Couldn't import file %s, unrecognized format"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
 		CREATE_PROJECT_FROM_RS_XML("Create project from RS arrangement XML"), //
 		DELETE("Delete"), //
@@ -92,9 +93,13 @@ public class Localization {
 		FRET_8("Fret 8"), //
 		FRET_9("Fret 9"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
+		IMPORT_LRC_VOCALS("Import LRC vocals file"), //
+		IMPORT_USC_VOCALS("Import USC vocals file"), //
 		INVERT_STRINGS("Invert strings"), //
 		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
 		LEFT_HANDED("Left handed"), //
+		LRC_FILE("LRC file"), //
+		LRC_IMPORTED_SUCCESSFULLY("LRC vocals imported successfully"), //
 		MARK_BOOKMARK_0("Mark bookmark 0"), //
 		MARK_BOOKMARK_1("Mark bookmark 1"), //
 		MARK_BOOKMARK_2("Mark bookmark 2"), //
@@ -173,10 +178,14 @@ public class Localization {
 		TOOLBAR_SLOWED_PLAYBACK_SPEED("Playback speed"), //
 		TOOLBAR_VOLUME("Volume"), //
 		TOOLBAR_WAVEFORM_GRAPH("Waveform"), //
+		TXT_FILE("Text file"), //
 		UNDO("Undo"), //
 		UNPITCHED_NOTE_SLIDE_LINKED("Unpitched note slide is linked to next note"), //
 		UNSUPPORTED_MUSIC_FORMAT("Unsupported music format!"), //
+		USC_IMPORTED_SUCCESSFULLY("USC vocals imported successfully"), //
 		VOCAL_ARRANGEMENT("Vocal arrangement"), //
+		VOCALS_EXIST("Vocals exist"), //
+		VOCALS_EXIST_REPLACE_QUESTION("Vocals exist, replace them with new vocals from import?"), //
 		WARNING("Warning"), //
 		XML_IMPORT_TYPE("XML import type"), //
 		XML_IMPORT_AS("Choose what to import the XML as"), //
@@ -184,7 +193,7 @@ public class Localization {
 		FILE_MENU_IMPORT("Import"), //
 		FILE_MENU_IMPORT_RS_GUITAR("RS guitar arrangement XML"), //
 		FILE_MENU_IMPORT_RS_VOCALS("RS vocals arrangement XML"), //
-		FILE_MENU_IMPORT_GP("Guitar Pro file"), //
+		FILE_MENU_IMPORT_GP("Guitar Pro (3, 4, 5) file"), //
 		FILE_MENU_IMPORT_MIDI_TEMPO("Tempo from Midi file"), //
 		SAVE_PROJECT("Save project"), //
 		SAVE_PROJECT_AS("Save project as..."), //

@@ -242,5 +242,7 @@ public class ArrangementFixer {
 
 		chartData.songChart.beatsMap.truncate(chartTimeHandler.maxNonBeatTime());
 		chordTemplatesEditorTab.refreshTemplates();
+
+		fixLengths(chartData.songChart.vocals.vocals);
 	}
 }

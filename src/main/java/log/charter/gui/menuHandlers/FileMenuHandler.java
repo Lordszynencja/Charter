@@ -17,9 +17,11 @@ import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.data.files.GP5FileImporter;
+import log.charter.services.data.files.LRCImporter;
 import log.charter.services.data.files.MidiImporter;
 import log.charter.services.data.files.RSXMLImporter;
 import log.charter.services.data.files.SongFileHandler;
+import log.charter.services.data.files.USCTxtImporter;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.utils.Framer;
@@ -33,11 +35,13 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 	private CharterMenuBar charterMenuBar;
 	private Framer framer;
 	private GP5FileImporter gp5FileImporter;
+	private LRCImporter lrcImporter;
 	private MidiImporter midiImporter;
 	private ModeManager modeManager;
 	private ProjectAudioHandler projectAudioHandler;
 	private RSXMLImporter rsXMLImporter;
 	private SongFileHandler songFileHandler;
+	private USCTxtImporter uscTxtImporter;
 
 	@Override
 	boolean isApplicable() {
@@ -60,10 +64,17 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 			menu.add(createItem(Label.CHANGE_AUDIO, this::openAudioFile));
 
 			final JMenu importSubmenu = createMenu(Label.FILE_MENU_IMPORT);
+			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_MIDI_TEMPO, this::importMidiTempo));
+			importSubmenu.addSeparator();
+
 			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_GUITAR, this::importRSArrangementXML));
+			importSubmenu.add(createItem(Label.IMPORT_LRC_VOCALS, this::importLRCVocals));
+			importSubmenu.add(createItem(Label.IMPORT_USC_VOCALS, this::importUSCVocals));
+			importSubmenu.addSeparator();
+
 			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_VOCALS, this::importRSVocalsXML));
 			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_GP, this::importGPFile));
-			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_MIDI_TEMPO, this::importMidiTempo));
+
 			menu.add(importSubmenu);
 
 			menu.addSeparator();
@@ -93,6 +104,46 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 		projectAudioHandler.importAudio(file);
 	}
 
+	private void importMidiTempo() {
+		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".mid" },
+				Label.MIDI_FILE.label());
+		if (file == null) {
+			return;
+		}
+
+		midiImporter.importMidiTempo(file);
+	}
+
+	private void importRSVocalsXML() {
+		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".xml" },
+				new String[] { Label.RS_ARRANGEMENT_FILE.label() });
+		if (file == null) {
+			return;
+		}
+
+		rsXMLImporter.importRSVocalsXML(file);
+	}
+
+	private void importLRCVocals() {
+		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".lrc" },
+				Label.LRC_FILE.label());
+		if (file == null) {
+			return;
+		}
+
+		lrcImporter.importLRCFile(file);
+	}
+
+	private void importUSCVocals() {
+		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".txt" },
+				Label.TXT_FILE.label());
+		if (file == null) {
+			return;
+		}
+
+		uscTxtImporter.importUSCFile(file);
+	}
+
 	private void importRSArrangementXML() {
 		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".xml" },
 				new String[] { Label.RS_ARRANGEMENT_FILE.label() });
@@ -101,16 +152,6 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 		}
 
 		rsXMLImporter.importAndAddRSArrangementXML(file);
-	}
-
-	public void importRSVocalsXML() {
-		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".xml" },
-				new String[] { Label.RS_ARRANGEMENT_FILE.label() });
-		if (file == null) {
-			return;
-		}
-
-		rsXMLImporter.importRSVocalsXML(file);
 	}
 
 	private void importGPFile() {
@@ -122,15 +163,4 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 
 		gp5FileImporter.importGP5File(file);
 	}
-
-	private void importMidiTempo() {
-		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".mid" },
-				Label.MIDI_FILE.label());
-		if (file == null) {
-			return;
-		}
-
-		midiImporter.importMidiTempo(file);
-	}
-
 }
