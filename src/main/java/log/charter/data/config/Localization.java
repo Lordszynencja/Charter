@@ -404,6 +404,7 @@ public class Localization {
 		NO_PROJECT("No project"), //
 		NOT_A_FOLDER("Given path is not a folder"), //
 		OPERATION_CANCELLED("Operation cancelled"), //
+		PLACE_LYRIC_FROM_TEXT("Place lyric from text"), //
 		PLAY_AUDIO("Play audio"), //
 		PROJECT_IS_NEWER_VERSION("Project is newer version than program handles"), //
 		RS_ARRANGEMENT_FILE("RS arrangment file (XML)"), //

@@ -30,6 +30,9 @@ class VocalsMenuHandler extends CharterMenuHandler implements Initiable {
 		menu.add(createItem(Action.TOGGLE_WORD_PART));
 		menu.add(createItem(Action.TOGGLE_PHRASE_END));
 
+		menu.addSeparator();
+		menu.add(createItem(Action.PLACE_LYRIC_FROM_TEXT));
+
 		return menu;
 	}
 }
