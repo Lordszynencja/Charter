@@ -82,6 +82,7 @@ public class ShortcutConfig {
 		addDefaultShortcut(Action.NEXT_ITEM_WITH_SELECT, new Shortcut(KeyEvent.VK_PAGE_UP));
 		addDefaultShortcut(Action.OPEN_PROJECT, new Shortcut(KeyEvent.VK_O).ctrl());
 		addDefaultShortcut(Action.PASTE, new Shortcut(KeyEvent.VK_V).ctrl());
+		addDefaultShortcut(Action.PLACE_LYRIC_FROM_TEXT, new Shortcut(KeyEvent.VK_SPACE).ctrl());
 		addDefaultShortcut(Action.PLAY_AUDIO, new Shortcut(KeyEvent.VK_SPACE));
 		addDefaultShortcut(Action.PREVIOUS_BEAT, new Shortcut(KeyEvent.VK_LEFT).shift().alt());
 		addDefaultShortcut(Action.PREVIOUS_GRID, new Shortcut(KeyEvent.VK_LEFT).ctrl().alt());

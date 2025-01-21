@@ -244,6 +244,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT, chartTimeHandler::moveToNextItemWithSelect);
 		actionHandlers.put(Action.OPEN_PROJECT, songFileHandler::open);
 		actionHandlers.put(Action.PASTE, copyManager::paste);
+		actionHandlers.put(Action.PLACE_LYRIC_FROM_TEXT, vocalsHandler::placeLyricFromText);
 		actionHandlers.put(Action.PLAY_AUDIO, audioHandler::togglePlaySetSpeed);
 		actionHandlers.put(Action.PREVIOUS_BEAT, chartTimeHandler::moveToPreviousBeat);
 		actionHandlers.put(Action.PREVIOUS_GRID, chartTimeHandler::moveToPreviousGrid);
@@ -307,6 +308,7 @@ public class ActionHandler implements Initiable {
 			Action.SLOW_BACKWARD, //
 			Action.SLOW_FORWARD);
 	private static final List<Action> actionsNotStoppingAudio = asList(//
+			Action.PLACE_LYRIC_FROM_TEXT, //
 			Action.PLAY_AUDIO, //
 			Action.SPEED_DECREASE, //
 			Action.SPEED_DECREASE_FAST, //

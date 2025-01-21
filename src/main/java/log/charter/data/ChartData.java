@@ -122,5 +122,4 @@ public class ChartData {
 	public List<HandShape> currentHandShapes() {
 		return currentArrangementLevel().handShapes;
 	}
-
 }

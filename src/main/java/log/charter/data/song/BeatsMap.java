@@ -339,13 +339,13 @@ public class BeatsMap {
 		};
 
 		public IVirtualConstantPosition getMinEndPositionAfter(final IVirtualConstantPosition position) {
-			if (Config.minNoteDistanceType == DistanceType.MILISECONDS) {
+			if (Config.minTailLengthType == DistanceType.MILISECONDS) {
 				return addMiliseconds(position, Config.minTailLengthFactor);
 			}
-			if (Config.minNoteDistanceType == DistanceType.BEATS) {
+			if (Config.minTailLengthType == DistanceType.BEATS) {
 				return addBeats(position, new FractionalPosition(new Fraction(1, Config.minTailLengthFactor)));
 			}
-			if (Config.minNoteDistanceType == DistanceType.NOTES) {
+			if (Config.minTailLengthType == DistanceType.NOTES) {
 				return addNote(position, new Fraction(1, Config.minTailLengthFactor));
 			}
 
