@@ -1,32 +1,22 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
-import static log.charter.data.config.GraphicalConfig.noteHeight;
 
-import static java.lang.Math.sin;
 import static log.charter.data.config.Config.maxStrings;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.tailHeight;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredTextWithBackground;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.clippedShapes;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledPolygon;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledTriangle;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
-import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedPolygon;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.sine;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.util.Utils.stringId;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.util.ArrayList;
-import java.util.List;
 
-import log.charter.data.config.Zoom;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
-import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.StrokedTriangle;
@@ -61,27 +51,31 @@ public class ModernThemeNoteTails {
 
 	private void addSlideCommon(final EditorNoteDrawingData note, final int y, final Color backgroundColor,
 			final Color fretColor) {
-		this.addNormalNoteTailShape(note, y);
-		
+		addNormalNoteTailShape(note, y);
+
 		final int lineThickness = 2;
-		
-		IntRange topBottom = getDefaultTailTopBottom(y);
-		final int slideStartY = note.slideTo < note.fretNumber ? topBottom.min + lineThickness / 2 : topBottom.max - lineThickness / 2;
-		final int slideEndY = note.slideTo < note.fretNumber ? topBottom.max - lineThickness / 2 : topBottom.min + lineThickness / 2;
+
+		final IntRange topBottom = getDefaultTailTopBottom(y);
+		final int slideStartY = note.slideTo < note.fretNumber ? topBottom.min + lineThickness / 2
+				: topBottom.max - lineThickness / 2;
+		final int slideEndY = note.slideTo < note.fretNumber ? topBottom.max - lineThickness / 2
+				: topBottom.min + lineThickness / 2;
 		final int slideStartX = note.x + noteHeight / 4;
-		final int slideEndX = note.linkNext ? note.x + note.length - lineThickness - noteHeight / 4 : note.x + note.length - lineThickness;
+		final int slideEndX = note.linkNext ? note.x + note.length - lineThickness - noteHeight / 4
+				: note.x + note.length - lineThickness;
 		final Position2D slideStart = new Position2D(slideStartX, slideStartY);
 		final Position2D slideEnd = new Position2D(slideEndX, slideEndY);
-		
+
 		data.noteTails.add(new Line(slideStart, slideEnd, Color.WHITE, lineThickness));
-		
+
 		if (note.unpitchedSlide) {
 			final int tailEndFretTextY = note.slideTo < note.fretNumber ? topBottom.max + noteHeight / 3
 					: topBottom.min - noteHeight / 3;
 			final Position2D fretTextPosition = new Position2D(note.x + note.length, tailEndFretTextY);
 			final Color color = noteTailColors[stringId(note.string, data.strings)];
-			data.slideFrets.add(centeredTextWithBackground(fretTextPosition, slideFretFont, note.slideTo + "", color.darker().darker().darker(),
-					Color.WHITE, noteTailColors[stringId(note.string, data.strings)]));
+			data.slideFrets.add(centeredTextWithBackground(fretTextPosition, slideFretFont, note.slideTo + "",
+					color.darker().darker().darker(), Color.WHITE,
+					noteTailColors[stringId(note.string, data.strings)]));
 		}
 	}
 
@@ -93,7 +87,7 @@ public class ModernThemeNoteTails {
 		addSlideCommon(note, y, ColorLabel.SLIDE_UNPITCHED_FRET_BG.color(),
 				ColorLabel.SLIDE_UNPITCHED_FRET_TEXT.color());
 	}
-	
+
 	private void addTailBox(final int x, final int length, final int y, final Color color) {
 		addTailBox(x, length, y, color, 1);
 	}
@@ -120,7 +114,7 @@ public class ModernThemeNoteTails {
 			final int y1 = y + tailHeight / 2 + 1;
 			final int y2 = y - tailHeight / 2 + intensity;
 			final int y3 = y - tailHeight / 2;
-			
+
 			final int fragmentSize = 8;
 			while (fragmentX <= x + length - fragmentSize) {
 				data.noteTails.add(filledPolygon(color.brighter(), //
@@ -139,7 +133,7 @@ public class ModernThemeNoteTails {
 						new Position2D(fragmentX, y2 + 2)));
 				fragmentX += fragmentSize;
 			}
-			
+
 			// Add another partial fragment
 			if (fragmentX <= x + length - fragmentSize / 2) {
 				data.noteTails.add(filledPolygon(color.brighter(), //
@@ -157,7 +151,7 @@ public class ModernThemeNoteTails {
 						new Position2D(fragmentX + fragmentSize / 2, y3 + 2), //
 						new Position2D(fragmentX, y2 + 2)));
 			}
-	
+
 			// Add another partial half fragment
 			else {
 				data.noteTails.add(filledPolygon(color.brighter(), //
@@ -176,17 +170,17 @@ public class ModernThemeNoteTails {
 					topBottom.max - topBottom.min);
 			data.noteTails.add(filledRectangle(position, color));
 		}
-		
+
 		// Define vibrato appearance
 		if (note.vibrato) {
 			final Position2D from = new Position2D(x, y);
 			data.noteTails.add(sine(from, length, tailHeight / 2 - 2, -8, 10, Color.GRAY.brighter(), 2));
 		}
-		
+
 		if (!note.tremolo) {
 			addTailBox(note.x, note.length, y, color.brighter());
 		}
-		
+
 		if (note.highlighted) {
 			addTailBox(note.x, note.length, y, ColorLabel.HIGHLIGHT.color(), 2);
 		} else if (note.selected) {

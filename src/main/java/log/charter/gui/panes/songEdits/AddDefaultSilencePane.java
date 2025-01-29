@@ -42,14 +42,14 @@ public class AddDefaultSilencePane extends ParamsPane {
 		addDefaultFinish(3, this::saveAndExit);
 	}
 
-	private void removeAudio(final int movement) {
+	private void removeAudio(final double movement) {
 		final AudioDataShort editedAudio = projectAudioHandler.getAudio().remove(movement / 1000.0);
 
 		projectAudioHandler.changeAudio(editedAudio);
 		data.songChart.moveBeats(chartTimeHandler.maxTime(), -movement);
 	}
 
-	private void addSilence(final int movement) {
+	private void addSilence(final double movement) {
 		if (movement < 0) {
 			removeAudio(-movement);
 			return;
@@ -69,18 +69,18 @@ public class AddDefaultSilencePane extends ParamsPane {
 
 		final Beat firstBeat = data.songChart.beatsMap.beats.get(0);
 		movement -= firstBeat.position();
-		final int firstBarPosition = firstBeat.position();
-		final int secondBarPosition = data.songChart.beatsMap.beats.get(firstBeat.beatsInMeasure).position();
-		final int barLength = secondBarPosition - firstBarPosition;
+		final double firstBarPosition = firstBeat.position();
+		final double secondBarPosition = data.songChart.beatsMap.beats.get(firstBeat.beatsInMeasure).position();
+		final double barLength = secondBarPosition - firstBarPosition;
 		movement += bars * barLength;
 		addSilence(movement);
 
 		final int beatsInMeasure = firstBeat.beatsInMeasure;
 		int beatsAdded = 0;
 		for (int bar = 0; bar < bars; bar++) {
-			final int barPosition = firstBeat.position() - barLength * (bars - bar);
+			final double barPosition = firstBeat.position() - barLength * (bars - bar);
 			for (int i = 0; i < beatsInMeasure; i++) {
-				final int beatPosition = barPosition + i * barLength / beatsInMeasure;
+				final double beatPosition = barPosition + i * barLength / beatsInMeasure;
 				data.songChart.beatsMap.beats.add(beatsAdded++,
 						new Beat(beatPosition, beatsInMeasure, firstBeat.noteDenominator, i == 0));
 			}

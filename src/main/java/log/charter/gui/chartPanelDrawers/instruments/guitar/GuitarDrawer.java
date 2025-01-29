@@ -191,7 +191,7 @@ public class GuitarDrawer {
 		return false;
 	}
 
-	private void addGuitarNoteAddLineHighlight(final List<ChordTemplate> chordTemplates, final int time,
+	private void addGuitarNoteAddLineHighlight(final List<ChordTemplate> chordTemplates, final double time,
 			final HighwayDrawer highwayDrawer, final HighlightData highlightData) {
 		if (highlightData.type != PositionType.GUITAR_NOTE) {
 			return;

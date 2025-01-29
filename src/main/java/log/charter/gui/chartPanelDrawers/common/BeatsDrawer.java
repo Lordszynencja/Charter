@@ -195,8 +195,8 @@ public class BeatsDrawer {
 
 	private void addRepeater(final FrameData frameData, final BeatsDrawingData drawingData) {
 		if (frameData.repeaterSpan.a != null && frameData.repeaterSpan.b != null) {
-			final int start = frameData.repeaterSpan.a;
-			final int end = frameData.repeaterSpan.b;
+			final double start = frameData.repeaterSpan.a;
+			final double end = frameData.repeaterSpan.b;
 			if (start > end) {
 				drawingData.addRepeatStart(positionToX(start, frameData.time));
 				drawingData.addRepeatEnd(positionToX(end, frameData.time));
@@ -212,7 +212,7 @@ public class BeatsDrawer {
 
 	private void addGrid(final FrameData frameData, final BeatsDrawingData drawingData) {
 		final GridPosition<Beat> gridPosition = GridPosition.create(frameData.beats, xToPosition(0, frameData.time));
-		final int maxTime = xToPosition(chartPanel.getWidth() + 1, frameData.time);
+		final double maxTime = xToPosition(chartPanel.getWidth() + 1, frameData.time);
 		while (gridPosition.position() < maxTime) {
 			if (gridPosition.positionId >= frameData.beats.size() - 1) {
 				break;

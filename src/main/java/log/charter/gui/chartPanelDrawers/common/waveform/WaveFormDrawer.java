@@ -70,7 +70,7 @@ public class WaveFormDrawer {
 		return drawWaveForm || modeManager.getMode() == EditMode.TEMPO_MAP;
 	}
 
-	private void drawFromMap(final Graphics g, final int time) {
+	private void drawFromMap(final Graphics g, final double time) {
 		final WaveformMap map = this.map;
 		if (map == null) {
 			return;
@@ -82,8 +82,8 @@ public class WaveFormDrawer {
 		final int width = chartPanel.getWidth();
 		final int y = getMiddle();
 		final int fullHeight = getHeight();
-		final int start = max(0, xToPosition(0, time) / timeSpan);
-		final int end = min(level.b.size() - 1, xToPosition(chartPanel.getWidth(), time) / timeSpan);
+		final int start = max(0, (int) (xToPosition(0, time) / timeSpan));
+		final int end = min(level.b.size() - 1, (int) (xToPosition(chartPanel.getWidth(), time) / timeSpan));
 
 		final int[] heights = new int[width];
 		final boolean[] rms = new boolean[width];
@@ -114,7 +114,7 @@ public class WaveFormDrawer {
 		}
 	}
 
-	private void drawFull(final Graphics g, final int time) {
+	private void drawFull(final Graphics g, final double time) {
 		final float timeToFrameMultiplier = projectAudioHandler.getAudio().frameRate() / 1000;
 
 		final short[] musicValues = projectAudioHandler.getAudio().data[0];

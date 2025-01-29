@@ -74,7 +74,7 @@ public class Preview3DLyricsDrawer {
 		return text;
 	}
 
-	private void drawCurrentLine(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
+	private void drawCurrentLine(final ShadersHolder shadersHolder, final double time, final double aspectRatio,
 			final double textSizeMultiplier) {
 		final List<Vocal> vocals = chartData.currentVocals().vocals;
 		final Integer currentVocalId = lastBefore(vocals, FractionalPosition.fromTime(chartData.beats(), time))
@@ -98,7 +98,7 @@ public class Preview3DLyricsDrawer {
 				aspectRatio);
 	}
 
-	private void drawNextLine(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
+	private void drawNextLine(final ShadersHolder shadersHolder, final double time, final double aspectRatio,
 			final double textSizeMultiplier) {
 		final List<Vocal> vocals = chartData.currentVocals().vocals;
 		final Integer currentVocalId = lastBefore(vocals, FractionalPosition.fromTime(chartData.beats(), time))
@@ -114,7 +114,7 @@ public class Preview3DLyricsDrawer {
 				0.1 * textSizeMultiplier, aspectRatio);
 	}
 
-	public void draw(final ShadersHolder shadersHolder, final int time, final double aspectRatio,
+	public void draw(final ShadersHolder shadersHolder, final double time, final double aspectRatio,
 			final double textSizeMultiplier) {
 		GL30.glDisable(GL30.GL_DEPTH_TEST);
 

@@ -122,12 +122,12 @@ public class Preview3DBeatsDrawer {
 	}
 
 	private static class FretDrawData implements Comparable<FretDrawData> {
-		public final int position;
+		public final double position;
 		public final int fret;
 		public final boolean fromAnchor;
 		public final boolean active;
 
-		public FretDrawData(final int position, final int fret, final boolean fromAnchor, final boolean active) {
+		public FretDrawData(final double position, final int fret, final boolean fromAnchor, final boolean active) {
 			this.position = position;
 			this.fret = fret;
 			this.fromAnchor = fromAnchor;
@@ -136,7 +136,7 @@ public class Preview3DBeatsDrawer {
 
 		@Override
 		public int compareTo(final FretDrawData o) {
-			final int positionDifference = Integer.compare(position, o.position);
+			final int positionDifference = Double.compare(position, o.position);
 			if (positionDifference != 0) {
 				return positionDifference;
 			}

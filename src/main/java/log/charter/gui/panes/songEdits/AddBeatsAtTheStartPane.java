@@ -46,9 +46,9 @@ public class AddBeatsAtTheStartPane extends ParamsPane {
 		final Beat firstBeat = beats.get(0);
 		final double bpm = beatsMap.findBPM(firstBeat, 0);
 
-		final int firstBeatPosition = firstBeat.position();
+		final double firstBeatPosition = firstBeat.position();
 		for (int i = 0; i < beatsToGenerate; i++) {
-			final int position = firstBeatPosition - (int) ((1 + i) * 60_000 / bpm);
+			final double position = firstBeatPosition - ((1 + i) * 60_000 / bpm);
 			if (position >= 0) {
 				final Beat beat = new Beat(position, firstBeat.beatsInMeasure, firstBeat.noteDenominator, false);
 				beats.add(0, beat);

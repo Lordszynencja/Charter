@@ -15,7 +15,7 @@ import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.services.data.fixers.ArrangementFixer;
 
-public class GP5ImportOptions extends ParamsPane {
+public class GPImportOptions extends ParamsPane {
 	private static class ArrangementImportSetting {
 		public final boolean skip;
 		public final Integer arrangementId;
@@ -48,9 +48,9 @@ public class GP5ImportOptions extends ParamsPane {
 
 	private final ArrangementImportSetting[] arrangementImportSettings;
 
-	public GP5ImportOptions(final CharterFrame frame, final ArrangementFixer arrangementFixer,
+	public GPImportOptions(final CharterFrame frame, final ArrangementFixer arrangementFixer,
 			final CharterMenuBar charterMenuBar, final ChartData data, final SongChart imported) {
-		super(frame, Label.GP5_IMPORT, 450);
+		super(frame, Label.GP_IMPORT_OPTIONS, 450);
 
 		this.arrangementFixer = arrangementFixer;
 		this.charterMenuBar = charterMenuBar;
@@ -70,14 +70,14 @@ public class GP5ImportOptions extends ParamsPane {
 	}
 
 	private void addArrangementOptions(final int row, final int id, final Arrangement arrangement) {
-		final String name = Label.GP5_IMPORT_ARRANGEMENT_NAME.label().formatted(id + 1, arrangement.getTypeNameLabel());
+		final String name = Label.GP_IMPORT_ARRANGEMENT_NAME.label().formatted(id + 1, arrangement.getTypeNameLabel());
 
 		addLabel(row, 10, name, 0);
 		final Vector<ArrangementImportSetting> options = new Vector<>(asList(//
-				new ArrangementImportSetting(false, Label.GP5_IMPORT_TO_NEW_ARRANGEMENT.label()), //
-				new ArrangementImportSetting(true, Label.GP5_IMPORT_SKIP_ARRANGEMENT.label())));
+				new ArrangementImportSetting(false, Label.GP_IMPORT_TO_NEW_ARRANGEMENT.label()), //
+				new ArrangementImportSetting(true, Label.GP_IMPORT_SKIP_ARRANGEMENT.label())));
 		for (int i = 0; i < data.songChart.arrangements.size(); i++) {
-			final String optionName = Label.GP5_IMPORT_TO_EXISTING_ARRANGEMENT.label().formatted(i + 1,
+			final String optionName = Label.GP_IMPORT_TO_EXISTING_ARRANGEMENT.label().formatted(i + 1,
 					data.songChart.arrangements.get(i).getTypeNameLabel());
 			options.add(new ArrangementImportSetting(i, optionName));
 		}

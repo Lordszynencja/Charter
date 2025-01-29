@@ -40,11 +40,11 @@ public class ArrangementLevel {
 	public CountedList<ArrangementHandShape> handShapes;
 
 	private ArrangementAnchor anchor(final ImmutableBeatsMap beats, final Anchor anchor) {
-		return new ArrangementAnchor(anchor.position(beats), anchor.fret, new BigDecimal(anchor.width));
+		return new ArrangementAnchor((int) anchor.position(beats), anchor.fret, new BigDecimal(anchor.width));
 	}
 
 	private ArrangementHandShape handShape(final ImmutableBeatsMap beats, final HandShape handShape) {
-		return new ArrangementHandShape(handShape.position(beats), handShape.endPosition(beats),
+		return new ArrangementHandShape((int) handShape.position(beats), (int) handShape.endPosition(beats),
 				handShape.templateId == null ? 0 : handShape.templateId);
 	}
 

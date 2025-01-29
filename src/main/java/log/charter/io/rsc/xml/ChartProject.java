@@ -22,7 +22,7 @@ public class ChartProject {
 	public EditMode editMode = EditMode.TEMPO_MAP;
 	public int arrangement = 0;
 	public int level = 0;
-	public int time = 0;
+	public double time = 0;
 
 	public String artistName;
 	public String artistNameSort;
@@ -37,10 +37,10 @@ public class ChartProject {
 	public List<Arrangement> arrangements = new ArrayList<>();
 	public Vocals vocals = new Vocals();
 
-	public Map<Integer, Integer> bookmarks = new HashMap<>();
+	public Map<Integer, Double> bookmarks = new HashMap<>();
 	public String text;
 
-	public ChartProject(final int time, final EditMode editMode, final ChartData data, final SongChart songChart,
+	public ChartProject(final double time, final EditMode editMode, final ChartData data, final SongChart songChart,
 			final String text) {
 		this.editMode = editMode;
 		arrangement = data.currentArrangement;

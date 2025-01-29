@@ -19,8 +19,8 @@ import log.charter.data.song.position.time.Position;
 import log.charter.services.RepeatManager;
 
 public class AnchorDrawData implements IConstantPosition {
-	public static List<AnchorDrawData> getAnchorsForTimeSpan(final ChartData chartData, final int audioLength,
-			final int timeFrom, final int timeTo) {
+	public static List<AnchorDrawData> getAnchorsForTimeSpan(final ChartData chartData, final double audioLength,
+			final double timeFrom, final double timeTo) {
 		if (chartData.currentArrangementLevel() == null) {
 			return asList(new AnchorDrawData(timeFrom, timeTo, 0, 4));
 		}
@@ -39,8 +39,8 @@ public class AnchorDrawData implements IConstantPosition {
 		for (int i = anchorsFrom; i <= anchorsTo; i++) {
 			final Anchor anchor = anchors.get(i);
 
-			final int anchorTimeFrom = max(anchor.position(beats), timeFrom);
-			int anchorTimeTo;
+			final double anchorTimeFrom = max(anchor.position(beats), timeFrom);
+			double anchorTimeTo;
 			if (i < anchors.size() - 1) {
 				anchorTimeTo = anchors.get(i + 1).position(beats) - 1;
 			} else {
@@ -61,8 +61,8 @@ public class AnchorDrawData implements IConstantPosition {
 	}
 
 	public static List<AnchorDrawData> getAnchorsForTimeSpanWithRepeats(final ChartData data,
-			final RepeatManager repeatManager, final int audioLength, final int timeFrom, final int timeTo) {
-		int maxTime = timeTo;
+			final RepeatManager repeatManager, final double audioLength, final double timeFrom, final double timeTo) {
+		double maxTime = timeTo;
 		if (repeatManager.isRepeating()) {
 			maxTime = min(maxTime, repeatManager.repeatEnd() - 1);
 		}
@@ -75,17 +75,17 @@ public class AnchorDrawData implements IConstantPosition {
 
 		final List<AnchorDrawData> repeatedAnchors = getAnchorsForTimeSpan(data, audioLength,
 				repeatManager.repeatStart(), repeatManager.repeatEnd() - 1);
-		final int repeatLength = repeatManager.repeatEnd() - repeatManager.repeatStart();
-		int repeatStart = repeatManager.repeatEnd();
+		final double repeatLength = repeatManager.repeatEnd() - repeatManager.repeatStart();
+		double repeatStart = repeatManager.repeatEnd();
 		while (repeatStart < timeFrom) {
 			repeatStart += repeatLength;
 		}
 
 		while (repeatStart < timeTo) {
-			final int repeatOffset = repeatStart - repeatManager.repeatStart();
+			final double repeatOffset = repeatStart - repeatManager.repeatStart();
 			for (final AnchorDrawData anchorDrawData : repeatedAnchors) {
-				final int start = anchorDrawData.timeFrom + repeatOffset;
-				int end = start + anchorDrawData.timeTo + repeatOffset;
+				final double start = anchorDrawData.timeFrom + repeatOffset;
+				double end = start + anchorDrawData.timeTo + repeatOffset;
 				if (start > timeTo) {
 					break;
 				}
@@ -101,12 +101,12 @@ public class AnchorDrawData implements IConstantPosition {
 		return anchorsToDraw;
 	}
 
-	public final int timeFrom;
-	public final int timeTo;
+	public final double timeFrom;
+	public final double timeTo;
 	public final int fretFrom;
 	public final int fretTo;
 
-	public AnchorDrawData(final int timeFrom, final int timeTo, final int fretFrom, final int fretTo) {
+	public AnchorDrawData(final double timeFrom, final double timeTo, final int fretFrom, final int fretTo) {
 		this.timeFrom = timeFrom;
 		this.timeTo = timeTo;
 		this.fretFrom = fretFrom;
@@ -114,7 +114,7 @@ public class AnchorDrawData implements IConstantPosition {
 	}
 
 	@Override
-	public int position() {
+	public double position() {
 		return timeFrom;
 	}
 

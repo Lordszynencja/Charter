@@ -17,8 +17,8 @@ import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 public class ArrangementChordNote extends ArrangementNote {
 	public ArrangementChordNote(final ImmutableBeatsMap beats, final int string, final int fret,
 			final ChordNote chordNote, final boolean ignore) {
-		time = chordNote.position(beats);
-		sustain = chordNote.endPosition(beats) - time;
+		time = (int) chordNote.position(beats);
+		sustain = (int) chordNote.endPosition(beats) - time;
 		this.string = string;
 		this.fret = fret;
 

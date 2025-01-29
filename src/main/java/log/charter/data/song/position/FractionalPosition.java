@@ -41,27 +41,27 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		fractionsToTryForRounding.sort(Fraction::compareTo);
 	}
 
-	private static Fraction generateFractionWithRounding(final int timeInBeat, final int beatLength) {
-		final Fraction baseFraction = new Fraction(timeInBeat, beatLength);
+	private static Fraction generateFractionWithRounding(final double timeInBeat, final double beatLength) {
+		final Fraction baseFraction = new Fraction((int) timeInBeat, (int) beatLength);
 		final Fraction closestFraction = closest(fractionsToTryForRounding, baseFraction).find();
 
-		final int positionFromClosest = closestFraction.multiply(beatLength).intValue();
+		final int positionFromClosest = closestFraction.multiply((int) beatLength).intValue();
 		return abs(positionFromClosest - timeInBeat) <= 1 ? closestFraction : baseFraction;
 	}
 
 	private static FractionalPosition generateOnExistingBeat(final ImmutableBeatsMap beats, final int beatId,
-			final int time, final boolean round) {
+			final double time, final boolean round) {
 		final Beat beat = beats.get(beatId);
 		final Beat nextBeat = beats.get(beatId + 1);
-		final int timeInBeat = time - beat.position();
-		final int beatLength = nextBeat.position() - beat.position();
+		final double timeInBeat = time - beat.position();
+		final double beatLength = nextBeat.position() - beat.position();
 
 		final Fraction fraction = generateFractionWithRounding(timeInBeat, beatLength);
 
 		return new FractionalPosition(beatId, fraction);
 	}
 
-	private static FractionalPosition fromTime(final ImmutableBeatsMap beats, final int time, final boolean round) {
+	private static FractionalPosition fromTime(final ImmutableBeatsMap beats, final double time, final boolean round) {
 		Integer beatId = lastBeforeEqual(beats, new Position(time), IConstantPosition::compareTo).findId();
 		if (beatId == null) {
 			return new FractionalPosition();
@@ -78,23 +78,23 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		final int usedBeatId = beats.size() - 2;
 		final Beat beat = beats.get(usedBeatId);
 		final Beat nextBeat = beats.get(usedBeatId + 1);
-		final int beatLength = nextBeat.position() - beat.position();
+		final double beatLength = nextBeat.position() - beat.position();
 		if (beatLength > 0) {
-			beatId = (time - beat.position()) / beatLength;
+			beatId = (int) ((time - beat.position() + 1) / beatLength);
 		}
-		final int beatPosition = beat.position() + beatLength * (beatId - usedBeatId);
-		final int timeInBeat = time - beatPosition;
+		final double beatPosition = beat.position() + beatLength * (beatId - usedBeatId);
+		final double timeInBeat = time - beatPosition;
 		if (beatLength == 0) {
 			return new FractionalPosition(beatId);
 		}
 
 		final Fraction fraction = round ? generateFractionWithRounding(timeInBeat, beatLength)
-				: new Fraction(timeInBeat, beatLength);
+				: new Fraction((int) timeInBeat, (int) beatLength);
 
 		return new FractionalPosition(beatId, fraction);
 	}
 
-	public static FractionalPosition fromTime(final ImmutableBeatsMap beats, final int time) {
+	public static FractionalPosition fromTime(final ImmutableBeatsMap beats, final double time) {
 		return fromTime(beats, time, false);
 	}
 
@@ -193,11 +193,11 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		return new FractionalPosition(fraction.numerator > 0 ? beatId + 1 : beatId);
 	}
 
-	private int getPosition(final int beatPosition, final int beatLength) {
-		return beatPosition + (int) (fraction.doubleValue() * beatLength);
+	private double getPosition(final double beatPosition, final double beatLength) {
+		return beatPosition + fraction.doubleValue() * beatLength;
 	}
 
-	public int getPosition(final ImmutableBeatsMap beats) {
+	public double getPosition(final ImmutableBeatsMap beats) {
 		if (beatId + 1 < beats.size()) {
 			final Beat beat = beats.get(beatId);
 			final Beat nextBeat = beats.get(beatId + 1);
@@ -207,8 +207,8 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		final int usedBeatId = beats.size() - 2;
 		final Beat beat = beats.get(usedBeatId);
 		final Beat nextBeat = beats.get(usedBeatId + 1);
-		final int beatLength = nextBeat.position() - beat.position();
-		final int beatPosition = beat.position() + beatLength * (beatId - usedBeatId);
+		final double beatLength = nextBeat.position() - beat.position();
+		final double beatPosition = beat.position() + beatLength * (beatId - usedBeatId);
 		return getPosition(beatPosition, beatLength);
 	}
 

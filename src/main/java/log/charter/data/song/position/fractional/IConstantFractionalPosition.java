@@ -19,7 +19,7 @@ public interface IConstantFractionalPosition extends IVirtualConstantPosition {
 		return this;
 	}
 
-	default int position(final ImmutableBeatsMap beats) {
+	default double position(final ImmutableBeatsMap beats) {
 		return position().getPosition(beats);
 	}
 

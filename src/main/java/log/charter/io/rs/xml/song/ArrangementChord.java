@@ -42,7 +42,7 @@ public class ArrangementChord implements IPosition {
 
 	public ArrangementChord(final ImmutableBeatsMap beats, final Chord chord, final ChordTemplate chordTemplate,
 			final boolean forceAddNotes) {
-		time = chord.position(beats);
+		time = (int) chord.position(beats);
 		chordId = chord.templateId();
 		accent = chord.accent ? 1 : null;
 		linkNext = chord.linkNext() ? 1 : null;
@@ -71,13 +71,13 @@ public class ArrangementChord implements IPosition {
 	}
 
 	@Override
-	public int position() {
+	public double position() {
 		return time;
 	}
 
 	@Override
-	public void position(final int newPosition) {
-		time = newPosition;
+	public void position(final double newPosition) {
+		time = (int) newPosition;
 	}
 
 	public void populateChordNotes(final ImmutableBeatsMap beats, final ChordTemplate chordTemplate,

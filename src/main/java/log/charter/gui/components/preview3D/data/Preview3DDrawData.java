@@ -28,7 +28,7 @@ public class Preview3DDrawData {
 	private final List<Anchor> levelAnchors;
 	private final Map<Integer, IntRange> fretsCache = new HashMap<>();
 
-	public final int time;
+	public final double time;
 	public final List<AnchorDrawData> anchors;
 	public final List<BeatDrawData> beats;
 	public final List<HandShapeDrawData> handShapes;
@@ -42,20 +42,20 @@ public class Preview3DDrawData {
 		time = chartTimeHandler.time();
 		levelAnchors = chartData.currentArrangementLevel().anchors;
 
-		final int timeTo = time + getVisibility();
+		final double timeTo = time + getVisibility();
 		anchors = getAnchorsForTimeSpanWithRepeats(chartData, repeatManager, chartTimeHandler.maxTime(), time, timeTo);
 		beats = getBeatsForTimeSpanWithRepeats(chartData, repeatManager, time, timeTo);
 		handShapes = getHandShapesForTimeSpanWithRepeats(chartData, repeatManager, time, timeTo);
 		notes = getNotesForTimeSpanWithRepeats(chartData, repeatManager, time, timeTo);
 	}
 
-	private int getTimeWithRepeat(int t) {
+	private double getTimeWithRepeat(double t) {
 		if (!repeatManager.isRepeating()) {
 			return t;
 		}
 
-		final int end = repeatManager.repeatEnd();
-		final int length = end - repeatManager.repeatStart();
+		final double end = repeatManager.repeatEnd();
+		final double length = end - repeatManager.repeatStart();
 		while (t >= end) {
 			t -= length;
 		}
@@ -63,10 +63,10 @@ public class Preview3DDrawData {
 		return t;
 	}
 
-	private void putAnchorInCache(final int t) {
+	private void putAnchorInCache(final double t) {
 		final AnchorDrawData drawnAnchor = lastBeforeEqual(anchors, new Position(t)).find();
 		if (drawnAnchor != null) {
-			fretsCache.put(t, new IntRange(drawnAnchor.fretFrom + 1, drawnAnchor.fretTo));
+			fretsCache.put((int) t, new IntRange(drawnAnchor.fretFrom + 1, drawnAnchor.fretTo));
 			return;
 		}
 
@@ -77,20 +77,20 @@ public class Preview3DDrawData {
 			anchor = firstAfter(levelAnchors, p).find();
 		}
 		if (anchor == null) {
-			fretsCache.put(t, null);
+			fretsCache.put((int) t, null);
 			return;
 		}
 
-		fretsCache.put(t, new IntRange(anchor.fret, anchor.topFret()));
+		fretsCache.put((int) t, new IntRange(anchor.fret, anchor.topFret()));
 	}
 
-	public IntRange getFrets(int t) {
+	public IntRange getFrets(double t) {
 		t = getTimeWithRepeat(t);
 
-		if (!fretsCache.containsKey(t)) {
+		if (!fretsCache.containsKey((int) t)) {
 			putAnchorInCache(t);
 		}
 
-		return fretsCache.get(t);
+		return fretsCache.get((int) t);
 	}
 }

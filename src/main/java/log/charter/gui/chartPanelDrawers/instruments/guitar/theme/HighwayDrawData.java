@@ -6,7 +6,7 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 
 public class HighwayDrawData {
 	public final int strings;
-	public final int time;
+	public final double time;
 
 	public final DrawableShapeList sectionsAndPhrases;
 	public final DrawableShapeList toneChanges;
@@ -22,7 +22,7 @@ public class HighwayDrawData {
 
 	public final Graphics2D g;
 
-	public HighwayDrawData(final Graphics2D g, final int strings, final int time) {
+	public HighwayDrawData(final Graphics2D g, final int strings, final double time) {
 		this.strings = strings;
 		this.time = time;
 

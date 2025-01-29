@@ -42,7 +42,7 @@ public class MidiChartNotePlayer implements Initiable {
 		midiNotePlayer.init(chartData);
 	}
 
-	private int getTime() {
+	private double getTime() {
 		return chartTimeHandler.time() + midiDelay * speed / 100;
 	}
 
@@ -70,7 +70,7 @@ public class MidiChartNotePlayer implements Initiable {
 		}
 	}
 
-	private double getBendValue(final int time, final List<BendValue> bendValues, final FractionalPosition position,
+	private double getBendValue(final double time, final List<BendValue> bendValues, final FractionalPosition position,
 			final FractionalPosition endPosition) {
 		if (bendValues.isEmpty()) {
 			return 0;
@@ -89,18 +89,18 @@ public class MidiChartNotePlayer implements Initiable {
 					: new BendValue(endPosition, bendPointA.bendValue);
 		}
 
-		final int bendPositionA = bendPointA.position(chartData.beats());
-		final int bendPositionB = bendPointB.position(chartData.beats());
+		final double bendPositionA = bendPointA.position(chartData.beats());
+		final double bendPositionB = bendPointB.position(chartData.beats());
 		final double bendValueA = bendPointA.bendValue.doubleValue();
 		final double bendValueB = bendPointB.bendValue.doubleValue();
 
 		return mix(bendPositionA, bendPositionB, time, bendValueA, bendValueB);
 	}
 
-	private double getSlideValue(final int time, final FractionalPosition position,
+	private double getSlideValue(final double time, final FractionalPosition position,
 			final FractionalPosition endPosition, final int slide, final boolean unpitchedSlide) {
-		final int start = position.position(chartData.beats());
-		final int end = endPosition.position(chartData.beats());
+		final double start = position.position(chartData.beats());
+		final double end = endPosition.position(chartData.beats());
 		if (end <= start) {
 			return 0;
 		}
@@ -113,7 +113,7 @@ public class MidiChartNotePlayer implements Initiable {
 		return slide * weight;
 	}
 
-	private void updateBend(final int time, final FractionalPosition position, final FractionalPosition endPosition,
+	private void updateBend(final double time, final FractionalPosition position, final FractionalPosition endPosition,
 			final int string, final List<BendValue> bendValues, final int fret, final Integer slideTo,
 			final boolean unpitchedSlide, final boolean vibrato) {
 		double bendValue = getBendValue(time, bendValues, position, endPosition);
@@ -130,7 +130,7 @@ public class MidiChartNotePlayer implements Initiable {
 		midiNotePlayer.updateBend(string, fret, bendValue);
 	}
 
-	private void updateSoundingSounds(final int time) {
+	private void updateSoundingSounds(final double time) {
 		for (final MidiChartNotePlayerNoteData sound : soundsPlaying) {
 			if (sound.endPosition < time) {
 				stopSound(sound);
@@ -152,7 +152,7 @@ public class MidiChartNotePlayer implements Initiable {
 			return;
 		}
 
-		final int time = getTime();
+		final double time = getTime();
 
 		midiNotePlayer.updateVolume();
 		updateSoundingSounds(time);
@@ -163,9 +163,9 @@ public class MidiChartNotePlayer implements Initiable {
 	}
 
 	private static class SoundEndCalculationData {
-		public int position;
-		public int endPosition;
-		public int maxEndTime;
+		public double position;
+		public double endPosition;
+		public double maxEndTime;
 	}
 
 	private void calculateEndForChord(final ChordOrNote sound, final SoundEndCalculationData endCalculationData,
@@ -174,9 +174,9 @@ public class MidiChartNotePlayer implements Initiable {
 			return;
 		}
 
-		final List<Integer> possibleEndTimes = new ArrayList<>();
+		final List<Double> possibleEndTimes = new ArrayList<>();
 		if (nextSound != null) {
-			final int endPositionBeforeNextSound = nextSound.position(chartData.beats()) - 5;
+			final double endPositionBeforeNextSound = nextSound.position(chartData.beats()) - 5;
 			possibleEndTimes.add(endPositionBeforeNextSound);
 			endCalculationData.maxEndTime = min(endPositionBeforeNextSound, endCalculationData.maxEndTime);
 		}
@@ -191,7 +191,7 @@ public class MidiChartNotePlayer implements Initiable {
 	}
 
 	private void calculateMinSoundLength(final SoundEndCalculationData endCalculationData) {
-		final int minSoundPosition = endCalculationData.position + minSoundLength;
+		final double minSoundPosition = endCalculationData.position + minSoundLength;
 		if (endCalculationData.endPosition < minSoundPosition) {
 			endCalculationData.endPosition = min(endCalculationData.maxEndTime, minSoundPosition);
 		}
@@ -237,7 +237,7 @@ public class MidiChartNotePlayer implements Initiable {
 			return;
 		}
 
-		final int time = getTime();
+		final double time = getTime();
 
 		playing = true;
 		final List<ChordOrNote> sounds = chartData.currentSounds();

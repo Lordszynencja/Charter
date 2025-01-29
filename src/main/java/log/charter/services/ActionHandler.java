@@ -152,7 +152,7 @@ public class ActionHandler implements Initiable {
 	}
 
 	private void toggleBookmark(final int number) {
-		final Integer currentBookmark = chartData.songChart.bookmarks.get(number);
+		final Double currentBookmark = chartData.songChart.bookmarks.get(number);
 		if (currentBookmark == null || currentBookmark != chartTimeHandler.time()) {
 			chartData.songChart.bookmarks.put(number, chartTimeHandler.time());
 		} else {
@@ -161,7 +161,7 @@ public class ActionHandler implements Initiable {
 	}
 
 	private void moveToBookmark(final int number) {
-		final Integer bookmark = chartData.songChart.bookmarks.get(number);
+		final Double bookmark = chartData.songChart.bookmarks.get(number);
 		if (bookmark == null) {
 			return;
 		}

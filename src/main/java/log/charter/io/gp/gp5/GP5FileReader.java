@@ -61,9 +61,10 @@ public class GP5FileReader {
 	private static final int percussionTrackFlag = 1 << 0;
 
 	public static GP5File importGPFile(final File file) {
-		final GP5File gp5File = new GP5FileReader(new ByteArrayInputStream(RW.readB(file))).readScore();
+		final ByteArrayInputStream inputStream = new ByteArrayInputStream(RW.readB(file));
+		final GP5FileReader reader = new GP5FileReader(inputStream);
 
-		return gp5File;
+		return reader.readScore();
 	}
 
 	private final ByteArrayInputStream data;
@@ -346,15 +347,15 @@ public class GP5FileReader {
 		if (version >= 500) {
 			final int tripletFeelValue = data.read();
 			switch (tripletFeelValue) {
-			case 1:
-				tripletFeel = TripletFeel.EIGHTH;
-				break;
-			case 2:
-				tripletFeel = TripletFeel.SIXTEENTH;
-				break;
-			default:
-				tripletFeel = TripletFeel.NONE;
-				break;
+				case 1:
+					tripletFeel = TripletFeel.EIGHTH;
+					break;
+				case 2:
+					tripletFeel = TripletFeel.SIXTEENTH;
+					break;
+				default:
+					tripletFeel = TripletFeel.NONE;
+					break;
 			}
 			data.read();
 		} else {
@@ -692,15 +693,15 @@ public class GP5FileReader {
 		if ((flags & 0x20) != 0) {
 			final int slapPop = readShortInt8(data);
 			switch (slapPop) {
-			case 1:
-				hopo = HOPO.TAP;
-				break;
-			case 2:
-				bassPickingTechnique = BassPickingTechnique.SLAP;
-				break;
-			case 3:
-				bassPickingTechnique = BassPickingTechnique.POP;
-				break;
+				case 1:
+					hopo = HOPO.TAP;
+					break;
+				case 2:
+					bassPickingTechnique = BassPickingTechnique.SLAP;
+					break;
+				case 3:
+					bassPickingTechnique = BassPickingTechnique.POP;
+					break;
 			}
 			if (version < 400) {
 				data.skip(4);
@@ -935,10 +936,10 @@ public class GP5FileReader {
 		final boolean legato = type == 3;
 		final int durationValue = data.read();
 		final GPDuration duration = switch (durationValue) {
-		case 1 -> GPDuration.NOTE_64;
-		case 2 -> GPDuration.NOTE_32;
-		case 3 -> GPDuration.NOTE_16;
-		default -> GPDuration.NOTE_64;
+			case 1 -> GPDuration.NOTE_64;
+			case 2 -> GPDuration.NOTE_32;
+			case 3 -> GPDuration.NOTE_16;
+			default -> GPDuration.NOTE_64;
 		};
 
 		boolean graceBefore = true;
@@ -974,24 +975,24 @@ public class GP5FileReader {
 		} else {
 			final int type = readShortInt8(data);
 			switch (type) {
-			case 1:
-				types[0] = GPSlideType.OUT_WITH_PLUCK;
-				break;
-			case 2:
-				types[0] = GPSlideType.OUT_WITHOUT_PLUCK;
-				break;
-			case 3:
-				types[0] = GPSlideType.OUT_DOWN;
-				break;
-			case 4:
-				types[0] = GPSlideType.OUT_UP;
-				break;
-			case -1:
-				types[1] = GPSlideType.IN_FROM_BELOW;
-				break;
-			case -2:
-				types[1] = GPSlideType.IN_FROM_ABOVE;
-				break;
+				case 1:
+					types[0] = GPSlideType.OUT_WITH_PLUCK;
+					break;
+				case 2:
+					types[0] = GPSlideType.OUT_WITHOUT_PLUCK;
+					break;
+				case 3:
+					types[0] = GPSlideType.OUT_DOWN;
+					break;
+				case 4:
+					types[0] = GPSlideType.OUT_UP;
+					break;
+				case -1:
+					types[1] = GPSlideType.IN_FROM_BELOW;
+					break;
+				case -2:
+					types[1] = GPSlideType.IN_FROM_ABOVE;
+					break;
 			}
 		}
 
@@ -1002,40 +1003,40 @@ public class GP5FileReader {
 		final int type = data.read();
 		if (version >= 500) {
 			switch (type) {
-			case 1:// natural
-				return Harmonic.NORMAL;
-			case 2:
-				// artificial
-				/* let _harmonicTone: number = */ data.read();
-				/* let _harmonicKey: number = */ data.read();
-				/* let _harmonicOctaveOffset: number = */ data.read();
-				return Harmonic.PINCH;
-			case 3:// tap
-				data.read();// fret
-				return Harmonic.NORMAL;
-			case 4:// pinch
-				return Harmonic.PINCH;
-			case 5:// semi
-				return Harmonic.NORMAL;
-			default:
-				return Harmonic.NONE;
+				case 1:// natural
+					return Harmonic.NORMAL;
+				case 2:
+					// artificial
+					/* let _harmonicTone: number = */ data.read();
+					/* let _harmonicKey: number = */ data.read();
+					/* let _harmonicOctaveOffset: number = */ data.read();
+					return Harmonic.PINCH;
+				case 3:// tap
+					data.read();// fret
+					return Harmonic.NORMAL;
+				case 4:// pinch
+					return Harmonic.PINCH;
+				case 5:// semi
+					return Harmonic.NORMAL;
+				default:
+					return Harmonic.NONE;
 			}
 		} else if (version >= 400) {
 			switch (type) {
-			case 1:// natural
-				return Harmonic.NORMAL;
-			case 3:// tap
-				return Harmonic.NORMAL;
-			case 4:// pinch
-				return Harmonic.PINCH;
-			case 5:// semi
-				return Harmonic.NORMAL;
-			case 15:// artificial
-			case 17:// artificial
-			case 22:// artificial
-				return Harmonic.PINCH;
-			default:
-				return Harmonic.NONE;
+				case 1:// natural
+					return Harmonic.NORMAL;
+				case 3:// tap
+					return Harmonic.NORMAL;
+				case 4:// pinch
+					return Harmonic.PINCH;
+				case 5:// semi
+					return Harmonic.NORMAL;
+				case 15:// artificial
+				case 17:// artificial
+				case 22:// artificial
+					return Harmonic.PINCH;
+				default:
+					return Harmonic.NONE;
 			}
 		}
 
@@ -1045,10 +1046,10 @@ public class GP5FileReader {
 	public GPTrill readTrill() {
 		final int value = data.read();
 		final GPDuration speed = switch (data.read()) {
-		case 1 -> GPDuration.NOTE_16;
-		case 2 -> GPDuration.NOTE_32;
-		case 3 -> GPDuration.NOTE_64;
-		default -> GPDuration.NOTE_16;
+			case 1 -> GPDuration.NOTE_16;
+			case 2 -> GPDuration.NOTE_32;
+			case 3 -> GPDuration.NOTE_64;
+			default -> GPDuration.NOTE_16;
 		};
 
 		return new GPTrill(value, speed);

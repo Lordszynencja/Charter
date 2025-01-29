@@ -17,7 +17,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.function.ToIntFunction;
+import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
@@ -283,7 +283,7 @@ public class CollectionUtils {
 	public static <C extends IConstantPosition, E extends C, P extends C> Finder<E, P> closest(final List<E> list,
 			final P position) {
 		return closest(list, position, IConstantPosition::compareTo, (a, b) -> abs(a.position() - b.position()),
-				Integer::compare);
+				Double::compare);
 	}
 
 	public static <C extends IConstantFractionalPosition, E extends C, P extends C> Finder<E, P> closest(
@@ -298,28 +298,28 @@ public class CollectionUtils {
 				Fraction::compareTo);
 	}
 
-	private static <C, E extends C, T extends C> BiFunction<E, T, Integer> distance(
-			final ToIntFunction<? super C> positionCalculator) {
-		return (a, b) -> abs(positionCalculator.applyAsInt(a) - positionCalculator.applyAsInt(b));
+	private static <C, E extends C, T extends C> BiFunction<E, T, Double> distance(
+			final ToDoubleFunction<? super C> positionCalculator) {
+		return (a, b) -> abs(positionCalculator.applyAsDouble(a) - positionCalculator.applyAsDouble(b));
 	}
 
 	public static <C, E extends C, P extends C> Finder<E, P> closest(final List<E> list, final P position,
-			final Comparator<C> comparator, final ToIntFunction<C> positionCalculator) {
-		return closest(list, position, comparator, distance(positionCalculator), Integer::compare);
+			final Comparator<C> comparator, final ToDoubleFunction<C> positionCalculator) {
+		return closest(list, position, comparator, distance(positionCalculator), Double::compare);
 	}
 
 	public static <C extends Comparable<? super C>, E extends C, P extends C> Finder<E, P> closest(final List<E> list,
-			final P position, final ToIntFunction<C> positionCalculator) {
+			final P position, final ToDoubleFunction<C> positionCalculator) {
 		return closest(list, position, Comparable::compareTo, positionCalculator);
 	}
 
 	public static <C extends IConstantPosition, E extends C, P extends C> Finder<E, P> closest(final List<E> list,
-			final P position, final ToIntFunction<C> positionCalculator) {
+			final P position, final ToDoubleFunction<C> positionCalculator) {
 		return closest(list, position, IConstantPosition::compareTo, positionCalculator);
 	}
 
 	public static <C extends IConstantFractionalPosition, E extends C, P extends C> Finder<E, P> closest(
-			final List<E> list, final P position, final ToIntFunction<C> positionCalculator) {
+			final List<E> list, final P position, final ToDoubleFunction<C> positionCalculator) {
 		return closest(list, position, IConstantFractionalPosition::compareTo, positionCalculator);
 	}
 

@@ -111,7 +111,7 @@ public class Utils {
 		return unit.fullFormat.formatted(time);
 	}
 
-	public static double mix(final int start, final int end, final int position, final double startValue,
+	public static double mix(final double start, final double end, final double position, final double startValue,
 			final double endValue) {
 		if (end == start) {
 			return startValue;

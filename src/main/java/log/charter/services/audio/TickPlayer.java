@@ -19,7 +19,7 @@ public class TickPlayer {
 	private final Supplier<ImmutableBeatsMap> beatsSupplier;
 
 	public boolean on = false;
-	private Integer nextSoundTime = null;
+	private Double nextSoundTime = null;
 
 	public TickPlayer(final AudioDataShort tick,
 			final Supplier<List<? extends IVirtualConstantPosition>> positionsSupplier,
@@ -29,7 +29,7 @@ public class TickPlayer {
 		this.beatsSupplier = beatsSupplier;
 	}
 
-	public void nextTime(final int t) {
+	public void nextTime(final double t) {
 		if (nextSoundTime != null && nextSoundTime < t) {
 			SoundSystem.play(tick, () -> sfxVolume, 100);
 			nextSoundTime = null;

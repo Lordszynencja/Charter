@@ -31,8 +31,8 @@ public interface IConstantFractionalPositionWithEnd
 
 		@Override
 		public IConstantPositionWithLength toPosition(final ImmutableBeatsMap beats) {
-			final int position = this.position(beats);
-			final int endPosition = this.endPosition.position(beats);
+			final double position = this.position(beats);
+			final double endPosition = this.endPosition.position(beats);
 			return new ConstantPositionWithLength(position, endPosition - position);
 		}
 
@@ -45,7 +45,7 @@ public interface IConstantFractionalPositionWithEnd
 	@Override
 	public FractionalPosition endPosition();
 
-	default int endPosition(final ImmutableBeatsMap beats) {
+	default double endPosition(final ImmutableBeatsMap beats) {
 		return endPosition().position(beats);
 	}
 
@@ -53,7 +53,7 @@ public interface IConstantFractionalPositionWithEnd
 		return position().distance(endPosition());
 	}
 
-	default int length(final ImmutableBeatsMap beats) {
+	default double length(final ImmutableBeatsMap beats) {
 		return endPosition().position(beats) - position(beats);
 	}
 
@@ -69,8 +69,8 @@ public interface IConstantFractionalPositionWithEnd
 
 	@Override
 	default IConstantPositionWithLength toPosition(final ImmutableBeatsMap beats) {
-		final int position = position().position(beats);
-		final int endPosition = endPosition().position(beats);
+		final double position = position().position(beats);
+		final double endPosition = endPosition().position(beats);
 		return new ConstantPositionWithLength(position, endPosition - position);
 	}
 

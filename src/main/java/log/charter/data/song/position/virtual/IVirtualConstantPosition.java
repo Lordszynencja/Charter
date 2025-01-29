@@ -37,8 +37,8 @@ public interface IVirtualConstantPosition {
 	public static IVirtualConstantPosition add(final ImmutableBeatsMap beats, final IVirtualConstantPosition a,
 			final IVirtualConstantPosition b) {
 		if (b.isPosition()) {
-			final int positionA = a.toPosition(beats).position();
-			final int positionB = b.toPosition(beats).position();
+			final double positionA = a.toPosition(beats).position();
+			final double positionB = b.toPosition(beats).position();
 			return new ConstantPosition(positionA + positionB);
 		}
 

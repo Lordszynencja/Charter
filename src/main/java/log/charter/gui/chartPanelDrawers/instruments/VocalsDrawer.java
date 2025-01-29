@@ -48,9 +48,9 @@ public class VocalsDrawer {
 
 		private final ImmutableBeatsMap beats;
 		private final Graphics2D g;
-		private final int time;
+		private final double time;
 
-		public VocalNotesDrawingData(final ImmutableBeatsMap beats, final Graphics2D g, final int time) {
+		public VocalNotesDrawingData(final ImmutableBeatsMap beats, final Graphics2D g, final double time) {
 			this.beats = beats;
 			this.g = g;
 			this.time = time;
@@ -120,8 +120,8 @@ public class VocalsDrawer {
 		final int width = chartPanel.getWidth();
 		final Set<Integer> selectedVocalIds = frameData.selection.getSelectedIdsSet(PositionType.VOCAL);
 
-		final int timeFrom = xToPosition(-1, frameData.time);
-		final int timeTo = xToPosition(width + 1, frameData.time);
+		final double timeFrom = xToPosition(-1, frameData.time);
+		final double timeTo = xToPosition(width + 1, frameData.time);
 
 		for (int i = 0; i < vocals.size(); i++) {
 			final Vocal vocal = vocals.get(i);
@@ -133,7 +133,8 @@ public class VocalsDrawer {
 			if (vocal.flag() == VocalFlag.WORD_PART) {
 				next = vocals.size() > i + 1 ? vocals.get(i + 1) : null;
 			}
-			final int endPosition = next == null ? vocal.endPosition(frameData.beats) : next.position(frameData.beats);
+			final double endPosition = next == null ? vocal.endPosition(frameData.beats)
+					: next.position(frameData.beats);
 			if (endPosition < timeFrom) {
 				continue;
 			}

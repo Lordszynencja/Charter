@@ -33,9 +33,9 @@ import log.charter.util.collections.Pair;
 
 public class ChartTimeHandler {
 	private static class MaxPositionAccumulator {
-		public int maxTime = 1;
+		public double maxTime = 1;
 
-		public void add(final int time) {
+		public void add(final double time) {
 			maxTime = max(maxTime, time);
 		}
 
@@ -111,19 +111,15 @@ public class ChartTimeHandler {
 		}
 	}
 
-	public double preciseTime() {
+	public double time() {
 		return time;
-	}
-
-	public int time() {
-		return (int) time;
 	}
 
 	public FractionalPosition timeFractional() {
 		return fractionalTime;
 	}
 
-	public int maxNonBeatTime() {
+	public double maxNonBeatTime() {
 		final MaxPositionAccumulator accumulator = new MaxPositionAccumulator();
 
 		if (modeManager.getMode() != EditMode.EMPTY) {
@@ -145,7 +141,7 @@ public class ChartTimeHandler {
 		return accumulator.maxTime;
 	}
 
-	public int maxTime() {
+	public double maxTime() {
 		final MaxPositionAccumulator accumulator = new MaxPositionAccumulator();
 
 		if (modeManager.getMode() != EditMode.EMPTY) {
@@ -172,15 +168,15 @@ public class ChartTimeHandler {
 		return FractionalPosition.fromTime(chartData.beats(), maxTime());
 	}
 
-	public int audioTime() {
+	public double audioTime() {
 		return projectAudioHandler.getAudio().msLength();
 	}
 
-	public int positionToX(final int position) {
+	public int positionToX(final double position) {
 		return ScalingUtils.positionToX(position, time());
 	}
 
-	public int xToPosition(final int x) {
+	public double xToPosition(final int x) {
 		return ScalingUtils.xToPosition(x, time());
 	}
 
@@ -281,7 +277,7 @@ public class ChartTimeHandler {
 		nextTime(items.get(0));
 	}
 
-	private int getNext(final List<? extends IConstantPosition> positions) {
+	private double getNext(final List<? extends IConstantPosition> positions) {
 		final IConstantPosition position = firstAfter(positions, new Position(time())).find();
 		if (position == null) {
 			return time();

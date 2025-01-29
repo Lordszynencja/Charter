@@ -23,9 +23,15 @@ public class SongFilesBackuper implements Initiable {
 		return new File(new File(dir), "backups");
 	}
 
-	public static void makeBackups(final String dir, final List<String> fileNames) {
+	private static File makeSureBackupFolderExists(final String dir) {
 		final File backupFolder = new File(getBackupDirsFile(dir), getCurrentTimeString());
 		backupFolder.mkdirs();
+
+		return backupFolder;
+	}
+
+	public static void makeBackups(final String dir, final List<String> fileNames) {
+		final File backupFolder = makeSureBackupFolderExists(dir);
 
 		for (final String fileName : fileNames) {
 			final File f = new File(dir, fileName);
@@ -36,7 +42,7 @@ public class SongFilesBackuper implements Initiable {
 	}
 
 	public static void makeAudioBackup(final File file) {
-		final File backupFolder = getBackupDirsFile(file.getParent());
+		final File backupFolder = makeSureBackupFolderExists(file.getParent());
 		final String backupfileName = getCurrentTimeString() + " " + file.getName();
 		RW.writeB(new File(backupFolder, backupfileName), RW.readB(file));
 	}

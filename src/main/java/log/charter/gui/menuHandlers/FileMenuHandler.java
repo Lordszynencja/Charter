@@ -11,6 +11,7 @@ import log.charter.gui.panes.ShortcutConfigPane;
 import log.charter.gui.panes.colorConfig.ColorConfigPane;
 import log.charter.gui.panes.graphicalConfig.GraphicConfigPane;
 import log.charter.gui.panes.programConfig.ConfigPane;
+import log.charter.io.gp.gp7.GP7PlusFileImporter;
 import log.charter.services.Action;
 import log.charter.services.ActionHandler;
 import log.charter.services.CharterContext;
@@ -35,6 +36,7 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 	private CharterMenuBar charterMenuBar;
 	private Framer framer;
 	private GP5FileImporter gp5FileImporter;
+	private GP7PlusFileImporter gp7PlusFileImporter;
 	private LRCImporter lrcImporter;
 	private MidiImporter midiImporter;
 	private ModeManager modeManager;
@@ -67,12 +69,12 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_MIDI_TEMPO, this::importMidiTempo));
 			importSubmenu.addSeparator();
 
-			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_GUITAR, this::importRSArrangementXML));
+			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_VOCALS, this::importRSVocalsXML));
 			importSubmenu.add(createItem(Label.IMPORT_LRC_VOCALS, this::importLRCVocals));
 			importSubmenu.add(createItem(Label.IMPORT_USC_VOCALS, this::importUSCVocals));
 			importSubmenu.addSeparator();
 
-			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_VOCALS, this::importRSVocalsXML));
+			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_GUITAR, this::importRSArrangementXML));
 			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_GP, this::importGPFile));
 
 			menu.add(importSubmenu);
@@ -156,11 +158,15 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 
 	private void importGPFile() {
 		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path,
-				new String[] { ".gp3", ".gp4", "gp5" }, Label.GP_FILE.label());
+				new String[] { ".gp3", ".gp4", ".gp5", ".gp" }, Label.GP_FILE.label());
 		if (file == null) {
 			return;
 		}
 
-		gp5FileImporter.importGP5File(file);
+		if (file.getName().endsWith(".gp3") || file.getName().endsWith(".gp4") || file.getName().endsWith(".gp5")) {
+			gp5FileImporter.importGP5File(file);
+		} else if (file.getName().endsWith(".gp")) {
+			gp7PlusFileImporter.importGP7PlusFile(file);
+		}
 	}
 }

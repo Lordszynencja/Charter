@@ -37,7 +37,7 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	private final ModernThemeNotes notes;
 	private final ModernThemeHandShapes handShapes;
 
-	public ModernHighwayDrawer(final Graphics2D g, final int strings, final int time) {
+	public ModernHighwayDrawer(final Graphics2D g, final int strings, final double time) {
 		data = new HighwayDrawData(g, strings, time);
 
 		themeEvents = new ModernThemeEvents(data);

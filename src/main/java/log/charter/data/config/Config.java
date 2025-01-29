@@ -199,7 +199,7 @@ public class Config {
 	}
 
 	public static void init() {
-		for (final Entry<String, String> configVal : RW.readConfig(configPath).entrySet()) {
+		for (final Entry<String, String> configVal : RW.readConfig(configPath, false).entrySet()) {
 			try {
 				valueAccessors.getOrDefault(configVal.getKey(), ValueAccessor.empty).set(configVal.getValue());
 			} catch (final Exception e) {

@@ -203,7 +203,7 @@ public class ChartPanelColors {
 			colors.put(colorLabel, colorLabel.defaultColor);
 		}
 
-		final Map<String, String> config = RW.readConfig(colorSetFile(setName));
+		final Map<String, String> config = RW.readConfig(colorSetFile(setName), false);
 		for (final Entry<String, String> configEntry : config.entrySet()) {
 			try {
 				final ColorLabel colorLabel = ColorLabel.valueOf(configEntry.getKey());

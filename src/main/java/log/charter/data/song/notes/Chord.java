@@ -125,16 +125,18 @@ public class Chord extends GuitarSound {
 		final boolean vibrato = chordNotesValue(n -> n.vibrato, false);
 
 		for (final Integer string : template.frets.keySet()) {
-			if (!chordNotes.containsKey(string)) {
-				final ChordNote chordNote = new ChordNote(this, endPosition);
-				chordNote.mute = mute;
-				chordNote.hopo = hopo;
-				chordNote.linkNext = linkNext;
-				chordNote.tremolo = tremolo;
-				chordNote.vibrato = vibrato;
-
-				chordNotes.put(string, chordNote);
+			if (chordNotes.containsKey(string)) {
+				continue;
 			}
+
+			final ChordNote chordNote = new ChordNote(this, endPosition);
+			chordNote.mute = mute;
+			chordNote.hopo = hopo;
+			chordNote.linkNext = linkNext;
+			chordNote.tremolo = tremolo;
+			chordNote.vibrato = vibrato;
+
+			chordNotes.put(string, chordNote);
 		}
 
 		for (final Integer existingString : new ArrayList<>(chordNotes.keySet())) {

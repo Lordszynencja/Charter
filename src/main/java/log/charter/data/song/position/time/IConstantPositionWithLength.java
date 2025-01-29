@@ -7,7 +7,7 @@ import log.charter.data.song.position.fractional.IConstantFractionalPositionWith
 import log.charter.data.song.position.virtual.IVirtualConstantPositionWithEnd;
 
 public interface IConstantPositionWithLength extends IConstantPosition, IVirtualConstantPositionWithEnd {
-	int length();
+	double length();
 
 	@Override
 	default IConstantPositionWithLength asConstantPositionWithLength() {

@@ -24,7 +24,7 @@ public class ArrangementSection {
 		return map(sections, section -> {
 			final SectionType sectionType = section.section;
 			sectionNumbers.put(sectionType, sectionNumbers.getOrDefault(sectionType, 0) + 1);
-			return new ArrangementSection(section.position(beats), sectionType,
+			return new ArrangementSection((int) section.position(beats), sectionType,
 					sectionNumbers.getOrDefault(sectionType, 0));
 		});
 	}

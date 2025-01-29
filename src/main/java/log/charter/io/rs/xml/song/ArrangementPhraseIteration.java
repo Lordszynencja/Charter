@@ -21,7 +21,7 @@ public class ArrangementPhraseIteration implements IConstantPosition {
 	}
 
 	@Override
-	public int position() {
+	public double position() {
 		return time;
 	}
 }

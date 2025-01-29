@@ -14,7 +14,8 @@ import log.charter.data.song.position.time.Position;
 import log.charter.services.RepeatManager;
 
 public class BeatDrawData {
-	public static List<BeatDrawData> getBeatsForTimeSpan(final ChartData data, final int timeFrom, final int timeTo) {
+	public static List<BeatDrawData> getBeatsForTimeSpan(final ChartData data, final double timeFrom,
+			final double timeTo) {
 		final List<BeatDrawData> beatsToDraw = new ArrayList<>();
 		final ImmutableBeatsMap beats = data.beats();
 
@@ -33,8 +34,8 @@ public class BeatDrawData {
 	}
 
 	public static List<BeatDrawData> getBeatsForTimeSpanWithRepeats(final ChartData data,
-			final RepeatManager repeatManager, final int timeFrom, final int timeTo) {
-		int maxTime = timeTo;
+			final RepeatManager repeatManager, final double timeFrom, final double timeTo) {
+		double maxTime = timeTo;
 		if (repeatManager.isRepeating()) {
 			maxTime = min(maxTime, repeatManager.repeatEnd() - 1);
 		}
@@ -47,14 +48,14 @@ public class BeatDrawData {
 
 		final List<BeatDrawData> repeatedBeats = getBeatsForTimeSpan(data, repeatManager.repeatStart(),
 				repeatManager.repeatEnd() - 1);
-		int repeatStart = repeatManager.repeatEnd();
+		double repeatStart = repeatManager.repeatEnd();
 		while (repeatStart < timeFrom) {
 			repeatStart += repeatManager.repeatEnd() - repeatManager.repeatStart();
 		}
 
 		while (repeatStart < timeTo) {
 			for (final BeatDrawData beatDrawData : repeatedBeats) {
-				final int position = beatDrawData.time - repeatManager.repeatStart() + repeatStart;
+				final double position = beatDrawData.time - repeatManager.repeatStart() + repeatStart;
 				if (position > timeTo) {
 					break;
 				}
@@ -68,8 +69,8 @@ public class BeatDrawData {
 		return beatsToDraw;
 	}
 
-	public final int originalTime;
-	public final int time;
+	public final double originalTime;
+	public final double time;
 	public final boolean firstInMeasure;
 
 	public BeatDrawData(final Beat beat) {
@@ -78,7 +79,7 @@ public class BeatDrawData {
 		firstInMeasure = beat.firstInMeasure;
 	}
 
-	public BeatDrawData(final int time, final BeatDrawData other) {
+	public BeatDrawData(final double time, final BeatDrawData other) {
 		originalTime = other.originalTime;
 		this.time = time;
 		firstInMeasure = other.firstInMeasure;

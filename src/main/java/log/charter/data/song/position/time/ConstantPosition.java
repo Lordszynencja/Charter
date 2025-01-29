@@ -4,9 +4,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class ConstantPosition implements IConstantPosition {
 	@XStreamAsAttribute
-	private final int position;
+	private final double position;
 
-	public ConstantPosition(final int position) {
+	public ConstantPosition(final double position) {
 		this.position = position;
 	}
 
@@ -15,13 +15,13 @@ public class ConstantPosition implements IConstantPosition {
 	}
 
 	@Override
-	public int position() {
+	public double position() {
 		return position;
 	}
 
 	@Override
 	public int hashCode() {
-		return Integer.hashCode(position);
+		return Double.hashCode(position);
 	}
 
 	@Override

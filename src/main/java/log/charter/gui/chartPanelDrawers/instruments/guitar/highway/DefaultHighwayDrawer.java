@@ -106,7 +106,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 	protected final int strings;
 	protected final int bendStepSize;
-	protected final int time;
+	protected final double time;
 	protected final int[] stringPositions;
 
 	protected final DrawableShapeList sectionsAndPhrases;
@@ -125,7 +125,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 	protected final Graphics2D g;
 
-	public DefaultHighwayDrawer(final Graphics2D g, final int strings, final int time) {
+	public DefaultHighwayDrawer(final Graphics2D g, final int strings, final double time) {
 		this.strings = strings;
 		this.time = time;
 
