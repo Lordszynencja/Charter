@@ -27,7 +27,7 @@ public class AudioHandler {
 
 	private AudioDataShort lastPlayedData = null;
 	private int speed = 100;
-	private int songTimeOnStart = 0;
+	private double songTimeOnStart = 0;
 	private long playStartTime;
 
 	private final boolean ignoreStops = false;
@@ -52,7 +52,7 @@ public class AudioHandler {
 	private void playMusic(final AudioDataShort musicData) {
 		stop();
 
-		final int start = chartTimeHandler.time();
+		final double start = chartTimeHandler.time();
 		if (repeatManager.isRepeating() && chartTimeHandler.nextTime() > repeatManager.repeatEnd()) {
 			rewind(repeatManager.repeatStart());
 			return;
@@ -130,8 +130,8 @@ public class AudioHandler {
 
 		if (songPlayer.isStopped()) {
 			if (repeatManager.isRepeating()) {
-				final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed / 100);
-				final int nextTime = songTimeOnStart + timePassed;
+				final double timePassed = ((nanoTime() / 1_000_000.0 - playStartTime) * speed / 100);
+				final double nextTime = songTimeOnStart + timePassed;
 				chartTimeHandler.nextTime(nextTime);
 				return;
 			}
@@ -139,8 +139,8 @@ public class AudioHandler {
 			stopMusic();
 		}
 
-		final int timePassed = (int) ((nanoTime() / 1_000_000 - playStartTime) * speed / 100);
-		final int nextTime = songTimeOnStart + timePassed;
+		final double timePassed = ((nanoTime() / 1_000_000.0 - playStartTime) * speed / 100);
+		final double nextTime = songTimeOnStart + timePassed;
 		chartTimeHandler.nextTime(nextTime);
 
 		metronomeHandler.nextTime(nextTime);
@@ -151,7 +151,7 @@ public class AudioHandler {
 		}
 	}
 
-	public void rewind(final int t) {
+	public void rewind(final double t) {
 		stop();
 
 		chartTimeHandler.nextTime(t);

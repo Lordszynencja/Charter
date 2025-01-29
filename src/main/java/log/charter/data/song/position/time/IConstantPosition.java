@@ -8,7 +8,7 @@ import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 
 public interface IConstantPosition extends IVirtualConstantPosition {
-	int position();
+	double position();
 
 	@Override
 	default IConstantPosition asConstantPosition() {
@@ -35,6 +35,6 @@ public interface IConstantPosition extends IVirtualConstantPosition {
 	}
 
 	default int compareTo(final IConstantPosition other) {
-		return Integer.compare(position(), other.position());
+		return Double.compare(position(), other.position());
 	}
 }

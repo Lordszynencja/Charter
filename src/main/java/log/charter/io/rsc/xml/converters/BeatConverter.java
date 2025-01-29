@@ -45,7 +45,7 @@ public class BeatConverter implements Converter {
 			return readOldBeat(reader);
 		}
 
-		final int t = Integer.valueOf(reader.getAttribute("t"));
+		final double t = Double.valueOf(reader.getAttribute("t"));
 		final String signature = reader.getAttribute("sig");
 		int beatsInMeasure;
 		int noteDenominator;

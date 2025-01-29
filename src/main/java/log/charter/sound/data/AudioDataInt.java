@@ -49,7 +49,7 @@ public class AudioDataInt extends AudioData<AudioDataInt> {
 	}
 
 	@Override
-	public int msLength() {
+	public double msLength() {
 		return (int) ((data[0].length * 1000.0) / format.getFrameRate());
 	}
 

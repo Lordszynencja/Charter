@@ -4,7 +4,7 @@ import log.charter.data.song.position.fractional.IFractionalPositionWithEnd;
 import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
 
 public interface IPositionWithLength extends IPosition, IConstantPositionWithLength, IVirtualPositionWithEnd {
-	void length(int newLength);
+	void length(double newLength);
 
 	@Override
 	default IPositionWithLength asPositionWithLength() {
@@ -21,7 +21,7 @@ public interface IPositionWithLength extends IPosition, IConstantPositionWithLen
 		return new ConstantPosition(position() + length());
 	}
 
-	default void endPosition(final int newEndPosition) {
+	default void endPosition(final double newEndPosition) {
 		length(newEndPosition - position());
 	}
 }

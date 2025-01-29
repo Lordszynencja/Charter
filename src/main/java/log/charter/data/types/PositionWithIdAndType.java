@@ -28,7 +28,8 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 		return new Builder(beats, position).type(type).build();
 	}
 
-	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int position, final PositionType type) {
+	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final double position,
+			final PositionType type) {
 		return new Builder(beats, position).type(type).build();
 	}
 
@@ -61,9 +62,9 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 	}
 
 	private static class Builder {
-		public int position = 0;
+		public double position = 0;
 		public FractionalPosition fractionalPosition = new FractionalPosition();
-		public int endPosition = 0;
+		public double endPosition = 0;
 		public FractionalPosition fractionalEndPosition = new FractionalPosition();
 		public Integer id = null;
 		public PositionType type = PositionType.NONE;
@@ -80,7 +81,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 		public Builder() {
 		}
 
-		public Builder(final ImmutableBeatsMap beats, final int position) {
+		public Builder(final ImmutableBeatsMap beats, final double position) {
 			this.position = position;
 			fractionalPosition = FractionalPosition.fromTime(beats, position);
 			endPosition = position;
@@ -193,8 +194,8 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 	public final ToneChange toneChange;
 	public final Vocal vocal;
 
-	private PositionWithIdAndType(final int position, final FractionalPosition fractionalPosition,
-			final int endPosition, final FractionalPosition fractionalEndPosition, final Integer id,
+	private PositionWithIdAndType(final double position, final FractionalPosition fractionalPosition,
+			final double endPosition, final FractionalPosition fractionalEndPosition, final Integer id,
 			final PositionType type, final boolean existingPosition, final Anchor anchor, final Beat beat,
 			final EventPoint eventPoint, final ChordOrNote chordOrNote, final HandShape handShape,
 			final ToneChange toneChange, final Vocal vocal) {

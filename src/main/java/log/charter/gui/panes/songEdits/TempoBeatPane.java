@@ -27,7 +27,7 @@ public class TempoBeatPane extends ParamsPane {
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
-	private final int audioLength;
+	private final double audioLength;
 
 	private final Beat beat;
 
@@ -44,7 +44,7 @@ public class TempoBeatPane extends ParamsPane {
 	}
 
 	public TempoBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
-			final int audioLength, final Beat beat) {
+			final double audioLength, final Beat beat) {
 		super(frame, Label.TEMPO_BEAT_PANE, 250);
 		this.data = data;
 		this.undoSystem = undoSystem;

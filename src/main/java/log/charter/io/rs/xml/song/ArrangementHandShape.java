@@ -25,12 +25,12 @@ public class ArrangementHandShape implements IPosition {
 	}
 
 	@Override
-	public int position() {
+	public double position() {
 		return startTime;
 	}
 
 	@Override
-	public void position(final int newPosition) {
-		startTime = newPosition;
+	public void position(final double newPosition) {
+		startTime = (int) newPosition;
 	}
 }

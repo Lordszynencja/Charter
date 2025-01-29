@@ -30,7 +30,7 @@ public class EditorNoteDrawingData {
 		}
 	}
 
-	public static EditorNoteDrawingData fromNote(final ImmutableBeatsMap beats, final int time, final Note note,
+	public static EditorNoteDrawingData fromNote(final ImmutableBeatsMap beats, final double time, final Note note,
 			final boolean selected, final boolean highlighted, final boolean lastWasLinkNext,
 			final boolean wrongLinkNext) {
 		final int x = positionToX(note.position(beats), time);
@@ -45,9 +45,9 @@ public class EditorNoteDrawingData {
 				selected, highlighted, lastWasLinkNext, wrongLinkNext, note.linkNext);
 	}
 
-	public static EditorNoteDrawingData fromChordNote(final ImmutableBeatsMap beats, final int time, final Chord chord,
-			final ChordTemplate chordTemplate, final int x, final int string, final ChordNote chordNote,
-			final boolean selected, final boolean highlighted, final boolean lastWasLinkNext,
+	public static EditorNoteDrawingData fromChordNote(final ImmutableBeatsMap beats, final double time,
+			final Chord chord, final ChordTemplate chordTemplate, final int x, final int string,
+			final ChordNote chordNote, final boolean selected, final boolean highlighted, final boolean lastWasLinkNext,
 			final boolean wrongLinkNext, final boolean ctrl) {
 		final int length = positionToX(chordNote.endPosition(beats), time) - x;
 		final int fret = chordTemplate.frets.get(string);
@@ -64,7 +64,7 @@ public class EditorNoteDrawingData {
 				selected, highlighted, lastWasLinkNext, wrongLinkNext, chordNote.linkNext);
 	}
 
-	public static List<EditorNoteDrawingData> fromChord(final ImmutableBeatsMap beats, final int time,
+	public static List<EditorNoteDrawingData> fromChord(final ImmutableBeatsMap beats, final double time,
 			final Chord chord, final ChordTemplate chordTemplate, final int x, final boolean selected,
 			final int highlightedString, final boolean lastWasLinkNext, final boolean wrongLinkNext,
 			final boolean ctrl) {
@@ -108,7 +108,8 @@ public class EditorNoteDrawingData {
 			final boolean accent, final Mute mute, final HOPO hopo, final Harmonic harmonic,
 			final BassPickingTechnique bassPickingTech, final List<EditorBendValueDrawingData> bendValues,
 			final Integer slideTo, final boolean unpitchedSlide, final boolean vibrato, final boolean tremolo,
-			final boolean selected, final boolean highlighted, final boolean lastWasLinkNext, final boolean wrongLink, final boolean linkNext) {
+			final boolean selected, final boolean highlighted, final boolean lastWasLinkNext, final boolean wrongLink,
+			final boolean linkNext) {
 		this.x = x;
 		this.length = lastWasLinkNext ? max(5, length) : length;
 

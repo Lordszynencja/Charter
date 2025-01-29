@@ -103,10 +103,10 @@ public class ArrangementNote {
 	}
 
 	public ArrangementNote(final ImmutableBeatsMap beats, final Note note) {
-		time = note.position(beats);
+		time = (int) note.position(beats);
 		string = note.string;
 		fret = note.fret;
-		final int length = note.endPosition(beats) - note.position(beats);
+		final int length = (int) note.endPosition(beats) - time;
 		sustain = length > 0 ? length : null;
 		vibrato = note.vibrato ? 1 : null;
 		tremolo = note.tremolo ? 1 : null;

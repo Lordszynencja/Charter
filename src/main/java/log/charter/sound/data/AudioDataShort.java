@@ -69,8 +69,8 @@ public class AudioDataShort extends AudioData<AudioDataShort> {
 	}
 
 	@Override
-	public int msLength() {
-		return (int) ((data[0].length * 1000.0) / format.getFrameRate());
+	public double msLength() {
+		return ((data[0].length * 1000.0) / format.getFrameRate());
 	}
 
 	public AudioDataShort pass(final float frequency, final float resonance, final PassType type) {

@@ -21,7 +21,7 @@ public interface HighwayDrawer {
 		ModernHighwayDrawer.reloadGraphics();
 	}
 
-	public static HighwayDrawer getHighwayDrawer(final Graphics2D g, final int strings, final int time) {
+	public static HighwayDrawer getHighwayDrawer(final Graphics2D g, final int strings, final double time) {
 		return switch (GraphicalConfig.theme) {
 			case BASIC -> new DefaultHighwayDrawer(g, strings, time);
 			case SQUARE -> new SquareHighwayDrawer(g, strings, time);

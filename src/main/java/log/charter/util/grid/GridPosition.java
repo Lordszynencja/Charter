@@ -17,7 +17,7 @@ import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.util.data.Fraction;
 
 public class GridPosition<T extends Position> implements IVirtualConstantPosition {
-	public static GridPosition<Beat> create(final List<Beat> beats, final int position) {
+	public static GridPosition<Beat> create(final List<Beat> beats, final double position) {
 		switch (Config.gridType) {
 			case NOTE:
 				return new NoteBasedGridPosition(beats, position);
@@ -57,7 +57,7 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 	public int positionId;
 	public int gridId;
 
-	public GridPosition(final List<T> positions, final int position) {
+	public GridPosition(final List<T> positions, final double position) {
 		this.positions = positions;
 		if (positions.isEmpty() || position <= positions.get(0).position()) {
 			positionId = 0;
@@ -70,10 +70,10 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 
 		positionId = lastBeforeEqual(positions, new Position(position), IConstantPosition::compareTo).findId(0);
 
-		final int currentPosition = positions.get(positionId).position();
-		final int nextPosition = positions.get(positionId + 1).position();
-		final int beatLength = nextPosition - currentPosition;
-		final int distanceInBeat = position - currentPosition;
+		final double currentPosition = positions.get(positionId).position();
+		final double nextPosition = positions.get(positionId + 1).position();
+		final double beatLength = nextPosition - currentPosition;
+		final double distanceInBeat = position - currentPosition;
 		gridId = (int) floor(1.0 * (distanceInBeat + 1) * gridSize / beatLength);
 	}
 
@@ -111,13 +111,13 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 		}
 	}
 
-	public int position() {
-		final int beatPosition = positions.get(positionId).position();
+	public double position() {
+		final double beatPosition = positions.get(positionId).position();
 		if (gridId == 0) {
 			return beatPosition;
 		}
 
-		final int nextBeatPosition = positions.get(positionId + 1).position();
+		final double nextBeatPosition = positions.get(positionId + 1).position();
 		return beatPosition + (nextBeatPosition - beatPosition) * gridId / gridSize;
 	}
 

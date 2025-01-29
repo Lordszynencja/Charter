@@ -4,9 +4,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 public class Position implements IPosition {
 	@XStreamAsAttribute
-	private int position;
+	private double position;
 
-	public Position(final int position) {
+	public Position(final double position) {
 		this.position = position;
 	}
 
@@ -19,18 +19,18 @@ public class Position implements IPosition {
 	}
 
 	@Override
-	public int position() {
+	public double position() {
 		return position;
 	}
 
 	@Override
-	public void position(final int newPosition) {
+	public void position(final double newPosition) {
 		position = newPosition;
 	}
 
 	@Override
 	public int hashCode() {
-		return Integer.hashCode(position);
+		return Double.hashCode(position);
 	}
 
 	@Override

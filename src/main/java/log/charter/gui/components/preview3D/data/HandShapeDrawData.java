@@ -16,8 +16,8 @@ import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.services.RepeatManager;
 
 public class HandShapeDrawData implements IConstantPosition {
-	public static List<HandShapeDrawData> getHandShapesForTimeSpan(final ChartData data, final int timeFrom,
-			final int timeTo) {
+	public static List<HandShapeDrawData> getHandShapesForTimeSpan(final ChartData data, final double timeFrom,
+			final double timeTo) {
 		if (data.currentArrangementLevel() == null) {
 			return new ArrayList<>();
 		}
@@ -47,8 +47,8 @@ public class HandShapeDrawData implements IConstantPosition {
 				continue;
 			}
 
-			final int handShapeTimeFrom = max(handShape.position(beats), timeFrom);
-			final int handShapeTimeTo = min(handShape.endPosition().position(beats), timeTo);
+			final double handShapeTimeFrom = max(handShape.position(beats), timeFrom);
+			final double handShapeTimeTo = min(handShape.endPosition().position(beats), timeTo);
 
 			handShapesToDraw.add(new HandShapeDrawData(handShapeTimeFrom, handShapeTimeTo,
 					chordTemplates.get(handShape.templateId)));
@@ -58,8 +58,8 @@ public class HandShapeDrawData implements IConstantPosition {
 	}
 
 	public static List<HandShapeDrawData> getHandShapesForTimeSpanWithRepeats(final ChartData data,
-			final RepeatManager repeatManager, final int timeFrom, final int timeTo) {
-		int maxTime = timeTo;
+			final RepeatManager repeatManager, final double timeFrom, final double timeTo) {
+		double maxTime = timeTo;
 		if (repeatManager.isRepeating()) {
 			maxTime = min(maxTime, repeatManager.repeatEnd() - 1);
 		}
@@ -72,15 +72,15 @@ public class HandShapeDrawData implements IConstantPosition {
 
 		final List<HandShapeDrawData> repeatedHandShapes = getHandShapesForTimeSpan(data, repeatManager.repeatStart(),
 				repeatManager.repeatEnd() - 1);
-		int repeatStart = repeatManager.repeatEnd();
+		double repeatStart = repeatManager.repeatEnd();
 		while (repeatStart < timeFrom) {
 			repeatStart += repeatManager.repeatEnd() - repeatManager.repeatStart();
 		}
 
 		while (repeatStart < timeTo) {
 			for (final HandShapeDrawData handShapeDrawData : repeatedHandShapes) {
-				final int start = handShapeDrawData.timeFrom - repeatManager.repeatStart() + repeatStart;
-				int end = start + handShapeDrawData.timeTo - handShapeDrawData.timeFrom;
+				final double start = handShapeDrawData.timeFrom - repeatManager.repeatStart() + repeatStart;
+				double end = start + handShapeDrawData.timeTo - handShapeDrawData.timeFrom;
 				if (start > timeTo) {
 					break;
 				}
@@ -97,19 +97,19 @@ public class HandShapeDrawData implements IConstantPosition {
 		return handShapesToDraw;
 	}
 
-	public final int originalPosition;
-	public final int timeFrom;
-	public final int timeTo;
+	public final double originalPosition;
+	public final double timeFrom;
+	public final double timeTo;
 	public final ChordTemplate template;
 
-	public HandShapeDrawData(final int timeFrom, final int timeTo, final ChordTemplate template) {
+	public HandShapeDrawData(final double timeFrom, final double timeTo, final ChordTemplate template) {
 		originalPosition = timeFrom;
 		this.timeFrom = timeFrom;
 		this.timeTo = timeTo;
 		this.template = template;
 	}
 
-	public HandShapeDrawData(final int timeFrom, final int timeTo, final HandShapeDrawData other) {
+	public HandShapeDrawData(final double timeFrom, final double timeTo, final HandShapeDrawData other) {
 		originalPosition = other.originalPosition;
 		this.timeFrom = timeFrom;
 		this.timeTo = timeTo;
@@ -117,7 +117,7 @@ public class HandShapeDrawData implements IConstantPosition {
 	}
 
 	@Override
-	public int position() {
+	public double position() {
 		return timeFrom;
 	}
 }

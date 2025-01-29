@@ -52,7 +52,7 @@ public class WaveformInformationGenerator {
 			return level;
 		}
 
-		final int length = audio.msLength();
+		final int length = (int) audio.msLength();
 		level = new ArrayList<>(length);
 
 		for (int t = 0; t < length; t++) {

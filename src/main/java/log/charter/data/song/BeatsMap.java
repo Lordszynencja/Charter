@@ -360,7 +360,7 @@ public class BeatsMap {
 	/**
 	 * creates base beats map
 	 */
-	public BeatsMap(final int audioLength) {
+	public BeatsMap(final double audioLength) {
 		beats.add(new Beat(0, 4, 4, true));
 		makeBeatsUntilSongEnd(audioLength);
 	}
@@ -405,14 +405,14 @@ public class BeatsMap {
 		}
 	}
 
-	public void makeBeatsUntilSongEnd(final int audioLength) {
+	public void makeBeatsUntilSongEnd(final double audioLength) {
 		final Beat current = beats.get(beats.size() - 1);
 		if (current.position() > audioLength) {
 			return;
 		}
 
 		Beat previous;
-		int distance;
+		double distance;
 		if (beats.size() == 1) {
 			previous = current;
 			distance = 500;
@@ -424,7 +424,7 @@ public class BeatsMap {
 			}
 		}
 
-		int pos = current.position() + distance;
+		double pos = current.position() + distance;
 		int beatInMeasure = 0;
 		for (int i = beats.size() - 1; i >= 0; i--) {
 			if (beats.get(i).firstInMeasure) {
@@ -445,7 +445,7 @@ public class BeatsMap {
 		}
 	}
 
-	public void truncate(final int maxTime) {
+	public void truncate(final double maxTime) {
 		beats.removeIf(beat -> beat.position() > maxTime);
 	}
 
@@ -484,7 +484,7 @@ public class BeatsMap {
 		return beatId + 1.0 * (position - beat.position()) / (nextBeat.position() - beat.position());
 	}
 
-	public int getPositionForPositionInBeats(final double beatPosition) {
+	public double getPositionForPositionInBeats(final double beatPosition) {
 		final int beatId = (int) beatPosition;
 		final Beat beat = beats.get(beatId);
 		if (beatId >= beats.size() - 1) {
@@ -493,23 +493,42 @@ public class BeatsMap {
 
 		final Beat nextBeat = beats.get(beatId + 1);
 
-		return (int) (beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0));
+		return beat.position() + (nextBeat.position() - beat.position()) * (beatPosition % 1.0);
 	}
 
-	public void setBPM(final int beatId, final double newBPM, final int audioLength) {
+	public void setBPM(final int beatId, final double newBPM, final double maxBeatPositionCreated) {
 		for (int i = beats.size() - 1; i > beatId; i--) {
 			beats.remove(i);
 		}
 
 		final Beat startBeat = beats.get(beats.size() - 1);
-		final int startPosition = startBeat.position();
-		int position = (int) (startPosition + 60_000 / newBPM);
+		final double startPosition = startBeat.position();
+		double position = startPosition + 60_000 / newBPM;
 		int createdBeatId = 1;
-		while (position <= audioLength) {
+		while (position <= maxBeatPositionCreated) {
 			final Beat newBeat = new Beat(position, startBeat.beatsInMeasure, startBeat.noteDenominator, false);
 			beats.add(newBeat);
 			createdBeatId++;
-			position = startPosition + (int) (createdBeatId * 60_000 / newBPM);
+			position = startPosition + createdBeatId * 60_000 / newBPM;
+		}
+
+		fixFirstBeatInMeasures();
+	}
+
+	public void setBPMWithMaxBeatId(final int beatId, final double newBPM, final int maxBeatId) {
+		for (int i = beats.size() - 1; i > beatId; i--) {
+			beats.remove(i);
+		}
+
+		final Beat startBeat = beats.get(beats.size() - 1);
+		final double startPosition = startBeat.position();
+		double position = (int) (startPosition + 60_000 / newBPM);
+		int createdBeatId = 1;
+		while (beatId + createdBeatId <= maxBeatId) {
+			final Beat newBeat = new Beat(position, startBeat.beatsInMeasure, startBeat.noteDenominator, false);
+			beats.add(newBeat);
+			createdBeatId++;
+			position = startPosition + createdBeatId * 60_000 / newBPM;
 		}
 
 		fixFirstBeatInMeasures();
@@ -530,7 +549,7 @@ public class BeatsMap {
 		}
 
 		final Beat nextAnchor = beats.get(nextAnchorId);
-		final int distancePassed = nextAnchor.position() - beat.position();
+		final double distancePassed = nextAnchor.position() - beat.position();
 		final int beatsPassed = nextAnchorId - beatId;
 		return 60_000.0 / distancePassed * beatsPassed;
 	}

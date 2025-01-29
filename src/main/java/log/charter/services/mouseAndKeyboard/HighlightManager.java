@@ -34,8 +34,8 @@ import log.charter.util.grid.GridPosition;
 
 public class HighlightManager {
 	private class PositionsWithStringsCalculator {
-		private final int fromPosition;
-		private final int toPosition;
+		private final double fromPosition;
+		private final double toPosition;
 		private final FractionalPosition fromPositionFractional;
 		private final FractionalPosition toPositionFractional;
 		private final int fromY;
@@ -44,7 +44,7 @@ public class HighlightManager {
 		private final List<PositionWithStringOrNoteId> positions = new ArrayList<>();
 		private final List<PositionWithStringOrNoteId> noteChordPositions = new ArrayList<>();
 
-		public PositionsWithStringsCalculator(final int fromPosition, final int toPosition, final int fromY,
+		public PositionsWithStringsCalculator(final double fromPosition, final double toPosition, final int fromY,
 				final int toY) {
 			this.fromPosition = fromPosition;
 			this.toPosition = toPosition;
@@ -54,14 +54,14 @@ public class HighlightManager {
 			this.toY = toY;
 		}
 
-		private int getLane(final int position) {
-			final int distance = position - fromPosition;
-			final int maxDistance = toPosition - fromPosition;
+		private int getLane(final double position) {
+			final double distance = position - fromPosition;
+			final double maxDistance = toPosition - fromPosition;
 			if (distance == 0 || maxDistance == 0) {
 				return yToString(fromY, chartData.currentArrangement().tuning.strings());
 			}
 
-			final int y = fromY + (toY - fromY) * distance / maxDistance;
+			final int y = (int) (fromY + (toY - fromY) * distance / maxDistance);
 			return yToString(y, chartData.currentArrangement().tuning.strings());
 		}
 
@@ -125,17 +125,17 @@ public class HighlightManager {
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 
-	private IConstantPosition snapBeat(final int position) {
+	private IConstantPosition snapBeat(final double position) {
 		final Beat beat = closest(chartData.beats(), new Position(position), IConstantPosition::compareTo,
 				p -> p.position()).find();
 		return new ConstantPosition(beat == null ? position : beat.position());
 	}
 
-	private IConstantFractionalPosition snapNotAnchor(final int position) {
+	private IConstantFractionalPosition snapNotAnchor(final double position) {
 		return chartData.beats().getPositionFromGridClosestTo(new Position(position)).toFraction(chartData.beats());
 	}
 
-	private IConstantFractionalPosition snapAnchor(final int position) {
+	private IConstantFractionalPosition snapAnchor(final double position) {
 		final FractionalPosition closestGridPosition = chartData.beats()
 				.getPositionFromGridClosestTo(new Position(position));
 
@@ -155,7 +155,7 @@ public class HighlightManager {
 		return closestNotePosition;
 	}
 
-	private IVirtualConstantPosition snapPosition(final PositionType positionType, final int position) {
+	private IVirtualConstantPosition snapPosition(final PositionType positionType, final double position) {
 		if (positionType == PositionType.BEAT) {
 			return snapBeat(position);
 		}
@@ -175,7 +175,7 @@ public class HighlightManager {
 		}
 
 		final ImmutableBeatsMap beats = chartData.beats();
-		final int mouseTime = xToPosition(x, chartTimeHandler.time());
+		final double mouseTime = xToPosition(x, chartTimeHandler.time());
 		if (positionType == PositionType.BEAT) {
 			return PositionWithIdAndType.of(beats, mouseTime, positionType);
 		}
@@ -194,7 +194,7 @@ public class HighlightManager {
 		return PositionWithIdAndType.of(beats, position, positionType);
 	}
 
-	public List<PositionWithStringOrNoteId> getPositionsWithStrings(final int fromPosition, final int toPosition,
+	public List<PositionWithStringOrNoteId> getPositionsWithStrings(final double fromPosition, final double toPosition,
 			final int fromY, final int toY) {
 		final PositionsWithStringsCalculator calculator;
 		if (fromPosition > toPosition) {

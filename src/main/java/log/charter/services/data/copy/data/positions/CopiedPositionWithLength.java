@@ -8,7 +8,7 @@ import log.charter.data.song.position.time.IPositionWithLength;
 
 public abstract class CopiedPositionWithLength<T extends IPositionWithLength> extends CopiedPosition<T> {
 	@XStreamAsAttribute
-	public final int l;
+	public final double l;
 	@XStreamAsAttribute
 	public final FractionalPosition fl;
 

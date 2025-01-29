@@ -11,7 +11,7 @@ import log.charter.io.gp.gp5.data.GPMasterBar;
 import log.charter.util.collections.ArrayList2;
 
 public class GP5FileTempoMapExtractor {
-	public static BeatsMap getTempoMap(final GP5File gp5File, final int start, final int audioLength,
+	public static BeatsMap getTempoMap(final GP5File gp5File, final double start, final double audioLength,
 			final List<Integer> barsOrder) {
 		final List<GPBar> track = gp5File.trackBars.get(0);
 		final ArrayList2<Beat> beats = new ArrayList2<>();

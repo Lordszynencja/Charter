@@ -30,7 +30,7 @@ public class SongChart {
 	public Vocals vocals = new Vocals();
 	public List<Arrangement> arrangements = new ArrayList<>();
 
-	public Map<Integer, Integer> bookmarks = new HashMap<>();
+	public Map<Integer, Double> bookmarks = new HashMap<>();
 
 	public SongChart() {
 		beatsMap = new BeatsMap(1);
@@ -113,7 +113,7 @@ public class SongChart {
 		albumName = cleanString(value);
 	}
 
-	public void moveBeats(final int chartLength, final int positionDifference) {
+	public void moveBeats(final double chartLength, final double positionDifference) {
 		for (final Beat beat : beatsMap.beats) {
 			beat.position(max(0, min(chartLength, beat.position() + positionDifference)));
 		}

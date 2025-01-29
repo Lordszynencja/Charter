@@ -24,17 +24,17 @@ public class Preview3DAnchorsDrawer {
 	private ChartData chartData;
 
 	public void init(final ChartData data) {
-		this.chartData = data;
+		chartData = data;
 	}
 
-	private void addAnchor(final FadingShaderDrawData shaderDrawData, final AnchorDrawData anchor, final int time) {
+	private void addAnchor(final FadingShaderDrawData shaderDrawData, final AnchorDrawData anchor, final double time) {
 		if (anchor.timeTo < anchor.timeFrom) {
 			return;
 		}
 
 		final double y = getChartboardYPosition(chartData.currentStrings()) - 0.001;
-		final int t0 = anchor.timeFrom - time;
-		final int t1 = anchor.timeTo - time;
+		final double t0 = anchor.timeFrom - time;
+		final double t1 = anchor.timeTo - time;
 		final double z0 = getTimePosition(t0);
 		final double z1 = getTimePosition(t1);
 

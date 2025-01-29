@@ -18,6 +18,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.io.Logger;
+import log.charter.io.gp.gp7.GP7PlusFileImporter;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.util.RW;
@@ -26,6 +27,7 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 	private CharterFrame charterFrame;
 	private ExistingProjectImporter existingProjectImporter;
 	private GP5FileImporter gp5FileImporter;
+	private GP7PlusFileImporter gp7PlusFileImporter;
 	private LRCImporter lrcImporter;
 	private MidiImporter midiImporter;
 	private ProjectAudioHandler projectAudioHandler;
@@ -39,6 +41,7 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 		fileTypeHandlers.put("gp3", gp5FileImporter::importGP5File);
 		fileTypeHandlers.put("gp4", gp5FileImporter::importGP5File);
 		fileTypeHandlers.put("gp5", gp5FileImporter::importGP5File);
+		fileTypeHandlers.put("gp", gp7PlusFileImporter::importGP7PlusFile);
 		fileTypeHandlers.put("lrc", lrcImporter::importLRCFile);
 		fileTypeHandlers.put("mid", midiImporter::importMidiTempo);
 		fileTypeHandlers.put("mp3", projectAudioHandler::importAudio);

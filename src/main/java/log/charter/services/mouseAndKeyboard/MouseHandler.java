@@ -190,14 +190,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	}
 
 	private void straightenBeats(final int from, final int to) {
-		final int positionFrom = chartData.songChart.beatsMap.beats.get(from).position();
-		final int positionTo = chartData.songChart.beatsMap.beats.get(to).position();
+		final double positionFrom = chartData.beats().get(from).position();
+		final double positionTo = chartData.beats().get(to).position();
 		final int size = to - from;
 
 		for (int i = 1; i < size; i++) {
 			final int beatId = from + i;
-			final int beatPosition = (positionFrom * (size - i) + positionTo * i) / size;
-			chartData.songChart.beatsMap.beats.get(beatId).position(beatPosition);
+			final double beatPosition = (positionFrom * (size - i) + positionTo * i) / size;
+			chartData.beats().get(beatId).position(beatPosition);
 		}
 	}
 
@@ -207,10 +207,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 
 		undoSystem.addUndo();
-		final int pressPosition = clickData.pressHighlight.toPosition(chartData.beats()).position();
+		final double pressPosition = clickData.pressHighlight.toPosition(chartData.beats()).position();
 
 		if (clickData.pressHighlight.id != null && clickData.pressHighlight.id == 0 || keyboardHandler.alt()) {
-			final int positionAfter = max(0,
+			final double positionAfter = max(0,
 					min(chartTimeHandler.maxTime(), xToPosition(clickData.releasePosition.x, chartTimeHandler.time())));
 			chartData.songChart.moveBeats(chartTimeHandler.maxTime(), positionAfter - pressPosition);
 			return;
@@ -224,22 +224,22 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		final int middleId = clickData.pressHighlight.id;
 		final Integer rightId = beats.findNextAnchoredBeat(clickData.pressHighlight.id);
 
-		final int leftPosition = beats.get(leftId).position();
-		final int minNewPosition = leftPosition + (middleId - leftId) * 10;
-		final int middlePositionBefore = pressPosition;
-		int middlePositionAfter = max(minNewPosition,
+		final double leftPosition = beats.get(leftId).position();
+		final double minNewPosition = leftPosition + (middleId - leftId) * 10;
+		final double middlePositionBefore = pressPosition;
+		double middlePositionAfter = max(minNewPosition,
 				min(chartTimeHandler.maxTime(), xToPosition(clickData.releasePosition.x, chartTimeHandler.time())));
-		final int rightPositionBefore;
-		final int rightPositionAfter;
+		final double rightPositionBefore;
+		final double rightPositionAfter;
 
 		if (rightId != null) {
 			rightPositionBefore = beats.get(rightId).position();
 			rightPositionAfter = rightPositionBefore;
-			final int maxNewPosition = rightPositionAfter - (rightId - middleId) * 10;
+			final double maxNewPosition = rightPositionAfter - (rightId - middleId) * 10;
 			middlePositionAfter = min(maxNewPosition, middlePositionAfter);
 		} else if (beats.size() > middleId + 1) {
 			rightPositionBefore = beats.get(beats.size() - 1).position();
-			final int beatLength = middleId == leftId ? 500
+			final double beatLength = middleId == leftId ? 500
 					: (middlePositionAfter - leftPosition) / (middleId - leftId);
 			rightPositionAfter = middlePositionAfter + (beats.size() - middleId - 1) * beatLength;
 		} else {
@@ -254,8 +254,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		if (rightId != null) {
 			straightenBeats(middleId, rightId);
 		} else {
-			final int basePosition = beats.get(middleId).position();
-			final int distance = basePosition - beats.get(middleId - 1).position();
+			final double basePosition = beats.get(middleId).position();
+			final double distance = basePosition - beats.get(middleId - 1).position();
 			for (int i = middleId + 1; i < beats.size(); i++) {
 				beats.get(i).position(basePosition + (i - middleId) * distance);
 			}

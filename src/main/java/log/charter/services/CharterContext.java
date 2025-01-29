@@ -24,6 +24,7 @@ import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.gui.components.utils.TitleUpdater;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
+import log.charter.io.gp.gp7.GP7PlusFileImporter;
 import log.charter.services.audio.AudioHandler;
 import log.charter.services.audio.ClapsHandler;
 import log.charter.services.audio.MetronomeHandler;
@@ -79,6 +80,7 @@ public class CharterContext {
 	private final ExistingProjectImporter existingProjectImporter = new ExistingProjectImporter();
 	private final FileDropHandler fileDropHandler = new FileDropHandler();
 	private final GP5FileImporter gp5FileImporter = new GP5FileImporter();
+	private final GP7PlusFileImporter gp7PlusFileImporter = new GP7PlusFileImporter();
 	private final GuitarSoundsHandler guitarSoundsHandler = new GuitarSoundsHandler();
 	private final GuitarSoundsStatusesHandler guitarSoundsStatusesHandler = new GuitarSoundsStatusesHandler();
 	private final HandShapesHandler handShapesHandler = new HandShapesHandler();

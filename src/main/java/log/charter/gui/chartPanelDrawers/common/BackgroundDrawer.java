@@ -62,8 +62,8 @@ public class BackgroundDrawer {
 		g.fillRect(0, lanesTop, chartPanel.getWidth(), lanesHeight + 1);
 	}
 
-	private int calculateJump(final int startTime, final int endTime) {
-		final int dt = endTime - startTime;
+	private int calculateJump(final double startTime, final double endTime) {
+		final double dt = endTime - startTime;
 		final int maxJumpsA = chartPanel.getWidth() / 10;
 		final int maxJumpsB = chartPanel.getWidth() / 40;
 		for (int i = 0; i < jumpDistances.length; i++) {
@@ -75,7 +75,7 @@ public class BackgroundDrawer {
 		return jumpDistances[jumpDistances.length - 1];
 	}
 
-	private void drawTimestamp(final Graphics2D g, final int time, final int timestampTime) {
+	private void drawTimestamp(final Graphics2D g, final double time, final int timestampTime) {
 		final int x = positionToX(timestampTime, time);
 		if (timestampTime % 1000 == 0) {
 			filledRectangle(new ShapePositionWithSize(x, lanesBottom + 1, 1, secondsMarkerBottom - lanesBottom - 1),
@@ -89,13 +89,13 @@ public class BackgroundDrawer {
 		}
 	}
 
-	private void drawTimeScale(final Graphics2D g, final int time) {
-		int timestampTime = xToPosition(-20, time);
+	private void drawTimeScale(final Graphics2D g, final double time) {
+		int timestampTime = (int) xToPosition(-20, time);
 		if (timestampTime < 0) {
 			timestampTime = 0;
 		}
 
-		final int endTime = xToPosition(chartPanel.getWidth() + 20, time);
+		final double endTime = xToPosition(chartPanel.getWidth() + 20, time);
 		final int jump = calculateJump(timestampTime, endTime);
 		timestampTime -= timestampTime % jump;
 
@@ -105,7 +105,7 @@ public class BackgroundDrawer {
 		}
 	}
 
-	public void draw(final Graphics2D g, final int time) {
+	public void draw(final Graphics2D g, final double time) {
 		drawBackground(g);
 
 		if (chartData.isEmpty) {

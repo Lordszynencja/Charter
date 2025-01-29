@@ -9,14 +9,14 @@ import log.charter.data.song.position.fractional.IConstantFractionalPositionWith
 
 public class ConstantPositionWithLength extends ConstantPosition implements IConstantPositionWithLength {
 	@XStreamAsAttribute
-	private final int length;
+	private final double length;
 
-	public ConstantPositionWithLength(final int position) {
+	public ConstantPositionWithLength(final double position) {
 		super(position);
 		length = 0;
 	}
 
-	public ConstantPositionWithLength(final int position, final int length) {
+	public ConstantPositionWithLength(final double position, final double length) {
 		super(position);
 		this.length = length;
 	}
@@ -27,13 +27,12 @@ public class ConstantPositionWithLength extends ConstantPosition implements ICon
 	}
 
 	@Override
-	public int length() {
+	public double length() {
 		return length;
 	}
 
 	@Override
 	public IConstantPositionWithLength toPosition(final ImmutableBeatsMap beats) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 

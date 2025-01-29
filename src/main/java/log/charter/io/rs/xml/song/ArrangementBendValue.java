@@ -32,7 +32,7 @@ public class ArrangementBendValue {
 	public BigDecimal step;
 
 	public ArrangementBendValue(final ImmutableBeatsMap beats, final BendValue bendValue) {
-		time = bendValue.position(beats);
+		time = (int) bendValue.position(beats);
 		step = getStep(bendValue.bendValue);
 	}
 }

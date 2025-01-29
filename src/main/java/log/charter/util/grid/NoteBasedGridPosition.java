@@ -6,7 +6,7 @@ import log.charter.data.song.Beat;
 import log.charter.data.song.position.FractionalPosition;
 
 public class NoteBasedGridPosition extends GridPosition<Beat> {
-	public NoteBasedGridPosition(final List<Beat> beats, final int position) {
+	public NoteBasedGridPosition(final List<Beat> beats, final double position) {
 		super(beats, position);
 
 		snap();

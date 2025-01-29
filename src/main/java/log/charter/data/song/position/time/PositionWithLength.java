@@ -9,7 +9,7 @@ import log.charter.data.song.position.fractional.IConstantFractionalPositionWith
 
 public class PositionWithLength extends Position implements IPositionWithLength {
 	@XStreamAsAttribute
-	private int length;
+	private double length;
 
 	public PositionWithLength(final int position) {
 		super(position);
@@ -26,12 +26,12 @@ public class PositionWithLength extends Position implements IPositionWithLength 
 	}
 
 	@Override
-	public int length() {
+	public double length() {
 		return length;
 	}
 
 	@Override
-	public void length(final int value) {
+	public void length(final double value) {
 		length = value;
 	}
 

@@ -223,7 +223,7 @@ public class ArrangementFixer {
 	}
 
 	public void fixArrangements() {
-		final int end = chartTimeHandler.maxTime();
+		final double end = chartTimeHandler.maxTime();
 		final FractionalPosition endFractional = FractionalPosition.fromTime(chartData.beats(), end);
 
 		chartData.songChart.beatsMap.makeBeatsUntilSongEnd(end);

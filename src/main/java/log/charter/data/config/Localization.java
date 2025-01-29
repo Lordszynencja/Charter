@@ -58,7 +58,8 @@ public class Localization {
 		CONFIG_GENERAL("General"), //
 		COPY("Copy"), //
 		COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT("Couldn't create folder with this name, please change the name"), //
-		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 5 file"), //
+		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 3/4/5 file"), //
+		COULDNT_IMPORT_GP7("Couldn't properly import Guitar Pro 7/8 file"), //
 		COULDNT_IMPORT_MIDI_TEMPO("Couldn't properly import tempo map from %s"), //
 		COULDNT_READ_TXT("Couldn't import file %s, unrecognized format"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
@@ -193,7 +194,7 @@ public class Localization {
 		FILE_MENU_IMPORT("Import"), //
 		FILE_MENU_IMPORT_RS_GUITAR("RS guitar arrangement XML"), //
 		FILE_MENU_IMPORT_RS_VOCALS("RS vocals arrangement XML"), //
-		FILE_MENU_IMPORT_GP("Guitar Pro (3, 4, 5) file"), //
+		FILE_MENU_IMPORT_GP("Guitar Pro (3-5, 7-8) file"), //
 		FILE_MENU_IMPORT_MIDI_TEMPO("Tempo from Midi file"), //
 		SAVE_PROJECT("Save project"), //
 		SAVE_PROJECT_AS("Save project as..."), //
@@ -243,12 +244,12 @@ public class Localization {
 		TOGGLE_PREVIEW_WINDOW("Windowed preview"), //
 		TOGGLE_BORDERLESS_PREVIEW_WINDOW("Borderless windowed preview"), //
 
-		GP5_IMPORT("GP5 Import options"), //
+		GP_IMPORT_OPTIONS("Guitar Pro file import options"), //
 		GP5_IMPORT_BEAT_MAP_CHANGE("Import beat map"), //
-		GP5_IMPORT_ARRANGEMENT_NAME("Arrangement %d, %s:"), //
-		GP5_IMPORT_SKIP_ARRANGEMENT("Skip arrangement"), //
-		GP5_IMPORT_TO_NEW_ARRANGEMENT("To new arrangement"), //
-		GP5_IMPORT_TO_EXISTING_ARRANGEMENT("To arrangement %d, %s"), //
+		GP_IMPORT_ARRANGEMENT_NAME("Arrangement %d, %s:"), //
+		GP_IMPORT_SKIP_ARRANGEMENT("Skip arrangement"), //
+		GP_IMPORT_TO_NEW_ARRANGEMENT("To new arrangement"), //
+		GP_IMPORT_TO_EXISTING_ARRANGEMENT("To arrangement %d, %s"), //
 
 		TEMPO_BEAT_PANE("Tempo beat options"), //
 		TEMPO_BEAT_PANE_BPM("BPM"), //
@@ -386,7 +387,7 @@ public class Localization {
 		FAST_FORWARD("fast forward"), //
 		FOLDER_EXISTS_CHOOSE_DIFFERENT("Given folder already exists, choose different name"), //
 		GENERATING_SLOWED_SOUND("Playback speed added to queue"), //
-		GP_FILE("GP file (.gp3, .gp4, .gp5)"), //
+		GP_FILE("GP file (.gp3, .gp4, .gp5, .gp)"), //
 		GP5_IMPORT_TEMPO_MAP("GP5 import tempo map"), //
 		MOVE_BACKWARD("Move backward"), //
 		MOVE_FORWARD("Move forward"), //
@@ -583,7 +584,7 @@ public class Localization {
 
 	private static void readLocalizationFile() {
 		try {
-			labels = RW.readConfig(new File(languagesFolder, Config.language + ".txt"));
+			labels = RW.readConfig(new File(languagesFolder, Config.language + ".txt"), true);
 		} catch (final Exception e) {
 			Config.language = "English";
 			labels = new HashMap<>();

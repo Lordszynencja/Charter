@@ -71,7 +71,7 @@ public class Preview3DUtils {
 		return getStringPosition(string, strings) + bendValue * bendHalfstepDistance;
 	}
 
-	public static double getTimePosition(final int time) {
+	public static double getTimePosition(final double time) {
 		// 0.02 is subjective and might need adjustments if camera perspective is edited
 		return time * 0.02 / previewWindowScrollSpeed;
 	}

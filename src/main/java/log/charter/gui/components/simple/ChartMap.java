@@ -114,8 +114,8 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 		return (int) ((double) p * chartTimeHandler.maxTime() / (getWidth() - 1));
 	}
 
-	private int timeToPosition(final int t) {
-		return (int) ((long) t * (getWidth() - 1) / chartTimeHandler.maxTime());
+	private int timeToPosition(final double t) {
+		return (int) (t * (getWidth() - 1) / chartTimeHandler.maxTime());
 	}
 
 	private void drawBars(final Graphics g) {
@@ -164,8 +164,8 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 		final List<EventPoint> points = chartData.currentArrangement().getFilteredEventPoints(filter);
 
 		for (int i = 0; i < points.size(); i++) {
-			final int pointTime = points.get(i).position(beats);
-			final int nextPointTime = i + 1 < points.size() ? points.get(i + 1).position(beats)
+			final double pointTime = points.get(i).position(beats);
+			final double nextPointTime = i + 1 < points.size() ? points.get(i + 1).position(beats)
 					: chartTimeHandler.maxTime();
 
 			final int x0 = timeToPosition(pointTime);
@@ -187,7 +187,7 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 		drawEventPoints(g, 0, ColorLabel.SECTION_NAME_BG, ep -> ep.section != null);
 	}
 
-	private void drawNote(final Graphics g, final int string, final int position, final int length) {
+	private void drawNote(final Graphics g, final int string, final double position, final double length) {
 		g.setColor(getStringBasedColor(StringColorLabelType.NOTE, string, chartData.currentStrings()));
 
 		final int x0 = timeToPosition(position);

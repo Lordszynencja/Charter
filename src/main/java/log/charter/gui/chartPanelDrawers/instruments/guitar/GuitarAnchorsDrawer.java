@@ -16,14 +16,14 @@ import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
 
 public class GuitarAnchorsDrawer {
-	private static Anchor findCurrentAnchor(final FrameData frameData, final int edgeTime) {
+	private static Anchor findCurrentAnchor(final FrameData frameData, final double edgeTime) {
 		final FractionalPosition edgePosition = FractionalPosition.fromTime(frameData.beats, edgeTime);
 
 		return lastBeforeEqual(frameData.level.anchors, edgePosition).find();
 	}
 
 	private static void drawCurrentAnchor(final FrameData frameData, final HighwayDrawer highwayDrawer,
-			final int edgeTime, final int nextAnchorX) {
+			final double edgeTime, final int nextAnchorX) {
 		final Anchor anchor = findCurrentAnchor(frameData, edgeTime);
 		if (anchor == null) {
 			return;
@@ -33,7 +33,7 @@ public class GuitarAnchorsDrawer {
 	}
 
 	private static void drawCurrentAnchor(final FrameData frameData, final HighwayDrawer highwayDrawer,
-			final int edgeTime) {
+			final double edgeTime) {
 		final Anchor anchor = findCurrentAnchor(frameData, edgeTime);
 		if (anchor == null) {
 			return;
@@ -42,7 +42,7 @@ public class GuitarAnchorsDrawer {
 		highwayDrawer.addCurrentAnchor(frameData.g, anchor);
 	}
 
-	private static void drawHighlightedPositions(final HighwayDrawer highwayDrawer, final int time,
+	private static void drawHighlightedPositions(final HighwayDrawer highwayDrawer, final double time,
 			final HighlightData highlightData) {
 		if (highlightData.type != PositionType.ANCHOR) {
 			return;
@@ -56,7 +56,7 @@ public class GuitarAnchorsDrawer {
 
 	public static void addAnchors(final FrameData frameData, final int panelWidth, final HighwayDrawer highwayDrawer) {
 		final int highlightId = frameData.highlightData.getId(PositionType.ANCHOR);
-		final int edgeTime = xToPosition(0, frameData.time);
+		final double edgeTime = xToPosition(0, frameData.time);
 		final List<Anchor> anchors = frameData.level.anchors;
 		final Set<Integer> selectedIds = frameData.selection.getSelectedIdsSet(PositionType.ANCHOR);
 

@@ -39,8 +39,8 @@ public class GP5ArrangementTransformer {
 		final int[] convertedTuning = new int[strings];
 
 		for (int string = 0; string < strings; string++) {
-			// A default E standard is offset by 40 from the Tuning E standard, and ordered
-			// in the opposite order
+			// A default E standard is offset by 40 from the Tuning E standard
+			// and ordered in the opposite direction
 			final int gpStringPosition = strings - 1 - string;
 
 			convertedTuning[string] = gpTuning[gpStringPosition] - 40 - getStringDistance(string, strings) + capo

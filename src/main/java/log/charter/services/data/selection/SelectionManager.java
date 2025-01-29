@@ -54,16 +54,16 @@ public class SelectionManager implements Initiable {
 	}
 
 	private class PositionWithLink implements IConstantPosition {
-		private final int position;
+		private final double position;
 		public final PositionWithIdAndType link;
 
-		public PositionWithLink(final int position, final PositionWithIdAndType link) {
+		public PositionWithLink(final double position, final PositionWithIdAndType link) {
 			this.position = position;
 			this.link = link;
 		}
 
 		@Override
-		public int position() {
+		public double position() {
 			return position;
 		}
 	}
@@ -92,7 +92,7 @@ public class SelectionManager implements Initiable {
 	}
 
 	private PositionWithIdAndType findExisting(final int x, final List<PositionWithLink> positionsWithLinks) {
-		final int position = xToPosition(x, chartTimeHandler.time());
+		final double position = xToPosition(x, chartTimeHandler.time());
 		final PositionWithLink closestLink = closest(positionsWithLinks, new ConstantPosition(position)).find();
 		if (closestLink == null) {
 			return null;
@@ -108,7 +108,7 @@ public class SelectionManager implements Initiable {
 	}
 
 	private PositionWithIdAndType findWithLengthExisting(final int x, final List<PositionWithLink> positionsWithLinks) {
-		final int position = xToPosition(x, chartTimeHandler.time());
+		final double position = xToPosition(x, chartTimeHandler.time());
 		final PositionWithLink closestLink = closest(positionsWithLinks, new ConstantPosition(position)).find();
 		if (closestLink == null) {
 			return null;

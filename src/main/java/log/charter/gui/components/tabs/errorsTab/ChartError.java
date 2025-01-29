@@ -23,7 +23,7 @@ public class ChartError {
 		}
 
 		private static String getTimeText(final ImmutableBeatsMap beats, final IVirtualConstantPosition time) {
-			return Utils.formatTime(time.toPosition(beats).position(), TimeUnit.MILISECONDS, TimeUnit.MILISECONDS,
+			return Utils.formatTime((int) time.toPosition(beats).position(), TimeUnit.MILISECONDS, TimeUnit.MILISECONDS,
 					TimeUnit.HOURS);
 		}
 

@@ -185,7 +185,7 @@ public class ShortcutConfig {
 	}
 
 	public static void init() {
-		final Map<String, String> config = RW.readConfig(shortcutConfigPath);
+		final Map<String, String> config = RW.readConfig(shortcutConfigPath, false);
 		for (final Entry<String, String> entry : config.entrySet()) {
 			try {
 				final Action action = Action.valueOf(entry.getKey());

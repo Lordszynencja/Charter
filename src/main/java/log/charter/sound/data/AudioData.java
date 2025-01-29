@@ -19,7 +19,7 @@ public abstract class AudioData<T extends AudioData<T>> {
 
 	public abstract byte[] getBytes();
 
-	public abstract int msLength();
+	public abstract double msLength();
 
 	public abstract T join(final T other);
 

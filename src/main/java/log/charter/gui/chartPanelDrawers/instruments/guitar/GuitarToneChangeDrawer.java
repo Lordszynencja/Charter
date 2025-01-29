@@ -37,7 +37,7 @@ public class GuitarToneChangeDrawer {
 		highwayDrawer.addCurrentTone(g, tone);
 	}
 
-	private static void drawHighlightedPositions(final HighwayDrawer highwayDrawer, final int time,
+	private static void drawHighlightedPositions(final HighwayDrawer highwayDrawer, final double time,
 			final HighlightData highlightData) {
 		if (highlightData.type != PositionType.TONE_CHANGE) {
 			return;

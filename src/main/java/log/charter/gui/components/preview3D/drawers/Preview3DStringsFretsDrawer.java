@@ -85,7 +85,7 @@ public class Preview3DStringsFretsDrawer {
 		}
 
 		final ImmutableBeatsMap beats = chartData.beats();
-		final int[] highlightValues = new int[Config.frets + 1];
+		final double[] highlightValues = new double[Config.frets + 1];
 		final List<ChordOrNote> sounds = chartData.currentSounds();
 		final Integer idFrom = firstAfter(sounds, FractionalPosition.fromTime(beats, drawData.time - highlightTime))
 				.findId();
@@ -100,7 +100,7 @@ public class Preview3DStringsFretsDrawer {
 				continue;
 			}
 
-			final int highlightValue = highlightTime - drawData.time + sound.position(beats);
+			final double highlightValue = highlightTime - drawData.time + sound.position(beats);
 			if (sound.isNote() && sound.note().fret != 0) {
 				highlightValues[sound.note().fret - 1] = highlightValue;
 				highlightValues[sound.note().fret] = highlightValue;

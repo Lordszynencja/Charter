@@ -38,9 +38,9 @@ public class USCTxtImporter {
 
 	private class FileImporter {
 		private double bpm = 120;
-		private int startPosition = chartData.beats().get(0).position();
+		private double startPosition = chartData.beats().get(0).position();
 		private Vocal lastVocal = null;
-		private int lastPosition = -1;
+		private int lastBeatPosition = -1;
 
 		private void readBpm(final String line) {
 			bpm = Double.valueOf(line.substring(5));
@@ -57,11 +57,11 @@ public class USCTxtImporter {
 		private void addNextSyllable(final String line) {
 			final String[] tokens = line.split(" ", 5);
 			final int beatId = Integer.valueOf(tokens[1]);
-			if (lastPosition >= beatId) {
+			if (lastBeatPosition >= beatId) {
 				return;
 			}
 
-			lastPosition = beatId;
+			lastBeatPosition = beatId;
 			final int length = Integer.valueOf(tokens[2]);
 			String text = tokens[4];
 			if (text.startsWith("-") && lastVocal != null) {

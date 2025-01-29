@@ -18,7 +18,7 @@ import log.charter.util.RW;
 
 public class LRCImporter {
 	private class FileImporter {
-		private int offset = 0;
+		private double offset = 0;
 
 		private int parseTime(final String timeString) {
 			final String[] parts = timeString.split("[:.]");
@@ -29,7 +29,7 @@ public class LRCImporter {
 			return centiseconds * 10;
 		}
 
-		private void addVocal(final int start, final int end, final String text, final boolean phraseEnd) {
+		private void addVocal(final double start, final double end, final String text, final boolean phraseEnd) {
 			if (offset + start < chartData.beats().get(0).position()) {
 				offset = chartData.beats().get(0).position();
 			}

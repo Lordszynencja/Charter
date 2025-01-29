@@ -22,7 +22,7 @@ public class MetronomeHandler {
 		chartToolbar.updateValues();
 	}
 
-	public void nextTime(final int nextTime) {
+	public void nextTime(final double nextTime) {
 		metronomePlayer.nextTime(nextTime);
 	}
 

@@ -22,8 +22,8 @@ public class ArrangementVocals {
 
 	public ArrangementVocals(final ImmutableBeatsMap beats, final Vocals vocals) {
 		this.vocals = map(vocals.vocals, vocal -> {
-			final int time = vocal.position(beats);
-			final int length = vocal.endPosition().position(beats) - time;
+			final int time = (int) vocal.position(beats);
+			final int length = (int) vocal.endPosition().position(beats) - time;
 			return new ArrangementVocal(time, length, vocal.lyrics());
 		});
 	}

@@ -47,12 +47,12 @@ public class ArrangementDrawer implements Initiable {
 		vocalsDrawer.lyricLinesDrawer(lyricLinesDrawer);
 	}
 
-	private HighlightData generateHighlightData(final int time) {
+	private HighlightData generateHighlightData(final double time) {
 		return HighlightData.getCurrentHighlight(time, chartData, highlightManager, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 	}
 
-	private FrameData generateFrameData(final Graphics2D g, final int time) {
+	private FrameData generateFrameData(final Graphics2D g, final double time) {
 		return new FrameData(chartData.beats(), //
 				chartData.songChart.bookmarks, //
 				chartData.songChart.vocals, //
@@ -66,7 +66,7 @@ public class ArrangementDrawer implements Initiable {
 				keyboardHandler.ctrl());
 	}
 
-	public void draw(final Graphics2D g, final int time) {
+	public void draw(final Graphics2D g, final double time) {
 		final FrameData frameData = generateFrameData(g, time);
 
 		switch (modeManager.getMode()) {

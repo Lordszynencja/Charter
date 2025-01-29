@@ -74,7 +74,7 @@ public class GuitarEventPointsDrawer {
 		highwayDrawer.addCurrentPhrase(g, phrases.get(section.phrase), section.phrase);
 	}
 
-	private static void drawHighlightedPositions(final HighwayDrawer highwayDrawer, final int time,
+	private static void drawHighlightedPositions(final HighwayDrawer highwayDrawer, final double time,
 			final HighlightData highlightData) {
 		if (highlightData.type != PositionType.EVENT_POINT) {
 			return;

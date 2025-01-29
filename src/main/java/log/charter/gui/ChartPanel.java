@@ -57,7 +57,7 @@ public class ChartPanel extends JComponent implements Initiable {
 	}
 
 	private void paintComponent2D(final Graphics2D g) {
-		final int time = chartTimeHandler.time();
+		final double time = chartTimeHandler.time();
 
 		backgroundDrawer.draw(g, time);
 

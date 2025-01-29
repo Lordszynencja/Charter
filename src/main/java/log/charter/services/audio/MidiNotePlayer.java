@@ -197,7 +197,7 @@ public class MidiNotePlayer {
 		playMidiNote(soundType, string, midiNote, bendValue);
 	}
 
-	private String getToneName(final int position) {
+	private String getToneName(final double position) {
 		final ToneChange lastToneChange = lastBeforeEqual(chartData.currentToneChanges(),
 				new Position(position).toFraction(chartData.beats())).find();
 		if (lastToneChange != null) {

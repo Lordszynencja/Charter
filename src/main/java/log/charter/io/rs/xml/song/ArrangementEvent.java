@@ -21,14 +21,15 @@ public class ArrangementEvent {
 		final List<ArrangementEvent> arrangementEvents = new ArrayList<>();
 		for (final EventPoint eventPoint : events) {
 			for (final EventType eventType : eventPoint.events) {
-				arrangementEvents.add(new ArrangementEvent(eventPoint.position(beats), eventType));
+				arrangementEvents.add(new ArrangementEvent((int) eventPoint.position(beats), eventType));
 			}
 		}
 
 		Beat previous = null;
 		for (final Beat beat : beatsMap.beats) {
 			if (previous == null || previous.beatsInMeasure != beat.beatsInMeasure) {
-				arrangementEvents.add(new ArrangementEvent(beat.position(), beat.beatsInMeasure, beat.noteDenominator));
+				arrangementEvents
+						.add(new ArrangementEvent((int) beat.position(), beat.beatsInMeasure, beat.noteDenominator));
 			}
 
 			previous = beat;

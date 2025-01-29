@@ -27,7 +27,6 @@ import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
-import log.charter.services.data.validation.ArrangementValidator;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.sound.data.AudioDataShort;
@@ -38,7 +37,6 @@ public class SongFileHandler {
 	public static final String vocalsFileName = "Vocals_RS2.xml";
 
 	private ArrangementFixer arrangementFixer;
-	private ArrangementValidator arrangementValidator;
 	private AudioHandler audioHandler;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
@@ -126,7 +124,7 @@ public class SongFileHandler {
 		int id = 1;
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
 			final String arrangementFileName = generateArrangementFileName(id, arrangement);
-			final SongArrangement songArrangement = new SongArrangement(projectAudioHandler.getAudio().msLength(),
+			final SongArrangement songArrangement = new SongArrangement((int) projectAudioHandler.getAudio().msLength(),
 					chartData.songChart, arrangement);
 			RW.write(new File(dir, arrangementFileName), SongArrangementXStreamHandler.saveSong(songArrangement));
 			id++;

@@ -7,8 +7,8 @@ import log.charter.util.collections.Pair;
 
 public class RepeatManager {
 	private boolean repeatingOn = true;
-	private Integer repeatStart = null;
-	private Integer repeatEnd = null;
+	private Double repeatStart = null;
+	private Double repeatEnd = null;
 
 	private AudioHandler audioHandler;
 	private ChartTimeHandler chartTimeHandler;
@@ -24,23 +24,27 @@ public class RepeatManager {
 		chartToolbar.updateValues();
 	}
 
-	public Integer repeatStart() {
+	public Double repeatStart() {
 		return repeatStart;
 	}
 
 	public void toggleRepeatStart() {
-		repeatStart = (repeatStart == null || repeatStart != chartTimeHandler.time()) ? chartTimeHandler.time() : null;
+		repeatStart = (repeatStart == null || repeatStart.intValue() != ((int) chartTimeHandler.time()))
+				? chartTimeHandler.time()
+				: null;
 	}
 
-	public Integer repeatEnd() {
+	public Double repeatEnd() {
 		return repeatEnd;
 	}
 
 	public void toggleRepeatEnd() {
-		repeatEnd = (repeatEnd == null || repeatEnd != chartTimeHandler.time()) ? chartTimeHandler.time() : null;
+		repeatEnd = (repeatEnd == null || repeatEnd.intValue() != ((int) chartTimeHandler.time()))
+				? chartTimeHandler.time()
+				: null;
 	}
 
-	public Pair<Integer, Integer> repeatSpan() {
+	public Pair<Double, Double> repeatSpan() {
 		return new Pair<>(repeatStart, repeatEnd);
 	}
 

@@ -30,7 +30,7 @@ import log.charter.util.data.IntRange;
 import log.charter.util.data.Position2D;
 
 class SquareHighwayDrawer extends DefaultHighwayDrawer {
-	public SquareHighwayDrawer(final Graphics2D g, final int strings, final int time) {
+	public SquareHighwayDrawer(final Graphics2D g, final int strings, final double time) {
 		super(g, strings, time);
 	}
 

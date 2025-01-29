@@ -1,6 +1,7 @@
 package log.charter.services.data.files;
 
 import static log.charter.gui.components.utils.ComponentUtils.askYesNo;
+import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import static log.charter.io.gp.gp5.transformers.GP5BarOrderExtractor.getBarsOrder;
 import static log.charter.io.gp.gp5.transformers.GP5FileTempoMapExtractor.getTempoMap;
 
@@ -12,9 +13,8 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.song.BeatsMap;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.menuHandlers.CharterMenuBar;
-import log.charter.gui.panes.imports.GP5ImportOptions;
+import log.charter.gui.panes.imports.GPImportOptions;
 import log.charter.io.Logger;
 import log.charter.io.gp.gp5.GP5FileReader;
 import log.charter.io.gp.gp5.data.GP5File;
@@ -37,26 +37,29 @@ public class GP5FileImporter {
 	}
 
 	public void importGP5File(final File file) {
-		final boolean useImportTempoMap = askUserAboutUsingImportTempoMap();
-
+		final GP5File gp5File;
 		try {
-			final GP5File gp5File = GP5FileReader.importGPFile(file);
-			final List<Integer> barsOrder = getBarsOrder(gp5File.directions, gp5File.masterBars);
-
-			final int startPosition = chartData.songChart.beatsMap.beats.get(0).position();
-			final BeatsMap beatsMap;
-			if (useImportTempoMap) {
-				beatsMap = getTempoMap(gp5File, startPosition, chartTimeHandler.maxTime(), barsOrder);
-			} else {
-				beatsMap = chartData.songChart.beatsMap;
-			}
-
-			final SongChart temporaryChart = GP5FileToSongChart.transform(gp5File, beatsMap, barsOrder);
-
-			new GP5ImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart);
+			gp5File = GP5FileReader.importGPFile(file);
 		} catch (final Exception e) {
 			Logger.error("Couldn't import gp5 file " + file.getAbsolutePath(), e);
-			ComponentUtils.showPopup(charterFrame, Label.COULDNT_IMPORT_GP5);
+			showPopup(charterFrame, Label.COULDNT_IMPORT_GP5);
+
+			return;
 		}
+		final List<Integer> barsOrder = getBarsOrder(gp5File.directions, gp5File.masterBars);
+
+		final double startPosition = chartData.songChart.beatsMap.beats.get(0).position();
+		final BeatsMap beatsMap;
+
+		final boolean useImportTempoMap = askUserAboutUsingImportTempoMap();
+		if (useImportTempoMap) {
+			beatsMap = getTempoMap(gp5File, startPosition, chartTimeHandler.maxTime(), barsOrder);
+		} else {
+			beatsMap = chartData.songChart.beatsMap;
+		}
+
+		final SongChart temporaryChart = GP5FileToSongChart.transform(gp5File, beatsMap, barsOrder);
+
+		new GPImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart);
 	}
 }

@@ -4,7 +4,7 @@ import log.charter.data.song.position.fractional.IFractionalPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 
 public interface IPosition extends IConstantPosition, IVirtualPosition {
-	void position(int newPosition);
+	void position(double newPosition);
 
 	@Override
 	default IPosition asPosition() {

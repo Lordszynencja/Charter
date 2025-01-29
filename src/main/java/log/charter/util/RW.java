@@ -83,14 +83,15 @@ public class RW {
 		return readB(new File(filename));
 	}
 
-	public static Map<String, String> readConfig(final String filename) {
-		return readConfig(new File(filename));
+	public static Map<String, String> readConfig(final String filename, final boolean acceptSplitLines) {
+		return readConfig(new File(filename), acceptSplitLines);
 	}
 
-	public static Map<String, String> readConfig(final File file) {
+	public static Map<String, String> readConfig(final File file, final boolean acceptSplitLines) {
 		final String[] lines = read(file).split("\r\n|\r|\n");
 
 		final Map<String, String> config = new HashMap<>();
+		String lastKey = "";
 		for (final String line : lines) {
 			final int split = line.indexOf('=');
 			if (split != -1) {
@@ -101,6 +102,9 @@ public class RW {
 				}
 
 				config.put(key, value);
+				lastKey = key;
+			} else if (acceptSplitLines) {
+				config.put(lastKey, config.get(lastKey) + "\n" + line);
 			}
 		}
 

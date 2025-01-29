@@ -27,8 +27,8 @@ public class Beat extends Position {
 			final Beat current = beats.get(i);
 			final Beat previous = beats.get(i - 1);
 			final Beat next = beats.get(i + 1);
-			final int previousDistance = current.position() - previous.position();
-			final int nextDistance = next.position() - current.position();
+			final double previousDistance = current.position() - previous.position();
+			final double nextDistance = next.position() - current.position();
 			if (abs(previousDistance - nextDistance) > 10) {
 				current.anchor = true;
 			}
@@ -42,11 +42,11 @@ public class Beat extends Position {
 	public boolean firstInMeasure = false;
 	public boolean anchor = false;
 
-	public Beat(final int position) {
+	public Beat(final double position) {
 		super(position);
 	}
 
-	public Beat(final int position, final TimeSignature timeSignature, final boolean firstInMeasure,
+	public Beat(final double position, final TimeSignature timeSignature, final boolean firstInMeasure,
 			final boolean anchor) {
 		super(position);
 		beatsInMeasure = timeSignature.numerator;
@@ -55,8 +55,8 @@ public class Beat extends Position {
 		this.anchor = anchor;
 	}
 
-	public Beat(final int position, final int beatsInMeasure, final int noteDenominator, final boolean firstInMeasure,
-			final boolean anchor) {
+	public Beat(final double position, final int beatsInMeasure, final int noteDenominator,
+			final boolean firstInMeasure, final boolean anchor) {
 		super(position);
 		this.beatsInMeasure = beatsInMeasure;
 		this.noteDenominator = noteDenominator;
@@ -64,7 +64,7 @@ public class Beat extends Position {
 		this.anchor = anchor;
 	}
 
-	public Beat(final int pos, final int beatsInMeasure, final int noteDenominator, final boolean firstInMeasure) {
+	public Beat(final double pos, final int beatsInMeasure, final int noteDenominator, final boolean firstInMeasure) {
 		super(pos);
 		this.beatsInMeasure = beatsInMeasure;
 		this.noteDenominator = noteDenominator;
