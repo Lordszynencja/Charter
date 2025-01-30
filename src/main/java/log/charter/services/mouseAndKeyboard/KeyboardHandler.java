@@ -10,6 +10,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Optional;
 
+import org.jcodec.common.logging.Logger;
+
 import log.charter.services.Action;
 import log.charter.services.ActionHandler;
 import log.charter.services.editModes.ModeManager;
@@ -78,73 +80,77 @@ public class KeyboardHandler implements KeyListener {
 				new Shortcut(ctrl, shift, alt, heldNonModifierKey));
 	}
 
-	private void keyUsed(final KeyEvent e) {
-		int keyCode = e.getKeyCode();
-		if (keyCode == KeyEvent.VK_UNDEFINED) {
-			return;
-		}
-
-		if (keyCode == VK_CONTROL) {
-			ctrl = true;
-			replaceHeldAction();
-			return;
-		}
-		if (keyCode == VK_SHIFT) {
-			shift = true;
-			replaceHeldAction();
-			return;
-		}
-		if (keyCode == VK_ALT) {
-			alt = true;
-			replaceHeldAction();
-			return;
-		}
-		if (keyCode == KeyEvent.VK_ADD) {
-			keyCode = KeyEvent.VK_PLUS;
-		}
-		if (keyCode == KeyEvent.VK_SUBTRACT) {
-			keyCode = KeyEvent.VK_MINUS;
-		}
-
-		heldNonModifierKey = keyCode;
-		replaceHeldAction();
-
-		if (heldAction != null) {
-			actionHandler.fireAction(heldAction);
-		}
-	}
-
 	@Override
 	public void keyPressed(final KeyEvent e) {
-		keyUsed(e);
-		e.consume();
+		try {
+			int keyCode = e.getKeyCode();
+			if (keyCode == KeyEvent.VK_UNDEFINED) {
+				return;
+			}
+
+			if (keyCode == VK_CONTROL) {
+				ctrl = true;
+				replaceHeldAction();
+				return;
+			}
+			if (keyCode == VK_SHIFT) {
+				shift = true;
+				replaceHeldAction();
+				return;
+			}
+			if (keyCode == VK_ALT) {
+				alt = true;
+				replaceHeldAction();
+				return;
+			}
+			if (keyCode == KeyEvent.VK_ADD) {
+				keyCode = KeyEvent.VK_PLUS;
+			}
+			if (keyCode == KeyEvent.VK_SUBTRACT) {
+				keyCode = KeyEvent.VK_MINUS;
+			}
+
+			heldNonModifierKey = keyCode;
+			replaceHeldAction();
+
+			if (heldAction != null) {
+				actionHandler.fireAction(heldAction);
+			}
+			e.consume();
+		} catch (final Exception ex) {
+			Logger.error("Exception on key pressed " + KeyEvent.getKeyText(e.getKeyCode()), ex);
+		}
 	}
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
-		final int keyCode = e.getKeyCode();
-		switch (keyCode) {
-			case KeyEvent.VK_CONTROL:
-				ctrl = false;
-				replaceHeldAction();
-				break;
-			case KeyEvent.VK_SHIFT:
-				shift = false;
-				replaceHeldAction();
-				break;
-			case KeyEvent.VK_ALT:
-				alt = false;
-				replaceHeldAction();
-				break;
-			default:
-				if (heldNonModifierKey == keyCode) {
-					heldNonModifierKey = -1;
-					heldAction = null;
-				}
-				break;
-		}
+		try {
+			final int keyCode = e.getKeyCode();
+			switch (keyCode) {
+				case KeyEvent.VK_CONTROL:
+					ctrl = false;
+					replaceHeldAction();
+					break;
+				case KeyEvent.VK_SHIFT:
+					shift = false;
+					replaceHeldAction();
+					break;
+				case KeyEvent.VK_ALT:
+					alt = false;
+					replaceHeldAction();
+					break;
+				default:
+					if (heldNonModifierKey == keyCode) {
+						heldNonModifierKey = -1;
+						heldAction = null;
+					}
+					break;
+			}
 
-		e.consume();
+			e.consume();
+		} catch (final Exception ex) {
+			Logger.error("Exception on key released " + KeyEvent.getKeyText(e.getKeyCode()), ex);
+		}
 	}
 
 	@Override

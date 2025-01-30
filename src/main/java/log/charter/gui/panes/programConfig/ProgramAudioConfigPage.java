@@ -170,7 +170,7 @@ public class ProgramAudioConfigPage implements Page {
 
 	private void addBaseAudioFormatSelect(final RowedPanel panel, final RowedPosition position) {
 		final Stream<SoundFileType> possibleValues = Stream.of(SoundFileType.values())//
-				.filter(type -> type.writer != null && type.loader != null);
+				.filter(SoundFileType::canBeWritten);
 
 		final CharterSelect<SoundFileType> select = new CharterSelect<>(possibleValues, baseAudioFormat, t -> t.name,
 				t -> baseAudioFormat = t);

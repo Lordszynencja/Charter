@@ -39,6 +39,35 @@ public class Utils {
 		}
 	}
 
+	public static class TimeFormatter {
+		private TimeUnit unit = TimeUnit.SECONDS;
+		private TimeUnit minUnitShown = TimeUnit.SECONDS;
+		private TimeUnit maxUnitShown = TimeUnit.HOURS;
+
+		public TimeFormatter(final TimeUnit unit) {
+			this.unit = unit;
+		}
+
+		public TimeFormatter unit(final TimeUnit unit) {
+			this.unit = unit;
+			return this;
+		}
+
+		public TimeFormatter minUnitShown(final TimeUnit minUnitShown) {
+			this.minUnitShown = minUnitShown;
+			return this;
+		}
+
+		public TimeFormatter maxUnitShown(final TimeUnit maxUnitShown) {
+			this.maxUnitShown = maxUnitShown;
+			return this;
+		}
+
+		public String format(final int time) {
+			return formatTime(time, unit, minUnitShown, maxUnitShown);
+		}
+	}
+
 	public static <T> T nvl(final T value, final T defaultValue) {
 		return value == null ? defaultValue : value;
 	}
@@ -109,6 +138,10 @@ public class Utils {
 		}
 
 		return unit.fullFormat.formatted(time);
+	}
+
+	public static String formatTime(final int time) {
+		return formatTime(time, TimeUnit.SECONDS, TimeUnit.SECONDS, TimeUnit.HOURS);
 	}
 
 	public static double mix(final double start, final double end, final double position, final double startValue,

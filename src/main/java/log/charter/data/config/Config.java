@@ -45,7 +45,7 @@ public class Config {
 	public static String audioIn1SystemName = null;
 	public static int inChannel1Id = 1;
 
-	public static SoundFileType baseAudioFormat = SoundFileType.WAV;
+	public static SoundFileType baseAudioFormat = SoundFileType.FLAC;
 	public static int audioBufferSize = 2048;
 	public static int audioBufferMs = 10;
 	public static int antialiasingSamples = 16;

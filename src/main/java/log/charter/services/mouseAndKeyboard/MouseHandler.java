@@ -13,6 +13,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.List;
 
+import org.jcodec.common.logging.Logger;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Zoom;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
@@ -79,26 +81,30 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	@Override
 	public void mousePressed(final MouseEvent e) {
-		if (e.getComponent() != null) {
-			e.getComponent().requestFocus();
+		try {
+			if (e.getComponent() != null) {
+				e.getComponent().requestFocus();
+			}
+
+			mouseMoved(e);
+
+			if (chartData.isEmpty) {
+				return;
+			}
+
+			cancelAllActions();
+			if (pressCancelsRelease) {
+				releaseCancelled = true;
+				return;
+			} else {
+				pressCancelsRelease = true;
+				releaseCancelled = false;
+			}
+
+			mouseButtonPressReleaseHandler.press(e);
+		} catch (final Exception ex) {
+			Logger.error("Exception on mouse pressed", ex);
 		}
-
-		mouseMoved(e);
-
-		if (chartData.isEmpty) {
-			return;
-		}
-
-		cancelAllActions();
-		if (pressCancelsRelease) {
-			releaseCancelled = true;
-			return;
-		} else {
-			pressCancelsRelease = true;
-			releaseCancelled = false;
-		}
-
-		mouseButtonPressReleaseHandler.press(e);
 	}
 
 	private void leftClickGuitar(final MouseButtonPressReleaseData clickData) {
@@ -139,54 +145,58 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	@Override
 	public void mouseReleased(final MouseEvent e) {
-		mouseMoved(e);
+		try {
+			mouseMoved(e);
 
-		if (chartData.isEmpty) {
-			return;
+			if (chartData.isEmpty) {
+				return;
+			}
+
+			pressCancelsRelease = false;
+			if (releaseCancelled) {
+				return;
+			}
+
+			final MouseButtonPressReleaseData clickData = mouseButtonPressReleaseHandler.release(e);
+			if (clickData == null) {
+				return;
+			}
+
+			switch (clickData.button) {
+				case LEFT_BUTTON:
+					final boolean wasLeftDoubleClick = lastClickId != null
+							&& lastClickId.equals(clickData.pressHighlight.id) //
+							&& System.currentTimeMillis() - lastLeftClickTime < 300;
+					lastLeftClickTime = System.currentTimeMillis();
+					lastClickId = clickData.pressHighlight.id;
+
+					switch (modeManager.getMode()) {
+						case GUITAR:
+							leftClickGuitar(clickData);
+							break;
+						case TEMPO_MAP:
+							dragTempo(clickData);
+							break;
+						case VOCALS:
+							leftClickVocals(clickData, wasLeftDoubleClick);
+							break;
+						default:
+							break;
+					}
+					break;
+				case RIGHT_BUTTON:
+					modeManager.getHandler().rightClick(clickData);
+					break;
+				default:
+					break;
+			}
+
+			mouseButtonPressReleaseHandler.remove(e);
+			cancelAllActions();
+			actionHandler.clearFrets();
+		} catch (final Exception ex) {
+			Logger.error("Exception on mouse released", ex);
 		}
-
-		pressCancelsRelease = false;
-		if (releaseCancelled) {
-			return;
-		}
-
-		final MouseButtonPressReleaseData clickData = mouseButtonPressReleaseHandler.release(e);
-		if (clickData == null) {
-			return;
-		}
-
-		switch (clickData.button) {
-			case LEFT_BUTTON:
-				final boolean wasLeftDoubleClick = lastClickId != null
-						&& lastClickId.equals(clickData.pressHighlight.id) //
-						&& System.currentTimeMillis() - lastLeftClickTime < 300;
-				lastLeftClickTime = System.currentTimeMillis();
-				lastClickId = clickData.pressHighlight.id;
-
-				switch (modeManager.getMode()) {
-					case GUITAR:
-						leftClickGuitar(clickData);
-						break;
-					case TEMPO_MAP:
-						dragTempo(clickData);
-						break;
-					case VOCALS:
-						leftClickVocals(clickData, wasLeftDoubleClick);
-						break;
-					default:
-						break;
-				}
-				break;
-			case RIGHT_BUTTON:
-				modeManager.getHandler().rightClick(clickData);
-				break;
-			default:
-				break;
-		}
-
-		mouseButtonPressReleaseHandler.remove(e);
-		cancelAllActions();
-		actionHandler.clearFrets();
 	}
 
 	private void straightenBeats(final int from, final int to) {
@@ -395,18 +405,22 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			return;
 		}
 
-		final int change = -e.getWheelRotation();
-		if (keyboardHandler.ctrl()) {
-			final int zoomChange = change * (keyboardHandler.shift() ? 8 : 1);
-			Zoom.addZoom(zoomChange);
-			return;
-		}
+		try {
+			final int change = -e.getWheelRotation();
+			if (keyboardHandler.ctrl()) {
+				final int zoomChange = change * (keyboardHandler.shift() ? 8 : 1);
+				Zoom.addZoom(zoomChange);
+				return;
+			}
 
-		if (!selectionManager.selectedAccessor().isSelected()) {
-			return;
-		}
+			if (!selectionManager.selectedAccessor().isSelected()) {
+				return;
+			}
 
-		modeManager.getHandler().changeLength(change);
+			modeManager.getHandler().changeLength(change);
+		} catch (final Exception ex) {
+			Logger.error("Exception on mouse wheel moved", ex);
+		}
 	}
 
 }

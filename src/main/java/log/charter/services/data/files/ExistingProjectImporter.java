@@ -20,7 +20,8 @@ import log.charter.io.rsc.xml.ChartProject;
 import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.data.AudioData;
+import log.charter.sound.data.AudioUtils;
 
 public class ExistingProjectImporter {
 	private AudioHandler audioHandler;
@@ -56,11 +57,11 @@ public class ExistingProjectImporter {
 		return project;
 	}
 
-	private AudioDataShort loadMusicData(final ChartProject project, final String dir) {
-		final AudioDataShort musicData = AudioDataShort.readFile(new File(dir, project.musicFileName));
+	private AudioData loadMusicData(final ChartProject project, final String dir) {
+		final AudioData musicData = AudioData.readFile(new File(dir, project.musicFileName));
 		if (musicData == null) {
 			showPopup(charterFrame, Label.WRONG_MUSIC_FILE, project.musicFileName);
-			return null;
+			return AudioUtils.generateEmpty(0);
 		}
 
 		return musicData;
@@ -82,7 +83,7 @@ public class ExistingProjectImporter {
 		filesToBackup.add(SongFileHandler.vocalsFileName);
 
 		final String dir = projectFileChosen.getParent() + File.separator;
-		final AudioDataShort musicData = loadMusicData(project, dir);
+		final AudioData musicData = loadMusicData(project, dir);
 		if (musicData == null) {
 			return;
 		}

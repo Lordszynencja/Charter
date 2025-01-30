@@ -1,8 +1,9 @@
-package log.charter.sound.mp3;
+package log.charter.sound.audioFormats.mp3;
 
 import static java.util.Arrays.copyOf;
 import static javax.sound.sampled.AudioSystem.getAudioInputStream;
 import static log.charter.io.Logger.error;
+import static log.charter.sound.data.AudioUtils.splitAudioInt;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -14,11 +15,11 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
 
-import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.data.AudioData;
 import log.charter.util.RW;
 
 public class Mp3Loader {
-	public static AudioDataShort load(final File path) {
+	public static AudioData load(final File path) {
 		try {
 			final AudioInputStream in = getAudioInputStream(
 					new BufferedInputStream(new ByteArrayInputStream(RW.readB(path))));
@@ -48,7 +49,19 @@ public class Mp3Loader {
 				last += bytes.length;
 			}
 
-			return new AudioDataShort(buffer, rate, channels, 2);
+			final int[][] audio = splitAudioInt(buffer, channels, 2);
+			final int max = AudioData.getMax(2);
+			final int delta = max - AudioData.getMin(2) + 1;
+			for (final int[] channel : audio) {
+				for (int i = 0; i < channel.length; i++) {
+					if (channel[i] > max) {
+						channel[i] -= delta;
+					}
+
+				}
+			}
+
+			return new AudioData(audio, rate, 2);
 		} catch (final Exception e) {
 			error("Couldnt load mp3 file " + path, e);
 		}

@@ -4,14 +4,18 @@ import java.io.File;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.config.Localization.Label;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
+import log.charter.services.data.files.LoadingDialog;
 import log.charter.services.data.files.SongFilesBackuper;
 import log.charter.sound.SoundFileType;
-import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.data.AudioData;
+import log.charter.sound.data.AudioUtils;
 
 public class ProjectAudioHandler {
 	public static SoundFileType defaultWrittenFileType() {
-		return Config.baseAudioFormat.writer == null ? SoundFileType.WAV : Config.baseAudioFormat;
+		return !Config.baseAudioFormat.canBeWritten() ? SoundFileType.FLAC : Config.baseAudioFormat;
 	}
 
 	public static String defaultAudioFileName() {
@@ -19,12 +23,13 @@ public class ProjectAudioHandler {
 	}
 
 	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private WaveFormDrawer waveFormDrawer;
 
-	private AudioDataShort audio = new AudioDataShort();
+	private AudioData audio = AudioUtils.generateSilence(0, AudioUtils.DEF_RATE, 1, 1);
 
 	public void importAudio(final File file) {
-		final AudioDataShort musicData = AudioDataShort.readFile(file);
+		final AudioData musicData = AudioData.readFile(file);
 		if (musicData != null) {
 			changeAudio(musicData);
 		}
@@ -41,23 +46,25 @@ public class ProjectAudioHandler {
 			SongFilesBackuper.makeAudioBackup(file);
 		}
 
-		defaultWrittenFileType().writer.accept(audio, file);
-		chartData.songChart.musicFileName = file.getName();
+		LoadingDialog.doWithLoadingDialog(charterFrame, 1, loadingDialog -> {
+			defaultWrittenFileType().write(loadingDialog, audio, file);
+			chartData.songChart.musicFileName = file.getName();
+		}, Label.SAVING_AUDIO.label());
 	}
 
-	public void changeAudio(final AudioDataShort audio) {
+	public void changeAudio(final AudioData audio) {
 		this.audio = audio;
 		waveFormDrawer.recalculateMap();
 		saveAudio(true);
 	}
 
-	public void setAudio(final AudioDataShort audio) {
+	public void setAudio(final AudioData audio) {
 		this.audio = audio;
 		waveFormDrawer.recalculateMap();
 		saveAudio(false);
 	}
 
-	public AudioDataShort getAudio() {
+	public AudioData getAudio() {
 		return audio;
 	}
 }

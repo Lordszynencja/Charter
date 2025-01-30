@@ -33,7 +33,7 @@ public class Vocals {
 			final FractionalPosition position = FractionalPosition.fromTime(beats, v.time);
 			final FractionalPosition endPosition = v.length == null ? position
 					: FractionalPosition.fromTime(beats, v.time + v.length);
-			return new Vocal(position, endPosition, v.lyric);
+			return new Vocal(position, endPosition, v.lyric, v.tone);
 		});
 	}
 

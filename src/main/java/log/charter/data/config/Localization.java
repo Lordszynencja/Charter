@@ -49,6 +49,7 @@ public class Localization {
 		BUFFER_SIZE_MS("Audio buffer size to fill (ms)"), //
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
+		CENTS("%s cents"), //
 		CHANGE_AUDIO("Change audio"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_INSIDE_WRONG_HANDSHAPE("Chord is inside hand shape of different chord"), //
@@ -136,6 +137,7 @@ public class Localization {
 		NOTE_SLIDES_INTO_WRONG_FRET("Note slide ends on a different fret than next note"), //
 		OPEN_PROJECT("Open project"), //
 		PASTE("Paste"), //
+		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
 		REDO("Redo"), //
 		SECTION_WITHOUT_PHRASE("Section without phrase"), //
 		SELECT_ALL_NOTES("Select all notes"), //
@@ -154,7 +156,8 @@ public class Localization {
 		SPEED_INCREASE_FAST("Increase speed fast"), //
 		SPEED_INCREASE_PRECISE("Increase speed precise"), //
 		SQUASH_LEVELS("Squash levels"), //
-		SUPPORTED_MUSIC_FILE("Mp3, Ogg or Wav file"), //
+		STARTING_TONE("Starting tone"), //
+		SUPPORTED_MUSIC_FILE("Flac, Mp3, Ogg or Wav file"), //
 		TAB_3D_PREVIEW("3D preview"), //
 		TAB_CHORD_TEMPLATES_EDITOR("Chord templates"), //
 		TAB_ERRORS("Errors"), //
@@ -179,6 +182,8 @@ public class Localization {
 		TOOLBAR_SLOWED_PLAYBACK_SPEED("Playback speed"), //
 		TOOLBAR_VOLUME("Volume"), //
 		TOOLBAR_WAVEFORM_GRAPH("Waveform"), //
+		TRANSFORMING_WAV_TO_OGG("Transforming WAV to OGG<br>Time elapsed: %s"), //
+		TUNING_PITCH("Tuning pitch"), //
 		TXT_FILE("Text file"), //
 		UNDO("Undo"), //
 		UNPITCHED_NOTE_SLIDE_LINKED("Unpitched note slide is linked to next note"), //
@@ -188,6 +193,8 @@ public class Localization {
 		VOCALS_EXIST("Vocals exist"), //
 		VOCALS_EXIST_REPLACE_QUESTION("Vocals exist, replace them with new vocals from import?"), //
 		WARNING("Warning"), //
+		WRITING_FLAC_FILE("Writing FLAC file<br>Time elapsed: %s"), //
+		WRITING_WAV_FILE("Writing WAV file<br>Time elapsed: %s"), //
 		XML_IMPORT_TYPE("XML import type"), //
 		XML_IMPORT_AS("Choose what to import the XML as"), //
 
@@ -309,7 +316,6 @@ public class Localization {
 		ARRANGEMENT_OPTIONS_PANE("Arrangement options"), //
 		ARRANGEMENT_OPTIONS_TYPE("Arrangement type"), //
 		ARRANGEMENT_OPTIONS_SUBTYPE("Arrangement subtype"), //
-		ARRANGEMENT_OPTIONS_BASE_TONE("Base tone"), //
 		ARRANGEMENT_OPTIONS_TUNING_TYPE("Tuning"), //
 		ARRANGEMENT_OPTIONS_STRINGS("Strings"), //
 		ARRANGEMENT_OPTIONS_CAPO("Capo"), //
@@ -409,6 +415,7 @@ public class Localization {
 		PLAY_AUDIO("Play audio"), //
 		PROJECT_IS_NEWER_VERSION("Project is newer version than program handles"), //
 		RS_ARRANGEMENT_FILE("RS arrangment file (XML)"), //
+		SAVING_AUDIO("Saving audio"), //
 		SELECT_FOLDER("Select"), //
 		SLOW_BACKWARD("Slow backward"), //
 		SLOW_FORWARD("Slow forward"), //
@@ -423,7 +430,7 @@ public class Localization {
 		VALUE_MUST_BE_LE("Value must be lesser or equal to %s"), //
 		VALUE_NUMBER_EXPECTED("Number expected"), //
 		WRONG_FINGER_VALUE("Wrong finger name, must be one of (T, 1, 2, 3, 4)"), //
-		WRONG_MUSIC_FILE("Wrong or missing music file %s"), //
+		WRONG_MUSIC_FILE("Wrong or missing music file %s, please select new audio file"), //
 
 		SONG_FOLDER_SELECT("Create song folder"), //
 		SONG_FOLDER_AUDIO_FILE_FOLDER("Use audio file folder (%s)"), //

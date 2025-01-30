@@ -21,7 +21,7 @@ class InfoMenuHandler extends CharterMenuHandler {
 
 	private static final String librariesUsed = //
 			"part of Widgex made by Joseph Fabisevich\n"//
-					+ "GLAC_library-Java made by Nayuki";
+					+ "FLAC_library-Java made by Nayuki";
 
 	private static final String paypalDonationCode = "https://www.paypal.com/donate/?hosted_button_id=YH2SN57E68LK8";
 

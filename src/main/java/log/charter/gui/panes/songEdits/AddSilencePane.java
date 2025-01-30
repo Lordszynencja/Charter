@@ -16,9 +16,11 @@ import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
+import log.charter.io.Logger;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.data.AudioData;
+import log.charter.sound.data.AudioData.DifferentSampleSizesException;
 
 public class AddSilencePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
@@ -69,17 +71,21 @@ public class AddSilencePane extends ParamsPane {
 	}
 
 	private void addSilence(final double time) {
-		final AudioDataShort songMusicData = projectAudioHandler.getAudio();
-		final AudioDataShort silenceMusicData = generateSilence(time, songMusicData.sampleRate(),
-				songMusicData.channels());
-		final AudioDataShort joined = silenceMusicData.join(songMusicData);
+		final AudioData songMusicData = projectAudioHandler.getAudio();
+		final AudioData silenceMusicData = generateSilence(time, songMusicData.format.getSampleRate(),
+				songMusicData.data.length, songMusicData.format.getSampleSizeInBits() / 8);
+		try {
+			final AudioData joined = silenceMusicData.join(songMusicData);
 
-		projectAudioHandler.changeAudio(joined);
-		data.songChart.moveBeats(chartTimeHandler.maxTime(), (int) (time * 1000));
+			projectAudioHandler.changeAudio(joined);
+			data.songChart.moveBeats(chartTimeHandler.maxTime(), (int) (time * 1000));
+		} catch (final DifferentSampleSizesException e) {
+			Logger.error("Couldn't join audio " + songMusicData.format + " and " + silenceMusicData.format);
+		}
 	}
 
 	private void removeAudio(final double time) {
-		final AudioDataShort editedAudio = projectAudioHandler.getAudio().remove(time);
+		final AudioData editedAudio = projectAudioHandler.getAudio().removeFromStart(time);
 
 		projectAudioHandler.changeAudio(editedAudio);
 		data.songChart.moveBeats(chartTimeHandler.maxTime(), (int) -(time * 1000));

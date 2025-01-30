@@ -7,6 +7,8 @@ import static log.charter.data.song.configs.Tuning.getStringDistanceFromC0;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.util.SoundUtils.soundToFullName;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,19 +22,20 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
-import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Arrangement.ArrangementSubtype;
+import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.configs.Tuning.TuningType;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
-import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.services.data.selection.SelectionManager;
+import log.charter.sound.data.AudioUtils;
 import log.charter.util.collections.ArrayList2;
 
 public class ArrangementSettingsPane extends ParamsPane {
@@ -56,6 +59,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 	private final CharterFrame frame;
 	private final SelectionManager selectionManager;
 
+	private final JLabel centOffsetLabel;
 	private JComboBox<TuningTypeHolder> tuningSelect;
 	private final int tuningInputsRow;
 	private final List<TextInputWithValidation> tuningInputs = new ArrayList<>();
@@ -64,7 +68,8 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 	private ArrangementType arrangementType;
 	private ArrangementSubtype arrangementSubtype;
-	private String baseTone;
+	private String startingTone;
+	private BigDecimal centOffset;
 	private Tuning tuning;
 	private int capo;
 
@@ -82,16 +87,24 @@ public class ArrangementSettingsPane extends ParamsPane {
 		final Arrangement arrangement = data.currentArrangement();
 		arrangementType = arrangement.arrangementType;
 		arrangementSubtype = arrangement.arrangementSubtype;
-		baseTone = arrangement.baseTone;
+		startingTone = arrangement.startingTone;
 		tuning = new Tuning(arrangement.tuning);
+		centOffset = arrangement.centOffset;
 		capo = arrangement.capo;
 
 		final AtomicInteger row = new AtomicInteger(0);
 		addArrangmentType(row);
 		addArrangmentSubtype(row);
 
-		addStringConfigValue(row.getAndIncrement(), 20, 0, Label.ARRANGEMENT_OPTIONS_BASE_TONE, baseTone, 100,
-				this::validateBaseTone, val -> baseTone = val, false);
+		addStringConfigValue(row.getAndIncrement(), 20, 0, Label.STARTING_TONE, startingTone, 100,
+				this::validateBaseTone, val -> startingTone = val, false);
+		addStringConfigValue(row.get(), 20, 0, Label.TUNING_PITCH,
+				formatPitch(AudioUtils.centsToPitch(440, centOffset.doubleValue())), 100, this::validateTuningPitch,
+				this::setTuningPitch, false);
+
+		centOffsetLabel = new JLabel("", JLabel.LEFT);
+		setCentsValue();
+		add(centOffsetLabel, 200, getY(row.getAndIncrement()), 150, 20);
 
 		row.incrementAndGet();
 		addTuningSelect(row);
@@ -116,6 +129,39 @@ public class ArrangementSettingsPane extends ParamsPane {
 		}
 
 		return null;
+	}
+
+	private String validateTuningPitch(final String text) {
+		if (text == null || text.isBlank()) {
+			return Label.VALUE_CANT_BE_EMPTY.label();
+		}
+		Double pitch;
+		try {
+			pitch = Double.valueOf(text.replace(',', '.'));
+		} catch (final NumberFormatException e) {
+			return Label.VALUE_NUMBER_EXPECTED.label();
+		}
+		if (pitch <= 0) {
+			return Label.PITCH_MUST_BE_POSITIVE.label();
+		}
+
+		return null;
+	}
+
+	private String formatPitch(final double pitch) {
+		return "%.2f".formatted(pitch).replace(",", ".");
+	}
+
+	private void setCentsValue() {
+		final String text = Label.CENTS.format("%+.2f".formatted(centOffset).replace(",", "."));
+		centOffsetLabel.setText(text);
+	}
+
+	private void setTuningPitch(final String pitch) {
+		final double tuningPitch = Double.valueOf(pitch);
+		final double cents = AudioUtils.pitchToCents(440, tuningPitch);
+		centOffset = new BigDecimal(cents).setScale(2, RoundingMode.HALF_UP);
+		setCentsValue();
 	}
 
 	private void addArrangmentType(final AtomicInteger row) {
@@ -331,7 +377,8 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 		arrangement.arrangementType = arrangementType;
 		arrangement.arrangementSubtype = arrangementSubtype;
-		arrangement.baseTone = baseTone;
+		arrangement.startingTone = startingTone;
+		arrangement.centOffset = centOffset;
 		arrangement.tuning = tuning;
 		arrangement.capo = capo;
 

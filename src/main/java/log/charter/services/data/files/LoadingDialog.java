@@ -48,7 +48,8 @@ public class LoadingDialog extends JDialog {
 
 		text = new JLabel(Label.LOADING.label());
 		text.setHorizontalAlignment(JLabel.CENTER);
-		text.setBounds(0, 30, 300, 20);
+		text.setVerticalAlignment(JLabel.CENTER);
+		text.setBounds(0, 30, 300, 60);
 		add(text);
 
 		progressBar = new JProgressBar(0, steps);
@@ -62,6 +63,10 @@ public class LoadingDialog extends JDialog {
 		progressBar.setValue(progress);
 		text.setText(description);
 		repaint();
+	}
+
+	public void changeMaxProgress(final int newMaxProgress) {
+		progressBar.setMaximum(newMaxProgress);
 	}
 
 	public void addProgress(final Label label) {

@@ -1,4 +1,4 @@
-package log.charter.sound.ogg;
+package log.charter.sound.audioFormats.ogg;
 
 import static log.charter.io.Logger.error;
 
@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -23,7 +22,8 @@ import com.jcraft.jorbis.DspState;
 import com.jcraft.jorbis.Info;
 
 import log.charter.io.Logger;
-import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.data.AudioData;
+import log.charter.sound.data.AudioUtils;
 import log.charter.util.RW;
 
 /**
@@ -44,21 +44,18 @@ public class OggLoader {
 
 	private static final int BUF_SIZE = 2048;
 
-	private static <T> T load(final String path, final Function<LoadingResult, T> transformer) {
+	public static AudioData load(final File file) {
+		return load(file.getAbsolutePath());
+	}
+
+	private static AudioData load(final String path) {
 		try {
-			return transformer.apply(new OggLoader(path).load());
+			final LoadingResult result = new OggLoader(path).load();
+			return new AudioData(AudioUtils.splitAudioInt(result.bytes, result.channels, 2), result.rate, 2);
 		} catch (final IOException | UnsupportedAudioFileException e) {
 			error("Couldnt load ogg file " + path, e);
 			return null;
 		}
-	}
-
-	public static AudioDataShort load(final File file) {
-		return load(file.getAbsolutePath());
-	}
-
-	private static AudioDataShort load(final String path) {
-		return load(path, result -> new AudioDataShort(result.bytes, result.rate, result.channels, 2));
 	}
 
 	private byte[] buffer = null;

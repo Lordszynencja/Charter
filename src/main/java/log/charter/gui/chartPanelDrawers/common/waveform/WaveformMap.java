@@ -3,7 +3,7 @@ package log.charter.gui.chartPanelDrawers.common.waveform;
 import java.util.ArrayList;
 import java.util.List;
 
-import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.data.AudioData;
 import log.charter.util.collections.Pair;
 
 public class WaveformMap {
@@ -45,7 +45,7 @@ public class WaveformMap {
 		return newLevel;
 	}
 
-	public WaveformMap(final AudioDataShort audio) {
+	public WaveformMap(final AudioData audio) {
 		List<WaveformInformation> currentLevel = new WaveformInformationGenerator(audio).getLevel();
 		levels.add(currentLevel);
 

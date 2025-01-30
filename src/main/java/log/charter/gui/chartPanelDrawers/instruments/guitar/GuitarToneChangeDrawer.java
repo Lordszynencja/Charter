@@ -55,7 +55,7 @@ public class GuitarToneChangeDrawer {
 		final int highlightId = frameData.highlightData.getId(PositionType.TONE_CHANGE);
 		final FractionalPosition leftScreenEdgeTime = FractionalPosition.fromTime(frameData.beats,
 				xToPosition(0, frameData.time));
-		final String baseTone = frameData.arrangement.baseTone;
+		final String baseTone = frameData.arrangement.startingTone;
 		final List<ToneChange> toneChanges = frameData.arrangement.toneChanges;
 
 		boolean currentToneDrawn = false;

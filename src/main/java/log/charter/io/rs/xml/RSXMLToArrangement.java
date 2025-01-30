@@ -91,7 +91,7 @@ public class RSXMLToArrangement {
 		arrangement.capo = arrangementData.capo;
 		arrangement.centOffset = arrangementData.centOffset;
 
-		arrangement.baseTone = arrangementData.tonebase == null ? "" : arrangementData.tonebase;
+		arrangement.startingTone = arrangementData.tonebase == null ? "" : arrangementData.tonebase;
 		arrangement.toneChanges = arrangementData.tones == null ? new ArrayList<>()
 				: getToneChanges(beats, arrangementData.tones.list);
 		arrangement.tones = map(arrangement.toneChanges, toneChange -> toneChange.toneName, new HashSet<>());

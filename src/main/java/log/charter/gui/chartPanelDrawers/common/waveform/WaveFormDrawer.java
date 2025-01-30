@@ -20,7 +20,7 @@ import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.sound.data.AudioDataInt;
+import log.charter.sound.data.AudioData;
 import log.charter.util.collections.Pair;
 
 public class WaveFormDrawer {
@@ -35,7 +35,7 @@ public class WaveFormDrawer {
 	}
 
 	private static int getHeight() {
-		return (lanesBottom - lanesTop) / 2;
+		return (int) ((lanesBottom - lanesTop) / 2.05);
 	}
 
 	private ChartPanel chartPanel;
@@ -115,9 +115,10 @@ public class WaveFormDrawer {
 	}
 
 	private void drawFull(final Graphics g, final double time) {
-		final float timeToFrameMultiplier = projectAudioHandler.getAudio().frameRate() / 1000;
+		final AudioData audio = projectAudioHandler.getAudio();
+		final float timeToFrameMultiplier = audio.format.getFrameRate() / 1000;
 
-		final short[] musicValues = projectAudioHandler.getAudio().data[0];
+		final int[] musicValues = audio.data[0];
 		int start = (int) (xToPosition(0, time) * timeToFrameMultiplier);
 		start = max(1, start);
 		int end = (int) (xToPosition(chartPanel.getWidth(), time) * timeToFrameMultiplier);
@@ -128,7 +129,7 @@ public class WaveFormDrawer {
 		int x0 = 0;
 		int x1 = positionToX((int) ((start - 1) / timeToFrameMultiplier), time);
 		int y0 = 0;
-		int y1 = musicValues[start - 1] * yScale / 0x8000;
+		int y1 = musicValues[start - 1] * yScale / audio.maxValue;
 		final RMSCalculator rmsCalculator = new RMSCalculator((int) timeToFrameMultiplier);
 
 		for (int frame = start; frame < end; frame++) {
@@ -137,7 +138,7 @@ public class WaveFormDrawer {
 			y0 = y1;
 			y1 = musicValues[frame] * yScale / 0x8000;
 
-			rmsCalculator.addValue((float) musicValues[frame] / AudioDataInt.maxValue);
+			rmsCalculator.addValue((float) musicValues[frame] / audio.maxValue);
 
 			g.setColor(rmsCalculator.getRMS() > 4 ? highIntensityColorZoomed : normalColorZoomed);
 			g.drawLine(x0, midY + y0, x1, midY + y1);

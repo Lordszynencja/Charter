@@ -20,6 +20,16 @@ public class Vocal implements IFractionalPositionWithEnd {
 	private FractionalPosition endPosition;
 	private String text;
 	private VocalFlag flag;
+	public int tone = 255;
+
+	public Vocal(final FractionalPosition position, final FractionalPosition endPosition, final String text,
+			final VocalFlag flag, final int tone) {
+		this.position = position;
+		this.endPosition = endPosition;
+		flag(flag);
+		text(text);
+		this.tone = tone;
+	}
 
 	public Vocal(final FractionalPosition position, final FractionalPosition endPosition, final String text,
 			final VocalFlag flag) {
@@ -41,8 +51,9 @@ public class Vocal implements IFractionalPositionWithEnd {
 		this(new FractionalPosition(), new FractionalPosition(), lyric, flag);
 	}
 
-	public Vocal(final FractionalPosition position, final FractionalPosition endPosition, final String text) {
-		this(position, endPosition, text, VocalFlag.NONE);
+	public Vocal(final FractionalPosition position, final FractionalPosition endPosition, final String text,
+			final int tone) {
+		this(position, endPosition, text, VocalFlag.NONE, tone);
 	}
 
 	public Vocal() {

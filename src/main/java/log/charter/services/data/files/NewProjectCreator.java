@@ -4,7 +4,6 @@ import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import static log.charter.util.FileUtils.cleanFileName;
 
 import java.io.File;
-import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
@@ -16,7 +15,8 @@ import log.charter.gui.components.containers.SongFolderSelectPane;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.audioFormats.AudioFileMetadata;
+import log.charter.sound.data.AudioData;
 import log.charter.util.FileChooseUtils;
 
 public class NewProjectCreator {
@@ -72,10 +72,10 @@ public class NewProjectCreator {
 			return;
 		}
 
-		final Map<String, String> songData = MetaDataUtils.extractSongMetaData(songFile.getAbsolutePath());
+		final AudioFileMetadata metadata = AudioFileMetadata.readMetadata(songFile);
 
-		final String artist = songData.get("artist");
-		final String title = songData.get("title");
+		final String artist = metadata.artist;
+		final String title = metadata.title;
 
 		String defaultFolderName;
 		if (artist.isBlank() && title.isBlank()) {
@@ -92,7 +92,7 @@ public class NewProjectCreator {
 			return;
 		}
 
-		final AudioDataShort musicData = AudioDataShort.readFile(songFile);
+		final AudioData musicData = AudioData.readFile(songFile);
 		if (musicData == null) {
 			showPopup(charterFrame, Label.MUSIC_DATA_NOT_FOUND);
 			return;
@@ -100,11 +100,11 @@ public class NewProjectCreator {
 
 		final SongChart songChart = new SongChart(new BeatsMap(musicData.msLength()));
 		songChart.musicFileName = songFile.getName();
-		songChart.artistName(songData.getOrDefault("artist", ""));
-		songChart.title(songData.getOrDefault("title", ""));
-		songChart.albumName(songData.getOrDefault("album", ""));
+		songChart.artistName(metadata.artist);
+		songChart.title(metadata.title);
+		songChart.albumName(metadata.album);
 		try {
-			songChart.albumYear = Integer.valueOf(songData.getOrDefault("year", ""));
+			songChart.albumYear = Integer.valueOf(metadata.year);
 		} catch (final NumberFormatException e) {
 			songChart.albumYear = null;
 		}
