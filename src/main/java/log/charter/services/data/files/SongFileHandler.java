@@ -29,7 +29,7 @@ import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.data.AudioData;
 import log.charter.util.FileChooseUtils;
 import log.charter.util.RW;
 
@@ -76,7 +76,7 @@ public class SongFileHandler {
 
 		LoadingDialog loadingDialog = new LoadingDialog(charterFrame, 1);
 		loadingDialog.setProgress(0, Label.LOADING_MUSIC_FILE.label());
-		final AudioDataShort musicData = AudioDataShort.readFile(songFile);
+		final AudioData musicData = AudioData.readFile(songFile);
 		if (musicData == null) {
 			loadingDialog.dispose();
 			showPopup(charterFrame, Label.MUSIC_FILE_COULDNT_BE_LOADED);

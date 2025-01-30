@@ -56,7 +56,8 @@ import log.charter.util.data.IntRange;
 public class Preview3DGuitarSoundsDrawer {
 	private static final double noteHeadOffset = -0.03;
 
-	private static final double tailBumpLength = 100;
+	private static final double tailBumpLengthVibrato = 80;
+	private static final double tailBumpLengthTremolo = 60;
 	private static final double anticipationWindow = 500;
 
 	private interface SoundDrawObject extends Comparable<SoundDrawObject> {
@@ -213,7 +214,7 @@ public class Preview3DGuitarSoundsDrawer {
 			bendValue = -bendValue;
 		}
 		if (note.vibrato) {
-			bendValue += sin((t - note.originalPosition) * Math.PI / tailBumpLength) * bendHalfstepDistance / 2;
+			bendValue += sin((t - note.originalPosition) * Math.PI / tailBumpLengthVibrato) * bendHalfstepDistance;
 		}
 
 		return getStringPositionWithBend(note.string, chartData.currentStrings(), bendValue);
@@ -387,7 +388,8 @@ public class Preview3DGuitarSoundsDrawer {
 			xOffset += getNoteSlideOffsetAtTime(note, (double) (pointTime - note.originalPosition) / note.trueLength);
 		}
 		if (note.tremolo) {
-			xOffset += tailHalfWidth * (abs((double) (pointTime % tailBumpLength) / tailBumpLength - 0.5) - 0.25);
+			xOffset += tailHalfWidth
+					* (abs((double) (pointTime % tailBumpLengthTremolo) / tailBumpLengthTremolo - 0.5) - 0.25) * 3;
 		}
 		final double y = getNoteHeightAtTime(note, pointTime, invertBend);
 		final double z = getTimePosition(pointTime - time);

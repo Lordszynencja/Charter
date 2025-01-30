@@ -136,6 +136,7 @@ public class MidiNotePlayer {
 		int actualNote = lastNotes[string];
 		bendValue += getMidiNote(string, fret, chartData.currentStrings())
 				+ chartData.currentArrangement().tuning.getTuning()[string] - actualNote;
+		bendValue += chartData.currentArrangement().centOffset.multiply(new BigDecimal("0.01")).doubleValue();
 
 		int roundedValue = (int) Math.round(bendValue);
 		while (roundedValue > 0) {
@@ -204,7 +205,7 @@ public class MidiNotePlayer {
 			return lastToneChange.toneName;
 		}
 
-		return chartData.currentArrangement().baseTone;
+		return chartData.currentArrangement().startingTone;
 	}
 
 	private void playNote(final Note note) {

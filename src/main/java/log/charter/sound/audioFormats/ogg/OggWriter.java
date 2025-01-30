@@ -1,22 +1,39 @@
-package log.charter.sound.ogg;
+package log.charter.sound.audioFormats.ogg;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.Localization.Label;
 import log.charter.io.Logger;
-import log.charter.sound.data.AudioDataShort;
-import log.charter.sound.wav.WavWriter;
+import log.charter.sound.SoundFileType.WriteProgressHolder;
+import log.charter.sound.audioFormats.wav.WavWriter;
+import log.charter.sound.data.AudioData;
 
 public class OggWriter {
-
-	public static void write(final AudioDataShort musicData, final File output) {
-		final File wav = new File(output.getAbsolutePath() + "_tmp_" + System.currentTimeMillis() + ".wav");
+	public static void write(final AudioData data, final File file, final WriteProgressHolder progress) {
+		final File wav = new File(file.getAbsolutePath() + "_tmp_" + System.currentTimeMillis() + ".wav");
 		wav.deleteOnExit();
 
-		WavWriter.write(musicData, wav);
-		runOggEnc(wav, output);
+		WavWriter.write(data, wav, progress);
+		progress.changeStep(Label.TRANSFORMING_WAV_TO_OGG, 1);
+		final AtomicBoolean finished = new AtomicBoolean(false);
+
+		final Thread oggEncThread = new Thread(() -> {
+			runOggEnc(wav, file);
+			finished.set(true);
+		});
+		oggEncThread.start();
+		while (!finished.get()) {
+			try {
+				Thread.sleep(1000 - (System.currentTimeMillis() - progress.startTime) % 1000);
+			} catch (final InterruptedException e) {
+			}
+		}
+
+		progress.updateProgress(Label.TRANSFORMING_WAV_TO_OGG, 1);
 		wav.delete();
 	}
 

@@ -4,6 +4,7 @@ import static log.charter.util.CollectionUtils.closest;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,10 +24,12 @@ import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.io.rs.xml.song.ArrangementType;
+import log.charter.io.rsc.xml.converters.ArrangementConverter;
 import log.charter.io.rsc.xml.converters.PhraseDataConverter;
 
 @XStreamAlias("arrangement")
 @XStreamInclude({ ChordTemplate.class, EventPoint.class, Level.class, Phrase.class, ToneChange.class })
+@XStreamConverter(ArrangementConverter.class)
 public class Arrangement {
 	public enum ArrangementSubtype {
 		MAIN(Label.ARRANGEMENT_SUBTYPE_MAIN), //
@@ -55,9 +58,10 @@ public class Arrangement {
 	@XStreamAsAttribute
 	public int capo = 0;
 	@XStreamAsAttribute
-	public BigDecimal centOffset = BigDecimal.ZERO;
+	public BigDecimal centOffset = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 	@XStreamAsAttribute
-	public String baseTone = "base";
+	@XStreamAlias("startingTone")
+	public String startingTone = "tone";
 
 	public List<EventPoint> eventPoints = new ArrayList<>();
 	@XStreamConverter(PhraseDataConverter.class)

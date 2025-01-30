@@ -12,9 +12,11 @@ import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.utils.validators.IntValueValidator;
+import log.charter.io.Logger;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.data.AudioData;
+import log.charter.sound.data.AudioData.DifferentSampleSizesException;
 
 public class AddDefaultSilencePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
@@ -43,7 +45,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 	}
 
 	private void removeAudio(final double movement) {
-		final AudioDataShort editedAudio = projectAudioHandler.getAudio().remove(movement / 1000.0);
+		final AudioData editedAudio = projectAudioHandler.getAudio().removeFromStart(movement / 1000.0);
 
 		projectAudioHandler.changeAudio(editedAudio);
 		data.songChart.moveBeats(chartTimeHandler.maxTime(), -movement);
@@ -55,13 +57,16 @@ public class AddDefaultSilencePane extends ParamsPane {
 			return;
 		}
 
-		final AudioDataShort songMusicData = projectAudioHandler.getAudio();
-		final AudioDataShort silenceMusicData = generateSilence(movement / 1000.0, songMusicData.sampleRate(),
-				songMusicData.channels());
-		final AudioDataShort joined = silenceMusicData.join(songMusicData);
-
-		projectAudioHandler.changeAudio(joined);
-		data.songChart.moveBeats(chartTimeHandler.maxTime(), movement);
+		final AudioData songMusicData = projectAudioHandler.getAudio();
+		final AudioData silenceMusicData = generateSilence(movement / 1000.0, songMusicData.format.getSampleRate(),
+				songMusicData.format.getChannels(), songMusicData.format.getSampleSizeInBits() / 8);
+		try {
+			final AudioData joined = silenceMusicData.join(songMusicData);
+			projectAudioHandler.changeAudio(joined);
+			data.songChart.moveBeats(chartTimeHandler.maxTime(), movement);
+		} catch (final DifferentSampleSizesException e) {
+			Logger.error("Couldn't join audio " + songMusicData.format + " and " + silenceMusicData.format);
+		}
 	}
 
 	private void addSilenceAndBars() {

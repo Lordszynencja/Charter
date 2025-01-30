@@ -1,5 +1,7 @@
 package log.charter.io.rsc.xml.converters;
 
+import org.jcodec.common.logging.Logger;
+
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -45,6 +47,7 @@ public class VocalConverter implements Converter {
 		if (vocal.flag() != VocalFlag.NONE) {
 			writer.addAttribute("flag", vocal.flag().name());
 		}
+		writer.addAttribute("tone", vocal.tone + "");
 	}
 
 	private Vocal generateVocalFromPosition(final HierarchicalStreamReader reader) {
@@ -74,6 +77,15 @@ public class VocalConverter implements Converter {
 			vocal.text(reader.getAttribute("lyric"));
 		} else {
 			vocal.text(text);
+		}
+
+		final String tone = reader.getAttribute("tone");
+		if (tone != null) {
+			try {
+				vocal.tone = Integer.valueOf(tone);
+			} catch (final NumberFormatException e) {
+				Logger.error("Wrong tone value for vocal: " + tone);
+			}
 		}
 
 		return vocal;

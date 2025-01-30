@@ -9,7 +9,7 @@ import log.charter.io.Logger;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.data.AudioData;
 import log.charter.sound.system.SoundSystem;
 import log.charter.sound.system.SoundSystem.Player;
 
@@ -25,7 +25,7 @@ public class AudioHandler {
 
 	private Player songPlayer;
 
-	private AudioDataShort lastPlayedData = null;
+	private AudioData lastPlayedData = null;
 	private int speed = 100;
 	private double songTimeOnStart = 0;
 	private long playStartTime;
@@ -49,7 +49,7 @@ public class AudioHandler {
 		chartToolbar.updateValues();
 	}
 
-	private void playMusic(final AudioDataShort musicData) {
+	private void playMusic(final AudioData musicData) {
 		stop();
 
 		final double start = chartTimeHandler.time();

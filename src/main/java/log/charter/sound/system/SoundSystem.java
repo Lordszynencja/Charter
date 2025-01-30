@@ -79,7 +79,7 @@ public class SoundSystem {
 	}
 
 	public static class Player {
-		private final AudioData<?> musicData;
+		private final AudioData musicData;
 		private final DoubleSupplier volume;
 		private final int speed;
 
@@ -94,12 +94,12 @@ public class SoundSystem {
 
 		public long playingStartTime = -1;
 
-		private Player(final AudioData<?> musicData, final DoubleSupplier volume, final int speed) {
+		private Player(final AudioData musicData, final DoubleSupplier volume, final int speed) {
 			this.musicData = musicData;
 			this.volume = volume;
 			this.speed = speed;
-			rubberBandStretcher = new RubberBandStretcher((int) musicData.sampleRate(), musicData.channels(),
-					RubberBandStretcher.OptionProcessRealTime //
+			rubberBandStretcher = new RubberBandStretcher((int) musicData.playingFormat.getSampleRate(),
+					musicData.playingFormat.getChannels(), RubberBandStretcher.OptionProcessRealTime //
 							| RubberBandStretcher.OptionTransientsSmooth//
 							| RubberBandStretcher.OptionThreadingNever//
 							| RubberBandStretcher.OptionPitchHighQuality//
@@ -107,16 +107,16 @@ public class SoundSystem {
 							| RubberBandStretcher.OptionPhaseIndependent, //
 					100f / speed, 1.0);
 
-			sampleSizeInBits = musicData.format().getSampleSizeInBits();
+			sampleSizeInBits = musicData.playingFormat.getSampleSizeInBits();
 			if (sampleSizeInBits <= 8) {
 				sampleSize = 1;
 			} else {
 				sampleSize = 2;
 			}
-			frameSize = musicData.format().getFrameSize();
+			frameSize = musicData.playingFormat.getFrameSize();
 
 			final ISoundSystem soundSystem = getCurrentSoundSystem();
-			line = soundSystem.getNewLine(musicData.format());
+			line = soundSystem.getNewLine(musicData.playingFormat);
 		}
 
 		public boolean isStopped() {
@@ -124,7 +124,7 @@ public class SoundSystem {
 		}
 
 		private int getStartByte(final double startTime) {
-			final int startFrame = (int) (musicData.frameRate() * startTime / 1000);
+			final int startFrame = (int) (musicData.playingFormat.getFrameRate() * startTime / 1000);
 			return startFrame * frameSize;
 		}
 
@@ -196,7 +196,7 @@ public class SoundSystem {
 		}
 
 		private void playSound(int startByte) throws InterruptedException {
-			final byte[] data = musicData.getBytes();
+			final byte[] data = musicData.playingBytes;
 
 			while (startByte < data.length) {
 				if (stopped) {
@@ -244,11 +244,11 @@ public class SoundSystem {
 		}
 	}
 
-	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier, final int speed) {
+	public static Player play(final AudioData audioData, final DoubleSupplier volumeSupplier, final int speed) {
 		return play(audioData, volumeSupplier, speed, 0);
 	}
 
-	public static Player play(final AudioData<?> audioData, final DoubleSupplier volumeSupplier, final int speed,
+	public static Player play(final AudioData audioData, final DoubleSupplier volumeSupplier, final int speed,
 			final double startTime) {
 		return new Player(audioData, volumeSupplier, speed).start(startTime);
 	}

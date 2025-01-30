@@ -6,35 +6,41 @@ import static java.lang.Math.min;
 import java.util.ArrayList;
 import java.util.List;
 
-import log.charter.sound.data.AudioDataShort;
+import log.charter.sound.data.AudioData;
 
 public class WaveformInformationGenerator {
 	private List<WaveformInformation> level = null;
-	private final AudioDataShort audio;
+	private final AudioData audio;
 
-	public WaveformInformationGenerator(final AudioDataShort audio) {
+	public WaveformInformationGenerator(final AudioData audio) {
 		this.audio = audio;
 	}
 
-	private float getValue(final short sample) {
-		if (sample >= 0) {
-			return (float) sample / AudioDataShort.maxValue;
+	private float getSampleValue(final int sample) {
+		if (sample < audio.minValue) {
+			System.out.println("wrong sample " + sample);
 		}
 
-		return (float) sample / AudioDataShort.minValue;
+		if (sample >= 0) {
+			return (float) sample / audio.maxValue;
+		}
+
+		return (float) sample / audio.minValue;
 	}
 
 	private float getValue(final int position) {
 		float value = 0;
 		for (int i = 0; i < audio.data.length; i++) {
-			value = max(value, getValue(audio.data[i][position]));
+			value = max(value, getSampleValue(audio.data[i][position]));
 		}
+
 		return value;
 	}
 
 	private void addFrame(final int t) {
-		final int start = (int) (t * audio.sampleRate() / 1000);
-		final int end = min(audio.data[0].length, (int) ((t + 1) * audio.sampleRate() / 1000));
+		final float sampleRate = audio.format.getSampleRate();
+		final int start = (int) (t * sampleRate / 1000);
+		final int end = min(audio.data[0].length, (int) ((t + 1) * sampleRate / 1000));
 
 		float height = 0;
 		final RMSCalculator rmsCalculator = new RMSCalculator(end - start);

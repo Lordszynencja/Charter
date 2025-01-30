@@ -322,20 +322,25 @@ public class ActionHandler implements Initiable {
 			Action.TOGGLE_WAVEFORM_GRAPH);
 
 	public void fireAction(final Action action) {
-		if (!action.editModes.contains(modeManager.getMode())) {
-			return;
-		}
+		try {
+			if (!action.editModes.contains(modeManager.getMode())) {
+				return;
+			}
 
-		if (!actionsNotClearingMousePress.contains(action)) {
-			mouseHandler.cancelAllActions();
-		}
-		if (!actionsNotStoppingAudio.contains(action)) {
-			audioHandler.stopMusic();
-		}
+			if (!actionsNotClearingMousePress.contains(action)) {
+				mouseHandler.cancelAllActions();
+			}
+			if (!actionsNotStoppingAudio.contains(action)) {
+				audioHandler.stopMusic();
+			}
 
-		final Runnable actionHandler = actionHandlers.get(action);
-		if (actionHandler != null) {
-			actionHandler.run();
+			final Runnable actionHandler = actionHandlers.get(action);
+			if (actionHandler != null) {
+				actionHandler.run();
+			}
+
+		} catch (final Exception ex) {
+			Logger.error("Exception on action " + action, ex);
 		}
 	}
 

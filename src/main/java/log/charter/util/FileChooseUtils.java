@@ -44,6 +44,9 @@ public class FileChooseUtils {
 		});
 
 		final File file = showDialog(parent, chooser);
+		if (file == null) {
+			return null;
+		}
 		if (SoundFileType.fromExtension(extension(file.getName())) == null) {
 			showPopup(parent, Label.UNSUPPORTED_MUSIC_FORMAT);
 			return null;

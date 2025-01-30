@@ -1,4 +1,4 @@
-package log.charter.sound.wav;
+package log.charter.sound.audioFormats.wav;
 //Wav file IO class
 
 //A.Greensted
@@ -114,6 +114,10 @@ public class WavFile {
 	 */
 	public int getValidBits() {
 		return validBits;
+	}
+
+	public int getBytesPerSample() {
+		return bytesPerSample;
 	}
 
 	/**
@@ -475,7 +479,7 @@ public class WavFile {
 	}
 
 	/**
-	 * Read some number of frames from the buffer into a flat short array.
+	 * Read some number of frames from the buffer into a flat int array.
 	 *
 	 * @param sampleBuffer    the buffer to read samples into
 	 * @param numFramesToRead the number of frames to read
@@ -483,13 +487,13 @@ public class WavFile {
 	 * @throws IOException      Signals that an I/O exception has occurred
 	 * @throws WavFileException a WavFile-specific exception
 	 */
-	public int readFrames(final short[] sampleBuffer, final int numFramesToRead) throws Exception {
+	public int readFrames(final int[] sampleBuffer, final int numFramesToRead) throws Exception {
 		return readFrames(sampleBuffer, 0, numFramesToRead);
 	}
 
 	/**
 	 * Read some number of frames from a specific offset in the buffer into a flat
-	 * short array.
+	 * int array.
 	 *
 	 * @param sampleBuffer    the buffer to read samples into
 	 * @param offset          the buffer offset to read from
@@ -498,7 +502,7 @@ public class WavFile {
 	 * @throws IOException      Signals that an I/O exception has occurred
 	 * @throws WavFileException a WavFile-specific exception
 	 */
-	public int readFrames(final short[] sampleBuffer, int offset, final int numFramesToRead) throws Exception {
+	public int readFrames(final int[] sampleBuffer, int offset, final int numFramesToRead) throws Exception {
 		if (ioState != IOState.READING) {
 			throw new IOException("Cannot read from WavFile instance");
 		}
@@ -509,7 +513,7 @@ public class WavFile {
 			}
 
 			for (int c = 0; c < numChannels; c++) {
-				sampleBuffer[offset] = (short) readSample();
+				sampleBuffer[offset] = (int) readSample();
 				offset++;
 			}
 
@@ -520,7 +524,7 @@ public class WavFile {
 	}
 
 	/**
-	 * Read some number of frames from the buffer into a multi-dimensional short
+	 * Read some number of frames from the buffer into a multi-dimensional int
 	 * array.
 	 *
 	 * @param sampleBuffer    the buffer to read samples into
@@ -529,13 +533,13 @@ public class WavFile {
 	 * @throws IOException      Signals that an I/O exception has occurred
 	 * @throws WavFileException a WavFile-specific exception
 	 */
-	public int readFrames(final short[][] sampleBuffer, final int numFramesToRead) throws Exception {
+	public int readFrames(final int[][] sampleBuffer, final int numFramesToRead) throws Exception {
 		return readFrames(sampleBuffer, 0, numFramesToRead);
 	}
 
 	/**
 	 * Read some number of frames from a specific offset in the buffer into a
-	 * multi-dimensional short array.
+	 * multi-dimensional int array.
 	 *
 	 * @param sampleBuffer    the buffer to read samples into
 	 * @param offset          the buffer offset to read from
@@ -544,7 +548,7 @@ public class WavFile {
 	 * @throws IOException      Signals that an I/O exception has occurred
 	 * @throws WavFileException a WavFile-specific exception
 	 */
-	public int readFrames(final short[][] sampleBuffer, int offset, final int numFramesToRead) throws Exception {
+	public int readFrames(final int[][] sampleBuffer, int offset, final int numFramesToRead) throws Exception {
 		if (ioState != IOState.READING) {
 			throw new IOException("Cannot read from WavFile instance");
 		}
@@ -555,13 +559,7 @@ public class WavFile {
 			}
 
 			for (int c = 0; c < numChannels; c++) {
-				final long sample = readSample();
-				sampleBuffer[c][offset] = (short) switch (bytesPerSample) {
-					case 0 -> 0;
-					case 1 -> sample << 8;
-					case 2 -> sample;
-					default -> sample >> ((bytesPerSample - 2) * 8);
-				};
+				sampleBuffer[c][offset] = (int) readSample();
 			}
 
 			offset++;
@@ -626,7 +624,7 @@ public class WavFile {
 	 * @throws IOException      Signals that an I/O exception has occurred
 	 * @throws WavFileException a WavFile-specific exception
 	 */
-	public int writeFrames(final short[][] sampleBuffer, final int numFramesToWrite) throws Exception {
+	public int writeFrames(final int[][] sampleBuffer, final int numFramesToWrite) throws Exception {
 		return writeFrames(sampleBuffer, 0, numFramesToWrite);
 	}
 
@@ -641,7 +639,7 @@ public class WavFile {
 	 * @throws IOException      Signals that an I/O exception has occurred
 	 * @throws WavFileException a WavFile-specific exception
 	 */
-	public int writeFrames(final short[][] sampleBuffer, int offset, final int numFramesToWrite) throws Exception {
+	public int writeFrames(final int[][] sampleBuffer, int offset, final int numFramesToWrite) throws Exception {
 		if (ioState != IOState.WRITING) {
 			throw new IOException("Cannot write to WavFile instance");
 		}

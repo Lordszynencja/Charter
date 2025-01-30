@@ -213,7 +213,7 @@ public class SongArrangement {
 	}
 
 	private void setTones(final ImmutableBeatsMap beats, final Arrangement arrangement) {
-		tonebase = arrangement.baseTone;
+		tonebase = arrangement.startingTone;
 		final List<String> tonesList = new ArrayList<>(arrangement.toneChanges.size());
 		for (final ToneChange toneChange : arrangement.toneChanges) {
 			if (!tonesList.contains(toneChange.toneName)) {

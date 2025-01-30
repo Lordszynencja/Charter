@@ -58,8 +58,8 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 	public static TextInputWithValidation generateForBigDecimal(final BigDecimal value, final int length,
 			final BigDecimalValueValidator validator, final Consumer<BigDecimal> setter,
 			final boolean allowWrongValues) {
-		return new TextInputWithValidation(value + "", length, validator, setterForBigDecimal(setter),
-				allowWrongValues);
+		return new TextInputWithValidation(value == null ? "" : (value + ""), length, validator,
+				setterForBigDecimal(setter), allowWrongValues);
 	}
 
 	private static Consumer<String> setterForBigDecimal(final Consumer<BigDecimal> setter) {
@@ -145,6 +145,8 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		if (!error || allowWrongValues) {
 			setter.accept(value);
 		}
+
+		setSelectionEnd(getSelectionStart());
 
 		repaint();
 	}
