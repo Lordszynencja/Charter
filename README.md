@@ -27,19 +27,19 @@ Download the latest version of Charter from the [releases page](https://github.c
 
 ### Windows
 
-Download `Charter-windows-<version>.zip` then unzip it, then run `Charter.exe`.
+Download `Charter-windows-<version>.zip` then unzip it, move `jasiohost64.dll` and `rubberband-jni.dll` to the `Windows\system32` folder, then run `Charter.exe`.
 
 Works For Windows 10 and above
 
 ### MacOS
 
-Download `Charter-mac-<version>.zip` then unzip it, then run `Charter.jar`.
+Download `Charter-mac-<version>.zip` then unzip it, move libraries to the correct folder, then run `Charter.jar`.
 
 For Apple Silicon/ARM (M1/M2/M3) based Macs, download `Charter-mac-arm-<version>.zip` then unzip it. Then run `Charter.jar`.
 
 ### Linux
 
-Download `Charter-linux-<version>.zip` then unzip it, then run `Charter.jar`.
+Download `Charter-linux-<version>.zip` then unzip it, move libraries to the correct folder, then run `Charter.jar`.
 
 ## TODO
 
