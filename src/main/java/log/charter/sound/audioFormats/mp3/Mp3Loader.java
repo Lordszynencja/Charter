@@ -16,6 +16,7 @@ import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
 
 import log.charter.sound.data.AudioData;
+import log.charter.sound.data.AudioUtils;
 import log.charter.util.RW;
 
 public class Mp3Loader {
@@ -50,16 +51,7 @@ public class Mp3Loader {
 			}
 
 			final int[][] audio = splitAudioInt(buffer, channels, 2);
-			final int max = AudioData.getMax(2);
-			final int delta = max - AudioData.getMin(2) + 1;
-			for (final int[] channel : audio) {
-				for (int i = 0; i < channel.length; i++) {
-					if (channel[i] > max) {
-						channel[i] -= delta;
-					}
-
-				}
-			}
+			AudioUtils.fixValues(2, audio);
 
 			return new AudioData(audio, rate, 2);
 		} catch (final Exception e) {

@@ -51,7 +51,11 @@ public class OggLoader {
 	private static AudioData load(final String path) {
 		try {
 			final LoadingResult result = new OggLoader(path).load();
-			return new AudioData(AudioUtils.splitAudioInt(result.bytes, result.channels, 2), result.rate, 2);
+
+			final int[][] samples = AudioUtils.splitAudioInt(result.bytes, result.channels, 2);
+			AudioUtils.fixValues(2, samples);
+
+			return new AudioData(samples, result.rate, 2);
 		} catch (final IOException | UnsupportedAudioFileException e) {
 			error("Couldnt load ogg file " + path, e);
 			return null;

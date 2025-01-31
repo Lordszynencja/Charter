@@ -245,4 +245,21 @@ public class AudioUtils {
 	public static double pitchToCents(final int basePitch, final double pitch) {
 		return Math.log(pitch / basePitch) / Math.log(2) * 1200;
 	}
+
+	public static void fixValues(final int sampleBytes, final int[][] samples) {
+		if (sampleBytes >= 4) {
+			return;
+		}
+
+		final int max = AudioData.getMax(sampleBytes);
+		final int delta = max - AudioData.getMin(sampleBytes) + 1;
+		for (final int[] channel : samples) {
+			for (int i = 0; i < channel.length; i++) {
+				if (channel[i] > max) {
+					channel[i] -= delta;
+				}
+
+			}
+		}
+	}
 }

@@ -100,6 +100,7 @@ public class Localization {
 		INVERT_STRINGS("Invert strings"), //
 		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
 		LEFT_HANDED("Left handed"), //
+		LOW_PASS("Low pass"), //
 		LRC_FILE("LRC file"), //
 		LRC_IMPORTED_SUCCESSFULLY("LRC vocals imported successfully"), //
 		MARK_BOOKMARK_0("Mark bookmark 0"), //
@@ -169,6 +170,7 @@ public class Localization {
 		THEME_SQUARE("Square"), //
 		TOGGLE_ANCHOR("Toggle anchor"), //
 		TOGGLE_CLAPS("Toggle claps"), //
+		TOGGLE_LOW_PASS_FILTER("Toggle low pass filter"), //
 		TOGGLE_METRONOME("Toggle metronome"), //
 		TOGGLE_MIDI("Toggle midi notes"), //
 		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //

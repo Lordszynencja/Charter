@@ -9,7 +9,10 @@ import log.charter.io.Logger;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
+import log.charter.sound.PassFilter.PassType;
 import log.charter.sound.data.AudioData;
+import log.charter.sound.effects.Effect;
+import log.charter.sound.effects.TestFilter;
 import log.charter.sound.system.SoundSystem;
 import log.charter.sound.system.SoundSystem.Player;
 
@@ -27,6 +30,7 @@ public class AudioHandler {
 
 	private AudioData lastPlayedData = null;
 	private int speed = 100;
+	public boolean lowPassFilter = false;
 	private double songTimeOnStart = 0;
 	private long playStartTime;
 
@@ -49,6 +53,12 @@ public class AudioHandler {
 		chartToolbar.updateValues();
 	}
 
+	public void toggleLowPassFilter() {
+		lowPassFilter = !lowPassFilter;
+
+		chartToolbar.updateValues();
+	}
+
 	private void playMusic(final AudioData musicData) {
 		stop();
 
@@ -61,7 +71,10 @@ public class AudioHandler {
 		lastPlayedData = musicData;
 
 		try {
-			songPlayer = SoundSystem.play(lastPlayedData, () -> Config.volume, speed, start);
+			final Effect effect = createEffect(lastPlayedData.playingFormat.getChannels(),
+					(int) lastPlayedData.playingFormat.getSampleRate());
+
+			songPlayer = SoundSystem.play(lastPlayedData, () -> Config.volume, speed, start, effect);
 		} catch (final Exception | UnsatisfiedLinkError e) {
 			Logger.error("Couldn't play sound", e);
 		}
@@ -71,6 +84,18 @@ public class AudioHandler {
 		if (midiNotesPlaying) {
 			midiChartNotePlayer.startPlaying(speed);
 		}
+	}
+
+	private Effect createEffect(final int channels, final int sampleRate) {
+		if (lowPassFilter) {
+			return createLowPassEffect(channels, sampleRate);
+		}
+
+		return Effect.emptyEffect;
+	}
+
+	private Effect createLowPassEffect(final int channels, final int sampleRate) {
+		return new TestFilter(channels, sampleRate, 1000, PassType.Lowpass);
 	}
 
 	private void stop() {
@@ -130,7 +155,7 @@ public class AudioHandler {
 
 		if (songPlayer.isStopped()) {
 			if (repeatManager.isRepeating()) {
-				final double timePassed = ((nanoTime() / 1_000_000.0 - playStartTime) * speed / 100);
+				final double timePassed = (nanoTime() / 1_000_000.0 - playStartTime) * speed / 100;
 				final double nextTime = songTimeOnStart + timePassed;
 				chartTimeHandler.nextTime(nextTime);
 				return;
@@ -139,7 +164,7 @@ public class AudioHandler {
 			stopMusic();
 		}
 
-		final double timePassed = ((nanoTime() / 1_000_000.0 - playStartTime) * speed / 100);
+		final double timePassed = (nanoTime() / 1_000_000.0 - playStartTime) * speed / 100;
 		final double nextTime = songTimeOnStart + timePassed;
 		chartTimeHandler.nextTime(nextTime);
 
