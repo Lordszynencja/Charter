@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
 	<artifactId>Charter</artifactId>
-	<version>0.19.1</version>
+	<version>0.19.2</version>
 	<packaging>jar</packaging>
 	<name>Charter</name>
 	<description>Charting program for guitar</description>
@@ -152,6 +152,11 @@
 			<groupId>org.bytedeco</groupId>
 			<artifactId>fftw-platform</artifactId>
 			<version>3.3.10-1.5.10</version>
+		</dependency>
+		<dependency>
+    		<groupId>com.github.psambit9791</groupId>
+    		<artifactId>jdsp</artifactId>
+    		<version>3.1.0</version>
 		</dependency>
 	</dependencies>
 	

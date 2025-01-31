@@ -16,6 +16,8 @@ import log.charter.io.Logger;
 import log.charter.sound.asio.ASIOHandler;
 import log.charter.sound.data.AudioData;
 import log.charter.sound.data.AudioUtils;
+import log.charter.sound.data.FloatQueue;
+import log.charter.sound.effects.Effect;
 import log.charter.sound.system.SoundSystem.ISoundSystem.ISoundLine;
 
 public class SoundSystem {
@@ -83,40 +85,54 @@ public class SoundSystem {
 		private final DoubleSupplier volume;
 		private final int speed;
 
-		private final int sampleSizeInBits;
-		@SuppressWarnings("unused")
-		private final int sampleSize;
 		private final int frameSize;
 		private final ISoundLine line;
 		private boolean stopped;
 
+		private final Effect effect;
 		private final RubberBandStretcher rubberBandStretcher;
+		private final FloatQueue[] stretchingSamplesQueue;
 
 		public long playingStartTime = -1;
 
-		private Player(final AudioData musicData, final DoubleSupplier volume, final int speed) {
+		private Player(final AudioData musicData, final DoubleSupplier volume, final int speed, final Effect effect) {
 			this.musicData = musicData;
 			this.volume = volume;
 			this.speed = speed;
-			rubberBandStretcher = new RubberBandStretcher((int) musicData.playingFormat.getSampleRate(),
-					musicData.playingFormat.getChannels(), RubberBandStretcher.OptionProcessRealTime //
-							| RubberBandStretcher.OptionTransientsSmooth//
-							| RubberBandStretcher.OptionThreadingNever//
-							| RubberBandStretcher.OptionPitchHighQuality//
-							| RubberBandStretcher.OptionStretchPrecise//
-							| RubberBandStretcher.OptionPhaseIndependent, //
-					100f / speed, 1.0);
 
-			sampleSizeInBits = musicData.playingFormat.getSampleSizeInBits();
-			if (sampleSizeInBits <= 8) {
-				sampleSize = 1;
-			} else {
-				sampleSize = 2;
-			}
 			frameSize = musicData.playingFormat.getFrameSize();
+
+			this.effect = effect;
+			if (speed == 100) {
+				rubberBandStretcher = null;
+				stretchingSamplesQueue = null;
+			} else {
+				rubberBandStretcher = createStretcher();
+				stretchingSamplesQueue = new FloatQueue[2];
+				for (int i = 0; i < 2; i++) {
+					stretchingSamplesQueue[i] = new FloatQueue(rubberBandStretcher.getSamplesRequired(), 1, 1);
+				}
+			}
 
 			final ISoundSystem soundSystem = getCurrentSoundSystem();
 			line = soundSystem.getNewLine(musicData.playingFormat);
+		}
+
+		private RubberBandStretcher createStretcher() {
+			try {
+				return new RubberBandStretcher((int) musicData.playingFormat.getSampleRate(),
+						musicData.playingFormat.getChannels(), RubberBandStretcher.OptionProcessRealTime //
+								| RubberBandStretcher.OptionTransientsSmooth//
+								| RubberBandStretcher.OptionThreadingNever//
+								| RubberBandStretcher.OptionPitchHighQuality//
+								| RubberBandStretcher.OptionStretchPrecise//
+								| RubberBandStretcher.OptionPhaseIndependent, //
+						100f / speed, 1.0);
+			} catch (final Throwable e) {
+				Logger.error("Couldn't create audio stretcher", e);
+			}
+
+			return null;
 		}
 
 		public boolean isStopped() {
@@ -138,22 +154,45 @@ public class SoundSystem {
 			}
 		}
 
-		private float[][] stretch(final float[][] samples) {
+		private void applyEffect(final float[][] samples) {
+			for (int channel = 0; channel < samples.length; channel++) {
+				for (int i = 0; i < samples[channel].length; i++) {
+					samples[channel][i] = effect.apply(channel, samples[channel][i]);
+				}
+			}
+		}
+
+		private float[][] stretch(final float[][] samples, final boolean lastBlock) {
 			if (speed == 100) {
 				return samples;
 			}
 
-			boolean lastBlock = false;
-			if (samples[0].length < audioBufferSize) {
-				lastBlock = true;
+			for (int i = 0; i < 2; i++) {
+				for (final float sample : samples[i]) {
+					try {
+						stretchingSamplesQueue[i].add(sample);
+					} catch (final Exception e) {
+					}
+				}
+			}
+			if (lastBlock) {
+				for (int i = 0; i < 2; i++) {
+					stretchingSamplesQueue[i].close();
+				}
 			}
 
-			final int samplesRequired = rubberBandStretcher.getSamplesRequired();
-			if (samples[0].length < samplesRequired) {
-				return samples;
+			if (!stretchingSamplesQueue[0].bufferAvailable()) {
+				return new float[2][0];
 			}
 
-			rubberBandStretcher.process(samples, lastBlock);
+			final float[][] stretchingSamples = new float[2][];
+			for (int i = 0; i < 2; i++) {
+				try {
+					stretchingSamples[i] = stretchingSamplesQueue[i].take();
+				} catch (final InterruptedException e) {
+				}
+			}
+			rubberBandStretcher.process(stretchingSamples, lastBlock);
 
 			int available = 0;
 			while (available == 0) {
@@ -171,22 +210,33 @@ public class SoundSystem {
 			return output;
 		}
 
-		private int writeBuffer(final byte[] data, int startByte) {
-			final byte[] buffer = Arrays.copyOfRange(data, startByte,
-					min(data.length, startByte + audioBufferSize * 4));
+		private int writeBuffer(final byte[] data, final int startByte) {
+			final int length = audioBufferSize * speed / 100 * 4;
 
-			final float[][] samples = splitStereoAudioFloat(buffer);
+			int endByte = startByte + length;
+			boolean lastBlock = false;
+			if (endByte >= data.length) {
+				endByte = data.length;
+				lastBlock = true;
+			}
+
+			final byte[] buffer = Arrays.copyOfRange(data, startByte, endByte);
+
+			float[][] samples = splitStereoAudioFloat(buffer);
+			applyEffect(samples);
 			setVolume(samples);
-			final float[][] stretchedSamples = stretch(samples);
 
-			startByte += buffer.length;
-			line.write(AudioUtils.toBytes(stretchedSamples, 2, 2));
-			return startByte;
+			if (rubberBandStretcher != null) {
+				samples = stretch(samples, lastBlock);
+			}
+			line.write(AudioUtils.toBytes(samples, 2, 2));
+
+			return endByte;
 		}
 
 		private void waitIfNeeded() throws InterruptedException {
 			while (!line.stopped() && !line.wantsMoreData()) {
-				Thread.sleep(1);
+				Thread.sleep(0, 10_000);
 			}
 		}
 
@@ -245,11 +295,11 @@ public class SoundSystem {
 	}
 
 	public static Player play(final AudioData audioData, final DoubleSupplier volumeSupplier, final int speed) {
-		return play(audioData, volumeSupplier, speed, 0);
+		return play(audioData, volumeSupplier, speed, 0, Effect.emptyEffect);
 	}
 
 	public static Player play(final AudioData audioData, final DoubleSupplier volumeSupplier, final int speed,
-			final double startTime) {
-		return new Player(audioData, volumeSupplier, speed).start(startTime);
+			final double startTime, final Effect effect) {
+		return new Player(audioData, volumeSupplier, speed, effect).start(startTime);
 	}
 }

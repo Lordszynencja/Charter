@@ -277,6 +277,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.TOGGLE_LINK_NEXT, guitarSoundsStatusesHandler::toggleLinkNext);
 		actionHandlers.put(Action.TOGGLE_LINK_NEXT_INDEPENDENTLY,
 				guitarSoundsStatusesHandler::toggleLinkNextIndependently);
+		actionHandlers.put(Action.TOGGLE_LOW_PASS_FILTER, audioHandler::toggleLowPassFilter);
 		actionHandlers.put(Action.TOGGLE_METRONOME, metronomeHandler::toggleMetronome);
 		actionHandlers.put(Action.TOGGLE_MIDI, audioHandler::toggleMidiNotes);
 		actionHandlers.put(Action.TOGGLE_MUTE, guitarSoundsStatusesHandler::toggleMute);

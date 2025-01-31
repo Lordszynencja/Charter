@@ -11,8 +11,6 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
 
 import log.charter.io.Logger;
-import log.charter.sound.HighPassFilter;
-import log.charter.sound.HighPassFilter.PassType;
 import log.charter.sound.SoundFileType;
 
 public class AudioData {
@@ -85,25 +83,6 @@ public class AudioData {
 
 	public double msLength() {
 		return (data[0].length * 1000.0) / format.getFrameRate();
-	}
-
-	public AudioData pass(final float frequency, final float resonance, final PassType type) {
-		final float rate = format.getSampleRate();
-		final int[][] newData = new int[data.length][];
-		final int valueRange = maxValue - minValue;
-
-		for (int i = 0; i < data.length; i++) {
-			final int[] oldChannel = data[i];
-			newData[i] = new int[oldChannel.length];
-			final HighPassFilter filter = new HighPassFilter(frequency, (int) rate, type, resonance);
-			for (int j = 0; j < oldChannel.length; j++) {
-				final float oldVal = (float) ((oldChannel[j] - minValue) / valueRange);
-				final float newVal = max(0, min(1, filter.update(oldVal)));
-				newData[i][j] = (int) (newVal * valueRange + minValue);
-			}
-		}
-
-		return new AudioData(newData, rate, 2);
 	}
 
 	public static class DifferentSampleSizesException extends Exception {

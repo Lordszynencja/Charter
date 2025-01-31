@@ -9,6 +9,7 @@ import io.nayuki.flac.decode.DataFormatException;
 import io.nayuki.flac.decode.FlacDecoder;
 import log.charter.io.Logger;
 import log.charter.sound.data.AudioData;
+import log.charter.sound.data.AudioUtils;
 
 public class FlacLoader {
 	private static class LoadedData {
@@ -67,18 +68,8 @@ public class FlacLoader {
 	public static AudioData load(final File file) {
 		try {
 			final LoadedData data = loadData(file);
-			int minValue = 0;
-			int maxValue = 0;
-			for (final int[] channel : data.samples) {
-				for (final int sample : channel) {
-					if (sample < minValue) {
-						minValue = sample;
-					}
-					if (sample > maxValue) {
-						maxValue = sample;
-					}
-				}
-			}
+
+			AudioUtils.fixValues(data.streamInfo.sampleDepth / 8, data.samples);
 
 			return new AudioData(data.samples, data.streamInfo.sampleRate, data.streamInfo.sampleDepth / 8);
 		} catch (final Exception e) {

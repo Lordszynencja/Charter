@@ -73,15 +73,18 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private JToggleButton midi;
 	private JToggleButton claps;
 	private JToggleButton metronome;
+
 	private JToggleButton waveformGraph;
 	private JToggleButton intensityRMSIndicator;
+
 	private JToggleButton repeater;
 
 	private FieldWithLabel<TextInputWithValidation> gridSize;
-	private FieldWithLabel<TextInputWithValidation> playbackSpeed;
-
 	private JToggleButton beatGridType;
 	private JToggleButton noteGridType;
+
+	private FieldWithLabel<TextInputWithValidation> playbackSpeed;
+	private JToggleButton lowPassFilter;
 
 	private JButton playButton;
 
@@ -128,9 +131,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Runnable onClick,
 			final int buttonWidth) {
-		final JToggleButton toggleButton = addToggleButton(x, horizontalSpacing, label, onClick, buttonWidth);
-
-		return toggleButton;
+		return addToggleButton(x, horizontalSpacing, label, onClick, buttonWidth);
 	}
 
 	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Runnable onClick) {
@@ -384,6 +385,10 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		addPlaybackSpeed(x);
 		addTimeControls(x);
 
+		addSeparator(x);
+
+		lowPassFilter = addToggleButton(x, Label.LOW_PASS, () -> audioHandler.toggleLowPassFilter(), 80);
+
 		updateValues();
 		setSize(getWidth(), height);
 
@@ -416,6 +421,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		}
 
 		playbackSpeed.field.setTextWithoutEvent(Config.stretchedMusicSpeed + "");
+
+		lowPassFilter.setSelected(audioHandler.lowPassFilter);
 	}
 
 	@Override

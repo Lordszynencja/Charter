@@ -47,7 +47,7 @@ public class Config {
 
 	public static SoundFileType baseAudioFormat = SoundFileType.FLAC;
 	public static int audioBufferSize = 2048;
-	public static int audioBufferMs = 10;
+	public static int audioBufferMs = 50;
 	public static int antialiasingSamples = 16;
 
 	public static DistanceType minNoteDistanceType = DistanceType.NOTES;

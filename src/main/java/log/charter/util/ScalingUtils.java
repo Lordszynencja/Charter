@@ -22,7 +22,7 @@ public class ScalingUtils {
 	}
 
 	public static int positionToX(final double pos, final double t) {
-		return (int) (pos * Zoom.zoom - t * Zoom.zoom) + Config.markerOffset;
+		return (int) (pos * Zoom.zoom) - (int) (t * Zoom.zoom) + Config.markerOffset;
 	}
 
 	public static int timeToXLength(final double position, final double length) {
