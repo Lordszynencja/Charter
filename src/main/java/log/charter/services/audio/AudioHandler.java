@@ -9,12 +9,10 @@ import log.charter.io.Logger;
 import log.charter.services.RepeatManager;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.sound.PassFilter.PassType;
 import log.charter.sound.data.AudioData;
 import log.charter.sound.effects.Effect;
-import log.charter.sound.effects.TestFilter;
 import log.charter.sound.system.SoundSystem;
-import log.charter.sound.system.SoundSystem.Player;
+import log.charter.sound.system.data.Player;
 
 public class AudioHandler {
 	private ChartTimeHandler chartTimeHandler;
@@ -30,7 +28,9 @@ public class AudioHandler {
 
 	private AudioData lastPlayedData = null;
 	private int speed = 100;
-	public boolean lowPassFilter = false;
+	public boolean lowPassFilterEnabled = false;
+	public boolean bandPassFilterEnabled = false;
+	public boolean highPassFilterEnabled = false;
 	private double songTimeOnStart = 0;
 	private long playStartTime;
 
@@ -54,7 +54,25 @@ public class AudioHandler {
 	}
 
 	public void toggleLowPassFilter() {
-		lowPassFilter = !lowPassFilter;
+		lowPassFilterEnabled = !lowPassFilterEnabled;
+		highPassFilterEnabled = false;
+		bandPassFilterEnabled = false;
+
+		chartToolbar.updateValues();
+	}
+
+	public void toggleBandPassFilter() {
+		lowPassFilterEnabled = false;
+		highPassFilterEnabled = false;
+		bandPassFilterEnabled = !bandPassFilterEnabled;
+
+		chartToolbar.updateValues();
+	}
+
+	public void toggleHighPassFilter() {
+		lowPassFilterEnabled = false;
+		highPassFilterEnabled = !highPassFilterEnabled;
+		bandPassFilterEnabled = false;
 
 		chartToolbar.updateValues();
 	}
@@ -87,15 +105,27 @@ public class AudioHandler {
 	}
 
 	private Effect createEffect(final int channels, final int sampleRate) {
-		if (lowPassFilter) {
-			return createLowPassEffect(channels, sampleRate);
-		}
+		return new Effect() {
+			private final Effect lowPassFilter = Config.passFilters.createLowPassFilter(channels, sampleRate);
+			private final Effect bandPassFilter = Config.passFilters.createBandPassFilter(channels, sampleRate);
+			private final Effect highPassFilter = Config.passFilters.createHighPassFilter(channels, sampleRate);
 
-		return Effect.emptyEffect;
-	}
+			@Override
+			public float apply(final int channel, final float sample) {
+				if (lowPassFilterEnabled) {
+					// return sample - highPassFilter.apply(channel, sample);
+					return lowPassFilter.apply(channel, sample);
+				}
+				if (bandPassFilterEnabled) {
+					return bandPassFilter.apply(channel, sample);
+				}
+				if (highPassFilterEnabled) {
+					return highPassFilter.apply(channel, sample);
+				}
 
-	private Effect createLowPassEffect(final int channels, final int sampleRate) {
-		return new TestFilter(channels, sampleRate, 1000, PassType.Lowpass);
+				return sample;
+			}
+		};
 	}
 
 	private void stop() {

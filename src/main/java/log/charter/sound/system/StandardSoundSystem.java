@@ -9,7 +9,9 @@ import javax.sound.sampled.SourceDataLine;
 
 import log.charter.data.config.Config;
 import log.charter.io.Logger;
-import log.charter.sound.system.SoundSystem.ISoundSystem;
+import log.charter.sound.system.data.EmptySoundLine;
+import log.charter.sound.system.data.ISoundLine;
+import log.charter.sound.system.data.ISoundSystem;
 
 public class StandardSoundSystem implements ISoundSystem {
 	public class StandardSoundLine implements ISoundLine {

@@ -1,9 +1,9 @@
-package log.charter.data.config;
+package log.charter.data.config.values;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-class ValueAccessor {
+public class ValueAccessor {
 	public static ValueAccessor empty = new ValueAccessor(s -> {}, () -> null);
 
 	public static ValueAccessor forString(final Consumer<String> setter, final Supplier<String> getter) {
@@ -16,6 +16,10 @@ class ValueAccessor {
 
 	public static ValueAccessor forInteger(final Consumer<Integer> setter, final Supplier<Integer> getter) {
 		return new ValueAccessor(s -> setter.accept(Integer.valueOf(s)), () -> getter.get() + "");
+	}
+
+	public static ValueAccessor forFloat(final Consumer<Float> setter, final Supplier<Float> getter) {
+		return new ValueAccessor(s -> setter.accept(Float.valueOf(s)), () -> getter.get() + "");
 	}
 
 	public static ValueAccessor forDouble(final Consumer<Double> setter, final Supplier<Double> getter) {

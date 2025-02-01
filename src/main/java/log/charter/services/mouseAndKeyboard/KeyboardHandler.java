@@ -38,6 +38,7 @@ public class KeyboardHandler implements KeyListener {
 	public void setRewind() {
 		heldNonModifierKey = VK_LEFT;
 		heldAction = Action.MOVE_BACKWARD;
+		actionHandler.fireAction(heldAction);
 	}
 
 	public void clearRewind() {
@@ -50,6 +51,7 @@ public class KeyboardHandler implements KeyListener {
 	public void setFastForward() {
 		heldNonModifierKey = VK_RIGHT;
 		heldAction = Action.MOVE_FORWARD;
+		actionHandler.fireAction(heldAction);
 	}
 
 	public void clearFastForward() {

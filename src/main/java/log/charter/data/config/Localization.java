@@ -44,6 +44,8 @@ public class Localization {
 		AUDIO_OUTPUT_L_ID("Left output channel id"), //
 		AUDIO_OUTPUT_R_ID("Right output channel id"), //
 		BACKUP_DELAY_S("Backup delay (s)"), //
+		BAND_PASS("Band"), //
+		BAND_PASS_SETTINGS("Band pass settings"), //
 		BASE_AUDIO_FORMAT("Base audio format"), //
 		BOOKMARKS_MENU("Bookmarks"), //
 		BUFFER_SIZE_MS("Audio buffer size to fill (ms)"), //
@@ -95,12 +97,15 @@ public class Localization {
 		FRET_8("Fret 8"), //
 		FRET_9("Fret 9"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
+		HIGH_PASS("High"), //
+		HIGH_PASS_SETTINGS("High pass settings"), //
 		IMPORT_LRC_VOCALS("Import LRC vocals file"), //
 		IMPORT_USC_VOCALS("Import USC vocals file"), //
 		INVERT_STRINGS("Invert strings"), //
 		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
 		LEFT_HANDED("Left handed"), //
-		LOW_PASS("Low pass"), //
+		LOW_PASS("Low"), //
+		LOW_PASS_SETTINGS("Low pass settings"), //
 		LRC_FILE("LRC file"), //
 		LRC_IMPORTED_SUCCESSFULLY("LRC vocals imported successfully"), //
 		MARK_BOOKMARK_0("Mark bookmark 0"), //
@@ -137,6 +142,12 @@ public class Localization {
 		NOTE_SLIDES_INTO_CHORD("Note slide ends on a chord, should end on note"), //
 		NOTE_SLIDES_INTO_WRONG_FRET("Note slide ends on a different fret than next note"), //
 		OPEN_PROJECT("Open project"), //
+		PASS_FILTER_ALGORITHM("Algorithm"), //
+		PASS_FILTER_CENTER_FREQUENCY("Center frequency"), //
+		PASS_FILTER_FREQUENCY("Frequency"), //
+		PASS_FILTER_FREQUENCY_WIDTH("Frequency width"), //
+		PASS_FILTER_ORDER("Order"), //
+		PASS_FILTER_RIPPLE_DB("Ripple dB"), //
 		PASTE("Paste"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
 		REDO("Redo"), //
@@ -170,6 +181,8 @@ public class Localization {
 		THEME_SQUARE("Square"), //
 		TOGGLE_ANCHOR("Toggle anchor"), //
 		TOGGLE_CLAPS("Toggle claps"), //
+		TOGGLE_BAND_PASS_FILTER("Toggle band pass filter"), //
+		TOGGLE_HIGH_PASS_FILTER("Toggle high pass filter"), //
 		TOGGLE_LOW_PASS_FILTER("Toggle low pass filter"), //
 		TOGGLE_METRONOME("Toggle metronome"), //
 		TOGGLE_MIDI("Toggle midi notes"), //

@@ -1,9 +1,9 @@
 package log.charter.data.config;
 
-import static log.charter.data.config.ValueAccessor.forBoolean;
-import static log.charter.data.config.ValueAccessor.forDouble;
-import static log.charter.data.config.ValueAccessor.forInteger;
-import static log.charter.data.config.ValueAccessor.forString;
+import static log.charter.data.config.values.ValueAccessor.forBoolean;
+import static log.charter.data.config.values.ValueAccessor.forDouble;
+import static log.charter.data.config.values.ValueAccessor.forInteger;
+import static log.charter.data.config.values.ValueAccessor.forString;
 import static log.charter.io.Logger.error;
 
 import java.awt.DisplayMode;
@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 import javax.swing.JFrame;
 
 import log.charter.data.GridType;
+import log.charter.data.config.values.PassFiltersConfig;
+import log.charter.data.config.values.ValueAccessor;
 import log.charter.data.song.BeatsMap.DistanceType;
 import log.charter.io.Logger;
 import log.charter.sound.SoundFileType;
@@ -49,6 +51,8 @@ public class Config {
 	public static int audioBufferSize = 2048;
 	public static int audioBufferMs = 50;
 	public static int antialiasingSamples = 16;
+
+	public static PassFiltersConfig passFilters = new PassFiltersConfig();
 
 	public static DistanceType minNoteDistanceType = DistanceType.NOTES;
 	public static int minNoteDistanceFactor = 32;
@@ -175,6 +179,8 @@ public class Config {
 
 		valueAccessors.put("debugLogging", forBoolean(v -> debugLogging = v, () -> debugLogging));
 		valueAccessors.put("specialDebugOption", forBoolean(v -> specialDebugOption = v, () -> specialDebugOption));
+
+		passFilters.installValueAccessors(valueAccessors, "passFilters");
 
 		final String os = System.getProperty("os.name").toLowerCase();
 		@SuppressWarnings("unused")

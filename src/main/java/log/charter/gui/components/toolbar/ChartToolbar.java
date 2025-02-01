@@ -1,6 +1,7 @@
 package log.charter.gui.components.toolbar;
 
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
+import static log.charter.gui.components.utils.ComponentUtils.addRightPressListener;
 import static log.charter.gui.components.utils.ComponentUtils.setIcon;
 import static log.charter.util.FileUtils.imagesFolder;
 
@@ -26,6 +27,7 @@ import log.charter.data.GridType;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
@@ -63,6 +65,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private ActionHandler actionHandler;
 	private AudioHandler audioHandler;
+	private CharterFrame charterFrame;
 	private ClapsHandler clapsHandler;
 	private KeyboardHandler keyboardHandler;
 	private MetronomeHandler metronomeHandler;
@@ -85,6 +88,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private FieldWithLabel<TextInputWithValidation> playbackSpeed;
 	private JToggleButton lowPassFilter;
+	private JToggleButton highPassFilter;
+	private JToggleButton bandPassFilter;
 
 	private JButton playButton;
 
@@ -292,6 +297,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	}
 
 	private void setSpeed(final int newSpeed) {
+		audioHandler.stopMusic();
+
 		Config.stretchedMusicSpeed = newSpeed;
 		Config.markChanged();
 	}
@@ -341,6 +348,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		fastForwardButton.setSize(30, 20);
 		fastForwardButton.addChangeListener(e -> {
 			if (fastForwardButton.getModel().isPressed()) {
+				keyboardHandler.setRewind();
 				keyboardHandler.setFastForward();
 			} else {
 				keyboardHandler.clearFastForward();
@@ -352,6 +360,24 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	public void setPlayButtonIcon() {
 		playButton.setText(audioHandler.isPlaying() ? "⏸" : "▶️");
+	}
+
+	private void showLowPassSettings() {
+		audioHandler.stopMusic();
+
+		new LowPassSettings(charterFrame);
+	}
+
+	private void showHighPassSettings() {
+		audioHandler.stopMusic();
+
+		new HighPassSettings(charterFrame);
+	}
+
+	private void showBandPassSettings() {
+		audioHandler.stopMusic();
+
+		new BandPassSettings(charterFrame);
 	}
 
 	@Override
@@ -387,7 +413,12 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 		addSeparator(x);
 
-		lowPassFilter = addToggleButton(x, Label.LOW_PASS, () -> audioHandler.toggleLowPassFilter(), 80);
+		lowPassFilter = addToggleButton(x, 1, Label.LOW_PASS, () -> audioHandler.toggleLowPassFilter(), 40);
+		addRightPressListener(lowPassFilter, this::showLowPassSettings);
+		bandPassFilter = addToggleButton(x, 1, Label.BAND_PASS, () -> audioHandler.toggleBandPassFilter(), 40);
+		addRightPressListener(bandPassFilter, this::showBandPassSettings);
+		highPassFilter = addToggleButton(x, 1, Label.HIGH_PASS, () -> audioHandler.toggleHighPassFilter(), 40);
+		addRightPressListener(highPassFilter, this::showHighPassSettings);
 
 		updateValues();
 		setSize(getWidth(), height);
@@ -422,7 +453,9 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 		playbackSpeed.field.setTextWithoutEvent(Config.stretchedMusicSpeed + "");
 
-		lowPassFilter.setSelected(audioHandler.lowPassFilter);
+		lowPassFilter.setSelected(audioHandler.lowPassFilterEnabled);
+		bandPassFilter.setSelected(audioHandler.bandPassFilterEnabled);
+		highPassFilter.setSelected(audioHandler.highPassFilterEnabled);
 	}
 
 	@Override
