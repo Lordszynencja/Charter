@@ -49,9 +49,13 @@ NOTE: This list is subject to change.
   <summary>TODO</summary>
   
 new features:
-- add RW/play/stop/FF buttons on GUI
+- ctrl + rclick to split hand shape
+- improve lyric tapping
+- option to add/remove audio at the end of the song
+- octave up low pass option
+- ER options for bonus rhythm
+- more validations
 - straightening beats when anchor is removed
-- option to disable warnings
 - vocal notes creation/deletion revamp
 - preview of beats' movements when dragging them
 - ability to shift all further beats
@@ -61,11 +65,9 @@ new features:
 - change vibrato tail for linked notes
 - modern theme tail types
 - auto fhp creating moving top fret instead of bottom fret if new is above
-- edit tab with chord templates
 - slide shape options
 - tab notation under edit area
 - add tabs with arrangements
-- add tab with warnings
 - new select options:
 > - select all after etc.
 > - select by clicking note tail
@@ -74,32 +76,29 @@ new features:
 - handling strings beyond max?
 - FHP creation switch stretch/make new/ask user?
 - multiple tracks preview
-- better slowdowns
 - quick paste section/phrase tab
+- stems
+- spectrogram
 
 bugs:
-- when adding silence/beats the notes aren't moved forward
+- 3D view repeat FHPs
+- gp8 import hand shapes
+- error checks for wrong fhps for handshapes
+- gp5 import triplet feel
 - bend gp5 import positions
 - midi bass
 - check tempo moving notes
 - After accidentally linking the previous note to a chord at the start of a handshape (which removed the chord) when I recreated it, the notes behaved like individual notes and not like a chord. No matter what I tried I could not get it to properly treat it like a chord again. This caused it to display odd in both the 3D preview and in Rocksmith after building the project.
 
 formats to add:
-- gp8
-- LRC
-- FLAC audio
 - psarc
   
 3D preview:
-- COUNT makes fhp appear, and END makes the disappear
 - exploding notes with shaky camera
-- tremolo should vibrate more
 - arpeggios colored note shadows
 - editable camera settings
 - camera more like in RS
 - string vibrating when plucked
-- change how chord boxes look
-- full chord box if chord has at least 3 notes
 
 Future things:
 - Campaign/Guitarcade
