@@ -201,21 +201,22 @@ public class CharterContext {
 	}
 
 	private void frame(final double frameTime) {
-		if (!charterFrame.isFocused() && !windowedPreviewHandler.isPreviewVisible()) {
-			return;
-		}
-
 		try {
 			final Timer timer = new Timer();
 			repeatManager.frame();
 			timer.addTimestamp("repeatManager.frame()");
+
 			chartTimeHandler.frame(frameTime);
 			timer.addTimestamp("chartTimeHandler.frame()");
 
-			windowedPreviewHandler.paintFrame();
-			timer.addTimestamp("windowedPreviewHandler.paintFrame()");
-			charterFrame.repaint();
-			timer.addTimestamp("charterFrame.repaint()");
+			if (windowedPreviewHandler.isPreviewVisible()) {
+				windowedPreviewHandler.paintFrame();
+				timer.addTimestamp("windowedPreviewHandler.paintFrame()");
+			}
+			if (charterFrame.isShowing()) {
+				charterFrame.repaint();
+				timer.addTimestamp("charterFrame.repaint()");
+			}
 			timer.print("frame timings:", "%20s: %d");
 		} catch (final Exception e) {
 			Logger.error("Exception in frame()", e);
