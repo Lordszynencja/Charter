@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.AbstractButton;
@@ -162,5 +164,33 @@ public class ComponentUtils {
 
 		button.setText(null);
 		button.setIcon(new ImageIcon(icon));
+	}
+
+	public static void addRightPressListener(final Component component, final Runnable onClick) {
+		component.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(final MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(final MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON3) {
+					onClick.run();
+				}
+			}
+
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(final MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(final MouseEvent e) {
+			}
+		});
 	}
 }

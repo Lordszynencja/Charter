@@ -14,6 +14,7 @@ import javax.swing.event.DocumentListener;
 
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
+import log.charter.gui.components.utils.validators.DoubleValueValidator;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.components.utils.validators.ValueValidator;
@@ -52,6 +53,24 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 				setter.accept(Integer.valueOf(s));
 			} catch (final NumberFormatException e) {
 			}
+		};
+	}
+
+	public static TextInputWithValidation generateForDouble(final Double value, final int length,
+			final DoubleValueValidator validator, final Consumer<Double> setter, final boolean allowWrongValues) {
+		return new TextInputWithValidation(value == null ? "" : (value + ""), length, validator,
+				setterForDouble(setter), allowWrongValues);
+	}
+
+	private static Consumer<String> setterForDouble(final Consumer<Double> setter) {
+		return s -> {
+			Double value;
+			try {
+				value = Double.valueOf(s);
+			} catch (final NumberFormatException e) {
+				value = null;
+			}
+			setter.accept(value);
 		};
 	}
 

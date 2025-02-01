@@ -10,7 +10,9 @@ import javax.sound.sampled.LineUnavailableException;
 import log.charter.io.Logger;
 import log.charter.sound.asio.ASIOHandler;
 import log.charter.sound.data.FloatQueue;
-import log.charter.sound.system.SoundSystem.ISoundSystem;
+import log.charter.sound.system.data.EmptySoundLine;
+import log.charter.sound.system.data.ISoundLine;
+import log.charter.sound.system.data.ISoundSystem;
 
 public class ASIOSoundSystem implements ISoundSystem {
 	public class ASIOSoundLine implements ISoundLine {

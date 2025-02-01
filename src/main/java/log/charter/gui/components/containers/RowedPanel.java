@@ -44,6 +44,8 @@ public class RowedPanel extends JPanel {
 	public RowedPanel(final PaneSizes sizes) {
 		this.sizes = sizes;
 
+		setSize(sizes.width, sizes.getHeight(3));
+
 		setLayout(null);
 	}
 
