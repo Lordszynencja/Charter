@@ -77,8 +77,8 @@ public class SoundsCopyData implements ICopyData {
 
 				final Integer valueId = lastBeforeEqual(sounds, newSound).findId();
 				if (valueId == null) {
-					sounds.add(newSound);
-					return;
+					sounds.add(0, newSound);
+					continue;
 				}
 
 				final ChordOrNote sound = sounds.get(valueId);
