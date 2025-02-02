@@ -47,6 +47,12 @@ public class ScrollableRowedPanel extends CharterScrollPane {
 		panel.add(component);
 	}
 
+	public void addWithYOffset(final Component component, final int x, final int row, final int yOffset,
+			final int width, final int height) {
+		setComponentBounds(component, x, sizes.getY(row) + yOffset, width, height);
+		panel.add(component);
+	}
+
 	public void resizePanel(final int width, final int rows) {
 		setComponentBounds(panel, 0, 0, sizes.width, sizes.getHeight(rows));
 	}

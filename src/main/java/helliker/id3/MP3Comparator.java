@@ -41,34 +41,28 @@ import java.util.Comparator;
 public class MP3Comparator implements Comparator {
 
 	/**
-	 * Returns true if the two parameters are acceptable comparison values. In
-	 * order to be acceptable, both parameters must not be empty and they must
-	 * not be equal.
+	 * Returns true if the two parameters are acceptable comparison values. In order
+	 * to be acceptable, both parameters must not be empty and they must not be
+	 * equal.
 	 *
-	 * @param str1
-	 *           the first parameter
-	 * @param str2
-	 *           the second parameter
+	 * @param str1 the first parameter
+	 * @param str2 the second parameter
 	 * @return true if the two parameters are acceptable comparison values
 	 */
 	private boolean accept(final String str1, final String str2) {
-		return (!str1.equalsIgnoreCase(str2) && (str1.length() != 0)
-				&& (str2.length() != 0));
+		return (!str1.equalsIgnoreCase(str2) && (str1.length() != 0) && (str2.length() != 0));
 	}
 
 	/**
-	 * Compares the objects. Non-MP3File objects will always be less then an
-	 * MP3File object and if neither objects are MP3Files then they are
-	 * considered equal. A series of tests are conducted to determine the the
-	 * outcome. First the artist is tested, then the album, then the track, then
-	 * the title, then the path.
+	 * Compares the objects. Non-MP3File objects will always be less then an MP3File
+	 * object and if neither objects are MP3Files then they are considered equal. A
+	 * series of tests are conducted to determine the the outcome. First the artist
+	 * is tested, then the album, then the track, then the title, then the path.
 	 *
-	 * @param o1
-	 *           one object to compare
-	 * @param o2
-	 *           another object to compare
-	 * @return a positive number if o1 > o2, zero if o1 = o2, and a negative
-	 *         number if o1 < o2
+	 * @param o1 one object to compare
+	 * @param o2 another object to compare
+	 * @return a positive number if o1 > o2, zero if o1 = o2, and a negative number
+	 *         if o1 < o2
 	 */
 	@Override
 	public int compare(final Object o1, final Object o2) {
@@ -80,8 +74,7 @@ public class MP3Comparator implements Comparator {
 
 			try {
 				if (accept(m1.getArtist(), m2.getArtist())) {
-					retval = m1.getArtist().compareToIgnoreCase(
-							m2.getArtist());
+					retval = m1.getArtist().compareToIgnoreCase(m2.getArtist());
 
 				} else if (accept(m1.getAlbum(), m2.getAlbum())) {
 					retval = m1.getAlbum().compareToIgnoreCase(m2.getAlbum());
@@ -106,11 +99,15 @@ public class MP3Comparator implements Comparator {
 		return retval;
 	}
 
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
 	/**
 	 * Returns true if the specified object is an MP3Comparator
 	 *
-	 * @param obj
-	 *           the object to test
+	 * @param obj the object to test
 	 * @return true if the object is an MP3Comparator
 	 */
 	@Override

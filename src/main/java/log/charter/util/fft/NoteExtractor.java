@@ -1,8 +1,10 @@
 package log.charter.util.fft;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Arrays;
 
-public class NoteExtractor {
+public class NoteExtractor implements Closeable {
 
 	// Declare reference frequency of A4
 	private static final float A4 = 440f;
@@ -98,5 +100,10 @@ public class NoteExtractor {
 			output[bin].imag = fftOutput[fLow].imag
 					+ (frequency - fLow) * (fftOutput[fHigh].imag - fftOutput[fLow].imag);
 		}
+	}
+
+	@Override
+	public void close() throws IOException {
+		fft.close();
 	}
 }

@@ -14,7 +14,7 @@ public class WavWriter {
 		try {
 			final int samples = musicData.data[0].length;
 			progress.changeStep(Label.WRITING_WAV_FILE, samples);
-			final WavFile wavFile = WavFile.newWavFile(file, musicData.data.length, musicData.data[0].length,
+			final WavFile wavFile = new WavFile().openForWriting(file, musicData.data.length, musicData.data[0].length,
 					musicData.format.getSampleSizeInBits(), (long) musicData.format.getFrameRate());
 
 			int offset = 0;

@@ -23,6 +23,7 @@ public class AudioFramer implements Initiable {
 		try {
 			thread.join();
 		} catch (final InterruptedException e) {
+			return;
 		}
 	}
 

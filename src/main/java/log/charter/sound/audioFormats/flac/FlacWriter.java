@@ -42,14 +42,17 @@ public class FlacWriter {
 			} catch (final Exception e) {
 				Logger.error("Couldn't write FLAC file", e);
 			}
+
 			finished.set(true);
 		}).start();
+
 		int lastProgress = 0;
 		while (!finished.get()) {
 			if (lastProgress == encoder.getCurrentPosition()) {
 				try {
 					Thread.sleep(10);
 				} catch (final InterruptedException e) {
+					return;
 				}
 
 				continue;
@@ -58,6 +61,7 @@ public class FlacWriter {
 			lastProgress = encoder.getCurrentPosition();
 			progress.updateProgress(Label.WRITING_FLAC_FILE, lastProgress);
 		}
+
 		out.flush();
 	}
 

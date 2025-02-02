@@ -17,6 +17,7 @@ public class ImageUtils {
 			try {
 				return ImageIO.read(f);
 			} catch (final Exception e) {
+				Logger.error("Couldn't load image '" + name + "' from file " + f.getName());
 			}
 		}
 

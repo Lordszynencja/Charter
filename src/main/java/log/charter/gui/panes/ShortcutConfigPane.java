@@ -23,8 +23,10 @@ import log.charter.gui.components.containers.ScrollableRowedPanel;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.ShortcutEditor;
+import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.services.Action;
+import log.charter.services.mouseAndKeyboard.Shortcut;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 import log.charter.util.collections.Pair;
 
@@ -126,7 +128,7 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 	private final JButton cancelButton;
 
 	public ShortcutConfigPane(final CharterMenuBar charterMenuBar, final CharterFrame frame) {
-		super(frame, Label.SHORTCUT_CONFIG_PANE, 420);
+		super(frame, Label.SHORTCUT_CONFIG_PANE, new PaneSizesBuilder(420).rowHeight(23).build());
 		this.charterMenuBar = charterMenuBar;
 
 		int row = 0;
@@ -140,7 +142,7 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 
 		this.add(panel);
 
-		addDefaultFinish(10, this.getDefaultAction(this::validateSaveAndExit), getDefaultAction(), false);
+		addDefaultFinish(20, this::validateSaveAndExit, getDefaultAction(), false);
 		saveButton = (JButton) getPart(getPartsSize() - 2);
 		cancelButton = (JButton) getLastPart();
 
@@ -151,17 +153,20 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 
 	private ScrollableRowedPanel makePanel() {
 		final int rows = actionGroups.stream().collect(Collectors.summingInt(group -> 1 + group.b.size()));
-		return new ScrollableRowedPanel(400, rows);
+		final ScrollableRowedPanel panel = new ScrollableRowedPanel(400, rows);
+		panel.getVerticalScrollBar().setUnitIncrement(5);
+
+		return panel;
 	}
 
 	private void addLabel(final Label label, final int row) {
 		final JLabel groupLabel = new JLabel(label.label(), JLabel.CENTER);
 		groupLabel.setFont(new Font(Font.DIALOG, Font.BOLD, 20));
-		panel.add(groupLabel, 20, row, 360, 20);
+		panel.addWithYOffset(groupLabel, 20, row, -5, 360, 30);
 	}
 
 	private void addEditFor(final Action action, final int row) {
-		final ShortcutEditor editor = new ShortcutEditor(action);
+		final ShortcutEditor editor = new ShortcutEditor(this, action);
 		final FieldWithLabel<ShortcutEditor> fieldWithLabel = new FieldWithLabel<>(action.label, 200, 150, 20, editor,
 				LabelPosition.LEFT);
 		panel.add(fieldWithLabel, 20, row, 360, 20);
@@ -169,14 +174,44 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		editors.put(action, fieldWithLabel.field);
 	}
 
-	private boolean validateShortcuts() {
-		// TODO check if no keybinds repeat in given groups
+	public boolean validShortcut(final Action action, final Shortcut shortcut) {
+		for (final Action otherAction : Action.values()) {
+			if (otherAction == action) {
+				continue;
+			}
+			if (!otherAction.editModes.stream().anyMatch(editMode -> action.editModes.contains(editMode))) {
+				continue;
+			}
+
+			final Shortcut otherShortcut;
+			if (editors.containsKey(otherAction)) {
+				otherShortcut = editors.get(otherAction).shortcut;
+			} else {
+				otherShortcut = ShortcutConfig.getShortcut(otherAction);
+				if (otherShortcut == null) {
+					continue;
+				}
+			}
+
+			if (otherShortcut.equals(shortcut)) {
+				return false;
+			}
+		}
+
 		return true;
 	}
 
+	public void validateShortcuts() {
+		for (final ShortcutEditor editor : editors.values()) {
+			editor.validateShortcut();
+		}
+	}
+
 	private boolean validateSaveAndExit() {
-		if (!validateShortcuts()) {
-			return false;
+		for (final ShortcutEditor editor : editors.values()) {
+			if (!editor.isValidShortcut()) {
+				return false;
+			}
 		}
 
 		editors.forEach((action, editor) -> ShortcutConfig.setShortcut(action, editor.shortcut));

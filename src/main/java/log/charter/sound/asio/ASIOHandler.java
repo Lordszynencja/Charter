@@ -3,6 +3,8 @@ package log.charter.sound.asio;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jcodec.common.logging.Logger;
+
 import com.synthbot.jasiohost.AsioChannel;
 import com.synthbot.jasiohost.AsioDriver;
 import com.synthbot.jasiohost.AsioDriverListener;
@@ -80,8 +82,8 @@ public class ASIOHandler {
 					for (int channel = 0; channel < outputChannels.length; channel++) {
 						outputChannels[channel].write(mixChannels[channel].getNextBuffer());
 					}
-
 				} catch (final Exception e) {
+					Logger.error("Error in ASIO driver listener buffer switching", e);
 				}
 			}
 

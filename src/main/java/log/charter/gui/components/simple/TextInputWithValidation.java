@@ -12,6 +12,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.jcodec.common.logging.Logger;
+
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
 import log.charter.gui.components.utils.validators.DoubleValueValidator;
@@ -52,6 +54,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 			try {
 				setter.accept(Integer.valueOf(s));
 			} catch (final NumberFormatException e) {
+				Logger.error("Unexpected empty value set");
 			}
 		};
 	}

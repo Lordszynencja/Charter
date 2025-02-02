@@ -1,5 +1,7 @@
 package log.charter.services.data.copy.data;
 
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,10 +51,24 @@ public interface ICopyData {
 
 		positionsToPaste.forEach(copiedPosition -> {
 			try {
-				final T value = copiedPosition.getValue(beats, basePosition, convertFromBeats);
-				if (value != null) {
-					positions.add(value);
-					positionsToSelect.add(value);
+				final T newValue = copiedPosition.getValue(beats, basePosition, convertFromBeats);
+				if (newValue == null) {
+					return;
+				}
+
+				positionsToSelect.add(newValue);
+
+				final Integer valueId = lastBeforeEqual(positions, newValue).findId();
+				if (valueId == null) {
+					positions.add(newValue);
+					return;
+				}
+
+				final T value = positions.get(valueId);
+				if (value.position().compareTo(newValue) == 0) {
+					positions.set(valueId, newValue);
+				} else {
+					positions.add(valueId + 1, newValue);
 				}
 			} catch (final Exception e) {
 				Logger.error("Couldn't paste position", e);

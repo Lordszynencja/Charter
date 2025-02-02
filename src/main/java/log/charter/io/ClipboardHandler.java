@@ -30,6 +30,7 @@ public class ClipboardHandler {
 				}
 			}
 		} catch (final Exception e) {
+			Logger.error("Exception when reading clipboard bytes", e);
 		}
 
 		return new byte[0];
