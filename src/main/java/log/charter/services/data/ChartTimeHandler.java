@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.jcodec.common.logging.Logger;
+
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
@@ -51,6 +53,7 @@ public class ChartTimeHandler {
 				try {
 					maxTime = max(maxTime, positions.get(positions.size() - 1).position().getPosition(beats));
 				} catch (final Exception e) {
+					Logger.error("Couldn't add fractional position to max position accumulator", e);
 				}
 			}
 		}

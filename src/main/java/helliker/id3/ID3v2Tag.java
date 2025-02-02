@@ -624,7 +624,6 @@ public class ID3v2Tag implements ID3Tag {
 		String str = head.toString();
 
 		str += "\nPadding:\t\t\t" + getPadding() + " bytes" + "\nTotalSize:\t\t\t" + getTotalSize() + " bytes";
-		;
 
 		if (head.getExtendedHeader()) {
 			str += "\n" + ext_head.toString();
