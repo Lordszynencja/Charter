@@ -357,6 +357,7 @@ public final class FrameInfo {
 		if ((val >>> 36) != 0) {
 			throw new IllegalArgumentException();
 		}
+
 		final int bitLen = 64 - Long.numberOfLeadingZeros(val);
 		if (bitLen <= 7) {
 			out.writeInt(8, (int) val);
@@ -372,8 +373,7 @@ public final class FrameInfo {
 	// Returns a uint4 value representing the given block size. Pure function.
 	private static int getBlockSizeCode(final int blockSize) {
 		int result = searchFirst(BLOCK_SIZE_CODES, blockSize);
-		if (result != -1) {
-			; // Already done
+		if (result != -1) { // Already done
 		} else if (1 <= blockSize && blockSize <= 256) {
 			result = 6;
 		} else if (1 <= blockSize && blockSize <= 65536) {
@@ -385,6 +385,7 @@ public final class FrameInfo {
 		if ((result >>> 4) != 0) {
 			throw new AssertionError();
 		}
+
 		return result;
 	}
 
@@ -393,6 +394,7 @@ public final class FrameInfo {
 		if (sampleRate == 0 || sampleRate < -1) {
 			throw new IllegalArgumentException();
 		}
+
 		int result = searchFirst(SAMPLE_RATE_CODES, sampleRate);
 		if (result != -1) {// Already done
 		} else if (0 <= sampleRate && sampleRate < 256) {
@@ -416,13 +418,16 @@ public final class FrameInfo {
 		if (sampleDepth != -1 && (sampleDepth < 1 || sampleDepth > 32)) {
 			throw new IllegalArgumentException();
 		}
+
 		int result = searchFirst(SAMPLE_DEPTH_CODES, sampleDepth);
 		if (result == -1) {
 			result = 0;
 		}
+
 		if ((result >>> 3) != 0) {
 			throw new AssertionError();
 		}
+
 		return result;
 	}
 

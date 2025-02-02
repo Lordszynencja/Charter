@@ -102,6 +102,7 @@ public class AudioHandler {
 		if (midiNotesPlaying) {
 			midiChartNotePlayer.startPlaying(speed);
 		}
+		chartToolbar.setPlayButtonIcon();
 	}
 
 	private Effect createEffect(final int channels, final int sampleRate) {
@@ -141,6 +142,8 @@ public class AudioHandler {
 		if (midiNotesPlaying) {
 			midiChartNotePlayer.stopPlaying();
 		}
+
+		chartToolbar.setPlayButtonIcon();
 	}
 
 	public void stopMusic() {
@@ -161,12 +164,10 @@ public class AudioHandler {
 		}
 		if (songPlayer != null) {
 			stopMusic();
-			chartToolbar.setPlayButtonIcon();
 			return;
 		}
 
 		playMusic(projectAudioHandler.getAudio());
-		chartToolbar.setPlayButtonIcon();
 	}
 
 	public void frame() {

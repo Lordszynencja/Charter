@@ -8,10 +8,13 @@ import static org.bytedeco.fftw.global.fftw3.fftwf_execute;
 import static org.bytedeco.fftw.global.fftw3.fftwf_free;
 import static org.bytedeco.fftw.global.fftw3.fftwf_plan_dft_r2c_1d;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 import org.bytedeco.fftw.global.fftw3.fftwf_plan;
 import org.bytedeco.javacpp.FloatPointer;
 
-public class FourierTransform {
+public class FourierTransform implements Closeable {
 	private static final int REAL = 0;
 	private static final int IMAG = 1;
 
@@ -57,7 +60,7 @@ public class FourierTransform {
 	}
 
 	@Override
-	protected void finalize() {
+	public void close() throws IOException {
 		fftwf_destroy_plan(plan);
 		fftwf_free(input);
 		fftwf_free(output);

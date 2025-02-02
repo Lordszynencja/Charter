@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.jcodec.common.logging.Logger;
+
 import helliker.id3.MP3File;
 import io.nayuki.flac.decode.FlacDecoder;
 
@@ -91,7 +93,8 @@ public class AudioFileMetadata {
 					case "YEAR" -> {
 						try {
 							metadata.year = Integer.valueOf(value);
-						} catch (final Exception e) {
+						} catch (final NumberFormatException e) {
+							Logger.error("Wrong year value in metadata: " + value);
 						}
 					}
 				}

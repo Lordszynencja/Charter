@@ -3,6 +3,8 @@ package log.charter.io.rsc.xml.converters;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jcodec.common.logging.Logger;
+
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.collections.AbstractCollectionConverter;
@@ -58,13 +60,16 @@ public class PhraseDataConverter extends AbstractCollectionConverter {
 
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();
+
 			try {
 				final String name = reader.getAttribute("name");
 				final int maxDifficulty = readMaxDifficulty(reader);
 				final boolean solo = readSolo(reader);
 				phrases.put(name, new Phrase(maxDifficulty, solo));
 			} catch (final Exception e) {
+				Logger.error("Unknown error in unmarshalling phrase", e);
 			}
+
 			reader.moveUp();
 		}
 

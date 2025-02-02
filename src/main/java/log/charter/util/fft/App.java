@@ -1,7 +1,9 @@
 package log.charter.util.fft;
 
+import java.io.IOException;
+
 public class App {
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws IOException {
 		// Sampling rate
 		final int sampleRate = 44100;
 
@@ -33,5 +35,7 @@ public class App {
 			// +
 			// mag);
 		}
+
+		noteExtractor.close();
 	}
 }

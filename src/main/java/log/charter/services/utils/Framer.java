@@ -67,6 +67,7 @@ public class Framer {
 			try {
 				thread.join();
 			} catch (final InterruptedException e) {
+				return;
 			}
 		}
 	}

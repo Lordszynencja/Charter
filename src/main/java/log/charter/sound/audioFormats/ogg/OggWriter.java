@@ -25,11 +25,14 @@ public class OggWriter {
 			runOggEnc(wav, file);
 			finished.set(true);
 		});
+
 		oggEncThread.start();
+
 		while (!finished.get()) {
 			try {
 				Thread.sleep(1000 - (System.currentTimeMillis() - progress.startTime) % 1000);
 			} catch (final InterruptedException e) {
+				return;
 			}
 		}
 
@@ -48,7 +51,6 @@ public class OggWriter {
 			runCmd(cmd);
 		} catch (final IOException e) {
 			Logger.error("Couldn't run oggenc!", e);
-			e.printStackTrace();
 		}
 	}
 
@@ -69,7 +71,7 @@ public class OggWriter {
 			try {
 				Thread.sleep(1);
 			} catch (final InterruptedException e) {
-				e.printStackTrace();
+				return;
 			}
 		}
 	}
