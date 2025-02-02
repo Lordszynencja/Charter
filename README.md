@@ -3,6 +3,13 @@
 
  ![java](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/built-with/java_vector.svg) ![github](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg) <img alt="maven" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/built-with/maven_vector.svg">
 
+[
+  ![Donate with PayPal]
+  (https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png)
+]
+(https://www.paypal.com/donate/?hosted_button_id=YH2SN57E68LK8)
+
+
 A simple viewer, player, and editor for guitar charts. Charter is a Free and Open Source app for Desktop (Windows, MacOS, and Linux.) using Java and jasio.
 
 ## Table of Contents
