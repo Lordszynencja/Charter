@@ -1,5 +1,7 @@
 package log.charter.services.data.copy.data;
 
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,13 +56,13 @@ public class SoundsCopyData implements ICopyData {
 
 		for (final CopiedSound copiedPosition : this.sounds) {
 			try {
-				final ChordOrNote sound = copiedPosition.getValue(beats, basePosition, convertFromBeats);
-				if (sound == null) {
+				final ChordOrNote newSound = copiedPosition.getValue(beats, basePosition, convertFromBeats);
+				if (newSound == null) {
 					continue;
 				}
 
-				if (sound.isChord()) {
-					final int templateId = sound.chord().templateId();
+				if (newSound.isChord()) {
+					final int templateId = newSound.chord().templateId();
 					if (!chordIdsMap.containsKey(templateId)) {
 						chordIdsMap.put(templateId,
 								arrangement.getChordTemplateIdWithSave(chordTemplates.get(templateId)));
@@ -68,11 +70,23 @@ public class SoundsCopyData implements ICopyData {
 
 					final int newTemplateId = chordIdsMap.get(templateId);
 					final ChordTemplate newTemplate = arrangement.chordTemplates.get(newTemplateId);
-					sound.chord().updateTemplate(newTemplateId, newTemplate);
+					newSound.chord().updateTemplate(newTemplateId, newTemplate);
 				}
 
-				sounds.add(sound);
-				positionsToSelect.add(sound);
+				positionsToSelect.add(newSound);
+
+				final Integer valueId = lastBeforeEqual(sounds, newSound).findId();
+				if (valueId == null) {
+					sounds.add(newSound);
+					return;
+				}
+
+				final ChordOrNote sound = sounds.get(valueId);
+				if (sound.position().compareTo(newSound) == 0) {
+					sounds.set(valueId, newSound);
+				} else {
+					sounds.add(valueId + 1, newSound);
+				}
 			} catch (final Exception e) {
 				Logger.error("Couldn't paste sound", e);
 			}
