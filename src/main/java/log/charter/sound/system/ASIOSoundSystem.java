@@ -58,6 +58,7 @@ public class ASIOSoundSystem implements ISoundSystem {
 					}
 				}
 			} catch (final Exception e) {
+				Logger.error("Error when writing bytes", e);
 			}
 
 			return written;
@@ -83,6 +84,7 @@ public class ASIOSoundSystem implements ISoundSystem {
 					}
 				}
 			} catch (final InterruptedException e) {
+				Logger.error("Error when waiting for buffers to be available", e);
 			}
 		}
 

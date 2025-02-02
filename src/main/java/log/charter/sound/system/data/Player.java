@@ -110,6 +110,7 @@ public class Player {
 				try {
 					stretchingSamplesQueue[i].add(sample);
 				} catch (final Exception e) {
+					Logger.error("Error when trying to add samples to the queue", e);
 				}
 			}
 		}
@@ -128,6 +129,7 @@ public class Player {
 			try {
 				stretchingSamples[i] = stretchingSamplesQueue[i].take();
 			} catch (final InterruptedException e) {
+				Logger.error("Error when trying to take samples from the queue", e);
 			}
 		}
 		rubberBandStretcher.process(stretchingSamples, lastBlock);

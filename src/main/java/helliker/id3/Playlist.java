@@ -13,6 +13,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.jcodec.common.logging.Logger;
+
 /*
    Copyright (C) 2001,2002 Jonathan Hilliker
    This library is free software; you can redistribute it and/or
@@ -67,10 +69,8 @@ public class Playlist extends LinkedList {
 	 * Reads in mp3s from a directory and adds them to this playlist. By default,
 	 * subdirectories will be recursed and the files will be sorted.
 	 *
-	 * @param dir
-	 *           the directory to look for mp3s in
-	 * @exception IOException
-	 *               if the files specified is not a directory
+	 * @param dir the directory to look for mp3s in
+	 * @exception IOException if the files specified is not a directory
 	 */
 	public void addDirectory(final File dir) throws IOException {
 		addDirectory(dir, true, true);
@@ -78,22 +78,17 @@ public class Playlist extends LinkedList {
 
 	/**
 	 * Reads in mp3s from a directory and adds them to the this playlist. The
-	 * recurse parameter should be set if you wish to grab mp3s from
-	 * subdirectories as well. If the sort parameter is true the files in each
-	 * directory will be sorted before added.
+	 * recurse parameter should be set if you wish to grab mp3s from subdirectories
+	 * as well. If the sort parameter is true the files in each directory will be
+	 * sorted before added.
 	 *
-	 * @param dir
-	 *           the directory to look for mp3s in
-	 * @param recurse
-	 *           whether or not to recurse subdirectories
-	 * @param sort
-	 *           whether or not to sort each directory
-	 * @exception IOException
-	 *               if the file specified is not a directory
+	 * @param dir     the directory to look for mp3s in
+	 * @param recurse whether or not to recurse subdirectories
+	 * @param sort    whether or not to sort each directory
+	 * @exception IOException if the file specified is not a directory
 	 */
 	@SuppressWarnings("unchecked")
-	public void addDirectory(final File dir, final boolean recurse, final boolean sort)
-			throws IOException {
+	public void addDirectory(final File dir, final boolean recurse, final boolean sort) throws IOException {
 
 		if (dir.isDirectory()) {
 			final File[] files = dir.listFiles(new MP3FileFilter(true));
@@ -117,26 +112,20 @@ public class Playlist extends LinkedList {
 				}
 			}
 		} else {
-			throw new IOException("Error loading playlist from a directory: "
-					+ dir.getAbsolutePath() + " is not a " + "directory");
+			throw new IOException(
+					"Error loading playlist from a directory: " + dir.getAbsolutePath() + " is not a " + "directory");
 		}
 	}
 
 	/**
-	 * Load a playlist from a file. This works with Winamp and MusicMatch
-	 * playlists. The format parameter should be either WINAMP_FORMAT or
-	 * MUSICMATCH_FORMAT.
+	 * Load a playlist from a file. This works with Winamp and MusicMatch playlists.
+	 * The format parameter should be either WINAMP_FORMAT or MUSICMATCH_FORMAT.
 	 *
-	 * @param m3uFile
-	 *           the playlist file
-	 * @param format
-	 *           the type of playlist to load
-	 * @exception PlaylistException
-	 *               if the file is corrupt
-	 * @exception FileNotFoundException
-	 *               if an error occurs
-	 * @exception IOException
-	 *               if an error occurs
+	 * @param m3uFile the playlist file
+	 * @param format  the type of playlist to load
+	 * @exception PlaylistException     if the file is corrupt
+	 * @exception FileNotFoundException if an error occurs
+	 * @exception IOException           if an error occurs
 	 */
 	public void loadFromFile(final File m3uFile, final int format)
 			throws PlaylistException, FileNotFoundException, IOException {
@@ -157,16 +146,12 @@ public class Playlist extends LinkedList {
 	/**
 	 * Loads the contents of a MusicMatch playlist.
 	 *
-	 * @param reader
-	 *           the stream to read from
-	 * @exception PlaylistException
-	 *               if an error occurs
-	 * @exception IOException
-	 *               if an error occurs
+	 * @param reader the stream to read from
+	 * @exception PlaylistException if an error occurs
+	 * @exception IOException       if an error occurs
 	 */
 	@SuppressWarnings("unchecked")
-	private void loadMusicMatchFile(final BufferedReader reader)
-			throws PlaylistException, IOException {
+	private void loadMusicMatchFile(final BufferedReader reader) throws PlaylistException, IOException {
 
 		String str;
 
@@ -182,18 +167,13 @@ public class Playlist extends LinkedList {
 	/**
 	 * Loads the contents of a winamp playlist.
 	 *
-	 * @param reader
-	 *           the stream to read from
-	 * @param m3uFile
-	 *           the Playlist File
-	 * @exception PlaylistException
-	 *               if an error occurs
-	 * @exception IOException
-	 *               if an error occurs
+	 * @param reader  the stream to read from
+	 * @param m3uFile the Playlist File
+	 * @exception PlaylistException if an error occurs
+	 * @exception IOException       if an error occurs
 	 */
 	@SuppressWarnings("unchecked")
-	private void loadWinampFile(final BufferedReader reader, final File m3uFile)
-			throws PlaylistException, IOException {
+	private void loadWinampFile(final BufferedReader reader, final File m3uFile) throws PlaylistException, IOException {
 
 		String str = reader.readLine();
 		MP3File mp3 = null;
@@ -240,8 +220,7 @@ public class Playlist extends LinkedList {
 	 * Sorts this playlist by using the specified comparator. Uses
 	 * Collections.sort().
 	 *
-	 * @param cmp
-	 *           the comparator to use
+	 * @param cmp the comparator to use
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -269,10 +248,8 @@ public class Playlist extends LinkedList {
 	/**
 	 * Writes the contents of this playlist in MusicMatch format.
 	 *
-	 * @param printer
-	 *           the stream to write to
-	 * @exception IOException
-	 *               if an error occurs
+	 * @param printer the stream to write to
+	 * @exception IOException if an error occurs
 	 */
 	private void writeMusicMatchFile(final PrintWriter printer) throws IOException {
 		// Written by David Barron, thanx
@@ -287,18 +264,15 @@ public class Playlist extends LinkedList {
 
 	/**
 	 * Writes this playlist in the format specified. This can be either
-	 * WINAMP_FORMAT or MUSICMATCH_FORMAT. If the destination is a directory,
-	 * then the file will be created in that directory with the same name as the
+	 * WINAMP_FORMAT or MUSICMATCH_FORMAT. If the destination is a directory, then
+	 * the file will be created in that directory with the same name as the
 	 * directory with a ".m3u" extension added. If the destination is a file then
 	 * the playlist will be saved to that file. If the format argument is invalid
 	 * the file will not be written.
 	 *
-	 * @param dest
-	 *           where to save the playlist
-	 * @param format
-	 *           the format to write the file in
-	 * @exception IOException
-	 *               if an error occurs
+	 * @param dest   where to save the playlist
+	 * @param format the format to write the file in
+	 * @exception IOException if an error occurs
 	 */
 	public void writeToFile(final File dest, final int format) throws IOException {
 		File m3u = dest;
@@ -323,10 +297,8 @@ public class Playlist extends LinkedList {
 	/**
 	 * Write the contents of this playlist in Winamp format.
 	 *
-	 * @param printer
-	 *           the stream to write to
-	 * @exception IOException
-	 *               if an error occurs
+	 * @param printer the stream to write to
+	 * @exception IOException if an error occurs
 	 */
 	private void writeWinampFile(final PrintWriter printer) throws IOException {
 		final Iterator it = iterator();
@@ -346,13 +318,13 @@ public class Playlist extends LinkedList {
 			try {
 				artist = mp3.getArtist();
 			} catch (final ID3v2FormatException e) {
-				;
+				Logger.error("Error when reading artist", e);
 			}
 
 			try {
 				title = mp3.getTitle();
 			} catch (final ID3v2FormatException e) {
-				;
+				Logger.error("Error when reading title", e);
 			}
 
 			if ((artist.length() != 0) && (title.length() != 0)) {
