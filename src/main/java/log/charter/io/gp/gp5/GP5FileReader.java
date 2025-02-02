@@ -45,6 +45,7 @@ import log.charter.io.gp.gp5.data.ScoreInformation;
 import log.charter.io.gp.gp5.data.TripletFeel;
 import log.charter.util.RW;
 import log.charter.util.collections.ArrayList2;
+import log.charter.util.collections.Pair;
 
 public class GP5FileReader {
 	private static final String versionString = "FICHIER GUITAR PRO";
@@ -675,19 +676,7 @@ public class GP5FileReader {
 		return new GPChord(chordName, firstFret, chordFrets, barreFrets);
 	}
 
-	private GPBeatEffects readBeatEffects() {
-		final int flags = data.read();
-		int flags2 = 0;
-		if (version >= 400) {
-			flags2 = data.read();
-		}
-
-		boolean vibrato = false;
-		if ((version < 400 && (flags & 0x01) != 0) || (flags & 0x02) != 0) {
-			vibrato = true;
-		}
-
-		final boolean rasgueado = (flags2 & 0x01) != 0;
+	private Pair<HOPO, BassPickingTechnique> readBeatBassPicking(final int flags) {
 		HOPO hopo = HOPO.NONE;
 		BassPickingTechnique bassPickingTechnique = BassPickingTechnique.NONE;
 		if ((flags & 0x20) != 0) {
@@ -708,13 +697,32 @@ public class GP5FileReader {
 			}
 		}
 
-		List<GPBend> tremoloEffects;
-		if ((flags2 & 0x04) != 0) {
-			tremoloEffects = readBend();
-		} else {
-			tremoloEffects = new ArrayList<>();
+		return new Pair<>(hopo, bassPickingTechnique);
+	}
+
+	private List<GPBend> readBeatBend(final int flags2) {
+		if ((flags2 & 0x04) == 0) {
+			return new ArrayList<>();
 		}
 
+		data.read(); // type
+		readInt32LE(data); // value
+		final List<GPBend> effects = new ArrayList<>();
+
+		final int pointCount = readInt32LE(data);
+		if (pointCount > 0) {
+			for (int i = 0; i < pointCount; i++) {
+				final int offset = readInt32LE(data); // 0...60
+				final int value = readInt32LE(data); // % of full steps
+				final boolean vibrato = readBoolean(data); // vibrato
+				effects.add(new GPBend(offset, value, vibrato));
+			}
+		}
+
+		return effects;
+	}
+
+	private void readStrokeDirection(final int flags) {
 		if ((flags & 0x40) != 0) {// stroke direction
 			if (version < 500) {
 				data.read();
@@ -724,19 +732,52 @@ public class GP5FileReader {
 				data.read();
 			}
 		}
+	}
 
+	private void readPickStrokeDirection(final int flags2) {
 		if ((flags2 & 0x02) != 0) {
 			readShortInt8(data);// pick stroke direction
 		}
+	}
 
-		Harmonic harmonic = Harmonic.NONE;
-		if (version < 400) {
-			if ((flags & 0x04) != 0) {
-				harmonic = Harmonic.NORMAL;
-			} else if ((flags & 0x08) != 0) {
-				harmonic = Harmonic.PINCH;
-			}
+	private Harmonic readHarmonic(final int flags) {
+		if (version >= 400) {
+			return Harmonic.NONE;
 		}
+
+		if ((flags & 0x04) != 0) {
+			return Harmonic.NORMAL;
+		}
+		if ((flags & 0x08) != 0) {
+			return Harmonic.PINCH;
+		}
+
+		return Harmonic.NONE;
+	}
+
+	private GPBeatEffects readBeatEffects() {
+		final int flags = data.read();
+		int flags2 = 0;
+		if (version >= 400) {
+			flags2 = data.read();
+		}
+
+		boolean vibrato = false;
+		if ((version < 400 && (flags & 0x01) != 0) || (flags & 0x02) != 0) {
+			vibrato = true;
+		}
+
+		final boolean rasgueado = (flags2 & 0x01) != 0;
+		final Pair<HOPO, BassPickingTechnique> bassPickingTechniqueData = readBeatBassPicking(flags);
+		final HOPO hopo = bassPickingTechniqueData.a;
+		final BassPickingTechnique bassPickingTechnique = bassPickingTechniqueData.b;
+
+		final List<GPBend> tremoloEffects = readBeatBend(flags2);
+
+		readStrokeDirection(flags);
+		readPickStrokeDirection(flags2);
+
+		final Harmonic harmonic = readHarmonic(flags);
 
 		return new GPBeatEffects(vibrato, rasgueado, hopo, bassPickingTechnique, tremoloEffects, harmonic);
 	}
