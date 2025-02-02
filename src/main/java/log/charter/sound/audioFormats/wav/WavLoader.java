@@ -8,7 +8,7 @@ import log.charter.sound.data.AudioUtils;
 public class WavLoader {
 	public static AudioData load(final File file) {
 		try {
-			final WavFile wavFile = WavFile.openWavFile(file);
+			final WavFile wavFile = new WavFile().openForReading(file);
 			final int channels = wavFile.getNumChannels();
 			final int frames = (int) wavFile.getNumFrames();
 

@@ -287,6 +287,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 			try {
 				Thread.sleep(2000);
 			} catch (final InterruptedException e) {
+				Logger.error("error on changing speed", e);
 			}
 			if (this.newSpeed != newSpeed) {
 				return;
