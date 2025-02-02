@@ -569,102 +569,121 @@ public class GP5FileReader {
 		return tupletNumeratorsDenominators[0];
 	}
 
-	private GPChord readChord(final int trackId) {
-		final String chordName;
-		int firstFret;
-		final int[] chordFrets = new int[tracks.get(trackId).tuning.length];
-		byte[] barreFrets = new byte[0];
+	private GPChord readVersion500Chord(final int strings) {
+		data.skip(17);
+		final String chordName = readStringWithSkip(data, 21);
+		data.skip(4);
+		final int firstFret = readInt32LE(data);
 
-		if (version >= 500) {
-			data.skip(17);
-			chordName = readStringWithSkip(data, 21);
-			data.skip(4);
-			firstFret = readInt32LE(data);
-			for (int i = 0; i < 7; i++) {
+		final int[] chordFrets = new int[strings];
+		for (int i = 0; i < 7; i++) {
+			final int fret = readInt32LE(data);
+			if (i < chordFrets.length) {
+				chordFrets[i] = fret;
+			}
+		}
+
+		final int numberOfBarres = data.read();
+		final byte[] barreFrets = new byte[numberOfBarres];
+		try {
+			data.read(barreFrets);
+			data.skip(5 - numberOfBarres);
+		} catch (final IOException e) {
+			Logger.error("Couldn't read data", e);
+		}
+		data.skip(26);
+
+		if (chordName == null) {
+			return null;
+		}
+
+		return new GPChord(chordName, firstFret, chordFrets, barreFrets);
+	}
+
+	private GPChord readVersion400AdvancedChord(final int strings) {
+		// Sharp (1)
+		// Unused (3)
+		// Root (1)
+		// Major/Minor (1)
+		// Nin,Eleven or Thirteen (1)
+		// Bass (4)
+		// Diminished/Augmented (4)
+		// Add (1)
+		data.skip(16);
+		final String chordName = readStringWithSkip(data, 21);
+
+		// Unused (2)
+		// Fifth (1)
+		// Ninth (1)
+		// Eleventh (1)
+		data.skip(4);
+		final int firstFret = readInt32LE(data);
+
+		final int[] chordFrets = new int[strings];
+		for (int i = 0; i < 7; i++) {
+			final int fret = readInt32LE(data);
+			if (i < chordFrets.length) {
+				chordFrets[i] = fret;
+			}
+		}
+
+		final int numberOfBarres = data.read();
+		final byte[] barreFrets = new byte[numberOfBarres];
+		try {
+			data.read(barreFrets);
+			data.skip(5 - numberOfBarres);
+		} catch (final IOException e) {
+			Logger.error("Couldn't read data", e);
+		}
+		// Barree end (5)
+		// Omission1,3,5,7,9,11,13 (7)
+		// Unused (1)
+		// Fingering (7)
+		// Show Diagram Fingering (1)
+		// ??
+		data.skip(26);
+
+		if (chordName == null) {
+			return null;
+		}
+
+		return new GPChord(chordName, firstFret, chordFrets, barreFrets);
+	}
+
+	private GPChord readVersion300AdvancedChord(final int strings) {
+		// unknown
+		data.skip(25);
+		final String chordName = readStringWithSkip(data, 34);
+		final int firstFret = readInt32LE(data);
+		final byte[] barreFrets = new byte[0];
+		final int[] chordFrets = new int[strings];
+		for (int i = 0; i < 6; i++) {
+			final int fret = readInt32LE(data);
+			if (i < chordFrets.length) {
+				chordFrets[i] = fret;
+			}
+		}
+		// unknown
+		data.skip(36);
+
+		if (chordName == null) {
+			return null;
+		}
+
+		return new GPChord(chordName, firstFret, chordFrets, barreFrets);
+	}
+
+	private GPChord readOlderVersionSimpleChord() {
+		final int strings = version >= 406 ? 7 : 6;
+		final String chordName = readStringWithByteSkip(data);
+		final int firstFret = readInt32LE(data);
+		final byte[] barreFrets = new byte[0];
+		final int[] chordFrets = new int[strings];
+		if (firstFret > 0) {
+			for (int i = 0; i < strings; i++) {
 				final int fret = readInt32LE(data);
 				if (i < chordFrets.length) {
 					chordFrets[i] = fret;
-				}
-			}
-
-			final int numberOfBarres = data.read();
-			barreFrets = new byte[numberOfBarres];
-			try {
-				data.read(barreFrets);
-				data.skip(5 - numberOfBarres);
-			} catch (final IOException e) {
-				Logger.error("Couldn't read data", e);
-			}
-			data.skip(26);
-		} else {
-			if (data.read() != 0) {
-				// gp4
-				if (version >= 400) {
-					// Sharp (1)
-					// Unused (3)
-					// Root (1)
-					// Major/Minor (1)
-					// Nin,Eleven or Thirteen (1)
-					// Bass (4)
-					// Diminished/Augmented (4)
-					// Add (1)
-					data.skip(16);
-					chordName = readStringWithSkip(data, 21);
-					// Unused (2)
-					// Fifth (1)
-					// Ninth (1)
-					// Eleventh (1)
-					data.skip(4);
-					firstFret = readInt32LE(data);
-					for (int i = 0; i < 7; i++) {
-						final int fret = readInt32LE(data);
-						if (i < chordFrets.length) {
-							chordFrets[i] = fret;
-						}
-					}
-
-					final int numberOfBarres = data.read();
-					barreFrets = new byte[numberOfBarres];
-					try {
-						data.read(barreFrets);
-						data.skip(5 - numberOfBarres);
-					} catch (final IOException e) {
-						Logger.error("Couldn't read data", e);
-					}
-					// Barree end (5)
-					// Omission1,3,5,7,9,11,13 (7)
-					// Unused (1)
-					// Fingering (7)
-					// Show Diagram Fingering (1)
-					// ??
-					data.skip(26);
-				} else {
-					// unknown
-					data.skip(25);
-					chordName = readStringWithSkip(data, 34);
-					firstFret = readInt32LE(data);
-					barreFrets = new byte[0];
-					for (int i = 0; i < 6; i++) {
-						final int fret = readInt32LE(data);
-						if (i < chordFrets.length) {
-							chordFrets[i] = fret;
-						}
-					}
-					// unknown
-					data.skip(36);
-				}
-			} else {
-				final int strings = version >= 406 ? 7 : 6;
-				chordName = readStringWithByteSkip(data);
-				firstFret = readInt32LE(data);
-				barreFrets = new byte[0];
-				if (firstFret > 0) {
-					for (int i = 0; i < strings; i++) {
-						final int fret = readInt32LE(data);
-						if (i < chordFrets.length) {
-							chordFrets[i] = fret;
-						}
-					}
 				}
 			}
 		}
@@ -674,6 +693,22 @@ public class GP5FileReader {
 		}
 
 		return new GPChord(chordName, firstFret, chordFrets, barreFrets);
+	}
+
+	private GPChord readChord(final int trackId) {
+		final int strings = tracks.get(trackId).tuning.length;
+		if (version >= 500) {
+			return readVersion500Chord(strings);
+		}
+		if (data.read() != 0) {
+			if (version >= 400) {
+				return readVersion400AdvancedChord(strings);
+			}
+
+			return readVersion300AdvancedChord(strings);
+		}
+
+		return readOlderVersionSimpleChord();
 	}
 
 	private Pair<HOPO, BassPickingTechnique> readBeatBassPicking(final int flags) {
@@ -705,21 +740,7 @@ public class GP5FileReader {
 			return new ArrayList<>();
 		}
 
-		data.read(); // type
-		readInt32LE(data); // value
-		final List<GPBend> effects = new ArrayList<>();
-
-		final int pointCount = readInt32LE(data);
-		if (pointCount > 0) {
-			for (int i = 0; i < pointCount; i++) {
-				final int offset = readInt32LE(data); // 0...60
-				final int value = readInt32LE(data); // % of full steps
-				final boolean vibrato = readBoolean(data); // vibrato
-				effects.add(new GPBend(offset, value, vibrato));
-			}
-		}
-
-		return effects;
+		return readBend();
 	}
 
 	private void readStrokeDirection(final int flags) {
