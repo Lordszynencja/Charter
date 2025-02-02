@@ -2,6 +2,8 @@ package log.charter.io.gp.gp7.converters;
 
 import java.util.ArrayList;
 
+import org.jcodec.common.logging.Logger;
+
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -39,12 +41,14 @@ public class GP7BeatConverter implements Converter {
 						try {
 							beat.notes.add(Integer.valueOf(noteId));
 						} catch (final NumberFormatException e) {
+							Logger.error("wrong noteId: " + noteId);
 						}
 					}
 					break;
 				default:
 					break;
 			}
+
 			reader.moveUp();
 		}
 

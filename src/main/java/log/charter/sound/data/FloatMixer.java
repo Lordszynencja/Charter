@@ -5,6 +5,8 @@ import static java.lang.Math.max;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jcodec.common.logging.Logger;
+
 import log.charter.sound.asio.ASIOHandler;
 
 public class FloatMixer {
@@ -32,6 +34,7 @@ public class FloatMixer {
 			try {
 				buffers.add(queue.take());
 			} catch (final InterruptedException e) {
+				Logger.error("Error in getting next buffer", e);
 			}
 		}
 		queues.removeIf(q -> q.isFinished() && !q.bufferAvailable());
