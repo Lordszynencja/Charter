@@ -171,16 +171,6 @@ public class ShortcutConfig {
 		}
 
 		shortcuts.put(action, shortcut);
-		for (final EditMode editMode : action.editModes) {
-			final Map<Shortcut, Action> editModeActions = actions.get(editMode);
-			if (editModeActions.containsKey(shortcut)) {
-				Logger.error("doubled shortcut %s: %s and %s".formatted(shortcut.name("-"),
-						editModeActions.get(shortcut).label.label(), action.label.label()));
-			}
-
-			editModeActions.put(shortcut, action);
-		}
-
 		addNumberShortcutAlias(action, shortcut);
 	}
 
@@ -191,6 +181,15 @@ public class ShortcutConfig {
 				final Action action = Action.valueOf(entry.getKey());
 				final Shortcut shortcut = Shortcut.fromName(entry.getValue());
 				setShortcut(action, shortcut);
+				for (final EditMode editMode : action.editModes) {
+					final Map<Shortcut, Action> editModeActions = actions.get(editMode);
+					if (editModeActions.containsKey(shortcut)) {
+						Logger.error("Doubled shortcut %s: %s and %s".formatted(shortcut.name("-"),
+								editModeActions.get(shortcut).label.label(), action.label.label()));
+					}
+
+					editModeActions.put(shortcut, action);
+				}
 			} catch (final Exception e) {
 				Logger.error(shortcutConfigPath);
 			}

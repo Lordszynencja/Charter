@@ -106,4 +106,9 @@ public class Shortcut {
 		final Shortcut other = (Shortcut) obj;
 		return ctrl == other.ctrl && shift == other.shift && alt == other.alt && key == other.key;
 	}
+
+	@Override
+	public String toString() {
+		return name("-");
+	}
 }

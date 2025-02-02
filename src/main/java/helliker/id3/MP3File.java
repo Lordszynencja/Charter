@@ -3,6 +3,7 @@ package helliker.id3;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 
 /*
    Copyright (C) 2001,2002 Jonathan Hilliker
@@ -55,8 +56,8 @@ import java.io.IOException;
 public class MP3File implements Comparable {
 
 	/**
-	 * Write ID3v1 and ID3v2 tags whether or not they exist. Precedence for
-	 * reading will be given to id3v2 tags.
+	 * Write ID3v1 and ID3v2 tags whether or not they exist. Precedence for reading
+	 * will be given to id3v2 tags.
 	 */
 	public static final int BOTH_TAGS = 0;
 
@@ -78,8 +79,8 @@ public class MP3File implements Comparable {
 	public static final int NO_TAGS = 3;
 
 	/**
-	 * Only write and read tags that already exist. Existing tags can be updated
-	 * but new tags will not be created.
+	 * Only write and read tags that already exist. Existing tags can be updated but
+	 * new tags will not be created.
 	 */
 	public static final int EXISTING_TAGS_ONLY = 4;
 
@@ -118,22 +119,15 @@ public class MP3File implements Comparable {
 	 * assumes that you only want to read and write id3 tags tha already exist in
 	 * the file.
 	 *
-	 * @param mp3
-	 *           the file of the mp3
-	 * @exception FileNotFoundException
-	 *               if an error occurs
-	 * @exception NoMPEGFramesException
-	 *               if an error occurs
-	 * @exception IOException
-	 *               if an error occurs
-	 * @exception ID3v2FormatException
-	 *               if an error occurs
-	 * @exception CorruptHeaderException
-	 *               if an error occurs
+	 * @param mp3 the file of the mp3
+	 * @exception FileNotFoundException  if an error occurs
+	 * @exception NoMPEGFramesException  if an error occurs
+	 * @exception IOException            if an error occurs
+	 * @exception ID3v2FormatException   if an error occurs
+	 * @exception CorruptHeaderException if an error occurs
 	 */
-	public MP3File(final File mp3) throws FileNotFoundException,
-			NoMPEGFramesException, IOException, ID3v2FormatException,
-			CorruptHeaderException {
+	public MP3File(final File mp3) throws FileNotFoundException, NoMPEGFramesException, IOException,
+			ID3v2FormatException, CorruptHeaderException {
 
 		this(mp3, EXISTING_TAGS_ONLY);
 	}
@@ -141,27 +135,19 @@ public class MP3File implements Comparable {
 	/**
 	 * Create and MP3File object that reads and writes to the specified file. The
 	 * id3 tags that are read from and written are dependant upon the tagType
-	 * argument. This could be either: BOTH_TAGS, ID3V2_ONLY, ID3V1_ONLY,
-	 * NO_TAGS, or EXISTING_TAGS_ONLY.
+	 * argument. This could be either: BOTH_TAGS, ID3V2_ONLY, ID3V1_ONLY, NO_TAGS,
+	 * or EXISTING_TAGS_ONLY.
 	 *
-	 * @param mp3
-	 *           the file of the mp3
-	 * @param tagType
-	 *           determines what type of tags to write and read from
-	 * @exception FileNotFoundException
-	 *               if an error occurs
-	 * @exception NoMPEGFramesException
-	 *               if an error occurs
-	 * @exception IOException
-	 *               if an error occurs
-	 * @exception ID3v2FormatException
-	 *               if an error occurs
-	 * @exception CorruptHeaderException
-	 *               if an error occurs
+	 * @param mp3     the file of the mp3
+	 * @param tagType determines what type of tags to write and read from
+	 * @exception FileNotFoundException  if an error occurs
+	 * @exception NoMPEGFramesException  if an error occurs
+	 * @exception IOException            if an error occurs
+	 * @exception ID3v2FormatException   if an error occurs
+	 * @exception CorruptHeaderException if an error occurs
 	 */
-	public MP3File(final File mp3, final int tagType) throws FileNotFoundException,
-			NoMPEGFramesException, IOException, ID3v2FormatException,
-			CorruptHeaderException {
+	public MP3File(final File mp3, final int tagType) throws FileNotFoundException, NoMPEGFramesException, IOException,
+			ID3v2FormatException, CorruptHeaderException {
 
 		this.mp3 = mp3;
 		this.tagType = tagType;
@@ -174,65 +160,49 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Create an MP3File object that reads and writes to the file with the
-	 * filename fn. This assumes that you only want to read and write id3 tags
-	 * that already exist in the file.
+	 * Create an MP3File object that reads and writes to the file with the filename
+	 * fn. This assumes that you only want to read and write id3 tags that already
+	 * exist in the file.
 	 *
-	 * @param fn
-	 *           the filename of the mp3
-	 * @exception FileNotFoundException
-	 *               if an error occurs
-	 * @exception NoMPEGFramesException
-	 *               if an error occurs
-	 * @exception IOException
-	 *               if an error occurs
-	 * @exception ID3v2FormatException
-	 *               if an error occurs
-	 * @exception CorruptHeaderException
-	 *               if an error occurs
+	 * @param fn the filename of the mp3
+	 * @exception FileNotFoundException  if an error occurs
+	 * @exception NoMPEGFramesException  if an error occurs
+	 * @exception IOException            if an error occurs
+	 * @exception ID3v2FormatException   if an error occurs
+	 * @exception CorruptHeaderException if an error occurs
 	 */
-	public MP3File(final String fn) throws FileNotFoundException,
-			NoMPEGFramesException, IOException, ID3v2FormatException,
-			CorruptHeaderException {
+	public MP3File(final String fn) throws FileNotFoundException, NoMPEGFramesException, IOException,
+			ID3v2FormatException, CorruptHeaderException {
 
 		this(new File(fn));
 	}
 
 	/**
-	 * Create an MP3File object that reads and writes to the file with the
-	 * filename fn. The id3 tags that are read from and written are dependant
-	 * upon the tagType argument. This could be either: BOTH_TAGS, ID3V2_ONLY,
-	 * ID3V1_ONLY, NO_TAGS, or EXISTING_TAGS_ONLY.
+	 * Create an MP3File object that reads and writes to the file with the filename
+	 * fn. The id3 tags that are read from and written are dependant upon the
+	 * tagType argument. This could be either: BOTH_TAGS, ID3V2_ONLY, ID3V1_ONLY,
+	 * NO_TAGS, or EXISTING_TAGS_ONLY.
 	 *
-	 * @param fn
-	 *           the filename of the mp3
-	 * @param tagType
-	 *           determines what type of tags to write and read from
-	 * @exception FileNotFoundException
-	 *               if an error occurs
-	 * @exception NoMPEGFramesException
-	 *               if an error occurs
-	 * @exception IOException
-	 *               if an error occurs
-	 * @exception ID3v2FormatException
-	 *               if an error occurs
-	 * @exception CorruptHeaderException
-	 *               if an error occurs
+	 * @param fn      the filename of the mp3
+	 * @param tagType determines what type of tags to write and read from
+	 * @exception FileNotFoundException  if an error occurs
+	 * @exception NoMPEGFramesException  if an error occurs
+	 * @exception IOException            if an error occurs
+	 * @exception ID3v2FormatException   if an error occurs
+	 * @exception CorruptHeaderException if an error occurs
 	 */
-	public MP3File(final String fn, final int tagType) throws FileNotFoundException,
-			NoMPEGFramesException, IOException, ID3v2FormatException,
-			CorruptHeaderException {
+	public MP3File(final String fn, final int tagType) throws FileNotFoundException, NoMPEGFramesException, IOException,
+			ID3v2FormatException, CorruptHeaderException {
 
 		this(new File(fn), tagType);
 	}
 
 	/**
-	 * Checks whether it is ok to read or write from the tag version specified
-	 * based on the tagType passed to the constructor. The tagVersion parameter
-	 * should be either ID3V1 or ID3V2.
+	 * Checks whether it is ok to read or write from the tag version specified based
+	 * on the tagType passed to the constructor. The tagVersion parameter should be
+	 * either ID3V1 or ID3V2.
 	 *
-	 * @param tagVersion
-	 *           the id3 version to check
+	 * @param tagVersion the id3 version to check
 	 * @return true if it is ok to proceed with the read/write
 	 */
 	private boolean allow(final int tagVersion) {
@@ -240,26 +210,22 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Checks whether it is ok to read or write from the tag version specified
-	 * based on the tagType passed to the method. The tagVersion parameter should
-	 * be either ID3V1 or ID3V2. The type parameter should be either BOTH_TAGS,
+	 * Checks whether it is ok to read or write from the tag version specified based
+	 * on the tagType passed to the method. The tagVersion parameter should be
+	 * either ID3V1 or ID3V2. The type parameter should be either BOTH_TAGS,
 	 * ID3V1_ONLY, ID3V2_ONLY, NO_TAGS, or EXISTING_TAGS_ONLY.
 	 *
-	 * @param tagVersion
-	 *           the id3 version to check
-	 * @param type
-	 *           specifies what conditions the tags are allowed to proceed
+	 * @param tagVersion the id3 version to check
+	 * @param type       specifies what conditions the tags are allowed to proceed
 	 * @return true if it is ok to proceed with the read/write
 	 */
 	private boolean allow(final int tagVersion, final int type) {
 		boolean retval = false;
 
 		if (tagVersion == ID3V1) {
-			retval = ((type == EXISTING_TAGS_ONLY) && id3v1.tagExists())
-					|| (type == ID3V1_ONLY) || (type == BOTH_TAGS);
+			retval = ((type == EXISTING_TAGS_ONLY) && id3v1.tagExists()) || (type == ID3V1_ONLY) || (type == BOTH_TAGS);
 		} else if (tagVersion == ID3V2) {
-			retval = ((type == EXISTING_TAGS_ONLY) && id3v2.tagExists())
-					|| (type == ID3V2_ONLY) || (type == BOTH_TAGS);
+			retval = ((type == EXISTING_TAGS_ONLY) && id3v2.tagExists()) || (type == ID3V2_ONLY) || (type == BOTH_TAGS);
 		}
 
 		return retval;
@@ -267,14 +233,13 @@ public class MP3File implements Comparable {
 
 	/**
 	 * Compare this MP3File to the specified object. This comparson does a simple
-	 * compare of the two paths. If the other object is not an mp3, compareTo
-	 * will always return a positive number.
+	 * compare of the two paths. If the other object is not an mp3, compareTo will
+	 * always return a positive number.
 	 *
-	 * @param o
-	 *           the object to compare to this one
-	 * @return a positive number if this object is greater than the other, 0 if
-	 *         the object are equal, or a negative number if this object is less
-	 *         than the other
+	 * @param o the object to compare to this one
+	 * @return a positive number if this object is greater than the other, 0 if the
+	 *         object are equal, or a negative number if this object is less than
+	 *         the other
 	 */
 	@Override
 	public int compareTo(final Object o) {
@@ -287,31 +252,32 @@ public class MP3File implements Comparable {
 		return cmp;
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(getPath());
+	}
+
 	/**
 	 * Returns true if the object o is equal to this MP3File. This is true if the
 	 * mp3s share the same path.
 	 *
-	 * @param o
-	 *           the object to compare
+	 * @param o the object to compare
 	 * @return true if the object o is equal to this MP3File
 	 */
 	@Override
 	public boolean equals(final Object o) {
-		boolean equal = false;
-
-		if (o instanceof MP3File) {
-			equal = getPath().equals(((MP3File) o).getPath());
+		if (!(o instanceof MP3File)) {
+			return false;
 		}
 
-		return equal;
+		return getPath().equals(((MP3File) o).getPath());
 	}
 
 	/**
 	 * Returns the album of the mp3 if set and the empty string if not.
 	 *
 	 * @return the album of the mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of the field is incorrect
+	 * @exception ID3v2FormatException if the data of the field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getAlbum() throws ID3v2FormatException {
@@ -330,8 +296,7 @@ public class MP3File implements Comparable {
 	 * Returns the artist of the mp3 if set and the empty string if not.
 	 *
 	 * @return the artist of the mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of the field is incorrect
+	 * @exception ID3v2FormatException if the data of the field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getArtist() throws ID3v2FormatException {
@@ -347,8 +312,8 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Returns the bitrate of this mp3 in kbps. If the file is a VBR file then
-	 * the average bitrate is returned.
+	 * Returns the bitrate of this mp3 in kbps. If the file is a VBR file then the
+	 * average bitrate is returned.
 	 *
 	 * @return the bitrate of this mp3 in kbps
 	 */
@@ -360,8 +325,7 @@ public class MP3File implements Comparable {
 	 * Returns the comment field of this mp3 if set and the empty string if not.
 	 *
 	 * @return the comment field of this mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of the field is incorrect
+	 * @exception ID3v2FormatException if the data of the field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getComment() throws ID3v2FormatException {
@@ -381,8 +345,7 @@ public class MP3File implements Comparable {
 	 * only).
 	 *
 	 * @return the composer of this mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of this field is incorrect
+	 * @exception ID3v2FormatException if the data of this field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getComposer() throws ID3v2FormatException {
@@ -400,8 +363,7 @@ public class MP3File implements Comparable {
 	 * (id3v2 only).
 	 *
 	 * @return the copyright info of this mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of this field is incorrect
+	 * @exception ID3v2FormatException if the data of this field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getCopyrightInfo() throws ID3v2FormatException {
@@ -415,12 +377,10 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Returns who encoded this mp3 if set and the empty string if not (id3v2
-	 * only).
+	 * Returns who encoded this mp3 if set and the empty string if not (id3v2 only).
 	 *
 	 * @return who encoded this mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of this field is incorrect
+	 * @exception ID3v2FormatException if the data of this field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getEncodedBy() throws ID3v2FormatException {
@@ -452,12 +412,11 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Returns the data contained in the frame specified by the id (id3v2 only) .
-	 * If the frame does not exist, a zero length array will be returned. The id
-	 * should be one of the static strings defined in the ID3v2Frames class.
+	 * Returns the data contained in the frame specified by the id (id3v2 only) . If
+	 * the frame does not exist, a zero length array will be returned. The id should
+	 * be one of the static strings defined in the ID3v2Frames class.
 	 *
-	 * @param id
-	 *           the id of the frame to get data from
+	 * @param id the id of the frame to get data from
 	 * @return the data contained in the frame
 	 */
 	public byte[] getFrameDataBytes(final String id) {
@@ -471,16 +430,14 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Returns the textual information contained in the frame specifed by the id.
-	 * If the frame does not contain any textual information or does not exist,
-	 * then the empty string is returned (id3v2 only). The id should be one of
-	 * the static strings defined in the ID3v2Frames class.
+	 * Returns the textual information contained in the frame specifed by the id. If
+	 * the frame does not contain any textual information or does not exist, then
+	 * the empty string is returned (id3v2 only). The id should be one of the static
+	 * strings defined in the ID3v2Frames class.
 	 *
-	 * @param id
-	 *           the id of the frame to get data from
+	 * @param id the id of the frame to get data from
 	 * @return the textual information of the frame
-	 * @exception ID3v2FormatException
-	 *               if the data of the frame is incorrect
+	 * @exception ID3v2FormatException if the data of the frame is incorrect
 	 */
 	public String getFrameDataString(final String id) throws ID3v2FormatException {
 		String str = new String();
@@ -496,8 +453,7 @@ public class MP3File implements Comparable {
 	 * Returns the genre of this mp3 if set and the empty string if not.
 	 *
 	 * @return the genre of this mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of this field is incorrect
+	 * @exception ID3v2FormatException if the data of this field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getGenre() throws ID3v2FormatException {
@@ -540,8 +496,8 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Returns a string specifying the version of the mpeg. This can either be
-	 * 1.0, 2.0, or 2.5.
+	 * Returns a string specifying the version of the mpeg. This can either be 1.0,
+	 * 2.0, or 2.5.
 	 *
 	 * @return a string specifying the version of the mpeg
 	 */
@@ -550,14 +506,13 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Although not a standard, sometimes track numbers are expressed as "x/y"
-	 * where x is the track number and y is the total number of tracks on an
-	 * album. This method will attempt to return the y value. Returns -1 if there
-	 * is an error parsing the field or if there is no id3v2 tag.
+	 * Although not a standard, sometimes track numbers are expressed as "x/y" where
+	 * x is the track number and y is the total number of tracks on an album. This
+	 * method will attempt to return the y value. Returns -1 if there is an error
+	 * parsing the field or if there is no id3v2 tag.
 	 *
 	 * @return the total number of tracks of the related album
-	 * @exception ID3v2FormatException
-	 *               if an error occurs
+	 * @exception ID3v2FormatException if an error occurs
 	 */
 	public int getNumTracks() throws ID3v2FormatException {
 		String str = getTrackString();
@@ -581,8 +536,7 @@ public class MP3File implements Comparable {
 	 * (id3v2 only).
 	 *
 	 * @return the original artist of this mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of this field is incorrect
+	 * @exception ID3v2FormatException if the data of this field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getOriginalArtist() throws ID3v2FormatException {
@@ -625,8 +579,7 @@ public class MP3File implements Comparable {
 		if (head.isVBR()) {
 			time = head.getVBRPlayingTime();
 		} else {
-			final long datasize = (mp3.length() * 8) - id3v2.getSize()
-					- id3v1.getSize();
+			final long datasize = (mp3.length() * 8) - id3v2.getSize() - id3v1.getSize();
 			final long bps = head.getBitRate() * 1000;
 
 			// Avoid divide by zero error
@@ -641,8 +594,8 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Return a formatted version of the getPlayingTime method. The string will
-	 * be formated "m:ss" where 'm' is minutes and 'ss' is seconds.
+	 * Return a formatted version of the getPlayingTime method. The string will be
+	 * formated "m:ss" where 'm' is minutes and 'ss' is seconds.
 	 *
 	 * @return a formatted version of the getPlayingTime method
 	 */
@@ -682,8 +635,8 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Return the current size of the tag(s) in bytes. What size is returned
-	 * depends on the type of tagging specified in the constructor.
+	 * Return the current size of the tag(s) in bytes. What size is returned depends
+	 * on the type of tagging specified in the constructor.
 	 *
 	 * @return the size of the tag(s) in bytes
 	 */
@@ -695,11 +648,10 @@ public class MP3File implements Comparable {
 	 * Returns the current size of the tag(s) in bytes. What size is returned
 	 * depends on the type of tagging specified. The possible values for the type
 	 * is: BOTH_TAGS, ID3V1_ONLY, ID3V2_ONLY, EXISTING_TAGS_ONLY, NO_TAGS. If
-	 * BOTH_TAGS or EXISTING_TAGS_ONLY is used and both tags exist, then the size
-	 * of the two tags added will be returned.
+	 * BOTH_TAGS or EXISTING_TAGS_ONLY is used and both tags exist, then the size of
+	 * the two tags added will be returned.
 	 *
-	 * @param type
-	 *           the tagging type
+	 * @param type the tagging type
 	 * @return the size of the tag(s) in bytes
 	 */
 	public int getTagSize(final int type) {
@@ -723,8 +675,7 @@ public class MP3File implements Comparable {
 	 * Returns the title of this mp3 if set and the empty string if not.
 	 *
 	 * @return the title of this mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of this field is incorrect
+	 * @exception ID3v2FormatException if the data of this field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getTitle() throws ID3v2FormatException {
@@ -741,12 +692,11 @@ public class MP3File implements Comparable {
 
 	/**
 	 * Returns an integer value of the track number. If a track field of an id3v2
-	 * tag has a '/' the number before the '/' will be returned. Returns -1 if
-	 * there is an error parsing the track field.
+	 * tag has a '/' the number before the '/' will be returned. Returns -1 if there
+	 * is an error parsing the track field.
 	 *
 	 * @return an int value of the track number
-	 * @exception ID3v2FormatException
-	 *               if an error occurs
+	 * @exception ID3v2FormatException if an error occurs
 	 */
 	public int getTrack() throws ID3v2FormatException {
 		String str = getTrackString();
@@ -770,8 +720,7 @@ public class MP3File implements Comparable {
 	 * Returns the track exactly as the track field of the id3 tag reads.
 	 *
 	 * @return the track of this mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of this field is incorrect
+	 * @exception ID3v2FormatException if the data of this field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getTrackString() throws ID3v2FormatException {
@@ -787,12 +736,11 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Returns the user defined url of this mp3 if set and the empty string if
-	 * not (id3v2 only).
+	 * Returns the user defined url of this mp3 if set and the empty string if not
+	 * (id3v2 only).
 	 *
 	 * @return the user defined url of this mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of this field is incorrect
+	 * @exception ID3v2FormatException if the data of this field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getUserDefinedURL() throws ID3v2FormatException {
@@ -809,8 +757,7 @@ public class MP3File implements Comparable {
 	 * Returns the year of this mp3 if set and the empty string if not.
 	 *
 	 * @return the year of this mp3
-	 * @exception ID3v2FormatException
-	 *               if the data of this field is incorrect
+	 * @exception ID3v2FormatException if the data of this field is incorrect
 	 */
 	@SuppressWarnings("deprecation")
 	public String getYear() throws ID3v2FormatException {
@@ -899,19 +846,14 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Removes id3 tags from the file. The argument specifies which tags to
-	 * remove. This can either be BOTH_TAGS, ID3V1_ONLY, ID3V2_ONLY, or
-	 * EXISTING_TAGS_ONLY.
+	 * Removes id3 tags from the file. The argument specifies which tags to remove.
+	 * This can either be BOTH_TAGS, ID3V1_ONLY, ID3V2_ONLY, or EXISTING_TAGS_ONLY.
 	 *
-	 * @param type
-	 *           specifies what tag(s) to remove
-	 * @exception FileNotFoundException
-	 *               if an error occurs
-	 * @exception IOException
-	 *               if an error occurs
+	 * @param type specifies what tag(s) to remove
+	 * @exception FileNotFoundException if an error occurs
+	 * @exception IOException           if an error occurs
 	 */
-	public void removeTags(final int type)
-			throws FileNotFoundException, IOException {
+	public void removeTags(final int type) throws FileNotFoundException, IOException {
 
 		if (allow(ID3V1, type)) {
 			id3v1.removeTag();
@@ -924,8 +866,7 @@ public class MP3File implements Comparable {
 	/**
 	 * Set the album of this mp3.
 	 *
-	 * @param album
-	 *           the album of the mp3
+	 * @param album the album of the mp3
 	 */
 	@SuppressWarnings("deprecation")
 	public void setAlbum(final String album) {
@@ -940,8 +881,7 @@ public class MP3File implements Comparable {
 	/**
 	 * Set the artist of this mp3.
 	 *
-	 * @param artist
-	 *           the artist of the mp3
+	 * @param artist the artist of the mp3
 	 */
 	@SuppressWarnings("deprecation")
 	public void setArtist(final String artist) {
@@ -956,8 +896,7 @@ public class MP3File implements Comparable {
 	/**
 	 * Add a comment to this mp3.
 	 *
-	 * @param comment
-	 *           a comment to add to the mp3
+	 * @param comment a comment to add to the mp3
 	 */
 	public void setComment(final String comment) {
 		if (allow(ID3V1)) {
@@ -971,8 +910,7 @@ public class MP3File implements Comparable {
 	/**
 	 * Set the composer of this mp3 (id3v2 only).
 	 *
-	 * @param composer
-	 *           the composer of this mp3
+	 * @param composer the composer of this mp3
 	 */
 	@SuppressWarnings("deprecation")
 	public void setComposer(final String composer) {
@@ -984,8 +922,7 @@ public class MP3File implements Comparable {
 	/**
 	 * Add some copyright information to this mp3 (id3v2 only).
 	 *
-	 * @param copyright
-	 *           copyright information related to this mp3
+	 * @param copyright copyright information related to this mp3
 	 */
 	@SuppressWarnings("deprecation")
 	public void setCopyrightInfo(final String copyright) {
@@ -997,8 +934,7 @@ public class MP3File implements Comparable {
 	/**
 	 * Set who encoded the mp3 (id3v2 only).
 	 *
-	 * @param encBy
-	 *           who encoded the mp3
+	 * @param encBy who encoded the mp3
 	 */
 	@SuppressWarnings("deprecation")
 	public void setEncodedBy(final String encBy) {
@@ -1008,13 +944,11 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Set the data of the frame specified by the id (id3v2 only). The id should
-	 * be one of the static strings specified in ID3v2Frames class.
+	 * Set the data of the frame specified by the id (id3v2 only). The id should be
+	 * one of the static strings specified in ID3v2Frames class.
 	 *
-	 * @param id
-	 *           the id of the frame to set the data for
-	 * @param data
-	 *           the data to set
+	 * @param id   the id of the frame to set the data for
+	 * @param data the data to set
 	 */
 	public void setFrameData(final String id, final byte[] data) {
 		if (allow(ID3V2)) {
@@ -1025,8 +959,7 @@ public class MP3File implements Comparable {
 	/**
 	 * Set the genre of this mp3.
 	 *
-	 * @param genre
-	 *           the genre of the mp3
+	 * @param genre the genre of the mp3
 	 */
 	@SuppressWarnings("deprecation")
 	public void setGenre(final String genre) {
@@ -1041,8 +974,7 @@ public class MP3File implements Comparable {
 	/**
 	 * Set the original artist of this mp3 (id3v2 only).
 	 *
-	 * @param artist
-	 *           the original artist of this mp3
+	 * @param artist the original artist of this mp3
 	 */
 	@SuppressWarnings("deprecation")
 	public void setOriginalArtist(final String artist) {
@@ -1052,12 +984,11 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Set the tagging type. This determines what type of id3 tags are
-	 * read/written. This should be one of the constants defined by this class:
-	 * BOTH_TAGS, ID3V1_ONLY, ID3V2_ONLY, EXISTING_TAGS_ONLY, NO_TAGS
+	 * Set the tagging type. This determines what type of id3 tags are read/written.
+	 * This should be one of the constants defined by this class: BOTH_TAGS,
+	 * ID3V1_ONLY, ID3V2_ONLY, EXISTING_TAGS_ONLY, NO_TAGS
 	 *
-	 * @param newType
-	 *           the new tagging type
+	 * @param newType the new tagging type
 	 */
 	public void setTaggingType(final int newType) {
 		tagType = newType;
@@ -1065,13 +996,11 @@ public class MP3File implements Comparable {
 
 	/**
 	 * Set the text of the text frame specified by the id (id3v2 only). The id
-	 * should be one of the static strings specifed in ID3v2Frames class. All
-	 * id's that begin with 'T' (excluding "TXXX") are considered text frames.
+	 * should be one of the static strings specifed in ID3v2Frames class. All id's
+	 * that begin with 'T' (excluding "TXXX") are considered text frames.
 	 *
-	 * @param id
-	 *           the id of the frame to set the data for
-	 * @param data
-	 *           the data to set
+	 * @param id   the id of the frame to set the data for
+	 * @param data the data to set
 	 */
 	public void setTextFrame(final String id, final String data) {
 		if (allow(ID3V2)) {
@@ -1082,8 +1011,7 @@ public class MP3File implements Comparable {
 	/**
 	 * Set the title of this mp3.
 	 *
-	 * @param title
-	 *           the title of the mp3
+	 * @param title the title of the mp3
 	 */
 	@SuppressWarnings("deprecation")
 	public void setTitle(final String title) {
@@ -1098,8 +1026,7 @@ public class MP3File implements Comparable {
 	/**
 	 * Set the track number of this mp3.
 	 *
-	 * @param track
-	 *           the track number of this mp3
+	 * @param track the track number of this mp3
 	 */
 	@SuppressWarnings("deprecation")
 	public void setTrack(final int track) {
@@ -1107,18 +1034,15 @@ public class MP3File implements Comparable {
 			id3v1.setTrack(track);
 		}
 		if (allow(ID3V2)) {
-			id3v2.setTextFrame(ID3v2Frames.TRACK_NUMBER,
-					String.valueOf(track));
+			id3v2.setTextFrame(ID3v2Frames.TRACK_NUMBER, String.valueOf(track));
 		}
 	}
 
 	/**
 	 * Set the track number with a String.
 	 *
-	 * @param track
-	 *           the track number of this mp3
-	 * @exception NumberFormatException
-	 *               if the String can't be parsed as an integer
+	 * @param track the track number of this mp3
+	 * @exception NumberFormatException if the String can't be parsed as an integer
 	 */
 	@SuppressWarnings("deprecation")
 	public void setTrack(final String track) throws NumberFormatException {
@@ -1126,19 +1050,16 @@ public class MP3File implements Comparable {
 			id3v1.setTrack(Integer.parseInt(track));
 		}
 		if (allow(ID3V2)) {
-			id3v2.setTextFrame(ID3v2Frames.TRACK_NUMBER,
-					track);
+			id3v2.setTextFrame(ID3v2Frames.TRACK_NUMBER, track);
 		}
 	}
 
 	/**
-	 * Add a field of miscellaneous text (id3v2 only). This includes a
-	 * description of the text and the text itself.
+	 * Add a field of miscellaneous text (id3v2 only). This includes a description
+	 * of the text and the text itself.
 	 *
-	 * @param desc
-	 *           a description of the text
-	 * @param text
-	 *           the text itself
+	 * @param desc a description of the text
+	 * @param text the text itself
 	 */
 	public void setUserDefinedText(final String desc, final String text) {
 		if (allow(ID3V2)) {
@@ -1147,13 +1068,11 @@ public class MP3File implements Comparable {
 	}
 
 	/**
-	 * Add a link to this mp3 (id3v2 only). This includes a description of the
-	 * url and the url itself.
+	 * Add a link to this mp3 (id3v2 only). This includes a description of the url
+	 * and the url itself.
 	 *
-	 * @param desc
-	 *           a description of the url
-	 * @param url
-	 *           the url itself
+	 * @param desc a description of the url
+	 * @param url  the url itself
 	 */
 	public void setUserDefinedURL(final String desc, final String url) {
 		if (allow(ID3V2)) {
@@ -1164,8 +1083,7 @@ public class MP3File implements Comparable {
 	/**
 	 * Set the year of this mp3.
 	 *
-	 * @param year
-	 *           of the mp3
+	 * @param year of the mp3
 	 */
 	@SuppressWarnings("deprecation")
 	public void setYear(final String year) {
@@ -1179,30 +1097,25 @@ public class MP3File implements Comparable {
 
 	/**
 	 * Return a string representation of this object. This includes all the
-	 * information contained within the mpeg header and id3 tags as well as
-	 * certain file attributes.
+	 * information contained within the mpeg header and id3 tags as well as certain
+	 * file attributes.
 	 *
 	 * @return a string representation of this object
 	 */
 	@Override
 	public String toString() {
-		return "MP3File" + "\nPath:\t\t\t\t" + mp3.getAbsolutePath()
-				+ "\nFileSize:\t\t\t" + mp3.length()
-				+ " bytes\nPlayingTime:\t\t\t" + getPlayingTimeString() + "\n"
-				+ head + "\n" + id3v1 + "\n" + id3v2;
+		return "MP3File" + "\nPath:\t\t\t\t" + mp3.getAbsolutePath() + "\nFileSize:\t\t\t" + mp3.length()
+				+ " bytes\nPlayingTime:\t\t\t" + getPlayingTimeString() + "\n" + head + "\n" + id3v1 + "\n" + id3v2;
 	}
 
 	/**
-	 * Writes the current state of the id3 tags to the file. What tags are
-	 * written depends upon the tagType passed to the constructor.
+	 * Writes the current state of the id3 tags to the file. What tags are written
+	 * depends upon the tagType passed to the constructor.
 	 *
-	 * @exception FileNotFoundException
-	 *               if an error occurs
-	 * @exception IOException
-	 *               if an error occurs
+	 * @exception FileNotFoundException if an error occurs
+	 * @exception IOException           if an error occurs
 	 */
-	public void writeTags()
-			throws FileNotFoundException, IOException {
+	public void writeTags() throws FileNotFoundException, IOException {
 
 		// Write out id3v2 first because if the filesize is changed when an
 		// id3v2 is written then the id3v1 may be moved away from the end

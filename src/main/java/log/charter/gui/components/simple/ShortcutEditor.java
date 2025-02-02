@@ -1,5 +1,6 @@
 package log.charter.gui.components.simple;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -10,6 +11,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JButton;
 import javax.swing.KeyStroke;
 
+import log.charter.gui.panes.ShortcutConfigPane;
 import log.charter.services.Action;
 import log.charter.services.mouseAndKeyboard.Shortcut;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
@@ -17,12 +19,22 @@ import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 public class ShortcutEditor extends JButton implements ActionListener, FocusListener, KeyListener {
 	private static final long serialVersionUID = -8841476344526552242L;
 
+	private final ShortcutConfigPane parent;
 	private final Action action;
 	public Shortcut shortcut;
 
-	private void resetShortcut() {
-		shortcut = new Shortcut(ShortcutConfig.getShortcut(action));
-		resetText();
+	private Color validColor;
+	private boolean validShortcut = true;
+
+	public ShortcutEditor(final ShortcutConfigPane parent, final Action action) {
+		this.parent = parent;
+		this.action = action;
+
+		resetShortcut();
+
+		addActionListener(this);
+		addFocusListener(this);
+		getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "none");
 	}
 
 	private void resetText() {
@@ -34,13 +46,36 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 		setText(text);
 	}
 
-	public ShortcutEditor(final Action action) {
-		this.action = action;
-		resetShortcut();
+	private void resetShortcut() {
+		shortcut = new Shortcut(ShortcutConfig.getShortcut(action));
+		validateShortcut();
+		resetText();
+	}
 
-		addActionListener(this);
-		addFocusListener(this);
-		getInputMap().put(KeyStroke.getKeyStroke("SPACE"), "none");
+	public void validateShortcut() {
+		final boolean previousValidationResult = validShortcut;
+		validShortcut = parent.validShortcut(action, shortcut);
+		if (previousValidationResult == validShortcut) {
+			return;
+		}
+
+		if (!validShortcut) {
+			if (validColor == null) {
+				validColor = getBackground();
+			}
+
+			setBackground(Color.RED);
+			setOpaque(validShortcut);
+		} else if (validColor != null) {
+			setBackground(validColor);
+			validColor = null;
+		}
+
+		repaint();
+	}
+
+	public boolean isValidShortcut() {
+		return validShortcut;
 	}
 
 	@Override
@@ -98,6 +133,7 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 
 		shortcut.key = code;
 		removeKeyListener(this);
+		parent.validateShortcuts();
 		resetText();
 		e.consume();
 	}

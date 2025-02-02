@@ -173,9 +173,6 @@ public class NoteStatusModels {
 		final int g1 = (rgb1 >> 8) & 0xFF;
 		final int b1 = rgb1 & 0xFF;
 
-		if (rgb1 != -16777216) {
-		}
-
 		final int multA = (255 - b1);
 		final int b = min(255, b0 * multA / 255 + b1);
 

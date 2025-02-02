@@ -1,5 +1,6 @@
 package log.charter.gui.lookAndFeel;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -25,11 +26,24 @@ public class CharterButtonUI extends BasicButtonUI {
 	@Override
 	public void installUI(final JComponent c) {
 		super.installUI(c);
+
 		final AbstractButton button = (AbstractButton) c;
 		button.setContentAreaFilled(false);
 		button.setFocusPainted(false);
 		button.setBorderPainted(false);
 		button.setOpaque(false);
+		button.setBackground(ColorLabel.BASE_BUTTON.color());
+	}
+
+	private Color getBackgroundColor(final Graphics2D g2d, final AbstractButton button) {
+		if (!button.isEnabled()) {
+			return ColorLabel.BASE_BG_2.color();
+		}
+		if (button.getModel().isPressed()) {
+			return ColorLabel.BASE_HIGHLIGHT.color();
+		}
+
+		return button.getBackground();
 	}
 
 	@Override
@@ -41,13 +55,7 @@ public class CharterButtonUI extends BasicButtonUI {
 		// button fill
 		final RoundRectangle2D.Double roundedRectangle = new RoundRectangle2D.Double(0, 0, c.getWidth() - 1,
 				c.getHeight() - 1, 5, 5);
-		if (!button.isEnabled()) {
-			g2d.setColor(ColorLabel.BASE_BG_2.color());
-		} else if (button.getModel().isPressed()) {
-			g2d.setColor(ColorLabel.BASE_HIGHLIGHT.color());
-		} else {
-			g2d.setColor(ColorLabel.BASE_BUTTON.color());
-		}
+		g2d.setColor(getBackgroundColor(g2d, button));
 		g2d.fill(roundedRectangle);
 
 		// button icon
