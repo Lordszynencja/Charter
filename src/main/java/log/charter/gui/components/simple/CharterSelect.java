@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 
 import javax.swing.JComboBox;
 
+import log.charter.gui.ChartPanelColors.ColorLabel;
+
 public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 	public static class ItemHolder<T> {
 		public final T item;
@@ -67,6 +69,8 @@ public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 		if (onPick != null) {
 			addActionListener(e -> onPick.accept(getSelectedValue()));
 		}
+
+		setBackground(ColorLabel.BASE_BUTTON.color());
 	}
 
 	public CharterSelect(final List<T> items, final T item, final Function<T, String> labelGenerator) {

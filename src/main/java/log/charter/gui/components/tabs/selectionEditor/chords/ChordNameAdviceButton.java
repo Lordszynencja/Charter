@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -112,7 +113,7 @@ public class ChordNameAdviceButton extends JButton implements ActionListener, Mo
 	public void actionPerformed(final ActionEvent e) {
 		removePopup();
 
-		final ArrayList2<String> suggestedChordNames = suggestChordNames(tuningSupplier.get(), fretsSupplier.get());
+		final List<String> suggestedChordNames = suggestChordNames(tuningSupplier.get(), fretsSupplier.get());
 
 		final int x = getX();
 		int y = getY() + getHeight();

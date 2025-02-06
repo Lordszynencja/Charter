@@ -3,6 +3,7 @@ package log.charter.sound.system;
 import java.util.function.DoubleSupplier;
 
 import log.charter.data.config.Config;
+import log.charter.io.Logger;
 import log.charter.sound.asio.ASIOHandler;
 import log.charter.sound.data.AudioData;
 import log.charter.sound.effects.Effect;
@@ -15,12 +16,18 @@ public class SoundSystem {
 	private static ISoundSystem currentSoundSystem = new StandardSoundSystem();
 
 	public static void setCurrentSoundSystem() {
-		currentSoundSystem = switch (Config.audioOutSystemType) {
-			case ASIO -> new ASIOSoundSystem();
-			default -> new StandardSoundSystem();
-		};
+		try {
+			currentSoundSystem = switch (Config.audioOutSystemType) {
+				case ASIO -> new ASIOSoundSystem();
+				default -> new StandardSoundSystem();
+			};
 
-		ASIOHandler.refresh();
+			ASIOHandler.refresh();
+		} catch (final Throwable t) {
+			Logger.error("Couldn't initialize audio system, setting output to default", t);
+			Config.audioOutSystemType = AudioSystemType.DEFAULT;
+			setCurrentSoundSystem();
+		}
 	}
 
 	public static ISoundSystem getCurrentSoundSystem() {
