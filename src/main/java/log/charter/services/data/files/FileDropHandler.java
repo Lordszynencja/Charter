@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.utils.ComponentUtils;
@@ -24,10 +25,12 @@ import log.charter.services.data.ProjectAudioHandler;
 import log.charter.util.RW;
 
 public class FileDropHandler implements DropTargetListener, Initiable {
+	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ExistingProjectImporter existingProjectImporter;
 	private GP5FileImporter gp5FileImporter;
 	private GP7PlusFileImporter gp7PlusFileImporter;
+	private GpaXmlImporter gpaXmlImporter;
 	private LRCImporter lrcImporter;
 	private MidiImporter midiImporter;
 	private ProjectAudioHandler projectAudioHandler;
@@ -56,7 +59,9 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 		final int optionChosen = ComponentUtils.showOptionsPopup(charterFrame, Label.XML_IMPORT_TYPE,
 				Label.XML_IMPORT_AS, //
 				Label.GUITAR_ARRANGEMENT, //
-				Label.VOCAL_ARRANGEMENT);
+				Label.VOCAL_ARRANGEMENT/*
+										 * , // Label.GO_PLAY_ALONG
+										 */);
 
 		switch (optionChosen) {
 			case 0:
@@ -64,6 +69,9 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 				break;
 			case 1:
 				rsXMLImporter.importRSVocalsXML(file);
+				break;
+			case 2:
+				gpaXmlImporter.importGpaXml(file);
 				break;
 			default:
 				break;
@@ -150,17 +158,26 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 
 	@Override
 	public void drop(final DropTargetDropEvent event) {
+		if (chartData.isEmpty) {
+			event.rejectDrop();
+			ComponentUtils.showPopup(charterFrame, Label.CANT_DROP_WITHOUT_PROJECT);
+			return;
+		}
+
 		final File file = getFile(event);
 		if (file == null) {
 			event.rejectDrop();
 			return;
 		}
 
-		final String fileName = file.getName();
-		final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-		fileTypeHandlers.get(extension).accept(file);
+		importFile(file);
 
 		event.dropComplete(true);
 	}
 
+	public void importFile(final File file) {
+		final String fileName = file.getName();
+		final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+		fileTypeHandlers.get(extension).accept(file);
+	}
 }

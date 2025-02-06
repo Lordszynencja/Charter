@@ -56,6 +56,7 @@ public class Localization {
 		BUFFER_SIZE_MS("Audio buffer size to fill (ms)"), //
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
+		CANT_DROP_WITHOUT_PROJECT("Can't import file without project open"), //
 		CENTS("%s cents"), //
 		CHANGE_AUDIO("Change audio"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
@@ -101,6 +102,7 @@ public class Localization {
 		FRET_7("Fret 7"), //
 		FRET_8("Fret 8"), //
 		FRET_9("Fret 9"), //
+		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
 		HIGH_PASS("High"), //
 		HIGH_PASS_SETTINGS("High pass settings"), //
@@ -169,7 +171,7 @@ public class Localization {
 		SECTION_INTRO("Intro"), //
 		SECTION_MELODY("Melody"), //
 		SECTION_MODULATED_BRIDGE("Modulated bridge"), //
-		SECTINO_MODULATED_CHORUS("Modulated chorus"), //
+		SECTION_MODULATED_CHORUS("Modulated chorus"), //
 		SECTION_MODULATED_VERSE("Modulated verse"), //
 		SECTION_NO_GUITAR("No guitar"), //
 		SECTION_OUTRO("Outro"), //
@@ -181,7 +183,7 @@ public class Localization {
 		SECTION_PRE_VERSE("Pre verse"), //
 		SECTION_RIFF("Riff"), //
 		SECTION_SILENCE("Silence"), //
-		SECITON_SOLO("Solo"), //
+		SECTION_SOLO("Solo"), //
 		SECTION_TAPPING("Tapping"), //
 		SECTION_TRANSITION("Transition"), //
 		SECTION_VAMP("Vamp"), //

@@ -1,5 +1,6 @@
 package log.charter.services;
 
+import static log.charter.data.config.SystemType.MAC;
 import static log.charter.gui.components.utils.ComponentUtils.askYesNo;
 
 import java.lang.reflect.Field;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.SystemType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.CharterFrame;
@@ -40,6 +42,7 @@ import log.charter.services.data.copy.CopyManager;
 import log.charter.services.data.files.ExistingProjectImporter;
 import log.charter.services.data.files.FileDropHandler;
 import log.charter.services.data.files.GP5FileImporter;
+import log.charter.services.data.files.GpaXmlImporter;
 import log.charter.services.data.files.LRCImporter;
 import log.charter.services.data.files.MidiImporter;
 import log.charter.services.data.files.NewProjectCreator;
@@ -81,6 +84,7 @@ public class CharterContext {
 	private final FileDropHandler fileDropHandler = new FileDropHandler();
 	private final GP5FileImporter gp5FileImporter = new GP5FileImporter();
 	private final GP7PlusFileImporter gp7PlusFileImporter = new GP7PlusFileImporter();
+	private final GpaXmlImporter gpaXmlImporter = new GpaXmlImporter();
 	private final GuitarSoundsHandler guitarSoundsHandler = new GuitarSoundsHandler();
 	private final GuitarSoundsStatusesHandler guitarSoundsStatusesHandler = new GuitarSoundsStatusesHandler();
 	private final HandShapesHandler handShapesHandler = new HandShapesHandler();
@@ -209,7 +213,7 @@ public class CharterContext {
 			chartTimeHandler.frame(frameTime);
 			timer.addTimestamp("chartTimeHandler.frame()");
 
-			if (windowedPreviewHandler.isPreviewVisible()) {
+			if (SystemType.not(MAC) && windowedPreviewHandler.isPreviewVisible()) {
 				windowedPreviewHandler.paintFrame();
 				timer.addTimestamp("windowedPreviewHandler.paintFrame()");
 			}

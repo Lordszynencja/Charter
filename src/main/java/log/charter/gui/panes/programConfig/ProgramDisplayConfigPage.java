@@ -1,11 +1,13 @@
 package log.charter.gui.panes.programConfig;
 
+import static log.charter.data.config.SystemType.MAC;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 
 import javax.swing.JCheckBox;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.SystemType;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.FieldWithLabel;
@@ -40,11 +42,13 @@ public class ProgramDisplayConfigPage implements Page {
 		position.newRow();
 
 		addInvertStrings(panel, position);
-		position.addX(20);
-		addInvertStrings3D(panel, position);
-		position.newRow();
+		if (SystemType.not(MAC)) {
+			position.addX(20);
+			addInvertStrings3D(panel, position);
+			position.newRow();
 
-		addLeftHanded(panel, position);
+			addLeftHanded(panel, position);
+		}
 		position.newRow();
 
 		addshowTempoInsteadOfBPM(panel, position);
@@ -141,8 +145,10 @@ public class ProgramDisplayConfigPage implements Page {
 	public void setVisible(final boolean visibility) {
 		markerOffsetField.setVisible(visibility);
 		invertStringsField.setVisible(visibility);
-		invertStrings3DField.setVisible(visibility);
-		leftHandedField.setVisible(visibility);
+		if (SystemType.not(MAC)) {
+			invertStrings3DField.setVisible(visibility);
+			leftHandedField.setVisible(visibility);
+		}
 		showTempoInsteadOfBPMField.setVisible(visibility);
 		showChordIdsField.setVisible(visibility);
 		showGridField.setVisible(visibility);

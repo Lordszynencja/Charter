@@ -7,7 +7,7 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
-import log.charter.services.data.files.LoadingDialog;
+import log.charter.gui.components.simple.LoadingDialog;
 import log.charter.services.data.files.SongFilesBackuper;
 import log.charter.sound.SoundFileType;
 import log.charter.sound.data.AudioData;

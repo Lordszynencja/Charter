@@ -3,6 +3,7 @@ package log.charter.services.mouseAndKeyboard;
 import static java.awt.event.KeyEvent.VK_ALT;
 import static java.awt.event.KeyEvent.VK_CONTROL;
 import static java.awt.event.KeyEvent.VK_LEFT;
+import static java.awt.event.KeyEvent.VK_META;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_SHIFT;
 
@@ -20,43 +21,37 @@ public class KeyboardHandler implements KeyListener {
 	private ActionHandler actionHandler;
 	private ModeManager modeManager;
 
-	private boolean ctrl = false;
-	private boolean alt = false;
-	private boolean shift = false;
+	private Shortcut shortcut = new Shortcut();
 
-	private int heldNonModifierKey = -1;
 	private Action heldAction = null;
 
 	public void clearKeys() {
-		ctrl = false;
-		alt = false;
-		shift = false;
-		heldNonModifierKey = -1;
+		shortcut = new Shortcut();
 		heldAction = null;
 	}
 
 	public void setRewind() {
-		heldNonModifierKey = VK_LEFT;
+		shortcut.key = VK_LEFT;
 		heldAction = Action.MOVE_BACKWARD;
 		actionHandler.fireAction(heldAction);
 	}
 
 	public void clearRewind() {
-		if (heldAction == Action.MOVE_BACKWARD && heldNonModifierKey == VK_LEFT) {
-			heldNonModifierKey = -1;
+		if (heldAction == Action.MOVE_BACKWARD && shortcut.key == VK_LEFT) {
+			shortcut.key = -1;
 			heldAction = null;
 		}
 	}
 
 	public void setFastForward() {
-		heldNonModifierKey = VK_RIGHT;
+		shortcut.key = VK_RIGHT;
 		heldAction = Action.MOVE_FORWARD;
 		actionHandler.fireAction(heldAction);
 	}
 
 	public void clearFastForward() {
-		if (heldAction == Action.MOVE_FORWARD && heldNonModifierKey == VK_RIGHT) {
-			heldNonModifierKey = -1;
+		if (heldAction == Action.MOVE_FORWARD && shortcut.key == VK_RIGHT) {
+			shortcut.key = -1;
 			heldAction = null;
 		}
 	}
@@ -66,20 +61,19 @@ public class KeyboardHandler implements KeyListener {
 	}
 
 	public boolean alt() {
-		return alt;
+		return shortcut.alt;
 	}
 
 	public boolean ctrl() {
-		return ctrl;
+		return shortcut.ctrl;
 	}
 
 	public boolean shift() {
-		return shift;
+		return shortcut.shift;
 	}
 
 	private void replaceHeldAction() {
-		heldAction = ShortcutConfig.getAction(modeManager.getMode(),
-				new Shortcut(ctrl, shift, alt, heldNonModifierKey));
+		heldAction = ShortcutConfig.getAction(modeManager.getMode(), shortcut);
 	}
 
 	@Override
@@ -91,17 +85,22 @@ public class KeyboardHandler implements KeyListener {
 			}
 
 			if (keyCode == VK_CONTROL) {
-				ctrl = true;
+				shortcut.ctrl = true;
 				replaceHeldAction();
 				return;
 			}
 			if (keyCode == VK_SHIFT) {
-				shift = true;
+				shortcut.shift = true;
 				replaceHeldAction();
 				return;
 			}
 			if (keyCode == VK_ALT) {
-				alt = true;
+				shortcut.alt = true;
+				replaceHeldAction();
+				return;
+			}
+			if (keyCode == VK_META) {
+				shortcut.command = true;
 				replaceHeldAction();
 				return;
 			}
@@ -112,12 +111,13 @@ public class KeyboardHandler implements KeyListener {
 				keyCode = KeyEvent.VK_MINUS;
 			}
 
-			heldNonModifierKey = keyCode;
+			shortcut.key = keyCode;
 			replaceHeldAction();
 
 			if (heldAction != null) {
 				actionHandler.fireAction(heldAction);
 			}
+
 			e.consume();
 		} catch (final Exception ex) {
 			Logger.error("Exception on key pressed " + KeyEvent.getKeyText(e.getKeyCode()), ex);
@@ -129,21 +129,25 @@ public class KeyboardHandler implements KeyListener {
 		try {
 			final int keyCode = e.getKeyCode();
 			switch (keyCode) {
-				case KeyEvent.VK_CONTROL:
-					ctrl = false;
+				case VK_CONTROL:
+					shortcut.ctrl = false;
 					replaceHeldAction();
 					break;
-				case KeyEvent.VK_SHIFT:
-					shift = false;
+				case VK_SHIFT:
+					shortcut.shift = false;
 					replaceHeldAction();
 					break;
-				case KeyEvent.VK_ALT:
-					alt = false;
+				case VK_ALT:
+					shortcut.alt = false;
+					replaceHeldAction();
+					break;
+				case VK_META:
+					shortcut.command = false;
 					replaceHeldAction();
 					break;
 				default:
-					if (heldNonModifierKey == keyCode) {
-						heldNonModifierKey = -1;
+					if (shortcut.key == keyCode) {
+						shortcut.key = -1;
 						heldAction = null;
 					}
 					break;

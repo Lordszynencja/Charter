@@ -41,7 +41,7 @@ public class Player {
 		frameSize = musicData.playingFormat.getFrameSize();
 
 		this.effect = effect;
-		if (speed == 100) {
+		if (speed == 100 || !RubberBandStretcher.loaded) {
 			rubberBandStretcher = null;
 			stretchingSamplesQueue = null;
 		} else {
@@ -101,7 +101,7 @@ public class Player {
 	}
 
 	private float[][] stretch(final float[][] samples, final boolean lastBlock) {
-		if (speed == 100) {
+		if (rubberBandStretcher == null) {
 			return samples;
 		}
 

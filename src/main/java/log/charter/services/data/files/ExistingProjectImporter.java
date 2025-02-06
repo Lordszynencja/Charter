@@ -1,8 +1,8 @@
 package log.charter.services.data.files;
 
+import static log.charter.gui.components.simple.LoadingDialog.doWithLoadingDialog;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.readChartProject;
-import static log.charter.services.data.files.LoadingDialog.doWithLoadingDialog;
 import static log.charter.services.data.files.SongFilesBackuper.makeBackups;
 
 import java.io.File;
@@ -13,6 +13,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.simple.LoadingDialog;
 import log.charter.gui.components.tabs.TextTab;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.io.Logger;

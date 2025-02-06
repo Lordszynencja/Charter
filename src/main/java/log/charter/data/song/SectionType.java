@@ -40,6 +40,11 @@ public enum SectionType {
 
 	private SectionType(final String rsName) {
 		this.rsName = rsName;
-		label = Label.valueOf("SECTION_" + name());
+		try {
+			label = Label.valueOf("SECTION_" + name());
+		} catch (final Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
 	}
 }

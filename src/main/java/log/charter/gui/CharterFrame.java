@@ -1,6 +1,7 @@
 package log.charter.gui;
 
 import static java.util.Arrays.asList;
+import static log.charter.data.config.SystemType.MAC;
 
 import java.awt.Component;
 import java.awt.Graphics;
@@ -16,6 +17,7 @@ import log.charter.CharterMain;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.SystemType;
 import log.charter.data.song.Arrangement;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.components.containers.CharterScrollPane;
@@ -59,7 +61,7 @@ public class CharterFrame extends JFrame implements Initiable {
 	private ModeManager modeManager;
 	private TextTab textTab;
 
-	private final Preview3DPanel preview3DPanel = new Preview3DPanel();
+	private final Preview3DPanel preview3DPanel = SystemType.not(MAC) ? new Preview3DPanel() : null;
 
 	private CharterMenuBar charterMenuBar;
 	private ChartToolbar chartToolbar;
@@ -86,19 +88,30 @@ public class CharterFrame extends JFrame implements Initiable {
 
 	@Override
 	public void init() {
-		charterContext.initObject(preview3DPanel);
+		if (SystemType.not(MAC)) {
+			charterContext.initObject(preview3DPanel);
+		}
 
 		setSize(Config.windowWidth, Config.windowHeight);
 		setLocation(Config.windowPosX, Config.windowPosY);
 		setExtendedState(Config.windowExtendedState);
 
-		tabs = new CharterTabbedPane(//
-				new Tab(Label.TAB_QUICK_EDIT, new CharterScrollPane(currentSelectionEditor)), //
-				new Tab(Label.TAB_CHORD_TEMPLATES_EDITOR, new CharterScrollPane(chordTemplatesEditorTab)), //
-				new Tab(Label.TAB_ERRORS, errorsTab), //
-				new Tab(Label.TAB_3D_PREVIEW, preview3DPanel), //
-				new Tab(Label.TAB_TEXT, textTab), //
-				new Tab(Label.TAB_HELP, helpTab));
+		if (SystemType.is(MAC)) {
+			tabs = new CharterTabbedPane(//
+					new Tab(Label.TAB_QUICK_EDIT, new CharterScrollPane(currentSelectionEditor)), //
+					new Tab(Label.TAB_CHORD_TEMPLATES_EDITOR, new CharterScrollPane(chordTemplatesEditorTab)), //
+					new Tab(Label.TAB_ERRORS, errorsTab), //
+					new Tab(Label.TAB_TEXT, textTab), //
+					new Tab(Label.TAB_HELP, helpTab));
+		} else {
+			tabs = new CharterTabbedPane(//
+					new Tab(Label.TAB_QUICK_EDIT, new CharterScrollPane(currentSelectionEditor)), //
+					new Tab(Label.TAB_CHORD_TEMPLATES_EDITOR, new CharterScrollPane(chordTemplatesEditorTab)), //
+					new Tab(Label.TAB_ERRORS, errorsTab), //
+					new Tab(Label.TAB_3D_PREVIEW, preview3DPanel), //
+					new Tab(Label.TAB_TEXT, textTab), //
+					new Tab(Label.TAB_HELP, helpTab));
+		}
 
 		add(chartToolbar);
 		add(chartPanel);
@@ -161,6 +174,10 @@ public class CharterFrame extends JFrame implements Initiable {
 	}
 
 	public void reloadTextures() {
+		if (SystemType.is(MAC)) {
+			return;
+		}
+
 		preview3DPanel.reloadTextures();
 	}
 
@@ -173,7 +190,7 @@ public class CharterFrame extends JFrame implements Initiable {
 		paintWaiting = true;
 		super.repaint();
 
-		if (preview3DPanel.isShowing()) {
+		if (SystemType.not(MAC) && preview3DPanel.isShowing()) {
 			preview3DPanel.repaint();
 		}
 	}

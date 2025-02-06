@@ -6,17 +6,31 @@ import java.util.Objects;
 public class Shortcut {
 	public static Shortcut fromName(final String name) {
 		final String[] nameParts = name.split(" ");
-		if (nameParts.length < 4) {
-			return new Shortcut();
+		if (nameParts.length == 4 && (nameParts[0].equals("T") || nameParts[0].equals("F"))) {
+			return new Shortcut(nameParts[0].equals("T"), nameParts[1].equals("T"), nameParts[2].equals("T"),
+					Integer.valueOf(nameParts[3]));
 		}
 
-		return new Shortcut(nameParts[0].equals("T"), nameParts[1].equals("T"), nameParts[2].equals("T"),
-				Integer.valueOf(nameParts[3]));
+		final Shortcut shortcut = new Shortcut();
+
+		for (int i = 0; i < nameParts.length - 1; i++) {
+			switch (nameParts[i]) {
+				case "Ctrl" -> shortcut.ctrl = true;
+				case "Shift" -> shortcut.shift = true;
+				case "Alt" -> shortcut.alt = true;
+				case "Cmd" -> shortcut.command = true;
+			}
+		}
+
+		shortcut.key = Integer.valueOf(nameParts[nameParts.length - 1]);
+
+		return shortcut;
 	}
 
 	public boolean ctrl = false;
 	public boolean shift = false;
 	public boolean alt = false;
+	public boolean command = false;
 	public int key = -1;// key code from KeyEvent
 
 	public Shortcut() {
@@ -26,6 +40,7 @@ public class Shortcut {
 		ctrl = other.ctrl;
 		shift = other.shift;
 		alt = other.alt;
+		command = other.command;
 		key = other.key;
 	}
 
@@ -75,6 +90,9 @@ public class Shortcut {
 		if (alt) {
 			nameBuilder.append("Alt").append(joiner);
 		}
+		if (command) {
+			nameBuilder.append("Cmd").append(joiner);
+		}
 		if (key != -1) {
 			nameBuilder.append(KeyEvent.getKeyText(key));
 		}
@@ -83,7 +101,23 @@ public class Shortcut {
 	}
 
 	public String saveName() {
-		return (ctrl ? "T" : "F") + " " + (shift ? "T" : "F") + " " + (alt ? "T" : "F") + " " + key;
+		final StringBuilder b = new StringBuilder();
+		if (ctrl) {
+			b.append("Ctrl ");
+		}
+		if (shift) {
+			b.append("Shift ");
+		}
+		if (alt) {
+			b.append("Alt ");
+		}
+		if (command) {
+			b.append("Cmd ");
+		}
+
+		b.append(key);
+
+		return b.toString();
 	}
 
 	@Override
