@@ -3,7 +3,7 @@ package log.charter.data.config;
 public enum SystemType {
 	LINUX, MAC, WINDOWS, OTHER;
 
-	public static final SystemType systemType = MAC;
+	public static final SystemType systemType = findSystemType();
 
 	private static SystemType findSystemType() {
 		final String os = System.getProperty("os.name").toLowerCase();
