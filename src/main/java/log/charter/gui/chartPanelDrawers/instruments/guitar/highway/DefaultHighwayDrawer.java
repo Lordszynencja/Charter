@@ -220,7 +220,8 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 	private void addSection(final Graphics2D g, final SectionType section, final int x) {
 		final TextWithBackground text = new TextWithBackground(new Position2D(x, sectionNamesY), anchorFont,
-				section.label, ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color());
+				section.label.label(), ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT,
+				ColorLabel.BASE_BORDER.color());
 
 		addEventPointTextIfOnScreen(text);
 	}

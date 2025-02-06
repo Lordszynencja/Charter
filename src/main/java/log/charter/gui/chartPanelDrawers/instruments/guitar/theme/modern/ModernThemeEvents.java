@@ -42,7 +42,7 @@ public class ModernThemeEvents implements ThemeEvents {
 	}
 
 	private TextWithBackground generateSectionText(final SectionType section, final int x) {
-		return new TextWithBackground(new Position2D(x, sectionNamesY), eventFont, section.label,
+		return new TextWithBackground(new Position2D(x, sectionNamesY), eventFont, section.label.label(),
 				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.SECTION_NAME_BG, 2, ColorLabel.BASE_BORDER);
 	}
 
@@ -76,7 +76,7 @@ public class ModernThemeEvents implements ThemeEvents {
 
 	@Override
 	public void addCurrentSection(final Graphics2D g, final SectionType section, final int nextSectionX) {
-		final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, section.label,
+		final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, section.label.label(),
 				sectionTextSpace);
 		final int x = min(0, nextSectionX - expectedSize.width);
 
