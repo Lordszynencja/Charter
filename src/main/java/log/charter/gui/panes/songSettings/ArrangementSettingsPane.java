@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -28,6 +27,7 @@ import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.configs.Tuning.TuningType;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.simple.CharterSelect;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
@@ -36,23 +36,9 @@ import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.sound.data.AudioUtils;
-import log.charter.util.collections.ArrayList2;
 
 public class ArrangementSettingsPane extends ParamsPane {
 	private static final long serialVersionUID = -3193534671039163160L;
-
-	private class TuningTypeHolder {
-		public final TuningType tuningType;
-
-		private TuningTypeHolder(final TuningType tuningType) {
-			this.tuningType = tuningType;
-		}
-
-		@Override
-		public String toString() {
-			return tuningType.nameWithValues(tuning.strings());
-		}
-	}
 
 	private final CharterMenuBar charterMenuBar;
 	private final ChartData data;
@@ -60,7 +46,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 	private final SelectionManager selectionManager;
 
 	private final JLabel centOffsetLabel;
-	private JComboBox<TuningTypeHolder> tuningSelect;
+	private CharterSelect<TuningType> tuningSelect;
 	private final int tuningInputsRow;
 	private final List<TextInputWithValidation> tuningInputs = new ArrayList<>();
 	private final List<JLabel> tuningLabels = new ArrayList<>();
@@ -164,33 +150,34 @@ public class ArrangementSettingsPane extends ParamsPane {
 		setCentsValue();
 	}
 
+	private void setArrangementType(final ArrangementType newArrangementType) {
+		arrangementType = newArrangementType;
+		setTuningLabels();
+	}
+
 	private void addArrangmentType(final AtomicInteger row) {
-		final JComboBox<ArrangementType> arrangementTypeInput = new JComboBox<>(ArrangementType.values());
-		arrangementTypeInput.setSelectedItem(arrangementType);
-		arrangementTypeInput.addActionListener(e -> {
-			arrangementType = (ArrangementType) arrangementTypeInput.getSelectedItem();
-			setTuningLabels();
-		});
+		final CharterSelect<ArrangementType> input = new CharterSelect<>(ArrangementType.values(), arrangementType,
+				v -> v.name(), this::setArrangementType);
+
 		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_TYPE, 0);
-		add(arrangementTypeInput, 150, getY(row.getAndIncrement()), 100, 20);
+		add(input, 150, getY(row.getAndIncrement()), 100, 20);
+	}
+
+	private void setArrangementSubtype(final ArrangementSubtype newArrangementSubtype) {
+		arrangementSubtype = newArrangementSubtype;
 	}
 
 	private void addArrangmentSubtype(final AtomicInteger row) {
-		final JComboBox<ArrangementSubtype> arrangementSubtypeInput = new JComboBox<>(ArrangementSubtype.values());
-		arrangementSubtypeInput.setSelectedItem(arrangementSubtype);
-		arrangementSubtypeInput.addActionListener(e -> {
-			arrangementSubtype = (ArrangementSubtype) arrangementSubtypeInput.getSelectedItem();
-		});
+		final CharterSelect<ArrangementSubtype> input = new CharterSelect<>(ArrangementSubtype.values(),
+				arrangementSubtype, v -> v.label.label(), this::setArrangementSubtype);
+
 		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_SUBTYPE, 0);
-		add(arrangementSubtypeInput, 150, getY(row.getAndIncrement()), 100, 20);
+		add(input, 150, getY(row.getAndIncrement()), 100, 20);
 	}
 
 	private void addTuningSelect(final AtomicInteger row) {
-		final List<TuningTypeHolder> values = new ArrayList2<>(TuningType.values()).map(TuningTypeHolder::new);
-		tuningSelect = new JComboBox<>(values.toArray(new TuningTypeHolder[0]));
-		tuningSelect.setSelectedIndex(tuning.tuningType.ordinal());
-		tuningSelect.addActionListener(
-				e -> onTuningSelected(((TuningTypeHolder) tuningSelect.getSelectedItem()).tuningType));
+		tuningSelect = new CharterSelect<>(TuningType.values(), tuning.tuningType, v -> v.name, this::onTuningSelected);
+
 		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_TUNING_TYPE, 0);
 		this.add(tuningSelect, 75, getY(row.getAndIncrement()), 200, 20);
 	}

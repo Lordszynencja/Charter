@@ -16,7 +16,7 @@ import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.gui.menuHandlers.CharterMenuBar;
-import log.charter.gui.panes.imports.GPImportOptions;
+import log.charter.gui.panes.imports.ArrangementImportOptions;
 import log.charter.io.Logger;
 import log.charter.io.gp.gp7.data.GP7Automation;
 import log.charter.io.gp.gp7.data.GP7MasterBar;
@@ -160,6 +160,6 @@ public class GP7PlusFileImporter {
 		final BeatsMap beatsMap = replaceTempoMap(gpif);
 		final SongChart temporaryChart = GP7FileToSongChart.transform(gpif, beatsMap);
 
-		new GPImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart);
+		new ArrangementImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart);
 	}
 }

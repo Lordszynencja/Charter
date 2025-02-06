@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.function.Function;
 
 import log.charter.data.config.Localization.Label;
-import log.charter.services.data.files.LoadingDialog;
+import log.charter.gui.components.simple.LoadingDialog;
 import log.charter.sound.audioFormats.flac.FlacLoader;
 import log.charter.sound.audioFormats.flac.FlacWriter;
 import log.charter.sound.audioFormats.mp3.Mp3Loader;

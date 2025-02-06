@@ -30,7 +30,6 @@ import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.util.chordRecognition.ChordNameSuggester;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.Pair;
 import log.charter.util.data.IntRange;
 
@@ -222,8 +221,8 @@ public class GuitarSoundsHandler {
 			return;
 		}
 
-		final ArrayList2<String> suggestedNames = ChordNameSuggester
-				.suggestChordNames(chartData.currentArrangement().tuning, template.frets);
+		final List<String> suggestedNames = ChordNameSuggester.suggestChordNames(chartData.currentArrangement().tuning,
+				template.frets);
 
 		if (!suggestedNames.isEmpty()) {
 			template.chordName = suggestedNames.get(0);

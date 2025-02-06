@@ -130,6 +130,11 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 			resetText();
 			return;
 		}
+		if (code == KeyEvent.VK_META) {
+			shortcut.command = true;
+			resetText();
+			return;
+		}
 
 		shortcut.key = code;
 		removeKeyListener(this);
@@ -156,6 +161,11 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 		}
 		if (e.getKeyCode() == KeyEvent.VK_ALT) {
 			shortcut.alt = false;
+			resetText();
+			return;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_META) {
+			shortcut.command = false;
 			resetText();
 			return;
 		}

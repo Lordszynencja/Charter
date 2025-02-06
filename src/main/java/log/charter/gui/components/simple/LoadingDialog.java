@@ -1,4 +1,4 @@
-package log.charter.services.data.files;
+package log.charter.gui.components.simple;
 
 import java.util.function.Consumer;
 
@@ -23,8 +23,8 @@ public class LoadingDialog extends JDialog {
 			protected Void doInBackground() throws Exception {
 				try {
 					operation.accept(dialog);
-				} catch (final Exception e) {
-					Logger.error("error when executing operation " + operationName, e);
+				} catch (final Throwable t) {
+					Logger.error("error when executing operation " + operationName, t);
 				}
 
 				dialog.dispose();

@@ -21,6 +21,9 @@ public class GraphicTexturesConfigPage implements Page {
 	private FieldWithLabel<CharterSelect<String>> inlayField;
 	private FieldWithLabel<CharterSelect<String>> texturePackField;
 
+	private String inlay = GraphicalConfig.inlay;
+	private String texturePack = GraphicalConfig.texturePack;
+
 	@Override
 	public Label label() {
 		return Label.PAGE_TEXTURES;
@@ -38,7 +41,7 @@ public class GraphicTexturesConfigPage implements Page {
 		final Stream<String> names = listFiles(FileUtils.inlaysFolder, f -> f.getName().endsWith(".png"))//
 				.map(name -> name.substring(0, name.length() - 4));
 
-		final CharterSelect<String> inlaySelect = new CharterSelect<>(names, GraphicalConfig.inlay);
+		final CharterSelect<String> inlaySelect = new CharterSelect<>(names, inlay, null, v -> inlay = v);
 		inlayField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_INLAY, 90, 150, 20, inlaySelect, LabelPosition.LEFT);
 		panel.add(inlayField, position);
 	}
@@ -46,7 +49,8 @@ public class GraphicTexturesConfigPage implements Page {
 	private void addTexturePackSelect(final RowedPanel panel, final RowedPosition position) {
 		final List<String> names = listDirectories(FileUtils.texturesFolder);
 
-		final CharterSelect<String> texturePackSelect = new CharterSelect<>(names, GraphicalConfig.texturePack);
+		final CharterSelect<String> texturePackSelect = new CharterSelect<>(names, texturePack, null,
+				v -> texturePack = v);
 		texturePackField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_TEXTURE_PACK, 90, 150, 20, texturePackSelect,
 				LabelPosition.LEFT);
 		panel.add(texturePackField, position);
@@ -60,12 +64,12 @@ public class GraphicTexturesConfigPage implements Page {
 
 	public void save(final CharterContext context) {
 		boolean texturesChanged = false;
-		if (!inlayField.field.getSelectedItem().equals(GraphicalConfig.inlay)) {
-			GraphicalConfig.inlay = inlayField.field.getSelectedValue();
+		if (!inlay.equals(GraphicalConfig.inlay)) {
+			GraphicalConfig.inlay = inlay;
 			texturesChanged = true;
 		}
-		if (!texturePackField.field.getSelectedItem().equals(GraphicalConfig.texturePack)) {
-			GraphicalConfig.texturePack = texturePackField.field.getSelectedValue();
+		if (!texturePack.equals(GraphicalConfig.texturePack)) {
+			GraphicalConfig.texturePack = texturePack;
 			texturesChanged = true;
 		}
 

@@ -59,7 +59,8 @@ public class ColorConfigPane extends ParamsPane {
 				.listFiles(FileUtils.colorSetsFolder, file -> file.getName().endsWith(".txt"))//
 				.map(name -> name.substring(0, name.length() - 4));
 
-		final CharterSelect<String> select = new CharterSelect<>(names, GraphicalConfig.colorSet, this::changeSet);
+		final CharterSelect<String> select = new CharterSelect<>(names, GraphicalConfig.colorSet, null,
+				this::changeSet);
 
 		add(select, 20, 0, 200, 20);
 

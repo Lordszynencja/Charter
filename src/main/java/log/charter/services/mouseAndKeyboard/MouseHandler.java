@@ -13,8 +13,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.List;
 
-import org.jcodec.common.logging.Logger;
-
 import log.charter.data.ChartData;
 import log.charter.data.config.Zoom;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
@@ -28,6 +26,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.songEdits.VocalPane;
+import log.charter.io.Logger;
 import log.charter.services.ActionHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.fixers.ArrangementFixer;

@@ -14,7 +14,7 @@ import log.charter.data.song.BeatsMap;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.menuHandlers.CharterMenuBar;
-import log.charter.gui.panes.imports.GPImportOptions;
+import log.charter.gui.panes.imports.ArrangementImportOptions;
 import log.charter.io.Logger;
 import log.charter.io.gp.gp5.GP5FileReader;
 import log.charter.io.gp.gp5.data.GP5File;
@@ -60,6 +60,6 @@ public class GP5FileImporter {
 
 		final SongChart temporaryChart = GP5FileToSongChart.transform(gp5File, beatsMap, barsOrder);
 
-		new GPImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart);
+		new ArrangementImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart);
 	}
 }

@@ -1,17 +1,20 @@
 package log.charter.util.chordRecognition;
 
+import static java.util.Arrays.asList;
 import static log.charter.util.SoundUtils.soundToSimpleName;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import log.charter.data.song.configs.Tuning;
 import log.charter.util.collections.ArrayList2;
-import log.charter.util.collections.HashMap2;
 
 public class ChordNameSuggester {
-	private static ArrayList2<Integer> soundsToNotes(final int[] sounds) {
-		final ArrayList2<Integer> notes = new ArrayList2<>();
+	private static List<Integer> soundsToNotes(final int[] sounds) {
+		final List<Integer> notes = new ArrayList<>(sounds.length);
 		for (int i = 0; i < sounds.length; i++) {
 			int note = sounds[i];
 			while (note < 0) {
@@ -27,21 +30,23 @@ public class ChordNameSuggester {
 		return notes;
 	}
 
-	private static ArrayList2<String> recognizeChord(final int[] sounds) {
-		final ArrayList2<Integer> notes = soundsToNotes(sounds);
+	private static List<String> recognizeChord(final int[] sounds) {
+		final List<Integer> notes = soundsToNotes(sounds);
 		if (notes.size() == 1) {
-			return new ArrayList2<>(soundToSimpleName(notes.get(0), true));
+			return asList(soundToSimpleName(notes.get(0), true));
 		}
 
-		final ArrayList2<String> foundNames = new ArrayList2<>();
+		final List<String> foundNames = new ArrayList2<>();
 		for (int i = 0; i < notes.size(); i++) {
 			final int root = notes.get(i);
-			final ArrayList2<String> foundNamesForRoot = ChordNameAdder.getSuggestedChordNames(root, notes);
-			if (root != sounds[0] % 12) {
-				foundNamesForRoot.addAll(
-						foundNamesForRoot.map(chordName -> chordName + "/" + soundToSimpleName(sounds[0], true)));
-			}
+			final List<String> foundNamesForRoot = ChordNameAdder.getSuggestedChordNames(root, notes);
 			foundNames.addAll(foundNamesForRoot);
+
+			if (root != sounds[0] % 12) {
+				for (final String name : foundNamesForRoot) {
+					foundNames.add(name + "/" + soundToSimpleName(root, true));
+				}
+			}
 		}
 
 		return foundNames;
@@ -57,8 +62,7 @@ public class ChordNameSuggester {
 		return false;
 	}
 
-	public static ArrayList2<String> suggestChordNames(final Tuning tuning,
-			final HashMap2<Integer, Integer> templateFrets) {
+	public static List<String> suggestChordNames(final Tuning tuning, final Map<Integer, Integer> templateFrets) {
 		final int[] sounds = new int[templateFrets.size()];
 		int i = 0;
 		for (final Entry<Integer, Integer> stringWithFret : templateFrets.entrySet()) {
@@ -74,7 +78,7 @@ public class ChordNameSuggester {
 		Arrays.sort(sounds);
 
 		if (sounds.length == 1) {
-			return new ArrayList2<>(soundToSimpleName(sounds[0], true));
+			return asList(soundToSimpleName(sounds[0], true));
 		}
 
 		return recognizeChord(sounds);

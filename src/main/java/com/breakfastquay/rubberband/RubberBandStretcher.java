@@ -26,6 +26,8 @@ package com.breakfastquay.rubberband;
 import java.util.Map;
 import java.util.Set;
 
+import log.charter.io.Logger;
+
 public class RubberBandStretcher {
 	public RubberBandStretcher(final int sampleRate, final int channels, final int options,
 			final double initialTimeRatio, final double initialPitchScale) {
@@ -156,7 +158,15 @@ public class RubberBandStretcher {
 	public static final int DefaultOptions = 0x00000000;
 	public static final int PercussiveOptions = 0x00102000;
 
-	static {
-		System.loadLibrary("rubberband-jni");
+	private static boolean loadLibrary() {
+		try {
+			System.loadLibrary("rubberband-jni");
+			return true;
+		} catch (final Throwable t) {
+			Logger.error("Couldn't load rubberband library", t);
+			return false;
+		}
 	}
+
+	public static final boolean loaded = loadLibrary();
 };

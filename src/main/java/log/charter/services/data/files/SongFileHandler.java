@@ -15,6 +15,7 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.SongChart;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.simple.LoadingDialog;
 import log.charter.gui.components.tabs.TextTab;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
@@ -67,40 +68,61 @@ public class SongFileHandler {
 		existingProjectImporter.open(projectFileChosen.getAbsolutePath());
 	}
 
-	public void createSongWithImportFromArrangementXML() {
+	private File chooseSongFile() {
 		final String fileChooseDir = modeManager.getMode() == EditMode.EMPTY ? Config.songsPath : chartData.path;
-		final File songFile = FileChooseUtils.chooseMusicFile(charterFrame, fileChooseDir);
-		if (songFile == null) {
-			return;
-		}
+		return FileChooseUtils.chooseMusicFile(charterFrame, fileChooseDir);
+	}
 
-		LoadingDialog loadingDialog = new LoadingDialog(charterFrame, 1);
+	private AudioData loadMusicFile(final File songFile) {
+		final LoadingDialog loadingDialog = new LoadingDialog(charterFrame, 1);
 		loadingDialog.setProgress(0, Label.LOADING_MUSIC_FILE.label());
 		final AudioData musicData = AudioData.readFile(songFile);
 		if (musicData == null) {
 			loadingDialog.dispose();
 			showPopup(charterFrame, Label.MUSIC_FILE_COULDNT_BE_LOADED);
-			return;
+			return null;
 		}
+
 		loadingDialog.dispose();
+		return musicData;
+	}
 
-		final String dir = songFile.getParent() + File.separator;
-		final File arrangementFile = FileChooseUtils.chooseFile(charterFrame, dir, new String[] { ".xml" },
-				new String[] { Label.RS_ARRANGEMENT_FILE.label() });
+	private SongChart readSongArrangement(final File songFile) {
+		final File arrangementFile = FileChooseUtils.chooseFile(charterFrame, songFile.getParent(),
+				new String[] { ".xml" }, new String[] { Label.RS_ARRANGEMENT_FILE.label() });
 		if (arrangementFile == null) {
-			return;
+			return null;
 		}
 
-		loadingDialog = new LoadingDialog(charterFrame, 1);
+		final LoadingDialog loadingDialog = new LoadingDialog(charterFrame, 1);
 		loadingDialog.setProgress(0, Label.LOADING_ARRANGEMENTS.label());
 		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(arrangementFile);
 		final SongChart songChart = RSXMLToSongChart.makeSongChartForArrangement(songFile.getName(), songArrangement);
-
-		chartTimeHandler.nextTime(0);
-		chartData.setSong(dir, songChart, "project.rscp", EditMode.GUITAR, 0, 0);
-		projectAudioHandler.setAudio(musicData);
 		loadingDialog.dispose();
 
+		return songChart;
+	}
+
+	public void createSongWithImportFromArrangementXML() {
+		final File songFile = chooseSongFile();
+		if (songFile == null) {
+			return;
+		}
+
+		final AudioData musicData = loadMusicFile(songFile);
+		if (musicData == null) {
+			return;
+		}
+
+		final SongChart songChart = readSongArrangement(songFile);
+		if (songChart == null) {
+			return;
+		}
+
+		chartData.setSong(songFile.getParent() + File.separator, songChart, "project.rscp", EditMode.GUITAR, 0, 0);
+		projectAudioHandler.setAudio(musicData);
+
+		chartTimeHandler.nextTime(0);
 		audioHandler.clear();
 		chordTemplatesEditorTab.refreshTemplates();
 

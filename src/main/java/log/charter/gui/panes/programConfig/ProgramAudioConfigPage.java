@@ -1,5 +1,6 @@
 package log.charter.gui.panes.programConfig;
 
+import static log.charter.data.config.SystemType.WINDOWS;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import com.synthbot.jasiohost.AsioDriver;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.SystemType;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.CharterSelect;
@@ -85,12 +87,14 @@ public class ProgramAudioConfigPage implements Page {
 
 	@Override
 	public void init(final RowedPanel panel, final RowedPosition position) {
-		addAudioOutputSystemSelect(panel, position);
-		position.newRow();
+		if (SystemType.is(WINDOWS)) {
+			addAudioOutputSystemSelect(panel, position);
+			position.newRow();
 
-		addLeftOutChannelId(panel, position);
-		addRightOutChannelId(panel, position);
-		position.newRow();
+			addLeftOutChannelId(panel, position);
+			addRightOutChannelId(panel, position);
+			position.newRow();
+		}
 
 		addAudioBufferMs(panel, position);
 		position.newRow();
@@ -101,8 +105,6 @@ public class ProgramAudioConfigPage implements Page {
 		addDelay(panel, position);
 		addMidiDelay(panel, position);
 		position.newRow();
-
-		showChannelIdsFields(audioOutSystemType == AudioSystemType.ASIO);
 	}
 
 	private List<AudioOutputData> getASIOOutputsList() {
@@ -202,8 +204,10 @@ public class ProgramAudioConfigPage implements Page {
 
 	@Override
 	public void setVisible(final boolean visibility) {
-		audioOutSystemField.setVisible(visibility);
-		showChannelIdsFields(visibility && audioOutSystemType == AudioSystemType.ASIO);
+		if (SystemType.is(WINDOWS)) {
+			audioOutSystemField.setVisible(visibility);
+			showChannelIdsFields(visibility && audioOutSystemType == AudioSystemType.ASIO);
+		}
 		audioBufferMsField.setVisible(visibility);
 		baseAudioFormatField.setVisible(visibility);
 		delayField.setVisible(visibility);

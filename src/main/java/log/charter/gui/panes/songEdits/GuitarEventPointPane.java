@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -30,36 +29,11 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInputForPane;
+import log.charter.gui.components.simple.CharterSelect;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 
 public class GuitarEventPointPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
-
-	private static class SectionTypeListValue {
-		public final SectionType type;
-
-		public SectionTypeListValue(final SectionType type) {
-			this.type = type;
-		}
-
-		@Override
-		public String toString() {
-			return type == null ? "" : type.label;
-		}
-	}
-
-	private static class EventTypeListValue {
-		public final EventType type;
-
-		public EventTypeListValue(final EventType type) {
-			this.type = type;
-		}
-
-		@Override
-		public String toString() {
-			return type == null ? "" : type.label;
-		}
-	}
 
 	private final ChartData data;
 	private final UndoSystem undoSystem;
@@ -103,17 +77,17 @@ public class GuitarEventPointPane extends ParamsPane {
 	}
 
 	private void prepareSectionInput(final AtomicInteger row) {
-		final JComboBox<SectionTypeListValue> sectionTypeInput = new JComboBox<>();
-		sectionTypeInput.addItem(new SectionTypeListValue(null));
-		for (final SectionType type : SectionType.values()) {
-			sectionTypeInput.addItem(new SectionTypeListValue(type));
+		final List<SectionType> sectionTypes = new ArrayList<>();
+		sectionTypes.add(null);
+		for (final SectionType sectionType : SectionType.values()) {
+			sectionTypes.add(sectionType);
 		}
-		sectionTypeInput.setSelectedIndex(section == null ? 0 : 1 + section.ordinal());
-		sectionTypeInput
-				.addItemListener(e -> section = ((SectionTypeListValue) sectionTypeInput.getSelectedItem()).type);
+
+		final CharterSelect<SectionType> input = new CharterSelect<>(sectionTypes, section,
+				v -> v == null ? "" : v.label.label(), v -> section = v);
 
 		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_SECTION_TYPE, 0);
-		this.add(sectionTypeInput, 100, getY(row.getAndIncrement()), 200, 20);
+		this.add(input, 100, getY(row.getAndIncrement()), 200, 20);
 	}
 
 	private void preparePhraseInputs(final AtomicInteger row, final String phrase) {
@@ -161,12 +135,14 @@ public class GuitarEventPointPane extends ParamsPane {
 	}
 
 	private void prepareEventList(final AtomicInteger row) {
-		final JComboBox<EventTypeListValue> eventTypeComboBox = new JComboBox<>();
-		eventTypeComboBox.addItem(new EventTypeListValue(null));
+		final List<EventType> eventTypes = new ArrayList<>();
+		eventTypes.add(null);
 		for (final EventType type : EventType.values()) {
-			eventTypeComboBox.addItem(new EventTypeListValue(type));
+			eventTypes.add(type);
 		}
-		eventTypeComboBox.setMinimumSize(new Dimension(100, 20));
+
+		final CharterSelect<EventType> input = new CharterSelect<>(eventTypes, null, v -> v.toString(), null);
+		input.setMinimumSize(new Dimension(100, 20));
 
 		final DefaultTableModel tableModel = new DefaultTableModel();
 		tableModel.setRowCount(events.size());
@@ -178,22 +154,20 @@ public class GuitarEventPointPane extends ParamsPane {
 		eventsTable.setTableHeader(new JTableHeader());
 
 		final TableColumn column = eventsTable.getColumnModel().getColumn(0);
-		column.setCellEditor(new DefaultCellEditor(eventTypeComboBox));
+		column.setCellEditor(new DefaultCellEditor(input));
 
 		final CharterScrollPane scrollTable = new CharterScrollPane(eventsTable);
 		scrollTable.setColumnHeader(null);
 		scrollTable.setMinimumSize(new Dimension(100, 80));
 
 		for (int tableRow = 0; tableRow < events.size(); tableRow++) {
-			final int id = events.get(tableRow).ordinal() + 1;
-			final EventTypeListValue value = eventTypeComboBox.getItemAt(id);
-			tableModel.setValueAt(value, tableRow, 0);
+			tableModel.setValueAt(events.get(tableRow), tableRow, 0);
 		}
 
 		this.add(scrollTable, 50, getY(row.getAndIncrement()), 170, 120);
 
 		final JButton rowAddButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_ADD.label());
-		rowAddButton.addActionListener(e -> { tableModel.addRow(new Vector<Object>()); });
+		rowAddButton.addActionListener(e -> { tableModel.addRow(new Vector<Object>(1)); });
 		this.add(rowAddButton, 230, getY(row.getAndAdd(2)), 150, 20);
 
 		final JButton rowRemoveButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_REMOVE.label());
@@ -216,6 +190,7 @@ public class GuitarEventPointPane extends ParamsPane {
 			eventsTable.clearSelection();
 			tableModel.removeRow(0);
 		});
+
 		this.add(rowRemoveButton, 230, getY(row.getAndAdd(2)), 150, 20);
 	}
 
@@ -231,8 +206,8 @@ public class GuitarEventPointPane extends ParamsPane {
 		}
 
 		for (int row = 0; row < eventsTable.getRowCount(); row++) {
-			final EventTypeListValue value = (EventTypeListValue) eventsTable.getValueAt(row, 0);
-			if (value != null && value.type != null) {
+			final EventType value = (EventType) eventsTable.getValueAt(row, 0);
+			if (value != null) {
 				return true;
 			}
 		}
@@ -266,9 +241,9 @@ public class GuitarEventPointPane extends ParamsPane {
 
 		eventPoint.events.clear();
 		for (int row = 0; row < eventsTable.getRowCount(); row++) {
-			final EventTypeListValue value = (EventTypeListValue) eventsTable.getValueAt(row, 0);
-			if (value != null && value.type != null) {
-				eventPoint.events.add(value.type);
+			final EventType value = (EventType) eventsTable.getValueAt(row, 0);
+			if (value != null) {
+				eventPoint.events.add(value);
 			}
 		}
 		eventPoint.events.sort(EventType::compareTo);

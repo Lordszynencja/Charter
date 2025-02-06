@@ -1,6 +1,9 @@
 package log.charter.util.chordRecognition;
 
+import static java.util.Arrays.asList;
 import static log.charter.util.SoundUtils.soundToSimpleName;
+
+import java.util.List;
 
 import log.charter.util.collections.ArrayList2;
 
@@ -13,7 +16,7 @@ public class ChordNameAdder {
 	public static String sus = "sus";
 
 	static interface ChordTypeChecker {
-		boolean check(final int root, final ArrayList2<Integer> notes);
+		boolean check(final int root, final List<Integer> notes);
 	}
 
 	static interface ChordNameGenerator {
@@ -28,13 +31,13 @@ public class ChordNameAdder {
 		this.nameGenerator = nameGenerator;
 	}
 
-	void add(final int root, final ArrayList2<Integer> notes, final ArrayList2<String> foundNames) {
+	void add(final int root, final List<Integer> notes, final List<String> foundNames) {
 		if (checker.check(root, notes)) {
 			foundNames.add(nameGenerator.generate(root));
 		}
 	}
 
-	private static ChordTypeChecker makeSimpleChecker(final int... requiredTones) {
+	private static ChordTypeChecker notes(final int... requiredTones) {
 		return (root, notes) -> {
 			if (notes.size() != requiredTones.length + 1) {
 				return false;
@@ -62,66 +65,71 @@ public class ChordNameAdder {
 	// #13, 7 - 10 frets
 	// maj7 - 11 frets
 
-	private static String chordName(final int root, final String additions) {
-		return soundToSimpleName(root + 4, true) + additions;
+	private static ChordNameGenerator nameWith(final String additions) {
+		return new ChordNameGenerator() {
+
+			@Override
+			public String generate(final int root) {
+				return soundToSimpleName(root + 4, true) + additions;
+			}
+		};
 	}
 
-	private static ArrayList2<ChordNameAdder> adders = new ArrayList2<>(
-			new ChordNameAdder(makeSimpleChecker(1, 4, 7, 10), root -> chordName(root, "7(b9)")), //
-			new ChordNameAdder(makeSimpleChecker(1, 4, 8, 10), root -> chordName(root, "7(b9,b13)")), //
-			new ChordNameAdder(makeSimpleChecker(1, 4, 9, 10), root -> chordName(root, "13(b9)")), //
-			new ChordNameAdder(makeSimpleChecker(1, 5, 10), root -> chordName(root, "7" + sus + "(b9)")), //
+	private static List<ChordNameAdder> adders = asList(new ChordNameAdder(notes(1, 4, 7, 10), nameWith("7(b9)")), //
+			new ChordNameAdder(notes(1, 4, 8, 10), nameWith("7(b9,b13)")), //
+			new ChordNameAdder(notes(1, 4, 9, 10), nameWith("13(b9)")), //
+			new ChordNameAdder(notes(1, 5, 10), nameWith("7" + sus + "(b9)")), //
 
-			new ChordNameAdder(makeSimpleChecker(2, 3, 7), root -> chordName(root, min + add + "9")), //
-			new ChordNameAdder(makeSimpleChecker(2, 3, 7, 10), root -> chordName(root, min + "9")), //
-			new ChordNameAdder(makeSimpleChecker(2, 3, 9), root -> chordName(root, min + "6(9)")), //
-			new ChordNameAdder(makeSimpleChecker(2, 4, 7), root -> chordName(root, add + "9")), //
-			new ChordNameAdder(makeSimpleChecker(2, 4, 7, 10), root -> chordName(root, "9")), //
-			new ChordNameAdder(makeSimpleChecker(2, 4, 7, 11), root -> chordName(root, maj + "9")), //
-			new ChordNameAdder(makeSimpleChecker(2, 4, 9), root -> chordName(root, "6(9)")), //
-			new ChordNameAdder(makeSimpleChecker(2, 4, 9, 10), root -> chordName(root, "9(13)")), //
-			new ChordNameAdder(makeSimpleChecker(2, 4, 9, 11), root -> chordName(root, maj + "9(13)")), //
-			new ChordNameAdder(makeSimpleChecker(2, 5, 9, 10), root -> chordName(root, "13" + sus)), //
-			new ChordNameAdder(makeSimpleChecker(2, 5, 10), root -> chordName(root, "9" + sus)), //
-			new ChordNameAdder(makeSimpleChecker(2, 7), root -> chordName(root, sus + "2")), //
+			new ChordNameAdder(notes(2, 3, 7), nameWith(min + add + "9")), //
+			new ChordNameAdder(notes(2, 3, 7, 10), nameWith(min + "9")), //
+			new ChordNameAdder(notes(2, 3, 9), nameWith(min + "6(9)")), //
+			new ChordNameAdder(notes(2, 4, 7), nameWith(add + "9")), //
+			new ChordNameAdder(notes(2, 4, 7, 10), nameWith("9")), //
+			new ChordNameAdder(notes(2, 4, 7, 11), nameWith(maj + "9")), //
+			new ChordNameAdder(notes(2, 4, 9), nameWith("6(9)")), //
+			new ChordNameAdder(notes(2, 4, 9, 10), nameWith("9(13)")), //
+			new ChordNameAdder(notes(2, 4, 9, 11), nameWith(maj + "9(13)")), //
+			new ChordNameAdder(notes(2, 5, 9, 10), nameWith("13" + sus)), //
+			new ChordNameAdder(notes(2, 5, 10), nameWith("9" + sus)), //
+			new ChordNameAdder(notes(2, 7), nameWith(sus + "2")), //
 
-			new ChordNameAdder(makeSimpleChecker(3), root -> chordName(root, min)), //
-			new ChordNameAdder(makeSimpleChecker(3, 4, 10), root -> chordName(root, "7(#9)")), //
-			new ChordNameAdder(makeSimpleChecker(3, 5, 6, 10), root -> chordName(root, min + "11(b5)")), //
-			new ChordNameAdder(makeSimpleChecker(3, 5, 10), root -> chordName(root, min + "11")), //
-			new ChordNameAdder(makeSimpleChecker(3, 6, 8, 9), root -> chordName(root, dim + "b13")), //
-			new ChordNameAdder(makeSimpleChecker(3, 6, 9), root -> chordName(root, dim)), //
-			new ChordNameAdder(makeSimpleChecker(3, 6, 10), root -> chordName(root, min + "7(b5)")), //
-			new ChordNameAdder(makeSimpleChecker(3, 7), root -> chordName(root, min)), //
-			new ChordNameAdder(makeSimpleChecker(3, 7, 8, 10), root -> chordName(root, min + "7(b13)")), //
-			new ChordNameAdder(makeSimpleChecker(3, 7, 9), root -> chordName(root, min + "6")), //
-			new ChordNameAdder(makeSimpleChecker(3, 7, 9, 10), root -> chordName(root, min + "13")), //
-			new ChordNameAdder(makeSimpleChecker(3, 7, 11), root -> chordName(root, min + maj + "7")), //
-			new ChordNameAdder(makeSimpleChecker(3, 9, 10), root -> chordName(root, min + "13")), //
-			new ChordNameAdder(makeSimpleChecker(3, 10), root -> chordName(root, min + "7")), //
+			new ChordNameAdder(notes(3), nameWith(min)), //
+			new ChordNameAdder(notes(3, 4, 10), nameWith("7(#9)")), //
+			new ChordNameAdder(notes(3, 5, 6, 10), nameWith(min + "11(b5)")), //
+			new ChordNameAdder(notes(3, 5, 10), nameWith(min + "11")), //
+			new ChordNameAdder(notes(3, 6, 8, 9), nameWith(dim + "b13")), //
+			new ChordNameAdder(notes(3, 6, 9), nameWith(dim)), //
+			new ChordNameAdder(notes(3, 6, 10), nameWith(min + "7(b5)")), //
+			new ChordNameAdder(notes(3, 7), nameWith(min)), //
+			new ChordNameAdder(notes(3, 7, 8, 10), nameWith(min + "7(b13)")), //
+			new ChordNameAdder(notes(3, 7, 9), nameWith(min + "6")), //
+			new ChordNameAdder(notes(3, 7, 9, 10), nameWith(min + "13")), //
+			new ChordNameAdder(notes(3, 7, 11), nameWith(min + maj + "7")), //
+			new ChordNameAdder(notes(3, 9, 10), nameWith(min + "13")), //
+			new ChordNameAdder(notes(3, 10), nameWith(min + "7")), //
 
-			new ChordNameAdder(makeSimpleChecker(4), root -> chordName(root, "")), //
-			new ChordNameAdder(makeSimpleChecker(4, 6, 10), root -> chordName(root, "7(#11)")), //
-			new ChordNameAdder(makeSimpleChecker(4, 6, 10), root -> chordName(root, "7(b5)")), //
-			new ChordNameAdder(makeSimpleChecker(4, 6, 11), root -> chordName(root, maj + "7(#11)")), //
-			new ChordNameAdder(makeSimpleChecker(4, 7), root -> chordName(root, "")), //
-			new ChordNameAdder(makeSimpleChecker(4, 7, 11), root -> chordName(root, maj + "7")), //
-			new ChordNameAdder(makeSimpleChecker(4, 8), root -> chordName(root, aug)), //
-			new ChordNameAdder(makeSimpleChecker(4, 8, 10), root -> chordName(root, "7(#5)")), //
-			new ChordNameAdder(makeSimpleChecker(4, 8, 10), root -> chordName(root, "7(b13)")), //
-			new ChordNameAdder(makeSimpleChecker(4, 8, 11), root -> chordName(root, maj + "7(#5)")), //
-			new ChordNameAdder(makeSimpleChecker(4, 9), root -> chordName(root, "6")), //
-			new ChordNameAdder(makeSimpleChecker(4, 9, 10), root -> chordName(root, "13")), //
-			new ChordNameAdder(makeSimpleChecker(4, 9, 11), root -> chordName(root, maj + "13")), //
-			new ChordNameAdder(makeSimpleChecker(4, 10), root -> chordName(root, "7")), //
+			new ChordNameAdder(notes(4), nameWith("3")), //
+			new ChordNameAdder(notes(4, 6, 10), nameWith("7(#11)")), //
+			new ChordNameAdder(notes(4, 6, 10), nameWith("7(b5)")), //
+			new ChordNameAdder(notes(4, 6, 11), nameWith(maj + "7(#11)")), //
+			new ChordNameAdder(notes(4, 7), nameWith("")), //
+			new ChordNameAdder(notes(4, 7, 11), nameWith(maj + "7")), //
+			new ChordNameAdder(notes(4, 8), nameWith(aug)), //
+			new ChordNameAdder(notes(4, 8, 10), nameWith("7(#5)")), //
+			new ChordNameAdder(notes(4, 8, 10), nameWith("7(b13)")), //
+			new ChordNameAdder(notes(4, 8, 11), nameWith(maj + "7(#5)")), //
+			new ChordNameAdder(notes(4, 9), nameWith("6")), //
+			new ChordNameAdder(notes(4, 9, 10), nameWith("13")), //
+			new ChordNameAdder(notes(4, 9, 11), nameWith(maj + "13")), //
+			new ChordNameAdder(notes(4, 10), nameWith("7")), //
 
-			new ChordNameAdder(makeSimpleChecker(5, 7), root -> chordName(root, sus)), //
-			new ChordNameAdder(makeSimpleChecker(5, 7, 10), root -> chordName(root, "7" + sus)), //
+			new ChordNameAdder(notes(5, 7), nameWith(sus)), //
+			new ChordNameAdder(notes(5, 7, 10), nameWith("7" + sus)), //
 
-			new ChordNameAdder(makeSimpleChecker(7), root -> chordName(root, "5")));
+			new ChordNameAdder(notes(7), nameWith("5")));
 
-	public static ArrayList2<String> getSuggestedChordNames(final int root, final ArrayList2<Integer> notes) {
-		final ArrayList2<String> foundNames = new ArrayList2<>();
+	public static List<String> getSuggestedChordNames(final int root, final List<Integer> notes) {
+		final List<String> foundNames = new ArrayList2<>();
 		adders.forEach(adder -> adder.add(root, notes, foundNames));
 		return foundNames;
 	}

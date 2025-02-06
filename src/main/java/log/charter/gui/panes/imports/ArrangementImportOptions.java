@@ -1,10 +1,7 @@
 package log.charter.gui.panes.imports;
 
-import static java.util.Arrays.asList;
-
-import java.util.Vector;
-
-import javax.swing.JComboBox;
+import java.util.ArrayList;
+import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
@@ -12,10 +9,11 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.simple.CharterSelect;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.services.data.fixers.ArrangementFixer;
 
-public class GPImportOptions extends ParamsPane {
+public class ArrangementImportOptions extends ParamsPane {
 	private static class ArrangementImportSetting {
 		public final boolean skip;
 		public final Integer arrangementId;
@@ -47,10 +45,11 @@ public class GPImportOptions extends ParamsPane {
 	private final SongChart imported;
 
 	private final ArrangementImportSetting[] arrangementImportSettings;
+	private final List<ArrangementImportSetting> arrangementImportSettingsOptions;
 
-	public GPImportOptions(final CharterFrame frame, final ArrangementFixer arrangementFixer,
+	public ArrangementImportOptions(final CharterFrame frame, final ArrangementFixer arrangementFixer,
 			final CharterMenuBar charterMenuBar, final ChartData data, final SongChart imported) {
-		super(frame, Label.GP_IMPORT_OPTIONS, 450);
+		super(frame, Label.ARRANGEMENT_IMPORT_OPTIONS, 450);
 
 		this.arrangementFixer = arrangementFixer;
 		this.charterMenuBar = charterMenuBar;
@@ -61,6 +60,8 @@ public class GPImportOptions extends ParamsPane {
 
 		int arrangementId = 0;
 		arrangementImportSettings = new ArrangementImportSetting[imported.arrangements.size()];
+		arrangementImportSettingsOptions = prepareArrangementImportSettingsOptions();
+
 		for (final Arrangement arrangement : imported.arrangements) {
 			addArrangementOptions(row++, arrangementId++, arrangement);
 		}
@@ -69,24 +70,28 @@ public class GPImportOptions extends ParamsPane {
 		addDefaultFinish(row, this::saveAndExit);
 	}
 
-	private void addArrangementOptions(final int row, final int id, final Arrangement arrangement) {
-		final String name = Label.GP_IMPORT_ARRANGEMENT_NAME.label().formatted(id + 1, arrangement.getTypeNameLabel());
-
-		addLabel(row, 10, name, 0);
-		final Vector<ArrangementImportSetting> options = new Vector<>(asList(//
-				new ArrangementImportSetting(false, Label.GP_IMPORT_TO_NEW_ARRANGEMENT.label()), //
-				new ArrangementImportSetting(true, Label.GP_IMPORT_SKIP_ARRANGEMENT.label())));
+	private List<ArrangementImportSetting> prepareArrangementImportSettingsOptions() {
+		final List<ArrangementImportSetting> options = new ArrayList<>();
+		options.add(new ArrangementImportSetting(false, Label.ARRANGEMENT_TO_NEW_ARRANGEMENT.label()));
+		options.add(new ArrangementImportSetting(true, Label.ARRANGEMENT_SKIP_ARRANGEMENT.label()));
 		for (int i = 0; i < data.songChart.arrangements.size(); i++) {
-			final String optionName = Label.GP_IMPORT_TO_EXISTING_ARRANGEMENT.label().formatted(i + 1,
-					data.songChart.arrangements.get(i).getTypeNameLabel());
+			final String arrangementTypeAndName = data.songChart.arrangements.get(i).getTypeNameLabel();
+			final String optionName = Label.ARRANGEMENT_TO_EXISTING_ARRANGEMENT.format(i + 1, arrangementTypeAndName);
 			options.add(new ArrangementImportSetting(i, optionName));
 		}
-		arrangementImportSettings[id] = options.get(0);
 
-		final JComboBox<ArrangementImportSetting> themeSelect = new JComboBox<>(options);
-		themeSelect.setSelectedIndex(0);
-		themeSelect.addActionListener(
-				e -> arrangementImportSettings[id] = ((ArrangementImportSetting) themeSelect.getSelectedItem()));
+		return options;
+	}
+
+	private void addArrangementOptions(final int row, final int id, final Arrangement arrangement) {
+		final String name = Label.ARRANGEMENT_ID_NAME.label().formatted(id + 1, arrangement.getTypeNameLabel());
+
+		addLabel(row, 10, name, 0);
+		arrangementImportSettings[id] = arrangementImportSettingsOptions.get(0);
+
+		final CharterSelect<ArrangementImportSetting> themeSelect = new CharterSelect<>(
+				arrangementImportSettingsOptions, null, v -> v.name, v -> arrangementImportSettings[id] = v);
+
 		this.add(themeSelect, 200, getY(row), 200, 20);
 	}
 

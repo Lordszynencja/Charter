@@ -182,9 +182,6 @@ public class Config {
 
 		passFilters.installValueAccessors(valueAccessors, "passFilters");
 
-		final String os = System.getProperty("os.name").toLowerCase();
-		@SuppressWarnings("unused")
-		final String osType = os.startsWith("windows") ? "windows" : os.startsWith("mac") ? "mac" : "linux";
 		oggEncPath = new File(RW.getProgramDirectory(), "oggenc" + File.separator + "oggenc2.exe").getAbsolutePath();
 
 		final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();

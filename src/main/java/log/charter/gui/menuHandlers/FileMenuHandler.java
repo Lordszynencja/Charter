@@ -61,6 +61,7 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 		menu.add(createItem(Action.NEW_PROJECT));
 		menu.add(createItem(Action.OPEN_PROJECT));
 		menu.add(createItem(Label.CREATE_PROJECT_FROM_RS_XML, songFileHandler::createSongWithImportFromArrangementXML));
+//TODO create projects based on gp5/gp8/GPA files
 
 		if (modeManager.getMode() != EditMode.EMPTY) {
 			menu.add(createItem(Label.CHANGE_AUDIO, this::openAudioFile));
