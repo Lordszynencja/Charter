@@ -1,5 +1,7 @@
 package log.charter.gui.components.simple;
 
+import static java.util.Arrays.asList;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
@@ -13,6 +15,7 @@ import javax.swing.JComboBox;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
+
 	public static class ItemHolder<T> {
 		public final T item;
 		private final String label;
@@ -36,6 +39,10 @@ public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 	private static <T> Vector<ItemHolder<T>> pack(final List<T> collection, final Function<T, String> labelGenerator) {
 		return collection.stream().map(e -> new ItemHolder<>(e, labelGenerator.apply(e)))
 				.collect(Collectors.toCollection(Vector::new));
+	}
+
+	private static <T> Function<T, String> defaultLabelGenerator() {
+		return v -> v == null ? "" : v.toString();
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -62,7 +69,7 @@ public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 
 	public CharterSelect(final List<T> items, final T item, final Function<T, String> labelGenerator,
 			final Consumer<T> onPick) {
-		super(pack(items, labelGenerator));
+		super(pack(items, labelGenerator == null ? defaultLabelGenerator() : labelGenerator));
 
 		setSelectedIndex(findSelectedIndex(items, item));
 
@@ -73,29 +80,13 @@ public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 		setBackground(ColorLabel.BASE_BUTTON.color());
 	}
 
-	public CharterSelect(final List<T> items, final T item, final Function<T, String> labelGenerator) {
-		this(items, item, labelGenerator, null);
-	}
-
-	public CharterSelect(final List<T> items, final T item) {
-		this(items, item, T::toString);
-	}
-
 	public CharterSelect(final Stream<T> items, final T item, final Function<T, String> labelGenerator,
 			final Consumer<T> onPick) {
 		this(items.toList(), item, labelGenerator, onPick);
 	}
 
-	public CharterSelect(final Stream<T> items, final T item, final Function<T, String> labelGenerator) {
-		this(items, item, labelGenerator, null);
+	public CharterSelect(final T[] items, final T item, final Function<T, String> labelGenerator,
+			final Consumer<T> onPick) {
+		this(asList(items), item, labelGenerator, onPick);
 	}
-
-	public CharterSelect(final Stream<T> items, final T item, final Consumer<T> onPick) {
-		this(items, item, T::toString, onPick);
-	}
-
-	public CharterSelect(final Stream<T> items, final T item) {
-		this(items, item, T::toString);
-	}
-
 }

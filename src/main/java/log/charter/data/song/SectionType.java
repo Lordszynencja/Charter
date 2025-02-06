@@ -1,43 +1,45 @@
 package log.charter.data.song;
 
+import log.charter.data.config.Localization.Label;
+
 public enum SectionType {
-	NO_GUITAR("noguitar", "No guitar"), //
-	INTRO("intro", "Intro"), //
-	PRE_VERSE("preverse", "Pre verse"), //
-	VERSE("verse", "Verse"), //
-	POST_VERSE("postvs", "Post verse"), //
-	MODULATED_VERSE("modverse", "Modulated verse"), //
-	PRE_CHORUS("prechorus", "Pre chorus"), //
-	CHORUS("chorus", "Chorus"), //
-	POST_CHORUS("postchorus", "Post chorus"), //
-	MODULATED_CHORUS("modchorus", "Modulated chorus"), //
-	HOOK("hook", "Hook"), //
-	PRE_BRIDGE("prebrdg", "Pre bridge"), //
-	BRIDGE("bridge", "Bridge"), //
-	POST_BRIDGE("postbrdg", "Post bridge"), //
-	SOLO("solo", "Solo"), //
-	OUTRO("outro", "Outro"), //
-	AMBIENT("ambient", "Ambient"), //
-	BREAKDOWN("breakdown", "Breakdown"), //
-	INTERLUDE("interlude", "Interlude"), //
-	TRANSITION("transition", "Transition"), //
-	RIFF("riff", "Riff"), //
-	FADE_IN("fadein", "Fade in"), //
-	FADE_OUT("fadeout", "Fade out"), //
-	BUILDUP("buildup", "Buildup"), //
-	VARIATION("variation", "Variation"), //
-	HEAD("head", "Head"), //
-	MODULATED_BRIDGE("modbridge", "Modulated bridge"), //
-	MELODY("melody", "Melody"), //
-	VAMP("vamp", "Vamp"), //
-	SILENCE("silence", "Silence"), //
-	TAPPING("tapping", "Tapping");
+	NO_GUITAR("noguitar"), //
+	INTRO("intro"), //
+	PRE_VERSE("preverse"), //
+	VERSE("verse"), //
+	POST_VERSE("postvs"), //
+	MODULATED_VERSE("modverse"), //
+	PRE_CHORUS("prechorus"), //
+	CHORUS("chorus"), //
+	POST_CHORUS("postchorus"), //
+	MODULATED_CHORUS("modchorus"), //
+	HOOK("hook"), //
+	PRE_BRIDGE("prebrdg"), //
+	BRIDGE("bridge"), //
+	POST_BRIDGE("postbrdg"), //
+	SOLO("solo"), //
+	OUTRO("outro"), //
+	AMBIENT("ambient"), //
+	BREAKDOWN("breakdown"), //
+	INTERLUDE("interlude"), //
+	TRANSITION("transition"), //
+	RIFF("riff"), //
+	FADE_IN("fadein"), //
+	FADE_OUT("fadeout"), //
+	BUILDUP("buildup"), //
+	VARIATION("variation"), //
+	HEAD("head"), //
+	MODULATED_BRIDGE("modbridge"), //
+	MELODY("melody"), //
+	VAMP("vamp"), //
+	SILENCE("silence"), //
+	TAPPING("tapping");
 
 	public final String rsName;
-	public final String label;
+	public final Label label;
 
-	private SectionType(final String rsName, final String label) {
+	private SectionType(final String rsName) {
 		this.rsName = rsName;
-		this.label = label;
+		label = Label.valueOf("SECTION_" + name());
 	}
 }

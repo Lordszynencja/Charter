@@ -73,7 +73,11 @@ public class ActionHandler implements Initiable {
 				modeManager.setMode(EditMode.VOCALS);
 				break;
 			case VOCALS:
-				modeManager.setArrangement(0);
+				if (chartData.songChart.arrangements.isEmpty()) {
+					modeManager.setMode(EditMode.TEMPO_MAP);
+				} else {
+					modeManager.setArrangement(0);
+				}
 				break;
 			case GUITAR:
 				if (chartData.currentArrangement >= chartData.songChart.arrangements.size() - 1) {
@@ -92,7 +96,11 @@ public class ActionHandler implements Initiable {
 	private void previousArrangement() {
 		switch (modeManager.getMode()) {
 			case TEMPO_MAP:
-				modeManager.setArrangement(chartData.songChart.arrangements.size() - 1);
+				if (chartData.songChart.arrangements.isEmpty()) {
+					modeManager.setMode(EditMode.VOCALS);
+				} else {
+					modeManager.setArrangement(chartData.songChart.arrangements.size() - 1);
+				}
 				break;
 			case VOCALS:
 				modeManager.setMode(EditMode.TEMPO_MAP);

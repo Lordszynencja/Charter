@@ -1,14 +1,11 @@
 package log.charter.gui.panes.graphicalConfig;
 
-import static java.util.Arrays.asList;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForBigDecimal;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.math.BigDecimal;
-import java.util.Vector;
 
-import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
 import log.charter.data.config.GraphicalConfig;
@@ -16,6 +13,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.config.Theme;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.containers.RowedPanel;
+import log.charter.gui.components.simple.CharterSelect;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
@@ -29,21 +27,6 @@ public class GraphicThemeConfigPage implements Page {
 	private static final BigDecimalValueValidator scrollSpeedValidator = new BigDecimalValueValidator(
 			new BigDecimal("0.1"), new BigDecimal("2.0"), false);
 
-	private static class ThemeHolder {
-		public final Theme theme;
-		public final Label label;
-
-		public ThemeHolder(final Theme theme, final Label label) {
-			this.theme = theme;
-			this.label = label;
-		}
-
-		@Override
-		public String toString() {
-			return label.label();
-		}
-	}
-
 	private Theme theme = GraphicalConfig.theme;
 
 	private int eventsChangeHeight = GraphicalConfig.eventsChangeHeight;
@@ -56,7 +39,7 @@ public class GraphicThemeConfigPage implements Page {
 	private int timingHeight = GraphicalConfig.timingHeight;
 	private BigDecimal previewScrollSpeed = BigDecimal.valueOf(GraphicalConfig.previewWindowScrollSpeed);
 
-	private FieldWithLabel<JComboBox<ThemeHolder>> themeField;
+	private FieldWithLabel<CharterSelect<Theme>> themeField;
 	private FieldWithLabel<TextInputWithValidation> noteHeightField;
 	private FieldWithLabel<TextInputWithValidation> noteWidthField;
 	private FieldWithLabel<TextInputWithValidation> chordHeightField;
@@ -96,25 +79,6 @@ public class GraphicThemeConfigPage implements Page {
 		addScrollSpeedFieldField(panel, position);
 	}
 
-	private void addThemePicker(final RowedPanel panel, final RowedPosition position) {
-		final Vector<ThemeHolder> themes = new Vector<>(asList(//
-				new ThemeHolder(Theme.MODERN, Label.THEME_MODERN), //
-				new ThemeHolder(Theme.SQUARE, Label.THEME_SQUARE), //
-				new ThemeHolder(Theme.BASIC, Label.THEME_BASIC)));
-
-		final JComboBox<ThemeHolder> themeSelect = new JComboBox<>(themes);
-		for (int i = 0; i < themes.size(); i++) {
-			if (themes.get(i).theme == theme) {
-				themeSelect.setSelectedIndex(i);
-				break;
-			}
-		}
-		themeSelect.addActionListener(e -> onThemeChange(((ThemeHolder) themeSelect.getSelectedItem()).theme));
-
-		themeField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_THEME, 60, 150, 20, themeSelect, LabelPosition.LEFT);
-		panel.add(themeField, position);
-	}
-
 	private void onThemeChange(final Theme newTheme) {
 		theme = newTheme;
 
@@ -124,6 +88,14 @@ public class GraphicThemeConfigPage implements Page {
 		} else {
 			noteWidthField.setVisible(true);
 		}
+	}
+
+	private void addThemePicker(final RowedPanel panel, final RowedPosition position) {
+		final CharterSelect<Theme> input = new CharterSelect<>(Theme.values(), theme, v -> v.label.label(),
+				this::onThemeChange);
+
+		themeField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_THEME, 60, 150, 20, input, LabelPosition.LEFT);
+		panel.add(themeField, position);
 	}
 
 	private void addEventsChangeHeightField(final RowedPanel panel, final RowedPosition position) {

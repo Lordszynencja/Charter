@@ -27,15 +27,20 @@ public class Localization {
 		ANCHOR_PANE("Anchor"), //
 		ANCHOR_WIDTH("Anchor width"), //
 		ARPEGGIO("Arpeggio"), //
+		ARRANGEMENT_ID_NAME("Arrangement %d, %s:"), //
+		ARRANGEMENT_IMPORT_OPTIONS("Arrangement import options"), //
 		ARRANGEMENT_MENU("Arrangement"), //
 		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
 		ARRANGEMENT_MENU_VOCALS("Vocals"), //
 		ARRANGEMENT_NEXT("Next arrangement"), //
 		ARRANGEMENT_PREVIOUS("Previous arrangement"), //
 		ARRANGEMENT_OPTIONS("Arrangement options"), //
+		ARRANGEMENT_SKIP_ARRANGEMENT("Skip arrangement"), //
 		ARRANGEMENT_SUBTYPE_ALTERNATE("Alternate"), //
 		ARRANGEMENT_SUBTYPE_BONUS("Bonus"), //
 		ARRANGEMENT_SUBTYPE_MAIN("Main"), //
+		ARRANGEMENT_TO_EXISTING_ARRANGEMENT("To arrangement %d, %s"), //
+		ARRANGEMENT_TO_NEW_ARRANGEMENT("To new arrangement"), //
 		ARRANGEMENT_TYPE_BASS("Bass"), //
 		ARRANGEMENT_TYPE_COMBO("Combo"), //
 		ARRANGEMENT_TYPE_LEAD("Lead"), //
@@ -151,6 +156,37 @@ public class Localization {
 		PASTE("Paste"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
 		REDO("Redo"), //
+		SECTION_AMBIENT("Ambient"), //
+		SECTION_BREAKDOWN("Breakdown"), //
+		SECTION_BRIDGE("Bridge"), //
+		SECTION_BUILDUP("Buildup"), //
+		SECTION_CHORUS("Chorus"), //
+		SECTION_FADE_IN("Fade in"), //
+		SECTION_FADE_OUT("Fade out"), //
+		SECTION_HEAD("Head"), //
+		SECTION_HOOK("Hook"), //
+		SECTION_INTERLUDE("Interlude"), //
+		SECTION_INTRO("Intro"), //
+		SECTION_MELODY("Melody"), //
+		SECTION_MODULATED_BRIDGE("Modulated bridge"), //
+		SECTINO_MODULATED_CHORUS("Modulated chorus"), //
+		SECTION_MODULATED_VERSE("Modulated verse"), //
+		SECTION_NO_GUITAR("No guitar"), //
+		SECTION_OUTRO("Outro"), //
+		SECTION_POST_BRIDGE("Post bridge"), //
+		SECTION_POST_CHORUS("Post chorus"), //
+		SECTION_POST_VERSE("Post verse"), //
+		SECTION_PRE_BRIDGE("Pre bridge"), //
+		SECTION_PRE_CHORUS("Pre chorus"), //
+		SECTION_PRE_VERSE("Pre verse"), //
+		SECTION_RIFF("Riff"), //
+		SECTION_SILENCE("Silence"), //
+		SECITON_SOLO("Solo"), //
+		SECTION_TAPPING("Tapping"), //
+		SECTION_TRANSITION("Transition"), //
+		SECTION_VAMP("Vamp"), //
+		SECTION_VARIATION("Variation"), //
+		SECTION_VERSE("Verse"), //
 		SECTION_WITHOUT_PHRASE("Section without phrase"), //
 		SELECT_ALL_NOTES("Select all notes"), //
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
@@ -265,13 +301,6 @@ public class Localization {
 		GUITAR_MENU_AUTOCREATE_FHP("Autocreate Fret Hand Positions"), //
 		TOGGLE_PREVIEW_WINDOW("Windowed preview"), //
 		TOGGLE_BORDERLESS_PREVIEW_WINDOW("Borderless windowed preview"), //
-
-		GP_IMPORT_OPTIONS("Guitar Pro file import options"), //
-		GP5_IMPORT_BEAT_MAP_CHANGE("Import beat map"), //
-		GP_IMPORT_ARRANGEMENT_NAME("Arrangement %d, %s:"), //
-		GP_IMPORT_SKIP_ARRANGEMENT("Skip arrangement"), //
-		GP_IMPORT_TO_NEW_ARRANGEMENT("To new arrangement"), //
-		GP_IMPORT_TO_EXISTING_ARRANGEMENT("To arrangement %d, %s"), //
 
 		TEMPO_BEAT_PANE("Tempo beat options"), //
 		TEMPO_BEAT_PANE_BPM("BPM"), //
