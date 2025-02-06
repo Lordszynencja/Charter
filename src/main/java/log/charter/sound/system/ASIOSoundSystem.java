@@ -24,8 +24,8 @@ public class ASIOSoundSystem implements ISoundSystem {
 			this.format = format;
 
 			channels = new FloatQueue[2];
-			channels[0] = ASIOHandler.createLeftChannelStream((int) format.getSampleRate());
-			channels[1] = ASIOHandler.createRightChannelStream((int) format.getSampleRate());
+			channels[0] = ASIOHandler.createLeftChannelStream(format.getSampleRate());
+			channels[1] = ASIOHandler.createRightChannelStream(format.getSampleRate());
 		}
 
 		private float[][] transformToFloat(final short[][] audioData) {
@@ -54,7 +54,7 @@ public class ASIOSoundSystem implements ISoundSystem {
 				for (int frame = 0; frame < floatAudioData[0].length; frame++) {
 					written += channels * sampleSize;
 					for (int channel = 0; channel < this.channels.length; channel++) {
-						this.channels[channel].add(floatAudioData[channel][frame]);
+						this.channels[channel].add(floatAudioData[channel]);
 					}
 				}
 			} catch (final Exception e) {

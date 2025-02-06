@@ -48,7 +48,7 @@ public class Player {
 			rubberBandStretcher = createStretcher();
 			stretchingSamplesQueue = new FloatQueue[2];
 			for (int i = 0; i < 2; i++) {
-				stretchingSamplesQueue[i] = new FloatQueue(rubberBandStretcher.getSamplesRequired(), 1, 1);
+				stretchingSamplesQueue[i] = new FloatQueue(rubberBandStretcher.getSamplesRequired(), 1);
 			}
 		}
 
@@ -126,11 +126,7 @@ public class Player {
 
 		final float[][] stretchingSamples = new float[2][];
 		for (int i = 0; i < 2; i++) {
-			try {
-				stretchingSamples[i] = stretchingSamplesQueue[i].take();
-			} catch (final InterruptedException e) {
-				Logger.error("Error when trying to take samples from the queue", e);
-			}
+			stretchingSamples[i] = stretchingSamplesQueue[i].take();
 		}
 		rubberBandStretcher.process(stretchingSamples, lastBlock);
 

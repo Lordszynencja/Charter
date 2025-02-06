@@ -1,52 +1,51 @@
 package log.charter.sound;
 
-import log.charter.util.data.Fraction;
-
 public class Resampler implements IResampler {
-	public static IResampler create(final int sampleRateFrom, final int sampleRateTo, final SampleSink sink) {
-		if (sampleRateFrom == sampleRateTo) {
+	public static IResampler create(final float resampleRatio, final SampleSink sink) {
+		if (resampleRatio <= 0) {
+			throw new IllegalArgumentException("resample ratio must be positive");
+		}
+		if (resampleRatio == 1) {
 			return f -> sink.consume(f);
 		}
 
-		return new Resampler(sampleRateFrom, sampleRateTo, sink);
+		return new Resampler(resampleRatio, sink);
 	}
 
 	public static interface SampleSink {
-		void consume(float f) throws Exception;
+		void consume(float f);
 	}
 
 	private float a = 0;
 	private float b = 0;
 	private float c = 0;
 
-	private final Fraction distanceBetweenNewSamples;
-	private Fraction position = new Fraction(0, 1);
+	private final float distanceBetweenNewSamples;
+	private float position = 0;
 
 	private final SampleSink sink;
 
-	private Resampler(final int sampleRateFrom, final int sampleRateTo, final SampleSink sink) {
-		distanceBetweenNewSamples = new Fraction(sampleRateFrom, sampleRateTo);
-
+	private Resampler(final float resampleRatio, final SampleSink sink) {
+		distanceBetweenNewSamples = resampleRatio;
 		this.sink = sink;
 	}
 
 	@Override
-	public void addSample(final float sample) throws Exception {
+	public void addSample(final float sample) {
 		a = b;
 		b = c;
 		c = sample;
 
-		while (position.numerator < position.denominator) {
-			final float x = position.floatValue();
-			final float l0 = x * (x - 1) / 2;
-			final float l1 = -(x + 1) * (x - 1);
-			final float l2 = (x + 1) * x / 2;
+		while (position < 1) {
+			final float l0 = position * (position - 1) / 2;
+			final float l1 = -(position + 1) * (position - 1);
+			final float l2 = (position + 1) * position / 2;
 
 			final float y = a * l0 + b * l1 + c * l2;
 			sink.consume(y);
-			position = position.add(distanceBetweenNewSamples);
+			position += distanceBetweenNewSamples;
 		}
 
-		position = position.add(new Fraction(-1, 1));
+		position -= 1;
 	}
 }

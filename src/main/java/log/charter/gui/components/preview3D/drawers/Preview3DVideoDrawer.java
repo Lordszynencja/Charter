@@ -42,7 +42,7 @@ public class Preview3DVideoDrawer {
 
 	private void drawAudio(final Graphics2D graphics) {
 		graphics.setColor(Color.RED);
-		final float[] buffer = ASIOHandler.inputBuffer;
+		final float[] buffer = ASIOHandler.inputCopyBuffer;
 		for (int i = 0; i < buffer.length - 1; i++) {
 			final int x0 = i * 1000 / (buffer.length - 1);
 			final int x1 = (i + 1) * 1000 / (buffer.length - 1);

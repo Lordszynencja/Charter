@@ -213,6 +213,20 @@ public class Config {
 			}
 		}
 
+		try {
+			final File debugConfigFile = new File("C:/users/szymon/documents/CharterDebugConfig.ini");
+			if (debugConfigFile.exists()) {
+				for (final Entry<String, String> configVal : RW.readConfig(debugConfigFile, false).entrySet()) {
+					try {
+						valueAccessors.getOrDefault(configVal.getKey(), ValueAccessor.empty).set(configVal.getValue());
+					} catch (final Exception e) {
+						error("wrong config line " + configVal.getKey() + "=" + configVal.getValue(), e);
+					}
+				}
+			}
+		} catch (final Throwable t) {
+		}
+
 		markChanged();
 		save();
 
