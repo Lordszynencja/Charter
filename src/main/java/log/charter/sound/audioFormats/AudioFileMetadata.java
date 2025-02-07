@@ -65,48 +65,52 @@ public class AudioFileMetadata {
 	}
 
 	private static AudioFileMetadata tryToReadVorbisMetadata(final File file) {
-		try (FlacDecoder decoder = new FlacDecoder(file)) {
-			final byte[] vorbisComment = findVorbisComment(decoder);
-			if (vorbisComment == null) {
-				return null;
-			}
-
-			final int vendorStringLength = readLittleEndian(vorbisComment, 0);
-			int offset = 4 + vendorStringLength;
-			final int fields = readLittleEndian(vorbisComment, offset);
-			offset += 4;
-			final AudioFileMetadata metadata = new AudioFileMetadata();
-
-			for (int i = 0; i < fields; i++) {
-				final int fieldLength = readLittleEndian(vorbisComment, offset);
-				offset += 4;
-				final String field = new String(Arrays.copyOfRange(vorbisComment, offset, offset + fieldLength),
-						"UTF-8");
-				final int equalityPosition = field.indexOf('=');
-				final String name = field.substring(0, equalityPosition);
-				final String value = field.substring(equalityPosition + 1);
-
-				switch (name) {
-					case "ARTIST" -> metadata.artist = value;
-					case "TITLE" -> metadata.title = value;
-					case "ALBUM" -> metadata.album = value;
-					case "YEAR" -> {
-						try {
-							metadata.year = Integer.valueOf(value);
-						} catch (final NumberFormatException e) {
-							Logger.error("Wrong year value in metadata: " + value);
-						}
-					}
+		try {
+			try (FlacDecoder decoder = new FlacDecoder(file)) {
+				final byte[] vorbisComment = findVorbisComment(decoder);
+				if (vorbisComment == null) {
+					decoder.close();
+					return null;
 				}
 
-				offset += fieldLength;
+				final int vendorStringLength = readLittleEndian(vorbisComment, 0);
+				int offset = 4 + vendorStringLength;
+				final int fields = readLittleEndian(vorbisComment, offset);
+				offset += 4;
+				final AudioFileMetadata metadata = new AudioFileMetadata();
+
+				for (int i = 0; i < fields; i++) {
+					final int fieldLength = readLittleEndian(vorbisComment, offset);
+					offset += 4;
+					final String field = new String(Arrays.copyOfRange(vorbisComment, offset, offset + fieldLength),
+							"UTF-8");
+					final int equalityPosition = field.indexOf('=');
+					final String name = field.substring(0, equalityPosition);
+					final String value = field.substring(equalityPosition + 1);
+
+					switch (name) {
+						case "ARTIST" -> metadata.artist = value;
+						case "TITLE" -> metadata.title = value;
+						case "ALBUM" -> metadata.album = value;
+						case "YEAR" -> {
+							try {
+								metadata.year = Integer.valueOf(value);
+							} catch (final NumberFormatException e) {
+								Logger.error("Wrong year value in metadata: " + value);
+							}
+						}
+					}
+
+					offset += fieldLength;
+				}
+
+				decoder.close();
+
+				return metadata;
 			}
-
-		} catch (final Exception e) {
-			debug("Couldn't get vorbis comment data", e);
+		} catch (final Throwable t) {
+			return null;
 		}
-
-		return null;
 	}
 
 	public static AudioFileMetadata readMetadata(final File file) {
@@ -131,5 +135,4 @@ public class AudioFileMetadata {
 	public String toString() {
 		return "AudioFileMetadata [artist=" + artist + ", title=" + title + ", album=" + album + ", year=" + year + "]";
 	}
-
 }

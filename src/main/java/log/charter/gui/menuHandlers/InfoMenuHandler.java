@@ -36,11 +36,22 @@ class InfoMenuHandler extends CharterMenuHandler {
 	private JMenu prepareLanguagesSubmenu() {
 		final JMenu languagesMenu = createMenu(Label.INFO_MENU_LANGUAGE);
 		final File languagesFolder = new File(Localization.languagesFolder);
-		if (languagesFolder.isDirectory()) {
-			for (final String fileName : languagesFolder.list((dir, name) -> name.endsWith(".txt"))) {
-				final String language = fileName.substring(0, fileName.lastIndexOf('.'));
-				languagesMenu.add(createItem(language, () -> Localization.changeLanguage(language, charterMenuBar)));
+		if (!languagesFolder.isDirectory() || !languagesFolder.exists()) {
+			return languagesMenu;
+		}
+
+		final String[] languageFiles = languagesFolder.list((dir, name) -> name.endsWith(".txt"));
+		if (languageFiles == null) {
+			return languagesMenu;
+		}
+
+		for (final String fileName : languageFiles) {
+			if (fileName == null) {
+				continue;
 			}
+
+			final String language = fileName.substring(0, fileName.lastIndexOf('.'));
+			languagesMenu.add(createItem(language, () -> Localization.changeLanguage(language, charterMenuBar)));
 		}
 
 		return languagesMenu;
