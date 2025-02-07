@@ -35,9 +35,9 @@ Works For Windows 10 and above
 
 ### MacOS
 
-Download `Charter-mac-<version>.zip` then unzip it, move libraries to the correct folder, then run `Charter.jar`.
+Download `Charter-mac-<version>.zip` then unzip it and move into `Applications` folder, move libraries to the libraries folder, one of `~/lib`, `/usr/local/lib` or `/usr/lib`, then run `Charter.jar`.
 
-For Apple Silicon/ARM (M1/M2/M3) based Macs, download `Charter-mac-arm-<version>.zip` then unzip it. Then run `Charter.jar`.
+For Apple Silicon/ARM (M1/M2/M3) based Macs, download `Charter-mac-arm-<version>.zip` and proceed as with the other version.
 
 ### Linux
 
