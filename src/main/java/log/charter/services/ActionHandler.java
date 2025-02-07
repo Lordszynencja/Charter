@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcodec.common.logging.Logger;
-
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.types.PositionType;
@@ -20,6 +18,7 @@ import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.toolbar.IChartToolbar;
+import log.charter.io.Logger;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.audio.AudioHandler;
 import log.charter.services.audio.ClapsHandler;
