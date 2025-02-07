@@ -103,10 +103,8 @@ public class NewProjectCreator {
 		songChart.artistName(metadata.artist);
 		songChart.title(metadata.title);
 		songChart.albumName(metadata.album);
-		try {
-			songChart.albumYear = Integer.valueOf(metadata.year);
-		} catch (final NumberFormatException e) {
-			songChart.albumYear = null;
+		if (metadata.year != null) {
+			songChart.albumYear = metadata.year;
 		}
 
 		chartData.setNewSong(songFolder, songChart, "project.rscp");
