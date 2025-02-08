@@ -141,7 +141,7 @@ public class GuitarEventPointPane extends ParamsPane {
 			eventTypes.add(type);
 		}
 
-		final CharterSelect<EventType> input = new CharterSelect<>(eventTypes, null, v -> v.toString(), null);
+		final CharterSelect<EventType> input = new CharterSelect<>(eventTypes, null, null, null);
 		input.setMinimumSize(new Dimension(100, 20));
 
 		final DefaultTableModel tableModel = new DefaultTableModel();
