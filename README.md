@@ -26,6 +26,7 @@ A simple viewer, player, and editor for guitar charts. Charter is a Free and Ope
 ## Download & Install
 
 Download the latest version of Charter from the [releases page](https://github.com/Lordszynencja/Charter/releases/latest).
+You need Java 16 or newer to run it, you can install it from [Oracle Main release](https://www.oracle.com/java/technologies/javase/jdk16-archive-downloads.html) or [OpenJDK]([https://jdk.java.net/](https://jdk.java.net/archive/)).
 
 ### Windows
 
