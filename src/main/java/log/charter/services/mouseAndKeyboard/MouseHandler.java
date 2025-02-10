@@ -80,6 +80,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	@Override
 	public void mousePressed(final MouseEvent e) {
+		Logger.debug("Mouse pressed, key: " + e.getButton() + ", position: (" + e.getX() + "," + e.getY() + ")");
+
 		try {
 			if (e.getComponent() != null) {
 				e.getComponent().requestFocus();
@@ -144,6 +146,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	@Override
 	public void mouseReleased(final MouseEvent e) {
+		Logger.debug("Mouse released, key: " + e.getButton() + ", position: (" + e.getX() + "," + e.getY() + ")");
+
 		try {
 			mouseMoved(e);
 
@@ -400,6 +404,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	@Override
 	public void mouseWheelMoved(final MouseWheelEvent e) {
+		Logger.debug("Mouse wheel moved, rotation: " + e.getWheelRotation());
+
 		if (chartData.isEmpty) {
 			return;
 		}

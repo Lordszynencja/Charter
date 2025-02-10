@@ -11,8 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Optional;
 
-import org.jcodec.common.logging.Logger;
-
+import log.charter.io.Logger;
 import log.charter.services.Action;
 import log.charter.services.ActionHandler;
 import log.charter.services.editModes.ModeManager;
@@ -78,6 +77,8 @@ public class KeyboardHandler implements KeyListener {
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
+		Logger.debug("Pressed " + e.getKeyChar());
+
 		try {
 			int keyCode = e.getKeyCode();
 			if (keyCode == KeyEvent.VK_UNDEFINED) {
@@ -126,6 +127,8 @@ public class KeyboardHandler implements KeyListener {
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
+		Logger.debug("Released " + e.getKeyChar());
+
 		try {
 			final int keyCode = e.getKeyCode();
 			switch (keyCode) {

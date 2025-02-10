@@ -64,7 +64,7 @@ public class ActionHandler implements Initiable {
 	private WindowedPreviewHandler windowedPreviewHandler;
 
 	private int lastFretNumber = 0;
-	private int fretNumberTimer = 0;
+	private long fretNumberTimer = 0;
 
 	private void nextArrangement() {
 		switch (modeManager.getMode()) {
@@ -125,7 +125,7 @@ public class ActionHandler implements Initiable {
 			lastFretNumber = number;
 		}
 
-		fretNumberTimer = (int) (nanoTime() / 1_000_000 + 2000);
+		fretNumberTimer = nanoTime() / 1_000_000 + 2000;
 		guitarSoundsHandler.setFret(lastFretNumber);
 	}
 

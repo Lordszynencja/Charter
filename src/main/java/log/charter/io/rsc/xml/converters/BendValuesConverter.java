@@ -35,7 +35,7 @@ public class BendValuesConverter {
 	}
 
 	private static BendValue generateBendValueFromPosition(final String positionString) {
-		if (positionString.matches("[0-9]* [0-9]*/[0-9]*")) {
+		if (positionString.matches("-?[0-9]* [0-9]*/[0-9]*")) {
 			return new BendValue(FractionalPosition.fromString(positionString));
 		}
 
