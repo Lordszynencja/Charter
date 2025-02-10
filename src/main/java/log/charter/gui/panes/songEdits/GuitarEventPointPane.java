@@ -30,6 +30,7 @@ import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInputForPane;
 import log.charter.gui.components.simple.CharterSelect;
+import log.charter.gui.components.simple.CharterSelect.ItemHolder;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 
 public class GuitarEventPointPane extends ParamsPane {
@@ -194,6 +195,7 @@ public class GuitarEventPointPane extends ParamsPane {
 		this.add(rowRemoveButton, 230, getY(row.getAndAdd(2)), 150, 20);
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean hasValues() {
 		if (section != null) {
 			return true;
@@ -206,8 +208,8 @@ public class GuitarEventPointPane extends ParamsPane {
 		}
 
 		for (int row = 0; row < eventsTable.getRowCount(); row++) {
-			final EventType value = (EventType) eventsTable.getValueAt(row, 0);
-			if (value != null) {
+			final ItemHolder<EventType> value = (ItemHolder<EventType>) eventsTable.getValueAt(row, 0);
+			if (value != null && value.item != null) {
 				return true;
 			}
 		}
@@ -215,6 +217,7 @@ public class GuitarEventPointPane extends ParamsPane {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void saveAndExit() {
 		undoSystem.addUndo();
 
@@ -241,9 +244,9 @@ public class GuitarEventPointPane extends ParamsPane {
 
 		eventPoint.events.clear();
 		for (int row = 0; row < eventsTable.getRowCount(); row++) {
-			final EventType value = (EventType) eventsTable.getValueAt(row, 0);
-			if (value != null) {
-				eventPoint.events.add(value);
+			final ItemHolder<EventType> value = (ItemHolder<EventType>) eventsTable.getValueAt(row, 0);
+			if (value != null && value.item != null) {
+				eventPoint.events.add(value.item);
 			}
 		}
 		eventPoint.events.sort(EventType::compareTo);

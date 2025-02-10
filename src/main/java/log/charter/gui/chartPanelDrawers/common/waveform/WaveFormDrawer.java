@@ -129,14 +129,14 @@ public class WaveFormDrawer {
 		int x0 = 0;
 		int x1 = positionToX((int) ((start - 1) / timeToFrameMultiplier), time);
 		int y0 = 0;
-		int y1 = musicValues[start - 1] * yScale / audio.maxValue;
+		int y1 = (int) ((double) musicValues[start - 1] * yScale / audio.maxValue);
 		final RMSCalculator rmsCalculator = new RMSCalculator((int) timeToFrameMultiplier);
 
 		for (int frame = start; frame < end; frame++) {
 			x0 = x1;
 			x1 = positionToX(frame / timeToFrameMultiplier, time);
 			y0 = y1;
-			y1 = musicValues[frame] * yScale / 0x8000;
+			y1 = (int) ((double) musicValues[frame] * yScale / audio.maxValue);
 
 			rmsCalculator.addValue((float) musicValues[frame] / audio.maxValue);
 

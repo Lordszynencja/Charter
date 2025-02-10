@@ -18,10 +18,10 @@ public class HelpTab extends JLabel {
 		setFocusable(false);
 	}
 
-	private final List<Integer> frameTimes = new ArrayList<>();
+	private final List<Long> frameTimes = new ArrayList<>();
 
 	public void addFrameTime() {
-		final int t = (int) (System.nanoTime() / 1_000_000);
+		final long t = (System.nanoTime() / 1_000_000);
 		frameTimes.add(t);
 
 		frameTimes.removeIf(t0 -> t - t0 > 1000);
