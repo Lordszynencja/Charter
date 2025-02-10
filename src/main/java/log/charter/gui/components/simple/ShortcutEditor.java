@@ -11,7 +11,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JButton;
 import javax.swing.KeyStroke;
 
-import log.charter.gui.panes.ShortcutConfigPane;
+import log.charter.gui.panes.shortcuts.ShortcutConfigPane;
 import log.charter.services.Action;
 import log.charter.services.mouseAndKeyboard.Shortcut;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
@@ -38,6 +38,11 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 	}
 
 	private void resetText() {
+		if (shortcut == null) {
+			setText("");
+			return;
+		}
+
 		String text = shortcut.name("-");
 		if (!shortcut.isReady()) {
 			text += "?";
@@ -46,10 +51,14 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 		setText(text);
 	}
 
-	private void resetShortcut() {
-		shortcut = new Shortcut(ShortcutConfig.getShortcut(action));
-		validateShortcut();
+	public void setShortcut(final Shortcut newShortcut) {
+		shortcut = newShortcut;
 		resetText();
+	}
+
+	private void resetShortcut() {
+		setShortcut(ShortcutConfig.shortcuts.get(action));
+		validateShortcut();
 	}
 
 	public void validateShortcut() {

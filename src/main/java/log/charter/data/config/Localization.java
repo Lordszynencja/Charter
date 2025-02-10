@@ -104,6 +104,8 @@ public class Localization {
 		FRET_9("Fret 9"), //
 		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
+		HAMMER_ON_ON_FRET_ZERO("Hammer on on fret zero"), //
+		HAMMER_ON_ON_LOWER_EQUAL_FRET("Hammer on on a lower or equal fret"), //
 		HIGH_PASS("High"), //
 		HIGH_PASS_SETTINGS("High pass settings"), //
 		IMPORT_LRC_VOCALS("Import LRC vocals file"), //
@@ -157,6 +159,7 @@ public class Localization {
 		PASS_FILTER_RIPPLE_DB("Ripple dB"), //
 		PASTE("Paste"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
+		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		REDO("Redo"), //
 		SECTION_AMBIENT("Ambient"), //
 		SECTION_BREAKDOWN("Breakdown"), //
@@ -192,6 +195,9 @@ public class Localization {
 		SECTION_WITHOUT_PHRASE("Section without phrase"), //
 		SELECT_ALL_NOTES("Select all notes"), //
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
+		SHORTCUTS_SET_CHARTER_DEFAULT("Charter default"), //
+		SHORTCUTS_SET_CURRENT("Current"), //
+		SHORTCUTS_SET_EOF_DEFAULT("EoF default"), //
 		SHOW_CHORD_IDS("Show chord ids"), //
 		SHOW_GRID("Show grid"), //
 		SHOW_TEMPO_INSTEAD_OF_BPM("Show tempo instead of BPM"), //
@@ -214,6 +220,8 @@ public class Localization {
 		TAB_HELP("Help"), //
 		TAB_QUICK_EDIT("Quick edit"), //
 		TAB_TEXT("Text"), //
+		TAP_ON_FRET_ZERO("Tap on fret zero"), //
+		TAP_ON_LOWER_EQUAL_FRET("Tap on a lower or equal fret"), //
 		THEME_BASIC("Basic"), //
 		THEME_MODERN("Modern"), //
 		THEME_SQUARE("Square"), //

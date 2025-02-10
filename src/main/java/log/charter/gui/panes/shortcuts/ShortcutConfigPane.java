@@ -1,21 +1,20 @@
-package log.charter.gui.panes;
+package log.charter.gui.panes.shortcuts;
 
-import static java.util.Arrays.asList;
 import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
 
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
@@ -28,98 +27,21 @@ import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.services.Action;
 import log.charter.services.mouseAndKeyboard.Shortcut;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
-import log.charter.util.collections.Pair;
+import log.charter.services.mouseAndKeyboard.shortcuts.DefaultEofShortcuts;
+import log.charter.services.mouseAndKeyboard.shortcuts.DefaultShortcuts;
+import log.charter.services.mouseAndKeyboard.shortcuts.ShortcutList;
 
 public final class ShortcutConfigPane extends ParamsPane implements ComponentListener {
 	private static final long serialVersionUID = -3193534671039163160L;
 
-	private static final List<Pair<Label, List<Action>>> actionGroups = new ArrayList<>();
-
-	static {
-		actionGroups.add(new Pair<>(Label.TIME_MOVEMENT, asList(//
-				Action.PLAY_AUDIO, //
-				Action.MOVE_BACKWARD, //
-				Action.MOVE_FORWARD, //
-				Action.FAST_BACKWARD, //
-				Action.FAST_FORWARD, //
-				Action.SLOW_BACKWARD, //
-				Action.SLOW_FORWARD, //
-				Action.MOVE_TO_START, //
-				Action.MOVE_TO_END, //
-				Action.MOVE_TO_FIRST_ITEM, //
-				Action.MOVE_TO_LAST_ITEM, //
-				Action.NEXT_ITEM, //
-				Action.PREVIOUS_ITEM, //
-				Action.NEXT_ITEM_WITH_SELECT, //
-				Action.PREVIOUS_ITEM_WITH_SELECT, //
-				Action.NEXT_GRID, //
-				Action.PREVIOUS_GRID, //
-				Action.NEXT_BEAT, //
-				Action.PREVIOUS_BEAT, //
-				Action.SPEED_DECREASE, //
-				Action.SPEED_DECREASE_FAST, //
-				Action.SPEED_DECREASE_PRECISE, //
-				Action.SPEED_INCREASE, //
-				Action.SPEED_INCREASE_FAST, //
-				Action.SPEED_INCREASE_PRECISE, //
-				Action.TOGGLE_REPEATER, //
-				Action.TOGGLE_REPEAT_START, //
-				Action.TOGGLE_REPEAT_END)));
-		actionGroups.add(new Pair<>(Label.EDITING, asList(//
-				Action.COPY, //
-				Action.PASTE, //
-				Action.SPECIAL_PASTE, //
-				Action.DELETE, //
-				Action.UNDO, //
-				Action.REDO, //
-				Action.SELECT_ALL_NOTES, //
-				Action.REDO, //
-				Action.TOGGLE_ANCHOR)));
-		actionGroups.add(new Pair<>(Label.VOCAL_EDITING, asList(//
-				Action.EDIT_VOCALS, //
-				Action.TOGGLE_PHRASE_END, //
-				Action.TOGGLE_WORD_PART)));
-		actionGroups.add(new Pair<>(Label.GUITAR_EDITING, asList(//
-				Action.MOVE_STRING_UP, //
-				Action.MOVE_STRING_DOWN, //
-				Action.MOVE_STRING_UP_SIMPLE, //
-				Action.MOVE_STRING_DOWN_SIMPLE, //
-				Action.MOVE_FRET_UP, //
-				Action.MOVE_FRET_DOWN, //
-				Action.MARK_HAND_SHAPE, //
-				Action.DOUBLE_GRID, //
-				Action.HALVE_GRID, //
-				Action.SNAP_SELECTED, //
-				Action.SNAP_ALL, //
-				Action.TOGGLE_ACCENT, //
-				Action.TOGGLE_ACCENT_INDEPENDENTLY, //
-				Action.TOGGLE_HARMONIC, //
-				Action.TOGGLE_HARMONIC_INDEPENDENTLY, //
-				Action.TOGGLE_HOPO, //
-				Action.TOGGLE_HOPO_INDEPENDENTLY, //
-				Action.TOGGLE_LINK_NEXT, //
-				Action.TOGGLE_LINK_NEXT_INDEPENDENTLY, //
-				Action.TOGGLE_MUTE, //
-				Action.TOGGLE_MUTE_INDEPENDENTLY, //
-				Action.TOGGLE_TREMOLO, //
-				Action.TOGGLE_TREMOLO_INDEPENDENTLY, //
-				Action.TOGGLE_VIBRATO, //
-				Action.TOGGLE_VIBRATO_INDEPENDENTLY)));
-		actionGroups.add(new Pair<>(Label.OTHER, asList(//
-				Action.NEW_PROJECT, //
-				Action.OPEN_PROJECT, //
-				Action.SAVE, //
-				Action.SAVE_AS, //
-				Action.TOGGLE_PREVIEW_WINDOW, //
-				Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW, //
-				Action.TOGGLE_MIDI, //
-				Action.TOGGLE_CLAPS, //
-				Action.TOGGLE_METRONOME, //
-				Action.TOGGLE_WAVEFORM_GRAPH, //
-				Action.EXIT)));
-	}
-
 	private final CharterMenuBar charterMenuBar;
+
+	private final JButton setDefaultShortcutsButton;
+	private final JButton setEoFShortcutsButton;
+	private final JButton setCurrentShortcutsButton;
+
+	private boolean setDefaultShortcuts = false;
+	private boolean setEoFShortcuts = false;
 
 	private final ScrollableRowedPanel panel;
 	private final Map<Action, ShortcutEditor> editors = new HashMap<>();
@@ -131,14 +53,19 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		super(frame, Label.SHORTCUT_CONFIG_PANE, new PaneSizesBuilder(420).rowHeight(23).build());
 		this.charterMenuBar = charterMenuBar;
 
-		int row = 0;
+		setDefaultShortcutsButton = new JButton(Label.SHORTCUTS_SET_CHARTER_DEFAULT.label());
+		setDefaultShortcutsButton.addActionListener(e -> setDefaultShortcuts());
+		setEoFShortcutsButton = new JButton(Label.SHORTCUTS_SET_EOF_DEFAULT.label());
+		setEoFShortcutsButton.addActionListener(e -> setDefaultEoFShortcuts());
+		setCurrentShortcutsButton = new JButton(Label.SHORTCUTS_SET_CURRENT.label());
+		setCurrentShortcutsButton.addActionListener(e -> setCurrentShortcuts());
+
+		add(setDefaultShortcutsButton, 0, 0, 100, 20);
+		add(setEoFShortcutsButton, 110, 0, 100, 20);
+		add(setCurrentShortcutsButton, 220, 0, 100, 20);
+
 		panel = makePanel();
-		for (final Pair<Label, List<Action>> group : actionGroups) {
-			addLabel(group.a, row++);
-			for (final Action action : group.b) {
-				addEditFor(action, row++);
-			}
-		}
+		populatePanel();
 
 		this.add(panel);
 
@@ -147,12 +74,15 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		cancelButton = (JButton) getLastPart();
 
 		resize();
+
+		setResizable(true);
 		addComponentListener(this);
 		setVisible(true);
 	}
 
 	private ScrollableRowedPanel makePanel() {
-		final int rows = actionGroups.stream().collect(Collectors.summingInt(group -> 1 + group.b.size()));
+		final int rows = ShortcutConfigGroup.groups.stream()
+				.collect(Collectors.summingInt(group -> 1 + group.actions.size()));
 		final ScrollableRowedPanel panel = new ScrollableRowedPanel(400, rows);
 		panel.getVerticalScrollBar().setUnitIncrement(5);
 
@@ -174,6 +104,47 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		editors.put(action, fieldWithLabel.field);
 	}
 
+	private void populatePanel() {
+		int row = 0;
+
+		for (final ShortcutConfigGroup group : ShortcutConfigGroup.groups) {
+			addLabel(group.label, row++);
+
+			for (final Action action : group.actions) {
+				addEditFor(action, row++);
+			}
+		}
+	}
+
+	private void setShortcutsFromList(final ShortcutList list) {
+		for (final Entry<Action, ShortcutEditor> editorEntry : editors.entrySet()) {
+			editorEntry.getValue().setShortcut(list.get(editorEntry.getKey()));
+		}
+
+		validateShortcuts();
+	}
+
+	private void setDefaultShortcuts() {
+		setDefaultShortcuts = true;
+		setEoFShortcuts = false;
+
+		setShortcutsFromList(DefaultShortcuts.instance);
+	}
+
+	private void setDefaultEoFShortcuts() {
+		setDefaultShortcuts = false;
+		setEoFShortcuts = true;
+
+		setShortcutsFromList(DefaultEofShortcuts.instance);
+	}
+
+	private void setCurrentShortcuts() {
+		setDefaultShortcuts = false;
+		setEoFShortcuts = false;
+
+		setShortcutsFromList(ShortcutConfig.shortcuts);
+	}
+
 	public boolean validShortcut(final Action action, final Shortcut shortcut) {
 		for (final Action otherAction : Action.values()) {
 			if (otherAction == action) {
@@ -187,13 +158,13 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 			if (editors.containsKey(otherAction)) {
 				otherShortcut = editors.get(otherAction).shortcut;
 			} else {
-				otherShortcut = ShortcutConfig.getShortcut(otherAction);
+				otherShortcut = ShortcutConfig.shortcuts.get(otherAction);
 				if (otherShortcut == null) {
 					continue;
 				}
 			}
 
-			if (otherShortcut.equals(shortcut)) {
+			if (otherShortcut != null && otherShortcut.equals(shortcut)) {
 				return false;
 			}
 		}
@@ -214,7 +185,16 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 			}
 		}
 
-		editors.forEach((action, editor) -> ShortcutConfig.setShortcut(action, editor.shortcut));
+		if (setDefaultShortcuts) {
+			Config.defaultEofShortcuts = false;
+		} else if (setEoFShortcuts) {
+			Config.defaultEofShortcuts = true;
+		}
+
+		ShortcutConfig.resetDefaultShortcuts();
+		editors.forEach((action, editor) -> ShortcutConfig.shortcuts.set(action, editor.shortcut));
+		ShortcutConfig.resetEditModeActions();
+
 		ShortcutConfig.markChanged();
 		charterMenuBar.refreshMenus();
 
@@ -225,11 +205,24 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		final Insets insets = getInsets();
 		final int w = getWidth() - insets.left - insets.right;
 		final int middleX = w / 2;
-		final int scrollEndY = getHeight() - 50 - insets.top - insets.bottom;
 
-		setComponentBounds(panel, 0, 0, w, scrollEndY);
-		setComponentBounds(saveButton, middleX - 110, scrollEndY + 20, 100, 20);
-		setComponentBounds(cancelButton, middleX + 10, scrollEndY + 20, 100, 20);
+		final int defaultButtonsTop = sizes.getY(1);
+		setComponentBounds(setDefaultShortcutsButton, middleX - 170, defaultButtonsTop, 100, 20);
+		setComponentBounds(setEoFShortcutsButton, middleX - 50, defaultButtonsTop, 100, 20);
+		setComponentBounds(setCurrentShortcutsButton, middleX + 70, defaultButtonsTop, 100, 20);
+
+		final int scrollTop = sizes.getY(2);
+		final int scrollBottom = sizes.getY(19);
+
+		if (w > 420) {
+			setComponentBounds(panel, middleX - 200, scrollTop, 420, scrollBottom - scrollTop);
+		} else {
+			setComponentBounds(panel, 0, scrollTop, w, scrollBottom - scrollTop);
+		}
+
+		final int finishButtonsTop = sizes.getY(20);
+		setComponentBounds(saveButton, middleX - 110, finishButtonsTop, 100, 20);
+		setComponentBounds(cancelButton, middleX + 10, finishButtonsTop, 100, 20);
 	}
 
 	@Override

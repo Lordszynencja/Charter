@@ -35,6 +35,7 @@ public class Config {
 	public static String musicPath = System.getProperty("user.home") + File.separator + "Music";
 	public static String songsPath = System.getProperty("user.home") + File.separator + "Documents";
 	public static String oggEncPath;
+	public static boolean defaultEofShortcuts = false;
 
 	public static AudioSystemType audioOutSystemType = AudioSystemType.DEFAULT;
 	public static String audioOutSystemName = null;
@@ -62,7 +63,7 @@ public class Config {
 	public static double volume = 1;
 	public static int midiDelay = 200;
 	public static double sfxVolume = 1;
-	public static int markerOffset = 300;
+	public static int markerOffset = 600;
 
 	public static boolean invertStrings = false;
 	public static boolean invertStrings3D = false;
@@ -180,7 +181,7 @@ public class Config {
 		valueAccessors.put("debugLogging", forBoolean(v -> debugLogging = v, () -> debugLogging));
 		valueAccessors.put("specialDebugOption", forBoolean(v -> specialDebugOption = v, () -> specialDebugOption));
 
-		passFilters.installValueAccessors(valueAccessors, "passFilters");
+		passFilters.init(valueAccessors, "passFilters");
 
 		oggEncPath = new File(RW.getProgramDirectory(), "oggenc" + File.separator + "oggenc2.exe").getAbsolutePath();
 

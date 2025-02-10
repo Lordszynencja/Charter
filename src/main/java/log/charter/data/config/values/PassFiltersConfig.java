@@ -39,7 +39,7 @@ public class PassFiltersConfig implements ConfigValue {
 	public double highPassRippleDb = 1;
 
 	@Override
-	public void installValueAccessors(final Map<String, ValueAccessor> valueAccessors, final String name) {
+	public void init(final Map<String, ValueAccessor> valueAccessors, final String name) {
 		valueAccessors.put(name + ".lowPassAlgorithm",
 				forString(v -> lowPassAlgorithm = PassFilterAlgorithm.valueOf(v), () -> lowPassAlgorithm.name()));
 		valueAccessors.put(name + ".lowPassOrder", forInteger(v -> lowPassOrder = v, () -> lowPassOrder));
