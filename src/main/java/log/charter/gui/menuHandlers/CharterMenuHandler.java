@@ -41,7 +41,7 @@ abstract class CharterMenuHandler {
 
 	protected JMenuItem createItem(final Action action) {
 		final Label label = action.label;
-		final Shortcut shortcut = ShortcutConfig.getShortcut(action);
+		final Shortcut shortcut = ShortcutConfig.shortcuts.get(action);
 		final String shortcutName = shortcut == null ? null : shortcut.name("-");
 		final JMenuItem item = new SpecialMenuItem(label, shortcutName, () -> actionHandler.fireAction(action));
 		setDefaultColors(item);

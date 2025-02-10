@@ -3,5 +3,5 @@ package log.charter.data.config.values;
 import java.util.Map;
 
 public interface ConfigValue {
-	public void installValueAccessors(Map<String, ValueAccessor> valueAccessors, String name);
+	public void init(Map<String, ValueAccessor> valueAccessors, String name);
 }

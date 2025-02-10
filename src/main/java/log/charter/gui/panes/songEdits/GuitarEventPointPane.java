@@ -1,6 +1,9 @@
 package log.charter.gui.panes.songEdits;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -10,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -25,6 +29,7 @@ import log.charter.data.song.EventType;
 import log.charter.data.song.Phrase;
 import log.charter.data.song.SectionType;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.ParamsPane;
@@ -40,6 +45,7 @@ public class GuitarEventPointPane extends ParamsPane {
 	private final UndoSystem undoSystem;
 
 	private AutocompleteInputForPane<String> phraseNameInput;
+	private JLabel phraseHint;
 	private JTextField phraseLevelInput;
 	private JCheckBox phraseSoloInput;
 	private JTable eventsTable;
@@ -77,6 +83,14 @@ public class GuitarEventPointPane extends ParamsPane {
 		addDefaultFinish(row.incrementAndGet(), this::saveAndExit, onCancel);
 	}
 
+	private void onSectionChange(final SectionType newSection) {
+		section = newSection;
+
+		phraseHint.setText(section == null ? "" : section.label.label());
+		phraseHint.setVisible(!phraseHint.getText().isBlank() && phraseNameInput.getText().isBlank());
+		phraseNameInput.repaint();
+	}
+
 	private void prepareSectionInput(final AtomicInteger row) {
 		final List<SectionType> sectionTypes = new ArrayList<>();
 		sectionTypes.add(null);
@@ -85,7 +99,7 @@ public class GuitarEventPointPane extends ParamsPane {
 		}
 
 		final CharterSelect<SectionType> input = new CharterSelect<>(sectionTypes, section,
-				v -> v == null ? "" : v.label.label(), v -> section = v);
+				v -> v == null ? "" : v.label.label(), this::onSectionChange);
 
 		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_SECTION_TYPE, 0);
 		this.add(input, 100, getY(row.getAndIncrement()), 200, 20);
@@ -93,9 +107,28 @@ public class GuitarEventPointPane extends ParamsPane {
 
 	private void preparePhraseInputs(final AtomicInteger row, final String phrase) {
 		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_PHRASE_NAME, 0);
+
+		phraseHint = new JLabel(section == null ? "" : section.label.label());
+		phraseHint.setVisible(false);
+		phraseHint.setForeground(ColorLabel.BASE_DARK_TEXT.color());
+		phraseHint.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+		this.add(phraseHint, 105, getY(row.get()), 100, 20);
+
 		phraseNameInput = new AutocompleteInputForPane<>(this, 100, phrase, this::getPossiblePhraseNames, s -> s,
 				this::onPhraseNameSelected);
-		this.add(phraseNameInput, 100, getY(row.getAndIncrement()), 100, 20);
+		this.add(phraseNameInput, 100, getY(row.getAndIncrement()) - 2, 100, 24);
+
+		phraseNameInput.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(final FocusEvent e) {
+				phraseHint.setVisible(!phraseHint.getText().isBlank() && phraseNameInput.getText().isBlank());
+			}
+
+			@Override
+			public void focusGained(final FocusEvent e) {
+				phraseHint.setVisible(false);
+			}
+		});
 
 		addIntConfigValue(row.get(), 50, 45, Label.GUITAR_BEAT_PANE_PHRASE_LEVEL, phraseLevel, 30, //
 				new IntValueValidator(0, 100), v -> phraseLevel = v, false);
@@ -222,11 +255,15 @@ public class GuitarEventPointPane extends ParamsPane {
 		undoSystem.addUndo();
 
 		final Arrangement arrangement = data.currentArrangement();
-		final String phraseName = phraseNameInput.getText();
+		String phraseName = phraseNameInput.getText();
 
 		if (!hasValues()) {
 			arrangement.eventPoints.remove(eventPoint);
 			return;
+		}
+
+		if (phraseName.isBlank()) {
+			phraseName = section.label.label();
 		}
 
 		eventPoint.section = section;
