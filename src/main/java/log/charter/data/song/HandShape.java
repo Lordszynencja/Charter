@@ -15,7 +15,6 @@ public class HandShape implements IFractionalPositionWithEnd {
 	private FractionalPosition position;
 	private FractionalPosition endPosition;
 	public Integer templateId;
-	public boolean forceArpeggioInRS;
 
 	public HandShape() {
 	}
@@ -41,7 +40,6 @@ public class HandShape implements IFractionalPositionWithEnd {
 		position = other.position;
 		endPosition = other.endPosition;
 		templateId = other.templateId;
-		forceArpeggioInRS = other.forceArpeggioInRS;
 	}
 
 	@Override

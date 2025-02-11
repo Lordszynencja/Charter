@@ -61,7 +61,7 @@ public class Localization {
 		CHANGE_AUDIO("Change audio"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_INSIDE_WRONG_HANDSHAPE(
-				"Chord is inside hand shape of different chord (add fake arpeggio flag if it's part of arpeggio)"), //
+				"Chord is inside hand shape of different chord (add arpeggio flag if it's a part of an arpeggio)"), //
 		CONFIG("Config"), //
 		CONFIG_AUDIO("Audio"), //
 		CONFIG_DISPLAY("Display"), //
@@ -91,7 +91,7 @@ public class Localization {
 		ERRORS_TAB_SEVERITY("Severity"), //
 		EXIT("Exit"), //
 		FILE_MENU("File"), //
-		FORCE_ARPEGGIO_EXPORT_TO_RS("in RS"), //
+		FORCE_ARPEGGIO_IN_RS("in RS"), //
 		FPS("FPS"), //
 		FRET("Fret"), //
 		FRET_0("Fret 0"), //

@@ -125,7 +125,8 @@ public class GuitarSoundsValidator {
 
 			final int templateId = sound.chord().templateId();
 			final HandShape lastHandShape = CollectionUtils.lastBeforeEqual(level.handShapes, sound).find();
-			if (lastHandShape == null || lastHandShape.endPosition().compareTo(sound) < 0) {
+			if (lastHandShape == null || lastHandShape.templateId == null
+					|| lastHandShape.endPosition().compareTo(sound) < 0) {
 				return;// is fixed by ArrangementFixer
 			}
 

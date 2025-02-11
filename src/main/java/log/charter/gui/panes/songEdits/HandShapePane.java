@@ -47,9 +47,10 @@ public class HandShapePane extends ParamsPane {
 
 		addConfigCheckbox(2, 20, 70, Label.ARPEGGIO, template.arpeggio, this::onArpeggioChanged);
 		arpeggioCheckBox = (JCheckBox) getPart(-1);
-		addConfigCheckbox(2, 120, 70, Label.FORCE_ARPEGGIO_EXPORT_TO_RS, handShape.forceArpeggioInRS,
-				v -> handShape.forceArpeggioInRS = v);
+		addConfigCheckbox(2, 130, 30, Label.FORCE_ARPEGGIO_IN_RS, template.forceArpeggioInRS,
+				v -> template.forceArpeggioInRS = v);
 		forceArpeggioInRSCheckbox = (JCheckBox) getPart(-1);
+		forceArpeggioInRSCheckbox.setEnabled(template.arpeggio);
 
 		editor.addChordTemplateEditor(20, 4);
 		editor.hideFields();
@@ -64,7 +65,7 @@ public class HandShapePane extends ParamsPane {
 		template.arpeggio = newArpeggio;
 
 		if (!newArpeggio) {
-			handShape.forceArpeggioInRS = false;
+			template.forceArpeggioInRS = false;
 			forceArpeggioInRSCheckbox.setSelected(false);
 		}
 
