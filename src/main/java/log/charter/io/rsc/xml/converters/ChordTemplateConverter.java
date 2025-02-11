@@ -13,6 +13,7 @@ import log.charter.data.song.ChordTemplate;
 import log.charter.util.collections.HashMap2;
 
 public class ChordTemplateConverter implements Converter {
+	private static String forceArpeggioInRS = "forceRS";
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -36,6 +37,9 @@ public class ChordTemplateConverter implements Converter {
 		writer.addAttribute("chordName", chordTemplate.chordName);
 		if (chordTemplate.arpeggio) {
 			writer.addAttribute("arpeggio", "T");
+			if (chordTemplate.forceArpeggioInRS) {
+				writer.addAttribute(forceArpeggioInRS, "T");
+			}
 		}
 
 		writeMap(writer, "fingers", chordTemplate.fingers);
@@ -64,11 +68,14 @@ public class ChordTemplateConverter implements Converter {
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		final String chordName = reader.getAttribute("chordName");
-		final boolean arpeggio = readBoolean(reader.getAttribute("arpeggio"));
 		final HashMap2<Integer, Integer> fingers = readMap(reader.getAttribute("fingers"));
 		final HashMap2<Integer, Integer> frets = readMap(reader.getAttribute("frets"));
 
-		return new ChordTemplate(chordName, arpeggio, fingers, frets);
+		final ChordTemplate template = new ChordTemplate(chordName, fingers, frets);
+		template.arpeggio = readBoolean(reader.getAttribute("arpeggio"));
+		template.forceArpeggioInRS = readBoolean(reader.getAttribute(forceArpeggioInRS));
+
+		return template;
 	}
 
 }

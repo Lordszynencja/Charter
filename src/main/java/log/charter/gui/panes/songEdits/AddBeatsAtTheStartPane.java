@@ -32,10 +32,11 @@ public class AddBeatsAtTheStartPane extends ParamsPane {
 
 		addIntConfigValue(1, 20, 0, null, beatsToGenerate, 100, //
 				new IntValueValidator(1, 100), v -> beatsToGenerate = v, false);
-		final JTextField input = (JTextField) getLastPart();
+		final JTextField input = (JTextField) getPart(-1);
 		addSelectTextOnFocus(input);
 
-		addDefaultFinish(3, this::saveAndExit);
+		setOnFinish(this::saveAndExit, null);
+		addDefaultFinish(3);
 	}
 
 	private void saveAndExit() {

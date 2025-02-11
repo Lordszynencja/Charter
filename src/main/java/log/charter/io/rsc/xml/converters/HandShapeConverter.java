@@ -40,9 +40,7 @@ public class HandShapeConverter implements Converter {
 
 		writer.addAttribute("p", handShape.position().asString());
 		writer.addAttribute("ep", handShape.endPosition().asString());
-		if (handShape.templateId != null) {
-			writer.addAttribute("templateId", handShape.templateId + "");
-		}
+		writer.addAttribute("templateId", handShape.templateId + "");
 	}
 
 	private HandShape generateHandShapeFromPosition(final HierarchicalStreamReader reader) {

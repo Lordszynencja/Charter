@@ -82,35 +82,38 @@ public class RSXMLToArrangement {
 		return EventType.HIGH_PITCH_TICK;
 	}
 
-	public static Arrangement toArrangement(final SongArrangement arrangementData, final ImmutableBeatsMap beats) {
-		final Arrangement arrangement = new Arrangement();
-
-		arrangement.arrangementType = arrangementData.arrangementProperties.getType();
-		arrangement.arrangementSubtype = arrangementData.arrangementProperties.getSubtype();
-		arrangement.tuning = getTuning(arrangementData.tuning, arrangement.arrangementType);
-		arrangement.capo = arrangementData.capo;
-		arrangement.centOffset = arrangementData.centOffset;
-
-		arrangement.startingTone = arrangementData.tonebase == null ? "" : arrangementData.tonebase;
-		arrangement.toneChanges = arrangementData.tones == null ? new ArrayList<>()
-				: getToneChanges(beats, arrangementData.tones.list);
-		arrangement.tones = map(arrangement.toneChanges, toneChange -> toneChange.toneName, new HashSet<>());
+	private static void addChordTemplates(final SongArrangement arrangementData, final Arrangement arrangement,
+			final ImmutableBeatsMap beats) {
 		arrangement.chordTemplates = arrangementData.chordTemplates.list.stream()//
 				.map(ChordTemplate::new)//
-				.collect(Collectors.toCollection(ArrayList::new));
+				.peek(chordTemplate -> {
+					for (final Integer string : chordTemplate.frets.keySet()) {
+						chordTemplate.frets.put(string, max(arrangement.capo, chordTemplate.frets.get(string)));
+					}
+				}).collect(Collectors.toCollection(ArrayList::new));
+	}
 
+	private static void addSections(final SongArrangement arrangementData, final Arrangement arrangement,
+			final ImmutableBeatsMap beats) {
 		arrangementData.sections.list.forEach(arrangementSection -> {
 			final EventPoint arrangementEventsPoint = arrangement.findOrCreateArrangementEventsPoint(
 					FractionalPosition.fromTimeRounded(beats, arrangementSection.startTime));
 			arrangementEventsPoint.section = findSectionByRSName(arrangementSection.name);
 		});
-		arrangement.phrases = getArrangementPhrases(arrangementData.phrases.list);
+	}
+
+	private static void addPhrases(final SongArrangement arrangementData, final Arrangement arrangement,
+			final ImmutableBeatsMap beats) {
 		arrangementData.phraseIterations.list.forEach(arrangementPhraseIteration -> {
 			final EventPoint arrangementEventsPoint = arrangement.findOrCreateArrangementEventsPoint(
 					FractionalPosition.fromTimeRounded(beats, arrangementPhraseIteration.time));
 			final String phraseName = arrangementData.phrases.list.get(arrangementPhraseIteration.phraseId).name;
 			arrangementEventsPoint.phrase = phraseName;
 		});
+	}
+
+	private static void addEvents(final SongArrangement arrangementData, final Arrangement arrangement,
+			final ImmutableBeatsMap beats) {
 		arrangementData.events.list.forEach(arrangementEvent -> {
 			if (arrangementEvent.code.startsWith("TS:")) {
 				final int time = arrangementEvent.time;
@@ -127,6 +130,26 @@ public class RSXMLToArrangement {
 					FractionalPosition.fromTimeRounded(beats, arrangementEvent.time));
 			arrangementEventsPoint.events.add(findEventByRSName(arrangementEvent.code));
 		});
+	}
+
+	public static Arrangement toArrangement(final SongArrangement arrangementData, final ImmutableBeatsMap beats) {
+		final Arrangement arrangement = new Arrangement();
+
+		arrangement.arrangementType = arrangementData.arrangementProperties.getType();
+		arrangement.arrangementSubtype = arrangementData.arrangementProperties.getSubtype();
+		arrangement.tuning = getTuning(arrangementData.tuning, arrangement.arrangementType);
+		arrangement.capo = arrangementData.capo;
+		arrangement.centOffset = arrangementData.centOffset;
+
+		arrangement.startingTone = arrangementData.tonebase == null ? "" : arrangementData.tonebase;
+		arrangement.toneChanges = arrangementData.tones == null ? new ArrayList<>()
+				: getToneChanges(beats, arrangementData.tones.list);
+		arrangement.tones = map(arrangement.toneChanges, toneChange -> toneChange.toneName, new HashSet<>());
+		addChordTemplates(arrangementData, arrangement, beats);
+		addSections(arrangementData, arrangement, beats);
+		arrangement.phrases = getArrangementPhrases(arrangementData.phrases.list);
+		addPhrases(arrangementData, arrangement, beats);
+		addEvents(arrangementData, arrangement, beats);
 
 		arrangement.levels = RSXMLLevelTransformer.fromArrangementDataLevels(arrangement, arrangementData.levels.list,
 				beats);

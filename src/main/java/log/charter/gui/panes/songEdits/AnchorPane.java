@@ -39,17 +39,18 @@ public class AnchorPane extends ParamsPane {
 		int row = 0;
 		addIntegerConfigValue(row++, 20, 100, Label.FRET, fret, 30, //
 				new IntegerValueValidator(1, Config.frets, true), v -> fret = v, false);
-		final JTextField input = (JTextField) getLastPart();
+		final JTextField input = (JTextField) getPart(-1);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
 		addIntConfigValue(row++, 20, 100, Label.ANCHOR_WIDTH, width, 30, //
 				new IntValueValidator(1, Config.frets), v -> width = v, false);
-		final JTextField AnchorWidthInput = (JTextField) getLastPart();
+		final JTextField AnchorWidthInput = (JTextField) getPart(-1);
 		AnchorWidthInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(AnchorWidthInput);
 
-		addDefaultFinish(row, this::saveAndExit, onCancel);
+		this.setOnFinish(this::saveAndExit, onCancel);
+		addDefaultFinish(row);
 	}
 
 	private void saveAndExit() {

@@ -23,7 +23,7 @@ public class USCTxtImporter {
 		for (final String line : data.split("\r\n|\r|\n")) {
 			if (line.startsWith("#")//
 					|| line.matches("- [0-9]*")//
-					|| line.matches("[:\\\\*FRG] [0-9]* [0-9]* [0-9]* .*")//
+					|| line.matches("[:\\\\*FRG] [0-9]* [0-9]* -?[0-9]* .*")//
 					|| line.matches("P(1|2)")//
 					|| line.matches("E")//
 					|| line.isBlank()) {

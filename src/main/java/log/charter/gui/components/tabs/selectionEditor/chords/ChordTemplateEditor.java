@@ -259,7 +259,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 	public void addChordNameInput(final int x, final int row) {
 		parent.addLabel(1, x - 80, Label.CHORD_NAME, 80);
-		chordNameLabel = (JLabel) parent.getLastPart();
+		chordNameLabel = (JLabel) parent.getPart(-1);
 
 		chordNameInput = new AutocompleteInput<>(parent, 130, "", this::getPossibleChords,
 				this::formatChordTemplateName, this::onChordTemplateChange);
@@ -415,7 +415,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		x = position.getX();
 
 		final int fingerLabelWidth = parent.addLabel(row, x, Label.CHORD_TEMPLATE_FINGER, 50);
-		fingersLabel = (JLabel) parent.getLastPart();
+		fingersLabel = (JLabel) parent.getPart(-1);
 		fingersLabel.setHorizontalAlignment(JLabel.CENTER);
 
 		final int fingerInputX = x + fingerLabelWidth / 2 - 10;

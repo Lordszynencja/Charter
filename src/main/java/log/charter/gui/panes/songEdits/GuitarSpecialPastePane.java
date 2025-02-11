@@ -76,7 +76,8 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_HAND_SHAPES, 0);
 
 		row++;
-		addDefaultFinish(row, this::saveAndExit);
+		this.setOnFinish(this::saveAndExit, null);
+		addDefaultFinish(row);
 	}
 
 	private void saveAndExit() {

@@ -17,7 +17,7 @@ public class ArrangementChordTemplate {
 
 	public ArrangementChordTemplate(final ChordTemplate chordTemplate) {
 		chordName = chordTemplate.chordName;
-		displayName = chordName + (chordTemplate.arpeggio ? "-arp" : "");
+		displayName = chordName + (chordTemplate.forceArpeggioInRS ? "-arp" : "");
 		fingers = new HashMap2<>(chordTemplate.fingers);
 		frets = new HashMap2<>(chordTemplate.frets);
 	}

@@ -33,7 +33,6 @@ public class NewProjectCreator {
 		while (songFolder == null) {
 			final SongFolderSelectPane songFolderSelectPane = new SongFolderSelectPane(charterFrame, Config.songsPath,
 					audioFileDirectory, defaultFolderName);
-			songFolderSelectPane.setVisible(true);
 
 			if (songFolderSelectPane.isAudioFolderChosen()) {
 				return new File(audioFileDirectory);

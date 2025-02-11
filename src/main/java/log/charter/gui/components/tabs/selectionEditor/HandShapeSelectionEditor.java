@@ -35,6 +35,8 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	private JButton setTemplateButton;
 	private JLabel arpeggioLabel;
 	private JCheckBox arpeggioCheckBox;
+	private JLabel forceArpeggioInRSLabel;
+	private JCheckBox forceArpeggioInRSCheckBox;
 
 	private ChartData chartData;
 	private CharterFrame charterFrame;
@@ -56,12 +58,27 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		addSetTemplateButton(300, 0);
 
 		addChordNameInput(100, 1);
+
 		parent.addCheckbox(2, 20, 70, Label.ARPEGGIO, false, val -> {
 			chordTemplate.arpeggio = val;
+
+			if (!val) {
+				forceArpeggioInRSCheckBox.setSelected(false);
+				chordTemplate.forceArpeggioInRS = false;
+			}
+			forceArpeggioInRSCheckBox.setEnabled(val);
+
 			templateEdited();
 		});
-		arpeggioLabel = (JLabel) parent.getPart(parent.getPartsSize() - 2);
-		arpeggioCheckBox = (JCheckBox) parent.getLastPart();
+		arpeggioLabel = (JLabel) parent.getPart(-2);
+		arpeggioCheckBox = (JCheckBox) parent.getPart(-1);
+		parent.addCheckbox(2, 130, 30, Label.FORCE_ARPEGGIO_IN_RS, false, val -> {
+			chordTemplate.forceArpeggioInRS = val;
+			templateEdited();
+		});
+		forceArpeggioInRSLabel = (JLabel) parent.getPart(-2);
+		forceArpeggioInRSCheckBox = (JCheckBox) parent.getPart(-1);
+
 		addChordTemplateEditor(20, 4);
 
 		hideFields();
@@ -118,28 +135,32 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		}
 	}
 
+	private void setVisibility(final boolean visibility) {
+		setTemplateButton.setVisible(visibility);
+		arpeggioLabel.setVisible(visibility);
+		arpeggioCheckBox.setVisible(visibility);
+		forceArpeggioInRSLabel.setVisible(visibility);
+		forceArpeggioInRSCheckBox.setVisible(visibility);
+	}
+
 	@Override
 	public void showFields() {
 		super.showFields();
-
-		setTemplateButton.setVisible(true);
-		arpeggioLabel.setVisible(true);
-		arpeggioCheckBox.setVisible(true);
+		setVisibility(true);
 	}
 
 	@Override
 	public void hideFields() {
 		super.hideFields();
-
-		setTemplateButton.setVisible(false);
-		arpeggioLabel.setVisible(false);
-		arpeggioCheckBox.setVisible(false);
+		setVisibility(false);
 	}
 
 	private void setEmptyTemplate() {
 		chordTemplate = new ChordTemplate();
 		setCurrentValuesInInputs();
 		arpeggioCheckBox.setSelected(false);
+		forceArpeggioInRSCheckBox.setSelected(false);
+		forceArpeggioInRSCheckBox.setEnabled(false);
 	}
 
 	public void selectionChanged(final ISelectionAccessor<HandShape> selectedHandShapesAccessor) {
@@ -154,5 +175,8 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		chordTemplate = new ChordTemplate(chartData.currentArrangement().chordTemplates.get(templateId));
 		setCurrentValuesInInputs();
 		arpeggioCheckBox.setSelected(chordTemplate.arpeggio);
+		forceArpeggioInRSCheckBox.setSelected(chordTemplate.forceArpeggioInRS);
+		forceArpeggioInRSCheckBox.setEnabled(chordTemplate.arpeggio);
+
 	}
 }

@@ -80,7 +80,8 @@ public class GuitarEventPointPane extends ParamsPane {
 		preparePhraseInputs(row, eventPoint.phrase == null ? "" : eventPoint.phrase);
 		prepareEventList(row);
 
-		addDefaultFinish(row.incrementAndGet(), this::saveAndExit, onCancel);
+		setOnFinish(this::saveAndExit, onCancel);
+		addDefaultFinish(row.incrementAndGet());
 	}
 
 	private void onSectionChange(final SectionType newSection) {
@@ -132,11 +133,11 @@ public class GuitarEventPointPane extends ParamsPane {
 
 		addIntConfigValue(row.get(), 50, 45, Label.GUITAR_BEAT_PANE_PHRASE_LEVEL, phraseLevel, 30, //
 				new IntValueValidator(0, 100), v -> phraseLevel = v, false);
-		phraseLevelInput = (JTextField) getLastPart();
+		phraseLevelInput = (JTextField) getPart(-1);
 
 		addConfigCheckbox(row.getAndIncrement(), 150, 0, Label.GUITAR_BEAT_PANE_PHRASE_SOLO, phraseSolo,
 				val -> phraseSolo = val);
-		phraseSoloInput = (JCheckBox) getLastPart();
+		phraseSoloInput = (JCheckBox) getPart(-1);
 	}
 
 	private List<String> getPossiblePhraseNames(final String text) {

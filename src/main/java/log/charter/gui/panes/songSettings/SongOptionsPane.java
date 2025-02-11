@@ -43,7 +43,8 @@ public final class SongOptionsPane extends ParamsPane {
 		addIntegerConfigValue(4, 20, 130, Label.SONG_OPTIONS_YEAR, albumYear, 80, //
 				yearValidator, v -> albumYear = v, false);
 
-		this.addDefaultFinish(6, this::saveAndExit);
+		this.setOnFinish(this::saveAndExit, null);
+		this.addDefaultFinish(6);
 	}
 
 	private void saveAndExit() {

@@ -4,6 +4,8 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
 
+import java.util.Objects;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
@@ -32,6 +34,7 @@ public class ChordTemplate {
 
 	public String chordName = "";
 	public boolean arpeggio;
+	public boolean forceArpeggioInRS;
 	public HashMap2<Integer, Integer> fingers = new HashMap2<>();
 	public HashMap2<Integer, Integer> frets = new HashMap2<>();
 
@@ -48,14 +51,14 @@ public class ChordTemplate {
 	public ChordTemplate(final ChordTemplate other) {
 		chordName = other.chordName;
 		arpeggio = other.arpeggio;
+		forceArpeggioInRS = other.forceArpeggioInRS;
 		fingers = new HashMap2<>(other.fingers);
 		frets = new HashMap2<>(other.frets);
 	}
 
-	public ChordTemplate(final String chordName, final boolean arpeggio, final HashMap2<Integer, Integer> fingers,
+	public ChordTemplate(final String chordName, final HashMap2<Integer, Integer> fingers,
 			final HashMap2<Integer, Integer> frets) {
 		this.chordName = chordName;
-		this.arpeggio = arpeggio;
 		this.fingers = fingers;
 		this.frets = frets;
 	}
@@ -152,10 +155,28 @@ public class ChordTemplate {
 				+ " (" + getTemplateFrets(strings) + ")";
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(arpeggio, chordName, fingers, forceArpeggioInRS, frets);
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || !ChordTemplate.class.isAssignableFrom(obj.getClass())) {
+			return false;
+		}
+
+		return equals((ChordTemplate) obj);
+	}
+
 	public boolean equals(final ChordTemplate other) {
-		return chordName.equals(other.chordName)//
-				&& arpeggio == other.arpeggio//
-				&& frets.equals(other.frets)//
-				&& fingers.equals(other.fingers);
+		return arpeggio == other.arpeggio//
+				&& Objects.equals(chordName, other.chordName)//
+				&& Objects.equals(fingers, other.fingers)//
+				&& forceArpeggioInRS == other.forceArpeggioInRS//
+				&& Objects.equals(frets, other.frets);
 	}
 }

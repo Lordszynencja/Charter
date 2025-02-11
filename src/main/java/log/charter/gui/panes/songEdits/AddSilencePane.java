@@ -44,12 +44,13 @@ public class AddSilencePane extends ParamsPane {
 
 		addBigDecimalConfigValue(1, 20, 0, null, time, 100, //
 				new BigDecimalValueValidator(new BigDecimal(0.1), new BigDecimal(60), false), val -> time = val, false);
-		final JTextField input = (JTextField) getLastPart();
+		final JTextField input = (JTextField) getPart(-1);
 		addSelectTextOnFocus(input);
 
 		addTypeSelector();
 
-		addDefaultFinish(4, this::saveAndExit);
+		setOnFinish(this::saveAndExit, null);
+		addDefaultFinish(4);
 	}
 
 	private void addTypeSelector() {

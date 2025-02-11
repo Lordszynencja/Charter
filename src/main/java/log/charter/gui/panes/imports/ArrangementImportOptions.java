@@ -67,7 +67,8 @@ public class ArrangementImportOptions extends ParamsPane {
 		}
 
 		row++;
-		addDefaultFinish(row, this::saveAndExit);
+		setOnFinish(this::saveAndExit, null);
+		addDefaultFinish(row);
 	}
 
 	private List<ArrangementImportSetting> prepareArrangementImportSettingsOptions() {
