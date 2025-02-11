@@ -180,9 +180,10 @@ public class RSXMLLevelTransformer {
 		return arrangementNotesMap;
 	}
 
-	private static Note note(final ImmutableBeatsMap beats, final ArrangementNote arrangementNote) {
+	private static Note note(final Arrangement arrangement, final ImmutableBeatsMap beats,
+			final ArrangementNote arrangementNote) {
 		final Note note = new Note(FractionalPosition.fromTimeRounded(beats, arrangementNote.time),
-				arrangementNote.string, arrangementNote.fret);
+				arrangementNote.string, Math.max(arrangementNote.fret, arrangement.capo));
 
 		note.endPosition(arrangementNote.sustain == null ? note.position()
 				: FractionalPosition.fromTimeRounded(beats, arrangementNote.time + arrangementNote.sustain));
@@ -236,7 +237,7 @@ public class RSXMLLevelTransformer {
 			final Map<FractionalPosition, List<ArrangementNote>> arrangementNotesMap) {
 		for (final Entry<FractionalPosition, List<ArrangementNote>> notesPosition : arrangementNotesMap.entrySet()) {
 			if (notesPosition.getValue().size() == 1) {
-				level.sounds.add(ChordOrNote.from(note(beats, notesPosition.getValue().get(0))));
+				level.sounds.add(ChordOrNote.from(note(arrangement, beats, notesPosition.getValue().get(0))));
 				continue;
 			}
 

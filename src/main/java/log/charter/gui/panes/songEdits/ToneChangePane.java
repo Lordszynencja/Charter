@@ -50,10 +50,8 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		add(toneNameInput, 20 + labelWidth + 3, getY(row++), 100, 20);
 
 		row++;
-		addDefaultFinish(row, this::saveAndExit, () -> {
-			onCancel.run();
-			return true;
-		});
+		this.setOnFinish(this::saveAndExit, onCancel);
+		addDefaultFinish(row);
 	}
 
 	private ArrayList2<String> getPossibleValues(final String name) {

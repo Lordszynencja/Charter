@@ -90,7 +90,8 @@ public class VocalPane extends ParamsPane {
 			wordPartCheckbox.setEnabled(!val);
 		});
 
-		addDefaultFinish(4, onSave);
+		this.setOnFinish(onSave, null);
+		addDefaultFinish(4);
 	}
 
 	private VocalFlag flag() {

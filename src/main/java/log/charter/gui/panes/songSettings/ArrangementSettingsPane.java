@@ -106,7 +106,8 @@ public class ArrangementSettingsPane extends ParamsPane {
 			addMoveFretsCheckbox(row);
 		}
 
-		addDefaultFinish(row.incrementAndGet(), this::saveAndExit, onCancel);
+		setOnFinish(this::saveAndExit, onCancel);
+		addDefaultFinish(row.incrementAndGet());
 	}
 
 	private String validateBaseTone(final String text) {
@@ -186,7 +187,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 		addIntegerConfigValue(row.get(), 20, 0, Label.ARRANGEMENT_OPTIONS_STRINGS, tuning.strings(), 20,
 				new IntegerValueValidator(1, maxStrings, false), //
 				this::onTuningStringsChanged, false);
-		final TextInputWithValidation stringsInput = (TextInputWithValidation) getLastPart();
+		final TextInputWithValidation stringsInput = (TextInputWithValidation) getPart(-1);
 		stringsInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(stringsInput);
 
@@ -194,7 +195,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 				new IntegerValueValidator(0, Config.frets, false), //
 				val -> capo = val, //
 				false);
-		final TextInputWithValidation capoInput = (TextInputWithValidation) getLastPart();
+		final TextInputWithValidation capoInput = (TextInputWithValidation) getPart(-1);
 		capoInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(capoInput);
 	}
@@ -209,7 +210,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 					new IntegerValueValidator(-48, 48, false), //
 					val -> onTuningValueChanged(string, val), //
 					false);
-			final TextInputWithValidation tuningInput = (TextInputWithValidation) getLastPart();
+			final TextInputWithValidation tuningInput = (TextInputWithValidation) getPart(-1);
 			tuningInput.setHorizontalAlignment(JTextField.CENTER);
 			addSelectTextOnFocus(tuningInput);
 			tuningInputs.add(tuningInput);

@@ -38,10 +38,11 @@ public class AddDefaultSilencePane extends ParamsPane {
 
 		addIntConfigValue(1, 20, 0, null, 2, 100, //
 				new IntValueValidator(0, 5), val -> bars = val, false);
-		final JTextField input = (JTextField) getLastPart();
+		final JTextField input = (JTextField) getPart(-1);
 		addSelectTextOnFocus(input);
 
-		addDefaultFinish(3, this::saveAndExit);
+		setOnFinish(this::saveAndExit, null);
+		addDefaultFinish(3);
 	}
 
 	private void removeAudio(final double movement) {

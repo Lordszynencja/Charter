@@ -1,5 +1,7 @@
 package log.charter.gui.components.containers;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForBigDecimal;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
@@ -8,7 +10,10 @@ import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds
 import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
@@ -34,10 +39,9 @@ import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.components.utils.validators.ValueValidator;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.Pair;
 
-public class ParamsPane extends JDialog {
+public class ParamsPane extends JDialog implements WindowListener {
 	public class RowedPanelEmulator extends RowedPanel {
 		private static final long serialVersionUID = 1L;
 
@@ -48,16 +52,6 @@ public class ParamsPane extends JDialog {
 		@Override
 		public Component getPart(final int id) {
 			return ParamsPane.this.getPart(id);
-		}
-
-		@Override
-		public Component getLastPart() {
-			return ParamsPane.this.getLastPart();
-		}
-
-		@Override
-		public int getPartsSize() {
-			return ParamsPane.this.getPartsSize();
 		}
 
 		@Override
@@ -110,13 +104,12 @@ public class ParamsPane extends JDialog {
 	protected final CharterFrame frame;
 	protected final Component parent;
 
-	private final ArrayList2<Component> parts = new ArrayList2<>();
+	private final List<Component> parts = new ArrayList<>();
 
 	public final PaneSizes sizes;
 
-	public ParamsPane(final CharterFrame frame, final Label title) {
-		this(frame, title, 700);
-	}
+	private Runnable onSave;
+	private Runnable onCancel;
 
 	public ParamsPane(final CharterFrame frame, final Label title, final int width) {
 		this(frame, title, new PaneSizesBuilder(width).build());
@@ -138,16 +131,26 @@ public class ParamsPane extends JDialog {
 		setLayout(null);
 	}
 
-	public Component getPart(final int id) {
-		return parts.get(id);
+	protected void setOnFinish(final Runnable onSave, final Runnable onCancel) {
+		setOnFinish(SaverWithStatus.defaultFor(onSave), onCancel);
 	}
 
-	public Component getLastPart() {
-		return parts.getLast();
+	protected void setOnFinish(final SaverWithStatus onSave, final Runnable onCancel) {
+		this.onSave = onSave == null//
+				? () -> { dispose(); }//
+				: () -> {
+					if (onSave.save()) {
+						dispose();
+					}
+				};
+		this.onCancel = onCancel == null ? () -> {} : onCancel;
 	}
 
-	public int getPartsSize() {
-		return parts.size();
+	public Component getPart(int id) {
+		if (id < 0) {
+			id += parts.size();
+		}
+		return parts.get(max(0, min(parts.size() - 1, id)));
 	}
 
 	private void setSizeWithInsets(final int newWidth, final int newHeight) {
@@ -218,90 +221,6 @@ public class ParamsPane extends JDialog {
 		add(labelComponent, x, y, width, 20);
 
 		return width;
-	}
-
-	protected SaverWithStatus getDefaultAction(final Runnable action) {
-		if (action == null) {
-			return getDefaultAction();
-		}
-
-		return () -> {
-			action.run();
-			return true;
-		};
-	}
-
-	protected SaverWithStatus getDefaultAction() {
-		return () -> true;
-	}
-
-	protected void addDefaultFinish(final int row, final Runnable onSave) {
-		addDefaultFinish(row, getDefaultAction(onSave), getDefaultAction(), true);
-	}
-
-	protected void addDefaultFinish(final int row, final Runnable onSave, final boolean setVisible) {
-		addDefaultFinish(row, getDefaultAction(onSave), setVisible);
-	}
-
-	protected void addDefaultFinish(final int row, final SaverWithStatus onSave) {
-		addDefaultFinish(row, onSave, getDefaultAction(), true);
-	}
-
-	protected void addDefaultFinish(final int row, final SaverWithStatus onSave, final boolean setVisible) {
-		addDefaultFinish(row, onSave, getDefaultAction(), setVisible);
-	}
-
-	protected void addDefaultFinish(final int row, final Runnable onSave, final Runnable onCancel) {
-		addDefaultFinish(row, getDefaultAction(onSave), getDefaultAction(onCancel), true);
-	}
-
-	protected void addDefaultFinish(final int row, final Runnable onSave, final Runnable onCancel,
-			final boolean setVisible) {
-		addDefaultFinish(row, getDefaultAction(onSave), getDefaultAction(onCancel), setVisible);
-	}
-
-	protected void addDefaultFinish(final int row, final SaverWithStatus onSave, final SaverWithStatus onCancel) {
-		addDefaultFinish(row, onSave, onCancel, true);
-	}
-
-	protected void addDefaultFinish(final int row, final SaverWithStatus onSave, final SaverWithStatus onCancel,
-			final boolean setVisible) {
-		final Runnable paneOnSave = () -> {
-			if (onSave.save()) {
-				dispose();
-			}
-		};
-		final Runnable paneOnCancel = () -> {
-			if (onCancel.save()) {
-				dispose();
-			}
-		};
-
-		addButtons(row, paneOnSave, paneOnCancel);
-		getRootPane().registerKeyboardAction(e -> paneOnCancel.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				JComponent.WHEN_IN_FOCUSED_WINDOW);
-		getRootPane().registerKeyboardAction(e -> paneOnSave.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
-				JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-		setSizeWithInsets(sizes.width, sizes.getHeight(row + 1));
-		setLocation();
-
-		validate();
-		if (setVisible) {
-			setVisible(true);
-		}
-	}
-
-	protected void addButtons(final int row, final Runnable onSave) {
-		this.addButtons(row, onSave, this::dispose);
-	}
-
-	protected void addButtons(final int row, final Label label, final Runnable onSave) {
-		this.addButtons(row, label, Label.BUTTON_CANCEL, onSave, this::dispose);
-	}
-
-	protected void addButtons(final int row, final Runnable onSave, final Runnable onCancel) {
-		addButtons(row, Label.BUTTON_SAVE, Label.BUTTON_CANCEL, onSave, onCancel);
 	}
 
 	protected void addButtons(final int row, final Label button1Label, final Label button2Label, final Runnable on1,
@@ -413,5 +332,61 @@ public class ParamsPane extends JDialog {
 		final int fieldX = x + labelWidth;
 		final int length = inputLength > OPTIONS_MAX_INPUT_WIDTH ? OPTIONS_MAX_INPUT_WIDTH : inputLength;
 		add(input, fieldX, y, length, 20);
+	}
+
+	protected void addDefaultFinish(final int row) {
+		addDefaultFinish(row, true);
+	}
+
+	protected void addDefaultFinish(final int row, final boolean setVisible) {
+		final Runnable onCancelWithDispose = () -> {
+			onCancel.run();
+			dispose();
+		};
+
+		addButtons(row, Label.BUTTON_SAVE, Label.BUTTON_CANCEL, onSave, onCancelWithDispose);
+		getRootPane().registerKeyboardAction(e -> onCancelWithDispose.run(),
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		getRootPane().registerKeyboardAction(e -> onSave.run(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+				JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+		addWindowListener(this);
+
+		setSizeWithInsets(sizes.width, sizes.getHeight(row + 1));
+		setLocation();
+
+		validate();
+		if (setVisible) {
+			setVisible(true);
+		}
+	}
+
+	@Override
+	public void windowOpened(final WindowEvent e) {
+	}
+
+	@Override
+	public void windowClosing(final WindowEvent e) {
+		onCancel.run();
+	}
+
+	@Override
+	public void windowClosed(final WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(final WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(final WindowEvent e) {
+	}
+
+	@Override
+	public void windowActivated(final WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeactivated(final WindowEvent e) {
 	}
 }

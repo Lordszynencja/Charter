@@ -27,6 +27,7 @@ public class HandShapePane extends ParamsPane {
 
 	private final ChordTemplateEditor editor;
 	private final JCheckBox arpeggioCheckBox;
+	private final JCheckBox forceArpeggioInRSCheckbox;
 
 	public HandShapePane(final ChartData data, final CharterFrame frame,
 			final ChordTemplatesEditorTab chordTemplatesEditorTab, final HandShape handShape, final Runnable onCancel) {
@@ -44,15 +45,30 @@ public class HandShapePane extends ParamsPane {
 		editor.addChordNameSuggestionButton(100, 0);
 		editor.addChordNameInput(100, 1);
 
-		addConfigCheckbox(2, 20, 70, Label.ARPEGGIO, template.arpeggio, val -> template.arpeggio = val);
-		arpeggioCheckBox = (JCheckBox) getLastPart();
+		addConfigCheckbox(2, 20, 70, Label.ARPEGGIO, template.arpeggio, this::onArpeggioChanged);
+		arpeggioCheckBox = (JCheckBox) getPart(-1);
+		addConfigCheckbox(2, 120, 70, Label.FORCE_ARPEGGIO_EXPORT_TO_RS, handShape.forceArpeggioInRS,
+				v -> handShape.forceArpeggioInRS = v);
+		forceArpeggioInRSCheckbox = (JCheckBox) getPart(-1);
 
 		editor.addChordTemplateEditor(20, 4);
 		editor.hideFields();
 		editor.showFields();
 		editor.setCurrentValuesInInputs();
 
-		addDefaultFinish(6 + data.currentArrangement().tuning.strings(), this::saveAndExit, onCancel);
+		setOnFinish(this::saveAndExit, onCancel);
+		addDefaultFinish(6 + data.currentArrangement().tuning.strings());
+	}
+
+	private void onArpeggioChanged(final boolean newArpeggio) {
+		template.arpeggio = newArpeggio;
+
+		if (!newArpeggio) {
+			handShape.forceArpeggioInRS = false;
+			forceArpeggioInRSCheckbox.setSelected(false);
+		}
+
+		forceArpeggioInRSCheckbox.setEnabled(newArpeggio);
 	}
 
 	private void onChordTemplateChange() {

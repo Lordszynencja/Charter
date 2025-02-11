@@ -60,7 +60,8 @@ public class Localization {
 		CENTS("%s cents"), //
 		CHANGE_AUDIO("Change audio"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
-		CHORD_INSIDE_WRONG_HANDSHAPE("Chord is inside hand shape of different chord"), //
+		CHORD_INSIDE_WRONG_HANDSHAPE(
+				"Chord is inside hand shape of different chord (add fake arpeggio flag if it's part of arpeggio)"), //
 		CONFIG("Config"), //
 		CONFIG_AUDIO("Audio"), //
 		CONFIG_DISPLAY("Display"), //
@@ -90,6 +91,7 @@ public class Localization {
 		ERRORS_TAB_SEVERITY("Severity"), //
 		EXIT("Exit"), //
 		FILE_MENU("File"), //
+		FORCE_ARPEGGIO_EXPORT_TO_RS("in RS"), //
 		FPS("FPS"), //
 		FRET("Fret"), //
 		FRET_0("Fret 0"), //
@@ -105,7 +107,6 @@ public class Localization {
 		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
 		HAMMER_ON_ON_FRET_ZERO("Hammer on on fret zero"), //
-		HAMMER_ON_ON_LOWER_EQUAL_FRET("Hammer on on a lower or equal fret"), //
 		HIGH_PASS("High"), //
 		HIGH_PASS_SETTINGS("High pass settings"), //
 		IMPORT_LRC_VOCALS("Import LRC vocals file"), //
@@ -160,6 +161,7 @@ public class Localization {
 		PASTE("Paste"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
+		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
 		REDO("Redo"), //
 		SECTION_AMBIENT("Ambient"), //
 		SECTION_BREAKDOWN("Breakdown"), //
@@ -221,7 +223,6 @@ public class Localization {
 		TAB_QUICK_EDIT("Quick edit"), //
 		TAB_TEXT("Text"), //
 		TAP_ON_FRET_ZERO("Tap on fret zero"), //
-		TAP_ON_LOWER_EQUAL_FRET("Tap on a lower or equal fret"), //
 		THEME_BASIC("Basic"), //
 		THEME_MODERN("Modern"), //
 		THEME_SQUARE("Square"), //

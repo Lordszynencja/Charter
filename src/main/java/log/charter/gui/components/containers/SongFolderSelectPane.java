@@ -56,17 +56,11 @@ public class SongFolderSelectPane extends ParamsPane {
 		folderNameInput.setSize(500, 20);
 		this.add(folderNameInput);
 
-		addDefaultFinish(4, () -> {
+		this.setOnFinish(() -> {
 			audioFolderChosen = audioFolderOptionButton.isSelected();
 			folderName = folderNameInput.getText();
-
-			return true;
-		}, () -> {
-			audioFolderChosen = false;
-			folderName = null;
-
-			return true;
-		}, false);
+		}, this::cancel);
+		addDefaultFinish(4);
 	}
 
 	public boolean isAudioFolderChosen() {
@@ -75,5 +69,10 @@ public class SongFolderSelectPane extends ParamsPane {
 
 	public String getFolderName() {
 		return folderName;
+	}
+
+	private void cancel() {
+		audioFolderChosen = false;
+		folderName = null;
 	}
 }

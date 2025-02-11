@@ -11,7 +11,6 @@ import java.util.Map;
 
 import log.charter.data.song.vocals.Vocals;
 import log.charter.io.rsc.xml.ChartProject;
-import log.charter.util.collections.ArrayList2;
 
 public class SongChart {
 	private static String cleanString(final String s) {
@@ -42,7 +41,7 @@ public class SongChart {
 
 	public SongChart(final String musicFileName, final String artistName, final String artistNameSort,
 			final String title, final String albumName, final Integer albumYear, final BeatsMap beatsMap,
-			final ArrayList2<Arrangement> arrangements) {
+			final List<Arrangement> arrangements) {
 		this.musicFileName = musicFileName;
 
 		this.artistName(artistName);
@@ -52,7 +51,7 @@ public class SongChart {
 		this.albumYear = albumYear;
 
 		this.beatsMap = beatsMap;
-		this.arrangements = arrangements;
+		this.arrangements.addAll(arrangements);
 	}
 
 	/**

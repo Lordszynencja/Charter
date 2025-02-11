@@ -80,8 +80,8 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 			chordTemplate.arpeggio = val;
 			templateEdited();
 		});
-		arpeggioLabel = (JLabel) getPart(getPartsSize() - 2);
-		arpeggioCheckBox = (JCheckBox) getLastPart();
+		arpeggioLabel = (JLabel) getPart(-2);
+		arpeggioCheckBox = (JCheckBox) getPart(-1);
 		chordTemplateEditor.addChordTemplateEditor(listWidth + 70, 4);
 
 		refreshTemplates();

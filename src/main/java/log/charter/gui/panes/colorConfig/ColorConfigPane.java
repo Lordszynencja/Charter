@@ -37,13 +37,14 @@ public class ColorConfigPane extends ParamsPane {
 		fileSelect = makeFileSelect();
 		panel = makePanel();
 
-		this.addDefaultFinish(21, this::onSave, false);
+		this.setOnFinish(this::onSave, null);
+		this.addDefaultFinish(21);
 
 		addComponentCenteringOnResize(this, //
 				new ComponentWithOffset(fileSelect, 0), //
 				new ComponentWithOffset(panel, 0), //
-				new ComponentWithOffset(getPart(getPartsSize() - 2), 55), //
-				new ComponentWithOffset(getPart(getPartsSize() - 1), -55));
+				new ComponentWithOffset(getPart(-2), 55), //
+				new ComponentWithOffset(getPart(-1), -55));
 
 		setVisible(true);
 	}

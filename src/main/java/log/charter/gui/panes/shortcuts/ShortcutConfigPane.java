@@ -69,9 +69,11 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 
 		this.add(panel);
 
-		addDefaultFinish(20, this::validateSaveAndExit, getDefaultAction(), false);
-		saveButton = (JButton) getPart(getPartsSize() - 2);
-		cancelButton = (JButton) getLastPart();
+		this.setOnFinish(this::validateSaveAndExit, null);
+
+		addDefaultFinish(20, false);
+		saveButton = (JButton) getPart(-2);
+		cancelButton = (JButton) getPart(-1);
 
 		resize();
 

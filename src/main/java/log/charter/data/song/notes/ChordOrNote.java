@@ -193,12 +193,12 @@ public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPos
 		}
 
 		@Override
-		public Optional<CommonNoteWithFret> noteWithFrets(final int string, final List<ChordTemplate> chordTemplates) {
-			return noteWithFrets(string, chordTemplates.get(chord.templateId()));
+		public Optional<CommonNoteWithFret> noteWithFret(final int string, final List<ChordTemplate> chordTemplates) {
+			return noteWithFret(string, chordTemplates.get(chord.templateId()));
 		}
 
 		@Override
-		public Optional<CommonNoteWithFret> noteWithFrets(final int string, final ChordTemplate chordTemplate) {
+		public Optional<CommonNoteWithFret> noteWithFret(final int string, final ChordTemplate chordTemplate) {
 			if (!chord.chordNotes.containsKey(string)) {
 				return Optional.empty();
 			}
@@ -302,12 +302,12 @@ public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPos
 		}
 
 		@Override
-		public Optional<CommonNoteWithFret> noteWithFrets(final int string, final List<ChordTemplate> chordTemplates) {
+		public Optional<CommonNoteWithFret> noteWithFret(final int string, final List<ChordTemplate> chordTemplates) {
 			return getString(string).map(CommonNoteWithFret::new);
 		}
 
 		@Override
-		public Optional<CommonNoteWithFret> noteWithFrets(final int string, final ChordTemplate chordTemplate) {
+		public Optional<CommonNoteWithFret> noteWithFret(final int string, final ChordTemplate chordTemplate) {
 			return getString(string).map(CommonNoteWithFret::new);
 		}
 
@@ -372,9 +372,9 @@ public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPos
 
 	Stream<? extends CommonNoteWithFret> notesWithFrets(ChordTemplate chordTemplate);
 
-	Optional<? extends CommonNoteWithFret> noteWithFrets(int string, List<ChordTemplate> chordTemplates);
+	Optional<? extends CommonNoteWithFret> noteWithFret(int string, List<ChordTemplate> chordTemplates);
 
-	Optional<? extends CommonNoteWithFret> noteWithFrets(int string, ChordTemplate chordTemplate);
+	Optional<? extends CommonNoteWithFret> noteWithFret(int string, ChordTemplate chordTemplate);
 
 	@Override
 	default boolean isFraction() {

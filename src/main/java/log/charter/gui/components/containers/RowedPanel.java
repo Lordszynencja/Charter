@@ -1,10 +1,12 @@
 package log.charter.gui.components.containers;
 
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -19,7 +21,6 @@ import javax.swing.SwingConstants;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.utils.PaneSizes;
 import log.charter.gui.components.utils.RowedPosition;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.Pair;
 
 public class RowedPanel extends JPanel {
@@ -39,7 +40,7 @@ public class RowedPanel extends JPanel {
 
 	public final PaneSizes sizes;
 
-	private final ArrayList2<Component> parts = new ArrayList2<>();
+	private final List<Component> parts = new ArrayList<>();
 
 	public RowedPanel(final PaneSizes sizes) {
 		this.sizes = sizes;
@@ -66,16 +67,11 @@ public class RowedPanel extends JPanel {
 		setMaximumSize(size);
 	}
 
-	public Component getPart(final int id) {
-		return parts.get(id);
-	}
-
-	public Component getLastPart() {
-		return parts.getLast();
-	}
-
-	public int getPartsSize() {
-		return parts.size();
+	public Component getPart(int id) {
+		if (id < 0) {
+			id += parts.size();
+		}
+		return parts.get(max(0, min(parts.size() - 1, id)));
 	}
 
 	@Override

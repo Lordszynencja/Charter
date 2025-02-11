@@ -1,25 +1,24 @@
 package log.charter.services.data.validation;
 
+import java.util.Optional;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
+import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
-import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
 import log.charter.gui.components.tabs.errorsTab.ChartError.ChartErrorSeverity;
 import log.charter.gui.components.tabs.errorsTab.ChartError.ChartPosition;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.util.CollectionUtils;
-import log.charter.util.data.Fraction;
 
 public class GuitarSoundsValidator {
-	private static final FractionalPosition maxHOPODistance = new FractionalPosition(0, new Fraction(1, 2));
-
 	private ChartData chartData;
 	private ErrorsTab errorsTab;
 
@@ -85,44 +84,36 @@ public class GuitarSoundsValidator {
 					return;
 				}
 
-				if (n.fret() == 0) {
-					if (n.hopo() == HOPO.HAMMER_ON) {
+				if (n.hopo() == HOPO.HAMMER_ON) {
+					if (n.fret() == 0) {
 						errorsTab.addError(generateError(Label.HAMMER_ON_ON_FRET_ZERO, n));
-						return;
 					}
-					if (n.hopo() == HOPO.TAP) {
+
+					return;
+				}
+				if (n.hopo() == HOPO.TAP) {
+					if (n.fret() == 0) {
 						errorsTab.addError(generateError(Label.TAP_ON_FRET_ZERO, n));
-						return;
 					}
+
+					return;
+				}
+				if (n.hopo() != HOPO.PULL_OFF) {
+					return;
 				}
 
 				final ChordOrNote previousSound = ChordOrNote.findPreviousSoundOnString(n.string(), id - 1,
 						level.sounds);
-				if (previousSound.isNote()) {
-					final Note previousNote = previousSound.note();
+				final Optional<Integer> previousFret = Optional.ofNullable(previousSound)//
+						.flatMap(s -> s.noteWithFret(n.string(), arrangement.chordTemplates))//
+						.map(previousNote -> previousNote.fret());
+				if (previousFret.isEmpty()) {
+					errorsTab.addError(generateError(Label.PULL_OFF_WITHOUT_NOTE_BEFORE, n));
+					return;
+				}
 
-					switch (n.hopo()) {
-						case HAMMER_ON:
-							if (previousNote.fret >= n.fret()
-									&& previousNote.distance(n).compareTo(maxHOPODistance) <= 0) {
-								errorsTab.addError(generateError(Label.HAMMER_ON_ON_LOWER_EQUAL_FRET, n));
-							}
-							break;
-						case PULL_OFF:
-							if (previousNote.fret <= n.fret()) {
-								errorsTab.addError(generateError(Label.PULL_OFF_ON_HIGHER_EQUAL_FRET, n));
-							}
-							break;
-						case TAP:
-							if (previousNote.fret >= n.fret()
-									&& previousNote.distance(n).compareTo(maxHOPODistance) <= 0) {
-								errorsTab.addError(generateError(Label.TAP_ON_LOWER_EQUAL_FRET, n));
-							}
-							break;
-						default:
-							break;
-
-					}
+				if (previousFret.get() <= n.fret()) {
+					errorsTab.addError(generateError(Label.PULL_OFF_ON_HIGHER_EQUAL_FRET, n));
 				}
 			});
 		}
@@ -136,6 +127,11 @@ public class GuitarSoundsValidator {
 			final HandShape lastHandShape = CollectionUtils.lastBeforeEqual(level.handShapes, sound).find();
 			if (lastHandShape == null || lastHandShape.endPosition().compareTo(sound) < 0) {
 				return;// is fixed by ArrangementFixer
+			}
+
+			final ChordTemplate handShapeTemplate = arrangement.chordTemplates.get(lastHandShape.templateId);
+			if (handShapeTemplate.arpeggio) {
+				return;
 			}
 
 			if (lastHandShape.templateId != templateId) {
