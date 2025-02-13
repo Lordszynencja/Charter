@@ -13,21 +13,21 @@ import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.preview3D.data.AnchorDrawData;
+import log.charter.gui.components.preview3D.data.FHPDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.FadingShaderDrawData;
 
-public class Preview3DAnchorsDrawer {
+public class Preview3DFHPsDrawer {
 	private ChartData chartData;
 
 	public void init(final ChartData data) {
 		chartData = data;
 	}
 
-	private void addAnchor(final FadingShaderDrawData shaderDrawData, final AnchorDrawData anchor, final double time) {
+	private void addAnchor(final FadingShaderDrawData shaderDrawData, final FHPDrawData anchor, final double time) {
 		if (anchor.timeTo < anchor.timeFrom) {
 			return;
 		}
@@ -54,7 +54,7 @@ public class Preview3DAnchorsDrawer {
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
 		final FadingShaderDrawData shaderDrawData = shadersHolder.new FadingShaderDrawData();
 
-		drawData.anchors.forEach(anchorToDraw -> addAnchor(shaderDrawData, anchorToDraw, drawData.time));
+		drawData.fhps.forEach(anchorToDraw -> addAnchor(shaderDrawData, anchorToDraw, drawData.time));
 
 		shaderDrawData.draw(GL30.GL_QUADS, Matrix4.identity, closeDistanceZ, fadedDistanceZ);
 	}

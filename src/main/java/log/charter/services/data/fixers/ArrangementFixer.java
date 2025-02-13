@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
@@ -46,7 +46,7 @@ public class ArrangementFixer {
 		arrangement.eventPoints.removeIf(invalidPositionCheck);
 		arrangement.toneChanges.removeIf(invalidPositionCheck);
 		for (final Level level : arrangement.levels) {
-			level.anchors.removeIf(invalidPositionCheck);
+			level.fhps.removeIf(invalidPositionCheck);
 			level.sounds.removeIf(invalidPositionCheck);
 			level.handShapes.removeIf(invalidPositionCheck);
 		}
@@ -96,7 +96,7 @@ public class ArrangementFixer {
 		level.handShapes.sort(IConstantFractionalPosition::compareTo);
 	}
 
-	private void addMissingAnchors(final Arrangement arrangement, final Level level) {
+	private void addMissingFHPs(final Arrangement arrangement, final Level level) {
 		final List<EventPoint> sections = filter(arrangement.eventPoints, p -> p.section != null);
 
 		for (final EventPoint eventPoint : arrangement.eventPoints) {
@@ -109,22 +109,22 @@ public class ArrangementFixer {
 				continue;
 			}
 
-			final Integer lastAnchorId = CollectionUtils
-					.lastBeforeEqual(level.anchors, eventPoint.toFraction(chartData.beats())).findId();
-			if (lastAnchorId == null) {
-				final Anchor newAnchor = new Anchor(eventPoint.position());
-				level.anchors.add(newAnchor);
-				level.anchors.sort(IConstantFractionalPosition::compareTo);
+			final Integer lastFHPId = CollectionUtils
+					.lastBeforeEqual(level.fhps, eventPoint.toFraction(chartData.beats())).findId();
+			if (lastFHPId == null) {
+				final FHP newFHP = new FHP(eventPoint.position());
+				level.fhps.add(newFHP);
+				level.fhps.sort(IConstantFractionalPosition::compareTo);
 
 				continue;
 			}
 
-			final Anchor lastAnchor = level.anchors.get(lastAnchorId);
-			if (lastAnchor.position().compareTo(eventPoint) != 0) {
-				final Anchor newAnchor = new Anchor(lastAnchor);
-				newAnchor.position(eventPoint.position());
-				level.anchors.add(newAnchor);
-				level.anchors.sort(IConstantFractionalPosition::compareTo);
+			final FHP lastFHP = level.fhps.get(lastFHPId);
+			if (lastFHP.position().compareTo(eventPoint) != 0) {
+				final FHP newFHP = new FHP(lastFHP);
+				newFHP.position(eventPoint.position());
+				level.fhps.add(newFHP);
+				level.fhps.sort(IConstantFractionalPosition::compareTo);
 			}
 		}
 	}
@@ -210,11 +210,11 @@ public class ArrangementFixer {
 				&& (sound.chord().templateId() >= arrangement.chordTemplates.size()//
 						|| sound.chord().chordNotes.isEmpty()));
 
-		removeDuplicatesFractional(level.anchors);
+		removeDuplicatesFractional(level.fhps);
 		removeDuplicatesFractional(level.sounds);
 		removeDuplicatesFractional(level.handShapes);
 
-		addMissingAnchors(arrangement, level);
+		addMissingFHPs(arrangement, level);
 		addMissingHandShapes(level);
 
 		fixNoteLengths(level.sounds);

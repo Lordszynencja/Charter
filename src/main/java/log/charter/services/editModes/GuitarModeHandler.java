@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
@@ -25,7 +25,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
-import log.charter.gui.panes.songEdits.AnchorPane;
+import log.charter.gui.panes.songEdits.FHPPane;
 import log.charter.gui.panes.songEdits.GuitarEventPointPane;
 import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.gui.panes.songEdits.ToneChangePane;
@@ -56,22 +56,22 @@ public class GuitarModeHandler extends ModeHandler {
 
 	private long lastScrollTime = -scrollTimeoutForUndo;
 
-	private void rightClickAnchor(final PositionWithIdAndType anchorPosition) {
+	private void rightClickFHP(final PositionWithIdAndType fhpPosition) {
 		selectionManager.clear();
 
-		if (anchorPosition.anchor != null) {
-			new AnchorPane(chartData, charterFrame, undoSystem, anchorPosition.anchor, () -> {});
+		if (fhpPosition.fhp != null) {
+			new FHPPane(chartData, charterFrame, undoSystem, fhpPosition.fhp, () -> {});
 			return;
 		}
 
 		undoSystem.addUndo();
 
-		final Anchor anchor = new Anchor(anchorPosition.toFraction(chartData.beats()).position());
-		final List<Anchor> anchors = chartData.currentAnchors();
-		anchors.add(anchor);
-		anchors.sort(IConstantFractionalPosition::compareTo);
+		final FHP fhp = new FHP(fhpPosition.toFraction(chartData.beats()).position());
+		final List<FHP> fhps = chartData.currentFHPs();
+		fhps.add(fhp);
+		fhps.sort(IConstantFractionalPosition::compareTo);
 
-		new AnchorPane(chartData, charterFrame, undoSystem, anchor, () -> {
+		new FHPPane(chartData, charterFrame, undoSystem, fhp, () -> {
 			undoSystem.undo();
 			undoSystem.removeRedo();
 		});
@@ -274,12 +274,12 @@ public class GuitarModeHandler extends ModeHandler {
 			rightClickToneChange(clickData.pressHighlight);
 			return;
 		}
-		if (clickData.pressHighlight.type == PositionType.ANCHOR) {
+		if (clickData.pressHighlight.type == PositionType.FHP) {
 			if (clickData.isXDrag()) {
 				return;
 			}
 
-			rightClickAnchor(clickData.pressHighlight);
+			rightClickFHP(clickData.pressHighlight);
 			return;
 		}
 		if (clickData.pressHighlight.type == PositionType.GUITAR_NOTE) {

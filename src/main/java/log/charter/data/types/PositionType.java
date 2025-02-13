@@ -2,7 +2,7 @@ package log.charter.data.types;
 
 import static log.charter.data.song.position.virtual.IVirtualPosition.fractionalPositionManager;
 import static log.charter.data.song.position.virtual.IVirtualPosition.positionManager;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
@@ -26,7 +26,7 @@ import log.charter.data.song.position.virtual.IVirtualPosition.PositionDataTypeM
 import log.charter.services.editModes.EditMode;
 
 public enum PositionType {
-	ANCHOR(false, fractionalPositionManager, ChartData::currentAnchors, PositionWithIdAndType::of), //
+	FHP(false, fractionalPositionManager, ChartData::currentFHPs, PositionWithIdAndType::of), //
 	BEAT(false, positionManager, ChartData::beats, PositionWithIdAndType::of), //
 	EVENT_POINT(false, fractionalPositionManager, ChartData::currentEventPoints, PositionWithIdAndType::of), //
 	GUITAR_NOTE(true, fractionalPositionManager, ChartData::currentSounds, PositionWithIdAndType::of), //
@@ -111,11 +111,11 @@ public enum PositionType {
 		if (y < toneChangeY) {
 			return EVENT_POINT;
 		}
-		if (y < anchorY) {
+		if (y < fhpY) {
 			return TONE_CHANGE;
 		}
 		if (y < lanesTop) {
-			return ANCHOR;
+			return FHP;
 		}
 		if (y < lanesBottom) {
 			return GUITAR_NOTE;

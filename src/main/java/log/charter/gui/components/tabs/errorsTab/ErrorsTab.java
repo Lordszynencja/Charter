@@ -19,12 +19,9 @@ import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.components.utils.RowedPosition;
-import log.charter.services.data.ChartTimeHandler;
 
 public class ErrorsTab extends RowedPanel implements ComponentListener {
 	private static final long serialVersionUID = 1L;
-
-	private ChartTimeHandler chartTimeHandler;
 
 	private DefaultTableModel tableModel;
 	private JTable errorsTable;
@@ -91,7 +88,7 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 			public void mousePressed(final MouseEvent mouseEvent) {
 				if (mouseEvent.getClickCount() == 2) {
 					final int row = errorsTable.rowAtPoint(mouseEvent.getPoint());
-					errors.get(row).position.goTo(chartTimeHandler);
+					errors.get(row).position.goTo();
 				}
 			}
 		});

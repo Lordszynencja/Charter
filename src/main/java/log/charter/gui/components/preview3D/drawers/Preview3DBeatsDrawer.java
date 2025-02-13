@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL30;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.preview3D.data.AnchorDrawData;
+import log.charter.gui.components.preview3D.data.FHPDrawData;
 import log.charter.gui.components.preview3D.data.BeatDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
@@ -124,13 +124,13 @@ public class Preview3DBeatsDrawer {
 	private static class FretDrawData implements Comparable<FretDrawData> {
 		public final double position;
 		public final int fret;
-		public final boolean fromAnchor;
+		public final boolean fromFHP;
 		public final boolean active;
 
-		public FretDrawData(final double position, final int fret, final boolean fromAnchor, final boolean active) {
+		public FretDrawData(final double position, final int fret, final boolean fromFHP, final boolean active) {
 			this.position = position;
 			this.fret = fret;
-			this.fromAnchor = fromAnchor;
+			this.fromFHP = fromFHP;
 			this.active = active;
 		}
 
@@ -141,7 +141,7 @@ public class Preview3DBeatsDrawer {
 				return positionDifference;
 			}
 
-			return fromAnchor == o.fromAnchor ? 0 : fromAnchor ? 1 : -1;
+			return fromFHP == o.fromFHP ? 0 : fromFHP ? 1 : -1;
 		}
 	}
 
@@ -165,10 +165,10 @@ public class Preview3DBeatsDrawer {
 	}
 
 	private void drawActiveFretNumbers(final ShadersHolder shadersHolder, final IntRange currentFrets, final double y) {
-		final Color anchorFretColor = ColorLabel.PREVIEW_3D_ANCHOR_FRET_COLOR.color();
+		final Color fhpFretColor = ColorLabel.PREVIEW_3D_FHP_FRET_COLOR.color();
 		for (int fret = currentFrets.min; fret <= currentFrets.max; fret++) {
 			final double z = getTimePosition(0);
-			drawFretNumber(shadersHolder, fret, y, z, anchorFretColor);
+			drawFretNumber(shadersHolder, fret, y, z, fhpFretColor);
 		}
 	}
 
@@ -179,9 +179,9 @@ public class Preview3DBeatsDrawer {
 
 		addFretsToDrawForMeasures(drawData, fretsToDraw);
 
-		for (final AnchorDrawData anchor : drawData.anchors) {
-			if (anchor.timeFrom > drawData.time) {
-				fretsToDraw.add(new FretDrawData(anchor.timeFrom, anchor.fretFrom + 1, true, true));
+		for (final FHPDrawData fhp : drawData.fhps) {
+			if (fhp.timeFrom > drawData.time) {
+				fretsToDraw.add(new FretDrawData(fhp.timeFrom, fhp.fretFrom + 1, true, true));
 			}
 		}
 
@@ -189,11 +189,11 @@ public class Preview3DBeatsDrawer {
 
 		final Color beatActiveFretColor = ColorLabel.PREVIEW_3D_BEAT_NUMBER_ACTIVE_COLOR.color();
 		final Color beatFretColor = setAlpha(ColorLabel.PREVIEW_3D_LANE_BORDER.color(), 128);
-		final Color anchorFretColor = ColorLabel.PREVIEW_3D_ANCHOR_FRET_COLOR.color();
+		final Color fhpFretColor = ColorLabel.PREVIEW_3D_FHP_FRET_COLOR.color();
 
 		fretsToDraw.forEach(fretToDraw -> {
 			final double z = getTimePosition(fretToDraw.position - drawData.time);
-			final Color color = fretToDraw.fromAnchor ? anchorFretColor //
+			final Color color = fretToDraw.fromFHP ? fhpFretColor //
 					: fretToDraw.active ? beatActiveFretColor : beatFretColor;
 			drawFretNumberWithFade(shadersHolder, fretToDraw.fret, y, z, color);
 		});

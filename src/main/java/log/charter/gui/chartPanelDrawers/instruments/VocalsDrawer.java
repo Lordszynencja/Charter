@@ -61,6 +61,7 @@ public class VocalsDrawer {
 			notes.add(filledRectangle(positionAndSize, ColorLabel.VOCAL_NOTE, true));
 			if (selected) {
 				notes.add(strokedRectangle(positionAndSize.resized(-1, -1, 1, 1), ColorLabel.VOCAL_SELECT));
+				notes.add(strokedRectangle(positionAndSize.resized(0, 0, -1, -1), ColorLabel.VOCAL_SELECT));
 			}
 
 			final String text = vocal.text() + (vocal.flag() == VocalFlag.WORD_PART ? "-" : "");
@@ -93,7 +94,9 @@ public class VocalsDrawer {
 		}
 
 		public void addHighlight(final int x, final int length) {
-			notes.add(strokedRectangle(getVocalNotePosition(x, length).resized(-1, -1, 1, 1), ColorLabel.HIGHLIGHT));
+			final ShapePositionWithSize position = getVocalNotePosition(x, length);
+			notes.add(strokedRectangle(position.resized(-1, -1, 1, 1), ColorLabel.VOCAL_HIGHLIGHT));
+			notes.add(strokedRectangle(position.resized(0, 0, -1, -1), ColorLabel.VOCAL_HIGHLIGHT));
 		}
 
 		public void draw(final Graphics2D g) {

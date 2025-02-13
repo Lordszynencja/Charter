@@ -127,7 +127,7 @@ public class SongChart {
 			arrangement.toneChanges.forEach(tc -> tc.move(beatsToAdd));
 
 			for (final Level level : arrangement.levels) {
-				level.anchors.forEach(tc -> tc.move(beatsToAdd));
+				level.fhps.forEach(tc -> tc.move(beatsToAdd));
 				level.sounds.forEach(s -> s.move(beatsToAdd));
 				level.handShapes.forEach(tc -> tc.move(beatsToAdd));
 			}

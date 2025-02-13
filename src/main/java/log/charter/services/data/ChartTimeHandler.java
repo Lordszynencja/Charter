@@ -100,20 +100,6 @@ public class ChartTimeHandler {
 		}
 	}
 
-	public void moveTo(final Integer arrangementId, final Integer levelId, final IVirtualConstantPosition time) {
-		if (arrangementId != null) {
-			modeManager.setArrangement(arrangementId);
-		}
-
-		if (levelId != null) {
-			modeManager.setLevel(levelId);
-		}
-
-		if (time != null) {
-			nextTime(time);
-		}
-	}
-
 	public double time() {
 		return time;
 	}
@@ -134,7 +120,7 @@ public class ChartTimeHandler {
 				accumulator.addFractional(beats, arrangement.toneChanges);
 
 				for (final Level level : arrangement.levels) {
-					accumulator.addFractional(beats, level.anchors);
+					accumulator.addFractional(beats, level.fhps);
 					accumulator.addFractional(beats, level.sounds);
 					accumulator.addFractional(beats, level.handShapes);
 				}
@@ -157,7 +143,7 @@ public class ChartTimeHandler {
 				accumulator.addFractional(beats, arrangement.toneChanges);
 
 				for (final Level level : arrangement.levels) {
-					accumulator.addFractional(beats, level.anchors);
+					accumulator.addFractional(beats, level.fhps);
 					accumulator.addFractional(beats, level.sounds);
 					accumulator.addFractional(beats, level.handShapes);
 				}

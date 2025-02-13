@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.configs.Tuning;
@@ -310,15 +310,15 @@ public class GuitarSoundsHandler {
 	}
 
 	private void setFretForFHPs(final int fret) {
-		final List<Selection<Anchor>> selected = selectionManager.getSelected(PositionType.ANCHOR);
+		final List<Selection<FHP>> selected = selectionManager.getSelected(PositionType.FHP);
 		if (selected.isEmpty()) {
 			return;
 		}
 
 		undoSystem.addUndo();
 
-		for (final Selection<Anchor> anchorSelection : selected) {
-			anchorSelection.selectable.fret = fret;
+		for (final Selection<FHP> fhpSelection : selected) {
+			fhpSelection.selectable.fret = fret;
 		}
 	}
 
@@ -359,7 +359,7 @@ public class GuitarSoundsHandler {
 
 	public void setFret(final int fret) {
 		switch (selectionManager.selectedType()) {
-			case ANCHOR:
+			case FHP:
 				setFretForFHPs(fret);
 				break;
 			case GUITAR_NOTE:

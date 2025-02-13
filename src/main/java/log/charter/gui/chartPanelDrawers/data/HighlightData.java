@@ -18,7 +18,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
@@ -312,7 +312,7 @@ public class HighlightData {
 		}
 
 		final Function<Selection<IVirtualConstantPosition>, ITemporaryHighlightPosition> mapper = switch (press.highlight.type) {
-			case ANCHOR -> s -> new TemporaryFractionalHighlighPosition((Anchor) s.selectable);
+			case FHP -> s -> new TemporaryFractionalHighlighPosition((FHP) s.selectable);
 			case BEAT -> s -> new TemporaryHighlightPosition((Beat) s.selectable);
 			case EVENT_POINT -> s -> new TemporaryFractionalHighlighPosition((EventPoint) s.selectable);
 			case GUITAR_NOTE -> s -> new TemporaryFractionalHighlighPosition((ChordOrNote) s.selectable);

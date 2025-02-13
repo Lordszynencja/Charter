@@ -101,7 +101,7 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 		}
 
 		undoSystem.addUndo();
-		ArrangementFretHandPositionsCreator.createFretHandPositions(chartData.beats(),
-				chartData.currentChordTemplates(), soundsToAddFHPFor, chartData.currentAnchors());
+		ArrangementFretHandPositionsCreator.createFHPs(chartData.beats(),
+				chartData.currentChordTemplates(), soundsToAddFHPFor, chartData.currentFHPs());
 	}
 }

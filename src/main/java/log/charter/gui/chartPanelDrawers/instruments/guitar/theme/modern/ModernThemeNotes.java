@@ -1,11 +1,11 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.GraphicalConfig.anchorInfoHeight;
+import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
 import static log.charter.data.config.GraphicalConfig.chordHeight;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.AccentIconGenerator.generateAccentIcon;
@@ -275,7 +275,7 @@ public class ModernThemeNotes implements ThemeNotes {
 
 	@Override
 	public void addChordName(final int x, final String chordName) {
-		data.chordNames.add(new Text(new Position2D(x + 2, anchorY + anchorInfoHeight), chordNameFont, chordName,
+		data.chordNames.add(new Text(new Position2D(x + 2, fhpY + fhpInfoHeight), chordNameFont, chordName,
 				ColorLabel.BASE_DARK_TEXT));
 	}
 

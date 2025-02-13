@@ -13,9 +13,11 @@ import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 
 @XStreamAlias("level")
-@XStreamInclude({ Anchor.class, ChordOrNote.class, HandShape.class })
+@XStreamInclude({ FHP.class, ChordOrNote.class, HandShape.class })
 public class Level {
-	public List<Anchor> anchors = new ArrayList<>();
+
+	@XStreamAlias("anchors")
+	public List<FHP> fhps = new ArrayList<>();
 	public List<ChordOrNote> sounds = new ArrayList<>();
 	public List<HandShape> handShapes = new ArrayList<>();
 

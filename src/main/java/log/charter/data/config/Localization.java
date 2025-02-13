@@ -24,8 +24,8 @@ public class Localization {
 		ADD_BEATS_PANE("Add beats"), //
 		ADD_DEFAULT_SILENCE("Add default silence based on bars"), //
 		ADD_SILENCE("Add silence in the beginning"), //
-		ANCHOR_PANE("Anchor"), //
-		ANCHOR_WIDTH("Anchor width"), //
+		FHP_PANE("FHP"), //
+		FHP_WIDTH("Width"), //
 		ARPEGGIO("Arpeggio"), //
 		ARRANGEMENT_ID_NAME("Arrangement %d, %s:"), //
 		ARRANGEMENT_IMPORT_OPTIONS("Arrangement import options"), //
@@ -62,6 +62,7 @@ public class Localization {
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_INSIDE_WRONG_HANDSHAPE(
 				"Chord is inside hand shape of different chord (add arpeggio flag if it's a part of an arpeggio)"), //
+		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
 		CONFIG("Config"), //
 		CONFIG_AUDIO("Audio"), //
 		CONFIG_DISPLAY("Display"), //
@@ -91,6 +92,11 @@ public class Localization {
 		ERRORS_TAB_SEVERITY("Severity"), //
 		EXIT("Exit"), //
 		FILE_MENU("File"), //
+		FINGER_NOT_SET_FOR_FRETTED_STRING("Finger not set for fretted string in template [%d] - string %d"), //
+		FINGER_SET_FOR_OPEN_STRING("Finger set for open string in template [%d] - string %d"), //
+		FIRST_BEAT_BEFORE_10_SECONDS("First beat is set before 10 seconds have passed"), //
+		FIRST_FINGER_ON_NOT_LOWEST_FRET(
+				"First finger set on fret that's not lowest non-open fret in template [%d] - string %d"), //
 		FORCE_ARPEGGIO_IN_RS("in RS"), //
 		FPS("FPS"), //
 		FRET("Fret"), //
@@ -104,6 +110,8 @@ public class Localization {
 		FRET_7("Fret 7"), //
 		FRET_8("Fret 8"), //
 		FRET_9("Fret 9"), //
+		FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
+				"Fret in sound is different than fret in hand shape under it on the same string"), //
 		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
 		HAMMER_ON_ON_FRET_ZERO("Hammer on on fret zero"), //
@@ -114,6 +122,7 @@ public class Localization {
 		INVERT_STRINGS("Invert strings"), //
 		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
 		LEFT_HANDED("Left handed"), //
+		LINKED_NOTE_HAS_NO_LENGTH("Note that's linked to has no length"), //
 		LOW_PASS("Low"), //
 		LOW_PASS_SETTINGS("Low pass settings"), //
 		LRC_FILE("LRC file"), //
@@ -147,10 +156,14 @@ public class Localization {
 		NEW_PROJECT("New project"), //
 		NO_PHRASES_IN_ARRANGEMENT("No phrases in arrangement"), //
 		NO_SECTIONS_IN_ARRANGEMENT("No sections in arrangement"), //
+		NOTE_IN_WRONG_FHP("Note in wrong FHP"), //
+		NOTE_INSIDE_NON_ARPEGGIO_HAND_SHAPE("Note inside hand shape that's not arpeggio"), //
 		NOTE_SLIDE_FROM_OPEN_STRING("Slide starts on open string"), //
 		NOTE_SLIDE_NOT_LINKED("Pitched note slide is not linked to next note"), //
 		NOTE_SLIDES_INTO_CHORD("Note slide ends on a chord, should end on note"), //
-		NOTE_SLIDES_INTO_WRONG_FRET("Note slide ends on a different fret than next note"), //
+		NOTE_SLIDES_INTO_WRONG_FRET("Note slide ends on a different fret than next note on string %d"), //
+		NOTE_SLIDE_ENDS_ON_DIFFERENT_FINGER("Note slide ends on different finger on string %d"), //
+		NOTE_WITHOUT_FHP("Note without FHP"), //
 		OPEN_PROJECT("Open project"), //
 		PASS_FILTER_ALGORITHM("Algorithm"), //
 		PASS_FILTER_CENTER_FREQUENCY("Center frequency"), //
@@ -257,6 +270,7 @@ public class Localization {
 		WARNING("Warning"), //
 		WRITING_FLAC_FILE("Writing FLAC file<br>Time elapsed: %s"), //
 		WRITING_WAV_FILE("Writing WAV file<br>Time elapsed: %s"), //
+		FIRST_FINGER_NOT_ON_FIRST_FHP_FRET("First finger is not on first fret in FHP"), //
 		XML_IMPORT_TYPE("XML import type"), //
 		XML_IMPORT_AS("Choose what to import the XML as"), //
 
@@ -421,7 +435,7 @@ public class Localization {
 		SPLIT_INTO_NOTES("Split"), //
 		FORCE_NO_NOTES("No notes"), //
 		IGNORE("Ignore"), //
-		PASS_OTHER_NOTES("Crazy/Arpeggiato"), //
+		PASS_OTHER_NOTES("Pass other notes"), //
 		VIBRATO("Vibrato"), //
 		TREMOLO("Tremolo"), //
 
@@ -431,7 +445,7 @@ public class Localization {
 		SPECIAL_GUITAR_PASTE_PHRASES("Paste phrases"), //
 		SPECIAL_GUITAR_PASTE_EVENTS("Paste events"), //
 		SPECIAL_GUITAR_PASTE_TONE_CHANGES("Paste tone changes"), //
-		SPECIAL_GUITAR_PASTE_ANCHORS("Paste anchors"), //
+		SPECIAL_GUITAR_PASTE_FHPS("Paste FHPs"), //
 		SPECIAL_GUITAR_PASTE_SOUNDS("Paste notes"), //
 		SPECIAL_GUITAR_PASTE_HAND_SHAPES("Paste hand shapes"), //
 
@@ -501,7 +515,7 @@ public class Localization {
 		GRAPHIC_CONFIG_THEME("Theme"), //
 		GRAPHIC_CONFIG_EVENTS_CHANGE_HEIGHT("Events height"), //
 		GRAPHIC_CONFIG_TONE_CHANGE_HEIGHT("Tone height"), //
-		GRAPHIC_CONFIG_ANCHOR_INFO_HEIGHT("Anchor info height"), //
+		GRAPHIC_CONFIG_FHP_INFO_HEIGHT("FHP info height"), //
 		GRAPHIC_CONFIG_NOTE_HEIGHT("Note height (px)"), //
 		GRAPHIC_CONFIG_NOTE_WIDTH("Note width (px)"), //
 		GRAPHIC_CONFIG_CHORD_HEIGHT("Chord height"), //
@@ -565,7 +579,7 @@ public class Localization {
 		GRAPHIC_CONFIG_NOTE_7("Note 8"), //
 		GRAPHIC_CONFIG_NOTE_8("Note 9"), //
 
-		GRAPHIC_CONFIG_ANCHOR("Anchor"), //
+		GRAPHIC_CONFIG_FHP("FHP"), //
 		GRAPHIC_CONFIG_HAND_SHAPE("Hand shape"), //
 		GRAPHIC_CONFIG_HAND_SHAPE_ARPEGGIO("Arpeggio"), //
 		GRAPHIC_CONFIG_TONE_CHANGE("Tone change"), //
@@ -579,7 +593,7 @@ public class Localization {
 
 		GRAPHIC_CONFIG_PREVIEW_3D_FULL_MUTE("3D preview full mute"), //
 		GRAPHIC_CONFIG_PREVIEW_3D_PALM_MUTE("3D preview palm mute"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_ANCHOR("3D preview anchor"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_FHP("3D preview FHP"), //
 		GRAPHIC_CONFIG_PREVIEW_3D_FRET_LANE("3D preview fret lane"), //
 		GRAPHIC_CONFIG_PREVIEW_3D_BEAT("3D preview beat"), //
 		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_BOX("Chord box"), //

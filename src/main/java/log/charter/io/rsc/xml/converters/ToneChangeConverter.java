@@ -41,7 +41,7 @@ public class ToneChangeConverter implements Converter {
 		}
 	}
 
-	private ToneChange generateAnchorFromPosition(final HierarchicalStreamReader reader) {
+	private ToneChange generateToneChangeFromPosition(final HierarchicalStreamReader reader) {
 		final String position = reader.getAttribute("position");
 		if (position != null) {
 			return new TemporaryToneChange(Integer.valueOf(position));
@@ -52,7 +52,7 @@ public class ToneChangeConverter implements Converter {
 
 	@Override
 	public ToneChange unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-		final ToneChange toneChange = generateAnchorFromPosition(reader);
+		final ToneChange toneChange = generateToneChangeFromPosition(reader);
 		final String oldTone = reader.getAttribute("toneName");
 		toneChange.toneName = oldTone == null ? reader.getAttribute("tone") : oldTone;
 

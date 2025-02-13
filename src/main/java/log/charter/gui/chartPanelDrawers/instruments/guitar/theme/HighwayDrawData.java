@@ -10,7 +10,7 @@ public class HighwayDrawData {
 
 	public final DrawableShapeList sectionsAndPhrases;
 	public final DrawableShapeList toneChanges;
-	public final DrawableShapeList anchors;
+	public final DrawableShapeList fhps;
 	public final DrawableShapeList chordNames;
 	public final DrawableShapeList noteTails;
 	public final DrawableShapeList notes;
@@ -28,7 +28,7 @@ public class HighwayDrawData {
 
 		sectionsAndPhrases = new DrawableShapeList();
 		toneChanges = new DrawableShapeList();
-		anchors = new DrawableShapeList();
+		fhps = new DrawableShapeList();
 		chordNames = new DrawableShapeList();
 		highlights = new DrawableShapeList();
 		noteTails = new DrawableShapeList();
@@ -44,7 +44,7 @@ public class HighwayDrawData {
 	public void draw() {
 		sectionsAndPhrases.draw(g);
 		toneChanges.draw(g);
-		anchors.draw(g);
+		fhps.draw(g);
 		chordNames.draw(g);
 		handShapes.draw(g);
 		noteTails.draw(g);

@@ -4,12 +4,12 @@ import static java.lang.Math.round;
 import static java.lang.Math.sin;
 import static log.charter.data.config.Config.maxBendValue;
 import static log.charter.data.config.Config.showChordIds;
-import static log.charter.data.config.GraphicalConfig.anchorInfoHeight;
+import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
 import static log.charter.data.config.GraphicalConfig.handShapesHeight;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.data.config.GraphicalConfig.noteWidth;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.anchorY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Optional;
 
 import log.charter.data.config.Zoom;
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.EventType;
@@ -96,7 +96,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	protected final Color[] noteAccentColors;
 	protected final Color[] noteTailColors;
 
-	protected final Font anchorFont;
+	protected final Font fhpFont;
 	protected final Font bendValueFont;
 	protected final Font fretFont;
 	protected final Font handShapesFont;
@@ -110,7 +110,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	protected final int[] stringPositions;
 
 	protected final DrawableShapeList sectionsAndPhrases;
-	protected final DrawableShapeList anchors;
+	protected final DrawableShapeList fhps;
 	protected final DrawableShapeList bendValues;
 	protected final DrawableShapeList chordNames;
 	protected final DrawableShapeList handShapes;
@@ -142,7 +142,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 		bendStepSize = tailHeight / 3;
 
-		anchorFont = defineAnchorFont();
+		fhpFont = defineFHPFont();
 		bendValueFont = defineBendFont();
 		fretFont = defineFretFont();
 		handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, handShapesHeight);
@@ -151,7 +151,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		muteImage = defineMuteImage();
 
 		sectionsAndPhrases = new DrawableShapeList();
-		anchors = new DrawableShapeList();
+		fhps = new DrawableShapeList();
 		bendValues = new DrawableShapeList();
 		chordNames = new DrawableShapeList();
 		handShapes = new DrawableShapeList();
@@ -167,8 +167,8 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		this.g = g;
 	}
 
-	protected Font defineAnchorFont() {
-		return new Font(Font.DIALOG, Font.BOLD, anchorInfoHeight);
+	protected Font defineFHPFont() {
+		return new Font(Font.DIALOG, Font.BOLD, fhpInfoHeight);
 	}
 
 	protected Font defineBendFont() {
@@ -219,7 +219,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	private void addSection(final Graphics2D g, final SectionType section, final int x) {
-		final TextWithBackground text = new TextWithBackground(new Position2D(x, sectionNamesY), anchorFont,
+		final TextWithBackground text = new TextWithBackground(new Position2D(x, sectionNamesY), fhpFont,
 				section.label.label(), ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT,
 				ColorLabel.BASE_BORDER.color());
 
@@ -229,7 +229,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	private void addPhrase(final Phrase phrase, final String phraseName, final int x) {
 		final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
 				+ (phrase.solo ? "[Solo]" : "");
-		final TextWithBackground text = new TextWithBackground(new Position2D(x, phraseNamesY), anchorFont, phraseLabel,
+		final TextWithBackground text = new TextWithBackground(new Position2D(x, phraseNamesY), fhpFont, phraseLabel,
 				ColorLabel.PHRASE_NAME_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER);
 
 		addEventPointTextIfOnScreen(text);
@@ -237,7 +237,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 	private void addEvents(final List<EventType> events, final int x) {
 		final String eventsName = String.join(", ", map(events, event -> event.label));
-		final TextWithBackground text = new TextWithBackground(new Position2D(x, eventNamesY), anchorFont, eventsName,
+		final TextWithBackground text = new TextWithBackground(new Position2D(x, eventNamesY), fhpFont, eventsName,
 				ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color());
 
 		addEventPointTextIfOnScreen(text);
@@ -760,44 +760,44 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addCurrentAnchor(final Graphics2D g, final Anchor anchor) {
+	public void addCurrentFHP(final Graphics2D g, final FHP fhp) {
 	}
 
 	@Override
-	public void addCurrentAnchor(final Graphics2D g, final Anchor anchor, final int nextAnchorX) {
+	public void addCurrentFHP(final Graphics2D g, final FHP fhp, final int nextFHPX) {
 	}
 
-	protected void addAnchorLine(final int x) {
-		anchors.add(lineVertical(x, anchorY, lanesBottom, ColorLabel.ANCHOR));
+	protected void addFHPLine(final int x) {
+		fhps.add(lineVertical(x, fhpY, lanesBottom, ColorLabel.FHP));
 	}
 
-	protected void addAnchorText(final Anchor anchor, final int x) {
-		final String anchorText = anchor.width == 4 ? anchor.fret + "" : anchor.fret + " - " + anchor.topFret();
-		anchors.add(new Text(new Position2D(x + 4, anchorY + 1), anchorFont, anchorText, ColorLabel.ANCHOR));
+	protected void addFHPText(final FHP fhp, final int x) {
+		final String fhpText = fhp.width == 4 ? fhp.fret + "" : fhp.fret + " - " + fhp.topFret();
+		fhps.add(new Text(new Position2D(x + 4, fhpY + 1), fhpFont, fhpText, ColorLabel.FHP));
 	}
 
-	protected void addAnchorBox(final int x, final ColorLabel color) {
-		final int top = anchorY - 1;
+	protected void addFHPBox(final int x, final ColorLabel color) {
+		final int top = fhpY - 1;
 		final int bottom = lanesBottom + 1;
-		final ShapePositionWithSize anchorPosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
-		selects.add(strokedRectangle(anchorPosition, color));
+		final ShapePositionWithSize fhpPosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
+		selects.add(strokedRectangle(fhpPosition, color));
 	}
 
 	@Override
-	public void addAnchor(final Anchor anchor, final int x, final boolean selected, final boolean highlighted) {
-		addAnchorLine(x);
-		addAnchorText(anchor, x);
+	public void addFHP(final FHP fhp, final int x, final boolean selected, final boolean highlighted) {
+		addFHPLine(x);
+		addFHPText(fhp, x);
 
 		if (highlighted) {
-			addAnchorBox(x, ColorLabel.HIGHLIGHT);
+			addFHPBox(x, ColorLabel.HIGHLIGHT);
 		} else if (selected) {
-			addAnchorBox(x, ColorLabel.SELECT);
+			addFHPBox(x, ColorLabel.SELECT);
 		}
 	}
 
 	@Override
-	public void addAnchorHighlight(final int x) {
-		anchors.add(lineVertical(x, anchorY, lanesBottom, ColorLabel.HIGHLIGHT.color()));
+	public void addFHPHighlight(final int x) {
+		fhps.add(lineVertical(x, fhpY, lanesBottom, ColorLabel.HIGHLIGHT.color()));
 	}
 
 	@Override
@@ -852,7 +852,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	public void addToneChange(final ToneChange toneChange, final int x, final boolean selected,
 			final boolean highlighted) {
 		toneChanges.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.TONE_CHANGE));
-		toneChanges.add(new TextWithBackground(new Position2D(x, toneChangeY), anchorFont, "" + toneChange.toneName,
+		toneChanges.add(new TextWithBackground(new Position2D(x, toneChangeY), fhpFont, "" + toneChange.toneName,
 				ColorLabel.TONE_CHANGE, ColorLabel.BASE_TEXT, 2, ColorLabel.BASE_BORDER.color()));
 
 		if (highlighted) {
@@ -864,14 +864,14 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 	@Override
 	public void addToneChangeHighlight(final int x) {
-		anchors.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.HIGHLIGHT));
+		fhps.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.HIGHLIGHT));
 	}
 
 	@Override
 	public void draw(final Graphics2D g) {
-		g.setFont(anchorFont);
+		g.setFont(fhpFont);
 		toneChanges.draw(g);
-		anchors.draw(g);
+		fhps.draw(g);
 		chordNames.draw(g);
 		noteTails.draw(g);
 

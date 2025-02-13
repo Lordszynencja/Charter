@@ -14,8 +14,8 @@ import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.camera.Preview3DCameraHandler;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
-import log.charter.gui.components.preview3D.drawers.Preview3DAnchorsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DBeatsDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DFHPsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DFingeringDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DGuitarSoundsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DHandShapesDrawer;
@@ -55,7 +55,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	private final TextTexturesHolder textTexturesHolder = new TextTexturesHolder();
 	private final TexturesHolder texturesHolder = new TexturesHolder();
 
-	private final Preview3DAnchorsDrawer anchorsDrawer = new Preview3DAnchorsDrawer();
+	private final Preview3DFHPsDrawer fhpsDrawer = new Preview3DFHPsDrawer();
 	private final Preview3DBeatsDrawer beatsDrawer = new Preview3DBeatsDrawer();
 	private final Preview3DCameraHandler cameraHandler = new Preview3DCameraHandler();
 	private final Preview3DFingeringDrawer fingeringDrawer = new Preview3DFingeringDrawer();
@@ -87,7 +87,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	public void init() {
 		noteStatusModels.init(texturesHolder);
 
-		anchorsDrawer.init(chartData);
+		fhpsDrawer.init(chartData);
 		beatsDrawer.init(chartData, textTexturesHolder);
 		cameraHandler.init(chartTimeHandler, chartData);
 		fingeringDrawer.init(chartData, noteStatusModels, texturesHolder);
@@ -197,8 +197,8 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 			timer.addTimestamp("beatsDrawer");
 			laneBordersDrawer.draw(shadersHolder, drawData);
 			timer.addTimestamp("laneBordersDrawer");
-			anchorsDrawer.draw(shadersHolder, drawData);
-			timer.addTimestamp("anchorsDrawer");
+			fhpsDrawer.draw(shadersHolder, drawData);
+			timer.addTimestamp("fhpsDrawer");
 
 			if (modeManager.getMode() == EditMode.GUITAR) {
 				handShapesDrawer.draw(shadersHolder, drawData);

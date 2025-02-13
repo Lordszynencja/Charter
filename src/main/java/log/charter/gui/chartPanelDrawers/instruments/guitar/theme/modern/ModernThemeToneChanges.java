@@ -89,6 +89,6 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 
 	@Override
 	public void addToneChangeHighlight(final int x) {
-		data.anchors.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.HIGHLIGHT));
+		data.fhps.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.HIGHLIGHT));
 	}
 }

@@ -26,7 +26,7 @@ import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.time.Position;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
-import log.charter.gui.components.preview3D.data.AnchorDrawData;
+import log.charter.gui.components.preview3D.data.FHPDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
@@ -59,11 +59,11 @@ public class Preview3DStringsFretsDrawer {
 	private boolean[] getActiveFrets(final Preview3DDrawData drawData) {
 		final boolean[] active = new boolean[Config.frets + 1];
 
-		final Integer idTo = lastBefore(drawData.anchors, new Position(drawData.time + activeTime)).findId();
+		final Integer idTo = lastBefore(drawData.fhps, new Position(drawData.time + activeTime)).findId();
 		if (idTo != null) {
 			for (int i = 0; i <= idTo; i++) {
-				final AnchorDrawData anchor = drawData.anchors.get(i);
-				for (int fret = max(0, anchor.fretFrom); fret <= min(Config.frets, anchor.fretTo); fret++) {
+				final FHPDrawData fhp = drawData.fhps.get(i);
+				for (int fret = max(0, fhp.fretFrom); fret <= min(Config.frets, fhp.fretTo); fret++) {
 					active[fret] = true;
 				}
 			}

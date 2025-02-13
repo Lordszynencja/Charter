@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
@@ -32,18 +33,25 @@ public class Preview3DNotesData {
 				.chordNotesVisibility(level.shouldChordShowNotes(beats, id));
 
 		if (chordNotesVisibility == ChordNotesVisibility.NONE) {
-			chords.add(new ChordBoxDrawData(chord.position(beats), //
-					chord.chordNotesValue(n -> n.mute, Mute.NONE), //
-					true, //
-					chord.chordNotes.size() > 2));
+			final double position = chord.position(beats);
+			if (position >= timeFrom) {
+				chords.add(new ChordBoxDrawData(position, //
+						chord.chordNotesValue(n -> n.mute, Mute.NONE), //
+						true, //
+						chord.chordNotes.size() > 2));
+			}
+
 			return;
 		}
 
 		if (!chord.splitIntoNotes) {
-			chords.add(new ChordBoxDrawData(chord.position(beats), //
-					Mute.NONE, //
-					false, //
-					chord.chordNotes.size() > 2));
+			final double position = chord.position(beats);
+			if (position >= timeFrom) {
+				chords.add(new ChordBoxDrawData(position, //
+						Mute.NONE, //
+						false, //
+						chord.chordNotes.size() > 2));
+			}
 		}
 		if (chord.forceNoNotes) {
 			return;
@@ -174,5 +182,13 @@ public class Preview3DNotesData {
 	public Preview3DNotesData(final List<List<NoteDrawData>> notes, final List<ChordBoxDrawData> chords) {
 		this.notes = notes;
 		this.chords = chords;
+	}
+
+	public Preview3DNotesData() {
+		notes = new ArrayList<>();
+		for (int i = 0; i < Config.maxStrings; i++) {
+			notes.add(new ArrayList<>());
+		}
+		chords = new ArrayList<>();
 	}
 }

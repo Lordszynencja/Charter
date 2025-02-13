@@ -80,7 +80,7 @@ public class HandShapeDrawData implements IConstantPosition {
 		while (repeatStart < timeTo) {
 			for (final HandShapeDrawData handShapeDrawData : repeatedHandShapes) {
 				final double start = handShapeDrawData.timeFrom - repeatManager.repeatStart() + repeatStart;
-				double end = start + handShapeDrawData.timeTo - handShapeDrawData.timeFrom;
+				double end = handShapeDrawData.timeTo - handShapeDrawData.timeFrom;
 				if (start > timeTo) {
 					break;
 				}

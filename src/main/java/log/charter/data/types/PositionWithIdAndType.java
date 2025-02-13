@@ -1,6 +1,6 @@
 package log.charter.data.types;
 
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
@@ -33,8 +33,8 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 		return new Builder(beats, position).type(type).build();
 	}
 
-	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int id, final Anchor anchor) {
-		return new Builder(beats, anchor.position()).id(id).anchor(anchor).build();
+	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int id, final FHP fhp) {
+		return new Builder(beats, fhp.position()).id(id).fhp(fhp).build();
 	}
 
 	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int id, final Beat beat) {
@@ -70,7 +70,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 		public PositionType type = PositionType.NONE;
 		public boolean existingPosition = false;
 
-		public Anchor anchor = null;
+		public FHP fhp = null;
 		public Beat beat = null;
 		public EventPoint eventPoint = null;
 		public ChordOrNote sound = null;
@@ -123,9 +123,9 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 			return this;
 		}
 
-		public Builder anchor(final Anchor anchor) {
-			type = PositionType.ANCHOR;
-			this.anchor = anchor;
+		public Builder fhp(final FHP fhp) {
+			type = PositionType.FHP;
+			this.fhp = fhp;
 
 			return this;
 		}
@@ -174,7 +174,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 
 		public PositionWithIdAndType build() {
 			return new PositionWithIdAndType(position, fractionalPosition, endPosition, fractionalEndPosition, id, type,
-					existingPosition, anchor, beat, eventPoint, sound, handShape, toneChange, vocal);
+					existingPosition, fhp, beat, eventPoint, sound, handShape, toneChange, vocal);
 		}
 	}
 
@@ -186,7 +186,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 	public final PositionType type;
 	public final boolean existingPosition;
 
-	public final Anchor anchor;
+	public final FHP fhp;
 	public final Beat beat;
 	public final EventPoint eventPoint;
 	public final ChordOrNote chordOrNote;
@@ -196,7 +196,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 
 	private PositionWithIdAndType(final double position, final FractionalPosition fractionalPosition,
 			final double endPosition, final FractionalPosition fractionalEndPosition, final Integer id,
-			final PositionType type, final boolean existingPosition, final Anchor anchor, final Beat beat,
+			final PositionType type, final boolean existingPosition, final FHP fhp, final Beat beat,
 			final EventPoint eventPoint, final ChordOrNote chordOrNote, final HandShape handShape,
 			final ToneChange toneChange, final Vocal vocal) {
 		this.position = new ConstantPositionWithLength(position, endPosition - position);
@@ -229,7 +229,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 		this.type = type;
 		this.existingPosition = existingPosition;
 
-		this.anchor = anchor;
+		this.fhp = fhp;
 		this.beat = beat;
 		this.eventPoint = eventPoint;
 		this.chordOrNote = chordOrNote;
@@ -241,7 +241,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 	@SuppressWarnings("unchecked")
 	public <T> T get() {
 		return switch (type) {
-			case ANCHOR -> (T) anchor;
+			case FHP -> (T) fhp;
 			case BEAT -> (T) beat;
 			case EVENT_POINT -> (T) eventPoint;
 			case GUITAR_NOTE -> (T) chordOrNote;

@@ -1,7 +1,7 @@
 package log.charter.io.gp.gp5.transformers;
 
 import static log.charter.data.song.configs.Tuning.getStringDistance;
-import static log.charter.services.ArrangementFretHandPositionsCreator.createFretHandPositions;
+import static log.charter.services.ArrangementFretHandPositionsCreator.createFHPs;
 
 import java.util.List;
 
@@ -99,7 +99,7 @@ public class GP5ArrangementTransformer {
 			barBeatId += beatsMap.getBeatSafe(barBeatId).beatsInMeasure;
 		}
 
-		createFretHandPositions(beatsMap.immutable, arrangement.chordTemplates, level.sounds, level.anchors);
+		createFHPs(beatsMap.immutable, arrangement.chordTemplates, level.sounds, level.fhps);
 
 		return level;
 	}

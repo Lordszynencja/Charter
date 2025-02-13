@@ -16,7 +16,7 @@ import log.charter.data.song.vocals.Vocals;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.RSXMLToArrangement;
 import log.charter.io.rs.xml.song.SongArrangement;
-import log.charter.io.rsc.xml.converters.AnchorConverter.TemporaryAnchor;
+import log.charter.io.rsc.xml.converters.FHPConverter.TemporaryFHP;
 import log.charter.io.rsc.xml.converters.ChordConverter.TemporaryChord;
 import log.charter.io.rsc.xml.converters.EventPointConverter.TemporaryEventPoint;
 import log.charter.io.rsc.xml.converters.HandShapeConverter.TemporaryHandShape;
@@ -79,7 +79,7 @@ public class ChartProjectVerion3Updater {
 			transform(arrangement.eventPoints, TemporaryEventPoint.class, e -> e.transform(beats));
 			transform(arrangement.toneChanges, TemporaryToneChange.class, e -> e.transform(beats));
 			for (final Level level : arrangement.levels) {
-				transform(level.anchors, TemporaryAnchor.class, e -> e.transform(beats));
+				transform(level.fhps, TemporaryFHP.class, e -> e.transform(beats));
 				transform(level.sounds, e -> transformSound(beats, e));
 				transform(level.handShapes, TemporaryHandShape.class, e -> e.transform(beats));
 			}

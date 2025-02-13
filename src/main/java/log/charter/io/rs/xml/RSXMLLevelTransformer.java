@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
@@ -61,12 +61,12 @@ public class RSXMLLevelTransformer {
 		return levels;
 	}
 
-	private static Anchor anchor(final ImmutableBeatsMap beats, final ArrangementAnchor arrangementAnchor) {
+	private static FHP fhp(final ImmutableBeatsMap beats, final ArrangementAnchor arrangementAnchor) {
 		final FractionalPosition position = FractionalPosition.fromTimeRounded(beats, arrangementAnchor.time);
 		final int fret = arrangementAnchor.fret;
 		final int width = arrangementAnchor.width == null ? 4 : arrangementAnchor.width.intValue();
 
-		return new Anchor(position, fret, width);
+		return new FHP(position, fret, width);
 	}
 
 	private static BendValue bendValue(final ImmutableBeatsMap beats, final ArrangementBendValue arrangementBendValue) {
@@ -275,7 +275,7 @@ public class RSXMLLevelTransformer {
 	private static Level toLevel(final ArrangementLevel arrangementLevel, final Arrangement arrangement,
 			final ImmutableBeatsMap beats) {
 		final Level level = new Level();
-		level.anchors = map(arrangementLevel.anchors.list, a -> anchor(beats, a));
+		level.fhps = map(arrangementLevel.anchors.list, a -> fhp(beats, a));
 		level.sounds = map(arrangementLevel.chords.list,
 				c -> ChordOrNote.from(chord(beats, c, arrangement.chordTemplates.get(c.chordId))));
 

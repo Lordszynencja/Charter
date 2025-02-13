@@ -3,7 +3,7 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 import java.awt.Graphics2D;
 import java.util.Optional;
 
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
@@ -20,7 +20,7 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	public static void reloadGraphics() {
 		ModernThemeEvents.reloadSizes();
 		ModernThemeToneChanges.reloadSizes();
-		ModernThemeAnchors.reloadGraphics();
+		ModernThemeFHPs.reloadGraphics();
 		ModernThemeNotes.reloadGraphics();
 		ModernThemeHandShapes.reloadGraphics();
 	}
@@ -33,7 +33,7 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 
 	private final ModernThemeEvents themeEvents;
 	private final ModernThemeToneChanges toneChanges;
-	private final ModernThemeAnchors anchors;
+	private final ModernThemeFHPs fhps;
 	private final ModernThemeNotes notes;
 	private final ModernThemeHandShapes handShapes;
 
@@ -42,7 +42,7 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 
 		themeEvents = new ModernThemeEvents(data);
 		toneChanges = new ModernThemeToneChanges(data);
-		anchors = new ModernThemeAnchors(data);
+		fhps = new ModernThemeFHPs(data);
 		notes = new ModernThemeNotes(data);
 		handShapes = new ModernThemeHandShapes(data);
 	}
@@ -101,23 +101,23 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addCurrentAnchor(final Graphics2D g, final Anchor anchor) {
-		anchors.addCurrentAnchor(g, anchor);
+	public void addCurrentFHP(final Graphics2D g, final FHP fhp) {
+		fhps.addCurrentFHP(g, fhp);
 	}
 
 	@Override
-	public void addCurrentAnchor(final Graphics2D g, final Anchor anchor, final int nextAnchorX) {
-		anchors.addCurrentAnchor(g, anchor, nextAnchorX);
+	public void addCurrentFHP(final Graphics2D g, final FHP fhp, final int nextFHPX) {
+		fhps.addCurrentFHP(g, fhp, nextFHPX);
 	}
 
 	@Override
-	public void addAnchor(final Anchor anchor, final int x, final boolean selected, final boolean highlighted) {
-		anchors.addAnchor(anchor, x, selected, highlighted);
+	public void addFHP(final FHP fhp, final int x, final boolean selected, final boolean highlighted) {
+		fhps.addFHP(fhp, x, selected, highlighted);
 	}
 
 	@Override
-	public void addAnchorHighlight(final int x) {
-		anchors.addAnchorHighlight(x);
+	public void addFHPHighlight(final int x) {
+		fhps.addFHPHighlight(x);
 	}
 
 	@Override

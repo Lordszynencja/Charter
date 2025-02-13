@@ -15,7 +15,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	private static boolean pastePhrasesDefault = true;
 	private static boolean pasteEventsDefault = true;
 	private static boolean pasteToneChangesDefault = true;
-	private static boolean pasteAnchorsDefault = true;
+	private static boolean pasteFHPsDefault = true;
 	private static boolean pasteSoundsDefault = true;
 	private static boolean pasteHandShapesDefault = true;
 
@@ -36,7 +36,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 	private boolean pastePhrases = pastePhrasesDefault;
 	private boolean pasteEvents = pasteEventsDefault;
 	private boolean pasteToneChanges = pasteToneChangesDefault;
-	private boolean pasteAnchors = pasteAnchorsDefault;
+	private boolean pasteFHPs = pasteFHPsDefault;
 	private boolean pasteSounds = pasteSoundsDefault;
 	private boolean pasteHandShapes = pasteHandShapesDefault;
 
@@ -68,8 +68,8 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_EVENTS, 0);
 		addConfigCheckbox(row, 20, 0, null, pasteToneChanges, val -> pasteToneChanges = val);
 		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_TONE_CHANGES, 0);
-		addConfigCheckbox(row, 20, 0, null, pasteAnchors, val -> pasteAnchors = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_ANCHORS, 0);
+		addConfigCheckbox(row, 20, 0, null, pasteFHPs, val -> pasteFHPs = val);
+		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_FHPS, 0);
 		addConfigCheckbox(row, 20, 0, null, pasteSounds, val -> pasteSounds = val);
 		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_SOUNDS, 0);
 		addConfigCheckbox(row, 20, 0, null, pasteHandShapes, val -> pasteHandShapes = val);
@@ -88,7 +88,7 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		pastePhrasesDefault = pastePhrases;
 		pasteEventsDefault = pasteEvents;
 		pasteToneChangesDefault = pasteToneChanges;
-		pasteAnchorsDefault = pasteAnchors;
+		pasteFHPsDefault = pasteFHPs;
 		pasteSoundsDefault = pasteSounds;
 		pasteHandShapesDefault = pasteHandShapes;
 
@@ -99,8 +99,8 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		if (pasteToneChanges) {
 			copyData.toneChanges.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
 		}
-		if (pasteAnchors) {
-			copyData.anchors.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
+		if (pasteFHPs) {
+			copyData.fhps.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
 		}
 		if (pasteHandShapes) {
 			copyData.handShapes.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
