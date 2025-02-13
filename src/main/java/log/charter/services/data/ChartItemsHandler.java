@@ -13,16 +13,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
@@ -144,8 +145,7 @@ public class ChartItemsHandler {
 						chartData.currentEventPoints());
 				clearRepeatedPositions(chartData.currentEventPoints());
 			case FHP:
-				snapPositions(selected.stream().map(selection -> (FHP) selection.selectable),
-						chartData.currentFHPs());
+				snapPositions(selected.stream().map(selection -> (FHP) selection.selectable), chartData.currentFHPs());
 			case TONE_CHANGE:
 				snapPositions(selected.stream().map(selection -> (ToneChange) selection.selectable),
 						chartData.currentToneChanges());
@@ -172,8 +172,10 @@ public class ChartItemsHandler {
 		undoSystem.addUndo();
 
 		final List<Selection<Vocal>> selected = accessor.getSelected();
-		final Vocal from = selected.get(0).selectable;
-		final Vocal to = selected.get(selected.size() - 1).selectable;
+		final FractionalPosition from = new FractionalPosition(
+				selected.get(0).selectable.toFraction(chartData.beats()).position());
+		final FractionalPosition to = new FractionalPosition(
+				selected.get(selected.size() - 1).selectable.toFraction(chartData.beats()).position());
 		snapPositionsWithLength(getFromTo(chartData.currentVocals().vocals, from, to).stream(),
 				chartData.currentVocals().vocals);
 
@@ -184,8 +186,10 @@ public class ChartItemsHandler {
 		undoSystem.addUndo();
 
 		final List<Selection<T>> selected = accessor.getSelected();
-		final T from = selected.get(0).selectable;
-		final T to = selected.get(selected.size() - 1).selectable;
+		final FractionalPosition from = new FractionalPosition(
+				selected.get(0).selectable.toFraction(chartData.beats()).position());
+		final FractionalPosition to = new FractionalPosition(
+				selected.get(selected.size() - 1).selectable.toFraction(chartData.beats()).position());
 		final Arrangement arrangement = chartData.currentArrangement();
 		final Level level = chartData.currentArrangementLevel();
 		final Comparator<IVirtualConstantPosition> comparator = IVirtualConstantPosition.comparator(chartData.beats());

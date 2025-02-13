@@ -47,7 +47,7 @@ class EditMenuHandler extends CharterMenuHandler implements Initiable {
 
 		if (modeManager.getMode() == EditMode.VOCALS || modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
-			menu.add(createItem(Action.SELECT_ALL_NOTES));
+			menu.add(createItem(Action.SELECT_ALL));
 			menu.add(createItem(Action.DELETE));
 			menu.add(createItem(Action.COPY));
 			menu.add(createItem(Action.PASTE));

@@ -221,6 +221,10 @@ public class GuitarSoundsValidator {
 			final Chord chord = sound.chord();
 			for (final int string : chord.chordNotes.keySet()) {
 				final ChordNote chordNote = chord.chordNotes.get(string);
+				if (chordNote.endPosition().equals(chord.position())) {
+					continue;
+				}
+
 				if (chordNote.linkNext || chordNote.tremolo || chordNote.vibrato || chordNote.slideTo != null
 						|| !chordNote.bendValues.isEmpty()) {
 					return;
@@ -230,9 +234,10 @@ public class GuitarSoundsValidator {
 				if (previousSound != null && previousSound.getString(string).get().linkNext()) {
 					return;
 				}
-			}
 
-			errorsTab.addError(generateError(Label.CHORD_WITH_NOTE_TAILS, sound));
+				errorsTab.addError(generateError(Label.CHORD_WITH_NOTE_TAILS, sound));
+				return;
+			}
 		}
 
 		private void validateSounds() {

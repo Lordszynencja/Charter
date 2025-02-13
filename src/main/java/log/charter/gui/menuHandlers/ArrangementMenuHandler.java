@@ -74,9 +74,13 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 		final String tempoMapLabel = getNameWithSelect(Label.ARRANGEMENT_MENU_TEMPO_MAP,
 				modeManager.getMode() == EditMode.TEMPO_MAP);
 		menu.add(createItem(tempoMapLabel, () -> modeManager.setMode(EditMode.TEMPO_MAP)));
+
+		menu.addSeparator();
 		final String vocalsLabel = getNameWithSelect(Label.ARRANGEMENT_MENU_VOCALS,
 				modeManager.getMode() == EditMode.VOCALS);
 		menu.add(createItem(vocalsLabel, () -> modeManager.setMode(EditMode.VOCALS)));
+
+		menu.addSeparator();
 		addArrangementsList(menu);
 		menu.add(createItem("New arrangement...", this::addArrangement));
 
@@ -90,17 +94,10 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 
 			menu.addSeparator();
 			createLevelMenuItems(menu);
-		}
 
-		menu.addSeparator();
-		menu.add(createItem(Action.TOGGLE_MIDI));
-		menu.add(createItem(Action.TOGGLE_CLAPS));
-		menu.add(createItem(Action.TOGGLE_METRONOME));
-		menu.add(createItem(Action.TOGGLE_WAVEFORM_GRAPH));
-
-		if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
 			menu.add(createItem(Label.SQUASH_LEVELS, this::squashLevels));
+
 			menu.addSeparator();
 			menu.add(createItem(Label.DELETE_ARRANGEMENT, this::deleteArrangement));
 		}

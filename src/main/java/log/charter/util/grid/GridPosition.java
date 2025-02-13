@@ -80,7 +80,7 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 	public GridPosition(final List<T> positions, final FractionalPosition position) {
 		this.positions = positions;
 		positionId = position.beatId;
-		gridId = (int) Math.round(position.fraction.multiply(gridSize).doubleValue());
+		gridId = (int) Math.floor(position.fraction.multiply(gridSize).doubleValue());
 	}
 
 	public void next() {
