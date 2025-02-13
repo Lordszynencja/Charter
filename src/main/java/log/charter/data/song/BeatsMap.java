@@ -167,8 +167,11 @@ public class BeatsMap {
 		}
 
 		public IVirtualConstantPosition getPositionWithAddedGrid(final IVirtualConstantPosition position,
-				final int gridAdditions) {
+				int gridAdditions) {
 			final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
+			if (gridPosition.compareTo(position) > 0) {
+				gridAdditions--;
+			}
 			for (int i = 0; i < gridAdditions; i++) {
 				gridPosition.next();
 			}
