@@ -1,6 +1,7 @@
 package log.charter.util.grid;
 
 import static java.lang.Math.floor;
+import static java.lang.Math.round;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.List;
@@ -80,7 +81,7 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 	public GridPosition(final List<T> positions, final FractionalPosition position) {
 		this.positions = positions;
 		positionId = position.beatId;
-		gridId = (int) Math.floor(position.fraction.multiply(gridSize).doubleValue());
+		gridId = (int) round(position.fraction.multiply(gridSize).doubleValue());
 	}
 
 	public void next() {
