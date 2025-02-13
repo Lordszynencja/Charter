@@ -26,6 +26,13 @@ class MusicMenuHandler extends CharterMenuHandler implements Initiable {
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.MUSIC_MENU);
+
+		menu.add(createItem(Action.TOGGLE_MIDI));
+		menu.add(createItem(Action.TOGGLE_CLAPS));
+		menu.add(createItem(Action.TOGGLE_METRONOME));
+		menu.add(createItem(Action.TOGGLE_WAVEFORM_GRAPH));
+
+		menu.addSeparator();
 		menu.add(createItem(Action.TOGGLE_REPEATER));
 		menu.add(createItem(Action.TOGGLE_REPEAT_START));
 		menu.add(createItem(Action.TOGGLE_REPEAT_END));

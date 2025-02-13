@@ -398,6 +398,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		return mouseY;
 	}
 
+	public PositionType getMouseHoverPositionType() {
+		return PositionType.fromY(mouseY, modeManager.getMode());
+	}
+
 	public void cancelAllActions() {
 		mouseButtonPressReleaseHandler.clear();
 	}

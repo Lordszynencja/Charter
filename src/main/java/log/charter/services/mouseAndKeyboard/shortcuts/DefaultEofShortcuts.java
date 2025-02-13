@@ -78,7 +78,7 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.REDO, new Shortcut(KeyEvent.VK_R).ctrl());
 		super.set(Action.SAVE, new Shortcut(KeyEvent.VK_S).ctrl());
 		super.set(Action.SAVE_AS, new Shortcut(KeyEvent.VK_S).ctrl().shift());
-		super.set(Action.SELECT_ALL_NOTES, new Shortcut(KeyEvent.VK_A).ctrl());
+		super.set(Action.SELECT_ALL, new Shortcut(KeyEvent.VK_A).ctrl());
 		super.set(Action.SLOW_BACKWARD, new Shortcut(KeyEvent.VK_LEFT).ctrl());
 		super.set(Action.SLOW_FORWARD, new Shortcut(KeyEvent.VK_RIGHT).ctrl());
 		super.set(Action.SNAP_ALL, new Shortcut(KeyEvent.VK_R).ctrl().shift());

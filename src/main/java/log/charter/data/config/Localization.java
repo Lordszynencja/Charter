@@ -208,7 +208,7 @@ public class Localization {
 		SECTION_VARIATION("Variation"), //
 		SECTION_VERSE("Verse"), //
 		SECTION_WITHOUT_PHRASE("Section without phrase"), //
-		SELECT_ALL_NOTES("Select all notes"), //
+		SELECT_ALL("Select all"), //
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
 		SHORTCUTS_SET_CHARTER_DEFAULT("Charter default"), //
 		SHORTCUTS_SET_CURRENT("Current"), //

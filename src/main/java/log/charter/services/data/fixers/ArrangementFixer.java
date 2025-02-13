@@ -13,10 +13,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.SectionType;
@@ -38,6 +38,10 @@ public class ArrangementFixer {
 	private ChartData chartData;
 	private ChartTimeHandler chartTimeHandler;
 	private ChordTemplatesEditorTab chordTemplatesEditorTab;
+
+	private void removeWrongEventPoints(final Arrangement arrangement) {
+		arrangement.eventPoints.removeIf(ep -> ep.section == null && !ep.hasPhrase() && ep.events.isEmpty());
+	}
 
 	private void removeWrongPositions(final Arrangement arrangement, final FractionalPosition end) {
 		final Predicate<IConstantFractionalPosition> invalidPositionCheck = p -> p.position().beatId < 0
@@ -230,6 +234,7 @@ public class ArrangementFixer {
 		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
 
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
+			removeWrongEventPoints(arrangement);
 			removeWrongPositions(arrangement, endFractional);
 			for (final Level level : arrangement.levels) {
 				fixLevel(arrangement, level);

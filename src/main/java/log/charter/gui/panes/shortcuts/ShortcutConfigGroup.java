@@ -44,7 +44,7 @@ public enum ShortcutConfigGroup {
 			Action.DELETE, //
 			Action.UNDO, //
 			Action.REDO, //
-			Action.SELECT_ALL_NOTES, //
+			Action.SELECT_ALL, //
 			Action.REDO, //
 			Action.TOGGLE_ANCHOR), //
 	VOCAL_EDITING(Label.VOCAL_EDITING, //

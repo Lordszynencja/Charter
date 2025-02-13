@@ -21,9 +21,9 @@ import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
+import log.charter.services.mouseAndKeyboard.MouseHandler;
 import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.HashMap2;
 
@@ -33,6 +33,7 @@ public class SelectionManager implements Initiable {
 	private ChartTimeHandler chartTimeHandler;
 	private CurrentSelectionEditor currentSelectionEditor;
 	private ModeManager modeManager;
+	private MouseHandler mouseHandler;
 
 	private final Map<PositionType, SelectionList<?, ?, ?>> selectionLists = new HashMap2<>();
 
@@ -216,13 +217,22 @@ public class SelectionManager implements Initiable {
 		return new NoneSelectionAccessor<T>();
 	}
 
-	public void selectAllNotes() {
-		if (modeManager.getMode() == EditMode.GUITAR) {
-			selectionLists.get(PositionType.GUITAR_NOTE).addAll();
-		} else if (modeManager.getMode() == EditMode.VOCALS) {
-			selectionLists.get(PositionType.VOCAL).addAll();
-		}
+	public void selectAll() {
+		final PositionType positionTypeToSelect = switch (modeManager.getMode()) {
+			case VOCALS -> PositionType.VOCAL;
+			case GUITAR -> {
+				PositionType positionType = selectedType();
+				if (positionType != PositionType.NONE) {
+					yield positionType;
+				}
 
+				positionType = mouseHandler.getMouseHoverPositionType();
+				yield positionType == PositionType.NONE ? PositionType.GUITAR_NOTE : positionType;
+			}
+			default -> PositionType.NONE;
+		};
+
+		selectionLists.get(positionTypeToSelect).addAll();
 		currentSelectionEditor.selectionChanged(true);
 	}
 
