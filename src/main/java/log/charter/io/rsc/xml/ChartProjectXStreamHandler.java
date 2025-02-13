@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
 
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BendValue;
@@ -25,14 +25,14 @@ import log.charter.data.song.notes.Note;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
-import log.charter.services.data.copy.data.AnchorsCopyData;
+import log.charter.services.data.copy.data.FHPsCopyData;
 import log.charter.services.data.copy.data.CopyData;
 import log.charter.services.data.copy.data.EventPointsCopyData;
 import log.charter.services.data.copy.data.FullGuitarCopyData;
 import log.charter.services.data.copy.data.HandShapesCopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
-import log.charter.services.data.copy.data.positions.CopiedAnchor;
+import log.charter.services.data.copy.data.positions.CopiedFHP;
 import log.charter.services.data.copy.data.positions.CopiedEventPoint;
 import log.charter.services.data.copy.data.positions.CopiedHandShape;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundChord;
@@ -56,8 +56,8 @@ public class ChartProjectXStreamHandler {
 		xstream.processAnnotations(ChartProject.class);
 		xstream.processAnnotations(CopyData.class);
 		xstream.allowTypes(new Class[] { //
-				Anchor.class, //
-				AnchorsCopyData.class, //
+				FHP.class, //
+				FHPsCopyData.class, //
 				Arrangement.class, //
 				Beat.class, //
 				BendValue.class, //
@@ -66,7 +66,7 @@ public class ChartProjectXStreamHandler {
 				ChordOrNoteForChord.class, //
 				ChordOrNoteForNote.class, //
 				ChordTemplate.class, //
-				CopiedAnchor.class, //
+				CopiedFHP.class, //
 				CopiedEventPoint.class, //
 				CopiedHandShape.class, //
 				CopiedSoundChord.class, //

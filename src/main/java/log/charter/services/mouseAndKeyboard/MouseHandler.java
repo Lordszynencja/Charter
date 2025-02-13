@@ -120,8 +120,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		if (clickData.pressHighlight.type == PositionType.TONE_CHANGE) {
 			dragPositions(PositionType.TONE_CHANGE, clickData, chartData.currentToneChanges());
 		}
-		if (clickData.pressHighlight.type == PositionType.ANCHOR) {
-			dragPositions(PositionType.ANCHOR, clickData, chartData.currentAnchors());
+		if (clickData.pressHighlight.type == PositionType.FHP) {
+			dragPositions(PositionType.FHP, clickData, chartData.currentFHPs());
 		}
 		if (clickData.pressHighlight.type == PositionType.GUITAR_NOTE) {
 			dragSounds(clickData, chartData.currentSounds());

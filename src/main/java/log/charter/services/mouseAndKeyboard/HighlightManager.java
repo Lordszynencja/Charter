@@ -131,11 +131,11 @@ public class HighlightManager {
 		return new ConstantPosition(beat == null ? position : beat.position());
 	}
 
-	private IConstantFractionalPosition snapNotAnchor(final double position) {
+	private IConstantFractionalPosition snapNotFHP(final double position) {
 		return chartData.beats().getPositionFromGridClosestTo(new Position(position)).toFraction(chartData.beats());
 	}
 
-	private IConstantFractionalPosition snapAnchor(final double position) {
+	private IConstantFractionalPosition snapFHP(final double position) {
 		final FractionalPosition closestGridPosition = chartData.beats()
 				.getPositionFromGridClosestTo(new Position(position));
 
@@ -159,11 +159,11 @@ public class HighlightManager {
 		if (positionType == PositionType.BEAT) {
 			return snapBeat(position);
 		}
-		if (positionType != PositionType.ANCHOR) {
-			return snapNotAnchor(position);
+		if (positionType != PositionType.FHP) {
+			return snapNotFHP(position);
 		}
 
-		return snapAnchor(position);
+		return snapFHP(position);
 	}
 
 	public PositionWithIdAndType getHighlight(final int x, final int y) {

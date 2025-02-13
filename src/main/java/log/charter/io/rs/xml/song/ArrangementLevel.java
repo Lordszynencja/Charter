@@ -8,7 +8,7 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
@@ -39,7 +39,7 @@ public class ArrangementLevel {
 	public CountedList<ArrangementAnchor> anchors;
 	public CountedList<ArrangementHandShape> handShapes;
 
-	private ArrangementAnchor anchor(final ImmutableBeatsMap beats, final Anchor anchor) {
+	private ArrangementAnchor anchor(final ImmutableBeatsMap beats, final FHP anchor) {
 		return new ArrangementAnchor((int) anchor.position(beats), anchor.fret, new BigDecimal(anchor.width));
 	}
 
@@ -55,7 +55,7 @@ public class ArrangementLevel {
 		setChordsAndNotes(beats, level, chordTemplates);
 
 		fretHandMutes = new CountedList<>();
-		anchors = new CountedList<>(map(level.anchors, a -> anchor(beats, a)));
+		anchors = new CountedList<>(map(level.fhps, a -> anchor(beats, a)));
 		handShapes = new CountedList<>(map(level.handShapes, h -> handShape(beats, h)));
 	}
 

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
@@ -143,9 +143,9 @@ public class ChartItemsHandler {
 				snapPositions(selected.stream().map(selection -> (EventPoint) selection.selectable),
 						chartData.currentEventPoints());
 				clearRepeatedPositions(chartData.currentEventPoints());
-			case ANCHOR:
-				snapPositions(selected.stream().map(selection -> (Anchor) selection.selectable),
-						chartData.currentAnchors());
+			case FHP:
+				snapPositions(selected.stream().map(selection -> (FHP) selection.selectable),
+						chartData.currentFHPs());
 			case TONE_CHANGE:
 				snapPositions(selected.stream().map(selection -> (ToneChange) selection.selectable),
 						chartData.currentToneChanges());
@@ -192,7 +192,7 @@ public class ChartItemsHandler {
 
 		snapPositions(getFromTo(arrangement.eventPoints, from, to, comparator).stream(), arrangement.eventPoints);
 		snapPositions(getFromTo(arrangement.toneChanges, from, to, comparator).stream(), arrangement.toneChanges);
-		snapPositions(getFromTo(level.anchors, from, to, comparator).stream(), level.anchors);
+		snapPositions(getFromTo(level.fhps, from, to, comparator).stream(), level.fhps);
 		snapNotePositions(getFromTo(level.sounds, from, to, comparator).stream());
 		snapPositionsWithLength(getFromTo(level.handShapes, from, to, comparator).stream(), level.handShapes);
 

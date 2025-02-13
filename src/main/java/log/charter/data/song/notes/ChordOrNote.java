@@ -189,7 +189,8 @@ public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPos
 		@Override
 		public Stream<CommonNoteWithFret> notesWithFrets(final ChordTemplate chordTemplate) {
 			return chord.chordNotes.keySet().stream()//
-					.map(string -> new CommonNoteWithFret(chord, string, chordTemplate.frets.get(string)));
+					.map(string -> new CommonNoteWithFret(chord, string, chordTemplate.frets.get(string),
+							chordTemplate.fingers.get(string)));
 		}
 
 		@Override
@@ -203,7 +204,8 @@ public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPos
 				return Optional.empty();
 			}
 
-			return Optional.of(new CommonNoteWithFret(chord, string, chordTemplate.frets.get(string)));
+			return Optional.of(new CommonNoteWithFret(chord, string, chordTemplate.frets.get(string),
+					chordTemplate.fingers.get(string)));
 		}
 
 		@Override

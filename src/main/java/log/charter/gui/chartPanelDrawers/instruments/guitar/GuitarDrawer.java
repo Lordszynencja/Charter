@@ -293,7 +293,7 @@ public class GuitarDrawer {
 
 		GuitarEventPointsDrawer.addEventPoints(frameData, panelWidth, highwayDrawer);
 		GuitarToneChangeDrawer.addToneChanges(frameData, panelWidth, highwayDrawer);
-		GuitarAnchorsDrawer.addAnchors(frameData, panelWidth, highwayDrawer);
+		GuitarFHPsDrawer.addFHPs(frameData, panelWidth, highwayDrawer);
 		drawGuitarLanes(frameData, panelWidth);
 		addGuitarNotes(frameData, panelWidth, highwayDrawer);
 		addHandShapes(frameData, panelWidth, highwayDrawer);

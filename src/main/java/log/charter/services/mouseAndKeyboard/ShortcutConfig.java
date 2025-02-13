@@ -117,7 +117,7 @@ public class ShortcutConfig {
 				continue;
 			}
 
-			shortcuts.set(action, defaultShortcuts.get(action));
+			setShortcut(action, defaultShortcuts.get(action));
 		}
 
 		markChanged();

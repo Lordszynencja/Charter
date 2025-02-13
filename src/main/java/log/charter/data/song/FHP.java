@@ -5,36 +5,36 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IFractionalPosition;
-import log.charter.io.rsc.xml.converters.AnchorConverter;
+import log.charter.io.rsc.xml.converters.FHPConverter;
 
 @XStreamAlias("anchor")
-@XStreamConverter(AnchorConverter.class)
-public class Anchor implements IFractionalPosition {
+@XStreamConverter(FHPConverter.class)
+public class FHP implements IFractionalPosition {
 
 	private FractionalPosition position;
 	public int fret = 1;
 	public int width = 4;
 
-	public Anchor() {
+	public FHP() {
 		position = new FractionalPosition();
 	}
 
-	public Anchor(final FractionalPosition position, final int fret) {
+	public FHP(final FractionalPosition position, final int fret) {
 		this.position = position;
 		this.fret = fret;
 	}
 
-	public Anchor(final FractionalPosition position) {
+	public FHP(final FractionalPosition position) {
 		this.position = position;
 	}
 
-	public Anchor(final FractionalPosition position, final int fret, final int width) {
+	public FHP(final FractionalPosition position, final int fret, final int width) {
 		this.position = position;
 		this.fret = fret;
 		this.width = width;
 	}
 
-	public Anchor(final Anchor other) {
+	public FHP(final FHP other) {
 		position = other.position;
 		fret = other.fret;
 		width = other.width;

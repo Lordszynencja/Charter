@@ -5,6 +5,7 @@ import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
 
 import java.util.Objects;
+import java.util.Set;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -74,6 +75,19 @@ public class ChordTemplate {
 		return new IntRange(minString, maxString);
 	}
 
+	public int getLowestString() {
+		int minString = maxStrings;
+		for (final int string : getStrings()) {
+			minString = min(minString, string);
+		}
+
+		return minString;
+	}
+
+	public Set<Integer> getStrings() {
+		return frets.keySet();
+	}
+
 	public int getLowestFret() {
 		int lowestFret = Config.frets;
 
@@ -84,11 +98,11 @@ public class ChordTemplate {
 		return lowestFret;
 	}
 
-	public int getLowestNonzeroFret() {
+	public int getLowestNotOpenFret(final int capo) {
 		int lowestFret = Config.frets;
 
 		for (final int fret : frets.values()) {
-			if (fret == 0) {
+			if (fret <= capo) {
 				continue;
 			}
 

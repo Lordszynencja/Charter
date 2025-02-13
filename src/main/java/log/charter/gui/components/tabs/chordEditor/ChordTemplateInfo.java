@@ -123,8 +123,8 @@ public class ChordTemplateInfo extends JComponent implements MouseListener {
 	}
 
 	private void drawChordName(final Graphics2D g, final ChordTemplate chordTemplate, final int strings) {
-		final Color lowestStringColor = getStringBasedColor(StringColorLabelType.NOTE,
-				chordTemplate.getStringRange().min, strings);
+		final Color lowestStringColor = getStringBasedColor(StringColorLabelType.NOTE, chordTemplate.getLowestString(),
+				strings);
 		final String chordName = "[%d] %s".formatted(chordTemplateId, chordTemplate.chordName);
 		final Point2D expectedTextSize = CenteredText.getExpectedSize(g, chordNameFont, chordName);
 		final int x = 60 + strings * 20;

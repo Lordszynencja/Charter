@@ -261,9 +261,10 @@ public class GuitarSoundsStatusesHandler {
 					updateLinkedNotesFrets(currentSound, nextChord);
 					updateLinkedNotesBends(currentSound, nextNote);
 
-					final int fret = chartData.currentChordTemplates().get(nextChord.templateId()).frets
-							.get(n.string());
-					currentSound = new CommonNoteWithFret(nextChord, n.string(), fret);
+					final ChordTemplate chordTemplate = chartData.currentChordTemplates().get(nextChord.templateId());
+					final int fret = chordTemplate.frets.get(n.string());
+					final Integer finger = chordTemplate.fingers.get(n.string());
+					currentSound = new CommonNoteWithFret(nextChord, n.string(), fret, finger);
 				}
 
 				currentId = nextSound.a;

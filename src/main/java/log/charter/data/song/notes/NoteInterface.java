@@ -13,6 +13,10 @@ import log.charter.data.song.position.fractional.IConstantFractionalPositionWith
 public interface NoteInterface extends IConstantFractionalPositionWithEnd {
 	void endPosition(FractionalPosition newEndPosition);
 
+	default Integer finger() {
+		return null;
+	}
+
 	BassPickingTechnique bassPicking();
 
 	void bassPicking(BassPickingTechnique value);

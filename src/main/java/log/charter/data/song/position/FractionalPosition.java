@@ -20,6 +20,8 @@ import log.charter.util.data.Fraction;
 
 @XStreamConverter(FractionalPositionConverter.class)
 public class FractionalPosition implements IConstantFractionalPosition {
+	public static final FractionalPosition zero = new FractionalPosition(0, new Fraction(0, 1));
+
 	private static final List<Fraction> fractionsToTryForRounding = new ArrayList<>();
 
 	private static void addFractions(final int numerator, final int denominator) {

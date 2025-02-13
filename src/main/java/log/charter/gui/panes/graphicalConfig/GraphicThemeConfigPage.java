@@ -31,7 +31,7 @@ public class GraphicThemeConfigPage implements Page {
 
 	private int eventsChangeHeight = GraphicalConfig.eventsChangeHeight;
 	private int toneChangeHeight = GraphicalConfig.toneChangeHeight;
-	private int anchorInfoHeight = GraphicalConfig.anchorInfoHeight;
+	private int fhpInfoHeight = GraphicalConfig.fhpInfoHeight;
 	private int noteHeight = GraphicalConfig.noteHeight;
 	private int noteWidth = GraphicalConfig.noteWidth;
 	private int chordHeight = GraphicalConfig.chordHeight;
@@ -45,7 +45,7 @@ public class GraphicThemeConfigPage implements Page {
 	private FieldWithLabel<TextInputWithValidation> chordHeightField;
 	private FieldWithLabel<TextInputWithValidation> eventsChangeHeightField;
 	private FieldWithLabel<TextInputWithValidation> toneChangeHeightField;
-	private FieldWithLabel<TextInputWithValidation> anchorInfoHeightField;
+	private FieldWithLabel<TextInputWithValidation> fhpInfoHeightField;
 	private FieldWithLabel<TextInputWithValidation> handShapesHeightField;
 	private FieldWithLabel<TextInputWithValidation> timingHeightField;
 	private FieldWithLabel<TextInputWithValidation> previewScrollSpeedField;
@@ -68,7 +68,7 @@ public class GraphicThemeConfigPage implements Page {
 		addToneChangeHeightField(panel, position);
 		position.newRow();
 
-		addAnchorInfoHeightField(panel, position);
+		addFHPInfoHeightField(panel, position);
 		addChordHeightField(panel, position);
 		position.newRow();
 
@@ -121,15 +121,15 @@ public class GraphicThemeConfigPage implements Page {
 		panel.add(toneChangeHeightField, position);
 	}
 
-	private void addAnchorInfoHeightField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(anchorInfoHeight, 20, editorPartHeightValidator,
-				i -> anchorInfoHeight = i, false);
+	private void addFHPInfoHeightField(final RowedPanel panel, final RowedPosition position) {
+		final TextInputWithValidation input = generateForInt(fhpInfoHeight, 20, editorPartHeightValidator,
+				i -> fhpInfoHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
-		anchorInfoHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_ANCHOR_INFO_HEIGHT, 120, 30, 20, input,
+		fhpInfoHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_FHP_INFO_HEIGHT, 120, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
-		panel.add(anchorInfoHeightField, position);
+		panel.add(fhpInfoHeightField, position);
 	}
 
 	private void addNoteHeightInput(final RowedPanel panel, final RowedPosition position) {
@@ -210,7 +210,7 @@ public class GraphicThemeConfigPage implements Page {
 		themeField.setVisible(visibility);
 		eventsChangeHeightField.setVisible(visibility);
 		toneChangeHeightField.setVisible(visibility);
-		anchorInfoHeightField.setVisible(visibility);
+		fhpInfoHeightField.setVisible(visibility);
 		noteHeightField.setVisible(visibility);
 		noteWidthField.setVisible(visibility && theme != Theme.MODERN);
 		chordHeightField.setVisible(visibility);
@@ -223,7 +223,7 @@ public class GraphicThemeConfigPage implements Page {
 		GraphicalConfig.theme = theme;
 		GraphicalConfig.eventsChangeHeight = eventsChangeHeight;
 		GraphicalConfig.toneChangeHeight = toneChangeHeight;
-		GraphicalConfig.anchorInfoHeight = anchorInfoHeight;
+		GraphicalConfig.fhpInfoHeight = fhpInfoHeight;
 		GraphicalConfig.noteHeight = noteHeight;
 		GraphicalConfig.noteWidth = noteWidth;
 		GraphicalConfig.chordHeight = chordHeight;

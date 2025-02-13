@@ -103,7 +103,7 @@ public class USCTxtImporter {
 				if (line.matches("P(1|2)")) {
 					continue;
 				}
-				if (line.matches("[:\\\\*FRG] [0-9]* [0-9]* [0-9]* .*")) {
+				if (line.matches("[:\\\\*FRG] [0-9]* [0-9]* -?[0-9]* .*")) {
 					addNextSyllable(line);
 					continue;
 				}

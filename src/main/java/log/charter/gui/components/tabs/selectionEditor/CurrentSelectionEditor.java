@@ -1,6 +1,6 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
-import static log.charter.data.types.PositionType.ANCHOR;
+import static log.charter.data.types.PositionType.FHP;
 import static log.charter.data.types.PositionType.GUITAR_NOTE;
 import static log.charter.data.types.PositionType.HAND_SHAPE;
 import static log.charter.data.types.PositionType.NONE;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
@@ -57,7 +57,7 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
 
-	private final AnchorSelectionEditor anchorSelectionEditor = new AnchorSelectionEditor();
+	private final FHPSelectionEditor fhpSelectionEditor = new FHPSelectionEditor();
 	private final GuitarSoundSelectionEditor guitarSoundSelectionEditor = new GuitarSoundSelectionEditor(this);
 	private final HandShapeSelectionEditor handShapeSelectionEditor = new HandShapeSelectionEditor(this);
 	private final ToneChangeSelectionEditor toneChangeSelectionEditor = new ToneChangeSelectionEditor();
@@ -74,8 +74,8 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 
 	@Override
 	public void init() {
-		charterContext.initObject(anchorSelectionEditor);
-		anchorSelectionEditor.addTo(this);
+		charterContext.initObject(fhpSelectionEditor);
+		fhpSelectionEditor.addTo(this);
 
 		charterContext.initObject(guitarSoundSelectionEditor);
 		guitarSoundSelectionEditor.addTo(this);
@@ -93,10 +93,10 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 	}
 
 	private void hideAllfieldsExcept(final PositionType type) {
-		if (type != ANCHOR) {
-			anchorSelectionEditor.hideFields();
+		if (type != FHP) {
+			fhpSelectionEditor.hideFields();
 		} else {
-			anchorSelectionEditor.showFields();
+			fhpSelectionEditor.showFields();
 		}
 
 		if (type != GUITAR_NOTE) {
@@ -134,8 +134,8 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		hideAllfieldsExcept(selected.type());
 
 		switch (selected.type()) {
-			case ANCHOR:
-				anchorSelectionEditor.selectionChanged((ISelectionAccessor<Anchor>) selected);
+			case FHP:
+				fhpSelectionEditor.selectionChanged((ISelectionAccessor<FHP>) selected);
 				break;
 			case GUITAR_NOTE:
 				guitarSoundSelectionEditor.selectionChanged((ISelectionAccessor<ChordOrNote>) selected,

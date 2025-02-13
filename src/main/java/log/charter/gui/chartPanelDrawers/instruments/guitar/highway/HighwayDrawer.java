@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.util.Optional;
 
 import log.charter.data.config.GraphicalConfig;
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
@@ -50,13 +50,13 @@ public interface HighwayDrawer {
 
 	void addToneChangeHighlight(int x);
 
-	void addCurrentAnchor(Graphics2D g, Anchor anchor);
+	void addCurrentFHP(Graphics2D g, FHP fhp);
 
-	void addCurrentAnchor(Graphics2D g, Anchor anchor, int nextAnchorX);
+	void addCurrentFHP(Graphics2D g, FHP fhp, int nextFHPX);
 
-	void addAnchor(Anchor anchor, int x, boolean selected, boolean highlighted);
+	void addFHP(FHP fhp, int x, boolean selected, boolean highlighted);
 
-	void addAnchorHighlight(int x);
+	void addFHPHighlight(int x);
 
 	void addChordName(int x, String chordName);
 

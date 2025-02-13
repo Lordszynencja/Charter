@@ -17,7 +17,7 @@ import org.lwjgl.opengl.GL33;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.preview3D.data.AnchorDrawData;
+import log.charter.gui.components.preview3D.data.FHPDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
@@ -53,7 +53,7 @@ public class Preview3DLaneBordersDrawer {
 			fretsOpacity[fret] = 32;
 		}
 
-		for (final AnchorDrawData anchor : drawData.anchors) {
+		for (final FHPDrawData anchor : drawData.fhps) {
 			for (int fret = anchor.fretFrom; fret <= anchor.fretTo; fret++) {
 				fretsOpacity[fret] = max(fretsOpacity[fret], 96);
 			}

@@ -31,7 +31,7 @@ import log.charter.io.ClipboardHandler;
 import log.charter.io.Logger;
 import log.charter.io.rsc.xml.ChartProjectXStreamHandler;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.services.data.copy.data.AnchorsCopyData;
+import log.charter.services.data.copy.data.FHPsCopyData;
 import log.charter.services.data.copy.data.CopyData;
 import log.charter.services.data.copy.data.EventPointsCopyData;
 import log.charter.services.data.copy.data.FullCopyData;
@@ -41,7 +41,7 @@ import log.charter.services.data.copy.data.ICopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
 import log.charter.services.data.copy.data.positions.Copied;
-import log.charter.services.data.copy.data.positions.CopiedAnchor;
+import log.charter.services.data.copy.data.positions.CopiedFHP;
 import log.charter.services.data.copy.data.positions.CopiedEventPoint;
 import log.charter.services.data.copy.data.positions.CopiedHandShape;
 import log.charter.services.data.copy.data.positions.CopiedSound;
@@ -94,15 +94,15 @@ public class CopyManager {
 		final List<ChordTemplate> copiedChordTemplates = map(chartData.currentChordTemplates(), ChordTemplate::new);
 		final List<CopiedToneChange> copiedToneChanges = copyPositionsFromTo(from, to, arrangement.toneChanges,
 				CopiedToneChange::new);
-		final List<CopiedAnchor> copiedAnchors = copyPositionsFromTo(from, to,
-				chartData.currentArrangementLevel().anchors, CopiedAnchor::new);
+		final List<CopiedFHP> copiedFHPs = copyPositionsFromTo(from, to,
+				chartData.currentArrangementLevel().fhps, CopiedFHP::new);
 		final List<CopiedSound> copiedSounds = copyPositionsFromTo(from, to, chartData.currentSounds(),
 				CopiedSound::copy);
 		final List<CopiedHandShape> copiedHandShapes = copyPositionsFromTo(from, to, chartData.currentHandShapes(),
 				CopiedHandShape::new);
 
 		return new FullGuitarCopyData(copiedPhrases, copiedArrangementEventsPoints, copiedChordTemplates,
-				copiedToneChanges, copiedAnchors, copiedSounds, copiedHandShapes);
+				copiedToneChanges, copiedFHPs, copiedSounds, copiedHandShapes);
 	}
 
 	private CopyData getGuitarCopyDataEventPoints() {
@@ -182,8 +182,8 @@ public class CopyManager {
 	}
 
 	private CopyData getGuitarCopyData() {
-		if (selectionManager.accessor(PositionType.ANCHOR).isSelected()) {
-			return getCopyData(PositionType.ANCHOR, CopiedAnchor::new, AnchorsCopyData::new);
+		if (selectionManager.accessor(PositionType.FHP).isSelected()) {
+			return getCopyData(PositionType.FHP, CopiedFHP::new, FHPsCopyData::new);
 		}
 		if (selectionManager.accessor(PositionType.EVENT_POINT).isSelected()) {
 			return getGuitarCopyDataEventPoints();
@@ -195,7 +195,7 @@ public class CopyManager {
 			return getGuitarCopyDataHandShapes();
 		}
 		if (selectionManager.accessor(PositionType.TONE_CHANGE).isSelected()) {
-			return getCopyData(PositionType.TONE_CHANGE, CopiedAnchor::new, AnchorsCopyData::new);
+			return getCopyData(PositionType.TONE_CHANGE, CopiedFHP::new, FHPsCopyData::new);
 		}
 
 		return null;
@@ -260,7 +260,7 @@ public class CopyManager {
 		switch (selectedCopy.type()) {
 			case EVENT_POINT:
 			case TONE_CHANGE:
-			case ANCHOR:
+			case FHP:
 			case GUITAR_NOTE:
 			case HAND_SHAPE:
 				break;
@@ -280,7 +280,7 @@ public class CopyManager {
 			if (fullCopy instanceof FullGuitarCopyData) {
 				final FullGuitarCopyData fullGuitarCopyData = (FullGuitarCopyData) fullCopy;
 				fullGuitarCopyData.toneChanges.paste(chartData, selectionManager, currentTime, true);
-				fullGuitarCopyData.anchors.paste(chartData, selectionManager, currentTime, true);
+				fullGuitarCopyData.fhps.paste(chartData, selectionManager, currentTime, true);
 				fullGuitarCopyData.handShapes.paste(chartData, selectionManager, currentTime, true);
 			}
 		}

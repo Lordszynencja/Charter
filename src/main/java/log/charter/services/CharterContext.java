@@ -52,7 +52,7 @@ import log.charter.services.data.files.SongFilesBackuper;
 import log.charter.services.data.files.USCTxtImporter;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.services.data.validation.ArrangementValidator;
+import log.charter.services.data.validation.ChartValidator;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.HighlightManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
@@ -72,7 +72,7 @@ public class CharterContext {
 
 	private final ActionHandler actionHandler = new ActionHandler();
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
-	private final ArrangementValidator arrangementValidator = new ArrangementValidator();
+	private final ChartValidator chartValidator = new ChartValidator();
 	private final AudioHandler audioHandler = new AudioHandler();
 	private final BeatsDrawer beatsDrawer = new BeatsDrawer();
 	private final ChartData chartData = new ChartData();

@@ -17,7 +17,7 @@ public class GraphicalConfig {
 	public static Theme theme = Theme.MODERN;
 	public static int eventsChangeHeight = 10;
 	public static int toneChangeHeight = 10;
-	public static int anchorInfoHeight = 10;
+	public static int fhpInfoHeight = 10;
 	public static int noteWidth = 25;
 	public static int noteHeight = 25;
 	public static int chordHeight = 10;
@@ -41,8 +41,7 @@ public class GraphicalConfig {
 				ValueAccessor.forInteger(v -> eventsChangeHeight = v, () -> eventsChangeHeight));
 		valueAccessors.put("toneChangeHeight",
 				ValueAccessor.forInteger(v -> toneChangeHeight = v, () -> toneChangeHeight));
-		valueAccessors.put("anchorInfoHeight",
-				ValueAccessor.forInteger(v -> anchorInfoHeight = v, () -> anchorInfoHeight));
+		valueAccessors.put("fhpInfoHeight", ValueAccessor.forInteger(v -> fhpInfoHeight = v, () -> fhpInfoHeight));
 		valueAccessors.put("noteWidth", ValueAccessor.forInteger(v -> noteWidth = v, () -> noteWidth));
 		valueAccessors.put("noteHeight", ValueAccessor.forInteger(v -> noteHeight = v, () -> noteHeight));
 		valueAccessors.put("chordHeight", ValueAccessor.forInteger(v -> chordHeight = v, () -> chordHeight));

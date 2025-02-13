@@ -7,7 +7,7 @@ import static log.charter.util.CollectionUtils.map;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
@@ -38,7 +38,7 @@ public class LevelSquisher {
 			final FractionalPosition to = i + 1 < phrases.size() ? phrases.get(i + 1).position() : null;
 
 			final Level level = arrangement.levels.get(levelId);
-			squished.anchors.addAll(map(getFromTo(level.anchors, from, to), Anchor::new));
+			squished.fhps.addAll(map(getFromTo(level.fhps, from, to), FHP::new));
 			squished.sounds.addAll(map(getFromTo(level.sounds, from, to), ChordOrNote::from));
 			squished.handShapes.addAll(map(getFromTo(level.handShapes, from, to), HandShape::new));
 		}

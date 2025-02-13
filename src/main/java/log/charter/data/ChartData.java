@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.List;
 
 import log.charter.data.config.Config;
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
@@ -111,8 +111,8 @@ public class ChartData {
 		return currentArrangement().getLevel(currentLevel);
 	}
 
-	public List<Anchor> currentAnchors() {
-		return currentArrangementLevel().anchors;
+	public List<FHP> currentFHPs() {
+		return currentArrangementLevel().fhps;
 	}
 
 	public List<ChordOrNote> currentSounds() {

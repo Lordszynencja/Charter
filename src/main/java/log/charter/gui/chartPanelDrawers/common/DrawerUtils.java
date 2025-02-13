@@ -3,7 +3,7 @@ package log.charter.gui.chartPanelDrawers.common;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.GraphicalConfig.anchorInfoHeight;
+import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
 import static log.charter.data.config.GraphicalConfig.chartMapHeightMultiplier;
 import static log.charter.data.config.GraphicalConfig.chordHeight;
 import static log.charter.data.config.GraphicalConfig.eventsChangeHeight;
@@ -25,8 +25,8 @@ public class DrawerUtils {
 	public static final int phraseNamesY = sectionNamesY + eventsChangeHeight + 10;
 	public static final int eventNamesY = phraseNamesY + eventsChangeHeight + 10;
 	public static int toneChangeY = eventNamesY + toneChangeHeight + 10;
-	public static int anchorY = toneChangeY + toneChangeHeight + 10;
-	public static int lanesTop = anchorY + anchorInfoHeight + chordHeight + 2;
+	public static int fhpY = toneChangeY + toneChangeHeight + 10;
+	public static int lanesTop = fhpY + fhpInfoHeight + chordHeight + 2;
 	public static int laneHeight;
 	public static int lanesHeight;
 	public static int lanesBottom;
@@ -54,8 +54,8 @@ public class DrawerUtils {
 	}
 
 	private static void setEditAreaSizesForGuitar(final boolean bass, final int strings) {
-		anchorY = toneChangeY + toneChangeHeight + 10;
-		lanesTop = anchorY + anchorInfoHeight + chordHeight + 2;
+		fhpY = toneChangeY + toneChangeHeight + 10;
+		lanesTop = fhpY + fhpInfoHeight + chordHeight + 2;
 		laneHeight = (int) (noteHeight * (bass ? 2 : 1.5));
 		tailHeight = getAsOdd(noteHeight * 3 / 4);
 		lanesHeight = laneHeight * strings;

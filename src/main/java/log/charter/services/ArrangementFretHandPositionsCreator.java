@@ -8,7 +8,7 @@ import static log.charter.util.CollectionUtils.lastBeforeEqual;
 import java.util.List;
 
 import log.charter.data.config.Config;
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.HOPO;
@@ -71,7 +71,7 @@ public class ArrangementFretHandPositionsCreator {
 	}
 
 	private static void addFHP(final ImmutableBeatsMap beats, final FretRange fretRange, final int index,
-			final List<Anchor> anchors) {
+			final List<FHP> fhps) {
 		int baseFret = Math.min(frets - 3, max(1, fretRange.fretRange.min));
 
 		if (baseFret <= 0) {
@@ -82,29 +82,29 @@ public class ArrangementFretHandPositionsCreator {
 		}
 		final int width = 1 + max(3, fretRange.fretRange.max - fretRange.fretRange.min);
 
-		anchors.add(index, new Anchor(fretRange.position(), baseFret, width));
+		fhps.add(index, new FHP(fretRange.position(), baseFret, width));
 	}
 
-	private static boolean canBeExtended(final Anchor anchor, final int fret) {
+	private static boolean canBeExtended(final FHP fhp, final int fret) {
 		int maxWidth;
-		if (anchor.fret >= 18) {
+		if (fhp.fret >= 18) {
 			maxWidth = 6;
-		} else if (anchor.fret >= 13) {
+		} else if (fhp.fret >= 13) {
 			maxWidth = 5;
-		} else if (anchor.fret >= 7) {
+		} else if (fhp.fret >= 7) {
 			maxWidth = 4;
 		} else {
 			maxWidth = 3;
 		}
 
-		return fret <= anchor.fret + maxWidth;
+		return fret <= fhp.fret + maxWidth;
 	}
 
 	private static void addFHPIfNeeded(final ImmutableBeatsMap beats, final FretRange fretRange,
-			final List<Anchor> anchors) {
-		final Integer currentAnchorId = lastBeforeEqual(anchors, fretRange).findId();
-		if (currentAnchorId == null) {
-			addFHP(beats, fretRange, 0, anchors);
+			final List<FHP> fhps) {
+		final Integer currentFHPId = lastBeforeEqual(fhps, fretRange).findId();
+		if (currentFHPId == null) {
+			addFHP(beats, fretRange, 0, fhps);
 			return;
 		}
 
@@ -112,14 +112,14 @@ public class ArrangementFretHandPositionsCreator {
 			return;
 		}
 
-		final Anchor current = anchors.get(currentAnchorId);
+		final FHP current = fhps.get(currentFHPId);
 		if (fretRange.isNote) {
 			final int fret = fretRange.fretRange.min;
 			if (fret < current.fret || fret > current.topFret()) {
 				if (fretRange.isTap || (fret > current.fret && canBeExtended(current, fret))) {
 					current.width = fret - current.fret + 1;
 				} else {
-					addFHP(beats, fretRange, currentAnchorId + 1, anchors);
+					addFHP(beats, fretRange, currentFHPId + 1, fhps);
 				}
 			}
 
@@ -127,7 +127,7 @@ public class ArrangementFretHandPositionsCreator {
 		}
 
 		if (current.fret != fretRange.fretRange.min) {
-			addFHP(beats, fretRange, currentAnchorId + 1, anchors);
+			addFHP(beats, fretRange, currentFHPId + 1, fhps);
 			return;
 		}
 
@@ -136,11 +136,11 @@ public class ArrangementFretHandPositionsCreator {
 		}
 	}
 
-	public static void createFretHandPositions(final ImmutableBeatsMap beats, final List<ChordTemplate> chordTemplates,
-			final List<ChordOrNote> sounds, final List<Anchor> anchors) {
+	public static void createFHPs(final ImmutableBeatsMap beats, final List<ChordTemplate> chordTemplates,
+			final List<ChordOrNote> sounds, final List<FHP> fhps) {
 		for (final ChordOrNote sound : sounds) {
 			final FretRange fretRange = fretRangeFromSound(beats, chordTemplates, sound);
-			addFHPIfNeeded(beats, fretRange, anchors);
+			addFHPIfNeeded(beats, fretRange, fhps);
 		}
 	}
 }

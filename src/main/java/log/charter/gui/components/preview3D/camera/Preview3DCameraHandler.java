@@ -15,7 +15,7 @@ import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.time.Position;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
@@ -55,29 +55,29 @@ public class Preview3DCameraHandler {
 	}
 
 	public void updateFretFocus(final double frameTime) {
-		final List<Anchor> anchors = chartData.currentArrangementLevel().anchors;
+		final List<FHP> fhps = chartData.currentArrangementLevel().fhps;
 		int minFret = Config.frets;
 		int maxFret = 1;
 
 		final IConstantFractionalPosition start = new Position(chartTimeHandler.time() + fretFocusWindowStartOffset)
 				.toFraction(chartData.beats());
-		final int anchorsFrom = lastBeforeEqual(anchors, start).findId(0);
+		final int fhpsFrom = lastBeforeEqual(fhps, start).findId(0);
 
 		final IConstantFractionalPosition end = new Position(chartTimeHandler.time() + fretFocusWindowEndOffset)
 				.toFraction(chartData.beats());
-		final Integer anchorsTo = lastBeforeEqual(anchors, end).findId();
-		if (anchorsTo == null) {
+		final Integer fhpsTo = lastBeforeEqual(fhps, end).findId();
+		if (fhpsTo == null) {
 			return;
 		}
 		// TODO add weighted average instead of focusing speed
 
-		for (int i = anchorsFrom; i <= anchorsTo; i++) {
-			final Anchor anchor = anchors.get(i);
-			if (anchor.fret < minFret) {
-				minFret = anchor.fret;
+		for (int i = fhpsFrom; i <= fhpsTo; i++) {
+			final FHP fhp = fhps.get(i);
+			if (fhp.fret < minFret) {
+				minFret = fhp.fret;
 			}
-			if (anchor.topFret() > maxFret) {
-				maxFret = anchor.topFret();
+			if (fhp.topFret() > maxFret) {
+				maxFret = fhp.topFret();
 			}
 		}
 

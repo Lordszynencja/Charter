@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.Anchor;
+import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
@@ -27,7 +27,7 @@ public class GuitarUndoState extends UndoState {
 	private final List<ChordTemplate> chordTemplates;
 	private final List<ToneChange> toneChanges;
 
-	private final List<Anchor> anchors;
+	private final List<FHP> fhps;
 	private final List<ChordOrNote> chordsAndNotes;
 	private final List<HandShape> handShapes;
 
@@ -43,7 +43,7 @@ public class GuitarUndoState extends UndoState {
 		chordTemplates = map(arrangement.chordTemplates, ChordTemplate::new);
 		toneChanges = map(arrangement.toneChanges, ToneChange::new);
 
-		anchors = map(level.anchors, Anchor::new);
+		fhps = map(level.fhps, FHP::new);
 		chordsAndNotes = map(level.sounds, ChordOrNote::from);
 		handShapes = map(level.handShapes, HandShape::new);
 	}
@@ -65,7 +65,7 @@ public class GuitarUndoState extends UndoState {
 		arrangement.tones = new HashSet<>(map(toneChanges, toneChange -> toneChange.toneName));
 
 		arrangement.toneChanges = toneChanges;
-		level.anchors = anchors;
+		level.fhps = fhps;
 		level.sounds = chordsAndNotes;
 		level.handShapes = handShapes;
 
