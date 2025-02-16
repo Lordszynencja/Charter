@@ -132,8 +132,8 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 	}
 
 	private void squashLevels() {
-		LevelSquisher.squish(chartData.currentArrangement());
 		modeManager.setLevel(0);
+		LevelSquisher.squish(chartData.currentArrangement());
 	}
 
 	private void deleteArrangement() {

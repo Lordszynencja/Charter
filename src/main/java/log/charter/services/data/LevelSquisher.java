@@ -4,12 +4,13 @@ import static log.charter.util.CollectionUtils.firstAfterEqual;
 import static log.charter.util.CollectionUtils.lastBefore;
 import static log.charter.util.CollectionUtils.map;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
@@ -22,10 +23,14 @@ public class LevelSquisher {
 		final int fromId = firstAfterEqual(items, from).findId(items.size() - 1);
 		final int toId = lastBefore(items, to).findId(-1);
 
+		if (fromId >= toId) {
+			return new ArrayList<>();
+		}
+
 		return items.subList(fromId, toId + 1);
 	}
 
-	public static Level squish(final Arrangement arrangement) {
+	public static void squish(final Arrangement arrangement) {
 		final Level squished = new Level();
 
 		final List<EventPoint> phrases = arrangement.eventPoints.stream()//
@@ -43,6 +48,7 @@ public class LevelSquisher {
 			squished.handShapes.addAll(map(getFromTo(level.handShapes, from, to), HandShape::new));
 		}
 
-		return squished;
+		arrangement.levels.clear();
+		arrangement.setLevel(0, squished);
 	}
 }

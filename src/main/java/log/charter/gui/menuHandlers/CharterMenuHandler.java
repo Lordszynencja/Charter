@@ -6,6 +6,7 @@ import javax.swing.JMenuItem;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.simple.SpecialMenuItem;
+import log.charter.io.Logger;
 import log.charter.services.Action;
 import log.charter.services.ActionHandler;
 import log.charter.services.mouseAndKeyboard.Shortcut;
@@ -28,7 +29,13 @@ abstract class CharterMenuHandler {
 
 	protected static JMenuItem createItem(final String label, final Runnable onAction) {
 		final JMenuItem item = new JMenuItem(label);
-		item.addActionListener(e -> onAction.run());
+		item.addActionListener(e -> {
+			try {
+				onAction.run();
+			} catch (final Throwable t) {
+				Logger.error("Couldn't do action " + label, t);
+			}
+		});
 		setDefaultColors(item);
 		return item;
 	}
