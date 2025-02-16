@@ -32,7 +32,7 @@ public class CollectionUtils {
 		Integer findId();
 
 		default int findId(final int defaultValue) {
-			return nvl(findId(), defaultValue);
+			return nvl(findId(), (Integer) defaultValue);
 		}
 
 		default E find() {
@@ -69,7 +69,7 @@ public class CollectionUtils {
 
 		@Override
 		public Integer findId() {
-			if (list.isEmpty() || comparator.compare(position, list.get(list.size() - 1)) >= 0) {
+			if (list.isEmpty() || position == null || comparator.compare(position, list.get(list.size() - 1)) >= 0) {
 				return null;
 			}
 
@@ -115,7 +115,7 @@ public class CollectionUtils {
 
 		@Override
 		public Integer findId() {
-			if (list.isEmpty() || comparator.compare(position, list.get(list.size() - 1)) > 0) {
+			if (list.isEmpty() || position == null || comparator.compare(position, list.get(list.size() - 1)) > 0) {
 				return null;
 			}
 
@@ -161,7 +161,7 @@ public class CollectionUtils {
 
 		@Override
 		public Integer findId() {
-			if (list.isEmpty() || comparator.compare(position, list.get(0)) <= 0) {
+			if (list.isEmpty() || position == null || comparator.compare(position, list.get(0)) <= 0) {
 				return null;
 			}
 
@@ -202,7 +202,7 @@ public class CollectionUtils {
 
 		@Override
 		public Integer findId() {
-			if (list.isEmpty() || comparator.compare(position, list.get(0)) < 0) {
+			if (list.isEmpty() || position == null || comparator.compare(position, list.get(0)) < 0) {
 				return null;
 			}
 
@@ -250,7 +250,7 @@ public class CollectionUtils {
 
 		@Override
 		public Integer findId() {
-			if (list.isEmpty()) {
+			if (list.isEmpty() || position == null) {
 				return null;
 			}
 			if (list.size() == 1) {
