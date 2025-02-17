@@ -1,7 +1,6 @@
 package log.charter.gui.components.preview3D.data;
 
 import static java.lang.Math.min;
-import static log.charter.data.config.Config.maxStrings;
 import static log.charter.data.song.notes.ChordOrNote.isLinkedToPrevious;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
@@ -76,7 +75,7 @@ public class Preview3DNotesData {
 			final double timeTo) {
 		if (chartData.currentArrangementLevel() == null) {
 			final List<List<NoteDrawData>> notes = new ArrayList<>();
-			for (int i = 0; i < maxStrings; i++) {
+			for (int i = 0; i < Config.instrument.maxStrings; i++) {
 				notes.add(new ArrayList<>());
 			}
 			final List<ChordBoxDrawData> chords = new ArrayList<>();
@@ -89,7 +88,7 @@ public class Preview3DNotesData {
 		final List<List<NoteDrawData>> notes = new ArrayList<>();
 		final Arrangement arrangement = chartData.currentArrangement();
 		final Level level = chartData.currentArrangementLevel();
-		for (int i = 0; i < maxStrings; i++) {
+		for (int i = 0; i < Config.instrument.maxStrings; i++) {
 			notes.add(new ArrayList<>());
 		}
 		final List<ChordOrNote> sounds = level.sounds;
@@ -186,7 +185,7 @@ public class Preview3DNotesData {
 
 	public Preview3DNotesData() {
 		notes = new ArrayList<>();
-		for (int i = 0; i < Config.maxStrings; i++) {
+		for (int i = 0; i < Config.instrument.maxStrings; i++) {
 			notes.add(new ArrayList<>());
 		}
 		chords = new ArrayList<>();

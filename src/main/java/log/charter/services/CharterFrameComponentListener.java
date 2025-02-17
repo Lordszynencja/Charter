@@ -20,8 +20,8 @@ public class CharterFrameComponentListener implements ComponentListener {
 
 	@Override
 	public void componentMoved(final ComponentEvent e) {
-		Config.windowPosX = e.getComponent().getX();
-		Config.windowPosY = e.getComponent().getY();
+		Config.window.x = e.getComponent().getX();
+		Config.window.y = e.getComponent().getY();
 		Config.markChanged();
 	}
 

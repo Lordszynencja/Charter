@@ -33,6 +33,7 @@ import log.charter.services.editModes.ModeManager;
 import log.charter.sound.data.AudioData;
 import log.charter.util.FileChooseUtils;
 import log.charter.util.RW;
+import log.charter.util.Timer;
 
 public class SongFileHandler {
 	public static final String vocalsFileName = "Vocals_RS2.xml";
@@ -135,6 +136,7 @@ public class SongFileHandler {
 	}
 
 	private void saveRSXML() {
+		final Timer timer = new Timer();
 		final File dir = new File(chartData.path, "RS XML");
 		dir.mkdirs();
 		for (final File f : dir.listFiles()) {
@@ -142,20 +144,29 @@ public class SongFileHandler {
 				f.delete();
 			}
 		}
+		timer.addTimestamp("created dirs");
 
 		int id = 1;
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
 			final String arrangementFileName = generateArrangementFileName(id, arrangement);
 			final SongArrangement songArrangement = new SongArrangement((int) projectAudioHandler.getAudio().msLength(),
 					chartData.songChart, arrangement);
-			RW.write(new File(dir, arrangementFileName), SongArrangementXStreamHandler.saveSong(songArrangement));
+			final String xml = SongArrangementXStreamHandler.saveSong(songArrangement);
+			timer.addTimestamp("created XML for arrangement " + id);
+
+			RW.write(new File(dir, arrangementFileName), xml, "UTF-8");
+			timer.addTimestamp("wrote XML to disk");
 			id++;
 		}
 
 		if (!chartData.currentVocals().vocals.isEmpty()) {
-			RW.write(new File(dir, vocalsFileName),
-					saveVocals(new ArrangementVocals(chartData.beats(), chartData.songChart.vocals)), "UTF-8");
+			final String xml = saveVocals(new ArrangementVocals(chartData.beats(), chartData.songChart.vocals));
+			timer.addTimestamp("created XML for vocals");
+			RW.write(new File(dir, vocalsFileName), xml, "UTF-8");
+			timer.addTimestamp("wrote XML to disk");
 		}
+
+		timer.print("RS XMLs save", Timer.defaultFormat(35));
 	}
 
 	public void save() {
@@ -163,14 +174,26 @@ public class SongFileHandler {
 			return;
 		}
 
+		final Timer timer = new Timer();
+
 		arrangementFixer.fixArrangements();
+		timer.addTimestamp("arrangementFixer.fixArrangements()");
 
 		final ChartProject project = new ChartProject(chartTimeHandler.time(), modeManager.getMode(), chartData,
 				chartData.songChart, textTab.getText());
-		RW.write(new File(chartData.path, chartData.projectFileName), writeChartProject(project));
+		timer.addTimestamp("generated project");
+		final String xml = writeChartProject(project);
+		timer.addTimestamp("wrote project to variable");
+
+		RW.write(new File(chartData.path, chartData.projectFileName), xml);
+		timer.addTimestamp("wrote project to disk");
 		saveRSXML();
+		timer.addTimestamp("wrote RS XML");
 
 		undoSystem.onSave();
+		timer.addTimestamp("marked undo saved");
+
+		timer.print("save", Timer.defaultFormat(35));
 	}
 
 	public void saveAs() {

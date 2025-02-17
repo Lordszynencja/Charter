@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import com.synthbot.jasiohost.AsioDriver;
 
@@ -23,7 +22,6 @@ import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.io.Logger;
-import log.charter.sound.SoundFileType;
 import log.charter.sound.system.AudioSystemType;
 import log.charter.sound.system.SoundSystem;
 
@@ -67,21 +65,19 @@ public class ProgramAudioConfigPage implements Page {
 		}
 	}
 
-	private AudioSystemType audioOutSystemType = Config.audioOutSystemType;
-	private String audioOutSystemName = Config.audioOutSystemName;
-	private int leftOutChannelId = Config.leftOutChannelId;
-	private int rightOutChannelId = Config.rightOutChannelId;
+	private AudioSystemType audioOutSystem = Config.audio.outSystem;
+	private String audioOutSystemName = Config.audio.outSystemName;
+	private int leftOutChannelId = Config.audio.leftOutChannelId;
+	private int rightOutChannelId = Config.audio.rightOutChannelId;
 
-	private int audioBufferMs = Config.audioBufferMs;
-	private SoundFileType baseAudioFormat = Config.baseAudioFormat;
-	private int delay = Config.delay;
-	private int midiDelay = Config.midiDelay;
+	private int audioBufferedMs = Config.audio.bufferedMs;
+	private int delay = Config.audio.delay;
+	private int midiDelay = Config.audio.midiDelay;
 
 	private FieldWithLabel<CharterSelect<AudioOutputData>> audioOutSystemField;
 	private FieldWithLabel<TextInputWithValidation> leftOutChannelIdField;
 	private FieldWithLabel<TextInputWithValidation> rightOutChannelIdField;
 	private FieldWithLabel<TextInputWithValidation> audioBufferMsField;
-	private FieldWithLabel<CharterSelect<SoundFileType>> baseAudioFormatField;
 	private FieldWithLabel<TextInputWithValidation> delayField;
 	private FieldWithLabel<TextInputWithValidation> midiDelayField;
 
@@ -97,9 +93,6 @@ public class ProgramAudioConfigPage implements Page {
 		}
 
 		addAudioBufferMs(panel, position);
-		position.newRow();
-
-		addBaseAudioFormatSelect(panel, position);
 		position.newRow();
 
 		addDelay(panel, position);
@@ -133,10 +126,10 @@ public class ProgramAudioConfigPage implements Page {
 		inputs.add(new AudioOutputData(AudioSystemType.DEFAULT, null));
 		inputs.addAll(getASIOOutputsList());
 
-		final AudioOutputData selected = new AudioOutputData(audioOutSystemType, audioOutSystemName);
+		final AudioOutputData selected = new AudioOutputData(audioOutSystem, audioOutSystemName);
 
 		final CharterSelect<AudioOutputData> select = new CharterSelect<>(inputs, selected, t -> t.toString(), t -> {
-			audioOutSystemType = t.type;
+			audioOutSystem = t.type;
 			audioOutSystemName = t.name;
 
 			showChannelIdsFields(t.type == AudioSystemType.ASIO);
@@ -151,7 +144,7 @@ public class ProgramAudioConfigPage implements Page {
 				new IntValueValidator(0, 255), i -> leftOutChannelId = i, true);
 		leftOutChannelIdField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_L_ID, 130, 30, 20, input, LabelPosition.LEFT);
 		panel.add(leftOutChannelIdField, position);
-		leftOutChannelIdField.setVisible(audioOutSystemType == AudioSystemType.ASIO);
+		leftOutChannelIdField.setVisible(audioOutSystem == AudioSystemType.ASIO);
 	}
 
 	private void addRightOutChannelId(final RowedPanel panel, final RowedPosition position) {
@@ -159,26 +152,15 @@ public class ProgramAudioConfigPage implements Page {
 				new IntValueValidator(0, 255), i -> rightOutChannelId = i, true);
 		rightOutChannelIdField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_R_ID, 130, 30, 20, input, LabelPosition.LEFT);
 		panel.add(rightOutChannelIdField, position);
-		rightOutChannelIdField.setVisible(audioOutSystemType == AudioSystemType.ASIO);
+		rightOutChannelIdField.setVisible(audioOutSystem == AudioSystemType.ASIO);
 	}
 
 	private void addAudioBufferMs(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(audioBufferMs, 50, new IntValueValidator(1, 1000),
-				v -> audioBufferMs = v, false);
+		final TextInputWithValidation input = generateForInt(audioBufferedMs, 50, new IntValueValidator(1, 1000),
+				v -> audioBufferedMs = v, false);
 
 		audioBufferMsField = new FieldWithLabel<>(Label.BUFFER_SIZE_MS, 150, 50, 20, input, LabelPosition.LEFT);
 		panel.add(audioBufferMsField, position);
-	}
-
-	private void addBaseAudioFormatSelect(final RowedPanel panel, final RowedPosition position) {
-		final Stream<SoundFileType> possibleValues = Stream.of(SoundFileType.values())//
-				.filter(SoundFileType::canBeWritten);
-
-		final CharterSelect<SoundFileType> select = new CharterSelect<>(possibleValues, baseAudioFormat, t -> t.name,
-				t -> baseAudioFormat = t);
-		baseAudioFormatField = new FieldWithLabel<>(Label.BASE_AUDIO_FORMAT, 100, 100, 20, select, LabelPosition.LEFT);
-
-		panel.add(baseAudioFormatField, position);
 	}
 
 	private void addDelay(final RowedPanel panel, final RowedPosition position) {
@@ -206,24 +188,22 @@ public class ProgramAudioConfigPage implements Page {
 	public void setVisible(final boolean visibility) {
 		if (SystemType.is(WINDOWS)) {
 			audioOutSystemField.setVisible(visibility);
-			showChannelIdsFields(visibility && audioOutSystemType == AudioSystemType.ASIO);
+			showChannelIdsFields(visibility && audioOutSystem == AudioSystemType.ASIO);
 		}
 		audioBufferMsField.setVisible(visibility);
-		baseAudioFormatField.setVisible(visibility);
 		delayField.setVisible(visibility);
 		midiDelayField.setVisible(visibility);
 	}
 
 	public void save() {
-		Config.audioOutSystemType = audioOutSystemType;
-		Config.audioOutSystemName = audioOutSystemName;
-		Config.leftOutChannelId = leftOutChannelId;
-		Config.rightOutChannelId = rightOutChannelId;
+		Config.audio.outSystem = audioOutSystem;
+		Config.audio.outSystemName = audioOutSystemName;
+		Config.audio.leftOutChannelId = leftOutChannelId;
+		Config.audio.rightOutChannelId = rightOutChannelId;
 
-		Config.audioBufferMs = audioBufferMs;
-		Config.baseAudioFormat = baseAudioFormat;
-		Config.delay = delay;
-		Config.midiDelay = midiDelay;
+		Config.audio.bufferedMs = audioBufferedMs;
+		Config.audio.delay = delay;
+		Config.audio.midiDelay = midiDelay;
 
 		SoundSystem.setCurrentSoundSystem();
 	}

@@ -77,7 +77,7 @@ public class KeyboardHandler implements KeyListener {
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
-		Logger.debug("Pressed " + e.getKeyChar());
+		Logger.debug("Pressed " + KeyEvent.getKeyText(e.getKeyCode()));
 
 		try {
 			int keyCode = e.getKeyCode();
@@ -127,7 +127,7 @@ public class KeyboardHandler implements KeyListener {
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
-		Logger.debug("Released " + e.getKeyChar());
+		Logger.debug("Released " + KeyEvent.getKeyText(e.getKeyCode()));
 
 		try {
 			final int keyCode = e.getKeyCode();

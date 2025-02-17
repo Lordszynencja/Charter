@@ -2,15 +2,14 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar.highway;
 
 import static java.lang.Math.round;
 import static java.lang.Math.sin;
-import static log.charter.data.config.Config.maxBendValue;
 import static log.charter.data.config.Config.showChordIds;
 import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
 import static log.charter.data.config.GraphicalConfig.handShapesHeight;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.data.config.GraphicalConfig.noteWidth;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
@@ -48,11 +47,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import log.charter.data.config.Config;
 import log.charter.data.config.Zoom;
-import log.charter.data.song.FHP;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.EventType;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Phrase;
 import log.charter.data.song.SectionType;
@@ -607,12 +607,12 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		if (bendValue == null) {
 			bendValue = BigDecimal.ZERO;
 		}
-		if (bendValue.compareTo(new BigDecimal(maxBendValue)) > 0) {
-			bendValue = new BigDecimal(maxBendValue);
+		if (bendValue.compareTo(new BigDecimal(Config.instrument.maxBendValue)) > 0) {
+			bendValue = new BigDecimal(Config.instrument.maxBendValue);
 		}
 
 		final int bendOffset = bendValue.multiply(new BigDecimal(tailHeight * 2 / 3))
-				.divide(new BigDecimal(maxBendValue), RoundingMode.HALF_UP).intValue();
+				.divide(new BigDecimal(Config.instrument.maxBendValue), RoundingMode.HALF_UP).intValue();
 		return y + tailHeight / 3 - bendOffset;
 	}
 

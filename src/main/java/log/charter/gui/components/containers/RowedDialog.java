@@ -117,8 +117,8 @@ public class RowedDialog extends JDialog implements ComponentListener {
 	}
 
 	private void setLocation() {
-		final int x = Config.windowPosX + frame.getWidth() / 2 - getWidth() / 2;
-		final int y = Config.windowPosY + frame.getHeight() / 2 - getHeight() / 2;
+		final int x = Config.window.x + frame.getWidth() / 2 - getWidth() / 2;
+		final int y = Config.window.y + frame.getHeight() / 2 - getHeight() / 2;
 		setLocation(x, y);
 	}
 

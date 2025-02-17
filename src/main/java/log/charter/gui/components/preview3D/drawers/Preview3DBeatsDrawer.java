@@ -1,5 +1,6 @@
 package log.charter.gui.components.preview3D.drawers;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static log.charter.gui.components.preview3D.Preview3DUtils.closeDistanceZ;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fadedDistanceZ;
@@ -19,8 +20,8 @@ import org.lwjgl.opengl.GL30;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.components.preview3D.data.FHPDrawData;
 import log.charter.gui.components.preview3D.data.BeatDrawData;
+import log.charter.gui.components.preview3D.data.FHPDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
@@ -88,7 +89,7 @@ public class Preview3DBeatsDrawer {
 
 	private void drawFretNumberWithFade(final ShadersHolder shadersHolder, final int fret, final double y,
 			final double z, Color color) {
-		if (fret > Config.frets) {
+		if (fret > Config.instrument.frets) {
 			return;
 		}
 
@@ -102,14 +103,14 @@ public class Preview3DBeatsDrawer {
 
 	private void drawFretNumber(final ShadersHolder shadersHolder, final int fret, final double y, final double z,
 			final Color color) {
-		if (fret > Config.frets) {
+		if (fret > Config.instrument.frets) {
 			return;
 		}
 
 		final BufferedTextureData textureData = textTexturesHolder.setTextInTexture("" + fret, 128f, color);
 
 		final double x = getFretMiddlePosition(fret);
-		final double width = (getFretPosition(fret) - getFretPosition(fret - 1)) * textureData.width
+		final double width = abs(getFretPosition(fret) - getFretPosition(fret - 1)) * textureData.width
 				/ textureData.height;
 		final double x0 = x - width * 0.4;
 		final double x1 = x + width * 0.4;
@@ -154,7 +155,7 @@ public class Preview3DBeatsDrawer {
 			final IntRange fretsRange = drawData.getFrets(beat.originalTime);
 			int fret = 0;
 			int i = 0;
-			while (fret <= Config.frets) {
+			while (fret <= Config.instrument.frets) {
 				fret += dottedFretDistances[i];
 				final boolean fretHighlight = fretsRange != null && fret >= fretsRange.min && fret <= fretsRange.max;
 				fretsToDraw.add(new FretDrawData(beat.time, fret, false, fretHighlight));

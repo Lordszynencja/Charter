@@ -73,8 +73,10 @@ public class Preview3DVideoDrawer {
 		graphics.clearRect(0, 0, 1000, 1000);
 		graphics.setStroke(new BasicStroke(10));
 
-		if (Config.specialDebugOption) {
+		if (Config.debug.showInputGraph) {
 			drawAudio(graphics);
+		}
+		if (Config.debug.showFTGraph) {
 			drawFFT(graphics);
 		}
 

@@ -24,8 +24,6 @@ public class Localization {
 		ADD_BEATS_PANE("Add beats"), //
 		ADD_DEFAULT_SILENCE("Add default silence based on bars"), //
 		ADD_SILENCE("Add silence in the beginning"), //
-		FHP_PANE("FHP"), //
-		FHP_WIDTH("Width"), //
 		ARPEGGIO("Arpeggio"), //
 		ARRANGEMENT_ID_NAME("Arrangement %d, %s:"), //
 		ARRANGEMENT_IMPORT_OPTIONS("Arrangement import options"), //
@@ -67,6 +65,7 @@ public class Localization {
 		CONFIG_AUDIO("Audio"), //
 		CONFIG_DISPLAY("Display"), //
 		CONFIG_GENERAL("General"), //
+		CONFIG_INSTRUMENT("Instrument"), //
 		COPY("Copy"), //
 		COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT("Couldn't create folder with this name, please change the name"), //
 		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 3/4/5 file"), //
@@ -91,6 +90,9 @@ public class Localization {
 		ERRORS_TAB_POSITION("Position"), //
 		ERRORS_TAB_SEVERITY("Severity"), //
 		EXIT("Exit"), //
+		FHP_PANE("FHP"), //
+		FHP_STARTS_ON_WRONG_FRET("Fret Hand Position starts on fret below or equal to capo/0"), //
+		FHP_WIDTH("Width"), //
 		FILE_MENU("File"), //
 		FINGER_NOT_SET_FOR_FRETTED_STRING("Finger not set for fretted string in template [%d] - string %d"), //
 		FINGER_SET_FOR_OPEN_STRING("Finger set for open string in template [%d] - string %d"), //
@@ -112,6 +114,7 @@ public class Localization {
 		FRET_9("Fret 9"), //
 		FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
 				"Fret in sound is different than fret in hand shape under it on the same string"), //
+		FRETS("Frets"), //
 		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
 		HAMMER_ON_ON_FRET_ZERO("Hammer on on fret zero"), //
@@ -138,6 +141,7 @@ public class Localization {
 		MARK_BOOKMARK_8("Mark bookmark 8"), //
 		MARK_BOOKMARK_9("Mark bookmark 9"), //
 		MARKER_POSITION_PX("Marker position (px)"), //
+		MAX_BEND_VALUE("Max bend value"), //
 		MAX_STRINGS("Max strings"), //
 		MIDI_SOUND_DELAY("Midi sound delay (ms)"), //
 		MINIMAL_NOTE_DISTANCE("Minimal note distance"), //
@@ -156,6 +160,7 @@ public class Localization {
 		NEW_PROJECT("New project"), //
 		NO_PHRASES_IN_ARRANGEMENT("No phrases in arrangement"), //
 		NO_SECTIONS_IN_ARRANGEMENT("No sections in arrangement"), //
+		NOTE_FRET_BELOW_CAPO("Note fret is below capo, for open string it should be equal"), //
 		NOTE_IN_WRONG_FHP("Note in wrong FHP"), //
 		NOTE_INSIDE_NON_ARPEGGIO_HAND_SHAPE("Note inside hand shape that's not arpeggio"), //
 		NOTE_SLIDE_FROM_OPEN_STRING("Slide starts on open string"), //

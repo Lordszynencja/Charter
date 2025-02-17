@@ -225,7 +225,10 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 
 			swapBuffers();
 			timer.addTimestamp("finish");
-			timer.print("paintGL timings:", "%20s: %d");
+
+			if (Config.debug.frameTimes) {
+				timer.print("paintGL timings:", Timer.defaultFormat(20));
+			}
 		} catch (final Exception e) {
 			Logger.error("Exception in paintGL", e);
 		} catch (final Error error) {

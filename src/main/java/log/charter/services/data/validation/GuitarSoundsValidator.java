@@ -54,6 +54,17 @@ public class GuitarSoundsValidator {
 			return generateError(label.label(), position);
 		}
 
+		private void validateFrets(final ChordOrNote sound) {
+			sound.notesWithFrets(arrangement.chordTemplates).forEach(note -> {
+				if (note.fret() < arrangement.capo) {
+					final ChartPositionOnLevel errorPosition = new ChartPositionOnLevel(chartData, arrangementId,
+							levelId, note.position(), chartTimeHandler, modeManager);
+					errorsTab.addError(
+							new ChartError(Label.NOTE_FRET_BELOW_CAPO, ChartErrorSeverity.WARNING, errorPosition));
+				}
+			});
+		}
+
 		private void validateSlideFret(final CommonNoteWithFret note) {
 			if (note.fret() == 0) {
 				errorsTab.addError(generateError(Label.NOTE_SLIDE_FROM_OPEN_STRING, note));
@@ -244,6 +255,7 @@ public class GuitarSoundsValidator {
 			for (int i = 0; i < level.sounds.size(); i++) {
 				final ChordOrNote sound = level.sounds.get(i);
 
+				validateFrets(sound);
 				validateCorrectSlide(i, sound);
 				validateCorrectLength(i, sound);
 				validateCorrectHandshape(sound);

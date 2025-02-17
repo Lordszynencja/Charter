@@ -152,7 +152,8 @@ public class Preview3DGuitarSoundsDrawer {
 			return openNoteSameFretsModels.get(fretsWidth);
 		}
 
-		final Map<Integer, Map<Integer, CompositeModel>> currentMap = Config.leftHanded ? openNoteModelsLeftHanded
+		final Map<Integer, Map<Integer, CompositeModel>> currentMap = Config.instrument.leftHanded
+				? openNoteModelsLeftHanded
 				: openNoteModels;
 
 		if (currentMap.get(fret0) == null) {
@@ -353,7 +354,7 @@ public class Preview3DGuitarSoundsDrawer {
 		if (note.withoutHead) {
 			return;
 		}
-		if (note.fret == 0) {
+		if (note.fret <= drawData.capo) {
 			drawOpenStringNoteHead(shadersHolder, drawData, position, note, hit);
 			return;
 		}
@@ -494,7 +495,7 @@ public class Preview3DGuitarSoundsDrawer {
 			return;
 		}
 
-		if (note.fret == 0) {
+		if (note.fret <= drawData.capo) {
 			drawOpenNoteTail(shadersHolder, drawData, note);
 		} else {
 			drawFrettedNoteTail(shadersHolder, drawData.time, note, invertBend);

@@ -27,6 +27,7 @@ public class ChartValidator implements Initiable {
 	private Thread validationThread;
 
 	private final ChordTemplatesValidator chordTemplatesValidator = new ChordTemplatesValidator();
+	private final FHPsValidator fhpsValidator = new FHPsValidator();
 	private final GuitarSoundsValidator guitarSoundsValidator = new GuitarSoundsValidator();
 	private final PhrasesValidator phrasesValidator = new PhrasesValidator();
 	private final SectionsValidator sectionsValidator = new SectionsValidator();
@@ -34,6 +35,7 @@ public class ChartValidator implements Initiable {
 	@Override
 	public void init() {
 		charterContext.initObject(chordTemplatesValidator);
+		charterContext.initObject(fhpsValidator);
 		charterContext.initObject(guitarSoundsValidator);
 		charterContext.initObject(phrasesValidator);
 		charterContext.initObject(sectionsValidator);
@@ -75,17 +77,20 @@ public class ChartValidator implements Initiable {
 		final List<Arrangement> arrangements = chartData.songChart.arrangements;
 		for (int arrangementId = 0; arrangementId < arrangements.size(); arrangementId++) {
 			final Arrangement arrangement = arrangements.get(arrangementId);
-			for (int levelId = 0; levelId < arrangement.levels.size(); levelId++) {
-				final Level level = arrangement.getLevel(levelId);
-				guitarSoundsValidator.validate(arrangementId, arrangement, levelId, level);
-			}
-
 			chordTemplatesValidator.validate(arrangementId, arrangement);
 			phrasesValidator.validate(arrangementId, arrangement);
 			sectionsValidator.validate(arrangementId, arrangement);
+
+			for (int levelId = 0; levelId < arrangement.levels.size(); levelId++) {
+				final Level level = arrangement.getLevel(levelId);
+
+				fhpsValidator.validate(arrangementId, arrangement, levelId, level);
+				guitarSoundsValidator.validate(arrangementId, arrangement, levelId, level);
+			}
+
 		}
 
-		errorsTab.swapBuffers();
+		errorsTab.swapBuffer();
 	}
 
 }

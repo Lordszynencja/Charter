@@ -2,15 +2,14 @@ package log.charter.services;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.data.config.Config.frets;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.List;
 
 import log.charter.data.config.Config;
-import log.charter.data.song.FHP;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.FHP;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
@@ -52,7 +51,7 @@ public class ArrangementFretHandPositionsCreator {
 		}
 
 		final ChordTemplate template = chordTemplates.get(sound.chord().templateId());
-		int minFret = Config.frets;
+		int minFret = Config.instrument.frets;
 		int maxFret = 0;
 		for (final int fret : template.frets.values()) {
 			if (fret == 0) {
@@ -72,13 +71,13 @@ public class ArrangementFretHandPositionsCreator {
 
 	private static void addFHP(final ImmutableBeatsMap beats, final FretRange fretRange, final int index,
 			final List<FHP> fhps) {
-		int baseFret = Math.min(frets - 3, max(1, fretRange.fretRange.min));
+		int baseFret = min(Config.instrument.frets - 3, max(1, fretRange.fretRange.min));
 
 		if (baseFret <= 0) {
 			baseFret = 0;
 		}
-		if (baseFret > Config.frets - 3) {
-			baseFret = Config.frets - 3;
+		if (baseFret > Config.instrument.frets - 3) {
+			baseFret = Config.instrument.frets - 3;
 		}
 		final int width = 1 + max(3, fretRange.fretRange.max - fretRange.fretRange.min);
 
@@ -100,8 +99,7 @@ public class ArrangementFretHandPositionsCreator {
 		return fret <= fhp.fret + maxWidth;
 	}
 
-	private static void addFHPIfNeeded(final ImmutableBeatsMap beats, final FretRange fretRange,
-			final List<FHP> fhps) {
+	private static void addFHPIfNeeded(final ImmutableBeatsMap beats, final FretRange fretRange, final List<FHP> fhps) {
 		final Integer currentFHPId = lastBeforeEqual(fhps, fretRange).findId();
 		if (currentFHPId == null) {
 			addFHP(beats, fretRange, 0, fhps);

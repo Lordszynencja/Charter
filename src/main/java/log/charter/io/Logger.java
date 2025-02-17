@@ -35,7 +35,7 @@ public class Logger {
 	}
 
 	public static void debug(String msg) {
-		if (!Config.debugLogging) {
+		if (!Config.debug.logging) {
 			return;
 		}
 

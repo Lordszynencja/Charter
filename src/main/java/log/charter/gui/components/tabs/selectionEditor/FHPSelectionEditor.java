@@ -1,6 +1,5 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
-import static log.charter.data.config.Config.frets;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
@@ -9,6 +8,7 @@ import java.util.List;
 
 import javax.swing.JTextField;
 
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.FHP;
 import log.charter.data.types.PositionType;
@@ -31,7 +31,7 @@ public class FHPSelectionEditor {
 	public void addTo(final CurrentSelectionEditor currentSelectionEditor) {
 		final RowedPosition position = new RowedPosition(10, currentSelectionEditor.sizes);
 		final TextInputWithValidation fhpFretInput = generateForInt(1, 20, //
-				new IntValueValidator(1, frets), this::changeFHPFret, false);
+				new IntValueValidator(1, Config.instrument.frets), this::changeFHPFret, false);
 		fhpFretInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(fhpFretInput);
 		fhpFret = new FieldWithLabel<>(Label.FRET, 100, 30, 20, fhpFretInput, LabelPosition.LEFT);
@@ -39,7 +39,7 @@ public class FHPSelectionEditor {
 		position.newRow();
 
 		final TextInputWithValidation fhpWidthInput = generateForInt(4, 20, //
-				new IntValueValidator(4, frets), //
+				new IntValueValidator(4, Config.instrument.frets), //
 				this::changeFHPWidth, //
 				false);
 		fhpWidthInput.setHorizontalAlignment(JTextField.CENTER);

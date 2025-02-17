@@ -21,7 +21,6 @@ public class ProgramDisplayConfigPage implements Page {
 	private int markerOffset = Config.markerOffset;
 	private boolean invertStrings = Config.invertStrings;
 	private boolean invertStrings3D = Config.invertStrings3D;
-	private boolean leftHanded = Config.leftHanded;
 	private boolean showTempoInsteadOfBPM = Config.showTempoInsteadOfBPM;
 	private boolean showChordIds = Config.showChordIds;
 	private boolean showGrid = Config.showGrid;
@@ -30,7 +29,6 @@ public class ProgramDisplayConfigPage implements Page {
 	private FieldWithLabel<TextInputWithValidation> markerOffsetField;
 	private FieldWithLabel<JCheckBox> invertStringsField;
 	private FieldWithLabel<JCheckBox> invertStrings3DField;
-	private FieldWithLabel<JCheckBox> leftHandedField;
 	private FieldWithLabel<JCheckBox> showTempoInsteadOfBPMField;
 	private FieldWithLabel<JCheckBox> showChordIdsField;
 	private FieldWithLabel<JCheckBox> showGridField;
@@ -45,9 +43,6 @@ public class ProgramDisplayConfigPage implements Page {
 		if (SystemType.not(MAC)) {
 			position.addX(20);
 			addInvertStrings3D(panel, position);
-			position.newRow();
-
-			addLeftHanded(panel, position);
 		}
 		position.newRow();
 
@@ -89,15 +84,6 @@ public class ProgramDisplayConfigPage implements Page {
 		invertStrings3DField = new FieldWithLabel<>(Label.INVERT_STRINGS_IN_PREVIEW, 125, 20, 20, input,
 				LabelPosition.LEFT);
 		panel.add(invertStrings3DField, position);
-	}
-
-	private void addLeftHanded(final RowedPanel panel, final RowedPosition position) {
-		final JCheckBox input = new JCheckBox();
-		input.addActionListener(a -> leftHanded = input.isSelected());
-		input.setSelected(leftHanded);
-
-		leftHandedField = new FieldWithLabel<>(Label.LEFT_HANDED, 100, 20, 20, input, LabelPosition.LEFT);
-		panel.add(leftHandedField, position);
 	}
 
 	private void addshowTempoInsteadOfBPM(final RowedPanel panel, final RowedPosition position) {
@@ -147,7 +133,6 @@ public class ProgramDisplayConfigPage implements Page {
 		invertStringsField.setVisible(visibility);
 		if (SystemType.not(MAC)) {
 			invertStrings3DField.setVisible(visibility);
-			leftHandedField.setVisible(visibility);
 		}
 		showTempoInsteadOfBPMField.setVisible(visibility);
 		showChordIdsField.setVisible(visibility);
@@ -159,7 +144,6 @@ public class ProgramDisplayConfigPage implements Page {
 		Config.markerOffset = markerOffset;
 		Config.invertStrings = invertStrings;
 		Config.invertStrings3D = invertStrings3D;
-		Config.leftHanded = leftHanded;
 		Config.showTempoInsteadOfBPM = showTempoInsteadOfBPM;
 		Config.showChordIds = showChordIds;
 		Config.showGrid = showGrid;

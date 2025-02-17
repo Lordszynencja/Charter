@@ -2,17 +2,17 @@ package log.charter.gui.chartPanelDrawers.common;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
 import static log.charter.data.config.GraphicalConfig.chartMapHeightMultiplier;
 import static log.charter.data.config.GraphicalConfig.chordHeight;
 import static log.charter.data.config.GraphicalConfig.eventsChangeHeight;
+import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
 import static log.charter.data.config.GraphicalConfig.handShapesHeight;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.data.config.GraphicalConfig.timingHeight;
 import static log.charter.data.config.GraphicalConfig.toneChangeHeight;
 import static log.charter.util.Utils.getStringPosition;
 
+import log.charter.data.config.Config;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
 import log.charter.services.editModes.EditMode;
@@ -63,7 +63,7 @@ public class DrawerUtils {
 		timingY = lanesBottom + handShapesHeight;
 		editAreaHeight = timingY + timingHeight;
 
-		chartMapHeight = 2 * chartMapHeightMultiplier + 1 + maxStrings * chartMapHeightMultiplier;
+		chartMapHeight = 2 * chartMapHeightMultiplier + 1 + Config.instrument.maxStrings * chartMapHeightMultiplier;
 	}
 
 	public static void updateEditAreaSizes(final EditMode editMode, final boolean bass, final int strings) {

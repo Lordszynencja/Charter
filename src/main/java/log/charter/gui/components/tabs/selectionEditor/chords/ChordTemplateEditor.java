@@ -3,7 +3,6 @@ package log.charter.gui.components.tabs.selectionEditor.chords;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
-import static log.charter.data.config.Config.maxStrings;
 import static log.charter.data.song.ChordTemplate.fingerIds;
 import static log.charter.data.song.ChordTemplate.fingerNames;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
@@ -75,7 +74,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			}
 			int minUsedString = strings;
 			int maxUsedString = 0;
-			int minNonzeroFret = maxStrings;
+			int minNonzeroFret = Config.instrument.maxStrings;
 			int maxNonzeroFret = 0;
 
 			for (final Entry<Integer, Integer> entry : template.frets.entrySet()) {
@@ -386,11 +385,12 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 		parent.addWithSettingSize(fretsLabel, position, 40, 5, 20);
 		final RowedPosition fretInputPosition = position.copy().newRow().addX(10).startFromHere();
-		for (int i = 0; i < maxStrings; i++) {
+		for (int i = 0; i < Config.instrument.maxStrings; i++) {
 			final int string = i;
 
 			final TextInputWithValidation input = generateForInteger(null, 40, //
-					new IntegerValueValidator(0, Config.frets, true), v -> updateFretValue(string, v), false);
+					new IntegerValueValidator(0, Config.instrument.frets, true), v -> updateFretValue(string, v),
+					false);
 			input.setHorizontalAlignment(JTextField.CENTER);
 			addSelectTextOnFocus(input);
 
@@ -419,7 +419,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		fingersLabel.setHorizontalAlignment(JLabel.CENTER);
 
 		final int fingerInputX = x + fingerLabelWidth / 2 - 10;
-		for (int i = 0; i < maxStrings; i++) {
+		for (int i = 0; i < Config.instrument.maxStrings; i++) {
 			final int string = i;
 
 			final TextInputWithValidation input = new TextInputWithValidation("", 40, this::validateFinger,
@@ -428,13 +428,14 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			addSelectTextOnFocus(input);
 
 			fingerInputs.add(input);
-			final int y = parent.sizes.getY(row + 1 + getStringPosition(string, maxStrings));
+			final int y = parent.sizes.getY(row + 1 + getStringPosition(string, Config.instrument.maxStrings));
 			parent.addWithSettingSize(input, fingerInputX, y, 20, 20);
 		}
 		x += 5 + max(fingerLabelWidth, 20);
 
 		final int y = parent.sizes.getY(row);
-		parent.addWithSettingSize(chordTemplatePreview, x, y, width, calculatePreviewHeight(maxStrings));
+		parent.addWithSettingSize(chordTemplatePreview, x, y, width,
+				calculatePreviewHeight(Config.instrument.maxStrings));
 	}
 
 	private String validateFinger(final String val) {
@@ -475,7 +476,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 	private void updateFingersQuiet() {
 		setSuggestedFingers(chordTemplateSupplier.get());
-		for (int string = 0; string < Config.maxStrings; string++) {
+		for (int string = 0; string < Config.instrument.maxStrings; string++) {
 			final TextInputWithValidation input = fingerInputs.get(string);
 			input.setTextWithoutEvent(fingerNames.get(chordTemplateSupplier.get().fingers.get(string)));
 			input.repaint();
@@ -541,7 +542,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			fretInputs.get(i).setVisible(true);
 			fingerInputs.get(i).setVisible(true);
 		}
-		for (int i = chartData.currentArrangement().tuning.strings(); i < maxStrings; i++) {
+		for (int i = chartData.currentArrangement().tuning.strings(); i < Config.instrument.maxStrings; i++) {
 			fretInputs.get(i).setVisible(false);
 			fingerInputs.get(i).setVisible(false);
 		}

@@ -2,7 +2,6 @@ package log.charter.data.song;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.data.config.Config.maxStrings;
 
 import java.util.Objects;
 import java.util.Set;
@@ -65,7 +64,7 @@ public class ChordTemplate {
 	}
 
 	public IntRange getStringRange() {
-		int minString = maxStrings;
+		int minString = Config.instrument.maxStrings;
 		int maxString = 0;
 		for (final int string : frets.keySet()) {
 			minString = min(minString, string);
@@ -76,7 +75,7 @@ public class ChordTemplate {
 	}
 
 	public int getLowestString() {
-		int minString = maxStrings;
+		int minString = Config.instrument.maxStrings;
 		for (final int string : getStrings()) {
 			minString = min(minString, string);
 		}
@@ -89,7 +88,7 @@ public class ChordTemplate {
 	}
 
 	public int getLowestFret() {
-		int lowestFret = Config.frets;
+		int lowestFret = Config.instrument.frets;
 
 		for (final int fret : frets.values()) {
 			lowestFret = min(lowestFret, fret);
@@ -99,7 +98,7 @@ public class ChordTemplate {
 	}
 
 	public int getLowestNotOpenFret(final int capo) {
-		int lowestFret = Config.frets;
+		int lowestFret = Config.instrument.frets;
 
 		for (final int fret : frets.values()) {
 			if (fret <= capo) {

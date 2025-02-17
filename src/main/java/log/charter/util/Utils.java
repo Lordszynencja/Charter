@@ -7,15 +7,19 @@ import log.charter.data.config.Config;
 
 public class Utils {
 	public enum TimeUnit {
-		MILISECONDS(1000, "%d", ".%03d"), //
-		SECONDS(60, "%d", ":%02d"), //
-		MINUTES(60, "%d", ":%02d"), //
-		HOURS(24, "%d", " %02d"), //
+		NANOSECONDS(1_000_000, "%dns", " %06dns"), //
+		MICROSECONDS(1_000, "%dus", " %03dus"), //
+		MILISECONDS(1_000, "%dms", " %03dms"), //
+		SECONDS(60, "%ds", ":%02d"), //
+		MINUTES(60, "%d min", ":%02d"), //
+		HOURS(24, "%dh", " %02d"), //
 		DAYS(365, "%dd", " %3dd"), //
 		YEARS(365, "%dy", " %dy");
 
 		private static Map<TimeUnit, TimeUnit> nextUnits = new HashMap<>();
 		static {
+			nextUnits.put(NANOSECONDS, MILISECONDS);
+			nextUnits.put(MICROSECONDS, MILISECONDS);
 			nextUnits.put(MILISECONDS, SECONDS);
 			nextUnits.put(SECONDS, MINUTES);
 			nextUnits.put(MINUTES, HOURS);
@@ -130,7 +134,7 @@ public class Utils {
 		return text;
 	}
 
-	public static String formatTime(final int time, final TimeUnit unit, final TimeUnit minUnitShown,
+	public static String formatTime(final long time, final TimeUnit unit, final TimeUnit minUnitShown,
 			final TimeUnit maxUnitShown) {
 		if (minUnitShown.compareTo(unit) > 0 || (maxUnitShown.compareTo(unit) > 0 && time >= unit.max)) {
 			return formatTime(time / unit.max, unit.next(), minUnitShown, maxUnitShown)
@@ -140,7 +144,7 @@ public class Utils {
 		return unit.fullFormat.formatted(time);
 	}
 
-	public static String formatTime(final int time) {
+	public static String formatTime(final long time) {
 		return formatTime(time, TimeUnit.SECONDS, TimeUnit.SECONDS, TimeUnit.HOURS);
 	}
 

@@ -14,11 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.swing.JFrame;
-
 import log.charter.data.GridType;
+import log.charter.data.config.values.AudioConfig;
+import log.charter.data.config.values.DebugConfig;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.config.values.PassFiltersConfig;
 import log.charter.data.config.values.ValueAccessor;
+import log.charter.data.config.values.WindowConfig;
 import log.charter.data.song.BeatsMap.DistanceType;
 import log.charter.io.Logger;
 import log.charter.sound.SoundFileType;
@@ -37,57 +39,21 @@ public class Config {
 	public static String oggEncPath;
 	public static boolean defaultEofShortcuts = false;
 
-	public static AudioSystemType audioOutSystemType = AudioSystemType.DEFAULT;
-	public static String audioOutSystemName = null;
-	public static int leftOutChannelId = 0;
-	public static int rightOutChannelId = 1;
-	public static AudioSystemType audioIn0SystemType = AudioSystemType.DEFAULT;
-	public static String audioIn0SystemName = null;
-	public static int inChannel0Id = 0;
-	public static AudioSystemType audioIn1SystemType = AudioSystemType.DEFAULT;
-	public static String audioIn1SystemName = null;
-	public static int inChannel1Id = 1;
-
-	public static SoundFileType baseAudioFormat = SoundFileType.FLAC;
-	public static int audioBufferSize = 2048;
-	public static int audioBufferMs = 50;
+	public static SoundFileType baseAudioFormat = SoundFileType.WAV;
 	public static int antialiasingSamples = 16;
-
-	public static PassFiltersConfig passFilters = new PassFiltersConfig();
 
 	public static DistanceType minNoteDistanceType = DistanceType.NOTES;
 	public static int minNoteDistanceFactor = 32;
 	public static DistanceType minTailLengthType = DistanceType.NOTES;
 	public static int minTailLengthFactor = 32;
-	public static int delay = 25;
-	public static double volume = 1;
-	public static int midiDelay = 200;
-	public static double sfxVolume = 1;
 	public static int markerOffset = 600;
 
 	public static boolean invertStrings = false;
 	public static boolean invertStrings3D = false;
-	public static boolean leftHanded = false;
 	public static boolean showTempoInsteadOfBPM = false;
 	public static boolean showChordIds = true;
-	public static int frets = 28;
-	public static int maxStrings = 9;
-	public static int maxBendValue = 6;// in half steps
 	public static int FPS = 60;
 	public static int backupDelay = 600;
-
-	public static int windowPosX = 100;
-	public static int windowPosY = 100;
-	public static int windowWidth = 1200;
-	public static int windowHeight = 700;
-	public static int windowExtendedState = JFrame.NORMAL;
-
-	public static int previewWindowPosX = 200;
-	public static int previewWindowPosY = 200;
-	public static int previewWindowWidth = 1200;
-	public static int previewWindowHeight = 700;
-	public static int previewWindowExtendedState = JFrame.NORMAL;
-	public static boolean previewWindowBorderless = false;
 
 	public static int zoomLvl = 100;
 	public static int stretchedMusicSpeed = 100;
@@ -98,36 +64,61 @@ public class Config {
 	public static boolean selectNotesByTails = false;
 	public static boolean audioFolderChosenForNewSong = false;
 
-	public static boolean debugLogging = false;
-	public static boolean specialDebugOption = false;
+	public static AudioConfig audio = new AudioConfig();
+	public static DebugConfig debug = new DebugConfig();
+	public static InstrumentConfig instrument = new InstrumentConfig();
+	public static PassFiltersConfig passFilters = new PassFiltersConfig();
+	public static WindowConfig window = new WindowConfig();
 
 	private static boolean changed = false;
 
 	private static final Map<String, ValueAccessor> valueAccessors = new HashMap<>();
 
 	static {
+		// older variable names
+		// 0.19.20
+		valueAccessors.put("audioOutSystemType", forString(v -> audio.outSystem = AudioSystemType.valueOf(v), null));
+		valueAccessors.put("audioOutSystemName", forString(v -> audio.outSystemName = v, null));
+		valueAccessors.put("leftOutChannelId", forInteger(v -> audio.leftOutChannelId = v, null));
+		valueAccessors.put("rightOutChannelId", forInteger(v -> audio.rightOutChannelId = v, null));
+		valueAccessors.put("audioIn0SystemType", forString(v -> audio.in0System = AudioSystemType.valueOf(v), null));
+		valueAccessors.put("audioIn0SystemName", forString(v -> audio.in0SystemName = v, null));
+		valueAccessors.put("inChannel0Id", forInteger(v -> audio.inChannel0Id = v, null));
+		valueAccessors.put("audioIn1SystemType", forString(v -> audio.in1System = AudioSystemType.valueOf(v), null));
+		valueAccessors.put("audioIn1SystemName", forString(v -> audio.in1SystemName = v, null));
+		valueAccessors.put("inChannel1Id", forInteger(v -> audio.inChannel1Id = v, null));
+		valueAccessors.put("audioBufferSize", forInteger(v -> audio.bufferSize = v, null));
+		valueAccessors.put("audioBufferMs", forInteger(v -> audio.bufferedMs = v, null));
+		valueAccessors.put("delay", forInteger(v -> audio.delay = v, null));
+		valueAccessors.put("midiDelay", forInteger(v -> audio.midiDelay = v, null));
+		valueAccessors.put("volume", forDouble(v -> audio.volume = v, null));
+		valueAccessors.put("sfxVolume", forDouble(v -> audio.sfxVolume = v, null));
+
+		valueAccessors.put("leftHanded", forBoolean(v -> instrument.leftHanded = v, null));
+		valueAccessors.put("frets", forInteger(v -> instrument.frets = v, null));
+		valueAccessors.put("maxBendValue", forInteger(v -> instrument.maxBendValue = v, null));
+
+		valueAccessors.put("windowPosX", forInteger(v -> window.x = v, null));
+		valueAccessors.put("windowPosY", forInteger(v -> window.y = v, null));
+		valueAccessors.put("windowWidth", forInteger(v -> window.width = v, null));
+		valueAccessors.put("windowHeight", forInteger(v -> window.height = v, null));
+		valueAccessors.put("windowExtendedState", forInteger(v -> window.extendedState = v, null));
+		valueAccessors.put("previewWindowPosX", forInteger(v -> window.previewX = v, null));
+		valueAccessors.put("previewWindowPosY", forInteger(v -> window.previewY = v, null));
+		valueAccessors.put("previewWindowWidth", forInteger(v -> window.previewWidth = v, null));
+		valueAccessors.put("previewWindowHeight", forInteger(v -> window.previewHeight = v, null));
+		valueAccessors.put("previewWindowExtendedState", forInteger(v -> window.previewExtendedState = v, null));
+		valueAccessors.put("previewWindowBorderless", forBoolean(v -> window.previewBorderless = v, null));
+
+		// current variables
 		valueAccessors.put("language", forString(v -> language = v, () -> language));
 		valueAccessors.put("lastDir", forString(v -> lastDir = v, () -> lastDir));
 		valueAccessors.put("lastPath", forString(v -> lastPath = v, () -> lastPath));
 		valueAccessors.put("musicPath", forString(v -> musicPath = v, () -> musicPath));
 		valueAccessors.put("songsPath", forString(v -> songsPath = v, () -> songsPath));
-		valueAccessors.put("audioOutSystemType",
-				forString(v -> audioOutSystemType = AudioSystemType.valueOf(v), () -> audioOutSystemType.name()));
-		valueAccessors.put("audioOutSystemName", forString(v -> audioOutSystemName = v, () -> audioOutSystemName));
-		valueAccessors.put("leftOutChannelId", forInteger(v -> leftOutChannelId = v, () -> leftOutChannelId));
-		valueAccessors.put("rightOutChannelId", forInteger(v -> rightOutChannelId = v, () -> rightOutChannelId));
-		valueAccessors.put("audioIn0SystemType",
-				forString(v -> audioIn0SystemType = AudioSystemType.valueOf(v), () -> audioIn0SystemType.name()));
-		valueAccessors.put("audioIn0SystemName", forString(v -> audioIn0SystemName = v, () -> audioIn0SystemName));
-		valueAccessors.put("inChannel0Id", forInteger(v -> inChannel0Id = v, () -> inChannel0Id));
-		valueAccessors.put("audioIn1SystemType",
-				forString(v -> audioIn1SystemType = AudioSystemType.valueOf(v), () -> audioIn1SystemType.name()));
-		valueAccessors.put("audioIn1SystemName", forString(v -> audioIn1SystemName = v, () -> audioIn1SystemName));
-		valueAccessors.put("inChannel1Id", forInteger(v -> inChannel1Id = v, () -> inChannel1Id));
+
 		valueAccessors.put("baseAudioFormat",
 				forString(v -> baseAudioFormat = SoundFileType.valueOf(v), () -> baseAudioFormat.name()));
-		valueAccessors.put("audioBufferSize", forInteger(v -> audioBufferSize = v, () -> audioBufferSize));
-		valueAccessors.put("audioBufferMs", forInteger(v -> audioBufferMs = v, () -> audioBufferMs));
 		valueAccessors.put("antialiasingSamples", forInteger(v -> antialiasingSamples = v, () -> antialiasingSamples));
 
 		valueAccessors.put("minNoteDistanceFactor",
@@ -137,37 +128,16 @@ public class Config {
 		valueAccessors.put("minTailLengthType",
 				forString(v -> minTailLengthType = DistanceType.valueOf(v), () -> minTailLengthType.name()));
 		valueAccessors.put("minTailLengthFactor", forInteger(v -> minTailLengthFactor = v, () -> minTailLengthFactor));
-		valueAccessors.put("delay", forInteger(v -> delay = v, () -> delay));
-		valueAccessors.put("volume", forDouble(v -> volume = v, () -> volume));
-		valueAccessors.put("midiDelay", forInteger(v -> midiDelay = v, () -> midiDelay));
-		valueAccessors.put("sfxVolume", forDouble(v -> sfxVolume = v, () -> sfxVolume));
 		valueAccessors.put("markerOffset", forInteger(v -> markerOffset = v, () -> markerOffset));
 
 		valueAccessors.put("invertStrings", forBoolean(v -> invertStrings = v, () -> invertStrings));
 		valueAccessors.put("invertStrings3D", forBoolean(v -> invertStrings3D = v, () -> invertStrings3D));
-		valueAccessors.put("leftHanded", forBoolean(v -> leftHanded = v, () -> leftHanded));
 		valueAccessors.put("showTempoInsteadOfBPM",
 				forBoolean(v -> showTempoInsteadOfBPM = v, () -> showTempoInsteadOfBPM));
 		valueAccessors.put("showChordIds", forBoolean(v -> showChordIds = v, () -> showChordIds));
-		valueAccessors.put("frets", forInteger(v -> frets = v, () -> frets));
-		valueAccessors.put("maxBendValue", forInteger(v -> maxBendValue = v, () -> maxBendValue));
 		valueAccessors.put("FPS", forInteger(v -> FPS = v, () -> FPS));
 		valueAccessors.put("backupDelay", forInteger(v -> backupDelay = v, () -> backupDelay));
 
-		valueAccessors.put("windowPosX", forInteger(v -> windowPosX = v, () -> windowPosX));
-		valueAccessors.put("windowPosY", forInteger(v -> windowPosY = v, () -> windowPosY));
-		valueAccessors.put("windowWidth", forInteger(v -> windowWidth = v, () -> windowWidth));
-		valueAccessors.put("windowHeight", forInteger(v -> windowHeight = v, () -> windowHeight));
-		valueAccessors.put("windowExtendedState", forInteger(v -> windowExtendedState = v, () -> windowExtendedState));
-
-		valueAccessors.put("previewWindowPosX", forInteger(v -> previewWindowPosX = v, () -> previewWindowPosX));
-		valueAccessors.put("previewWindowPosY", forInteger(v -> previewWindowPosY = v, () -> previewWindowPosY));
-		valueAccessors.put("previewWindowWidth", forInteger(v -> previewWindowWidth = v, () -> previewWindowWidth));
-		valueAccessors.put("previewWindowHeight", forInteger(v -> previewWindowHeight = v, () -> previewWindowHeight));
-		valueAccessors.put("previewWindowExtendedState",
-				forInteger(v -> previewWindowExtendedState = v, () -> previewWindowExtendedState));
-		valueAccessors.put("previewWindowBorderless",
-				forBoolean(v -> previewWindowBorderless = v, () -> previewWindowBorderless));
 		valueAccessors.put("zoomLvl", forInteger(v -> zoomLvl = v, () -> zoomLvl));
 		valueAccessors.put("stretchedMusicSpeed", forInteger(v -> stretchedMusicSpeed = v, () -> stretchedMusicSpeed));
 
@@ -178,10 +148,10 @@ public class Config {
 		valueAccessors.put("audioFolderChosenForNewSong",
 				forBoolean(v -> audioFolderChosenForNewSong = v, () -> audioFolderChosenForNewSong));
 
-		valueAccessors.put("debugLogging", forBoolean(v -> debugLogging = v, () -> debugLogging));
-		valueAccessors.put("specialDebugOption", forBoolean(v -> specialDebugOption = v, () -> specialDebugOption));
-
+		audio.init(valueAccessors, "audio");
+		debug.init(valueAccessors, "debug");
 		passFilters.init(valueAccessors, "passFilters");
+		window.init(valueAccessors, "windowState");
 
 		oggEncPath = new File(RW.getProgramDirectory(), "oggenc" + File.separator + "oggenc2.exe").getAbsolutePath();
 
@@ -202,14 +172,20 @@ public class Config {
 		}
 	}
 
-	public static void init() {
-		for (final Entry<String, String> configVal : RW.readConfig(configPath, false).entrySet()) {
+	private static void readConfigFrom(final String path) {
+		for (final Entry<String, String> configVal : RW.readConfig(path, false).entrySet()) {
 			try {
 				valueAccessors.getOrDefault(configVal.getKey(), ValueAccessor.empty).set(configVal.getValue());
 			} catch (final Exception e) {
 				error("wrong config line " + configVal.getKey() + "=" + configVal.getValue(), e);
 			}
 		}
+	}
+
+	public static void init() {
+		readConfigFrom(configPath);
+		readConfigFrom(System.getProperty("user.home") + File.separator + "Documents" + File.separator
+				+ "CharterDebugConfig.ini");
 
 		markChanged();
 		save();
@@ -224,7 +200,11 @@ public class Config {
 		}
 
 		final Map<String, String> config = new HashMap<>();
-		valueAccessors.forEach((name, accessor) -> config.put(name, accessor.get()));
+		valueAccessors.forEach((name, accessor) -> {
+			if (accessor.hasGetter()) {
+				config.put(name, accessor.get());
+			}
+		});
 		RW.writeConfig(configPath, config);
 
 		changed = false;

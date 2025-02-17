@@ -1,16 +1,14 @@
 package log.charter.data;
 
-import static log.charter.data.config.Config.maxStrings;
-
 import java.io.File;
 import java.util.List;
 
 import log.charter.data.config.Config;
-import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.SongChart;
@@ -73,7 +71,7 @@ public class ChartData {
 
 	public int currentStrings() {
 		if (modeManager.getMode() != EditMode.GUITAR) {
-			return maxStrings;
+			return Config.instrument.maxStrings;
 		}
 
 		return currentArrangement().tuning.strings();

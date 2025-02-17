@@ -4,8 +4,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 import static log.charter.data.config.Config.gridSize;
-import static log.charter.data.config.Config.maxBendValue;
-import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.util.Utils.formatBendValue;
 
@@ -23,6 +21,7 @@ import java.util.function.BiConsumer;
 
 import javax.swing.JComponent;
 
+import log.charter.data.config.Config;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.Note;
@@ -37,7 +36,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	private static final int beatWidth = 100;
 	private static final int labelsWidth = 30;
 	private static final int bendValueDenominator = 2;
-	private static final int maxBendInternalValue = maxBendValue * bendValueDenominator;
+	private static final int maxBendInternalValue = Config.instrument.maxBendValue * bendValueDenominator;
 	public static final int height = 20 + 10 * maxBendInternalValue;
 
 	private static int getYFromBendValue(final int value) {
@@ -104,7 +103,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	final BiConsumer<Integer, List<BendValue>> onChangeBends;
 
 	private FractionalPosition notePosition = new FractionalPosition();
-	private final FractionalPosition[] notesLengths = new FractionalPosition[maxStrings];
+	private final FractionalPosition[] notesLengths = new FractionalPosition[Config.instrument.maxStrings];
 	private int firstBeatId = 0;
 	private int lastBeatId = 1;
 	private FractionalPosition noteStartPosition = new FractionalPosition();
@@ -121,7 +120,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 	public BendEditorGraph(final BiConsumer<Integer, List<BendValue>> onChangeBends) {
 		super();
-		strings = maxStrings;
+		strings = Config.instrument.maxStrings;
 
 		this.onChangeBends = onChangeBends;
 
@@ -320,7 +319,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 
 		g.setColor(ColorLabel.BASE_TEXT_INPUT.color());
 		g.setFont(new Font(Font.DIALOG, Font.PLAIN, 10));
-		for (int halfSteps = 0; halfSteps <= maxBendValue; halfSteps++) {
+		for (int halfSteps = 0; halfSteps <= Config.instrument.maxBendValue; halfSteps++) {
 			final int bendValue = halfSteps * 2;
 			final int y = getYFromBendValue(bendValue) + 4;
 			g.drawString(formatBendValue(bendValue), 2, y);

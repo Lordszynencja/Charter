@@ -1,7 +1,5 @@
 package log.charter.gui.components.tabs.chordEditor;
 
-import static log.charter.data.config.Config.maxStrings;
-
 import java.awt.Dimension;
 import java.util.List;
 
@@ -10,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.ScrollPaneConstants;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Level;
@@ -67,7 +66,7 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 	@Override
 	public void init() {
 		final int width = listWidth + ChordTemplateEditor.width + 200;
-		final int height = sizes.getY(maxStrings + 5);
+		final int height = sizes.getY(Config.instrument.maxStrings + 5);
 
 		addWithSettingSize(chordTemplatesList, 0, 0, listWidth, height);
 

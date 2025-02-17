@@ -1,6 +1,5 @@
 package log.charter.services.audio;
 
-import static log.charter.data.config.Config.sfxVolume;
 import static log.charter.data.song.configs.Tuning.getStringDistanceFromC0;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
@@ -17,6 +16,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.ToneChange;
@@ -163,7 +163,7 @@ public class MidiNotePlayer {
 
 	public void updateVolume() {
 		for (final MidiChannel channel : channels) {
-			channel.controlChange(7, (int) (sfxVolume * 127.0));
+			channel.controlChange(7, (int) (Config.audio.sfxVolume * 127.0));
 		}
 	}
 

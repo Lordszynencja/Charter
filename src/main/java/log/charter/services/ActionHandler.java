@@ -5,7 +5,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.System.nanoTime;
 import static java.util.Arrays.asList;
-import static log.charter.data.config.Config.frets;
 
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +118,7 @@ public class ActionHandler implements Initiable {
 	}
 
 	private void handleFretNumber(final int number) {
-		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= frets) {
+		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= Config.instrument.frets) {
 			lastFretNumber = lastFretNumber * 10 + number;
 		} else {
 			lastFretNumber = number;

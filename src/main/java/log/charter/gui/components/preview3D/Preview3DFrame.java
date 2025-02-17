@@ -24,13 +24,13 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 		addComponentListener(this);
 		add(preview3DPanel);
 
-		setLocation(Config.previewWindowPosX, Config.previewWindowPosY);
-		setSize(Config.previewWindowWidth, Config.previewWindowHeight);
-		if (Config.previewWindowBorderless) {
+		setLocation(Config.window.previewX, Config.window.previewY);
+		setSize(Config.window.previewWidth, Config.window.previewHeight);
+		if (Config.window.previewBorderless) {
 			setBorderlessFullScreen();
 			setExtendedState(JFrame.MAXIMIZED_BOTH);
 		} else {
-			setExtendedState(Config.previewWindowExtendedState);
+			setExtendedState(Config.window.previewExtendedState);
 		}
 	}
 
@@ -40,19 +40,19 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 		setUndecorated(true);
 		setVisible(true);
 
-		Config.previewWindowBorderless = true;
+		Config.window.previewBorderless = true;
 		Config.markChanged();
 	}
 
 	public void setWindowed() {
 		dispose();
-		setExtendedState(Config.previewWindowExtendedState);
-		setLocation(Config.previewWindowPosX, Config.previewWindowPosY);
-		setSize(Config.previewWindowWidth, Config.previewWindowHeight);
+		setExtendedState(Config.window.previewExtendedState);
+		setLocation(Config.window.previewX, Config.window.previewY);
+		setSize(Config.window.previewWidth, Config.window.previewHeight);
 		setUndecorated(false);
 		setVisible(true);
 
-		Config.previewWindowBorderless = false;
+		Config.window.previewBorderless = false;
 		Config.markChanged();
 	}
 
@@ -62,24 +62,24 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 
 	@Override
 	public void componentMoved(final ComponentEvent e) {
-		if (Config.previewWindowBorderless) {
+		if (Config.window.previewBorderless) {
 			return;
 		}
 
-		Config.previewWindowPosX = e.getComponent().getX();
-		Config.previewWindowPosY = e.getComponent().getY();
+		Config.window.previewX = e.getComponent().getX();
+		Config.window.previewY = e.getComponent().getY();
 		Config.markChanged();
 	}
 
 	@Override
 	public void componentResized(final ComponentEvent e) {
-		if (Config.previewWindowBorderless) {
+		if (Config.window.previewBorderless) {
 			return;
 		}
 
-		Config.previewWindowExtendedState = getExtendedState();
-		Config.previewWindowWidth = getWidth();
-		Config.previewWindowHeight = getHeight();
+		Config.window.previewExtendedState = getExtendedState();
+		Config.window.previewWidth = getWidth();
+		Config.window.previewHeight = getHeight();
 		Config.markChanged();
 	}
 
