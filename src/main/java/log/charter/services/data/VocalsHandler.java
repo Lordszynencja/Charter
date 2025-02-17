@@ -120,7 +120,7 @@ public class VocalsHandler {
 				flag = VocalFlag.PHRASE_END;
 			}
 
-			for (final Vocal vocal : chartData.songChart.vocals.vocals) {
+			for (final Vocal vocal : chartData.currentVocals().vocals) {
 				if (vocal.position().equals(vocalPosition)) {
 					vocalPosition = chartData.beats().addGrid(vocalPosition, 1).toFraction(chartData.beats());
 				}
@@ -132,8 +132,8 @@ public class VocalsHandler {
 			final FractionalPosition end = vocalEndPosition.toFraction(chartData.beats()).position();
 			final Vocal vocal = new Vocal(start, end, syllable, flag);
 
-			chartData.songChart.vocals.vocals.add(vocal);
-			chartData.songChart.vocals.vocals.sort(IConstantFractionalPosition::compareTo);
+			chartData.currentVocals().vocals.add(vocal);
+			chartData.currentVocals().vocals.sort(IConstantFractionalPosition::compareTo);
 		}
 
 		public void placeSyllable() {
@@ -152,7 +152,7 @@ public class VocalsHandler {
 
 			undoSystem.addUndo();
 			addVocal();
-			arrangementFixer.fixLengths(chartData.songChart.vocals.vocals);
+			arrangementFixer.fixLengths(chartData.currentVocals().vocals);
 			textTab.setText(remainingText);
 		}
 	}

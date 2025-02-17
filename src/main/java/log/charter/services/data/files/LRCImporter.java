@@ -7,6 +7,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.utils.ComponentUtils;
@@ -101,10 +102,9 @@ public class LRCImporter {
 
 		modeManager.setMode(EditMode.VOCALS);
 		undoSystem.addUndo();
-		chartData.currentVocals().vocals.clear();
-
+		chartData.addVocals(new VocalPath());
 		new FileImporter().importLRCFile(RW.read(file));
-		arrangementFixer.fixLengths(chartData.songChart.vocals.vocals);
+		arrangementFixer.fixLengths(chartData.currentVocals().vocals);
 
 		ComponentUtils.showPopup(charterFrame, Label.LRC_IMPORTED_SUCCESSFULLY);
 	}

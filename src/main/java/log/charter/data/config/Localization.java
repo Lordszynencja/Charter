@@ -29,7 +29,7 @@ public class Localization {
 		ARRANGEMENT_IMPORT_OPTIONS("Arrangement import options"), //
 		ARRANGEMENT_MENU("Arrangement"), //
 		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
-		ARRANGEMENT_MENU_VOCALS("Vocals"), //
+		ARRANGEMENT_MENU_VOCALS("Vocal path"), //
 		ARRANGEMENT_NEXT("Next arrangement"), //
 		ARRANGEMENT_PREVIOUS("Previous arrangement"), //
 		ARRANGEMENT_OPTIONS("Arrangement options"), //
@@ -157,7 +157,9 @@ public class Localization {
 		MOVE_TO_BOOKMARK_8("Move to bookmark 8"), //
 		MOVE_TO_BOOKMARK_9("Move to bookmark 9"), //
 		MUSIC_FOLDER("Music folder"), //
+		NEW_ARRANGEMENT("New arrangement..."), //
 		NEW_PROJECT("New project"), //
+		NEW_VOCAL_PATH("New vocal path..."), //
 		NO_PHRASES_IN_ARRANGEMENT("No phrases in arrangement"), //
 		NO_SECTIONS_IN_ARRANGEMENT("No sections in arrangement"), //
 		NOTE_FRET_BELOW_CAPO("Note fret is below capo, for open string it should be equal"), //
@@ -270,6 +272,10 @@ public class Localization {
 		UNSUPPORTED_MUSIC_FORMAT("Unsupported music format!"), //
 		USC_IMPORTED_SUCCESSFULLY("USC vocals imported successfully"), //
 		VOCAL_ARRANGEMENT("Vocal arrangement"), //
+		VOCAL_PATH("Vocal path"), //
+		VOCAL_PATH_COLOR("Color"), //
+		VOCAL_PATH_NAME("Name"), //
+		VOCAL_PATH_OPTIONS("Vocal path options"), //
 		VOCALS_EXIST("Vocals exist"), //
 		VOCALS_EXIST_REPLACE_QUESTION("Vocals exist, replace them with new vocals from import?"), //
 		WARNING("Warning"), //

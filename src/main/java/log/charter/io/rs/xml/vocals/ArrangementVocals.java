@@ -9,7 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.vocals.Vocals;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.util.collections.ArrayList2;
 
 @XStreamAlias("vocals")
@@ -20,7 +20,7 @@ public class ArrangementVocals {
 	public ArrangementVocals() {
 	}
 
-	public ArrangementVocals(final ImmutableBeatsMap beats, final Vocals vocals) {
+	public ArrangementVocals(final ImmutableBeatsMap beats, final VocalPath vocals) {
 		this.vocals = map(vocals.vocals, vocal -> {
 			final int time = (int) vocal.position(beats);
 			final int length = (int) vocal.endPosition().position(beats) - time;

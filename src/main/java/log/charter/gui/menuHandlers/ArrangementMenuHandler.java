@@ -1,13 +1,16 @@
 package log.charter.gui.menuHandlers;
 
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.songSettings.ArrangementSettingsPane;
+import log.charter.gui.panes.songSettings.VocalPathSettingsPane;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.services.Action;
 import log.charter.services.ActionHandler;
@@ -47,6 +50,22 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 		return getNameWithSelect(label.label(), isSelected);
 	}
 
+	private void addVocalPathsList(final JMenu menu) {
+		for (int i = 0; i < chartData.songChart.vocalPaths.size(); i++) {
+			final VocalPath vocalPath = chartData.songChart.vocalPaths.get(i);
+			final boolean vocalsSelected = i == chartData.currentVocals && modeManager.getMode() == EditMode.VOCALS;
+			final int vocalPathId = i;
+
+			final String vocalsLabel = getNameWithSelect(vocalPath.getName(vocalPathId), vocalsSelected);
+
+			final JMenuItem menuItem = createItem(vocalsLabel, () -> modeManager.setVocalPath(vocalPathId));
+			if (vocalPath.color != null) {
+				menuItem.setForeground(vocalPath.color);
+			}
+			menu.add(menuItem);
+		}
+	}
+
 	private void addArrangementsList(final JMenu menu) {
 		for (int i = 0; i < chartData.songChart.arrangements.size(); i++) {
 			final Arrangement arrangement = chartData.songChart.arrangements.get(i);
@@ -76,21 +95,24 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 		menu.add(createItem(tempoMapLabel, () -> modeManager.setMode(EditMode.TEMPO_MAP)));
 
 		menu.addSeparator();
-		final String vocalsLabel = getNameWithSelect(Label.ARRANGEMENT_MENU_VOCALS,
-				modeManager.getMode() == EditMode.VOCALS);
-		menu.add(createItem(vocalsLabel, () -> modeManager.setMode(EditMode.VOCALS)));
+		addVocalPathsList(menu);
+		menu.add(createItem(Label.NEW_VOCAL_PATH, this::addVocalPath));
 
 		menu.addSeparator();
 		addArrangementsList(menu);
-		menu.add(createItem("New arrangement...", this::addArrangement));
+		menu.add(createItem(Label.NEW_ARRANGEMENT, this::addArrangement));
 
 		menu.addSeparator();
 		menu.add(createItem(Action.ARRANGEMENT_NEXT));
 		menu.add(createItem(Action.ARRANGEMENT_PREVIOUS));
 
+		if (modeManager.getMode() == EditMode.VOCALS) {
+			menu.addSeparator();
+			menu.add(createItem(Label.VOCAL_PATH_OPTIONS, this::editVocalPathSettings));
+		}
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
-			menu.add(createItem(Label.ARRANGEMENT_OPTIONS, this::editOptions));
+			menu.add(createItem(Label.ARRANGEMENT_OPTIONS, this::editArrangementSettings));
 
 			menu.addSeparator();
 			createLevelMenuItems(menu);
@@ -127,7 +149,16 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 		}, true);
 	}
 
-	private void editOptions() {
+	private void addVocalPath() {
+		new VocalPathSettingsPane(chartData, charterMenuBar, charterFrame, selectionManager, new VocalPath(), true);
+	}
+
+	private void editVocalPathSettings() {
+		new VocalPathSettingsPane(chartData, charterMenuBar, charterFrame, selectionManager, chartData.currentVocals(),
+				false);
+	}
+
+	private void editArrangementSettings() {
 		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, null, false);
 	}
 

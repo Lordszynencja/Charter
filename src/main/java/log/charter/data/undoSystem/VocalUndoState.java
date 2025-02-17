@@ -1,15 +1,17 @@
 package log.charter.data.undoSystem;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.vocals.Vocals;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.services.data.ChartTimeHandler;
 
 public class VocalUndoState extends UndoState {
-	private final Vocals vocals;
+	private final int pathId;
+	private final VocalPath vocals;
 
 	private VocalUndoState(final ChartData data, final boolean fromUndo) {
-		final Vocals tmpVocals = data.songChart.vocals;
-		vocals = fromUndo ? tmpVocals : new Vocals(tmpVocals);
+		final VocalPath tmpVocals = data.currentVocals();
+		pathId = data.currentVocals;
+		vocals = fromUndo ? tmpVocals : new VocalPath(tmpVocals);
 	}
 
 	public VocalUndoState(final ChartData data) {
@@ -21,7 +23,7 @@ public class VocalUndoState extends UndoState {
 	public VocalUndoState undo(final ChartData data, final ChartTimeHandler chartTimeHandler) {
 		final VocalUndoState redo = new VocalUndoState(data, true);
 
-		data.songChart.vocals = vocals;
+		data.songChart.vocalPaths.set(pathId, vocals);
 
 		return redo;
 	}

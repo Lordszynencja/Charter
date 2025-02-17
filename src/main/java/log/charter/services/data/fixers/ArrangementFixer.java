@@ -28,6 +28,7 @@ import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.util.CollectionUtils;
@@ -248,6 +249,8 @@ public class ArrangementFixer {
 		chartData.songChart.beatsMap.truncate(chartTimeHandler.maxNonBeatTime());
 		chordTemplatesEditorTab.refreshTemplates();
 
-		fixLengths(chartData.songChart.vocals.vocals);
+		for (final VocalPath vocals : chartData.songChart.vocalPaths) {
+			fixLengths(vocals.vocals);
+		}
 	}
 }

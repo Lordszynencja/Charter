@@ -7,19 +7,19 @@ import log.charter.data.config.Config;
 
 public class Utils {
 	public enum TimeUnit {
-		NANOSECONDS(1_000_000, "%dns", " %06dns"), //
-		MICROSECONDS(1_000, "%dus", " %03dus"), //
-		MILISECONDS(1_000, "%dms", " %03dms"), //
-		SECONDS(60, "%ds", ":%02d"), //
-		MINUTES(60, "%d min", ":%02d"), //
-		HOURS(24, "%dh", " %02d"), //
-		DAYS(365, "%dd", " %3dd"), //
-		YEARS(365, "%dy", " %dy");
+		NANOSECONDS(1_000_000_000, "%dns", "%d", ".%09d"), //
+		MICROSECONDS(1_000_000, "%dus", "%d", ".%06d"), //
+		MILISECONDS(1_000, "%dms", "%d", ".%03d"), //
+		SECONDS(60, "%ds", "%d", ":%02d"), //
+		MINUTES(60, "%dmin", "%d", ":%02d"), //
+		HOURS(24, "%dh", "%d", " %02d"), //
+		DAYS(365, "%dd", "%dd", " %3dd"), //
+		YEARS(365, "%dy", "%dy", " %dy");
 
 		private static Map<TimeUnit, TimeUnit> nextUnits = new HashMap<>();
 		static {
-			nextUnits.put(NANOSECONDS, MILISECONDS);
-			nextUnits.put(MICROSECONDS, MILISECONDS);
+			nextUnits.put(NANOSECONDS, SECONDS);
+			nextUnits.put(MICROSECONDS, SECONDS);
 			nextUnits.put(MILISECONDS, SECONDS);
 			nextUnits.put(SECONDS, MINUTES);
 			nextUnits.put(MINUTES, HOURS);
@@ -28,13 +28,16 @@ public class Utils {
 			nextUnits.put(YEARS, YEARS);
 		}
 
-		public final int max;
+		public final long max;
 		public final String fullFormat;
+		public final String partialFrontFormat;
 		public final String partialFormat;
 
-		private TimeUnit(final int max, final String fullFormat, final String partialFormat) {
+		private TimeUnit(final long max, final String fullFormat, final String partialFrontFormat,
+				final String partialFormat) {
 			this.max = max;
 			this.fullFormat = fullFormat;
+			this.partialFrontFormat = partialFrontFormat;
 			this.partialFormat = partialFormat;
 		}
 
@@ -135,13 +138,20 @@ public class Utils {
 	}
 
 	public static String formatTime(final long time, final TimeUnit unit, final TimeUnit minUnitShown,
-			final TimeUnit maxUnitShown) {
+			final TimeUnit maxUnitShown, final boolean partial) {
 		if (minUnitShown.compareTo(unit) > 0 || (maxUnitShown.compareTo(unit) > 0 && time >= unit.max)) {
-			return formatTime(time / unit.max, unit.next(), minUnitShown, maxUnitShown)
-					+ unit.partialFormat.formatted(time % unit.max);
+			final String prefix = formatTime(time / unit.max, unit.next(), minUnitShown, maxUnitShown, true);
+			final String part = unit.partialFormat.formatted(time % unit.max);
+
+			return prefix + part;
 		}
 
-		return unit.fullFormat.formatted(time);
+		return (partial ? unit.partialFrontFormat : unit.fullFormat).formatted(time);
+	}
+
+	public static String formatTime(final long time, final TimeUnit unit, final TimeUnit minUnitShown,
+			final TimeUnit maxUnitShown) {
+		return formatTime(time, unit, minUnitShown, maxUnitShown, false);
 	}
 
 	public static String formatTime(final long time) {

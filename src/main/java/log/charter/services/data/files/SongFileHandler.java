@@ -13,6 +13,7 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.SongChart;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.simple.LoadingDialog;
@@ -135,7 +136,29 @@ public class SongFileHandler {
 				+ "_RS2.xml";
 	}
 
-	private void saveRSXML() {
+	private void writeRSXML(final Timer timer, final File dir, final int id, final Arrangement arrangement) {
+		final String arrangementFileName = generateArrangementFileName(id, arrangement);
+		final SongArrangement songArrangement = new SongArrangement((int) projectAudioHandler.getAudio().msLength(),
+				chartData.songChart, arrangement);
+		final String xml = SongArrangementXStreamHandler.saveSong(songArrangement);
+		timer.addTimestamp("created XML for arrangement " + id);
+
+		RW.write(new File(dir, arrangementFileName), xml, "UTF-8");
+		timer.addTimestamp("wrote XML to disk");
+	}
+
+	private void writeRSXML(final Timer timer, final File dir, final int id, final VocalPath vocals) {
+		if (vocals.vocals.isEmpty()) {
+			return;
+		}
+
+		final String xml = saveVocals(new ArrangementVocals(chartData.beats(), vocals));
+		timer.addTimestamp("created XML for vocals");
+		RW.write(new File(dir, vocalsFileName), xml, "UTF-8");
+		timer.addTimestamp("wrote XML to disk");
+	}
+
+	private void writeRSXMLs() {
 		final Timer timer = new Timer();
 		final File dir = new File(chartData.path, "RS XML");
 		dir.mkdirs();
@@ -148,22 +171,14 @@ public class SongFileHandler {
 
 		int id = 1;
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
-			final String arrangementFileName = generateArrangementFileName(id, arrangement);
-			final SongArrangement songArrangement = new SongArrangement((int) projectAudioHandler.getAudio().msLength(),
-					chartData.songChart, arrangement);
-			final String xml = SongArrangementXStreamHandler.saveSong(songArrangement);
-			timer.addTimestamp("created XML for arrangement " + id);
-
-			RW.write(new File(dir, arrangementFileName), xml, "UTF-8");
-			timer.addTimestamp("wrote XML to disk");
+			writeRSXML(timer, dir, id, arrangement);
 			id++;
 		}
 
-		if (!chartData.currentVocals().vocals.isEmpty()) {
-			final String xml = saveVocals(new ArrangementVocals(chartData.beats(), chartData.songChart.vocals));
-			timer.addTimestamp("created XML for vocals");
-			RW.write(new File(dir, vocalsFileName), xml, "UTF-8");
-			timer.addTimestamp("wrote XML to disk");
+		id = 1;
+		for (final VocalPath vocals : chartData.songChart.vocalPaths) {
+			writeRSXML(timer, dir, id, vocals);
+			id++;
 		}
 
 		timer.print("RS XMLs save", Timer.defaultFormat(35));
@@ -187,7 +202,7 @@ public class SongFileHandler {
 
 		RW.write(new File(chartData.path, chartData.projectFileName), xml);
 		timer.addTimestamp("wrote project to disk");
-		saveRSXML();
+		writeRSXMLs();
 		timer.addTimestamp("wrote RS XML");
 
 		undoSystem.onSave();

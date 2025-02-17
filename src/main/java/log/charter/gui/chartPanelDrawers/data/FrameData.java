@@ -7,14 +7,14 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.Level;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
-import log.charter.data.song.vocals.Vocals;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.util.collections.Pair;
 
 public class FrameData {
 	public final ImmutableBeatsMap beats;
 	public final Map<Integer, Double> bookmarks;
-	public final Vocals vocals;
+	public final VocalPath vocals;
 	public final Arrangement arrangement;
 	public final Level level;
 	public final Pair<Double, Double> repeaterSpan;
@@ -24,7 +24,7 @@ public class FrameData {
 	public final HighlightData highlightData;
 	public final boolean ctrlPressed;
 
-	public FrameData(final ImmutableBeatsMap beats, final Map<Integer, Double> bookmarks, final Vocals vocals,
+	public FrameData(final ImmutableBeatsMap beats, final Map<Integer, Double> bookmarks, final VocalPath vocals,
 			final Arrangement arrangement, final Level level, final Pair<Double, Double> repeaterSpan,
 			final ISelectionAccessor<? extends IVirtualConstantPosition> selection, final double time,
 			final Graphics2D g, final HighlightData highlightData, final boolean ctrlPressed) {
