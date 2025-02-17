@@ -12,7 +12,7 @@ import log.charter.data.song.BeatsMap;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.vocals.Vocals;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.io.Logger;
 import log.charter.io.rs.xml.RSXMLToArrangement;
 import log.charter.io.rs.xml.song.SongArrangement;
@@ -33,7 +33,7 @@ public class ChartProjectVerion3Updater {
 		}
 
 		final File vocalsFile = new File(dir, SongFileHandler.vocalsFileName);
-		project.vocals = new Vocals(beats, readVocals(RW.read(vocalsFile)));
+		project.vocals = new VocalPath(beats, readVocals(RW.read(vocalsFile)));
 	}
 
 	private static void loadArrangementsFromFiles(final File dir, final ChartProject project,

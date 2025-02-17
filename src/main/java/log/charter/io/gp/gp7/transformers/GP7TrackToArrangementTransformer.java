@@ -207,7 +207,7 @@ class GP7TrackToArrangementTransformer {
 				note.position(position.add(toAdd));
 				final Note preNote = new Note(position, note.position());
 				preNote.string = note.string;
-				preNote.fret = min(Config.frets, note.fret + 2);
+				preNote.fret = min(Config.instrument.frets, note.fret + 2);
 				preNote.linkNext = true;
 				preNote.slideTo = note.fret;
 				notesCreated.add(0, preNote);
@@ -222,7 +222,7 @@ class GP7TrackToArrangementTransformer {
 				note.slideTo = max(1, note.fret - 5);
 				note.unpitchedSlide = true;
 			} else if (checkSlideFlag(3)) {
-				note.slideTo = min(Config.frets, note.fret + 5);
+				note.slideTo = min(Config.instrument.frets, note.fret + 5);
 				note.unpitchedSlide = true;
 			}
 		}
@@ -444,7 +444,7 @@ class GP7TrackToArrangementTransformer {
 					chord.position(notes.position.add(toAdd));
 					final Note preNote = new Note(notes.position, chord.position());
 					preNote.string = gp7Note.string;
-					preNote.fret = min(Config.frets, gp7Note.fret + 2);
+					preNote.fret = min(Config.instrument.frets, gp7Note.fret + 2);
 					preNote.linkNext = true;
 					preNote.slideTo = gp7Note.fret;
 					addPreNote(preNote);
@@ -460,7 +460,7 @@ class GP7TrackToArrangementTransformer {
 				chordNote.slideTo = max(1, gp7Note.fret - 5);
 				chordNote.unpitchedSlide = true;
 			} else if (checkSlideFlag(3)) {
-				chordNote.slideTo = min(Config.frets, gp7Note.fret + 5);
+				chordNote.slideTo = min(Config.instrument.frets, gp7Note.fret + 5);
 				chordNote.unpitchedSlide = true;
 			}
 		}

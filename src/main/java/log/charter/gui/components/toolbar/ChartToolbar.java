@@ -257,12 +257,12 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	}
 
 	private void changeVolume(final double newVolume) {
-		Config.volume = newVolume;
+		Config.audio.volume = newVolume;
 		Config.markChanged();
 	}
 
 	private void changeSFXVolume(final double newVolume) {
-		Config.sfxVolume = newVolume;
+		Config.audio.sfxVolume = newVolume;
 		Config.markChanged();
 	}
 
@@ -407,8 +407,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 		addSeparator(x);
 
-		addVolumeSlider(x, Label.TOOLBAR_VOLUME, volumeIcon, Config.volume, this::changeVolume);
-		addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, sfxVolumeIcon, Config.sfxVolume, this::changeSFXVolume);
+		addVolumeSlider(x, Label.TOOLBAR_VOLUME, volumeIcon, Config.audio.volume, this::changeVolume);
+		addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, sfxVolumeIcon, Config.audio.sfxVolume, this::changeSFXVolume);
 		addPlaybackSpeed(x);
 		addTimeControls(x);
 

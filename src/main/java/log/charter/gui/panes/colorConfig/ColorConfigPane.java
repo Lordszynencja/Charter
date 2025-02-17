@@ -3,8 +3,7 @@ package log.charter.gui.panes.colorConfig;
 import static log.charter.gui.components.utils.ComponentUtils.addComponentCenteringOnResize;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -29,7 +28,7 @@ public class ColorConfigPane extends ParamsPane {
 
 	private final CharterSelect<String> fileSelect;
 	private final CharterScrollPane panel;
-	private List<ColorPicker> colorPickers;
+	private final Map<ColorLabel, ColorPicker> pickersForLabels = new HashMap<>();
 
 	public ColorConfigPane(final CharterFrame frame) {
 		super(frame, Label.GRAPHIC_CONFIG_PANE, 400);
@@ -52,7 +51,7 @@ public class ColorConfigPane extends ParamsPane {
 	private void changeSet(final String newName) {
 		final Map<ColorLabel, Color> colors = ChartPanelColors.readColors(newName);
 
-		colorPickers.forEach(picker -> picker.color(colors.get(picker.colorLabel)));
+		pickersForLabels.forEach((colorLabel, picker) -> picker.color(colors.get(colorLabel)));
 	}
 
 	private CharterSelect<String> makeFileSelect() {
@@ -69,7 +68,6 @@ public class ColorConfigPane extends ParamsPane {
 	}
 
 	private CharterScrollPane makePanel() {
-		final int valuesAmount = ColorLabel.values().length;
 		final int horizontalSpace = 20;
 		final int width = sizes.width - 2 * horizontalSpace;
 		final int labelWidth = 300;
@@ -77,12 +75,11 @@ public class ColorConfigPane extends ParamsPane {
 
 		final RowedPanel panel = new RowedPanel(new PaneSizesBuilder(width).build());
 
-		colorPickers = new ArrayList<>(valuesAmount);
 		final RowedPosition position = new RowedPosition(10, 10, sizes.rowDistance);
 		boolean even = false;
 		for (final ColorLabel colorLabel : ColorLabel.values()) {
 			final ColorPicker colorPicker = new ColorPicker(colorLabel);
-			colorPickers.add(colorPicker);
+			pickersForLabels.put(colorLabel, colorPicker);
 
 			final FieldWithLabel<ColorPicker> field = new FieldWithLabel<>(colorLabel.label(), labelWidth, inputWidth,
 					20, colorPicker, LabelPosition.LEFT);
@@ -103,7 +100,7 @@ public class ColorConfigPane extends ParamsPane {
 
 	private void onSave() {
 		GraphicalConfig.colorSet = fileSelect.getSelectedValue();
-		colorPickers.forEach(colorPicker -> colorPicker.colorLabel.setColor(colorPicker.color()));
+		pickersForLabels.forEach((label, picker) -> label.setColor(picker.color()));
 
 		GraphicalConfig.markChanged();
 		GraphicalConfig.save();

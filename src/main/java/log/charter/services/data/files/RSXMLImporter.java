@@ -7,7 +7,7 @@ import java.io.File;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
-import log.charter.data.song.vocals.Vocals;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.Logger;
@@ -46,7 +46,8 @@ public class RSXMLImporter {
 	public void importRSVocalsXML(final File file) {
 		try {
 			final ArrangementVocals vocals = VocalsXStreamHandler.readVocals(RW.read(file));
-			chartData.songChart.vocals = new Vocals(chartData.beats(), vocals);
+			final VocalPath newVocals = new VocalPath(chartData.beats(), vocals);
+			chartData.addVocals(newVocals);
 			songFileHandler.save();
 		} catch (final Exception e) {
 			Logger.error("Couldn't load arrangement", e);

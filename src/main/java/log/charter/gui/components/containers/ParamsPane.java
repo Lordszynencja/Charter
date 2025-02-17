@@ -161,8 +161,8 @@ public class ParamsPane extends JDialog implements WindowListener {
 	}
 
 	private void setLocation() {
-		setLocation(Config.windowPosX + frame.getWidth() / 2 - getWidth() / 2,
-				Config.windowPosY + frame.getHeight() / 2 - getHeight() / 2);
+		setLocation(Config.window.x + frame.getWidth() / 2 - getWidth() / 2,
+				Config.window.y + frame.getHeight() / 2 - getHeight() / 2);
 	}
 
 	public int getY(final int row) {

@@ -4,6 +4,7 @@ import log.charter.CharterMain;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.services.CharterContext.Initiable;
@@ -28,6 +29,11 @@ public class TitleUpdater implements Initiable {
 		return chartData.songChart.artistName() + " - " + chartData.songChart.title();
 	}
 
+	private String getVocalPathTitlePart() {
+		final VocalPath vocalPath = chartData.currentVocals();
+		return vocalPath.getName(chartData.currentVocals);
+	}
+
 	private String getArrangementTitlePart() {
 		final Arrangement arrangement = chartData.currentArrangement();
 		final String arrangementName = arrangement.getTypeNameLabel(chartData.currentArrangement);
@@ -38,9 +44,9 @@ public class TitleUpdater implements Initiable {
 
 	private String modeInfo() {
 		return switch (modeManager.getMode()) {
-			case GUITAR -> getSongData() + " : " + getArrangementTitlePart();
 			case TEMPO_MAP -> getSongData() + " : Tempo map";
-			case VOCALS -> getSongData() + " : Vocals";
+			case VOCALS -> getSongData() + " : " + getVocalPathTitlePart();
+			case GUITAR -> getSongData() + " : " + getArrangementTitlePart();
 			case EMPTY -> Label.NO_PROJECT.label();
 			default -> "Surprise mode! (contact dev for fix)";
 		};

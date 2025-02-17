@@ -12,11 +12,11 @@ import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Beat;
 import log.charter.data.song.SongChart;
-import log.charter.data.song.vocals.Vocals;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.services.editModes.EditMode;
 
 @XStreamAlias("project")
-@XStreamInclude({ Arrangement.class, Beat.class, Vocals.class })
+@XStreamInclude({ Arrangement.class, Beat.class, VocalPath.class })
 public class ChartProject {
 	public int chartFormatVersion = 3;
 	public EditMode editMode = EditMode.TEMPO_MAP;
@@ -34,8 +34,9 @@ public class ChartProject {
 	public List<String> arrangementFiles = new ArrayList<>();
 
 	public List<Beat> beats = new ArrayList<>();
+	public VocalPath vocals = new VocalPath();
+	public List<VocalPath> vocalPaths = new ArrayList<>();
 	public List<Arrangement> arrangements = new ArrayList<>();
-	public Vocals vocals = new Vocals();
 
 	public Map<Integer, Double> bookmarks = new HashMap<>();
 	public String text;
@@ -56,8 +57,8 @@ public class ChartProject {
 		musicFileName = songChart.musicFileName;
 
 		beats = songChart.beatsMap.beats;
+		vocalPaths = songChart.vocalPaths;
 		arrangements = songChart.arrangements;
-		vocals = songChart.vocals;
 
 		bookmarks = songChart.bookmarks;
 		this.text = text;

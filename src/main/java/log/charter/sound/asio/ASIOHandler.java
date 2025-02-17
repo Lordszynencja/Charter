@@ -46,8 +46,8 @@ public class ASIOHandler {
 			asioDriver = null;
 		}
 
-		if (Config.audioOutSystemName != null) {
-			asioDriver = AsioDriver.getDriver(Config.audioOutSystemName);
+		if (Config.audio.outSystemName != null) {
+			asioDriver = AsioDriver.getDriver(Config.audio.outSystemName);
 		}
 	}
 
@@ -75,7 +75,7 @@ public class ASIOHandler {
 			public void bufferSwitch(final long systemTime, final long samplePosition,
 					final Set<AsioChannel> channelsSet) {
 				try {
-					if (Config.specialDebugOption) {
+					if (Config.debug.handleASIOInput) {
 						processInput();
 					}
 
@@ -90,7 +90,7 @@ public class ASIOHandler {
 			@Override
 			public void sampleRateDidChange(final double sampleRate) {
 				ASIOHandler.sampleRate = sampleRate;
-				desiredFill = (int) (Config.audioBufferMs * sampleRate / 1000);
+				desiredFill = (int) (Config.audio.bufferedMs * sampleRate / 1000);
 			}
 
 			@Override
@@ -114,13 +114,13 @@ public class ASIOHandler {
 
 	private static void setInputChannels() {
 		inputChannels = new AsioChannel[1];
-		inputChannels[0] = asioDriver.getChannelInput(Config.inChannel0Id);
+		inputChannels[0] = asioDriver.getChannelInput(Config.audio.inChannel0Id);
 	}
 
 	private static void setOutputChannels() {
 		outputChannels = new AsioChannel[2];
-		outputChannels[0] = asioDriver.getChannelOutput(Config.leftOutChannelId);
-		outputChannels[1] = asioDriver.getChannelOutput(Config.rightOutChannelId);
+		outputChannels[0] = asioDriver.getChannelOutput(Config.audio.leftOutChannelId);
+		outputChannels[1] = asioDriver.getChannelOutput(Config.audio.rightOutChannelId);
 
 		mixChannels = new FloatMixer[2];
 		mixChannels[0] = new FloatMixer();
@@ -134,17 +134,17 @@ public class ASIOHandler {
 		}
 
 		setDriverListener();
-		if (Config.specialDebugOption) {
+		if (Config.debug.handleASIOInput) {
 			setInputChannels();
 		}
 		setOutputChannels();
 
 		bufferSize = asioDriver.getBufferPreferredSize();
-		desiredFill = (int) (Config.audioBufferMs * asioDriver.getSampleRate() / 1000);
+		desiredFill = (int) (Config.audio.bufferedMs * asioDriver.getSampleRate() / 1000);
 		sampleRate = asioDriver.getSampleRate();
 
 		final Set<AsioChannel> channels = new HashSet<>(Set.of(outputChannels));
-		if (Config.specialDebugOption) {
+		if (Config.debug.handleASIOInput) {
 			channels.addAll(Set.of(inputChannels));
 		}
 		asioDriver.createBuffers(channels);

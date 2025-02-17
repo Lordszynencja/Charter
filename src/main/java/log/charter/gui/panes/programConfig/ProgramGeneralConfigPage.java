@@ -22,6 +22,7 @@ import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.gui.components.utils.validators.ValueValidator;
+import log.charter.sound.SoundFileType;
 import log.charter.util.FileChooseUtils;
 
 public class ProgramGeneralConfigPage implements Page {
@@ -29,6 +30,8 @@ public class ProgramGeneralConfigPage implements Page {
 
 	private String musicPath = Config.musicPath;
 	private String songsPath = Config.songsPath;
+
+	private SoundFileType baseAudioFormat = Config.baseAudioFormat;
 
 	private int minNoteDistanceFactor = Config.minNoteDistanceFactor;
 	private DistanceType minNoteDistanceType = Config.minNoteDistanceType;
@@ -42,6 +45,8 @@ public class ProgramGeneralConfigPage implements Page {
 	private JButton musicFolderPickerButton;
 	private FieldWithLabel<TextInputWithValidation> songsPathField;
 	private JButton songsFolderPickerButton;
+
+	private FieldWithLabel<CharterSelect<SoundFileType>> baseAudioFormatField;
 
 	private FieldWithLabel<TextInputWithValidation> minNoteDistanceFactorField;
 	private CharterSelect<DistanceType> minNoteDistanceTypeField;
@@ -57,6 +62,9 @@ public class ProgramGeneralConfigPage implements Page {
 		position.newRow();
 
 		addSongsPath(panel, position);
+		position.newRow();
+		addBaseAudioFormatSelect(panel, position);
+
 		position.newRow();
 		position.newRow();
 
@@ -117,6 +125,17 @@ public class ProgramGeneralConfigPage implements Page {
 		final TextInputWithValidation input = addPathInput(songsPath, val -> songsPath = val);
 		songsPathField = generatePathField(panel, position, Label.SONGS_FOLDER, input);
 		songsFolderPickerButton = addPathSelectButton(panel, position, songsPath, songsPathField);
+	}
+
+	private void addBaseAudioFormatSelect(final RowedPanel panel, final RowedPosition position) {
+		final Stream<SoundFileType> possibleValues = Stream.of(SoundFileType.values())//
+				.filter(SoundFileType::canBeWritten);
+
+		final CharterSelect<SoundFileType> select = new CharterSelect<>(possibleValues, baseAudioFormat, t -> t.name,
+				t -> baseAudioFormat = t);
+		baseAudioFormatField = new FieldWithLabel<>(Label.BASE_AUDIO_FORMAT, 100, 100, 20, select, LabelPosition.LEFT);
+
+		panel.add(baseAudioFormatField, position);
 	}
 
 	private FieldWithLabel<TextInputWithValidation> addDistanceValue(final RowedPanel panel,
@@ -185,6 +204,7 @@ public class ProgramGeneralConfigPage implements Page {
 	public void setVisible(final boolean visibility) {
 		musicPathField.setVisible(visibility);
 		musicFolderPickerButton.setVisible(visibility);
+		baseAudioFormatField.setVisible(visibility);
 		songsPathField.setVisible(visibility);
 		songsFolderPickerButton.setVisible(visibility);
 		minNoteDistanceFactorField.setVisible(visibility);
@@ -198,6 +218,8 @@ public class ProgramGeneralConfigPage implements Page {
 	public void save() {
 		Config.musicPath = musicPath;
 		Config.songsPath = songsPath;
+
+		Config.baseAudioFormat = baseAudioFormat;
 
 		Config.minNoteDistanceType = minNoteDistanceType;
 		Config.minNoteDistanceFactor = minNoteDistanceFactor;

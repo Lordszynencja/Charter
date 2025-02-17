@@ -1,6 +1,5 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
-import static log.charter.data.config.Config.maxStrings;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.tailHeight;
@@ -14,6 +13,7 @@ import static log.charter.util.Utils.stringId;
 import java.awt.Color;
 import java.awt.Font;
 
+import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
@@ -25,13 +25,13 @@ import log.charter.util.data.IntRange;
 import log.charter.util.data.Position2D;
 
 public class ModernThemeNoteTails {
-	private static final Color[] noteTailColors = new Color[maxStrings];
+	private static final Color[] noteTailColors = new Color[Config.instrument.maxStrings];
 	private static Font slideFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
 	public static void reloadGraphics() {
-		for (int i = 0; i < maxStrings; i++) {
-			noteTailColors[stringId(i, maxStrings)] = getStringBasedColor(StringColorLabelType.NOTE_TAIL, i,
-					maxStrings);
+		for (int i = 0; i < Config.instrument.maxStrings; i++) {
+			noteTailColors[stringId(i, Config.instrument.maxStrings)] = getStringBasedColor(
+					StringColorLabelType.NOTE_TAIL, i, Config.instrument.maxStrings);
 		}
 
 		slideFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);

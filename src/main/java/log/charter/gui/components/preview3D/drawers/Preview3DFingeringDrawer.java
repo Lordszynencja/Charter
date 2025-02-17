@@ -106,7 +106,7 @@ public class Preview3DFingeringDrawer {
 		}
 
 		template.frets.forEach((string, fret) -> {
-			if (fret == 0) {
+			if (fret <= drawData.capo) {
 				drawArpeggioOpen(shadersHolder, drawData, string, fret);
 			}
 			if (fret > 0) {

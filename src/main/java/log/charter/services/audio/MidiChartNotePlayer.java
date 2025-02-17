@@ -3,7 +3,6 @@ package log.charter.services.audio;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
-import static log.charter.data.config.Config.midiDelay;
 import static log.charter.data.song.notes.ChordOrNote.findNextSoundOnString;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 import static log.charter.util.CollectionUtils.min;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.ChordOrNote;
@@ -43,7 +43,7 @@ public class MidiChartNotePlayer implements Initiable {
 	}
 
 	private double getTime() {
-		return chartTimeHandler.time() + midiDelay * speed / 100;
+		return chartTimeHandler.time() + Config.audio.midiDelay * speed / 100;
 	}
 
 	private void stopSound(final MidiChartNotePlayerNoteData sound) {

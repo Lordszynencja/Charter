@@ -76,8 +76,8 @@ public class GP5ArrangementTransformer {
 		final Level level = new Level();
 		final GP5SoundsTransformer noteTransformer = new GP5SoundsTransformer(level, arrangement);
 
-		final boolean[] wasHOPOStart = new boolean[Config.maxStrings];
-		final int[] hopoFrom = new int[Config.maxStrings];
+		final boolean[] wasHOPOStart = new boolean[Config.instrument.maxStrings];
+		final int[] hopoFrom = new int[Config.instrument.maxStrings];
 
 		int barBeatId = 0;
 		for (final int barId : barsOrder) {

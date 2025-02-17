@@ -1,22 +1,20 @@
 package log.charter.data;
 
-import static log.charter.data.config.Config.maxStrings;
-
 import java.io.File;
 import java.util.List;
 
 import log.charter.data.config.Config;
-import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.SongChart;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
-import log.charter.data.song.vocals.Vocals;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.menuHandlers.CharterMenuBar;
@@ -32,6 +30,7 @@ public class ChartData {
 
 	public int currentArrangement = 0;
 	public int currentLevel = 0;
+	public int currentVocals = 0;
 
 	private CharterFrame charterFrame;
 	private CharterMenuBar charterMenuBar;
@@ -73,14 +72,23 @@ public class ChartData {
 
 	public int currentStrings() {
 		if (modeManager.getMode() != EditMode.GUITAR) {
-			return maxStrings;
+			return Config.instrument.maxStrings;
 		}
 
 		return currentArrangement().tuning.strings();
 	}
 
-	public Vocals currentVocals() {
-		return songChart.vocals;
+	public VocalPath currentVocals() {
+		if (songChart == null || currentVocals < 0 || currentVocals >= songChart.vocalPaths.size()) {
+			return new VocalPath();
+		}
+
+		return songChart.vocalPaths.get(currentVocals);
+	}
+
+	public void addVocals(final VocalPath newVocals) {
+		songChart.vocalPaths.add(newVocals);
+		currentVocals = songChart.vocalPaths.size() - 1;
 	}
 
 	public Arrangement currentArrangement() {

@@ -14,22 +14,24 @@ public class ConfigPane extends PagedDialog {
 
 	private final ProgramGeneralConfigPage generalConfig;
 	private final ProgramAudioConfigPage audioConfig;
+	private final ProgramInstrumentConfigPage instrumentConfig;
 	private final ProgramDisplayConfigPage displayConfig;
 
 	public ConfigPane(final CharterFrame charterFrame, final CharterContext context, final Framer framer) {
 		this(charterFrame, context, framer, new ProgramGeneralConfigPage(), new ProgramAudioConfigPage(),
-				new ProgramDisplayConfigPage());
+				new ProgramInstrumentConfigPage(), new ProgramDisplayConfigPage());
 	}
 
 	private ConfigPane(final CharterFrame charterFrame, final CharterContext context, final Framer framer,
 			final ProgramGeneralConfigPage generalConfig, final ProgramAudioConfigPage audioConfig,
-			final ProgramDisplayConfigPage displayConfig) {
-		super(charterFrame, Label.CONFIG, generalConfig, audioConfig, displayConfig);
+			final ProgramInstrumentConfigPage instrumentConfig, final ProgramDisplayConfigPage displayConfig) {
+		super(charterFrame, Label.CONFIG, generalConfig, audioConfig, instrumentConfig, displayConfig);
 
 		this.framer = framer;
 
 		this.generalConfig = generalConfig;
 		this.audioConfig = audioConfig;
+		this.instrumentConfig = instrumentConfig;
 		this.displayConfig = displayConfig;
 
 		finishInit();
@@ -39,6 +41,7 @@ public class ConfigPane extends PagedDialog {
 	protected boolean save() {
 		generalConfig.save();
 		audioConfig.save();
+		instrumentConfig.save();
 		displayConfig.save();
 
 		Config.markChanged();

@@ -1,8 +1,7 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
-import static log.charter.data.config.Config.maxStrings;
-import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
 import static log.charter.data.config.GraphicalConfig.chordHeight;
+import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
@@ -27,6 +26,7 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
+import log.charter.data.config.Config;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
@@ -46,15 +46,15 @@ import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeNotes;
 import log.charter.util.data.Position2D;
 
 public class ModernThemeNotes implements ThemeNotes {
-	private static BufferedImage[] noteIcons = new BufferedImage[maxStrings];
-	private static BufferedImage[] linkedNoteIcons = new BufferedImage[maxStrings];
+	private static BufferedImage[] noteIcons = new BufferedImage[Config.instrument.maxStrings];
+	private static BufferedImage[] linkedNoteIcons = new BufferedImage[Config.instrument.maxStrings];
 	private static BufferedImage noteSelectIcon = null;
 	private static BufferedImage noteHighlightIcon = null;
-	private static BufferedImage[] harmonicNoteIcons = new BufferedImage[maxStrings];
+	private static BufferedImage[] harmonicNoteIcons = new BufferedImage[Config.instrument.maxStrings];
 	private static BufferedImage harmonicNoteSelectIcon = null;
 	private static BufferedImage harmonicNoteHighlightIcon = null;
-	private static BufferedImage[] accentIcons = new BufferedImage[maxStrings];
-	private static BufferedImage[] harmonicAccentIcons = new BufferedImage[maxStrings];
+	private static BufferedImage[] accentIcons = new BufferedImage[Config.instrument.maxStrings];
+	private static BufferedImage[] harmonicAccentIcons = new BufferedImage[Config.instrument.maxStrings];
 
 	private static BufferedImage hammerOnIcon = null;
 	private static BufferedImage pullOffIcon = null;
@@ -70,10 +70,10 @@ public class ModernThemeNotes implements ThemeNotes {
 	private static Font smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
 	public static void reloadGraphics() {
-		for (int string = 0; string < maxStrings; string++) {
-			final int stringId = stringId(string, maxStrings);
-			final Color borderInnerColor = getStringBasedColor(StringColorLabelType.LANE, string, maxStrings)
-					.brighter();
+		for (int string = 0; string < Config.instrument.maxStrings; string++) {
+			final int stringId = stringId(string, Config.instrument.maxStrings);
+			final Color borderInnerColor = getStringBasedColor(StringColorLabelType.LANE, string,
+					Config.instrument.maxStrings).brighter();
 			final Color innerColor = borderInnerColor.darker().darker();
 			final Color borderOuterColor = ColorLabel.NOTE_BACKGROUND.color();
 			noteIcons[stringId] = generateNoteIcon(innerColor, borderInnerColor, borderOuterColor);

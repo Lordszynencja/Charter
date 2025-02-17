@@ -17,7 +17,7 @@ public class SoundSystem {
 
 	public static void setCurrentSoundSystem() {
 		try {
-			currentSoundSystem = switch (Config.audioOutSystemType) {
+			currentSoundSystem = switch (Config.audio.outSystem) {
 				case ASIO -> new ASIOSoundSystem();
 				default -> new StandardSoundSystem();
 			};
@@ -25,7 +25,7 @@ public class SoundSystem {
 			ASIOHandler.refresh();
 		} catch (final Throwable t) {
 			Logger.error("Couldn't initialize audio system, setting output to default", t);
-			Config.audioOutSystemType = AudioSystemType.DEFAULT;
+			Config.audio.outSystem = AudioSystemType.DEFAULT;
 			setCurrentSoundSystem();
 		}
 	}

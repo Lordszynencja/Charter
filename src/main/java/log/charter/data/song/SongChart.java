@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import log.charter.data.song.vocals.Vocals;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.io.rsc.xml.ChartProject;
 
 public class SongChart {
@@ -26,7 +26,7 @@ public class SongChart {
 	public Integer albumYear;
 
 	public BeatsMap beatsMap;
-	public Vocals vocals = new Vocals();
+	public List<VocalPath> vocalPaths = new ArrayList<>();
 	public List<Arrangement> arrangements = new ArrayList<>();
 
 	public Map<Integer, Double> bookmarks = new HashMap<>();
@@ -68,8 +68,12 @@ public class SongChart {
 
 		beatsMap = new BeatsMap(project);
 
+		if (project.vocalPaths != null) {
+			vocalPaths = project.vocalPaths;
+		}
 		if (project.vocals != null) {
-			vocals = project.vocals;
+			vocalPaths.add(project.vocals);
+			project.vocals = null;
 		}
 		if (project.arrangements != null) {
 			arrangements = project.arrangements;
@@ -121,7 +125,7 @@ public class SongChart {
 	}
 
 	public void moveContent(final int beatsToAdd) {
-		vocals.vocals.forEach(v -> v.move(beatsToAdd));
+		vocalPaths.forEach(vocals -> vocals.vocals.forEach(v -> v.move(beatsToAdd)));
 		for (final Arrangement arrangement : arrangements) {
 			arrangement.eventPoints.forEach(ep -> ep.move(beatsToAdd));
 			arrangement.toneChanges.forEach(tc -> tc.move(beatsToAdd));

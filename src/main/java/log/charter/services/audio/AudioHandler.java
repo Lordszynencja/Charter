@@ -92,7 +92,7 @@ public class AudioHandler {
 			final Effect effect = createEffect(lastPlayedData.playingFormat.getChannels(),
 					(int) lastPlayedData.playingFormat.getSampleRate());
 
-			songPlayer = SoundSystem.play(lastPlayedData, () -> Config.volume, speed, start, effect);
+			songPlayer = SoundSystem.play(lastPlayedData, () -> Config.audio.volume, speed, start, effect);
 		} catch (final Exception | UnsatisfiedLinkError e) {
 			Logger.error("Couldn't play sound", e);
 		}

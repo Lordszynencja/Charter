@@ -48,8 +48,8 @@ public class Preview3DLaneBordersDrawer {
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
-		final int[] fretsOpacity = new int[Config.frets + 1];
-		for (int fret = 0; fret <= Config.frets; fret++) {
+		final int[] fretsOpacity = new int[Config.instrument.frets + 1];
+		for (int fret = 0; fret <= Config.instrument.frets; fret++) {
 			fretsOpacity[fret] = 32;
 		}
 
@@ -70,7 +70,7 @@ public class Preview3DLaneBordersDrawer {
 		final double y = getChartboardYPosition(data.currentStrings());
 
 		GL30.glLineWidth(1);
-		for (int fret = 0; fret <= Config.frets; fret++) {
+		for (int fret = 0; fret <= Config.instrument.frets; fret++) {
 			drawFretBorder(shadersHolder, getFretPosition(fret), y, setAlpha(color, fretsOpacity[fret]));
 		}
 	}

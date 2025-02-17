@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.SystemType;
 import log.charter.data.undoSystem.UndoSystem;
@@ -221,7 +222,10 @@ public class CharterContext {
 				charterFrame.repaint();
 				timer.addTimestamp("charterFrame.repaint()");
 			}
-			timer.print("frame timings:", "%20s: %d");
+
+			if (Config.debug.frameTimes) {
+				timer.print("frame timings:", Timer.defaultFormat(20));
+			}
 		} catch (final Exception e) {
 			Logger.error("Exception in frame()", e);
 		}

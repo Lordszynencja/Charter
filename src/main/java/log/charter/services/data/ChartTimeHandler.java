@@ -176,7 +176,7 @@ public class ChartTimeHandler {
 			case TEMPO_MAP:
 				return chartData.songChart.beatsMap.beats;
 			case VOCALS:
-				return chartData.songChart.vocals.vocals;
+				return chartData.currentVocals().vocals;
 			default:
 				return new ArrayList<>();
 		}

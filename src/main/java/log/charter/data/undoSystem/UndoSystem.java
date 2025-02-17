@@ -3,6 +3,7 @@ package log.charter.data.undoSystem;
 import java.util.LinkedList;
 
 import log.charter.data.ChartData;
+import log.charter.gui.components.utils.TitleUpdater;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.ModeManager;
@@ -14,6 +15,7 @@ public class UndoSystem {
 	private ChartTimeHandler chartTimeHandler;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
+	private TitleUpdater titleUpdater;
 
 	private final LinkedList<UndoState> undo = new LinkedList<>();
 	private final LinkedList<UndoState> redo = new LinkedList<>();
@@ -32,6 +34,7 @@ public class UndoSystem {
 		}
 
 		redo.clear();
+		titleUpdater.updateTitle();
 	}
 
 	public void addUndo() {
@@ -50,6 +53,7 @@ public class UndoSystem {
 		savePosition--;
 		final UndoState lastUndo = undo.removeLast();
 		redo.add(lastUndo.undo(chartData, chartTimeHandler));
+		titleUpdater.updateTitle();
 	}
 
 	public void redo() {
@@ -63,16 +67,19 @@ public class UndoSystem {
 		selectionManager.clear();
 		savePosition++;
 		undo.add(redo.removeLast().undo(chartData, chartTimeHandler));
+		titleUpdater.updateTitle();
 	}
 
 	public void clear() {
 		undo.clear();
 		redo.clear();
 		savePosition = 0;
+		titleUpdater.updateTitle();
 	}
 
 	public void onSave() {
 		savePosition = 0;
+		titleUpdater.updateTitle();
 	}
 
 	public boolean isSaved() {

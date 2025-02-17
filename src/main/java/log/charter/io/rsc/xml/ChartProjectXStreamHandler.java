@@ -6,12 +6,12 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
 
-import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.Phrase;
@@ -23,17 +23,18 @@ import log.charter.data.song.notes.ChordOrNote.ChordOrNoteForNote;
 import log.charter.data.song.notes.GuitarSound;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.vocals.Vocal;
+import log.charter.data.song.vocals.VocalPath;
 import log.charter.io.XMLHandler;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
-import log.charter.services.data.copy.data.FHPsCopyData;
 import log.charter.services.data.copy.data.CopyData;
 import log.charter.services.data.copy.data.EventPointsCopyData;
+import log.charter.services.data.copy.data.FHPsCopyData;
 import log.charter.services.data.copy.data.FullGuitarCopyData;
 import log.charter.services.data.copy.data.HandShapesCopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
-import log.charter.services.data.copy.data.positions.CopiedFHP;
 import log.charter.services.data.copy.data.positions.CopiedEventPoint;
+import log.charter.services.data.copy.data.positions.CopiedFHP;
 import log.charter.services.data.copy.data.positions.CopiedHandShape;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundChord;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundNote;
@@ -87,6 +88,7 @@ public class ChartProjectXStreamHandler {
 				SoundsCopyData.class, //
 				ToneChange.class, //
 				Vocal.class, //
+				VocalPath.class, //
 				VocalsCopyData.class });
 
 		return xstream;

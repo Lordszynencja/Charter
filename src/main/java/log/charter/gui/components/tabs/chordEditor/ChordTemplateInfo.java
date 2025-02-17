@@ -76,7 +76,7 @@ public class ChordTemplateInfo extends JComponent implements MouseListener {
 		}
 		int minUsedString = strings;
 		int maxUsedString = 0;
-		int minNonzeroFret = Config.frets;
+		int minNonzeroFret = Config.instrument.frets;
 		int maxNonzeroFret = 0;
 
 		for (final Entry<Integer, Integer> entry : chordTemplate.frets.entrySet()) {

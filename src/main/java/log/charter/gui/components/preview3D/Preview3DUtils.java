@@ -19,28 +19,22 @@ public class Preview3DUtils {
 
 	public static double fretLengthMultiplier = 1;
 
-	private static double[] fretPositions = new double[Config.frets + 1];
+	private static double[] fretPositions = new double[Config.instrument.frets + 1];
 	static {
 		double fretLength = firstFretDistance;
 		fretPositions[0] = 0;
-		for (int fret = 1; fret <= Config.frets; fret++) {
+		for (int fret = 1; fret <= Config.instrument.frets; fret++) {
 			fretPositions[fret] = fretPositions[fret - 1] + fretLength;
 			fretLength *= fretLengthMultiplier;
 		}
 	}
 
 	public static double getFretPosition(final int fret) {
-		if (fret < 0) {
-			return fretPositions[0];
-		}
-		if (fret > Config.frets) {
-			return fretPositions[Config.frets];
-		}
+		final double position = fret < 0 ? fretPositions[0]//
+				: fret > Config.instrument.frets ? fretPositions[Config.instrument.frets]//
+						: fretPositions[fret];
 
-		if (Config.leftHanded) {
-			return fretPositions[Config.frets] / 2 - fretPositions[fret];
-		}
-		return fretPositions[fret];
+		return Config.instrument.leftHanded ? fretPositions[Config.instrument.frets] / 2 - position : position;
 	}
 
 	public static int getVisibility() {

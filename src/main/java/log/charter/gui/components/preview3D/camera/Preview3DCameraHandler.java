@@ -34,7 +34,8 @@ public class Preview3DCameraHandler {
 	private final static double minScreenScaleY = 1;
 	private final static double screenScaleYMultiplier = 0.5;
 
-	private static final double weightedPosition = getFretPosition(Config.frets) * 0.4 + getFretPosition(0) * 0.6;
+	private static final double weightedPosition = getFretPosition(Config.instrument.frets) * 0.4
+			+ getFretPosition(0) * 0.6;
 	private static final double weightedPositionWeight = 0.1;
 
 	private ChartTimeHandler chartTimeHandler;
@@ -56,7 +57,7 @@ public class Preview3DCameraHandler {
 
 	public void updateFretFocus(final double frameTime) {
 		final List<FHP> fhps = chartData.currentArrangementLevel().fhps;
-		int minFret = Config.frets;
+		int minFret = Config.instrument.frets;
 		int maxFret = 1;
 
 		final IConstantFractionalPosition start = new Position(chartTimeHandler.time() + fretFocusWindowStartOffset)

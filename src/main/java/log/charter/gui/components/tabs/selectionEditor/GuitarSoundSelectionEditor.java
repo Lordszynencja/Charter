@@ -3,8 +3,6 @@ package log.charter.gui.components.tabs.selectionEditor;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
-import static log.charter.data.config.Config.frets;
-import static log.charter.data.config.Config.maxStrings;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
@@ -22,6 +20,7 @@ import java.util.stream.Stream;
 import javax.swing.JCheckBox;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
@@ -77,7 +76,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private ChordTemplate chordTemplate = new ChordTemplate();
 
-	private int lastStringsAmount = maxStrings;
+	private int lastStringsAmount = Config.instrument.maxStrings;
 	private List<JCheckBox> strings;
 	private FieldWithLabel<TextInputWithValidation> string;
 	private FieldWithLabel<TextInputWithValidation> fret;
@@ -110,7 +109,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private void addChordStringsSelection(final CurrentSelectionEditor parent, final RowedPosition position) {
 		strings = new ArrayList<>();
 
-		for (int i = 0; i < maxStrings; i++) {
+		for (int i = 0; i < Config.instrument.maxStrings; i++) {
 			final int string = i;
 			final JCheckBox stringCheckbox = new JCheckBox((string + 1) + "");
 			stringCheckbox.setFocusable(false);
@@ -155,7 +154,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void addSlideFretInput(final CurrentSelectionEditor parent, final RowedPosition position) {
 		final TextInputWithValidation slideFretInput = generateForInteger(null, 30, //
-				new IntegerValueValidator(1, frets, true), this::changeSlideFret, false);
+				new IntegerValueValidator(1, Config.instrument.frets, true), this::changeSlideFret, false);
 		slideFret = new FieldWithLabel<>(Label.SLIDE_PANE_FRET, 60, 30, 20, slideFretInput, LabelPosition.LEFT);
 		parent.add(slideFret, position);
 	}
@@ -434,7 +433,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 						continue;
 					}
 
-					chordNoteEntry.getValue().slideTo = min(frets, max(1, fret - fretDifference));
+					chordNoteEntry.getValue().slideTo = min(Config.instrument.frets, max(1, fret - fretDifference));
 				}
 			}
 		}

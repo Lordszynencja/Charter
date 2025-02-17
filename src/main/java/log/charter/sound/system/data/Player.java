@@ -1,7 +1,6 @@
 package log.charter.sound.system.data;
 
 import static java.lang.Math.min;
-import static log.charter.data.config.Config.audioBufferSize;
 import static log.charter.sound.data.AudioUtils.splitStereoAudioFloat;
 
 import java.util.Arrays;
@@ -151,7 +150,7 @@ public class Player {
 	}
 
 	private int writeBuffer(final byte[] data, final int startByte) {
-		final int length = audioBufferSize * speed / 100 * 4;
+		final int length = Config.audio.bufferSize * speed / 100 * 4;
 
 		int endByte = startByte + length;
 		boolean lastBlock = false;
@@ -200,7 +199,7 @@ public class Player {
 			startByte = writeBuffer(data, startByte);
 
 			if (playingStartTime < 0) {
-				playingStartTime = System.nanoTime() + Config.delay * 1_000_000;
+				playingStartTime = System.nanoTime() + Config.audio.delay * 1_000_000;
 			}
 			waitIfNeeded();
 		}

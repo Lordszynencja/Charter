@@ -45,6 +45,7 @@ import log.charter.util.data.IntRange;
 import log.charter.util.data.Position2D;
 
 public class ChordTemplatePreview extends JComponent implements MouseListener, MouseMotionListener, KeyListener {
+
 	private static final long serialVersionUID = 1L;
 	private static final double fretsProportion = pow(2, -1.0 / 12);
 	private static final int minFrets = 7;
@@ -103,12 +104,16 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		hideFields();
 	}
 
+	private int getPositionWithLeftHandedFlip(final int x) {
+		return Config.instrument.leftHanded ? getWidth() - x : x;
+	}
+
 	public int preferredHeight() {
 		return fretStart + data.currentStrings() * parent.sizes.rowDistance;
 	}
 
 	private IntRange getFretsRange() {
-		int min = Config.frets;
+		int min = Config.instrument.frets;
 		int max = 0;
 		for (final int fret : chordTemplateSupplier.get().frets.values()) {
 			if (fret != 0) {
@@ -126,14 +131,14 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		if (min > 0) {
 			min--;
 		}
-		if (max < Config.frets) {
+		if (max < Config.instrument.frets) {
 			max++;
 		}
 		while (max - min < minFrets) {
 			if (min > 0) {
 				min--;
 			}
-			if (max < Config.frets) {
+			if (max < Config.instrument.frets) {
 				max++;
 			}
 		}
@@ -181,7 +186,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	}
 
 	private void addDot(final DrawableShapeList frets, final FretPosition fretPosition, final int y) {
-		final int x = fretPosition.position - fretPosition.length / 2;
+		final int x = getPositionWithLeftHandedFlip(fretPosition.position - fretPosition.length / 2);
 		final ShapePositionWithSize position = new ShapePositionWithSize(x, y, 10, 10).centered();
 		frets.add(filledOval(position, ColorLabel.BASE_BG_4));
 	}
@@ -203,17 +208,17 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		final DrawableShapeList frets = new DrawableShapeList();
 
 		for (final FretPosition fretPosition : fretPositions) {
-			frets.add(new CenteredText(new Position2D(fretPosition.position, 10), g.getFont(), fretPosition.fret + "",
-					ColorLabel.BASE_DARK_TEXT));
+			frets.add(new CenteredText(new Position2D(getPositionWithLeftHandedFlip(fretPosition.position), 10),
+					g.getFont(), fretPosition.fret + "", ColorLabel.BASE_DARK_TEXT));
 
 			final int fretWidth = fretPosition.fret == 0 ? 3 : 1;
-			final int x0 = fretPosition.position - fretWidth;
-			final int x1 = x0 + 1;
-			final int x3 = fretPosition.position + fretWidth;
-			final int x2 = x3 - 1;
-			frets.add(lineVertical(x0, fretStart, getHeight(), ColorLabel.BASE_BG_2.color()));
+			final IntRange fretX = new IntRange(getPositionWithLeftHandedFlip(fretPosition.position - fretWidth),
+					getPositionWithLeftHandedFlip(fretPosition.position + fretWidth));
+			final int x1 = fretX.min + 1;
+			final int x2 = fretX.max - 1;
+			frets.add(lineVertical(fretX.min, fretStart, getHeight(), ColorLabel.BASE_BG_2.color()));
 			frets.add(new FilledRectangle(x1, fretStart, x2 - x1 + 1, getHeight() - fretStart, ColorLabel.BASE_BG_4));
-			frets.add(lineVertical(x3, fretStart, getHeight(), ColorLabel.BASE_BG_2.color()));
+			frets.add(lineVertical(fretX.max, fretStart, getHeight(), ColorLabel.BASE_BG_2.color()));
 
 			if (fretPosition.fret % 12 == 0 && fretPosition.fret >= 12) {
 				addFretDotDouble(frets, fretPosition);
@@ -264,8 +269,9 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 			}
 
 			final FretPosition fretPosition = fretPositions[fret - baseFret];
-			final Position2D position = new Position2D(fretPosition.position - fretPosition.length / 2,
-					stringPositions[i]);
+			int x = fretPosition.position - fretPosition.length / 2;
+			x = getPositionWithLeftHandedFlip(x);
+			final Position2D position = new Position2D(x, stringPositions[i]);
 			pressMarks.add(filledDiamond(position.move(1, 0), 10,
 					getStringBasedColor(StringColorLabelType.NOTE, i, strings).darker()));
 
@@ -372,7 +378,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 
 		if (mouseFret == null) {
 			final FretPosition lastPosition = fretPositions[fretPositions.length - 1];
-			if (lastPosition.fret < Config.frets && x > lastPosition.position) {
+			if (lastPosition.fret < Config.instrument.frets && x > lastPosition.position) {
 				mouseFret = lastPosition.fret + 1;
 			}
 		}

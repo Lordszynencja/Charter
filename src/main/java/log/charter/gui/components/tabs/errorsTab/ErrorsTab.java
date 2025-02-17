@@ -1,6 +1,7 @@
 package log.charter.gui.components.tabs.errorsTab;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
@@ -27,8 +28,9 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 	private JTable errorsTable;
 	private CharterScrollPane scrollTable;
 
-	private final List<ChartError> errors = new ArrayList<>();
 	private List<ChartError> errorsBuffer = new ArrayList<>();
+	private List<ChartError> internalBuffer = new ArrayList<>();
+	private final List<ChartError> errors = new ArrayList<>();
 
 	public ErrorsTab() {
 		super(new PaneSizesBuilder(0).build());
@@ -112,14 +114,17 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 		errorsBuffer.add(chartError);
 	}
 
-	public void swapBuffers() {
-		final List<ChartError> currentBuffer = errorsBuffer;
+	public void swapBuffer() {
+		internalBuffer = errorsBuffer;
 		errorsBuffer = new ArrayList<>();
+	}
+
+	private void swapInternalBuffer() {
 		final int selected = errorsTable.getSelectedRow();
-		final boolean reselect = currentBuffer.size() == errors.size();
+		final boolean reselect = internalBuffer.size() == errors.size();
 		clearErrors();
 
-		for (final ChartError chartError : currentBuffer) {
+		for (final ChartError chartError : internalBuffer) {
 			final Vector<Object> row = new Vector<>();
 			row.add(chartError.position.description);
 			row.add(chartError.severity.name());
@@ -132,6 +137,12 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 		if (reselect && selected != -1) {
 			errorsTable.addRowSelectionInterval(selected, selected);
 		}
+	}
+
+	@Override
+	public void paint(final Graphics g) {
+		swapInternalBuffer();
+		super.paint(g);
 	}
 
 	@Override

@@ -5,7 +5,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.System.nanoTime;
 import static java.util.Arrays.asList;
-import static log.charter.data.config.Config.frets;
 
 import java.util.HashMap;
 import java.util.List;
@@ -66,60 +65,117 @@ public class ActionHandler implements Initiable {
 	private int lastFretNumber = 0;
 	private long fretNumberTimer = 0;
 
-	private void nextArrangement() {
-		switch (modeManager.getMode()) {
-			case TEMPO_MAP:
-				modeManager.setMode(EditMode.VOCALS);
-				break;
+	private void switchTo(final EditMode editMode, final int id) {
+		switch (editMode) {
 			case VOCALS:
-				if (chartData.songChart.arrangements.isEmpty()) {
-					modeManager.setMode(EditMode.TEMPO_MAP);
-				} else {
-					modeManager.setArrangement(0);
-				}
+				modeManager.setVocalPath(id);
 				break;
 			case GUITAR:
-				if (chartData.currentArrangement >= chartData.songChart.arrangements.size() - 1) {
-					modeManager.setMode(EditMode.TEMPO_MAP);
-				} else {
-					modeManager.setArrangement(chartData.currentArrangement + 1);
-				}
+				modeManager.setArrangement(id);
 				break;
-			case EMPTY:
 			default:
-				Logger.error("Changed to next arrangement in mode " + modeManager.getMode());
+				modeManager.setMode(editMode);
 				break;
 		}
+	}
+
+	private void nextArrangement() {
+		EditMode currentMode = modeManager.getMode();
+		if (currentMode == EditMode.EMPTY) {
+			return;
+		}
+
+		int currentPath = switch (currentMode) {
+			case TEMPO_MAP -> 0;
+			case VOCALS -> chartData.currentVocals;
+			case GUITAR -> chartData.currentArrangement;
+			default -> throw new IllegalArgumentException("Unexpected value: " + currentMode);
+		};
+		boolean foundNext = false;
+		while (!foundNext) {
+			switch (currentMode) {
+				case TEMPO_MAP:
+					currentMode = EditMode.VOCALS;
+					currentPath = 0;
+					break;
+				case VOCALS:
+					currentPath++;
+					if (currentPath >= chartData.songChart.vocalPaths.size()) {
+						currentMode = EditMode.GUITAR;
+						currentPath = 0;
+					}
+					break;
+				case GUITAR:
+					currentPath++;
+					if (currentPath >= chartData.songChart.arrangements.size()) {
+						currentMode = EditMode.TEMPO_MAP;
+						currentPath = 0;
+					}
+					break;
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + currentMode);
+			}
+
+			foundNext = switch (currentMode) {
+				case TEMPO_MAP -> true;
+				case VOCALS -> currentPath < chartData.songChart.vocalPaths.size();
+				case GUITAR -> currentPath < chartData.songChart.arrangements.size();
+				default -> throw new IllegalArgumentException("Unexpected value: " + currentMode);
+			};
+		}
+
+		switchTo(currentMode, currentPath);
 	}
 
 	private void previousArrangement() {
-		switch (modeManager.getMode()) {
-			case TEMPO_MAP:
-				if (chartData.songChart.arrangements.isEmpty()) {
-					modeManager.setMode(EditMode.VOCALS);
-				} else {
-					modeManager.setArrangement(chartData.songChart.arrangements.size() - 1);
-				}
-				break;
-			case VOCALS:
-				modeManager.setMode(EditMode.TEMPO_MAP);
-				break;
-			case GUITAR:
-				if (chartData.currentArrangement <= 0) {
-					modeManager.setMode(EditMode.VOCALS);
-				} else {
-					modeManager.setArrangement(chartData.currentArrangement - 1);
-				}
-				break;
-			case EMPTY:
-			default:
-				Logger.error("Changed to next arrangement in mode " + modeManager.getMode());
-				break;
+		EditMode currentMode = modeManager.getMode();
+		if (currentMode == EditMode.EMPTY) {
+			return;
 		}
+
+		int currentPath = switch (currentMode) {
+			case TEMPO_MAP -> 0;
+			case VOCALS -> chartData.currentVocals;
+			case GUITAR -> chartData.currentArrangement;
+			default -> throw new IllegalArgumentException("Unexpected value: " + currentMode);
+		};
+		boolean foundNext = false;
+		while (!foundNext) {
+			switch (currentMode) {
+				case GUITAR:
+					currentPath--;
+					if (currentPath < 0) {
+						currentMode = EditMode.VOCALS;
+						currentPath = chartData.songChart.vocalPaths.size() - 1;
+					}
+					break;
+				case VOCALS:
+					currentPath--;
+					if (currentPath < 0) {
+						currentMode = EditMode.TEMPO_MAP;
+					}
+					break;
+				case TEMPO_MAP:
+					currentMode = EditMode.GUITAR;
+					currentPath = chartData.songChart.arrangements.size() - 1;
+					break;
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + currentMode);
+			}
+
+			foundNext = switch (currentMode) {
+				case TEMPO_MAP -> true;
+				case VOCALS -> currentPath >= 0;
+				case GUITAR -> currentPath >= 0;
+				default -> throw new IllegalArgumentException("Unexpected value: " + currentMode);
+			};
+		}
+
+		switchTo(currentMode, currentPath);
 	}
 
 	private void handleFretNumber(final int number) {
-		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= frets) {
+		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= Config.instrument.frets) {
 			lastFretNumber = lastFretNumber * 10 + number;
 		} else {
 			lastFretNumber = number;

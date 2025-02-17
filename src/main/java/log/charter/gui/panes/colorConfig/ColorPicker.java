@@ -15,14 +15,22 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 public class ColorPicker extends JComponent implements MouseListener {
 	private static final long serialVersionUID = -5746700025590582773L;
 
-	public final ColorLabel colorLabel;
+	private final String label;
 	private Color color;
 
-	public ColorPicker(final ColorLabel colorLabel) {
+	public ColorPicker(final ColorLabel label) {
+		this(label.label(), label.color());
+	}
+
+	public ColorPicker(final Label label, final Color color) {
+		this(label.label(), color);
+	}
+
+	public ColorPicker(final String label, final Color color) {
 		super();
 
-		this.colorLabel = colorLabel;
-		color = colorLabel.color();
+		this.label = label;
+		this.color = color;
 
 		final Dimension size = new Dimension(20, 20);
 		setPreferredSize(size);
@@ -44,16 +52,18 @@ public class ColorPicker extends JComponent implements MouseListener {
 		final int w = getWidth();
 		final int h = getHeight();
 
-		g.setColor(ColorLabel.BASE_BG_2.color());
-		g.fillRect(0, 0, w, h);
+		g.setColor(ColorLabel.BASE_BG_4.color());
+		g.drawRect(0, 0, w - 1, h - 1);
+		g.setColor(ColorLabel.BASE_BG_3.color());
+		g.drawRect(1, 1, w - 3, h - 3);
 
 		g.setColor(color);
-		g.fillRect(2, 2, w - 2, h - 2);
+		g.fillRect(2, 2, w - 4, h - 4);
 	}
 
 	@Override
 	public void mouseClicked(final MouseEvent e) {
-		final String title = Label.CHOOSE_COLOR_FOR.label().formatted(colorLabel.label());
+		final String title = Label.CHOOSE_COLOR_FOR.format(label);
 		final Color newColor = JColorChooser.showDialog(this, title, color);
 
 		if (newColor != null) {

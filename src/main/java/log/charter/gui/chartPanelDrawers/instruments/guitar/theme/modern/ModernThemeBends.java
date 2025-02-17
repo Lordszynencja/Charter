@@ -1,7 +1,6 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
 import static java.lang.Math.round;
-import static log.charter.data.config.Config.maxBendValue;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.tailHeight;
@@ -12,6 +11,7 @@ import java.awt.Font;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import log.charter.data.config.Config;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.EditorBendValueDrawingData;
@@ -46,12 +46,12 @@ public class ModernThemeBends {
 		if (bendValue == null) {
 			bendValue = BigDecimal.ZERO;
 		}
-		if (bendValue.compareTo(new BigDecimal(maxBendValue)) > 0) {
-			bendValue = new BigDecimal(maxBendValue);
+		if (bendValue.compareTo(new BigDecimal(Config.instrument.maxBendValue)) > 0) {
+			bendValue = new BigDecimal(Config.instrument.maxBendValue);
 		}
 
 		final int bendOffset = bendValue.multiply(new BigDecimal(tailHeight * 2 / 3))
-				.divide(new BigDecimal(maxBendValue), RoundingMode.HALF_UP).intValue();
+				.divide(new BigDecimal(Config.instrument.maxBendValue), RoundingMode.HALF_UP).intValue();
 		return y + tailHeight / 3 - bendOffset;
 	}
 

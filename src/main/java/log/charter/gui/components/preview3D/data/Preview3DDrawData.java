@@ -30,6 +30,7 @@ public class Preview3DDrawData {
 	private final Map<Integer, IntRange> fretsCache = new HashMap<>();
 
 	public final double time;
+	public final int capo;
 	public final List<FHPDrawData> fhps;
 	public final List<BeatDrawData> beats;
 	public final List<HandShapeDrawData> handShapes;
@@ -41,6 +42,7 @@ public class Preview3DDrawData {
 		this.repeatManager = repeatManager;
 
 		time = chartTimeHandler.time();
+		capo = chartData.currentArrangement().capo;
 		levelFHPs = chartData.currentArrangementLevel().fhps;
 
 		final double timeTo = time + getVisibility();

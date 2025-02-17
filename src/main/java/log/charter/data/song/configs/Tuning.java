@@ -2,7 +2,6 @@ package log.charter.data.song.configs;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.data.config.Config.maxStrings;
 import static log.charter.util.SoundUtils.soundToFullName;
 import static log.charter.util.SoundUtils.soundToSimpleName;
 
@@ -38,7 +37,7 @@ public class Tuning {
 	private static int[] getTuningValues(final int[] tuning, final int strings) {
 		final int[] fullTuning = getFullTuning(tuning);
 		final int[] tuningValues = new int[strings];
-		final int offset = maxStrings - max(6, strings);
+		final int offset = Config.instrument.maxStrings - max(6, strings);
 		for (int i = 0; i < strings; i++) {
 			tuningValues[i] = fullTuning[i + offset];
 		}
@@ -47,12 +46,12 @@ public class Tuning {
 	}
 
 	private static int[] getFullTuning(final int[] tuning) {
-		final int[] fullTuning = new int[Config.maxStrings];
-		for (int i = 0; i < Config.maxStrings; i++) {
+		final int[] fullTuning = new int[Config.instrument.maxStrings];
+		for (int i = 0; i < Config.instrument.maxStrings; i++) {
 			fullTuning[i] = tuning[tuning.length - 1];
 		}
 
-		final int offset = maxStrings - max(6, tuning.length);
+		final int offset = Config.instrument.maxStrings - max(6, tuning.length);
 		for (int i = 0; i < tuning.length; i++) {
 			fullTuning[i + offset] = tuning[i];
 		}
@@ -113,7 +112,7 @@ public class Tuning {
 		}
 
 		public boolean isFullTuning(final int[] tuning) {
-			if (tuning.length != Config.maxStrings) {
+			if (tuning.length != Config.instrument.maxStrings) {
 				return isFullTuning(getFullTuning(tuning));
 			}
 

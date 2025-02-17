@@ -20,7 +20,7 @@ public class StandardSoundSystem implements ISoundSystem {
 		private boolean stopped = false;
 
 		private StandardSoundLine(final AudioFormat format) throws LineUnavailableException {
-			maxBytes = (int) (format.getFrameRate() * format.getFrameSize() * Config.audioBufferMs / 1000);
+			maxBytes = (int) (format.getFrameRate() * format.getFrameSize() * Config.audio.bufferedMs / 1000);
 
 			final Info info = new Info(SourceDataLine.class, format);
 
