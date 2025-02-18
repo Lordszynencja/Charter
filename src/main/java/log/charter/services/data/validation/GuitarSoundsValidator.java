@@ -166,16 +166,6 @@ public class GuitarSoundsValidator {
 			}
 
 			final ChordTemplate handShapeTemplate = arrangement.chordTemplates.get(lastHandShape.templateId);
-			if (!handShapeTemplate.arpeggio) {
-				if (sound.isNote()) {
-					errorsTab.addError(generateError(Label.NOTE_INSIDE_NON_ARPEGGIO_HAND_SHAPE, sound));
-				} else if (lastHandShape.templateId != sound.chord().templateId()) {
-					errorsTab.addError(generateError(Label.CHORD_INSIDE_WRONG_HANDSHAPE, sound));
-				}
-
-				return;
-			}
-
 			final boolean wrongFrets = sound.notesWithFrets(arrangement.chordTemplates).anyMatch(soundNote -> {
 				final Integer fret = handShapeTemplate.frets.get(soundNote.string());
 

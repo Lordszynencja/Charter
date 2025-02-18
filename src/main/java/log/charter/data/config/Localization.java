@@ -58,8 +58,6 @@ public class Localization {
 		CENTS("%s cents"), //
 		CHANGE_AUDIO("Change audio"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
-		CHORD_INSIDE_WRONG_HANDSHAPE(
-				"Chord is inside hand shape of different chord (add arpeggio flag if it's a part of an arpeggio)"), //
 		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
 		CONFIG("Config"), //
 		CONFIG_AUDIO("Audio"), //
@@ -164,7 +162,6 @@ public class Localization {
 		NO_SECTIONS_IN_ARRANGEMENT("No sections in arrangement"), //
 		NOTE_FRET_BELOW_CAPO("Note fret is below capo, for open string it should be equal"), //
 		NOTE_IN_WRONG_FHP("Note in wrong FHP"), //
-		NOTE_INSIDE_NON_ARPEGGIO_HAND_SHAPE("Note inside hand shape that's not arpeggio"), //
 		NOTE_SLIDE_FROM_OPEN_STRING("Slide starts on open string"), //
 		NOTE_SLIDE_NOT_LINKED("Pitched note slide is not linked to next note"), //
 		NOTE_SLIDES_INTO_CHORD("Note slide ends on a chord, should end on note"), //

@@ -1,5 +1,8 @@
 package log.charter.gui.menuHandlers;
 
+import java.awt.Color;
+import java.awt.Font;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -62,6 +65,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 			if (vocalPath.color != null) {
 				menuItem.setForeground(vocalPath.color);
 			}
+			menuItem.setFont(menuItem.getFont().deriveFont(Font.BOLD));
 			menu.add(menuItem);
 		}
 	}
@@ -73,7 +77,16 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 					&& modeManager.getMode() == EditMode.GUITAR;
 			final String arrangementLabel = getNameWithSelect(arrangement.getTypeNameLabel(i), arrangementSelected);
 			final int arrangementId = i;
-			menu.add(createItem(arrangementLabel, () -> modeManager.setArrangement(arrangementId)));
+
+			final JMenuItem menuItem = createItem(arrangementLabel, () -> modeManager.setArrangement(arrangementId));
+			menuItem.setForeground(switch (arrangement.arrangementType) {
+				case Lead -> new Color(255, 200, 80);
+				case Rhythm -> new Color(120, 255, 120);
+				case Bass -> new Color(80, 120, 255);
+				default -> new Color(255, 255, 120);
+			});
+			menuItem.setFont(menuItem.getFont().deriveFont(Font.BOLD));
+			menu.add(menuItem);
 		}
 	}
 
