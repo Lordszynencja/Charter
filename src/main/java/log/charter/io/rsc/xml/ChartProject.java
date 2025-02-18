@@ -34,7 +34,7 @@ public class ChartProject {
 	public List<String> arrangementFiles = new ArrayList<>();
 
 	public List<Beat> beats = new ArrayList<>();
-	public VocalPath vocals = new VocalPath();
+	public VocalPath vocals = null;
 	public List<VocalPath> vocalPaths = new ArrayList<>();
 	public List<Arrangement> arrangements = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public class ChartProject {
 
 		musicFileName = songChart.musicFileName;
 
-		beats = songChart.beatsMap.beats;
+		beats = new ArrayList<>(songChart.beatsMap.beats);
 		vocalPaths = songChart.vocalPaths;
 		arrangements = songChart.arrangements;
 

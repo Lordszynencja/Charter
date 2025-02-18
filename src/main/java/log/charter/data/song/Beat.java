@@ -3,6 +3,7 @@ package log.charter.data.song;
 import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toCollection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -11,16 +12,15 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 import log.charter.data.song.position.time.Position;
 import log.charter.io.rs.xml.song.EBeat;
 import log.charter.io.rsc.xml.converters.BeatConverter;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.data.TimeSignature;
 
 @XStreamAlias("beat2")
 @XStreamConverter(BeatConverter.class)
 public class Beat extends Position {
-	public static ArrayList2<Beat> fromEbeats(final List<EBeat> ebeats) {
-		final ArrayList2<Beat> beats = ebeats.stream()//
+	public static List<Beat> fromEbeats(final List<EBeat> ebeats) {
+		final ArrayList<Beat> beats = ebeats.stream()//
 				.map(Beat::new)//
-				.collect(toCollection(ArrayList2::new));
+				.collect(toCollection(ArrayList::new));
 
 		beats.get(0).anchor = true;
 		for (int i = 1; i < beats.size() - 1; i++) {
