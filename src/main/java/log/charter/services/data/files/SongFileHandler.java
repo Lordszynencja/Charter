@@ -122,6 +122,7 @@ public class SongFileHandler {
 		}
 
 		chartData.setSong(songFile.getParent() + File.separator, songChart, "project.rscp", EditMode.GUITAR, 0, 0);
+		textTab.setText("");
 		projectAudioHandler.setAudio(musicData);
 
 		chartTimeHandler.nextTime(0);

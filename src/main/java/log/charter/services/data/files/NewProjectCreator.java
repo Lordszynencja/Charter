@@ -12,6 +12,7 @@ import log.charter.data.song.BeatsMap;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.SongFolderSelectPane;
+import log.charter.gui.components.tabs.TextTab;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ProjectAudioHandler;
@@ -26,6 +27,7 @@ public class NewProjectCreator {
 	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private ProjectAudioHandler projectAudioHandler;
 	private SongFileHandler songFileHandler;
+	private TextTab textTab;
 
 	private File chooseSongFolder(final String audioFileDirectory, final String defaultFolderName) {
 		File songFolder = null;
@@ -107,6 +109,7 @@ public class NewProjectCreator {
 		}
 
 		chartData.setNewSong(songFolder, songChart, "project.rscp");
+		textTab.setText("");
 		projectAudioHandler.setAudio(musicData);
 		songFileHandler.save();
 
