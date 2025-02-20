@@ -103,16 +103,16 @@ public class Localization {
 		FORCE_ARPEGGIO_IN_RS("in RS"), //
 		FPS("FPS"), //
 		FRET("Fret"), //
-		FRET_0("Fret 0"), //
-		FRET_1("Fret 1"), //
-		FRET_2("Fret 2"), //
-		FRET_3("Fret 3"), //
-		FRET_4("Fret 4"), //
-		FRET_5("Fret 5"), //
-		FRET_6("Fret 6"), //
-		FRET_7("Fret 7"), //
-		FRET_8("Fret 8"), //
-		FRET_9("Fret 9"), //
+		NUMBER_0("Number 0"), //
+		NUMBER_1("Number 1"), //
+		NUMBER_2("Number 2"), //
+		NUMBER_3("Number 3"), //
+		NUMBER_4("Number 4"), //
+		NUMBER_5("Number 5"), //
+		NUMBER_6("Number 6"), //
+		NUMBER_7("Number 7"), //
+		NUMBER_8("Number 8"), //
+		NUMBER_9("Number 9"), //
 		FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
 				"Fret in sound is different than fret in hand shape under it on the same string"), //
 		FRETS("Frets"), //
@@ -239,6 +239,7 @@ public class Localization {
 		SQUASH_LEVELS("Squash levels"), //
 		STARTING_TONE("Starting tone"), //
 		SUPPORTED_MUSIC_FILE("Flac, Mp3, Ogg or Wav file"), //
+		SWITCH_TS_TYPING_PART("Switch TS typing part"), //
 		TAB_3D_PREVIEW("3D preview"), //
 		TAB_CHORD_TEMPLATES_EDITOR("Chord templates"), //
 		TAB_ERRORS("Errors"), //

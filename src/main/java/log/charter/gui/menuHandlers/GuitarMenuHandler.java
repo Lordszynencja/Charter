@@ -50,7 +50,7 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 		menu.addSeparator();
 		final JMenu noteFretOperationsSubMenu = createMenu(Label.NOTE_FRET_OPERATIONS);
 		for (int i = 0; i < 10; i++) {
-			noteFretOperationsSubMenu.add(createItem(Action.valueOf("FRET_" + i)));
+			noteFretOperationsSubMenu.add(createItem(Action.valueOf("NUMBER_" + i)));
 		}
 		menu.add(noteFretOperationsSubMenu);
 
@@ -101,7 +101,7 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 		}
 
 		undoSystem.addUndo();
-		ArrangementFretHandPositionsCreator.createFHPs(chartData.beats(),
-				chartData.currentChordTemplates(), soundsToAddFHPFor, chartData.currentFHPs());
+		ArrangementFretHandPositionsCreator.createFHPs(chartData.beats(), chartData.currentChordTemplates(),
+				soundsToAddFHPFor, chartData.currentFHPs());
 	}
 }

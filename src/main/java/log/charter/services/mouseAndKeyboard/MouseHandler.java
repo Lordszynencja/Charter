@@ -196,7 +196,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 			mouseButtonPressReleaseHandler.remove(e);
 			cancelAllActions();
-			actionHandler.clearFrets();
+			actionHandler.clearNumbers();
 		} catch (final Exception ex) {
 			Logger.error("Exception on mouse released", ex);
 		}

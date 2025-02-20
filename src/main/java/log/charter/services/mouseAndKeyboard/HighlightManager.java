@@ -123,6 +123,7 @@ public class HighlightManager {
 	private ChartData chartData;
 	private ChartTimeHandler chartTimeHandler;
 	private ModeManager modeManager;
+	private MouseHandler mouseHandler;
 	private SelectionManager selectionManager;
 
 	private IConstantPosition snapBeat(final double position) {
@@ -192,6 +193,10 @@ public class HighlightManager {
 		}
 
 		return PositionWithIdAndType.of(beats, position, positionType);
+	}
+
+	public PositionWithIdAndType getHighlight() {
+		return getHighlight(mouseHandler.getMouseX(), mouseHandler.getMouseY());
 	}
 
 	public List<PositionWithStringOrNoteId> getPositionsWithStrings(final double fromPosition, final double toPosition,

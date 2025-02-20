@@ -18,10 +18,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.FHP;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;

@@ -1,5 +1,6 @@
 package log.charter.services.editModes;
 
+import static java.lang.System.nanoTime;
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.util.CollectionUtils.lastBefore;
@@ -9,10 +10,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.FHP;
+import log.charter.data.config.Config;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
@@ -30,6 +32,7 @@ import log.charter.gui.panes.songEdits.GuitarEventPointPane;
 import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.gui.panes.songEdits.ToneChangePane;
 import log.charter.services.data.ChartItemsHandler;
+import log.charter.services.data.GuitarSoundsHandler;
 import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.SelectionManager;
@@ -39,7 +42,7 @@ import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.Mous
 import log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId;
 import log.charter.util.collections.Pair;
 
-public class GuitarModeHandler extends ModeHandler {
+public class GuitarModeHandler implements ModeHandler {
 	private static final long scrollTimeoutForUndo = 1000;
 
 	private ArrangementFixer arrangementFixer;
@@ -48,6 +51,7 @@ public class GuitarModeHandler extends ModeHandler {
 	private CharterFrame charterFrame;
 	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private CurrentSelectionEditor currentSelectionEditor;
+	private GuitarSoundsHandler guitarSoundsHandler;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private HighlightManager highlightManager;
 	private KeyboardHandler keyboardHandler;
@@ -55,6 +59,8 @@ public class GuitarModeHandler extends ModeHandler {
 	private UndoSystem undoSystem;
 
 	private long lastScrollTime = -scrollTimeoutForUndo;
+	private int lastFretNumber = 0;
+	private long fretNumberTimer = 0;
 
 	private void rightClickFHP(final PositionWithIdAndType fhpPosition) {
 		selectionManager.clear();
@@ -321,5 +327,23 @@ public class GuitarModeHandler extends ModeHandler {
 
 		currentSelectionEditor.selectionChanged(false);
 		lastScrollTime = System.currentTimeMillis();
+	}
+
+	@Override
+	public void handleNumber(final int number) {
+		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= Config.instrument.frets) {
+			lastFretNumber = lastFretNumber * 10 + number;
+		} else {
+			lastFretNumber = number;
+		}
+
+		fretNumberTimer = nanoTime() / 1_000_000 + 2000;
+		guitarSoundsHandler.setFret(lastFretNumber);
+	}
+
+	@Override
+	public void clearNumbers() {
+		fretNumberTimer = 0;
+		lastFretNumber = 0;
 	}
 }

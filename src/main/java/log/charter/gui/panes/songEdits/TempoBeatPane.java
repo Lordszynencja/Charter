@@ -25,7 +25,7 @@ public class TempoBeatPane extends ParamsPane {
 	private static final BigDecimal minBPM = new BigDecimal(1);
 	private static final BigDecimal maxBPM = new BigDecimal(999);
 
-	private final ChartData data;
+	private final ChartData chartData;
 	private final UndoSystem undoSystem;
 
 	private final double audioLength;
@@ -42,13 +42,13 @@ public class TempoBeatPane extends ParamsPane {
 	}
 
 	private BigDecimal calculateBPM(final Beat beat) {
-		return roundBPM(new BigDecimal(data.songChart.beatsMap.findBPM(beat)));
+		return roundBPM(new BigDecimal(chartData.songChart.beatsMap.findBPM(beat)));
 	}
 
-	public TempoBeatPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
+	public TempoBeatPane(final ChartData chartData, final CharterFrame charterFrame, final UndoSystem undoSystem,
 			final double audioLength, final Beat beat) {
-		super(frame, Label.TEMPO_BEAT_PANE, 250);
-		this.data = data;
+		super(charterFrame, Label.TEMPO_BEAT_PANE, 250);
+		this.chartData = chartData;
 		this.undoSystem = undoSystem;
 
 		this.audioLength = audioLength;
@@ -106,7 +106,7 @@ public class TempoBeatPane extends ParamsPane {
 		}
 
 		beat.anchor = true;
-		data.songChart.beatsMap.setBPM(beatId, bpm.doubleValue(), audioLength);
+		chartData.songChart.beatsMap.setBPM(beatId, bpm.doubleValue(), audioLength);
 	}
 
 	private void saveTimeSignatureChange(final int beatId) {
@@ -114,8 +114,8 @@ public class TempoBeatPane extends ParamsPane {
 			return;
 		}
 
-		final ImmutableBeatsMap beats = data.beats();
-		for (int i = beatId; i < data.songChart.beatsMap.beats.size(); i++) {
+		final ImmutableBeatsMap beats = chartData.beats();
+		for (int i = beatId; i < chartData.songChart.beatsMap.beats.size(); i++) {
 			beats.get(i).setTimeSignature(beatsInMeasure, noteDenominator);
 		}
 	}
@@ -123,9 +123,9 @@ public class TempoBeatPane extends ParamsPane {
 	private void saveAndExit() {
 		undoSystem.addUndo();
 
-		final int beatId = lastBeforeEqual(data.beats(), beat).findId(0);
+		final int beatId = lastBeforeEqual(chartData.beats(), beat).findId(0);
 		saveBPMChange(beatId);
 		saveTimeSignatureChange(beatId);
-		data.songChart.beatsMap.fixFirstBeatInMeasures();
+		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
 	}
 }
