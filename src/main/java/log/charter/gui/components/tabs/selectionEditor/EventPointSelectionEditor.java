@@ -29,6 +29,7 @@ import log.charter.data.types.PositionType;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.simple.AutocompleteInput;
 import log.charter.gui.components.simple.CharterSelect;
+import log.charter.gui.components.simple.CharterSelect.ItemHolder;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
@@ -195,19 +196,20 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		currentSelectionEditor.add(solo, position.addX(10), 70);
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<EventType> readEventTypesFromTable() {
 		final List<EventType> eventTypes = new ArrayList<>();
 		for (int i = 0; i < tableModel.getRowCount(); i++) {
-			final EventType eventType = (EventType) eventsTable.getValueAt(i, 0);
-			if (eventType != null) {
-				eventTypes.add(eventType);
+			final ItemHolder<EventType> eventType = (ItemHolder<EventType>) eventsTable.getValueAt(i, 0);
+			if (eventType != null && eventType.item != null) {
+				eventTypes.add(eventType.item);
 			}
 		}
 
 		return eventTypes;
 	}
 
-	private void onEventTypeChange() {
+	private void onEventsChange() {
 		if (settingData) {
 			return;
 		}
@@ -229,7 +231,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 			eventTypes.add(type);
 		}
 
-		final CharterSelect<EventType> input = new CharterSelect<>(eventTypes, null, null, v -> onEventTypeChange());
+		final CharterSelect<EventType> input = new CharterSelect<>(eventTypes, null, null, v -> onEventsChange());
 		input.setMinimumSize(new Dimension(100, 20));
 
 		tableModel = new DefaultTableModel();
@@ -246,15 +248,29 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 
 		eventsTableScroll = new CharterScrollPane(eventsTable);
 		eventsTableScroll.setColumnHeader(null);
-		eventsTableScroll.setMinimumSize(new Dimension(100, 80));
 
-		currentSelectionEditor.add(eventsTableScroll, position, 120);
+		currentSelectionEditor.addWithSettingSize(eventsTableScroll, position, 300, 20, 200);
 	}
 
 	private void addNewEventButton(final CurrentSelectionEditor currentSelectionEditor, final RowedPosition position) {
 		eventAddButton = new JButton(Label.EVENT_ADD.label());
 		eventAddButton.addActionListener(e -> tableModel.addRow(new Vector<Object>(1)));
-		currentSelectionEditor.add(eventAddButton, position, 100);
+
+		currentSelectionEditor.addWithSettingSize(eventAddButton, position, 150, 10, 30);
+	}
+
+	private int getRowToRemove() {
+		int rowToRemove = eventsTable.getEditingRow();
+		if (rowToRemove >= 0) {
+			return rowToRemove;
+		}
+
+		rowToRemove = eventsTable.getSelectedRow();
+		if (rowToRemove >= 0) {
+			return rowToRemove;
+		}
+
+		return tableModel.getRowCount() - 1;
 	}
 
 	private void addRemoveEventButton(final CurrentSelectionEditor currentSelectionEditor,
@@ -265,22 +281,17 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 				return;
 			}
 
-			int rowToRemove = eventsTable.getEditingRow();
-			if (rowToRemove == -1) {
-				rowToRemove = eventsTable.getSelectedRow();
-				if (rowToRemove == -1) {
-					return;
-				}
-			}
+			final int rowToRemove = getRowToRemove();
 
 			if (eventsTable.getCellEditor() != null) {
 				eventsTable.getCellEditor().cancelCellEditing();
 			}
 			eventsTable.clearSelection();
-			tableModel.removeRow(0);
+			tableModel.removeRow(rowToRemove);
+			onEventsChange();
 		});
 
-		currentSelectionEditor.add(eventRemoveButton, position, 100);
+		currentSelectionEditor.addWithSettingSize(eventRemoveButton, position, 150, 10, 30);
 	}
 
 	@Override
@@ -334,6 +345,9 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		} else {
 			setEvents(new ArrayList<>());
 		}
+		eventsTable.setVisible(true);
+		eventAddButton.setVisible(true);
+		eventRemoveButton.setVisible(true);
 
 		settingData = false;
 	}

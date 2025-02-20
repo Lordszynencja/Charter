@@ -89,7 +89,8 @@ public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 	}
 
 	public T getSelectedValue() {
-		return getSelectedItem().item;
+		final ItemHolder<T> selected = getSelectedItem();
+		return selected == null ? null : selected.item;
 	}
 
 	public void setSelectedValue(final T value) {

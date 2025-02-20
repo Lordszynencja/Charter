@@ -215,6 +215,7 @@ public class GuitarEventPointPane extends ParamsPane {
 			if (rowToRemove == -1) {
 				rowToRemove = eventsTable.getSelectedRow();
 				if (rowToRemove == -1) {
+					tableModel.removeRow(tableModel.getRowCount() - 1);
 					return;
 				}
 			}
@@ -223,7 +224,7 @@ public class GuitarEventPointPane extends ParamsPane {
 				eventsTable.getCellEditor().cancelCellEditing();
 			}
 			eventsTable.clearSelection();
-			tableModel.removeRow(0);
+			tableModel.removeRow(rowToRemove);
 		});
 
 		this.add(rowRemoveButton, 230, getY(row.getAndAdd(2)), 150, 20);
