@@ -15,7 +15,6 @@ import javax.swing.JComboBox;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
-
 	public static class ItemHolder<T> {
 		public final T item;
 		private final String label;
@@ -47,7 +46,33 @@ public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static <T> int findSelectedIndex(final List<T> items, final T item) {
+	private final List<T> items;
+
+	public CharterSelect(final List<T> items, final T item, final Function<T, String> labelGenerator,
+			final Consumer<T> onPick) {
+		super(pack(items, labelGenerator == null ? defaultLabelGenerator() : labelGenerator));
+
+		this.items = items;
+		setSelectedIndex(findSelectedIndex(item));
+
+		if (onPick != null) {
+			addActionListener(e -> onPick.accept(getSelectedValue()));
+		}
+
+		setBackground(ColorLabel.BASE_BUTTON.color());
+	}
+
+	public CharterSelect(final Stream<T> items, final T item, final Function<T, String> labelGenerator,
+			final Consumer<T> onPick) {
+		this(items.toList(), item, labelGenerator, onPick);
+	}
+
+	public CharterSelect(final T[] items, final T item, final Function<T, String> labelGenerator,
+			final Consumer<T> onPick) {
+		this(asList(items), item, labelGenerator, onPick);
+	}
+
+	private int findSelectedIndex(final T item) {
 		for (int i = 0; i < items.size(); i++) {
 			if (Objects.equals(items.get(i), item)) {
 				return i;
@@ -67,26 +92,7 @@ public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 		return getSelectedItem().item;
 	}
 
-	public CharterSelect(final List<T> items, final T item, final Function<T, String> labelGenerator,
-			final Consumer<T> onPick) {
-		super(pack(items, labelGenerator == null ? defaultLabelGenerator() : labelGenerator));
-
-		setSelectedIndex(findSelectedIndex(items, item));
-
-		if (onPick != null) {
-			addActionListener(e -> onPick.accept(getSelectedValue()));
-		}
-
-		setBackground(ColorLabel.BASE_BUTTON.color());
-	}
-
-	public CharterSelect(final Stream<T> items, final T item, final Function<T, String> labelGenerator,
-			final Consumer<T> onPick) {
-		this(items.toList(), item, labelGenerator, onPick);
-	}
-
-	public CharterSelect(final T[] items, final T item, final Function<T, String> labelGenerator,
-			final Consumer<T> onPick) {
-		this(asList(items), item, labelGenerator, onPick);
+	public void setSelectedValue(final T value) {
+		setSelectedIndex(findSelectedIndex(value));
 	}
 }

@@ -126,6 +126,7 @@ public class Localization {
 		INVERT_STRINGS("Invert strings"), //
 		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
 		LEFT_HANDED("Left handed"), //
+		LEVEL("Level"), //
 		LINKED_NOTE_HAS_NO_LENGTH("Note that's linked to has no length"), //
 		LOW_PASS("Low"), //
 		LOW_PASS_SETTINGS("Low pass settings"), //
@@ -179,6 +180,7 @@ public class Localization {
 		PASS_FILTER_ORDER("Order"), //
 		PASS_FILTER_RIPPLE_DB("Ripple dB"), //
 		PASTE("Paste"), //
+		PHRASE_NAME("Phrase name"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
@@ -211,6 +213,7 @@ public class Localization {
 		SECTION_SOLO("Solo"), //
 		SECTION_TAPPING("Tapping"), //
 		SECTION_TRANSITION("Transition"), //
+		SECTION_TYPE("Section"), //
 		SECTION_VAMP("Vamp"), //
 		SECTION_VARIATION("Variation"), //
 		SECTION_VERSE("Verse"), //
@@ -298,11 +301,8 @@ public class Localization {
 		FILE_MENU_TEXTURING_OPTIONS("Texturing options"), //
 
 		GUITAR_BEAT_PANE("Guitar beat options"), //
-		GUITAR_BEAT_PANE_SECTION_TYPE("Section"), //
-		GUITAR_BEAT_PANE_PHRASE_NAME("Phrase name"), //
-		GUITAR_BEAT_PANE_PHRASE_LEVEL("Level"), //
 		GUITAR_BEAT_PANE_PHRASE_SOLO("Solo"), //
-		GUITAR_BEAT_PANE_EVENT_ADD("Add event"), //
+		EVENT_ADD("Add event"), //
 		GUITAR_BEAT_PANE_EVENT_REMOVE("Remove event"), //
 
 		GUITAR_MENU("Guitar"), //

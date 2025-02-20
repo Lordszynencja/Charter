@@ -25,6 +25,8 @@ public class FHPSelectionEditor {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
+	private boolean undoAdded = false;
+
 	private FieldWithLabel<TextInputWithValidation> fhpFret;
 	private FieldWithLabel<TextInputWithValidation> fhpWidth;
 
@@ -46,34 +48,32 @@ public class FHPSelectionEditor {
 		addSelectTextOnFocus(fhpWidthInput);
 		fhpWidth = new FieldWithLabel<>(Label.FHP_WIDTH, 100, 30, 20, fhpWidthInput, LabelPosition.LEFT);
 		currentSelectionEditor.add(fhpWidth, position, 140);
+	}
 
-		hideFields();
+	private void addUndo() {
+		if (undoAdded) {
+			return;
+		}
+
+		undoSystem.addUndo();
+		undoAdded = true;
+	}
+
+	private List<FHP> getItems() {
+		return selectionManager.getSelectedElements(PositionType.FHP);
 	}
 
 	private void changeFHPFret(final int newFret) {
-		undoSystem.addUndo();
-
-		final List<FHP> fhps = selectionManager.getSelectedElements(PositionType.FHP);
-		for (final FHP fhp : fhps) {
-			fhp.fret = newFret;
-		}
+		addUndo();
+		getItems().forEach(fhp -> fhp.fret = newFret);
 	}
 
 	private void changeFHPWidth(final int newWidth) {
-		undoSystem.addUndo();
-
-		final List<FHP> fhps = selectionManager.getSelectedElements(PositionType.FHP);
-		for (final FHP fhp : fhps) {
-			fhp.width = newWidth;
-		}
+		addUndo();
+		getItems().forEach(fhp -> fhp.width = newWidth);
 	}
 
-	public void showFields() {
-		fhpFret.setVisible(true);
-		fhpWidth.setVisible(true);
-	}
-
-	public void hideFields() {
+	public void hide() {
 		fhpFret.setVisible(false);
 		fhpWidth.setVisible(false);
 	}
@@ -83,8 +83,10 @@ public class FHPSelectionEditor {
 
 		final Integer fret = getSingleValue(selectedFHPs, fhp -> fhp.fret, null);
 		fhpFret.field.setTextWithoutEvent(fret == null ? "" : (fret + ""));
+		fhpFret.setVisible(true);
 
 		final Integer width = getSingleValue(selectedFHPs, fhp -> fhp.width, null);
 		fhpWidth.field.setTextWithoutEvent(width == null ? "" : (width + ""));
+		fhpWidth.setVisible(true);
 	}
 }

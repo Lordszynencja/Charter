@@ -4,9 +4,9 @@ import static log.charter.data.config.Localization.Label.TONE_NAME_CANT_BE_EMPTY
 import static log.charter.data.config.Localization.Label.TONE_NAME_PAST_LIMIT;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
-import static log.charter.util.CollectionUtils.filter;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,16 +47,10 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 				LabelPosition.LEFT);
 		toneNameField.setLocation(10, selectionEditor.sizes.getY(row++));
 		selectionEditor.add(toneNameField);
-
-		hideFields();
 	}
 
-	public void showFields() {
-		toneNameField.setVisible(true);
-	}
-
-	public void hideFields() {
-		toneNameField.setVisible(false);
+	public void setFieldsVisible(final boolean visibility) {
+		toneNameField.setVisible(visibility);
 	}
 
 	public void selectionChanged(final ISelectionAccessor<ToneChange> selectedToneChangesAccessor) {
@@ -67,8 +61,14 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 	}
 
 	private List<String> getPossibleValues(final String name) {
-		return filter(chartData.currentArrangement().tones,
-				toneName -> toneName.toLowerCase().contains(name.toLowerCase()));
+		final List<String> tones = chartData.currentArrangement().tones.stream()//
+				.filter(toneName -> toneName.toLowerCase().contains(name.toLowerCase()))//
+				.collect(Collectors.toCollection(ArrayList::new));
+		if (!tones.contains(chartData.currentArrangement().startingTone)) {
+			tones.add(chartData.currentArrangement().startingTone);
+		}
+
+		return tones;
 	}
 
 	@Override

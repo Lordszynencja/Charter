@@ -145,25 +145,30 @@ public class CharterContext {
 	final Map<String, Object> fields = getFieldsValues();
 
 	private void fillFieldsforObject(final Object o) {
-		for (final Field field : o.getClass().getDeclaredFields()) {
-			final Object fieldValue = fields.get(field.getName());
-			if (fieldValue != null && field.getType().isAssignableFrom(fieldValue.getClass())) {
-				try {
-					if (!field.canAccess(o)) {
-						field.setAccessible(true);
-						field.set(o, fieldValue);
-						field.setAccessible(false);
-					} else {
-						field.set(o, fieldValue);
+		Class<?> c = o.getClass();
+
+		while (!Object.class.equals(c)) {
+			for (final Field field : c.getDeclaredFields()) {
+				final Object fieldValue = fields.get(field.getName());
+				if (fieldValue != null && field.getType().isAssignableFrom(fieldValue.getClass())) {
+					try {
+						if (!field.canAccess(o)) {
+							field.setAccessible(true);
+							field.set(o, fieldValue);
+							field.setAccessible(false);
+						} else {
+							field.set(o, fieldValue);
+						}
+						Logger.debug("set field " + field.getName() + " of object " + o.getClass());
+					} catch (IllegalArgumentException | IllegalAccessException e) {
+						Logger.error("Couldn't set field %s of type %s".formatted(field.getName(), field.getType()), e);
+						System.exit(0);
 					}
-					Logger.debug("set field " + field.getName() + " of object " + o.getClass());
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					Logger.error("Couldn't set field %s of type %s".formatted(field.getName(), field.getType()), e);
-					System.exit(0);
 				}
 			}
-		}
 
+			c = c.getSuperclass();
+		}
 	}
 
 	public void initObject(final Object o) {
@@ -171,8 +176,7 @@ public class CharterContext {
 			fillFieldsforObject(o);
 
 			if (Initiable.class.isAssignableFrom(o.getClass())) {
-				final Initiable initiable = (Initiable) o;
-				initiable.init();
+				((Initiable) o).init();
 				Logger.debug("initiated " + o.getClass().getSimpleName());
 			}
 		} catch (final IllegalArgumentException e) {

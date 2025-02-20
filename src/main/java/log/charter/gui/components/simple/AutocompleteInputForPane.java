@@ -108,7 +108,6 @@ public class AutocompleteInputForPane<T> extends JTextField
 	private final Consumer<T> onSelect;
 
 	private boolean disableDocumentUpdateHandling = false;
-
 	private int highlightedLabel = -1;
 
 	public AutocompleteInputForPane(final ParamsPane parent, final int columns, final String text,

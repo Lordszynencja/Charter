@@ -1,6 +1,8 @@
 package log.charter.gui.panes.songEdits;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.event.DocumentEvent;
@@ -13,18 +15,17 @@ import log.charter.data.song.ToneChange;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
-import log.charter.gui.components.simple.AutocompleteInputForPane;
+import log.charter.gui.components.simple.AutocompleteInput;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.util.CollectionUtils;
-import log.charter.util.collections.ArrayList2;
 
 public class ToneChangePane extends ParamsPane implements DocumentListener {
 	private static final long serialVersionUID = -4754359602173894487L;
 
-	private final ChartData data;
+	private final ChartData chartData;
 	private final UndoSystem undoSystem;
 
-	private final AutocompleteInputForPane<String> toneNameInput;
+	private final AutocompleteInput<String> toneNameInput;
 	private boolean error;
 	private Color toneNameInputBackgroundColor;
 
@@ -32,10 +33,10 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 
 	private String toneName;
 
-	public ToneChangePane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
+	public ToneChangePane(final ChartData chartData, final CharterFrame frame, final UndoSystem undoSystem,
 			final ToneChange toneChange, final Runnable onCancel) {
 		super(frame, Label.TONE_CHANGE_PANE, 250);
-		this.data = data;
+		this.chartData = chartData;
 		this.undoSystem = undoSystem;
 
 		this.toneChange = toneChange;
@@ -43,8 +44,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		toneName = toneChange.toneName;
 
 		int row = 0;
-		toneNameInput = new AutocompleteInputForPane<>(this, 100, toneName, this::getPossibleValues, s -> s,
-				this::onSelect);
+		toneNameInput = new AutocompleteInput<>(this, 100, toneName, this::getPossibleValues, s -> s, this::onSelect);
 		toneNameInput.getDocument().addDocumentListener(this);
 		final int labelWidth = addLabel(row, 20, Label.TONE_CHANGE_TONE_NAME, 0);
 		add(toneNameInput, 20 + labelWidth + 3, getY(row++), 100, 20);
@@ -54,10 +54,15 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		addDefaultFinish(row);
 	}
 
-	private ArrayList2<String> getPossibleValues(final String name) {
-		return data.currentArrangement().tones.stream()//
+	private List<String> getPossibleValues(final String name) {
+		final List<String> tones = chartData.currentArrangement().tones.stream()//
 				.filter(toneName -> toneName.toLowerCase().contains(name.toLowerCase()))//
-				.collect(Collectors.toCollection(ArrayList2::new));
+				.collect(Collectors.toCollection(ArrayList::new));
+		if (!tones.contains(chartData.currentArrangement().startingTone)) {
+			tones.add(chartData.currentArrangement().startingTone);
+		}
+
+		return tones;
 	}
 
 	@Override
@@ -80,7 +85,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 
 		final String name = toneNameInput.getText();
 
-		final Arrangement arrangement = data.currentArrangement();
+		final Arrangement arrangement = chartData.currentArrangement();
 		if (arrangement.tones.size() >= 4 && !arrangement.tones.contains(name) && !name.isEmpty()) {
 			error = true;
 			toneNameInputBackgroundColor = toneNameInput.getBackground();
@@ -104,7 +109,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 
 		undoSystem.addUndo();
 
-		final Arrangement arrangement = data.currentArrangement();
+		final Arrangement arrangement = chartData.currentArrangement();
 		if (toneName.isEmpty()) {
 			arrangement.toneChanges.remove(toneChange);
 			if (!CollectionUtils.contains(arrangement.toneChanges,

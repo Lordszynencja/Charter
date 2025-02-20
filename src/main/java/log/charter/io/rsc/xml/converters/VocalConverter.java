@@ -47,7 +47,7 @@ public class VocalConverter implements Converter {
 		if (vocal.flag() != VocalFlag.NONE) {
 			writer.addAttribute("flag", vocal.flag().name());
 		}
-		writer.addAttribute("tone", vocal.tone + "");
+		writer.addAttribute("note", vocal.note + "");
 	}
 
 	private Vocal generateVocalFromPosition(final HierarchicalStreamReader reader) {
@@ -79,12 +79,12 @@ public class VocalConverter implements Converter {
 			vocal.text(text);
 		}
 
-		final String tone = reader.getAttribute("tone");
-		if (tone != null) {
+		final String note = reader.getAttribute("note");
+		if (note != null) {
 			try {
-				vocal.tone = Integer.valueOf(tone);
+				vocal.note = Integer.valueOf(note);
 			} catch (final NumberFormatException e) {
-				Logger.error("Wrong tone value for vocal: " + tone);
+				Logger.error("Wrong note value for vocal: " + note);
 			}
 		}
 

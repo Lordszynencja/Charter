@@ -24,7 +24,7 @@ public class ArrangementVocals {
 		this.vocals = map(vocals.vocals, vocal -> {
 			final int time = (int) vocal.position(beats);
 			final int length = (int) vocal.endPosition().position(beats) - time;
-			return new ArrangementVocal(time, length, vocal.lyrics(), vocal.tone);
+			return new ArrangementVocal(time, length, vocal.lyrics(), vocal.note);
 		});
 	}
 
