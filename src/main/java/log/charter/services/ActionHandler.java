@@ -3,7 +3,6 @@ package log.charter.services;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.lang.System.nanoTime;
 import static java.util.Arrays.asList;
 
 import java.util.HashMap;
@@ -61,9 +60,6 @@ public class ActionHandler implements Initiable {
 	private VocalsHandler vocalsHandler;
 	private WaveFormDrawer waveFormDrawer;
 	private WindowedPreviewHandler windowedPreviewHandler;
-
-	private int lastFretNumber = 0;
-	private long fretNumberTimer = 0;
 
 	private void switchTo(final EditMode editMode, final int id) {
 		switch (editMode) {
@@ -174,15 +170,8 @@ public class ActionHandler implements Initiable {
 		switchTo(currentMode, currentPath);
 	}
 
-	private void handleFretNumber(final int number) {
-		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= Config.instrument.frets) {
-			lastFretNumber = lastFretNumber * 10 + number;
-		} else {
-			lastFretNumber = number;
-		}
-
-		fretNumberTimer = nanoTime() / 1_000_000 + 2000;
-		guitarSoundsHandler.setFret(lastFretNumber);
+	private void handleNumber(final int number) {
+		modeManager.getHandler().handleNumber(number);
 	}
 
 	private void doubleGridSize() {
@@ -258,16 +247,16 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.DOUBLE_GRID, this::doubleGridSize);
 		actionHandlers.put(Action.EDIT_VOCALS, vocalsHandler::editVocals);
 		actionHandlers.put(Action.EXIT, charterContext::exit);
-		actionHandlers.put(Action.FRET_0, () -> handleFretNumber(0));
-		actionHandlers.put(Action.FRET_1, () -> handleFretNumber(1));
-		actionHandlers.put(Action.FRET_2, () -> handleFretNumber(2));
-		actionHandlers.put(Action.FRET_3, () -> handleFretNumber(3));
-		actionHandlers.put(Action.FRET_4, () -> handleFretNumber(4));
-		actionHandlers.put(Action.FRET_5, () -> handleFretNumber(5));
-		actionHandlers.put(Action.FRET_6, () -> handleFretNumber(6));
-		actionHandlers.put(Action.FRET_7, () -> handleFretNumber(7));
-		actionHandlers.put(Action.FRET_8, () -> handleFretNumber(8));
-		actionHandlers.put(Action.FRET_9, () -> handleFretNumber(9));
+		actionHandlers.put(Action.NUMBER_0, () -> handleNumber(0));
+		actionHandlers.put(Action.NUMBER_1, () -> handleNumber(1));
+		actionHandlers.put(Action.NUMBER_2, () -> handleNumber(2));
+		actionHandlers.put(Action.NUMBER_3, () -> handleNumber(3));
+		actionHandlers.put(Action.NUMBER_4, () -> handleNumber(4));
+		actionHandlers.put(Action.NUMBER_5, () -> handleNumber(5));
+		actionHandlers.put(Action.NUMBER_6, () -> handleNumber(6));
+		actionHandlers.put(Action.NUMBER_7, () -> handleNumber(7));
+		actionHandlers.put(Action.NUMBER_8, () -> handleNumber(8));
+		actionHandlers.put(Action.NUMBER_9, () -> handleNumber(9));
 		actionHandlers.put(Action.HALVE_GRID, this::halveGridSize);
 		actionHandlers.put(Action.MARK_BOOKMARK_0, () -> toggleBookmark(0));
 		actionHandlers.put(Action.MARK_BOOKMARK_1, () -> toggleBookmark(1));
@@ -326,6 +315,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.SPEED_INCREASE, () -> changeSpeed(5));
 		actionHandlers.put(Action.SPEED_INCREASE_FAST, () -> changeSpeed(25));
 		actionHandlers.put(Action.SPEED_INCREASE_PRECISE, () -> changeSpeed(1));
+		actionHandlers.put(Action.SWITCH_TS_TYPING_PART, () -> modeManager.getTempoMapModeHandler().switchTSTypingPart());
 		actionHandlers.put(Action.TOGGLE_ACCENT, guitarSoundsStatusesHandler::toggleAccent);
 		actionHandlers.put(Action.TOGGLE_ACCENT_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleAccentIndependently);
 		actionHandlers.put(Action.TOGGLE_ANCHOR, this::toggleAnchor);
@@ -410,7 +400,7 @@ public class ActionHandler implements Initiable {
 		}
 	}
 
-	public void clearFrets() {
-		lastFretNumber = 0;
+	public void clearNumbers() {
+		modeManager.clearNumbers();
 	}
 }

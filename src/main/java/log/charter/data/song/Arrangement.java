@@ -162,4 +162,12 @@ public class Arrangement {
 			closestEventPoint.phrase = name;
 		}
 	}
+
+	public void clearPhrases() {
+		final Set<String> usedPhrases = eventPoints.stream()//
+				.map(ep -> ep.phrase)//
+				.collect(Collectors.toSet());
+
+		phrases.keySet().removeIf(p -> !usedPhrases.contains(p));
+	}
 }

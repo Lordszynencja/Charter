@@ -120,4 +120,12 @@ public class ModeManager implements Initiable {
 	public EditMode getMode() {
 		return editMode;
 	}
+
+	public void clearNumbers() {
+		modeHandlers.values().forEach(ModeHandler::clearNumbers);
+	}
+
+	public TempoMapModeHandler getTempoMapModeHandler() {
+		return tempoMapModeHandler;
+	}
 }

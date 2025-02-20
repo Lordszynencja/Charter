@@ -37,7 +37,7 @@ import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.AutocompleteInput;
-import log.charter.gui.components.simple.AutocompleteInput.PopupComponentMouseListener;
+import log.charter.gui.components.simple.AutocompleteInput.LabelComponent;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
@@ -55,16 +55,13 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		private final String formattedText;
 		private final BufferedImage chordShape;
 
-		public ChordSuggestion(final int strings, final String formattedText,
-				final AutocompleteInput<ChordTemplate> input, final ChordTemplate template) {
+		public ChordSuggestion(final int strings, final String formattedText, final ChordTemplate template) {
 			super();
 			this.formattedText = formattedText;
 
 			chordShape = generateChordShapeImage(template, strings);
 			final int width = chordShape.getWidth() + 7 + (int) (font.getSize() * 0.63 * formattedText.length());
 			setSize(width, max(20, strings * shapeNoteSize + 4));
-
-			addMouseListener(new PopupComponentMouseListener<>(input, template, this::onFocus, this::onDefocus));
 		}
 
 		private static BufferedImage generateChordShapeImage(final ChordTemplate template, final int strings) {
@@ -125,7 +122,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			repaint();
 		}
 
-		private void onDefocus() {
+		private void onLoseFocus() {
 			focused = false;
 			repaint();
 		}
@@ -262,8 +259,10 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 		chordNameInput = new AutocompleteInput<>(parent, 130, "", this::getPossibleChords,
 				this::formatChordTemplateName, this::onChordTemplateChange);
-		chordNameInput.setLabelGenerator(
-				value -> new ChordSuggestion(chartData.currentStrings(), value.text, chordNameInput, value.value));
+		chordNameInput.setLabelGenerator(value -> {
+			final ChordSuggestion component = new ChordSuggestion(chartData.currentStrings(), value.text, value.value);
+			return new LabelComponent(component, component::onFocus, component::onLoseFocus);
+		});
 		chordNameInput.getDocument().addDocumentListener(new DocumentListener() {
 
 			@Override
@@ -345,7 +344,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	public void setCurrentValuesInInputs() {
 		final ChordTemplate chordTemplate = chordTemplateSupplier.get();
 		chordNameInput.setTextWithoutUpdate(chordTemplate.chordName);
-		chordNameInput.removePopups();
+		chordNameInput.removeLabels();
 
 		for (int i = 0; i < chartData.currentStrings(); i++) {
 			final Integer fret = chordTemplate.frets.get(i);
@@ -560,7 +559,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		chordNameAdviceButton.removePopup();
 		chordNameLabel.setVisible(false);
 		chordNameInput.setVisible(false);
-		chordNameInput.removePopups();
+		chordNameInput.removeLabels();
 		fretsLabel.setVisible(false);
 		fingersLabel.setVisible(false);
 
@@ -585,6 +584,6 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		}
 
 		chordNameInput.setTextWithoutUpdate("");
-		chordNameInput.removePopups();
+		chordNameInput.removeLabels();
 	}
 }

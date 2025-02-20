@@ -122,8 +122,10 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 		if (modeManager.getMode() == EditMode.VOCALS) {
 			menu.addSeparator();
 			menu.add(createItem(Label.VOCAL_PATH_OPTIONS, this::editVocalPathSettings));
-		}
-		if (modeManager.getMode() == EditMode.GUITAR) {
+
+			menu.addSeparator();
+			menu.add(createItem(Label.DELETE_VOCAL_PATH, this::deleteVocalPath));
+		} else if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
 			menu.add(createItem(Label.ARRANGEMENT_OPTIONS, this::editArrangementSettings));
 
@@ -180,9 +182,32 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 		LevelSquisher.squish(chartData.currentArrangement());
 	}
 
+	private void deleteVocalPath() {
+		final String name = chartData.getCurrentVocalPathName();
+		final String msg = Label.DELETE_VOCAL_PATH_POPUP_MSG.format(name);
+		final int option = JOptionPane.showConfirmDialog(charterFrame, msg, Label.DELETE_VOCAL_PATH_POPUP_TITLE.label(),
+				JOptionPane.YES_NO_OPTION);
+
+		if (option != JOptionPane.YES_OPTION) {
+			return;
+		}
+
+		chartData.songChart.vocalPaths.remove(chartData.currentVocals);
+
+		if (!chartData.songChart.vocalPaths.isEmpty()) {
+			if (chartData.songChart.vocalPaths.size() == chartData.currentVocals) {
+				modeManager.setVocalPath(chartData.currentVocals - 1);
+			} else {
+				modeManager.setVocalPath(chartData.currentVocals);
+			}
+		} else {
+			modeManager.setMode(EditMode.TEMPO_MAP);
+		}
+	}
+
 	private void deleteArrangement() {
 		final String arrangementName = chartData.getCurrentArrangementName();
-		final String msg = Label.DELETE_ARRANGEMENT_POPUP_MSG.label().formatted(arrangementName);
+		final String msg = Label.DELETE_ARRANGEMENT_POPUP_MSG.format(arrangementName);
 		final int option = JOptionPane.showConfirmDialog(charterFrame, msg,
 				Label.DELETE_ARRANGEMENT_POPUP_TITLE.label(), JOptionPane.YES_NO_OPTION);
 
@@ -190,19 +215,18 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 			return;
 		}
 
-		final int arrangementToRemove = chartData.currentArrangement;
-		chartData.songChart.arrangements.remove(arrangementToRemove);
+		chartData.songChart.arrangements.remove(chartData.currentArrangement);
 
-		if (chartData.songChart.arrangements.size() > 0) {
-			if (chartData.songChart.arrangements.size() == arrangementToRemove) {
-				modeManager.setArrangement(arrangementToRemove - 1);
+		if (!chartData.songChart.arrangements.isEmpty()) {
+			if (chartData.songChart.arrangements.size() == chartData.currentArrangement) {
+				modeManager.setArrangement(chartData.currentArrangement - 1);
 			} else {
-				modeManager.setArrangement(arrangementToRemove);
+				modeManager.setArrangement(chartData.currentArrangement);
 			}
+		} else if (!chartData.songChart.vocalPaths.isEmpty()) {
+			modeManager.setVocalPath(chartData.songChart.vocalPaths.size() - 1);
 		} else {
-			modeManager.setMode(EditMode.VOCALS);
+			modeManager.setMode(EditMode.TEMPO_MAP);
 		}
-
-		charterMenuBar.refreshMenus();
 	}
 }

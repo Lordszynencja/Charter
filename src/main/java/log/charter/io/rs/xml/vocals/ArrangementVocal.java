@@ -17,12 +17,12 @@ public class ArrangementVocal {
 	@XStreamAsAttribute
 	public String lyric;
 	@XStreamAsAttribute
-	public int tone;
+	public int note;
 
-	public ArrangementVocal(final Integer time, final Integer length, final String lyric, final int tone) {
+	public ArrangementVocal(final Integer time, final Integer length, final String lyric, final int note) {
 		this.time = time;
 		this.length = length;
 		this.lyric = lyric;
-		this.tone = tone;
+		this.note = note;
 	}
 }

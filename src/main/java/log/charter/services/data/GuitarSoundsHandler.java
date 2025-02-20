@@ -364,12 +364,6 @@ public class GuitarSoundsHandler {
 			case GUITAR_NOTE:
 				setFretForSounds(fret);
 				break;
-			case BEAT:
-			case EVENT_POINT:
-			case HAND_SHAPE:
-			case TONE_CHANGE:
-			case NONE:
-			case VOCAL:
 			default:
 				break;
 		}

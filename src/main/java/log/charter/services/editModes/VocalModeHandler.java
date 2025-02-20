@@ -13,7 +13,7 @@ import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 
-public class VocalModeHandler extends ModeHandler {
+public class VocalModeHandler implements ModeHandler {
 	private static final long scrollTimeoutForUndo = 1000;
 
 	private ChartData chartData;
@@ -62,5 +62,13 @@ public class VocalModeHandler extends ModeHandler {
 
 		currentSelectionEditor.selectionChanged(false);
 		lastScrollTime = System.currentTimeMillis();
+	}
+
+	@Override
+	public void handleNumber(final int number) {
+	}
+
+	@Override
+	public void clearNumbers() {
 	}
 }

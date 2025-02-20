@@ -103,6 +103,10 @@ public class ChartData {
 		return currentArrangement().getTypeNameLabel(currentArrangement);
 	}
 
+	public String getCurrentVocalPathName() {
+		return currentVocals().getName(currentVocals);
+	}
+
 	public List<EventPoint> currentEventPoints() {
 		return currentArrangement().eventPoints;
 	}

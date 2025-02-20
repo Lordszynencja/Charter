@@ -76,6 +76,9 @@ public class Localization {
 		DELETE_ARRANGEMENT("Delete arrangement"), //
 		DELETE_ARRANGEMENT_POPUP_MSG("Are you sure you want to delete arrangement %s?"), //
 		DELETE_ARRANGEMENT_POPUP_TITLE("Delete arrangement?"), //
+		DELETE_VOCAL_PATH("Delete vocal path"), //
+		DELETE_VOCAL_PATH_POPUP_MSG("Are you sure you want to delete vocal path %s?"), //
+		DELETE_VOCAL_PATH_POPUP_TITLE("Delete vocal path?"), //
 		DIRECTORY_DOESNT_EXIST("Directory doesn't exist"), //
 		DISTANCE_TYPE_BEATS("1/x beat"), //
 		DISTANCE_TYPE_MILISECONDS("ms"), //
@@ -100,16 +103,16 @@ public class Localization {
 		FORCE_ARPEGGIO_IN_RS("in RS"), //
 		FPS("FPS"), //
 		FRET("Fret"), //
-		FRET_0("Fret 0"), //
-		FRET_1("Fret 1"), //
-		FRET_2("Fret 2"), //
-		FRET_3("Fret 3"), //
-		FRET_4("Fret 4"), //
-		FRET_5("Fret 5"), //
-		FRET_6("Fret 6"), //
-		FRET_7("Fret 7"), //
-		FRET_8("Fret 8"), //
-		FRET_9("Fret 9"), //
+		NUMBER_0("Number 0"), //
+		NUMBER_1("Number 1"), //
+		NUMBER_2("Number 2"), //
+		NUMBER_3("Number 3"), //
+		NUMBER_4("Number 4"), //
+		NUMBER_5("Number 5"), //
+		NUMBER_6("Number 6"), //
+		NUMBER_7("Number 7"), //
+		NUMBER_8("Number 8"), //
+		NUMBER_9("Number 9"), //
 		FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
 				"Fret in sound is different than fret in hand shape under it on the same string"), //
 		FRETS("Frets"), //
@@ -123,6 +126,7 @@ public class Localization {
 		INVERT_STRINGS("Invert strings"), //
 		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
 		LEFT_HANDED("Left handed"), //
+		LEVEL("Level"), //
 		LINKED_NOTE_HAS_NO_LENGTH("Note that's linked to has no length"), //
 		LOW_PASS("Low"), //
 		LOW_PASS_SETTINGS("Low pass settings"), //
@@ -176,6 +180,7 @@ public class Localization {
 		PASS_FILTER_ORDER("Order"), //
 		PASS_FILTER_RIPPLE_DB("Ripple dB"), //
 		PASTE("Paste"), //
+		PHRASE_NAME("Phrase name"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
@@ -208,6 +213,7 @@ public class Localization {
 		SECTION_SOLO("Solo"), //
 		SECTION_TAPPING("Tapping"), //
 		SECTION_TRANSITION("Transition"), //
+		SECTION_TYPE("Section"), //
 		SECTION_VAMP("Vamp"), //
 		SECTION_VARIATION("Variation"), //
 		SECTION_VERSE("Verse"), //
@@ -233,6 +239,7 @@ public class Localization {
 		SQUASH_LEVELS("Squash levels"), //
 		STARTING_TONE("Starting tone"), //
 		SUPPORTED_MUSIC_FILE("Flac, Mp3, Ogg or Wav file"), //
+		SWITCH_TS_TYPING_PART("Switch TS typing part"), //
 		TAB_3D_PREVIEW("3D preview"), //
 		TAB_CHORD_TEMPLATES_EDITOR("Chord templates"), //
 		TAB_ERRORS("Errors"), //
@@ -295,11 +302,8 @@ public class Localization {
 		FILE_MENU_TEXTURING_OPTIONS("Texturing options"), //
 
 		GUITAR_BEAT_PANE("Guitar beat options"), //
-		GUITAR_BEAT_PANE_SECTION_TYPE("Section"), //
-		GUITAR_BEAT_PANE_PHRASE_NAME("Phrase name"), //
-		GUITAR_BEAT_PANE_PHRASE_LEVEL("Level"), //
 		GUITAR_BEAT_PANE_PHRASE_SOLO("Solo"), //
-		GUITAR_BEAT_PANE_EVENT_ADD("Add event"), //
+		EVENT_ADD("Add event"), //
 		GUITAR_BEAT_PANE_EVENT_REMOVE("Remove event"), //
 
 		GUITAR_MENU("Guitar"), //

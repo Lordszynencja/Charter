@@ -1,15 +1,15 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
-import static log.charter.data.types.PositionType.FHP;
 import static log.charter.data.types.PositionType.GUITAR_NOTE;
 import static log.charter.data.types.PositionType.HAND_SHAPE;
 import static log.charter.data.types.PositionType.NONE;
-import static log.charter.data.types.PositionType.TONE_CHANGE;
 import static log.charter.data.types.PositionType.VOCAL;
 
 import java.awt.Dimension;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -57,6 +57,8 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
 
+	private final Map<PositionType, SelectionEditorPart<?>> parts = new HashMap<>();
+
 	private final FHPSelectionEditor fhpSelectionEditor = new FHPSelectionEditor();
 	private final GuitarSoundSelectionEditor guitarSoundSelectionEditor = new GuitarSoundSelectionEditor(this);
 	private final HandShapeSelectionEditor handShapeSelectionEditor = new HandShapeSelectionEditor(this);
@@ -70,10 +72,17 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		setBackground(ColorLabel.BASE_BG_2.color());
 
 		setMinimumSize(new Dimension(925, sizes.getHeight(10)));
+
+		parts.put(PositionType.EVENT_POINT, new EventPointSelectionEditor());
 	}
 
 	@Override
 	public void init() {
+		for (final SelectionEditorPart<?> part : parts.values()) {
+			charterContext.initObject(part);
+			part.addTo(this);
+		}
+
 		charterContext.initObject(fhpSelectionEditor);
 		fhpSelectionEditor.addTo(this);
 
@@ -89,14 +98,20 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		charterContext.initObject(vocalSelectionEditor);
 		vocalSelectionEditor.addTo(this);
 
+		hideAllfieldsExcept(null);
+
 		addKeyListener(keyboardHandler);
 	}
 
 	private void hideAllfieldsExcept(final PositionType type) {
-		if (type != FHP) {
-			fhpSelectionEditor.hideFields();
-		} else {
-			fhpSelectionEditor.showFields();
+		parts.forEach((partType, part) -> {
+			if (type != partType) {
+				part.hide();
+			}
+		});
+
+		if (type != PositionType.FHP) {
+			fhpSelectionEditor.hide();
 		}
 
 		if (type != GUITAR_NOTE) {
@@ -111,11 +126,7 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 			handShapeSelectionEditor.showFields();
 		}
 
-		if (type != TONE_CHANGE) {
-			toneChangeSelectionEditor.hideFields();
-		} else {
-			toneChangeSelectionEditor.showFields();
-		}
+		toneChangeSelectionEditor.setFieldsVisible(type == PositionType.TONE_CHANGE);
 
 		if (type != VOCAL) {
 			vocalSelectionEditor.hideFields();
@@ -125,33 +136,38 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends IVirtualPosition> void selectionChanged(final boolean stringsCouldChange) {
-		final ISelectionAccessor<T> selected = selectionManager.selectedAccessor();
+	public void selectionChanged(final boolean stringsCouldChange) {
+		final ISelectionAccessor<? extends IVirtualPosition> selected = selectionManager.selectedAccessor();
 		if (selected == null || !selected.isSelected()) {
 			hideAllfieldsExcept(NONE);
 		}
 
 		hideAllfieldsExcept(selected.type());
 
-		switch (selected.type()) {
-			case FHP:
-				fhpSelectionEditor.selectionChanged((ISelectionAccessor<FHP>) selected);
-				break;
-			case GUITAR_NOTE:
-				guitarSoundSelectionEditor.selectionChanged((ISelectionAccessor<ChordOrNote>) selected,
-						stringsCouldChange);
-				break;
-			case HAND_SHAPE:
-				handShapeSelectionEditor.selectionChanged((ISelectionAccessor<HandShape>) selected);
-				break;
-			case TONE_CHANGE:
-				toneChangeSelectionEditor.selectionChanged((ISelectionAccessor<ToneChange>) selected);
-				break;
-			case VOCAL:
-				vocalSelectionEditor.selectionChanged((ISelectionAccessor<Vocal>) selected);
-				break;
-			default:
-				break;
+		final SelectionEditorPart<?> part = parts.get(selected.type());
+		if (part != null) {
+			part.selectionChanged();
+		} else {
+			switch (selected.type()) {
+				case FHP:
+					fhpSelectionEditor.selectionChanged((ISelectionAccessor<FHP>) selected);
+					break;
+				case GUITAR_NOTE:
+					guitarSoundSelectionEditor.selectionChanged((ISelectionAccessor<ChordOrNote>) selected,
+							stringsCouldChange);
+					break;
+				case HAND_SHAPE:
+					handShapeSelectionEditor.selectionChanged((ISelectionAccessor<HandShape>) selected);
+					break;
+				case TONE_CHANGE:
+					toneChangeSelectionEditor.selectionChanged((ISelectionAccessor<ToneChange>) selected);
+					break;
+				case VOCAL:
+					vocalSelectionEditor.selectionChanged((ISelectionAccessor<Vocal>) selected);
+					break;
+				default:
+					break;
+			}
 		}
 
 		repaint();

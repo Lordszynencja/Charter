@@ -33,7 +33,7 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.ParamsPane;
-import log.charter.gui.components.simple.AutocompleteInputForPane;
+import log.charter.gui.components.simple.AutocompleteInput;
 import log.charter.gui.components.simple.CharterSelect;
 import log.charter.gui.components.simple.CharterSelect.ItemHolder;
 import log.charter.gui.components.utils.validators.IntValueValidator;
@@ -44,7 +44,7 @@ public class GuitarEventPointPane extends ParamsPane {
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
-	private AutocompleteInputForPane<String> phraseNameInput;
+	private AutocompleteInput<String> phraseNameInput;
 	private JLabel phraseHint;
 	private JTextField phraseLevelInput;
 	private JCheckBox phraseSoloInput;
@@ -89,7 +89,7 @@ public class GuitarEventPointPane extends ParamsPane {
 
 		phraseHint.setText(section == null ? "" : section.label.label());
 		phraseHint.setVisible(!phraseHint.getText().isBlank() && phraseNameInput.getText().isBlank());
-		phraseNameInput.repaint();
+		phraseHint.repaint();
 	}
 
 	private void prepareSectionInput(final AtomicInteger row) {
@@ -102,12 +102,12 @@ public class GuitarEventPointPane extends ParamsPane {
 		final CharterSelect<SectionType> input = new CharterSelect<>(sectionTypes, section,
 				v -> v == null ? "" : v.label.label(), this::onSectionChange);
 
-		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_SECTION_TYPE, 0);
+		addLabel(row.get(), 20, Label.SECTION_TYPE, 0);
 		this.add(input, 100, getY(row.getAndIncrement()), 200, 20);
 	}
 
 	private void preparePhraseInputs(final AtomicInteger row, final String phrase) {
-		addLabel(row.get(), 20, Label.GUITAR_BEAT_PANE_PHRASE_NAME, 0);
+		addLabel(row.get(), 20, Label.PHRASE_NAME, 0);
 
 		phraseHint = new JLabel(section == null ? "" : section.label.label());
 		phraseHint.setVisible(false);
@@ -115,7 +115,7 @@ public class GuitarEventPointPane extends ParamsPane {
 		phraseHint.setCursor(new Cursor(Cursor.TEXT_CURSOR));
 		this.add(phraseHint, 105, getY(row.get()), 100, 20);
 
-		phraseNameInput = new AutocompleteInputForPane<>(this, 100, phrase, this::getPossiblePhraseNames, s -> s,
+		phraseNameInput = new AutocompleteInput<>(this, 100, phrase, this::getPossiblePhraseNames, s -> s,
 				this::onPhraseNameSelected);
 		this.add(phraseNameInput, 100, getY(row.getAndIncrement()) - 2, 100, 24);
 
@@ -131,7 +131,7 @@ public class GuitarEventPointPane extends ParamsPane {
 			}
 		});
 
-		addIntConfigValue(row.get(), 50, 45, Label.GUITAR_BEAT_PANE_PHRASE_LEVEL, phraseLevel, 30, //
+		addIntConfigValue(row.get(), 50, 45, Label.LEVEL, phraseLevel, 30, //
 				new IntValueValidator(0, 100), v -> phraseLevel = v, false);
 		phraseLevelInput = (JTextField) getPart(-1);
 
@@ -201,7 +201,7 @@ public class GuitarEventPointPane extends ParamsPane {
 
 		this.add(scrollTable, 50, getY(row.getAndIncrement()), 170, 120);
 
-		final JButton rowAddButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_ADD.label());
+		final JButton rowAddButton = new JButton(Label.EVENT_ADD.label());
 		rowAddButton.addActionListener(e -> { tableModel.addRow(new Vector<Object>(1)); });
 		this.add(rowAddButton, 230, getY(row.getAndAdd(2)), 150, 20);
 
@@ -215,6 +215,7 @@ public class GuitarEventPointPane extends ParamsPane {
 			if (rowToRemove == -1) {
 				rowToRemove = eventsTable.getSelectedRow();
 				if (rowToRemove == -1) {
+					tableModel.removeRow(tableModel.getRowCount() - 1);
 					return;
 				}
 			}
@@ -223,7 +224,7 @@ public class GuitarEventPointPane extends ParamsPane {
 				eventsTable.getCellEditor().cancelCellEditing();
 			}
 			eventsTable.clearSelection();
-			tableModel.removeRow(0);
+			tableModel.removeRow(rowToRemove);
 		});
 
 		this.add(rowRemoveButton, 230, getY(row.getAndAdd(2)), 150, 20);
@@ -288,5 +289,7 @@ public class GuitarEventPointPane extends ParamsPane {
 			}
 		}
 		eventPoint.events.sort(EventType::compareTo);
+
+		arrangement.clearPhrases();
 	}
 }

@@ -15,7 +15,6 @@ import javax.swing.JComboBox;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
-
 	public static class ItemHolder<T> {
 		public final T item;
 		private final String label;
@@ -47,31 +46,14 @@ public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static <T> int findSelectedIndex(final List<T> items, final T item) {
-		for (int i = 0; i < items.size(); i++) {
-			if (Objects.equals(items.get(i), item)) {
-				return i;
-			}
-		}
-
-		return 0;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public ItemHolder<T> getSelectedItem() {
-		return (ItemHolder<T>) super.getSelectedItem();
-	}
-
-	public T getSelectedValue() {
-		return getSelectedItem().item;
-	}
+	private final List<T> items;
 
 	public CharterSelect(final List<T> items, final T item, final Function<T, String> labelGenerator,
 			final Consumer<T> onPick) {
 		super(pack(items, labelGenerator == null ? defaultLabelGenerator() : labelGenerator));
 
-		setSelectedIndex(findSelectedIndex(items, item));
+		this.items = items;
+		setSelectedIndex(findSelectedIndex(item));
 
 		if (onPick != null) {
 			addActionListener(e -> onPick.accept(getSelectedValue()));
@@ -88,5 +70,30 @@ public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 	public CharterSelect(final T[] items, final T item, final Function<T, String> labelGenerator,
 			final Consumer<T> onPick) {
 		this(asList(items), item, labelGenerator, onPick);
+	}
+
+	private int findSelectedIndex(final T item) {
+		for (int i = 0; i < items.size(); i++) {
+			if (Objects.equals(items.get(i), item)) {
+				return i;
+			}
+		}
+
+		return 0;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ItemHolder<T> getSelectedItem() {
+		return (ItemHolder<T>) super.getSelectedItem();
+	}
+
+	public T getSelectedValue() {
+		final ItemHolder<T> selected = getSelectedItem();
+		return selected == null ? null : selected.item;
+	}
+
+	public void setSelectedValue(final T value) {
+		setSelectedIndex(findSelectedIndex(value));
 	}
 }
