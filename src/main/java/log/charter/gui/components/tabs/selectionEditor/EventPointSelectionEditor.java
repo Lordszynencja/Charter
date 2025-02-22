@@ -300,7 +300,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		phrase.setVisible(false);
 		maxLevel.setVisible(false);
 		solo.setVisible(false);
-		eventsTable.setVisible(false);
+		eventsTableScroll.setVisible(false);
 		eventAddButton.setVisible(false);
 		eventRemoveButton.setVisible(false);
 	}
@@ -345,7 +345,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		} else {
 			setEvents(new ArrayList<>());
 		}
-		eventsTable.setVisible(true);
+		eventsTableScroll.setVisible(true);
 		eventAddButton.setVisible(true);
 		eventRemoveButton.setVisible(true);
 
