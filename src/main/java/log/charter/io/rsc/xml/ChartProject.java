@@ -12,6 +12,7 @@ import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Beat;
 import log.charter.data.song.SongChart;
+import log.charter.data.song.Stem;
 import log.charter.data.song.vocals.VocalPath;
 import log.charter.services.editModes.EditMode;
 
@@ -31,6 +32,8 @@ public class ChartProject {
 	public Integer albumYear;
 
 	public String musicFileName;
+	public List<Stem> stems = new ArrayList<>();
+	public int selectedStem;
 	public List<String> arrangementFiles = new ArrayList<>();
 
 	public List<Beat> beats = new ArrayList<>();
@@ -42,7 +45,7 @@ public class ChartProject {
 	public String text;
 
 	public ChartProject(final double time, final EditMode editMode, final ChartData data, final SongChart songChart,
-			final String text) {
+			final int selectedStem, final String text) {
 		this.editMode = editMode;
 		arrangement = data.currentArrangement;
 		level = data.currentLevel;
@@ -55,6 +58,8 @@ public class ChartProject {
 		albumYear = songChart.albumYear;
 
 		musicFileName = songChart.musicFileName;
+		stems = songChart.stems;
+		this.selectedStem = selectedStem;
 
 		beats = new ArrayList<>(songChart.beatsMap.beats);
 		vocalPaths = songChart.vocalPaths;

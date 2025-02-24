@@ -49,6 +49,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 		final AudioData editedAudio = projectAudioHandler.getAudio().removeFromStart(movement / 1000.0);
 
 		projectAudioHandler.changeAudio(editedAudio);
+		projectAudioHandler.changeStemsOffset(-movement / 1000);
 		data.songChart.moveBeats(chartTimeHandler.maxTime(), -movement);
 	}
 
@@ -61,9 +62,11 @@ public class AddDefaultSilencePane extends ParamsPane {
 		final AudioData songMusicData = projectAudioHandler.getAudio();
 		final AudioData silenceMusicData = generateSilence(movement / 1000.0, songMusicData.format.getSampleRate(),
 				songMusicData.format.getChannels(), songMusicData.format.getSampleSizeInBits() / 8);
+
 		try {
 			final AudioData joined = silenceMusicData.join(songMusicData);
 			projectAudioHandler.changeAudio(joined);
+			projectAudioHandler.changeStemsOffset(movement / 1000);
 			data.songChart.moveBeats(chartTimeHandler.maxTime(), movement);
 		} catch (final DifferentSampleSizesException e) {
 			Logger.error("Couldn't join audio " + songMusicData.format + " and " + silenceMusicData.format);

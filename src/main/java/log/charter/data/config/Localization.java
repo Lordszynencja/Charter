@@ -19,6 +19,7 @@ import log.charter.util.RW;
 public class Localization {
 	public enum Label {
 		ACCENT("Accent"), //
+		ADD_AUDIO_STEM("Add audio stem"), //
 		ADD_BEATS_AMOUNT("Add this many beats:"), //
 		ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
 		ADD_BEATS_PANE("Add beats"), //
@@ -46,6 +47,10 @@ public class Localization {
 		AUDIO_OUTPUT("Audio output"), //
 		AUDIO_OUTPUT_L_ID("Left output channel id"), //
 		AUDIO_OUTPUT_R_ID("Right output channel id"), //
+		AUDIO_STEM_NAME("Audio stem name:"), //
+		AUDIO_STEM_NAME_CANT_BE_EMPTY("Audio stem name can't be empty"), //
+		AUDIO_STEM_SETTINGS("Audio stem settings"), //
+		AUDIO_STEMS("Audio stems"), //
 		BACKUP_DELAY_S("Backup delay (s)"), //
 		BAND_PASS("Band"), //
 		BAND_PASS_SETTINGS("Band pass settings"), //
@@ -69,6 +74,7 @@ public class Localization {
 		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 3/4/5 file"), //
 		COULDNT_IMPORT_GP7("Couldn't properly import Guitar Pro 7/8 file"), //
 		COULDNT_IMPORT_MIDI_TEMPO("Couldn't properly import tempo map from %s"), //
+		COULDNT_LOAD_AUDIO("Couldn't load audio from %s"), //
 		COULDNT_READ_TXT("Couldn't import file %s, unrecognized format"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
 		CREATE_PROJECT_FROM_RS_XML("Create project from RS arrangement XML"), //
@@ -132,6 +138,7 @@ public class Localization {
 		LOW_PASS_SETTINGS("Low pass settings"), //
 		LRC_FILE("LRC file"), //
 		LRC_IMPORTED_SUCCESSFULLY("LRC vocals imported successfully"), //
+		MAIN_AUDIO("Main audio"), //
 		MARK_BOOKMARK_0("Mark bookmark 0"), //
 		MARK_BOOKMARK_1("Mark bookmark 1"), //
 		MARK_BOOKMARK_2("Mark bookmark 2"), //
@@ -172,6 +179,7 @@ public class Localization {
 		NOTE_SLIDES_INTO_WRONG_FRET("Note slide ends on a different fret than next note on string %d"), //
 		NOTE_SLIDE_ENDS_ON_DIFFERENT_FINGER("Note slide ends on different finger on string %d"), //
 		NOTE_WITHOUT_FHP("Note without FHP"), //
+		OFFSET_MS_FIELD("Offset (ms):"), //
 		OPEN_PROJECT("Open project"), //
 		PASS_FILTER_ALGORITHM("Algorithm"), //
 		PASS_FILTER_CENTER_FREQUENCY("Center frequency"), //
@@ -483,6 +491,7 @@ public class Localization {
 		LOADING_DONE("Loading done"), //
 		LOADING_MUSIC_FILE("Loading music file"), //
 		LOADING_PROJECT_FILE("Loading project file"), //
+		LOADING_STEM("Loading stem"), //
 		MIDI_FILE("Midi file (.mid)"), //
 		MISSING_ARRANGEMENT_FILE("Missing arrangement file %s"), //
 		MUSIC_FILE_COULDNT_BE_LOADED("Music file couldn't be loaded"), //

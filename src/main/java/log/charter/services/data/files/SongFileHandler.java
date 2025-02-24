@@ -124,6 +124,7 @@ public class SongFileHandler {
 		chartData.setSong(songFile.getParent() + File.separator, songChart, "project.rscp", EditMode.GUITAR, 0, 0);
 		textTab.setText("");
 		projectAudioHandler.setAudio(musicData);
+		projectAudioHandler.readStems();
 
 		chartTimeHandler.nextTime(0);
 		audioHandler.clear();
@@ -139,7 +140,7 @@ public class SongFileHandler {
 
 	private void writeRSXML(final Timer timer, final File dir, final int id, final Arrangement arrangement) {
 		final String arrangementFileName = generateArrangementFileName(id, arrangement);
-		final SongArrangement songArrangement = new SongArrangement((int) projectAudioHandler.getAudio().msLength(),
+		final SongArrangement songArrangement = new SongArrangement((int) projectAudioHandler.audioLength(),
 				chartData.songChart, arrangement);
 		final String xml = SongArrangementXStreamHandler.saveSong(songArrangement);
 		timer.addTimestamp("created XML for arrangement " + id);
@@ -196,7 +197,7 @@ public class SongFileHandler {
 		timer.addTimestamp("arrangementFixer.fixArrangements()");
 
 		final ChartProject project = new ChartProject(chartTimeHandler.time(), modeManager.getMode(), chartData,
-				chartData.songChart, textTab.getText());
+				chartData.songChart, projectAudioHandler.getSelectedStem(), textTab.getText());
 		timer.addTimestamp("generated project");
 		final String xml = writeChartProject(project);
 		timer.addTimestamp("wrote project to variable");

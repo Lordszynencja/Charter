@@ -40,7 +40,7 @@ public class RowedDialog extends JDialog implements ComponentListener {
 	protected final RowedPanel panel;
 
 	public RowedDialog(final CharterFrame frame, final Label title) {
-		this(frame, title, 700);
+		this(frame, title, 250);
 	}
 
 	public RowedDialog(final CharterFrame frame, final Label title, final int width) {

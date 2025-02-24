@@ -7,6 +7,8 @@ import javax.swing.JMenu;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.simple.LoadingDialog;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.panes.colorConfig.ColorConfigPane;
 import log.charter.gui.panes.graphicalConfig.GraphicConfigPane;
 import log.charter.gui.panes.programConfig.ConfigPane;
@@ -26,6 +28,7 @@ import log.charter.services.data.files.USCTxtImporter;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.utils.Framer;
+import log.charter.sound.data.AudioData;
 import log.charter.util.FileChooseUtils;
 
 public class FileMenuHandler extends CharterMenuHandler implements Initiable {
@@ -65,6 +68,7 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 
 		if (modeManager.getMode() != EditMode.EMPTY) {
 			menu.add(createItem(Label.CHANGE_AUDIO, this::openAudioFile));
+			menu.add(createItem(Label.ADD_AUDIO_STEM, this::addAudioStem));
 
 			final JMenu importSubmenu = createMenu(Label.FILE_MENU_IMPORT);
 			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_MIDI_TEMPO, this::importMidiTempo));
@@ -105,6 +109,43 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 		}
 
 		projectAudioHandler.importAudio(file);
+	}
+
+	private void addAudioStem() {
+		final File file = FileChooseUtils.chooseMusicFile(charterFrame, chartData.path);
+		if (file == null) {
+			return;
+		}
+
+		String path = file.getAbsolutePath();
+		boolean local = false;
+		if (path.startsWith(chartData.path)) {
+			local = true;
+			path = path.substring(chartData.path.length());
+		}
+
+		final AudioData stemAudioData = LoadingDialog.load(charterFrame, 1, dialog -> {
+			dialog.setProgress(0, Label.LOADING_MUSIC_FILE);
+			final AudioData result = AudioData.readFile(file);
+			dialog.addProgress(Label.LOADING_DONE);
+
+			return result;
+		}, "Loading stem audio");
+		if (stemAudioData == null) {
+			ComponentUtils.showPopup(charterFrame, Label.COULDNT_LOAD_AUDIO, file.getAbsolutePath());
+			return;
+		}
+
+		String stemName = ComponentUtils.askForInput(charterFrame, Label.AUDIO_STEM_NAME, "");
+		while (stemName != null && stemName.isBlank()) {
+			ComponentUtils.showPopup(charterFrame, Label.AUDIO_STEM_NAME_CANT_BE_EMPTY);
+			stemName = ComponentUtils.askForInput(charterFrame, Label.AUDIO_STEM_NAME, "");
+		}
+		if (stemName == null) {
+			return;
+		}
+
+		projectAudioHandler.addStem(stemName, path, local, stemAudioData);
 	}
 
 	private void importMidiTempo() {

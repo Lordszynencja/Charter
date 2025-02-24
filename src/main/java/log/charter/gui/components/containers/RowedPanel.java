@@ -43,11 +43,7 @@ public class RowedPanel extends JPanel {
 	private final List<Component> parts = new ArrayList<>();
 
 	public RowedPanel(final PaneSizes sizes) {
-		this.sizes = sizes;
-
-		setSize(sizes.width, sizes.getHeight(3));
-
-		setLayout(null);
+		this(sizes, 3);
 	}
 
 	public RowedPanel(final PaneSizes sizes, final int rows) {
@@ -58,7 +54,7 @@ public class RowedPanel extends JPanel {
 	}
 
 	protected void resizeToFit(final int width, final int height) {
-		Dimension size = getPreferredSize();
+		Dimension size = getSize();
 		size = new Dimension(max(width, size.width), max(height, size.height));
 
 		setSize(size);
@@ -99,12 +95,17 @@ public class RowedPanel extends JPanel {
 
 	public void addWithSettingSize(final Component component, final RowedPosition position, final int width,
 			final int space, final int height) {
-		addWithSettingSize(component, position.getAndAddX(width + space), position.getY(), width, height);
+		addWithSettingSize(component, position.getAndAddX(width + space), position.getY(), width, height, space);
 	}
 
 	public void addWithSettingSize(final Component component, final int x, final int y, final int w, final int h) {
+		addWithSettingSize(component, x, y, w, h, 20);
+	}
+
+	public void addWithSettingSize(final Component component, final int x, final int y, final int w, final int h,
+			final int space) {
 		setComponentBounds(component, x, y, w, h);
-		resizeToFit(x + w, y + h + sizes.verticalSpace);
+		resizeToFit(x + w + space, y + h + sizes.verticalSpace);
 		add(component);
 	}
 
@@ -133,7 +134,7 @@ public class RowedPanel extends JPanel {
 		if (width == 0) {
 			width = labelComponent.getPreferredSize().width;
 		}
-		addWithSettingSize(labelComponent, x, y, width, 20);
+		addWithSettingSize(labelComponent, x, y, width, 20, sizes.verticalSpace);
 
 		return width;
 	}
