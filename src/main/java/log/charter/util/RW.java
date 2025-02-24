@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import log.charter.io.Logger;
+
 public class RW {
 	public static File getProgramDirectory() {
 		try {
@@ -150,5 +152,26 @@ public class RW {
 		lines.sort(String::compareTo);
 
 		writeB(file, String.join("\r\n", lines).getBytes());
+	}
+
+	public static void copy(final File from, final File to) {
+		try {
+			to.getParentFile().mkdirs();
+
+			final FileInputStream input = new FileInputStream(from);
+			final byte[] bytes = new byte[4096];
+			int bytesRead = 0;
+			final FileOutputStream output = new FileOutputStream(to);
+			while (bytesRead >= 0) {
+				bytesRead = input.read(bytes);
+				if (bytesRead > 0) {
+					output.write(bytes, 0, bytesRead);
+				}
+			}
+			input.close();
+			output.close();
+		} catch (final IOException e) {
+			Logger.error("Couldn't copy " + from + " to " + to, e);
+		}
 	}
 }

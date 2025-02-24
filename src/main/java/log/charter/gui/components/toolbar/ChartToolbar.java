@@ -23,6 +23,7 @@ import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
+import log.charter.data.ChartData;
 import log.charter.data.GridType;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
@@ -43,6 +44,7 @@ import log.charter.services.RepeatManager;
 import log.charter.services.audio.AudioHandler;
 import log.charter.services.audio.ClapsHandler;
 import log.charter.services.audio.MetronomeHandler;
+import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
@@ -65,11 +67,13 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private ActionHandler actionHandler;
 	private AudioHandler audioHandler;
+	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ClapsHandler clapsHandler;
 	private KeyboardHandler keyboardHandler;
 	private MetronomeHandler metronomeHandler;
 	private ModeManager modeManager;
+	private ProjectAudioHandler projectAudioHandler;
 	private RepeatManager repeatManager;
 	private WaveFormDrawer waveFormDrawer;
 
@@ -85,6 +89,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private FieldWithLabel<TextInputWithValidation> gridSize;
 	private JToggleButton beatGridType;
 	private JToggleButton noteGridType;
+
+	private FieldWithLabel<JSlider> volume;
 
 	private FieldWithLabel<TextInputWithValidation> playbackSpeed;
 	private JToggleButton lowPassFilter;
@@ -256,11 +262,6 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		return (int) (volume * 100);
 	}
 
-	private void changeVolume(final double newVolume) {
-		Config.audio.volume = newVolume;
-		Config.markChanged();
-	}
-
 	private void changeSFXVolume(final double newVolume) {
 		Config.audio.sfxVolume = newVolume;
 		Config.markChanged();
@@ -273,9 +274,13 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		volumeSlider.setFocusable(false);
 		volumeSlider.setBackground(getBackground());
 
-		final FieldWithLabel<JSlider> volume = new FieldWithLabel<>(label, icon.getWidth(), 72, elementHeight,
-				volumeSlider, LabelPosition.LEFT_CLOSE);
+		volume = new FieldWithLabel<>(label, icon.getWidth(), 72, elementHeight, volumeSlider,
+				LabelPosition.LEFT_CLOSE);
 		setIcon(volume.label, icon);
+		ComponentUtils.addRightPressListener(volumeSlider,
+				() -> new AudioStemsSettings(chartData, charterFrame, projectAudioHandler));
+		ComponentUtils.addRightPressListener(volume,
+				() -> new AudioStemsSettings(chartData, charterFrame, projectAudioHandler));
 
 		add(x, volume);
 		volumeSlider.setUI(new CharterSliderUI());
@@ -407,7 +412,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 		addSeparator(x);
 
-		addVolumeSlider(x, Label.TOOLBAR_VOLUME, volumeIcon, Config.audio.volume, this::changeVolume);
+		addVolumeSlider(x, Label.TOOLBAR_VOLUME, volumeIcon, projectAudioHandler.getVolume(),
+				projectAudioHandler::setVolume);
 		addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, sfxVolumeIcon, Config.audio.sfxVolume, this::changeSFXVolume);
 		addPlaybackSpeed(x);
 		addTimeControls(x);

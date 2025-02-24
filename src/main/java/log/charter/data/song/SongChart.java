@@ -2,6 +2,7 @@ package log.charter.data.song;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.util.Utils.nvl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class SongChart {
 	}
 
 	public String musicFileName;
+	public List<Stem> stems = new ArrayList<>();
 
 	private String artistName;
 	private String artistNameSort;
@@ -59,6 +61,8 @@ public class SongChart {
 	 */
 	public SongChart(final ChartProject project, final String dir) throws IOException {
 		musicFileName = project.musicFileName;
+
+		stems = nvl(project.stems, new ArrayList<>());
 
 		artistName(project.artistName);
 		artistNameSort(project.artistNameSort);

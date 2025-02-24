@@ -15,6 +15,7 @@ import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.Phrase;
+import log.charter.data.song.Stem;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
@@ -62,6 +63,7 @@ public class ChartProjectXStreamHandler {
 				Arrangement.class, //
 				Beat.class, //
 				BendValue.class, //
+				ChartProject.class, //
 				ChordNote.class, //
 				ChordOrNote.class, //
 				ChordOrNoteForChord.class, //
@@ -84,8 +86,8 @@ public class ChartProjectXStreamHandler {
 				Level.class, //
 				Note.class, //
 				Phrase.class, //
-				ChartProject.class, //
 				SoundsCopyData.class, //
+				Stem.class, //
 				ToneChange.class, //
 				Vocal.class, //
 				VocalPath.class, //

@@ -79,6 +79,7 @@ public class AddSilencePane extends ParamsPane {
 			final AudioData joined = silenceMusicData.join(songMusicData);
 
 			projectAudioHandler.changeAudio(joined);
+			projectAudioHandler.changeStemsOffset(time);
 			data.songChart.moveBeats(chartTimeHandler.maxTime(), (int) (time * 1000));
 		} catch (final DifferentSampleSizesException e) {
 			Logger.error("Couldn't join audio " + songMusicData.format + " and " + silenceMusicData.format);
@@ -89,6 +90,7 @@ public class AddSilencePane extends ParamsPane {
 		final AudioData editedAudio = projectAudioHandler.getAudio().removeFromStart(time);
 
 		projectAudioHandler.changeAudio(editedAudio);
+		projectAudioHandler.changeStemsOffset(-time);
 		data.songChart.moveBeats(chartTimeHandler.maxTime(), (int) -(time * 1000));
 	}
 

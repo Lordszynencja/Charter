@@ -3,7 +3,7 @@ package log.charter.gui.lookAndFeel;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-class IconMaker {
+public class IconMaker {
 	public static BufferedImage createIcon(final int width, final int height, final int[][] colorMap,
 			final Color[] colors) {
 		final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);

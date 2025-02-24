@@ -1,11 +1,14 @@
 package log.charter.gui.components.simple;
 
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
+import javax.swing.SwingWorker.StateValue;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
@@ -36,6 +39,42 @@ public class LoadingDialog extends JDialog {
 		dialog.setVisible(true);
 	}
 
+	public static <T> T load(final CharterFrame charterFrame, final int steps,
+			final Function<LoadingDialog, T> operation, final String operationName) {
+		final LoadingDialog dialog = new LoadingDialog(charterFrame, steps);
+
+		final SwingWorker<T, Void> mySwingWorker = new SwingWorker<T, Void>() {
+			@Override
+			protected T doInBackground() throws Exception {
+				T result = null;
+				try {
+					result = operation.apply(dialog);
+				} catch (final Throwable t) {
+					Logger.error("error when executing operation " + operationName, t);
+				}
+
+				dialog.dispose();
+				return result;
+			}
+		};
+
+		mySwingWorker.execute();
+		dialog.setVisible(true);
+		while (mySwingWorker.getState() != StateValue.DONE) {
+			try {
+				Thread.sleep(10);
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			return mySwingWorker.get();
+		} catch (InterruptedException | ExecutionException e) {
+			return null;
+		}
+	}
+
 	private final JLabel text;
 	private final JProgressBar progressBar;
 
@@ -57,6 +96,10 @@ public class LoadingDialog extends JDialog {
 		add(progressBar);
 
 		setModalityType(ModalityType.APPLICATION_MODAL);
+	}
+
+	public void setProgress(final int progress, final Label label) {
+		setProgress(progress, label.label());
 	}
 
 	public void setProgress(final int progress, final String description) {

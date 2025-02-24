@@ -111,6 +111,7 @@ public class NewProjectCreator {
 		chartData.setNewSong(songFolder, songChart, "project.rscp");
 		textTab.setText("");
 		projectAudioHandler.setAudio(musicData);
+		projectAudioHandler.readStems();
 		songFileHandler.save();
 
 		audioHandler.clear();

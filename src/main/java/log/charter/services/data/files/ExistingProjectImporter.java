@@ -104,6 +104,8 @@ public class ExistingProjectImporter {
 				project.level);
 		chartTimeHandler.nextTime(project.time);
 		projectAudioHandler.setAudio(musicData);
+		projectAudioHandler.readStems();
+		projectAudioHandler.selectStem(project.selectedStem);
 		textTab.setText(project.text);
 
 		audioHandler.clear();

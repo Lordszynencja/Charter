@@ -87,7 +87,6 @@ public class AudioData {
 
 	public static class DifferentSampleSizesException extends Exception {
 		private static final long serialVersionUID = -6437477047963463037L;
-
 	}
 
 	public AudioData join(final AudioData other) throws DifferentSampleSizesException {
