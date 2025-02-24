@@ -70,6 +70,8 @@ public class Localization {
 		CONFIG_GENERAL("General"), //
 		CONFIG_INSTRUMENT("Instrument"), //
 		COPY("Copy"), //
+		COPY_AUDIO("Copy audio?"), //
+		COPY_AUDIO_TO_PROJECT_FOLDER("Do you want to copy the audio file to the project folder?"), //
 		COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT("Couldn't create folder with this name, please change the name"), //
 		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 3/4/5 file"), //
 		COULDNT_IMPORT_GP7("Couldn't properly import Guitar Pro 7/8 file"), //
