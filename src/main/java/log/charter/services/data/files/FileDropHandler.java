@@ -1,5 +1,7 @@
 package log.charter.services.data.files;
 
+import static log.charter.gui.components.utils.ComponentUtils.askYesNo;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
@@ -41,17 +43,18 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 
 	@Override
 	public void init() {
+		fileTypeHandlers.put("flac", this::handleAudio);
 		fileTypeHandlers.put("gp3", gp5FileImporter::importGP5File);
 		fileTypeHandlers.put("gp4", gp5FileImporter::importGP5File);
 		fileTypeHandlers.put("gp5", gp5FileImporter::importGP5File);
 		fileTypeHandlers.put("gp", gp7PlusFileImporter::importGP7PlusFile);
 		fileTypeHandlers.put("lrc", lrcImporter::importLRCFile);
 		fileTypeHandlers.put("mid", midiImporter::importMidiTempo);
-		fileTypeHandlers.put("mp3", projectAudioHandler::importAudio);
-		fileTypeHandlers.put("ogg", projectAudioHandler::importAudio);
+		fileTypeHandlers.put("mp3", this::handleAudio);
+		fileTypeHandlers.put("ogg", this::handleAudio);
 		fileTypeHandlers.put("rscp", f -> existingProjectImporter.open(f.getAbsolutePath()));
 		fileTypeHandlers.put("txt", this::handleTXT);
-		fileTypeHandlers.put("wav", projectAudioHandler::importAudio);
+		fileTypeHandlers.put("wav", this::handleAudio);
 		fileTypeHandlers.put("xml", this::handleXML);
 	}
 
@@ -87,6 +90,19 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 		}
 
 		ComponentUtils.showPopup(charterFrame, Label.COULDNT_READ_TXT, file.getAbsolutePath());
+	}
+
+	private void handleAudio(final File file) {
+		switch (askYesNo(charterFrame, Label.IMPORTING_AUDIO, Label.IMPORT_AUDIO_AS_STEM)) {
+			case NO:
+				projectAudioHandler.importAudio(file);
+				break;
+			case YES:
+				projectAudioHandler.addStem(file);
+				break;
+			default:
+				return;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
