@@ -111,6 +111,7 @@ public class Localization {
 		FORCE_ARPEGGIO_IN_RS("in RS"), //
 		FPS("FPS"), //
 		FRET("Fret"), //
+		NAME_CANT_BE_EMPTY("Name can't be empty"), //
 		NUMBER_0("Number 0"), //
 		NUMBER_1("Number 1"), //
 		NUMBER_2("Number 2"), //
@@ -129,6 +130,8 @@ public class Localization {
 		HAMMER_ON_ON_FRET_ZERO("Hammer on on fret zero"), //
 		HIGH_PASS("High"), //
 		HIGH_PASS_SETTINGS("High pass settings"), //
+		IMPORTING_AUDIO("Importing audio"), //
+		IMPORT_AUDIO_AS_STEM("Import audio as stem?"), //
 		IMPORT_LRC_VOCALS("Import LRC vocals file"), //
 		IMPORT_USC_VOCALS("Import USC vocals file"), //
 		INVERT_STRINGS("Invert strings"), //

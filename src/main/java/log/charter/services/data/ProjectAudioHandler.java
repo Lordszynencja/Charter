@@ -1,5 +1,6 @@
 package log.charter.services.data;
 
+import static log.charter.gui.components.utils.ComponentUtils.askYesNo;
 import static log.charter.sound.data.AudioUtils.generateSilence;
 
 import java.io.File;
@@ -14,12 +15,14 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.simple.LoadingDialog;
 import log.charter.gui.components.utils.ComponentUtils;
+import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.io.Logger;
 import log.charter.services.data.files.SongFilesBackuper;
 import log.charter.sound.SoundFileType;
 import log.charter.sound.data.AudioData;
 import log.charter.sound.data.AudioData.DifferentSampleSizesException;
 import log.charter.sound.data.AudioUtils;
+import log.charter.util.RW;
 
 public class ProjectAudioHandler {
 	public static SoundFileType defaultWrittenFileType() {
@@ -95,7 +98,48 @@ public class ProjectAudioHandler {
 		}, "Loading stems");
 	}
 
-	public void addStem(final String name, final String path, final boolean local, final AudioData audioData) {
+	public void addStem(File file) {
+		String path = file.getAbsolutePath();
+		boolean local = false;
+		if (path.startsWith(chartData.path)) {
+			local = true;
+			path = path.substring(chartData.path.length());
+		} else {
+			if (askYesNo(charterFrame, Label.COPY_AUDIO, Label.COPY_AUDIO_TO_PROJECT_FOLDER) == ConfirmAnswer.YES) {
+				final File from = file;
+				local = true;
+				path = "stems/" + file.getName();
+				file = new File(chartData.path, path);
+				RW.copy(from, file);
+			}
+		}
+
+		final File loadingFile = file;
+		final AudioData stemAudioData = LoadingDialog.load(charterFrame, 1, dialog -> {
+			dialog.setProgress(0, Label.LOADING_MUSIC_FILE);
+			final AudioData result = AudioData.readFile(loadingFile);
+			dialog.addProgress(Label.LOADING_DONE);
+
+			return result;
+		}, "Loading stem audio");
+		if (stemAudioData == null) {
+			ComponentUtils.showPopup(charterFrame, Label.COULDNT_LOAD_AUDIO, loadingFile.getAbsolutePath());
+			return;
+		}
+
+		String stemName = ComponentUtils.askForInput(charterFrame, Label.AUDIO_STEM_NAME, "");
+		while (stemName != null && stemName.isBlank()) {
+			ComponentUtils.showPopup(charterFrame, Label.AUDIO_STEM_NAME_CANT_BE_EMPTY);
+			stemName = ComponentUtils.askForInput(charterFrame, Label.AUDIO_STEM_NAME, "");
+		}
+		if (stemName == null) {
+			return;
+		}
+
+		addStem(stemName, path, local, stemAudioData);
+	}
+
+	private void addStem(final String name, final String path, final boolean local, final AudioData audioData) {
 		stems.add(audioData);
 		chartData.songChart.stems.add(new Stem(name, path, local));
 	}

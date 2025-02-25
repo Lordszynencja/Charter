@@ -2,6 +2,7 @@ package log.charter.gui.components.toolbar;
 
 import static java.lang.Math.abs;
 import static log.charter.gui.components.utils.ComponentUtils.setIcon;
+import static log.charter.gui.components.utils.validators.ValueValidator.notBlankValidator;
 
 import java.awt.Color;
 import java.awt.font.TextAttribute;
@@ -14,7 +15,6 @@ import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JSlider;
 
 import log.charter.data.ChartData;
@@ -23,6 +23,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Stem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedDialog;
+import log.charter.gui.components.containers.SaverWithStatus;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
@@ -61,31 +62,35 @@ public class AudioStemsSettings extends RowedDialog {
 
 	private class AudioStemRow {
 		private final int id;
-		private JCheckBox selected;
-		private JLabel label;
-		private FieldWithLabel<TextInputWithValidation> offsetField;
-		private JSlider volumeSlider;
 
+		private String name;
 		private double volume;
 		private double offset;
 		private boolean deleted;
 
+		private JCheckBox selected;
+		private TextInputWithValidation label;
+		private FieldWithLabel<TextInputWithValidation> offsetField;
+		private JSlider volumeSlider;
+
 		public AudioStemRow(final RowedPosition position) {
-			this(-1, Config.audio.volume, Label.MAIN_AUDIO.label(), 0, position);
+			this(-1, Label.MAIN_AUDIO.label(), Config.audio.volume, 0, position);
 		}
 
 		public AudioStemRow(final int id, final Stem stem, final RowedPosition position) {
-			this(id, stem.volume, stem.name, stem.offset, position);
+			this(id, stem.name, stem.volume, stem.offset, position);
 		}
 
-		private AudioStemRow(final int id, final double volume, final String name, final double offset,
+		private AudioStemRow(final int id, final String name, final double volume, final double offset,
 				final RowedPosition position) {
 			this.id = id;
+
+			this.name = name;
 			this.volume = volume;
 			this.offset = offset;
 
 			addCheckBox(position);
-			addLabel(position, name);
+			addName(position);
 			addVolume(position);
 			if (id >= 0) {
 				addOffset(position);
@@ -107,16 +112,13 @@ public class AudioStemsSettings extends RowedDialog {
 			panel.addWithSettingSize(selected, position, 20, 10, 20);
 		}
 
-		private String getName() {
-			if (id < 0) {
-				return Label.MAIN_AUDIO.label();
+		private void addName(final RowedPosition position) {
+			label = new TextInputWithValidation(name, 100, notBlankValidator(Label.NAME_CANT_BE_EMPTY), v -> name = v,
+					false);
+			if (id == -1) {
+				label.setEditable(false);
 			}
 
-			return chartData.songChart.stems.get(id).name;
-		}
-
-		private void addLabel(final RowedPosition position, final String name) {
-			label = new JLabel(getName());
 			panel.addWithSettingSize(label, position, 100, 10, 20);
 		}
 
@@ -161,6 +163,8 @@ public class AudioStemsSettings extends RowedDialog {
 						.getAttributes();
 				fontAttributes.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
 				label.setFont(getFont().deriveFont(fontAttributes));
+				label.setEnabled(false);
+				label.setEditable(false);
 				panel.repaint();
 
 				deleted = true;
@@ -171,6 +175,7 @@ public class AudioStemsSettings extends RowedDialog {
 	}
 
 	private final ChartData chartData;
+	private final ChartToolbar chartToolbar;
 	private final ProjectAudioHandler projectAudioHandler;
 
 	private final List<AudioStemRow> stemRows = new ArrayList<>();
@@ -178,10 +183,11 @@ public class AudioStemsSettings extends RowedDialog {
 	private int selectedStem = -1;
 
 	public AudioStemsSettings(final ChartData chartData, final CharterFrame charterFrame,
-			final ProjectAudioHandler projectAudioHandler) {
+			final ChartToolbar chartToolbar, final ProjectAudioHandler projectAudioHandler) {
 		super(charterFrame, Label.AUDIO_STEM_SETTINGS, 0);
 
 		this.chartData = chartData;
+		this.chartToolbar = chartToolbar;
 		this.projectAudioHandler = projectAudioHandler;
 
 		selectedStem = projectAudioHandler.getSelectedStem();
@@ -196,30 +202,32 @@ public class AudioStemsSettings extends RowedDialog {
 			position.newRow();
 		}
 
-		addDefaultFinish(position.newRow().getY(), () -> {
-			projectAudioHandler.selectStem(selectedStem);
+		addDefaultFinish(position.newRow().getY(), SaverWithStatus.defaultFor(this::save), null, true);
+	}
 
-			int deleted = 0;
-			for (final AudioStemRow stemRow : stemRows) {
-				final int id = stemRow.id - deleted;
-				if (stemRow.deleted) {
-					projectAudioHandler.removeStem(id);
-					deleted++;
+	private void save() {
+		projectAudioHandler.selectStem(selectedStem);
+
+		int deleted = 0;
+		for (final AudioStemRow stemRow : stemRows) {
+			final int id = stemRow.id - deleted;
+			if (stemRow.deleted) {
+				projectAudioHandler.removeStem(id);
+				deleted++;
+			} else {
+				if (stemRow.id < 0) {
+					Config.audio.volume = stemRow.volume;
 				} else {
-					if (stemRow.id < 0) {
-						Config.audio.volume = stemRow.volume;
-					} else {
-						final Stem stem = chartData.songChart.stems.get(id);
-						stem.volume = stemRow.volume;
-						if (abs(stemRow.offset - stem.offset) > 0.001) {
-							projectAudioHandler.addStemOffset(id, stemRow.offset - stem.offset);
-						}
+					final Stem stem = chartData.songChart.stems.get(id);
+					stem.volume = stemRow.volume;
+					stem.name = stemRow.name;
+					if (abs(stemRow.offset - stem.offset) > 0.001) {
+						projectAudioHandler.addStemOffset(id, stemRow.offset - stem.offset);
 					}
 				}
 			}
+		}
 
-			return true;
-		}, null, true);
+		chartToolbar.updateValues();
 	}
-
 }

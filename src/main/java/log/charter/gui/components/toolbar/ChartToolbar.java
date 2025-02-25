@@ -69,6 +69,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private AudioHandler audioHandler;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
+	private ChartToolbar chartToolbar;
 	private ClapsHandler clapsHandler;
 	private KeyboardHandler keyboardHandler;
 	private MetronomeHandler metronomeHandler;
@@ -91,6 +92,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private JToggleButton noteGridType;
 
 	private FieldWithLabel<JSlider> volume;
+	private FieldWithLabel<JSlider> sfxVolume;
 
 	private FieldWithLabel<TextInputWithValidation> playbackSpeed;
 	private JToggleButton lowPassFilter;
@@ -267,23 +269,27 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		Config.markChanged();
 	}
 
-	private void addVolumeSlider(final AtomicInteger x, final Label label, final BufferedImage icon, final double value,
-			final DoubleConsumer volumeSetter) {
+	private void openStemSettings() {
+		new AudioStemsSettings(chartData, charterFrame, chartToolbar, projectAudioHandler);
+	}
+
+	private FieldWithLabel<JSlider> addVolumeSlider(final AtomicInteger x, final Label label, final BufferedImage icon,
+			final double value, final DoubleConsumer volumeSetter) {
 		final JSlider volumeSlider = new JSlider(0, 100, getVolumeAsInteger(value));
 		volumeSlider.addChangeListener(e -> volumeSetter.accept(volumeSlider.getValue() / 100.0));
 		volumeSlider.setFocusable(false);
 		volumeSlider.setBackground(getBackground());
 
-		volume = new FieldWithLabel<>(label, icon.getWidth(), 72, elementHeight, volumeSlider,
-				LabelPosition.LEFT_CLOSE);
-		setIcon(volume.label, icon);
-		ComponentUtils.addRightPressListener(volumeSlider,
-				() -> new AudioStemsSettings(chartData, charterFrame, projectAudioHandler));
-		ComponentUtils.addRightPressListener(volume,
-				() -> new AudioStemsSettings(chartData, charterFrame, projectAudioHandler));
+		final FieldWithLabel<JSlider> field = new FieldWithLabel<>(label, icon.getWidth(), 72, elementHeight,
+				volumeSlider, LabelPosition.LEFT_CLOSE);
+		setIcon(field.label, icon);
+		ComponentUtils.addRightPressListener(volumeSlider, this::openStemSettings);
+		ComponentUtils.addRightPressListener(field, this::openStemSettings);
 
-		add(x, volume);
+		add(x, field);
 		volumeSlider.setUI(new CharterSliderUI());
+
+		return field;
 	}
 
 	private void changeSpeed(final int newSpeed) {
@@ -412,9 +418,10 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 		addSeparator(x);
 
-		addVolumeSlider(x, Label.TOOLBAR_VOLUME, volumeIcon, projectAudioHandler.getVolume(),
+		volume = addVolumeSlider(x, Label.TOOLBAR_VOLUME, volumeIcon, projectAudioHandler.getVolume(),
 				projectAudioHandler::setVolume);
-		addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, sfxVolumeIcon, Config.audio.sfxVolume, this::changeSFXVolume);
+		sfxVolume = addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, sfxVolumeIcon, Config.audio.sfxVolume,
+				this::changeSFXVolume);
 		addPlaybackSpeed(x);
 		addTimeControls(x);
 
@@ -458,6 +465,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 				break;
 		}
 
+		volume.field.setValue(getVolumeAsInteger(projectAudioHandler.getVolume()));
 		playbackSpeed.field.setTextWithoutEvent(Config.stretchedMusicSpeed + "");
 
 		lowPassFilter.setSelected(audioHandler.lowPassFilterEnabled);
