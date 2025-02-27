@@ -1,27 +1,27 @@
 package log.charter.sound.system.data;
 
 import static java.lang.Math.min;
-import static log.charter.sound.data.AudioUtils.splitStereoAudioFloat;
 
-import java.util.Arrays;
 import java.util.function.DoubleSupplier;
+
+import javax.sound.sampled.AudioFormat;
 
 import com.breakfastquay.rubberband.RubberBandStretcher;
 
 import log.charter.data.config.Config;
 import log.charter.io.Logger;
 import log.charter.sound.data.AudioData;
-import log.charter.sound.data.AudioUtils;
 import log.charter.sound.data.FloatQueue;
 import log.charter.sound.effects.Effect;
 import log.charter.sound.system.SoundSystem;
+import log.charter.sound.utils.FloatSamplesUtils;
 
 public class Player {
 	private final AudioData musicData;
+	private final AudioFormat audioFormat;
 	private final DoubleSupplier volume;
 	private final int speed;
 
-	private final int frameSize;
 	private final ISoundLine line;
 	private Thread thread = null;
 	private boolean stopped = false;
@@ -34,10 +34,9 @@ public class Player {
 
 	public Player(final AudioData musicData, final DoubleSupplier volume, final int speed, final Effect effect) {
 		this.musicData = musicData;
+		audioFormat = musicData.getPlayingFormat();
 		this.volume = volume;
 		this.speed = speed;
-
-		frameSize = musicData.playingFormat.getFrameSize();
 
 		this.effect = effect;
 		if (speed == 100 || !RubberBandStretcher.loaded) {
@@ -52,13 +51,13 @@ public class Player {
 		}
 
 		final ISoundSystem soundSystem = SoundSystem.getCurrentSoundSystem();
-		line = soundSystem.getNewLine(musicData.playingFormat);
+		line = soundSystem.getNewLine(audioFormat);
 	}
 
 	private RubberBandStretcher createStretcher() {
 		try {
-			return new RubberBandStretcher((int) musicData.playingFormat.getSampleRate(),
-					musicData.playingFormat.getChannels(), RubberBandStretcher.OptionProcessRealTime //
+			return new RubberBandStretcher((int) audioFormat.getSampleRate(), audioFormat.getChannels(),
+					RubberBandStretcher.OptionProcessRealTime //
 							| RubberBandStretcher.OptionTransientsSmooth//
 							| RubberBandStretcher.OptionThreadingNever//
 							| RubberBandStretcher.OptionPitchHighQuality//
@@ -76,9 +75,8 @@ public class Player {
 		return stopped;
 	}
 
-	private int getStartByte(final double startTime) {
-		final int startFrame = (int) (musicData.playingFormat.getFrameRate() * startTime / 1000);
-		return startFrame * frameSize;
+	private int getStartFrame(final double startTime) {
+		return (int) (musicData.getPlayingFormat().getFrameRate() * startTime / 1000);
 	}
 
 	private void setVolume(final float[][] samples) {
@@ -149,28 +147,18 @@ public class Player {
 		return output;
 	}
 
-	private int writeBuffer(final byte[] data, final int startByte) {
-		final int length = Config.audio.bufferSize * speed / 100 * 4;
+	private void writeBuffer(final byte[] buffer, final boolean lastBlock) {
+		final int channels = audioFormat.getChannels();
+		final int sampleSize = audioFormat.getSampleSizeInBits() / 8;
 
-		int endByte = startByte + length;
-		boolean lastBlock = false;
-		if (endByte >= data.length) {
-			endByte = data.length;
-			lastBlock = true;
-		}
-
-		final byte[] buffer = Arrays.copyOfRange(data, startByte, endByte);
-
-		float[][] samples = splitStereoAudioFloat(buffer);
+		float[][] samples = FloatSamplesUtils.splitStereoAudioFloat(buffer, sampleSize, channels);
 		applyEffect(samples);
 		setVolume(samples);
-
 		if (rubberBandStretcher != null) {
 			samples = stretch(samples, lastBlock);
 		}
-		line.write(AudioUtils.toBytes(samples, 2, 2));
 
-		return endByte;
+		line.write(FloatSamplesUtils.toBytes(samples, channels, sampleSize));
 	}
 
 	private void waitIfNeeded() throws InterruptedException {
@@ -184,10 +172,11 @@ public class Player {
 		stopped = true;
 	}
 
-	private void playSound(int startByte) throws InterruptedException {
-		final byte[] data = musicData.playingBytes;
+	private void playSound(int startFrame) throws InterruptedException {
+		final int frames = musicData.frames();
+		final byte[] buffer = musicData.generatePlayingBuffer(Config.audio.bufferSize);
 
-		while (startByte < data.length) {
+		while (startFrame < frames) {
 			if (stopped) {
 				if (playingStartTime < 0) {
 					playingStartTime = System.nanoTime();
@@ -196,7 +185,9 @@ public class Player {
 				return;
 			}
 
-			startByte = writeBuffer(data, startByte);
+			startFrame += musicData.fillPlayingBuffer(startFrame, buffer);
+			final boolean lastBlock = startFrame >= frames;
+			writeBuffer(buffer, lastBlock);
 
 			if (playingStartTime < 0) {
 				playingStartTime = System.nanoTime() + Config.audio.delay * 1_000_000;
@@ -214,7 +205,7 @@ public class Player {
 
 		thread = new Thread(() -> {
 			try {
-				playSound(getStartByte(startTime));
+				playSound(getStartFrame(startTime));
 			} catch (final InterruptedException e) {
 				Logger.error("playing audio interrupted", e);
 				line.stop();

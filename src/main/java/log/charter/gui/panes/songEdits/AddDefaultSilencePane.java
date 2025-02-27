@@ -1,7 +1,6 @@
 package log.charter.gui.panes.songEdits;
 
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
-import static log.charter.sound.data.AudioUtils.generateSilence;
 
 import javax.swing.JTextField;
 
@@ -16,7 +15,10 @@ import log.charter.io.Logger;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.sound.data.AudioData;
+import log.charter.sound.data.AudioData.DifferentChannelAmountException;
+import log.charter.sound.data.AudioData.DifferentSampleRateException;
 import log.charter.sound.data.AudioData.DifferentSampleSizesException;
+import log.charter.sound.utils.AudioGenerator;
 
 public class AddDefaultSilencePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
@@ -60,15 +62,17 @@ public class AddDefaultSilencePane extends ParamsPane {
 		}
 
 		final AudioData songMusicData = projectAudioHandler.getAudio();
-		final AudioData silenceMusicData = generateSilence(movement / 1000.0, songMusicData.format.getSampleRate(),
-				songMusicData.format.getChannels(), songMusicData.format.getSampleSizeInBits() / 8);
+		final AudioData silenceMusicData = AudioGenerator.generateSilence(movement / 1000.0,
+				songMusicData.format.getSampleRate(), songMusicData.format.getChannels(),
+				songMusicData.format.getSampleSizeInBits() / 8);
 
 		try {
 			final AudioData joined = silenceMusicData.join(songMusicData);
 			projectAudioHandler.changeAudio(joined);
 			projectAudioHandler.changeStemsOffset(movement / 1000);
 			data.songChart.moveBeats(chartTimeHandler.maxTime(), movement);
-		} catch (final DifferentSampleSizesException e) {
+		} catch (final DifferentSampleSizesException | DifferentChannelAmountException
+				| DifferentSampleRateException e) {
 			Logger.error("Couldn't join audio " + songMusicData.format + " and " + silenceMusicData.format);
 		}
 	}

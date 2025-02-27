@@ -1,16 +1,15 @@
 package log.charter.services.audio;
 
-import static log.charter.sound.data.AudioUtils.generateSound;
-
 import log.charter.data.ChartData;
 import log.charter.gui.components.toolbar.ChartToolbar;
+import log.charter.sound.utils.AudioGenerator;
 
 public class MetronomeHandler {
 	private ChartData chartData;
 	private ChartToolbar chartToolbar;
 
-	private final TickPlayer metronomePlayer = new TickPlayer(generateSound(500, 0.02, 1), () -> chartData.beats(),
-			() -> chartData.beats());
+	private final TickPlayer metronomePlayer = new TickPlayer(AudioGenerator.generateSound(500, 0.02, 1),
+			() -> chartData.beats(), () -> chartData.beats());
 
 	public boolean metronome() {
 		return metronomePlayer.on;

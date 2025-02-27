@@ -24,6 +24,7 @@ import com.jcraft.jorbis.Info;
 import log.charter.io.Logger;
 import log.charter.sound.data.AudioData;
 import log.charter.sound.data.AudioUtils;
+import log.charter.sound.utils.IntSampleUtils;
 import log.charter.util.RW;
 
 /**
@@ -52,7 +53,7 @@ public class OggLoader {
 		try {
 			final LoadingResult result = new OggLoader(path).load();
 
-			final int[][] samples = AudioUtils.splitAudioInt(result.bytes, result.channels, 2);
+			final int[][] samples = IntSampleUtils.readSamples(result.bytes, result.channels, 2);
 			AudioUtils.fixValues(2, samples);
 
 			return new AudioData(samples, result.rate, 2);

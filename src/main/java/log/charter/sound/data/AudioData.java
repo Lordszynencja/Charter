@@ -2,7 +2,6 @@ package log.charter.sound.data;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.sound.data.AudioUtils.toBytes;
 
 import java.io.File;
 import java.util.Arrays;
@@ -12,21 +11,16 @@ import javax.sound.sampled.AudioFormat.Encoding;
 
 import log.charter.io.Logger;
 import log.charter.sound.SoundFileType;
+import log.charter.sound.utils.FloatSamplesUtils;
+import log.charter.sound.utils.IntSampleUtils;
 
 public class AudioData {
-	private static final int[][] spans = { //
-			{ -0x80, 0x7F }, // 1 byte
-			{ -0x80_00, 0x7F_FF }, // 2 bytes
-			{ -0x80_00_00, 0x7F_FF_FF }, // 3 bytes
-			{ -0x80_00_00_00, 0x7F_FF_FF_FF },// 4 bytes
-	};
-
 	public static int getMin(final int sampleSize) {
-		return spans[max(0, min(3, sampleSize - 1))][0];
+		return AudioUtils.spans[max(0, min(3, sampleSize - 1))][0];
 	}
 
 	public static int getMax(final int sampleSize) {
-		return spans[max(0, min(3, sampleSize - 1))][1];
+		return AudioUtils.spans[max(0, min(3, sampleSize - 1))][1];
 	}
 
 	public static int[][] shortToInt(final short[][] data, final int sampleSize) {
@@ -59,114 +53,156 @@ public class AudioData {
 		return null;
 	}
 
-	public final int[][] data;
+	public final byte[] data;
 	public final AudioFormat format;
-	public final AudioFormat playingFormat;
-	public final byte[] playingBytes;
-	public final int minValue;
-	public final int maxValue;
 
-	public AudioData(final int[][] data, final float sampleRate, final int sampleBytes) {
+	public AudioData(final int[][] data, final float sampleRate, final int sampleSize) {
+		this(IntSampleUtils.writeSamples(data, data.length, sampleSize), sampleRate, sampleSize, data.length);
+	}
+
+	public AudioData(final byte[] data, final float sampleRate, final int sampleSize, final int channels) {
 		this.data = data;
-		final int channels = data.length;
-		format = new AudioFormat(Encoding.PCM_SIGNED, sampleRate, sampleBytes * 8, channels, channels * sampleBytes,
+		format = new AudioFormat(Encoding.PCM_SIGNED, sampleRate, sampleSize * 8, channels, channels * sampleSize,
 				sampleRate, false);
+	}
 
-		final int playingChannels = min(channels, 2);
-		playingFormat = new AudioFormat(Encoding.PCM_SIGNED, sampleRate, 16, playingChannels, playingChannels * 2,
-				sampleRate, false);
-		playingBytes = toBytes(data, playingChannels, sampleBytes, 2);
+	public int frames() {
+		return data.length / max(1, format.getFrameSize());
+	}
 
-		minValue = spans[sampleBytes - 1][0];
-		maxValue = spans[sampleBytes - 1][1];
+	public float getSample(final int frame, final int channel) {
+		return FloatSamplesUtils.readSample(data, frame, format.getSampleSizeInBits() / 8);
+	}
+
+	public float[] getFrame(final int frame) {
+		final float[] frameData = new float[format.getChannels()];
+
+		for (int channel = 0; channel < format.getChannels(); channel++) {
+			frameData[channel] = FloatSamplesUtils.readSample(data, frame * format.getChannels(),
+					format.getSampleSizeInBits() / 8);
+		}
+
+		return frameData;
 	}
 
 	public double msLength() {
-		return (data[0].length * 1000.0) / format.getFrameRate();
+		return frames() * 1000.0 / format.getFrameRate();
+	}
+
+	public AudioFormat getPlayingFormat() {
+		final float sampleRate = format.getSampleRate();
+		final int byteDepth = min(2, format.getSampleSizeInBits() / 8);
+		final int channels = min(format.getChannels(), 2);
+		final int frameSize = channels * byteDepth;
+
+		return new AudioFormat(Encoding.PCM_SIGNED, sampleRate, byteDepth * 8, channels, frameSize, sampleRate, false);
+	}
+
+	public byte[] generatePlayingBuffer(final int bufferSize) {
+		final int byteDepth = min(2, format.getSampleSizeInBits() / 8);
+		final int channels = min(2, format.getChannels());
+
+		return new byte[bufferSize * byteDepth * channels];
+	}
+
+	public int fillPlayingBuffer(final int fromFrame, final byte[] buffer) {
+		final int byteDepth = format.getSampleSizeInBits() / 8;
+		final int writtenByteDepth = min(2, byteDepth);
+		final int channels = format.getChannels();
+		final int writtenChannels = min(2, channels);
+		final int writtenFrameSize = writtenByteDepth * writtenChannels;
+		final int framesToWrite = min(buffer.length / writtenFrameSize, frames() - fromFrame);
+		if (byteDepth == writtenByteDepth && channels == writtenChannels) {
+			final int from = fromFrame * writtenFrameSize;
+			final int length = framesToWrite * writtenFrameSize;
+			System.arraycopy(data, from, buffer, 0, length);
+			if (length < buffer.length) {
+				Arrays.fill(buffer, length, buffer.length, (byte) 0);
+			}
+
+			return framesToWrite;
+		}
+
+		int currentByte = fromFrame * byteDepth * channels;
+		int currentBufferByte = 0;
+		for (int i = 0; i < framesToWrite; i++) {
+			for (int channel = 0; channel < writtenChannels; channel++) {
+				for (int j = 0; j < writtenByteDepth; j++) {
+					buffer[currentBufferByte++] = data[currentByte++];
+				}
+
+				currentByte += byteDepth - writtenByteDepth;
+			}
+
+			currentByte += (channels - writtenChannels) * byteDepth;
+		}
+
+		return framesToWrite;
+	}
+
+	public byte[] getPlayingBufferByte(final int fromFrame, final int bufferSize) {
+		final byte[] buffer = generatePlayingBuffer(bufferSize);
+		fillPlayingBuffer(fromFrame, buffer);
+		return buffer;
 	}
 
 	public static class DifferentSampleSizesException extends Exception {
 		private static final long serialVersionUID = -6437477047963463037L;
 	}
 
-	public AudioData join(final AudioData other) throws DifferentSampleSizesException {
+	public static class DifferentChannelAmountException extends Exception {
+		private static final long serialVersionUID = -6437477047963463037L;
+	}
+
+	public static class DifferentSampleRateException extends Exception {
+		private static final long serialVersionUID = -6437477047963463037L;
+	}
+
+	private AudioData withCopiedFormat(final byte[] newData) {
+		final float sampleRate = format.getSampleRate();
+		final int sampleSize = format.getSampleSizeInBits() / 8;
+		final int channels = format.getChannels();
+		return new AudioData(newData, sampleRate, sampleSize, channels);
+	}
+
+	public AudioData join(final AudioData other)
+			throws DifferentSampleSizesException, DifferentChannelAmountException, DifferentSampleRateException {
 		if (format.getSampleSizeInBits() != other.format.getSampleSizeInBits()) {
 			throw new DifferentSampleSizesException();
 		}
-
-		int length0 = 0;
-		for (int i = 0; i < data.length; i++) {
-			length0 = max(length0, data[i].length);
+		if (format.getChannels() != other.format.getChannels()) {
+			throw new DifferentChannelAmountException();
 		}
-		int length1 = 0;
-		for (int i = 0; i < other.data.length; i++) {
-			length1 = max(length1, other.data[i].length);
+		if (format.getSampleRate() != other.format.getSampleRate()) {
+			throw new DifferentSampleRateException();
 		}
 
-		final int channels = max(data.length, other.data.length);
-		final int[][] newData = new int[channels][length0 + length1];
-		for (int channel = 0; channel < data.length; channel++) {
-			final int[] targetChannel = newData[channel];
-			System.arraycopy(data[channel], 0, targetChannel, 0, data[channel].length);
-			System.arraycopy(other.data[channel], 0, targetChannel, length0, other.data[channel].length);
+		final byte[] newData = Arrays.copyOf(data, data.length + other.data.length);
+		System.arraycopy(other.data, 0, newData, data.length, other.data.length);
+
+		return withCopiedFormat(newData);
+	}
+
+	private AudioData copyPart(int from, int to) {
+		if (to > data.length) {
+			to = data.length;
+		}
+		if (from > to) {
+			from = to;
 		}
 
-		return new AudioData(newData, format.getSampleRate(), format.getSampleSizeInBits() / 8);
+		final byte[] newData = Arrays.copyOfRange(data, from, to);
+		return withCopiedFormat(newData);
 	}
 
 	public AudioData cut(final double startTime, final double endTime) {
-		int length = 0;
-		for (int i = 0; i < data.length; i++) {
-			length = max(length, data[i].length);
-		}
-
-		final int start = (int) (startTime * format.getSampleRate());
-		final int end = (int) (endTime * format.getSampleRate());
-
-		final int[][] newData = new int[data.length][end - start + 1];
-		for (int channel = 0; channel < data.length; channel++) {
-			final int[] src = data[channel];
-			if (src.length < start) {
-				continue;
-			}
-
-			final int toMove = min(end - start + 1, src.length - start);
-			System.arraycopy(src, start, newData[channel], 0, toMove);
-		}
-
-		return new AudioData(newData, format.getSampleRate(), format.getSampleSizeInBits() / 8);
+		final int from = (int) (startTime * format.getSampleRate() * format.getFrameSize());
+		final int to = (int) (endTime * format.getSampleRate() * format.getFrameSize());
+		return copyPart(from, to);
 	}
 
 	public AudioData removeFromStart(final double time) {
-		int length = 0;
-		for (int i = 0; i < data.length; i++) {
-			length = max(length, data[i].length);
-		}
-
-		final int samplesRemoved = (int) (time * format.getSampleRate());
-		length -= samplesRemoved;
-
-		final int channels = data.length;
-		final int[][] newData = new int[channels][length];
-		for (int channel = 0; channel < data.length; channel++) {
-			final int[] src = data[channel];
-			final int[] dest = newData[channel];
-			final int toMove = max(0, data[channel].length - samplesRemoved);
-			System.arraycopy(src, samplesRemoved, dest, 0, toMove);
-		}
-
-		return new AudioData(newData, format.getSampleRate(), format.getSampleSizeInBits() / 8);
-	}
-
-	public AudioData volume(final double volume) {
-		final int[][] newData = new int[data.length][];
-		for (int channel = 0; channel < data.length; channel++) {
-			newData[channel] = Arrays.copyOf(data[channel], data[channel].length);
-			for (int i = 0; i < newData[channel].length; i++) {
-				newData[channel][i] *= volume;
-			}
-		}
-
-		return new AudioData(newData, format.getSampleRate(), format.getSampleSizeInBits() / 8);
+		final int from = (int) (time * format.getSampleRate() * format.getFrameSize());
+		return copyPart(from, data.length);
 	}
 }
