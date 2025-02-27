@@ -21,7 +21,6 @@ import com.jcraft.jorbis.Comment;
 import com.jcraft.jorbis.DspState;
 import com.jcraft.jorbis.Info;
 
-import log.charter.io.Logger;
 import log.charter.sound.data.AudioData;
 import log.charter.sound.data.AudioUtils;
 import log.charter.sound.utils.IntSampleUtils;
@@ -88,7 +87,6 @@ public class OggLoader {
 
 	private OggLoader(final String path) {
 		final byte[] bytes = RW.readB(path);
-		Logger.debug("Loaded " + bytes.length + " bytes of ogg audio from " + path);
 		inputStream = new ByteArrayInputStream(bytes);
 	}
 
