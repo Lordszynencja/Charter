@@ -118,27 +118,29 @@ public class WaveFormDrawer {
 		final AudioData audio = projectAudioHandler.getAudio();
 		final float timeToFrameMultiplier = audio.format.getFrameRate() / 1000;
 
-		final int[] musicValues = audio.data[0];
 		int start = (int) (xToPosition(0, time) * timeToFrameMultiplier);
 		start = max(1, start);
 		int end = (int) (xToPosition(chartPanel.getWidth(), time) * timeToFrameMultiplier);
-		end = min(musicValues.length, end);
+		end = min(audio.frames(), end);
+
+		float sample = audio.getSample(start, 0);
 
 		final int midY = getMiddle();
 		final int yScale = getHeight();
 		int x0 = 0;
 		int x1 = positionToX((int) ((start - 1) / timeToFrameMultiplier), time);
 		int y0 = 0;
-		int y1 = (int) ((double) musicValues[start - 1] * yScale / audio.maxValue);
+		int y1 = (int) (sample * yScale);
 		final RMSCalculator rmsCalculator = new RMSCalculator((int) timeToFrameMultiplier);
 
 		for (int frame = start; frame < end; frame++) {
+			sample = audio.getSample(frame, 0);
 			x0 = x1;
 			x1 = positionToX(frame / timeToFrameMultiplier, time);
 			y0 = y1;
-			y1 = (int) ((double) musicValues[frame] * yScale / audio.maxValue);
+			y1 = (int) (sample * yScale);
 
-			rmsCalculator.addValue((float) musicValues[frame] / audio.maxValue);
+			rmsCalculator.addValue(sample);
 
 			g.setColor(rmsCalculator.getRMS() > 4 ? highIntensityColorZoomed : normalColorZoomed);
 			g.drawLine(x0, midY + y0, x1, midY + y1);

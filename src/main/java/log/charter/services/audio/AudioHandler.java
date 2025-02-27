@@ -89,8 +89,8 @@ public class AudioHandler {
 		lastPlayedData = musicData;
 
 		try {
-			final Effect effect = createEffect(lastPlayedData.playingFormat.getChannels(),
-					(int) lastPlayedData.playingFormat.getSampleRate());
+			final Effect effect = createEffect(lastPlayedData.getPlayingFormat().getChannels(),
+					(int) lastPlayedData.getPlayingFormat().getSampleRate());
 
 			songPlayer = SoundSystem.play(lastPlayedData, () -> projectAudioHandler.getVolume(), speed, start, effect);
 		} catch (final Exception | UnsatisfiedLinkError e) {

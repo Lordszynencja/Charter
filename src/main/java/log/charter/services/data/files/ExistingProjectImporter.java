@@ -22,7 +22,7 @@ import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.sound.data.AudioData;
-import log.charter.sound.data.AudioUtils;
+import log.charter.sound.utils.AudioGenerator;
 
 public class ExistingProjectImporter {
 	private AudioHandler audioHandler;
@@ -62,7 +62,7 @@ public class ExistingProjectImporter {
 		final AudioData musicData = AudioData.readFile(new File(dir, project.musicFileName));
 		if (musicData == null) {
 			showPopup(charterFrame, Label.WRONG_MUSIC_FILE, project.musicFileName);
-			return AudioUtils.generateEmpty(0);
+			return AudioGenerator.generateEmpty(0);
 		}
 
 		return musicData;

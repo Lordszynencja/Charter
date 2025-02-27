@@ -1,7 +1,6 @@
 package log.charter.services.data;
 
 import static log.charter.gui.components.utils.ComponentUtils.askYesNo;
-import static log.charter.sound.data.AudioUtils.generateSilence;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,8 +19,10 @@ import log.charter.io.Logger;
 import log.charter.services.data.files.SongFilesBackuper;
 import log.charter.sound.SoundFileType;
 import log.charter.sound.data.AudioData;
+import log.charter.sound.data.AudioData.DifferentChannelAmountException;
+import log.charter.sound.data.AudioData.DifferentSampleRateException;
 import log.charter.sound.data.AudioData.DifferentSampleSizesException;
-import log.charter.sound.data.AudioUtils;
+import log.charter.sound.utils.AudioGenerator;
 import log.charter.util.RW;
 
 public class ProjectAudioHandler {
@@ -37,7 +38,7 @@ public class ProjectAudioHandler {
 	private CharterFrame charterFrame;
 	private WaveFormDrawer waveFormDrawer;
 
-	private AudioData audio = AudioUtils.generateEmpty(0);
+	private AudioData audio = AudioGenerator.generateEmpty(0);
 	private final List<AudioData> stems = new ArrayList<>();
 	private int selectedStem = -1;
 
@@ -62,11 +63,12 @@ public class ProjectAudioHandler {
 		AudioData stemAudioData = stems.get(stemId);
 
 		if (offset >= 0) {
-			final AudioData silence = generateSilence(offset, stemAudioData.format.getSampleRate(),
+			final AudioData silence = AudioGenerator.generateSilence(offset, stemAudioData.format.getSampleRate(),
 					stemAudioData.format.getChannels(), stemAudioData.format.getSampleSizeInBits() / 8);
 			try {
 				stemAudioData = silence.join(stemAudioData);
-			} catch (final DifferentSampleSizesException e) {
+			} catch (final DifferentSampleSizesException | DifferentChannelAmountException
+					| DifferentSampleRateException e) {
 				Logger.error("couldn't pan the stem", e);
 			}
 		} else {
@@ -88,7 +90,7 @@ public class ProjectAudioHandler {
 				AudioData stemAudioData = AudioData.readFile(new File(stem.getPath(chartData)));
 				if (stemAudioData == null) {
 					ComponentUtils.showPopup(charterFrame, Label.COULDNT_LOAD_AUDIO, stem.getPath(chartData));
-					stemAudioData = AudioUtils.generateEmpty(0);
+					stemAudioData = AudioGenerator.generateEmpty(0);
 				}
 
 				stems.add(stemAudioData);

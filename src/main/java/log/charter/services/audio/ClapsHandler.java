@@ -1,7 +1,5 @@
 package log.charter.services.audio;
 
-import static log.charter.sound.data.AudioUtils.generateSound;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,14 +7,15 @@ import log.charter.data.ChartData;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.editModes.ModeManager;
+import log.charter.sound.utils.AudioGenerator;
 
 public class ClapsHandler {
 	private ChartData chartData;
 	private ChartToolbar chartToolbar;
 	private ModeManager modeManager;
 
-	private final TickPlayer clapsPlayer = new TickPlayer(generateSound(1000, 0.01, 1), this::getCurrentClapPositions,
-			() -> chartData.beats());
+	private final TickPlayer clapsPlayer = new TickPlayer(AudioGenerator.generateSound(1000, 0.01, 1),
+			this::getCurrentClapPositions, () -> chartData.beats());
 
 	private List<? extends IVirtualConstantPosition> getCurrentClapPositions() {
 		switch (modeManager.getMode()) {

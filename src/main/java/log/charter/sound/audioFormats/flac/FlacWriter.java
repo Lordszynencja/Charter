@@ -15,30 +15,31 @@ import log.charter.data.config.Localization.Label;
 import log.charter.io.Logger;
 import log.charter.sound.SoundFileType.WriteProgressHolder;
 import log.charter.sound.data.AudioData;
+import log.charter.sound.utils.IntSampleUtils;
 
 public class FlacWriter {
 	private static void writeFLACHeader(final BitOutputStream out) throws IOException {
 		out.writeInt(32, 0x664C6143);
 	}
 
-	private static StreamInfo generateInfo(final AudioData musicData) {
+	private static StreamInfo generateInfo(final AudioData musicData, final int[][] samples) {
 		final StreamInfo info = new StreamInfo();
 		info.sampleRate = (int) musicData.format.getSampleRate();
-		info.numChannels = musicData.data.length;
+		info.numChannels = musicData.format.getChannels();
 		info.sampleDepth = musicData.format.getSampleSizeInBits();
-		info.numSamples = musicData.data[0].length;
-		info.md5Hash = StreamInfo.getMd5Hash(musicData.data, info.sampleDepth);
+		info.numSamples = musicData.frames();
+		info.md5Hash = StreamInfo.getMd5Hash(samples, info.sampleDepth);
 
 		return info;
 	}
 
-	private static void writeSamples(final StreamInfo info, final AudioData data, final BitOutputStream out,
+	private static void writeSamples(final StreamInfo info, final int[][] samples, final BitOutputStream out,
 			final WriteProgressHolder progress) throws IOException {
 		final FlacEncoder encoder = new FlacEncoder(info, SearchOptions.SUBSET_MEDIUM);
 		final AtomicBoolean finished = new AtomicBoolean(false);
 		new Thread(() -> {
 			try {
-				encoder.encode(data.data, out);
+				encoder.encode(samples, out);
 			} catch (final Exception e) {
 				Logger.error("Couldn't write FLAC file", e);
 			}
@@ -66,7 +67,10 @@ public class FlacWriter {
 	}
 
 	public static void write(final AudioData data, final File file, final WriteProgressHolder progress) {
-		progress.changeStep(Label.WRITING_FLAC_FILE, data.data[0].length);
+		progress.changeStep(Label.WRITING_FLAC_FILE, data.frames());
+
+		final int[][] samples = IntSampleUtils.readSamples(data.data, data.format.getChannels(),
+				data.format.getSampleSizeInBits() / 8);
 
 		try (RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
 			raf.setLength(0);
@@ -75,10 +79,10 @@ public class FlacWriter {
 					new BufferedOutputStream(new RandomAccessFileOutputStream(raf)));
 			writeFLACHeader(out);
 
-			final StreamInfo info = generateInfo(data);
+			final StreamInfo info = generateInfo(data, samples);
 			info.write(true, out);
 
-			writeSamples(info, data, out, progress);
+			writeSamples(info, samples, out, progress);
 
 			raf.seek(4);
 			info.write(true, out);
