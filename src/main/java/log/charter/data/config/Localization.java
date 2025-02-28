@@ -163,6 +163,10 @@ public class Localization {
 		MIDI_SOUND_DELAY("Midi sound delay (ms)"), //
 		MINIMAL_NOTE_DISTANCE("Minimal note distance"), //
 		MINIMAL_TAIL_LENGTH("Minimal note tail length"), //
+		MOVE_FRET_DOWN("Move notes one fret down"), //
+		MOVE_FRET_DOWN_OCTAVE("Move notes twelve frets down"), //
+		MOVE_FRET_UP("Move notes one fret up"), //
+		MOVE_FRET_UP_OCTAVE("Move notes twelve frets up"), //
 		MOVE_TO_BOOKMARK_0("Move to bookmark 0"), //
 		MOVE_TO_BOOKMARK_1("Move to bookmark 1"), //
 		MOVE_TO_BOOKMARK_2("Move to bookmark 2"), //
@@ -333,8 +337,6 @@ public class Localization {
 		MOVE_STRING_DOWN("Move notes string down"), //
 		MOVE_STRING_UP_SIMPLE("Move notes string up keeping the frets"), //
 		MOVE_STRING_DOWN_SIMPLE("Move notes string down keeping the frets"), //
-		MOVE_FRET_UP("Move notes one fret up"), //
-		MOVE_FRET_DOWN("Move notes one fret down"), //
 		NOTE_FRET_OPERATIONS("Note fret operations"), //
 		NOTE_STATUS_OPERATIONS("Note status operations"), //
 		TOGGLE_MUTE("Toggle mutes"), //

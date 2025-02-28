@@ -274,7 +274,9 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.MOVE_STRING_UP, () -> guitarSoundsHandler.moveStringsWithFretChange(1));
 		actionHandlers.put(Action.MOVE_STRING_UP_SIMPLE, () -> guitarSoundsHandler.moveStringsWithoutFretChange(1));
 		actionHandlers.put(Action.MOVE_FRET_DOWN, () -> guitarSoundsHandler.moveFret(-1));
+		actionHandlers.put(Action.MOVE_FRET_DOWN_OCTAVE, () -> guitarSoundsHandler.moveFret(-12));
 		actionHandlers.put(Action.MOVE_FRET_UP, () -> guitarSoundsHandler.moveFret(1));
+		actionHandlers.put(Action.MOVE_FRET_UP_OCTAVE, () -> guitarSoundsHandler.moveFret(12));
 		actionHandlers.put(Action.MOVE_TO_BOOKMARK_0, () -> moveToBookmark(0));
 		actionHandlers.put(Action.MOVE_TO_BOOKMARK_1, () -> moveToBookmark(1));
 		actionHandlers.put(Action.MOVE_TO_BOOKMARK_2, () -> moveToBookmark(2));
@@ -315,7 +317,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.SPEED_INCREASE, () -> changeSpeed(5));
 		actionHandlers.put(Action.SPEED_INCREASE_FAST, () -> changeSpeed(25));
 		actionHandlers.put(Action.SPEED_INCREASE_PRECISE, () -> changeSpeed(1));
-		actionHandlers.put(Action.SWITCH_TS_TYPING_PART, () -> modeManager.getTempoMapModeHandler().switchTSTypingPart());
+		actionHandlers.put(Action.SWITCH_TS_TYPING_PART,
+				() -> modeManager.getTempoMapModeHandler().switchTSTypingPart());
 		actionHandlers.put(Action.TOGGLE_ACCENT, guitarSoundsStatusesHandler::toggleAccent);
 		actionHandlers.put(Action.TOGGLE_ACCENT_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleAccentIndependently);
 		actionHandlers.put(Action.TOGGLE_ANCHOR, this::toggleAnchor);

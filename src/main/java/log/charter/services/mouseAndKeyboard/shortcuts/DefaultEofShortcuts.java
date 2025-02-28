@@ -43,7 +43,9 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.MOVE_BACKWARD, new Shortcut(KeyEvent.VK_LEFT));
 		super.set(Action.MOVE_FORWARD, new Shortcut(KeyEvent.VK_RIGHT));
 		super.set(Action.MOVE_FRET_DOWN, new Shortcut(KeyEvent.VK_DOWN).shift());
+		super.set(Action.MOVE_FRET_DOWN_OCTAVE, new Shortcut(KeyEvent.VK_DOWN).alt().shift());
 		super.set(Action.MOVE_FRET_UP, new Shortcut(KeyEvent.VK_UP).shift());
+		super.set(Action.MOVE_FRET_UP_OCTAVE, new Shortcut(KeyEvent.VK_UP).alt().shift());
 		super.set(Action.MOVE_STRING_DOWN, new Shortcut(KeyEvent.VK_DOWN).alt());
 		super.set(Action.MOVE_STRING_DOWN_SIMPLE, new Shortcut(KeyEvent.VK_DOWN));
 		super.set(Action.MOVE_STRING_UP, new Shortcut(KeyEvent.VK_UP).alt());
