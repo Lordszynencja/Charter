@@ -101,7 +101,7 @@ public class WaveFormDrawer {
 		}
 
 		final int xStart = max(0, positionToX(0, time));
-		final int xEnd = min(width - 1, positionToX(projectAudioHandler.audioLength(), time));
+		final int xEnd = min(width - 1, positionToX(projectAudioHandler.audioLengthMs(), time));
 		for (int x = xStart; x <= xEnd; x++) {
 			g.setColor(rms[x] ? highIntensityColor : normalColor);
 			final int height = heights[x];

@@ -1,5 +1,6 @@
 package log.charter.sound.utils;
 
+import static java.lang.Math.ceil;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 
@@ -10,7 +11,7 @@ public class AudioGenerator {
 
 	public static AudioData generateSilence(final double lengthSeconds, final float sampleRate, final int channels,
 			final int sampleSize) {
-		final int length = (int) (lengthSeconds * sampleRate * channels * sampleSize);
+		final int length = (int) ceil(lengthSeconds * sampleRate * channels * sampleSize);
 		return new AudioData(new byte[length], sampleRate, sampleSize, channels);
 	}
 

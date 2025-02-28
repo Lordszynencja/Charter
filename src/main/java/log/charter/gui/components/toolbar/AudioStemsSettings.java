@@ -140,7 +140,7 @@ public class AudioStemsSettings extends RowedDialog {
 			final BigDecimal value = BigDecimal.valueOf(offset * 1000).setScale(2, RoundingMode.HALF_UP);
 			final BigDecimalValueValidator validator = new BigDecimalValueValidator(
 					BigDecimal.valueOf(-projectAudioHandler.audioStemLength(id)),
-					BigDecimal.valueOf(projectAudioHandler.audioLength()), false);
+					BigDecimal.valueOf(projectAudioHandler.audioLengthMs()), false);
 			final TextInputWithValidation input = TextInputWithValidation.generateForBigDecimal(value, 50, validator,
 					v -> offset = v.doubleValue() / 1000, false);
 

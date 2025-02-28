@@ -158,7 +158,7 @@ public class ChartTimeHandler {
 	}
 
 	public double audioTime() {
-		return projectAudioHandler.audioLength();
+		return projectAudioHandler.audioLengthMs();
 	}
 
 	public int positionToX(final double position) {

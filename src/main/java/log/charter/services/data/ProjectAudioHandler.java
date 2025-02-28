@@ -38,7 +38,7 @@ public class ProjectAudioHandler {
 	private CharterFrame charterFrame;
 	private WaveFormDrawer waveFormDrawer;
 
-	private AudioData audio = AudioGenerator.generateEmpty(0);
+	private AudioData mainAudio = AudioGenerator.generateEmpty(0);
 	private final List<AudioData> stems = new ArrayList<>();
 	private int selectedStem = -1;
 
@@ -185,19 +185,19 @@ public class ProjectAudioHandler {
 		}
 
 		LoadingDialog.doWithLoadingDialog(charterFrame, 1, loadingDialog -> {
-			defaultWrittenFileType().write(loadingDialog, audio, file);
+			defaultWrittenFileType().write(loadingDialog, mainAudio, file);
 			chartData.songChart.musicFileName = file.getName();
 		}, Label.SAVING_AUDIO.label());
 	}
 
 	public void changeAudio(final AudioData audio) {
-		this.audio = audio;
+		this.mainAudio = audio;
 		waveFormDrawer.recalculateMap();
 		saveAudio(true);
 	}
 
 	public void setAudio(final AudioData audio) {
-		this.audio = audio;
+		this.mainAudio = audio;
 		waveFormDrawer.recalculateMap();
 		saveAudio(false);
 	}
@@ -207,7 +207,7 @@ public class ProjectAudioHandler {
 			return stems.get(selectedStem);
 		}
 
-		return audio;
+		return mainAudio;
 	}
 
 	public double getVolume() {
@@ -231,8 +231,8 @@ public class ProjectAudioHandler {
 		return stem < 0 || stem >= stems.size() ? 0 : stems.get(stem).msLength();
 	}
 
-	public double audioLength() {
-		return audio.msLength();
+	public double audioLengthMs() {
+		return mainAudio.msLength();
 	}
 
 }
