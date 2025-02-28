@@ -71,7 +71,7 @@ public class AudioData {
 	}
 
 	public float getSample(final int frame, final int channel) {
-		return FloatSamplesUtils.readSample(data, frame, format.getSampleSizeInBits() / 8);
+		return FloatSamplesUtils.readSample(data, frame * format.getChannels(), format.getSampleSizeInBits() / 8);
 	}
 
 	public float[] getFrame(final int frame) {
@@ -204,5 +204,10 @@ public class AudioData {
 	public AudioData removeFromStart(final double time) {
 		final int from = (int) (time * format.getSampleRate() * format.getFrameSize());
 		return copyPart(from, data.length);
+	}
+
+	public AudioData cutToLength(final double time) {
+		final int to = (int) (time * format.getSampleRate() * format.getFrameSize());
+		return copyPart(0, to);
 	}
 }

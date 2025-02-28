@@ -140,7 +140,7 @@ public class SongFileHandler {
 
 	private void writeRSXML(final Timer timer, final File dir, final int id, final Arrangement arrangement) {
 		final String arrangementFileName = generateArrangementFileName(id, arrangement);
-		final SongArrangement songArrangement = new SongArrangement((int) projectAudioHandler.audioLength(),
+		final SongArrangement songArrangement = new SongArrangement((int) projectAudioHandler.audioLengthMs(),
 				chartData.songChart, arrangement);
 		final String xml = SongArrangementXStreamHandler.saveSong(songArrangement);
 		timer.addTimestamp("created XML for arrangement " + id);

@@ -23,8 +23,9 @@ public class Localization {
 		ADD_BEATS_AMOUNT("Add this many beats:"), //
 		ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
 		ADD_BEATS_PANE("Add beats"), //
-		ADD_DEFAULT_SILENCE("Add default silence based on bars"), //
-		ADD_SILENCE("Add silence in the beginning"), //
+		ADD_DEFAULT_START_SILENCE("Add default starting silence with empty bars"), //
+		ADD_SILENCE_AT_THE_END("Add silence at the end"), //
+		ADD_SILENCE_IN_THE_BEGINNING("Add silence in the beginning"), //
 		ARPEGGIO("Arpeggio"), //
 		ARRANGEMENT_ID_NAME("Arrangement %d, %s:"), //
 		ARRANGEMENT_IMPORT_OPTIONS("Arrangement import options"), //
@@ -62,6 +63,8 @@ public class Localization {
 		CANT_DROP_WITHOUT_PROJECT("Can't import file without project open"), //
 		CENTS("%s cents"), //
 		CHANGE_AUDIO("Change audio"), //
+		CHANGE_LENGTH("Change length"), //
+		CHANGE_LENGTH_BY_SECONDS("Change length by this many seconds:"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
 		CONFIG("Config"), //
@@ -233,6 +236,8 @@ public class Localization {
 		SECTION_WITHOUT_PHRASE("Section without phrase"), //
 		SELECT_ALL("Select all"), //
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
+		SET_LENGTH("Set length"), //
+		SET_LENGTH_TO_SECONDS("Set length to be this many seconds:"), //
 		SHORTCUTS_SET_CHARTER_DEFAULT("Charter default"), //
 		SHORTCUTS_SET_CURRENT("Current"), //
 		SHORTCUTS_SET_EOF_DEFAULT("EoF default"), //
