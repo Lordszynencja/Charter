@@ -202,7 +202,7 @@ public class SongFileHandler {
 		final String xml = writeChartProject(project);
 		timer.addTimestamp("wrote project to variable");
 
-		RW.write(new File(chartData.path, chartData.projectFileName), xml);
+		RW.write(new File(chartData.path, chartData.projectFileName), xml, "UTF-8");
 		timer.addTimestamp("wrote project to disk");
 		writeRSXMLs();
 		timer.addTimestamp("wrote RS XML");

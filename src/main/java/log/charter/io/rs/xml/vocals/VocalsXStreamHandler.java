@@ -7,7 +7,6 @@ import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
 
 import log.charter.io.XMLHandler;
-import log.charter.io.rs.xml.converters.ArrangementChordTemplateConverter;
 import log.charter.io.rs.xml.converters.CountedListConverter;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
 import log.charter.io.rs.xml.converters.VocalsConverter;
@@ -19,7 +18,6 @@ public class VocalsXStreamHandler {
 
 	private static XStream prepareXStream() {
 		final XStream xstream = new XStream();
-		xstream.registerConverter(new ArrangementChordTemplateConverter());
 		xstream.registerConverter(new CountedListConverter());
 		xstream.registerConverter(new NullSafeIntegerConverter());
 		xstream.registerConverter(new VocalsConverter());

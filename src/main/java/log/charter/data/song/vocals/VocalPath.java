@@ -21,7 +21,7 @@ import log.charter.io.rs.xml.vocals.ArrangementVocals;
 @XStreamInclude(Vocal.class)
 public class VocalPath {
 	public String name = "";
-	public Color color = new Color(160, 160, 160);
+	public Color color = new Color(255, 255, 255);
 	public List<Vocal> vocals = new ArrayList<>();
 
 	public VocalPath() {

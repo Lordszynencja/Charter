@@ -1,7 +1,9 @@
 package log.charter.gui.components.containers;
 
+import static java.lang.Math.max;
 import static log.charter.gui.components.containers.SaverWithStatus.emptySaver;
 
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -67,9 +69,14 @@ public class RowedDialog extends JDialog implements ComponentListener {
 
 	private void setSizeWithInsets() {
 		final Insets insets = getInsets();
-		final int width = panel.getWidth() + insets.left + insets.right;
-		final int height = panel.getHeight() + insets.top + insets.bottom;
+		final Dimension minPanelSize = panel.getMinimumSize();
+		final int width = max(getWidth(), minPanelSize.width + insets.left + insets.right);
+		final int height = max(getHeight(), minPanelSize.height + insets.top + insets.bottom);
 		setSize(width, height);
+
+		final int panelWidth = width - insets.left - insets.right;
+		final int panelHeight = height - insets.top - insets.bottom;
+		panel.setSize(panelWidth, panelHeight);
 	}
 
 	protected void addDefaultFinish(final int y, final SaverWithStatus onSave, final SaverWithStatus onCancel,
@@ -123,9 +130,14 @@ public class RowedDialog extends JDialog implements ComponentListener {
 	}
 
 	protected void finishInit() {
+		final Insets insets = getInsets();
+		final Dimension minPanelSize = panel.getMinimumSize();
+		final int minWidth = minPanelSize.width + insets.left + insets.right;
+		final int minHeight = minPanelSize.height + insets.top + insets.bottom;
+		setMinimumSize(new Dimension(minWidth, minHeight));
+
 		setSizeWithInsets();
 		setLocation();
-
 		validate();
 		setVisible(true);
 	}
