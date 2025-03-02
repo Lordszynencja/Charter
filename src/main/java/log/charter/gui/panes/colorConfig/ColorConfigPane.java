@@ -49,7 +49,7 @@ public class ColorConfigPane extends RowedDialog {
 		colorsPanel = makePanel(position);
 		position.newRows(4 + (int) ceil(400 / (panel.sizes.rowHeight + panel.sizes.verticalSpace)));
 
-		addDefaultFinish(position.getY(), SaverWithStatus.defaultFor(this::onSave), null, false);
+		addDefaultFinish(position.y(), SaverWithStatus.defaultFor(this::onSave), null, false);
 		saveButton = panel.getPart(-2);
 		cancelButton = panel.getPart(-1);
 

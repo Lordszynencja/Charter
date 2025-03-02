@@ -49,7 +49,7 @@ public class BandPassSettings extends RowedDialog {
 
 		showAlgorithmDependentFields();
 
-		addDefaultFinish(position.newRow().getY(), () -> {
+		addDefaultFinish(position.newRow().y(), () -> {
 			Config.passFilters.bandPassAlgorithm = algorithm;
 			Config.passFilters.bandPassOrder = order;
 			Config.passFilters.bandPassCenterFrequency = centerFrequency;

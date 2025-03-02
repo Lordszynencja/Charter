@@ -74,7 +74,7 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 
 		chordTemplateEditor.addChordNameSuggestionButton(listWidth + 150, 0);
 
-		chordTemplateEditor.addChordNameInput(listWidth + 150, 1);
+		chordTemplateEditor.addChordNameInput(listWidth + 70, 1);
 		addCheckbox(2, listWidth + 70, 70, Label.ARPEGGIO, false, val -> {
 			chordTemplate.arpeggio = val;
 			templateEdited();

@@ -50,7 +50,7 @@ public class VocalPathSettingsPane extends RowedDialog {
 
 		position.newRow();
 		position.newRow();
-		addDefaultFinish(position.getY(), SaverWithStatus.defaultFor(this::saveAndExit), null, true);
+		addDefaultFinish(position.y(), SaverWithStatus.defaultFor(this::saveAndExit), null, true);
 	}
 
 	private JTextField addNameInput(final RowedPosition position) {

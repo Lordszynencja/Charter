@@ -33,7 +33,7 @@ public abstract class PagedDialog extends RowedDialog {
 		final JToggleButton themeConfigSwitch = new JToggleButton(page.label().label());
 		themeConfigSwitch.addActionListener(e -> setCurrentPage(page));
 		buttonGroup.add(themeConfigSwitch);
-		panel.addWithSettingSize(themeConfigSwitch, position.getAndAddX(120), position.getY(), 100, 20);
+		panel.addWithSettingSize(themeConfigSwitch, position.getAndAddX(120), position.y(), 100, 20);
 
 		page.init(panel, position.copy().newRows(2).startFromHere());
 
@@ -49,9 +49,9 @@ public abstract class PagedDialog extends RowedDialog {
 		for (final Page page : pages) {
 			addPage(position, page, buttonGroup);
 		}
-		panel.resizeToFit(position.getX() - 10, position.getY());
+		panel.resizeToFit(position.x() - 10, position.y());
 
-		while (position.getY() < panel.getHeight()) {
+		while (position.y() < panel.getHeight()) {
 			position.newRow();
 		}
 
@@ -61,7 +61,7 @@ public abstract class PagedDialog extends RowedDialog {
 			setCurrentPage(this.pages.get(0));
 		}
 
-		addDefaultFinish(position.getY(), this::save, this::cancel, false);
+		addDefaultFinish(position.y(), this::save, this::cancel, false);
 	}
 
 	abstract protected boolean save();

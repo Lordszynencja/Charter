@@ -88,8 +88,8 @@ public class RowedPanel extends JPanel {
 
 	public void addWithSpace(final Component component, final RowedPosition position, final int width,
 			final int space) {
-		component.setLocation(position.getAndAddX(width + space), position.getY());
-		resizeToFit(position.getX(), position.getY() + sizes.rowHeight + sizes.verticalSpace);
+		component.setLocation(position.getAndAddX(width + space), position.y());
+		resizeToFit(position.x(), position.y() + sizes.rowHeight + sizes.verticalSpace);
 		add(component);
 	}
 
@@ -104,7 +104,7 @@ public class RowedPanel extends JPanel {
 
 	public void addWithSettingSize(final Component component, final RowedPosition position, final int width,
 			final int space, final int height) {
-		addWithSettingSize(component, position.getAndAddX(width + space), position.getY(), width, height, space);
+		addWithSettingSize(component, position.getAndAddX(width + space), position.y(), width, height, space);
 	}
 
 	public void addWithSettingSize(final Component component, final int x, final int y, final int w, final int h) {

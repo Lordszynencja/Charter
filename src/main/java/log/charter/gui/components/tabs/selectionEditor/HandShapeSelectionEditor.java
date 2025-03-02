@@ -57,7 +57,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		addChordNameSuggestionButton(100, 0);
 		addSetTemplateButton(300, 0);
 
-		addChordNameInput(100, 1);
+		addChordNameInput(20, 1);
 
 		parent.addCheckbox(2, 20, 70, Label.ARPEGGIO, false, val -> {
 			chordTemplate.arpeggio = val;

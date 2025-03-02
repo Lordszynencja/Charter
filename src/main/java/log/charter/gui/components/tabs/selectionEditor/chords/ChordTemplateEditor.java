@@ -254,7 +254,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	}
 
 	public void addChordNameInput(final int x, final int row) {
-		parent.addLabel(1, x - 80, Label.CHORD_NAME, 80);
+		parent.addLabel(1, x, Label.CHORD_NAME, 80);
 		chordNameLabel = (JLabel) parent.getPart(-1);
 
 		chordNameInput = new AutocompleteInput<>(parent, 130, "", this::getPossibleChords,
@@ -289,7 +289,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			}
 		});
 
-		parent.addWithSettingSize(chordNameInput, x, parent.sizes.getY(row), 150, 20);
+		parent.addWithSettingSize(chordNameInput, x + 80, parent.sizes.getY(row), 150, 20);
 	}
 
 	private String templateSearchName(final ChordTemplate template) {
@@ -398,7 +398,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			fretInputPosition.newRow();
 		}
 
-		final int sizeDifference = fretInputPosition.getX() - position.getX();
+		final int sizeDifference = fretInputPosition.x() - position.x();
 		if (sizeDifference > 0) {
 			position.addX(sizeDifference);
 		}
@@ -411,7 +411,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 		addFretInputs(position);
 
-		x = position.getX();
+		x = position.x();
 
 		final int fingerLabelWidth = parent.addLabel(row, x, Label.CHORD_TEMPLATE_FINGER, 50);
 		fingersLabel = (JLabel) parent.getPart(-1);

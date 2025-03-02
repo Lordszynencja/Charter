@@ -43,7 +43,7 @@ public class LowPassSettings extends RowedDialog {
 
 		showAlgorithmDependentFields();
 
-		addDefaultFinish(position.newRow().getY(), () -> {
+		addDefaultFinish(position.newRow().y(), () -> {
 			Config.passFilters.lowPassAlgorithm = algorithm;
 			Config.passFilters.lowPassOrder = order;
 			Config.passFilters.lowPassFrequency = frequency;
