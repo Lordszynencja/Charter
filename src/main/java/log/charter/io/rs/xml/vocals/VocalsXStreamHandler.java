@@ -1,7 +1,5 @@
 package log.charter.io.rs.xml.vocals;
 
-import java.nio.charset.Charset;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
@@ -33,11 +31,11 @@ public class VocalsXStreamHandler {
 	}
 
 	public static ArrangementVocals readVocals(final String xml) {
-		if (xml.isEmpty()) {
+		if (xml == null || xml.isEmpty()) {
 			return new ArrangementVocals();
 		}
 
-		return (ArrangementVocals) xstream.fromXML(new String(xml.getBytes(), Charset.forName("UTF-8")));
+		return (ArrangementVocals) xstream.fromXML(xml);
 	}
 
 	public static String saveVocals(final ArrangementVocals vocals) {

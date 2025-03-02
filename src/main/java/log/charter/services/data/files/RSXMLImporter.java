@@ -45,7 +45,7 @@ public class RSXMLImporter {
 
 	public void importRSVocalsXML(final File file) {
 		try {
-			final ArrangementVocals vocals = VocalsXStreamHandler.readVocals(RW.read(file));
+			final ArrangementVocals vocals = VocalsXStreamHandler.readVocals(RW.read(file, "UTF-8"));
 			final VocalPath newVocals = new VocalPath(chartData.beats(), vocals);
 			chartData.addVocals(newVocals);
 			songFileHandler.save();

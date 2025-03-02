@@ -72,6 +72,22 @@ public class ModeManager implements Initiable {
 		chordTemplatesEditorTab.refreshTemplates();
 	}
 
+	public void resetVocalPath() {
+		audioHandler.stopMusic();
+		selectionManager.clear();
+
+		chartData.currentArrangement = -1;
+		setLevel(0);
+		setMode(EditMode.VOCALS);
+
+		chartToolbar.updateValues();
+		charterMenuBar.refreshMenus();
+		charterFrame.updateSizes();
+		titleUpdater.updateTitle();
+		chartMap.triggerRedraw();
+		chordTemplatesEditorTab.refreshTemplates();
+	}
+
 	public void setVocalPath(final int vocalPathId) {
 		if (vocalPathId == chartData.currentVocals && editMode == EditMode.VOCALS) {
 			return;
@@ -84,6 +100,21 @@ public class ModeManager implements Initiable {
 		chartData.currentArrangement = -1;
 		setLevel(0);
 		setMode(EditMode.VOCALS);
+
+		chartToolbar.updateValues();
+		charterMenuBar.refreshMenus();
+		charterFrame.updateSizes();
+		titleUpdater.updateTitle();
+		chartMap.triggerRedraw();
+		chordTemplatesEditorTab.refreshTemplates();
+	}
+
+	public void resetArrangement() {
+		audioHandler.stopMusic();
+		selectionManager.clear();
+
+		setLevel(0);
+		setMode(EditMode.GUITAR);
 
 		chartToolbar.updateValues();
 		charterMenuBar.refreshMenus();

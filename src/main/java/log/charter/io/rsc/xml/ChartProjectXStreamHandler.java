@@ -97,7 +97,7 @@ public class ChartProjectXStreamHandler {
 	}
 
 	public static ChartProject readChartProject(final File file) {
-		String content = RW.read(file);
+		String content = RW.read(file, "UTF-8");
 		content = content.replace(" class=\"log.charter.util.collections.HashSet2\"", "");
 
 		final Object o = xstream.fromXML(content);
