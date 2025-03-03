@@ -56,6 +56,8 @@ public class Localization {
 		BAND_PASS("Band"), //
 		BAND_PASS_SETTINGS("Band pass settings"), //
 		BASE_AUDIO_FORMAT("Base audio format"), //
+		BEAT_ADD("Add beat"), //
+		BEAT_REMOVE("Remove beat"), //
 		BOOKMARKS_MENU("Bookmarks"), //
 		BUFFER_SIZE_MS("Audio buffer size to fill (ms)"), //
 		BUTTON_CANCEL("Cancel"), //

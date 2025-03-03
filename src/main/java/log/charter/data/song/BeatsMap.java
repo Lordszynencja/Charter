@@ -1,5 +1,7 @@
 package log.charter.data.song;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static log.charter.data.song.position.virtual.IVirtualConstantPosition.distance;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
@@ -571,4 +573,13 @@ public class BeatsMap {
 
 		return beats.get(beatId);
 	}
+
+	public void moveBeats(final double chartLength, final double positionDifference) {
+		for (final Beat beat : beats) {
+			beat.position(max(0, min(chartLength, beat.position() + positionDifference)));
+		}
+
+		makeBeatsUntilSongEnd(chartLength);
+	}
+
 }

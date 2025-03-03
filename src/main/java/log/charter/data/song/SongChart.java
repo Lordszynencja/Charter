@@ -1,7 +1,5 @@
 package log.charter.data.song;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static log.charter.util.Utils.nvl;
 
 import java.io.IOException;
@@ -118,14 +116,6 @@ public class SongChart {
 
 	public void albumName(final String value) {
 		albumName = cleanString(value);
-	}
-
-	public void moveBeats(final double chartLength, final double positionDifference) {
-		for (final Beat beat : beatsMap.beats) {
-			beat.position(max(0, min(chartLength, beat.position() + positionDifference)));
-		}
-
-		beatsMap.makeBeatsUntilSongEnd(chartLength);
 	}
 
 	public void moveContent(final int beatsToAdd) {
