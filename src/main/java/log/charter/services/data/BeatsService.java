@@ -2,6 +2,7 @@ package log.charter.services.data;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.util.Utils.mix;
 
 import java.util.List;
 
@@ -138,7 +139,7 @@ public class BeatsService {
 		}
 	}
 
-	private void moveBeatsForward(final int fromId) {
+	private void moveBeatForward(final int fromId) {
 		final double offset = chartData.beats().get(fromId + 1).position() - chartData.beats().get(fromId).position();
 		moveBeats(fromId, offset);
 	}
@@ -155,12 +156,58 @@ public class BeatsService {
 		final double positionFrom = chartData.beats().get(highlight.id).position();
 
 		chartData.songChart.moveContent(new FractionalPosition(highlight.id), new FractionalPosition(1));
-		moveBeatsForward(highlight.id);
-		chartData.songChart.beatsMap.beats.add(highlight.id, new Beat(positionFrom));
+		moveBeatForward(highlight.id);
+		final Beat newBeat = new Beat(positionFrom, highlight.beat.beatsInMeasure, highlight.beat.noteDenominator,
+				highlight.beat.firstInMeasure, highlight.beat.anchor);
+		chartData.songChart.beatsMap.beats.add(highlight.id, newBeat);
 		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
 	}
 
-	private void moveBeatsBackward(final int fromId) {
+	private int findMeasureStartId(final int id) {
+		for (int i = id; i > 0; i--) {
+			if (chartData.beats().get(i).firstInMeasure) {
+				return i;
+			}
+		}
+
+		return 0;
+	}
+
+	private void moveMeasureForward(final int fromId, final Beat measureBeat) {
+		final double offset = chartData.beats().get(fromId + measureBeat.beatsInMeasure).position()
+				- measureBeat.position();
+		moveBeats(fromId, offset);
+	}
+
+	public void addMeasure() {
+		final PositionWithIdAndType highlight = highlightManager.getHighlight();
+		if (highlight.type != PositionType.BEAT || !highlight.existingPosition
+				|| highlight.id >= chartData.beats().size() - 1) {
+			return;
+		}
+
+		undoSystem.addUndo();
+
+		final int measureStartId = findMeasureStartId(highlight.id);
+		final Beat measureBeat = chartData.beats().get(measureStartId);
+
+		final double positionFrom = measureBeat.position();
+
+		chartData.songChart.moveContent(new FractionalPosition(measureStartId),
+				new FractionalPosition(measureBeat.beatsInMeasure));
+		moveMeasureForward(measureStartId, measureBeat);
+
+		final double positionTo = measureBeat.position();
+		for (int i = 0; i < measureBeat.beatsInMeasure; i++) {
+			final double position = mix(0, measureBeat.beatsInMeasure, i, positionFrom, positionTo);
+			final Beat newBeat = new Beat(position, measureBeat.beatsInMeasure, measureBeat.noteDenominator, i == 0,
+					i == 0 && measureBeat.anchor);
+			chartData.songChart.beatsMap.beats.add(measureStartId + i, newBeat);
+		}
+		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
+	}
+
+	private void moveBeatBackward(final int fromId) {
 		final double offset = chartData.beats().get(fromId).position() - chartData.beats().get(fromId + 1).position();
 		moveBeats(fromId, offset);
 	}
@@ -177,10 +224,37 @@ public class BeatsService {
 
 		chartData.songChart.removeContent(new FractionalPosition(id), new FractionalPosition(id + 1));
 		chartData.songChart.moveContent(new FractionalPosition(id), new FractionalPosition(-1));
-		moveBeatsBackward(id);
+		moveBeatBackward(id);
 		chartData.songChart.beatsMap.beats.remove(id);
 		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
+	}
 
+	private void moveMeasureBackward(final int fromId, final Beat measureBeat) {
+		final double offset = measureBeat.position()
+				- chartData.beats().get(fromId + measureBeat.beatsInMeasure).position();
+		moveBeats(fromId, offset);
+	}
+
+	public void removeMeasure() {
+		final PositionWithIdAndType highlight = highlightManager.getHighlight();
+		if (highlight.type != PositionType.BEAT || !highlight.existingPosition) {
+			return;
+		}
+
+		undoSystem.addUndo();
+
+		final int measureStartId = findMeasureStartId(highlight.id);
+		final Beat measureBeat = chartData.beats().get(measureStartId);
+
+		chartData.songChart.removeContent(new FractionalPosition(measureStartId),
+				new FractionalPosition(measureStartId + measureBeat.beatsInMeasure));
+		chartData.songChart.moveContent(new FractionalPosition(measureStartId),
+				new FractionalPosition(-measureBeat.beatsInMeasure));
+		moveMeasureBackward(measureStartId, measureBeat);
+		for (int i = 0; i < measureBeat.beatsInMeasure; i++) {
+			chartData.songChart.beatsMap.beats.remove(measureStartId);
+		}
+		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
 	}
 
 	public void toggleAnchor() {

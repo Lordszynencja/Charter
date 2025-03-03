@@ -100,6 +100,17 @@ public class Note extends GuitarSound implements IFractionalPositionWithEnd, Not
 	}
 
 	@Override
+	public void move(final FractionalPosition distance) {
+		IFractionalPositionWithEnd.super.move(distance);
+		bendValues.forEach(p -> p.move(distance));
+	}
+
+	@Override
+	public void move(final int beats) {
+		move(new FractionalPosition(beats));
+	}
+
+	@Override
 	public BassPickingTechnique bassPicking() {
 		return bassPicking;
 	}

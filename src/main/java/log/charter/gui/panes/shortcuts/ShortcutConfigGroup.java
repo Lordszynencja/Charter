@@ -48,7 +48,9 @@ public enum ShortcutConfigGroup {
 			Action.REDO, //
 			Action.TOGGLE_ANCHOR, //
 			Action.BEAT_ADD, //
-			Action.BEAT_REMOVE), //
+			Action.BEAT_REMOVE, //
+			Action.MEASURE_ADD, //
+			Action.MEASURE_REMOVE), //
 	VOCAL_EDITING(Label.VOCAL_EDITING, //
 			Action.EDIT_VOCALS, //
 			Action.TOGGLE_PHRASE_END, //

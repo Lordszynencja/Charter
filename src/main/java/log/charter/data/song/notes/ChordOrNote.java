@@ -389,14 +389,22 @@ public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPos
 	}
 
 	@Override
-	default void move(final int beats) {
+	default void move(final FractionalPosition distance) {
 		if (isNote()) {
-			note().move(beats);
+			note().move(distance);
 			return;
 		}
 
 		final Chord chord = chord();
-		chord.position(chord.position().add(beats));
-		chord.chordNotes.values().forEach(n -> n.endPosition(n.endPosition().add(beats)));
+		chord.move(distance);
+		chord.chordNotes.values().forEach(n -> {
+			n.endPosition(n.endPosition().add(distance));
+			n.bendValues.forEach(p -> p.move(distance));
+		});
+	}
+
+	@Override
+	default void move(final int beats) {
+		this.move(new FractionalPosition(beats));
 	}
 }

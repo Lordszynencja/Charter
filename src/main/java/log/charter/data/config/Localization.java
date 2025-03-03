@@ -162,6 +162,8 @@ public class Localization {
 		MARKER_POSITION_PX("Marker position (px)"), //
 		MAX_BEND_VALUE("Max bend value"), //
 		MAX_STRINGS("Max strings"), //
+		MEASURE_ADD("Add measure"), //
+		MEASURE_REMOVE("Remove measure"), //
 		MIDI_SOUND_DELAY("Midi sound delay (ms)"), //
 		MINIMAL_NOTE_DISTANCE("Minimal note distance"), //
 		MINIMAL_TAIL_LENGTH("Minimal note tail length"), //

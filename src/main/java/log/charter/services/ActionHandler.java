@@ -258,6 +258,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.MARK_BOOKMARK_8, () -> toggleBookmark(8));
 		actionHandlers.put(Action.MARK_BOOKMARK_9, () -> toggleBookmark(9));
 		actionHandlers.put(Action.MARK_HAND_SHAPE, handShapesHandler::markHandShape);
+		actionHandlers.put(Action.MEASURE_ADD, beatsService::addMeasure);
+		actionHandlers.put(Action.MEASURE_REMOVE, beatsService::removeMeasure);
 		actionHandlers.put(Action.MOVE_STRING_DOWN, () -> guitarSoundsHandler.moveStringsWithFretChange(-1));
 		actionHandlers.put(Action.MOVE_STRING_DOWN_SIMPLE, () -> guitarSoundsHandler.moveStringsWithoutFretChange(-1));
 		actionHandlers.put(Action.MOVE_STRING_UP, () -> guitarSoundsHandler.moveStringsWithFretChange(1));
