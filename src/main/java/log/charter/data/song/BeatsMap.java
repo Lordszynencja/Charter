@@ -597,6 +597,7 @@ public class BeatsMap {
 
 	@Override
 	public BeatsMap clone() {
-		return new BeatsMap(beats.stream().map(Beat::new).collect(Collectors.toCollection(ArrayList::new)));
+		return new BeatsMap(
+				(List<Beat>) beats.stream().map(Beat::new).collect(Collectors.toCollection(ArrayList::new)));
 	}
 }
