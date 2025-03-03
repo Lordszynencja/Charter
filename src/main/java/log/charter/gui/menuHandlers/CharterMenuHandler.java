@@ -55,6 +55,12 @@ abstract class CharterMenuHandler {
 		return item;
 	}
 
+	protected JMenuItem createDisabledItem(final Action action) {
+		final JMenuItem item = createItem(action);
+		item.setEnabled(false);
+		return item;
+	}
+
 	abstract boolean isApplicable();
 
 	abstract JMenu prepareMenu();

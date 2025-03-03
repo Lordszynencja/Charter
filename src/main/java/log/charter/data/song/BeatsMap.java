@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
@@ -200,23 +201,11 @@ public class BeatsMap {
 		}
 
 		public int findPreviousAnchoredBeat(final int beatId) {
-			for (int i = beatId - 1; i > 0; i--) {
-				if (beats.get(i).anchor) {
-					return i;
-				}
-			}
-
-			return 0;
+			return BeatsMap.this.findPreviousAnchoredBeat(beatId);
 		}
 
 		public Integer findNextAnchoredBeat(final int beatId) {
-			for (int i = beatId + 1; i < beats.size(); i++) {
-				if (beats.get(i).anchor) {
-					return i;
-				}
-			}
-
-			return null;
+			return BeatsMap.this.findNextAnchoredBeat(beatId);
 		}
 
 		public FractionalPosition getPositionFromGridClosestTo(final IVirtualConstantPosition position) {
@@ -341,7 +330,7 @@ public class BeatsMap {
 			}
 
 			return position;
-		};
+		}
 
 		public IVirtualConstantPosition getMinEndPositionAfter(final IVirtualConstantPosition position) {
 			if (Config.minTailLengthType == DistanceType.MILISECONDS) {
@@ -355,7 +344,11 @@ public class BeatsMap {
 			}
 
 			return position;
-		};
+		}
+
+		public BeatsMap getClone() {
+			return BeatsMap.this.clone();
+		}
 	}
 
 	public final ImmutableBeatsMap immutable = new ImmutableBeatsMap();
@@ -582,4 +575,28 @@ public class BeatsMap {
 		makeBeatsUntilSongEnd(chartLength);
 	}
 
+	public int findPreviousAnchoredBeat(final int beatId) {
+		for (int i = beatId - 1; i > 0; i--) {
+			if (beats.get(i).anchor) {
+				return i;
+			}
+		}
+
+		return 0;
+	}
+
+	public Integer findNextAnchoredBeat(final int beatId) {
+		for (int i = beatId + 1; i < beats.size(); i++) {
+			if (beats.get(i).anchor) {
+				return i;
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public BeatsMap clone() {
+		return new BeatsMap(beats.stream().map(Beat::new).collect(Collectors.toCollection(ArrayList::new)));
+	}
 }

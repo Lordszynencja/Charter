@@ -142,27 +142,27 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 	}
 
+	private boolean isLeftDoubleClick(final MouseButtonPressReleaseData clickData) {
+		return lastClickId != null && lastClickId.equals(clickData.pressHighlight.id) //
+				&& System.currentTimeMillis() - lastLeftClickTime < 300;
+	}
+
+	private void dragTempo(final MouseButtonPressReleaseData clickData) {
+		final double to = xToPosition(clickData.releasePosition.x, chartTimeHandler.time());
+		beatsService.dragTempo(chartData.songChart.beatsMap, clickData.pressHighlight, to);
+	}
+
 	private void handleClick(final MouseButtonPressReleaseData clickData) {
 		switch (clickData.button) {
 			case LEFT_BUTTON:
-				final boolean wasLeftDoubleClick = lastClickId != null
-						&& lastClickId.equals(clickData.pressHighlight.id) //
-						&& System.currentTimeMillis() - lastLeftClickTime < 300;
 				lastLeftClickTime = System.currentTimeMillis();
 				lastClickId = clickData.pressHighlight.id;
 
 				switch (modeManager.getMode()) {
-					case GUITAR:
-						leftClickGuitar(clickData);
-						break;
-					case TEMPO_MAP:
-						dragTempo(clickData);
-						break;
-					case VOCALS:
-						leftClickVocals(clickData, wasLeftDoubleClick);
-						break;
-					default:
-						break;
+					case GUITAR -> leftClickGuitar(clickData);
+					case TEMPO_MAP -> dragTempo(clickData);
+					case VOCALS -> leftClickVocals(clickData, isLeftDoubleClick(clickData));
+					default -> {}
 				}
 				break;
 			case RIGHT_BUTTON:
@@ -202,11 +202,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		} catch (final Exception ex) {
 			Logger.error("Exception on mouse released", ex);
 		}
-	}
-
-	private void dragTempo(final MouseButtonPressReleaseData clickData) {
-		final double to = xToPosition(clickData.releasePosition.x, chartTimeHandler.time());
-		beatsService.dragTempo(clickData.pressHighlight, to);
 	}
 
 	private void reselectDraggedPositions(final PositionType type,
