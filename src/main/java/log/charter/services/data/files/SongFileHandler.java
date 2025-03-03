@@ -149,14 +149,19 @@ public class SongFileHandler {
 		timer.addTimestamp("wrote XML to disk");
 	}
 
+	private static String generateVocalPathFileName(final int id, final VocalPath vocals) {
+		return id + "_Vocals_" + vocals.name.replaceAll("[^ \\-0-9a-zA-Z]", "") + "_RS2.xml";
+	}
+
 	private void writeRSXML(final Timer timer, final File dir, final int id, final VocalPath vocals) {
 		if (vocals.vocals.isEmpty()) {
 			return;
 		}
 
+		final String vocalPathFileName = generateVocalPathFileName(id, vocals);
 		final String xml = saveVocals(new ArrangementVocals(chartData.beats(), vocals));
 		timer.addTimestamp("created XML for vocals");
-		RW.write(new File(dir, vocalsFileName), xml, "UTF-8");
+		RW.write(new File(dir, vocalPathFileName), xml, "UTF-8");
 		timer.addTimestamp("wrote XML to disk");
 	}
 
