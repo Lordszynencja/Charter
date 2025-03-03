@@ -1,7 +1,5 @@
 package log.charter.data.song;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static log.charter.util.Utils.nvl;
 
 import java.io.IOException;
@@ -10,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IFractionalPosition;
 import log.charter.data.song.vocals.VocalPath;
 import log.charter.io.rsc.xml.ChartProject;
 
@@ -120,24 +120,55 @@ public class SongChart {
 		albumName = cleanString(value);
 	}
 
-	public void moveBeats(final double chartLength, final double positionDifference) {
-		for (final Beat beat : beatsMap.beats) {
-			beat.position(max(0, min(chartLength, beat.position() + positionDifference)));
+	private List<IFractionalPosition> getAllFractionalPositionContent() {
+		final List<IFractionalPosition> positions = new ArrayList<>(10000);
+
+		for (final VocalPath vocalPath : vocalPaths) {
+			positions.addAll(vocalPath.vocals);
+		}
+		for (final Arrangement arrangement : arrangements) {
+			positions.addAll(arrangement.eventPoints);
+			positions.addAll(arrangement.toneChanges);
+
+			for (final Level level : arrangement.levels) {
+				positions.addAll(level.fhps);
+				positions.addAll(level.sounds);
+				positions.addAll(level.handShapes);
+			}
 		}
 
-		beatsMap.makeBeatsUntilSongEnd(chartLength);
+		return positions;
+	}
+
+	public void moveContent(final FractionalPosition from, final FractionalPosition offset) {
+		getAllFractionalPositionContent().forEach(p -> {
+			if (p.compareTo(from) >= 0) {
+				p.move(offset);
+			}
+		});
 	}
 
 	public void moveContent(final int beatsToAdd) {
-		vocalPaths.forEach(vocals -> vocals.vocals.forEach(v -> v.move(beatsToAdd)));
+		getAllFractionalPositionContent().forEach(p -> p.move(beatsToAdd));
+	}
+
+	private void remove(final List<? extends IFractionalPosition> positions, final FractionalPosition from,
+			final FractionalPosition to) {
+		positions.removeIf(p -> p.compareTo(from) >= 0 && p.compareTo(to) < 0);
+	}
+
+	public void removeContent(final FractionalPosition from, final FractionalPosition to) {
+		for (final VocalPath vocalPath : vocalPaths) {
+			remove(vocalPath.vocals, from, to);
+		}
 		for (final Arrangement arrangement : arrangements) {
-			arrangement.eventPoints.forEach(ep -> ep.move(beatsToAdd));
-			arrangement.toneChanges.forEach(tc -> tc.move(beatsToAdd));
+			remove(arrangement.eventPoints, from, to);
+			remove(arrangement.toneChanges, from, to);
 
 			for (final Level level : arrangement.levels) {
-				level.fhps.forEach(tc -> tc.move(beatsToAdd));
-				level.sounds.forEach(s -> s.move(beatsToAdd));
-				level.handShapes.forEach(tc -> tc.move(beatsToAdd));
+				remove(level.fhps, from, to);
+				remove(level.sounds, from, to);
+				remove(level.handShapes, from, to);
 			}
 		}
 	}

@@ -120,22 +120,26 @@ public class ComponentUtils {
 		}
 	}
 
+	private static void resize(final Container parent, final ComponentWithOffset... components) {
+		final Insets insets = parent.getInsets();
+		final int w = parent.getWidth() - insets.left - insets.right;
+		final int middleX = w / 2;
+
+		for (final ComponentWithOffset component : components) {
+			component.setLocationFor(middleX);
+		}
+	}
+
 	public static void addComponentCenteringOnResize(final Container parent, final ComponentWithOffset... components) {
 		parent.addComponentListener(new ComponentListener() {
-
 			@Override
 			public void componentShown(final ComponentEvent e) {
+				resize(parent, components);
 			}
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				final Insets insets = parent.getInsets();
-				final int w = parent.getWidth() - insets.left - insets.right;
-				final int middleX = w / 2;
-
-				for (final ComponentWithOffset component : components) {
-					component.setLocationFor(middleX);
-				}
+				resize(parent, components);
 			}
 
 			@Override
@@ -146,6 +150,8 @@ public class ComponentUtils {
 			public void componentHidden(final ComponentEvent e) {
 			}
 		});
+
+		resize(parent, components);
 	}
 
 	public static void setIcon(final JLabel label, final BufferedImage icon) {

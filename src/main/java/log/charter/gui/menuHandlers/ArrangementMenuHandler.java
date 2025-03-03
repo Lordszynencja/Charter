@@ -198,7 +198,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 			if (chartData.songChart.vocalPaths.size() == chartData.currentVocals) {
 				modeManager.setVocalPath(chartData.currentVocals - 1);
 			} else {
-				modeManager.setVocalPath(chartData.currentVocals);
+				modeManager.resetVocalPath();
 			}
 		} else {
 			modeManager.setMode(EditMode.TEMPO_MAP);
@@ -221,7 +221,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 			if (chartData.songChart.arrangements.size() == chartData.currentArrangement) {
 				modeManager.setArrangement(chartData.currentArrangement - 1);
 			} else {
-				modeManager.setArrangement(chartData.currentArrangement);
+				modeManager.resetArrangement();
 			}
 		} else if (!chartData.songChart.vocalPaths.isEmpty()) {
 			modeManager.setVocalPath(chartData.songChart.vocalPaths.size() - 1);

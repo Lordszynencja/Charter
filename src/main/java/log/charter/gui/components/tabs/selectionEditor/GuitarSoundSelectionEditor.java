@@ -114,7 +114,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 			final JCheckBox stringCheckbox = new JCheckBox((string + 1) + "");
 			stringCheckbox.setFocusable(false);
 			stringCheckbox.addActionListener(e -> updateStringSelectionDependentValues());
-			parent.addWithSettingSize(stringCheckbox, position.getAndAddX(40), position.getY(), 40, 20);
+			parent.addWithSettingSize(stringCheckbox, position.getAndAddX(40), position.y(), 40, 20);
 			strings.add(stringCheckbox);
 		}
 	}
@@ -173,7 +173,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void addChordTemplateEditorParts(final int x) {
 		addChordNameSuggestionButton(x + 100, 0);
-		addChordNameInput(x + 100, 1);
+		addChordNameInput(x + 20, 1);
 		addChordTemplateEditor(x, 3);
 	}
 

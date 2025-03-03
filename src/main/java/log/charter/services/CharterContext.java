@@ -32,6 +32,7 @@ import log.charter.services.audio.AudioHandler;
 import log.charter.services.audio.ClapsHandler;
 import log.charter.services.audio.MetronomeHandler;
 import log.charter.services.audio.MidiChartNotePlayer;
+import log.charter.services.data.BeatsService;
 import log.charter.services.data.ChartItemsHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.GuitarSoundsHandler;
@@ -73,6 +74,7 @@ public class CharterContext {
 
 	private final ActionHandler actionHandler = new ActionHandler();
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
+	private final BeatsService beatsService = new BeatsService();
 	private final ChartValidator chartValidator = new ChartValidator();
 	private final AudioHandler audioHandler = new AudioHandler();
 	private final BeatsDrawer beatsDrawer = new BeatsDrawer();

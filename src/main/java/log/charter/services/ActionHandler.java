@@ -11,8 +11,6 @@ import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
-import log.charter.data.types.PositionType;
-import log.charter.data.types.PositionWithIdAndType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.toolbar.IChartToolbar;
@@ -21,6 +19,7 @@ import log.charter.services.CharterContext.Initiable;
 import log.charter.services.audio.AudioHandler;
 import log.charter.services.audio.ClapsHandler;
 import log.charter.services.audio.MetronomeHandler;
+import log.charter.services.data.BeatsService;
 import log.charter.services.data.ChartItemsHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.GuitarSoundsHandler;
@@ -33,11 +32,11 @@ import log.charter.services.data.files.SongFileHandler;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.services.mouseAndKeyboard.HighlightManager;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
 
 public class ActionHandler implements Initiable {
 	private AudioHandler audioHandler;
+	private BeatsService beatsService;
 	private ChartData chartData;
 	private ChartItemsHandler chartItemsHandler;
 	private ChartTimeHandler chartTimeHandler;
@@ -48,7 +47,6 @@ public class ActionHandler implements Initiable {
 	private GuitarSoundsHandler guitarSoundsHandler;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private HandShapesHandler handShapesHandler;
-	private HighlightManager highlightManager;
 	private MetronomeHandler metronomeHandler;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
@@ -192,17 +190,6 @@ public class ActionHandler implements Initiable {
 		}
 	}
 
-	private void toggleAnchor() {
-		final PositionWithIdAndType highlight = highlightManager.getHighlight(mouseHandler.getMouseX(),
-				mouseHandler.getMouseY());
-		if (!highlight.existingPosition || highlight.type != PositionType.BEAT) {
-			return;
-		}
-
-		undoSystem.addUndo();
-		highlight.beat.anchor = !highlight.beat.anchor;
-	}
-
 	private void toggleBookmark(final int number) {
 		final Double currentBookmark = chartData.songChart.bookmarks.get(number);
 		if (currentBookmark == null || currentBookmark != chartTimeHandler.time()) {
@@ -242,6 +229,8 @@ public class ActionHandler implements Initiable {
 	public void init() {
 		actionHandlers.put(Action.ARRANGEMENT_NEXT, this::nextArrangement);
 		actionHandlers.put(Action.ARRANGEMENT_PREVIOUS, this::previousArrangement);
+		actionHandlers.put(Action.BEAT_ADD, beatsService::addBeat);
+		actionHandlers.put(Action.BEAT_REMOVE, beatsService::removeBeat);
 		actionHandlers.put(Action.COPY, copyManager::copy);
 		actionHandlers.put(Action.DELETE, chartItemsHandler::delete);
 		actionHandlers.put(Action.DOUBLE_GRID, this::doubleGridSize);
@@ -269,12 +258,16 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.MARK_BOOKMARK_8, () -> toggleBookmark(8));
 		actionHandlers.put(Action.MARK_BOOKMARK_9, () -> toggleBookmark(9));
 		actionHandlers.put(Action.MARK_HAND_SHAPE, handShapesHandler::markHandShape);
+		actionHandlers.put(Action.MEASURE_ADD, beatsService::addMeasure);
+		actionHandlers.put(Action.MEASURE_REMOVE, beatsService::removeMeasure);
 		actionHandlers.put(Action.MOVE_STRING_DOWN, () -> guitarSoundsHandler.moveStringsWithFretChange(-1));
 		actionHandlers.put(Action.MOVE_STRING_DOWN_SIMPLE, () -> guitarSoundsHandler.moveStringsWithoutFretChange(-1));
 		actionHandlers.put(Action.MOVE_STRING_UP, () -> guitarSoundsHandler.moveStringsWithFretChange(1));
 		actionHandlers.put(Action.MOVE_STRING_UP_SIMPLE, () -> guitarSoundsHandler.moveStringsWithoutFretChange(1));
 		actionHandlers.put(Action.MOVE_FRET_DOWN, () -> guitarSoundsHandler.moveFret(-1));
+		actionHandlers.put(Action.MOVE_FRET_DOWN_OCTAVE, () -> guitarSoundsHandler.moveFret(-12));
 		actionHandlers.put(Action.MOVE_FRET_UP, () -> guitarSoundsHandler.moveFret(1));
+		actionHandlers.put(Action.MOVE_FRET_UP_OCTAVE, () -> guitarSoundsHandler.moveFret(12));
 		actionHandlers.put(Action.MOVE_TO_BOOKMARK_0, () -> moveToBookmark(0));
 		actionHandlers.put(Action.MOVE_TO_BOOKMARK_1, () -> moveToBookmark(1));
 		actionHandlers.put(Action.MOVE_TO_BOOKMARK_2, () -> moveToBookmark(2));
@@ -315,10 +308,11 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.SPEED_INCREASE, () -> changeSpeed(5));
 		actionHandlers.put(Action.SPEED_INCREASE_FAST, () -> changeSpeed(25));
 		actionHandlers.put(Action.SPEED_INCREASE_PRECISE, () -> changeSpeed(1));
-		actionHandlers.put(Action.SWITCH_TS_TYPING_PART, () -> modeManager.getTempoMapModeHandler().switchTSTypingPart());
+		actionHandlers.put(Action.SWITCH_TS_TYPING_PART,
+				() -> modeManager.getTempoMapModeHandler().switchTSTypingPart());
 		actionHandlers.put(Action.TOGGLE_ACCENT, guitarSoundsStatusesHandler::toggleAccent);
 		actionHandlers.put(Action.TOGGLE_ACCENT_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleAccentIndependently);
-		actionHandlers.put(Action.TOGGLE_ANCHOR, this::toggleAnchor);
+		actionHandlers.put(Action.TOGGLE_ANCHOR, beatsService::toggleAnchor);
 		actionHandlers.put(Action.TOGGLE_BAND_PASS_FILTER, audioHandler::toggleBandPassFilter);
 		actionHandlers.put(Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW,
 				windowedPreviewHandler::switchBorderlessWindowedPreview);

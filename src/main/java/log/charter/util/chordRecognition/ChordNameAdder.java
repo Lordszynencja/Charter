@@ -113,6 +113,8 @@ public class ChordNameAdder {
 			new ChordNameAdder(notes(4, 6, 10), nameWith("7(b5)")), //
 			new ChordNameAdder(notes(4, 6, 11), nameWith(maj + "7(#11)")), //
 			new ChordNameAdder(notes(4, 7), nameWith("")), //
+			new ChordNameAdder(notes(4, 7, 9), nameWith("6")), //
+			new ChordNameAdder(notes(4, 7, 10), nameWith("7")), //
 			new ChordNameAdder(notes(4, 7, 11), nameWith(maj + "7")), //
 			new ChordNameAdder(notes(4, 8), nameWith(aug)), //
 			new ChordNameAdder(notes(4, 8, 10), nameWith("7(#5)")), //

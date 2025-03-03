@@ -106,7 +106,7 @@ public class GraphicThemeConfigPage implements Page {
 
 		eventsChangeHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_EVENTS_CHANGE_HEIGHT, 120, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
-		eventsChangeHeightField.setLocation(10, position.getY());
+		eventsChangeHeightField.setLocation(10, position.y());
 		panel.add(eventsChangeHeightField, position);
 	}
 

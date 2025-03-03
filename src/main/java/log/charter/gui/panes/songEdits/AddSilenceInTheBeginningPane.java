@@ -41,8 +41,8 @@ public class AddSilenceInTheBeginningPane extends ParamsPane {
 
 	private BigDecimal time = null;
 
-	public AddSilenceInTheBeginningPane(final CharterFrame frame, final ChartTimeHandler chartTimeHandler, final ChartData data,
-			final ProjectAudioHandler projectAudioHandler) {
+	public AddSilenceInTheBeginningPane(final CharterFrame frame, final ChartTimeHandler chartTimeHandler,
+			final ChartData data, final ProjectAudioHandler projectAudioHandler) {
 		super(frame, Label.ADD_SILENCE_PANE, 300);
 		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
@@ -96,7 +96,7 @@ public class AddSilenceInTheBeginningPane extends ParamsPane {
 
 			projectAudioHandler.changeAudio(joined);
 			projectAudioHandler.changeStemsOffset(time);
-			data.songChart.moveBeats(chartTimeHandler.maxTime(), (int) (time * 1000));
+			data.songChart.beatsMap.moveBeats(chartTimeHandler.maxTime(), (int) (time * 1000));
 		} catch (final DifferentSampleSizesException | DifferentChannelAmountException
 				| DifferentSampleRateException e) {
 			Logger.error("Couldn't join audio " + songMusicData.format + " and " + silenceMusicData.format);
@@ -108,7 +108,7 @@ public class AddSilenceInTheBeginningPane extends ParamsPane {
 
 		projectAudioHandler.changeAudio(editedAudio);
 		projectAudioHandler.changeStemsOffset(-time);
-		data.songChart.moveBeats(chartTimeHandler.maxTime(), (int) -(time * 1000));
+		data.songChart.beatsMap.moveBeats(chartTimeHandler.maxTime(), (int) -(time * 1000));
 	}
 
 	private double getTimeChange() {

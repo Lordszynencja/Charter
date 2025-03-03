@@ -14,9 +14,15 @@ public class CharterScrollPane extends JScrollPane {
 
 		getVerticalScrollBar().setUI(new CharterScrollBarUI());
 		getHorizontalScrollBar().setUI(new CharterScrollBarUI());
+
+		setVerticalScrollbarSpeed(5);
 	}
 
 	public CharterScrollPane(final Component view, final int vsbPolicy, final int hsbPolicy) {
 		super(view, vsbPolicy, hsbPolicy);
+	}
+
+	public void setVerticalScrollbarSpeed(final int speed) {
+		getVerticalScrollBar().setUnitIncrement(speed);
 	}
 }

@@ -70,7 +70,7 @@ public class TempoBeatPane extends ParamsPane {
 		position.newRow();
 
 		this.setOnFinish(this::saveAndExit, null);
-		addDefaultFinish(position.getY());
+		addDefaultFinish(position.y());
 	}
 
 	private void setBPM(final BigDecimal newBPM) {
@@ -80,12 +80,12 @@ public class TempoBeatPane extends ParamsPane {
 
 	private void addBPM(final RowedPosition position) {
 		bpm = calculateBPM(beat);
-		addBigDecimalConfigValue(position.getY(), position.getX(), 0, Label.TEMPO_BEAT_PANE_BPM, bpm, 60,
+		addBigDecimalConfigValue(position.y(), position.x(), 0, Label.TEMPO_BEAT_PANE_BPM, bpm, 60,
 				new BigDecimalValueValidator(minBPM, maxBPM, false), this::setBPM, false);
 	}
 
 	private void addBeatsInMeasure(final RowedPosition position) {
-		addIntConfigValue(position.getY(), 20, 0, Label.TEMPO_BEAT_PANE_BEATS_IN_MEASURE, beatsInMeasure, 30, //
+		addIntConfigValue(position.y(), 20, 0, Label.TEMPO_BEAT_PANE_BEATS_IN_MEASURE, beatsInMeasure, 30, //
 				new IntValueValidator(1, 128), v -> beatsInMeasure = v, false);
 		final JTextField beatsInMeasureInput = (JTextField) getPart(-1);
 		beatsInMeasureInput.setHorizontalAlignment(JTextField.CENTER);
@@ -93,7 +93,7 @@ public class TempoBeatPane extends ParamsPane {
 	}
 
 	private void addNoteDenominator(final RowedPosition position) {
-		addIntConfigValue(position.getY(), 20, 0, Label.TEMPO_BEAT_PANE_NOTE_DENOMINATOR, noteDenominator, 30, //
+		addIntConfigValue(position.y(), 20, 0, Label.TEMPO_BEAT_PANE_NOTE_DENOMINATOR, noteDenominator, 30, //
 				new IntValueValidator(1, 32), v -> noteDenominator = v, false);
 		final JTextField noteDenominatorInput = (JTextField) getPart(-1);
 		noteDenominatorInput.setHorizontalAlignment(JTextField.CENTER);

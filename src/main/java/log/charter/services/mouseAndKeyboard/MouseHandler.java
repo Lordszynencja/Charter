@@ -1,7 +1,5 @@
 package log.charter.services.mouseAndKeyboard;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static log.charter.util.CollectionUtils.contains;
 import static log.charter.util.CollectionUtils.map;
 import static log.charter.util.ScalingUtils.xToPosition;
@@ -15,7 +13,6 @@ import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Zoom;
-import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.time.Position;
@@ -28,17 +25,18 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.io.Logger;
 import log.charter.services.ActionHandler;
+import log.charter.services.data.BeatsService;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 
 public class MouseHandler implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private ActionHandler actionHandler;
 	private ArrangementFixer arrangementFixer;
+	private BeatsService beatsService;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
@@ -144,6 +142,37 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 	}
 
+	private boolean isLeftDoubleClick(final MouseButtonPressReleaseData clickData) {
+		return lastClickId != null && lastClickId.equals(clickData.pressHighlight.id) //
+				&& System.currentTimeMillis() - lastLeftClickTime < 300;
+	}
+
+	private void dragTempo(final MouseButtonPressReleaseData clickData) {
+		final double to = xToPosition(clickData.releasePosition.x, chartTimeHandler.time());
+		beatsService.dragTempo(chartData.songChart.beatsMap, clickData.pressHighlight, to);
+	}
+
+	private void handleClick(final MouseButtonPressReleaseData clickData) {
+		switch (clickData.button) {
+			case LEFT_BUTTON:
+				lastLeftClickTime = System.currentTimeMillis();
+				lastClickId = clickData.pressHighlight.id;
+
+				switch (modeManager.getMode()) {
+					case GUITAR -> leftClickGuitar(clickData);
+					case TEMPO_MAP -> dragTempo(clickData);
+					case VOCALS -> leftClickVocals(clickData, isLeftDoubleClick(clickData));
+					default -> {}
+				}
+				break;
+			case RIGHT_BUTTON:
+				modeManager.getHandler().rightClick(clickData);
+				break;
+			default:
+				break;
+		}
+	}
+
 	@Override
 	public void mouseReleased(final MouseEvent e) {
 		Logger.debug("Mouse released, key: " + e.getButton() + ", position: (" + e.getX() + "," + e.getY() + ")");
@@ -165,34 +194,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 				return;
 			}
 
-			switch (clickData.button) {
-				case LEFT_BUTTON:
-					final boolean wasLeftDoubleClick = lastClickId != null
-							&& lastClickId.equals(clickData.pressHighlight.id) //
-							&& System.currentTimeMillis() - lastLeftClickTime < 300;
-					lastLeftClickTime = System.currentTimeMillis();
-					lastClickId = clickData.pressHighlight.id;
-
-					switch (modeManager.getMode()) {
-						case GUITAR:
-							leftClickGuitar(clickData);
-							break;
-						case TEMPO_MAP:
-							dragTempo(clickData);
-							break;
-						case VOCALS:
-							leftClickVocals(clickData, wasLeftDoubleClick);
-							break;
-						default:
-							break;
-					}
-					break;
-				case RIGHT_BUTTON:
-					modeManager.getHandler().rightClick(clickData);
-					break;
-				default:
-					break;
-			}
+			handleClick(clickData);
 
 			mouseButtonPressReleaseHandler.remove(e);
 			cancelAllActions();
@@ -200,81 +202,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		} catch (final Exception ex) {
 			Logger.error("Exception on mouse released", ex);
 		}
-	}
-
-	private void straightenBeats(final int from, final int to) {
-		final double positionFrom = chartData.beats().get(from).position();
-		final double positionTo = chartData.beats().get(to).position();
-		final int size = to - from;
-
-		for (int i = 1; i < size; i++) {
-			final int beatId = from + i;
-			final double beatPosition = (positionFrom * (size - i) + positionTo * i) / size;
-			chartData.beats().get(beatId).position(beatPosition);
-		}
-	}
-
-	private void dragTempo(final MouseButtonPressReleaseData clickData) {
-		if (modeManager.getMode() != EditMode.TEMPO_MAP || !clickData.pressHighlight.existingPosition) {
-			return;
-		}
-
-		undoSystem.addUndo();
-		final double pressPosition = clickData.pressHighlight.toPosition(chartData.beats()).position();
-
-		if (clickData.pressHighlight.id != null && clickData.pressHighlight.id == 0 || keyboardHandler.alt()) {
-			final double positionAfter = max(0,
-					min(chartTimeHandler.maxTime(), xToPosition(clickData.releasePosition.x, chartTimeHandler.time())));
-			chartData.songChart.moveBeats(chartTimeHandler.maxTime(), positionAfter - pressPosition);
-			return;
-		}
-
-		clickData.pressHighlight.beat.anchor = true;
-
-		final ImmutableBeatsMap beats = chartData.beats();
-
-		final int leftId = beats.findPreviousAnchoredBeat(clickData.pressHighlight.id);
-		final int middleId = clickData.pressHighlight.id;
-		final Integer rightId = beats.findNextAnchoredBeat(clickData.pressHighlight.id);
-
-		final double leftPosition = beats.get(leftId).position();
-		final double minNewPosition = leftPosition + (middleId - leftId) * 10;
-		final double middlePositionBefore = pressPosition;
-		double middlePositionAfter = max(minNewPosition,
-				min(chartTimeHandler.maxTime(), xToPosition(clickData.releasePosition.x, chartTimeHandler.time())));
-		final double rightPositionBefore;
-		final double rightPositionAfter;
-
-		if (rightId != null) {
-			rightPositionBefore = beats.get(rightId).position();
-			rightPositionAfter = rightPositionBefore;
-			final double maxNewPosition = rightPositionAfter - (rightId - middleId) * 10;
-			middlePositionAfter = min(maxNewPosition, middlePositionAfter);
-		} else if (beats.size() > middleId + 1) {
-			rightPositionBefore = beats.get(beats.size() - 1).position();
-			final double beatLength = middleId == leftId ? 500
-					: (middlePositionAfter - leftPosition) / (middleId - leftId);
-			rightPositionAfter = middlePositionAfter + (beats.size() - middleId - 1) * beatLength;
-		} else {
-			rightPositionBefore = middlePositionBefore;
-			rightPositionAfter = middlePositionAfter;
-		}
-
-		clickData.pressHighlight.beat.position(middlePositionAfter);
-
-		straightenBeats(leftId, middleId);
-
-		if (rightId != null) {
-			straightenBeats(middleId, rightId);
-		} else {
-			final double basePosition = beats.get(middleId).position();
-			final double distance = basePosition - beats.get(middleId - 1).position();
-			for (int i = middleId + 1; i < beats.size(); i++) {
-				beats.get(i).position(basePosition + (i - middleId) * distance);
-			}
-		}
-
-		chartData.songChart.beatsMap.makeBeatsUntilSongEnd(chartTimeHandler.maxTime());
 	}
 
 	private void reselectDraggedPositions(final PositionType type,

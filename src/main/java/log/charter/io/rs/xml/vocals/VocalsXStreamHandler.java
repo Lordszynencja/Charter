@@ -1,13 +1,10 @@
 package log.charter.io.rs.xml.vocals;
 
-import java.nio.charset.Charset;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
 
 import log.charter.io.XMLHandler;
-import log.charter.io.rs.xml.converters.ArrangementChordTemplateConverter;
 import log.charter.io.rs.xml.converters.CountedListConverter;
 import log.charter.io.rs.xml.converters.NullSafeIntegerConverter;
 import log.charter.io.rs.xml.converters.VocalsConverter;
@@ -19,7 +16,6 @@ public class VocalsXStreamHandler {
 
 	private static XStream prepareXStream() {
 		final XStream xstream = new XStream();
-		xstream.registerConverter(new ArrangementChordTemplateConverter());
 		xstream.registerConverter(new CountedListConverter());
 		xstream.registerConverter(new NullSafeIntegerConverter());
 		xstream.registerConverter(new VocalsConverter());
@@ -35,11 +31,11 @@ public class VocalsXStreamHandler {
 	}
 
 	public static ArrangementVocals readVocals(final String xml) {
-		if (xml.isEmpty()) {
+		if (xml == null || xml.isEmpty()) {
 			return new ArrangementVocals();
 		}
 
-		return (ArrangementVocals) xstream.fromXML(new String(xml.getBytes(), Charset.forName("UTF-8")));
+		return (ArrangementVocals) xstream.fromXML(xml);
 	}
 
 	public static String saveVocals(final ArrangementVocals vocals) {

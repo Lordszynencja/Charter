@@ -202,7 +202,7 @@ public class AudioStemsSettings extends RowedDialog {
 			position.newRow();
 		}
 
-		addDefaultFinish(position.newRow().getY(), SaverWithStatus.defaultFor(this::save), null, true);
+		addDefaultFinish(position.newRow().y(), SaverWithStatus.defaultFor(this::save), null, true);
 	}
 
 	private void save() {

@@ -38,23 +38,26 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 		return modeManager.getMode() == EditMode.GUITAR;
 	}
 
-	@Override
-	JMenu prepareMenu() {
-		final JMenu menu = createMenu(Label.GUITAR_MENU);
+	private void addStringChangeItems(final JMenu menu) {
 		menu.add(createItem(Action.MOVE_STRING_UP));
 		menu.add(createItem(Action.MOVE_STRING_DOWN));
 		menu.add(createItem(Action.MOVE_STRING_UP_SIMPLE));
 		menu.add(createItem(Action.MOVE_STRING_DOWN_SIMPLE));
+	}
+
+	private void addFretChangeItems(final JMenu menu) {
 		menu.add(createItem(Action.MOVE_FRET_UP));
 		menu.add(createItem(Action.MOVE_FRET_DOWN));
-		menu.addSeparator();
+		menu.add(createItem(Action.MOVE_FRET_UP_OCTAVE));
+		menu.add(createItem(Action.MOVE_FRET_DOWN_OCTAVE));
 		final JMenu noteFretOperationsSubMenu = createMenu(Label.NOTE_FRET_OPERATIONS);
 		for (int i = 0; i < 10; i++) {
 			noteFretOperationsSubMenu.add(createItem(Action.valueOf("NUMBER_" + i)));
 		}
 		menu.add(noteFretOperationsSubMenu);
+	}
 
-		menu.addSeparator();
+	private void addNoteStatusOperations(final JMenu menu) {
 		final JMenu noteStatusOperationsSubMenu = createMenu(Label.NOTE_STATUS_OPERATIONS);
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_MUTE));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_MUTE_INDEPENDENTLY));
@@ -71,6 +74,18 @@ class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_LINK_NEXT));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_LINK_NEXT_INDEPENDENTLY));
 		menu.add(noteStatusOperationsSubMenu);
+	}
+
+	@Override
+	JMenu prepareMenu() {
+		final JMenu menu = createMenu(Label.GUITAR_MENU);
+		addStringChangeItems(menu);
+
+		menu.addSeparator();
+		addFretChangeItems(menu);
+
+		menu.addSeparator();
+		addNoteStatusOperations(menu);
 
 		menu.addSeparator();
 		menu.add(createItem(Action.MARK_HAND_SHAPE));

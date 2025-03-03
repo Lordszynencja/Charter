@@ -43,7 +43,7 @@ public class HighPassSettings extends RowedDialog {
 
 		showAlgorithmDependentFields();
 
-		addDefaultFinish(position.newRow().getY(), () -> {
+		addDefaultFinish(position.newRow().y(), () -> {
 			Config.passFilters.highPassAlgorithm = algorithm;
 			Config.passFilters.highPassOrder = order;
 			Config.passFilters.highPassFrequency = frequency;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -58,6 +59,16 @@ public class RW {
 
 	public static String read(final File f) {
 		return new String(readB(f));
+	}
+
+	public static String read(final File f, final String charset) {
+		try {
+			return new String(readB(f), charset);
+		} catch (final UnsupportedEncodingException e) {
+			Logger.error("Unsupported encoding " + charset, e);
+		}
+
+		return null;
 	}
 
 	public static String read(final String filename) {

@@ -11,6 +11,8 @@ public class DefaultEofShortcuts extends ShortcutList {
 	private DefaultEofShortcuts() {
 		super.set(Action.ARRANGEMENT_NEXT, new Shortcut(KeyEvent.VK_UP).ctrl().shift());
 		super.set(Action.ARRANGEMENT_PREVIOUS, new Shortcut(KeyEvent.VK_DOWN).ctrl().shift());
+		super.set(Action.BEAT_ADD, new Shortcut(KeyEvent.VK_INSERT).ctrl());
+		super.set(Action.BEAT_REMOVE, new Shortcut(KeyEvent.VK_DELETE).ctrl());
 		super.set(Action.COPY, new Shortcut(KeyEvent.VK_C).ctrl());
 		super.set(Action.DELETE, new Shortcut(KeyEvent.VK_DELETE));
 		super.set(Action.DOUBLE_GRID, new Shortcut(KeyEvent.VK_PERIOD));
@@ -40,10 +42,14 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.MARK_BOOKMARK_8, new Shortcut(KeyEvent.VK_8).ctrl());
 		super.set(Action.MARK_BOOKMARK_9, new Shortcut(KeyEvent.VK_9).ctrl());
 		super.set(Action.MARK_HAND_SHAPE, new Shortcut(KeyEvent.VK_H).ctrl());
+		super.set(Action.MEASURE_ADD, new Shortcut(KeyEvent.VK_INSERT).ctrl().shift());
+		super.set(Action.MEASURE_REMOVE, new Shortcut(KeyEvent.VK_DELETE).ctrl().shift());
 		super.set(Action.MOVE_BACKWARD, new Shortcut(KeyEvent.VK_LEFT));
 		super.set(Action.MOVE_FORWARD, new Shortcut(KeyEvent.VK_RIGHT));
 		super.set(Action.MOVE_FRET_DOWN, new Shortcut(KeyEvent.VK_DOWN).shift());
+		super.set(Action.MOVE_FRET_DOWN_OCTAVE, new Shortcut(KeyEvent.VK_DOWN).alt().shift());
 		super.set(Action.MOVE_FRET_UP, new Shortcut(KeyEvent.VK_UP).shift());
+		super.set(Action.MOVE_FRET_UP_OCTAVE, new Shortcut(KeyEvent.VK_UP).alt().shift());
 		super.set(Action.MOVE_STRING_DOWN, new Shortcut(KeyEvent.VK_DOWN).alt());
 		super.set(Action.MOVE_STRING_DOWN_SIMPLE, new Shortcut(KeyEvent.VK_DOWN));
 		super.set(Action.MOVE_STRING_UP, new Shortcut(KeyEvent.VK_UP).alt());
