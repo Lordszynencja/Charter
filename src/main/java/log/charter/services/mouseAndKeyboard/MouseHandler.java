@@ -129,14 +129,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 	}
 
-	private void leftClickVocals(final MouseButtonPressReleaseData clickData, final boolean wasDoubleClick) {
+	private void leftClickVocals(final MouseButtonPressReleaseData clickData, final boolean isDoubleClick) {
 		if (!clickData.isXDrag()) {
 			selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
 		} else if (clickData.pressHighlight.type == PositionType.VOCAL) {
 			dragPositionsWithLength(PositionType.VOCAL, clickData, chartData.currentVocals().vocals);
 		}
 
-		if (wasDoubleClick && clickData.pressHighlight.vocal != null) {
+		if (isDoubleClick && clickData.pressHighlight.vocal != null) {
 			new VocalPane(clickData.pressHighlight.id, clickData.pressHighlight.vocal, chartData, charterFrame,
 					selectionManager, undoSystem);
 		}
@@ -155,13 +155,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	private void handleClick(final MouseButtonPressReleaseData clickData) {
 		switch (clickData.button) {
 			case LEFT_BUTTON:
+				final boolean doubleClick = isLeftDoubleClick(clickData);
 				lastLeftClickTime = System.currentTimeMillis();
 				lastClickId = clickData.pressHighlight.id;
 
 				switch (modeManager.getMode()) {
 					case GUITAR -> leftClickGuitar(clickData);
 					case TEMPO_MAP -> dragTempo(clickData);
-					case VOCALS -> leftClickVocals(clickData, isLeftDoubleClick(clickData));
+					case VOCALS -> leftClickVocals(clickData, doubleClick);
 					default -> {}
 				}
 				break;
