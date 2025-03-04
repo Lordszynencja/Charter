@@ -3,6 +3,7 @@ package log.charter.services.data.copy;
 import static log.charter.util.CollectionUtils.getFromTo;
 import static log.charter.util.CollectionUtils.map;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -31,9 +32,9 @@ import log.charter.io.ClipboardHandler;
 import log.charter.io.Logger;
 import log.charter.io.rsc.xml.ChartProjectXStreamHandler;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.services.data.copy.data.FHPsCopyData;
 import log.charter.services.data.copy.data.CopyData;
 import log.charter.services.data.copy.data.EventPointsCopyData;
+import log.charter.services.data.copy.data.FHPsCopyData;
 import log.charter.services.data.copy.data.FullCopyData;
 import log.charter.services.data.copy.data.FullGuitarCopyData;
 import log.charter.services.data.copy.data.HandShapesCopyData;
@@ -41,8 +42,8 @@ import log.charter.services.data.copy.data.ICopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
 import log.charter.services.data.copy.data.positions.Copied;
-import log.charter.services.data.copy.data.positions.CopiedFHP;
 import log.charter.services.data.copy.data.positions.CopiedEventPoint;
+import log.charter.services.data.copy.data.positions.CopiedFHP;
 import log.charter.services.data.copy.data.positions.CopiedHandShape;
 import log.charter.services.data.copy.data.positions.CopiedSound;
 import log.charter.services.data.copy.data.positions.CopiedToneChange;
@@ -94,8 +95,8 @@ public class CopyManager {
 		final List<ChordTemplate> copiedChordTemplates = map(chartData.currentChordTemplates(), ChordTemplate::new);
 		final List<CopiedToneChange> copiedToneChanges = copyPositionsFromTo(from, to, arrangement.toneChanges,
 				CopiedToneChange::new);
-		final List<CopiedFHP> copiedFHPs = copyPositionsFromTo(from, to,
-				chartData.currentArrangementLevel().fhps, CopiedFHP::new);
+		final List<CopiedFHP> copiedFHPs = copyPositionsFromTo(from, to, chartData.currentArrangementLevel().fhps,
+				CopiedFHP::new);
 		final List<CopiedSound> copiedSounds = copyPositionsFromTo(from, to, chartData.currentSounds(),
 				CopiedSound::copy);
 		final List<CopiedHandShape> copiedHandShapes = copyPositionsFromTo(from, to, chartData.currentHandShapes(),
@@ -220,11 +221,21 @@ public class CopyManager {
 		}
 
 		final String xml = ChartProjectXStreamHandler.writeCopyData(copyData);
-		ClipboardHandler.setClipboardBytes(xml.getBytes());
+		try {
+			ClipboardHandler.setClipboardBytes(xml.getBytes("UTF-8"));
+		} catch (final UnsupportedEncodingException e) {
+			Logger.error("Couldn't copy data", e);
+		}
 	}
 
 	private CopyData getDataFromClipboard() {
-		final String xml = new String(ClipboardHandler.readClipboardBytes());
+		String xml;
+		try {
+			xml = new String(ClipboardHandler.readClipboardBytes(), "UTF-8");
+		} catch (final UnsupportedEncodingException e) {
+			Logger.error("Couldn't read clipboard data", e);
+			return null;
+		}
 		if (xml.isEmpty()) {
 			return null;
 		}
