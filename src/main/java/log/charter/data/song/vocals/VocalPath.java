@@ -41,6 +41,8 @@ public class VocalPath {
 	}
 
 	public VocalPath(final VocalPath other) {
+		name = other.name;
+		color = other.color;
 		vocals = map(other.vocals, Vocal::new);
 	}
 

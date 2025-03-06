@@ -201,19 +201,23 @@ public class AudioData {
 		return (int) (time * format.getSampleRate());
 	}
 
+	private int byteOffset(final double time) {
+		return frame(time) * format.getFrameSize();
+	}
+
 	public AudioData cut(final double startTime, final double endTime) {
-		final int from = frame(startTime) * format.getFrameSize();
-		final int to = frame(endTime) * format.getFrameSize();
+		final int from = byteOffset(startTime);
+		final int to = byteOffset(endTime);
 		return copyPart(from, to);
 	}
 
 	public AudioData removeFromStart(final double time) {
-		final int from = frame(time) * format.getFrameSize();
+		final int from = byteOffset(time);
 		return copyPart(from, data.length);
 	}
 
 	public AudioData cutToLength(final double time) {
-		final int to = frame(time) * format.getFrameSize();
+		final int to = byteOffset(time);
 		return copyPart(0, to);
 	}
 }
