@@ -205,6 +205,7 @@ public class Localization {
 		PASS_FILTER_RIPPLE_DB("Ripple dB"), //
 		PASTE("Paste"), //
 		PHRASE_NAME("Phrase name"), //
+		PICKED_BASS("Picked"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //

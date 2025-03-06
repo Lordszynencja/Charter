@@ -227,7 +227,7 @@ public class Tuning {
 	public Tuning(final TuningType tuningType, final int strings) {
 		this.tuningType = tuningType;
 		this.strings = strings;
-		tuning = new int[strings];
+		tuning = getTuningValues(tuningType.tuning, strings);
 	}
 
 	public Tuning(final TuningType tuningType, final int strings, final int[] tuning) {

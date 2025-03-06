@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import log.charter.data.song.configs.Tuning;
+import log.charter.util.SoundUtils;
 import log.charter.util.collections.ArrayList2;
 
 public class ChordNameSuggester {
@@ -63,14 +63,10 @@ public class ChordNameSuggester {
 	}
 
 	public static List<String> suggestChordNames(final Tuning tuning, final Map<Integer, Integer> templateFrets) {
-		final int[] sounds = new int[templateFrets.size()];
-		int i = 0;
-		for (final Entry<Integer, Integer> stringWithFret : templateFrets.entrySet()) {
-			sounds[i++] = tuning.getStringOffset(stringWithFret.getKey()) + stringWithFret.getValue();
-		}
+		final int[] sounds = SoundUtils.getSounds(tuning, false, templateFrets);
 
 		while (negativeExists(sounds)) {
-			for (i = 0; i < sounds.length; i++) {
+			for (int i = 0; i < sounds.length; i++) {
 				sounds[i] += 12;
 			}
 		}

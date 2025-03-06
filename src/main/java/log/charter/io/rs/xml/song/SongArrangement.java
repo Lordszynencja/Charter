@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.IntSupplier;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -25,14 +26,25 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.Level;
 import log.charter.data.song.SectionType;
 import log.charter.data.song.SongChart;
 import log.charter.data.song.ToneChange;
+import log.charter.data.song.configs.Tuning;
+import log.charter.data.song.enums.BassPickingTechnique;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.enums.Harmonic;
+import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.NoteInterface;
 import log.charter.io.rs.xml.converters.ArrangementTypeConverter;
 import log.charter.io.rs.xml.converters.CountedListConverter.CountedList;
 import log.charter.io.rs.xml.converters.DateTimeConverter;
 import log.charter.io.rs.xml.converters.TimeConverter;
+import log.charter.util.SoundUtils;
+import log.charter.util.data.Fraction;
 
 @XStreamAlias("song")
 @XStreamInclude({ ArrangementTuning.class, ArrangementProperties.class, TranscriptionTrack.class })
@@ -134,10 +146,249 @@ public class SongArrangement {
 		fixMeasureNumbers();
 	}
 
-	private void setArrangementProperties(final Arrangement arrangementChart) {
+	private boolean standardTuning(final Tuning tuning) {
+		switch (tuning.tuningType) {
+			case F_SHARP_STANDARD:
+			case F_STANDARD:
+			case E_STANDARD:
+			case E_FLAT_STANDARD:
+			case D_STANDARD:
+			case C_SHARP_STANDARD:
+			case C_STANDARD:
+			case B_STANDARD:
+			case A_SHARP_STANDARD:
+			case A_STANDARD:
+			case G_SHARP_STANDARD:
+			case G_STANDARD:
+				return true;
+			case E_DROP_D:
+			case E_DROP_C:
+			case E_FLAT_DROP_D_FLAT:
+			case D_DROP_C:
+			case C_SHARP_DROP_B:
+			case DADGAD:
+			case OPEN_A:
+			case OPEN_D:
+			case OPEN_E:
+			case OPEN_G:
+			case CUSTOM:
+			default:
+				return false;
+		}
+	}
+
+	private boolean nonStandardChords(final Arrangement arrangement) {
+		return false;// TODO
+	}
+
+	private boolean barreChords(final Arrangement arrangement) {
+		for (final ChordTemplate template : arrangement.chordTemplates) {
+			final int[] fingerCounts = new int[5];
+			for (final Integer finger : template.fingers.values()) {
+				if (finger == null) {
+					continue;
+				}
+
+				fingerCounts[finger]++;
+
+				if (fingerCounts[finger] > 1) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private boolean powerChords(final Arrangement arrangement) {
+		for (final ChordTemplate template : arrangement.chordTemplates) {
+			final int size = template.frets.size();
+			if (size != 2 && size != 3) {
+				continue;
+			}
+
+			final int lowestString = template.getLowestString();
+			if (!template.frets.containsKey(lowestString + 1)
+					|| (size == 3 && !template.frets.containsKey(lowestString + 2))) {
+				continue;
+			}
+			final int[] frets = new int[size];
+			for (int i = 0; i < size; i++) {
+				frets[i] = template.frets.get(lowestString + i);
+			}
+			if (frets[0] != frets[1] - 2 || (size == 3 && frets[1] != frets[2])) {
+				continue;
+			}
+
+			final int[] sounds = SoundUtils.getSounds(arrangement.tuning,
+					arrangement.arrangementType.isBass(arrangement.tuning.strings()), template.frets);
+			if (sounds[0] != sounds[1] - 7 || (size == 3 && sounds[0] != sounds[2] - 12)) {
+				continue;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean dropDPower(final Arrangement arrangement) {
+		for (final ChordTemplate template : arrangement.chordTemplates) {
+			final int size = template.frets.size();
+			if (size != 2 && size != 3) {
+				continue;
+			}
+
+			final int lowestString = template.getLowestString();
+			if (!template.frets.containsKey(lowestString + 1)
+					|| (size == 3 && !template.frets.containsKey(lowestString + 2))) {
+				continue;
+			}
+			final int[] frets = new int[size];
+			for (int i = 0; i < size; i++) {
+				frets[i] = template.frets.get(lowestString + i);
+			}
+			if (frets[0] != frets[1] || (size == 3 && frets[0] != frets[2])) {
+				continue;
+			}
+
+			final int[] sounds = SoundUtils.getSounds(arrangement.tuning,
+					arrangement.arrangementType.isBass(arrangement.tuning.strings()), template.frets);
+			if (sounds[0] != sounds[1] - 7 || (size == 3 && sounds[0] != sounds[2] - 12)) {
+				continue;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean openChords(final Arrangement arrangement) {
+		for (final ChordTemplate template : arrangement.chordTemplates) {
+			for (final Integer fret : template.frets.values()) {
+				if (fret == 0) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private boolean doubleStops(final Arrangement arrangement) {
+		for (final ChordTemplate template : arrangement.chordTemplates) {
+			if (template.frets.size() == 2) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean noteCheck(final Arrangement arrangement, final Predicate<? super NoteInterface> check) {
+		for (final Level level : arrangement.levels) {
+			for (final ChordOrNote sound : level.sounds) {
+				if (sound.noteInterfaces().anyMatch(check)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private boolean palmMutes(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.mute() == Mute.PALM);
+	}
+
+	private boolean harmonics(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.harmonic() == Harmonic.NORMAL);
+	}
+
+	private boolean pinchHarmonics(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.harmonic() == Harmonic.PINCH);
+	}
+
+	private boolean hopo(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.hopo() == HOPO.HAMMER_ON || n.hopo() == HOPO.PULL_OFF);
+	}
+
+	private boolean tremolo(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.tremolo());
+	}
+
+	private boolean slides(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.slideTo() != null && !n.unpitchedSlide());
+	}
+
+	private boolean unpitchedSlides(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.slideTo() != null && n.unpitchedSlide());
+	}
+
+	private boolean bends(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> !n.bendValues().isEmpty());
+	}
+
+	private boolean tapping(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.hopo() == HOPO.TAP);
+	}
+
+	private boolean vibrato(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.vibrato());
+	}
+
+	private boolean fretHandMutes(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.mute() == Mute.FULL);
+	}
+
+	private boolean slapPop(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.bassPicking() != BassPickingTechnique.NONE);
+	}
+
+	private boolean sustain(final Arrangement arrangement) {
+		return noteCheck(arrangement, n -> n.length().compareTo(Fraction.ZERO) > 0);
+	}
+
+	private boolean bassFingered(final Arrangement arrangement) {
+		return arrangement.arrangementType.isBass(arrangement.tuning.strings()) && !arrangement.pickedBass;
+	}
+
+	private boolean bassPick(final Arrangement arrangement) {
+		return arrangement.arrangementType.isBass(arrangement.tuning.strings()) && arrangement.pickedBass;
+	}
+
+	private void setArrangementProperties(final Arrangement arrangement) {
 		arrangementProperties = new ArrangementProperties();
-		arrangementProperties.setType(arrangementChart.arrangementType);
-		arrangementProperties.setSubtype(arrangementChart.arrangementSubtype);
+		arrangementProperties.setType(arrangement.arrangementType);
+		arrangementProperties.setSubtype(arrangement.arrangementSubtype);
+
+		arrangementProperties.standardTuning = standardTuning(arrangement.tuning) ? 1 : 0;
+		arrangementProperties.nonStandardChords = nonStandardChords(arrangement) ? 1 : 0;
+		arrangementProperties.barreChords = barreChords(arrangement) ? 1 : 0;
+		arrangementProperties.powerChords = powerChords(arrangement) ? 1 : 0;
+		arrangementProperties.dropDPower = dropDPower(arrangement) ? 1 : 0;
+		arrangementProperties.openChords = openChords(arrangement) ? 1 : 0;
+		arrangementProperties.fingerPicking = bassFingered(arrangement) ? 1 : 0;
+		arrangementProperties.pickDirection = 0;
+		arrangementProperties.doubleStops = doubleStops(arrangement) ? 1 : 0;
+		arrangementProperties.palmMutes = palmMutes(arrangement) ? 1 : 0;
+		arrangementProperties.harmonics = harmonics(arrangement) ? 1 : 0;
+		arrangementProperties.pinchHarmonics = pinchHarmonics(arrangement) ? 1 : 0;
+		arrangementProperties.hopo = hopo(arrangement) ? 1 : 0;
+		arrangementProperties.tremolo = tremolo(arrangement) ? 1 : 0;
+		arrangementProperties.slides = slides(arrangement) ? 1 : 0;
+		arrangementProperties.unpitchedSlides = unpitchedSlides(arrangement) ? 1 : 0;
+		arrangementProperties.bends = bends(arrangement) ? 1 : 0;
+		arrangementProperties.tapping = tapping(arrangement) ? 1 : 0;
+		arrangementProperties.vibrato = vibrato(arrangement) ? 1 : 0;
+		arrangementProperties.fretHandMutes = fretHandMutes(arrangement) ? 1 : 0;
+		arrangementProperties.slapPop = slapPop(arrangement) ? 1 : 0;
+		arrangementProperties.twoFingerPicking = bassFingered(arrangement) ? 1 : 0;
+		arrangementProperties.fifthsAndOctaves = 0;
+		arrangementProperties.syncopation = 0;
+		arrangementProperties.bassPick = bassPick(arrangement) ? 1 : 0;
+		arrangementProperties.sustain = sustain(arrangement) ? 1 : 0;
 	}
 
 	private void addPhraseIfNotExisting(final Map<String, Integer> phraseIds, final String name) {

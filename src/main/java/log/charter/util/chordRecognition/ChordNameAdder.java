@@ -3,9 +3,8 @@ package log.charter.util.chordRecognition;
 import static java.util.Arrays.asList;
 import static log.charter.util.SoundUtils.soundToSimpleName;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import log.charter.util.collections.ArrayList2;
 
 public class ChordNameAdder {
 	public static String min = "m";
@@ -70,7 +69,7 @@ public class ChordNameAdder {
 
 			@Override
 			public String generate(final int root) {
-				return soundToSimpleName(root + 4, true) + additions;
+				return soundToSimpleName(root, true) + additions;
 			}
 		};
 	}
@@ -131,7 +130,7 @@ public class ChordNameAdder {
 			new ChordNameAdder(notes(7), nameWith("5")));
 
 	public static List<String> getSuggestedChordNames(final int root, final List<Integer> notes) {
-		final List<String> foundNames = new ArrayList2<>();
+		final List<String> foundNames = new ArrayList<>();
 		adders.forEach(adder -> adder.add(root, notes, foundNames));
 		return foundNames;
 	}
