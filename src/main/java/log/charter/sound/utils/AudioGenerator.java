@@ -12,7 +12,8 @@ public class AudioGenerator {
 	public static AudioData generateSilence(final double lengthSeconds, final float sampleRate, final int channels,
 			final int sampleSize) {
 		final int frames = (int) ceil(lengthSeconds * sampleRate);
-		final int length = frames * channels * sampleSize;
+		final int frameSize = channels * sampleSize;
+		final int length = frames * frameSize;
 		return new AudioData(new byte[length], sampleRate, sampleSize, channels);
 	}
 
