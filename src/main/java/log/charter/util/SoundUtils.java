@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import log.charter.data.song.configs.Tuning;
+import log.charter.io.Logger;
 
 public class SoundUtils {
 	public static class NoteWithScale {
@@ -44,8 +45,15 @@ public class SoundUtils {
 		final int[] sounds = new int[frets.size()];
 		int i = 0;
 		for (final Entry<Integer, Integer> stringWithFret : frets.entrySet()) {
-			sounds[i++] = Tuning.getStringDistanceFromC0(stringWithFret.getKey(), tuning.strings(), bass)
-					+ stringWithFret.getValue();
+			final int string = stringWithFret.getKey();
+			try {
+				sounds[i++] = Tuning.getStringDistanceFromC0(string, tuning.strings(), bass) + stringWithFret.getValue()
+						+ tuning.getTuningRaw()[string];
+			} catch (final Exception e) {
+				Logger.error(
+						"Couldn't read sound for string " + string + " in tuning " + tuning.getFullName("%s %s", bass),
+						e);
+			}
 		}
 
 		return sounds;
