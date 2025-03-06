@@ -264,7 +264,7 @@ public class GuitarEventPointPane extends ParamsPane {
 			return;
 		}
 
-		if (phraseName.isBlank()) {
+		if (phraseName.isBlank() && section != null) {
 			phraseName = section.label.label();
 		}
 
