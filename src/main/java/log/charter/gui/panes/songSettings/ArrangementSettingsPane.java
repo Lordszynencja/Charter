@@ -46,6 +46,8 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 	private final JLabel centOffsetLabel;
 	private CharterSelect<TuningType> tuningSelect;
+	private TextInputWithValidation stringsInput;
+	private FieldWithLabel<JCheckBox> pickedBassField;
 	private final int tuningInputsRow;
 	private final List<TextInputWithValidation> tuningInputs = new ArrayList<>();
 	private final List<JLabel> tuningLabels = new ArrayList<>();
@@ -57,6 +59,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 	private BigDecimal centOffset;
 	private Tuning tuning;
 	private int capo;
+	private boolean pickedBass;
 
 	boolean ignoreEvents = false;
 
@@ -76,6 +79,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 		tuning = new Tuning(arrangement.tuning);
 		centOffset = arrangement.centOffset;
 		capo = arrangement.capo;
+		pickedBass = arrangement.pickedBass;
 
 		final AtomicInteger row = new AtomicInteger(0);
 		addArrangmentType(row);
@@ -94,7 +98,9 @@ public class ArrangementSettingsPane extends ParamsPane {
 		row.incrementAndGet();
 		addTuningSelect(row);
 		addStringsCapo(row);
+		addPickedBass(row);
 
+		row.incrementAndGet();
 		tuningInputsRow = row.getAndAdd(2);
 		addTuningInputsAndLabels();
 		setTuningValuesAndLabels();
@@ -151,7 +157,17 @@ public class ArrangementSettingsPane extends ParamsPane {
 	}
 
 	private void setArrangementType(final ArrangementType newArrangementType) {
+		final ArrangementType oldArrangementType = arrangementType;
 		arrangementType = newArrangementType;
+
+		pickedBassField.setVisible(arrangementType == ArrangementType.Bass);
+		pickedBassField.repaint();
+		if (oldArrangementType != ArrangementType.Bass && arrangementType == ArrangementType.Bass) {
+			stringsInput.setText("4");
+		} else if (oldArrangementType == ArrangementType.Bass && arrangementType != ArrangementType.Bass) {
+			stringsInput.setText("6");
+		}
+
 		setTuningLabels();
 	}
 
@@ -186,17 +202,27 @@ public class ArrangementSettingsPane extends ParamsPane {
 		addIntegerConfigValue(row.get(), 20, 0, Label.ARRANGEMENT_OPTIONS_STRINGS, tuning.strings(), 20,
 				new IntegerValueValidator(1, Config.instrument.maxStrings, false), //
 				this::onTuningStringsChanged, false);
-		final TextInputWithValidation stringsInput = (TextInputWithValidation) getPart(-1);
+		stringsInput = (TextInputWithValidation) getPart(-1);
 		stringsInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(stringsInput);
 
-		addIntegerConfigValue(row.getAndIncrement(), 120, 0, Label.ARRANGEMENT_OPTIONS_CAPO, capo, 30,
+		addIntegerConfigValue(row.get(), 120, 0, Label.ARRANGEMENT_OPTIONS_CAPO, capo, 30,
 				new IntegerValueValidator(0, Config.instrument.frets, false), //
 				val -> capo = val, //
 				false);
 		final TextInputWithValidation capoInput = (TextInputWithValidation) getPart(-1);
 		capoInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(capoInput);
+	}
+
+	private void addPickedBass(final AtomicInteger row) {
+		final JCheckBox checkbox = new JCheckBox();
+		checkbox.setSelected(pickedBass);
+		checkbox.addActionListener(e -> pickedBass = checkbox.isSelected());
+
+		pickedBassField = new FieldWithLabel<>(Label.PICKED_BASS, 80, 20, 20, checkbox, LabelPosition.LEFT_CLOSE);
+		pickedBassField.setVisible(arrangementType == ArrangementType.Bass);
+		add(pickedBassField, 170, getY(row.get()), pickedBassField.getWidth(), pickedBassField.getHeight());
 	}
 
 	private void addTuningInputsAndLabels() {
@@ -253,7 +279,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 		final JCheckBox checkbox = new JCheckBox();
 		checkbox.setSelected(true);
 
-		moveFrets = new FieldWithLabel<JCheckBox>(Label.ARRANGEMENT_OPTIONS_MOVE_FRETS, 5, 20, 20, checkbox,
+		moveFrets = new FieldWithLabel<>(Label.ARRANGEMENT_OPTIONS_MOVE_FRETS, 5, 20, 20, checkbox,
 				LabelPosition.RIGHT_PACKED);
 		add(moveFrets, 20, getY(row.getAndIncrement()), 200, 20);
 	}
@@ -368,6 +394,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 		arrangement.centOffset = centOffset;
 		arrangement.tuning = tuning;
 		arrangement.capo = capo;
+		arrangement.pickedBass = pickedBass;
 
 		selectionManager.clear();
 

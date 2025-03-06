@@ -140,8 +140,9 @@ public class RSXMLToArrangement {
 		arrangement.tuning = getTuning(arrangementData.tuning, arrangement.arrangementType);
 		arrangement.capo = arrangementData.capo;
 		arrangement.centOffset = arrangementData.centOffset;
-
 		arrangement.startingTone = arrangementData.tonebase == null ? "" : arrangementData.tonebase;
+		arrangement.pickedBass = arrangementData.arrangementProperties.bassPick == 1;
+
 		arrangement.toneChanges = arrangementData.tones == null ? new ArrayList<>()
 				: getToneChanges(beats, arrangementData.tones.list);
 		arrangement.tones = map(arrangement.toneChanges, toneChange -> toneChange.toneName, new HashSet<>());
