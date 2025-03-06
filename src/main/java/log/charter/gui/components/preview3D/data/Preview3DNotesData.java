@@ -66,6 +66,10 @@ public class Preview3DNotesData {
 			final boolean linkPrevious = isLinkedToPrevious(string, id, sounds);
 			final int fret = chordTemplate.frets.get(string);
 
+			if (noteEndPosition < timeFrom) {
+				continue;
+			}
+
 			notes.get(string).add(new NoteDrawData(notePosition, noteEndPosition, timeFrom, timeTo, chord, string, fret,
 					chordNote, linkPrevious, shouldHaveLength));
 		}

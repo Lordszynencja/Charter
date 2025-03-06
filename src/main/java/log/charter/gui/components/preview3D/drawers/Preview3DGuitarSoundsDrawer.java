@@ -186,24 +186,27 @@ public class Preview3DGuitarSoundsDrawer {
 		final FractionalPosition timePosition = FractionalPosition.fromTime(chartData.beats(), t);
 
 		final Integer lastBendId = lastBeforeEqual(note.bendValues, timePosition).findId();
+		if (lastBendId != null && lastBendId >= note.bendValues.size() - 1) {
+			return note.bendValues.get(lastBendId).bendValue.doubleValue();
+		}
 
+		final double bendAValue;
+		final double bendAPosition;
 		if (lastBendId == null) {
-			return 0;
+			bendAValue = 0;
+			bendAPosition = note.originalPosition;
+		} else {
+			final BendValue bend = note.bendValues.get(lastBendId);
+
+			bendAValue = bend.bendValue.doubleValue();
+			bendAPosition = bend.position(chartData.beats());
 		}
 
-		final BendValue bend = note.bendValues.get(lastBendId);
-
-		if (lastBendId >= note.bendValues.size() - 1) {
-			return bend.bendValue.doubleValue();
-		}
-
-		final double bendAValue = bend.bendValue.doubleValue();
-		final double bendAPosition = bend.position(chartData.beats());
 		if (t == bendAPosition) {
 			return bendAValue;
 		}
 
-		final BendValue nextBend = note.bendValues.get(lastBendId + 1);
+		final BendValue nextBend = note.bendValues.get(lastBendId == null ? 0 : (lastBendId + 1));
 		final double bendBValue = nextBend.bendValue.doubleValue();
 		final double bendBPosition = nextBend.position(chartData.beats());
 		return mix(bendAPosition, bendBPosition, t, bendAValue, bendBValue);
