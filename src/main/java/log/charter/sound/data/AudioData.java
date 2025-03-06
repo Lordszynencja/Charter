@@ -184,6 +184,8 @@ public class AudioData {
 	}
 
 	private AudioData copyPart(int from, int to) {
+		to -= to % format.getFrameSize();
+		from -= from % format.getFrameSize();
 		if (to > data.length) {
 			to = data.length;
 		}
@@ -195,19 +197,23 @@ public class AudioData {
 		return withCopiedFormat(newData);
 	}
 
+	public int frame(final double time) {
+		return (int) (time * format.getSampleRate());
+	}
+
 	public AudioData cut(final double startTime, final double endTime) {
-		final int from = (int) (startTime * format.getSampleRate() * format.getFrameSize());
-		final int to = (int) (endTime * format.getSampleRate() * format.getFrameSize());
+		final int from = frame(startTime) * format.getFrameSize();
+		final int to = frame(endTime) * format.getFrameSize();
 		return copyPart(from, to);
 	}
 
 	public AudioData removeFromStart(final double time) {
-		final int from = (int) (time * format.getSampleRate() * format.getFrameSize());
+		final int from = frame(time) * format.getFrameSize();
 		return copyPart(from, data.length);
 	}
 
 	public AudioData cutToLength(final double time) {
-		final int to = (int) (time * format.getSampleRate() * format.getFrameSize());
+		final int to = frame(time) * format.getFrameSize();
 		return copyPart(0, to);
 	}
 }
