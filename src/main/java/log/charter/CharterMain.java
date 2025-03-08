@@ -9,8 +9,8 @@ import log.charter.services.CharterContext;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 
 public class CharterMain {
-	public static final String VERSION = "0.20.11";
-	public static final String VERSION_DATE = "2025.03.07 24:00";
+	public static final String VERSION = "0.20.12";
+	public static final String VERSION_DATE = "2025.03.08 19:00";
 	public static final String TITLE = "Charter " + VERSION;
 
 	public static void main(final String[] args) throws InterruptedException, IOException {
