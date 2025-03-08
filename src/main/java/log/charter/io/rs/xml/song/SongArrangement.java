@@ -54,6 +54,10 @@ public class SongArrangement {
 			.collect(Collectors.toUnmodifiableSet());
 
 	private static String cleanString(final String s) {
+		if (s == null) {
+			return "";
+		}
+
 		final StringBuilder b = new StringBuilder();
 		for (final int codePoint : s.chars().toArray()) {
 			if (validCharactersSet.contains(codePoint)) {

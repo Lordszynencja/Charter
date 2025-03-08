@@ -23,7 +23,9 @@ public class VocalUndoState extends UndoState {
 	public VocalUndoState undo(final ChartData data, final ChartTimeHandler chartTimeHandler) {
 		final VocalUndoState redo = new VocalUndoState(data, true);
 
-		data.songChart.vocalPaths.set(pathId, vocals);
+		if (data.songChart.vocalPaths.size() > pathId) {
+			data.songChart.vocalPaths.set(pathId, vocals);
+		}
 
 		return redo;
 	}
