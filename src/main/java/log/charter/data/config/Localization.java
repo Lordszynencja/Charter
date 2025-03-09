@@ -59,6 +59,8 @@ public class Localization {
 		BEAT_ADD("Add beat"), //
 		BEAT_REMOVE("Remove beat"), //
 		BOOKMARKS_MENU("Bookmarks"), //
+		BPM_DOUBLE("Double BPM"), //
+		BPM_HALVE("Halve BPM"), //
 		BUFFER_SIZE_MS("Audio buffer size to fill (ms)"), //
 		BUTTON_CANCEL("Cancel"), //
 		BUTTON_SAVE("Save"), //
@@ -132,6 +134,8 @@ public class Localization {
 		FRETS("Frets"), //
 		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
+		HALVING_BPM_MUST_START_ON_MEASURE_BEGINNING("You can only halve BPM from the beginning of a measure"), //
+		HALVING_BPM_UNEVEN_BEATS_IN_MEASURE("Uneven beats count, can't halve BPM"), //
 		HAMMER_ON_ON_FRET_ZERO("Hammer on on fret zero"), //
 		HIGH_PASS("High"), //
 		HIGH_PASS_SETTINGS("High pass settings"), //

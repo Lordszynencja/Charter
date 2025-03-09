@@ -537,19 +537,8 @@ public class BeatsMap {
 	}
 
 	public double findBPM(final Beat beat, final int beatId) {
-		int nextAnchorId = beats.size() - 1;
-
-		for (int i = beatId + 1; i < beats.size(); i++) {
-			if (beats.get(i).anchor) {
-				nextAnchorId = i;
-				break;
-			}
-		}
-
-		final Beat nextAnchor = beats.get(nextAnchorId);
-		final double distancePassed = nextAnchor.position() - beat.position();
-		final int beatsPassed = nextAnchorId - beatId;
-		return 60_000.0 / distancePassed * beatsPassed;
+		final double distance = beats.get(beatId + 1).position() - beat.position();
+		return 60_000.0 / distance;
 	}
 
 	public Beat getBeatSafe(final int beatId) {

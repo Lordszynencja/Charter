@@ -82,6 +82,8 @@ class EditMenuHandler extends CharterMenuHandler implements Initiable {
 			menu.add(createDisabledItem(Action.TOGGLE_ANCHOR));
 			menu.add(createDisabledItem(Action.BEAT_ADD));
 			menu.add(createDisabledItem(Action.BEAT_REMOVE));
+			menu.add(createDisabledItem(Action.BPM_DOUBLE));
+			menu.add(createDisabledItem(Action.BPM_HALVE));
 		}
 
 		return menu;
