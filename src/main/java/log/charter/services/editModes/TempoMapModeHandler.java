@@ -73,6 +73,7 @@ public class TempoMapModeHandler implements ModeHandler {
 				beats.get(i).beatsInMeasure = lastNumber;
 			}
 		}
+		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
 	}
 
 	@Override

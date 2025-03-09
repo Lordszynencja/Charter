@@ -40,6 +40,8 @@ import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.HandShapesHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.data.VocalsHandler;
+import log.charter.services.data.beats.BPMDoubler;
+import log.charter.services.data.beats.BPMHalver;
 import log.charter.services.data.copy.CopyManager;
 import log.charter.services.data.files.ExistingProjectImporter;
 import log.charter.services.data.files.FileDropHandler;
@@ -75,6 +77,8 @@ public class CharterContext {
 	private final ActionHandler actionHandler = new ActionHandler();
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
 	private final BeatsService beatsService = new BeatsService();
+	private final BPMDoubler bpmDoubler = new BPMDoubler();
+	private final BPMHalver bpmHalver = new BPMHalver();
 	private final ChartValidator chartValidator = new ChartValidator();
 	private final AudioHandler audioHandler = new AudioHandler();
 	private final BeatsDrawer beatsDrawer = new BeatsDrawer();

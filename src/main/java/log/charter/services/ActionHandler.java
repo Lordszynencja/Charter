@@ -26,6 +26,8 @@ import log.charter.services.data.GuitarSoundsHandler;
 import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.HandShapesHandler;
 import log.charter.services.data.VocalsHandler;
+import log.charter.services.data.beats.BPMDoubler;
+import log.charter.services.data.beats.BPMHalver;
 import log.charter.services.data.copy.CopyManager;
 import log.charter.services.data.files.NewProjectCreator;
 import log.charter.services.data.files.SongFileHandler;
@@ -37,6 +39,8 @@ import log.charter.services.mouseAndKeyboard.MouseHandler;
 public class ActionHandler implements Initiable {
 	private AudioHandler audioHandler;
 	private BeatsService beatsService;
+	private BPMDoubler bpmDoubler;
+	private BPMHalver bpmHalver;
 	private ChartData chartData;
 	private ChartItemsHandler chartItemsHandler;
 	private ChartTimeHandler chartTimeHandler;
@@ -231,6 +235,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.ARRANGEMENT_PREVIOUS, this::previousArrangement);
 		actionHandlers.put(Action.BEAT_ADD, beatsService::addBeat);
 		actionHandlers.put(Action.BEAT_REMOVE, beatsService::removeBeat);
+		actionHandlers.put(Action.BPM_DOUBLE, bpmDoubler::doubleBPM);
+		actionHandlers.put(Action.BPM_HALVE, bpmHalver::halveBPM);
 		actionHandlers.put(Action.COPY, copyManager::copy);
 		actionHandlers.put(Action.DELETE, chartItemsHandler::delete);
 		actionHandlers.put(Action.DOUBLE_GRID, this::doubleGridSize);
