@@ -10,7 +10,7 @@ public class Utils {
 	public static String getDefaultConfigDir() {
 		switch (SystemType.systemType) {
 			case WINDOWS:
-				return System.getProperty("APPDATA") + "/Local/Charter/";
+				return System.getenv("APPDATA") + "/Charter/";
 			case MAC:
 				return "~/Library/Preferences/Charter/";
 			case LINUX:

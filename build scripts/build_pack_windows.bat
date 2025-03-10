@@ -18,6 +18,6 @@ jpackage -i target/Charter^
  -d target
 
 CD target
-REN "Charter-%version%.exe" "Charter-%version%-Windows_installer.exe"
-MOVE "Charter-%version%-Windows_installer.exe" ../
+REN "Charter-%version%.exe" "Charter-windows-%version%-installer.exe"
+MOVE "Charter-windows-%version%-installer.exe" ../
 CD ../

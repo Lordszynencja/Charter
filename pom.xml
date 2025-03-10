@@ -198,6 +198,7 @@
 										<resource>
 											<directory>${basedir}/resources</directory>
 											<includes>
+												<include>graphics/**</include>
 												<include>languages/**</include>
 												<include>oggenc/**</include>
 												<include>manual.pdf</include>
@@ -251,6 +252,7 @@
 										<resource>
 											<directory>${basedir}/resources</directory>
 											<includes>
+												<include>graphics/**</include>
 												<include>languages/**</include>
 												<include>oggenc/**</include>
 												<include>manual.pdf</include>
@@ -304,6 +306,7 @@
 										<resource>
 											<directory>${basedir}/resources</directory>
 											<includes>
+												<include>graphics/**</include>
 												<include>languages/**</include>
 												<include>oggenc/**</include>
 												<include>manual.pdf</include>
@@ -357,6 +360,7 @@
 										<resource>
 											<directory>${basedir}/resources</directory>
 											<includes>
+												<include>graphics/**</include>
 												<include>languages/**</include>
 												<include>oggenc/**</include>
 												<include>manual.pdf</include>

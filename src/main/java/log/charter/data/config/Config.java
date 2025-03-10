@@ -204,6 +204,8 @@ public class Config {
 				config.put(name, accessor.get());
 			}
 		});
+
+		new File(configPath).getParentFile().mkdirs();
 		RW.writeConfig(configPath, config);
 
 		changed = false;

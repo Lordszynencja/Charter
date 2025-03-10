@@ -2,6 +2,7 @@ package log.charter.data.config;
 
 import static log.charter.io.Logger.error;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -80,6 +81,8 @@ public class GraphicalConfig {
 
 		final Map<String, String> config = new HashMap<>();
 		valueAccessors.forEach((name, accessor) -> config.put(name, accessor.get()));
+
+		new File(configPath).getParentFile().mkdirs();
 		RW.writeConfig(configPath, config);
 
 		changed = false;
