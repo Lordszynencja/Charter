@@ -15,9 +15,10 @@ jpackage -i target/Charter^
  --copyright "SBD 3-Clause"^
  -n Charter^
  --file-associations AssociationProjectFile.properties^
+ -t msi^
  -d target
 
 CD target
-REN "Charter-%version%.exe" "Charter-windows-%version%-installer.exe"
-MOVE "Charter-windows-%version%-installer.exe" ../
+REN "Charter-%version%.msi" "Charter-windows-%version%-installer.msi"
+MOVE "Charter-windows-%version%-installer.msi" ../
 CD ../
