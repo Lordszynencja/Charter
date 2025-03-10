@@ -64,6 +64,7 @@ import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
 import log.charter.services.utils.AudioFramer;
 import log.charter.services.utils.Framer;
+import log.charter.services.utils.UpdateChecker;
 import log.charter.util.ConfigAutoSaver;
 import log.charter.util.ExitActions;
 import log.charter.util.Timer;
@@ -131,6 +132,7 @@ public class CharterContext {
 
 	private final AudioFramer audioFramer = new AudioFramer();
 	private final Framer framer = new Framer(this::frame);
+	private final UpdateChecker updateChecker = new UpdateChecker();
 
 	private Map<String, Object> getFieldsValues() {
 		final Map<String, Object> fields = new HashMap<>();
@@ -244,6 +246,10 @@ public class CharterContext {
 	public void reloadTextures() {
 		charterFrame.reloadTextures();
 		windowedPreviewHandler.reloadTextures();
+	}
+
+	public void checkForUpdates() {
+		updateChecker.checkForUpdates();
 	}
 
 	public void exit() {

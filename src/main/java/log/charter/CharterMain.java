@@ -31,6 +31,8 @@ public class CharterMain {
 				context.openProject(pathToOpen);
 			}
 
+			context.checkForUpdates();
+
 			Logger.info("Charter started");
 		} catch (final Throwable t) {
 			Logger.error("Couldn't start Charter", t);
