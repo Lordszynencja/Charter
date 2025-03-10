@@ -38,20 +38,20 @@ Works For Windows 10 and above.
 
 1. You need Java 17 (JDK) or newer to run it, you can install it from [Oracle Main release](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) or [OpenJDK](https://jdk.java.net/archive/).
 1. Download `Charter-mac-<version>.zip` for Intel Macs, or `Charter-mac-arm-<version>.zip` for ARM, then unzip it and move into `Applications`.
-1. Download [jasiohost64.dll](https://github.com/mhroth/jasiohost/blob/master/jasiohost64.dll) and [rubberband-jni_win64.dll](https://github.com/JorenSix/RubberBandJNI/blob/master/jni/JVM/rubberband-jni_win64.dll)(rename it to `rubberband-jni.dll`) and put them in the libraries folder, one of `~/lib`, `/usr/local/lib` or `/usr/lib`.
+1. Download [librubberband-jni.dylib](https://github.com/JorenSix/RubberBandJNI/blob/master/jni/JVM/librubberband-jni.dylib) and put it in the libraries folder, one of `~/lib`, `/usr/local/lib` or `/usr/lib`.
 1. Run `Charter.jar`.
 
 ### Linux
 
 1. You need Java 17 (JDK) or newer to run it, you can install it from [Oracle Main release](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) or [OpenJDK](https://jdk.java.net/archive/).
 1. Download `Charter-linux-<version>.zip` then unzip it.
-1. Download [jasiohost64.dll](https://github.com/mhroth/jasiohost/blob/master/jasiohost64.dll) and [rubberband-jni_win64.dll](https://github.com/JorenSix/RubberBandJNI/blob/master/jni/JVM/rubberband-jni_win64.dll)(rename it to `rubberband-jni.dll`) and put them in the libraries folder, one of `~/lib`, `/usr/local/lib` or `/usr/lib`.
+1. Download [librubberband-jni.so](https://github.com/JorenSix/RubberBandJNI/blob/master/jni/JVM/librubberband-jni.so) and put them in the libraries folder, one of `~/lib`, `/usr/local/lib` or `/usr/lib`.
 1. Run `Charter.jar`.
 
 ## Contributing and Building
 
 #### Contributing
-1. Install JDK 17 or newer, for example [Main release](https://www.oracle.com/java/technologies/javase/jdk16-archive-downloads.html) or [OpenJDK](https://jdk.java.net/archive/)
+1. Install JDK 17 or newer, for example [Main release](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) or [OpenJDK](https://jdk.java.net/archive/)
 2. Download and install Maven from [here](https://maven.apache.org/index.html).
 3. Fork the repo and make pull requests
 4. Profit

@@ -202,7 +202,6 @@
 												<include>languages/**</include>
 												<include>oggenc/**</include>
 												<include>manual.pdf</include>
-												<include>librubberband-jni.so</include>
 											</includes>
 										</resource>
 										<resource>
@@ -256,7 +255,6 @@
 												<include>languages/**</include>
 												<include>oggenc/**</include>
 												<include>manual.pdf</include>
-												<include>librubberband-jni.dylib</include>
 											</includes>
 										</resource>
 										<resource>
@@ -310,7 +308,6 @@
 												<include>languages/**</include>
 												<include>oggenc/**</include>
 												<include>manual.pdf</include>
-												<include>librubberband-jni.dylib</include>
 											</includes>
 										</resource>
 										<resource>
@@ -364,8 +361,6 @@
 												<include>languages/**</include>
 												<include>oggenc/**</include>
 												<include>manual.pdf</include>
-												<include>jasiohost64.dll</include>
-												<include>rubberband-jni.dll</include>
 											</includes>
 										</resource>
 										<resource>
