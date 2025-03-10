@@ -1,7 +1,7 @@
 package log.charter.util;
 
 import log.charter.data.config.Config;
-import log.charter.data.config.Zoom;
+import log.charter.data.config.ZoomUtils;
 import log.charter.data.song.position.time.IPosition;
 
 public class ScalingUtils {
@@ -10,11 +10,11 @@ public class ScalingUtils {
 	}
 
 	public static double xToTimeLength(final int x) {
-		return (x / Zoom.zoom);
+		return (x / ZoomUtils.zoom);
 	}
 
 	public static int positionToX(final double length) {
-		return (int) (length * Zoom.zoom);
+		return (int) (length * ZoomUtils.zoom);
 	}
 
 	public static int positionToX(final IPosition position, final double t) {
@@ -22,7 +22,7 @@ public class ScalingUtils {
 	}
 
 	public static int positionToX(final double pos, final double t) {
-		return (int) (pos * Zoom.zoom) - (int) (t * Zoom.zoom) + Config.markerOffset;
+		return (int) (pos * ZoomUtils.zoom) - (int) (t * ZoomUtils.zoom) + Config.markerOffset;
 	}
 
 	public static int timeToXLength(final double position, final double length) {

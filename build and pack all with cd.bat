@@ -1,3 +1,3 @@
 cd %~dp0
-"build_pack_all.bat"
+CALL "build scripts/build_pack_all.bat"
 PAUSE

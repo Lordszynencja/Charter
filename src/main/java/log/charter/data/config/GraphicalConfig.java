@@ -2,17 +2,16 @@ package log.charter.data.config;
 
 import static log.charter.io.Logger.error;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import log.charter.data.config.values.ValueAccessor;
 import log.charter.util.RW;
+import log.charter.util.Utils;
 
 public class GraphicalConfig {
-	private static final String configPath = new File(RW.getProgramDirectory(), "graphicalConfig.ini")
-			.getAbsolutePath();
+	private static final String configPath = Utils.getDefaultConfigDir() + "graphicalConfig.ini";
 
 	public static Theme theme = Theme.MODERN;
 	public static int eventsChangeHeight = 10;

@@ -27,9 +27,10 @@ import log.charter.sound.SoundFileType;
 import log.charter.sound.system.AudioSystemType;
 import log.charter.sound.system.SoundSystem;
 import log.charter.util.RW;
+import log.charter.util.Utils;
 
 public class Config {
-	private static final String configPath = new File(RW.getProgramDirectory(), "config.ini").getAbsolutePath();
+	private static final String configPath = Utils.getDefaultConfigDir() + "config.ini";
 
 	public static String language = "English";
 	public static String lastDir = "";
@@ -184,8 +185,6 @@ public class Config {
 
 	public static void init() {
 		readConfigFrom(configPath);
-		readConfigFrom(System.getProperty("user.home") + File.separator + "Documents" + File.separator
-				+ "CharterDebugConfig.ini");
 
 		markChanged();
 		save();

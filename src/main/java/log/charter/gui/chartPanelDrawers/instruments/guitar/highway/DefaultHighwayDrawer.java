@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Optional;
 
 import log.charter.data.config.Config;
-import log.charter.data.config.Zoom;
+import log.charter.data.config.ZoomUtils;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.EventType;
@@ -441,7 +441,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		if (note.vibrato || note.tremolo) {
 			if (note.vibrato) {
 				final List<DrawableShape> shapes = new ArrayList<>();
-				final int vibratoSpeed = (int) (Zoom.zoom * 100);
+				final int vibratoSpeed = (int) (ZoomUtils.zoom * 100);
 				final int vibratoLineHeight = tailHeight / 2;
 				final int vibratoAmplitude = tailHeight - vibratoLineHeight - 1;
 				final int vibratoOffset = (vibratoAmplitude - tailHeight) / 2;
@@ -516,7 +516,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 		if (note.vibrato || note.tremolo) {
 			if (note.vibrato && note.tremolo) {
-				final int vibratoSpeed = (int) (Zoom.zoom * 100);
+				final int vibratoSpeed = (int) (ZoomUtils.zoom * 100);
 				final int vibratoLineHeight = tailHeight / 2;
 				final int vibratoAmplitude = tailHeight - vibratoLineHeight - 1;
 				final int vibratoOffset = (vibratoAmplitude - tailHeight) / 2;
@@ -545,7 +545,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 						new Position2D(x + length, y), //
 						new Position2D(fragmentX, y1)));
 			} else if (note.vibrato) {
-				final int vibratoSpeed = (int) (Zoom.zoom * 100);
+				final int vibratoSpeed = (int) (ZoomUtils.zoom * 100);
 				final int vibratoLineHeight = topBottom.max - topBottom.min;
 				final int vibratoAmplitude = tailHeight - vibratoLineHeight - 1;
 				final int vibratoOffset = (vibratoAmplitude - tailHeight) / 2;

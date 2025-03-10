@@ -4,8 +4,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.SystemType;
 
 public class Utils {
+	public static String getDefaultConfigDir() {
+		switch (SystemType.systemType) {
+			case WINDOWS:
+				return System.getProperty("APPDATA") + "/Local/Charter/";
+			case MAC:
+				return "~/Library/Preferences/Charter/";
+			case LINUX:
+			case OTHER:
+			default:
+				return "~/.local/Charter/";
+		}
+	}
+
 	public enum TimeUnit {
 		NANOSECONDS(1_000_000_000, "%dns", "%d", ".%09d"), //
 		MICROSECONDS(1_000_000, "%dus", "%d", ".%06d"), //
