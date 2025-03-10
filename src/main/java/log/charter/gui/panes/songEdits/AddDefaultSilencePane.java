@@ -22,6 +22,7 @@ import log.charter.sound.utils.AudioGenerator;
 
 public class AddDefaultSilencePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
+	private static final double defaultSilence = 10.001;
 
 	private final ChartTimeHandler chartTimeHandler;
 	private final ChartData data;
@@ -48,11 +49,11 @@ public class AddDefaultSilencePane extends ParamsPane {
 	}
 
 	private void removeAudio(final double movement) {
-		final AudioData editedAudio = projectAudioHandler.getAudio().removeFromStart(movement / 1000.0);
+		final AudioData editedAudio = projectAudioHandler.getAudio().removeFromStart(movement);
 
 		projectAudioHandler.changeAudio(editedAudio);
-		projectAudioHandler.changeStemsOffset(-movement / 1000);
-		data.songChart.beatsMap.moveBeats(chartTimeHandler.maxTime(), -movement);
+		projectAudioHandler.changeStemsOffset(-movement);
+		data.songChart.beatsMap.moveBeats(chartTimeHandler.maxTime(), -movement * 1000);
 	}
 
 	private void addSilence(final double movement) {
@@ -62,15 +63,15 @@ public class AddDefaultSilencePane extends ParamsPane {
 		}
 
 		final AudioData songMusicData = projectAudioHandler.getAudio();
-		final AudioData silenceMusicData = AudioGenerator.generateSilence(movement / 1000.0,
+		final AudioData silenceMusicData = AudioGenerator.generateSilence(movement,
 				songMusicData.format.getSampleRate(), songMusicData.format.getChannels(),
 				songMusicData.format.getSampleSizeInBits() / 8);
 
 		try {
 			final AudioData joined = silenceMusicData.join(songMusicData);
 			projectAudioHandler.changeAudio(joined);
-			projectAudioHandler.changeStemsOffset(movement / 1000);
-			data.songChart.beatsMap.moveBeats(chartTimeHandler.maxTime(), movement);
+			projectAudioHandler.changeStemsOffset(movement);
+			data.songChart.beatsMap.moveBeats(chartTimeHandler.maxTime(), movement * 1000);
 		} catch (final DifferentSampleSizesException | DifferentChannelAmountException
 				| DifferentSampleRateException e) {
 			Logger.error("Couldn't join audio " + songMusicData.format + " and " + silenceMusicData.format);
@@ -78,14 +79,14 @@ public class AddDefaultSilencePane extends ParamsPane {
 	}
 
 	private void addSilenceAndBars() {
-		int movement = 10_000;
+		double movement = defaultSilence;
 
 		final Beat firstBeat = data.songChart.beatsMap.beats.get(0);
-		movement -= firstBeat.position();
+		movement -= firstBeat.position() / 1000;
 		final double firstBarPosition = firstBeat.position();
 		final double secondBarPosition = data.songChart.beatsMap.beats.get(firstBeat.beatsInMeasure).position();
 		final double barLength = secondBarPosition - firstBarPosition;
-		movement += bars * barLength;
+		movement += bars * barLength / 1000;
 		addSilence(movement);
 
 		final int beatsInMeasure = firstBeat.beatsInMeasure;
@@ -106,7 +107,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 	private void saveAndExit() {
 		if (bars == 0) {
 			final Beat firstBeat = data.songChart.beatsMap.beats.get(0);
-			addSilence(10_000 - firstBeat.position());
+			addSilence(defaultSilence - firstBeat.position() / 1000);
 		} else {
 			addSilenceAndBars();
 		}

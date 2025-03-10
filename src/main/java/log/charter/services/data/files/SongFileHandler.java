@@ -150,7 +150,9 @@ public class SongFileHandler {
 	}
 
 	private static String generateVocalPathFileName(final int id, final VocalPath vocals) {
-		return id + "_Vocals_" + vocals.name.replaceAll("[^ \\-0-9a-zA-Z]", "") + "_RS2.xml";
+		final String namePart = vocals.name == null || vocals.name.isBlank() ? ""//
+				: (vocals.name.replaceAll("[^ \\-0-9a-zA-Z]", "").replaceAll(" ", "_") + "_");
+		return id + "_Vocals_" + namePart + "RS2.xml";
 	}
 
 	private void writeRSXML(final Timer timer, final File dir, final int id, final VocalPath vocals) {
