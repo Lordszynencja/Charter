@@ -9,7 +9,7 @@ import java.util.Set;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.io.rs.xml.song.ArrangementChordTemplate;
 import log.charter.io.rsc.xml.converters.ChordTemplateConverter;
 import log.charter.util.collections.HashMap2;
@@ -64,7 +64,7 @@ public class ChordTemplate {
 	}
 
 	public IntRange getStringRange() {
-		int minString = Config.instrument.maxStrings;
+		int minString = InstrumentConfig.maxStrings;
 		int maxString = 0;
 		for (final int string : frets.keySet()) {
 			minString = min(minString, string);
@@ -75,7 +75,7 @@ public class ChordTemplate {
 	}
 
 	public int getLowestString() {
-		int minString = Config.instrument.maxStrings;
+		int minString = InstrumentConfig.maxStrings;
 		for (final int string : getStrings()) {
 			minString = min(minString, string);
 		}
@@ -88,7 +88,7 @@ public class ChordTemplate {
 	}
 
 	public int getLowestFret() {
-		int lowestFret = Config.instrument.frets;
+		int lowestFret = InstrumentConfig.frets;
 
 		for (final int fret : frets.values()) {
 			lowestFret = min(lowestFret, fret);
@@ -98,7 +98,7 @@ public class ChordTemplate {
 	}
 
 	public int getLowestNotOpenFret(final int capo) {
-		int lowestFret = Config.instrument.frets;
+		int lowestFret = InstrumentConfig.frets;
 
 		for (final int fret : frets.values()) {
 			if (fret <= capo) {

@@ -6,6 +6,7 @@ import java.awt.event.ComponentListener;
 import javax.swing.JFrame;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.values.WindowStateConfig;
 import log.charter.gui.CharterFrame;
 import log.charter.services.CharterFrameWindowFocusListener;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
@@ -24,13 +25,13 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 		addComponentListener(this);
 		add(preview3DPanel);
 
-		setLocation(Config.window.previewX, Config.window.previewY);
-		setSize(Config.window.previewWidth, Config.window.previewHeight);
-		if (Config.window.previewBorderless) {
+		setLocation(WindowStateConfig.previewX, WindowStateConfig.previewY);
+		setSize(WindowStateConfig.previewWidth, WindowStateConfig.previewHeight);
+		if (WindowStateConfig.previewBorderless) {
 			setBorderlessFullScreen();
 			setExtendedState(JFrame.MAXIMIZED_BOTH);
 		} else {
-			setExtendedState(Config.window.previewExtendedState);
+			setExtendedState(WindowStateConfig.previewExtendedState);
 		}
 	}
 
@@ -40,19 +41,19 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 		setUndecorated(true);
 		setVisible(true);
 
-		Config.window.previewBorderless = true;
+		WindowStateConfig.previewBorderless = true;
 		Config.markChanged();
 	}
 
 	public void setWindowed() {
 		dispose();
-		setExtendedState(Config.window.previewExtendedState);
-		setLocation(Config.window.previewX, Config.window.previewY);
-		setSize(Config.window.previewWidth, Config.window.previewHeight);
+		setExtendedState(WindowStateConfig.previewExtendedState);
+		setLocation(WindowStateConfig.previewX, WindowStateConfig.previewY);
+		setSize(WindowStateConfig.previewWidth, WindowStateConfig.previewHeight);
 		setUndecorated(false);
 		setVisible(true);
 
-		Config.window.previewBorderless = false;
+		WindowStateConfig.previewBorderless = false;
 		Config.markChanged();
 	}
 
@@ -62,24 +63,24 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 
 	@Override
 	public void componentMoved(final ComponentEvent e) {
-		if (Config.window.previewBorderless) {
+		if (WindowStateConfig.previewBorderless) {
 			return;
 		}
 
-		Config.window.previewX = e.getComponent().getX();
-		Config.window.previewY = e.getComponent().getY();
+		WindowStateConfig.previewX = e.getComponent().getX();
+		WindowStateConfig.previewY = e.getComponent().getY();
 		Config.markChanged();
 	}
 
 	@Override
 	public void componentResized(final ComponentEvent e) {
-		if (Config.window.previewBorderless) {
+		if (WindowStateConfig.previewBorderless) {
 			return;
 		}
 
-		Config.window.previewExtendedState = getExtendedState();
-		Config.window.previewWidth = getWidth();
-		Config.window.previewHeight = getHeight();
+		WindowStateConfig.previewExtendedState = getExtendedState();
+		WindowStateConfig.previewWidth = getWidth();
+		WindowStateConfig.previewHeight = getHeight();
 		Config.markChanged();
 	}
 

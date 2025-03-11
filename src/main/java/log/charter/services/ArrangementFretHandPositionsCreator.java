@@ -6,7 +6,7 @@ import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.List;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.FHP;
@@ -51,7 +51,7 @@ public class ArrangementFretHandPositionsCreator {
 		}
 
 		final ChordTemplate template = chordTemplates.get(sound.chord().templateId());
-		int minFret = Config.instrument.frets;
+		int minFret = InstrumentConfig.frets;
 		int maxFret = 0;
 		for (final int fret : template.frets.values()) {
 			if (fret == 0) {
@@ -71,13 +71,13 @@ public class ArrangementFretHandPositionsCreator {
 
 	private static void addFHP(final ImmutableBeatsMap beats, final FretRange fretRange, final int index,
 			final List<FHP> fhps) {
-		int baseFret = min(Config.instrument.frets - 3, max(1, fretRange.fretRange.min));
+		int baseFret = min(InstrumentConfig.frets - 3, max(1, fretRange.fretRange.min));
 
 		if (baseFret <= 0) {
 			baseFret = 0;
 		}
-		if (baseFret > Config.instrument.frets - 3) {
-			baseFret = Config.instrument.frets - 3;
+		if (baseFret > InstrumentConfig.frets - 3) {
+			baseFret = InstrumentConfig.frets - 3;
 		}
 		final int width = 1 + max(3, fretRange.fretRange.max - fretRange.fretRange.min);
 

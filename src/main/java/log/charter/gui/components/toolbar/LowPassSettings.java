@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.PassFiltersConfig;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedDialog;
 import log.charter.gui.components.simple.CharterSelect;
@@ -18,10 +19,10 @@ import log.charter.sound.effects.pass.PassFilterAlgorithm;
 public class LowPassSettings extends RowedDialog {
 	private static final long serialVersionUID = -2133758312693862190L;
 
-	private PassFilterAlgorithm algorithm = Config.passFilters.lowPassAlgorithm;
-	private int order = Config.passFilters.lowPassOrder;
-	private double frequency = Config.passFilters.lowPassFrequency;
-	private double rippleDb = Config.passFilters.lowPassRippleDb;
+	private PassFilterAlgorithm algorithm = PassFiltersConfig.lowPassAlgorithm;
+	private int order = PassFiltersConfig.lowPassOrder;
+	private double frequency = PassFiltersConfig.lowPassFrequency;
+	private double rippleDb = PassFiltersConfig.lowPassRippleDb;
 
 	@SuppressWarnings("unused")
 	private final FieldWithLabel<CharterSelect<PassFilterAlgorithm>> algorithmField;
@@ -44,10 +45,10 @@ public class LowPassSettings extends RowedDialog {
 		showAlgorithmDependentFields();
 
 		addDefaultFinish(position.newRow().y(), () -> {
-			Config.passFilters.lowPassAlgorithm = algorithm;
-			Config.passFilters.lowPassOrder = order;
-			Config.passFilters.lowPassFrequency = frequency;
-			Config.passFilters.lowPassRippleDb = rippleDb;
+			PassFiltersConfig.lowPassAlgorithm = algorithm;
+			PassFiltersConfig.lowPassOrder = order;
+			PassFiltersConfig.lowPassFrequency = frequency;
+			PassFiltersConfig.lowPassRippleDb = rippleDb;
 
 			Config.markChanged();
 

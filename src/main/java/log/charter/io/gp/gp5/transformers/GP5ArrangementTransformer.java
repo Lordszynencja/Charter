@@ -5,7 +5,7 @@ import static log.charter.services.ArrangementFretHandPositionsCreator.createFHP
 
 import java.util.List;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap;
 import log.charter.data.song.Level;
@@ -76,8 +76,8 @@ public class GP5ArrangementTransformer {
 		final Level level = new Level();
 		final GP5SoundsTransformer noteTransformer = new GP5SoundsTransformer(level, arrangement);
 
-		final boolean[] wasHOPOStart = new boolean[Config.instrument.maxStrings];
-		final int[] hopoFrom = new int[Config.instrument.maxStrings];
+		final boolean[] wasHOPOStart = new boolean[InstrumentConfig.maxStrings];
+		final int[] hopoFrom = new int[InstrumentConfig.maxStrings];
 
 		int barBeatId = 0;
 		for (final int barId : barsOrder) {

@@ -6,8 +6,8 @@ import static log.charter.util.FileUtils.cleanFileName;
 import java.io.File;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.PathsConfig;
 import log.charter.data.song.BeatsMap;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
@@ -33,8 +33,8 @@ public class NewProjectCreator {
 		File songFolder = null;
 
 		while (songFolder == null) {
-			final SongFolderSelectPane songFolderSelectPane = new SongFolderSelectPane(charterFrame, Config.songsPath,
-					audioFileDirectory, defaultFolderName);
+			final SongFolderSelectPane songFolderSelectPane = new SongFolderSelectPane(charterFrame,
+					PathsConfig.songsPath, audioFileDirectory, defaultFolderName);
 
 			if (songFolderSelectPane.isAudioFolderChosen()) {
 				return new File(audioFileDirectory);
@@ -46,7 +46,7 @@ public class NewProjectCreator {
 			}
 			folderName = cleanFileName(folderName);
 
-			songFolder = new File(Config.songsPath, folderName);
+			songFolder = new File(PathsConfig.songsPath, folderName);
 
 			if (songFolder.exists()) {
 				songFolder = null;
@@ -68,7 +68,7 @@ public class NewProjectCreator {
 			return;
 		}
 
-		final File songFile = FileChooseUtils.chooseMusicFile(charterFrame, Config.musicPath);
+		final File songFile = FileChooseUtils.chooseMusicFile(charterFrame, PathsConfig.musicPath);
 		if (songFile == null) {
 			return;
 		}

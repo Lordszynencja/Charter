@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.SystemType;
+import log.charter.data.config.values.DebugConfig;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.CharterFrame;
@@ -235,7 +235,7 @@ public class CharterContext {
 				timer.addTimestamp("charterFrame.repaint()");
 			}
 
-			if (Config.debug.frameTimes) {
+			if (DebugConfig.frameTimes) {
 				timer.print("frame timings:", Timer.defaultFormat(20));
 			}
 		} catch (final Exception e) {

@@ -20,8 +20,8 @@ import java.util.stream.Stream;
 import javax.swing.JCheckBox;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.BassPickingTechnique;
@@ -76,7 +76,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private ChordTemplate chordTemplate = new ChordTemplate();
 
-	private int lastStringsAmount = Config.instrument.maxStrings;
+	private int lastStringsAmount = InstrumentConfig.maxStrings;
 	private List<JCheckBox> strings;
 	private FieldWithLabel<TextInputWithValidation> string;
 	private FieldWithLabel<TextInputWithValidation> fret;
@@ -109,7 +109,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private void addChordStringsSelection(final CurrentSelectionEditor parent, final RowedPosition position) {
 		strings = new ArrayList<>();
 
-		for (int i = 0; i < Config.instrument.maxStrings; i++) {
+		for (int i = 0; i < InstrumentConfig.maxStrings; i++) {
 			final int string = i;
 			final JCheckBox stringCheckbox = new JCheckBox((string + 1) + "");
 			stringCheckbox.setFocusable(false);
@@ -154,7 +154,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private void addSlideFretInput(final CurrentSelectionEditor parent, final RowedPosition position) {
 		final TextInputWithValidation slideFretInput = generateForInteger(null, 30, //
-				new IntegerValueValidator(1, Config.instrument.frets, true), this::changeSlideFret, false);
+				new IntegerValueValidator(1, InstrumentConfig.frets, true), this::changeSlideFret, false);
 		slideFret = new FieldWithLabel<>(Label.SLIDE_PANE_FRET, 60, 30, 20, slideFretInput, LabelPosition.LEFT);
 		parent.add(slideFret, position);
 	}
@@ -433,7 +433,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 						continue;
 					}
 
-					chordNoteEntry.getValue().slideTo = min(Config.instrument.frets, max(1, fret - fretDifference));
+					chordNoteEntry.getValue().slideTo = min(InstrumentConfig.frets, max(1, fret - fretDifference));
 				}
 			}
 		}

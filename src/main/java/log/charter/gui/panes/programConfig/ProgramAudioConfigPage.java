@@ -10,9 +10,9 @@ import java.util.Objects;
 
 import com.synthbot.jasiohost.AsioDriver;
 
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.SystemType;
+import log.charter.data.config.values.AudioConfig;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.CharterSelect;
@@ -65,14 +65,14 @@ public class ProgramAudioConfigPage implements Page {
 		}
 	}
 
-	private AudioSystemType audioOutSystem = Config.audio.outSystem;
-	private String audioOutSystemName = Config.audio.outSystemName;
-	private int leftOutChannelId = Config.audio.leftOutChannelId;
-	private int rightOutChannelId = Config.audio.rightOutChannelId;
+	private AudioSystemType audioOutSystem = AudioConfig.outSystem;
+	private String audioOutSystemName = AudioConfig.outSystemName;
+	private int leftOutChannelId = AudioConfig.leftOutChannelId;
+	private int rightOutChannelId = AudioConfig.rightOutChannelId;
 
-	private int audioBufferedMs = Config.audio.bufferedMs;
-	private int delay = Config.audio.delay;
-	private int midiDelay = Config.audio.midiDelay;
+	private int audioBufferedMs = AudioConfig.bufferedMs;
+	private int delay = AudioConfig.delay;
+	private int midiDelay = AudioConfig.midiDelay;
 
 	private FieldWithLabel<CharterSelect<AudioOutputData>> audioOutSystemField;
 	private FieldWithLabel<TextInputWithValidation> leftOutChannelIdField;
@@ -196,14 +196,14 @@ public class ProgramAudioConfigPage implements Page {
 	}
 
 	public void save() {
-		Config.audio.outSystem = audioOutSystem;
-		Config.audio.outSystemName = audioOutSystemName;
-		Config.audio.leftOutChannelId = leftOutChannelId;
-		Config.audio.rightOutChannelId = rightOutChannelId;
+		AudioConfig.outSystem = audioOutSystem;
+		AudioConfig.outSystemName = audioOutSystemName;
+		AudioConfig.leftOutChannelId = leftOutChannelId;
+		AudioConfig.rightOutChannelId = rightOutChannelId;
 
-		Config.audio.bufferedMs = audioBufferedMs;
-		Config.audio.delay = delay;
-		Config.audio.midiDelay = midiDelay;
+		AudioConfig.bufferedMs = audioBufferedMs;
+		AudioConfig.delay = delay;
+		AudioConfig.midiDelay = midiDelay;
 
 		SoundSystem.setCurrentSoundSystem();
 	}

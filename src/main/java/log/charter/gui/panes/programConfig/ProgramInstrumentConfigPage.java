@@ -4,8 +4,8 @@ import static log.charter.gui.components.simple.TextInputWithValidation.generate
 
 import javax.swing.JCheckBox;
 
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.FieldWithLabel;
@@ -15,10 +15,10 @@ import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 
 public class ProgramInstrumentConfigPage implements Page {
-	private boolean leftHanded = Config.instrument.leftHanded;
-	private int maxStrings = Config.instrument.maxStrings;
-	private int frets = Config.instrument.frets;
-	private int maxBendValue = Config.instrument.maxBendValue;
+	private boolean leftHanded = InstrumentConfig.leftHanded;
+	private int maxStrings = InstrumentConfig.maxStrings;
+	private int frets = InstrumentConfig.frets;
+	private int maxBendValue = InstrumentConfig.maxBendValue;
 
 	private FieldWithLabel<JCheckBox> leftHandedField;
 	private FieldWithLabel<TextInputWithValidation> maxStringsField;
@@ -84,9 +84,9 @@ public class ProgramInstrumentConfigPage implements Page {
 	}
 
 	public void save() {
-		Config.instrument.leftHanded = leftHanded;
-		Config.instrument.maxStrings = maxStrings;
-		Config.instrument.frets = frets;
-		Config.instrument.maxBendValue = maxBendValue;
+		InstrumentConfig.leftHanded = leftHanded;
+		InstrumentConfig.maxStrings = maxStrings;
+		InstrumentConfig.frets = frets;
+		InstrumentConfig.maxBendValue = maxBendValue;
 	}
 }

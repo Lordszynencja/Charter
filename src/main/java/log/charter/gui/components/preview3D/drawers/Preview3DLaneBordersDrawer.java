@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.data.FHPDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
@@ -48,8 +48,8 @@ public class Preview3DLaneBordersDrawer {
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
-		final int[] fretsOpacity = new int[Config.instrument.frets + 1];
-		for (int fret = 0; fret <= Config.instrument.frets; fret++) {
+		final int[] fretsOpacity = new int[InstrumentConfig.frets + 1];
+		for (int fret = 0; fret <= InstrumentConfig.frets; fret++) {
 			fretsOpacity[fret] = 32;
 		}
 
@@ -70,7 +70,7 @@ public class Preview3DLaneBordersDrawer {
 		final double y = getChartboardYPosition(data.currentStrings());
 
 		GL30.glLineWidth(1);
-		for (int fret = 0; fret <= Config.instrument.frets; fret++) {
+		for (int fret = 0; fret <= InstrumentConfig.frets; fret++) {
 			drawFretBorder(shadersHolder, getFretPosition(fret), y, setAlpha(color, fretsOpacity[fret]));
 		}
 	}

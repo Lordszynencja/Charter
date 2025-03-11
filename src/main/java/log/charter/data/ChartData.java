@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
+import log.charter.data.config.values.PathsConfig;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
@@ -23,7 +25,7 @@ import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
 public class ChartData {
-	public String path = Config.lastDir;
+	public String path = PathsConfig.lastDir;
 	public String projectFileName = "project.rscp";
 	public boolean isEmpty = true;
 	public SongChart songChart = new SongChart();
@@ -58,8 +60,8 @@ public class ChartData {
 
 		path = dir;
 		this.projectFileName = projectFileName;
-		Config.lastDir = path;
-		Config.lastPath = new File(path, projectFileName).getAbsolutePath();
+		PathsConfig.lastDir = path;
+		PathsConfig.lastPath = new File(path, projectFileName).getAbsolutePath();
 		Config.markChanged();
 
 		selectionManager.clear();
@@ -72,7 +74,7 @@ public class ChartData {
 
 	public int currentStrings() {
 		if (modeManager.getMode() != EditMode.GUITAR) {
-			return Config.instrument.maxStrings;
+			return InstrumentConfig.maxStrings;
 		}
 
 		return currentArrangement().tuning.strings();

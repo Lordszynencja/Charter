@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.GraphicalConfig;
+import log.charter.data.config.values.PathsConfig;
 import log.charter.io.Logger;
 import log.charter.services.CharterContext;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
@@ -19,7 +20,7 @@ public class CharterMain {
 			GraphicalConfig.init();
 			ShortcutConfig.init();
 
-			String pathToOpen = Config.lastPath;
+			String pathToOpen = PathsConfig.lastPath;
 			if (args.length > 0) {
 				pathToOpen = args[0];
 			}

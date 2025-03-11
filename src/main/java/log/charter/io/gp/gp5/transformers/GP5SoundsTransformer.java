@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
@@ -186,7 +186,7 @@ public class GP5SoundsTransformer {
 				lastNote.unpitchedSlide = true;
 				break;
 			case OUT_UP:
-				lastNote.slideTo = min(Config.instrument.frets, lastNote.fret + 5);
+				lastNote.slideTo = min(InstrumentConfig.frets, lastNote.fret + 5);
 				lastNote.unpitchedSlide = true;
 				break;
 			case OUT_WITHOUT_PLUCK:
@@ -216,7 +216,7 @@ public class GP5SoundsTransformer {
 				afterNotes.add(slideInNoteFromAbove);
 				note.linkNext = true;
 				note.slideTo = note.fret;
-				note.fret = min(Config.instrument.frets, note.fret + 5);
+				note.fret = min(InstrumentConfig.frets, note.fret + 5);
 				break;
 			case IN_FROM_BELOW:
 				final Note slideInNoteFromBelow = new Note(note.position().add(new Fraction(1, 4)), note.string,
@@ -276,10 +276,10 @@ public class GP5SoundsTransformer {
 		}
 
 		final GPNote gpNote = gpBeat.notes.get(0);
-		if (gpNote.fret < 0 || gpNote.fret > Config.instrument.frets) {
+		if (gpNote.fret < 0 || gpNote.fret > InstrumentConfig.frets) {
 			return;
 		}
-		if (gpNote.string < 0 || gpNote.string > Config.instrument.maxStrings) {
+		if (gpNote.string < 0 || gpNote.string > InstrumentConfig.maxStrings) {
 			return;
 		}
 

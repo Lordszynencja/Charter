@@ -11,6 +11,7 @@ import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.config.values.GridConfig;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.toolbar.IChartToolbar;
@@ -177,8 +178,8 @@ public class ActionHandler implements Initiable {
 	}
 
 	private void doubleGridSize() {
-		if (Config.gridSize <= 512) {
-			Config.gridSize *= 2;
+		if (GridConfig.gridSize <= 512) {
+			GridConfig.gridSize *= 2;
 			Config.markChanged();
 
 			chartToolbar.updateValues();
@@ -186,8 +187,8 @@ public class ActionHandler implements Initiable {
 	}
 
 	private void halveGridSize() {
-		if (Config.gridSize % 2 == 0) {
-			Config.gridSize /= 2;
+		if (GridConfig.gridSize % 2 == 0) {
+			GridConfig.gridSize /= 2;
 			Config.markChanged();
 
 			chartToolbar.updateValues();

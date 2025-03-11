@@ -5,7 +5,7 @@ import static java.lang.Math.min;
 
 import java.util.List;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
 
 public class ChordTemplateFingerSetter {
@@ -107,7 +107,7 @@ public class ChordTemplateFingerSetter {
 	}
 
 	private static void cleanTemplate(final ChordTemplate template) {
-		for (int i = 0; i < Config.instrument.maxStrings; i++) {
+		for (int i = 0; i < InstrumentConfig.maxStrings; i++) {
 			if (template.frets.getOrDefault(i, 0) == 0) {
 				template.fingers.remove(i);
 			}
@@ -130,11 +130,11 @@ public class ChordTemplateFingerSetter {
 
 	private final ChordTemplate template;
 
-	private int lowestNonzeroString = Config.instrument.maxStrings;
+	private int lowestNonzeroString = InstrumentConfig.maxStrings;
 	private int highestNonzeroString = -1;
-	private int lowestString = Config.instrument.maxStrings;
+	private int lowestString = InstrumentConfig.maxStrings;
 	private int highestString = -1;
-	private int lowestNonzeroFret = Config.instrument.frets + 1;
+	private int lowestNonzeroFret = InstrumentConfig.frets + 1;
 
 	private ChordTemplateFingerSetter(final ChordTemplate template) {
 		this.template = template;

@@ -15,8 +15,8 @@ import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.WindowStateConfig;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.utils.PaneSizes;
 import log.charter.gui.components.utils.PaneSizesBuilder;
@@ -124,8 +124,8 @@ public class RowedDialog extends JDialog implements ComponentListener {
 	}
 
 	private void setLocation() {
-		final int x = Config.window.x + frame.getWidth() / 2 - getWidth() / 2;
-		final int y = Config.window.y + frame.getHeight() / 2 - getHeight() / 2;
+		final int x = WindowStateConfig.x + frame.getWidth() / 2 - getWidth() / 2;
+		final int y = WindowStateConfig.y + frame.getHeight() / 2 - getHeight() / 2;
 		setLocation(x, y);
 	}
 

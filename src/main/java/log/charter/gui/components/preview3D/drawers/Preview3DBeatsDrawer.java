@@ -18,7 +18,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.data.BeatDrawData;
 import log.charter.gui.components.preview3D.data.FHPDrawData;
@@ -89,7 +89,7 @@ public class Preview3DBeatsDrawer {
 
 	private void drawFretNumberWithFade(final ShadersHolder shadersHolder, final int fret, final double y,
 			final double z, Color color) {
-		if (fret > Config.instrument.frets) {
+		if (fret > InstrumentConfig.frets) {
 			return;
 		}
 
@@ -103,7 +103,7 @@ public class Preview3DBeatsDrawer {
 
 	private void drawFretNumber(final ShadersHolder shadersHolder, final int fret, final double y, final double z,
 			final Color color) {
-		if (fret > Config.instrument.frets) {
+		if (fret > InstrumentConfig.frets) {
 			return;
 		}
 
@@ -155,7 +155,7 @@ public class Preview3DBeatsDrawer {
 			final IntRange fretsRange = drawData.getFrets(beat.originalTime);
 			int fret = 0;
 			int i = 0;
-			while (fret <= Config.instrument.frets) {
+			while (fret <= InstrumentConfig.frets) {
 				fret += dottedFretDistances[i];
 				final boolean fretHighlight = fretsRange != null && fret >= fretsRange.min && fret <= fretsRange.max;
 				fretsToDraw.add(new FretDrawData(beat.time, fret, false, fretHighlight));

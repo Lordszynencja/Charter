@@ -11,7 +11,7 @@ import java.awt.Font;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.EditorBendValueDrawingData;
@@ -46,12 +46,12 @@ public class ModernThemeBends {
 		if (bendValue == null) {
 			bendValue = BigDecimal.ZERO;
 		}
-		if (bendValue.compareTo(new BigDecimal(Config.instrument.maxBendValue)) > 0) {
-			bendValue = new BigDecimal(Config.instrument.maxBendValue);
+		if (bendValue.compareTo(new BigDecimal(InstrumentConfig.maxBendValue)) > 0) {
+			bendValue = new BigDecimal(InstrumentConfig.maxBendValue);
 		}
 
 		final int bendOffset = bendValue.multiply(new BigDecimal(tailHeight * 2 / 3))
-				.divide(new BigDecimal(Config.instrument.maxBendValue), RoundingMode.HALF_UP).intValue();
+				.divide(new BigDecimal(InstrumentConfig.maxBendValue), RoundingMode.HALF_UP).intValue();
 		return y + tailHeight / 3 - bendOffset;
 	}
 

@@ -12,7 +12,7 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.io.rsc.xml.converters.TuningConverter;
 
 @XStreamAlias("tuning")
@@ -28,7 +28,7 @@ public class Tuning {
 	}
 
 	public static int getStringDistance(final int string, final int strings) {
-		final int offset = standardStringDistances.length - min(Config.instrument.maxStrings, max(6, strings));
+		final int offset = standardStringDistances.length - min(InstrumentConfig.maxStrings, max(6, strings));
 		return standardStringDistances[string + offset];
 	}
 

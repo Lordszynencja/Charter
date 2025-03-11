@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
@@ -331,7 +331,7 @@ public class GuitarModeHandler implements ModeHandler {
 
 	@Override
 	public void handleNumber(final int number) {
-		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= Config.instrument.frets) {
+		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= InstrumentConfig.frets) {
 			lastFretNumber = lastFretNumber * 10 + number;
 		} else {
 			lastFretNumber = number;

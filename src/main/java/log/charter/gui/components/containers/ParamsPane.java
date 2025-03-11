@@ -29,8 +29,8 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.WindowStateConfig;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.PaneSizes;
@@ -161,8 +161,8 @@ public class ParamsPane extends JDialog implements WindowListener {
 	}
 
 	private void setLocation() {
-		setLocation(Config.window.x + frame.getWidth() / 2 - getWidth() / 2,
-				Config.window.y + frame.getHeight() / 2 - getHeight() / 2);
+		setLocation(WindowStateConfig.x + frame.getWidth() / 2 - getWidth() / 2,
+				WindowStateConfig.y + frame.getHeight() / 2 - getHeight() / 2);
 	}
 
 	public int getY(final int row) {

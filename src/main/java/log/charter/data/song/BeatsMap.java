@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
 
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.NoteDistanceConfig;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
@@ -319,31 +319,31 @@ public class BeatsMap {
 		}
 
 		public IVirtualConstantPosition getMaxPositionBefore(final IVirtualConstantPosition position) {
-			if (Config.minNoteDistanceType == DistanceType.MILISECONDS) {
-				return addMiliseconds(position, -Config.minNoteDistanceFactor);
+			final int factor = NoteDistanceConfig.minSpaceFactor;
+			switch (NoteDistanceConfig.minSpaceType) {
+				case MILISECONDS:
+					return addMiliseconds(position, -factor);
+				case BEATS:
+					return addBeats(position, new FractionalPosition(new Fraction(-1, factor)));
+				case NOTES:
+					return removeNote(position, new Fraction(1, factor));
+				default:
+					return position;
 			}
-			if (Config.minNoteDistanceType == DistanceType.BEATS) {
-				return addBeats(position, new FractionalPosition(new Fraction(-1, Config.minNoteDistanceFactor)));
-			}
-			if (Config.minNoteDistanceType == DistanceType.NOTES) {
-				return removeNote(position, new Fraction(1, Config.minNoteDistanceFactor));
-			}
-
-			return position;
 		}
 
 		public IVirtualConstantPosition getMinEndPositionAfter(final IVirtualConstantPosition position) {
-			if (Config.minTailLengthType == DistanceType.MILISECONDS) {
-				return addMiliseconds(position, Config.minTailLengthFactor);
+			final int factor = NoteDistanceConfig.minLengthFactor;
+			switch (NoteDistanceConfig.minLengthType) {
+				case MILISECONDS:
+					return addMiliseconds(position, factor);
+				case BEATS:
+					return addBeats(position, new FractionalPosition(new Fraction(1, factor)));
+				case NOTES:
+					return addNote(position, new Fraction(1, factor));
+				default:
+					return position;
 			}
-			if (Config.minTailLengthType == DistanceType.BEATS) {
-				return addBeats(position, new FractionalPosition(new Fraction(1, Config.minTailLengthFactor)));
-			}
-			if (Config.minTailLengthType == DistanceType.NOTES) {
-				return addNote(position, new Fraction(1, Config.minTailLengthFactor));
-			}
-
-			return position;
 		}
 
 		public BeatsMap getClone() {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.AudioConfig;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.ChordOrNote;
@@ -43,7 +43,7 @@ public class MidiChartNotePlayer implements Initiable {
 	}
 
 	private double getTime() {
-		return chartTimeHandler.time() + Config.audio.midiDelay * speed / 100;
+		return chartTimeHandler.time() + AudioConfig.midiDelay * speed / 100;
 	}
 
 	private void stopSound(final MidiChartNotePlayerNoteData sound) {

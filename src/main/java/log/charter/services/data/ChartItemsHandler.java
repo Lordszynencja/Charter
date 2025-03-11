@@ -261,7 +261,7 @@ public class ChartItemsHandler {
 		endPosition = beats.addGrid(endPosition, gridsChange);
 		note.endPosition(endPosition.toFraction(beats).position());
 
-		arrangementFixer.fixNoteLength(note, id, sounds);
+		arrangementFixer.fixNoteLengthWithoutCutting(note, id, sounds);
 	}
 
 	public void changeSoundsLength(final List<Selection<ChordOrNote>> toChange, final int gridsChange,

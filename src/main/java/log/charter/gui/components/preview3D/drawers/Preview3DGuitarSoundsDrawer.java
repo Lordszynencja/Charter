@@ -33,7 +33,7 @@ import java.util.Map;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Mute;
@@ -152,7 +152,7 @@ public class Preview3DGuitarSoundsDrawer {
 			return openNoteSameFretsModels.get(fretsWidth);
 		}
 
-		final Map<Integer, Map<Integer, CompositeModel>> currentMap = Config.instrument.leftHanded
+		final Map<Integer, Map<Integer, CompositeModel>> currentMap = InstrumentConfig.leftHanded
 				? openNoteModelsLeftHanded
 				: openNoteModels;
 

@@ -7,7 +7,7 @@ import javax.sound.sampled.DataLine.Info;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.AudioConfig;
 import log.charter.io.Logger;
 import log.charter.sound.system.data.EmptySoundLine;
 import log.charter.sound.system.data.ISoundLine;
@@ -20,7 +20,7 @@ public class StandardSoundSystem implements ISoundSystem {
 		private boolean stopped = false;
 
 		private StandardSoundLine(final AudioFormat format) throws LineUnavailableException {
-			maxBytes = (int) (format.getFrameRate() * format.getFrameSize() * Config.audio.bufferedMs / 1000);
+			maxBytes = (int) (format.getFrameRate() * format.getFrameSize() * AudioConfig.bufferedMs / 1000);
 
 			final Info info = new Info(SourceDataLine.class, format);
 

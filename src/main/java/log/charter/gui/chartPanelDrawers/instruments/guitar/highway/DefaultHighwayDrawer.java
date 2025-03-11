@@ -47,8 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import log.charter.data.config.Config;
 import log.charter.data.config.ZoomUtils;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.EventType;
@@ -607,12 +607,12 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		if (bendValue == null) {
 			bendValue = BigDecimal.ZERO;
 		}
-		if (bendValue.compareTo(new BigDecimal(Config.instrument.maxBendValue)) > 0) {
-			bendValue = new BigDecimal(Config.instrument.maxBendValue);
+		if (bendValue.compareTo(new BigDecimal(InstrumentConfig.maxBendValue)) > 0) {
+			bendValue = new BigDecimal(InstrumentConfig.maxBendValue);
 		}
 
 		final int bendOffset = bendValue.multiply(new BigDecimal(tailHeight * 2 / 3))
-				.divide(new BigDecimal(Config.instrument.maxBendValue), RoundingMode.HALF_UP).intValue();
+				.divide(new BigDecimal(InstrumentConfig.maxBendValue), RoundingMode.HALF_UP).intValue();
 		return y + tailHeight / 3 - bendOffset;
 	}
 

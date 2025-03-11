@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.PassFiltersConfig;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedDialog;
 import log.charter.gui.components.simple.CharterSelect;
@@ -20,11 +21,11 @@ public class BandPassSettings extends RowedDialog {
 
 	private static final int labelWidth = 100;
 
-	private PassFilterAlgorithm algorithm = Config.passFilters.bandPassAlgorithm;
-	private int order = Config.passFilters.bandPassOrder;
-	private double centerFrequency = Config.passFilters.bandPassCenterFrequency;
-	private double frequencyWidth = Config.passFilters.bandPassFrequencyWidth;
-	private double rippleDb = Config.passFilters.bandPassRippleDb;
+	private PassFilterAlgorithm algorithm = PassFiltersConfig.bandPassAlgorithm;
+	private int order = PassFiltersConfig.bandPassOrder;
+	private double centerFrequency = PassFiltersConfig.bandPassCenterFrequency;
+	private double frequencyWidth = PassFiltersConfig.bandPassFrequencyWidth;
+	private double rippleDb = PassFiltersConfig.bandPassRippleDb;
 
 	@SuppressWarnings("unused")
 	private final FieldWithLabel<CharterSelect<PassFilterAlgorithm>> algorithmField;
@@ -50,11 +51,11 @@ public class BandPassSettings extends RowedDialog {
 		showAlgorithmDependentFields();
 
 		addDefaultFinish(position.newRow().y(), () -> {
-			Config.passFilters.bandPassAlgorithm = algorithm;
-			Config.passFilters.bandPassOrder = order;
-			Config.passFilters.bandPassCenterFrequency = centerFrequency;
-			Config.passFilters.bandPassFrequencyWidth = frequencyWidth;
-			Config.passFilters.bandPassRippleDb = rippleDb;
+			PassFiltersConfig.bandPassAlgorithm = algorithm;
+			PassFiltersConfig.bandPassOrder = order;
+			PassFiltersConfig.bandPassCenterFrequency = centerFrequency;
+			PassFiltersConfig.bandPassFrequencyWidth = frequencyWidth;
+			PassFiltersConfig.bandPassRippleDb = rippleDb;
 
 			Config.markChanged();
 

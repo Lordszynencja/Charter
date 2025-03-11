@@ -2,7 +2,8 @@ package log.charter.gui.components.preview3D;
 
 import static log.charter.data.config.GraphicalConfig.previewWindowScrollSpeed;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
+import log.charter.data.config.values.InstrumentConfig;
 
 public class Preview3DUtils {
 	public static final double topStringPosition = 0;
@@ -19,11 +20,11 @@ public class Preview3DUtils {
 
 	public static double fretLengthMultiplier = 1;
 
-	private static double[] fretPositions = new double[Config.instrument.frets + 1];
+	private static double[] fretPositions = new double[InstrumentConfig.frets + 1];
 	static {
 		double fretLength = firstFretDistance;
 		fretPositions[0] = 0;
-		for (int fret = 1; fret <= Config.instrument.frets; fret++) {
+		for (int fret = 1; fret <= InstrumentConfig.frets; fret++) {
 			fretPositions[fret] = fretPositions[fret - 1] + fretLength;
 			fretLength *= fretLengthMultiplier;
 		}
@@ -31,10 +32,10 @@ public class Preview3DUtils {
 
 	public static double getFretPosition(final int fret) {
 		final double position = fret < 0 ? fretPositions[0]//
-				: fret > Config.instrument.frets ? fretPositions[Config.instrument.frets]//
+				: fret > InstrumentConfig.frets ? fretPositions[InstrumentConfig.frets]//
 						: fretPositions[fret];
 
-		return Config.instrument.leftHanded ? fretPositions[Config.instrument.frets] / 2 - position : position;
+		return InstrumentConfig.leftHanded ? fretPositions[InstrumentConfig.frets] / 2 - position : position;
 	}
 
 	public static int getVisibility() {
@@ -54,7 +55,7 @@ public class Preview3DUtils {
 	}
 
 	private static int invertStrings(final int string, final int strings) {
-		return Config.invertStrings3D ? strings - string - 1 : string;
+		return GraphicalConfig.invertStrings3D ? strings - string - 1 : string;
 	}
 
 	public static double getStringPosition(final int string, final int strings) {

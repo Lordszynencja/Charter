@@ -18,8 +18,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JSlider;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.AudioConfig;
 import log.charter.data.song.Stem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedDialog;
@@ -74,7 +74,7 @@ public class AudioStemsSettings extends RowedDialog {
 		private JSlider volumeSlider;
 
 		public AudioStemRow(final RowedPosition position) {
-			this(-1, Label.MAIN_AUDIO.label(), Config.audio.volume, 0, position);
+			this(-1, Label.MAIN_AUDIO.label(), AudioConfig.volume, 0, position);
 		}
 
 		public AudioStemRow(final int id, final Stem stem, final RowedPosition position) {
@@ -216,7 +216,7 @@ public class AudioStemsSettings extends RowedDialog {
 				deleted++;
 			} else {
 				if (stemRow.id < 0) {
-					Config.audio.volume = stemRow.volume;
+					AudioConfig.volume = stemRow.volume;
 				} else {
 					final Stem stem = chartData.songChart.stems.get(id);
 					stem.volume = stemRow.volume;

@@ -6,7 +6,7 @@ import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.List;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.GridConfig;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.position.FractionalPosition;
@@ -19,7 +19,7 @@ import log.charter.util.data.Fraction;
 
 public class GridPosition<T extends Position> implements IVirtualConstantPosition {
 	public static GridPosition<Beat> create(final List<Beat> beats, final double position) {
-		switch (Config.gridType) {
+		switch (GridConfig.gridType) {
 			case NOTE:
 				return new NoteBasedGridPosition(beats, position);
 			case BEAT:
@@ -32,7 +32,7 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 	}
 
 	public static GridPosition<Beat> create(final List<Beat> beats, final FractionalPosition position) {
-		switch (Config.gridType) {
+		switch (GridConfig.gridType) {
 			case NOTE:
 				return new NoteBasedGridPosition(beats, position);
 			case BEAT:
@@ -52,7 +52,7 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 		return create(beats, position.asConstantPosition().position());
 	}
 
-	public final int gridSize = Config.gridSize;
+	public final int gridSize = GridConfig.gridSize;
 	protected final List<T> positions;
 
 	public int positionId;
@@ -87,7 +87,7 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 	public void next() {
 		gridId++;
 
-		if (gridId >= Config.gridSize) {
+		if (gridId >= GridConfig.gridSize) {
 			positionId++;
 			gridId = 0;
 		}

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.notes.ChordOrNote;
@@ -222,8 +222,9 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 	private void drawMarkerAndViewArea(final Graphics g) {
 		final int markerPosition = timeToPosition(chartTimeHandler.time());
 
-		final int x0 = markerPosition - timeToPosition(xToTimeLength(Config.markerOffset));
-		final int x1 = markerPosition + timeToPosition(xToTimeLength(chartPanel.getWidth() - Config.markerOffset));
+		final int x0 = markerPosition - timeToPosition(xToTimeLength(GraphicalConfig.markerOffset));
+		final int x1 = markerPosition
+				+ timeToPosition(xToTimeLength(chartPanel.getWidth() - GraphicalConfig.markerOffset));
 		g.setColor(ColorLabel.MARKER_VIEW_AREA.color());
 		g.drawRect(x0, 0, x1 - x0, getHeight() - 1);
 

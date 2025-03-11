@@ -11,6 +11,8 @@ import org.lwjgl.opengl.awt.GLData;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
+import log.charter.data.config.values.DebugConfig;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.camera.Preview3DCameraHandler;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
@@ -74,7 +76,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		final GLData data = new GLData();
 		data.majorVersion = 3;
 		data.minorVersion = 0;
-		data.samples = Config.antialiasingSamples;
+		data.samples = GraphicalConfig.antialiasingSamples;
 
 		return data;
 	}
@@ -121,8 +123,8 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		} catch (final Exception e) {
 			Logger.error("Exception in paint", e);
 			if (e.getMessage().contains("Exception while creating the OpenGL context")) {
-				if (Config.antialiasingSamples > 1) {
-					Config.antialiasingSamples /= 2;
+				if (GraphicalConfig.antialiasingSamples > 1) {
+					GraphicalConfig.antialiasingSamples /= 2;
 					Config.markChanged();
 				} else {
 					Logger.error("stopping painting of GL component");
@@ -156,7 +158,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 			GL30.glEnable(GL30.GL_BLEND);
 			GL30.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
-			if (Config.antialiasingSamples > 1) {
+			if (GraphicalConfig.antialiasingSamples > 1) {
 				GL30.glEnable(GL30.GL_MULTISAMPLE);
 			}
 		} catch (final Exception e) {
@@ -226,7 +228,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 			swapBuffers();
 			timer.addTimestamp("finish");
 
-			if (Config.debug.frameTimes) {
+			if (DebugConfig.frameTimes) {
 				timer.print("paintGL timings:", Timer.defaultFormat(20));
 			}
 		} catch (final Exception e) {

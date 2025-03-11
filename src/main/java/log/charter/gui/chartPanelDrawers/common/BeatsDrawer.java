@@ -1,6 +1,5 @@
 package log.charter.gui.chartPanelDrawers.common;
 
-import static log.charter.data.config.Config.showGrid;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatSizeTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaHeight;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.values.GridConfig;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
@@ -224,7 +224,7 @@ public class BeatsDrawer {
 					.addBeatHighlight(positionToX(highlightPosition.position, frameData.time)));
 		}
 
-		if (showGrid) {
+		if (GridConfig.showGrid) {
 			addGrid(beats, frameData, drawingData, dragged);
 		}
 	}

@@ -8,7 +8,7 @@ import javax.sound.sampled.AudioFormat;
 
 import com.breakfastquay.rubberband.RubberBandStretcher;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.AudioConfig;
 import log.charter.io.Logger;
 import log.charter.sound.data.AudioData;
 import log.charter.sound.data.FloatQueue;
@@ -174,7 +174,7 @@ public class Player {
 
 	private void playSound(int startFrame) throws InterruptedException {
 		final int frames = musicData.frames();
-		final byte[] buffer = musicData.generatePlayingBuffer(Config.audio.bufferSize);
+		final byte[] buffer = musicData.generatePlayingBuffer(AudioConfig.bufferSize);
 
 		while (startFrame < frames) {
 			if (stopped) {
@@ -190,7 +190,7 @@ public class Player {
 			writeBuffer(buffer, lastBlock);
 
 			if (playingStartTime < 0) {
-				playingStartTime = System.nanoTime() + Config.audio.delay * 1_000_000;
+				playingStartTime = System.nanoTime() + AudioConfig.delay * 1_000_000;
 			}
 			waitIfNeeded();
 		}

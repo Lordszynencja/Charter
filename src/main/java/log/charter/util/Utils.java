@@ -3,7 +3,7 @@ package log.charter.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.SystemType;
 
 public class Utils {
@@ -111,7 +111,7 @@ public class Utils {
 	}
 
 	public static int getStringPosition(final int stringId, final int strings) {
-		return Config.invertStrings ? stringId : strings - stringId - 1;
+		return GraphicalConfig.invertStrings ? stringId : strings - stringId - 1;
 	}
 
 	public static boolean isDottedFret(final int fret) {

@@ -6,8 +6,10 @@ import static log.charter.gui.components.simple.TextInputWithValidation.generate
 import javax.swing.JCheckBox;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.SystemType;
+import log.charter.data.config.values.GridConfig;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.FieldWithLabel;
@@ -18,13 +20,13 @@ import log.charter.gui.components.utils.validators.IntValueValidator;
 
 public class ProgramDisplayConfigPage implements Page {
 
-	private int markerOffset = Config.markerOffset;
-	private boolean invertStrings = Config.invertStrings;
-	private boolean invertStrings3D = Config.invertStrings3D;
+	private int markerOffset = GraphicalConfig.markerOffset;
+	private boolean invertStrings = GraphicalConfig.invertStrings;
+	private boolean invertStrings3D = GraphicalConfig.invertStrings3D;
 	private boolean showTempoInsteadOfBPM = Config.showTempoInsteadOfBPM;
 	private boolean showChordIds = Config.showChordIds;
-	private boolean showGrid = Config.showGrid;
-	private int FPS = Config.FPS;
+	private boolean showGrid = GridConfig.showGrid;
+	private int FPS = GraphicalConfig.FPS;
 
 	private FieldWithLabel<TextInputWithValidation> markerOffsetField;
 	private FieldWithLabel<JCheckBox> invertStringsField;
@@ -141,12 +143,12 @@ public class ProgramDisplayConfigPage implements Page {
 	}
 
 	public void save() {
-		Config.markerOffset = markerOffset;
-		Config.invertStrings = invertStrings;
-		Config.invertStrings3D = invertStrings3D;
+		GraphicalConfig.markerOffset = markerOffset;
+		GraphicalConfig.invertStrings = invertStrings;
+		GraphicalConfig.invertStrings3D = invertStrings3D;
 		Config.showTempoInsteadOfBPM = showTempoInsteadOfBPM;
 		Config.showChordIds = showChordIds;
-		Config.showGrid = showGrid;
-		Config.FPS = FPS;
+		GridConfig.showGrid = showGrid;
+		GraphicalConfig.FPS = FPS;
 	}
 }
