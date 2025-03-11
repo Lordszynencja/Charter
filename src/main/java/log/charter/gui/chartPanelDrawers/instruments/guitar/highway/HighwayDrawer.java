@@ -4,9 +4,9 @@ import java.awt.Graphics2D;
 import java.util.Optional;
 
 import log.charter.data.config.GraphicalConfig;
-import log.charter.data.song.FHP;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Phrase;
 import log.charter.data.song.SectionType;
@@ -36,6 +36,8 @@ public interface HighwayDrawer {
 	void addCurrentPhrase(Graphics2D g, Phrase phrase, String phraseName, int nextEventPointX);
 
 	void addCurrentPhrase(Graphics2D g, Phrase phrase, String phraseName);
+
+	void addEvents(Graphics2D g, EventPoint eventPoint, int x);
 
 	void addEventPoint(Graphics2D g, EventPoint eventPoint, Phrase phrase, int x, boolean selected,
 			boolean highlighted);

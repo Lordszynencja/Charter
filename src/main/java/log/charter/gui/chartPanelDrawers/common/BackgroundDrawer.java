@@ -21,6 +21,8 @@ import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.services.data.ChartTimeHandler;
+import log.charter.services.editModes.EditMode;
+import log.charter.services.editModes.ModeManager;
 import log.charter.util.Utils.TimeUnit;
 import log.charter.util.data.Position2D;
 
@@ -51,10 +53,32 @@ public class BackgroundDrawer {
 	private ChartData chartData;
 	private ChartPanel chartPanel;
 	private ChartTimeHandler chartTimeHandler;
+	private ModeManager modeManager;
 
 	private void drawBackground(final Graphics g) {
 		g.setColor(ColorLabel.BASE_BG_0.color());
 		g.fillRect(0, 0, chartPanel.getWidth(), chartPanel.getHeight());
+	}
+
+	private void drawEventPointsBackground(final Graphics g) {
+		g.setColor(ColorLabel.BASE_BG_2.color());
+		final int y = DrawerUtils.sectionNamesY;
+		final int h = DrawerUtils.toneChangeY - y;
+		g.fillRect(0, y, chartPanel.getWidth(), h);
+	}
+
+	private void drawToneChangesBackground(final Graphics g) {
+		g.setColor(ColorLabel.BASE_BG_1.color());
+		final int y = DrawerUtils.toneChangeY;
+		final int h = DrawerUtils.fhpY - y;
+		g.fillRect(0, y, chartPanel.getWidth(), h);
+	}
+
+	private void drawFHPsBackground(final Graphics g) {
+		g.setColor(ColorLabel.BASE_BG_0.color());
+		final int y = DrawerUtils.fhpY;
+		final int h = DrawerUtils.lanesTop - y;
+		g.fillRect(0, y, chartPanel.getWidth(), h);
 	}
 
 	private void drawLanesBackground(final Graphics g) {
@@ -110,6 +134,12 @@ public class BackgroundDrawer {
 
 		if (chartData.isEmpty) {
 			return;
+		}
+
+		if (modeManager.getMode() == EditMode.GUITAR) {
+			drawEventPointsBackground(g);
+			drawToneChangesBackground(g);
+			drawFHPsBackground(g);
 		}
 
 		drawLanesBackground(g);

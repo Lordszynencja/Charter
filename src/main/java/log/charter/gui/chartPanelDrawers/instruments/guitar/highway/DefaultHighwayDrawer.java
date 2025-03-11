@@ -268,6 +268,13 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
+	public void addEvents(final Graphics2D g, final EventPoint eventPoint, final int x) {
+		if (!eventPoint.events.isEmpty()) {
+			addEvents(eventPoint.events, x);
+		}
+	}
+
+	@Override
 	public void addEventPoint(final Graphics2D g, final EventPoint eventPoint, final Phrase phrase, final int x,
 			final boolean selected, final boolean highlighted) {
 		if (eventPoint.section != null) {
@@ -276,9 +283,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		if (eventPoint.phrase != null) {
 			addPhrase(phrase, eventPoint.phrase, x);
 		}
-		if (!eventPoint.events.isEmpty()) {
-			addEvents(eventPoint.events, x);
-		}
+		addEvents(g, eventPoint, x);
 
 		if (highlighted) {
 			addEventPointBox(x, ColorLabel.HIGHLIGHT);

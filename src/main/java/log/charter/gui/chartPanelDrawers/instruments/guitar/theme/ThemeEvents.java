@@ -21,4 +21,5 @@ public interface ThemeEvents {
 
 	void addEventPointHighlight(final int x);
 
+	void addEvents(Graphics2D g, EventPoint eventPoint, int x);
 }
