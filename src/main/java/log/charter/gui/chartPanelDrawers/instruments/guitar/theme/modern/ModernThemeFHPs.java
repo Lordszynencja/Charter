@@ -37,7 +37,7 @@ public class ModernThemeFHPs implements ThemeFHPs {
 	}
 
 	private Text generateText(final String label, final int x) {
-		return new Text(new Position2D(x + 4, fhpY + 1), fhpFont, label, ColorLabel.FHP);
+		return new Text(new Position2D(x + 4, fhpY + 6), fhpFont, label, ColorLabel.FHP);
 	}
 
 	private void addFHP(final String label, final int x) {

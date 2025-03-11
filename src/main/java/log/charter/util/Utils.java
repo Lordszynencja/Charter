@@ -3,9 +3,23 @@ package log.charter.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
+import log.charter.data.config.SystemType;
 
 public class Utils {
+	public static String getDefaultConfigDir() {
+		switch (SystemType.systemType) {
+			case WINDOWS:
+				return System.getenv("APPDATA") + "/Charter/";
+			case MAC:
+				return "~/Library/Preferences/Charter/";
+			case LINUX:
+			case OTHER:
+			default:
+				return "~/.local/Charter/";
+		}
+	}
+
 	public enum TimeUnit {
 		NANOSECONDS(1_000_000_000, "%dns", "%d", ".%09d"), //
 		MICROSECONDS(1_000_000, "%dus", "%d", ".%06d"), //
@@ -97,7 +111,7 @@ public class Utils {
 	}
 
 	public static int getStringPosition(final int stringId, final int strings) {
-		return Config.invertStrings ? stringId : strings - stringId - 1;
+		return GraphicalConfig.invertStrings ? stringId : strings - stringId - 1;
 	}
 
 	public static boolean isDottedFret(final int fret) {

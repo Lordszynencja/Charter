@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
@@ -93,22 +93,27 @@ public class GP5SoundsTransformer {
 		this.arrangement = arrangement;
 	}
 
-	private void checkPreviousNoteLink(final GPNote gpNote) {
+	private boolean checkPreviousNoteLink(final GPNote gpNote) {
 		if (lastSound == null || !lastSound.isNote()) {
 			addSlideToLastSound = false;
-			return;
+			return false;
 		}
 
 		final Note note = lastSound.note();
 
+		boolean linked = false;
 		if (gpNote.tied) {
 			note.linkNext = true;
+			linked = true;
 		}
 
 		if (addSlideToLastSound) {
 			lastSound.note().slideTo = gpNote.fret;
 			addSlideToLastSound = false;
+			linked = true;
 		}
+
+		return linked;
 	}
 
 	private Note addBends(final GPNote gpNote, final Note note, final FractionalPosition endPosition,
@@ -186,7 +191,7 @@ public class GP5SoundsTransformer {
 				lastNote.unpitchedSlide = true;
 				break;
 			case OUT_UP:
-				lastNote.slideTo = min(Config.instrument.frets, lastNote.fret + 5);
+				lastNote.slideTo = min(InstrumentConfig.frets, lastNote.fret + 5);
 				lastNote.unpitchedSlide = true;
 				break;
 			case OUT_WITHOUT_PLUCK:
@@ -216,7 +221,7 @@ public class GP5SoundsTransformer {
 				afterNotes.add(slideInNoteFromAbove);
 				note.linkNext = true;
 				note.slideTo = note.fret;
-				note.fret = min(Config.instrument.frets, note.fret + 5);
+				note.fret = min(InstrumentConfig.frets, note.fret + 5);
 				break;
 			case IN_FROM_BELOW:
 				final Note slideInNoteFromBelow = new Note(note.position().add(new Fraction(1, 4)), note.string,
@@ -276,17 +281,20 @@ public class GP5SoundsTransformer {
 		}
 
 		final GPNote gpNote = gpBeat.notes.get(0);
-		if (gpNote.fret < 0 || gpNote.fret > Config.instrument.frets) {
+		if (gpNote.fret < 0 || gpNote.fret > InstrumentConfig.frets) {
 			return;
 		}
-		if (gpNote.string < 0 || gpNote.string > Config.instrument.maxStrings) {
+		if (gpNote.string < 0 || gpNote.string > InstrumentConfig.maxStrings) {
 			return;
 		}
 
-		checkPreviousNoteLink(gpNote);
+		final boolean linked = checkPreviousNoteLink(gpNote);
 
 		final FractionalPosition length = position.distance(endPosition);
 		final Note note = new Note(position.position(), gpNote.string - 1, gpNote.fret);
+		if (linked || length.compareTo(new Fraction(1, 2)) > 0) {
+			note.endPosition(endPosition.position());
+		}
 		final GPNoteEffects effects = gpNote.effects;
 
 		setStatuses(new CommonNote(note), gpBeat, gpNote, wasHOPOStart, hopoFrom);

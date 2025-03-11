@@ -3,8 +3,10 @@ package log.charter.services.data;
 import java.util.List;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.values.AudioConfig;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
@@ -110,8 +112,9 @@ public class VocalsHandler {
 		}
 
 		private void addVocal() {
-			final FractionalPosition currentTime = chartTimeHandler.timeFractional();
-			IVirtualConstantPosition vocalPosition = chartData.beats().getPositionFromGridClosestTo(currentTime);
+			final double currentTimeMs = chartTimeHandler.time() - AudioConfig.delay;
+			IVirtualConstantPosition vocalPosition = chartData.beats()
+					.getPositionFromGridClosestTo(new ConstantPosition(currentTimeMs));
 			VocalFlag flag = VocalFlag.NONE;
 
 			if (moreThanOneSyllable) {

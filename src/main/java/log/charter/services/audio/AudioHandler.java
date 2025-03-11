@@ -4,6 +4,7 @@ import static java.lang.System.nanoTime;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.config.values.PassFiltersConfig;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.io.Logger;
 import log.charter.services.RepeatManager;
@@ -107,9 +108,9 @@ public class AudioHandler {
 
 	private Effect createEffect(final int channels, final int sampleRate) {
 		return new Effect() {
-			private final Effect lowPassFilter = Config.passFilters.createLowPassFilter(channels, sampleRate);
-			private final Effect bandPassFilter = Config.passFilters.createBandPassFilter(channels, sampleRate);
-			private final Effect highPassFilter = Config.passFilters.createHighPassFilter(channels, sampleRate);
+			private final Effect lowPassFilter = PassFiltersConfig.createLowPassFilter(channels, sampleRate);
+			private final Effect bandPassFilter = PassFiltersConfig.createBandPassFilter(channels, sampleRate);
+			private final Effect highPassFilter = PassFiltersConfig.createHighPassFilter(channels, sampleRate);
 
 			@Override
 			public float apply(final int channel, final float sample) {

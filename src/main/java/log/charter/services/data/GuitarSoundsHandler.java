@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.FHP;
@@ -103,7 +103,7 @@ public class GuitarSoundsHandler {
 			}
 
 			fret = fret + stringDifferences.get(string);
-			if (fret < 0 || fret > Config.instrument.frets) {
+			if (fret < 0 || fret > InstrumentConfig.frets) {
 				return null;
 			}
 			final int newString = string + stringChange;
@@ -133,7 +133,7 @@ public class GuitarSoundsHandler {
 			final ChordOrNote sound = selection.selectable;
 			if (sound.isNote()) {
 				final int newFret = sound.note().fret + stringDifferences.get(sound.note().string);
-				if (newFret >= 0 && newFret <= Config.instrument.frets) {
+				if (newFret >= 0 && newFret <= InstrumentConfig.frets) {
 					Note currentNote = sound.note();
 					currentNote.fret = newFret;
 
@@ -231,7 +231,7 @@ public class GuitarSoundsHandler {
 	}
 
 	private boolean validFretChange(final List<Selection<ChordOrNote>> selected, final int fretChange) {
-		final IntRange fretRange = new IntRange(max(0, -fretChange), Config.instrument.frets - max(0, fretChange));
+		final IntRange fretRange = new IntRange(max(0, -fretChange), InstrumentConfig.frets - max(0, fretChange));
 
 		for (final Selection<ChordOrNote> selection : selected) {
 			final ChordOrNote sound = selection.selectable;
@@ -261,7 +261,7 @@ public class GuitarSoundsHandler {
 		for (final Entry<Integer, Integer> stringFret : template.frets.entrySet()) {
 			final int string = stringFret.getKey();
 			final int oldFret = stringFret.getValue();
-			final int newFret = max(0, min(Config.instrument.frets, oldFret + fretChange));
+			final int newFret = max(0, min(InstrumentConfig.frets, oldFret + fretChange));
 
 			newTemplate.frets.put(string, newFret);
 			if (newFret == 0) {
@@ -339,7 +339,7 @@ public class GuitarSoundsHandler {
 			final Chord chord = sound.chord();
 			final ChordTemplate oldTemplate = chartData.currentArrangement().chordTemplates.get(chord.templateId());
 			final int fretChange = fret - oldTemplate.getLowestFret();
-			if (fretChange == 0 || oldTemplate.getHighestFret() + fretChange > Config.instrument.frets) {
+			if (fretChange == 0 || oldTemplate.getHighestFret() + fretChange > InstrumentConfig.frets) {
 				continue;
 			}
 

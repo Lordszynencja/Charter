@@ -1,6 +1,7 @@
 package log.charter.gui.panes.programConfig;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.PagedDialog;
@@ -47,10 +48,13 @@ public class ConfigPane extends PagedDialog {
 		Config.markChanged();
 		Config.save();
 
+		GraphicalConfig.markChanged();
+		GraphicalConfig.save();
+
 		frame.updateSizes();
 		frame.resize();
 
-		framer.setFPS(Config.FPS);
+		framer.setFPS(GraphicalConfig.FPS);
 
 		return true;
 	}

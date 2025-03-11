@@ -13,7 +13,7 @@ import java.awt.Color;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
@@ -144,14 +144,14 @@ public class Preview3DFingeringDrawer {
 			return;
 		}
 
-		final int topString = Config.invertStrings ? strings.max : strings.min;
+		final int topString = GraphicalConfig.invertStrings ? strings.max : strings.min;
 		addFingerSpot(drawData, fret, topString, fingerShapeEnd, false, fingerTexturePositions[finger]);
 
 		for (int i = strings.min + 1; i < strings.max; i++) {
 			addFingerSpot(drawData, fret, i, fingerShapeMiddle, false, null);
 		}
 
-		final int bottomString = Config.invertStrings ? strings.min : strings.max;
+		final int bottomString = GraphicalConfig.invertStrings ? strings.min : strings.max;
 		addFingerSpot(drawData, fret, bottomString, fingerShapeEnd, true, null);
 	}
 

@@ -169,8 +169,8 @@ public class Localization {
 		MEASURE_ADD("Add measure"), //
 		MEASURE_REMOVE("Remove measure"), //
 		MIDI_SOUND_DELAY("Midi sound delay (ms)"), //
-		MINIMAL_NOTE_DISTANCE("Minimal note distance"), //
-		MINIMAL_TAIL_LENGTH("Minimal note tail length"), //
+		MINIMAL_NOTE_LENGTH("Minimal note length"), //
+		MINIMAL_NOTE_SPACE("Minimal space between notes"), //
 		MOVE_FRET_DOWN("Move notes one fret down"), //
 		MOVE_FRET_DOWN_OCTAVE("Move notes twelve frets down"), //
 		MOVE_FRET_UP("Move notes one fret up"), //
@@ -188,6 +188,8 @@ public class Localization {
 		MUSIC_FOLDER("Music folder"), //
 		NEW_ARRANGEMENT("New arrangement..."), //
 		NEW_PROJECT("New project"), //
+		NEW_VERSION("New version"), //
+		NEW_VERSION_AVAILABLE_DOWNLOAD("New version %s is available, you are on %s, open the download page?"), //
 		NEW_VOCAL_PATH("New vocal path..."), //
 		NO_PHRASES_IN_ARRANGEMENT("No phrases in arrangement"), //
 		NO_SECTIONS_IN_ARRANGEMENT("No sections in arrangement"), //
@@ -654,7 +656,7 @@ public class Localization {
 		}
 
 		public String format(final Object... args) {
-			return label().formatted(args);
+			return args.length == 0 ? label() : label().formatted(args);
 		}
 
 		public BufferedImage exportAsImage(final Color color, final Font font) {

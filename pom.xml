@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
 	<artifactId>Charter</artifactId>
-	<version>0.20.13</version>
+	<version>0.21.0</version>
 	<packaging>jar</packaging>
 	<name>Charter</name>
 	<description>Charting program for guitar</description>
@@ -106,21 +106,25 @@
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl</artifactId>
 			<classifier>${lwjgl.natives}</classifier>
+			<version>${lwjgl.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-assimp</artifactId>
 			<classifier>${lwjgl.natives}</classifier>
+			<version>${lwjgl.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-glfw</artifactId>
 			<classifier>${lwjgl.natives}</classifier>
+			<version>${lwjgl.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-opengl</artifactId>
 			<classifier>${lwjgl.natives}</classifier>
+			<version>${lwjgl.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjglx</groupId>
@@ -163,123 +167,228 @@
 	<profiles>
 		<profile>
 			<id>lwjgl-natives-linux-amd64</id>
-			<activation>
-				<os>
-					<family>unix</family>
-					<arch>amd64</arch>
-				</os>
-			</activation>
 			<properties>
 				<lwjgl.natives>natives-linux</lwjgl.natives>
 			</properties>
-		</profile>
-		<profile>
-			<id>lwjgl-natives-linux-aarch64</id>
-			<activation>
-				<os>
-					<family>unix</family>
-					<arch>aarch64</arch>
-				</os>
-			</activation>
-			<properties>
-				<lwjgl.natives>natives-linux-arm64</lwjgl.natives>
-			</properties>
-		</profile>
-		<profile>
-			<id>lwjgl-natives-linux-arm</id>
-			<activation>
-				<os>
-					<family>unix</family>
-					<arch>arm</arch>
-				</os>
-			</activation>
-			<properties>
-				<lwjgl.natives>natives-linux-arm32</lwjgl.natives>
-			</properties>
-		</profile>
-		<profile>
-			<id>lwjgl-natives-linux-arm32</id>
-			<activation>
-				<os>
-					<family>unix</family>
-					<arch>arm32</arch>
-				</os>
-			</activation>
-			<properties>
-				<lwjgl.natives>natives-linux-arm32</lwjgl.natives>
-			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.3.0</version>
+						<executions>
+							<execution>
+								<id>copy-resources</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/target/Charter</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${basedir}/src/main/resources/</directory>
+											<filtering>false</filtering>
+										</resource>
+										<resource>
+											<directory>${basedir}/target</directory>
+											<include>Charter.jar</include>
+											<targetPath>${basedir}/target/Charter</targetPath>
+											<filtering>false</filtering>
+										</resource>
+										<resource>
+											<directory>${basedir}/resources</directory>
+											<includes>
+												<include>graphics/**</include>
+												<include>languages/**</include>
+												<include>oggenc/**</include>
+												<include>manual.pdf</include>
+											</includes>
+										</resource>
+										<resource>
+											<directory>${basedir}</directory>
+											<includes>
+												<include>LICENSE</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>lwjgl-natives-macos-x86_64</id>
-			<activation>
-				<os>
-					<family>mac</family>
-					<arch>x86_64</arch>
-				</os>
-			</activation>
 			<properties>
 				<lwjgl.natives>natives-macos</lwjgl.natives>
 			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.3.0</version>
+						<executions>
+							<execution>
+								<id>copy-resources</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/target/Charter</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${basedir}/src/main/resources/</directory>
+											<filtering>false</filtering>
+										</resource>
+										<resource>
+											<directory>${basedir}/target</directory>
+											<include>Charter.jar</include>
+											<targetPath>${basedir}/target/Charter</targetPath>
+											<filtering>false</filtering>
+										</resource>
+										<resource>
+											<directory>${basedir}/resources</directory>
+											<includes>
+												<include>graphics/**</include>
+												<include>languages/**</include>
+												<include>oggenc/**</include>
+												<include>manual.pdf</include>
+											</includes>
+										</resource>
+										<resource>
+											<directory>${basedir}</directory>
+											<includes>
+												<include>LICENSE</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>lwjgl-natives-macos-aarch64</id>
-			<activation>
-				<os>
-					<family>mac</family>
-					<arch>aarch64</arch>
-				</os>
-			</activation>
 			<properties>
 				<lwjgl.natives>natives-macos-arm64</lwjgl.natives>
 			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.3.0</version>
+						<executions>
+							<execution>
+								<id>copy-resources</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/target/Charter</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${basedir}/src/main/resources/</directory>
+											<filtering>false</filtering>
+										</resource>
+										<resource>
+											<directory>${basedir}/target</directory>
+											<include>Charter.jar</include>
+											<targetPath>${basedir}/target/Charter</targetPath>
+											<filtering>false</filtering>
+										</resource>
+										<resource>
+											<directory>${basedir}/resources</directory>
+											<includes>
+												<include>graphics/**</include>
+												<include>languages/**</include>
+												<include>oggenc/**</include>
+												<include>manual.pdf</include>
+											</includes>
+										</resource>
+										<resource>
+											<directory>${basedir}</directory>
+											<includes>
+												<include>LICENSE</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>lwjgl-natives-windows-amd64</id>
-			<activation>
-				<os>
-					<family>windows</family>
-					<arch>amd64</arch>
-				</os>
-			</activation>
 			<properties>
 				<lwjgl.natives>natives-windows</lwjgl.natives>
 			</properties>
-		</profile>
-		<profile>
-			<id>lwjgl-natives-windows-x86</id>
-			<activation>
-				<os>
-					<family>windows</family>
-					<arch>x86</arch>
-				</os>
-			</activation>
-			<properties>
-				<lwjgl.natives>natives-windows-x86</lwjgl.natives>
-			</properties>
-		</profile>
-		<profile>
-			<id>lwjgl-natives-windows-aarch64</id>
-			<activation>
-				<os>
-					<family>windows</family>
-					<arch>aarch64</arch>
-				</os>
-			</activation>
-			<properties>
-				<lwjgl.natives>natives-windows-arm64</lwjgl.natives>
-			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.3.0</version>
+						<executions>
+							<execution>
+								<id>copy-resources</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${basedir}/target/Charter</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${basedir}/src/main/resources/</directory>
+											<filtering>false</filtering>
+										</resource>
+										<resource>
+											<directory>${basedir}/target</directory>
+											<include>Charter.jar</include>
+											<targetPath>${basedir}/target/Charter</targetPath>
+											<filtering>false</filtering>
+										</resource>
+										<resource>
+											<directory>${basedir}/resources</directory>
+											<includes>
+												<include>graphics/**</include>
+												<include>languages/**</include>
+												<include>oggenc/**</include>
+												<include>manual.pdf</include>
+											</includes>
+										</resource>
+										<resource>
+											<directory>${basedir}</directory>
+											<includes>
+												<include>LICENSE</include>
+											</includes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 	
 	<build>
 		<finalName>Charter</finalName>
+		
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.10.1</version>
 				<configuration>
-					<source>16</source>
-					<target>16</target>
+					<source>17</source>
+					<target>17</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
@@ -328,121 +437,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.0</version>
-			</plugin>
-			<plugin>
-				<groupId>com.akathist.maven.plugins.launch4j</groupId>
-				<artifactId>launch4j-maven-plugin</artifactId>
-				<version>2.3.0</version>
-				<executions>
-					<execution>
-						<id>l4j-gui</id>
-						<phase>package</phase>
-						<goals>
-							<goal>launch4j</goal>
-						</goals>
-						<configuration>
-							<headerType>gui</headerType>
-							<outfile>target/Charter/Charter.exe</outfile>
-							<jar>target/Charter.jar</jar>
-							<icon>src/main/resources/icon.ico</icon>
-							<errTitle>Charter</errTitle>
-							<classPath>
-								<mainClass>log.charter.CharterMain</mainClass>
-								<addDependencies>true</addDependencies>
-								<preCp>anything</preCp>
-							</classPath>
-							<jre>
-								<path>%JAVA_HOME%;%PATH%</path>
-								<minVersion>16</minVersion>
-							</jre>
-							<versionInfo>
-								<fileVersion>${project.version}.0</fileVersion>
-								<txtFileVersion>${project.version}.0</txtFileVersion>
-								<fileDescription>Charter: Charting tool for guitar arrangements</fileDescription>
-								<copyright>BSD 3-Clause</copyright>
-								<productVersion>${project.version}.0</productVersion>
-								<txtProductVersion>${project.version}.0</txtProductVersion>
-								<productName>Charter</productName>
-								<internalName>Charter</internalName>
-								<originalFilename>Charter.exe</originalFilename>
-							</versionInfo>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.3.0</version>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/Charter</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${basedir}/src/main/resources/</directory>
-									<filtering>false</filtering>
-								</resource>
-								<resource>
-									<directory>${basedir}/target</directory>
-									<include>Charter.jar</include>
-									<targetPath>${basedir}/target/Charter</targetPath>
-									<filtering>false</filtering>
-								</resource>
-								<resource>
-									<directory>${basedir}</directory>
-									<includes>
-										<include>graphics/**</include>
-										<include>languages/**</include>
-										<include>rubberband/**</include>
-										<include>oggenc/**</include>
-										<include>manual.pdf</include>
-										<include>jasiohost64.dll</include>
-										<include>rubberband-jni.dll</include>
-										<include>librubberband-jni.so</include>
-										<include>librubberband-jni.dylib</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>sh.tak.appbundler</groupId>
-				<artifactId>appbundle-maven-plugin</artifactId>
-				<version>1.2.0</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.codehaus.plexus</groupId>
-						<artifactId>plexus-archiver</artifactId>
-						<version>RELEASE</version>
-					</dependency>
-					<dependency>
-						<groupId>org.apache.velocity</groupId>
-						<artifactId>velocity-tools</artifactId>
-						<version>2.0</version>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<jvmOptions>-Djava.library.path=./jasio/</jvmOptions>
-					<mainClass>log.charter.CharterMain</mainClass>
-					<iconFile>src/main/resources/icon.ico</iconFile>
-					<generateDiskImageFile>true</generateDiskImageFile>
-					<buildDirectory>${basedir}/target/Charter</buildDirectory>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>bundle</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

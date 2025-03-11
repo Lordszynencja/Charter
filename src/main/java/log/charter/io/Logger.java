@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.DebugConfig;
 import log.charter.util.RW;
 
 public class Logger {
@@ -35,7 +35,7 @@ public class Logger {
 	}
 
 	public static void debug(String msg) {
-		if (!Config.debug.logging) {
+		if (!DebugConfig.logging) {
 			return;
 		}
 

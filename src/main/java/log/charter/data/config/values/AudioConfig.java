@@ -8,30 +8,29 @@ import java.util.Map;
 
 import log.charter.sound.system.AudioSystemType;
 
-public class AudioConfig implements ConfigValue {
-	public AudioSystemType outSystem = AudioSystemType.DEFAULT;
-	public String outSystemName = null;
-	public int leftOutChannelId = 0;
-	public int rightOutChannelId = 1;
+public class AudioConfig {
+	public static AudioSystemType outSystem = AudioSystemType.DEFAULT;
+	public static String outSystemName = null;
+	public static int leftOutChannelId = 0;
+	public static int rightOutChannelId = 1;
 
-	public AudioSystemType in0System = AudioSystemType.DEFAULT;
-	public String in0SystemName = null;
-	public int inChannel0Id = 0;
+	public static AudioSystemType in0System = AudioSystemType.DEFAULT;
+	public static String in0SystemName = null;
+	public static int inChannel0Id = 0;
 
-	public AudioSystemType in1System = AudioSystemType.DEFAULT;
-	public String in1SystemName = null;
-	public int inChannel1Id = 1;
+	public static AudioSystemType in1System = AudioSystemType.DEFAULT;
+	public static String in1SystemName = null;
+	public static int inChannel1Id = 1;
 
-	public int bufferSize = 2048;
-	public int bufferedMs = 50;
-	public int delay = 25;
-	public int midiDelay = 200;
+	public static int bufferSize = 2048;
+	public static int bufferedMs = 50;
+	public static int delay = 25;
+	public static int midiDelay = 200;
 
-	public double volume = 1;
-	public double sfxVolume = 1;
+	public static double volume = 1;
+	public static double sfxVolume = 1;
 
-	@Override
-	public void init(final Map<String, ValueAccessor> valueAccessors, final String name) {
+	public static void init(final Map<String, ValueAccessor> valueAccessors, final String name) {
 		valueAccessors.put(name + ".outSystem",
 				forString(v -> outSystem = AudioSystemType.valueOf(v), () -> outSystem.name()));
 		valueAccessors.put(name + ".outSystemName", forString(v -> outSystemName = v, () -> outSystemName));

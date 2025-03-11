@@ -14,10 +14,10 @@ import log.charter.services.mouseAndKeyboard.shortcuts.DefaultEofShortcuts;
 import log.charter.services.mouseAndKeyboard.shortcuts.DefaultShortcuts;
 import log.charter.services.mouseAndKeyboard.shortcuts.ShortcutList;
 import log.charter.util.RW;
+import log.charter.util.Utils;
 
 public class ShortcutConfig {
-	private static final String shortcutConfigPath = new File(RW.getProgramDirectory(), "shortcuts.ini")
-			.getAbsolutePath();
+	private static final String configPath = Utils.getDefaultConfigDir() + "shortcuts.ini";
 
 	public static ShortcutList defaultShortcuts;
 
@@ -93,7 +93,7 @@ public class ShortcutConfig {
 	public static void init() {
 		resetDefaultShortcuts();
 
-		final Map<String, String> config = RW.readConfig(shortcutConfigPath, false);
+		final Map<String, String> config = RW.readConfig(configPath, false);
 		for (final Entry<String, String> entry : config.entrySet()) {
 			try {
 				final Action action = Action.valueOf(entry.getKey());
@@ -108,7 +108,7 @@ public class ShortcutConfig {
 
 				setShortcut(action, shortcut);
 			} catch (final Exception e) {
-				Logger.error(shortcutConfigPath);
+				Logger.error(configPath, e);
 			}
 		}
 
@@ -137,7 +137,8 @@ public class ShortcutConfig {
 			}
 		}
 
-		RW.writeConfig(shortcutConfigPath, config);
+		new File(configPath).getParentFile().mkdirs();
+		RW.writeConfig(configPath, config);
 
 		changed = false;
 	}

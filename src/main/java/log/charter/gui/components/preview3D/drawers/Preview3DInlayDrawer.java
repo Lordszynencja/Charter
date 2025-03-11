@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
@@ -30,7 +30,7 @@ public class Preview3DInlayDrawer {
 		final double y0 = topStringPosition + stringDistance / 2;
 		final double y1 = topStringPosition - stringDistance * (data.currentStrings() - 0.5);
 
-		for (int i = 0; i <= Config.instrument.frets && i < 32; i++) {
+		for (int i = 0; i <= InstrumentConfig.frets && i < 32; i++) {
 			final DoubleRange x = new DoubleRange(getFretPosition(i), getFretPosition(i + 1));
 			final double tx0 = (i % 8) / 8.0;
 			final double tx1 = tx0 + 0.125;

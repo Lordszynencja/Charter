@@ -13,7 +13,7 @@ import static log.charter.util.Utils.stringId;
 import java.awt.Color;
 import java.awt.Font;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
@@ -25,13 +25,13 @@ import log.charter.util.data.IntRange;
 import log.charter.util.data.Position2D;
 
 public class ModernThemeNoteTails {
-	private static final Color[] noteTailColors = new Color[Config.instrument.maxStrings];
+	private static final Color[] noteTailColors = new Color[InstrumentConfig.maxStrings];
 	private static Font slideFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
 	public static void reloadGraphics() {
-		for (int i = 0; i < Config.instrument.maxStrings; i++) {
-			noteTailColors[stringId(i, Config.instrument.maxStrings)] = getStringBasedColor(
-					StringColorLabelType.NOTE_TAIL, i, Config.instrument.maxStrings);
+		for (int i = 0; i < InstrumentConfig.maxStrings; i++) {
+			noteTailColors[stringId(i, InstrumentConfig.maxStrings)] = getStringBasedColor(
+					StringColorLabelType.NOTE_TAIL, i, InstrumentConfig.maxStrings);
 		}
 
 		slideFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);

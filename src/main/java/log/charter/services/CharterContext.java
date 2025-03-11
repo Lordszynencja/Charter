@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.SystemType;
+import log.charter.data.config.values.DebugConfig;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.CharterFrame;
@@ -64,6 +64,7 @@ import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
 import log.charter.services.utils.AudioFramer;
 import log.charter.services.utils.Framer;
+import log.charter.services.utils.UpdateChecker;
 import log.charter.util.ConfigAutoSaver;
 import log.charter.util.ExitActions;
 import log.charter.util.Timer;
@@ -131,6 +132,7 @@ public class CharterContext {
 
 	private final AudioFramer audioFramer = new AudioFramer();
 	private final Framer framer = new Framer(this::frame);
+	private final UpdateChecker updateChecker = new UpdateChecker();
 
 	private Map<String, Object> getFieldsValues() {
 		final Map<String, Object> fields = new HashMap<>();
@@ -233,7 +235,7 @@ public class CharterContext {
 				timer.addTimestamp("charterFrame.repaint()");
 			}
 
-			if (Config.debug.frameTimes) {
+			if (DebugConfig.frameTimes) {
 				timer.print("frame timings:", Timer.defaultFormat(20));
 			}
 		} catch (final Exception e) {
@@ -244,6 +246,10 @@ public class CharterContext {
 	public void reloadTextures() {
 		charterFrame.reloadTextures();
 		windowedPreviewHandler.reloadTextures();
+	}
+
+	public void checkForUpdates() {
+		updateChecker.checkForUpdates();
 	}
 
 	public void exit() {

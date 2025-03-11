@@ -27,6 +27,8 @@ import log.charter.data.ChartData;
 import log.charter.data.GridType;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.AudioConfig;
+import log.charter.data.config.values.GridConfig;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
@@ -92,6 +94,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private JToggleButton noteGridType;
 
 	private FieldWithLabel<JSlider> volume;
+	@SuppressWarnings("unused")
 	private FieldWithLabel<JSlider> sfxVolume;
 
 	private FieldWithLabel<TextInputWithValidation> playbackSpeed;
@@ -184,8 +187,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private void addGridSizeInput(final AtomicInteger x) {
 		gridSize = createNumberField(Label.TOOLBAR_GRID_SIZE, LabelPosition.LEFT_PACKED, 25, //
-				Config.gridSize, 1, 128, false, newGridSize -> {
-					Config.gridSize = newGridSize;
+				GridConfig.gridSize, 1, 128, false, newGridSize -> {
+					GridConfig.gridSize = newGridSize;
 					Config.markChanged();
 				});
 		add(x, 1, gridSize);
@@ -202,21 +205,21 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	}
 
 	private void halveGridSize() {
-		if (Config.gridSize % 2 != 0) {
+		if (GridConfig.gridSize % 2 != 0) {
 			return;
 		}
 
-		Config.gridSize /= 2;
+		GridConfig.gridSize /= 2;
 		Config.markChanged();
 		updateValues();
 	}
 
 	private void doubleGridSize() {
-		if (Config.gridSize > 64) {
+		if (GridConfig.gridSize > 64) {
 			return;
 		}
 
-		Config.gridSize *= 2;
+		GridConfig.gridSize *= 2;
 		Config.markChanged();
 		updateValues();
 	}
@@ -237,7 +240,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	}
 
 	private void onGridTypeChange(final GridType newGridType) {
-		Config.gridType = newGridType;
+		GridConfig.gridType = newGridType;
 		Config.markChanged();
 	}
 
@@ -265,7 +268,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	}
 
 	private void changeSFXVolume(final double newVolume) {
-		Config.audio.sfxVolume = newVolume;
+		AudioConfig.sfxVolume = newVolume;
 		Config.markChanged();
 	}
 
@@ -420,7 +423,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 		volume = addVolumeSlider(x, Label.TOOLBAR_VOLUME, volumeIcon, projectAudioHandler.getVolume(),
 				projectAudioHandler::setVolume);
-		sfxVolume = addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, sfxVolumeIcon, Config.audio.sfxVolume,
+		sfxVolume = addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, sfxVolumeIcon, AudioConfig.sfxVolume,
 				this::changeSFXVolume);
 		addPlaybackSpeed(x);
 		addTimeControls(x);
@@ -452,8 +455,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		intensityRMSIndicator.setSelected(waveFormDrawer.rms());
 		repeater.setSelected(repeatManager.isOn());
 
-		gridSize.field.setTextWithoutEvent(Config.gridSize + "");
-		switch (Config.gridType) {
+		gridSize.field.setTextWithoutEvent(GridConfig.gridSize + "");
+		switch (GridConfig.gridType) {
 			case BEAT:
 				beatGridType.setSelected(true);
 				break;
@@ -461,7 +464,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 				noteGridType.setSelected(true);
 				break;
 			default:
-				Logger.error("Wrong grid type for toolbar " + Config.gridType);
+				Logger.error("Wrong grid type for toolbar " + GridConfig.gridType);
 				break;
 		}
 

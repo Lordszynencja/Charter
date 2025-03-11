@@ -4,6 +4,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.values.WindowStateConfig;
 import log.charter.gui.CharterFrame;
 
 public class CharterFrameComponentListener implements ComponentListener {
@@ -20,8 +21,8 @@ public class CharterFrameComponentListener implements ComponentListener {
 
 	@Override
 	public void componentMoved(final ComponentEvent e) {
-		Config.window.x = e.getComponent().getX();
-		Config.window.y = e.getComponent().getY();
+		WindowStateConfig.x = e.getComponent().getX();
+		WindowStateConfig.y = e.getComponent().getY();
 		Config.markChanged();
 	}
 

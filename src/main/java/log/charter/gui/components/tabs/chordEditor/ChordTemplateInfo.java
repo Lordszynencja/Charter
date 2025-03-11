@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import javax.swing.JComponent;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
@@ -76,7 +76,7 @@ public class ChordTemplateInfo extends JComponent implements MouseListener {
 		}
 		int minUsedString = strings;
 		int maxUsedString = 0;
-		int minNonzeroFret = Config.instrument.frets;
+		int minNonzeroFret = InstrumentConfig.frets;
 		int maxNonzeroFret = 0;
 
 		for (final Entry<Integer, Integer> entry : chordTemplate.frets.entrySet()) {

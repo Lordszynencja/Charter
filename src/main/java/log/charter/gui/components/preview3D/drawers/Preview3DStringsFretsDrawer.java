@@ -19,7 +19,7 @@ import java.util.List;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
@@ -46,7 +46,7 @@ public class Preview3DStringsFretsDrawer {
 
 	private void addStrings(final BaseShaderDrawData drawData) {
 		final double x0 = getFretPosition(0);
-		final double x1 = getFretPosition(Config.instrument.frets);
+		final double x1 = getFretPosition(InstrumentConfig.frets);
 
 		for (int i = 0; i < chartData.currentStrings(); i++) {
 			final Color stringColor = getStringBasedColor(StringColorLabelType.LANE, i, chartData.currentStrings());
@@ -57,13 +57,13 @@ public class Preview3DStringsFretsDrawer {
 	}
 
 	private boolean[] getActiveFrets(final Preview3DDrawData drawData) {
-		final boolean[] active = new boolean[Config.instrument.frets + 1];
+		final boolean[] active = new boolean[InstrumentConfig.frets + 1];
 
 		final Integer idTo = lastBefore(drawData.fhps, new Position(drawData.time + activeTime)).findId();
 		if (idTo != null) {
 			for (int i = 0; i <= idTo; i++) {
 				final FHPDrawData fhp = drawData.fhps.get(i);
-				for (int fret = max(0, fhp.fretFrom); fret <= min(Config.instrument.frets, fhp.fretTo); fret++) {
+				for (int fret = max(0, fhp.fretFrom); fret <= min(InstrumentConfig.frets, fhp.fretTo); fret++) {
 					active[fret] = true;
 				}
 			}
@@ -81,17 +81,17 @@ public class Preview3DStringsFretsDrawer {
 
 	private double[] getFretHighlight(final Preview3DDrawData drawData) {
 		if (chartData.currentArrangementLevel() == null) {
-			return new double[Config.instrument.frets + 1];
+			return new double[InstrumentConfig.frets + 1];
 		}
 
 		final ImmutableBeatsMap beats = chartData.beats();
-		final double[] highlightValues = new double[Config.instrument.frets + 1];
+		final double[] highlightValues = new double[InstrumentConfig.frets + 1];
 		final List<ChordOrNote> sounds = chartData.currentSounds();
 		final Integer idFrom = firstAfter(sounds, FractionalPosition.fromTime(beats, drawData.time - highlightTime))
 				.findId();
 		final Integer idTo = lastBefore(sounds, FractionalPosition.fromTime(beats, drawData.time)).findId();
 		if (idFrom == null || idTo == null) {
-			return new double[Config.instrument.frets + 1];
+			return new double[InstrumentConfig.frets + 1];
 		}
 
 		for (int i = idFrom; i <= idTo; i++) {
@@ -132,7 +132,7 @@ public class Preview3DStringsFretsDrawer {
 		final double y0 = topStringPosition + stringDistance / 2;
 		final double y1 = topStringPosition - stringDistance * (chartData.currentStrings() - 0.5);
 
-		for (int fret = 0; fret <= Config.instrument.frets; fret++) {
+		for (int fret = 0; fret <= InstrumentConfig.frets; fret++) {
 			Color fretColor = activeFrets[fret] ? activeColor : inactiveColor;
 			double offset = fretThickness;
 			if (fretHighlight[fret] > 0) {

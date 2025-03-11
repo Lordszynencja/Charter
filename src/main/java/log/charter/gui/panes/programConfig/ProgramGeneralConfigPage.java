@@ -3,6 +3,8 @@ package log.charter.gui.panes.programConfig;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import java.util.stream.Stream;
@@ -12,6 +14,8 @@ import javax.swing.JCheckBox;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.NoteDistanceConfig;
+import log.charter.data.config.values.PathsConfig;
 import log.charter.data.song.BeatsMap.DistanceType;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.containers.RowedPanel;
@@ -28,15 +32,15 @@ import log.charter.util.FileChooseUtils;
 public class ProgramGeneralConfigPage implements Page {
 	private static final int pathInputWidth = 400;
 
-	private String musicPath = Config.musicPath;
-	private String songsPath = Config.songsPath;
+	private String musicPath = PathsConfig.musicPath;
+	private String songsPath = PathsConfig.songsPath;
 
 	private SoundFileType baseAudioFormat = Config.baseAudioFormat;
 
-	private int minNoteDistanceFactor = Config.minNoteDistanceFactor;
-	private DistanceType minNoteDistanceType = Config.minNoteDistanceType;
-	private int minTailLengthFactor = Config.minTailLengthFactor;
-	private DistanceType minTailLengthType = Config.minTailLengthType;
+	private int minSpaceFactor = NoteDistanceConfig.minSpaceFactor;
+	private DistanceType minSpaceType = NoteDistanceConfig.minSpaceType;
+	private int minLengthFactor = NoteDistanceConfig.minLengthFactor;
+	private DistanceType minLengthType = NoteDistanceConfig.minLengthType;
 
 	private boolean selectNotesByTails = Config.selectNotesByTails;
 	private int backupDelay = Config.backupDelay;
@@ -48,10 +52,10 @@ public class ProgramGeneralConfigPage implements Page {
 
 	private FieldWithLabel<CharterSelect<SoundFileType>> baseAudioFormatField;
 
-	private FieldWithLabel<TextInputWithValidation> minNoteDistanceFactorField;
-	private CharterSelect<DistanceType> minNoteDistanceTypeField;
-	private FieldWithLabel<TextInputWithValidation> minTailLengthFactorField;
-	private CharterSelect<DistanceType> minTailLengthTypeField;
+	private FieldWithLabel<TextInputWithValidation> minSpaceFactorField;
+	private CharterSelect<DistanceType> minSpaceTypeField;
+	private FieldWithLabel<TextInputWithValidation> minLengthFactorField;
+	private CharterSelect<DistanceType> minLengthTypeField;
 
 	private FieldWithLabel<JCheckBox> selectNotesByTailsField;
 	private FieldWithLabel<TextInputWithValidation> backupDelayField;
@@ -152,7 +156,7 @@ public class ProgramGeneralConfigPage implements Page {
 
 	private CharterSelect<DistanceType> addDistanceTypeSelect(final RowedPanel panel, final RowedPosition position,
 			final DistanceType current, final Consumer<DistanceType> onChange) {
-		final Stream<DistanceType> possibleValues = Stream.of(DistanceType.MILISECONDS, DistanceType.BEATS,
+		final List<DistanceType> possibleValues = Arrays.asList(DistanceType.MILISECONDS, DistanceType.BEATS,
 				DistanceType.NOTES);
 
 		final CharterSelect<DistanceType> select = new CharterSelect<>(possibleValues, current, t -> t.label.label(),
@@ -165,16 +169,15 @@ public class ProgramGeneralConfigPage implements Page {
 	}
 
 	private void addMinNoteDistance(final RowedPanel panel, final RowedPosition position) {
-		minNoteDistanceFactorField = addDistanceValue(panel, position, Label.MINIMAL_NOTE_DISTANCE,
-				minNoteDistanceFactor, v -> minNoteDistanceFactor = v);
-		minNoteDistanceTypeField = addDistanceTypeSelect(panel, position, minNoteDistanceType,
-				t -> minNoteDistanceType = t);
+		minSpaceFactorField = addDistanceValue(panel, position, Label.MINIMAL_NOTE_SPACE, minSpaceFactor,
+				v -> minSpaceFactor = v);
+		minSpaceTypeField = addDistanceTypeSelect(panel, position, minSpaceType, t -> minSpaceType = t);
 	}
 
 	private void addMinTailLength(final RowedPanel panel, final RowedPosition position) {
-		minTailLengthFactorField = addDistanceValue(panel, position, Label.MINIMAL_TAIL_LENGTH, minTailLengthFactor,
-				v -> minTailLengthFactor = v);
-		minTailLengthTypeField = addDistanceTypeSelect(panel, position, minTailLengthType, t -> minTailLengthType = t);
+		minLengthFactorField = addDistanceValue(panel, position, Label.MINIMAL_NOTE_LENGTH, minLengthFactor,
+				v -> minLengthFactor = v);
+		minLengthTypeField = addDistanceTypeSelect(panel, position, minLengthType, t -> minLengthType = t);
 	}
 
 	private void addSelectNotesByTails(final RowedPanel panel, final RowedPosition position) {
@@ -207,24 +210,24 @@ public class ProgramGeneralConfigPage implements Page {
 		baseAudioFormatField.setVisible(visibility);
 		songsPathField.setVisible(visibility);
 		songsFolderPickerButton.setVisible(visibility);
-		minNoteDistanceFactorField.setVisible(visibility);
-		minNoteDistanceTypeField.setVisible(visibility);
-		minTailLengthFactorField.setVisible(visibility);
-		minTailLengthTypeField.setVisible(visibility);
+		minSpaceFactorField.setVisible(visibility);
+		minSpaceTypeField.setVisible(visibility);
+		minLengthFactorField.setVisible(visibility);
+		minLengthTypeField.setVisible(visibility);
 		selectNotesByTailsField.setVisible(visibility);
 		backupDelayField.setVisible(visibility);
 	}
 
 	public void save() {
-		Config.musicPath = musicPath;
-		Config.songsPath = songsPath;
+		PathsConfig.musicPath = musicPath;
+		PathsConfig.songsPath = songsPath;
 
 		Config.baseAudioFormat = baseAudioFormat;
 
-		Config.minNoteDistanceType = minNoteDistanceType;
-		Config.minNoteDistanceFactor = minNoteDistanceFactor;
-		Config.minTailLengthType = minTailLengthType;
-		Config.minTailLengthFactor = minTailLengthFactor;
+		NoteDistanceConfig.minSpaceType = minSpaceType;
+		NoteDistanceConfig.minSpaceFactor = minSpaceFactor;
+		NoteDistanceConfig.minLengthType = minLengthType;
+		NoteDistanceConfig.minLengthFactor = minLengthFactor;
 
 		Config.selectNotesByTails = selectNotesByTails;
 		Config.backupDelay = backupDelay;

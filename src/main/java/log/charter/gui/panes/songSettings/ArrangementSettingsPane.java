@@ -17,8 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Arrangement.ArrangementSubtype;
 import log.charter.data.song.ChordTemplate;
@@ -200,14 +200,14 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 	private void addStringsCapo(final AtomicInteger row) {
 		addIntegerConfigValue(row.get(), 20, 0, Label.ARRANGEMENT_OPTIONS_STRINGS, tuning.strings(), 20,
-				new IntegerValueValidator(1, Config.instrument.maxStrings, false), //
+				new IntegerValueValidator(1, InstrumentConfig.maxStrings, false), //
 				this::onTuningStringsChanged, false);
 		stringsInput = (TextInputWithValidation) getPart(-1);
 		stringsInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(stringsInput);
 
 		addIntegerConfigValue(row.get(), 120, 0, Label.ARRANGEMENT_OPTIONS_CAPO, capo, 30,
-				new IntegerValueValidator(0, Config.instrument.frets, false), //
+				new IntegerValueValidator(0, InstrumentConfig.frets, false), //
 				val -> capo = val, //
 				false);
 		final TextInputWithValidation capoInput = (TextInputWithValidation) getPart(-1);
@@ -227,7 +227,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 	private void addTuningInputsAndLabels() {
 		final int inputWidth = 30;
-		for (int i = 0; i < Config.instrument.maxStrings; i++) {
+		for (int i = 0; i < InstrumentConfig.maxStrings; i++) {
 			final int string = i;
 			final int x = 20 + i * 40;
 

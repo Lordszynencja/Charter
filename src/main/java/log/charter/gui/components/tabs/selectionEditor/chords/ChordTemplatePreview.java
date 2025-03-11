@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 import javax.swing.JComponent;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.ChartPanelColors.StringColorLabelType;
@@ -105,7 +105,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	}
 
 	private int getPositionWithLeftHandedFlip(final int x) {
-		return Config.instrument.leftHanded ? getWidth() - x : x;
+		return InstrumentConfig.leftHanded ? getWidth() - x : x;
 	}
 
 	public int preferredHeight() {
@@ -113,7 +113,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	}
 
 	private IntRange getFretsRange() {
-		int min = Config.instrument.frets;
+		int min = InstrumentConfig.frets;
 		int max = 0;
 		for (final int fret : chordTemplateSupplier.get().frets.values()) {
 			if (fret != 0) {
@@ -131,14 +131,14 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		if (min > 0) {
 			min--;
 		}
-		if (max < Config.instrument.frets) {
+		if (max < InstrumentConfig.frets) {
 			max++;
 		}
 		while (max - min < minFrets) {
 			if (min > 0) {
 				min--;
 			}
-			if (max < Config.instrument.frets) {
+			if (max < InstrumentConfig.frets) {
 				max++;
 			}
 		}
@@ -378,7 +378,7 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 
 		if (mouseFret == null) {
 			final FretPosition lastPosition = fretPositions[fretPositions.length - 1];
-			if (lastPosition.fret < Config.instrument.frets && x > lastPosition.position) {
+			if (lastPosition.fret < InstrumentConfig.frets && x > lastPosition.position) {
 				mouseFret = lastPosition.fret + 1;
 			}
 		}

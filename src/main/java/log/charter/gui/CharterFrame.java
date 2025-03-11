@@ -18,6 +18,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.SystemType;
+import log.charter.data.config.values.WindowStateConfig;
 import log.charter.data.song.Arrangement;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.components.containers.CharterScrollPane;
@@ -92,9 +93,9 @@ public class CharterFrame extends JFrame implements Initiable {
 			charterContext.initObject(preview3DPanel);
 		}
 
-		setSize(Config.window.width, Config.window.height);
-		setLocation(Config.window.x, Config.window.y);
-		setExtendedState(Config.window.extendedState);
+		setSize(WindowStateConfig.width, WindowStateConfig.height);
+		setLocation(WindowStateConfig.x, WindowStateConfig.y);
+		setExtendedState(WindowStateConfig.extendedState);
 
 		if (SystemType.is(MAC)) {
 			tabs = new CharterTabbedPane(//
@@ -136,9 +137,9 @@ public class CharterFrame extends JFrame implements Initiable {
 	}
 
 	public void resize() {
-		Config.window.height = getHeight();
-		Config.window.width = getWidth();
-		Config.window.extendedState = getExtendedState();
+		WindowStateConfig.height = getHeight();
+		WindowStateConfig.width = getWidth();
+		WindowStateConfig.extendedState = getExtendedState();
 		Config.markChanged();
 
 		resizeComponents();
@@ -146,8 +147,8 @@ public class CharterFrame extends JFrame implements Initiable {
 
 	private void resizeComponents() {
 		final Insets insets = getInsets();
-		final int width = Config.window.width - insets.left - insets.right;
-		final int height = Config.window.height - insets.top - insets.bottom - charterMenuBar.getHeight();
+		final int width = WindowStateConfig.width - insets.left - insets.right;
+		final int height = WindowStateConfig.height - insets.top - insets.bottom - charterMenuBar.getHeight();
 
 		final List<Pair<Component, Integer>> componentHeights = asList(//
 				new Pair<>(chartToolbar, chartToolbar.getHeight()), //

@@ -21,25 +21,24 @@ import log.charter.sound.effects.pass.low.LowPassFilterButterworth;
 import log.charter.sound.effects.pass.low.LowPassFilterChebyshevI;
 import log.charter.sound.effects.pass.low.LowPassFilterChebyshevII;
 
-public class PassFiltersConfig implements ConfigValue {
-	public PassFilterAlgorithm lowPassAlgorithm = PassFilterAlgorithm.BESSEL;
-	public int lowPassOrder = 2;
-	public double lowPassFrequency = 440;
-	public double lowPassRippleDb = 1;
+public class PassFiltersConfig {
+	public static PassFilterAlgorithm lowPassAlgorithm = PassFilterAlgorithm.BESSEL;
+	public static int lowPassOrder = 2;
+	public static double lowPassFrequency = 440;
+	public static double lowPassRippleDb = 1;
 
-	public PassFilterAlgorithm bandPassAlgorithm = PassFilterAlgorithm.BESSEL;
-	public int bandPassOrder = 2;
-	public double bandPassCenterFrequency = 880;
-	public double bandPassFrequencyWidth = 440;
-	public double bandPassRippleDb = 1;
+	public static PassFilterAlgorithm bandPassAlgorithm = PassFilterAlgorithm.BESSEL;
+	public static int bandPassOrder = 2;
+	public static double bandPassCenterFrequency = 880;
+	public static double bandPassFrequencyWidth = 440;
+	public static double bandPassRippleDb = 1;
 
-	public PassFilterAlgorithm highPassAlgorithm = PassFilterAlgorithm.BESSEL;
-	public int highPassOrder = 2;
-	public double highPassFrequency = 880;
-	public double highPassRippleDb = 1;
+	public static PassFilterAlgorithm highPassAlgorithm = PassFilterAlgorithm.BESSEL;
+	public static int highPassOrder = 2;
+	public static double highPassFrequency = 880;
+	public static double highPassRippleDb = 1;
 
-	@Override
-	public void init(final Map<String, ValueAccessor> valueAccessors, final String name) {
+	public static void init(final Map<String, ValueAccessor> valueAccessors, final String name) {
 		valueAccessors.put(name + ".lowPassAlgorithm",
 				forString(v -> lowPassAlgorithm = PassFilterAlgorithm.valueOf(v), () -> lowPassAlgorithm.name()));
 		valueAccessors.put(name + ".lowPassOrder", forInteger(v -> lowPassOrder = v, () -> lowPassOrder));
@@ -62,7 +61,7 @@ public class PassFiltersConfig implements ConfigValue {
 		valueAccessors.put(name + ".highPassRippleDb", forDouble(v -> highPassRippleDb = v, () -> highPassRippleDb));
 	}
 
-	public Effect createLowPassFilter(final int channels, final double sampleRate) {
+	public static Effect createLowPassFilter(final int channels, final double sampleRate) {
 		return switch (lowPassAlgorithm) {
 			case BESSEL -> new LowPassFilterBessel(channels, lowPassOrder, sampleRate, lowPassFrequency);
 			case BUTTERWORTH -> new LowPassFilterButterworth(channels, lowPassOrder, sampleRate, lowPassFrequency);
@@ -74,7 +73,7 @@ public class PassFiltersConfig implements ConfigValue {
 		};
 	}
 
-	public Effect createBandPassFilter(final int channels, final double sampleRate) {
+	public static Effect createBandPassFilter(final int channels, final double sampleRate) {
 		return switch (bandPassAlgorithm) {
 			case BESSEL -> new BandPassFilterBessel(channels, bandPassOrder, sampleRate, bandPassCenterFrequency,
 					bandPassFrequencyWidth);
@@ -88,7 +87,7 @@ public class PassFiltersConfig implements ConfigValue {
 		};
 	}
 
-	public Effect createHighPassFilter(final int channels, final double sampleRate) {
+	public static Effect createHighPassFilter(final int channels, final double sampleRate) {
 		return switch (highPassAlgorithm) {
 			case BESSEL -> new HighPassFilterBessel(channels, highPassOrder, sampleRate, highPassFrequency);
 			case BUTTERWORTH -> new HighPassFilterButterworth(channels, highPassOrder, sampleRate, highPassFrequency);

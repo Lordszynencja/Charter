@@ -2,7 +2,7 @@ package log.charter.services.utils;
 
 import java.util.function.DoubleConsumer;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
 
 public class Framer {
 	private static final double scale = 1_000_000_000.0;
@@ -16,7 +16,7 @@ public class Framer {
 	private Thread thread;
 
 	public Framer(final DoubleConsumer runnable) {
-		this(runnable, Config.FPS);
+		this(runnable, GraphicalConfig.FPS);
 	}
 
 	public Framer(final DoubleConsumer runnable, final int fps) {

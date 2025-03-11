@@ -5,8 +5,8 @@ import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSele
 import javax.swing.JTextField;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.FHP;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -38,13 +38,13 @@ public class FHPPane extends ParamsPane {
 
 		int row = 0;
 		addIntegerConfigValue(row++, 20, 100, Label.FRET, fret, 30, //
-				new IntegerValueValidator(1, Config.instrument.frets, true), v -> fret = v, false);
+				new IntegerValueValidator(1, InstrumentConfig.frets, true), v -> fret = v, false);
 		final JTextField input = (JTextField) getPart(-1);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
 		addIntConfigValue(row++, 20, 100, Label.FHP_WIDTH, width, 30, //
-				new IntValueValidator(1, Config.instrument.frets), v -> width = v, false);
+				new IntValueValidator(1, InstrumentConfig.frets), v -> width = v, false);
 		final JTextField fhpWidthInput = (JTextField) getPart(-1);
 		fhpWidthInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(fhpWidthInput);

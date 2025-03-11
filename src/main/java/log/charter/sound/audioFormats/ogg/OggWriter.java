@@ -5,14 +5,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.io.Logger;
 import log.charter.sound.SoundFileType.WriteProgressHolder;
 import log.charter.sound.audioFormats.wav.WavWriter;
 import log.charter.sound.data.AudioData;
+import log.charter.util.RW;
 
 public class OggWriter {
+	private static final String oggEncPath = new File(RW.getProgramDirectory(),
+			"oggenc" + File.separator + "oggenc2.exe").getAbsolutePath();
+
 	public static void write(final AudioData data, final File file, final WriteProgressHolder progress) {
 		final File wav = new File(file.getAbsolutePath() + "_tmp_" + System.currentTimeMillis() + ".wav");
 		wav.deleteOnExit();
@@ -41,7 +44,7 @@ public class OggWriter {
 	}
 
 	private static void runOggEnc(final File input, final File output) {
-		final String exe = Config.oggEncPath;
+		final String exe = oggEncPath;
 		final String inputPath = input.getAbsolutePath();
 		final String outputPath = output.getAbsolutePath();
 

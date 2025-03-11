@@ -12,10 +12,8 @@ import static log.charter.util.CollectionUtils.map;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.util.List;
 
 import log.charter.data.song.EventPoint;
-import log.charter.data.song.EventType;
 import log.charter.data.song.Phrase;
 import log.charter.data.song.SectionType;
 import log.charter.gui.ChartPanelColors.ColorLabel;
@@ -41,25 +39,17 @@ public class ModernThemeEvents implements ThemeEvents {
 		data = highwayDrawerData;
 	}
 
-	private TextWithBackground generateSectionText(final SectionType section, final int x) {
-		return new TextWithBackground(new Position2D(x, sectionNamesY), eventFont, section.label.label(),
-				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.SECTION_NAME_BG, 2, ColorLabel.BASE_BORDER);
+	private TextWithBackground generateText(final String text, final int x, final int y, final ColorLabel bgColor) {
+		return new TextWithBackground(new Position2D(x, y + 3), eventFont, text, ColorLabel.ARRANGEMENT_TEXT, bgColor,
+				sectionTextSpace, ColorLabel.BASE_BORDER);
 	}
 
-	private String generatePhraseLabel(final Phrase phrase, final String phraseName) {
-		return phraseName + " (" + phrase.maxDifficulty + ")"//
-				+ (phrase.solo ? "[Solo]" : "");
+	private TextWithBackground generateSectionText(final SectionType section, final int x) {
+		return generateText(section.label.label(), x, sectionNamesY, ColorLabel.SECTION_NAME_BG);
 	}
 
 	private TextWithBackground generatePhraseText(final String text, final int x) {
-		return new TextWithBackground(new Position2D(x, phraseNamesY), eventFont, text, ColorLabel.ARRANGEMENT_TEXT,
-				ColorLabel.PHRASE_NAME_BG, 2, ColorLabel.BASE_BORDER);
-	}
-
-	private void addEvents(final List<EventType> events, final int x) {
-		final String eventsName = String.join(", ", map(events, event -> event.label));
-		data.sectionsAndPhrases.add(new TextWithBackground(new Position2D(x, eventNamesY), eventFont, eventsName,
-				ColorLabel.ARRANGEMENT_TEXT, ColorLabel.EVENT_BG, 2, ColorLabel.BASE_BORDER));
+		return generateText(text, x, phraseNamesY, ColorLabel.PHRASE_NAME_BG);
 	}
 
 	private void addEventPointBox(final int x, final ColorLabel color) {
@@ -83,6 +73,11 @@ public class ModernThemeEvents implements ThemeEvents {
 		data.sectionsAndPhrases.add(generateSectionText(section, x));
 	}
 
+	private String generatePhraseLabel(final Phrase phrase, final String phraseName) {
+		return phraseName + " (" + phrase.maxDifficulty + ")"//
+				+ (phrase.solo ? "[Solo]" : "");
+	}
+
 	@Override
 	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName) {
 		data.sectionsAndPhrases.add(generatePhraseText(generatePhraseLabel(phrase, phraseName), 0));
@@ -103,17 +98,25 @@ public class ModernThemeEvents implements ThemeEvents {
 	}
 
 	@Override
+	public void addEvents(final Graphics2D g, final EventPoint eventPoint, final int x) {
+		if (!eventPoint.events.isEmpty()) {
+			final String text = String.join(", ", map(eventPoint.events, event -> event.label));
+			data.sectionsAndPhrases.add(generateText(text, x, eventNamesY, ColorLabel.EVENT_BG));
+		}
+	}
+
+	@Override
 	public void addEventPoint(final Graphics2D g, final EventPoint eventPoint, final Phrase phrase, final int x,
 			final boolean selected, final boolean highlighted) {
 		if (eventPoint.section != null) {
-			data.sectionsAndPhrases.add(generateSectionText(eventPoint.section, x));
+			final String text = eventPoint.section.label.label();
+			data.sectionsAndPhrases.add(generateText(text, x, sectionNamesY, ColorLabel.SECTION_NAME_BG));
 		}
 		if (eventPoint.phrase != null) {
-			data.sectionsAndPhrases.add(generatePhraseText(generatePhraseLabel(phrase, eventPoint.phrase), x));
+			final String text = generatePhraseLabel(phrase, eventPoint.phrase);
+			data.sectionsAndPhrases.add(generateText(text, x, phraseNamesY, ColorLabel.PHRASE_NAME_BG));
 		}
-		if (!eventPoint.events.isEmpty()) {
-			addEvents(eventPoint.events, x);
-		}
+		addEvents(g, eventPoint, x);
 
 		if (highlighted) {
 			addEventPointBox(x, ColorLabel.HIGHLIGHT);

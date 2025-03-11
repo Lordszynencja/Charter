@@ -134,13 +134,30 @@ public class ArrangementFixer {
 		}
 	}
 
-	public void fixNoteLength(final CommonNote note, final int id, final List<ChordOrNote> sounds) {
-		if (note.linkNext()) {
-			LinkedNotesFixer.fixLinkedNote(note, id, sounds);
-			WrongBendPositionRemover.fixBends(note);
+	private void removeNoteTailIfNeeded(final CommonNote note, final int id, final List<ChordOrNote> sounds) {
+		if (note.linkNext() || note.tremolo() || note.vibrato() || !note.bendValues().isEmpty()
+				|| note.slideTo() != null) {
 			return;
 		}
 
+		final ChordOrNote previousSound = ChordOrNote.findPreviousSoundOnString(note.string(), id - 1, sounds);
+		if (previousSound != null && previousSound.getString(note.string()).get().linkNext()) {
+			return;
+		}
+
+		final ImmutableBeatsMap beats = chartData.beats();
+		final IConstantFractionalPosition minimalEndPosition = beats.getMinEndPositionAfter(note).toFraction(beats);
+		if (note.endPosition().compareTo(minimalEndPosition) < 0) {
+			note.endPosition(note.position());
+		}
+	}
+
+	private void fixLinkedNoteLength(final CommonNote note, final int id, final List<ChordOrNote> sounds) {
+		LinkedNotesFixer.fixLinkedNote(note, id, sounds);
+		WrongBendPositionRemover.fixBends(note);
+	}
+
+	private void fixNotLinkedNoteLength(final CommonNote note, final int id, final List<ChordOrNote> sounds) {
 		IConstantFractionalPosition endPosition = note.endPosition();
 		final ImmutableBeatsMap beats = chartData.beats();
 
@@ -157,6 +174,26 @@ public class ArrangementFixer {
 		endPosition = min(endPosition, chartTimeHandler.maxTimeFractional());
 
 		note.endPosition(max(note.position(), endPosition).position());
+	}
+
+	public void fixNoteLengthWithoutCutting(final CommonNote note, final int id, final List<ChordOrNote> sounds) {
+		if (note.linkNext()) {
+			fixLinkedNoteLength(note, id, sounds);
+			return;
+		}
+
+		fixNotLinkedNoteLength(note, id, sounds);
+		WrongBendPositionRemover.fixBends(note);
+	}
+
+	private void fixNoteLength(final CommonNote note, final int id, final List<ChordOrNote> sounds) {
+		if (note.linkNext()) {
+			fixLinkedNoteLength(note, id, sounds);
+			return;
+		}
+
+		fixNotLinkedNoteLength(note, id, sounds);
+		removeNoteTailIfNeeded(note, id, sounds);
 		WrongBendPositionRemover.fixBends(note);
 	}
 
@@ -197,19 +234,6 @@ public class ArrangementFixer {
 		lastPosition.endPosition(beats, max(comparator, lastPosition, minEndPosition));
 	}
 
-	private void removeTailsUnderMinLength(final List<ChordOrNote> sounds) {
-		final ImmutableBeatsMap beats = chartData.beats();
-
-		sounds.stream()//
-				.flatMap(s -> s.noteInterfaces())//
-				.filter(n -> !n.linkNext())//
-				.forEach(n -> {
-					if (n.endPosition().compareTo(beats.getMinEndPositionAfter(n).toFraction(beats)) < 0) {
-						n.endPosition(n.position());
-					}
-				});
-	}
-
 	private void fixLevel(final Arrangement arrangement, final Level level) {
 		level.sounds.removeIf(sound -> sound.isChord() //
 				&& (sound.chord().templateId() >= arrangement.chordTemplates.size()//
@@ -224,7 +248,6 @@ public class ArrangementFixer {
 
 		fixNoteLengths(level.sounds);
 		fixLengths(level.handShapes);
-		removeTailsUnderMinLength(level.sounds);
 	}
 
 	public void fixArrangements() {

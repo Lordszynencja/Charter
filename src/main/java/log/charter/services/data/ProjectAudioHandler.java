@@ -9,6 +9,7 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.AudioConfig;
 import log.charter.data.song.Stem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
@@ -191,13 +192,13 @@ public class ProjectAudioHandler {
 	}
 
 	public void changeAudio(final AudioData audio) {
-		this.mainAudio = audio;
+		mainAudio = audio;
 		waveFormDrawer.recalculateMap();
 		saveAudio(true);
 	}
 
 	public void setAudio(final AudioData audio) {
-		this.mainAudio = audio;
+		mainAudio = audio;
 		waveFormDrawer.recalculateMap();
 		saveAudio(false);
 	}
@@ -215,14 +216,14 @@ public class ProjectAudioHandler {
 			return chartData.songChart.stems.get(selectedStem).volume;
 		}
 
-		return Config.audio.volume;
+		return AudioConfig.volume;
 	}
 
 	public void setVolume(final double volume) {
 		if (selectedStem >= 0 && selectedStem < stems.size()) {
 			chartData.songChart.stems.get(selectedStem).volume = volume;
 		} else {
-			Config.audio.volume = volume;
+			AudioConfig.volume = volume;
 			Config.markChanged();
 		}
 	}

@@ -43,7 +43,7 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 	}
 
 	private TextWithBackground generateText(final String tone, final int x) {
-		return new TextWithBackground(new Position2D(x, toneChangeY), toneChangeFont, cleanTone(tone),
+		return new TextWithBackground(new Position2D(x, toneChangeY + 3), toneChangeFont, cleanTone(tone),
 				ColorLabel.TONE_CHANGE_TEXT, ColorLabel.TONE_CHANGE, toneChangeSpace, ColorLabel.BASE_BORDER);
 	}
 
@@ -75,10 +75,8 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 	@Override
 	public void addToneChange(final ToneChange toneChange, final int x, final boolean selected,
 			final boolean highlighted) {
-		data.toneChanges.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.TONE_CHANGE));
-		data.toneChanges
-				.add(new TextWithBackground(new Position2D(x, toneChangeY), toneChangeFont, "" + toneChange.toneName,
-						ColorLabel.TONE_CHANGE_TEXT, ColorLabel.TONE_CHANGE, 2, ColorLabel.BASE_BORDER.color()));
+		data.toneChanges.add(lineVertical(x, toneChangeY + 5, lanesBottom, ColorLabel.TONE_CHANGE));
+		data.toneChanges.add(generateText(toneChange.toneName, x));
 
 		if (highlighted) {
 			addToneChangeBox(x, ColorLabel.HIGHLIGHT);

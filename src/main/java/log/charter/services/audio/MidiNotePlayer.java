@@ -16,7 +16,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Synthesizer;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.AudioConfig;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.ToneChange;
@@ -163,7 +163,7 @@ public class MidiNotePlayer {
 
 	public void updateVolume() {
 		for (final MidiChannel channel : channels) {
-			channel.controlChange(7, (int) (Config.audio.sfxVolume * 127.0));
+			channel.controlChange(7, (int) (AudioConfig.sfxVolume * 127.0));
 		}
 	}
 

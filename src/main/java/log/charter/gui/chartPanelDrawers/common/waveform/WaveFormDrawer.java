@@ -12,7 +12,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
 
-import log.charter.data.config.Zoom;
+import log.charter.data.config.ZoomUtils;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.ChartPanelColors;
 import log.charter.gui.chartPanelDrawers.data.FrameData;
@@ -76,7 +76,7 @@ public class WaveFormDrawer {
 			return;
 		}
 
-		final Pair<Integer, List<WaveformInformation>> level = map.getLevel(1 / Zoom.zoom);
+		final Pair<Integer, List<WaveformInformation>> level = map.getLevel(1 / ZoomUtils.zoom);
 		final int timeSpan = getSpanForLevel(level.a);
 
 		final int width = chartPanel.getWidth();
@@ -152,7 +152,7 @@ public class WaveFormDrawer {
 			return;
 		}
 
-		if (Zoom.zoom > 1) {
+		if (ZoomUtils.zoom > 1) {
 			drawFull(frameData.g, frameData.time);
 		} else {
 			drawFromMap(frameData.g, frameData.time);

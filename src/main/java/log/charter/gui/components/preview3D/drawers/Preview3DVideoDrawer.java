@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Config;
+import log.charter.data.config.values.DebugConfig;
 import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.Texture;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
@@ -73,10 +73,10 @@ public class Preview3DVideoDrawer {
 		graphics.clearRect(0, 0, 1000, 1000);
 		graphics.setStroke(new BasicStroke(10));
 
-		if (Config.debug.showInputGraph) {
+		if (DebugConfig.showInputGraph) {
 			drawAudio(graphics);
 		}
-		if (Config.debug.showFTGraph) {
+		if (DebugConfig.showFTGraph) {
 			drawFFT(graphics);
 		}
 

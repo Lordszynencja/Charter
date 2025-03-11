@@ -12,7 +12,7 @@ import java.awt.event.MouseWheelListener;
 import java.util.List;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.Zoom;
+import log.charter.data.config.ZoomUtils;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.time.Position;
@@ -346,7 +346,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			final int change = -e.getWheelRotation();
 			if (keyboardHandler.ctrl()) {
 				final int zoomChange = change * (keyboardHandler.shift() ? 8 : 1);
-				Zoom.addZoom(zoomChange);
+				ZoomUtils.changeZoom(zoomChange);
 				return;
 			}
 

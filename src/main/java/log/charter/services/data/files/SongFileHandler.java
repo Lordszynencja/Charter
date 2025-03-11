@@ -7,10 +7,12 @@ import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.writeChartProjec
 import static log.charter.util.FileChooseUtils.chooseFile;
 
 import java.io.File;
+import java.util.Optional;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.PathsConfig;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.SongChart;
 import log.charter.data.song.vocals.VocalPath;
@@ -58,7 +60,7 @@ public class SongFileHandler {
 
 		String startingDir = chartData.path;
 		if (startingDir.isEmpty() || !new File(startingDir).exists()) {
-			startingDir = Config.songsPath;
+			startingDir = PathsConfig.songsPath;
 		}
 
 		final File projectFileChosen = chooseFile(charterFrame, startingDir, new String[] { ".rscp" },
@@ -71,7 +73,7 @@ public class SongFileHandler {
 	}
 
 	private File chooseSongFile() {
-		final String fileChooseDir = modeManager.getMode() == EditMode.EMPTY ? Config.songsPath : chartData.path;
+		final String fileChooseDir = modeManager.getMode() == EditMode.EMPTY ? PathsConfig.songsPath : chartData.path;
 		return FileChooseUtils.chooseMusicFile(charterFrame, fileChooseDir);
 	}
 
@@ -150,7 +152,10 @@ public class SongFileHandler {
 	}
 
 	private static String generateVocalPathFileName(final int id, final VocalPath vocals) {
-		return id + "_Vocals_" + vocals.name.replaceAll("[^ \\-0-9a-zA-Z]", "") + "_RS2.xml";
+		final String vocalsName = Optional.ofNullable(vocals.name).map(n -> "_" + n.replaceAll("[^ \\-0-9a-zA-Z]", ""))
+				.orElse("");
+
+		return id + "_Vocals_" + vocalsName + "_RS2.xml";
 	}
 
 	private void writeRSXML(final Timer timer, final File dir, final int id, final VocalPath vocals) {
@@ -231,8 +236,8 @@ public class SongFileHandler {
 		}
 
 		chartData.path = newDir.getAbsolutePath();
-		Config.lastDir = chartData.path;
-		Config.lastPath = new File(chartData.path, chartData.projectFileName).getAbsolutePath();
+		PathsConfig.lastDir = chartData.path;
+		PathsConfig.lastPath = new File(chartData.path, chartData.projectFileName).getAbsolutePath();
 		Config.markChanged();
 		Config.save();
 

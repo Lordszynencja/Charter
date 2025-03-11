@@ -12,7 +12,7 @@ import static log.charter.data.config.GraphicalConfig.timingHeight;
 import static log.charter.data.config.GraphicalConfig.toneChangeHeight;
 import static log.charter.util.Utils.getStringPosition;
 
-import log.charter.data.config.Config;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
 import log.charter.services.editModes.EditMode;
@@ -63,7 +63,7 @@ public class DrawerUtils {
 		timingY = lanesBottom + handShapesHeight;
 		editAreaHeight = timingY + timingHeight;
 
-		chartMapHeight = 2 * chartMapHeightMultiplier + 1 + Config.instrument.maxStrings * chartMapHeightMultiplier;
+		chartMapHeight = 2 * chartMapHeightMultiplier + 1 + InstrumentConfig.maxStrings * chartMapHeightMultiplier;
 	}
 
 	public static void updateEditAreaSizes(final EditMode editMode, final boolean bass, final int strings) {

@@ -3,9 +3,9 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 import java.awt.Graphics2D;
 import java.util.Optional;
 
-import log.charter.data.song.FHP;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Phrase;
 import log.charter.data.song.SectionType;
@@ -66,6 +66,11 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName,
 			final int nextSectionX) {
 		themeEvents.addCurrentPhrase(g, phrase, phraseName, nextSectionX);
+	}
+
+	@Override
+	public void addEvents(final Graphics2D g, final EventPoint eventPoint, final int x) {
+		themeEvents.addEvents(g, eventPoint, x);
 	}
 
 	@Override

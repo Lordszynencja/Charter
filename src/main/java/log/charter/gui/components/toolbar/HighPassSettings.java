@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.PassFiltersConfig;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedDialog;
 import log.charter.gui.components.simple.CharterSelect;
@@ -18,10 +19,10 @@ import log.charter.sound.effects.pass.PassFilterAlgorithm;
 public class HighPassSettings extends RowedDialog {
 	private static final long serialVersionUID = -2133758312693862190L;
 
-	private PassFilterAlgorithm algorithm = Config.passFilters.highPassAlgorithm;
-	private int order = Config.passFilters.highPassOrder;
-	private double frequency = Config.passFilters.highPassFrequency;
-	private double rippleDb = Config.passFilters.highPassRippleDb;
+	private PassFilterAlgorithm algorithm = PassFiltersConfig.highPassAlgorithm;
+	private int order = PassFiltersConfig.highPassOrder;
+	private double frequency = PassFiltersConfig.highPassFrequency;
+	private double rippleDb = PassFiltersConfig.highPassRippleDb;
 
 	@SuppressWarnings("unused")
 	private final FieldWithLabel<CharterSelect<PassFilterAlgorithm>> algorithmField;
@@ -44,10 +45,10 @@ public class HighPassSettings extends RowedDialog {
 		showAlgorithmDependentFields();
 
 		addDefaultFinish(position.newRow().y(), () -> {
-			Config.passFilters.highPassAlgorithm = algorithm;
-			Config.passFilters.highPassOrder = order;
-			Config.passFilters.highPassFrequency = frequency;
-			Config.passFilters.highPassRippleDb = rippleDb;
+			PassFiltersConfig.highPassAlgorithm = algorithm;
+			PassFiltersConfig.highPassOrder = order;
+			PassFiltersConfig.highPassFrequency = frequency;
+			PassFiltersConfig.highPassRippleDb = rippleDb;
 
 			Config.markChanged();
 

@@ -1,9 +1,9 @@
 package log.charter.data.config;
 
-public class Zoom {
+public class ZoomUtils {
 	public static double zoom = Math.pow(0.99, Config.zoomLvl);
 
-	public static void addZoom(final int change) {
+	public static void changeZoom(final int change) {
 		Config.zoomLvl -= change;
 		Config.markChanged();
 
