@@ -93,22 +93,27 @@ public class GP5SoundsTransformer {
 		this.arrangement = arrangement;
 	}
 
-	private void checkPreviousNoteLink(final GPNote gpNote) {
+	private boolean checkPreviousNoteLink(final GPNote gpNote) {
 		if (lastSound == null || !lastSound.isNote()) {
 			addSlideToLastSound = false;
-			return;
+			return false;
 		}
 
 		final Note note = lastSound.note();
 
+		boolean linked = false;
 		if (gpNote.tied) {
 			note.linkNext = true;
+			linked = true;
 		}
 
 		if (addSlideToLastSound) {
 			lastSound.note().slideTo = gpNote.fret;
 			addSlideToLastSound = false;
+			linked = true;
 		}
+
+		return linked;
 	}
 
 	private Note addBends(final GPNote gpNote, final Note note, final FractionalPosition endPosition,
@@ -283,10 +288,13 @@ public class GP5SoundsTransformer {
 			return;
 		}
 
-		checkPreviousNoteLink(gpNote);
+		final boolean linked = checkPreviousNoteLink(gpNote);
 
 		final FractionalPosition length = position.distance(endPosition);
 		final Note note = new Note(position.position(), gpNote.string - 1, gpNote.fret);
+		if (linked || length.compareTo(new Fraction(1, 2)) > 0) {
+			note.endPosition(endPosition.position());
+		}
 		final GPNoteEffects effects = gpNote.effects;
 
 		setStatuses(new CommonNote(note), gpBeat, gpNote, wasHOPOStart, hopoFrom);
