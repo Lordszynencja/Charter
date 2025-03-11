@@ -17,6 +17,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
@@ -298,13 +299,13 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 				+ template.getTemplateFrets(chartData.currentStrings());
 	}
 
-	private ArrayList2<ChordTemplate> getPossibleChords(final String filter) {
+	private List<ChordTemplate> getPossibleChords(final String filter) {
 		final String filterLower = filter.toLowerCase();
 
 		return chartData.currentArrangement().chordTemplates.stream()//
 				.filter(chordTemplate -> !chordTemplate.equals(chordTemplateSupplier.get())//
 						&& templateSearchName(chordTemplate).contains(filterLower))//
-				.collect(Collectors.toCollection(ArrayList2::new));
+				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	private void recalculateIdWidth() {
@@ -447,6 +448,15 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		return Label.WRONG_FINGER_VALUE.label();
 	}
 
+	private void updateFingersQuiet() {
+		setSuggestedFingers(chordTemplateSupplier.get());
+		for (int string = 0; string < InstrumentConfig.maxStrings; string++) {
+			final TextInputWithValidation input = fingerInputs.get(string);
+			input.setTextWithoutEvent(fingerNames.get(chordTemplateSupplier.get().fingers.get(string)));
+			input.repaint();
+		}
+	}
+
 	private void updateFretValue(final int string, final Integer fret) {
 		if (fret == null) {
 			chordTemplateSupplier.get().frets.remove(string);
@@ -470,15 +480,6 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		onChange.run();
 
 		chordTemplatePreview.repaint();
-	}
-
-	private void updateFingersQuiet() {
-		setSuggestedFingers(chordTemplateSupplier.get());
-		for (int string = 0; string < InstrumentConfig.maxStrings; string++) {
-			final TextInputWithValidation input = fingerInputs.get(string);
-			input.setTextWithoutEvent(fingerNames.get(chordTemplateSupplier.get().fingers.get(string)));
-			input.repaint();
-		}
 	}
 
 	@Override
