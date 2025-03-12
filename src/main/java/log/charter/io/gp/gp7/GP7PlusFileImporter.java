@@ -160,6 +160,8 @@ public class GP7PlusFileImporter {
 		final BeatsMap beatsMap = replaceTempoMap(gpif);
 		final SongChart temporaryChart = GP7FileToSongChart.transform(gpif, beatsMap);
 
-		new ArrangementImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart);
+		final List<String> trackNames = gpif.tracks.stream().map(t -> t.name).collect(Collectors.toList());
+		new ArrangementImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart,
+				trackNames);
 	}
 }
