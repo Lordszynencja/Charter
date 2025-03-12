@@ -6,7 +6,7 @@ import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.metal.DefaultMetalTheme;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
 

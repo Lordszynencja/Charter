@@ -8,13 +8,13 @@ import javax.swing.JLabel;
 import javax.swing.ScrollPaneConstants;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.containers.ScrollableRowedPanel;

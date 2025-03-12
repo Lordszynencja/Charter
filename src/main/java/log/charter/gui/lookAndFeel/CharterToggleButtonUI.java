@@ -13,7 +13,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicToggleButtonUI;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 
 public class CharterToggleButtonUI extends BasicToggleButtonUI {
 	private static final CharterToggleButtonUI toggleButtonUI = new CharterToggleButtonUI();

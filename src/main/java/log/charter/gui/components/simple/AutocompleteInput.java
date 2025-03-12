@@ -20,7 +20,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.util.data.Position2D;

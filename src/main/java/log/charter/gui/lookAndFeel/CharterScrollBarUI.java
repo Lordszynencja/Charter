@@ -15,7 +15,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 
 public class CharterScrollBarUI extends BasicScrollBarUI {
 	private static final int SCROLLBAR_WIDTH = 17;

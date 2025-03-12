@@ -1,6 +1,6 @@
 package log.charter.gui.components.tabs.selectionEditor.bends;
 
-import static log.charter.gui.ChartPanelColors.getStringBasedColor;
+import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +13,13 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNoteWithFret;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;

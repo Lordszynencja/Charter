@@ -13,10 +13,10 @@ import static log.charter.util.CollectionUtils.map;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.Phrase;
 import log.charter.data.song.SectionType;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.TextWithBackground;

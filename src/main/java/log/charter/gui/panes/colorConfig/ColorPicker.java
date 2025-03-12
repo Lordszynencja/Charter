@@ -9,8 +9,8 @@ import java.awt.event.MouseListener;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class ColorPicker extends JComponent implements MouseListener {
 	private static final long serialVersionUID = -5746700025590582773L;

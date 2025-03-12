@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.config.Config;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.values.GridConfig;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;

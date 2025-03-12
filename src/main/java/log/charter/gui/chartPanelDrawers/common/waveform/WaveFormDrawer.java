@@ -12,9 +12,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
 
+import log.charter.data.config.ChartPanelColors;
 import log.charter.data.config.ZoomUtils;
 import log.charter.gui.ChartPanel;
-import log.charter.gui.ChartPanelColors;
 import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.data.ProjectAudioHandler;

@@ -10,9 +10,9 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.str
 import java.awt.Color;
 import java.awt.Font;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;

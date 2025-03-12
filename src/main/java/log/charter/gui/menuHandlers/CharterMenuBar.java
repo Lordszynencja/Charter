@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.util.collections.ArrayList2;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 
 public class CharterMenuBar extends JMenuBar implements Initiable {

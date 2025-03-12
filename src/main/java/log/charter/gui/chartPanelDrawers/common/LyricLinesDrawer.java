@@ -10,11 +10,11 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.data.song.vocals.VocalPath;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;

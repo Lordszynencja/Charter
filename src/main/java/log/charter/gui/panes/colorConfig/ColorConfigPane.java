@@ -12,10 +12,11 @@ import java.util.stream.Stream;
 
 import javax.swing.UIManager;
 
+import log.charter.data.config.ChartPanelColors;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ColorMap;
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.ChartPanelColors;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.RowedDialog;
@@ -63,8 +64,7 @@ public class ColorConfigPane extends RowedDialog {
 	}
 
 	private void changeSet(final String newName) {
-		final Map<ColorLabel, Color> colors = ChartPanelColors.readColors(newName);
-
+		final Map<ColorLabel, Color> colors = ColorMap.forSet(newName).colors;
 		pickersForLabels.forEach((colorLabel, picker) -> picker.color(colors.get(colorLabel)));
 	}
 

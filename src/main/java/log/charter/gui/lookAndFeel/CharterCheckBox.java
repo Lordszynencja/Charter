@@ -12,7 +12,7 @@ import java.awt.geom.RoundRectangle2D;
 import javax.swing.JCheckBox;
 import javax.swing.UIManager;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 
 public class CharterCheckBox {
 	public static class CheckBoxIcon extends SimpleIcon {

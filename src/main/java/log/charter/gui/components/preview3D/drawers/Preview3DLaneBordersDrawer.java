@@ -15,8 +15,8 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.values.InstrumentConfig;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.data.FHPDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;

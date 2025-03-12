@@ -2,8 +2,8 @@ package log.charter.gui.components.simple;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.data.config.GraphicalConfig.chartMapHeightMultiplier;
-import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.chartMapHeight;
 import static log.charter.util.ScalingUtils.xToTimeLength;
 import static log.charter.util.Utils.getStringPosition;
@@ -20,14 +20,14 @@ import java.util.function.Predicate;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.GraphicalConfig;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.gui.ChartPanel;
-import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
 import log.charter.services.CharterContext.Initiable;

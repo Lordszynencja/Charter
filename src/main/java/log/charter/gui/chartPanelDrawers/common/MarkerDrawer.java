@@ -9,7 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 
 import log.charter.data.config.GraphicalConfig;
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 
 public class MarkerDrawer {
 	public void draw(final Graphics g) {

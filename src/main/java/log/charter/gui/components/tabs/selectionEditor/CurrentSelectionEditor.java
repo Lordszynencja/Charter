@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.ToneChange;
@@ -20,7 +21,6 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.services.CharterContext;

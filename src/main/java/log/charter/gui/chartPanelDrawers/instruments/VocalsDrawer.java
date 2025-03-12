@@ -13,12 +13,12 @@ import java.awt.Graphics2D;
 import java.util.List;
 import java.util.Set;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;

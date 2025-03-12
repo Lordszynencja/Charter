@@ -15,7 +15,7 @@ import java.awt.Color;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.data.HandShapeDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;

@@ -7,8 +7,8 @@ import java.awt.Graphics;
 
 import javax.swing.JMenuItem;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class SpecialMenuItem extends JMenuItem {
 	private static final long serialVersionUID = 1L;

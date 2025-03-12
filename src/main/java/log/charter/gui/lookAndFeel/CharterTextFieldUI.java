@@ -12,7 +12,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTextFieldUI;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 
 public class CharterTextFieldUI extends BasicTextFieldUI {
 	private static final String CHARTER_TEXT_FIELD_UI = "CharterTextFieldUI";

@@ -1,11 +1,11 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar;
 
 import static java.lang.Math.max;
+import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.data.config.Config.showChordIds;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.data.config.GraphicalConfig.noteWidth;
 import static log.charter.data.song.notes.ChordOrNote.findPreviousSoundOnString;
-import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.Chord;
@@ -31,8 +33,6 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
-import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;

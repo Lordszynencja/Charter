@@ -16,8 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 
 public class FieldWithLabel<T extends Component> extends Container {
 	public enum LabelPosition {

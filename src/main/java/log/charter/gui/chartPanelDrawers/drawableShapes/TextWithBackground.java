@@ -7,7 +7,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.util.data.Position2D;
 
 public class TextWithBackground implements DrawableShape {

@@ -15,8 +15,8 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.metal.MetalTabbedPaneUI;
 
-import log.charter.gui.ChartPanelColors;
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 
 public class CharterTabbedPaneUI extends MetalTabbedPaneUI {
 

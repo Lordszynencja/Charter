@@ -7,7 +7,7 @@ import java.awt.RenderingHints;
 import javax.swing.JSlider;
 import javax.swing.plaf.metal.MetalSliderUI;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 
 public class CharterSliderUI extends MetalSliderUI {
 	@Override

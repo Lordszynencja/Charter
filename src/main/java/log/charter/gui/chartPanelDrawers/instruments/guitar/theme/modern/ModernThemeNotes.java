@@ -1,9 +1,9 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
+import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.data.config.GraphicalConfig.chordHeight;
 import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
-import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
@@ -26,6 +26,8 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.HOPO;
@@ -33,8 +35,6 @@ import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNoteWithFret;
-import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredImage;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;

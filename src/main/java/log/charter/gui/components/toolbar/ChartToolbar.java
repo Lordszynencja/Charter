@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
@@ -26,10 +27,10 @@ import javax.swing.JToolBar;
 import log.charter.data.ChartData;
 import log.charter.data.GridType;
 import log.charter.data.config.Config;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.AudioConfig;
 import log.charter.data.config.values.GridConfig;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.simple.FieldWithLabel;
@@ -61,11 +62,16 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private static final int horizontalSpacing = 5;
 
-	private static final BufferedImage repeaterIcon = ImageUtils.loadSafe(imagesFolder + "toolbarRepeater.png");
-	private static final BufferedImage gridBeatTypeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarGridTypeBeat.png");
-	private static final BufferedImage gridNoteTypeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarGridTypeNote.png");
-	private static final BufferedImage volumeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarVolume.png");
-	private static final BufferedImage sfxVolumeIcon = ImageUtils.loadSafe(imagesFolder + "toolbarSFXVolume.png");
+	private static final BufferedImage repeaterIcon = ImageUtils.loadSafe("toolbarRepeater.png",
+			new File(imagesFolder, "toolbarRepeater.png"));
+	private static final BufferedImage gridBeatTypeIcon = ImageUtils.loadSafe("toolbarGridTypeBeat.png",
+			new File(imagesFolder, "toolbarGridTypeBeat.png"));
+	private static final BufferedImage gridNoteTypeIcon = ImageUtils.loadSafe("toolbarGridTypeNote.png",
+			new File(imagesFolder, "toolbarGridTypeNote.png"));
+	private static final BufferedImage volumeIcon = ImageUtils.loadSafe("toolbarVolume.png",
+			new File(imagesFolder, "toolbarVolume.png"));
+	private static final BufferedImage sfxVolumeIcon = ImageUtils.loadSafe("toolbarSFXVolume.png",
+			new File(imagesFolder, "toolbarSFXVolume.png"));
 
 	private ActionHandler actionHandler;
 	private AudioHandler audioHandler;

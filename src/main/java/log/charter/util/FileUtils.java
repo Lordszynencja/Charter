@@ -7,31 +7,31 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileUtils {
-	public static final String graphicsFolder = "graphics/";
-	public static final String colorSetsFolder = graphicsFolder + "colorSets/";
-	public static final String imagesFolder = graphicsFolder + "images/";
-	public static final String texturesFolder = graphicsFolder + "textures/";
-	public static final String inlaysFolder = graphicsFolder + "inlays/";
+	private static final File graphicsFolder = new File(RW.getProgramDirectory(), "graphics");
+	public static final File colorSetsFolder = new File(graphicsFolder, "colorSets");
+	public static final File imagesFolder = new File(graphicsFolder, "images");
+	public static final File texturesFolder = new File(graphicsFolder, "textures");
+	public static final File inlaysFolder = new File(graphicsFolder, "inlays");
 
-	public static List<String> listDirectories(final String dir) {
-		return Stream.of(new File(dir).listFiles(f -> f.isDirectory()))//
+	public static List<String> listDirectories(final File dir) {
+		return Stream.of(dir.listFiles(f -> f.isDirectory()))//
 				.map(file -> file.getName())//
 				.sorted()//
 				.collect(Collectors.toList());
 	}
 
-	public static Stream<String> listFiles(final String dir) {
-		return Stream.of(new File(dir).listFiles(f -> f.isFile()))//
+	public static Stream<String> listFiles(final File dir) {
+		return Stream.of(dir.listFiles(f -> f.isFile()))//
 				.map(file -> file.getName())//
 				.sorted();
 	}
 
-	public static Stream<String> listFiles(final String dir, final Predicate<File> filter) {
+	public static Stream<String> listFiles(final File dir, final Predicate<File> filter) {
 		if (filter == null) {
 			return listFiles(dir);
 		}
 
-		return Stream.of(new File(dir).listFiles(f -> f.isFile()))//
+		return Stream.of(dir.listFiles(f -> f.isFile()))//
 				.filter(filter)//
 				.map(file -> file.getName())//
 				.sorted();

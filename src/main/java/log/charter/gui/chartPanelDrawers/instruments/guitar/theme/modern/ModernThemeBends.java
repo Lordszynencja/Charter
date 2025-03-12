@@ -1,8 +1,8 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
 import static java.lang.Math.round;
+import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
-import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.tailHeight;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackgroundAndBorder.getExpectedSize;
 
@@ -11,8 +11,8 @@ import java.awt.Font;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.config.values.InstrumentConfig;
-import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.EditorBendValueDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackground;

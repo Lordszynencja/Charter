@@ -14,7 +14,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 
 public class CharterButtonUI extends BasicButtonUI {
 	public static final CharterButtonUI buttonUI = new CharterButtonUI();
