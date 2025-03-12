@@ -53,6 +53,59 @@ public class AudioData {
 		return null;
 	}
 
+	public class PlayingBuffer {
+		private final AudioFormat playingFormat = getPlayingFormat();
+
+		private final int byteDepth = format.getSampleSizeInBits() / 8;
+		private final int writtenByteDepth = playingFormat.getSampleSizeInBits() / 8;
+		private final int channels = format.getChannels();
+		private final int writtenChannels = playingFormat.getChannels();
+
+		private final int writtenFrameSize = writtenByteDepth * writtenChannels;
+		public final byte[] buffer;
+
+		private PlayingBuffer(final int bufferSize) {
+			buffer = new byte[bufferSize * byteDepth * channels];
+		}
+
+		private int fillPlayingBufferWithExactCopy(final int fromFrame, final int framesToWrite) {
+			final int from = fromFrame * writtenFrameSize;
+			final int length = framesToWrite * writtenFrameSize;
+			System.arraycopy(data, from, buffer, 0, length);
+			if (length < buffer.length) {
+				Arrays.fill(buffer, length, buffer.length, (byte) 0);
+			}
+
+			return framesToWrite;
+		}
+
+		private void writeBufferLittleEndian(final int fromFrame, final int framesToWrite) {
+			int currentByte = fromFrame * byteDepth * channels;
+			int currentBufferByte = 0;
+			for (int i = 0; i < framesToWrite; i++) {
+				for (int channel = 0; channel < writtenChannels; channel++) {
+					currentByte += byteDepth - writtenByteDepth;
+					for (int j = 0; j < writtenByteDepth; j++) {
+						buffer[currentBufferByte++] = data[currentByte++];
+					}
+				}
+
+				currentByte += (channels - writtenChannels) * byteDepth;
+			}
+		}
+
+		public int write(final int fromFrame) {
+			final int framesToWrite = min(buffer.length / writtenFrameSize, frames() - fromFrame);
+			if (byteDepth == writtenByteDepth && channels == writtenChannels) {
+				return fillPlayingBufferWithExactCopy(fromFrame, framesToWrite);
+			} else {
+				writeBufferLittleEndian(fromFrame, framesToWrite);
+			}
+
+			return framesToWrite;
+		}
+	}
+
 	public final byte[] data;
 	public final AudioFormat format;
 
@@ -74,17 +127,6 @@ public class AudioData {
 		return FloatSamplesUtils.readSample(data, frame * format.getChannels(), format.getSampleSizeInBits() / 8);
 	}
 
-	public float[] getFrame(final int frame) {
-		final float[] frameData = new float[format.getChannels()];
-
-		for (int channel = 0; channel < format.getChannels(); channel++) {
-			frameData[channel] = FloatSamplesUtils.readSample(data, frame * format.getChannels(),
-					format.getSampleSizeInBits() / 8);
-		}
-
-		return frameData;
-	}
-
 	public double msLength() {
 		return frames() * 1000.0 / format.getFrameRate();
 	}
@@ -98,52 +140,8 @@ public class AudioData {
 		return new AudioFormat(Encoding.PCM_SIGNED, sampleRate, byteDepth * 8, channels, frameSize, sampleRate, false);
 	}
 
-	public byte[] generatePlayingBuffer(final int bufferSize) {
-		final int byteDepth = min(2, format.getSampleSizeInBits() / 8);
-		final int channels = min(2, format.getChannels());
-
-		return new byte[bufferSize * byteDepth * channels];
-	}
-
-	public int fillPlayingBuffer(final int fromFrame, final byte[] buffer) {
-		final int byteDepth = format.getSampleSizeInBits() / 8;
-		final int writtenByteDepth = min(2, byteDepth);
-		final int channels = format.getChannels();
-		final int writtenChannels = min(2, channels);
-		final int writtenFrameSize = writtenByteDepth * writtenChannels;
-		final int framesToWrite = min(buffer.length / writtenFrameSize, frames() - fromFrame);
-		if (byteDepth == writtenByteDepth && channels == writtenChannels) {
-			final int from = fromFrame * writtenFrameSize;
-			final int length = framesToWrite * writtenFrameSize;
-			System.arraycopy(data, from, buffer, 0, length);
-			if (length < buffer.length) {
-				Arrays.fill(buffer, length, buffer.length, (byte) 0);
-			}
-
-			return framesToWrite;
-		}
-
-		int currentByte = fromFrame * byteDepth * channels;
-		int currentBufferByte = 0;
-		for (int i = 0; i < framesToWrite; i++) {
-			for (int channel = 0; channel < writtenChannels; channel++) {
-				for (int j = 0; j < writtenByteDepth; j++) {
-					buffer[currentBufferByte++] = data[currentByte++];
-				}
-
-				currentByte += byteDepth - writtenByteDepth;
-			}
-
-			currentByte += (channels - writtenChannels) * byteDepth;
-		}
-
-		return framesToWrite;
-	}
-
-	public byte[] getPlayingBufferByte(final int fromFrame, final int bufferSize) {
-		final byte[] buffer = generatePlayingBuffer(bufferSize);
-		fillPlayingBuffer(fromFrame, buffer);
-		return buffer;
+	public PlayingBuffer generatePlayingBuffer(final int bufferSize) {
+		return new PlayingBuffer(bufferSize);
 	}
 
 	public static class DifferentSampleSizesException extends Exception {
