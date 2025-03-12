@@ -5,7 +5,9 @@ import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
@@ -19,6 +21,8 @@ import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.gui.panes.imports.ArrangementImportOptions;
 import log.charter.io.Logger;
 import log.charter.io.gp.gp7.data.GP7Automation;
+import log.charter.io.gp.gp7.data.GP7Automation.GP7SyncPointValue;
+import log.charter.io.gp.gp7.data.GP7Automation.GP7TempoValue;
 import log.charter.io.gp.gp7.data.GP7MasterBar;
 import log.charter.io.gp.gp7.data.GPIF;
 import log.charter.io.gp.gp7.transformers.GP7FileToSongChart;
@@ -65,28 +69,83 @@ public class GP7PlusFileImporter {
 
 	private class TempoChangePoint {
 		public final int beatId;
-		public final double quarterNoteTempo;
-		public final boolean linear;
+		public boolean linear;
+		public int noteType = 2;
+		public boolean noteTypeSet = false;
+		public double tempo;
+		public Double position = null;
 
-		public TempoChangePoint(final GPIF gpif, final GP7Automation automation) {
-			beatId = findBeatId(gpif, automation.bar, automation.position);
-
-			final String[] tempoValues = automation.value.split(" ");
-			final double tempo = Double.valueOf(tempoValues[0]);
-			final int noteType = Integer.valueOf(tempoValues[1]);
-			quarterNoteTempo = tempo * noteTypeMultiplier(noteType);
-			linear = automation.linear;
+		public TempoChangePoint(final int beatId) {
+			this.beatId = beatId;
 		}
+
+		public void addValue(final GP7TempoValue value) {
+			noteType = value.noteType;
+			noteTypeSet = true;
+			tempo = value.tempo;
+		}
+
+		public void addValue(final GP7SyncPointValue value) {
+			tempo = value.modifiedTempo;
+			position = value.frameOffset / 44.100;
+		}
+
+		public double getQuarterNoteTempo() {
+			return tempo * noteTypeMultiplier(noteType);
+		}
+
+		public void setNoteType(final TempoChangePoint previous) {
+			noteType = previous.noteType;
+			noteTypeSet = true;
+		}
+	}
+
+	private Map<Integer, TempoChangePoint> getTempoChangesMap(final GPIF gpif) {
+		final Map<Integer, TempoChangePoint> tempoChangePoints = new HashMap<>();
+		for (final GP7Automation automation : gpif.masterTrack.automations) {
+			if (automation.type == null || (!automation.type.equals("Tempo") && !automation.type.equals("SyncPoint"))) {
+				continue;
+			}
+
+			final int beatId = findBeatId(gpif, automation.bar, automation.position);
+			if (!tempoChangePoints.containsKey(beatId)) {
+				tempoChangePoints.put(beatId, new TempoChangePoint(beatId));
+			}
+			final TempoChangePoint tempoChangePoint = tempoChangePoints.get(beatId);
+			tempoChangePoint.linear = automation.linear;
+
+			switch (automation.type) {
+				case "Tempo" -> tempoChangePoint.addValue(automation.value.asTempoValue());
+				case "SyncPoint" -> tempoChangePoint.addValue(automation.value.asSyncPointValue());
+			}
+		}
+
+		return tempoChangePoints;
+	}
+
+	private List<TempoChangePoint> compileTempoChanges(final Map<Integer, TempoChangePoint> tempoChangePoints) {
+		final List<TempoChangePoint> tempoChanges = tempoChangePoints.values().stream()//
+				.sorted((a, b) -> Integer.compare(a.beatId, b.beatId))//
+				.collect(Collectors.toList());
+
+		for (int i = 1; i < tempoChanges.size(); i++) {
+			final TempoChangePoint tempoChangePoint = tempoChanges.get(i);
+			if (!tempoChangePoint.noteTypeSet) {
+				tempoChangePoint.setNoteType(tempoChanges.get(i - 1));
+			}
+		}
+
+		return tempoChanges;
 	}
 
 	private double calculateBPM(final GP7MasterBar masterBar, final TempoChangePoint tempoChangePoint,
 			final TempoChangePoint nextTempoChangePoint, final int beatId) {
 		if (!tempoChangePoint.linear) {
-			return tempoChangePoint.quarterNoteTempo * masterBar.timeSignature.denominator / 4;
+			return tempoChangePoint.getQuarterNoteTempo() * masterBar.timeSignature.denominator / 4;
 		}
 
-		final double bpmA = tempoChangePoint.quarterNoteTempo * masterBar.timeSignature.denominator / 4;
-		final double bpmB = nextTempoChangePoint.quarterNoteTempo * masterBar.timeSignature.denominator / 4;
+		final double bpmA = tempoChangePoint.getQuarterNoteTempo() * masterBar.timeSignature.denominator / 4;
+		final double bpmB = nextTempoChangePoint.getQuarterNoteTempo() * masterBar.timeSignature.denominator / 4;
 		final int length = nextTempoChangePoint.beatId - tempoChangePoint.beatId;
 		if (length <= 0) {
 			return bpmB;
@@ -103,10 +162,9 @@ public class GP7PlusFileImporter {
 		}
 
 		final BeatsMap beatsMap = new BeatsMap(new ArrayList<>());
-		final List<TempoChangePoint> tempoChanges = gpif.masterTrack.automations.stream()//
-				.filter(a -> a.type != null && a.type.equals("Tempo"))//
-				.map(a -> new TempoChangePoint(gpif, a))//
-				.collect(Collectors.toList());
+
+		final Map<Integer, TempoChangePoint> tempoChangePoints = getTempoChangesMap(gpif);
+		final List<TempoChangePoint> tempoChanges = compileTempoChanges(tempoChangePoints);
 
 		int tempoChangePointId = 0;
 		int barBeat = 0;
@@ -123,6 +181,10 @@ public class GP7PlusFileImporter {
 				final TempoChangePoint nextTempoChangePoint = tempoChangePointId < tempoChanges.size() - 1
 						? tempoChanges.get(tempoChangePointId + 1)
 						: tempoChangePoint;
+
+				if (beatId == tempoChangePoint.beatId && tempoChangePoint.position != null) {
+					position = tempoChangePoint.position;
+				}
 
 				final double bpm = calculateBPM(masterBar, tempoChangePoint, nextTempoChangePoint, beatId);
 
