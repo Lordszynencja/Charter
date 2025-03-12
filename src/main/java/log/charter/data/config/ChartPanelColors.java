@@ -1,18 +1,14 @@
-package log.charter.gui;
+package log.charter.data.config;
 
 import static log.charter.util.ColorUtils.setAlpha;
 
 import java.awt.Color;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
-import log.charter.io.Logger;
 import log.charter.util.ColorUtils;
-import log.charter.util.FileUtils;
 import log.charter.util.RW;
 import log.charter.util.Utils;
 
@@ -120,7 +116,7 @@ public class ChartPanelColors {
 		PREVIEW_3D_LYRICS(255, 255, 255), //
 		PREVIEW_3D_LYRICS_PASSED(13, 162, 255); //
 
-		private final Color defaultColor;
+		public final Color defaultColor;
 
 		private ColorLabel(final int r, final int g, final int b) {
 			defaultColor = new Color(r, g, b);
@@ -179,68 +175,33 @@ public class ChartPanelColors {
 
 	private static Map<ColorLabel, Color> colors = new HashMap<>();
 
-	private static File colorSetFile(final String setName) {
-		return new File(RW.getProgramDirectory(), FileUtils.colorSetsFolder + setName + ".txt");
-	}
-
-	private static int readColorValue(final String value, final int defaultValue) {
-		try {
-			return Integer.valueOf(value, 16);
-		} catch (final NumberFormatException e) {
-			return defaultValue;
-		}
-	}
-
-	private static Color readColor(final String value) {
-		final String[] rgb = value.split(" ");
-		final int r = rgb.length < 1 ? 0 : readColorValue(rgb[0], 0);
-		final int g = rgb.length < 2 ? 0 : readColorValue(rgb[1], 0);
-		final int b = rgb.length < 3 ? 0 : readColorValue(rgb[2], 0);
-		final int a = rgb.length < 4 ? 255 : readColorValue(rgb[3], 255);
-
-		return new Color(r, g, b, a);
-	}
-
-	public static Map<ColorLabel, Color> readColors(final String setName) {
-		final Map<ColorLabel, Color> colors = new HashMap<>();
-
-		for (final ColorLabel colorLabel : ColorLabel.values()) {
-			colors.put(colorLabel, colorLabel.defaultColor);
-		}
-
-		final Map<String, String> config = RW.readConfig(colorSetFile(setName), false);
-		for (final Entry<String, String> configEntry : config.entrySet()) {
-			try {
-				final ColorLabel colorLabel = ColorLabel.valueOf(configEntry.getKey());
-				final Color color = readColor(configEntry.getValue());
-
-				colors.put(colorLabel, color);
-			} catch (final Exception e) {
-				Logger.error("Couldn't load color " + configEntry.getKey() + "=" + configEntry.getValue(), e);
-			}
-		}
-
-		return colors;
-	}
-
 	static {
-		colors = readColors(GraphicalConfig.colorSet);
-
+		colors = ColorMap.full().colors;
 		save();
 	}
 
+	private static String getColorAsString(final Color c) {
+		final String r = Integer.toHexString(c.getRed());
+		final String g = Integer.toHexString(c.getGreen());
+		final String b = Integer.toHexString(c.getBlue());
+		final String a = Integer.toHexString(c.getAlpha());
+		return r + " " + g + " " + b + " " + a;
+	}
+
 	public static void save() {
+		final Map<ColorLabel, Color> baseColors = ColorMap.forCurrentSet().colors;
+
 		final Map<String, String> config = new HashMap<>();
 
 		for (final Entry<ColorLabel, Color> colorEntry : colors.entrySet()) {
-			final Color c = colorEntry.getValue();
-			final String r = Integer.toHexString(c.getRed());
-			final String g = Integer.toHexString(c.getGreen());
-			final String b = Integer.toHexString(c.getBlue());
-			final String a = Integer.toHexString(c.getAlpha());
-			config.put(colorEntry.getKey().name(), r + " " + g + " " + b + " " + a);
+			final Color baseColor = baseColors.get(colorEntry.getKey());
+			if (baseColor != null && baseColor.equals(colorEntry.getValue())) {
+				continue;
+			}
+
+			config.put(colorEntry.getKey().name(), getColorAsString(colorEntry.getValue()));
 		}
 
-		RW.writeConfig(colorSetFile(GraphicalConfig.colorSet), config);
+		RW.writeConfig(ColorMap.customColorsPath, config);
 	}
 }

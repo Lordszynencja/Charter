@@ -2,7 +2,7 @@ package log.charter.gui.components.tabs.chordEditor;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static log.charter.gui.ChartPanelColors.getStringBasedColor;
+import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.util.ColorUtils.mix;
 import static log.charter.util.Utils.getStringPosition;
 
@@ -18,10 +18,10 @@ import java.util.Map.Entry;
 import javax.swing.JComponent;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
-import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.components.preview3D.glUtils.Point2D;
 import log.charter.util.ColorUtils;

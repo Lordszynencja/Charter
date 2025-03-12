@@ -10,7 +10,7 @@ import javax.swing.ButtonModel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 
 public class CharterRadioButton {
 	public static class RadioIcon extends SimpleIcon {

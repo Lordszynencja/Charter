@@ -2,8 +2,8 @@ package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.data.song.notes.ChordOrNote.isLinkedToPrevious;
-import static log.charter.gui.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
@@ -19,13 +19,13 @@ import java.util.List;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.time.Position;
-import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.components.preview3D.data.FHPDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;

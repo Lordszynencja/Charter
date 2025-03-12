@@ -14,7 +14,7 @@ import javax.swing.event.DocumentListener;
 
 import org.jcodec.common.logging.Logger;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
 import log.charter.gui.components.utils.validators.DoubleValueValidator;
 import log.charter.gui.components.utils.validators.IntValueValidator;

@@ -83,18 +83,19 @@ public class IntSampleUtils {
 			}
 		}
 
+		final int frameSize = channels * sampleSize;
 		final int l = data[0].length;
-		final byte[] bytes = new byte[l * channels * sampleSize];
+		final byte[] bytes = new byte[l * frameSize];
 
-		for (int i = 0; i < l; i++) {
-			final int offset = i * channels * sampleSize;
+		for (int frame = 0; frame < l; frame++) {
+			final int offset = frame * frameSize;
 			for (int channel = 0; channel < channels; channel++) {
 				final int channelOffset = offset + channel * sampleSize;
-				if (data[channel][i] == 0) {
+				if (data[channel][frame] == 0) {
 					continue;
 				}
 
-				writeSample(bytes, channelOffset, data[channel][i], sampleSize);
+				writeSample(bytes, channelOffset, data[channel][frame], sampleSize);
 			}
 		}
 

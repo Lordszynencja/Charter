@@ -3,7 +3,7 @@ package log.charter.gui.components.tabs.selectionEditor.bends;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
-import static log.charter.gui.ChartPanelColors.getStringBasedColor;
+import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.util.Utils.formatBendValue;
 
 import java.awt.Dimension;
@@ -20,6 +20,8 @@ import java.util.function.BiConsumer;
 
 import javax.swing.JComponent;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.config.values.GridConfig;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.BendValue;
@@ -27,8 +29,6 @@ import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
-import log.charter.gui.ChartPanelColors.ColorLabel;
-import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.util.data.Fraction;
 import log.charter.util.data.Position2D;
 

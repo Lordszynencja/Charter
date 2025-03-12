@@ -3,7 +3,7 @@ package log.charter.gui.components.tabs.selectionEditor;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
-import static log.charter.gui.ChartPanelColors.getStringBasedColor;
+import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 
@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 import javax.swing.JCheckBox;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.Arrangement;
@@ -37,7 +38,6 @@ import log.charter.data.song.notes.Note;
 import log.charter.data.song.notes.NoteInterface;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.ChartPanelColors.StringColorLabelType;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;

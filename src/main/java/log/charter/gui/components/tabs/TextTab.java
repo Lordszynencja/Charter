@@ -4,7 +4,7 @@ import java.awt.Graphics;
 
 import javax.swing.JTextArea;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.containers.CharterScrollPane;
 
 public class TextTab extends CharterScrollPane {

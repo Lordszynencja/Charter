@@ -12,8 +12,8 @@ import java.awt.Color;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.song.enums.Mute;
-import log.charter.gui.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.data.ChordBoxDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;

@@ -11,6 +11,7 @@ import com.breakfastquay.rubberband.RubberBandStretcher;
 import log.charter.data.config.values.AudioConfig;
 import log.charter.io.Logger;
 import log.charter.sound.data.AudioData;
+import log.charter.sound.data.AudioData.PlayingBuffer;
 import log.charter.sound.data.FloatQueue;
 import log.charter.sound.effects.Effect;
 import log.charter.sound.system.SoundSystem;
@@ -174,7 +175,8 @@ public class Player {
 
 	private void playSound(int startFrame) throws InterruptedException {
 		final int frames = musicData.frames();
-		final byte[] buffer = musicData.generatePlayingBuffer(AudioConfig.bufferSize);
+
+		final PlayingBuffer buffer = musicData.generatePlayingBuffer(AudioConfig.bufferSize);
 
 		while (startFrame < frames) {
 			if (stopped) {
@@ -185,9 +187,9 @@ public class Player {
 				return;
 			}
 
-			startFrame += musicData.fillPlayingBuffer(startFrame, buffer);
+			startFrame += buffer.write(startFrame);
 			final boolean lastBlock = startFrame >= frames;
-			writeBuffer(buffer, lastBlock);
+			writeBuffer(buffer.buffer, lastBlock);
 
 			if (playingStartTime < 0) {
 				playingStartTime = System.nanoTime() + AudioConfig.delay * 1_000_000;

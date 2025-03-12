@@ -48,7 +48,8 @@ public class ArrangementImportOptions extends ParamsPane {
 	private final List<ArrangementImportSetting> arrangementImportSettingsOptions;
 
 	public ArrangementImportOptions(final CharterFrame frame, final ArrangementFixer arrangementFixer,
-			final CharterMenuBar charterMenuBar, final ChartData data, final SongChart imported) {
+			final CharterMenuBar charterMenuBar, final ChartData data, final SongChart imported,
+			final List<String> trackNames) {
 		super(frame, Label.ARRANGEMENT_IMPORT_OPTIONS, 450);
 
 		this.arrangementFixer = arrangementFixer;
@@ -63,7 +64,8 @@ public class ArrangementImportOptions extends ParamsPane {
 		arrangementImportSettingsOptions = prepareArrangementImportSettingsOptions();
 
 		for (final Arrangement arrangement : imported.arrangements) {
-			addArrangementOptions(row++, arrangementId++, arrangement);
+			final String arrangementName = trackNames.get(arrangementId);
+			addArrangementOptions(row++, arrangementId++, arrangement, arrangementName);
 		}
 
 		row++;
@@ -84,8 +86,9 @@ public class ArrangementImportOptions extends ParamsPane {
 		return options;
 	}
 
-	private void addArrangementOptions(final int row, final int id, final Arrangement arrangement) {
-		final String name = Label.ARRANGEMENT_ID_NAME.label().formatted(id + 1, arrangement.getTypeNameLabel());
+	private void addArrangementOptions(final int row, final int id, final Arrangement arrangement,
+			final String arrangementName) {
+		final String name = Label.ARRANGEMENT_ID_NAME.label().formatted(id + 1, arrangementName);
 
 		addLabel(row, 10, name, 0);
 		arrangementImportSettings[id] = arrangementImportSettingsOptions.get(0);

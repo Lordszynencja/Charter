@@ -190,6 +190,7 @@ public class Localization {
 		NEW_PROJECT("New project"), //
 		NEW_VERSION("New version"), //
 		NEW_VERSION_AVAILABLE_DOWNLOAD("New version %s is available, you are on %s, open the download page?"), //
+		NEW_VERSION_AVAILABLE_UPDATE("New version %s is available, you are on %s, download the update?"), //
 		NEW_VOCAL_PATH("New vocal path..."), //
 		NO_PHRASES_IN_ARRANGEMENT("No phrases in arrangement"), //
 		NO_SECTIONS_IN_ARRANGEMENT("No sections in arrangement"), //

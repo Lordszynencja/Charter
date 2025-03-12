@@ -7,6 +7,7 @@ import static log.charter.io.gp.gp5.transformers.GP5FileTempoMapExtractor.getTem
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
@@ -60,6 +61,8 @@ public class GP5FileImporter {
 
 		final SongChart temporaryChart = GP5FileToSongChart.transform(gp5File, beatsMap, barsOrder);
 
-		new ArrangementImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart);
+		final List<String> trackNames = gp5File.tracks.stream().map(t -> t.trackName).collect(Collectors.toList());
+		new ArrangementImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart,
+				trackNames);
 	}
 }

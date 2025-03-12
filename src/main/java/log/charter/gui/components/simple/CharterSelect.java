@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import javax.swing.JComboBox;
 
-import log.charter.gui.ChartPanelColors.ColorLabel;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 
 public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 	public static class ItemHolder<T> {

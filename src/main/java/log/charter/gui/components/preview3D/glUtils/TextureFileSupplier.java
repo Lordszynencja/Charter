@@ -4,14 +4,12 @@ import java.io.File;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import log.charter.util.RW;
-
 public class TextureFileSupplier {
-	private final String dir;
+	private final File dir;
 	private final Supplier<String> nameSupplier;
 	private final Function<String, String> fileNameFunction;
 
-	public TextureFileSupplier(final String dir, final Supplier<String> nameSupplier,
+	public TextureFileSupplier(final File dir, final Supplier<String> nameSupplier,
 			final Function<String, String> fileNameFunction) {
 		this.dir = dir;
 		this.nameSupplier = nameSupplier;
@@ -19,11 +17,11 @@ public class TextureFileSupplier {
 	}
 
 	public File getFile() {
-		final File f = new File(RW.getProgramDirectory() + "\\" + dir + fileNameFunction.apply(nameSupplier.get()));
+		final File f = new File(dir, fileNameFunction.apply(nameSupplier.get()));
 		if (f.exists()) {
 			return f;
 		}
 
-		return new File(dir + fileNameFunction.apply("default"));
+		return new File(dir, fileNameFunction.apply("default"));
 	}
 }
