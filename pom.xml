@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
 	<artifactId>Charter</artifactId>
-	<version>0.21.0</version>
+	<version>0.21.1</version>
 	<packaging>jar</packaging>
 	<name>Charter</name>
 	<description>Charting program for guitar</description>
@@ -361,6 +361,7 @@
 												<include>languages/**</include>
 												<include>oggenc/**</include>
 												<include>manual.pdf</include>
+												<include>update.bat</include>
 											</includes>
 										</resource>
 										<resource>

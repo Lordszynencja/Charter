@@ -273,6 +273,11 @@ public class CharterContext {
 		onExit();
 	}
 
+	public void forceExit() {
+		audioHandler.stopMusic();
+		onExit();
+	}
+
 	private void onExit() {
 		audioFramer.stop();
 		framer.stop();

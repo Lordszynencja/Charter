@@ -167,7 +167,9 @@ public class RW {
 
 	public static void copy(final File from, final File to) {
 		try {
-			to.getParentFile().mkdirs();
+			if (to.getParentFile() != null) {
+				to.getParentFile().mkdirs();
+			}
 
 			final FileInputStream input = new FileInputStream(from);
 			final byte[] bytes = new byte[4096];
