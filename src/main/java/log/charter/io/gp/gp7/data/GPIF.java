@@ -23,6 +23,8 @@ public class GPIF {
 	public GP7Score score;
 	@XStreamAlias("MasterTrack")
 	public GP7MasterTrack masterTrack;
+	@XStreamAlias("BackingTrack")
+	public GP7BackingTrack backingTrack;
 	@XStreamAlias("Tracks")
 	public List<GP7Track> tracks;
 	@XStreamAlias("MasterBars")
@@ -42,6 +44,8 @@ public class GPIF {
 	@XStreamAlias("Rhythms")
 	@XStreamConverter(GP7RhythmsConverter.class)
 	public Map<Integer, GP7Rhythm> rhythms;
+	@XStreamAlias("Assets")
+	public List<GP7Asset> assets;
 
 	@Override
 	public String toString() {

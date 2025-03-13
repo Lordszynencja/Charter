@@ -1,5 +1,6 @@
 package log.charter.io.gp.gp7;
 
+import static java.lang.Math.max;
 import static log.charter.gui.components.utils.ComponentUtils.askYesNo;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 
@@ -87,7 +88,7 @@ public class GP7PlusFileImporter {
 
 		public void addValue(final GP7SyncPointValue value) {
 			tempo = value.modifiedTempo;
-			position = value.frameOffset / 44.100;
+			position = value.frameOffset / 44.1;
 		}
 
 		public double getQuarterNoteTempo() {
@@ -156,8 +157,8 @@ public class GP7PlusFileImporter {
 				+ bpmB * positionInChange / length;
 	}
 
-	private BeatsMap replaceTempoMap(final GPIF gpif) {
-		if (askYesNo(charterFrame, Label.GP5_IMPORT_TEMPO_MAP, Label.USE_TEMPO_MAP_FROM_IMPORT) != ConfirmAnswer.YES) {
+	private BeatsMap getTempoMap(final GPIF gpif, final boolean importBeatMap) {
+		if (!importBeatMap) {
 			return chartData.songChart.beatsMap;
 		}
 
@@ -169,6 +170,11 @@ public class GP7PlusFileImporter {
 		int tempoChangePointId = 0;
 		int barBeat = 0;
 		double position = 0;
+		double offset = 0;
+		if (gpif.backingTrack != null && gpif.backingTrack.framePadding != null) {
+			offset = max(0, -gpif.backingTrack.framePadding / 44.1);
+			position = offset;
+		}
 		boolean firstInMeasure = true;
 		for (final GP7MasterBar masterBar : gpif.masterBars) {
 			for (int beatId = barBeat; beatId < barBeat + masterBar.timeSignature.numerator; beatId++) {
@@ -183,7 +189,7 @@ public class GP7PlusFileImporter {
 						: tempoChangePoint;
 
 				if (beatId == tempoChangePoint.beatId && tempoChangePoint.position != null) {
-					position = tempoChangePoint.position;
+					position = offset + tempoChangePoint.position;
 				}
 
 				final double bpm = calculateBPM(masterBar, tempoChangePoint, nextTempoChangePoint, beatId);
@@ -208,22 +214,35 @@ public class GP7PlusFileImporter {
 		return beatsMap;
 	}
 
-	public void importGP7PlusFile(final File file) {
-		final GPIF gpif;
+	public GPIF importGPIF(final File file) {
 		try {
-			gpif = GP7FileXStreamHandler.readGPIF(file);
+			return GP7FileXStreamHandler.readGPIF(file);
 		} catch (final Exception e) {
 			Logger.error("Couldn't import GP7/8 file", e);
 			showPopup(charterFrame, Label.COULDNT_IMPORT_GP7);
+		}
 
+		return null;
+	}
+
+	public void importGP7PlusFile(final File file) {
+		final GPIF gpif = importGPIF(file);
+		if (gpif == null) {
 			return;
 		}
 
-		final BeatsMap beatsMap = replaceTempoMap(gpif);
-		final SongChart temporaryChart = GP7FileToSongChart.transform(gpif, beatsMap);
+		final boolean importBeatMap = askYesNo(charterFrame, Label.GP_IMPORT_TEMPO_MAP,
+				Label.USE_TEMPO_MAP_FROM_IMPORT) == ConfirmAnswer.YES;
+
+		final SongChart temporaryChart = transformGPIFToSongChart(gpif, importBeatMap);
 
 		final List<String> trackNames = gpif.tracks.stream().map(t -> t.name).collect(Collectors.toList());
 		new ArrangementImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart,
 				trackNames);
+	}
+
+	public SongChart transformGPIFToSongChart(final GPIF gpif, final boolean importBeatMap) {
+		final BeatsMap beatsMap = getTempoMap(gpif, importBeatMap);
+		return GP7FileToSongChart.transform(gpif, beatsMap);
 	}
 }

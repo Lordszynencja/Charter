@@ -46,13 +46,16 @@ abstract class CharterMenuHandler {
 		this.actionHandler = actionHandler;
 	}
 
-	protected JMenuItem createItem(final Action action) {
-		final Label label = action.label;
+	protected JMenuItem createItem(final Action action, final Label label) {
 		final Shortcut shortcut = ShortcutConfig.shortcuts.get(action);
 		final String shortcutName = shortcut == null ? null : shortcut.name("-");
 		final JMenuItem item = new SpecialMenuItem(label, shortcutName, () -> actionHandler.fireAction(action));
 		setDefaultColors(item);
 		return item;
+	}
+
+	protected JMenuItem createItem(final Action action) {
+		return createItem(action, action.label);
 	}
 
 	protected JMenuItem createDisabledItem(final Action action) {

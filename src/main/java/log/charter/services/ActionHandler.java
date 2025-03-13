@@ -30,8 +30,8 @@ import log.charter.services.data.VocalsHandler;
 import log.charter.services.data.beats.BPMDoubler;
 import log.charter.services.data.beats.BPMHalver;
 import log.charter.services.data.copy.CopyManager;
-import log.charter.services.data.files.NewProjectCreator;
 import log.charter.services.data.files.SongFileHandler;
+import log.charter.services.data.files.newProject.NewEmptyProjectCreator;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
@@ -55,7 +55,7 @@ public class ActionHandler implements Initiable {
 	private MetronomeHandler metronomeHandler;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
-	private NewProjectCreator newProjectCreator;
+	private NewEmptyProjectCreator newEmptyProjectCreator;
 	private RepeatManager repeatManager;
 	private SelectionManager selectionManager;
 	private SongFileHandler songFileHandler;
@@ -289,7 +289,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.MOVE_TO_FIRST_ITEM, chartTimeHandler::moveToFirstItem);
 		actionHandlers.put(Action.MOVE_TO_LAST_ITEM, chartTimeHandler::moveToLastItem);
 		actionHandlers.put(Action.MOVE_TO_START, chartTimeHandler::moveToBeginning);
-		actionHandlers.put(Action.NEW_PROJECT, newProjectCreator::newSong);
+		actionHandlers.put(Action.NEW_PROJECT, newEmptyProjectCreator::newProject);
 		actionHandlers.put(Action.NEXT_BEAT, chartTimeHandler::moveToNextBeat);
 		actionHandlers.put(Action.NEXT_GRID, chartTimeHandler::moveToNextGrid);
 		actionHandlers.put(Action.NEXT_ITEM, chartTimeHandler::moveToNextItem);

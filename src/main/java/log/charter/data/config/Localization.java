@@ -86,7 +86,6 @@ public class Localization {
 		COULDNT_LOAD_AUDIO("Couldn't load audio from %s"), //
 		COULDNT_READ_TXT("Couldn't import file %s, unrecognized format"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
-		CREATE_PROJECT_FROM_RS_XML("Create project from RS arrangement XML"), //
 		DELETE("Delete"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
 		DELETE_ARRANGEMENT_POPUP_MSG("Are you sure you want to delete arrangement %s?"), //
@@ -134,6 +133,7 @@ public class Localization {
 		FRETS("Frets"), //
 		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
+		GP_FILES_FOLDER("GP files folder"), //
 		HALVING_BPM_MUST_START_ON_MEASURE_BEGINNING("You can only halve BPM from the beginning of a measure"), //
 		HALVING_BPM_UNEVEN_BEATS_IN_MEASURE("Uneven beats count, can't halve BPM"), //
 		HAMMER_ON_ON_FRET_ZERO("Hammer on on fret zero"), //
@@ -188,6 +188,9 @@ public class Localization {
 		MUSIC_FOLDER("Music folder"), //
 		NEW_ARRANGEMENT("New arrangement..."), //
 		NEW_PROJECT("New project"), //
+		NEW_PROJECT_EMPTY("Empty project"), //
+		NEW_PROJECT_RS_XML("Project from RS XML"), //
+		NEW_PROJECT_GP7("Project from GP7+ file"), //
 		NEW_VERSION("New version"), //
 		NEW_VERSION_AVAILABLE_DOWNLOAD("New version %s is available, you are on %s, open the download page?"), //
 		NEW_VERSION_AVAILABLE_UPDATE("New version %s is available, you are on %s, download the update?"), //
@@ -507,7 +510,8 @@ public class Localization {
 		FOLDER_EXISTS_CHOOSE_DIFFERENT("Given folder already exists, choose different name"), //
 		GENERATING_SLOWED_SOUND("Playback speed added to queue"), //
 		GP_FILE("GP file (.gp3, .gp4, .gp5, .gp)"), //
-		GP5_IMPORT_TEMPO_MAP("GP5 import tempo map"), //
+		GP7_FILE("GP7+ file (.gp)"), //
+		GP_IMPORT_TEMPO_MAP("GP import tempo map"), //
 		MOVE_BACKWARD("Move backward"), //
 		MOVE_FORWARD("Move forward"), //
 		LOADING("Please wait, loading..."), //

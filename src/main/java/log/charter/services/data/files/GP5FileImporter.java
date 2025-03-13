@@ -14,6 +14,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.song.BeatsMap;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.gui.panes.imports.ArrangementImportOptions;
 import log.charter.io.Logger;
@@ -31,10 +32,7 @@ public class GP5FileImporter {
 	private ChartTimeHandler chartTimeHandler;
 
 	private boolean askUserAboutUsingImportTempoMap() {
-		return switch (askYesNo(charterFrame, Label.GP5_IMPORT_TEMPO_MAP, Label.USE_TEMPO_MAP_FROM_IMPORT)) {
-			case YES -> true;
-			default -> false;
-		};
+		return askYesNo(charterFrame, Label.GP_IMPORT_TEMPO_MAP, Label.USE_TEMPO_MAP_FROM_IMPORT) == ConfirmAnswer.YES;
 	}
 
 	public void importGP5File(final File file) {

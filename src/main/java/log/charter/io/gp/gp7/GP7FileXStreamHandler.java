@@ -9,7 +9,9 @@ import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.collections.MapConverter;
 
 import log.charter.io.XMLHandler;
+import log.charter.io.gp.gp7.data.GP7Asset;
 import log.charter.io.gp.gp7.data.GP7Automation;
+import log.charter.io.gp.gp7.data.GP7BackingTrack;
 import log.charter.io.gp.gp7.data.GP7Bar;
 import log.charter.io.gp.gp7.data.GP7Beat;
 import log.charter.io.gp.gp7.data.GP7MasterBar;
@@ -34,7 +36,9 @@ public class GP7FileXStreamHandler {
 		xstream.ignoreUnknownElements();
 		xstream.processAnnotations(GPIF.class);
 		xstream.allowTypes(new Class[] { //
+				GP7Asset.class, //
 				GP7Automation.class, //
+				GP7BackingTrack.class, //
 				GP7Bar.class, //
 				GP7Beat.class, //
 				GP7MasterBar.class, //

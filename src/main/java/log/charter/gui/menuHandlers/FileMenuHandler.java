@@ -21,8 +21,9 @@ import log.charter.services.data.files.GP5FileImporter;
 import log.charter.services.data.files.LRCImporter;
 import log.charter.services.data.files.MidiImporter;
 import log.charter.services.data.files.RSXMLImporter;
-import log.charter.services.data.files.SongFileHandler;
 import log.charter.services.data.files.USCTxtImporter;
+import log.charter.services.data.files.newProject.NewProjectFromGP7Creator;
+import log.charter.services.data.files.newProject.NewProjectFromRSXMLCreator;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.utils.Framer;
@@ -40,9 +41,10 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 	private LRCImporter lrcImporter;
 	private MidiImporter midiImporter;
 	private ModeManager modeManager;
+	private NewProjectFromGP7Creator newProjectFromGP7Creator;
+	private NewProjectFromRSXMLCreator newProjectFromRSXMLCreator;
 	private ProjectAudioHandler projectAudioHandler;
 	private RSXMLImporter rsXMLImporter;
-	private SongFileHandler songFileHandler;
 	private USCTxtImporter uscTxtImporter;
 
 	@Override
@@ -55,31 +57,46 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 		super.init(actionHandler);
 	}
 
+	private JMenu prepareNewProjectMenu() {
+		final JMenu newProjectSubmenu = createMenu(Label.NEW_PROJECT);
+		newProjectSubmenu.add(createItem(Action.NEW_PROJECT, Label.NEW_PROJECT_EMPTY));
+		newProjectSubmenu.add(createItem(Label.NEW_PROJECT_RS_XML,
+				newProjectFromRSXMLCreator::createSongWithImportFromArrangementXML));
+		newProjectSubmenu.add(createItem(Label.NEW_PROJECT_GP7, newProjectFromGP7Creator::createProject));
+		// TODO create projects based on GPA files
+
+		return newProjectSubmenu;
+	}
+
+	private JMenu prepareImportsMenu() {
+		final JMenu importSubmenu = createMenu(Label.FILE_MENU_IMPORT);
+		importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_MIDI_TEMPO, this::importMidiTempo));
+		importSubmenu.addSeparator();
+
+		importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_VOCALS, this::importRSVocalsXML));
+		importSubmenu.add(createItem(Label.IMPORT_LRC_VOCALS, this::importLRCVocals));
+		importSubmenu.add(createItem(Label.IMPORT_USC_VOCALS, this::importUSCVocals));
+		importSubmenu.addSeparator();
+
+		importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_GUITAR, this::importRSArrangementXML));
+		importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_GP, this::importGPFile));
+
+		return importSubmenu;
+	}
+
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.FILE_MENU);
-		menu.add(createItem(Action.NEW_PROJECT));
+		menu.add(prepareNewProjectMenu());
 		menu.add(createItem(Action.OPEN_PROJECT));
-		menu.add(createItem(Label.CREATE_PROJECT_FROM_RS_XML, songFileHandler::createSongWithImportFromArrangementXML));
-//TODO create projects based on gp5/gp8/GPA files
 
 		if (modeManager.getMode() != EditMode.EMPTY) {
+			menu.addSeparator();
 			menu.add(createItem(Label.CHANGE_AUDIO, this::openAudioFile));
 			menu.add(createItem(Label.ADD_AUDIO_STEM, this::addAudioStem));
 
-			final JMenu importSubmenu = createMenu(Label.FILE_MENU_IMPORT);
-			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_MIDI_TEMPO, this::importMidiTempo));
-			importSubmenu.addSeparator();
-
-			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_VOCALS, this::importRSVocalsXML));
-			importSubmenu.add(createItem(Label.IMPORT_LRC_VOCALS, this::importLRCVocals));
-			importSubmenu.add(createItem(Label.IMPORT_USC_VOCALS, this::importUSCVocals));
-			importSubmenu.addSeparator();
-
-			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_GUITAR, this::importRSArrangementXML));
-			importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_GP, this::importGPFile));
-
-			menu.add(importSubmenu);
+			menu.addSeparator();
+			menu.add(prepareImportsMenu());
 
 			menu.addSeparator();
 			menu.add(createItem(Action.SAVE));

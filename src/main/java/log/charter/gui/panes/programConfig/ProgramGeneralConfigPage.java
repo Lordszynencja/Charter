@@ -34,6 +34,7 @@ public class ProgramGeneralConfigPage implements Page {
 
 	private String musicPath = PathsConfig.musicPath;
 	private String songsPath = PathsConfig.songsPath;
+	private String gpFilesPath = PathsConfig.gpFilesPath;
 
 	private SoundFileType baseAudioFormat = Config.baseAudioFormat;
 
@@ -49,6 +50,8 @@ public class ProgramGeneralConfigPage implements Page {
 	private JButton musicFolderPickerButton;
 	private FieldWithLabel<TextInputWithValidation> songsPathField;
 	private JButton songsFolderPickerButton;
+	private FieldWithLabel<TextInputWithValidation> gpFilesPathField;
+	private JButton gpFilesFolderPickerButton;
 
 	private FieldWithLabel<CharterSelect<SoundFileType>> baseAudioFormatField;
 
@@ -63,27 +66,29 @@ public class ProgramGeneralConfigPage implements Page {
 	@Override
 	public void init(final RowedPanel panel, final RowedPosition position) {
 		addMusicPath(panel, position);
-		position.newRow();
 
+		position.newRow();
 		addSongsPath(panel, position);
+
+		position.newRow();
+		addGpFilesPath(panel, position);
+
 		position.newRow();
 		addBaseAudioFormatSelect(panel, position);
 
 		position.newRow();
 		position.newRow();
-
 		addMinNoteDistance(panel, position);
-		position.newRow();
 
+		position.newRow();
 		addMinTailLength(panel, position);
-		position.newRow();
-		position.newRow();
 
+		position.newRow();
+		position.newRow();
 		addSelectNotesByTails(panel, position);
-		position.newRow();
 
-		addBackupDelay(panel, position);
 		position.newRow();
+		addBackupDelay(panel, position);
 	}
 
 	private TextInputWithValidation addPathInput(final String value, final Consumer<String> onchange) {
@@ -129,6 +134,12 @@ public class ProgramGeneralConfigPage implements Page {
 		final TextInputWithValidation input = addPathInput(songsPath, val -> songsPath = val);
 		songsPathField = generatePathField(panel, position, Label.SONGS_FOLDER, input);
 		songsFolderPickerButton = addPathSelectButton(panel, position, songsPath, songsPathField);
+	}
+
+	private void addGpFilesPath(final RowedPanel panel, final RowedPosition position) {
+		final TextInputWithValidation input = addPathInput(gpFilesPath, val -> gpFilesPath = val);
+		gpFilesPathField = generatePathField(panel, position, Label.GP_FILES_FOLDER, input);
+		gpFilesFolderPickerButton = addPathSelectButton(panel, position, gpFilesPath, gpFilesPathField);
 	}
 
 	private void addBaseAudioFormatSelect(final RowedPanel panel, final RowedPosition position) {
@@ -207,9 +218,11 @@ public class ProgramGeneralConfigPage implements Page {
 	public void setVisible(final boolean visibility) {
 		musicPathField.setVisible(visibility);
 		musicFolderPickerButton.setVisible(visibility);
-		baseAudioFormatField.setVisible(visibility);
 		songsPathField.setVisible(visibility);
 		songsFolderPickerButton.setVisible(visibility);
+		gpFilesPathField.setVisible(visibility);
+		gpFilesFolderPickerButton.setVisible(visibility);
+		baseAudioFormatField.setVisible(visibility);
 		minSpaceFactorField.setVisible(visibility);
 		minSpaceTypeField.setVisible(visibility);
 		minLengthFactorField.setVisible(visibility);
@@ -221,6 +234,7 @@ public class ProgramGeneralConfigPage implements Page {
 	public void save() {
 		PathsConfig.musicPath = musicPath;
 		PathsConfig.songsPath = songsPath;
+		PathsConfig.gpFilesPath = gpFilesPath;
 
 		Config.baseAudioFormat = baseAudioFormat;
 

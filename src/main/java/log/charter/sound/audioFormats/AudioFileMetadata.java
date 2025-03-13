@@ -93,10 +93,12 @@ public class AudioFileMetadata {
 						case "TITLE" -> metadata.title = value;
 						case "ALBUM" -> metadata.album = value;
 						case "YEAR" -> {
-							try {
-								metadata.year = Integer.valueOf(value);
-							} catch (final NumberFormatException e) {
-								Logger.error("Wrong year value in metadata: " + value);
+							if (value != null && !value.isBlank()) {
+								try {
+									metadata.year = Integer.valueOf(value);
+								} catch (final NumberFormatException e) {
+									Logger.error("Wrong year value in metadata: " + value);
+								}
 							}
 						}
 					}
