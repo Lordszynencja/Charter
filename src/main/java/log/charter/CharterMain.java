@@ -11,36 +11,53 @@ import log.charter.services.CharterContext;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 
 public class CharterMain {
-	public static final String VERSION = "0.21.3";
+	public static final String VERSION = "0.21.4";
 	public static final String VERSION_DATE = "2025.03.13 16:00";
 	public static final String TITLE = "Charter " + VERSION;
 
-	public static void main(final String[] args) throws InterruptedException, IOException {
+	private static void deleteTempUpdateFile() {
 		try {
-			new File("tmp_update.bat").delete();
+			final File tempUpdateFile = new File("app/tmp_update.bat");
+			if (tempUpdateFile.exists()) {
+				tempUpdateFile.delete();
+			}
 		} catch (final SecurityException e) {
 			Logger.debug("Couldn't delete tmp_update.bat", e);
 		}
+	}
 
+	private static void initConfigs() {
+		Config.init();
+		GraphicalConfig.init();
+		ShortcutConfig.init();
+	}
+
+	private static String getPathToOpen(final String[] args) {
+		if (args.length > 0) {
+			return args[0];
+		}
+
+		return PathsConfig.lastPath;
+	}
+
+	private static void startContext(final String[] args) {
+		final String pathToOpen = getPathToOpen(args);
+
+		final CharterContext context = new CharterContext();
+		context.init();
+
+		if (pathToOpen != null && !pathToOpen.isBlank()) {
+			context.openProject(pathToOpen);
+		}
+
+		context.checkForUpdates();
+	}
+
+	public static void main(final String[] args) throws InterruptedException, IOException {
 		try {
-			Config.init();
-			GraphicalConfig.init();
-			ShortcutConfig.init();
-
-			String pathToOpen = PathsConfig.lastPath;
-			if (args.length > 0) {
-				pathToOpen = args[0];
-			}
-
-			final CharterContext context = new CharterContext();
-			context.init();
-
-			if (pathToOpen != null && !pathToOpen.isEmpty()) {
-				context.openProject(pathToOpen);
-			}
-
-			context.checkForUpdates();
-
+			deleteTempUpdateFile();
+			initConfigs();
+			startContext(args);
 			Logger.info("Charter started");
 		} catch (final Throwable t) {
 			Logger.error("Couldn't start Charter", t);

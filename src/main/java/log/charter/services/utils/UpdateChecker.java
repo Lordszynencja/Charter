@@ -58,6 +58,21 @@ public class UpdateChecker {
 		return location.substring(slashPosition + 1);
 	}
 
+	private static void makeTempUpdateFile() {
+		final File updateScriptFile = new File(RW.getProgramDirectory(), "update.bat");
+		final File tmpFile = new File(RW.getProgramDirectory(), "tmp_update.bat");
+
+		RW.copy(updateScriptFile, tmpFile);
+	}
+
+	private static void runUpdate(final String oldVersion, final String newVersion) throws IOException {
+		makeTempUpdateFile();
+
+		new ProcessBuilder()//
+				.command("cmd.exe", "/c", "START \"\" tmp_update.bat " + newVersion + " " + oldVersion)//
+				.directory(RW.getProgramDirectory()).start();
+	}
+
 	private CharterContext charterContext;
 	private CharterFrame charterFrame;
 
@@ -71,12 +86,6 @@ public class UpdateChecker {
 
 		try {
 			Desktop.getDesktop().browse(latestVersionLink);
-			try {
-				Runtime.getRuntime().exec("cmd /c start \"Charter update\" update.bat " + newVersion);
-				charterContext.forceExit();
-			} catch (final IOException e) {
-				Logger.error("Couldn't autoupdate", e);
-			}
 		} catch (final Exception e) {
 			Logger.error("Couldn't open browser", e);
 		}
@@ -91,18 +100,10 @@ public class UpdateChecker {
 		}
 
 		try {
-			try {
-				final File tmpFile = new File("tmp_update.bat");
-				RW.copy(new File("update.bat"), tmpFile);
-
-				final String baseCmd = "cmd.exe /c tmp_update.bat " + newVersion + " " + CharterMain.VERSION;
-				Runtime.getRuntime().exec(baseCmd);
-				charterContext.forceExit();
-			} catch (final IOException e) {
-				Logger.error("Couldn't autoupdate", e);
-			}
-		} catch (final Exception e) {
-			Logger.error("Couldn't open browser", e);
+			runUpdate(CharterMain.VERSION, newVersion);
+			charterContext.forceExit();
+		} catch (final IOException e) {
+			Logger.error("Couldn't autoupdate", e);
 		}
 	}
 

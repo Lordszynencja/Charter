@@ -8,10 +8,11 @@ import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.SystemType;
 
 public class Utils {
+	public static final boolean isDevEnv = new File("pom.xml").exists();
 	public static final String defaultConfigDir = getDefaultConfigDir();
 
 	private static String getDefaultConfigDir() {
-		final String programFolderName = new File("pom.xml").exists() ? "Charter_dev" : "Charter";
+		final String programFolderName = isDevEnv ? "Charter_dev" : "Charter";
 
 		return switch (SystemType.systemType) {
 			case WINDOWS -> System.getenv("APPDATA") + "/" + programFolderName + "/";

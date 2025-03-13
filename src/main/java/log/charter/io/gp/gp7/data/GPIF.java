@@ -6,6 +6,7 @@ import java.util.Map;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import log.charter.io.gp.gp7.converters.GP7BarsConverter;
 import log.charter.io.gp.gp7.converters.GP7BeatsConverter;
@@ -47,6 +48,9 @@ public class GPIF {
 	@XStreamAlias("Assets")
 	public List<GP7Asset> assets;
 
+	@XStreamOmitField
+	public float sampleRate = 44100;
+
 	@Override
 	public String toString() {
 		final StringBuilder b = new StringBuilder("GPIF {")//
@@ -65,4 +69,8 @@ public class GPIF {
 		return b.toString();
 	}
 
+	public boolean containsAudioTrackAsset() {
+		return backingTrack != null && backingTrack.source != null && backingTrack.source.equalsIgnoreCase("local")
+				&& backingTrack.assetId != null;
+	}
 }

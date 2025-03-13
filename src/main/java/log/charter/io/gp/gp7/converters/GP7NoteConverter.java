@@ -153,21 +153,20 @@ public class GP7NoteConverter implements Converter {
 				case "ConcertPitch" -> {}
 				case "Midi" -> {}
 				case "TransposedPitch" -> {}
-				default -> {
-					Logger.debug("Unknown GP7Note property " + reader.getAttribute("name") + ":\n"
-							+ getNodeString(reader, 0));
-				}
+				default -> Logger.warning(
+						"Unknown GP7Note property " + reader.getAttribute("name") + ":\n" + getNodeString(reader, 0));
 			}
 			reader.moveUp();
 		}
 	}
 
-	private void mapLeftFingering(final HierarchicalStreamReader reader, final GP7Note gp7Note) {
-		gp7Note.finger = switch (reader.getValue()) {
+	private int mapFingering(final HierarchicalStreamReader reader, final GP7Note gp7Note) {
+		return switch (reader.getValue()) {
 			case "I" -> 1;
 			case "M" -> 2;
 			case "C" -> 3;
 			case "A" -> 4;
+			case "P" -> 4;
 			case "T" -> 0;
 			default -> throw new IllegalArgumentException("Unexpected value: " + reader.getValue());
 		};
@@ -176,10 +175,6 @@ public class GP7NoteConverter implements Converter {
 	private void mapTie(final HierarchicalStreamReader reader, final GP7Note gp7Note) {
 		gp7Note.tieOrigin = reader.getAttribute("origin").equals("true");
 		gp7Note.tieDestination = reader.getAttribute("destination").equals("true");
-	}
-
-	private void mappingUnknownField(final HierarchicalStreamReader reader) {
-		Logger.error("Unknown GP7Note field " + reader.getNodeName() + ":\n" + getNodeString(reader, 0));
 	}
 
 	@Override
@@ -191,13 +186,15 @@ public class GP7NoteConverter implements Converter {
 			switch (reader.getNodeName()) {
 				case "Properties" -> mapProperties(reader, gp7Note);
 				case "Accent" -> { gp7Note.accent = "1".equals(reader.getValue()); }
-				case "LeftFingering" -> mapLeftFingering(reader, gp7Note);
+				case "LeftFingering" -> gp7Note.finger = mapFingering(reader, gp7Note);
+				case "RightFingering" -> gp7Note.rightFinger = mapFingering(reader, gp7Note);
 				case "Tie" -> mapTie(reader, gp7Note);
 				case "Vibrato" -> { gp7Note.vibrato = true; }
 				case "AntiAccent" -> {}
 				case "InstrumentArticulation" -> {}
 				case "LetRing" -> {}
-				default -> mappingUnknownField(reader);
+				default ->
+					Logger.warning("Unknown GP7Note field " + reader.getNodeName() + ":\n" + getNodeString(reader, 0));
 			}
 			reader.moveUp();
 		}

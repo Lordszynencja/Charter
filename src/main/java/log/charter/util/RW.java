@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -19,17 +20,17 @@ import log.charter.io.Logger;
 
 public class RW {
 	public static File getProgramDirectory() {
+		if (Utils.isDevEnv) {
+			return new File("target\\Charter").getAbsoluteFile();
+		}
+
 		try {
-			final File file = new File(RW.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-			if (file.getName().endsWith(".exe")) {
-				return file.getParentFile();
-			}
+			final URI uri = RW.class.getProtectionDomain()//
+					.getCodeSource()//
+					.getLocation()//
+					.toURI();
 
-			if (file.getAbsolutePath().contains("Charter\\target\\classes")) {
-				return new File("target\\Charter").getAbsoluteFile();
-			}
-
-			return file.getParentFile();
+			return new File(uri).getParentFile();
 		} catch (final URISyntaxException e) {
 			return new File("");
 		}
