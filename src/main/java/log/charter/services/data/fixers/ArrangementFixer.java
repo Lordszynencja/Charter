@@ -7,10 +7,8 @@ import static log.charter.util.CollectionUtils.min;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
@@ -32,10 +30,11 @@ import log.charter.data.song.vocals.VocalPath;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.util.CollectionUtils;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.data.Fraction;
 
 public class ArrangementFixer {
+	private static final FractionalPosition maxDistanceBeforeBreakingHandshape = new FractionalPosition(2);
+
 	private ChartData chartData;
 	private ChartTimeHandler chartTimeHandler;
 	private ChordTemplatesEditorTab chordTemplatesEditorTab;
@@ -68,37 +67,67 @@ public class ArrangementFixer {
 		positions.removeAll(positionsToRemove);
 	}
 
-	private void addMissingHandShapes(final Level level) {
-		final ImmutableBeatsMap beats = chartData.beats();
-
-		final LinkedList<Chord> chordsForHandShapes = level.sounds.stream()//
-				.filter(chordOrNote -> chordOrNote.isChord())//
-				.map(chordOrNote -> chordOrNote.chord())//
-				.collect(Collectors.toCollection(LinkedList::new));
-		final ArrayList2<Chord> chordsWithoutHandShapes = new ArrayList2<>();
-		for (final HandShape handShape : level.handShapes) {
-			while (!chordsForHandShapes.isEmpty() && chordsForHandShapes.get(0).compareTo(handShape) < 0) {
-				chordsWithoutHandShapes.add(chordsForHandShapes.remove(0));
-			}
-			while (!chordsForHandShapes.isEmpty()
-					&& chordsForHandShapes.get(0).compareTo(handShape.endPosition()) < 0) {
-				chordsForHandShapes.remove(0);
-			}
+	private void addHandShapeForChord(final List<EventPoint> phrases, final Level level, final Chord chord,
+			final int id, final HandShape nextHandShape, final int nextHandShapeId) {
+		IConstantFractionalPosition maxEndPosition = level.sounds.get(level.sounds.size() - 1).endPosition();
+		final EventPoint nextPhrase = CollectionUtils.firstAfter(phrases, chord).find();
+		if (nextPhrase != null) {
+			maxEndPosition = max(maxEndPosition, nextPhrase);
 		}
-		chordsWithoutHandShapes.addAll(chordsForHandShapes);
-
-		for (final Chord chord : chordsWithoutHandShapes) {
-			final FractionalPosition position = chord.toFraction(beats).position();
-			FractionalPosition endPosition = chord.endPosition().toFraction(beats).position();
-			if (chord.length().compareTo(new FractionalPosition(new Fraction(1, 8))) < 0) {
-				endPosition = position.add(new Fraction(1, 8));
-			}
-
-			final HandShape handShape = new HandShape(position, endPosition, chord.templateId());
-			level.handShapes.add(handShape);
+		if (nextHandShape != null) {
+			maxEndPosition = max(maxEndPosition, nextHandShape);
 		}
 
-		level.handShapes.sort(IConstantFractionalPosition::compareTo);
+		Chord lastChord = chord;
+		for (int i = id + 1; i < level.sounds.size(); i++) {
+			final ChordOrNote sound = level.sounds.get(i);
+			if (!sound.isChord() || sound.position().compareTo(maxEndPosition) >= 0) {
+				break;
+			}
+
+			final Chord nextChord = sound.chord();
+			if (nextChord.templateId() != chord.templateId()) {
+				break;
+			}
+			if (nextChord.distance(lastChord.endPosition()).compareTo(maxDistanceBeforeBreakingHandshape) > 0) {
+				break;
+			}
+
+			lastChord = nextChord;
+		}
+
+		final FractionalPosition position = chord.position();
+		FractionalPosition endPosition = lastChord.endPosition().position();
+		if (endPosition.compareTo(lastChord) <= 0) {
+			endPosition = endPosition.add(new Fraction(1, 4));
+		}
+
+		final HandShape handShape = new HandShape(position, endPosition, chord.templateId());
+		level.handShapes.add(nextHandShapeId, handShape);
+	}
+
+	private void addMissingHandShapes(final Arrangement arrangement, final Level level) {
+		final List<EventPoint> phrases = filter(arrangement.eventPoints, ep -> ep.hasPhrase());
+
+		int handShapeId = 0;
+		HandShape handShape = level.handShapes.isEmpty() ? null : level.handShapes.get(handShapeId);
+		for (int i = 0; i < level.sounds.size(); i++) {
+			final ChordOrNote sound = level.sounds.get(i);
+			if (!sound.isChord()) {
+				continue;
+			}
+			while (handShape != null && handShape.endPosition().compareTo(sound) < 0) {
+				handShapeId++;
+				handShape = handShapeId >= level.handShapes.size() ? null : level.handShapes.get(handShapeId);
+			}
+			if (handShape != null && handShape.position().compareTo(sound) <= 0) {
+				continue;
+			}
+
+			final Chord chord = sound.chord();
+			addHandShapeForChord(phrases, level, chord, i, handShape, handShapeId);
+			handShape = level.handShapes.get(handShapeId);
+		}
 	}
 
 	private void addMissingFHPs(final Arrangement arrangement, final Level level) {
@@ -244,7 +273,7 @@ public class ArrangementFixer {
 		removeDuplicatesFractional(level.handShapes);
 
 		addMissingFHPs(arrangement, level);
-		addMissingHandShapes(level);
+		addMissingHandShapes(arrangement, level);
 
 		fixNoteLengths(level.sounds);
 		fixLengths(level.handShapes);
