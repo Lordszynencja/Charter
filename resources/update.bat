@@ -10,7 +10,7 @@ tar -xf tmp.zip
 
 ROBOCOPY Charter ../ /MOVE /NFL /NDL
 
-CD ../../
+CD ../
 RD /S /Q tmp_%version%
 
 REG COPY HKLM\Software\Lordszynencja\Charter\%oldVersion% HKLM\Software\Lordszynencja\Charter\%version% /s /f
