@@ -1,7 +1,6 @@
 package log.charter.services.data.files;
 
 import static log.charter.gui.components.utils.ComponentUtils.askYesNoCancel;
-import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.saveVocals;
 import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.writeChartProject;
 import static log.charter.util.FileChooseUtils.chooseFile;
@@ -14,26 +13,20 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.PathsConfig;
 import log.charter.data.song.Arrangement;
-import log.charter.data.song.SongChart;
 import log.charter.data.song.vocals.VocalPath;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.simple.LoadingDialog;
 import log.charter.gui.components.tabs.TextTab;
-import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
-import log.charter.io.rs.xml.RSXMLToSongChart;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
 import log.charter.io.rs.xml.vocals.ArrangementVocals;
 import log.charter.io.rsc.xml.ChartProject;
-import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
-import log.charter.sound.data.AudioData;
 import log.charter.util.FileChooseUtils;
 import log.charter.util.RW;
 import log.charter.util.Timer;
@@ -42,11 +35,9 @@ public class SongFileHandler {
 	public static final String vocalsFileName = "Vocals_RS2.xml";
 
 	private ArrangementFixer arrangementFixer;
-	private AudioHandler audioHandler;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
-	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private ExistingProjectImporter existingProjectImporter;
 	private ModeManager modeManager;
 	private ProjectAudioHandler projectAudioHandler;
@@ -70,69 +61,6 @@ public class SongFileHandler {
 		}
 
 		existingProjectImporter.open(projectFileChosen.getAbsolutePath());
-	}
-
-	private File chooseSongFile() {
-		final String fileChooseDir = modeManager.getMode() == EditMode.EMPTY ? PathsConfig.songsPath : chartData.path;
-		return FileChooseUtils.chooseMusicFile(charterFrame, fileChooseDir);
-	}
-
-	private AudioData loadMusicFile(final File songFile) {
-		final LoadingDialog loadingDialog = new LoadingDialog(charterFrame, 1);
-		loadingDialog.setProgress(0, Label.LOADING_MUSIC_FILE.label());
-		final AudioData musicData = AudioData.readFile(songFile);
-		if (musicData == null) {
-			loadingDialog.dispose();
-			showPopup(charterFrame, Label.MUSIC_FILE_COULDNT_BE_LOADED);
-			return null;
-		}
-
-		loadingDialog.dispose();
-		return musicData;
-	}
-
-	private SongChart readSongArrangement(final File songFile) {
-		final File arrangementFile = FileChooseUtils.chooseFile(charterFrame, songFile.getParent(),
-				new String[] { ".xml" }, new String[] { Label.RS_ARRANGEMENT_FILE.label() });
-		if (arrangementFile == null) {
-			return null;
-		}
-
-		final LoadingDialog loadingDialog = new LoadingDialog(charterFrame, 1);
-		loadingDialog.setProgress(0, Label.LOADING_ARRANGEMENTS.label());
-		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(arrangementFile);
-		final SongChart songChart = RSXMLToSongChart.makeSongChartForArrangement(songFile.getName(), songArrangement);
-		loadingDialog.dispose();
-
-		return songChart;
-	}
-
-	public void createSongWithImportFromArrangementXML() {
-		final File songFile = chooseSongFile();
-		if (songFile == null) {
-			return;
-		}
-
-		final AudioData musicData = loadMusicFile(songFile);
-		if (musicData == null) {
-			return;
-		}
-
-		final SongChart songChart = readSongArrangement(songFile);
-		if (songChart == null) {
-			return;
-		}
-
-		chartData.setSong(songFile.getParent() + File.separator, songChart, "project.rscp", EditMode.GUITAR, 0, 0);
-		textTab.setText("");
-		projectAudioHandler.setAudio(musicData);
-		projectAudioHandler.readStems();
-
-		chartTimeHandler.nextTime(0);
-		audioHandler.clear();
-		chordTemplatesEditorTab.refreshTemplates();
-
-		save();
 	}
 
 	private static String generateArrangementFileName(final int id, final Arrangement arrangementChart) {
