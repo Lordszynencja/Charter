@@ -27,6 +27,22 @@ public class GP7Note {
 		}
 	}
 
+	public enum SlideInType {
+		NONE, //
+		FROM_BELOW, // 4
+		FROM_ABOVE// 5
+		;
+	}
+
+	public enum SlideOutType {
+		NONE, //
+		TO_NEXT_NOTE, // 0
+		TO_NEXT_NOTE_LINKED, // 1
+		DOWN, // 2
+		UP// 3
+		;
+	}
+
 	public int string;
 	public int fret;
 	public int finger = -1;
@@ -45,7 +61,8 @@ public class GP7Note {
 	public boolean tieOrigin;
 	public boolean tieDestination;
 	public boolean vibrato;
-	public int slideFlag;
+	public SlideInType slideIn = SlideInType.NONE;
+	public SlideOutType slideOut = SlideOutType.NONE;
 	public boolean bend;
 	public double bendOriginOffset;
 	public double bendOriginValue;
@@ -74,7 +91,8 @@ public class GP7Note {
 				+ ", tieOrigin=" + tieOrigin//
 				+ ", tieDestination=" + tieDestination//
 				+ ", vibrato=" + vibrato//
-				+ ", slideFlag=" + slideFlag//
+				+ ", slideIn=" + slideIn//
+				+ ", slideOut=" + slideOut//
 				+ ", bend=" + bend//
 				+ ", bendOriginOffset=" + bendOriginOffset//
 				+ ", bendOriginValue=" + bendOriginValue//

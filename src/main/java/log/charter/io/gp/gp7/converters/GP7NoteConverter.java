@@ -9,6 +9,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import log.charter.io.Logger;
 import log.charter.io.gp.gp7.data.GP7Note;
 import log.charter.io.gp.gp7.data.GP7Note.GP7HarmonicType;
+import log.charter.io.gp.gp7.data.GP7Note.SlideInType;
+import log.charter.io.gp.gp7.data.GP7Note.SlideOutType;
 
 public class GP7NoteConverter implements Converter {
 	@SuppressWarnings("rawtypes")
@@ -74,6 +76,29 @@ public class GP7NoteConverter implements Converter {
 		return defaultValue;
 	}
 
+	private boolean checkSlideFlag(final int flags, final int position) {
+		return (flags & (1 << position)) > 0;
+	}
+
+	private void setSlides(final HierarchicalStreamReader reader, final GP7Note gp7Note) {
+		final int flags = readInt(reader, "Flags", 0);
+
+		if (checkSlideFlag(flags, 0)) {
+			gp7Note.slideOut = SlideOutType.TO_NEXT_NOTE;
+		} else if (checkSlideFlag(flags, 1)) {
+			gp7Note.slideOut = SlideOutType.TO_NEXT_NOTE_LINKED;
+		} else if (checkSlideFlag(flags, 2)) {
+			gp7Note.slideOut = SlideOutType.DOWN;
+		} else if (checkSlideFlag(flags, 3)) {
+			gp7Note.slideOut = SlideOutType.UP;
+		}
+		if (checkSlideFlag(flags, 4)) {
+			gp7Note.slideIn = SlideInType.FROM_BELOW;
+		} else if (checkSlideFlag(flags, 5)) {
+			gp7Note.slideIn = SlideInType.FROM_ABOVE;
+		}
+	}
+
 	private String getNodeString(final HierarchicalStreamReader reader, final int level) {
 		String node = "  ".repeat(level) + "<" + reader.getNodeName();
 		for (int i = 0; i < reader.getAttributeCount(); i++) {
@@ -102,34 +127,34 @@ public class GP7NoteConverter implements Converter {
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();
 			switch (reader.getAttribute("name")) {
-				case "String" -> { gp7Note.string = readInt(reader, "String", 0); }
-				case "Fret" -> { gp7Note.fret = readInt(reader, "Fret", 0); }
-				case "HopoOrigin" -> { gp7Note.hopoOrigin = readEnable(reader); }
-				case "HopoDestination" -> { gp7Note.hopoDestination = readEnable(reader); }
-				case "LeftHandTapped" -> { gp7Note.leftHandTapped = readEnable(reader); }
-				case "Tapped" -> { gp7Note.tapped = readEnable(reader); }
-				case "Muted" -> { gp7Note.mute = readEnable(reader); }
-				case "PalmMuted" -> { gp7Note.palmMute = readEnable(reader); }
-				case "Popped" -> { gp7Note.popped = readEnable(reader); }
-				case "Slapped" -> { gp7Note.slapped = readEnable(reader); }
-				case "Harmonic" -> { gp7Note.harmonic = readEnable(reader); }
-				case "HarmonicFret" -> { gp7Note.harmonicFret = readDouble(reader, "HFret", 12); }
+				case "String" -> gp7Note.string = readInt(reader, "String", 0);
+				case "Fret" -> gp7Note.fret = readInt(reader, "Fret", 0);
+				case "HopoOrigin" -> gp7Note.hopoOrigin = readEnable(reader);
+				case "HopoDestination" -> gp7Note.hopoDestination = readEnable(reader);
+				case "LeftHandTapped" -> gp7Note.leftHandTapped = readEnable(reader);
+				case "Tapped" -> gp7Note.tapped = readEnable(reader);
+				case "Muted" -> gp7Note.mute = readEnable(reader);
+				case "PalmMuted" -> gp7Note.palmMute = readEnable(reader);
+				case "Popped" -> gp7Note.popped = readEnable(reader);
+				case "Slapped" -> gp7Note.slapped = readEnable(reader);
+				case "Harmonic" -> gp7Note.harmonic = readEnable(reader);
+				case "HarmonicFret" -> gp7Note.harmonicFret = readDouble(reader, "HFret", 12);
 				case "HarmonicType" ->
-					{ gp7Note.harmonicType = GP7HarmonicType.valueOfWithCheck(readString(reader, "HType", "")); }
-				case "Slide" -> { gp7Note.slideFlag = readInt(reader, "Flags", -1); }
-				case "Bended" -> { gp7Note.bend = readEnable(reader); }
-				case "BendOriginOffset" -> { gp7Note.bendOriginOffset = readDouble(reader, "Float", 0); }
-				case "BendOriginValue" -> { gp7Note.bendOriginValue = readDouble(reader, "Float", 0); }
-				case "BendMiddleOffset1" -> { gp7Note.bendMiddleOffset1 = readDouble(reader, "Float", 0); }
-				case "BendMiddleOffset2" -> { gp7Note.bendMiddleOffset2 = readDouble(reader, "Float", 0); }
-				case "BendMiddleValue" -> { gp7Note.bendMiddleValue = readDouble(reader, "Float", 0); }
-				case "BendDestinationOffset" -> { gp7Note.bendDestinationOffset = readDouble(reader, "Float", 0); }
-				case "BendDestinationValue" -> { gp7Note.bendDestinationValue = readDouble(reader, "Float", 0); }
+					gp7Note.harmonicType = GP7HarmonicType.valueOfWithCheck(readString(reader, "HType", ""));
+				case "Slide" -> setSlides(reader, gp7Note);
+				case "Bended" -> gp7Note.bend = readEnable(reader);
+				case "BendOriginOffset" -> gp7Note.bendOriginOffset = readDouble(reader, "Float", 0);
+				case "BendOriginValue" -> gp7Note.bendOriginValue = readDouble(reader, "Float", 0);
+				case "BendMiddleOffset1" -> gp7Note.bendMiddleOffset1 = readDouble(reader, "Float", 0);
+				case "BendMiddleOffset2" -> gp7Note.bendMiddleOffset2 = readDouble(reader, "Float", 0);
+				case "BendMiddleValue" -> gp7Note.bendMiddleValue = readDouble(reader, "Float", 0);
+				case "BendDestinationOffset" -> gp7Note.bendDestinationOffset = readDouble(reader, "Float", 0);
+				case "BendDestinationValue" -> gp7Note.bendDestinationValue = readDouble(reader, "Float", 0);
 				case "ConcertPitch" -> {}
 				case "Midi" -> {}
 				case "TransposedPitch" -> {}
 				default -> {
-					Logger.info("Unknown GP7Note property " + reader.getAttribute("name") + ":\n"
+					Logger.debug("Unknown GP7Note property " + reader.getAttribute("name") + ":\n"
 							+ getNodeString(reader, 0));
 				}
 			}
