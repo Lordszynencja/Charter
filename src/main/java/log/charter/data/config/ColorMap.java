@@ -13,7 +13,7 @@ import log.charter.util.RW;
 import log.charter.util.Utils;
 
 public class ColorMap {
-	public static final File customColorsPath = new File(Utils.getDefaultConfigDir(), "customColors.ini");
+	public static final File customColorsPath = new File(Utils.defaultConfigDir, "customColors.ini");
 
 	private static int readColorValue(final String value, final int defaultValue) {
 		try {

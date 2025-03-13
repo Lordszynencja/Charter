@@ -27,7 +27,7 @@ import log.charter.util.RW;
 import log.charter.util.Utils;
 
 public class Config {
-	private static final String configPath = Utils.getDefaultConfigDir() + "config.ini";
+	private static final String configPath = Utils.defaultConfigDir + "config.ini";
 
 	public static String language = "English";
 	public static boolean defaultEofShortcuts = false;

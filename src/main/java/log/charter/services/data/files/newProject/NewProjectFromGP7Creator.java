@@ -57,7 +57,7 @@ public class NewProjectFromGP7Creator {
 			lastSlash = zipPath.lastIndexOf('\\');
 		}
 		final String fileName = lastSlash == -1 ? zipPath : zipPath.substring(lastSlash + 1);
-		final File tmpFile = new File(Utils.getDefaultConfigDir(), fileName);
+		final File tmpFile = new File(Utils.defaultConfigDir, fileName);
 		GP7ZipReader.unpackFile(gpFile, zipPath, tmpFile);
 		return tmpFile;
 	}

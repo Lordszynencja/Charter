@@ -17,7 +17,7 @@ import log.charter.util.RW;
 import log.charter.util.Utils;
 
 public class GraphicalConfig {
-	private static final String configPath = Utils.getDefaultConfigDir() + "graphicalConfig.ini";
+	private static final String configPath = Utils.defaultConfigDir + "graphicalConfig.ini";
 
 	public static Theme theme = Theme.MODERN;
 	public static int eventsChangeHeight = 10;
