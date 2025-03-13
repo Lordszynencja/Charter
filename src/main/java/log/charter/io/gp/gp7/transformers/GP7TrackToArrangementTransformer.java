@@ -4,6 +4,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.data.song.configs.Tuning.getStringDistance;
+import static log.charter.services.ArrangementFretHandPositionsCreator.createFHPs;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.Level;
 import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.configs.Tuning.TuningType;
 import log.charter.data.song.enums.BassPickingTechnique;
@@ -539,7 +541,10 @@ class GP7TrackToArrangementTransformer {
 				case 1 -> new SingleNoteCreator(notes).generateNote().getCreatedSounds();
 				default -> new ChordCreator(notes).setChordValues().getCreatedSounds();
 			};
-			arrangement.getLevel(0).sounds.addAll(sounds);
+
+			final Level level = arrangement.getLevel(0);
+			level.sounds.addAll(sounds);
+			createFHPs(beats, arrangement.chordTemplates, level.sounds, level.fhps);
 		}
 	}
 

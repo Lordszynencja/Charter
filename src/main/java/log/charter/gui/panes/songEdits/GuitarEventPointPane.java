@@ -162,10 +162,14 @@ public class GuitarEventPointPane extends ParamsPane {
 	private void onPhraseNameSelected(final String phraseName) {
 		phraseNameInput.setTextWithoutUpdate(phraseName);
 
-		final Phrase phrase = data.currentArrangement().phrases.get(phraseName);
+		Phrase phrase = data.currentArrangement().phrases.get(phraseName);
+		if (phrase == null) {
+			phrase = new Phrase();
+		}
 		phraseLevel = phrase.maxDifficulty;
-		phraseLevelInput.setText(phraseLevel + "");
 		phraseSolo = phrase.solo;
+
+		phraseLevelInput.setText(phraseLevel + "");
 		phraseSoloInput.setSelected(phraseSolo);
 	}
 

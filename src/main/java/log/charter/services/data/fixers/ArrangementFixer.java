@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.BendValue;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
@@ -21,14 +23,17 @@ import log.charter.data.song.SectionType;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
+import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
 import log.charter.data.song.vocals.VocalPath;
+import log.charter.data.types.PositionType;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.services.data.ChartTimeHandler;
+import log.charter.services.data.selection.SelectionManager;
 import log.charter.util.CollectionUtils;
 import log.charter.util.data.Fraction;
 
@@ -38,6 +43,7 @@ public class ArrangementFixer {
 	private ChartData chartData;
 	private ChartTimeHandler chartTimeHandler;
 	private ChordTemplatesEditorTab chordTemplatesEditorTab;
+	private SelectionManager selectionManager;
 
 	private void removeWrongEventPoints(final Arrangement arrangement) {
 		arrangement.eventPoints.removeIf(ep -> ep.section == null && !ep.hasPhrase() && ep.events.isEmpty());
@@ -163,6 +169,81 @@ public class ArrangementFixer {
 		}
 	}
 
+	private List<Integer> removeId(final List<Integer> ids, final int idToRemove) {
+		return ids.stream()//
+				.filter(id -> id != idToRemove)//
+				.map(id -> id > idToRemove ? id - 1 : id)//
+				.collect(Collectors.toCollection(ArrayList::new));
+	}
+
+	private void joinSimilarLinkedNotes(final Level level) {
+		final boolean guitarSelected = selectionManager.selectedType() == PositionType.GUITAR_NOTE;
+		List<Integer> selectedNoteIds = guitarSelected ? selectionManager.getSelectedIds(PositionType.GUITAR_NOTE)
+				: null;
+
+		if (guitarSelected) {
+			selectionManager.clear();
+		}
+
+		for (int i = 0; i < level.sounds.size(); i++) {
+			final ChordOrNote sound = level.sounds.get(i);
+			if (!sound.isNote()) {
+				continue;
+			}
+
+			final Note note = sound.note();
+			if (!note.linkNext || note.slideTo != null) {
+				continue;
+			}
+
+			int nextNoteId = i;
+			while (nextNoteId + 1 < level.sounds.size()) {
+				nextNoteId++;
+				final ChordOrNote nextSound = level.sounds.get(nextNoteId);
+				if (!nextSound.isNote()) {
+					final Chord chord = nextSound.chord();
+					if (chord.chordNotes.containsKey(note.string)) {
+						break;
+					}
+
+					continue;
+				}
+
+				final Note nextNote = nextSound.note();
+				if (nextNote.string != note.string) {
+					continue;
+				}
+
+				if (nextNote.fret != note.fret //
+						|| nextNote.slideTo != null//
+						|| nextNote.vibrato != note.vibrato//
+						|| nextNote.tremolo != note.tremolo) {
+					break;
+				}
+
+				note.endPosition(nextNote.endPosition());
+				if (!nextNote.bendValues.isEmpty()) {
+					if (nextNote.bendValues.get(0).position().compareTo(nextNote) != 0) {
+						note.bendValues.add(new BendValue(nextNote.position()));
+					}
+					note.bendValues.addAll(nextNote.bendValues);
+				}
+				note.linkNext = nextNote.linkNext;
+				level.sounds.remove(nextNoteId);
+				if (guitarSelected) {
+					selectedNoteIds = removeId(selectedNoteIds, nextNoteId);
+				}
+
+				nextNoteId--;
+			}
+
+		}
+
+		if (guitarSelected) {
+			selectionManager.addSoundSelection(selectedNoteIds);
+		}
+	}
+
 	private void removeNoteTailIfNeeded(final CommonNote note, final int id, final List<ChordOrNote> sounds) {
 		if (note.linkNext() || note.tremolo() || note.vibrato() || !note.bendValues().isEmpty()
 				|| note.slideTo() != null) {
@@ -275,6 +356,7 @@ public class ArrangementFixer {
 		addMissingFHPs(arrangement, level);
 		addMissingHandShapes(arrangement, level);
 
+		joinSimilarLinkedNotes(level);
 		fixNoteLengths(level.sounds);
 		fixLengths(level.handShapes);
 	}
