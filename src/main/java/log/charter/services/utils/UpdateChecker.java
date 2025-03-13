@@ -72,7 +72,7 @@ public class UpdateChecker {
 		try {
 			Desktop.getDesktop().browse(latestVersionLink);
 			try {
-				Runtime.getRuntime().exec("cmd /c start \"\" update.bat " + newVersion);
+				Runtime.getRuntime().exec("cmd /c start \"Charter update\" update.bat " + newVersion);
 				charterContext.forceExit();
 			} catch (final IOException e) {
 				Logger.error("Couldn't autoupdate", e);

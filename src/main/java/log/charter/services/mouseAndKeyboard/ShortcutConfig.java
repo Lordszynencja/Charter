@@ -17,7 +17,7 @@ import log.charter.util.RW;
 import log.charter.util.Utils;
 
 public class ShortcutConfig {
-	private static final String configPath = Utils.getDefaultConfigDir() + "shortcuts.ini";
+	private static final String configPath = Utils.defaultConfigDir + "shortcuts.ini";
 
 	public static ShortcutList defaultShortcuts;
 

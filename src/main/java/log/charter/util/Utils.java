@@ -1,5 +1,6 @@
 package log.charter.util;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,17 +8,16 @@ import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.SystemType;
 
 public class Utils {
-	public static String getDefaultConfigDir() {
-		switch (SystemType.systemType) {
-			case WINDOWS:
-				return System.getenv("APPDATA") + "/Charter/";
-			case MAC:
-				return "~/Library/Preferences/Charter/";
-			case LINUX:
-			case OTHER:
-			default:
-				return "~/.local/Charter/";
-		}
+	public static final String defaultConfigDir = getDefaultConfigDir();
+
+	private static String getDefaultConfigDir() {
+		final String programFolderName = new File("pom.xml").exists() ? "Charter_dev" : "Charter";
+
+		return switch (SystemType.systemType) {
+			case WINDOWS -> System.getenv("APPDATA") + "/" + programFolderName + "/";
+			case MAC -> "~/Library/Preferences/" + programFolderName + "/";
+			default -> "~/.local/" + programFolderName + "/";
+		};
 	}
 
 	public enum TimeUnit {

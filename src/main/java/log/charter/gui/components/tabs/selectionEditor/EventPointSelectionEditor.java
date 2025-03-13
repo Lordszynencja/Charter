@@ -167,9 +167,13 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		}
 	}
 
+	private IntValueValidator generateMaxLevelValidator() {
+		return new IntValueValidator(0, chartData.currentArrangement().levels.size());
+	}
+
 	private void addMaxLevel(final CurrentSelectionEditor currentSelectionEditor, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(0, 30, new IntValueValidator(0, 99),
-				this::onMaxLevelChange, false);
+		final TextInputWithValidation input = generateForInt(0, 30, generateMaxLevelValidator(), this::onMaxLevelChange,
+				false);
 
 		maxLevel = new FieldWithLabel<>(Label.LEVEL, 50, 30, 20, input, LabelPosition.LEFT);
 		currentSelectionEditor.add(maxLevel, position, 80);
@@ -333,6 +337,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 				.collect(Collectors.toSet());
 
 		final Integer maxLevel = getSingleValue(phrases, p -> p.maxDifficulty, null);
+		this.maxLevel.field.setValidator(generateMaxLevelValidator());
 		this.maxLevel.field.setTextWithoutEvent(maxLevel == null ? "" : maxLevel.toString());
 		this.maxLevel.setVisible(true);
 

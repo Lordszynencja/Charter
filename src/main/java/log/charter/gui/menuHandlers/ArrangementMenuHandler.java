@@ -143,6 +143,8 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 	}
 
 	private void addArrangement() {
+		selectionManager.clear();
+
 		final int previousArrangement = chartData.currentArrangement;
 		final EditMode previousEditMode = modeManager.getMode();
 		final int previousDifficulty = chartData.currentLevel;

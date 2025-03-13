@@ -132,7 +132,7 @@ public class GuitarEventPointPane extends ParamsPane {
 		});
 
 		addIntConfigValue(row.get(), 50, 45, Label.LEVEL, phraseLevel, 30, //
-				new IntValueValidator(0, 100), v -> phraseLevel = v, false);
+				new IntValueValidator(0, data.currentArrangement().levels.size()), v -> phraseLevel = v, false);
 		phraseLevelInput = (JTextField) getPart(-1);
 
 		addConfigCheckbox(row.getAndIncrement(), 150, 0, Label.GUITAR_BEAT_PANE_PHRASE_SOLO, phraseSolo,
@@ -162,10 +162,14 @@ public class GuitarEventPointPane extends ParamsPane {
 	private void onPhraseNameSelected(final String phraseName) {
 		phraseNameInput.setTextWithoutUpdate(phraseName);
 
-		final Phrase phrase = data.currentArrangement().phrases.get(phraseName);
+		Phrase phrase = data.currentArrangement().phrases.get(phraseName);
+		if (phrase == null) {
+			phrase = new Phrase();
+		}
 		phraseLevel = phrase.maxDifficulty;
-		phraseLevelInput.setText(phraseLevel + "");
 		phraseSolo = phrase.solo;
+
+		phraseLevelInput.setText(phraseLevel + "");
 		phraseSoloInput.setSelected(phraseSolo);
 	}
 

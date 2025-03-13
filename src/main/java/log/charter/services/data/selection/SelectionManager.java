@@ -24,7 +24,6 @@ import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.HashMap2;
 
 public class SelectionManager implements Initiable {
@@ -245,7 +244,7 @@ public class SelectionManager implements Initiable {
 		addSelection(PositionType.GUITAR_NOTE, id);
 	}
 
-	public void addSoundSelection(final ArrayList2<Integer> ids) {
+	public void addSoundSelection(final List<Integer> ids) {
 		selectionLists.get(PositionType.GUITAR_NOTE).add(ids);
 		currentSelectionEditor.selectionChanged(true);
 	}

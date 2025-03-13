@@ -4,6 +4,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.data.song.configs.Tuning.getStringDistance;
+import static log.charter.services.ArrangementFretHandPositionsCreator.createFHPs;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.Level;
 import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.configs.Tuning.TuningType;
 import log.charter.data.song.enums.BassPickingTechnique;
@@ -35,6 +37,8 @@ import log.charter.data.song.position.time.Position;
 import log.charter.io.gp.gp7.data.GP7Beat;
 import log.charter.io.gp.gp7.data.GP7Note;
 import log.charter.io.gp.gp7.data.GP7Note.GP7HarmonicType;
+import log.charter.io.gp.gp7.data.GP7Note.SlideInType;
+import log.charter.io.gp.gp7.data.GP7Note.SlideOutType;
 import log.charter.io.gp.gp7.transformers.GP7NotesWithPosition.GP7BeatWithNoteAndEndPosition;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.util.data.Fraction;
@@ -172,58 +176,67 @@ class GP7TrackToArrangementTransformer {
 			note.endPosition(endPosition);
 		}
 
-		private boolean checkSlideFlag(final int position) {
-			return (gp7Note.slideFlag & (1 << position)) > 0;
+		private void addSlideInFromBelow() {
+			Beat beat = lastBeforeEqual(beats, new Position(position.position(beats))).find();
+			if (beat == null) {
+				beat = new Beat(0);
+			}
+			final Fraction toAdd = new Fraction(beat.noteDenominator, 16);
+
+			note.position(position.add(toAdd));
+			final Note preNote = new Note(position, note.position());
+			preNote.string = note.string;
+			preNote.fret = max(1, note.fret - 2);
+			preNote.linkNext = true;
+			preNote.slideTo = note.fret;
+			notesCreated.add(0, preNote);
+		}
+
+		private void addSlideInFromAbove() {
+			Beat beat = lastBeforeEqual(beats, new Position(position.position(beats))).find();
+			if (beat == null) {
+				beat = new Beat(0);
+			}
+			final Fraction toAdd = new Fraction(beat.noteDenominator, 16);
+
+			note.position(position.add(toAdd));
+			final Note preNote = new Note(position, note.position());
+			preNote.string = note.string;
+			preNote.fret = min(InstrumentConfig.frets, note.fret + 2);
+			preNote.linkNext = true;
+			preNote.slideTo = note.fret;
+			notesCreated.add(0, preNote);
 		}
 
 		private void setNoteSlide() {
-			if (gp7Note.slideFlag <= 0) {
+			if (gp7Note.slideIn == SlideInType.NONE && gp7Note.slideOut == SlideOutType.NONE) {
 				return;
 			}
 
 			note.endPosition(endPosition);
 
-			if (checkSlideFlag(4)) {
-				Beat beat = lastBeforeEqual(beats, new Position(position.position(beats))).find();
-				if (beat == null) {
-					beat = new Beat(0);
-				}
-				final Fraction toAdd = new Fraction(beat.noteDenominator, 16);
-
-				note.position(position.add(toAdd));
-				final Note preNote = new Note(position, note.position());
-				preNote.string = note.string;
-				preNote.fret = max(1, note.fret - 2);
-				preNote.linkNext = true;
-				preNote.slideTo = note.fret;
-				notesCreated.add(0, preNote);
-			} else if (checkSlideFlag(5)) {
-				Beat beat = lastBeforeEqual(beats, new Position(position.position(beats))).find();
-				if (beat == null) {
-					beat = new Beat(0);
-				}
-				final Fraction toAdd = new Fraction(beat.noteDenominator, 16);
-
-				note.position(position.add(toAdd));
-				final Note preNote = new Note(position, note.position());
-				preNote.string = note.string;
-				preNote.fret = min(InstrumentConfig.frets, note.fret + 2);
-				preNote.linkNext = true;
-				preNote.slideTo = note.fret;
-				notesCreated.add(0, preNote);
+			switch (gp7Note.slideIn) {
+				case FROM_BELOW -> addSlideInFromBelow();
+				case FROM_ABOVE -> addSlideInFromAbove();
+				default -> {}
 			}
 
-			if (checkSlideFlag(0)) {
-				shouldSetSlideTo.put(note.string, note);
-			} else if (checkSlideFlag(1)) {
-				note.linkNext = true;
-				shouldSetSlideTo.put(note.string, note);
-			} else if (checkSlideFlag(2)) {
-				note.slideTo = max(1, note.fret - 5);
-				note.unpitchedSlide = true;
-			} else if (checkSlideFlag(3)) {
-				note.slideTo = min(InstrumentConfig.frets, note.fret + 5);
-				note.unpitchedSlide = true;
+			switch (gp7Note.slideOut) {
+				case TO_NEXT_NOTE_LINKED:
+					note.linkNext = true;
+				case TO_NEXT_NOTE:
+					shouldSetSlideTo.put(note.string, note);
+					break;
+				case DOWN:
+					note.slideTo = max(1, note.fret - 5);
+					note.unpitchedSlide = true;
+					break;
+				case UP:
+					note.slideTo = min(InstrumentConfig.frets, note.fret + 5);
+					note.unpitchedSlide = true;
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -287,6 +300,7 @@ class GP7TrackToArrangementTransformer {
 		private final GP7NotesWithPosition notes;
 		private final Chord chord = new Chord(-1);
 		private final ChordTemplate template = new ChordTemplate();
+		private ChordOrNote preSlide = null;
 		private final List<ChordOrNote> notesCreated = new ArrayList<>();
 
 		private GP7Beat gp7Beat;
@@ -302,6 +316,10 @@ class GP7TrackToArrangementTransformer {
 
 		private int string() {
 			return gp7Note.string;
+		}
+
+		private int fret() {
+			return gp7Note.fret;
 		}
 
 		private void setNoteHOPO() {
@@ -328,12 +346,12 @@ class GP7TrackToArrangementTransformer {
 			}
 
 			if (previousNote.isNote()) {
-				chordNote.hopo = previousNote.note().fret > gp7Note.fret ? HOPO.PULL_OFF : HOPO.HAMMER_ON;
+				chordNote.hopo = previousNote.note().fret > fret() ? HOPO.PULL_OFF : HOPO.HAMMER_ON;
 				return;
 			}
 
 			final ChordTemplate template = arrangement.chordTemplates.get(previousNote.chord().templateId());
-			chordNote.hopo = template.frets.get(string()) > gp7Note.fret ? HOPO.PULL_OFF : HOPO.HAMMER_ON;
+			chordNote.hopo = template.frets.get(string()) > fret() ? HOPO.PULL_OFF : HOPO.HAMMER_ON;
 		}
 
 		private void setNoteAccent() {
@@ -380,17 +398,14 @@ class GP7TrackToArrangementTransformer {
 			chordNote.endPosition(endPosition);
 		}
 
-		private boolean checkSlideFlag(final int position) {
-			return (gp7Note.slideFlag & (1 << position)) > 0;
-		}
-
-		private void addPreNote(final Note preNote) {
-			if (notesCreated.size() <= 1) {
-				notesCreated.add(0, ChordOrNote.from(preNote));
+		private void addPreSlideNote(final Note preNote) {
+			if (preSlide == null) {
+				preSlide = ChordOrNote.from(preNote);
+				notesCreated.add(0, preSlide);
 				return;
 			}
 
-			final ChordOrNote sound = notesCreated.get(0);
+			final ChordOrNote sound = preSlide;
 			final Chord preChord;
 			final ChordTemplate preChordTemplate;
 			if (sound.isNote()) {
@@ -412,56 +427,73 @@ class GP7TrackToArrangementTransformer {
 			notesCreated.set(0, sound.asChord(preChordId, preChordTemplate));
 		}
 
+		private void addSlideInFromBelow() {
+			Beat beat = lastBeforeEqual(beats, new Position(notes.position.position(beats))).find();
+			if (beat == null) {
+				beat = new Beat(0);
+			}
+
+			if (preSlide == null) {
+				final Fraction toAdd = new Fraction(beat.noteDenominator, 16);
+				chord.position(notes.position.add(toAdd));
+			}
+
+			final Note preNote = new Note(notes.position, chord.position());
+			preNote.string = string();
+			preNote.fret = max(1, fret() - 2);
+			preNote.linkNext = true;
+			preNote.slideTo = fret();
+			addPreSlideNote(preNote);
+		}
+
+		private void addSlideInFromAbove() {
+			Beat beat = lastBeforeEqual(beats, new Position(notes.position.position(beats))).find();
+			if (beat == null) {
+				beat = new Beat(0);
+			}
+
+			if (preSlide == null) {
+				final Fraction toAdd = new Fraction(beat.noteDenominator, 16);
+				chord.position(notes.position.add(toAdd));
+			}
+
+			final Note preNote = new Note(notes.position, chord.position());
+			preNote.string = string();
+			preNote.fret = min(InstrumentConfig.frets, fret() + 2);
+			preNote.linkNext = true;
+			preNote.slideTo = fret();
+			addPreSlideNote(preNote);
+		}
+
 		private void setNoteSlide() {
-			if (gp7Note.slideFlag <= 0) {
+			if (gp7Note.slideIn == SlideInType.NONE && gp7Note.slideOut == SlideOutType.NONE) {
 				return;
 			}
 
 			chordNote.endPosition(endPosition);
 
-			if (notesCreated.size() > 1) {
-				if (checkSlideFlag(4)) {
-					Beat beat = lastBeforeEqual(beats, new Position(notes.position.position(beats))).find();
-					if (beat == null) {
-						beat = new Beat(0);
-					}
-					final Fraction toAdd = new Fraction(beat.noteDenominator, 16);
-
-					chord.position(notes.position.add(toAdd));
-					final Note preNote = new Note(notes.position, chord.position());
-					preNote.string = gp7Note.string;
-					preNote.fret = max(1, gp7Note.fret - 2);
-					preNote.linkNext = true;
-					preNote.slideTo = gp7Note.fret;
-					addPreNote(preNote);
-				} else if (checkSlideFlag(5)) {
-					Beat beat = lastBeforeEqual(beats, new Position(notes.position.position(beats))).find();
-					if (beat == null) {
-						beat = new Beat(0);
-					}
-					final Fraction toAdd = new Fraction(beat.noteDenominator, 16);
-
-					chord.position(notes.position.add(toAdd));
-					final Note preNote = new Note(notes.position, chord.position());
-					preNote.string = gp7Note.string;
-					preNote.fret = min(InstrumentConfig.frets, gp7Note.fret + 2);
-					preNote.linkNext = true;
-					preNote.slideTo = gp7Note.fret;
-					addPreNote(preNote);
-				}
+			switch (gp7Note.slideIn) {
+				case FROM_BELOW -> addSlideInFromBelow();
+				case FROM_ABOVE -> addSlideInFromAbove();
+				default -> {}
 			}
 
-			if (checkSlideFlag(0)) {
-				shouldSetSlideTo.put(gp7Note.string, chordNote);
-			} else if (checkSlideFlag(1)) {
-				chordNote.linkNext = true;
-				shouldSetSlideTo.put(gp7Note.string, chordNote);
-			} else if (checkSlideFlag(2)) {
-				chordNote.slideTo = max(1, gp7Note.fret - 5);
-				chordNote.unpitchedSlide = true;
-			} else if (checkSlideFlag(3)) {
-				chordNote.slideTo = min(InstrumentConfig.frets, gp7Note.fret + 5);
-				chordNote.unpitchedSlide = true;
+			switch (gp7Note.slideOut) {
+				case TO_NEXT_NOTE_LINKED:
+					chordNote.linkNext = true;
+				case TO_NEXT_NOTE:
+					shouldSetSlideTo.put(string(), chordNote);
+					break;
+				case DOWN:
+					chordNote.slideTo = max(1, fret() - 5);
+					chordNote.unpitchedSlide = true;
+					break;
+				case UP:
+					chordNote.slideTo = min(InstrumentConfig.frets, fret() + 5);
+					chordNote.unpitchedSlide = true;
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -504,10 +536,16 @@ class GP7TrackToArrangementTransformer {
 				if (gp7Note.finger >= 0) {
 					template.fingers.put(string(), gp7Note.finger);
 				}
-				template.frets.put(string(), gp7Note.fret);
+				template.frets.put(string(), fret());
 
 				chordNote = new ChordNote(chord);
 				chord.chordNotes.put(string(), chordNote);
+
+				if (shouldSetSlideTo.containsKey(string())) {
+					final NoteInterface previousNote = shouldSetSlideTo.remove(string());
+					previousNote.slideTo(fret());
+					chordNote.endPosition(endPosition);
+				}
 
 				setNoteHOPO();
 				setNoteAccent();
@@ -530,6 +568,8 @@ class GP7TrackToArrangementTransformer {
 	}
 
 	private void addNotes() {
+		final Level level = arrangement.getLevel(0);
+
 		for (final GP7NotesWithPosition notes : track.notes) {
 			if (notes.notes.isEmpty()) {
 				continue;
@@ -539,8 +579,11 @@ class GP7TrackToArrangementTransformer {
 				case 1 -> new SingleNoteCreator(notes).generateNote().getCreatedSounds();
 				default -> new ChordCreator(notes).setChordValues().getCreatedSounds();
 			};
-			arrangement.getLevel(0).sounds.addAll(sounds);
+
+			level.sounds.addAll(sounds);
 		}
+
+		createFHPs(beats, arrangement.chordTemplates, level.sounds, level.fhps);
 	}
 
 	private Arrangement transform() {
