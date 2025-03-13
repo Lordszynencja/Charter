@@ -81,6 +81,28 @@ public class Logger {
 		}
 	}
 
+	public static void warning(String msg) {
+		msg = getLine("WARNING", msg);
+
+		out.println(msg);
+
+		if (out != System.out) {
+			System.out.println(msg);
+		}
+	}
+
+	public static void warning(String msg, final Throwable e) {
+		msg = getLine("WARNING", msg);
+
+		out.println(msg);
+		e.printStackTrace(out);
+
+		if (out != System.out) {
+			System.out.println(msg);
+			e.printStackTrace(System.out);
+		}
+	}
+
 	public static void error(String msg) {
 		msg = getLine("ERROR", msg);
 
@@ -92,18 +114,6 @@ public class Logger {
 	}
 
 	public static void error(String msg, final Throwable e) {
-		msg = getLine("ERROR", msg);
-
-		out.println(msg);
-		e.printStackTrace(out);
-
-		if (out != System.out) {
-			System.out.println(msg);
-			e.printStackTrace(System.out);
-		}
-	}
-
-	public static void error(String msg, final Error e) {
 		msg = getLine("ERROR", msg);
 
 		out.println(msg);

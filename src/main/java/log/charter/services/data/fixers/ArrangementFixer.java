@@ -122,7 +122,8 @@ public class ArrangementFixer {
 			if (!sound.isChord()) {
 				continue;
 			}
-			while (handShape != null && handShape.endPosition().compareTo(sound) < 0) {
+      
+			while (handShape != null && handShape.endPosition().compareTo(sound) <= 0) {
 				handShapeId++;
 				handShape = handShapeId >= level.handShapes.size() ? null : level.handShapes.get(handShapeId);
 			}

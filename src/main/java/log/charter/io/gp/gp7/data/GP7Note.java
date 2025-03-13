@@ -46,6 +46,7 @@ public class GP7Note {
 	public int string;
 	public int fret;
 	public int finger = -1;
+	public int rightFinger = -1;
 	public boolean hopoOrigin;
 	public boolean hopoDestination;
 	public boolean leftHandTapped;
@@ -77,6 +78,7 @@ public class GP7Note {
 		return "GP7Note [string=" + string //
 				+ ", fret=" + fret//
 				+ ", finger=" + finger//
+				+ ", rightFinger=" + rightFinger//
 				+ ", hopoOrigin=" + hopoOrigin//
 				+ ", hopoDestination=" + hopoDestination//
 				+ ", leftHandTapped=" + leftHandTapped//

@@ -172,7 +172,7 @@ public class GP7PlusFileImporter {
 		double position = 0;
 		double offset = 0;
 		if (gpif.backingTrack != null && gpif.backingTrack.framePadding != null) {
-			offset = max(0, -gpif.backingTrack.framePadding / 44.1);
+			offset = max(0, -gpif.backingTrack.framePadding / gpif.sampleRate * 1000);
 			position = offset;
 		}
 		boolean firstInMeasure = true;

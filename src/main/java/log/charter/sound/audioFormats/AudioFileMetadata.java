@@ -36,7 +36,10 @@ public class AudioFileMetadata {
 				debug("Couldn't get album from mpeg tags data", e);
 			}
 			try {
-				metadata.year = Integer.valueOf(mp3File.getYear());
+				final String year = mp3File.getYear();
+				if (year != null && !year.isBlank()) {
+					metadata.year = Integer.valueOf(mp3File.getYear());
+				}
 			} catch (final Exception e) {
 				debug("Couldn't get year from mpeg tags data", e);
 			}
