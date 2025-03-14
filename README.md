@@ -10,10 +10,10 @@ A simple viewer, player, and editor for guitar charts. Charter is a Free and Ope
 ## Table of Contents
 - [Charter](#charter)
 - [Screenshots](#screenshots)
-  - [Download & Install](#Download--Install)
-    - [Windows](#Windows)
-    - [MacOS](#MacOS)
-    - [Linux](#Linux)
+  - [Download & Install](#download--install)
+    - [Windows](#windows)
+    - [MacOS](#macos)
+    - [Linux](#linux)
 - [Contributing and Building](#contributing-and-building)
   - [Contributing](#contributing)
   - [Building](#building)
@@ -27,6 +27,9 @@ A simple viewer, player, and editor for guitar charts. Charter is a Free and Ope
 Download the latest version of Charter from the [releases page](https://github.com/Lordszynencja/Charter/releases/latest).
 
 ### Windows
+
+**Currently, the installer is recognized by some antivirus software as a trojan, Windows Defender sometimes says it's `Trojan:Script/Wacatac.B!ml`, as there is no way to fix it other than to pay M$ money.
+You have to deal with it by ignoring the issue or turning check for that file off in the software, however most antivirus scanners say that the file is clean.**
 
 1. Download and run the installer `Charter-windows-<version>-installer.exe`.
 1. Download [jasiohost64.dll](https://github.com/mhroth/jasiohost/blob/master/jasiohost64.dll) and [rubberband-jni_win64.dll](https://github.com/JorenSix/RubberBandJNI/blob/master/jni/JVM/rubberband-jni_win64.dll)(rename it to `rubberband-jni.dll`) and put them in the `Windows\system32` folder.
