@@ -19,7 +19,7 @@ import java.util.Map.Entry;
 import log.charter.io.Logger;
 
 public class RW {
-	public static File getProgramDirectory() {
+	public static File getJarDirectory() {
 		if (Utils.isDevEnv) {
 			return new File("target\\Charter").getAbsoluteFile();
 		}
@@ -186,6 +186,27 @@ public class RW {
 			output.close();
 		} catch (final IOException e) {
 			Logger.error("Couldn't copy " + from + " to " + to, e);
+		}
+	}
+
+	public static void copyDir(final File from, final File to) {
+		if (!from.exists()) {
+			return;
+		}
+
+		if (!to.isAbsolute()) {
+			copyDir(from, to.getAbsoluteFile());
+			return;
+		}
+
+		if (!from.isDirectory()) {
+			copy(from, to);
+			return;
+		}
+
+		for (final File file : from.listFiles()) {
+			final File toFile = new File(to, file.getName());
+			copyDir(file, toFile);
 		}
 	}
 }

@@ -9,15 +9,16 @@ import log.charter.data.config.values.PathsConfig;
 import log.charter.io.Logger;
 import log.charter.services.CharterContext;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
+import log.charter.util.RW;
 
 public class CharterMain {
-	public static final String VERSION = "0.21.4";
-	public static final String VERSION_DATE = "2025.03.13 16:00";
+	public static final String VERSION = "0.21.5";
+	public static final String VERSION_DATE = "2025.03.15 12:00";
 	public static final String TITLE = "Charter " + VERSION;
 
 	private static void deleteTempUpdateFile() {
 		try {
-			final File tempUpdateFile = new File("app/tmp_update.bat");
+			final File tempUpdateFile = new File(RW.getJarDirectory(), "tmp_update.bat");
 			if (tempUpdateFile.exists()) {
 				tempUpdateFile.delete();
 			}

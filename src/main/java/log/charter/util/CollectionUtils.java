@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -379,6 +380,15 @@ public class CollectionUtils {
 
 	public static <T, U> List<U> map(final Collection<T> collection, final Function<T, U> mapper) {
 		return map(collection, mapper, new ArrayList<>(collection.size()));
+	}
+
+	public static <T, U, V, W> Map<V, W> map(final Map<T, U> map, final Predicate<Entry<T, U>> filter,
+			final Function<T, V> keyMapper, final Function<U, W> valueMapper) {
+		final Map<V, W> newMap = new HashMap<>();
+		map.entrySet().stream()//
+				.filter(filter)//
+				.forEach(entry -> newMap.put(keyMapper.apply(entry.getKey()), valueMapper.apply(entry.getValue())));
+		return newMap;
 	}
 
 	public static <T, U, V, W> Map<V, W> map(final Map<T, U> map, final Function<T, V> keyMapper,

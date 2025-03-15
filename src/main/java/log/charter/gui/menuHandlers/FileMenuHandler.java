@@ -17,6 +17,7 @@ import log.charter.services.ActionHandler;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ProjectAudioHandler;
+import log.charter.services.data.StemAddService;
 import log.charter.services.data.files.GP5FileImporter;
 import log.charter.services.data.files.LRCImporter;
 import log.charter.services.data.files.MidiImporter;
@@ -45,6 +46,7 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 	private NewProjectFromRSXMLCreator newProjectFromRSXMLCreator;
 	private ProjectAudioHandler projectAudioHandler;
 	private RSXMLImporter rsXMLImporter;
+	private StemAddService stemAddService;
 	private USCTxtImporter uscTxtImporter;
 
 	@Override
@@ -131,7 +133,7 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 			return;
 		}
 
-		projectAudioHandler.addStem(file);
+		stemAddService.addStem(file);
 	}
 
 	private void importMidiTempo() {

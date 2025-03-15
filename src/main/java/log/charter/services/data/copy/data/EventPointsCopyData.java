@@ -54,7 +54,10 @@ public class EventPointsCopyData implements ICopyData {
 			for (final CopiedEventPoint arrangementEventsPoint : arrangementEventsPoints) {
 				final String phraseName = arrangementEventsPoint.phrase;
 				if (!arrangement.phrases.containsKey(phraseName)) {
-					arrangement.phrases.put(phraseName, this.phrases.get(phraseName));
+					final Phrase phrase = this.phrases.get(phraseName);
+					if (phrase != null) {
+						arrangement.phrases.put(phraseName, phrase);
+					}
 				}
 			}
 		}

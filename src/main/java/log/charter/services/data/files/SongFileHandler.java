@@ -17,6 +17,7 @@ import log.charter.data.song.vocals.VocalPath;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.TextTab;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
@@ -163,8 +164,22 @@ public class SongFileHandler {
 			return;
 		}
 
-		chartData.path = newDir.getAbsolutePath();
-		PathsConfig.lastDir = chartData.path;
+		if (!newDir.equals(new File(chartData.path))) {
+			final ConfirmAnswer copyAllfiles = ComponentUtils.askYesNo(charterFrame, Label.COPY_ALL_FILES,
+					Label.COPY_ALL_FILES_MESSAGE);
+			if (copyAllfiles == ConfirmAnswer.YES) {
+				RW.copyDir(new File(chartData.path), newDir);
+			} else if (copyAllfiles == ConfirmAnswer.NO) {
+				final String audioName = ProjectAudioHandler.defaultAudioFileName();
+				RW.copy(new File(chartData.path, audioName), new File(newDir, audioName));
+			} else {
+				return;
+			}
+
+			chartData.path = newDir.getAbsolutePath();
+			PathsConfig.lastDir = chartData.path;
+		}
+
 		PathsConfig.lastPath = new File(chartData.path, chartData.projectFileName).getAbsolutePath();
 		Config.markChanged();
 		Config.save();

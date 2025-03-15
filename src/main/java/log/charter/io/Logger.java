@@ -18,7 +18,7 @@ public class Logger {
 		try {
 			final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			final String name = "log-" + dateFormat.format(new Date()) + ".txt";
-			final File dir = new File(RW.getProgramDirectory(), "logs");
+			final File dir = new File(RW.getJarDirectory(), "logs");
 			if (!dir.exists()) {
 				dir.mkdirs();
 				dir.mkdir();

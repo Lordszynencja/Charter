@@ -11,9 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
@@ -27,7 +24,7 @@ import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 
-public class ToneChangeSelectionEditor implements DocumentListener {
+public class ToneChangeSelectionEditor {
 	private ChartData chartData;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
@@ -38,10 +35,10 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 
 	public void addTo(final CurrentSelectionEditor selectionEditor) {
 		int row = 0;
-		final AutocompleteInput<String> toneNameInput = new AutocompleteInput<String>(selectionEditor, 200, "",
+		final AutocompleteInput<String> toneNameInput = new AutocompleteInput<>(selectionEditor, 200, "",
 				this::getPossibleValues, s -> s, this::onSelect);
 		addSelectTextOnFocus(toneNameInput);
-		toneNameInput.getDocument().addDocumentListener(this);
+		toneNameInput.setTextChangeListener(this::onToneNameChange);
 
 		toneNameField = new FieldWithLabel<>(Label.TONE_CHANGE_TONE_NAME, 100, 200, 20, toneNameInput,
 				LabelPosition.LEFT);
@@ -62,23 +59,14 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 
 	private List<String> getPossibleValues(final String name) {
 		final List<String> tones = chartData.currentArrangement().tones.stream()//
-				.filter(toneName -> toneName.toLowerCase().contains(name.toLowerCase()))//
+				.filter(toneName -> !toneName.equals(name) && toneName.toLowerCase().contains(name.toLowerCase()))//
 				.collect(Collectors.toCollection(ArrayList::new));
-		if (!tones.contains(chartData.currentArrangement().startingTone)) {
+		if (!tones.contains(chartData.currentArrangement().startingTone)
+				&& !name.equals(chartData.currentArrangement().startingTone)) {
 			tones.add(chartData.currentArrangement().startingTone);
 		}
 
 		return tones;
-	}
-
-	@Override
-	public void insertUpdate(final DocumentEvent e) {
-		changedUpdate(e);
-	}
-
-	@Override
-	public void removeUpdate(final DocumentEvent e) {
-		changedUpdate(e);
 	}
 
 	private void clearError() {
@@ -96,11 +84,8 @@ public class ToneChangeSelectionEditor implements DocumentListener {
 		toneNameField.field.setToolTipText(label.label());
 	}
 
-	@Override
-	public void changedUpdate(final DocumentEvent e) {
+	public void onToneNameChange(final String name) {
 		clearError();
-
-		final String name = toneNameField.field.getText();
 
 		final Arrangement arrangement = chartData.currentArrangement();
 		if (name.isBlank()) {
