@@ -180,7 +180,8 @@ public class GuitarEventPointPane extends ParamsPane {
 			eventTypes.add(type);
 		}
 
-		final CharterSelect<EventType> input = new CharterSelect<>(eventTypes, null, null, null);
+		final CharterSelect<EventType> input = new CharterSelect<>(eventTypes, null, e -> e == null ? "" : e.label,
+				null);
 		input.setMinimumSize(new Dimension(100, 20));
 
 		final DefaultTableModel tableModel = new DefaultTableModel();
@@ -200,7 +201,9 @@ public class GuitarEventPointPane extends ParamsPane {
 		scrollTable.setMinimumSize(new Dimension(100, 80));
 
 		for (int tableRow = 0; tableRow < events.size(); tableRow++) {
-			tableModel.setValueAt(events.get(tableRow), tableRow, 0);
+			final EventType event = events.get(tableRow);
+			final ItemHolder<EventType> value = new ItemHolder<>(event, event.label);
+			tableModel.setValueAt(value, tableRow, 0);
 		}
 
 		this.add(scrollTable, 50, getY(row.getAndIncrement()), 170, 120);
