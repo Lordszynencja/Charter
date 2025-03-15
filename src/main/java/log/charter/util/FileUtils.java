@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileUtils {
-	private static final File graphicsFolder = new File(RW.getProgramDirectory(), "graphics");
+	private static final File graphicsFolder = new File(RW.getJarDirectory(), "graphics");
 	public static final File colorSetsFolder = new File(graphicsFolder, "colorSets");
 	public static final File imagesFolder = new File(graphicsFolder, "images");
 	public static final File texturesFolder = new File(graphicsFolder, "textures");
@@ -39,5 +39,11 @@ public class FileUtils {
 
 	public static String cleanFileName(final String fileName) {
 		return fileName.replaceAll("[^a-zA-Z0-9_\\- ]", "");
+	}
+
+	public static String getFileNameWithoutExtension(final File file) {
+		final String name = file.getName();
+		final int dotPosition = name.lastIndexOf('.');
+		return dotPosition < 0 ? name : name.substring(0, dotPosition);
 	}
 }

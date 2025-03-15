@@ -44,6 +44,7 @@ import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.HighlightManager;
+import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButton;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressData;
@@ -340,8 +341,9 @@ public class HighlightData {
 	}
 
 	private static HighlightData getDragHighlight(final double time, final ChartData chartData,
-			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
-			final MouseHandler mouseHandler, final SelectionManager selectionManager) {
+			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final MouseHandler mouseHandler,
+			final SelectionManager selectionManager) {
 		final MouseButtonPressData leftPressPosition = mouseButtonPressReleaseHandler
 				.getPressPosition(MouseButton.LEFT_BUTTON);
 		if (leftPressPosition == null || leftPressPosition.highlight == null) {
@@ -356,7 +358,7 @@ public class HighlightData {
 			return getDraggedBeats(chartData.beats(), time, mouseHandler);
 		}
 
-		if (abs(leftPressPosition.position.x - mouseHandler.getMouseX()) > 5) {
+		if (abs(leftPressPosition.position.x - mouseHandler.getMouseX()) > 5 && !keyboardHandler.scrollLock()) {
 			return getDraggedPositions(time, chartData, selectionManager, leftPressPosition, mouseHandler.getMouseX());
 		}
 
@@ -394,14 +396,14 @@ public class HighlightData {
 	}
 
 	public static HighlightData getCurrentHighlight(final double time, final ChartData chartData,
-			final HighlightManager highlightManager, final ModeManager modeManager,
-			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final MouseHandler mouseHandler,
-			final SelectionManager selectionManager) {
+			final KeyboardHandler keyboardHandler, final HighlightManager highlightManager,
+			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
+			final MouseHandler mouseHandler, final SelectionManager selectionManager) {
 		if (modeManager.getMode() == EditMode.EMPTY) {
 			return new HighlightData();
 		}
 
-		final HighlightData dragHighlight = getDragHighlight(time, chartData, modeManager,
+		final HighlightData dragHighlight = getDragHighlight(time, chartData, keyboardHandler, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 		if (dragHighlight != null) {
 			return dragHighlight;

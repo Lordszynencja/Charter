@@ -48,7 +48,7 @@ public class ArrangementDrawer implements Initiable {
 	}
 
 	private HighlightData generateHighlightData(final double time) {
-		return HighlightData.getCurrentHighlight(time, chartData, highlightManager, modeManager,
+		return HighlightData.getCurrentHighlight(time, chartData, keyboardHandler, highlightManager, modeManager,
 				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 	}
 

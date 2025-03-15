@@ -34,7 +34,7 @@ public class ColorMap {
 	}
 
 	private static File colorSetFile(final String setName) {
-		return new File(RW.getProgramDirectory(), FileUtils.colorSetsFolder + setName + ".txt");
+		return new File(RW.getJarDirectory(), FileUtils.colorSetsFolder + setName + ".txt");
 	}
 
 	public static ColorMap forSet(final String setName) {

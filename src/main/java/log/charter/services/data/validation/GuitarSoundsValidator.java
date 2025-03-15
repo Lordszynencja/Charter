@@ -1,5 +1,6 @@
 package log.charter.services.data.validation;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import log.charter.data.ChartData;
@@ -171,9 +172,18 @@ public class GuitarSoundsValidator {
 
 				return fret == null || fret != soundNote.fret();
 			});
+			final boolean wrongFingers = sound.isNote() ? false
+					: sound.notesWithFrets(arrangement.chordTemplates).anyMatch(soundNote -> {
+						final Integer finger = handShapeTemplate.fingers.get(soundNote.string());
+
+						return !Objects.equals(finger, soundNote.finger());
+					});
 
 			if (wrongFrets) {
 				errorsTab.addError(generateError(Label.FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE, sound));
+			}
+			if (wrongFingers) {
+				errorsTab.addError(generateError(Label.FINGER_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE, sound));
 			}
 		}
 

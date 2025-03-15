@@ -77,6 +77,8 @@ public class Localization {
 		CONFIG_GENERAL("General"), //
 		CONFIG_INSTRUMENT("Instrument"), //
 		COPY("Copy"), //
+		COPY_ALL_FILES("Copy all files?"), //
+		COPY_ALL_FILES_MESSAGE("Copy all files? If not, only project and main audio will be moved."), //
 		COPY_AUDIO("Copy audio?"), //
 		COPY_AUDIO_TO_PROJECT_FOLDER("Do you want to copy the audio file to the project folder?"), //
 		COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT("Couldn't create folder with this name, please change the name"), //
@@ -128,6 +130,8 @@ public class Localization {
 		NUMBER_7("Number 7"), //
 		NUMBER_8("Number 8"), //
 		NUMBER_9("Number 9"), //
+		FINGER_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
+				"Finger in sound is different than finger in hand shape under it on the same string"), //
 		FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
 				"Fret in sound is different than fret in hand shape under it on the same string"), //
 		FRETS("Frets"), //
@@ -220,6 +224,7 @@ public class Localization {
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
 		REDO("Redo"), //
+		SAVE_AS("Save as..."), //
 		SECTION_AMBIENT("Ambient"), //
 		SECTION_BREAKDOWN("Breakdown"), //
 		SECTION_BRIDGE("Bridge"), //
@@ -693,7 +698,7 @@ public class Localization {
 		}
 	}
 
-	public static final String languagesFolder = new File(RW.getProgramDirectory(), "languages").getAbsolutePath();
+	public static final String languagesFolder = new File(RW.getJarDirectory(), "languages").getAbsolutePath();
 
 	private static Map<String, String> labels;
 

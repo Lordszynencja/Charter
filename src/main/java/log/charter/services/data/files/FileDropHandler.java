@@ -24,6 +24,7 @@ import log.charter.io.Logger;
 import log.charter.io.gp.gp7.GP7PlusFileImporter;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ProjectAudioHandler;
+import log.charter.services.data.StemAddService;
 import log.charter.util.RW;
 
 public class FileDropHandler implements DropTargetListener, Initiable {
@@ -37,6 +38,7 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 	private MidiImporter midiImporter;
 	private ProjectAudioHandler projectAudioHandler;
 	private RSXMLImporter rsXMLImporter;
+	private StemAddService stemAddService;
 	private final USCTxtImporter uscTxtImporter = new USCTxtImporter();
 
 	private final Map<String, Consumer<File>> fileTypeHandlers = new HashMap<>();
@@ -94,11 +96,11 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 
 	private void handleAudio(final File file) {
 		switch (askYesNo(charterFrame, Label.IMPORTING_AUDIO, Label.IMPORT_AUDIO_AS_STEM)) {
+			case YES:
+				stemAddService.addStem(file);
+				break;
 			case NO:
 				projectAudioHandler.importAudio(file);
-				break;
-			case YES:
-				projectAudioHandler.addStem(file);
 				break;
 			default:
 				return;

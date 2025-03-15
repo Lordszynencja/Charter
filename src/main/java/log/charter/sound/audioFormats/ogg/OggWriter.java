@@ -13,7 +13,7 @@ import log.charter.sound.data.AudioData;
 import log.charter.util.RW;
 
 public class OggWriter {
-	private static final String oggEncPath = new File(RW.getProgramDirectory(),
+	private static final String oggEncPath = new File(RW.getJarDirectory(),
 			"oggenc" + File.separator + "oggenc2.exe").getAbsolutePath();
 
 	public static void write(final AudioData data, final File file, final WriteProgressHolder progress) {

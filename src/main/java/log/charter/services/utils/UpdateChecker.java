@@ -19,6 +19,7 @@ import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.io.Logger;
 import log.charter.services.CharterContext;
 import log.charter.util.RW;
+import log.charter.util.Utils;
 
 public class UpdateChecker {
 	private static final URI latestVersionLink = URI.create("https://github.com/Lordszynencja/Charter/releases/latest");
@@ -59,8 +60,8 @@ public class UpdateChecker {
 	}
 
 	private static void makeTempUpdateFile() {
-		final File updateScriptFile = new File(RW.getProgramDirectory(), "update.bat");
-		final File tmpFile = new File(RW.getProgramDirectory(), "tmp_update.bat");
+		final File updateScriptFile = new File(RW.getJarDirectory(), "update.bat");
+		final File tmpFile = new File(RW.getJarDirectory(), "tmp_update.bat");
 
 		RW.copy(updateScriptFile, tmpFile);
 	}
@@ -70,7 +71,7 @@ public class UpdateChecker {
 
 		new ProcessBuilder()//
 				.command("cmd.exe", "/c", "START \"\" tmp_update.bat " + newVersion + " " + oldVersion)//
-				.directory(RW.getProgramDirectory()).start();
+				.directory(RW.getJarDirectory()).start();
 	}
 
 	private CharterContext charterContext;
@@ -108,6 +109,10 @@ public class UpdateChecker {
 	}
 
 	public void checkForUpdates() {
+		if (Utils.isDevEnv) {
+			return;
+		}
+
 		final HttpResponse<String> response = getLatestVersionRedirect();
 		if (response == null) {
 			return;

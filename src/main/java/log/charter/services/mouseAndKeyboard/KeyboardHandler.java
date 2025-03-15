@@ -7,10 +7,12 @@ import static java.awt.event.KeyEvent.VK_META;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_SHIFT;
 
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Optional;
 
+import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.io.Logger;
 import log.charter.services.Action;
 import log.charter.services.ActionHandler;
@@ -18,14 +20,23 @@ import log.charter.services.editModes.ModeManager;
 
 public class KeyboardHandler implements KeyListener {
 	private ActionHandler actionHandler;
+	private ChartToolbar chartToolbar;
 	private ModeManager modeManager;
 
 	private Shortcut shortcut = new Shortcut();
 
+	private boolean scrollLock = false;
+
 	private Action heldAction = null;
+
+	private void setScrollLock() {
+		scrollLock = Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_SCROLL_LOCK);
+		chartToolbar.setChartLockIcon();
+	}
 
 	public void clearKeys() {
 		shortcut = new Shortcut();
+		setScrollLock();
 		heldAction = null;
 	}
 
@@ -71,6 +82,10 @@ public class KeyboardHandler implements KeyListener {
 		return shortcut.shift;
 	}
 
+	public boolean scrollLock() {
+		return scrollLock;
+	}
+
 	private void replaceHeldAction() {
 		heldAction = ShortcutConfig.getAction(modeManager.getMode(), shortcut);
 	}
@@ -105,6 +120,11 @@ public class KeyboardHandler implements KeyListener {
 				replaceHeldAction();
 				return;
 			}
+			if (keyCode == KeyEvent.VK_SCROLL_LOCK) {
+				setScrollLock();
+				return;
+			}
+
 			if (keyCode == KeyEvent.VK_ADD) {
 				keyCode = KeyEvent.VK_PLUS;
 			}

@@ -1,9 +1,15 @@
 package log.charter.services.data.validation;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.Level;
+import log.charter.data.song.enums.HOPO;
+import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
 import log.charter.gui.components.tabs.errorsTab.ChartError.ChartErrorSeverity;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionOnArrangement;
@@ -14,6 +20,20 @@ public class ChordTemplatesValidator {
 	private ChartData chartData;
 	private ErrorsTab errorsTab;
 	private ModeManager modeManager;
+
+	private Set<Integer> getChordTemplateIdsToSkip(final Arrangement arrangement) {
+		final Set<Integer> idsToSkip = new HashSet<>();
+
+		for (final Level level : arrangement.levels) {
+			for (final ChordOrNote sound : level.sounds) {
+				if (sound.isChord() && sound.notes().anyMatch(n -> n.hopo() == HOPO.TAP)) {
+					idsToSkip.add(sound.chord().templateId());
+				}
+			}
+		}
+
+		return idsToSkip;
+	}
 
 	private void addError(final int arrangementId, final Label label, final int templateId, final int string) {
 		final ChartPositionOnArrangement errorPosition = new ChartPositionOnArrangement(chartData, arrangementId,
@@ -45,7 +65,13 @@ public class ChordTemplatesValidator {
 	}
 
 	public void validate(final int arrangementId, final Arrangement arrangement) {
+		final Set<Integer> chordTemplateIdsToSkip = getChordTemplateIdsToSkip(arrangement);
+
 		for (int i = 0; i < arrangement.chordTemplates.size(); i++) {
+			if (chordTemplateIdsToSkip.contains(i)) {
+				continue;
+			}
+
 			validateChordTemplate(arrangementId, arrangement, i, arrangement.chordTemplates.get(i));
 		}
 	}

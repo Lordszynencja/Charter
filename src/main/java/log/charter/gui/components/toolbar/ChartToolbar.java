@@ -5,6 +5,7 @@ import static log.charter.gui.components.utils.ComponentUtils.addRightPressListe
 import static log.charter.gui.components.utils.ComponentUtils.setIcon;
 import static log.charter.util.FileUtils.imagesFolder;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -12,12 +13,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
@@ -26,8 +27,8 @@ import javax.swing.JToolBar;
 
 import log.charter.data.ChartData;
 import log.charter.data.GridType;
-import log.charter.data.config.Config;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.AudioConfig;
 import log.charter.data.config.values.GridConfig;
@@ -62,16 +63,16 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private static final int horizontalSpacing = 5;
 
-	private static final BufferedImage repeaterIcon = ImageUtils.loadSafe("toolbarRepeater.png",
-			new File(imagesFolder, "toolbarRepeater.png"));
-	private static final BufferedImage gridBeatTypeIcon = ImageUtils.loadSafe("toolbarGridTypeBeat.png",
-			new File(imagesFolder, "toolbarGridTypeBeat.png"));
-	private static final BufferedImage gridNoteTypeIcon = ImageUtils.loadSafe("toolbarGridTypeNote.png",
-			new File(imagesFolder, "toolbarGridTypeNote.png"));
-	private static final BufferedImage volumeIcon = ImageUtils.loadSafe("toolbarVolume.png",
-			new File(imagesFolder, "toolbarVolume.png"));
-	private static final BufferedImage sfxVolumeIcon = ImageUtils.loadSafe("toolbarSFXVolume.png",
-			new File(imagesFolder, "toolbarSFXVolume.png"));
+	private static final BufferedImage repeaterIcon = ImageUtils.loadSafeFromDir(imagesFolder, "toolbarRepeater.png");
+	private static final BufferedImage gridBeatTypeIcon = ImageUtils.loadSafeFromDir(imagesFolder,
+			"toolbarGridTypeBeat.png");
+	private static final BufferedImage gridNoteTypeIcon = ImageUtils.loadSafeFromDir(imagesFolder,
+			"toolbarGridTypeNote.png");
+	private static final BufferedImage chartLocked = ImageUtils.loadSafeFromDir(imagesFolder, "toolbarChartLocked.png");
+	private static final BufferedImage chartUnlocked = ImageUtils.loadSafeFromDir(imagesFolder,
+			"toolbarChartUnlocked.png");
+	private static final BufferedImage volumeIcon = ImageUtils.loadSafeFromDir(imagesFolder, "toolbarVolume.png");
+	private static final BufferedImage sfxVolumeIcon = ImageUtils.loadSafeFromDir(imagesFolder, "toolbarSFXVolume.png");
 
 	private ActionHandler actionHandler;
 	private AudioHandler audioHandler;
@@ -98,6 +99,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private FieldWithLabel<TextInputWithValidation> gridSize;
 	private JToggleButton beatGridType;
 	private JToggleButton noteGridType;
+
+	private JButton chartLock;
 
 	private FieldWithLabel<JSlider> volume;
 	@SuppressWarnings("unused")
@@ -262,6 +265,20 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		gridTypeGroup.add(noteGridType);
 	}
 
+	public void setChartLockIcon() {
+		setIcon(chartLock, keyboardHandler.scrollLock() ? chartLocked : chartUnlocked);
+	}
+
+	private void addChartLock(final AtomicInteger x) {
+		chartLock = new JButton(new ImageIcon(chartUnlocked));
+		chartLock.setEnabled(false);
+		chartLock.setBackground(Color.RED);
+		ComponentUtils.setComponentSize(chartLock, 20, 20);
+		setChartLockIcon();
+
+		add(x, chartLock);
+	}
+
 	private int getVolumeAsInteger(final double volume) {
 		if (volume <= 0) {
 			return 0;
@@ -424,6 +441,10 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		addGridSizeInput(x);
 		addGridSizeButtons(x);
 		addGridTypes(x);
+
+		addSeparator(x);
+
+		addChartLock(x);
 
 		addSeparator(x);
 

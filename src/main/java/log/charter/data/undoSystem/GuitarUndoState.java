@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import log.charter.data.ChartData;
-import log.charter.data.song.FHP;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.Phrase;
@@ -38,7 +38,7 @@ public class GuitarUndoState extends UndoState {
 		final Arrangement arrangement = data.songChart.arrangements.get(arrangementId);
 		final Level level = arrangement.getLevel(levelId);
 
-		phrases = map(arrangement.phrases, name -> name, Phrase::new);
+		phrases = map(arrangement.phrases, entry -> entry.getValue() != null, name -> name, Phrase::new);
 		eventPoints = map(arrangement.eventPoints, EventPoint::new);
 		chordTemplates = map(arrangement.chordTemplates, ChordTemplate::new);
 		toneChanges = map(arrangement.toneChanges, ToneChange::new);

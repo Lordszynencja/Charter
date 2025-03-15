@@ -3,11 +3,14 @@ package log.charter.util;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.metal.MetalComboBoxButton;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Localization.Label;
 import log.charter.sound.SoundFileType;
 
@@ -112,9 +115,24 @@ public class FileChooseUtils {
 		return showDialog(parent, chooser);
 	}
 
+	private static void setComboBoxesBackgrounds(final Container container) {
+		for (final Component component : container.getComponents()) {
+			if (MetalComboBoxButton.class.isAssignableFrom(component.getClass())) {
+				final MetalComboBoxButton button = (MetalComboBoxButton) component;
+				button.setBackground(ColorLabel.BASE_BG_3.color());
+			} else if (Container.class.isAssignableFrom(component.getClass())) {
+				setComboBoxesBackgrounds((Container) component);
+			}
+		}
+	}
+
 	public static File chooseDirectory(final Component parent, final String startingPath) {
 		final JFileChooser chooser = new JFileChooser(new File(startingPath));
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setApproveButtonText(Label.SAVE_AS.label());
+
+		setComboBoxesBackgrounds(chooser);
+
 		final int chosenOption = chooser.showOpenDialog(parent);
 		if (chosenOption != JFileChooser.APPROVE_OPTION) {
 			return null;

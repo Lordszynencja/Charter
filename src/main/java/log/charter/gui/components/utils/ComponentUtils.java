@@ -31,13 +31,18 @@ public class ComponentUtils {
 		}
 	}
 
-	public static void setComponentBounds(final Component component, final int x, final int y, final int w,
-			final int h) {
-		component.setBounds(x, y, w, h);
+	public static void setComponentSize(final Component component, final int w, final int h) {
 		final Dimension size = new Dimension(w, h);
 		component.setMinimumSize(size);
 		component.setPreferredSize(size);
 		component.setMaximumSize(size);
+		component.setSize(size);
+	}
+
+	public static void setComponentBounds(final Component component, final int x, final int y, final int w,
+			final int h) {
+		component.setBounds(x, y, w, h);
+		setComponentSize(component, w, h);
 	}
 
 	public static void setComponentBoundsWithValidateRepaint(final Component component, final int x, final int y,

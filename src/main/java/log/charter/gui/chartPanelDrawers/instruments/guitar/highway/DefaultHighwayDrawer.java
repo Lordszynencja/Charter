@@ -83,7 +83,7 @@ import log.charter.util.data.Position2D;
 public class DefaultHighwayDrawer implements HighwayDrawer {
 	public static BufferedImage loadImage(final String path) {
 		final BufferedImage image = ImageUtils.loadSafe(path, //
-				new File(RW.getProgramDirectory(), path), //
+				new File(RW.getJarDirectory(), path), //
 				new File(path));
 		return image == null ? new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR) : image;
 	}

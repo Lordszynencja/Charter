@@ -107,7 +107,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	}
 
 	private void leftClickGuitar(final MouseButtonPressReleaseData clickData) {
-		if (!clickData.isXDrag()) {
+		if (!clickData.isXDrag() || keyboardHandler.scrollLock()) {
 			selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
 			return;
 		}
@@ -130,7 +130,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	}
 
 	private void leftClickVocals(final MouseButtonPressReleaseData clickData, final boolean isDoubleClick) {
-		if (!clickData.isXDrag()) {
+		if (!clickData.isXDrag() || keyboardHandler.scrollLock()) {
 			selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
 		} else if (clickData.pressHighlight.type == PositionType.VOCAL) {
 			dragPositionsWithLength(PositionType.VOCAL, clickData, chartData.currentVocals().vocals);

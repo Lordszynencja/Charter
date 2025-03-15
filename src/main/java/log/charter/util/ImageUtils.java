@@ -9,7 +9,7 @@ import log.charter.io.Logger;
 
 public class ImageUtils {
 	public static BufferedImage loadSafe(final String path) {
-		return loadSafe(path, new File(RW.getProgramDirectory(), path));
+		return loadSafe(path, new File(RW.getJarDirectory(), path));
 	}
 
 	public static BufferedImage loadSafe(final String name, final File... files) {
@@ -23,5 +23,9 @@ public class ImageUtils {
 
 		Logger.error("Couldn't load image " + name);
 		return null;
+	}
+
+	public static BufferedImage loadSafeFromDir(final File dir, final String fileName) {
+		return loadSafe(fileName, new File(dir, fileName));
 	}
 }
