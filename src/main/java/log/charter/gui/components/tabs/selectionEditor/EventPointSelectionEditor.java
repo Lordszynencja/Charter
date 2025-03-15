@@ -312,7 +312,9 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 	private void setEvents(final List<EventType> events) {
 		tableModel.setRowCount(events.size());
 		for (int i = 0; i < events.size(); i++) {
-			tableModel.setValueAt(events.get(i), i, 0);
+			final EventType event = events.get(i);
+			final ItemHolder<EventType> value = new ItemHolder<>(event, event.label);
+			tableModel.setValueAt(value, i, 0);
 		}
 	}
 

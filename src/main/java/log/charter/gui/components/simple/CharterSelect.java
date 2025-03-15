@@ -62,6 +62,10 @@ public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 		setBackground(ColorLabel.BASE_BUTTON.color());
 	}
 
+	public CharterSelect(final List<T> items, final T item) {
+		this(items, item, null, null);
+	}
+
 	public CharterSelect(final Stream<T> items, final T item, final Function<T, String> labelGenerator,
 			final Consumer<T> onPick) {
 		this(items.toList(), item, labelGenerator, onPick);
