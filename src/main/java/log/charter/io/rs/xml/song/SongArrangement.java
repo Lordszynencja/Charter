@@ -33,6 +33,7 @@ import log.charter.data.song.SectionType;
 import log.charter.data.song.SongChart;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.configs.Tuning;
+import log.charter.data.song.configs.Tuning.TuningType;
 import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
@@ -69,6 +70,26 @@ public class SongArrangement {
 		}
 
 		return b.toString();
+	}
+
+	private static final Set<TuningType> standardTunings = Set.of(//
+			TuningType.HIGH_F_SHARP_STANDARD, //
+			TuningType.HIGH_F_STANDARD, //
+			TuningType.E_STANDARD, //
+			TuningType.E_FLAT_STANDARD, //
+			TuningType.D_STANDARD, //
+			TuningType.D_FLAT_STANDARD, //
+			TuningType.C_STANDARD, //
+			TuningType.B_STANDARD, //
+			TuningType.B_FLAT_STANDARD, //
+			TuningType.A_STANDARD, //
+			TuningType.A_FLAT_STANDARD, //
+			TuningType.G_STANDARD, //
+			TuningType.G_FLAT_STANDARD, //
+			TuningType.LOW_F_STANDARD);
+
+	private static boolean standardTuning(final Tuning tuning) {
+		return standardTunings.contains(tuning.tuningType);
 	}
 
 	@XStreamAsAttribute
@@ -148,37 +169,6 @@ public class SongArrangement {
 				arrangement.chordTemplates));
 
 		fixMeasureNumbers();
-	}
-
-	private boolean standardTuning(final Tuning tuning) {
-		switch (tuning.tuningType) {
-			case F_SHARP_STANDARD:
-			case F_STANDARD:
-			case E_STANDARD:
-			case E_FLAT_STANDARD:
-			case D_STANDARD:
-			case C_SHARP_STANDARD:
-			case C_STANDARD:
-			case B_STANDARD:
-			case A_SHARP_STANDARD:
-			case A_STANDARD:
-			case G_SHARP_STANDARD:
-			case G_STANDARD:
-				return true;
-			case E_DROP_D:
-			case E_DROP_C:
-			case E_FLAT_DROP_D_FLAT:
-			case D_DROP_C:
-			case C_SHARP_DROP_B:
-			case DADGAD:
-			case OPEN_A:
-			case OPEN_D:
-			case OPEN_E:
-			case OPEN_G:
-			case CUSTOM:
-			default:
-				return false;
-		}
 	}
 
 	private boolean nonStandardChords(final Arrangement arrangement) {

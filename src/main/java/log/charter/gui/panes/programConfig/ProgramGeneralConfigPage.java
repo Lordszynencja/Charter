@@ -158,7 +158,7 @@ public class ProgramGeneralConfigPage implements Page {
 		final TextInputWithValidation input = generateForInt(value, 50, new IntValueValidator(1, 1000), onChange,
 				false);
 
-		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(label, 130, 50, 20, input,
+		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(label, 180, 50, 20, input,
 				LabelPosition.LEFT);
 		panel.add(field, position);
 
