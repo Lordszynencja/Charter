@@ -61,7 +61,7 @@ public class TuningConverter implements Converter {
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-		final TuningType type = readTuningType(reader.getAttribute("type"));
+		TuningType type = readTuningType(reader.getAttribute("type"));
 		final int strings = Integer.valueOf(reader.getAttribute("strings"));
 		if (type != TuningType.CUSTOM) {
 			return new Tuning(type, strings);
@@ -76,6 +76,10 @@ public class TuningConverter implements Converter {
 			}
 		}
 
+		type = TuningType.fromTuning(tuning);
+		if (type != TuningType.CUSTOM) {
+			return new Tuning(type, strings);
+		}
 		return new Tuning(type, strings, tuning);
 	}
 
