@@ -69,28 +69,65 @@ public class Tuning {
 	}
 
 	public enum TuningType {
+		// high F#
+		HIGH_F_SHARP_STANDARD("high F# standard", new int[] { 2, 2, 2, 2, 2, 2, 2, 2, 2 }), //
+
+		// high F
+		HIGH_F_STANDARD("high F standard", new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1 }), //
+
+		// E
 		E_STANDARD("E standard", new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }), //
 		E_DROP_D("E drop D", new int[] { 0, 0, 0, -2, 0, 0, 0, 0, 0 }), //
 		E_DROP_C("E drop C", new int[] { 0, 0, 0, -4, 0, 0, 0, 0, 0 }), //
+
+		// Eb
 		E_FLAT_STANDARD("Eb standard", new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1 }), //
 		E_FLAT_DROP_D_FLAT("Eb drop Db", new int[] { -1, -1, -1, -3, -1, -1, -1, -1, -1 }), //
+
+		// D
 		D_STANDARD("D standard", new int[] { -2, -2, -2, -2, -2, -2, -2, -2, -2 }), //
 		D_DROP_C("D drop C", new int[] { -2, -2, -2, -4, -2, -2, -2, -2, -2 }), //
-		C_SHARP_STANDARD("Db standard", new int[] { -3, -3, -3, -3, -3, -3, -3, -3, -3 }), //
-		C_SHARP_DROP_B("Db drop B", new int[] { -3, -3, -3, -5, -3, -3, -3, -3, -3 }), //
+
+		// Db
+		D_FLAT_STANDARD("Db standard", new int[] { -3, -3, -3, -3, -3, -3, -3, -3, -3 }), //
+		D_FLAT_DROP_B("Db drop B", new int[] { -3, -3, -3, -5, -3, -3, -3, -3, -3 }), //
+
+		// C
 		C_STANDARD("C standard", new int[] { -4, -4, -4, -4, -4, -4, -4, -4, -4 }), //
+		C_DROP_B_FLAT("C drop Bb", new int[] { -4, -4, -4, -6, -4, -4, -4, -4, -4 }), //
+
+		// B
 		B_STANDARD("B standard", new int[] { -5, -5, -5, -5, -5, -5, -5, -5, -5 }), //
-		A_SHARP_STANDARD("Bb standard", new int[] { -6, -6, -6, -6, -6, -6, -6, -6, -6 }), //
+		B_DROP_A("B drop A", new int[] { -5, -5, -5, -7, -5, -5, -5, -5, -5 }), //
+
+		// Bb
+		B_FLAT_STANDARD("Bb standard", new int[] { -6, -6, -6, -6, -6, -6, -6, -6, -6 }), //
+		B_FLAT_DROP_G("Bb drop G", new int[] { -6, -6, -6, -8, -6, -6, -6, -6, -6 }), //
+
+		// A
 		A_STANDARD("A standard", new int[] { -7, -7, -7, -7, -7, -7, -7, -7, -7 }), //
-		G_SHARP_STANDARD("Ab standard", new int[] { -8, -8, -8, -8, -8, -8, -8, -8, -8 }), //
+		A_DROP_G_FLAT("A drop Gb", new int[] { -7, -7, -7, -9, -7, -7, -7, -7, -7 }), //
+
+		// Ab
+		A_FLAT_STANDARD("Ab standard", new int[] { -8, -8, -8, -8, -8, -8, -8, -8, -8 }), //
+
+		// G
 		G_STANDARD("G standard", new int[] { -9, -9, -9, -9, -9, -9, -9, -9, -9 }), //
-		F_SHARP_STANDARD("Gb standard", new int[] { -10, -10, -10, -10, -10, -10, -10, -10, -10 }), //
-		F_STANDARD("Gb standard", new int[] { -11, -11, -11, -11, -11, -11, -11, -11, -11 }), //
+
+		// Gb
+		G_FLAT_STANDARD("Gb standard", new int[] { -10, -10, -10, -10, -10, -10, -10, -10, -10 }), //
+
+		// F
+		LOW_F_STANDARD("Low F standard", new int[] { -11, -11, -11, -11, -11, -11, -11, -11, -11 }), //
+
+		// Open tunings
 		OPEN_D("Open D", new int[] { -2, -2, -2, -2, 0, 0, -1, -2, -2 }), //
 		OPEN_E("Open E", new int[] { 0, 0, 0, 0, 2, 2, 1, 0, 0 }), //
 		OPEN_G("Open G", new int[] { -2, -2, -2, -2, -2, 0, 0, 0, -2 }), //
 		OPEN_A("Open A", new int[] { 0, 0, 0, 0, 0, 2, 2, 2, 0 }), //
 		DADGAD("DADGAD", new int[] { -2, -2, -2, -2, 0, 0, 0, -2, -2 }), //
+
+		// Custom
 		CUSTOM("Custom", new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
 		public final String name;
@@ -135,22 +172,26 @@ public class Tuning {
 					case 0 -> E_STANDARD;
 					case -1 -> E_FLAT_STANDARD;
 					case -2 -> D_STANDARD;
-					case -3 -> C_SHARP_STANDARD;
+					case -3 -> D_FLAT_STANDARD;
 					case -4 -> C_STANDARD;
 					case -5 -> B_STANDARD;
-					case -6 -> A_SHARP_STANDARD;
+					case -6 -> B_FLAT_STANDARD;
 					case -7 -> A_STANDARD;
-					case -8 -> G_SHARP_STANDARD;
+					case -8 -> A_FLAT_STANDARD;
 					case -9 -> G_STANDARD;
-					case -10 -> F_SHARP_STANDARD;
-					case -11 -> F_STANDARD;
+					case -10 -> G_FLAT_STANDARD;
+					case -11 -> LOW_F_STANDARD;
 					default -> CUSTOM;
 				};
 				case -2 -> switch (lastStringTuning) {
 					case 0 -> E_DROP_D;
 					case -1 -> E_FLAT_DROP_D_FLAT;
 					case -2 -> D_DROP_C;
-					case -3 -> C_SHARP_DROP_B;
+					case -3 -> D_FLAT_DROP_B;
+					case -4 -> C_DROP_B_FLAT;
+					case -5 -> B_DROP_A;
+					case -6 -> B_FLAT_DROP_G;
+					case -7 -> A_DROP_G_FLAT;
 					default -> CUSTOM;
 				};
 				case -4 -> switch (lastStringTuning) {

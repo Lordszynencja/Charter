@@ -36,9 +36,32 @@ public class TuningConverter implements Converter {
 		writer.addAttribute("tuningValues", String.join(",", valueStrings));
 	}
 
+	private TuningType readTuningType(final String type) {
+		if ("F_STANDARD".equals(type)) {
+			return TuningType.LOW_F_STANDARD;
+		}
+		if ("C_SHARP_STANDARD".equals(type)) {
+			return TuningType.D_FLAT_STANDARD;
+		}
+		if ("C_SHARP_DROP_B".equals(type)) {
+			return TuningType.D_FLAT_DROP_B;
+		}
+		if ("A_SHARP_STANDARD".equals(type)) {
+			return TuningType.B_FLAT_STANDARD;
+		}
+		if ("G_SHARP_STANDARD".equals(type)) {
+			return TuningType.A_FLAT_STANDARD;
+		}
+		if ("F_SHARP_STANDARD".equals(type)) {
+			return TuningType.G_FLAT_STANDARD;
+		}
+
+		return TuningType.valueOf(type);
+	}
+
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-		final TuningType type = TuningType.valueOf(reader.getAttribute("type"));
+		TuningType type = readTuningType(reader.getAttribute("type"));
 		final int strings = Integer.valueOf(reader.getAttribute("strings"));
 		if (type != TuningType.CUSTOM) {
 			return new Tuning(type, strings);
@@ -53,6 +76,10 @@ public class TuningConverter implements Converter {
 			}
 		}
 
+		type = TuningType.fromTuning(tuning);
+		if (type != TuningType.CUSTOM) {
+			return new Tuning(type, strings);
+		}
 		return new Tuning(type, strings, tuning);
 	}
 
