@@ -46,15 +46,15 @@ import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeNotes;
 import log.charter.util.data.Position2D;
 
 public class ModernThemeNotes implements ThemeNotes {
-	private static BufferedImage[] noteIcons = new BufferedImage[InstrumentConfig.maxStrings];
-	private static BufferedImage[] linkedNoteIcons = new BufferedImage[InstrumentConfig.maxStrings];
+	private static BufferedImage[] noteIcons = new BufferedImage[InstrumentConfig.maxPossibleStrings];
+	private static BufferedImage[] linkedNoteIcons = new BufferedImage[InstrumentConfig.maxPossibleStrings];
 	private static BufferedImage noteSelectIcon = null;
 	private static BufferedImage noteHighlightIcon = null;
-	private static BufferedImage[] harmonicNoteIcons = new BufferedImage[InstrumentConfig.maxStrings];
+	private static BufferedImage[] harmonicNoteIcons = new BufferedImage[InstrumentConfig.maxPossibleStrings];
 	private static BufferedImage harmonicNoteSelectIcon = null;
 	private static BufferedImage harmonicNoteHighlightIcon = null;
-	private static BufferedImage[] accentIcons = new BufferedImage[InstrumentConfig.maxStrings];
-	private static BufferedImage[] harmonicAccentIcons = new BufferedImage[InstrumentConfig.maxStrings];
+	private static BufferedImage[] accentIcons = new BufferedImage[InstrumentConfig.maxPossibleStrings];
+	private static BufferedImage[] harmonicAccentIcons = new BufferedImage[InstrumentConfig.maxPossibleStrings];
 
 	private static BufferedImage hammerOnIcon = null;
 	private static BufferedImage pullOffIcon = null;

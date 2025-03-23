@@ -47,8 +47,8 @@ public class ProgramInstrumentConfigPage implements Page {
 	}
 
 	private void addMaxStrings(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(maxStrings, 50, new IntValueValidator(1, 9),
-				v -> maxStrings = v, false);
+		final TextInputWithValidation input = generateForInt(maxStrings, 50,
+				new IntValueValidator(1, InstrumentConfig.maxPossibleStrings), v -> maxStrings = v, false);
 
 		maxStringsField = new FieldWithLabel<>(Label.MAX_STRINGS, 100, 50, 20, input, LabelPosition.LEFT);
 		panel.add(maxStringsField, position);

@@ -13,6 +13,7 @@ import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.Note;
 
 public class NoteDrawData {
+	public final int id;
 	public final double position;
 	public final double endPosition;
 	public final int string;
@@ -34,8 +35,9 @@ public class NoteDrawData {
 	public final boolean withoutHead;
 	public final boolean isChordNote;
 
-	public NoteDrawData(final double notePosition, final double noteEndPosition, final double minPosition,
+	public NoteDrawData(final int id, final double notePosition, final double noteEndPosition, final double minPosition,
 			final double maxPosition, final Note note, final boolean linkPrevious) {
+		this.id = id;
 		originalPosition = notePosition;
 		trueLength = noteEndPosition - notePosition;
 
@@ -68,9 +70,10 @@ public class NoteDrawData {
 				: 0;
 	}
 
-	public NoteDrawData(final double chordPosition, final double chordNoteEndPosition, final double minPosition,
-			final double maxPosition, final Chord chord, final int string, final int fret, final ChordNote chordNote,
-			final boolean linkPrevious, final boolean shouldHaveLength) {
+	public NoteDrawData(final int id, final double chordPosition, final double chordNoteEndPosition,
+			final double minPosition, final double maxPosition, final Chord chord, final int string, final int fret,
+			final ChordNote chordNote, final boolean linkPrevious, final boolean shouldHaveLength) {
+		this.id = id;
 		originalPosition = chordPosition;
 		trueLength = shouldHaveLength ? chordNoteEndPosition - chordPosition : 0;
 
@@ -104,6 +107,7 @@ public class NoteDrawData {
 
 	public NoteDrawData(final double truePosition, final double position, final double endPosition,
 			final NoteDrawData note) {
+		id = note.id;
 		originalPosition = truePosition;
 		trueLength = note.trueLength;
 

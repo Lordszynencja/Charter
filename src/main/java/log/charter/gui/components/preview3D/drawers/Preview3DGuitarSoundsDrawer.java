@@ -12,6 +12,7 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.fretLengthMult
 import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretMiddlePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
+import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPositionWithBend;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.noteHalfWidth;
@@ -29,15 +30,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.config.values.InstrumentConfig;
+import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
+import log.charter.data.song.Level;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.Chord.ChordNotesVisibility;
+import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.gui.components.preview3D.data.ChordBoxDrawData;
 import log.charter.gui.components.preview3D.data.NoteDrawData;
@@ -75,6 +81,32 @@ public class Preview3DGuitarSoundsDrawer {
 			}
 
 			return Integer.compare(drawOrder(), o.drawOrder());
+		}
+	}
+
+	private class NoteHitDrawObject implements SoundDrawObject {
+		public final long startTime = System.nanoTime();
+		public final int string;
+		public final int fret;
+
+		public NoteHitDrawObject(final int string, final int fret) {
+			this.string = string;
+			this.fret = fret;
+		}
+
+		@Override
+		public double position() {
+			return 0;
+		}
+
+		@Override
+		public int drawOrder() {
+			return 1;
+		}
+
+		@Override
+		public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
+			drawNoteHit(shadersHolder, drawData, startTime, string, fret);
 		}
 	}
 
@@ -126,15 +158,19 @@ public class Preview3DGuitarSoundsDrawer {
 		}
 	}
 
+	private static double lastFretLengthMultiplier = fretLengthMultiplier;
+	private final static Map<Integer, CompositeModel> openNoteSameFretsModels = new HashMap<>();
+	private final static Map<Integer, Map<Integer, CompositeModel>> openNoteModels = new HashMap<>();
+	private final static Map<Integer, Map<Integer, CompositeModel>> openNoteModelsLeftHanded = new HashMap<>();
+
 	private ChartData chartData;
 	private NoteStatusModels noteStatusModels;
 
 	private final Preview3DChordBoxDrawer preview3DChordBoxDrawer = new Preview3DChordBoxDrawer();
 
-	private static double lastFretLengthMultiplier = fretLengthMultiplier;
-	private final static Map<Integer, CompositeModel> openNoteSameFretsModels = new HashMap<>();
-	private final static Map<Integer, Map<Integer, CompositeModel>> openNoteModels = new HashMap<>();
-	private final static Map<Integer, Map<Integer, CompositeModel>> openNoteModelsLeftHanded = new HashMap<>();
+	private double lastTime;
+	private final List<NoteHitDrawObject> explosions = new ArrayList<>();
+	private int lastSound = -1;
 
 	private static CompositeModel getOpenNoteModel(final int fret0, final int fret1) {
 		if (fretLengthMultiplier != lastFretLengthMultiplier) {
@@ -511,17 +547,128 @@ public class Preview3DGuitarSoundsDrawer {
 		drawNoteHead(shadersHolder, drawData, note.position, note, false, invertBend);
 	}
 
+	private void drawNoteHit(final ShadersHolder shadersHolder, final Preview3DDrawData drawData, final long startTime,
+			final int string, final int fret) {
+		final double x, l;
+		if (fret == 0) {
+			final IntRange frets = drawData.getFrets(drawData.time);
+			if (frets == null) {
+				return;
+			}
+
+			x = getFretPosition(frets.min - 1);
+			l = getFretPosition(frets.max) - x;
+		} else {
+			x = getFretMiddlePosition(fret);
+			l = 0;
+		}
+
+		final double y = getStringPosition(string, chartData.currentStrings());
+		final double z = 0;
+
+		final Matrix4 modelMatrix = moveMatrix(x, y, z);
+		final BaseShaderDrawData shaderDrawData = shadersHolder.new BaseShaderDrawData();
+
+		final double explosionLifetime = 500_000_000;
+		final double explosionTime = (System.nanoTime() - startTime) / explosionLifetime;
+
+		final int r = (int) (255 * (1 - explosionTime));
+		final int g = (int) (255 * (1 - Math.min(1, explosionTime * 2)));
+		final int b = 0;
+		final int a = (int) (255 * (1 - explosionTime));
+		final Color particleColor = new Color(r, g, b, a);
+
+		final Random random = new Random(startTime);
+		for (int i = 0; i < 100; i++) {
+			final double dx = (random.nextDouble() - 0.5) * 2;
+			final double dy = random.nextDouble();
+			final double dz = (random.nextDouble() - 0.5) * 0.5;
+
+			final double px = random.nextDouble() * l + dx * explosionTime;
+			final double py = dy * explosionTime - explosionTime * explosionTime;
+			final double pz = dz * explosionTime;
+
+			shaderDrawData.addVertex(new Point3D(px, py, pz), particleColor);
+		}
+
+		GL30.glPointSize(5);
+		shaderDrawData.draw(GL30.GL_POINTS, modelMatrix);
+	}
+
+	/**
+	 * @return if new current note was set while moving forward
+	 */
+	private boolean updateLastSound(final double time) {
+		final boolean movedForward = lastTime < time;
+		lastTime = time;
+		final ImmutableBeatsMap beats = chartData.beats();
+		final List<ChordOrNote> sounds = chartData.currentSounds();
+		if (!movedForward) {
+			while (lastSound >= sounds.size() || (lastSound >= 0 && sounds.get(lastSound).position(beats) > time)) {
+				lastSound--;
+			}
+
+			return false;
+		}
+
+		boolean newSound = false;
+		while (lastSound + 1 < sounds.size() && sounds.get(lastSound + 1).position(beats) < time) {
+			lastSound++;
+			newSound = true;
+		}
+
+		return newSound;
+	}
+
+	private void addNotesToDraw(final List<SoundDrawObject> objectsToDraw, final Preview3DDrawData drawData) {
+		for (int string = 0; string < chartData.currentStrings(); string++) {
+			final boolean shouldBendDownwards = invertBend(string);
+
+			final List<NoteDrawData> stringNotes = drawData.notes.notes.get(string);
+			stringNotes.forEach(note -> objectsToDraw.add(new NoteDrawObject(note, shouldBendDownwards)));
+		}
+	}
+
+	private void addExplosionsToDraw(final List<SoundDrawObject> objectsToDraw, final Preview3DDrawData drawData) {
+		final boolean addExplosions = updateLastSound(drawData.time);
+		if (addExplosions) {
+			final ChordOrNote sound = chartData.currentSounds().get(lastSound);
+			final ImmutableBeatsMap beats = chartData.beats();
+			final Level level = chartData.currentArrangementLevel();
+			boolean visibleNotes;
+			if (!sound.isChord()) {
+				visibleNotes = true;
+			} else {
+				final boolean shouldAddNotesByDefault = level.shouldChordShowNotes(beats, lastSound);
+				final ChordNotesVisibility chordNotesVisibility = sound.chord()
+						.chordNotesVisibility(shouldAddNotesByDefault);
+				visibleNotes = chordNotesVisibility != ChordNotesVisibility.NONE;
+			}
+
+			if (visibleNotes) {
+				sound.notesWithFrets(chartData.currentChordTemplates()).forEach(n -> {
+					if (!ChordOrNote.isLinkedToPrevious(n.string(), lastSound, chartData.currentSounds())) {
+						explosions.add(new NoteHitDrawObject(n.string(), n.fret()));
+					}
+				});
+			} else {
+				for (int i = 0; i < chartData.currentStrings(); i++) {
+					explosions.add(new NoteHitDrawObject(i, 0));
+				}
+			}
+		}
+
+		explosions.removeIf(o -> o.startTime < System.nanoTime() - 500_000_000);
+		objectsToDraw.addAll(explosions);
+	}
+
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
 		final List<SoundDrawObject> objectsToDraw = new ArrayList<>(100);
 		final List<SoundDrawObject> transparentObjectsToDraw = new ArrayList<>(20);
 
-		for (int string = 0; string < chartData.currentStrings(); string++) {
-			final boolean shouldBendDownwards = invertBend(string);
-
-			drawData.notes.notes.get(string)
-					.forEach(note -> objectsToDraw.add(new NoteDrawObject(note, shouldBendDownwards)));
-		}
+		addNotesToDraw(objectsToDraw, drawData);
 		drawData.notes.chords.forEach(chordBox -> transparentObjectsToDraw.add(new ChordBoxDrawObject(chordBox)));
+		addExplosionsToDraw(objectsToDraw, drawData);
 
 		objectsToDraw.sort(SoundDrawObject::compareTo);
 		objectsToDraw.forEach(object -> object.draw(shadersHolder, drawData));

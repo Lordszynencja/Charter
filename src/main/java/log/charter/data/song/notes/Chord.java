@@ -146,7 +146,7 @@ public class Chord extends GuitarSound {
 		}
 	}
 
-	public ChordNotesVisibility chordNotesVisibility() {
+	private ChordNotesVisibility chordNotesVisibility() {
 		for (final ChordNote chordNote : chordNotes.values()) {
 			if (chordNote.linkNext || chordNote.slideTo != null || chordNote.tremolo || chordNote.vibrato
 					|| !chordNote.bendValues.isEmpty() || chordNote.endPosition().compareTo(this.position()) > 0) {

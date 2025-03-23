@@ -6,6 +6,8 @@ import static log.charter.data.config.values.ValueAccessor.forInteger;
 import java.util.Map;
 
 public class InstrumentConfig {
+	public static final int maxPossibleStrings = 9;
+
 	public static boolean leftHanded = false;
 	public static int maxStrings = 9;
 	public static int frets = 28;

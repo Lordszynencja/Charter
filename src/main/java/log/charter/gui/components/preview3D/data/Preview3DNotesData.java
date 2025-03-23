@@ -70,8 +70,8 @@ public class Preview3DNotesData {
 				continue;
 			}
 
-			notes.get(string).add(new NoteDrawData(notePosition, noteEndPosition, timeFrom, timeTo, chord, string, fret,
-					chordNote, linkPrevious, shouldHaveLength));
+			notes.get(string).add(new NoteDrawData(id, notePosition, noteEndPosition, timeFrom, timeTo, chord, string,
+					fret, chordNote, linkPrevious, shouldHaveLength));
 		}
 	}
 
@@ -112,7 +112,7 @@ public class Preview3DNotesData {
 				final Note note = sound.note();
 				final double notePosition = note.position(beats);
 				final double noteEndPosition = note.endPosition(beats);
-				notes.get(note.string).add(new NoteDrawData(notePosition, noteEndPosition, timeFrom, timeTo, note,
+				notes.get(note.string).add(new NoteDrawData(i, notePosition, noteEndPosition, timeFrom, timeTo, note,
 						isLinkedToPrevious(note.string, i, sounds)));
 			} else {
 				addChord(chartData.beats(), chords, notes, arrangement, level, sounds, i, sound.chord(), timeFrom,
