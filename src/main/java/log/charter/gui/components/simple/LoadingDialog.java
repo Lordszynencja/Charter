@@ -10,6 +10,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
@@ -92,6 +93,7 @@ public class LoadingDialog extends JDialog {
 		add(text);
 
 		progressBar = new JProgressBar(0, steps);
+		progressBar.setBackground(ColorLabel.BASE_BG_2.color());
 		progressBar.setBounds(50, 100, getWidth() - 100, 30);
 		add(progressBar);
 

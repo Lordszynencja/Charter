@@ -152,14 +152,14 @@ public class Player {
 		final int channels = audioFormat.getChannels();
 		final int sampleSize = audioFormat.getSampleSizeInBits() / 8;
 
-		float[][] samples = FloatSamplesUtils.splitStereoAudioFloat(buffer, sampleSize, channels);
+		float[][] samples = FloatSamplesUtils.splitAudioFloat(buffer, sampleSize, channels);
 		applyEffect(samples);
 		setVolume(samples);
 		if (rubberBandStretcher != null) {
 			samples = stretch(samples, lastBlock);
 		}
 
-		line.write(FloatSamplesUtils.toBytes(samples, channels, sampleSize));
+		line.write(FloatSamplesUtils.toBytes(samples, sampleSize, channels));
 	}
 
 	private void waitIfNeeded() throws InterruptedException {

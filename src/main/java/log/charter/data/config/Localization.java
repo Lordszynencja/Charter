@@ -69,6 +69,7 @@ public class Localization {
 		CHANGE_AUDIO("Change audio"), //
 		CHANGE_LENGTH("Change length"), //
 		CHANGE_LENGTH_BY_SECONDS("Change length by this many seconds:"), //
+		CHANGE_SONG_PITCH("Change song pitch"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
 		CONFIG("Config"), //
@@ -225,6 +226,9 @@ public class Localization {
 		PASTE("Paste"), //
 		PHRASE_NAME("Phrase name"), //
 		PICKED_BASS("Picked"), //
+		PITCH_FROM("Change pitch from"), //
+		PITCH_SHIFTING_AUDIO("Pitch shifting audio: %s"), //
+		PITCH_TO("to"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
@@ -285,6 +289,7 @@ public class Localization {
 		SPEED_INCREASE_PRECISE("Increase speed precise"), //
 		SQUASH_LEVELS("Squash levels"), //
 		STARTING_TONE("Starting tone"), //
+		STUDYING_AUDIO("Studying audio: %s"), //
 		SUPPORTED_MUSIC_FILE("Flac, Mp3, Ogg or Wav file"), //
 		SWITCH_TS_TYPING_PART("Switch TS typing part"), //
 		TAB_3D_PREVIEW("3D preview"), //

@@ -157,6 +157,10 @@ public class ProjectAudioHandler {
 		saveAudio(false);
 	}
 
+	public AudioData getMainAudio() {
+		return mainAudio;
+	}
+
 	public AudioData getAudio() {
 		if (selectedStem >= 0 && selectedStem < stems.size()) {
 			return stems.get(selectedStem);
