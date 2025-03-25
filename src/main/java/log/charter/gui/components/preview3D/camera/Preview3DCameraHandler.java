@@ -1,5 +1,6 @@
 package log.charter.gui.components.preview3D.camera;
 
+import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
@@ -12,9 +13,11 @@ import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.List;
+import java.util.Random;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.values.InstrumentConfig;
+import log.charter.data.config.values.SecretsConfig;
 import log.charter.data.song.FHP;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.time.Position;
@@ -22,6 +25,7 @@ import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.services.data.ChartTimeHandler;
 
 public class Preview3DCameraHandler {
+
 	private static final Matrix4 baseCameraPerspectiveMatrix = cameraMatrix(-0.3, -0.3, -0.3, -1)//
 			.multiply(scaleMatrix(1, 1, -1));
 
@@ -38,11 +42,57 @@ public class Preview3DCameraHandler {
 			+ getFretPosition(0) * 0.6;
 	private static final double weightedPositionWeight = 0.1;
 
+	private final Random random = new Random();
+
+	private double getRandomShakeValue(final double multiplier) {
+		return (random.nextDouble() * 2 - 1) * multiplier;
+	}
+
+	private class CameraFinalData {
+		final double camY;
+		final double camZ;
+		final double camRotationX;
+		final double camRotationY;
+
+		final double screenScaleX;
+		final double screenScaleY;
+
+		public CameraFinalData(final double aspectRatio) {
+			camY = 1.3 + topStringPosition + (fretSpan - 4) * 0.2;
+			camZ = -2.5 + (fretSpan - 4) * -0.2;
+			camRotationX = 0.2 + Math.sqrt(fretSpan - 4) * 0.01;
+			camRotationY = 0.06;
+
+			screenScaleX = min(minScreenScaleX, screenScaleXMultiplier / aspectRatio);
+			screenScaleY = min(minScreenScaleY, screenScaleYMultiplier * aspectRatio);
+		}
+
+		public CameraFinalData(final double aspectRatio, final double shake) {
+			camY = 1.3 + topStringPosition + (fretSpan - 4) * 0.2 + getRandomShakeValue(shake * 0.5);
+			camZ = -2.5 + (fretSpan - 4) * -0.2 + getRandomShakeValue(shake * 0.5);
+			camRotationX = 0.2 + Math.sqrt(fretSpan - 4) * 0.01 + getRandomShakeValue(shake * 0.1);
+			camRotationY = 0.06 + getRandomShakeValue(shake * 0.1);
+
+			screenScaleX = min(minScreenScaleX, screenScaleXMultiplier / aspectRatio);
+			screenScaleY = min(minScreenScaleY, screenScaleYMultiplier * aspectRatio);
+		}
+
+		public Matrix4 generateMatrix() {
+			return scaleMatrix(screenScaleX, screenScaleY, 1 / 10.0)//
+					.multiply(baseCameraPerspectiveMatrix)//
+					.multiply(rotationXMatrix(camRotationX))//
+					.multiply(rotationYMatrix(camRotationY))//
+					.multiply(moveMatrix(-camX, -camY, -camZ));
+		}
+	}
+
 	private ChartTimeHandler chartTimeHandler;
 	private ChartData chartData;
 
 	private double camX = 2.5;
 	private double fretSpan = 4;
+	private long cameraShakeTime = 0;
+	private int cameraShakeStrength = 0;
 
 	public Matrix4 currentMatrix;
 
@@ -91,19 +141,19 @@ public class Preview3DCameraHandler {
 		fretSpan = mix(targetFretSpan, fretSpan, focusSpeed);
 	}
 
+	public void shakeCamera(final int strength) {
+		cameraShakeTime = System.nanoTime();
+		cameraShakeStrength = strength;
+	}
+
 	public void updateCamera(final double aspectRatio) {
-		final double camY = 1.3 + topStringPosition + (fretSpan - 4) * 0.2;
-		final double camZ = -2.5 + (fretSpan - 4) * -0.2;
-		final double camRotationX = 0.2 + Math.sqrt(fretSpan - 4) * 0.01;
-		final double camRotationY = 0.06;
+		double shake = SecretsConfig.explosionsShakyCam ? 1 : 0;
+		shake *= max(0, 1 - (System.nanoTime() - cameraShakeTime) / 1_000_000_000.0);
+		shake = pow(shake, 3) * cameraShakeStrength / chartData.currentStrings();
 
-		final double screenScaleX = min(minScreenScaleX, screenScaleXMultiplier / aspectRatio);
-		final double screenScaleY = min(minScreenScaleY, screenScaleYMultiplier * aspectRatio);
+		final CameraFinalData cameraFinalData = shake > 0 ? new CameraFinalData(aspectRatio, shake)
+				: new CameraFinalData(aspectRatio);
 
-		currentMatrix = scaleMatrix(screenScaleX, screenScaleY, 1 / 10.0)//
-				.multiply(baseCameraPerspectiveMatrix)//
-				.multiply(rotationXMatrix(camRotationX))//
-				.multiply(rotationYMatrix(camRotationY))//
-				.multiply(moveMatrix(-camX, -camY, -camZ));
+		currentMatrix = cameraFinalData.generateMatrix();
 	}
 }

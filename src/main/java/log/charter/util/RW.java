@@ -166,7 +166,7 @@ public class RW {
 		writeB(file, String.join("\r\n", lines).getBytes());
 	}
 
-	public static void copy(final File from, final File to) {
+	public static boolean copy(final File from, final File to) {
 		try {
 			if (to.getParentFile() != null) {
 				to.getParentFile().mkdirs();
@@ -184,8 +184,10 @@ public class RW {
 			}
 			input.close();
 			output.close();
+			return true;
 		} catch (final IOException e) {
 			Logger.error("Couldn't copy " + from + " to " + to, e);
+			return false;
 		}
 	}
 

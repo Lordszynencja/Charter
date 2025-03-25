@@ -8,7 +8,8 @@ public class MissingFingersOnChordTemplatesFixer {
 	public static void fix(final Arrangement arrangement) {
 		arrangement.chordTemplates.forEach(chordTemplate -> {
 			for (final int string : new HashSet<>(chordTemplate.fingers.keySet())) {
-				if (chordTemplate.fingers.get(string) == null) {
+				final Integer finger = chordTemplate.fingers.get(string);
+				if (finger == null || finger < 0 || finger > 5) {
 					chordTemplate.fingers.remove(string);
 				}
 			}

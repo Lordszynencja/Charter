@@ -59,23 +59,26 @@ public class UpdateChecker {
 		return location.substring(slashPosition + 1);
 	}
 
-	private static void makeTempUpdateFile() {
+	private static boolean makeTempUpdateFile() {
 		final File updateScriptFile = new File(RW.getJarDirectory(), "update.bat");
 		final File tmpFile = new File(RW.getJarDirectory(), "tmp_update.bat");
 
-		RW.copy(updateScriptFile, tmpFile);
+		return RW.copy(updateScriptFile, tmpFile);
 	}
 
-	private static void runUpdate(final String oldVersion, final String newVersion) throws IOException {
-		makeTempUpdateFile();
+	private CharterContext charterContext;
+	private CharterFrame charterFrame;
+
+	private void runUpdate(final String oldVersion, final String newVersion) throws IOException {
+		if (!makeTempUpdateFile()) {
+			ComponentUtils.showPopup(charterFrame, Label.COULDNT_RUN_UPDATE_SCRIPT);
+			return;
+		}
 
 		new ProcessBuilder()//
 				.command("cmd.exe", "/c", "START \"\" tmp_update.bat " + newVersion + " " + oldVersion)//
 				.directory(RW.getJarDirectory()).start();
 	}
-
-	private CharterContext charterContext;
-	private CharterFrame charterFrame;
 
 	private void informUserAboutNewVersion(final String newVersion) {
 		final ConfirmAnswer answer = ComponentUtils.askYesNo(charterFrame, Label.NEW_VERSION,

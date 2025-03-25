@@ -37,6 +37,7 @@ import org.lwjgl.opengl.GL30;
 import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.config.values.InstrumentConfig;
+import log.charter.data.config.values.SecretsConfig;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.Level;
@@ -45,6 +46,7 @@ import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.Chord.ChordNotesVisibility;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.gui.components.preview3D.camera.Preview3DCameraHandler;
 import log.charter.gui.components.preview3D.data.ChordBoxDrawData;
 import log.charter.gui.components.preview3D.data.NoteDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
@@ -163,6 +165,7 @@ public class Preview3DGuitarSoundsDrawer {
 	private final static Map<Integer, Map<Integer, CompositeModel>> openNoteModels = new HashMap<>();
 	private final static Map<Integer, Map<Integer, CompositeModel>> openNoteModelsLeftHanded = new HashMap<>();
 
+	private Preview3DCameraHandler cameraHandler;
 	private ChartData chartData;
 	private NoteStatusModels noteStatusModels;
 
@@ -203,7 +206,9 @@ public class Preview3DGuitarSoundsDrawer {
 		return currentMap.get(fret0).get(fret1);
 	}
 
-	public void init(final ChartData chartData, final NoteStatusModels noteStatusModels) {
+	public void init(final ChartData chartData, final NoteStatusModels noteStatusModels,
+			final Preview3DCameraHandler cameraHandler) {
+		this.cameraHandler = cameraHandler;
 		this.chartData = chartData;
 		this.noteStatusModels = noteStatusModels;
 
@@ -629,32 +634,47 @@ public class Preview3DGuitarSoundsDrawer {
 		}
 	}
 
+	private boolean explosionForNotes(final ChordOrNote sound) {
+		if (!sound.isChord()) {
+			return true;
+		}
+
+		final ImmutableBeatsMap beats = chartData.beats();
+		final Level level = chartData.currentArrangementLevel();
+
+		final boolean shouldAddNotesByDefault = level.shouldChordShowNotes(beats, lastSound);
+		final ChordNotesVisibility chordNotesVisibility = sound.chord().chordNotesVisibility(shouldAddNotesByDefault);
+		return chordNotesVisibility != ChordNotesVisibility.NONE;
+	}
+
+	private void addExplosionsForNotes(final ChordOrNote sound) {
+		sound.notesWithFrets(chartData.currentChordTemplates()).forEach(n -> {
+			if (!ChordOrNote.isLinkedToPrevious(n.string(), lastSound, chartData.currentSounds())) {
+				explosions.add(new NoteHitDrawObject(n.string(), n.fret()));
+				cameraHandler.shakeCamera(sound.isChord() ? sound.chord().chordNotes.size() : 1);
+			}
+		});
+	}
+
+	private void addExplosionsForStrings(final ChordOrNote sound) {
+		final int size = !sound.isChord() ? 0 : chartData.currentStrings() / 2;
+		for (int i = chartData.currentStrings() - size; i < chartData.currentStrings(); i++) {
+			explosions.add(new NoteHitDrawObject(i, 0));
+		}
+
+		cameraHandler.shakeCamera(sound.isChord() ? sound.chord().chordNotes.size() : 0);
+	}
+
 	private void addExplosionsToDraw(final List<SoundDrawObject> objectsToDraw, final Preview3DDrawData drawData) {
 		final boolean addExplosions = updateLastSound(drawData.time);
-		if (addExplosions) {
+		if (SecretsConfig.explosions && addExplosions) {
 			final ChordOrNote sound = chartData.currentSounds().get(lastSound);
-			final ImmutableBeatsMap beats = chartData.beats();
-			final Level level = chartData.currentArrangementLevel();
-			boolean visibleNotes;
-			if (!sound.isChord()) {
-				visibleNotes = true;
-			} else {
-				final boolean shouldAddNotesByDefault = level.shouldChordShowNotes(beats, lastSound);
-				final ChordNotesVisibility chordNotesVisibility = sound.chord()
-						.chordNotesVisibility(shouldAddNotesByDefault);
-				visibleNotes = chordNotesVisibility != ChordNotesVisibility.NONE;
-			}
+			final boolean explosionForNotes = explosionForNotes(sound);
 
-			if (visibleNotes) {
-				sound.notesWithFrets(chartData.currentChordTemplates()).forEach(n -> {
-					if (!ChordOrNote.isLinkedToPrevious(n.string(), lastSound, chartData.currentSounds())) {
-						explosions.add(new NoteHitDrawObject(n.string(), n.fret()));
-					}
-				});
+			if (explosionForNotes) {
+				addExplosionsForNotes(sound);
 			} else {
-				for (int i = 0; i < chartData.currentStrings(); i++) {
-					explosions.add(new NoteHitDrawObject(i, 0));
-				}
+				addExplosionsForStrings(sound);
 			}
 		}
 

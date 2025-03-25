@@ -10,8 +10,6 @@ import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
 import log.charter.io.gp.gp7.GP7PlusFileImporter;
-import log.charter.io.gp.gp7.GP7ZipReader;
-import log.charter.io.gp.gp7.data.GP7Asset;
 import log.charter.io.gp.gp7.data.GPIF;
 import log.charter.services.data.files.SongFileHandler;
 import log.charter.sound.audioFormats.AudioFileMetadata;
@@ -21,7 +19,6 @@ import log.charter.sound.data.AudioData.DifferentSampleRateException;
 import log.charter.sound.data.AudioData.DifferentSampleSizesException;
 import log.charter.sound.utils.AudioGenerator;
 import log.charter.util.FileChooseUtils;
-import log.charter.util.Utils;
 
 public class NewProjectFromGP7Creator {
 	private static class SongFileData {
@@ -72,33 +69,8 @@ public class NewProjectFromGP7Creator {
 		createProjectForInternal(gpFile);
 	}
 
-	private File createTempSongFile(final File gpFile, final String zipPath) {
-		int lastSlash = zipPath.lastIndexOf('/');
-		if (lastSlash == -1) {
-			lastSlash = zipPath.lastIndexOf('\\');
-		}
-		final String fileName = lastSlash == -1 ? zipPath : zipPath.substring(lastSlash + 1);
-		final File tmpFile = new File(Utils.defaultConfigDir, fileName);
-		GP7ZipReader.unpackFile(gpFile, zipPath, tmpFile);
-		return tmpFile;
-	}
-
-	private File getGPIFSongFile(final File gpFile, final GPIF gpif) {
-		if (!gpif.containsAudioTrackAsset()) {
-			return null;
-		}
-
-		for (final GP7Asset asset : gpif.assets) {
-			if (asset.id == gpif.backingTrack.assetId) {
-				return createTempSongFile(gpFile, asset.embeddedFilePath);
-			}
-		}
-
-		return null;
-	}
-
 	private SongFileData getSongFile(final File gpFile, final GPIF gpif) {
-		File songFile = getGPIFSongFile(gpFile, gpif);
+		File songFile = GP7PlusFileImporter.getGPIFSongFile(gpFile, gpif);
 		if (songFile != null) {
 			return new SongFileData(songFile, true);
 		}

@@ -246,5 +246,4 @@ public class ProgramGeneralConfigPage implements Page {
 		Config.selectNotesByTails = selectNotesByTails;
 		Config.backupDelay = backupDelay;
 	}
-
 }

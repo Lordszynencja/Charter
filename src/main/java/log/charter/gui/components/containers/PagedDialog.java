@@ -1,5 +1,7 @@
 package log.charter.gui.components.containers;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,13 +43,19 @@ public abstract class PagedDialog extends RowedDialog {
 	}
 
 	public PagedDialog(final CharterFrame frame, final Label title, final Page... pages) {
+		this(frame, title, asList(pages));
+	}
+
+	public PagedDialog(final CharterFrame frame, final Label title, final List<Page> pages) {
 		super(frame, title);
 
 		final ButtonGroup buttonGroup = new ButtonGroup();
 
 		final RowedPosition position = new RowedPosition(10, panel.sizes);
 		for (final Page page : pages) {
-			addPage(position, page, buttonGroup);
+			if (page != null) {
+				addPage(position, page, buttonGroup);
+			}
 		}
 		panel.resizeToFit(position.x() - 10, position.y());
 

@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Optional;
 
+import log.charter.data.config.values.SecretsConfig;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.io.Logger;
 import log.charter.services.Action;
@@ -19,6 +20,20 @@ import log.charter.services.ActionHandler;
 import log.charter.services.editModes.ModeManager;
 
 public class KeyboardHandler implements KeyListener {
+	private static final int[] secretOptionsUnlockSequence = { //
+			KeyEvent.VK_UP, //
+			KeyEvent.VK_UP, //
+			KeyEvent.VK_DOWN, //
+			KeyEvent.VK_DOWN, //
+			KeyEvent.VK_LEFT, //
+			KeyEvent.VK_RIGHT, //
+			KeyEvent.VK_LEFT, //
+			KeyEvent.VK_RIGHT, //
+			KeyEvent.VK_A, //
+			KeyEvent.VK_B, //
+			KeyEvent.VK_ENTER };
+	private static int secretOptionsUnlockSequencePosition = 0;
+
 	private ActionHandler actionHandler;
 	private ChartToolbar chartToolbar;
 	private ModeManager modeManager;
@@ -130,6 +145,14 @@ public class KeyboardHandler implements KeyListener {
 			}
 			if (keyCode == KeyEvent.VK_SUBTRACT) {
 				keyCode = KeyEvent.VK_MINUS;
+			}
+
+			if (!SecretsConfig.optionsUnlocked
+					&& keyCode == secretOptionsUnlockSequence[secretOptionsUnlockSequencePosition]) {
+				secretOptionsUnlockSequencePosition++;
+				if (secretOptionsUnlockSequencePosition == secretOptionsUnlockSequence.length) {
+					SecretsConfig.optionsUnlocked = true;
+				}
 			}
 
 			shortcut.key = keyCode;

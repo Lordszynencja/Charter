@@ -76,6 +76,7 @@ public class Localization {
 		CONFIG_DISPLAY("Display"), //
 		CONFIG_GENERAL("General"), //
 		CONFIG_INSTRUMENT("Instrument"), //
+		CONFIG_SECRETS("Secrets"), //
 		COPY("Copy"), //
 		COPY_ALL_FILES("Copy all files?"), //
 		COPY_ALL_FILES_MESSAGE("Copy all files? If not, only project and main audio will be moved."), //
@@ -87,6 +88,8 @@ public class Localization {
 		COULDNT_IMPORT_MIDI_TEMPO("Couldn't properly import tempo map from %s"), //
 		COULDNT_LOAD_AUDIO("Couldn't load audio from %s"), //
 		COULDNT_READ_TXT("Couldn't import file %s, unrecognized format"), //
+		COULDNT_RUN_UPDATE_SCRIPT(
+				"Couldn't run update script, run the program as administrator, install update manually or install it in a different folder"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
 		DELETE("Delete"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
@@ -107,6 +110,8 @@ public class Localization {
 		ERRORS_TAB_POSITION("Position"), //
 		ERRORS_TAB_SEVERITY("Severity"), //
 		EXIT("Exit"), //
+		EXPLOSIONS("Explosions"), //
+		EXPLOSIONS_SHAKY_CAM("Shaky cam"), //
 		FHP_PANE("FHP"), //
 		FHP_STARTS_ON_WRONG_FRET("Fret Hand Position starts on fret below or equal to capo/0"), //
 		FHP_WIDTH("Width"), //
