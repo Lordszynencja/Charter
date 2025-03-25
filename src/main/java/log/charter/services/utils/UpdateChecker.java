@@ -69,15 +69,16 @@ public class UpdateChecker {
 	private CharterContext charterContext;
 	private CharterFrame charterFrame;
 
-	private void runUpdate(final String oldVersion, final String newVersion) throws IOException {
+	private boolean runUpdate(final String oldVersion, final String newVersion) throws IOException {
 		if (!makeTempUpdateFile()) {
 			ComponentUtils.showPopup(charterFrame, Label.COULDNT_RUN_UPDATE_SCRIPT);
-			return;
+			return false;
 		}
 
 		new ProcessBuilder()//
 				.command("cmd.exe", "/c", "START \"\" tmp_update.bat " + newVersion + " " + oldVersion)//
 				.directory(RW.getJarDirectory()).start();
+		return true;
 	}
 
 	private void informUserAboutNewVersion(final String newVersion) {
@@ -104,8 +105,9 @@ public class UpdateChecker {
 		}
 
 		try {
-			runUpdate(CharterMain.VERSION, newVersion);
-			charterContext.forceExit();
+			if (runUpdate(CharterMain.VERSION, newVersion)) {
+				charterContext.forceExit();
+			}
 		} catch (final IOException e) {
 			Logger.error("Couldn't autoupdate", e);
 		}
