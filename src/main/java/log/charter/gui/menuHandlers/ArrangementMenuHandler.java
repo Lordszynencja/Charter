@@ -93,8 +93,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 
 	private void createLevelMenuItems(final JMenu menu) {
 		for (int level = 0; level < chartData.currentArrangement().levels.size(); level++) {
-			final boolean isLevelSelected = level == chartData.currentLevel && modeManager.getMode() == EditMode.GUITAR;
-			final String levelLabel = getNameWithSelect("Level " + level, isLevelSelected);
+			final String levelLabel = getNameWithSelect("Level " + level, level == chartData.currentLevel);
 			final int levelToChangeTo = level;
 			menu.add(createItem(levelLabel, () -> modeManager.setLevel(levelToChangeTo)));
 		}
