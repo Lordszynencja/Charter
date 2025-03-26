@@ -77,8 +77,8 @@ public class ModeManager implements Initiable {
 		selectionManager.clear();
 
 		chartData.currentArrangement = -1;
-		setLevel(0);
-		setMode(EditMode.VOCALS);
+		chartData.currentLevel = 0;
+		editMode = EditMode.VOCALS;
 
 		chartToolbar.updateValues();
 		charterMenuBar.refreshMenus();
@@ -98,8 +98,8 @@ public class ModeManager implements Initiable {
 
 		chartData.currentVocals = vocalPathId;
 		chartData.currentArrangement = -1;
-		setLevel(0);
-		setMode(EditMode.VOCALS);
+		chartData.currentLevel = 0;
+		editMode = EditMode.VOCALS;
 
 		chartToolbar.updateValues();
 		charterMenuBar.refreshMenus();
@@ -113,8 +113,8 @@ public class ModeManager implements Initiable {
 		audioHandler.stopMusic();
 		selectionManager.clear();
 
-		setLevel(0);
-		setMode(EditMode.GUITAR);
+		chartData.currentLevel = 0;
+		editMode = EditMode.GUITAR;
 
 		chartToolbar.updateValues();
 		charterMenuBar.refreshMenus();
@@ -133,8 +133,8 @@ public class ModeManager implements Initiable {
 		selectionManager.clear();
 
 		chartData.currentArrangement = arrangementId;
-		setLevel(0);
-		setMode(EditMode.GUITAR);
+		chartData.currentLevel = 0;
+		editMode = EditMode.GUITAR;
 
 		chartToolbar.updateValues();
 		charterMenuBar.refreshMenus();
@@ -145,7 +145,13 @@ public class ModeManager implements Initiable {
 	}
 
 	public void setLevel(final int level) {
+		audioHandler.stopMusic();
+		selectionManager.clear();
+
 		chartData.currentLevel = level;
+
+		charterMenuBar.refreshMenus();
+		chartMap.triggerRedraw();
 	}
 
 	public EditMode getMode() {
