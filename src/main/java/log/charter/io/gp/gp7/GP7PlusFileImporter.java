@@ -189,6 +189,7 @@ public class GP7PlusFileImporter {
 		if (!importBeatMap) {
 			return chartData.songChart.beatsMap;
 		}
+		gpif.sampleRate = 44100;
 
 		final BeatsMap beatsMap = new BeatsMap(new ArrayList<>());
 

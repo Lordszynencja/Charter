@@ -70,8 +70,8 @@ public class ModernThemeNotes implements ThemeNotes {
 	private static Font smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
 	public static void reloadGraphics() {
-		for (int string = 0; string < InstrumentConfig.maxStrings; string++) {
-			final int stringId = stringId(string, InstrumentConfig.maxStrings);
+		for (int string = 0; string < InstrumentConfig.maxPossibleStrings; string++) {
+			final int stringId = stringId(string, InstrumentConfig.maxPossibleStrings);
 			final Color borderInnerColor = getStringBasedColor(StringColorLabelType.LANE, string,
 					InstrumentConfig.maxStrings).brighter();
 			final Color innerColor = borderInnerColor.darker().darker();

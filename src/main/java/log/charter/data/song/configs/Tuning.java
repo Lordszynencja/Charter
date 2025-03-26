@@ -28,7 +28,7 @@ public class Tuning {
 	}
 
 	public static int getStringDistance(final int string, final int strings) {
-		final int offset = standardStringDistances.length - min(InstrumentConfig.maxStrings, max(6, strings));
+		final int offset = standardStringDistances.length - min(InstrumentConfig.maxPossibleStrings, max(6, strings));
 		return standardStringDistances[string + offset];
 	}
 
