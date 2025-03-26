@@ -26,12 +26,12 @@ public class ChangeSongPitchPane extends RowedDialog {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private static final int flags = RubberBandStretcher.OptionProcessOffline //
+			| RubberBandStretcher.OptionDetectorPercussive//
 			| RubberBandStretcher.OptionChannelsTogether//
 			| RubberBandStretcher.OptionEngineFiner//
 			| RubberBandStretcher.OptionPhaseIndependent//
 			| RubberBandStretcher.OptionThreadingNever//
 			| RubberBandStretcher.OptionPitchHighQuality//
-			| RubberBandStretcher.OptionChannelsApart//
 			| RubberBandStretcher.OptionWindowLong;
 
 	private static final int bufferSize = 1024 * 8;
@@ -131,7 +131,7 @@ public class ChangeSongPitchPane extends RowedDialog {
 		final int l = samples[0].length;
 		for (final float[] channel : samples) {
 			for (int i = 0; i < l; i++) {
-				channel[i] *= 0.98;
+				channel[i] *= 0.9;
 			}
 		}
 		studyAudio(loadingDialog, pitchShifter, samples, l);

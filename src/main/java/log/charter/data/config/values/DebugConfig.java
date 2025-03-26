@@ -12,6 +12,7 @@ public class DebugConfig {
 	public static boolean handleASIOInput = false;
 	public static boolean showFTGraph = false;
 	public static boolean showInputGraph = false;
+	public static boolean enablePitchShifting = false;
 
 	public static void init(final Map<String, ValueAccessor> valueAccessors, final String name) {
 		valueAccessors.put(name + ".logging", forBoolean(v -> logging = v, () -> logging, logging));
@@ -21,5 +22,7 @@ public class DebugConfig {
 		valueAccessors.put(name + ".showFTGraph", forBoolean(v -> showFTGraph = v, () -> showFTGraph, showFTGraph));
 		valueAccessors.put(name + ".showInputGraph",
 				forBoolean(v -> showInputGraph = v, () -> showInputGraph, showInputGraph));
+		valueAccessors.put(name + ".enablePitchShifting",
+				forBoolean(v -> enablePitchShifting = v, () -> enablePitchShifting, enablePitchShifting));
 	}
 }

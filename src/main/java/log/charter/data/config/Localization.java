@@ -24,6 +24,7 @@ public class Localization {
 		ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
 		ADD_BEATS_PANE("Add beats"), //
 		ADD_DEFAULT_START_SILENCE("Add default starting silence with empty bars"), //
+		ADD_LEVEL("Add level"), //
 		ADD_SILENCE_AT_THE_END("Add silence at the end"), //
 		ADD_SILENCE_IN_THE_BEGINNING("Add silence in the beginning"), //
 		ARPEGGIO("Arpeggio"), //

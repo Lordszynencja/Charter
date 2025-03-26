@@ -4,6 +4,7 @@ import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.DebugConfig;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.simple.SpecialMenuItem;
@@ -82,8 +83,10 @@ class EditMenuHandler extends CharterMenuHandler implements Initiable {
 		menu.addSeparator();
 		menu.add(new SpecialMenuItem(Label.ADD_SILENCE_AT_THE_END, this::addSilenceIAtTheEnd));
 
-		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.CHANGE_SONG_PITCH, this::changeSongPitch));
+		if (DebugConfig.enablePitchShifting) {
+			menu.addSeparator();
+			menu.add(new SpecialMenuItem(Label.CHANGE_SONG_PITCH, this::changeSongPitch));
+		}
 
 		menu.addSeparator();
 		addBookmarksSubmenu(menu);

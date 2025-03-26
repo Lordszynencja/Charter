@@ -31,11 +31,11 @@ public class RSXMLImporter {
 			final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(file);
 			final Arrangement arrangementChart = RSXMLToArrangement.toArrangement(songArrangement,
 					chartData.songChart.beatsMap.immutable);
-			chartData.songChart.arrangements.add(arrangementChart);
 
+			chartData.songChart.arrangements.add(arrangementChart);
+			modeManager.setArrangement(chartData.songChart.arrangements.size() - 1);
 			charterMenuBar.refreshMenus();
 
-			modeManager.setArrangement(chartData.songChart.arrangements.size() - 1);
 			songFileHandler.save();
 		} catch (final Exception e) {
 			Logger.error("Couldn't load arrangement", e);
@@ -47,7 +47,10 @@ public class RSXMLImporter {
 		try {
 			final ArrangementVocals vocals = VocalsXStreamHandler.readVocals(RW.read(file, "UTF-8"));
 			final VocalPath newVocals = new VocalPath(chartData.beats(), vocals);
+
 			chartData.addVocals(newVocals);
+			charterMenuBar.refreshMenus();
+
 			songFileHandler.save();
 		} catch (final Exception e) {
 			Logger.error("Couldn't load arrangement", e);
