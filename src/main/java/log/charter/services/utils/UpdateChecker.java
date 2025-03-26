@@ -1,7 +1,6 @@
 package log.charter.services.utils;
 
 import java.awt.Desktop;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -59,24 +58,12 @@ public class UpdateChecker {
 		return location.substring(slashPosition + 1);
 	}
 
-	private static boolean makeTempUpdateFile() {
-		final File updateScriptFile = new File(RW.getJarDirectory(), "update.bat");
-		final File tmpFile = new File(RW.getJarDirectory(), "tmp_update.bat");
-
-		return RW.copy(updateScriptFile, tmpFile);
-	}
-
 	private CharterContext charterContext;
 	private CharterFrame charterFrame;
 
 	private boolean runUpdate(final String oldVersion, final String newVersion) throws IOException {
-		if (!makeTempUpdateFile()) {
-			ComponentUtils.showPopup(charterFrame, Label.COULDNT_RUN_UPDATE_SCRIPT);
-			return false;
-		}
-
 		new ProcessBuilder()//
-				.command("cmd.exe", "/c", "START \"\" tmp_update.bat " + newVersion + " " + oldVersion)//
+				.command("cmd.exe", "/c", "START \"\" start_update.bat " + newVersion + " " + oldVersion)//
 				.directory(RW.getJarDirectory()).start();
 		return true;
 	}
