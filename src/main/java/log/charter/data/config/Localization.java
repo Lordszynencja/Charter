@@ -24,6 +24,7 @@ public class Localization {
 		ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
 		ADD_BEATS_PANE("Add beats"), //
 		ADD_DEFAULT_START_SILENCE("Add default starting silence with empty bars"), //
+		ADD_LEVEL("Add level"), //
 		ADD_SILENCE_AT_THE_END("Add silence at the end"), //
 		ADD_SILENCE_IN_THE_BEGINNING("Add silence in the beginning"), //
 		ARPEGGIO("Arpeggio"), //
@@ -69,6 +70,7 @@ public class Localization {
 		CHANGE_AUDIO("Change audio"), //
 		CHANGE_LENGTH("Change length"), //
 		CHANGE_LENGTH_BY_SECONDS("Change length by this many seconds:"), //
+		CHANGE_SONG_PITCH("Change song pitch"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
 		CONFIG("Config"), //
@@ -76,6 +78,7 @@ public class Localization {
 		CONFIG_DISPLAY("Display"), //
 		CONFIG_GENERAL("General"), //
 		CONFIG_INSTRUMENT("Instrument"), //
+		CONFIG_SECRETS("Secrets"), //
 		COPY("Copy"), //
 		COPY_ALL_FILES("Copy all files?"), //
 		COPY_ALL_FILES_MESSAGE("Copy all files? If not, only project and main audio will be moved."), //
@@ -87,6 +90,8 @@ public class Localization {
 		COULDNT_IMPORT_MIDI_TEMPO("Couldn't properly import tempo map from %s"), //
 		COULDNT_LOAD_AUDIO("Couldn't load audio from %s"), //
 		COULDNT_READ_TXT("Couldn't import file %s, unrecognized format"), //
+		COULDNT_RUN_UPDATE_SCRIPT(
+				"Couldn't run update script, run the program as administrator, install update manually or install it in a different folder"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
 		DELETE("Delete"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
@@ -107,6 +112,8 @@ public class Localization {
 		ERRORS_TAB_POSITION("Position"), //
 		ERRORS_TAB_SEVERITY("Severity"), //
 		EXIT("Exit"), //
+		EXPLOSIONS("Explosions"), //
+		EXPLOSIONS_SHAKY_CAM("Shaky cam"), //
 		FHP_PANE("FHP"), //
 		FHP_STARTS_ON_WRONG_FRET("Fret Hand Position starts on fret below or equal to capo/0"), //
 		FHP_WIDTH("Width"), //
@@ -220,6 +227,9 @@ public class Localization {
 		PASTE("Paste"), //
 		PHRASE_NAME("Phrase name"), //
 		PICKED_BASS("Picked"), //
+		PITCH_FROM("Change pitch from"), //
+		PITCH_SHIFTING_AUDIO("Pitch shifting audio: %s"), //
+		PITCH_TO("to"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
@@ -280,6 +290,7 @@ public class Localization {
 		SPEED_INCREASE_PRECISE("Increase speed precise"), //
 		SQUASH_LEVELS("Squash levels"), //
 		STARTING_TONE("Starting tone"), //
+		STUDYING_AUDIO("Studying audio: %s"), //
 		SUPPORTED_MUSIC_FILE("Flac, Mp3, Ogg or Wav file"), //
 		SWITCH_TS_TYPING_PART("Switch TS typing part"), //
 		TAB_3D_PREVIEW("3D preview"), //

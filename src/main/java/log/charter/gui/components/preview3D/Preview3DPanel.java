@@ -10,9 +10,9 @@ import org.lwjgl.opengl.awt.AWTGLCanvas;
 import org.lwjgl.opengl.awt.GLData;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Config;
 import log.charter.data.config.GraphicalConfig;
-import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.values.DebugConfig;
 import log.charter.gui.components.preview3D.camera.Preview3DCameraHandler;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
@@ -93,7 +93,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		beatsDrawer.init(chartData, textTexturesHolder);
 		cameraHandler.init(chartTimeHandler, chartData);
 		fingeringDrawer.init(chartData, noteStatusModels, texturesHolder);
-		guitarSoundsDrawer.init(chartData, noteStatusModels);
+		guitarSoundsDrawer.init(chartData, noteStatusModels, cameraHandler);
 		handShapesDrawer.init(chartData);
 		inlayDrawer.init(chartData, texturesHolder);
 		laneBordersDrawer.init(chartData);

@@ -59,23 +59,27 @@ public class UpdateChecker {
 		return location.substring(slashPosition + 1);
 	}
 
-	private static void makeTempUpdateFile() {
+	private static boolean makeTempUpdateFile() {
 		final File updateScriptFile = new File(RW.getJarDirectory(), "update.bat");
 		final File tmpFile = new File(RW.getJarDirectory(), "tmp_update.bat");
 
-		RW.copy(updateScriptFile, tmpFile);
-	}
-
-	private static void runUpdate(final String oldVersion, final String newVersion) throws IOException {
-		makeTempUpdateFile();
-
-		new ProcessBuilder()//
-				.command("cmd.exe", "/c", "START \"\" tmp_update.bat " + newVersion + " " + oldVersion)//
-				.directory(RW.getJarDirectory()).start();
+		return RW.copy(updateScriptFile, tmpFile);
 	}
 
 	private CharterContext charterContext;
 	private CharterFrame charterFrame;
+
+	private boolean runUpdate(final String oldVersion, final String newVersion) throws IOException {
+		if (!makeTempUpdateFile()) {
+			ComponentUtils.showPopup(charterFrame, Label.COULDNT_RUN_UPDATE_SCRIPT);
+			return false;
+		}
+
+		new ProcessBuilder()//
+				.command("cmd.exe", "/c", "START \"\" tmp_update.bat " + newVersion + " " + oldVersion)//
+				.directory(RW.getJarDirectory()).start();
+		return true;
+	}
 
 	private void informUserAboutNewVersion(final String newVersion) {
 		final ConfirmAnswer answer = ComponentUtils.askYesNo(charterFrame, Label.NEW_VERSION,
@@ -101,8 +105,9 @@ public class UpdateChecker {
 		}
 
 		try {
-			runUpdate(CharterMain.VERSION, newVersion);
-			charterContext.forceExit();
+			if (runUpdate(CharterMain.VERSION, newVersion)) {
+				charterContext.forceExit();
+			}
 		} catch (final IOException e) {
 			Logger.error("Couldn't autoupdate", e);
 		}

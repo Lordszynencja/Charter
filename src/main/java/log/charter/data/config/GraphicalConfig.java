@@ -1,7 +1,11 @@
 package log.charter.data.config;
 
-import static log.charter.data.config.values.ValueAccessor.forBoolean;
-import static log.charter.data.config.values.ValueAccessor.forInteger;
+import static log.charter.data.config.values.accessors.BooleanValueAccessor.forBoolean;
+import static log.charter.data.config.values.accessors.DoubleValueAccessor.forDouble;
+import static log.charter.data.config.values.accessors.EnumValueAccessor.forEnum;
+import static log.charter.data.config.values.accessors.FloatValueAccessor.forFloat;
+import static log.charter.data.config.values.accessors.IntValueAccessor.forInteger;
+import static log.charter.data.config.values.accessors.StringValueAccessor.forString;
 import static log.charter.io.Logger.error;
 
 import java.awt.DisplayMode;
@@ -11,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import log.charter.data.config.values.ValueAccessor;
+import log.charter.data.config.values.accessors.ValueAccessor;
 import log.charter.io.Logger;
 import log.charter.util.RW;
 import log.charter.util.Utils;
@@ -60,35 +64,36 @@ public class GraphicalConfig {
 	}
 
 	static {
-		valueAccessors.put("theme", ValueAccessor.forString(v -> theme = Theme.valueOf(v), () -> theme.name()));
+		valueAccessors.put("theme", forEnum(Theme.class, v -> theme = v, () -> theme, theme));
 		valueAccessors.put("eventsChangeHeight",
-				ValueAccessor.forInteger(v -> eventsChangeHeight = v, () -> eventsChangeHeight));
+				forInteger(v -> eventsChangeHeight = v, () -> eventsChangeHeight, eventsChangeHeight));
 		valueAccessors.put("toneChangeHeight",
-				ValueAccessor.forInteger(v -> toneChangeHeight = v, () -> toneChangeHeight));
-		valueAccessors.put("fhpInfoHeight", ValueAccessor.forInteger(v -> fhpInfoHeight = v, () -> fhpInfoHeight));
-		valueAccessors.put("noteWidth", ValueAccessor.forInteger(v -> noteWidth = v, () -> noteWidth));
-		valueAccessors.put("noteHeight", ValueAccessor.forInteger(v -> noteHeight = v, () -> noteHeight));
-		valueAccessors.put("chordHeight", ValueAccessor.forInteger(v -> chordHeight = v, () -> chordHeight));
+				forInteger(v -> toneChangeHeight = v, () -> toneChangeHeight, toneChangeHeight));
+		valueAccessors.put("fhpInfoHeight", forInteger(v -> fhpInfoHeight = v, () -> fhpInfoHeight, fhpInfoHeight));
+		valueAccessors.put("noteWidth", forInteger(v -> noteWidth = v, () -> noteWidth, noteWidth));
+		valueAccessors.put("noteHeight", forInteger(v -> noteHeight = v, () -> noteHeight, noteHeight));
+		valueAccessors.put("chordHeight", forInteger(v -> chordHeight = v, () -> chordHeight, chordHeight));
 		valueAccessors.put("handShapesHeight",
-				ValueAccessor.forInteger(v -> handShapesHeight = v, () -> handShapesHeight));
-		valueAccessors.put("timingHeight", ValueAccessor.forInteger(v -> timingHeight = v, () -> timingHeight));
+				forInteger(v -> handShapesHeight = v, () -> handShapesHeight, handShapesHeight));
+		valueAccessors.put("timingHeight", forInteger(v -> timingHeight = v, () -> timingHeight, timingHeight));
 		valueAccessors.put("chartMapHeightMultiplier",
-				ValueAccessor.forInteger(v -> chartMapHeightMultiplier = v, () -> chartMapHeightMultiplier));
+				forInteger(v -> chartMapHeightMultiplier = v, () -> chartMapHeightMultiplier, chartMapHeightMultiplier));
 
-		valueAccessors.put("markerOffset", forInteger(v -> markerOffset = v, () -> markerOffset));
-		valueAccessors.put("tempoMapGhostNotesTransparency",
-				ValueAccessor.forFloat(v -> tempoMapGhostNotesTransparency = v, () -> tempoMapGhostNotesTransparency));
+		valueAccessors.put("markerOffset", forInteger(v -> markerOffset = v, () -> markerOffset, markerOffset));
+		valueAccessors.put("tempoMapGhostNotesTransparency", forFloat(v -> tempoMapGhostNotesTransparency = v,
+				() -> tempoMapGhostNotesTransparency, tempoMapGhostNotesTransparency));
 		valueAccessors.put("previewWindowScrollSpeed",
-				ValueAccessor.forDouble(v -> previewWindowScrollSpeed = v, () -> previewWindowScrollSpeed));
-		valueAccessors.put("invertStrings", forBoolean(v -> invertStrings = v, () -> invertStrings));
-		valueAccessors.put("invertStrings3D", forBoolean(v -> invertStrings3D = v, () -> invertStrings3D));
+				forDouble(v -> previewWindowScrollSpeed = v, () -> previewWindowScrollSpeed, previewWindowScrollSpeed));
+		valueAccessors.put("invertStrings", forBoolean(v -> invertStrings = v, () -> invertStrings, invertStrings));
+		valueAccessors.put("invertStrings3D", forBoolean(v -> invertStrings3D = v, () -> invertStrings3D, invertStrings3D));
 
-		valueAccessors.put("colorSet", ValueAccessor.forString(v -> colorSet = v, () -> colorSet));
-		valueAccessors.put("inlay", ValueAccessor.forString(v -> inlay = v, () -> inlay));
-		valueAccessors.put("textures", ValueAccessor.forString(v -> texturePack = v, () -> texturePack));
+		valueAccessors.put("colorSet", forString(v -> colorSet = v, () -> colorSet, colorSet));
+		valueAccessors.put("inlay", forString(v -> inlay = v, () -> inlay, inlay));
+		valueAccessors.put("textures", forString(v -> texturePack = v, () -> texturePack, texturePack));
 
-		valueAccessors.put("FPS", forInteger(v -> FPS = v, () -> FPS));
-		valueAccessors.put("antialiasingSamples", forInteger(v -> antialiasingSamples = v, () -> antialiasingSamples));
+		valueAccessors.put("FPS", forInteger(v -> FPS = v, () -> FPS, FPS));
+		valueAccessors.put("antialiasingSamples",
+				forInteger(v -> antialiasingSamples = v, () -> antialiasingSamples, antialiasingSamples));
 
 		setDefaultFPS();
 	}
@@ -96,7 +101,12 @@ public class GraphicalConfig {
 	public static void init() {
 		for (final Entry<String, String> configVal : RW.readConfig(configPath, false).entrySet()) {
 			try {
-				valueAccessors.getOrDefault(configVal.getKey(), ValueAccessor.empty).set(configVal.getValue());
+				final ValueAccessor valueAccessor = valueAccessors.get(configVal.getKey());
+				if (valueAccessor == null) {
+					continue;
+				}
+
+				valueAccessor.set(configVal.getValue());
 			} catch (final Exception e) {
 				error("wrong config line " + configVal.getKey() + "=" + configVal.getValue(), e);
 			}
@@ -112,7 +122,7 @@ public class GraphicalConfig {
 		}
 
 		final Map<String, String> config = new HashMap<>();
-		valueAccessors.forEach((name, accessor) -> config.put(name, accessor.get()));
+		valueAccessors.forEach((name, accessor) -> accessor.saveTo(config, name));
 
 		new File(configPath).getParentFile().mkdirs();
 		RW.writeConfig(configPath, config);

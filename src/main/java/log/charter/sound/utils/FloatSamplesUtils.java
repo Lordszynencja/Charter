@@ -13,7 +13,7 @@ public class FloatSamplesUtils {
 		return sample / divisor;
 	}
 
-	public static float[][] splitStereoAudioFloat(final byte[] b, final int sampleSize, final int channels) {
+	public static float[][] splitAudioFloat(final byte[] b, final int sampleSize, final int channels) {
 		final float[][] d = new float[channels][b.length / sampleSize / channels];
 		for (int i = 0; i < d[0].length; i++) {
 			for (int channel = 0; channel < channels; channel++) {
@@ -24,7 +24,7 @@ public class FloatSamplesUtils {
 		return d;
 	}
 
-	public static byte[] toBytes(final float[][] data, final int channels, final int sampleSize) {
+	public static byte[] toBytes(final float[][] data, final int sampleSize, final int channels) {
 		if (data.length < channels) {
 			return new byte[0];
 		}

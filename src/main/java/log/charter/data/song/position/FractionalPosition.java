@@ -86,12 +86,13 @@ public class FractionalPosition implements IConstantFractionalPosition {
 		}
 		final double beatPosition = beat.position() + beatLength * (beatId - usedBeatId);
 		final double timeInBeat = time - beatPosition;
-		if (beatLength == 0) {
+		final int roundedBeatLength = (int) beatLength;
+		if (roundedBeatLength < 1) {
 			return new FractionalPosition(beatId);
 		}
 
 		final Fraction fraction = round ? generateFractionWithRounding(timeInBeat, beatLength)
-				: new Fraction((int) timeInBeat, (int) beatLength);
+				: new Fraction((int) timeInBeat, roundedBeatLength);
 
 		return new FractionalPosition(beatId, fraction);
 	}

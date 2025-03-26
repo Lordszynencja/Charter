@@ -21,6 +21,7 @@ import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.gui.panes.imports.ArrangementImportOptions;
 import log.charter.io.Logger;
+import log.charter.io.gp.gp7.data.GP7Asset;
 import log.charter.io.gp.gp7.data.GP7Automation;
 import log.charter.io.gp.gp7.data.GP7Automation.GP7SyncPointValue;
 import log.charter.io.gp.gp7.data.GP7Automation.GP7TempoValue;
@@ -29,8 +30,35 @@ import log.charter.io.gp.gp7.data.GPIF;
 import log.charter.io.gp.gp7.transformers.GP7FileToSongChart;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
+import log.charter.sound.data.AudioData;
+import log.charter.util.Utils;
 
 public class GP7PlusFileImporter {
+	private static File createTempSongFile(final File gpFile, final String zipPath) {
+		int lastSlash = zipPath.lastIndexOf('/');
+		if (lastSlash == -1) {
+			lastSlash = zipPath.lastIndexOf('\\');
+		}
+		final String fileName = lastSlash == -1 ? zipPath : zipPath.substring(lastSlash + 1);
+		final File tmpFile = new File(Utils.defaultConfigDir, fileName);
+		GP7ZipReader.unpackFile(gpFile, zipPath, tmpFile);
+		return tmpFile;
+	}
+
+	public static File getGPIFSongFile(final File gpFile, final GPIF gpif) {
+		if (!gpif.containsAudioTrackAsset()) {
+			return null;
+		}
+
+		for (final GP7Asset asset : gpif.assets) {
+			if (asset.id == gpif.backingTrack.assetId) {
+				return createTempSongFile(gpFile, asset.embeddedFilePath);
+			}
+		}
+
+		return null;
+	}
+
 	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
@@ -225,11 +253,30 @@ public class GP7PlusFileImporter {
 		return null;
 	}
 
+	private void loadAudioFileData(final File gpFile, final GPIF gpif) {
+		try {
+			final File audioFile = getGPIFSongFile(gpFile, gpif);
+			if (audioFile == null) {
+				gpif.sampleRate = 44100;
+				return;
+			}
+
+			final AudioData musicData = AudioData.readFile(audioFile);
+			audioFile.delete();
+			gpif.sampleRate = musicData.format.getSampleRate();
+		} catch (final Throwable t) {
+			Logger.debug("Couldn't read audio file", t);
+			gpif.sampleRate = 44100;
+		}
+	}
+
 	public void importGP7PlusFile(final File file) {
 		final GPIF gpif = importGPIF(file);
 		if (gpif == null) {
 			return;
 		}
+
+		loadAudioFileData(file, gpif);
 
 		final boolean importBeatMap = askYesNo(charterFrame, Label.GP_IMPORT_TEMPO_MAP,
 				Label.USE_TEMPO_MAP_FROM_IMPORT) == ConfirmAnswer.YES;

@@ -1,8 +1,9 @@
 package log.charter.data.config;
 
-import static log.charter.data.config.values.ValueAccessor.forBoolean;
-import static log.charter.data.config.values.ValueAccessor.forInteger;
-import static log.charter.data.config.values.ValueAccessor.forString;
+import static log.charter.data.config.values.accessors.BooleanValueAccessor.forBoolean;
+import static log.charter.data.config.values.accessors.EnumValueAccessor.forEnum;
+import static log.charter.data.config.values.accessors.IntValueAccessor.forInteger;
+import static log.charter.data.config.values.accessors.StringValueAccessor.forString;
 import static log.charter.io.Logger.error;
 
 import java.io.File;
@@ -18,8 +19,9 @@ import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.config.values.NoteDistanceConfig;
 import log.charter.data.config.values.PassFiltersConfig;
 import log.charter.data.config.values.PathsConfig;
-import log.charter.data.config.values.ValueAccessor;
+import log.charter.data.config.values.SecretsConfig;
 import log.charter.data.config.values.WindowStateConfig;
+import log.charter.data.config.values.accessors.ValueAccessor;
 import log.charter.data.song.BeatsMap.DistanceType;
 import log.charter.sound.SoundFileType;
 import log.charter.sound.system.SoundSystem;
@@ -49,41 +51,50 @@ public class Config {
 	static {
 		// older variable names
 		// 0.21.0
-		valueAccessors.put("showGrid", forBoolean(v -> GridConfig.showGrid = v, null));
-		valueAccessors.put("gridType", forString(v -> GridConfig.gridType = GridType.valueOf(v), null));
-		valueAccessors.put("gridSize", forInteger(v -> GridConfig.gridSize = v, null));
+		valueAccessors.put("showGrid", forBoolean(v -> GridConfig.showGrid = v, null, GridConfig.showGrid));
+		valueAccessors.put("gridType",
+				forEnum(GridType.class, v -> GridConfig.gridType = v, null, GridConfig.gridType));
+		valueAccessors.put("gridSize", forInteger(v -> GridConfig.gridSize = v, null, GridConfig.gridSize));
+		valueAccessors.put("minNoteDistanceFactor", forEnum(DistanceType.class,
+				v -> NoteDistanceConfig.minSpaceType = v, null, NoteDistanceConfig.minSpaceType));
 		valueAccessors.put("minNoteDistanceFactor",
-				forString(v -> NoteDistanceConfig.minSpaceType = DistanceType.valueOf(v), null));
-		valueAccessors.put("minNoteDistanceFactor", forInteger(v -> NoteDistanceConfig.minSpaceFactor = v, null));
-		valueAccessors.put("minTailLengthType",
-				forString(v -> NoteDistanceConfig.minLengthType = DistanceType.valueOf(v), null));
-		valueAccessors.put("minTailLengthFactor", forInteger(v -> NoteDistanceConfig.minLengthFactor = v, null));
-		valueAccessors.put("markerOffset", forInteger(v -> GraphicalConfig.markerOffset = v, null));
-		valueAccessors.put("FPS", forInteger(v -> GraphicalConfig.FPS = v, null));
-		valueAccessors.put("antialiasingSamples", forInteger(v -> GraphicalConfig.antialiasingSamples = v, null));
-		valueAccessors.put("lastDir", forString(v -> PathsConfig.lastDir = v, null));
-		valueAccessors.put("lastPath", forString(v -> PathsConfig.lastPath = v, null));
-		valueAccessors.put("musicPath", forString(v -> PathsConfig.musicPath = v, null));
-		valueAccessors.put("songsPath", forString(v -> PathsConfig.songsPath = v, null));
-		valueAccessors.put("invertStrings", forBoolean(v -> GraphicalConfig.invertStrings = v, null));
-		valueAccessors.put("invertStrings3D", forBoolean(v -> GraphicalConfig.invertStrings3D = v, null));
+				forInteger(v -> NoteDistanceConfig.minSpaceFactor = v, null, NoteDistanceConfig.minSpaceFactor));
+		valueAccessors.put("minTailLengthType", forEnum(DistanceType.class, v -> NoteDistanceConfig.minLengthType = v,
+				null, NoteDistanceConfig.minLengthType));
+		valueAccessors.put("minTailLengthFactor",
+				forInteger(v -> NoteDistanceConfig.minLengthFactor = v, null, NoteDistanceConfig.minLengthFactor));
+		valueAccessors.put("markerOffset",
+				forInteger(v -> GraphicalConfig.markerOffset = v, null, GraphicalConfig.markerOffset));
+		valueAccessors.put("FPS", forInteger(v -> GraphicalConfig.FPS = v, null, GraphicalConfig.FPS));
+		valueAccessors.put("antialiasingSamples",
+				forInteger(v -> GraphicalConfig.antialiasingSamples = v, null, GraphicalConfig.antialiasingSamples));
+		valueAccessors.put("lastDir", forString(v -> PathsConfig.lastDir = v, null, PathsConfig.lastDir));
+		valueAccessors.put("lastPath", forString(v -> PathsConfig.lastPath = v, null, PathsConfig.lastPath));
+		valueAccessors.put("musicPath", forString(v -> PathsConfig.musicPath = v, null, PathsConfig.musicPath));
+		valueAccessors.put("songsPath", forString(v -> PathsConfig.songsPath = v, null, PathsConfig.songsPath));
+		valueAccessors.put("invertStrings",
+				forBoolean(v -> GraphicalConfig.invertStrings = v, null, GraphicalConfig.invertStrings));
+		valueAccessors.put("invertStrings3D",
+				forBoolean(v -> GraphicalConfig.invertStrings3D = v, null, GraphicalConfig.invertStrings3D));
 
 		// current variables
-		valueAccessors.put("language", forString(v -> language = v, () -> language));
+		valueAccessors.put("language", forString(v -> language = v, () -> language, language));
 
 		valueAccessors.put("baseAudioFormat",
-				forString(v -> baseAudioFormat = SoundFileType.valueOf(v), () -> baseAudioFormat.name()));
+				forEnum(SoundFileType.class, v -> baseAudioFormat = v, () -> baseAudioFormat, baseAudioFormat));
 		valueAccessors.put("showTempoInsteadOfBPM",
-				forBoolean(v -> showTempoInsteadOfBPM = v, () -> showTempoInsteadOfBPM));
-		valueAccessors.put("showChordIds", forBoolean(v -> showChordIds = v, () -> showChordIds));
-		valueAccessors.put("backupDelay", forInteger(v -> backupDelay = v, () -> backupDelay));
+				forBoolean(v -> showTempoInsteadOfBPM = v, () -> showTempoInsteadOfBPM, showTempoInsteadOfBPM));
+		valueAccessors.put("showChordIds", forBoolean(v -> showChordIds = v, () -> showChordIds, showChordIds));
+		valueAccessors.put("backupDelay", forInteger(v -> backupDelay = v, () -> backupDelay, backupDelay));
 
-		valueAccessors.put("zoomLvl", forInteger(v -> zoomLvl = v, () -> zoomLvl));
-		valueAccessors.put("stretchedMusicSpeed", forInteger(v -> stretchedMusicSpeed = v, () -> stretchedMusicSpeed));
+		valueAccessors.put("zoomLvl", forInteger(v -> zoomLvl = v, () -> zoomLvl, zoomLvl));
+		valueAccessors.put("stretchedMusicSpeed",
+				forInteger(v -> stretchedMusicSpeed = v, () -> stretchedMusicSpeed, stretchedMusicSpeed));
 
-		valueAccessors.put("selectNotesByTails", forBoolean(v -> selectNotesByTails = v, () -> selectNotesByTails));
-		valueAccessors.put("audioFolderChosenForNewSong",
-				forBoolean(v -> audioFolderChosenForNewSong = v, () -> audioFolderChosenForNewSong));
+		valueAccessors.put("selectNotesByTails",
+				forBoolean(v -> selectNotesByTails = v, () -> selectNotesByTails, selectNotesByTails));
+		valueAccessors.put("audioFolderChosenForNewSong", forBoolean(v -> audioFolderChosenForNewSong = v,
+				() -> audioFolderChosenForNewSong, audioFolderChosenForNewSong));
 
 		AudioConfig.init(valueAccessors, "audio");
 		DebugConfig.init(valueAccessors, "debug");
@@ -92,13 +103,19 @@ public class Config {
 		NoteDistanceConfig.init(valueAccessors, "noteDistance");
 		PassFiltersConfig.init(valueAccessors, "passFilters");
 		PathsConfig.init(valueAccessors, "paths");
+		SecretsConfig.init(valueAccessors, "secrets");
 		WindowStateConfig.init(valueAccessors, "windowState");
 	}
 
 	private static void readConfigFrom(final String path) {
 		for (final Entry<String, String> configVal : RW.readConfig(path, false).entrySet()) {
 			try {
-				valueAccessors.getOrDefault(configVal.getKey(), ValueAccessor.empty).set(configVal.getValue());
+				final ValueAccessor valueAccessor = valueAccessors.get(configVal.getKey());
+				if (valueAccessor == null) {
+					continue;
+				}
+
+				valueAccessor.set(configVal.getValue());
 			} catch (final Throwable t) {
 				error("wrong config line " + configVal.getKey() + "=" + configVal.getValue(), t);
 			}
@@ -121,11 +138,7 @@ public class Config {
 		}
 
 		final Map<String, String> config = new HashMap<>();
-		valueAccessors.forEach((name, accessor) -> {
-			if (accessor.hasGetter()) {
-				config.put(name, accessor.get());
-			}
-		});
+		valueAccessors.forEach((name, accessor) -> accessor.saveTo(config, name));
 
 		new File(configPath).getParentFile().mkdirs();
 		RW.writeConfig(configPath, config);

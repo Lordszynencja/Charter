@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
+import log.charter.data.song.Level;
 import log.charter.data.song.vocals.VocalPath;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.songSettings.ArrangementSettingsPane;
@@ -97,6 +98,8 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 			final int levelToChangeTo = level;
 			menu.add(createItem(levelLabel, () -> modeManager.setLevel(levelToChangeTo)));
 		}
+
+		menu.add(createItem(Label.ADD_LEVEL, this::addLevel));
 	}
 
 	@Override
@@ -179,9 +182,16 @@ public class ArrangementMenuHandler extends CharterMenuHandler implements Initia
 		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, null, false);
 	}
 
+	private void addLevel() {
+		chartData.currentArrangement().levels.add(new Level());
+		modeManager.setLevel(chartData.currentArrangement().levels.size() - 1);
+		charterMenuBar.refreshMenus();
+	}
+
 	private void squashLevels() {
 		modeManager.setLevel(0);
 		LevelSquisher.squish(chartData.currentArrangement());
+		charterMenuBar.refreshMenus();
 	}
 
 	private void deleteVocalPath() {

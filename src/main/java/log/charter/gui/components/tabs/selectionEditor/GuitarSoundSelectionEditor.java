@@ -76,7 +76,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 	private ChordTemplate chordTemplate = new ChordTemplate();
 
-	private int lastStringsAmount = InstrumentConfig.maxStrings;
+	private int lastStringsAmount = 0;
 	private List<JCheckBox> strings;
 	private FieldWithLabel<TextInputWithValidation> string;
 	private FieldWithLabel<TextInputWithValidation> fret;

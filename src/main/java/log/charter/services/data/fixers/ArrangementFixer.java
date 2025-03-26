@@ -75,7 +75,7 @@ public class ArrangementFixer {
 
 	private void addHandShapeForChord(final List<EventPoint> phrases, final Level level, final Chord chord,
 			final int id, final HandShape nextHandShape, final int nextHandShapeId) {
-		IConstantFractionalPosition maxEndPosition = level.sounds.get(level.sounds.size() - 1).endPosition();
+		IConstantFractionalPosition maxEndPosition = new FractionalPosition(Integer.MAX_VALUE);
 		final EventPoint nextPhrase = CollectionUtils.firstAfter(phrases, chord).find();
 		if (nextPhrase != null) {
 			maxEndPosition = max(maxEndPosition, nextPhrase);
@@ -109,7 +109,11 @@ public class ArrangementFixer {
 		}
 
 		final HandShape handShape = new HandShape(position, endPosition, chord.templateId());
-		level.handShapes.add(nextHandShapeId, handShape);
+		if (level.handShapes.size() > nextHandShapeId) {
+			level.handShapes.add(nextHandShapeId, handShape);
+		} else {
+			level.handShapes.add(handShape);
+		}
 	}
 
 	private void addMissingHandShapes(final Arrangement arrangement, final Level level) {
@@ -122,7 +126,7 @@ public class ArrangementFixer {
 			if (!sound.isChord()) {
 				continue;
 			}
-      
+
 			while (handShape != null && handShape.endPosition().compareTo(sound) <= 0) {
 				handShapeId++;
 				handShape = handShapeId >= level.handShapes.size() ? null : level.handShapes.get(handShapeId);
@@ -345,6 +349,17 @@ public class ArrangementFixer {
 		lastPosition.endPosition(beats, max(comparator, lastPosition, minEndPosition));
 	}
 
+	private void fixSlides(final List<ChordOrNote> sounds) {
+		for (final ChordOrNote sound : sounds) {
+			sound.notes().forEach(n -> {
+				if (n.slideTo() != null && n.slideTo() < 0) {
+					n.slideTo(null);
+					n.unpitchedSlide(false);
+				}
+			});
+		}
+	}
+
 	private void fixLevel(final Arrangement arrangement, final Level level) {
 		level.sounds.removeIf(sound -> sound.isChord() //
 				&& (sound.chord().templateId() >= arrangement.chordTemplates.size()//
@@ -360,6 +375,7 @@ public class ArrangementFixer {
 		joinSimilarLinkedNotes(level);
 		fixNoteLengths(level.sounds);
 		fixLengths(level.handShapes);
+		fixSlides(level.sounds);
 	}
 
 	public void fixArrangements() {

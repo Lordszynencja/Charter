@@ -118,6 +118,10 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 			return beatPosition;
 		}
 
+		if (positionId + 1 >= positions.size()) {
+			return beatPosition;
+		}
+
 		final double nextBeatPosition = positions.get(positionId + 1).position();
 		return beatPosition + (nextBeatPosition - beatPosition) * gridId / gridSize;
 	}

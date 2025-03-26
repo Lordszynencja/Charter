@@ -47,15 +47,15 @@ public class Logger {
 		}
 	}
 
-	public static void debug(String msg, final Exception e) {
+	public static void debug(String msg, final Throwable t) {
 		msg = getLine("DEBUG", msg);
 
 		out.println(msg);
-		e.printStackTrace(out);
+		t.printStackTrace(out);
 
 		if (out != System.out) {
 			System.out.println(msg);
-			e.printStackTrace(System.out);
+			t.printStackTrace(System.out);
 		}
 	}
 

@@ -1,11 +1,12 @@
 package log.charter.data.config.values;
 
-import static log.charter.data.config.values.ValueAccessor.forDouble;
-import static log.charter.data.config.values.ValueAccessor.forInteger;
-import static log.charter.data.config.values.ValueAccessor.forString;
+import static log.charter.data.config.values.accessors.DoubleValueAccessor.forDouble;
+import static log.charter.data.config.values.accessors.EnumValueAccessor.forEnum;
+import static log.charter.data.config.values.accessors.IntValueAccessor.forInteger;
 
 import java.util.Map;
 
+import log.charter.data.config.values.accessors.ValueAccessor;
 import log.charter.sound.effects.Effect;
 import log.charter.sound.effects.pass.PassFilterAlgorithm;
 import log.charter.sound.effects.pass.band.BandPassFilterBessel;
@@ -39,26 +40,33 @@ public class PassFiltersConfig {
 	public static double highPassRippleDb = 1;
 
 	public static void init(final Map<String, ValueAccessor> valueAccessors, final String name) {
-		valueAccessors.put(name + ".lowPassAlgorithm",
-				forString(v -> lowPassAlgorithm = PassFilterAlgorithm.valueOf(v), () -> lowPassAlgorithm.name()));
-		valueAccessors.put(name + ".lowPassOrder", forInteger(v -> lowPassOrder = v, () -> lowPassOrder));
-		valueAccessors.put(name + ".lowPassFrequency", forDouble(v -> lowPassFrequency = v, () -> lowPassFrequency));
-		valueAccessors.put(name + ".lowPassRippleDb", forDouble(v -> lowPassRippleDb = v, () -> lowPassRippleDb));
+		valueAccessors.put(name + ".lowPassAlgorithm", forEnum(PassFilterAlgorithm.class, v -> lowPassAlgorithm = v,
+				() -> lowPassAlgorithm, lowPassAlgorithm));
+		valueAccessors.put(name + ".lowPassOrder", forInteger(v -> lowPassOrder = v, () -> lowPassOrder, lowPassOrder));
+		valueAccessors.put(name + ".lowPassFrequency",
+				forDouble(v -> lowPassFrequency = v, () -> lowPassFrequency, lowPassFrequency));
+		valueAccessors.put(name + ".lowPassRippleDb",
+				forDouble(v -> lowPassRippleDb = v, () -> lowPassRippleDb, lowPassRippleDb));
 
-		valueAccessors.put(name + ".bandPassAlgorithm",
-				forString(v -> bandPassAlgorithm = PassFilterAlgorithm.valueOf(v), () -> bandPassAlgorithm.name()));
-		valueAccessors.put(name + ".bandPassOrder", forInteger(v -> bandPassOrder = v, () -> bandPassOrder));
+		valueAccessors.put(name + ".bandPassAlgorithm", forEnum(PassFilterAlgorithm.class, v -> bandPassAlgorithm = v,
+				() -> bandPassAlgorithm, bandPassAlgorithm));
+		valueAccessors.put(name + ".bandPassOrder",
+				forInteger(v -> bandPassOrder = v, () -> bandPassOrder, bandPassOrder));
 		valueAccessors.put(name + ".bandPassCenterFrequency",
-				forDouble(v -> bandPassCenterFrequency = v, () -> bandPassCenterFrequency));
+				forDouble(v -> bandPassCenterFrequency = v, () -> bandPassCenterFrequency, bandPassCenterFrequency));
 		valueAccessors.put(name + ".bandPassFrequencyWidth",
-				forDouble(v -> bandPassFrequencyWidth = v, () -> bandPassFrequencyWidth));
-		valueAccessors.put(name + ".bandPassRippleDb", forDouble(v -> bandPassRippleDb = v, () -> bandPassRippleDb));
+				forDouble(v -> bandPassFrequencyWidth = v, () -> bandPassFrequencyWidth, bandPassFrequencyWidth));
+		valueAccessors.put(name + ".bandPassRippleDb",
+				forDouble(v -> bandPassRippleDb = v, () -> bandPassRippleDb, bandPassRippleDb));
 
-		valueAccessors.put(name + ".highPassAlgorithm",
-				forString(v -> highPassAlgorithm = PassFilterAlgorithm.valueOf(v), () -> highPassAlgorithm.name()));
-		valueAccessors.put(name + ".highPassOrder", forInteger(v -> highPassOrder = v, () -> highPassOrder));
-		valueAccessors.put(name + ".highPassFrequency", forDouble(v -> highPassFrequency = v, () -> highPassFrequency));
-		valueAccessors.put(name + ".highPassRippleDb", forDouble(v -> highPassRippleDb = v, () -> highPassRippleDb));
+		valueAccessors.put(name + ".highPassAlgorithm", forEnum(PassFilterAlgorithm.class, v -> highPassAlgorithm = v,
+				() -> highPassAlgorithm, highPassAlgorithm));
+		valueAccessors.put(name + ".highPassOrder",
+				forInteger(v -> highPassOrder = v, () -> highPassOrder, highPassOrder));
+		valueAccessors.put(name + ".highPassFrequency",
+				forDouble(v -> highPassFrequency = v, () -> highPassFrequency, highPassFrequency));
+		valueAccessors.put(name + ".highPassRippleDb",
+				forDouble(v -> highPassRippleDb = v, () -> highPassRippleDb, highPassRippleDb));
 	}
 
 	public static Effect createLowPassFilter(final int channels, final double sampleRate) {
