@@ -13,25 +13,17 @@ import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.services.Action;
-import log.charter.services.ActionHandler;
 import log.charter.services.ArrangementFretHandPositionsCreator;
-import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
-class GuitarMenuHandler extends CharterMenuHandler implements Initiable {
-	private ActionHandler actionHandler;
+class GuitarMenuHandler extends CharterMenuHandler {
 	private ChartData chartData;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
-
-	@Override
-	public void init() {
-		super.init(actionHandler);
-	}
 
 	@Override
 	boolean isApplicable() {

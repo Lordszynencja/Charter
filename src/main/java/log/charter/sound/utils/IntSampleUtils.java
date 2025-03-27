@@ -4,6 +4,10 @@ import static java.lang.Math.abs;
 
 public class IntSampleUtils {
 	public static int readSample(final byte[] bytes, final int position, final int sampleSize) {
+		if (bytes.length < position * sampleSize) {
+			return 0;
+		}
+
 		int sample = 0;
 		for (int i = 0; i < sampleSize; i++) {
 			final int part = bytes[position * sampleSize + sampleSize - 1 - i];

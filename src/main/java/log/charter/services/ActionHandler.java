@@ -11,10 +11,13 @@ import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
+import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.GridConfig;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.toolbar.IChartToolbar;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.io.Logger;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.audio.AudioHandler;
@@ -43,6 +46,7 @@ public class ActionHandler implements Initiable {
 	private BPMDoubler bpmDoubler;
 	private BPMHalver bpmHalver;
 	private ChartData chartData;
+	private CharterFrame charterFrame;
 	private ChartItemsHandler chartItemsHandler;
 	private ChartTimeHandler chartTimeHandler;
 	private IChartToolbar chartToolbar;
@@ -398,6 +402,7 @@ public class ActionHandler implements Initiable {
 
 		} catch (final Exception ex) {
 			Logger.error("Exception on action " + action, ex);
+			ComponentUtils.showPopup(charterFrame, Label.ERROR, ex.getLocalizedMessage());
 		}
 	}
 

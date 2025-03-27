@@ -36,31 +36,35 @@ public class GP5FileImporter {
 	}
 
 	public void importGP5File(final File file) {
-		final GP5File gp5File;
 		try {
-			gp5File = GP5FileReader.importGPFile(file);
+			final GP5File gp5File;
+			try {
+				gp5File = GP5FileReader.importGPFile(file);
+			} catch (final Exception e) {
+				Logger.error("Couldn't import gp5 file " + file.getAbsolutePath(), e);
+				showPopup(charterFrame, Label.COULDNT_IMPORT_GP5);
+
+				return;
+			}
+			final List<Integer> barsOrder = getBarsOrder(gp5File.directions, gp5File.masterBars);
+
+			final double startPosition = chartData.songChart.beatsMap.beats.get(0).position();
+			final BeatsMap beatsMap;
+
+			final boolean useImportTempoMap = askUserAboutUsingImportTempoMap();
+			if (useImportTempoMap) {
+				beatsMap = getTempoMap(gp5File, startPosition, chartTimeHandler.maxTime(), barsOrder);
+			} else {
+				beatsMap = chartData.songChart.beatsMap;
+			}
+
+			final SongChart temporaryChart = GP5FileToSongChart.transform(gp5File, beatsMap, barsOrder);
+
+			final List<String> trackNames = gp5File.tracks.stream().map(t -> t.trackName).collect(Collectors.toList());
+			new ArrangementImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart,
+					trackNames);
 		} catch (final Exception e) {
-			Logger.error("Couldn't import gp5 file " + file.getAbsolutePath(), e);
-			showPopup(charterFrame, Label.COULDNT_IMPORT_GP5);
-
-			return;
+			Logger.error("Couldn't import gp5 file", e);
 		}
-		final List<Integer> barsOrder = getBarsOrder(gp5File.directions, gp5File.masterBars);
-
-		final double startPosition = chartData.songChart.beatsMap.beats.get(0).position();
-		final BeatsMap beatsMap;
-
-		final boolean useImportTempoMap = askUserAboutUsingImportTempoMap();
-		if (useImportTempoMap) {
-			beatsMap = getTempoMap(gp5File, startPosition, chartTimeHandler.maxTime(), barsOrder);
-		} else {
-			beatsMap = chartData.songChart.beatsMap;
-		}
-
-		final SongChart temporaryChart = GP5FileToSongChart.transform(gp5File, beatsMap, barsOrder);
-
-		final List<String> trackNames = gp5File.tracks.stream().map(t -> t.trackName).collect(Collectors.toList());
-		new ArrangementImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart,
-				trackNames);
 	}
 }

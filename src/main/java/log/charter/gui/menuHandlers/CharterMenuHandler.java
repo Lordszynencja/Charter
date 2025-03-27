@@ -5,7 +5,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.gui.CharterFrame;
 import log.charter.gui.components.simple.SpecialMenuItem;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.io.Logger;
 import log.charter.services.Action;
 import log.charter.services.ActionHandler;
@@ -23,27 +25,25 @@ abstract class CharterMenuHandler {
 		return menu;
 	}
 
-	protected static JMenuItem createItem(final Label label, final Runnable onAction) {
+	protected ActionHandler actionHandler;
+	protected CharterFrame charterFrame;
+
+	protected JMenuItem createItem(final Label label, final Runnable onAction) {
 		return createItem(label.label(), onAction);
 	}
 
-	protected static JMenuItem createItem(final String label, final Runnable onAction) {
+	protected JMenuItem createItem(final String label, final Runnable onAction) {
 		final JMenuItem item = new JMenuItem(label);
 		item.addActionListener(e -> {
 			try {
 				onAction.run();
 			} catch (final Throwable t) {
 				Logger.error("Couldn't do action " + label, t);
+				ComponentUtils.showPopup(charterFrame, Label.ERROR, t.getLocalizedMessage());
 			}
 		});
 		setDefaultColors(item);
 		return item;
-	}
-
-	protected ActionHandler actionHandler;
-
-	protected void init(final ActionHandler actionHandler) {
-		this.actionHandler = actionHandler;
 	}
 
 	protected JMenuItem createItem(final Action action, final Label label) {

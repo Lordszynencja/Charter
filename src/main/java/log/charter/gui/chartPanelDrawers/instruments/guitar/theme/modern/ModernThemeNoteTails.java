@@ -25,13 +25,13 @@ import log.charter.util.data.IntRange;
 import log.charter.util.data.Position2D;
 
 public class ModernThemeNoteTails {
-	private static final Color[] noteTailColors = new Color[InstrumentConfig.maxStrings];
+	private static final Color[] noteTailColors = new Color[InstrumentConfig.maxPossibleStrings];
 	private static Font slideFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
 	public static void reloadGraphics() {
-		for (int i = 0; i < InstrumentConfig.maxStrings; i++) {
-			noteTailColors[stringId(i, InstrumentConfig.maxStrings)] = getStringBasedColor(
-					StringColorLabelType.NOTE_TAIL, i, InstrumentConfig.maxStrings);
+		for (int i = 0; i < InstrumentConfig.maxPossibleStrings; i++) {
+			noteTailColors[stringId(i, InstrumentConfig.maxPossibleStrings)] = getStringBasedColor(
+					StringColorLabelType.NOTE_TAIL, i, InstrumentConfig.maxPossibleStrings);
 		}
 
 		slideFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);

@@ -6,7 +6,6 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.DebugConfig;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.CharterFrame;
 import log.charter.gui.components.simple.SpecialMenuItem;
 import log.charter.gui.panes.songEdits.AddBeatsAtTheStartPane;
 import log.charter.gui.panes.songEdits.AddDefaultSilencePane;
@@ -14,26 +13,17 @@ import log.charter.gui.panes.songEdits.AddSilenceAtTheEndPane;
 import log.charter.gui.panes.songEdits.AddSilenceInTheBeginningPane;
 import log.charter.gui.panes.songEdits.ChangeSongPitchPane;
 import log.charter.services.Action;
-import log.charter.services.ActionHandler;
-import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
-class EditMenuHandler extends CharterMenuHandler implements Initiable {
-	private ActionHandler actionHandler;
+class EditMenuHandler extends CharterMenuHandler {
 	private ChartData chartData;
-	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
 	private ModeManager modeManager;
 	private ProjectAudioHandler projectAudioHandler;
 	private UndoSystem undoSystem;
-
-	@Override
-	public void init() {
-		super.init(actionHandler);
-	}
 
 	@Override
 	boolean isApplicable() {
