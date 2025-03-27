@@ -108,6 +108,7 @@ public class Localization {
 		DUPLICATED_END_PHRASE("Duplicated END phrase"), //
 		EDIT_MENU("Edit"), //
 		EDITING("Editing"), //
+		ERROR("Error: %s"), //
 		ERRORS_TAB_DESCRIPTION("Description"), //
 		ERRORS_TAB_POSITION("Position"), //
 		ERRORS_TAB_SEVERITY("Severity"), //

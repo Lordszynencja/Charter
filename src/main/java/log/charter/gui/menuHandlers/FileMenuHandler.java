@@ -13,11 +13,10 @@ import log.charter.gui.panes.graphicalConfig.GraphicConfigPane;
 import log.charter.gui.panes.programConfig.ConfigPane;
 import log.charter.gui.panes.shortcuts.ShortcutConfigPane;
 import log.charter.gui.panes.songSettings.SongOptionsPane;
+import log.charter.io.Logger;
 import log.charter.io.gp.gp7.GP7PlusFileImporter;
 import log.charter.services.Action;
-import log.charter.services.ActionHandler;
 import log.charter.services.CharterContext;
-import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.data.StemAddService;
 import log.charter.services.data.files.GP5FileImporter;
@@ -32,8 +31,7 @@ import log.charter.services.editModes.ModeManager;
 import log.charter.services.utils.Framer;
 import log.charter.util.FileChooseUtils;
 
-public class FileMenuHandler extends CharterMenuHandler implements Initiable {
-	private ActionHandler actionHandler;
+public class FileMenuHandler extends CharterMenuHandler {
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private CharterContext charterContext;
@@ -54,11 +52,6 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 	@Override
 	boolean isApplicable() {
 		return true;
-	}
-
-	@Override
-	public void init() {
-		super.init(actionHandler);
 	}
 
 	private JMenu prepareNewProjectMenu() {
@@ -196,16 +189,20 @@ public class FileMenuHandler extends CharterMenuHandler implements Initiable {
 	}
 
 	private void importGPFile() {
-		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path,
-				new String[] { ".gp3", ".gp4", ".gp5", ".gp" }, Label.GP_FILE.label());
-		if (file == null) {
-			return;
-		}
+		try {
+			final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path,
+					new String[] { ".gp3", ".gp4", ".gp5", ".gp" }, Label.GP_FILE.label());
+			if (file == null) {
+				return;
+			}
 
-		if (file.getName().endsWith(".gp3") || file.getName().endsWith(".gp4") || file.getName().endsWith(".gp5")) {
-			gp5FileImporter.importGP5File(file);
-		} else if (file.getName().endsWith(".gp")) {
-			gp7PlusFileImporter.importGP7PlusFile(file);
+			if (file.getName().endsWith(".gp3") || file.getName().endsWith(".gp4") || file.getName().endsWith(".gp5")) {
+				gp5FileImporter.importGP5File(file);
+			} else if (file.getName().endsWith(".gp")) {
+				gp7PlusFileImporter.importGP7PlusFile(file);
+			}
+		} catch (final Exception e) {
+			Logger.error("Couldn't import gp file", e);
 		}
 	}
 }

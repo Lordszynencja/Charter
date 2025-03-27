@@ -53,12 +53,16 @@ public class NewProjectFromGP7Creator {
 			return;
 		}
 
-		final File gpifFile = chooseGPFile();
-		if (gpifFile == null) {
-			return;
-		}
+		try {
+			final File gpifFile = chooseGPFile();
+			if (gpifFile == null) {
+				return;
+			}
 
-		createProjectForInternal(gpifFile);
+			createProjectForInternal(gpifFile);
+		} catch (final Exception e) {
+			Logger.error("Error while creating gp7+ project", e);
+		}
 	}
 
 	public void createProjectFor(final File gpFile) {
@@ -100,7 +104,8 @@ public class NewProjectFromGP7Creator {
 		}
 
 		if (songFile.fromGPIF && gpif.backingTrack.framePadding != null && gpif.backingTrack.framePadding > 0) {
-			final double offset = gpif.backingTrack.framePadding / musicData.format.getSampleRate();
+			final double offset = gpif.backingTrack.framePadding / 44100.0;
+			musicData.format.getSampleRate();
 			final AudioData silence = AudioGenerator.generateSilence(offset, musicData.format);
 			try {
 				musicData = silence.join(musicData);
