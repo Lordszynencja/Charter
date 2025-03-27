@@ -70,8 +70,8 @@ public class ModernThemeNotes implements ThemeNotes {
 	private static Font smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
 	public static void reloadGraphics() {
-		for (int string = 0; string < InstrumentConfig.maxPossibleStrings; string++) {
-			final int stringId = stringId(string, InstrumentConfig.maxPossibleStrings);
+		for (int string = 0; string < InstrumentConfig.maxStrings; string++) {
+			final int stringId = stringId(string, InstrumentConfig.maxStrings);
 			final Color borderInnerColor = getStringBasedColor(StringColorLabelType.LANE, string,
 					InstrumentConfig.maxStrings).brighter();
 			final Color innerColor = borderInnerColor.darker().darker();
@@ -84,6 +84,15 @@ public class ModernThemeNotes implements ThemeNotes {
 			final Color accentColor = borderInnerColor.brighter().brighter();
 			accentIcons[stringId] = generateAccentIcon(accentColor);
 			harmonicAccentIcons[stringId] = generateHarmonicAccentIcon(accentColor);
+		}
+		for (int string = 0; string < InstrumentConfig.maxPossibleStrings; string++) {
+			if (noteIcons[string] == null) {
+				noteIcons[string] = noteIcons[0];
+				linkedNoteIcons[string] = linkedNoteIcons[0];
+				harmonicNoteIcons[string] = harmonicNoteIcons[0];
+				accentIcons[string] = accentIcons[0];
+				harmonicAccentIcons[string] = harmonicAccentIcons[0];
+			}
 		}
 
 		noteSelectIcon = generateNoteIcon(null, null, ColorLabel.SELECT.color());
