@@ -104,7 +104,7 @@ public class NewProjectFromGP7Creator {
 		}
 
 		if (songFile.fromGPIF && gpif.backingTrack.framePadding != null && gpif.backingTrack.framePadding > 0) {
-			final double offset = gpif.backingTrack.framePadding / 44100.0;
+			final double offset = gpif.backingTrack.framePadding / musicData.format.getSampleRate();
 			musicData.format.getSampleRate();
 			final AudioData silence = AudioGenerator.generateSilence(offset, musicData.format);
 			try {
