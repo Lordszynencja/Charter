@@ -189,7 +189,6 @@ public class GP7PlusFileImporter {
 		if (!importBeatMap) {
 			return chartData.songChart.beatsMap;
 		}
-		gpif.sampleRate = 44100;
 
 		final BeatsMap beatsMap = new BeatsMap(new ArrayList<>());
 
@@ -201,7 +200,7 @@ public class GP7PlusFileImporter {
 		double position = 0;
 		double offset = 0;
 		if (gpif.backingTrack != null && gpif.backingTrack.framePadding != null) {
-			offset = max(0, -gpif.backingTrack.framePadding / gpif.sampleRate * 1000);
+			offset = max(0, -gpif.backingTrack.framePadding / 44100 * 1000);
 			position = offset;
 		}
 		boolean firstInMeasure = true;
