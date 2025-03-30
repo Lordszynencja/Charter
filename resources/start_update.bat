@@ -22,14 +22,12 @@ if '%errorlevel%' NEQ '0' (
 
     "%temp%\getadmin.vbs"
     del "%temp%\getadmin.vbs"
-    exit /B
+    exit
 
 :gotAdmin
     pushd "%CD%"
     CD /D "%~dp0"
 :--------------------------------------    
-
-@echo on
 
 COPY update.bat tmp_update.bat
 tmp_update.bat %1 %2
