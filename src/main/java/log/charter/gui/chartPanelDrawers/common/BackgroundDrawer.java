@@ -129,6 +129,14 @@ public class BackgroundDrawer {
 		}
 	}
 
+	private void drawStartAndEnd(final Graphics2D g, final double time) {
+		g.setColor(ColorLabel.MARKER.color());
+		final int startX = positionToX(0, time);
+		g.drawLine(startX, lanesTop + 30, startX, lanesBottom - 30);
+		final int endX = positionToX(chartTimeHandler.maxTime(), time);
+		g.drawLine(endX, lanesTop + 30, endX, lanesBottom - 30);
+	}
+
 	public void draw(final Graphics2D g, final double time) {
 		drawBackground(g);
 
@@ -144,11 +152,6 @@ public class BackgroundDrawer {
 
 		drawLanesBackground(g);
 		drawTimeScale(g, time);
-
-		g.setColor(ColorLabel.MARKER.color());
-		final int startX = positionToX(0, chartTimeHandler.time());
-		g.drawLine(startX, lanesTop + 30, startX, lanesBottom - 30);
-		final int endX = positionToX(chartTimeHandler.maxTime(), chartTimeHandler.time());
-		g.drawLine(endX, lanesTop + 30, endX, lanesBottom - 30);
+		drawStartAndEnd(g, time);
 	}
 }
