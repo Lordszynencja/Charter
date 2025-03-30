@@ -29,8 +29,6 @@ if '%errorlevel%' NEQ '0' (
     CD /D "%~dp0"
 :--------------------------------------    
 
-@echo on
-
 COPY update.bat tmp_update.bat
 tmp_update.bat %1 %2
 DEL tmp_update.bat
