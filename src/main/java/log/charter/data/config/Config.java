@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import log.charter.data.GridType;
 import log.charter.data.config.values.AudioConfig;
 import log.charter.data.config.values.DebugConfig;
 import log.charter.data.config.values.GridConfig;
@@ -22,7 +21,6 @@ import log.charter.data.config.values.PathsConfig;
 import log.charter.data.config.values.SecretsConfig;
 import log.charter.data.config.values.WindowStateConfig;
 import log.charter.data.config.values.accessors.ValueAccessor;
-import log.charter.data.song.BeatsMap.DistanceType;
 import log.charter.sound.SoundFileType;
 import log.charter.sound.system.SoundSystem;
 import log.charter.util.RW;
@@ -49,34 +47,6 @@ public class Config {
 	private static final Map<String, ValueAccessor> valueAccessors = new HashMap<>();
 
 	static {
-		// older variable names
-		// 0.21.0
-		valueAccessors.put("showGrid", forBoolean(v -> GridConfig.showGrid = v, null, GridConfig.showGrid));
-		valueAccessors.put("gridType",
-				forEnum(GridType.class, v -> GridConfig.gridType = v, null, GridConfig.gridType));
-		valueAccessors.put("gridSize", forInteger(v -> GridConfig.gridSize = v, null, GridConfig.gridSize));
-		valueAccessors.put("minNoteDistanceFactor", forEnum(DistanceType.class,
-				v -> NoteDistanceConfig.minSpaceType = v, null, NoteDistanceConfig.minSpaceType));
-		valueAccessors.put("minNoteDistanceFactor",
-				forInteger(v -> NoteDistanceConfig.minSpaceFactor = v, null, NoteDistanceConfig.minSpaceFactor));
-		valueAccessors.put("minTailLengthType", forEnum(DistanceType.class, v -> NoteDistanceConfig.minLengthType = v,
-				null, NoteDistanceConfig.minLengthType));
-		valueAccessors.put("minTailLengthFactor",
-				forInteger(v -> NoteDistanceConfig.minLengthFactor = v, null, NoteDistanceConfig.minLengthFactor));
-		valueAccessors.put("markerOffset",
-				forInteger(v -> GraphicalConfig.markerOffset = v, null, GraphicalConfig.markerOffset));
-		valueAccessors.put("FPS", forInteger(v -> GraphicalConfig.FPS = v, null, GraphicalConfig.FPS));
-		valueAccessors.put("antialiasingSamples",
-				forInteger(v -> GraphicalConfig.antialiasingSamples = v, null, GraphicalConfig.antialiasingSamples));
-		valueAccessors.put("lastDir", forString(v -> PathsConfig.lastDir = v, null, PathsConfig.lastDir));
-		valueAccessors.put("lastPath", forString(v -> PathsConfig.lastPath = v, null, PathsConfig.lastPath));
-		valueAccessors.put("musicPath", forString(v -> PathsConfig.musicPath = v, null, PathsConfig.musicPath));
-		valueAccessors.put("songsPath", forString(v -> PathsConfig.songsPath = v, null, PathsConfig.songsPath));
-		valueAccessors.put("invertStrings",
-				forBoolean(v -> GraphicalConfig.invertStrings = v, null, GraphicalConfig.invertStrings));
-		valueAccessors.put("invertStrings3D",
-				forBoolean(v -> GraphicalConfig.invertStrings3D = v, null, GraphicalConfig.invertStrings3D));
-
 		// current variables
 		valueAccessors.put("language", forString(v -> language = v, () -> language, language));
 
