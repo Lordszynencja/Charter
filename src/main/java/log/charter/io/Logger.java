@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import log.charter.data.config.values.DebugConfig;
-import log.charter.util.RW;
+import log.charter.util.Utils;
 
 public class Logger {
 	private static final SimpleDateFormat timeFormat = new SimpleDateFormat("<yyyy-MM-dd HH:mm:ss>");
@@ -18,7 +18,7 @@ public class Logger {
 		try {
 			final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			final String name = "log-" + dateFormat.format(new Date()) + ".txt";
-			final File dir = new File(RW.getJarDirectory(), "logs");
+			final File dir = new File(Utils.defaultConfigDir, "logs");
 			if (!dir.exists()) {
 				dir.mkdirs();
 				dir.mkdir();
