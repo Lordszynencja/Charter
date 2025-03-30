@@ -105,7 +105,6 @@ public class GuitarDrawer {
 		}
 		if (chordName != null) {
 			highwayDrawer.addChordName(x, chordName);
-
 		}
 
 		return true;

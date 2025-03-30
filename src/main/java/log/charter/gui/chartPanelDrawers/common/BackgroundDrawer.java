@@ -2,7 +2,6 @@ package log.charter.gui.chartPanelDrawers.common;
 
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.timingY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
@@ -83,7 +82,7 @@ public class BackgroundDrawer {
 
 	private void drawLanesBackground(final Graphics g) {
 		g.setColor(ColorLabel.LANE.color());
-		g.fillRect(0, lanesTop, chartPanel.getWidth(), lanesHeight + 1);
+		g.fillRect(0, DrawerUtils.lanesTop, chartPanel.getWidth(), DrawerUtils.lanesBottom - DrawerUtils.lanesTop + 1);
 	}
 
 	private int calculateJump(final double startTime, final double endTime) {
