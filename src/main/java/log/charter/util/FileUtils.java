@@ -41,6 +41,12 @@ public class FileUtils {
 		return fileName.replaceAll("[^a-zA-Z0-9_\\- ]", "");
 	}
 
+	public static String getExtension(final File file) {
+		final String name = file.getName();
+		final int dotPosition = name.lastIndexOf('.');
+		return dotPosition < 0 ? "" : name.substring(dotPosition + 1);
+	}
+
 	public static String getFileNameWithoutExtension(final File file) {
 		final String name = file.getName();
 		final int dotPosition = name.lastIndexOf('.');

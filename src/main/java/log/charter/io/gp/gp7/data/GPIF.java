@@ -6,7 +6,6 @@ import java.util.Map;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import log.charter.io.gp.gp7.converters.GP7BarsConverter;
 import log.charter.io.gp.gp7.converters.GP7BeatsConverter;
@@ -47,9 +46,6 @@ public class GPIF {
 	public Map<Integer, GP7Rhythm> rhythms;
 	@XStreamAlias("Assets")
 	public List<GP7Asset> assets;
-
-	@XStreamOmitField
-	public float sampleRate = 44100;
 
 	@Override
 	public String toString() {
