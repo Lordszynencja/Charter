@@ -16,6 +16,7 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.NoteDistanceConfig;
 import log.charter.data.config.values.PathsConfig;
+import log.charter.data.config.values.SecretsConfig;
 import log.charter.data.song.BeatsMap.DistanceType;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.containers.RowedPanel;
@@ -46,6 +47,8 @@ public class ProgramGeneralConfigPage implements Page {
 	private boolean selectNotesByTails = Config.selectNotesByTails;
 	private int backupDelay = Config.backupDelay;
 
+	private boolean aprilFoolsEnabled = SecretsConfig.aprilFoolsEnabled;
+
 	private FieldWithLabel<TextInputWithValidation> musicPathField;
 	private JButton musicFolderPickerButton;
 	private FieldWithLabel<TextInputWithValidation> songsPathField;
@@ -62,6 +65,8 @@ public class ProgramGeneralConfigPage implements Page {
 
 	private FieldWithLabel<JCheckBox> selectNotesByTailsField;
 	private FieldWithLabel<TextInputWithValidation> backupDelayField;
+
+	private FieldWithLabel<JCheckBox> aprilFoolsEnabledField;
 
 	@Override
 	public void init(final RowedPanel panel, final RowedPosition position) {
@@ -89,6 +94,12 @@ public class ProgramGeneralConfigPage implements Page {
 
 		position.newRow();
 		addBackupDelay(panel, position);
+
+		if (SecretsConfig.isAprilFools()) {
+			position.newRow();
+			position.newRow();
+			addAprilFoolsEnabled(panel, position);
+		}
 	}
 
 	private TextInputWithValidation addPathInput(final String value, final Consumer<String> onchange) {
@@ -209,6 +220,16 @@ public class ProgramGeneralConfigPage implements Page {
 		panel.add(backupDelayField, position);
 	}
 
+	private void addAprilFoolsEnabled(final RowedPanel panel, final RowedPosition position) {
+		final JCheckBox input = new JCheckBox();
+		input.addActionListener(a -> aprilFoolsEnabled = input.isSelected());
+		input.setSelected(aprilFoolsEnabled);
+
+		aprilFoolsEnabledField = new FieldWithLabel<>(Label.APRIL_FOOLS_ENABLED, 125, 20, 20, input,
+				LabelPosition.LEFT);
+		panel.add(aprilFoolsEnabledField, position);
+	}
+
 	@Override
 	public Label label() {
 		return Label.CONFIG_GENERAL;
@@ -229,6 +250,10 @@ public class ProgramGeneralConfigPage implements Page {
 		minLengthTypeField.setVisible(visibility);
 		selectNotesByTailsField.setVisible(visibility);
 		backupDelayField.setVisible(visibility);
+
+		if (aprilFoolsEnabledField != null) {
+			aprilFoolsEnabledField.setVisible(visibility);
+		}
 	}
 
 	public void save() {
@@ -245,5 +270,7 @@ public class ProgramGeneralConfigPage implements Page {
 
 		Config.selectNotesByTails = selectNotesByTails;
 		Config.backupDelay = backupDelay;
+
+		SecretsConfig.aprilFoolsEnabled = aprilFoolsEnabled;
 	}
 }

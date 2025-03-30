@@ -12,7 +12,6 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.phraseNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.tailHeight;
@@ -47,9 +46,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import log.charter.data.config.ZoomUtils;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
+import log.charter.data.config.ZoomUtils;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
@@ -733,7 +732,8 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 
 	@Override
 	public void addChordName(final int x, final String chordName) {
-		chordNames.add(new Text(new Position2D(x + 2, lanesTop - 1), fretFont, chordName, ColorLabel.BASE_DARK_TEXT));
+		chordNames
+				.add(new Text(new Position2D(x + 2, lanesBottom - 12), fretFont, chordName, ColorLabel.BASE_DARK_TEXT));
 	}
 
 	private void addNoteHighlight(final int x, final int length, final int string) {

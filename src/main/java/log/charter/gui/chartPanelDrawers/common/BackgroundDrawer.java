@@ -2,7 +2,6 @@ package log.charter.gui.chartPanelDrawers.common;
 
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.editAreaHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.timingY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
@@ -83,7 +82,7 @@ public class BackgroundDrawer {
 
 	private void drawLanesBackground(final Graphics g) {
 		g.setColor(ColorLabel.LANE.color());
-		g.fillRect(0, lanesTop, chartPanel.getWidth(), lanesHeight + 1);
+		g.fillRect(0, DrawerUtils.lanesTop, chartPanel.getWidth(), DrawerUtils.lanesBottom - DrawerUtils.lanesTop + 1);
 	}
 
 	private int calculateJump(final double startTime, final double endTime) {
@@ -129,6 +128,14 @@ public class BackgroundDrawer {
 		}
 	}
 
+	private void drawStartAndEnd(final Graphics2D g, final double time) {
+		g.setColor(ColorLabel.MARKER.color());
+		final int startX = positionToX(0, time);
+		g.drawLine(startX, lanesTop + 30, startX, lanesBottom - 30);
+		final int endX = positionToX(chartTimeHandler.maxTime(), time);
+		g.drawLine(endX, lanesTop + 30, endX, lanesBottom - 30);
+	}
+
 	public void draw(final Graphics2D g, final double time) {
 		drawBackground(g);
 
@@ -144,11 +151,6 @@ public class BackgroundDrawer {
 
 		drawLanesBackground(g);
 		drawTimeScale(g, time);
-
-		g.setColor(ColorLabel.MARKER.color());
-		final int startX = positionToX(0, chartTimeHandler.time());
-		g.drawLine(startX, lanesTop + 30, startX, lanesBottom - 30);
-		final int endX = positionToX(chartTimeHandler.maxTime(), chartTimeHandler.time());
-		g.drawLine(endX, lanesTop + 30, endX, lanesBottom - 30);
+		drawStartAndEnd(g, time);
 	}
 }

@@ -66,7 +66,7 @@ public class ChartPanel extends JComponent implements Initiable {
 		}
 
 		arrangementDrawer.draw(g, time);
-		markerDrawer.draw(g);
+		markerDrawer.draw(g, time);
 	}
 
 	@Override

@@ -2,9 +2,7 @@ package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
 import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.data.config.GraphicalConfig.chordHeight;
-import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.AccentIconGenerator.generateAccentIcon;
@@ -35,6 +33,7 @@ import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNoteWithFret;
+import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredImage;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
@@ -284,7 +283,7 @@ public class ModernThemeNotes implements ThemeNotes {
 
 	@Override
 	public void addChordName(final int x, final String chordName) {
-		data.chordNames.add(new Text(new Position2D(x + 2, fhpY + fhpInfoHeight), chordNameFont, chordName,
+		data.chordNames.add(new Text(new Position2D(x + 2, DrawerUtils.lanesBottom - 13), chordNameFont, chordName,
 				ColorLabel.BASE_DARK_TEXT));
 	}
 

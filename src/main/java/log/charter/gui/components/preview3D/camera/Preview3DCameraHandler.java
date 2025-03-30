@@ -147,12 +147,14 @@ public class Preview3DCameraHandler {
 	}
 
 	public void updateCamera(final double aspectRatio) {
-		double shake = SecretsConfig.explosionsShakyCam ? 1 : 0;
-		shake *= max(0, 1 - (System.nanoTime() - cameraShakeTime) / 1_000_000_000.0);
-		shake = pow(shake, 3) * cameraShakeStrength / chartData.currentStrings();
-
-		final CameraFinalData cameraFinalData = shake > 0 ? new CameraFinalData(aspectRatio, shake)
-				: new CameraFinalData(aspectRatio);
+		final CameraFinalData cameraFinalData;
+		if (SecretsConfig.explosionsShakyCamEnabled()) {
+			double shake = max(0, 1 - (System.nanoTime() - cameraShakeTime) / 1_000_000_000.0);
+			shake = pow(shake, 3) * cameraShakeStrength / chartData.currentStrings();
+			cameraFinalData = new CameraFinalData(aspectRatio, shake);
+		} else {
+			cameraFinalData = new CameraFinalData(aspectRatio);
+		}
 
 		currentMatrix = cameraFinalData.generateMatrix();
 	}

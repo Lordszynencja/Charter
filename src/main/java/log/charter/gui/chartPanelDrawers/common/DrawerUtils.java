@@ -59,7 +59,7 @@ public class DrawerUtils {
 		laneHeight = (int) (noteHeight * (bass ? 2 : 1.5));
 		tailHeight = getAsOdd(noteHeight * 3 / 4);
 		lanesHeight = laneHeight * strings;
-		lanesBottom = lanesTop + lanesHeight;
+		lanesBottom = lanesTop + lanesHeight + 10;
 		timingY = lanesBottom + handShapesHeight;
 		editAreaHeight = timingY + timingHeight;
 

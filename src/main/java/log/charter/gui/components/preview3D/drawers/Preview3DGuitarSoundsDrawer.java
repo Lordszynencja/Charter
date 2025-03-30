@@ -667,7 +667,8 @@ public class Preview3DGuitarSoundsDrawer {
 
 	private void addExplosionsToDraw(final List<SoundDrawObject> objectsToDraw, final Preview3DDrawData drawData) {
 		final boolean addExplosions = updateLastSound(drawData.time);
-		if (SecretsConfig.explosions && addExplosions) {
+
+		if (SecretsConfig.explosionsEnabled() && addExplosions) {
 			final ChordOrNote sound = chartData.currentSounds().get(lastSound);
 			final boolean explosionForNotes = explosionForNotes(sound);
 

@@ -27,6 +27,7 @@ public class Localization {
 		ADD_LEVEL("Add level"), //
 		ADD_SILENCE_AT_THE_END("Add silence at the end"), //
 		ADD_SILENCE_IN_THE_BEGINNING("Add silence in the beginning"), //
+		APRIL_FOOLS_ENABLED("April fools"), //
 		ARPEGGIO("Arpeggio"), //
 		ARRANGEMENT_ID_NAME("Arrangement %d, %s:"), //
 		ARRANGEMENT_IMPORT_OPTIONS("Arrangement import options"), //
