@@ -34,6 +34,7 @@ public class NewProjectFromGP7Creator {
 			if (!fromGPIF || file == null) {
 				return;
 			}
+
 			file.delete();
 		}
 	}
@@ -104,8 +105,8 @@ public class NewProjectFromGP7Creator {
 		}
 
 		if (songFile.fromGPIF && gpif.backingTrack.framePadding != null && gpif.backingTrack.framePadding > 0) {
-			final double offset = gpif.backingTrack.framePadding / musicData.format.getSampleRate();
-			musicData.format.getSampleRate();
+			final double offset = gpif.backingTrack.framePadding / 44100.0;
+
 			final AudioData silence = AudioGenerator.generateSilence(offset, musicData.format);
 			try {
 				musicData = silence.join(musicData);
@@ -139,6 +140,7 @@ public class NewProjectFromGP7Creator {
 		}
 
 		final AudioData musicData = getAudioData(gpif, songFile);
+		songFile.deleteTempFile();
 		if (musicData == null) {
 			return;
 		}
