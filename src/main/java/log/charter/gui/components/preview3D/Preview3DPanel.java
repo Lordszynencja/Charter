@@ -11,7 +11,6 @@ import org.lwjgl.opengl.awt.GLData;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
-import log.charter.data.config.Config;
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.values.DebugConfig;
 import log.charter.gui.components.preview3D.camera.Preview3DCameraHandler;
@@ -124,8 +123,16 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 			Logger.error("Exception in paint", e);
 			if (e.getMessage().contains("Exception while creating the OpenGL context")) {
 				if (GraphicalConfig.antialiasingSamples > 1) {
-					GraphicalConfig.antialiasingSamples /= 2;
-					Config.markChanged();
+					GraphicalConfig.antialiasingSamples = 1;
+					GraphicalConfig.markChanged();
+
+					try {
+						GL.setCapabilities(null);
+					} catch (final Exception e2) {
+						Logger.error("Couldn't start OpenGL after setting antialiasing to 1", e2);
+					}
+
+					return;
 				} else {
 					Logger.error("stopping painting of GL component");
 					active = false;
