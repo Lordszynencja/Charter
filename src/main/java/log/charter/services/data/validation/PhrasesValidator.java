@@ -32,7 +32,13 @@ public class PhrasesValidator {
 
 	private void validateCountPhrases(final List<EventPoint> phrases, final int arrangementId) {
 		final List<EventPoint> countPhrases = filter(phrases, phrase -> phrase.phrase.equals("COUNT"));
-		if (countPhrases.size() <= 1) {
+		if (countPhrases.size() == 1) {
+			return;
+		}
+
+		if (countPhrases.size() < 1) {
+			final ChartPosition errorPosition = new ChartPositionOnArrangement(chartData, arrangementId, modeManager);
+			errorsTab.addError(new ChartError(Label.NO_COUNT_PHRASE_IN_ARRANGEMENT, ChartErrorSeverity.ERROR, errorPosition));
 			return;
 		}
 
@@ -43,7 +49,13 @@ public class PhrasesValidator {
 
 	private void validateEndPhrases(final List<EventPoint> phrases, final int arrangementId) {
 		final List<EventPoint> endPhrases = filter(phrases, phrase -> phrase.phrase.equals("END"));
-		if (endPhrases.size() <= 1) {
+		if (endPhrases.size() == 1) {
+			return;
+		}
+
+		if (endPhrases.size() < 1) {
+			final ChartPosition errorPosition = new ChartPositionOnArrangement(chartData, arrangementId, modeManager);
+			errorsTab.addError(new ChartError(Label.NO_END_PHRASE_IN_ARRANGEMENT, ChartErrorSeverity.ERROR, errorPosition));
 			return;
 		}
 

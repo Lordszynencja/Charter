@@ -209,6 +209,8 @@ public class Localization {
 		NEW_VERSION_AVAILABLE_UPDATE("New version %s is available, you are on %s, download the update?"), //
 		NEW_VOCAL_PATH("New vocal path..."), //
 		NO_PHRASES_IN_ARRANGEMENT("No phrases in arrangement"), //
+		NO_COUNT_PHRASE_IN_ARRANGEMENT("No COUNT phrase in arrangement"), //
+		NO_END_PHRASE_IN_ARRANGEMENT("No END phrase in arrangement"), //
 		NO_SECTIONS_IN_ARRANGEMENT("No sections in arrangement"), //
 		NOTE_FRET_BELOW_CAPO("Note fret is below capo, for open string it should be equal"), //
 		NOTE_IN_WRONG_FHP("Note in wrong FHP"), //
