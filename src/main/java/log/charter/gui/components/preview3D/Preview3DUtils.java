@@ -6,12 +6,13 @@ import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.values.InstrumentConfig;
 
 public class Preview3DUtils {
-	public static final double topStringPosition = 0;
+	public static final double chartboardYPosition = 0;
+	public static final double stringDistance = 0.35;
+	public static final double bottomStringPosition = chartboardYPosition + stringDistance;
 	public static final double fretThickness = 0.025;
 	public static final double firstFretDistance = 1.2;
 	public static final double noteHalfWidth = firstFretDistance / 3;
 	public static final double tailHalfWidth = noteHalfWidth * 0.33;
-	public static final double stringDistance = 0.35;
 	public static final double bendHalfstepDistance = stringDistance * 0.8;
 	public static final int closeDistance = 250;
 	public static final float closeDistanceZ = (float) getTimePosition(closeDistance);
@@ -51,7 +52,7 @@ public class Preview3DUtils {
 	}
 
 	public static double getChartboardYPosition(final int strings) {
-		return -stringDistance * strings;
+		return chartboardYPosition;
 	}
 
 	private static int invertStrings(final int string, final int strings) {
@@ -59,7 +60,7 @@ public class Preview3DUtils {
 	}
 
 	public static double getStringPosition(final int string, final int strings) {
-		return topStringPosition - invertStrings(string, strings) * stringDistance;
+		return bottomStringPosition + (strings - 1) * stringDistance - invertStrings(string, strings) * stringDistance;
 	}
 
 	public static double getStringPositionWithBend(final int string, final int strings, final double bendValue) {

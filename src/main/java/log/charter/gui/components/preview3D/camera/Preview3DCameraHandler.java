@@ -3,13 +3,8 @@ package log.charter.gui.components.preview3D.camera;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
-import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
-import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
-import static log.charter.gui.components.preview3D.glUtils.Matrix4.cameraMatrix;
-import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
-import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationXMatrix;
-import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationYMatrix;
-import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
+import static log.charter.gui.components.preview3D.Preview3DUtils.*;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.*;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.List;
@@ -26,7 +21,7 @@ import log.charter.services.data.ChartTimeHandler;
 
 public class Preview3DCameraHandler {
 
-	private static final Matrix4 baseCameraPerspectiveMatrix = cameraMatrix(-0.3, -0.3, -0.3, -1)//
+	private static final Matrix4 baseCameraPerspectiveMatrix = cameraMatrix(-0.2, -0.3, -0.3, -1)//
 			.multiply(scaleMatrix(1, 1, -1));
 
 	private final static int fretFocusWindowStartOffset = 0;
@@ -51,26 +46,23 @@ public class Preview3DCameraHandler {
 	private class CameraFinalData {
 		final double camY;
 		final double camZ;
-		final double camRotationX;
 		final double camRotationY;
 
 		final double screenScaleX;
 		final double screenScaleY;
 
 		public CameraFinalData(final double aspectRatio) {
-			camY = 1.3 + topStringPosition + (fretSpan - 4) * 0.2;
+			camY = 5.0 + chartboardYPosition + (fretSpan - 4) * 0.2;
 			camZ = -2.5 + (fretSpan - 4) * -0.2;
-			camRotationX = 0.2 + Math.sqrt(fretSpan - 4) * 0.01;
-			camRotationY = 0.06;
+			camRotationY = 0.04;
 
 			screenScaleX = min(minScreenScaleX, screenScaleXMultiplier / aspectRatio);
 			screenScaleY = min(minScreenScaleY, screenScaleYMultiplier * aspectRatio);
 		}
 
 		public CameraFinalData(final double aspectRatio, final double shake) {
-			camY = 1.3 + topStringPosition + (fretSpan - 4) * 0.2 + getRandomShakeValue(shake * 0.5);
+			camY = 5.0 + chartboardYPosition + (fretSpan - 4) * 0.2 + getRandomShakeValue(shake * 0.5);
 			camZ = -2.5 + (fretSpan - 4) * -0.2 + getRandomShakeValue(shake * 0.5);
-			camRotationX = 0.2 + Math.sqrt(fretSpan - 4) * 0.01 + getRandomShakeValue(shake * 0.1);
 			camRotationY = 0.06 + getRandomShakeValue(shake * 0.1);
 
 			screenScaleX = min(minScreenScaleX, screenScaleXMultiplier / aspectRatio);
@@ -78,11 +70,13 @@ public class Preview3DCameraHandler {
 		}
 
 		public Matrix4 generateMatrix() {
-			return scaleMatrix(screenScaleX, screenScaleY, 1 / 10.0)//
+			return scaleMatrix(screenScaleX, screenScaleY + 0.1, 1 / 10.0)
+					.multiply(moveMatrix(0, 0.5, 0))//
 					.multiply(baseCameraPerspectiveMatrix)//
-					.multiply(rotationXMatrix(camRotationX))//
+					//.multiply(rotationXMatrix(camRotationX))// <-- Deliberately avoid rotating on X to keep frets appearing vertical on screen
 					.multiply(rotationYMatrix(camRotationY))//
-					.multiply(moveMatrix(-camX, -camY, -camZ));
+					.multiply(moveMatrix(-camX, -camY, -camZ));//
+
 		}
 	}
 

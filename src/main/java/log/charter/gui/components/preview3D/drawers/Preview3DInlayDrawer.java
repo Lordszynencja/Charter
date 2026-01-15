@@ -2,7 +2,7 @@ package log.charter.gui.components.preview3D.drawers;
 
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance;
-import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
+import static log.charter.gui.components.preview3D.Preview3DUtils.bottomStringPosition;
 
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
@@ -27,8 +27,8 @@ public class Preview3DInlayDrawer {
 	public void draw(final ShadersHolder shadersHolder) {
 		final BaseTextureShaderDrawData drawData = shadersHolder.new BaseTextureShaderDrawData();
 
-		final double y0 = topStringPosition + stringDistance / 2;
-		final double y1 = topStringPosition - stringDistance * (data.currentStrings() - 0.5);
+		final double y0 = bottomStringPosition - stringDistance / 2;
+		final double y1 = bottomStringPosition + stringDistance * (data.currentStrings() - 0.5);
 
 		for (int i = 0; i <= InstrumentConfig.frets && i < 32; i++) {
 			final DoubleRange x = new DoubleRange(getFretPosition(i), getFretPosition(i + 1));
