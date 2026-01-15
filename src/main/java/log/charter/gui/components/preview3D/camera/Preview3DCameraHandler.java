@@ -46,37 +46,70 @@ public class Preview3DCameraHandler {
 	private class CameraFinalData {
 		final double camY;
 		final double camZ;
+
+		final double camRotationX;
 		final double camRotationY;
+		final double camRotationZ;
 
 		final double screenScaleX;
 		final double screenScaleY;
 
 		public CameraFinalData(final double aspectRatio) {
-			camY = 5.0 + chartboardYPosition + (fretSpan - 4) * 0.2;
-			camZ = -2.5 + (fretSpan - 4) * -0.2;
-			camRotationY = 0.04;
-
-			screenScaleX = min(minScreenScaleX, screenScaleXMultiplier / aspectRatio);
-			screenScaleY = min(minScreenScaleY, screenScaleYMultiplier * aspectRatio);
+			camY = getCamY();
+			camZ = getCamZ();
+			camRotationX = getCamRotationX();
+			camRotationY = getCamRotationY();
+			camRotationZ = getCamRotationZ();
+			screenScaleX = getScreenScaleX(aspectRatio);
+			screenScaleY = getScreenScaleY(aspectRatio);
 		}
 
 		public CameraFinalData(final double aspectRatio, final double shake) {
-			camY = 5.0 + chartboardYPosition + (fretSpan - 4) * 0.2 + getRandomShakeValue(shake * 0.5);
-			camZ = -2.5 + (fretSpan - 4) * -0.2 + getRandomShakeValue(shake * 0.5);
-			camRotationY = 0.06 + getRandomShakeValue(shake * 0.1);
-
-			screenScaleX = min(minScreenScaleX, screenScaleXMultiplier / aspectRatio);
-			screenScaleY = min(minScreenScaleY, screenScaleYMultiplier * aspectRatio);
+			camY = getCamY() + getRandomShakeValue(shake * 0.5);
+			camZ = getCamZ() + getRandomShakeValue(shake * 0.5);
+			camRotationX = getCamRotationX() + getRandomShakeValue(shake + 0.1);
+			camRotationY = getCamRotationY() + getRandomShakeValue(shake * 0.1);
+			camRotationZ = getCamRotationZ() + getRandomShakeValue(shake * 0.1);
+			screenScaleX = getScreenScaleX(aspectRatio);
+			screenScaleY = getScreenScaleY(aspectRatio);
 		}
 
 		public Matrix4 generateMatrix() {
-			return scaleMatrix(screenScaleX, screenScaleY + 0.1, 1 / 10.0)
-					.multiply(moveMatrix(0, 0.5, 0))//
+			return scaleMatrix(screenScaleX, screenScaleY + 0.05, 1 / 10.0)
+					.multiply(moveMatrix(0, 0.2, 0))//
 					.multiply(baseCameraPerspectiveMatrix)//
-					//.multiply(rotationXMatrix(camRotationX))// <-- Deliberately avoid rotating on X to keep frets appearing vertical on screen
+					.multiply(rotationXMatrix(camRotationX))//
 					.multiply(rotationYMatrix(camRotationY))//
+					.multiply(rotationZMatrix(camRotationZ))//
 					.multiply(moveMatrix(-camX, -camY, -camZ));//
+		}
 
+		private double getCamY() {
+			return 5.0 + chartboardYPosition + (fretSpan - 4) * 0.2;
+		}
+
+		private double getCamZ() {
+			return -2.5 + (fretSpan - 4) * -0.2;
+		}
+
+		private double getCamRotationX() {
+			return 0.06;
+		}
+
+		private double getCamRotationY() {
+			return 0.03;
+		}
+
+		private double getCamRotationZ() {
+			return 0.00;
+		}
+
+		private double getScreenScaleX(final double aspectRatio) {
+			return min(minScreenScaleX, screenScaleXMultiplier / aspectRatio);
+		}
+
+		private double getScreenScaleY(final double aspectRatio) {
+			return min(minScreenScaleY, screenScaleYMultiplier * aspectRatio);
 		}
 	}
 

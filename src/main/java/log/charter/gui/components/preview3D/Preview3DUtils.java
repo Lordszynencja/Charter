@@ -11,7 +11,7 @@ public class Preview3DUtils {
 	public static final double bottomStringPosition = chartboardYPosition + stringDistance;
 	public static final double fretThickness = 0.025;
 	public static final double firstFretDistance = 1.2;
-	public static final double noteHalfWidth = firstFretDistance / 3;
+	public static final double noteHalfWidth = firstFretDistance / 2.5;
 	public static final double tailHalfWidth = noteHalfWidth * 0.33;
 	public static final double bendHalfstepDistance = stringDistance * 0.8;
 	public static final int closeDistance = 250;
