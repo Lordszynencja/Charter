@@ -76,7 +76,6 @@ public class Preview3DCameraHandler {
 
 		public Matrix4 generateMatrix() {
 			return scaleMatrix(screenScaleX, screenScaleY + 0.05, 1 / 10.0)
-					.multiply(moveMatrix(0, 0.2, 0))//
 					.multiply(baseCameraPerspectiveMatrix)//
 					.multiply(rotationXMatrix(camRotationX))//
 					.multiply(rotationYMatrix(camRotationY))//
@@ -173,6 +172,35 @@ public class Preview3DCameraHandler {
 		cameraShakeStrength = strength;
 	}
 
+	private Matrix4 anchorYZCrossingToBottom(final Matrix4 cameraMatrix) {
+		// Anchor point on the Y/Z crossing at the camera's X focus
+		final double x = camX;
+		final double y = 0;
+		final double z = 0;
+
+		// Transform into clip space
+		final double clipY =
+				cameraMatrix.matrix[1][0] * x +
+						cameraMatrix.matrix[1][1] * y +
+						cameraMatrix.matrix[1][2] * z +
+						cameraMatrix.matrix[1][3];
+
+		final double clipW =
+				cameraMatrix.matrix[3][0] * x +
+						cameraMatrix.matrix[3][1] * y +
+						cameraMatrix.matrix[3][2] * z +
+						cameraMatrix.matrix[3][3];
+
+		// Convert to NDC Y
+		final double ndcY = clipY / clipW;
+
+		// Bottom of screen in OpenGL NDC is -1
+		final double offsetY = -1 - ndcY + 0.1;
+
+		// IMPORTANT: X offset is intentionally zero
+		return Matrix4.moveMatrix(0, offsetY, 0);
+	}
+
 	public void updateCamera(final double aspectRatio) {
 		final CameraFinalData cameraFinalData;
 		if (SecretsConfig.explosionsShakyCamEnabled()) {
@@ -183,6 +211,7 @@ public class Preview3DCameraHandler {
 			cameraFinalData = new CameraFinalData(aspectRatio);
 		}
 
-		currentMatrix = cameraFinalData.generateMatrix();
+		final Matrix4 cameraMatrix = cameraFinalData.generateMatrix();
+		currentMatrix = anchorYZCrossingToBottom(cameraMatrix).multiply(cameraMatrix);
 	}
 }
