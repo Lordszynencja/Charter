@@ -3,6 +3,7 @@ package log.charter.gui.chartPanelDrawers;
 import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
+import log.charter.data.config.values.DebugConfig;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
@@ -18,6 +19,7 @@ import log.charter.services.mouseAndKeyboard.HighlightManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
+import log.charter.util.Timer;
 
 public class ArrangementDrawer implements Initiable {
 	private CharterContext charterContext;
@@ -67,13 +69,20 @@ public class ArrangementDrawer implements Initiable {
 	}
 
 	public void draw(final Graphics2D g, final double time) {
+		final Timer timer = new Timer();
 		final FrameData frameData = generateFrameData(g, time);
+		timer.addTimestamp("frameData generated");
 
 		switch (modeManager.getMode()) {
 			case TEMPO_MAP -> tempoMapDrawer.draw(frameData);
 			case VOCALS -> vocalsDrawer.draw(frameData);
 			case GUITAR -> guitarDrawer.draw(frameData);
 			default -> {}
+		}
+
+		timer.addTimestamp("2D frame drawn");
+		if (DebugConfig.frameTimes) {
+			timer.print("2D frame", Timer.defaultFormat(20));
 		}
 	}
 

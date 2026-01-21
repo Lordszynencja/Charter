@@ -1,12 +1,9 @@
 package log.charter.util;
 
-import static log.charter.util.Utils.formatTime;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.io.Logger;
-import log.charter.util.Utils.TimeUnit;
 import log.charter.util.collections.Pair;
 
 public class Timer {
@@ -28,9 +25,29 @@ public class Timer {
 		t = t1;
 	}
 
+	private String formatTime(final long t) {
+		if (t < 1000) {
+			return "" + t;
+		}
+
+		return formatTime(t / 1000L) + String.format(" %03d", t % 1000L);
+	}
+
 	public void print(final String label, final String format) {
-		Logger.debug(label + " times:");
-		timings.forEach(pair -> Logger.debug(String.format(format, pair.a,
-				formatTime(pair.b, TimeUnit.NANOSECONDS, TimeUnit.NANOSECONDS, TimeUnit.SECONDS))));
+		final StringBuilder s = new StringBuilder(label + " times:\n");
+		long totalTime = 0;
+		for (final Pair<String, Long> timing : timings) {
+			s.append(" " + String.format(format, timing.a, formatTime(timing.b))).append('\n');
+			totalTime += timing.b;
+		}
+
+		final String totalString = totalTime < 1000 ? totalTime + "ns"//
+				: totalTime < 1_000_000 ? totalTime / 1000 + "us" //
+						: totalTime / 1_000_000 + "ms";
+		if (totalTime > 20_000) {
+			System.err.println("long frame");
+		}
+		s.append("total: " + totalString);
+		Logger.debug(s.toString());
 	}
 }
