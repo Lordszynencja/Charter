@@ -65,8 +65,10 @@ public class Preview3DHandShapesDrawer {
 			final BaseTextureShaderDrawData texturesShader, final HandShapeDrawData handShape, final int fretFrom,
 			final double z) {
 		final String chordName = handShape.template.chordName;
-		if (chordName != null && !chordName.isBlank() && handShape.timeFrom - drawData.time <= 0
-				&& handShape.timeTo - drawData.time < 150) {
+		if (chordName == null || chordName.isBlank()) {
+			return;
+		}
+		if (handShape.timeFrom - drawData.time <= 0 && handShape.timeTo - drawData.time < 150) {
 			return;
 		}
 
