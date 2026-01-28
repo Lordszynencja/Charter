@@ -64,7 +64,9 @@ public class Preview3DHandShapesDrawer {
 	private void addChordName(final ShadersHolder shadersHolder, final Preview3DDrawData drawData,
 			final BaseTextureShaderDrawData texturesShader, final HandShapeDrawData handShape, final int fretFrom,
 			final double z) {
-		if (handShape.timeFrom - drawData.time <= 0 && handShape.timeTo - drawData.time < 150) {
+		final String chordName = handShape.template.chordName;
+		if (chordName != null && !chordName.isBlank() && handShape.timeFrom - drawData.time <= 0
+				&& handShape.timeTo - drawData.time < 150) {
 			return;
 		}
 
