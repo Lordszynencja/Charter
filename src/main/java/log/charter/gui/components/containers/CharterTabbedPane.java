@@ -1,5 +1,6 @@
 package log.charter.gui.components.containers;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
@@ -20,6 +21,7 @@ public class CharterTabbedPane extends JTabbedPane implements ComponentListener 
 
 		public Icon icon = null;
 		public String tip = null;
+		public Color textColorOverride = null;
 
 		public Tab(final Label label, final Component component) {
 			this(label.label(), component);
@@ -39,17 +41,34 @@ public class CharterTabbedPane extends JTabbedPane implements ComponentListener 
 			tip = value;
 			return this;
 		}
+
+		public void setTextColorOverride(final Color override) {
+			textColorOverride = override;
+		}
+
+		public void clearTextColorOVerride() {
+			textColorOverride = null;
+		}
 	}
+
+	public final Tab[] tabs;
 
 	public CharterTabbedPane(final Tab... tabs) {
 		super();
-		setUI(new CharterTabbedPaneUI());
+		setUI(new CharterTabbedPaneUI(this));
+
+		this.tabs = tabs;
 
 		for (final Tab tab : tabs) {
 			this.addTab(tab.name, tab.icon, tab.component, tab.tip);
 		}
 
 		addComponentListener(this);
+	}
+
+	@Override
+	public Icon getIconAt(final int index) {
+		return tabs[index].icon;
 	}
 
 	@Override

@@ -97,22 +97,24 @@ public class CharterFrame extends JFrame implements Initiable {
 		setLocation(WindowStateConfig.x, WindowStateConfig.y);
 		setExtendedState(WindowStateConfig.extendedState);
 
+		final Tab errorsParentTab = new Tab(Label.TAB_ERRORS, errorsTab);
 		if (SystemType.is(MAC)) {
 			tabs = new CharterTabbedPane(//
 					new Tab(Label.TAB_QUICK_EDIT, new CharterScrollPane(currentSelectionEditor)), //
 					new Tab(Label.TAB_CHORD_TEMPLATES_EDITOR, new CharterScrollPane(chordTemplatesEditorTab)), //
-					new Tab(Label.TAB_ERRORS, errorsTab), //
+					errorsParentTab, //
 					new Tab(Label.TAB_TEXT, textTab), //
 					new Tab(Label.TAB_HELP, helpTab));
 		} else {
 			tabs = new CharterTabbedPane(//
 					new Tab(Label.TAB_QUICK_EDIT, new CharterScrollPane(currentSelectionEditor)), //
 					new Tab(Label.TAB_CHORD_TEMPLATES_EDITOR, new CharterScrollPane(chordTemplatesEditorTab)), //
-					new Tab(Label.TAB_ERRORS, errorsTab), //
+					errorsParentTab, //
 					new Tab(Label.TAB_3D_PREVIEW, preview3DPanel), //
 					new Tab(Label.TAB_TEXT, textTab), //
 					new Tab(Label.TAB_HELP, helpTab));
 		}
+		errorsTab.setTab(errorsParentTab);
 
 		add(chartToolbar);
 		add(chartPanel);

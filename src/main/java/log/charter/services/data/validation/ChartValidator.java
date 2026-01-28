@@ -45,11 +45,15 @@ public class ChartValidator implements Initiable {
 
 	private void startThread() {
 		validationThread = new Thread(() -> {
+			long startTime = System.currentTimeMillis();
 			while (!validationThread.isInterrupted()) {
 				validate();
 
+				while (startTime <= System.currentTimeMillis()) {
+					startTime += 1000;
+				}
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(startTime - System.currentTimeMillis());
 				} catch (final InterruptedException e) {
 					return;
 				}
