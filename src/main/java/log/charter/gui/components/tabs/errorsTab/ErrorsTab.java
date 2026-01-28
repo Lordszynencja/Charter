@@ -1,15 +1,24 @@
 package log.charter.gui.components.tabs.errorsTab;
 
+import static log.charter.util.FileUtils.imagesFolder;
+
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
@@ -17,12 +26,32 @@ import javax.swing.table.DefaultTableModel;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.containers.CharterScrollPane;
+import log.charter.gui.components.containers.CharterTabbedPane.Tab;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.components.utils.RowedPosition;
+import log.charter.util.ImageUtils;
 
 public class ErrorsTab extends RowedPanel implements ComponentListener {
 	private static final long serialVersionUID = 1L;
+
+	private static final Icon warningIcon;
+	static {
+		final BufferedImage warningImage = ImageUtils.loadSafeFromDir(imagesFolder, "/warning.png");
+		final BufferedImage iconImage = new BufferedImage(12, 12, BufferedImage.TYPE_4BYTE_ABGR);
+		final Graphics g = iconImage.getGraphics();
+		((Graphics2D) g).addRenderingHints(Map.of(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON,
+				RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC));
+		if (warningImage != null) {
+			g.drawImage(warningImage, 0, 0, iconImage.getWidth(), iconImage.getHeight(), null);
+		} else {
+			g.setColor(Color.RED);
+			g.fillPolygon(new int[] { 1, 7, 4 }, new int[] { 7, 7, 1 }, 3);
+		}
+		warningIcon = new ImageIcon(iconImage);
+	}
+
+	private Tab tab;
 
 	private DefaultTableModel tableModel;
 	private JTable errorsTable;
@@ -40,6 +69,10 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 		createTable(position);
 
 		addComponentListener(this);
+	}
+
+	public void setTab(final Tab tab) {
+		this.tab = tab;
 	}
 
 	private void addColumnsToTable() {
@@ -117,6 +150,16 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 	public void swapBuffer() {
 		internalBuffer = errorsBuffer;
 		errorsBuffer = new ArrayList<>();
+
+		if (tab != null) {
+			if (internalBuffer.isEmpty()) {
+				tab.clearTextColorOVerride();
+				tab.icon = null;
+			} else {
+				tab.setTextColorOverride(Color.RED);
+				tab.icon = warningIcon;
+			}
+		}
 	}
 
 	private void swapInternalBuffer() {
