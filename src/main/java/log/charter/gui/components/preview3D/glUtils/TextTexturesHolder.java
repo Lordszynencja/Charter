@@ -16,16 +16,18 @@ public class TextTexturesHolder {
 		public final String text;
 		public final float fontSize;
 		public final Color color;
+		public final boolean bold;
 
-		public TextProperties(final String text, final float fontSize, final Color color) {
+		public TextProperties(final String text, final float fontSize, final Color color, final boolean bold) {
 			this.text = text;
 			this.fontSize = fontSize;
 			this.color = color;
+			this.bold = bold;
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(color, fontSize, text);
+			return Objects.hash(color, fontSize, text, bold);
 		}
 
 		@Override
@@ -39,10 +41,11 @@ public class TextTexturesHolder {
 			if (getClass() != obj.getClass()) {
 				return false;
 			}
+
 			final TextProperties other = (TextProperties) obj;
 			return Objects.equals(color, other.color)
 					&& Float.floatToIntBits(fontSize) == Float.floatToIntBits(other.fontSize)
-					&& Objects.equals(text, other.text);
+					&& Objects.equals(text, other.text) && bold == other.bold;
 		}
 
 	}
@@ -63,7 +66,7 @@ public class TextTexturesHolder {
 	private BufferedImage generateImage(final TextProperties properties) {
 		BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics graphics = img.getGraphics();
-		final Font font = graphics.getFont().deriveFont(properties.fontSize);
+		final Font font = graphics.getFont().deriveFont(properties.fontSize).deriveFont(Font.BOLD);
 		graphics.setFont(font);
 		final Rectangle2D stringBounds = graphics.getFontMetrics().getStringBounds(properties.text, graphics);
 		final int width = (int) Math.ceil(stringBounds.getWidth());
@@ -93,7 +96,12 @@ public class TextTexturesHolder {
 	}
 
 	public BufferedTextureData setTextInTexture(final String text, final float fontSize, final Color color) {
-		final TextProperties properties = new TextProperties(text, fontSize, color);
+		return setTextInTexture(text, fontSize, color, false);
+	}
+
+	public BufferedTextureData setTextInTexture(final String text, final float fontSize, final Color color,
+			final boolean bold) {
+		final TextProperties properties = new TextProperties(text, fontSize, color, bold);
 
 		if (!texturesMap.containsKey(properties)) {
 			addText(properties);

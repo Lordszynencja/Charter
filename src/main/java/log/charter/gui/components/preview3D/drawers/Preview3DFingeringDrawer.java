@@ -13,8 +13,8 @@ import java.awt.Color;
 import org.lwjgl.opengl.GL30;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
@@ -59,6 +59,29 @@ public class Preview3DFingeringDrawer {
 		this.chartData = chartData;
 		this.noteStatusModels = noteStatusModels;
 		this.texturesHolder = texturesHolder;
+	}
+
+	private ChordTemplate findTemplateToUse(final Preview3DDrawData drawData) {
+		final HandShapeDrawData handShape = lastBeforeEqual(drawData.handShapes, new Position(drawData.time + 20))
+				.find();
+		if (handShape == null || handShape.timeTo < drawData.time) {
+			return null;
+		}
+		if (handShape.template.arpeggio) {
+			return handShape.template;
+		}
+
+		final Level level = chartData.currentArrangementLevel();
+		final ChordOrNote sound = lastBeforeEqual(level.sounds,
+				FractionalPosition.fromTime(chartData.beats(), drawData.time + 20)).find();
+		if (sound == null || sound.position(chartData.beats()) < handShape.timeFrom || sound.isNote()) {
+			return handShape.template;
+		}
+		if (sound.chord().fullyMuted()) {
+			return null;
+		}
+
+		return chartData.currentArrangement().chordTemplates.get(sound.chord().templateId());
 	}
 
 	private void addQuad(final BaseTextureShaderDrawData drawData, final double x0, final double x1, final double y0,
@@ -181,29 +204,6 @@ public class Preview3DFingeringDrawer {
 		}
 
 		drawData.draw(GL30.GL_QUADS, Matrix4.identity, texturesHolder.getTextureId("fingering"));
-	}
-
-	private ChordTemplate findTemplateToUse(final Preview3DDrawData drawData) {
-		final HandShapeDrawData handShape = lastBeforeEqual(drawData.handShapes, new Position(drawData.time + 20))
-				.find();
-		if (handShape == null || handShape.timeTo < drawData.time) {
-			return null;
-		}
-		if (handShape.template.arpeggio) {
-			return handShape.template;
-		}
-
-		final Level level = chartData.currentArrangementLevel();
-		final ChordOrNote sound = lastBeforeEqual(level.sounds,
-				FractionalPosition.fromTime(chartData.beats(), drawData.time + 20)).find();
-		if (sound == null || sound.position(chartData.beats()) < handShape.timeFrom || sound.isNote()) {
-			return handShape.template;
-		}
-		if (sound.chord().fullyMuted()) {
-			return null;
-		}
-
-		return chartData.currentArrangement().chordTemplates.get(sound.chord().templateId());
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
