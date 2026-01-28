@@ -8,7 +8,7 @@ import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance;
-import static log.charter.gui.components.preview3D.Preview3DUtils.topStringPosition;
+import static log.charter.gui.components.preview3D.Preview3DUtils.bottomStringPosition;
 import static log.charter.util.CollectionUtils.firstAfter;
 import static log.charter.util.CollectionUtils.lastBefore;
 import static log.charter.util.ColorUtils.mix;
@@ -129,8 +129,8 @@ public class Preview3DStringsFretsDrawer {
 		final Color activeColor = ColorLabel.PREVIEW_3D_ACTIVE_FRET.color();
 		final Color highlightColor = ColorLabel.PREVIEW_3D_HIGHLIGHTED_FRET.color();
 
-		final double y0 = topStringPosition + stringDistance / 2;
-		final double y1 = topStringPosition - stringDistance * (chartData.currentStrings() - 0.5);
+		final double y0 = bottomStringPosition - stringDistance / 2;
+		final double y1 = bottomStringPosition + stringDistance * (chartData.currentStrings() - 0.5);
 
 		for (int fret = 0; fret <= InstrumentConfig.frets; fret++) {
 			Color fretColor = activeFrets[fret] ? activeColor : inactiveColor;

@@ -112,10 +112,11 @@ public class Preview3DBeatsDrawer {
 		final double x = getFretMiddlePosition(fret);
 		final double width = abs(getFretPosition(fret) - getFretPosition(fret - 1)) * textureData.width
 				/ textureData.height;
-		final double x0 = x - width * 0.4;
-		final double x1 = x + width * 0.4;
-		final double y0 = y + 0.5;
-		final double y1 = y - 0.5;
+		final double scale = z > 0 ? 0.35 : 0.2;
+		final double x0 = x - width * scale;
+		final double x1 = x + width * scale;
+		final double y0 = y + scale;
+		final double y1 = y - scale;
 
 		shadersHolder.new BaseTextureShaderDrawData()//
 				.addZQuad(x0, x1, y0, y1, z, 0, 1, 0, 1)//
