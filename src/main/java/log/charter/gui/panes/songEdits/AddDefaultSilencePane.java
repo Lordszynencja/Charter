@@ -56,6 +56,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 	}
 
 	private void addSilence(final double movement) {
+		System.out.println("movement: " + movement);
 		if (movement < 0) {
 			removeAudio(-movement);
 			return;
@@ -77,18 +78,12 @@ public class AddDefaultSilencePane extends ParamsPane {
 		}
 	}
 
-	private void addSilenceAndBars() {
-		int movement = 10_000;
-
+	private int addBars() {
 		final Beat firstBeat = data.songChart.beatsMap.beats.get(0);
-		movement -= firstBeat.position();
+		final int beatsInMeasure = firstBeat.beatsInMeasure;
 		final double firstBarPosition = firstBeat.position();
 		final double secondBarPosition = data.songChart.beatsMap.beats.get(firstBeat.beatsInMeasure).position();
 		final double barLength = secondBarPosition - firstBarPosition;
-		movement += bars * barLength;
-		addSilence(movement);
-
-		final int beatsInMeasure = firstBeat.beatsInMeasure;
 		int beatsAdded = 0;
 		for (int bar = 0; bar < bars; bar++) {
 			final double barPosition = firstBeat.position() - barLength * (bars - bar);
@@ -98,6 +93,14 @@ public class AddDefaultSilencePane extends ParamsPane {
 						new Beat(beatPosition, beatsInMeasure, firstBeat.noteDenominator, i == 0));
 			}
 		}
+
+		return beatsAdded;
+	}
+
+	private void addSilenceAndBars() {
+		final int beatsAdded = addBars();
+		final double movement = Math.ceil(10_000 - data.songChart.beatsMap.beats.get(0).position());
+		addSilence(movement);
 
 		data.songChart.beatsMap.beats.sort(IConstantPosition::compareTo);
 		data.songChart.moveContent(beatsAdded);
