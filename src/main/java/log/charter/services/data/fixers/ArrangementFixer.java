@@ -202,7 +202,7 @@ public class ArrangementFixer {
 			}
 
 			int nextNoteId = i;
-			while (nextNoteId + 1 < level.sounds.size()) {
+			while (nextNoteId + 1 < level.sounds.size() && note.linkNext) {
 				nextNoteId++;
 				final ChordOrNote nextSound = level.sounds.get(nextNoteId);
 				if (!nextSound.isNote()) {
@@ -276,14 +276,26 @@ public class ArrangementFixer {
 		IConstantFractionalPosition endPosition = note.endPosition();
 		final ImmutableBeatsMap beats = chartData.beats();
 
+		IConstantFractionalPosition nextNotePosition;
 		if (note.passOtherNotes()) {
 			final ChordOrNote nextSoundOnString = ChordOrNote.findNextSoundOnString(note.string(), id + 1, sounds);
 			if (nextSoundOnString != null) {
-				endPosition = min(endPosition, beats.getMaxPositionBefore(nextSoundOnString).toFraction(beats));
+				nextNotePosition = nextSoundOnString;
+			} else {
+				nextNotePosition = null;
 			}
 		} else if (id + 1 < sounds.size()) {
-			final IConstantFractionalPosition next = sounds.get(id + 1);
-			endPosition = min(endPosition, beats.getMaxPositionBefore(next).toFraction(beats));
+			nextNotePosition = sounds.get(id + 1);
+		} else {
+			nextNotePosition = null;
+		}
+
+		if (nextNotePosition != null) {
+			final IConstantFractionalPosition maximumPositionBeforeNextNote = ChordOrNote
+					.isLinkedToPrevious(note.string(), id, sounds)
+							? nextNotePosition.position().add(note.position()).multiply(new Fraction(1, 2))
+							: beats.getMaxPositionBefore(nextNotePosition).toFraction(beats);
+			endPosition = min(endPosition, maximumPositionBeforeNextNote);
 		}
 
 		endPosition = min(endPosition, chartTimeHandler.maxTimeFractional());
