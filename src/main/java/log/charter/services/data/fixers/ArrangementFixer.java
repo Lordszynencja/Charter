@@ -291,10 +291,14 @@ public class ArrangementFixer {
 		}
 
 		if (nextNotePosition != null) {
-			final IConstantFractionalPosition maximumPositionBeforeNextNote = ChordOrNote
-					.isLinkedToPrevious(note.string(), id, sounds)
-							? nextNotePosition.position().add(note.position()).multiply(new Fraction(1, 2))
-							: beats.getMaxPositionBefore(nextNotePosition).toFraction(beats);
+			IConstantFractionalPosition maximumPositionBeforeNextNote = beats.getMaxPositionBefore(nextNotePosition)
+					.toFraction(beats);
+
+			if (ChordOrNote.isLinkedToPrevious(note.string(), id, sounds)) {
+				maximumPositionBeforeNextNote = max(maximumPositionBeforeNextNote,
+						nextNotePosition.position().add(note.position()).multiply(new Fraction(1, 2)));
+			}
+
 			endPosition = min(endPosition, maximumPositionBeforeNextNote);
 		}
 
