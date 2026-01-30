@@ -24,6 +24,7 @@ import log.charter.gui.components.preview3D.drawers.Preview3DHandShapesDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DInlayDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DLaneBordersDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DLyricsDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DSectionDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DStringsFretsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DVideoDrawer;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
@@ -67,6 +68,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	private final Preview3DInlayDrawer inlayDrawer = new Preview3DInlayDrawer();
 	private final Preview3DLaneBordersDrawer laneBordersDrawer = new Preview3DLaneBordersDrawer();
 	private final Preview3DLyricsDrawer lyricsDrawer = new Preview3DLyricsDrawer();
+	private final Preview3DSectionDrawer sectionDrawer = new Preview3DSectionDrawer();
 	private final Preview3DStringsFretsDrawer stringsFretsDrawer = new Preview3DStringsFretsDrawer();
 	private final Preview3DVideoDrawer videoDrawer = new Preview3DVideoDrawer();
 
@@ -97,6 +99,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		guitarSoundsDrawer.init(chartData, noteStatusModels, cameraHandler);
 		inlayDrawer.init(chartData, texturesHolder);
 		lyricsDrawer.init(chartData, textTexturesHolder);
+		sectionDrawer.init(chartData, textTexturesHolder);
 		stringsFretsDrawer.init(chartData);
 		videoDrawer.init(chartData);
 
@@ -257,6 +260,13 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		}
 	}
 
+	private void drawSection(final Timer timer, final Preview3DDrawData drawData) {
+		sectionDrawer.draw(shadersHolder, drawData.time, 1.0 * getHeight() / getWidth());
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("sectionDrawer");
+		}
+	}
+
 	@Override
 	public void paintGL() {
 		try {
@@ -286,6 +296,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 			drawFretboard(timer, drawData);
 			if (modeManager.getMode() == EditMode.GUITAR) {
 				drawChordInformation(timer, drawData);
+				drawSection(timer, drawData);
 			}
 			drawLyrics(timer, drawData);
 
