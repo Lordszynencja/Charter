@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.notes.ChordOrNote;
@@ -158,15 +158,32 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 		}
 	}
 
+	private double getMaxPhraseTime() {
+		final List<EventPoint> endPhrases = chartData.currentArrangement()
+				.getFilteredEventPoints(ep -> "END".equals(ep.phrase));
+
+		if (endPhrases.isEmpty()) {
+			return chartTimeHandler.maxTime();
+		}
+
+		final EventPoint endPhrase = endPhrases.get(0);
+		return endPhrase.position(chartData.beats()) - 1;
+	}
+
 	private void drawEventPoints(final Graphics g, final int y, final ColorLabel color,
 			final Predicate<EventPoint> filter) {
 		final ImmutableBeatsMap beats = chartData.beats();
+		final double maxPhraseTime = getMaxPhraseTime();
+		chartData.currentEventPoints().get(chartData.currentEventPoints().size() - 1);
 		final List<EventPoint> points = chartData.currentArrangement().getFilteredEventPoints(filter);
 
 		for (int i = 0; i < points.size(); i++) {
 			final double pointTime = points.get(i).position(beats);
-			final double nextPointTime = i + 1 < points.size() ? points.get(i + 1).position(beats)
-					: chartTimeHandler.maxTime();
+			if (pointTime >= maxPhraseTime) {
+				break;
+			}
+
+			final double nextPointTime = i + 1 < points.size() ? points.get(i + 1).position(beats) : maxPhraseTime;
 
 			final int x0 = timeToPosition(pointTime);
 			final int x1 = timeToPosition(nextPointTime);
