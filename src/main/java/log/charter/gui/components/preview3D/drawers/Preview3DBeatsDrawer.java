@@ -2,9 +2,9 @@ package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
+import static log.charter.gui.components.preview3D.Preview3DUtils.chartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.closeDistanceZ;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fadedDistanceZ;
-import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretMiddlePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL30;
 
-import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.gui.components.preview3D.data.BeatDrawData;
@@ -34,13 +33,11 @@ import log.charter.util.data.IntRange;
 public class Preview3DBeatsDrawer {
 	private static final int[] dottedFretDistances = { 3, 2, 2, 2, 3 };
 
-	private ChartData data;
 	private TextTexturesHolder textTexturesHolder;
 
 	public Matrix4 currentMatrix;
 
-	public void init(final ChartData data, final TextTexturesHolder textTexturesHolder) {
-		this.data = data;
+	public void init(final TextTexturesHolder textTexturesHolder) {
 		this.textTexturesHolder = textTexturesHolder;
 	}
 
@@ -56,7 +53,7 @@ public class Preview3DBeatsDrawer {
 		final FadingShaderDrawData shaderDrawData = shadersHolder.new FadingShaderDrawData();
 		final FadingShaderDrawData shaderLineDrawData = shadersHolder.new FadingShaderDrawData();
 
-		final double y = getChartboardYPosition(data.currentStrings()) + 0.0001;
+		final double y = chartboardYPosition + 0.0001;
 		final Color color = ColorLabel.PREVIEW_3D_BEAT.color();
 		final Color alpha = transparent(color);
 
@@ -175,7 +172,7 @@ public class Preview3DBeatsDrawer {
 	}
 
 	private void drawFretNumbers(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
-		final double y = getChartboardYPosition(data.currentStrings());
+		final double y = chartboardYPosition;
 
 		final List<FretDrawData> fretsToDraw = new ArrayList<>(100);
 

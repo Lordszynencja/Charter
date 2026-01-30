@@ -2,10 +2,10 @@ package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.gui.components.preview3D.Preview3DUtils.chartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.closeDistanceZ;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fadedDistanceZ;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
-import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getVisibility;
@@ -14,31 +14,18 @@ import java.awt.Color;
 
 import org.lwjgl.opengl.GL30;
 
-import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.data.HandShapeDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
-import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.Matrix4;
 import log.charter.gui.components.preview3D.glUtils.Point3D;
-import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
-import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseTextureShaderDrawData;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.FadingShaderDrawData;
 import log.charter.util.data.IntRange;
 
 public class Preview3DHandShapesDrawer {
-	private static final double lineThickness0 = fretThickness * 2;
-	private static final double lineThickness1 = fretThickness * 6;
-	private static final double chordNameSize = 0.7;
-
-	private ChartData data;
-	private TextTexturesHolder textTexturesHolder;
-
-	public void init(final ChartData data, final TextTexturesHolder textTexturesHolder) {
-		this.data = data;
-		this.textTexturesHolder = textTexturesHolder;
-	}
+	private static final double lineThickness0 = fretThickness * 3;
+	private static final double lineThickness1 = fretThickness * 9;
 
 	private void addSquare(final FadingShaderDrawData drawData, final double x0, final double x1, final double y,
 			final double z0, final double z1, final Color color0, final Color color1) {
@@ -61,34 +48,9 @@ public class Preview3DHandShapesDrawer {
 		addSquare(drawData, x2, x3, y, z0, z1, color, alpha);
 	}
 
-	private void addChordName(final ShadersHolder shadersHolder, final Preview3DDrawData drawData,
-			final BaseTextureShaderDrawData texturesShader, final HandShapeDrawData handShape, final int fretFrom,
-			final double z) {
-		final String chordName = handShape.template.chordName;
-		if (chordName == null || chordName.isBlank()) {
-			return;
-		}
-		if (handShape.timeFrom - drawData.time <= 0 && handShape.timeTo - drawData.time < 150) {
-			return;
-		}
-
-		final BufferedTextureData textureData = textTexturesHolder.setTextInTexture(handShape.template.chordName, 64f,
-				ColorLabel.PREVIEW_3D_CHORD_NAME.color(), true);
-
-		final double x0 = fretFrom - 1.75;
-		final double x1 = x0 + chordNameSize * textureData.width / textureData.height;
-		final double y1 = getChartboardYPosition(0) + 0.5;
-		final double y0 = y1 + chordNameSize;
-
-		shadersHolder.new BaseTextureShaderDrawData()//
-				.addZQuad(x0, x1, y0, y1, z, 0, 1, 0, 1)//
-				.draw(GL30.GL_QUADS, Matrix4.identity, textTexturesHolder.getTextureId());
-	}
-
 	private void addHandShape(final ShadersHolder shadersHolder, final Preview3DDrawData drawData,
-			final FadingShaderDrawData shaderDrawData, final BaseTextureShaderDrawData texturesShader,
-			final HandShapeDrawData handShape) {
-		final double y = getChartboardYPosition(data.currentStrings()) + 0.0002;
+			final FadingShaderDrawData shaderDrawData, final HandShapeDrawData handShape) {
+		final double y = chartboardYPosition + 0.0002;
 		final boolean arpeggio = handShape.template.arpeggio;
 
 		final double timeFrom = max(0, handShape.timeFrom - drawData.time);
@@ -110,15 +72,12 @@ public class Preview3DHandShapesDrawer {
 
 		addThickLine(shaderDrawData, frets.min - 1, y, z0, z1, color, alpha);
 		addThickLine(shaderDrawData, frets.max, y, z0, z1, color, alpha);
-		addChordName(shadersHolder, drawData, texturesShader, handShape, frets.min, z0);
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
 		final FadingShaderDrawData fadingShader = shadersHolder.new FadingShaderDrawData();
-		final BaseTextureShaderDrawData texturesShader = shadersHolder.new BaseTextureShaderDrawData();
 
-		drawData.handShapes
-				.forEach(handShape -> addHandShape(shadersHolder, drawData, fadingShader, texturesShader, handShape));
+		drawData.handShapes.forEach(handShape -> addHandShape(shadersHolder, drawData, fadingShader, handShape));
 
 		fadingShader.draw(GL30.GL_QUADS, Matrix4.identity, closeDistanceZ, fadedDistanceZ);
 	}

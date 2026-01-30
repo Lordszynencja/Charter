@@ -1,10 +1,10 @@
 package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.max;
+import static log.charter.gui.components.preview3D.Preview3DUtils.chartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.closeDistanceZ;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fadedDistanceZ;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
-import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getVisibilityZ;
 import static log.charter.util.ColorUtils.setAlpha;
@@ -14,7 +14,6 @@ import java.awt.Color;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL33;
 
-import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.gui.components.preview3D.data.FHPDrawData;
@@ -25,12 +24,6 @@ import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.util.data.IntRange;
 
 public class Preview3DLaneBordersDrawer {
-	private ChartData data;
-
-	public void init(final ChartData data) {
-		this.data = data;
-	}
-
 	private void drawFretBorder(final ShadersHolder shadersHolder, final double x, final double y, final Color color) {
 		final double x0 = x - fretThickness;
 		final double x1 = x + fretThickness;
@@ -67,7 +60,7 @@ public class Preview3DLaneBordersDrawer {
 		}
 
 		final Color color = ColorLabel.PREVIEW_3D_LANE_BORDER.color();
-		final double y = getChartboardYPosition(data.currentStrings());
+		final double y = chartboardYPosition;
 
 		GL30.glLineWidth(1);
 		for (int fret = 0; fret <= InstrumentConfig.frets; fret++) {

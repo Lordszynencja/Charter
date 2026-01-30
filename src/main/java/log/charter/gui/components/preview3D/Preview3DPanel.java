@@ -16,6 +16,7 @@ import log.charter.data.config.values.DebugConfig;
 import log.charter.gui.components.preview3D.camera.Preview3DCameraHandler;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
 import log.charter.gui.components.preview3D.drawers.Preview3DBeatsDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DChordNamesDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DFHPsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DFingeringDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DGuitarSoundsDrawer;
@@ -23,6 +24,7 @@ import log.charter.gui.components.preview3D.drawers.Preview3DHandShapesDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DInlayDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DLaneBordersDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DLyricsDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DSectionDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DStringsFretsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DVideoDrawer;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
@@ -59,12 +61,14 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	private final Preview3DFHPsDrawer fhpsDrawer = new Preview3DFHPsDrawer();
 	private final Preview3DBeatsDrawer beatsDrawer = new Preview3DBeatsDrawer();
 	private final Preview3DCameraHandler cameraHandler = new Preview3DCameraHandler();
+	private final Preview3DChordNamesDrawer chordNamesDrawer = new Preview3DChordNamesDrawer();
 	private final Preview3DFingeringDrawer fingeringDrawer = new Preview3DFingeringDrawer();
 	private final Preview3DGuitarSoundsDrawer guitarSoundsDrawer = new Preview3DGuitarSoundsDrawer();
 	private final Preview3DHandShapesDrawer handShapesDrawer = new Preview3DHandShapesDrawer();
 	private final Preview3DInlayDrawer inlayDrawer = new Preview3DInlayDrawer();
 	private final Preview3DLaneBordersDrawer laneBordersDrawer = new Preview3DLaneBordersDrawer();
 	private final Preview3DLyricsDrawer lyricsDrawer = new Preview3DLyricsDrawer();
+	private final Preview3DSectionDrawer sectionDrawer = new Preview3DSectionDrawer();
 	private final Preview3DStringsFretsDrawer stringsFretsDrawer = new Preview3DStringsFretsDrawer();
 	private final Preview3DVideoDrawer videoDrawer = new Preview3DVideoDrawer();
 
@@ -88,15 +92,14 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	public void init() {
 		noteStatusModels.init(texturesHolder);
 
-		fhpsDrawer.init(chartData);
-		beatsDrawer.init(chartData, textTexturesHolder);
+		beatsDrawer.init(textTexturesHolder);
 		cameraHandler.init(chartTimeHandler, chartData);
+		chordNamesDrawer.init(chartData, textTexturesHolder);
 		fingeringDrawer.init(chartData, noteStatusModels, texturesHolder);
 		guitarSoundsDrawer.init(chartData, noteStatusModels, cameraHandler);
-		handShapesDrawer.init(chartData, textTexturesHolder);
 		inlayDrawer.init(chartData, texturesHolder);
-		laneBordersDrawer.init(chartData);
 		lyricsDrawer.init(chartData, textTexturesHolder);
+		sectionDrawer.init(chartData, textTexturesHolder);
 		stringsFretsDrawer.init(chartData);
 		videoDrawer.init(chartData);
 
@@ -174,66 +177,135 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		}
 	}
 
+	private void clearGL() {
+		GL30.glViewport(0, 0, getWidth(), getHeight());
+
+		final Color backgroundColor = ColorLabel.PREVIEW_3D_BACKGROUND.color();
+		GL30.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
+				backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
+		GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
+		GL30.glDepthFunc(GL30.GL_GEQUAL);
+	}
+
+	private void updateCamera(final Timer timer) {
+		cameraHandler.updateCamera(1.0 * getWidth() / getHeight());
+		shadersHolder.setSceneMatrix(cameraHandler.currentMatrix);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("updating camera");
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private void drawVideo(final Timer timer) {
+		videoDrawer.draw(shadersHolder, getWidth(), getHeight());
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("videoDrawer");
+		}
+	}
+
+	private void drawNoteboard(final Timer timer, final Preview3DDrawData drawData) {
+		beatsDrawer.draw(shadersHolder, drawData);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("beatsDrawer");
+		}
+		laneBordersDrawer.draw(shadersHolder, drawData);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("laneBordersDrawer");
+		}
+		fhpsDrawer.draw(shadersHolder, drawData);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("fhpsDrawer");
+		}
+	}
+
+	private void drawGuitarNotes(final Timer timer, final Preview3DDrawData drawData) {
+		handShapesDrawer.draw(shadersHolder, drawData);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("handShapesDrawer");
+		}
+		guitarSoundsDrawer.draw(shadersHolder, drawData);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("guitarSoundsDrawer");
+		}
+	}
+
+	private void drawFretboard(final Timer timer, final Preview3DDrawData drawData) {
+		stringsFretsDrawer.draw(shadersHolder, drawData);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("stringsFretsDrawer");
+		}
+
+		inlayDrawer.draw(shadersHolder);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("inlayDrawer");
+		}
+	}
+
+	private void drawChordInformation(final Timer timer, final Preview3DDrawData drawData) {
+		fingeringDrawer.draw(shadersHolder, drawData);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("fingeringDrawer");
+		}
+		chordNamesDrawer.draw(shadersHolder, drawData);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("chordNamesDrawer");
+		}
+	}
+
+	private void drawLyrics(final Timer timer, final Preview3DDrawData drawData) {
+		lyricsDrawer.draw(shadersHolder, drawData.time, 1.0 * getHeight() / getWidth(),
+				getHeight() < 500 ? 500.0 / getHeight() : 1);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("lyricsDrawer");
+		}
+	}
+
+	private void drawSection(final Timer timer, final Preview3DDrawData drawData) {
+		sectionDrawer.draw(shadersHolder, drawData.time, 1.0 * getHeight() / getWidth());
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("sectionDrawer");
+		}
+	}
+
 	@Override
 	public void paintGL() {
 		try {
 			final Timer timer = new Timer();
-			GL30.glViewport(0, 0, getWidth(), getHeight());
 
-			final Color backgroundColor = ColorLabel.PREVIEW_3D_BACKGROUND.color();
-			GL30.glClearColor(backgroundColor.getRed() / 255f, backgroundColor.getGreen() / 255f,
-					backgroundColor.getBlue() / 255f, backgroundColor.getAlpha() / 255f);
-			GL30.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
-			GL30.glDepthFunc(GL30.GL_GEQUAL);
-
+			clearGL();
 			if (chartData == null || chartData.isEmpty) {
 				swapBuffers();
 				return;
 			}
-			timer.addTimestamp("clearing");
+			if (DebugConfig.frameTimes) {
+				timer.addTimestamp("clearing");
+			}
 
-			cameraHandler.updateCamera(1.0 * getWidth() / getHeight());
-			shadersHolder.setSceneMatrix(cameraHandler.currentMatrix);
-			timer.addTimestamp("updating camera");
-
-			//videoDrawer.draw(shadersHolder, getWidth(), getHeight());
-			//timer.addTimestamp("videoDrawer");
+			updateCamera(timer);
+			// drawVideo(timer);
 
 			final Preview3DDrawData drawData = new Preview3DDrawData(chartData, chartTimeHandler, repeatManager);
-			timer.addTimestamp("preparing draw data");
-
-			beatsDrawer.draw(shadersHolder, drawData);
-			timer.addTimestamp("beatsDrawer");
-			laneBordersDrawer.draw(shadersHolder, drawData);
-			timer.addTimestamp("laneBordersDrawer");
-			fhpsDrawer.draw(shadersHolder, drawData);
-			timer.addTimestamp("fhpsDrawer");
-
-			if (modeManager.getMode() == EditMode.GUITAR) {
-				handShapesDrawer.draw(shadersHolder, drawData);
-				timer.addTimestamp("handShapesDrawer");
-				guitarSoundsDrawer.draw(shadersHolder, drawData);
-				timer.addTimestamp("guitarSoundsDrawer");
+			if (DebugConfig.frameTimes) {
+				timer.addTimestamp("preparing draw data");
 			}
 
-			stringsFretsDrawer.draw(shadersHolder, drawData);
-			timer.addTimestamp("stringsFretsDrawer");
-
-			inlayDrawer.draw(shadersHolder);
-			timer.addTimestamp("inlayDrawer");
-
+			drawNoteboard(timer, drawData);
 			if (modeManager.getMode() == EditMode.GUITAR) {
-				fingeringDrawer.draw(shadersHolder, drawData);
-				timer.addTimestamp("fingeringDrawer");
+				drawGuitarNotes(timer, drawData);
 			}
-
-			lyricsDrawer.draw(shadersHolder, drawData.time, 1.0 * getHeight() / getWidth(),
-					getHeight() < 500 ? 500.0 / getHeight() : 1);
+			drawFretboard(timer, drawData);
+			if (modeManager.getMode() == EditMode.GUITAR) {
+				drawChordInformation(timer, drawData);
+				drawSection(timer, drawData);
+			}
+			drawLyrics(timer, drawData);
 
 			shadersHolder.clearShader();
 
 			swapBuffers();
-			timer.addTimestamp("finish");
+			if (DebugConfig.frameTimes) {
+				timer.addTimestamp("finish");
+			}
 
 			if (DebugConfig.frameTimes) {
 				timer.print("paintGL timings:", Timer.defaultFormat(20));
