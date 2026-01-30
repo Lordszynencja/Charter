@@ -1,8 +1,8 @@
 package log.charter.gui.components.preview3D.drawers;
 
+import static log.charter.gui.components.preview3D.Preview3DUtils.chartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.closeDistanceZ;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fadedDistanceZ;
-import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
 import static log.charter.util.Utils.isDottedFret;
@@ -11,7 +11,6 @@ import java.awt.Color;
 
 import org.lwjgl.opengl.GL30;
 
-import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.preview3D.data.FHPDrawData;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
@@ -21,18 +20,12 @@ import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder.FadingShaderDrawData;
 
 public class Preview3DFHPsDrawer {
-	private ChartData chartData;
-
-	public void init(final ChartData data) {
-		chartData = data;
-	}
-
 	private void addAnchor(final FadingShaderDrawData shaderDrawData, final FHPDrawData anchor, final double time) {
 		if (anchor.timeTo < anchor.timeFrom) {
 			return;
 		}
 
-		final double y = getChartboardYPosition(chartData.currentStrings()) - 0.001;
+		final double y = chartboardYPosition - 0.001;
 		final double t0 = anchor.timeFrom - time;
 		final double t1 = anchor.timeTo - time;
 		final double z0 = getTimePosition(t0);

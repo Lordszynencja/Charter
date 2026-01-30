@@ -8,8 +8,8 @@ import static java.lang.Math.sin;
 import static java.util.Arrays.asList;
 import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.gui.components.preview3D.Preview3DUtils.bendHalfstepDistance;
+import static log.charter.gui.components.preview3D.Preview3DUtils.chartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretLengthMultiplier;
-import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretMiddlePosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
@@ -271,7 +271,7 @@ public class Preview3DGuitarSoundsDrawer {
 		final double y = getNoteHeightAtTime(note, note.position, invertBend);
 		final double z = getTimePosition(note.position - time);
 
-		final double shadowBaseY = getChartboardYPosition(chartData.currentStrings());
+		final double shadowBaseY = chartboardYPosition;
 		final Point3D shadowBaseP0 = new Point3D(x - noteHalfWidth / 2, shadowBaseY, z);
 		final Point3D shadowBaseP1 = new Point3D(x, shadowBaseY, z);
 		final Point3D shadowBaseP2 = new Point3D(x + noteHalfWidth / 2, shadowBaseY, z);

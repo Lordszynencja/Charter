@@ -1,8 +1,9 @@
 package log.charter.gui.components.preview3D.drawers;
 
 import static java.lang.Math.max;
-import static log.charter.gui.components.preview3D.Preview3DUtils.getChartboardYPosition;
+import static log.charter.gui.components.preview3D.Preview3DUtils.chartboardYPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
+import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getTimePosition;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
@@ -187,8 +188,8 @@ public class Preview3DChordBoxDrawer {
 
 		final double x0 = getFretPosition(frets.min - 1);
 		final double x1 = getFretPosition(frets.max);
-		final double y0 = getChartboardYPosition(chartData.currentStrings());
-		double y1 = getChartboardYPosition(-1);
+		final double y0 = chartboardYPosition;
+		double y1 = getStringPosition(-1, chartData.currentStrings());
 		final double z = max(0, getTimePosition(chordBox.position - drawData.time));
 
 		if (chordBox.onlyBox) {
