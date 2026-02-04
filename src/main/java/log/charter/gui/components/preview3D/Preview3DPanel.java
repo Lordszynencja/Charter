@@ -1,5 +1,7 @@
 package log.charter.gui.components.preview3D;
 
+import static log.charter.data.config.SystemType.MAC;
+
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -12,6 +14,7 @@ import org.lwjgl.opengl.awt.GLData;
 import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.GraphicalConfig;
+import log.charter.data.config.SystemType;
 import log.charter.data.config.values.DebugConfig;
 import log.charter.gui.components.preview3D.camera.Preview3DCameraHandler;
 import log.charter.gui.components.preview3D.data.Preview3DDrawData;
@@ -90,6 +93,10 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 
 	@Override
 	public void init() {
+		if (SystemType.is(MAC)) {
+			return;
+		}
+
 		noteStatusModels.init(texturesHolder);
 
 		beatsDrawer.init(textTexturesHolder);
