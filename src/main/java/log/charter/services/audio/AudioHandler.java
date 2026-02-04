@@ -2,6 +2,8 @@ package log.charter.services.audio;
 
 import static java.lang.System.nanoTime;
 
+import com.breakfastquay.rubberband.RubberBandStretcher;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.values.PassFiltersConfig;
@@ -37,6 +39,10 @@ public class AudioHandler {
 
 	private final boolean ignoreStops = false;
 	public boolean midiNotesPlaying = false;
+
+	private void setSpeed(final int newSpeed) {
+		speed = RubberBandStretcher.loaded ? newSpeed : 100;
+	}
 
 	public void toggleMidiNotes() {
 		if (midiNotesPlaying) {
@@ -171,9 +177,12 @@ public class AudioHandler {
 	}
 
 	public void frame() {
-		if (speed != Config.stretchedMusicSpeed) {
-			speed = Config.stretchedMusicSpeed;
+		final int speedBefore = speed;
+		setSpeed(Config.stretchedMusicSpeed);
+		Config.stretchedMusicSpeed = speed;
+		chartToolbar.updateValues();
 
+		if (speed != speedBefore) {
 			if (isPlaying()) {
 				stopMusic();
 				playMusic(projectAudioHandler.getAudio());
