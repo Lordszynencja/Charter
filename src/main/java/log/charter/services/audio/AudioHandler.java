@@ -178,9 +178,12 @@ public class AudioHandler {
 
 	public void frame() {
 		final int speedBefore = speed;
+		final int configSpeedBefore = Config.stretchedMusicSpeed;
 		setSpeed(Config.stretchedMusicSpeed);
 		Config.stretchedMusicSpeed = speed;
-		chartToolbar.updateValues();
+		if (configSpeedBefore != speed) {
+			chartToolbar.updateValues();
+		}
 
 		if (speed != speedBefore) {
 			if (isPlaying()) {

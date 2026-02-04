@@ -13,7 +13,6 @@ import log.charter.gui.components.preview3D.glUtils.BufferedTextureData;
 import log.charter.gui.components.preview3D.glUtils.Texture;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.sound.asio.ASIOHandler;
-import log.charter.util.ExitActions;
 
 public class Preview3DVideoDrawer {
 	@SuppressWarnings("unused")
@@ -30,10 +29,10 @@ public class Preview3DVideoDrawer {
 
 		image.setRGB(0, 0, 0);
 
-		videoPlayingThread = new Thread(this::playVideo, "3D Video drawer");
-		videoPlayingThread.start();
+		// videoPlayingThread = new Thread(this::playVideo, "3D Video drawer");
+		// videoPlayingThread.start();
 
-		ExitActions.addOnExit(() -> videoPlayingThread.interrupt());
+		// ExitActions.addOnExit(() -> videoPlayingThread.interrupt());
 	}
 
 	public void initGL() {

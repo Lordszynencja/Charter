@@ -190,12 +190,12 @@ public class CharterFrame extends JFrame implements Initiable {
 			return;
 		}
 
-		paintWaiting = true;
-		super.repaint();
-
 		if (SystemType.not(MAC) && preview3DPanel.isShowing()) {
 			preview3DPanel.repaint();
 		}
+
+		paintWaiting = true;
+		 super.repaint();
 	}
 
 	@Override
