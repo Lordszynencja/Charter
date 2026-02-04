@@ -41,6 +41,7 @@ import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.HandShapesHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.data.StemAddService;
+import log.charter.services.data.StringsChanger;
 import log.charter.services.data.VocalsHandler;
 import log.charter.services.data.beats.BPMDoubler;
 import log.charter.services.data.beats.BPMHalver;
@@ -122,6 +123,7 @@ public class CharterContext {
 	private final SongFileHandler songFileHandler = new SongFileHandler();
 	private final SongFilesBackuper songFilesBackuper = new SongFilesBackuper();
 	private final StemAddService stemAddService = new StemAddService();
+	private final StringsChanger stringsChanger = new StringsChanger();
 	private final TitleUpdater titleUpdater = new TitleUpdater();
 	private final UndoSystem undoSystem = new UndoSystem();
 	private final USCTxtImporter uscTxtImporter = new USCTxtImporter();
