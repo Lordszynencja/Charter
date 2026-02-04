@@ -29,7 +29,6 @@ import log.charter.gui.components.preview3D.drawers.Preview3DLaneBordersDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DLyricsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DSectionDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DStringsFretsDrawer;
-import log.charter.gui.components.preview3D.drawers.Preview3DVideoDrawer;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
@@ -73,7 +72,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	private final Preview3DLyricsDrawer lyricsDrawer = new Preview3DLyricsDrawer();
 	private final Preview3DSectionDrawer sectionDrawer = new Preview3DSectionDrawer();
 	private final Preview3DStringsFretsDrawer stringsFretsDrawer = new Preview3DStringsFretsDrawer();
-	private final Preview3DVideoDrawer videoDrawer = new Preview3DVideoDrawer();
+	// private final Preview3DVideoDrawer videoDrawer = new Preview3DVideoDrawer();
 
 	private boolean active = true;
 	private boolean repaintActivated = false;
@@ -108,7 +107,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		lyricsDrawer.init(chartData, textTexturesHolder);
 		sectionDrawer.init(chartData, textTexturesHolder);
 		stringsFretsDrawer.init(chartData);
-		videoDrawer.init(chartData);
+		// videoDrawer.init(chartData);
 
 		addKeyListener(keyboardHandler);
 
@@ -166,7 +165,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 			textTexturesHolder.initGL();
 			texturesHolder.initGL();
 
-			videoDrawer.initGL();
+			// videoDrawer.initGL();
 
 			GL30.glEnable(GL30.GL_DEPTH_TEST);
 			GL30.glDepthFunc(GL30.GL_GEQUAL);
@@ -204,7 +203,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 
 	@SuppressWarnings("unused")
 	private void drawVideo(final Timer timer) {
-		videoDrawer.draw(shadersHolder, getWidth(), getHeight());
+		// videoDrawer.draw(shadersHolder, getWidth(), getHeight());
 		if (DebugConfig.frameTimes) {
 			timer.addTimestamp("videoDrawer");
 		}
