@@ -68,7 +68,7 @@ public class GP7AutomationConverter implements Converter {
 				case "Type" -> automation.type = reader.getValue();
 				case "Linear" -> automation.linear = Boolean.valueOf(reader.getValue());
 				case "Bar" -> automation.bar = Integer.valueOf(reader.getValue());
-				case "Position" -> automation.position = Integer.valueOf(reader.getValue());
+				case "Position" -> automation.position = Double.valueOf(reader.getValue());
 				case "Visible" -> automation.visible = Boolean.valueOf(reader.getValue());
 				case "Value" -> automation.value = readValue(reader, automation.type);
 			}

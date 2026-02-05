@@ -80,6 +80,8 @@ public class Localization {
 		CONFIG_GENERAL("General"), //
 		CONFIG_INSTRUMENT("Instrument"), //
 		CONFIG_SECRETS("Secrets"), //
+		CONFIGS_AND_LOGS("Open configs and logs folder"), //
+		CONFIGS_AND_LOGS_MESSAGE("Configs and logs folder is %s"), //
 		COPY("Copy"), //
 		COPY_ALL_FILES("Copy all files?"), //
 		COPY_ALL_FILES_MESSAGE("Copy all files? If not, only project and main audio will be moved."), //
