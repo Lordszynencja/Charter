@@ -174,7 +174,6 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 			final Predicate<EventPoint> filter) {
 		final ImmutableBeatsMap beats = chartData.beats();
 		final double maxPhraseTime = getMaxPhraseTime();
-		chartData.currentEventPoints().get(chartData.currentEventPoints().size() - 1);
 		final List<EventPoint> points = chartData.currentArrangement().getFilteredEventPoints(filter);
 
 		for (int i = 0; i < points.size(); i++) {

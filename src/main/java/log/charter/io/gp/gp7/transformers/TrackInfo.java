@@ -30,8 +30,11 @@ class TrackInfo {
 		partialCapoFret = staff.partialCapoFret();
 		partialCapoStringFlags = staff.partialCapoStringFlags();
 		tuningValues = staff.getTuningValues();
-		if ("Guitar".equals(staff.getInstrument())) {
-			if (gp7Track.name.toLowerCase().contains("rhythm") || gp7Track.name.toLowerCase().contains("rythm")) {
+		if ("Guitar".equals(staff.getInstrument()) && name != null) {
+			if (name.toLowerCase().contains("bass")) {
+				type = ArrangementType.Bass;
+			} else if (gp7Track.name.toLowerCase().contains("rhythm")
+					|| gp7Track.name.toLowerCase().contains("rythm")) {
 				type = ArrangementType.Rhythm;
 			} else {
 				type = ArrangementType.Lead;
