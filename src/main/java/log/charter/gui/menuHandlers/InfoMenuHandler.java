@@ -5,6 +5,7 @@ import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import java.awt.Desktop;
 import java.awt.Desktop.Action;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 import javax.swing.JMenu;
@@ -13,6 +14,7 @@ import log.charter.CharterMain;
 import log.charter.data.config.Localization;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
+import log.charter.util.Utils;
 
 class InfoMenuHandler extends CharterMenuHandler {
 	private static final String infoText = "Charter\n"//
@@ -65,6 +67,9 @@ class InfoMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Label.LICENSES, () -> showPopup(charterFrame, Label.LIBRARIES_USED.format(librariesUsed))));
 		menu.add(prepareLanguagesSubmenu());
 
+		menu.addSeparator();
+		menu.add(createItem(Label.CONFIGS_AND_LOGS, this::openConfigFolder));
+
 		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Action.BROWSE)) {
 			menu.addSeparator();
 			menu.add(createItem(Label.INFO_MENU_DONATION, this::openDonationPage));
@@ -80,4 +85,21 @@ class InfoMenuHandler extends CharterMenuHandler {
 			e.printStackTrace();
 		}
 	}
+
+	private void showConfigFolderPosition() {
+		showPopup(charterFrame, Label.CONFIGS_AND_LOGS_MESSAGE.format(Utils.defaultConfigDir));
+	}
+
+	private void openConfigFolder() {
+		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Action.OPEN)) {
+			try {
+				Desktop.getDesktop().open(new File(Utils.defaultConfigDir));
+			} catch (final IOException e) {
+				showConfigFolderPosition();
+			}
+		} else {
+			showConfigFolderPosition();
+		}
+	}
+
 }
