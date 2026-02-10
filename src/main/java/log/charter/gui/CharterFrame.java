@@ -70,8 +70,6 @@ public class CharterFrame extends JFrame implements Initiable {
 	private ChartMap chartMap;
 	private CharterTabbedPane tabs;
 
-	private boolean paintWaiting = false;
-
 	public CharterFrame() {
 		super(CharterMain.TITLE + " : " + Label.NO_PROJECT.label());
 		try {
@@ -92,6 +90,8 @@ public class CharterFrame extends JFrame implements Initiable {
 		if (SystemType.not(MAC)) {
 			charterContext.initObject(preview3DPanel);
 		}
+
+		preview3DPanel.setPanelName("Tab preview");
 
 		setSize(WindowStateConfig.width, WindowStateConfig.height);
 		setLocation(WindowStateConfig.x, WindowStateConfig.y);
@@ -138,15 +138,6 @@ public class CharterFrame extends JFrame implements Initiable {
 		setFocusable(true);
 	}
 
-	public void resize() {
-		WindowStateConfig.height = getHeight();
-		WindowStateConfig.width = getWidth();
-		WindowStateConfig.extendedState = getExtendedState();
-		Config.markChanged();
-
-		resizeComponents();
-	}
-
 	private void resizeComponents() {
 		final Insets insets = getInsets();
 		final int width = WindowStateConfig.width - insets.left - insets.right;
@@ -164,6 +155,16 @@ public class CharterFrame extends JFrame implements Initiable {
 			ComponentUtils.setComponentBoundsWithValidateRepaint(componentHeight.a, 0, y, width, componentHeight.b);
 			y += componentHeight.b;
 		}
+	}
+
+	public void resize() {
+		WindowStateConfig.height = getHeight();
+		WindowStateConfig.width = getWidth();
+		WindowStateConfig.extendedState = getExtendedState();
+		Config.markChanged();
+
+		resizeComponents();
+		validate();
 	}
 
 	public void updateSizes() {
@@ -186,28 +187,22 @@ public class CharterFrame extends JFrame implements Initiable {
 
 	@Override
 	public void repaint() {
-		if (paintWaiting) {
-			return;
-		}
-
-		if (SystemType.not(MAC) && preview3DPanel.isShowing()) {
+		if (preview3DPanel != null && preview3DPanel.isShowing()) {
+			if (preview3DPanel.painted) {
+				super.repaint();
+			}
 			preview3DPanel.repaint();
+		} else {
+			super.repaint();
 		}
-
-		paintWaiting = true;
-		 super.repaint();
 	}
 
 	@Override
 	public void paint(final Graphics g) {
 		try {
 			super.paint(g);
-			helpTab.addFrameTime();
 		} catch (final Exception e) {
 			Logger.error("Error in CharterFrame.paint", e);
 		}
-
-		paintWaiting = false;
-
 	}
 }

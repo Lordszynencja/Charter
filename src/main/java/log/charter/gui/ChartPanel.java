@@ -12,6 +12,7 @@ import log.charter.data.ChartData;
 import log.charter.gui.chartPanelDrawers.ArrangementDrawer;
 import log.charter.gui.chartPanelDrawers.common.BackgroundDrawer;
 import log.charter.gui.chartPanelDrawers.common.MarkerDrawer;
+import log.charter.gui.components.tabs.HelpTab;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartTimeHandler;
@@ -24,6 +25,7 @@ public class ChartPanel extends JComponent implements Initiable {
 	private CharterContext charterContext;
 	private ChartData chartData;
 	private ChartTimeHandler chartTimeHandler;
+	private HelpTab helpTab;
 	private KeyboardHandler keyboardHandler;
 	private MouseHandler mouseHandler;
 
@@ -58,7 +60,6 @@ public class ChartPanel extends JComponent implements Initiable {
 
 	private void paintComponent2D(final Graphics2D g) {
 		final double time = chartTimeHandler.time();
-
 		backgroundDrawer.draw(g, time);
 
 		if (chartData.isEmpty) {
@@ -67,6 +68,8 @@ public class ChartPanel extends JComponent implements Initiable {
 
 		arrangementDrawer.draw(g, time);
 		markerDrawer.draw(g, time);
+
+		helpTab.addFrameTime("2D editor");
 	}
 
 	@Override

@@ -10,7 +10,6 @@ import java.util.Map;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.SystemType;
-import log.charter.data.config.values.DebugConfig;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.CharterFrame;
@@ -73,7 +72,6 @@ import log.charter.services.utils.Framer;
 import log.charter.services.utils.UpdateChecker;
 import log.charter.util.ConfigAutoSaver;
 import log.charter.util.ExitActions;
-import log.charter.util.Timer;
 
 @SuppressWarnings("unused")
 public class CharterContext {
@@ -179,7 +177,6 @@ public class CharterContext {
 						} else {
 							field.set(o, fieldValue);
 						}
-						Logger.debug("set field " + field.getName() + " of object " + o.getClass());
 					} catch (IllegalArgumentException | IllegalAccessException e) {
 						Logger.error("Couldn't set field %s of type %s".formatted(field.getName(), field.getType()), e);
 						System.exit(0);
@@ -197,7 +194,6 @@ public class CharterContext {
 
 			if (Initiable.class.isAssignableFrom(o.getClass())) {
 				((Initiable) o).init();
-				Logger.debug("initiated " + o.getClass().getSimpleName());
 			}
 		} catch (final IllegalArgumentException e) {
 			Logger.error("Couldn't initiate " + o.getClass().getSimpleName(), e);
@@ -231,24 +227,19 @@ public class CharterContext {
 
 	private void frame(final double frameTime) {
 		try {
-			final Timer timer = new Timer();
 			repeatManager.frame();
-			timer.addTimestamp("repeatManager.frame()");
 
 			chartTimeHandler.frame(frameTime);
-			timer.addTimestamp("chartTimeHandler.frame()");
 
 			if (SystemType.not(MAC) && windowedPreviewHandler.isPreviewVisible()) {
-				windowedPreviewHandler.paintFrame();
-				timer.addTimestamp("windowedPreviewHandler.paintFrame()");
-			}
-			if (charterFrame.isShowing()) {
-				charterFrame.repaint();
-				timer.addTimestamp("charterFrame.repaint()");
+				windowedPreviewHandler.repaint();
 			}
 
-			if (DebugConfig.frameTimes) {
-				timer.print("frame timings:", Timer.defaultFormat(20));
+			if (charterFrame.isShowing()) {
+				helpTab.updateValues();
+				titleUpdater.updateTitle();
+				charterFrame.validate();
+				charterFrame.repaint();
 			}
 		} catch (final Exception e) {
 			Logger.error("Exception in frame()", e);

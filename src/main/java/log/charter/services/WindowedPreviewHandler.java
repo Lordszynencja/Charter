@@ -23,6 +23,8 @@ public class WindowedPreviewHandler implements Initiable {
 		charterContext.initObject(windowedPreview3DPanel);
 		charterContext.initObject(windowedPreviewFrame);
 		windowedPreviewFrame.initWith(windowedPreview3DPanel);
+
+		windowedPreview3DPanel.setPanelName("Windowed preview");
 	}
 
 	public void reloadTextures() {
@@ -53,7 +55,7 @@ public class WindowedPreviewHandler implements Initiable {
 		}
 	}
 
-	public void paintFrame() {
+	public void repaint() {
 		if (SystemType.is(MAC)) {
 			return;
 		}
