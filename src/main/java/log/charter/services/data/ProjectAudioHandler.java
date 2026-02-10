@@ -120,6 +120,7 @@ public class ProjectAudioHandler {
 		} else {
 			selectedStem = stem;
 		}
+		waveFormDrawer.recalculateMap();
 	}
 
 	public void changeStemsOffset(final double offsetChange) {
