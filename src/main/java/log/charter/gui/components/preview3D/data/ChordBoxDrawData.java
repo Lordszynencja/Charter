@@ -8,13 +8,16 @@ public class ChordBoxDrawData {
 	public final Mute mute;
 	public final boolean onlyBox;
 	public final boolean withTop;
+	public final boolean accent;
 
-	public ChordBoxDrawData(final double position, final Mute mute, final boolean onlyBox, final boolean withTop) {
+	public ChordBoxDrawData(final double position, final Mute mute, final boolean onlyBox, final boolean withTop,
+			final boolean accent) {
 		originalPosition = position;
 		this.position = position;
 		this.mute = mute;
 		this.onlyBox = onlyBox;
 		this.withTop = withTop;
+		this.accent = accent;
 	}
 
 	public ChordBoxDrawData(final double position, final ChordBoxDrawData other) {
@@ -23,5 +26,6 @@ public class ChordBoxDrawData {
 		mute = other.mute;
 		onlyBox = other.onlyBox;
 		withTop = other.withTop;
+		accent = other.accent;
 	}
 }

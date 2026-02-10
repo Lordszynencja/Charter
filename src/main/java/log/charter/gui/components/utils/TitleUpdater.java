@@ -7,23 +7,13 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.vocals.VocalPath;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
-import log.charter.services.CharterContext.Initiable;
 import log.charter.services.editModes.ModeManager;
-import log.charter.services.utils.Framer;
 
-public class TitleUpdater implements Initiable {
+public class TitleUpdater {
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ModeManager modeManager;
 	private UndoSystem undoSystem;
-
-	private final Framer titleUpdateFramer = new Framer(dt -> updateTitle());
-
-	@Override
-	public void init() {
-		titleUpdateFramer.setFPS(1);
-		titleUpdateFramer.start("title update thread");
-	}
 
 	private String getSongData() {
 		return chartData.songChart.artistName() + " - " + chartData.songChart.title();
@@ -69,6 +59,7 @@ public class TitleUpdater implements Initiable {
 		}
 
 		charterFrame.setTitle(title);
+		charterFrame.validate();
 	}
 
 }

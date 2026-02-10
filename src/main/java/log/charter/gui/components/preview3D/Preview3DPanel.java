@@ -33,6 +33,7 @@ import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
 import log.charter.gui.components.preview3D.shaders.ShadersHolder;
 import log.charter.gui.components.preview3D.shapes.NoteStatusModels;
+import log.charter.gui.components.tabs.HelpTab;
 import log.charter.io.Logger;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.RepeatManager;
@@ -48,6 +49,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 
 	private ChartTimeHandler chartTimeHandler;
 	private ChartData chartData;
+	private HelpTab helpTab;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
 
@@ -75,7 +77,10 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	// private final Preview3DVideoDrawer videoDrawer = new Preview3DVideoDrawer();
 
 	private boolean active = true;
-	private boolean repaintActivated = false;
+
+	private String panelName = "3D panel";
+
+	public boolean painted = false;
 
 	private static GLData prepareGLData() {
 		final GLData data = new GLData();
@@ -88,6 +93,10 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 
 	public Preview3DPanel() {
 		super(prepareGLData());
+	}
+
+	public void setPanelName(final String name) {
+		panelName = name;
 	}
 
 	@Override
@@ -153,7 +162,6 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 				active = false;
 			}
 		}
-		repaintActivated = false;
 	}
 
 	@Override
@@ -316,6 +324,9 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 			if (DebugConfig.frameTimes) {
 				timer.print("paintGL timings:", Timer.defaultFormat(20));
 			}
+			helpTab.addFrameTime(panelName);
+
+			painted = true;
 		} catch (final Exception e) {
 			Logger.error("Exception in paintGL", e);
 		} catch (final Error error) {
@@ -323,18 +334,14 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		}
 	}
 
-	@Override
-	public void repaint() {
-		if (repaintActivated) {
-			return;
-		}
-
-		repaintActivated = true;
-		super.repaint();
-	}
-
 	public void reloadTextures() {
 		noteStatusModels.reload();
 		texturesHolder.reloadTextures();
+	}
+
+	@Override
+	public void repaint() {
+		super.repaint();
+		painted = false;
 	}
 }

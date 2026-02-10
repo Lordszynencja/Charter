@@ -90,14 +90,34 @@ public class Preview3DChordBoxDrawer {
 				.draw(GL30.GL_TRIANGLE_STRIP, moveMatrix(x1, 0, 0).multiply(scaleMatrix(-1, 1, 1)));
 	}
 
+	private static void drawChordBoxAccent(final ShadersHolder shadersHolder, final double x0, final double x1,
+			final double y0, final double y1, final double z, final Color color, final Color darkColor) {
+		final double dx = (x1 - x0) / 3;
+
+		final double y2 = y1 + frameThickness * 2;
+
+		shadersHolder.new BaseShaderDrawData()//
+				.addVertex(new Point3D(0, y0, 0), color)//
+				.addVertex(new Point3D(frameThickness * 2, y0, 0), color)//
+				.addVertex(new Point3D(0, y2, 0), color)//
+				.addVertex(new Point3D(frameThickness * 2, y1, 0), color)//
+				.addVertex(new Point3D(dx, y2, 0), darkColor)//
+				.addVertex(new Point3D(dx + frameThickness, y1, 0), darkColor)//
+				.draw(GL30.GL_TRIANGLE_STRIP, moveMatrix(x0, 0, z))//
+				.draw(GL30.GL_TRIANGLE_STRIP, moveMatrix(x1, 0, z).multiply(scaleMatrix(-1, 1, 1)));
+	}
+
 	private static void drawChordBoxFrame(final ShadersHolder shadersHolder, final double x0, final double x1,
-			final double y0, final double y1, final double z, final boolean full) {
+			final double y0, final double y1, final double z, final boolean full, final boolean accent) {
+		final Color fullColor = ColorLabel.PREVIEW_3D_CHORD_BOX.color();
 		final Color color = ColorLabel.PREVIEW_3D_CHORD_BOX.colorWithAlpha(128);
 		final Color darkColor = ColorLabel.PREVIEW_3D_CHORD_BOX_DARK.colorWithAlpha(128);
 
 		drawChordBoxFrameHorizontalBar(shadersHolder, x0, x1, y0, z, color, darkColor);
 
-		if (full) {
+		if (accent) {
+			drawChordBoxAccent(shadersHolder, x0, x1, y0, y1, z, fullColor, color);
+		} else if (full) {
 			drawChordBoxFrameSidesToTheTop(shadersHolder, x0, x1, y0, y1, z, color);
 			drawChordBoxFrameHorizontalBar(shadersHolder, x0, x1, y1, z, color, darkColor);
 		} else {
@@ -197,7 +217,7 @@ public class Preview3DChordBoxDrawer {
 		}
 
 		drawChordBoxHolder(shadersHolder, x0, x1, y0, z);
-		drawChordBoxFrame(shadersHolder, x0, x1, y0, y1, z, chordBox.withTop);
+		drawChordBoxFrame(shadersHolder, x0, x1, y0, y1, z, chordBox.withTop, chordBox.accent);
 		drawChordBoxFilling(shadersHolder, x0, x1, y0, y1, z);
 		drawChordBoxMuteIfNeeded(shadersHolder, chordBox, x0, x1, y0, y1, z);
 	}

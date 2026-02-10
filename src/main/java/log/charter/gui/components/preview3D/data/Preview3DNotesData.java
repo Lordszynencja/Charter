@@ -34,10 +34,10 @@ public class Preview3DNotesData {
 		if (chordNotesVisibility == ChordNotesVisibility.NONE) {
 			final double position = chord.position(beats);
 			if (position >= timeFrom) {
-				chords.add(new ChordBoxDrawData(position, //
-						chord.chordNotesValue(n -> n.mute, Mute.NONE), //
-						true, //
-						chord.chordNotes.size() > 2));
+				final Mute mute = chord.chordNotesValue(n -> n.mute, Mute.NONE);
+				final boolean withTop = chord.chordNotes.size() > 2;
+
+				chords.add(new ChordBoxDrawData(position, mute, true, withTop, chord.accent));
 			}
 
 			return;
@@ -46,10 +46,8 @@ public class Preview3DNotesData {
 		if (!chord.splitIntoNotes) {
 			final double position = chord.position(beats);
 			if (position >= timeFrom) {
-				chords.add(new ChordBoxDrawData(position, //
-						Mute.NONE, //
-						false, //
-						chord.chordNotes.size() > 2));
+				final boolean withTop = chord.chordNotes.size() > 2;
+				chords.add(new ChordBoxDrawData(position, Mute.NONE, false, withTop, chord.accent));
 			}
 		}
 		if (chord.forceNoNotes) {
