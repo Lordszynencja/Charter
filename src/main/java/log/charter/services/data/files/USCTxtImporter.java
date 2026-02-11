@@ -75,7 +75,7 @@ public class USCTxtImporter {
 			final Vocal newVocal = new Vocal();
 			newVocal.position(FractionalPosition.fromTime(chartData.beats(), startTime));
 			newVocal.endPosition(FractionalPosition.fromTime(chartData.beats(), endTime));
-			newVocal.text(text);
+			newVocal.text(text.trim());
 
 			chartData.currentVocals().vocals.add(newVocal);
 			lastVocal = newVocal;
