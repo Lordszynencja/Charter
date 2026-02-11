@@ -6,7 +6,9 @@ import static log.charter.util.CollectionUtils.max;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.Arrangement;
@@ -442,10 +444,21 @@ public class GP5SoundsTransformer {
 		final Chord chord = new Chord(position.position(), -1, chordTemplate);
 		final ChordAddingData chordAddingData = new ChordAddingData();
 
+		Map<Integer, Integer> lastFrets = new HashMap<>();
+		if (lastSound != null) {
+			if (lastSound.isNote()) {
+				lastFrets.put(lastSound.note().string, lastSound.note().fret);
+			} else if (lastSoundTemplate != null) {
+				lastFrets = new HashMap<>(lastSoundTemplate.frets);
+			}
+		}
+
 		for (final GPNote gpNote : gpBeat.notes) {
 			final int string = gpNote.string - 1;
 			chordTemplate.fingers.put(string, gpNote.finger == -1 ? null : gpNote.finger);
-			chordTemplate.frets.put(string, gpNote.fret);
+			final int fret = gpNote.tied && lastFrets.get(string) != null ? lastFrets.get(string) : gpNote.fret;
+			chordAddingData.setLength |= gpNote.tied;
+			chordTemplate.frets.put(string, fret);
 
 			final ChordNote chordNote = new ChordNote(chord);
 			chord.chordNotes.put(string, chordNote);
