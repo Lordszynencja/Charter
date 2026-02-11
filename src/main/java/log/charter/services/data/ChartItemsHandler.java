@@ -144,8 +144,10 @@ public class ChartItemsHandler {
 				snapPositions(selected.stream().map(selection -> (EventPoint) selection.selectable),
 						chartData.currentEventPoints());
 				clearRepeatedPositions(chartData.currentEventPoints());
+				break;
 			case FHP:
 				snapPositions(selected.stream().map(selection -> (FHP) selection.selectable), chartData.currentFHPs());
+				break;
 			case TONE_CHANGE:
 				snapPositions(selected.stream().map(selection -> (ToneChange) selection.selectable),
 						chartData.currentToneChanges());
