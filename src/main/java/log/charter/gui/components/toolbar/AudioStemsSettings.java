@@ -113,8 +113,8 @@ public class AudioStemsSettings extends RowedDialog {
 		}
 
 		private void addName(final RowedPosition position) {
-			label = new TextInputWithValidation(name, 100, notBlankValidator(Label.NAME_CANT_BE_EMPTY), v -> name = v,
-					false);
+			label = new TextInputWithValidation(name, 100, notBlankValidator(Label.NAME_CANT_BE_EMPTY),
+					v -> { name = v; }, false);
 			if (id == -1) {
 				label.setEditable(false);
 			}

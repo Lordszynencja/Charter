@@ -422,7 +422,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			final int string = i;
 
 			final TextInputWithValidation input = new TextInputWithValidation("", 40, this::validateFinger,
-					val -> updateFingerValue(string, val), false);
+					val -> (String) updateFingerValue(string, val.toUpperCase()), false);
 			input.setHorizontalAlignment(JTextField.CENTER);
 			addSelectTextOnFocus(input);
 
@@ -441,7 +441,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		if (val == null || val.isEmpty()) {
 			return null;
 		}
-		if (fingerIds.containsKey(val)) {
+		if (fingerIds.containsKey(val.toUpperCase())) {
 			return null;
 		}
 
@@ -470,7 +470,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		chordTemplatePreview.repaint();
 	}
 
-	private void updateFingerValue(final int string, final String finger) {
+	private String updateFingerValue(final int string, final String finger) {
 		if (finger == null || finger.isEmpty()) {
 			chordTemplateSupplier.get().fingers.remove(string);
 		} else {
@@ -480,6 +480,8 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		onChange.run();
 
 		chordTemplatePreview.repaint();
+
+		return finger;
 	}
 
 	@Override

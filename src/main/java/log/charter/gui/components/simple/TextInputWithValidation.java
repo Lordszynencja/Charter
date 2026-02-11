@@ -5,9 +5,11 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.math.BigDecimal;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.IntConsumer;
 
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -99,13 +101,21 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 	private boolean error;
 
 	private ValueValidator validator;
-	private final Consumer<String> setter;
+	private final Function<String, String> setter;
 	private final boolean allowWrongValues;
 
 	private boolean disableEvents;
 
 	public TextInputWithValidation(final String text, final int length, final ValueValidator validator,
 			final Consumer<String> setter, final boolean allowWrongValues) {
+		this(text, length, validator, val -> {
+			setter.accept(val);
+			return val;
+		}, allowWrongValues);
+	}
+
+	public TextInputWithValidation(final String text, final int length, final ValueValidator validator,
+			final Function<String, String> setter, final boolean allowWrongValues) {
 		super(new ComponentDocument(), text, length);
 		this.allowWrongValues = allowWrongValues;
 		this.validator = validator;
@@ -165,7 +175,15 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		validateValue(value);
 
 		if (!error || allowWrongValues) {
-			setter.accept(value);
+			final String newValue = setter.apply(value);
+
+			final Runnable doHighlight = new Runnable() {
+				@Override
+				public void run() {
+					setTextWithoutEvent(newValue);
+				}
+			};
+			SwingUtilities.invokeLater(doHighlight);
 		}
 
 		setSelectionEnd(getSelectionStart());
