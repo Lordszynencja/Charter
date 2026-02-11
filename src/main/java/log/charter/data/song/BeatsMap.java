@@ -274,7 +274,7 @@ public class BeatsMap {
 					return fractionalPosition.add(distanceLeftInBeats.negate());
 				}
 
-				distance = distance.add(fractionalPosition.fraction.divide(noteDenominator));
+				distance = distance.add(fractionalPosition.fraction.divide(noteDenominator).negate());
 				fractionalPosition = new FractionalPosition(fractionalPosition.beatId);
 			}
 
@@ -286,7 +286,8 @@ public class BeatsMap {
 				noteDenominator = get(beatId).noteDenominator;
 			}
 
-			return new FractionalPosition(beatId, new Fraction(1).add(distance.multiply(noteDenominator).negate()));
+			final Fraction beatRemaining = new Fraction(1).add(distance.multiply(noteDenominator).negate());
+			return new FractionalPosition(beatId, beatRemaining);
 		}
 
 		private IVirtualConstantPosition addNote(final IVirtualConstantPosition position, Fraction distance) {
