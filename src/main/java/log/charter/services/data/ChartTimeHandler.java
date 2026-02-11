@@ -212,7 +212,12 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToPreviousBeat() {
-		nextTime(getPrevious(chartData.beats()));
+		final IConstantFractionalPosition timePosition = timeFractional();
+		int beatId = timePosition.position().beatId;
+		if (timePosition.position().fraction.numerator == 0) {
+			beatId--;
+		}
+		nextTime(new FractionalPosition(beatId));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -290,7 +295,8 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToNextBeat() {
-		nextTime(getNext(chartData.beats()));
+		final IConstantFractionalPosition timePosition = timeFractional();
+		nextTime(new FractionalPosition(timePosition.position().beatId + 1));
 	}
 
 	public void moveToNextGrid() {
