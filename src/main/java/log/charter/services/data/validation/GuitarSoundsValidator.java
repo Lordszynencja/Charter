@@ -230,6 +230,10 @@ public class GuitarSoundsValidator {
 			}
 
 			final Chord chord = sound.chord();
+			if (chord.chordNotes.size() <= 2) {
+				return;
+			}
+
 			for (final int string : chord.chordNotes.keySet()) {
 				final ChordNote chordNote = chord.chordNotes.get(string);
 				if (chordNote.endPosition().equals(chord.position())) {
