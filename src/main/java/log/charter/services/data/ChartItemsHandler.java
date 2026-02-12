@@ -24,6 +24,7 @@ import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
@@ -36,6 +37,7 @@ import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.ModeManager;
+import log.charter.util.CollectionUtils;
 
 public class ChartItemsHandler {
 
@@ -45,27 +47,74 @@ public class ChartItemsHandler {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
-	public <T extends IVirtualConstantPosition> void delete() {
-		boolean nonEmptyFound = false;
+	public void delete() {
+		final ISelectionAccessor<IVirtualConstantPosition> selectedAccessor = selectionManager.selectedAccessor();
+		if (selectedAccessor.type() == PositionType.NONE || selectedAccessor.type() == PositionType.BEAT) {
+			return;
+		}
+		if (!selectedAccessor.isSelected()) {
+			return;
+		}
 
-		for (final PositionType type : PositionType.values()) {
-			if (type == PositionType.NONE || type == PositionType.BEAT) {
-				continue;
-			}
+		final List<Selection<IVirtualConstantPosition>> selected = selectedAccessor.getSelected();
 
-			final ISelectionAccessor<T> selectedTypeAccessor = selectionManager.accessor(type);
-			if (!selectedTypeAccessor.isSelected()) {
-				continue;
-			}
+		undoSystem.addUndo();
+		selectionManager.clear();
+		delete(selectedAccessor.type(), selected.stream().map(selection -> selection.id).collect(Collectors.toList()));
+	}
 
-			final List<Selection<T>> selected = selectedTypeAccessor.getSelected();
-			if (!nonEmptyFound) {
-				undoSystem.addUndo();
-				selectionManager.clear();
-				nonEmptyFound = true;
-			}
+	private void deleteFromTo(final List<? extends IConstantFractionalPosition> items,
+			final IConstantFractionalPosition from, final IConstantFractionalPosition to) {
+		final Integer fromId = CollectionUtils.firstAfterEqual(items, from).findId();
+		final Integer toId = CollectionUtils.lastBeforeEqual(items, to).findId();
+		if (fromId == null || toId == null) {
+			return;
+		}
 
-			delete(type, selected.stream().map(selection -> selection.id).collect(Collectors.toList()));
+		for (int i = toId; i >= fromId; i--) {
+			items.remove(i);
+		}
+	}
+
+	private void deleteRelatedToNotes(final PositionType type, final List<IVirtualConstantPosition> selectedElements) {
+		final FractionalPosition selectionStart = selectedElements.get(0).toFraction(chartData.beats()).position();
+		final IVirtualConstantPosition lastElement = selectedElements.get(selectedElements.size() - 1);
+		FractionalPosition selectionEnd;
+		if (lastElement instanceof FHP) {
+			selectionEnd = ((FHP) lastElement).position();
+		} else if (lastElement instanceof ChordOrNote) {
+			selectionEnd = ((ChordOrNote) lastElement).endPosition();
+		} else if (lastElement instanceof HandShape) {
+			selectionEnd = ((HandShape) lastElement).endPosition();
+		} else {
+			selectionEnd = lastElement.toFraction(chartData.beats()).position();
+		}
+
+		undoSystem.addUndo();
+		selectionManager.clear();
+
+		deleteFromTo(chartData.currentFHPs(), selectionStart, selectionEnd);
+		deleteFromTo(chartData.currentSounds(), selectionStart, selectionEnd);
+		deleteFromTo(chartData.currentHandShapes(), selectionStart, selectionEnd);
+
+		arrangementFixer.fixNoteLengths(chartData.currentSounds());
+	}
+
+	public void deleteRelated() {
+		final ISelectionAccessor<IVirtualConstantPosition> selectedAccessor = selectionManager.selectedAccessor();
+		if (!selectedAccessor.isSelected()) {
+			return;
+		}
+
+		switch (selectedAccessor.type()) {
+			case FHP:
+			case GUITAR_NOTE:
+			case HAND_SHAPE:
+				deleteRelatedToNotes(selectedAccessor.type(), selectedAccessor.getSelectedElements());
+				break;
+			default:
+				delete();
+				break;
 		}
 	}
 
@@ -83,6 +132,14 @@ public class ChartItemsHandler {
 			chartData.currentArrangement().tones = chartData.currentArrangement().toneChanges.stream()//
 					.map(toneChange -> toneChange.toneName)//
 					.collect(Collectors.toCollection(HashSet::new));
+		}
+
+		switch (type) {
+			case GUITAR_NOTE:
+				arrangementFixer.fixNoteLengths(chartData.currentSounds());
+				break;
+			default:
+				break;
 		}
 	}
 

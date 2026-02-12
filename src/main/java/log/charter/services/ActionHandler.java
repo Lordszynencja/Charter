@@ -244,6 +244,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.BPM_HALVE, bpmHalver::halveBPM);
 		actionHandlers.put(Action.COPY, copyManager::copy);
 		actionHandlers.put(Action.DELETE, chartItemsHandler::delete);
+		actionHandlers.put(Action.DELETE_RELATED, chartItemsHandler::deleteRelated);
 		actionHandlers.put(Action.DOUBLE_GRID, this::doubleGridSize);
 		actionHandlers.put(Action.EDIT_VOCALS, vocalsHandler::editVocals);
 		actionHandlers.put(Action.EXIT, charterContext::exit);

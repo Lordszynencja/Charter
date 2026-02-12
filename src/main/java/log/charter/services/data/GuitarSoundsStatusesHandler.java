@@ -228,13 +228,18 @@ public class GuitarSoundsStatusesHandler {
 		final BigDecimal lastBendValue = note.bendValues().get(note.bendValues().size() - 1).bendValue;
 		if (nextNote.bendValues().isEmpty() && lastBendValue.compareTo(BigDecimal.ZERO) != 0) {
 			nextNote.bendValues().add(new BendValue(nextNote.position(), lastBendValue));
-		} else {
-			final BendValue firstBend = nextNote.bendValues().get(0);
-			if (firstBend.compareTo(nextNote) != 0) {
-				nextNote.bendValues().add(new BendValue(new FractionalPosition(), lastBendValue));
-			} else if (firstBend.bendValue.compareTo(lastBendValue) != 0) {
-				firstBend.bendValue = lastBendValue;
-			}
+			return;
+		}
+
+		if (lastBendValue.compareTo(BigDecimal.ZERO) == 0 && nextNote.bendValues().isEmpty()) {
+			return;
+		}
+
+		final BendValue firstBend = nextNote.bendValues().get(0);
+		if (firstBend.compareTo(nextNote) != 0) {
+			nextNote.bendValues().add(new BendValue(new FractionalPosition(), lastBendValue));
+		} else if (firstBend.bendValue.compareTo(lastBendValue) != 0) {
+			firstBend.bendValue = lastBendValue;
 		}
 	}
 

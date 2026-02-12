@@ -17,6 +17,7 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.BPM_HALVE, new Shortcut(KeyEvent.VK_COMMA));
 		super.set(Action.COPY, new Shortcut(KeyEvent.VK_C).ctrl());
 		super.set(Action.DELETE, new Shortcut(KeyEvent.VK_DELETE));
+		super.set(Action.DELETE_RELATED, new Shortcut(KeyEvent.VK_DELETE).ctrl());
 		super.set(Action.DOUBLE_GRID, new Shortcut(KeyEvent.VK_PERIOD));
 		super.set(Action.EDIT_VOCALS, new Shortcut(KeyEvent.VK_L));
 		super.set(Action.EXIT, new Shortcut(KeyEvent.VK_ESCAPE));
