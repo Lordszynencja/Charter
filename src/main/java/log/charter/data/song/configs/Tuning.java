@@ -102,11 +102,11 @@ public class Tuning {
 
 		// Bb
 		B_FLAT_STANDARD("Bb standard", new int[] { -6, -6, -6, -6, -6, -6, -6, -6, -6 }), //
-		B_FLAT_DROP_G("Bb drop G", new int[] { -6, -6, -6, -8, -6, -6, -6, -6, -6 }), //
+		B_FLAT_DROP_A_FLAT("Bb drop Ab", new int[] { -6, -6, -6, -8, -6, -6, -6, -6, -6 }), //
 
 		// A
 		A_STANDARD("A standard", new int[] { -7, -7, -7, -7, -7, -7, -7, -7, -7 }), //
-		A_DROP_G_FLAT("A drop Gb", new int[] { -7, -7, -7, -9, -7, -7, -7, -7, -7 }), //
+		A_DROP_G("A drop G", new int[] { -7, -7, -7, -9, -7, -7, -7, -7, -7 }), //
 
 		// Ab
 		A_FLAT_STANDARD("Ab standard", new int[] { -8, -8, -8, -8, -8, -8, -8, -8, -8 }), //
@@ -190,8 +190,8 @@ public class Tuning {
 					case -3 -> D_FLAT_DROP_B;
 					case -4 -> C_DROP_B_FLAT;
 					case -5 -> B_DROP_A;
-					case -6 -> B_FLAT_DROP_G;
-					case -7 -> A_DROP_G_FLAT;
+					case -6 -> B_FLAT_DROP_A_FLAT;
+					case -7 -> A_DROP_G;
 					default -> CUSTOM;
 				};
 				case -4 -> switch (lastStringTuning) {
