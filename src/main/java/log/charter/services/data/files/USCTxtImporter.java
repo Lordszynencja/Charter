@@ -3,6 +3,7 @@ package log.charter.services.data.files;
 import static java.lang.Math.max;
 
 import java.io.File;
+import java.util.function.Consumer;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
@@ -41,7 +42,97 @@ public class USCTxtImporter {
 		private double bpm = 120;
 		private double startPosition = chartData.beats().get(0).position();
 		private Vocal lastVocal = null;
+		private Vocal currentVocal = null;
 		private int lastBeatPosition = -1;
+		private Consumer<String> textAdder;
+
+		private Consumer<String> generateSpacesBeforeWordsTextAdder() {
+			return s -> {
+				if (s.startsWith(" ")) {
+					currentVocal.text(s.substring(1));
+				} else {
+					if (lastVocal != null) {
+						lastVocal.flag(VocalFlag.WORD_PART);
+					}
+					currentVocal.text(s);
+				}
+			};
+		}
+
+		private Consumer<String> generateSpacesAfterWordsTextAdder() {
+			return s -> {
+				if (s.endsWith(" ")) {
+					currentVocal.text(s.substring(0, s.length() - 1));
+				} else {
+					currentVocal.flag(VocalFlag.WORD_PART);
+					currentVocal.text(s);
+				}
+			};
+		}
+
+		private Consumer<String> generateJoinsBeforeSyllablesTextAdder() {
+			return s -> {
+				if (s.startsWith("-") || s.startsWith("~") || s.startsWith("+") || s.startsWith("=")) {
+					currentVocal.text(s.substring(1));
+					if (lastVocal != null) {
+						lastVocal.flag(VocalFlag.WORD_PART);
+					}
+				} else {
+					currentVocal.text(s);
+				}
+			};
+		}
+
+		private Consumer<String> generateJoinsAfterSyllablesTextAdder() {
+			return s -> {
+				if (s.endsWith("-") || s.endsWith("~") || s.endsWith("+") || s.endsWith("=")) {
+					currentVocal.text(s.substring(0, s.length() - 1));
+					currentVocal.flag(VocalFlag.WORD_PART);
+				} else {
+					currentVocal.text(s);
+				}
+			};
+		}
+
+		private Consumer<String> selectTextAdder(final String[] lines) {
+			boolean spacesBeforeWords = false;
+			boolean spacesAfterWords = false;
+			boolean joinsBeforeSyllable = false;
+
+			for (final String line : lines) {
+				if (!line.matches("[:\\\\*FRG] [0-9]* [0-9]* -?[0-9]* .*")) {
+					continue;
+				}
+
+				final String text = line.split(" ", 5)[4];
+				if (text.startsWith(" ")) {
+					spacesBeforeWords = true;
+					break;
+				}
+				if (text.endsWith(" ")) {
+					spacesAfterWords = true;
+					break;
+				}
+				if (text.startsWith("-") || text.startsWith("~") || text.startsWith("+") || text.startsWith("=")) {
+					joinsBeforeSyllable = true;
+					break;
+				}
+				if (text.endsWith("-") || text.endsWith("~") || text.endsWith("+") || text.endsWith("=")) {
+					break;
+				}
+			}
+
+			if (spacesBeforeWords) {
+				return generateSpacesBeforeWordsTextAdder();
+			}
+			if (spacesAfterWords) {
+				return generateSpacesAfterWordsTextAdder();
+			}
+			if (joinsBeforeSyllable) {
+				return generateJoinsBeforeSyllablesTextAdder();
+			}
+			return generateJoinsAfterSyllablesTextAdder();
+		}
 
 		private void readBpm(final String line) {
 			bpm = Double.valueOf(line.substring(5));
@@ -64,21 +155,19 @@ public class USCTxtImporter {
 
 			lastBeatPosition = beatId;
 			final int length = Integer.valueOf(tokens[2]);
-			String text = tokens[4];
-			if (text.startsWith("-") && lastVocal != null) {
-				lastVocal.flag(VocalFlag.WORD_PART);
-				text = text.substring(1);
-			}
 
 			final int startTime = (int) (startPosition + beatToTime(beatId));
 			final int endTime = (int) (startTime + beatToTime(length));
-			final Vocal newVocal = new Vocal();
-			newVocal.position(FractionalPosition.fromTime(chartData.beats(), startTime));
-			newVocal.endPosition(FractionalPosition.fromTime(chartData.beats(), endTime));
-			newVocal.text(text.trim());
+			currentVocal = new Vocal();
+			currentVocal.position(FractionalPosition.fromTime(chartData.beats(), startTime));
+			currentVocal.endPosition(FractionalPosition.fromTime(chartData.beats(), endTime));
 
-			chartData.currentVocals().vocals.add(newVocal);
-			lastVocal = newVocal;
+			final String text = tokens[4];
+			textAdder.accept(text);
+
+			chartData.currentVocals().vocals.add(currentVocal);
+
+			lastVocal = currentVocal;
 		}
 
 		private void endLine() {
@@ -90,7 +179,10 @@ public class USCTxtImporter {
 		}
 
 		public void importUSCFile(final String data) {
-			for (final String line : data.split("\r\n|\r|\n")) {
+			final String[] lines = data.split("\r\n|\r|\n");
+			textAdder = selectTextAdder(lines);
+
+			for (final String line : lines) {
 				if (line.startsWith("#")) {
 					if (line.matches("#BPM:[0-9\\.]*")) {
 						readBpm(line);
