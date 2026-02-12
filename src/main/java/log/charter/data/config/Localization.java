@@ -97,6 +97,7 @@ public class Localization {
 				"Couldn't run update script, run the program as administrator, install update manually or install it in a different folder"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
 		DELETE("Delete"), //
+		DELETE_RELATED("Delete related"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
 		DELETE_ARRANGEMENT_POPUP_MSG("Are you sure you want to delete arrangement %s?"), //
 		DELETE_ARRANGEMENT_POPUP_TITLE("Delete arrangement?"), //
