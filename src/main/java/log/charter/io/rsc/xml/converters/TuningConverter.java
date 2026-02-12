@@ -55,6 +55,12 @@ public class TuningConverter implements Converter {
 		if ("F_SHARP_STANDARD".equals(type)) {
 			return TuningType.G_FLAT_STANDARD;
 		}
+		if ("B_FLAT_DROP_G".equals(type)) {
+			return TuningType.B_FLAT_DROP_A_FLAT;
+		}
+		if ("A_DROP_G_FLAT".equals(type)) {
+			return TuningType.A_DROP_G;
+		}
 
 		return TuningType.valueOf(type);
 	}
