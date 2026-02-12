@@ -46,6 +46,54 @@ public class USCTxtImporter {
 		private int lastBeatPosition = -1;
 		private Consumer<String> textAdder;
 
+		private Consumer<String> generateSpacesBeforeWordsTextAdder() {
+			return s -> {
+				if (s.startsWith(" ")) {
+					currentVocal.text(s.substring(1));
+				} else {
+					if (lastVocal != null) {
+						lastVocal.flag(VocalFlag.WORD_PART);
+					}
+					currentVocal.text(s);
+				}
+			};
+		}
+
+		private Consumer<String> generateSpacesAfterWordsTextAdder() {
+			return s -> {
+				if (s.endsWith(" ")) {
+					currentVocal.text(s.substring(0, s.length() - 1));
+				} else {
+					currentVocal.flag(VocalFlag.WORD_PART);
+					currentVocal.text(s);
+				}
+			};
+		}
+
+		private Consumer<String> generateJoinsBeforeSyllablesTextAdder() {
+			return s -> {
+				if (s.startsWith("-") || s.startsWith("~") || s.startsWith("+") || s.startsWith("=")) {
+					currentVocal.text(s.substring(1));
+					if (lastVocal != null) {
+						lastVocal.flag(VocalFlag.WORD_PART);
+					}
+				} else {
+					currentVocal.text(s);
+				}
+			};
+		}
+
+		private Consumer<String> generateJoinsAfterSyllablesTextAdder() {
+			return s -> {
+				if (s.endsWith("-") || s.endsWith("~") || s.endsWith("+") || s.endsWith("=")) {
+					currentVocal.text(s.substring(0, s.length() - 1));
+					currentVocal.flag(VocalFlag.WORD_PART);
+				} else {
+					currentVocal.text(s);
+				}
+			};
+		}
+
 		private Consumer<String> selectTextAdder(final String[] lines) {
 			boolean spacesBeforeWords = false;
 			boolean spacesAfterWords = false;
@@ -75,47 +123,15 @@ public class USCTxtImporter {
 			}
 
 			if (spacesBeforeWords) {
-				return s -> {
-					if (s.startsWith(" ")) {
-						currentVocal.text(s.substring(1));
-					} else {
-						if (lastVocal != null) {
-							lastVocal.flag(VocalFlag.WORD_PART);
-						}
-						currentVocal.text(s);
-					}
-				};
+				return generateSpacesBeforeWordsTextAdder();
 			}
 			if (spacesAfterWords) {
-				return s -> {
-					if (s.endsWith(" ")) {
-						currentVocal.text(s.substring(0, s.length() - 1));
-					} else {
-						currentVocal.flag(VocalFlag.WORD_PART);
-						currentVocal.text(s);
-					}
-				};
+				return generateSpacesAfterWordsTextAdder();
 			}
 			if (joinsBeforeSyllable) {
-				return s -> {
-					if (s.startsWith("-") || s.startsWith("~") || s.startsWith("+") || s.startsWith("=")) {
-						currentVocal.text(s.substring(1));
-						if (lastVocal != null) {
-							lastVocal.flag(VocalFlag.WORD_PART);
-						}
-					} else {
-						currentVocal.text(s);
-					}
-				};
+				return generateJoinsBeforeSyllablesTextAdder();
 			}
-			return s -> {
-				if (s.endsWith("-") || s.endsWith("~") || s.endsWith("+") || s.endsWith("=")) {
-					currentVocal.text(s.substring(0, s.length() - 1));
-					currentVocal.flag(VocalFlag.WORD_PART);
-				} else {
-					currentVocal.text(s);
-				}
-			};
+			return generateJoinsAfterSyllablesTextAdder();
 		}
 
 		private void readBpm(final String line) {
