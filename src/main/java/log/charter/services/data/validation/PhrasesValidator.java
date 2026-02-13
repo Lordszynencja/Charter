@@ -1,83 +1,79 @@
 package log.charter.services.data.validation;
 
 import static log.charter.util.CollectionUtils.filter;
+import static log.charter.util.CollectionUtils.findIdsFor;
 
 import java.util.List;
 
-import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
-import log.charter.gui.components.tabs.errorsTab.ChartError.ChartErrorSeverity;
-import log.charter.gui.components.tabs.errorsTab.ChartPosition;
-import log.charter.gui.components.tabs.errorsTab.ChartPositionOnArrangement;
-import log.charter.gui.components.tabs.errorsTab.ChartPositionOnArrangementTime;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
-import log.charter.services.data.ChartTimeHandler;
-import log.charter.services.editModes.ModeManager;
+import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator;
+import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator.ChartPosition;
 
 public class PhrasesValidator {
-	private ChartData chartData;
-	private ChartTimeHandler chartTimeHandler;
+	private ChartPositionGenerator chartPositionGenerator;
 	private ErrorsTab errorsTab;
-	private ModeManager modeManager;
 
-	private void addError(final Label label, final int arrangementId, final FractionalPosition position) {
-		final ChartPosition errorPosition = new ChartPositionOnArrangementTime(chartData, arrangementId, position,
-				chartTimeHandler, modeManager);
-		errorsTab.addError(new ChartError(label, ChartErrorSeverity.ERROR, errorPosition));
+	private void addError(final Label label, final int arrangementId, final int id) {
+		final ChartPosition position = chartPositionGenerator.position().arrangement(arrangementId).event(id).build();
+
+		errorsTab.addError(new ChartError(label, position));
 	}
 
-	private void validateCountPhrases(final List<EventPoint> phrases, final int arrangementId) {
-		final List<EventPoint> countPhrases = filter(phrases, phrase -> phrase.phrase.equals("COUNT"));
-		if (countPhrases.size() == 1) {
+	private void validateCountPhrases(final List<EventPoint> eventPoints, final int arrangementId) {
+		final List<Integer> countPhraseIds = findIdsFor(eventPoints, p -> "COUNT".equals(p.phrase));
+
+		if (countPhraseIds.size() == 1) {
 			return;
 		}
 
-		if (countPhrases.size() < 1) {
-			final ChartPosition errorPosition = new ChartPositionOnArrangement(chartData, arrangementId, modeManager);
-			errorsTab.addError(new ChartError(Label.NO_COUNT_PHRASE_IN_ARRANGEMENT, ChartErrorSeverity.ERROR, errorPosition));
+		if (countPhraseIds.size() < 1) {
+			final ChartPosition position = chartPositionGenerator.position().arrangement(arrangementId)
+					.time(new FractionalPosition(0)).build();
+			errorsTab.addError(new ChartError(Label.NO_COUNT_PHRASE_IN_ARRANGEMENT, position));
 			return;
 		}
 
-		for (int i = 0; i < countPhrases.size(); i++) {
-			addError(Label.DUPLICATED_COUNT_PHRASE, arrangementId, countPhrases.get(i).position());
-		}
-	}
-
-	private void validateEndPhrases(final List<EventPoint> phrases, final int arrangementId) {
-		final List<EventPoint> endPhrases = filter(phrases, phrase -> phrase.phrase.equals("END"));
-		if (endPhrases.size() == 1) {
-			return;
-		}
-
-		if (endPhrases.size() < 1) {
-			final ChartPosition errorPosition = new ChartPositionOnArrangement(chartData, arrangementId, modeManager);
-			errorsTab.addError(new ChartError(Label.NO_END_PHRASE_IN_ARRANGEMENT, ChartErrorSeverity.ERROR, errorPosition));
-			return;
-		}
-
-		for (int i = 0; i < endPhrases.size(); i++) {
-			addError(Label.DUPLICATED_END_PHRASE, arrangementId, endPhrases.get(i).position());
+		for (final int id : countPhraseIds) {
+			addError(Label.DUPLICATED_COUNT_PHRASE, arrangementId, id);
 		}
 	}
 
-	private void validatePhrasesAmount(final List<EventPoint> phrases, final int arrangementId) {
-		if (!filter(phrases, ep -> !ep.phrase.equals("COUNT") && !ep.phrase.equals("END")).isEmpty()) {
+	private void validateEndPhrases(final List<EventPoint> eventPoints, final int arrangementId) {
+		final List<Integer> endPhraseIds = findIdsFor(eventPoints, p -> "END".equals(p.phrase));
+		if (endPhraseIds.size() == 1) {
 			return;
 		}
 
-		final ChartPosition errorPosition = new ChartPositionOnArrangement(chartData, arrangementId, modeManager);
-		errorsTab.addError(new ChartError(Label.NO_PHRASES_IN_ARRANGEMENT, ChartErrorSeverity.ERROR, errorPosition));
+		if (endPhraseIds.size() < 1) {
+			final ChartPosition position = chartPositionGenerator.position().arrangement(arrangementId)
+					.time(new FractionalPosition(0)).build();
+			errorsTab.addError(new ChartError(Label.NO_END_PHRASE_IN_ARRANGEMENT, position));
+			return;
+		}
+
+		for (final int id : endPhraseIds) {
+			addError(Label.DUPLICATED_END_PHRASE, arrangementId, id);
+		}
+	}
+
+	private void validatePhrasesAmount(final List<EventPoint> eventPoints, final int arrangementId) {
+		if (!filter(eventPoints, p -> p.hasPhrase() && !p.phrase.equals("COUNT") && !p.phrase.equals("END"))
+				.isEmpty()) {
+			return;
+		}
+
+		final ChartPosition position = chartPositionGenerator.position().arrangement(arrangementId).build();
+		errorsTab.addError(new ChartError(Label.NO_PHRASES_IN_ARRANGEMENT, position));
 	}
 
 	public void validate(final int arrangementId, final Arrangement arrangement) {
-		final List<EventPoint> phrases = filter(arrangement.eventPoints, EventPoint::hasPhrase);
-
-		validateCountPhrases(phrases, arrangementId);
-		validateEndPhrases(phrases, arrangementId);
-		validatePhrasesAmount(phrases, arrangementId);
+		validateCountPhrases(arrangement.eventPoints, arrangementId);
+		validateEndPhrases(arrangement.eventPoints, arrangementId);
+		validatePhrasesAmount(arrangement.eventPoints, arrangementId);
 	}
 }

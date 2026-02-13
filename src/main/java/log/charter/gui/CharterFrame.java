@@ -9,7 +9,11 @@ import java.awt.Insets;
 import java.awt.dnd.DropTarget;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
 
@@ -49,6 +53,10 @@ import log.charter.util.collections.Pair;
 import net.sf.image4j.codec.ico.ICODecoder;
 
 public class CharterFrame extends JFrame implements Initiable {
+	public enum TabType {
+		QUICK_EDIT, CHORD_TEMPLATES, ERRORS, PREVIEW_3D, TEXT, HELP
+	}
+
 	private static final long serialVersionUID = 3603305480386377813L;
 
 	private ChartData chartData;
@@ -70,6 +78,8 @@ public class CharterFrame extends JFrame implements Initiable {
 	private ChartMap chartMap;
 	private CharterTabbedPane tabs;
 
+	private final Map<TabType, Integer> tabPositions = new HashMap<>();
+
 	public CharterFrame() {
 		super(CharterMain.TITLE + " : " + Label.NO_PROJECT.label());
 		try {
@@ -85,6 +95,28 @@ public class CharterFrame extends JFrame implements Initiable {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 	}
 
+	private List<TabType> getTabsOrder() {
+		if (SystemType.is(MAC)) {
+			return asList(TabType.QUICK_EDIT, TabType.CHORD_TEMPLATES, TabType.ERRORS, TabType.TEXT, TabType.HELP);
+		} else {
+			return asList(TabType.QUICK_EDIT, TabType.CHORD_TEMPLATES, TabType.ERRORS, TabType.PREVIEW_3D, TabType.TEXT,
+					TabType.HELP);
+		}
+	}
+
+	private Function<TabType, Tab> makeTabGenerator(final Tab errorsParentTab) {
+		return type -> switch (type) {
+			case CHORD_TEMPLATES ->
+				new Tab(Label.TAB_CHORD_TEMPLATES_EDITOR, new CharterScrollPane(chordTemplatesEditorTab));
+			case ERRORS -> errorsParentTab;
+			case HELP -> new Tab(Label.TAB_HELP, helpTab);
+			case PREVIEW_3D -> new Tab(Label.TAB_3D_PREVIEW, preview3DPanel);
+			case QUICK_EDIT -> new Tab(Label.TAB_QUICK_EDIT, new CharterScrollPane(currentSelectionEditor));
+			case TEXT -> new Tab(Label.TAB_TEXT, textTab);
+			default -> throw new IllegalArgumentException("Unknown tab to make: " + type.name());
+		};
+	}
+
 	@Override
 	public void init() {
 		if (SystemType.not(MAC)) {
@@ -98,21 +130,12 @@ public class CharterFrame extends JFrame implements Initiable {
 		setExtendedState(WindowStateConfig.extendedState);
 
 		final Tab errorsParentTab = new Tab(Label.TAB_ERRORS, errorsTab);
-		if (SystemType.is(MAC)) {
-			tabs = new CharterTabbedPane(//
-					new Tab(Label.TAB_QUICK_EDIT, new CharterScrollPane(currentSelectionEditor)), //
-					new Tab(Label.TAB_CHORD_TEMPLATES_EDITOR, new CharterScrollPane(chordTemplatesEditorTab)), //
-					errorsParentTab, //
-					new Tab(Label.TAB_TEXT, textTab), //
-					new Tab(Label.TAB_HELP, helpTab));
-		} else {
-			tabs = new CharterTabbedPane(//
-					new Tab(Label.TAB_QUICK_EDIT, new CharterScrollPane(currentSelectionEditor)), //
-					new Tab(Label.TAB_CHORD_TEMPLATES_EDITOR, new CharterScrollPane(chordTemplatesEditorTab)), //
-					errorsParentTab, //
-					new Tab(Label.TAB_3D_PREVIEW, preview3DPanel), //
-					new Tab(Label.TAB_TEXT, textTab), //
-					new Tab(Label.TAB_HELP, helpTab));
+
+		final List<TabType> tabsOrder = getTabsOrder();
+		tabs = new CharterTabbedPane(
+				tabsOrder.stream().map(makeTabGenerator(errorsParentTab)).collect(Collectors.toList()));
+		for (int i = 0; i < tabsOrder.size(); i++) {
+			tabPositions.put(tabsOrder.get(i), i);
 		}
 		errorsTab.setTab(errorsParentTab);
 
@@ -183,6 +206,15 @@ public class CharterFrame extends JFrame implements Initiable {
 		}
 
 		preview3DPanel.reloadTextures();
+	}
+
+	public void setTab(final TabType tab) {
+		final Integer position = tabPositions.get(tab);
+		if (position == null) {
+			return;
+		}
+
+		tabs.setSelectedIndex(position);
 	}
 
 	@Override

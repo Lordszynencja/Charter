@@ -1,4 +1,4 @@
-package log.charter.gui.components.tabs.errorsTab;
+package log.charter.gui.components.tabs.errorsTab.position;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
@@ -6,7 +6,7 @@ import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.util.Utils;
 import log.charter.util.Utils.TimeUnit;
 
-public abstract class ChartPosition {
+public abstract class ChartPositionOld {
 	protected static String getArrangementName(final ChartData chartData, final Integer arrangementId) {
 		return chartData.songChart.arrangements.get(arrangementId).getTypeNameLabel(arrangementId);
 	}
@@ -25,7 +25,7 @@ public abstract class ChartPosition {
 
 	public final String description;
 
-	public ChartPosition(final String description) {
+	public ChartPositionOld(final String description) {
 		this.description = description;
 	}
 

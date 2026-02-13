@@ -15,11 +15,11 @@ import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNoteWithFret;
-import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.gui.CharterFrame.TabType;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
-import log.charter.gui.components.tabs.errorsTab.ChartError.ChartErrorSeverity;
-import log.charter.gui.components.tabs.errorsTab.ChartPositionOnLevel;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
+import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator;
+import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator.ChartPosition;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.editModes.ModeManager;
 import log.charter.util.CollectionUtils;
@@ -27,6 +27,7 @@ import log.charter.util.collections.Pair;
 
 public class GuitarSoundsValidator {
 	private ChartData chartData;
+	private ChartPositionGenerator chartPositionGenerator;
 	private ChartTimeHandler chartTimeHandler;
 	private ErrorsTab errorsTab;
 	private ModeManager modeManager;
@@ -45,67 +46,75 @@ public class GuitarSoundsValidator {
 			this.level = level;
 		}
 
-		private ChartError generateError(final String label, final IConstantFractionalPosition position) {
-			final ChartPositionOnLevel errorPosition = new ChartPositionOnLevel(chartData, arrangementId, levelId,
-					position, chartTimeHandler, modeManager);
-			return new ChartError(label, ChartErrorSeverity.ERROR, errorPosition);
+		private ChartError generateErrorWithTab(final String label, final int id) {
+			final ChartPosition position = chartPositionGenerator.position().arrangement(arrangementId).level(levelId)
+					.sound(id).tab(TabType.QUICK_EDIT).build();
+			return new ChartError(label, position);
 		}
 
-		private ChartError generateError(final Label label, final IConstantFractionalPosition position) {
-			return generateError(label.label(), position);
+		private ChartError generateErrorWithTab(final Label label, final int id) {
+			return generateErrorWithTab(label.label(), id);
 		}
 
-		private void validateFrets(final ChordOrNote sound) {
+		private ChartError generateError(final String label, final int id) {
+			final ChartPosition position = chartPositionGenerator.position().arrangement(arrangementId).level(levelId)
+					.sound(id).tab(TabType.QUICK_EDIT).build();
+			return new ChartError(label, position);
+		}
+
+		private ChartError generateError(final Label label, final int id) {
+			return generateError(label.label(), id);
+		}
+
+		private void validateFrets(final int id, final ChordOrNote sound) {
 			sound.notesWithFrets(arrangement.chordTemplates).forEach(note -> {
 				if (note.fret() < arrangement.capo) {
-					final ChartPositionOnLevel errorPosition = new ChartPositionOnLevel(chartData, arrangementId,
-							levelId, note.position(), chartTimeHandler, modeManager);
-					errorsTab.addError(
-							new ChartError(Label.NOTE_FRET_BELOW_CAPO, ChartErrorSeverity.WARNING, errorPosition));
+					generateErrorWithTab(Label.NOTE_FRET_BELOW_CAPO, id);
 				}
 			});
 		}
 
-		private void validateSlideFret(final CommonNoteWithFret note) {
+		private void validateSlideFret(final int id, final CommonNoteWithFret note) {
 			if (note.fret() == 0) {
-				errorsTab.addError(generateError(Label.NOTE_SLIDE_FROM_OPEN_STRING, note));
+				errorsTab.addError(generateErrorWithTab(Label.NOTE_SLIDE_FROM_OPEN_STRING, id));
 			}
 		}
 
-		private void validatePitchedWithoutLinkNext(final CommonNoteWithFret note) {
+		private void validatePitchedWithoutLinkNext(final int id, final CommonNoteWithFret note) {
 			if (!note.linkNext() && !note.unpitchedSlide()) {
-				errorsTab.addError(generateError(Label.NOTE_SLIDE_NOT_LINKED, note));
+				errorsTab.addError(generateErrorWithTab(Label.NOTE_SLIDE_NOT_LINKED, id));
 			}
 		}
 
-		private void validateUnpitchedWithLinkNext(final CommonNoteWithFret note) {
+		private void validateUnpitchedWithLinkNext(final int id, final CommonNoteWithFret note) {
 			if (note.unpitchedSlide()) {
-				errorsTab.addError(generateError(Label.UNPITCHED_NOTE_SLIDE_LINKED, note));
+				errorsTab.addError(generateErrorWithTab(Label.UNPITCHED_NOTE_SLIDE_LINKED, id));
 			}
 		}
 
-		private void validateSlideToNextNote(final CommonNoteWithFret note, final CommonNoteWithFret nextNote) {
+		private void validateSlideToNextNote(final int id, final CommonNoteWithFret note,
+				final CommonNoteWithFret nextNote) {
 			if (nextNote.fret() != note.slideTo()) {
-				errorsTab.addError(generateError(Label.NOTE_SLIDES_INTO_WRONG_FRET.format(note.string()), note));
+				errorsTab.addError(generateErrorWithTab(Label.NOTE_SLIDES_INTO_WRONG_FRET.format(note.string()), id));
 			}
 			if (note.finger() != null && !note.finger().equals(nextNote.finger())) {
-				errorsTab
-						.addError(generateError(Label.NOTE_SLIDE_ENDS_ON_DIFFERENT_FINGER.format(note.string()), note));
+				errorsTab.addError(
+						generateErrorWithTab(Label.NOTE_SLIDE_ENDS_ON_DIFFERENT_FINGER.format(note.string()), id));
 			}
 		}
 
 		private void validateCorrectSlide(final int id, final ChordOrNote sound) {
 			sound.notesWithFrets(arrangement.chordTemplates)//
 					.filter(n -> n.slideTo() != null)//
-					.peek(this::validateSlideFret)//
-					.peek(this::validatePitchedWithoutLinkNext)//
+					.peek(n -> validateSlideFret(id, n))//
+					.peek(n -> validatePitchedWithoutLinkNext(id, n))//
 					.filter(n -> n.linkNext())//
-					.peek(this::validateUnpitchedWithLinkNext)//
+					.peek(n -> validateUnpitchedWithLinkNext(id, n))//
 					.filter(n -> !n.unpitchedSlide())//
 					.map(n -> new Pair<>(n, ChordOrNote.findNextSoundOnString(n.string(), id + 1, level.sounds)))//
 					.filter(v -> v.b != null)//
 					.map(v -> new Pair<>(v.a, v.b.noteWithFret(v.a.string(), arrangement.chordTemplates).get()))//
-					.forEach(v -> validateSlideToNextNote(v.a, v.b));
+					.forEach(v -> validateSlideToNextNote(id, v.a, v.b));
 		}
 
 		private void validateCorrectLength(final int id, final ChordOrNote sound) {
@@ -118,29 +127,29 @@ public class GuitarSoundsValidator {
 				}
 
 				if (note.position().equals(note.endPosition())) {
-					errorsTab.addError(generateError(Label.LINKED_NOTE_HAS_NO_LENGTH, note));
+					errorsTab.addError(generateError(Label.LINKED_NOTE_HAS_NO_LENGTH, id));
 				}
 			});
 		}
 
-		private void validateHammerOnFret(final CommonNoteWithFret n) {
+		private void validateHammerOnFret(final int id, final CommonNoteWithFret n) {
 			if (n.hopo() == HOPO.HAMMER_ON && n.fret() == 0) {
-				errorsTab.addError(generateError(Label.HAMMER_ON_ON_FRET_ZERO, n));
+				errorsTab.addError(generateError(Label.HAMMER_ON_ON_FRET_ZERO, id));
 			}
 		}
 
-		private void validateTapFret(final CommonNoteWithFret n) {
+		private void validateTapFret(final int id, final CommonNoteWithFret n) {
 			if (n.hopo() == HOPO.TAP && n.fret() == 0) {
-				errorsTab.addError(generateError(Label.TAP_ON_FRET_ZERO, n));
+				errorsTab.addError(generateError(Label.TAP_ON_FRET_ZERO, id));
 			}
 		}
 
 		private void validateCorrectHOPO(final int id, final ChordOrNote sound) {
 			sound.notesWithFrets(arrangement.chordTemplates)//
 					.filter(n -> n.hopo() != HOPO.NONE)//
-					.peek(this::validateHammerOnFret)//
+					.peek(n -> validateHammerOnFret(id, n))//
 					.filter(n -> n.hopo() != HOPO.HAMMER_ON)//
-					.peek(this::validateTapFret)//
+					.peek(n -> validateTapFret(id, n))//
 					.filter(n -> n.hopo() == HOPO.PULL_OFF)//
 					.forEach(n -> {
 						final ChordOrNote previousSound = ChordOrNote.findPreviousSoundOnString(n.string(), id - 1,
@@ -149,17 +158,17 @@ public class GuitarSoundsValidator {
 								.flatMap(s -> s.noteWithFret(n.string(), arrangement.chordTemplates))//
 								.map(previousNote -> previousNote.fret());
 						if (previousFret.isEmpty()) {
-							errorsTab.addError(generateError(Label.PULL_OFF_WITHOUT_NOTE_BEFORE, n));
+							errorsTab.addError(generateError(Label.PULL_OFF_WITHOUT_NOTE_BEFORE, id));
 							return;
 						}
 
 						if (previousFret.get() <= n.fret()) {
-							errorsTab.addError(generateError(Label.PULL_OFF_ON_HIGHER_EQUAL_FRET, n));
+							errorsTab.addError(generateError(Label.PULL_OFF_ON_HIGHER_EQUAL_FRET, id));
 						}
 					});
 		}
 
-		private void validateCorrectHandshape(final ChordOrNote sound) {
+		private void validateCorrectHandshape(final int id, final ChordOrNote sound) {
 			final HandShape lastHandShape = CollectionUtils.lastBeforeEqual(level.handShapes, sound).find();
 			if (lastHandShape == null || lastHandShape.templateId == null
 					|| lastHandShape.endPosition().compareTo(sound) < 0) {
@@ -180,24 +189,24 @@ public class GuitarSoundsValidator {
 					});
 
 			if (wrongFrets) {
-				errorsTab.addError(generateError(Label.FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE, sound));
+				errorsTab.addError(generateErrorWithTab(Label.FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE, id));
 			}
 			if (wrongFingers) {
-				errorsTab.addError(generateError(Label.FINGER_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE, sound));
+				errorsTab.addError(generateErrorWithTab(Label.FINGER_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE, id));
 			}
 		}
 
-		private void validateNoteFHP(final ChordOrNote sound) {
+		private void validateNoteFHP(final int id, final ChordOrNote sound) {
 			final FHP fhp = CollectionUtils.lastBeforeEqual(level.fhps, sound).find();
 			if (fhp == null) {
-				errorsTab.addError(generateError(Label.NOTE_WITHOUT_FHP, sound));
+				errorsTab.addError(generateError(Label.NOTE_WITHOUT_FHP, id));
 				return;
 			}
 
 			if (sound.isNote()) {
 				final int fret = sound.note().fret;
 				if (fret > arrangement.capo && (fret < fhp.fret || fret > fhp.topFret())) {
-					errorsTab.addError(generateError(Label.NOTE_IN_WRONG_FHP, sound));
+					errorsTab.addError(generateError(Label.NOTE_IN_WRONG_FHP, id));
 				}
 
 				return;
@@ -210,7 +219,7 @@ public class GuitarSoundsValidator {
 				final Integer finger = template.fingers.get(string);
 				final int fret = template.frets.get(string);
 				if (finger != null && finger == 1 && fret != fhp.fret) {
-					errorsTab.addError(generateError(Label.FIRST_FINGER_NOT_ON_FIRST_FHP_FRET, sound));
+					errorsTab.addError(generateErrorWithTab(Label.FIRST_FINGER_NOT_ON_FIRST_FHP_FRET, id));
 					return;
 				}
 
@@ -220,7 +229,7 @@ public class GuitarSoundsValidator {
 			}
 
 			if (fretOutsideOfFHP) {
-				errorsTab.addError(generateError(Label.NOTE_IN_WRONG_FHP, sound));
+				errorsTab.addError(generateError(Label.NOTE_IN_WRONG_FHP, id));
 			}
 		}
 
@@ -250,7 +259,7 @@ public class GuitarSoundsValidator {
 					return;
 				}
 
-				errorsTab.addError(generateError(Label.CHORD_WITH_NOTE_TAILS, sound));
+				errorsTab.addError(generateError(Label.CHORD_WITH_NOTE_TAILS, id));
 				return;
 			}
 		}
@@ -259,12 +268,12 @@ public class GuitarSoundsValidator {
 			for (int i = 0; i < level.sounds.size(); i++) {
 				final ChordOrNote sound = level.sounds.get(i);
 
-				validateFrets(sound);
+				validateFrets(i, sound);
 				validateCorrectSlide(i, sound);
 				validateCorrectLength(i, sound);
-				validateCorrectHandshape(sound);
+				validateCorrectHandshape(i, sound);
 				validateCorrectHOPO(i, sound);
-				validateNoteFHP(sound);
+				validateNoteFHP(i, sound);
 				validateChordTail(i, sound);
 			}
 		}

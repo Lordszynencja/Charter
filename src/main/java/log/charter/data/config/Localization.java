@@ -121,6 +121,7 @@ public class Localization {
 		EXPLOSIONS_SHAKY_CAM("Shaky cam"), //
 		FHP_PANE("FHP"), //
 		FHP_STARTS_ON_WRONG_FRET("Fret Hand Position starts on fret below or equal to capo/0"), //
+		FHP_TOO_CLOSE_TO_NEXT("Fret Hand Position too close to next one (<%d ms)"), //
 		FHP_WIDTH("Width"), //
 		FILE_MENU("File"), //
 		FINGER_NOT_SET_FOR_FRETTED_STRING("Finger not set for fretted string in template [%d] - string %d"), //

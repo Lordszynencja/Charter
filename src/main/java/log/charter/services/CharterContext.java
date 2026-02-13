@@ -20,6 +20,7 @@ import log.charter.gui.components.tabs.HelpTab;
 import log.charter.gui.components.tabs.TextTab;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
+import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
@@ -81,15 +82,16 @@ public class CharterContext {
 
 	private final ActionHandler actionHandler = new ActionHandler();
 	private final ArrangementFixer arrangementFixer = new ArrangementFixer();
+	private final AudioHandler audioHandler = new AudioHandler();
 	private final BeatsService beatsService = new BeatsService();
 	private final BPMDoubler bpmDoubler = new BPMDoubler();
 	private final BPMHalver bpmHalver = new BPMHalver();
-	private final ChartValidator chartValidator = new ChartValidator();
-	private final AudioHandler audioHandler = new AudioHandler();
 	private final BeatsDrawer beatsDrawer = new BeatsDrawer();
 	private final ChartData chartData = new ChartData();
 	private final ChartItemsHandler chartItemsHandler = new ChartItemsHandler();
+	private final ChartPositionGenerator chartPositionGenerator = new ChartPositionGenerator();
 	private final ChartTimeHandler chartTimeHandler = new ChartTimeHandler();
+	private final ChartValidator chartValidator = new ChartValidator();
 	private final ClapsHandler clapsHandler = new ClapsHandler();
 	private final CopyManager copyManager = new CopyManager();
 	private final ExistingProjectImporter existingProjectImporter = new ExistingProjectImporter();
