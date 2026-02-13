@@ -380,6 +380,7 @@ public class ArrangementFixer {
 		level.sounds.removeIf(sound -> sound.isChord() //
 				&& (sound.chord().templateId() >= arrangement.chordTemplates.size()//
 						|| sound.chord().chordNotes.isEmpty()));
+		level.handShapes.removeIf(hs -> hs.endPosition().equals(hs.position()));
 
 		removeDuplicatesFractional(level.fhps);
 		removeDuplicatesFractional(level.sounds);
