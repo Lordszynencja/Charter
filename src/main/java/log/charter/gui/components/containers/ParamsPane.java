@@ -218,7 +218,7 @@ public class ParamsPane extends JDialog implements WindowListener {
 		if (width == 0) {
 			width = labelComponent.getPreferredSize().width;
 		}
-		add(labelComponent, x, y, width, 20);
+		add(labelComponent, x, y, width, sizes.rowHeight);
 
 		return width;
 	}
