@@ -4,12 +4,14 @@ import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.FHP;
+import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.gui.CharterFrame.TabType;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator;
 import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator.ChartPosition;
+import log.charter.util.CollectionUtils;
 
 public class FHPsValidator {
 	/**
@@ -53,8 +55,25 @@ public class FHPsValidator {
 		}
 	}
 
+	private void checkFhpInsideHandShape(final int arrangementId, final Arrangement arrangement, final int levelId,
+			final Level level) {
+		for (int i = 0; i < level.fhps.size(); i++) {
+			final FHP fhp = level.fhps.get(i);
+
+			final HandShape handShape = CollectionUtils.lastBefore(level.handShapes, fhp).find();
+			if (handShape == null || handShape.endPosition().compareTo(fhp) < 0) {
+				continue;
+			}
+
+			final ChartPosition position = chartPositionGenerator.position()//
+					.arrangement(arrangementId).level(levelId).fhp(i).build();
+			errorsTab.addError(new ChartError(Label.FHP_INSIDE_HAND_SHAPE, position));
+		}
+	}
+
 	public void validate(final int arrangementId, final Arrangement arrangement, final int levelId, final Level level) {
 		checkFhpBelowCapo(arrangementId, arrangement, levelId, level);
 		checkFhpTooCloseToNext(arrangementId, arrangement, levelId, level);
+		checkFhpInsideHandShape(arrangementId, arrangement, levelId, level);
 	}
 }

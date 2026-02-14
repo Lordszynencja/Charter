@@ -119,6 +119,7 @@ public class Localization {
 		EXIT("Exit"), //
 		EXPLOSIONS("Explosions"), //
 		EXPLOSIONS_SHAKY_CAM("Shaky cam"), //
+		FHP_INSIDE_HAND_SHAPE("Fret Hand Position change inside a Hand Shape"), //
 		FHP_PANE("FHP"), //
 		FHP_STARTS_ON_WRONG_FRET("Fret Hand Position starts on fret below or equal to capo/0"), //
 		FHP_TOO_CLOSE_TO_NEXT("Fret Hand Position too close to next one (<%d ms)"), //
