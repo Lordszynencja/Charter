@@ -431,7 +431,7 @@ public class ArrangementFixer {
 				if (firstBend.position().compareTo(sound) != 0) {
 					final BendValue bend = new BendValue(lastBendOnPreviousNote);
 					bend.position(sound.position());
-					note.bendValues().add(bend);
+					note.bendValues().add(0, bend);
 					return;
 				}
 
