@@ -10,9 +10,9 @@ import log.charter.data.song.Level;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
-import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator;
-import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator.ChartPosition;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
 
 public class ChordTemplatesValidator {
 	private ChartPositionGenerator chartPositionGenerator;

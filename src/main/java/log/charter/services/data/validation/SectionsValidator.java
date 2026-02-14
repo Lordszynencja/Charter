@@ -9,9 +9,9 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.SectionType;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
-import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator;
-import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator.ChartPosition;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
 import log.charter.util.CollectionUtils;
 
 public class SectionsValidator {

@@ -8,9 +8,9 @@ import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.gui.CharterFrame.TabType;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
-import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator;
-import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator.ChartPosition;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
 import log.charter.util.CollectionUtils;
 
 public class FHPsValidator {

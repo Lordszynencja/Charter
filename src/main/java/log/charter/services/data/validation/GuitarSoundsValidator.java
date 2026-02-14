@@ -3,7 +3,6 @@ package log.charter.services.data.validation;
 import java.util.Objects;
 import java.util.Optional;
 
-import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
@@ -17,20 +16,15 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNoteWithFret;
 import log.charter.gui.CharterFrame.TabType;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
-import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator;
-import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator.ChartPosition;
-import log.charter.services.data.ChartTimeHandler;
-import log.charter.services.editModes.ModeManager;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
 import log.charter.util.CollectionUtils;
 import log.charter.util.collections.Pair;
 
 public class GuitarSoundsValidator {
-	private ChartData chartData;
 	private ChartPositionGenerator chartPositionGenerator;
-	private ChartTimeHandler chartTimeHandler;
 	private ErrorsTab errorsTab;
-	private ModeManager modeManager;
 
 	private class LevelValidator {
 		private final int arrangementId;

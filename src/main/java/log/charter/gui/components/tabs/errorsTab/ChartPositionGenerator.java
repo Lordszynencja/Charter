@@ -1,4 +1,4 @@
-package log.charter.gui.components.tabs.errorsTab.position;
+package log.charter.gui.components.tabs.errorsTab;
 
 import static log.charter.util.Utils.formatTime;
 

@@ -1,7 +1,7 @@
 package log.charter.gui.components.tabs.errorsTab;
 
 import log.charter.data.config.Localization.Label;
-import log.charter.gui.components.tabs.errorsTab.position.ChartPositionGenerator.ChartPosition;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
 
 public class ChartError {
 	public enum ChartErrorSeverity {
