@@ -52,7 +52,7 @@ public final class MidiReader {
 
 		public void addBeats(final MidiTempoEvent tempo) {
 			while (beatTime < tempo.time) {
-				addBeat(beatTime + resolution > tempo.time);
+				addBeat(beatTime > tempo.time);
 			}
 
 			position = (position
