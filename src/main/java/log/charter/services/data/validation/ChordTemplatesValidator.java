@@ -3,7 +3,6 @@ package log.charter.services.data.validation;
 import java.util.HashSet;
 import java.util.Set;
 
-import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
@@ -11,15 +10,13 @@ import log.charter.data.song.Level;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
-import log.charter.gui.components.tabs.errorsTab.ChartError.ChartErrorSeverity;
-import log.charter.gui.components.tabs.errorsTab.ChartPositionOnArrangement;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
-import log.charter.services.editModes.ModeManager;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
 
 public class ChordTemplatesValidator {
-	private ChartData chartData;
+	private ChartPositionGenerator chartPositionGenerator;
 	private ErrorsTab errorsTab;
-	private ModeManager modeManager;
 
 	private Set<Integer> getChordTemplateIdsToSkip(final Arrangement arrangement) {
 		final Set<Integer> idsToSkip = new HashSet<>();
@@ -36,9 +33,10 @@ public class ChordTemplatesValidator {
 	}
 
 	private void addError(final int arrangementId, final Label label, final int templateId, final int string) {
-		final ChartPositionOnArrangement errorPosition = new ChartPositionOnArrangement(chartData, arrangementId,
-				modeManager);
-		errorsTab.addError(new ChartError(label.format(templateId, string), ChartErrorSeverity.ERROR, errorPosition));
+		final String message = label.format(templateId, string);
+		final ChartPosition position = chartPositionGenerator.position().arrangement(arrangementId)
+				.chordTemplate(templateId).build();
+		errorsTab.addError(new ChartError(message, position));
 	}
 
 	private void validateChordTemplate(final int arrangementId, final Arrangement arrangement, final int templateId,

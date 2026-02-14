@@ -28,6 +28,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.CharterTabbedPane.Tab;
 import log.charter.gui.components.containers.RowedPanel;
+import log.charter.gui.components.tabs.errorsTab.ChartError.ChartErrorSeverity;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.util.ImageUtils;
@@ -152,7 +153,9 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 		errorsBuffer = new ArrayList<>();
 
 		if (tab != null) {
-			if (internalBuffer.isEmpty()) {
+			final boolean hasErrors = internalBuffer.stream()
+					.anyMatch(error -> error.severity == ChartErrorSeverity.ERROR);
+			if (!hasErrors) {
 				tab.clearTextColorOVerride();
 				tab.icon = null;
 			} else {

@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JTabbedPane;
@@ -51,9 +52,9 @@ public class CharterTabbedPane extends JTabbedPane implements ComponentListener 
 		}
 	}
 
-	public final Tab[] tabs;
+	public final List<Tab> tabs;
 
-	public CharterTabbedPane(final Tab... tabs) {
+	public CharterTabbedPane(final List<Tab> tabs) {
 		super();
 		setUI(new CharterTabbedPaneUI(this));
 
@@ -68,7 +69,7 @@ public class CharterTabbedPane extends JTabbedPane implements ComponentListener 
 
 	@Override
 	public Icon getIconAt(final int index) {
-		return tabs[index].icon;
+		return tabs.get(index).icon;
 	}
 
 	@Override

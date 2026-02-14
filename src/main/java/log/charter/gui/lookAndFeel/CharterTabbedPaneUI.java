@@ -18,6 +18,7 @@ import javax.swing.plaf.metal.MetalTabbedPaneUI;
 import log.charter.data.config.ChartPanelColors;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.containers.CharterTabbedPane;
+import log.charter.gui.components.containers.CharterTabbedPane.Tab;
 
 public class CharterTabbedPaneUI extends MetalTabbedPaneUI {
 
@@ -79,8 +80,9 @@ public class CharterTabbedPaneUI extends MetalTabbedPaneUI {
 	@Override
 	protected void paintText(final Graphics g, final int tabPlacement, final Font font, final FontMetrics metrics,
 			final int tabIndex, final String title, final Rectangle textRect, final boolean isSelected) {
-		if (component.tabs[tabIndex].textColorOverride != null) {
-			g.setColor(component.tabs[tabIndex].textColorOverride);
+		final Tab tab = component.tabs.get(tabIndex);
+		if (tab.textColorOverride != null) {
+			g.setColor(tab.textColorOverride);
 		} else if (isSelected) {
 			g.setColor(ChartPanelColors.ColorLabel.BASE_TEXT.color());
 		} else {

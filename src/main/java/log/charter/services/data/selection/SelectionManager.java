@@ -249,6 +249,11 @@ public class SelectionManager implements Initiable {
 		currentSelectionEditor.selectionChanged(true);
 	}
 
+	public void setSelection(final PositionType type, final int id) {
+		clearSelectionsExcept(PositionType.NONE);
+		addSelection(type, id);
+	}
+
 	@SuppressWarnings("unchecked")
 	public <C extends IVirtualConstantPosition> void addSelectionForPositions(final PositionType type,
 			final Collection<C> positions) {

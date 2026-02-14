@@ -8,21 +8,17 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.Level;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
-import log.charter.gui.components.tabs.errorsTab.ChartError.ChartErrorSeverity;
-import log.charter.gui.components.tabs.errorsTab.ChartPosition;
-import log.charter.gui.components.tabs.errorsTab.ChartPositionOnTempoMap;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
+import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
-import log.charter.services.data.ChartTimeHandler;
-import log.charter.services.editModes.ModeManager;
 
 public class ChartValidator implements Initiable {
 	private CharterContext charterContext;
 	private ChartData chartData;
-	private ChartTimeHandler chartTimeHandler;
+	private ChartPositionGenerator chartPositionGenerator;
 	private ErrorsTab errorsTab;
-	private ModeManager modeManager;
 
 	private Thread validationThread;
 
@@ -68,10 +64,8 @@ public class ChartValidator implements Initiable {
 
 		final double firstBeatPosition = beats.get(0).position();
 		if (firstBeatPosition < 10_000) {
-			final ChartPosition errorPosition = new ChartPositionOnTempoMap(firstBeatPosition, chartTimeHandler,
-					modeManager);
-			errorsTab.addError(
-					new ChartError(Label.FIRST_BEAT_BEFORE_10_SECONDS, ChartErrorSeverity.ERROR, errorPosition));
+			final ChartPosition position = chartPositionGenerator.position().tempoMap(0).build();
+			errorsTab.addError(new ChartError(Label.FIRST_BEAT_BEFORE_10_SECONDS, position));
 		}
 	}
 

@@ -523,4 +523,15 @@ public class CollectionUtils {
 
 		return set;
 	}
+
+	public static <T> List<Integer> findIdsFor(final List<T> items, final Predicate<T> filter) {
+		final List<Integer> ids = new ArrayList<>();
+		for (int i = 0; i < items.size(); i++) {
+			final T item = items.get(i);
+			if (filter.test(item)) {
+				ids.add(i);
+			}
+		}
+		return ids;
+	}
 }
