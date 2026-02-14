@@ -17,6 +17,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInput;
 import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.util.CollectionUtils;
 
 public class ToneChangePane extends ParamsPane implements DocumentListener {
@@ -35,7 +36,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 
 	public ToneChangePane(final ChartData chartData, final CharterFrame frame, final UndoSystem undoSystem,
 			final ToneChange toneChange, final Runnable onCancel) {
-		super(frame, Label.TONE_CHANGE_PANE, 250);
+		super(frame, Label.TONE_CHANGE_PANE, new PaneSizesBuilder(400).rowHeight(25).build());
 		this.chartData = chartData;
 		this.undoSystem = undoSystem;
 
@@ -44,10 +45,10 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		toneName = toneChange.toneName;
 
 		int row = 0;
-		toneNameInput = new AutocompleteInput<>(this, 100, toneName, this::getPossibleValues, s -> s, this::onSelect);
+		toneNameInput = new AutocompleteInput<>(this, 250, toneName, this::getPossibleValues, s -> s, this::onSelect);
 		toneNameInput.getDocument().addDocumentListener(this);
 		final int labelWidth = addLabel(row, 20, Label.TONE_CHANGE_TONE_NAME, 0);
-		add(toneNameInput, 20 + labelWidth + 3, getY(row++), 100, 20);
+		add(toneNameInput, 20 + labelWidth + 3, getY(row++), 250, 25);
 
 		row++;
 		this.setOnFinish(this::saveAndExit, onCancel);
@@ -55,11 +56,15 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 	}
 
 	private List<String> getPossibleValues(final String name) {
+		final String nameFilter = name.toLowerCase();
+
 		final List<String> tones = chartData.currentArrangement().tones.stream()//
-				.filter(toneName -> toneName.toLowerCase().contains(name.toLowerCase()))//
+				.filter(toneName -> toneName.toLowerCase().contains(nameFilter))//
 				.collect(Collectors.toCollection(ArrayList::new));
-		if (!tones.contains(chartData.currentArrangement().startingTone)) {
-			tones.add(chartData.currentArrangement().startingTone);
+
+		final String startingTone = chartData.currentArrangement().startingTone;
+		if (!tones.contains(startingTone) && startingTone.toLowerCase().contains(nameFilter)) {
+			tones.add(startingTone);
 		}
 
 		return tones;
