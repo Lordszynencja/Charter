@@ -90,12 +90,16 @@ public class ArrangementNote {
 			bend = max(1, min(3, max(bend, bendValue.bendValue.intValue())));
 		}
 
+		if (bend == 0) {
+			return null;
+		}
+
 		return bend;
 	}
 
 	private CountedList<ArrangementBendValue> bendValues(final ImmutableBeatsMap beats,
 			final List<BendValue> bendValues) {
-		if (bendValues.isEmpty()) {
+		if (bendValues.isEmpty() || bend == null) {
 			return null;
 		}
 
