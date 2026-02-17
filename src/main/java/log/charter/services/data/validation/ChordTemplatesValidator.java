@@ -6,13 +6,14 @@ import java.util.Set;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
-import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
+import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 
 public class ChordTemplatesValidator {
 	private ChartPositionGenerator chartPositionGenerator;
@@ -32,11 +33,36 @@ public class ChordTemplatesValidator {
 		return idsToSkip;
 	}
 
-	private void addError(final int arrangementId, final Label label, final int templateId, final int string) {
+	private void addFirstItemUsingTemplate(final ChartPosition position, final Arrangement arrangement,
+			final int templateId) {
+		for (int i = arrangement.levels.size() - 1; i >= 0; i--) {
+			final Level level = arrangement.levels.get(i);
+
+			for (int soundId = 0; soundId < level.sounds.size(); soundId++) {
+				final ChordOrNote sound = level.sounds.get(soundId);
+				if (sound.isChord() && sound.chord().templateId() == templateId) {
+					position.level(i).sound(soundId);
+					return;
+				}
+			}
+			for (int handShapeId = 0; handShapeId < level.handShapes.size(); handShapeId++) {
+				final HandShape handShape = level.handShapes.get(handShapeId);
+				if (handShape.templateId == templateId) {
+					position.level(i).handShape(handShapeId);
+					return;
+				}
+			}
+		}
+	}
+
+	private void addError(final int arrangementId, final Arrangement arrangement, final Label label,
+			final int templateId, final int string) {
 		final String message = label.format(templateId, string);
 		final ChartPosition position = chartPositionGenerator.position().arrangement(arrangementId)
-				.chordTemplate(templateId).build();
-		errorsTab.addError(new ChartError(message, position));
+				.chordTemplate(templateId);
+		addFirstItemUsingTemplate(position, arrangement, templateId);
+
+		errorsTab.addError(new ChartError(message, position.build()));
 	}
 
 	private void validateChordTemplate(final int arrangementId, final Arrangement arrangement, final int templateId,
@@ -47,7 +73,7 @@ public class ChordTemplatesValidator {
 			final int fret = template.frets.get(string);
 			final Integer finger = template.fingers.get(string);
 			if (fret > lowestFret && finger != null && finger == 1) {
-				addError(arrangementId, Label.FIRST_FINGER_ON_NOT_LOWEST_FRET, templateId, string);
+				addError(arrangementId, arrangement, Label.FIRST_FINGER_ON_NOT_LOWEST_FRET, templateId, string);
 				continue;
 			}
 
@@ -56,7 +82,7 @@ public class ChordTemplatesValidator {
 			if (isOpen == hasFinger) {
 				final Label label = isOpen ? Label.FINGER_SET_FOR_OPEN_STRING//
 						: Label.FINGER_NOT_SET_FOR_FRETTED_STRING;
-				addError(arrangementId, label, templateId, string);
+				addError(arrangementId, arrangement, label, templateId, string);
 			}
 
 		}
