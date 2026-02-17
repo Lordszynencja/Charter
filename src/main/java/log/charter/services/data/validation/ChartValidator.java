@@ -9,8 +9,8 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.Level;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
-import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
+import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
 
@@ -70,6 +70,10 @@ public class ChartValidator implements Initiable {
 	}
 
 	private void validate() {
+		if (chartData.isEmpty) {
+			return;
+		}
+
 		validateBeatMap();
 
 		final List<Arrangement> arrangements = chartData.songChart.arrangements;

@@ -360,7 +360,7 @@ public class BeatsMap {
 	 * creates base beats map
 	 */
 	public BeatsMap(final double audioLength) {
-		beats.add(new Beat(10_000, 4, 4, true));
+		beats.add(new Beat(0, 4, 4, true));
 		makeBeatsUntilSongEnd(audioLength);
 	}
 
