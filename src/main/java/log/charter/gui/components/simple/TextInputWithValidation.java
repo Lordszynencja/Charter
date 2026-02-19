@@ -176,14 +176,9 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 
 		if (!error || allowWrongValues) {
 			final String newValue = setter.apply(value);
-
-			final Runnable doHighlight = new Runnable() {
-				@Override
-				public void run() {
-					setTextWithoutEvent(newValue);
-				}
-			};
-			SwingUtilities.invokeLater(doHighlight);
+			if (!newValue.equals(value)) {
+				SwingUtilities.invokeLater(() -> setTextWithoutEvent(newValue));
+			}
 		}
 
 		setSelectionEnd(getSelectionStart());
@@ -193,7 +188,9 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 
 	public void setTextWithoutEvent(final String text) {
 		disableEvents = true;
+		final int caretPosition = getCaretPosition();
 		setText(text);
+		setCaretPosition(caretPosition);
 		clearError();
 		disableEvents = false;
 	}
