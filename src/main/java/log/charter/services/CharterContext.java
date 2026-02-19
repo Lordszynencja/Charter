@@ -7,6 +7,8 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.SystemType;
@@ -234,14 +236,16 @@ public class CharterContext {
 			chartTimeHandler.frame(frameTime);
 
 			if (SystemType.not(MAC) && windowedPreviewHandler.isPreviewVisible()) {
-				windowedPreviewHandler.repaint();
+				SwingUtilities.invokeLater(windowedPreviewHandler::repaint);
 			}
 
 			if (charterFrame.isShowing()) {
 				helpTab.updateValues();
 				titleUpdater.updateTitle();
-				charterFrame.validate();
-				charterFrame.repaint();
+				SwingUtilities.invokeLater(() -> {
+					charterFrame.validate();
+					charterFrame.repaint();
+				});
 			}
 		} catch (final Exception e) {
 			Logger.error("Exception in frame()", e);

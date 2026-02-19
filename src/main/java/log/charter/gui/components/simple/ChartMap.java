@@ -22,6 +22,7 @@ import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
 import log.charter.data.config.GraphicalConfig;
+import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.notes.ChordOrNote;
@@ -121,14 +122,19 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 	private void drawBars(final Graphics g) {
 		g.setColor(ColorLabel.MAIN_BEAT.color());
 
-		chartData.beats().stream()//
-				.filter(beat -> beat.firstInMeasure)//
-				.forEach(beat -> {
-					final int x = timeToPosition(beat.position());
-					final Color color = (beat.anchor ? ColorLabel.MAIN_BEAT : ColorLabel.SECONDARY_BEAT).color();
-					g.setColor(color);
-					g.drawLine(x, 0, x, getHeight());
-				});
+		final ImmutableBeatsMap beats = chartData.beats();
+
+		for (int i = 0; i < beats.size(); i++) {
+			final Beat beat = beats.get(i);
+			if (!beat.firstInMeasure) {
+				continue;
+			}
+
+			final int x = timeToPosition(beat.position());
+			final Color color = (beat.anchor ? ColorLabel.MAIN_BEAT : ColorLabel.SECONDARY_BEAT).color();
+			g.setColor(color);
+			g.drawLine(x, 0, x, getHeight());
+		}
 	}
 
 	private void drawVocalLines(final Graphics g) {

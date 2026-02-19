@@ -13,7 +13,7 @@ public class TextTab extends CharterScrollPane {
 	private final JTextArea textArea;
 
 	public TextTab() {
-		this(new JTextArea(1000, 1000));
+		this(new JTextArea(1, 1));
 	}
 
 	private TextTab(final JTextArea textArea) {
