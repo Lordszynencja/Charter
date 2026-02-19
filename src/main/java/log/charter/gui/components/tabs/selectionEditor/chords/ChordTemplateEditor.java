@@ -290,7 +290,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			}
 		});
 
-		parent.addWithSettingSize(chordNameInput, x + 80, parent.sizes.getY(row), 150, 20);
+		parent.addWithSettingSize(chordNameInput, x + 80, parent.sizes.getY(row), 150, 25);
 	}
 
 	private String templateSearchName(final ChordTemplate template) {
