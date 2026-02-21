@@ -1,5 +1,7 @@
 package log.charter.gui.components.simple;
 
+import static java.lang.Math.min;
+
 import java.awt.Color;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -190,7 +192,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		disableEvents = true;
 		final int caretPosition = getCaretPosition();
 		setText(text);
-		setCaretPosition(caretPosition);
+		setCaretPosition(min(text.length(), caretPosition));
 		clearError();
 		disableEvents = false;
 	}

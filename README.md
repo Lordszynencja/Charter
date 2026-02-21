@@ -12,8 +12,8 @@ A simple viewer, player, and editor for guitar charts. Charter is a Free and Ope
 - [Screenshots](#screenshots)
   - [Download & Install](#download--install)
     - [Windows](#windows)
-    - [MacOS](#macos)
     - [Linux](#linux)
+    - [MacOS](#macos)
 - [Contributing and Building](#contributing-and-building)
   - [Contributing](#contributing)
   - [Building](#building)
@@ -34,17 +34,9 @@ You have to deal with it by ignoring the issue or turning check for that file of
 Autoupdater needs to have writing permissions where you installed the program to update it, so you can change permissions for the program directory once it's installed, give it administrator privileges or install it in a directory that's not protected.
 
 1. Download and run the installer `Charter-windows-<version>-installer.exe`.
-1. Download [jasiohost64.dll](https://github.com/mhroth/jasiohost/blob/master/jasiohost64.dll) and [rubberband-jni_win64.dll](https://github.com/JorenSix/RubberBandJNI/blob/master/jni/JVM/rubberband-jni_win64.dll)(rename it to `rubberband-jni.dll`) and put them in the `Windows\system32` folder.
 1. Run `Charter.exe`.
 
 Works For Windows 10 and above.
-
-### MacOS
-
-1. You need Java 17 (JDK) or newer to run it, you can install it from [Oracle Main release](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) or [OpenJDK](https://jdk.java.net/archive/).
-1. Download `Charter-mac-<version>.zip` for Intel Macs, or `Charter-mac-arm-<version>.zip` for ARM, then unzip it and move into `Applications`.
-1. Download [librubberband-jni.dylib](https://github.com/JorenSix/RubberBandJNI/blob/master/jni/JVM/librubberband-jni.dylib) and put it in the libraries folder, one of `~/lib`, `/usr/local/lib` or `/usr/lib`.
-1. Run `Charter.jar`.
 
 ### Linux
 
@@ -53,9 +45,16 @@ Works For Windows 10 and above.
 1. Download [librubberband-jni.so](https://github.com/JorenSix/RubberBandJNI/blob/master/jni/JVM/librubberband-jni.so) and put them in the libraries folder, one of `~/lib`, `/usr/local/lib` or `/usr/lib`.
 1. Run `Charter.jar`.
 
+### MacOS
+
+1. You need Java 17 (JDK) or newer to run it, you can install it from [Oracle Main release](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) or [OpenJDK](https://jdk.java.net/archive/).
+1. Download `Charter-mac-<version>.zip` for Intel Macs, or `Charter-mac-arm-<version>.zip` for ARM, then unzip it and move into `Applications`.
+1. Download [librubberband-jni.dylib](https://github.com/JorenSix/RubberBandJNI/blob/master/jni/JVM/librubberband-jni.dylib) and put it in the libraries folder, one of `~/lib`, `/usr/local/lib` or `/usr/lib`.
+1. Run `Charter.jar`.
+
 ## Contributing and Building
 
-#### Contributing
+### Contributing
 1. Install JDK 17 or newer, for example [Main release](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) or [OpenJDK](https://jdk.java.net/archive/)
 2. Download and install Maven from [here](https://maven.apache.org/index.html).
 3. Fork the repo and make pull requests
@@ -63,6 +62,6 @@ Works For Windows 10 and above.
 
 You can also suggest features by making a new issue and you can submit them in the Charter [Discord](https://discord.gg/JA6Jan3pcx)!
 
-#### Building
+### Building
 1. Go to main directory and run `mvn clean package`
 2. Built program will appear in `<dir>\target\Charter\`
