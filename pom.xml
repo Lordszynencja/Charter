@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>log.program</groupId>
 	<artifactId>Charter</artifactId>
-	<version>0.21.38</version>
+	<version>0.21.39</version>
 	<packaging>jar</packaging>
 	<name>Charter</name>
 	<description>Charting program for guitar</description>
@@ -169,11 +169,6 @@
 		<!-- Linux -->
 		<profile>
 			<id>lwjgl-natives-linux-amd64</id>
-			<activation>
-				<os>
-					<family>unix</family>
-				</os>
-			</activation>
 			<properties>
 				<lwjgl.natives>natives-linux</lwjgl.natives>
 			</properties>
@@ -229,12 +224,6 @@
 		<!-- macOS Intel -->
 		<profile>
 			<id>lwjgl-natives-macos-x86_64</id>
-			<activation>
-				<os>
-					<family>mac</family>
-					<arch>x86_64</arch>
-				</os>
-			</activation>
 			<properties>
 				<lwjgl.natives>natives-macos</lwjgl.natives>
 			</properties>
@@ -290,12 +279,6 @@
 		<!-- macOS Apple Silicon -->
 		<profile>
 			<id>lwjgl-natives-macos-aarch64</id>
-			<activation>
-				<os>
-					<family>mac</family>
-					<arch>aarch64</arch>
-				</os>
-			</activation>
 			<properties>
 				<lwjgl.natives>natives-macos-arm64</lwjgl.natives>
 			</properties>
@@ -351,11 +334,6 @@
 		<!-- Windows -->
 		<profile>
 			<id>lwjgl-natives-windows-amd64</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
 			<properties>
 				<lwjgl.natives>natives-windows</lwjgl.natives>
 			</properties>
