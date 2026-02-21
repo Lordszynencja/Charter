@@ -15,6 +15,7 @@ jpackage -i target/Charter^
  --copyright "SBD 3-Clause"^
  -n Charter^
  --file-associations AssociationProjectFile.properties^
+ --java-options '-Djava.library.path=$APPDIR'^
  -t msi^
  -d target
 
