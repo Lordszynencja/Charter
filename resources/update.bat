@@ -34,4 +34,5 @@ ECHO Updated registry keys
 
 CD ../
 
+ECHO Starting Charter
 START Charter.exe
