@@ -10,8 +10,6 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -112,8 +110,6 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private JToggleButton bandPassFilter;
 
 	private JButton playButton;
-
-	private int newSpeed = Config.stretchedMusicSpeed;
 
 	public ChartToolbar() {
 		super();
@@ -319,22 +315,6 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	}
 
 	private void changeSpeed(final int newSpeed) {
-		this.newSpeed = newSpeed;
-		new Thread(() -> {
-			try {
-				Thread.sleep(2000);
-			} catch (final InterruptedException e) {
-				Logger.error("error on changing speed", e);
-			}
-			if (this.newSpeed != newSpeed) {
-				return;
-			}
-
-			setSpeed(newSpeed);
-		}).start();
-	}
-
-	private void setSpeed(final int newSpeed) {
 		audioHandler.stopMusic();
 
 		Config.stretchedMusicSpeed = newSpeed;
@@ -345,18 +325,6 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		playbackSpeed = createNumberField(Label.TOOLBAR_SLOWED_PLAYBACK_SPEED, LabelPosition.LEFT_PACKED, 30, //
 				Config.stretchedMusicSpeed, 1, 500, false, this::changeSpeed);
 		this.add(x, playbackSpeed);
-
-		playbackSpeed.field.addFocusListener(new FocusListener() {
-
-			@Override
-			public void focusGained(final FocusEvent e) {
-			}
-
-			@Override
-			public void focusLost(final FocusEvent e) {
-				setSpeed(newSpeed);
-			}
-		});
 	}
 
 	private void addTimeControls(final AtomicInteger x) {
