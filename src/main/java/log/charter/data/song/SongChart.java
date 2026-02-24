@@ -28,6 +28,7 @@ public class SongChart {
 	public Integer albumYear;
 
 	public BeatsMap beatsMap;
+	public List<Showlight> showlights = new ArrayList<>();
 	public List<VocalPath> vocalPaths = new ArrayList<>();
 	public List<Arrangement> arrangements = new ArrayList<>();
 
@@ -72,6 +73,9 @@ public class SongChart {
 
 		beatsMap = new BeatsMap(project);
 
+		if (project.showlights != null) {
+			showlights = project.showlights;
+		}
 		if (project.vocalPaths != null) {
 			vocalPaths = project.vocalPaths;
 		}
@@ -82,7 +86,6 @@ public class SongChart {
 		if (project.arrangements != null) {
 			arrangements = project.arrangements;
 		}
-
 		if (project.bookmarks != null) {
 			bookmarks = project.bookmarks;
 		}

@@ -15,6 +15,7 @@ import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.Phrase;
+import log.charter.data.song.Showlight;
 import log.charter.data.song.Stem;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordNote;
@@ -86,6 +87,7 @@ public class ChartProjectXStreamHandler {
 				Level.class, //
 				Note.class, //
 				Phrase.class, //
+				Showlight.class, //
 				SoundsCopyData.class, //
 				Stem.class, //
 				ToneChange.class, //
@@ -107,7 +109,7 @@ public class ChartProjectXStreamHandler {
 
 		final ChartProject project = (ChartProject) o;
 		ChartProjectVerion2Updater.update(project);
-		ChartProjectVerion3Updater.update(file, project);
+		ChartProjectVersion3Updater.update(file, project);
 
 		return project;
 	}

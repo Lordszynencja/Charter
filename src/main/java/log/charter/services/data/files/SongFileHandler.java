@@ -1,11 +1,13 @@
 package log.charter.services.data.files;
 
 import static log.charter.gui.components.utils.ComponentUtils.askYesNoCancel;
+import static log.charter.io.rs.xml.showlights.RsXmlShowlightsXStreamHandler.saveShowlights;
 import static log.charter.io.rs.xml.vocals.VocalsXStreamHandler.saveVocals;
 import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.writeChartProject;
 import static log.charter.util.FileChooseUtils.chooseFile;
 
 import java.io.File;
+import java.util.List;
 import java.util.Optional;
 
 import log.charter.data.ChartData;
@@ -13,12 +15,14 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.PathsConfig;
 import log.charter.data.song.Arrangement;
+import log.charter.data.song.Showlight;
 import log.charter.data.song.vocals.VocalPath;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.TextTab;
 import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
+import log.charter.io.rs.xml.showlights.RsXmlShowlights;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
 import log.charter.io.rs.xml.vocals.ArrangementVocals;
@@ -34,6 +38,7 @@ import log.charter.util.Timer;
 
 public class SongFileHandler {
 	public static final String vocalsFileName = "Vocals_RS2.xml";
+	public static final String showlightsFileName = "showlights.xml";
 
 	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
@@ -84,6 +89,10 @@ public class SongFileHandler {
 		final String vocalsName = Optional.ofNullable(vocals.name).map(n -> "_" + n.replaceAll("[^ \\-0-9a-zA-Z]", ""))
 				.orElse("");
 
+		if (vocalsName.isBlank()) {
+			return id + "_Vocals_RS2.xml";
+		}
+
 		return id + "_Vocals_" + vocalsName + "_RS2.xml";
 	}
 
@@ -96,6 +105,17 @@ public class SongFileHandler {
 		final String xml = saveVocals(new ArrangementVocals(chartData.beats(), vocals));
 		timer.addTimestamp("created XML for vocals");
 		RW.write(new File(dir, vocalPathFileName), xml, "UTF-8");
+		timer.addTimestamp("wrote XML to disk");
+	}
+
+	private void writeRSXML(final Timer timer, final File dir, final int id, final List<Showlight> showlights) {
+		if (showlights.isEmpty()) {
+			return;
+		}
+
+		final String xml = saveShowlights(new RsXmlShowlights(chartData.beats(), showlights));
+		timer.addTimestamp("created XML for showlights");
+		RW.write(new File(dir, showlightsFileName), xml, "UTF-8");
 		timer.addTimestamp("wrote XML to disk");
 	}
 
@@ -121,6 +141,7 @@ public class SongFileHandler {
 			writeRSXML(timer, dir, id, vocals);
 			id++;
 		}
+		writeRSXML(timer, dir, id, chartData.songChart.showlights);
 
 		timer.print("RS XMLs save", Timer.defaultFormat(35));
 	}

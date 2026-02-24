@@ -96,6 +96,8 @@ public class Localization {
 		COULDNT_RUN_UPDATE_SCRIPT(
 				"Couldn't run update script, run the program as administrator, install update manually or install it in a different folder"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
+		OPEN_CURRENT_SONG_FOLDER("Open current song folder"), //
+		CURRENT_SONG_FOLDER("Current song folder: %s"), //
 		DELETE("Delete"), //
 		DELETE_RELATED("Delete related"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
@@ -125,6 +127,7 @@ public class Localization {
 		FHP_TOO_CLOSE_TO_NEXT("Fret Hand Position too close to next one (<%d ms)"), //
 		FHP_WIDTH("Width"), //
 		FILE_MENU("File"), //
+		FILE_MENU_IMPORT_RS_SHOWLIGHTS("RS showlights XML"), //
 		FINGER_NOT_SET_FOR_FRETTED_STRING("Finger not set for fretted string in template [%d] - string %d"), //
 		FINGER_SET_FOR_OPEN_STRING("Finger set for open string in template [%d] - string %d"), //
 		FIRST_BEAT_BEFORE_10_SECONDS("First beat is set before 10 seconds have passed"), //
@@ -243,6 +246,8 @@ public class Localization {
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
 		REDO("Redo"), //
+		RS_SHOWLIGHTS_FILE("RS showlights file (XML)"), //
+		RS_SHOWLIGHTS("RS showlights"), //
 		SAVE_AS("Save as..."), //
 		SECTION_AMBIENT("Ambient"), //
 		SECTION_BREAKDOWN("Breakdown"), //
@@ -527,7 +532,7 @@ public class Localization {
 		CHART_PROJECT("Chart Project"), //
 		CHOOSE_FOLDER_NAME("Choose folder name"), //
 		COULDNT_LOAD_PROJECT("Couldn't load project, reason:\n"), //
-		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement, reason:\n"), //
+		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement, reason:\n%s"), //
 		EXIT_POPUP("Exit"), //
 		EXIT_MESSAGE("Are you sure you want to exit?"), //
 		FAST_BACKWARD("fast backward"), //

@@ -10,7 +10,9 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,12 @@ import log.charter.services.data.StemAddService;
 import log.charter.util.RW;
 
 public class FileDropHandler implements DropTargetListener, Initiable {
+	private enum FileType {
+		RS_ARRANGEMENT_XML, //
+		RS_SHOWLIGHTS_XML, //
+		RS_VOCALS_XML
+	}
+
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ExistingProjectImporter existingProjectImporter;
@@ -41,46 +49,94 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 	private StemAddService stemAddService;
 	private final USCTxtImporter uscTxtImporter = new USCTxtImporter();
 
-	private final Map<String, Consumer<File>> fileTypeHandlers = new HashMap<>();
+	private final Map<FileType, Consumer<File>> fileTypeHandlers = new HashMap<>();
+	private final Map<String, Consumer<File>> fileExtensionHandlers = new HashMap<>();
 
 	@Override
 	public void init() {
-		fileTypeHandlers.put("flac", this::handleAudio);
-		fileTypeHandlers.put("gp3", gp5FileImporter::importGP5File);
-		fileTypeHandlers.put("gp4", gp5FileImporter::importGP5File);
-		fileTypeHandlers.put("gp5", gp5FileImporter::importGP5File);
-		fileTypeHandlers.put("gp", gp7PlusFileImporter::importGP7PlusFile);
-		fileTypeHandlers.put("lrc", lrcImporter::importLRCFile);
-		fileTypeHandlers.put("mid", midiImporter::importMidiTempo);
-		fileTypeHandlers.put("mp3", this::handleAudio);
-		fileTypeHandlers.put("ogg", this::handleAudio);
-		fileTypeHandlers.put("rscp", f -> existingProjectImporter.open(f.getAbsolutePath()));
-		fileTypeHandlers.put("txt", this::handleTXT);
-		fileTypeHandlers.put("wav", this::handleAudio);
-		fileTypeHandlers.put("xml", this::handleXML);
+		fileExtensionHandlers.put("flac", this::handleAudio);
+		fileExtensionHandlers.put("gp3", gp5FileImporter::importGP5File);
+		fileExtensionHandlers.put("gp4", gp5FileImporter::importGP5File);
+		fileExtensionHandlers.put("gp5", gp5FileImporter::importGP5File);
+		fileExtensionHandlers.put("gp", gp7PlusFileImporter::importGP7PlusFile);
+		fileExtensionHandlers.put("lrc", lrcImporter::importLRCFile);
+		fileExtensionHandlers.put("mid", midiImporter::importMidiTempo);
+		fileExtensionHandlers.put("mp3", this::handleAudio);
+		fileExtensionHandlers.put("ogg", this::handleAudio);
+		fileExtensionHandlers.put("rscp", f -> existingProjectImporter.open(f.getAbsolutePath()));
+		fileExtensionHandlers.put("txt", this::handleTXT);
+		fileExtensionHandlers.put("wav", this::handleAudio);
+		fileExtensionHandlers.put("xml", this::handleXML);
+
+		fileTypeHandlers.put(FileType.RS_ARRANGEMENT_XML, rsXMLImporter::importAndAddRSArrangementXML);
+		fileTypeHandlers.put(FileType.RS_SHOWLIGHTS_XML, rsXMLImporter::importAndAddRsShowlightsXml);
+		fileTypeHandlers.put(FileType.RS_VOCALS_XML, rsXMLImporter::importAndAddRsVocalsXML);
+	}
+
+	private String readTag(final InputStream in) throws IOException {
+		char c = (char) in.read();
+		while (c != '<' && c != -1) {
+			c = (char) in.read();
+		}
+
+		String s = "";
+		while (c != '>' && c != -1) {
+			c = (char) in.read();
+			s += c;
+		}
+
+		return s;
+	}
+
+	private FileType readFileTypeFromXml(final File file) {
+		try {
+			final InputStream in = new FileInputStream(file);
+			String tag = readTag(in);
+			while (tag.startsWith("?") || tag.startsWith("!--")) {
+				tag = readTag(in);
+			}
+			in.close();
+
+			if (tag.startsWith("song ")) {
+				return FileType.RS_ARRANGEMENT_XML;
+			}
+			if (tag.startsWith("vocals ")) {
+				return FileType.RS_VOCALS_XML;
+			}
+			if (tag.startsWith("showlights ")) {
+				return FileType.RS_SHOWLIGHTS_XML;
+			}
+		} catch (final Exception e) {
+			Logger.error("Couldn't read XML type", e);
+		}
+
+		return null;
 	}
 
 	private void handleXML(final File file) {
-		final int optionChosen = ComponentUtils.showOptionsPopup(charterFrame, Label.XML_IMPORT_TYPE,
-				Label.XML_IMPORT_AS, //
-				Label.GUITAR_ARRANGEMENT, //
-				Label.VOCAL_ARRANGEMENT/*
+		FileType fileType = readFileTypeFromXml(file);
+		if (fileType == null) {
+			final int optionChosen = ComponentUtils.showOptionsPopup(charterFrame, Label.XML_IMPORT_TYPE,
+					Label.XML_IMPORT_AS, //
+					Label.GUITAR_ARRANGEMENT, //
+					Label.VOCAL_ARRANGEMENT, //
+					Label.RS_SHOWLIGHTS/*
 										 * , // Label.GO_PLAY_ALONG
 										 */);
 
-		switch (optionChosen) {
-			case 0:
-				rsXMLImporter.importAndAddRSArrangementXML(file);
-				break;
-			case 1:
-				rsXMLImporter.importRSVocalsXML(file);
-				break;
-			case 2:
-				gpaXmlImporter.importGpaXml(file);
-				break;
-			default:
-				break;
+			fileType = switch (optionChosen) {
+				case 0 -> FileType.RS_ARRANGEMENT_XML;
+				case 1 -> FileType.RS_VOCALS_XML;
+				case 2 -> FileType.RS_SHOWLIGHTS_XML;
+				default -> null;
+			};
 		}
+
+		if (fileType == null) {
+			return;
+		}
+
+		fileTypeHandlers.get(fileType).accept(file);
 	}
 
 	private void handleTXT(final File file) {
@@ -126,7 +182,7 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 		final File file = files.get(0);
 		final String fileName = file.getName();
 		final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-		if (!fileTypeHandlers.containsKey(extension)) {
+		if (!fileExtensionHandlers.containsKey(extension)) {
 			return false;
 		}
 
@@ -196,6 +252,6 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 	public void importFile(final File file) {
 		final String fileName = file.getName();
 		final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-		fileTypeHandlers.get(extension).accept(file);
+		fileExtensionHandlers.get(extension).accept(file);
 	}
 }
