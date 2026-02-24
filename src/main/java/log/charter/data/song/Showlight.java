@@ -50,6 +50,7 @@ public class Showlight implements IFractionalPosition {
 
 		public final boolean isFog;
 		public final boolean isBeam;
+		public final boolean isLaser;
 
 		private ShowlightType(final int note, final Color color) {
 			this.note = note;
@@ -57,6 +58,7 @@ public class Showlight implements IFractionalPosition {
 
 			isFog = note >= 24 && note <= 35;
 			isBeam = note >= 42 && note <= 59;
+			isLaser = note >= 66 && note <= 67;
 		}
 
 		public static ShowlightType fromNote(final int note) {
@@ -73,9 +75,9 @@ public class Showlight implements IFractionalPosition {
 	private FractionalPosition position;
 	public List<ShowlightType> types = new ArrayList<>();
 
-	public Showlight(final FractionalPosition position, final ShowlightType type) {
+	public Showlight(final FractionalPosition position, final List<ShowlightType> types) {
 		this.position = position;
-		types.add(type);
+		this.types = new ArrayList<>(types);
 	}
 
 	public Showlight(final Showlight other) {

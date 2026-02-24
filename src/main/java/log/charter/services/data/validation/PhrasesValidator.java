@@ -11,8 +11,8 @@ import log.charter.data.song.EventPoint;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
-import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
+import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 
 public class PhrasesValidator {
 	private ChartPositionGenerator chartPositionGenerator;

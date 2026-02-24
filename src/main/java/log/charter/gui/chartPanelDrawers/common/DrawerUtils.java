@@ -51,7 +51,7 @@ public class DrawerUtils {
 		timingY = lanesBottom;
 		editAreaHeight = timingY + timingHeight;
 
-		chartMapHeight = chartMapHeightMultiplier * 4;
+		chartMapHeight = chartMapHeightMultiplier * 10;
 	}
 
 	private static void setEditAreaSizesForVocals() {
@@ -63,7 +63,7 @@ public class DrawerUtils {
 		timingY = lanesBottom;
 		editAreaHeight = timingY + timingHeight;
 
-		chartMapHeight = chartMapHeightMultiplier * 5;
+		chartMapHeight = chartMapHeightMultiplier * 10;
 	}
 
 	private static void setEditAreaSizesForGuitar(final boolean bass, final int strings) {

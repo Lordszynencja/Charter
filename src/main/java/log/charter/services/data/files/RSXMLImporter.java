@@ -1,5 +1,6 @@
 package log.charter.services.data.files;
 
+import static java.util.Arrays.asList;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 
 import java.io.File;
@@ -22,6 +23,7 @@ import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
 import log.charter.io.rs.xml.vocals.ArrangementVocals;
 import log.charter.io.rs.xml.vocals.VocalsXStreamHandler;
+import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.editModes.ModeManager;
 import log.charter.util.CollectionUtils;
 import log.charter.util.RW;
@@ -39,10 +41,10 @@ public class RSXMLImporter {
 			final List<Showlight> showlights = CollectionUtils.map(rsShowlights.showlights, showlight -> {
 				final FractionalPosition position = FractionalPosition.fromTime(chartData.beats(), showlight.time);
 				final ShowlightType type = ShowlightType.fromNote(showlight.note);
-				return new Showlight(position, type);
+				return new Showlight(position, asList(type));
 			});
 
-			chartData.songChart.showlights = showlights;
+			chartData.songChart.showlights = ArrangementFixer.joinShowlights(showlights);
 
 			songFileHandler.save();
 		} catch (final Exception e) {

@@ -1,7 +1,11 @@
 package log.charter.data;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.File;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.values.InstrumentConfig;
@@ -14,6 +18,7 @@ import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.Showlight;
+import log.charter.data.song.Showlight.ShowlightType;
 import log.charter.data.song.SongChart;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
@@ -83,6 +88,13 @@ public class ChartData {
 
 	public List<Showlight> showlights() {
 		return songChart.showlights;
+	}
+
+	public List<Showlight> showlights(final Predicate<ShowlightType> filter) {
+		return showlights().stream()//
+				.map(s -> new Showlight(s.position(), s.types.stream().filter(filter).collect(toList())))//
+				.filter(s -> !s.types.isEmpty())//
+				.collect(Collectors.toList());
 	}
 
 	public VocalPath currentVocals() {

@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
+import static java.util.stream.Collectors.toList;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.laneHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
@@ -18,6 +19,8 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.song.Showlight;
@@ -96,6 +99,13 @@ public class ShowlightsDrawer {
 		}
 	}
 
+	private static List<Showlight> showlights(final FrameData frameData, final Predicate<ShowlightType> filter) {
+		return frameData.showlights.stream()//
+				.map(s -> new Showlight(s.position(), s.types.stream().filter(filter).collect(toList())))//
+				.filter(s -> !s.types.isEmpty())//
+				.collect(Collectors.toList());
+	}
+
 	private BeatsDrawer beatsDrawer;
 	private ChartPanel chartPanel;
 	private WaveFormDrawer waveFormDrawer;
@@ -124,105 +134,30 @@ public class ShowlightsDrawer {
 		g.setClip(previousClip);
 	}
 
-	private void drawFog(final FrameData frameData, final int width, final double timeFrom, final double timeTo) {
-		int x = 0;
-		ShowlightType fog = ShowlightType.FOG_GREEN;
-		for (final Showlight showlight : frameData.showlights) {
-			ShowlightType nextFog = null;
-			for (final ShowlightType type : showlight.types) {
-				if (type.isFog) {
-					nextFog = type;
-				}
-			}
-			if (nextFog == null) {
-				continue;
-			}
-
+	private void drawShowlights(final FrameData frameData, final List<Showlight> showlights,
+			final ShowlightType defaultValue, final int width, final int y, final double timeFrom,
+			final double timeTo) {
+		int x = Math.max(0, positionToX(0, frameData.time));
+		ShowlightType type = defaultValue;
+		for (final Showlight showlight : showlights) {
 			final double position = showlight.position(frameData.beats);
+			final int newX = positionToX(position, frameData.time);
 			if (position > timeFrom) {
-				final int newX = positionToX(position, frameData.time);
-				drawTextureFromTo(frameData.g, timeFrom, x, min(newX, width), fogLaneY, fog);
-				x = newX;
+				drawTextureFromTo(frameData.g, timeFrom, x, min(newX, width), y, type);
 
 				if (position > timeTo) {
 					return;
 				}
 			}
 
-			fog = nextFog;
+			x = newX;
+			for (final ShowlightType nextType : showlight.types) {
+				type = nextType;
+			}
 		}
 
 		final int endX = positionToX(frameData.songLength, frameData.time);
-		drawTextureFromTo(frameData.g, timeFrom, x, min(endX, width), fogLaneY, fog);
-	}
-
-	private void drawBeams(final FrameData frameData, final int width, final double timeFrom, final double timeTo) {
-		int x = 0;
-		ShowlightType beam = ShowlightType.BEAMS_OFF;
-		for (final Showlight showlight : frameData.showlights) {
-			ShowlightType nextBeam = null;
-			for (final ShowlightType type : showlight.types) {
-				if (type.isBeam) {
-					nextBeam = type;
-				}
-			}
-			if (nextBeam == null) {
-				continue;
-			}
-
-			final double position = showlight.position(frameData.beats);
-			if (position > timeFrom) {
-				final int newX = positionToX(position, frameData.time);
-				drawTextureFromTo(frameData.g, timeFrom, x, min(newX, width), beamLaneY, beam);
-				x = newX;
-
-				if (position > timeTo) {
-					return;
-				}
-			}
-
-			beam = nextBeam;
-		}
-
-		final int endX = positionToX(frameData.songLength, frameData.time);
-		drawTextureFromTo(frameData.g, timeFrom, x, min(endX, width), beamLaneY, beam);
-	}
-
-	private void drawLasers(final FrameData frameData, final int width, final double timeFrom, final double timeTo) {
-		int x = 0;
-		ShowlightType laser = ShowlightType.LASERS_OFF;
-		for (final Showlight showlight : frameData.showlights) {
-			ShowlightType nextLaser = null;
-			for (final ShowlightType type : showlight.types) {
-				if (type == ShowlightType.LASERS_ON || type == ShowlightType.LASERS_OFF) {
-					nextLaser = type;
-				}
-			}
-			if (nextLaser == null) {
-				continue;
-			}
-
-			if (laser == ShowlightType.LASERS_ON) {
-				final double position = showlight.position(frameData.beats);
-				if (position > timeFrom) {
-					final int newX = positionToX(position, frameData.time);
-					drawTextureFromTo(frameData.g, timeFrom, x, min(newX, width), beamLaneY, laser);
-
-					x = newX;
-
-					if (position > timeTo) {
-						return;
-					}
-				}
-			}
-
-			laser = nextLaser;
-		}
-
-		if (laser == ShowlightType.LASERS_ON) {
-			final int endX = positionToX(frameData.songLength, frameData.time);
-			drawTextureFromTo(frameData.g, timeFrom, x, min(endX, width), beamLaneY, laser);
-		}
+		drawTextureFromTo(frameData.g, timeFrom, x, min(endX, width), y, type);
 	}
 
 	private void drawHighlight(final Graphics2D g, final int x, final ColorLabel color) {
@@ -277,9 +212,13 @@ public class ShowlightsDrawer {
 		final int width = chartPanel.getWidth();
 		final double timeFrom = xToPosition(-1, frameData.time);
 		final double timeTo = xToPosition(width + 1, frameData.time);
-		drawFog(frameData, width, timeFrom, timeTo);
-		drawBeams(frameData, width, timeFrom, timeTo);
-		drawLasers(frameData, width, timeFrom, timeTo);
+
+		drawShowlights(frameData, showlights(frameData, t -> t.isFog), ShowlightType.FOG_GREEN, width, fogLaneY,
+				timeFrom, timeTo);
+		drawShowlights(frameData, showlights(frameData, t -> t.isBeam), ShowlightType.BEAMS_OFF, width, beamLaneY,
+				timeFrom, timeTo);
+		drawShowlights(frameData, showlights(frameData, t -> t.isLaser), ShowlightType.LASERS_OFF, width, beamLaneY,
+				timeFrom, timeTo);
 		drawSelected(frameData, width, timeFrom, timeTo);
 		drawHighlight(frameData);
 	}

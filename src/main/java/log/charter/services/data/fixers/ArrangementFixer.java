@@ -1,5 +1,6 @@
 package log.charter.services.data.fixers;
 
+import static log.charter.services.data.validation.ChartValidator.overlappingPositions;
 import static log.charter.util.CollectionUtils.filter;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 import static log.charter.util.CollectionUtils.max;
@@ -21,6 +22,7 @@ import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.SectionType;
+import log.charter.data.song.Showlight;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
@@ -40,6 +42,27 @@ import log.charter.util.CollectionUtils;
 import log.charter.util.data.Fraction;
 
 public class ArrangementFixer {
+	public static List<Showlight> joinShowlights(final List<Showlight> showlights) {
+		final List<Integer> doubledPositions = overlappingPositions(showlights);
+		if (!doubledPositions.isEmpty()) {
+			return showlights;
+		}
+
+		final List<Showlight> newShowlights = new ArrayList<>(showlights.size());
+		Showlight lastAdded = null;
+		for (final Showlight showlight : showlights) {
+			if (lastAdded != null && lastAdded.position().equals(showlight.position())) {
+				lastAdded.types.addAll(showlight.types);
+				continue;
+			}
+
+			lastAdded = showlight;
+			newShowlights.add(lastAdded);
+		}
+
+		return newShowlights;
+	}
+
 	private static final FractionalPosition maxDistanceBeforeBreakingHandshape = new FractionalPosition(2);
 
 	private ChartData chartData;
@@ -466,6 +489,7 @@ public class ArrangementFixer {
 
 		chartData.songChart.beatsMap.makeBeatsUntilSongEnd(end);
 		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
+		chartData.songChart.showlights = joinShowlights(chartData.showlights());
 
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
 			removeWrongEventPoints(arrangement);

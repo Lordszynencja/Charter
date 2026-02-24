@@ -1,5 +1,9 @@
 package log.charter.io.rsc.xml.converters;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -22,13 +26,17 @@ public class ShowlightConverter implements Converter {
 		final Showlight showlight = (Showlight) source;
 
 		writer.addAttribute("p", showlight.position().asString());
-		writer.addAttribute("t", showlight.type.name());
+
+		final String t = showlight.types.stream().map(ShowlightType::name).collect(Collectors.joining(","));
+		writer.addAttribute("t", t);
 	}
 
 	@Override
 	public Showlight unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		final FractionalPosition position = FractionalPosition.fromString(reader.getAttribute("p"));
-		final ShowlightType type = ShowlightType.valueOf(reader.getAttribute("t"));
-		return new Showlight(position, type);
+
+		final List<ShowlightType> t = Stream.of(reader.getAttribute("t").split(",")).map(ShowlightType::valueOf)
+				.collect(Collectors.toList());
+		return new Showlight(position, t);
 	}
 }

@@ -1,9 +1,8 @@
 package log.charter.io.rs.xml.showlights;
 
-import static log.charter.util.CollectionUtils.map;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
@@ -21,11 +20,10 @@ public class RsXmlShowlights {
 	}
 
 	public RsXmlShowlights(final ImmutableBeatsMap beats, final List<Showlight> showlights) {
-		this.showlights = map(showlights, showlight -> {
+		this.showlights = showlights.stream().flatMap(showlight -> {
 			final int time = (int) showlight.position(beats);
-			final int note = showlight.type.note;
-			return new RsXmlShowlight(time, note);
-		});
+			return showlight.types.stream().map(type -> new RsXmlShowlight(time, type.note));
+		}).collect(Collectors.toList());
 	}
 
 	public RsXmlShowlights(final ArrayList2<RsXmlShowlight> showlights) {

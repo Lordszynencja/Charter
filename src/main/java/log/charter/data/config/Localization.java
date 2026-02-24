@@ -231,6 +231,11 @@ public class Localization {
 		NOTE_WITHOUT_FHP("Note without FHP"), //
 		OFFSET_MS_FIELD("Offset (ms):"), //
 		OPEN_PROJECT("Open project"), //
+		OVERLAPPING_EVENT_POINT("Overlapping event point"), //
+		OVERLAPPING_FHP("Overlapping FHP"), //
+		OVERLAPPING_HAND_SHAPE("Overlapping hand shape"), //
+		OVERLAPPING_SOUND("Overlapping sound"), //
+		OVERLAPPING_TONE_CHANGE("Overlapping tone change"), //
 		PASS_FILTER_ALGORITHM("Algorithm"), //
 		PASS_FILTER_CENTER_FREQUENCY("Center frequency"), //
 		PASS_FILTER_FREQUENCY("Frequency"), //

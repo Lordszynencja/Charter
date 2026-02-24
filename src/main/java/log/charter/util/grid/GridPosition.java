@@ -92,7 +92,7 @@ public class GridPosition<T extends Position> implements IVirtualConstantPositio
 			gridId = 0;
 		}
 
-		if (positionId >= positions.size() - 1) {
+		if (positionId > positions.size() - 1) {
 			positionId = positions.size() - 1;
 			gridId = 0;
 		}

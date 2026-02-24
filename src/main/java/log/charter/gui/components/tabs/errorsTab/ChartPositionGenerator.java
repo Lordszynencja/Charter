@@ -38,6 +38,21 @@ public class ChartPositionGenerator {
 		private IVirtualConstantPosition time;
 		private TabType tab;
 
+		private ChartPosition() {
+		}
+
+		private ChartPosition(final ChartPosition other) {
+			description = other.description;
+			vocalPathId = other.vocalPathId;
+			arrangementId = other.arrangementId;
+			levelId = other.levelId;
+			itemType = other.itemType;
+			itemId = other.itemId;
+			templateId = other.templateId;
+			time = other.time;
+			tab = other.tab;
+		}
+
 		private ChartPosition item(final PositionType type, final int id) {
 			itemType = type;
 			itemId = id;
@@ -91,6 +106,10 @@ public class ChartPositionGenerator {
 		public ChartPosition time(final IVirtualConstantPosition time) {
 			this.time = time;
 			return this;
+		}
+
+		public ChartPosition toneChange(final int id) {
+			return item(PositionType.TONE_CHANGE, id);
 		}
 
 		public ChartPosition vocal(final int id) {
@@ -203,6 +222,11 @@ public class ChartPositionGenerator {
 			if (templateId != null) {
 				chordTemplatesEditorTab.selectChordTemplate(templateId);
 			}
+		}
+
+		@Override
+		public ChartPosition clone() {
+			return new ChartPosition(this);
 		}
 	}
 }

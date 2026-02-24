@@ -175,6 +175,8 @@ public class ChartTimeHandler {
 				return chartData.currentSounds();
 			case TEMPO_MAP:
 				return chartData.songChart.beatsMap.beats;
+			case SHOWLIGHTS:
+				return chartData.showlights();
 			case VOCALS:
 				return chartData.currentVocals().vocals;
 			default:
@@ -256,6 +258,7 @@ public class ChartTimeHandler {
 		selectionManager.clear();
 		final PositionType type = switch (modeManager.getMode()) {
 			case GUITAR -> PositionType.GUITAR_NOTE;
+			case SHOWLIGHTS -> PositionType.SHOWLIGHT;
 			case VOCALS -> PositionType.VOCAL;
 			default -> throw new IllegalArgumentException();
 		};
@@ -339,6 +342,7 @@ public class ChartTimeHandler {
 		selectionManager.clear();
 		final PositionType type = switch (modeManager.getMode()) {
 			case GUITAR -> PositionType.GUITAR_NOTE;
+			case SHOWLIGHTS -> PositionType.SHOWLIGHT;
 			case VOCALS -> PositionType.VOCAL;
 			default -> throw new IllegalArgumentException();
 		};

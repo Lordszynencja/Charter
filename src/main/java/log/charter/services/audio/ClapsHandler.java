@@ -23,6 +23,8 @@ public class ClapsHandler {
 				return chartData.currentSounds();
 			case TEMPO_MAP:
 				return chartData.beats();
+			case SHOWLIGHTS:
+				return chartData.showlights();
 			case VOCALS:
 				return chartData.currentVocals().vocals;
 			default:
