@@ -13,6 +13,7 @@ import static log.charter.data.config.GraphicalConfig.toneChangeHeight;
 import static log.charter.util.Utils.getStringPosition;
 
 import log.charter.data.config.values.InstrumentConfig;
+import log.charter.gui.chartPanelDrawers.instruments.ShowlightsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
 import log.charter.services.editModes.EditMode;
@@ -43,7 +44,7 @@ public class DrawerUtils {
 
 	private static void setEditAreaSizesForShowlights() {
 		lanesTop = beatSizeTextY + 15;
-		laneHeight = noteHeight * 5;
+		laneHeight = noteHeight * 2;
 		tailHeight = noteHeight;
 		lanesHeight = laneHeight * 2;
 		lanesBottom = lanesTop + lanesHeight;
@@ -89,6 +90,7 @@ public class DrawerUtils {
 		BackgroundDrawer.reloadGraphics();
 		GuitarDrawer.reloadGraphics();
 		LyricLinesDrawer.reloadGraphics();
+		ShowlightsDrawer.reloadGraphics();
 		VocalsDrawer.reloadGraphics();
 	}
 

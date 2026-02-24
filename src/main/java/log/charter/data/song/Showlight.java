@@ -40,7 +40,7 @@ public class Showlight implements IFractionalPosition {
 		BEAMS_YELLOW_PLUS(58, new Color(255, 255, 0)), //
 		BEAMS_PURPLE_PLUS(59, new Color(255, 0, 128)), //
 
-		LASERS_ON(67, new Color(0, 0, 0)), //
+		LASERS_ON(67, new Color(0, 255, 0)), //
 		LASERS_OFF(66, new Color(0, 0, 0));
 
 		public final int note;
