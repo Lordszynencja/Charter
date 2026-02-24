@@ -16,8 +16,7 @@ public class CopiedHandShape extends CopiedFractionalPositionWithEnd<HandShape> 
 	}
 
 	@Override
-	public HandShape prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
-			final boolean convertFromBeats) {
+	public HandShape prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition) {
 		return new HandShape(chordId);
 	}
 }

@@ -39,12 +39,14 @@ import log.charter.services.data.copy.data.FullCopyData;
 import log.charter.services.data.copy.data.FullGuitarCopyData;
 import log.charter.services.data.copy.data.HandShapesCopyData;
 import log.charter.services.data.copy.data.ICopyData;
+import log.charter.services.data.copy.data.ShowlightsCopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
 import log.charter.services.data.copy.data.positions.Copied;
 import log.charter.services.data.copy.data.positions.CopiedEventPoint;
 import log.charter.services.data.copy.data.positions.CopiedFHP;
 import log.charter.services.data.copy.data.positions.CopiedHandShape;
+import log.charter.services.data.copy.data.positions.CopiedShowlight;
 import log.charter.services.data.copy.data.positions.CopiedSound;
 import log.charter.services.data.copy.data.positions.CopiedToneChange;
 import log.charter.services.data.copy.data.positions.CopiedVocalPosition;
@@ -206,6 +208,8 @@ public class CopyManager {
 		switch (modeManager.getMode()) {
 			case GUITAR:
 				return getGuitarCopyData();
+			case SHOWLIGHTS:
+				return getCopyData(PositionType.SHOWLIGHT, CopiedShowlight::new, ShowlightsCopyData::new);
 			case VOCALS:
 				return getCopyDataWithEnd(PositionType.VOCAL, CopiedVocalPosition::new, VocalsCopyData::new);
 			case TEMPO_MAP:
@@ -252,17 +256,6 @@ public class CopyManager {
 		}
 	}
 
-	private void pasteVocals(final CopyData copyData) {
-		final ICopyData selectedCopy = copyData.selectedCopy;
-		if (selectedCopy.isEmpty() || selectedCopy.type() != PositionType.VOCAL) {
-			return;
-		}
-
-		undoSystem.addUndo();
-		selectionManager.clear();
-		selectedCopy.paste(chartData, selectionManager, chartTimeHandler.timeFractional(), true);
-	}
-
 	private void pasteGuitar(final CopyData copyData) {
 		final ICopyData selectedCopy = copyData.selectedCopy;
 		if (selectedCopy.isEmpty()) {
@@ -275,9 +268,6 @@ public class CopyManager {
 			case GUITAR_NOTE:
 			case HAND_SHAPE:
 				break;
-			case NONE:
-			case BEAT:
-			case VOCAL:
 			default:
 				return;
 		}
@@ -290,15 +280,37 @@ public class CopyManager {
 			final FullCopyData fullCopy = copyData.fullCopy;
 			if (fullCopy instanceof FullGuitarCopyData) {
 				final FullGuitarCopyData fullGuitarCopyData = (FullGuitarCopyData) fullCopy;
-				fullGuitarCopyData.toneChanges.paste(chartData, selectionManager, currentTime, true);
-				fullGuitarCopyData.fhps.paste(chartData, selectionManager, currentTime, true);
-				fullGuitarCopyData.handShapes.paste(chartData, selectionManager, currentTime, true);
+				fullGuitarCopyData.toneChanges.paste(chartData, selectionManager, currentTime);
+				fullGuitarCopyData.fhps.paste(chartData, selectionManager, currentTime);
+				fullGuitarCopyData.handShapes.paste(chartData, selectionManager, currentTime);
 			}
 		}
 
-		selectedCopy.paste(chartData, selectionManager, currentTime, true);
+		selectedCopy.paste(chartData, selectionManager, currentTime);
 
 		chordTemplatesEditorTab.refreshTemplates();
+	}
+
+	private void pasteShowlights(final CopyData copyData) {
+		final ICopyData selectedCopy = copyData.selectedCopy;
+		if (selectedCopy.isEmpty() || selectedCopy.type() != PositionType.SHOWLIGHT) {
+			return;
+		}
+
+		undoSystem.addUndo();
+		selectionManager.clear();
+		selectedCopy.paste(chartData, selectionManager, chartTimeHandler.timeFractional());
+	}
+
+	private void pasteVocals(final CopyData copyData) {
+		final ICopyData selectedCopy = copyData.selectedCopy;
+		if (selectedCopy.isEmpty() || selectedCopy.type() != PositionType.VOCAL) {
+			return;
+		}
+
+		undoSystem.addUndo();
+		selectionManager.clear();
+		selectedCopy.paste(chartData, selectionManager, chartTimeHandler.timeFractional());
 	}
 
 	public void paste() {
@@ -311,29 +323,18 @@ public class CopyManager {
 			return;
 		}
 
-		if (modeManager.getMode() == EditMode.VOCALS) {
-			pasteVocals(copyData);
-			return;
-		}
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			pasteGuitar(copyData);
 			return;
 		}
-
-		final ICopyData selectedCopy = copyData.selectedCopy;
-		if (selectedCopy.isEmpty()) {
+		if (modeManager.getMode() == EditMode.SHOWLIGHTS) {
+			pasteShowlights(copyData);
 			return;
 		}
-
-		final boolean isVocalsEditMode = modeManager.getMode() == EditMode.VOCALS;
-		final boolean isVocalsCopyData = selectedCopy instanceof VocalsCopyData;
-		if (isVocalsEditMode != isVocalsCopyData) {
+		if (modeManager.getMode() == EditMode.VOCALS) {
+			pasteVocals(copyData);
 			return;
 		}
-
-		undoSystem.addUndo();
-		selectionManager.clear();
-		selectedCopy.paste(chartData, selectionManager, chartTimeHandler.timeFractional(), true);
 	}
 
 	public void specialPaste() {

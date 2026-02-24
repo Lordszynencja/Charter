@@ -17,9 +17,8 @@ public abstract class CopiedFractionalPositionWithEnd<T extends IFractionalPosit
 	}
 
 	@Override
-	public T getValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
-			final boolean convertFromBeats) {
-		final T value = super.getValue(beats, basePosition, convertFromBeats);
+	public T getValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition) {
+		final T value = super.getValue(beats, basePosition);
 		if (value == null) {
 			return null;
 		}

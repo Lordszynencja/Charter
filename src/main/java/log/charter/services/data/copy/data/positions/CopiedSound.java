@@ -24,22 +24,19 @@ public interface CopiedSound extends Copied<ChordOrNote> {
 		public CopiedSoundChord(final FractionalPosition basePosition, final ChordOrNote item) {
 			chord = new Chord(item.chord());
 			chord.position(chord.position().add(basePosition.negate()));
-			chord.chordNotes.values()
-					.forEach(chordNote -> {
-						chordNote.endPosition(chordNote.endPosition().add(basePosition.negate()));
-						chordNote.bendValues.forEach(bend -> bend.position(bend.position().add(basePosition.negate())));
-					});
+			chord.chordNotes.values().forEach(chordNote -> {
+				chordNote.endPosition(chordNote.endPosition().add(basePosition.negate()));
+				chordNote.bendValues.forEach(bend -> bend.position(bend.position().add(basePosition.negate())));
+			});
 		}
 
 		@Override
-		public ChordOrNote prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
-				final boolean convertFromBeats) {
+		public ChordOrNote prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition) {
 			chord.position(chord.position().add(basePosition));
-			chord.chordNotes.values()
-					.forEach(chordNote -> {
-						chordNote.endPosition(chordNote.endPosition().add(basePosition));
-						chordNote.bendValues.forEach(bend -> bend.position(bend.position().add(basePosition)));
-					});
+			chord.chordNotes.values().forEach(chordNote -> {
+				chordNote.endPosition(chordNote.endPosition().add(basePosition));
+				chordNote.bendValues.forEach(bend -> bend.position(bend.position().add(basePosition)));
+			});
 
 			return ChordOrNote.from(chord);
 		}
@@ -57,8 +54,7 @@ public interface CopiedSound extends Copied<ChordOrNote> {
 		}
 
 		@Override
-		public ChordOrNote prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
-				final boolean convertFromBeats) {
+		public ChordOrNote prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition) {
 			note.position(note.position().add(basePosition));
 			note.endPosition(note.endPosition().add(basePosition));
 			note.bendValues.forEach(bend -> bend.position(bend.position().add(basePosition)));

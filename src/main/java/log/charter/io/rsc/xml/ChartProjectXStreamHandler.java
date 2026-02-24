@@ -33,11 +33,13 @@ import log.charter.services.data.copy.data.EventPointsCopyData;
 import log.charter.services.data.copy.data.FHPsCopyData;
 import log.charter.services.data.copy.data.FullGuitarCopyData;
 import log.charter.services.data.copy.data.HandShapesCopyData;
+import log.charter.services.data.copy.data.ShowlightsCopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
 import log.charter.services.data.copy.data.positions.CopiedEventPoint;
 import log.charter.services.data.copy.data.positions.CopiedFHP;
 import log.charter.services.data.copy.data.positions.CopiedHandShape;
+import log.charter.services.data.copy.data.positions.CopiedShowlight;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundChord;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundNote;
 import log.charter.services.data.copy.data.positions.CopiedToneChange;
@@ -73,6 +75,7 @@ public class ChartProjectXStreamHandler {
 				CopiedFHP.class, //
 				CopiedEventPoint.class, //
 				CopiedHandShape.class, //
+				CopiedShowlight.class, //
 				CopiedSoundChord.class, //
 				CopiedSoundNote.class, //
 				CopiedToneChange.class, //
@@ -88,6 +91,7 @@ public class ChartProjectXStreamHandler {
 				Note.class, //
 				Phrase.class, //
 				Showlight.class, //
+				ShowlightsCopyData.class, //
 				SoundsCopyData.class, //
 				Stem.class, //
 				ToneChange.class, //

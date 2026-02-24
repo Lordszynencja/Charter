@@ -234,6 +234,7 @@ public class Localization {
 		OVERLAPPING_EVENT_POINT("Overlapping event point"), //
 		OVERLAPPING_FHP("Overlapping FHP"), //
 		OVERLAPPING_HAND_SHAPE("Overlapping hand shape"), //
+		OVERLAPPING_SHOWLIGHT("Overlapping showlight"), //
 		OVERLAPPING_SOUND("Overlapping sound"), //
 		OVERLAPPING_TONE_CHANGE("Overlapping tone change"), //
 		PASS_FILTER_ALGORITHM("Algorithm"), //

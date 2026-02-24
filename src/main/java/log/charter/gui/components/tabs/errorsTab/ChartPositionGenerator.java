@@ -94,6 +94,10 @@ public class ChartPositionGenerator {
 			return this;
 		}
 
+		public ChartPosition showlight(final int id) {
+			return item(PositionType.SHOWLIGHT, id);
+		}
+
 		public ChartPosition sound(final int id) {
 			return item(PositionType.GUITAR_NOTE, id);
 		}
@@ -212,6 +216,8 @@ public class ChartPositionGenerator {
 			if (itemId != null) {
 				if (itemType == PositionType.BEAT) {
 					modeManager.setMode(EditMode.TEMPO_MAP);
+				} else if (itemType == PositionType.SHOWLIGHT) {
+					modeManager.setMode(EditMode.SHOWLIGHTS);
 				} else {
 					selectionManager.setSelection(itemType, itemId);
 				}

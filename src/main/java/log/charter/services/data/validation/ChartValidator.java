@@ -109,6 +109,9 @@ public class ChartValidator implements Initiable {
 
 		validateBeatMap();
 
+		validateOverlapping(chartData.showlights(), Label.OVERLAPPING_SHOWLIGHT,
+				id -> chartPositionGenerator.position().showlight(id));
+
 		final List<Arrangement> arrangements = chartData.songChart.arrangements;
 		for (int arrangementId = 0; arrangementId < arrangements.size(); arrangementId++) {
 			final Arrangement arrangement = arrangements.get(arrangementId);

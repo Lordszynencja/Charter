@@ -46,7 +46,7 @@ public class SoundsCopyData implements ICopyData {
 
 	@Override
 	public void paste(final ChartData chartData, final SelectionManager selectionManager,
-			final FractionalPosition basePosition, final boolean convertFromBeats) {
+			final FractionalPosition basePosition) {
 		final Arrangement arrangement = chartData.currentArrangement();
 		final ImmutableBeatsMap beats = chartData.beats();
 		final List<ChordOrNote> sounds = chartData.currentSounds();
@@ -56,7 +56,7 @@ public class SoundsCopyData implements ICopyData {
 
 		for (final CopiedSound copiedPosition : this.sounds) {
 			try {
-				final ChordOrNote newSound = copiedPosition.getValue(beats, basePosition, convertFromBeats);
+				final ChordOrNote newSound = copiedPosition.getValue(beats, basePosition);
 				if (newSound == null) {
 					continue;
 				}

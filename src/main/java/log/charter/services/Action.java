@@ -80,7 +80,7 @@ public enum Action {
 	NEXT_ITEM(EditMode.nonEmpty), //
 	NEXT_ITEM_WITH_SELECT(EditMode.withItems), //
 	OPEN_PROJECT(EditMode.nonEmpty), //
-	PASTE(VOCALS, GUITAR), //
+	PASTE(EditMode.withItems), //
 	PLACE_LYRIC_FROM_TEXT(VOCALS), //
 	PLAY_AUDIO(EditMode.nonEmpty), //
 	PREVIOUS_BEAT(EditMode.nonEmpty), //
