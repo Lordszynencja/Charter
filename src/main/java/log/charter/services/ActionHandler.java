@@ -90,6 +90,7 @@ public class ActionHandler implements Initiable {
 
 		int currentPath = switch (currentMode) {
 			case TEMPO_MAP -> 0;
+			case SHOWLIGHTS -> 0;
 			case VOCALS -> chartData.currentVocals;
 			case GUITAR -> chartData.currentArrangement;
 			default -> throw new IllegalArgumentException("Unexpected value: " + currentMode);
@@ -98,6 +99,10 @@ public class ActionHandler implements Initiable {
 		while (!foundNext) {
 			switch (currentMode) {
 				case TEMPO_MAP:
+					currentMode = EditMode.SHOWLIGHTS;
+					currentPath = 0;
+					break;
+				case SHOWLIGHTS:
 					currentMode = EditMode.VOCALS;
 					currentPath = 0;
 					break;
@@ -138,6 +143,7 @@ public class ActionHandler implements Initiable {
 
 		int currentPath = switch (currentMode) {
 			case TEMPO_MAP -> 0;
+			case SHOWLIGHTS -> 0;
 			case VOCALS -> chartData.currentVocals;
 			case GUITAR -> chartData.currentArrangement;
 			default -> throw new IllegalArgumentException("Unexpected value: " + currentMode);
@@ -155,8 +161,11 @@ public class ActionHandler implements Initiable {
 				case VOCALS:
 					currentPath--;
 					if (currentPath < 0) {
-						currentMode = EditMode.TEMPO_MAP;
+						currentMode = EditMode.SHOWLIGHTS;
 					}
+					break;
+				case SHOWLIGHTS:
+					currentMode = EditMode.TEMPO_MAP;
 					break;
 				case TEMPO_MAP:
 					currentMode = EditMode.GUITAR;
@@ -168,6 +177,7 @@ public class ActionHandler implements Initiable {
 
 			foundNext = switch (currentMode) {
 				case TEMPO_MAP -> true;
+				case SHOWLIGHTS -> true;
 				case VOCALS -> currentPath >= 0;
 				case GUITAR -> currentPath >= 0;
 				default -> throw new IllegalArgumentException("Unexpected value: " + currentMode);

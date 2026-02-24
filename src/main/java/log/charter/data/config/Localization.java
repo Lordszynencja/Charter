@@ -33,6 +33,7 @@ public class Localization {
 		ARRANGEMENT_IMPORT_OPTIONS("Arrangement import options"), //
 		ARRANGEMENT_MENU("Arrangement"), //
 		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
+		ARRANGEMENT_MENU_SHOWLIGHTS("Showlights"), //
 		ARRANGEMENT_MENU_VOCALS("Vocal path"), //
 		ARRANGEMENT_NEXT("Next arrangement"), //
 		ARRANGEMENT_PREVIOUS("Previous arrangement"), //

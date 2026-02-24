@@ -1,14 +1,12 @@
 package log.charter.services.editModes;
 
 public enum EditMode {
-	EMPTY("Empty"), //
-	GUITAR("Guitar"), //
-	TEMPO_MAP("Tempo map"), //
-	VOCALS("Vocals");
+	EMPTY, //
+	GUITAR, //
+	SHOWLIGHTS, //
+	TEMPO_MAP, //
+	VOCALS;
 
-	public final String label;
-
-	private EditMode(final String label) {
-		this.label = label;
-	}
+	public static final EditMode[] nonEmpty = { GUITAR, SHOWLIGHTS, TEMPO_MAP, VOCALS };
+	public static final EditMode[] withItems = { GUITAR, SHOWLIGHTS, VOCALS };
 }

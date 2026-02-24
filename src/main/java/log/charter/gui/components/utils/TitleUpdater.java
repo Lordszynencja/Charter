@@ -35,6 +35,7 @@ public class TitleUpdater {
 	private String modeInfo() {
 		return switch (modeManager.getMode()) {
 			case TEMPO_MAP -> getSongData() + " : Tempo map";
+			case SHOWLIGHTS -> getSongData() + " : Showlights";
 			case VOCALS -> getSongData() + " : " + getVocalPathTitlePart();
 			case GUITAR -> getSongData() + " : " + getArrangementTitlePart();
 			case EMPTY -> Label.NO_PROJECT.label();

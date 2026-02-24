@@ -41,6 +41,18 @@ public class DrawerUtils {
 		updateEditAreaSizes(EditMode.TEMPO_MAP, false, 1);
 	}
 
+	private static void setEditAreaSizesForShowlights() {
+		lanesTop = beatSizeTextY + 15;
+		laneHeight = noteHeight * 5;
+		tailHeight = noteHeight;
+		lanesHeight = laneHeight * 2;
+		lanesBottom = lanesTop + lanesHeight;
+		timingY = lanesBottom;
+		editAreaHeight = timingY + timingHeight;
+
+		chartMapHeight = chartMapHeightMultiplier * 4;
+	}
+
 	private static void setEditAreaSizesForVocals() {
 		lanesTop = beatSizeTextY + 15;
 		laneHeight = (int) (noteHeight * 7.5);
@@ -70,6 +82,7 @@ public class DrawerUtils {
 		switch (editMode) {
 			case GUITAR -> setEditAreaSizesForGuitar(bass, strings);
 			case TEMPO_MAP -> setEditAreaSizesForGuitar(bass, strings);
+			case SHOWLIGHTS -> setEditAreaSizesForShowlights();
 			default -> setEditAreaSizesForVocals();
 		}
 

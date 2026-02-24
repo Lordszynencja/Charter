@@ -46,9 +46,15 @@ public class Showlight implements IFractionalPosition {
 		public final int note;
 		public final Color color;
 
+		public final boolean isFog;
+		public final boolean isBeam;
+
 		private ShowlightType(final int note, final Color color) {
 			this.note = note;
 			this.color = color;
+
+			isFog = note >= 24 && note <= 35;
+			isBeam = note >= 42 && note <= 59;
 		}
 
 		public static ShowlightType fromNote(final int note) {

@@ -39,6 +39,7 @@ public class ModeManager implements Initiable {
 	public ModeManager() {
 		modeHandlers.put(EditMode.EMPTY, emptyModeHandler);
 		modeHandlers.put(EditMode.GUITAR, guitarModeHandler);
+		modeHandlers.put(EditMode.SHOWLIGHTS, emptyModeHandler);
 		modeHandlers.put(EditMode.TEMPO_MAP, tempoMapModeHandler);
 		modeHandlers.put(EditMode.VOCALS, vocalModeHandler);
 	}
