@@ -3,7 +3,6 @@ package log.charter.gui.components.tabs.selectionEditor;
 import static log.charter.data.types.PositionType.GUITAR_NOTE;
 import static log.charter.data.types.PositionType.HAND_SHAPE;
 import static log.charter.data.types.PositionType.NONE;
-import static log.charter.data.types.PositionType.VOCAL;
 
 import java.awt.Dimension;
 import java.util.Collection;
@@ -16,10 +15,8 @@ import java.util.stream.Collectors;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
-import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.virtual.IVirtualPosition;
-import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;
@@ -62,8 +59,6 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 	private final FHPSelectionEditor fhpSelectionEditor = new FHPSelectionEditor();
 	private final GuitarSoundSelectionEditor guitarSoundSelectionEditor = new GuitarSoundSelectionEditor(this);
 	private final HandShapeSelectionEditor handShapeSelectionEditor = new HandShapeSelectionEditor(this);
-	private final ToneChangeSelectionEditor toneChangeSelectionEditor = new ToneChangeSelectionEditor();
-	private final VocalSelectionEditor vocalSelectionEditor = new VocalSelectionEditor();
 
 	public CurrentSelectionEditor() {
 		super(new PaneSizesBuilder(0).build());
@@ -74,6 +69,9 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		setMinimumSize(new Dimension(925, sizes.getHeight(10)));
 
 		parts.put(PositionType.EVENT_POINT, new EventPointSelectionEditor());
+		parts.put(PositionType.SHOWLIGHT, new ShowlightSelectionEditor());
+		parts.put(PositionType.TONE_CHANGE, new ToneChangeSelectionEditor());
+		parts.put(PositionType.VOCAL, new VocalSelectionEditor());
 	}
 
 	@Override
@@ -92,23 +90,13 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		charterContext.initObject(handShapeSelectionEditor);
 		handShapeSelectionEditor.addTo(this);
 
-		charterContext.initObject(toneChangeSelectionEditor);
-		toneChangeSelectionEditor.addTo(this);
-
-		charterContext.initObject(vocalSelectionEditor);
-		vocalSelectionEditor.addTo(this);
-
 		hideAllfieldsExcept(null);
 
 		addKeyListener(keyboardHandler);
 	}
 
 	private void hideAllfieldsExcept(final PositionType type) {
-		parts.forEach((partType, part) -> {
-			if (type != partType) {
-				part.hide();
-			}
-		});
+		parts.forEach((partType, part) -> part.show(type == partType));
 
 		if (type != PositionType.FHP) {
 			fhpSelectionEditor.hide();
@@ -124,14 +112,6 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 			handShapeSelectionEditor.hideFields();
 		} else {
 			handShapeSelectionEditor.showFields();
-		}
-
-		toneChangeSelectionEditor.setFieldsVisible(type == PositionType.TONE_CHANGE);
-
-		if (type != VOCAL) {
-			vocalSelectionEditor.hideFields();
-		} else {
-			vocalSelectionEditor.showFields();
 		}
 	}
 
@@ -158,12 +138,6 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 					break;
 				case HAND_SHAPE:
 					handShapeSelectionEditor.selectionChanged((ISelectionAccessor<HandShape>) selected);
-					break;
-				case TONE_CHANGE:
-					toneChangeSelectionEditor.selectionChanged((ISelectionAccessor<ToneChange>) selected);
-					break;
-				case VOCAL:
-					vocalSelectionEditor.selectionChanged((ISelectionAccessor<Vocal>) selected);
 					break;
 				default:
 					break;

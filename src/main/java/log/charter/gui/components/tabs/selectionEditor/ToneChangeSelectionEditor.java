@@ -24,7 +24,7 @@ import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.SelectionManager;
 
-public class ToneChangeSelectionEditor {
+public class ToneChangeSelectionEditor extends SelectionEditorPart<ToneChange> {
 	private ChartData chartData;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
@@ -33,6 +33,11 @@ public class ToneChangeSelectionEditor {
 	private boolean error;
 	private Color toneNameInputBackgroundColor;
 
+	public ToneChangeSelectionEditor() {
+		super(PositionType.TONE_CHANGE);
+	}
+
+	@Override
 	public void addTo(final CurrentSelectionEditor selectionEditor) {
 		int row = 0;
 		final AutocompleteInput<String> toneNameInput = new AutocompleteInput<>(selectionEditor, 200, "",
@@ -46,7 +51,8 @@ public class ToneChangeSelectionEditor {
 		selectionEditor.add(toneNameField);
 	}
 
-	public void setFieldsVisible(final boolean visibility) {
+	@Override
+	public void show(final boolean visibility) {
 		toneNameField.setVisible(visibility);
 	}
 

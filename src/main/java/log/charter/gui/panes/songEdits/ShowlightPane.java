@@ -28,6 +28,18 @@ import log.charter.gui.components.simple.CharterSelect.ItemHolder;
 public class ShowlightPane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
+	public static List<ShowlightType> getAvailableShowlightTypes() {
+		final List<ShowlightType> availableTypes = new ArrayList<>();
+		availableTypes.add(null);
+		for (final ShowlightType type : ShowlightType.values()) {
+			availableTypes.add(type);
+		}
+
+		availableTypes.sort((a, b) -> a == null ? -1 : b == null ? 1 : a.label.label().compareTo(b.label.label()));
+
+		return availableTypes;
+	}
+
 	private final ChartData data;
 	private final UndoSystem undoSystem;
 
@@ -52,15 +64,12 @@ public class ShowlightPane extends ParamsPane {
 	}
 
 	private void prepareShowlightTypesTable(final AtomicInteger row) {
-		final List<ShowlightType> availableTypes = new ArrayList<>();
-		availableTypes.add(null);
-		for (final ShowlightType type : ShowlightType.values()) {
-			availableTypes.add(type);
-		}
+		final List<ShowlightType> availableTypes = getAvailableShowlightTypes();
 
 		final CharterSelect<ShowlightType> input = new CharterSelect<>(availableTypes, null,
 				e -> e == null ? "" : e.label.label(), null);
 		input.setMinimumSize(new Dimension(100, 20));
+		input.setMaximumRowCount(15);
 
 		tableModel = new DefaultTableModel();
 		tableModel.setRowCount(showlight.types.size());

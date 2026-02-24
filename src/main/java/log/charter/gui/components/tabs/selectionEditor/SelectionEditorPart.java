@@ -33,7 +33,7 @@ public abstract class SelectionEditorPart<T extends IVirtualPosition> {
 
 	public abstract void addTo(final CurrentSelectionEditor currentSelectionEditor);
 
-	public abstract void hide();
+	public abstract void show(boolean visibility);
 
 	public void selectionChanged() {
 		undoAdded = false;

@@ -299,14 +299,14 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 	}
 
 	@Override
-	public void hide() {
-		section.setVisible(false);
-		phrase.setVisible(false);
-		maxLevel.setVisible(false);
-		solo.setVisible(false);
-		eventsTableScroll.setVisible(false);
-		eventAddButton.setVisible(false);
-		eventRemoveButton.setVisible(false);
+	public void show(final boolean visibility) {
+		section.setVisible(visibility);
+		phrase.setVisible(visibility);
+		maxLevel.setVisible(visibility);
+		solo.setVisible(visibility);
+		eventsTableScroll.setVisible(visibility);
+		eventAddButton.setVisible(visibility);
+		eventRemoveButton.setVisible(visibility);
 	}
 
 	private void setEvents(final List<EventType> events) {
@@ -328,11 +328,9 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 
 		final SectionType section = getSingleValue(items, ep -> ep.section, null);
 		this.section.field.setSelectedValue(section);
-		this.section.setVisible(true);
 
 		final String phrase = getSingleValue(items, ep -> ep.phrase, null);
 		this.phrase.field.setTextWithoutUpdate(phrase == null ? "" : phrase);
-		this.phrase.setVisible(true);
 
 		final Set<Phrase> phrases = items.stream()//
 				.map(ep -> chartData.currentArrangement().phrases.get(ep.phrase))//
@@ -341,20 +339,15 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		final Integer maxLevel = getSingleValue(phrases, p -> p.maxDifficulty, null);
 		this.maxLevel.field.setValidator(generateMaxLevelValidator());
 		this.maxLevel.field.setTextWithoutEvent(maxLevel == null ? "" : maxLevel.toString());
-		this.maxLevel.setVisible(true);
 
 		final boolean solo = getSingleValue(phrases, p -> p.solo, false);
 		this.solo.field.setSelected(solo);
-		this.solo.setVisible(true);
 
 		if (items.size() == 1) {
 			setEvents(items.get(0).events);
 		} else {
 			setEvents(new ArrayList<>());
 		}
-		eventsTableScroll.setVisible(true);
-		eventAddButton.setVisible(true);
-		eventRemoveButton.setVisible(true);
 
 		settingData = false;
 	}

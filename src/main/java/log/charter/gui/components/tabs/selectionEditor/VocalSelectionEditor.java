@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
+import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
@@ -20,7 +21,7 @@ import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 
-public class VocalSelectionEditor {
+public class VocalSelectionEditor extends SelectionEditorPart<Vocal> {
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
@@ -28,6 +29,11 @@ public class VocalSelectionEditor {
 	private FieldWithLabel<JCheckBox> vocalWordPart;
 	private FieldWithLabel<JCheckBox> vocalPhraseEnd;
 
+	public VocalSelectionEditor() {
+		super(PositionType.VOCAL);
+	}
+
+	@Override
 	public void addTo(final CurrentSelectionEditor selectionEditor) {
 		int row = 0;
 		final ValueValidator textValidator = s -> s == null || s.isBlank() ? "" : null;
@@ -54,8 +60,6 @@ public class VocalSelectionEditor {
 				LabelPosition.LEFT);
 		vocalPhraseEnd.setLocation(10, selectionEditor.sizes.getY(row++));
 		selectionEditor.add(vocalPhraseEnd);
-
-		hideFields();
 	}
 
 	private void changeText(final String newText) {
@@ -96,15 +100,11 @@ public class VocalSelectionEditor {
 		}
 	}
 
-	public void showFields() {
-		vocalWordPart.setVisible(true);
-		vocalPhraseEnd.setVisible(true);
-	}
-
-	public void hideFields() {
-		vocalText.setVisible(false);
-		vocalWordPart.setVisible(false);
-		vocalPhraseEnd.setVisible(false);
+	@Override
+	public void show(final boolean visibility) {
+		vocalText.setVisible(visibility);
+		vocalWordPart.setVisible(visibility);
+		vocalPhraseEnd.setVisible(visibility);
 	}
 
 	public void selectionChanged(final ISelectionAccessor<Vocal> selectedVocalsAccessor) {
@@ -112,9 +112,8 @@ public class VocalSelectionEditor {
 		if (selectedVocals.size() == 1) {
 			final String text = selectedVocals.get(0).text();
 			vocalText.field.setTextWithoutEvent(text);
-			vocalText.setVisible(true);
 		} else {
-			vocalText.setVisible(false);
+			vocalText.field.setTextWithoutEvent("");
 		}
 
 		final VocalFlag flag = getSingleValue(selectedVocals, vocal -> vocal.flag(), VocalFlag.NONE);
