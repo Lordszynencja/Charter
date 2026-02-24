@@ -490,6 +490,7 @@ public class ArrangementFixer {
 		chartData.songChart.beatsMap.makeBeatsUntilSongEnd(end);
 		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
 		chartData.songChart.showlights = joinShowlights(chartData.showlights());
+		chartData.songChart.showlights.removeIf(s -> s.types.isEmpty());
 
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
 			removeWrongEventPoints(arrangement);

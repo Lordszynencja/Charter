@@ -133,6 +133,7 @@ public class ChartPositionGenerator {
 					chartData.songChart.arrangements.get(arrangementId).getLevel(levelId).handShapes.get(itemId);
 				case GUITAR_NOTE ->
 					chartData.songChart.arrangements.get(arrangementId).getLevel(levelId).sounds.get(itemId);
+				case SHOWLIGHT -> chartData.showlights().get(itemId);
 				case TONE_CHANGE -> chartData.songChart.arrangements.get(arrangementId).toneChanges.get(itemId);
 				case VOCAL -> chartData.songChart.vocalPaths.get(vocalPathId).vocals.get(itemId);
 				default -> null;
@@ -218,6 +219,7 @@ public class ChartPositionGenerator {
 					modeManager.setMode(EditMode.TEMPO_MAP);
 				} else if (itemType == PositionType.SHOWLIGHT) {
 					modeManager.setMode(EditMode.SHOWLIGHTS);
+					selectionManager.setSelection(itemType, itemId);
 				} else {
 					selectionManager.setSelection(itemType, itemId);
 				}

@@ -30,8 +30,6 @@ public class GuitarSpecialPastePane extends ParamsPane {
 
 	private final FullGuitarCopyData copyData;
 
-	private boolean pasteUsingBeats = true;
-
 	private boolean pasteSections = pasteSectionsDefault;
 	private boolean pastePhrases = pastePhrasesDefault;
 	private boolean pasteEvents = pasteEventsDefault;
@@ -56,10 +54,6 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		copyData = fullGuitarCopyData;
 
 		int row = 0;
-		addConfigCheckbox(row, 20, 0, null, pasteUsingBeats, val -> pasteUsingBeats = val);
-		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_USE_BEATS, 0);
-		row++;
-
 		addConfigCheckbox(row, 20, 0, null, pasteSections, val -> pasteSections = val);
 		addLabel(row++, 50, Label.SPECIAL_GUITAR_PASTE_SECTIONS, 0);
 		addConfigCheckbox(row, 20, 0, null, pastePhrases, val -> pastePhrases = val);
@@ -93,20 +87,19 @@ public class GuitarSpecialPastePane extends ParamsPane {
 		pasteHandShapesDefault = pasteHandShapes;
 
 		if (pasteSections || pastePhrases || pasteEvents) {
-			copyData.beats.paste(chartData, selectionManager, basePosition, pasteSections, pastePhrases, pasteEvents,
-					pasteUsingBeats);
+			copyData.beats.paste(chartData, selectionManager, basePosition, pasteSections, pastePhrases, pasteEvents);
 		}
 		if (pasteToneChanges) {
-			copyData.toneChanges.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
+			copyData.toneChanges.paste(chartData, selectionManager, basePosition);
 		}
 		if (pasteFHPs) {
-			copyData.fhps.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
+			copyData.fhps.paste(chartData, selectionManager, basePosition);
 		}
 		if (pasteHandShapes) {
-			copyData.handShapes.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
+			copyData.handShapes.paste(chartData, selectionManager, basePosition);
 		}
 		if (pasteSounds) {
-			copyData.sounds.paste(chartData, selectionManager, basePosition, pasteUsingBeats);
+			copyData.sounds.paste(chartData, selectionManager, basePosition);
 			chordTemplatesEditorTab.refreshTemplates();
 		}
 	}

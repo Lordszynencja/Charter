@@ -299,6 +299,35 @@ public class Localization {
 		SHOW_CHORD_IDS("Show chord ids"), //
 		SHOW_GRID("Show grid"), //
 		SHOW_TEMPO_INSTEAD_OF_BPM("Show tempo instead of BPM"), //
+		SHOWLIGHT_ADD("Add showlight"), //
+		SHOWLIGHT_BEAMS_BLUE("Blue beams"), //
+		SHOWLIGHT_BEAMS_BLUE_PLUS("Blue extended beams"), //
+		SHOWLIGHT_BEAMS_GREEN("Green beams"), //
+		SHOWLIGHT_BEAMS_LIGHT_BLUE("Light blue beams"), //
+		SHOWLIGHT_BEAMS_MAGENTA("Magenta beams"), //
+		SHOWLIGHT_BEAMS_OFF("Beams off"), //
+		SHOWLIGHT_BEAMS_ORANGE("Orange beams"), //
+		SHOWLIGHT_BEAMS_PINK("Pink beams"), //
+		SHOWLIGHT_BEAMS_PURPLE_PLUS("Purple extended beams"), //
+		SHOWLIGHT_BEAMS_RED_PLUS("Red extended beams"), //
+		SHOWLIGHT_BEAMS_TEAL("Teal beams"), //
+		SHOWLIGHT_BEAMS_YELLOW("Yellow beams"), //
+		SHOWLIGHT_BEAMS_YELLOW_PLUS("Yellow extended beams"), //
+		SHOWLIGHT_FOG_BLUE("Blue fog"), //
+		SHOWLIGHT_FOG_GREEN("Green fog"), //
+		SHOWLIGHT_FOG_LIGHT_BLUE("Light blue fog"), //
+		SHOWLIGHT_FOG_LIGHT_GREEN("Light green fog"), //
+		SHOWLIGHT_FOG_LIME("Lime fog"), //
+		SHOWLIGHT_FOG_MAGENTA("Magenta fog"), //
+		SHOWLIGHT_FOG_ORANGE("Orange fog"), //
+		SHOWLIGHT_FOG_PINK("Pink fog"), //
+		SHOWLIGHT_FOG_PURPLE("Purple fog"), //
+		SHOWLIGHT_FOG_RED("Red fog"), //
+		SHOWLIGHT_FOG_TEAL("Teal fog"), //
+		SHOWLIGHT_FOG_YELLOW("Yellow fog"), //
+		SHOWLIGHT_LASERS_OFF("Lasers off"), //
+		SHOWLIGHT_LASERS_ON("Lasers on"), //
+		SHOWLIGHT_REMOVE("Remove showlight"), //
 		SONG_OPTIONS("Song options"), //
 		SONGS_FOLDER("Songs folder"), //
 		SOUND_DELAY("Sound delay (ms)"), //
@@ -524,7 +553,6 @@ public class Localization {
 		TREMOLO("Tremolo"), //
 
 		SPECIAL_GUITAR_PASTE_PANE("Special paste"), //
-		SPECIAL_GUITAR_PASTE_USE_BEATS("Use beats as time"), //
 		SPECIAL_GUITAR_PASTE_SECTIONS("Paste sections"), //
 		SPECIAL_GUITAR_PASTE_PHRASES("Paste phrases"), //
 		SPECIAL_GUITAR_PASTE_EVENTS("Paste events"), //

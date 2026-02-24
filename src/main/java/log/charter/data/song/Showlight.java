@@ -7,6 +7,7 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+import log.charter.data.config.Localization.Label;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IFractionalPosition;
 import log.charter.io.rsc.xml.converters.ShowlightConverter;
@@ -20,7 +21,7 @@ public class Showlight implements IFractionalPosition {
 		FOG_TEAL(26, new Color(0, 255, 255)), //
 		FOG_ORANGE(27, new Color(255, 192, 0)), //
 		FOG_BLUE(28, new Color(0, 0, 255)), //
-		FOG_GREEN_YELLOW(29, new Color(192, 255, 0)), //
+		FOG_LIME(29, new Color(192, 255, 0)), //
 		FOG_MAGENTA(30, new Color(255, 0, 255)), //
 		FOG_LIGHT_GREEN(31, new Color(0, 255, 128)), //
 		FOG_RED(32, new Color(255, 0, 0)), //
@@ -47,6 +48,7 @@ public class Showlight implements IFractionalPosition {
 
 		public final int note;
 		public final Color color;
+		public final Label label;
 
 		public final boolean isFog;
 		public final boolean isBeam;
@@ -55,6 +57,7 @@ public class Showlight implements IFractionalPosition {
 		private ShowlightType(final int note, final Color color) {
 			this.note = note;
 			this.color = color;
+			label = Label.valueOf("SHOWLIGHT_" + name());
 
 			isFog = note >= 24 && note <= 35;
 			isBeam = note >= 42 && note <= 59;
@@ -74,6 +77,10 @@ public class Showlight implements IFractionalPosition {
 
 	private FractionalPosition position;
 	public List<ShowlightType> types = new ArrayList<>();
+
+	public Showlight(final FractionalPosition position) {
+		this.position = position;
+	}
 
 	public Showlight(final FractionalPosition position, final List<ShowlightType> types) {
 		this.position = position;
