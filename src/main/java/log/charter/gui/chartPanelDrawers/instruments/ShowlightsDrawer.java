@@ -5,7 +5,9 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.laneHeight;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
 import static log.charter.util.ScalingUtils.positionToX;
 import static log.charter.util.ScalingUtils.xToPosition;
 
@@ -14,18 +16,25 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.song.Showlight;
 import log.charter.data.song.Showlight.ShowlightType;
+import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.FrameData;
+import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
+import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.util.ColorUtils;
 
 public class ShowlightsDrawer {
 	private static int textureWidth = laneHeight * 2;
+	private static int fogLaneY = lanesTop + laneHeight / 3;
+	private static int beamLaneY = lanesTop + laneHeight * 5 / 3;
 	private static final Map<ShowlightType, BufferedImage> showlightTextures = new HashMap<>();
 
 	private static BufferedImage generateFogTexture(final Color color) {
@@ -69,6 +78,10 @@ public class ShowlightsDrawer {
 	}
 
 	public static void reloadGraphics() {
+		textureWidth = laneHeight * 2;
+		fogLaneY = lanesTop + laneHeight / 3;
+		beamLaneY = lanesTop + laneHeight * 5 / 3;
+
 		for (final ShowlightType type : ShowlightType.values()) {
 			if (type == ShowlightType.BEAMS_OFF || type == ShowlightType.LASERS_OFF) {
 				continue;
@@ -115,14 +128,20 @@ public class ShowlightsDrawer {
 		int x = 0;
 		ShowlightType fog = ShowlightType.FOG_GREEN;
 		for (final Showlight showlight : frameData.showlights) {
-			if (!showlight.type.isFog) {
+			ShowlightType nextFog = null;
+			for (final ShowlightType type : showlight.types) {
+				if (type.isFog) {
+					nextFog = type;
+				}
+			}
+			if (nextFog == null) {
 				continue;
 			}
 
 			final double position = showlight.position(frameData.beats);
 			if (position > timeFrom) {
 				final int newX = positionToX(position, frameData.time);
-				drawTextureFromTo(frameData.g, timeFrom, x, min(newX, width), lanesTop, fog);
+				drawTextureFromTo(frameData.g, timeFrom, x, min(newX, width), fogLaneY, fog);
 				x = newX;
 
 				if (position > timeTo) {
@@ -130,31 +149,31 @@ public class ShowlightsDrawer {
 				}
 			}
 
-			fog = showlight.type;
+			fog = nextFog;
 		}
 
 		final int endX = positionToX(frameData.songLength, frameData.time);
-		drawTextureFromTo(frameData.g, timeFrom, x, min(endX, width), lanesTop, fog);
+		drawTextureFromTo(frameData.g, timeFrom, x, min(endX, width), fogLaneY, fog);
 	}
 
 	private void drawBeams(final FrameData frameData, final int width, final double timeFrom, final double timeTo) {
 		int x = 0;
 		ShowlightType beam = ShowlightType.BEAMS_OFF;
-		boolean laser = false;
 		for (final Showlight showlight : frameData.showlights) {
-			if (!showlight.type.isBeam && showlight.type != ShowlightType.LASERS_ON
-					&& showlight.type != ShowlightType.LASERS_OFF) {
+			ShowlightType nextBeam = null;
+			for (final ShowlightType type : showlight.types) {
+				if (type.isBeam) {
+					nextBeam = type;
+				}
+			}
+			if (nextBeam == null) {
 				continue;
 			}
 
 			final double position = showlight.position(frameData.beats);
 			if (position > timeFrom) {
 				final int newX = positionToX(position, frameData.time);
-				drawTextureFromTo(frameData.g, timeFrom, x, min(newX, width), lanesTop + laneHeight, beam);
-				if (laser) {
-					drawTextureFromTo(frameData.g, timeFrom, x, min(newX, width), lanesTop + laneHeight,
-							ShowlightType.LASERS_ON);
-				}
+				drawTextureFromTo(frameData.g, timeFrom, x, min(newX, width), beamLaneY, beam);
 				x = newX;
 
 				if (position > timeTo) {
@@ -162,20 +181,92 @@ public class ShowlightsDrawer {
 				}
 			}
 
-			if (showlight.type.isBeam) {
-				beam = showlight.type;
-			} else if (showlight.type == ShowlightType.LASERS_ON) {
-				laser = true;
-			} else if (showlight.type == ShowlightType.LASERS_OFF) {
-				laser = false;
-			}
+			beam = nextBeam;
 		}
 
 		final int endX = positionToX(frameData.songLength, frameData.time);
-		drawTextureFromTo(frameData.g, timeFrom, x, min(endX, width), lanesTop + laneHeight, beam);
-		if (laser) {
-			drawTextureFromTo(frameData.g, timeFrom, x, min(endX, width), lanesTop + laneHeight,
-					ShowlightType.LASERS_ON);
+		drawTextureFromTo(frameData.g, timeFrom, x, min(endX, width), beamLaneY, beam);
+	}
+
+	private void drawLasers(final FrameData frameData, final int width, final double timeFrom, final double timeTo) {
+		int x = 0;
+		ShowlightType laser = ShowlightType.LASERS_OFF;
+		for (final Showlight showlight : frameData.showlights) {
+			ShowlightType nextLaser = null;
+			for (final ShowlightType type : showlight.types) {
+				if (type == ShowlightType.LASERS_ON || type == ShowlightType.LASERS_OFF) {
+					nextLaser = type;
+				}
+			}
+			if (nextLaser == null) {
+				continue;
+			}
+
+			if (laser == ShowlightType.LASERS_ON) {
+				final double position = showlight.position(frameData.beats);
+				if (position > timeFrom) {
+					final int newX = positionToX(position, frameData.time);
+					drawTextureFromTo(frameData.g, timeFrom, x, min(newX, width), beamLaneY, laser);
+
+					x = newX;
+
+					if (position > timeTo) {
+						return;
+					}
+				}
+			}
+
+			laser = nextLaser;
+		}
+
+		if (laser == ShowlightType.LASERS_ON) {
+			final int endX = positionToX(frameData.songLength, frameData.time);
+			drawTextureFromTo(frameData.g, timeFrom, x, min(endX, width), beamLaneY, laser);
+		}
+	}
+
+	private void drawHighlight(final Graphics2D g, final int x, final ColorLabel color) {
+		final ShapePositionWithSize position = new ShapePositionWithSize(x - 1, lanesTop, 2, lanesHeight);
+		strokedRectangle(position, color).draw(g);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void drawSelected(final FrameData frameData, final int width, final double timeFrom, final double timeTo) {
+		if (!frameData.selection.isSelected() || frameData.selection.type() != PositionType.SHOWLIGHT) {
+			return;
+		}
+
+		final List<Showlight> selectedShowlights = ((ISelectionAccessor<Showlight>) frameData.selection)
+				.getSelectedElements();
+
+		for (final Showlight showlight : selectedShowlights) {
+			final double position = showlight.position().position(frameData.beats);
+			if (position < timeFrom) {
+				continue;
+			}
+			if (position > timeTo) {
+				return;
+			}
+
+			final int x = positionToX(position, frameData.time);
+			drawHighlight(frameData.g, x, ColorLabel.SELECT);
+		}
+	}
+
+	private void drawHighlight(final FrameData frameData) {
+		if (frameData.highlightData.type != PositionType.SHOWLIGHT) {
+			return;
+		}
+
+		if (frameData.highlightData.id.isPresent()) {
+			final Showlight showlight = frameData.showlights.get(frameData.highlightData.id.get().id);
+			final int x = positionToX(showlight.position(frameData.beats), frameData.time);
+			drawHighlight(frameData.g, x, ColorLabel.BASE_HIGHLIGHT);
+		} else {
+			frameData.highlightData.highlightedNonIdPositions.forEach(highlightPosition -> {
+				final int x = positionToX(highlightPosition.position, frameData.time);
+				drawHighlight(frameData.g, x, ColorLabel.BASE_HIGHLIGHT);
+			});
 		}
 	}
 
@@ -188,6 +279,9 @@ public class ShowlightsDrawer {
 		final double timeTo = xToPosition(width + 1, frameData.time);
 		drawFog(frameData, width, timeFrom, timeTo);
 		drawBeams(frameData, width, timeFrom, timeTo);
+		drawLasers(frameData, width, timeFrom, timeTo);
+		drawSelected(frameData, width, timeFrom, timeTo);
+		drawHighlight(frameData);
 	}
 
 }

@@ -17,6 +17,9 @@ public class BaseUndoState extends UndoState {
 			case TEMPO_MAP:
 				internalUndoState = new TempoMapUndoState(data);
 				break;
+			case SHOWLIGHTS:
+				internalUndoState = new ShowlightsUndoState(data);
+				break;
 			case VOCALS:
 				internalUndoState = new VocalUndoState(data);
 				break;

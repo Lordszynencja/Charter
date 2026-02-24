@@ -23,6 +23,7 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
+import log.charter.data.song.Showlight;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
@@ -318,6 +319,7 @@ public class HighlightData {
 			case EVENT_POINT -> s -> new TemporaryFractionalHighlighPosition((EventPoint) s.selectable);
 			case GUITAR_NOTE -> s -> new TemporaryFractionalHighlighPosition((ChordOrNote) s.selectable);
 			case HAND_SHAPE -> s -> new TemporaryFractionalHighlighPosition((HandShape) s.selectable);
+			case SHOWLIGHT -> s -> new TemporaryFractionalHighlighPosition((Showlight) s.selectable);
 			case TONE_CHANGE -> s -> new TemporaryFractionalHighlighPosition((ToneChange) s.selectable);
 			case VOCAL -> s -> new TemporaryFractionalHighlighPosition((Vocal) s.selectable);
 			default -> s -> new TemporaryHighlightPosition(0);

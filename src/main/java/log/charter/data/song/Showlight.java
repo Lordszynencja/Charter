@@ -1,6 +1,8 @@
 package log.charter.data.song;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -69,11 +71,16 @@ public class Showlight implements IFractionalPosition {
 	}
 
 	private FractionalPosition position;
-	public ShowlightType type;
+	public List<ShowlightType> types = new ArrayList<>();
 
 	public Showlight(final FractionalPosition position, final ShowlightType type) {
 		this.position = position;
-		this.type = type;
+		types.add(type);
+	}
+
+	public Showlight(final Showlight other) {
+		position = other.position;
+		types = new ArrayList<>(other.types);
 	}
 
 	@Override

@@ -46,7 +46,7 @@ public class DrawerUtils {
 		lanesTop = beatSizeTextY + 15;
 		laneHeight = noteHeight * 2;
 		tailHeight = noteHeight;
-		lanesHeight = laneHeight * 2;
+		lanesHeight = laneHeight * 3;
 		lanesBottom = lanesTop + lanesHeight;
 		timingY = lanesBottom;
 		editAreaHeight = timingY + timingHeight;
