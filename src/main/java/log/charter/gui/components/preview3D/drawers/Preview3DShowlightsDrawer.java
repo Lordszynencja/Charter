@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationXMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationYMatrix;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationZMatrix;
 import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
@@ -54,9 +55,9 @@ public class Preview3DShowlightsDrawer {
 
 	private void drawFog(final ShadersHolder shadersHolder, final Preview3DDrawData drawData, final Matrix4 rotation,
 			final ShowlightType fog) {
-		final Color baseColor1 = ColorUtils.setAlpha(fog.color.darker().darker().darker(), 128);
-		final Color baseColor2 = ColorUtils.setAlpha(baseColor1, 96);
-		final Color baseColor3 = ColorUtils.setAlpha(baseColor1, 64);
+		final Color baseColor1 = ColorUtils.setAlpha(fog.color.darker().darker().darker(), 96);
+		final Color baseColor2 = ColorUtils.setAlpha(baseColor1, 48);
+		final Color baseColor3 = ColorUtils.setAlpha(baseColor1, 32);
 		final double x0 = -100;
 		final double x1 = 100;
 		final double y0 = -20;
@@ -79,19 +80,19 @@ public class Preview3DShowlightsDrawer {
 		final Point3D p110 = new Point3D(x1, y1, z0);
 
 		shadersHolder.new BaseShaderDrawData()//
-				.addVertex(p000, baseColor3).addVertex(p100, baseColor3)//
-				.addVertex(p001, baseColor1).addVertex(p101, baseColor1)//
+				.addVertex(p000, baseColor2).addVertex(p100, baseColor2)//
+				.addVertex(p001, baseColor3).addVertex(p101, baseColor3)//
 				.addVertex(p011, baseColor2).addVertex(p111, baseColor2)//
 				.addVertex(p021, baseColor1).addVertex(p121, baseColor1)//
 				.addVertex(p020, baseColor3).addVertex(p120, baseColor3)//
 				.draw(GL30.GL_QUAD_STRIP, rotation);
 		shadersHolder.new BaseShaderDrawData()//
-				.addVertex(p000, baseColor3).addVertex(p001, baseColor1)//
+				.addVertex(p000, baseColor2).addVertex(p001, baseColor3)//
 				.addVertex(p010, baseColor3).addVertex(p011, baseColor2)//
 				.addVertex(p020, baseColor3).addVertex(p021, baseColor1)//
 				.draw(GL30.GL_QUAD_STRIP, rotation);
 		shadersHolder.new BaseShaderDrawData()//
-				.addVertex(p100, baseColor3).addVertex(p101, baseColor1)//
+				.addVertex(p100, baseColor2).addVertex(p101, baseColor3)//
 				.addVertex(p110, baseColor3).addVertex(p111, baseColor2)//
 				.addVertex(p120, baseColor3).addVertex(p121, baseColor1)//
 				.draw(GL30.GL_QUAD_STRIP, rotation);
@@ -178,25 +179,24 @@ public class Preview3DShowlightsDrawer {
 				.addVertex(new Point3D(0, 0, -10), fadeColor2);
 
 		final Matrix4 movement = moveMatrix(40, 30, 35);
-		final Matrix4 rotationY = rotationYMatrix(0.8);
-		final Matrix4 rotationX = rotationXMatrix(0.8);
+		final Matrix4 lightRotation = Matrix4.create(rotationYMatrix(0.9), rotationXMatrix(0.8));
 		final Matrix4 scaling = scaleMatrix(1, 1, 5);
-
-		final Matrix4 matrix = Matrix4.create(movement, //
-				rotationY, //
-				rotationX, //
-				scaling);
+		final Matrix4 lightSway = rotationZMatrix(Math.sin(System.currentTimeMillis() / 2000.0) / 10);
 
 		final int rays = 8;
 		final double multiplier = Math.PI / rays * 2;
 		for (int i = 0; i < rays; i++) {
 			final double x = Math.sin(i * multiplier) * 5;
 			final double y = Math.cos(i * multiplier) * 5;
-			final Matrix4 rotationZ = Matrix4.rotationZMatrix((i + 0.5) * multiplier);
-			final Matrix4 rayMatrix = Matrix4.create(Matrix4.moveMatrix(x, y, 0), //
+			final Matrix4 rayPositionInLight = moveMatrix(x, y, 0);
+			final Matrix4 rotationZ = rotationZMatrix((i + 0.5) * multiplier);
+			final Matrix4 rotationOutward = rotationXMatrix(-0.2);
+			final Matrix4 rayMatrix = Matrix4.create(//
 					movement, //
-					rotationY, //
-					rotationX, //
+					lightSway, //
+					rayPositionInLight, //
+					rotationOutward, //
+					lightRotation, //
 					rotationZ, //
 					scaling);
 			shadersDrawData.draw(GL30.GL_TRIANGLE_FAN, rayMatrix);

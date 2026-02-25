@@ -23,6 +23,7 @@ import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.SectionType;
 import log.charter.data.song.Showlight;
+import log.charter.data.song.Showlight.ShowlightType;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
@@ -66,6 +67,32 @@ public class ArrangementFixer {
 	public static List<Showlight> fixShowlights(final List<Showlight> showlights) {
 		final List<Showlight> joinedShowlights = joinShowlights(showlights);
 		joinedShowlights.removeIf(s -> s.types.isEmpty());
+		for (final Showlight showlight : joinedShowlights) {
+			ShowlightType fog = null;
+			ShowlightType beam = null;
+			ShowlightType laser = null;
+			for (final ShowlightType type : showlight.types) {
+				if (type.isFog) {
+					fog = type;
+				} else if (type.isBeam) {
+					beam = type;
+				} else if (type.isLaser) {
+					laser = type;
+				}
+			}
+
+			showlight.types.clear();
+			if (fog != null) {
+				showlight.types.add(fog);
+			}
+			if (beam != null) {
+				showlight.types.add(beam);
+			}
+			if (laser != null) {
+				showlight.types.add(laser);
+			}
+		}
+
 		return joinedShowlights;
 	}
 

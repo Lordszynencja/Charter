@@ -91,7 +91,7 @@ public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
 		tableModel.setRowCount(0);
 		tableModel.setColumnCount(1);
 		showlightTypesTable = new JTable(tableModel);
-		showlightTypesTable.setShowGrid(false);
+		showlightTypesTable.setShowGrid(true);
 		showlightTypesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		showlightTypesTable.setRowHeight(20);
 		showlightTypesTable.setTableHeader(new JTableHeader());
