@@ -1,5 +1,6 @@
 package log.charter.gui.components.preview3D;
 
+import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
@@ -16,8 +17,13 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 
 	private CharterFrame charterFrame;
 	private KeyboardHandler keyboardHandler;
+	private Preview3DPanel preview3DPanel;
 
 	public void initWith(final Preview3DPanel preview3DPanel) {
+		this.preview3DPanel = preview3DPanel;
+
+		setTitle("Charter preview");
+
 		setIconImages(charterFrame.getIconImages());
 
 		addKeyListener(keyboardHandler);
@@ -86,5 +92,11 @@ public class Preview3DFrame extends JFrame implements ComponentListener {
 
 	@Override
 	public void componentShown(final ComponentEvent e) {
+	}
+
+	@Override
+	public void paint(final Graphics g) {
+		super.paint(g);
+		preview3DPanel.paint(g);
 	}
 }

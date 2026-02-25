@@ -229,24 +229,26 @@ public class CharterContext {
 		existingProjectImporter.open(path);
 	}
 
+	private void tryToRepaint() {
+		if (charterFrame.isShowing()) {
+			helpTab.updateValues();
+			titleUpdater.updateTitle();
+			charterFrame.validate();
+			charterFrame.repaint();
+		}
+
+		if (SystemType.not(MAC) && windowedPreviewHandler.isPreviewVisible()) {
+			windowedPreviewHandler.validateAndRepaint();
+		}
+
+	}
+
 	private void frame(final double frameTime) {
 		try {
 			repeatManager.frame();
 
 			chartTimeHandler.frame(frameTime);
-
-			if (SystemType.not(MAC) && windowedPreviewHandler.isPreviewVisible()) {
-				SwingUtilities.invokeLater(windowedPreviewHandler::repaint);
-			}
-
-			if (charterFrame.isShowing()) {
-				helpTab.updateValues();
-				titleUpdater.updateTitle();
-				SwingUtilities.invokeLater(() -> {
-					charterFrame.validate();
-					charterFrame.repaint();
-				});
-			}
+			SwingUtilities.invokeLater(this::tryToRepaint);
 		} catch (final Exception e) {
 			Logger.error("Exception in frame()", e);
 		}

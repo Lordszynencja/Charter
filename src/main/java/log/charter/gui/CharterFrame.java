@@ -218,21 +218,12 @@ public class CharterFrame extends JFrame implements Initiable {
 	}
 
 	@Override
-	public void repaint() {
-		if (preview3DPanel != null && preview3DPanel.isShowing()) {
-			if (preview3DPanel.painted) {
-				super.repaint();
-			}
-			preview3DPanel.repaint();
-		} else {
-			super.repaint();
-		}
-	}
-
-	@Override
 	public void paint(final Graphics g) {
 		try {
 			super.paint(g);
+			if (preview3DPanel != null && preview3DPanel.isVisible()) {
+				preview3DPanel.paint(g);
+			}
 		} catch (final Exception e) {
 			Logger.error("Error in CharterFrame.paint", e);
 		}
