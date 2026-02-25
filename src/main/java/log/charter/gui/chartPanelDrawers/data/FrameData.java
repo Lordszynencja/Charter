@@ -17,6 +17,9 @@ public class FrameData {
 	public final ImmutableBeatsMap beats;
 	public final Map<Integer, Double> bookmarks;
 	public final List<Showlight> showlights;
+	public final List<Showlight> showlightsFog;
+	public final List<Showlight> showlightsBeam;
+	public final List<Showlight> showlightsLaser;
 	public final VocalPath vocals;
 	public final Arrangement arrangement;
 	public final Level level;
@@ -29,13 +32,17 @@ public class FrameData {
 	public final boolean ctrlPressed;
 
 	public FrameData(final ImmutableBeatsMap beats, final Map<Integer, Double> bookmarks,
-			final List<Showlight> showlights, final VocalPath vocals, final Arrangement arrangement, final Level level,
-			final Pair<Double, Double> repeaterSpan,
+			final List<Showlight> showlights, final List<Showlight> showlightsFog, final List<Showlight> showlightsBeam,
+			final List<Showlight> showlightsLaser, final VocalPath vocals, final Arrangement arrangement,
+			final Level level, final Pair<Double, Double> repeaterSpan,
 			final ISelectionAccessor<? extends IVirtualConstantPosition> selection, final double time,
 			final double songLength, final Graphics2D g, final HighlightData highlightData, final boolean ctrlPressed) {
 		this.beats = beats;
 		this.bookmarks = bookmarks;
 		this.showlights = showlights;
+		this.showlightsFog = showlightsFog;
+		this.showlightsBeam = showlightsBeam;
+		this.showlightsLaser = showlightsLaser;
 		this.vocals = vocals;
 		this.arrangement = arrangement;
 		this.level = level;
@@ -49,8 +56,8 @@ public class FrameData {
 	}
 
 	public FrameData spawnSubData(final Graphics2D g) {
-		return new FrameData(beats, bookmarks, showlights, vocals, arrangement, level, repeaterSpan, selection, time,
-				songLength, g, highlightData, ctrlPressed);
+		return new FrameData(beats, bookmarks, showlights, showlightsFog, showlightsBeam, showlightsLaser, vocals,
+				arrangement, level, repeaterSpan, selection, time, songLength, g, highlightData, ctrlPressed);
 	}
 
 }

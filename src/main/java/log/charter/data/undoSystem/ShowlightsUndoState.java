@@ -27,7 +27,7 @@ public class ShowlightsUndoState extends UndoState {
 	public ShowlightsUndoState undo(final ChartData data, final ChartTimeHandler chartTimeHandler) {
 		final ShowlightsUndoState redo = new ShowlightsUndoState(data, true);
 
-		data.songChart.showlights = showlights;
+		data.songChart.showlights(showlights);
 
 		return redo;
 	}

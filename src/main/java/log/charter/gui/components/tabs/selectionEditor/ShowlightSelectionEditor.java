@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
+import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Showlight;
 import log.charter.data.song.Showlight.ShowlightType;
@@ -24,6 +25,8 @@ import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.panes.songEdits.ShowlightPane;
 
 public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
+	private ChartData chartData;
+
 	private DefaultTableModel tableModel;
 	private JTable showlightTypesTable;
 	private CharterScrollPane eventsTableScroll;
@@ -72,13 +75,15 @@ public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
 			showlight.types.clear();
 			showlight.types.addAll(types);
 		}
+
+		chartData.songChart.refreshShowlightsLists();
 	}
 
 	private void addShowlightTypes(final CurrentSelectionEditor currentSelectionEditor, final RowedPosition position) {
 		final List<ShowlightType> showlightTypes = ShowlightPane.getAvailableShowlightTypes();
 
-		final CharterSelect<ShowlightType> input = new CharterSelect<>(showlightTypes, null, null,
-				v -> onShowlightTypesChange());
+		final CharterSelect<ShowlightType> input = new CharterSelect<>(showlightTypes, null,
+				t -> t == null ? "" : t.label.label(), v -> onShowlightTypesChange());
 		input.setMinimumSize(new Dimension(100, 20));
 		input.setMaximumRowCount(15);
 

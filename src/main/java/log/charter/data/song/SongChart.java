@@ -1,5 +1,6 @@
 package log.charter.data.song;
 
+import static java.util.stream.Collectors.toList;
 import static log.charter.util.Utils.nvl;
 
 import java.io.IOException;
@@ -7,7 +8,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import log.charter.data.song.Showlight.ShowlightType;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IFractionalPosition;
 import log.charter.data.song.vocals.VocalPath;
@@ -28,7 +32,10 @@ public class SongChart {
 	public Integer albumYear;
 
 	public BeatsMap beatsMap;
-	public List<Showlight> showlights = new ArrayList<>();
+	private List<Showlight> showlights = new ArrayList<>();
+	private List<Showlight> showlightsFog = new ArrayList<>();
+	private List<Showlight> showlightsBeam = new ArrayList<>();
+	private List<Showlight> showlightsLaser = new ArrayList<>();
 	public List<VocalPath> vocalPaths = new ArrayList<>();
 	public List<Arrangement> arrangements = new ArrayList<>();
 
@@ -74,7 +81,7 @@ public class SongChart {
 		beatsMap = new BeatsMap(project);
 
 		if (project.showlights != null) {
-			showlights = project.showlights;
+			showlights(project.showlights);
 		}
 		if (project.vocalPaths != null) {
 			vocalPaths = project.vocalPaths;
@@ -121,6 +128,40 @@ public class SongChart {
 
 	public void albumName(final String value) {
 		albumName = cleanString(value);
+	}
+
+	public List<Showlight> showlights() {
+		return showlights;
+	}
+
+	public List<Showlight> showlightsFog() {
+		return showlightsFog;
+	}
+
+	public List<Showlight> showlightsBeam() {
+		return showlightsBeam;
+	}
+
+	public List<Showlight> showlightsLaser() {
+		return showlightsLaser;
+	}
+
+	private List<Showlight> showlights(final Predicate<ShowlightType> filter) {
+		return showlights.stream()//
+				.map(s -> new Showlight(s.position(), s.types.stream().filter(filter).collect(toList())))//
+				.filter(s -> !s.types.isEmpty())//
+				.collect(Collectors.toList());
+	}
+
+	public void refreshShowlightsLists() {
+		showlightsFog = showlights(s -> s.isFog);
+		showlightsBeam = showlights(s -> s.isBeam);
+		showlightsLaser = showlights(s -> s.isLaser);
+	}
+
+	public void showlights(final List<Showlight> showlights) {
+		this.showlights = showlights;
+		refreshShowlightsLists();
 	}
 
 	private List<IFractionalPosition> getAllFractionalPositionContent() {

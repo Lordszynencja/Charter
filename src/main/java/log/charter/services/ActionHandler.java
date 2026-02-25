@@ -409,6 +409,10 @@ public class ActionHandler implements Initiable {
 			final Runnable actionHandler = actionHandlers.get(action);
 			if (actionHandler != null) {
 				actionHandler.run();
+
+				if (modeManager.getMode() == EditMode.SHOWLIGHTS) {
+					chartData.songChart.refreshShowlightsLists();
+				}
 			}
 
 		} catch (final Exception ex) {

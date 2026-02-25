@@ -60,7 +60,10 @@ public class ArrangementDrawer implements Initiable {
 	private FrameData generateFrameData(final Graphics2D g, final double time) {
 		return new FrameData(chartData.beats().getClone().immutable, //
 				chartData.songChart.bookmarks, //
-				chartData.songChart.showlights, //
+				chartData.showlights(), //
+				chartData.showlightsFog(), //
+				chartData.showlightsBeam(), //
+				chartData.showlightsLaser(), //
 				chartData.currentVocals(), //
 				chartData.currentArrangement(), //
 				chartData.currentArrangementLevel(), //

@@ -158,6 +158,7 @@ public class ShowlightPane extends ParamsPane {
 
 		if (!hasValues()) {
 			data.showlights().remove(showlight);
+			data.songChart.refreshShowlightsLists();
 			return;
 		}
 
@@ -168,5 +169,6 @@ public class ShowlightPane extends ParamsPane {
 				showlight.types.add(value.item);
 			}
 		}
+		data.songChart.refreshShowlightsLists();
 	}
 }

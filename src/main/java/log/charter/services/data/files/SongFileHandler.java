@@ -141,7 +141,7 @@ public class SongFileHandler {
 			writeRSXML(timer, dir, id, vocals);
 			id++;
 		}
-		writeRSXML(timer, dir, id, chartData.songChart.showlights);
+		writeRSXML(timer, dir, id, chartData.songChart.showlights());
 
 		timer.print("RS XMLs save", Timer.defaultFormat(35));
 	}

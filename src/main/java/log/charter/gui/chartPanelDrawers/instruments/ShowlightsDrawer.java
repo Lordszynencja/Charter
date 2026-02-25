@@ -4,7 +4,6 @@ import static java.lang.Math.abs;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
-import static java.util.stream.Collectors.toList;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.laneHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
@@ -19,8 +18,6 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.song.Showlight;
@@ -97,13 +94,6 @@ public class ShowlightsDrawer {
 				showlightTextures.put(type, img);
 			}
 		}
-	}
-
-	private static List<Showlight> showlights(final FrameData frameData, final Predicate<ShowlightType> filter) {
-		return frameData.showlights.stream()//
-				.map(s -> new Showlight(s.position(), s.types.stream().filter(filter).collect(toList())))//
-				.filter(s -> !s.types.isEmpty())//
-				.collect(Collectors.toList());
 	}
 
 	private BeatsDrawer beatsDrawer;
@@ -213,12 +203,11 @@ public class ShowlightsDrawer {
 		final double timeFrom = xToPosition(-1, frameData.time);
 		final double timeTo = xToPosition(width + 1, frameData.time);
 
-		drawShowlights(frameData, showlights(frameData, t -> t.isFog), ShowlightType.FOG_GREEN, width, fogLaneY,
-				timeFrom, timeTo);
-		drawShowlights(frameData, showlights(frameData, t -> t.isBeam), ShowlightType.BEAMS_OFF, width, beamLaneY,
-				timeFrom, timeTo);
-		drawShowlights(frameData, showlights(frameData, t -> t.isLaser), ShowlightType.LASERS_OFF, width, beamLaneY,
-				timeFrom, timeTo);
+		drawShowlights(frameData, frameData.showlightsFog, ShowlightType.FOG_GREEN, width, fogLaneY, timeFrom, timeTo);
+		drawShowlights(frameData, frameData.showlightsBeam, ShowlightType.BEAMS_OFF, width, beamLaneY, timeFrom,
+				timeTo);
+		drawShowlights(frameData, frameData.showlightsLaser, ShowlightType.LASERS_OFF, width, beamLaneY, timeFrom,
+				timeTo);
 		drawSelected(frameData, width, timeFrom, timeTo);
 		drawHighlight(frameData);
 	}

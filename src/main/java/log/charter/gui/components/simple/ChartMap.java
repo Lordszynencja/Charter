@@ -196,9 +196,9 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 		final int y2 = getHeight();
 		final int y1 = y2 / 2;
 
-		drawShowlights(g, y0, y1, ShowlightType.FOG_GREEN, chartData.showlights(t -> t.isFog));
-		drawShowlights(g, y1, y2, ShowlightType.BEAMS_OFF, chartData.showlights(t -> t.isBeam));
-		drawShowlights(g, y1, y2, ShowlightType.LASERS_OFF, chartData.showlights(t -> t.isLaser));
+		drawShowlights(g, y0, y1, ShowlightType.FOG_GREEN, chartData.showlightsFog());
+		drawShowlights(g, y1, y2, ShowlightType.BEAMS_OFF, chartData.showlightsBeam());
+		drawShowlights(g, y1, y2, ShowlightType.LASERS_OFF, chartData.showlightsLaser());
 	}
 
 	private void drawVocalLines(final Graphics g) {

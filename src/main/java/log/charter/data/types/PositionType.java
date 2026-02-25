@@ -33,7 +33,7 @@ public enum PositionType {
 	HAND_SHAPE(true, fractionalPositionManager, ChartData::currentHandShapes, PositionWithIdAndType::of), //
 	NONE(false, positionManager, chartData -> new ArrayList<>(), (beats, id, item) -> PositionWithIdAndType.none()), //
 	TONE_CHANGE(false, fractionalPositionManager, ChartData::currentToneChanges, PositionWithIdAndType::of), //
-	SHOWLIGHT(false, fractionalPositionManager, chartData -> chartData.songChart.showlights, PositionWithIdAndType::of), //
+	SHOWLIGHT(false, fractionalPositionManager, chartData -> chartData.showlights(), PositionWithIdAndType::of), //
 	VOCAL(true, fractionalPositionManager, chartData -> chartData.currentVocals().vocals, PositionWithIdAndType::of);
 
 	private static interface PositionTypeItemsSupplier<T> {

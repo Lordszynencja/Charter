@@ -44,7 +44,7 @@ public class RSXMLImporter {
 				return new Showlight(position, asList(type));
 			});
 
-			chartData.songChart.showlights = ArrangementFixer.joinShowlights(showlights);
+			chartData.songChart.showlights(ArrangementFixer.fixShowlights(showlights));
 
 			songFileHandler.save();
 		} catch (final Exception e) {

@@ -42,7 +42,7 @@ import log.charter.util.CollectionUtils;
 import log.charter.util.data.Fraction;
 
 public class ArrangementFixer {
-	public static List<Showlight> joinShowlights(final List<Showlight> showlights) {
+	private static List<Showlight> joinShowlights(final List<Showlight> showlights) {
 		final List<Integer> doubledPositions = overlappingPositions(showlights);
 		if (!doubledPositions.isEmpty()) {
 			return showlights;
@@ -61,6 +61,12 @@ public class ArrangementFixer {
 		}
 
 		return newShowlights;
+	}
+
+	public static List<Showlight> fixShowlights(final List<Showlight> showlights) {
+		final List<Showlight> joinedShowlights = joinShowlights(showlights);
+		joinedShowlights.removeIf(s -> s.types.isEmpty());
+		return joinedShowlights;
 	}
 
 	private static final FractionalPosition maxDistanceBeforeBreakingHandshape = new FractionalPosition(2);
@@ -489,8 +495,8 @@ public class ArrangementFixer {
 
 		chartData.songChart.beatsMap.makeBeatsUntilSongEnd(end);
 		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
-		chartData.songChart.showlights = joinShowlights(chartData.showlights());
-		chartData.songChart.showlights.removeIf(s -> s.types.isEmpty());
+
+		chartData.songChart.showlights(fixShowlights(chartData.showlights()));
 
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
 			removeWrongEventPoints(arrangement);

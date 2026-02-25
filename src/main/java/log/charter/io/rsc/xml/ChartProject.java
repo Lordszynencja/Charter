@@ -64,7 +64,7 @@ public class ChartProject {
 		this.selectedStem = selectedStem;
 
 		beats = new ArrayList<>(songChart.beatsMap.beats);
-		showlights = songChart.showlights;
+		showlights = songChart.showlights();
 		vocalPaths = songChart.vocalPaths;
 		arrangements = songChart.arrangements;
 

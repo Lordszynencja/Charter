@@ -28,6 +28,7 @@ import log.charter.gui.components.preview3D.drawers.Preview3DInlayDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DLaneBordersDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DLyricsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DSectionDrawer;
+import log.charter.gui.components.preview3D.drawers.Preview3DShowlightsDrawer;
 import log.charter.gui.components.preview3D.drawers.Preview3DStringsFretsDrawer;
 import log.charter.gui.components.preview3D.glUtils.TextTexturesHolder;
 import log.charter.gui.components.preview3D.glUtils.TexturesHolder;
@@ -72,6 +73,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	private final Preview3DInlayDrawer inlayDrawer = new Preview3DInlayDrawer();
 	private final Preview3DLaneBordersDrawer laneBordersDrawer = new Preview3DLaneBordersDrawer();
 	private final Preview3DLyricsDrawer lyricsDrawer = new Preview3DLyricsDrawer();
+	private final Preview3DShowlightsDrawer showlightsDrawer = new Preview3DShowlightsDrawer();
 	private final Preview3DSectionDrawer sectionDrawer = new Preview3DSectionDrawer();
 	private final Preview3DStringsFretsDrawer stringsFretsDrawer = new Preview3DStringsFretsDrawer();
 	// private final Preview3DVideoDrawer videoDrawer = new Preview3DVideoDrawer();
@@ -115,6 +117,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		inlayDrawer.init(chartData, texturesHolder);
 		lyricsDrawer.init(chartData, textTexturesHolder);
 		sectionDrawer.init(chartData, textTexturesHolder);
+		showlightsDrawer.init(chartData);
 		stringsFretsDrawer.init(chartData);
 		// videoDrawer.init(chartData);
 
@@ -203,7 +206,8 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 
 	private void updateCamera(final Timer timer) {
 		cameraHandler.updateCamera(1.0 * getWidth() / getHeight());
-		shadersHolder.setSceneMatrix(cameraHandler.currentMatrix);
+		shadersHolder.setBackgroundMatrix(cameraHandler.currentBackgroundMatrix);
+		shadersHolder.setFretboardMatrix(cameraHandler.currentFretboardMatrix);
 		if (DebugConfig.frameTimes) {
 			timer.addTimestamp("updating camera");
 		}
@@ -214,6 +218,13 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		// videoDrawer.draw(shadersHolder, getWidth(), getHeight());
 		if (DebugConfig.frameTimes) {
 			timer.addTimestamp("videoDrawer");
+		}
+	}
+
+	private void drawBackground(final Timer timer, final Preview3DDrawData drawData) {
+		showlightsDrawer.draw(shadersHolder, drawData);
+		if (DebugConfig.frameTimes) {
+			timer.addTimestamp("showlightsDrawer");
 		}
 	}
 
@@ -303,6 +314,10 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 				timer.addTimestamp("preparing draw data");
 			}
 
+			shadersHolder.useBackgroundMatrix();
+			drawBackground(timer, drawData);
+
+			shadersHolder.useFretboardMatrix();
 			drawNoteboard(timer, drawData);
 			if (modeManager.getMode() == EditMode.GUITAR) {
 				drawGuitarNotes(timer, drawData);
