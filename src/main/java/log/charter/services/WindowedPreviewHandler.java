@@ -55,16 +55,14 @@ public class WindowedPreviewHandler implements Initiable {
 		}
 	}
 
-	public void repaint() {
+	public void validateAndRepaint() {
 		if (SystemType.is(MAC)) {
 			return;
 		}
 
 		try {
-			if (windowedPreviewFrame.isShowing()) {
-				windowedPreviewFrame.repaint();
-				windowedPreview3DPanel.repaint();
-			}
+			windowedPreviewFrame.validate();
+			windowedPreviewFrame.repaint();
 		} catch (final Exception e) {
 			Logger.error("Exception in frame()", e);
 		}

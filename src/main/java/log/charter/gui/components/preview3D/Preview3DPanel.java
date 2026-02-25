@@ -82,8 +82,6 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 
 	private String panelName = "3D panel";
 
-	public boolean painted = false;
-
 	private static GLData prepareGLData() {
 		final GLData data = new GLData();
 		data.majorVersion = 3;
@@ -340,8 +338,6 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 				timer.print("paintGL timings:", Timer.defaultFormat(20));
 			}
 			helpTab.addFrameTime(panelName);
-
-			painted = true;
 		} catch (final Exception e) {
 			Logger.error("Exception in paintGL", e);
 		} catch (final Error error) {
@@ -357,6 +353,5 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	@Override
 	public void repaint() {
 		super.repaint();
-		painted = false;
 	}
 }
