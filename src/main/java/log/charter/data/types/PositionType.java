@@ -2,8 +2,8 @@ package log.charter.data.types;
 
 import static log.charter.data.song.position.virtual.IVirtualPosition.fractionalPositionManager;
 import static log.charter.data.song.position.virtual.IVirtualPosition.positionManager;
-import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.beatTextY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.timingY;
@@ -33,6 +33,7 @@ public enum PositionType {
 	HAND_SHAPE(true, fractionalPositionManager, ChartData::currentHandShapes, PositionWithIdAndType::of), //
 	NONE(false, positionManager, chartData -> new ArrayList<>(), (beats, id, item) -> PositionWithIdAndType.none()), //
 	TONE_CHANGE(false, fractionalPositionManager, ChartData::currentToneChanges, PositionWithIdAndType::of), //
+	SHOWLIGHT(false, fractionalPositionManager, chartData -> chartData.showlights(), PositionWithIdAndType::of), //
 	VOCAL(true, fractionalPositionManager, chartData -> chartData.currentVocals().vocals, PositionWithIdAndType::of);
 
 	private static interface PositionTypeItemsSupplier<T> {
@@ -138,6 +139,17 @@ public enum PositionType {
 		return NONE;
 	}
 
+	private static PositionType fromYShowlights(final int y) {
+		if (y < lanesTop) {
+			return NONE;
+		}
+		if (y < lanesBottom) {
+			return SHOWLIGHT;
+		}
+
+		return NONE;
+	}
+
 	private static PositionType fromYVocals(final int y) {
 		if (y < lanesTop) {
 			return NONE;
@@ -153,6 +165,7 @@ public enum PositionType {
 		return switch (mode) {
 			case GUITAR -> fromYGuitar(y);
 			case TEMPO_MAP -> fromYTempoMap(y);
+			case SHOWLIGHTS -> fromYShowlights(y);
 			case VOCALS -> fromYVocals(y);
 			case EMPTY -> NONE;
 			default -> NONE;

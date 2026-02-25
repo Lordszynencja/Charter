@@ -9,6 +9,15 @@ public class Matrix4 {
 			0, 0, 1, 0, //
 			0, 0, 0, 1);
 
+	public static Matrix4 create(final Matrix4... matrices) {
+		Matrix4 matrix = identity;
+		for (final Matrix4 multiplier : matrices) {
+			matrix = matrix.multiply(multiplier);
+		}
+
+		return matrix;
+	}
+
 	public static Matrix4 create(final double... values) {
 		if (values.length != 16) {
 			throw new IllegalArgumentException("wrong matrix values size " + values.length);
@@ -18,6 +27,14 @@ public class Matrix4 {
 				{ values[4], values[5], values[6], values[7] }, //
 				{ values[8], values[9], values[10], values[11] }, //
 				{ values[12], values[13], values[14], values[15] } });
+	}
+
+	public static Matrix4 moveMatrix(final Point3D p) {
+		return create(//
+				1, 0, 0, p.x, //
+				0, 1, 0, p.y, //
+				0, 0, 1, p.z, //
+				0, 0, 0, p.w);
 	}
 
 	public static Matrix4 moveMatrix(final double x, final double y, final double z) {

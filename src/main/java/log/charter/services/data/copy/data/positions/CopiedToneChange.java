@@ -18,8 +18,7 @@ public class CopiedToneChange extends CopiedFractionalPosition<ToneChange> {
 	}
 
 	@Override
-	public ToneChange prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
-			final boolean convertFromBeats) {
+	public ToneChange prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition) {
 		final ToneChange toneChange = new ToneChange();
 		toneChange.toneName = toneName;
 

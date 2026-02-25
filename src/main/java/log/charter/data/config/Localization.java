@@ -33,6 +33,7 @@ public class Localization {
 		ARRANGEMENT_IMPORT_OPTIONS("Arrangement import options"), //
 		ARRANGEMENT_MENU("Arrangement"), //
 		ARRANGEMENT_MENU_TEMPO_MAP("Tempo map"), //
+		ARRANGEMENT_MENU_SHOWLIGHTS("Showlights"), //
 		ARRANGEMENT_MENU_VOCALS("Vocal path"), //
 		ARRANGEMENT_NEXT("Next arrangement"), //
 		ARRANGEMENT_PREVIOUS("Previous arrangement"), //
@@ -96,6 +97,8 @@ public class Localization {
 		COULDNT_RUN_UPDATE_SCRIPT(
 				"Couldn't run update script, run the program as administrator, install update manually or install it in a different folder"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
+		OPEN_CURRENT_SONG_FOLDER("Open current song folder"), //
+		CURRENT_SONG_FOLDER("Current song folder: %s"), //
 		DELETE("Delete"), //
 		DELETE_RELATED("Delete related"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
@@ -125,6 +128,7 @@ public class Localization {
 		FHP_TOO_CLOSE_TO_NEXT("Fret Hand Position too close to next one (<%d ms)"), //
 		FHP_WIDTH("Width"), //
 		FILE_MENU("File"), //
+		FILE_MENU_IMPORT_RS_SHOWLIGHTS("RS showlights XML"), //
 		FINGER_NOT_SET_FOR_FRETTED_STRING("Finger not set for fretted string in template [%d] - string %d"), //
 		FINGER_SET_FOR_OPEN_STRING("Finger set for open string in template [%d] - string %d"), //
 		FIRST_BEAT_BEFORE_10_SECONDS("First beat is set before 10 seconds have passed"), //
@@ -227,6 +231,12 @@ public class Localization {
 		NOTE_WITHOUT_FHP("Note without FHP"), //
 		OFFSET_MS_FIELD("Offset (ms):"), //
 		OPEN_PROJECT("Open project"), //
+		OVERLAPPING_EVENT_POINT("Overlapping event point"), //
+		OVERLAPPING_FHP("Overlapping FHP"), //
+		OVERLAPPING_HAND_SHAPE("Overlapping hand shape"), //
+		OVERLAPPING_SHOWLIGHT("Overlapping showlight"), //
+		OVERLAPPING_SOUND("Overlapping sound"), //
+		OVERLAPPING_TONE_CHANGE("Overlapping tone change"), //
 		PASS_FILTER_ALGORITHM("Algorithm"), //
 		PASS_FILTER_CENTER_FREQUENCY("Center frequency"), //
 		PASS_FILTER_FREQUENCY("Frequency"), //
@@ -243,6 +253,8 @@ public class Localization {
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
 		REDO("Redo"), //
+		RS_SHOWLIGHTS_FILE("RS showlights file (XML)"), //
+		RS_SHOWLIGHTS("RS showlights"), //
 		SAVE_AS("Save as..."), //
 		SECTION_AMBIENT("Ambient"), //
 		SECTION_BREAKDOWN("Breakdown"), //
@@ -287,6 +299,35 @@ public class Localization {
 		SHOW_CHORD_IDS("Show chord ids"), //
 		SHOW_GRID("Show grid"), //
 		SHOW_TEMPO_INSTEAD_OF_BPM("Show tempo instead of BPM"), //
+		SHOWLIGHT_ADD("Add showlight"), //
+		SHOWLIGHT_BEAMS_BLUE("Blue beams"), //
+		SHOWLIGHT_BEAMS_BLUE_PLUS("Blue extended beams"), //
+		SHOWLIGHT_BEAMS_GREEN("Green beams"), //
+		SHOWLIGHT_BEAMS_LIGHT_BLUE("Light blue beams"), //
+		SHOWLIGHT_BEAMS_MAGENTA("Magenta beams"), //
+		SHOWLIGHT_BEAMS_OFF("Beams off"), //
+		SHOWLIGHT_BEAMS_ORANGE("Orange beams"), //
+		SHOWLIGHT_BEAMS_PINK("Pink beams"), //
+		SHOWLIGHT_BEAMS_PURPLE_PLUS("Purple extended beams"), //
+		SHOWLIGHT_BEAMS_RED_PLUS("Red extended beams"), //
+		SHOWLIGHT_BEAMS_TEAL("Teal beams"), //
+		SHOWLIGHT_BEAMS_YELLOW("Yellow beams"), //
+		SHOWLIGHT_BEAMS_YELLOW_PLUS("Yellow extended beams"), //
+		SHOWLIGHT_FOG_BLUE("Blue fog"), //
+		SHOWLIGHT_FOG_GREEN("Green fog"), //
+		SHOWLIGHT_FOG_LIGHT_BLUE("Light blue fog"), //
+		SHOWLIGHT_FOG_LIGHT_GREEN("Light green fog"), //
+		SHOWLIGHT_FOG_LIME("Lime fog"), //
+		SHOWLIGHT_FOG_MAGENTA("Magenta fog"), //
+		SHOWLIGHT_FOG_ORANGE("Orange fog"), //
+		SHOWLIGHT_FOG_PINK("Pink fog"), //
+		SHOWLIGHT_FOG_PURPLE("Purple fog"), //
+		SHOWLIGHT_FOG_RED("Red fog"), //
+		SHOWLIGHT_FOG_TEAL("Teal fog"), //
+		SHOWLIGHT_FOG_YELLOW("Yellow fog"), //
+		SHOWLIGHT_LASERS_OFF("Lasers off"), //
+		SHOWLIGHT_LASERS_ON("Lasers on"), //
+		SHOWLIGHT_REMOVE("Remove showlight"), //
 		SONG_OPTIONS("Song options"), //
 		SONGS_FOLDER("Songs folder"), //
 		SOUND_DELAY("Sound delay (ms)"), //
@@ -512,7 +553,6 @@ public class Localization {
 		TREMOLO("Tremolo"), //
 
 		SPECIAL_GUITAR_PASTE_PANE("Special paste"), //
-		SPECIAL_GUITAR_PASTE_USE_BEATS("Use beats as time"), //
 		SPECIAL_GUITAR_PASTE_SECTIONS("Paste sections"), //
 		SPECIAL_GUITAR_PASTE_PHRASES("Paste phrases"), //
 		SPECIAL_GUITAR_PASTE_EVENTS("Paste events"), //
@@ -527,7 +567,7 @@ public class Localization {
 		CHART_PROJECT("Chart Project"), //
 		CHOOSE_FOLDER_NAME("Choose folder name"), //
 		COULDNT_LOAD_PROJECT("Couldn't load project, reason:\n"), //
-		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement, reason:\n"), //
+		COULDNT_LOAD_ARRANGEMENT("Couldn't load arrangement, reason:\n%s"), //
 		EXIT_POPUP("Exit"), //
 		EXIT_MESSAGE("Are you sure you want to exit?"), //
 		FAST_BACKWARD("fast backward"), //

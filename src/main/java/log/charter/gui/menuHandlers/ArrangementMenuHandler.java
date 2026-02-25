@@ -100,6 +100,11 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(tempoMapLabel, () -> modeManager.setMode(EditMode.TEMPO_MAP)));
 
 		menu.addSeparator();
+		final String showlightsLabel = getNameWithSelect(Label.ARRANGEMENT_MENU_SHOWLIGHTS,
+				modeManager.getMode() == EditMode.SHOWLIGHTS);
+		menu.add(createItem(showlightsLabel, () -> modeManager.setMode(EditMode.SHOWLIGHTS)));
+
+		menu.addSeparator();
 		addVocalPathsList(menu);
 		menu.add(createItem(Label.NEW_VOCAL_PATH, this::addVocalPath));
 

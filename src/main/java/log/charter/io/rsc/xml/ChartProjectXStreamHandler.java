@@ -15,6 +15,7 @@ import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.Phrase;
+import log.charter.data.song.Showlight;
 import log.charter.data.song.Stem;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordNote;
@@ -32,11 +33,13 @@ import log.charter.services.data.copy.data.EventPointsCopyData;
 import log.charter.services.data.copy.data.FHPsCopyData;
 import log.charter.services.data.copy.data.FullGuitarCopyData;
 import log.charter.services.data.copy.data.HandShapesCopyData;
+import log.charter.services.data.copy.data.ShowlightsCopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
 import log.charter.services.data.copy.data.positions.CopiedEventPoint;
 import log.charter.services.data.copy.data.positions.CopiedFHP;
 import log.charter.services.data.copy.data.positions.CopiedHandShape;
+import log.charter.services.data.copy.data.positions.CopiedShowlight;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundChord;
 import log.charter.services.data.copy.data.positions.CopiedSound.CopiedSoundNote;
 import log.charter.services.data.copy.data.positions.CopiedToneChange;
@@ -72,6 +75,7 @@ public class ChartProjectXStreamHandler {
 				CopiedFHP.class, //
 				CopiedEventPoint.class, //
 				CopiedHandShape.class, //
+				CopiedShowlight.class, //
 				CopiedSoundChord.class, //
 				CopiedSoundNote.class, //
 				CopiedToneChange.class, //
@@ -86,6 +90,8 @@ public class ChartProjectXStreamHandler {
 				Level.class, //
 				Note.class, //
 				Phrase.class, //
+				Showlight.class, //
+				ShowlightsCopyData.class, //
 				SoundsCopyData.class, //
 				Stem.class, //
 				ToneChange.class, //
@@ -107,7 +113,7 @@ public class ChartProjectXStreamHandler {
 
 		final ChartProject project = (ChartProject) o;
 		ChartProjectVerion2Updater.update(project);
-		ChartProjectVerion3Updater.update(file, project);
+		ChartProjectVersion3Updater.update(file, project);
 
 		return project;
 	}

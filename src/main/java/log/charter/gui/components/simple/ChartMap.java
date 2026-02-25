@@ -25,6 +25,8 @@ import log.charter.data.config.GraphicalConfig;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.Showlight;
+import log.charter.data.song.Showlight.ShowlightType;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
@@ -63,6 +65,9 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 		switch (modeManager.getMode()) {
 			case TEMPO_MAP:
 				drawBars(g);
+				break;
+			case SHOWLIGHTS:
+				drawShowlights(g);
 				break;
 			case VOCALS:
 				drawVocalLines(g);
@@ -137,13 +142,72 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 		}
 	}
 
+	private void drawShowlight(final Graphics g, final int x0, final int x1, final int y0, final int y1,
+			final ShowlightType type) {
+		if (type == ShowlightType.BEAMS_OFF || type == ShowlightType.LASERS_OFF) {
+			return;
+		}
+
+		if (type.isFog) {
+			g.setColor(type.color.darker().darker().darker());
+			g.fillRect(x0, y0, x1 - x0, y1 - y0);
+		} else if (type.isBeam) {
+			if (type == ShowlightType.BEAMS_OFF) {
+				return;
+			}
+
+			g.setColor(type.color.darker());
+			g.fillRect(x0, y0, x1 - x0, y1 - y0);
+		} else if (type.isLaser) {
+			if (type == ShowlightType.LASERS_OFF) {
+				return;
+			}
+
+			g.setColor(type.color);
+			final int spacing = 4;
+			for (int x = x0 + (x0 % spacing == 0 ? 0 : (spacing - x0 % spacing)); x < x1; x += spacing) {
+				g.drawLine(x, y0, x, y1);
+			}
+		}
+	}
+
+	private void drawShowlights(final Graphics g, final int y0, final int y1, final ShowlightType defaultValue,
+			final List<Showlight> showlights) {
+		final ImmutableBeatsMap beats = chartData.beats();
+		ShowlightType last = defaultValue;
+		int lastX = timeToPosition(beats.get(0).position());
+
+		for (final Showlight showlight : showlights) {
+			final int x = timeToPosition(showlight.position(beats));
+
+			drawShowlight(g, lastX, x, y0, y1, last);
+
+			lastX = x;
+			for (final ShowlightType type : showlight.types) {
+				last = type;
+			}
+		}
+
+		drawShowlight(g, lastX, getWidth(), y0, y1, last);
+	}
+
+	private void drawShowlights(final Graphics g) {
+		final int y0 = 0;
+		final int y2 = getHeight();
+		final int y1 = y2 / 2;
+
+		drawShowlights(g, y0, y1, ShowlightType.FOG_GREEN, chartData.showlightsFog());
+		drawShowlights(g, y1, y2, ShowlightType.BEAMS_OFF, chartData.showlightsBeam());
+		drawShowlights(g, y1, y2, ShowlightType.LASERS_OFF, chartData.showlightsLaser());
+	}
+
 	private void drawVocalLines(final Graphics g) {
 		g.setColor(ColorLabel.VOCAL_NOTE.color());
 
 		final ImmutableBeatsMap beats = chartData.beats();
 		final int y0 = chartMapHeightMultiplier;
 		final int y2 = getHeight() - chartMapHeightMultiplier - 1;
-		final int y1 = y0 + chartMapHeightMultiplier;
+		final int y1 = (y0 + y2) / 2;
 		boolean started = false;
 		int x = 0;
 
@@ -156,7 +220,7 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 			if (vocal.flag() == VocalFlag.PHRASE_END) {
 				final int x1 = timeToPosition(vocal.endPosition(beats));
 
-				g.fillRect(x, y1, x1 - x, chartMapHeightMultiplier);
+				g.fillRect(x, y1 - chartMapHeightMultiplier, x1 - x, chartMapHeightMultiplier * 2);
 				g.drawLine(x, y0, x, y2);
 				g.drawLine(x1, y0, x1, y2);
 				started = false;

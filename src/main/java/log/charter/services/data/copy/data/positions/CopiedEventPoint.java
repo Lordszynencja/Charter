@@ -29,8 +29,7 @@ public class CopiedEventPoint extends CopiedFractionalPosition<EventPoint> {
 	}
 
 	@Override
-	public EventPoint prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
-			final boolean convertFromBeats) {
+	public EventPoint prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition) {
 		final EventPoint arrangementEventsPoint = new EventPoint();
 		arrangementEventsPoint.section = section;
 		arrangementEventsPoint.phrase = phrase;

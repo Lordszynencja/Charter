@@ -29,6 +29,8 @@ public class ShadersHolder {
 	private final Map<String, Shader> shadersMap = new HashMap<>();
 
 	private String shaderInUse = null;
+	private Matrix4 backgroundMatrix = Matrix4.identity;
+	private Matrix4 fretboardMatrix = Matrix4.identity;
 
 	public void initGL() {
 		shadersMap.put(BASE_SHADER_NAME, baseShader);
@@ -222,7 +224,15 @@ public class ShadersHolder {
 		}
 	}
 
-	public void setSceneMatrix(final Matrix4 matrix) {
+	public void setBackgroundMatrix(final Matrix4 matrix) {
+		backgroundMatrix = matrix;
+	}
+
+	public void setFretboardMatrix(final Matrix4 matrix) {
+		fretboardMatrix = matrix;
+	}
+
+	private void useMatrix(final Matrix4 matrix) {
 		baseShader.use();
 		baseShader.setSceneMatrix(matrix);
 
@@ -234,5 +244,13 @@ public class ShadersHolder {
 
 		fadingShader.use();
 		fadingShader.setSceneMatrix(matrix);
+	}
+
+	public void useBackgroundMatrix() {
+		useMatrix(backgroundMatrix);
+	}
+
+	public void useFretboardMatrix() {
+		useMatrix(fretboardMatrix);
 	}
 }

@@ -3,8 +3,14 @@ package log.charter.gui.components.preview3D.camera;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
-import static log.charter.gui.components.preview3D.Preview3DUtils.*;
-import static log.charter.gui.components.preview3D.glUtils.Matrix4.*;
+import static log.charter.gui.components.preview3D.Preview3DUtils.chartboardYPosition;
+import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.cameraMatrix;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.moveMatrix;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationXMatrix;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationYMatrix;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.rotationZMatrix;
+import static log.charter.gui.components.preview3D.glUtils.Matrix4.scaleMatrix;
 import static log.charter.util.CollectionUtils.lastBeforeEqual;
 
 import java.util.List;
@@ -74,13 +80,26 @@ public class Preview3DCameraHandler {
 			screenScaleY = getScreenScaleY(aspectRatio);
 		}
 
-		public Matrix4 generateMatrix() {
-			return scaleMatrix(screenScaleX, screenScaleY + 0.05, 1 / 10.0)
+		public Matrix4 generateBackgroundMatrix() {
+			return scaleMatrix(screenScaleX, screenScaleY + 0.05, 1 / 10.0)//
 					.multiply(baseCameraPerspectiveMatrix)//
 					.multiply(rotationXMatrix(camRotationX))//
 					.multiply(rotationYMatrix(camRotationY))//
 					.multiply(rotationZMatrix(camRotationZ))//
-					.multiply(moveMatrix(-camX, -camY, -camZ));//
+					.multiply(moveMatrix(-camX / 4, -camY / 4, -camZ / 4))//
+					.multiply(Matrix4.rotationXMatrix(Math.sin(System.currentTimeMillis() / 1500.0) / 100))
+					.multiply(Matrix4.rotationYMatrix(Math.sin(System.currentTimeMillis() / 2500.0) / 100));
+		}
+
+		public Matrix4 generateFretboardMatrix() {
+			final Matrix4 baseMatrix = scaleMatrix(screenScaleX, screenScaleY + 0.05, 1 / 10.0)
+					.multiply(baseCameraPerspectiveMatrix)//
+					.multiply(rotationXMatrix(camRotationX))//
+					.multiply(rotationYMatrix(camRotationY))//
+					.multiply(rotationZMatrix(camRotationZ))//
+					.multiply(moveMatrix(-camX, -camY, -camZ));
+
+			return anchorYZCrossingToBottom(baseMatrix).multiply(baseMatrix);
 		}
 
 		private double getCamY() {
@@ -120,7 +139,8 @@ public class Preview3DCameraHandler {
 	private long cameraShakeTime = 0;
 	private int cameraShakeStrength = 0;
 
-	public Matrix4 currentMatrix;
+	public Matrix4 currentBackgroundMatrix;
+	public Matrix4 currentFretboardMatrix;
 
 	public void init(final ChartTimeHandler chartTimeHandler, final ChartData data) {
 		this.chartTimeHandler = chartTimeHandler;
@@ -179,17 +199,11 @@ public class Preview3DCameraHandler {
 		final double z = 0;
 
 		// Transform into clip space
-		final double clipY =
-				cameraMatrix.matrix[1][0] * x +
-						cameraMatrix.matrix[1][1] * y +
-						cameraMatrix.matrix[1][2] * z +
-						cameraMatrix.matrix[1][3];
+		final double clipY = cameraMatrix.matrix[1][0] * x + cameraMatrix.matrix[1][1] * y
+				+ cameraMatrix.matrix[1][2] * z + cameraMatrix.matrix[1][3];
 
-		final double clipW =
-				cameraMatrix.matrix[3][0] * x +
-						cameraMatrix.matrix[3][1] * y +
-						cameraMatrix.matrix[3][2] * z +
-						cameraMatrix.matrix[3][3];
+		final double clipW = cameraMatrix.matrix[3][0] * x + cameraMatrix.matrix[3][1] * y
+				+ cameraMatrix.matrix[3][2] * z + cameraMatrix.matrix[3][3];
 
 		// Convert to NDC Y
 		final double ndcY = clipY / clipW;
@@ -211,7 +225,7 @@ public class Preview3DCameraHandler {
 			cameraFinalData = new CameraFinalData(aspectRatio);
 		}
 
-		final Matrix4 cameraMatrix = cameraFinalData.generateMatrix();
-		currentMatrix = anchorYZCrossingToBottom(cameraMatrix).multiply(cameraMatrix);
+		currentBackgroundMatrix = cameraFinalData.generateBackgroundMatrix();
+		currentFretboardMatrix = cameraFinalData.generateFretboardMatrix();
 	}
 }

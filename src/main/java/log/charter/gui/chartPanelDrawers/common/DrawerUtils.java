@@ -13,6 +13,7 @@ import static log.charter.data.config.GraphicalConfig.toneChangeHeight;
 import static log.charter.util.Utils.getStringPosition;
 
 import log.charter.data.config.values.InstrumentConfig;
+import log.charter.gui.chartPanelDrawers.instruments.ShowlightsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
 import log.charter.services.editModes.EditMode;
@@ -41,6 +42,18 @@ public class DrawerUtils {
 		updateEditAreaSizes(EditMode.TEMPO_MAP, false, 1);
 	}
 
+	private static void setEditAreaSizesForShowlights() {
+		lanesTop = beatSizeTextY + 15;
+		laneHeight = noteHeight * 2;
+		tailHeight = noteHeight;
+		lanesHeight = laneHeight * 3;
+		lanesBottom = lanesTop + lanesHeight;
+		timingY = lanesBottom;
+		editAreaHeight = timingY + timingHeight;
+
+		chartMapHeight = chartMapHeightMultiplier * 10;
+	}
+
 	private static void setEditAreaSizesForVocals() {
 		lanesTop = beatSizeTextY + 15;
 		laneHeight = (int) (noteHeight * 7.5);
@@ -50,7 +63,7 @@ public class DrawerUtils {
 		timingY = lanesBottom;
 		editAreaHeight = timingY + timingHeight;
 
-		chartMapHeight = chartMapHeightMultiplier * 5;
+		chartMapHeight = chartMapHeightMultiplier * 10;
 	}
 
 	private static void setEditAreaSizesForGuitar(final boolean bass, final int strings) {
@@ -70,12 +83,14 @@ public class DrawerUtils {
 		switch (editMode) {
 			case GUITAR -> setEditAreaSizesForGuitar(bass, strings);
 			case TEMPO_MAP -> setEditAreaSizesForGuitar(bass, strings);
+			case SHOWLIGHTS -> setEditAreaSizesForShowlights();
 			default -> setEditAreaSizesForVocals();
 		}
 
 		BackgroundDrawer.reloadGraphics();
 		GuitarDrawer.reloadGraphics();
 		LyricLinesDrawer.reloadGraphics();
+		ShowlightsDrawer.reloadGraphics();
 		VocalsDrawer.reloadGraphics();
 	}
 

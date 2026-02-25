@@ -1,10 +1,11 @@
 package log.charter.data.types;
 
-import log.charter.data.song.FHP;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.EventPoint;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
+import log.charter.data.song.Showlight;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
@@ -53,6 +54,10 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 		return new Builder(beats, handShape.position(), handShape.endPosition()).id(id).handShape(handShape).build();
 	}
 
+	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int id, final Showlight showlight) {
+		return new Builder(beats, showlight.position()).id(id).showlight(showlight).build();
+	}
+
 	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final int id, final ToneChange toneChange) {
 		return new Builder(beats, toneChange.position()).id(id).toneChange(toneChange).build();
 	}
@@ -75,6 +80,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 		public EventPoint eventPoint = null;
 		public ChordOrNote sound = null;
 		public HandShape handShape = null;
+		public Showlight showlight = null;
 		public ToneChange toneChange = null;
 		public Vocal vocal = null;
 
@@ -158,6 +164,13 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 			return this;
 		}
 
+		public Builder showlight(final Showlight showlight) {
+			type = PositionType.SHOWLIGHT;
+			this.showlight = showlight;
+
+			return this;
+		}
+
 		public Builder toneChange(final ToneChange toneChange) {
 			type = PositionType.TONE_CHANGE;
 			this.toneChange = toneChange;
@@ -174,7 +187,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 
 		public PositionWithIdAndType build() {
 			return new PositionWithIdAndType(position, fractionalPosition, endPosition, fractionalEndPosition, id, type,
-					existingPosition, fhp, beat, eventPoint, sound, handShape, toneChange, vocal);
+					existingPosition, fhp, beat, eventPoint, sound, handShape, showlight, toneChange, vocal);
 		}
 	}
 
@@ -191,6 +204,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 	public final EventPoint eventPoint;
 	public final ChordOrNote chordOrNote;
 	public final HandShape handShape;
+	public final Showlight showlight;
 	public final ToneChange toneChange;
 	public final Vocal vocal;
 
@@ -198,7 +212,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 			final double endPosition, final FractionalPosition fractionalEndPosition, final Integer id,
 			final PositionType type, final boolean existingPosition, final FHP fhp, final Beat beat,
 			final EventPoint eventPoint, final ChordOrNote chordOrNote, final HandShape handShape,
-			final ToneChange toneChange, final Vocal vocal) {
+			final Showlight showlight, final ToneChange toneChange, final Vocal vocal) {
 		this.position = new ConstantPositionWithLength(position, endPosition - position);
 		this.fractionalPosition = new ConstantFractionalPositionWithEnd(fractionalPosition, fractionalEndPosition);
 		this.endPosition = new IVirtualConstantPosition() {
@@ -234,6 +248,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 		this.eventPoint = eventPoint;
 		this.chordOrNote = chordOrNote;
 		this.handShape = handShape;
+		this.showlight = showlight;
 		this.toneChange = toneChange;
 		this.vocal = vocal;
 	}
@@ -247,6 +262,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 			case GUITAR_NOTE -> (T) chordOrNote;
 			case HAND_SHAPE -> (T) handShape;
 			case NONE -> null;
+			case SHOWLIGHT -> (T) showlight;
 			case TONE_CHANGE -> (T) toneChange;
 			case VOCAL -> (T) vocal;
 			default -> null;

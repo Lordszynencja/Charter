@@ -11,6 +11,7 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Beat;
+import log.charter.data.song.Showlight;
 import log.charter.data.song.SongChart;
 import log.charter.data.song.Stem;
 import log.charter.data.song.vocals.VocalPath;
@@ -37,6 +38,7 @@ public class ChartProject {
 	public List<String> arrangementFiles = new ArrayList<>();
 
 	public List<Beat> beats = new ArrayList<>();
+	public List<Showlight> showlights = new ArrayList<>();
 	public VocalPath vocals = null;
 	public List<VocalPath> vocalPaths = new ArrayList<>();
 	public List<Arrangement> arrangements = new ArrayList<>();
@@ -62,6 +64,7 @@ public class ChartProject {
 		this.selectedStem = selectedStem;
 
 		beats = new ArrayList<>(songChart.beatsMap.beats);
+		showlights = songChart.showlights();
 		vocalPaths = songChart.vocalPaths;
 		arrangements = songChart.arrangements;
 

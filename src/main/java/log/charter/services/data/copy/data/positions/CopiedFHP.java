@@ -21,8 +21,7 @@ public class CopiedFHP extends CopiedFractionalPosition<FHP> {
 	}
 
 	@Override
-	public FHP prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition,
-			final boolean convertFromBeats) {
+	public FHP prepareValue(final ImmutableBeatsMap beats, final FractionalPosition basePosition) {
 		final FHP fhp = new FHP();
 		fhp.fret = fret;
 		fhp.width = width;

@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 @XStreamAlias("copyData")
 @XStreamInclude({ EventPointsCopyData.class, EmptyCopyData.class, FHPsCopyData.class, FullGuitarCopyData.class,
-		HandShapesCopyData.class, SoundsCopyData.class, VocalsCopyData.class })
+		HandShapesCopyData.class, ShowlightsCopyData.class, SoundsCopyData.class, VocalsCopyData.class })
 public class CopyData {
 	public final ICopyData selectedCopy;
 	public final FullCopyData fullCopy;

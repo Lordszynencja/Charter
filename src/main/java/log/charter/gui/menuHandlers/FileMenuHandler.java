@@ -1,6 +1,10 @@
 package log.charter.gui.menuHandlers;
 
+import static log.charter.gui.components.utils.ComponentUtils.showPopup;
+
+import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JMenu;
 
@@ -70,6 +74,9 @@ public class FileMenuHandler extends CharterMenuHandler {
 		importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_MIDI_TEMPO, this::importMidiTempo));
 		importSubmenu.addSeparator();
 
+		importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_SHOWLIGHTS, this::importRsShowlightsXML));
+		importSubmenu.addSeparator();
+
 		importSubmenu.add(createItem(Label.FILE_MENU_IMPORT_RS_VOCALS, this::importRSVocalsXML));
 		importSubmenu.add(createItem(Label.IMPORT_LRC_VOCALS, this::importLRCVocals));
 		importSubmenu.add(createItem(Label.IMPORT_USC_VOCALS, this::importUSCVocals));
@@ -90,6 +97,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 		if (modeManager.getMode() != EditMode.EMPTY) {
 			menu.addSeparator();
 			menu.add(new SpecialMenuItem(Label.SONG_OPTIONS, this::songOptions));
+			menu.add(createItem(Label.OPEN_CURRENT_SONG_FOLDER, this::openSongFolder));
 
 			menu.addSeparator();
 			menu.add(createItem(Label.CHANGE_AUDIO, this::openAudioFile));
@@ -120,6 +128,22 @@ public class FileMenuHandler extends CharterMenuHandler {
 		new SongOptionsPane(charterFrame, chartData);
 	}
 
+	private void showSongFolderPosition() {
+		showPopup(charterFrame, Label.CURRENT_SONG_FOLDER.format(chartData.path));
+	}
+
+	private void openSongFolder() {
+		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(java.awt.Desktop.Action.OPEN)) {
+			try {
+				Desktop.getDesktop().open(new File(chartData.path));
+			} catch (final IOException e) {
+				showSongFolderPosition();
+			}
+		} else {
+			showSongFolderPosition();
+		}
+	}
+
 	private void openAudioFile() {
 		final File file = FileChooseUtils.chooseMusicFile(charterFrame, chartData.path);
 		if (file == null) {
@@ -148,14 +172,24 @@ public class FileMenuHandler extends CharterMenuHandler {
 		midiImporter.importMidiTempo(file);
 	}
 
-	private void importRSVocalsXML() {
+	private void importRsShowlightsXML() {
 		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".xml" },
-				new String[] { Label.RS_ARRANGEMENT_FILE.label() });
+				Label.RS_SHOWLIGHTS_FILE.label());
 		if (file == null) {
 			return;
 		}
 
-		rsXMLImporter.importRSVocalsXML(file);
+		rsXMLImporter.importAndAddRsShowlightsXml(file);
+	}
+
+	private void importRSVocalsXML() {
+		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".xml" },
+				Label.RS_ARRANGEMENT_FILE.label());
+		if (file == null) {
+			return;
+		}
+
+		rsXMLImporter.importAndAddRsVocalsXML(file);
 	}
 
 	private void importLRCVocals() {

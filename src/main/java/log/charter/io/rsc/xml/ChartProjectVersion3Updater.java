@@ -26,7 +26,7 @@ import log.charter.io.rsc.xml.converters.VocalConverter.TemporaryVocal;
 import log.charter.services.data.files.SongFileHandler;
 import log.charter.util.RW;
 
-public class ChartProjectVerion3Updater {
+public class ChartProjectVersion3Updater {
 	private static void loadVocalsFromFile(final File dir, final ChartProject project, final ImmutableBeatsMap beats) {
 		if (project.vocals != null) {
 			return;

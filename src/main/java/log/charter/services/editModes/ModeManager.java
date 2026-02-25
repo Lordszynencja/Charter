@@ -32,6 +32,7 @@ public class ModeManager implements Initiable {
 	private final EmptyModeHandler emptyModeHandler = new EmptyModeHandler();
 	private final GuitarModeHandler guitarModeHandler = new GuitarModeHandler();
 	private final TempoMapModeHandler tempoMapModeHandler = new TempoMapModeHandler();
+	private final ShowlightsModeHandler showlightsModeHandler = new ShowlightsModeHandler();
 	private final VocalModeHandler vocalModeHandler = new VocalModeHandler();
 
 	private final Map<EditMode, ModeHandler> modeHandlers = new HashMap<>();
@@ -39,6 +40,7 @@ public class ModeManager implements Initiable {
 	public ModeManager() {
 		modeHandlers.put(EditMode.EMPTY, emptyModeHandler);
 		modeHandlers.put(EditMode.GUITAR, guitarModeHandler);
+		modeHandlers.put(EditMode.SHOWLIGHTS, showlightsModeHandler);
 		modeHandlers.put(EditMode.TEMPO_MAP, tempoMapModeHandler);
 		modeHandlers.put(EditMode.VOCALS, vocalModeHandler);
 	}
@@ -46,6 +48,7 @@ public class ModeManager implements Initiable {
 	@Override
 	public void init() {
 		charterContext.initObject(guitarModeHandler);
+		charterContext.initObject(showlightsModeHandler);
 		charterContext.initObject(tempoMapModeHandler);
 		charterContext.initObject(vocalModeHandler);
 	}

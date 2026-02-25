@@ -22,7 +22,7 @@ public class EmptyCopyData implements ICopyData, FullCopyData {
 
 	@Override
 	public void paste(final ChartData chartData, final SelectionManager selectionManager,
-			final FractionalPosition position, final boolean convertFromBeats) {
+			final FractionalPosition position) {
 	}
 
 }

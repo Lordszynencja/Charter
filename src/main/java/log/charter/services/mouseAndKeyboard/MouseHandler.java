@@ -129,6 +129,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 	}
 
+	private void leftClickShowlights(final MouseButtonPressReleaseData clickData) {
+		if (!clickData.isXDrag() || keyboardHandler.scrollLock()) {
+			selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
+		} else if (clickData.pressHighlight.type == PositionType.SHOWLIGHT) {
+			dragPositions(PositionType.SHOWLIGHT, clickData, chartData.showlights());
+		}
+	}
+
 	private void leftClickVocals(final MouseButtonPressReleaseData clickData, final boolean isDoubleClick) {
 		if (!clickData.isXDrag() || keyboardHandler.scrollLock()) {
 			selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
@@ -162,6 +170,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 				switch (modeManager.getMode()) {
 					case GUITAR -> leftClickGuitar(clickData);
 					case TEMPO_MAP -> dragTempo(clickData);
+					case SHOWLIGHTS -> leftClickShowlights(clickData);
 					case VOCALS -> leftClickVocals(clickData, doubleClick);
 					default -> {}
 				}

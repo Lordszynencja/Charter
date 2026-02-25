@@ -38,6 +38,21 @@ public class ChartPositionGenerator {
 		private IVirtualConstantPosition time;
 		private TabType tab;
 
+		private ChartPosition() {
+		}
+
+		private ChartPosition(final ChartPosition other) {
+			description = other.description;
+			vocalPathId = other.vocalPathId;
+			arrangementId = other.arrangementId;
+			levelId = other.levelId;
+			itemType = other.itemType;
+			itemId = other.itemId;
+			templateId = other.templateId;
+			time = other.time;
+			tab = other.tab;
+		}
+
 		private ChartPosition item(final PositionType type, final int id) {
 			itemType = type;
 			itemId = id;
@@ -79,6 +94,10 @@ public class ChartPositionGenerator {
 			return this;
 		}
 
+		public ChartPosition showlight(final int id) {
+			return item(PositionType.SHOWLIGHT, id);
+		}
+
 		public ChartPosition sound(final int id) {
 			return item(PositionType.GUITAR_NOTE, id);
 		}
@@ -91,6 +110,10 @@ public class ChartPositionGenerator {
 		public ChartPosition time(final IVirtualConstantPosition time) {
 			this.time = time;
 			return this;
+		}
+
+		public ChartPosition toneChange(final int id) {
+			return item(PositionType.TONE_CHANGE, id);
 		}
 
 		public ChartPosition vocal(final int id) {
@@ -110,6 +133,7 @@ public class ChartPositionGenerator {
 					chartData.songChart.arrangements.get(arrangementId).getLevel(levelId).handShapes.get(itemId);
 				case GUITAR_NOTE ->
 					chartData.songChart.arrangements.get(arrangementId).getLevel(levelId).sounds.get(itemId);
+				case SHOWLIGHT -> chartData.showlights().get(itemId);
 				case TONE_CHANGE -> chartData.songChart.arrangements.get(arrangementId).toneChanges.get(itemId);
 				case VOCAL -> chartData.songChart.vocalPaths.get(vocalPathId).vocals.get(itemId);
 				default -> null;
@@ -193,6 +217,9 @@ public class ChartPositionGenerator {
 			if (itemId != null) {
 				if (itemType == PositionType.BEAT) {
 					modeManager.setMode(EditMode.TEMPO_MAP);
+				} else if (itemType == PositionType.SHOWLIGHT) {
+					modeManager.setMode(EditMode.SHOWLIGHTS);
+					selectionManager.setSelection(itemType, itemId);
 				} else {
 					selectionManager.setSelection(itemType, itemId);
 				}
@@ -203,6 +230,11 @@ public class ChartPositionGenerator {
 			if (templateId != null) {
 				chordTemplatesEditorTab.selectChordTemplate(templateId);
 			}
+		}
+
+		@Override
+		public ChartPosition clone() {
+			return new ChartPosition(this);
 		}
 	}
 }

@@ -13,6 +13,7 @@ import log.charter.data.song.EventPoint;
 import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
+import log.charter.data.song.Showlight;
 import log.charter.data.song.SongChart;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
@@ -78,6 +79,22 @@ public class ChartData {
 		}
 
 		return currentArrangement().tuning.strings();
+	}
+
+	public List<Showlight> showlights() {
+		return songChart.showlights();
+	}
+
+	public List<Showlight> showlightsFog() {
+		return songChart.showlightsFog();
+	}
+
+	public List<Showlight> showlightsBeam() {
+		return songChart.showlightsBeam();
+	}
+
+	public List<Showlight> showlightsLaser() {
+		return songChart.showlightsLaser();
 	}
 
 	public VocalPath currentVocals() {

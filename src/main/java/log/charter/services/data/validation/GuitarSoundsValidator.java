@@ -17,8 +17,8 @@ import log.charter.data.song.notes.CommonNoteWithFret;
 import log.charter.gui.CharterFrame.TabType;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
-import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
+import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.util.CollectionUtils;
 import log.charter.util.collections.Pair;
 
@@ -91,7 +91,7 @@ public class GuitarSoundsValidator {
 			if (nextNote.fret() != note.slideTo()) {
 				errorsTab.addError(generateErrorWithTab(Label.NOTE_SLIDES_INTO_WRONG_FRET.format(note.string()), id));
 			}
-			if (note.finger() != null && !note.finger().equals(nextNote.finger())) {
+			if (note.finger() != null && nextNote.finger() != null && !note.finger().equals(nextNote.finger())) {
 				errorsTab.addError(
 						generateErrorWithTab(Label.NOTE_SLIDE_ENDS_ON_DIFFERENT_FINGER.format(note.string()), id));
 			}

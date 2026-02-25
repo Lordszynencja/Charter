@@ -30,9 +30,8 @@ public class VocalsCopyData implements ICopyData {
 
 	@Override
 	public void paste(final ChartData chartData, final SelectionManager selectionManager,
-			final FractionalPosition basePosition, final boolean convertFromBeats) {
-		ICopyData.simplePasteFractional(chartData, selectionManager, PositionType.VOCAL, basePosition, vocals,
-				convertFromBeats);
+			final FractionalPosition basePosition) {
+		ICopyData.simplePasteFractional(chartData, selectionManager, PositionType.VOCAL, basePosition, vocals);
 	}
 
 }
