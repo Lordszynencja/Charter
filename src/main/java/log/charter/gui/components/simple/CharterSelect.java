@@ -33,6 +33,26 @@ public class CharterSelect<T> extends JComboBox<CharterSelect.ItemHolder<T>> {
 		public String toString() {
 			return label;
 		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(item, label);
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			final ItemHolder<?> other = (ItemHolder<?>) obj;
+			return Objects.equals(item, other.item);
+		}
 	}
 
 	private static <T> Vector<ItemHolder<T>> pack(final List<T> collection, final Function<T, String> labelGenerator) {
