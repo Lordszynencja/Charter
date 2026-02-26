@@ -290,9 +290,13 @@ public class CharterContext {
 	}
 
 	private void onExit() {
-		audioFramer.stop();
-		framer.stop();
-		charterFrame.dispose();
+		try {
+			audioFramer.stop();
+			framer.stop();
+			charterFrame.dispose();
+		} catch (final Exception e) {
+			Logger.error("Error when exiting", e);
+		}
 		System.exit(0);
 	}
 }
