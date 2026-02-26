@@ -73,8 +73,12 @@ public class WindowedPreviewHandler implements Initiable {
 			return false;
 		}
 
-		windowedPreviewFrame.dispose();
-		return true;
+		if (windowedPreviewFrame.isVisible()) {
+			windowedPreviewFrame.dispose();
+			return true;
+		}
+
+		return false;
 	}
 
 	public void restore() {
