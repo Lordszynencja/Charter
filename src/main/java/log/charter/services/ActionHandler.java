@@ -126,6 +126,7 @@ public class ActionHandler implements Initiable {
 
 			foundNext = switch (currentMode) {
 				case TEMPO_MAP -> true;
+				case SHOWLIGHTS -> true;
 				case VOCALS -> currentPath < chartData.songChart.vocalPaths.size();
 				case GUITAR -> currentPath < chartData.songChart.arrangements.size();
 				default -> throw new IllegalArgumentException("Unexpected value: " + currentMode);
