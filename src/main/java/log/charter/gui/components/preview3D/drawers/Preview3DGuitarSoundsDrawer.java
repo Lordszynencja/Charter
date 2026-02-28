@@ -575,10 +575,10 @@ public class Preview3DGuitarSoundsDrawer {
 		final BaseShaderDrawData shaderDrawData = shadersHolder.new BaseShaderDrawData();
 
 		final double explosionLifetime = 500_000_000;
-		final double explosionTime = (System.nanoTime() - startTime) / explosionLifetime;
+		final double explosionTime = max(0, min(1, (System.nanoTime() - startTime) / explosionLifetime));
 
 		final int r = (int) (255 * (1 - explosionTime));
-		final int g = (int) (255 * (1 - Math.min(1, explosionTime * 2)));
+		final int g = (int) (255 * (1 - min(1, explosionTime * 2)));
 		final int b = 0;
 		final int a = (int) (255 * (1 - explosionTime));
 		final Color particleColor = new Color(r, g, b, a);
