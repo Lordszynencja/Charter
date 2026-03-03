@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import log.charter.data.ChartData;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
@@ -38,6 +39,8 @@ import log.charter.util.collections.Pair;
 
 public class GuitarSoundsStatusesHandler {
 	private static Map<Mute, Mute> mutesCycleMap = getCycleMap(asList(Mute.NONE, Mute.PALM, Mute.FULL));
+	private static Map<BassPickingTechnique, BassPickingTechnique> popSlapCycleMap = getCycleMap(
+			asList(BassPickingTechnique.NONE, BassPickingTechnique.SLAP, BassPickingTechnique.POP));
 	private static Map<HOPO, HOPO> hoposCycleMap = getCycleMap(
 			asList(HOPO.NONE, HOPO.HAMMER_ON, HOPO.PULL_OFF, HOPO.TAP));
 	private static Map<Harmonic, Harmonic> harmonicsCycleMap = getCycleMap(
@@ -183,6 +186,15 @@ public class GuitarSoundsStatusesHandler {
 	public void toggleAccentIndependently() {
 		independentCyclicalToggleSound(booleanCycleMap, sound -> sound.accent,
 				(sound, accent) -> sound.accent = accent);
+	}
+
+	public void toggleSlapPop() {
+		cyclicalToggleNotes(popSlapCycleMap, CommonNote::bassPicking, CommonNote::bassPicking,
+				BassPickingTechnique.NONE);
+	}
+
+	public void toggleSlapPopIndependently() {
+		independentCyclicalToggleNotes(popSlapCycleMap, CommonNote::bassPicking, CommonNote::bassPicking);
 	}
 
 	public void toggleVibrato() {

@@ -355,6 +355,9 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.TOGGLE_MUTE, guitarSoundsStatusesHandler::toggleMute);
 		actionHandlers.put(Action.TOGGLE_MUTE_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleMuteIndependently);
 		actionHandlers.put(Action.TOGGLE_PHRASE_END, vocalsHandler::togglePhraseEnd);
+		actionHandlers.put(Action.TOGGLE_SLAP_POP, guitarSoundsStatusesHandler::toggleSlapPop);
+		actionHandlers.put(Action.TOGGLE_SLAP_POP_INDEPENDENTLY,
+				guitarSoundsStatusesHandler::toggleSlapPopIndependently);
 		actionHandlers.put(Action.TOGGLE_PREVIEW_WINDOW, windowedPreviewHandler::switchWindowedPreview);
 		actionHandlers.put(Action.TOGGLE_REPEAT_START, repeatManager::toggleRepeatStart);
 		actionHandlers.put(Action.TOGGLE_REPEAT_END, repeatManager::toggleRepeatEnd);

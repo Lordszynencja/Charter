@@ -360,6 +360,8 @@ public class Localization {
 		TOGGLE_LOW_PASS_FILTER("Toggle low pass filter"), //
 		TOGGLE_METRONOME("Toggle metronome"), //
 		TOGGLE_MIDI("Toggle midi notes"), //
+		TOGGLE_SLAP_POP("Toggle Slap/Pop"), //
+		TOGGLE_SLAP_POP_INDEPENDENTLY("Toggle Slap/Pop independently"), //
 		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //
 		TOOLBAR_CLAPS("Claps"), //
 		TOOLBAR_GRID_SIZE("Grid Size: 1/"), //
