@@ -116,8 +116,8 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.TOGGLE_MUTE, null);
 		super.set(Action.TOGGLE_MUTE_INDEPENDENTLY, new Shortcut(KeyEvent.VK_M).shift());
 		super.set(Action.TOGGLE_PHRASE_END, new Shortcut(KeyEvent.VK_E));
-		super.set(Action.TOGGLE_POP_SLAP, new Shortcut(KeyEvent.VK_P));
-		super.set(Action.TOGGLE_POP_SLAP_INDEPENDENTLY, new Shortcut(KeyEvent.VK_P).shift());
+		super.set(Action.TOGGLE_SLAP_POP, new Shortcut(KeyEvent.VK_P));
+		super.set(Action.TOGGLE_SLAP_POP_INDEPENDENTLY, new Shortcut(KeyEvent.VK_P).shift());
 		super.set(Action.TOGGLE_PREVIEW_WINDOW, new Shortcut(KeyEvent.VK_F11));
 		super.set(Action.TOGGLE_REPEAT_END, new Shortcut(KeyEvent.VK_CLOSE_BRACKET).alt());
 		super.set(Action.TOGGLE_REPEAT_START, new Shortcut(KeyEvent.VK_OPEN_BRACKET).alt());

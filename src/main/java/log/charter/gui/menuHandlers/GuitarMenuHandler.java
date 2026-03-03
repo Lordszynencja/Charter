@@ -59,6 +59,8 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HARMONIC_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_SLAP_POP));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_SLAP_POP_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_VIBRATO));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_VIBRATO_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_TREMOLO));

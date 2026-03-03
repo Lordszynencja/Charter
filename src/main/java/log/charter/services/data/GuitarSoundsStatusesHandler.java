@@ -188,12 +188,12 @@ public class GuitarSoundsStatusesHandler {
 				(sound, accent) -> sound.accent = accent);
 	}
 
-	public void togglePopSlap() {
+	public void toggleSlapPop() {
 		cyclicalToggleNotes(popSlapCycleMap, CommonNote::bassPicking, CommonNote::bassPicking,
 				BassPickingTechnique.NONE);
 	}
 
-	public void togglePopSlapIndependently() {
+	public void toggleSlapPopIndependently() {
 		independentCyclicalToggleNotes(popSlapCycleMap, CommonNote::bassPicking, CommonNote::bassPicking);
 	}
 
