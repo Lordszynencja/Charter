@@ -14,6 +14,7 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
+import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
@@ -41,8 +42,8 @@ public class NoteStatusModels {
 
 		HARMONIC(0, 3, "harmonic"), //
 		PINCH_HARMONIC(1, 3, "pinch_harmonic"), //
-		EMPTY_B(2, 3, "empty_B"), //
-		EMPTY_C(3, 3, "empty_C"),//
+		SLAP(2, 3, "slap"), //
+		POP(3, 3, "pop"),//
 		;
 
 		public final int x;
@@ -61,25 +62,47 @@ public class NoteStatusModels {
 		public final boolean palmMute;
 		public final Harmonic harmonic;
 		public final boolean tap;
+		public final BassPickingTechnique bassPicking;
 		public final boolean accent;
 		public final boolean isLeftHandTechniquePresent;
+
+		public final String name;
 
 		public NoteStatusData(final NoteDrawData note) {
 			palmMute = note.mute == Mute.PALM;
 			harmonic = note.harmonic;
 			tap = note.hopo == HOPO.TAP;
+			bassPicking = note.bassPicking;
 			accent = note.accent;
 			isLeftHandTechniquePresent = note.mute == Mute.FULL || note.harmonic == Harmonic.NORMAL
 					|| note.hopo == HOPO.HAMMER_ON || note.hopo == HOPO.PULL_OFF;
-		}
 
-		public String name() {
-			return "note_" + palmMute + "_" + harmonic + "_" + tap + "_" + accent + "_" + isLeftHandTechniquePresent;
+			final StringBuilder nameBuilder = new StringBuilder("note");
+			if (palmMute) {
+				nameBuilder.append("_palmMute");
+			}
+			if (harmonic != Harmonic.NONE) {
+				nameBuilder.append("_").append(harmonic.name());
+			}
+			if (tap) {
+				nameBuilder.append("_tap");
+			}
+			if (bassPicking != BassPickingTechnique.NONE) {
+				nameBuilder.append("_").append(bassPicking.name());
+			}
+			if (accent) {
+				nameBuilder.append("_accent");
+			}
+			if (isLeftHandTechniquePresent) {
+				nameBuilder.append("_leftHandTech");
+			}
+
+			name = nameBuilder.toString();
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(palmMute, harmonic, tap, accent, isLeftHandTechniquePresent);
+			return Objects.hash(palmMute, harmonic, tap, bassPicking, accent, isLeftHandTechniquePresent);
 		}
 
 		@Override
@@ -96,7 +119,8 @@ public class NoteStatusModels {
 
 			final NoteStatusData other = (NoteStatusData) obj;
 			return palmMute == other.palmMute && harmonic == other.harmonic && tap == other.tap
-					&& accent == other.accent && isLeftHandTechniquePresent == other.isLeftHandTechniquePresent;
+					&& bassPicking == other.bassPicking && accent == other.accent
+					&& isLeftHandTechniquePresent == other.isLeftHandTechniquePresent;
 		}
 	}
 
@@ -122,8 +146,8 @@ public class NoteStatusModels {
 	 * <br>
 	 * (0, 3) - harmonic<br>
 	 * (1, 3) - pinch harmonic<br>
-	 * (2, 3) -<br>
-	 * (3, 3) -
+	 * (2, 3) - slap<br>
+	 * (3, 3) - pop
 	 */
 	private final BufferedImage[][] noteStatusesTextureAtlas = new BufferedImage[4][4];
 
@@ -236,6 +260,9 @@ public class NoteStatusModels {
 		if (noteStatusData.tap) {
 			addImage(img, getImage(TextureAtlasPosition.TAP));
 		}
+		if (noteStatusData.bassPicking != BassPickingTechnique.NONE) {
+			addImage(img, getImage(TextureAtlasPosition.valueOf(noteStatusData.bassPicking.name())));
+		}
 		if (noteStatusData.accent) {
 			addImage(img, getImage(TextureAtlasPosition.ACCENT));
 		}
@@ -247,7 +274,7 @@ public class NoteStatusModels {
 			final BufferedImage img = getBaseNoteImage(noteStatusData);
 			addTechImages(img, noteStatusData);
 
-			noteStatusesTextureIds.put(noteStatusData, texturesHolder.addTexture(noteStatusData.name(), img, true));
+			noteStatusesTextureIds.put(noteStatusData, texturesHolder.addTexture(noteStatusData.name, img, true));
 		}
 
 		return noteStatusesTextureIds.get(noteStatusData);
