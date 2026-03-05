@@ -17,6 +17,7 @@ import log.charter.gui.ChartPanel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawerUtils;
 import log.charter.gui.components.simple.ChartMap;
 import log.charter.gui.components.tabs.HelpTab;
 import log.charter.gui.components.tabs.TextTab;
@@ -102,6 +103,7 @@ public class CharterContext {
 	private final GP7PlusFileImporter gp7PlusFileImporter = new GP7PlusFileImporter();
 	private final GP7TempoReader gp7TempoReader = new GP7TempoReader();
 	private final GpaXmlImporter gpaXmlImporter = new GpaXmlImporter();
+	private final GuitarDrawerUtils guitarDrawerUtils = new GuitarDrawerUtils();
 	private final GuitarSoundsHandler guitarSoundsHandler = new GuitarSoundsHandler();
 	private final GuitarSoundsStatusesHandler guitarSoundsStatusesHandler = new GuitarSoundsStatusesHandler();
 	private final HandShapesHandler handShapesHandler = new HandShapesHandler();
@@ -293,7 +295,10 @@ public class CharterContext {
 		try {
 			audioFramer.stop();
 			framer.stop();
-			charterFrame.dispose();
+			try {
+				charterFrame.dispose();
+			} catch (final Exception e) {
+			}
 		} catch (final Exception e) {
 			Logger.error("Error when exiting", e);
 		}

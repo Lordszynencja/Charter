@@ -79,6 +79,7 @@ public enum Action {
 	NEXT_GRID(Label.NEXT_GRID_POSITION, EditMode.withItems), //
 	NEXT_ITEM(EditMode.nonEmpty), //
 	NEXT_ITEM_WITH_SELECT(EditMode.withItems), //
+	NEXT_PHRASE(GUITAR), //
 	OPEN_PROJECT(EditMode.nonEmpty), //
 	PASTE(EditMode.withItems), //
 	PLACE_LYRIC_FROM_TEXT(VOCALS), //
@@ -87,6 +88,7 @@ public enum Action {
 	PREVIOUS_GRID(Label.PREVIOUS_GRID_POSITION, EditMode.withItems), //
 	PREVIOUS_ITEM(EditMode.nonEmpty), //
 	PREVIOUS_ITEM_WITH_SELECT(EditMode.withItems), //
+	PREVIOUS_PHRASE(GUITAR), //
 	REDO(EditMode.nonEmpty), //
 	SAVE(Label.SAVE_PROJECT, EditMode.nonEmpty), //
 	SAVE_AS(Label.SAVE_PROJECT_AS, EditMode.nonEmpty), //

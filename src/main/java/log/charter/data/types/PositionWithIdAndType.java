@@ -66,6 +66,11 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 		return new Builder(beats, vocal.position(), vocal.endPosition()).id(id).vocal(vocal).build();
 	}
 
+	public static PositionWithIdAndType of(final ImmutableBeatsMap beats, final IConstantFractionalPosition position,
+			final SpecialPositionType specialType) {
+		return new Builder(beats, position).special(specialType).build();
+	}
+
 	private static class Builder {
 		public double position = 0;
 		public FractionalPosition fractionalPosition = new FractionalPosition();
@@ -73,6 +78,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 		public FractionalPosition fractionalEndPosition = new FractionalPosition();
 		public Integer id = null;
 		public PositionType type = PositionType.NONE;
+		public SpecialPositionType specialType;
 		public boolean existingPosition = false;
 
 		public FHP fhp = null;
@@ -185,9 +191,15 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 			return this;
 		}
 
+		public Builder special(final SpecialPositionType specialType) {
+			this.specialType = specialType;
+			return this;
+		}
+
 		public PositionWithIdAndType build() {
 			return new PositionWithIdAndType(position, fractionalPosition, endPosition, fractionalEndPosition, id, type,
-					existingPosition, fhp, beat, eventPoint, sound, handShape, showlight, toneChange, vocal);
+					specialType, existingPosition, fhp, beat, eventPoint, sound, handShape, showlight, toneChange,
+					vocal);
 		}
 	}
 
@@ -197,6 +209,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 
 	public final Integer id;
 	public final PositionType type;
+	public final SpecialPositionType specialType;
 	public final boolean existingPosition;
 
 	public final FHP fhp;
@@ -210,9 +223,9 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 
 	private PositionWithIdAndType(final double position, final FractionalPosition fractionalPosition,
 			final double endPosition, final FractionalPosition fractionalEndPosition, final Integer id,
-			final PositionType type, final boolean existingPosition, final FHP fhp, final Beat beat,
-			final EventPoint eventPoint, final ChordOrNote chordOrNote, final HandShape handShape,
-			final Showlight showlight, final ToneChange toneChange, final Vocal vocal) {
+			final PositionType type, final SpecialPositionType specialType, final boolean existingPosition,
+			final FHP fhp, final Beat beat, final EventPoint eventPoint, final ChordOrNote chordOrNote,
+			final HandShape handShape, final Showlight showlight, final ToneChange toneChange, final Vocal vocal) {
 		this.position = new ConstantPositionWithLength(position, endPosition - position);
 		this.fractionalPosition = new ConstantFractionalPositionWithEnd(fractionalPosition, fractionalEndPosition);
 		this.endPosition = new IVirtualConstantPosition() {
@@ -241,6 +254,7 @@ public class PositionWithIdAndType implements IVirtualConstantPositionWithEnd {
 
 		this.id = id;
 		this.type = type;
+		this.specialType = specialType;
 		this.existingPosition = existingPosition;
 
 		this.fhp = fhp;

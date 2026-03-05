@@ -61,6 +61,7 @@ public class GuitarDrawer {
 
 	private BeatsDrawer beatsDrawer;
 	private ChartPanel chartPanel;
+	private GuitarDrawerUtils guitarDrawerUtils;
 	private LyricLinesDrawer lyricLinesDrawer;
 	private WaveFormDrawer waveFormDrawer;
 
@@ -290,8 +291,8 @@ public class GuitarDrawer {
 		final int panelWidth = chartPanel.getWidth();
 		final HighwayDrawer highwayDrawer = getHighwayDrawer(frameData.g, strings, frameData.time);
 
-		GuitarEventPointsDrawer.addEventPoints(frameData, panelWidth, highwayDrawer);
-		GuitarToneChangeDrawer.addToneChanges(frameData, panelWidth, highwayDrawer);
+		GuitarEventPointsDrawer.addEventPoints(frameData, panelWidth, highwayDrawer, guitarDrawerUtils);
+		GuitarToneChangeDrawer.addToneChanges(frameData, panelWidth, highwayDrawer, guitarDrawerUtils);
 		GuitarFHPsDrawer.addFHPs(frameData, panelWidth, highwayDrawer);
 		drawGuitarLanes(frameData, panelWidth);
 		addGuitarNotes(frameData, panelWidth, highwayDrawer);

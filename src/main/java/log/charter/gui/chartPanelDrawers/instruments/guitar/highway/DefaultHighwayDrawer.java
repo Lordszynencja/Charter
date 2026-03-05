@@ -217,7 +217,8 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		sectionsAndPhrases.add(text);
 	}
 
-	private void addSection(final Graphics2D g, final SectionType section, final int x) {
+	@Override
+	public void addSection(final SectionType section, final int x, final boolean highlight) {
 		final TextWithBackground text = new TextWithBackground(new Position2D(x, sectionNamesY), fhpFont,
 				section.label.label(), ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT,
 				ColorLabel.BASE_BORDER.color());
@@ -225,7 +226,8 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		addEventPointTextIfOnScreen(text);
 	}
 
-	private void addPhrase(final Phrase phrase, final String phraseName, final int x) {
+	@Override
+	public void addPhrase(final Phrase phrase, final String phraseName, final int x, final boolean highlight) {
 		final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
 				+ (phrase.solo ? "[Solo]" : "");
 		final TextWithBackground text = new TextWithBackground(new Position2D(x, phraseNamesY), fhpFont, phraseLabel,
@@ -250,39 +252,22 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addCurrentSection(final Graphics2D g, final SectionType section) {
-	}
-
-	@Override
-	public void addCurrentSection(final Graphics2D g, final SectionType section, final int nextSectionX) {
-	}
-
-	@Override
-	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName,
-			final int nextEventPointX) {
-	}
-
-	@Override
-	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName) {
-	}
-
-	@Override
-	public void addEvents(final Graphics2D g, final EventPoint eventPoint, final int x) {
+	public void addEvents(final EventPoint eventPoint, final int x) {
 		if (!eventPoint.events.isEmpty()) {
 			addEvents(eventPoint.events, x);
 		}
 	}
 
 	@Override
-	public void addEventPoint(final Graphics2D g, final EventPoint eventPoint, final Phrase phrase, final int x,
-			final boolean selected, final boolean highlighted) {
+	public void addEventPoint(final EventPoint eventPoint, final Phrase phrase, final int x, final boolean selected,
+			final boolean highlighted) {
 		if (eventPoint.section != null) {
-			addSection(g, eventPoint.section, x);
+			addSection(eventPoint.section, x, false);
 		}
 		if (eventPoint.phrase != null) {
-			addPhrase(phrase, eventPoint.phrase, x);
+			addPhrase(phrase, eventPoint.phrase, x, false);
 		}
-		addEvents(g, eventPoint, x);
+		addEvents(eventPoint, x);
 
 		if (highlighted) {
 			addEventPointBox(x, ColorLabel.HIGHLIGHT);
@@ -764,14 +749,6 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		notes.add(new Line(line.lineStart, line.lineEnd, ColorLabel.NOTE_ADD_LINE));
 	}
 
-	@Override
-	public void addCurrentFHP(final Graphics2D g, final FHP fhp) {
-	}
-
-	@Override
-	public void addCurrentFHP(final Graphics2D g, final FHP fhp, final int nextFHPX) {
-	}
-
 	protected void addFHPLine(final int x) {
 		fhps.add(lineVertical(x, fhpY, lanesBottom, ColorLabel.FHP));
 	}
@@ -838,14 +815,6 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		handShapes.add(strokedRectangle(position, ColorLabel.HIGHLIGHT));
 	}
 
-	@Override
-	public void addCurrentTone(final Graphics2D g, final String tone) {
-	}
-
-	@Override
-	public void addCurrentTone(final Graphics2D g, final String tone, final int nextToneChangeX) {
-	}
-
 	private void addToneChangeBox(final int x, final ColorLabel color) {
 		final int top = toneChangeY - 1;
 		final int bottom = lanesBottom + 1;
@@ -854,11 +823,16 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
+	public void addTone(final String tone, final int x, final boolean highlighted) {
+		toneChanges.add(new TextWithBackground(new Position2D(x, toneChangeY), fhpFont, "" + tone,
+				ColorLabel.TONE_CHANGE, ColorLabel.BASE_TEXT, 2, ColorLabel.BASE_BORDER.color()));
+	}
+
+	@Override
 	public void addToneChange(final ToneChange toneChange, final int x, final boolean selected,
 			final boolean highlighted) {
 		toneChanges.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.TONE_CHANGE));
-		toneChanges.add(new TextWithBackground(new Position2D(x, toneChangeY), fhpFont, "" + toneChange.toneName,
-				ColorLabel.TONE_CHANGE, ColorLabel.BASE_TEXT, 2, ColorLabel.BASE_BORDER.color()));
+		addTone(toneChange.toneName, x, highlighted);
 
 		if (highlighted) {
 			addToneChangeBox(x, ColorLabel.HIGHLIGHT);

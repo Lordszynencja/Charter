@@ -107,6 +107,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	}
 
 	private void leftClickGuitar(final MouseButtonPressReleaseData clickData) {
+		if (clickData.pressHighlight.specialType != null) {
+			chartTimeHandler.nextFractionalTime(clickData.pressHighlight.asConstantFraction());
+			return;
+		}
 		if (!clickData.isXDrag() || keyboardHandler.scrollLock()) {
 			selectionManager.click(clickData, keyboardHandler.ctrl(), keyboardHandler.shift());
 			return;

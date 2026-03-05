@@ -29,7 +29,7 @@ public class GuitarFHPsDrawer {
 			return;
 		}
 
-		highwayDrawer.addCurrentFHP(frameData.g, fhp, nextFHPX);
+		highwayDrawer.addCurrentFHP(fhp, nextFHPX);
 	}
 
 	private static void drawCurrentFHP(final FrameData frameData, final HighwayDrawer highwayDrawer,
@@ -39,7 +39,7 @@ public class GuitarFHPsDrawer {
 			return;
 		}
 
-		highwayDrawer.addCurrentFHP(frameData.g, fhp);
+		highwayDrawer.addCurrentFHP(fhp);
 	}
 
 	private static void drawHighlightedPositions(final HighwayDrawer highwayDrawer, final double time,
