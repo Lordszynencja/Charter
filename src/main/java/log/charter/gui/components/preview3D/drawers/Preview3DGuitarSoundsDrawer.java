@@ -41,6 +41,7 @@ import log.charter.data.config.values.SecretsConfig;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
 import log.charter.data.song.Level;
+import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.Chord.ChordNotesVisibility;
@@ -339,6 +340,11 @@ public class Preview3DGuitarSoundsDrawer {
 			drawTexture(shadersHolder, modelMatrix, noteHeadOffset * 2, note, TextureAtlasPosition.PALM_MUTE);
 		} else if (note.mute == Mute.FULL) {
 			drawTexture(shadersHolder, modelMatrix, noteHeadOffset * 2, note, TextureAtlasPosition.FULL_MUTE);
+		}
+
+		if (note.bassPicking != BassPickingTechnique.NONE) {
+			drawTexture(shadersHolder, modelMatrix, noteHeadOffset * 3, note,
+					TextureAtlasPosition.valueOf(note.bassPicking.name()));
 		}
 	}
 
