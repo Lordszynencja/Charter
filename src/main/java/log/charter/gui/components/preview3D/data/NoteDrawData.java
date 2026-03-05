@@ -5,6 +5,7 @@ import static java.lang.Math.min;
 import java.util.List;
 
 import log.charter.data.song.BendValue;
+import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
@@ -21,6 +22,7 @@ public class NoteDrawData {
 	public final boolean accent;
 	public final Mute mute;
 	public final HOPO hopo;
+	public final BassPickingTechnique bassPicking;
 	public final Harmonic harmonic;
 	public final double prebend;
 	public final List<BendValue> bendValues;
@@ -55,6 +57,7 @@ public class NoteDrawData {
 		accent = note.accent;
 		mute = note.mute;
 		hopo = note.hopo;
+		bassPicking = note.bassPicking;
 		harmonic = note.harmonic;
 		bendValues = note.bendValues;
 		slideTo = note.slideTo;
@@ -90,6 +93,7 @@ public class NoteDrawData {
 		accent = chord.accent;
 		mute = chordNote.mute;
 		hopo = chordNote.hopo;
+		bassPicking = chordNote.bassPicking();
 		harmonic = chordNote.harmonic;
 		bendValues = chordNote.bendValues;
 		slideTo = chordNote.slideTo;
@@ -119,6 +123,7 @@ public class NoteDrawData {
 		accent = note.accent;
 		mute = note.mute;
 		hopo = note.hopo;
+		bassPicking = note.bassPicking;
 		harmonic = note.harmonic;
 		bendValues = note.bendValues;
 		slideTo = note.slideTo;
