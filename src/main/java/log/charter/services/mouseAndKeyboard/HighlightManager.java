@@ -1,6 +1,9 @@
 package log.charter.services.mouseAndKeyboard;
 
 import static java.lang.Math.abs;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.phraseNamesY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId.fromNoteId;
 import static log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId.fromPosition;
@@ -18,6 +21,8 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.EventPoint;
+import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
@@ -27,9 +32,13 @@ import log.charter.data.song.position.time.Position;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
+import log.charter.data.types.SpecialPositionType;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawerUtils;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawerUtils.ItemWithDrawingPosition;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.ModeManager;
+import log.charter.util.collections.Pair;
 import log.charter.util.grid.GridPosition;
 
 public class HighlightManager {
@@ -122,6 +131,7 @@ public class HighlightManager {
 
 	private ChartData chartData;
 	private ChartTimeHandler chartTimeHandler;
+	private GuitarDrawerUtils guitarDrawerUtils;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
 	private SelectionManager selectionManager;
@@ -167,15 +177,64 @@ public class HighlightManager {
 		return snapFHP(position);
 	}
 
+	private Pair<IConstantFractionalPosition, SpecialPositionType> checkSpecialPositions(final int x, final int y,
+			final PositionType positionType) {
+		if (positionType == PositionType.EVENT_POINT) {
+			if (y > sectionNamesY && y <= phraseNamesY) {
+				final ItemWithDrawingPosition<EventPoint> previousSection = guitarDrawerUtils.findPreviousSection();
+				if (previousSection != null && x < previousSection.x1) {
+					return new Pair<>(previousSection.item, SpecialPositionType.SECTION_PREVIOUS);
+				}
+
+				final ItemWithDrawingPosition<EventPoint> nextSection = guitarDrawerUtils.findNextSection();
+				if (nextSection != null && x >= nextSection.x0) {
+					return new Pair<>(nextSection.item, SpecialPositionType.SECTION_NEXT);
+				}
+			}
+
+			if (y > phraseNamesY && y <= eventNamesY) {
+				final ItemWithDrawingPosition<EventPoint> previousPhrase = guitarDrawerUtils.findPreviousPhrase();
+				if (previousPhrase != null && x < previousPhrase.x1) {
+					return new Pair<>(previousPhrase.item, SpecialPositionType.PHRASE_PREVIOUS);
+				}
+
+				final ItemWithDrawingPosition<EventPoint> nextPhrase = guitarDrawerUtils.findNextPhrase();
+				if (nextPhrase != null && x >= nextPhrase.x0) {
+					return new Pair<>(nextPhrase.item, SpecialPositionType.PHRASE_NEXT);
+				}
+			}
+		}
+
+		if (positionType == PositionType.TONE_CHANGE) {
+			final ItemWithDrawingPosition<ToneChange> previousToneChange = guitarDrawerUtils.findPreviousToneChange();
+			if (previousToneChange != null && x < previousToneChange.x1) {
+				return new Pair<>(previousToneChange.item, SpecialPositionType.TONE_PREVIOUS);
+			}
+
+			final ItemWithDrawingPosition<ToneChange> nextToneChange = guitarDrawerUtils.findNextToneChange();
+			if (nextToneChange != null && x >= nextToneChange.x0) {
+				return new Pair<>(nextToneChange.item, SpecialPositionType.TONE_NEXT);
+			}
+		}
+
+		return null;
+	}
+
 	public PositionWithIdAndType getHighlight(final int x, final int y) {
 		final PositionType positionType = PositionType.fromY(y, modeManager.getMode());
+
+		final ImmutableBeatsMap beats = chartData.beats();
+		final Pair<IConstantFractionalPosition, SpecialPositionType> specialPosition = checkSpecialPositions(x, y,
+				positionType);
+		if (specialPosition != null) {
+			return PositionWithIdAndType.of(beats, specialPosition.a, specialPosition.b);
+		}
 
 		final PositionWithIdAndType existingPosition = selectionManager.findExistingPosition(x, y);
 		if (existingPosition != null) {
 			return existingPosition;
 		}
 
-		final ImmutableBeatsMap beats = chartData.beats();
 		final double mouseTime = xToPosition(x, chartTimeHandler.time());
 		if (positionType == PositionType.BEAT) {
 			return PositionWithIdAndType.of(beats, mouseTime, positionType);

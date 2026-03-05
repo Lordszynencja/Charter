@@ -40,6 +40,8 @@ import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.types.PositionType;
 import log.charter.data.types.PositionWithIdAndType;
+import log.charter.data.types.SpecialPositionType;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawerUtils;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
@@ -398,9 +400,10 @@ public class HighlightData {
 	}
 
 	public static HighlightData getCurrentHighlight(final double time, final ChartData chartData,
-			final KeyboardHandler keyboardHandler, final HighlightManager highlightManager,
-			final ModeManager modeManager, final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler,
-			final MouseHandler mouseHandler, final SelectionManager selectionManager) {
+			final GuitarDrawerUtils guitarDrawerUtils, final HighlightManager highlightManager,
+			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
+			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final MouseHandler mouseHandler,
+			final SelectionManager selectionManager) {
 		if (modeManager.getMode() == EditMode.EMPTY) {
 			return new HighlightData();
 		}
@@ -420,6 +423,9 @@ public class HighlightData {
 		}
 
 		final PositionWithIdAndType highlight = highlightManager.getHighlight(x, y);
+		if (highlight.specialType != null) {
+			return new HighlightData(highlight.type, highlight.specialType);
+		}
 		if (highlight.existingPosition) {
 			final IdHighlightPosition id = switch (highlight.type) {
 				case GUITAR_NOTE -> new IdHighlightPosition(highlight.id, yToString(y, chartData.currentStrings()));
@@ -444,12 +450,14 @@ public class HighlightData {
 	}
 
 	public final PositionType type;
+	public final SpecialPositionType specialType;
 	public final Optional<IdHighlightPosition> id;
 	public final List<HighlightPosition> highlightedNonIdPositions;
 	public final Optional<HighlightLine> line;
 
 	public HighlightData() {
 		type = PositionType.NONE;
+		specialType = null;
 		id = Optional.empty();
 		highlightedNonIdPositions = new ArrayList<>();
 		line = Optional.empty();
@@ -457,6 +465,7 @@ public class HighlightData {
 
 	public HighlightData(final PositionType type, final IdHighlightPosition id) {
 		this.type = type;
+		specialType = null;
 		this.id = Optional.of(id);
 		highlightedNonIdPositions = new ArrayList<>();
 		line = Optional.empty();
@@ -464,6 +473,7 @@ public class HighlightData {
 
 	public HighlightData(final PositionType type, final HighlightPosition highlightPosition) {
 		this.type = type;
+		specialType = null;
 		id = Optional.empty();
 		highlightedNonIdPositions = asList(highlightPosition);
 		line = Optional.empty();
@@ -472,6 +482,7 @@ public class HighlightData {
 	public HighlightData(final PositionType type, final IdHighlightPosition id,
 			final List<HighlightPosition> highlightedNonIdPositions) {
 		this.type = type;
+		specialType = null;
 		this.id = Optional.of(id);
 		this.highlightedNonIdPositions = highlightedNonIdPositions;
 		line = Optional.empty();
@@ -479,6 +490,7 @@ public class HighlightData {
 
 	public HighlightData(final PositionType type, final List<HighlightPosition> highlightedNonIdPositions) {
 		this.type = type;
+		specialType = null;
 		id = Optional.empty();
 		this.highlightedNonIdPositions = highlightedNonIdPositions;
 		line = Optional.empty();
@@ -487,9 +499,18 @@ public class HighlightData {
 	public HighlightData(final PositionType type, final List<HighlightPosition> highlightedNonIdPositions,
 			final HighlightLine line) {
 		this.type = type;
+		specialType = null;
 		id = Optional.empty();
 		this.highlightedNonIdPositions = highlightedNonIdPositions;
 		this.line = Optional.of(line);
+	}
+
+	public HighlightData(final PositionType type, final SpecialPositionType specialType) {
+		this.type = type;
+		this.specialType = specialType;
+		id = Optional.empty();
+		highlightedNonIdPositions = new ArrayList<>();
+		line = Optional.empty();
 	}
 
 	public int getId(final PositionType type) {

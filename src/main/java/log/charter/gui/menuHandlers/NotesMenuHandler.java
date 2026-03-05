@@ -32,6 +32,10 @@ class NotesMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Action.NEXT_GRID));
 		menu.add(createItem(Action.PREVIOUS_BEAT));
 		menu.add(createItem(Action.NEXT_BEAT));
+		if (modeManager.getMode() == EditMode.GUITAR) {
+			menu.add(createItem(Action.PREVIOUS_PHRASE));
+			menu.add(createItem(Action.NEXT_PHRASE));
+		}
 
 		menu.addSeparator();
 		menu.add(createItem(Action.MOVE_TO_START));

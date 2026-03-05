@@ -100,7 +100,7 @@ public class Localization {
 		OPEN_CURRENT_SONG_FOLDER("Open current song folder"), //
 		CURRENT_SONG_FOLDER("Current song folder: %s"), //
 		DELETE("Delete"), //
-		DELETE_RELATED("Delete related"), //
+		DELETE_RELATED("Delete notes with related items"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
 		DELETE_ARRANGEMENT_POPUP_MSG("Are you sure you want to delete arrangement %s?"), //
 		DELETE_ARRANGEMENT_POPUP_TITLE("Delete arrangement?"), //
@@ -137,17 +137,6 @@ public class Localization {
 		FORCE_ARPEGGIO_IN_RS("in RS"), //
 		FPS("FPS"), //
 		FRET("Fret"), //
-		NAME_CANT_BE_EMPTY("Name can't be empty"), //
-		NUMBER_0("Number 0"), //
-		NUMBER_1("Number 1"), //
-		NUMBER_2("Number 2"), //
-		NUMBER_3("Number 3"), //
-		NUMBER_4("Number 4"), //
-		NUMBER_5("Number 5"), //
-		NUMBER_6("Number 6"), //
-		NUMBER_7("Number 7"), //
-		NUMBER_8("Number 8"), //
-		NUMBER_9("Number 9"), //
 		FINGER_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
 				"Finger in sound is different than finger in hand shape under it on the same string"), //
 		FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
@@ -208,6 +197,7 @@ public class Localization {
 		MOVE_TO_BOOKMARK_8("Move to bookmark 8"), //
 		MOVE_TO_BOOKMARK_9("Move to bookmark 9"), //
 		MUSIC_FOLDER("Music folder"), //
+		NAME_CANT_BE_EMPTY("Name can't be empty"), //
 		NEW_ARRANGEMENT("New arrangement..."), //
 		NEW_PROJECT("New project"), //
 		NEW_PROJECT_EMPTY("Empty project"), //
@@ -217,6 +207,7 @@ public class Localization {
 		NEW_VERSION_AVAILABLE_DOWNLOAD("New version %s is available, you are on %s, open the download page?"), //
 		NEW_VERSION_AVAILABLE_UPDATE("New version %s is available, you are on %s, download the update?"), //
 		NEW_VOCAL_PATH("New vocal path..."), //
+		NEXT_PHRASE("Next phrase"), //
 		NO_PHRASES_IN_ARRANGEMENT("No phrases in arrangement"), //
 		NO_COUNT_PHRASE_IN_ARRANGEMENT("No COUNT phrase in arrangement"), //
 		NO_END_PHRASE_IN_ARRANGEMENT("No END phrase in arrangement"), //
@@ -229,6 +220,16 @@ public class Localization {
 		NOTE_SLIDES_INTO_WRONG_FRET("Note slide ends on a different fret than next note on string %d"), //
 		NOTE_SLIDE_ENDS_ON_DIFFERENT_FINGER("Note slide ends on different finger on string %d"), //
 		NOTE_WITHOUT_FHP("Note without FHP"), //
+		NUMBER_0("Number 0"), //
+		NUMBER_1("Number 1"), //
+		NUMBER_2("Number 2"), //
+		NUMBER_3("Number 3"), //
+		NUMBER_4("Number 4"), //
+		NUMBER_5("Number 5"), //
+		NUMBER_6("Number 6"), //
+		NUMBER_7("Number 7"), //
+		NUMBER_8("Number 8"), //
+		NUMBER_9("Number 9"), //
 		OFFSET_MS_FIELD("Offset (ms):"), //
 		OPEN_PROJECT("Open project"), //
 		OVERLAPPING_EVENT_POINT("Overlapping event point"), //
@@ -250,6 +251,7 @@ public class Localization {
 		PITCH_SHIFTING_AUDIO("Pitch shifting audio: %s"), //
 		PITCH_TO("to"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
+		PREVIOUS_PHRASE("Previous phrase"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
 		REDO("Redo"), //

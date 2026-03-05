@@ -10,6 +10,7 @@ import log.charter.gui.chartPanelDrawers.instruments.ShowlightsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.TempoMapDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.VocalsDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawer;
+import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawerUtils;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.RepeatManager;
@@ -24,6 +25,7 @@ import log.charter.services.mouseAndKeyboard.MouseHandler;
 public class ArrangementDrawer implements Initiable {
 	private CharterContext charterContext;
 	private ChartData chartData;
+	private GuitarDrawerUtils guitarDrawerUtils;
 	private HighlightManager highlightManager;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
@@ -53,8 +55,8 @@ public class ArrangementDrawer implements Initiable {
 	}
 
 	private HighlightData generateHighlightData(final double time) {
-		return HighlightData.getCurrentHighlight(time, chartData, keyboardHandler, highlightManager, modeManager,
-				mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
+		return HighlightData.getCurrentHighlight(time, chartData, guitarDrawerUtils, highlightManager, keyboardHandler,
+				modeManager, mouseButtonPressReleaseHandler, mouseHandler, selectionManager);
 	}
 
 	private FrameData generateFrameData(final Graphics2D g, final double time) {

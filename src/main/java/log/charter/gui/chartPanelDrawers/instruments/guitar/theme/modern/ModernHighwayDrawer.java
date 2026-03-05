@@ -13,6 +13,7 @@ import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightLine;
+import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 
@@ -48,35 +49,44 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addCurrentSection(final Graphics2D g, final SectionType section) {
-		themeEvents.addCurrentSection(g, section);
+	public boolean supportsCurrentValues() {
+		return true;
 	}
 
 	@Override
-	public void addCurrentSection(final Graphics2D g, final SectionType section, final int nextSectionX) {
-		themeEvents.addCurrentSection(g, section, nextSectionX);
+	public ShapeSize getSizeOfSection(final SectionType section) {
+		return themeEvents.getSizeOfSection(data.g, section);
 	}
 
 	@Override
-	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName) {
-		themeEvents.addCurrentPhrase(g, phrase, phraseName);
+	public ShapeSize getSizeOfPhrase(final Phrase phrase, final String phraseName) {
+		return themeEvents.getSizeOfPhrase(data.g, phrase, phraseName);
 	}
 
 	@Override
-	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName,
-			final int nextSectionX) {
-		themeEvents.addCurrentPhrase(g, phrase, phraseName, nextSectionX);
+	public ShapeSize getSizeOfTone(final String tone) {
+		return toneChanges.getSizeOfTone(data.g, tone);
 	}
 
 	@Override
-	public void addEvents(final Graphics2D g, final EventPoint eventPoint, final int x) {
-		themeEvents.addEvents(g, eventPoint, x);
+	public void addSection(final SectionType section, final int x, final boolean highlight) {
+		themeEvents.addSection(data.g, section, x, highlight);
 	}
 
 	@Override
-	public void addEventPoint(final Graphics2D g, final EventPoint eventPoint, final Phrase phrase, final int x,
-			final boolean selected, final boolean highlighted) {
-		themeEvents.addEventPoint(g, eventPoint, phrase, x, selected, highlighted);
+	public void addPhrase(final Phrase phrase, final String phraseName, final int x, final boolean highlight) {
+		themeEvents.addPhrase(data.g, phrase, phraseName, x, highlight);
+	}
+
+	@Override
+	public void addEvents(final EventPoint eventPoint, final int x) {
+		themeEvents.addEvents(eventPoint, x);
+	}
+
+	@Override
+	public void addEventPoint(final EventPoint eventPoint, final Phrase phrase, final int x, final boolean selected,
+			final boolean highlighted) {
+		themeEvents.addEventPoint(data.g, eventPoint, phrase, x, selected, highlighted);
 	}
 
 	@Override
@@ -85,19 +95,14 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addCurrentTone(final Graphics2D g, final String tone) {
-		toneChanges.addCurrentTone(g, tone);
-	}
-
-	@Override
-	public void addCurrentTone(final Graphics2D g, final String tone, final int nextToneChangeX) {
-		toneChanges.addCurrentTone(g, tone, nextToneChangeX);
+	public void addTone(final String tone, final int x, final boolean highlighted) {
+		toneChanges.addTone(data.g, tone, x, highlighted);
 	}
 
 	@Override
 	public void addToneChange(final ToneChange toneChange, final int x, final boolean selected,
 			final boolean highlighted) {
-		toneChanges.addToneChange(toneChange, x, selected, highlighted);
+		toneChanges.addToneChange(data.g, toneChange, x, selected, highlighted);
 	}
 
 	@Override
@@ -106,13 +111,13 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addCurrentFHP(final Graphics2D g, final FHP fhp) {
-		fhps.addCurrentFHP(g, fhp);
+	public void addCurrentFHP(final FHP fhp) {
+		fhps.addCurrentFHP(data.g, fhp);
 	}
 
 	@Override
-	public void addCurrentFHP(final Graphics2D g, final FHP fhp, final int nextFHPX) {
-		fhps.addCurrentFHP(g, fhp, nextFHPX);
+	public void addCurrentFHP(final FHP fhp, final int nextFHPX) {
+		fhps.addCurrentFHP(data.g, fhp, nextFHPX);
 	}
 
 	@Override

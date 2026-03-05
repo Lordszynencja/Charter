@@ -1,6 +1,5 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
-import static java.lang.Math.min;
 import static log.charter.data.config.GraphicalConfig.eventsChangeHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
@@ -8,6 +7,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.phraseNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRoundRectangle;
 import static log.charter.util.CollectionUtils.map;
 
 import java.awt.Font;
@@ -44,14 +44,6 @@ public class ModernThemeEvents implements ThemeEvents {
 				sectionTextSpace, ColorLabel.BASE_BORDER);
 	}
 
-	private TextWithBackground generateSectionText(final SectionType section, final int x) {
-		return generateText(section.label.label(), x, sectionNamesY, ColorLabel.SECTION_NAME_BG);
-	}
-
-	private TextWithBackground generatePhraseText(final String text, final int x) {
-		return generateText(text, x, phraseNamesY, ColorLabel.PHRASE_NAME_BG);
-	}
-
 	private void addEventPointBox(final int x, final ColorLabel color) {
 		final int top = sectionNamesY - 1;
 		final int bottom = lanesBottom + 1;
@@ -60,45 +52,55 @@ public class ModernThemeEvents implements ThemeEvents {
 	}
 
 	@Override
-	public void addCurrentSection(final Graphics2D g, final SectionType section) {
-		data.sectionsAndPhrases.add(generateSectionText(section, 0));
+	public ShapeSize getSizeOfSection(final Graphics2D g, final SectionType section) {
+		return TextWithBackground.getExpectedSize(g, eventFont, section.label.label(), sectionTextSpace);
 	}
 
 	@Override
-	public void addCurrentSection(final Graphics2D g, final SectionType section, final int nextSectionX) {
-		final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, section.label.label(),
-				sectionTextSpace);
-		final int x = min(0, nextSectionX - expectedSize.width);
+	public ShapeSize getSizeOfPhrase(final Graphics2D g, final Phrase phrase, final String phraseName) {
+		final String label = generatePhraseLabel(phrase, phraseName);
+		return TextWithBackground.getExpectedSize(g, eventFont, label, sectionTextSpace);
+	}
 
-		data.sectionsAndPhrases.add(generateSectionText(section, x));
+	@Override
+	public void addSection(final Graphics2D g, final SectionType section, final int x, final boolean highlight) {
+		final String label = section.label.label();
+		data.sectionsAndPhrases.add(generateText(label, x, sectionNamesY, ColorLabel.SECTION_NAME_BG));
+		if (highlight) {
+			final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, label, sectionTextSpace);
+			final ShapePositionWithSize position = new ShapePositionWithSize(x + 1, sectionNamesY + 2,
+					expectedSize.width - 3, expectedSize.height - 3);
+			data.sectionsAndPhrases.add(strokedRoundRectangle(position, ColorLabel.HIGHLIGHT.color(), 3, 3));
+		}
+	}
+
+	@Override
+	public void addPhrase(final Graphics2D g, final Phrase phrase, final String phraseName, final int x,
+			final boolean highlight) {
+		final String label = generatePhraseLabel(phrase, phraseName);
+		data.sectionsAndPhrases.add(generateText(label, x, phraseNamesY, ColorLabel.PHRASE_NAME_BG));
+		if (highlight) {
+			final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, label, sectionTextSpace);
+			final ShapePositionWithSize position = new ShapePositionWithSize(x + 1, phraseNamesY + 2,
+					expectedSize.width - 3, expectedSize.height - 3);
+			data.sectionsAndPhrases.add(strokedRoundRectangle(position, ColorLabel.HIGHLIGHT.color(), 3, 3));
+		}
 	}
 
 	private String generatePhraseLabel(final Phrase phrase, final String phraseName) {
-		return phraseName + " (" + phrase.maxDifficulty + ")"//
-				+ (phrase.solo ? "[Solo]" : "");
-	}
+		final StringBuilder b = new StringBuilder(phraseName);
 
-	@Override
-	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName) {
-		data.sectionsAndPhrases.add(generatePhraseText(generatePhraseLabel(phrase, phraseName), 0));
-	}
-
-	@Override
-	public void addCurrentPhrase(final Graphics2D g, final Phrase phrase, final String phraseName,
-			final int nextPhraseX) {
-		if (nextPhraseX <= 0) {
-			return;
+		if (phrase.maxDifficulty > 0) {
+			b.append(" (").append(phrase.maxDifficulty).append(")");
 		}
-
-		final String label = generatePhraseLabel(phrase, phraseName);
-		final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, label, sectionTextSpace);
-		final int x = min(0, nextPhraseX - expectedSize.width);
-
-		data.sectionsAndPhrases.add(generatePhraseText(label, x));
+		if (phrase.solo) {
+			b.append(" [Solo]");
+		}
+		return b.toString();
 	}
 
 	@Override
-	public void addEvents(final Graphics2D g, final EventPoint eventPoint, final int x) {
+	public void addEvents(final EventPoint eventPoint, final int x) {
 		if (!eventPoint.events.isEmpty()) {
 			final String text = String.join(", ", map(eventPoint.events, event -> event.label));
 			data.sectionsAndPhrases.add(generateText(text, x, eventNamesY, ColorLabel.EVENT_BG));
@@ -109,14 +111,12 @@ public class ModernThemeEvents implements ThemeEvents {
 	public void addEventPoint(final Graphics2D g, final EventPoint eventPoint, final Phrase phrase, final int x,
 			final boolean selected, final boolean highlighted) {
 		if (eventPoint.section != null) {
-			final String text = eventPoint.section.label.label();
-			data.sectionsAndPhrases.add(generateText(text, x, sectionNamesY, ColorLabel.SECTION_NAME_BG));
+			addSection(g, eventPoint.section, x, highlighted);
 		}
 		if (eventPoint.phrase != null) {
-			final String text = generatePhraseLabel(phrase, eventPoint.phrase);
-			data.sectionsAndPhrases.add(generateText(text, x, phraseNamesY, ColorLabel.PHRASE_NAME_BG));
+			addPhrase(g, phrase, eventPoint.phrase, x, highlighted);
 		}
-		addEvents(g, eventPoint, x);
+		addEvents(eventPoint, x);
 
 		if (highlighted) {
 			addEventPointBox(x, ColorLabel.HIGHLIGHT);

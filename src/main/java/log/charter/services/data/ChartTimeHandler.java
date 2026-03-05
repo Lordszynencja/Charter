@@ -16,6 +16,7 @@ import org.jcodec.common.logging.Logger;
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.EventPoint;
 import log.charter.data.song.Level;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
@@ -265,6 +266,15 @@ public class ChartTimeHandler {
 		selectionManager.addSelection(type, lastIdBefore);
 	}
 
+	public void moveToPreviousPhrase() {
+		if (modeManager.getMode() != EditMode.GUITAR) {
+			return;
+		}
+
+		final List<EventPoint> phrases = chartData.currentArrangement().getFilteredEventPoints(e -> e.hasPhrase());
+		nextFractionalTime(getPreviousFractional(phrases));
+	}
+
 	public void moveToFirstItem() {
 		final List<? extends IVirtualConstantPosition> items = getCurrentItems();
 		if (items.isEmpty()) {
@@ -347,6 +357,15 @@ public class ChartTimeHandler {
 			default -> throw new IllegalArgumentException();
 		};
 		selectionManager.addSelection(type, nextIdAfter);
+	}
+
+	public void moveToNextPhrase() {
+		if (modeManager.getMode() != EditMode.GUITAR) {
+			return;
+		}
+
+		final List<EventPoint> phrases = chartData.currentArrangement().getFilteredEventPoints(e -> e.hasPhrase());
+		nextFractionalTime(getNextFractional(phrases));
 	}
 
 	public void moveToLastItem() {

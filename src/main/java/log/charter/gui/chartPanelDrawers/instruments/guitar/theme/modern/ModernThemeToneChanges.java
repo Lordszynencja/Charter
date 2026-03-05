@@ -1,11 +1,11 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
-import static java.lang.Math.min;
 import static log.charter.data.config.GraphicalConfig.toneChangeHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRectangle;
+import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.strokedRoundRectangle;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -48,21 +48,22 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 	}
 
 	@Override
-	public void addCurrentTone(final Graphics2D g, final String tone, final int nextToneChangeX) {
-		if (nextToneChangeX <= 0) {
-			return;
-		}
-
-		final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, toneChangeFont, cleanTone(tone),
-				toneChangeSpace);
-		final int x = min(0, nextToneChangeX - expectedSize.width);
-
-		data.sectionsAndPhrases.add(generateText(tone, x));
+	public ShapeSize getSizeOfTone(final Graphics2D g, final String tone) {
+		final String label = cleanTone(tone);
+		return TextWithBackground.getExpectedSize(g, toneChangeFont, label, toneChangeSpace);
 	}
 
 	@Override
-	public void addCurrentTone(final Graphics2D g, final String tone) {
-		data.sectionsAndPhrases.add(generateText(tone, 0));
+	public void addTone(final Graphics2D g, final String tone, final int x, final boolean highlight) {
+		final String label = cleanTone(tone);
+		data.toneChanges.add(generateText(label, x));
+		if (highlight) {
+			final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, toneChangeFont, label,
+					toneChangeSpace);
+			final ShapePositionWithSize position = new ShapePositionWithSize(x + 1, toneChangeY + 2,
+					expectedSize.width - 3, expectedSize.height - 3);
+			data.toneChanges.add(strokedRoundRectangle(position, ColorLabel.HIGHLIGHT.color(), 3, 3));
+		}
 	}
 
 	private void addToneChangeBox(final int x, final ColorLabel color) {
@@ -73,10 +74,10 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 	}
 
 	@Override
-	public void addToneChange(final ToneChange toneChange, final int x, final boolean selected,
+	public void addToneChange(final Graphics2D g, final ToneChange toneChange, final int x, final boolean selected,
 			final boolean highlighted) {
 		data.toneChanges.add(lineVertical(x, toneChangeY + 5, lanesBottom, ColorLabel.TONE_CHANGE));
-		data.toneChanges.add(generateText(toneChange.toneName, x));
+		addTone(g, toneChange.toneName, x, highlighted);
 
 		if (highlighted) {
 			addToneChangeBox(x, ColorLabel.HIGHLIGHT);
@@ -89,4 +90,5 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 	public void addToneChangeHighlight(final int x) {
 		data.fhps.add(lineVertical(x, toneChangeY, lanesBottom, ColorLabel.HIGHLIGHT));
 	}
+
 }

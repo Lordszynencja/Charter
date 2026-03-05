@@ -14,6 +14,7 @@ import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightLine;
+import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.ModernHighwayDrawer;
 
 public interface HighwayDrawer {
@@ -29,32 +30,43 @@ public interface HighwayDrawer {
 		};
 	}
 
-	void addCurrentSection(Graphics2D g, SectionType section);
+	default boolean supportsCurrentValues() {
+		return false;
+	}
 
-	void addCurrentSection(Graphics2D g, SectionType section, int nextSectionX);
+	default ShapeSize getSizeOfSection(final SectionType section) {
+		return new ShapeSize(0, 0);
+	}
 
-	void addCurrentPhrase(Graphics2D g, Phrase phrase, String phraseName, int nextEventPointX);
+	default ShapeSize getSizeOfPhrase(final Phrase phrase, final String phraseName) {
+		return new ShapeSize(0, 0);
+	}
 
-	void addCurrentPhrase(Graphics2D g, Phrase phrase, String phraseName);
+	default ShapeSize getSizeOfTone(final String tone) {
+		return new ShapeSize(0, 0);
+	}
 
-	void addEvents(Graphics2D g, EventPoint eventPoint, int x);
+	void addSection(final SectionType section, int x, boolean highlight);
 
-	void addEventPoint(Graphics2D g, EventPoint eventPoint, Phrase phrase, int x, boolean selected,
-			boolean highlighted);
+	void addPhrase(final Phrase phrase, String phraseName, int x, boolean highlight);
+
+	void addEvents(EventPoint eventPoint, int x);
+
+	void addEventPoint(EventPoint eventPoint, Phrase phrase, int x, boolean selected, boolean highlighted);
 
 	void addEventPointHighlight(int x);
 
-	void addCurrentTone(Graphics2D g, String tone);
-
-	void addCurrentTone(Graphics2D g, String tone, int nextToneChangeX);
+	void addTone(String tone, int x, boolean highlighted);
 
 	void addToneChange(ToneChange toneChange, int x, boolean selected, boolean highlighted);
 
 	void addToneChangeHighlight(int x);
 
-	void addCurrentFHP(Graphics2D g, FHP fhp);
+	default void addCurrentFHP(final FHP fhp) {
+	}
 
-	void addCurrentFHP(Graphics2D g, FHP fhp, int nextFHPX);
+	default void addCurrentFHP(final FHP fhp, final int nextFHPX) {
+	}
 
 	void addFHP(FHP fhp, int x, boolean selected, boolean highlighted);
 
