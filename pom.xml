@@ -13,6 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<lwjgl.version>3.3.6</lwjgl.version>
 		<lwjgl3-awt.version>0.2.3</lwjgl3-awt.version>
+		<javafx.version>21.0.10</javafx.version>
 	</properties>
 	
 	<repositories>
@@ -36,6 +37,17 @@
 	</dependencyManagement>
 	
 	<dependencies>
+		<dependency>
+		    <groupId>org.openjfx</groupId>
+		    <artifactId>javafx-swing</artifactId>
+		    <version>${javafx.version}</version>
+		    <scope>compile</scope>
+		</dependency>
+	  	<dependency>
+	    	<groupId>org.openjfx</groupId>
+	   	 	<artifactId>javafx-controls</artifactId>
+	    	<version>${javafx.version}</version>
+	  	</dependency>
 		<dependency>
 		    <groupId>jasiohost</groupId>
 		    <artifactId>jasiohost</artifactId>
@@ -339,6 +351,14 @@
 			</properties>
 			<build>
 				<plugins>
+				    <plugin>
+				        <groupId>org.openjfx</groupId>
+				        <artifactId>javafx-maven-plugin</artifactId>
+				        <version>0.0.8</version>
+				        <configuration>
+				            <mainClass>log.charter.CharterTestMain</mainClass>
+				        </configuration>
+				    </plugin>
 					<plugin>
 						<artifactId>maven-resources-plugin</artifactId>
 						<version>3.3.0</version>
