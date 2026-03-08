@@ -45,7 +45,6 @@ public class NewEmptyProjectCreator {
 
 		final SongChart songChart = new SongChart(new BeatsMap(musicData.msLength()));
 		newProjectService.fillMetadata(songChart, songFile, metadata);
-
 		newProjectService.setDataForNewProject(projectFolder, songChart, musicData);
 	}
 }
