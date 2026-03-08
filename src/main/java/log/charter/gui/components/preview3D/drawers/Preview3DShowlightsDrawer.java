@@ -204,6 +204,10 @@ public class Preview3DShowlightsDrawer {
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
+		if (chartData.showlights().isEmpty()) {
+			return;
+		}
+
 		final Matrix4 rotation = Matrix4.rotationXMatrix(Math.sin(System.currentTimeMillis() / 1500.0) / 100)
 				.multiply(Matrix4.rotationYMatrix(Math.sin(System.currentTimeMillis() / 2500.0) / 100));
 		final ShowlightType fog = currentFog(drawData.time);

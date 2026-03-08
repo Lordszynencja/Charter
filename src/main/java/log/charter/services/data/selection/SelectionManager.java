@@ -219,6 +219,7 @@ public class SelectionManager implements Initiable {
 	public void selectAll() {
 		final PositionType positionTypeToSelect = switch (modeManager.getMode()) {
 			case VOCALS -> PositionType.VOCAL;
+			case SHOWLIGHTS -> PositionType.SHOWLIGHT;
 			case GUITAR -> {
 				PositionType positionType = selectedType();
 				if (positionType != PositionType.NONE) {

@@ -162,6 +162,7 @@ public class AudioHandler {
 
 	public void clear() {
 		stopMusic();
+		projectAudioHandler.selectStem(-1);
 	}
 
 	public void togglePlaySetSpeed() {
