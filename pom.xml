@@ -11,8 +11,9 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<lwjgl.version>3.3.6</lwjgl.version>
-		<lwjgl3-awt.version>0.2.3</lwjgl3-awt.version>
+		<lwjgl.version>3.0.0</lwjgl.version>
+		<lwjgl.libraries.version>3.3.6</lwjgl.libraries.version>
+		<lwjgl3-awt.version>0.1.8</lwjgl3-awt.version>
 		<javafx.version>21.0.10</javafx.version>
 	</properties>
 	
@@ -29,7 +30,7 @@
 			<dependency>
 				<groupId>org.lwjgl</groupId>
 				<artifactId>lwjgl-bom</artifactId>
-				<version>${lwjgl.version}</version>
+				<version>${lwjgl.libraries.version}</version>
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
@@ -39,9 +40,14 @@
 	<dependencies>
 		<dependency>
 		    <groupId>org.openjfx</groupId>
+		    <artifactId>javafx</artifactId>
+		    <version>${javafx.version}</version>
+		    <type>pom</type>
+		</dependency>
+		<dependency>
+		    <groupId>org.openjfx</groupId>
 		    <artifactId>javafx-swing</artifactId>
 		    <version>${javafx.version}</version>
-		    <scope>compile</scope>
 		</dependency>
 	  	<dependency>
 	    	<groupId>org.openjfx</groupId>
@@ -101,42 +107,26 @@
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl-assimp</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl-glfw</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl-opengl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl</artifactId>
 			<classifier>${lwjgl.natives}</classifier>
-			<version>${lwjgl.version}</version>
+			<version>${lwjgl.libraries.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-assimp</artifactId>
 			<classifier>${lwjgl.natives}</classifier>
-			<version>${lwjgl.version}</version>
+			<version>${lwjgl.libraries.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-glfw</artifactId>
 			<classifier>${lwjgl.natives}</classifier>
-			<version>${lwjgl.version}</version>
+			<version>${lwjgl.libraries.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-opengl</artifactId>
 			<classifier>${lwjgl.natives}</classifier>
-			<version>${lwjgl.version}</version>
+			<version>${lwjgl.libraries.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjglx</groupId>
@@ -183,6 +173,8 @@
 			<id>lwjgl-natives-linux-amd64</id>
 			<properties>
 				<lwjgl.natives>natives-linux</lwjgl.natives>
+				<lwjgl.version>3.3.2</lwjgl.version>
+				<lwjgl3-awt.version>0.2.3</lwjgl3-awt.version>
 			</properties>
 			<build>
 				<plugins>
@@ -356,6 +348,7 @@
 				        <artifactId>javafx-maven-plugin</artifactId>
 				        <version>0.0.8</version>
 				        <configuration>
+<!--				            <mainClass>log.charter.CharterMain</mainClass>-->
 				            <mainClass>log.charter.CharterTestMain</mainClass>
 				        </configuration>
 				    </plugin>
@@ -447,7 +440,8 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>log.charter.CharterMain</mainClass>
+<!--							<mainClass>log.charter.CharterMain</mainClass>-->
+							<mainClass>log.charter.CharterTestMain</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

@@ -12,6 +12,7 @@ public class CharterTestMain extends Application {
 	private static final ExpiringValuesList<Long> framesCounter = new ExpiringValuesList<>(ExpiringValuesList.second);
 
 	public static void main(final String[] args) {
+		System.out.println("test");
 		launch();
 	}
 
