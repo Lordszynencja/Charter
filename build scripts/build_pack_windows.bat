@@ -24,7 +24,7 @@ tar.exe -a -cf "Charter-windows-%version%.zip" -C "target" "Charter"
 
 Echo Creating runtime image
 jlink ^
- --module-path "C:\Programs\javafx-jmods-21.0.10"^
+ --module-path "%JAVAFX_JMOD_HOME%"^
  --add-modules=javafx.base^
  --add-modules=javafx.controls^
  --add-modules=javafx.fxml^
