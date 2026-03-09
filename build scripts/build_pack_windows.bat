@@ -14,8 +14,6 @@ jdeps -q^
  --add-modules=javafx.swing^
  target\Charter.jar >temp.txt
 
-echo Dependencies:
-more temp.txt
 set /P detected_modules= <temp.txt
 del temp.txt
 
@@ -26,7 +24,7 @@ tar.exe -a -cf "Charter-windows-%version%.zip" -C "target" "Charter"
 
 Echo Creating runtime image
 jlink ^
- --module-path "%JAVAFX_HOME%\lib"^
+ --module-path "C:\Programs\javafx-jmods-21.0.10"^
  --add-modules=javafx.base^
  --add-modules=javafx.controls^
  --add-modules=javafx.fxml^

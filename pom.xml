@@ -11,9 +11,9 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<lwjgl.version>3.0.0</lwjgl.version>
+		<lwjgl.version>3.3.6</lwjgl.version>
 		<lwjgl.libraries.version>3.3.6</lwjgl.libraries.version>
-		<lwjgl3-awt.version>0.1.8</lwjgl3-awt.version>
+		<lwjgl3-awt.version>0.2.3</lwjgl3-awt.version>
 		<javafx.version>21.0.10</javafx.version>
 	</properties>
 	
@@ -103,6 +103,22 @@
 			<groupId>org.jogamp.jogl</groupId>
 			<artifactId>jogl-all-main</artifactId>
 			<version>2.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-assimp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-glfw</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-opengl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
