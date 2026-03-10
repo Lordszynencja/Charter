@@ -74,13 +74,13 @@ public enum Action {
 	MOVE_TO_FIRST_ITEM(EditMode.nonEmpty), //
 	MOVE_TO_LAST_ITEM(EditMode.nonEmpty), //
 	MOVE_TO_START(EditMode.nonEmpty), //
-	NEW_PROJECT(EditMode.nonEmpty), //
+	NEW_PROJECT(EditMode.values()), //
 	NEXT_BEAT(EditMode.nonEmpty), //
 	NEXT_GRID(Label.NEXT_GRID_POSITION, EditMode.withItems), //
 	NEXT_ITEM(EditMode.nonEmpty), //
 	NEXT_ITEM_WITH_SELECT(EditMode.withItems), //
 	NEXT_PHRASE(GUITAR), //
-	OPEN_PROJECT(EditMode.nonEmpty), //
+	OPEN_PROJECT(EditMode.values()), //
 	PASTE(EditMode.withItems), //
 	PLACE_LYRIC_FROM_TEXT(VOCALS), //
 	PLAY_AUDIO(EditMode.nonEmpty), //
