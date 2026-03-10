@@ -2,7 +2,7 @@ CD %~dp0
 
 SET version=%1
 SET oldVersion=%2
-ECHO Set versions to %oldVersion% -> %version%
+ECHO Set versions to old: %oldVersion% - new: %version%
 
 ECHO Creating folder 'tmp_%version%'
 MD tmp_%version%
