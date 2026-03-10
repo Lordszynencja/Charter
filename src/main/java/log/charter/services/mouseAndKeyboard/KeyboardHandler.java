@@ -29,8 +29,8 @@ public class KeyboardHandler implements KeyListener {
 			KeyEvent.VK_RIGHT, //
 			KeyEvent.VK_LEFT, //
 			KeyEvent.VK_RIGHT, //
-			KeyEvent.VK_A, //
 			KeyEvent.VK_B, //
+			KeyEvent.VK_A, //
 			KeyEvent.VK_ENTER };
 	private static int secretOptionsUnlockSequencePosition = 0;
 

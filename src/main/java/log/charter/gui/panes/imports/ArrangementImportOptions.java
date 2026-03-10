@@ -1,5 +1,7 @@
 package log.charter.gui.panes.imports;
 
+import static java.lang.Math.max;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,17 +60,21 @@ public class ArrangementImportOptions extends ParamsPane {
 		this.imported = imported;
 
 		int row = 0;
-
-		int arrangementId = 0;
 		arrangementImportSettings = new ArrangementImportSetting[imported.arrangements.size()];
 		arrangementImportSettingsOptions = prepareArrangementImportSettingsOptions();
 
-		for (final Arrangement arrangement : imported.arrangements) {
-			final String arrangementName = trackNames.get(arrangementId);
-			addArrangementOptions(row++, arrangementId++, arrangement, arrangementName);
+		int maxWidth = 0;
+		for (int i = 0; i < imported.arrangements.size(); i++) {
+			final String arrangementName = trackNames.get(i);
+			final int width = addArrangementName(row + i, i, arrangementName);
+			maxWidth = max(maxWidth, width);
+		}
+		for (int i = 0; i < imported.arrangements.size(); i++) {
+			addArrangementOptions(row + i, i, maxWidth);
 		}
 
-		row++;
+		row += imported.arrangements.size() + 1;
+
 		setOnFinish(this::saveAndExit, null);
 		addDefaultFinish(row);
 	}
@@ -77,6 +83,7 @@ public class ArrangementImportOptions extends ParamsPane {
 		final List<ArrangementImportSetting> options = new ArrayList<>();
 		options.add(new ArrangementImportSetting(false, Label.ARRANGEMENT_TO_NEW_ARRANGEMENT.label()));
 		options.add(new ArrangementImportSetting(true, Label.ARRANGEMENT_SKIP_ARRANGEMENT.label()));
+
 		for (int i = 0; i < data.songChart.arrangements.size(); i++) {
 			final String arrangementTypeAndName = data.songChart.arrangements.get(i).getTypeNameLabel();
 			final String optionName = Label.ARRANGEMENT_TO_EXISTING_ARRANGEMENT.format(i + 1, arrangementTypeAndName);
@@ -86,17 +93,19 @@ public class ArrangementImportOptions extends ParamsPane {
 		return options;
 	}
 
-	private void addArrangementOptions(final int row, final int id, final Arrangement arrangement,
-			final String arrangementName) {
+	private int addArrangementName(final int row, final int id, final String arrangementName) {
 		final String name = Label.ARRANGEMENT_ID_NAME.label().formatted(id + 1, arrangementName);
 
-		addLabel(row, 10, name, 0);
+		return addLabel(row, 10, name, 0);
+	}
+
+	private void addArrangementOptions(final int row, final int id, final int x) {
 		arrangementImportSettings[id] = arrangementImportSettingsOptions.get(0);
 
 		final CharterSelect<ArrangementImportSetting> themeSelect = new CharterSelect<>(
 				arrangementImportSettingsOptions, null, v -> v.name, v -> arrangementImportSettings[id] = v);
 
-		this.add(themeSelect, 200, getY(row), 200, 20);
+		this.add(themeSelect, x + 10, getY(row), 200, 20);
 	}
 
 	private void updateSongInformation() {
