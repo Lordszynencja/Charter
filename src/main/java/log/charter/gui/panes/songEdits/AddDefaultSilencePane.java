@@ -27,7 +27,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 	private final ChartData data;
 	private final ProjectAudioHandler projectAudioHandler;
 
-	private int bars = 2;
+	private int bars = 1;
 
 	public AddDefaultSilencePane(final CharterFrame frame, final ChartTimeHandler chartTimeHandler,
 			final ChartData data, final ProjectAudioHandler projectAudioHandler) {
