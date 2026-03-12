@@ -185,7 +185,7 @@ public class ArrangementFixer {
 				continue;
 			}
 
-			while (handShape != null && handShape.endPosition().compareTo(sound) <= 0) {
+			while (handShape != null && handShape.endPosition().compareTo(sound) < 0) {
 				handShapeId++;
 				handShape = handShapeId >= level.handShapes.size() ? null : level.handShapes.get(handShapeId);
 			}
@@ -500,7 +500,6 @@ public class ArrangementFixer {
 		level.sounds.removeIf(sound -> sound.isChord() //
 				&& (sound.chord().templateId() >= arrangement.chordTemplates.size()//
 						|| sound.chord().chordNotes.isEmpty()));
-		level.handShapes.removeIf(hs -> hs.endPosition().equals(hs.position()));
 
 		removeDuplicatesFractional(level.fhps);
 		removeDuplicatesFractional(level.sounds);
