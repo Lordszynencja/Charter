@@ -84,11 +84,7 @@ public class TempoMapModeHandler implements ModeHandler {
 	}
 
 	public void switchTSTypingPart() {
-		if (nanoTime() / 1_000_000 <= typingTimer) {
-			typingDenominator = true;
-		} else {
-			typingDenominator = !typingDenominator;
-		}
+		typingDenominator = !typingDenominator;
 		lastNumber = 0;
 
 		updateTypingTimer();
