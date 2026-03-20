@@ -16,7 +16,6 @@ import org.jcodec.common.logging.Logger;
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.EventPoint;
 import log.charter.data.song.Level;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
@@ -170,19 +169,26 @@ public class ChartTimeHandler {
 		return ScalingUtils.xToPosition(x, time());
 	}
 
-	private List<? extends IVirtualConstantPosition> getCurrentItems() {
-		switch (modeManager.getMode()) {
-			case GUITAR:
-				return chartData.currentSounds();
-			case TEMPO_MAP:
-				return chartData.songChart.beatsMap.beats;
-			case SHOWLIGHTS:
-				return chartData.showlights();
-			case VOCALS:
-				return chartData.currentVocals().vocals;
-			default:
-				return new ArrayList<>();
+	private Pair<PositionType, List<? extends IVirtualConstantPosition>> getCurrentItemsWithType() {
+		PositionType selectedType = selectionManager.selectedType();
+		if (selectedType == PositionType.NONE) {
+			selectedType = selectionManager.selectedEmpty();
 		}
+		if (selectedType != PositionType.NONE) {
+			return new Pair<>(selectedType, selectedType.getPositions(chartData));
+		}
+
+		return switch (modeManager.getMode()) {
+			case GUITAR -> new Pair<>(PositionType.GUITAR_NOTE, chartData.currentSounds());
+			case TEMPO_MAP -> new Pair<>(PositionType.BEAT, chartData.songChart.beatsMap.beats);
+			case SHOWLIGHTS -> new Pair<>(PositionType.SHOWLIGHT, chartData.showlights());
+			case VOCALS -> new Pair<>(PositionType.VOCAL, chartData.currentVocals().vocals);
+			default -> new Pair<>(PositionType.NONE, new ArrayList<>());
+		};
+	}
+
+	private List<? extends IVirtualConstantPosition> getCurrentItems() {
+		return getCurrentItemsWithType().b;
 	}
 
 	public void moveToBeginning() {
@@ -238,18 +244,18 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToPreviousItemWithSelect() {
-		final List<? extends IVirtualConstantPosition> currentItems = getCurrentItems();
-		if (currentItems.isEmpty()) {
+		final Pair<PositionType, List<? extends IVirtualConstantPosition>> currentItems = getCurrentItemsWithType();
+		if (currentItems.b.isEmpty()) {
 			return;
 		}
 
-		final Integer lastIdBefore = lastBefore(currentItems, new ConstantPosition(time()),
+		final Integer lastIdBefore = lastBefore(currentItems.b, new ConstantPosition(time()),
 				comparator(chartData.beats())).findId();
 		if (lastIdBefore == null) {
 			return;
 		}
 
-		final IVirtualConstantPosition position = currentItems.get(lastIdBefore);
+		final IVirtualConstantPosition position = currentItems.b.get(lastIdBefore);
 		if (position.isFraction()) {
 			nextFractionalTime(position.asConstantFraction());
 		} else {
@@ -257,22 +263,7 @@ public class ChartTimeHandler {
 		}
 
 		selectionManager.clear();
-		final PositionType type = switch (modeManager.getMode()) {
-			case GUITAR -> PositionType.GUITAR_NOTE;
-			case SHOWLIGHTS -> PositionType.SHOWLIGHT;
-			case VOCALS -> PositionType.VOCAL;
-			default -> throw new IllegalArgumentException();
-		};
-		selectionManager.addSelection(type, lastIdBefore);
-	}
-
-	public void moveToPreviousPhrase() {
-		if (modeManager.getMode() != EditMode.GUITAR) {
-			return;
-		}
-
-		final List<EventPoint> phrases = chartData.currentArrangement().getFilteredEventPoints(e -> e.hasPhrase());
-		nextFractionalTime(getPreviousFractional(phrases));
+		selectionManager.addSelection(currentItems.a, lastIdBefore);
 	}
 
 	public void moveToFirstItem() {
@@ -331,18 +322,18 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToNextItemWithSelect() {
-		final List<? extends IVirtualConstantPosition> currentItems = getCurrentItems();
-		if (currentItems.isEmpty()) {
+		final Pair<PositionType, List<? extends IVirtualConstantPosition>> currentItems = getCurrentItemsWithType();
+		if (currentItems.b.isEmpty()) {
 			return;
 		}
 
-		final Integer nextIdAfter = firstAfter(currentItems, new ConstantPosition(time()),
+		final Integer nextIdAfter = firstAfter(currentItems.b, new ConstantPosition(time()),
 				comparator(chartData.beats())).findId();
 		if (nextIdAfter == null) {
 			return;
 		}
 
-		final IVirtualConstantPosition position = currentItems.get(nextIdAfter);
+		final IVirtualConstantPosition position = currentItems.b.get(nextIdAfter);
 		if (position.isFraction()) {
 			nextFractionalTime(position.asConstantFraction());
 		} else {
@@ -350,22 +341,7 @@ public class ChartTimeHandler {
 		}
 
 		selectionManager.clear();
-		final PositionType type = switch (modeManager.getMode()) {
-			case GUITAR -> PositionType.GUITAR_NOTE;
-			case SHOWLIGHTS -> PositionType.SHOWLIGHT;
-			case VOCALS -> PositionType.VOCAL;
-			default -> throw new IllegalArgumentException();
-		};
-		selectionManager.addSelection(type, nextIdAfter);
-	}
-
-	public void moveToNextPhrase() {
-		if (modeManager.getMode() != EditMode.GUITAR) {
-			return;
-		}
-
-		final List<EventPoint> phrases = chartData.currentArrangement().getFilteredEventPoints(e -> e.hasPhrase());
-		nextFractionalTime(getNextFractional(phrases));
+		selectionManager.addSelection(currentItems.a, nextIdAfter);
 	}
 
 	public void moveToLastItem() {

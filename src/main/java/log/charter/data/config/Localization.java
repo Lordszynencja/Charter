@@ -208,7 +208,11 @@ public class Localization {
 		NEW_VERSION_AVAILABLE_DOWNLOAD("New version %s is available, you are on %s, open the download page?"), //
 		NEW_VERSION_AVAILABLE_UPDATE("New version %s is available, you are on %s, download the update?"), //
 		NEW_VOCAL_PATH("New vocal path..."), //
-		NEXT_PHRASE("Next phrase"), //
+		NEXT_BEAT("Next beat"), //
+		NEXT_GRID_POSITION("Next grid position"), //
+		NEXT_ITEM("Next item"), //
+		NEXT_ITEM_TYPE("Next item type"), //
+		NEXT_ITEM_WITH_SELECT("Next item with select"), //
 		NO_PHRASES_IN_ARRANGEMENT("No phrases in arrangement"), //
 		NO_COUNT_PHRASE_IN_ARRANGEMENT("No COUNT phrase in arrangement"), //
 		NO_END_PHRASE_IN_ARRANGEMENT("No END phrase in arrangement"), //
@@ -252,7 +256,11 @@ public class Localization {
 		PITCH_SHIFTING_AUDIO("Pitch shifting audio: %s"), //
 		PITCH_TO("to"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
-		PREVIOUS_PHRASE("Previous phrase"), //
+		PREVIOUS_BEAT("Previous beat"), //
+		PREVIOUS_GRID_POSITION("Previous grid position"), //
+		PREVIOUS_ITEM("Previous item"), //
+		PREVIOUS_ITEM_TYPE("Previous item type"), //
+		PREVIOUS_ITEM_WITH_SELECT("Previous item with select"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
 		REDO("Redo"), //
@@ -462,20 +470,12 @@ public class Localization {
 		TOGGLE_REPEAT_START("Set repeater start"), //
 		TOGGLE_REPEATER("Toggle repeater"), //
 
-		NOTES_MENU("Notes"), //
-		NOTES_MENU_GRID_OPTIONS("Grid options"), //
+		ITEMS_MENU("Items"), //
+		GRID_OPTIONS("Grid options"), //
 		SNAP_ALL("Snap all items inbetween to grid"), //
 		SNAP_SELECTED("Snap selected items to grid"), //
 		DOUBLE_GRID("Double grid resolution"), //
 		HALVE_GRID("Halve grid resolution"), //
-		PREVIOUS_ITEM("Previous item"), //
-		PREVIOUS_ITEM_WITH_SELECT("Previous item with select"), //
-		PREVIOUS_GRID_POSITION("Previous grid position"), //
-		PREVIOUS_BEAT("Previous beat"), //
-		NEXT_ITEM("Next item"), //
-		NEXT_ITEM_WITH_SELECT("Next item with select"), //
-		NEXT_GRID_POSITION("Next grid position"), //
-		NEXT_BEAT("Next beat"), //
 
 		BEAT_GRID_TYPE("Beat"), //
 		NOTE_GRID_TYPE("Note"), //
@@ -675,6 +675,9 @@ public class Localization {
 		GRAPHIC_CONFIG_EVENT_BG("Event background"), //
 		GRAPHIC_CONFIG_HIGHLIGHT("Highlight"), //
 		GRAPHIC_CONFIG_SELECT("Select"), //
+		GRAPHIC_CONFIG_TYPE_SELECT("Type select"), //
+		GRAPHIC_CONFIG_WAVEFORM_COLOR("Waveform"), //
+		GRAPHIC_CONFIG_WAVEFORM_RMS_COLOR("Waveform RMS"), //
 
 		GRAPHIC_CONFIG_NOTE_FLAG_MARKER("Note flag marker"), //
 		GRAPHIC_CONFIG_SLIDE_NORMAL_FRET_BG("Normal slide fret background"), //
@@ -701,7 +704,9 @@ public class Localization {
 		GRAPHIC_CONFIG_FHP("FHP"), //
 		GRAPHIC_CONFIG_HAND_SHAPE("Hand shape"), //
 		GRAPHIC_CONFIG_HAND_SHAPE_ARPEGGIO("Arpeggio"), //
+		GRAPHIC_CONFIG_HAND_SHAPE_TEXT("Hand shape text"), //
 		GRAPHIC_CONFIG_TONE_CHANGE("Tone change"), //
+		GRAPHIC_CONFIG_TONE_CHANGE_TEXT("Tone change text"), //
 
 		GRAPHIC_CONFIG_VOCAL_LINE_BACKGROUND("Vocal line background"), //
 		GRAPHIC_CONFIG_VOCAL_LINE_TEXT("Vocal line text"), //
@@ -710,14 +715,27 @@ public class Localization {
 		GRAPHIC_CONFIG_VOCAL_NOTE_WORD_PART("Vocal note word part"), //
 		GRAPHIC_CONFIG_VOCAL_SELECT("Vocal selection"), //
 
-		GRAPHIC_CONFIG_PREVIEW_3D_FULL_MUTE("3D preview full mute"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_PALM_MUTE("3D preview palm mute"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_FHP("3D preview FHP"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_FRET_LANE("3D preview fret lane"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_BEAT("3D preview beat"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_BOX("Chord box"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_FULL_MUTE("Full mute chord"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_PALM_MUTE("Palm mute chord") //
+		GRAPHIC_CONFIG_PREVIEW_3D_BACKGROUND("3D Background"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_FRET("3D Fret"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_ACTIVE_FRET("3D Active fret"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_HIGHLIGHTED_FRET("3D Highlighted fret"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_BOX("3D Chord box"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_BOX_DARK("3D Chord box dark"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_NAME("3D Chord name"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_FULL_MUTE("3D Full mute"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_PALM_MUTE("3D Palm mute"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_FULL_MUTE("3D Full mute chord"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_PALM_MUTE("3D Palm mute chord"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_FHP("3D FHP"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_FHP_FRET_COLOR("3D FHP fret"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_LANE("3D Lane"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_LANE_DOTTED("3D Lane dotted"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_LANE_BORDER("3D Lane border"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_ARPEGGIO("3D Arpeggio"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_BEAT("3D Beat"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_BEAT_NUMBER_ACTIVE_COLOR("3D Beat number active color"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_LYRICS("3D Lyrics"), //
+		GRAPHIC_CONFIG_PREVIEW_3D_LYRICS_PASSED("3D Lyrics passed"), //
 		;
 
 		private final String defaultLabel;

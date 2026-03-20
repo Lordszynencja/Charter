@@ -1,16 +1,20 @@
 package log.charter.services.data.selection;
 
+import static java.util.Arrays.asList;
 import static log.charter.data.config.Config.selectNotesByTails;
 import static log.charter.util.CollectionUtils.closest;
 import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
+import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.time.IConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
@@ -21,12 +25,20 @@ import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartTimeHandler;
+import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
-import log.charter.util.collections.HashMap2;
+import log.charter.util.CollectionUtils;
 
 public class SelectionManager implements Initiable {
+	private static Map<EditMode, List<PositionType>> typeCycles = new HashMap<>();
+
+	static {
+		typeCycles.put(EditMode.GUITAR, asList(PositionType.EVENT_POINT, PositionType.TONE_CHANGE, PositionType.FHP,
+				PositionType.GUITAR_NOTE, PositionType.HAND_SHAPE));
+	}
+
 	private CharterContext charterContext;
 	private ChartData chartData;
 	private ChartTimeHandler chartTimeHandler;
@@ -34,7 +46,8 @@ public class SelectionManager implements Initiable {
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
 
-	private final Map<PositionType, SelectionList<?, ?, ?>> selectionLists = new HashMap2<>();
+	private final Map<PositionType, SelectionList<?, ?, ?>> selectionLists = new HashMap<>();
+	private PositionType emptySelect = PositionType.NONE;
 
 	@Override
 	public void init() {
@@ -51,6 +64,7 @@ public class SelectionManager implements Initiable {
 				manager.clear();
 			}
 		});
+		emptySelect = PositionType.NONE;
 	}
 
 	private class PositionWithLink implements IConstantPosition {
@@ -165,6 +179,7 @@ public class SelectionManager implements Initiable {
 
 	public void clear() {
 		clearSelectionsExcept(PositionType.NONE);
+		emptySelect = PositionType.NONE;
 		currentSelectionEditor.selectionChanged(true);
 	}
 
@@ -204,6 +219,10 @@ public class SelectionManager implements Initiable {
 		return PositionType.NONE;
 	}
 
+	public PositionType selectedEmpty() {
+		return selectedType() == PositionType.NONE ? emptySelect : PositionType.NONE;
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T extends IVirtualConstantPosition> ISelectionAccessor<T> selectedAccessor() {
 		for (final SelectionList<?, ?, ?> selectionList : selectionLists.values()) {
@@ -217,21 +236,25 @@ public class SelectionManager implements Initiable {
 	}
 
 	public void selectAll() {
-		final PositionType positionTypeToSelect = switch (modeManager.getMode()) {
-			case VOCALS -> PositionType.VOCAL;
-			case SHOWLIGHTS -> PositionType.SHOWLIGHT;
-			case GUITAR -> {
-				PositionType positionType = selectedType();
-				if (positionType != PositionType.NONE) {
-					yield positionType;
+		PositionType positionTypeToSelect = selectedTypeWithEmpty();
+		if (positionTypeToSelect == PositionType.NONE) {
+			positionTypeToSelect = switch (modeManager.getMode()) {
+				case VOCALS -> PositionType.VOCAL;
+				case SHOWLIGHTS -> PositionType.SHOWLIGHT;
+				case GUITAR -> {
+					PositionType positionType = selectedType();
+					if (positionType != PositionType.NONE) {
+						yield positionType;
+					}
+
+					positionType = mouseHandler.getMouseHoverPositionType();
+					yield positionType == PositionType.NONE ? PositionType.GUITAR_NOTE : positionType;
 				}
+				default -> PositionType.NONE;
+			};
+		}
 
-				positionType = mouseHandler.getMouseHoverPositionType();
-				yield positionType == PositionType.NONE ? PositionType.GUITAR_NOTE : positionType;
-			}
-			default -> PositionType.NONE;
-		};
-
+		clear();
 		selectionLists.get(positionTypeToSelect).addAll();
 		currentSelectionEditor.selectionChanged(true);
 	}
@@ -260,5 +283,60 @@ public class SelectionManager implements Initiable {
 			final Collection<C> positions) {
 		((SelectionList<C, ?, ?>) selectionLists.get(type)).addPositions(positions);
 		currentSelectionEditor.selectionChanged(type == PositionType.GUITAR_NOTE);
+	}
+
+	private PositionType selectedTypeWithEmpty() {
+		final PositionType currentlySelected = selectedType();
+		return currentlySelected == PositionType.NONE ? emptySelect : currentlySelected;
+	}
+
+	private void setEmptyType(final PositionType type) {
+		clear();
+
+		final List<? extends IConstantFractionalPosition> positions = type.getPositions(chartData);
+		final Integer id = CollectionUtils.lastBeforeEqual(positions, chartTimeHandler.timeFractional()).findId();
+		if (id == null) {
+			emptySelect = type;
+			return;
+		}
+
+		final IConstantFractionalPosition position = positions.get(id);
+		if (position.equals(chartTimeHandler.timeFractional())) {
+			setSelection(type, id);
+			return;
+		}
+		if (IConstantFractionalPositionWithEnd.class.isAssignableFrom(position.getClass())
+				&& ((IConstantFractionalPositionWithEnd) position).endPosition()
+						.compareTo(chartTimeHandler.timeFractional()) >= 0) {
+			setSelection(type, id);
+			return;
+		}
+
+		emptySelect = type;
+	}
+
+	public void previousItemType() {
+		final List<PositionType> cycle = typeCycles.get(modeManager.getMode());
+		if (cycle == null) {
+			return;
+		}
+
+		final PositionType currentlySelected = selectedTypeWithEmpty();
+		int previousItemId = cycle.indexOf(currentlySelected) - 1;
+		if (previousItemId < 0) {
+			previousItemId = cycle.size() - 1;
+		}
+		setEmptyType(cycle.get(previousItemId));
+	}
+
+	public void nextItemType() {
+		final List<PositionType> cycle = typeCycles.get(modeManager.getMode());
+		if (cycle == null) {
+			return;
+		}
+
+		final PositionType currentlySelected = selectedTypeWithEmpty();
+		final int nextItemId = (cycle.indexOf(currentlySelected) + 1) % cycle.size();
+		setEmptyType(cycle.get(nextItemId));
 	}
 }

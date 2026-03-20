@@ -61,7 +61,7 @@ public class ChartPanelColors {
 		HIGHLIGHT(122, 122, 122), //
 		VOCAL_HIGHLIGHT(200, 200, 200), //
 		SELECT(41, 188, 254), //
-		VOCAL_SELECT(255, 255, 0), //
+		TYPE_SELECT(32, 128, 128), //
 		WAVEFORM_COLOR(64, 128, 128), //
 		WAVEFORM_RMS_COLOR(255, 128, 255),
 
@@ -77,15 +77,15 @@ public class ChartPanelColors {
 		HARMONIC(255, 255, 255), //
 		PINCH_HARMONIC(0, 0, 0), //
 
-		NOTE_0(237, 0, 0), //
-		NOTE_1(242, 215, 6), //
-		NOTE_2(37, 178, 255), //
-		NOTE_3(255, 135, 10), //
-		NOTE_4(133, 231, 71), //
-		NOTE_5(210, 44, 248), //
-		NOTE_6(62, 229, 223), //
-		NOTE_7(182, 182, 182), //
-		NOTE_8(208, 57, 57), //
+		STRING_0(237, 0, 0), //
+		STRING_1(242, 215, 6), //
+		STRING_2(37, 178, 255), //
+		STRING_3(255, 135, 10), //
+		STRING_4(133, 231, 71), //
+		STRING_5(210, 44, 248), //
+		STRING_6(62, 229, 223), //
+		STRING_7(182, 182, 182), //
+		STRING_8(208, 57, 57), //
 
 		FHP(208, 57, 57), //
 		HAND_SHAPE(49, 87, 167), //
@@ -99,6 +99,7 @@ public class ChartPanelColors {
 		VOCAL_TEXT(210, 210, 210), //
 		VOCAL_NOTE(13, 162, 255), //
 		VOCAL_NOTE_WORD_PART(173, 89, 33, 192), //
+		VOCAL_SELECT(255, 255, 0), //
 
 		PREVIEW_3D_BACKGROUND(0, 0, 0), //
 		PREVIEW_3D_FRET(32, 32, 32), //
@@ -120,7 +121,7 @@ public class ChartPanelColors {
 		PREVIEW_3D_BEAT(15, 59, 94), //
 		PREVIEW_3D_BEAT_NUMBER_ACTIVE_COLOR(135, 221, 246), //
 		PREVIEW_3D_LYRICS(255, 255, 255), //
-		PREVIEW_3D_LYRICS_PASSED(13, 162, 255); //
+		PREVIEW_3D_LYRICS_PASSED(13, 162, 255);
 
 		public final Color defaultColor;
 
@@ -161,7 +162,7 @@ public class ChartPanelColors {
 	public static Color getStringBasedColor(final StringColorLabelType type, final int string, final int strings) {
 		final int stringId = Utils.stringId(string, strings);
 
-		final Color base = ColorLabel.valueOf("NOTE_" + stringId).color();
+		final Color base = ColorLabel.valueOf("STRING_" + stringId).color();
 
 		switch (type) {
 			case LANE:

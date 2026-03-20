@@ -7,7 +7,7 @@ import log.charter.services.Action;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
-class NotesMenuHandler extends CharterMenuHandler {
+class ItemsMenuHandler extends CharterMenuHandler {
 	private ModeManager modeManager;
 
 	@Override
@@ -17,7 +17,7 @@ class NotesMenuHandler extends CharterMenuHandler {
 
 	@Override
 	JMenu prepareMenu() {
-		final JMenu menu = createMenu(Label.NOTES_MENU);
+		final JMenu menu = createMenu(Label.ITEMS_MENU);
 		menu.add(createItem(Action.SNAP_SELECTED));
 		menu.add(createItem(Action.SNAP_ALL));
 		menu.add(createItem(Action.DOUBLE_GRID));
@@ -33,8 +33,8 @@ class NotesMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Action.PREVIOUS_BEAT));
 		menu.add(createItem(Action.NEXT_BEAT));
 		if (modeManager.getMode() == EditMode.GUITAR) {
-			menu.add(createItem(Action.PREVIOUS_PHRASE));
-			menu.add(createItem(Action.NEXT_PHRASE));
+			menu.add(createItem(Action.PREVIOUS_ITEM_TYPE));
+			menu.add(createItem(Action.NEXT_ITEM_TYPE));
 		}
 
 		menu.addSeparator();

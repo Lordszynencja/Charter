@@ -108,7 +108,12 @@ public class ShortcutConfig {
 
 				setShortcut(action, shortcut);
 			} catch (final Exception e) {
-				Logger.error(configPath, e);
+				if (e.getMessage().contains("No enum constant log.charter.services.Action.")) {
+					Logger.warning("Entry " + entry.getKey()
+							+ " couldn't be translated, removed (possibly the shortcut was removed from the app)");
+				} else {
+					Logger.error(configPath, e);
+				}
 			}
 		}
 

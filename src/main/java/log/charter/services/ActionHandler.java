@@ -317,8 +317,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.NEXT_BEAT, chartTimeHandler::moveToNextBeat);
 		actionHandlers.put(Action.NEXT_GRID, chartTimeHandler::moveToNextGrid);
 		actionHandlers.put(Action.NEXT_ITEM, chartTimeHandler::moveToNextItem);
+		actionHandlers.put(Action.NEXT_ITEM_TYPE, selectionManager::nextItemType);
 		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT, chartTimeHandler::moveToNextItemWithSelect);
-		actionHandlers.put(Action.NEXT_PHRASE, chartTimeHandler::moveToNextPhrase);
 		actionHandlers.put(Action.OPEN_PROJECT, songFileHandler::open);
 		actionHandlers.put(Action.PASTE, copyManager::paste);
 		actionHandlers.put(Action.PLACE_LYRIC_FROM_TEXT, vocalsHandler::placeLyricFromText);
@@ -326,8 +326,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.PREVIOUS_BEAT, chartTimeHandler::moveToPreviousBeat);
 		actionHandlers.put(Action.PREVIOUS_GRID, chartTimeHandler::moveToPreviousGrid);
 		actionHandlers.put(Action.PREVIOUS_ITEM, chartTimeHandler::moveToPreviousItem);
+		actionHandlers.put(Action.PREVIOUS_ITEM_TYPE, selectionManager::previousItemType);
 		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT, chartTimeHandler::moveToPreviousItemWithSelect);
-		actionHandlers.put(Action.PREVIOUS_PHRASE, chartTimeHandler::moveToPreviousPhrase);
 		actionHandlers.put(Action.REDO, undoSystem::redo);
 		actionHandlers.put(Action.SAVE, songFileHandler::save);
 		actionHandlers.put(Action.SAVE_AS, songFileHandler::saveAs);

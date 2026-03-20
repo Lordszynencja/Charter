@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -599,6 +600,59 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		return value == null ? defaultValue : value;
 	}
 
+	private void changeAvailableStrings() {
+		if (chartData.currentStrings() == lastStringsAmount) {
+			return;
+		}
+
+		lastStringsAmount = chartData.currentStrings();
+		for (int string = 0; string < lastStringsAmount; string++) {
+			strings.get(string).setIcon(new CharterCheckBox.CheckBoxIcon(
+					getStringBasedColor(StringColorLabelType.NOTE, string, lastStringsAmount)));
+		}
+	}
+
+	private void selectAvailableStrings(final boolean stringsCouldChange, final List<ChordOrNote> selected) {
+		if (!stringsCouldChange) {
+			return;
+		}
+
+		final Set<Integer> selectedStrings = selected.stream().flatMap(sound -> sound.notes().map(n -> n.string()))
+				.collect(Collectors.toSet());
+
+		for (int i = 0; i < strings.size(); i++) {
+			final boolean stringAvailable = selectedStrings.contains(i);
+			final JCheckBox stringSelected = strings.get(i);
+			stringSelected.setSelected(stringAvailable);
+			stringSelected.setEnabled(stringAvailable);
+		}
+	}
+
+	private void setFretsOnSelectionChange(final Collection<ChordOrNote> selected) {
+		final Integer templateId = getSingleValue(selected,
+				sound -> sound.isChord() ? sound.chord().templateId() : null, null);
+		if (templateId != null) {
+			chordTemplate = new ChordTemplate(chartData.currentArrangement().chordTemplates.get(templateId));
+			setCurrentValuesInInputs();
+			fret.field.setTextWithoutEvent("");
+			string.field.setTextWithoutEvent("");
+			return;
+		}
+
+		final Integer fretValue = getSingleValue(selected, sound -> sound.isNote() ? sound.note().fret : null, null);
+		final Integer stringValue = getSingleValue(selected, sound -> sound.isNote() ? sound.note().string : null,
+				null);
+
+		chordTemplate = new ChordTemplate();
+		if (stringValue != null && fretValue != null) {
+			chordTemplate.frets.put(stringValue, fretValue);
+		}
+		setCurrentValuesInInputs();
+
+		fret.field.setTextWithoutEvent(fretValue == null ? "" : (fretValue + ""));
+		string.field.setTextWithoutEvent(stringValue == null ? "" : ((stringValue + 1) + ""));
+	}
+
 	private void updateStringSelectionDependentValues() {
 		final List<ChordOrNote> selected = selectionManager.getSelectedElements(PositionType.GUITAR_NOTE);
 
@@ -632,52 +686,12 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		slideFret.field.setTextWithoutEvent(slideFretValue == null ? "" : (slideFretValue + ""));
 	}
 
-	private void setFretsOnSelectionChange(final Collection<ChordOrNote> selected) {
-		final Integer templateId = getSingleValue(selected,
-				sound -> sound.isChord() ? sound.chord().templateId() : null, null);
-		if (templateId != null) {
-			chordTemplate = new ChordTemplate(chartData.currentArrangement().chordTemplates.get(templateId));
-			setCurrentValuesInInputs();
-			fret.field.setTextWithoutEvent("");
-			string.field.setTextWithoutEvent("");
-			return;
-		}
-
-		final Integer fretValue = getSingleValue(selected, sound -> sound.isNote() ? sound.note().fret : null, null);
-		final Integer stringValue = getSingleValue(selected, sound -> sound.isNote() ? sound.note().string : null,
-				null);
-
-		chordTemplate = new ChordTemplate();
-		if (stringValue != null && fretValue != null) {
-			chordTemplate.frets.put(stringValue, fretValue);
-		}
-		setCurrentValuesInInputs();
-
-		fret.field.setTextWithoutEvent(fretValue == null ? "" : (fretValue + ""));
-		string.field.setTextWithoutEvent(stringValue == null ? "" : ((stringValue + 1) + ""));
-	}
-
-	private void changeAvailableStrings() {
-		if (chartData.currentStrings() == lastStringsAmount) {
-			return;
-		}
-
-		lastStringsAmount = chartData.currentStrings();
-		for (int string = 0; string < lastStringsAmount; string++) {
-			strings.get(string).setIcon(new CharterCheckBox.CheckBoxIcon(
-					getStringBasedColor(StringColorLabelType.NOTE, string, lastStringsAmount)));
-		}
-	}
-
 	public void selectionChanged(final ISelectionAccessor<ChordOrNote> selectedChordOrNotesAccessor,
 			final boolean stringsCouldChange) {
 		changeAvailableStrings();
 
-		if (stringsCouldChange) {
-			strings.forEach(string -> string.setSelected(true));
-		}
-
 		final List<ChordOrNote> selected = selectionManager.getSelectedElements(PositionType.GUITAR_NOTE);
+		selectAvailableStrings(stringsCouldChange, selected);
 		setFretsOnSelectionChange(selected);
 		string.field.setValidator(new IntegerValueValidator(1, chartData.currentStrings(), false));
 

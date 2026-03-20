@@ -25,6 +25,7 @@ import java.util.Set;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.Chord;
@@ -34,6 +35,7 @@ import log.charter.data.song.notes.Note;
 import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.chartPanelDrawers.common.BeatsDrawer;
+import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
@@ -286,6 +288,37 @@ public class GuitarDrawer {
 		}
 	}
 
+	private static void drawEmptySelect(final FrameData frameData, final int panelWidth) {
+		int y, h;
+		switch (frameData.emptySelection) {
+			case EVENT_POINT:
+				y = DrawerUtils.sectionNamesY;
+				h = DrawerUtils.toneChangeY - y - 1;
+				break;
+			case TONE_CHANGE:
+				y = DrawerUtils.toneChangeY;
+				h = DrawerUtils.fhpY - y - 1;
+				break;
+			case FHP:
+				y = DrawerUtils.fhpY;
+				h = DrawerUtils.lanesTop - y - 1;
+				break;
+			case GUITAR_NOTE:
+				y = DrawerUtils.lanesTop;
+				h = DrawerUtils.lanesBottom - y - 1;
+				break;
+			case HAND_SHAPE:
+				y = DrawerUtils.lanesBottom;
+				h = GraphicalConfig.handShapesHeight;
+				break;
+			default:
+				return;
+		}
+
+		frameData.g.setColor(ColorLabel.TYPE_SELECT.color());
+		frameData.g.drawRect(0, y, panelWidth - 1, h);
+	}
+
 	public void drawGuitar(final FrameData frameData) {
 		final int strings = frameData.arrangement.tuning.strings();
 		final int panelWidth = chartPanel.getWidth();
@@ -299,6 +332,7 @@ public class GuitarDrawer {
 		addHandShapes(frameData, panelWidth, highwayDrawer);
 
 		highwayDrawer.draw(frameData.g);
+		drawEmptySelect(frameData, panelWidth);
 	}
 
 	public void drawStringNames(final FrameData frameData) {
