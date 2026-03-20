@@ -19,11 +19,6 @@ public class FHP implements IFractionalPosition {
 		position = new FractionalPosition();
 	}
 
-	public FHP(final FractionalPosition position, final int fret) {
-		this.position = position;
-		this.fret = fret;
-	}
-
 	public FHP(final FractionalPosition position) {
 		this.position = position;
 	}

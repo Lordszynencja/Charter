@@ -175,16 +175,17 @@ public class GuitarSoundsValidator {
 
 				return fret == null || fret != soundNote.fret();
 			});
+
+			if (wrongFrets) {
+				errorsTab.addError(generateErrorWithTab(Label.FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE, id));
+			}
+
 			final boolean wrongFingers = sound.isNote() ? false
 					: sound.notesWithFrets(arrangement.chordTemplates).anyMatch(soundNote -> {
 						final Integer finger = handShapeTemplate.fingers.get(soundNote.string());
 
 						return !Objects.equals(finger, soundNote.finger());
 					});
-
-			if (wrongFrets) {
-				errorsTab.addError(generateErrorWithTab(Label.FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE, id));
-			}
 			if (wrongFingers) {
 				errorsTab.addError(generateErrorWithTab(Label.FINGER_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE, id));
 			}

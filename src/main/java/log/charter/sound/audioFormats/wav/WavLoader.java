@@ -1,14 +1,16 @@
 package log.charter.sound.audioFormats.wav;
 
 import java.io.File;
+import java.io.IOException;
 
 import log.charter.sound.data.AudioData;
 import log.charter.sound.data.AudioUtils;
 
 public class WavLoader {
 	public static AudioData load(final File file) {
+		final WavFile wavFile = new WavFile();
 		try {
-			final WavFile wavFile = new WavFile().openForReading(file);
+			wavFile.openForReading(file);
 			final int channels = wavFile.getNumChannels();
 			final int frames = (int) wavFile.getNumFrames();
 
@@ -21,6 +23,11 @@ public class WavLoader {
 
 			return new AudioData(sound, wavFile.getSampleRate(), bytesPerSample);
 		} catch (final Exception e) {
+			try {
+				wavFile.close();
+			} catch (final IOException e1) {
+				e1.printStackTrace();
+			}
 			return null;
 		}
 	}
