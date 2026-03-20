@@ -71,6 +71,7 @@ public class ArrangementDrawer implements Initiable {
 				chartData.currentArrangementLevel(), //
 				repeatManager.repeatSpan(), //
 				selectionManager.selectedAccessor(), //
+				selectionManager.selectedEmpty(), //
 				time, //
 				projectAudioHandler.audioLengthMs(), //
 				g, //

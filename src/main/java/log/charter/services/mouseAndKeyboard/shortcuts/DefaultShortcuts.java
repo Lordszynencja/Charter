@@ -75,8 +75,8 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.NEXT_BEAT, new Shortcut(KeyEvent.VK_RIGHT).shift().alt());
 		super.set(Action.NEXT_GRID, new Shortcut(KeyEvent.VK_RIGHT).ctrl().alt());
 		super.set(Action.NEXT_ITEM, new Shortcut(KeyEvent.VK_RIGHT).alt());
+		super.set(Action.NEXT_ITEM_TYPE, new Shortcut(KeyEvent.VK_TAB).ctrl());
 		super.set(Action.NEXT_ITEM_WITH_SELECT, new Shortcut(KeyEvent.VK_PAGE_UP));
-		super.set(Action.NEXT_PHRASE, new Shortcut(KeyEvent.VK_PAGE_UP).shift());
 		super.set(Action.OPEN_PROJECT, new Shortcut(KeyEvent.VK_O).ctrl());
 		super.set(Action.PASTE, new Shortcut(KeyEvent.VK_V).ctrl());
 		super.set(Action.PLACE_LYRIC_FROM_TEXT, new Shortcut(KeyEvent.VK_SPACE).ctrl());
@@ -84,8 +84,8 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.PREVIOUS_BEAT, new Shortcut(KeyEvent.VK_LEFT).shift().alt());
 		super.set(Action.PREVIOUS_GRID, new Shortcut(KeyEvent.VK_LEFT).ctrl().alt());
 		super.set(Action.PREVIOUS_ITEM, new Shortcut(KeyEvent.VK_LEFT).alt());
+		super.set(Action.PREVIOUS_ITEM_TYPE, new Shortcut(KeyEvent.VK_TAB).ctrl().shift());
 		super.set(Action.PREVIOUS_ITEM_WITH_SELECT, new Shortcut(KeyEvent.VK_PAGE_DOWN));
-		super.set(Action.PREVIOUS_PHRASE, new Shortcut(KeyEvent.VK_PAGE_DOWN).shift());
 		super.set(Action.REDO, new Shortcut(KeyEvent.VK_R).ctrl());
 		super.set(Action.SAVE, new Shortcut(KeyEvent.VK_S).ctrl());
 		super.set(Action.SAVE_AS, new Shortcut(KeyEvent.VK_S).ctrl().shift());
@@ -101,7 +101,7 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.SPEED_INCREASE, new Shortcut(KeyEvent.VK_PLUS));
 		super.set(Action.SPEED_INCREASE_FAST, new Shortcut(KeyEvent.VK_PLUS).shift());
 		super.set(Action.SPEED_INCREASE_PRECISE, new Shortcut(KeyEvent.VK_PLUS).ctrl());
-		super.set(Action.SWITCH_TS_TYPING_PART, new Shortcut(KeyEvent.VK_SLASH));
+		super.set(Action.SWITCH_TYPING_PART, new Shortcut(KeyEvent.VK_SLASH));
 		super.set(Action.TOGGLE_ACCENT, new Shortcut(KeyEvent.VK_A));
 		super.set(Action.TOGGLE_ACCENT_INDEPENDENTLY, new Shortcut(KeyEvent.VK_A).alt());
 		super.set(Action.TOGGLE_ANCHOR, new Shortcut(KeyEvent.VK_A));

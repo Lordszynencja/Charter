@@ -88,6 +88,17 @@ public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPos
 		return null;
 	}
 
+	public static ChordOrNote findFirstLinkedTo(final int string, final int id, final List<ChordOrNote> sounds) {
+		ChordOrNote current = sounds.get(id);
+		Pair<Integer, ChordOrNote> previous = findPreviousSoundWithIdOnString(string, id - 1, sounds);
+		while (previous != null && previous.b.linkNext(string)) {
+			current = previous.b;
+			previous = findPreviousSoundWithIdOnString(string, previous.a - 1, sounds);
+		}
+
+		return current;
+	}
+
 	public static boolean isLinkedToPrevious(final int string, final int id, final List<ChordOrNote> sounds) {
 		final ChordOrNote previousSound = findPreviousSoundOnString(string, id - 1, sounds);
 		return previousSound != null && previousSound.linkNext(string);

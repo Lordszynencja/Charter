@@ -41,6 +41,7 @@ import log.charter.services.data.copy.data.HandShapesCopyData;
 import log.charter.services.data.copy.data.ICopyData;
 import log.charter.services.data.copy.data.ShowlightsCopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
+import log.charter.services.data.copy.data.ToneChangesCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
 import log.charter.services.data.copy.data.positions.Copied;
 import log.charter.services.data.copy.data.positions.CopiedEventPoint;
@@ -198,7 +199,7 @@ public class CopyManager {
 			return getGuitarCopyDataHandShapes();
 		}
 		if (selectionManager.accessor(PositionType.TONE_CHANGE).isSelected()) {
-			return getCopyData(PositionType.TONE_CHANGE, CopiedFHP::new, FHPsCopyData::new);
+			return getCopyData(PositionType.TONE_CHANGE, CopiedToneChange::new, ToneChangesCopyData::new);
 		}
 
 		return null;

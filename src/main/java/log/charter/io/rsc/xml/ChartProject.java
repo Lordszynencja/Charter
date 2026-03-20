@@ -38,6 +38,8 @@ public class ChartProject {
 	public List<String> arrangementFiles = new ArrayList<>();
 
 	public List<Beat> beats = new ArrayList<>();
+	public double mainAudioOffsetAdded = 0;
+
 	public List<Showlight> showlights = new ArrayList<>();
 	public VocalPath vocals = null;
 	public List<VocalPath> vocalPaths = new ArrayList<>();
@@ -64,6 +66,8 @@ public class ChartProject {
 		this.selectedStem = selectedStem;
 
 		beats = new ArrayList<>(songChart.beatsMap.beats);
+		mainAudioOffsetAdded = songChart.mainAudioOffsetAdded;
+
 		showlights = songChart.showlights();
 		vocalPaths = songChart.vocalPaths;
 		arrangements = songChart.arrangements;

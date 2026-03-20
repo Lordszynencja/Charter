@@ -74,7 +74,7 @@ public class AudioStemsSettings extends RowedDialog {
 		private JSlider volumeSlider;
 
 		public AudioStemRow(final RowedPosition position) {
-			this(-1, Label.MAIN_AUDIO.label(), AudioConfig.volume, 0, position);
+			this(-1, Label.MAIN_AUDIO.label(), AudioConfig.volume, chartData.songChart.mainAudioOffsetAdded, position);
 		}
 
 		public AudioStemRow(final int id, final Stem stem, final RowedPosition position) {
@@ -93,8 +93,10 @@ public class AudioStemsSettings extends RowedDialog {
 			addName(position);
 			addVolume(position);
 			if (id >= 0) {
-				addOffset(position);
+				addOffset(position, true);
 				addDelete(position);
+			} else {
+				addOffset(position, false);
 			}
 		}
 
@@ -136,13 +138,14 @@ public class AudioStemsSettings extends RowedDialog {
 			volumeSlider.setUI(new CharterSliderUI());
 		}
 
-		private void addOffset(final RowedPosition position) {
+		private void addOffset(final RowedPosition position, final boolean editable) {
 			final BigDecimal value = BigDecimal.valueOf(offset * 1000).setScale(2, RoundingMode.HALF_UP);
 			final BigDecimalValueValidator validator = new BigDecimalValueValidator(
 					BigDecimal.valueOf(-projectAudioHandler.audioStemLength(id)),
 					BigDecimal.valueOf(projectAudioHandler.audioLengthMs()), false);
 			final TextInputWithValidation input = TextInputWithValidation.generateForBigDecimal(value, 50, validator,
 					v -> offset = v.doubleValue() / 1000, false);
+			input.setEditable(editable);
 
 			offsetField = new FieldWithLabel<>(Label.OFFSET_MS_FIELD, 80, 50, 20, input, LabelPosition.LEFT_CLOSE);
 
@@ -206,14 +209,15 @@ public class AudioStemsSettings extends RowedDialog {
 	}
 
 	private void save() {
-		projectAudioHandler.selectStem(selectedStem);
-
 		int deleted = 0;
 		for (final AudioStemRow stemRow : stemRows) {
 			final int id = stemRow.id - deleted;
 			if (stemRow.deleted) {
 				projectAudioHandler.removeStem(id);
 				deleted++;
+				if (id < selectedStem) {
+					selectedStem--;
+				}
 			} else {
 				if (stemRow.id < 0) {
 					AudioConfig.volume = stemRow.volume;
@@ -227,6 +231,8 @@ public class AudioStemsSettings extends RowedDialog {
 				}
 			}
 		}
+
+		projectAudioHandler.selectStem(selectedStem);
 
 		chartToolbar.updateValues();
 	}

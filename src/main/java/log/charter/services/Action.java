@@ -79,7 +79,7 @@ public enum Action {
 	NEXT_GRID(Label.NEXT_GRID_POSITION, EditMode.withItems), //
 	NEXT_ITEM(EditMode.nonEmpty), //
 	NEXT_ITEM_WITH_SELECT(EditMode.withItems), //
-	NEXT_PHRASE(GUITAR), //
+	NEXT_ITEM_TYPE(GUITAR), //
 	OPEN_PROJECT(EditMode.values()), //
 	PASTE(EditMode.withItems), //
 	PLACE_LYRIC_FROM_TEXT(VOCALS), //
@@ -88,7 +88,7 @@ public enum Action {
 	PREVIOUS_GRID(Label.PREVIOUS_GRID_POSITION, EditMode.withItems), //
 	PREVIOUS_ITEM(EditMode.nonEmpty), //
 	PREVIOUS_ITEM_WITH_SELECT(EditMode.withItems), //
-	PREVIOUS_PHRASE(GUITAR), //
+	PREVIOUS_ITEM_TYPE(GUITAR), //
 	REDO(EditMode.nonEmpty), //
 	SAVE(Label.SAVE_PROJECT, EditMode.nonEmpty), //
 	SAVE_AS(Label.SAVE_PROJECT_AS, EditMode.nonEmpty), //
@@ -104,7 +104,7 @@ public enum Action {
 	SPEED_INCREASE(EditMode.nonEmpty), //
 	SPEED_INCREASE_FAST(EditMode.nonEmpty), //
 	SPEED_INCREASE_PRECISE(EditMode.nonEmpty), //
-	SWITCH_TS_TYPING_PART(TEMPO_MAP), //
+	SWITCH_TYPING_PART(TEMPO_MAP, GUITAR), //
 	TOGGLE_ACCENT(GUITAR), //
 	TOGGLE_ACCENT_INDEPENDENTLY(GUITAR), //
 	TOGGLE_ANCHOR(TEMPO_MAP), //

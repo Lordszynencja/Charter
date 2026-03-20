@@ -35,6 +35,7 @@ import log.charter.services.data.copy.data.FullGuitarCopyData;
 import log.charter.services.data.copy.data.HandShapesCopyData;
 import log.charter.services.data.copy.data.ShowlightsCopyData;
 import log.charter.services.data.copy.data.SoundsCopyData;
+import log.charter.services.data.copy.data.ToneChangesCopyData;
 import log.charter.services.data.copy.data.VocalsCopyData;
 import log.charter.services.data.copy.data.positions.CopiedEventPoint;
 import log.charter.services.data.copy.data.positions.CopiedFHP;
@@ -61,8 +62,6 @@ public class ChartProjectXStreamHandler {
 		xstream.processAnnotations(ChartProject.class);
 		xstream.processAnnotations(CopyData.class);
 		xstream.allowTypes(new Class[] { //
-				FHP.class, //
-				FHPsCopyData.class, //
 				Arrangement.class, //
 				Beat.class, //
 				BendValue.class, //
@@ -83,6 +82,8 @@ public class ChartProjectXStreamHandler {
 				CopyData.class, //
 				EventPoint.class, //
 				EventPointsCopyData.class, //
+				FHP.class, //
+				FHPsCopyData.class, //
 				FullGuitarCopyData.class, //
 				GuitarSound.class, //
 				HandShape.class, //
@@ -95,6 +96,7 @@ public class ChartProjectXStreamHandler {
 				SoundsCopyData.class, //
 				Stem.class, //
 				ToneChange.class, //
+				ToneChangesCopyData.class, //
 				Vocal.class, //
 				VocalPath.class, //
 				VocalsCopyData.class });

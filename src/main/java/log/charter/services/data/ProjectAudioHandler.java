@@ -124,6 +124,7 @@ public class ProjectAudioHandler {
 	}
 
 	public void changeStemsOffset(final double offsetChange) {
+		chartData.songChart.mainAudioOffsetAdded += offsetChange;
 		for (int i = 0; i < stems.size(); i++) {
 			addStemOffset(i, offsetChange);
 		}

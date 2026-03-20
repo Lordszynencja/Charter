@@ -78,6 +78,8 @@ public enum ShortcutConfigGroup {
 			Action.TOGGLE_LINK_NEXT_INDEPENDENTLY, //
 			Action.TOGGLE_MUTE, //
 			Action.TOGGLE_MUTE_INDEPENDENTLY, //
+			Action.TOGGLE_SLAP_POP, //
+			Action.TOGGLE_SLAP_POP_INDEPENDENTLY, //
 			Action.TOGGLE_TREMOLO, //
 			Action.TOGGLE_TREMOLO_INDEPENDENTLY, //
 			Action.TOGGLE_VIBRATO, //

@@ -243,6 +243,14 @@ public class ActionHandler implements Initiable {
 		chartToolbar.updateValues();
 	}
 
+	private void switchTypingPart() {
+		switch (modeManager.getMode()) {
+			case TEMPO_MAP -> modeManager.getTempoMapModeHandler().switchTypingPart();
+			case GUITAR -> modeManager.getGuitarModeHandler().switchTypingPart();
+			default -> throw new IllegalArgumentException("Unexpected value: " + modeManager.getMode());
+		}
+	}
+
 	private final Map<Action, Runnable> actionHandlers = new HashMap<>();
 
 	@Override
@@ -309,8 +317,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.NEXT_BEAT, chartTimeHandler::moveToNextBeat);
 		actionHandlers.put(Action.NEXT_GRID, chartTimeHandler::moveToNextGrid);
 		actionHandlers.put(Action.NEXT_ITEM, chartTimeHandler::moveToNextItem);
+		actionHandlers.put(Action.NEXT_ITEM_TYPE, selectionManager::nextItemType);
 		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT, chartTimeHandler::moveToNextItemWithSelect);
-		actionHandlers.put(Action.NEXT_PHRASE, chartTimeHandler::moveToNextPhrase);
 		actionHandlers.put(Action.OPEN_PROJECT, songFileHandler::open);
 		actionHandlers.put(Action.PASTE, copyManager::paste);
 		actionHandlers.put(Action.PLACE_LYRIC_FROM_TEXT, vocalsHandler::placeLyricFromText);
@@ -318,8 +326,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.PREVIOUS_BEAT, chartTimeHandler::moveToPreviousBeat);
 		actionHandlers.put(Action.PREVIOUS_GRID, chartTimeHandler::moveToPreviousGrid);
 		actionHandlers.put(Action.PREVIOUS_ITEM, chartTimeHandler::moveToPreviousItem);
+		actionHandlers.put(Action.PREVIOUS_ITEM_TYPE, selectionManager::previousItemType);
 		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT, chartTimeHandler::moveToPreviousItemWithSelect);
-		actionHandlers.put(Action.PREVIOUS_PHRASE, chartTimeHandler::moveToPreviousPhrase);
 		actionHandlers.put(Action.REDO, undoSystem::redo);
 		actionHandlers.put(Action.SAVE, songFileHandler::save);
 		actionHandlers.put(Action.SAVE_AS, songFileHandler::saveAs);
@@ -333,8 +341,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.SPEED_INCREASE, () -> changeSpeed(5));
 		actionHandlers.put(Action.SPEED_INCREASE_FAST, () -> changeSpeed(25));
 		actionHandlers.put(Action.SPEED_INCREASE_PRECISE, () -> changeSpeed(1));
-		actionHandlers.put(Action.SWITCH_TS_TYPING_PART,
-				() -> modeManager.getTempoMapModeHandler().switchTSTypingPart());
+		actionHandlers.put(Action.SWITCH_TYPING_PART, this::switchTypingPart);
 		actionHandlers.put(Action.TOGGLE_ACCENT, guitarSoundsStatusesHandler::toggleAccent);
 		actionHandlers.put(Action.TOGGLE_ACCENT_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleAccentIndependently);
 		actionHandlers.put(Action.TOGGLE_ANCHOR, beatsService::toggleAnchor);
