@@ -83,7 +83,7 @@ public class TempoMapModeHandler implements ModeHandler {
 		typingDenominator = false;
 	}
 
-	public void switchTSTypingPart() {
+	public void switchTypingPart() {
 		typingDenominator = !typingDenominator;
 		lastNumber = 0;
 

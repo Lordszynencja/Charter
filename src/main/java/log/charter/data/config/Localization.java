@@ -345,7 +345,7 @@ public class Localization {
 		STARTING_TONE("Starting tone"), //
 		STUDYING_AUDIO("Studying audio: %s"), //
 		SUPPORTED_MUSIC_FILE("Flac, Mp3, Ogg or Wav file"), //
-		SWITCH_TS_TYPING_PART("Switch TS typing part"), //
+		SWITCH_TYPING_PART("Switch typing part"), //
 		TAB_3D_PREVIEW("3D preview"), //
 		TAB_CHORD_TEMPLATES_EDITOR("Chord templates"), //
 		TAB_ERRORS("Errors"), //

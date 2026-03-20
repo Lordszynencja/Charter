@@ -61,6 +61,7 @@ public class GuitarModeHandler implements ModeHandler {
 	private long lastScrollTime = -scrollTimeoutForUndo;
 	private int lastFretNumber = 0;
 	private long fretNumberTimer = 0;
+	private int typingNumber = 0;
 
 	private void rightClickFHP(final PositionWithIdAndType fhpPosition) {
 		selectionManager.clear();
@@ -329,21 +330,38 @@ public class GuitarModeHandler implements ModeHandler {
 		lastScrollTime = System.currentTimeMillis();
 	}
 
+	private void setFretNumberTimer() {
+		fretNumberTimer = nanoTime() / 1_000_000 + 2000;
+	}
+
 	@Override
 	public void handleNumber(final int number) {
 		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= InstrumentConfig.frets) {
 			lastFretNumber = lastFretNumber * 10 + number;
 		} else {
+			clearNumbers();
 			lastFretNumber = number;
 		}
 
-		fretNumberTimer = nanoTime() / 1_000_000 + 2000;
-		guitarSoundsHandler.setFret(lastFretNumber);
+		setFretNumberTimer();
+
+		if (typingNumber % 2 == 0) {
+			guitarSoundsHandler.setFret(lastFretNumber);
+		} else {
+			guitarSoundsHandler.setSecondFret(lastFretNumber);
+		}
 	}
 
 	@Override
 	public void clearNumbers() {
 		fretNumberTimer = 0;
 		lastFretNumber = 0;
+		typingNumber = 0;
+	}
+
+	public void switchTypingPart() {
+		typingNumber++;
+		lastFretNumber = 0;
+		setFretNumberTimer();
 	}
 }

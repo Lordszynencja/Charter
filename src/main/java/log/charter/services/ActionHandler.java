@@ -243,6 +243,14 @@ public class ActionHandler implements Initiable {
 		chartToolbar.updateValues();
 	}
 
+	private void switchTypingPart() {
+		switch (modeManager.getMode()) {
+			case TEMPO_MAP -> modeManager.getTempoMapModeHandler().switchTypingPart();
+			case GUITAR -> modeManager.getGuitarModeHandler().switchTypingPart();
+			default -> throw new IllegalArgumentException("Unexpected value: " + modeManager.getMode());
+		}
+	}
+
 	private final Map<Action, Runnable> actionHandlers = new HashMap<>();
 
 	@Override
@@ -333,8 +341,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.SPEED_INCREASE, () -> changeSpeed(5));
 		actionHandlers.put(Action.SPEED_INCREASE_FAST, () -> changeSpeed(25));
 		actionHandlers.put(Action.SPEED_INCREASE_PRECISE, () -> changeSpeed(1));
-		actionHandlers.put(Action.SWITCH_TS_TYPING_PART,
-				() -> modeManager.getTempoMapModeHandler().switchTSTypingPart());
+		actionHandlers.put(Action.SWITCH_TYPING_PART, this::switchTypingPart);
 		actionHandlers.put(Action.TOGGLE_ACCENT, guitarSoundsStatusesHandler::toggleAccent);
 		actionHandlers.put(Action.TOGGLE_ACCENT_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleAccentIndependently);
 		actionHandlers.put(Action.TOGGLE_ANCHOR, beatsService::toggleAnchor);

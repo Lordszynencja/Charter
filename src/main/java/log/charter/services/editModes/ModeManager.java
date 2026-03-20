@@ -168,4 +168,8 @@ public class ModeManager implements Initiable {
 	public TempoMapModeHandler getTempoMapModeHandler() {
 		return tempoMapModeHandler;
 	}
+
+	public GuitarModeHandler getGuitarModeHandler() {
+		return guitarModeHandler;
+	}
 }

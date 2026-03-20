@@ -258,6 +258,10 @@ public class GuitarSoundsStatusesHandler {
 	private void updateLinkedNote(final List<ChordOrNote> sounds, final int id) {
 		final ChordOrNote sound = sounds.get(id);
 		sound.notesWithFrets(chartData.currentChordTemplates()).forEach(n -> {
+			if (n.slideTo() != null) {
+				n.unpitchedSlide(!n.linkNext());
+			}
+
 			CommonNoteWithFret currentSound = n;
 			int currentId = id;
 			while (currentSound != null && currentSound.linkNext()) {

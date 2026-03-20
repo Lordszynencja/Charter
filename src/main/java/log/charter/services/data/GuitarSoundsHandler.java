@@ -4,8 +4,10 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import log.charter.data.ChartData;
@@ -13,7 +15,9 @@ import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.FHP;
 import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.notes.Note;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
@@ -177,6 +181,21 @@ public class GuitarSoundsHandler {
 		}
 	}
 
+	private void setSecondFretForFHPs(final int fret) {
+		final List<Selection<FHP>> selected = selectionManager.getSelected(PositionType.FHP);
+		if (selected.isEmpty()) {
+			return;
+		}
+
+		undoSystem.addUndo();
+
+		for (final Selection<FHP> fhpSelection : selected) {
+			if (fret >= fhpSelection.selectable.fret + 3) {
+				fhpSelection.selectable.width = fret - fhpSelection.selectable.fret + 1;
+			}
+		}
+	}
+
 	private void setFretForSounds(final int fret) {
 		final List<Selection<ChordOrNote>> selected = selectionManager.getSelected(PositionType.GUITAR_NOTE);
 		if (selected.isEmpty()) {
@@ -212,6 +231,63 @@ public class GuitarSoundsHandler {
 		chordTemplatesEditorTab.refreshTemplates();
 	}
 
+	private void setSlideFret(final int newSlideFret) {
+		final List<Selection<ChordOrNote>> selected = selectionManager.getSelected(PositionType.GUITAR_NOTE);
+		if (selected.isEmpty()) {
+			return;
+		}
+
+		undoSystem.addUndo();
+
+		final List<ChordTemplate> chordTemplates = chartData.currentArrangement().chordTemplates;
+		final Set<Integer> selectedStrings = new HashSet<>(currentSelectionEditor.getSelectedStrings());
+
+		for (final Selection<ChordOrNote> selection : selected) {
+			if (selection.selectable.isNote()) {
+				final Note note = selection.selectable.note();
+				if (note.fret == newSlideFret) {
+					note.unpitchedSlide = false;
+					note.slideTo = null;
+				} else {
+					if (note.slideTo == null) {
+						note.unpitchedSlide = !note.linkNext;
+					}
+					note.slideTo = newSlideFret;
+				}
+			} else {
+				final Chord chord = selection.selectable.chord();
+				final ChordTemplate chordTemplate = chordTemplates.get(chord.templateId());
+				final int minFret = chordTemplate.frets.entrySet().stream()//
+						.filter(fret -> selectedStrings.contains(fret.getKey()) && fret.getValue() > 0)//
+						.map(fret -> fret.getValue())//
+						.collect(Collectors.minBy(Integer::compare)).orElse(1);
+				final int fretDifference = minFret - newSlideFret;
+
+				for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
+					if (!selectedStrings.contains(chordNoteEntry.getKey())) {
+						continue;
+					}
+
+					final int fret = chordTemplate.frets.get(chordNoteEntry.getKey());
+					if (fret == 0) {
+						continue;
+					}
+
+					final ChordNote chordNote = chordNoteEntry.getValue();
+					if (chordNote.slideTo == null) {
+						chordNote.unpitchedSlide = !chordNote.linkNext;
+					}
+					chordNote.slideTo = min(InstrumentConfig.frets, max(1, fret - fretDifference));
+				}
+			}
+		}
+
+		guitarSoundsStatusesHandler
+				.updateLinkedNotes(selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
+
+		currentSelectionEditor.selectionChanged(false);
+	}
+
 	public void setFret(final int fret) {
 		switch (selectionManager.selectedType()) {
 			case FHP:
@@ -219,6 +295,19 @@ public class GuitarSoundsHandler {
 				break;
 			case GUITAR_NOTE:
 				setFretForSounds(fret);
+				break;
+			default:
+				break;
+		}
+	}
+
+	public void setSecondFret(final int fret) {
+		switch (selectionManager.selectedType()) {
+			case FHP:
+				setSecondFretForFHPs(fret);
+				break;
+			case GUITAR_NOTE:
+				setSlideFret(fret);
 				break;
 			default:
 				break;
