@@ -97,6 +97,7 @@ public class Localization {
 		COULDNT_RUN_UPDATE_SCRIPT(
 				"Couldn't run update script, run the program as administrator, install update manually or install it in a different folder"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
+		CREATE_FHP_AUTOMATICALLY("Create FHP automatically"), //
 		OPEN_CURRENT_SONG_FOLDER("Open current song folder"), //
 		CURRENT_SONG_FOLDER("Current song folder: %s"), //
 		DELETE("Delete"), //

@@ -7,9 +7,11 @@ import static log.charter.util.CollectionUtils.lastBeforeEqual;
 import java.util.List;
 
 import log.charter.data.config.values.InstrumentConfig;
+import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.FHP;
+import log.charter.data.song.Level;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.FractionalPosition;
@@ -139,6 +141,12 @@ public class ArrangementFretHandPositionsCreator {
 		for (final ChordOrNote sound : sounds) {
 			final FretRange fretRange = fretRangeFromSound(beats, chordTemplates, sound);
 			addFHPIfNeeded(beats, fretRange, fhps);
+		}
+	}
+
+	public static void createFHPs(final ImmutableBeatsMap beats, final Arrangement arrangement) {
+		for (final Level level : arrangement.levels) {
+			createFHPs(beats, arrangement.chordTemplates, level.sounds, level.fhps);
 		}
 	}
 }

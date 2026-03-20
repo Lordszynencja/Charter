@@ -1,6 +1,7 @@
 package log.charter.gui.panes.imports;
 
 import static java.lang.Math.max;
+import static log.charter.services.ArrangementFretHandPositionsCreator.createFHPs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,7 @@ public class ArrangementImportOptions extends ParamsPane {
 	private final ChartData data;
 	private final SongChart imported;
 
+	private boolean createFHP = false;
 	private final ArrangementImportSetting[] arrangementImportSettings;
 	private final List<ArrangementImportSetting> arrangementImportSettingsOptions;
 
@@ -60,6 +62,10 @@ public class ArrangementImportOptions extends ParamsPane {
 		this.imported = imported;
 
 		int row = 0;
+		addCreateFHPCheckbox(row);
+
+		row++;
+
 		arrangementImportSettings = new ArrangementImportSetting[imported.arrangements.size()];
 		arrangementImportSettingsOptions = prepareArrangementImportSettingsOptions();
 
@@ -77,6 +83,11 @@ public class ArrangementImportOptions extends ParamsPane {
 
 		setOnFinish(this::saveAndExit, null);
 		addDefaultFinish(row);
+	}
+
+	private void addCreateFHPCheckbox(final int row) {
+		addConfigCheckbox(row, 10, createFHP, newCreateFHP -> createFHP = newCreateFHP);
+		addLabel(row, 45, Label.CREATE_FHP_AUTOMATICALLY, 0);
 	}
 
 	private List<ArrangementImportSetting> prepareArrangementImportSettingsOptions() {
@@ -132,6 +143,9 @@ public class ArrangementImportOptions extends ParamsPane {
 			}
 
 			final Arrangement arrangementToAdd = imported.arrangements.get(i);
+			if (createFHP) {
+				createFHPs(data.beats(), arrangementToAdd);
+			}
 			if (setting.arrangementId != null) {
 				data.songChart.arrangements.set(setting.arrangementId, arrangementToAdd);
 			} else {
