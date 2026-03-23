@@ -1,6 +1,10 @@
 package log.charter.gui.lookAndFeel;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.util.Enumeration;
+
+import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.metal.DefaultMetalTheme;
@@ -9,9 +13,6 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
-
-import java.awt.*;
-import java.util.Enumeration;
 
 public class CharterTheme extends DefaultMetalTheme {
 	public static final String name = "Charter";
@@ -34,23 +35,24 @@ public class CharterTheme extends DefaultMetalTheme {
 	}
 
 	private static void CharterThemeInstall() {
-		CharterRadioButton.install();
-		CharterCheckBox.install();
 		CharterButtonUI.install();
-		CharterToggleButtonUI.install();
-		CharterTextFieldUI.install();
-		CharterTabbedPaneUI.install();
+		CharterCheckBox.install();
+		CharterRadioButton.install();
 		CharterScrollBarUI.install();
+		CharterTabbedPaneUI.install();
+		CharterTextFieldUI.install();
+		CharterToggleButtonUI.install();
+		CharterToolTipUI.install();
 
 		UIManager.put("Label.font", new Font(Font.SANS_SERIF, Font.PLAIN, 12));
 	}
 
 	private static void setMenuFont() {
-		Font font = new Font("SansSerif", Font.PLAIN, 12);
+		final Font font = new Font("SansSerif", Font.PLAIN, 12);
 
-		Enumeration<Object> keys = UIManager.getDefaults().keys();
+		final Enumeration<Object> keys = UIManager.getDefaults().keys();
 		while (keys.hasMoreElements()) {
-			Object key = keys.nextElement();
+			final Object key = keys.nextElement();
 			if (key instanceof String && ((String) key).endsWith(".font") && ((String) key).contains("Menu")) {
 				UIManager.put(key, font);
 			}

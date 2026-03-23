@@ -90,7 +90,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private JToggleButton metronome;
 
 	private JToggleButton waveformGraph;
-	private JToggleButton intensityRMSIndicator;
+	private JToggleButton rms;
 
 	private JToggleButton repeater;
 
@@ -138,8 +138,9 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	}
 
 	private JToggleButton addToggleButton(final AtomicInteger x, final int horizontalSpacing, final Label label,
-			final Runnable onClick, final int buttonWidth) {
+			final Label tooltipLabel, final Runnable onClick, final int buttonWidth) {
 		final JToggleButton toggleButton = new JToggleButton(label.label());
+		toggleButton.setToolTipText(tooltipLabel.label());
 		toggleButton.addActionListener(a -> onClick.run());
 		toggleButton.setFocusable(false);
 
@@ -150,18 +151,19 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		return toggleButton;
 	}
 
-	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Runnable onClick,
-			final int buttonWidth) {
-		return addToggleButton(x, horizontalSpacing, label, onClick, buttonWidth);
+	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Label tooltipLabel,
+			final Runnable onClick, final int buttonWidth) {
+		return addToggleButton(x, horizontalSpacing, label, tooltipLabel, onClick, buttonWidth);
 	}
 
-	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Runnable onClick) {
-		return addToggleButton(x, label, onClick, 0);
-	}
-
-	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final BufferedImage icon,
+	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Label tooltipLabel,
 			final Runnable onClick) {
-		final JToggleButton toggleButton = addToggleButton(x, label, onClick);
+		return addToggleButton(x, label, tooltipLabel, onClick, 0);
+	}
+
+	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Label tooltipLabel,
+			final BufferedImage icon, final Runnable onClick) {
+		final JToggleButton toggleButton = addToggleButton(x, label, tooltipLabel, onClick);
 		setIcon(toggleButton, icon);
 
 		return toggleButton;
@@ -250,10 +252,12 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	}
 
 	private void addGridTypes(final AtomicInteger x) {
-		beatGridType = addToggleButton(x, 1, Label.BEAT_GRID_TYPE, () -> onGridTypeChange(GridType.BEAT), 25);
+		beatGridType = addToggleButton(x, 1, Label.GRID_TYPE_BEAT, Label.GRID_TYPE_BEAT_TOOLTIP,
+				() -> onGridTypeChange(GridType.BEAT), 25);
 		setIcon(beatGridType, gridBeatTypeIcon);
 
-		noteGridType = addToggleButton(x, Label.NOTE_GRID_TYPE, () -> onGridTypeChange(GridType.NOTE), 25);
+		noteGridType = addToggleButton(x, Label.GRID_TYPE_NOTE, Label.GRID_TYPE_NOTE_TOOLTIP,
+				() -> onGridTypeChange(GridType.NOTE), 25);
 		setIcon(noteGridType, gridNoteTypeIcon);
 
 		final ButtonGroup gridTypeGroup = new ButtonGroup();
@@ -267,6 +271,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private void addChartLock(final AtomicInteger x) {
 		chartLock = new JButton(new ImageIcon(chartUnlocked));
+		chartLock.setToolTipText(Label.CHART_LOCK_TOOLTIP.label());
+		chartLock.createToolTip().setForeground(Color.WHITE);
 		chartLock.setEnabled(false);
 		chartLock.setBackground(Color.RED);
 		ComponentUtils.setComponentSize(chartLock, 20, 20);
@@ -295,15 +301,17 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		new AudioStemsSettings(chartData, charterFrame, chartToolbar, projectAudioHandler);
 	}
 
-	private FieldWithLabel<JSlider> addVolumeSlider(final AtomicInteger x, final Label label, final BufferedImage icon,
-			final double value, final DoubleConsumer volumeSetter) {
+	private FieldWithLabel<JSlider> addVolumeSlider(final AtomicInteger x, final Label label, final Label tooltip,
+			final BufferedImage icon, final double value, final DoubleConsumer volumeSetter) {
 		final JSlider volumeSlider = new JSlider(0, 100, getVolumeAsInteger(value));
 		volumeSlider.addChangeListener(e -> volumeSetter.accept(volumeSlider.getValue() / 100.0));
 		volumeSlider.setFocusable(false);
 		volumeSlider.setBackground(getBackground());
+		volumeSlider.setToolTipText(tooltip.label());
 
 		final FieldWithLabel<JSlider> field = new FieldWithLabel<>(label, icon.getWidth(), 72, elementHeight,
 				volumeSlider, LabelPosition.LEFT_CLOSE);
+		field.label.setToolTipText(tooltip.label());
 		setIcon(field.label, icon);
 		ComponentUtils.addRightPressListener(volumeSlider, this::openStemSettings);
 		ComponentUtils.addRightPressListener(field, this::openStemSettings);
@@ -329,6 +337,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private void addTimeControls(final AtomicInteger x) {
 		final JButton rewindButton = new JButton("⏮");
+		rewindButton.setToolTipText(Label.REWIND_TOOLTIP.label());
 		rewindButton.setFocusable(false);
 		rewindButton.setSize(30, 20);
 		rewindButton.addChangeListener(e -> {
@@ -342,6 +351,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		add(x, 0, rewindButton);
 
 		playButton = new JButton();
+		playButton.setToolTipText(Label.PLAY_TOOLTIP.label());
 		playButton.setFocusable(false);
 		playButton.setSize(30, 20);
 		playButton.addActionListener(e -> actionHandler.fireAction(Action.PLAY_AUDIO));
@@ -350,6 +360,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		add(x, 0, playButton);
 
 		final JButton fastForwardButton = new JButton("⏩");
+		fastForwardButton.setToolTipText(Label.FAST_FORWARD_TOOLTIP.label());
 		fastForwardButton.setFocusable(false);
 		fastForwardButton.setSize(30, 20);
 		fastForwardButton.addChangeListener(e -> {
@@ -390,19 +401,22 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	public void init() {
 		final AtomicInteger x = new AtomicInteger(5);
 
-		midi = addToggleButton(x, Label.TOOLBAR_MIDI, audioHandler::toggleMidiNotes);
-		claps = addToggleButton(x, Label.TOOLBAR_CLAPS, clapsHandler::toggleClaps);
-		metronome = addToggleButton(x, Label.TOOLBAR_METRONOME, metronomeHandler::toggleMetronome);
+		midi = addToggleButton(x, Label.TOOLBAR_MIDI, Label.TOOLBAR_MIDI_TOOLTIP, audioHandler::toggleMidiNotes);
+		claps = addToggleButton(x, Label.TOOLBAR_CLAPS, Label.TOOLBAR_CLAPS_TOOLTIP, clapsHandler::toggleClaps);
+		metronome = addToggleButton(x, Label.TOOLBAR_METRONOME, Label.TOOLBAR_METRONOME_TOOLTIP,
+				metronomeHandler::toggleMetronome);
 
 		addSeparator(x);
 
-		waveformGraph = addToggleButton(x, Label.TOOLBAR_WAVEFORM_GRAPH, waveFormDrawer::toggle);
-		intensityRMSIndicator = addToggleButton(x, Label.TOOLBAR_RMS_INDICATOR, waveFormDrawer::toggleRMS);
-		intensityRMSIndicator.setEnabled(false);
+		waveformGraph = addToggleButton(x, Label.TOOLBAR_WAVEFORM, Label.TOOLBAR_WAVEFORM_TOOLTIP,
+				waveFormDrawer::toggle);
+		rms = addToggleButton(x, Label.TOOLBAR_RMS, Label.TOOLBAR_RMS_TOOLTIP, waveFormDrawer::toggleRMS);
+		rms.setEnabled(false);
 
 		addSeparator(x);
 
-		repeater = addToggleButton(x, Label.TOOLBAR_REPEATER, repeaterIcon, repeatManager::toggle);
+		repeater = addToggleButton(x, Label.TOOLBAR_REPEATER, Label.TOOLBAR_REPEATER_TOOLTIP, repeaterIcon,
+				repeatManager::toggle);
 
 		addSeparator(x);
 
@@ -416,20 +430,23 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 		addSeparator(x);
 
-		volume = addVolumeSlider(x, Label.TOOLBAR_VOLUME, volumeIcon, projectAudioHandler.getVolume(),
-				projectAudioHandler::setVolume);
-		sfxVolume = addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, sfxVolumeIcon, AudioConfig.sfxVolume,
-				this::changeSFXVolume);
+		volume = addVolumeSlider(x, Label.TOOLBAR_VOLUME, Label.TOOLBAR_VOLUME_TOOLTIP, volumeIcon,
+				projectAudioHandler.getVolume(), projectAudioHandler::setVolume);
+		sfxVolume = addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, Label.TOOLBAR_SFX_VOLUME_TOOLTIP, sfxVolumeIcon,
+				AudioConfig.sfxVolume, this::changeSFXVolume);
 		addPlaybackSpeed(x);
 		addTimeControls(x);
 
 		addSeparator(x);
 
-		lowPassFilter = addToggleButton(x, 1, Label.LOW_PASS, () -> audioHandler.toggleLowPassFilter(), 40);
+		lowPassFilter = addToggleButton(x, 1, Label.LOW_PASS, Label.LOW_PASS_TOOLTIP,
+				() -> audioHandler.toggleLowPassFilter(), 40);
 		addRightPressListener(lowPassFilter, this::showLowPassSettings);
-		bandPassFilter = addToggleButton(x, 1, Label.BAND_PASS, () -> audioHandler.toggleBandPassFilter(), 40);
+		bandPassFilter = addToggleButton(x, 1, Label.BAND_PASS, Label.BAND_PASS_TOOLTIP,
+				() -> audioHandler.toggleBandPassFilter(), 40);
 		addRightPressListener(bandPassFilter, this::showBandPassSettings);
-		highPassFilter = addToggleButton(x, 1, Label.HIGH_PASS, () -> audioHandler.toggleHighPassFilter(), 40);
+		highPassFilter = addToggleButton(x, 1, Label.HIGH_PASS, Label.HIGH_PASS_TOOLTIP,
+				() -> audioHandler.toggleHighPassFilter(), 40);
 		addRightPressListener(highPassFilter, this::showHighPassSettings);
 
 		updateValues();
@@ -446,8 +463,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		metronome.setSelected(metronomeHandler.metronome());
 		waveformGraph.setSelected(waveFormDrawer.drawing());
 		waveformGraph.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
-		intensityRMSIndicator.setEnabled(waveFormDrawer.drawing());
-		intensityRMSIndicator.setSelected(waveFormDrawer.rms());
+		rms.setEnabled(waveFormDrawer.drawing());
+		rms.setSelected(waveFormDrawer.rms());
 		repeater.setSelected(repeatManager.isOn());
 
 		gridSize.field.setTextWithoutEvent(GridConfig.gridSize + "");

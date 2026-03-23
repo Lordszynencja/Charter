@@ -91,7 +91,6 @@ public class ProjectAudioHandler {
 				}
 
 				stems.add(stemAudioData);
-				addStemOffset(i, stem.offset);
 			}
 			dialog.addProgress(Label.LOADING_DONE);
 		}, "Loading stems");

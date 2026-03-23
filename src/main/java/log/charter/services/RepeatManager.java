@@ -6,7 +6,7 @@ import log.charter.services.data.ChartTimeHandler;
 import log.charter.util.collections.Pair;
 
 public class RepeatManager {
-	private boolean repeatingOn = true;
+	private boolean repeatingOn = false;
 	private Double repeatStart = null;
 	private Double repeatEnd = null;
 
@@ -24,14 +24,22 @@ public class RepeatManager {
 		chartToolbar.updateValues();
 	}
 
+	private Double toggleTime(final Double time) {
+		return (time == null || time.intValue() != ((int) chartTimeHandler.time())) ? chartTimeHandler.time() : null;
+	}
+
+	private void setRepeatingIfStartEndSet() {
+		repeatingOn = repeatStart != null && repeatEnd != null;
+		chartToolbar.updateValues();
+	}
+
 	public Double repeatStart() {
 		return repeatStart;
 	}
 
 	public void toggleRepeatStart() {
-		repeatStart = (repeatStart == null || repeatStart.intValue() != ((int) chartTimeHandler.time()))
-				? chartTimeHandler.time()
-				: null;
+		repeatStart = toggleTime(repeatStart);
+		setRepeatingIfStartEndSet();
 	}
 
 	public Double repeatEnd() {
@@ -39,9 +47,8 @@ public class RepeatManager {
 	}
 
 	public void toggleRepeatEnd() {
-		repeatEnd = (repeatEnd == null || repeatEnd.intValue() != ((int) chartTimeHandler.time()))
-				? chartTimeHandler.time()
-				: null;
+		repeatEnd = toggleTime(repeatEnd);
+		setRepeatingIfStartEndSet();
 	}
 
 	public Pair<Double, Double> repeatSpan() {
