@@ -58,6 +58,8 @@ public class Localization {
 		BACKUP_DELAY_S("Backup delay (s)"), //
 		BAND_PASS("Band"), //
 		BAND_PASS_SETTINGS("Band pass settings"), //
+		BAND_PASS_TOOLTIP(
+				"<html>Band pass filter filters out frequencies not in specified range<br/>Right click for settings</html>"), //
 		BASE_AUDIO_FORMAT("Base audio format"), //
 		BEAT_ADD("Add beat"), //
 		BEAT_REMOVE("Remove beat"), //
@@ -73,6 +75,8 @@ public class Localization {
 		CHANGE_LENGTH("Change length"), //
 		CHANGE_LENGTH_BY_SECONDS("Change length by this many seconds:"), //
 		CHANGE_SONG_PITCH("Change song pitch"), //
+		CHART_LOCK_TOOLTIP(
+				"<html>Locks the chart, stopping you from moving any items on it (toggled with Scroll Lock)<br/>Items can still be added and removed</html>"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
 		CONFIG("Config"), //
@@ -128,6 +132,7 @@ public class Localization {
 		FHP_STARTS_ON_WRONG_FRET("Fret Hand Position starts on fret below or equal to capo/0"), //
 		FHP_TOO_CLOSE_TO_NEXT("Fret Hand Position too close to next one (<%d ms)"), //
 		FHP_WIDTH("Width"), //
+		FAST_FORWARD_TOOLTIP("Fast forwards the song"), //
 		FILE_MENU("File"), //
 		FILE_MENU_IMPORT_RS_SHOWLIGHTS("RS showlights XML"), //
 		FINGER_NOT_SET_FOR_FRETTED_STRING("Finger not set for fretted string in template [%d] - string %d"), //
@@ -146,11 +151,17 @@ public class Localization {
 		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
 		GP_FILES_FOLDER("GP files folder"), //
+		GRID_TYPE_BEAT("Beat"), //
+		GRID_TYPE_BEAT_TOOLTIP("Grid will appear every 1/x of a beat"), //
+		GRID_TYPE_NOTE("Note"), //
+		GRID_TYPE_NOTE_TOOLTIP("Grid will appear every 1/x note"), //
 		HALVING_BPM_MUST_START_ON_MEASURE_BEGINNING("You can only halve BPM from the beginning of a measure"), //
 		HALVING_BPM_UNEVEN_BEATS_IN_MEASURE("Uneven beats count, can't halve BPM"), //
 		HAMMER_ON_ON_FRET_ZERO("Hammer on on fret zero"), //
 		HIGH_PASS("High"), //
 		HIGH_PASS_SETTINGS("High pass settings"), //
+		HIGH_PASS_TOOLTIP(
+				"<html>High pass filter filters out frequencies below given value<br/>Right click for settings</html>"), //
 		IMPORTING_AUDIO("Importing audio"), //
 		IMPORT_AUDIO_AS_STEM("Import audio as stem?"), //
 		IMPORT_LRC_VOCALS("Import LRC vocals file"), //
@@ -162,6 +173,8 @@ public class Localization {
 		LINKED_NOTE_HAS_NO_LENGTH("Note that's linked to has no length"), //
 		LOW_PASS("Low"), //
 		LOW_PASS_SETTINGS("Low pass settings"), //
+		LOW_PASS_TOOLTIP(
+				"<html>Low pass filter filters frequencies above certain value<br/>Right click for settings</html>"), //
 		LRC_FILE("LRC file"), //
 		LRC_IMPORTED_SUCCESSFULLY("LRC vocals imported successfully"), //
 		MAIN_AUDIO("Main audio"), //
@@ -256,6 +269,7 @@ public class Localization {
 		PITCH_SHIFTING_AUDIO("Pitch shifting audio: %s"), //
 		PITCH_TO("to"), //
 		PITCH_MUST_BE_POSITIVE("Pitch must be positive"), //
+		PLAY_TOOLTIP("Plays the song at set speed"), //
 		PREVIOUS_BEAT("Previous beat"), //
 		PREVIOUS_GRID_POSITION("Previous grid position"), //
 		PREVIOUS_ITEM("Previous item"), //
@@ -264,6 +278,7 @@ public class Localization {
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
 		REDO("Redo"), //
+		REWIND_TOOLTIP("Rewinds the song"), //
 		RS_SHOWLIGHTS_FILE("RS showlights file (XML)"), //
 		RS_SHOWLIGHTS("RS showlights"), //
 		SAVE_AS("Save as..."), //
@@ -375,15 +390,23 @@ public class Localization {
 		TOGGLE_SLAP_POP_INDEPENDENTLY("Toggle Slap/Pop independently"), //
 		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //
 		TOOLBAR_CLAPS("Claps"), //
+		TOOLBAR_CLAPS_TOOLTIP("Plays a tick every time marker goes past a note while playing"), //
 		TOOLBAR_GRID_SIZE("Grid Size: 1/"), //
 		TOOLBAR_METRONOME("Metronome"), //
+		TOOLBAR_METRONOME_TOOLTIP("Plays a tick every time marker goes past a beat while playing"), //
 		TOOLBAR_MIDI("MIDI"), //
+		TOOLBAR_MIDI_TOOLTIP("Plays midi notes for each guitar note"), //
 		TOOLBAR_REPEATER("Repeater"), //
-		TOOLBAR_RMS_INDICATOR("RMS"), //
+		TOOLBAR_REPEATER_TOOLTIP("Repeats a selected part of the song"), //
+		TOOLBAR_RMS("RMS"), //
+		TOOLBAR_RMS_TOOLTIP("Enables highlighting parts with high Root Mean Square (high volume) for the waveform"), //
 		TOOLBAR_SFX_VOLUME("SFX"), //
+		TOOLBAR_SFX_VOLUME_TOOLTIP("Special effects (midi, ticks) volume, press right click for stem selection"), //
 		TOOLBAR_SLOWED_PLAYBACK_SPEED("Playback speed"), //
 		TOOLBAR_VOLUME("Volume"), //
-		TOOLBAR_WAVEFORM_GRAPH("Waveform"), //
+		TOOLBAR_VOLUME_TOOLTIP("Song volume, press right click for stem selection"), //
+		TOOLBAR_WAVEFORM("Waveform"), //
+		TOOLBAR_WAVEFORM_TOOLTIP("Shows a waveform of the current audio"), //
 		TRANSFORMING_WAV_TO_OGG("Transforming WAV to OGG<br>Time elapsed: %s"), //
 		TUNING_PITCH("Tuning pitch"), //
 		TXT_FILE("Text file"), //
@@ -476,9 +499,6 @@ public class Localization {
 		SNAP_SELECTED("Snap selected items to grid"), //
 		DOUBLE_GRID("Double grid resolution"), //
 		HALVE_GRID("Halve grid resolution"), //
-
-		BEAT_GRID_TYPE("Beat"), //
-		NOTE_GRID_TYPE("Note"), //
 
 		SLIDE_PANE("Slide options"), //
 		SLIDE_PANE_FRET("Slide to"), //
