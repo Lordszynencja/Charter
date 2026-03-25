@@ -70,7 +70,7 @@ public class SongFilesBackuper implements Initiable {
 		t.start();
 	}
 
-	private void makeDefaultBackups() {
+	public void makeDefaultBackups() {
 		if (chartData.isEmpty) {
 			return;
 		}

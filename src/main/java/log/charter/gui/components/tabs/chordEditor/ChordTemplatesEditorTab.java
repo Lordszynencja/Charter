@@ -68,7 +68,7 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 		final int width = listWidth + ChordTemplateEditor.width + 200;
 		final int height = sizes.getY(InstrumentConfig.maxStrings + 5);
 
-		addWithSettingSize(chordTemplatesList, 0, 0, listWidth, height, 20);
+		addWithSettingSize(chordTemplatesList, 0, 0, listWidth, height);
 
 		chordTemplateEditor.init(chartData, charterFrame, keyboardHandler, () -> chordTemplate, this::templateEdited);
 

@@ -60,7 +60,7 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 		fileExtensionHandlers.put("gp5", gp5FileImporter::importGP5File);
 		fileExtensionHandlers.put("gp", gp7PlusFileImporter::importGP7PlusFile);
 		fileExtensionHandlers.put("lrc", lrcImporter::importLRCFile);
-		fileExtensionHandlers.put("mid", midiImporter::importMidiTempo);
+		fileExtensionHandlers.put("mid", midiImporter::importMidi);
 		fileExtensionHandlers.put("mp3", this::handleAudio);
 		fileExtensionHandlers.put("ogg", this::handleAudio);
 		fileExtensionHandlers.put("rscp", f -> existingProjectImporter.open(f.getAbsolutePath()));

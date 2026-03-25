@@ -24,6 +24,8 @@ import log.charter.gui.components.utils.RowedPosition;
 import log.charter.util.collections.Pair;
 
 public class RowedPanel extends JPanel {
+	public static final int resizingHorizontalSpacing = 20;
+
 	public static interface ValueSetter<T> {
 		void setValue(T val);
 	}
@@ -108,13 +110,19 @@ public class RowedPanel extends JPanel {
 	}
 
 	public void addWithSettingSize(final Component component, final int x, final int y, final int w, final int h) {
-		addWithSettingSize(component, x, y, w, h, 20);
+		addWithSettingSize(component, x, y, w, h, resizingHorizontalSpacing);
 	}
 
 	public void addWithSettingSize(final Component component, final int x, final int y, final int w, final int h,
 			final int space) {
 		setComponentBounds(component, x, y, w, h);
 		resizeToFit(x + w + space, y + h + sizes.verticalSpace);
+		add(component);
+	}
+
+	public void addWithSettingSizeWithoutResize(final Component component, final int x, final int y, final int w,
+			final int h) {
+		setComponentBounds(component, x, y, w, h);
 		add(component);
 	}
 
@@ -143,7 +151,7 @@ public class RowedPanel extends JPanel {
 		if (width == 0) {
 			width = labelComponent.getPreferredSize().width;
 		}
-		addWithSettingSize(labelComponent, x, y, width, 20, sizes.verticalSpace);
+		addWithSettingSize(labelComponent, x, y, width, 20, resizingHorizontalSpacing);
 
 		return width;
 	}

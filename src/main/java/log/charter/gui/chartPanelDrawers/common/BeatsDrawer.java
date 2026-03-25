@@ -18,8 +18,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import log.charter.data.config.Config;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.Config;
 import log.charter.data.config.values.GridConfig;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap;
@@ -177,11 +177,8 @@ public class BeatsDrawer {
 	private void addGrid(final ImmutableBeatsMap beats, final FrameData frameData, final BeatsDrawingData drawingData,
 			final boolean dragged) {
 		final GridPosition<Beat> gridPosition = GridPosition.create(beats, xToPosition(0, frameData.time));
-		final double maxTime = xToPosition(chartPanel.getWidth() + 1, frameData.time);
+		final double maxTime = Math.min(frameData.songLength, xToPosition(chartPanel.getWidth() + 1, frameData.time));
 		while (gridPosition.position() < maxTime) {
-			if (gridPosition.positionId >= frameData.beats.size() - 1) {
-				break;
-			}
 			if (gridPosition.gridId != 0) {
 				drawingData.addGrid(positionToX(gridPosition.position(), frameData.time), dragged);
 			}

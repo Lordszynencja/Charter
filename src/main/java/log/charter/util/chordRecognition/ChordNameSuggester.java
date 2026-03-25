@@ -44,7 +44,7 @@ public class ChordNameSuggester {
 
 			if (root != sounds[0] % 12) {
 				for (final String name : foundNamesForRoot) {
-					foundNames.add(name + "/" + soundToSimpleName(root, true));
+					foundNames.add(name + "/" + soundToSimpleName(notes.get(0), true));
 				}
 			}
 		}

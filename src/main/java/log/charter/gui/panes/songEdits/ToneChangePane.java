@@ -50,7 +50,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		final int labelWidth = addLabel(row, 20, Label.TONE_CHANGE_TONE_NAME, 0);
 		add(toneNameInput, 20 + labelWidth + 3, getY(row++), 250, 25);
 
-		row++;
+		row += 2;
 		this.setOnFinish(this::saveAndExit, onCancel);
 		addDefaultFinish(row);
 	}
