@@ -53,26 +53,29 @@ public class ProjectAudioHandler {
 		}
 	}
 
+	private AudioData addOffsetForAudio(final double offset, final AudioData audioData) {
+		if (offset >= 0) {
+			final AudioData silence = AudioGenerator.generateSilence(offset, audioData.format.getSampleRate(),
+					audioData.format.getChannels(), audioData.format.getSampleSizeInBits() / 8);
+			try {
+				return silence.join(audioData);
+			} catch (final DifferentSampleSizesException | DifferentChannelAmountException
+					| DifferentSampleRateException e) {
+				ComponentUtils.showPopup(charterFrame, Label.COULDNT_PAN_AUDIO, e.getLocalizedMessage());
+				Logger.error("couldn't pan the stem", e);
+				return audioData;
+			}
+		} else {
+			return audioData.removeFromStart(-offset);
+		}
+	}
+
 	public void addStemOffset(final int stemId, final double offset) {
 		final Stem stem = chartData.songChart.stems.get(stemId);
 		stem.offset += offset;
 
-		AudioData stemAudioData = stems.get(stemId);
-
-		if (offset >= 0) {
-			final AudioData silence = AudioGenerator.generateSilence(offset, stemAudioData.format.getSampleRate(),
-					stemAudioData.format.getChannels(), stemAudioData.format.getSampleSizeInBits() / 8);
-			try {
-				stemAudioData = silence.join(stemAudioData);
-			} catch (final DifferentSampleSizesException | DifferentChannelAmountException
-					| DifferentSampleRateException e) {
-				Logger.error("couldn't pan the stem", e);
-			}
-		} else {
-			stemAudioData = stemAudioData.removeFromStart(-offset);
-		}
-
-		stems.set(stemId, stemAudioData);
+		final AudioData stemAudioData = stems.get(stemId);
+		stems.set(stemId, addOffsetForAudio(offset, stemAudioData));
 	}
 
 	public void readStems() {
@@ -90,7 +93,7 @@ public class ProjectAudioHandler {
 					stemAudioData = AudioGenerator.generateEmpty(0);
 				}
 
-				stems.add(stemAudioData);
+				stems.add(addOffsetForAudio(stem.offset, stemAudioData));
 			}
 			dialog.addProgress(Label.LOADING_DONE);
 		}, "Loading stems");

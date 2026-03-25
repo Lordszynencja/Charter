@@ -97,6 +97,7 @@ public class Localization {
 		COULDNT_IMPORT_GP7("Couldn't properly import Guitar Pro 7/8 file"), //
 		COULDNT_IMPORT_MIDI("Couldn't properly import %s"), //
 		COULDNT_LOAD_AUDIO("Couldn't load audio from %s"), //
+		COULDNT_PAN_AUDIO("Couldn't pan audio: %s"), //
 		COULDNT_READ_TXT("Couldn't import file %s, unrecognized format"), //
 		COULDNT_RUN_UPDATE_SCRIPT(
 				"Couldn't run update script, run the program as administrator, install update manually or install it in a different folder"), //

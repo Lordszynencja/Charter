@@ -41,14 +41,17 @@ public class SoundUtils {
 		return new NoteWithScale(distanceFromC0).noteName(useSharp);
 	}
 
+	public static int getSound(final Tuning tuning, final boolean bass, final int string, final int fret) {
+		return Tuning.getStringDistanceFromC0(string, tuning.strings(), bass) + fret + tuning.getTuningRaw()[string];
+	}
+
 	public static int[] getSounds(final Tuning tuning, final boolean bass, final Map<Integer, Integer> frets) {
 		final int[] sounds = new int[frets.size()];
 		int i = 0;
 		for (final Entry<Integer, Integer> stringWithFret : frets.entrySet()) {
 			final int string = stringWithFret.getKey();
 			try {
-				sounds[i++] = Tuning.getStringDistanceFromC0(string, tuning.strings(), bass) + stringWithFret.getValue()
-						+ tuning.getTuningRaw()[string];
+				sounds[i++] = getSound(tuning, bass, string, stringWithFret.getValue());
 			} catch (final Exception e) {
 				Logger.error(
 						"Couldn't read sound for string " + string + " in tuning " + tuning.getFullName("%s %s", bass),
