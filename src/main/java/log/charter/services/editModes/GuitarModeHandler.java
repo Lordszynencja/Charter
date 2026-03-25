@@ -345,11 +345,7 @@ public class GuitarModeHandler implements ModeHandler {
 
 		setFretNumberTimer();
 
-		if (typingNumber % 2 == 0) {
-			guitarSoundsHandler.setFret(lastFretNumber);
-		} else {
-			guitarSoundsHandler.setSecondFret(lastFretNumber);
-		}
+		guitarSoundsHandler.setFret(lastFretNumber, typingNumber);
 	}
 
 	@Override

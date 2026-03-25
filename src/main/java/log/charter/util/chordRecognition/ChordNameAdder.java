@@ -19,7 +19,7 @@ public class ChordNameAdder {
 	}
 
 	static interface ChordNameGenerator {
-		String generate(int root);
+		String generate(int root, boolean useSharp);
 	}
 
 	private final ChordTypeChecker checker;
@@ -32,7 +32,13 @@ public class ChordNameAdder {
 
 	void add(final int root, final List<Integer> notes, final List<String> foundNames) {
 		if (checker.check(root, notes)) {
-			foundNames.add(nameGenerator.generate(root));
+			final String withSharp = nameGenerator.generate(root, true);
+			final String withFlat = nameGenerator.generate(root, false);
+
+			foundNames.add(withSharp);
+			if (!withSharp.equals(withFlat)) {
+				foundNames.add(withFlat);
+			}
 		}
 	}
 
@@ -51,6 +57,10 @@ public class ChordNameAdder {
 		};
 	}
 
+	private static ChordNameGenerator nameWith(final String additions) {
+		return (final int root, final boolean useSharp) -> soundToSimpleName(root, useSharp) + additions;
+	}
+
 	// 1 - 0 frets
 	// #1, b9 - 1 frets
 	// 9 - 2 frets
@@ -63,16 +73,6 @@ public class ChordNameAdder {
 	// dim7, b7, 13 - 9 frets
 	// #13, 7 - 10 frets
 	// maj7 - 11 frets
-
-	private static ChordNameGenerator nameWith(final String additions) {
-		return new ChordNameGenerator() {
-
-			@Override
-			public String generate(final int root) {
-				return soundToSimpleName(root, true) + additions;
-			}
-		};
-	}
 
 	private static List<ChordNameAdder> adders = asList(new ChordNameAdder(notes(1, 4, 7, 10), nameWith("7(b9)")), //
 			new ChordNameAdder(notes(1, 4, 8, 10), nameWith("7(b9,b13)")), //

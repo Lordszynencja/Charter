@@ -43,7 +43,6 @@ import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
-import log.charter.util.collections.ArrayList2;
 import log.charter.util.collections.HashMap2;
 
 public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseListener {
@@ -183,8 +182,8 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	private AutocompleteInput<ChordTemplate> chordNameInput;
 	private JLabel fretsLabel;
 	private JLabel fingersLabel;
-	private final ArrayList2<TextInputWithValidation> fretInputs = new ArrayList2<>();
-	private final ArrayList2<TextInputWithValidation> fingerInputs = new ArrayList2<>();
+	private final ArrayList<TextInputWithValidation> fretInputs = new ArrayList<>();
+	private final ArrayList<TextInputWithValidation> fingerInputs = new ArrayList<>();
 	private ChordTemplatePreview chordTemplatePreview;
 
 	private int chordIdWidth = 1;

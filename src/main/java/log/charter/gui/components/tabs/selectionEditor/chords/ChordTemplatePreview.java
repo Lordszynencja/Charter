@@ -17,6 +17,7 @@ import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lin
 import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -39,8 +40,10 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
 import log.charter.gui.chartPanelDrawers.drawableShapes.FilledRectangle;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
+import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
+import log.charter.util.SoundUtils;
 import log.charter.util.data.IntRange;
 import log.charter.util.data.Position2D;
 
@@ -51,6 +54,8 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 	private static final int minFrets = 7;
 	private static final int fretStart = 22;
 	private static final Set<Integer> dotFrets = new HashSet<>(asList(3, 5, 7, 9));
+
+	private static final Font font = new Font(Font.DIALOG, Font.BOLD, 12);
 
 	private static class FretPosition {
 		public final int fret;
@@ -248,6 +253,44 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 		stringLines.draw(g);
 	}
 
+	private void drawOpenString(final DrawableShapeList pressMarks, final FretPosition[] fretPositions,
+			final int string, final int strings) {
+		for (int j = 0; j < 8; j++) {
+			final StringColorLabelType type = j < 2 || j >= 6 ? StringColorLabelType.LANE_BRIGHT
+					: StringColorLabelType.NOTE;
+			final Color color = getStringBasedColor(type, string, strings);
+			pressMarks.add(lineHorizontal(0, getWidth(), stringPositions[string] - 3 + j, color));
+		}
+
+		final int tone = SoundUtils.getSound(data.currentArrangement().tuning, data.currentArrangement().isBass(),
+				string, 0);
+		final String toneName = SoundUtils.soundToSimpleName(tone, parentListenerAdded);
+		final Color toneColor = getStringBasedColor(StringColorLabelType.NOTE, string, strings);
+		pressMarks.add(new Text(new Position2D(fretPositions[0].position + 5, stringPositions[string] - 15), font,
+				toneName, toneColor));
+	}
+
+	private void drawFretPressMark(final DrawableShapeList pressMarks, final FretPosition[] fretPositions,
+			final int string, final int strings, final int fret, final int baseFret) {
+		final FretPosition fretPosition = fretPositions[fret - baseFret];
+		int x = fretPosition.position - fretPosition.length / 2;
+		x = getPositionWithLeftHandedFlip(x);
+		final Position2D position = new Position2D(x + 1, stringPositions[string]);
+		pressMarks.add(
+				filledDiamond(position, 10, getStringBasedColor(StringColorLabelType.NOTE, string, strings).darker()));
+
+		final Integer finger = chordTemplateSupplier.get().fingers.get(string);
+		final String fingerText = finger == null ? "" : finger == 0 ? "T" : finger.toString();
+
+		pressMarks.add(new CenteredText(position, font, fingerText, ColorLabel.BASE_TEXT_INPUT));
+
+		final int tone = SoundUtils.getSound(data.currentArrangement().tuning, data.currentArrangement().isBass(),
+				string, fret);
+		final String toneName = SoundUtils.soundToSimpleName(tone, parentListenerAdded);
+		final Color toneColor = getStringBasedColor(StringColorLabelType.NOTE, string, strings);
+		pressMarks.add(new Text(position.move(10, -12), font, toneName, toneColor));
+	}
+
 	private void drawFretPressMarks(final Graphics2D g, final FretPosition[] fretPositions) {
 		final int strings = data.currentStrings();
 		final int baseFret = fretPositions[0].fret;
@@ -259,25 +302,11 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 				continue;
 			}
 			if (fret == 0) {
-				for (int j = 0; j < 8; j++) {
-					final StringColorLabelType type = j < 2 || j >= 6 ? StringColorLabelType.LANE_BRIGHT
-							: StringColorLabelType.NOTE;
-					final Color color = getStringBasedColor(type, i, strings);
-					pressMarks.add(lineHorizontal(0, getWidth(), stringPositions[i] - 3 + j, color));
-				}
+				drawOpenString(pressMarks, fretPositions, i, strings);
 				continue;
 			}
 
-			final FretPosition fretPosition = fretPositions[fret - baseFret];
-			int x = fretPosition.position - fretPosition.length / 2;
-			x = getPositionWithLeftHandedFlip(x);
-			final Position2D position = new Position2D(x, stringPositions[i]);
-			pressMarks.add(filledDiamond(position.move(1, 0), 10,
-					getStringBasedColor(StringColorLabelType.NOTE, i, strings).darker()));
-
-			final Integer finger = chordTemplateSupplier.get().fingers.get(i);
-			final String fingerText = finger == null ? "" : finger == 0 ? "T" : finger.toString();
-			pressMarks.add(new CenteredText(position, g.getFont(), fingerText, ColorLabel.BASE_TEXT_INPUT));
+			drawFretPressMark(pressMarks, fretPositions, i, strings, fret, baseFret);
 		}
 
 		pressMarks.draw(g);
