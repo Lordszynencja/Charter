@@ -15,6 +15,7 @@ import log.charter.data.ChordTemplateFingerSetter;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.HandShape;
 import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
@@ -57,6 +58,7 @@ public class StringsChanger {
 	public class Action {
 		private final IntRange stringRange;
 		private final int stringChange;
+		private final boolean fretChange;
 		private final Map<Integer, Integer> stringDifferences;
 		private final Arrangement arrangement = chartData.currentArrangement();
 
@@ -69,6 +71,7 @@ public class StringsChanger {
 				final boolean fretChange) {
 			this.stringRange = stringRange;
 			this.stringChange = stringChange;
+			this.fretChange = fretChange;
 			stringDifferences = fretChange ? getStringDifferences(tuning, stringRange, stringChange)
 					: getStringDifferencesEmpty(stringRange);
 		}
@@ -106,17 +109,26 @@ public class StringsChanger {
 			return list;
 		}
 
-		private boolean invalidStringChangeForNote(final CommonNoteWithFret note) {
-			if (note.string() < stringRange.min || note.string() > stringRange.max) {
+		private boolean invalidStringChangeForStringFret(final int string, final int fret) {
+			if (string < stringRange.min || string > stringRange.max) {
 				return true;
 			}
 
-			final int stringDifference = stringDifferences.get(note.string());
-			final int newFret = note.fret() + stringDifference;
+			final int stringDifference = stringDifferences.get(string);
+			final int newFret = fret + stringDifference;
 			if (newFret < 0 || newFret > InstrumentConfig.frets) {
 				return true;
 			}
 
+			return false;
+		}
+
+		private boolean invalidStringChangeForNote(final CommonNoteWithFret note) {
+			if (invalidStringChangeForStringFret(note.string(), note.fret())) {
+				return true;
+			}
+
+			final int stringDifference = stringDifferences.get(note.string());
 			if (note.slideTo() != null) {
 				final int newSlideTo = note.slideTo() + stringDifference;
 				if (newSlideTo < 0 || newSlideTo > InstrumentConfig.frets) {
@@ -127,14 +139,25 @@ public class StringsChanger {
 			return false;
 		}
 
-		private boolean validateStringChange(final List<ChordOrNote> sounds) {
+		private boolean invalidStringChange(final List<ChordOrNote> sounds) {
 			for (final ChordOrNote sound : sounds) {
 				if (sound.notesWithFrets(chordTemplates).anyMatch(this::invalidStringChangeForNote)) {
-					return false;
+					return true;
 				}
 			}
 
-			return true;
+			return false;
+		}
+
+		private boolean invalidStringChange(final HandShape handShape) {
+			final ChordTemplate template = chartData.currentChordTemplates().get(handShape.templateId);
+			for (final Entry<Integer, Integer> fret : template.frets.entrySet()) {
+				if (invalidStringChangeForStringFret(fret.getKey(), fret.getValue())) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private void moveNote(final Note note) {
@@ -193,14 +216,23 @@ public class StringsChanger {
 				if (templateNote.getValue() == null) {
 					continue;
 				}
+
 				final int string = templateNote.getKey();
 				int fret = templateNote.getValue();
 
-				fret += stringDifferences.get(string);
+				if (fretChange) {
+					fret += stringDifferences.get(string);
+				} else {
+					newChordTemplate.chordName = "";
+				}
 				final int newString = string + stringChange;
 
 				newChordTemplate.frets.put(newString, fret);
-				newChordTemplate.fingers.put(newString, chordTemplate.fingers.get(string));
+
+				final Integer finger = chordTemplate.fingers.get(string);
+				if (finger != null) {
+					newChordTemplate.fingers.put(newString, chordTemplate.fingers.get(string));
+				}
 			}
 
 			if (chordShapeChanged(chordTemplate, newChordTemplate)) {
@@ -228,6 +260,20 @@ public class StringsChanger {
 			chord.updateTemplate(newTemplateId, newChordTemplate);
 		}
 
+		private void moveHandShape(final HandShape handShape) {
+			if (movedChordTemplates.containsKey(handShape.templateId)) {
+				handShape.templateId = movedChordTemplates.get(handShape.templateId);
+				return;
+			}
+
+			final ChordTemplate oldTemplate = chordTemplates.get(handShape.templateId);
+			final ChordTemplate newChordTemplate = moveChordTemplateStrings(oldTemplate);
+
+			final int newTemplateId = arrangement.getChordTemplateIdWithSave(newChordTemplate);
+			movedChordTemplates.put(handShape.templateId, newTemplateId);
+			handShape.templateId = newTemplateId;
+		}
+
 		public void moveStrings(final List<Selection<ChordOrNote>> selected) {
 			undoSystem.addUndo();
 
@@ -237,7 +283,7 @@ public class StringsChanger {
 				}
 
 				final List<ChordOrNote> group = getSoundWithLinked(selection.selectable, selection.id);
-				if (!validateStringChange(group)) {
+				if (invalidStringChange(group)) {
 					continue;
 				}
 
@@ -252,6 +298,21 @@ public class StringsChanger {
 
 			guitarSoundsStatusesHandler.updateLinkedNotes(
 					selected.stream().map(s -> s.id).collect(Collectors.toCollection(ArrayList::new)));
+			currentSelectionEditor.selectionChanged(true);
+			chordTemplatesEditorTab.refreshTemplates();
+		}
+
+		public void moveHandShapesStrings(final List<Selection<HandShape>> selected) {
+			undoSystem.addUndo();
+
+			for (final Selection<HandShape> selection : selected) {
+				if (invalidStringChange(selection.selectable)) {
+					continue;
+				}
+
+				moveHandShape(selection.selectable);
+			}
+
 			currentSelectionEditor.selectionChanged(true);
 			chordTemplatesEditorTab.refreshTemplates();
 		}

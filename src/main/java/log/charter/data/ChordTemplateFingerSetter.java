@@ -24,7 +24,7 @@ public class ChordTemplateFingerSetter {
 			this.fingers = fingers;
 		}
 
-		public boolean is(final ChordTemplate template, final int[] shape) {
+		public boolean is(final int[] shape) {
 			if (shape.length > requiredFrets.length) {
 				return false;
 			}
@@ -137,6 +137,7 @@ public class ChordTemplateFingerSetter {
 		shapes.add(new Shape(i(1, 4, 0), I(2, 4, 1)));
 
 		shapes.add(new Shape(i(2, 2, 0), I(3, 4, 1)));
+		shapes.add(new Shape(i(2, 2, 1), I(3, 4, 2)));
 		shapes.add(new Shape(i(2, 3, 0), I(3, 4, 1)));
 		shapes.add(new Shape(i(2, 4, 0), I(2, 4, 1)));
 
@@ -145,8 +146,21 @@ public class ChordTemplateFingerSetter {
 
 	private static List<Shape> generate4StringChordFingerings() {
 		return List.of(//
+				new Shape(i(0, 0, 0, -1), I(1, 2, 3, null)), //
 				new Shape(i(0, 0, 0, 0), I(1, 1, 1, 1)), //
 				new Shape(i(0, 0, 0, 2), I(1, 1, 1, 3)), //
+				new Shape(i(0, 0, 1, -1), I(1, 2, 4, null)), //
+				new Shape(i(0, 0, 1, 0), I(1, 1, 2, 1)), //
+				new Shape(i(0, 0, 2, 0), I(1, 1, 3, 1)), //
+				new Shape(i(0, 0, 2, 1), I(1, 1, 3, 2)), //
+				new Shape(i(0, 0, 2, 2), I(1, 1, 3, 4)), //
+				new Shape(i(0, 1, 0, 0), I(1, 2, 1, 1)), //
+				new Shape(i(0, 1, 1, 0), I(1, 2, 3, 1)), //
+				new Shape(i(0, 2, 0, 0), I(1, 3, 1, 1)), //
+				new Shape(i(0, 2, 1, 0), I(1, 3, 2, 1)), //
+				new Shape(i(0, 2, 2, 0), I(1, 3, 4, 1)), //
+				new Shape(i(0, 2, 2, 1), I(1, 3, 4, 2)), //
+				new Shape(i(0, 2, 2, 2), I(1, 2, 3, 4)), //
 				new Shape(i(0, 2, 3, 0), I(1, 3, 4, 1)), //
 				new Shape(i(1, 0, 1, 0), I(2, 1, 3, 4)), //
 				new Shape(i(1, 0, 1, 1), I(2, 1, 3, 4)), //
@@ -162,7 +176,16 @@ public class ChordTemplateFingerSetter {
 
 	private static List<Shape> generate5StringChordFingerings() {
 		return List.of(//
+				new Shape(i(-1, 0, 0, 0, -1), I(null, 1, 2, 3, null)), //
+				new Shape(i(-1, 0, 0, 1, -1), I(null, 1, 2, 4, null)), //
 				new Shape(i(0, 0, 0, 0, 0), I(1, 1, 1, 1, 1)), //
+				new Shape(i(0, 0, 2, 2, 0), I(1, 1, 3, 4, 1)), //
+				new Shape(i(0, 0, 2, 2, 1), I(1, 1, 3, 4, 2)), //
+				new Shape(i(0, 0, 2, 2, 2), I(1, 1, 2, 3, 4)), //
+				new Shape(i(0, 2, 2, 0, 0), I(1, 3, 4, 1, 1)), //
+				new Shape(i(0, 2, 2, 1, 0), I(1, 3, 4, 2, 1)), //
+				new Shape(i(0, 2, 2, 2, 0), I(1, 2, 3, 4, 1)), //
+				new Shape(i(0, 2, 2, 3, 0), I(1, 2, 3, 4, 1)), //
 				new Shape(i(1, 0, -1, 1, 1), I(2, 1, null, 3, 4)), //
 				new Shape(i(1, 0, 1, -1, 1), I(2, 1, 3, null, 4)), //
 				new Shape(i(2, 0, 1, 0, 0), I(3, 1, 2, 1, 1)), //
@@ -194,11 +217,11 @@ public class ChordTemplateFingerSetter {
 
 	private static List<Shape> getAllShapes() {
 		final List<Shape> shapes = new ArrayList<>();
-		shapes.addAll(generate2StringChordFingerings());
-		shapes.addAll(generate3StringChordFingerings());
-		shapes.addAll(generate4StringChordFingerings());
-		shapes.addAll(generate5StringChordFingerings());
 		shapes.addAll(generate6StringChordFingerings());
+		shapes.addAll(generate5StringChordFingerings());
+		shapes.addAll(generate4StringChordFingerings());
+		shapes.addAll(generate3StringChordFingerings());
+		shapes.addAll(generate2StringChordFingerings());
 
 		return shapes;
 	}
@@ -271,7 +294,7 @@ public class ChordTemplateFingerSetter {
 	}
 
 	private int[] calculateShape() {
-		final int[] frets = new int[highestNonzeroString - lowestNonzeroString + 1];
+		final int[] frets = new int[highestString - lowestNonzeroString + 1];
 		for (int i = 0; i < frets.length; i++) {
 			frets[i] = template.frets.getOrDefault(lowestNonzeroString + i, -1);
 			if (frets[i] > 0) {
@@ -291,7 +314,7 @@ public class ChordTemplateFingerSetter {
 		}
 
 		for (final Shape shape : recognizedShapes.get(frets.length - 2)) {
-			if (shape.is(template, frets)) {
+			if (shape.is(frets)) {
 				return shape;
 			}
 		}
