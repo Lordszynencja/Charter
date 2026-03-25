@@ -95,7 +95,7 @@ public class Localization {
 		COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT("Couldn't create folder with this name, please change the name"), //
 		COULDNT_IMPORT_GP5("Couldn't properly import Guitar Pro 3/4/5 file"), //
 		COULDNT_IMPORT_GP7("Couldn't properly import Guitar Pro 7/8 file"), //
-		COULDNT_IMPORT_MIDI_TEMPO("Couldn't properly import tempo map from %s"), //
+		COULDNT_IMPORT_MIDI("Couldn't properly import %s"), //
 		COULDNT_LOAD_AUDIO("Couldn't load audio from %s"), //
 		COULDNT_READ_TXT("Couldn't import file %s, unrecognized format"), //
 		COULDNT_RUN_UPDATE_SCRIPT(
@@ -151,6 +151,7 @@ public class Localization {
 		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
 		GP_FILES_FOLDER("GP files folder"), //
+		GRAPHIC_CONFIG_PANE("Graphic config"), //
 		GRID_TYPE_BEAT("Beat"), //
 		GRID_TYPE_BEAT_TOOLTIP("Grid will appear every 1/x of a beat"), //
 		GRID_TYPE_NOTE("Note"), //
@@ -193,6 +194,9 @@ public class Localization {
 		MAX_STRINGS("Max strings"), //
 		MEASURE_ADD("Add measure"), //
 		MEASURE_REMOVE("Remove measure"), //
+		MIDI_IMPORT_PANE("Midi import"), //
+		MIDI_IMPORT_TEMPO_MAP("Import tempo map"), //
+		MIDI_IMPORT_VOCALS("Import vocals"), //
 		MIDI_SOUND_DELAY("Midi sound delay (ms)"), //
 		MINIMAL_NOTE_LENGTH("Minimal note length"), //
 		MINIMAL_NOTE_SPACE("Minimal space between notes"), //
@@ -667,8 +671,6 @@ public class Localization {
 
 		GRAPHIC_CONFIG_CHART_MAP_PAGE("Chart map"), //
 		GRAPHIC_CONFIG_CHART_MAP_HEIGHT_MULTIPLIER("Chart map size"), //
-
-		GRAPHIC_CONFIG_PANE("Graphic config"), //
 
 		// COLORS
 		COLOR_BASE_1("Base 1"), //

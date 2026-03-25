@@ -43,6 +43,10 @@ public class Vocal implements IFractionalPositionWithEnd {
 		this(other.position, other.endPosition, other.text, other.flag, other.note);
 	}
 
+	public Vocal(final FractionalPosition position) {
+		this(position, position, "", VocalFlag.NONE);
+	}
+
 	public Vocal(final FractionalPosition position, final FractionalPosition endPosition) {
 		this(position, endPosition, "", VocalFlag.NONE);
 	}
@@ -81,6 +85,10 @@ public class Vocal implements IFractionalPositionWithEnd {
 			return;
 		}
 
+		this.text = text;
+	}
+
+	public void textWithoutFlags(final String text) {
 		this.text = text;
 	}
 

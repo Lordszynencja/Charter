@@ -103,8 +103,8 @@ public class RowedDialog extends JDialog implements ComponentListener {
 
 	private void addDefaultButtons(final int y, final Disposer onSave, final Disposer onCancel) {
 		final int center = panel.getWidth() / 2;
-		final int x0 = center - 110;
-		final int x1 = center + 10;
+		final int x0 = max(center - 110, RowedPanel.resizingHorizontalSpacing);
+		final int x1 = x0 + 120;
 
 		addDefaultButton(x0, y, Label.BUTTON_SAVE, onSave);
 		addDefaultButton(x1, y, Label.BUTTON_CANCEL, onCancel);

@@ -169,7 +169,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 			return;
 		}
 
-		midiImporter.importMidiTempo(file);
+		midiImporter.importMidi(file);
 	}
 
 	private void importRsShowlightsXML() {
