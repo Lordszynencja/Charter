@@ -313,7 +313,10 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private void toggleMute(final JLabel label, final JSlider volumeSlider, final BooleanConsumer muteSetter,
 			final BufferedImage icon, final BufferedImage mutedIcon) {
 		final boolean newMuted = volumeSlider.isEnabled();
+
 		volumeSlider.setEnabled(!newMuted);
+		volumeSlider.setForeground((newMuted ? ColorLabel.BASE_BORDER : ColorLabel.BASE_HIGHLIGHT).color());
+
 		muteSetter.consume(newMuted);
 		setIcon(label, newMuted ? mutedIcon : icon);
 		label.repaint();
