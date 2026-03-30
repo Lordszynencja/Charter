@@ -163,7 +163,7 @@ public class MidiNotePlayer {
 
 	public void updateVolume() {
 		for (final MidiChannel channel : channels) {
-			channel.controlChange(7, (int) (AudioConfig.sfxVolume * 127.0));
+			channel.controlChange(7, (int) (AudioConfig.getSfxVolumeWithMute() * 127.0));
 		}
 	}
 

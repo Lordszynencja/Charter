@@ -30,7 +30,7 @@ public class TickPlayer {
 
 	public void nextTime(final double t) {
 		if (nextSoundTime != null && nextSoundTime < t) {
-			SoundSystem.play(tick, () -> AudioConfig.sfxVolume, 100);
+			SoundSystem.play(tick, AudioConfig::getSfxVolumeWithMute, 100);
 			nextSoundTime = null;
 		}
 

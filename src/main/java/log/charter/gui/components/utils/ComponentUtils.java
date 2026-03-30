@@ -179,6 +179,34 @@ public class ComponentUtils {
 		button.setIcon(new ImageIcon(icon));
 	}
 
+	public static void addLeftPressListener(final Component component, final Runnable onClick) {
+		component.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(final MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(final MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					onClick.run();
+				}
+			}
+
+			@Override
+			public void mouseReleased(final MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(final MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(final MouseEvent e) {
+			}
+		});
+	}
+
 	public static void addRightPressListener(final Component component, final Runnable onClick) {
 		component.addMouseListener(new MouseListener() {
 

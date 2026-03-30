@@ -18,6 +18,7 @@ import java.util.function.DoubleConsumer;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JToggleButton;
@@ -53,6 +54,10 @@ import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.util.ImageUtils;
 
 public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
+	private static interface BooleanConsumer {
+		void consume(boolean value);
+	}
+
 	private static final long serialVersionUID = 1L;
 
 	private static final int verticalSpacing = 8;
@@ -70,7 +75,11 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private static final BufferedImage chartUnlocked = ImageUtils.loadSafeFromDir(imagesFolder,
 			"toolbarChartUnlocked.png");
 	private static final BufferedImage volumeIcon = ImageUtils.loadSafeFromDir(imagesFolder, "toolbarVolume.png");
+	private static final BufferedImage volumeMuteIcon = ImageUtils.loadSafeFromDir(imagesFolder,
+			"toolbarVolumeMute.png");
 	private static final BufferedImage sfxVolumeIcon = ImageUtils.loadSafeFromDir(imagesFolder, "toolbarSFXVolume.png");
+	private static final BufferedImage sfxVolumeMuteIcon = ImageUtils.loadSafeFromDir(imagesFolder,
+			"toolbarSFXVolumeMute.png");
 
 	private ActionHandler actionHandler;
 	private AudioHandler audioHandler;
@@ -301,18 +310,31 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		new AudioStemsSettings(chartData, charterFrame, chartToolbar, projectAudioHandler);
 	}
 
+	private void toggleMute(final JLabel label, final JSlider volumeSlider, final BooleanConsumer muteSetter,
+			final BufferedImage icon, final BufferedImage mutedIcon) {
+		final boolean newMuted = volumeSlider.isEnabled();
+		volumeSlider.setEnabled(!newMuted);
+		muteSetter.consume(newMuted);
+		setIcon(label, newMuted ? mutedIcon : icon);
+		label.repaint();
+	}
+
 	private FieldWithLabel<JSlider> addVolumeSlider(final AtomicInteger x, final Label label, final Label tooltip,
-			final BufferedImage icon, final double value, final DoubleConsumer volumeSetter) {
+			final BufferedImage icon, final BufferedImage mutedIcon, final double value,
+			final DoubleConsumer volumeSetter, final boolean muted, final BooleanConsumer muteSetter) {
 		final JSlider volumeSlider = new JSlider(0, 100, getVolumeAsInteger(value));
 		volumeSlider.addChangeListener(e -> volumeSetter.accept(volumeSlider.getValue() / 100.0));
 		volumeSlider.setFocusable(false);
 		volumeSlider.setBackground(getBackground());
 		volumeSlider.setToolTipText(tooltip.label());
+		volumeSlider.setEnabled(!muted);
 
 		final FieldWithLabel<JSlider> field = new FieldWithLabel<>(label, icon.getWidth(), 72, elementHeight,
 				volumeSlider, LabelPosition.LEFT_CLOSE);
 		field.label.setToolTipText(tooltip.label());
 		setIcon(field.label, icon);
+		ComponentUtils.addLeftPressListener(field.label,
+				() -> toggleMute(field.label, volumeSlider, muteSetter, icon, mutedIcon));
 		ComponentUtils.addRightPressListener(volumeSlider, this::openStemSettings);
 		ComponentUtils.addRightPressListener(field, this::openStemSettings);
 
@@ -430,10 +452,12 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 		addSeparator(x);
 
-		volume = addVolumeSlider(x, Label.TOOLBAR_VOLUME, Label.TOOLBAR_VOLUME_TOOLTIP, volumeIcon,
-				projectAudioHandler.getVolume(), projectAudioHandler::setVolume);
+		volume = addVolumeSlider(x, Label.TOOLBAR_VOLUME, Label.TOOLBAR_VOLUME_TOOLTIP, volumeIcon, volumeMuteIcon,
+				projectAudioHandler.getVolume(), projectAudioHandler::setVolume, AudioConfig.volumeMute,
+				v -> AudioConfig.volumeMute = v);
 		sfxVolume = addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, Label.TOOLBAR_SFX_VOLUME_TOOLTIP, sfxVolumeIcon,
-				AudioConfig.sfxVolume, this::changeSFXVolume);
+				sfxVolumeMuteIcon, AudioConfig.sfxVolume, this::changeSFXVolume, AudioConfig.sfxVolumeMute,
+				v -> AudioConfig.sfxVolumeMute = v);
 		addPlaybackSpeed(x);
 		addTimeControls(x);
 

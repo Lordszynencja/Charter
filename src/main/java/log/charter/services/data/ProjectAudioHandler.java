@@ -181,6 +181,18 @@ public class ProjectAudioHandler {
 		return AudioConfig.volume;
 	}
 
+	public double getVolumeWithMute() {
+		if (AudioConfig.volumeMute) {
+			return 0;
+		}
+
+		if (selectedStem >= 0 && selectedStem < stems.size()) {
+			return chartData.songChart.stems.get(selectedStem).volume;
+		}
+
+		return AudioConfig.volume;
+	}
+
 	public void setVolume(final double volume) {
 		if (selectedStem >= 0 && selectedStem < stems.size()) {
 			chartData.songChart.stems.get(selectedStem).volume = volume;
