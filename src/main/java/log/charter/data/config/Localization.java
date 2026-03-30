@@ -132,6 +132,7 @@ public class Localization {
 		FHP_PANE("FHP"), //
 		FHP_STARTS_ON_WRONG_FRET("Fret Hand Position starts on fret below or equal to capo/0"), //
 		FHP_TOO_CLOSE_TO_NEXT("Fret Hand Position too close to next one (<%d ms)"), //
+		FHP_TOP_FRET_TOO_HIGH("Fret Hand Position has top fret above max fret"), //
 		FHP_WIDTH("Width"), //
 		FAST_FORWARD_TOOLTIP("Fast forwards the song"), //
 		FILE_MENU("File"), //
