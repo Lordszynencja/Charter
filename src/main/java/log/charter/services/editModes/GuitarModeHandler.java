@@ -37,7 +37,6 @@ import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.HighlightManager;
-import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 import log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId;
 import log.charter.util.collections.Pair;
@@ -54,7 +53,6 @@ public class GuitarModeHandler implements ModeHandler {
 	private GuitarSoundsHandler guitarSoundsHandler;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private HighlightManager highlightManager;
-	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
@@ -314,11 +312,7 @@ public class GuitarModeHandler implements ModeHandler {
 	}
 
 	@Override
-	public void changeLength(int change) {
-		if (keyboardHandler.shift()) {
-			change *= 4;
-		}
-
+	public void changeLength(final int change) {
 		if (System.currentTimeMillis() - lastScrollTime > scrollTimeoutForUndo) {
 			undoSystem.addUndo();
 		}

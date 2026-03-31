@@ -115,6 +115,8 @@ public class Localization {
 		CREATE_FHP_AUTOMATICALLY("Create FHP automatically"), //
 		OPEN_CURRENT_SONG_FOLDER("Open current song folder"), //
 		CURRENT_SONG_FOLDER("Current song folder: %s"), //
+		DECREASE_LENGTH("Decrease length"), //
+		DECREASE_LENGTH_FAST("Decrease length fast"), //
 		DELETE("Delete"), //
 		DELETE_RELATED("Delete notes with related items"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
@@ -179,6 +181,8 @@ public class Localization {
 		IMPORT_AUDIO_AS_STEM("Import audio as stem?"), //
 		IMPORT_LRC_VOCALS("Import LRC vocals file"), //
 		IMPORT_USC_VOCALS("Import USC vocals file"), //
+		INCREASE_LENGTH("Increase length"), //
+		INCREASE_LENGTH_FAST("Increase length fast"), //
 		INVERT_STRINGS("Invert strings"), //
 		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
 		LEFT_HANDED("Left handed"), //
@@ -355,6 +359,11 @@ public class Localization {
 		SHOWLIGHT_LASERS_OFF("Lasers off"), //
 		SHOWLIGHT_LASERS_ON("Lasers on"), //
 		SHOWLIGHT_REMOVE("Remove showlight"), //
+		SIZE_S("S"), //
+		SIZE_M("M"), //
+		SIZE_L("L"), //
+		SIZE_XL("XL"), //
+		SIZE_XXL("XXL"), //
 		SONG_OPTIONS("Song options"), //
 		SONGS_FOLDER("Songs folder"), //
 		SOUND_DELAY("Sound delay (ms)"), //
@@ -387,6 +396,7 @@ public class Localization {
 		TAB_QUICK_EDIT("Quick edit"), //
 		TAB_TEXT("Text"), //
 		TAP_ON_FRET_ZERO("Tap on fret zero"), //
+		TEMPO_MAP_MENU("Tempo map"), //
 		THEME_BASIC("Basic"), //
 		THEME_MODERN("Modern"), //
 		THEME_SQUARE("Square"), //
@@ -438,6 +448,10 @@ public class Localization {
 		FIRST_FINGER_NOT_ON_FIRST_FHP_FRET("First finger is not on first fret in FHP"), //
 		XML_IMPORT_TYPE("XML import type"), //
 		XML_IMPORT_AS("Choose what to import the XML as"), //
+		ZOOM_IN("Zoom in"), //
+		ZOOM_IN_FAST("Zoom in fast"), //
+		ZOOM_OUT("Zoom out"), //
+		ZOOM_OUT_FAST("Zoom out fast"), //
 
 		FILE_MENU_IMPORT("Import"), //
 		FILE_MENU_IMPORT_RS_GUITAR("RS guitar arrangement XML"), //

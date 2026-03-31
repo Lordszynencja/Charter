@@ -26,6 +26,8 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.BPM_DOUBLE, new Shortcut(KeyEvent.VK_PERIOD));
 		super.set(Action.BPM_HALVE, new Shortcut(KeyEvent.VK_COMMA));
 		super.set(Action.COPY, new Shortcut(KeyEvent.VK_C).ctrl());
+		super.set(Action.DECREASE_LENGTH, new Shortcut(KeyEvent.VK_OPEN_BRACKET));
+		super.set(Action.DECREASE_LENGTH_FAST, new Shortcut(KeyEvent.VK_OPEN_BRACKET).shift());
 		super.set(Action.DELETE, new Shortcut(KeyEvent.VK_DELETE));
 		super.set(Action.DELETE_RELATED, new Shortcut(KeyEvent.VK_DELETE).ctrl());
 		super.set(Action.DOUBLE_GRID, new Shortcut(KeyEvent.VK_PERIOD));
@@ -33,6 +35,8 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.EXIT, new Shortcut(KeyEvent.VK_ESCAPE));
 		super.set(Action.FAST_BACKWARD, new Shortcut(KeyEvent.VK_LEFT).shift());
 		super.set(Action.FAST_FORWARD, new Shortcut(KeyEvent.VK_RIGHT).shift());
+		super.set(Action.INCREASE_LENGTH, new Shortcut(KeyEvent.VK_CLOSE_BRACKET));
+		super.set(Action.INCREASE_LENGTH_FAST, new Shortcut(KeyEvent.VK_CLOSE_BRACKET).shift());
 		super.set(Action.NUMBER_0, new Shortcut(KeyEvent.VK_0));
 		super.set(Action.NUMBER_1, new Shortcut(KeyEvent.VK_1));
 		super.set(Action.NUMBER_2, new Shortcut(KeyEvent.VK_2));
@@ -63,7 +67,7 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.MOVE_TO_START, new Shortcut(KeyEvent.VK_HOME));
 		super.set(Action.NEW_PROJECT, new Shortcut(KeyEvent.VK_N).ctrl());
 		super.set(Action.NEXT_BEAT, new Shortcut(KeyEvent.VK_RIGHT).shift().alt());
-		super.set(Action.NEXT_GRID, new Shortcut(KeyEvent.VK_RIGHT).ctrl().alt());
+		super.set(Action.NEXT_GRID_POSITION, new Shortcut(KeyEvent.VK_RIGHT).ctrl().alt());
 		super.set(Action.NEXT_ITEM, new Shortcut(KeyEvent.VK_RIGHT).alt());
 		super.set(Action.NEXT_ITEM_TYPE, new Shortcut(KeyEvent.VK_TAB).ctrl());
 		super.set(Action.NEXT_ITEM_WITH_SELECT, new Shortcut(KeyEvent.VK_PAGE_UP));
@@ -72,7 +76,7 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.PLACE_LYRIC_FROM_TEXT, new Shortcut(KeyEvent.VK_SPACE).ctrl());
 		super.set(Action.PLAY_AUDIO, new Shortcut(KeyEvent.VK_SPACE));
 		super.set(Action.PREVIOUS_BEAT, new Shortcut(KeyEvent.VK_LEFT).shift().alt());
-		super.set(Action.PREVIOUS_GRID, new Shortcut(KeyEvent.VK_LEFT).ctrl().alt());
+		super.set(Action.PREVIOUS_GRID_POSITION, new Shortcut(KeyEvent.VK_LEFT).ctrl().alt());
 		super.set(Action.PREVIOUS_ITEM, new Shortcut(KeyEvent.VK_LEFT).alt());
 		super.set(Action.PREVIOUS_ITEM_TYPE, new Shortcut(KeyEvent.VK_TAB).ctrl().shift());
 		super.set(Action.PREVIOUS_ITEM_WITH_SELECT, new Shortcut(KeyEvent.VK_PAGE_DOWN));
@@ -120,8 +124,8 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.TOGGLE_SLAP_POP, new Shortcut(KeyEvent.VK_P));
 		super.set(Action.TOGGLE_SLAP_POP_INDEPENDENTLY, new Shortcut(KeyEvent.VK_P).alt());
 		super.set(Action.TOGGLE_PREVIEW_WINDOW, new Shortcut(KeyEvent.VK_F11));
-		super.set(Action.TOGGLE_REPEAT_END, new Shortcut(KeyEvent.VK_CLOSE_BRACKET));
-		super.set(Action.TOGGLE_REPEAT_START, new Shortcut(KeyEvent.VK_OPEN_BRACKET));
+		super.set(Action.TOGGLE_REPEAT_END, new Shortcut(KeyEvent.VK_CLOSE_BRACKET).alt());
+		super.set(Action.TOGGLE_REPEAT_START, new Shortcut(KeyEvent.VK_OPEN_BRACKET).alt());
 		super.set(Action.TOGGLE_REPEATER, new Shortcut(KeyEvent.VK_F6));
 		super.set(Action.TOGGLE_TREMOLO, new Shortcut(KeyEvent.VK_T));
 		super.set(Action.TOGGLE_TREMOLO_INDEPENDENTLY, new Shortcut(KeyEvent.VK_T).alt());
@@ -130,6 +134,10 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.TOGGLE_WAVEFORM_GRAPH, new Shortcut(KeyEvent.VK_F5));
 		super.set(Action.TOGGLE_WORD_PART, new Shortcut(KeyEvent.VK_W));
 		super.set(Action.UNDO, new Shortcut(KeyEvent.VK_Z).ctrl());
+		super.set(Action.ZOOM_IN, new Shortcut(KeyEvent.VK_CLOSE_BRACKET).ctrl());
+		super.set(Action.ZOOM_IN_FAST, new Shortcut(KeyEvent.VK_CLOSE_BRACKET).ctrl().shift());
+		super.set(Action.ZOOM_OUT, new Shortcut(KeyEvent.VK_OPEN_BRACKET).ctrl());
+		super.set(Action.ZOOM_OUT_FAST, new Shortcut(KeyEvent.VK_OPEN_BRACKET).ctrl().shift());
 	}
 
 	@Override

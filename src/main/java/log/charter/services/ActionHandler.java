@@ -12,6 +12,7 @@ import java.util.Map;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.ZoomUtils;
 import log.charter.data.config.values.GridConfig;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
@@ -39,6 +40,7 @@ import log.charter.services.data.files.newProject.NewEmptyProjectCreator;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
+import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
 
 public class ActionHandler implements Initiable {
@@ -58,6 +60,7 @@ public class ActionHandler implements Initiable {
 	private GuitarSoundsHandler guitarSoundsHandler;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private HandShapesHandler handShapesHandler;
+	private KeyboardHandler keyboardHandler;
 	private MetronomeHandler metronomeHandler;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
@@ -227,6 +230,28 @@ public class ActionHandler implements Initiable {
 		}
 	}
 
+	public void changeLength(final int change) {
+		if (chartData.isEmpty) {
+			return;
+		}
+
+		try {
+			if (keyboardHandler.ctrl()) {
+				final int zoomChange = change * (keyboardHandler.shift() ? 8 : 1);
+				ZoomUtils.changeZoom(zoomChange);
+				return;
+			}
+
+			if (!selectionManager.selectedAccessor().isSelected()) {
+				return;
+			}
+
+			modeManager.getHandler().changeLength(change);
+		} catch (final Exception ex) {
+			Logger.error("Exception on length change", ex);
+		}
+	}
+
 	private void changeSpeed(final int change) {
 		final int divideRest = Config.stretchedMusicSpeed % abs(change);
 		if (divideRest != 0) {
@@ -250,6 +275,10 @@ public class ActionHandler implements Initiable {
 		}
 	}
 
+	public void changeZoom(final int change) {
+		ZoomUtils.changeZoom(change);
+	}
+
 	private final Map<Action, Runnable> actionHandlers = new HashMap<>();
 
 	@Override
@@ -271,6 +300,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.BPM_DOUBLE, bpmDoubler::doubleBPM);
 		actionHandlers.put(Action.BPM_HALVE, bpmHalver::halveBPM);
 		actionHandlers.put(Action.COPY, copyManager::copy);
+		actionHandlers.put(Action.DECREASE_LENGTH, () -> changeLength(-1));
+		actionHandlers.put(Action.DECREASE_LENGTH_FAST, () -> changeLength(-4));
 		actionHandlers.put(Action.DELETE, chartItemsHandler::delete);
 		actionHandlers.put(Action.DELETE_RELATED, chartItemsHandler::deleteRelated);
 		actionHandlers.put(Action.DOUBLE_GRID, this::doubleGridSize);
@@ -287,6 +318,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.NUMBER_8, () -> handleNumber(8));
 		actionHandlers.put(Action.NUMBER_9, () -> handleNumber(9));
 		actionHandlers.put(Action.HALVE_GRID, this::halveGridSize);
+		actionHandlers.put(Action.INCREASE_LENGTH, () -> changeLength(1));
+		actionHandlers.put(Action.INCREASE_LENGTH_FAST, () -> changeLength(4));
 		actionHandlers.put(Action.MARK_HAND_SHAPE, handShapesHandler::markHandShape);
 		actionHandlers.put(Action.MEASURE_ADD, beatsService::addMeasure);
 		actionHandlers.put(Action.MEASURE_REMOVE, beatsService::removeMeasure);
@@ -304,7 +337,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.MOVE_TO_START, chartTimeHandler::moveToBeginning);
 		actionHandlers.put(Action.NEW_PROJECT, newEmptyProjectCreator::newProject);
 		actionHandlers.put(Action.NEXT_BEAT, chartTimeHandler::moveToNextBeat);
-		actionHandlers.put(Action.NEXT_GRID, chartTimeHandler::moveToNextGrid);
+		actionHandlers.put(Action.NEXT_GRID_POSITION, chartTimeHandler::moveToNextGrid);
 		actionHandlers.put(Action.NEXT_ITEM, chartTimeHandler::moveToNextItem);
 		actionHandlers.put(Action.NEXT_ITEM_TYPE, selectionManager::nextItemType);
 		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT, chartTimeHandler::moveToNextItemWithSelect);
@@ -313,7 +346,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.PLACE_LYRIC_FROM_TEXT, vocalsHandler::placeLyricFromText);
 		actionHandlers.put(Action.PLAY_AUDIO, audioHandler::togglePlaySetSpeed);
 		actionHandlers.put(Action.PREVIOUS_BEAT, chartTimeHandler::moveToPreviousBeat);
-		actionHandlers.put(Action.PREVIOUS_GRID, chartTimeHandler::moveToPreviousGrid);
+		actionHandlers.put(Action.PREVIOUS_GRID_POSITION, chartTimeHandler::moveToPreviousGrid);
 		actionHandlers.put(Action.PREVIOUS_ITEM, chartTimeHandler::moveToPreviousItem);
 		actionHandlers.put(Action.PREVIOUS_ITEM_TYPE, selectionManager::previousItemType);
 		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT, chartTimeHandler::moveToPreviousItemWithSelect);
@@ -378,15 +411,16 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.TOGGLE_WAVEFORM_GRAPH, waveFormDrawer::toggle);
 		actionHandlers.put(Action.TOGGLE_WORD_PART, vocalsHandler::toggleWordPart);
 		actionHandlers.put(Action.UNDO, undoSystem::undo);
+		actionHandlers.put(Action.ZOOM_IN, () -> changeZoom(1));
+		actionHandlers.put(Action.ZOOM_IN_FAST, () -> changeZoom(16));
+		actionHandlers.put(Action.ZOOM_OUT, () -> changeZoom(-1));
+		actionHandlers.put(Action.ZOOM_OUT_FAST, () -> changeZoom(-16));
 	}
 
 	private static final List<Action> actionsNotClearingMousePress = asList(//
 			Action.FAST_BACKWARD, //
 			Action.FAST_FORWARD, //
 			Action.MOVE_BACKWARD, //
-			Action.PREVIOUS_BEAT, //
-			Action.PREVIOUS_GRID, //
-			Action.PREVIOUS_ITEM, //
 			Action.MOVE_FORWARD, //
 			Action.SLOW_BACKWARD, //
 			Action.SLOW_FORWARD);

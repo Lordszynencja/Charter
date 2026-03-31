@@ -10,7 +10,6 @@ import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.services.data.ChartItemsHandler;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 
 public class VocalModeHandler implements ModeHandler {
@@ -20,7 +19,6 @@ public class VocalModeHandler implements ModeHandler {
 	private ChartItemsHandler chartItemsHandler;
 	private CharterFrame charterFrame;
 	private CurrentSelectionEditor currentSelectionEditor;
-	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
 
@@ -48,11 +46,7 @@ public class VocalModeHandler implements ModeHandler {
 	}
 
 	@Override
-	public void changeLength(int change) {
-		if (keyboardHandler.shift()) {
-			change *= 4;
-		}
-
+	public void changeLength(final int change) {
 		if (System.currentTimeMillis() - lastScrollTime > scrollTimeoutForUndo) {
 			undoSystem.addUndo();
 		}

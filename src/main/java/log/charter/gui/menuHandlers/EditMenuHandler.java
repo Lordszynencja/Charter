@@ -2,28 +2,18 @@ package log.charter.gui.menuHandlers;
 
 import javax.swing.JMenu;
 
-import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.DebugConfig;
-import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.SpecialMenuItem;
-import log.charter.gui.panes.songEdits.AddBeatsAtTheStartPane;
-import log.charter.gui.panes.songEdits.AddSilenceAtTheEndPane;
-import log.charter.gui.panes.songEdits.AddSilenceInTheBeginningPane;
 import log.charter.gui.panes.songEdits.ChangeSongPitchPane;
-import log.charter.gui.panes.songEdits.SetDefaultSilencePane;
 import log.charter.services.Action;
-import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
 class EditMenuHandler extends CharterMenuHandler {
-	private ChartData chartData;
-	private ChartTimeHandler chartTimeHandler;
 	private ModeManager modeManager;
 	private ProjectAudioHandler projectAudioHandler;
-	private UndoSystem undoSystem;
 
 	@Override
 	boolean isApplicable() {
@@ -48,14 +38,6 @@ class EditMenuHandler extends CharterMenuHandler {
 		}
 	}
 
-	private void addAdvancedAudioTempoMapEdits(final JMenu menu) {
-		final JMenu submenu = createMenu(Label.ADVANCED_AUDIO_TEMPO_MAP_EDITS);
-		submenu.add(new SpecialMenuItem(Label.ADD_SILENCE_IN_THE_BEGINNING, this::addSilenceInTheBeginning));
-		submenu.add(new SpecialMenuItem(Label.ADD_BEATS_AT_THE_START, this::addBeatsAtTheStart));
-		submenu.add(new SpecialMenuItem(Label.ADD_SILENCE_AT_THE_END, this::addSilenceIAtTheEnd));
-		menu.add(submenu);
-	}
-
 	private void addBookmarksSubmenu(final JMenu menu) {
 		final JMenu bookmarksSubmenu = createMenu(Label.BOOKMARKS_MENU);
 		for (int i = 0; i < 10; i++) {
@@ -72,9 +54,13 @@ class EditMenuHandler extends CharterMenuHandler {
 
 		addSelectOptionsIfNeeded(menu);
 
-		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.SET_DEFAULT_START_SILENCE, this::setDefaultSilence));
-		addAdvancedAudioTempoMapEdits(menu);
+		if (modeManager.modeIs(EditMode.GUITAR, EditMode.VOCALS)) {
+			menu.addSeparator();
+			menu.add(createItem(Action.DECREASE_LENGTH));
+			menu.add(createItem(Action.INCREASE_LENGTH));
+			menu.add(createItem(Action.DECREASE_LENGTH_FAST));
+			menu.add(createItem(Action.INCREASE_LENGTH_FAST));
+		}
 
 		if (DebugConfig.enablePitchShifting) {
 			menu.addSeparator();
@@ -84,31 +70,13 @@ class EditMenuHandler extends CharterMenuHandler {
 		menu.addSeparator();
 		addBookmarksSubmenu(menu);
 
-		if (modeManager.getMode() == EditMode.TEMPO_MAP) {
-			menu.add(createDisabledItem(Action.TOGGLE_ANCHOR));
-			menu.add(createDisabledItem(Action.BEAT_ADD));
-			menu.add(createDisabledItem(Action.BEAT_REMOVE));
-			menu.add(createDisabledItem(Action.BPM_DOUBLE));
-			menu.add(createDisabledItem(Action.BPM_HALVE));
-		}
+		menu.addSeparator();
+		menu.add(createItem(Action.ZOOM_IN));
+		menu.add(createItem(Action.ZOOM_IN_FAST));
+		menu.add(createItem(Action.ZOOM_OUT));
+		menu.add(createItem(Action.ZOOM_OUT_FAST));
 
 		return menu;
-	}
-
-	private void setDefaultSilence() {
-		new SetDefaultSilencePane(charterFrame, chartTimeHandler, chartData, projectAudioHandler);
-	}
-
-	private void addSilenceInTheBeginning() {
-		new AddSilenceInTheBeginningPane(charterFrame, chartTimeHandler, chartData, projectAudioHandler);
-	}
-
-	private void addBeatsAtTheStart() {
-		new AddBeatsAtTheStartPane(charterFrame, chartData, undoSystem);
-	}
-
-	private void addSilenceIAtTheEnd() {
-		new AddSilenceAtTheEndPane(charterFrame, projectAudioHandler);
 	}
 
 	private void changeSongPitch() {

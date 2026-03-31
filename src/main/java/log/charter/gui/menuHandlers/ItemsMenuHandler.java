@@ -28,11 +28,11 @@ class ItemsMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Action.NEXT_ITEM));
 		menu.add(createItem(Action.PREVIOUS_ITEM_WITH_SELECT));
 		menu.add(createItem(Action.NEXT_ITEM_WITH_SELECT));
-		menu.add(createItem(Action.PREVIOUS_GRID));
-		menu.add(createItem(Action.NEXT_GRID));
+		menu.add(createItem(Action.PREVIOUS_GRID_POSITION));
+		menu.add(createItem(Action.NEXT_GRID_POSITION));
 		menu.add(createItem(Action.PREVIOUS_BEAT));
 		menu.add(createItem(Action.NEXT_BEAT));
-		if (modeManager.getMode() == EditMode.GUITAR) {
+		if (modeManager.modeIs(EditMode.GUITAR)) {
 			menu.add(createItem(Action.PREVIOUS_ITEM_TYPE));
 			menu.add(createItem(Action.NEXT_ITEM_TYPE));
 		}

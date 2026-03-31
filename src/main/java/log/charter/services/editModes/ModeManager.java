@@ -161,6 +161,16 @@ public class ModeManager implements Initiable {
 		return editMode;
 	}
 
+	public boolean modeIs(final EditMode... modes) {
+		for (final EditMode mode : modes) {
+			if (mode == editMode) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public void clearNumbers() {
 		modeHandlers.values().forEach(ModeHandler::clearNumbers);
 	}

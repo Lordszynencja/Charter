@@ -29,6 +29,8 @@ public enum Action {
 	BPM_DOUBLE(TEMPO_MAP), //
 	BPM_HALVE(TEMPO_MAP), //
 	COPY(EditMode.nonEmpty), //
+	DECREASE_LENGTH(GUITAR, VOCALS), //
+	DECREASE_LENGTH_FAST(GUITAR, VOCALS), //
 	DELETE(EditMode.withItems), //
 	DELETE_RELATED(GUITAR), //
 	DOUBLE_GRID(EditMode.withItems), //
@@ -36,6 +38,8 @@ public enum Action {
 	EXIT(EditMode.values()), //
 	FAST_BACKWARD(EditMode.nonEmpty), //
 	FAST_FORWARD(EditMode.nonEmpty), //
+	INCREASE_LENGTH(GUITAR, VOCALS), //
+	INCREASE_LENGTH_FAST(GUITAR, VOCALS), //
 	NUMBER_0(TEMPO_MAP, GUITAR), //
 	NUMBER_1(TEMPO_MAP, GUITAR), //
 	NUMBER_2(TEMPO_MAP, GUITAR), //
@@ -66,7 +70,7 @@ public enum Action {
 	MOVE_TO_START(EditMode.nonEmpty), //
 	NEW_PROJECT(EditMode.values()), //
 	NEXT_BEAT(EditMode.nonEmpty), //
-	NEXT_GRID(Label.NEXT_GRID_POSITION, EditMode.withItems), //
+	NEXT_GRID_POSITION(EditMode.withItems), //
 	NEXT_ITEM(EditMode.nonEmpty), //
 	NEXT_ITEM_WITH_SELECT(EditMode.withItems), //
 	NEXT_ITEM_TYPE(GUITAR), //
@@ -75,7 +79,7 @@ public enum Action {
 	PLACE_LYRIC_FROM_TEXT(VOCALS), //
 	PLAY_AUDIO(EditMode.nonEmpty), //
 	PREVIOUS_BEAT(EditMode.nonEmpty), //
-	PREVIOUS_GRID(Label.PREVIOUS_GRID_POSITION, EditMode.withItems), //
+	PREVIOUS_GRID_POSITION(EditMode.withItems), //
 	PREVIOUS_ITEM(EditMode.nonEmpty), //
 	PREVIOUS_ITEM_WITH_SELECT(EditMode.withItems), //
 	PREVIOUS_ITEM_TYPE(GUITAR), //
@@ -135,7 +139,11 @@ public enum Action {
 	TOGGLE_VIBRATO_INDEPENDENTLY(GUITAR), //
 	TOGGLE_WAVEFORM_GRAPH(EditMode.withItems), //
 	TOGGLE_WORD_PART(VOCALS), //
-	UNDO(EditMode.nonEmpty),//
+	UNDO(EditMode.nonEmpty), //
+	ZOOM_IN(EditMode.nonEmpty), //
+	ZOOM_IN_FAST(EditMode.nonEmpty), //
+	ZOOM_OUT(EditMode.nonEmpty), //
+	ZOOM_OUT_FAST(EditMode.nonEmpty),//
 
 	;
 

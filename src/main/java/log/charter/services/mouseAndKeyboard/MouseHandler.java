@@ -12,7 +12,6 @@ import java.awt.event.MouseWheelListener;
 import java.util.List;
 
 import log.charter.data.ChartData;
-import log.charter.data.config.ZoomUtils;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.data.song.position.time.Position;
@@ -349,27 +348,19 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	@Override
 	public void mouseWheelMoved(final MouseWheelEvent e) {
-		Logger.debug("Mouse wheel moved, rotation: " + e.getWheelRotation());
+		int change = -e.getWheelRotation();
+		Logger.debug("Mouse wheel moved, rotation: " + change);
 
-		if (chartData.isEmpty) {
-			return;
-		}
-
-		try {
-			final int change = -e.getWheelRotation();
-			if (keyboardHandler.ctrl()) {
-				final int zoomChange = change * (keyboardHandler.shift() ? 8 : 1);
-				ZoomUtils.changeZoom(zoomChange);
-				return;
+		if (keyboardHandler.ctrl()) {
+			if (keyboardHandler.shift()) {
+				change *= 16;
 			}
-
-			if (!selectionManager.selectedAccessor().isSelected()) {
-				return;
+			actionHandler.changeZoom(change);
+		} else {
+			if (keyboardHandler.shift()) {
+				change *= 4;
 			}
-
-			modeManager.getHandler().changeLength(change);
-		} catch (final Exception ex) {
-			Logger.error("Exception on mouse wheel moved", ex);
+			actionHandler.changeLength(change);
 		}
 	}
 

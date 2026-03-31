@@ -6,6 +6,7 @@ import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSele
 
 import java.math.BigDecimal;
 
+import javax.swing.JButton;
 import javax.swing.JTextField;
 
 import log.charter.data.config.GraphicalConfig;
@@ -60,19 +61,32 @@ public class GraphicThemeConfigPage implements Page {
 		addThemePicker(panel, position);
 		position.newRow();
 
-		addNoteHeightInput(panel, position);
-		addNoteWidthInput(panel, position);
+		addSSizeButton(panel, position);
+		addMSizeButton(panel, position);
+		addLSizeButton(panel, position);
+		addXLSizeButton(panel, position);
+		addXXLSizeButton(panel, position);
 		position.newRow();
 
 		addEventsChangeHeightField(panel, position);
+		position.newRow();
+
 		addToneChangeHeightField(panel, position);
 		position.newRow();
 
 		addFHPInfoHeightField(panel, position);
+		position.newRow();
+
+		addNoteHeightInput(panel, position);
+		addNoteWidthInput(panel, position);
+		position.newRow();
+
 		addChordHeightField(panel, position);
 		position.newRow();
 
 		addHandShapesHeightFieldField(panel, position);
+		position.newRow();
+
 		addTimingHeightFieldField(panel, position);
 		position.newRow();
 
@@ -96,6 +110,117 @@ public class GraphicThemeConfigPage implements Page {
 
 		themeField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_THEME, 60, 150, 20, input, LabelPosition.LEFT);
 		panel.add(themeField, position);
+	}
+
+	private void onNoteHeightChange(final int newHeight) {
+		noteHeight = newHeight;
+		if (theme == Theme.MODERN) {
+			noteWidthField.field.setText(noteHeight + "");
+		}
+	}
+
+	private void addSSizeButton(final RowedPanel panel, final RowedPosition position) {
+		final JButton button = new JButton(Label.SIZE_S.label());
+		button.addActionListener(e -> {
+			eventsChangeHeightField.field.setText("7");
+			toneChangeHeightField.field.setText("7");
+			fhpInfoHeightField.field.setText("7");
+			noteHeightField.field.setText("19");
+			noteWidthField.field.setText("19");
+			chordHeightField.field.setText("7");
+			handShapesHeightField.field.setText("7");
+			timingHeightField.field.setText("18");
+		});
+
+		panel.addWithSettingSize(button, position, 30);
+	}
+
+	private void addMSizeButton(final RowedPanel panel, final RowedPosition position) {
+		final JButton button = new JButton(Label.SIZE_M.label());
+		button.addActionListener(e -> {
+			eventsChangeHeightField.field.setText("10");
+			toneChangeHeightField.field.setText("10");
+			fhpInfoHeightField.field.setText("10");
+			noteHeightField.field.setText("25");
+			noteWidthField.field.setText("25");
+			chordHeightField.field.setText("10");
+			handShapesHeightField.field.setText("10");
+			timingHeightField.field.setText("24");
+		});
+
+		panel.addWithSettingSize(button, position, 30);
+	}
+
+	private void addLSizeButton(final RowedPanel panel, final RowedPosition position) {
+		final JButton button = new JButton(Label.SIZE_L.label());
+		button.addActionListener(e -> {
+			eventsChangeHeightField.field.setText("14");
+			toneChangeHeightField.field.setText("14");
+			fhpInfoHeightField.field.setText("14");
+			noteHeightField.field.setText("31");
+			noteWidthField.field.setText("31");
+			chordHeightField.field.setText("14");
+			handShapesHeightField.field.setText("14");
+			timingHeightField.field.setText("30");
+		});
+
+		panel.addWithSettingSize(button, position, 30);
+	}
+
+	private void addXLSizeButton(final RowedPanel panel, final RowedPosition position) {
+		final JButton button = new JButton(Label.SIZE_XL.label());
+		button.addActionListener(e -> {
+			eventsChangeHeightField.field.setText("17");
+			toneChangeHeightField.field.setText("17");
+			fhpInfoHeightField.field.setText("17");
+			noteHeightField.field.setText("37");
+			noteWidthField.field.setText("37");
+			chordHeightField.field.setText("17");
+			handShapesHeightField.field.setText("17");
+			timingHeightField.field.setText("34");
+			timingHeightField.field.setText("34");
+		});
+
+		panel.addWithSettingSize(button, position, 30);
+	}
+
+	private void addXXLSizeButton(final RowedPanel panel, final RowedPosition position) {
+		final JButton button = new JButton(Label.SIZE_XXL.label());
+		button.addActionListener(e -> {
+			eventsChangeHeightField.field.setText("20");
+			toneChangeHeightField.field.setText("20");
+			fhpInfoHeightField.field.setText("20");
+			noteHeightField.field.setText("43");
+			noteWidthField.field.setText("43");
+			chordHeightField.field.setText("20");
+			handShapesHeightField.field.setText("20");
+			timingHeightField.field.setText("40");
+			timingHeightField.field.setText("40");
+		});
+
+		panel.addWithSettingSize(button, position, 30);
+	}
+
+	private void addNoteHeightInput(final RowedPanel panel, final RowedPosition position) {
+		final TextInputWithValidation input = generateForInt(noteHeight, 20, //
+				editorPartHeightValidator, this::onNoteHeightChange, false);
+		input.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(input);
+
+		noteHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_NOTE_HEIGHT, 120, 30, 20, input,
+				LabelPosition.LEFT_CLOSE);
+		panel.add(noteHeightField, position);
+	}
+
+	private void addNoteWidthInput(final RowedPanel panel, final RowedPosition position) {
+		final TextInputWithValidation input = generateForInt(noteWidth, 20, //
+				editorPartHeightValidator, i -> noteWidth = i, false);
+		input.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(input);
+
+		noteWidthField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_NOTE_WIDTH, 120, 30, 20, input,
+				LabelPosition.LEFT_CLOSE);
+		panel.add(noteWidthField, position);
 	}
 
 	private void addEventsChangeHeightField(final RowedPanel panel, final RowedPosition position) {
@@ -132,24 +257,6 @@ public class GraphicThemeConfigPage implements Page {
 		panel.add(fhpInfoHeightField, position);
 	}
 
-	private void addNoteHeightInput(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(noteHeight, 20, //
-				editorPartHeightValidator, this::onNoteHeightChange, false);
-		input.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(input);
-
-		noteHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_NOTE_HEIGHT, 120, 30, 20, input,
-				LabelPosition.LEFT_CLOSE);
-		panel.add(noteHeightField, position);
-	}
-
-	private void onNoteHeightChange(final int newHeight) {
-		noteHeight = newHeight;
-		if (theme == Theme.MODERN) {
-			noteWidthField.field.setText(noteHeight + "");
-		}
-	}
-
 	private void addChordHeightField(final RowedPanel panel, final RowedPosition position) {
 		final TextInputWithValidation input = generateForInt(chordHeight, 20, //
 				editorPartHeightValidator, i -> chordHeight = i, false);
@@ -159,17 +266,6 @@ public class GraphicThemeConfigPage implements Page {
 		chordHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_CHORD_HEIGHT, 120, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
 		panel.add(chordHeightField, position);
-	}
-
-	private void addNoteWidthInput(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(noteWidth, 20, //
-				editorPartHeightValidator, i -> noteWidth = i, false);
-		input.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(input);
-
-		noteWidthField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_NOTE_WIDTH, 120, 30, 20, input,
-				LabelPosition.LEFT_CLOSE);
-		panel.add(noteWidthField, position);
 	}
 
 	private void addHandShapesHeightFieldField(final RowedPanel panel, final RowedPosition position) {
