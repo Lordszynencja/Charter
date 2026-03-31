@@ -12,23 +12,22 @@ import java.util.function.IntConsumer;
 
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.jcodec.common.logging.Logger;
 
-import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
 import log.charter.gui.components.utils.validators.DoubleValueValidator;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.components.utils.validators.ValueValidator;
+import log.charter.gui.lookAndFeel.CharterTextFieldUI;
 
 public class TextInputWithValidation extends JTextField implements DocumentListener {
 	private static final long serialVersionUID = 1L;
-	public static final Color errorBackground = new Color(160, 64, 64);
-	public static final Color textFieldBorder = ColorLabel.BASE_BORDER.color();
+	public static final Color errorBackground = new Color(96, 16, 16);
+	public static final Color errorBackgroundBorder = new Color(255, 32, 32);
 
 	public static TextInputWithValidation generateForInteger(final Integer value, final int length,
 			final IntegerValueValidator validator, final Consumer<Integer> setter, final boolean allowWrongValues) {
@@ -101,6 +100,7 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 	}
 
 	private boolean error;
+	private Color defaultBackgroundColor;
 
 	private ValueValidator validator;
 	private final Function<String, String> setter;
@@ -124,19 +124,33 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 		this.setter = setter;
 
 		getDocument().addDocumentListener(this);
-		setBorder(new LineBorder(textFieldBorder, 0));
 		addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(final FocusEvent e) {
 				setCaretColor(getForeground());
 			}
 		});
+
+		setUI(CharterTextFieldUI.createUI(this));
 	}
 
 	private void clearError() {
+		if (!error) {
+			return;
+		}
+
 		error = false;
 		setToolTipText(null);
-		setBorder(new LineBorder(textFieldBorder, 0));
+		setBorder(CharterTextFieldUI.defaultBorder());
+		setBackground(defaultBackgroundColor);
+	}
+
+	private void setError(final String errorMessage) {
+		error = true;
+		setToolTipText(errorMessage);
+		setBorder(CharterTextFieldUI.defaultBorder(errorBackgroundBorder));
+		defaultBackgroundColor = getBackground();
+		setBackground(errorBackground);
 	}
 
 	private void validateValue(final String value) {
@@ -147,14 +161,12 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 			return;
 		}
 
-		final String validation = validator.validateValue(value);
-		if (validation == null) {
+		final String errorMessage = validator.validateValue(value);
+		if (errorMessage == null) {
 			return;
 		}
 
-		error = true;
-		setToolTipText(validation);
-		setBorder(new LineBorder(errorBackground, 2));
+		setError(errorMessage);
 	}
 
 	@Override

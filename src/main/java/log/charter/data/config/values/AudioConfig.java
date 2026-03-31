@@ -1,5 +1,6 @@
 package log.charter.data.config.values;
 
+import static log.charter.data.config.values.accessors.BooleanValueAccessor.forBoolean;
 import static log.charter.data.config.values.accessors.DoubleValueAccessor.forDouble;
 import static log.charter.data.config.values.accessors.EnumValueAccessor.forEnum;
 import static log.charter.data.config.values.accessors.IntValueAccessor.forInteger;
@@ -30,12 +31,15 @@ public class AudioConfig {
 	public static int midiDelay = 200;
 
 	public static double volume = 1;
+	public static boolean volumeMute = false;
 	public static double sfxVolume = 1;
+	public static boolean sfxVolumeMute = false;
 
 	public static void init(final Map<String, ValueAccessor> valueAccessors, final String name) {
 		valueAccessors.put(name + ".outSystem",
 				forEnum(AudioSystemType.class, v -> outSystem = v, () -> outSystem, outSystem));
-		valueAccessors.put(name + ".outSystemName", forString(v -> outSystemName = v, () -> outSystemName, outSystemName));
+		valueAccessors.put(name + ".outSystemName",
+				forString(v -> outSystemName = v, () -> outSystemName, outSystemName));
 		valueAccessors.put(name + ".leftOutChannelId",
 				forInteger(v -> leftOutChannelId = v, () -> leftOutChannelId, leftOutChannelId));
 		valueAccessors.put(name + ".rightOutChannelId",
@@ -43,12 +47,14 @@ public class AudioConfig {
 
 		valueAccessors.put(name + ".in0System",
 				forEnum(AudioSystemType.class, v -> in0System = v, () -> in0System, in0System));
-		valueAccessors.put(name + ".in0SystemName", forString(v -> in0SystemName = v, () -> in0SystemName, in0SystemName));
+		valueAccessors.put(name + ".in0SystemName",
+				forString(v -> in0SystemName = v, () -> in0SystemName, in0SystemName));
 		valueAccessors.put(name + ".inChannel0Id", forInteger(v -> inChannel0Id = v, () -> inChannel0Id, inChannel0Id));
 
 		valueAccessors.put(name + ".in1System",
 				forEnum(AudioSystemType.class, v -> in1System = v, () -> in1System, in1System));
-		valueAccessors.put(name + ".in1SystemName", forString(v -> in1SystemName = v, () -> in1SystemName, in1SystemName));
+		valueAccessors.put(name + ".in1SystemName",
+				forString(v -> in1SystemName = v, () -> in1SystemName, in1SystemName));
 		valueAccessors.put(name + ".inChannel1Id", forInteger(v -> inChannel1Id = v, () -> inChannel1Id, inChannel1Id));
 
 		valueAccessors.put(name + ".bufferSize", forInteger(v -> bufferSize = v, () -> bufferSize, bufferSize));
@@ -57,6 +63,14 @@ public class AudioConfig {
 		valueAccessors.put(name + ".midiDelay", forInteger(v -> midiDelay = v, () -> midiDelay, midiDelay));
 
 		valueAccessors.put(name + ".volume", forDouble(v -> volume = v, () -> volume, volume));
+		valueAccessors.put(name + ".volumeMute", forBoolean(v -> volumeMute = v, () -> volumeMute, volumeMute));
 		valueAccessors.put(name + ".sfxVolume", forDouble(v -> sfxVolume = v, () -> sfxVolume, sfxVolume));
+		valueAccessors.put(name + ".sfxVolumeMute",
+				forBoolean(v -> sfxVolumeMute = v, () -> sfxVolumeMute, sfxVolumeMute));
 	}
+
+	public static double getSfxVolumeWithMute() {
+		return sfxVolumeMute ? 0 : sfxVolume;
+	}
+
 }

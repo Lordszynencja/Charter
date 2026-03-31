@@ -29,6 +29,7 @@ public class CharterMenuBar extends JMenuBar implements Initiable {
 	private final InfoMenuHandler infoMenuHandler = new InfoMenuHandler();
 	private final ItemsMenuHandler itemsMenuHandler = new ItemsMenuHandler();
 	private final MusicMenuHandler musicMenuHandler = new MusicMenuHandler();
+	private final TempoMapMenuHandler tempoMapMenuHandler = new TempoMapMenuHandler();
 	private final VocalsMenuHandler vocalsMenuHandler = new VocalsMenuHandler();
 
 	private final List<CharterMenuHandler> menusOrder = asList(//
@@ -39,6 +40,7 @@ public class CharterMenuBar extends JMenuBar implements Initiable {
 			vocalsMenuHandler, //
 			itemsMenuHandler, //
 			guitarMenuHandler, //
+			tempoMapMenuHandler, //
 			infoMenuHandler);
 
 	@Override
@@ -50,6 +52,7 @@ public class CharterMenuBar extends JMenuBar implements Initiable {
 		charterContext.initObject(infoMenuHandler);
 		charterContext.initObject(itemsMenuHandler);
 		charterContext.initObject(musicMenuHandler);
+		charterContext.initObject(tempoMapMenuHandler);
 		charterContext.initObject(vocalsMenuHandler);
 
 		final Dimension size = new Dimension(1, 20);

@@ -388,7 +388,7 @@ public class HighlightData {
 
 		final Position2D startPosition = pressPosition.position;
 		final Position2D endPosition = new Position2D(x, y);
-		final PositionWithIdAndType highlight = highlightManager.getHighlight(x, y);
+		final PositionWithIdAndType highlight = highlightManager.getHighlight(x, y, true);
 
 		final List<PositionWithStringOrNoteId> positionsWithStrings = highlightManager
 				.getPositionsWithStrings(pressXTime, highlight.toPosition(beats).position(), pressY, y);
@@ -404,7 +404,7 @@ public class HighlightData {
 			final KeyboardHandler keyboardHandler, final ModeManager modeManager,
 			final MouseButtonPressReleaseHandler mouseButtonPressReleaseHandler, final MouseHandler mouseHandler,
 			final SelectionManager selectionManager) {
-		if (modeManager.getMode() == EditMode.EMPTY) {
+		if (modeManager.modeIs(EditMode.EMPTY)) {
 			return new HighlightData();
 		}
 
@@ -422,7 +422,7 @@ public class HighlightData {
 			return noteAddDragHighlight;
 		}
 
-		final PositionWithIdAndType highlight = highlightManager.getHighlight(x, y);
+		final PositionWithIdAndType highlight = highlightManager.getHighlight(x, y, false);
 		if (highlight.specialType != null) {
 			return new HighlightData(highlight.type, highlight.specialType);
 		}

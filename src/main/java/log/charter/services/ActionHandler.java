@@ -12,10 +12,12 @@ import java.util.Map;
 import log.charter.data.ChartData;
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.ZoomUtils;
 import log.charter.data.config.values.GridConfig;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
+import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.IChartToolbar;
 import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.io.Logger;
@@ -38,6 +40,7 @@ import log.charter.services.data.files.newProject.NewEmptyProjectCreator;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
+import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
 
 public class ActionHandler implements Initiable {
@@ -53,9 +56,11 @@ public class ActionHandler implements Initiable {
 	private CharterContext charterContext;
 	private ClapsHandler clapsHandler;
 	private CopyManager copyManager;
+	private CurrentSelectionEditor currentSelectionEditor;
 	private GuitarSoundsHandler guitarSoundsHandler;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private HandShapesHandler handShapesHandler;
+	private KeyboardHandler keyboardHandler;
 	private MetronomeHandler metronomeHandler;
 	private ModeManager modeManager;
 	private MouseHandler mouseHandler;
@@ -192,6 +197,10 @@ public class ActionHandler implements Initiable {
 		modeManager.getHandler().handleNumber(number);
 	}
 
+	private void toggleString(final int string) {
+		currentSelectionEditor.toggleString(string);
+	}
+
 	private void doubleGridSize() {
 		if (GridConfig.gridSize <= 512) {
 			GridConfig.gridSize *= 2;
@@ -210,22 +219,37 @@ public class ActionHandler implements Initiable {
 		}
 	}
 
-	private void toggleBookmark(final int number) {
-		final Double currentBookmark = chartData.songChart.bookmarks.get(number);
-		if (currentBookmark == null || currentBookmark != chartTimeHandler.time()) {
+	private void bookmark(final int number) {
+		final Double bookmark = chartData.songChart.bookmarks.get(number);
+		if (bookmark == null) {
 			chartData.songChart.bookmarks.put(number, chartTimeHandler.time());
+		} else if (bookmark != chartTimeHandler.time()) {
+			chartTimeHandler.nextTime(bookmark);
 		} else {
 			chartData.songChart.bookmarks.remove(number);
 		}
 	}
 
-	private void moveToBookmark(final int number) {
-		final Double bookmark = chartData.songChart.bookmarks.get(number);
-		if (bookmark == null) {
+	public void changeLength(final int change) {
+		if (chartData.isEmpty) {
 			return;
 		}
 
-		chartTimeHandler.nextTime(bookmark);
+		try {
+			if (keyboardHandler.ctrl()) {
+				final int zoomChange = change * (keyboardHandler.shift() ? 8 : 1);
+				ZoomUtils.changeZoom(zoomChange);
+				return;
+			}
+
+			if (!selectionManager.selectedAccessor().isSelected()) {
+				return;
+			}
+
+			modeManager.getHandler().changeLength(change);
+		} catch (final Exception ex) {
+			Logger.error("Exception on length change", ex);
+		}
 	}
 
 	private void changeSpeed(final int change) {
@@ -251,6 +275,10 @@ public class ActionHandler implements Initiable {
 		}
 	}
 
+	public void changeZoom(final int change) {
+		ZoomUtils.changeZoom(change);
+	}
+
 	private final Map<Action, Runnable> actionHandlers = new HashMap<>();
 
 	@Override
@@ -259,14 +287,31 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.ARRANGEMENT_PREVIOUS, this::previousArrangement);
 		actionHandlers.put(Action.BEAT_ADD, beatsService::addBeat);
 		actionHandlers.put(Action.BEAT_REMOVE, beatsService::removeBeat);
+		actionHandlers.put(Action.BOOKMARK_0, () -> bookmark(0));
+		actionHandlers.put(Action.BOOKMARK_1, () -> bookmark(1));
+		actionHandlers.put(Action.BOOKMARK_2, () -> bookmark(2));
+		actionHandlers.put(Action.BOOKMARK_3, () -> bookmark(3));
+		actionHandlers.put(Action.BOOKMARK_4, () -> bookmark(4));
+		actionHandlers.put(Action.BOOKMARK_5, () -> bookmark(5));
+		actionHandlers.put(Action.BOOKMARK_6, () -> bookmark(6));
+		actionHandlers.put(Action.BOOKMARK_7, () -> bookmark(7));
+		actionHandlers.put(Action.BOOKMARK_8, () -> bookmark(8));
+		actionHandlers.put(Action.BOOKMARK_9, () -> bookmark(9));
 		actionHandlers.put(Action.BPM_DOUBLE, bpmDoubler::doubleBPM);
 		actionHandlers.put(Action.BPM_HALVE, bpmHalver::halveBPM);
 		actionHandlers.put(Action.COPY, copyManager::copy);
+		actionHandlers.put(Action.DECREASE_LENGTH, () -> changeLength(-1));
+		actionHandlers.put(Action.DECREASE_LENGTH_FAST, () -> changeLength(-4));
 		actionHandlers.put(Action.DELETE, chartItemsHandler::delete);
 		actionHandlers.put(Action.DELETE_RELATED, chartItemsHandler::deleteRelated);
 		actionHandlers.put(Action.DOUBLE_GRID, this::doubleGridSize);
 		actionHandlers.put(Action.EDIT_VOCALS, vocalsHandler::editVocals);
 		actionHandlers.put(Action.EXIT, charterContext::exit);
+		actionHandlers.put(Action.FINGER_1, () -> guitarSoundsHandler.setFinger(1));
+		actionHandlers.put(Action.FINGER_2, () -> guitarSoundsHandler.setFinger(2));
+		actionHandlers.put(Action.FINGER_3, () -> guitarSoundsHandler.setFinger(3));
+		actionHandlers.put(Action.FINGER_4, () -> guitarSoundsHandler.setFinger(4));
+		actionHandlers.put(Action.FINGER_T, () -> guitarSoundsHandler.setFinger(0));
 		actionHandlers.put(Action.NUMBER_0, () -> handleNumber(0));
 		actionHandlers.put(Action.NUMBER_1, () -> handleNumber(1));
 		actionHandlers.put(Action.NUMBER_2, () -> handleNumber(2));
@@ -278,16 +323,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.NUMBER_8, () -> handleNumber(8));
 		actionHandlers.put(Action.NUMBER_9, () -> handleNumber(9));
 		actionHandlers.put(Action.HALVE_GRID, this::halveGridSize);
-		actionHandlers.put(Action.MARK_BOOKMARK_0, () -> toggleBookmark(0));
-		actionHandlers.put(Action.MARK_BOOKMARK_1, () -> toggleBookmark(1));
-		actionHandlers.put(Action.MARK_BOOKMARK_2, () -> toggleBookmark(2));
-		actionHandlers.put(Action.MARK_BOOKMARK_3, () -> toggleBookmark(3));
-		actionHandlers.put(Action.MARK_BOOKMARK_4, () -> toggleBookmark(4));
-		actionHandlers.put(Action.MARK_BOOKMARK_5, () -> toggleBookmark(5));
-		actionHandlers.put(Action.MARK_BOOKMARK_6, () -> toggleBookmark(6));
-		actionHandlers.put(Action.MARK_BOOKMARK_7, () -> toggleBookmark(7));
-		actionHandlers.put(Action.MARK_BOOKMARK_8, () -> toggleBookmark(8));
-		actionHandlers.put(Action.MARK_BOOKMARK_9, () -> toggleBookmark(9));
+		actionHandlers.put(Action.INCREASE_LENGTH, () -> changeLength(1));
+		actionHandlers.put(Action.INCREASE_LENGTH_FAST, () -> changeLength(4));
 		actionHandlers.put(Action.MARK_HAND_SHAPE, handShapesHandler::markHandShape);
 		actionHandlers.put(Action.MEASURE_ADD, beatsService::addMeasure);
 		actionHandlers.put(Action.MEASURE_REMOVE, beatsService::removeMeasure);
@@ -299,23 +336,13 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.MOVE_FRET_DOWN_OCTAVE, () -> guitarSoundsHandler.moveFret(-12));
 		actionHandlers.put(Action.MOVE_FRET_UP, () -> guitarSoundsHandler.moveFret(1));
 		actionHandlers.put(Action.MOVE_FRET_UP_OCTAVE, () -> guitarSoundsHandler.moveFret(12));
-		actionHandlers.put(Action.MOVE_TO_BOOKMARK_0, () -> moveToBookmark(0));
-		actionHandlers.put(Action.MOVE_TO_BOOKMARK_1, () -> moveToBookmark(1));
-		actionHandlers.put(Action.MOVE_TO_BOOKMARK_2, () -> moveToBookmark(2));
-		actionHandlers.put(Action.MOVE_TO_BOOKMARK_3, () -> moveToBookmark(3));
-		actionHandlers.put(Action.MOVE_TO_BOOKMARK_4, () -> moveToBookmark(4));
-		actionHandlers.put(Action.MOVE_TO_BOOKMARK_5, () -> moveToBookmark(5));
-		actionHandlers.put(Action.MOVE_TO_BOOKMARK_6, () -> moveToBookmark(6));
-		actionHandlers.put(Action.MOVE_TO_BOOKMARK_7, () -> moveToBookmark(7));
-		actionHandlers.put(Action.MOVE_TO_BOOKMARK_8, () -> moveToBookmark(8));
-		actionHandlers.put(Action.MOVE_TO_BOOKMARK_9, () -> moveToBookmark(9));
 		actionHandlers.put(Action.MOVE_TO_END, chartTimeHandler::moveToEnd);
 		actionHandlers.put(Action.MOVE_TO_FIRST_ITEM, chartTimeHandler::moveToFirstItem);
 		actionHandlers.put(Action.MOVE_TO_LAST_ITEM, chartTimeHandler::moveToLastItem);
 		actionHandlers.put(Action.MOVE_TO_START, chartTimeHandler::moveToBeginning);
 		actionHandlers.put(Action.NEW_PROJECT, newEmptyProjectCreator::newProject);
 		actionHandlers.put(Action.NEXT_BEAT, chartTimeHandler::moveToNextBeat);
-		actionHandlers.put(Action.NEXT_GRID, chartTimeHandler::moveToNextGrid);
+		actionHandlers.put(Action.NEXT_GRID_POSITION, chartTimeHandler::moveToNextGrid);
 		actionHandlers.put(Action.NEXT_ITEM, chartTimeHandler::moveToNextItem);
 		actionHandlers.put(Action.NEXT_ITEM_TYPE, selectionManager::nextItemType);
 		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT, chartTimeHandler::moveToNextItemWithSelect);
@@ -324,14 +351,15 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.PLACE_LYRIC_FROM_TEXT, vocalsHandler::placeLyricFromText);
 		actionHandlers.put(Action.PLAY_AUDIO, audioHandler::togglePlaySetSpeed);
 		actionHandlers.put(Action.PREVIOUS_BEAT, chartTimeHandler::moveToPreviousBeat);
-		actionHandlers.put(Action.PREVIOUS_GRID, chartTimeHandler::moveToPreviousGrid);
+		actionHandlers.put(Action.PREVIOUS_GRID_POSITION, chartTimeHandler::moveToPreviousGrid);
 		actionHandlers.put(Action.PREVIOUS_ITEM, chartTimeHandler::moveToPreviousItem);
 		actionHandlers.put(Action.PREVIOUS_ITEM_TYPE, selectionManager::previousItemType);
 		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT, chartTimeHandler::moveToPreviousItemWithSelect);
 		actionHandlers.put(Action.REDO, undoSystem::redo);
-		actionHandlers.put(Action.SAVE, songFileHandler::save);
-		actionHandlers.put(Action.SAVE_AS, songFileHandler::saveAs);
+		actionHandlers.put(Action.SAVE_PROJECT, songFileHandler::save);
+		actionHandlers.put(Action.SAVE_PROJECT_AS, songFileHandler::saveAs);
 		actionHandlers.put(Action.SELECT_ALL, selectionManager::selectAll);
+		actionHandlers.put(Action.SET_HAND_SHAPE_TEMPLATE_ON_CHORDS, guitarSoundsHandler::setHandShapeTemplateOnChords);
 		actionHandlers.put(Action.SNAP_ALL, chartItemsHandler::snapAll);
 		actionHandlers.put(Action.SNAP_SELECTED, chartItemsHandler::snapSelected);
 		actionHandlers.put(Action.SPECIAL_PASTE, copyManager::specialPaste);
@@ -341,6 +369,15 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.SPEED_INCREASE, () -> changeSpeed(5));
 		actionHandlers.put(Action.SPEED_INCREASE_FAST, () -> changeSpeed(25));
 		actionHandlers.put(Action.SPEED_INCREASE_PRECISE, () -> changeSpeed(1));
+		actionHandlers.put(Action.STRING_1, () -> toggleString(0));
+		actionHandlers.put(Action.STRING_2, () -> toggleString(1));
+		actionHandlers.put(Action.STRING_3, () -> toggleString(2));
+		actionHandlers.put(Action.STRING_4, () -> toggleString(3));
+		actionHandlers.put(Action.STRING_5, () -> toggleString(4));
+		actionHandlers.put(Action.STRING_6, () -> toggleString(5));
+		actionHandlers.put(Action.STRING_7, () -> toggleString(6));
+		actionHandlers.put(Action.STRING_8, () -> toggleString(7));
+		actionHandlers.put(Action.STRING_9, () -> toggleString(8));
 		actionHandlers.put(Action.SWITCH_TYPING_PART, this::switchTypingPart);
 		actionHandlers.put(Action.TOGGLE_ACCENT, guitarSoundsStatusesHandler::toggleAccent);
 		actionHandlers.put(Action.TOGGLE_ACCENT_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleAccentIndependently);
@@ -380,15 +417,16 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.TOGGLE_WAVEFORM_GRAPH, waveFormDrawer::toggle);
 		actionHandlers.put(Action.TOGGLE_WORD_PART, vocalsHandler::toggleWordPart);
 		actionHandlers.put(Action.UNDO, undoSystem::undo);
+		actionHandlers.put(Action.ZOOM_IN, () -> changeZoom(1));
+		actionHandlers.put(Action.ZOOM_IN_FAST, () -> changeZoom(16));
+		actionHandlers.put(Action.ZOOM_OUT, () -> changeZoom(-1));
+		actionHandlers.put(Action.ZOOM_OUT_FAST, () -> changeZoom(-16));
 	}
 
 	private static final List<Action> actionsNotClearingMousePress = asList(//
 			Action.FAST_BACKWARD, //
 			Action.FAST_FORWARD, //
 			Action.MOVE_BACKWARD, //
-			Action.PREVIOUS_BEAT, //
-			Action.PREVIOUS_GRID, //
-			Action.PREVIOUS_ITEM, //
 			Action.MOVE_FORWARD, //
 			Action.SLOW_BACKWARD, //
 			Action.SLOW_FORWARD);

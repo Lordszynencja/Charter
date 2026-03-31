@@ -12,7 +12,7 @@ public class InstrumentConfig {
 
 	public static boolean leftHanded = false;
 	public static int maxStrings = 9;
-	public static int frets = 28;
+	public static int frets = 24;
 	/**
 	 * in half steps
 	 */

@@ -68,7 +68,7 @@ public class MouseButtonPressReleaseHandler {
 		final MouseButton button = MouseButton.fromEvent(e);
 		if (button != null) {
 			final Position2D position = new Position2D(e.getX(), e.getY());
-			final PositionWithIdAndType highlight = highlightManager.getHighlight(position.x, position.y);
+			final PositionWithIdAndType highlight = highlightManager.getHighlight(position.x, position.y, true);
 			final MouseButtonPressData pressData = new MouseButtonPressData(button, position, highlight);
 			pressedButtons.put(button, pressData);
 		}
@@ -89,7 +89,7 @@ public class MouseButtonPressReleaseHandler {
 			return null;
 		}
 
-		final PositionWithIdAndType highlight = highlightManager.getHighlight(e.getX(), e.getY());
+		final PositionWithIdAndType highlight = highlightManager.getHighlight(e.getX(), e.getY(), true);
 		return new MouseButtonPressReleaseData(pressData, highlight, e.getX(), e.getY());
 	}
 

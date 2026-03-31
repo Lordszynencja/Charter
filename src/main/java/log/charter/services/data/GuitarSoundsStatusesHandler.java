@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -83,12 +84,19 @@ public class GuitarSoundsStatusesHandler {
 		currentSelectionEditor.selectionChanged(false);
 	}
 
-	private <T> T getNewValueNotes(final Map<T, T> cycleMap, final ChordOrNote sound,
+	private <T> T getNewValueNotes(final Map<T, T> cycleMap, final ChordOrNote sound, final Set<Integer> editedStrings,
 			final Function<CommonNote, T> getter, final T defaultValue) {
 		return cycleMap.get(sound.notes()//
+				.filter(n -> editedStrings.contains(n.string()))//
 				.findFirst()//
 				.map(getter)//
 				.orElse(defaultValue));
+	}
+
+	private List<? extends CommonNote> getNotesToChange(final List<Selection<ChordOrNote>> selected,
+			final Set<Integer> editedStrings) {
+		return selected.stream().flatMap(v -> v.selectable.notes()).filter(n -> editedStrings.contains(n.string()))
+				.collect(Collectors.toList());
 	}
 
 	public <T> void cyclicalToggleNotes(final Map<T, T> cycleMap, final Function<CommonNote, T> getter,
@@ -99,11 +107,17 @@ public class GuitarSoundsStatusesHandler {
 		}
 
 		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
-		final T valueToSet = getNewValueNotes(cycleMap, selected.get(0).selectable, getter, defaultValue);
+		final Set<Integer> editedStrings = currentSelectionEditor.getEditedStrings();
+		final T valueToSet = getNewValueNotes(cycleMap, selected.get(0).selectable, editedStrings, getter,
+				defaultValue);
+
+		final List<? extends CommonNote> notesToChange = getNotesToChange(selected, editedStrings);
+		if (notesToChange.isEmpty()) {
+			return;
+		}
 
 		undoSystem.addUndo();
-		selected.forEach(selectedValue -> selectedValue.selectable.notes()//
-				.forEach(note -> setter.accept(note, valueToSet)));
+		notesToChange.forEach(n -> setter.accept(n, valueToSet));
 		currentSelectionEditor.selectionChanged(false);
 	}
 
@@ -115,11 +129,15 @@ public class GuitarSoundsStatusesHandler {
 		}
 
 		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
+		final Set<Integer> editedStrings = currentSelectionEditor.getEditedStrings();
+
+		final List<? extends CommonNote> notesToChange = getNotesToChange(selected, editedStrings);
+		if (notesToChange.isEmpty()) {
+			return;
+		}
 
 		undoSystem.addUndo();
-
-		selected.forEach(selectedValue -> selectedValue.selectable.notes()//
-				.forEach(note -> setter.accept(note, cycleMap.get(getter.apply(note)))));
+		notesToChange.forEach(n -> setter.accept(n, cycleMap.get(getter.apply(n))));
 		currentSelectionEditor.selectionChanged(false);
 	}
 

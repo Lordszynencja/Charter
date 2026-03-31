@@ -23,10 +23,10 @@ public class Localization {
 		ADD_BEATS_AMOUNT("Add this many beats:"), //
 		ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
 		ADD_BEATS_PANE("Add beats"), //
-		ADD_DEFAULT_START_SILENCE("Add default starting silence with empty bars"), //
 		ADD_LEVEL("Add level"), //
 		ADD_SILENCE_AT_THE_END("Add silence at the end"), //
 		ADD_SILENCE_IN_THE_BEGINNING("Add silence in the beginning"), //
+		ADVANCED_AUDIO_TEMPO_MAP_EDITS("Advanced audio/tempo map edits"), //
 		APRIL_FOOLS_ENABLED("April fools"), //
 		ARPEGGIO("Arpeggio"), //
 		ARRANGEMENT_ID_NAME("Arrangement %d, %s:"), //
@@ -63,6 +63,16 @@ public class Localization {
 		BASE_AUDIO_FORMAT("Base audio format"), //
 		BEAT_ADD("Add beat"), //
 		BEAT_REMOVE("Remove beat"), //
+		BOOKMARK_0("Bookmark 0"), //
+		BOOKMARK_1("Bookmark 1"), //
+		BOOKMARK_2("Bookmark 2"), //
+		BOOKMARK_3("Bookmark 3"), //
+		BOOKMARK_4("Bookmark 4"), //
+		BOOKMARK_5("Bookmark 5"), //
+		BOOKMARK_6("Bookmark 6"), //
+		BOOKMARK_7("Bookmark 7"), //
+		BOOKMARK_8("Bookmark 8"), //
+		BOOKMARK_9("Bookmark 9"), //
 		BOOKMARKS_MENU("Bookmarks"), //
 		BPM_DOUBLE("Double BPM"), //
 		BPM_HALVE("Halve BPM"), //
@@ -105,6 +115,8 @@ public class Localization {
 		CREATE_FHP_AUTOMATICALLY("Create FHP automatically"), //
 		OPEN_CURRENT_SONG_FOLDER("Open current song folder"), //
 		CURRENT_SONG_FOLDER("Current song folder: %s"), //
+		DECREASE_LENGTH("Decrease length"), //
+		DECREASE_LENGTH_FAST("Decrease length fast"), //
 		DELETE("Delete"), //
 		DELETE_RELATED("Delete notes with related items"), //
 		DELETE_ARRANGEMENT("Delete arrangement"), //
@@ -128,12 +140,18 @@ public class Localization {
 		EXIT("Exit"), //
 		EXPLOSIONS("Explosions"), //
 		EXPLOSIONS_SHAKY_CAM("Shaky cam"), //
+		FAST_FORWARD_TOOLTIP("Fast forwards the song"), //
 		FHP_INSIDE_HAND_SHAPE("Fret Hand Position change inside a Hand Shape"), //
 		FHP_PANE("FHP"), //
 		FHP_STARTS_ON_WRONG_FRET("Fret Hand Position starts on fret below or equal to capo/0"), //
 		FHP_TOO_CLOSE_TO_NEXT("Fret Hand Position too close to next one (<%d ms)"), //
+		FHP_TOP_FRET_TOO_HIGH("Fret Hand Position has top fret above max fret"), //
 		FHP_WIDTH("Width"), //
-		FAST_FORWARD_TOOLTIP("Fast forwards the song"), //
+		FINGER_1("Finger 1"), //
+		FINGER_2("Finger 2"), //
+		FINGER_3("Finger 3"), //
+		FINGER_4("Finger 4"), //
+		FINGER_T("Finger thumb"), //
 		FILE_MENU("File"), //
 		FILE_MENU_IMPORT_RS_SHOWLIGHTS("RS showlights XML"), //
 		FINGER_NOT_SET_FOR_FRETTED_STRING("Finger not set for fretted string in template [%d] - string %d"), //
@@ -146,6 +164,7 @@ public class Localization {
 		FRET("Fret"), //
 		FINGER_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
 				"Finger in sound is different than finger in hand shape under it on the same string"), //
+		FINGER_OPERATIONS("Finger operations"), //
 		FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
 				"Fret in sound is different than fret in hand shape under it on the same string"), //
 		FRETS("Frets"), //
@@ -168,6 +187,8 @@ public class Localization {
 		IMPORT_AUDIO_AS_STEM("Import audio as stem?"), //
 		IMPORT_LRC_VOCALS("Import LRC vocals file"), //
 		IMPORT_USC_VOCALS("Import USC vocals file"), //
+		INCREASE_LENGTH("Increase length"), //
+		INCREASE_LENGTH_FAST("Increase length fast"), //
 		INVERT_STRINGS("Invert strings"), //
 		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
 		LEFT_HANDED("Left handed"), //
@@ -180,16 +201,6 @@ public class Localization {
 		LRC_FILE("LRC file"), //
 		LRC_IMPORTED_SUCCESSFULLY("LRC vocals imported successfully"), //
 		MAIN_AUDIO("Main audio"), //
-		MARK_BOOKMARK_0("Mark bookmark 0"), //
-		MARK_BOOKMARK_1("Mark bookmark 1"), //
-		MARK_BOOKMARK_2("Mark bookmark 2"), //
-		MARK_BOOKMARK_3("Mark bookmark 3"), //
-		MARK_BOOKMARK_4("Mark bookmark 4"), //
-		MARK_BOOKMARK_5("Mark bookmark 5"), //
-		MARK_BOOKMARK_6("Mark bookmark 6"), //
-		MARK_BOOKMARK_7("Mark bookmark 7"), //
-		MARK_BOOKMARK_8("Mark bookmark 8"), //
-		MARK_BOOKMARK_9("Mark bookmark 9"), //
 		MARKER_POSITION_PX("Marker position (px)"), //
 		MAX_BEND_VALUE("Max bend value"), //
 		MAX_STRINGS("Max strings"), //
@@ -205,16 +216,6 @@ public class Localization {
 		MOVE_FRET_DOWN_OCTAVE("Move notes twelve frets down"), //
 		MOVE_FRET_UP("Move notes one fret up"), //
 		MOVE_FRET_UP_OCTAVE("Move notes twelve frets up"), //
-		MOVE_TO_BOOKMARK_0("Move to bookmark 0"), //
-		MOVE_TO_BOOKMARK_1("Move to bookmark 1"), //
-		MOVE_TO_BOOKMARK_2("Move to bookmark 2"), //
-		MOVE_TO_BOOKMARK_3("Move to bookmark 3"), //
-		MOVE_TO_BOOKMARK_4("Move to bookmark 4"), //
-		MOVE_TO_BOOKMARK_5("Move to bookmark 5"), //
-		MOVE_TO_BOOKMARK_6("Move to bookmark 6"), //
-		MOVE_TO_BOOKMARK_7("Move to bookmark 7"), //
-		MOVE_TO_BOOKMARK_8("Move to bookmark 8"), //
-		MOVE_TO_BOOKMARK_9("Move to bookmark 9"), //
 		MUSIC_FOLDER("Music folder"), //
 		NAME_CANT_BE_EMPTY("Name can't be empty"), //
 		NEW_ARRANGEMENT("New arrangement..."), //
@@ -236,12 +237,14 @@ public class Localization {
 		NO_END_PHRASE_IN_ARRANGEMENT("No END phrase in arrangement"), //
 		NO_SECTIONS_IN_ARRANGEMENT("No sections in arrangement"), //
 		NOTE_FRET_BELOW_CAPO("Note fret is below capo, for open string it should be equal"), //
+		NOTE_FRET_OPERATIONS("Note fret operations"), //
 		NOTE_IN_WRONG_FHP("Note in wrong FHP"), //
 		NOTE_SLIDE_FROM_OPEN_STRING("Slide starts on open string"), //
 		NOTE_SLIDE_NOT_LINKED("Pitched note slide is not linked to next note"), //
 		NOTE_SLIDES_INTO_CHORD("Note slide ends on a chord, should end on note"), //
 		NOTE_SLIDES_INTO_WRONG_FRET("Note slide ends on a different fret than next note on string %d"), //
 		NOTE_SLIDE_ENDS_ON_DIFFERENT_FINGER("Note slide ends on different finger on string %d"), //
+		NOTE_STRING_SELECTION_OPERATIONS("Note string selection operations"), //
 		NOTE_WITHOUT_FHP("Note without FHP"), //
 		NUMBER_0("Number 0"), //
 		NUMBER_1("Number 1"), //
@@ -268,6 +271,7 @@ public class Localization {
 		PASS_FILTER_ORDER("Order"), //
 		PASS_FILTER_RIPPLE_DB("Ripple dB"), //
 		PASTE("Paste"), //
+		PHRASE_INSIDE_HAND_SHAPE("Phrase inside a Hand Shape"), //
 		PHRASE_NAME("Phrase name"), //
 		PICKED_BASS("Picked"), //
 		PITCH_FROM("Change pitch from"), //
@@ -322,6 +326,8 @@ public class Localization {
 		SECTION_WITHOUT_PHRASE("Section without phrase"), //
 		SELECT_ALL("Select all"), //
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
+		SET_DEFAULT_START_SILENCE("Set default starting silence"), //
+		SET_HAND_SHAPE_TEMPLATE_ON_CHORDS("Set hand shape template on chords"), //
 		SET_LENGTH("Set length"), //
 		SET_LENGTH_TO_SECONDS("Set length to be this many seconds:"), //
 		SHORTCUTS_SET_CHARTER_DEFAULT("Charter default"), //
@@ -329,6 +335,7 @@ public class Localization {
 		SHORTCUTS_SET_EOF_DEFAULT("EoF default"), //
 		SHOW_CHORD_IDS("Show chord ids"), //
 		SHOW_GRID("Show grid"), //
+		SHOW_NOTE_NAMES("Show note names"), //
 		SHOW_TEMPO_INSTEAD_OF_BPM("Show tempo instead of BPM"), //
 		SHOWLIGHT_ADD("Add showlight"), //
 		SHOWLIGHT_BEAMS_BLUE("Blue beams"), //
@@ -359,6 +366,11 @@ public class Localization {
 		SHOWLIGHT_LASERS_OFF("Lasers off"), //
 		SHOWLIGHT_LASERS_ON("Lasers on"), //
 		SHOWLIGHT_REMOVE("Remove showlight"), //
+		SIZE_S("S"), //
+		SIZE_M("M"), //
+		SIZE_L("L"), //
+		SIZE_XL("XL"), //
+		SIZE_XXL("XXL"), //
 		SONG_OPTIONS("Song options"), //
 		SONGS_FOLDER("Songs folder"), //
 		SOUND_DELAY("Sound delay (ms)"), //
@@ -373,6 +385,16 @@ public class Localization {
 		STARTING_TONE("Starting tone"), //
 		STUDYING_AUDIO("Studying audio: %s"), //
 		SUPPORTED_MUSIC_FILE("Flac, Mp3, Ogg or Wav file"), //
+		STRING_0("String 0"), //
+		STRING_1("String 1"), //
+		STRING_2("String 2"), //
+		STRING_3("String 3"), //
+		STRING_4("String 4"), //
+		STRING_5("String 5"), //
+		STRING_6("String 6"), //
+		STRING_7("String 7"), //
+		STRING_8("String 8"), //
+		STRING_9("String 9"), //
 		SWITCH_TYPING_PART("Switch typing part"), //
 		TAB_3D_PREVIEW("3D preview"), //
 		TAB_CHORD_TEMPLATES_EDITOR("Chord templates"), //
@@ -381,6 +403,7 @@ public class Localization {
 		TAB_QUICK_EDIT("Quick edit"), //
 		TAB_TEXT("Text"), //
 		TAP_ON_FRET_ZERO("Tap on fret zero"), //
+		TEMPO_MAP_MENU("Tempo map"), //
 		THEME_BASIC("Basic"), //
 		THEME_MODERN("Modern"), //
 		THEME_SQUARE("Square"), //
@@ -432,6 +455,10 @@ public class Localization {
 		FIRST_FINGER_NOT_ON_FIRST_FHP_FRET("First finger is not on first fret in FHP"), //
 		XML_IMPORT_TYPE("XML import type"), //
 		XML_IMPORT_AS("Choose what to import the XML as"), //
+		ZOOM_IN("Zoom in"), //
+		ZOOM_IN_FAST("Zoom in fast"), //
+		ZOOM_OUT("Zoom out"), //
+		ZOOM_OUT_FAST("Zoom out fast"), //
 
 		FILE_MENU_IMPORT("Import"), //
 		FILE_MENU_IMPORT_RS_GUITAR("RS guitar arrangement XML"), //
@@ -459,7 +486,6 @@ public class Localization {
 		MOVE_STRING_DOWN("Move notes string down"), //
 		MOVE_STRING_UP_SIMPLE("Move notes string up keeping the frets"), //
 		MOVE_STRING_DOWN_SIMPLE("Move notes string down keeping the frets"), //
-		NOTE_FRET_OPERATIONS("Note fret operations"), //
 		NOTE_STATUS_OPERATIONS("Note status operations"), //
 		TOGGLE_MUTE("Toggle mutes"), //
 		TOGGLE_MUTE_INDEPENDENTLY("Toggle mutes independently"), //
@@ -576,9 +602,9 @@ public class Localization {
 
 		LINK_NEXT("Link next"), //
 		SPLIT_INTO_NOTES("Split"), //
-		FORCE_NO_NOTES("No notes"), //
+		ONLY_BOX("Only box"), //
 		IGNORE("Ignore"), //
-		PASS_OTHER_NOTES("Pass other notes"), //
+		PASS_NOTES("Pass notes"), //
 		VIBRATO("Vibrato"), //
 		TREMOLO("Tremolo"), //
 

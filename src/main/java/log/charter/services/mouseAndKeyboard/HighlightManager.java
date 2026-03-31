@@ -37,7 +37,9 @@ import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawerUtils;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.GuitarDrawerUtils.ItemWithDrawingPosition;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.selection.SelectionManager;
+import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
+import log.charter.util.CollectionUtils;
 import log.charter.util.collections.Pair;
 import log.charter.util.grid.GridPosition;
 
@@ -220,7 +222,26 @@ public class HighlightManager {
 		return null;
 	}
 
-	public PositionWithIdAndType getHighlight(final int x, final int y) {
+	private PositionWithIdAndType findCloseBeatOnTempoMap() {
+		if (!modeManager.modeIs(EditMode.TEMPO_MAP)) {
+			return null;
+		}
+
+		final Integer closestBeatId = CollectionUtils.closest(chartData.beats(), new Position(chartTimeHandler.time()))
+				.findId();
+		if (closestBeatId == null) {
+			return null;
+		}
+
+		final Beat beat = chartData.beats().get(closestBeatId);
+		if (Math.abs(beat.position() - chartTimeHandler.time()) < 10) {
+			return PositionWithIdAndType.of(chartData.beats(), closestBeatId, beat);
+		}
+
+		return null;
+	}
+
+	public PositionWithIdAndType getHighlight(final int x, final int y, final boolean mousePress) {
 		final PositionType positionType = PositionType.fromY(y, modeManager.getMode());
 
 		final ImmutableBeatsMap beats = chartData.beats();
@@ -233,6 +254,13 @@ public class HighlightManager {
 		final PositionWithIdAndType existingPosition = selectionManager.findExistingPosition(x, y);
 		if (existingPosition != null) {
 			return existingPosition;
+		}
+
+		if (!mousePress) {
+			final PositionWithIdAndType closeBeatPosition = findCloseBeatOnTempoMap();
+			if (closeBeatPosition != null) {
+				return closeBeatPosition;
+			}
 		}
 
 		final double mouseTime = xToPosition(x, chartTimeHandler.time());
@@ -255,7 +283,7 @@ public class HighlightManager {
 	}
 
 	public PositionWithIdAndType getHighlight() {
-		return getHighlight(mouseHandler.getMouseX(), mouseHandler.getMouseY());
+		return getHighlight(mouseHandler.getMouseX(), mouseHandler.getMouseY(), false);
 	}
 
 	public List<PositionWithStringOrNoteId> getPositionsWithStrings(final double fromPosition, final double toPosition,

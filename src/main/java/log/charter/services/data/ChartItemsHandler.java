@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -324,13 +325,13 @@ public class ChartItemsHandler {
 	}
 
 	public void changeSoundsLength(final List<Selection<ChordOrNote>> toChange, final int gridsChange,
-			final List<Integer> selectedStrings) {
+			final Set<Integer> editedStrings) {
 		final ImmutableBeatsMap beats = chartData.beats();
 		final List<ChordOrNote> sounds = chartData.currentSounds();
 
 		for (final Selection<ChordOrNote> selected : toChange) {
 			selected.selectable.notes().forEach(note -> {
-				if (!selectedStrings.contains(note.string())) {
+				if (!editedStrings.contains(note.string())) {
 					return;
 				}
 

@@ -34,6 +34,7 @@ import javax.swing.JComponent;
 import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
+import log.charter.data.config.Config;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
@@ -48,7 +49,6 @@ import log.charter.util.data.IntRange;
 import log.charter.util.data.Position2D;
 
 public class ChordTemplatePreview extends JComponent implements MouseListener, MouseMotionListener, KeyListener {
-
 	private static final long serialVersionUID = 1L;
 	private static final double fretsProportion = pow(2, -1.0 / 12);
 	private static final int minFrets = 7;
@@ -262,12 +262,14 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 			pressMarks.add(lineHorizontal(0, getWidth(), stringPositions[string] - 3 + j, color));
 		}
 
-		final int tone = SoundUtils.getSound(data.currentArrangement().tuning, data.currentArrangement().isBass(),
-				string, 0);
-		final String toneName = SoundUtils.soundToSimpleName(tone, parentListenerAdded);
-		final Color toneColor = getStringBasedColor(StringColorLabelType.NOTE, string, strings);
-		pressMarks.add(new Text(new Position2D(fretPositions[0].position + 5, stringPositions[string] - 15), font,
-				toneName, toneColor));
+		if (Config.showNoteNames) {
+			final int tone = SoundUtils.getSound(data.currentArrangement().tuning, data.currentArrangement().isBass(),
+					string, 0);
+			final String toneName = SoundUtils.soundToSimpleName(tone, parentListenerAdded);
+			final Color toneColor = getStringBasedColor(StringColorLabelType.NOTE, string, strings);
+			pressMarks.add(new Text(new Position2D(fretPositions[0].position + 5, stringPositions[string] - 15), font,
+					toneName, toneColor));
+		}
 	}
 
 	private void drawFretPressMark(final DrawableShapeList pressMarks, final FretPosition[] fretPositions,
@@ -284,11 +286,13 @@ public class ChordTemplatePreview extends JComponent implements MouseListener, M
 
 		pressMarks.add(new CenteredText(position, font, fingerText, ColorLabel.BASE_TEXT_INPUT));
 
-		final int tone = SoundUtils.getSound(data.currentArrangement().tuning, data.currentArrangement().isBass(),
-				string, fret);
-		final String toneName = SoundUtils.soundToSimpleName(tone, parentListenerAdded);
-		final Color toneColor = getStringBasedColor(StringColorLabelType.NOTE, string, strings);
-		pressMarks.add(new Text(position.move(10, -12), font, toneName, toneColor));
+		if (Config.showNoteNames) {
+			final int tone = SoundUtils.getSound(data.currentArrangement().tuning, data.currentArrangement().isBass(),
+					string, fret);
+			final String toneName = SoundUtils.soundToSimpleName(tone, parentListenerAdded);
+			final Color toneColor = getStringBasedColor(StringColorLabelType.NOTE, string, strings);
+			pressMarks.add(new Text(position.move(10, -12), font, toneName, toneColor));
+		}
 	}
 
 	private void drawFretPressMarks(final Graphics2D g, final FretPosition[] fretPositions) {

@@ -2,6 +2,7 @@ package log.charter.services.data.validation;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
@@ -9,8 +10,8 @@ import log.charter.data.song.Level;
 import log.charter.gui.CharterFrame.TabType;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
-import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator.ChartPosition;
+import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.util.CollectionUtils;
 
 public class FHPsValidator {
@@ -31,6 +32,18 @@ public class FHPsValidator {
 				final ChartPosition position = chartPositionGenerator.position()//
 						.arrangement(arrangementId).level(levelId).fhp(i).tab(TabType.QUICK_EDIT).build();
 				errorsTab.addError(new ChartError(Label.FHP_STARTS_ON_WRONG_FRET, position));
+			}
+		}
+	}
+
+	private void checkFhpAboveMaxFret(final int arrangementId, final Arrangement arrangement, final int levelId,
+			final Level level) {
+		for (int i = 0; i < level.fhps.size(); i++) {
+			final FHP fhp = level.fhps.get(i);
+			if (fhp.topFret() > InstrumentConfig.frets) {
+				final ChartPosition position = chartPositionGenerator.position()//
+						.arrangement(arrangementId).level(levelId).fhp(i).tab(TabType.QUICK_EDIT).build();
+				errorsTab.addError(new ChartError(Label.FHP_TOP_FRET_TOO_HIGH, position));
 			}
 		}
 	}
@@ -73,6 +86,7 @@ public class FHPsValidator {
 
 	public void validate(final int arrangementId, final Arrangement arrangement, final int levelId, final Level level) {
 		checkFhpBelowCapo(arrangementId, arrangement, levelId, level);
+		checkFhpAboveMaxFret(arrangementId, arrangement, levelId, level);
 		checkFhpTooCloseToNext(arrangementId, arrangement, levelId, level);
 		checkFhpInsideHandShape(arrangementId, arrangement, levelId, level);
 	}

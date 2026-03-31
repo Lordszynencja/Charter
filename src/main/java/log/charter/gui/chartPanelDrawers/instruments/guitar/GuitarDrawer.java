@@ -44,11 +44,16 @@ import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
+import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.util.data.Position2D;
 
 public class GuitarDrawer {
+	private static int selectedStringWidth = 0;
+
 	public static void reloadGraphics() {
 		HighwayDrawer.reloadGraphics();
+
+		selectedStringWidth = DrawerUtils.getAsOdd(noteHeight / 5);
 	}
 
 	public static final BigDecimal bendStepSize = new BigDecimal("10");
@@ -63,6 +68,7 @@ public class GuitarDrawer {
 
 	private BeatsDrawer beatsDrawer;
 	private ChartPanel chartPanel;
+	private CurrentSelectionEditor currentSelectionEditor;
 	private GuitarDrawerUtils guitarDrawerUtils;
 	private LyricLinesDrawer lyricLinesDrawer;
 	private WaveFormDrawer waveFormDrawer;
@@ -76,9 +82,15 @@ public class GuitarDrawer {
 		final int x = max(0, positionToX(0, frameData.time));
 
 		for (int lane = 0; lane < strings; lane++) {
-			frameData.g.setColor(getStringBasedColor(StringColorLabelType.LANE, lane, strings));
 			final int y = getLaneY(getStringPosition(lane, strings));
-			frameData.g.drawLine(x, y, panelWidth, y);
+
+			if (currentSelectionEditor.isSelected(lane)) {
+				frameData.g.setColor(getStringBasedColor(StringColorLabelType.LANE_BRIGHT, lane, strings));
+				frameData.g.fillRect(x, y - selectedStringWidth / 2, panelWidth, selectedStringWidth);
+			} else {
+				frameData.g.setColor(getStringBasedColor(StringColorLabelType.LANE, lane, strings));
+				frameData.g.drawLine(x, y, panelWidth, y);
+			}
 		}
 	}
 
@@ -327,6 +339,7 @@ public class GuitarDrawer {
 		GuitarEventPointsDrawer.addEventPoints(frameData, panelWidth, highwayDrawer, guitarDrawerUtils);
 		GuitarToneChangeDrawer.addToneChanges(frameData, panelWidth, highwayDrawer, guitarDrawerUtils);
 		GuitarFHPsDrawer.addFHPs(frameData, panelWidth, highwayDrawer);
+
 		drawGuitarLanes(frameData, panelWidth);
 		addGuitarNotes(frameData, panelWidth, highwayDrawer);
 		addHandShapes(frameData, panelWidth, highwayDrawer);

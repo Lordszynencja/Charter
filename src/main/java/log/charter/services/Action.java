@@ -16,9 +16,21 @@ public enum Action {
 	ARRANGEMENT_PREVIOUS(EditMode.nonEmpty), //
 	BEAT_ADD(TEMPO_MAP), //
 	BEAT_REMOVE(TEMPO_MAP), //
+	BOOKMARK_0(EditMode.nonEmpty), //
+	BOOKMARK_1(EditMode.nonEmpty), //
+	BOOKMARK_2(EditMode.nonEmpty), //
+	BOOKMARK_3(EditMode.nonEmpty), //
+	BOOKMARK_4(EditMode.nonEmpty), //
+	BOOKMARK_5(EditMode.nonEmpty), //
+	BOOKMARK_6(EditMode.nonEmpty), //
+	BOOKMARK_7(EditMode.nonEmpty), //
+	BOOKMARK_8(EditMode.nonEmpty), //
+	BOOKMARK_9(EditMode.nonEmpty), //
 	BPM_DOUBLE(TEMPO_MAP), //
 	BPM_HALVE(TEMPO_MAP), //
 	COPY(EditMode.nonEmpty), //
+	DECREASE_LENGTH(GUITAR, VOCALS), //
+	DECREASE_LENGTH_FAST(GUITAR, VOCALS), //
 	DELETE(EditMode.withItems), //
 	DELETE_RELATED(GUITAR), //
 	DOUBLE_GRID(EditMode.withItems), //
@@ -26,6 +38,13 @@ public enum Action {
 	EXIT(EditMode.values()), //
 	FAST_BACKWARD(EditMode.nonEmpty), //
 	FAST_FORWARD(EditMode.nonEmpty), //
+	FINGER_1(GUITAR), //
+	FINGER_2(GUITAR), //
+	FINGER_3(GUITAR), //
+	FINGER_4(GUITAR), //
+	FINGER_T(GUITAR), //
+	INCREASE_LENGTH(GUITAR, VOCALS), //
+	INCREASE_LENGTH_FAST(GUITAR, VOCALS), //
 	NUMBER_0(TEMPO_MAP, GUITAR), //
 	NUMBER_1(TEMPO_MAP, GUITAR), //
 	NUMBER_2(TEMPO_MAP, GUITAR), //
@@ -37,16 +56,6 @@ public enum Action {
 	NUMBER_8(TEMPO_MAP, GUITAR), //
 	NUMBER_9(TEMPO_MAP, GUITAR), //
 	HALVE_GRID(EditMode.withItems), //
-	MARK_BOOKMARK_0(EditMode.nonEmpty), //
-	MARK_BOOKMARK_1(EditMode.nonEmpty), //
-	MARK_BOOKMARK_2(EditMode.nonEmpty), //
-	MARK_BOOKMARK_3(EditMode.nonEmpty), //
-	MARK_BOOKMARK_4(EditMode.nonEmpty), //
-	MARK_BOOKMARK_5(EditMode.nonEmpty), //
-	MARK_BOOKMARK_6(EditMode.nonEmpty), //
-	MARK_BOOKMARK_7(EditMode.nonEmpty), //
-	MARK_BOOKMARK_8(EditMode.nonEmpty), //
-	MARK_BOOKMARK_9(EditMode.nonEmpty), //
 	MARK_HAND_SHAPE(GUITAR), //
 	MEASURE_ADD(TEMPO_MAP), //
 	MEASURE_REMOVE(TEMPO_MAP), //
@@ -60,23 +69,13 @@ public enum Action {
 	MOVE_STRING_DOWN_SIMPLE(GUITAR), //
 	MOVE_STRING_UP(GUITAR), //
 	MOVE_STRING_UP_SIMPLE(GUITAR), //
-	MOVE_TO_BOOKMARK_0(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_1(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_2(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_3(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_4(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_5(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_6(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_7(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_8(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_9(EditMode.nonEmpty), //
 	MOVE_TO_END(EditMode.nonEmpty), //
 	MOVE_TO_FIRST_ITEM(EditMode.nonEmpty), //
 	MOVE_TO_LAST_ITEM(EditMode.nonEmpty), //
 	MOVE_TO_START(EditMode.nonEmpty), //
 	NEW_PROJECT(EditMode.values()), //
 	NEXT_BEAT(EditMode.nonEmpty), //
-	NEXT_GRID(Label.NEXT_GRID_POSITION, EditMode.withItems), //
+	NEXT_GRID_POSITION(EditMode.withItems), //
 	NEXT_ITEM(EditMode.nonEmpty), //
 	NEXT_ITEM_WITH_SELECT(EditMode.withItems), //
 	NEXT_ITEM_TYPE(GUITAR), //
@@ -85,14 +84,15 @@ public enum Action {
 	PLACE_LYRIC_FROM_TEXT(VOCALS), //
 	PLAY_AUDIO(EditMode.nonEmpty), //
 	PREVIOUS_BEAT(EditMode.nonEmpty), //
-	PREVIOUS_GRID(Label.PREVIOUS_GRID_POSITION, EditMode.withItems), //
+	PREVIOUS_GRID_POSITION(EditMode.withItems), //
 	PREVIOUS_ITEM(EditMode.nonEmpty), //
 	PREVIOUS_ITEM_WITH_SELECT(EditMode.withItems), //
 	PREVIOUS_ITEM_TYPE(GUITAR), //
 	REDO(EditMode.nonEmpty), //
-	SAVE(Label.SAVE_PROJECT, EditMode.nonEmpty), //
-	SAVE_AS(Label.SAVE_PROJECT_AS, EditMode.nonEmpty), //
+	SAVE_PROJECT(EditMode.nonEmpty), //
+	SAVE_PROJECT_AS(EditMode.nonEmpty), //
 	SELECT_ALL(EditMode.withItems), //
+	SET_HAND_SHAPE_TEMPLATE_ON_CHORDS(GUITAR), //
 	SLOW_BACKWARD(EditMode.nonEmpty), //
 	SLOW_FORWARD(EditMode.nonEmpty), //
 	SNAP_ALL(EditMode.withItems), //
@@ -104,6 +104,15 @@ public enum Action {
 	SPEED_INCREASE(EditMode.nonEmpty), //
 	SPEED_INCREASE_FAST(EditMode.nonEmpty), //
 	SPEED_INCREASE_PRECISE(EditMode.nonEmpty), //
+	STRING_1(TEMPO_MAP, GUITAR), //
+	STRING_2(TEMPO_MAP, GUITAR), //
+	STRING_3(TEMPO_MAP, GUITAR), //
+	STRING_4(TEMPO_MAP, GUITAR), //
+	STRING_5(TEMPO_MAP, GUITAR), //
+	STRING_6(TEMPO_MAP, GUITAR), //
+	STRING_7(TEMPO_MAP, GUITAR), //
+	STRING_8(TEMPO_MAP, GUITAR), //
+	STRING_9(TEMPO_MAP, GUITAR), //
 	SWITCH_TYPING_PART(TEMPO_MAP, GUITAR), //
 	TOGGLE_ACCENT(GUITAR), //
 	TOGGLE_ACCENT_INDEPENDENTLY(GUITAR), //
@@ -136,7 +145,11 @@ public enum Action {
 	TOGGLE_VIBRATO_INDEPENDENTLY(GUITAR), //
 	TOGGLE_WAVEFORM_GRAPH(EditMode.withItems), //
 	TOGGLE_WORD_PART(VOCALS), //
-	UNDO(EditMode.nonEmpty),//
+	UNDO(EditMode.nonEmpty), //
+	ZOOM_IN(EditMode.nonEmpty), //
+	ZOOM_IN_FAST(EditMode.nonEmpty), //
+	ZOOM_OUT(EditMode.nonEmpty), //
+	ZOOM_OUT_FAST(EditMode.nonEmpty),//
 
 	;
 

@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import javax.swing.JComponent;
 import javax.swing.JSlider;
 import javax.swing.plaf.metal.MetalSliderUI;
 
@@ -20,6 +21,12 @@ public class CharterSliderUI extends MetalSliderUI {
 	}
 
 	@Override
+	public void installUI(final JComponent c) {
+		super.installUI(c);
+		c.setForeground(ColorLabel.BASE_HIGHLIGHT.color());
+	}
+
+	@Override
 	public void paintThumb(final Graphics g) {
 		if (slider.getOrientation() != JSlider.HORIZONTAL) {
 			super.paintThumb(g);
@@ -30,7 +37,7 @@ public class CharterSliderUI extends MetalSliderUI {
 		setupGraphics(g2d);
 
 		// thumb color
-		g2d.setColor(ColorLabel.BASE_HIGHLIGHT.color());
+		g2d.setColor(slider.getForeground());
 		g2d.fillOval(thumbRect.x, thumbRect.y, thumbRect.width, thumbRect.height);
 	}
 
@@ -45,7 +52,7 @@ public class CharterSliderUI extends MetalSliderUI {
 		final int x2 = x0 + trackRect.width;
 
 		// before thumb
-		g2d.setColor(ColorLabel.BASE_HIGHLIGHT.color());
+		g2d.setColor(slider.getForeground());
 		g2d.fillRect(x0, y, x1 - x0, 3);
 
 		// after thumb

@@ -1,5 +1,8 @@
 package log.charter.gui.panes.songEdits;
 
+import static log.charter.gui.components.simple.TextInputWithValidation.errorBackground;
+import static log.charter.gui.components.simple.TextInputWithValidation.errorBackgroundBorder;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +19,8 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.AutocompleteInput;
-import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.PaneSizesBuilder;
+import log.charter.gui.lookAndFeel.CharterTextFieldUI;
 import log.charter.util.CollectionUtils;
 
 public class ToneChangePane extends ParamsPane implements DocumentListener {
@@ -84,6 +87,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 	public void changedUpdate(final DocumentEvent e) {
 		if (error) {
 			toneNameInput.setToolTipText(null);
+			toneNameInput.setBorder(CharterTextFieldUI.defaultBorder());
 			toneNameInput.setBackground(toneNameInputBackgroundColor);
 			error = false;
 		}
@@ -94,7 +98,8 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		if (arrangement.tones.size() >= 4 && !arrangement.tones.contains(name) && !name.isEmpty()) {
 			error = true;
 			toneNameInputBackgroundColor = toneNameInput.getBackground();
-			toneNameInput.setBackground(TextInputWithValidation.errorBackground);
+			toneNameInput.setBorder(CharterTextFieldUI.defaultBorder(errorBackgroundBorder));
+			toneNameInput.setBackground(errorBackground);
 			toneNameInput.setToolTipText(Label.TONE_NAME_PAST_LIMIT.label());
 
 			return;

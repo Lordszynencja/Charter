@@ -3,8 +3,6 @@ package log.charter.gui.panes.songEdits;
 import static java.lang.Math.min;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
-import java.io.File;
-
 import com.breakfastquay.rubberband.RubberBandStretcher;
 
 import log.charter.data.config.Localization.Label;
@@ -18,7 +16,6 @@ import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.DoubleValueValidator;
 import log.charter.services.data.ProjectAudioHandler;
-import log.charter.sound.SoundFileType;
 import log.charter.sound.data.AudioData;
 import log.charter.sound.utils.FloatSamplesUtils;
 
@@ -142,6 +139,7 @@ public class ChangeSongPitchPane extends RowedDialog {
 
 	private void saveAndExit() {
 		setVisible(false);
+
 		LoadingDialog.doWithLoadingDialog(frame, 4, loadingDialog -> {
 			loadingDialog.setProgress(0, "Reading samples");
 			final AudioData audio = projectAudioHandler.getAudio();
@@ -149,15 +147,15 @@ public class ChangeSongPitchPane extends RowedDialog {
 			final int channels = audio.format.getChannels();
 			final float[][] samples = FloatSamplesUtils.splitAudioFloat(audio.data, sampleSize, channels);
 
+			loadingDialog.setProgress(1, "Shifting samples");
 			shiftAudio(loadingDialog, samples, (int) audio.format.getSampleRate(), channels);
 
 			loadingDialog.changeMaxProgress(4);
 			loadingDialog.setProgress(2, "Writing samples");
 			final byte[] bytes = FloatSamplesUtils.toBytes(samples, sampleSize, channels);
 			final AudioData shiftedAudio = new AudioData(bytes, audio.format.getSampleRate(), sampleSize, channels);
-			final File file = new File("C:/users/szymon/desktop/" + pitchFrom + "_" + pitchTo + ".wav");
 
-			SoundFileType.WAV.write(loadingDialog, shiftedAudio, file);
+			projectAudioHandler.changeAudio(shiftedAudio);
 		}, Label.SAVING_AUDIO.label());
 	}
 }
