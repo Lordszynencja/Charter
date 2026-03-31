@@ -8,10 +8,10 @@ import log.charter.data.config.values.DebugConfig;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.SpecialMenuItem;
 import log.charter.gui.panes.songEdits.AddBeatsAtTheStartPane;
-import log.charter.gui.panes.songEdits.AddDefaultSilencePane;
 import log.charter.gui.panes.songEdits.AddSilenceAtTheEndPane;
 import log.charter.gui.panes.songEdits.AddSilenceInTheBeginningPane;
 import log.charter.gui.panes.songEdits.ChangeSongPitchPane;
+import log.charter.gui.panes.songEdits.SetDefaultSilencePane;
 import log.charter.services.Action;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
@@ -48,6 +48,14 @@ class EditMenuHandler extends CharterMenuHandler {
 		}
 	}
 
+	private void addAdvancedAudioTempoMapEdits(final JMenu menu) {
+		final JMenu submenu = createMenu(Label.ADVANCED_AUDIO_TEMPO_MAP_EDITS);
+		submenu.add(new SpecialMenuItem(Label.ADD_SILENCE_IN_THE_BEGINNING, this::addSilenceInTheBeginning));
+		submenu.add(new SpecialMenuItem(Label.ADD_BEATS_AT_THE_START, this::addBeatsAtTheStart));
+		submenu.add(new SpecialMenuItem(Label.ADD_SILENCE_AT_THE_END, this::addSilenceIAtTheEnd));
+		menu.add(submenu);
+	}
+
 	private void addBookmarksSubmenu(final JMenu menu) {
 		final JMenu bookmarksSubmenu = createMenu(Label.BOOKMARKS_MENU);
 		for (int i = 0; i < 10; i++) {
@@ -69,12 +77,8 @@ class EditMenuHandler extends CharterMenuHandler {
 		addSelectOptionsIfNeeded(menu);
 
 		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.ADD_SILENCE_IN_THE_BEGINNING, this::addSilenceInTheBeginning));
-		menu.add(new SpecialMenuItem(Label.ADD_DEFAULT_START_SILENCE, this::addDefaultSilence));
-		menu.add(new SpecialMenuItem(Label.ADD_BEATS_AT_THE_START, this::addBeatsAtTheStart));
-
-		menu.addSeparator();
-		menu.add(new SpecialMenuItem(Label.ADD_SILENCE_AT_THE_END, this::addSilenceIAtTheEnd));
+		menu.add(new SpecialMenuItem(Label.SET_DEFAULT_START_SILENCE, this::setDefaultSilence));
+		addAdvancedAudioTempoMapEdits(menu);
 
 		if (DebugConfig.enablePitchShifting) {
 			menu.addSeparator();
@@ -95,12 +99,12 @@ class EditMenuHandler extends CharterMenuHandler {
 		return menu;
 	}
 
-	private void addSilenceInTheBeginning() {
-		new AddSilenceInTheBeginningPane(charterFrame, chartTimeHandler, chartData, projectAudioHandler);
+	private void setDefaultSilence() {
+		new SetDefaultSilencePane(charterFrame, chartTimeHandler, chartData, projectAudioHandler);
 	}
 
-	private void addDefaultSilence() {
-		new AddDefaultSilencePane(charterFrame, chartTimeHandler, chartData, projectAudioHandler);
+	private void addSilenceInTheBeginning() {
+		new AddSilenceInTheBeginningPane(charterFrame, chartTimeHandler, chartData, projectAudioHandler);
 	}
 
 	private void addBeatsAtTheStart() {

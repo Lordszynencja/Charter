@@ -20,7 +20,7 @@ import log.charter.sound.data.AudioData.DifferentSampleRateException;
 import log.charter.sound.data.AudioData.DifferentSampleSizesException;
 import log.charter.sound.utils.AudioGenerator;
 
-public class AddDefaultSilencePane extends ParamsPane {
+public class SetDefaultSilencePane extends ParamsPane {
 	private static final long serialVersionUID = -4754359602173894487L;
 
 	private final ChartTimeHandler chartTimeHandler;
@@ -29,7 +29,7 @@ public class AddDefaultSilencePane extends ParamsPane {
 
 	private int bars = 1;
 
-	public AddDefaultSilencePane(final CharterFrame frame, final ChartTimeHandler chartTimeHandler,
+	public SetDefaultSilencePane(final CharterFrame frame, final ChartTimeHandler chartTimeHandler,
 			final ChartData data, final ProjectAudioHandler projectAudioHandler) {
 		super(frame, Label.ADD_DEFAULT_SILENCE_PANE, 300);
 		this.chartTimeHandler = chartTimeHandler;

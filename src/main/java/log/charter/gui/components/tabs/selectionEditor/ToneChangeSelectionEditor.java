@@ -86,7 +86,7 @@ public class ToneChangeSelectionEditor extends SelectionEditorPart<ToneChange> {
 	private void setError(final Label label) {
 		error = true;
 		toneNameInputBackgroundColor = toneNameField.field.getBackground();
-		toneNameField.field.setBackground(TextInputWithValidation.errorBackground);
+		toneNameField.field.setBackground(TextInputWithValidation.errorBackgroundBorder);
 		toneNameField.field.setToolTipText(label.label());
 	}
 

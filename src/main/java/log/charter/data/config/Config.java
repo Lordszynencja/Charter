@@ -41,6 +41,7 @@ public class Config {
 	public static int stretchedMusicSpeed = 100;
 	public static boolean selectNotesByTails = false;
 	public static boolean audioFolderChosenForNewSong = false;
+	public static boolean showNoteNames = false;
 
 	private static boolean changed = false;
 

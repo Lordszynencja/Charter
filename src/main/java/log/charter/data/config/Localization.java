@@ -23,10 +23,10 @@ public class Localization {
 		ADD_BEATS_AMOUNT("Add this many beats:"), //
 		ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
 		ADD_BEATS_PANE("Add beats"), //
-		ADD_DEFAULT_START_SILENCE("Add default starting silence with empty bars"), //
 		ADD_LEVEL("Add level"), //
 		ADD_SILENCE_AT_THE_END("Add silence at the end"), //
 		ADD_SILENCE_IN_THE_BEGINNING("Add silence in the beginning"), //
+		ADVANCED_AUDIO_TEMPO_MAP_EDITS("Advanced audio/tempo map edits"), //
 		APRIL_FOOLS_ENABLED("April fools"), //
 		ARPEGGIO("Arpeggio"), //
 		ARRANGEMENT_ID_NAME("Arrangement %d, %s:"), //
@@ -269,6 +269,7 @@ public class Localization {
 		PASS_FILTER_ORDER("Order"), //
 		PASS_FILTER_RIPPLE_DB("Ripple dB"), //
 		PASTE("Paste"), //
+		PHRASE_INSIDE_HAND_SHAPE("Phrase inside a Hand Shape"), //
 		PHRASE_NAME("Phrase name"), //
 		PICKED_BASS("Picked"), //
 		PITCH_FROM("Change pitch from"), //
@@ -323,6 +324,7 @@ public class Localization {
 		SECTION_WITHOUT_PHRASE("Section without phrase"), //
 		SELECT_ALL("Select all"), //
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
+		SET_DEFAULT_START_SILENCE("Set default starting silence"), //
 		SET_LENGTH("Set length"), //
 		SET_LENGTH_TO_SECONDS("Set length to be this many seconds:"), //
 		SHORTCUTS_SET_CHARTER_DEFAULT("Charter default"), //
@@ -330,6 +332,7 @@ public class Localization {
 		SHORTCUTS_SET_EOF_DEFAULT("EoF default"), //
 		SHOW_CHORD_IDS("Show chord ids"), //
 		SHOW_GRID("Show grid"), //
+		SHOW_NOTE_NAMES("Show note names"), //
 		SHOW_TEMPO_INSTEAD_OF_BPM("Show tempo instead of BPM"), //
 		SHOWLIGHT_ADD("Add showlight"), //
 		SHOWLIGHT_BEAMS_BLUE("Blue beams"), //

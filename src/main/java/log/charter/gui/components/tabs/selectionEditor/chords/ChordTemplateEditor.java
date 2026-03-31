@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -32,6 +33,7 @@ import javax.swing.event.DocumentListener;
 import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
+import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
@@ -39,6 +41,8 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.simple.AutocompleteInput;
 import log.charter.gui.components.simple.AutocompleteInput.LabelComponent;
+import log.charter.gui.components.simple.FieldWithLabel;
+import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
@@ -185,6 +189,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	private final ArrayList<TextInputWithValidation> fretInputs = new ArrayList<>();
 	private final ArrayList<TextInputWithValidation> fingerInputs = new ArrayList<>();
 	private ChordTemplatePreview chordTemplatePreview;
+	private FieldWithLabel<JCheckBox> showNoteNames;
 
 	private int chordIdWidth = 1;
 	private int chordNameWidth = 1;
@@ -192,6 +197,14 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 	public ChordTemplateEditor(final RowedPanel parent) {
 		this.parent = parent;
+	}
+
+	private void generateNoteNamesVisibleCheckbox() {
+		final JCheckBox checkBox = new JCheckBox();
+		checkBox.setSelected(Config.showNoteNames);
+		checkBox.addActionListener(e -> Config.showNoteNames = checkBox.isSelected());
+
+		showNoteNames = new FieldWithLabel<>(Label.SHOW_NOTE_NAMES, 0, 25, 25, checkBox, LabelPosition.RIGHT_CLOSE);
 	}
 
 	public void init(final ChartData chartData, final CharterFrame charterFrame, final KeyboardHandler keyboardHandler,
@@ -203,6 +216,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		this.chordTemplateSupplier = chordTemplateSupplier;
 		chordTemplatePreview = new ChordTemplatePreview(parent, this, chartData, charterFrame::requestFocusInWindow,
 				keyboardHandler, chordTemplateSupplier);
+		generateNoteNamesVisibleCheckbox();
 	}
 
 	private int calculatePreviewHeight(final int strings) {
@@ -225,6 +239,8 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			final TextInputWithValidation fingerInput = fingerInputs.get(i);
 			setComponentBounds(fingerInput, fingerInput.getX(), y, fingerInput.getWidth(), fingerInput.getHeight());
 		}
+
+		showNoteNames.setLocation(x, chordTemplatePreview.getY() + chordTemplatePreview.preferredHeight() + 5);
 	}
 
 	public void addChordNameSuggestionButton(final int x, final int row) {
@@ -434,6 +450,9 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		final int y = parent.sizes.getY(row);
 		parent.addWithSettingSize(chordTemplatePreview, x, y, width,
 				calculatePreviewHeight(InstrumentConfig.maxStrings));
+
+		position.newRows(InstrumentConfig.maxStrings);
+		parent.addWithSettingSize(showNoteNames, position, 150);
 	}
 
 	private String validateFinger(final String val) {
@@ -553,6 +572,8 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		}
 
 		chordTemplatePreview.showFields();
+
+		showNoteNames.setVisible(true);
 	}
 
 	public void hideFields() {
@@ -577,6 +598,8 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		}
 
 		chordTemplatePreview.hideFields();
+
+		showNoteNames.setVisible(false);
 	}
 
 	public void clearChordName() {
