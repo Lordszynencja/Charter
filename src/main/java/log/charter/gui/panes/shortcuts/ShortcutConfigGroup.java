@@ -92,8 +92,8 @@ public enum ShortcutConfigGroup {
 	OTHER(Label.OTHER, //
 			Action.NEW_PROJECT, //
 			Action.OPEN_PROJECT, //
-			Action.SAVE, //
-			Action.SAVE_AS, //
+			Action.SAVE_PROJECT, //
+			Action.SAVE_PROJECT_AS, //
 			Action.TOGGLE_PREVIEW_WINDOW, //
 			Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW, //
 			Action.TOGGLE_MIDI, //

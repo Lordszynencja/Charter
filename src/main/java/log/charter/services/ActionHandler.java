@@ -307,6 +307,11 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.DOUBLE_GRID, this::doubleGridSize);
 		actionHandlers.put(Action.EDIT_VOCALS, vocalsHandler::editVocals);
 		actionHandlers.put(Action.EXIT, charterContext::exit);
+		actionHandlers.put(Action.FINGER_1, () -> guitarSoundsHandler.setFinger(1));
+		actionHandlers.put(Action.FINGER_2, () -> guitarSoundsHandler.setFinger(2));
+		actionHandlers.put(Action.FINGER_3, () -> guitarSoundsHandler.setFinger(3));
+		actionHandlers.put(Action.FINGER_4, () -> guitarSoundsHandler.setFinger(4));
+		actionHandlers.put(Action.FINGER_T, () -> guitarSoundsHandler.setFinger(0));
 		actionHandlers.put(Action.NUMBER_0, () -> handleNumber(0));
 		actionHandlers.put(Action.NUMBER_1, () -> handleNumber(1));
 		actionHandlers.put(Action.NUMBER_2, () -> handleNumber(2));
@@ -351,9 +356,10 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.PREVIOUS_ITEM_TYPE, selectionManager::previousItemType);
 		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT, chartTimeHandler::moveToPreviousItemWithSelect);
 		actionHandlers.put(Action.REDO, undoSystem::redo);
-		actionHandlers.put(Action.SAVE, songFileHandler::save);
-		actionHandlers.put(Action.SAVE_AS, songFileHandler::saveAs);
+		actionHandlers.put(Action.SAVE_PROJECT, songFileHandler::save);
+		actionHandlers.put(Action.SAVE_PROJECT_AS, songFileHandler::saveAs);
 		actionHandlers.put(Action.SELECT_ALL, selectionManager::selectAll);
+		actionHandlers.put(Action.SET_HAND_SHAPE_TEMPLATE_ON_CHORDS, guitarSoundsHandler::setHandShapeTemplateOnChords);
 		actionHandlers.put(Action.SNAP_ALL, chartItemsHandler::snapAll);
 		actionHandlers.put(Action.SNAP_SELECTED, chartItemsHandler::snapSelected);
 		actionHandlers.put(Action.SPECIAL_PASTE, copyManager::specialPaste);

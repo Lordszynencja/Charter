@@ -140,13 +140,18 @@ public class Localization {
 		EXIT("Exit"), //
 		EXPLOSIONS("Explosions"), //
 		EXPLOSIONS_SHAKY_CAM("Shaky cam"), //
+		FAST_FORWARD_TOOLTIP("Fast forwards the song"), //
 		FHP_INSIDE_HAND_SHAPE("Fret Hand Position change inside a Hand Shape"), //
 		FHP_PANE("FHP"), //
 		FHP_STARTS_ON_WRONG_FRET("Fret Hand Position starts on fret below or equal to capo/0"), //
 		FHP_TOO_CLOSE_TO_NEXT("Fret Hand Position too close to next one (<%d ms)"), //
 		FHP_TOP_FRET_TOO_HIGH("Fret Hand Position has top fret above max fret"), //
 		FHP_WIDTH("Width"), //
-		FAST_FORWARD_TOOLTIP("Fast forwards the song"), //
+		FINGER_1("Finger 1"), //
+		FINGER_2("Finger 2"), //
+		FINGER_3("Finger 3"), //
+		FINGER_4("Finger 4"), //
+		FINGER_T("Finger thumb"), //
 		FILE_MENU("File"), //
 		FILE_MENU_IMPORT_RS_SHOWLIGHTS("RS showlights XML"), //
 		FINGER_NOT_SET_FOR_FRETTED_STRING("Finger not set for fretted string in template [%d] - string %d"), //
@@ -159,6 +164,7 @@ public class Localization {
 		FRET("Fret"), //
 		FINGER_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
 				"Finger in sound is different than finger in hand shape under it on the same string"), //
+		FINGER_OPERATIONS("Finger operations"), //
 		FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
 				"Fret in sound is different than fret in hand shape under it on the same string"), //
 		FRETS("Frets"), //
@@ -321,6 +327,7 @@ public class Localization {
 		SELECT_ALL("Select all"), //
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
 		SET_DEFAULT_START_SILENCE("Set default starting silence"), //
+		SET_HAND_SHAPE_TEMPLATE_ON_CHORDS("Set hand shape template on chords"), //
 		SET_LENGTH("Set length"), //
 		SET_LENGTH_TO_SECONDS("Set length to be this many seconds:"), //
 		SHORTCUTS_SET_CHARTER_DEFAULT("Charter default"), //

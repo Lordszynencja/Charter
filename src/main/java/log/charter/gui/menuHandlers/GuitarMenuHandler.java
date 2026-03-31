@@ -54,6 +54,17 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(noteFretOperationsSubMenu);
 	}
 
+	private void addFingerChangeItems(final JMenu menu) {
+		final JMenu fingerOperationsSubMenu = createMenu(Label.FINGER_OPERATIONS);
+		fingerOperationsSubMenu.add(createItem(Action.FINGER_1));
+		fingerOperationsSubMenu.add(createItem(Action.FINGER_2));
+		fingerOperationsSubMenu.add(createItem(Action.FINGER_3));
+		fingerOperationsSubMenu.add(createItem(Action.FINGER_4));
+		fingerOperationsSubMenu.add(createItem(Action.FINGER_T));
+
+		menu.add(fingerOperationsSubMenu);
+	}
+
 	private void addNoteStatusOperations(final JMenu menu) {
 		final JMenu noteStatusOperationsSubMenu = createMenu(Label.NOTE_STATUS_OPERATIONS);
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_MUTE));
@@ -84,10 +95,14 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		addFretChangeItems(menu);
 
 		menu.addSeparator();
+		addFingerChangeItems(menu);
+
+		menu.addSeparator();
 		addNoteStatusOperations(menu);
 
 		menu.addSeparator();
 		menu.add(createItem(Action.MARK_HAND_SHAPE));
+		menu.add(createItem(Action.SET_HAND_SHAPE_TEMPLATE_ON_CHORDS));
 
 		menu.addSeparator();
 		menu.add(createItem(Label.GUITAR_MENU_AUTOCREATE_FHP, this::addFHP));

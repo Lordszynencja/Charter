@@ -325,13 +325,13 @@ public class ChartItemsHandler {
 	}
 
 	public void changeSoundsLength(final List<Selection<ChordOrNote>> toChange, final int gridsChange,
-			final Set<Integer> selectedStrings) {
+			final Set<Integer> editedStrings) {
 		final ImmutableBeatsMap beats = chartData.beats();
 		final List<ChordOrNote> sounds = chartData.currentSounds();
 
 		for (final Selection<ChordOrNote> selected : toChange) {
 			selected.selectable.notes().forEach(note -> {
-				if (!selectedStrings.contains(note.string())) {
+				if (!editedStrings.contains(note.string())) {
 					return;
 				}
 

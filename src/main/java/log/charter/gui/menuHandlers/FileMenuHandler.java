@@ -107,8 +107,8 @@ public class FileMenuHandler extends CharterMenuHandler {
 			menu.add(prepareImportsMenu());
 
 			menu.addSeparator();
-			menu.add(createItem(Action.SAVE));
-			menu.add(createItem(Action.SAVE_AS));
+			menu.add(createItem(Action.SAVE_PROJECT));
+			menu.add(createItem(Action.SAVE_PROJECT_AS));
 		}
 
 		menu.addSeparator();

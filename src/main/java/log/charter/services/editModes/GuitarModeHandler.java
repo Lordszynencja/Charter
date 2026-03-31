@@ -303,7 +303,7 @@ public class GuitarModeHandler implements ModeHandler {
 
 	private void changeNotesLength(final int change) {
 		chartItemsHandler.changeSoundsLength(selectionManager.getSelected(PositionType.GUITAR_NOTE), change,
-				currentSelectionEditor.getSelectedStrings());
+				currentSelectionEditor.getEditedStrings());
 	}
 
 	private void changeHandShapesLength(final int change) {

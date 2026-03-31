@@ -38,6 +38,11 @@ public enum Action {
 	EXIT(EditMode.values()), //
 	FAST_BACKWARD(EditMode.nonEmpty), //
 	FAST_FORWARD(EditMode.nonEmpty), //
+	FINGER_1(GUITAR), //
+	FINGER_2(GUITAR), //
+	FINGER_3(GUITAR), //
+	FINGER_4(GUITAR), //
+	FINGER_T(GUITAR), //
 	INCREASE_LENGTH(GUITAR, VOCALS), //
 	INCREASE_LENGTH_FAST(GUITAR, VOCALS), //
 	NUMBER_0(TEMPO_MAP, GUITAR), //
@@ -84,9 +89,10 @@ public enum Action {
 	PREVIOUS_ITEM_WITH_SELECT(EditMode.withItems), //
 	PREVIOUS_ITEM_TYPE(GUITAR), //
 	REDO(EditMode.nonEmpty), //
-	SAVE(Label.SAVE_PROJECT, EditMode.nonEmpty), //
-	SAVE_AS(Label.SAVE_PROJECT_AS, EditMode.nonEmpty), //
+	SAVE_PROJECT(EditMode.nonEmpty), //
+	SAVE_PROJECT_AS(EditMode.nonEmpty), //
 	SELECT_ALL(EditMode.withItems), //
+	SET_HAND_SHAPE_TEMPLATE_ON_CHORDS(GUITAR), //
 	SLOW_BACKWARD(EditMode.nonEmpty), //
 	SLOW_FORWARD(EditMode.nonEmpty), //
 	SNAP_ALL(EditMode.withItems), //

@@ -84,18 +84,18 @@ public class GuitarSoundsStatusesHandler {
 		currentSelectionEditor.selectionChanged(false);
 	}
 
-	private <T> T getNewValueNotes(final Map<T, T> cycleMap, final ChordOrNote sound,
-			final Set<Integer> selectedStrings, final Function<CommonNote, T> getter, final T defaultValue) {
+	private <T> T getNewValueNotes(final Map<T, T> cycleMap, final ChordOrNote sound, final Set<Integer> editedStrings,
+			final Function<CommonNote, T> getter, final T defaultValue) {
 		return cycleMap.get(sound.notes()//
-				.filter(n -> selectedStrings.contains(n.string()))//
+				.filter(n -> editedStrings.contains(n.string()))//
 				.findFirst()//
 				.map(getter)//
 				.orElse(defaultValue));
 	}
 
 	private List<? extends CommonNote> getNotesToChange(final List<Selection<ChordOrNote>> selected,
-			final Set<Integer> selectedStrings) {
-		return selected.stream().flatMap(v -> v.selectable.notes()).filter(n -> selectedStrings.contains(n.string()))
+			final Set<Integer> editedStrings) {
+		return selected.stream().flatMap(v -> v.selectable.notes()).filter(n -> editedStrings.contains(n.string()))
 				.collect(Collectors.toList());
 	}
 
@@ -107,11 +107,11 @@ public class GuitarSoundsStatusesHandler {
 		}
 
 		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
-		final Set<Integer> selectedStrings = currentSelectionEditor.getSelectedStrings();
-		final T valueToSet = getNewValueNotes(cycleMap, selected.get(0).selectable, selectedStrings, getter,
+		final Set<Integer> editedStrings = currentSelectionEditor.getEditedStrings();
+		final T valueToSet = getNewValueNotes(cycleMap, selected.get(0).selectable, editedStrings, getter,
 				defaultValue);
 
-		final List<? extends CommonNote> notesToChange = getNotesToChange(selected, selectedStrings);
+		final List<? extends CommonNote> notesToChange = getNotesToChange(selected, editedStrings);
 		if (notesToChange.isEmpty()) {
 			return;
 		}
@@ -129,9 +129,9 @@ public class GuitarSoundsStatusesHandler {
 		}
 
 		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
-		final Set<Integer> selectedStrings = currentSelectionEditor.getSelectedStrings();
+		final Set<Integer> editedStrings = currentSelectionEditor.getEditedStrings();
 
-		final List<? extends CommonNote> notesToChange = getNotesToChange(selected, selectedStrings);
+		final List<? extends CommonNote> notesToChange = getNotesToChange(selected, editedStrings);
 		if (notesToChange.isEmpty()) {
 			return;
 		}

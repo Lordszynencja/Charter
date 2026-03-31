@@ -193,22 +193,22 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		return stringSelects.stream().allMatch(checkBox -> !checkBox.isSelected()) || isSelected(string);
 	}
 
-	public Set<Integer> getSelectedStrings() {
-		final Set<Integer> selectedStrings = new HashSet<>();
+	public Set<Integer> getEditedStrings() {
+		final Set<Integer> editedStrings = new HashSet<>();
+
 		if (stringSelects.stream().allMatch(checkBox -> !checkBox.isSelected())) {
 			for (int i = 0; i < stringSelects.size(); i++) {
-				selectedStrings.add(i);
+				editedStrings.add(i);
 			}
-			return selectedStrings;
+		} else {
+			for (int i = 0; i < stringSelects.size(); i++) {
+				if (stringSelects.get(i).isSelected()) {
+					editedStrings.add(i);
+				}
+			}
 		}
 
-		for (int i = 0; i < stringSelects.size(); i++) {
-			if (stringSelects.get(i).isSelected()) {
-				selectedStrings.add(i);
-			}
-		}
-
-		return selectedStrings;
+		return editedStrings;
 	}
 
 	public void toggleString(final int string) {

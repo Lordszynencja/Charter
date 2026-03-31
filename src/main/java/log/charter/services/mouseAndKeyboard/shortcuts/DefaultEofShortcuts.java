@@ -35,6 +35,11 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.EXIT, new Shortcut(KeyEvent.VK_ESCAPE));
 		super.set(Action.FAST_BACKWARD, new Shortcut(KeyEvent.VK_LEFT).shift());
 		super.set(Action.FAST_FORWARD, new Shortcut(KeyEvent.VK_RIGHT).shift());
+		super.set(Action.FINGER_1, new Shortcut(KeyEvent.VK_1).alt());
+		super.set(Action.FINGER_2, new Shortcut(KeyEvent.VK_2).alt());
+		super.set(Action.FINGER_3, new Shortcut(KeyEvent.VK_3).alt());
+		super.set(Action.FINGER_4, new Shortcut(KeyEvent.VK_4).alt());
+		super.set(Action.FINGER_T, new Shortcut(KeyEvent.VK_5).alt());
 		super.set(Action.INCREASE_LENGTH, new Shortcut(KeyEvent.VK_CLOSE_BRACKET));
 		super.set(Action.INCREASE_LENGTH_FAST, new Shortcut(KeyEvent.VK_CLOSE_BRACKET).shift());
 		super.set(Action.NUMBER_0, new Shortcut(KeyEvent.VK_0));
@@ -48,6 +53,7 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.NUMBER_8, new Shortcut(KeyEvent.VK_8));
 		super.set(Action.NUMBER_9, new Shortcut(KeyEvent.VK_9));
 		super.set(Action.HALVE_GRID, new Shortcut(KeyEvent.VK_COMMA));
+		super.set(Action.MARK_HAND_SHAPE, null);
 		super.set(Action.MEASURE_ADD, new Shortcut(KeyEvent.VK_INSERT).ctrl().shift());
 		super.set(Action.MEASURE_REMOVE, new Shortcut(KeyEvent.VK_DELETE).ctrl().shift());
 		super.set(Action.MOVE_BACKWARD, new Shortcut(KeyEvent.VK_LEFT));
@@ -80,9 +86,10 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.PREVIOUS_ITEM_TYPE, new Shortcut(KeyEvent.VK_TAB).ctrl().shift());
 		super.set(Action.PREVIOUS_ITEM_WITH_SELECT, new Shortcut(KeyEvent.VK_PAGE_UP).alt());
 		super.set(Action.REDO, new Shortcut(KeyEvent.VK_R).ctrl());
-		super.set(Action.SAVE, new Shortcut(KeyEvent.VK_S).ctrl());
-		super.set(Action.SAVE_AS, new Shortcut(KeyEvent.VK_S).ctrl().shift());
+		super.set(Action.SAVE_PROJECT, new Shortcut(KeyEvent.VK_S).ctrl());
+		super.set(Action.SAVE_PROJECT_AS, new Shortcut(KeyEvent.VK_S).ctrl().shift());
 		super.set(Action.SELECT_ALL, new Shortcut(KeyEvent.VK_A).ctrl());
+		super.set(Action.SET_HAND_SHAPE_TEMPLATE_ON_CHORDS, new Shortcut(KeyEvent.VK_H).ctrl());
 		super.set(Action.SLOW_BACKWARD, new Shortcut(KeyEvent.VK_LEFT).ctrl());
 		super.set(Action.SLOW_FORWARD, new Shortcut(KeyEvent.VK_RIGHT).ctrl());
 		super.set(Action.SNAP_ALL, new Shortcut(KeyEvent.VK_R).ctrl().shift());
