@@ -1,25 +1,34 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
+import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.data.types.PositionType.GUITAR_NOTE;
 import static log.charter.data.types.PositionType.HAND_SHAPE;
 import static log.charter.data.types.PositionType.NONE;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.swing.JCheckBox;
+
+import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
-import log.charter.data.song.FHP;
+import log.charter.data.config.ChartPanelColors.StringColorLabelType;
+import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.types.PositionType;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.utils.PaneSizesBuilder;
+import log.charter.gui.lookAndFeel.CharterCheckBox;
 import log.charter.services.CharterContext;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.selection.ISelectionAccessor;
@@ -50,15 +59,17 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		return values.size() == 1 ? values.get(0) : defaultValue;
 	}
 
+	private ChartData chartData;
 	private CharterContext charterContext;
 	private KeyboardHandler keyboardHandler;
 	private SelectionManager selectionManager;
 
 	private final Map<PositionType, SelectionEditorPart<?>> parts = new HashMap<>();
 
-	private final FHPSelectionEditor fhpSelectionEditor = new FHPSelectionEditor();
 	private final GuitarSoundSelectionEditor guitarSoundSelectionEditor = new GuitarSoundSelectionEditor(this);
 	private final HandShapeSelectionEditor handShapeSelectionEditor = new HandShapeSelectionEditor(this);
+
+	private List<JCheckBox> stringSelects;
 
 	public CurrentSelectionEditor() {
 		super(new PaneSizesBuilder(0).build());
@@ -69,20 +80,48 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		setMinimumSize(new Dimension(925, sizes.getHeight(10)));
 
 		parts.put(PositionType.EVENT_POINT, new EventPointSelectionEditor());
+		parts.put(PositionType.FHP, new FHPSelectionEditor());
 		parts.put(PositionType.SHOWLIGHT, new ShowlightSelectionEditor());
 		parts.put(PositionType.TONE_CHANGE, new ToneChangeSelectionEditor());
 		parts.put(PositionType.VOCAL, new VocalSelectionEditor());
 	}
 
+	private void addStringsSelection() {
+		stringSelects = new ArrayList<>();
+
+		for (int i = 0; i < InstrumentConfig.maxStrings; i++) {
+			final JCheckBox stringCheckbox = new JCheckBox();
+			stringCheckbox.setFocusable(false);
+			stringCheckbox.setVisible(false);
+			addWithSettingSize(stringCheckbox, 0, 0, 20, 20);
+			stringSelects.add(stringCheckbox);
+		}
+	}
+
+	public void addStringChangeOperation(final Runnable action) {
+		stringSelects.forEach(s -> s.addActionListener(e -> action.run()));
+	}
+
+	public void setStringSelectPosition(final int string, final int x, final int y) {
+		if (string < 0 || string >= stringSelects.size()) {
+			return;
+		}
+
+		final JCheckBox stringSelect = stringSelects.get(string);
+		stringSelect.setLocation(x, y);
+		stringSelect.setIcon(new CharterCheckBox.CheckBoxIcon(
+				getStringBasedColor(StringColorLabelType.NOTE, string, chartData.currentStrings())));
+		stringSelect.setVisible(true);
+	}
+
 	@Override
 	public void init() {
+		addStringsSelection();
+
 		for (final SelectionEditorPart<?> part : parts.values()) {
 			charterContext.initObject(part);
 			part.addTo(this);
 		}
-
-		charterContext.initObject(fhpSelectionEditor);
-		fhpSelectionEditor.addTo(this);
 
 		charterContext.initObject(guitarSoundSelectionEditor);
 		guitarSoundSelectionEditor.addTo(this);
@@ -96,11 +135,8 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 	}
 
 	private void hideAllfieldsExcept(final PositionType type) {
+		stringSelects.forEach(s -> s.setVisible(false));
 		parts.forEach((partType, part) -> part.show(type == partType));
-
-		if (type != PositionType.FHP) {
-			fhpSelectionEditor.hide();
-		}
 
 		if (type != GUITAR_NOTE) {
 			guitarSoundSelectionEditor.hideFields();
@@ -117,9 +153,14 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 
 	@SuppressWarnings("unchecked")
 	public void selectionChanged(final boolean stringsCouldChange) {
+		if (stringsCouldChange) {
+			stringSelects.forEach(s -> s.setSelected(false));
+		}
+
 		final ISelectionAccessor<? extends IVirtualPosition> selected = selectionManager.selectedAccessor();
 		if (selected == null || !selected.isSelected()) {
 			hideAllfieldsExcept(NONE);
+			return;
 		}
 
 		hideAllfieldsExcept(selected.type());
@@ -129,9 +170,6 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 			part.selectionChanged();
 		} else {
 			switch (selected.type()) {
-				case FHP:
-					fhpSelectionEditor.selectionChanged((ISelectionAccessor<FHP>) selected);
-					break;
 				case GUITAR_NOTE:
 					guitarSoundSelectionEditor.selectionChanged((ISelectionAccessor<ChordOrNote>) selected,
 							stringsCouldChange);
@@ -147,7 +185,39 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		repaint();
 	}
 
-	public List<Integer> getSelectedStrings() {
-		return guitarSoundSelectionEditor.getSelectedStrings();
+	public boolean isSelected(final int string) {
+		return stringSelects.get(string).isSelected();
+	}
+
+	public boolean isEdited(final int string) {
+		return stringSelects.stream().allMatch(checkBox -> !checkBox.isSelected()) || isSelected(string);
+	}
+
+	public Set<Integer> getSelectedStrings() {
+		final Set<Integer> selectedStrings = new HashSet<>();
+		if (stringSelects.stream().allMatch(checkBox -> !checkBox.isSelected())) {
+			for (int i = 0; i < stringSelects.size(); i++) {
+				selectedStrings.add(i);
+			}
+			return selectedStrings;
+		}
+
+		for (int i = 0; i < stringSelects.size(); i++) {
+			if (stringSelects.get(i).isSelected()) {
+				selectedStrings.add(i);
+			}
+		}
+
+		return selectedStrings;
+	}
+
+	public void toggleString(final int string) {
+		if (string < 0 || string >= stringSelects.size()) {
+			return;
+		}
+
+		final JCheckBox stringSelected = stringSelects.get(string);
+		stringSelected.setSelected(!stringSelected.isSelected());
+		stringSelected.repaint();
 	}
 }

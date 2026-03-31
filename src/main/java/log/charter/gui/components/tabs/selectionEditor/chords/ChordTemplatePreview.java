@@ -49,7 +49,6 @@ import log.charter.util.data.IntRange;
 import log.charter.util.data.Position2D;
 
 public class ChordTemplatePreview extends JComponent implements MouseListener, MouseMotionListener, KeyListener {
-
 	private static final long serialVersionUID = 1L;
 	private static final double fretsProportion = pow(2, -1.0 / 12);
 	private static final int minFrets = 7;

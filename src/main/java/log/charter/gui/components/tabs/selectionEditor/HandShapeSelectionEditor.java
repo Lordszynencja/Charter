@@ -177,6 +177,5 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		arpeggioCheckBox.setSelected(chordTemplate.arpeggio);
 		forceArpeggioInRSCheckBox.setSelected(chordTemplate.forceArpeggioInRS);
 		forceArpeggioInRSCheckBox.setEnabled(chordTemplate.arpeggio);
-
 	}
 }

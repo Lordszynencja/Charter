@@ -118,7 +118,7 @@ public class ChordTemplateFingerSetter {
 		shapes.add(new Shape(i(0, 2, 1), I(1, 3, 2)));
 		shapes.add(new Shape(i(0, 2, 2), I(1, 3, 4)));
 		shapes.add(new Shape(i(0, 2, 3), I(1, 3, 4)));
-		shapes.add(new Shape(i(0, 2, 4), I(1, 3, 4)));
+		shapes.add(new Shape(i(0, 2, 4), I(1, 2, 4)));
 
 		shapes.add(new Shape(i(0, 3, 0), I(1, 4, 1)));
 		shapes.add(new Shape(i(0, 3, 1), I(1, 4, 2)));

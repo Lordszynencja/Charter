@@ -4,13 +4,13 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import log.charter.data.ChartData;
 import log.charter.data.ChordTemplateFingerSetter;
@@ -107,7 +107,7 @@ public class GuitarSoundsHandler {
 		}
 	}
 
-	private void setChordName(final ChordTemplate oldTemplate, final ChordTemplate template, final int change) {
+	private void updateChordName(final ChordTemplate oldTemplate, final ChordTemplate template, final int change) {
 		if (change % 12 == 0) {
 			template.chordName = oldTemplate.chordName;
 			return;
@@ -138,6 +138,14 @@ public class GuitarSoundsHandler {
 		}
 
 		template.chordName = b.toString();
+	}
+
+	private void setChordName(final ChordTemplate template) {
+		final List<String> suggestedNames = ChordNameSuggester.suggestChordNames(chartData.currentArrangement().tuning,
+				template.frets);
+		if (!suggestedNames.isEmpty()) {
+			template.chordName = suggestedNames.get(0);
+		}
 	}
 
 	private boolean validFHPsFretChange(final List<Selection<FHP>> selected, final int fretChange) {
@@ -206,7 +214,25 @@ public class GuitarSoundsHandler {
 			newTemplate.frets.put(string, newFret);
 		}
 
-		setChordName(template, newTemplate, fretChange);
+		updateChordName(template, newTemplate, fretChange);
+		ChordTemplateFingerSetter.setSuggestedFingers(newTemplate);
+
+		return newTemplate;
+	}
+
+	private ChordTemplate moveTemplateFretsSimple(final ChordTemplate template, final int fret,
+			final Set<Integer> selectedStrings) {
+		final ChordTemplate newTemplate = new ChordTemplate();
+
+		for (final Entry<Integer, Integer> stringFret : template.frets.entrySet()) {
+			final int string = stringFret.getKey();
+			final int newFret = selectedStrings.contains(string) ? fret : stringFret.getValue();
+			newTemplate.frets.put(string, newFret);
+		}
+
+		if (template.frets.size() > 2) {
+			setChordName(newTemplate);
+		}
 		ChordTemplateFingerSetter.setSuggestedFingers(newTemplate);
 
 		return newTemplate;
@@ -331,23 +357,34 @@ public class GuitarSoundsHandler {
 			return;
 		}
 
+		final Set<Integer> selectedStrings = currentSelectionEditor.getSelectedStrings();
+		final boolean setFretsSimple = !IntStream.range(0, chartData.currentStrings())
+				.allMatch(selectedStrings::contains);
+
 		undoSystem.addUndo();
 
 		for (final Selection<ChordOrNote> selection : selected) {
 			final ChordOrNote sound = selection.selectable;
 			if (sound.isNote()) {
-				sound.note().fret = fret;
+				if (selectedStrings.contains(sound.note().string)) {
+					sound.note().fret = fret;
+				}
 				continue;
 			}
 
 			final Chord chord = sound.chord();
 			final ChordTemplate oldTemplate = chartData.currentArrangement().chordTemplates.get(chord.templateId());
-			final int fretChange = fret - oldTemplate.getLowestFret();
-			if (fretChange == 0 || oldTemplate.getHighestFret() + fretChange > InstrumentConfig.frets) {
-				continue;
-			}
+			final ChordTemplate newTemplate;
+			if (setFretsSimple) {
+				newTemplate = moveTemplateFretsSimple(oldTemplate, fret, selectedStrings);
+			} else {
+				final int fretChange = fret - oldTemplate.getLowestFret();
+				if (fretChange == 0 || oldTemplate.getHighestFret() + fretChange > InstrumentConfig.frets) {
+					continue;
+				}
 
-			final ChordTemplate newTemplate = moveTemplateFrets(oldTemplate, fretChange);
+				newTemplate = moveTemplateFrets(oldTemplate, fretChange);
+			}
 
 			final int newTemplateId = chartData.currentArrangement().getChordTemplateIdWithSave(newTemplate);
 			chord.updateTemplate(newTemplateId, newTemplate);
@@ -360,55 +397,70 @@ public class GuitarSoundsHandler {
 		chordTemplatesEditorTab.refreshTemplates();
 	}
 
+	private void setSlideFretForNote(final Set<Integer> selectedStrings, final Note note, final int fret) {
+		if (!selectedStrings.contains(note.string)) {
+			return;
+		}
+
+		if (note.fret == fret) {
+			note.unpitchedSlide = false;
+			note.slideTo = null;
+		} else {
+			if (note.slideTo == null) {
+				note.unpitchedSlide = !note.linkNext;
+			}
+			note.slideTo = fret;
+		}
+	}
+
+	private void setSlideFretForChord(final Set<Integer> selectedStrings, final Chord chord,
+			final ChordTemplate chordTemplate, final int fret) {
+		final int minFret = chordTemplate.frets.entrySet().stream()//
+				.filter(f -> selectedStrings.contains(f.getKey()) && f.getValue() > 0)//
+				.map(f -> f.getValue())//
+				.collect(Collectors.minBy(Integer::compare)).orElse(1);
+		final int fretDifference = minFret - fret;
+
+		for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
+			if (!selectedStrings.contains(chordNoteEntry.getKey())) {
+				continue;
+			}
+
+			final ChordNote chordNote = chordNoteEntry.getValue();
+			final int noteFret = chordTemplate.frets.get(chordNoteEntry.getKey());
+			final int slideTo = min(InstrumentConfig.frets, max(1, noteFret - fretDifference));
+			if (noteFret == 0 || slideTo == noteFret) {
+				chordNote.slideTo = null;
+				chordNote.unpitchedSlide = false;
+				continue;
+			}
+
+			chordNote.unpitchedSlide = !chordNote.linkNext;
+			chordNote.slideTo = slideTo;
+		}
+	}
+
 	private void setSlideFret(final int newSlideFret) {
 		final List<Selection<ChordOrNote>> selected = selectionManager.getSelected(PositionType.GUITAR_NOTE);
 		if (selected.isEmpty()) {
 			return;
 		}
 
+		final Set<Integer> selectedStrings = currentSelectionEditor.getSelectedStrings();
+
 		undoSystem.addUndo();
 
 		final List<ChordTemplate> chordTemplates = chartData.currentArrangement().chordTemplates;
-		final Set<Integer> selectedStrings = new HashSet<>(currentSelectionEditor.getSelectedStrings());
 
 		for (final Selection<ChordOrNote> selection : selected) {
 			if (selection.selectable.isNote()) {
-				final Note note = selection.selectable.note();
-				if (note.fret == newSlideFret) {
-					note.unpitchedSlide = false;
-					note.slideTo = null;
-				} else {
-					if (note.slideTo == null) {
-						note.unpitchedSlide = !note.linkNext;
-					}
-					note.slideTo = newSlideFret;
-				}
-			} else {
-				final Chord chord = selection.selectable.chord();
-				final ChordTemplate chordTemplate = chordTemplates.get(chord.templateId());
-				final int minFret = chordTemplate.frets.entrySet().stream()//
-						.filter(fret -> selectedStrings.contains(fret.getKey()) && fret.getValue() > 0)//
-						.map(fret -> fret.getValue())//
-						.collect(Collectors.minBy(Integer::compare)).orElse(1);
-				final int fretDifference = minFret - newSlideFret;
-
-				for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
-					if (!selectedStrings.contains(chordNoteEntry.getKey())) {
-						continue;
-					}
-
-					final int fret = chordTemplate.frets.get(chordNoteEntry.getKey());
-					if (fret == 0) {
-						continue;
-					}
-
-					final ChordNote chordNote = chordNoteEntry.getValue();
-					if (chordNote.slideTo == null) {
-						chordNote.unpitchedSlide = !chordNote.linkNext;
-					}
-					chordNote.slideTo = min(InstrumentConfig.frets, max(1, fret - fretDifference));
-				}
+				setSlideFretForNote(selectedStrings, selection.selectable.note(), newSlideFret);
+				continue;
 			}
+
+			final Chord chord = selection.selectable.chord();
+			final ChordTemplate chordTemplate = chordTemplates.get(chord.templateId());
+			setSlideFretForChord(selectedStrings, chord, chordTemplate, newSlideFret);
 		}
 
 		guitarSoundsStatusesHandler
@@ -423,18 +475,27 @@ public class GuitarSoundsHandler {
 			return;
 		}
 
+		final Set<Integer> selectedStrings = currentSelectionEditor.getSelectedStrings();
+		final boolean setFretsSimple = !IntStream.range(0, chartData.currentStrings())
+				.allMatch(selectedStrings::contains);
+
 		undoSystem.addUndo();
 
 		for (final Selection<HandShape> selection : selected) {
 			final HandShape handShape = selection.selectable;
 
 			final ChordTemplate oldTemplate = chartData.currentArrangement().chordTemplates.get(handShape.templateId);
-			final int fretChange = fret - oldTemplate.getLowestFret();
-			if (fretChange == 0 || oldTemplate.getHighestFret() + fretChange > InstrumentConfig.frets) {
-				continue;
-			}
+			final ChordTemplate newTemplate;
+			if (setFretsSimple) {
+				newTemplate = moveTemplateFretsSimple(oldTemplate, fret, selectedStrings);
+			} else {
+				final int fretChange = fret - oldTemplate.getLowestFret();
+				if (fretChange == 0 || oldTemplate.getHighestFret() + fretChange > InstrumentConfig.frets) {
+					continue;
+				}
 
-			final ChordTemplate newTemplate = moveTemplateFrets(oldTemplate, fretChange);
+				newTemplate = moveTemplateFrets(oldTemplate, fretChange);
+			}
 
 			final int newTemplateId = chartData.currentArrangement().getChordTemplateIdWithSave(newTemplate);
 			handShape.templateId = newTemplateId;

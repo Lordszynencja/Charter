@@ -35,6 +35,11 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Action.MOVE_STRING_DOWN));
 		menu.add(createItem(Action.MOVE_STRING_UP_SIMPLE));
 		menu.add(createItem(Action.MOVE_STRING_DOWN_SIMPLE));
+		final JMenu noteStringSelectionOperationsSubMenu = createMenu(Label.NOTE_STRING_SELECTION_OPERATIONS);
+		for (int i = 1; i <= 9; i++) {
+			noteStringSelectionOperationsSubMenu.add(createItem(Action.valueOf("STRING_" + i)));
+		}
+		menu.add(noteStringSelectionOperationsSubMenu);
 	}
 
 	private void addFretChangeItems(final JMenu menu) {

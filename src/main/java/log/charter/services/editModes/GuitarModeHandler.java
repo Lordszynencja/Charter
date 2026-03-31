@@ -336,8 +336,12 @@ public class GuitarModeHandler implements ModeHandler {
 
 	@Override
 	public void handleNumber(final int number) {
-		if (nanoTime() / 1_000_000 <= fretNumberTimer && lastFretNumber * 10 + number <= InstrumentConfig.frets) {
-			lastFretNumber = lastFretNumber * 10 + number;
+		if (nanoTime() / 1_000_000 <= fretNumberTimer) {
+			if (lastFretNumber * 10 + number <= InstrumentConfig.frets) {
+				lastFretNumber = lastFretNumber * 10 + number;
+			} else {
+				lastFretNumber = number;
+			}
 		} else {
 			clearNumbers();
 			lastFretNumber = number;

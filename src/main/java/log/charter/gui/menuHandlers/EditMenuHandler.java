@@ -59,11 +59,7 @@ class EditMenuHandler extends CharterMenuHandler {
 	private void addBookmarksSubmenu(final JMenu menu) {
 		final JMenu bookmarksSubmenu = createMenu(Label.BOOKMARKS_MENU);
 		for (int i = 0; i < 10; i++) {
-			bookmarksSubmenu.add(createItem(Action.valueOf("MARK_BOOKMARK_" + i)));
-		}
-		bookmarksSubmenu.addSeparator();
-		for (int i = 0; i < 10; i++) {
-			bookmarksSubmenu.add(createItem(Action.valueOf("MOVE_TO_BOOKMARK_" + i)));
+			bookmarksSubmenu.add(createItem(Action.valueOf("BOOKMARK_" + i)));
 		}
 		menu.add(bookmarksSubmenu);
 	}

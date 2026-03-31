@@ -63,6 +63,16 @@ public class Localization {
 		BASE_AUDIO_FORMAT("Base audio format"), //
 		BEAT_ADD("Add beat"), //
 		BEAT_REMOVE("Remove beat"), //
+		BOOKMARK_0("Bookmark 0"), //
+		BOOKMARK_1("Bookmark 1"), //
+		BOOKMARK_2("Bookmark 2"), //
+		BOOKMARK_3("Bookmark 3"), //
+		BOOKMARK_4("Bookmark 4"), //
+		BOOKMARK_5("Bookmark 5"), //
+		BOOKMARK_6("Bookmark 6"), //
+		BOOKMARK_7("Bookmark 7"), //
+		BOOKMARK_8("Bookmark 8"), //
+		BOOKMARK_9("Bookmark 9"), //
 		BOOKMARKS_MENU("Bookmarks"), //
 		BPM_DOUBLE("Double BPM"), //
 		BPM_HALVE("Halve BPM"), //
@@ -181,16 +191,6 @@ public class Localization {
 		LRC_FILE("LRC file"), //
 		LRC_IMPORTED_SUCCESSFULLY("LRC vocals imported successfully"), //
 		MAIN_AUDIO("Main audio"), //
-		MARK_BOOKMARK_0("Mark bookmark 0"), //
-		MARK_BOOKMARK_1("Mark bookmark 1"), //
-		MARK_BOOKMARK_2("Mark bookmark 2"), //
-		MARK_BOOKMARK_3("Mark bookmark 3"), //
-		MARK_BOOKMARK_4("Mark bookmark 4"), //
-		MARK_BOOKMARK_5("Mark bookmark 5"), //
-		MARK_BOOKMARK_6("Mark bookmark 6"), //
-		MARK_BOOKMARK_7("Mark bookmark 7"), //
-		MARK_BOOKMARK_8("Mark bookmark 8"), //
-		MARK_BOOKMARK_9("Mark bookmark 9"), //
 		MARKER_POSITION_PX("Marker position (px)"), //
 		MAX_BEND_VALUE("Max bend value"), //
 		MAX_STRINGS("Max strings"), //
@@ -206,16 +206,6 @@ public class Localization {
 		MOVE_FRET_DOWN_OCTAVE("Move notes twelve frets down"), //
 		MOVE_FRET_UP("Move notes one fret up"), //
 		MOVE_FRET_UP_OCTAVE("Move notes twelve frets up"), //
-		MOVE_TO_BOOKMARK_0("Move to bookmark 0"), //
-		MOVE_TO_BOOKMARK_1("Move to bookmark 1"), //
-		MOVE_TO_BOOKMARK_2("Move to bookmark 2"), //
-		MOVE_TO_BOOKMARK_3("Move to bookmark 3"), //
-		MOVE_TO_BOOKMARK_4("Move to bookmark 4"), //
-		MOVE_TO_BOOKMARK_5("Move to bookmark 5"), //
-		MOVE_TO_BOOKMARK_6("Move to bookmark 6"), //
-		MOVE_TO_BOOKMARK_7("Move to bookmark 7"), //
-		MOVE_TO_BOOKMARK_8("Move to bookmark 8"), //
-		MOVE_TO_BOOKMARK_9("Move to bookmark 9"), //
 		MUSIC_FOLDER("Music folder"), //
 		NAME_CANT_BE_EMPTY("Name can't be empty"), //
 		NEW_ARRANGEMENT("New arrangement..."), //
@@ -237,12 +227,14 @@ public class Localization {
 		NO_END_PHRASE_IN_ARRANGEMENT("No END phrase in arrangement"), //
 		NO_SECTIONS_IN_ARRANGEMENT("No sections in arrangement"), //
 		NOTE_FRET_BELOW_CAPO("Note fret is below capo, for open string it should be equal"), //
+		NOTE_FRET_OPERATIONS("Note fret operations"), //
 		NOTE_IN_WRONG_FHP("Note in wrong FHP"), //
 		NOTE_SLIDE_FROM_OPEN_STRING("Slide starts on open string"), //
 		NOTE_SLIDE_NOT_LINKED("Pitched note slide is not linked to next note"), //
 		NOTE_SLIDES_INTO_CHORD("Note slide ends on a chord, should end on note"), //
 		NOTE_SLIDES_INTO_WRONG_FRET("Note slide ends on a different fret than next note on string %d"), //
 		NOTE_SLIDE_ENDS_ON_DIFFERENT_FINGER("Note slide ends on different finger on string %d"), //
+		NOTE_STRING_SELECTION_OPERATIONS("Note string selection operations"), //
 		NOTE_WITHOUT_FHP("Note without FHP"), //
 		NUMBER_0("Number 0"), //
 		NUMBER_1("Number 1"), //
@@ -377,6 +369,16 @@ public class Localization {
 		STARTING_TONE("Starting tone"), //
 		STUDYING_AUDIO("Studying audio: %s"), //
 		SUPPORTED_MUSIC_FILE("Flac, Mp3, Ogg or Wav file"), //
+		STRING_0("String 0"), //
+		STRING_1("String 1"), //
+		STRING_2("String 2"), //
+		STRING_3("String 3"), //
+		STRING_4("String 4"), //
+		STRING_5("String 5"), //
+		STRING_6("String 6"), //
+		STRING_7("String 7"), //
+		STRING_8("String 8"), //
+		STRING_9("String 9"), //
 		SWITCH_TYPING_PART("Switch typing part"), //
 		TAB_3D_PREVIEW("3D preview"), //
 		TAB_CHORD_TEMPLATES_EDITOR("Chord templates"), //
@@ -463,7 +465,6 @@ public class Localization {
 		MOVE_STRING_DOWN("Move notes string down"), //
 		MOVE_STRING_UP_SIMPLE("Move notes string up keeping the frets"), //
 		MOVE_STRING_DOWN_SIMPLE("Move notes string down keeping the frets"), //
-		NOTE_FRET_OPERATIONS("Note fret operations"), //
 		NOTE_STATUS_OPERATIONS("Note status operations"), //
 		TOGGLE_MUTE("Toggle mutes"), //
 		TOGGLE_MUTE_INDEPENDENTLY("Toggle mutes independently"), //
@@ -580,9 +581,9 @@ public class Localization {
 
 		LINK_NEXT("Link next"), //
 		SPLIT_INTO_NOTES("Split"), //
-		FORCE_NO_NOTES("No notes"), //
+		ONLY_BOX("Only box"), //
 		IGNORE("Ignore"), //
-		PASS_OTHER_NOTES("Pass other notes"), //
+		PASS_NOTES("Pass notes"), //
 		VIBRATO("Vibrato"), //
 		TREMOLO("Tremolo"), //
 

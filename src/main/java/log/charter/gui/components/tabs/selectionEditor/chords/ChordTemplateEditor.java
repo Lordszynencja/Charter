@@ -44,6 +44,7 @@ import log.charter.gui.components.simple.AutocompleteInput.LabelComponent;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
@@ -550,6 +551,21 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	public void mouseExited(final MouseEvent e) {
 	}
 
+	private void addStringSelects() {
+		if (!CurrentSelectionEditor.class.isAssignableFrom(parent.getClass())) {
+			return;
+		}
+
+		final CurrentSelectionEditor currentSelectionEditor = (CurrentSelectionEditor) parent;
+
+		final int strings = chartData.currentStrings();
+		final int x = chordTemplatePreview.getX() + chordTemplatePreview.getWidth() + 10;
+		for (int string = 0; string < strings; string++) {
+			final int y = parent.sizes.getY(chordTemplateEditorRow + 1 + getStringPosition(string, strings));
+			currentSelectionEditor.setStringSelectPosition(string, x, y);
+		}
+	}
+
 	public void showFields() {
 		chordNameAdviceButton.setVisible(true);
 		chordNameLabel.setVisible(true);
@@ -572,6 +588,8 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		}
 
 		chordTemplatePreview.showFields();
+
+		addStringSelects();
 
 		showNoteNames.setVisible(true);
 	}

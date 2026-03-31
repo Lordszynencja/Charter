@@ -16,6 +16,16 @@ public enum Action {
 	ARRANGEMENT_PREVIOUS(EditMode.nonEmpty), //
 	BEAT_ADD(TEMPO_MAP), //
 	BEAT_REMOVE(TEMPO_MAP), //
+	BOOKMARK_0(EditMode.nonEmpty), //
+	BOOKMARK_1(EditMode.nonEmpty), //
+	BOOKMARK_2(EditMode.nonEmpty), //
+	BOOKMARK_3(EditMode.nonEmpty), //
+	BOOKMARK_4(EditMode.nonEmpty), //
+	BOOKMARK_5(EditMode.nonEmpty), //
+	BOOKMARK_6(EditMode.nonEmpty), //
+	BOOKMARK_7(EditMode.nonEmpty), //
+	BOOKMARK_8(EditMode.nonEmpty), //
+	BOOKMARK_9(EditMode.nonEmpty), //
 	BPM_DOUBLE(TEMPO_MAP), //
 	BPM_HALVE(TEMPO_MAP), //
 	COPY(EditMode.nonEmpty), //
@@ -37,16 +47,6 @@ public enum Action {
 	NUMBER_8(TEMPO_MAP, GUITAR), //
 	NUMBER_9(TEMPO_MAP, GUITAR), //
 	HALVE_GRID(EditMode.withItems), //
-	MARK_BOOKMARK_0(EditMode.nonEmpty), //
-	MARK_BOOKMARK_1(EditMode.nonEmpty), //
-	MARK_BOOKMARK_2(EditMode.nonEmpty), //
-	MARK_BOOKMARK_3(EditMode.nonEmpty), //
-	MARK_BOOKMARK_4(EditMode.nonEmpty), //
-	MARK_BOOKMARK_5(EditMode.nonEmpty), //
-	MARK_BOOKMARK_6(EditMode.nonEmpty), //
-	MARK_BOOKMARK_7(EditMode.nonEmpty), //
-	MARK_BOOKMARK_8(EditMode.nonEmpty), //
-	MARK_BOOKMARK_9(EditMode.nonEmpty), //
 	MARK_HAND_SHAPE(GUITAR), //
 	MEASURE_ADD(TEMPO_MAP), //
 	MEASURE_REMOVE(TEMPO_MAP), //
@@ -60,16 +60,6 @@ public enum Action {
 	MOVE_STRING_DOWN_SIMPLE(GUITAR), //
 	MOVE_STRING_UP(GUITAR), //
 	MOVE_STRING_UP_SIMPLE(GUITAR), //
-	MOVE_TO_BOOKMARK_0(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_1(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_2(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_3(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_4(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_5(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_6(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_7(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_8(EditMode.nonEmpty), //
-	MOVE_TO_BOOKMARK_9(EditMode.nonEmpty), //
 	MOVE_TO_END(EditMode.nonEmpty), //
 	MOVE_TO_FIRST_ITEM(EditMode.nonEmpty), //
 	MOVE_TO_LAST_ITEM(EditMode.nonEmpty), //
@@ -104,6 +94,15 @@ public enum Action {
 	SPEED_INCREASE(EditMode.nonEmpty), //
 	SPEED_INCREASE_FAST(EditMode.nonEmpty), //
 	SPEED_INCREASE_PRECISE(EditMode.nonEmpty), //
+	STRING_1(TEMPO_MAP, GUITAR), //
+	STRING_2(TEMPO_MAP, GUITAR), //
+	STRING_3(TEMPO_MAP, GUITAR), //
+	STRING_4(TEMPO_MAP, GUITAR), //
+	STRING_5(TEMPO_MAP, GUITAR), //
+	STRING_6(TEMPO_MAP, GUITAR), //
+	STRING_7(TEMPO_MAP, GUITAR), //
+	STRING_8(TEMPO_MAP, GUITAR), //
+	STRING_9(TEMPO_MAP, GUITAR), //
 	SWITCH_TYPING_PART(TEMPO_MAP, GUITAR), //
 	TOGGLE_ACCENT(GUITAR), //
 	TOGGLE_ACCENT_INDEPENDENTLY(GUITAR), //
