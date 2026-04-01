@@ -73,7 +73,7 @@ public class Preview3DCameraHandler {
 		public CameraFinalData(final double aspectRatio, final double shake) {
 			camY = getCamY() + getRandomShakeValue(shake * 0.5);
 			camZ = getCamZ() + getRandomShakeValue(shake * 0.5);
-			camRotationX = getCamRotationX() + getRandomShakeValue(shake + 0.1);
+			camRotationX = getCamRotationX() + getRandomShakeValue(shake * 0.1);
 			camRotationY = getCamRotationY() + getRandomShakeValue(shake * 0.1);
 			camRotationZ = getCamRotationZ() + getRandomShakeValue(shake * 0.1);
 			screenScaleX = getScreenScaleX(aspectRatio);

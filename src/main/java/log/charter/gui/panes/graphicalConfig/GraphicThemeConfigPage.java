@@ -5,6 +5,8 @@ import static log.charter.gui.components.simple.TextInputWithValidation.generate
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
@@ -41,6 +43,7 @@ public class GraphicThemeConfigPage implements Page {
 	private BigDecimal previewScrollSpeed = BigDecimal.valueOf(GraphicalConfig.previewWindowScrollSpeed);
 
 	private FieldWithLabel<CharterSelect<Theme>> themeField;
+	private final List<JButton> sizeChangeButtons = new ArrayList<>();
 	private FieldWithLabel<TextInputWithValidation> noteHeightField;
 	private FieldWithLabel<TextInputWithValidation> noteWidthField;
 	private FieldWithLabel<TextInputWithValidation> chordHeightField;
@@ -133,6 +136,7 @@ public class GraphicThemeConfigPage implements Page {
 		});
 
 		panel.addWithSettingSize(button, position, 30);
+		sizeChangeButtons.add(button);
 	}
 
 	private void addMSizeButton(final RowedPanel panel, final RowedPosition position) {
@@ -149,6 +153,7 @@ public class GraphicThemeConfigPage implements Page {
 		});
 
 		panel.addWithSettingSize(button, position, 30);
+		sizeChangeButtons.add(button);
 	}
 
 	private void addLSizeButton(final RowedPanel panel, final RowedPosition position) {
@@ -165,6 +170,7 @@ public class GraphicThemeConfigPage implements Page {
 		});
 
 		panel.addWithSettingSize(button, position, 30);
+		sizeChangeButtons.add(button);
 	}
 
 	private void addXLSizeButton(final RowedPanel panel, final RowedPosition position) {
@@ -182,6 +188,7 @@ public class GraphicThemeConfigPage implements Page {
 		});
 
 		panel.addWithSettingSize(button, position, 30);
+		sizeChangeButtons.add(button);
 	}
 
 	private void addXXLSizeButton(final RowedPanel panel, final RowedPosition position) {
@@ -199,6 +206,7 @@ public class GraphicThemeConfigPage implements Page {
 		});
 
 		panel.addWithSettingSize(button, position, 30);
+		sizeChangeButtons.add(button);
 	}
 
 	private void addNoteHeightInput(final RowedPanel panel, final RowedPosition position) {
@@ -304,6 +312,7 @@ public class GraphicThemeConfigPage implements Page {
 	@Override
 	public void setVisible(final boolean visibility) {
 		themeField.setVisible(visibility);
+		sizeChangeButtons.forEach(b -> b.setVisible(visibility));
 		eventsChangeHeightField.setVisible(visibility);
 		toneChangeHeightField.setVisible(visibility);
 		fhpInfoHeightField.setVisible(visibility);
