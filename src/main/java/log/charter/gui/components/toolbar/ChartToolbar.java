@@ -10,6 +10,8 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -31,6 +33,7 @@ import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.AudioConfig;
 import log.charter.data.config.values.GridConfig;
+import log.charter.gui.ChartPanel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
 import log.charter.gui.components.simple.FieldWithLabel;
@@ -85,6 +88,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private AudioHandler audioHandler;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
+	private ChartPanel chartPanel;
 	private ChartToolbar chartToolbar;
 	private ClapsHandler clapsHandler;
 	private KeyboardHandler keyboardHandler;
@@ -93,6 +97,23 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private ProjectAudioHandler projectAudioHandler;
 	private RepeatManager repeatManager;
 	private WaveFormDrawer waveFormDrawer;
+
+	private final KeyListener focusingChartPanelOnEnterKey = new KeyListener() {
+		@Override
+		public void keyTyped(final KeyEvent e) {
+		}
+
+		@Override
+		public void keyPressed(final KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				chartPanel.requestFocusInWindow();
+			}
+		}
+
+		@Override
+		public void keyReleased(final KeyEvent e) {
+		}
+	};
 
 	private JToggleButton midi;
 	private JToggleButton claps;
@@ -207,6 +228,9 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 					GridConfig.gridSize = newGridSize;
 					Config.markChanged();
 				});
+
+		gridSize.field.addKeyListener(focusingChartPanelOnEnterKey);
+
 		add(x, 1, gridSize);
 	}
 
@@ -357,6 +381,9 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private void addPlaybackSpeed(final AtomicInteger x) {
 		playbackSpeed = createNumberField(Label.TOOLBAR_SLOWED_PLAYBACK_SPEED, LabelPosition.LEFT_PACKED, 30, //
 				Config.stretchedMusicSpeed, 1, 500, false, this::changeSpeed);
+
+		playbackSpeed.field.addKeyListener(focusingChartPanelOnEnterKey);
+
 		this.add(x, playbackSpeed);
 	}
 
