@@ -2,6 +2,7 @@ package log.charter.services;
 
 import static java.util.Arrays.asList;
 import static log.charter.services.editModes.EditMode.GUITAR;
+import static log.charter.services.editModes.EditMode.SHOWLIGHTS;
 import static log.charter.services.editModes.EditMode.TEMPO_MAP;
 import static log.charter.services.editModes.EditMode.VOCALS;
 
@@ -47,6 +48,7 @@ public enum Action {
 	FINGER_T(GUITAR), //
 	INCREASE_LENGTH(GUITAR, VOCALS), //
 	INCREASE_LENGTH_FAST(GUITAR, VOCALS), //
+	INSERT_SHOWLIGHT(SHOWLIGHTS), //
 	INSERT_VOCAL(VOCALS), //
 	NUMBER_0(TEMPO_MAP, GUITAR), //
 	NUMBER_1(TEMPO_MAP, GUITAR), //
@@ -81,6 +83,9 @@ public enum Action {
 	NEXT_GRID_POSITION(EditMode.withItems), //
 	NEXT_ITEM(EditMode.nonEmpty), //
 	NEXT_ITEM_WITH_SELECT(EditMode.withItems), //
+	NEXT_ITEM_WITH_SELECT_CTRL(EditMode.withItems), //
+	NEXT_ITEM_WITH_SELECT_CTRL_SHIFT(EditMode.withItems), //
+	NEXT_ITEM_WITH_SELECT_SHIFT(EditMode.withItems), //
 	NEXT_ITEM_TYPE(GUITAR), //
 	OPEN_PROJECT(EditMode.values()), //
 	PASTE(EditMode.withItems), //
@@ -90,6 +95,9 @@ public enum Action {
 	PREVIOUS_GRID_POSITION(EditMode.withItems), //
 	PREVIOUS_ITEM(EditMode.nonEmpty), //
 	PREVIOUS_ITEM_WITH_SELECT(EditMode.withItems), //
+	PREVIOUS_ITEM_WITH_SELECT_CTRL(EditMode.withItems), //
+	PREVIOUS_ITEM_WITH_SELECT_CTRL_SHIFT(EditMode.withItems), //
+	PREVIOUS_ITEM_WITH_SELECT_SHIFT(EditMode.withItems), //
 	PREVIOUS_ITEM_TYPE(GUITAR), //
 	REDO(EditMode.nonEmpty), //
 	SAVE_PROJECT(EditMode.nonEmpty), //

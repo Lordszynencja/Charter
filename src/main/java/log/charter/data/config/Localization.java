@@ -191,6 +191,7 @@ public class Localization {
 		IMPORT_USC_VOCALS("Import USC vocals file"), //
 		INCREASE_LENGTH("Increase length"), //
 		INCREASE_LENGTH_FAST("Increase length fast"), //
+		INSERT_SHOWLIGHT("Insert showlight"), //
 		INSERT_VOCAL("Insert vocal"), //
 		INVERT_STRINGS("Invert strings"), //
 		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
@@ -235,6 +236,9 @@ public class Localization {
 		NEXT_ITEM("Next item"), //
 		NEXT_ITEM_TYPE("Next item type"), //
 		NEXT_ITEM_WITH_SELECT("Next item with select"), //
+		NEXT_ITEM_WITH_SELECT_CTRL("Next item with add select"), //
+		NEXT_ITEM_WITH_SELECT_CTRL_SHIFT("Next item with group add select"), //
+		NEXT_ITEM_WITH_SELECT_SHIFT("Next item with group select"), //
 		NO_PHRASES_IN_ARRANGEMENT("No phrases in arrangement"), //
 		NO_COUNT_PHRASE_IN_ARRANGEMENT("No COUNT phrase in arrangement"), //
 		NO_END_PHRASE_IN_ARRANGEMENT("No END phrase in arrangement"), //
@@ -287,6 +291,9 @@ public class Localization {
 		PREVIOUS_ITEM("Previous item"), //
 		PREVIOUS_ITEM_TYPE("Previous item type"), //
 		PREVIOUS_ITEM_WITH_SELECT("Previous item with select"), //
+		PREVIOUS_ITEM_WITH_SELECT_CTRL("Previous item with add select"), //
+		PREVIOUS_ITEM_WITH_SELECT_CTRL_SHIFT("Previous item with group add select"), //
+		PREVIOUS_ITEM_WITH_SELECT_SHIFT("Previous item with group select"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
 		REDO("Redo"), //
@@ -368,6 +375,7 @@ public class Localization {
 		SHOWLIGHT_FOG_YELLOW("Yellow fog"), //
 		SHOWLIGHT_LASERS_OFF("Lasers off"), //
 		SHOWLIGHT_LASERS_ON("Lasers on"), //
+		SHOWLIGHT_PANE("Showlight"), //
 		SHOWLIGHT_REMOVE("Remove showlight"), //
 		SIZE_S("S"), //
 		SIZE_M("M"), //

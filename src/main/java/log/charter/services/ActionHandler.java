@@ -31,6 +31,7 @@ import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.GuitarSoundsHandler;
 import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.HandShapesHandler;
+import log.charter.services.data.ShowlightsHandler;
 import log.charter.services.data.VocalsHandler;
 import log.charter.services.data.beats.BPMDoubler;
 import log.charter.services.data.beats.BPMHalver;
@@ -67,6 +68,7 @@ public class ActionHandler implements Initiable {
 	private NewEmptyProjectCreator newEmptyProjectCreator;
 	private RepeatManager repeatManager;
 	private SelectionManager selectionManager;
+	private ShowlightsHandler showlightsHandler;
 	private SongFileHandler songFileHandler;
 	private UndoSystem undoSystem;
 	private VocalsHandler vocalsHandler;
@@ -317,6 +319,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.HALVE_GRID, this::halveGridSize);
 		actionHandlers.put(Action.INCREASE_LENGTH, () -> changeLength(1));
 		actionHandlers.put(Action.INCREASE_LENGTH_FAST, () -> changeLength(4));
+		actionHandlers.put(Action.INSERT_SHOWLIGHT, showlightsHandler::insertShowlight);
 		actionHandlers.put(Action.INSERT_VOCAL, vocalsHandler::insertVocal);
 		actionHandlers.put(Action.MARK_HAND_SHAPE, handShapesHandler::markHandShape);
 		actionHandlers.put(Action.MEASURE_ADD, beatsService::addMeasure);
@@ -338,7 +341,13 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.NEXT_GRID_POSITION, chartTimeHandler::moveToNextGrid);
 		actionHandlers.put(Action.NEXT_ITEM, chartTimeHandler::moveToNextItem);
 		actionHandlers.put(Action.NEXT_ITEM_TYPE, selectionManager::nextItemType);
-		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT, chartTimeHandler::moveToNextItemWithSelect);
+		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT, () -> chartTimeHandler.moveToNextItemWithSelect(false, false));
+		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT_CTRL,
+				() -> chartTimeHandler.moveToNextItemWithSelect(true, false));
+		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT_CTRL_SHIFT,
+				() -> chartTimeHandler.moveToNextItemWithSelect(true, true));
+		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT_SHIFT,
+				() -> chartTimeHandler.moveToNextItemWithSelect(false, true));
 		actionHandlers.put(Action.NUMBER_0, () -> handleNumber(0));
 		actionHandlers.put(Action.NUMBER_1, () -> handleNumber(1));
 		actionHandlers.put(Action.NUMBER_2, () -> handleNumber(2));
@@ -357,7 +366,14 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.PREVIOUS_GRID_POSITION, chartTimeHandler::moveToPreviousGrid);
 		actionHandlers.put(Action.PREVIOUS_ITEM, chartTimeHandler::moveToPreviousItem);
 		actionHandlers.put(Action.PREVIOUS_ITEM_TYPE, selectionManager::previousItemType);
-		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT, chartTimeHandler::moveToPreviousItemWithSelect);
+		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT,
+				() -> chartTimeHandler.moveToPreviousItemWithSelect(false, false));
+		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT_CTRL,
+				() -> chartTimeHandler.moveToPreviousItemWithSelect(true, false));
+		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT_CTRL_SHIFT,
+				() -> chartTimeHandler.moveToPreviousItemWithSelect(true, true));
+		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT_SHIFT,
+				() -> chartTimeHandler.moveToPreviousItemWithSelect(false, true));
 		actionHandlers.put(Action.REDO, undoSystem::redo);
 		actionHandlers.put(Action.SAVE_PROJECT, songFileHandler::save);
 		actionHandlers.put(Action.SAVE_PROJECT_AS, songFileHandler::saveAs);

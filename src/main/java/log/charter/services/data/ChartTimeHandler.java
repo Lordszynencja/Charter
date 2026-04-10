@@ -243,7 +243,7 @@ public class ChartTimeHandler {
 		}
 	}
 
-	public void moveToPreviousItemWithSelect() {
+	public void moveToPreviousItemWithSelect(final boolean ctrl, final boolean shift) {
 		final Pair<PositionType, List<? extends IVirtualConstantPosition>> currentItems = getCurrentItemsWithType();
 		if (currentItems.b.isEmpty()) {
 			return;
@@ -262,8 +262,7 @@ public class ChartTimeHandler {
 			nextTime(position.asConstantPosition());
 		}
 
-		selectionManager.clear();
-		selectionManager.addSelection(currentItems.a, lastIdBefore);
+		selectionManager.addSelectionwithModifiers(currentItems.a, lastIdBefore, ctrl, shift);
 	}
 
 	public void moveToFirstItem() {
@@ -321,7 +320,7 @@ public class ChartTimeHandler {
 		}
 	}
 
-	public void moveToNextItemWithSelect() {
+	public void moveToNextItemWithSelect(final boolean ctrl, final boolean shift) {
 		final Pair<PositionType, List<? extends IVirtualConstantPosition>> currentItems = getCurrentItemsWithType();
 		if (currentItems.b.isEmpty()) {
 			return;
@@ -340,8 +339,7 @@ public class ChartTimeHandler {
 			nextTime(position.asConstantPosition());
 		}
 
-		selectionManager.clear();
-		selectionManager.addSelection(currentItems.a, nextIdAfter);
+		selectionManager.addSelectionwithModifiers(currentItems.a, nextIdAfter, ctrl, shift);
 	}
 
 	public void moveToLastItem() {

@@ -29,7 +29,7 @@ public class ShowlightsModeHandler implements ModeHandler {
 		selectionManager.clear();
 
 		if (position.showlight != null) {
-			new ShowlightPane(chartData, charterFrame, undoSystem, position.showlight, () -> {});
+			new ShowlightPane(chartData, charterFrame, undoSystem, position.showlight);
 			return;
 		}
 

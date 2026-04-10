@@ -264,6 +264,12 @@ public class SelectionManager implements Initiable {
 		currentSelectionEditor.selectionChanged(true);
 	}
 
+	public void addSelectionwithModifiers(final PositionType type, final int id, final boolean ctrl,
+			final boolean shift) {
+		selectionLists.get(type).addSelectablesWithModifiers(id, ctrl, shift);
+		currentSelectionEditor.selectionChanged(true);
+	}
+
 	public void addSoundSelection(final int id) {
 		addSelection(PositionType.GUITAR_NOTE, id);
 	}
