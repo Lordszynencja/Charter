@@ -82,6 +82,7 @@ public class Localization {
 		CANT_DROP_WITHOUT_PROJECT("Can't import file without project open"), //
 		CENTS("%s cents"), //
 		CHANGE_AUDIO("Change audio"), //
+		CHANGE_GRID("Change grid"), //
 		CHANGE_LENGTH("Change length"), //
 		CHANGE_LENGTH_BY_SECONDS("Change length by this many seconds:"), //
 		CHANGE_SONG_PITCH("Change song pitch"), //
@@ -113,6 +114,7 @@ public class Localization {
 				"Couldn't run update script, run the program as administrator, install update manually or install it in a different folder"), //
 		CREATE_DEFAULT_STRETCHES_IN_BACKGROUND("Create stretched audio in the background when new song is made"), //
 		CREATE_FHP_AUTOMATICALLY("Create FHP automatically"), //
+		CUT("Cut"), //
 		OPEN_CURRENT_SONG_FOLDER("Open current song folder"), //
 		CURRENT_SONG_FOLDER("Current song folder: %s"), //
 		DECREASE_LENGTH("Decrease length"), //

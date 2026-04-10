@@ -28,7 +28,9 @@ public enum Action {
 	BOOKMARK_9(EditMode.nonEmpty), //
 	BPM_DOUBLE(TEMPO_MAP), //
 	BPM_HALVE(TEMPO_MAP), //
+	CHANGE_GRID(EditMode.nonEmpty), //
 	COPY(EditMode.nonEmpty), //
+	CUT(EditMode.withItems), //
 	DECREASE_LENGTH(GUITAR, VOCALS), //
 	DECREASE_LENGTH_FAST(GUITAR, VOCALS), //
 	DELETE(EditMode.withItems), //

@@ -546,4 +546,10 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	public void paint(final Graphics g) {
 		super.paint(g);
 	}
+
+	@Override
+	public void focusGrid() {
+		gridSize.field.requestFocusInWindow();
+		gridSize.field.selectAll();
+	}
 }

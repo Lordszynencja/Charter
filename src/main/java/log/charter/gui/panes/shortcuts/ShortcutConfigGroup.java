@@ -39,6 +39,7 @@ public enum ShortcutConfigGroup {
 			Action.TOGGLE_REPEAT_END), //
 	EDITING(Label.EDITING, //
 			Action.COPY, //
+			Action.CUT, //
 			Action.PASTE, //
 			Action.SPECIAL_PASTE, //
 			Action.DELETE, //
@@ -69,6 +70,7 @@ public enum ShortcutConfigGroup {
 			Action.MOVE_FRET_UP, //
 			Action.MOVE_FRET_DOWN, //
 			Action.MARK_HAND_SHAPE, //
+			Action.CHANGE_GRID, //
 			Action.DOUBLE_GRID, //
 			Action.HALVE_GRID, //
 			Action.SNAP_SELECTED, //

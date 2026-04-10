@@ -299,7 +299,9 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.BOOKMARK_9, () -> bookmark(9));
 		actionHandlers.put(Action.BPM_DOUBLE, bpmDoubler::doubleBPM);
 		actionHandlers.put(Action.BPM_HALVE, bpmHalver::halveBPM);
+		actionHandlers.put(Action.CHANGE_GRID, chartToolbar::focusGrid);
 		actionHandlers.put(Action.COPY, copyManager::copy);
+		actionHandlers.put(Action.CUT, copyManager::cut);
 		actionHandlers.put(Action.DECREASE_LENGTH, () -> changeLength(-1));
 		actionHandlers.put(Action.DECREASE_LENGTH_FAST, () -> changeLength(-4));
 		actionHandlers.put(Action.DELETE, chartItemsHandler::delete);
