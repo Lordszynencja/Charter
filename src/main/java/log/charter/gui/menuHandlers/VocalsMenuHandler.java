@@ -18,6 +18,7 @@ class VocalsMenuHandler extends CharterMenuHandler {
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.VOCALS_MENU);
+		menu.add(createItem(Action.INSERT_VOCAL));
 		menu.add(createItem(Action.EDIT_VOCALS));
 		menu.add(createItem(Action.TOGGLE_WORD_PART));
 		menu.add(createItem(Action.TOGGLE_PHRASE_END));

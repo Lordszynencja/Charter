@@ -14,6 +14,7 @@ import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.gui.panes.colorConfig.ColorPicker;
 import log.charter.services.data.selection.SelectionManager;
+import log.charter.services.editModes.ModeManager;
 
 public class VocalPathSettingsPane extends RowedDialog {
 	private static final long serialVersionUID = -3193534671039163160L;
@@ -21,6 +22,7 @@ public class VocalPathSettingsPane extends RowedDialog {
 	private final ChartData chartData;
 	private final CharterMenuBar charterMenuBar;
 	private final CharterFrame frame;
+	private final ModeManager modeManager;
 	private final SelectionManager selectionManager;
 
 	private final VocalPath vocalPath;
@@ -30,13 +32,14 @@ public class VocalPathSettingsPane extends RowedDialog {
 	private final ColorPicker colorPicker;
 
 	public VocalPathSettingsPane(final ChartData chartData, final CharterMenuBar charterMenuBar,
-			final CharterFrame frame, final SelectionManager selectionManager, final VocalPath vocalPath,
-			final boolean newPath) {
+			final CharterFrame frame, final ModeManager modeManager, final SelectionManager selectionManager,
+			final VocalPath vocalPath, final boolean newPath) {
 		super(frame, Label.VOCAL_PATH_OPTIONS, 400);
 
 		this.chartData = chartData;
 		this.charterMenuBar = charterMenuBar;
 		this.frame = frame;
+		this.modeManager = modeManager;
 		this.selectionManager = selectionManager;
 
 		this.vocalPath = vocalPath;
@@ -77,6 +80,7 @@ public class VocalPathSettingsPane extends RowedDialog {
 
 		if (newPath) {
 			chartData.addVocals(vocalPath);
+			modeManager.setVocalPath(chartData.songChart.vocalPaths.size() - 1);
 			selectionManager.clear();
 			frame.updateSizes();
 		}

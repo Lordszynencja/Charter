@@ -75,6 +75,7 @@ public class WindowedPreviewHandler implements Initiable {
 
 		if (windowedPreviewFrame.isVisible()) {
 			windowedPreviewFrame.dispose();
+			windowedPreview3DPanel.clear();
 			return true;
 		}
 

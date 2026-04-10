@@ -9,12 +9,14 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.services.data.ChartItemsHandler;
+import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
 
 public class VocalModeHandler implements ModeHandler {
 	private static final long scrollTimeoutForUndo = 1000;
 
+	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
 	private ChartItemsHandler chartItemsHandler;
 	private CharterFrame charterFrame;
@@ -41,8 +43,8 @@ public class VocalModeHandler implements ModeHandler {
 		final FractionalPosition position = clickData.pressHighlight.toFraction(chartData.beats()).position();
 		final FractionalPosition endPosition = chartData.beats().getMinEndPositionAfter(position)
 				.toFraction(chartData.beats()).position();
-		new VocalPane(new ConstantFractionalPositionWithEnd(position, endPosition), chartData, charterFrame,
-				selectionManager, undoSystem);
+		new VocalPane(new ConstantFractionalPositionWithEnd(position, endPosition), arrangementFixer, chartData,
+				charterFrame, selectionManager, undoSystem);
 	}
 
 	@Override

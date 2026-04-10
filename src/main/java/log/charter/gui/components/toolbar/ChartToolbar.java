@@ -98,14 +98,14 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private RepeatManager repeatManager;
 	private WaveFormDrawer waveFormDrawer;
 
-	private final KeyListener focusingChartPanelOnEnterKey = new KeyListener() {
+	private final KeyListener defocusingInput = new KeyListener() {
 		@Override
 		public void keyTyped(final KeyEvent e) {
 		}
 
 		@Override
 		public void keyPressed(final KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				chartPanel.requestFocusInWindow();
 			}
 		}
@@ -229,7 +229,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 					Config.markChanged();
 				});
 
-		gridSize.field.addKeyListener(focusingChartPanelOnEnterKey);
+		gridSize.field.addKeyListener(defocusingInput);
 
 		add(x, 1, gridSize);
 	}
@@ -382,7 +382,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		playbackSpeed = createNumberField(Label.TOOLBAR_SLOWED_PLAYBACK_SPEED, LabelPosition.LEFT_PACKED, 30, //
 				Config.stretchedMusicSpeed, 1, 500, false, this::changeSpeed);
 
-		playbackSpeed.field.addKeyListener(focusingChartPanelOnEnterKey);
+		playbackSpeed.field.addKeyListener(defocusingInput);
 
 		this.add(x, playbackSpeed);
 	}

@@ -11,7 +11,7 @@ public class DefaultEofShortcuts extends ShortcutList {
 	private DefaultEofShortcuts() {
 		super.set(Action.ARRANGEMENT_NEXT, new Shortcut(KeyEvent.VK_UP).ctrl().shift());
 		super.set(Action.ARRANGEMENT_PREVIOUS, new Shortcut(KeyEvent.VK_DOWN).ctrl().shift());
-		super.set(Action.BEAT_ADD, new Shortcut(KeyEvent.VK_INSERT).ctrl());
+		super.set(Action.BEAT_ADD, new Shortcut().ctrl().insert());
 		super.set(Action.BEAT_REMOVE, new Shortcut(KeyEvent.VK_DELETE).ctrl());
 		super.set(Action.BOOKMARK_0, new Shortcut(KeyEvent.VK_0).shift());
 		super.set(Action.BOOKMARK_1, new Shortcut(KeyEvent.VK_1).shift());
@@ -44,6 +44,7 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.FINGER_T, new Shortcut(KeyEvent.VK_5).alt());
 		super.set(Action.INCREASE_LENGTH, new Shortcut(KeyEvent.VK_CLOSE_BRACKET));
 		super.set(Action.INCREASE_LENGTH_FAST, new Shortcut(KeyEvent.VK_CLOSE_BRACKET).shift());
+		super.set(Action.INSERT_VOCAL, new Shortcut().insert());
 		super.set(Action.NUMBER_0, new Shortcut(KeyEvent.VK_0));
 		super.set(Action.NUMBER_1, new Shortcut(KeyEvent.VK_1));
 		super.set(Action.NUMBER_2, new Shortcut(KeyEvent.VK_2));
@@ -56,7 +57,7 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.NUMBER_9, new Shortcut(KeyEvent.VK_9));
 		super.set(Action.HALVE_GRID, new Shortcut(KeyEvent.VK_COMMA));
 		super.set(Action.MARK_HAND_SHAPE, null);
-		super.set(Action.MEASURE_ADD, new Shortcut(KeyEvent.VK_INSERT).ctrl().shift());
+		super.set(Action.MEASURE_ADD, new Shortcut().ctrl().shift().insert());
 		super.set(Action.MEASURE_REMOVE, new Shortcut(KeyEvent.VK_DELETE).ctrl().shift());
 		super.set(Action.MOVE_BACKWARD, new Shortcut(KeyEvent.VK_LEFT));
 		super.set(Action.MOVE_FORWARD, new Shortcut(KeyEvent.VK_RIGHT));

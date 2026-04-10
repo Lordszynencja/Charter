@@ -191,6 +191,7 @@ public class Localization {
 		IMPORT_USC_VOCALS("Import USC vocals file"), //
 		INCREASE_LENGTH("Increase length"), //
 		INCREASE_LENGTH_FAST("Increase length fast"), //
+		INSERT_VOCAL("Insert vocal"), //
 		INVERT_STRINGS("Invert strings"), //
 		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
 		LEFT_HANDED("Left handed"), //

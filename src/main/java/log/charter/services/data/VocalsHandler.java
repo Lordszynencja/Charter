@@ -6,6 +6,8 @@ import log.charter.data.ChartData;
 import log.charter.data.config.values.AudioConfig;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
+import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd.ConstantFractionalPositionWithEnd;
 import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.vocals.Vocal;
@@ -19,6 +21,7 @@ import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
+import log.charter.util.CollectionUtils;
 
 public class VocalsHandler {
 	private ArrangementFixer arrangementFixer;
@@ -29,6 +32,28 @@ public class VocalsHandler {
 	private SelectionManager selectionManager;
 	private TextTab textTab;
 	private UndoSystem undoSystem;
+
+	public void insertVocal() {
+		selectionManager.clear();
+		final FractionalPosition vocalPosition = chartData.beats()
+				.getPositionFromGridClosestTo(new ConstantPosition(chartTimeHandler.time()));
+
+		final Integer vocalId = CollectionUtils.lastBeforeEqual(chartData.currentVocals().vocals, vocalPosition)
+				.findId();
+		final Vocal vocal = vocalId == null ? null : chartData.currentVocals().vocals.get(vocalId);
+		if (vocal != null && vocal.position().equals(vocalPosition)) {
+			new VocalPane(vocalId, vocal, chartData, charterFrame, selectionManager, undoSystem);
+			return;
+		}
+
+		final FractionalPosition vocalEndPosition = chartData.beats().getMinEndPositionAfter(vocalPosition)
+				.toFraction(chartData.beats()).position();
+
+		final IConstantFractionalPositionWithEnd position = new ConstantFractionalPositionWithEnd(vocalPosition,
+				vocalEndPosition);
+
+		new VocalPane(position, arrangementFixer, chartData, charterFrame, selectionManager, undoSystem);
+	}
 
 	public void editVocals() {
 		final List<Selection<Vocal>> selected = selectionManager.getSelected(PositionType.VOCAL);
