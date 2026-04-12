@@ -39,6 +39,7 @@ public class ChartProject {
 
 	public List<Beat> beats = new ArrayList<>();
 	public double mainAudioOffsetAdded = 0;
+	public int barsAdded = 0;
 
 	public List<Showlight> showlights = new ArrayList<>();
 	public VocalPath vocals = null;
@@ -67,6 +68,7 @@ public class ChartProject {
 
 		beats = new ArrayList<>(songChart.beatsMap.beats);
 		mainAudioOffsetAdded = songChart.mainAudioOffsetAdded;
+		barsAdded = songChart.barsAdded;
 
 		showlights = songChart.showlights();
 		vocalPaths = songChart.vocalPaths;

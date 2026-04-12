@@ -1,5 +1,6 @@
 package log.charter.gui.panes.songEdits;
 
+import static java.lang.Math.abs;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.math.BigDecimal;
@@ -121,6 +122,10 @@ public class AddSilenceInTheBeginningPane extends ParamsPane {
 
 	private void saveAndExit() {
 		final double timeChange = getTimeChange();
+
+		if (abs(timeChange) < 0.0001) {
+			return;
+		}
 
 		if (timeChange > 0) {
 			addSilence(timeChange);

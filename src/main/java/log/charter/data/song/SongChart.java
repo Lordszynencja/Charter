@@ -33,6 +33,7 @@ public class SongChart {
 
 	public BeatsMap beatsMap;
 	public double mainAudioOffsetAdded = 0;
+	public int barsAdded = 0;
 
 	private List<Showlight> showlights = new ArrayList<>();
 	private List<Showlight> showlightsFog = new ArrayList<>();
@@ -82,6 +83,7 @@ public class SongChart {
 
 		beatsMap = new BeatsMap(project);
 		mainAudioOffsetAdded = project.mainAudioOffsetAdded;
+		barsAdded = project.barsAdded;
 
 		if (project.showlights != null) {
 			showlights(project.showlights);

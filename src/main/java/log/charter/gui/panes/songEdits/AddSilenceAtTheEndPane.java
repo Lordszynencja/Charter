@@ -1,5 +1,6 @@
 package log.charter.gui.panes.songEdits;
 
+import static java.lang.Math.abs;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.math.BigDecimal;
@@ -149,6 +150,10 @@ public class AddSilenceAtTheEndPane extends RowedDialog {
 
 	private void saveAndExit() {
 		final double newLength = getLength();
+
+		if (abs(newLength - audioLength) < 0.0001) {
+			return;
+		}
 
 		if (newLength > audioLength) {
 			addSilence(newLength - audioLength);
