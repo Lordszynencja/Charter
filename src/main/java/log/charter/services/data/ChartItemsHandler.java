@@ -26,6 +26,7 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.data.song.position.time.ConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
@@ -41,9 +42,21 @@ import log.charter.services.editModes.ModeManager;
 import log.charter.util.CollectionUtils;
 
 public class ChartItemsHandler {
+	public static class Insertable<T extends IConstantFractionalPosition> {
+		public final FractionalPosition position;
+		public final Integer itemId;
+		public final T item;
+
+		public Insertable(final FractionalPosition position, final Integer itemId, final T item) {
+			this.position = position;
+			this.itemId = itemId;
+			this.item = item;
+		}
+	}
 
 	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
+	private ChartTimeHandler chartTimeHandler;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
@@ -338,5 +351,18 @@ public class ChartItemsHandler {
 				changeNoteLength(beats, sounds, note, selected.id, gridsChange);
 			});
 		}
+	}
+
+	public <T extends IConstantFractionalPosition> Insertable<T> getItemForInsert(final List<T> items) {
+		final FractionalPosition position = chartData.beats()
+				.getPositionFromGridClosestTo(new ConstantPosition(chartTimeHandler.time()));
+
+		final Integer id = CollectionUtils.lastBeforeEqual(items, position).findId();
+		final T item = id == null ? null : items.get(id);
+		if (item != null && item.position().equals(position)) {
+			return new Insertable<>(position, id, item);
+		}
+
+		return new Insertable<>(position, id, null);
 	}
 }

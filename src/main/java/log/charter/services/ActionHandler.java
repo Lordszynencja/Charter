@@ -40,6 +40,7 @@ import log.charter.services.data.files.SongFileHandler;
 import log.charter.services.data.files.newProject.NewEmptyProjectCreator;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
+import log.charter.services.editModes.GuitarModeHandler;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
@@ -58,6 +59,7 @@ public class ActionHandler implements Initiable {
 	private ClapsHandler clapsHandler;
 	private CopyManager copyManager;
 	private CurrentSelectionEditor currentSelectionEditor;
+	private GuitarModeHandler guitarModeHandler;
 	private GuitarSoundsHandler guitarSoundsHandler;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private HandShapesHandler handShapesHandler;
@@ -199,10 +201,6 @@ public class ActionHandler implements Initiable {
 		modeManager.getHandler().handleNumber(number);
 	}
 
-	private void toggleString(final int string) {
-		currentSelectionEditor.toggleString(string);
-	}
-
 	private void doubleGridSize() {
 		if (GridConfig.gridSize <= 512) {
 			GridConfig.gridSize *= 2;
@@ -285,6 +283,8 @@ public class ActionHandler implements Initiable {
 
 	@Override
 	public void init() {
+		guitarModeHandler = modeManager.getGuitarModeHandler();
+
 		actionHandlers.put(Action.ARRANGEMENT_NEXT, this::nextArrangement);
 		actionHandlers.put(Action.ARRANGEMENT_PREVIOUS, this::previousArrangement);
 		actionHandlers.put(Action.BEAT_ADD, beatsService::addBeat);
@@ -319,7 +319,11 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.HALVE_GRID, this::halveGridSize);
 		actionHandlers.put(Action.INCREASE_LENGTH, () -> changeLength(1));
 		actionHandlers.put(Action.INCREASE_LENGTH_FAST, () -> changeLength(4));
+		actionHandlers.put(Action.INSERT_EVENT_POINT, guitarModeHandler::insertEventPoint);
+		actionHandlers.put(Action.INSERT_FHP, guitarModeHandler::insertFHP);
+		actionHandlers.put(Action.INSERT_HAND_SHAPE, guitarModeHandler::insertHandShape);
 		actionHandlers.put(Action.INSERT_SHOWLIGHT, showlightsHandler::insertShowlight);
+		actionHandlers.put(Action.INSERT_TONE_CHANGE, guitarModeHandler::insertToneChange);
 		actionHandlers.put(Action.INSERT_VOCAL, vocalsHandler::insertVocal);
 		actionHandlers.put(Action.MARK_HAND_SHAPE, handShapesHandler::markHandShape);
 		actionHandlers.put(Action.MEASURE_ADD, beatsService::addMeasure);
@@ -388,15 +392,15 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.SPEED_INCREASE, () -> changeSpeed(5));
 		actionHandlers.put(Action.SPEED_INCREASE_FAST, () -> changeSpeed(25));
 		actionHandlers.put(Action.SPEED_INCREASE_PRECISE, () -> changeSpeed(1));
-		actionHandlers.put(Action.STRING_1, () -> toggleString(0));
-		actionHandlers.put(Action.STRING_2, () -> toggleString(1));
-		actionHandlers.put(Action.STRING_3, () -> toggleString(2));
-		actionHandlers.put(Action.STRING_4, () -> toggleString(3));
-		actionHandlers.put(Action.STRING_5, () -> toggleString(4));
-		actionHandlers.put(Action.STRING_6, () -> toggleString(5));
-		actionHandlers.put(Action.STRING_7, () -> toggleString(6));
-		actionHandlers.put(Action.STRING_8, () -> toggleString(7));
-		actionHandlers.put(Action.STRING_9, () -> toggleString(8));
+		actionHandlers.put(Action.STRING_1, () -> currentSelectionEditor.toggleString(0));
+		actionHandlers.put(Action.STRING_2, () -> currentSelectionEditor.toggleString(1));
+		actionHandlers.put(Action.STRING_3, () -> currentSelectionEditor.toggleString(2));
+		actionHandlers.put(Action.STRING_4, () -> currentSelectionEditor.toggleString(3));
+		actionHandlers.put(Action.STRING_5, () -> currentSelectionEditor.toggleString(4));
+		actionHandlers.put(Action.STRING_6, () -> currentSelectionEditor.toggleString(5));
+		actionHandlers.put(Action.STRING_7, () -> currentSelectionEditor.toggleString(6));
+		actionHandlers.put(Action.STRING_8, () -> currentSelectionEditor.toggleString(7));
+		actionHandlers.put(Action.STRING_9, () -> currentSelectionEditor.toggleString(8));
 		actionHandlers.put(Action.SWITCH_TYPING_PART, this::switchTypingPart);
 		actionHandlers.put(Action.TOGGLE_ACCENT, guitarSoundsStatusesHandler::toggleAccent);
 		actionHandlers.put(Action.TOGGLE_ACCENT_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleAccentIndependently);
@@ -419,6 +423,11 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.TOGGLE_MIDI, audioHandler::toggleMidiNotes);
 		actionHandlers.put(Action.TOGGLE_MUTE, guitarSoundsStatusesHandler::toggleMute);
 		actionHandlers.put(Action.TOGGLE_MUTE_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleMuteIndependently);
+		for (int i = 0; i < 9; i++) {
+			final int string = i;
+			final Action action = Action.valueOf("TOGGLE_NOTE_" + (string + 1));
+			actionHandlers.put(action, () -> guitarModeHandler.toggleString(string));
+		}
 		actionHandlers.put(Action.TOGGLE_PHRASE_END, vocalsHandler::togglePhraseEnd);
 		actionHandlers.put(Action.TOGGLE_SLAP_POP, guitarSoundsStatusesHandler::toggleSlapPop);
 		actionHandlers.put(Action.TOGGLE_SLAP_POP_INDEPENDENTLY,

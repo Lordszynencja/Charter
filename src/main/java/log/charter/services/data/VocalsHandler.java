@@ -18,15 +18,16 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.TextTab;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.panes.songEdits.VocalPane;
+import log.charter.services.data.ChartItemsHandler.Insertable;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
-import log.charter.util.CollectionUtils;
 
 public class VocalsHandler {
 	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
+	private ChartItemsHandler chartItemsHandler;
 	private ChartTimeHandler chartTimeHandler;
 	private CurrentSelectionEditor currentSelectionEditor;
 	private SelectionManager selectionManager;
@@ -34,24 +35,19 @@ public class VocalsHandler {
 	private UndoSystem undoSystem;
 
 	public void insertVocal() {
+		final Insertable<Vocal> insertable = chartItemsHandler.getItemForInsert(chartData.currentVocals().vocals);
 		selectionManager.clear();
-		final FractionalPosition vocalPosition = chartData.beats()
-				.getPositionFromGridClosestTo(new ConstantPosition(chartTimeHandler.time()));
 
-		final Integer vocalId = CollectionUtils.lastBeforeEqual(chartData.currentVocals().vocals, vocalPosition)
-				.findId();
-		final Vocal vocal = vocalId == null ? null : chartData.currentVocals().vocals.get(vocalId);
-		if (vocal != null && vocal.position().equals(vocalPosition)) {
-			new VocalPane(vocalId, vocal, chartData, charterFrame, selectionManager, undoSystem);
+		if (insertable.item != null) {
+			new VocalPane(insertable.itemId, insertable.item, chartData, charterFrame, selectionManager, undoSystem);
 			return;
 		}
 
-		final FractionalPosition vocalEndPosition = chartData.beats().getMinEndPositionAfter(vocalPosition)
+		final FractionalPosition vocalEndPosition = chartData.beats().getMinEndPositionAfter(insertable.position)
 				.toFraction(chartData.beats()).position();
 
-		final IConstantFractionalPositionWithEnd position = new ConstantFractionalPositionWithEnd(vocalPosition,
+		final IConstantFractionalPositionWithEnd position = new ConstantFractionalPositionWithEnd(insertable.position,
 				vocalEndPosition);
-
 		new VocalPane(position, arrangementFixer, chartData, charterFrame, selectionManager, undoSystem);
 	}
 

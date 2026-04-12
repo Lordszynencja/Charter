@@ -130,6 +130,7 @@ public class VocalPane extends ParamsPane {
 		if (text == null || "".equals(text)) {
 			undoSystem.addUndo();
 			data.currentVocals().removeNote(id);
+			selectionManager.clear();
 			return;
 		}
 

@@ -15,6 +15,20 @@ class ItemsMenuHandler extends CharterMenuHandler {
 		return modeManager.getMode() != EditMode.EMPTY && modeManager.getMode() != EditMode.TEMPO_MAP;
 	}
 
+	private JMenu seekingItemWithSelectSubmenu() {
+		final JMenu submenu = createMenu(Label.SEEKING_ITEM_WITH_SELECT);
+		submenu.add(createItem(Action.PREVIOUS_ITEM_WITH_SELECT));
+		submenu.add(createItem(Action.NEXT_ITEM_WITH_SELECT));
+		submenu.add(createItem(Action.PREVIOUS_ITEM_WITH_SELECT_CTRL));
+		submenu.add(createItem(Action.NEXT_ITEM_WITH_SELECT_CTRL));
+		submenu.add(createItem(Action.PREVIOUS_ITEM_WITH_SELECT_CTRL_SHIFT));
+		submenu.add(createItem(Action.NEXT_ITEM_WITH_SELECT_CTRL_SHIFT));
+		submenu.add(createItem(Action.PREVIOUS_ITEM_WITH_SELECT_SHIFT));
+		submenu.add(createItem(Action.NEXT_ITEM_WITH_SELECT_SHIFT));
+
+		return submenu;
+	}
+
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.ITEMS_MENU);
@@ -31,8 +45,7 @@ class ItemsMenuHandler extends CharterMenuHandler {
 		menu.addSeparator();
 		menu.add(createItem(Action.PREVIOUS_ITEM));
 		menu.add(createItem(Action.NEXT_ITEM));
-		menu.add(createItem(Action.PREVIOUS_ITEM_WITH_SELECT));
-		menu.add(createItem(Action.NEXT_ITEM_WITH_SELECT));
+		menu.add(seekingItemWithSelectSubmenu());
 		menu.add(createItem(Action.PREVIOUS_GRID_POSITION));
 		menu.add(createItem(Action.NEXT_GRID_POSITION));
 		menu.add(createItem(Action.PREVIOUS_BEAT));

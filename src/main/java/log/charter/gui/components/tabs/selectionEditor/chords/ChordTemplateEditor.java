@@ -203,7 +203,10 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	private void generateNoteNamesVisibleCheckbox() {
 		final JCheckBox checkBox = new JCheckBox();
 		checkBox.setSelected(Config.showNoteNames);
-		checkBox.addActionListener(e -> Config.showNoteNames = checkBox.isSelected());
+		checkBox.addActionListener(e -> {
+			Config.showNoteNames = checkBox.isSelected();
+			chordTemplatePreview.repaint();
+		});
 
 		showNoteNames = new FieldWithLabel<>(Label.SHOW_NOTE_NAMES, 0, 25, 25, checkBox, LabelPosition.RIGHT_CLOSE);
 	}
@@ -596,7 +599,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 	public void hideFields() {
 		chordNameAdviceButton.setVisible(false);
-		chordNameAdviceButton.removePopup();
+		chordNameAdviceButton.removeLabels();
 		chordNameLabel.setVisible(false);
 		chordNameInput.setVisible(false);
 		chordNameInput.removeLabels();

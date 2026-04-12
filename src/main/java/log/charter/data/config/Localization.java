@@ -172,6 +172,7 @@ public class Localization {
 		FRETS("Frets"), //
 		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
+		GUITAR_EVENT_POINT_PANE("Event point"), //
 		GP_FILES_FOLDER("GP files folder"), //
 		GRAPHIC_CONFIG_PANE("Graphic config"), //
 		GRID_TYPE_BEAT("Beat"), //
@@ -191,7 +192,11 @@ public class Localization {
 		IMPORT_USC_VOCALS("Import USC vocals file"), //
 		INCREASE_LENGTH("Increase length"), //
 		INCREASE_LENGTH_FAST("Increase length fast"), //
+		INSERT_EVENT_POINT("Insert event point"), //
+		INSERT_FHP("Insert FHP"), //
+		INSERT_HAND_SHAPE("Insert hand shape"), //
 		INSERT_SHOWLIGHT("Insert showlight"), //
+		INSERT_TONE_CHANGE("Insert tone change"), //
 		INSERT_VOCAL("Insert vocal"), //
 		INVERT_STRINGS("Invert strings"), //
 		INVERT_STRINGS_IN_PREVIEW("Invert strings in preview"), //
@@ -252,6 +257,7 @@ public class Localization {
 		NOTE_SLIDES_INTO_WRONG_FRET("Note slide ends on a different fret than next note on string %d"), //
 		NOTE_SLIDE_ENDS_ON_DIFFERENT_FINGER("Note slide ends on different finger on string %d"), //
 		NOTE_STRING_SELECTION_OPERATIONS("Note string selection operations"), //
+		NOTE_STRING_TOGGLE_OPERATIONS("Note string toggle operations"), //
 		NOTE_WITHOUT_FHP("Note without FHP"), //
 		NUMBER_0("Number 0"), //
 		NUMBER_1("Number 1"), //
@@ -334,6 +340,7 @@ public class Localization {
 		SECTION_VARIATION("Variation"), //
 		SECTION_VERSE("Verse"), //
 		SECTION_WITHOUT_PHRASE("Section without phrase"), //
+		SEEKING_ITEM_WITH_SELECT("Seeking item with select"), //
 		SELECT_ALL("Select all"), //
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
 		SET_DEFAULT_START_SILENCE("Set default starting silence"), //
@@ -425,6 +432,15 @@ public class Localization {
 		TOGGLE_LOW_PASS_FILTER("Toggle low pass filter"), //
 		TOGGLE_METRONOME("Toggle metronome"), //
 		TOGGLE_MIDI("Toggle midi notes"), //
+		TOGGLE_NOTE_1("Toggle note on string 1"), //
+		TOGGLE_NOTE_2("Toggle note on string 2"), //
+		TOGGLE_NOTE_3("Toggle note on string 3"), //
+		TOGGLE_NOTE_4("Toggle note on string 4"), //
+		TOGGLE_NOTE_5("Toggle note on string 5"), //
+		TOGGLE_NOTE_6("Toggle note on string 6"), //
+		TOGGLE_NOTE_7("Toggle note on string 7"), //
+		TOGGLE_NOTE_8("Toggle note on string 8"), //
+		TOGGLE_NOTE_9("Toggle note on string 9"), //
 		TOGGLE_SLAP_POP("Toggle Slap/Pop"), //
 		TOGGLE_SLAP_POP_INDEPENDENTLY("Toggle Slap/Pop independently"), //
 		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //

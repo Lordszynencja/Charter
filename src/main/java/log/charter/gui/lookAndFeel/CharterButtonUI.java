@@ -46,38 +46,63 @@ public class CharterButtonUI extends BasicButtonUI {
 		return button.getBackground();
 	}
 
+	private void paintFill(final Graphics2D g2d, final AbstractButton button) {
+
+		final RoundRectangle2D.Double roundedRectangle = new RoundRectangle2D.Double(0, 0, button.getWidth() - 1,
+				button.getHeight() - 1, 5, 5);
+
+		if (button.hasFocus()) {
+			g2d.setColor(ColorLabel.BASE_1.color());
+		} else {
+			g2d.setColor(getBackgroundColor(g2d, button));
+		}
+		g2d.fill(roundedRectangle);
+
+		if (button.hasFocus()) {
+			final RoundRectangle2D.Double focusRectangle = new RoundRectangle2D.Double(2, 2, button.getWidth() - 5,
+					button.getHeight() - 5, 5, 5);
+			g2d.setColor(getBackgroundColor(g2d, button));
+			g2d.fill(focusRectangle);
+		}
+	}
+
+	private void paintIcon(final Graphics2D g2d, final AbstractButton button) {
+		if (button.getIcon() == null) {
+			return;
+		}
+
+		final Icon icon = button.getIcon();
+		final int iconX = (button.getWidth() - icon.getIconWidth()) / 2;
+		final int iconY = (button.getHeight() - icon.getIconHeight()) / 2;
+		icon.paintIcon(button, g2d, iconX, iconY);
+	}
+
+	private void paintText(final Graphics2D g2d, final AbstractButton button) {
+		if (button.getText() == null || button.getText().isEmpty()) {
+			return;
+		}
+
+		if (button.isEnabled()) {
+			g2d.setColor(button.getForeground());
+		} else {
+			g2d.setColor(button.getForeground().darker());
+		}
+
+		g2d.drawString(button.getText(),
+				(int) (button.getWidth() - g2d.getFontMetrics().getStringBounds(button.getText(), g2d).getWidth()) / 2,
+				(int) ((button.getHeight() - g2d.getFontMetrics().getAscent() - g2d.getFontMetrics().getDescent()) / 2)
+						+ g2d.getFontMetrics().getAscent());
+	}
+
 	@Override
 	public void paint(final Graphics g, final JComponent c) {
 		final AbstractButton button = (AbstractButton) c;
 		final Graphics2D g2d = (Graphics2D) g.create();
 		setupGraphics(g2d, c);
 
-		// button fill
-		final RoundRectangle2D.Double roundedRectangle = new RoundRectangle2D.Double(0, 0, c.getWidth() - 1,
-				c.getHeight() - 1, 5, 5);
-		g2d.setColor(getBackgroundColor(g2d, button));
-		g2d.fill(roundedRectangle);
-
-		// button icon
-		if (button.getIcon() != null) {
-			final Icon icon = button.getIcon();
-			final int iconX = (c.getWidth() - icon.getIconWidth()) / 2;
-			final int iconY = (c.getHeight() - icon.getIconHeight()) / 2;
-			icon.paintIcon(c, g2d, iconX, iconY);
-		}
-
-		// button text
-		if (button.getText() != null && !button.getText().isEmpty()) {
-			if (button.isEnabled()) {
-				g2d.setColor(button.getForeground());
-			} else {
-				g2d.setColor(button.getForeground().darker());
-			}
-			g2d.drawString(button.getText(),
-					(int) (c.getWidth() - g2d.getFontMetrics().getStringBounds(button.getText(), g2d).getWidth()) / 2,
-					(int) ((c.getHeight() - g2d.getFontMetrics().getAscent() - g2d.getFontMetrics().getDescent()) / 2)
-							+ g2d.getFontMetrics().getAscent());
-		}
+		paintFill(g2d, button);
+		paintIcon(g2d, button);
+		paintText(g2d, button);
 
 		g2d.dispose();
 	}

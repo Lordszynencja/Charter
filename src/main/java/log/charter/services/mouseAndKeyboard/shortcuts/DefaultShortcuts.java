@@ -44,7 +44,11 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.FINGER_T, new Shortcut(KeyEvent.VK_5).alt());
 		super.set(Action.INCREASE_LENGTH, new Shortcut(KeyEvent.VK_CLOSE_BRACKET));
 		super.set(Action.INCREASE_LENGTH_FAST, new Shortcut(KeyEvent.VK_CLOSE_BRACKET).shift());
+		super.set(Action.INSERT_EVENT_POINT, new Shortcut(KeyEvent.VK_E).insert());
+		super.set(Action.INSERT_FHP, new Shortcut(KeyEvent.VK_F).insert());
+		super.set(Action.INSERT_HAND_SHAPE, new Shortcut(KeyEvent.VK_H).insert());
 		super.set(Action.INSERT_SHOWLIGHT, new Shortcut().insert());
+		super.set(Action.INSERT_TONE_CHANGE, new Shortcut(KeyEvent.VK_T).insert());
 		super.set(Action.INSERT_VOCAL, new Shortcut().insert());
 		super.set(Action.NUMBER_0, new Shortcut(KeyEvent.VK_0));
 		super.set(Action.NUMBER_1, new Shortcut(KeyEvent.VK_1));
@@ -136,6 +140,15 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.TOGGLE_MIDI, new Shortcut(KeyEvent.VK_F2));
 		super.set(Action.TOGGLE_MUTE, new Shortcut(KeyEvent.VK_M));
 		super.set(Action.TOGGLE_MUTE_INDEPENDENTLY, new Shortcut(KeyEvent.VK_M).alt());
+		super.set(Action.TOGGLE_NOTE_1, new Shortcut(KeyEvent.VK_1).insert());
+		super.set(Action.TOGGLE_NOTE_2, new Shortcut(KeyEvent.VK_2).insert());
+		super.set(Action.TOGGLE_NOTE_3, new Shortcut(KeyEvent.VK_3).insert());
+		super.set(Action.TOGGLE_NOTE_4, new Shortcut(KeyEvent.VK_4).insert());
+		super.set(Action.TOGGLE_NOTE_5, new Shortcut(KeyEvent.VK_5).insert());
+		super.set(Action.TOGGLE_NOTE_6, new Shortcut(KeyEvent.VK_6).insert());
+		super.set(Action.TOGGLE_NOTE_7, new Shortcut(KeyEvent.VK_7).insert());
+		super.set(Action.TOGGLE_NOTE_8, new Shortcut(KeyEvent.VK_8).insert());
+		super.set(Action.TOGGLE_NOTE_9, new Shortcut(KeyEvent.VK_9).insert());
 		super.set(Action.TOGGLE_PHRASE_END, new Shortcut(KeyEvent.VK_E));
 		super.set(Action.TOGGLE_SLAP_POP, new Shortcut(KeyEvent.VK_P));
 		super.set(Action.TOGGLE_SLAP_POP_INDEPENDENTLY, new Shortcut(KeyEvent.VK_P).alt());
