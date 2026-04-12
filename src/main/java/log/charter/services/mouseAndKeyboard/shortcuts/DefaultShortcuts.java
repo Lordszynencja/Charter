@@ -134,6 +134,8 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.TOGGLE_HARMONIC_INDEPENDENTLY, new Shortcut(KeyEvent.VK_O).alt());
 		super.set(Action.TOGGLE_HOPO, new Shortcut(KeyEvent.VK_H));
 		super.set(Action.TOGGLE_HOPO_INDEPENDENTLY, new Shortcut(KeyEvent.VK_H).alt());
+		super.set(Action.TOGGLE_IGNORE, new Shortcut(KeyEvent.VK_I));
+		super.set(Action.TOGGLE_IGNORE_INDEPENDENTLY, new Shortcut(KeyEvent.VK_I).alt());
 		super.set(Action.TOGGLE_LINK_NEXT, new Shortcut(KeyEvent.VK_L));
 		super.set(Action.TOGGLE_LINK_NEXT_INDEPENDENTLY, new Shortcut(KeyEvent.VK_L).alt());
 		super.set(Action.TOGGLE_METRONOME, new Shortcut(KeyEvent.VK_F4));
@@ -149,9 +151,15 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.TOGGLE_NOTE_7, new Shortcut(KeyEvent.VK_7).insert());
 		super.set(Action.TOGGLE_NOTE_8, new Shortcut(KeyEvent.VK_8).insert());
 		super.set(Action.TOGGLE_NOTE_9, new Shortcut(KeyEvent.VK_9).insert());
+		super.set(Action.TOGGLE_ONLY_BOX, new Shortcut(KeyEvent.VK_B));
+		super.set(Action.TOGGLE_ONLY_BOX_INDEPENDENTLY, new Shortcut(KeyEvent.VK_B).alt());
+		super.set(Action.TOGGLE_PASS_NOTES, new Shortcut(KeyEvent.VK_C));
+		super.set(Action.TOGGLE_PASS_NOTES_INDEPENDENTLY, new Shortcut(KeyEvent.VK_C).alt());
 		super.set(Action.TOGGLE_PHRASE_END, new Shortcut(KeyEvent.VK_E));
 		super.set(Action.TOGGLE_SLAP_POP, new Shortcut(KeyEvent.VK_P));
 		super.set(Action.TOGGLE_SLAP_POP_INDEPENDENTLY, new Shortcut(KeyEvent.VK_P).alt());
+		super.set(Action.TOGGLE_SPLIT, new Shortcut(KeyEvent.VK_S));
+		super.set(Action.TOGGLE_SPLIT_INDEPENDENTLY, new Shortcut(KeyEvent.VK_S).alt());
 		super.set(Action.TOGGLE_PREVIEW_WINDOW, new Shortcut(KeyEvent.VK_F11));
 		super.set(Action.TOGGLE_REPEAT_END, new Shortcut(KeyEvent.VK_CLOSE_BRACKET).alt());
 		super.set(Action.TOGGLE_REPEAT_START, new Shortcut(KeyEvent.VK_OPEN_BRACKET).alt());

@@ -415,6 +415,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.TOGGLE_HIGH_PASS_FILTER, audioHandler::toggleHighPassFilter);
 		actionHandlers.put(Action.TOGGLE_HOPO, guitarSoundsStatusesHandler::toggleHOPO);
 		actionHandlers.put(Action.TOGGLE_HOPO_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleHOPOIndependently);
+		actionHandlers.put(Action.TOGGLE_IGNORE, guitarSoundsStatusesHandler::toggleIgnore);
+		actionHandlers.put(Action.TOGGLE_IGNORE_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleIgnoreIndependently);
 		actionHandlers.put(Action.TOGGLE_LINK_NEXT, guitarSoundsStatusesHandler::toggleLinkNext);
 		actionHandlers.put(Action.TOGGLE_LINK_NEXT_INDEPENDENTLY,
 				guitarSoundsStatusesHandler::toggleLinkNextIndependently);
@@ -428,10 +430,17 @@ public class ActionHandler implements Initiable {
 			final Action action = Action.valueOf("TOGGLE_NOTE_" + (string + 1));
 			actionHandlers.put(action, () -> guitarModeHandler.toggleString(string));
 		}
+		actionHandlers.put(Action.TOGGLE_ONLY_BOX, () -> guitarSoundsStatusesHandler.toggleOnlyBox(false));
+		actionHandlers.put(Action.TOGGLE_ONLY_BOX_INDEPENDENTLY, () -> guitarSoundsStatusesHandler.toggleOnlyBox(true));
+		actionHandlers.put(Action.TOGGLE_PASS_NOTES, guitarSoundsStatusesHandler::togglePassNotes);
+		actionHandlers.put(Action.TOGGLE_PASS_NOTES_INDEPENDENTLY,
+				guitarSoundsStatusesHandler::togglePassNotesIndependently);
 		actionHandlers.put(Action.TOGGLE_PHRASE_END, vocalsHandler::togglePhraseEnd);
 		actionHandlers.put(Action.TOGGLE_SLAP_POP, guitarSoundsStatusesHandler::toggleSlapPop);
 		actionHandlers.put(Action.TOGGLE_SLAP_POP_INDEPENDENTLY,
 				guitarSoundsStatusesHandler::toggleSlapPopIndependently);
+		actionHandlers.put(Action.TOGGLE_SPLIT, () -> guitarSoundsStatusesHandler.toggleSplit(false));
+		actionHandlers.put(Action.TOGGLE_SPLIT_INDEPENDENTLY, () -> guitarSoundsStatusesHandler.toggleSplit(true));
 		actionHandlers.put(Action.TOGGLE_PREVIEW_WINDOW, windowedPreviewHandler::switchWindowedPreview);
 		actionHandlers.put(Action.TOGGLE_REPEAT_START, repeatManager::toggleRepeatStart);
 		actionHandlers.put(Action.TOGGLE_REPEAT_END, repeatManager::toggleRepeatEnd);

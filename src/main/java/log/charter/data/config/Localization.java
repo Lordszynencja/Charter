@@ -426,9 +426,11 @@ public class Localization {
 		THEME_MODERN("Modern"), //
 		THEME_SQUARE("Square"), //
 		TOGGLE_ANCHOR("Toggle anchor"), //
-		TOGGLE_CLAPS("Toggle claps"), //
 		TOGGLE_BAND_PASS_FILTER("Toggle band pass filter"), //
+		TOGGLE_CLAPS("Toggle claps"), //
 		TOGGLE_HIGH_PASS_FILTER("Toggle high pass filter"), //
+		TOGGLE_IGNORE("Toggle ignore"), //
+		TOGGLE_IGNORE_INDEPENDENTLY("Toggle ignore independently"), //
 		TOGGLE_LOW_PASS_FILTER("Toggle low pass filter"), //
 		TOGGLE_METRONOME("Toggle metronome"), //
 		TOGGLE_MIDI("Toggle midi notes"), //
@@ -441,8 +443,14 @@ public class Localization {
 		TOGGLE_NOTE_7("Toggle note on string 7"), //
 		TOGGLE_NOTE_8("Toggle note on string 8"), //
 		TOGGLE_NOTE_9("Toggle note on string 9"), //
+		TOGGLE_ONLY_BOX("Toggle only box"), //
+		TOGGLE_ONLY_BOX_INDEPENDENTLY("Toggle only box independently"), //
+		TOGGLE_PASS_NOTES("Toggle pass notes"), //
+		TOGGLE_PASS_NOTES_INDEPENDENTLY("Toggle pass notes independently"), //
 		TOGGLE_SLAP_POP("Toggle Slap/Pop"), //
 		TOGGLE_SLAP_POP_INDEPENDENTLY("Toggle Slap/Pop independently"), //
+		TOGGLE_SPLIT("Toggle split"), //
+		TOGGLE_SPLIT_INDEPENDENTLY("Toggle split independently"), //
 		TOGGLE_WAVEFORM_GRAPH("Toggle waveform drawing"), //
 		TOOLBAR_CLAPS("Claps"), //
 		TOOLBAR_CLAPS_TOOLTIP("Plays a tick every time marker goes past a note while playing"), //

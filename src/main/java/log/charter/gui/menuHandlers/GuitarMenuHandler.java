@@ -78,18 +78,26 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_MUTE_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HOPO));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HOPO_INDEPENDENTLY));
-		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HARMONIC));
-		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HARMONIC_INDEPENDENTLY));
-		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT));
-		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_SLAP_POP));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_SLAP_POP_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HARMONIC));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HARMONIC_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_VIBRATO));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_VIBRATO_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_TREMOLO));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_TREMOLO_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_LINK_NEXT));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_LINK_NEXT_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_SPLIT));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_SPLIT_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ONLY_BOX));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ONLY_BOX_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_IGNORE));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_IGNORE_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_PASS_NOTES));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_PASS_NOTES_INDEPENDENTLY));
 		menu.add(noteStatusOperationsSubMenu);
 	}
 
