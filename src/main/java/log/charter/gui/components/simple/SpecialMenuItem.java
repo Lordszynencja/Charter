@@ -20,16 +20,19 @@ public class SpecialMenuItem extends JMenuItem {
 		super(label.label());
 		this.shortcut = shortcut;
 		addActionListener(e -> onClick.run());
-
-		if (shortcut != null) {
-			final Dimension preferredSize = getPreferredSize();
-			preferredSize.width += textOffset;
-			setPreferredSize(preferredSize);
-		}
 	}
 
 	public SpecialMenuItem(final Label label, final Runnable onClick) {
 		this(label, null, onClick);
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		final Dimension size = super.getPreferredSize();
+		if (shortcut != null) {
+			size.width += textOffset;
+		}
+		return size;
 	}
 
 	private void paintShortcut(final Graphics g) {
@@ -37,7 +40,7 @@ public class SpecialMenuItem extends JMenuItem {
 			return;
 		}
 
-		final Font shortcutFont = new Font(Font.DIALOG, Font.PLAIN, 10);
+		final Font shortcutFont = new Font(Font.DIALOG, Font.PLAIN, getFont().getSize() * 2 / 3);
 		final FontMetrics fontMetrics = getFontMetrics(shortcutFont);
 		g.setFont(shortcutFont);
 		g.setColor(ColorLabel.BASE_DARK_TEXT.color());
@@ -47,7 +50,6 @@ public class SpecialMenuItem extends JMenuItem {
 	@Override
 	public void paint(final Graphics g) {
 		super.paint(g);
-
 		paintShortcut(g);
 	}
 }

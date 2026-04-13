@@ -20,6 +20,7 @@ import java.util.List;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.values.GridConfig;
 import log.charter.data.song.Beat;
 import log.charter.data.song.BeatsMap;
@@ -39,8 +40,13 @@ import log.charter.util.data.Position2D;
 import log.charter.util.grid.GridPosition;
 
 public class BeatsDrawer {
-	private static final Font beatFont = new Font(Font.DIALOG, Font.BOLD, 9);
 	private static final NumberFormat bpmFormat = new DecimalFormat("##0.00");
+
+	private static Font beatFont = new Font(Font.DIALOG, Font.BOLD, 9);
+
+	public static void reloadGraphics() {
+		beatFont = new Font(Font.DIALOG, Font.BOLD, GraphicalConfig.chartTextHeight * 9 / 10);
+	}
 
 	private static String formatBPM(final double bpm, final Beat beat) {
 		if (Config.showTempoInsteadOfBPM) {

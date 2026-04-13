@@ -6,7 +6,6 @@ import static log.charter.gui.components.utils.ComponentUtils.setIcon;
 import static log.charter.util.FileUtils.imagesFolder;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
@@ -17,19 +16,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 
+import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.plaf.basic.BasicGraphicsUtils;
 
 import log.charter.data.ChartData;
 import log.charter.data.GridType;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Config;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.AudioConfig;
 import log.charter.data.config.values.GridConfig;
@@ -63,11 +64,9 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final int verticalSpacing = 8;
+	private static int horizontalSpacing = GraphicalConfig.inputSize / 4;
+	private static int verticalSpacing = GraphicalConfig.inputSize / 2;
 	private static final int elementHeight = 20;
-	public static final int height = elementHeight + 2 * verticalSpacing;
-
-	private static final int horizontalSpacing = 5;
 
 	private static final BufferedImage repeaterIcon = ImageUtils.loadSafeFromDir(imagesFolder, "toolbarRepeater.png");
 	private static final BufferedImage gridBeatTypeIcon = ImageUtils.loadSafeFromDir(imagesFolder,
@@ -125,21 +124,24 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private JToggleButton repeater;
 
 	private FieldWithLabel<TextInputWithValidation> gridSize;
+	private JButton gridDoubleButton;
+	private JButton gridHalveButton;
 	private JToggleButton beatGridType;
 	private JToggleButton noteGridType;
 
 	private JButton chartLock;
 
 	private FieldWithLabel<JSlider> volume;
-	@SuppressWarnings("unused")
 	private FieldWithLabel<JSlider> sfxVolume;
 
 	private FieldWithLabel<TextInputWithValidation> playbackSpeed;
+	private JButton rewindButton;
+	private JButton playButton;
+	private JButton fastForwardButton;
+
 	private JToggleButton lowPassFilter;
 	private JToggleButton highPassFilter;
 	private JToggleButton bandPassFilter;
-
-	private JButton playButton;
 
 	public ChartToolbar() {
 		super();
@@ -151,61 +153,23 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		setBackground(ColorLabel.BASE_BG_2.color());
 	}
 
-	private void setComponentBounds(final Component c, final int x, final int y, final int w, final int h) {
-		ComponentUtils.setComponentBounds(c, x, y, w, h);
-		c.validate();
-		c.repaint();
-	}
-
-	private void add(final AtomicInteger x, final int horizontalSpace, final Component c) {
-		setComponentBounds(c, x.getAndAdd(c.getWidth() + horizontalSpace), verticalSpacing, c.getWidth(),
-				c.getHeight());
-		add(c);
-	}
-
-	private void add(final AtomicInteger x, final Component c) {
-		add(x, horizontalSpacing, c);
-	}
-
-	private JToggleButton addToggleButton(final AtomicInteger x, final int horizontalSpacing, final Label label,
-			final Label tooltipLabel, final Runnable onClick, final int buttonWidth) {
+	private JToggleButton addToggleButton(final Label label, final Label tooltipLabel, final Runnable onClick) {
 		final JToggleButton toggleButton = new JToggleButton(label.label());
 		toggleButton.setToolTipText(tooltipLabel.label());
 		toggleButton.addActionListener(a -> onClick.run());
 		toggleButton.setFocusable(false);
 
-		final int width = (buttonWidth > 0) ? buttonWidth : toggleButton.getPreferredSize().width;
-		toggleButton.setBounds(x.get(), 0, width, elementHeight);
-		add(x, horizontalSpacing, toggleButton);
+		add(toggleButton);
 
 		return toggleButton;
 	}
 
-	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Label tooltipLabel,
-			final Runnable onClick, final int buttonWidth) {
-		return addToggleButton(x, horizontalSpacing, label, tooltipLabel, onClick, buttonWidth);
-	}
-
-	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Label tooltipLabel,
+	private JToggleButton addToggleButton(final Label label, final Label tooltipLabel, final BufferedImage icon,
 			final Runnable onClick) {
-		return addToggleButton(x, label, tooltipLabel, onClick, 0);
-	}
-
-	private JToggleButton addToggleButton(final AtomicInteger x, final Label label, final Label tooltipLabel,
-			final BufferedImage icon, final Runnable onClick) {
-		final JToggleButton toggleButton = addToggleButton(x, label, tooltipLabel, onClick);
+		final JToggleButton toggleButton = addToggleButton(label, tooltipLabel, onClick);
 		setIcon(toggleButton, icon);
 
 		return toggleButton;
-	}
-
-	private void addSeparator(final AtomicInteger x) {
-		x.addAndGet(horizontalSpacing);
-		final JSeparator separator = new JSeparator(JSeparator.VERTICAL);
-		separator.setForeground(ColorLabel.BASE_BG_2.color());
-		separator.setSize(4, elementHeight);
-		add(x, separator);
-		x.addAndGet(horizontalSpacing);
 	}
 
 	private FieldWithLabel<TextInputWithValidation> createNumberField(final Label label,
@@ -222,7 +186,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		return field;
 	}
 
-	private void addGridSizeInput(final AtomicInteger x) {
+	private void addGridSizeInput() {
 		gridSize = createNumberField(Label.TOOLBAR_GRID_SIZE, LabelPosition.LEFT_PACKED, 25, //
 				GridConfig.gridSize, 1, 128, false, newGridSize -> {
 					GridConfig.gridSize = newGridSize;
@@ -231,7 +195,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 		gridSize.field.addKeyListener(defocusingInput);
 
-		add(x, 1, gridSize);
+		add(gridSize);
 	}
 
 	private JButton generateGridSizeButton(final Font font, final String text, final ActionListener actionListener) {
@@ -264,18 +228,13 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		updateValues();
 	}
 
-	private void addGridSizeButtons(final AtomicInteger x) {
+	private void addGridSizeButtons() {
 		final Font miniFont = new Font(Font.DIALOG, Font.PLAIN, 8);
 
-		final JButton gridDoubleButton = generateGridSizeButton(miniFont, "+", a -> doubleGridSize());
-		setComponentBounds(gridDoubleButton, x.get(), verticalSpacing, gridDoubleButton.getWidth(),
-				gridDoubleButton.getHeight());
+		gridDoubleButton = generateGridSizeButton(miniFont, "+", a -> doubleGridSize());
 		add(gridDoubleButton);
 
-		final JButton gridHalveButton = generateGridSizeButton(miniFont, "-", a -> halveGridSize());
-		setComponentBounds(gridHalveButton, x.getAndAdd(gridHalveButton.getWidth() + horizontalSpacing),
-				verticalSpacing + gridDoubleButton.getHeight(), gridHalveButton.getWidth(),
-				gridHalveButton.getHeight());
+		gridHalveButton = generateGridSizeButton(miniFont, "-", a -> halveGridSize());
 		add(gridHalveButton);
 	}
 
@@ -284,13 +243,13 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		Config.markChanged();
 	}
 
-	private void addGridTypes(final AtomicInteger x) {
-		beatGridType = addToggleButton(x, 1, Label.GRID_TYPE_BEAT, Label.GRID_TYPE_BEAT_TOOLTIP,
-				() -> onGridTypeChange(GridType.BEAT), 25);
+	private void addGridTypes() {
+		beatGridType = addToggleButton(Label.GRID_TYPE_BEAT, Label.GRID_TYPE_BEAT_TOOLTIP,
+				() -> onGridTypeChange(GridType.BEAT));
 		setIcon(beatGridType, gridBeatTypeIcon);
 
-		noteGridType = addToggleButton(x, Label.GRID_TYPE_NOTE, Label.GRID_TYPE_NOTE_TOOLTIP,
-				() -> onGridTypeChange(GridType.NOTE), 25);
+		noteGridType = addToggleButton(Label.GRID_TYPE_NOTE, Label.GRID_TYPE_NOTE_TOOLTIP,
+				() -> onGridTypeChange(GridType.NOTE));
 		setIcon(noteGridType, gridNoteTypeIcon);
 
 		final ButtonGroup gridTypeGroup = new ButtonGroup();
@@ -302,16 +261,15 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		setIcon(chartLock, keyboardHandler.scrollLock() ? chartLocked : chartUnlocked);
 	}
 
-	private void addChartLock(final AtomicInteger x) {
+	private void addChartLock() {
 		chartLock = new JButton(new ImageIcon(chartUnlocked));
 		chartLock.setToolTipText(Label.CHART_LOCK_TOOLTIP.label());
 		chartLock.createToolTip().setForeground(Color.WHITE);
 		chartLock.setEnabled(false);
 		chartLock.setBackground(Color.RED);
-		ComponentUtils.setComponentSize(chartLock, 20, 20);
 		setChartLockIcon();
 
-		add(x, chartLock);
+		add(chartLock);
 	}
 
 	private int getVolumeAsInteger(final double volume) {
@@ -346,9 +304,9 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		label.repaint();
 	}
 
-	private FieldWithLabel<JSlider> addVolumeSlider(final AtomicInteger x, final Label label, final Label tooltip,
-			final BufferedImage icon, final BufferedImage mutedIcon, final double value,
-			final DoubleConsumer volumeSetter, final boolean muted, final BooleanConsumer muteSetter) {
+	private FieldWithLabel<JSlider> addVolumeSlider(final Label label, final Label tooltip, final BufferedImage icon,
+			final BufferedImage mutedIcon, final double value, final DoubleConsumer volumeSetter, final boolean muted,
+			final BooleanConsumer muteSetter) {
 		final JSlider volumeSlider = new JSlider(0, 100, getVolumeAsInteger(value));
 		volumeSlider.addChangeListener(e -> volumeSetter.accept(volumeSlider.getValue() / 100.0));
 		volumeSlider.setFocusable(false);
@@ -365,7 +323,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		ComponentUtils.addRightPressListener(volumeSlider, this::openStemSettings);
 		ComponentUtils.addRightPressListener(field, this::openStemSettings);
 
-		add(x, field);
+		add(field);
 		volumeSlider.setUI(new CharterSliderUI());
 
 		return field;
@@ -378,20 +336,20 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		Config.markChanged();
 	}
 
-	private void addPlaybackSpeed(final AtomicInteger x) {
+	private void addPlaybackSpeed() {
 		playbackSpeed = createNumberField(Label.TOOLBAR_SLOWED_PLAYBACK_SPEED, LabelPosition.LEFT_PACKED, 30, //
 				Config.stretchedMusicSpeed, 1, 500, false, this::changeSpeed);
 
 		playbackSpeed.field.addKeyListener(defocusingInput);
 
-		this.add(x, playbackSpeed);
+		this.add(playbackSpeed);
 	}
 
-	private void addTimeControls(final AtomicInteger x) {
-		final JButton rewindButton = new JButton("⏮");
+	private void addTimeControls() {
+		rewindButton = new JButton("⏮");
+		rewindButton.setHorizontalAlignment(CENTER);
 		rewindButton.setToolTipText(Label.REWIND_TOOLTIP.label());
 		rewindButton.setFocusable(false);
-		rewindButton.setSize(30, 20);
 		rewindButton.addChangeListener(e -> {
 			if (rewindButton.getModel().isPressed()) {
 				keyboardHandler.setRewind();
@@ -400,21 +358,21 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 			}
 		});
 
-		add(x, 0, rewindButton);
+		add(rewindButton);
 
 		playButton = new JButton();
+		playButton.setHorizontalAlignment(CENTER);
 		playButton.setToolTipText(Label.PLAY_TOOLTIP.label());
 		playButton.setFocusable(false);
-		playButton.setSize(30, 20);
 		playButton.addActionListener(e -> actionHandler.fireAction(Action.PLAY_AUDIO));
 		setPlayButtonIcon();
 
-		add(x, 0, playButton);
+		add(playButton);
 
-		final JButton fastForwardButton = new JButton("⏩");
+		fastForwardButton = new JButton("⏩");
+		fastForwardButton.setHorizontalAlignment(CENTER);
 		fastForwardButton.setToolTipText(Label.FAST_FORWARD_TOOLTIP.label());
 		fastForwardButton.setFocusable(false);
-		fastForwardButton.setSize(30, 20);
 		fastForwardButton.addChangeListener(e -> {
 			if (fastForwardButton.getModel().isPressed()) {
 				keyboardHandler.setRewind();
@@ -424,7 +382,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 			}
 		});
 
-		add(x, 0, fastForwardButton);
+		add(fastForwardButton);
 	}
 
 	public void setPlayButtonIcon() {
@@ -451,60 +409,45 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	@Override
 	public void init() {
-		final AtomicInteger x = new AtomicInteger(5);
-
-		midi = addToggleButton(x, Label.TOOLBAR_MIDI, Label.TOOLBAR_MIDI_TOOLTIP, audioHandler::toggleMidiNotes);
-		claps = addToggleButton(x, Label.TOOLBAR_CLAPS, Label.TOOLBAR_CLAPS_TOOLTIP, clapsHandler::toggleClaps);
-		metronome = addToggleButton(x, Label.TOOLBAR_METRONOME, Label.TOOLBAR_METRONOME_TOOLTIP,
+		midi = addToggleButton(Label.TOOLBAR_MIDI, Label.TOOLBAR_MIDI_TOOLTIP, audioHandler::toggleMidiNotes);
+		claps = addToggleButton(Label.TOOLBAR_CLAPS, Label.TOOLBAR_CLAPS_TOOLTIP, clapsHandler::toggleClaps);
+		metronome = addToggleButton(Label.TOOLBAR_METRONOME, Label.TOOLBAR_METRONOME_TOOLTIP,
 				metronomeHandler::toggleMetronome);
 
-		addSeparator(x);
-
-		waveformGraph = addToggleButton(x, Label.TOOLBAR_WAVEFORM, Label.TOOLBAR_WAVEFORM_TOOLTIP,
-				waveFormDrawer::toggle);
-		rms = addToggleButton(x, Label.TOOLBAR_RMS, Label.TOOLBAR_RMS_TOOLTIP, waveFormDrawer::toggleRMS);
+		waveformGraph = addToggleButton(Label.TOOLBAR_WAVEFORM, Label.TOOLBAR_WAVEFORM_TOOLTIP, waveFormDrawer::toggle);
+		rms = addToggleButton(Label.TOOLBAR_RMS, Label.TOOLBAR_RMS_TOOLTIP, waveFormDrawer::toggleRMS);
 		rms.setEnabled(false);
 
-		addSeparator(x);
-
-		repeater = addToggleButton(x, Label.TOOLBAR_REPEATER, Label.TOOLBAR_REPEATER_TOOLTIP, repeaterIcon,
+		repeater = addToggleButton(Label.TOOLBAR_REPEATER, Label.TOOLBAR_REPEATER_TOOLTIP, repeaterIcon,
 				repeatManager::toggle);
 
-		addSeparator(x);
+		addGridSizeInput();
+		addGridSizeButtons();
+		addGridTypes();
 
-		addGridSizeInput(x);
-		addGridSizeButtons(x);
-		addGridTypes(x);
+		addChartLock();
 
-		addSeparator(x);
-
-		addChartLock(x);
-
-		addSeparator(x);
-
-		volume = addVolumeSlider(x, Label.TOOLBAR_VOLUME, Label.TOOLBAR_VOLUME_TOOLTIP, volumeIcon, volumeMuteIcon,
+		volume = addVolumeSlider(Label.TOOLBAR_VOLUME, Label.TOOLBAR_VOLUME_TOOLTIP, volumeIcon, volumeMuteIcon,
 				projectAudioHandler.getVolume(), projectAudioHandler::setVolume, AudioConfig.volumeMute,
 				v -> AudioConfig.volumeMute = v);
-		sfxVolume = addVolumeSlider(x, Label.TOOLBAR_SFX_VOLUME, Label.TOOLBAR_SFX_VOLUME_TOOLTIP, sfxVolumeIcon,
+		sfxVolume = addVolumeSlider(Label.TOOLBAR_SFX_VOLUME, Label.TOOLBAR_SFX_VOLUME_TOOLTIP, sfxVolumeIcon,
 				sfxVolumeMuteIcon, AudioConfig.sfxVolume, this::changeSFXVolume, AudioConfig.sfxVolumeMute,
 				v -> AudioConfig.sfxVolumeMute = v);
-		addPlaybackSpeed(x);
-		addTimeControls(x);
+		addPlaybackSpeed();
+		addTimeControls();
 
-		addSeparator(x);
-
-		lowPassFilter = addToggleButton(x, 1, Label.LOW_PASS, Label.LOW_PASS_TOOLTIP,
-				() -> audioHandler.toggleLowPassFilter(), 40);
+		lowPassFilter = addToggleButton(Label.LOW_PASS, Label.LOW_PASS_TOOLTIP,
+				() -> audioHandler.toggleLowPassFilter());
 		addRightPressListener(lowPassFilter, this::showLowPassSettings);
-		bandPassFilter = addToggleButton(x, 1, Label.BAND_PASS, Label.BAND_PASS_TOOLTIP,
-				() -> audioHandler.toggleBandPassFilter(), 40);
+		bandPassFilter = addToggleButton(Label.BAND_PASS, Label.BAND_PASS_TOOLTIP,
+				() -> audioHandler.toggleBandPassFilter());
 		addRightPressListener(bandPassFilter, this::showBandPassSettings);
-		highPassFilter = addToggleButton(x, 1, Label.HIGH_PASS, Label.HIGH_PASS_TOOLTIP,
-				() -> audioHandler.toggleHighPassFilter(), 40);
+		highPassFilter = addToggleButton(Label.HIGH_PASS, Label.HIGH_PASS_TOOLTIP,
+				() -> audioHandler.toggleHighPassFilter());
 		addRightPressListener(highPassFilter, this::showHighPassSettings);
 
 		updateValues();
-		setSize(getWidth(), height);
+		recalculateSizes();
 
 		addKeyListener(keyboardHandler);
 	}
@@ -551,5 +494,106 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	public void focusGrid() {
 		gridSize.field.requestFocusInWindow();
 		gridSize.field.selectAll();
+	}
+
+	private void resizeButton(final AtomicInteger x, final AbstractButton b) {
+		b.setFont(b.getFont().deriveFont(GraphicalConfig.inputSize / 1.6f));
+		final int width = BasicGraphicsUtils.getPreferredButtonSize(b, b.getIconTextGap()).width;
+		b.setBounds(x.getAndAdd(horizontalSpacing + width), verticalSpacing, width, GraphicalConfig.inputSize);
+	}
+
+	private void resizeIconButton(final AtomicInteger x, final AbstractButton b) {
+		b.setFont(b.getFont().deriveFont(GraphicalConfig.inputSize / 1.6f));
+		b.setBounds(x.getAndAdd(GraphicalConfig.inputSize), verticalSpacing, GraphicalConfig.inputSize,
+				GraphicalConfig.inputSize);
+	}
+
+	private void resizeGridInputs(final AtomicInteger x) {
+		gridSize.label.setFont(gridSize.label.getFont().deriveFont(GraphicalConfig.inputSize / 1.6f));
+		final int labelWidth = (int) Math.ceil(BasicGraphicsUtils.getStringWidth(gridSize.label,
+				gridSize.label.getFontMetrics(gridSize.label.getFont()), gridSize.label.getText()));
+		gridSize.label.setSize(labelWidth, GraphicalConfig.inputSize);
+
+		gridSize.field.setFont(gridSize.field.getFont().deriveFont(GraphicalConfig.inputSize / 1.6f));
+		gridSize.field.setLocation(gridSize.label.getWidth(), 0);
+		gridSize.field.setSize(GraphicalConfig.inputSize * 3 / 2, GraphicalConfig.inputSize);
+
+		gridSize.setLocation(x.getAndAdd(gridSize.getWidth() + 1), verticalSpacing);
+		gridSize.setSize(gridSize.label.getWidth() + gridSize.field.getWidth(), GraphicalConfig.inputSize);
+
+		gridDoubleButton.setFont(gridDoubleButton.getFont().deriveFont(GraphicalConfig.inputSize / 2.5f));
+		gridDoubleButton.setLocation(x.get(), verticalSpacing);
+		gridDoubleButton.setSize(GraphicalConfig.inputSize, GraphicalConfig.inputSize / 2);
+
+		gridHalveButton.setFont(gridHalveButton.getFont().deriveFont(GraphicalConfig.inputSize / 2.5f));
+		gridHalveButton.setLocation(x.get(), verticalSpacing + GraphicalConfig.inputSize / 2);
+		gridHalveButton.setSize(GraphicalConfig.inputSize, GraphicalConfig.inputSize / 2);
+
+		x.getAndAdd(GraphicalConfig.inputSize + horizontalSpacing);
+
+		resizeIconButton(x, beatGridType);
+		x.getAndAdd(horizontalSpacing / 2);
+		resizeIconButton(x, noteGridType);
+		x.getAndAdd(horizontalSpacing);
+	}
+
+	private void resizePlaybackSpeed(final AtomicInteger x) {
+		playbackSpeed.label.setFont(playbackSpeed.label.getFont().deriveFont(GraphicalConfig.inputSize / 1.6f));
+		final int labelWidth = (int) Math.ceil(BasicGraphicsUtils.getStringWidth(playbackSpeed.label,
+				gridSize.label.getFontMetrics(playbackSpeed.label.getFont()), playbackSpeed.label.getText()));
+		playbackSpeed.label.setSize(labelWidth, GraphicalConfig.inputSize);
+
+		playbackSpeed.field.setFont(playbackSpeed.field.getFont().deriveFont(GraphicalConfig.inputSize / 1.6f));
+		playbackSpeed.field.setLocation(playbackSpeed.label.getWidth(), 0);
+		playbackSpeed.field.setSize(GraphicalConfig.inputSize * 3 / 2, GraphicalConfig.inputSize);
+
+		playbackSpeed.setLocation(x.getAndAdd(playbackSpeed.getWidth() + horizontalSpacing / 2), verticalSpacing);
+		playbackSpeed.setSize(playbackSpeed.label.getWidth() + playbackSpeed.field.getWidth(),
+				GraphicalConfig.inputSize);
+
+		resizeIconButton(x, rewindButton);
+		x.getAndAdd(horizontalSpacing / 2);
+		resizeIconButton(x, playButton);
+		x.getAndAdd(horizontalSpacing / 2);
+		resizeIconButton(x, fastForwardButton);
+		x.getAndAdd(horizontalSpacing);
+	}
+
+	public void recalculateSizes() {
+		horizontalSpacing = GraphicalConfig.inputSize / 4;
+		verticalSpacing = GraphicalConfig.inputSize / 4;
+
+		final AtomicInteger x = new AtomicInteger(5);
+
+		this.setSize(getWidth(), GraphicalConfig.inputSize * 3 / 2);
+
+		resizeButton(x, midi);
+		resizeButton(x, claps);
+		resizeButton(x, metronome);
+
+		x.addAndGet(horizontalSpacing * 2);
+		resizeButton(x, waveformGraph);
+		resizeButton(x, rms);
+
+		x.addAndGet(horizontalSpacing * 2);
+		resizeButton(x, repeater);
+
+		x.addAndGet(horizontalSpacing * 2);
+		resizeGridInputs(x);
+
+		x.addAndGet(horizontalSpacing * 2);
+		resizeButton(x, chartLock);
+
+		x.addAndGet(horizontalSpacing * 2);
+		volume.setLocation(x.getAndAdd(volume.getWidth() + horizontalSpacing), verticalSpacing);
+		sfxVolume.setLocation(x.getAndAdd(sfxVolume.getWidth() + horizontalSpacing), verticalSpacing);
+
+		x.addAndGet(horizontalSpacing * 2);
+		resizePlaybackSpeed(x);
+
+		x.addAndGet(horizontalSpacing * 2);
+		resizeButton(x, lowPassFilter);
+		resizeButton(x, bandPassFilter);
+		resizeButton(x, highPassFilter);
 	}
 }

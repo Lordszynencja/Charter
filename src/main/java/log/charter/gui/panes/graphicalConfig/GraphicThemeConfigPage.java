@@ -25,6 +25,14 @@ import log.charter.gui.components.utils.validators.BigDecimalValueValidator;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 
 public class GraphicThemeConfigPage implements Page {
+	private static final Label[] sizeLabels = { Label.SIZE_S, Label.SIZE_M, Label.SIZE_L, Label.SIZE_XL,
+			Label.SIZE_XXL };
+	private static final int[] sizesChartMap = { 2, 3, 4, 6, 8 };
+	private static final int[] sizesText = { 7, 10, 15, 20, 25 };
+	private static final int[] sizesInputs = { 15, 20, 30, 40, 50 };
+	private static final int[] sizesTiming = { 16, 24, 36, 48, 60 };
+	private static final int[] sizesNotes = { 17, 25, 37, 51, 63 };
+
 	private static final IntValueValidator editorPartHeightValidator = new IntValueValidator(1, 100);
 	private static final IntValueValidator timingHeightValidator = new IntValueValidator(1, 200);
 	private static final BigDecimalValueValidator scrollSpeedValidator = new BigDecimalValueValidator(
@@ -32,26 +40,22 @@ public class GraphicThemeConfigPage implements Page {
 
 	private Theme theme = GraphicalConfig.theme;
 
-	private int eventsChangeHeight = GraphicalConfig.eventsChangeHeight;
-	private int toneChangeHeight = GraphicalConfig.toneChangeHeight;
-	private int fhpInfoHeight = GraphicalConfig.fhpInfoHeight;
+	private int inputSize = GraphicalConfig.inputSize;
 	private int noteHeight = GraphicalConfig.noteHeight;
 	private int noteWidth = GraphicalConfig.noteWidth;
-	private int chordHeight = GraphicalConfig.chordHeight;
-	private int handShapesHeight = GraphicalConfig.handShapesHeight;
+	private int chartTextHeight = GraphicalConfig.chartTextHeight;
 	private int timingHeight = GraphicalConfig.timingHeight;
+	private int chartMapHeightMultiplier = GraphicalConfig.chartMapHeightMultiplier;
 	private BigDecimal previewScrollSpeed = BigDecimal.valueOf(GraphicalConfig.previewWindowScrollSpeed);
 
 	private FieldWithLabel<CharterSelect<Theme>> themeField;
 	private final List<JButton> sizeChangeButtons = new ArrayList<>();
+	private FieldWithLabel<TextInputWithValidation> inputSizeField;
 	private FieldWithLabel<TextInputWithValidation> noteHeightField;
 	private FieldWithLabel<TextInputWithValidation> noteWidthField;
-	private FieldWithLabel<TextInputWithValidation> chordHeightField;
-	private FieldWithLabel<TextInputWithValidation> eventsChangeHeightField;
-	private FieldWithLabel<TextInputWithValidation> toneChangeHeightField;
-	private FieldWithLabel<TextInputWithValidation> fhpInfoHeightField;
-	private FieldWithLabel<TextInputWithValidation> handShapesHeightField;
+	private FieldWithLabel<TextInputWithValidation> chartTextHeightField;
 	private FieldWithLabel<TextInputWithValidation> timingHeightField;
+	private FieldWithLabel<TextInputWithValidation> chartMapHeightMultiplierField;
 	private FieldWithLabel<TextInputWithValidation> previewScrollSpeedField;
 
 	@Override
@@ -64,33 +68,25 @@ public class GraphicThemeConfigPage implements Page {
 		addThemePicker(panel, position);
 		position.newRow();
 
-		addSSizeButton(panel, position);
-		addMSizeButton(panel, position);
-		addLSizeButton(panel, position);
-		addXLSizeButton(panel, position);
-		addXXLSizeButton(panel, position);
+		for (int i = 0; i < sizeLabels.length; i++) {
+			addSizeButton(panel, position, i);
+		}
 		position.newRow();
 
-		addEventsChangeHeightField(panel, position);
-		position.newRow();
-
-		addToneChangeHeightField(panel, position);
-		position.newRow();
-
-		addFHPInfoHeightField(panel, position);
+		addInputSizeField(panel, position);
 		position.newRow();
 
 		addNoteHeightInput(panel, position);
 		addNoteWidthInput(panel, position);
 		position.newRow();
 
-		addChordHeightField(panel, position);
-		position.newRow();
-
-		addHandShapesHeightFieldField(panel, position);
+		addChartTextHeightField(panel, position);
 		position.newRow();
 
 		addTimingHeightFieldField(panel, position);
+		position.newRow();
+
+		addChartMapHeightMultiplierInput(panel, position);
 		position.newRow();
 
 		addScrollSpeedFieldField(panel, position);
@@ -122,91 +118,32 @@ public class GraphicThemeConfigPage implements Page {
 		}
 	}
 
-	private void addSSizeButton(final RowedPanel panel, final RowedPosition position) {
-		final JButton button = new JButton(Label.SIZE_S.label());
-		button.addActionListener(e -> {
-			eventsChangeHeightField.field.setText("7");
-			toneChangeHeightField.field.setText("7");
-			fhpInfoHeightField.field.setText("7");
-			noteHeightField.field.setText("19");
-			noteWidthField.field.setText("19");
-			chordHeightField.field.setText("7");
-			handShapesHeightField.field.setText("7");
-			timingHeightField.field.setText("18");
-		});
+	private void setSize(final int size) {
+		inputSizeField.field.setText(sizesInputs[size] + "");
+		noteHeightField.field.setText(sizesNotes[size] + "");
+		noteWidthField.field.setText(sizesNotes[size] + "");
+		chartTextHeightField.field.setText(sizesText[size] + "");
+		timingHeightField.field.setText(sizesTiming[size] + "");
+		chartMapHeightMultiplierField.field.setText(sizesChartMap[size] + "");
+	}
+
+	private void addSizeButton(final RowedPanel panel, final RowedPosition position, final int size) {
+		final JButton button = new JButton(sizeLabels[size].label());
+		button.addActionListener(e -> setSize(size));
 
 		panel.addWithSettingSize(button, position, 30);
 		sizeChangeButtons.add(button);
 	}
 
-	private void addMSizeButton(final RowedPanel panel, final RowedPosition position) {
-		final JButton button = new JButton(Label.SIZE_M.label());
-		button.addActionListener(e -> {
-			eventsChangeHeightField.field.setText("10");
-			toneChangeHeightField.field.setText("10");
-			fhpInfoHeightField.field.setText("10");
-			noteHeightField.field.setText("25");
-			noteWidthField.field.setText("25");
-			chordHeightField.field.setText("10");
-			handShapesHeightField.field.setText("10");
-			timingHeightField.field.setText("24");
-		});
+	private void addInputSizeField(final RowedPanel panel, final RowedPosition position) {
+		final TextInputWithValidation input = generateForInt(inputSize, 20, //
+				new IntValueValidator(5, 200), i -> inputSize = i, false);
+		input.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(input);
 
-		panel.addWithSettingSize(button, position, 30);
-		sizeChangeButtons.add(button);
-	}
-
-	private void addLSizeButton(final RowedPanel panel, final RowedPosition position) {
-		final JButton button = new JButton(Label.SIZE_L.label());
-		button.addActionListener(e -> {
-			eventsChangeHeightField.field.setText("14");
-			toneChangeHeightField.field.setText("14");
-			fhpInfoHeightField.field.setText("14");
-			noteHeightField.field.setText("31");
-			noteWidthField.field.setText("31");
-			chordHeightField.field.setText("14");
-			handShapesHeightField.field.setText("14");
-			timingHeightField.field.setText("30");
-		});
-
-		panel.addWithSettingSize(button, position, 30);
-		sizeChangeButtons.add(button);
-	}
-
-	private void addXLSizeButton(final RowedPanel panel, final RowedPosition position) {
-		final JButton button = new JButton(Label.SIZE_XL.label());
-		button.addActionListener(e -> {
-			eventsChangeHeightField.field.setText("17");
-			toneChangeHeightField.field.setText("17");
-			fhpInfoHeightField.field.setText("17");
-			noteHeightField.field.setText("37");
-			noteWidthField.field.setText("37");
-			chordHeightField.field.setText("17");
-			handShapesHeightField.field.setText("17");
-			timingHeightField.field.setText("34");
-			timingHeightField.field.setText("34");
-		});
-
-		panel.addWithSettingSize(button, position, 30);
-		sizeChangeButtons.add(button);
-	}
-
-	private void addXXLSizeButton(final RowedPanel panel, final RowedPosition position) {
-		final JButton button = new JButton(Label.SIZE_XXL.label());
-		button.addActionListener(e -> {
-			eventsChangeHeightField.field.setText("20");
-			toneChangeHeightField.field.setText("20");
-			fhpInfoHeightField.field.setText("20");
-			noteHeightField.field.setText("43");
-			noteWidthField.field.setText("43");
-			chordHeightField.field.setText("20");
-			handShapesHeightField.field.setText("20");
-			timingHeightField.field.setText("40");
-			timingHeightField.field.setText("40");
-		});
-
-		panel.addWithSettingSize(button, position, 30);
-		sizeChangeButtons.add(button);
+		inputSizeField = new FieldWithLabel<>(Label.INPUT_SIZE, 120, 30, 20, input, LabelPosition.LEFT_CLOSE);
+		inputSizeField.setLocation(10, position.y());
+		panel.add(inputSizeField, position);
 	}
 
 	private void addNoteHeightInput(final RowedPanel panel, final RowedPosition position) {
@@ -231,60 +168,16 @@ public class GraphicThemeConfigPage implements Page {
 		panel.add(noteWidthField, position);
 	}
 
-	private void addEventsChangeHeightField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(eventsChangeHeight, 20, //
-				editorPartHeightValidator, i -> eventsChangeHeight = i, false);
+	private void addChartTextHeightField(final RowedPanel panel, final RowedPosition position) {
+		final TextInputWithValidation input = generateForInt(chartTextHeight, 20, //
+				new IntValueValidator(5, 200), i -> chartTextHeight = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
-		eventsChangeHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_EVENTS_CHANGE_HEIGHT, 120, 30, 20, input,
+		chartTextHeightField = new FieldWithLabel<>(Label.CHART_TEXT_HEIGHT, 120, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
-		eventsChangeHeightField.setLocation(10, position.y());
-		panel.add(eventsChangeHeightField, position);
-	}
-
-	private void addToneChangeHeightField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(toneChangeHeight, 20, //
-				editorPartHeightValidator, i -> toneChangeHeight = i, false);
-		input.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(input);
-
-		toneChangeHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_TONE_CHANGE_HEIGHT, 120, 30, 20, input,
-				LabelPosition.LEFT_CLOSE);
-		panel.add(toneChangeHeightField, position);
-	}
-
-	private void addFHPInfoHeightField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(fhpInfoHeight, 20, editorPartHeightValidator,
-				i -> fhpInfoHeight = i, false);
-		input.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(input);
-
-		fhpInfoHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_FHP_INFO_HEIGHT, 120, 30, 20, input,
-				LabelPosition.LEFT_CLOSE);
-		panel.add(fhpInfoHeightField, position);
-	}
-
-	private void addChordHeightField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(chordHeight, 20, //
-				editorPartHeightValidator, i -> chordHeight = i, false);
-		input.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(input);
-
-		chordHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_CHORD_HEIGHT, 120, 30, 20, input,
-				LabelPosition.LEFT_CLOSE);
-		panel.add(chordHeightField, position);
-	}
-
-	private void addHandShapesHeightFieldField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(handShapesHeight, 20, //
-				editorPartHeightValidator, i -> handShapesHeight = i, false);
-		input.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(input);
-
-		handShapesHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_HAND_SHAPES_HEIGHT, 120, 30, 20, input,
-				LabelPosition.LEFT_CLOSE);
-		panel.add(handShapesHeightField, position);
+		chartTextHeightField.setLocation(10, position.y());
+		panel.add(chartTextHeightField, position);
 	}
 
 	private void addTimingHeightFieldField(final RowedPanel panel, final RowedPosition position) {
@@ -296,6 +189,17 @@ public class GraphicThemeConfigPage implements Page {
 		timingHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_TIMING_HEIGHT, 120, 30, 20, input,
 				LabelPosition.LEFT_CLOSE);
 		panel.add(timingHeightField, position);
+	}
+
+	private void addChartMapHeightMultiplierInput(final RowedPanel panel, final RowedPosition position) {
+		final TextInputWithValidation input = generateForInt(chartMapHeightMultiplier, 20, //
+				new IntValueValidator(1, 20), v -> chartMapHeightMultiplier = v, false);
+		input.setHorizontalAlignment(JTextField.CENTER);
+		addSelectTextOnFocus(input);
+
+		chartMapHeightMultiplierField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_CHART_MAP_HEIGHT_MULTIPLIER, 120, 30,
+				20, input, LabelPosition.LEFT_CLOSE);
+		panel.add(chartMapHeightMultiplierField, position);
 	}
 
 	private void addScrollSpeedFieldField(final RowedPanel panel, final RowedPosition position) {
@@ -313,27 +217,23 @@ public class GraphicThemeConfigPage implements Page {
 	public void setVisible(final boolean visibility) {
 		themeField.setVisible(visibility);
 		sizeChangeButtons.forEach(b -> b.setVisible(visibility));
-		eventsChangeHeightField.setVisible(visibility);
-		toneChangeHeightField.setVisible(visibility);
-		fhpInfoHeightField.setVisible(visibility);
+		inputSizeField.setVisible(visibility);
 		noteHeightField.setVisible(visibility);
 		noteWidthField.setVisible(visibility && theme != Theme.MODERN);
-		chordHeightField.setVisible(visibility);
-		handShapesHeightField.setVisible(visibility);
+		chartTextHeightField.setVisible(visibility);
 		timingHeightField.setVisible(visibility);
+		chartMapHeightMultiplierField.setVisible(visibility);
 		previewScrollSpeedField.setVisible(visibility);
 	}
 
 	public void save() {
 		GraphicalConfig.theme = theme;
-		GraphicalConfig.eventsChangeHeight = eventsChangeHeight;
-		GraphicalConfig.toneChangeHeight = toneChangeHeight;
-		GraphicalConfig.fhpInfoHeight = fhpInfoHeight;
+		GraphicalConfig.inputSize = inputSize;
 		GraphicalConfig.noteHeight = noteHeight;
 		GraphicalConfig.noteWidth = noteWidth;
-		GraphicalConfig.chordHeight = chordHeight;
-		GraphicalConfig.handShapesHeight = handShapesHeight;
+		GraphicalConfig.chartTextHeight = chartTextHeight;
 		GraphicalConfig.timingHeight = timingHeight;
+		GraphicalConfig.chartMapHeightMultiplier = chartMapHeightMultiplier;
 		GraphicalConfig.previewWindowScrollSpeed = previewScrollSpeed.doubleValue();
 	}
 

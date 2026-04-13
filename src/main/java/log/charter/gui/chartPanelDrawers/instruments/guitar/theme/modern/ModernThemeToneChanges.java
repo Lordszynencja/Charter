@@ -1,6 +1,6 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
-import static log.charter.data.config.GraphicalConfig.toneChangeHeight;
+import static log.charter.data.config.GraphicalConfig.chartTextHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.toneChangeY;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
@@ -20,12 +20,14 @@ import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeToneChang
 import log.charter.util.data.Position2D;
 
 public class ModernThemeToneChanges implements ThemeToneChanges {
-	private static final int toneChangeSpace = 2;
-
-	private static Font toneChangeFont = new Font(Font.SANS_SERIF, Font.BOLD, toneChangeHeight);
+	private static int toneChangeSpace;
+	private static int arcSize;
+	private static Font toneChangeFont;
 
 	public static void reloadSizes() {
-		toneChangeFont = new Font(Font.SANS_SERIF, Font.BOLD, toneChangeHeight);
+		toneChangeSpace = chartTextHeight / 5;
+		arcSize = chartTextHeight / 2;
+		toneChangeFont = new Font(Font.SANS_SERIF, Font.BOLD, chartTextHeight);
 	}
 
 	private final HighwayDrawData data;
@@ -43,8 +45,14 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 	}
 
 	private TextWithBackground generateText(final String tone, final int x) {
-		return new TextWithBackground(new Position2D(x, toneChangeY + 3), toneChangeFont, cleanTone(tone),
-				ColorLabel.TONE_CHANGE_TEXT, ColorLabel.TONE_CHANGE, toneChangeSpace, ColorLabel.BASE_BORDER);
+		return new TextWithBackground()//
+				.position(new Position2D(x, toneChangeY + toneChangeSpace))//
+				.font(toneChangeFont)//
+				.text(cleanTone(tone))//
+				.color(ColorLabel.TONE_CHANGE_TEXT)//
+				.backgroundColor(ColorLabel.TONE_CHANGE)//
+				.space(toneChangeSpace)//
+				.arcSize(arcSize);
 	}
 
 	@Override
@@ -56,18 +64,18 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 	@Override
 	public void addTone(final Graphics2D g, final String tone, final int x, final boolean highlight) {
 		final String label = cleanTone(tone);
-		data.toneChanges.add(generateText(label, x));
+
+		final TextWithBackground labelToAdd = generateText(label, x);
+		data.toneChanges.add(labelToAdd);
+
 		if (highlight) {
-			final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, toneChangeFont, label,
-					toneChangeSpace);
-			final ShapePositionWithSize position = new ShapePositionWithSize(x + 1, toneChangeY + 2,
-					expectedSize.width - 3, expectedSize.height - 3);
-			data.toneChanges.add(strokedRoundRectangle(position, ColorLabel.HIGHLIGHT.color(), 3, 3));
+			data.toneChanges.add(strokedRoundRectangle(labelToAdd.getPositionWithSize(g), ColorLabel.HIGHLIGHT.color(),
+					toneChangeSpace, arcSize));
 		}
 	}
 
 	private void addToneChangeBox(final int x, final ColorLabel color) {
-		final int top = toneChangeY - 1;
+		final int top = toneChangeY + chartTextHeight;
 		final int bottom = lanesBottom + 1;
 		final ShapePositionWithSize toneChangePosition = new ShapePositionWithSize(x - 1, top, 2, bottom - top);
 		data.toneChanges.add(strokedRectangle(toneChangePosition, color));
@@ -76,7 +84,7 @@ public class ModernThemeToneChanges implements ThemeToneChanges {
 	@Override
 	public void addToneChange(final Graphics2D g, final ToneChange toneChange, final int x, final boolean selected,
 			final boolean highlighted) {
-		data.toneChanges.add(lineVertical(x, toneChangeY + 5, lanesBottom, ColorLabel.TONE_CHANGE));
+		data.toneChanges.add(lineVertical(x, toneChangeY + chartTextHeight, lanesBottom, ColorLabel.TONE_CHANGE));
 		addTone(g, toneChange.toneName, x, highlighted);
 
 		if (highlighted) {

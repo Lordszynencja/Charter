@@ -1,6 +1,7 @@
 package log.charter.gui.menuHandlers;
 
 import static java.util.Arrays.asList;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 
 import java.awt.Dimension;
 import java.util.List;
@@ -55,12 +56,6 @@ public class CharterMenuBar extends JMenuBar implements Initiable {
 		charterContext.initObject(tempoMapMenuHandler);
 		charterContext.initObject(vocalsMenuHandler);
 
-		final Dimension size = new Dimension(1, 20);
-		setMinimumSize(size);
-		setSize(size);
-		setMaximumSize(size);
-		setPreferredSize(size);
-
 		setBackground(backgroundColor.color());
 
 		refreshMenus();
@@ -69,6 +64,12 @@ public class CharterMenuBar extends JMenuBar implements Initiable {
 	}
 
 	public void refreshMenus() {
+		final Dimension size = new Dimension(1, inputSize);
+		setMinimumSize(size);
+		setSize(size);
+		setMaximumSize(size);
+		setPreferredSize(size);
+
 		final List<JMenu> menusToAdd = menusOrder.stream()//
 				.filter(menu -> menu.isApplicable())//
 				.map(menu -> menu.prepareMenu())//

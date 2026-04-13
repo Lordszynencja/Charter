@@ -18,10 +18,13 @@ public class Text implements DrawableShape {
 		return new ShapeSize(width, height);
 	}
 
-	private final Position2D position;
-	private final Font font;
-	private final String text;
-	private final Color color;
+	private Position2D position;
+	private Font font;
+	private String text;
+	private Color color;
+
+	public Text() {
+	}
 
 	public Text(final Position2D position, final Font font, final String text, final ColorLabel color) {
 		this(position, font, text, color.color());
@@ -32,6 +35,30 @@ public class Text implements DrawableShape {
 		this.font = font;
 		this.text = text;
 		this.color = color;
+	}
+
+	public Text position(final Position2D position) {
+		this.position = position;
+		return this;
+	}
+
+	public Text font(final Font font) {
+		this.font = font;
+		return this;
+	}
+
+	public Text text(final String text) {
+		this.text = text;
+		return this;
+	}
+
+	public Text color(final Color color) {
+		this.color = color;
+		return this;
+	}
+
+	public Text color(final ColorLabel color) {
+		return color(color.color());
 	}
 
 	@Override

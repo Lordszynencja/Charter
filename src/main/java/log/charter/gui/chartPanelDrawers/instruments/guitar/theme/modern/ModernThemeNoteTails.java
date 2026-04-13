@@ -15,6 +15,7 @@ import java.awt.Font;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
@@ -26,6 +27,9 @@ import log.charter.util.data.Position2D;
 
 public class ModernThemeNoteTails {
 	private static final Color[] noteTailColors = new Color[InstrumentConfig.maxPossibleStrings];
+
+	private static int edgeSize;
+	private static int tremoloSize;
 	private static Font slideFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
 	public static void reloadGraphics() {
@@ -34,6 +38,8 @@ public class ModernThemeNoteTails {
 					StringColorLabelType.NOTE_TAIL, i, InstrumentConfig.maxPossibleStrings);
 		}
 
+		edgeSize = tailHeight / 8;
+		tremoloSize = tailHeight / 6;
 		slideFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 	}
 
@@ -51,8 +57,6 @@ public class ModernThemeNoteTails {
 
 	private void addSlideCommon(final EditorNoteDrawingData note, final int y, final Color backgroundColor,
 			final Color fretColor) {
-		addNormalNoteTailShape(note, y);
-
 		final int lineThickness = 2;
 
 		final IntRange topBottom = getDefaultTailTopBottom(y);
@@ -89,7 +93,7 @@ public class ModernThemeNoteTails {
 	}
 
 	private void addTailBox(final int x, final int length, final int y, final Color color) {
-		addTailBox(x, length, y, color, 1);
+		addTailBox(x, length, y, color, edgeSize);
 	}
 
 	private void addTailBox(final int x, final int length, final int y, final Color color, final int thickness) {
@@ -105,19 +109,21 @@ public class ModernThemeNoteTails {
 		final int x = note.x - 1;
 		final int length = note.length + 1;
 		final Color color = noteTailColors[stringId(note.string, data.strings)];
+		final Color edgeColor = note.highlighted ? ColorLabel.HIGHLIGHT.color()//
+				: note.selected ? ColorLabel.SELECT.color()//
+						: color.brighter();
 
 		// Define tremolo appearance
 		if (note.tremolo) {
 			int fragmentX = x;
-			final int intensity = 4;
-			final int y0 = y + tailHeight / 2 - intensity + 1;
+			final int y0 = y + tailHeight / 2 - tremoloSize + 1;
 			final int y1 = y + tailHeight / 2 + 1;
-			final int y2 = y - tailHeight / 2 + intensity;
+			final int y2 = y - tailHeight / 2 + tremoloSize;
 			final int y3 = y - tailHeight / 2;
 
-			final int fragmentSize = 8;
+			final int fragmentSize = GraphicalConfig.noteHeight / 2;
 			while (fragmentX <= x + length - fragmentSize) {
-				data.noteTails.add(filledPolygon(color.brighter(), //
+				data.noteTails.add(filledPolygon(edgeColor, //
 						new Position2D(fragmentX, y0), //
 						new Position2D(fragmentX + fragmentSize / 2, y1), //
 						new Position2D(fragmentX + fragmentSize, y0), //
@@ -125,18 +131,18 @@ public class ModernThemeNoteTails {
 						new Position2D(fragmentX + fragmentSize / 2, y3), //
 						new Position2D(fragmentX, y2)));
 				data.noteTails.add(filledPolygon(color, //
-						new Position2D(fragmentX, y0 - 2), //
-						new Position2D(fragmentX + fragmentSize / 2, y1 - 2), //
-						new Position2D(fragmentX + fragmentSize, y0 - 2), //
-						new Position2D(fragmentX + fragmentSize, y2 + 2), //
-						new Position2D(fragmentX + fragmentSize / 2, y3 + 2), //
-						new Position2D(fragmentX, y2 + 2)));
+						new Position2D(fragmentX, y0 - edgeSize), //
+						new Position2D(fragmentX + fragmentSize / 2, y1 - edgeSize), //
+						new Position2D(fragmentX + fragmentSize, y0 - edgeSize), //
+						new Position2D(fragmentX + fragmentSize, y2 + edgeSize), //
+						new Position2D(fragmentX + fragmentSize / 2, y3 + edgeSize), //
+						new Position2D(fragmentX, y2 + edgeSize)));
 				fragmentX += fragmentSize;
 			}
 
 			// Add another partial fragment
 			if (fragmentX <= x + length - fragmentSize / 2) {
-				data.noteTails.add(filledPolygon(color.brighter(), //
+				data.noteTails.add(filledPolygon(edgeColor, //
 						new Position2D(fragmentX, y0), //
 						new Position2D(fragmentX + fragmentSize / 2, y1), //
 						new Position2D(x + length, y0), //
@@ -144,47 +150,42 @@ public class ModernThemeNoteTails {
 						new Position2D(fragmentX + fragmentSize / 2, y3), //
 						new Position2D(fragmentX, y2)));
 				data.noteTails.add(filledPolygon(color, //
-						new Position2D(fragmentX, y0 - 2), //
-						new Position2D(fragmentX + fragmentSize / 2, y1 - 2), //
-						new Position2D(x + length - 1, y0 - 2), //
-						new Position2D(x + length - 1, y2 + 2), //
-						new Position2D(fragmentX + fragmentSize / 2, y3 + 2), //
-						new Position2D(fragmentX, y2 + 2)));
+						new Position2D(fragmentX, y0 - edgeSize), //
+						new Position2D(fragmentX + fragmentSize / 2, y1 - edgeSize), //
+						new Position2D(x + length - 1, y0 - edgeSize), //
+						new Position2D(x + length - 1, y2 + edgeSize), //
+						new Position2D(fragmentX + fragmentSize / 2, y3 + edgeSize), //
+						new Position2D(fragmentX, y2 + edgeSize)));
 			}
 
 			// Add another partial half fragment
 			else {
-				data.noteTails.add(filledPolygon(color.brighter(), //
+				data.noteTails.add(filledPolygon(edgeColor, //
 						new Position2D(fragmentX, y0), //
 						new Position2D(x + length, y1), //
 						new Position2D(x + length, y3), //
 						new Position2D(fragmentX, y2)));
 				data.noteTails.add(filledPolygon(color, //
-						new Position2D(fragmentX, y0 - 2), //
-						new Position2D(x + length - 1, y1 - 2), //
-						new Position2D(x + length - 1, y3 + 2), //
-						new Position2D(fragmentX, y2 + 2)));
+						new Position2D(fragmentX, y0 - edgeSize), //
+						new Position2D(x + length - 1, y1 - edgeSize), //
+						new Position2D(x + length - 1, y3 + edgeSize), //
+						new Position2D(fragmentX, y2 + edgeSize)));
 			}
 		} else {
 			final ShapePositionWithSize position = new ShapePositionWithSize(x, topBottom.min, length,
 					topBottom.max - topBottom.min);
 			data.noteTails.add(filledRectangle(position, color));
+			addTailBox(note.x, note.length, y, color.brighter());
 		}
 
 		// Define vibrato appearance
 		if (note.vibrato) {
 			final Position2D from = new Position2D(x, y);
-			data.noteTails.add(sine(from, length, tailHeight / 2 - 2, -8, 10, Color.GRAY.brighter(), 2));
-		}
-
-		if (!note.tremolo) {
-			addTailBox(note.x, note.length, y, color.brighter());
-		}
-
-		if (note.highlighted) {
-			addTailBox(note.x, note.length, y, ColorLabel.HIGHLIGHT.color(), 2);
-		} else if (note.selected) {
-			addTailBox(note.x, note.length, y, ColorLabel.SELECT.color(), 2);
+			final int amplitude = tailHeight / 3;
+			final int phase = 0;
+			final int period = amplitude * 3;
+			final int thickness = tailHeight / 8;
+			data.noteTails.add(sine(from, length, amplitude, phase, period, Color.GRAY.brighter(), thickness));
 		}
 	}
 
@@ -193,14 +194,13 @@ public class ModernThemeNoteTails {
 			return;
 		}
 
+		addNormalNoteTailShape(note, y);
 		if (note.slideTo != null) {
 			if (note.unpitchedSlide) {
 				addUnpitchedSlideNoteTailShape(note, y);
 			} else {
 				addSlideNoteTailShape(note, y);
 			}
-		} else {
-			addNormalNoteTailShape(note, y);
 		}
 	}
 

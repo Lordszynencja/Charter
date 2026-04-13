@@ -13,25 +13,20 @@ public final class GraphicConfigPane extends PagedDialog {
 
 	private final GraphicThemeConfigPage themeConfig;
 	private final GraphicTexturesConfigPage texturesConfig;
-	private final GraphicChartMapConfigPage chartMapConfig;
 
 	public GraphicConfigPane(final CharterFrame charterFrame, final CharterContext context) {
 		this(charterFrame, context, new GraphicThemeConfigPage(), //
-				new GraphicTexturesConfigPage(), //
-				new GraphicChartMapConfigPage()//
-		);
+				new GraphicTexturesConfigPage());
 	}
 
 	private GraphicConfigPane(final CharterFrame charterFrame, final CharterContext context,
-			final GraphicThemeConfigPage themeConfig, final GraphicTexturesConfigPage texturesConfig,
-			final GraphicChartMapConfigPage chartMapConfig) {
-		super(charterFrame, Label.GRAPHIC_CONFIG_PANE, themeConfig, texturesConfig, chartMapConfig);
+			final GraphicThemeConfigPage themeConfig, final GraphicTexturesConfigPage texturesConfig) {
+		super(charterFrame, Label.GRAPHIC_CONFIG_PANE, themeConfig, texturesConfig);
 
 		this.context = context;
 
 		this.themeConfig = themeConfig;
 		this.texturesConfig = texturesConfig;
-		this.chartMapConfig = chartMapConfig;
 
 		finishInit();
 	}
@@ -40,13 +35,11 @@ public final class GraphicConfigPane extends PagedDialog {
 	protected boolean save() {
 		themeConfig.save();
 		texturesConfig.save(context);
-		chartMapConfig.save();
 
 		GraphicalConfig.markChanged();
 		GraphicalConfig.save();
 
 		frame.updateSizes();
-		frame.resize();
 
 		return true;
 	}

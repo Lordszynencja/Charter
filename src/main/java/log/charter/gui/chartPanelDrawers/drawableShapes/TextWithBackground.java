@@ -15,40 +15,82 @@ public class TextWithBackground implements DrawableShape {
 		return Text.getExpectedSize(g, font, text).resizeBy(4 * space, 4 * space + 1);
 	}
 
+	private Position2D position;
 	private final Text text;
-	private final Color backgroundColor;
-	private final int space;
+	private Color backgroundColor;
+	private int space;
+	private int arcSize = 5;
 
-	public TextWithBackground(final Position2D position, final Font font, final String text, final ColorLabel textColor,
-			final ColorLabel backgroundColor, final ColorLabel borderColor) {
-		this(position, font, text, textColor.color(), backgroundColor.color(), 1, borderColor.color());
+	public TextWithBackground() {
+		this(new Position2D(0, 0), new Font(Font.DIALOG, 0, 10), "", Color.BLACK, Color.WHITE, 2);
 	}
 
 	public TextWithBackground(final Position2D position, final Font font, final String text, final ColorLabel textColor,
-			final ColorLabel backgroundColor, final Color borderColor) {
-		this(position, font, text, textColor.color(), backgroundColor.color(), 1, borderColor);
+			final ColorLabel backgroundColor) {
+		this(position, font, text, textColor.color(), backgroundColor.color(), 1);
 	}
 
 	public TextWithBackground(final Position2D position, final Font font, final String text, final ColorLabel textColor,
-			final ColorLabel backgroundColor, final int space, final ColorLabel borderColor) {
-		this(position, font, text, textColor.color(), backgroundColor.color(), space, borderColor.color());
-	}
-
-	public TextWithBackground(final Position2D position, final Font font, final String text, final ColorLabel textColor,
-			final ColorLabel backgroundColor, final int space, final Color borderColor) {
-		this(position, font, text, textColor.color(), backgroundColor.color(), space, borderColor);
+			final ColorLabel backgroundColor, final int space) {
+		this(position, font, text, textColor.color(), backgroundColor.color(), space);
 	}
 
 	public TextWithBackground(final Position2D position, final Font font, final String text, final Color textColor,
-			final Color backgroundColor, final Color borderColor) {
-		this(position, font, text, textColor, backgroundColor, 1, borderColor);
+			final Color backgroundColor) {
+		this(position, font, text, textColor, backgroundColor, 1);
 	}
 
 	public TextWithBackground(final Position2D position, final Font font, final String text, final Color textColor,
-			final Color backgroundColor, final int space, final Color borderColor) {
+			final Color backgroundColor, final int space) {
+		this.position = position;
 		this.text = new Text(position.move(space, space), font, text, textColor);
 		this.backgroundColor = backgroundColor;
 		this.space = space;
+	}
+
+	public TextWithBackground position(final Position2D position) {
+		this.position = position;
+		text.position(position.move(space, space));
+		return this;
+	}
+
+	public TextWithBackground font(final Font font) {
+		text.font(font);
+		return this;
+	}
+
+	public TextWithBackground text(final String text) {
+		this.text.text(text);
+		return this;
+	}
+
+	public TextWithBackground color(final Color color) {
+		text.color(color);
+		return this;
+	}
+
+	public TextWithBackground color(final ColorLabel color) {
+		return color(color.color());
+	}
+
+	public TextWithBackground backgroundColor(final Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
+		return this;
+	}
+
+	public TextWithBackground backgroundColor(final ColorLabel backgroundColor) {
+		return backgroundColor(backgroundColor.color());
+	}
+
+	public TextWithBackground space(final int space) {
+		this.space = space;
+		text.position(position.move(space, space));
+		return this;
+	}
+
+	public TextWithBackground arcSize(final int arcSize) {
+		this.arcSize = arcSize;
+		return this;
 	}
 
 	@Override
@@ -58,12 +100,14 @@ public class TextWithBackground implements DrawableShape {
 	}
 
 	public ShapePositionWithSize getPositionWithSize(final Graphics2D g) {
-		return text.getPositionWithSize(g).resized(-2 * space + 2, -2 * space, 4 * space, 4 * space + 1);
+		final ShapePositionWithSize textSize = text.getPositionWithSize(g);
+		return new ShapePositionWithSize(position.x, position.y, textSize.width + 4 * space,
+				textSize.height + 4 * space + 1);
 	}
 
 	public void draw(final Graphics2D g, final ShapePositionWithSize positionAndSize) {
 		final Shape roundedRect = new RoundRectangle2D.Double(positionAndSize.x, positionAndSize.y,
-				positionAndSize.width, positionAndSize.height, 5, 5);
+				positionAndSize.width, positionAndSize.height, arcSize, arcSize);
 
 		g.setColor(backgroundColor);
 		g.fill(roundedRect);

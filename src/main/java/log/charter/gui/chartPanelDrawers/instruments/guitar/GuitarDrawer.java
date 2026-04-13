@@ -25,7 +25,6 @@ import java.util.Set;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
-import log.charter.data.config.GraphicalConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.Chord;
@@ -321,7 +320,7 @@ public class GuitarDrawer {
 				break;
 			case HAND_SHAPE:
 				y = DrawerUtils.lanesBottom;
-				h = GraphicalConfig.handShapesHeight;
+				h = DrawerUtils.timingY - y - 1;
 				break;
 			default:
 				return;

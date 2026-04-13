@@ -162,6 +162,9 @@ public class CharterFrame extends JFrame implements Initiable {
 	}
 
 	private void resizeComponents() {
+		chartToolbar.recalculateSizes();
+		charterMenuBar.refreshMenus();
+
 		final Insets insets = getInsets();
 		final int width = WindowStateConfig.width - insets.left - insets.right;
 		final int height = WindowStateConfig.height - insets.top - insets.bottom - charterMenuBar.getHeight();

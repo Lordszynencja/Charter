@@ -88,6 +88,7 @@ public class Localization {
 		CHANGE_SONG_PITCH("Change song pitch"), //
 		CHART_LOCK_TOOLTIP(
 				"<html>Locks the chart, stopping you from moving any items on it (toggled with Scroll Lock)<br/>Items can still be added and removed</html>"), //
+		CHART_TEXT_HEIGHT("Chart text height"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
 		CONFIG("Config"), //
@@ -192,6 +193,7 @@ public class Localization {
 		IMPORT_USC_VOCALS("Import USC vocals file"), //
 		INCREASE_LENGTH("Increase length"), //
 		INCREASE_LENGTH_FAST("Increase length fast"), //
+		INPUT_SIZE("Input size"), //
 		INSERT_EVENT_POINT("Insert event point"), //
 		INSERT_FHP("Insert FHP"), //
 		INSERT_HAND_SHAPE("Insert hand shape"), //
@@ -718,13 +720,8 @@ public class Localization {
 		PAGE_TEXTURES("Textures"), //
 		PAGE_THEME("Theme"), //
 		GRAPHIC_CONFIG_THEME("Theme"), //
-		GRAPHIC_CONFIG_EVENTS_CHANGE_HEIGHT("Events height"), //
-		GRAPHIC_CONFIG_TONE_CHANGE_HEIGHT("Tone height"), //
-		GRAPHIC_CONFIG_FHP_INFO_HEIGHT("FHP info height"), //
 		GRAPHIC_CONFIG_NOTE_HEIGHT("Note height (px)"), //
 		GRAPHIC_CONFIG_NOTE_WIDTH("Note width (px)"), //
-		GRAPHIC_CONFIG_CHORD_HEIGHT("Chord height"), //
-		GRAPHIC_CONFIG_HAND_SHAPES_HEIGHT("Hand shapes height"), //
 		GRAPHIC_CONFIG_TIMING_HEIGHT("Timing height"), //
 		GRAPHIC_CONFIG_PREVIEW_SCROLL_SPEED("Preview scroll speed"), //
 

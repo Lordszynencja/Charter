@@ -4,8 +4,7 @@ import static java.lang.Math.round;
 import static java.lang.Math.sin;
 import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.data.config.Config.showChordIds;
-import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
-import static log.charter.data.config.GraphicalConfig.handShapesHeight;
+import static log.charter.data.config.GraphicalConfig.chartTextHeight;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.data.config.GraphicalConfig.noteWidth;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
@@ -144,7 +143,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		fhpFont = defineFHPFont();
 		bendValueFont = defineBendFont();
 		fretFont = defineFretFont();
-		handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, handShapesHeight);
+		handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, chartTextHeight);
 
 		palmMuteImage = definePalmMuteImage();
 		muteImage = defineMuteImage();
@@ -167,7 +166,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	protected Font defineFHPFont() {
-		return new Font(Font.DIALOG, Font.BOLD, fhpInfoHeight);
+		return new Font(Font.DIALOG, Font.BOLD, chartTextHeight);
 	}
 
 	protected Font defineBendFont() {
@@ -220,8 +219,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	@Override
 	public void addSection(final SectionType section, final int x, final boolean highlight) {
 		final TextWithBackground text = new TextWithBackground(new Position2D(x, sectionNamesY), fhpFont,
-				section.label.label(), ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT,
-				ColorLabel.BASE_BORDER.color());
+				section.label.label(), ColorLabel.SECTION_NAME_BG, ColorLabel.BASE_DARK_TEXT);
 
 		addEventPointTextIfOnScreen(text);
 	}
@@ -231,7 +229,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		final String phraseLabel = phraseName + " (" + phrase.maxDifficulty + ")"//
 				+ (phrase.solo ? "[Solo]" : "");
 		final TextWithBackground text = new TextWithBackground(new Position2D(x, phraseNamesY), fhpFont, phraseLabel,
-				ColorLabel.PHRASE_NAME_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER);
+				ColorLabel.PHRASE_NAME_BG, ColorLabel.BASE_DARK_TEXT);
 
 		addEventPointTextIfOnScreen(text);
 	}
@@ -239,7 +237,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	private void addEvents(final List<EventType> events, final int x) {
 		final String eventsName = String.join(", ", map(events, event -> event.label));
 		final TextWithBackground text = new TextWithBackground(new Position2D(x, eventNamesY), fhpFont, eventsName,
-				ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT, ColorLabel.BASE_BORDER.color());
+				ColorLabel.EVENT_BG, ColorLabel.BASE_DARK_TEXT);
 
 		addEventPointTextIfOnScreen(text);
 	}
@@ -785,7 +783,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	@Override
 	public void addHandShape(final int x, final int length, final boolean selected, final boolean highlighted,
 			final HandShape handShape, final ChordTemplate chordTemplate) {
-		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length, handShapesHeight);
+		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length, chartTextHeight);
 		final ColorLabel fillColor = chordTemplate.arpeggio ? ColorLabel.HAND_SHAPE_ARPEGGIO : ColorLabel.HAND_SHAPE;
 		handShapes.add(filledRectangle(position, fillColor));
 
@@ -811,7 +809,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	@Override
 	public void addHandShapeHighlight(final int x, final int length) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length - 1,
-				handShapesHeight - 1);
+				chartTextHeight - 1);
 		handShapes.add(strokedRectangle(position, ColorLabel.HIGHLIGHT));
 	}
 
@@ -825,7 +823,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	@Override
 	public void addTone(final String tone, final int x, final boolean highlighted) {
 		toneChanges.add(new TextWithBackground(new Position2D(x, toneChangeY), fhpFont, "" + tone,
-				ColorLabel.TONE_CHANGE, ColorLabel.BASE_TEXT, 2, ColorLabel.BASE_BORDER.color()));
+				ColorLabel.TONE_CHANGE, ColorLabel.BASE_TEXT));
 	}
 
 	@Override
