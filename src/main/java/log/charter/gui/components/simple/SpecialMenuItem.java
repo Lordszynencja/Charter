@@ -40,7 +40,7 @@ public class SpecialMenuItem extends JMenuItem {
 			return;
 		}
 
-		final Font shortcutFont = new Font(Font.DIALOG, Font.PLAIN, getFont().getSize() * 2 / 3);
+		final Font shortcutFont = new Font(Font.DIALOG, Font.PLAIN, getFont().getSize() * 4 / 5);
 		final FontMetrics fontMetrics = getFontMetrics(shortcutFont);
 		g.setFont(shortcutFont);
 		g.setColor(ColorLabel.BASE_DARK_TEXT.color());

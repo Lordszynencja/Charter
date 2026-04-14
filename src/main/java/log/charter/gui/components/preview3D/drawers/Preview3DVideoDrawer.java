@@ -83,6 +83,7 @@ public class Preview3DVideoDrawer {
 		imageChanged = true;
 	}
 
+	@SuppressWarnings("unused")
 	private void playVideo() {
 		long nextFrameTime = System.nanoTime() + 16_666_666;
 

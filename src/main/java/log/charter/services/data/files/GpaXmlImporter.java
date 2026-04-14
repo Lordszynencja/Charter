@@ -14,8 +14,7 @@ import log.charter.io.gpa.GpaXmlXStreamHandler;
 public class GpaXmlImporter {
 	private ChartData chartData;
 	private CharterFrame charterFrame;
-	private FileDropHandler fileDropHandler;
-	private GpaXmlXStreamHandler gpaXmlXStreamHandler;
+//	private GpaXmlXStreamHandler gpaXmlXStreamHandler;
 
 	private void setMetadata(final GpaTrack gpaTrack) {
 		if (chartData.songChart.artistName().isBlank()) {

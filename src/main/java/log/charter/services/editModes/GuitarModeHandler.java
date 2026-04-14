@@ -4,6 +4,7 @@ import static java.lang.System.nanoTime;
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.yToString;
 import static log.charter.util.CollectionUtils.lastBefore;
+import static log.charter.util.CollectionUtils.lastBeforeEqual;
 import static log.charter.util.Utils.nvl;
 
 import java.util.List;
@@ -89,7 +90,10 @@ public class GuitarModeHandler implements ModeHandler {
 
 	private void rightClickEventPoint(final PositionWithIdAndType eventPointPosition) {
 		final FractionalPosition position = eventPointPosition.toFraction(chartData.beats()).position();
-		final Integer itemId = eventPointPosition.id;
+		Integer itemId = eventPointPosition.id;
+		if (itemId == null) {
+			itemId = lastBeforeEqual(chartData.currentEventPoints(), position).findId();
+		}
 		final EventPoint item = eventPointPosition.eventPoint;
 
 		addOrUpdateEventPoint(new Insertable<>(position, itemId, item));
@@ -121,7 +125,10 @@ public class GuitarModeHandler implements ModeHandler {
 
 	private void rightClickToneChange(final PositionWithIdAndType toneChangePosition) {
 		final FractionalPosition position = toneChangePosition.toFraction(chartData.beats()).position();
-		final Integer itemId = toneChangePosition.id;
+		Integer itemId = toneChangePosition.id;
+		if (itemId == null) {
+			itemId = lastBeforeEqual(chartData.currentToneChanges(), position).findId();
+		}
 		final ToneChange item = toneChangePosition.toneChange;
 
 		addOrUpdateToneChange(new Insertable<>(position, itemId, item));
@@ -153,7 +160,10 @@ public class GuitarModeHandler implements ModeHandler {
 
 	private void rightClickFHP(final PositionWithIdAndType fhpPosition) {
 		final FractionalPosition position = fhpPosition.toFraction(chartData.beats()).position();
-		final Integer itemId = fhpPosition.id;
+		Integer itemId = fhpPosition.id;
+		if (itemId == null) {
+			itemId = lastBeforeEqual(chartData.currentFHPs(), position).findId();
+		}
 		final FHP item = fhpPosition.fhp;
 
 		addOrUpdateFHP(new Insertable<>(position, itemId, item));

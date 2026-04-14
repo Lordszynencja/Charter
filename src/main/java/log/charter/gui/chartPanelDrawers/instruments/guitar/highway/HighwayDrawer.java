@@ -51,7 +51,7 @@ public interface HighwayDrawer {
 
 	void addPhrase(final Phrase phrase, String phraseName, int x, boolean highlight);
 
-	void addEvents(EventPoint eventPoint, int x);
+	void addEvents(EventPoint eventPoint, int x, boolean highlight);
 
 	void addEventPoint(EventPoint eventPoint, Phrase phrase, int x, boolean selected, boolean highlighted);
 

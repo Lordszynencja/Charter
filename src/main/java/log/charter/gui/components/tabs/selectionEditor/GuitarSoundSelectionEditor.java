@@ -5,6 +5,7 @@ import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
+import static log.charter.gui.components.utils.ComponentUtils.numericFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -132,6 +133,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private void addSlideFretInput(final CurrentSelectionEditor parent, final RowedPosition position) {
 		final TextInputWithValidation slideFretInput = generateForInteger(null, 30, //
 				new IntegerValueValidator(1, InstrumentConfig.frets, true), this::changeSlideFret, false);
+		slideFretInput.addKeyListener(numericFilter);
+
 		slideFret = new FieldWithLabel<>(Label.SLIDE_PANE_FRET, 60, 30, 20, slideFretInput, LabelPosition.LEFT);
 		parent.add(slideFret, position);
 	}

@@ -7,6 +7,8 @@ import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.data.song.ChordTemplate.fingerIds;
 import static log.charter.data.song.ChordTemplate.fingerNames;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
+import static log.charter.gui.components.utils.ComponentUtils.editingKeyCodes;
+import static log.charter.gui.components.utils.ComponentUtils.numericFilter;
 import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.util.Utils.getStringPosition;
@@ -45,6 +47,7 @@ import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
+import log.charter.gui.components.utils.ComponentUtils.KeyFilter;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
@@ -411,6 +414,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 					new IntegerValueValidator(0, InstrumentConfig.frets, true), v -> updateFretValue(string, v), false);
 			input.setHorizontalAlignment(JTextField.CENTER);
 			addSelectTextOnFocus(input);
+			input.addKeyListener(numericFilter);
 
 			fretInputs.add(input);
 			parent.addWithSettingSize(input, fretInputPosition, 20, 5, 20);
@@ -444,6 +448,22 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 					val -> (String) updateFingerValue(string, val.toUpperCase()), false);
 			input.setHorizontalAlignment(JTextField.CENTER);
 			addSelectTextOnFocus(input);
+			input.addKeyListener(new KeyFilter(e -> {
+				if (editingKeyCodes.contains(e.getKeyCode())) {
+					return true;
+				}
+
+				final String selectedText = input.getSelectedText();
+				if (selectedText == null || selectedText.isBlank()) {
+					final String text = input.getText();
+					if (text != null && !text.isBlank()) {
+						return false;
+					}
+				}
+
+				final char c = e.getKeyChar();
+				return (c >= '1' && c <= '4') || c == 't' || c == 'T';
+			}));
 
 			fingerInputs.add(input);
 			final int y = parent.sizes.getY(row + 1 + getStringPosition(string, InstrumentConfig.maxStrings));

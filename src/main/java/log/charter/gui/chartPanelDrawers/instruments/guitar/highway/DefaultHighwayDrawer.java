@@ -252,7 +252,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addEvents(final EventPoint eventPoint, final int x) {
+	public void addEvents(final EventPoint eventPoint, final int x, final boolean highlight) {
 		if (!eventPoint.events.isEmpty()) {
 			addEvents(eventPoint.events, x);
 		}
@@ -267,7 +267,7 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 		if (eventPoint.phrase != null) {
 			addPhrase(phrase, eventPoint.phrase, x, false);
 		}
-		addEvents(eventPoint, x);
+		addEvents(eventPoint, x, highlighted);
 
 		if (highlighted) {
 			addEventPointBox(x, ColorLabel.HIGHLIGHT);

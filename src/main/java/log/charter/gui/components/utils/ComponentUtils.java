@@ -1,14 +1,25 @@
 package log.charter.gui.components.utils;
 
+import static java.awt.event.KeyEvent.VK_BACK_SPACE;
+import static java.awt.event.KeyEvent.VK_DELETE;
+import static java.awt.event.KeyEvent.VK_DOWN;
+import static java.awt.event.KeyEvent.VK_LEFT;
+import static java.awt.event.KeyEvent.VK_RIGHT;
+import static java.awt.event.KeyEvent.VK_UP;
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
@@ -30,6 +41,45 @@ public class ComponentUtils {
 			};
 		}
 	}
+
+	public static class KeyFilter implements KeyListener {
+		private final Predicate<KeyEvent> filter;
+
+		public KeyFilter(final Predicate<KeyEvent> filter) {
+			this.filter = filter;
+		}
+
+		@Override
+		public void keyTyped(final KeyEvent e) {
+
+			if (!filter.test(e)) {
+				e.consume();
+			}
+		}
+
+		@Override
+		public void keyPressed(final KeyEvent e) {
+			if (!filter.test(e)) {
+				e.consume();
+			}
+		}
+
+		@Override
+		public void keyReleased(final KeyEvent e) {
+			if (!filter.test(e)) {
+				e.consume();
+			}
+		}
+	}
+
+	public static final Set<Integer> editingKeyCodes = Set.of(//
+			VK_DELETE, VK_BACK_SPACE, //
+			VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT);
+
+	public static final KeyFilter numericFilter = new KeyFilter(e -> {
+		final char c = e.getKeyChar();
+		return (c >= '0' && c <= '9') || editingKeyCodes.contains(e.getKeyCode());
+	});
 
 	public static void setComponentSize(final Component component, final int w, final int h) {
 		final Dimension size = new Dimension(w, h);

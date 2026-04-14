@@ -73,13 +73,13 @@ public class ModernThemeEvents implements ThemeEvents {
 	@Override
 	public void addSection(final Graphics2D g, final SectionType section, final int x, final boolean highlight) {
 		final String label = section.label.label();
-		data.sectionsAndPhrases.add(generateText(label, x, sectionNamesY, ColorLabel.SECTION_NAME_BG));
+		final TextWithBackground text = generateText(label, x, sectionNamesY, ColorLabel.SECTION_NAME_BG);
+		data.sectionsAndPhrases.add(text);
+
 		if (highlight) {
-			final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, label, sectionTextSpace);
-			final ShapePositionWithSize position = new ShapePositionWithSize(x + rectangleArcSize, sectionNamesY + 2,
-					expectedSize.width - 3, expectedSize.height - 3);
+			final ShapePositionWithSize position = text.getPositionWithSize(g);
 			data.sectionsAndPhrases.add(
-					strokedRoundRectangle(position, ColorLabel.HIGHLIGHT.color(), rectangleArcSize, rectangleArcSize));
+					strokedRoundRectangle(position, ColorLabel.HIGHLIGHT.color(), sectionTextSpace, rectangleArcSize));
 		}
 	}
 
@@ -87,12 +87,13 @@ public class ModernThemeEvents implements ThemeEvents {
 	public void addPhrase(final Graphics2D g, final Phrase phrase, final String phraseName, final int x,
 			final boolean highlight) {
 		final String label = generatePhraseLabel(phrase, phraseName);
-		data.sectionsAndPhrases.add(generateText(label, x, phraseNamesY, ColorLabel.PHRASE_NAME_BG));
+		final TextWithBackground text = generateText(label, x, phraseNamesY, ColorLabel.PHRASE_NAME_BG);
+		data.sectionsAndPhrases.add(text);
+
 		if (highlight) {
-			final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, label, sectionTextSpace);
-			final ShapePositionWithSize position = new ShapePositionWithSize(x + 1, phraseNamesY + 2,
-					expectedSize.width - 3, expectedSize.height - 3);
-			data.sectionsAndPhrases.add(strokedRoundRectangle(position, ColorLabel.HIGHLIGHT.color(), 3, 3));
+			final ShapePositionWithSize position = text.getPositionWithSize(g);
+			data.sectionsAndPhrases.add(
+					strokedRoundRectangle(position, ColorLabel.HIGHLIGHT.color(), sectionTextSpace, rectangleArcSize));
 		}
 	}
 
@@ -109,10 +110,19 @@ public class ModernThemeEvents implements ThemeEvents {
 	}
 
 	@Override
-	public void addEvents(final EventPoint eventPoint, final int x) {
-		if (!eventPoint.events.isEmpty()) {
-			final String text = String.join(", ", map(eventPoint.events, event -> event.label));
-			data.sectionsAndPhrases.add(generateText(text, x, eventNamesY, ColorLabel.EVENT_BG));
+	public void addEvents(final Graphics2D g, final EventPoint eventPoint, final int x, final boolean highlight) {
+		if (eventPoint.events.isEmpty()) {
+			return;
+		}
+
+		final String label = String.join(", ", map(eventPoint.events, event -> event.label));
+		final TextWithBackground text = generateText(label, x, eventNamesY, ColorLabel.EVENT_BG);
+		data.sectionsAndPhrases.add(text);
+
+		if (highlight) {
+			final ShapePositionWithSize position = text.getPositionWithSize(g);
+			data.sectionsAndPhrases.add(
+					strokedRoundRectangle(position, ColorLabel.HIGHLIGHT.color(), sectionTextSpace, rectangleArcSize));
 		}
 	}
 
@@ -125,7 +135,7 @@ public class ModernThemeEvents implements ThemeEvents {
 		if (eventPoint.phrase != null) {
 			addPhrase(g, phrase, eventPoint.phrase, x, highlighted);
 		}
-		addEvents(eventPoint, x);
+		addEvents(g, eventPoint, x, highlighted);
 
 		if (highlighted) {
 			addEventPointBox(x, ColorLabel.HIGHLIGHT);

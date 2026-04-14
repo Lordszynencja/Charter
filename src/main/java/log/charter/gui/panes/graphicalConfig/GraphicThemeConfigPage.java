@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
 import log.charter.data.config.GraphicalConfig;
@@ -46,6 +47,7 @@ public class GraphicThemeConfigPage implements Page {
 	private int chartTextHeight = GraphicalConfig.chartTextHeight;
 	private int timingHeight = GraphicalConfig.timingHeight;
 	private int chartMapHeightMultiplier = GraphicalConfig.chartMapHeightMultiplier;
+	private boolean showChordBoxes = GraphicalConfig.showChordBoxes;
 	private BigDecimal previewScrollSpeed = BigDecimal.valueOf(GraphicalConfig.previewWindowScrollSpeed);
 
 	private FieldWithLabel<CharterSelect<Theme>> themeField;
@@ -56,6 +58,7 @@ public class GraphicThemeConfigPage implements Page {
 	private FieldWithLabel<TextInputWithValidation> chartTextHeightField;
 	private FieldWithLabel<TextInputWithValidation> timingHeightField;
 	private FieldWithLabel<TextInputWithValidation> chartMapHeightMultiplierField;
+	private FieldWithLabel<JCheckBox> showChordBoxesField;
 	private FieldWithLabel<TextInputWithValidation> previewScrollSpeedField;
 
 	@Override
@@ -87,6 +90,9 @@ public class GraphicThemeConfigPage implements Page {
 		position.newRow();
 
 		addChartMapHeightMultiplierInput(panel, position);
+		position.newRow();
+
+		addShowChordBoxesInput(panel, position);
 		position.newRow();
 
 		addScrollSpeedFieldField(panel, position);
@@ -202,6 +208,16 @@ public class GraphicThemeConfigPage implements Page {
 		panel.add(chartMapHeightMultiplierField, position);
 	}
 
+	private void addShowChordBoxesInput(final RowedPanel panel, final RowedPosition position) {
+		final JCheckBox input = new JCheckBox();
+		input.setSelected(showChordBoxes);
+		input.addActionListener(e -> showChordBoxes = input.isSelected());
+
+		showChordBoxesField = new FieldWithLabel<>(Label.SHOW_CHORD_BOXES, 120, 20, 20, input,
+				LabelPosition.LEFT_CLOSE);
+		panel.add(showChordBoxesField, position);
+	}
+
 	private void addScrollSpeedFieldField(final RowedPanel panel, final RowedPosition position) {
 		final TextInputWithValidation input = generateForBigDecimal(previewScrollSpeed, 20, //
 				scrollSpeedValidator, i -> previewScrollSpeed = i, false);
@@ -234,6 +250,7 @@ public class GraphicThemeConfigPage implements Page {
 		GraphicalConfig.chartTextHeight = chartTextHeight;
 		GraphicalConfig.timingHeight = timingHeight;
 		GraphicalConfig.chartMapHeightMultiplier = chartMapHeightMultiplier;
+		GraphicalConfig.showChordBoxes = showChordBoxes;
 		GraphicalConfig.previewWindowScrollSpeed = previewScrollSpeed.doubleValue();
 	}
 

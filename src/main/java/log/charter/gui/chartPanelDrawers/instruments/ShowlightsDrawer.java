@@ -38,6 +38,8 @@ import log.charter.util.ColorUtils;
 import log.charter.util.data.Position2D;
 
 public class ShowlightsDrawer {
+	private static final Map<ShowlightType, BufferedImage> showlightTextures = new HashMap<>();
+
 	private static int textureWidth = laneHeight * 2;
 	private static int fogLaneY = lanesTop + laneHeight / 3;
 	private static int fogLabelY = lanesTop + laneHeight * 2 / 3;
@@ -46,8 +48,6 @@ public class ShowlightsDrawer {
 
 	private static final int labelTextSpace = 2;
 	private static Font labelFont = new Font(Font.SANS_SERIF, Font.BOLD, laneHeight / 4);
-
-	private static final Map<ShowlightType, BufferedImage> showlightTextures = new HashMap<>();
 
 	private static BufferedImage generateFogTexture(final Color color) {
 		final BufferedImage img = new BufferedImage(textureWidth, laneHeight, BufferedImage.TYPE_INT_RGB);

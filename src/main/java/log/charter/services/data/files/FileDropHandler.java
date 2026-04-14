@@ -41,7 +41,7 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 	private ExistingProjectImporter existingProjectImporter;
 	private GP5FileImporter gp5FileImporter;
 	private GP7PlusFileImporter gp7PlusFileImporter;
-	private GpaXmlImporter gpaXmlImporter;
+//	private GpaXmlImporter gpaXmlImporter;
 	private LRCImporter lrcImporter;
 	private MidiImporter midiImporter;
 	private ProjectAudioHandler projectAudioHandler;
