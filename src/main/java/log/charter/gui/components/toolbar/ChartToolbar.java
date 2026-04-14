@@ -518,8 +518,9 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		gridSize.field.setLocation(gridSize.label.getWidth(), 0);
 		gridSize.field.setSize(GraphicalConfig.inputSize * 3 / 2, GraphicalConfig.inputSize);
 
-		gridSize.setLocation(x.getAndAdd(gridSize.getWidth() + 1), verticalSpacing);
+		gridSize.setLocation(x.get(), verticalSpacing);
 		gridSize.setSize(gridSize.label.getWidth() + gridSize.field.getWidth(), GraphicalConfig.inputSize);
+		x.getAndAdd(gridSize.getWidth() + 1);
 
 		gridDoubleButton.setFont(gridDoubleButton.getFont().deriveFont(GraphicalConfig.inputSize / 2.5f));
 		gridDoubleButton.setLocation(x.get(), verticalSpacing);
@@ -547,9 +548,10 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		playbackSpeed.field.setLocation(playbackSpeed.label.getWidth(), 0);
 		playbackSpeed.field.setSize(GraphicalConfig.inputSize * 3 / 2, GraphicalConfig.inputSize);
 
-		playbackSpeed.setLocation(x.getAndAdd(playbackSpeed.getWidth() + horizontalSpacing / 2), verticalSpacing);
+		playbackSpeed.setLocation(x.get(), verticalSpacing);
 		playbackSpeed.setSize(playbackSpeed.label.getWidth() + playbackSpeed.field.getWidth(),
 				GraphicalConfig.inputSize);
+		x.getAndAdd(playbackSpeed.getWidth() + horizontalSpacing / 2);
 
 		resizeIconButton(x, rewindButton);
 		x.getAndAdd(horizontalSpacing / 2);
