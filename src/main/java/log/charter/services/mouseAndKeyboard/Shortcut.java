@@ -1,6 +1,8 @@
 package log.charter.services.mouseAndKeyboard;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Shortcut {
@@ -93,27 +95,28 @@ public class Shortcut {
 	}
 
 	public String name(final String joiner) {
-		final StringBuilder nameBuilder = new StringBuilder();
+		final List<String> parts = new ArrayList<>();
+
 		if (ctrl) {
-			nameBuilder.append("Ctrl").append(joiner);
+			parts.add("Ctrl");
 		}
 		if (shift) {
-			nameBuilder.append("Shift").append(joiner);
+			parts.add("Shift");
 		}
 		if (alt) {
-			nameBuilder.append("Alt").append(joiner);
+			parts.add("Alt");
 		}
 		if (insert) {
-			nameBuilder.append("Insert").append(joiner);
+			parts.add("Insert");
 		}
 		if (command) {
-			nameBuilder.append("Cmd").append(joiner);
+			parts.add("Cmd");
 		}
 		if (key != -1) {
-			nameBuilder.append(KeyEvent.getKeyText(key));
+			parts.add(KeyEvent.getKeyText(key));
 		}
 
-		return nameBuilder.toString();
+		return String.join(joiner, parts);
 	}
 
 	public String saveName() {

@@ -23,6 +23,7 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 	private final Action action;
 	public Shortcut shortcut;
 
+	private boolean editingShortcut = false;
 	private Color validColor;
 	private boolean validShortcut = true;
 
@@ -44,8 +45,8 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 		}
 
 		String text = shortcut.name("-");
-		if (!shortcut.isReady()) {
-			text += "?";
+		if (editingShortcut && !shortcut.isReady()) {
+			text += "-?";
 		}
 
 		setText(text);
@@ -58,6 +59,7 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 
 	private void resetShortcut() {
 		setShortcut(ShortcutConfig.shortcuts.get(action));
+		editingShortcut = false;
 		validateShortcut();
 	}
 
@@ -90,6 +92,7 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 	@Override
 	public void actionPerformed(final ActionEvent e) {
 		shortcut = new Shortcut();
+		editingShortcut = true;
 		resetText();
 		addKeyListener(this);
 	}
@@ -139,6 +142,11 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 			resetText();
 			return;
 		}
+		if (code == KeyEvent.VK_INSERT) {
+			shortcut.insert = true;
+			resetText();
+			return;
+		}
 		if (code == KeyEvent.VK_META) {
 			shortcut.command = true;
 			resetText();
@@ -171,6 +179,14 @@ public class ShortcutEditor extends JButton implements ActionListener, FocusList
 		if (e.getKeyCode() == KeyEvent.VK_ALT) {
 			shortcut.alt = false;
 			resetText();
+			return;
+		}
+		if (e.getKeyCode() == KeyEvent.VK_INSERT) {
+			editingShortcut = false;
+			removeKeyListener(this);
+			parent.validateShortcuts();
+			resetText();
+			e.consume();
 			return;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_META) {
