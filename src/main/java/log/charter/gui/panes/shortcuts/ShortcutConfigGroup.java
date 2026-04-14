@@ -24,6 +24,13 @@ public enum ShortcutConfigGroup {
 			Action.PREVIOUS_ITEM, //
 			Action.NEXT_ITEM_WITH_SELECT, //
 			Action.PREVIOUS_ITEM_WITH_SELECT, //
+			Action.NEXT_ITEM_WITH_SELECT_CTRL, //
+			Action.PREVIOUS_ITEM_WITH_SELECT_CTRL, //
+			Action.NEXT_ITEM_WITH_SELECT_CTRL_SHIFT, //
+			Action.PREVIOUS_ITEM_WITH_SELECT_CTRL_SHIFT, //
+			Action.NEXT_ITEM_WITH_SELECT_SHIFT, //
+			Action.PREVIOUS_ITEM_WITH_SELECT_SHIFT, //
+			Action.CHANGE_GRID, //
 			Action.NEXT_GRID_POSITION, //
 			Action.PREVIOUS_GRID_POSITION, //
 			Action.NEXT_BEAT, //
@@ -39,6 +46,7 @@ public enum ShortcutConfigGroup {
 			Action.TOGGLE_REPEAT_END), //
 	EDITING(Label.EDITING, //
 			Action.COPY, //
+			Action.CUT, //
 			Action.PASTE, //
 			Action.SPECIAL_PASTE, //
 			Action.DELETE, //
@@ -56,8 +64,10 @@ public enum ShortcutConfigGroup {
 			Action.BEAT_ADD, //
 			Action.BEAT_REMOVE, //
 			Action.MEASURE_ADD, //
-			Action.MEASURE_REMOVE), //
+			Action.MEASURE_REMOVE, //
+			Action.INSERT_SHOWLIGHT), //
 	VOCAL_EDITING(Label.VOCAL_EDITING, //
+			Action.INSERT_VOCAL, //
 			Action.EDIT_VOCALS, //
 			Action.TOGGLE_PHRASE_END, //
 			Action.TOGGLE_WORD_PART), //

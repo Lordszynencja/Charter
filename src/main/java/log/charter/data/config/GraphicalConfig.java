@@ -24,13 +24,12 @@ public class GraphicalConfig {
 	private static final String configPath = Utils.defaultConfigDir + "graphicalConfig.ini";
 
 	public static Theme theme = Theme.MODERN;
+
+	public static int inputSize = 20;
+	public static int chartTextHeight = 10;
 	public static int eventsChangeHeight = 10;
-	public static int toneChangeHeight = 10;
-	public static int fhpInfoHeight = 10;
 	public static int noteWidth = 25;
 	public static int noteHeight = 25;
-	public static int chordHeight = 10;
-	public static int handShapesHeight = 10;
 	public static int timingHeight = 24;
 	public static int chartMapHeightMultiplier = 3;
 
@@ -65,19 +64,16 @@ public class GraphicalConfig {
 
 	static {
 		valueAccessors.put("theme", forEnum(Theme.class, v -> theme = v, () -> theme, theme));
+		valueAccessors.put("inputSize", forInteger(v -> inputSize = v, () -> inputSize, inputSize));
+		valueAccessors.put("chartTextHeight",
+				forInteger(v -> chartTextHeight = v, () -> chartTextHeight, chartTextHeight));
 		valueAccessors.put("eventsChangeHeight",
 				forInteger(v -> eventsChangeHeight = v, () -> eventsChangeHeight, eventsChangeHeight));
-		valueAccessors.put("toneChangeHeight",
-				forInteger(v -> toneChangeHeight = v, () -> toneChangeHeight, toneChangeHeight));
-		valueAccessors.put("fhpInfoHeight", forInteger(v -> fhpInfoHeight = v, () -> fhpInfoHeight, fhpInfoHeight));
 		valueAccessors.put("noteWidth", forInteger(v -> noteWidth = v, () -> noteWidth, noteWidth));
 		valueAccessors.put("noteHeight", forInteger(v -> noteHeight = v, () -> noteHeight, noteHeight));
-		valueAccessors.put("chordHeight", forInteger(v -> chordHeight = v, () -> chordHeight, chordHeight));
-		valueAccessors.put("handShapesHeight",
-				forInteger(v -> handShapesHeight = v, () -> handShapesHeight, handShapesHeight));
 		valueAccessors.put("timingHeight", forInteger(v -> timingHeight = v, () -> timingHeight, timingHeight));
-		valueAccessors.put("chartMapHeightMultiplier",
-				forInteger(v -> chartMapHeightMultiplier = v, () -> chartMapHeightMultiplier, chartMapHeightMultiplier));
+		valueAccessors.put("chartMapHeightMultiplier", forInteger(v -> chartMapHeightMultiplier = v,
+				() -> chartMapHeightMultiplier, chartMapHeightMultiplier));
 
 		valueAccessors.put("markerOffset", forInteger(v -> markerOffset = v, () -> markerOffset, markerOffset));
 		valueAccessors.put("tempoMapGhostNotesTransparency", forFloat(v -> tempoMapGhostNotesTransparency = v,
@@ -85,7 +81,8 @@ public class GraphicalConfig {
 		valueAccessors.put("previewWindowScrollSpeed",
 				forDouble(v -> previewWindowScrollSpeed = v, () -> previewWindowScrollSpeed, previewWindowScrollSpeed));
 		valueAccessors.put("invertStrings", forBoolean(v -> invertStrings = v, () -> invertStrings, invertStrings));
-		valueAccessors.put("invertStrings3D", forBoolean(v -> invertStrings3D = v, () -> invertStrings3D, invertStrings3D));
+		valueAccessors.put("invertStrings3D",
+				forBoolean(v -> invertStrings3D = v, () -> invertStrings3D, invertStrings3D));
 
 		valueAccessors.put("colorSet", forString(v -> colorSet = v, () -> colorSet, colorSet));
 		valueAccessors.put("inlay", forString(v -> inlay = v, () -> inlay, inlay));

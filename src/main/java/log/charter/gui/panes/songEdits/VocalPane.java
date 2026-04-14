@@ -13,6 +13,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
+import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 
@@ -23,23 +24,27 @@ public class VocalPane extends ParamsPane {
 	private boolean wordPart;
 	private boolean phraseEnd;
 
+	private final ArrangementFixer arrangementFixer;
 	private final ChartData data;
 	private final CharterFrame frame;
 	private final SelectionManager selectionManager;
 	private final UndoSystem undoSystem;
 
-	private VocalPane(final Label label, final ChartData data, final CharterFrame frame,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
+	private VocalPane(final Label label, final ArrangementFixer arrangementFixer, final ChartData data,
+			final CharterFrame frame, final SelectionManager selectionManager, final UndoSystem undoSystem) {
 		super(frame, label, 360);
+
+		this.arrangementFixer = arrangementFixer;
 		this.data = data;
 		this.frame = frame;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 	}
 
-	public VocalPane(final IConstantFractionalPositionWithEnd position, final ChartData data, final CharterFrame frame,
-			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this(Label.VOCAL_PANE_CREATION, data, frame, selectionManager, undoSystem);
+	public VocalPane(final IConstantFractionalPositionWithEnd position, final ArrangementFixer arrangementFixer,
+			final ChartData data, final CharterFrame frame, final SelectionManager selectionManager,
+			final UndoSystem undoSystem) {
+		this(Label.VOCAL_PANE_CREATION, arrangementFixer, data, frame, selectionManager, undoSystem);
 
 		text = "";
 		wordPart = false;
@@ -50,7 +55,7 @@ public class VocalPane extends ParamsPane {
 
 	public VocalPane(final int id, final Vocal vocal, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		this(Label.VOCAL_PANE_EDIT, data, frame, selectionManager, undoSystem);
+		this(Label.VOCAL_PANE_EDIT, null, data, frame, selectionManager, undoSystem);
 
 		text = vocal.text();
 		wordPart = vocal.flag() == VocalFlag.WORD_PART;
@@ -62,7 +67,7 @@ public class VocalPane extends ParamsPane {
 	public VocalPane(final int id, final Vocal vocal, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final UndoSystem undoSystem,
 			final List<Selection<Vocal>> remainingVocals) {
-		this(Label.VOCAL_PANE_EDIT, data, frame, selectionManager, undoSystem);
+		this(Label.VOCAL_PANE_EDIT, null, data, frame, selectionManager, undoSystem);
 
 		text = vocal.text();
 		wordPart = vocal.flag() == VocalFlag.WORD_PART;
@@ -107,6 +112,7 @@ public class VocalPane extends ParamsPane {
 		selectionManager.clear();
 
 		final int vocalId = data.currentVocals().insertVocal(position, text, flag());
+		arrangementFixer.fixLengths(data.currentVocals().vocals);
 		selectionManager.addSelection(PositionType.VOCAL, vocalId);
 	}
 
@@ -124,6 +130,7 @@ public class VocalPane extends ParamsPane {
 		if (text == null || "".equals(text)) {
 			undoSystem.addUndo();
 			data.currentVocals().removeNote(id);
+			selectionManager.clear();
 			return;
 		}
 

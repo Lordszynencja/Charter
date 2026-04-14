@@ -35,11 +35,18 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Action.MOVE_STRING_DOWN));
 		menu.add(createItem(Action.MOVE_STRING_UP_SIMPLE));
 		menu.add(createItem(Action.MOVE_STRING_DOWN_SIMPLE));
+
 		final JMenu noteStringSelectionOperationsSubMenu = createMenu(Label.NOTE_STRING_SELECTION_OPERATIONS);
 		for (int i = 1; i <= 9; i++) {
 			noteStringSelectionOperationsSubMenu.add(createItem(Action.valueOf("STRING_" + i)));
 		}
 		menu.add(noteStringSelectionOperationsSubMenu);
+
+		final JMenu noteStringToggleOperationsSubMenu = createMenu(Label.NOTE_STRING_TOGGLE_OPERATIONS);
+		for (int i = 1; i <= 9; i++) {
+			noteStringToggleOperationsSubMenu.add(createItem(Action.valueOf("TOGGLE_NOTE_" + i)));
+		}
+		menu.add(noteStringToggleOperationsSubMenu);
 	}
 
 	private void addFretChangeItems(final JMenu menu) {
@@ -71,24 +78,36 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_MUTE_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HOPO));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HOPO_INDEPENDENTLY));
-		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HARMONIC));
-		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HARMONIC_INDEPENDENTLY));
-		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT));
-		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_SLAP_POP));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_SLAP_POP_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HARMONIC));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_HARMONIC_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_VIBRATO));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_VIBRATO_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_TREMOLO));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_TREMOLO_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ACCENT_INDEPENDENTLY));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_LINK_NEXT));
 		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_LINK_NEXT_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_SPLIT));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_SPLIT_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ONLY_BOX));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_ONLY_BOX_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_IGNORE));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_IGNORE_INDEPENDENTLY));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_PASS_NOTES));
+		noteStatusOperationsSubMenu.add(createItem(Action.TOGGLE_PASS_NOTES_INDEPENDENTLY));
 		menu.add(noteStatusOperationsSubMenu);
 	}
 
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.GUITAR_MENU);
+		menu.add(createItem(Action.INSERT_EVENT_POINT));
+		menu.add(createItem(Action.INSERT_TONE_CHANGE));
+		menu.add(createItem(Action.INSERT_FHP));
+
 		addStringChangeItems(menu);
 
 		menu.addSeparator();
@@ -101,6 +120,7 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		addNoteStatusOperations(menu);
 
 		menu.addSeparator();
+		menu.add(createItem(Action.INSERT_HAND_SHAPE));
 		menu.add(createItem(Action.MARK_HAND_SHAPE));
 		menu.add(createItem(Action.SET_HAND_SHAPE_TEMPLATE_ON_CHORDS));
 

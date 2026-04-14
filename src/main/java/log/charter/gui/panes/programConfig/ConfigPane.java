@@ -58,7 +58,6 @@ public class ConfigPane extends PagedDialog {
 		GraphicalConfig.save();
 
 		frame.updateSizes();
-		frame.resize();
 
 		framer.setFPS(GraphicalConfig.FPS);
 

@@ -100,8 +100,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		mute = new ToggleButtonGroupInRow<>(parent, position, 65, Label.MUTE, //
 				makeChangeForCommonNotes(NoteInterface::mute), //
 				asList(new Pair<>(Mute.NONE, Label.MUTE_NONE), //
-						new Pair<>(Mute.FULL, Label.MUTE_FULL), //
-						new Pair<>(Mute.PALM, Label.MUTE_PALM)));
+						new Pair<>(Mute.PALM, Label.MUTE_PALM), //
+						new Pair<>(Mute.FULL, Label.MUTE_FULL)));
 	}
 
 	private void addHOPOInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
@@ -117,8 +117,8 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		bassPickingTechnique = new ToggleButtonGroupInRow<>(parent, position, 65, Label.BASS_PICKING_TECHNIQUE, //
 				makeChangeForCommonNotes(NoteInterface::bassPicking), //
 				asList(new Pair<>(BassPickingTechnique.NONE, Label.BASS_PICKING_NONE), //
-						new Pair<>(BassPickingTechnique.POP, Label.BASS_PICKING_POP), //
-						new Pair<>(BassPickingTechnique.SLAP, Label.BASS_PICKING_SLAP)));
+						new Pair<>(BassPickingTechnique.SLAP, Label.BASS_PICKING_SLAP), //
+						new Pair<>(BassPickingTechnique.POP, Label.BASS_PICKING_POP)));
 	}
 
 	private void addHarmonicInputs(final CurrentSelectionEditor parent, final RowedPosition position) {

@@ -32,9 +32,11 @@ import log.charter.gui.panes.songEdits.GuitarEventPointPane;
 import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.gui.panes.songEdits.ToneChangePane;
 import log.charter.services.data.ChartItemsHandler;
+import log.charter.services.data.ChartItemsHandler.Insertable;
 import log.charter.services.data.GuitarSoundsHandler;
 import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
+import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.mouseAndKeyboard.HighlightManager;
 import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.MouseButtonPressReleaseData;
@@ -61,40 +63,19 @@ public class GuitarModeHandler implements ModeHandler {
 	private long fretNumberTimer = 0;
 	private int typingNumber = 0;
 
-	private void rightClickFHP(final PositionWithIdAndType fhpPosition) {
+	private void addOrUpdateEventPoint(final Insertable<EventPoint> insertable) {
 		selectionManager.clear();
 
-		if (fhpPosition.fhp != null) {
-			new FHPPane(chartData, charterFrame, undoSystem, fhpPosition.fhp, () -> {});
+		if (insertable.item != null) {
+			new GuitarEventPointPane(chartData, charterFrame, undoSystem, insertable.item, () -> {});
 			return;
 		}
 
 		undoSystem.addUndo();
-
-		final FHP fhp = new FHP(fhpPosition.toFraction(chartData.beats()).position());
-		final List<FHP> fhps = chartData.currentFHPs();
-		fhps.add(fhp);
-		fhps.sort(IConstantFractionalPosition::compareTo);
-
-		new FHPPane(chartData, charterFrame, undoSystem, fhp, () -> {
-			undoSystem.undo();
-			undoSystem.removeRedo();
-		});
-	}
-
-	private void rightClickEventPoint(final PositionWithIdAndType eventPointPosition) {
-		selectionManager.clear();
-
-		if (eventPointPosition.eventPoint != null) {
-			new GuitarEventPointPane(chartData, charterFrame, undoSystem, eventPointPosition.eventPoint, () -> {});
-			return;
-		}
-
-		undoSystem.addUndo();
-		final EventPoint eventPoint = new EventPoint(eventPointPosition.toFraction(chartData.beats()).position());
+		final EventPoint eventPoint = new EventPoint(insertable.position);
 		final List<EventPoint> eventPoints = chartData.currentEventPoints();
-		eventPoints.add(eventPoint);
-		eventPoints.sort(IConstantFractionalPosition::compareTo);
+		final int id = insertable.itemId == null ? 0 : insertable.itemId + 1;
+		eventPoints.add(id, eventPoint);
 
 		new GuitarEventPointPane(chartData, charterFrame, undoSystem, eventPoint, () -> {
 			undoSystem.undo();
@@ -102,31 +83,80 @@ public class GuitarModeHandler implements ModeHandler {
 		});
 	}
 
-	private void addNewHandShape(final FractionalPosition position) {
-		final FractionalPosition endPosition = chartData.beats().addGrid(position, 1).toFraction(chartData.beats())
-				.position();
+	public void insertEventPoint() {
+		addOrUpdateEventPoint(chartItemsHandler.getItemForInsert(chartData.currentEventPoints()));
+	}
 
-		final HandShape handShape = new HandShape(position, endPosition);
-		final List<HandShape> handShapes = chartData.currentHandShapes();
-		handShapes.add(handShape);
-		handShapes.sort(IConstantFractionalPosition::compareTo);
+	private void rightClickEventPoint(final PositionWithIdAndType eventPointPosition) {
+		final FractionalPosition position = eventPointPosition.toFraction(chartData.beats()).position();
+		final Integer itemId = eventPointPosition.id;
+		final EventPoint item = eventPointPosition.eventPoint;
 
-		new HandShapePane(chartData, charterFrame, chordTemplatesEditorTab, handShape, () -> {
+		addOrUpdateEventPoint(new Insertable<>(position, itemId, item));
+	}
+
+	private void addOrUpdateToneChange(final Insertable<ToneChange> insertable) {
+		selectionManager.clear();
+
+		if (insertable.item != null) {
+			new ToneChangePane(chartData, charterFrame, undoSystem, insertable.item, () -> {});
+			return;
+		}
+
+		undoSystem.addUndo();
+		final ToneChange toneChange = new ToneChange(insertable.position);
+		final List<ToneChange> toneChanges = chartData.currentToneChanges();
+		final int id = insertable.itemId == null ? 0 : insertable.itemId + 1;
+		toneChanges.add(id, toneChange);
+
+		new ToneChangePane(chartData, charterFrame, undoSystem, toneChange, () -> {
 			undoSystem.undo();
 			undoSystem.removeRedo();
 		});
 	}
 
-	private void rightClickHandShape(final PositionWithIdAndType handShapePosition) {
+	public void insertToneChange() {
+		addOrUpdateToneChange(chartItemsHandler.getItemForInsert(chartData.currentToneChanges()));
+	}
+
+	private void rightClickToneChange(final PositionWithIdAndType toneChangePosition) {
+		final FractionalPosition position = toneChangePosition.toFraction(chartData.beats()).position();
+		final Integer itemId = toneChangePosition.id;
+		final ToneChange item = toneChangePosition.toneChange;
+
+		addOrUpdateToneChange(new Insertable<>(position, itemId, item));
+	}
+
+	private void addOrUpdateFHP(final Insertable<FHP> insertable) {
 		selectionManager.clear();
 
-		undoSystem.addUndo();
-		if (handShapePosition.handShape != null) {
-			chartData.currentArrangementLevel().handShapes.remove((int) handShapePosition.id);
+		if (insertable.item != null) {
+			new FHPPane(chartData, charterFrame, undoSystem, insertable.item, () -> {});
 			return;
 		}
 
-		addNewHandShape(handShapePosition.toFraction(chartData.beats()).position());
+		undoSystem.addUndo();
+		final FHP fhp = new FHP(insertable.position);
+		final List<FHP> fhps = chartData.currentFHPs();
+		final int id = insertable.itemId == null ? 0 : insertable.itemId + 1;
+		fhps.add(id, fhp);
+
+		new FHPPane(chartData, charterFrame, undoSystem, fhp, () -> {
+			undoSystem.undo();
+			undoSystem.removeRedo();
+		});
+	}
+
+	public void insertFHP() {
+		addOrUpdateFHP(chartItemsHandler.getItemForInsert(chartData.currentFHPs()));
+	}
+
+	private void rightClickFHP(final PositionWithIdAndType fhpPosition) {
+		final FractionalPosition position = fhpPosition.toFraction(chartData.beats()).position();
+		final Integer itemId = fhpPosition.id;
+		final FHP item = fhpPosition.fhp;
+
+		addOrUpdateFHP(new Insertable<>(position, itemId, item));
 	}
 
 	private ChordOrNote addSound(final Note note) {
@@ -150,9 +180,10 @@ public class GuitarModeHandler implements ModeHandler {
 		return sound;
 	}
 
-	private int addOrRemoveSingleNote(final FractionalPosition position, final int string, final Integer id,
+	private int toggleStringForSound(final FractionalPosition position, final int string, final Integer id,
 			final ChordOrNote chordOrNote) {
 		if (string < 0 || string >= chartData.currentStrings()) {
+			selectionManager.addSoundSelection(id);
 			return 0;
 		}
 
@@ -207,13 +238,43 @@ public class GuitarModeHandler implements ModeHandler {
 		return 0;
 	}
 
-	private void addSingleNote(final MouseButtonPressReleaseData clickData) {
-		final FractionalPosition position = clickData.pressHighlight.toFraction(chartData.beats()).position();
-		final int string = yToString(clickData.pressPosition.y, chartData.currentStrings());
-		addOrRemoveSingleNote(position, string, clickData.pressHighlight.id, clickData.pressHighlight.chordOrNote);
+	private int toggleStringForHandShape(final int string, final Integer id, final HandShape handShape) {
+		if (string < 0 || string >= chartData.currentStrings()) {
+			selectionManager.addSelection(PositionType.HAND_SHAPE, id);
+			return 0;
+		}
+
+		final List<ChordTemplate> chordTemplates = chartData.currentChordTemplates();
+		final ChordTemplate chordTemplate = new ChordTemplate(chordTemplates.get(handShape.templateId));
+
+		if (chordTemplate.frets.size() == 1 && chordTemplate.frets.containsKey(string)) {
+			chartData.currentHandShapes().remove((int) id);
+			return -1;
+		}
+
+		if (chordTemplate.frets.containsKey(string)) {
+			chordTemplate.frets.remove(string);
+		} else {
+			final int fret = chordTemplate.frets.values().stream().collect(Collectors.minBy(Integer::compare))
+					.orElse(0);
+			chordTemplate.frets.put(string, fret);
+		}
+
+		setSuggestedFingers(chordTemplate);
+
+		handShape.templateId = chartData.currentArrangement().getChordTemplateIdWithSave(chordTemplate);
+
+		selectionManager.addSelection(PositionType.HAND_SHAPE, id);
+		return 0;
 	}
 
-	private void addMultipleNotes(final MouseButtonPressReleaseData clickData) {
+	private void toggleSingleNote(final MouseButtonPressReleaseData clickData) {
+		final FractionalPosition position = clickData.pressHighlight.toFraction(chartData.beats()).position();
+		final int string = yToString(clickData.pressPosition.y, chartData.currentStrings());
+		toggleStringForSound(position, string, clickData.pressHighlight.id, clickData.pressHighlight.chordOrNote);
+	}
+
+	private void toggleMultipleNotes(final MouseButtonPressReleaseData clickData) {
 		final List<PositionWithStringOrNoteId> positions = highlightManager.getPositionsWithStrings(
 				clickData.pressHighlight.toPosition(chartData.beats()).position(), //
 				clickData.releaseHighlight.toPosition(chartData.beats()).position(), //
@@ -223,7 +284,7 @@ public class GuitarModeHandler implements ModeHandler {
 		int noteIdChange = 0;
 		final ImmutableBeatsMap beats = chartData.beats();
 		for (final PositionWithStringOrNoteId position : positions) {
-			noteIdChange += addOrRemoveSingleNote(position.toFraction(beats).position(), position.string,
+			noteIdChange += toggleStringForSound(position.toFraction(beats).position(), position.string,
 					position.noteId == null ? null : (position.noteId + noteIdChange), position.sound);
 		}
 	}
@@ -233,32 +294,108 @@ public class GuitarModeHandler implements ModeHandler {
 		undoSystem.addUndo();
 
 		if (!clickData.isXDrag()) {
-			addSingleNote(clickData);
+			toggleSingleNote(clickData);
 		} else {
-			addMultipleNotes(clickData);
+			toggleMultipleNotes(clickData);
 		}
 
 		chordTemplatesEditorTab.refreshTemplates();
 	}
 
-	private void rightClickToneChange(final PositionWithIdAndType toneChangePosition) {
+	private void toggleStringInSounds(final List<Selection<ChordOrNote>> soundSelections, final int string) {
+		selectionManager.clear();
+		int idDifference = 0;
+		for (final Selection<ChordOrNote> selection : soundSelections) {
+			idDifference += toggleStringForSound(selection.selectable.position(), string, selection.id + idDifference,
+					selection.selectable);
+		}
+	}
+
+	private void toggleStringInHandShapes(final List<Selection<HandShape>> handShapeSelections, final int string) {
+		selectionManager.clear();
+		int idDifference = 0;
+		for (final Selection<HandShape> selection : handShapeSelections) {
+			idDifference += toggleStringForHandShape(string, selection.id + idDifference, selection.selectable);
+		}
+	}
+
+	private void toggleStringForInsertable(final Insertable<ChordOrNote> insertable, final int string) {
+		selectionManager.clear();
+		toggleStringForSound(insertable.position, string, insertable.itemId, insertable.item);
+	}
+
+	public void toggleString(final int string) {
+		switch (selectionManager.selectedType()) {
+			case GUITAR_NOTE:
+				final List<Selection<ChordOrNote>> selectedSounds = selectionManager
+						.getSelected(PositionType.GUITAR_NOTE);
+				if (selectedSounds.size() > 1) {
+					toggleStringInSounds(selectedSounds, string);
+					return;
+				}
+				break;
+			case HAND_SHAPE:
+				toggleStringInHandShapes(selectionManager.getSelected(PositionType.HAND_SHAPE), string);
+				return;
+			default:
+				break;
+		}
+
+		toggleStringForInsertable(chartItemsHandler.getItemForInsert(chartData.currentSounds()), string);
+	}
+
+	public void insertHandShape() {
+		final Insertable<HandShape> insertable = chartItemsHandler.getItemForInsert(chartData.currentHandShapes());
+
 		selectionManager.clear();
 
-		if (toneChangePosition.toneChange != null) {
-			new ToneChangePane(chartData, charterFrame, undoSystem, toneChangePosition.toneChange, () -> {});
+		if (insertable.item != null) {
+			new HandShapePane(chartData, charterFrame, chordTemplatesEditorTab, insertable.item, () -> {});
 			return;
 		}
 
 		undoSystem.addUndo();
-		final ToneChange toneChange = new ToneChange(toneChangePosition.toFraction(chartData.beats()).position(), "");
-		final List<ToneChange> toneChanges = chartData.currentToneChanges();
-		toneChanges.add(toneChange);
-		toneChanges.sort(IConstantFractionalPosition::compareTo);
 
-		new ToneChangePane(chartData, charterFrame, undoSystem, toneChange, () -> {
+		final FractionalPosition endPosition = chartData.beats().getMinEndPositionAfter(insertable.position)
+				.toFraction(chartData.beats()).position();
+
+		final HandShape handShape = new HandShape(insertable.position, endPosition);
+		final List<HandShape> handShapes = chartData.currentHandShapes();
+		final int id = insertable.itemId == null ? 0 : insertable.itemId + 1;
+		handShapes.add(id, handShape);
+		arrangementFixer.fixLengths(handShapes);
+
+		new HandShapePane(chartData, charterFrame, chordTemplatesEditorTab, handShape, () -> {
 			undoSystem.undo();
 			undoSystem.removeRedo();
 		});
+	}
+
+	private void addNewHandShape(final FractionalPosition position) {
+		final FractionalPosition endPosition = chartData.beats().addGrid(position, 1).toFraction(chartData.beats())
+				.position();
+
+		final HandShape handShape = new HandShape(position, endPosition);
+		final List<HandShape> handShapes = chartData.currentHandShapes();
+		handShapes.add(handShape);
+		handShapes.sort(IConstantFractionalPosition::compareTo);
+
+		new HandShapePane(chartData, charterFrame, chordTemplatesEditorTab, handShape, () -> {
+			undoSystem.undo();
+			undoSystem.removeRedo();
+		});
+	}
+
+	private void rightClickHandShape(final PositionWithIdAndType handShapePosition) {
+		selectionManager.clear();
+
+		undoSystem.addUndo();
+		if (handShapePosition.handShape != null) {
+			chartData.currentArrangementLevel().handShapes.remove((int) handShapePosition.id);
+			return;
+		}
+
+		addNewHandShape(handShapePosition.toFraction(chartData.beats()).position());
 	}
 
 	@Override

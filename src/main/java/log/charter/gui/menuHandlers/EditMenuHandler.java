@@ -32,6 +32,7 @@ class EditMenuHandler extends CharterMenuHandler {
 			menu.add(createItem(Action.DELETE_RELATED));
 		}
 		menu.add(createItem(Action.COPY));
+		menu.add(createItem(Action.CUT));
 		menu.add(createItem(Action.PASTE));
 		if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.add(createItem(Action.SPECIAL_PASTE));
@@ -56,10 +57,14 @@ class EditMenuHandler extends CharterMenuHandler {
 
 		if (modeManager.modeIs(EditMode.GUITAR, EditMode.VOCALS)) {
 			menu.addSeparator();
+			menu.add(createItem(Action.CHANGE_GRID));
 			menu.add(createItem(Action.DECREASE_LENGTH));
 			menu.add(createItem(Action.INCREASE_LENGTH));
 			menu.add(createItem(Action.DECREASE_LENGTH_FAST));
 			menu.add(createItem(Action.INCREASE_LENGTH_FAST));
+		} else {
+			menu.addSeparator();
+			menu.add(createItem(Action.CHANGE_GRID));
 		}
 
 		if (DebugConfig.enablePitchShifting) {

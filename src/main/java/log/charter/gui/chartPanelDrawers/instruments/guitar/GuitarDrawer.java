@@ -25,7 +25,6 @@ import java.util.Set;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
-import log.charter.data.config.GraphicalConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.notes.Chord;
@@ -95,8 +94,8 @@ public class GuitarDrawer {
 	}
 
 	private boolean addChord(final FrameData frameData, final HighwayDrawer highwayDrawer, final int panelWidth,
-			final Chord chord, final boolean selected, final int highlightedString, final boolean lastWasLinkNext,
-			final boolean wrongLinkNext) {
+			final int id, final Chord chord, final boolean selected, final int highlightedString,
+			final boolean lastWasLinkNext, final boolean wrongLinkNext) {
 		final int x = positionToX(chord.position(frameData.beats), frameData.time);
 		if (isPastRightEdge(x, panelWidth)) {
 			return false;
@@ -108,8 +107,10 @@ public class GuitarDrawer {
 		}
 
 		final ChordTemplate chordTemplate = frameData.arrangement.chordTemplates.get(chord.templateId());
-		for (final EditorNoteDrawingData noteData : fromChord(frameData.beats, frameData.time, chord, chordTemplate, x,
-				selected, highlightedString, lastWasLinkNext, wrongLinkNext, frameData.ctrlPressed)) {
+		highwayDrawer.addChordBox(x, chord);
+		for (final EditorNoteDrawingData noteData : fromChord(frameData.beats, frameData.level, frameData.time, id,
+				chord, chordTemplate, x, selected, highlightedString, lastWasLinkNext, wrongLinkNext,
+				frameData.ctrlPressed)) {
 			highwayDrawer.addNote(noteData);
 		}
 
@@ -144,10 +145,10 @@ public class GuitarDrawer {
 	}
 
 	private boolean addChordOrNote(final FrameData frameData, final HighwayDrawer highwayDrawer, final int panelWidth,
-			final ChordOrNote chordOrNote, final boolean selected, final int highlightedString,
+			final int id, final ChordOrNote chordOrNote, final boolean selected, final int highlightedString,
 			final boolean lastWasLinkNext, final boolean wrongLinkNext) {
 		if (chordOrNote.isChord()) {
-			return addChord(frameData, highwayDrawer, panelWidth, chordOrNote.chord(), selected, highlightedString,
+			return addChord(frameData, highwayDrawer, panelWidth, id, chordOrNote.chord(), selected, highlightedString,
 					lastWasLinkNext, wrongLinkNext);
 		}
 		if (chordOrNote.isNote()) {
@@ -246,7 +247,7 @@ public class GuitarDrawer {
 			final boolean selected = selectedNoteIds.contains(i);
 			final int highlightedString = i != highlightId ? -1//
 					: frameData.highlightData.id.map(id -> id.string.orElse(-1)).orElse(-1);
-			addChordOrNote(frameData, highwayDrawer, panelWidth, sound, selected, highlightedString, lastWasLinkNext,
+			addChordOrNote(frameData, highwayDrawer, panelWidth, i, sound, selected, highlightedString, lastWasLinkNext,
 					wrongLinkNext);
 
 			lastWasLinkNext = sound.chord() != null ? sound.chord().linkNext() : sound.note().linkNext;
@@ -321,7 +322,7 @@ public class GuitarDrawer {
 				break;
 			case HAND_SHAPE:
 				y = DrawerUtils.lanesBottom;
-				h = GraphicalConfig.handShapesHeight;
+				h = DrawerUtils.timingY - y - 1;
 				break;
 			default:
 				return;

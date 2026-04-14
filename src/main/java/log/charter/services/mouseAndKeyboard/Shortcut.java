@@ -7,7 +7,7 @@ public class Shortcut {
 	public static Shortcut fromName(final String name) {
 		final String[] nameParts = name.split(" ");
 		if (nameParts.length == 4 && (nameParts[0].equals("T") || nameParts[0].equals("F"))) {
-			return new Shortcut(nameParts[0].equals("T"), nameParts[1].equals("T"), nameParts[2].equals("T"),
+			return new Shortcut(nameParts[0].equals("T"), nameParts[1].equals("T"), nameParts[2].equals("T"), false,
 					Integer.valueOf(nameParts[3]));
 		}
 
@@ -19,10 +19,15 @@ public class Shortcut {
 				case "Shift" -> shortcut.shift = true;
 				case "Alt" -> shortcut.alt = true;
 				case "Cmd" -> shortcut.command = true;
+				case "Insert" -> shortcut.insert = true;
 			}
 		}
 
 		shortcut.key = Integer.valueOf(nameParts[nameParts.length - 1]);
+		if (shortcut.key == KeyEvent.VK_INSERT) {
+			shortcut.key = -1;
+			shortcut.insert = true;
+		}
 
 		return shortcut;
 	}
@@ -31,6 +36,7 @@ public class Shortcut {
 	public boolean shift = false;
 	public boolean alt = false;
 	public boolean command = false;
+	public boolean insert = false;
 	public int key = -1;// key code from KeyEvent
 
 	public Shortcut() {
@@ -41,18 +47,20 @@ public class Shortcut {
 		shift = other.shift;
 		alt = other.alt;
 		command = other.command;
+		insert = other.insert;
 		key = other.key;
 	}
 
-	public Shortcut(final boolean ctrl, final boolean shift, final boolean alt, final int key) {
+	private Shortcut(final boolean ctrl, final boolean shift, final boolean alt, final boolean insert, final int key) {
 		this.ctrl = ctrl;
 		this.shift = shift;
 		this.alt = alt;
+		this.insert = insert;
 		this.key = key;
 	}
 
 	public Shortcut(final int key) {
-		this(false, false, false, key);
+		this(false, false, false, false, key);
 	}
 
 	public Shortcut ctrl() {
@@ -67,6 +75,11 @@ public class Shortcut {
 
 	public Shortcut alt() {
 		alt = true;
+		return this;
+	}
+
+	public Shortcut insert() {
+		insert = true;
 		return this;
 	}
 
@@ -90,6 +103,9 @@ public class Shortcut {
 		if (alt) {
 			nameBuilder.append("Alt").append(joiner);
 		}
+		if (insert) {
+			nameBuilder.append("Insert").append(joiner);
+		}
 		if (command) {
 			nameBuilder.append("Cmd").append(joiner);
 		}
@@ -110,6 +126,9 @@ public class Shortcut {
 		}
 		if (alt) {
 			b.append("Alt ");
+		}
+		if (insert) {
+			b.append("Insert ");
 		}
 		if (command) {
 			b.append("Cmd ");
@@ -138,7 +157,8 @@ public class Shortcut {
 		}
 
 		final Shortcut other = (Shortcut) obj;
-		return ctrl == other.ctrl && shift == other.shift && alt == other.alt && key == other.key;
+		return ctrl == other.ctrl && shift == other.shift && alt == other.alt && insert == other.insert
+				&& key == other.key;
 	}
 
 	@Override

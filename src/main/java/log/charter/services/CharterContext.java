@@ -43,6 +43,7 @@ import log.charter.services.data.GuitarSoundsHandler;
 import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.HandShapesHandler;
 import log.charter.services.data.ProjectAudioHandler;
+import log.charter.services.data.ShowlightsHandler;
 import log.charter.services.data.StemAddService;
 import log.charter.services.data.StringsChanger;
 import log.charter.services.data.VocalsHandler;
@@ -124,6 +125,7 @@ public class CharterContext {
 	private final RepeatManager repeatManager = new RepeatManager();
 	private final RSXMLImporter rsXMLImporter = new RSXMLImporter();
 	private final SelectionManager selectionManager = new SelectionManager();
+	private final ShowlightsHandler showlightsHandler = new ShowlightsHandler();
 	private final SongFileHandler songFileHandler = new SongFileHandler();
 	private final SongFilesBackuper songFilesBackuper = new SongFilesBackuper();
 	private final StemAddService stemAddService = new StemAddService();

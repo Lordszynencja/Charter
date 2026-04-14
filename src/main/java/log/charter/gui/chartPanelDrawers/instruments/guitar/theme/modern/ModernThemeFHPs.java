@@ -1,7 +1,7 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
 import static java.lang.Math.min;
-import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
+import static log.charter.data.config.GraphicalConfig.chartTextHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.lineVertical;
@@ -20,10 +20,14 @@ import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeFHPs;
 import log.charter.util.data.Position2D;
 
 public class ModernThemeFHPs implements ThemeFHPs {
-	private static Font fhpFont = new Font(Font.SANS_SERIF, Font.BOLD, fhpInfoHeight);
+	private static Font fhpFont;
+
+	static {
+		reloadGraphics();
+	}
 
 	public static void reloadGraphics() {
-		fhpFont = new Font(Font.SANS_SERIF, Font.BOLD, fhpInfoHeight);
+		fhpFont = new Font(Font.SANS_SERIF, Font.BOLD, chartTextHeight);
 	}
 
 	private final HighwayDrawData data;
@@ -54,9 +58,9 @@ public class ModernThemeFHPs implements ThemeFHPs {
 	public void addCurrentFHP(final Graphics2D g, final FHP fhp, final int nextFHPX) {
 		final String label = getLabel(fhp);
 		final ShapeSize expectedSize = Text.getExpectedSize(g, fhpFont, label);
-		final int x = min(0, nextFHPX - 4 - expectedSize.width);
+		final int x = min(0, nextFHPX - chartTextHeight / 2 - expectedSize.width);
 
-		addFHP(label, x);
+		data.fhps.add(generateText(label, x));
 	}
 
 	private void addFHPBox(final int x, final ColorLabel color) {

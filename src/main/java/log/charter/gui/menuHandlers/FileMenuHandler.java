@@ -11,7 +11,6 @@ import javax.swing.JMenu;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.simple.SpecialMenuItem;
 import log.charter.gui.panes.colorConfig.ColorConfigPane;
 import log.charter.gui.panes.graphicalConfig.GraphicConfigPane;
 import log.charter.gui.panes.programConfig.ConfigPane;
@@ -96,7 +95,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 
 		if (modeManager.getMode() != EditMode.EMPTY) {
 			menu.addSeparator();
-			menu.add(new SpecialMenuItem(Label.SONG_OPTIONS, this::songOptions));
+			menu.add(createItem(Label.SONG_OPTIONS, this::songOptions));
 			menu.add(createItem(Label.OPEN_CURRENT_SONG_FOLDER, this::openSongFolder));
 
 			menu.addSeparator();

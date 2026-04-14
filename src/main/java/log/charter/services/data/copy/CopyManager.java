@@ -31,6 +31,7 @@ import log.charter.gui.panes.songEdits.GuitarSpecialPastePane;
 import log.charter.io.ClipboardHandler;
 import log.charter.io.Logger;
 import log.charter.io.rsc.xml.ChartProjectXStreamHandler;
+import log.charter.services.data.ChartItemsHandler;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.copy.data.CopyData;
 import log.charter.services.data.copy.data.EventPointsCopyData;
@@ -63,6 +64,7 @@ public class CopyManager {
 
 	private ChartData chartData;
 	private CharterFrame charterFrame;
+	private ChartItemsHandler chartItemsHandler;
 	private ChartTimeHandler chartTimeHandler;
 	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private ModeManager modeManager;
@@ -231,6 +233,15 @@ public class CopyManager {
 		} catch (final UnsupportedEncodingException e) {
 			Logger.error("Couldn't copy data", e);
 		}
+	}
+
+	public void cut() {
+		if (selectionManager.selectedType() == PositionType.NONE) {
+			return;
+		}
+
+		copy();
+		chartItemsHandler.deleteRelated();
 	}
 
 	private CopyData getDataFromClipboard() {

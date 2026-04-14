@@ -168,8 +168,15 @@ public class NoteStatusModels {
 		}
 	}
 
+	public void clear() {
+		noteStatusesTextureIds.clear();
+		textureIds.clear();
+	}
+
 	public void reload() {
 		final BufferedImage noteStatusesTexture = loadTextureAtlas();
+
+		clear();
 
 		size = noteStatusesTexture.getWidth() / 4;
 		for (int i = 0; i < 4; i++) {
@@ -179,9 +186,6 @@ public class NoteStatusModels {
 				noteStatusesTextureAtlas[i][j] = noteStatusesTexture.getSubimage(x, y, size, size);
 			}
 		}
-
-		noteStatusesTextureIds.clear();
-		textureIds.clear();
 	}
 
 	public void init(final TexturesHolder texturesHolder) {

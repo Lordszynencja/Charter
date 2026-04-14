@@ -2,6 +2,7 @@ package log.charter.services;
 
 import static java.util.Arrays.asList;
 import static log.charter.services.editModes.EditMode.GUITAR;
+import static log.charter.services.editModes.EditMode.SHOWLIGHTS;
 import static log.charter.services.editModes.EditMode.TEMPO_MAP;
 import static log.charter.services.editModes.EditMode.VOCALS;
 
@@ -28,7 +29,9 @@ public enum Action {
 	BOOKMARK_9(EditMode.nonEmpty), //
 	BPM_DOUBLE(TEMPO_MAP), //
 	BPM_HALVE(TEMPO_MAP), //
+	CHANGE_GRID(EditMode.nonEmpty), //
 	COPY(EditMode.nonEmpty), //
+	CUT(EditMode.withItems), //
 	DECREASE_LENGTH(GUITAR, VOCALS), //
 	DECREASE_LENGTH_FAST(GUITAR, VOCALS), //
 	DELETE(EditMode.withItems), //
@@ -45,6 +48,12 @@ public enum Action {
 	FINGER_T(GUITAR), //
 	INCREASE_LENGTH(GUITAR, VOCALS), //
 	INCREASE_LENGTH_FAST(GUITAR, VOCALS), //
+	INSERT_EVENT_POINT(GUITAR), //
+	INSERT_FHP(GUITAR), //
+	INSERT_HAND_SHAPE(GUITAR), //
+	INSERT_SHOWLIGHT(SHOWLIGHTS), //
+	INSERT_TONE_CHANGE(GUITAR), //
+	INSERT_VOCAL(VOCALS), //
 	NUMBER_0(TEMPO_MAP, GUITAR), //
 	NUMBER_1(TEMPO_MAP, GUITAR), //
 	NUMBER_2(TEMPO_MAP, GUITAR), //
@@ -78,6 +87,9 @@ public enum Action {
 	NEXT_GRID_POSITION(EditMode.withItems), //
 	NEXT_ITEM(EditMode.nonEmpty), //
 	NEXT_ITEM_WITH_SELECT(EditMode.withItems), //
+	NEXT_ITEM_WITH_SELECT_CTRL(EditMode.withItems), //
+	NEXT_ITEM_WITH_SELECT_CTRL_SHIFT(EditMode.withItems), //
+	NEXT_ITEM_WITH_SELECT_SHIFT(EditMode.withItems), //
 	NEXT_ITEM_TYPE(GUITAR), //
 	OPEN_PROJECT(EditMode.values()), //
 	PASTE(EditMode.withItems), //
@@ -87,6 +99,9 @@ public enum Action {
 	PREVIOUS_GRID_POSITION(EditMode.withItems), //
 	PREVIOUS_ITEM(EditMode.nonEmpty), //
 	PREVIOUS_ITEM_WITH_SELECT(EditMode.withItems), //
+	PREVIOUS_ITEM_WITH_SELECT_CTRL(EditMode.withItems), //
+	PREVIOUS_ITEM_WITH_SELECT_CTRL_SHIFT(EditMode.withItems), //
+	PREVIOUS_ITEM_WITH_SELECT_SHIFT(EditMode.withItems), //
 	PREVIOUS_ITEM_TYPE(GUITAR), //
 	REDO(EditMode.nonEmpty), //
 	SAVE_PROJECT(EditMode.nonEmpty), //
@@ -125,6 +140,8 @@ public enum Action {
 	TOGGLE_HIGH_PASS_FILTER(EditMode.nonEmpty), //
 	TOGGLE_HOPO(GUITAR), //
 	TOGGLE_HOPO_INDEPENDENTLY(GUITAR), //
+	TOGGLE_IGNORE(GUITAR), //
+	TOGGLE_IGNORE_INDEPENDENTLY(GUITAR), //
 	TOGGLE_LINK_NEXT(GUITAR), //
 	TOGGLE_LINK_NEXT_INDEPENDENTLY(GUITAR), //
 	TOGGLE_LOW_PASS_FILTER(EditMode.nonEmpty), //
@@ -132,9 +149,24 @@ public enum Action {
 	TOGGLE_MIDI(EditMode.nonEmpty), //
 	TOGGLE_MUTE(GUITAR), //
 	TOGGLE_MUTE_INDEPENDENTLY(GUITAR), //
+	TOGGLE_NOTE_1(GUITAR), //
+	TOGGLE_NOTE_2(GUITAR), //
+	TOGGLE_NOTE_3(GUITAR), //
+	TOGGLE_NOTE_4(GUITAR), //
+	TOGGLE_NOTE_5(GUITAR), //
+	TOGGLE_NOTE_6(GUITAR), //
+	TOGGLE_NOTE_7(GUITAR), //
+	TOGGLE_NOTE_8(GUITAR), //
+	TOGGLE_NOTE_9(GUITAR), //
+	TOGGLE_ONLY_BOX(GUITAR), //
+	TOGGLE_ONLY_BOX_INDEPENDENTLY(GUITAR), //
+	TOGGLE_PASS_NOTES(GUITAR), //
+	TOGGLE_PASS_NOTES_INDEPENDENTLY(GUITAR), //
 	TOGGLE_PHRASE_END(VOCALS), //
 	TOGGLE_SLAP_POP(GUITAR), //
 	TOGGLE_SLAP_POP_INDEPENDENTLY(GUITAR), //
+	TOGGLE_SPLIT(GUITAR), //
+	TOGGLE_SPLIT_INDEPENDENTLY(GUITAR), //
 	TOGGLE_PREVIEW_WINDOW(EditMode.values()), //
 	TOGGLE_REPEAT_END(GUITAR), //
 	TOGGLE_REPEAT_START(GUITAR), //

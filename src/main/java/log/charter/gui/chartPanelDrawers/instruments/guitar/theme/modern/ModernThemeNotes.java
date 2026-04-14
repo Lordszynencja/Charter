@@ -1,9 +1,12 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
 import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
-import static log.charter.data.config.GraphicalConfig.chordHeight;
+import static log.charter.data.config.GraphicalConfig.chartTextHeight;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
+import static log.charter.data.config.GraphicalConfig.noteWidth;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.AccentIconGenerator.generateAccentIcon;
 import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.iconGenerators.AccentIconGenerator.generateHarmonicAccentIcon;
@@ -26,11 +29,14 @@ import java.util.Optional;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.ChartPanelColors.StringColorLabelType;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.Chord.ChordNotesVisibility;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNoteWithFret;
 import log.charter.gui.chartPanelDrawers.common.DrawerUtils;
@@ -38,10 +44,13 @@ import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredImage;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredTextWithBackgroundAndBorder;
+import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Line;
+import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.HighwayDrawData;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeNotes;
+import log.charter.util.MultiComposite;
 import log.charter.util.data.Position2D;
 
 public class ModernThemeNotes implements ThemeNotes {
@@ -64,7 +73,7 @@ public class ModernThemeNotes implements ThemeNotes {
 	private static BufferedImage palmMuteIcon = null;
 	private static BufferedImage fullMuteIcon = null;
 
-	private static Font chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, chordHeight);
+	private static Font chordNameFont = new Font(Font.SANS_SERIF, Font.PLAIN, chartTextHeight);
 	private static Font fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 	private static Font smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
@@ -108,7 +117,7 @@ public class ModernThemeNotes implements ThemeNotes {
 		palmMuteIcon = generatePalmMuteIcon();
 		fullMuteIcon = generateFullMuteIcon();
 
-		chordNameFont = new Font(Font.SANS_SERIF, Font.BOLD, chordHeight);
+		chordNameFont = new Font(Font.SANS_SERIF, Font.BOLD, chartTextHeight);
 		fretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 		smallFretFont = new Font(Font.SANS_SERIF, Font.BOLD, noteHeight / 2);
 
@@ -133,6 +142,21 @@ public class ModernThemeNotes implements ThemeNotes {
 
 		bends = new ModernThemeBends(data);
 		noteTails = new ModernThemeNoteTails(data);
+	}
+
+	public void addChordBox(final int x, final Chord chord) {
+		if (chord.splitIntoNotes) {
+			return;
+		}
+
+		final int alpha = chord.accent ? 224 : 128;
+		final Color chordBoxColor = ColorLabel.CHORD_BOX.colorWithAlpha(alpha);
+
+		final int radius = noteWidth / 4;
+		final ShapePositionWithSize position = new ShapePositionWithSize(x - radius, lanesTop, 2 * radius,
+				lanesBottom - lanesTop);
+
+		data.notes.add(DrawableShape.filledRoundRectangle(position, chordBoxColor, radius * 2));
 	}
 
 	private void addHopoOrBassTechIcon(final EditorNoteDrawingData note, final int noteY) {
@@ -212,7 +236,19 @@ public class ModernThemeNotes implements ThemeNotes {
 			default -> noteIcons[stringId];
 		};
 
-		data.notes.add(new CenteredImage(new Position2D(note.x, y), icon));
+		if (note.onlyBox || note.ignore || note.chordNotesVisibility == ChordNotesVisibility.NONE) {
+			final MultiComposite c = new MultiComposite();
+			if (note.onlyBox || note.chordNotesVisibility == ChordNotesVisibility.NONE) {
+				c.alpha(128);
+			}
+			if (note.ignore) {
+				c.colorMultiply(96);
+			}
+
+			data.notes.add(new CenteredImage(new Position2D(note.x, y), icon, c));
+		} else {
+			data.notes.add(new CenteredImage(new Position2D(note.x, y), icon));
+		}
 
 		if (note.highlighted) {
 			addNoteHighlight(note.harmonic, note.x, y);
@@ -283,8 +319,12 @@ public class ModernThemeNotes implements ThemeNotes {
 
 	@Override
 	public void addChordName(final int x, final String chordName) {
-		data.chordNames.add(new Text(new Position2D(x + 2, DrawerUtils.lanesBottom - 13), chordNameFont, chordName,
-				ColorLabel.BASE_DARK_TEXT));
+		data.chordNames.add(new Text()//
+				.position(new Position2D(x + noteHeight / 2,
+						DrawerUtils.lanesBottom - GraphicalConfig.chartTextHeight - 2))
+				.font(chordNameFont)//
+				.text(chordName)//
+				.color(ColorLabel.BASE_DARK_TEXT));
 	}
 
 	private void drawHighlightForNote(final int x, final int length, final CommonNoteWithFret note) {

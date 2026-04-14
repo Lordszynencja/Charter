@@ -1,6 +1,6 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
-import static log.charter.data.config.GraphicalConfig.eventsChangeHeight;
+import static log.charter.data.config.GraphicalConfig.chartTextHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.phraseNamesY;
@@ -25,12 +25,14 @@ import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeEvents;
 import log.charter.util.data.Position2D;
 
 public class ModernThemeEvents implements ThemeEvents {
-	private static final int sectionTextSpace = 2;
-
-	private static Font eventFont = new Font(Font.SANS_SERIF, Font.BOLD, eventsChangeHeight);
+	private static int sectionTextSpace = 2;
+	private static int rectangleArcSize = 3;
+	private static Font eventFont = new Font(Font.SANS_SERIF, Font.BOLD, chartTextHeight);
 
 	public static void reloadSizes() {
-		eventFont = new Font(Font.SANS_SERIF, Font.BOLD, eventsChangeHeight);
+		sectionTextSpace = chartTextHeight / 5;
+		rectangleArcSize = chartTextHeight / 2;
+		eventFont = new Font(Font.SANS_SERIF, Font.BOLD, chartTextHeight);
 	}
 
 	private final HighwayDrawData data;
@@ -40,8 +42,14 @@ public class ModernThemeEvents implements ThemeEvents {
 	}
 
 	private TextWithBackground generateText(final String text, final int x, final int y, final ColorLabel bgColor) {
-		return new TextWithBackground(new Position2D(x, y + 3), eventFont, text, ColorLabel.ARRANGEMENT_TEXT, bgColor,
-				sectionTextSpace, ColorLabel.BASE_BORDER);
+		return new TextWithBackground()//
+				.position(new Position2D(x, y))//
+				.font(eventFont)//
+				.text(text)//
+				.color(ColorLabel.ARRANGEMENT_TEXT)//
+				.backgroundColor(bgColor)//
+				.space(sectionTextSpace)//
+				.arcSize(rectangleArcSize);
 	}
 
 	private void addEventPointBox(final int x, final ColorLabel color) {
@@ -68,9 +76,10 @@ public class ModernThemeEvents implements ThemeEvents {
 		data.sectionsAndPhrases.add(generateText(label, x, sectionNamesY, ColorLabel.SECTION_NAME_BG));
 		if (highlight) {
 			final ShapeSize expectedSize = TextWithBackground.getExpectedSize(g, eventFont, label, sectionTextSpace);
-			final ShapePositionWithSize position = new ShapePositionWithSize(x + 1, sectionNamesY + 2,
+			final ShapePositionWithSize position = new ShapePositionWithSize(x + rectangleArcSize, sectionNamesY + 2,
 					expectedSize.width - 3, expectedSize.height - 3);
-			data.sectionsAndPhrases.add(strokedRoundRectangle(position, ColorLabel.HIGHLIGHT.color(), 3, 3));
+			data.sectionsAndPhrases.add(
+					strokedRoundRectangle(position, ColorLabel.HIGHLIGHT.color(), rectangleArcSize, rectangleArcSize));
 		}
 	}
 

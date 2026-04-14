@@ -4,6 +4,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.simple.SpecialMenuItem;
@@ -15,13 +16,14 @@ import log.charter.services.mouseAndKeyboard.Shortcut;
 import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 
 abstract class CharterMenuHandler {
-	private static void setDefaultColors(final JComponent component) {
+	private static void setDefaultGraphicalValues(final JComponent component) {
 		component.setBackground(CharterMenuBar.backgroundColor.color());
+		component.setFont(component.getFont().deriveFont(GraphicalConfig.inputSize / 1.6f));
 	}
 
 	protected static JMenu createMenu(final Label label) {
 		final JMenu menu = new JMenu(label.label());
-		setDefaultColors(menu);
+		setDefaultGraphicalValues(menu);
 		return menu;
 	}
 
@@ -42,7 +44,8 @@ abstract class CharterMenuHandler {
 				ComponentUtils.showPopup(charterFrame, Label.ERROR, t.getLocalizedMessage());
 			}
 		});
-		setDefaultColors(item);
+		setDefaultGraphicalValues(item);
+
 		return item;
 	}
 
@@ -50,7 +53,8 @@ abstract class CharterMenuHandler {
 		final Shortcut shortcut = ShortcutConfig.shortcuts.get(action);
 		final String shortcutName = shortcut == null ? null : shortcut.name("-");
 		final JMenuItem item = new SpecialMenuItem(label, shortcutName, () -> actionHandler.fireAction(action));
-		setDefaultColors(item);
+		setDefaultGraphicalValues(item);
+
 		return item;
 	}
 

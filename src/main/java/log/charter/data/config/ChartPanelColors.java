@@ -87,6 +87,7 @@ public class ChartPanelColors {
 		STRING_7(182, 182, 182), //
 		STRING_8(208, 57, 57), //
 
+		CHORD_BOX(0, 210, 213), //
 		FHP(208, 57, 57), //
 		HAND_SHAPE(49, 87, 167), //
 		HAND_SHAPE_ARPEGGIO(133, 89, 183), //

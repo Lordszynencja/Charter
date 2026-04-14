@@ -1,6 +1,7 @@
 package log.charter.gui.chartPanelDrawers.instruments;
 
 import static java.lang.Math.max;
+import static log.charter.data.config.GraphicalConfig.chartTextHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
@@ -30,11 +31,12 @@ import log.charter.gui.chartPanelDrawers.drawableShapes.Text;
 import log.charter.util.data.Position2D;
 
 public class VocalsDrawer {
-	private static final Font vocalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 	private static int vocalNoteY = (lanesTop + lanesBottom) / 2;
+	private static Font vocalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 
 	public static void reloadGraphics() {
-		vocalNoteY = (lanesTop + lanesBottom) / 2;
+		vocalNoteY = (lanesTop + lanesBottom * 2) / 3;
+		vocalFont = new Font(Font.DIALOG, Font.PLAIN, chartTextHeight * 6 / 5);
 	}
 
 	private static ShapePositionWithSize getVocalNotePosition(final int x, final int length) {

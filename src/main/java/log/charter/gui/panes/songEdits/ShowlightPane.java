@@ -50,7 +50,7 @@ public class ShowlightPane extends ParamsPane {
 
 	public ShowlightPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final Showlight showlight, final Runnable onCancel) {
-		super(frame, Label.GUITAR_BEAT_PANE, 400);
+		super(frame, Label.SHOWLIGHT_PANE, 400);
 		this.data = data;
 		this.undoSystem = undoSystem;
 
@@ -61,6 +61,11 @@ public class ShowlightPane extends ParamsPane {
 
 		setOnFinish(this::saveAndExit, onCancel);
 		addDefaultFinish(row.incrementAndGet());
+	}
+
+	public ShowlightPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
+			final Showlight showlight) {
+		this(data, frame, undoSystem, showlight, () -> {});
 	}
 
 	private void prepareShowlightTypesTable(final AtomicInteger row) {

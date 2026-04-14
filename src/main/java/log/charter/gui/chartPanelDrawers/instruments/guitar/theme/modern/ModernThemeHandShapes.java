@@ -1,7 +1,7 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern;
 
 import static log.charter.data.config.Config.showChordIds;
-import static log.charter.data.config.GraphicalConfig.handShapesHeight;
+import static log.charter.data.config.GraphicalConfig.chartTextHeight;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.filledRectangle;
@@ -20,10 +20,10 @@ import log.charter.gui.chartPanelDrawers.instruments.guitar.theme.ThemeHandShape
 import log.charter.util.data.Position2D;
 
 public class ModernThemeHandShapes implements ThemeHandShapes {
-	private static Font handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, handShapesHeight);
+	private static Font handShapesFont;
 
 	public static void reloadGraphics() {
-		handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, handShapesHeight);
+		handShapesFont = new Font(Font.SANS_SERIF, Font.BOLD, chartTextHeight);
 	}
 
 	private final HighwayDrawData data;
@@ -42,7 +42,7 @@ public class ModernThemeHandShapes implements ThemeHandShapes {
 
 		data.handShapes.add(filledRectangle(positionTop, fillColorAlpha));
 
-		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length, handShapesHeight);
+		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length, chartTextHeight);
 		final ColorLabel fillColor = chordTemplate.arpeggio ? ColorLabel.HAND_SHAPE_ARPEGGIO : ColorLabel.HAND_SHAPE;
 		data.handShapes.add(filledRectangle(position, fillColor, true));
 
@@ -68,7 +68,7 @@ public class ModernThemeHandShapes implements ThemeHandShapes {
 	@Override
 	public void addHandShapeHighlight(final int x, final int length) {
 		final ShapePositionWithSize position = new ShapePositionWithSize(x, lanesBottom + 1, length - 1,
-				handShapesHeight);
+				chartTextHeight);
 		data.handShapes.add(strokedRectangle(position, ColorLabel.HIGHLIGHT));
 	}
 }

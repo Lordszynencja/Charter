@@ -62,9 +62,13 @@ public class CharterCheckBox {
 				g.setColor(getColor(borderColor, ColorLabel.BASE_BORDER));
 			}
 
-			final RoundRectangle2D.Double roundedRectangle = new RoundRectangle2D.Double(x, y, width - 1, height - 1, 5,
-					5);
-			g.draw(roundedRectangle);
+			final RoundRectangle2D.Double roundedRectangle;
+			if (checkBox.hasFocus()) {
+				roundedRectangle = new RoundRectangle2D.Double(x - 1, y - 1, width + 2, height + 2, 5, 5);
+			} else {
+				roundedRectangle = new RoundRectangle2D.Double(x, y, width, height, 5, 5);
+			}
+			g.fill(roundedRectangle);
 		}
 
 		private void drawCheckMark(final JCheckBox checkBox, final Graphics2D g, final int x, final int y) {
@@ -86,8 +90,8 @@ public class CharterCheckBox {
 			final Graphics2D g2d = (Graphics2D) g;
 			setupGraphics(g2d);
 
-			paintFill(checkBox, g2d, x, y);
 			paintBorder(checkBox, g2d, x, y);
+			paintFill(checkBox, g2d, x, y);
 			drawCheckMark(checkBox, g2d, x, y);
 		}
 

@@ -173,28 +173,32 @@ public class GuitarSoundsStatusesHandler {
 		currentSelectionEditor.selectionChanged(false);
 	}
 
-	public void toggleMute() {
-		cyclicalToggleNotes(mutesCycleMap, CommonNote::mute, CommonNote::mute, Mute.NONE);
-	}
+	public <T> void cyclicalToggleChord(final Map<T, T> cycleMap, final Function<Chord, T> getter,
+			final BiConsumer<Chord, T> setter, final boolean independently) {
+		final ISelectionAccessor<ChordOrNote> selectedAccessor = selectionManager.accessor(PositionType.GUITAR_NOTE);
+		if (!selectedAccessor.isSelected()) {
+			return;
+		}
 
-	public void toggleMuteIndependently() {
-		independentCyclicalToggleNotes(mutesCycleMap, CommonNote::mute, CommonNote::mute);
-	}
+		final List<Selection<ChordOrNote>> selected = selectedAccessor.getSelected();
+		final List<Chord> chords = selected.stream().filter(s -> s.selectable.isChord())//
+				.map(s -> s.selectable.chord())//
+				.collect(Collectors.toList());
+		if (chords.isEmpty()) {
+			return;
+		}
 
-	public void toggleHOPO() {
-		cyclicalToggleNotes(hoposCycleMap, CommonNote::hopo, CommonNote::hopo, HOPO.NONE);
-	}
+		if (independently) {
+			undoSystem.addUndo();
+			chords.forEach(chord -> setter.accept(chord, cycleMap.get(getter.apply(chord))));
+			currentSelectionEditor.selectionChanged(false);
+		} else {
+			final T valueToSet = cycleMap.get(getter.apply(chords.get(0)));
 
-	public void toggleHOPOIndependently() {
-		independentCyclicalToggleNotes(hoposCycleMap, CommonNote::hopo, CommonNote::hopo);
-	}
-
-	public void toggleHarmonic() {
-		cyclicalToggleNotes(harmonicsCycleMap, CommonNote::harmonic, CommonNote::harmonic, Harmonic.NONE);
-	}
-
-	public void toggleHarmonicIndependently() {
-		independentCyclicalToggleNotes(harmonicsCycleMap, CommonNote::harmonic, CommonNote::harmonic);
+			undoSystem.addUndo();
+			chords.forEach(chord -> setter.accept(chord, valueToSet));
+			currentSelectionEditor.selectionChanged(false);
+		}
 	}
 
 	public void toggleAccent() {
@@ -206,6 +210,54 @@ public class GuitarSoundsStatusesHandler {
 				(sound, accent) -> sound.accent = accent);
 	}
 
+	public void toggleHarmonic() {
+		cyclicalToggleNotes(harmonicsCycleMap, CommonNote::harmonic, CommonNote::harmonic, Harmonic.NONE);
+	}
+
+	public void toggleHarmonicIndependently() {
+		independentCyclicalToggleNotes(harmonicsCycleMap, CommonNote::harmonic, CommonNote::harmonic);
+	}
+
+	public void toggleHOPO() {
+		cyclicalToggleNotes(hoposCycleMap, CommonNote::hopo, CommonNote::hopo, HOPO.NONE);
+	}
+
+	public void toggleHOPOIndependently() {
+		independentCyclicalToggleNotes(hoposCycleMap, CommonNote::hopo, CommonNote::hopo);
+	}
+
+	public void toggleIgnore() {
+		cyclicalToggleSound(booleanCycleMap, sound -> sound.ignore, (sound, ignore) -> sound.ignore = ignore);
+	}
+
+	public void toggleIgnoreIndependently() {
+		independentCyclicalToggleSound(booleanCycleMap, sound -> sound.ignore,
+				(sound, ignore) -> sound.ignore = ignore);
+	}
+
+	public void toggleMute() {
+		cyclicalToggleNotes(mutesCycleMap, CommonNote::mute, CommonNote::mute, Mute.NONE);
+	}
+
+	public void toggleMuteIndependently() {
+		independentCyclicalToggleNotes(mutesCycleMap, CommonNote::mute, CommonNote::mute);
+	}
+
+	public void toggleOnlyBox(final boolean independently) {
+		cyclicalToggleChord(booleanCycleMap, chord -> chord.forceNoNotes,
+				(chord, forceNoNotes) -> chord.forceNoNotes = forceNoNotes, independently);
+	}
+
+	public void togglePassNotes() {
+		cyclicalToggleSound(booleanCycleMap, sound -> sound.passOtherNotes,
+				(sound, passOtherNotes) -> sound.passOtherNotes = passOtherNotes);
+	}
+
+	public void togglePassNotesIndependently() {
+		independentCyclicalToggleSound(booleanCycleMap, sound -> sound.passOtherNotes,
+				(sound, passOtherNotes) -> sound.passOtherNotes = passOtherNotes);
+	}
+
 	public void toggleSlapPop() {
 		cyclicalToggleNotes(popSlapCycleMap, CommonNote::bassPicking, CommonNote::bassPicking,
 				BassPickingTechnique.NONE);
@@ -215,12 +267,9 @@ public class GuitarSoundsStatusesHandler {
 		independentCyclicalToggleNotes(popSlapCycleMap, CommonNote::bassPicking, CommonNote::bassPicking);
 	}
 
-	public void toggleVibrato() {
-		cyclicalToggleNotes(booleanCycleMap, CommonNote::vibrato, CommonNote::vibrato, false);
-	}
-
-	public void toggleVibratoIndependently() {
-		independentCyclicalToggleNotes(booleanCycleMap, CommonNote::vibrato, CommonNote::vibrato);
+	public void toggleSplit(final boolean independently) {
+		cyclicalToggleChord(booleanCycleMap, chord -> chord.splitIntoNotes,
+				(chord, splitIntoNotes) -> chord.splitIntoNotes = splitIntoNotes, independently);
 	}
 
 	public void toggleTremolo() {
@@ -229,6 +278,14 @@ public class GuitarSoundsStatusesHandler {
 
 	public void toggleTremoloIndependently() {
 		independentCyclicalToggleNotes(booleanCycleMap, CommonNote::tremolo, CommonNote::tremolo);
+	}
+
+	public void toggleVibrato() {
+		cyclicalToggleNotes(booleanCycleMap, CommonNote::vibrato, CommonNote::vibrato, false);
+	}
+
+	public void toggleVibratoIndependently() {
+		independentCyclicalToggleNotes(booleanCycleMap, CommonNote::vibrato, CommonNote::vibrato);
 	}
 
 	private void updateLinkedNotesFrets(final CommonNoteWithFret note, final Note nextNote) {

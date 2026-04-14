@@ -350,6 +350,10 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 		texturesHolder.reloadTextures();
 	}
 
+	public void clear() {
+		noteStatusModels.clear();
+	}
+
 	@Override
 	public void repaint() {
 		super.repaint();

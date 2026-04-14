@@ -74,6 +74,11 @@ public interface DrawableShape {
 		return filledRectangle(position, color.color(), rounded);
 	}
 
+	public static DrawableShape filledRoundRectangle(final ShapePositionWithSize position, final Color color,
+			final int arc) {
+		return new FilledRoundRectangle(position, color, arc);
+	}
+
 	public static DrawableShape strokedRectangle(final ShapePositionWithSize position, final Color color) {
 		return new StrokedRectangle(position, color);
 	}

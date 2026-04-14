@@ -11,7 +11,7 @@ public class DefaultEofShortcuts extends ShortcutList {
 	private DefaultEofShortcuts() {
 		super.set(Action.ARRANGEMENT_NEXT, new Shortcut(KeyEvent.VK_UP).ctrl().shift());
 		super.set(Action.ARRANGEMENT_PREVIOUS, new Shortcut(KeyEvent.VK_DOWN).ctrl().shift());
-		super.set(Action.BEAT_ADD, new Shortcut(KeyEvent.VK_INSERT).ctrl());
+		super.set(Action.BEAT_ADD, new Shortcut().ctrl().insert());
 		super.set(Action.BEAT_REMOVE, new Shortcut(KeyEvent.VK_DELETE).ctrl());
 		super.set(Action.BOOKMARK_0, new Shortcut(KeyEvent.VK_0).shift());
 		super.set(Action.BOOKMARK_1, new Shortcut(KeyEvent.VK_1).shift());
@@ -25,7 +25,9 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.BOOKMARK_9, new Shortcut(KeyEvent.VK_9).shift());
 		super.set(Action.BPM_DOUBLE, new Shortcut(KeyEvent.VK_PERIOD));
 		super.set(Action.BPM_HALVE, new Shortcut(KeyEvent.VK_COMMA));
+		super.set(Action.CHANGE_GRID, new Shortcut(KeyEvent.VK_G));
 		super.set(Action.COPY, new Shortcut(KeyEvent.VK_C).ctrl());
+		super.set(Action.CUT, new Shortcut(KeyEvent.VK_X).ctrl());
 		super.set(Action.DECREASE_LENGTH, new Shortcut(KeyEvent.VK_OPEN_BRACKET));
 		super.set(Action.DECREASE_LENGTH_FAST, new Shortcut(KeyEvent.VK_OPEN_BRACKET).shift());
 		super.set(Action.DELETE, new Shortcut(KeyEvent.VK_DELETE));
@@ -42,6 +44,12 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.FINGER_T, new Shortcut(KeyEvent.VK_5).alt());
 		super.set(Action.INCREASE_LENGTH, new Shortcut(KeyEvent.VK_CLOSE_BRACKET));
 		super.set(Action.INCREASE_LENGTH_FAST, new Shortcut(KeyEvent.VK_CLOSE_BRACKET).shift());
+		super.set(Action.INSERT_EVENT_POINT, new Shortcut(KeyEvent.VK_E).insert());
+		super.set(Action.INSERT_FHP, new Shortcut(KeyEvent.VK_F).insert());
+		super.set(Action.INSERT_HAND_SHAPE, new Shortcut(KeyEvent.VK_H).insert());
+		super.set(Action.INSERT_SHOWLIGHT, new Shortcut().insert());
+		super.set(Action.INSERT_TONE_CHANGE, new Shortcut(KeyEvent.VK_T).insert());
+		super.set(Action.INSERT_VOCAL, new Shortcut().insert());
 		super.set(Action.NUMBER_0, new Shortcut(KeyEvent.VK_0));
 		super.set(Action.NUMBER_1, new Shortcut(KeyEvent.VK_1));
 		super.set(Action.NUMBER_2, new Shortcut(KeyEvent.VK_2));
@@ -54,7 +62,7 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.NUMBER_9, new Shortcut(KeyEvent.VK_9));
 		super.set(Action.HALVE_GRID, new Shortcut(KeyEvent.VK_COMMA));
 		super.set(Action.MARK_HAND_SHAPE, null);
-		super.set(Action.MEASURE_ADD, new Shortcut(KeyEvent.VK_INSERT).ctrl().shift());
+		super.set(Action.MEASURE_ADD, new Shortcut().ctrl().shift().insert());
 		super.set(Action.MEASURE_REMOVE, new Shortcut(KeyEvent.VK_DELETE).ctrl().shift());
 		super.set(Action.MOVE_BACKWARD, new Shortcut(KeyEvent.VK_LEFT));
 		super.set(Action.MOVE_FORWARD, new Shortcut(KeyEvent.VK_RIGHT));
@@ -76,6 +84,9 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.NEXT_ITEM, new Shortcut(KeyEvent.VK_PAGE_DOWN).shift());
 		super.set(Action.NEXT_ITEM_TYPE, new Shortcut(KeyEvent.VK_TAB).ctrl());
 		super.set(Action.NEXT_ITEM_WITH_SELECT, new Shortcut(KeyEvent.VK_PAGE_DOWN).alt());
+		super.set(Action.NEXT_ITEM_WITH_SELECT_CTRL, new Shortcut(KeyEvent.VK_PAGE_DOWN).ctrl().alt());
+		super.set(Action.NEXT_ITEM_WITH_SELECT_CTRL_SHIFT, new Shortcut(KeyEvent.VK_PAGE_DOWN).ctrl().shift().alt());
+		super.set(Action.NEXT_ITEM_WITH_SELECT_SHIFT, new Shortcut(KeyEvent.VK_PAGE_DOWN).shift().alt());
 		super.set(Action.OPEN_PROJECT, new Shortcut(KeyEvent.VK_O).ctrl());
 		super.set(Action.PASTE, new Shortcut(KeyEvent.VK_V).ctrl());
 		super.set(Action.PLACE_LYRIC_FROM_TEXT, new Shortcut(KeyEvent.VK_SPACE).ctrl());
@@ -85,6 +96,9 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.PREVIOUS_ITEM, new Shortcut(KeyEvent.VK_PAGE_UP).shift());
 		super.set(Action.PREVIOUS_ITEM_TYPE, new Shortcut(KeyEvent.VK_TAB).ctrl().shift());
 		super.set(Action.PREVIOUS_ITEM_WITH_SELECT, new Shortcut(KeyEvent.VK_PAGE_UP).alt());
+		super.set(Action.PREVIOUS_ITEM_WITH_SELECT_CTRL, new Shortcut(KeyEvent.VK_PAGE_UP).ctrl().alt());
+		super.set(Action.PREVIOUS_ITEM_WITH_SELECT_CTRL_SHIFT, new Shortcut(KeyEvent.VK_PAGE_UP).ctrl().shift().alt());
+		super.set(Action.PREVIOUS_ITEM_WITH_SELECT_SHIFT, new Shortcut(KeyEvent.VK_PAGE_UP).shift().alt());
 		super.set(Action.REDO, new Shortcut(KeyEvent.VK_R).ctrl());
 		super.set(Action.SAVE_PROJECT, new Shortcut(KeyEvent.VK_S).ctrl());
 		super.set(Action.SAVE_PROJECT_AS, new Shortcut(KeyEvent.VK_S).ctrl().shift());
@@ -126,6 +140,15 @@ public class DefaultEofShortcuts extends ShortcutList {
 		super.set(Action.TOGGLE_MIDI, new Shortcut(KeyEvent.VK_F2));
 		super.set(Action.TOGGLE_MUTE, null);
 		super.set(Action.TOGGLE_MUTE_INDEPENDENTLY, new Shortcut(KeyEvent.VK_M).shift());
+		super.set(Action.TOGGLE_NOTE_1, new Shortcut(KeyEvent.VK_1).insert());
+		super.set(Action.TOGGLE_NOTE_2, new Shortcut(KeyEvent.VK_2).insert());
+		super.set(Action.TOGGLE_NOTE_3, new Shortcut(KeyEvent.VK_3).insert());
+		super.set(Action.TOGGLE_NOTE_4, new Shortcut(KeyEvent.VK_4).insert());
+		super.set(Action.TOGGLE_NOTE_5, new Shortcut(KeyEvent.VK_5).insert());
+		super.set(Action.TOGGLE_NOTE_6, new Shortcut(KeyEvent.VK_6).insert());
+		super.set(Action.TOGGLE_NOTE_7, new Shortcut(KeyEvent.VK_7).insert());
+		super.set(Action.TOGGLE_NOTE_8, new Shortcut(KeyEvent.VK_8).insert());
+		super.set(Action.TOGGLE_NOTE_9, new Shortcut(KeyEvent.VK_9).insert());
 		super.set(Action.TOGGLE_PHRASE_END, new Shortcut(KeyEvent.VK_E));
 		super.set(Action.TOGGLE_SLAP_POP, new Shortcut(KeyEvent.VK_P));
 		super.set(Action.TOGGLE_SLAP_POP_INDEPENDENTLY, new Shortcut(KeyEvent.VK_P).shift());

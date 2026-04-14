@@ -231,7 +231,7 @@ public class ShowlightsDrawer {
 
 	private void drawShowlightText(final Graphics2D g, final String text, final int x, final int y) {
 		new TextWithBackground(new Position2D(x, y), labelFont, text, ColorLabel.SHOWLIGHT_LABEL_TEXT,
-				ColorLabel.SHOWLIGHT_LABEL_BG, labelTextSpace, ColorLabel.BASE_BORDER).draw(g);
+				ColorLabel.SHOWLIGHT_LABEL_BG, labelTextSpace).draw(g);
 	}
 
 	private void drawLeftSideLabel(final Graphics2D g, final Showlight showlight, final int nextX, final int y) {

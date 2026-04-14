@@ -164,12 +164,13 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 	}
 
 	private void addVocalPath() {
-		new VocalPathSettingsPane(chartData, charterMenuBar, charterFrame, selectionManager, new VocalPath(), true);
+		new VocalPathSettingsPane(chartData, charterMenuBar, charterFrame, modeManager, selectionManager,
+				new VocalPath(), true);
 	}
 
 	private void editVocalPathSettings() {
-		new VocalPathSettingsPane(chartData, charterMenuBar, charterFrame, selectionManager, chartData.currentVocals(),
-				false);
+		new VocalPathSettingsPane(chartData, charterMenuBar, charterFrame, modeManager, selectionManager,
+				chartData.currentVocals(), false);
 	}
 
 	private void editArrangementSettings() {

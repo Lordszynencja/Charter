@@ -31,6 +31,7 @@ import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.GuitarSoundsHandler;
 import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.HandShapesHandler;
+import log.charter.services.data.ShowlightsHandler;
 import log.charter.services.data.VocalsHandler;
 import log.charter.services.data.beats.BPMDoubler;
 import log.charter.services.data.beats.BPMHalver;
@@ -39,6 +40,7 @@ import log.charter.services.data.files.SongFileHandler;
 import log.charter.services.data.files.newProject.NewEmptyProjectCreator;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
+import log.charter.services.editModes.GuitarModeHandler;
 import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
@@ -57,6 +59,7 @@ public class ActionHandler implements Initiable {
 	private ClapsHandler clapsHandler;
 	private CopyManager copyManager;
 	private CurrentSelectionEditor currentSelectionEditor;
+	private GuitarModeHandler guitarModeHandler;
 	private GuitarSoundsHandler guitarSoundsHandler;
 	private GuitarSoundsStatusesHandler guitarSoundsStatusesHandler;
 	private HandShapesHandler handShapesHandler;
@@ -67,6 +70,7 @@ public class ActionHandler implements Initiable {
 	private NewEmptyProjectCreator newEmptyProjectCreator;
 	private RepeatManager repeatManager;
 	private SelectionManager selectionManager;
+	private ShowlightsHandler showlightsHandler;
 	private SongFileHandler songFileHandler;
 	private UndoSystem undoSystem;
 	private VocalsHandler vocalsHandler;
@@ -197,10 +201,6 @@ public class ActionHandler implements Initiable {
 		modeManager.getHandler().handleNumber(number);
 	}
 
-	private void toggleString(final int string) {
-		currentSelectionEditor.toggleString(string);
-	}
-
 	private void doubleGridSize() {
 		if (GridConfig.gridSize <= 512) {
 			GridConfig.gridSize *= 2;
@@ -283,6 +283,8 @@ public class ActionHandler implements Initiable {
 
 	@Override
 	public void init() {
+		guitarModeHandler = modeManager.getGuitarModeHandler();
+
 		actionHandlers.put(Action.ARRANGEMENT_NEXT, this::nextArrangement);
 		actionHandlers.put(Action.ARRANGEMENT_PREVIOUS, this::previousArrangement);
 		actionHandlers.put(Action.BEAT_ADD, beatsService::addBeat);
@@ -299,7 +301,9 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.BOOKMARK_9, () -> bookmark(9));
 		actionHandlers.put(Action.BPM_DOUBLE, bpmDoubler::doubleBPM);
 		actionHandlers.put(Action.BPM_HALVE, bpmHalver::halveBPM);
+		actionHandlers.put(Action.CHANGE_GRID, chartToolbar::focusGrid);
 		actionHandlers.put(Action.COPY, copyManager::copy);
+		actionHandlers.put(Action.CUT, copyManager::cut);
 		actionHandlers.put(Action.DECREASE_LENGTH, () -> changeLength(-1));
 		actionHandlers.put(Action.DECREASE_LENGTH_FAST, () -> changeLength(-4));
 		actionHandlers.put(Action.DELETE, chartItemsHandler::delete);
@@ -312,19 +316,15 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.FINGER_3, () -> guitarSoundsHandler.setFinger(3));
 		actionHandlers.put(Action.FINGER_4, () -> guitarSoundsHandler.setFinger(4));
 		actionHandlers.put(Action.FINGER_T, () -> guitarSoundsHandler.setFinger(0));
-		actionHandlers.put(Action.NUMBER_0, () -> handleNumber(0));
-		actionHandlers.put(Action.NUMBER_1, () -> handleNumber(1));
-		actionHandlers.put(Action.NUMBER_2, () -> handleNumber(2));
-		actionHandlers.put(Action.NUMBER_3, () -> handleNumber(3));
-		actionHandlers.put(Action.NUMBER_4, () -> handleNumber(4));
-		actionHandlers.put(Action.NUMBER_5, () -> handleNumber(5));
-		actionHandlers.put(Action.NUMBER_6, () -> handleNumber(6));
-		actionHandlers.put(Action.NUMBER_7, () -> handleNumber(7));
-		actionHandlers.put(Action.NUMBER_8, () -> handleNumber(8));
-		actionHandlers.put(Action.NUMBER_9, () -> handleNumber(9));
 		actionHandlers.put(Action.HALVE_GRID, this::halveGridSize);
 		actionHandlers.put(Action.INCREASE_LENGTH, () -> changeLength(1));
 		actionHandlers.put(Action.INCREASE_LENGTH_FAST, () -> changeLength(4));
+		actionHandlers.put(Action.INSERT_EVENT_POINT, guitarModeHandler::insertEventPoint);
+		actionHandlers.put(Action.INSERT_FHP, guitarModeHandler::insertFHP);
+		actionHandlers.put(Action.INSERT_HAND_SHAPE, guitarModeHandler::insertHandShape);
+		actionHandlers.put(Action.INSERT_SHOWLIGHT, showlightsHandler::insertShowlight);
+		actionHandlers.put(Action.INSERT_TONE_CHANGE, guitarModeHandler::insertToneChange);
+		actionHandlers.put(Action.INSERT_VOCAL, vocalsHandler::insertVocal);
 		actionHandlers.put(Action.MARK_HAND_SHAPE, handShapesHandler::markHandShape);
 		actionHandlers.put(Action.MEASURE_ADD, beatsService::addMeasure);
 		actionHandlers.put(Action.MEASURE_REMOVE, beatsService::removeMeasure);
@@ -345,7 +345,23 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.NEXT_GRID_POSITION, chartTimeHandler::moveToNextGrid);
 		actionHandlers.put(Action.NEXT_ITEM, chartTimeHandler::moveToNextItem);
 		actionHandlers.put(Action.NEXT_ITEM_TYPE, selectionManager::nextItemType);
-		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT, chartTimeHandler::moveToNextItemWithSelect);
+		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT, () -> chartTimeHandler.moveToNextItemWithSelect(false, false));
+		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT_CTRL,
+				() -> chartTimeHandler.moveToNextItemWithSelect(true, false));
+		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT_CTRL_SHIFT,
+				() -> chartTimeHandler.moveToNextItemWithSelect(true, true));
+		actionHandlers.put(Action.NEXT_ITEM_WITH_SELECT_SHIFT,
+				() -> chartTimeHandler.moveToNextItemWithSelect(false, true));
+		actionHandlers.put(Action.NUMBER_0, () -> handleNumber(0));
+		actionHandlers.put(Action.NUMBER_1, () -> handleNumber(1));
+		actionHandlers.put(Action.NUMBER_2, () -> handleNumber(2));
+		actionHandlers.put(Action.NUMBER_3, () -> handleNumber(3));
+		actionHandlers.put(Action.NUMBER_4, () -> handleNumber(4));
+		actionHandlers.put(Action.NUMBER_5, () -> handleNumber(5));
+		actionHandlers.put(Action.NUMBER_6, () -> handleNumber(6));
+		actionHandlers.put(Action.NUMBER_7, () -> handleNumber(7));
+		actionHandlers.put(Action.NUMBER_8, () -> handleNumber(8));
+		actionHandlers.put(Action.NUMBER_9, () -> handleNumber(9));
 		actionHandlers.put(Action.OPEN_PROJECT, songFileHandler::open);
 		actionHandlers.put(Action.PASTE, copyManager::paste);
 		actionHandlers.put(Action.PLACE_LYRIC_FROM_TEXT, vocalsHandler::placeLyricFromText);
@@ -354,7 +370,14 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.PREVIOUS_GRID_POSITION, chartTimeHandler::moveToPreviousGrid);
 		actionHandlers.put(Action.PREVIOUS_ITEM, chartTimeHandler::moveToPreviousItem);
 		actionHandlers.put(Action.PREVIOUS_ITEM_TYPE, selectionManager::previousItemType);
-		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT, chartTimeHandler::moveToPreviousItemWithSelect);
+		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT,
+				() -> chartTimeHandler.moveToPreviousItemWithSelect(false, false));
+		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT_CTRL,
+				() -> chartTimeHandler.moveToPreviousItemWithSelect(true, false));
+		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT_CTRL_SHIFT,
+				() -> chartTimeHandler.moveToPreviousItemWithSelect(true, true));
+		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT_SHIFT,
+				() -> chartTimeHandler.moveToPreviousItemWithSelect(false, true));
 		actionHandlers.put(Action.REDO, undoSystem::redo);
 		actionHandlers.put(Action.SAVE_PROJECT, songFileHandler::save);
 		actionHandlers.put(Action.SAVE_PROJECT_AS, songFileHandler::saveAs);
@@ -369,15 +392,15 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.SPEED_INCREASE, () -> changeSpeed(5));
 		actionHandlers.put(Action.SPEED_INCREASE_FAST, () -> changeSpeed(25));
 		actionHandlers.put(Action.SPEED_INCREASE_PRECISE, () -> changeSpeed(1));
-		actionHandlers.put(Action.STRING_1, () -> toggleString(0));
-		actionHandlers.put(Action.STRING_2, () -> toggleString(1));
-		actionHandlers.put(Action.STRING_3, () -> toggleString(2));
-		actionHandlers.put(Action.STRING_4, () -> toggleString(3));
-		actionHandlers.put(Action.STRING_5, () -> toggleString(4));
-		actionHandlers.put(Action.STRING_6, () -> toggleString(5));
-		actionHandlers.put(Action.STRING_7, () -> toggleString(6));
-		actionHandlers.put(Action.STRING_8, () -> toggleString(7));
-		actionHandlers.put(Action.STRING_9, () -> toggleString(8));
+		actionHandlers.put(Action.STRING_1, () -> currentSelectionEditor.toggleString(0));
+		actionHandlers.put(Action.STRING_2, () -> currentSelectionEditor.toggleString(1));
+		actionHandlers.put(Action.STRING_3, () -> currentSelectionEditor.toggleString(2));
+		actionHandlers.put(Action.STRING_4, () -> currentSelectionEditor.toggleString(3));
+		actionHandlers.put(Action.STRING_5, () -> currentSelectionEditor.toggleString(4));
+		actionHandlers.put(Action.STRING_6, () -> currentSelectionEditor.toggleString(5));
+		actionHandlers.put(Action.STRING_7, () -> currentSelectionEditor.toggleString(6));
+		actionHandlers.put(Action.STRING_8, () -> currentSelectionEditor.toggleString(7));
+		actionHandlers.put(Action.STRING_9, () -> currentSelectionEditor.toggleString(8));
 		actionHandlers.put(Action.SWITCH_TYPING_PART, this::switchTypingPart);
 		actionHandlers.put(Action.TOGGLE_ACCENT, guitarSoundsStatusesHandler::toggleAccent);
 		actionHandlers.put(Action.TOGGLE_ACCENT_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleAccentIndependently);
@@ -392,6 +415,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.TOGGLE_HIGH_PASS_FILTER, audioHandler::toggleHighPassFilter);
 		actionHandlers.put(Action.TOGGLE_HOPO, guitarSoundsStatusesHandler::toggleHOPO);
 		actionHandlers.put(Action.TOGGLE_HOPO_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleHOPOIndependently);
+		actionHandlers.put(Action.TOGGLE_IGNORE, guitarSoundsStatusesHandler::toggleIgnore);
+		actionHandlers.put(Action.TOGGLE_IGNORE_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleIgnoreIndependently);
 		actionHandlers.put(Action.TOGGLE_LINK_NEXT, guitarSoundsStatusesHandler::toggleLinkNext);
 		actionHandlers.put(Action.TOGGLE_LINK_NEXT_INDEPENDENTLY,
 				guitarSoundsStatusesHandler::toggleLinkNextIndependently);
@@ -400,10 +425,22 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.TOGGLE_MIDI, audioHandler::toggleMidiNotes);
 		actionHandlers.put(Action.TOGGLE_MUTE, guitarSoundsStatusesHandler::toggleMute);
 		actionHandlers.put(Action.TOGGLE_MUTE_INDEPENDENTLY, guitarSoundsStatusesHandler::toggleMuteIndependently);
+		for (int i = 0; i < 9; i++) {
+			final int string = i;
+			final Action action = Action.valueOf("TOGGLE_NOTE_" + (string + 1));
+			actionHandlers.put(action, () -> guitarModeHandler.toggleString(string));
+		}
+		actionHandlers.put(Action.TOGGLE_ONLY_BOX, () -> guitarSoundsStatusesHandler.toggleOnlyBox(false));
+		actionHandlers.put(Action.TOGGLE_ONLY_BOX_INDEPENDENTLY, () -> guitarSoundsStatusesHandler.toggleOnlyBox(true));
+		actionHandlers.put(Action.TOGGLE_PASS_NOTES, guitarSoundsStatusesHandler::togglePassNotes);
+		actionHandlers.put(Action.TOGGLE_PASS_NOTES_INDEPENDENTLY,
+				guitarSoundsStatusesHandler::togglePassNotesIndependently);
 		actionHandlers.put(Action.TOGGLE_PHRASE_END, vocalsHandler::togglePhraseEnd);
 		actionHandlers.put(Action.TOGGLE_SLAP_POP, guitarSoundsStatusesHandler::toggleSlapPop);
 		actionHandlers.put(Action.TOGGLE_SLAP_POP_INDEPENDENTLY,
 				guitarSoundsStatusesHandler::toggleSlapPopIndependently);
+		actionHandlers.put(Action.TOGGLE_SPLIT, () -> guitarSoundsStatusesHandler.toggleSplit(false));
+		actionHandlers.put(Action.TOGGLE_SPLIT_INDEPENDENTLY, () -> guitarSoundsStatusesHandler.toggleSplit(true));
 		actionHandlers.put(Action.TOGGLE_PREVIEW_WINDOW, windowedPreviewHandler::switchWindowedPreview);
 		actionHandlers.put(Action.TOGGLE_REPEAT_START, repeatManager::toggleRepeatStart);
 		actionHandlers.put(Action.TOGGLE_REPEAT_END, repeatManager::toggleRepeatEnd);

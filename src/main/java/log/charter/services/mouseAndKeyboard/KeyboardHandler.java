@@ -2,6 +2,7 @@ package log.charter.services.mouseAndKeyboard;
 
 import static java.awt.event.KeyEvent.VK_ALT;
 import static java.awt.event.KeyEvent.VK_CONTROL;
+import static java.awt.event.KeyEvent.VK_INSERT;
 import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_META;
 import static java.awt.event.KeyEvent.VK_RIGHT;
@@ -85,10 +86,6 @@ public class KeyboardHandler implements KeyListener {
 		return Optional.ofNullable(heldAction);
 	}
 
-	public boolean alt() {
-		return shortcut.alt;
-	}
-
 	public boolean ctrl() {
 		return shortcut.ctrl;
 	}
@@ -97,12 +94,24 @@ public class KeyboardHandler implements KeyListener {
 		return shortcut.shift;
 	}
 
+	public boolean alt() {
+		return shortcut.alt;
+	}
+
+	public boolean insert() {
+		return shortcut.insert;
+	}
+
 	public boolean scrollLock() {
 		return scrollLock;
 	}
 
 	private void replaceHeldAction() {
 		heldAction = ShortcutConfig.getAction(modeManager.getMode(), shortcut);
+
+		if (heldAction != null) {
+			actionHandler.fireAction(heldAction);
+		}
 	}
 
 	@Override
@@ -135,6 +144,11 @@ public class KeyboardHandler implements KeyListener {
 				replaceHeldAction();
 				return;
 			}
+			if (keyCode == VK_INSERT) {
+				shortcut.insert = true;
+				replaceHeldAction();
+				return;
+			}
 			if (keyCode == KeyEvent.VK_SCROLL_LOCK) {
 				setScrollLock();
 				return;
@@ -157,11 +171,6 @@ public class KeyboardHandler implements KeyListener {
 
 			shortcut.key = keyCode;
 			replaceHeldAction();
-
-			if (heldAction != null) {
-				actionHandler.fireAction(heldAction);
-			}
-
 			e.consume();
 		} catch (final Exception ex) {
 			Logger.error("Exception on key pressed " + KeyEvent.getKeyText(e.getKeyCode()), ex);
@@ -189,6 +198,10 @@ public class KeyboardHandler implements KeyListener {
 					break;
 				case VK_META:
 					shortcut.command = false;
+					replaceHeldAction();
+					break;
+				case VK_INSERT:
+					shortcut.insert = false;
 					replaceHeldAction();
 					break;
 				default:

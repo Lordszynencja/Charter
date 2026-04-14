@@ -1,7 +1,7 @@
 package log.charter.gui.chartPanelDrawers.instruments.guitar.highway;
 
 import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
-import static log.charter.data.config.GraphicalConfig.fhpInfoHeight;
+import static log.charter.data.config.GraphicalConfig.chartTextHeight;
 import static log.charter.data.config.GraphicalConfig.noteHeight;
 import static log.charter.data.config.GraphicalConfig.noteWidth;
 import static log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape.centeredImage;
@@ -36,7 +36,7 @@ class SquareHighwayDrawer extends DefaultHighwayDrawer {
 
 	@Override
 	protected Font defineFHPFont() {
-		return new Font(Font.DIALOG, Font.BOLD, fhpInfoHeight);
+		return new Font(Font.DIALOG, Font.BOLD, chartTextHeight);
 	}
 
 	@Override

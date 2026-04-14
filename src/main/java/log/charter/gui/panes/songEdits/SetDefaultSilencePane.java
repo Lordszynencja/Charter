@@ -1,5 +1,6 @@
 package log.charter.gui.panes.songEdits;
 
+import static java.lang.Math.abs;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import javax.swing.JTextField;
@@ -27,7 +28,7 @@ public class SetDefaultSilencePane extends ParamsPane {
 	private final ChartData data;
 	private final ProjectAudioHandler projectAudioHandler;
 
-	private int bars = 1;
+	private int bars;
 
 	public SetDefaultSilencePane(final CharterFrame frame, final ChartTimeHandler chartTimeHandler,
 			final ChartData data, final ProjectAudioHandler projectAudioHandler) {
@@ -38,7 +39,8 @@ public class SetDefaultSilencePane extends ParamsPane {
 
 		addLabel(0, 20, Label.ADD_DEFAULT_SILENCE_BARS, 0);
 
-		addIntConfigValue(1, 20, 0, null, 2, 100, //
+		bars = data.songChart.barsAdded == 0 ? 1 : 0;
+		addIntConfigValue(1, 20, 0, null, bars, 100, //
 				new IntValueValidator(0, 5), val -> bars = val, false);
 		final JTextField input = (JTextField) getPart(-1);
 		addSelectTextOnFocus(input);
@@ -56,7 +58,10 @@ public class SetDefaultSilencePane extends ParamsPane {
 	}
 
 	private void addSilence(final double movement) {
-		System.out.println("movement: " + movement);
+		if (abs(movement) < 0.1) {
+			return;
+		}
+
 		if (movement < 0) {
 			removeAudio(-movement);
 			return;
@@ -113,5 +118,7 @@ public class SetDefaultSilencePane extends ParamsPane {
 		} else {
 			addSilenceAndBars();
 		}
+
+		data.songChart.barsAdded += bars;
 	}
 }

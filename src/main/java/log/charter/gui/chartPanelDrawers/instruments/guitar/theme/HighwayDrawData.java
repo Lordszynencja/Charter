@@ -45,10 +45,10 @@ public class HighwayDrawData {
 		sectionsAndPhrases.draw(g);
 		toneChanges.draw(g);
 		fhps.draw(g);
-		chordNames.draw(g);
 		handShapes.draw(g);
 		noteTails.draw(g);
 		notes.draw(g);
+		chordNames.draw(g);
 		slideFrets.draw(g);
 		bendValues.draw(g);
 		highlights.draw(g);
