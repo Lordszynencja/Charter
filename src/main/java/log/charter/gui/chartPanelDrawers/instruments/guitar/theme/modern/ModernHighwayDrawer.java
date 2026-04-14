@@ -80,8 +80,8 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	}
 
 	@Override
-	public void addEvents(final EventPoint eventPoint, final int x) {
-		themeEvents.addEvents(eventPoint, x);
+	public void addEvents(final EventPoint eventPoint, final int x, final boolean highlight) {
+		themeEvents.addEvents(data.g, eventPoint, x, highlight);
 	}
 
 	@Override

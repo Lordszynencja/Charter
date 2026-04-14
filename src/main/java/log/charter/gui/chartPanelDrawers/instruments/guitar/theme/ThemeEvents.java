@@ -17,7 +17,7 @@ public interface ThemeEvents {
 
 	void addPhrase(Graphics2D g, Phrase phrase, String phraseName, int x, boolean highlight);
 
-	void addEvents(EventPoint eventPoint, int x);
+	void addEvents(Graphics2D g, EventPoint eventPoint, int x, boolean highlight);
 
 	void addEventPoint(Graphics2D g, final EventPoint eventPoint, final Phrase phrase, final int x,
 			final boolean selected, final boolean highlighted);

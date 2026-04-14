@@ -35,6 +35,7 @@ public class GraphicalConfig {
 
 	public static int markerOffset = 600;
 	public static float tempoMapGhostNotesTransparency = 0.66f;
+	public static boolean showChordBoxes = true;
 	public static double previewWindowScrollSpeed = 1.3;
 	public static boolean invertStrings = false;
 	public static boolean invertStrings3D = false;
@@ -78,6 +79,7 @@ public class GraphicalConfig {
 		valueAccessors.put("markerOffset", forInteger(v -> markerOffset = v, () -> markerOffset, markerOffset));
 		valueAccessors.put("tempoMapGhostNotesTransparency", forFloat(v -> tempoMapGhostNotesTransparency = v,
 				() -> tempoMapGhostNotesTransparency, tempoMapGhostNotesTransparency));
+		valueAccessors.put("showChordBoxes", forBoolean(v -> showChordBoxes = v, () -> showChordBoxes, showChordBoxes));
 		valueAccessors.put("previewWindowScrollSpeed",
 				forDouble(v -> previewWindowScrollSpeed = v, () -> previewWindowScrollSpeed, previewWindowScrollSpeed));
 		valueAccessors.put("invertStrings", forBoolean(v -> invertStrings = v, () -> invertStrings, invertStrings));

@@ -145,14 +145,14 @@ public class ModernThemeNotes implements ThemeNotes {
 	}
 
 	public void addChordBox(final int x, final Chord chord) {
-		if (chord.splitIntoNotes) {
+		if (!GraphicalConfig.showChordBoxes || chord.splitIntoNotes) {
 			return;
 		}
 
 		final int alpha = chord.accent ? 224 : 128;
 		final Color chordBoxColor = ColorLabel.CHORD_BOX.colorWithAlpha(alpha);
 
-		final int radius = noteWidth / 4;
+		final int radius = noteWidth / 6;
 		final ShapePositionWithSize position = new ShapePositionWithSize(x - radius, lanesTop, 2 * radius,
 				lanesBottom - lanesTop);
 
@@ -236,9 +236,11 @@ public class ModernThemeNotes implements ThemeNotes {
 			default -> noteIcons[stringId];
 		};
 
-		if (note.onlyBox || note.ignore || note.chordNotesVisibility == ChordNotesVisibility.NONE) {
+		if ((GraphicalConfig.showChordBoxes && (note.onlyBox || note.chordNotesVisibility == ChordNotesVisibility.NONE))
+				|| note.ignore) {
 			final MultiComposite c = new MultiComposite();
-			if (note.onlyBox || note.chordNotesVisibility == ChordNotesVisibility.NONE) {
+			if (GraphicalConfig.showChordBoxes
+					&& (note.onlyBox || note.chordNotesVisibility == ChordNotesVisibility.NONE)) {
 				c.alpha(128);
 			}
 			if (note.ignore) {

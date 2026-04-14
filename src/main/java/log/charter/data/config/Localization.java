@@ -352,6 +352,7 @@ public class Localization {
 		SHORTCUTS_SET_CHARTER_DEFAULT("Charter default"), //
 		SHORTCUTS_SET_CURRENT("Current"), //
 		SHORTCUTS_SET_EOF_DEFAULT("EoF default"), //
+		SHOW_CHORD_BOXES("Show chord boxes"), //
 		SHOW_CHORD_IDS("Show chord ids"), //
 		SHOW_GRID("Show grid"), //
 		SHOW_NOTE_NAMES("Show note names"), //

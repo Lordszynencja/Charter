@@ -84,8 +84,9 @@ public class GuitarEventPointsDrawer {
 		for (int i = 0; i < frameData.arrangement.eventPoints.size(); i++) {
 			final EventPoint eventPoint = eventPoints.get(i);
 			final int x = positionToX(eventPoint.position(frameData.beats), frameData.time);
+			final boolean highlighted = i == highlightId;
 			if (x < 0) {
-				highwayDrawer.addEvents(eventPoint, x);
+				highwayDrawer.addEvents(eventPoint, x, highlighted);
 				continue;
 			}
 			if (x > panelWidth) {
@@ -93,7 +94,6 @@ public class GuitarEventPointsDrawer {
 			}
 
 			final boolean selected = selectedIds.contains(i);
-			final boolean highlighted = i == highlightId;
 			highwayDrawer.addEventPoint(eventPoint, phrases.get(eventPoint.phrase), x, selected, highlighted);
 		}
 
