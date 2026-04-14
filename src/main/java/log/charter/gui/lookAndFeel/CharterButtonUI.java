@@ -47,7 +47,6 @@ public class CharterButtonUI extends BasicButtonUI {
 	}
 
 	private void paintFill(final Graphics2D g2d, final AbstractButton button) {
-
 		final RoundRectangle2D.Double roundedRectangle = new RoundRectangle2D.Double(0, 0, button.getWidth() - 1,
 				button.getHeight() - 1, 5, 5);
 

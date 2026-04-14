@@ -741,82 +741,83 @@ public class Localization {
 		COLOR_BASE_BG_4("Base background 4"), //
 		COLOR_BASE_BG_5("Base background 5"), //
 
-		GRAPHIC_CONFIG_BASE_DARK_TEXT("Dark text"), //
-		GRAPHIC_CONFIG_BASE_TEXT("Text"), //
+		COLOR_BASE_DARK_TEXT("Dark text"), //
+		COLOR_BASE_TEXT("Text"), //
 
-		GRAPHIC_CONFIG_NOTE_BACKGROUND("Note background"), //
-		GRAPHIC_CONFIG_NOTE_ADD_LINE("Note add line"), //
-		GRAPHIC_CONFIG_LANE("Lane"), //
-		GRAPHIC_CONFIG_MAIN_BEAT("Main beat"), //
-		GRAPHIC_CONFIG_SECONDARY_BEAT("Secondary beat"), //
-		GRAPHIC_CONFIG_GRID("Grid"), //
-		GRAPHIC_CONFIG_MARKER("Marker"), //
-		GRAPHIC_CONFIG_SECTION_NAME_BG("Section name background"), //
-		GRAPHIC_CONFIG_PHRASE_NAME_BG("Phrase name background"), //
-		GRAPHIC_CONFIG_EVENT_BG("Event background"), //
-		GRAPHIC_CONFIG_HIGHLIGHT("Highlight"), //
-		GRAPHIC_CONFIG_SELECT("Select"), //
-		GRAPHIC_CONFIG_TYPE_SELECT("Type select"), //
-		GRAPHIC_CONFIG_WAVEFORM_COLOR("Waveform"), //
-		GRAPHIC_CONFIG_WAVEFORM_RMS_COLOR("Waveform RMS"), //
+		COLOR_NOTE_BACKGROUND("Note background"), //
+		COLOR_NOTE_ADD_LINE("Note add line"), //
+		COLOR_LANE("Lane"), //
+		COLOR_MAIN_BEAT("Main beat"), //
+		COLOR_SECONDARY_BEAT("Secondary beat"), //
+		COLOR_GRID("Grid"), //
+		COLOR_MARKER("Marker"), //
+		COLOR_SECTION_NAME_BG("Section name background"), //
+		COLOR_PHRASE_NAME_BG("Phrase name background"), //
+		COLOR_EVENT_BG("Event background"), //
+		COLOR_HIGHLIGHT("Highlight"), //
+		COLOR_SELECT("Select"), //
+		COLOR_TYPE_SELECT("Type select"), //
+		COLOR_WAVEFORM_COLOR("Waveform"), //
+		COLOR_WAVEFORM_RMS_COLOR("Waveform RMS"), //
 
-		GRAPHIC_CONFIG_NOTE_FLAG_MARKER("Note flag marker"), //
-		GRAPHIC_CONFIG_SLIDE_NORMAL_FRET_BG("Normal slide fret background"), //
-		GRAPHIC_CONFIG_SLIDE_NORMAL_FRET_TEXT("Normal slide fret text"), //
-		GRAPHIC_CONFIG_SLIDE_UNPITCHED_FRET_BG("Unpitched slide fret background"), //
-		GRAPHIC_CONFIG_SLIDE_UNPITCHED_FRET_TEXT("Unpitched slide fret text"), //
-		GRAPHIC_CONFIG_NOTE_FULL_MUTE("Full mute"), //
-		GRAPHIC_CONFIG_HAMMER_ON("Hammer on"), //
-		GRAPHIC_CONFIG_PULL_OFF("Pull off"), //
-		GRAPHIC_CONFIG_TAP("Tap"), //
-		GRAPHIC_CONFIG_HARMONIC("Harmonic"), //
-		GRAPHIC_CONFIG_PINCH_HARMONIC("Pinch harmonic"), //
+		COLOR_NOTE_FLAG_MARKER("Note flag marker"), //
+		COLOR_SLIDE_NORMAL_FRET_BG("Normal slide fret background"), //
+		COLOR_SLIDE_NORMAL_FRET_TEXT("Normal slide fret text"), //
+		COLOR_SLIDE_UNPITCHED_FRET_BG("Unpitched slide fret background"), //
+		COLOR_SLIDE_UNPITCHED_FRET_TEXT("Unpitched slide fret text"), //
+		COLOR_NOTE_FULL_MUTE("Full mute"), //
+		COLOR_HAMMER_ON("Hammer on"), //
+		COLOR_PULL_OFF("Pull off"), //
+		COLOR_TAP("Tap"), //
+		COLOR_HARMONIC("Harmonic"), //
+		COLOR_PINCH_HARMONIC("Pinch harmonic"), //
 
-		GRAPHIC_CONFIG_NOTE_0("Note 1"), //
-		GRAPHIC_CONFIG_NOTE_1("Note 2"), //
-		GRAPHIC_CONFIG_NOTE_2("Note 3"), //
-		GRAPHIC_CONFIG_NOTE_3("Note 4"), //
-		GRAPHIC_CONFIG_NOTE_4("Note 5"), //
-		GRAPHIC_CONFIG_NOTE_5("Note 6"), //
-		GRAPHIC_CONFIG_NOTE_6("Note 7"), //
-		GRAPHIC_CONFIG_NOTE_7("Note 8"), //
-		GRAPHIC_CONFIG_NOTE_8("Note 9"), //
+		COLOR_STRING_0("Note 1"), //
+		COLOR_STRING_1("Note 2"), //
+		COLOR_STRING_2("Note 3"), //
+		COLOR_STRING_3("Note 4"), //
+		COLOR_STRING_4("Note 5"), //
+		COLOR_STRING_5("Note 6"), //
+		COLOR_STRING_6("Note 7"), //
+		COLOR_STRING_7("Note 8"), //
+		COLOR_STRING_8("Note 9"), //
 
-		GRAPHIC_CONFIG_FHP("FHP"), //
-		GRAPHIC_CONFIG_HAND_SHAPE("Hand shape"), //
-		GRAPHIC_CONFIG_HAND_SHAPE_ARPEGGIO("Arpeggio"), //
-		GRAPHIC_CONFIG_HAND_SHAPE_TEXT("Hand shape text"), //
-		GRAPHIC_CONFIG_TONE_CHANGE("Tone change"), //
-		GRAPHIC_CONFIG_TONE_CHANGE_TEXT("Tone change text"), //
+		COLOR_CHORD_BOX("Chord box"), //
+		COLOR_FHP("FHP"), //
+		COLOR_HAND_SHAPE("Hand shape"), //
+		COLOR_HAND_SHAPE_ARPEGGIO("Arpeggio"), //
+		COLOR_HAND_SHAPE_TEXT("Hand shape text"), //
+		COLOR_TONE_CHANGE("Tone change"), //
+		COLOR_TONE_CHANGE_TEXT("Tone change text"), //
 
-		GRAPHIC_CONFIG_VOCAL_LINE_BACKGROUND("Vocal line background"), //
-		GRAPHIC_CONFIG_VOCAL_LINE_TEXT("Vocal line text"), //
-		GRAPHIC_CONFIG_VOCAL_TEXT("Vocal text"), //
-		GRAPHIC_CONFIG_VOCAL_NOTE("Vocal note"), //
-		GRAPHIC_CONFIG_VOCAL_NOTE_WORD_PART("Vocal note word part"), //
-		GRAPHIC_CONFIG_VOCAL_SELECT("Vocal selection"), //
+		COLOR_VOCAL_LINE_BACKGROUND("Vocal line background"), //
+		COLOR_VOCAL_LINE_TEXT("Vocal line text"), //
+		COLOR_VOCAL_TEXT("Vocal text"), //
+		COLOR_VOCAL_NOTE("Vocal note"), //
+		COLOR_VOCAL_NOTE_WORD_PART("Vocal note word part"), //
+		COLOR_VOCAL_SELECT("Vocal selection"), //
 
-		GRAPHIC_CONFIG_PREVIEW_3D_BACKGROUND("3D Background"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_FRET("3D Fret"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_ACTIVE_FRET("3D Active fret"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_HIGHLIGHTED_FRET("3D Highlighted fret"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_BOX("3D Chord box"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_BOX_DARK("3D Chord box dark"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_NAME("3D Chord name"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_FULL_MUTE("3D Full mute"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_PALM_MUTE("3D Palm mute"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_FULL_MUTE("3D Full mute chord"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_CHORD_PALM_MUTE("3D Palm mute chord"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_FHP("3D FHP"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_FHP_FRET_COLOR("3D FHP fret"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_LANE("3D Lane"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_LANE_DOTTED("3D Lane dotted"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_LANE_BORDER("3D Lane border"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_ARPEGGIO("3D Arpeggio"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_BEAT("3D Beat"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_BEAT_NUMBER_ACTIVE_COLOR("3D Beat number active color"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_LYRICS("3D Lyrics"), //
-		GRAPHIC_CONFIG_PREVIEW_3D_LYRICS_PASSED("3D Lyrics passed"), //
+		COLOR_PREVIEW_3D_BACKGROUND("3D Background"), //
+		COLOR_PREVIEW_3D_FRET("3D Fret"), //
+		COLOR_PREVIEW_3D_ACTIVE_FRET("3D Active fret"), //
+		COLOR_PREVIEW_3D_HIGHLIGHTED_FRET("3D Highlighted fret"), //
+		COLOR_PREVIEW_3D_CHORD_BOX("3D Chord box"), //
+		COLOR_PREVIEW_3D_CHORD_BOX_DARK("3D Chord box dark"), //
+		COLOR_PREVIEW_3D_CHORD_NAME("3D Chord name"), //
+		COLOR_PREVIEW_3D_FULL_MUTE("3D Full mute"), //
+		COLOR_PREVIEW_3D_PALM_MUTE("3D Palm mute"), //
+		COLOR_PREVIEW_3D_CHORD_FULL_MUTE("3D Full mute chord"), //
+		COLOR_PREVIEW_3D_CHORD_PALM_MUTE("3D Palm mute chord"), //
+		COLOR_PREVIEW_3D_FHP("3D FHP"), //
+		COLOR_PREVIEW_3D_FHP_FRET_COLOR("3D FHP fret"), //
+		COLOR_PREVIEW_3D_LANE("3D Lane"), //
+		COLOR_PREVIEW_3D_LANE_DOTTED("3D Lane dotted"), //
+		COLOR_PREVIEW_3D_LANE_BORDER("3D Lane border"), //
+		COLOR_PREVIEW_3D_ARPEGGIO("3D Arpeggio"), //
+		COLOR_PREVIEW_3D_BEAT("3D Beat"), //
+		COLOR_PREVIEW_3D_BEAT_NUMBER_ACTIVE_COLOR("3D Beat number active color"), //
+		COLOR_PREVIEW_3D_LYRICS("3D Lyrics"), //
+		COLOR_PREVIEW_3D_LYRICS_PASSED("3D Lyrics passed"), //
 		;
 
 		private final String defaultLabel;

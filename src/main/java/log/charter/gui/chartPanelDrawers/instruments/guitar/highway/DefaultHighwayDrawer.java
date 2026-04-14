@@ -11,6 +11,7 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.eventNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.fhpY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getLaneY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesBottom;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.lanesTop;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.phraseNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.sectionNamesY;
 import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.tailHeight;
@@ -58,6 +59,7 @@ import log.charter.data.song.Phrase;
 import log.charter.data.song.SectionType;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.enums.Mute;
+import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData.EditorBendValueDrawingData;
@@ -277,6 +279,19 @@ public class DefaultHighwayDrawer implements HighwayDrawer {
 	@Override
 	public void addEventPointHighlight(final int x) {
 		selects.add(lineVertical(x, sectionNamesY, lanesBottom, ColorLabel.HIGHLIGHT));
+	}
+
+	@Override
+	public void addChordBox(final int x, final Chord chord) {
+		final Color chordBoxColor = ColorLabel.CHORD_BOX.color();
+		final int x0 = x - noteWidth / 3;
+		final int x1 = x + noteWidth / 3;
+		final int y0 = lanesTop + noteHeight / 3;
+		final int y1 = lanesBottom - noteHeight / 3;
+
+		final ShapePositionWithSize position = new ShapePositionWithSize(x0, y0, x1 - x0, y1 - y0);
+
+		notes.add(filledRectangle(position, chordBoxColor));
 	}
 
 	protected void addNormalNoteShape(final int y, final EditorNoteDrawingData note) {

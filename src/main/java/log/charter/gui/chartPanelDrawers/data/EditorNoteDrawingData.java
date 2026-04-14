@@ -11,11 +11,13 @@ import java.util.Map.Entry;
 
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.Level;
 import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.data.song.enums.Mute;
 import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.Chord.ChordNotesVisibility;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.Note;
 
@@ -41,14 +43,15 @@ public class EditorNoteDrawingData {
 		return new EditorNoteDrawingData(x, length, //
 				note.string, note.fret, note.fret + "", //
 				note.accent, note.mute, note.hopo, note.harmonic, note.bassPicking, //
-				bends, note.slideTo, note.unpitchedSlide, note.vibrato, note.tremolo, //
+				bends, note.slideTo, note.unpitchedSlide, note.vibrato, note.tremolo, note.ignore, false,
+				ChordNotesVisibility.TAILS, //
 				selected, highlighted, lastWasLinkNext, wrongLinkNext, note.linkNext);
 	}
 
 	public static EditorNoteDrawingData fromChordNote(final ImmutableBeatsMap beats, final double time,
 			final Chord chord, final ChordTemplate chordTemplate, final int x, final int string,
-			final ChordNote chordNote, final boolean selected, final boolean highlighted, final boolean lastWasLinkNext,
-			final boolean wrongLinkNext, final boolean ctrl) {
+			final ChordNote chordNote, final ChordNotesVisibility chordNotesVisibility, final boolean selected,
+			final boolean highlighted, final boolean lastWasLinkNext, final boolean wrongLinkNext, final boolean ctrl) {
 		final int length = positionToX(chordNote.endPosition(beats), time) - x;
 		final int fret = chordTemplate.frets.get(string);
 		final Integer finger = chordTemplate.fingers.get(string);
@@ -60,20 +63,23 @@ public class EditorNoteDrawingData {
 		return new EditorNoteDrawingData(x, length, //
 				string, fret, fretDescription, //
 				chord.accent, chordNote.mute, chordNote.hopo, chordNote.harmonic, BassPickingTechnique.NONE, //
-				bends, chordNote.slideTo, chordNote.unpitchedSlide, chordNote.vibrato, chordNote.tremolo, //
+				bends, chordNote.slideTo, chordNote.unpitchedSlide, chordNote.vibrato, chordNote.tremolo, chord.ignore,
+				chord.forceNoNotes, chordNotesVisibility, //
 				selected, highlighted, lastWasLinkNext, wrongLinkNext, chordNote.linkNext);
 	}
 
-	public static List<EditorNoteDrawingData> fromChord(final ImmutableBeatsMap beats, final double time,
-			final Chord chord, final ChordTemplate chordTemplate, final int x, final boolean selected,
-			final int highlightedString, final boolean lastWasLinkNext, final boolean wrongLinkNext,
-			final boolean ctrl) {
+	public static List<EditorNoteDrawingData> fromChord(final ImmutableBeatsMap beats, final Level level,
+			final double time, final int id, final Chord chord, final ChordTemplate chordTemplate, final int x,
+			final boolean selected, final int highlightedString, final boolean lastWasLinkNext,
+			final boolean wrongLinkNext, final boolean ctrl) {
 		final List<EditorNoteDrawingData> notes = new ArrayList<>();
+		final ChordNotesVisibility chordNotesVisibility = chord
+				.chordNotesVisibility(level.shouldChordShowNotes(beats, id));
 
 		for (final Entry<Integer, ChordNote> chordNoteEntry : chord.chordNotes.entrySet()) {
 			final int string = chordNoteEntry.getKey();
-			notes.add(fromChordNote(beats, time, chord, chordTemplate, x, string, chordNoteEntry.getValue(), selected,
-					highlightedString == string, lastWasLinkNext, wrongLinkNext, ctrl));
+			notes.add(fromChordNote(beats, time, chord, chordTemplate, x, string, chordNoteEntry.getValue(),
+					chordNotesVisibility, selected, highlightedString == string, lastWasLinkNext, wrongLinkNext, ctrl));
 		}
 
 		return notes;
@@ -95,6 +101,9 @@ public class EditorNoteDrawingData {
 	public final boolean unpitchedSlide;
 	public final boolean vibrato;
 	public final boolean tremolo;
+	public final boolean ignore;
+	public final boolean onlyBox;
+	public final ChordNotesVisibility chordNotesVisibility;
 
 	public final boolean selected;
 	public final boolean highlighted;
@@ -108,6 +117,7 @@ public class EditorNoteDrawingData {
 			final boolean accent, final Mute mute, final HOPO hopo, final Harmonic harmonic,
 			final BassPickingTechnique bassPickingTech, final List<EditorBendValueDrawingData> bendValues,
 			final Integer slideTo, final boolean unpitchedSlide, final boolean vibrato, final boolean tremolo,
+			final boolean ignore, final boolean onlyBox, final ChordNotesVisibility chordNotesVisibility,
 			final boolean selected, final boolean highlighted, final boolean lastWasLinkNext, final boolean wrongLink,
 			final boolean linkNext) {
 		this.x = x;
@@ -126,6 +136,9 @@ public class EditorNoteDrawingData {
 		this.unpitchedSlide = unpitchedSlide;
 		this.vibrato = vibrato;
 		this.tremolo = tremolo;
+		this.ignore = ignore;
+		this.onlyBox = onlyBox;
+		this.chordNotesVisibility = chordNotesVisibility;
 
 		this.selected = selected;
 		this.highlighted = highlighted;

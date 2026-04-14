@@ -26,7 +26,7 @@ public class GraphicalConfig {
 	public static Theme theme = Theme.MODERN;
 
 	public static int inputSize = 20;
-	public static int chartTextHeight = 20;
+	public static int chartTextHeight = 10;
 	public static int eventsChangeHeight = 10;
 	public static int noteWidth = 25;
 	public static int noteHeight = 25;
@@ -64,7 +64,7 @@ public class GraphicalConfig {
 
 	static {
 		valueAccessors.put("theme", forEnum(Theme.class, v -> theme = v, () -> theme, theme));
-//		valueAccessors.put("inputSize", forInteger(v -> inputSize = v, () -> inputSize, inputSize));
+		valueAccessors.put("inputSize", forInteger(v -> inputSize = v, () -> inputSize, inputSize));
 		valueAccessors.put("chartTextHeight",
 				forInteger(v -> chartTextHeight = v, () -> chartTextHeight, chartTextHeight));
 		valueAccessors.put("eventsChangeHeight",

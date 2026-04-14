@@ -11,6 +11,7 @@ import log.charter.data.song.HandShape;
 import log.charter.data.song.Phrase;
 import log.charter.data.song.SectionType;
 import log.charter.data.song.ToneChange;
+import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightLine;
@@ -72,9 +73,11 @@ public interface HighwayDrawer {
 
 	void addFHPHighlight(int x);
 
-	void addChordName(int x, String chordName);
+	void addChordBox(int x, Chord chord);
 
 	void addNote(final EditorNoteDrawingData note);
+
+	void addChordName(int x, String chordName);
 
 	void addSoundHighlight(int x, int length, Optional<ChordOrNote> originalSound, Optional<ChordTemplate> template,
 			int string, boolean drawOriginalStrings);

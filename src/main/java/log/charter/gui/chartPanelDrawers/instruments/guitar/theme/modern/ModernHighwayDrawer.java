@@ -10,6 +10,7 @@ import log.charter.data.song.HandShape;
 import log.charter.data.song.Phrase;
 import log.charter.data.song.SectionType;
 import log.charter.data.song.ToneChange;
+import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.gui.chartPanelDrawers.data.EditorNoteDrawingData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightLine;
@@ -128,6 +129,11 @@ public class ModernHighwayDrawer implements HighwayDrawer {
 	@Override
 	public void addFHPHighlight(final int x) {
 		fhps.addFHPHighlight(x);
+	}
+
+	@Override
+	public void addChordBox(final int x, final Chord chord) {
+		notes.addChordBox(x, chord);
 	}
 
 	@Override
