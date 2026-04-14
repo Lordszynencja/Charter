@@ -2,6 +2,7 @@ package log.charter.gui.components.toolbar;
 
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.utils.ComponentUtils.addRightPressListener;
+import static log.charter.gui.components.utils.ComponentUtils.numericFilter;
 import static log.charter.gui.components.utils.ComponentUtils.setIcon;
 import static log.charter.util.FileUtils.imagesFolder;
 
@@ -182,6 +183,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		final FieldWithLabel<TextInputWithValidation> field = //
 				new FieldWithLabel<>(label, 0, inputWidth, elementHeight, input, labelPosition);
 		field.setBackground(getBackground());
+		field.field.addKeyListener(numericFilter);
 
 		return field;
 	}
