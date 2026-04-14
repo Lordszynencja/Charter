@@ -497,6 +497,10 @@ public class ArrangementFixer {
 	}
 
 	private void fixLevel(final Arrangement arrangement, final Level level) {
+		level.fhps.sort(IConstantFractionalPosition::compareTo);
+		level.sounds.sort(IConstantFractionalPosition::compareTo);
+		level.handShapes.sort(IConstantFractionalPosition::compareTo);
+
 		level.sounds.removeIf(sound -> sound.isChord() //
 				&& (sound.chord().templateId() >= arrangement.chordTemplates.size()//
 						|| sound.chord().chordNotes.isEmpty()));
@@ -525,6 +529,9 @@ public class ArrangementFixer {
 		chartData.songChart.showlights(fixShowlights(chartData.showlights()));
 
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
+			arrangement.eventPoints.sort(IConstantFractionalPosition::compareTo);
+			arrangement.toneChanges.sort(IConstantFractionalPosition::compareTo);
+
 			removeWrongEventPoints(arrangement);
 			removeWrongPositions(arrangement, endFractional);
 			for (final Level level : arrangement.levels) {
