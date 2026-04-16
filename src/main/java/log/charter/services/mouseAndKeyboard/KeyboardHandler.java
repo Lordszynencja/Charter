@@ -182,7 +182,14 @@ public class KeyboardHandler implements KeyListener {
 		Logger.debug("Released " + KeyEvent.getKeyText(e.getKeyCode()));
 
 		try {
-			final int keyCode = e.getKeyCode();
+			int keyCode = e.getKeyCode();
+			if (keyCode == KeyEvent.VK_ADD) {
+				keyCode = KeyEvent.VK_PLUS;
+			}
+			if (keyCode == KeyEvent.VK_SUBTRACT) {
+				keyCode = KeyEvent.VK_MINUS;
+			}
+
 			switch (keyCode) {
 				case VK_CONTROL:
 					shortcut.ctrl = false;

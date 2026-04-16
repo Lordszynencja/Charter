@@ -64,6 +64,8 @@ public class GraphicalConfig {
 	}
 
 	static {
+		setDefaultFPS();
+
 		valueAccessors.put("theme", forEnum(Theme.class, v -> theme = v, () -> theme, theme));
 		valueAccessors.put("inputSize", forInteger(v -> inputSize = v, () -> inputSize, inputSize));
 		valueAccessors.put("chartTextHeight",
@@ -93,8 +95,6 @@ public class GraphicalConfig {
 		valueAccessors.put("FPS", forInteger(v -> FPS = v, () -> FPS, FPS));
 		valueAccessors.put("antialiasingSamples",
 				forInteger(v -> antialiasingSamples = v, () -> antialiasingSamples, antialiasingSamples));
-
-		setDefaultFPS();
 	}
 
 	public static void init() {
