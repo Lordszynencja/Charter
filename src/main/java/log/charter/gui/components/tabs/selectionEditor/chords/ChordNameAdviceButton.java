@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.configs.Tuning;
 import log.charter.gui.components.containers.RowedPanel;
@@ -162,7 +163,7 @@ public class ChordNameAdviceButton extends JButton
 		label.setBorder(new LineBorder(ColorLabel.BASE_BG_4.color()));
 		label.setForeground(ColorLabel.BASE_TEXT.color());
 		label.setFont(getFont());
-		label.setSize(getWidth(), 20);
+		label.setSize(getWidth(), GraphicalConfig.inputSize);
 
 		return new LabelComponent(label, () -> {
 			label.setBackground(ColorLabel.BASE_BG_4.color());

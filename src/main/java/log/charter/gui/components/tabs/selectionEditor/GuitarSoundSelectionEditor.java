@@ -3,6 +3,7 @@ package log.charter.gui.components.tabs.selectionEditor;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Arrays.asList;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.ComponentUtils.numericFilter;
@@ -46,6 +47,7 @@ import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.selectionEditor.bends.SelectionBendEditor;
 import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
 import log.charter.gui.components.tabs.selectionEditor.simpleComponents.BasicCheckboxInput;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.services.data.ChartItemsHandler;
@@ -92,13 +94,13 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private SelectionBendEditor selectionBendEditor;
 
 	public GuitarSoundSelectionEditor(final CurrentSelectionEditor parent) {
-		super(parent);
+		super(parent, false);
 
 		this.parent = parent;
 	}
 
 	private void addMuteInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
-		mute = new ToggleButtonGroupInRow<>(parent, position, 65, Label.MUTE, //
+		mute = new ToggleButtonGroupInRow<>(parent, Label.MUTE, //
 				makeChangeForCommonNotes(NoteInterface::mute), //
 				asList(new Pair<>(Mute.NONE, Label.MUTE_NONE), //
 						new Pair<>(Mute.PALM, Label.MUTE_PALM), //
@@ -106,7 +108,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void addHOPOInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
-		hopo = new ToggleButtonGroupInRow<>(parent, position, 49, Label.HOPO, //
+		hopo = new ToggleButtonGroupInRow<>(parent, Label.HOPO, //
 				makeChangeForCommonNotes(NoteInterface::hopo), //
 				asList(new Pair<>(HOPO.NONE, Label.HOPO_NONE), //
 						new Pair<>(HOPO.HAMMER_ON, Label.HOPO_HAMMER_ON), //
@@ -115,7 +117,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void addBassPickingTechniqueInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
-		bassPickingTechnique = new ToggleButtonGroupInRow<>(parent, position, 65, Label.BASS_PICKING_TECHNIQUE, //
+		bassPickingTechnique = new ToggleButtonGroupInRow<>(parent, Label.BASS_PICKING_TECHNIQUE, //
 				makeChangeForCommonNotes(NoteInterface::bassPicking), //
 				asList(new Pair<>(BassPickingTechnique.NONE, Label.BASS_PICKING_NONE), //
 						new Pair<>(BassPickingTechnique.SLAP, Label.BASS_PICKING_SLAP), //
@@ -123,7 +125,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	}
 
 	private void addHarmonicInputs(final CurrentSelectionEditor parent, final RowedPosition position) {
-		harmonic = new ToggleButtonGroupInRow<>(parent, position, 65, Label.HARMONIC, //
+		harmonic = new ToggleButtonGroupInRow<>(parent, Label.HARMONIC, //
 				makeChangeForCommonNotes(NoteInterface::harmonic), //
 				asList(new Pair<>(Harmonic.NONE, Label.HARMONIC_NONE), //
 						new Pair<>(Harmonic.NORMAL, Label.HARMONIC_NORMAL), //
@@ -135,7 +137,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 				new IntegerValueValidator(1, InstrumentConfig.frets, true), this::changeSlideFret, false);
 		slideFretInput.addKeyListener(numericFilter);
 
-		slideFret = new FieldWithLabel<>(Label.SLIDE_PANE_FRET, 60, 30, 20, slideFretInput, LabelPosition.LEFT);
+		slideFret = new FieldWithLabel<>(Label.SLIDE_PANE_FRET, 60, 30, 20, slideFretInput, LabelPosition.LEFT_CLOSE);
 		parent.add(slideFret, position);
 	}
 
@@ -160,8 +162,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private void addBendEditor(final int x) {
 		selectionBendEditor = new SelectionBendEditor(parent, chartData, guitarSoundsStatusesHandler, selectionManager,
 				undoSystem);
-		selectionBendEditor.setLocation(x, parent.sizes.getY(2));
-		parent.add(selectionBendEditor);
 	}
 
 	public void addTo(final CurrentSelectionEditor selectionEditor) {
@@ -482,7 +482,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		vibrato.setVisible(false);
 		tremolo.setVisible(false);
 
-		selectionBendEditor.setVisible(false);
+		selectionBendEditor.setVisibility(false);
 	}
 
 	private <T> T getValueFromSelectedStrings(final Function<Note, T> noteValueGetter,
@@ -592,9 +592,35 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 
 		if (selected.size() == 1) {
 			selectionBendEditor.onChangeSelection(selected.get(0));
-			selectionBendEditor.setVisible(true);
+			selectionBendEditor.setVisibility(true);
 		} else {
-			selectionBendEditor.setVisible(false);
+			selectionBendEditor.setVisibility(false);
 		}
+	}
+
+	public void recalculateSizes() {
+		mute.recalculateSizes(inputSize / 2, inputSize / 2, inputSize * 12);
+		hopo.recalculateSizes(inputSize / 2, inputSize * 11 / 4, inputSize * 12);
+		bassPickingTechnique.recalculateSizes(inputSize / 2, inputSize * 5, inputSize * 12);
+		harmonic.recalculateSizes(inputSize / 2, inputSize * 29 / 4, inputSize * 12);
+
+		ComponentUtils.resize(slideFret, inputSize / 2, inputSize * 38 / 4, inputSize * 5 / 2, inputSize);
+		ComponentUtils.resize(unpitchedSlide, inputSize * 9 / 2, inputSize * 38 / 4, inputSize * 3, inputSize);
+
+		ComponentUtils.resize(vibrato, inputSize / 2, inputSize * 43 / 4, inputSize * 5 / 2, inputSize);
+		ComponentUtils.resize(tremolo, inputSize * 9 / 2, inputSize * 43 / 4, inputSize * 3, inputSize);
+
+		ComponentUtils.resize(accent, inputSize / 2, inputSize * 48 / 4, inputSize * 5 / 2, inputSize);
+		ComponentUtils.resize(linkNext, inputSize * 9 / 2, inputSize * 48 / 4, inputSize * 3, inputSize);
+
+		ComponentUtils.resize(splitIntoNotes, inputSize / 2, inputSize * 53 / 4, inputSize * 5 / 2, inputSize);
+		ComponentUtils.resize(onlyBox, inputSize * 9 / 2, inputSize * 53 / 4, inputSize * 3, inputSize);
+
+		ComponentUtils.resize(ignore, inputSize / 2, inputSize * 58 / 4, inputSize * 5 / 2, inputSize);
+		ComponentUtils.resize(passOtherNotes, inputSize * 9 / 2, inputSize * 58 / 4, inputSize * 3, inputSize);
+
+		recalculateSizesWithReposition(inputSize * 14, inputSize / 2);
+
+		selectionBendEditor.recalculateSizesAndReposition(inputSize * 45, inputSize * 7 / 2);
 	}
 }

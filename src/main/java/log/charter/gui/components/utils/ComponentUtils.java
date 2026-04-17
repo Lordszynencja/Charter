@@ -6,6 +6,7 @@ import static java.awt.event.KeyEvent.VK_DOWN;
 import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_UP;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -27,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import log.charter.data.config.Localization.Label;
+import log.charter.gui.components.simple.FieldWithLabel;
 
 public class ComponentUtils {
 	public enum ConfirmAnswer {
@@ -185,6 +187,63 @@ public class ComponentUtils {
 		for (final ComponentWithOffset component : components) {
 			component.setLocationFor(middleX);
 		}
+	}
+
+	public static void resize(final FieldWithLabel<?> c, final int x, final int y, int labelLength,
+			final int inputLength) {
+		switch (c.labelPosition) {
+			case LEFT:
+			case LEFT_CLOSE:
+				setComponentBounds(c, x, y, labelLength + inputLength, inputSize);
+				c.label.setFont(c.label.getFont().deriveFont(inputSize * 0.6f));
+				setComponentBounds(c.label, 0, 0, labelLength, inputSize);
+				c.field.setFont(c.field.getFont().deriveFont(inputSize * 0.6f));
+				setComponentBounds(c.field, labelLength, 0, inputLength, inputSize);
+				break;
+			case LEFT_PACKED:
+				c.label.setFont(c.label.getFont().deriveFont(inputSize * 0.6f));
+				labelLength = c.getTextWidth();
+				setComponentBounds(c.label, 0, 0, labelLength, inputSize);
+				c.field.setFont(c.field.getFont().deriveFont(inputSize * 0.6f));
+				setComponentBounds(c.field, labelLength, 0, inputLength, inputSize);
+				setComponentBounds(c, x, y, labelLength + inputLength, inputSize);
+				break;
+			case RIGHT:
+			case RIGHT_CLOSE:
+				setComponentBounds(c, x, y, labelLength + inputLength, inputSize);
+				c.field.setFont(c.field.getFont().deriveFont(inputSize * 0.6f));
+				setComponentBounds(c.field, 0, 0, inputLength, inputSize);
+				c.label.setFont(c.label.getFont().deriveFont(inputSize * 0.6f));
+				setComponentBounds(c.label, inputLength, 0, labelLength, inputSize);
+				break;
+			case RIGHT_PACKED:
+				c.field.setFont(c.field.getFont().deriveFont(inputSize * 0.6f));
+				setComponentBounds(c.field, 0, 0, inputLength, inputSize);
+				c.label.setFont(c.label.getFont().deriveFont(inputSize * 0.6f));
+				labelLength = c.getTextWidth();
+				setComponentBounds(c.label, inputLength, 0, labelLength, inputSize);
+				setComponentBounds(c, x, y, labelLength + inputLength, inputSize);
+				break;
+			default:
+				break;
+		}
+	}
+
+	public static void resize(final JLabel label, final Component field, final int x, final int y,
+			final int labelLength, final int inputLength) {
+		label.setFont(label.getFont().deriveFont(inputSize * 0.6f));
+		setComponentBounds(label, x, y, labelLength, inputSize);
+		field.setFont(field.getFont().deriveFont(inputSize * 0.6f));
+		setComponentBounds(field, x + labelLength, y, inputLength, inputSize);
+	}
+
+	public static void resize(final Component c, final int x, final int y, final int length) {
+		resize(c, x, y, length, inputSize);
+	}
+
+	public static void resize(final Component c, final int x, final int y, final int length, final int height) {
+		c.setFont(c.getFont().deriveFont(inputSize * 0.6f));
+		setComponentBounds(c, x, y, length, height);
 	}
 
 	public static void addComponentCenteringOnResize(final Container parent, final ComponentWithOffset... components) {

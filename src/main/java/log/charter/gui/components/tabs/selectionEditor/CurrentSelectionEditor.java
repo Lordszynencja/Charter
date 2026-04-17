@@ -1,9 +1,11 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
 import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.data.types.PositionType.GUITAR_NOTE;
 import static log.charter.data.types.PositionType.HAND_SHAPE;
 import static log.charter.data.types.PositionType.NONE;
+import static log.charter.gui.components.utils.ComponentUtils.setComponentSize;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.position.virtual.IVirtualPosition;
 import log.charter.data.types.PositionType;
 import log.charter.gui.components.containers.RowedPanel;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.lookAndFeel.CharterCheckBox;
 import log.charter.services.CharterContext;
@@ -129,7 +132,7 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		charterContext.initObject(handShapeSelectionEditor);
 		handShapeSelectionEditor.addTo(this);
 
-		hideAllfieldsExcept(null);
+		recalculateSizes();
 
 		addKeyListener(keyboardHandler);
 	}
@@ -219,5 +222,28 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		final JCheckBox stringSelected = stringSelects.get(string);
 		stringSelected.setSelected(!stringSelected.isSelected());
 		stringSelected.repaint();
+	}
+
+	public void recalculateSizes() {
+		for (final JCheckBox stringSelect : stringSelects) {
+			setComponentSize(stringSelect, inputSize, inputSize);
+		}
+
+		guitarSoundSelectionEditor.recalculateSizes();
+		handShapeSelectionEditor.recalculateSizes();
+
+		for (final SelectionEditorPart<?> parts : parts.values()) {
+			parts.recalculateSizes();
+		}
+
+		final ISelectionAccessor<? extends IVirtualPosition> selected = selectionManager.selectedAccessor();
+		if (selected == null || !selected.isSelected()) {
+			hideAllfieldsExcept(NONE);
+			return;
+		}
+
+		hideAllfieldsExcept(selected.type());
+
+		ComponentUtils.resize(this, 0, 0, inputSize * 76, inputSize * 16);
 	}
 }

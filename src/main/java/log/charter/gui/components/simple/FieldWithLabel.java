@@ -28,7 +28,7 @@ public class FieldWithLabel<T extends Component> extends Container {
 
 	public ColorLabel backgroundColor = null;
 
-	private final LabelPosition labelPosition;
+	public final LabelPosition labelPosition;
 	public final JLabel label;
 	public final T field;
 
@@ -116,7 +116,7 @@ public class FieldWithLabel<T extends Component> extends Container {
 		};
 	}
 
-	private int getTextWidth() {
+	public int getTextWidth() {
 		final String text = label.getText();
 		if (text == null) {
 			return 0;

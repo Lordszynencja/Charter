@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JTabbedPane;
 
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.lookAndFeel.CharterTabbedPaneUI;
 
@@ -93,5 +94,9 @@ public class CharterTabbedPane extends JTabbedPane implements ComponentListener 
 
 	@Override
 	public void componentHidden(final ComponentEvent e) {
+	}
+
+	public void recalculateSizes() {
+		setFont(getFont().deriveFont(GraphicalConfig.inputSize * 0.6f));
 	}
 }

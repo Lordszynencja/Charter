@@ -530,6 +530,8 @@ public class GuitarSoundsHandler {
 			default:
 				break;
 		}
+
+		currentSelectionEditor.selectionChanged(false);
 	}
 
 	private ChordTemplate setFingerOnTemplate(final Set<Integer> editedStrings, final ChordTemplate template,

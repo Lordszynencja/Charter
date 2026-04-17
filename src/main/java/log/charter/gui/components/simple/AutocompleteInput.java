@@ -225,7 +225,7 @@ public class AutocompleteInput<T> extends JTextField
 		label.setBorder(new LineBorder(ColorLabel.BASE_BG_4.color()));
 		label.setForeground(ColorLabel.BASE_TEXT.color());
 		label.setFont(AutocompleteInput.this.getFont());
-		label.setSize(getWidth(), 20);
+		label.setSize(getWidth(), getHeight());
 
 		return new LabelComponent(label, () -> {
 			label.setBackground(ColorLabel.BASE_BG_4.color());

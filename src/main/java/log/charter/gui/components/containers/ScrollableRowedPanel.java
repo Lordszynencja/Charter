@@ -20,7 +20,7 @@ public class ScrollableRowedPanel extends CharterScrollPane {
 		return panel;
 	}
 
-	private final PaneSizes sizes;
+	public final PaneSizes sizes;
 	private final JPanel panel;
 
 	public ScrollableRowedPanel(final int width, final int rows) {

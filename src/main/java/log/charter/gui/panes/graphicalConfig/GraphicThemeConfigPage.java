@@ -30,7 +30,7 @@ public class GraphicThemeConfigPage implements Page {
 			Label.SIZE_XXL };
 	private static final int[] sizesChartMap = { 2, 3, 4, 6, 8 };
 	private static final int[] sizesText = { 7, 10, 15, 20, 25 };
-	private static final int[] sizesInputs = { 15, 20, 30, 40, 50 };
+	private static final int[] sizesInputs = { 16, 22, 33, 44, 55 };
 	private static final int[] sizesTiming = { 16, 24, 36, 48, 60 };
 	private static final int[] sizesNotes = { 17, 25, 37, 51, 63 };
 

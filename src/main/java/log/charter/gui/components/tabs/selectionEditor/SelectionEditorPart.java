@@ -38,4 +38,6 @@ public abstract class SelectionEditorPart<T extends IVirtualPosition> {
 	public void selectionChanged() {
 		undoAdded = false;
 	}
+
+	public abstract void recalculateSizes();
 }

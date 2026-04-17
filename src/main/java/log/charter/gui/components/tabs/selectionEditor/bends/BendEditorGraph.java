@@ -4,9 +4,10 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.round;
 import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
+import static log.charter.data.config.GraphicalConfig.inputSize;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getAsOdd;
 import static log.charter.util.Utils.formatBendValue;
 
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
@@ -29,18 +30,29 @@ import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPosition;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.util.data.Fraction;
 import log.charter.util.data.Position2D;
 
 public class BendEditorGraph extends JComponent implements MouseListener, MouseMotionListener {
-	private static final int beatWidth = 100;
-	private static final int labelsWidth = 30;
 	private static final int bendValueDenominator = 2;
 	private static final int maxBendInternalValue = InstrumentConfig.maxBendValue * bendValueDenominator;
-	public static final int height = 20 + 10 * maxBendInternalValue;
+
+	private static int beatWidth = inputSize * 8;
+	private static int labelsWidth = inputSize * 3 / 2;
+	private static int dotSize = getAsOdd(max(3, inputSize / 5));
+	private static int highlightSize = getAsOdd(max(5, inputSize / 3));
+
+	public static int preferredheight = inputSize * (2 + maxBendInternalValue) / 2;
+
+	public static void recalculateSizes() {
+		beatWidth = inputSize * 8;
+		labelsWidth = inputSize * 3 / 2;
+		preferredheight = inputSize * (2 + maxBendInternalValue) / 2;
+	}
 
 	private static int getYFromBendValue(final int value) {
-		return height - 5 - (int) round(value * 10);
+		return preferredheight - inputSize / 4 - value * inputSize / 2;
 	}
 
 	private static int getValueFromY(final int y) {
@@ -133,14 +145,9 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 	}
 
 	private void calculateSize() {
-		final int width = max(labelsWidth + 21 + beatWidth * 2,
-				labelsWidth + 21 + (lastBeatId - firstBeatId) * beatWidth);
-		final Dimension size = new Dimension(width, height);
-		setMinimumSize(size);
-		setMaximumSize(size);
-		setPreferredSize(size);
-		setSize(size);
-
+		final int width = max(labelsWidth + inputSize + beatWidth * 2,
+				labelsWidth + inputSize + (lastBeatId - firstBeatId) * beatWidth);
+		ComponentUtils.setComponentSize(this, width, preferredheight);
 		revalidate();
 	}
 
@@ -318,11 +325,11 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 		}
 
 		g.setColor(ColorLabel.BASE_TEXT_INPUT.color());
-		g.setFont(new Font(Font.DIALOG, Font.PLAIN, 10));
+		g.setFont(new Font(Font.DIALOG, Font.PLAIN, inputSize / 2));
 		for (int halfSteps = 0; halfSteps <= InstrumentConfig.maxBendValue; halfSteps++) {
 			final int bendValue = halfSteps * 2;
-			final int y = getYFromBendValue(bendValue) + 4;
-			g.drawString(formatBendValue(bendValue), 2, y);
+			final int y = getYFromBendValue(bendValue) + inputSize / 4;
+			g.drawString(formatBendValue(bendValue), inputSize / 4, y);
 		}
 	}
 
@@ -342,9 +349,9 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 				final int x = highlightedBend.x;
 				g.drawLine(x, getYFromBendValue(maxBendInternalValue), x, getYFromBendValue(0));
 			} else {
-				final int x = highlightedBend.x - 2;
-				final int y = getYFromBendValue(highlightedBend.value) - 2;
-				g.fillRect(x, y, 5, 5);
+				final int x = highlightedBend.x - highlightSize / 2;
+				final int y = getYFromBendValue(highlightedBend.value) - highlightSize / 2;
+				g.fillRect(x, y, highlightSize, highlightSize);
 			}
 		}
 	}
@@ -385,7 +392,7 @@ public class BendEditorGraph extends JComponent implements MouseListener, MouseM
 			if (previousPoint != null) {
 				g.drawLine(previousPoint.x, previousPoint.y, point.x, point.y);
 			}
-			g.fillRect(point.x - 1, point.y - 1, 3, 3);
+			g.fillRect(point.x - dotSize / 2, point.y - dotSize / 2, dotSize, dotSize);
 
 			previousPoint = point;
 		}

@@ -1,9 +1,9 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.data.config.Localization.Label.TONE_NAME_CANT_BE_EMPTY;
 import static log.charter.data.config.Localization.Label.TONE_NAME_PAST_LIMIT;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
-import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import log.charter.gui.components.simple.AutocompleteInput;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.services.data.selection.ISelectionAccessor;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.services.data.selection.SelectionManager;
 
 public class ToneChangeSelectionEditor extends SelectionEditorPart<ToneChange> {
@@ -39,15 +39,12 @@ public class ToneChangeSelectionEditor extends SelectionEditorPart<ToneChange> {
 
 	@Override
 	public void addTo(final CurrentSelectionEditor selectionEditor) {
-		int row = 0;
 		final AutocompleteInput<String> toneNameInput = new AutocompleteInput<>(selectionEditor, 200, "",
 				this::getPossibleValues, s -> s, this::onSelect);
-		addSelectTextOnFocus(toneNameInput);
 		toneNameInput.setTextChangeListener(this::onToneNameChange);
 
 		toneNameField = new FieldWithLabel<>(Label.TONE_CHANGE_TONE_NAME, 100, 200, 20, toneNameInput,
 				LabelPosition.LEFT);
-		toneNameField.setLocation(10, selectionEditor.sizes.getY(row++));
 		selectionEditor.add(toneNameField);
 	}
 
@@ -56,8 +53,9 @@ public class ToneChangeSelectionEditor extends SelectionEditorPart<ToneChange> {
 		toneNameField.setVisible(visibility);
 	}
 
-	public void selectionChanged(final ISelectionAccessor<ToneChange> selectedToneChangesAccessor) {
-		final List<ToneChange> selectedToneChanges = selectedToneChangesAccessor.getSelectedElements();
+	@Override
+	public void selectionChanged() {
+		final List<ToneChange> selectedToneChanges = getItems();
 
 		final String toneName = getSingleValue(selectedToneChanges, toneChange -> toneChange.toneName, "");
 		toneNameField.field.setTextWithoutUpdate(toneName == null ? "" : toneName);
@@ -115,6 +113,11 @@ public class ToneChangeSelectionEditor extends SelectionEditorPart<ToneChange> {
 	}
 
 	private void onSelect(final String name) {
-		toneNameField.field.setTextWithoutUpdate(name);
+		toneNameField.field.setText(name);
+	}
+
+	@Override
+	public void recalculateSizes() {
+		ComponentUtils.resize(toneNameField, inputSize / 2, inputSize / 2, inputSize * 4, inputSize * 15);
 	}
 }

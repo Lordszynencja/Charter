@@ -110,6 +110,15 @@ public class MidiVocalsReader {
 		endAdded = false;
 	}
 
+	private void addNoteForced(final long t) {
+		current.endPosition(getPosition(t));
+		vocals.add(current);
+		current = null;
+		textAdded = false;
+		startAdded = false;
+		endAdded = false;
+	}
+
 	private void handleLyric(final MidiEvent midiEvent) {
 		if (midiEvent.getMessage().getMessage()[0] == -112) {
 			if (current == null) {
@@ -132,9 +141,15 @@ public class MidiVocalsReader {
 	}
 
 	private void handleLyricsLine(final MidiEvent e) {
-		if (e.getMessage().getMessage()[0] == -112) {
+		final byte[] b = e.getMessage().getMessage();
+		final boolean start = (b[0] & (1 << 4)) > 0;
+		if (start) {
 			lineStarted = true;
-		} else if (e.getMessage().getMessage()[0] == -128) {
+		} else {
+			if (textAdded) {
+				addNoteForced(e.getTick() - midiResolution / 100);
+			}
+
 			if (!vocals.isEmpty()) {
 				vocals.get(vocals.size() - 1).flag(VocalFlag.PHRASE_END);
 			}
@@ -147,7 +162,15 @@ public class MidiVocalsReader {
 	}
 
 	private void handleText(final MidiEvent midiEvent) {
+		if (textAdded) {
+			addNoteForced(midiEvent.getTick() - midiResolution / 100);
+		}
+
 		String text = getTextAsString(midiEvent.getMessage().getMessage());
+		if (text.equals("PART VOCALS")) {
+			return;
+		}
+
 		final boolean connected = text.startsWith("+");
 		if (connected) {
 			text = text.substring(1);
@@ -162,6 +185,7 @@ public class MidiVocalsReader {
 		if (wordPart) {
 			text = text.replaceFirst("-", "");
 		}
+		System.out.println("text:" + text);
 
 		if (current == null || textAdded) {
 			createCurrent(midiEvent.getTick());

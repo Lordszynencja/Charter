@@ -1,6 +1,7 @@
 package log.charter.gui.components.tabs.selectionEditor.bends;
 
 import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,16 +23,14 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.RowedPanel;
-import log.charter.gui.components.utils.PaneSizesBuilder;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.lookAndFeel.CharterRadioButton;
 import log.charter.services.data.GuitarSoundsStatusesHandler;
 import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 
-public class SelectionBendEditor extends RowedPanel {
-	private static final long serialVersionUID = 6095874968137603127L;
-
+public class SelectionBendEditor {
 	private static void invert(final boolean[] values) {
 		for (int i = 0; i < values.length; i++) {
 			values[i] = !values[i];
@@ -43,6 +42,7 @@ public class SelectionBendEditor extends RowedPanel {
 	private final SelectionManager selectionManager;
 	private final UndoSystem undoSystem;
 
+	private final CharterScrollPane scrollPane;
 	private final BendEditorGraph bendEditorGraph;
 
 	private ButtonGroup stringsGroup;
@@ -57,36 +57,30 @@ public class SelectionBendEditor extends RowedPanel {
 	public SelectionBendEditor(final RowedPanel parent, final ChartData chartData,
 			final GuitarSoundsStatusesHandler guitarSoundsStatusesHandler, final SelectionManager selectionManager,
 			final UndoSystem undoSystem) {
-		super(new PaneSizesBuilder(500).build(), 2);
-
 		this.chartData = chartData;
 		this.guitarSoundsStatusesHandler = guitarSoundsStatusesHandler;
 		this.selectionManager = selectionManager;
 		this.undoSystem = undoSystem;
 
-		addRadioButtons();
+		addRadioButtons(parent);
 
 		bendEditorGraph = new BendEditorGraph(this::onChangeBends);
 
-		final CharterScrollPane scrollPane = new CharterScrollPane(bendEditorGraph,
-				JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane = new CharterScrollPane(bendEditorGraph, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.getHorizontalScrollBar().setUnitIncrement(25);
 		scrollPane.validate();
-		this.addWithSettingSize(scrollPane, 20, sizes.getY(1), 440, BendEditorGraph.height + 20);
-
-		setSize(500, sizes.getY(2) + BendEditorGraph.height);
-		setMinimumSize(getSize());
-		setPreferredSize(getSize());
-		setMaximumSize(getSize());
+		parent.add(scrollPane);
 	}
 
-	private void addRadioButtons() {
+	private void addRadioButtons(final RowedPanel parent) {
 		stringsGroup = new ButtonGroup();
 		strings = new ArrayList<>();
 		for (int i = 0; i < InstrumentConfig.maxStrings; i++) {
 			final int string = i;
-			final JRadioButton radioButton = new JRadioButton((string + 1) + "");
+			final JRadioButton radioButton = new JRadioButton();
 			radioButton.addActionListener(e -> onSelectString(string));
-			this.addWithSettingSize(radioButton, 20 + 40 * i, sizes.getY(0), 40, 20);
+			parent.add(radioButton);
 
 			stringsGroup.add(radioButton);
 			strings.add(radioButton);
@@ -178,5 +172,22 @@ public class SelectionBendEditor extends RowedPanel {
 		final Selection<ChordOrNote> selection = getCurrentSelection();
 		selection.selectable.getString(string).ifPresent(note -> note.bendValues(newBends));
 		guitarSoundsStatusesHandler.updateLinkedNote(selection.id);
+	}
+
+	public void setVisibility(final boolean visibility) {
+		scrollPane.getHorizontalScrollBar().setUnitIncrement(25);
+		scrollPane.setVisible(visibility);
+		for (int i = 0; i < strings.size(); i++) {
+			strings.get(i).setVisible(visibility && i < chartData.currentStrings());
+		}
+	}
+
+	public void recalculateSizesAndReposition(final int x, final int y) {
+		ComponentUtils.resize(scrollPane, x, y + inputSize, inputSize * 30, inputSize * 9);
+		ComponentUtils.resize(bendEditorGraph, 0, 0, inputSize * 10, inputSize * 7);
+
+		for (int i = 0; i < strings.size(); i++) {
+			ComponentUtils.resize(strings.get(i), x + inputSize * i * 3 / 2, y, inputSize * 3 / 2);
+		}
 	}
 }

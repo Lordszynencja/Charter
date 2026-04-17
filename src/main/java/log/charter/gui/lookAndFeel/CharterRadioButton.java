@@ -1,5 +1,7 @@
 package log.charter.gui.lookAndFeel;
 
+import static java.lang.Math.min;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -22,7 +24,7 @@ public class CharterRadioButton {
 
 		public RadioIcon(final Color backgroundColor, final Color disabledBackgroundColor, final Color borderColor,
 				final Color selectColor, final Color iconColor) {
-			super(14, 14);
+			super();
 			this.backgroundColor = getDefault(backgroundColor, CharterRadioButton.backgroundColor);
 			this.disabledBackgroundColor = getDefault(disabledBackgroundColor,
 					CharterRadioButton.disabledBackgroundColor);
@@ -52,7 +54,7 @@ public class CharterRadioButton {
 		}
 
 		@Override
-		public void paintIcon(final Component c, final Graphics g, final int x, final int y) {
+		public void paintIcon(final Component c, final Graphics g, int x, int y) {
 			final JRadioButton radioButton = (JRadioButton) c;
 			final ButtonModel model = radioButton.getModel();
 
@@ -62,18 +64,23 @@ public class CharterRadioButton {
 			final Graphics2D g2d = (Graphics2D) g;
 			setupGraphics(g2d);
 
+			final int size = min(c.getWidth(), c.getHeight()) * 7 / 10;
+			x = (c.getWidth() - size) / 2;
+			y = (c.getHeight() - size) / 2;
+			final int gapSize = size / 5;
+
 			// Radio button fill
 			g2d.setColor(fillColor);
-			g2d.fillOval(x + 1, y + 1, width - 2, height - 2);
+			g2d.fillOval(x + gapSize, y + gapSize, size - 2 * gapSize, size - 2 * gapSize);
 
 			// Radio button border
 			g2d.setColor(borderColor);
-			g2d.drawOval(x, y, width - 1, height - 1);
+			g2d.drawOval(x, y, size - 1, size - 1);
 
 			// Radio icon
 			if (model.isSelected()) {
 				g2d.setColor(iconColor);
-				g2d.fillOval(x + 4, y + 4, 6, 6);
+				g2d.fillOval(x + gapSize * 2, y + gapSize * 2, size - gapSize * 4, size - gapSize * 4);
 			}
 		}
 

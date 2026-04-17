@@ -11,6 +11,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.song.FHP;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapePositionWithSize;
 import log.charter.gui.chartPanelDrawers.drawableShapes.ShapeSize;
@@ -41,7 +42,9 @@ public class ModernThemeFHPs implements ThemeFHPs {
 	}
 
 	private Text generateText(final String label, final int x) {
-		return new Text(new Position2D(x + 4, fhpY + 6), fhpFont, label, ColorLabel.FHP);
+		return new Text(
+				new Position2D(x + GraphicalConfig.chartTextHeight / 3, fhpY + GraphicalConfig.chartTextHeight / 3),
+				fhpFont, label, ColorLabel.FHP);
 	}
 
 	private void addFHP(final String label, final int x) {

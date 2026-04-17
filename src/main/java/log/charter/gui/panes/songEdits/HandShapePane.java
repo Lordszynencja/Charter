@@ -68,7 +68,7 @@ public class HandShapePane extends RowedDialog {
 	}
 
 	private void initChordTemplateEditor() {
-		editor = new ChordTemplateEditor(panel);
+		editor = new ChordTemplateEditor(panel, true);
 		editor.init(data, frame, null, () -> template, this::onChordTemplateChange);
 	}
 

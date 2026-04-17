@@ -46,7 +46,7 @@ public class DrawerUtils {
 		phraseNamesY = sectionNamesY + chartTextHeight * 9 / 5;
 		eventNamesY = phraseNamesY + chartTextHeight * 9 / 5;
 		toneChangeY = eventNamesY + chartTextHeight * 9 / 5;
-		fhpY = toneChangeY + chartTextHeight * 9 / 5 + 4;
+		fhpY = toneChangeY + chartTextHeight * 2;
 	}
 
 	private static void setEditAreaSizesForGuitar(final boolean bass, final int strings) {

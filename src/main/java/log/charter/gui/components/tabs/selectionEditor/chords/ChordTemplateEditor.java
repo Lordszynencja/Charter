@@ -4,6 +4,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.data.song.ChordTemplate.fingerIds;
 import static log.charter.data.song.ChordTemplate.fingerNames;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
@@ -29,6 +30,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -47,8 +49,8 @@ import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.ComponentUtils.KeyFilter;
-import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.util.collections.HashMap2;
@@ -174,6 +176,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	}
 
 	public static final int width = 440;
+	private final boolean withArpeggio;
 
 	protected final RowedPanel parent;
 	private boolean parentListenerAdded = false;
@@ -183,7 +186,6 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 	private Supplier<ChordTemplate> chordTemplateSupplier;
 	private boolean editingChordName = false;
-	private int chordTemplateEditorRow;
 
 	private ChordNameAdviceButton chordNameAdviceButton;
 	private JLabel chordNameLabel;
@@ -199,8 +201,9 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 	private int chordNameWidth = 1;
 	private int chordFretsWidth = 1;
 
-	public ChordTemplateEditor(final RowedPanel parent) {
+	public ChordTemplateEditor(final RowedPanel parent, final boolean withArpeggio) {
 		this.parent = parent;
+		this.withArpeggio = withArpeggio;
 	}
 
 	private void generateNoteNamesVisibleCheckbox() {
@@ -226,28 +229,10 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		generateNoteNamesVisibleCheckbox();
 	}
 
-	private int calculatePreviewHeight(final int strings) {
-		return parent.sizes.getHeight(strings);
-	}
-
 	private void setCorrectPositions() {
-		final int strings = chartData.currentStrings();
-
-		final int x = chordTemplatePreview.getX();
-		int y = chordTemplatePreview.getY();
-		setComponentBounds(chordTemplatePreview, x, y, width, chordTemplatePreview.preferredHeight());
-
-		for (int i = 0; i < strings; i++) {
-			y = parent.sizes.getY(chordTemplateEditorRow + 1 + getStringPosition(i, strings));
-
-			final TextInputWithValidation fretInput = fretInputs.get(i);
-			setComponentBounds(fretInput, fretInput.getX(), y, fretInput.getWidth(), fretInput.getHeight());
-
-			final TextInputWithValidation fingerInput = fingerInputs.get(i);
-			setComponentBounds(fingerInput, fingerInput.getX(), y, fingerInput.getWidth(), fingerInput.getHeight());
-		}
-
-		showNoteNames.setLocation(x, chordTemplatePreview.getY() + chordTemplatePreview.preferredHeight() + 5);
+		final int x = fretsLabel.getX();
+		final int y = chordNameAdviceButton.getY();
+		recalculateSizesWithReposition(x, y);
 	}
 
 	public void addChordNameSuggestionButton(final int x, final int row) {
@@ -401,12 +386,11 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		parent.repaint();
 	}
 
-	private void addFretInputs(final RowedPosition position) {
+	private void addFretInputs() {
 		fretsLabel = (JLabel) new JLabel(Label.FRET.label(), JLabel.CENTER);
 		fretsLabel.setHorizontalAlignment(JLabel.CENTER);
 
-		parent.addWithSettingSize(fretsLabel, position, 40, 5, 20);
-		final RowedPosition fretInputPosition = position.copy().newRow().addX(10).startFromHere();
+		parent.add(fretsLabel);
 		for (int i = 0; i < InstrumentConfig.maxStrings; i++) {
 			final int string = i;
 
@@ -417,30 +401,17 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			input.addKeyListener(numericFilter);
 
 			fretInputs.add(input);
-			parent.addWithSettingSize(input, fretInputPosition, 20, 5, 20);
-			fretInputPosition.newRow();
-		}
-
-		final int sizeDifference = fretInputPosition.x() - position.x();
-		if (sizeDifference > 0) {
-			position.addX(sizeDifference);
+			parent.add(input);
 		}
 	}
 
 	public void addChordTemplateEditor(final int baseX, final int row) {
-		chordTemplateEditorRow = row;
-		int x = baseX;
-		final RowedPosition position = new RowedPosition(baseX, parent.sizes.getY(row), parent.sizes.rowDistance);
+		addFretInputs();
 
-		addFretInputs(position);
-
-		x = position.x();
-
-		final int fingerLabelWidth = parent.addLabel(row, x, Label.CHORD_TEMPLATE_FINGER, 50);
-		fingersLabel = (JLabel) parent.getPart(-1);
+		fingersLabel = new JLabel(Label.CHORD_TEMPLATE_FINGER.label(), SwingConstants.LEFT);
 		fingersLabel.setHorizontalAlignment(JLabel.CENTER);
+		parent.add(fingersLabel);
 
-		final int fingerInputX = x + fingerLabelWidth / 2 - 10;
 		for (int i = 0; i < InstrumentConfig.maxStrings; i++) {
 			final int string = i;
 
@@ -466,17 +437,13 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 			}));
 
 			fingerInputs.add(input);
-			final int y = parent.sizes.getY(row + 1 + getStringPosition(string, InstrumentConfig.maxStrings));
-			parent.addWithSettingSize(input, fingerInputX, y, 20, 20);
+			parent.add(input);
 		}
-		x += 5 + max(fingerLabelWidth, 20);
 
-		final int y = parent.sizes.getY(row);
-		parent.addWithSettingSize(chordTemplatePreview, x, y, width,
-				calculatePreviewHeight(InstrumentConfig.maxStrings));
+		parent.add(chordTemplatePreview);
+		parent.add(showNoteNames);
 
-		position.newRows(InstrumentConfig.maxStrings);
-		parent.addWithSettingSize(showNoteNames, position, 150);
+		recalculateSizesWithReposition(baseX, parent.sizes.getY(row));
 	}
 
 	private String validateFinger(final String val) {
@@ -582,9 +549,9 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		final CurrentSelectionEditor currentSelectionEditor = (CurrentSelectionEditor) parent;
 
 		final int strings = chartData.currentStrings();
-		final int x = chordTemplatePreview.getX() + chordTemplatePreview.getWidth() + 10;
+		final int x = chordTemplatePreview.getX() + chordTemplatePreview.getWidth() + inputSize / 2;
 		for (int string = 0; string < strings; string++) {
-			final int y = parent.sizes.getY(chordTemplateEditorRow + 1 + getStringPosition(string, strings));
+			final int y = chordTemplatePreview.getY() + (1 + getStringPosition(string, strings)) * inputSize * 5 / 4;
 			currentSelectionEditor.setStringSelectPosition(string, x, y);
 		}
 	}
@@ -650,5 +617,40 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 
 		chordNameInput.setTextWithoutUpdate("");
 		chordNameInput.removeLabels();
+	}
+
+	public void recalculateSizesWithReposition(final int x, final int y) {
+		final int strings = chartData.currentStrings();
+
+		ComponentUtils.resize(chordNameAdviceButton, x + inputSize * 9 / 2, y, inputSize * 8);
+		ComponentUtils.resize(chordNameLabel, chordNameInput, x + inputSize / 2, y + inputSize * 5 / 4, inputSize * 4,
+				inputSize * 8);
+
+		final int previewX = x + inputSize * 9 / 2;
+		final int previewY = y + (withArpeggio ? inputSize * 5 : inputSize * 4);
+
+		ComponentUtils.resize(fretsLabel, x, previewY, inputSize * 2);
+		ComponentUtils.resize(fingersLabel, x + inputSize * 2, previewY, inputSize * 2);
+
+		final int previewWidth = inputSize * 22;
+		setComponentBounds(chordTemplatePreview, previewX, previewY, previewWidth,
+				chordTemplatePreview.preferredHeight());
+
+		for (int i = 0; i < strings; i++) {
+			final int stringY = previewY + (1 + getStringPosition(i, strings)) * inputSize * 5 / 4;
+			ComponentUtils.resize(fretInputs.get(i), x + inputSize / 2, stringY, inputSize);
+			ComponentUtils.resize(fingerInputs.get(i), x + inputSize * 5 / 2, stringY, inputSize);
+		}
+
+		ComponentUtils.resize(showNoteNames, previewX,
+				chordTemplatePreview.getY() + chordTemplatePreview.preferredHeight() + inputSize / 2, 0, inputSize);
+
+		setComponentBounds(showNoteNames, previewX,
+				chordTemplatePreview.getY() + chordTemplatePreview.preferredHeight() + 5, inputSize * 11, inputSize);
+		setComponentBounds(showNoteNames.field, 0, 0, inputSize, inputSize);
+		showNoteNames.label.setFont(showNoteNames.label.getFont().deriveFont(inputSize * 0.8f));
+		setComponentBounds(showNoteNames.label, inputSize, 0, inputSize * 10, inputSize);
+
+		chordTemplatePreview.changeStringsAmount();
 	}
 }
