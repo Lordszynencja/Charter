@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -24,6 +25,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.containers.CharterTabbedPane.Tab;
@@ -36,20 +38,34 @@ import log.charter.util.ImageUtils;
 public class ErrorsTab extends RowedPanel implements ComponentListener {
 	private static final long serialVersionUID = 1L;
 
-	private static final Icon warningIcon;
-	static {
-		final BufferedImage warningImage = ImageUtils.loadSafeFromDir(imagesFolder, "/warning.png");
-		final BufferedImage iconImage = new BufferedImage(12, 12, BufferedImage.TYPE_4BYTE_ABGR);
-		final Graphics g = iconImage.getGraphics();
+	private static final BufferedImage warningImage;
+	private static Icon warningIcon;
+
+	private static void remakeWarningIcon() {
+		final int size = GraphicalConfig.inputSize * 3 / 5;
+		if (warningImage != null) {
+			warningIcon = new ImageIcon(warningImage.getScaledInstance(-1, size, Image.SCALE_SMOOTH));
+			return;
+		}
+
+		final int x0 = 1;
+		final int dx = (size - 2) / 2;
+		final int x1 = x0 + dx;
+		final int x2 = x1 + dx;
+		final BufferedImage warningImageTmp = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
+		final Graphics g = warningImageTmp.getGraphics();
 		((Graphics2D) g).addRenderingHints(Map.of(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON,
 				RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC));
-		if (warningImage != null) {
-			g.drawImage(warningImage, 0, 0, iconImage.getWidth(), iconImage.getHeight(), null);
-		} else {
-			g.setColor(Color.RED);
-			g.fillPolygon(new int[] { 1, 7, 4 }, new int[] { 7, 7, 1 }, 3);
-		}
-		warningIcon = new ImageIcon(iconImage);
+
+		g.setColor(Color.RED);
+		g.fillPolygon(new int[] { x0, x2, x1 }, new int[] { x2, x2, x0 }, 3);
+
+		warningIcon = new ImageIcon(warningImageTmp);
+	}
+
+	static {
+		warningImage = ImageUtils.loadSafeFromDir(imagesFolder, "/warning.png");
+		remakeWarningIcon();
 	}
 
 	private Tab tab;
@@ -78,18 +94,19 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 
 	private void addColumnsToTable() {
 		tableModel.addColumn(Label.ERRORS_TAB_POSITION.label());
-		tableModel.addColumn(Label.ERRORS_TAB_SEVERITY.label());
 		tableModel.addColumn(Label.ERRORS_TAB_DESCRIPTION.label());
 	}
 
+	private void setColumnWidth(final int column, final int width) {
+		errorsTable.getColumnModel().getColumn(column).setPreferredWidth(width);
+		errorsTable.getColumnModel().getColumn(column).setMinWidth(width);
+		errorsTable.getColumnModel().getColumn(column).setMaxWidth(width);
+		errorsTable.getColumnModel().getColumn(column).setWidth(width);
+	}
+
 	private void setColumnSizes() {
-		errorsTable.setRowHeight(20);
-		errorsTable.getColumnModel().getColumn(0).setPreferredWidth(200);
-		errorsTable.getColumnModel().getColumn(0).setMinWidth(200);
-		errorsTable.getColumnModel().getColumn(0).setMaxWidth(200);
-		errorsTable.getColumnModel().getColumn(1).setPreferredWidth(100);
-		errorsTable.getColumnModel().getColumn(1).setMinWidth(100);
-		errorsTable.getColumnModel().getColumn(1).setMaxWidth(100);
+		errorsTable.setRowHeight(GraphicalConfig.inputSize);
+		setColumnWidth(0, GraphicalConfig.inputSize * 15);
 		errorsTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 	}
 
@@ -173,7 +190,6 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 		for (final ChartError chartError : internalBuffer) {
 			final Vector<Object> row = new Vector<>();
 			row.add(chartError.position.description);
-			row.add(chartError.severity.name());
 			row.add(chartError.message);
 
 			tableModel.addRow(row);
@@ -208,5 +224,14 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 
 	@Override
 	public void componentHidden(final ComponentEvent e) {
+	}
+
+	public void recalculateSizes() {
+		remakeWarningIcon();
+		if (tab.icon != null) {
+			tab.icon = warningIcon;
+		}
+		errorsTable.setFont(errorsTable.getFont().deriveFont(GraphicalConfig.inputSize * 0.8f));
+		setColumnSizes();
 	}
 }

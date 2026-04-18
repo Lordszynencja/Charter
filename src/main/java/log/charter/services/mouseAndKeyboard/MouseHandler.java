@@ -21,6 +21,7 @@ import log.charter.data.song.position.virtual.IVirtualPositionWithEnd;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.simple.ChartMap;
 import log.charter.gui.panes.songEdits.VocalPane;
 import log.charter.io.Logger;
 import log.charter.services.ActionHandler;
@@ -38,6 +39,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	private BeatsService beatsService;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
+	private ChartMap chartMap;
 	private ChartTimeHandler chartTimeHandler;
 	private KeyboardHandler keyboardHandler;
 	private ModeManager modeManager;
@@ -212,6 +214,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			mouseButtonPressReleaseHandler.remove(e);
 			cancelAllActions();
 			actionHandler.clearNumbers();
+
+			chartMap.redraw();
 		} catch (final Exception ex) {
 			Logger.error("Exception on mouse released", ex);
 		}
@@ -362,6 +366,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 			}
 			actionHandler.changeLength(change);
 		}
+
+		chartMap.redraw();
 	}
 
 }

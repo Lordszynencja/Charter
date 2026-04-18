@@ -1,5 +1,6 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
@@ -16,8 +17,8 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.validators.ValueValidator;
-import log.charter.services.data.selection.ISelectionAccessor;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
 
@@ -107,8 +108,9 @@ public class VocalSelectionEditor extends SelectionEditorPart<Vocal> {
 		vocalPhraseEnd.setVisible(visibility);
 	}
 
-	public void selectionChanged(final ISelectionAccessor<Vocal> selectedVocalsAccessor) {
-		final List<Vocal> selectedVocals = selectedVocalsAccessor.getSelectedElements();
+	@Override
+	public void selectionChanged() {
+		final List<Vocal> selectedVocals = getItems();
 		if (selectedVocals.size() == 1) {
 			final String text = selectedVocals.get(0).text();
 			vocalText.field.setTextWithoutEvent(text);
@@ -123,5 +125,12 @@ public class VocalSelectionEditor extends SelectionEditorPart<Vocal> {
 
 		vocalPhraseEnd.field.setEnabled(flag != VocalFlag.WORD_PART);
 		vocalPhraseEnd.field.setSelected(flag == VocalFlag.PHRASE_END);
+	}
+
+	@Override
+	public void recalculateSizes() {
+		ComponentUtils.resize(vocalText, inputSize / 2, inputSize / 2, inputSize * 4, inputSize * 8);
+		ComponentUtils.resize(vocalWordPart, inputSize / 2, inputSize * 7 / 4, inputSize * 4, inputSize);
+		ComponentUtils.resize(vocalPhraseEnd, inputSize / 2, inputSize * 3, inputSize * 4, inputSize);
 	}
 }

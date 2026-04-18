@@ -35,6 +35,8 @@ import log.charter.gui.components.tabs.TextTab;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.errorsTab.ErrorsTab;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
+import log.charter.gui.components.tabs.selectionEditor.bends.BendEditorGraph;
+import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplatePreview;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.lookAndFeel.CharterTheme;
@@ -162,8 +164,17 @@ public class CharterFrame extends JFrame implements Initiable {
 	}
 
 	private void resizeComponents() {
+		BendEditorGraph.recalculateSizes();
+		ChordTemplatePreview.recalculateSizes();
+
 		chartToolbar.recalculateSizes();
 		charterMenuBar.refreshMenus();
+		currentSelectionEditor.recalculateSizes();
+		chordTemplatesEditorTab.recalculateSizes();
+		errorsTab.recalculateSizes();
+		textTab.recalculateSizes();
+		helpTab.recalculateSizes();
+		tabs.recalculateSizes();
 
 		final Insets insets = getInsets();
 		final int width = WindowStateConfig.width - insets.left - insets.right;

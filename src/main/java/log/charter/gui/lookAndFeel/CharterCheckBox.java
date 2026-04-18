@@ -24,7 +24,7 @@ public class CharterCheckBox {
 
 		public CheckBoxIcon(final Color backgroundColor, final Color disabledBackgroundColor, final Color borderColor,
 				final Color selectColor, final Color iconColor) {
-			super(14, 14);
+			super();
 			this.backgroundColor = backgroundColor;
 			this.disabledBackgroundColor = disabledBackgroundColor;
 			this.borderColor = borderColor;
@@ -40,22 +40,16 @@ public class CharterCheckBox {
 			this(null, null, null, null, null);
 		}
 
+		private void setupGraphics(final Graphics2D g2d) {
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
+
 		private Color getColor(final Color inputColor, final ColorLabel colorLabel) {
 			return (inputColor != null) ? inputColor : colorLabel.color();
 		}
 
-		private void paintFill(final JCheckBox checkBox, final Graphics2D g, final int x, final int y) {
-			if (!checkBox.isEnabled()) {
-				g.setColor(getColor(disabledBackgroundColor, ColorLabel.BASE_BG_2));
-			} else if (checkBox.isSelected()) {
-				g.setColor(getColor(selectColor, ColorLabel.BASE_HIGHLIGHT));
-			} else {
-				g.setColor(getColor(backgroundColor, ColorLabel.BASE_BG_INPUT));
-			}
-			g.fill(new RoundRectangle2D.Double(x + 1, y + 1, width - 2, height - 2, 0, 0));
-		}
-
-		private void paintBorder(final JCheckBox checkBox, final Graphics2D g, final int x, final int y) {
+		private void paintBorder(final JCheckBox checkBox, final Graphics2D g, final int x, final int y,
+				final int size) {
 			if (checkBox.isSelected()) {
 				g.setColor(getColor(selectColor, ColorLabel.BASE_HIGHLIGHT));
 			} else {
@@ -64,48 +58,73 @@ public class CharterCheckBox {
 
 			final RoundRectangle2D.Double roundedRectangle;
 			if (checkBox.hasFocus()) {
-				roundedRectangle = new RoundRectangle2D.Double(x - 1, y - 1, width + 2, height + 2, 5, 5);
+				roundedRectangle = new RoundRectangle2D.Double(x - 1, y - 1, size + 2, size + 2, 5, 5);
 			} else {
-				roundedRectangle = new RoundRectangle2D.Double(x, y, width, height, 5, 5);
+				roundedRectangle = new RoundRectangle2D.Double(x, y, size, size, 5, 5);
 			}
+
 			g.fill(roundedRectangle);
 		}
 
-		private void drawCheckMark(final JCheckBox checkBox, final Graphics2D g, final int x, final int y) {
+		private void paintFill(final JCheckBox checkBox, final Graphics2D g, final int x, final int y, final int size) {
+			if (!checkBox.isEnabled()) {
+				g.setColor(getColor(disabledBackgroundColor, ColorLabel.BASE_BG_2));
+			} else if (checkBox.isSelected()) {
+				g.setColor(getColor(selectColor, ColorLabel.BASE_HIGHLIGHT));
+			} else {
+				g.setColor(getColor(backgroundColor, ColorLabel.BASE_BG_INPUT));
+			}
+
+			final int borderThickness = size / 10;
+			g.fill(new RoundRectangle2D.Double(x + borderThickness, y + borderThickness, size - 2 * borderThickness,
+					size - 2 * borderThickness, 0, 0));
+		}
+
+		private Path2D.Double createCheckmark(final int x, final int y, final int size) {
+			final Path2D.Double checkmark = new Path2D.Double();
+			final int x0 = x + size / 10;
+			final int x1 = x + size * 2 / 5;
+			final int x2 = x + size * 9 / 10;
+			final int y0 = y + size * 4 / 5;
+			final int y1 = y + size / 2;
+			final int y2 = y + size / 5;
+
+			checkmark.moveTo(x0, y1);
+			checkmark.lineTo(x1, y0);
+			checkmark.lineTo(x2, y2);
+
+			return checkmark;
+		}
+
+		private void drawCheckMark(final JCheckBox checkBox, final Graphics2D g, final int x, final int y,
+				final int size) {
 			if (!checkBox.isSelected()) {
 				return;
 			}
 
 			g.setColor(getColor(iconColor, ColorLabel.BASE_TEXT_INPUT));
-			g.setStroke(new BasicStroke(1.5f));
+			g.setStroke(new BasicStroke(checkBox.getWidth() / 10f));
 
-			final Path2D.Double checkmark = createCheckmark(x, y);
+			final Path2D.Double checkmark = createCheckmark(x, y, size);
 			g.draw(checkmark);
 
 		}
 
 		@Override
-		public void paintIcon(final Component c, final Graphics g, final int x, final int y) {
+		public void paintIcon(final Component c, final Graphics g, int x, int y) {
 			final JCheckBox checkBox = (JCheckBox) c;
 			final Graphics2D g2d = (Graphics2D) g;
 			setupGraphics(g2d);
 
-			paintBorder(checkBox, g2d, x, y);
-			paintFill(checkBox, g2d, x, y);
-			drawCheckMark(checkBox, g2d, x, y);
-		}
+			final int w = c.getWidth() - x * 2;
+			final int h = c.getHeight() - y * 2;
+			final int size = Math.min(w, h);
+			x = (c.getWidth() - size) / 2;
+			y = (c.getHeight() - size) / 2;
 
-		private void setupGraphics(final Graphics2D g2d) {
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		}
-
-		private Path2D.Double createCheckmark(final int x, final int y) {
-			final Path2D.Double checkmark = new Path2D.Double();
-			checkmark.moveTo(x + 3, y + 7);
-			checkmark.lineTo(x + 6, y + 10);
-			checkmark.lineTo(x + 11, y + 5);
-
-			return checkmark;
+			paintBorder(checkBox, g2d, x, y, size);
+			paintFill(checkBox, g2d, x, y, size);
+			drawCheckMark(checkBox, g2d, x, y, size);
 		}
 	}
 

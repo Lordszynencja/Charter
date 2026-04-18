@@ -1,10 +1,13 @@
 package log.charter.gui.components.tabs.chordEditor;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
+
 import java.awt.Dimension;
 import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JScrollBar;
 import javax.swing.ScrollPaneConstants;
 
 import log.charter.data.ChartData;
@@ -19,13 +22,14 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedPanel;
 import log.charter.gui.components.containers.ScrollableRowedPanel;
 import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.PaneSizes;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 
 public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
-	static final int listWidth = 450;
+	static int listWidth = 450;
 
 	private static final long serialVersionUID = 1L;
 
@@ -60,14 +64,12 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 		chordTemplatesList.setBackground(ColorLabel.BASE_BG_4.color());
 		chordTemplatesList.getVerticalScrollBar().setUnitIncrement(25);
 
-		chordTemplateEditor = new ChordTemplateEditor(this);
+		chordTemplateEditor = new ChordTemplateEditor(this, true);
 	}
 
 	@Override
 	public void init() {
-		final int width = listWidth + ChordTemplateEditor.width + 200;
 		final int height = sizes.getY(InstrumentConfig.maxStrings + 5);
-
 		addWithSettingSize(chordTemplatesList, 0, 0, listWidth, height);
 
 		chordTemplateEditor.init(chartData, charterFrame, keyboardHandler, () -> chordTemplate, this::templateEdited);
@@ -83,13 +85,7 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 		arpeggioCheckBox = (JCheckBox) getPart(-1);
 		chordTemplateEditor.addChordTemplateEditor(listWidth + 70, 4);
 
-		refreshTemplates();
-
-		final Dimension size = new Dimension(width, height);
-		setMinimumSize(size);
-		setMaximumSize(size);
-		setPreferredSize(size);
-		setSize(size);
+		recalculateSizes();
 	}
 
 	private void templateEdited() {
@@ -112,13 +108,30 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 		}
 	}
 
+	private void refreshChordTemplateInfoSizes(final List<ChordTemplate> chordTemplates) {
+		int maxDifference = 5;
+		for (final ChordTemplate template : chordTemplates) {
+			final int bottom = template.getLowestNotOpenFret(chartData.currentArrangement().capo);
+			final int top = template.getHighestFret();
+			final int range = top - bottom + 1;
+			if (maxDifference < range) {
+				maxDifference = range;
+			}
+		}
+
+		ChordTemplateInfo.maxFretsVisible = maxDifference;
+		ChordTemplateInfo.recalculateSizes();
+	}
+
 	public void refreshTemplates() {
 		chordTemplatesList.getPanel().removeAll();
 
 		final List<ChordTemplate> chordTemplates = chartData.currentChordTemplates();
 		chordTemplatesList.resizePanel(listWidth - 20, chordTemplates.size());
+		refreshChordTemplateInfoSizes(chordTemplates);
+
 		for (int i = 0; i < chordTemplates.size(); i++) {
-			chordTemplatesList.add(new ChordTemplateInfo(chartData, this, i), 0, i);
+			chordTemplatesList.add(new ChordTemplateInfo(chartData, chordTemplatesList, this, i), 0, i);
 		}
 
 		setTemplate();
@@ -157,5 +170,21 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 
 	public Integer getSelectedChordTemplateId() {
 		return currentChordTemplateId;
+	}
+
+	public void recalculateSizes() {
+		listWidth = inputSize * 20;
+		chordTemplatesList.sizes.width = listWidth - inputSize;
+		chordTemplatesList.sizes.rowHeight(inputSize * 5 / 2);
+		chordTemplatesList.setSize(listWidth, sizes.getY(InstrumentConfig.maxStrings + 5));
+		final JScrollBar scrollBar = chordTemplatesList.getVerticalScrollBar();
+		scrollBar.setPreferredSize(new Dimension(inputSize, 1));
+
+		refreshTemplates();
+
+		ComponentUtils.resize(arpeggioLabel, arpeggioCheckBox, chordTemplatesList.sizes.width + inputSize * 5 / 2,
+				inputSize * 7 / 2, inputSize * 4, inputSize);
+
+		chordTemplateEditor.recalculateSizesWithReposition(chordTemplatesList.sizes.width + inputSize * 2, inputSize);
 	}
 }

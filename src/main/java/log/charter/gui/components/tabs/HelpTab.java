@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import javax.swing.JTextPane;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.util.collections.ExpiringValuesList;
 
 public class HelpTab extends JTextPane {
@@ -102,5 +103,9 @@ public class HelpTab extends JTextPane {
 
 		setText(b.toString());
 		lastUpdate = System.currentTimeMillis();
+	}
+
+	public void recalculateSizes() {
+		setFont(getFont().deriveFont(GraphicalConfig.inputSize * 0.7f));
 	}
 }

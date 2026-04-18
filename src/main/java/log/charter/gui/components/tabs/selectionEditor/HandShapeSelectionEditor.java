@@ -1,5 +1,6 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
 import log.charter.gui.components.tabs.selectionEditor.chords.ChordTemplateEditor;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.services.data.GuitarSoundsHandler;
 import log.charter.services.data.fixers.DuplicatedChordTemplatesRemover;
 import log.charter.services.data.fixers.UnusedChordTemplatesRemover;
@@ -44,7 +46,7 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 	private ChordTemplate chordTemplate = new ChordTemplate();
 
 	public HandShapeSelectionEditor(final CurrentSelectionEditor parent) {
-		super(parent);
+		super(parent, true);
 	}
 
 	public void addTo(final CurrentSelectionEditor parent) {
@@ -145,5 +147,14 @@ public class HandShapeSelectionEditor extends ChordTemplateEditor {
 		arpeggioCheckBox.setSelected(chordTemplate.arpeggio);
 		forceArpeggioInRSCheckBox.setSelected(chordTemplate.forceArpeggioInRS);
 		forceArpeggioInRSCheckBox.setEnabled(chordTemplate.arpeggio);
+	}
+
+	public void recalculateSizes() {
+		ComponentUtils.resize(setTemplateButton, inputSize * 31 / 2, inputSize / 2, inputSize * 8);
+		ComponentUtils.resize(arpeggioLabel, arpeggioCheckBox, inputSize, inputSize * 3, inputSize * 4, inputSize);
+		ComponentUtils.resize(forceArpeggioInRSLabel, forceArpeggioInRSCheckBox, inputSize * 7, inputSize * 3,
+				inputSize * 2, inputSize);
+
+		recalculateSizesWithReposition(inputSize / 2, inputSize / 2);
 	}
 }

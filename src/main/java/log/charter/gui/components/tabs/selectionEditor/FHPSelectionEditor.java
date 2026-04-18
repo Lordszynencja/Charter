@@ -1,5 +1,6 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
@@ -15,9 +16,9 @@ import log.charter.data.types.PositionType;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.components.utils.validators.IntValueValidator;
-import log.charter.services.data.selection.ISelectionAccessor;
 
 public class FHPSelectionEditor extends SelectionEditorPart<FHP> {
 	private FieldWithLabel<TextInputWithValidation> fhpFret;
@@ -64,15 +65,22 @@ public class FHPSelectionEditor extends SelectionEditorPart<FHP> {
 		fhpWidth.setVisible(visibility);
 	}
 
-	public void selectionChanged(final ISelectionAccessor<FHP> selectedFHPsAccessor) {
+	@Override
+	public void selectionChanged() {
 		super.selectionChanged();
 
-		final List<FHP> selectedFHPs = selectedFHPsAccessor.getSelectedElements();
+		final List<FHP> fhps = getItems();
 
-		final Integer fret = getSingleValue(selectedFHPs, fhp -> fhp.fret, null);
+		final Integer fret = getSingleValue(fhps, fhp -> fhp.fret, null);
 		fhpFret.field.setTextWithoutEvent(fret == null ? "" : (fret + ""));
 
-		final Integer width = getSingleValue(selectedFHPs, fhp -> fhp.width, null);
+		final Integer width = getSingleValue(fhps, fhp -> fhp.width, null);
 		fhpWidth.field.setTextWithoutEvent(width == null ? "" : (width + ""));
+	}
+
+	@Override
+	public void recalculateSizes() {
+		ComponentUtils.resize(fhpFret, inputSize / 2, inputSize / 2, inputSize * 3, inputSize);
+		ComponentUtils.resize(fhpWidth, inputSize / 2, inputSize * 7 / 4, inputSize * 3, inputSize);
 	}
 }

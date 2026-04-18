@@ -530,6 +530,8 @@ public class GuitarSoundsHandler {
 			default:
 				break;
 		}
+
+		currentSelectionEditor.selectionChanged(false);
 	}
 
 	private ChordTemplate setFingerOnTemplate(final Set<Integer> editedStrings, final ChordTemplate template,
@@ -684,6 +686,67 @@ public class GuitarSoundsHandler {
 				break;
 			default:
 				break;
+		}
+	}
+
+	private void selectNoteLike(final Note note) {
+		final List<ChordOrNote> sounds = chartData.currentSounds();
+		for (int i = 0; i < sounds.size(); i++) {
+			final ChordOrNote sound = sounds.get(i);
+			if (!sound.isNote()) {
+				continue;
+			}
+
+			final Note otherNote = sound.note();
+			if (note.string == otherNote.string && note.fret == otherNote.fret) {
+				selectionManager.addSoundSelection(i);
+			}
+		}
+	}
+
+	private boolean similarChords(final ChordTemplate a, final ChordTemplate b) {
+		if (a.frets.size() != b.frets.size()) {
+			return false;
+		}
+
+		for (final Entry<Integer, Integer> fret : a.frets.entrySet()) {
+			final Integer otherFret = b.frets.get(fret.getKey());
+			if (otherFret == null || otherFret != fret.getValue()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private void selectLikeChord(final Chord chord) {
+		final List<ChordTemplate> templates = chartData.currentChordTemplates();
+		final ChordTemplate template = templates.get(chord.templateId());
+		final List<ChordOrNote> sounds = chartData.currentSounds();
+		for (int i = 0; i < sounds.size(); i++) {
+			final ChordOrNote sound = sounds.get(i);
+			if (!sound.isChord()) {
+				continue;
+			}
+
+			final ChordTemplate otherTemplate = templates.get(sound.chord().templateId());
+			if (similarChords(template, otherTemplate)) {
+				selectionManager.addSoundSelection(i);
+			}
+		}
+	}
+
+	public void selectLike() {
+		final List<ChordOrNote> selected = selectionManager.getSelectedElements(PositionType.GUITAR_NOTE);
+		if (selected.size() != 1) {
+			return;
+		}
+
+		final ChordOrNote base = selected.get(0);
+		if (base.isNote()) {
+			selectNoteLike(base.note());
+		} else {
+			selectLikeChord(base.chord());
 		}
 	}
 }

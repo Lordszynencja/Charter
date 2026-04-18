@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import javax.swing.JTextArea;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.data.config.GraphicalConfig;
 import log.charter.gui.components.containers.CharterScrollPane;
 
 public class TextTab extends CharterScrollPane {
@@ -42,5 +43,9 @@ public class TextTab extends CharterScrollPane {
 
 	public void setText(final String text) {
 		textArea.setText(text);
+	}
+
+	public void recalculateSizes() {
+		textArea.setFont(textArea.getFont().deriveFont(GraphicalConfig.inputSize * 0.8f));
 	}
 }

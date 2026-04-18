@@ -1,5 +1,7 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
+
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,7 @@ import log.charter.data.types.PositionType;
 import log.charter.gui.components.containers.CharterScrollPane;
 import log.charter.gui.components.simple.CharterSelect;
 import log.charter.gui.components.simple.CharterSelect.ItemHolder;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.RowedPosition;
 import log.charter.gui.panes.songEdits.ShowlightPane;
 
@@ -28,8 +31,9 @@ public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
 	private ChartData chartData;
 
 	private DefaultTableModel tableModel;
+	private CharterSelect<ShowlightType> tableCellEditor;
 	private JTable showlightTypesTable;
-	private CharterScrollPane eventsTableScroll;
+	private CharterScrollPane showlightsTableScroll;
 	private JButton addShowlightButton;
 	private JButton removeShowlightButton;
 
@@ -82,10 +86,10 @@ public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
 	private void addShowlightTypes(final CurrentSelectionEditor currentSelectionEditor, final RowedPosition position) {
 		final List<ShowlightType> showlightTypes = ShowlightPane.getAvailableShowlightTypes();
 
-		final CharterSelect<ShowlightType> input = new CharterSelect<>(showlightTypes, null,
-				t -> t == null ? "" : t.label.label(), v -> onShowlightTypesChange());
-		input.setMinimumSize(new Dimension(100, 20));
-		input.setMaximumRowCount(15);
+		tableCellEditor = new CharterSelect<>(showlightTypes, null, t -> t == null ? "" : t.label.label(),
+				v -> onShowlightTypesChange());
+		tableCellEditor.setMinimumSize(new Dimension(100, 20));
+		tableCellEditor.setMaximumRowCount(15);
 
 		tableModel = new DefaultTableModel();
 		tableModel.setRowCount(0);
@@ -94,15 +98,16 @@ public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
 		showlightTypesTable.setShowGrid(true);
 		showlightTypesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		showlightTypesTable.setRowHeight(20);
+		showlightTypesTable.setFont(tableCellEditor.getFont());
 		showlightTypesTable.setTableHeader(new JTableHeader());
 
 		final TableColumn column = showlightTypesTable.getColumnModel().getColumn(0);
-		column.setCellEditor(new DefaultCellEditor(input));
+		column.setCellEditor(new DefaultCellEditor(tableCellEditor));
 
-		eventsTableScroll = new CharterScrollPane(showlightTypesTable);
-		eventsTableScroll.setColumnHeader(null);
+		showlightsTableScroll = new CharterScrollPane(showlightTypesTable);
+		showlightsTableScroll.setColumnHeader(null);
 
-		currentSelectionEditor.addWithSettingSize(eventsTableScroll, position, 300, 20, 200);
+		currentSelectionEditor.addWithSettingSize(showlightsTableScroll, position, 300, 20, 200);
 	}
 
 	private void addAddShowlightButton(final CurrentSelectionEditor currentSelectionEditor,
@@ -111,6 +116,7 @@ public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
 		addShowlightButton.addActionListener(e -> {
 			tableModel.addRow(new Vector<Object>(1));
 			addShowlightButton.setEnabled(tableModel.getRowCount() < 3);
+			removeShowlightButton.setEnabled(tableModel.getRowCount() > 0);
 		});
 
 		currentSelectionEditor.addWithSettingSize(addShowlightButton, position, 150, 10, 30);
@@ -132,7 +138,7 @@ public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
 
 	private void addRemoveEventButton(final CurrentSelectionEditor currentSelectionEditor,
 			final RowedPosition position) {
-		removeShowlightButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_REMOVE.label());
+		removeShowlightButton = new JButton(Label.SHOWLIGHT_REMOVE.label());
 		removeShowlightButton.addActionListener(e -> {
 			final int rowToRemove = getRowToRemove();
 
@@ -142,6 +148,7 @@ public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
 			showlightTypesTable.clearSelection();
 			tableModel.removeRow(rowToRemove);
 			onShowlightTypesChange();
+			addShowlightButton.setEnabled(tableModel.getRowCount() < 3);
 			removeShowlightButton.setEnabled(tableModel.getRowCount() > 0);
 		});
 
@@ -150,7 +157,7 @@ public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
 
 	@Override
 	public void show(final boolean visibility) {
-		eventsTableScroll.setVisible(visibility);
+		showlightsTableScroll.setVisible(visibility);
 		addShowlightButton.setVisible(visibility);
 		removeShowlightButton.setVisible(visibility);
 	}
@@ -181,6 +188,17 @@ public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
 		removeShowlightButton.setEnabled(tableModel.getRowCount() > 0);
 
 		settingData = false;
+	}
+
+	@Override
+	public void recalculateSizes() {
+		showlightTypesTable.setRowHeight(inputSize);
+		showlightTypesTable.setFont(showlightTypesTable.getFont().deriveFont(inputSize * 0.6f));
+		ComponentUtils.resize(showlightsTableScroll, inputSize / 2, inputSize / 2, inputSize * 10, inputSize * 7 / 2);
+		ComponentUtils.resize(tableCellEditor, 0, 0, inputSize * 10);
+
+		ComponentUtils.resize(addShowlightButton, inputSize * 12, inputSize / 2, inputSize * 5);
+		ComponentUtils.resize(removeShowlightButton, inputSize * 12, inputSize * 5 / 2, inputSize * 5);
 	}
 
 }

@@ -1,5 +1,6 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
 
@@ -33,7 +34,7 @@ import log.charter.gui.components.simple.CharterSelect.ItemHolder;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
-import log.charter.gui.components.utils.RowedPosition;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.validators.IntValueValidator;
 
 public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
@@ -46,6 +47,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 
 	private DefaultTableModel tableModel;
 	private JTable eventsTable;
+	private CharterSelect<EventType> tableCellEditor;
 	private CharterScrollPane eventsTableScroll;
 	private JButton eventAddButton;
 	private JButton eventRemoveButton;
@@ -58,21 +60,13 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 
 	@Override
 	public void addTo(final CurrentSelectionEditor currentSelectionEditor) {
-		final RowedPosition position = new RowedPosition(10, currentSelectionEditor.sizes);
-
-		addSection(currentSelectionEditor, position);
-		position.newRow();
-
-		addPhrase(currentSelectionEditor, position);
-		position.newRow();
-
-		addMaxLevel(currentSelectionEditor, position);
-		addSolo(currentSelectionEditor, position);
-		position.newRow();
-
-		addEvents(currentSelectionEditor, position);
-		addNewEventButton(currentSelectionEditor, position.copy());
-		addRemoveEventButton(currentSelectionEditor, position.newRowsInPlace(2));
+		addSection(currentSelectionEditor);
+		addPhrase(currentSelectionEditor);
+		addMaxLevel(currentSelectionEditor);
+		addSolo(currentSelectionEditor);
+		addEvents(currentSelectionEditor);
+		addNewEventButton(currentSelectionEditor);
+		addRemoveEventButton(currentSelectionEditor);
 	}
 
 	private void onSectionChange(final SectionType newSection) {
@@ -87,7 +81,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		}
 	}
 
-	private void addSection(final CurrentSelectionEditor currentSelectionEditor, final RowedPosition position) {
+	private void addSection(final CurrentSelectionEditor currentSelectionEditor) {
 		final List<SectionType> sectionTypes = new ArrayList<>();
 		sectionTypes.add(null);
 		for (final SectionType sectionType : SectionType.values()) {
@@ -98,7 +92,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 				v -> v == null ? "" : v.label.label(), this::onSectionChange);
 
 		section = new FieldWithLabel<>(Label.SECTION_TYPE, 100, 200, 20, input, LabelPosition.LEFT);
-		currentSelectionEditor.add(section, position, 300);
+		currentSelectionEditor.add(section);
 	}
 
 	private List<String> getPossiblePhraseNames(final String text) {
@@ -145,13 +139,13 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		chartData.currentArrangement().clearPhrases();
 	}
 
-	private void addPhrase(final CurrentSelectionEditor currentSelectionEditor, final RowedPosition position) {
+	private void addPhrase(final CurrentSelectionEditor currentSelectionEditor) {
 		final AutocompleteInput<String> input = new AutocompleteInput<>(currentSelectionEditor, 100, "",
 				this::getPossiblePhraseNames, s -> s, this::onPhraseChange);
 		input.setTextChangeListener(this::onPhraseChange);
 
 		phrase = new FieldWithLabel<>(Label.PHRASE_NAME, 100, 100, 20, input, LabelPosition.LEFT);
-		currentSelectionEditor.add(phrase, position, 200);
+		currentSelectionEditor.add(phrase);
 	}
 
 	private void onMaxLevelChange(final int newMaxLevel) {
@@ -168,15 +162,15 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 	}
 
 	private IntValueValidator generateMaxLevelValidator() {
-		return new IntValueValidator(0, chartData.currentArrangement().levels.size());
+		return new IntValueValidator(0, chartData.currentArrangement().levels.size() - 1);
 	}
 
-	private void addMaxLevel(final CurrentSelectionEditor currentSelectionEditor, final RowedPosition position) {
+	private void addMaxLevel(final CurrentSelectionEditor currentSelectionEditor) {
 		final TextInputWithValidation input = generateForInt(0, 30, generateMaxLevelValidator(), this::onMaxLevelChange,
 				false);
 
 		maxLevel = new FieldWithLabel<>(Label.LEVEL, 50, 30, 20, input, LabelPosition.LEFT);
-		currentSelectionEditor.add(maxLevel, position, 80);
+		currentSelectionEditor.add(maxLevel);
 	}
 
 	private void onSoloChange(final boolean newSolo) {
@@ -192,12 +186,12 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		}
 	}
 
-	private void addSolo(final CurrentSelectionEditor currentSelectionEditor, final RowedPosition position) {
+	private void addSolo(final CurrentSelectionEditor currentSelectionEditor) {
 		final JCheckBox input = new JCheckBox();
-		input.addActionListener(e -> { onSoloChange(input.isSelected()); });
+		input.addActionListener(e -> onSoloChange(input.isSelected()));
 
-		solo = new FieldWithLabel<>(Label.GUITAR_BEAT_PANE_PHRASE_SOLO, 50, 20, 20, input, LabelPosition.LEFT);
-		currentSelectionEditor.add(solo, position.addX(10), 70);
+		solo = new FieldWithLabel<>(Label.GUITAR_BEAT_PANE_PHRASE_SOLO, 50, 20, 20, input, LabelPosition.LEFT_CLOSE);
+		currentSelectionEditor.add(solo);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -228,15 +222,15 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		}
 	}
 
-	private void addEvents(final CurrentSelectionEditor currentSelectionEditor, final RowedPosition position) {
+	private void addEvents(final CurrentSelectionEditor currentSelectionEditor) {
 		final List<EventType> eventTypes = new ArrayList<>();
 		eventTypes.add(null);
 		for (final EventType type : EventType.values()) {
 			eventTypes.add(type);
 		}
 
-		final CharterSelect<EventType> input = new CharterSelect<>(eventTypes, null, null, v -> onEventsChange());
-		input.setMinimumSize(new Dimension(100, 20));
+		tableCellEditor = new CharterSelect<>(eventTypes, null, e -> e == null ? "" : e.label, v -> onEventsChange());
+		tableCellEditor.setMinimumSize(new Dimension(100, 20));
 
 		tableModel = new DefaultTableModel();
 		tableModel.setRowCount(0);
@@ -245,22 +239,23 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		eventsTable.setShowGrid(false);
 		eventsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		eventsTable.setRowHeight(20);
+		eventsTable.setFont(tableCellEditor.getFont());
 		eventsTable.setTableHeader(new JTableHeader());
 
 		final TableColumn column = eventsTable.getColumnModel().getColumn(0);
-		column.setCellEditor(new DefaultCellEditor(input));
+		column.setCellEditor(new DefaultCellEditor(tableCellEditor));
 
 		eventsTableScroll = new CharterScrollPane(eventsTable);
 		eventsTableScroll.setColumnHeader(null);
 
-		currentSelectionEditor.addWithSettingSize(eventsTableScroll, position, 300, 20, 200);
+		currentSelectionEditor.add(eventsTableScroll);
 	}
 
-	private void addNewEventButton(final CurrentSelectionEditor currentSelectionEditor, final RowedPosition position) {
+	private void addNewEventButton(final CurrentSelectionEditor currentSelectionEditor) {
 		eventAddButton = new JButton(Label.EVENT_ADD.label());
 		eventAddButton.addActionListener(e -> tableModel.addRow(new Vector<Object>(1)));
 
-		currentSelectionEditor.addWithSettingSize(eventAddButton, position, 150, 10, 30);
+		currentSelectionEditor.add(eventAddButton);
 	}
 
 	private int getRowToRemove() {
@@ -277,8 +272,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		return tableModel.getRowCount() - 1;
 	}
 
-	private void addRemoveEventButton(final CurrentSelectionEditor currentSelectionEditor,
-			final RowedPosition position) {
+	private void addRemoveEventButton(final CurrentSelectionEditor currentSelectionEditor) {
 		eventRemoveButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_REMOVE.label());
 		eventRemoveButton.addActionListener(e -> {
 			if (tableModel.getRowCount() == 0) {
@@ -295,7 +289,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 			onEventsChange();
 		});
 
-		currentSelectionEditor.addWithSettingSize(eventRemoveButton, position, 150, 10, 30);
+		currentSelectionEditor.add(eventRemoveButton);
 	}
 
 	@Override
@@ -333,6 +327,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		this.phrase.field.setTextWithoutUpdate(phrase == null ? "" : phrase);
 
 		final Set<Phrase> phrases = items.stream()//
+				.filter(EventPoint::hasPhrase)//
 				.map(ep -> chartData.currentArrangement().phrases.get(ep.phrase))//
 				.collect(Collectors.toSet());
 
@@ -350,6 +345,22 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		}
 
 		settingData = false;
+	}
+
+	@Override
+	public void recalculateSizes() {
+		ComponentUtils.resize(section, inputSize / 2, inputSize / 2, inputSize * 4, inputSize * 5);
+		ComponentUtils.resize(phrase, inputSize / 2, inputSize * 7 / 4, inputSize * 4, inputSize * 5);
+		ComponentUtils.resize(maxLevel, inputSize / 2, inputSize * 3, inputSize * 2, inputSize);
+		ComponentUtils.resize(solo, inputSize * 9 / 2, inputSize * 3, inputSize * 2, inputSize);
+
+		eventsTable.setRowHeight(inputSize);
+		eventsTable.setFont(eventsTable.getFont().deriveFont(inputSize * 0.6f));
+		ComponentUtils.resize(eventsTableScroll, inputSize / 2, inputSize * 17 / 4, inputSize * 10, inputSize * 5);
+		ComponentUtils.resize(tableCellEditor, 0, 0, inputSize * 10);
+
+		ComponentUtils.resize(eventAddButton, inputSize * 11, inputSize * 17 / 4, inputSize * 5);
+		ComponentUtils.resize(eventRemoveButton, inputSize * 11, inputSize * 25 / 4, inputSize * 5);
 	}
 
 }

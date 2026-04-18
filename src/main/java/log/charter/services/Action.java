@@ -107,6 +107,7 @@ public enum Action {
 	SAVE_PROJECT(EditMode.nonEmpty), //
 	SAVE_PROJECT_AS(EditMode.nonEmpty), //
 	SELECT_ALL(EditMode.withItems), //
+	SELECT_LIKE(GUITAR), //
 	SET_HAND_SHAPE_TEMPLATE_ON_CHORDS(GUITAR), //
 	SLOW_BACKWARD(EditMode.nonEmpty), //
 	SLOW_FORWARD(EditMode.nonEmpty), //
