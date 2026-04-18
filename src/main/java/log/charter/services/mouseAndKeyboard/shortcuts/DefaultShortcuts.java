@@ -103,6 +103,7 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.SAVE_PROJECT, new Shortcut(KeyEvent.VK_S).ctrl());
 		super.set(Action.SAVE_PROJECT_AS, new Shortcut(KeyEvent.VK_S).ctrl().shift());
 		super.set(Action.SELECT_ALL, new Shortcut(KeyEvent.VK_A).ctrl());
+		super.set(Action.SELECT_LIKE, new Shortcut(KeyEvent.VK_F));
 		super.set(Action.SET_HAND_SHAPE_TEMPLATE_ON_CHORDS, new Shortcut(KeyEvent.VK_H).shift());
 		super.set(Action.SLOW_BACKWARD, new Shortcut(KeyEvent.VK_LEFT).ctrl());
 		super.set(Action.SLOW_FORWARD, new Shortcut(KeyEvent.VK_RIGHT).ctrl());

@@ -54,6 +54,7 @@ public enum ShortcutConfigGroup {
 			Action.UNDO, //
 			Action.REDO, //
 			Action.SELECT_ALL, //
+			Action.SELECT_LIKE, //
 			Action.DECREASE_LENGTH, //
 			Action.DECREASE_LENGTH_FAST, //
 			Action.INCREASE_LENGTH, //

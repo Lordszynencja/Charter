@@ -344,6 +344,7 @@ public class Localization {
 		SECTION_WITHOUT_PHRASE("Section without phrase"), //
 		SEEKING_ITEM_WITH_SELECT("Seeking item with select"), //
 		SELECT_ALL("Select all"), //
+		SELECT_LIKE("Select like"), //
 		SELECT_NOTES_BY_TAILS("Select notes by tails"), //
 		SET_DEFAULT_START_SILENCE("Set default starting silence"), //
 		SET_HAND_SHAPE_TEMPLATE_ON_CHORDS("Set hand shape template on chords"), //

@@ -384,6 +384,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.SAVE_PROJECT, songFileHandler::save);
 		actionHandlers.put(Action.SAVE_PROJECT_AS, songFileHandler::saveAs);
 		actionHandlers.put(Action.SELECT_ALL, selectionManager::selectAll);
+		actionHandlers.put(Action.SELECT_LIKE, guitarSoundsHandler::selectLike);
 		actionHandlers.put(Action.SET_HAND_SHAPE_TEMPLATE_ON_CHORDS, guitarSoundsHandler::setHandShapeTemplateOnChords);
 		actionHandlers.put(Action.SNAP_ALL, chartItemsHandler::snapAll);
 		actionHandlers.put(Action.SNAP_SELECTED, chartItemsHandler::snapSelected);
