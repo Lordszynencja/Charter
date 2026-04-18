@@ -162,7 +162,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 	}
 
 	private IntValueValidator generateMaxLevelValidator() {
-		return new IntValueValidator(0, chartData.currentArrangement().levels.size());
+		return new IntValueValidator(0, chartData.currentArrangement().levels.size() - 1);
 	}
 
 	private void addMaxLevel(final CurrentSelectionEditor currentSelectionEditor) {
@@ -327,6 +327,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		this.phrase.field.setTextWithoutUpdate(phrase == null ? "" : phrase);
 
 		final Set<Phrase> phrases = items.stream()//
+				.filter(EventPoint::hasPhrase)//
 				.map(ep -> chartData.currentArrangement().phrases.get(ep.phrase))//
 				.collect(Collectors.toSet());
 

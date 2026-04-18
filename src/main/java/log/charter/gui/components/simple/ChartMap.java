@@ -15,7 +15,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import log.charter.data.ChartData;
@@ -28,14 +31,16 @@ import log.charter.data.song.EventPoint;
 import log.charter.data.song.Showlight;
 import log.charter.data.song.Showlight.ShowlightType;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
+import log.charter.data.types.PositionType;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartTimeHandler;
-import log.charter.services.editModes.EditMode;
+import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.ModeManager;
 import log.charter.util.ExitActions;
 
@@ -47,73 +52,12 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 	private ChartPanel chartPanel;
 	private ChartTimeHandler chartTimeHandler;
 	private ModeManager modeManager;
+	private SelectionManager selectionManager;
 
 	private BufferedImage background = null;
+	private boolean redraw = false;
 
 	private Thread imageMakerThread;
-
-	private BufferedImage createBackground() {
-		final BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-		final Graphics g = img.getGraphics();
-
-		g.setColor(ColorLabel.LANE.color());
-		g.fillRect(0, 0, getWidth(), getHeight());
-		if (chartData.isEmpty) {
-			return img;
-		}
-
-		switch (modeManager.getMode()) {
-			case TEMPO_MAP:
-				drawBars(g);
-				break;
-			case SHOWLIGHTS:
-				drawShowlights(g);
-				break;
-			case VOCALS:
-				drawVocalLines(g);
-				break;
-			case GUITAR:
-				drawPhrases(g);
-				drawSections(g);
-				drawNotes(g);
-				break;
-			default:
-				break;
-		}
-
-		drawBookmarks(g);
-
-		return img;
-	}
-
-	@Override
-	public void init() {
-		setSize(charterFrame.getWidth(), chartMapHeight);
-
-		setFocusable(false);
-		addMouseListener(this);
-		addMouseMotionListener(this);
-
-		imageMakerThread = new Thread(() -> {
-			while (!imageMakerThread.isInterrupted()) {
-				try {
-					background = createBackground();
-				} catch (final Exception e) {
-					Logger.error("Couldn't create background for chart map", e);
-				}
-
-				try {
-					Thread.sleep(1000);
-				} catch (final InterruptedException e) {
-					return;
-				}
-			}
-		});
-		imageMakerThread.setName("Chart map painter");
-		imageMakerThread.start();
-
-		ExitActions.addOnExit(() -> imageMakerThread.interrupt());
-	}
 
 	private int positionToTime(int p) {
 		p = max(0, min(getWidth() - 1, p));
@@ -191,6 +135,21 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 		drawShowlight(g, lastX, getWidth(), y0, y1, last);
 	}
 
+	private void drawShowlightsSelect(final Graphics g) {
+		final List<IVirtualConstantPosition> selected = selectionManager.getSelectedElements(PositionType.SHOWLIGHT);
+		if (selected.isEmpty()) {
+			return;
+		}
+
+		final ImmutableBeatsMap beats = chartData.beats();
+
+		for (final IVirtualConstantPosition element : selected) {
+			final int x = timeToPosition(element.toPosition(beats).position());
+			g.setColor(ColorLabel.SELECT.color());
+			g.drawLine(x, 0, x, getHeight());
+		}
+	}
+
 	private void drawShowlights(final Graphics g) {
 		final int y0 = 0;
 		final int y2 = getHeight();
@@ -199,11 +158,10 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 		drawShowlights(g, y0, y1, ShowlightType.FOG_GREEN, chartData.showlightsFog());
 		drawShowlights(g, y1, y2, ShowlightType.BEAMS_OFF, chartData.showlightsBeam());
 		drawShowlights(g, y1, y2, ShowlightType.LASERS_OFF, chartData.showlightsLaser());
+		drawShowlightsSelect(g);
 	}
 
 	private void drawVocalLines(final Graphics g) {
-		g.setColor(ColorLabel.VOCAL_NOTE.color());
-
 		final ImmutableBeatsMap beats = chartData.beats();
 		final int y0 = chartMapHeightMultiplier;
 		final int y2 = getHeight() - chartMapHeightMultiplier - 1;
@@ -220,11 +178,20 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 			if (vocal.flag() == VocalFlag.PHRASE_END) {
 				final int x1 = timeToPosition(vocal.endPosition(beats));
 
+				g.setColor(ColorLabel.VOCAL_NOTE.color());
 				g.fillRect(x, y1 - chartMapHeightMultiplier, x1 - x, chartMapHeightMultiplier * 2);
 				g.drawLine(x, y0, x, y2);
 				g.drawLine(x1, y0, x1, y2);
 				started = false;
 			}
+		}
+
+		final List<Vocal> selectedVocals = selectionManager.getSelectedElements(PositionType.VOCAL);
+		for (final Vocal vocal : selectedVocals) {
+			final int x0 = timeToPosition(vocal.position(beats));
+			final int x1 = timeToPosition(vocal.endPosition(beats));
+			g.setColor(ColorLabel.VOCAL_HIGHLIGHT.color());
+			g.drawRect(x0, y1 - chartMapHeightMultiplier, x1 - x0, chartMapHeightMultiplier * 2);
 		}
 	}
 
@@ -265,12 +232,50 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 		}
 	}
 
-	private void drawPhrases(final Graphics g) {
-		drawEventPoints(g, chartMapHeightMultiplier, ColorLabel.PHRASE_NAME_BG, ep -> ep.phrase != null);
+	private void drawSelectedEventPoints(final Graphics g) {
+		final List<EventPoint> points = chartData.currentEventPoints();
+		final List<Integer> selectedIds = selectionManager.getSelectedIds(PositionType.EVENT_POINT);
+		final ImmutableBeatsMap beats = chartData.beats();
+		final double maxTime = getMaxPhraseTime();
+		g.setColor(ColorLabel.SELECT.color());
+
+		for (final int id : selectedIds) {
+			final double pointTime = points.get(id).position(beats);
+			if (pointTime >= maxTime) {
+				break;
+			}
+
+			final double nextPointTime = id + 1 < points.size() ? points.get(id + 1).position(beats) : maxTime;
+
+			final int x0 = timeToPosition(pointTime);
+			final int x1 = timeToPosition(nextPointTime);
+			final int width = max(1, x1 - x0 - 2);
+
+			g.drawRect(x0, 0, width, chartMapHeightMultiplier * 2 - 1);
+		}
 	}
 
 	private void drawSections(final Graphics g) {
 		drawEventPoints(g, 0, ColorLabel.SECTION_NAME_BG, ep -> ep.section != null);
+	}
+
+	private void drawPhrases(final Graphics g) {
+		drawEventPoints(g, chartMapHeightMultiplier, ColorLabel.PHRASE_NAME_BG, ep -> ep.phrase != null);
+	}
+
+	private void drawNoteSelect(final Graphics g, final int string, final double position, final double length) {
+		g.setColor(ColorLabel.SELECT.color());
+
+		final int x0 = timeToPosition(position);
+		final int x1 = timeToPosition(position + length);
+		final int y0 = 2 * chartMapHeightMultiplier + 1
+				+ getStringPosition(string, chartData.currentStrings()) * chartMapHeightMultiplier;
+		g.drawRect(x0 - 1, y0 - 1, 2, chartMapHeightMultiplier + 1);
+
+		if (x1 > x0 + 1) {
+			final int y1 = y0 + chartMapHeightMultiplier - 1;
+			g.drawRect(x0 + 1, y1 - 1, x1 - x0, 2);
+		}
 	}
 
 	private void drawNote(final Graphics g, final int string, final double position, final double length) {
@@ -289,10 +294,26 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 
 	private void drawNotes(final Graphics g) {
 		final ImmutableBeatsMap beats = chartData.beats();
+		final List<ChordOrNote> sounds = chartData.currentArrangementLevel().sounds;
+		final Set<Integer> selectedIds = new HashSet<>(selectionManager.getSelectedIds(PositionType.GUITAR_NOTE));
+		final List<ChordOrNote> selectedSounds = new ArrayList<>(selectedIds.size());
 
-		chartData.currentArrangementLevel().sounds.stream()//
-				.flatMap(ChordOrNote::notes)//
-				.forEach(note -> drawNote(g, note.string(), note.position(beats), note.length(beats)));
+		for (int i = 0; i < sounds.size(); i++) {
+			final ChordOrNote sound = sounds.get(i);
+			if (selectedIds.contains(i)) {
+				selectedSounds.add(sound);
+				continue;
+			}
+
+			sound.notes().forEach(note -> drawNote(g, note.string(), note.position(beats), note.length(beats)));
+		}
+
+		for (final ChordOrNote sound : selectedSounds) {
+			sound.notes().forEach(note -> drawNoteSelect(g, note.string(), note.position(beats), note.length(beats)));
+		}
+		for (final ChordOrNote sound : selectedSounds) {
+			sound.notes().forEach(note -> drawNote(g, note.string(), note.position(beats), note.length(beats)));
+		}
 	}
 
 	private void drawBookmarks(final Graphics g) {
@@ -303,6 +324,76 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 			g.drawLine(x, 0, x, getHeight());
 			g.drawString(number + "", x + 2, 10);
 		});
+	}
+
+	private BufferedImage createBackground() {
+		final BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+		final Graphics g = img.getGraphics();
+
+		g.setColor(ColorLabel.LANE.color());
+		g.fillRect(0, 0, getWidth(), getHeight());
+		if (chartData.isEmpty) {
+			return img;
+		}
+
+		switch (modeManager.getMode()) {
+			case TEMPO_MAP:
+				drawBars(g);
+				break;
+			case SHOWLIGHTS:
+				drawShowlights(g);
+				break;
+			case VOCALS:
+				drawVocalLines(g);
+				break;
+			case GUITAR:
+				drawSections(g);
+				drawPhrases(g);
+				drawSelectedEventPoints(g);
+				drawNotes(g);
+				break;
+			default:
+				break;
+		}
+
+		drawShowlightsSelect(g);
+		drawBookmarks(g);
+
+		return img;
+	}
+
+	@Override
+	public void init() {
+		setSize(charterFrame.getWidth(), chartMapHeight);
+
+		setFocusable(false);
+		addMouseListener(this);
+		addMouseMotionListener(this);
+
+		imageMakerThread = new Thread(() -> {
+			long lastRedraw = System.currentTimeMillis();
+			while (!imageMakerThread.isInterrupted()) {
+				while (System.currentTimeMillis() - lastRedraw < 10_000 && !redraw) {
+					try {
+						Thread.sleep(1);
+					} catch (final InterruptedException e) {
+						return;
+					}
+				}
+				try {
+					background = createBackground();
+					lastRedraw = System.currentTimeMillis();
+					redraw = false;
+					repaint();
+				} catch (final Exception e) {
+					Logger.error("Couldn't create background for chart map", e);
+				}
+			}
+		});
+		imageMakerThread.setName("Chart map painter");
+		imageMakerThread.start();
+
+		ExitActions.addOnExit(() -> imageMakerThread.interrupt());
 	}
 
 	private void drawMarkerAndViewArea(final Graphics g) {
@@ -322,20 +413,13 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 
 	@Override
 	public void paint(final Graphics g) {
-		if (modeManager.getMode() == EditMode.EMPTY) {
-			g.setColor(ColorLabel.BASE_BG_0.color());
-			g.fillRect(0, 0, getWidth(), getHeight());
-			return;
-		}
-
 		if (background != null) {
 			g.drawImage(background, 0, 0, null);
+			drawMarkerAndViewArea(g);
 		} else {
 			g.setColor(ColorLabel.BASE_BG_0.color());
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
-
-		drawMarkerAndViewArea(g);
 	}
 
 	@Override
@@ -370,13 +454,7 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 	public void mouseMoved(final MouseEvent e) {
 	}
 
-	public void triggerRedraw() {
-		new Thread(() -> {
-			try {
-				background = createBackground();
-			} catch (final Exception e) {
-				Logger.error("Couldn't create background for chart map", e);
-			}
-		}).start();
+	public void redraw() {
+		redraw = true;
 	}
 }

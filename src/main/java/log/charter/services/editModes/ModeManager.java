@@ -71,7 +71,7 @@ public class ModeManager implements Initiable {
 		charterMenuBar.refreshMenus();
 		charterFrame.updateSizes();
 		titleUpdater.updateTitle();
-		chartMap.triggerRedraw();
+		chartMap.redraw();
 		chordTemplatesEditorTab.refreshTemplates();
 	}
 
@@ -87,7 +87,7 @@ public class ModeManager implements Initiable {
 		charterMenuBar.refreshMenus();
 		charterFrame.updateSizes();
 		titleUpdater.updateTitle();
-		chartMap.triggerRedraw();
+		chartMap.redraw();
 		chordTemplatesEditorTab.refreshTemplates();
 	}
 
@@ -108,7 +108,7 @@ public class ModeManager implements Initiable {
 		charterMenuBar.refreshMenus();
 		charterFrame.updateSizes();
 		titleUpdater.updateTitle();
-		chartMap.triggerRedraw();
+		chartMap.redraw();
 		chordTemplatesEditorTab.refreshTemplates();
 	}
 
@@ -123,7 +123,7 @@ public class ModeManager implements Initiable {
 		charterMenuBar.refreshMenus();
 		charterFrame.updateSizes();
 		titleUpdater.updateTitle();
-		chartMap.triggerRedraw();
+		chartMap.redraw();
 		chordTemplatesEditorTab.refreshTemplates();
 	}
 
@@ -143,7 +143,7 @@ public class ModeManager implements Initiable {
 		charterMenuBar.refreshMenus();
 		charterFrame.updateSizes();
 		titleUpdater.updateTitle();
-		chartMap.triggerRedraw();
+		chartMap.redraw();
 		chordTemplatesEditorTab.refreshTemplates();
 	}
 
@@ -154,7 +154,7 @@ public class ModeManager implements Initiable {
 		chartData.currentLevel = level;
 
 		charterMenuBar.refreshMenus();
-		chartMap.triggerRedraw();
+		chartMap.redraw();
 	}
 
 	public EditMode getMode() {

@@ -17,6 +17,7 @@ import log.charter.data.config.values.GridConfig;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
+import log.charter.gui.components.simple.ChartMap;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
 import log.charter.gui.components.toolbar.IChartToolbar;
 import log.charter.gui.components.utils.ComponentUtils;
@@ -53,6 +54,7 @@ public class ActionHandler implements Initiable {
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartItemsHandler chartItemsHandler;
+	private ChartMap chartMap;
 	private ChartTimeHandler chartTimeHandler;
 	private IChartToolbar chartToolbar;
 	private CharterContext charterContext;
@@ -480,6 +482,63 @@ public class ActionHandler implements Initiable {
 			Action.TOGGLE_METRONOME, //
 			Action.TOGGLE_MIDI, //
 			Action.TOGGLE_WAVEFORM_GRAPH);
+	private static final List<Action> actionsNotChangingChartMap = asList(//
+			Action.CHANGE_GRID, //
+			Action.COPY, //
+			Action.DOUBLE_GRID, //
+			Action.EDIT_VOCALS, //
+			Action.EXIT, //
+			Action.FAST_BACKWARD, //
+			Action.FAST_FORWARD, //
+			Action.HALVE_GRID, //
+			Action.MOVE_BACKWARD, //
+			Action.MOVE_FORWARD, //
+			Action.MOVE_TO_END, //
+			Action.MOVE_TO_FIRST_ITEM, //
+			Action.MOVE_TO_LAST_ITEM, //
+			Action.MOVE_TO_START, //
+			Action.NEXT_BEAT, //
+			Action.NEXT_GRID_POSITION, //
+			Action.NEXT_ITEM, //
+			Action.NEXT_ITEM_TYPE, //
+			Action.NEXT_ITEM_TYPE, //
+			Action.PLAY_AUDIO, //
+			Action.PREVIOUS_BEAT, //
+			Action.PREVIOUS_GRID_POSITION, //
+			Action.PREVIOUS_ITEM, //
+			Action.PREVIOUS_ITEM_TYPE, //
+			Action.SLOW_BACKWARD, //
+			Action.SLOW_FORWARD, //
+			Action.SPEED_DECREASE, //
+			Action.SPEED_DECREASE_FAST, //
+			Action.SPEED_DECREASE_PRECISE, //
+			Action.SPEED_INCREASE, //
+			Action.SPEED_INCREASE_FAST, //
+			Action.SPEED_INCREASE_PRECISE, //
+			Action.STRING_1, //
+			Action.STRING_2, //
+			Action.STRING_3, //
+			Action.STRING_4, //
+			Action.STRING_5, //
+			Action.STRING_6, //
+			Action.STRING_7, //
+			Action.STRING_8, //
+			Action.STRING_9, //
+			Action.SWITCH_TYPING_PART, //
+			Action.TOGGLE_BAND_PASS_FILTER, //
+			Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW, //
+			Action.TOGGLE_CLAPS, //
+			Action.TOGGLE_HIGH_PASS_FILTER, //
+			Action.TOGGLE_LOW_PASS_FILTER, //
+			Action.TOGGLE_METRONOME, //
+			Action.TOGGLE_MIDI, //
+			Action.TOGGLE_PREVIEW_WINDOW, //
+			Action.TOGGLE_REPEATER, //
+			Action.TOGGLE_WAVEFORM_GRAPH, //
+			Action.ZOOM_IN, //
+			Action.ZOOM_IN_FAST, //
+			Action.ZOOM_OUT, //
+			Action.ZOOM_OUT_FAST);
 
 	public void fireAction(final Action action) {
 		try {
@@ -503,6 +562,9 @@ public class ActionHandler implements Initiable {
 				}
 			}
 
+			if (!actionsNotChangingChartMap.contains(action)) {
+				chartMap.redraw();
+			}
 		} catch (final Exception ex) {
 			Logger.error("Exception on action " + action, ex);
 			ComponentUtils.showPopup(charterFrame, Label.ERROR, ex.getLocalizedMessage());
