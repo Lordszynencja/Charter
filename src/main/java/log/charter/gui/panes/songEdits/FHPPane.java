@@ -1,5 +1,6 @@
 package log.charter.gui.panes.songEdits;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import javax.swing.JTextField;
@@ -27,7 +28,8 @@ public class FHPPane extends ParamsPane {
 
 	public FHPPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem, final FHP fhp,
 			final Runnable onCancel) {
-		super(frame, Label.FHP_PANE, 250);
+		super(frame, Label.FHP_PANE, inputSize * 12);
+
 		this.data = data;
 		this.undoSystem = undoSystem;
 
@@ -37,13 +39,13 @@ public class FHPPane extends ParamsPane {
 		width = fhp.width;
 
 		int row = 0;
-		addIntegerConfigValue(row++, 20, 100, Label.FRET, fret, 30, //
+		addIntegerConfigValue(row++, inputSize, inputSize * 5, Label.FRET, fret, inputSize, //
 				new IntegerValueValidator(1, InstrumentConfig.frets, true), v -> fret = v, false);
 		final JTextField input = (JTextField) getPart(-1);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
-		addIntConfigValue(row++, 20, 100, Label.FHP_WIDTH, width, 30, //
+		addIntConfigValue(row++, inputSize, inputSize * 5, Label.FHP_WIDTH, width, inputSize, //
 				new IntValueValidator(1, InstrumentConfig.frets), v -> width = v, false);
 		final JTextField fhpWidthInput = (JTextField) getPart(-1);
 		fhpWidthInput.setHorizontalAlignment(JTextField.CENTER);

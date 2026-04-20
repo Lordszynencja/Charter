@@ -1,6 +1,7 @@
 package log.charter.gui.components.simple;
 
 import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
+import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -139,6 +140,7 @@ public class FieldWithLabel<T extends Component> extends Container {
 	private JLabel addLabel(final String label, final int x, final int w, final int h, final int labelAlignment) {
 		final JLabel labelComponent = new JLabel(label, labelAlignment);
 		labelComponent.setAlignmentY(CENTER_ALIGNMENT);
+		setDefaultFontSize(labelComponent);
 
 		setComponentBounds(labelComponent, x, 0, w, h);
 		this.add(labelComponent);
@@ -148,6 +150,7 @@ public class FieldWithLabel<T extends Component> extends Container {
 
 	private void addField(final T field, final int x, final int w, final int h) {
 		setComponentBounds(field, x, 0, w, h);
+		setDefaultFontSize(field);
 		this.add(field);
 	}
 

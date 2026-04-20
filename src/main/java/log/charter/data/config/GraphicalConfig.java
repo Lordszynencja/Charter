@@ -25,7 +25,7 @@ public class GraphicalConfig {
 
 	public static Theme theme = Theme.MODERN;
 
-	public static int inputSize = 20;
+	public static int inputSize = 25;
 	public static int chartTextHeight = 10;
 	public static int eventsChangeHeight = 10;
 	public static int noteWidth = 25;

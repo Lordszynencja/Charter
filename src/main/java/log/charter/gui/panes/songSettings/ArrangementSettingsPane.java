@@ -2,7 +2,10 @@ package log.charter.gui.panes.songSettings;
 
 import static java.lang.Math.max;
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.data.song.configs.Tuning.getStringDistanceFromC0;
+import static log.charter.gui.components.utils.ComponentUtils.numberFilter;
+import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.util.SoundUtils.soundToFullName;
 
@@ -65,7 +68,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 	public ArrangementSettingsPane(final CharterMenuBar charterMenuBar, final ChartData data, final CharterFrame frame,
 			final SelectionManager selectionManager, final Runnable onCancel, final boolean newArrangement) {
-		super(frame, Label.ARRANGEMENT_OPTIONS_PANE, 400);
+		super(frame, Label.ARRANGEMENT_OPTIONS_PANE, inputSize * 20);
 
 		this.charterMenuBar = charterMenuBar;
 		this.data = data;
@@ -85,15 +88,17 @@ public class ArrangementSettingsPane extends ParamsPane {
 		addArrangmentType(row);
 		addArrangmentSubtype(row);
 
-		addStringConfigValue(row.getAndIncrement(), 20, 0, Label.STARTING_TONE, startingTone, 100,
+		addStringConfigValue(row.getAndIncrement(), inputSize, 0, Label.STARTING_TONE, startingTone, inputSize * 5,
 				this::validateBaseTone, val -> startingTone = val, false);
-		addStringConfigValue(row.get(), 20, 0, Label.TUNING_PITCH,
-				formatPitch(AudioUtils.centsToPitch(440, centOffset.doubleValue())), 100, this::validateTuningPitch,
-				this::setTuningPitch, false);
+		addStringConfigValue(row.get(), inputSize, 0, Label.TUNING_PITCH,
+				formatPitch(AudioUtils.centsToPitch(440, centOffset.doubleValue())), inputSize * 5,
+				this::validateTuningPitch, this::setTuningPitch, false);
+		getPart(-1).addKeyListener(numberFilter);
 
 		centOffsetLabel = new JLabel("", JLabel.LEFT);
+		setDefaultFontSize(centOffsetLabel);
 		setCentsValue();
-		add(centOffsetLabel, 200, getY(row.getAndIncrement()), 150, 20);
+		add(centOffsetLabel, inputSize * 10, getY(row.getAndIncrement()), inputSize * 15 / 2, inputSize);
 
 		row.incrementAndGet();
 		addTuningSelect(row);
@@ -174,9 +179,10 @@ public class ArrangementSettingsPane extends ParamsPane {
 	private void addArrangmentType(final AtomicInteger row) {
 		final CharterSelect<ArrangementType> input = new CharterSelect<>(ArrangementType.values(), arrangementType,
 				v -> v.name(), this::setArrangementType);
+		setDefaultFontSize(input);
 
-		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_TYPE, 0);
-		add(input, 150, getY(row.getAndIncrement()), 100, 20);
+		addLabel(row.get(), inputSize, Label.ARRANGEMENT_OPTIONS_TYPE, 0);
+		add(input, inputSize * 15 / 2, getY(row.getAndIncrement()), inputSize * 5, inputSize);
 	}
 
 	private void setArrangementSubtype(final ArrangementSubtype newArrangementSubtype) {
@@ -186,27 +192,29 @@ public class ArrangementSettingsPane extends ParamsPane {
 	private void addArrangmentSubtype(final AtomicInteger row) {
 		final CharterSelect<ArrangementSubtype> input = new CharterSelect<>(ArrangementSubtype.values(),
 				arrangementSubtype, v -> v.label.label(), this::setArrangementSubtype);
+		setDefaultFontSize(input);
 
-		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_SUBTYPE, 0);
-		add(input, 150, getY(row.getAndIncrement()), 100, 20);
+		addLabel(row.get(), inputSize, Label.ARRANGEMENT_OPTIONS_SUBTYPE, 0);
+		add(input, inputSize * 15 / 2, getY(row.getAndIncrement()), inputSize * 5, inputSize);
 	}
 
 	private void addTuningSelect(final AtomicInteger row) {
 		tuningSelect = new CharterSelect<>(TuningType.values(), tuning.tuningType, v -> v.name, this::onTuningSelected);
+		setDefaultFontSize(tuningSelect);
 
-		addLabel(row.get(), 20, Label.ARRANGEMENT_OPTIONS_TUNING_TYPE, 0);
-		this.add(tuningSelect, 75, getY(row.getAndIncrement()), 200, 20);
+		addLabel(row.get(), inputSize, Label.ARRANGEMENT_OPTIONS_TUNING_TYPE, 0);
+		this.add(tuningSelect, inputSize * 4, getY(row.getAndIncrement()), inputSize * 10, inputSize);
 	}
 
 	private void addStringsCapo(final AtomicInteger row) {
-		addIntegerConfigValue(row.get(), 20, 0, Label.ARRANGEMENT_OPTIONS_STRINGS, tuning.strings(), 20,
+		addIntegerConfigValue(row.get(), inputSize, 0, Label.ARRANGEMENT_OPTIONS_STRINGS, tuning.strings(), inputSize,
 				new IntegerValueValidator(1, InstrumentConfig.maxStrings, false), //
 				this::onTuningStringsChanged, false);
 		stringsInput = (TextInputWithValidation) getPart(-1);
 		stringsInput.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(stringsInput);
 
-		addIntegerConfigValue(row.get(), 120, 0, Label.ARRANGEMENT_OPTIONS_CAPO, capo, 30,
+		addIntegerConfigValue(row.get(), inputSize * 6, 0, Label.ARRANGEMENT_OPTIONS_CAPO, capo, inputSize * 3 / 2,
 				new IntegerValueValidator(0, InstrumentConfig.frets, false), //
 				val -> capo = val, //
 				false);
@@ -220,16 +228,18 @@ public class ArrangementSettingsPane extends ParamsPane {
 		checkbox.setSelected(pickedBass);
 		checkbox.addActionListener(e -> pickedBass = checkbox.isSelected());
 
-		pickedBassField = new FieldWithLabel<>(Label.PICKED_BASS, 80, 20, 20, checkbox, LabelPosition.LEFT_CLOSE);
+		pickedBassField = new FieldWithLabel<>(Label.PICKED_BASS, inputSize * 4, inputSize, inputSize, checkbox,
+				LabelPosition.LEFT_CLOSE);
 		pickedBassField.setVisible(arrangementType == ArrangementType.Bass);
-		add(pickedBassField, 170, getY(row.get()), pickedBassField.getWidth(), pickedBassField.getHeight());
+		add(pickedBassField, inputSize * 17 / 2, getY(row.get()), pickedBassField.getWidth(),
+				pickedBassField.getHeight());
 	}
 
 	private void addTuningInputsAndLabels() {
-		final int inputWidth = 30;
+		final int inputWidth = inputSize * 3 / 2;
 		for (int i = 0; i < InstrumentConfig.maxStrings; i++) {
 			final int string = i;
-			final int x = 20 + i * 40;
+			final int x = inputSize + i * inputSize * 2;
 
 			addIntegerConfigValue(tuningInputsRow, x, 0, null, 0, inputWidth, //
 					new IntegerValueValidator(-48, 48, false), //
@@ -238,10 +248,12 @@ public class ArrangementSettingsPane extends ParamsPane {
 			final TextInputWithValidation tuningInput = (TextInputWithValidation) getPart(-1);
 			tuningInput.setHorizontalAlignment(JTextField.CENTER);
 			addSelectTextOnFocus(tuningInput);
+			setDefaultFontSize(tuningInput);
 			tuningInputs.add(tuningInput);
 
 			final JLabel label = new JLabel("", JLabel.CENTER);
-			add(label, x, getY(tuningInputsRow + 1), inputWidth, 20);
+			setDefaultFontSize(label);
+			add(label, x, getY(tuningInputsRow + 1), inputWidth, inputSize);
 
 			tuningLabels.add(label);
 
@@ -279,9 +291,9 @@ public class ArrangementSettingsPane extends ParamsPane {
 		final JCheckBox checkbox = new JCheckBox();
 		checkbox.setSelected(true);
 
-		moveFrets = new FieldWithLabel<>(Label.ARRANGEMENT_OPTIONS_MOVE_FRETS, 5, 20, 20, checkbox,
-				LabelPosition.RIGHT_PACKED);
-		add(moveFrets, 20, getY(row.getAndIncrement()), 200, 20);
+		moveFrets = new FieldWithLabel<>(Label.ARRANGEMENT_OPTIONS_MOVE_FRETS, inputSize / 4, inputSize, inputSize,
+				checkbox, LabelPosition.RIGHT_PACKED);
+		add(moveFrets, inputSize, getY(row.getAndIncrement()), inputSize * 10, inputSize);
 	}
 
 	private void onTuningSelected(final TuningType newTuningType) {

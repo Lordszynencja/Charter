@@ -13,6 +13,7 @@ import log.charter.data.config.Localization.Label;
 import log.charter.services.editModes.EditMode;
 
 public enum Action {
+	ADD_GRID_TRIPLET(EditMode.withItems), //
 	ARRANGEMENT_NEXT(EditMode.nonEmpty), //
 	ARRANGEMENT_PREVIOUS(EditMode.nonEmpty), //
 	BEAT_ADD(TEMPO_MAP), //
@@ -46,6 +47,7 @@ public enum Action {
 	FINGER_3(GUITAR), //
 	FINGER_4(GUITAR), //
 	FINGER_T(GUITAR), //
+	HALVE_GRID(EditMode.withItems), //
 	INCREASE_LENGTH(GUITAR, VOCALS), //
 	INCREASE_LENGTH_FAST(GUITAR, VOCALS), //
 	INSERT_EVENT_POINT(GUITAR), //
@@ -64,7 +66,6 @@ public enum Action {
 	NUMBER_7(TEMPO_MAP, GUITAR), //
 	NUMBER_8(TEMPO_MAP, GUITAR), //
 	NUMBER_9(TEMPO_MAP, GUITAR), //
-	HALVE_GRID(EditMode.withItems), //
 	MARK_HAND_SHAPE(GUITAR), //
 	MEASURE_ADD(TEMPO_MAP), //
 	MEASURE_REMOVE(TEMPO_MAP), //
@@ -104,6 +105,7 @@ public enum Action {
 	PREVIOUS_ITEM_WITH_SELECT_SHIFT(EditMode.withItems), //
 	PREVIOUS_ITEM_TYPE(GUITAR), //
 	REDO(EditMode.nonEmpty), //
+	REMOVE_GRID_TRIPLET(EditMode.withItems), //
 	SAVE_PROJECT(EditMode.nonEmpty), //
 	SAVE_PROJECT_AS(EditMode.nonEmpty), //
 	SELECT_ALL(EditMode.withItems), //

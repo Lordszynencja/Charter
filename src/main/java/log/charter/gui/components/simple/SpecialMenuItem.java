@@ -1,5 +1,7 @@
 package log.charter.gui.components.simple;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -12,7 +14,7 @@ import log.charter.data.config.Localization.Label;
 
 public class SpecialMenuItem extends JMenuItem {
 	private static final long serialVersionUID = 1L;
-	private static final int textOffset = 80;
+	private static final int textOffset = inputSize * 4;
 
 	private final String shortcut;
 
@@ -20,10 +22,6 @@ public class SpecialMenuItem extends JMenuItem {
 		super(label.label());
 		this.shortcut = shortcut;
 		addActionListener(e -> onClick.run());
-	}
-
-	public SpecialMenuItem(final Label label, final Runnable onClick) {
-		this(label, null, onClick);
 	}
 
 	@Override

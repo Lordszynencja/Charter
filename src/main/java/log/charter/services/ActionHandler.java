@@ -221,6 +221,24 @@ public class ActionHandler implements Initiable {
 		}
 	}
 
+	private void addGridTriplet() {
+		if (GridConfig.gridSize % 2 == 0) {
+			GridConfig.gridSize = GridConfig.gridSize * 3 / 2;
+			Config.markChanged();
+
+			chartToolbar.updateValues();
+		}
+	}
+
+	private void removeGridTriplet() {
+		if (GridConfig.gridSize % 3 == 0) {
+			GridConfig.gridSize = GridConfig.gridSize * 2 / 3;
+			Config.markChanged();
+
+			chartToolbar.updateValues();
+		}
+	}
+
 	private void bookmark(final int number) {
 		final Double bookmark = chartData.songChart.bookmarks.get(number);
 		if (bookmark == null) {
@@ -287,6 +305,7 @@ public class ActionHandler implements Initiable {
 	public void init() {
 		guitarModeHandler = modeManager.getGuitarModeHandler();
 
+		actionHandlers.put(Action.ADD_GRID_TRIPLET, this::addGridTriplet);
 		actionHandlers.put(Action.ARRANGEMENT_NEXT, this::nextArrangement);
 		actionHandlers.put(Action.ARRANGEMENT_PREVIOUS, this::previousArrangement);
 		actionHandlers.put(Action.BEAT_ADD, beatsService::addBeat);
@@ -381,6 +400,7 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.PREVIOUS_ITEM_WITH_SELECT_SHIFT,
 				() -> chartTimeHandler.moveToPreviousItemWithSelect(false, true));
 		actionHandlers.put(Action.REDO, undoSystem::redo);
+		actionHandlers.put(Action.REMOVE_GRID_TRIPLET, this::removeGridTriplet);
 		actionHandlers.put(Action.SAVE_PROJECT, songFileHandler::save);
 		actionHandlers.put(Action.SAVE_PROJECT_AS, songFileHandler::saveAs);
 		actionHandlers.put(Action.SELECT_ALL, selectionManager::selectAll);

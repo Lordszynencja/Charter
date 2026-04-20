@@ -244,6 +244,6 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 
 		hideAllfieldsExcept(selected.type());
 
-		ComponentUtils.resize(this, 0, 0, inputSize * 76, inputSize * 16);
+		ComponentUtils.resize(this, 0, 0, inputSize * 76, inputSize * 62 / 4);
 	}
 }

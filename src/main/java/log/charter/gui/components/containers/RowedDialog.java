@@ -1,9 +1,14 @@
 package log.charter.gui.components.containers;
 
 import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.containers.SaverWithStatus.emptySaver;
+import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
 
 import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -70,9 +75,10 @@ public class RowedDialog extends JDialog implements ComponentListener {
 	private void setSizeWithInsets() {
 		final Insets insets = getInsets();
 		final Dimension minPanelSize = panel.getMinimumSize();
-		final int width = max(getWidth(), minPanelSize.width + insets.left + insets.right);
-		final int height = max(getHeight(), minPanelSize.height + insets.top + insets.bottom);
-		setSize(width, height);
+		final int minimumWidth = minPanelSize.width + insets.left + insets.right;
+		final int minimumHeight = minPanelSize.height + insets.top + insets.bottom;
+		final int width = max(minimumWidth, getWidth());
+		final int height = max(minimumHeight, getHeight());
 
 		final int panelWidth = width - insets.left - insets.right;
 		final int panelHeight = height - insets.top - insets.bottom;
@@ -103,8 +109,8 @@ public class RowedDialog extends JDialog implements ComponentListener {
 
 	private void addDefaultButtons(final int y, final Disposer onSave, final Disposer onCancel) {
 		final int center = panel.getWidth() / 2;
-		final int x0 = max(center - 110, RowedPanel.resizingHorizontalSpacing);
-		final int x1 = x0 + 120;
+		final int x0 = max(center - inputSize * 11 / 2, inputSize);
+		final int x1 = x0 + inputSize * 6;
 
 		addDefaultButton(x0, y, Label.BUTTON_SAVE, onSave);
 		addDefaultButton(x1, y, Label.BUTTON_CANCEL, onCancel);
@@ -112,8 +118,9 @@ public class RowedDialog extends JDialog implements ComponentListener {
 
 	private void addDefaultButton(final int x, final int y, final Label label, final Disposer onClick) {
 		final JButton button = new JButton(label.label());
+		setDefaultFontSize(button);
 		button.addActionListener(e -> onClick.fire());
-		panel.addWithSettingSize(button, x, y, 100, 20);
+		panel.addWithSettingSize(button, x, y, inputSize * 5, inputSize);
 	}
 
 	private void addDefaultKeybinds(final Disposer onSave, final Disposer onCancel) {
@@ -124,8 +131,13 @@ public class RowedDialog extends JDialog implements ComponentListener {
 	}
 
 	private void setLocation() {
-		final int x = WindowStateConfig.x + frame.getWidth() / 2 - getWidth() / 2;
-		final int y = WindowStateConfig.y + frame.getHeight() / 2 - getHeight() / 2;
+		final DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+				.getDisplayMode();
+		final int x = min(displayMode.getWidth() * 99 / 100,
+				max(displayMode.getWidth() / 100, WindowStateConfig.x + frame.getWidth() / 2 - getWidth() / 2));
+		final int y = min(displayMode.getHeight() * 99 / 100,
+				max(displayMode.getWidth() / 100, WindowStateConfig.y + frame.getHeight() / 2 - getHeight() / 2));
+
 		setLocation(x, y);
 	}
 
@@ -136,6 +148,20 @@ public class RowedDialog extends JDialog implements ComponentListener {
 		final int minHeight = minPanelSize.height + insets.top + insets.bottom;
 		setMinimumSize(new Dimension(minWidth, minHeight));
 
+		final DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+				.getDisplayMode();
+		final int maximumWidth = dm.getWidth() * 49 / 50;
+		final int maximumHeight = dm.getHeight() * 49 / 50;
+
+		final int w = getWidth();
+		final int h = getHeight();
+		if (w > maximumWidth || h > maximumHeight) {
+			final int width = min(maximumWidth, getWidth());
+			final int height = min(maximumHeight, getHeight());
+			if (width != w || height != h) {
+				// setSize(width, height);
+			}
+		}
 		setSizeWithInsets();
 		setLocation();
 		validate();

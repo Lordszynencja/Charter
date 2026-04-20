@@ -1,6 +1,6 @@
 package log.charter.gui.panes.colorConfig;
 
-import static java.lang.Math.ceil;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.utils.ComponentUtils.addComponentCenteringOnResize;
 
 import java.awt.Color;
@@ -25,6 +25,7 @@ import log.charter.gui.components.containers.SaverWithStatus;
 import log.charter.gui.components.simple.CharterSelect;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.ComponentUtils.ComponentWithOffset;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.gui.components.utils.RowedPosition;
@@ -41,14 +42,14 @@ public class ColorConfigPane extends RowedDialog {
 	private final Map<ColorLabel, ColorPicker> pickersForLabels = new HashMap<>();
 
 	public ColorConfigPane(final CharterFrame frame) {
-		super(frame, Label.GRAPHIC_CONFIG_PANE, 200);
+		super(frame, Label.GRAPHIC_CONFIG_PANE, 0);
 
-		final RowedPosition position = new RowedPosition(20, panel.sizes);
+		final RowedPosition position = new RowedPosition(inputSize, panel.sizes);
 		fileSelect = makeFileSelect(position);
 		position.newRows(2);
 
 		colorsPanel = makePanel(position);
-		position.newRows(4 + (int) ceil(400 / (panel.sizes.rowHeight + panel.sizes.verticalSpace)));
+		position.newRows(17);
 
 		addDefaultFinish(position.y(), SaverWithStatus.defaultFor(this::onSave), null, false);
 		saveButton = panel.getPart(-2);
@@ -57,8 +58,8 @@ public class ColorConfigPane extends RowedDialog {
 		addComponentCenteringOnResize(this, //
 				new ComponentWithOffset(fileSelect, 0), //
 				new ComponentWithOffset(colorsPanel, 0), //
-				new ComponentWithOffset(saveButton, 55), //
-				new ComponentWithOffset(cancelButton, -55));
+				new ComponentWithOffset(saveButton, inputSize * 11 / 4), //
+				new ComponentWithOffset(cancelButton, -inputSize * 11 / 4));
 
 		finishInit();
 	}
@@ -76,18 +77,18 @@ public class ColorConfigPane extends RowedDialog {
 		final CharterSelect<String> select = new CharterSelect<>(names, GraphicalConfig.colorSet, null,
 				this::changeSet);
 
-		panel.addWithSettingSize(select, position, 200);
+		ComponentUtils.setDefaultFontSize(select);
+		panel.addWithSettingSize(select, position, inputSize * 10);
 
 		return select;
 	}
 
 	private CharterScrollPane makePanel(final RowedPosition position) {
-		final int labelWidth = 300;
-		final int inputWidth = 20;
-		final int fieldWidth = labelWidth + inputWidth + 5;
+		final int labelWidth = inputSize * 15;
+		final int fieldWidth = labelWidth + inputSize * 5 / 4;
 
-		final RowedPanel colorsPanel = new RowedPanel(new PaneSizesBuilder(labelWidth + inputWidth)//
-				.rowHeight(20)//
+		final RowedPanel colorsPanel = new RowedPanel(new PaneSizesBuilder(labelWidth + inputSize)//
+				.rowHeight(inputSize)//
 				.rowSpacing(0)//
 				.verticalSpace(0).build());
 
@@ -97,8 +98,8 @@ public class ColorConfigPane extends RowedDialog {
 			final ColorPicker colorPicker = new ColorPicker(colorLabel);
 			pickersForLabels.put(colorLabel, colorPicker);
 
-			final FieldWithLabel<ColorPicker> field = new FieldWithLabel<>(colorLabel.label(), labelWidth, inputWidth,
-					20, colorPicker, LabelPosition.LEFT);
+			final FieldWithLabel<ColorPicker> field = new FieldWithLabel<>(colorLabel.label(), labelWidth, inputSize,
+					inputSize, colorPicker, LabelPosition.LEFT);
 			if (even) {
 				field.backgroundColor = ColorLabel.BASE_BG_3;
 			}
@@ -109,11 +110,13 @@ public class ColorConfigPane extends RowedDialog {
 		}
 
 		final CharterScrollPane scrollPane = new CharterScrollPane(colorsPanel);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(20);
+
 		final Insets scrollPaneInsets = scrollPane.getInsets();
 		final int scrollPaneWidth = fieldWidth + ((Integer) UIManager.get("ScrollBar.width")) + scrollPaneInsets.left
 				+ scrollPaneInsets.right;
 		final int scrollPaneHeight = colorsPanel.sizes.getHeight(20);
-		panel.addWithSettingSize(scrollPane, position, scrollPaneWidth, 20, scrollPaneHeight);
+		panel.addWithSettingSize(scrollPane, position, scrollPaneWidth, inputSize, scrollPaneHeight);
 
 		return scrollPane;
 	}

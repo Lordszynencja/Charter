@@ -1,5 +1,7 @@
 package log.charter.gui.panes.songEdits;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
+
 import java.util.List;
 
 import javax.swing.JCheckBox;
@@ -32,7 +34,7 @@ public class VocalPane extends ParamsPane {
 
 	private VocalPane(final Label label, final ArrangementFixer arrangementFixer, final ChartData data,
 			final CharterFrame frame, final SelectionManager selectionManager, final UndoSystem undoSystem) {
-		super(frame, label, 360);
+		super(frame, label, inputSize * 18);
 
 		this.arrangementFixer = arrangementFixer;
 		this.data = data;
@@ -77,8 +79,9 @@ public class VocalPane extends ParamsPane {
 	}
 
 	private void createElementsAndShow(final Runnable onSave) {
-		addStringConfigValue(0, 20, 70, Label.VOCAL_PANE_LYRIC, text, 200, null, val -> text = val, true);
-		addConfigCheckbox(1, 20, 70, Label.VOCAL_PANE_WORD_PART, wordPart, val -> {
+		addStringConfigValue(0, inputSize, inputSize * 7 / 2, Label.VOCAL_PANE_LYRIC, text, inputSize * 10, null,
+				val -> text = val, true);
+		addConfigCheckbox(1, inputSize, inputSize * 7 / 2, Label.VOCAL_PANE_WORD_PART, wordPart, val -> {
 			wordPart = val;
 
 			phraseEnd = false;
@@ -86,7 +89,7 @@ public class VocalPane extends ParamsPane {
 			phraseEndCheckbox.setSelected(false);
 			phraseEndCheckbox.setEnabled(!val);
 		});
-		addConfigCheckbox(2, 20, 70, Label.VOCAL_PANE_PHRASE_END, phraseEnd, val -> {
+		addConfigCheckbox(2, inputSize, inputSize * 7 / 2, Label.VOCAL_PANE_PHRASE_END, phraseEnd, val -> {
 			phraseEnd = val;
 
 			wordPart = false;

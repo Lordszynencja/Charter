@@ -3,6 +3,7 @@ package log.charter.gui.components.tabs.selectionEditor;
 import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
+import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -355,7 +356,7 @@ public class EventPointSelectionEditor extends SelectionEditorPart<EventPoint> {
 		ComponentUtils.resize(solo, inputSize * 9 / 2, inputSize * 3, inputSize * 2, inputSize);
 
 		eventsTable.setRowHeight(inputSize);
-		eventsTable.setFont(eventsTable.getFont().deriveFont(inputSize * 0.6f));
+		setDefaultFontSize(eventsTable);
 		ComponentUtils.resize(eventsTableScroll, inputSize / 2, inputSize * 17 / 4, inputSize * 10, inputSize * 5);
 		ComponentUtils.resize(tableCellEditor, 0, 0, inputSize * 10);
 

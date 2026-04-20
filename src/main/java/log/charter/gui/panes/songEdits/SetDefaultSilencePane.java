@@ -1,6 +1,7 @@
 package log.charter.gui.panes.songEdits;
 
 import static java.lang.Math.abs;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import javax.swing.JTextField;
@@ -32,21 +33,21 @@ public class SetDefaultSilencePane extends ParamsPane {
 
 	public SetDefaultSilencePane(final CharterFrame frame, final ChartTimeHandler chartTimeHandler,
 			final ChartData data, final ProjectAudioHandler projectAudioHandler) {
-		super(frame, Label.ADD_DEFAULT_SILENCE_PANE, 300);
+		super(frame, Label.ADD_DEFAULT_SILENCE_PANE, inputSize * 15);
 		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.projectAudioHandler = projectAudioHandler;
 
-		addLabel(0, 20, Label.ADD_DEFAULT_SILENCE_BARS, 0);
+		addLabel(0, inputSize, Label.ADD_DEFAULT_SILENCE_BARS, inputSize * 12);
 
-		bars = data.songChart.barsAdded == 0 ? 1 : 0;
-		addIntConfigValue(1, 20, 0, null, bars, 100, //
+		bars = data.songChart.barsAdded == 0 ? 2 : 0;
+		addIntConfigValue(0, inputSize * 13, 0, null, bars, inputSize, //
 				new IntValueValidator(0, 5), val -> bars = val, false);
 		final JTextField input = (JTextField) getPart(-1);
 		addSelectTextOnFocus(input);
 
 		setOnFinish(this::saveAndExit, null);
-		addDefaultFinish(3);
+		addDefaultFinish(2);
 	}
 
 	private void removeAudio(final double movement) {

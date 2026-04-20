@@ -52,18 +52,18 @@ public class Preview3DVideoDrawer {
 		}
 	}
 
-	private void drawFFT(final Graphics2D graphics) {
-		graphics.setColor(Color.GREEN);
-		final double[] buffer = ASIOHandler.fft.magnitudes;
-		for (int i = 0; i < buffer.length - 1; i++) {
-			final int x0 = i * 1000 / (buffer.length - 1);
-			final int x1 = (i + 1) * 1000 / (buffer.length - 1);
-			final int y0 = (int) (buffer[i] * 400) + 500;
-			final int y1 = (int) (buffer[i + 1] * 400) + 500;
-
-			graphics.drawLine(x0, y0, x1, y1);
-		}
-	}
+//	private void drawFFT(final Graphics2D graphics) {
+//		graphics.setColor(Color.GREEN);
+//		final double[] buffer = ASIOHandler.fft.magnitudes;
+//		for (int i = 0; i < buffer.length - 1; i++) {
+//			final int x0 = i * 1000 / (buffer.length - 1);
+//			final int x1 = (i + 1) * 1000 / (buffer.length - 1);
+//			final int y0 = (int) (buffer[i] * 400) + 500;
+//			final int y1 = (int) (buffer[i + 1] * 400) + 500;
+//
+//			graphics.drawLine(x0, y0, x1, y1);
+//		}
+//	}
 
 	private void generateImage() {
 		final BufferedImage newImage = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
@@ -75,9 +75,9 @@ public class Preview3DVideoDrawer {
 		if (DebugConfig.showInputGraph) {
 			drawAudio(graphics);
 		}
-		if (DebugConfig.showFTGraph) {
-			drawFFT(graphics);
-		}
+//		if (DebugConfig.showFTGraph) {
+//			drawFFT(graphics);
+//		}
 
 		image = newImage;
 		imageChanged = true;

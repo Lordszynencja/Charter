@@ -1,10 +1,12 @@
 package log.charter.gui.components.utils;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
+
 public class PaneSizesBuilder {
 	public int width;
-	public int verticalSpace = 10;
-	public int rowHeight = 20;
-	public int rowSpacing = 5;
+	public int verticalSpace = inputSize / 2;
+	public int rowHeight = inputSize;
+	public int rowSpacing = inputSize / 4;
 
 	public PaneSizesBuilder(final int width) {
 		this.width = width;

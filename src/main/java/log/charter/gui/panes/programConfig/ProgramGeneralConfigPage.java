@@ -1,6 +1,8 @@
 package log.charter.gui.panes.programConfig;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
+import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
 
 import java.io.File;
 import java.util.Arrays;
@@ -31,8 +33,6 @@ import log.charter.sound.SoundFileType;
 import log.charter.util.FileChooseUtils;
 
 public class ProgramGeneralConfigPage implements Page {
-	private static final int pathInputWidth = 400;
-
 	private String musicPath = PathsConfig.musicPath;
 	private String songsPath = PathsConfig.songsPath;
 	private String gpFilesPath = PathsConfig.gpFilesPath;
@@ -103,13 +103,13 @@ public class ProgramGeneralConfigPage implements Page {
 	}
 
 	private TextInputWithValidation addPathInput(final String value, final Consumer<String> onchange) {
-		return new TextInputWithValidation(value, pathInputWidth, ValueValidator.dirValidator, onchange, false);
+		return new TextInputWithValidation(value, inputSize * 20, ValueValidator.dirValidator, onchange, false);
 	}
 
 	private FieldWithLabel<TextInputWithValidation> generatePathField(final RowedPanel panel,
 			final RowedPosition position, final Label label, final TextInputWithValidation input) {
-		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(label, 100, pathInputWidth, 20,
-				input, LabelPosition.LEFT);
+		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(label, inputSize * 5, inputSize * 20,
+				inputSize, input, LabelPosition.LEFT);
 		panel.add(field, position);
 
 		return field;
@@ -128,7 +128,8 @@ public class ProgramGeneralConfigPage implements Page {
 	private JButton addPathSelectButton(final RowedPanel panel, final RowedPosition position, final String path,
 			final FieldWithLabel<TextInputWithValidation> field) {
 		final JButton button = new JButton(Label.SELECT_FOLDER.label());
-		button.setSize(100, 20);
+		button.setSize(inputSize * 5, inputSize);
+		setDefaultFontSize(button);
 		button.addActionListener(e -> selectFolder(panel, path, field));
 		panel.add(button, position);
 
@@ -159,18 +160,19 @@ public class ProgramGeneralConfigPage implements Page {
 
 		final CharterSelect<SoundFileType> select = new CharterSelect<>(possibleValues, baseAudioFormat, t -> t.name,
 				t -> baseAudioFormat = t);
-		baseAudioFormatField = new FieldWithLabel<>(Label.BASE_AUDIO_FORMAT, 100, 100, 20, select, LabelPosition.LEFT);
+		baseAudioFormatField = new FieldWithLabel<>(Label.BASE_AUDIO_FORMAT, inputSize * 5, inputSize * 5, inputSize,
+				select, LabelPosition.LEFT);
 
 		panel.add(baseAudioFormatField, position);
 	}
 
 	private FieldWithLabel<TextInputWithValidation> addDistanceValue(final RowedPanel panel,
 			final RowedPosition position, final Label label, final int value, final IntConsumer onChange) {
-		final TextInputWithValidation input = generateForInt(value, 50, new IntValueValidator(1, 1000), onChange,
-				false);
+		final TextInputWithValidation input = generateForInt(value, inputSize * 5 / 2, new IntValueValidator(1, 1000),
+				onChange, false);
 
-		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(label, 180, 50, 20, input,
-				LabelPosition.LEFT);
+		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(label, inputSize * 17 / 2,
+				inputSize * 5 / 2, inputSize, input, LabelPosition.LEFT);
 		panel.add(field, position);
 
 		return field;
@@ -183,7 +185,8 @@ public class ProgramGeneralConfigPage implements Page {
 
 		final CharterSelect<DistanceType> select = new CharterSelect<>(possibleValues, current, t -> t.label.label(),
 				onChange);
-		select.setSize(100, 20);
+		select.setSize(inputSize * 5, inputSize);
+		setDefaultFontSize(select);
 
 		panel.add(select, position);
 
@@ -207,16 +210,17 @@ public class ProgramGeneralConfigPage implements Page {
 		input.addActionListener(a -> selectNotesByTails = input.isSelected());
 		input.setSelected(selectNotesByTails);
 
-		selectNotesByTailsField = new FieldWithLabel<>(Label.SELECT_NOTES_BY_TAILS, 125, 20, 20, input,
-				LabelPosition.LEFT);
+		selectNotesByTailsField = new FieldWithLabel<>(Label.SELECT_NOTES_BY_TAILS, inputSize * 13 / 2, inputSize,
+				inputSize, input, LabelPosition.LEFT);
 		panel.add(selectNotesByTailsField, position);
 	}
 
 	private void addBackupDelay(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(backupDelay, 50, new IntValueValidator(30, 3600),
-				v -> backupDelay = v, false);
+		final TextInputWithValidation input = generateForInt(backupDelay, inputSize * 5 / 2,
+				new IntValueValidator(30, 3600), v -> backupDelay = v, false);
 
-		backupDelayField = new FieldWithLabel<>(Label.BACKUP_DELAY_S, 130, 50, 20, input, LabelPosition.LEFT);
+		backupDelayField = new FieldWithLabel<>(Label.BACKUP_DELAY_S, inputSize * 13 / 2, inputSize * 5 / 2, inputSize,
+				input, LabelPosition.LEFT);
 		panel.add(backupDelayField, position);
 	}
 

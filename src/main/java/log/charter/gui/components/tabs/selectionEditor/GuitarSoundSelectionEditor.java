@@ -6,7 +6,6 @@ import static java.util.Arrays.asList;
 import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor.getSingleValue;
-import static log.charter.gui.components.utils.ComponentUtils.numericFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -135,7 +134,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 	private void addSlideFretInput(final CurrentSelectionEditor parent, final RowedPosition position) {
 		final TextInputWithValidation slideFretInput = generateForInteger(null, 30, //
 				new IntegerValueValidator(1, InstrumentConfig.frets, true), this::changeSlideFret, false);
-		slideFretInput.addKeyListener(numericFilter);
 
 		slideFret = new FieldWithLabel<>(Label.SLIDE_PANE_FRET, 60, 30, 20, slideFretInput, LabelPosition.LEFT_CLOSE);
 		parent.add(slideFret, position);
@@ -604,20 +602,26 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		bassPickingTechnique.recalculateSizes(inputSize / 2, inputSize * 5, inputSize * 12);
 		harmonic.recalculateSizes(inputSize / 2, inputSize * 29 / 4, inputSize * 12);
 
-		ComponentUtils.resize(slideFret, inputSize / 2, inputSize * 38 / 4, inputSize * 5 / 2, inputSize);
-		ComponentUtils.resize(unpitchedSlide, inputSize * 9 / 2, inputSize * 38 / 4, inputSize * 3, inputSize);
+		final int x0 = inputSize / 2;
+		final int l00 = inputSize * 3;
+		final int l1 = inputSize;
+		final int x1 = inputSize * 5;
+		final int l10 = inputSize * 7 / 2;
 
-		ComponentUtils.resize(vibrato, inputSize / 2, inputSize * 43 / 4, inputSize * 5 / 2, inputSize);
-		ComponentUtils.resize(tremolo, inputSize * 9 / 2, inputSize * 43 / 4, inputSize * 3, inputSize);
+		ComponentUtils.resize(slideFret, x0, inputSize * 38 / 4, l00, l1);
+		ComponentUtils.resize(unpitchedSlide, x1, inputSize * 38 / 4, l10, l1);
 
-		ComponentUtils.resize(accent, inputSize / 2, inputSize * 48 / 4, inputSize * 5 / 2, inputSize);
-		ComponentUtils.resize(linkNext, inputSize * 9 / 2, inputSize * 48 / 4, inputSize * 3, inputSize);
+		ComponentUtils.resize(vibrato, x0, inputSize * 43 / 4, l00, l1);
+		ComponentUtils.resize(tremolo, x1, inputSize * 43 / 4, l10, l1);
 
-		ComponentUtils.resize(splitIntoNotes, inputSize / 2, inputSize * 53 / 4, inputSize * 5 / 2, inputSize);
-		ComponentUtils.resize(onlyBox, inputSize * 9 / 2, inputSize * 53 / 4, inputSize * 3, inputSize);
+		ComponentUtils.resize(accent, x0, inputSize * 48 / 4, l00, l1);
+		ComponentUtils.resize(linkNext, x1, inputSize * 48 / 4, l10, l1);
 
-		ComponentUtils.resize(ignore, inputSize / 2, inputSize * 58 / 4, inputSize * 5 / 2, inputSize);
-		ComponentUtils.resize(passOtherNotes, inputSize * 9 / 2, inputSize * 58 / 4, inputSize * 3, inputSize);
+		ComponentUtils.resize(splitIntoNotes, x0, inputSize * 53 / 4, l00, l1);
+		ComponentUtils.resize(onlyBox, x1, inputSize * 53 / 4, l10, l1);
+
+		ComponentUtils.resize(ignore, x0, inputSize * 58 / 4, l00, l1);
+		ComponentUtils.resize(passOtherNotes, x1, inputSize * 58 / 4, l10, l1);
 
 		recalculateSizesWithReposition(inputSize * 14, inputSize / 2);
 

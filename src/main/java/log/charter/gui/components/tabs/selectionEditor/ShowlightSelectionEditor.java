@@ -1,6 +1,7 @@
 package log.charter.gui.components.tabs.selectionEditor;
 
 import static log.charter.data.config.GraphicalConfig.inputSize;
+import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -193,7 +194,7 @@ public class ShowlightSelectionEditor extends SelectionEditorPart<Showlight> {
 	@Override
 	public void recalculateSizes() {
 		showlightTypesTable.setRowHeight(inputSize);
-		showlightTypesTable.setFont(showlightTypesTable.getFont().deriveFont(inputSize * 0.6f));
+		setDefaultFontSize(showlightTypesTable);
 		ComponentUtils.resize(showlightsTableScroll, inputSize / 2, inputSize / 2, inputSize * 10, inputSize * 7 / 2);
 		ComponentUtils.resize(tableCellEditor, 0, 0, inputSize * 10);
 

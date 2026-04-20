@@ -5,7 +5,6 @@ import javax.swing.JMenu;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.undoSystem.UndoSystem;
-import log.charter.gui.components.simple.SpecialMenuItem;
 import log.charter.gui.panes.songEdits.AddBeatsAtTheStartPane;
 import log.charter.gui.panes.songEdits.AddSilenceAtTheEndPane;
 import log.charter.gui.panes.songEdits.AddSilenceInTheBeginningPane;
@@ -30,9 +29,9 @@ class TempoMapMenuHandler extends CharterMenuHandler {
 
 	private void addAdvancedAudioTempoMapEdits(final JMenu menu) {
 		final JMenu submenu = createMenu(Label.ADVANCED_AUDIO_TEMPO_MAP_EDITS);
-		submenu.add(new SpecialMenuItem(Label.ADD_SILENCE_IN_THE_BEGINNING, this::addSilenceInTheBeginning));
-		submenu.add(new SpecialMenuItem(Label.ADD_BEATS_AT_THE_START, this::addBeatsAtTheStart));
-		submenu.add(new SpecialMenuItem(Label.ADD_SILENCE_AT_THE_END, this::addSilenceIAtTheEnd));
+		submenu.add(createItem(Label.ADD_SILENCE_IN_THE_BEGINNING, this::addSilenceInTheBeginning));
+		submenu.add(createItem(Label.ADD_BEATS_AT_THE_START, this::addBeatsAtTheStart));
+		submenu.add(createItem(Label.ADD_SILENCE_AT_THE_END, this::addSilenceIAtTheEnd));
 		menu.add(submenu);
 	}
 
@@ -40,7 +39,7 @@ class TempoMapMenuHandler extends CharterMenuHandler {
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.TEMPO_MAP_MENU);
 
-		menu.add(new SpecialMenuItem(Label.SET_DEFAULT_START_SILENCE, this::setDefaultSilence));
+		menu.add(createItem(Label.SET_DEFAULT_START_SILENCE, this::setDefaultSilence));
 
 		menu.addSeparator();
 		addAdvancedAudioTempoMapEdits(menu);
