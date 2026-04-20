@@ -2,11 +2,14 @@ package log.charter.gui.panes.graphicalConfig;
 
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForBigDecimal;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
+import static log.charter.gui.components.utils.ComponentUtils.numberFilter;
+import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntConsumer;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -30,12 +33,10 @@ public class GraphicThemeConfigPage implements Page {
 			Label.SIZE_XXL };
 	private static final int[] sizesChartMap = { 2, 3, 4, 6, 8 };
 	private static final int[] sizesText = { 7, 10, 15, 20, 25 };
-	private static final int[] sizesInputs = { 16, 22, 33, 44, 55 };
 	private static final int[] sizesTiming = { 16, 24, 36, 48, 60 };
 	private static final int[] sizesNotes = { 17, 25, 37, 51, 63 };
 
 	private static final IntValueValidator editorPartHeightValidator = new IntValueValidator(1, 100);
-	private static final IntValueValidator timingHeightValidator = new IntValueValidator(1, 200);
 	private static final BigDecimalValueValidator scrollSpeedValidator = new BigDecimalValueValidator(
 			new BigDecimal("0.1"), new BigDecimal("2.0"), false);
 
@@ -113,7 +114,8 @@ public class GraphicThemeConfigPage implements Page {
 		final CharterSelect<Theme> input = new CharterSelect<>(Theme.values(), theme, v -> v.label.label(),
 				this::onThemeChange);
 
-		themeField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_THEME, 60, 150, 20, input, LabelPosition.LEFT);
+		themeField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_THEME, inputSize * 3, inputSize * 15 / 2, inputSize,
+				input, LabelPosition.LEFT);
 		panel.add(themeField, position);
 	}
 
@@ -125,7 +127,7 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	private void setSize(final int size) {
-		inputSizeField.field.setText(sizesInputs[size] + "");
+		inputSizeField.field.setText(sizesNotes[size] + "");
 		noteHeightField.field.setText(sizesNotes[size] + "");
 		noteWidthField.field.setText(sizesNotes[size] + "");
 		chartTextHeightField.field.setText(sizesText[size] + "");
@@ -136,76 +138,53 @@ public class GraphicThemeConfigPage implements Page {
 	private void addSizeButton(final RowedPanel panel, final RowedPosition position, final int size) {
 		final JButton button = new JButton(sizeLabels[size].label());
 		button.addActionListener(e -> setSize(size));
+		setDefaultFontSize(button);
 
-		panel.addWithSettingSize(button, position, 30);
+		panel.addWithSettingSize(button, position, inputSize * 3 / 2);
 		sizeChangeButtons.add(button);
 	}
 
-	private void addInputSizeField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(inputSize, 20, //
-				new IntValueValidator(5, 200), i -> inputSize = i, false);
+	private FieldWithLabel<TextInputWithValidation> addSizeField(final RowedPanel panel, final RowedPosition position,
+			final Label label, final int value, final IntValueValidator validator, final IntConsumer onChange) {
+		final TextInputWithValidation input = generateForInt(value, inputSize, validator, onChange, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
 
-		inputSizeField = new FieldWithLabel<>(Label.INPUT_SIZE, 120, 30, 20, input, LabelPosition.LEFT_CLOSE);
-		inputSizeField.setLocation(10, position.y());
-		panel.add(inputSizeField, position);
+		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(label, inputSize * 6,
+				inputSize * 3 / 2, inputSize, input, LabelPosition.LEFT_CLOSE);
+		panel.add(field, position);
+
+		return field;
+	}
+
+	private void addInputSizeField(final RowedPanel panel, final RowedPosition position) {
+		inputSizeField = addSizeField(panel, position, Label.INPUT_SIZE, inputSize, new IntValueValidator(5, 200),
+				v -> inputSize = v);
 	}
 
 	private void addNoteHeightInput(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(noteHeight, 20, //
-				editorPartHeightValidator, this::onNoteHeightChange, false);
-		input.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(input);
-
-		noteHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_NOTE_HEIGHT, 120, 30, 20, input,
-				LabelPosition.LEFT_CLOSE);
-		panel.add(noteHeightField, position);
+		noteHeightField = addSizeField(panel, position, Label.GRAPHIC_CONFIG_NOTE_HEIGHT, noteHeight,
+				editorPartHeightValidator, this::onNoteHeightChange);
 	}
 
 	private void addNoteWidthInput(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(noteWidth, 20, //
-				editorPartHeightValidator, i -> noteWidth = i, false);
-		input.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(input);
-
-		noteWidthField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_NOTE_WIDTH, 120, 30, 20, input,
-				LabelPosition.LEFT_CLOSE);
-		panel.add(noteWidthField, position);
+		noteWidthField = addSizeField(panel, position, Label.GRAPHIC_CONFIG_NOTE_WIDTH, noteWidth,
+				editorPartHeightValidator, v -> noteWidth = v);
 	}
 
 	private void addChartTextHeightField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(chartTextHeight, 20, //
-				new IntValueValidator(5, 200), i -> chartTextHeight = i, false);
-		input.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(input);
-
-		chartTextHeightField = new FieldWithLabel<>(Label.CHART_TEXT_HEIGHT, 120, 30, 20, input,
-				LabelPosition.LEFT_CLOSE);
-		chartTextHeightField.setLocation(10, position.y());
-		panel.add(chartTextHeightField, position);
+		chartTextHeightField = addSizeField(panel, position, Label.CHART_TEXT_HEIGHT, chartTextHeight,
+				new IntValueValidator(5, 200), v -> chartTextHeight = v);
 	}
 
 	private void addTimingHeightFieldField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(timingHeight, 20, //
-				timingHeightValidator, i -> timingHeight = i, false);
-		input.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(input);
-
-		timingHeightField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_TIMING_HEIGHT, 120, 30, 20, input,
-				LabelPosition.LEFT_CLOSE);
-		panel.add(timingHeightField, position);
+		timingHeightField = addSizeField(panel, position, Label.GRAPHIC_CONFIG_TIMING_HEIGHT, timingHeight,
+				new IntValueValidator(1, 200), v -> timingHeight = v);
 	}
 
 	private void addChartMapHeightMultiplierInput(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(chartMapHeightMultiplier, 20, //
-				new IntValueValidator(1, 20), v -> chartMapHeightMultiplier = v, false);
-		input.setHorizontalAlignment(JTextField.CENTER);
-		addSelectTextOnFocus(input);
-
-		chartMapHeightMultiplierField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_CHART_MAP_HEIGHT_MULTIPLIER, 120, 30,
-				20, input, LabelPosition.LEFT_CLOSE);
-		panel.add(chartMapHeightMultiplierField, position);
+		chartMapHeightMultiplierField = addSizeField(panel, position, Label.GRAPHIC_CONFIG_CHART_MAP_HEIGHT_MULTIPLIER,
+				chartMapHeightMultiplier, new IntValueValidator(1, 20), v -> chartMapHeightMultiplier = v);
 	}
 
 	private void addShowChordBoxesInput(final RowedPanel panel, final RowedPosition position) {
@@ -213,19 +192,20 @@ public class GraphicThemeConfigPage implements Page {
 		input.setSelected(showChordBoxes);
 		input.addActionListener(e -> showChordBoxes = input.isSelected());
 
-		showChordBoxesField = new FieldWithLabel<>(Label.SHOW_CHORD_BOXES, 120, 20, 20, input,
+		showChordBoxesField = new FieldWithLabel<>(Label.SHOW_CHORD_BOXES, inputSize * 6, inputSize, inputSize, input,
 				LabelPosition.LEFT_CLOSE);
 		panel.add(showChordBoxesField, position);
 	}
 
 	private void addScrollSpeedFieldField(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForBigDecimal(previewScrollSpeed, 20, //
+		final TextInputWithValidation input = generateForBigDecimal(previewScrollSpeed, inputSize, //
 				scrollSpeedValidator, i -> previewScrollSpeed = i, false);
 		input.setHorizontalAlignment(JTextField.CENTER);
 		addSelectTextOnFocus(input);
+		input.addKeyListener(numberFilter);
 
-		previewScrollSpeedField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_PREVIEW_SCROLL_SPEED, 120, 30, 20, input,
-				LabelPosition.LEFT_CLOSE);
+		previewScrollSpeedField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_PREVIEW_SCROLL_SPEED, inputSize * 6,
+				inputSize * 3 / 2, inputSize, input, LabelPosition.LEFT_CLOSE);
 		panel.add(previewScrollSpeedField, position);
 	}
 
@@ -239,6 +219,7 @@ public class GraphicThemeConfigPage implements Page {
 		chartTextHeightField.setVisible(visibility);
 		timingHeightField.setVisible(visibility);
 		chartMapHeightMultiplierField.setVisible(visibility);
+		showChordBoxesField.setVisible(visibility);
 		previewScrollSpeedField.setVisible(visibility);
 	}
 

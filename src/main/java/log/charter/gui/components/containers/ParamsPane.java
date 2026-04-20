@@ -2,12 +2,16 @@ package log.charter.gui.components.containers;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForBigDecimal;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
+import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
 
 import java.awt.Component;
+import java.awt.DisplayMode;
+import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
@@ -161,8 +165,14 @@ public class ParamsPane extends JDialog implements WindowListener {
 	}
 
 	private void setLocation() {
-		setLocation(WindowStateConfig.x + frame.getWidth() / 2 - getWidth() / 2,
-				WindowStateConfig.y + frame.getHeight() / 2 - getHeight() / 2);
+		final DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+				.getDisplayMode();
+		final int x = min(displayMode.getWidth() * 99 / 100,
+				max(displayMode.getWidth() / 100, WindowStateConfig.x + frame.getWidth() / 2 - getWidth() / 2));
+		final int y = min(displayMode.getHeight() * 99 / 100,
+				max(displayMode.getWidth() / 100, WindowStateConfig.y + frame.getHeight() / 2 - getHeight() / 2));
+
+		setLocation(x, y);
 	}
 
 	public int getY(final int row) {
@@ -215,6 +225,7 @@ public class ParamsPane extends JDialog implements WindowListener {
 		}
 
 		final JLabel labelComponent = new JLabel(label, SwingConstants.LEFT);
+		setDefaultFontSize(labelComponent);
 		if (width == 0) {
 			width = labelComponent.getPreferredSize().width;
 		}
@@ -226,16 +237,18 @@ public class ParamsPane extends JDialog implements WindowListener {
 	protected void addButtons(final int row, final Label button1Label, final Label button2Label, final Runnable on1,
 			final Runnable on2) {
 		final int center = sizes.width / 2;
-		final int x0 = center - 110;
-		final int x1 = center + 10;
+		final int x0 = center - inputSize * 11 / 2;
+		final int x1 = center + inputSize / 2;
 
 		final JButton button1 = new JButton(button1Label.label());
 		button1.addActionListener(e -> on1.run());
-		add(button1, x0, getY(row), 100, 20);
+		setDefaultFontSize(button1);
+		add(button1, x0, getY(row), inputSize * 5, inputSize);
 
 		final JButton button2 = new JButton(button2Label.label());
 		button2.addActionListener(e -> on2.run());
-		add(button2, x1, getY(row), 100, 20);
+		setDefaultFontSize(button2);
+		add(button2, x1, getY(row), inputSize * 5, inputSize);
 	}
 
 	protected void addConfigCheckbox(final int row, final int x, int labelWidth, final Label label, final boolean val,
@@ -260,7 +273,7 @@ public class ParamsPane extends JDialog implements WindowListener {
 		checkbox.addActionListener(a -> setter.setValue(checkbox.isSelected()));
 		checkbox.setFocusable(false);
 
-		add(checkbox, x, y, 20, 20);
+		add(checkbox, x, y, inputSize, inputSize);
 	}
 
 	protected <T> void addConfigRadioButtons(final int row, final int x, final int optionWidth, final T val,
@@ -278,9 +291,9 @@ public class ParamsPane extends JDialog implements WindowListener {
 			radioButton.setSelected(value.a.equals(val));
 			radioButton.addActionListener(a -> setter.setValue(value.a));
 			group.add(radioButton);
-			add(radioButton, x, y, 20, 20);
+			add(radioButton, x, y, inputSize, inputSize);
 
-			addLabelExact(x + 20, y, value.b, optionWidth - 20);
+			addLabelExact(x + inputSize, y, value.b, optionWidth - inputSize);
 
 			x += optionWidth;
 		}
@@ -317,21 +330,24 @@ public class ParamsPane extends JDialog implements WindowListener {
 
 	protected void addConfigValue(final int row, final int x, int labelWidth, final Label label,
 			final TextInputWithValidation input, final int inputLength) {
+		setDefaultFontSize(input);
+
 		final int y = getY(row);
 		if (label != null) {
 			final JLabel labelComponent = new JLabel(label.label(), SwingConstants.LEFT);
+			setDefaultFontSize(labelComponent);
 			if (labelWidth == 0) {
 				labelWidth = labelComponent.getPreferredSize().width;
 			}
 
 			labelWidth += 5;
 
-			add(labelComponent, x, y, labelWidth, 20);
+			add(labelComponent, x, y, labelWidth, inputSize);
 		}
 
 		final int fieldX = x + labelWidth;
 		final int length = inputLength > OPTIONS_MAX_INPUT_WIDTH ? OPTIONS_MAX_INPUT_WIDTH : inputLength;
-		add(input, fieldX, y, length, 20);
+		add(input, fieldX, y, length, inputSize);
 	}
 
 	protected void addDefaultFinish(final int row) {

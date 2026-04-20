@@ -1,6 +1,7 @@
 package log.charter.gui.panes.songEdits;
 
 import static java.lang.Math.abs;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 
 import java.math.BigDecimal;
@@ -44,7 +45,7 @@ public class AddSilenceInTheBeginningPane extends ParamsPane {
 
 	public AddSilenceInTheBeginningPane(final CharterFrame frame, final ChartTimeHandler chartTimeHandler,
 			final ChartData data, final ProjectAudioHandler projectAudioHandler) {
-		super(frame, Label.ADD_SILENCE_PANE, 300);
+		super(frame, Label.ADD_SILENCE_PANE, inputSize * 15);
 		this.chartTimeHandler = chartTimeHandler;
 		this.data = data;
 		this.projectAudioHandler = projectAudioHandler;
@@ -52,9 +53,10 @@ public class AddSilenceInTheBeginningPane extends ParamsPane {
 		addTimeValidator = new BigDecimalValueValidator(new BigDecimal(-data.beats().get(0).position() / 1000.0),
 				new BigDecimal(600), false);
 
-		addLabel(0, 20, Label.ADD_SILENCE_SECONDS, 0);
+		addLabel(0, inputSize, Label.ADD_SILENCE_SECONDS, 0);
 
-		addBigDecimalConfigValue(1, 20, 0, null, time, 100, addTimeValidator, val -> time = val, false);
+		addBigDecimalConfigValue(1, inputSize, 0, null, time, inputSize * 5, addTimeValidator, val -> time = val,
+				false);
 		input = (TextInputWithValidation) getPart(-1);
 		addSelectTextOnFocus(input);
 
@@ -76,16 +78,16 @@ public class AddSilenceInTheBeginningPane extends ParamsPane {
 		addButton.setSelected(true);
 		addButton.addActionListener(e -> setAddTime(true));
 		group.add(addButton);
-		final FieldWithLabel<JRadioButton> addField = new FieldWithLabel<>(Label.ADD_SILENCE_TYPE_ADD, 5, 20, 20,
-				addButton, LabelPosition.RIGHT_PACKED);
-		add(addField, 20, getY(2), 100, 20);
+		final FieldWithLabel<JRadioButton> addField = new FieldWithLabel<>(Label.ADD_SILENCE_TYPE_ADD, inputSize / 4,
+				inputSize, inputSize, addButton, LabelPosition.RIGHT_PACKED);
+		add(addField, inputSize, getY(2), inputSize * 5, inputSize);
 
 		final JRadioButton setButton = new JRadioButton();
 		setButton.addActionListener(e -> setAddTime(false));
 		group.add(setButton);
-		final FieldWithLabel<JRadioButton> setField = new FieldWithLabel<>(Label.ADD_SILENCE_TYPE_SET, 5, 20, 20,
-				setButton, LabelPosition.RIGHT_PACKED);
-		add(setField, 120, getY(2), 100, 20);
+		final FieldWithLabel<JRadioButton> setField = new FieldWithLabel<>(Label.ADD_SILENCE_TYPE_SET, inputSize / 4,
+				inputSize, inputSize, setButton, LabelPosition.RIGHT_PACKED);
+		add(setField, inputSize * 6, getY(2), inputSize * 5, inputSize);
 	}
 
 	private void addSilence(final double time) {

@@ -1,6 +1,7 @@
 package log.charter.gui.components.simple;
 
 import static java.lang.Math.min;
+import static log.charter.gui.components.utils.ComponentUtils.intFilter;
 
 import java.awt.Color;
 import java.awt.event.FocusAdapter;
@@ -31,8 +32,11 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 
 	public static TextInputWithValidation generateForInteger(final Integer value, final int length,
 			final IntegerValueValidator validator, final Consumer<Integer> setter, final boolean allowWrongValues) {
-		return new TextInputWithValidation(value == null ? "" : (value + ""), length, validator,
-				setterForInteger(setter), allowWrongValues);
+		final TextInputWithValidation input = new TextInputWithValidation(value == null ? "" : (value + ""), length,
+				validator, setterForInteger(setter), allowWrongValues);
+		input.addKeyListener(intFilter);
+
+		return input;
 	}
 
 	private static Consumer<String> setterForInteger(final Consumer<Integer> setter) {
@@ -49,7 +53,11 @@ public class TextInputWithValidation extends JTextField implements DocumentListe
 
 	public static TextInputWithValidation generateForInt(final int value, final int length,
 			final IntValueValidator validator, final IntConsumer setter, final boolean allowWrongValues) {
-		return new TextInputWithValidation(value + "", length, validator, setterForInt(setter), allowWrongValues);
+		final TextInputWithValidation input = new TextInputWithValidation(value + "", length, validator,
+				setterForInt(setter), allowWrongValues);
+		input.addKeyListener(intFilter);
+
+		return input;
 	}
 
 	private static Consumer<String> setterForInt(final IntConsumer setter) {

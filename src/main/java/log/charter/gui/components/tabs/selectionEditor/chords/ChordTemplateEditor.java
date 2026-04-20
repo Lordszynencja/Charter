@@ -9,7 +9,6 @@ import static log.charter.data.song.ChordTemplate.fingerIds;
 import static log.charter.data.song.ChordTemplate.fingerNames;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
 import static log.charter.gui.components.utils.ComponentUtils.editingKeyCodes;
-import static log.charter.gui.components.utils.ComponentUtils.numericFilter;
 import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
 import static log.charter.gui.components.utils.TextInputSelectAllOnFocus.addSelectTextOnFocus;
 import static log.charter.util.Utils.getStringPosition;
@@ -242,6 +241,13 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		parent.addWithSettingSize(chordNameAdviceButton, x, parent.sizes.getY(row), 150, 20);
 	}
 
+	public void addChordNameSuggestionButton() {
+		chordNameAdviceButton = new ChordNameAdviceButton(Label.CHORD_NAME_ADVICE, parent,
+				() -> chartData.currentArrangement().tuning, () -> chordTemplateSupplier.get().frets,
+				this::onChordNameSelect);
+		parent.add(chordNameAdviceButton);
+	}
+
 	public void onChordNameSelect(final String newName) {
 		chordTemplateSupplier.get().chordName = newName;
 		chordNameInput.setTextWithoutUpdate(newName);
@@ -298,6 +304,45 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		});
 
 		parent.addWithSettingSize(chordNameInput, x + 80, parent.sizes.getY(row), 150, 25);
+	}
+
+	public void addChordNameInput() {
+		chordNameLabel = new JLabel(Label.CHORD_NAME.label(), SwingConstants.LEFT);
+		parent.add(chordNameLabel);
+
+		chordNameInput = new AutocompleteInput<>(parent, 130, "", this::getPossibleChords,
+				this::formatChordTemplateName, this::onChordTemplateChange);
+		chordNameInput.setLabelGenerator(value -> {
+			final ChordSuggestion component = new ChordSuggestion(chartData.currentStrings(), value.text, value.value);
+			return new LabelComponent(component, component::onFocus, component::onLoseFocus);
+		});
+		chordNameInput.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void insertUpdate(final DocumentEvent e) {
+				changedUpdate(e);
+			}
+
+			@Override
+			public void removeUpdate(final DocumentEvent e) {
+				changedUpdate(e);
+			}
+
+			@Override
+			public void changedUpdate(final DocumentEvent e) {
+				if (chordNameInput.isDisableDocumentUpdateHandling()) {
+					return;
+				}
+
+				editingChordName = true;
+				final String newName = chordNameInput.getText();
+				chordTemplateSupplier.get().chordName = newName;
+				onChange.run();
+				editingChordName = false;
+			}
+		});
+
+		parent.add(chordNameInput);
 	}
 
 	private String templateSearchName(final ChordTemplate template) {
@@ -398,7 +443,6 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 					new IntegerValueValidator(0, InstrumentConfig.frets, true), v -> updateFretValue(string, v), false);
 			input.setHorizontalAlignment(JTextField.CENTER);
 			addSelectTextOnFocus(input);
-			input.addKeyListener(numericFilter);
 
 			fretInputs.add(input);
 			parent.add(input);

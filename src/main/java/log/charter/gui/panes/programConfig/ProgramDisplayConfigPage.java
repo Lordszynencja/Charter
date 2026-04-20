@@ -1,5 +1,6 @@
 package log.charter.gui.panes.programConfig;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.data.config.SystemType.MAC;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 
@@ -43,7 +44,7 @@ public class ProgramDisplayConfigPage implements Page {
 
 		addInvertStrings(panel, position);
 		if (SystemType.not(MAC)) {
-			position.addX(20);
+			position.addX(inputSize);
 			addInvertStrings3D(panel, position);
 		}
 		position.newRow();
@@ -62,10 +63,11 @@ public class ProgramDisplayConfigPage implements Page {
 	}
 
 	private void addMarkerOffset(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(markerOffset, 50, new IntValueValidator(0, 999_999),
-				v -> markerOffset = v, false);
+		final TextInputWithValidation input = generateForInt(markerOffset, inputSize * 5 / 2,
+				new IntValueValidator(0, 9_999), v -> markerOffset = v, false);
 
-		markerOffsetField = new FieldWithLabel<>(Label.MARKER_POSITION_PX, 125, 50, 20, input, LabelPosition.LEFT);
+		markerOffsetField = new FieldWithLabel<>(Label.MARKER_POSITION_PX, inputSize * 6, inputSize * 5 / 2, inputSize,
+				input, LabelPosition.LEFT);
 		panel.add(markerOffsetField, position);
 	}
 
@@ -74,7 +76,8 @@ public class ProgramDisplayConfigPage implements Page {
 		input.addActionListener(a -> invertStrings = input.isSelected());
 		input.setSelected(invertStrings);
 
-		invertStringsField = new FieldWithLabel<>(Label.INVERT_STRINGS, 100, 20, 20, input, LabelPosition.LEFT);
+		invertStringsField = new FieldWithLabel<>(Label.INVERT_STRINGS, inputSize * 4, inputSize, inputSize, input,
+				LabelPosition.LEFT);
 		panel.add(invertStringsField, position);
 	}
 
@@ -83,8 +86,8 @@ public class ProgramDisplayConfigPage implements Page {
 		input.addActionListener(a -> invertStrings3D = input.isSelected());
 		input.setSelected(invertStrings3D);
 
-		invertStrings3DField = new FieldWithLabel<>(Label.INVERT_STRINGS_IN_PREVIEW, 125, 20, 20, input,
-				LabelPosition.LEFT);
+		invertStrings3DField = new FieldWithLabel<>(Label.INVERT_STRINGS_IN_PREVIEW, inputSize * 7, inputSize,
+				inputSize, input, LabelPosition.LEFT);
 		panel.add(invertStrings3DField, position);
 	}
 
@@ -93,8 +96,8 @@ public class ProgramDisplayConfigPage implements Page {
 		input.addActionListener(a -> showTempoInsteadOfBPM = input.isSelected());
 		input.setSelected(showTempoInsteadOfBPM);
 
-		showTempoInsteadOfBPMField = new FieldWithLabel<>(Label.SHOW_TEMPO_INSTEAD_OF_BPM, 175, 20, 20, input,
-				LabelPosition.LEFT);
+		showTempoInsteadOfBPMField = new FieldWithLabel<>(Label.SHOW_TEMPO_INSTEAD_OF_BPM, inputSize * 8, inputSize,
+				inputSize, input, LabelPosition.LEFT);
 		panel.add(showTempoInsteadOfBPMField, position);
 	}
 
@@ -103,7 +106,8 @@ public class ProgramDisplayConfigPage implements Page {
 		input.addActionListener(a -> showChordIds = input.isSelected());
 		input.setSelected(showChordIds);
 
-		showChordIdsField = new FieldWithLabel<>(Label.SHOW_CHORD_IDS, 100, 20, 20, input, LabelPosition.LEFT);
+		showChordIdsField = new FieldWithLabel<>(Label.SHOW_CHORD_IDS, inputSize * 5, inputSize, inputSize, input,
+				LabelPosition.LEFT);
 		panel.add(showChordIdsField, position);
 	}
 
@@ -112,15 +116,17 @@ public class ProgramDisplayConfigPage implements Page {
 		input.addActionListener(a -> showGrid = input.isSelected());
 		input.setSelected(showGrid);
 
-		showGridField = new FieldWithLabel<>(Label.SHOW_GRID, 100, 20, 20, input, LabelPosition.LEFT);
+		showGridField = new FieldWithLabel<>(Label.SHOW_GRID, inputSize * 4, inputSize, inputSize, input,
+				LabelPosition.LEFT);
 		panel.add(showGridField, position);
 	}
 
 	private void addFPS(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(FPS, 50, new IntValueValidator(1, 1000), v -> FPS = v,
-				false);
+		final TextInputWithValidation input = generateForInt(FPS, inputSize * 5 / 2, new IntValueValidator(1, 1000),
+				v -> FPS = v, false);
 
-		FPSField = new FieldWithLabel<>(Label.FPS, 125, 50, 20, input, LabelPosition.LEFT);
+		FPSField = new FieldWithLabel<>(Label.FPS, inputSize * 2, inputSize * 3 / 2, inputSize, input,
+				LabelPosition.LEFT);
 		panel.add(FPSField, position);
 	}
 

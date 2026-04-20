@@ -1,5 +1,7 @@
 package log.charter.gui.components.containers;
 
+import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -10,7 +12,6 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JTabbedPane;
 
-import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.lookAndFeel.CharterTabbedPaneUI;
 
@@ -97,6 +98,6 @@ public class CharterTabbedPane extends JTabbedPane implements ComponentListener 
 	}
 
 	public void recalculateSizes() {
-		setFont(getFont().deriveFont(GraphicalConfig.inputSize * 0.6f));
+		setDefaultFontSize(this);
 	}
 }

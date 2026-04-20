@@ -14,6 +14,7 @@ import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.data.song.vocals.VocalPath;
+import log.charter.gui.ChartPanel;
 import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShape;
 import log.charter.gui.chartPanelDrawers.drawableShapes.DrawableShapeList;
@@ -37,7 +38,6 @@ public class LyricLinesDrawer {
 		private final DrawableShapeList texts = new DrawableShapeList();
 
 		public void addLyricLine(final String text, final int x, final int lengthPx, final Color color) {
-			reloadGraphics();
 			final ShapePositionWithSize backgroundPosition = new ShapePositionWithSize(x, lyricLinesY, lengthPx,
 					height);
 			backgrounds.add(DrawableShape.filledRoundRectangle(backgroundPosition,
@@ -54,6 +54,7 @@ public class LyricLinesDrawer {
 	}
 
 	private ChartData chartData;
+	private ChartPanel chartPanel;
 	private ModeManager modeManager;
 
 	public void draw(final FrameData frameData) {
@@ -65,6 +66,7 @@ public class LyricLinesDrawer {
 		String currentLine = "";
 		boolean started = false;
 		int x = 0;
+		final int width = chartPanel.getWidth();
 		final ImmutableBeatsMap beats = chartData.beats();
 		final VocalPath vocalPath = chartData.currentVocals();
 
@@ -72,6 +74,9 @@ public class LyricLinesDrawer {
 			if (!started) {
 				started = true;
 				x = positionToX(vocal.position(beats), frameData.time);
+				if (x > width) {
+					break;
+				}
 			}
 
 			currentLine += vocal.text();
@@ -80,8 +85,11 @@ public class LyricLinesDrawer {
 			}
 
 			if (vocal.flag() == VocalFlag.PHRASE_END) {
-				drawingData.addLyricLine(currentLine, x, positionToX(vocal.endPosition(beats), frameData.time) - x,
-						vocalPath.color);
+				final int endX = positionToX(vocal.endPosition(beats), frameData.time);
+				if (endX >= 0) {
+					drawingData.addLyricLine(currentLine, x, positionToX(vocal.endPosition(beats), frameData.time) - x,
+							vocalPath.color);
+				}
 				currentLine = "";
 				started = false;
 			}

@@ -3,9 +3,12 @@ package log.charter.gui.components.utils;
 import static java.awt.event.KeyEvent.VK_BACK_SPACE;
 import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.awt.event.KeyEvent.VK_DOWN;
+import static java.awt.event.KeyEvent.VK_ENTER;
+import static java.awt.event.KeyEvent.VK_ESCAPE;
 import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_UP;
+import static java.lang.Math.ceil;
 import static log.charter.data.config.GraphicalConfig.inputSize;
 
 import java.awt.Component;
@@ -26,6 +29,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.components.simple.FieldWithLabel;
@@ -76,11 +80,16 @@ public class ComponentUtils {
 
 	public static final Set<Integer> editingKeyCodes = Set.of(//
 			VK_DELETE, VK_BACK_SPACE, //
-			VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT);
+			VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT, //
+			VK_ESCAPE, VK_ENTER);
 
-	public static final KeyFilter numericFilter = new KeyFilter(e -> {
+	public static final KeyFilter intFilter = new KeyFilter(e -> {
 		final char c = e.getKeyChar();
 		return (c >= '0' && c <= '9') || editingKeyCodes.contains(e.getKeyCode());
+	});
+	public static final KeyFilter numberFilter = new KeyFilter(e -> {
+		final char c = e.getKeyChar();
+		return (c >= '0' && c <= '9') || c == '.' || c == ',' || editingKeyCodes.contains(e.getKeyCode());
 	});
 
 	public static void setComponentSize(final Component component, final int w, final int h) {
@@ -189,37 +198,55 @@ public class ComponentUtils {
 		}
 	}
 
+	public static float defaultFontSize() {
+		return (float) ceil(inputSize * 0.6f);
+	}
+
+	public static float defaultTextInputFontSize() {
+		return (float) ceil((inputSize - 10) * 0.8);
+	}
+
+	public static void setDefaultFontSize(final Component c) {
+		if (c.getFont() == null) {
+			return;
+		}
+
+		final float fontSize = JTextField.class.isAssignableFrom(c.getClass()) ? defaultTextInputFontSize()
+				: defaultFontSize();
+		c.setFont(c.getFont().deriveFont(fontSize));
+	}
+
 	public static void resize(final FieldWithLabel<?> c, final int x, final int y, int labelLength,
 			final int inputLength) {
 		switch (c.labelPosition) {
 			case LEFT:
 			case LEFT_CLOSE:
 				setComponentBounds(c, x, y, labelLength + inputLength, inputSize);
-				c.label.setFont(c.label.getFont().deriveFont(inputSize * 0.6f));
+				setDefaultFontSize(c.label);
 				setComponentBounds(c.label, 0, 0, labelLength, inputSize);
-				c.field.setFont(c.field.getFont().deriveFont(inputSize * 0.6f));
+				setDefaultFontSize(c.field);
 				setComponentBounds(c.field, labelLength, 0, inputLength, inputSize);
 				break;
 			case LEFT_PACKED:
-				c.label.setFont(c.label.getFont().deriveFont(inputSize * 0.6f));
+				setDefaultFontSize(c.label);
 				labelLength = c.getTextWidth();
 				setComponentBounds(c.label, 0, 0, labelLength, inputSize);
-				c.field.setFont(c.field.getFont().deriveFont(inputSize * 0.6f));
+				setDefaultFontSize(c.field);
 				setComponentBounds(c.field, labelLength, 0, inputLength, inputSize);
 				setComponentBounds(c, x, y, labelLength + inputLength, inputSize);
 				break;
 			case RIGHT:
 			case RIGHT_CLOSE:
 				setComponentBounds(c, x, y, labelLength + inputLength, inputSize);
-				c.field.setFont(c.field.getFont().deriveFont(inputSize * 0.6f));
+				setDefaultFontSize(c.field);
 				setComponentBounds(c.field, 0, 0, inputLength, inputSize);
-				c.label.setFont(c.label.getFont().deriveFont(inputSize * 0.6f));
+				setDefaultFontSize(c.label);
 				setComponentBounds(c.label, inputLength, 0, labelLength, inputSize);
 				break;
 			case RIGHT_PACKED:
-				c.field.setFont(c.field.getFont().deriveFont(inputSize * 0.6f));
+				setDefaultFontSize(c.field);
 				setComponentBounds(c.field, 0, 0, inputLength, inputSize);
-				c.label.setFont(c.label.getFont().deriveFont(inputSize * 0.6f));
+				setDefaultFontSize(c.label);
 				labelLength = c.getTextWidth();
 				setComponentBounds(c.label, inputLength, 0, labelLength, inputSize);
 				setComponentBounds(c, x, y, labelLength + inputLength, inputSize);
@@ -231,9 +258,9 @@ public class ComponentUtils {
 
 	public static void resize(final JLabel label, final Component field, final int x, final int y,
 			final int labelLength, final int inputLength) {
-		label.setFont(label.getFont().deriveFont(inputSize * 0.6f));
+		setDefaultFontSize(label);
 		setComponentBounds(label, x, y, labelLength, inputSize);
-		field.setFont(field.getFont().deriveFont(inputSize * 0.6f));
+		setDefaultFontSize(field);
 		setComponentBounds(field, x + labelLength, y, inputLength, inputSize);
 	}
 
@@ -242,7 +269,7 @@ public class ComponentUtils {
 	}
 
 	public static void resize(final Component c, final int x, final int y, final int length, final int height) {
-		c.setFont(c.getFont().deriveFont(inputSize * 0.6f));
+		setDefaultFontSize(c);
 		setComponentBounds(c, x, y, length, height);
 	}
 

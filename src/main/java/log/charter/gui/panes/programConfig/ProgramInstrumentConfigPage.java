@@ -1,5 +1,6 @@
 package log.charter.gui.panes.programConfig;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 
 import javax.swing.JCheckBox;
@@ -42,31 +43,35 @@ public class ProgramInstrumentConfigPage implements Page {
 		input.addActionListener(a -> leftHanded = input.isSelected());
 		input.setSelected(leftHanded);
 
-		leftHandedField = new FieldWithLabel<>(Label.LEFT_HANDED, 100, 20, 20, input, LabelPosition.LEFT);
+		leftHandedField = new FieldWithLabel<>(Label.LEFT_HANDED, inputSize * 5, inputSize, inputSize, input,
+				LabelPosition.LEFT);
 		panel.add(leftHandedField, position);
 	}
 
 	private void addMaxStrings(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(maxStrings, 50,
+		final TextInputWithValidation input = generateForInt(maxStrings, inputSize * 5 / 2,
 				new IntValueValidator(1, InstrumentConfig.maxPossibleStrings), v -> maxStrings = v, false);
 
-		maxStringsField = new FieldWithLabel<>(Label.MAX_STRINGS, 100, 50, 20, input, LabelPosition.LEFT);
+		maxStringsField = new FieldWithLabel<>(Label.MAX_STRINGS, inputSize * 5, inputSize * 5 / 2, inputSize, input,
+				LabelPosition.LEFT);
 		panel.add(maxStringsField, position);
 	}
 
 	private void addFrets(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(frets, 50, new IntValueValidator(0, 32), v -> frets = v,
-				false);
+		final TextInputWithValidation input = generateForInt(frets, inputSize * 5 / 2, new IntValueValidator(0, 128),
+				v -> frets = v, false);
 
-		fretsField = new FieldWithLabel<>(Label.FRETS, 50, 50, 20, input, LabelPosition.LEFT);
+		fretsField = new FieldWithLabel<>(Label.FRETS, inputSize * 5 / 2, inputSize * 5 / 2, inputSize, input,
+				LabelPosition.LEFT);
 		panel.add(fretsField, position);
 	}
 
 	private void addMaxBendValue(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(maxBendValue, 50, new IntValueValidator(2, 8),
-				v -> maxBendValue = v, false);
+		final TextInputWithValidation input = generateForInt(maxBendValue, inputSize * 5 / 2,
+				new IntValueValidator(2, 8), v -> maxBendValue = v, false);
 
-		maxBendValueField = new FieldWithLabel<>(Label.MAX_BEND_VALUE, 100, 50, 20, input, LabelPosition.LEFT);
+		maxBendValueField = new FieldWithLabel<>(Label.MAX_BEND_VALUE, inputSize * 5, inputSize * 5 / 2, inputSize,
+				input, LabelPosition.LEFT);
 		panel.add(maxBendValueField, position);
 	}
 

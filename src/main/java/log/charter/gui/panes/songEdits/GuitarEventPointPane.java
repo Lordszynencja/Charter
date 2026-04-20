@@ -1,5 +1,9 @@
 package log.charter.gui.panes.songEdits;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
+import static log.charter.gui.components.utils.ComponentUtils.defaultTextInputFontSize;
+import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
+
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.FocusEvent;
@@ -59,7 +63,7 @@ public class GuitarEventPointPane extends ParamsPane {
 
 	public GuitarEventPointPane(final ChartData data, final CharterFrame frame, final UndoSystem undoSystem,
 			final EventPoint eventPoint, final Runnable onCancel) {
-		super(frame, Label.GUITAR_EVENT_POINT_PANE, 400);
+		super(frame, Label.GUITAR_EVENT_POINT_PANE, inputSize * 20);
 		this.data = data;
 		this.undoSystem = undoSystem;
 
@@ -101,23 +105,26 @@ public class GuitarEventPointPane extends ParamsPane {
 
 		final CharterSelect<SectionType> input = new CharterSelect<>(sectionTypes, section,
 				v -> v == null ? "" : v.label.label(), this::onSectionChange);
+		setDefaultFontSize(input);
 
-		addLabel(row.get(), 20, Label.SECTION_TYPE, 0);
-		this.add(input, 100, getY(row.getAndIncrement()), 200, 20);
+		addLabel(row.get(), inputSize, Label.SECTION_TYPE, 0);
+		this.add(input, inputSize * 5, getY(row.getAndIncrement()), inputSize * 10, inputSize);
 	}
 
 	private void preparePhraseInputs(final AtomicInteger row, final String phrase) {
-		addLabel(row.get(), 20, Label.PHRASE_NAME, 0);
+		addLabel(row.get(), inputSize, Label.PHRASE_NAME, 0);
 
 		phraseHint = new JLabel(section == null ? "" : section.label.label());
 		phraseHint.setVisible(false);
 		phraseHint.setForeground(ColorLabel.BASE_DARK_TEXT.color());
 		phraseHint.setCursor(new Cursor(Cursor.TEXT_CURSOR));
-		this.add(phraseHint, 105, getY(row.get()), 100, 20);
+		phraseHint.setFont(phraseHint.getFont().deriveFont(defaultTextInputFontSize()));
+		this.add(phraseHint, inputSize * 5 + 2, getY(row.get()) - 2, inputSize * 5, inputSize);
 
-		phraseNameInput = new AutocompleteInput<>(this, 100, phrase, this::getPossiblePhraseNames, s -> s,
+		phraseNameInput = new AutocompleteInput<>(this, inputSize * 5, phrase, this::getPossiblePhraseNames, s -> s,
 				this::onPhraseNameSelected);
-		this.add(phraseNameInput, 100, getY(row.getAndIncrement()) - 2, 100, 24);
+		setDefaultFontSize(phraseNameInput);
+		this.add(phraseNameInput, inputSize * 5, getY(row.getAndIncrement()) - 2, inputSize * 5, inputSize);
 
 		phraseNameInput.addFocusListener(new FocusListener() {
 			@Override
@@ -131,11 +138,11 @@ public class GuitarEventPointPane extends ParamsPane {
 			}
 		});
 
-		addIntConfigValue(row.get(), 50, 45, Label.LEVEL, phraseLevel, 30, //
+		addIntConfigValue(row.get(), inputSize * 5 / 2, inputSize * 5 / 2, Label.LEVEL, phraseLevel, inputSize * 3 / 2, //
 				new IntValueValidator(0, data.currentArrangement().levels.size()), v -> phraseLevel = v, false);
 		phraseLevelInput = (JTextField) getPart(-1);
 
-		addConfigCheckbox(row.getAndIncrement(), 150, 0, Label.GUITAR_BEAT_PANE_PHRASE_SOLO, phraseSolo,
+		addConfigCheckbox(row.getAndIncrement(), inputSize * 15 / 2, 0, Label.GUITAR_BEAT_PANE_PHRASE_SOLO, phraseSolo,
 				val -> phraseSolo = val);
 		phraseSoloInput = (JCheckBox) getPart(-1);
 	}
@@ -182,7 +189,8 @@ public class GuitarEventPointPane extends ParamsPane {
 
 		final CharterSelect<EventType> input = new CharterSelect<>(eventTypes, null, e -> e == null ? "" : e.label,
 				null);
-		input.setMinimumSize(new Dimension(100, 20));
+		setDefaultFontSize(input);
+		input.setMinimumSize(new Dimension(inputSize * 5, inputSize));
 
 		final DefaultTableModel tableModel = new DefaultTableModel();
 		tableModel.setRowCount(events.size());
@@ -190,7 +198,7 @@ public class GuitarEventPointPane extends ParamsPane {
 		eventsTable = new JTable(tableModel);
 		eventsTable.setShowGrid(false);
 		eventsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		eventsTable.setRowHeight(20);
+		eventsTable.setRowHeight(inputSize);
 		eventsTable.setTableHeader(new JTableHeader());
 
 		final TableColumn column = eventsTable.getColumnModel().getColumn(0);
@@ -198,7 +206,7 @@ public class GuitarEventPointPane extends ParamsPane {
 
 		final CharterScrollPane scrollTable = new CharterScrollPane(eventsTable);
 		scrollTable.setColumnHeader(null);
-		scrollTable.setMinimumSize(new Dimension(100, 80));
+		scrollTable.setMinimumSize(new Dimension(inputSize * 5, inputSize * 4));
 
 		for (int tableRow = 0; tableRow < events.size(); tableRow++) {
 			final EventType event = events.get(tableRow);
@@ -206,13 +214,15 @@ public class GuitarEventPointPane extends ParamsPane {
 			tableModel.setValueAt(value, tableRow, 0);
 		}
 
-		this.add(scrollTable, 50, getY(row.getAndIncrement()), 170, 120);
+		this.add(scrollTable, inputSize * 5 / 2, getY(row.getAndIncrement()), inputSize * 17 / 2, inputSize * 6);
 
 		final JButton rowAddButton = new JButton(Label.EVENT_ADD.label());
-		rowAddButton.addActionListener(e -> { tableModel.addRow(new Vector<Object>(1)); });
-		this.add(rowAddButton, 230, getY(row.getAndAdd(2)), 150, 20);
+		setDefaultFontSize(rowAddButton);
+		rowAddButton.addActionListener(e -> tableModel.addRow(new Vector<Object>(1)));
+		this.add(rowAddButton, inputSize * 23 / 2, getY(row.getAndAdd(2)), inputSize * 15 / 2, inputSize);
 
 		final JButton rowRemoveButton = new JButton(Label.GUITAR_BEAT_PANE_EVENT_REMOVE.label());
+		setDefaultFontSize(rowRemoveButton);
 		rowRemoveButton.addActionListener(e -> {
 			if (tableModel.getRowCount() == 0) {
 				return;
@@ -234,7 +244,7 @@ public class GuitarEventPointPane extends ParamsPane {
 			tableModel.removeRow(rowToRemove);
 		});
 
-		this.add(rowRemoveButton, 230, getY(row.getAndAdd(2)), 150, 20);
+		this.add(rowRemoveButton, inputSize * 23 / 2, getY(row.getAndAdd(2)), inputSize * 15 / 2, inputSize);
 	}
 
 	@SuppressWarnings("unchecked")

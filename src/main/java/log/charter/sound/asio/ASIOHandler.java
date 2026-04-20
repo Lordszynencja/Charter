@@ -13,7 +13,6 @@ import log.charter.data.config.values.AudioConfig;
 import log.charter.data.config.values.DebugConfig;
 import log.charter.sound.data.FloatMixer;
 import log.charter.sound.data.FloatQueue;
-import log.charter.util.fft.FFTTest;
 
 public class ASIOHandler {
 	private static int bufferSize = 128;
@@ -24,7 +23,7 @@ public class ASIOHandler {
 	private static AsioChannel[] inputChannels;
 
 	public static float[] inputBuffer = new float[bufferSize];
-	public static FFTTest fft = new FFTTest();
+//	public static FFTTest fft = new FFTTest();
 
 	private static AsioChannel[] outputChannels;
 	private static FloatMixer[] mixChannels;
@@ -57,7 +56,7 @@ public class ASIOHandler {
 		inputChannels[0].read(newInput);
 		inputBuffer = newInput;
 
-		fft.addData(newInput);
+//		fft.addData(newInput);
 
 		final FloatQueue queue0 = mixChannels[0].generateQueue((int) sampleRate);
 		final FloatQueue queue1 = mixChannels[1].generateQueue((int) sampleRate);

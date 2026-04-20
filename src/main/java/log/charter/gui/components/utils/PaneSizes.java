@@ -1,5 +1,7 @@
 package log.charter.gui.components.utils;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
+
 public class PaneSizes {
 	public int width;
 	public int verticalSpace;
@@ -30,6 +32,13 @@ public class PaneSizes {
 
 	public void rowSpacing(final int rowSpacing) {
 		this.rowSpacing = rowSpacing;
+		rowDistance = rowHeight + rowSpacing;
+	}
+
+	public void setDefaultSizes() {
+		verticalSpace = inputSize / 2;
+		rowHeight = inputSize;
+		rowSpacing = inputSize / 4;
 		rowDistance = rowHeight + rowSpacing;
 	}
 }

@@ -1,5 +1,6 @@
 package log.charter.gui.panes.programConfig;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.data.config.SystemType.WINDOWS;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInt;
 
@@ -96,6 +97,7 @@ public class ProgramAudioConfigPage implements Page {
 		position.newRow();
 
 		addDelay(panel, position);
+		position.newRow();
 		addMidiDelay(panel, position);
 		position.newRow();
 	}
@@ -135,47 +137,54 @@ public class ProgramAudioConfigPage implements Page {
 			showChannelIdsFields(t.type == AudioSystemType.ASIO);
 		});
 
-		audioOutSystemField = new FieldWithLabel<>(Label.AUDIO_OUTPUT, 100, 200, 20, select, LabelPosition.LEFT);
+		audioOutSystemField = new FieldWithLabel<>(Label.AUDIO_OUTPUT, inputSize * 5, inputSize * 10, inputSize, select,
+				LabelPosition.LEFT);
 		panel.add(audioOutSystemField, position);
 	}
 
 	private void addLeftOutChannelId(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = TextInputWithValidation.generateForInt(leftOutChannelId, 30,
-				new IntValueValidator(0, 255), i -> leftOutChannelId = i, true);
-		leftOutChannelIdField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_L_ID, 130, 30, 20, input, LabelPosition.LEFT);
+		final TextInputWithValidation input = TextInputWithValidation.generateForInt(leftOutChannelId,
+				inputSize * 3 / 2, new IntValueValidator(0, 255), i -> leftOutChannelId = i, true);
+
+		leftOutChannelIdField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_L_ID, inputSize * 13 / 2, inputSize * 3 / 2,
+				inputSize, input, LabelPosition.LEFT);
 		panel.add(leftOutChannelIdField, position);
 		leftOutChannelIdField.setVisible(audioOutSystem == AudioSystemType.ASIO);
 	}
 
 	private void addRightOutChannelId(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = TextInputWithValidation.generateForInt(rightOutChannelId, 30,
-				new IntValueValidator(0, 255), i -> rightOutChannelId = i, true);
-		rightOutChannelIdField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_R_ID, 130, 30, 20, input, LabelPosition.LEFT);
+		final TextInputWithValidation input = TextInputWithValidation.generateForInt(rightOutChannelId,
+				inputSize * 3 / 2, new IntValueValidator(0, 255), i -> rightOutChannelId = i, true);
+		rightOutChannelIdField = new FieldWithLabel<>(Label.AUDIO_OUTPUT_R_ID, inputSize * 13 / 2, inputSize * 3 / 2,
+				inputSize, input, LabelPosition.LEFT);
 		panel.add(rightOutChannelIdField, position);
 		rightOutChannelIdField.setVisible(audioOutSystem == AudioSystemType.ASIO);
 	}
 
 	private void addAudioBufferMs(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(audioBufferedMs, 50, new IntValueValidator(1, 1000),
-				v -> audioBufferedMs = v, false);
+		final TextInputWithValidation input = generateForInt(audioBufferedMs, inputSize * 5 / 2,
+				new IntValueValidator(1, 1000), v -> audioBufferedMs = v, false);
 
-		audioBufferMsField = new FieldWithLabel<>(Label.BUFFER_SIZE_MS, 150, 50, 20, input, LabelPosition.LEFT);
+		audioBufferMsField = new FieldWithLabel<>(Label.BUFFER_SIZE_MS, inputSize * 15 / 2, inputSize * 5 / 2,
+				inputSize, input, LabelPosition.LEFT);
 		panel.add(audioBufferMsField, position);
 	}
 
 	private void addDelay(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(delay, 50, new IntValueValidator(1, 10_000),
+		final TextInputWithValidation input = generateForInt(delay, inputSize * 5 / 2, new IntValueValidator(1, 10_000),
 				v -> delay = v, false);
 
-		delayField = new FieldWithLabel<>(Label.SOUND_DELAY, 125, 50, 20, input, LabelPosition.LEFT);
+		delayField = new FieldWithLabel<>(Label.SOUND_DELAY, inputSize * 11 / 2, inputSize * 5 / 2, inputSize, input,
+				LabelPosition.LEFT);
 		panel.add(delayField, position);
 	}
 
 	private void addMidiDelay(final RowedPanel panel, final RowedPosition position) {
-		final TextInputWithValidation input = generateForInt(midiDelay, 50, new IntValueValidator(1, 10_000),
-				v -> midiDelay = v, false);
+		final TextInputWithValidation input = generateForInt(midiDelay, inputSize * 5 / 2,
+				new IntValueValidator(1, 10_000), v -> midiDelay = v, false);
 
-		midiDelayField = new FieldWithLabel<>(Label.MIDI_SOUND_DELAY, 125, 50, 20, input, LabelPosition.LEFT);
+		midiDelayField = new FieldWithLabel<>(Label.MIDI_SOUND_DELAY, inputSize * 13 / 2, inputSize * 5 / 2, inputSize,
+				input, LabelPosition.LEFT);
 		panel.add(midiDelayField, position);
 	}
 

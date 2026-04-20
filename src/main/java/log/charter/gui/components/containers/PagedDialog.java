@@ -1,6 +1,7 @@
 package log.charter.gui.components.containers;
 
 import static java.util.Arrays.asList;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.swing.JToggleButton;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.RowedPosition;
 
 public abstract class PagedDialog extends RowedDialog {
@@ -32,10 +34,13 @@ public abstract class PagedDialog extends RowedDialog {
 	}
 
 	private void addPage(final RowedPosition position, final Page page, final ButtonGroup buttonGroup) {
-		final JToggleButton themeConfigSwitch = new JToggleButton(page.label().label());
-		themeConfigSwitch.addActionListener(e -> setCurrentPage(page));
-		buttonGroup.add(themeConfigSwitch);
-		panel.addWithSettingSize(themeConfigSwitch, position.getAndAddX(120), position.y(), 100, 20);
+		final JToggleButton pageButton = new JToggleButton(page.label().label());
+		pageButton.addActionListener(e -> setCurrentPage(page));
+		ComponentUtils.setDefaultFontSize(pageButton);
+
+		buttonGroup.add(pageButton);
+		panel.addWithSettingSize(pageButton, position.getAndAddX(inputSize * 6), position.y(), inputSize * 5,
+				inputSize);
 
 		page.init(panel, position.copy().newRows(2).startFromHere());
 
@@ -51,13 +56,13 @@ public abstract class PagedDialog extends RowedDialog {
 
 		final ButtonGroup buttonGroup = new ButtonGroup();
 
-		final RowedPosition position = new RowedPosition(10, panel.sizes);
+		final RowedPosition position = new RowedPosition(inputSize / 2, panel.sizes);
 		for (final Page page : pages) {
 			if (page != null) {
 				addPage(position, page, buttonGroup);
 			}
 		}
-		panel.resizeToFit(position.x() - 10, position.y());
+		panel.resizeToFit(position.x() - inputSize / 2, position.y());
 
 		while (position.y() < panel.getHeight()) {
 			position.newRow();

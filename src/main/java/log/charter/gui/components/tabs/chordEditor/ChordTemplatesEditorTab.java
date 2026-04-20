@@ -1,6 +1,7 @@
 package log.charter.gui.components.tabs.chordEditor;
 
 import static log.charter.data.config.GraphicalConfig.inputSize;
+import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds;
 
 import java.awt.Dimension;
 import java.util.List;
@@ -173,18 +174,25 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 	}
 
 	public void recalculateSizes() {
+		sizes.setDefaultSizes();
+
 		listWidth = inputSize * 20;
 		chordTemplatesList.sizes.width = listWidth - inputSize;
 		chordTemplatesList.sizes.rowHeight(inputSize * 5 / 2);
-		chordTemplatesList.setSize(listWidth, sizes.getY(InstrumentConfig.maxStrings + 5));
+		final int height = sizes.getY(12) - inputSize / 2;
+		setComponentBounds(chordTemplatesList, inputSize / 2, inputSize / 2, listWidth, height);
+
 		final JScrollBar scrollBar = chordTemplatesList.getVerticalScrollBar();
 		scrollBar.setPreferredSize(new Dimension(inputSize, 1));
 
 		refreshTemplates();
 
 		ComponentUtils.resize(arpeggioLabel, arpeggioCheckBox, chordTemplatesList.sizes.width + inputSize * 5 / 2,
-				inputSize * 7 / 2, inputSize * 4, inputSize);
+				inputSize * 3, inputSize * 4, inputSize);
 
-		chordTemplateEditor.recalculateSizesWithReposition(chordTemplatesList.sizes.width + inputSize * 2, inputSize);
+		chordTemplateEditor.recalculateSizesWithReposition(chordTemplatesList.sizes.width + inputSize * 2,
+				inputSize / 2);
+
+		setComponentBounds(this, 0, 0, inputSize * 48, sizes.getY(12));
 	}
 }

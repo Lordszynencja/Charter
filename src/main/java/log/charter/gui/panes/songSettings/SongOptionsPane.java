@@ -1,5 +1,7 @@
 package log.charter.gui.panes.songSettings;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
+
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.SongChart;
@@ -22,7 +24,7 @@ public final class SongOptionsPane extends ParamsPane {
 	private Integer albumYear;
 
 	public SongOptionsPane(final CharterFrame frame, final ChartData data) {
-		super(frame, Label.SONG_OPTIONS_PANE, 500);
+		super(frame, Label.SONG_OPTIONS_PANE, inputSize * 25);
 
 		songChart = data.songChart;
 
@@ -32,15 +34,18 @@ public final class SongOptionsPane extends ParamsPane {
 		albumName = songChart.albumName();
 		albumYear = songChart.albumYear;
 
-		addStringConfigValue(0, 20, 130, Label.SONG_OPTIONS_TITLE, title, 300, //
+		final int labelWidth = inputSize * 13 / 2;
+		final int inputWidth = inputSize * 15;
+		addStringConfigValue(0, inputSize, labelWidth, Label.SONG_OPTIONS_TITLE, title, inputWidth, //
 				null, v -> title = v, false);
-		addStringConfigValue(1, 20, 130, Label.SONG_OPTIONS_ARTIST_NAME, artistName, 300, //
+		addStringConfigValue(1, inputSize, labelWidth, Label.SONG_OPTIONS_ARTIST_NAME, artistName, inputWidth, //
 				null, v -> artistName = v, false);
-		addStringConfigValue(2, 20, 130, Label.SONG_OPTIONS_ARTIST_NAME_SORTING, artistNameSort, 300, //
+		addStringConfigValue(2, inputSize, labelWidth, Label.SONG_OPTIONS_ARTIST_NAME_SORTING, artistNameSort,
+				inputWidth, //
 				null, v -> artistNameSort = v, false);
-		addStringConfigValue(3, 20, 130, Label.SONG_OPTIONS_ALBUM, albumName, 300, //
+		addStringConfigValue(3, inputSize, labelWidth, Label.SONG_OPTIONS_ALBUM, albumName, inputWidth, //
 				null, v -> albumName = v, false);
-		addIntegerConfigValue(4, 20, 130, Label.SONG_OPTIONS_YEAR, albumYear, 80, //
+		addIntegerConfigValue(4, inputSize, labelWidth, Label.SONG_OPTIONS_YEAR, albumYear, inputSize * 4, //
 				yearValidator, v -> albumYear = v, false);
 
 		this.setOnFinish(this::saveAndExit, null);

@@ -4,7 +4,6 @@ import javax.swing.JMenu;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.DebugConfig;
-import log.charter.gui.components.simple.SpecialMenuItem;
 import log.charter.gui.panes.songEdits.ChangeSongPitchPane;
 import log.charter.services.Action;
 import log.charter.services.data.ProjectAudioHandler;
@@ -72,7 +71,7 @@ class EditMenuHandler extends CharterMenuHandler {
 
 		if (DebugConfig.enablePitchShifting) {
 			menu.addSeparator();
-			menu.add(new SpecialMenuItem(Label.CHANGE_SONG_PITCH, this::changeSongPitch));
+			menu.add(createItem(Label.CHANGE_SONG_PITCH, this::changeSongPitch));
 		}
 
 		menu.addSeparator();
