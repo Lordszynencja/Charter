@@ -82,6 +82,8 @@ public enum ShortcutConfigGroup {
 			Action.MARK_HAND_SHAPE, //
 			Action.DOUBLE_GRID, //
 			Action.HALVE_GRID, //
+			Action.ADD_GRID_TRIPLET, //
+			Action.REMOVE_GRID_TRIPLET, //
 			Action.SNAP_SELECTED, //
 			Action.SNAP_ALL, //
 			Action.TOGGLE_ACCENT, //
