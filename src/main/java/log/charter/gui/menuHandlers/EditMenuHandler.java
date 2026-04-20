@@ -57,16 +57,13 @@ class EditMenuHandler extends CharterMenuHandler {
 
 		addSelectOptionsIfNeeded(menu);
 
+		menu.addSeparator();
+		menu.add(createItem(Action.CHANGE_GRID));
 		if (modeManager.modeIs(EditMode.GUITAR, EditMode.VOCALS)) {
-			menu.addSeparator();
-			menu.add(createItem(Action.CHANGE_GRID));
 			menu.add(createItem(Action.DECREASE_LENGTH));
 			menu.add(createItem(Action.INCREASE_LENGTH));
 			menu.add(createItem(Action.DECREASE_LENGTH_FAST));
 			menu.add(createItem(Action.INCREASE_LENGTH_FAST));
-		} else {
-			menu.addSeparator();
-			menu.add(createItem(Action.CHANGE_GRID));
 		}
 
 		if (DebugConfig.enablePitchShifting) {

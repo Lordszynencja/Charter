@@ -9,6 +9,7 @@ public class DefaultShortcuts extends ShortcutList {
 	public static final ShortcutList instance = new DefaultShortcuts();
 
 	private DefaultShortcuts() {
+		super.set(Action.ADD_GRID_TRIPLET, new Shortcut(KeyEvent.VK_PERIOD).ctrl());
 		super.set(Action.ARRANGEMENT_NEXT, new Shortcut(KeyEvent.VK_TAB));
 		super.set(Action.ARRANGEMENT_PREVIOUS, new Shortcut(KeyEvent.VK_TAB).shift());
 		super.set(Action.BEAT_ADD, new Shortcut().insert());
@@ -100,6 +101,7 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.PREVIOUS_ITEM_WITH_SELECT_CTRL_SHIFT, new Shortcut(KeyEvent.VK_PAGE_DOWN).ctrl().shift());
 		super.set(Action.PREVIOUS_ITEM_WITH_SELECT_SHIFT, new Shortcut(KeyEvent.VK_PAGE_DOWN).shift());
 		super.set(Action.REDO, new Shortcut(KeyEvent.VK_R).ctrl());
+		super.set(Action.REMOVE_GRID_TRIPLET, new Shortcut(KeyEvent.VK_COMMA).ctrl());
 		super.set(Action.SAVE_PROJECT, new Shortcut(KeyEvent.VK_S).ctrl());
 		super.set(Action.SAVE_PROJECT_AS, new Shortcut(KeyEvent.VK_S).ctrl().shift());
 		super.set(Action.SELECT_ALL, new Shortcut(KeyEvent.VK_A).ctrl());

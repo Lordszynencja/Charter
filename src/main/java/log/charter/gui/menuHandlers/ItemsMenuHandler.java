@@ -36,6 +36,8 @@ class ItemsMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Action.SNAP_ALL));
 		menu.add(createItem(Action.DOUBLE_GRID));
 		menu.add(createItem(Action.HALVE_GRID));
+		menu.add(createItem(Action.ADD_GRID_TRIPLET));
+		menu.add(createItem(Action.REMOVE_GRID_TRIPLET));
 
 		if (modeManager.modeIs(EditMode.SHOWLIGHTS)) {
 			menu.addSeparator();

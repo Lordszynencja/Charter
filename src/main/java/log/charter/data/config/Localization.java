@@ -23,6 +23,7 @@ public class Localization {
 		ADD_BEATS_AMOUNT("Add this many beats:"), //
 		ADD_BEATS_AT_THE_START("Add beats at the start, without moving the audio"), //
 		ADD_BEATS_PANE("Add beats"), //
+		ADD_GRID_TRIPLET("Add grid triplet"), //
 		ADD_LEVEL("Add level"), //
 		ADD_SILENCE_AT_THE_END("Add silence at the end"), //
 		ADD_SILENCE_IN_THE_BEGINNING("Add silence in the beginning"), //
@@ -305,6 +306,7 @@ public class Localization {
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
 		REDO("Redo"), //
+		REMOVE_GRID_TRIPLET("Remove grid triplet"), //
 		REWIND_TOOLTIP("Rewinds the song"), //
 		RS_SHOWLIGHTS_FILE("RS showlights file (XML)"), //
 		RS_SHOWLIGHTS("RS showlights"), //
