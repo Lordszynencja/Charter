@@ -40,9 +40,14 @@ public class CenteredImage implements DrawableShape {
 
 		if (composite != null) {
 			final Composite previousComposite = g.getComposite();
-			g.setComposite(composite);
-			g.drawImage(image, x, y, null);
-			g.setComposite(previousComposite);
+			try {
+				g.setComposite(composite);
+				g.drawImage(image, x, y, null);
+				g.setComposite(previousComposite);
+			} catch (final Exception e) {
+				g.setComposite(previousComposite);
+				g.drawImage(image, x, y, null);
+			}
 		} else {
 			g.drawImage(image, x, y, null);
 		}
