@@ -2,6 +2,7 @@ package log.charter.gui.components.toolbar;
 
 import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
+import static log.charter.gui.components.utils.ComponentUtils.addLeftPressListener;
 import static log.charter.gui.components.utils.ComponentUtils.addRightPressListener;
 import static log.charter.gui.components.utils.ComponentUtils.setComponentSize;
 import static log.charter.gui.components.utils.ComponentUtils.setIcon;
@@ -10,6 +11,8 @@ import static log.charter.util.FileUtils.imagesFolder;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -293,6 +296,16 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		new AudioStemsSettings(chartData, charterFrame, chartToolbar, projectAudioHandler);
 	}
 
+	private BufferedImage resizeIcon(final BufferedImage icon, final int size) {
+		final int w = size * icon.getWidth() / icon.getHeight();
+		final int h = size;
+		final BufferedImage img = new BufferedImage(w, h, icon.getType());
+		final Graphics2D g = (Graphics2D) img.getGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.drawImage(icon, 0, 0, w, h, null);
+		return img;
+	}
+
 	private void toggleMute(final JLabel label, final JSlider volumeSlider, final BooleanConsumer muteSetter,
 			final BufferedImage icon, final BufferedImage mutedIcon) {
 		final boolean newMuted = volumeSlider.isEnabled();
@@ -301,7 +314,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		volumeSlider.setForeground((newMuted ? ColorLabel.BASE_BORDER : ColorLabel.BASE_HIGHLIGHT).color());
 
 		muteSetter.consume(newMuted);
-		setIcon(label, newMuted ? mutedIcon : icon);
+		setIcon(label, resizeIcon(newMuted ? mutedIcon : icon, inputSize));
 		label.repaint();
 	}
 
@@ -314,15 +327,14 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		volumeSlider.setBackground(getBackground());
 		volumeSlider.setToolTipText(tooltip.label());
 		volumeSlider.setEnabled(!muted);
+		addRightPressListener(volumeSlider, this::openStemSettings);
 
-		final FieldWithLabel<JSlider> field = new FieldWithLabel<>(label, icon.getWidth(), inputSize * 3, inputSize,
+		final FieldWithLabel<JSlider> field = new FieldWithLabel<>(label, inputSize * 2 / 3, inputSize * 3, inputSize,
 				volumeSlider, LabelPosition.LEFT_CLOSE);
 		field.label.setToolTipText(tooltip.label());
-		setIcon(field.label, icon);
-		ComponentUtils.addLeftPressListener(field.label,
-				() -> toggleMute(field.label, volumeSlider, muteSetter, icon, mutedIcon));
-		ComponentUtils.addRightPressListener(volumeSlider, this::openStemSettings);
-		ComponentUtils.addRightPressListener(field, this::openStemSettings);
+		setIcon(field.label, resizeIcon(icon, inputSize));
+		addLeftPressListener(field.label, () -> toggleMute(field.label, volumeSlider, muteSetter, icon, mutedIcon));
+		addRightPressListener(field, this::openStemSettings);
 
 		add(field);
 		volumeSlider.setUI(new CharterSliderUI());
@@ -541,7 +553,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	}
 
 	private void resizeSlider(final AtomicInteger x, final FieldWithLabel<JSlider> slider) {
-		ComponentUtils.resize(slider, x.get(), verticalSpacing, inputSize, inputSize * 4);
+		ComponentUtils.resize(slider, x.get(), verticalSpacing, inputSize * 2 / 3, inputSize * 4);
 		x.addAndGet(slider.getWidth() + horizontalSpacing);
 	}
 
