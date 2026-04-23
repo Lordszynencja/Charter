@@ -39,9 +39,6 @@ public class CenteredImage implements DrawableShape {
 		boolean success = true;
 		try {
 			g.setComposite(c);
-			if (c instanceof MultiComposite) {
-				throw new Exception("");
-			}
 			g.drawImage(img, x, y, null);
 		} catch (final Exception | Error e) {
 			success = false;
