@@ -175,6 +175,7 @@ public class CharterFrame extends JFrame implements Initiable {
 		textTab.recalculateSizes();
 		helpTab.recalculateSizes();
 		tabs.recalculateSizes();
+		chartMap.redraw();
 
 		final Insets insets = getInsets();
 		final int width = WindowStateConfig.width - insets.left - insets.right;
@@ -192,6 +193,7 @@ public class CharterFrame extends JFrame implements Initiable {
 			ComponentUtils.setComponentBoundsWithValidateRepaint(componentHeight.a, 0, y, width, componentHeight.b);
 			y += componentHeight.b;
 		}
+
 	}
 
 	public void resize() {
