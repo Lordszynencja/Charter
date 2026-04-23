@@ -32,7 +32,7 @@ public class Level {
 
 		final Chord chord = sound.chord();
 		final HandShape handShape = lastBeforeEqual(handShapes, chord).find();
-		if (handShape == null) {
+		if (handShape == null || handShape.templateId == null) {
 			return true;
 		}
 		if (handShape.templateId != chord.templateId()) {

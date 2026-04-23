@@ -120,7 +120,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		undoSystem.addUndo();
 
 		final Arrangement arrangement = chartData.currentArrangement();
-		if (toneName.isEmpty()) {
+		if (toneName == null || toneName.isEmpty()) {
 			arrangement.toneChanges.remove(toneChange);
 			if (!CollectionUtils.contains(arrangement.toneChanges,
 					toneChange -> toneChange.toneName.equals(this.toneChange.toneName))) {
