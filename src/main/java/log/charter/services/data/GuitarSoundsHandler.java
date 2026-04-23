@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import java.util.stream.IntStream;
 import log.charter.data.ChartData;
 import log.charter.data.ChordTemplateFingerSetter;
 import log.charter.data.config.values.InstrumentConfig;
+import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
@@ -24,6 +26,7 @@ import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
+import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
@@ -748,5 +751,126 @@ public class GuitarSoundsHandler {
 		} else {
 			selectLikeChord(base.chord());
 		}
+	}
+
+	private void createFHPForChord(final ChordTemplate template, final FractionalPosition position) {
+		final Integer fhpFret = FHP.getFhpFretForChord(template);
+		if (fhpFret == null) {
+			return;
+		}
+
+		final List<FHP> fhps = chartData.currentFHPs();
+		final Integer fhpId = CollectionUtils.lastBeforeEqual(fhps, position).findId();
+		if (fhpId == null) {
+			final FHP fhp = new FHP(position, fhpFret);
+			fhps.add(0, fhp);
+			return;
+		}
+
+		final FHP fhp = fhps.get(fhpId);
+		if (fhp.fret == fhpFret) {
+			return;
+		}
+
+		if (fhp.position().equals(position)) {
+			fhp.fret = fhpFret;
+		} else {
+			final FHP newFhp = new FHP(position, fhpFret);
+			fhps.add(fhpId + 1, newFhp);
+		}
+	}
+
+	private void mapNotesToChords(final List<Selection<ChordOrNote>> notes,
+			final Function<Note, ChordTemplate> mapper) {
+		final Arrangement arrangement = chartData.currentArrangement();
+		for (final Selection<ChordOrNote> sound : notes) {
+			final ChordTemplate template = mapper.apply(sound.selectable.note());
+			if (template == null) {
+				continue;
+			}
+
+			ChordNameSuggester.setFirstSuggestedName(template, arrangement.tuning);
+			ChordTemplateFingerSetter.setSuggestedFingers(template);
+
+			final int templateId = arrangement.getChordTemplateIdWithSave(template);
+			final ChordOrNote newSound = sound.selectable.asChord(templateId, template);
+			chartData.currentSounds().set(sound.id, newSound);
+
+			createFHPForChord(template, newSound.position());
+		}
+
+		currentSelectionEditor.selectionChanged(true);
+	}
+
+	private List<Selection<ChordOrNote>> getNotesForChords(final int size) {
+		return selectionManager.<ChordOrNote>getSelected(PositionType.GUITAR_NOTE)//
+				.stream()//
+				.filter(s -> s.selectable.isNote() //
+						&& s.selectable.note().string <= chartData.currentStrings() - size)//
+				.toList();
+	}
+
+	public void changeToPowerChordSmall() {
+		final List<Selection<ChordOrNote>> notes = getNotesForChords(2);
+		if (notes.isEmpty()) {
+			return;
+		}
+
+		undoSystem.addUndo();
+
+		final Arrangement arrangement = chartData.currentArrangement();
+		mapNotesToChords(notes, note -> {
+			final int string = note.string;
+			if (string > chartData.currentStrings() - 2) {
+				return null;
+			}
+
+			final int fret = note.fret;
+
+			final ChordTemplate template = new ChordTemplate();
+			template.frets.put(string, fret);
+			final int fret2 = fret + 7 - arrangement.tuning.getStringsDifference(string + 1, string);
+			if (fret2 > InstrumentConfig.frets || fret2 < 0) {
+				return null;
+			}
+			template.frets.put(string + 1, fret2);
+
+			return template;
+		});
+	}
+
+	public void changeToPowerChordBig() {
+		final List<Selection<ChordOrNote>> notes = getNotesForChords(3);
+		if (notes.isEmpty()) {
+			return;
+		}
+
+		undoSystem.addUndo();
+
+		final Arrangement arrangement = chartData.currentArrangement();
+		mapNotesToChords(notes, note -> {
+			final int string = note.string;
+			if (string > chartData.currentStrings() - 3) {
+				return null;
+			}
+
+			final int fret = note.fret;
+
+			final ChordTemplate template = new ChordTemplate();
+			template.frets.put(string, fret);
+			final int fret2 = fret + 7 - arrangement.tuning.getStringsDifference(string + 1, string);
+			if (fret2 > InstrumentConfig.frets || fret2 < 0) {
+				return null;
+			}
+			template.frets.put(string + 1, fret2);
+
+			final int fret3 = fret + 12 - arrangement.tuning.getStringsDifference(string + 2, string);
+			if (fret3 > InstrumentConfig.frets || fret3 < 0) {
+				return null;
+			}
+			template.frets.put(string + 2, fret3);
+
+			return template;
+		});
 	}
 }

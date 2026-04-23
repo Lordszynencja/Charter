@@ -31,6 +31,8 @@ public enum Action {
 	BPM_DOUBLE(TEMPO_MAP), //
 	BPM_HALVE(TEMPO_MAP), //
 	CHANGE_GRID(EditMode.nonEmpty), //
+	CHANGE_TO_POWER_CHORD_BIG(GUITAR), //
+	CHANGE_TO_POWER_CHORD_SMALL(GUITAR), //
 	COPY(EditMode.nonEmpty), //
 	CUT(EditMode.withItems), //
 	DECREASE_LENGTH(GUITAR, VOCALS), //

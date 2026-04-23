@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.configs.Tuning;
 import log.charter.util.SoundUtils;
 import log.charter.util.collections.ArrayList2;
@@ -113,5 +114,10 @@ public class ChordNameSuggester {
 		}
 
 		return recognizeChord(sounds);
+	}
+
+	public static void setFirstSuggestedName(final ChordTemplate template, final Tuning tuning) {
+		final List<String> suggestions = suggestChordNames(tuning, template.frets);
+		template.chordName = suggestions.isEmpty() ? "" : suggestions.get(0);
 	}
 }

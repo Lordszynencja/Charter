@@ -309,6 +309,10 @@ public class Tuning {
 		return getStringDistance(string, strings) + tuning[string];
 	}
 
+	public int getStringsDifference(final int stringA, final int stringB) {
+		return getStringOffset(stringA) - getStringOffset(stringB);
+	}
+
 	public String[] getStringNames(final boolean withScaleNumber, final boolean bass) {
 		final String[] stringSoundNames = new String[strings];
 		final int[] tuning = getTuning();

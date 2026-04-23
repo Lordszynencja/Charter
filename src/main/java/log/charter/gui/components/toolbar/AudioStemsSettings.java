@@ -1,6 +1,8 @@
 package log.charter.gui.components.toolbar;
 
 import static java.lang.Math.abs;
+import static log.charter.data.config.GraphicalConfig.inputSize;
+import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
 import static log.charter.gui.components.utils.ComponentUtils.setIcon;
 import static log.charter.gui.components.utils.validators.ValueValidator.notBlankValidator;
 
@@ -111,17 +113,20 @@ public class AudioStemsSettings extends RowedDialog {
 				}
 			});
 
-			panel.addWithSettingSize(selected, position, 20, 10, 20);
+			panel.addWithSettingSize(selected, position, inputSize, inputSize / 2, inputSize);
 		}
 
 		private void addName(final RowedPosition position) {
-			label = new TextInputWithValidation(name, 100, notBlankValidator(Label.NAME_CANT_BE_EMPTY),
-					v -> { name = v; }, false);
+			label = new TextInputWithValidation(name, 0, notBlankValidator(Label.NAME_CANT_BE_EMPTY),
+					(final String v) -> name = v, false);
+			setDefaultFontSize(label);
+
 			if (id == -1) {
 				label.setEditable(false);
+				label.setEnabled(false);
 			}
 
-			panel.addWithSettingSize(label, position, 100, 10, 20);
+			panel.addWithSettingSize(label, position, inputSize * 5, inputSize / 2, inputSize);
 		}
 
 		private void addVolume(final RowedPosition position) {
@@ -134,7 +139,7 @@ public class AudioStemsSettings extends RowedDialog {
 			volumeSlider.setFocusable(false);
 			volumeSlider.setBackground(getBackground());
 
-			panel.addWithSettingSize(volumeSlider, position, 100, 10, 20);
+			panel.addWithSettingSize(volumeSlider, position, inputSize * 5, inputSize / 2, inputSize);
 			volumeSlider.setUI(new CharterSliderUI());
 		}
 
@@ -143,11 +148,12 @@ public class AudioStemsSettings extends RowedDialog {
 			final BigDecimalValueValidator validator = new BigDecimalValueValidator(
 					BigDecimal.valueOf(-projectAudioHandler.audioStemLength(id)),
 					BigDecimal.valueOf(projectAudioHandler.audioLengthMs()), false);
-			final TextInputWithValidation input = TextInputWithValidation.generateForBigDecimal(value, 50, validator,
+			final TextInputWithValidation input = TextInputWithValidation.generateForBigDecimal(value, 0, validator,
 					v -> offset = v.doubleValue() / 1000, false);
 			input.setEditable(editable);
 
-			offsetField = new FieldWithLabel<>(Label.OFFSET_MS_FIELD, 80, 50, 20, input, LabelPosition.LEFT_CLOSE);
+			offsetField = new FieldWithLabel<>(Label.OFFSET_MS_FIELD, inputSize * 4, inputSize * 5 / 2, inputSize,
+					input, LabelPosition.LEFT_CLOSE);
 
 			panel.add(offsetField, position);
 		}
@@ -173,7 +179,7 @@ public class AudioStemsSettings extends RowedDialog {
 				deleted = true;
 			});
 
-			panel.addWithSettingSize(deleteButton, position, 20, 20, 20);
+			panel.addWithSettingSize(deleteButton, position, inputSize, inputSize, inputSize);
 		}
 	}
 
@@ -195,7 +201,7 @@ public class AudioStemsSettings extends RowedDialog {
 
 		selectedStem = projectAudioHandler.getSelectedStem();
 
-		final RowedPosition position = new RowedPosition(20, panel.sizes);
+		final RowedPosition position = new RowedPosition(inputSize, panel.sizes);
 		stemRows.add(new AudioStemRow(position));
 		position.newRow();
 

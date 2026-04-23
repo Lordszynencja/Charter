@@ -10,8 +10,6 @@ import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds
 import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
 
 import java.awt.Component;
-import java.awt.DisplayMode;
-import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
@@ -165,12 +163,8 @@ public class ParamsPane extends JDialog implements WindowListener {
 	}
 
 	private void setLocation() {
-		final DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-				.getDisplayMode();
-		final int x = min(displayMode.getWidth() * 99 / 100,
-				max(displayMode.getWidth() / 100, WindowStateConfig.x + frame.getWidth() / 2 - getWidth() / 2));
-		final int y = min(displayMode.getHeight() * 99 / 100,
-				max(displayMode.getWidth() / 100, WindowStateConfig.y + frame.getHeight() / 2 - getHeight() / 2));
+		final int x = max(WindowStateConfig.x, WindowStateConfig.x + frame.getWidth() / 2 - getWidth() / 2);
+		final int y = max(WindowStateConfig.y, WindowStateConfig.y + frame.getHeight() / 2 - getHeight() / 2);
 
 		setLocation(x, y);
 	}

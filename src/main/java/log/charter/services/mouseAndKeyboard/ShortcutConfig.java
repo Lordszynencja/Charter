@@ -125,6 +125,15 @@ public class ShortcutConfig {
 			setShortcut(action, defaultShortcuts.get(action));
 		}
 
+		if (shortcuts.get(Action.TOGGLE_REPEAT_END).equals(shortcuts.get(Action.INCREASE_LENGTH))) {
+			setShortcut(Action.TOGGLE_REPEAT_END, new Shortcut(KeyEvent.VK_CLOSE_BRACKET).alt());
+			setShortcut(Action.INCREASE_LENGTH, new Shortcut(KeyEvent.VK_CLOSE_BRACKET));
+		}
+		if (shortcuts.get(Action.TOGGLE_REPEAT_START).equals(shortcuts.get(Action.DECREASE_LENGTH))) {
+			setShortcut(Action.TOGGLE_REPEAT_START, new Shortcut(KeyEvent.VK_OPEN_BRACKET).alt());
+			setShortcut(Action.DECREASE_LENGTH, new Shortcut(KeyEvent.VK_OPEN_BRACKET));
+		}
+
 		markChanged();
 		save();
 	}

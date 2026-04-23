@@ -1,13 +1,18 @@
 package log.charter.gui.components.toolbar;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.simple.TextInputWithValidation.generateForInteger;
+import static log.charter.gui.components.utils.ComponentUtils.addLeftPressListener;
 import static log.charter.gui.components.utils.ComponentUtils.addRightPressListener;
+import static log.charter.gui.components.utils.ComponentUtils.setComponentSize;
 import static log.charter.gui.components.utils.ComponentUtils.setIcon;
 import static log.charter.util.FileUtils.imagesFolder;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -64,9 +69,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static int horizontalSpacing = GraphicalConfig.inputSize / 4;
-	private static int verticalSpacing = GraphicalConfig.inputSize / 2;
-	private static final int elementHeight = 20;
+	private static int horizontalSpacing = inputSize / 4;
+	private static int verticalSpacing = inputSize / 4;
 
 	private static final BufferedImage repeaterIcon = ImageUtils.loadSafeFromDir(imagesFolder, "toolbarRepeater.png");
 	private static final BufferedImage gridBeatTypeIcon = ImageUtils.loadSafeFromDir(imagesFolder,
@@ -180,7 +184,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 				new IntegerValueValidator(min, max, allowEmpty), onChange, false);
 
 		final FieldWithLabel<TextInputWithValidation> field = //
-				new FieldWithLabel<>(label, 0, inputWidth, elementHeight, input, labelPosition);
+				new FieldWithLabel<>(label, 0, inputWidth, inputSize, input, labelPosition);
 		field.setBackground(getBackground());
 
 		return field;
@@ -200,7 +204,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private JButton generateGridSizeButton(final Font font, final String text, final ActionListener actionListener) {
 		final JButton gridChangeButton = new JButton(text);
-		gridChangeButton.setSize(24, elementHeight / 2);
+		gridChangeButton.setSize(inputSize, inputSize / 2);
 		gridChangeButton.setFont(font);
 		gridChangeButton.setFocusable(false);
 		gridChangeButton.addActionListener(actionListener);
@@ -292,6 +296,16 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		new AudioStemsSettings(chartData, charterFrame, chartToolbar, projectAudioHandler);
 	}
 
+	private BufferedImage resizeIcon(final BufferedImage icon, final int size) {
+		final int w = size * icon.getWidth() / icon.getHeight();
+		final int h = size;
+		final BufferedImage img = new BufferedImage(w, h, icon.getType());
+		final Graphics2D g = (Graphics2D) img.getGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.drawImage(icon, 0, 0, w, h, null);
+		return img;
+	}
+
 	private void toggleMute(final JLabel label, final JSlider volumeSlider, final BooleanConsumer muteSetter,
 			final BufferedImage icon, final BufferedImage mutedIcon) {
 		final boolean newMuted = volumeSlider.isEnabled();
@@ -300,7 +314,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		volumeSlider.setForeground((newMuted ? ColorLabel.BASE_BORDER : ColorLabel.BASE_HIGHLIGHT).color());
 
 		muteSetter.consume(newMuted);
-		setIcon(label, newMuted ? mutedIcon : icon);
+		setIcon(label, resizeIcon(newMuted ? mutedIcon : icon, inputSize));
 		label.repaint();
 	}
 
@@ -313,15 +327,14 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		volumeSlider.setBackground(getBackground());
 		volumeSlider.setToolTipText(tooltip.label());
 		volumeSlider.setEnabled(!muted);
+		addRightPressListener(volumeSlider, this::openStemSettings);
 
-		final FieldWithLabel<JSlider> field = new FieldWithLabel<>(label, icon.getWidth(), 72, elementHeight,
+		final FieldWithLabel<JSlider> field = new FieldWithLabel<>(label, inputSize * 2 / 3, inputSize * 3, inputSize,
 				volumeSlider, LabelPosition.LEFT_CLOSE);
 		field.label.setToolTipText(tooltip.label());
-		setIcon(field.label, icon);
-		ComponentUtils.addLeftPressListener(field.label,
-				() -> toggleMute(field.label, volumeSlider, muteSetter, icon, mutedIcon));
-		ComponentUtils.addRightPressListener(volumeSlider, this::openStemSettings);
-		ComponentUtils.addRightPressListener(field, this::openStemSettings);
+		setIcon(field.label, resizeIcon(icon, inputSize));
+		addLeftPressListener(field.label, () -> toggleMute(field.label, volumeSlider, muteSetter, icon, mutedIcon));
+		addRightPressListener(field, this::openStemSettings);
 
 		add(field);
 		volumeSlider.setUI(new CharterSliderUI());
@@ -420,6 +433,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 		repeater = addToggleButton(Label.TOOLBAR_REPEATER, Label.TOOLBAR_REPEATER_TOOLTIP, repeaterIcon,
 				repeatManager::toggle);
+		setComponentSize(repeater, inputSize * 3, inputSize);
 
 		addGridSizeInput();
 		addGridSizeButtons();
@@ -519,23 +533,28 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		gridSize.field.setSize(GraphicalConfig.inputSize * 3 / 2, GraphicalConfig.inputSize);
 
 		gridSize.setLocation(x.get(), verticalSpacing);
-		gridSize.setSize(gridSize.label.getWidth() + gridSize.field.getWidth(), GraphicalConfig.inputSize);
+		gridSize.setSize(gridSize.label.getWidth() + gridSize.field.getWidth(), inputSize);
 		x.getAndAdd(gridSize.getWidth() + 1);
 
-		gridDoubleButton.setFont(gridDoubleButton.getFont().deriveFont(GraphicalConfig.inputSize / 2.5f));
+		gridDoubleButton.setFont(gridDoubleButton.getFont().deriveFont(inputSize / 2.5f));
 		gridDoubleButton.setLocation(x.get(), verticalSpacing);
-		gridDoubleButton.setSize(GraphicalConfig.inputSize, GraphicalConfig.inputSize / 2);
+		gridDoubleButton.setSize(inputSize, inputSize / 2);
 
-		gridHalveButton.setFont(gridHalveButton.getFont().deriveFont(GraphicalConfig.inputSize / 2.5f));
-		gridHalveButton.setLocation(x.get(), verticalSpacing + GraphicalConfig.inputSize / 2);
-		gridHalveButton.setSize(GraphicalConfig.inputSize, GraphicalConfig.inputSize / 2);
+		gridHalveButton.setFont(gridHalveButton.getFont().deriveFont(inputSize / 2.5f));
+		gridHalveButton.setLocation(x.get(), verticalSpacing + inputSize / 2);
+		gridHalveButton.setSize(inputSize, inputSize / 2);
 
-		x.getAndAdd(GraphicalConfig.inputSize + horizontalSpacing);
+		x.getAndAdd(inputSize + horizontalSpacing);
 
 		resizeIconButton(x, beatGridType);
 		x.getAndAdd(horizontalSpacing / 2);
 		resizeIconButton(x, noteGridType);
 		x.getAndAdd(horizontalSpacing);
+	}
+
+	private void resizeSlider(final AtomicInteger x, final FieldWithLabel<JSlider> slider) {
+		ComponentUtils.resize(slider, x.get(), verticalSpacing, inputSize * 2 / 3, inputSize * 4);
+		x.addAndGet(slider.getWidth() + horizontalSpacing);
 	}
 
 	private void resizePlaybackSpeed(final AtomicInteger x) {
@@ -562,8 +581,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	}
 
 	public void recalculateSizes() {
-		horizontalSpacing = GraphicalConfig.inputSize / 4;
-		verticalSpacing = GraphicalConfig.inputSize / 4;
+		horizontalSpacing = inputSize / 4;
+		verticalSpacing = inputSize / 4;
 
 		final AtomicInteger x = new AtomicInteger(5);
 
@@ -587,8 +606,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		resizeButton(x, chartLock);
 
 		x.addAndGet(horizontalSpacing * 2);
-		volume.setLocation(x.getAndAdd(volume.getWidth() + horizontalSpacing), verticalSpacing);
-		sfxVolume.setLocation(x.getAndAdd(sfxVolume.getWidth() + horizontalSpacing), verticalSpacing);
+		resizeSlider(x, volume);
+		resizeSlider(x, sfxVolume);
 
 		x.addAndGet(horizontalSpacing * 2);
 		resizePlaybackSpeed(x);

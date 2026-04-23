@@ -323,6 +323,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.BPM_DOUBLE, bpmDoubler::doubleBPM);
 		actionHandlers.put(Action.BPM_HALVE, bpmHalver::halveBPM);
 		actionHandlers.put(Action.CHANGE_GRID, chartToolbar::focusGrid);
+		actionHandlers.put(Action.CHANGE_TO_POWER_CHORD_BIG, guitarSoundsHandler::changeToPowerChordBig);
+		actionHandlers.put(Action.CHANGE_TO_POWER_CHORD_SMALL, guitarSoundsHandler::changeToPowerChordSmall);
 		actionHandlers.put(Action.COPY, copyManager::copy);
 		actionHandlers.put(Action.CUT, copyManager::cut);
 		actionHandlers.put(Action.DECREASE_LENGTH, () -> changeLength(-1));

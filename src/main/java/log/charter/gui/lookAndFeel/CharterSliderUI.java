@@ -1,5 +1,9 @@
 package log.charter.gui.lookAndFeel;
 
+import static java.lang.Math.min;
+import static log.charter.data.config.GraphicalConfig.inputSize;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getAsOdd;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -13,7 +17,8 @@ import log.charter.data.config.ChartPanelColors.ColorLabel;
 public class CharterSliderUI extends MetalSliderUI {
 	@Override
 	protected void calculateThumbSize() {
-		thumbRect.setSize(11, 11);
+		final int size = min(inputSize / 2, min(slider.getHeight(), slider.getWidth()));
+		thumbRect.setSize(size, size);
 	}
 
 	private void setupGraphics(final Graphics2D g2d) {
@@ -41,22 +46,51 @@ public class CharterSliderUI extends MetalSliderUI {
 		g2d.fillOval(thumbRect.x, thumbRect.y, thumbRect.width, thumbRect.height);
 	}
 
+	private int trackWidth() {
+		return getAsOdd(min(inputSize / 10, min(slider.getHeight() / 3, slider.getWidth() / 3)));
+	}
+
+	private void paintHorizontal(final Graphics2D g2d) {
+		final int trackWidth = trackWidth();
+		final int y = (int) (trackRect.getCenterY() - trackWidth / 2);
+		final int x0 = trackRect.x;
+		final int x1 = thumbRect.x + thumbRect.width / 2;
+		final int x2 = x0 + trackRect.width;
+
+		// before thumb
+		g2d.setColor(slider.getForeground());
+		g2d.fillRect(x0, y, x1 - x0, trackWidth);
+
+		// after thumb
+		g2d.setColor(ColorLabel.BASE_BORDER.color());
+		g2d.fillRect(x1, y, x2 - x1, trackWidth);
+	}
+
+	private void paintVertical(final Graphics2D g2d) {
+		final int trackWidth = trackWidth();
+		final int x = (int) (trackRect.getCenterY() - trackWidth / 2);
+		final int y0 = trackRect.y;
+		final int y1 = thumbRect.y + thumbRect.height / 2;
+		final int y2 = y0 + trackRect.height;
+
+		// before thumb
+		g2d.setColor(slider.getForeground());
+		g2d.fillRect(x, y0, trackWidth, y1 - y0);
+
+		// after thumb
+		g2d.setColor(ColorLabel.BASE_BORDER.color());
+		g2d.fillRect(x, y1, trackWidth, y2 - y1);
+	}
+
 	@Override
 	public void paintTrack(final Graphics g) {
 		final Graphics2D g2d = (Graphics2D) g;
 		setupGraphics(g2d);
 
-		final int y = (int) (trackRect.getCenterY() - 1);
-		final int x0 = trackRect.x;
-		final int x1 = thumbRect.x;
-		final int x2 = x0 + trackRect.width;
-
-		// before thumb
-		g2d.setColor(slider.getForeground());
-		g2d.fillRect(x0, y, x1 - x0, 3);
-
-		// after thumb
-		g2d.setColor(ColorLabel.BASE_BORDER.color());
-		g2d.fillRect(x1, y, x2 - x1, 3);
+		if (slider.getOrientation() == JSlider.HORIZONTAL) {
+			paintHorizontal(g2d);
+		} else {
+			paintVertical(g2d);
+		}
 	}
 }
