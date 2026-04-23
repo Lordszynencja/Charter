@@ -87,6 +87,8 @@ public class Localization {
 		CHANGE_LENGTH("Change length"), //
 		CHANGE_LENGTH_BY_SECONDS("Change length by this many seconds:"), //
 		CHANGE_SONG_PITCH("Change song pitch"), //
+		CHANGE_TO_POWER_CHORD_BIG("Change to big power chord"), //
+		CHANGE_TO_POWER_CHORD_SMALL("Change to small power chord"), //
 		CHART_LOCK_TOOLTIP(
 				"<html>Locks the chart, stopping you from moving any items on it (toggled with Scroll Lock)<br/>Items can still be added and removed</html>"), //
 		CHART_TEXT_HEIGHT("Chart text height"), //

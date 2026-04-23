@@ -128,6 +128,10 @@ class GuitarMenuHandler extends CharterMenuHandler {
 		menu.add(createItem(Label.GUITAR_MENU_AUTOCREATE_FHP, this::addFHP));
 
 		menu.addSeparator();
+		menu.add(createItem(Action.CHANGE_TO_POWER_CHORD_SMALL));
+		menu.add(createItem(Action.CHANGE_TO_POWER_CHORD_BIG));
+
+		menu.addSeparator();
 		menu.add(createItem(Action.TOGGLE_PREVIEW_WINDOW));
 		menu.add(createItem(Action.TOGGLE_BORDERLESS_PREVIEW_WINDOW));
 

@@ -22,6 +22,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.tabs.TextTab;
 import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
+import log.charter.io.Logger;
 import log.charter.io.rs.xml.showlights.RsXmlShowlights;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
@@ -123,6 +124,13 @@ public class SongFileHandler {
 		final Timer timer = new Timer();
 		final File dir = new File(chartData.path, "RS XML");
 		dir.mkdirs();
+		final File[] files = dir.listFiles();
+		if (files == null) {
+			final String errorMsg = "Couldn't list files for directory '" + dir.getAbsolutePath() + "'!";
+			Logger.error("Couldn't list files for directory '" + dir.getAbsolutePath() + "'!");
+			throw new IllegalArgumentException(errorMsg);
+		}
+
 		for (final File f : dir.listFiles()) {
 			if (f.isFile()) {
 				f.delete();

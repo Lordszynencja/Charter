@@ -3,6 +3,7 @@ package log.charter.util;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import log.charter.data.song.Arrangement;
 import log.charter.data.song.configs.Tuning;
 import log.charter.io.Logger;
 
@@ -43,6 +44,10 @@ public class SoundUtils {
 
 	public static int getSound(final Tuning tuning, final boolean bass, final int string, final int fret) {
 		return Tuning.getStringDistanceFromC0(string, tuning.strings(), bass) + fret + tuning.getTuningRaw()[string];
+	}
+
+	public static String simpleName(final Arrangement arrangement, final int string, final int fret) {
+		return soundToSimpleName(getSound(arrangement.tuning, arrangement.isBass(), string, fret), true);
 	}
 
 	public static int[] getSounds(final Tuning tuning, final boolean bass, final Map<Integer, Integer> frets) {

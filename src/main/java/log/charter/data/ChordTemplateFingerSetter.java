@@ -62,8 +62,12 @@ public class ChordTemplateFingerSetter {
 	private static List<Shape> generate2StringChordFingerings() {
 		final List<Shape> shapes = new ArrayList<>();
 
+		shapes.add(new Shape(i(0, -1), I(1, null)));
+		shapes.add(new Shape(i(-1, 0), I(null, 1)));
+
 		for (int i = 0; i < 7; i++) {
 			shapes.add(new Shape(i(0, i), I(1, min(4, i + 1))));
+			shapes.add(new Shape(i(i, 0), I(min(4, i + 1), 1)));
 			shapes.add(new Shape(i(0, -1, i), I(1, null, min(4, i + 2))));
 		}
 		for (int i = 1; i < 5; i++) {
@@ -106,26 +110,27 @@ public class ChordTemplateFingerSetter {
 
 		for (int i = 0; i < 5; i++) {
 			shapes.add(new Shape(i(0, 0, i), I(1, 1, min(4, i + 1))));
+			shapes.add(new Shape(i(0, i, 0), I(1, min(4, i + 1), 1)));
+			shapes.add(new Shape(i(i, 0, 0), I(min(4, i + 1), 1, 1)));
+			shapes.add(new Shape(i(i, -1, -1), I(min(4, i + 1), null, null)));
+			shapes.add(new Shape(i(i, 0, -1), I(min(4, i + 1), 1, null)));
+			shapes.add(new Shape(i(i, -1, 0), I(max(2, min(4, i + 1)), null, 1)));
 		}
 
-		shapes.add(new Shape(i(0, 1, 0), I(1, 3, 2)));
 		shapes.add(new Shape(i(0, 1, 1), I(1, 2, 3)));
 		shapes.add(new Shape(i(0, 1, 2), I(1, 2, 3)));
 		shapes.add(new Shape(i(0, 1, 3), I(1, 2, 4)));
 		shapes.add(new Shape(i(0, 1, 4), I(1, 2, 4)));
 
-		shapes.add(new Shape(i(0, 2, 0), I(1, 3, 1)));
 		shapes.add(new Shape(i(0, 2, 1), I(1, 3, 2)));
 		shapes.add(new Shape(i(0, 2, 2), I(1, 3, 4)));
 		shapes.add(new Shape(i(0, 2, 3), I(1, 3, 4)));
 		shapes.add(new Shape(i(0, 2, 4), I(1, 2, 4)));
 
-		shapes.add(new Shape(i(0, 3, 0), I(1, 4, 1)));
 		shapes.add(new Shape(i(0, 3, 1), I(1, 4, 2)));
 		shapes.add(new Shape(i(0, 3, 2), I(1, 4, 3)));
 		shapes.add(new Shape(i(0, 3, 3), I(1, 4, 4)));
 
-		shapes.add(new Shape(i(1, 0, 0), I(2, 1, 1)));
 		shapes.add(new Shape(i(1, 0, 1), I(2, 1, 3)));
 		shapes.add(new Shape(i(1, 0, 2), I(2, 1, 3)));
 		shapes.add(new Shape(i(1, 0, 3), I(2, 1, 4)));

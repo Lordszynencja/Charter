@@ -143,7 +143,7 @@ public class RW {
 			output.write(content);
 			output.close();
 		} catch (final IOException e) {
-			e.printStackTrace();
+			Logger.error("Couldn't write to file " + f.getAbsolutePath(), e);
 		}
 	}
 

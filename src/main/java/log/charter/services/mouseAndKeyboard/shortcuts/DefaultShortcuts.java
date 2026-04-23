@@ -27,6 +27,8 @@ public class DefaultShortcuts extends ShortcutList {
 		super.set(Action.BPM_DOUBLE, new Shortcut(KeyEvent.VK_PERIOD));
 		super.set(Action.BPM_HALVE, new Shortcut(KeyEvent.VK_COMMA));
 		super.set(Action.CHANGE_GRID, new Shortcut(KeyEvent.VK_G));
+		super.set(Action.CHANGE_TO_POWER_CHORD_BIG, new Shortcut(KeyEvent.VK_P).ctrl().shift());
+		super.set(Action.CHANGE_TO_POWER_CHORD_SMALL, new Shortcut(KeyEvent.VK_P).ctrl());
 		super.set(Action.COPY, new Shortcut(KeyEvent.VK_C).ctrl());
 		super.set(Action.CUT, new Shortcut(KeyEvent.VK_X).ctrl());
 		super.set(Action.DECREASE_LENGTH, new Shortcut(KeyEvent.VK_OPEN_BRACKET));
