@@ -66,18 +66,30 @@ public class MultiComposite implements Composite {
 	private int colorAdd = 0;
 	private int colorMultiply = 255;
 
+	public int alpha() {
+		return alpha;
+	}
+
 	public MultiComposite alpha(final int alpha) {
-		this.alpha = alpha;
+		this.alpha = max(0, min(255, alpha));
 		return this;
+	}
+
+	public int colorAdd() {
+		return colorAdd;
 	}
 
 	public MultiComposite colorAdd(final int colorAdd) {
-		this.colorAdd = colorAdd;
+		this.colorAdd = max(0, min(255, colorAdd));
 		return this;
 	}
 
+	public int colorMultiply() {
+		return colorMultiply;
+	}
+
 	public MultiComposite colorMultiply(final int colorMultiply) {
-		this.colorMultiply = colorMultiply;
+		this.colorMultiply = max(0, min(255, colorMultiply));
 		return this;
 	}
 
