@@ -1,6 +1,7 @@
 package log.charter.gui.components.toolbar;
 
 import static java.util.Arrays.asList;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 
 import log.charter.data.config.Config;
 import log.charter.data.config.Localization.Label;
@@ -19,7 +20,7 @@ import log.charter.sound.effects.pass.PassFilterAlgorithm;
 public class BandPassSettings extends RowedDialog {
 	private static final long serialVersionUID = -2133758312693862190L;
 
-	private static final int labelWidth = 100;
+	private final int labelWidth = inputSize * 5;
 
 	private PassFilterAlgorithm algorithm = PassFiltersConfig.bandPassAlgorithm;
 	private int order = PassFiltersConfig.bandPassOrder;
@@ -38,9 +39,9 @@ public class BandPassSettings extends RowedDialog {
 	private final FieldWithLabel<TextInputWithValidation> rippleDbField;
 
 	public BandPassSettings(final CharterFrame charterFrame) {
-		super(charterFrame, Label.BAND_PASS_SETTINGS, 300);
+		super(charterFrame, Label.BAND_PASS_SETTINGS, inputSize * 15);
 
-		final RowedPosition position = new RowedPosition(30, panel.sizes);
+		final RowedPosition position = new RowedPosition(inputSize * 3 / 2, panel.sizes);
 
 		algorithmField = addAlgorithmSelect(position);
 		orderField = addOrderInput(position);
@@ -82,7 +83,7 @@ public class BandPassSettings extends RowedDialog {
 					showAlgorithmDependentFields();
 				});
 		final FieldWithLabel<CharterSelect<PassFilterAlgorithm>> field = new FieldWithLabel<>(
-				Label.PASS_FILTER_ALGORITHM, labelWidth, 120, 20, select, LabelPosition.LEFT);
+				Label.PASS_FILTER_ALGORITHM, labelWidth, inputSize * 6, inputSize, select, LabelPosition.LEFT);
 		panel.add(field, position);
 		position.newRow();
 
@@ -90,10 +91,10 @@ public class BandPassSettings extends RowedDialog {
 	}
 
 	private FieldWithLabel<TextInputWithValidation> addOrderInput(final RowedPosition position) {
-		final TextInputWithValidation input = TextInputWithValidation.generateForInt(order, 40,
+		final TextInputWithValidation input = TextInputWithValidation.generateForInt(order, inputSize * 2,
 				new IntValueValidator(1, 999), v -> order = v, false);
 		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(Label.PASS_FILTER_ORDER, labelWidth,
-				40, 20, input, LabelPosition.LEFT);
+				inputSize, inputSize, input, LabelPosition.LEFT);
 		panel.add(field, position);
 		position.newRow();
 
@@ -101,10 +102,10 @@ public class BandPassSettings extends RowedDialog {
 	}
 
 	private FieldWithLabel<TextInputWithValidation> addCenterFrequencyInput(final RowedPosition position) {
-		final TextInputWithValidation input = TextInputWithValidation.generateForDouble(centerFrequency, 40,
+		final TextInputWithValidation input = TextInputWithValidation.generateForDouble(centerFrequency, inputSize * 2,
 				new DoubleValueValidator(1, 20_000, false), v -> centerFrequency = v, false);
 		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(Label.PASS_FILTER_CENTER_FREQUENCY,
-				labelWidth, 60, 20, input, LabelPosition.LEFT);
+				labelWidth, inputSize * 2, inputSize, input, LabelPosition.LEFT);
 		panel.add(field, position);
 		position.newRow();
 
@@ -112,10 +113,10 @@ public class BandPassSettings extends RowedDialog {
 	}
 
 	private FieldWithLabel<TextInputWithValidation> addFrequencyWidthInput(final RowedPosition position) {
-		final TextInputWithValidation input = TextInputWithValidation.generateForDouble(frequencyWidth, 40,
+		final TextInputWithValidation input = TextInputWithValidation.generateForDouble(frequencyWidth, inputSize * 2,
 				new DoubleValueValidator(1, 20_000, false), v -> frequencyWidth = v, false);
 		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(Label.PASS_FILTER_FREQUENCY_WIDTH,
-				labelWidth, 60, 20, input, LabelPosition.LEFT);
+				labelWidth, inputSize * 2, inputSize, input, LabelPosition.LEFT);
 		panel.add(field, position);
 		position.newRow();
 
@@ -123,10 +124,10 @@ public class BandPassSettings extends RowedDialog {
 	}
 
 	private FieldWithLabel<TextInputWithValidation> addRippleDbInput(final RowedPosition position) {
-		final TextInputWithValidation input = TextInputWithValidation.generateForDouble(rippleDb, 40,
+		final TextInputWithValidation input = TextInputWithValidation.generateForDouble(rippleDb, inputSize * 2,
 				new DoubleValueValidator(0, 100, false), v -> rippleDb = v, false);
-		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(Label.PASS_FILTER_RIPPLE_DB, 60, 60,
-				20, input, LabelPosition.LEFT);
+		final FieldWithLabel<TextInputWithValidation> field = new FieldWithLabel<>(Label.PASS_FILTER_RIPPLE_DB,
+				labelWidth, inputSize * 2, inputSize, input, LabelPosition.LEFT);
 		panel.add(field, position);
 		position.newRow();
 

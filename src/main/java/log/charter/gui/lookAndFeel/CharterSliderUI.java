@@ -1,5 +1,9 @@
 package log.charter.gui.lookAndFeel;
 
+import static java.lang.Math.min;
+import static log.charter.data.config.GraphicalConfig.inputSize;
+import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getAsOdd;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -13,7 +17,20 @@ import log.charter.data.config.ChartPanelColors.ColorLabel;
 public class CharterSliderUI extends MetalSliderUI {
 	@Override
 	protected void calculateThumbSize() {
-		thumbRect.setSize(11, 11);
+		final int size = min(inputSize / 2, min(slider.getHeight(), slider.getWidth()));
+		thumbRect.setSize(size, size);
+	}
+
+	@Override
+	protected void calculateTrackRect() {
+		super.calculateTrackRect();
+
+		final int size = getAsOdd(min(inputSize / 5, min(slider.getHeight() / 3, slider.getWidth() / 3)));
+		if (slider.getOrientation() == JSlider.HORIZONTAL) {
+			trackRect.setSize(trackRect.width, size);
+		} else {
+			trackRect.setSize(size, trackRect.height);
+		}
 	}
 
 	private void setupGraphics(final Graphics2D g2d) {

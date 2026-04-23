@@ -203,7 +203,7 @@ public class ArrangementFixer {
 		final List<EventPoint> sections = filter(arrangement.eventPoints, p -> p.section != null);
 
 		for (final EventPoint eventPoint : arrangement.eventPoints) {
-			if (eventPoint.phrase == null || eventPoint.phrase.equals("COUNT")) {
+			if (eventPoint.phrase == null || eventPoint.phrase.equals("COUNT") || eventPoint.phrase.equals("END")) {
 				continue;
 			}
 
