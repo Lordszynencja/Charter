@@ -13,7 +13,7 @@ import log.charter.util.RW;
 
 public class CharterMain {
 	public static final String VERSION = "0.22.29";
-	public static final String VERSION_DATE = "2026.04.24 19:00";
+	public static final String VERSION_DATE = "2026.04.24 20:30";
 	public static final String TITLE = "Charter " + VERSION;
 
 	private static void deleteTempUpdateFile() {
