@@ -57,4 +57,8 @@ public class Point3D {
 	public Point3D descale() {
 		return new Point3D(x / w, y / w, z / w, 1);
 	}
+
+	public Point3D scale(final double sx, final double sy, final double sz) {
+		return new Point3D(x * sx, y * sy, z * sz, w);
+	}
 }
