@@ -312,6 +312,7 @@ public class Preview3DGuitarSoundsDrawer {
 	private void drawOpenStringNoteHead(final ShadersHolder shadersHolder, final Preview3DDrawData drawData,
 			final double position, final NoteDrawData note, final boolean hit) {
 		final Color color = getNoteHeadColor(note);
+		final Color accentColor = setAlpha(color, 96);
 		final IntRange frets = drawData.getFrets(note.originalPosition);
 		if (frets == null) {
 			return;
@@ -330,6 +331,13 @@ public class Preview3DGuitarSoundsDrawer {
 			}
 
 			shaderDrawData.draw(points.a, modelMatrix);
+
+			if (note.accent) {
+				for (final Point3D point : points.b) {
+					shaderDrawData.addVertex(point.scale(1, 3, 1), accentColor);
+				}
+				shaderDrawData.draw(points.a, modelMatrix);
+			}
 		}
 
 		if (note.hopo == HOPO.PULL_OFF) {

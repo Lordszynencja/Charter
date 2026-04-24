@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
 
 import log.charter.data.ChartData;
@@ -15,6 +16,7 @@ import log.charter.data.song.Showlight;
 import log.charter.data.song.SongChart;
 import log.charter.data.song.Stem;
 import log.charter.data.song.vocals.VocalPath;
+import log.charter.io.rsc.xml.converters.MapConverter.MapConverterIntDouble;
 import log.charter.services.editModes.EditMode;
 
 @XStreamAlias("project")
@@ -46,6 +48,7 @@ public class ChartProject {
 	public List<VocalPath> vocalPaths = new ArrayList<>();
 	public List<Arrangement> arrangements = new ArrayList<>();
 
+	@XStreamConverter(MapConverterIntDouble.class)
 	public Map<Integer, Double> bookmarks = new HashMap<>();
 	public String text;
 

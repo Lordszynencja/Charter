@@ -38,6 +38,7 @@ import log.charter.util.RW;
 import log.charter.util.Timer;
 
 public class SongFileHandler {
+	public static final String defaultProjectFileName = "project.rscp";
 	public static final String vocalsFileName = "Vocals_RS2.xml";
 	public static final String showlightsFileName = "showlights.xml";
 
@@ -206,10 +207,9 @@ public class SongFileHandler {
 			}
 
 			chartData.path = newDir.getAbsolutePath();
-			PathsConfig.lastDir = chartData.path;
 		}
 
-		PathsConfig.lastPath = new File(chartData.path, chartData.projectFileName).getAbsolutePath();
+		PathsConfig.lastPath(chartData.path, chartData.projectFileName);
 		Config.markChanged();
 		Config.save();
 

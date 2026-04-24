@@ -1,6 +1,7 @@
 package log.charter.gui.menuHandlers;
 
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
+import static log.charter.services.data.files.SongFileHandler.defaultProjectFileName;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -10,6 +11,7 @@ import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.values.PathsConfig;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.panes.colorConfig.ColorConfigPane;
 import log.charter.gui.panes.graphicalConfig.GraphicConfigPane;
@@ -22,6 +24,7 @@ import log.charter.services.Action;
 import log.charter.services.CharterContext;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.data.StemAddService;
+import log.charter.services.data.files.ExistingProjectImporter;
 import log.charter.services.data.files.GP5FileImporter;
 import log.charter.services.data.files.LRCImporter;
 import log.charter.services.data.files.MidiImporter;
@@ -39,6 +42,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 	private CharterFrame charterFrame;
 	private CharterContext charterContext;
 	private CharterMenuBar charterMenuBar;
+	private ExistingProjectImporter existingProjectImporter;
 	private Framer framer;
 	private GP5FileImporter gp5FileImporter;
 	private GP7PlusFileImporter gp7PlusFileImporter;
@@ -87,11 +91,27 @@ public class FileMenuHandler extends CharterMenuHandler {
 		return importSubmenu;
 	}
 
+	private JMenu prepareLastPathsMenu() {
+		final JMenu lastPathsSubmenu = createMenu(Label.OPEN_LAST_PROJECT);
+		for (final String path : PathsConfig.lastPaths) {
+			String label = path.startsWith(PathsConfig.songsPath) ? path.substring(PathsConfig.songsPath.length() + 1)
+					: path;
+			if (label.endsWith("\\" + defaultProjectFileName)) {
+				label = label.substring(0, label.length() - defaultProjectFileName.length() - 1);
+			}
+
+			lastPathsSubmenu.add(createItem(label, () -> existingProjectImporter.open(path)));
+		}
+
+		return lastPathsSubmenu;
+	}
+
 	@Override
 	JMenu prepareMenu() {
 		final JMenu menu = createMenu(Label.FILE_MENU);
 		menu.add(prepareNewProjectMenu());
 		menu.add(createItem(Action.OPEN_PROJECT));
+		menu.add(prepareLastPathsMenu());
 
 		if (modeManager.getMode() != EditMode.EMPTY) {
 			menu.addSeparator();
