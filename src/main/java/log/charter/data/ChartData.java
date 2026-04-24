@@ -1,5 +1,7 @@
 package log.charter.data;
 
+import static log.charter.services.data.files.SongFileHandler.defaultProjectFileName;
+
 import java.io.File;
 import java.util.List;
 
@@ -26,8 +28,8 @@ import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
 public class ChartData {
-	public String path = PathsConfig.lastDir;
-	public String projectFileName = "project.rscp";
+	public String path = PathsConfig.lastDir();
+	public String projectFileName = defaultProjectFileName;
 	public boolean isEmpty = true;
 	public SongChart songChart = new SongChart();
 
@@ -56,14 +58,13 @@ public class ChartData {
 		currentLevel = level;
 		modeManager.setMode(editMode);
 
-		charterMenuBar.refreshMenus();
-		charterFrame.updateSizes();
-
 		path = dir;
 		this.projectFileName = projectFileName;
-		PathsConfig.lastDir = path;
-		PathsConfig.lastPath = new File(path, projectFileName).getAbsolutePath();
+		PathsConfig.lastPath(path, projectFileName);
 		Config.markChanged();
+
+		charterMenuBar.refreshMenus();
+		charterFrame.updateSizes();
 
 		selectionManager.clear();
 		undoSystem.clear();

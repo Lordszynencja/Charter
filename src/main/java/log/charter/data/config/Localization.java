@@ -275,6 +275,7 @@ public class Localization {
 		NUMBER_8("Number 8"), //
 		NUMBER_9("Number 9"), //
 		OFFSET_MS_FIELD("Offset (ms):"), //
+		OPEN_LAST_PROJECT("Open last project..."), //
 		OPEN_PROJECT("Open project"), //
 		OVERLAPPING_EVENT_POINT("Overlapping event point"), //
 		OVERLAPPING_FHP("Overlapping FHP"), //

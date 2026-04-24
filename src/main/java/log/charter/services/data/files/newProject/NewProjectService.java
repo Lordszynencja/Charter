@@ -1,6 +1,7 @@
 package log.charter.services.data.files.newProject;
 
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
+import static log.charter.services.data.files.SongFileHandler.defaultProjectFileName;
 import static log.charter.util.FileUtils.cleanFileName;
 
 import java.io.File;
@@ -87,7 +88,7 @@ public class NewProjectService {
 	}
 
 	public void setDataForNewProject(final File projectFolder, final SongChart songChart, final AudioData musicData) {
-		chartData.setNewSong(projectFolder, songChart, "project.rscp");
+		chartData.setNewSong(projectFolder, songChart, defaultProjectFileName);
 		textTab.setText("");
 
 		projectAudioHandler.setAudio(musicData);

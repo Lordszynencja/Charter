@@ -16,7 +16,7 @@ public class InstrumentConfig {
 	/**
 	 * in half steps
 	 */
-	public static int maxBendValue = 6;
+	public static int maxBendValue = 3;
 
 	public static void init(final Map<String, ValueAccessor> valueAccessors, final String name) {
 		valueAccessors.put(name + ".leftHanded", forBoolean(v -> leftHanded = v, () -> leftHanded, leftHanded));
