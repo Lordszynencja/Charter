@@ -1,5 +1,7 @@
 package log.charter.gui.panes.imports;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
+
 import javax.swing.JCheckBox;
 
 import log.charter.data.ChartData;
@@ -29,7 +31,7 @@ public class MidiImportPane extends RowedDialog {
 
 	public MidiImportPane(final ChartData chartData, final CharterFrame frame, final CharterMenuBar charterMenuBar,
 			final SongFilesBackuper songFilesBackuper, final MidiFileData midiFileData) {
-		super(frame, Label.MIDI_IMPORT_PANE, 200);
+		super(frame, Label.MIDI_IMPORT_PANE, inputSize * 10);
 
 		this.chartData = chartData;
 		this.charterMenuBar = charterMenuBar;
@@ -37,7 +39,7 @@ public class MidiImportPane extends RowedDialog {
 
 		this.midiFileData = midiFileData;
 
-		final RowedPosition position = new RowedPosition(50, panel.sizes);
+		final RowedPosition position = new RowedPosition(inputSize * 5 / 2, panel.sizes);
 
 		if (midiFileData.beats != null) {
 			addImportTempoMapCheckbox(position);
@@ -63,8 +65,8 @@ public class MidiImportPane extends RowedDialog {
 		checkbox.setSelected(importBeatMap);
 		checkbox.addActionListener(a -> importBeatMap = checkbox.isSelected());
 
-		final FieldWithLabel<JCheckBox> field = new FieldWithLabel<>(Label.MIDI_IMPORT_TEMPO_MAP, 100, 20, 20, checkbox,
-				LabelPosition.LEFT);
+		final FieldWithLabel<JCheckBox> field = new FieldWithLabel<>(Label.MIDI_IMPORT_TEMPO_MAP, inputSize * 5,
+				inputSize, inputSize, checkbox, LabelPosition.LEFT);
 
 		panel.add(field, position);
 	}
@@ -74,8 +76,8 @@ public class MidiImportPane extends RowedDialog {
 		checkbox.setSelected(importVocals);
 		checkbox.addActionListener(a -> importVocals = checkbox.isSelected());
 
-		final FieldWithLabel<JCheckBox> field = new FieldWithLabel<>(Label.MIDI_IMPORT_VOCALS, 100, 20, 20, checkbox,
-				LabelPosition.LEFT);
+		final FieldWithLabel<JCheckBox> field = new FieldWithLabel<>(Label.MIDI_IMPORT_VOCALS, inputSize * 5, inputSize,
+				inputSize, checkbox, LabelPosition.LEFT);
 
 		panel.add(field, position);
 	}
