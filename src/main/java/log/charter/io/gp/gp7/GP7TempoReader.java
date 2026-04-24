@@ -125,14 +125,19 @@ public class GP7TempoReader {
 		return tempoChanges;
 	}
 
+	private double getBPMForMasterBar(final double bpm, final GP7MasterBar masterBar) {
+		return bpm * masterBar.timeSignature.denominator / masterBar.timeSignature.numerator
+				* masterBar.timeSignature.denominator / 4;
+	}
+
 	private double calculateBPM(final GP7MasterBar masterBar, final TempoChangePoint tempoChangePoint,
 			final TempoChangePoint nextTempoChangePoint, final int beatId) {
+		final double bpmA = getBPMForMasterBar(tempoChangePoint.getQuarterNoteTempo(), masterBar);
 		if (!tempoChangePoint.linear) {
-			return tempoChangePoint.getQuarterNoteTempo() * masterBar.timeSignature.denominator / 4;
+			return bpmA;
 		}
 
-		final double bpmA = tempoChangePoint.getQuarterNoteTempo() * masterBar.timeSignature.denominator / 4;
-		final double bpmB = nextTempoChangePoint.getQuarterNoteTempo() * masterBar.timeSignature.denominator / 4;
+		final double bpmB = getBPMForMasterBar(nextTempoChangePoint.getQuarterNoteTempo(), masterBar);
 		final int length = nextTempoChangePoint.beatId - tempoChangePoint.beatId;
 		if (length <= 0) {
 			return bpmB;

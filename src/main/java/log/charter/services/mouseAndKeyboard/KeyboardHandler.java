@@ -106,7 +106,7 @@ public class KeyboardHandler implements KeyListener {
 		return scrollLock;
 	}
 
-	private void replaceHeldAction() {
+	private void replaceHeldAction(final boolean fireAction) {
 		heldAction = ShortcutConfig.getAction(modeManager.getMode(), shortcut);
 
 		if (heldAction != null) {
@@ -126,27 +126,27 @@ public class KeyboardHandler implements KeyListener {
 
 			if (keyCode == VK_CONTROL) {
 				shortcut.ctrl = true;
-				replaceHeldAction();
+				replaceHeldAction(true);
 				return;
 			}
 			if (keyCode == VK_SHIFT) {
 				shortcut.shift = true;
-				replaceHeldAction();
+				replaceHeldAction(true);
 				return;
 			}
 			if (keyCode == VK_ALT) {
 				shortcut.alt = true;
-				replaceHeldAction();
+				replaceHeldAction(true);
 				return;
 			}
 			if (keyCode == VK_META) {
 				shortcut.command = true;
-				replaceHeldAction();
+				replaceHeldAction(true);
 				return;
 			}
 			if (keyCode == VK_INSERT) {
 				shortcut.insert = true;
-				replaceHeldAction();
+				replaceHeldAction(true);
 				return;
 			}
 			if (keyCode == KeyEvent.VK_SCROLL_LOCK) {
@@ -170,7 +170,7 @@ public class KeyboardHandler implements KeyListener {
 			}
 
 			shortcut.key = keyCode;
-			replaceHeldAction();
+			replaceHeldAction(true);
 			e.consume();
 		} catch (final Exception ex) {
 			Logger.error("Exception on key pressed " + KeyEvent.getKeyText(e.getKeyCode()), ex);
@@ -193,23 +193,23 @@ public class KeyboardHandler implements KeyListener {
 			switch (keyCode) {
 				case VK_CONTROL:
 					shortcut.ctrl = false;
-					replaceHeldAction();
+					replaceHeldAction(false);
 					break;
 				case VK_SHIFT:
 					shortcut.shift = false;
-					replaceHeldAction();
+					replaceHeldAction(false);
 					break;
 				case VK_ALT:
 					shortcut.alt = false;
-					replaceHeldAction();
+					replaceHeldAction(false);
 					break;
 				case VK_META:
 					shortcut.command = false;
-					replaceHeldAction();
+					replaceHeldAction(false);
 					break;
 				case VK_INSERT:
 					shortcut.insert = false;
-					replaceHeldAction();
+					replaceHeldAction(false);
 					break;
 				default:
 					if (shortcut.key == keyCode) {

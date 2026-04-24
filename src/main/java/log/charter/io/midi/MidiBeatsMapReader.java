@@ -37,8 +37,10 @@ public class MidiBeatsMapReader {
 		}
 
 		private void addBeat(final boolean anchor) {
+			final long beatDistanceFromPreviousInUnits = beatTime - time;
+			final double milisecondsPerQuarterNote = 60_000_000.0 / lastEvent.kiloQuarterNotesPerMinute;
 			final int position = (int) (this.position
-					+ (beatTime - time) * 60_000_000.0 / lastEvent.kiloQuarterNotesPerMinute / resolution);
+					+ beatDistanceFromPreviousInUnits * milisecondsPerQuarterNote / resolution);
 			final boolean firstInMeasure = countBeat();
 			final Beat beat = new Beat(position, lastEvent.timeSignature, firstInMeasure, anchor);
 

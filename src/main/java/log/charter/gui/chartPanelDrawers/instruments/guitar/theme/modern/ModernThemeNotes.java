@@ -152,7 +152,7 @@ public class ModernThemeNotes implements ThemeNotes {
 		final int alpha = chord.accent ? 224 : 128;
 		final Color chordBoxColor = ColorLabel.CHORD_BOX.colorWithAlpha(alpha);
 
-		final int radius = noteWidth / 6;
+		final int radius = chord.accent ? noteWidth / 4 : noteWidth / 6;
 		final ShapePositionWithSize position = new ShapePositionWithSize(x - radius, lanesTop, 2 * radius,
 				lanesBottom - lanesTop);
 
@@ -249,6 +249,7 @@ public class ModernThemeNotes implements ThemeNotes {
 
 			data.notes.add(new CenteredImage(new Position2D(note.x, y), icon, c));
 		} else {
+			addAccent(note, y);
 			data.notes.add(new CenteredImage(new Position2D(note.x, y), icon));
 		}
 
@@ -302,7 +303,6 @@ public class ModernThemeNotes implements ThemeNotes {
 			return;
 		}
 
-		addAccent(note, y);
 		addNoteHeadShape(note, y);
 		addMuteIcon(note, y);
 		addFretNumber(note, y);
