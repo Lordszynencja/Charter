@@ -1,14 +1,11 @@
 package log.charter.gui.components.containers;
 
 import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.gui.components.containers.SaverWithStatus.emptySaver;
 import static log.charter.gui.components.utils.ComponentUtils.setDefaultFontSize;
 
 import java.awt.Dimension;
-import java.awt.DisplayMode;
-import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -47,7 +44,7 @@ public class RowedDialog extends JDialog implements ComponentListener {
 	protected final RowedPanel panel;
 
 	public RowedDialog(final CharterFrame frame, final Label title) {
-		this(frame, title, 250);
+		this(frame, title, inputSize * 25 / 2);
 	}
 
 	public RowedDialog(final CharterFrame frame, final Label title, final int width) {
@@ -131,12 +128,8 @@ public class RowedDialog extends JDialog implements ComponentListener {
 	}
 
 	private void setLocation() {
-		final DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-				.getDisplayMode();
-		final int x = min(displayMode.getWidth() * 99 / 100,
-				max(displayMode.getWidth() / 100, WindowStateConfig.x + frame.getWidth() / 2 - getWidth() / 2));
-		final int y = min(displayMode.getHeight() * 99 / 100,
-				max(displayMode.getWidth() / 100, WindowStateConfig.y + frame.getHeight() / 2 - getHeight() / 2));
+		final int x = max(WindowStateConfig.x, WindowStateConfig.x + frame.getWidth() / 2 - getWidth() / 2);
+		final int y = max(WindowStateConfig.y, WindowStateConfig.y + frame.getHeight() / 2 - getHeight() / 2);
 
 		setLocation(x, y);
 	}
@@ -148,20 +141,6 @@ public class RowedDialog extends JDialog implements ComponentListener {
 		final int minHeight = minPanelSize.height + insets.top + insets.bottom;
 		setMinimumSize(new Dimension(minWidth, minHeight));
 
-		final DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-				.getDisplayMode();
-		final int maximumWidth = dm.getWidth() * 49 / 50;
-		final int maximumHeight = dm.getHeight() * 49 / 50;
-
-		final int w = getWidth();
-		final int h = getHeight();
-		if (w > maximumWidth || h > maximumHeight) {
-			final int width = min(maximumWidth, getWidth());
-			final int height = min(maximumHeight, getHeight());
-			if (width != w || height != h) {
-				// setSize(width, height);
-			}
-		}
 		setSizeWithInsets();
 		setLocation();
 		validate();
