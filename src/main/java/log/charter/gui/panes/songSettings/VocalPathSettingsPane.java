@@ -1,5 +1,7 @@
 package log.charter.gui.panes.songSettings;
 
+import static log.charter.data.config.GraphicalConfig.inputSize;
+
 import javax.swing.JTextField;
 
 import log.charter.data.ChartData;
@@ -34,7 +36,7 @@ public class VocalPathSettingsPane extends RowedDialog {
 	public VocalPathSettingsPane(final ChartData chartData, final CharterMenuBar charterMenuBar,
 			final CharterFrame frame, final ModeManager modeManager, final SelectionManager selectionManager,
 			final VocalPath vocalPath, final boolean newPath) {
-		super(frame, Label.VOCAL_PATH_OPTIONS, 400);
+		super(frame, Label.VOCAL_PATH_OPTIONS, inputSize * 20);
 
 		this.chartData = chartData;
 		this.charterMenuBar = charterMenuBar;
@@ -58,8 +60,8 @@ public class VocalPathSettingsPane extends RowedDialog {
 
 	private JTextField addNameInput(final RowedPosition position) {
 		final JTextField input = new JTextField(vocalPath.name, 200);
-		final FieldWithLabel<JTextField> field = new FieldWithLabel<>(Label.VOCAL_PATH_NAME, 75, 150, 20, input,
-				LabelPosition.LEFT);
+		final FieldWithLabel<JTextField> field = new FieldWithLabel<>(Label.VOCAL_PATH_NAME, inputSize * 4,
+				inputSize * 8, inputSize, input, LabelPosition.LEFT);
 		panel.add(field, position);
 
 		return input;
@@ -67,8 +69,8 @@ public class VocalPathSettingsPane extends RowedDialog {
 
 	private ColorPicker addColorPicker(final RowedPosition position) {
 		final ColorPicker input = new ColorPicker(Label.VOCAL_PATH_COLOR, vocalPath.color);
-		final FieldWithLabel<ColorPicker> field = new FieldWithLabel<>(Label.VOCAL_PATH_COLOR, 75, 120, 20, input,
-				LabelPosition.LEFT);
+		final FieldWithLabel<ColorPicker> field = new FieldWithLabel<>(Label.VOCAL_PATH_COLOR, inputSize * 4,
+				inputSize * 6, inputSize, input, LabelPosition.LEFT);
 		panel.add(field, position);
 
 		return input;
