@@ -236,12 +236,11 @@ public class ArrangementSettingsPane extends ParamsPane {
 	}
 
 	private void addTuningInputsAndLabels() {
-		final int inputWidth = inputSize * 3 / 2;
 		for (int i = 0; i < InstrumentConfig.maxStrings; i++) {
 			final int string = i;
 			final int x = inputSize + i * inputSize * 2;
 
-			addIntegerConfigValue(tuningInputsRow, x, 0, null, 0, inputWidth, //
+			addIntegerConfigValue(tuningInputsRow, x, 0, null, 0, inputSize, //
 					new IntegerValueValidator(-48, 48, false), //
 					val -> onTuningValueChanged(string, val), //
 					false);
@@ -253,7 +252,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 			final JLabel label = new JLabel("", JLabel.CENTER);
 			setDefaultFontSize(label);
-			add(label, x, getY(tuningInputsRow + 1), inputWidth, inputSize);
+			add(label, x - inputSize / 4, getY(tuningInputsRow + 1), inputSize * 3 / 2, inputSize);
 
 			tuningLabels.add(label);
 
@@ -319,8 +318,9 @@ public class ArrangementSettingsPane extends ParamsPane {
 		tuning.strings(newStrings);
 
 		for (int i = oldStrings; i < newStrings; i++) {
-			this.add(tuningInputs.get(i), 20 + i * 40, getY(tuningInputsRow), 30, 20);
-			this.add(tuningLabels.get(i), 20 + i * 40, getY(tuningInputsRow + 1), 30, 20);
+			final int x = inputSize * (i * 2 + 1);
+			this.add(tuningInputs.get(i), x, getY(tuningInputsRow), inputSize, inputSize);
+			this.add(tuningLabels.get(i), x - inputSize / 4, getY(tuningInputsRow + 1), inputSize * 3 / 2, inputSize);
 		}
 
 		for (int i = newStrings; i < oldStrings; i++) {

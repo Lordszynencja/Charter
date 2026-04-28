@@ -188,6 +188,11 @@ public class CurrentSelectionEditor extends RowedPanel implements Initiable {
 		repaint();
 	}
 
+	public boolean allStringsEdited() {
+		return stringSelects.stream().allMatch(checkBox -> !checkBox.isSelected())
+				|| stringSelects.stream().allMatch(checkBox -> checkBox.isSelected());
+	}
+
 	public boolean isSelected(final int string) {
 		return stringSelects.get(string).isSelected();
 	}
