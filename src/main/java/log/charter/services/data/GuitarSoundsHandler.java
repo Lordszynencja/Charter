@@ -13,7 +13,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import log.charter.data.ChartData;
 import log.charter.data.ChordTemplateFingerSetter;
@@ -364,8 +363,7 @@ public class GuitarSoundsHandler {
 		}
 
 		final Set<Integer> editedStrings = currentSelectionEditor.getEditedStrings();
-		final boolean setFretsSimple = !IntStream.range(0, chartData.currentStrings())
-				.allMatch(editedStrings::contains);
+		final boolean setFretsSimple = !currentSelectionEditor.allStringsEdited();
 
 		undoSystem.addUndo();
 
@@ -482,8 +480,7 @@ public class GuitarSoundsHandler {
 		}
 
 		final Set<Integer> editedStrings = currentSelectionEditor.getEditedStrings();
-		final boolean setFretsSimple = !IntStream.range(0, chartData.currentStrings())
-				.allMatch(editedStrings::contains);
+		final boolean setFretsSimple = !currentSelectionEditor.allStringsEdited();
 
 		undoSystem.addUndo();
 

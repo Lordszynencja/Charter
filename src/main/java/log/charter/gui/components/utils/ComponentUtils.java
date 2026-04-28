@@ -83,13 +83,17 @@ public class ComponentUtils {
 			VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT, //
 			VK_ESCAPE, VK_ENTER);
 
+	private static boolean isInt(final char c) {
+		return (c >= '0' && c <= '9') || c == '-';
+	}
+
 	public static final KeyFilter intFilter = new KeyFilter(e -> {
 		final char c = e.getKeyChar();
-		return (c >= '0' && c <= '9') || editingKeyCodes.contains(e.getKeyCode());
+		return isInt(c) || editingKeyCodes.contains(e.getKeyCode());
 	});
 	public static final KeyFilter numberFilter = new KeyFilter(e -> {
 		final char c = e.getKeyChar();
-		return (c >= '0' && c <= '9') || c == '.' || c == ',' || editingKeyCodes.contains(e.getKeyCode());
+		return isInt(c) || c == '.' || c == ',' || editingKeyCodes.contains(e.getKeyCode());
 	});
 
 	public static void setComponentSize(final Component component, final int w, final int h) {
