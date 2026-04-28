@@ -5,6 +5,7 @@ import static log.charter.gui.components.simple.TextInputWithValidation.errorBac
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,6 +84,22 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		changedUpdate(e);
 	}
 
+	private boolean isToneOverLimit(final String name) {
+		final Arrangement arrangement = chartData.currentArrangement();
+		if (arrangement.tones.contains(name)) {
+			return false;
+		}
+		if (arrangement.tones.size() < 4) {
+			return false;
+		}
+		if (arrangement.toneChanges.stream()
+				.collect(Collectors.summingInt(c -> c.toneName.equals(name) ? 1 : 0)) <= 1) {
+			return false;
+		}
+
+		return true;
+	}
+
 	@Override
 	public void changedUpdate(final DocumentEvent e) {
 		if (error) {
@@ -94,8 +111,7 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 
 		final String name = toneNameInput.getText();
 
-		final Arrangement arrangement = chartData.currentArrangement();
-		if (arrangement.tones.size() >= 4 && !arrangement.tones.contains(name) && !name.isEmpty()) {
+		if (isToneOverLimit(name) && !name.isEmpty()) {
 			error = true;
 			toneNameInputBackgroundColor = toneNameInput.getBackground();
 			toneNameInput.setBorder(CharterTextFieldUI.defaultBorder(errorBackgroundBorder));
@@ -126,11 +142,14 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 					toneChange -> toneChange.toneName.equals(this.toneChange.toneName))) {
 				arrangement.tones.remove(toneChange.toneName);
 			}
-			return true;
+		} else {
+			toneChange.toneName = toneName;
 		}
 
-		arrangement.tones.add(toneName);
-		toneChange.toneName = toneName;
+		arrangement.tones = arrangement.toneChanges.stream()//
+				.map(t -> t.toneName)//
+				.collect(Collectors.toCollection(HashSet::new));
+
 		return true;
 	}
 
