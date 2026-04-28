@@ -109,7 +109,7 @@ public class KeyboardHandler implements KeyListener {
 	private void replaceHeldAction(final boolean fireAction) {
 		heldAction = ShortcutConfig.getAction(modeManager.getMode(), shortcut);
 
-		if (heldAction != null) {
+		if (fireAction && heldAction != null) {
 			actionHandler.fireAction(heldAction);
 		}
 	}
