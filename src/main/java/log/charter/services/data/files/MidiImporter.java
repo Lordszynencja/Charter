@@ -26,7 +26,7 @@ public class MidiImporter {
 
 	public void importMidi(final File file) {
 		try {
-			final MidiFileData midiFileData = MidiReader.readBeatsMapFromMidi(file.getAbsolutePath());
+			final MidiFileData midiFileData = MidiReader.readMidi(file.getAbsolutePath());
 			if (midiFileData.isEmpty()) {
 				showPopup(charterFrame, Label.COULDNT_IMPORT_MIDI, file.getPath());
 				return;

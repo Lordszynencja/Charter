@@ -32,11 +32,18 @@ public final class MidiReader {
 	private static void addVocalsIfAvailable(final Sequence seq, final MidiFileData midiFileData) {
 		final List<Vocal> vocals = MidiVocalsReader.read(seq);
 		if (vocals != null) {
+			for (int i = 1; i < vocals.size(); i++) {
+				while (i < vocals.size() && vocals.get(i).text().isBlank()) {
+					vocals.get(i - 1).endPosition(vocals.get(i).endPosition());
+					vocals.remove(i);
+				}
+			}
+
 			midiFileData.vocals(vocals);
 		}
 	}
 
-	public static MidiFileData readBeatsMapFromMidi(final String path) throws InvalidMidiDataException, IOException {
+	public static MidiFileData readMidi(final String path) throws InvalidMidiDataException, IOException {
 		final Sequence sequence = MidiSystem.getSequence(new File(path));
 
 		final MidiFileData midiFileData = new MidiFileData(MidiBeatsMapReader.readBeatsMap(sequence));

@@ -92,8 +92,10 @@ public class ToneChangePane extends ParamsPane implements DocumentListener {
 		if (arrangement.tones.size() < 4) {
 			return false;
 		}
-		if (arrangement.toneChanges.stream()
-				.collect(Collectors.summingInt(c -> c.toneName.equals(name) ? 1 : 0)) <= 1) {
+		if (arrangement.toneChanges.stream()//
+				.filter(c -> c != toneChange)//
+				.map(t -> t.toneName)//
+				.collect(Collectors.toCollection(HashSet::new)).size() < 4) {
 			return false;
 		}
 

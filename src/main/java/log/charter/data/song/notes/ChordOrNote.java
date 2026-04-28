@@ -2,6 +2,7 @@ package log.charter.data.song.notes;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -115,6 +116,25 @@ public interface ChordOrNote extends IFractionalPosition, IConstantFractionalPos
 			}
 		}
 		return true;
+	}
+
+	public static BiFunction<ChordOrNote, ChordOrNote, Boolean> likeGenerator(
+			final List<ChordTemplate> chordTemplates) {
+		return (final ChordOrNote a, final ChordOrNote b) -> {
+			if (a.isChord() != b.isChord()) {
+				return false;
+			}
+
+			if (a.isChord()) {
+				final ChordTemplate templateA = chordTemplates.get(a.chord().templateId());
+				final ChordTemplate templateB = chordTemplates.get(b.chord().templateId());
+				return ChordTemplate.like(templateA, templateB);
+			} else {
+				final Note noteA = a.note();
+				final Note noteB = b.note();
+				return noteA.string == noteB.string && noteA.fret == noteB.fret;
+			}
+		};
 	}
 
 	@XStreamAlias("soundChord")
