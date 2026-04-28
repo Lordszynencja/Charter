@@ -3,6 +3,7 @@ package log.charter.data.song;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
@@ -30,6 +31,21 @@ public class ChordTemplate {
 
 		fingerIds.forEach((name, id) -> fingerNames.put(id, name));
 		fingerNames.put(null, "");
+	}
+
+	public static boolean like(final ChordTemplate a, final ChordTemplate b) {
+		if (a.frets.size() != b.frets.size()) {
+			return false;
+		}
+
+		for (final Entry<Integer, Integer> fret : a.frets.entrySet()) {
+			final Integer otherFret = b.frets.get(fret.getKey());
+			if (otherFret == null || otherFret != fret.getValue()) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public String chordName = "";

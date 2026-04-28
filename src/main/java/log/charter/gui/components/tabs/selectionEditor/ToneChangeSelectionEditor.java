@@ -88,6 +88,24 @@ public class ToneChangeSelectionEditor extends SelectionEditorPart<ToneChange> {
 		toneNameField.field.setToolTipText(label.label());
 	}
 
+	private boolean isToneOverLimit(final String name, final List<ToneChange> selected) {
+		final Arrangement arrangement = chartData.currentArrangement();
+		if (arrangement.tones.contains(name)) {
+			return false;
+		}
+		if (arrangement.tones.size() < 4) {
+			return false;
+		}
+		if (arrangement.toneChanges.stream()//
+				.filter(c -> !selected.contains(c))//
+				.map(t -> t.toneName)//
+				.collect(Collectors.toCollection(HashSet::new)).size() < 4) {
+			return false;
+		}
+
+		return true;
+	}
+
 	public void onToneNameChange(final String name) {
 		clearError();
 
@@ -96,14 +114,14 @@ public class ToneChangeSelectionEditor extends SelectionEditorPart<ToneChange> {
 			setError(TONE_NAME_CANT_BE_EMPTY);
 			return;
 		}
-		if (arrangement.tones.size() >= 4 && !arrangement.tones.contains(name)) {
+		final List<ToneChange> selected = selectionManager.getSelectedElements(PositionType.TONE_CHANGE);
+		if (isToneOverLimit(name, selected)) {
 			setError(TONE_NAME_PAST_LIMIT);
 			return;
 		}
 
 		undoSystem.addUndo();
 
-		final List<ToneChange> selected = selectionManager.getSelectedElements(PositionType.TONE_CHANGE);
 		for (final ToneChange toneChange : selected) {
 			toneChange.toneName = name;
 		}

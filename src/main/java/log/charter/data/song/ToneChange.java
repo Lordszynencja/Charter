@@ -1,5 +1,7 @@
 package log.charter.data.song;
 
+import java.util.Objects;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
@@ -10,6 +12,10 @@ import log.charter.io.rsc.xml.converters.ToneChangeConverter;
 @XStreamAlias("toneChange")
 @XStreamConverter(ToneChangeConverter.class)
 public class ToneChange implements IFractionalPosition {
+	public static boolean like(final ToneChange a, final ToneChange b) {
+		return Objects.equals(a.toneName, b.toneName);
+	}
+
 	private FractionalPosition position;
 	public String toneName;
 

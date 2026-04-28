@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,11 +22,13 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
+import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
 import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.data.song.position.virtual.IVirtualConstantPosition;
 import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
@@ -689,64 +692,37 @@ public class GuitarSoundsHandler {
 		}
 	}
 
-	private void selectNoteLike(final Note note) {
-		final List<ChordOrNote> sounds = chartData.currentSounds();
-		for (int i = 0; i < sounds.size(); i++) {
-			final ChordOrNote sound = sounds.get(i);
-			if (!sound.isNote()) {
-				continue;
-			}
-
-			final Note otherNote = sound.note();
-			if (note.string == otherNote.string && note.fret == otherNote.fret) {
-				selectionManager.addSoundSelection(i);
-			}
-		}
-	}
-
-	private boolean similarChords(final ChordTemplate a, final ChordTemplate b) {
-		if (a.frets.size() != b.frets.size()) {
-			return false;
+	private <T extends IVirtualConstantPosition> void simpleSelectLike(final PositionType type,
+			final BiFunction<T, T, Boolean> likeCheck, final List<T> items) {
+		final List<T> selected = selectionManager.getSelectedElements(type);
+		if (selected.size() != 1) {
+			return;
 		}
 
-		for (final Entry<Integer, Integer> fret : a.frets.entrySet()) {
-			final Integer otherFret = b.frets.get(fret.getKey());
-			if (otherFret == null || otherFret != fret.getValue()) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private void selectLikeChord(final Chord chord) {
-		final List<ChordTemplate> templates = chartData.currentChordTemplates();
-		final ChordTemplate template = templates.get(chord.templateId());
-		final List<ChordOrNote> sounds = chartData.currentSounds();
-		for (int i = 0; i < sounds.size(); i++) {
-			final ChordOrNote sound = sounds.get(i);
-			if (!sound.isChord()) {
-				continue;
-			}
-
-			final ChordTemplate otherTemplate = templates.get(sound.chord().templateId());
-			if (similarChords(template, otherTemplate)) {
-				selectionManager.addSoundSelection(i);
+		final T base = selected.get(0);
+		for (int i = 0; i < items.size(); i++) {
+			final T item = items.get(i);
+			if (likeCheck.apply(base, item)) {
+				selectionManager.addSelection(type, i);
 			}
 		}
 	}
 
 	public void selectLike() {
-		final List<ChordOrNote> selected = selectionManager.getSelectedElements(PositionType.GUITAR_NOTE);
-		if (selected.size() != 1) {
-			return;
-		}
-
-		final ChordOrNote base = selected.get(0);
-		if (base.isNote()) {
-			selectNoteLike(base.note());
-		} else {
-			selectLikeChord(base.chord());
+		switch (selectionManager.selectedType()) {
+			case GUITAR_NOTE:
+				simpleSelectLike(PositionType.GUITAR_NOTE, ChordOrNote.likeGenerator(chartData.currentChordTemplates()),
+						chartData.currentSounds());
+				break;
+			case HAND_SHAPE:
+				simpleSelectLike(PositionType.HAND_SHAPE, HandShape.likeGenerator(chartData.currentChordTemplates()),
+						chartData.currentHandShapes());
+				break;
+			case TONE_CHANGE:
+				simpleSelectLike(PositionType.TONE_CHANGE, ToneChange::like, chartData.currentToneChanges());
+				break;
+			default:
+				break;
 		}
 	}
 

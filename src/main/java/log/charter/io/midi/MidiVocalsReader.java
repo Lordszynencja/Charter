@@ -185,7 +185,6 @@ public class MidiVocalsReader {
 		if (wordPart) {
 			text = text.replaceFirst("-", "");
 		}
-		System.out.println("text:" + text);
 
 		if (current == null || textAdded) {
 			createCurrent(midiEvent.getTick());

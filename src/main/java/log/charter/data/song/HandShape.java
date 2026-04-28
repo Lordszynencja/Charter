@@ -1,5 +1,8 @@
 package log.charter.data.song;
 
+import java.util.List;
+import java.util.function.BiFunction;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
@@ -12,6 +15,12 @@ import log.charter.io.rsc.xml.converters.HandShapeConverter;
 @XStreamAlias("handShape")
 @XStreamConverter(HandShapeConverter.class)
 public class HandShape implements IFractionalPositionWithEnd {
+	public static BiFunction<HandShape, HandShape, Boolean> likeGenerator(final List<ChordTemplate> chordTemplates) {
+		return (final HandShape a, final HandShape b) -> {
+			return ChordTemplate.like(chordTemplates.get(a.templateId), chordTemplates.get(b.templateId));
+		};
+	}
+
 	private FractionalPosition position;
 	private FractionalPosition endPosition;
 	public Integer templateId;
