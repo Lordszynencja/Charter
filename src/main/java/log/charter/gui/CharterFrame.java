@@ -244,4 +244,10 @@ public class CharterFrame extends JFrame implements Initiable {
 			Logger.error("Error in CharterFrame.paint", e);
 		}
 	}
+
+	public void repaintPreviewIfVisible() {
+		if (tabs.getSelectedComponent() == preview3DPanel) {
+			preview3DPanel.repaint();
+		}
+	}
 }

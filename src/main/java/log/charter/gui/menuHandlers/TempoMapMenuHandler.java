@@ -4,7 +4,10 @@ import javax.swing.JMenu;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.song.Beat;
 import log.charter.data.undoSystem.UndoSystem;
+import log.charter.gui.components.utils.ComponentUtils;
+import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.gui.panes.songEdits.AddBeatsAtTheStartPane;
 import log.charter.gui.panes.songEdits.AddSilenceAtTheEndPane;
 import log.charter.gui.panes.songEdits.AddSilenceInTheBeginningPane;
@@ -54,7 +57,39 @@ class TempoMapMenuHandler extends CharterMenuHandler {
 		return menu;
 	}
 
+	private boolean validateTempoMapForAddingSilence() {
+		if (chartData.beats().get(0).position() == 0) {
+			final ConfirmAnswer answer = ComponentUtils.askYesNo(charterFrame,
+					Label.SETTING_SILENCE_WITHOUT_MOVING_FIRST_BEAT,
+					Label.SETTING_SILENCE_WITHOUT_MOVING_FIRST_BEAT_MESSAGE);
+			if (answer != ConfirmAnswer.YES) {
+				return false;
+			}
+		}
+
+		for (final Beat beat : chartData.beats()) {
+			if (beat.anchor) {
+				return true;
+			}
+		}
+
+		final double firstBeatBpm = chartData.beats().findBPM(chartData.beats().get(0), 0);
+		if (firstBeatBpm > 119.9 && firstBeatBpm < 120.1) {
+			final ConfirmAnswer answer = ComponentUtils.askYesNo(charterFrame, Label.SETTING_SILENCE_WITHOUT_TEMPO_SET,
+					Label.SETTING_SILENCE_WITHOUT_TEMPO_SET_MESSAGE);
+			if (answer != ConfirmAnswer.YES) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	private void setDefaultSilence() {
+		if (!validateTempoMapForAddingSilence()) {
+			return;
+		}
+
 		new SetDefaultSilencePane(charterFrame, chartTimeHandler, chartData, projectAudioHandler);
 	}
 

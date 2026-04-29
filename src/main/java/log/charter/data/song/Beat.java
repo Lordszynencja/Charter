@@ -88,4 +88,11 @@ public class Beat extends Position {
 		this.beatsInMeasure = beatsInMeasure;
 		this.noteDenominator = noteDenominator;
 	}
+
+	@Override
+	public String toString() {
+		return "Beat [beatsInMeasure=" + beatsInMeasure + ", noteDenominator=" + noteDenominator + ", firstInMeasure="
+				+ firstInMeasure + ", anchor=" + anchor + ", position=" + position() + "]";
+	}
+
 }

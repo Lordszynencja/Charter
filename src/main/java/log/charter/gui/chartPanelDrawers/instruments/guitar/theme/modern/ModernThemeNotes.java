@@ -23,6 +23,7 @@ import static log.charter.util.Utils.getStringPosition;
 import static log.charter.util.Utils.stringId;
 
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
@@ -209,7 +210,15 @@ public class ModernThemeNotes implements ThemeNotes {
 		final int stringId = stringId(note.string, data.strings);
 		final BufferedImage icon = noteIcons[stringId];
 
-		data.notes.add(new CenteredImage(new Position2D(note.x, y), icon));
+		Composite c;
+		if (note.ignore) {
+			final MultiComposite multiComposite = new MultiComposite();
+			multiComposite.colorMultiply(96);
+			c = multiComposite;
+		} else {
+			c = null;
+		}
+		data.notes.add(new CenteredImage(new Position2D(note.x, y), icon, c));
 
 		if (note.highlighted) {
 			addNoteHighlight(note.harmonic, note.x, y);
@@ -236,8 +245,8 @@ public class ModernThemeNotes implements ThemeNotes {
 			default -> noteIcons[stringId];
 		};
 
-		if ((GraphicalConfig.showChordBoxes && (note.onlyBox || note.chordNotesVisibility == ChordNotesVisibility.NONE))
-				|| note.ignore) {
+		if ((GraphicalConfig.showChordBoxes
+				&& (note.onlyBox || note.chordNotesVisibility == ChordNotesVisibility.NONE))) {
 			final MultiComposite c = new MultiComposite();
 			if (GraphicalConfig.showChordBoxes
 					&& (note.onlyBox || note.chordNotesVisibility == ChordNotesVisibility.NONE)) {
@@ -250,7 +259,17 @@ public class ModernThemeNotes implements ThemeNotes {
 			data.notes.add(new CenteredImage(new Position2D(note.x, y), icon, c));
 		} else {
 			addAccent(note, y);
-			data.notes.add(new CenteredImage(new Position2D(note.x, y), icon));
+
+			Composite c;
+			if (note.ignore) {
+				final MultiComposite multiComposite = new MultiComposite();
+				multiComposite.colorMultiply(96);
+				c = multiComposite;
+			} else {
+				c = null;
+			}
+
+			data.notes.add(new CenteredImage(new Position2D(note.x, y), icon, c));
 		}
 
 		if (note.highlighted) {

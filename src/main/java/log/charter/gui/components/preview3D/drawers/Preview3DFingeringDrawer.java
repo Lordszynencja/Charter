@@ -61,27 +61,27 @@ public class Preview3DFingeringDrawer {
 		this.texturesHolder = texturesHolder;
 	}
 
-	private ChordTemplate findTemplateToUse(final Preview3DDrawData drawData) {
+	private HandShapeDrawData findHandShapeToUse(final Preview3DDrawData drawData) {
 		final HandShapeDrawData handShape = lastBeforeEqual(drawData.handShapes, new Position(drawData.time + 20))
 				.find();
 		if (handShape == null || handShape.timeTo < drawData.time) {
 			return null;
 		}
 		if (handShape.template.arpeggio) {
-			return handShape.template;
+			return handShape;
 		}
 
 		final Level level = chartData.currentArrangementLevel();
 		final ChordOrNote sound = lastBeforeEqual(level.sounds,
 				FractionalPosition.fromTime(chartData.beats(), drawData.time + 20)).find();
 		if (sound == null || sound.position(chartData.beats()) < handShape.timeFrom || sound.isNote()) {
-			return handShape.template;
+			return handShape;
 		}
 		if (sound.chord().fullyMuted()) {
 			return null;
 		}
 
-		return chartData.currentArrangement().chordTemplates.get(sound.chord().templateId());
+		return handShape;
 	}
 
 	private void addQuad(final BaseTextureShaderDrawData drawData, final double x0, final double x1, final double y0,
@@ -110,8 +110,8 @@ public class Preview3DFingeringDrawer {
 	}
 
 	private void drawArpeggioOpen(final ShadersHolder shadersHolder, final Preview3DDrawData drawData, final int string,
-			final int fret) {
-		final IntRange frets = drawData.getFrets(0);
+			final int fret, final double position) {
+		final IntRange frets = drawData.getFrets(position);
 		if (frets == null) {
 			return;
 		}
@@ -123,14 +123,14 @@ public class Preview3DFingeringDrawer {
 	}
 
 	private void addArpeggioBrackets(final ShadersHolder shadersHolder, final Preview3DDrawData drawData,
-			final ChordTemplate template) {
-		if (!template.arpeggio) {
+			final HandShapeDrawData handShape) {
+		if (!handShape.template.arpeggio) {
 			return;
 		}
 
-		template.frets.forEach((string, fret) -> {
+		handShape.template.frets.forEach((string, fret) -> {
 			if (fret <= drawData.capo) {
-				drawArpeggioOpen(shadersHolder, drawData, string, fret);
+				drawArpeggioOpen(shadersHolder, drawData, string, fret, handShape.originalPosition);
 			}
 			if (fret > 0) {
 				drawArpeggioFret(shadersHolder, string, fret);
@@ -207,14 +207,14 @@ public class Preview3DFingeringDrawer {
 	}
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
-		final ChordTemplate template = findTemplateToUse(drawData);
-		if (template == null) {
+		final HandShapeDrawData handShape = findHandShapeToUse(drawData);
+		if (handShape == null) {
 			return;
 		}
 
 		GL30.glDisable(GL30.GL_DEPTH_TEST);
-		addArpeggioBrackets(shadersHolder, drawData, template);
-		addFingering(shadersHolder, template);
+		addArpeggioBrackets(shadersHolder, drawData, handShape);
+		addFingering(shadersHolder, handShape.template);
 		GL30.glEnable(GL30.GL_DEPTH_TEST);
 	}
 }
