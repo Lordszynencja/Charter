@@ -126,22 +126,22 @@ public class KeyboardHandler implements KeyListener {
 
 			if (keyCode == VK_CONTROL) {
 				shortcut.ctrl = true;
-				replaceHeldAction(true);
+				replaceHeldAction(false);
 				return;
 			}
 			if (keyCode == VK_SHIFT) {
 				shortcut.shift = true;
-				replaceHeldAction(true);
+				replaceHeldAction(false);
 				return;
 			}
 			if (keyCode == VK_ALT) {
 				shortcut.alt = true;
-				replaceHeldAction(true);
+				replaceHeldAction(false);
 				return;
 			}
 			if (keyCode == VK_META) {
 				shortcut.command = true;
-				replaceHeldAction(true);
+				replaceHeldAction(false);
 				return;
 			}
 			if (keyCode == VK_INSERT) {

@@ -14,9 +14,10 @@ import log.charter.CharterMain;
 import log.charter.data.config.Localization;
 import log.charter.data.config.Localization.Label;
 import log.charter.gui.CharterFrame;
+import log.charter.io.Logger;
 import log.charter.util.Utils;
 
-class InfoMenuHandler extends CharterMenuHandler {
+public class InfoMenuHandler extends CharterMenuHandler {
 	private static final String infoText = "Charter\n"//
 			+ "Created by Lord Sai and friends from Customs Forge\n\n"//
 			+ "Current version: " + CharterMain.VERSION + " - " + CharterMain.VERSION_DATE;
@@ -25,6 +26,7 @@ class InfoMenuHandler extends CharterMenuHandler {
 			"part of Widgex made by Joseph Fabisevich\n"//
 					+ "FLAC_library-Java made by Nayuki";
 
+	public static final String charterWikiLink = "https://github.com/Lordszynencja/Charter/wiki";
 	private static final String paypalDonationCode = "https://www.paypal.com/donate/?hosted_button_id=YH2SN57E68LK8";
 
 	private CharterFrame charterFrame;
@@ -72,17 +74,18 @@ class InfoMenuHandler extends CharterMenuHandler {
 
 		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Action.BROWSE)) {
 			menu.addSeparator();
-			menu.add(createItem(Label.INFO_MENU_DONATION, this::openDonationPage));
+			menu.add(createItem(Label.CHARTER_WIKI, () -> openPage(charterWikiLink)));
+			menu.add(createItem(Label.INFO_MENU_DONATION, () -> openPage(paypalDonationCode)));
 		}
 
 		return menu;
 	}
 
-	private void openDonationPage() {
+	private void openPage(final String url) {
 		try {
-			Desktop.getDesktop().browse(new URI(paypalDonationCode));
+			Desktop.getDesktop().browse(new URI(url));
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.error("Couldn't open page " + url, e);
 		}
 	}
 

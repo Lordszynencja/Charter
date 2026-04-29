@@ -92,6 +92,7 @@ public class Localization {
 		CHART_LOCK_TOOLTIP(
 				"<html>Locks the chart, stopping you from moving any items on it (toggled with Scroll Lock)<br/>Items can still be added and removed</html>"), //
 		CHART_TEXT_HEIGHT("Chart text height"), //
+		CHARTER_WIKI("Charter wiki"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
 		CONFIG("Config"), //
@@ -355,6 +356,12 @@ public class Localization {
 		SET_HAND_SHAPE_TEMPLATE_ON_CHORDS("Set hand shape template on chords"), //
 		SET_LENGTH("Set length"), //
 		SET_LENGTH_TO_SECONDS("Set length to be this many seconds:"), //
+		SETTING_SILENCE_WITHOUT_MOVING_FIRST_BEAT("First beat wasn't moved"), //
+		SETTING_SILENCE_WITHOUT_MOVING_FIRST_BEAT_MESSAGE(
+				"First beat wasn't moved, are you sure it's placed correctly?"), //
+		SETTING_SILENCE_WITHOUT_TEMPO_SET("Setting silence without tempo set"), //
+		SETTING_SILENCE_WITHOUT_TEMPO_SET_MESSAGE(
+				"The tempo map seems to have default BPM and no edits, the generated beats will have the same BPM as the current first beat.\nAre you sure the song starts at 120 BPM?"), //
 		SHORTCUTS_SET_CHARTER_DEFAULT("Charter default"), //
 		SHORTCUTS_SET_CURRENT("Current"), //
 		SHORTCUTS_SET_EOF_DEFAULT("EoF default"), //

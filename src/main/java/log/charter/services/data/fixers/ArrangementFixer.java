@@ -150,6 +150,9 @@ public class ArrangementFixer {
 			}
 
 			final Chord nextChord = sound.chord();
+			if (nextChord.chordNotes.values().stream().anyMatch(n -> n.slideTo != null)) {
+				break;
+			}
 			if (nextChord.templateId() != chord.templateId()) {
 				break;
 			}
@@ -185,6 +188,11 @@ public class ArrangementFixer {
 				continue;
 			}
 
+			final Chord chord = sound.chord();
+			if (chord.chordNotes.values().stream().anyMatch(n -> n.slideTo != null)) {
+				continue;
+			}
+
 			while (handShape != null && handShape.endPosition().compareTo(sound) < 0) {
 				handShapeId++;
 				handShape = handShapeId >= level.handShapes.size() ? null : level.handShapes.get(handShapeId);
@@ -193,7 +201,6 @@ public class ArrangementFixer {
 				continue;
 			}
 
-			final Chord chord = sound.chord();
 			addHandShapeForChord(phrases, level, chord, i, handShape, handShapeId);
 			handShape = level.handShapes.get(handShapeId);
 		}

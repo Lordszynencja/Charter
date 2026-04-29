@@ -237,8 +237,9 @@ public class CharterContext {
 		if (charterFrame.isShowing()) {
 			helpTab.updateValues();
 			titleUpdater.updateTitle();
-			charterFrame.validate();
-			charterFrame.repaint();
+			chartPanel.repaint();
+			chartMap.repaint();
+			charterFrame.repaintPreviewIfVisible();
 		}
 
 		if (SystemType.not(MAC) && windowedPreviewHandler.isPreviewVisible()) {
