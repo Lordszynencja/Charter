@@ -123,9 +123,8 @@ public class CharterFrame extends JFrame implements Initiable {
 	public void init() {
 		if (SystemType.not(MAC)) {
 			charterContext.initObject(preview3DPanel);
+			preview3DPanel.setPanelName("Tab preview");
 		}
-
-		preview3DPanel.setPanelName("Tab preview");
 
 		setSize(WindowStateConfig.width, WindowStateConfig.height);
 		setLocation(WindowStateConfig.x, WindowStateConfig.y);
