@@ -9,6 +9,7 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
+import log.charter.data.song.Level;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
@@ -145,7 +146,12 @@ public class ArrangementImportOptions extends ParamsPane {
 			final Arrangement arrangementToAdd = imported.arrangements.get(i);
 			if (createFHP) {
 				createFHPs(data.beats(), arrangementToAdd);
+			} else {
+				for (final Level level : arrangementToAdd.levels) {
+					level.fhps.clear();
+				}
 			}
+
 			if (setting.arrangementId != null) {
 				data.songChart.arrangements.set(setting.arrangementId, arrangementToAdd);
 			} else {
