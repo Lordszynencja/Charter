@@ -421,6 +421,8 @@ public class Localization {
 		SONG_OPTIONS("Song options"), //
 		SONGS_FOLDER("Songs folder"), //
 		SOUND_DELAY("Sound delay (ms)"), //
+		SOUND_PAST_LAST_PHRASE("Sound past last phrase"), //
+		SOUND_SPLIT_BY_PHRASE("Sound split by phrase or linked to a sound in next phrase"), //
 		SOUND_WITH_TREMOLO_OR_VIBRATO_WITHOUT_TAIL("Sound has tremolo or vibrato and no sustain"), //
 		SPECIAL_PASTE("Special paste"), //
 		SPEED_DECREASE("Decrease speed"), //
