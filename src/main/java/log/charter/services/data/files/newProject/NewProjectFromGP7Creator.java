@@ -133,7 +133,7 @@ public class NewProjectFromGP7Creator {
 		addGPIFMetadata(metadata, gpif);
 
 		final String defaultFolderName = newProjectService.generateFolderName(songFile.file, metadata);
-		final File songFolder = newProjectService.chooseSongFolder(songFile.file.getParent(), defaultFolderName);
+		final File songFolder = newProjectService.chooseSongFolder(songFile.file.getParentFile(), defaultFolderName);
 		if (songFolder == null) {
 			songFile.deleteTempFile();
 			return;

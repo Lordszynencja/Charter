@@ -32,7 +32,7 @@ public class NewEmptyProjectCreator {
 		final AudioFileMetadata metadata = AudioFileMetadata.readMetadata(songFile);
 
 		final String defaultFolderName = newProjectService.generateFolderName(songFile, metadata);
-		final File projectFolder = newProjectService.chooseSongFolder(songFile.getParent(), defaultFolderName);
+		final File projectFolder = newProjectService.chooseSongFolder(songFile.getParentFile(), defaultFolderName);
 		if (projectFolder == null) {
 			return;
 		}

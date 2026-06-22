@@ -122,7 +122,7 @@ public class AddSilenceAtTheEndPane extends RowedDialog {
 	}
 
 	private void addSilence(final double time) {
-		final AudioData songMusicData = projectAudioHandler.getAudio();
+		final AudioData songMusicData = projectAudioHandler.getMainAudio();
 		final AudioData silenceMusicData = AudioGenerator.generateSilence(time, songMusicData.format.getSampleRate(),
 				songMusicData.format.getChannels(), songMusicData.format.getSampleSizeInBits() / 8);
 		try {
@@ -144,7 +144,7 @@ public class AddSilenceAtTheEndPane extends RowedDialog {
 	}
 
 	private void cutAudio(final double length) {
-		final AudioData editedAudio = projectAudioHandler.getAudio().cutToLength(length);
+		final AudioData editedAudio = projectAudioHandler.getMainAudio().cutToLength(length);
 		projectAudioHandler.changeAudio(editedAudio);
 	}
 

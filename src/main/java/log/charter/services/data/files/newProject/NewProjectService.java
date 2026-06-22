@@ -8,12 +8,14 @@ import java.io.File;
 
 import log.charter.data.ChartData;
 import log.charter.data.config.Localization.Label;
-import log.charter.data.config.values.PathsConfig;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.SongFolderSelectPane;
+import log.charter.gui.components.containers.SongFolderSelectPane.FolderSelectedType;
 import log.charter.gui.components.tabs.TextTab;
 import log.charter.gui.components.tabs.chordEditor.ChordTemplatesEditorTab;
+import log.charter.gui.components.utils.ComponentUtils;
+import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.services.audio.AudioHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.data.files.SongFileHandler;
@@ -21,6 +23,21 @@ import log.charter.sound.audioFormats.AudioFileMetadata;
 import log.charter.sound.data.AudioData;
 
 public class NewProjectService {
+	public static String generateDefaultChartFolderName(final String audioFileName, final String artist,
+			final String title) {
+		String defaultFolderName;
+		if (artist.isBlank() && title.isBlank()) {
+			final String songFileName = audioFileName;
+			defaultFolderName = songFileName.substring(0, songFileName.lastIndexOf('.'));
+		} else {
+			defaultFolderName = "%s - %s".formatted(artist.isBlank() ? "unknown artist" : artist, //
+					title.isBlank() ? "unknown title" : title);
+		}
+		defaultFolderName = cleanFileName(defaultFolderName);
+
+		return defaultFolderName;
+	}
+
 	private AudioHandler audioHandler;
 	private ChartData chartData;
 	private CharterFrame charterFrame;
@@ -30,51 +47,46 @@ public class NewProjectService {
 	private TextTab textTab;
 
 	public String generateFolderName(final File songFile, final AudioFileMetadata metadata) {
-		String defaultFolderName;
-		if (metadata.artist.isBlank() && metadata.title.isBlank()) {
-			final String songFileName = songFile.getName();
-			defaultFolderName = songFileName.substring(0, songFileName.lastIndexOf('.'));
-		} else {
-			defaultFolderName = "%s - %s".formatted(metadata.artist.isBlank() ? "unknown artist" : metadata.artist, //
-					metadata.title.isBlank() ? "unknown title" : metadata.title);
-		}
-		defaultFolderName = cleanFileName(defaultFolderName);
-
-		return defaultFolderName;
+		return generateDefaultChartFolderName(songFile.getName(), metadata.artist, metadata.title);
 	}
 
-	public File chooseSongFolder(final String audioFileDirectory, final String defaultFolderName) {
-		File songFolder = null;
+	public File chooseSongFolder(final File audioFileDirectory, final String defaultFolderName) {
+		return chooseSongFolder(audioFileDirectory, defaultFolderName, null);
+	}
 
-		while (songFolder == null) {
-			final SongFolderSelectPane songFolderSelectPane = new SongFolderSelectPane(charterFrame,
-					PathsConfig.songsPath, audioFileDirectory, defaultFolderName);
+	public File chooseSongFolder(final File audioFileDirectory, final String defaultFolderName,
+			final File xmlFileDirectory) {
+		File folder = null;
 
-			if (songFolderSelectPane.isAudioFolderChosen()) {
-				return new File(audioFileDirectory);
-			}
+		while (folder == null) {
+			final FolderSelectedType defaultType = xmlFileDirectory != null ? FolderSelectedType.XML_FILE
+					: FolderSelectedType.CHARTS_DIR;
+			final SongFolderSelectPane songFolderSelectPane = new SongFolderSelectPane(charterFrame, audioFileDirectory,
+					defaultFolderName, null, xmlFileDirectory, defaultType);
 
-			String folderName = songFolderSelectPane.getFolderName();
-			if (folderName == null || folderName.isBlank()) {
+			final FolderSelectedType folderType = songFolderSelectPane.getFolderType();
+			if (folderType == null) {
 				return null;
 			}
-			folderName = cleanFileName(folderName);
 
-			songFolder = new File(PathsConfig.songsPath, folderName);
+			folder = songFolderSelectPane.getFolder();
 
-			if (songFolder.exists()) {
-				songFolder = null;
-				showPopup(charterFrame, Label.FOLDER_EXISTS_CHOOSE_DIFFERENT);
-				continue;
-			}
-			if (!songFolder.mkdir()) {
-				songFolder = null;
-				showPopup(charterFrame, Label.COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT);
-				continue;
+			if (folderType == FolderSelectedType.CHARTS_DIR) {
+				if (folder.exists()) {
+					final ConfirmAnswer answer = ComponentUtils.askYesNo(charterFrame, Label.FOLDER_EXISTS,
+							Label.FOLDER_EXISTS_MSG);
+					if (answer == ConfirmAnswer.YES) {
+						break;
+					}
+				} else if (!folder.mkdir()) {
+					folder = null;
+					showPopup(charterFrame, Label.COULDNT_CREATE_FOLDER_CHOOSE_DIFFERENT);
+					continue;
+				}
 			}
 		}
 
-		return songFolder;
+		return folder;
 	}
 
 	public void fillMetadata(final SongChart songChart, final File songFile, final AudioFileMetadata metadata) {

@@ -91,7 +91,7 @@ public class AddSilenceInTheBeginningPane extends ParamsPane {
 	}
 
 	private void addSilence(final double time) {
-		final AudioData songMusicData = projectAudioHandler.getAudio();
+		final AudioData songMusicData = projectAudioHandler.getMainAudio();
 		final AudioData silenceMusicData = AudioGenerator.generateSilence(time, songMusicData.format.getSampleRate(),
 				songMusicData.format.getChannels(), songMusicData.format.getSampleSizeInBits() / 8);
 		try {
@@ -107,7 +107,7 @@ public class AddSilenceInTheBeginningPane extends ParamsPane {
 	}
 
 	private void removeAudio(final double time) {
-		final AudioData editedAudio = projectAudioHandler.getAudio().removeFromStart(time);
+		final AudioData editedAudio = projectAudioHandler.getMainAudio().removeFromStart(time);
 
 		projectAudioHandler.changeAudio(editedAudio);
 		projectAudioHandler.changeStemsOffset(-time);

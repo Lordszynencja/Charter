@@ -166,6 +166,8 @@ public class Localization {
 		FIRST_BEAT_BEFORE_10_SECONDS("First beat is set before 10 seconds have passed"), //
 		FIRST_FINGER_ON_NOT_LOWEST_FRET(
 				"First finger set on fret that's not lowest non-open fret in template [%d] - string %d"), //
+		FOLDER_EXISTS("Given folder already exists"), //
+		FOLDER_EXISTS_MSG("Do you want to use existing folder?"), //
 		FORCE_ARPEGGIO_IN_RS("in RS"), //
 		FPS("FPS"), //
 		FRET("Fret"), //
@@ -405,6 +407,11 @@ public class Localization {
 		SIZE_L("L"), //
 		SIZE_XL("XL"), //
 		SIZE_XXL("XXL"), //
+		SONG_FOLDER_AUDIO_FOLDER("Use audio file folder"), //
+		SONG_FOLDER_GP_FOLDER("Use GP file folder"), //
+		SONG_FOLDER_IN_CHARTS_DIR("Create new folder in charts directory"), //
+		SONG_FOLDER_OTHER("Select other folder"), //
+		SONG_FOLDER_XML_FOLDER("Use XML file folder"), //
 		SONG_OPTIONS("Song options"), //
 		SONGS_FOLDER("Songs folder"), //
 		SOUND_DELAY("Sound delay (ms)"), //

@@ -1,6 +1,7 @@
 package log.charter.services.data.files.newProject;
 
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
+import static log.charter.services.data.files.newProject.NewProjectService.generateDefaultChartFolderName;
 
 import java.io.File;
 
@@ -45,13 +46,7 @@ public class NewProjectFromRSXMLCreator {
 		return musicData;
 	}
 
-	private SongChart readSongArrangement(final File songFile) {
-		final File arrangementFile = FileChooseUtils.chooseFile(charterFrame, songFile.getParent(),
-				new String[] { ".xml" }, new String[] { Label.RS_ARRANGEMENT_FILE.label() });
-		if (arrangementFile == null) {
-			return null;
-		}
-
+	private SongChart readSongArrangement(final File songFile, final File arrangementFile) {
 		final LoadingDialog loadingDialog = new LoadingDialog(charterFrame, 1);
 		loadingDialog.setProgress(0, Label.LOADING_ARRANGEMENTS.label());
 		final SongArrangement songArrangement = SongArrangementXStreamHandler.readSong(arrangementFile);
@@ -72,12 +67,23 @@ public class NewProjectFromRSXMLCreator {
 			return;
 		}
 
-		final SongChart songChart = readSongArrangement(songFile);
+		final File arrangementFile = FileChooseUtils.chooseFile(charterFrame, songFile.getParent(),
+				new String[] { ".xml" }, new String[] { Label.RS_ARRANGEMENT_FILE.label() });
+		if (arrangementFile == null) {
+			return;
+		}
+
+		final SongChart songChart = readSongArrangement(songFile, arrangementFile);
 		if (songChart == null) {
 			return;
 		}
 
-		newProjectService.setDataForNewProject(songFile.getParentFile(), songChart, musicData);
+		final String defaultChartFolderName = generateDefaultChartFolderName(songFile.getName(), songChart.artistName(),
+				songChart.title());
+		final File projectFolder = newProjectService.chooseSongFolder(songFile.getParentFile(), defaultChartFolderName,
+				arrangementFile.getParentFile());
+
+		newProjectService.setDataForNewProject(projectFolder, songChart, musicData);
 		modeManager.setArrangement(0);
 		chartTimeHandler.nextTime(0);
 	}
