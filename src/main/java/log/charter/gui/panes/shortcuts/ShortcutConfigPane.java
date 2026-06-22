@@ -55,7 +55,7 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 	private final JButton cancelButton;
 
 	public ShortcutConfigPane(final CharterMenuBar charterMenuBar, final CharterFrame frame) {
-		super(frame, Label.SHORTCUT_CONFIG_PANE, new PaneSizesBuilder(inputSize * 21).build());
+		super(frame, Label.SHORTCUT_CONFIG_PANE, new PaneSizesBuilder(inputSize * 23).build());
 		this.charterMenuBar = charterMenuBar;
 
 		setDefaultShortcutsButton = new JButton(Label.SHORTCUTS_SET_CHARTER_DEFAULT.label());
@@ -99,7 +99,7 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 	private ScrollableRowedPanel makePanel() {
 		final int rows = ShortcutConfigGroup.groups.stream()
 				.collect(Collectors.summingInt(group -> 1 + group.actions.size()));
-		final ScrollableRowedPanel panel = new ScrollableRowedPanel(inputSize * 20, rows);
+		final ScrollableRowedPanel panel = new ScrollableRowedPanel(inputSize * 22, rows);
 		panel.getVerticalScrollBar().setUnitIncrement(20);
 
 		return panel;
@@ -108,14 +108,14 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 	private void addLabel(final Label label, final int row) {
 		final JLabel groupLabel = new JLabel(label.label(), JLabel.CENTER);
 		groupLabel.setFont(new Font(Font.DIALOG, Font.BOLD, inputSize));
-		panel.addWithYOffset(groupLabel, inputSize, row, -inputSize / 4, inputSize * 18, inputSize * 3 / 2);
+		panel.addWithYOffset(groupLabel, inputSize, row, -inputSize / 4, inputSize * 20, inputSize * 3 / 2);
 	}
 
 	private void addEditFor(final Action action, final int row) {
 		final ShortcutEditor editor = new ShortcutEditor(this, action);
-		final FieldWithLabel<ShortcutEditor> fieldWithLabel = new FieldWithLabel<>(action.label, inputSize * 10,
+		final FieldWithLabel<ShortcutEditor> fieldWithLabel = new FieldWithLabel<>(action.label, inputSize * 12,
 				inputSize * 15 / 2, inputSize, editor, LabelPosition.LEFT);
-		panel.add(fieldWithLabel, inputSize, row, inputSize * 18, inputSize);
+		panel.add(fieldWithLabel, inputSize, row, inputSize * 20, inputSize);
 
 		editors.put(action, fieldWithLabel.field);
 	}
@@ -234,8 +234,9 @@ public final class ShortcutConfigPane extends ParamsPane implements ComponentLis
 		final int scrollTop = sizes.getY(2);
 		final int scrollBottom = h - inputSize * 5 / 2;
 
-		if (w > inputSize * 21) {
-			setComponentBounds(panel, middleX - inputSize * 10, scrollTop, inputSize * 21, scrollBottom - scrollTop);
+		if (w > inputSize * 23) {
+			setComponentBounds(panel, middleX - inputSize * 23 / 2, scrollTop, inputSize * 23,
+					scrollBottom - scrollTop);
 		} else {
 			setComponentBounds(panel, 0, scrollTop, w, scrollBottom - scrollTop);
 		}
