@@ -259,6 +259,16 @@ public class GuitarSoundsValidator {
 			}
 		}
 
+		private void validateTremoloVibratoTail(final int id, final ChordOrNote sound) {
+			final boolean hasTremoloOrVibratoWithoutTail = sound.noteInterfaces()//
+					.anyMatch(n -> (n.vibrato() || n.tremolo())//
+							&& n.endPosition().equals(n.position()));
+
+			if (hasTremoloOrVibratoWithoutTail) {
+				errorsTab.addError(generateError(Label.SOUND_WITH_TREMOLO_OR_VIBRATO_WITHOUT_TAIL, id));
+			}
+		}
+
 		private void validateSounds() {
 			for (int i = 0; i < level.sounds.size(); i++) {
 				final ChordOrNote sound = level.sounds.get(i);
@@ -270,6 +280,7 @@ public class GuitarSoundsValidator {
 				validateCorrectHOPO(i, sound);
 				validateNoteFHP(i, sound);
 				validateChordTail(i, sound);
+				validateTremoloVibratoTail(i, sound);
 			}
 		}
 
