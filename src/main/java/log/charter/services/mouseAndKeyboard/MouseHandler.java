@@ -233,10 +233,13 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	private <T extends IVirtualPosition> void dragPositions(final PositionType type,
 			final MouseButtonPressReleaseData clickData, final List<T> allPositions) {
+		if (!clickData.pressHighlight.existingPosition) {
+			return;
+		}
+
 		List<Selection<T>> selectedPositions = selectionManager.<T>accessor(type).getSelected();
 
-		if (clickData.pressHighlight.existingPosition//
-				&& !contains(selectedPositions, s -> s.id == clickData.pressHighlight.id)) {
+		if (!contains(selectedPositions, s -> s.id == clickData.pressHighlight.id)) {
 			selectionManager.clear();
 			selectionManager.addSelection(type, clickData.pressHighlight.id);
 			selectedPositions = selectionManager.<T>accessor(type)//
@@ -262,11 +265,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 
 	private <T extends IVirtualPositionWithEnd> void dragPositionsWithLength(final PositionType type,
 			final MouseButtonPressReleaseData clickData, final List<T> allPositions) {
+		if (!clickData.pressHighlight.existingPosition) {
+			return;
+		}
+
 		List<Selection<T>> selectedPositions = selectionManager.<T>accessor(clickData.pressHighlight.type)//
 				.getSelected();
 
-		if (clickData.pressHighlight.existingPosition//
-				&& !contains(selectedPositions, s -> s.id == clickData.pressHighlight.id)) {
+		if (!contains(selectedPositions, s -> s.id == clickData.pressHighlight.id)) {
 			selectionManager.clear();
 			selectionManager.addSelection(clickData.pressHighlight.type, clickData.pressHighlight.id);
 			selectedPositions = selectionManager.<T>accessor(clickData.pressHighlight.type)//
@@ -293,11 +299,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 	}
 
 	private void dragSounds(final MouseButtonPressReleaseData clickData, final List<ChordOrNote> allPositions) {
+		if (!clickData.pressHighlight.existingPosition) {
+			return;
+		}
+
 		List<Selection<ChordOrNote>> selectedPositions = selectionManager
 				.<ChordOrNote>accessor(clickData.pressHighlight.type).getSelected();
 
-		if (clickData.pressHighlight.existingPosition//
-				&& !contains(selectedPositions, s -> s.id == clickData.pressHighlight.id)) {
+		if (!contains(selectedPositions, s -> s.id == clickData.pressHighlight.id)) {
 			selectionManager.clear();
 			selectionManager.addSelection(clickData.pressHighlight.type, clickData.pressHighlight.id);
 			selectedPositions = selectionManager.<ChordOrNote>accessor(clickData.pressHighlight.type)//
