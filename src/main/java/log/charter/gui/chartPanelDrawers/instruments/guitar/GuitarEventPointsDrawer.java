@@ -86,7 +86,9 @@ public class GuitarEventPointsDrawer {
 			final int x = positionToX(eventPoint.position(frameData.beats), frameData.time);
 			final boolean highlighted = i == highlightId;
 			if (x < 0) {
-				highwayDrawer.addEvents(eventPoint, x, highlighted);
+				if (x > -1000) {
+					highwayDrawer.addEvents(eventPoint, x, highlighted);
+				}
 				continue;
 			}
 			if (x > panelWidth) {
