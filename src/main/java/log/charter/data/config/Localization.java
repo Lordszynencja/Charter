@@ -178,9 +178,11 @@ public class Localization {
 		FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
 				"Fret in sound is different than fret in hand shape under it on the same string"), //
 		FRETS("Frets"), //
+		GENERATE_FHP("Generate FHP"), //
 		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
 		GUITAR_EVENT_POINT_PANE("Event point"), //
+		GP_FILE_IMPORT_OPTIONS("GP file import options"), //
 		GP_FILES_FOLDER("GP files folder"), //
 		GRAPHIC_CONFIG_PANE("Graphic config"), //
 		GRID_TYPE_BEAT("Beat"), //
@@ -194,6 +196,7 @@ public class Localization {
 		HIGH_PASS_SETTINGS("High pass settings"), //
 		HIGH_PASS_TOOLTIP(
 				"<html>High pass filter filters out frequencies below given value<br/>Right click for settings</html>"), //
+		IMPORT_TEMPO_MAP("Import tempo map"), //
 		IMPORTING_AUDIO("Importing audio"), //
 		IMPORT_AUDIO_AS_STEM("Import audio as stem?"), //
 		IMPORT_LRC_VOCALS("Import LRC vocals file"), //
@@ -408,6 +411,8 @@ public class Localization {
 		SIZE_L("L"), //
 		SIZE_XL("XL"), //
 		SIZE_XXL("XXL"), //
+		SLIDE_IN_SIZE("Slide in size"), //
+		SLIDE_OUT_SIZE("Slide out size"), //
 		SONG_FOLDER_AUDIO_FOLDER("Use audio file folder"), //
 		SONG_FOLDER_GP_FOLDER("Use GP file folder"), //
 		SONG_FOLDER_IN_CHARTS_DIR("Create new folder in charts directory"), //
@@ -692,7 +697,6 @@ public class Localization {
 		GENERATING_SLOWED_SOUND("Playback speed added to queue"), //
 		GP_FILE("GP file (.gp3, .gp4, .gp5, .gp)"), //
 		GP7_FILE("GP7+ file (.gp)"), //
-		GP_IMPORT_TEMPO_MAP("GP import tempo map"), //
 		MOVE_BACKWARD("Move backward"), //
 		MOVE_FORWARD("Move forward"), //
 		LOADING("Please wait, loading..."), //
@@ -723,7 +727,6 @@ public class Localization {
 		UNSAVED_CHANGES_POPUP("Unsaved changes"), //
 		UNSAVED_CHANGES_MESSAGE("You have unsaved changes. Do you want to save?"), //
 		UNSUPPORTED_FILE_TYPE("This file type is not supported"), //
-		USE_TEMPO_MAP_FROM_IMPORT("Do you want to use the tempo map from the imported project?"), //
 		VALUE_CANT_BE_EMPTY("Value must not be empty"), //
 		VALUE_MUST_BE_GE("Value must be greater or equal to %s"), //
 		VALUE_MUST_BE_LE("Value must be lesser or equal to %s"), //

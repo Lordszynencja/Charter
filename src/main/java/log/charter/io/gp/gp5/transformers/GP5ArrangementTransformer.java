@@ -10,6 +10,7 @@ import log.charter.data.song.BeatsMap;
 import log.charter.data.song.Level;
 import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.configs.Tuning.TuningType;
+import log.charter.io.gp.GPFileImportOptions;
 import log.charter.io.gp.gp5.GP5FractionalPosition;
 import log.charter.io.gp.gp5.data.GPBar;
 import log.charter.io.gp.gp5.data.GPBeat;
@@ -71,9 +72,9 @@ public class GP5ArrangementTransformer {
 	}
 
 	private static Level generateLevel(final BeatsMap beatsMap, final Arrangement arrangement,
-			final List<Integer> barsOrder, final List<GPBar> bars) {
+			final List<Integer> barsOrder, final List<GPBar> bars, final GPFileImportOptions importOptions) {
 		final Level level = new Level();
-		final GP5SoundsTransformer noteTransformer = new GP5SoundsTransformer(level, arrangement);
+		final GP5SoundsTransformer noteTransformer = new GP5SoundsTransformer(level, arrangement, importOptions);
 
 		final boolean[] wasHOPOStart = new boolean[InstrumentConfig.maxStrings];
 		final int[] hopoFrom = new int[InstrumentConfig.maxStrings];
@@ -102,14 +103,14 @@ public class GP5ArrangementTransformer {
 	}
 
 	public static Arrangement makeArrangement(final BeatsMap beatsMap, final List<Integer> barsOrder,
-			final GPTrackData trackData, final List<GPBar> bars) {
+			final GPFileImportOptions importOptions, final GPTrackData trackData, final List<GPBar> bars) {
 		final ArrangementType arrangementType = getGPArrangementType(trackData);
 		final Arrangement arrangement = new Arrangement(arrangementType);
 
 		arrangement.capo = trackData.capo;
 		arrangement.tuning = getTuningFromGPTuning(trackData.tuning, arrangement.capo,
 				arrangementType == ArrangementType.Bass);
-		arrangement.setLevel(0, generateLevel(beatsMap, arrangement, barsOrder, bars));
+		arrangement.setLevel(0, generateLevel(beatsMap, arrangement, barsOrder, bars, importOptions));
 
 		return arrangement;
 	}

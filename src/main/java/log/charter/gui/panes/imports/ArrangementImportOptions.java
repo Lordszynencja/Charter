@@ -15,6 +15,7 @@ import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.CharterSelect;
 import log.charter.gui.menuHandlers.CharterMenuBar;
+import log.charter.io.gp.GPFileImportOptions;
 import log.charter.services.data.fixers.ArrangementFixer;
 
 public class ArrangementImportOptions extends ParamsPane {
@@ -47,26 +48,23 @@ public class ArrangementImportOptions extends ParamsPane {
 	private final CharterMenuBar charterMenuBar;
 	private final ChartData data;
 	private final SongChart imported;
+	private final GPFileImportOptions importOptions;
 
-	private boolean createFHP = false;
 	private final ArrangementImportSetting[] arrangementImportSettings;
 	private final List<ArrangementImportSetting> arrangementImportSettingsOptions;
 
 	public ArrangementImportOptions(final CharterFrame frame, final ArrangementFixer arrangementFixer,
 			final CharterMenuBar charterMenuBar, final ChartData data, final SongChart imported,
-			final List<String> trackNames) {
+			final List<String> trackNames, final GPFileImportOptions importOptions) {
 		super(frame, Label.ARRANGEMENT_IMPORT_OPTIONS, 450);
 
 		this.arrangementFixer = arrangementFixer;
 		this.charterMenuBar = charterMenuBar;
 		this.data = data;
 		this.imported = imported;
+		this.importOptions = importOptions;
 
 		int row = 0;
-		addCreateFHPCheckbox(row);
-
-		row++;
-
 		arrangementImportSettings = new ArrangementImportSetting[imported.arrangements.size()];
 		arrangementImportSettingsOptions = prepareArrangementImportSettingsOptions();
 
@@ -84,11 +82,6 @@ public class ArrangementImportOptions extends ParamsPane {
 
 		setOnFinish(this::saveAndExit, null);
 		addDefaultFinish(row);
-	}
-
-	private void addCreateFHPCheckbox(final int row) {
-		addConfigCheckbox(row, 10, createFHP, newCreateFHP -> createFHP = newCreateFHP);
-		addLabel(row, 45, Label.CREATE_FHP_AUTOMATICALLY, 0);
 	}
 
 	private List<ArrangementImportSetting> prepareArrangementImportSettingsOptions() {
@@ -144,7 +137,7 @@ public class ArrangementImportOptions extends ParamsPane {
 			}
 
 			final Arrangement arrangementToAdd = imported.arrangements.get(i);
-			if (createFHP) {
+			if (importOptions.generateFHP) {
 				createFHPs(data.beats(), arrangementToAdd);
 			} else {
 				for (final Level level : arrangementToAdd.levels) {

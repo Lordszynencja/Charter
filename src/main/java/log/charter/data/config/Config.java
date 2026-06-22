@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 
 import log.charter.data.config.values.AudioConfig;
 import log.charter.data.config.values.DebugConfig;
+import log.charter.data.config.values.GPConfig;
 import log.charter.data.config.values.GridConfig;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.config.values.NoteDistanceConfig;
@@ -67,6 +68,7 @@ public class Config {
 
 		AudioConfig.init(valueAccessors, "audio");
 		DebugConfig.init(valueAccessors, "debug");
+		GPConfig.init(valueAccessors, "gp");
 		GridConfig.init(valueAccessors, "grid");
 		InstrumentConfig.init(valueAccessors, "instrument");
 		NoteDistanceConfig.init(valueAccessors, "noteDistance");

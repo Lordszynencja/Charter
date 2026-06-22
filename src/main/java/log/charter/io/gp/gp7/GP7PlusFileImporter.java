@@ -1,6 +1,5 @@
 package log.charter.io.gp.gp7;
 
-import static log.charter.gui.components.utils.ComponentUtils.askYesNo;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 
 import java.io.File;
@@ -12,10 +11,11 @@ import log.charter.data.config.Localization.Label;
 import log.charter.data.song.BeatsMap;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
-import log.charter.gui.components.utils.ComponentUtils.ConfirmAnswer;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.gui.panes.imports.ArrangementImportOptions;
 import log.charter.io.Logger;
+import log.charter.io.gp.GPFileImportOptions;
+import log.charter.io.gp.GPFileImportOptionsPane;
 import log.charter.io.gp.gp7.data.GP7Asset;
 import log.charter.io.gp.gp7.data.GPIF;
 import log.charter.io.gp.gp7.transformers.GP7FileToSongChart;
@@ -74,18 +74,20 @@ public class GP7PlusFileImporter {
 			return;
 		}
 
-		final boolean importBeatMap = askYesNo(charterFrame, Label.GP_IMPORT_TEMPO_MAP,
-				Label.USE_TEMPO_MAP_FROM_IMPORT) == ConfirmAnswer.YES;
+		final GPFileImportOptions importOptions = GPFileImportOptionsPane.getImportOptions(charterFrame, false);
+		if (importOptions == null) {
+			return;
+		}
 
-		final SongChart temporaryChart = transformGPIFToSongChart(gpif, importBeatMap);
+		final SongChart temporaryChart = transformGPIFToSongChart(gpif, importOptions);
 
 		final List<String> trackNames = gpif.tracks.stream().map(t -> t.name).collect(Collectors.toList());
 		new ArrangementImportOptions(charterFrame, arrangementFixer, charterMenuBar, chartData, temporaryChart,
-				trackNames);
+				trackNames, importOptions);
 	}
 
-	public SongChart transformGPIFToSongChart(final GPIF gpif, final boolean importBeatMap) {
-		final BeatsMap beatsMap = gp7TempoReader.getTempoMap(gpif, importBeatMap);
-		return GP7FileToSongChart.transform(gpif, beatsMap);
+	public SongChart transformGPIFToSongChart(final GPIF gpif, final GPFileImportOptions importOptions) {
+		final BeatsMap beatsMap = gp7TempoReader.getTempoMap(gpif, importOptions.importTempoMap);
+		return GP7FileToSongChart.transform(gpif, beatsMap, importOptions);
 	}
 }
