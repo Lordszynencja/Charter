@@ -40,7 +40,6 @@ public class Config {
 	public static int zoomLvl = 100;
 	public static int stretchedMusicSpeed = 100;
 	public static boolean selectNotesByTails = false;
-	public static boolean audioFolderChosenForNewSong = false;
 	public static boolean showNoteNames = false;
 
 	private static boolean changed = false;
@@ -64,8 +63,7 @@ public class Config {
 
 		valueAccessors.put("selectNotesByTails",
 				forBoolean(v -> selectNotesByTails = v, () -> selectNotesByTails, selectNotesByTails));
-		valueAccessors.put("audioFolderChosenForNewSong", forBoolean(v -> audioFolderChosenForNewSong = v,
-				() -> audioFolderChosenForNewSong, audioFolderChosenForNewSong));
+		valueAccessors.put("showNoteNames", forBoolean(v -> showNoteNames = v, () -> showNoteNames, showNoteNames));
 
 		AudioConfig.init(valueAccessors, "audio");
 		DebugConfig.init(valueAccessors, "debug");
