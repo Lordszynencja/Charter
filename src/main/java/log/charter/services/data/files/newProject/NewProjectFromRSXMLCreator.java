@@ -15,6 +15,7 @@ import log.charter.io.rs.xml.RSXMLToSongChart;
 import log.charter.io.rs.xml.song.SongArrangement;
 import log.charter.io.rs.xml.song.SongArrangementXStreamHandler;
 import log.charter.services.data.ChartTimeHandler;
+import log.charter.services.data.files.SongFileHandler;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.sound.data.AudioData;
@@ -26,6 +27,7 @@ public class NewProjectFromRSXMLCreator {
 	private ChartTimeHandler chartTimeHandler;
 	private ModeManager modeManager;
 	private NewProjectService newProjectService;
+	private SongFileHandler songFileHandler;
 
 	private File chooseSongFile() {
 		final String fileChooseDir = modeManager.getMode() == EditMode.EMPTY ? PathsConfig.songsPath : chartData.path;
@@ -57,6 +59,10 @@ public class NewProjectFromRSXMLCreator {
 	}
 
 	public void createSongWithImportFromArrangementXML() {
+		if (!songFileHandler.askToSaveChanged()) {
+			return;
+		}
+
 		final File songFile = chooseSongFile();
 		if (songFile == null) {
 			return;
