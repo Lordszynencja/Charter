@@ -298,15 +298,15 @@ public class HighlightData {
 
 	private static HighlightData getDraggedPositions(final double time, final ChartData chartData,
 			final SelectionManager selectionManager, final MouseButtonPressData press, final int x) {
-		if (press.highlight.type == PositionType.NONE || press.highlight.type == BEAT) {
+		if (press.highlight.type == PositionType.NONE || press.highlight.type == BEAT
+				|| !press.highlight.existingPosition) {
 			return null;
 		}
 
 		List<Selection<IVirtualConstantPosition>> selectedPositions = selectionManager
 				.getSelected(press.highlight.type);
 
-		if (press.highlight.existingPosition//
-				&& !contains(selectedPositions, selection -> selection.id == press.highlight.id)) {
+		if (!contains(selectedPositions, selection -> selection.id == press.highlight.id)) {
 			selectionManager.clear();
 			selectionManager.addSelection(press.highlight.type, press.highlight.id);
 			selectedPositions = selectionManager.getSelected(press.highlight.type);

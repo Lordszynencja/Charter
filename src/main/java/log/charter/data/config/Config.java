@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 
 import log.charter.data.config.values.AudioConfig;
 import log.charter.data.config.values.DebugConfig;
+import log.charter.data.config.values.GPConfig;
 import log.charter.data.config.values.GridConfig;
 import log.charter.data.config.values.InstrumentConfig;
 import log.charter.data.config.values.NoteDistanceConfig;
@@ -40,7 +41,6 @@ public class Config {
 	public static int zoomLvl = 100;
 	public static int stretchedMusicSpeed = 100;
 	public static boolean selectNotesByTails = false;
-	public static boolean audioFolderChosenForNewSong = false;
 	public static boolean showNoteNames = false;
 
 	private static boolean changed = false;
@@ -64,11 +64,11 @@ public class Config {
 
 		valueAccessors.put("selectNotesByTails",
 				forBoolean(v -> selectNotesByTails = v, () -> selectNotesByTails, selectNotesByTails));
-		valueAccessors.put("audioFolderChosenForNewSong", forBoolean(v -> audioFolderChosenForNewSong = v,
-				() -> audioFolderChosenForNewSong, audioFolderChosenForNewSong));
+		valueAccessors.put("showNoteNames", forBoolean(v -> showNoteNames = v, () -> showNoteNames, showNoteNames));
 
 		AudioConfig.init(valueAccessors, "audio");
 		DebugConfig.init(valueAccessors, "debug");
+		GPConfig.init(valueAccessors, "gp");
 		GridConfig.init(valueAccessors, "grid");
 		InstrumentConfig.init(valueAccessors, "instrument");
 		NoteDistanceConfig.init(valueAccessors, "noteDistance");

@@ -59,8 +59,6 @@ public enum ShortcutConfigGroup {
 			Action.DECREASE_LENGTH_FAST, //
 			Action.INCREASE_LENGTH, //
 			Action.INCREASE_LENGTH_FAST, //
-			Action.SELECT_ALL, //
-			Action.SELECT_ALL, //
 			Action.TOGGLE_ANCHOR, //
 			Action.BEAT_ADD, //
 			Action.BEAT_REMOVE, //

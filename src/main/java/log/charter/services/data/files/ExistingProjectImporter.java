@@ -31,6 +31,7 @@ public class ExistingProjectImporter {
 	private ChartTimeHandler chartTimeHandler;
 	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private ProjectAudioHandler projectAudioHandler;
+	private SongFileHandler songFileHandler;
 	private TextTab textTab;
 
 	private ChartProject loadProjectFile(final File projectFileChosen) {
@@ -115,6 +116,10 @@ public class ExistingProjectImporter {
 	}
 
 	public void open(final String path) {
+		if (!songFileHandler.askToSaveChanged()) {
+			return;
+		}
+
 		doWithLoadingDialog(charterFrame, 3, dialog -> openInternal(dialog, path), "open " + path);
 	}
 }

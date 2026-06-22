@@ -10,6 +10,7 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
+import log.charter.data.song.SectionType;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.gui.components.tabs.errorsTab.ChartError;
 import log.charter.gui.components.tabs.errorsTab.ChartPositionGenerator;
@@ -84,6 +85,11 @@ public class PhrasesValidator {
 
 			final HandShape handShape = CollectionUtils.lastBefore(level.handShapes, eventPoint).find();
 			if (handShape == null || handShape.endPosition().compareTo(eventPoint) < 0) {
+				continue;
+			}
+			final int comparison = handShape.endPosition().compareTo(eventPoint);
+			if (comparison < 0 || ((eventPoint.section == SectionType.NO_GUITAR || "END".equals(eventPoint.phrase))
+					&& comparison == 0)) {
 				continue;
 			}
 

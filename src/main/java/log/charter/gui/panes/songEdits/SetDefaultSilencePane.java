@@ -51,7 +51,7 @@ public class SetDefaultSilencePane extends ParamsPane {
 	}
 
 	private void removeAudio(final double movement) {
-		final AudioData editedAudio = projectAudioHandler.getAudio().removeFromStart(movement / 1000.0);
+		final AudioData editedAudio = projectAudioHandler.getMainAudio().removeFromStart(movement / 1000.0);
 
 		projectAudioHandler.changeAudio(editedAudio);
 		projectAudioHandler.changeStemsOffset(-movement / 1000);
@@ -68,7 +68,7 @@ public class SetDefaultSilencePane extends ParamsPane {
 			return;
 		}
 
-		final AudioData songMusicData = projectAudioHandler.getAudio();
+		final AudioData songMusicData = projectAudioHandler.getMainAudio();
 		final AudioData silenceMusicData = AudioGenerator.generateSilence(movement / 1000.0,
 				songMusicData.format.getSampleRate(), songMusicData.format.getChannels(),
 				songMusicData.format.getSampleSizeInBits() / 8);

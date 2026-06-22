@@ -538,7 +538,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		setCurrentValuesInInputs();
 	}
 
-	private void setSlideForPartialChords(final List<ChordOrNote> selected) {
+	private void setSlide(final List<ChordOrNote> selected) {
 		final List<CommonNote> selectedNotesWithoutOpenStrings = selected.stream()//
 				.flatMap(sound -> sound.notesWithFrets(chartData.currentChordTemplates()))//
 				.filter(n -> n.fret() > 0 && parent.isEdited(n.string()))//
@@ -551,29 +551,6 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		unpitchedSlide.field.setSelected(slideValue.b);
 	}
 
-	private void setSlideForFullChords(final List<ChordOrNote> selected) {
-		final Integer slideFretValue = getSingleValue(selected, sound -> {
-			if (sound.isNote()) {
-				return sound.note().slideTo;
-			}
-
-			Integer slideTo = null;
-			for (final Entry<Integer, ChordNote> chordNote : sound.chord().chordNotes.entrySet()) {
-				if (chordNote.getValue().slideTo == null) {
-					continue;
-				}
-
-				slideTo = slideTo == null ? chordNote.getValue().slideTo//
-						: min(slideTo, chordNote.getValue().slideTo);
-			}
-
-			return slideTo;
-		}, null);
-
-		slideFret.field.setTextWithoutEvent(slideFretValue == null ? "" : (slideFretValue + ""));
-
-	}
-
 	private void updateStringSelectionDependentValues() {
 		final List<ChordOrNote> selected = selectionManager.getSelectedElements(PositionType.GUITAR_NOTE);
 
@@ -583,12 +560,7 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		linkNext.field.setSelected(getValueFromSelectedStrings(n -> n.linkNext, n -> n.linkNext, false, selected));
 		vibrato.field.setSelected(getValueFromSelectedStrings(n -> n.vibrato, n -> n.vibrato, false, selected));
 		tremolo.field.setSelected(getValueFromSelectedStrings(n -> n.tremolo, n -> n.tremolo, false, selected));
-
-		if (parent.allStringsEdited()) {
-			setSlideForFullChords(selected);
-		} else {
-			setSlideForPartialChords(selected);
-		}
+		setSlide(selected);
 	}
 
 	public void selectionChanged(final ISelectionAccessor<ChordOrNote> selectedChordOrNotesAccessor,

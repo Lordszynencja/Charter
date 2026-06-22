@@ -27,6 +27,26 @@ public class FieldWithLabel<T extends Component> extends Container {
 
 	private static final long serialVersionUID = 1L;
 
+	private static int getTextWidth(final JLabel label) {
+		final String text = label.getText();
+		if (text == null) {
+			return 0;
+		}
+
+		final Graphics2D gs = (Graphics2D) label.getGraphics();
+
+		final FontMetrics fm = label.getFontMetrics(label.getFont());
+
+		if (gs == null) {
+			return fm.stringWidth(text);
+		}
+
+		final Rectangle2D rect = fm.getStringBounds(text, gs);
+		final double w = rect.getWidth();
+		gs.dispose();
+		return (int) w;
+	}
+
 	public ColorLabel backgroundColor = null;
 
 	public final LabelPosition labelPosition;
@@ -51,34 +71,34 @@ public class FieldWithLabel<T extends Component> extends Container {
 			case LEFT:
 				this.label = addLabel(label, 0, labelWidth, height, SwingConstants.LEFT);
 				this.addField(field, labelWidth + 5, inputWidth, height);
-				totalSize = labelWidth + inputWidth + 5;
+				totalSize = this.label.getWidth() + inputWidth + 5;
 				break;
 			case LEFT_CLOSE:
 				this.label = addLabel(label, 0, labelWidth, height, SwingConstants.RIGHT);
 				this.addField(field, labelWidth + 5, inputWidth, height);
-				totalSize = labelWidth + inputWidth + 5;
+				totalSize = this.label.getWidth() + inputWidth + 5;
 				break;
 			case LEFT_PACKED:
 				this.label = addLabel(label, 0, 999, height, SwingConstants.LEFT);
 				labelWidth += getTextWidth();
 				this.label.setSize(labelWidth, height);
 				this.addField(field, labelWidth, inputWidth, height);
-				totalSize = labelWidth + inputWidth;
+				totalSize = this.label.getWidth() + inputWidth;
 				break;
 			case RIGHT_PACKED:
 				this.addField(field, 0, inputWidth, height);
 				this.label = addLabel(label, inputWidth + labelWidth, 999, height, SwingConstants.LEFT);
-				totalSize = inputWidth + labelWidth + getTextWidth();
+				totalSize = inputWidth + this.label.getWidth() + getTextWidth();
 				break;
 			case RIGHT_CLOSE:
 				this.addField(field, 0, inputWidth, height);
 				this.label = addLabel(label, inputWidth + 2, labelWidth, height, SwingConstants.LEFT);
-				totalSize = labelWidth + inputWidth + 2;
+				totalSize = this.label.getWidth() + inputWidth + 2;
 				break;
 			case RIGHT:
 				this.addField(field, 0, inputWidth, height);
 				this.label = addLabel(label, inputWidth + 2, labelWidth, height, SwingConstants.RIGHT);
-				totalSize = labelWidth + inputWidth + 2;
+				totalSize = this.label.getWidth() + inputWidth + 2;
 				break;
 			default:
 				throw new RuntimeException("Unknown label position " + labelPosition);
@@ -118,30 +138,17 @@ public class FieldWithLabel<T extends Component> extends Container {
 	}
 
 	public int getTextWidth() {
-		final String text = label.getText();
-		if (text == null) {
-			return 0;
-		}
-
-		final Graphics2D gs = (Graphics2D) label.getGraphics();
-
-		final FontMetrics fm = label.getFontMetrics(label.getFont());
-
-		if (gs == null) {
-			return fm.stringWidth(text);
-		}
-
-		final Rectangle2D rect = fm.getStringBounds(text, gs);
-		final double w = rect.getWidth();
-		gs.dispose();
-		return (int) w;
+		return getTextWidth(label);
 	}
 
-	private JLabel addLabel(final String label, final int x, final int w, final int h, final int labelAlignment) {
+	private JLabel addLabel(final String label, final int x, int w, final int h, final int labelAlignment) {
 		final JLabel labelComponent = new JLabel(label, labelAlignment);
 		labelComponent.setAlignmentY(CENTER_ALIGNMENT);
 		setDefaultFontSize(labelComponent);
 
+		if (w == 0) {
+			w = getTextWidth(labelComponent);
+		}
 		setComponentBounds(labelComponent, x, 0, w, h);
 		this.add(labelComponent);
 

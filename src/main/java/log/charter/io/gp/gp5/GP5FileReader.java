@@ -23,6 +23,7 @@ import log.charter.data.song.enums.BassPickingTechnique;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.enums.Harmonic;
 import log.charter.io.Logger;
+import log.charter.io.gp.GPFileImportOptions;
 import log.charter.io.gp.gp5.data.Directions;
 import log.charter.io.gp.gp5.data.GP5File;
 import log.charter.io.gp.gp5.data.GPBar;
@@ -61,11 +62,11 @@ public class GP5FileReader {
 
 	private static final int percussionTrackFlag = 1 << 0;
 
-	public static GP5File importGPFile(final File file) {
+	public static GP5File importGPFile(final File file, final GPFileImportOptions importOptions) {
 		final ByteArrayInputStream inputStream = new ByteArrayInputStream(RW.readB(file));
 		final GP5FileReader reader = new GP5FileReader(inputStream);
 
-		return reader.readScore();
+		return reader.readScore(importOptions);
 	}
 
 	private final ByteArrayInputStream data;
@@ -84,7 +85,7 @@ public class GP5FileReader {
 		this.data = data;
 	}
 
-	private GP5File readScore() {
+	private GP5File readScore(final GPFileImportOptions importOptions) {
 		if (file != null) {
 			return file;
 		}

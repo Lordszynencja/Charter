@@ -1,14 +1,17 @@
 package log.charter.services.data.validation;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.EventPoint;
 import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
+import log.charter.data.song.SectionType;
 import log.charter.data.song.enums.HOPO;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordNote;
@@ -259,7 +262,47 @@ public class GuitarSoundsValidator {
 			}
 		}
 
+		private void validateTremoloVibratoTail(final int id, final ChordOrNote sound) {
+			final boolean hasTremoloOrVibratoWithoutTail = sound.noteInterfaces()//
+					.anyMatch(n -> (n.vibrato() || n.tremolo())//
+							&& n.endPosition().equals(n.position()));
+
+			if (hasTremoloOrVibratoWithoutTail) {
+				errorsTab.addError(generateError(Label.SOUND_WITH_TREMOLO_OR_VIBRATO_WITHOUT_TAIL, id));
+			}
+		}
+
+		private void validateChordWithSplitAndOnlyBox(final int id, final ChordOrNote sound) {
+			if (!sound.isChord()) {
+				return;
+			}
+
+			final Chord chord = sound.chord();
+			if (chord.forceNoNotes && chord.splitIntoNotes) {
+				errorsTab.addError(generateError(Label.CHORD_WITH_SPLIT_AND_ONLY_BOX, id));
+			}
+		}
+
+		private void validateSoundGoingOverPhraseChange(final List<EventPoint> phrases, final int id,
+				final ChordOrNote sound) {
+			final EventPoint nextPhrase = CollectionUtils.firstAfter(phrases, sound).find();
+			if (nextPhrase == null) {
+				errorsTab.addError(generateError(Label.SOUND_PAST_LAST_PHRASE, id));
+				return;
+			}
+
+			final int comparison = sound.endPosition().compareTo(nextPhrase);
+			if (comparison < 0 || ((nextPhrase.section == SectionType.NO_GUITAR || "END".equals(nextPhrase.phrase))
+					&& comparison == 0)) {
+				return;
+			}
+
+			errorsTab.addError(generateError(Label.SOUND_SPLIT_BY_PHRASE, id));
+		}
+
 		private void validateSounds() {
+			final List<EventPoint> phrases = arrangement.getFilteredEventPoints(EventPoint::hasPhrase);
+
 			for (int i = 0; i < level.sounds.size(); i++) {
 				final ChordOrNote sound = level.sounds.get(i);
 
@@ -270,6 +313,9 @@ public class GuitarSoundsValidator {
 				validateCorrectHOPO(i, sound);
 				validateNoteFHP(i, sound);
 				validateChordTail(i, sound);
+				validateTremoloVibratoTail(i, sound);
+				validateChordWithSplitAndOnlyBox(i, sound);
+				validateSoundGoingOverPhraseChange(phrases, i, sound);
 			}
 		}
 

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.BendValue;
+import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
@@ -503,6 +505,28 @@ public class ArrangementFixer {
 		}
 	}
 
+	private void fixCapoFrets(final Arrangement arrangement, final Level level) {
+		final int capo = arrangement.capo;
+
+		for (final ChordTemplate template : arrangement.chordTemplates) {
+			for (final Entry<Integer, Integer> entry : template.frets.entrySet()) {
+				if (entry.getValue() <= capo) {
+					template.frets.put(entry.getKey(), 0);
+				}
+			}
+		}
+
+		for (final ChordOrNote sound : level.sounds) {
+			if (!sound.isNote()) {
+				continue;
+			}
+
+			if (sound.note().fret <= capo) {
+				sound.note().fret = 0;
+			}
+		}
+	}
+
 	private void fixLevel(final Arrangement arrangement, final Level level) {
 		level.fhps.sort(IConstantFractionalPosition::compareTo);
 		level.sounds.sort(IConstantFractionalPosition::compareTo);
@@ -524,6 +548,7 @@ public class ArrangementFixer {
 		fixLengths(level.handShapes);
 		fixSlides(level.sounds);
 		addMissingBends(level.sounds);
+		fixCapoFrets(arrangement, level);
 	}
 
 	public void fixArrangements() {

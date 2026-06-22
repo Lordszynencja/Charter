@@ -210,6 +210,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		checkBox.setSelected(Config.showNoteNames);
 		checkBox.addActionListener(e -> {
 			Config.showNoteNames = checkBox.isSelected();
+			Config.markChanged();
 			chordTemplatePreview.repaint();
 		});
 

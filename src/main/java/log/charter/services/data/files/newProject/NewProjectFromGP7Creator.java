@@ -9,6 +9,8 @@ import log.charter.data.config.values.PathsConfig;
 import log.charter.data.song.SongChart;
 import log.charter.gui.CharterFrame;
 import log.charter.io.Logger;
+import log.charter.io.gp.GPFileImportOptions;
+import log.charter.io.gp.GPFileImportOptionsPane;
 import log.charter.io.gp.gp7.GP7PlusFileImporter;
 import log.charter.io.gp.gp7.data.GPIF;
 import log.charter.services.data.files.SongFileHandler;
@@ -133,7 +135,7 @@ public class NewProjectFromGP7Creator {
 		addGPIFMetadata(metadata, gpif);
 
 		final String defaultFolderName = newProjectService.generateFolderName(songFile.file, metadata);
-		final File songFolder = newProjectService.chooseSongFolder(songFile.file.getParent(), defaultFolderName);
+		final File songFolder = newProjectService.chooseSongFolder(songFile.file.getParentFile(), defaultFolderName);
 		if (songFolder == null) {
 			songFile.deleteTempFile();
 			return;
@@ -145,7 +147,12 @@ public class NewProjectFromGP7Creator {
 			return;
 		}
 
-		final SongChart songChart = gp7PlusFileImporter.transformGPIFToSongChart(gpif, true);
+		final GPFileImportOptions importOptions = GPFileImportOptionsPane.getImportOptions(charterFrame, true);
+		if (importOptions == null) {
+			return;
+		}
+
+		final SongChart songChart = gp7PlusFileImporter.transformGPIFToSongChart(gpif, importOptions);
 		newProjectService.fillMetadata(songChart, songFile.file, metadata);
 		newProjectService.setDataForNewProject(songFolder, songChart, musicData);
 	}

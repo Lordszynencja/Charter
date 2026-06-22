@@ -24,6 +24,7 @@ import log.charter.data.song.notes.Note;
 import log.charter.data.song.notes.NoteInterface;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.time.Position;
+import log.charter.io.gp.GPFileImportOptions;
 import log.charter.io.gp.gp7.data.GP7Beat;
 import log.charter.io.gp.gp7.data.GP7Note;
 import log.charter.io.gp.gp7.data.GP7Note.GP7HarmonicType;
@@ -35,6 +36,7 @@ import log.charter.util.data.Fraction;
 public class ChordCreator extends GP7NoteCreator {
 	private final Arrangement arrangement;
 	private final Map<Integer, NoteInterface> shouldSetSlideTo;
+	private final GPFileImportOptions importOptions;
 
 	private final GP7NotesWithPosition notes;
 	private final Chord chord = new Chord(-1);
@@ -48,10 +50,12 @@ public class ChordCreator extends GP7NoteCreator {
 	private ChordNote chordNote;
 
 	public ChordCreator(final ImmutableBeatsMap beats, final Arrangement arrangement,
-			final Map<Integer, NoteInterface> shouldSetSlideTo, final GP7NotesWithPosition notes) {
+			final Map<Integer, NoteInterface> shouldSetSlideTo, final GPFileImportOptions importOptions,
+			final GP7NotesWithPosition notes) {
 		super(beats);
 		this.arrangement = arrangement;
 		this.shouldSetSlideTo = shouldSetSlideTo;
+		this.importOptions = importOptions;
 
 		this.notes = notes;
 
@@ -184,7 +188,7 @@ public class ChordCreator extends GP7NoteCreator {
 
 		final Note preNote = new Note(notes.position, chord.position());
 		preNote.string = string();
-		preNote.fret = max(1, fret() - 2);
+		preNote.fret = max(1, fret() - importOptions.slideInSize);
 		preNote.linkNext = true;
 		preNote.slideTo = fret();
 		addPreSlideNote(preNote);
@@ -203,7 +207,7 @@ public class ChordCreator extends GP7NoteCreator {
 
 		final Note preNote = new Note(notes.position, chord.position());
 		preNote.string = string();
-		preNote.fret = min(InstrumentConfig.frets, fret() + 2);
+		preNote.fret = min(InstrumentConfig.frets, fret() + importOptions.slideInSize);
 		preNote.linkNext = true;
 		preNote.slideTo = fret();
 		addPreSlideNote(preNote);
@@ -229,11 +233,11 @@ public class ChordCreator extends GP7NoteCreator {
 				shouldSetSlideTo.put(string(), chordNote);
 				break;
 			case DOWN:
-				chordNote.slideTo = max(1, fret() - 5);
+				chordNote.slideTo = max(1, fret() - importOptions.slideOutSize);
 				chordNote.unpitchedSlide = true;
 				break;
 			case UP:
-				chordNote.slideTo = min(InstrumentConfig.frets, fret() + 5);
+				chordNote.slideTo = min(InstrumentConfig.frets, fret() + importOptions.slideOutSize);
 				chordNote.unpitchedSlide = true;
 				break;
 			default:

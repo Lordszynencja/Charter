@@ -1,6 +1,7 @@
 package log.charter.gui.panes.songSettings;
 
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static log.charter.data.ChordTemplateFingerSetter.setSuggestedFingers;
 import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.data.song.configs.Tuning.getStringDistanceFromC0;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JCheckBox;
@@ -27,6 +29,9 @@ import log.charter.data.song.Arrangement.ArrangementSubtype;
 import log.charter.data.song.ChordTemplate;
 import log.charter.data.song.configs.Tuning;
 import log.charter.data.song.configs.Tuning.TuningType;
+import log.charter.data.song.notes.Chord;
+import log.charter.data.song.notes.ChordNote;
+import log.charter.data.song.notes.Note;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
 import log.charter.gui.components.simple.CharterSelect;
@@ -387,14 +392,28 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 			arrangement.levels.forEach(level -> {
 				level.sounds.forEach(sound -> {
-					if (!sound.isNote()) {
-						return;
-					}
-
-					if (sound.note().string >= tuning.strings()) {
-						sound.note().string = tuning.strings() - 1;
+					if (sound.isNote()) {
+						final Note note = sound.note();
+						if (note.string >= tuning.strings()) {
+							note.string = tuning.strings() - 1;
+						} else {
+							note.fret = min(InstrumentConfig.frets,
+									max(0, note.fret + fretsDifference[sound.note().string]));
+							if (note.slideTo != null) {
+								note.slideTo = min(InstrumentConfig.frets,
+										max(1, note.slideTo + fretsDifference[sound.note().string]));
+							}
+						}
 					} else {
-						sound.note().fret = max(0, sound.note().fret + fretsDifference[sound.note().string]);
+						final Chord chord = sound.chord();
+
+						for (final Entry<Integer, ChordNote> chordNote : chord.chordNotes.entrySet()) {
+							final ChordNote note = chordNote.getValue();
+							if (note.slideTo != null) {
+								note.slideTo = min(InstrumentConfig.frets,
+										max(1, note.slideTo + fretsDifference[chordNote.getKey()]));
+							}
+						}
 					}
 				});
 			});

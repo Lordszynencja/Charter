@@ -142,7 +142,7 @@ public class ChangeSongPitchPane extends RowedDialog {
 
 		LoadingDialog.doWithLoadingDialog(frame, 4, loadingDialog -> {
 			loadingDialog.setProgress(0, "Reading samples");
-			final AudioData audio = projectAudioHandler.getAudio();
+			final AudioData audio = projectAudioHandler.getMainAudio();
 			final int sampleSize = audio.format.getSampleSizeInBits() / 8;
 			final int channels = audio.format.getChannels();
 			final float[][] samples = FloatSamplesUtils.splitAudioFloat(audio.data, sampleSize, channels);

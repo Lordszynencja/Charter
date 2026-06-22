@@ -95,6 +95,7 @@ public class Localization {
 		CHARTER_WIKI("Charter wiki"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
+		CHORD_WITH_SPLIT_AND_ONLY_BOX("Chord has both Split and Only box flags marked"), //
 		CONFIG("Config"), //
 		CONFIG_AUDIO("Audio"), //
 		CONFIG_DISPLAY("Display"), //
@@ -166,6 +167,8 @@ public class Localization {
 		FIRST_BEAT_BEFORE_10_SECONDS("First beat is set before 10 seconds have passed"), //
 		FIRST_FINGER_ON_NOT_LOWEST_FRET(
 				"First finger set on fret that's not lowest non-open fret in template [%d] - string %d"), //
+		FOLDER_EXISTS("Given folder already exists"), //
+		FOLDER_EXISTS_MSG("Do you want to use existing folder?"), //
 		FORCE_ARPEGGIO_IN_RS("in RS"), //
 		FPS("FPS"), //
 		FRET("Fret"), //
@@ -175,9 +178,11 @@ public class Localization {
 		FRET_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
 				"Fret in sound is different than fret in hand shape under it on the same string"), //
 		FRETS("Frets"), //
+		GENERATE_FHP("Generate FHP"), //
 		GO_PLAY_ALONG("GoPlayAlong file"), //
 		GUITAR_ARRANGEMENT("Guitar arrangement"), //
 		GUITAR_EVENT_POINT_PANE("Event point"), //
+		GP_FILE_IMPORT_OPTIONS("GP file import options"), //
 		GP_FILES_FOLDER("GP files folder"), //
 		GRAPHIC_CONFIG_PANE("Graphic config"), //
 		GRID_TYPE_BEAT("Beat"), //
@@ -191,6 +196,7 @@ public class Localization {
 		HIGH_PASS_SETTINGS("High pass settings"), //
 		HIGH_PASS_TOOLTIP(
 				"<html>High pass filter filters out frequencies below given value<br/>Right click for settings</html>"), //
+		IMPORT_TEMPO_MAP("Import tempo map"), //
 		IMPORTING_AUDIO("Importing audio"), //
 		IMPORT_AUDIO_AS_STEM("Import audio as stem?"), //
 		IMPORT_LRC_VOCALS("Import LRC vocals file"), //
@@ -405,9 +411,19 @@ public class Localization {
 		SIZE_L("L"), //
 		SIZE_XL("XL"), //
 		SIZE_XXL("XXL"), //
+		SLIDE_IN_SIZE("Slide in size"), //
+		SLIDE_OUT_SIZE("Slide out size"), //
+		SONG_FOLDER_AUDIO_FOLDER("Use audio file folder"), //
+		SONG_FOLDER_GP_FOLDER("Use GP file folder"), //
+		SONG_FOLDER_IN_CHARTS_DIR("Create new folder in charts directory"), //
+		SONG_FOLDER_OTHER("Select other folder"), //
+		SONG_FOLDER_XML_FOLDER("Use XML file folder"), //
 		SONG_OPTIONS("Song options"), //
 		SONGS_FOLDER("Songs folder"), //
 		SOUND_DELAY("Sound delay (ms)"), //
+		SOUND_PAST_LAST_PHRASE("Sound past last phrase"), //
+		SOUND_SPLIT_BY_PHRASE("Sound split by phrase or linked to a sound in next phrase"), //
+		SOUND_WITH_TREMOLO_OR_VIBRATO_WITHOUT_TAIL("Sound has tremolo or vibrato and no sustain"), //
 		SPECIAL_PASTE("Special paste"), //
 		SPEED_DECREASE("Decrease speed"), //
 		SPEED_DECREASE_FAST("Decrease speed fast"), //
@@ -683,7 +699,6 @@ public class Localization {
 		GENERATING_SLOWED_SOUND("Playback speed added to queue"), //
 		GP_FILE("GP file (.gp3, .gp4, .gp5, .gp)"), //
 		GP7_FILE("GP7+ file (.gp)"), //
-		GP_IMPORT_TEMPO_MAP("GP import tempo map"), //
 		MOVE_BACKWARD("Move backward"), //
 		MOVE_FORWARD("Move forward"), //
 		LOADING("Please wait, loading..."), //
@@ -714,7 +729,6 @@ public class Localization {
 		UNSAVED_CHANGES_POPUP("Unsaved changes"), //
 		UNSAVED_CHANGES_MESSAGE("You have unsaved changes. Do you want to save?"), //
 		UNSUPPORTED_FILE_TYPE("This file type is not supported"), //
-		USE_TEMPO_MAP_FROM_IMPORT("Do you want to use the tempo map from the imported project?"), //
 		VALUE_CANT_BE_EMPTY("Value must not be empty"), //
 		VALUE_MUST_BE_GE("Value must be greater or equal to %s"), //
 		VALUE_MUST_BE_LE("Value must be lesser or equal to %s"), //

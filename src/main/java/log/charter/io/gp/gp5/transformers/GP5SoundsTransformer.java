@@ -25,6 +25,7 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.notes.CommonNote;
 import log.charter.data.song.notes.Note;
 import log.charter.data.song.position.FractionalPosition;
+import log.charter.io.gp.GPFileImportOptions;
 import log.charter.io.gp.gp5.GP5FractionalPosition;
 import log.charter.io.gp.gp5.data.GPBeat;
 import log.charter.io.gp.gp5.data.GPBend;
@@ -83,6 +84,7 @@ public class GP5SoundsTransformer {
 
 	private final Level level;
 	private final Arrangement arrangement;
+	private final GPFileImportOptions importOptions;
 
 	private ChordOrNote lastSound = null;
 	private ChordTemplate lastSoundTemplate = null;
@@ -90,9 +92,11 @@ public class GP5SoundsTransformer {
 
 	private boolean addSlideToLastSound = false;
 
-	public GP5SoundsTransformer(final Level level, final Arrangement arrangement) {
+	public GP5SoundsTransformer(final Level level, final Arrangement arrangement,
+			final GPFileImportOptions importOptions) {
 		this.level = level;
 		this.arrangement = arrangement;
+		this.importOptions = importOptions;
 	}
 
 	private boolean checkPreviousNoteLink(final GPNote gpNote) {
@@ -111,6 +115,7 @@ public class GP5SoundsTransformer {
 
 		if (addSlideToLastSound) {
 			lastSound.note().slideTo = gpNote.fret;
+			lastSound.note().unpitchedSlide = !lastSound.note().linkNext;
 			addSlideToLastSound = false;
 			linked = true;
 		}
@@ -189,11 +194,11 @@ public class GP5SoundsTransformer {
 
 		switch (effects.slideOut) {
 			case OUT_DOWN:
-				lastNote.slideTo = max(1, lastNote.fret - 5);
+				lastNote.slideTo = max(1, lastNote.fret - importOptions.slideOutSize);
 				lastNote.unpitchedSlide = true;
 				break;
 			case OUT_UP:
-				lastNote.slideTo = min(InstrumentConfig.frets, lastNote.fret + 5);
+				lastNote.slideTo = min(InstrumentConfig.frets, lastNote.fret + importOptions.slideOutSize);
 				lastNote.unpitchedSlide = true;
 				break;
 			case OUT_WITHOUT_PLUCK:
@@ -223,7 +228,7 @@ public class GP5SoundsTransformer {
 				afterNotes.add(slideInNoteFromAbove);
 				note.linkNext = true;
 				note.slideTo = note.fret;
-				note.fret = min(InstrumentConfig.frets, note.fret + 5);
+				note.fret = min(InstrumentConfig.frets, note.fret + importOptions.slideInSize);
 				break;
 			case IN_FROM_BELOW:
 				final Note slideInNoteFromBelow = new Note(note.position().add(new Fraction(1, 4)), note.string,
@@ -233,7 +238,7 @@ public class GP5SoundsTransformer {
 				afterNotes.add(slideInNoteFromBelow);
 				note.linkNext = true;
 				note.slideTo = note.fret;
-				note.fret = max(1, note.fret - 5);
+				note.fret = max(1, note.fret - importOptions.slideInSize);
 				break;
 			default:
 				break;
