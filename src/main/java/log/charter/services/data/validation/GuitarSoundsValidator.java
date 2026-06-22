@@ -269,6 +269,17 @@ public class GuitarSoundsValidator {
 			}
 		}
 
+		private void validateChordWithSplitAndOnlyBox(final int id, final ChordOrNote sound) {
+			if (!sound.isChord()) {
+				return;
+			}
+
+			final Chord chord = sound.chord();
+			if (chord.forceNoNotes && chord.splitIntoNotes) {
+				errorsTab.addError(generateError(Label.CHORD_WITH_SPLIT_AND_ONLY_BOX, id));
+			}
+		}
+
 		private void validateSounds() {
 			for (int i = 0; i < level.sounds.size(); i++) {
 				final ChordOrNote sound = level.sounds.get(i);
@@ -281,6 +292,7 @@ public class GuitarSoundsValidator {
 				validateNoteFHP(i, sound);
 				validateChordTail(i, sound);
 				validateTremoloVibratoTail(i, sound);
+				validateChordWithSplitAndOnlyBox(i, sound);
 			}
 		}
 

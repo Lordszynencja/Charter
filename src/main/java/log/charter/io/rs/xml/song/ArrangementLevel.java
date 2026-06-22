@@ -8,9 +8,9 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-import log.charter.data.song.FHP;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.Chord;
@@ -78,7 +78,9 @@ public class ArrangementLevel {
 			final ArrangementChord arrangementChord = new ArrangementChord(beats, chord, chordTemplate, forceAddNotes);
 
 			if (chord.splitIntoNotes) {
-				arrangementChord.chordNotes.stream().map(ArrangementNote::new).forEach(notes.list::add);
+				if (!chord.forceNoNotes) {
+					arrangementChord.chordNotes.stream().map(ArrangementNote::new).forEach(notes.list::add);
+				}
 			} else {
 				chords.list.add(arrangementChord);
 			}

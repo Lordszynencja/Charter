@@ -95,6 +95,7 @@ public class Localization {
 		CHARTER_WIKI("Charter wiki"), //
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
+		CHORD_WITH_SPLIT_AND_ONLY_BOX("Chord has both Split and Only box flags marked"), //
 		CONFIG("Config"), //
 		CONFIG_AUDIO("Audio"), //
 		CONFIG_DISPLAY("Display"), //
