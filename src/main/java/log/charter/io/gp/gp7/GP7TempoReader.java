@@ -125,9 +125,8 @@ public class GP7TempoReader {
 		return tempoChanges;
 	}
 
-	private double getBPMForMasterBar(final double bpm, final GP7MasterBar masterBar) {
-		return bpm * masterBar.timeSignature.denominator / masterBar.timeSignature.numerator
-				* masterBar.timeSignature.denominator / 4;
+	private double getBPMForMasterBar(final double quarterNoteTempo, final GP7MasterBar masterBar) {
+		return quarterNoteTempo * masterBar.timeSignature.denominator / 4;
 	}
 
 	private double calculateBPM(final GP7MasterBar masterBar, final TempoChangePoint tempoChangePoint,
@@ -167,6 +166,7 @@ public class GP7TempoReader {
 			position = offset;
 		}
 		boolean firstInMeasure = true;
+		double lastNoteDenominator = 4;
 		for (final GP7MasterBar masterBar : gpif.masterBars) {
 			for (int beatId = barBeat; beatId < barBeat + masterBar.timeSignature.numerator; beatId++) {
 				while (tempoChangePointId < tempoChanges.size() - 1
@@ -187,13 +187,15 @@ public class GP7TempoReader {
 
 				final int beatsInMeasure = masterBar.timeSignature.numerator;
 				final int noteDenominator = masterBar.timeSignature.denominator;
-				final boolean anchor = tempoChangePoint.beatId == beatId || tempoChangePoint.linear;
+				final boolean anchor = tempoChangePoint.beatId == beatId || tempoChangePoint.linear
+						|| noteDenominator != lastNoteDenominator;
 				final Beat beat = new Beat(position, beatsInMeasure, noteDenominator, firstInMeasure, anchor);
 
 				beatsMap.beats.add(beat);
 
 				position += 60_000 / bpm;
 				firstInMeasure = false;
+				lastNoteDenominator = noteDenominator;
 			}
 
 			barBeat += masterBar.timeSignature.numerator;
