@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charter - Manual de Uso y Creación de Charts</title>
+    <style>
+        /* ===== ESTILOS GENERALES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            line-height: 1.7;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #16213e;
+            padding: 40px 50px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        /* ===== TIPOGRAFÍA ===== */
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #f0e6d0;
+            margin-top: 1.8em;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            text-align: center;
+            border-bottom: 3px solid #e94560;
+            padding-bottom: 20px;
+            margin-top: 0;
+            margin-bottom: 30px;
+            color: #ffd700;
+        }
+
+        h2 {
+            font-size: 2em;
+            border-left: 6px solid #e94560;
+            padding-left: 18px;
+            margin-top: 2.2em;
+            color: #ffd700;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            color: #f5c842;
+            margin-top: 1.5em;
+        }
+
+        h4 {
+            font-size: 1.2em;
+            color: #f0d080;
+            margin-top: 1.2em;
+        }
+
+        /* ===== PÁRRAFOS Y LISTAS ===== */
+        p {
+            margin-bottom: 1em;
+            text-align: justify;
+        }
+
+        ul,
+        ol {
+            margin: 0.8em 0 1.2em 2em;
+        }
+
+        li {
+            margin-bottom: 0.4em;
+        }
+
+        /* ===== CÓDIGO Y COMANDOS ===== */
+        code,
+        .command {
+            background: #0f3460;
+            color: #ffd700;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            border: 1px solid #1a4a7a;
+            white-space: nowrap;
+        }
+
+        .menu-path {
+            background: #1a3a5a;
+            color: #8fcbff;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+            border: 1px solid #2a5a8a;
+        }
+
+        /* ===== TABLAS ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+            background: #1a2744;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            border: 1px solid #2a3a5a;
+            padding: 10px 15px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #0f3460;
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #1a2a4a;
+        }
+
+        /* ===== CUADROS DE NOTA ===== */
+        .note-box {
+            background: #0f2840;
+            border-left: 5px solid #e94560;
+            padding: 16px 22px;
+            margin: 1.5em 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .note-box strong {
+            color: #ffd700;
+        }
+
+        .tip-box {
+            background: #1a2a1a;
+            border-left: 5px solid #4caf50;
+            padding: 16px 22px;
+            margin: 1.5em 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .tip-box strong {
+            color: #81c784;
+        }
+
+        .warning-box {
+            background: #2a1a1a;
+            border-left: 5px solid #ff5722;
+            padding: 16px 22px;
+            margin: 1.5em 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box strong {
+            color: #ff8a65;
+        }
+
+        /* ===== IMÁGENES ===== */
+        .img-container {
+            background: #0a1a2a;
+            border: 1px solid #2a4a6a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 1.5em 0;
+            text-align: center;
+        }
+
+        .img-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            background: #0a1520;
+        }
+
+        .img-container .img-label {
+            display: block;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #88aacc;
+            font-style: italic;
+        }
+
+        .img-placeholder {
+            background: #0a1a2a;
+            border: 2px dashed #2a5a7a;
+            border-radius: 8px;
+            padding: 30px 20px;
+            margin: 1.5em 0;
+            text-align: center;
+            color: #6a8aaa;
+        }
+
+        .img-placeholder a {
+            color: #6aafff;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .img-placeholder a:hover {
+            text-decoration: underline;
+            color: #8fcbff;
+        }
+
+        /* ===== ÍNDICE ===== */
+        .toc {
+            background: #0f1f3a;
+            border-radius: 10px;
+            padding: 25px 30px;
+            margin: 30px 0;
+            border: 1px solid #2a4a6a;
+        }
+
+        .toc h2 {
+            border-left: none;
+            padding-left: 0;
+            margin-top: 0;
+            text-align: center;
+            color: #ffd700;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 30px;
+            margin-top: 10px;
+        }
+
+        .toc-grid a {
+            color: #8fcbff;
+            text-decoration: none;
+            display: block;
+            padding: 4px 0;
+            border-bottom: 1px solid #1a2a4a;
+        }
+
+        .toc-grid a:hover {
+            color: #ffd700;
+            border-bottom-color: #e94560;
+        }
+
+        .toc-col {
+            padding: 0;
+        }
+
+        .toc-col ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc-col ul li {
+            margin-bottom: 3px;
+        }
+
+        .toc-col ul li a {
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toc-col ul li a:hover {
+            background: #1a2a4a;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            h3 {
+                font-size: 1.2em;
+            }
+
+            .toc-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            th,
+            td {
+                padding: 6px 10px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 10px;
+                color: #111;
+            }
+
+            .container {
+                background: white;
+                box-shadow: none;
+                padding: 20px 30px;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+                color: #1a1a2e;
+            }
+
+            h1 {
+                border-bottom-color: #333;
+                color: #1a1a2e;
+            }
+
+            h2 {
+                border-left-color: #333;
+                color: #1a1a2e;
+            }
+
+            h3,
+            h4 {
+                color: #1a2a4a;
+            }
+
+            .command,
+            code {
+                background: #eee;
+                color: #c0392b;
+                border-color: #ccc;
+            }
+
+            .menu-path {
+                background: #e8edf3;
+                color: #1a3a6a;
+                border-color: #b0c0d0;
+            }
+
+            .note-box {
+                background: #f0f4f8;
+                border-left-color: #c0392b;
+            }
+
+            .tip-box {
+                background: #e8f0e8;
+                border-left-color: #27ae60;
+            }
+
+            .warning-box {
+                background: #fce8e0;
+                border-left-color: #e67e22;
+            }
+
+            .toc {
+                background: #f0f4f8;
+                border-color: #ccc;
+            }
+
+            .toc h2 {
+                color: #1a1a2e;
+            }
+
+            .toc-grid a {
+                color: #1a3a6a;
+                border-bottom-color: #ddd;
+            }
+
+            .toc-grid a:hover {
+                color: #c0392b;
+            }
+
+            table {
+                background: #f5f5f5;
+            }
+
+            th {
+                background: #ddd;
+                color: #111;
+            }
+
+            td,
+            th {
+                border-color: #ccc;
+            }
+
+            tr:nth-child(even) {
+                background: #f0f0f0;
+            }
+
+            .img-container {
+                background: #f5f5f5;
+                border-color: #ccc;
+            }
+
+            .img-placeholder {
+                background: #f5f5f5;
+                border-color: #aaa;
+                color: #555;
+            }
+
+            .img-placeholder a {
+                color: #1a3a6a;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        /* ===== UTILIDADES ===== */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 {
+            margin-top: 1em;
+        }
+
+        .mt-2 {
+            margin-top: 2em;
+        }
+
+        .mb-1 {
+            margin-bottom: 1em;
+        }
+
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e94560;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-green {
+            background: #27ae60;
+        }
+
+        .badge-blue {
+            background: #2980b9;
+        }
+
+        .badge-orange {
+            background: #e67e22;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #2a4a6a;
+            margin: 2.5em 0;
+        }
+
+        /* ===== PIE DE PÁGINA ===== */
+        .footer {
+            text-align: center;
+            margin-top: 3em;
+            padding-top: 1.5em;
+            border-top: 2px solid #2a4a6a;
+            font-size: 0.9em;
+            color: #6a8aaa;
+        }
+
+        .footer a {
+            color: #6aafff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ============================================================ -->
+        <!-- TÍTULO PRINCIPAL                                              -->
+        <!-- ============================================================ -->
+        <h1>🎸 Charter<br><span style="font-size:0.5em;color:#8fcbff;">Manual de Uso y Creación de Charts</span></h1>
+        <p style="text-align:center;color:#8aaccc;font-size:1.1em;">
+            Guía completa para el editor de charts de Rocksmith<br>
+            <span style="font-size:0.85em;color:#6a8aaa;">Basado en el repositorio <a href="https://github.com/Lordszynencja/Charter.wiki" style="color:#6aafff;text-decoration:none;">github.com/Lordszynencja/Charter.wiki</a></span>
+        </p>
+
+        <!-- ============================================================ -->
+        <!-- ÍNDICE                                                        -->
+        <!-- ============================================================ -->
+        <div class="toc">
+            <h2>📑 Índice</h2>
+
+            <div class="toc-grid">
+                <div class="toc-col">
+                    <h4 style="color:#ffd700;margin-top:0;border-bottom:1px solid #2a4a6a;padding-bottom:6px;">1. Introducción</h4>
+                    <ul>
+                        <li><a href="#seccion-1-1">1.1. Inicio</a></li>
+                        <li><a href="#seccion-1-2">1.2. Diccionario de Términos</a></li>
+                        <li><a href="#seccion-1-3">1.3. Guía de Estilo (Styling Guide)</a></li>
+                    </ul>
+
+                    <h4 style="color:#ffd700;margin-top:1.2em;border-bottom:1px solid #2a4a6a;padding-bottom:6px;">2. Configuración del Programa</h4>
+                    <ul>
+                        <li><a href="#seccion-2-1">2.1. Configuración General</a></li>
+                        <li><a href="#seccion-2-2">2.2. Configuración de Audio</a></li>
+                        <li><a href="#seccion-2-3">2.3. Configuración de Instrumento</a></li>
+                        <li><a href="#seccion-2-4">2.4. Configuración de Pantalla</a></li>
+                        <li><a href="#seccion-2-5">2.5. Atajos de Teclado</a></li>
+                        <li><a href="#seccion-2-6">2.6. Opciones Gráficas y Temas</a></li>
+                        <li><a href="#seccion-2-7">2.7. Opciones de Color</a></li>
+                    </ul>
+
+                    <h4 style="color:#ffd700;margin-top:1.2em;border-bottom:1px solid #2a4a6a;padding-bottom:6px;">3. El Sonido en Charter</h4>
+                    <ul>
+                        <li><a href="#seccion-3-1">3.1. Efectos de Sonido</a></li>
+                        <li><a href="#seccion-3-2">3.2. Pistas de Audio (Stems)</a></li>
+                        <li><a href="#seccion-3-3">3.3. Volumen y Velocidad</a></li>
+                        <li><a href="#seccion-3-4">3.4. Filtros de Audio</a></li>
+                        <li><a href="#seccion-3-5">3.5. Repetidor de Secciones</a></li>
+                    </ul>
+                </div>
+
+                <div class="toc-col">
+                    <h4 style="color:#ffd700;margin-top:0;border-bottom:1px solid #2a4a6a;padding-bottom:6px;">4. Crear un Chart desde Cero</h4>
+                    <ul>
+                        <li><a href="#seccion-4-1">4.1. Preparación y Requisitos</a></li>
+                        <li><a href="#seccion-4-2">4.2. Crear un Proyecto Vacío</a></li>
+                        <li><a href="#seccion-4-3">4.3. Preparar el Mapa de Tempo</a></li>
+                        <li><a href="#seccion-4-4">4.4. Añadir un Arreglo</a></li>
+                        <li><a href="#seccion-4-5">4.5. Validar y Corregir Errores</a></li>
+                        <li><a href="#seccion-4-6">4.6. (Opcional) Añadir Voces</a></li>
+                        <li><a href="#seccion-4-7">4.7. (Opcional) Añadir Showlights</a></li>
+                        <li><a href="#seccion-4-8">4.8. Compilar en DLC Builder</a></li>
+                        <li><a href="#seccion-4-9">4.9. Pruebas y Ajustes Finales</a></li>
+                    </ul>
+
+                    <h4 style="color:#ffd700;margin-top:1.2em;border-bottom:1px solid #2a4a6a;padding-bottom:6px;">5. Crear un Chart desde una Tab</h4>
+                    <ul>
+                        <li><a href="#seccion-5-1">5.1. Importar una Tab o Proyecto</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 1. INTRODUCCIÓN                                               -->
+        <!-- ============================================================ -->
+        <h2 id="seccion-1">1. Introducción</h2>
+
+        <!-- ============================================================ -->
+        <!-- 1.1. INICIO                                                    -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-1-1">1.1. Inicio</h3>
+
+        <p>Bienvenido a <strong>Charter</strong>, la herramienta de referencia para la creación de charts personalizados (DLC) para el juego <strong>Rocksmith</strong>. Este manual te guiará a través de todo el proceso, desde la configuración inicial hasta la compilación de tu propio chart.</p>
+
+        <h4>📌 ¿Qué necesitas para empezar?</h4>
+        <ul>
+            <li>El audio de la canción en un formato reconocible: <span class="command">WAV</span>, <span class="command">FLAC</span>, <span class="command">MP3</span> u <span class="command">OGG</span>. Se recomienda una buena calidad, como la de un CD.</li>
+            <li>El programa <strong>Charter</strong>.</li>
+            <li><strong>DLC Builder</strong> para empaquetar el chart.</li>
+        </ul>
+
+        <h4>📌 Recursos útiles (opcionales)</h4>
+        <ul>
+            <li>Un video de una actuación en vivo o un playthrough oficial para referencia visual.</li>
+            <li>Pistas de audio separadas (<em>stems</em>) de la canción.</li>
+            <li>Una cuenta en <strong>CustomsForge</strong> y/o unirte a su servidor de Discord para compartir tu trabajo y recibir retroalimentación.</li>
+        </ul>
+
+        <!-- ============================================================ -->
+        <!-- 1.2. DICCIONARIO                                              -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-1-2">1.2. Diccionario de Términos</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Término</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Arrangement</strong></td>
+                    <td>Ruta de juego individual. Contiene notas, formas de mano, acordes, secciones, frases, cambios de tono y afinación.<br>
+                        <span style="color:#8aaccc;">Tipos:</span> Lead, Rhythm, Combo, Bass.<br>
+                        <span style="color:#8aaccc;">Subtipos:</span> Main, Bonus, Alternate.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Bookmark</strong></td>
+                    <td>Punto marcado para acceso rápido.</td>
+                </tr>
+                <tr>
+                    <td><strong>Chart</strong></td>
+                    <td>Toda la información de una canción: mapa de tempo, arreglos, voces, showlights, metadatos, etc.</td>
+                </tr>
+                <tr>
+                    <td><strong>Chord</strong></td>
+                    <td>Conjunto de notas que se tocan juntas. Definido por una plantilla (nombre, trastes, digitación).<br>
+                        <span style="color:#8aaccc;">Chord Box:</span> Rectángulo que se muestra en el juego para indicar un acorde.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Chord Template</strong></td>
+                    <td>Plantilla que define nombre, trastes y digitación de un acorde. Se usa para acordes y formas de mano.</td>
+                </tr>
+                <tr>
+                    <td><strong>Event</strong></td>
+                    <td>Disparador para eventos en el juego (ej. aplausos, efectos de sonido).</td>
+                </tr>
+                <tr>
+                    <td><strong>FHP</strong><br><span style="font-size:0.85em;color:#6a8aaa;">Fret Hand Position</span></td>
+                    <td>Posición de la mano que trastea. El número inferior es el traste inicial; la anchura (por defecto 4) indica el rango de alcance.</td>
+                </tr>
+                <tr>
+                    <td><strong>Hand Shape</strong></td>
+                    <td>Forma que debe mantener la mano para tocar un acorde o arpegio. Se muestra como resaltado azul en el editor 2D y con dedos en el diapasón 3D.</td>
+                </tr>
+                <tr>
+                    <td><strong>Level</strong></td>
+                    <td>Nivel de dificultad dentro de un arreglo. Normalmente se trabaja con un solo nivel que contiene las notas para dificultad máxima.</td>
+                </tr>
+                <tr>
+                    <td><strong>Note</strong></td>
+                    <td>Nota individual, definida por traste, cuerda y técnicas (flags). Puede tener cola (sustain).</td>
+                </tr>
+                <tr>
+                    <td><strong>Phrase</strong></td>
+                    <td>Fragmento de la canción para práctica y selección de dificultad. Se muestra como bloques naranjas o morados.<br>
+                        <span style="color:#8aaccc;">COUNT:</span> Un compás antes de la primera nota.<br>
+                        <span style="color:#8aaccc;">END:</span> Después de la última nota.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Section</strong></td>
+                    <td>Parte de la canción (Verso, Estribillo, Solo, etc.). Cada arreglo necesita al menos una.<br>
+                        <span style="color:#8aaccc;">No guitar:</span> Sección especial para partes sin guitarra.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Showlights</strong></td>
+                    <td>Cambios de color de niebla y luces durante la canción. Solo visual.</td>
+                </tr>
+                <tr>
+                    <td><strong>Stem</strong></td>
+                    <td>Pista de audio individual (ej. guitarra aislada, batería, etc.).</td>
+                </tr>
+                <tr>
+                    <td><strong>Tempo Map</strong></td>
+                    <td>Lista de posiciones de los tiempos (pulsos). Todo se posiciona en base a esto.</td>
+                </tr>
+                <tr>
+                    <td><strong>Tone Change</strong></td>
+                    <td>Punto donde cambia el tono del instrumento. El tono por defecto se usa al inicio.</td>
+                </tr>
+                <tr>
+                    <td><strong>Vocals</strong></td>
+                    <td>Línea de tiempo con la letra de la canción. Cada vocal es una palabra o sílaba.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ============================================================ -->
+        <!-- 1.3. GUÍA DE ESTILO                                           -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-1-3">1.3. Guía de Estilo <span style="font-size:0.7em;color:#6a8aaa;">(Styling Guide)</span></h3>
+
+        <p>Esta guía explica cómo se representan las diferentes técnicas de guitarra en el juego para que tu chart sea claro, preciso y divertido de tocar.</p>
+
+        <!-- ============================================================ -->
+        <!-- ACENTOS                                                        -->
+        <!-- ============================================================ -->
+        <h4>Acentos <span style="font-size:0.7em;color:#6a8aaa;">(Accents)</span></h4>
+        <p>Notas que se tocan con más fuerza para que destaquen. En el juego se muestran como un resaltado alrededor de la cabeza de la nota (notas individuales) o en la parte superior de la caja de acorde (acordes).</p>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/5f163533-3151-4738-8cd5-437a7c442409" alt="Acentos en notas individuales - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Acentos en notas individuales (vista 2D)</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/85072740-01bc-452f-b9e6-94e15ba1afcd" alt="Acentos en notas individuales - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Acentos en notas individuales (vista 3D)</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://raw.githubusercontent.com/Lordszynencja/Charter.wiki/main/images/accents%20on%20chords%202D.png" alt="Acentos en acordes - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Acentos en acordes (vista 2D)</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/18ae5414-d14d-4869-a7f0-9ef262f184fa" alt="Acentos en acordes - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Acentos en acordes (vista 3D)</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/6d684296-837e-4376-8a21-d3df527e81a2" alt="Acentos en power metal - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Acentos en ritmos rápidos (power metal) - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/965b6f04-c9e4-4848-9741-8ecccac7d24f" alt="Acentos en power metal - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Acentos en ritmos rápidos (power metal) - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/a08d0092-cdf7-4770-a366-85ef77853bda" alt="Staccato - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Staccato (notas cortadas) - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/f47652df-0b16-4d84-8912-e8fa9f10dcd0" alt="Staccato - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Staccato (notas cortadas) - vista 3D</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ARPEGIOS                                                       -->
+        <!-- ============================================================ -->
+        <h4>Arpegios <span style="font-size:0.7em;color:#6a8aaa;">(Arpeggios)</span></h4>
+        <p>Acordes cuyas notas se tocan de forma secuencial, una tras otra. Se representan como una forma de mano (hand shape) debajo de notas normales.</p>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/d8a10ded-6c9b-485f-8f8b-664832fbb63b" alt="Arpegio - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Arpegio - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/3bb66c35-2c5e-4e80-a452-e37c7bebf76c" alt="Arpegio - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Arpegio - vista 3D</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- BENDS                                                          -->
+        <!-- ============================================================ -->
+        <h4>Bends <span style="font-size:0.7em;color:#6a8aaa;">(Flexiones)</span></h4>
+        <p>Se dobla la cuerda para cambiar su tensión. La cola de la nota se mueve hacia arriba/abajo. El valor en el editor es el número de tonos completos (ej. 0.5 = semitono).</p>
+        <ul>
+            <li><strong>Prebend:</strong> La cuerda ya está doblada antes de ser pulsada.</li>
+        </ul>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/7376d198-96af-43fe-a8ae-085448f04d2f" alt="Bend básico - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Bend básico - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/563ac3a6-9167-4437-8d87-a8b7f964b680" alt="Bend básico - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Bend básico - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/857543be-805c-4edd-98b0-3bc279cc065d" alt="Bend en acorde - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Bend en una nota de un acorde - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/f905b3f3-40c8-4423-877d-5b478cd92e2d" alt="Bend en acorde - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Bend en una nota de un acorde - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/6ad9fbcd-6af5-406a-920f-33767cf674af" alt="Prebend - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Prebend - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/af00be26-6ca9-460f-88a9-1bfd2474f822" alt="Prebend - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Prebend - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/ada25a2f-d89a-4570-819b-87cafb6604ff" alt="Bend complejo - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Bend con forma compleja - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/993f6202-b3c6-4056-ad3f-bd820e3e00f2" alt="Bend complejo - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Bend con forma compleja - vista 3D</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ACORDES                                                        -->
+        <!-- ============================================================ -->
+        <h4>Acordes <span style="font-size:0.7em;color:#6a8aaa;">(Chords)</span></h4>
+        <p>Conjunto de notas que se tocan juntas. En el editor, más de una nota se considera un acorde.</p>
+        <ul>
+            <li>Deben estar sincronizados con la forma de mano.</li>
+            <li><span class="command">Only box</span>: Oculta las notas, útil para acordes con mutes.</li>
+            <li><span class="command">Split</span>: Muestra las notas y oculta la caja de acorde (ej. para slides o pick scrapes).</li>
+        </ul>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/a5a72943-cb20-40d1-86f7-069c22f0e433" alt="Acorde - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Acorde mantenido y repetido - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/6a9084b1-5b82-43ec-92cc-46f1dee163" alt="Acorde - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Acorde mantenido y repetido - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/673085e2-c1ad-40ee-aca6-265ec25e4fd3" alt="Acordes entre notas - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Acordes entre notas individuales - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/f919d3e6-ec71-4302-8e33-e24e9d1ac023" alt="Acordes entre notas - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Acordes entre notas individuales - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/a4262bb1-5a99-4182-b99d-cdcf5c34a5f2" alt="Only box - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">"Only box" en acordes con mutes - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/a3a97959-2fe1-4bf4-9c5a-c22747f840a1" alt="Only box - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">"Only box" en acordes con mutes - vista 3D</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ARMÓNICOS                                                      -->
+        <!-- ============================================================ -->
+        <h4>Armónicos <span style="font-size:0.7em;color:#6a8aaa;">(Harmonics)</span></h4>
+        <ul>
+            <li><strong>Naturales:</strong> Círculo blanco. Sin sustain.</li>
+            <li><strong>Artificiales (Pinch):</strong> Círculo oscuro. Pueden tener sustain, vibrato o bends.</li>
+        </ul>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/8ea6fa2e-8135-4277-8cdb-baa303a4602e" alt="Armónicos naturales - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Armónicos naturales - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/78c7d58a-5261-4944-a3a1-35521b2dc455" alt="Armónicos naturales - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Armónicos naturales - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/3ff76e9d-9bf2-4c5b-85e1-8fd07811c76b" alt="Armónicos pinch - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Armónicos pinch - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/701a9842-bc58-4b41-87e3-7b8b805b9df8" alt="Armónicos pinch - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Armónicos pinch - vista 3D</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- HAMMER-ON / PULL-OFF / TAP                                    -->
+        <!-- ============================================================ -->
+        <h4>Hammer-on / Pull-off / Tap <span style="font-size:0.7em;color:#6a8aaa;">(Ligados)</span></h4>
+        <ul>
+            <li><strong>Hammer-on (H):</strong> Flecha blanca hacia abajo.</li>
+            <li><strong>Pull-off (P):</strong> Flecha blanca hacia arriba.</li>
+            <li><strong>Tap (T):</strong> Flecha oscura y ancha hacia abajo. La FHP debe extenderse.</li>
+        </ul>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/3eb8aca3-c717-49b1-9dc8-c153d38aaf84" alt="Hammer-on - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Hammer-on - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/eb1297df-eefe-4bcd-b868-6efe29b3c694" alt="Hammer-on - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Hammer-on - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/335f5156-fbc5-4b10-abc1-31745fc2d888" alt="Pull-off - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Pull-off - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/e4063f37-e71d-4d90-b546-1f19dddb9ba1" alt="Pull-off - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Pull-off - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/658a2f13-9541-4a6e-8d4a-f07ee1f06df9" alt="Trill - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Trill - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/bc2ba3c4-2241-46f7-b600-4f19c184cac5" alt="Trill - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Trill - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/e3a8e2bc-81a2-4292-b7d1-2c122fb04804" alt="Tapping - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Tapping - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/05c310e2-89bf-4976-870a-1776ff2eea01" alt="Tapping - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Tapping - vista 3D</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- MUTES                                                         -->
+        <!-- ============================================================ -->
+        <h4>Mutes <span style="font-size:0.7em;color:#6a8aaa;">(Silenciados)</span></h4>
+        <ul>
+            <li><strong>Palm Mutes (PM):</strong> "X" oscura. Silencio con la palma de la mano.</li>
+            <li><strong>Full Mutes (FM):</strong> "X" blanca. Silencio tocando suavemente con la mano que trastea.</li>
+        </ul>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/702c96c5-2663-45fa-b08b-a7c258dfdcb5" alt="Palm mutes - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Palm mutes - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/d4566b5a-71b3-46b4-bb13-f8338e9a342c" alt="Palm mutes - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Palm mutes - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/4d2c45fa-2202-4f6a-a4ad-add89f2ed5de" alt="Full mutes - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Full mutes - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/c350533f-2446-4966-8c37-360aa68d875e" alt="Full mutes - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Full mutes - vista 3D</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PICK SCRAPES                                                  -->
+        <!-- ============================================================ -->
+        <h4>Pick Scrapes <span style="font-size:0.7em;color:#6a8aaa;">(Rasguños con púa)</span></h4>
+        <p>Se marcan como <span class="command">Tap</span>, <span class="command">Slide down</span>, <span class="command">Tremolo</span> e <span class="command">Ignore</span>. La FHP se establece como para los taps.</p>
+
+        <!-- ============================================================ -->
+        <!-- SLIDES                                                        -->
+        <!-- ============================================================ -->
+        <h4>Slides <span style="font-size:0.7em;color:#6a8aaa;">(Deslizamientos)</span></h4>
+        <ul>
+            <li><strong>Unpitched:</strong> Sin tono, se "desvanece". No se enlaza a otra nota.</li>
+            <li><strong>Pitched:</strong> Con tono, termina en una nota específica. Se enlaza (<span class="command">Link next</span>) a la nota de destino. La FHP debe actualizarse.</li>
+        </ul>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/750f032f-f9fa-46ec-8bad-803023b12c68" alt="Slide unpitched - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Slide unpitched - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/fcbeb315-7e95-4816-8393-980e9b569018" alt="Slide unpitched - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Slide unpitched - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/63da948a-3899-45a5-827f-422ca6fa84ec" alt="Slide unpitched en acorde - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Slide unpitched en acorde - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/d3127176-e242-4dff-abcc-459772b368fc" alt="Slide unpitched en acorde - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Slide unpitched en acorde - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/b67d1215-53c6-4a44-ade6-29344d13992b" alt="Slide pitched - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Slide pitched - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/84985c3f-046b-4809-b4cc-384afd398f0e" alt="Slide pitched - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Slide pitched - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/92453143-6a49-41fe-9330-c064c53c9e7d" alt="Slide pitched en acorde - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Slide pitched en acorde - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/9f2cffd8-e491-47d0-b88e-0f8383f04194" alt="Slide pitched en acorde - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Slide pitched en acorde - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/39e57a00-eaa0-4dff-a0a8-60e19469a868" alt="Slide in - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Slide in - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="ttps://github.com/user-attachments/assets/e0561f4a-05b3-4924-9d5e-0b5b755776fd" alt="Slide in - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Slide in - vista 3D</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- CAMBIOS DE TONO                                               -->
+        <!-- ============================================================ -->
+        <h4>Cambios de Tono <span style="font-size:0.7em;color:#6a8aaa;">(Tone Changes)</span></h4>
+        <p>Se colocan ligeramente antes de la nota donde se necesita el nuevo tono (ej. 1/8 o 1/16 de tiempo antes). Si el nombre del tono contiene <em>"overdrive"</em> o <em>"distortion"</em>, el reproductor MIDI cambiará su instrumento.</p>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/ad00c779-a705-4dc7-89cf-786f31f13276" alt="Cambio de tono" loading="lazy" onerror="this.style.display='none'">
+<img src="https://github.com/user-attachments/assets/957773d3-aaf4-4bfb-8787-0ebf8b424706" alt="Cambio de tono" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Cambio de tono en el editor</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- TREMOLO                                                        -->
+        <!-- ============================================================ -->
+        <h4>Tremolo</h4>
+        <p>Rasgueo rápido de una nota. Se muestra con cola dentada. Puede usarse con slides, bends y mutes.</p>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/641fe2a8-4908-40d3-a1ce-d5a82a0ec102" alt="Tremolo - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Tremolo - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/f08368ab-8557-4d0d-a396-35c0028e3610" alt="Tremolo - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Tremolo - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/20673372-a824-422b-87d8-a8ed6074b370" alt="Tremolo slide - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Tremolo con slide - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/d5528ae6-d38b-4bfe-9269-3c33a6ed604d" alt="Tremolo slide - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Tremolo con slide - vista 3D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/6c7a55fd-061e-49df-b13f-80b8a5cca752" alt="Tremolo bend - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Tremolo con bend - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/c4c4fbb1-9332-4022-9ded-458047ac6be9" alt="Tremolo bend - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Tremolo con bend - vista 3D</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- VIBRATO                                                        -->
+        <!-- ============================================================ -->
+        <h4>Vibrato</h4>
+        <p>Flexión y liberación suave de la cuerda. Cola ondulada. No debe usarse en cuerdas al aire.</p>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/2215a65e-884d-4321-903a-bc8e2ee8c6a0" alt="Vibrato - 2D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Vibrato - vista 2D</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/49d20650-7f8a-437f-bf58-83fe63b0274e" alt="Vibrato - 3D" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Vibrato - vista 3D</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- SECCIONES Y FRASES                                            -->
+        <!-- ============================================================ -->
+        <h4>Secciones y Frases <span style="font-size:0.7em;color:#6a8aaa;">(Sections &amp; Phrases)</span></h4>
+        <p>Las secciones son partes de la canción (Intro, Verso, Solo, etc.). Las frases son fragmentos más pequeños (4-8 compases) que se usan para la práctica y la dificultad dinámica.</p>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/3584c788-8e91-435c-abc7-8c04850c60ce" alt="Frase con sección" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Frase con sección</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://raw.githubusercontent.com/Lordszynencja/Charter.wiki/main/images/Phrase%20without%20section.png" alt="Frase sin sección" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Frase sin sección</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/3584c788-8e91-435c-abc7-8c04850c60ce" alt="Frase repetida" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Frase repetida</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://raw.githubusercontent.com/Lordszynencja/Charter.wiki/main/images/section.png" alt="Sección" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Sección en el editor</span>
+        </div>
+
+        <div class="img-container">
+            <img src="https://github.com/user-attachments/assets/a0889af4-8355-4db3-b83a-c8c793f878f2" alt="Sección 'No guitar'" loading="lazy" onerror="this.style.display='none'">
+            <span class="img-label">Sección "No guitar"</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- WHAMMY BAR                                                     -->
+        <!-- ============================================================ -->
+        <h4>Whammy Bar</h4>
+        <p>El juego no tiene soporte nativo. Las notas que lo requieran deben marcarse como <span class="command">Ignore</span>. Se puede eliminar la cola (sustain).</p>
+
+        <!-- ============================================================ -->
+        <!-- 2. CONFIGURACIÓN                                              -->
+        <!-- ============================================================ -->
+        <h2 id="seccion-2">2. Configuración del Programa</h2>
+
+        <p>Puedes acceder a todas las opciones de configuración a través del menú <span class="menu-path">File > Config</span>.</p>
+
+        <!-- ============================================================ -->
+        <!-- 2.1. GENERAL                                                  -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-2-1">2.1. Configuración General <span style="font-size:0.7em;color:#6a8aaa;">(General)</span></h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Opción</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Music folder</strong></td>
+                    <td>Carpeta que se abrirá al buscar música para un nuevo proyecto.</td>
+                </tr>
+                <tr>
+                    <td><strong>Songs folder</strong></td>
+                    <td>Carpeta donde se crearán las carpetas de los charts por defecto.</td>
+                </tr>
+                <tr>
+                    <td><strong>*GP files folder</strong></td>
+                    <td>Carpeta que se abrirá al importar una tablatura de Guitar Pro.</td>
+                </tr>
+                <tr>
+                    <td><strong>Base audio format</strong></td>
+                    <td>Formato en el que se guardarán los archivos de audio (WAV, FLAC, OGG).</td>
+                </tr>
+                <tr>
+                    <td><strong>Minimal space between notes</strong></td>
+                    <td>Espacio mínimo entre el final de una nota y la siguiente.</td>
+                </tr>
+                <tr>
+                    <td><strong>Minimal note length</strong></td>
+                    <td>Duración mínima de la cola de una nota.</td>
+                </tr>
+                <tr>
+                    <td><strong>Select notes by tails</strong></td>
+                    <td>Permite seleccionar notas haciendo clic en sus colas.</td>
+                </tr>
+                <tr>
+                    <td><strong>Backup delay</strong></td>
+                    <td>Frecuencia con la que se guarda una copia de seguridad (en segundos).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ============================================================ -->
+        <!-- 2.2. AUDIO                                                    -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-2-2">2.2. Configuración de Audio <span style="font-size:0.7em;color:#6a8aaa;">(Audio)</span></h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Opción</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Audio output</strong></td>
+                    <td>Selecciona la salida de audio (por defecto o dispositivos ASIO en Windows).</td>
+                </tr>
+                <tr>
+                    <td><strong>Audio buffer size to fill</strong></td>
+                    <td>Tamaño del búfer de audio. Auméntalo si escuchas cortes o "cracking".</td>
+                </tr>
+                <tr>
+                    <td><strong>Sound delay</strong></td>
+                    <td>Ajusta la sincronización entre audio y vídeo.</td>
+                </tr>
+                <tr>
+                    <td><strong>Midi sound delay</strong></td>
+                    <td>Ajusta la sincronización de la reproducción MIDI con el audio.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ============================================================ -->
+        <!-- 2.3. INSTRUMENTO                                              -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-2-3">2.3. Configuración de Instrumento <span style="font-size:0.7em;color:#6a8aaa;">(Instrument)</span></h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Opción</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Left handed</strong></td>
+                    <td>Cambia la visualización para zurdos.</td>
+                </tr>
+                <tr>
+                    <td><strong>Max strings</strong></td>
+                    <td>Número máximo de cuerdas para chartear (Rocksmith no soporta más de 6).</td>
+                </tr>
+                <tr>
+                    <td><strong>Frets</strong></td>
+                    <td>Número máximo de trastes permitidos.</td>
+                </tr>
+                <tr>
+                    <td><strong>Max bend value</strong></td>
+                    <td>Valor máximo de bend, en semitonos.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ============================================================ -->
+        <!-- 2.4. PANTALLA                                                 -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-2-4">2.4. Configuración de Pantalla <span style="font-size:0.7em;color:#6a8aaa;">(Display)</span></h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Opción</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Marker position</strong></td>
+                    <td>Posición del marcador que indica el tiempo actual.</td>
+                </tr>
+                <tr>
+                    <td><strong>Invert strings</strong></td>
+                    <td>Invierte el orden de las cuerdas (Mi grave arriba).</td>
+                </tr>
+                <tr>
+                    <td><strong>Invert strings in preview</strong></td>
+                    <td>Invierte las cuerdas en la vista 3D.</td>
+                </tr>
+                <tr>
+                    <td><strong>Show tempo instead of BPM</strong></td>
+                    <td>Muestra el tempo en negras por segundo en lugar de BPM.</td>
+                </tr>
+                <tr>
+                    <td><strong>Show chord ids</strong></td>
+                    <td>Muestra los IDs de los acordes en el chart.</td>
+                </tr>
+                <tr>
+                    <td><strong>Show grid</strong></td>
+                    <td>Muestra u oculta la cuadrícula.</td>
+                </tr>
+                <tr>
+                    <td><strong>FPS</strong></td>
+                    <td>Frecuencia de cuadros por segundo objetivo.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ============================================================ -->
+        <!-- 2.5. ATAJOS                                                    -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-2-5">2.5. Atajos de Teclado <span style="font-size:0.7em;color:#6a8aaa;">(Shortcut config)</span></h3>
+        <p>Permite cambiar los atajos de teclado para diversas acciones. Incluye botones para usar los valores por defecto, los de EoF o restablecer los actuales.</p>
+
+        <!-- ============================================================ -->
+        <!-- 2.6. GRÁFICOS Y TEMAS                                         -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-2-6">2.6. Opciones Gráficas y Temas <span style="font-size:0.7em;color:#6a8aaa;">(Graphic options / Theme)</span></h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Opción</th>
+                    <th>Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Theme</strong></td>
+                    <td>Tema principal de la interfaz. Solo "Modern" soporta todas las funciones.</td>
+                </tr>
+                <tr>
+                    <td><strong>Note height/width</strong></td>
+                    <td>Tamaño de las notas.</td>
+                </tr>
+                <tr>
+                    <td><strong>Preview scroll speed</strong></td>
+                    <td>Velocidad de desplazamiento en la vista previa.</td>
+                </tr>
+                <tr>
+                    <td><strong>Textures</strong></td>
+                    <td>Selecciona el conjunto de texturas para la vista 3D (incrustaciones del diapasón, notas, etc.).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ============================================================ -->
+        <!-- 2.7. COLORES                                                  -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-2-7">2.7. Opciones de Color <span style="font-size:0.7em;color:#6a8aaa;">(Color options)</span></h3>
+        <p>Permite personalizar los colores del programa. Algunos cambios requieren reiniciar el programa.</p>
+
+        <!-- ============================================================ -->
+        <!-- 3. EL SONIDO EN CHARTER                                       -->
+        <!-- ============================================================ -->
+        <h2 id="seccion-3">3. El Sonido en Charter</h2>
+
+        <!-- ============================================================ -->
+        <!-- 3.1. EFECTOS                                                  -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-3-1">3.1. Efectos de Sonido</h3>
+
+        <p>Puedes activar/desactivar el sonido MIDI, los aplausos (claps) y el metrónomo usando los botones de la barra de herramientas o los atajos <span class="command">F2</span>, <span class="command">F3</span> y <span class="command">F4</span>.</p>
+
+        <ul>
+            <li><strong>MIDI:</strong> Reproduce las notas usando sonidos MIDI. El instrumento MIDI cambia según el tono y el tipo de nota (mute, armónico, distorsión, overdrive, clean).</li>
+            <li><strong>Claps:</strong> Suenan cada vez que el marcador encuentra un elemento en el modo de edición actual (notas, cambios de tempo, etc.).</li>
+            <li><strong>Metrónomo:</strong> Suena en cada tiempo (beat).</li>
+        </ul>
+
+        <!-- ============================================================ -->
+        <!-- 3.2. STEMS                                                    -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-3-2">3.2. Pistas de Audio <span style="font-size:0.7em;color:#6a8aaa;">(Stems)</span></h3>
+
+        <p>Puedes añadir pistas de audio adicionales usando <span class="menu-path">File > Add audio stem</span>. Para gestionarlas, haz clic derecho en la barra de volumen o ve a <span class="menu-path">Music > Audio stem settings</span>.</p>
+        <ul>
+            <li>Seleccionar una pista</li>
+            <li>Cambiar su offset</li>
+            <li>Eliminarla del proyecto</li>
+        </ul>
+
+        <!-- ============================================================ -->
+        <!-- 3.3. VOLUMEN Y VELOCIDAD                                      -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-3-3">3.3. Volumen y Velocidad de Reproducción</h3>
+
+        <ul>
+            <li><strong>Volumen:</strong> Ajusta el volumen de los efectos (MIDI, claps, metrónomo) y del audio principal con las barras de la barra de herramientas.</li>
+            <li><strong>Velocidad:</strong> Cambia la velocidad de reproducción con los atajos <span class="command">+</span> y <span class="command">-</span>.
+                <ul>
+                    <li>Aumenta/disminuye un 5%</li>
+                    <li>Un 1% con <span class="command">Ctrl</span></li>
+                    <li>Un 25% con <span class="command">Shift</span></li>
+                </ul>
+            </li>
+        </ul>
+
+        <!-- ============================================================ -->
+        <!-- 3.4. FILTROS                                                  -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-3-4">3.4. Filtros de Audio</h3>
+
+        <p>Puedes aplicar filtros <strong>Low Pass</strong>, <strong>Band Pass</strong> y <strong>High Pass</strong> al audio que se está reproduciendo usando los botones de la barra de herramientas. Haz clic derecho en un filtro para cambiar su configuración.</p>
+
+        <!-- ============================================================ -->
+        <!-- 3.5. REPETIDOR                                                -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-3-5">3.5. Repetidor de Secciones <span style="font-size:0.7em;color:#6a8aaa;">(Repeater)</span></h3>
+
+        <p>Permite repetir una sección de la canción. Establece un punto de inicio y uno de final; cuando la reproducción llegue al final, saltará al inicio. El fragmento también se repetirá en la vista previa.</p>
+
+        <!-- ============================================================ -->
+        <!-- 4. CREAR UN CHART DESDE CERO                                 -->
+        <!-- ============================================================ -->
+        <h2 id="seccion-4">4. Crear un Chart desde Cero</h2>
+
+        <!-- ============================================================ -->
+        <!-- 4.1. PREPARACIÓN                                              -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-4-1">4.1. Preparación y Requisitos</h3>
+
+        <ul>
+            <li>Canción en formato de audio de calidad (WAV, FLAC, MP3, OGG).</li>
+            <li>Charter y DLC Builder instalados.</li>
+            <li>(Opcional) Video de referencia, stems, cuenta en CustomsForge.</li>
+        </ul>
+
+        <!-- ============================================================ -->
+        <!-- 4.2. PROYECTO VACÍO                                           -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-4-2">4.2. Crear un Proyecto Vacío desde el Audio</h3>
+
+        <ol>
+            <li>Ve a <span class="menu-path">File > New project > Empty project</span> y selecciona el archivo de audio.</li>
+            <li>Elige la ubicación de la carpeta del proyecto (puede ser la misma que la del audio o la carpeta de charts).</li>
+            <li>Rellena los datos de la canción en <span class="menu-path">File > Song options</span>. La información se leerá automáticamente del archivo de audio si es posible. Los campos son:
+                <ul>
+                    <li><strong>Title</strong> (Título)</li>
+                    <li><strong>Artist name</strong> (Nombre del artista)</li>
+                    <li><strong>Artist name (sorting)</strong> (Nombre para ordenar, ej. "Beatles, The")</li>
+                    <li><strong>Album</strong> (Álbum)</li>
+                    <li><strong>Year</strong> (Año)</li>
+                </ul>
+            </li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- 4.3. MAPA DE TEMPO                                            -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-4-3">4.3. Preparar el Mapa de Tempo</h3>
+
+        <p>El mapa de tempo define el ritmo y la estructura de la canción.</p>
+
+        <ul>
+            <li><strong>Edición básica:</strong> Arrastra los tiempos (beats) para colocarlos en el lugar correcto. Al arrastrar, el tiempo se "ancla" (se muestra una flecha y el BPM). Para desanclarlo, pasa el ratón sobre él y presiona <span class="command">A</span>.</li>
+            <li><strong>Atajos útiles (con el ratón sobre un beat):</strong>
+                <ul>
+                    <li><span class="command">Insert</span> - Insertar beat: Añade un beat nuevo.</li>
+                    <li><span class="command">Delete</span> - Eliminar beat: Elimina el beat.</li>
+                    <li><span class="command">Ctrl+D</span> - Doblar BPM: Duplica el BPM a partir de este beat.</li>
+                    <li><span class="command">Ctrl+H</span> - Reducir BPM: Reduce el BPM a la mitad a partir de este beat.</li>
+                </ul>
+            </li>
+            <li><strong>Otras acciones:</strong>
+                <ul>
+                    <li><strong>Clic derecho:</strong> Abre las opciones del beat para cambiar el BPM y el compás.</li>
+                    <li><strong>Escribir números:</strong> Cambia el compás (ej. <span class="command">4/4</span>).</li>
+                </ul>
+            </li>
+            <li><strong>Waveform:</strong> Usa la forma de onda del audio para ayudarte a colocar los beats (los golpes de bombo y los acentos suelen crear picos).</li>
+        </ul>
+
+        <div class="note-box">
+            <strong>🔊 Silencio inicial:</strong> El estándar de CustomsForge requiere que haya al menos <strong>10 segundos de silencio</strong> antes de la primera nota. Usa <span class="menu-path">Edit > Add default silence with empty bars</span> para añadirlo automáticamente.
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 4.4. ARREGLO                                                   -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-4-4">4.4. Añadir un Arreglo <span style="font-size:0.7em;color:#6a8aaa;">(Arrangement)</span></h3>
+
+        <ol>
+            <li>Ve a <span class="menu-path">Arrangement > New Arrangement...</span>.</li>
+            <li>Configura las opciones:
+                <ul>
+                    <li><strong>Arrangement type y subtype:</strong> Tipo y subtipo del arreglo.</li>
+                    <li><strong>Starting tone:</strong> Tono inicial.</li>
+                    <li><strong>Tuning pitch:</strong> Frecuencia de afinación (440 Hz por defecto).</li>
+                    <li><strong>Tuning:</strong> Afinación del instrumento (notas al aire).</li>
+                    <li><strong>Strings:</strong> Número de cuerdas (máx. 6).</li>
+                    <li><strong>Capo:</strong> Traste del capotraste.</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h4>✏️ Editando el arreglo</h4>
+        <ul>
+            <li><strong>Diapasón 2D:</strong> Área central para colocar y editar notas.</li>
+            <li><strong>Chart Map:</strong> Barra inferior para navegar rápidamente por el chart.</li>
+            <li><strong>Quick Edit:</strong> Panel contextual para editar el elemento seleccionado.</li>
+            <li><strong>Chord templates:</strong> Lista de plantillas de acordes usadas.</li>
+            <li><strong>Errors:</strong> Lista de errores de validación.</li>
+            <li><strong>3D preview:</strong> Vista previa de cómo se verá en el juego.</li>
+        </ul>
+
+        <h4>📌 Colocación de elementos</h4>
+
+        <ul>
+            <li><strong>Secciones, Frases y Eventos:</strong> Haz clic derecho en el área superior (encima de las notas) y elige la opción.</li>
+            <li><strong>Cambios de Tono:</strong> Igual que las secciones, en el área superior. Escribe el nombre del tono.</li>
+            <li><strong>FHP (Posición de Mano):</strong> Haz clic derecho en el área de FHP. Define el traste inicial y la anchura.</li>
+            <li><strong>Notas:</strong>
+                <ul>
+                    <li><strong>Añadir/Eliminar:</strong> Clic derecho en el punto deseado o arrastra para añadir/eliminar varias.</li>
+                    <li><strong>Cambiar traste:</strong> Selecciona la nota y escribe el nuevo número.</li>
+                    <li><strong>Cambiar sustain:</strong> Usa la rueda del ratón sobre la cola.</li>
+                    <li><strong>Técnicas:</strong> Usa el menú <span class="menu-path">Guitar > Note status operations</span>.</li>
+                    <li><strong>Quick Edit (Notas):</strong> Aquí puedes configurar:
+                        <ul>
+                            <li><strong>Flags (Técnicas):</strong> <span class="command">Link next</span>, <span class="command">Split</span>, <span class="command">No notes</span>, <span class="command">Ignore</span>, etc.</li>
+                            <li><strong>Chord template:</strong> Edita el nombre y la forma del acorde.</li>
+                            <li><strong>Bend editor:</strong> Crea y elimina puntos de bend.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><strong>Formas de Mano (Hand Shapes):</strong> Haz clic derecho para añadir. También se generan automáticamente al añadir acordes. Se editan como las plantillas de acordes.</li>
+        </ul>
+
+        <!-- ============================================================ -->
+        <!-- 4.5. VALIDAR                                                  -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-4-5">4.5. Validar y Corregir Errores</h3>
+
+        <p>Es crucial validar el chart para asegurar que funciona correctamente en el juego.</p>
+
+        <ol>
+            <li>Revisa la pestaña <strong>Errors</strong> para ver una lista de problemas.</li>
+            <li>Haz doble clic en un error para ir directamente a su ubicación.</li>
+        </ol>
+
+        <h4>⚠️ Errores comunes</h4>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Error</th>
+                    <th>Solución</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>"Finger in sound is different than finger in hand shape"</td>
+                    <td>La digitación del acorde no coincide con la de la forma de mano. Usa el botón <strong>"Set template on chords"</strong> en la forma de mano para sincronizarlas.</td>
+                </tr>
+                <tr>
+                    <td>"First beat is set before 10 seconds have passed"</td>
+                    <td>No hay suficiente silencio inicial. Usa <span class="menu-path">Edit > Add default starting silence...</span>.</td>
+                </tr>
+                <tr>
+                    <td>"Note in wrong FHP"</td>
+                    <td>La nota está fuera del rango de la FHP. Ajusta la FHP.</td>
+                </tr>
+                <tr>
+                    <td>"Slide starts on open string"</td>
+                    <td>No se permiten slides desde cuerdas al aire. Corrige el traste.</td>
+                </tr>
+                <tr>
+                    <td>"Fret Hand Position change inside a Hand Shape"</td>
+                    <td>La FHP está dentro de una forma de mano. Elimina la FHP o divide la forma de mano.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ============================================================ -->
+        <!-- 4.6. VOCES                                                    -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-4-6">4.6. (Opcional) Añadir Voces</h3>
+
+        <ol>
+            <li>Crea una nueva ruta vocal en <span class="menu-path">Arrangement > New Vocal Arrangement...</span>.</li>
+            <li><strong>Editar voces:</strong>
+                <ul>
+                    <li><strong>Clic derecho:</strong> Añade una sílaba o palabra.</li>
+                    <li>Escribe el texto. Puedes usar <span class="command">-</span> al final para que se conecte a la siguiente sílaba, y <span class="command">+</span> para marcar el final de una frase.</li>
+                    <li><strong>Atajos:</strong> <span class="command">W</span> para alternar "word part", <span class="command">E</span> para alternar "phrase end".</li>
+                    <li><span class="command">Ctrl + Espacio</span> - Coloca una sílaba desde la pestaña "Text".</li>
+                </ul>
+            </li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- 4.7. SHOWLIGHTS                                               -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-4-7">4.7. (Opcional) Añadir Showlights</h3>
+
+        <p>Edita los cambios de color de la niebla y las luces del escenario. Define el color de la niebla, el de los haces de luz y si los láseres están activados.</p>
+
+        <!-- ============================================================ -->
+        <!-- 4.8. DLC BUILDER                                              -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-4-8">4.8. Compilar el Archivo en DLC Builder</h3>
+
+        <ol>
+            <li>Carga todos los arreglos (guitarra/bajo, voces, showlights) en el DLC Builder.</li>
+            <li>Configura los tonos que usarás en la canción.</li>
+            <li>Selecciona el audio principal y genera el audio de vista previa.</li>
+            <li>Añade la carátula del álbum.</li>
+            <li>Valida los arreglos en DLCB.</li>
+            <li>Construye el archivo <code>.psarc</code> (para pruebas o para lanzamiento).</li>
+        </ol>
+
+        <!-- ============================================================ -->
+        <!-- 4.9. PRUEBAS                                                  -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-4-9">4.9. Pruebas y Ajustes Finales</h3>
+
+        <ul>
+            <li>Juega la canción tú mismo para comprobar que todo suena y se siente bien.</li>
+            <li>Ajusta el volumen de los tonos.</li>
+            <li>Usa la vista previa 3D para revisar la estética.</li>
+            <li>Compara tu chart con las <strong>"Guidelines for official-looking customs"</strong> para pulir los detalles.</li>
+            <li>Sube tu chart a CustomsForge y compártelo con la comunidad.</li>
+        </ul>
+
+        <!-- ============================================================ -->
+        <!-- 5. CREAR UN CHART DESDE UNA TAB                              -->
+        <!-- ============================================================ -->
+        <h2 id="seccion-5">5. Crear un Chart a partir de una Tab Existente</h2>
+
+        <!-- ============================================================ -->
+        <!-- 5.1. IMPORTAR                                                 -->
+        <!-- ============================================================ -->
+        <h3 id="seccion-5-1">5.1. Importar una Tab o Proyecto Existente</h3>
+
+        <p>Puedes usar tablaturas de Guitar Pro (<code>.gp</code>), archivos de proyectos de Charter (<code>.chart</code>) o incluso descomprimir DLCs de Rocksmith (<code>.psarc</code>) para usarlos como base.</p>
+
+        <ul>
+            <li><strong>Desde GP7+ con audio:</strong> <span class="menu-path">File > New project > Project from GP7+ file</span>.</li>
+            <li><strong>Desde GP sin audio:</strong> Primero crea un proyecto vacío con el audio de la canción y luego importa la tab arrastrándola al editor o usando <span class="menu-path">File > Import > Guitar Pro File</span>.</li>
+            <li><strong>Desde PSARC:</strong> Descomprime el <code>.psarc</code> con DLC Builder (configura la importación para convertir el audio a WAV/OGG). Luego, en Charter, usa <span class="menu-path">File > New project > Project from RS XML</span>.</li>
+        </ul>
+
+        <div class="warning-box">
+            <strong>⚠️ ¡IMPORTANTE!</strong> Importar una tablatura de Guitar Pro no es suficiente para hacer un buen chart. Las tablaturas no incluyen información específica de Rocksmith. Debes revisar y añadir:
+            <ul style="margin-top:8px;">
+                <li><strong>FHP (Posiciones de Mano):</strong> Se generan automáticamente y deben verificarse en toda la canción.</li>
+                <li><strong>Hand Shapes (Formas de Mano):</strong> También se generan y deben comprobarse.</li>
+                <li><strong>Secciones, Frases y Cambios de Tono:</strong> No se importan, debes crearlos manualmente.</li>
+                <li><strong>Técnicas Especiales:</strong> La forma de representar técnicas como "pick scrapes" es específica de Rocksmith.</li>
+                <li><strong>Estilo General:</strong> Asegúrate de que el chart siga los estándares de CustomsForge.</li>
+            </ul>
+        </div>
+
+        <p><strong>Siguiente paso:</strong> Después de importar, procede al paso de <strong>Validación y Corrección de Errores</strong> (Sección 4.5).</p>
+
+        <!-- ============================================================ -->
+        <!-- PIE DE PÁGINA                                                -->
+        <!-- ============================================================ -->
+        <div class="footer">
+            <p>📘 <strong>Charter</strong> — Manual de Uso y Creación de Charts</p>
+            <p>Basado en el repositorio <a href="https://github.com/Lordszynencja/Charter.wiki" target="_blank">github.com/Lordszynencja/Charter.wiki</a></p>
+            <p style="font-size:0.8em;color:#4a6a8a;">Generado con ❤️ para la comunidad de CustomsForge</p>
+        </div>
+
+    </div>
+    <!-- /container -->
+
+</body>
+</html>
