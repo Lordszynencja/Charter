@@ -203,7 +203,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 
 	private void importRSVocalsXML() {
 		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".xml" },
-				Label.RS_ARRANGEMENT_FILE.label());
+				Label.RS_VOCALS_FILE.label());
 		if (file == null) {
 			return;
 		}
