@@ -181,7 +181,7 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 
 		final File file = files.get(0);
 		final String fileName = file.getName();
-		final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+		final String extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
 		if (!fileExtensionHandlers.containsKey(extension)) {
 			return false;
 		}
@@ -251,7 +251,7 @@ public class FileDropHandler implements DropTargetListener, Initiable {
 
 	public void importFile(final File file) {
 		final String fileName = file.getName();
-		final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+		final String extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
 		fileExtensionHandlers.get(extension).accept(file);
 	}
 }
