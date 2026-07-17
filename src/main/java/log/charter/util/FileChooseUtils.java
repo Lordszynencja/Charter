@@ -5,6 +5,8 @@ import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import java.awt.Component;
 import java.awt.Container;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -12,12 +14,24 @@ import javax.swing.plaf.metal.MetalComboBoxButton;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Localization.Label;
+import log.charter.io.Logger;
 import log.charter.sound.SoundFileType;
+import log.charter.util.NativeFileDialogs.DialogFilter;
 
 public class FileChooseUtils {
 	private static String extension(final String fileName) {
 		final int dotIndex = fileName.lastIndexOf('.');
 		return fileName.substring(dotIndex + 1).toLowerCase();
+	}
+
+	// turns [".gp3", ".gp4"] into the "gp3,gp4" form the native dialog wants
+	private static String nativeFilterSpec(final String... extensions) {
+		final List<String> cleaned = new ArrayList<>();
+		for (final String extension : extensions) {
+			cleaned.add(extension.startsWith(".") ? extension.substring(1) : extension);
+		}
+
+		return String.join(",", cleaned);
 	}
 
 	private static File showDialog(final Component parent, final JFileChooser chooser) {
@@ -29,6 +43,34 @@ public class FileChooseUtils {
 	}
 
 	public static File chooseMusicFile(final Component parent, final String startingDir) {
+		final File file = chooseMusicFileInternal(parent, startingDir);
+		if (file == null) {
+			return null;
+		}
+		if (SoundFileType.fromExtension(extension(file.getName())) == null) {
+			showPopup(parent, Label.UNSUPPORTED_MUSIC_FORMAT);
+			return null;
+		}
+
+		return file;
+	}
+
+	private static File chooseMusicFileInternal(final Component parent, final String startingDir) {
+		if (NativeFileDialogs.available()) {
+			try {
+				final List<String> extensions = new ArrayList<>();
+				for (final SoundFileType type : SoundFileType.values()) {
+					extensions.add(type.extension);
+				}
+				final DialogFilter filter = new DialogFilter(Label.SUPPORTED_MUSIC_FILE.label(),
+						String.join(",", extensions));
+
+				return NativeFileDialogs.openFile(startingDir, List.of(filter));
+			} catch (final Throwable t) {
+				Logger.error("native file dialog failed, using the swing one", t);
+			}
+		}
+
 		final JFileChooser chooser = new JFileChooser(new File(startingDir));
 		chooser.setFileFilter(new FileFilter() {
 			@Override
@@ -46,20 +88,20 @@ public class FileChooseUtils {
 			}
 		});
 
-		final File file = showDialog(parent, chooser);
-		if (file == null) {
-			return null;
-		}
-		if (SoundFileType.fromExtension(extension(file.getName())) == null) {
-			showPopup(parent, Label.UNSUPPORTED_MUSIC_FORMAT);
-			return null;
-		}
-
-		return file;
+		return showDialog(parent, chooser);
 	}
 
 	public static File chooseFile(final Component parent, final String startingDir, final String[] extensions,
 			final String description) {
+		if (NativeFileDialogs.available()) {
+			try {
+				final DialogFilter filter = new DialogFilter(description, nativeFilterSpec(extensions));
+				return NativeFileDialogs.openFile(startingDir, List.of(filter));
+			} catch (final Throwable t) {
+				Logger.error("native file dialog failed, using the swing one", t);
+			}
+		}
+
 		final JFileChooser chooser = new JFileChooser(new File(startingDir));
 		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.addChoosableFileFilter(new FileFilter() {
@@ -89,6 +131,19 @@ public class FileChooseUtils {
 
 	public static File chooseFile(final Component parent, final String startingDir, final String[] extensions,
 			final String[] descriptions) {
+		if (NativeFileDialogs.available()) {
+			try {
+				final List<DialogFilter> filters = new ArrayList<>();
+				for (int i = 0; i < extensions.length; i++) {
+					filters.add(new DialogFilter(descriptions[i], nativeFilterSpec(extensions[i])));
+				}
+
+				return NativeFileDialogs.openFile(startingDir, filters);
+			} catch (final Throwable t) {
+				Logger.error("native file dialog failed, using the swing one", t);
+			}
+		}
+
 		final JFileChooser chooser = new JFileChooser(new File(startingDir));
 		chooser.setAcceptAllFileFilterUsed(false);
 
@@ -127,6 +182,14 @@ public class FileChooseUtils {
 	}
 
 	public static File chooseDirectory(final Component parent, final String startingPath) {
+		if (NativeFileDialogs.available()) {
+			try {
+				return NativeFileDialogs.pickFolder(startingPath);
+			} catch (final Throwable t) {
+				Logger.error("native file dialog failed, using the swing one", t);
+			}
+		}
+
 		final JFileChooser chooser = new JFileChooser(new File(startingPath));
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		chooser.setApproveButtonText(Label.SAVE_AS.label());
