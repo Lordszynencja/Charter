@@ -59,13 +59,15 @@ public class FileChooseUtils {
 		if (NativeFileDialogs.available()) {
 			try {
 				final List<String> extensions = new ArrayList<>();
+				final List<DialogFilter> filters = new ArrayList<>();
 				for (final SoundFileType type : SoundFileType.values()) {
 					extensions.add(type.extension);
+					filters.add(new DialogFilter(type.name, type.extension));
 				}
-				final DialogFilter filter = new DialogFilter(Label.SUPPORTED_MUSIC_FILE.label(),
-						String.join(",", extensions));
+				// combined filter goes first so every format shows up by default
+				filters.add(0, new DialogFilter(Label.SUPPORTED_MUSIC_FILE.label(), String.join(",", extensions)));
 
-				return NativeFileDialogs.openFile(startingDir, List.of(filter));
+				return NativeFileDialogs.openFile(startingDir, filters);
 			} catch (final Throwable t) {
 				Logger.error("native file dialog failed, using the swing one", t);
 			}
