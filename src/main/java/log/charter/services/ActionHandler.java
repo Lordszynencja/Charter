@@ -47,6 +47,9 @@ import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
 
 public class ActionHandler implements Initiable {
+	public static record TypingPart(int value, int part, int totalParts) {
+	}
+
 	private AudioHandler audioHandler;
 	private BeatsService beatsService;
 	private BPMDoubler bpmDoubler;
@@ -201,6 +204,8 @@ public class ActionHandler implements Initiable {
 
 	private void handleNumber(final int number) {
 		modeManager.getHandler().handleNumber(number);
+
+		chartToolbar.updateTypingPartValue();
 	}
 
 	private void doubleGridSize() {
@@ -293,6 +298,16 @@ public class ActionHandler implements Initiable {
 			case GUITAR -> modeManager.getGuitarModeHandler().switchTypingPart();
 			default -> throw new IllegalArgumentException("Unexpected value: " + modeManager.getMode());
 		}
+
+		chartToolbar.updateTypingPartValue();
+	}
+
+	public TypingPart getTypingPart() {
+		return switch (modeManager.getMode()) {
+			case TEMPO_MAP -> modeManager.getTempoMapModeHandler().getTypingPart();
+			case GUITAR -> modeManager.getGuitarModeHandler().getTypingPart();
+			default -> new TypingPart(0, 0, 0);
+		};
 	}
 
 	public void changeZoom(final int change) {

@@ -215,7 +215,7 @@ public class Preview3DPanel extends AWTGLCanvas implements Initiable {
 	private void drawVideo(final Timer timer) {
 		// videoDrawer.draw(shadersHolder, getWidth(), getHeight());
 		if (DebugConfig.frameTimes) {
-			timer.addTimestamp("videoDrawer");
+			// timer.addTimestamp("videoDrawer");
 		}
 	}
 
