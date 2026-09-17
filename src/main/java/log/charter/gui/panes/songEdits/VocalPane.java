@@ -15,6 +15,7 @@ import log.charter.data.types.PositionType;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.ParamsPane;
+import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
@@ -79,8 +80,10 @@ public class VocalPane extends ParamsPane {
 	}
 
 	private void createElementsAndShow(final Runnable onSave) {
-		addStringConfigValue(0, inputSize, inputSize * 7 / 2, Label.VOCAL_PANE_LYRIC, text, inputSize * 10, null,
-				val -> text = val, true);
+		final TextInputWithValidation input = addStringConfigValue(0, inputSize, inputSize * 7 / 2,
+				Label.VOCAL_PANE_LYRIC, text, inputSize * 10, null, val -> text = val, true);
+		input.setCaretPosition(text.length());
+
 		addConfigCheckbox(1, inputSize, inputSize * 7 / 2, Label.VOCAL_PANE_WORD_PART, wordPart, val -> {
 			wordPart = val;
 
@@ -89,6 +92,7 @@ public class VocalPane extends ParamsPane {
 			phraseEndCheckbox.setSelected(false);
 			phraseEndCheckbox.setEnabled(!val);
 		});
+
 		addConfigCheckbox(2, inputSize, inputSize * 7 / 2, Label.VOCAL_PANE_PHRASE_END, phraseEnd, val -> {
 			phraseEnd = val;
 

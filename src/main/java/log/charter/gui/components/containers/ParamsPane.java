@@ -314,12 +314,14 @@ public class ParamsPane extends JDialog implements WindowListener {
 		addConfigValue(row, x, labelWidth, label, input, inputLength);
 	}
 
-	protected void addStringConfigValue(final int row, final int x, final int labelWidth, final Label label,
-			final String value, final int inputLength, final ValueValidator validator, final Consumer<String> setter,
-			final boolean allowWrong) {
+	protected TextInputWithValidation addStringConfigValue(final int row, final int x, final int labelWidth,
+			final Label label, final String value, final int inputLength, final ValueValidator validator,
+			final Consumer<String> setter, final boolean allowWrong) {
 		final TextInputWithValidation input = new TextInputWithValidation(value, inputLength, validator, setter,
 				allowWrong);
 		addConfigValue(row, x, labelWidth, label, input, inputLength);
+
+		return input;
 	}
 
 	protected void addConfigValue(final int row, final int x, int labelWidth, final Label label,
