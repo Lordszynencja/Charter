@@ -1,5 +1,6 @@
 package log.charter.gui.menuHandlers;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -44,6 +45,26 @@ abstract class CharterMenuHandler {
 				ComponentUtils.showPopup(charterFrame, Label.ERROR, t.getLocalizedMessage());
 			}
 		});
+		setDefaultGraphicalValues(item);
+
+		return item;
+	}
+
+	protected JMenuItem createCheckboxItem(final Label label, final Runnable onAction, final boolean value) {
+		return createCheckboxItem(label.label(), onAction, value);
+	}
+
+	protected JMenuItem createCheckboxItem(final String label, final Runnable onAction, final boolean value) {
+		final JCheckBoxMenuItem item = new JCheckBoxMenuItem(label);
+		item.addActionListener(e -> {
+			try {
+				onAction.run();
+			} catch (final Throwable t) {
+				Logger.error("Couldn't do action " + label, t);
+				ComponentUtils.showPopup(charterFrame, Label.ERROR, t.getLocalizedMessage());
+			}
+		});
+		item.setSelected(value);
 		setDefaultGraphicalValues(item);
 
 		return item;

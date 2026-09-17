@@ -61,6 +61,21 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		}
 	}
 
+	private Color getArrangementLabelColor(final Arrangement arrangement) {
+		Color color = switch (arrangement.arrangementType) {
+			case Lead -> new Color(255, 200, 80);
+			case Rhythm -> new Color(120, 255, 120);
+			case Bass -> new Color(80, 120, 255);
+			default -> new Color(255, 255, 120);
+		};
+
+		if (arrangement.ignore) {
+			color = color.darker().darker();
+		}
+
+		return color;
+	}
+
 	private void addArrangementsList(final JMenu menu) {
 		for (int i = 0; i < chartData.songChart.arrangements.size(); i++) {
 			final Arrangement arrangement = chartData.songChart.arrangements.get(i);
@@ -70,12 +85,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 			final int arrangementId = i;
 
 			final JMenuItem menuItem = createItem(arrangementLabel, () -> modeManager.setArrangement(arrangementId));
-			menuItem.setForeground(switch (arrangement.arrangementType) {
-				case Lead -> new Color(255, 200, 80);
-				case Rhythm -> new Color(120, 255, 120);
-				case Bass -> new Color(80, 120, 255);
-				default -> new Color(255, 255, 120);
-			});
+			menuItem.setForeground(getArrangementLabelColor(arrangement));
 			menuItem.setFont(menuItem.getFont().deriveFont(Font.BOLD));
 			menu.add(menuItem);
 		}
@@ -125,6 +135,9 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		} else if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
 			menu.add(createItem(Label.ARRANGEMENT_OPTIONS, this::editArrangementSettings));
+			// menu.add(createItem(Label.CLONE_ARRANGEMENT, this::cloneArrangement));
+			menu.add(createCheckboxItem(Label.IGNORE_ARRANGEMENT, this::toggleIgnoreArrangement,
+					chartData.currentArrangement().ignore));
 
 			menu.addSeparator();
 			createLevelMenuItems(menu);
@@ -175,6 +188,19 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 
 	private void editArrangementSettings() {
 		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, null, false);
+	}
+
+	private void cloneArrangement() {
+		// TODO copy the arrangement into a new one
+
+		charterMenuBar.refreshMenus();
+	}
+
+	private void toggleIgnoreArrangement() {
+		final Arrangement arrangement = chartData.currentArrangement();
+		arrangement.ignore = !arrangement.ignore;
+
+		charterMenuBar.refreshMenus();
 	}
 
 	private void addLevel() {

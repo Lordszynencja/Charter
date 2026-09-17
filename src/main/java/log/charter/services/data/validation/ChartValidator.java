@@ -115,6 +115,9 @@ public class ChartValidator implements Initiable {
 		final List<Arrangement> arrangements = chartData.songChart.arrangements;
 		for (int arrangementId = 0; arrangementId < arrangements.size(); arrangementId++) {
 			final Arrangement arrangement = arrangements.get(arrangementId);
+			if (arrangement.ignore) {
+				continue;
+			}
 
 			final ChartPosition errorPosition = chartPositionGenerator.position().arrangement(arrangementId);
 			validateOverlapping(arrangement.eventPoints, Label.OVERLAPPING_EVENT_POINT,

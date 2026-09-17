@@ -64,6 +64,8 @@ public class Arrangement {
 	public String startingTone = "tone";
 	@XStreamAsAttribute
 	public boolean pickedBass = false;
+	@XStreamAsAttribute
+	public boolean ignore = false;
 
 	public List<EventPoint> eventPoints = new ArrayList<>();
 	@XStreamConverter(PhraseDataConverter.class)

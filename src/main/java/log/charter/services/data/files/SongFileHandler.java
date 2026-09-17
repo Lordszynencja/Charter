@@ -88,7 +88,7 @@ public class SongFileHandler {
 	}
 
 	private static String generateVocalPathFileName(final int id, final VocalPath vocals) {
-		final String vocalsName = Optional.ofNullable(vocals.name).map(n -> "_" + n.replaceAll("[^ \\-0-9a-zA-Z]", ""))
+		final String vocalsName = Optional.ofNullable(vocals.name).map(n -> n.replaceAll("[^ \\-0-9a-zA-Z]", ""))
 				.orElse("");
 
 		if (vocalsName.isBlank()) {
@@ -141,7 +141,9 @@ public class SongFileHandler {
 
 		int id = 1;
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
-			writeRSXML(timer, dir, id, arrangement);
+			if (!arrangement.ignore) {
+				writeRSXML(timer, dir, id, arrangement);
+			}
 			id++;
 		}
 
