@@ -399,6 +399,7 @@ public class ChordTemplateEditor implements ChordTemplateEditorInterface, MouseL
 		final ChordTemplate chordTemplate = chordTemplateSupplier.get();
 		chordNameInput.setTextWithoutUpdate(chordTemplate.chordName);
 		chordNameInput.removeLabels();
+		chordNameAdviceButton.removeLabels();
 
 		for (int i = 0; i < chartData.currentStrings(); i++) {
 			final Integer fret = chordTemplate.frets.get(i);
