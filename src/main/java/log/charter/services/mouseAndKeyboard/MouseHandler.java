@@ -359,11 +359,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		mouseButtonPressReleaseHandler.clear();
 	}
 
-	@Override
-	public void mouseWheelMoved(final MouseWheelEvent e) {
-		int change = -e.getWheelRotation();
-		Logger.debug("Mouse wheel moved, rotation: " + change);
-
+	private void firstMouseWheelMoved(int change) {
 		if (keyboardHandler.ctrl()) {
 			if (keyboardHandler.shift()) {
 				change *= 16;
@@ -377,6 +373,35 @@ public class MouseHandler implements MouseListener, MouseMotionListener, MouseWh
 		}
 
 		chartMap.redraw();
+	}
+
+	private void secondMouseWheelMoved(int change) {
+		change *= 100;
+		if (keyboardHandler.ctrl()) {
+			change /= 10;
+		}
+		if (keyboardHandler.shift()) {
+			change *= 10;
+		}
+
+		chartTimeHandler.nextTime(chartTimeHandler.time() + change);
+	}
+
+	@Override
+	public void mouseWheelMoved(final MouseWheelEvent e) {
+		final int change = -e.getWheelRotation();
+		Logger.debug("Mouse wheel " + e.getButton() + " moved, rotation: " + change);
+
+		switch (e.getButton()) {
+			case 0:
+				firstMouseWheelMoved(change);
+				break;
+			case 1:
+				secondMouseWheelMoved(change);
+				break;
+			default:
+				break;
+		}
 	}
 
 }
