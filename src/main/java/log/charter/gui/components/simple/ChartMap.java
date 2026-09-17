@@ -375,11 +375,12 @@ public class ChartMap extends Component implements Initiable, MouseListener, Mou
 			while (!imageMakerThread.isInterrupted()) {
 				while (System.currentTimeMillis() - lastRedraw < 10_000 && !redraw) {
 					try {
-						Thread.sleep(1);
+						Thread.sleep(100);
 					} catch (final InterruptedException e) {
 						return;
 					}
 				}
+
 				try {
 					background = createBackground();
 					lastRedraw = System.currentTimeMillis();
