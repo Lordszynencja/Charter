@@ -566,7 +566,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 	private void resizeLabel(final AtomicInteger x, final JLabel l, final int expectedMaxTextLength) {
 		l.setFont(l.getFont().deriveFont(GraphicalConfig.inputSize / 1.6f));
-		final int width = expectedMaxTextLength * l.getFont().getSize();
+		final int width = (int) (expectedMaxTextLength * l.getFont().getSize() / 1.6f);
 		l.setBounds(x.getAndAdd(horizontalSpacing + width), verticalSpacing, width, GraphicalConfig.inputSize);
 	}
 
@@ -650,8 +650,10 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		x.addAndGet(horizontalSpacing * 2);
 		resizeGridInputs(x);
 
-		x.addAndGet(horizontalSpacing * 2);
-		resizeLabel(x, typingPart, 5);
+		if (modeManager.modeIs(EditMode.TEMPO_MAP, EditMode.GUITAR)) {
+			x.addAndGet(horizontalSpacing * 2);
+			resizeLabel(x, typingPart, 5);
+		}
 
 		x.addAndGet(horizontalSpacing * 2);
 		resizeButton(x, chartLock);

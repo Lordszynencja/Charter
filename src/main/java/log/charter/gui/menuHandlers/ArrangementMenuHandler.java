@@ -17,11 +17,13 @@ import log.charter.gui.panes.songSettings.VocalPathSettingsPane;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.services.Action;
 import log.charter.services.data.LevelSquisher;
+import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
 public class ArrangementMenuHandler extends CharterMenuHandler {
+	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
@@ -163,7 +165,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		chartData.songChart.arrangements.add(new Arrangement(ArrangementType.Lead));
 		modeManager.setArrangement(chartData.songChart.arrangements.size() - 1);
 
-		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, () -> {
+		new ArrangementSettingsPane(arrangementFixer, charterMenuBar, chartData, charterFrame, selectionManager, () -> {
 			if (previousEditMode == EditMode.GUITAR) {
 				modeManager.setArrangement(previousArrangement);
 				modeManager.setLevel(previousDifficulty);
@@ -195,7 +197,8 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 	}
 
 	private void editArrangementSettings() {
-		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, null, false);
+		new ArrangementSettingsPane(arrangementFixer, charterMenuBar, chartData, charterFrame, selectionManager, null,
+				false);
 	}
 
 	private void cloneArrangement() {
