@@ -26,6 +26,7 @@ import log.charter.data.song.position.fractional.IConstantFractionalPosition;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.io.rsc.xml.converters.ArrangementConverter;
 import log.charter.io.rsc.xml.converters.PhraseDataConverter;
+import log.charter.util.CollectionUtils;
 
 @XStreamAlias("arrangement")
 @XStreamInclude({ ChordTemplate.class, EventPoint.class, Level.class, Phrase.class, ToneChange.class })
@@ -82,6 +83,24 @@ public class Arrangement {
 	public Arrangement(final ArrangementType arrangementType) {
 		this.arrangementType = arrangementType;
 		setLevel(0, new Level());
+	}
+
+	public Arrangement(final Arrangement other) {
+		arrangementType = other.arrangementType;
+		arrangementSubtype = other.arrangementSubtype;
+		tuning = new Tuning(other.tuning);
+		capo = other.capo;
+		centOffset = other.centOffset;
+		startingTone = other.startingTone;
+		pickedBass = other.pickedBass;
+		ignore = other.ignore;
+
+		eventPoints = CollectionUtils.map(other.eventPoints, EventPoint::new);
+		phrases = CollectionUtils.map(other.phrases, k -> k, Phrase::new);
+		tones = new HashSet<>(other.tones);
+		toneChanges = CollectionUtils.map(other.toneChanges, ToneChange::new);
+		chordTemplates = CollectionUtils.map(other.chordTemplates, ChordTemplate::new);
+		levels = CollectionUtils.map(other.levels, Level::new);
 	}
 
 	public Level getLevel(final int id) {

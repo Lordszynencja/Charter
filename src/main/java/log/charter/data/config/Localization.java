@@ -97,6 +97,7 @@ public class Localization {
 		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
 		CHORD_WITH_SPLIT_AND_ONLY_BOX("Chord has both Split and Only box flags marked"), //
 		CLONE_ARRANGEMENT("Clone arrangement"), //
+		CLONE_VOCAL_PATH("Clone vocal path"), //
 		CONFIG("Config"), //
 		CONFIG_AUDIO("Audio"), //
 		CONFIG_DISPLAY("Display"), //

@@ -129,13 +129,14 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		if (modeManager.getMode() == EditMode.VOCALS) {
 			menu.addSeparator();
 			menu.add(createItem(Label.VOCAL_PATH_OPTIONS, this::editVocalPathSettings));
+			menu.add(createItem(Label.CLONE_VOCAL_PATH, this::cloneVocalPath));
 
 			menu.addSeparator();
 			menu.add(createItem(Label.DELETE_VOCAL_PATH, this::deleteVocalPath));
 		} else if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
 			menu.add(createItem(Label.ARRANGEMENT_OPTIONS, this::editArrangementSettings));
-			// menu.add(createItem(Label.CLONE_ARRANGEMENT, this::cloneArrangement));
+			menu.add(createItem(Label.CLONE_ARRANGEMENT, this::cloneArrangement));
 			menu.add(createCheckboxItem(Label.IGNORE_ARRANGEMENT, this::toggleIgnoreArrangement,
 					chartData.currentArrangement().ignore));
 
@@ -186,12 +187,20 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 				chartData.currentVocals(), false);
 	}
 
+	private void cloneVocalPath() {
+		final VocalPath vocalPath = new VocalPath(chartData.currentVocals());
+		chartData.songChart.vocalPaths.add(vocalPath);
+
+		charterMenuBar.refreshMenus();
+	}
+
 	private void editArrangementSettings() {
 		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, null, false);
 	}
 
 	private void cloneArrangement() {
-		// TODO copy the arrangement into a new one
+		final Arrangement arrangement = new Arrangement(chartData.currentArrangement());
+		chartData.songChart.arrangements.add(arrangement);
 
 		charterMenuBar.refreshMenus();
 	}
