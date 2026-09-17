@@ -264,6 +264,8 @@ public class ArrangementFixer {
 				break;
 			}
 			if (nextChord.templateId() != chord.templateId()) {
+				maxEndPosition = min(maxEndPosition,
+						lastChord.endPosition().add(nextChord.position()).multiply(new Fraction(1, 2)));
 				break;
 			}
 			if (nextChord.distance(lastChord.endPosition()).compareTo(maxDistanceBeforeBreakingHandshape) > 0) {
@@ -277,6 +279,9 @@ public class ArrangementFixer {
 		FractionalPosition endPosition = lastChord.endPosition().position();
 		if (endPosition.compareTo(lastChord) <= 0) {
 			endPosition = endPosition.add(new Fraction(1, 4));
+		}
+		if (endPosition.compareTo(maxEndPosition) > 0) {
+			endPosition = maxEndPosition.position();
 		}
 
 		final HandShape handShape = new HandShape(position, endPosition, chord.templateId());
