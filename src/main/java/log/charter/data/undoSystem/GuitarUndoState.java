@@ -16,6 +16,7 @@ import log.charter.data.song.Level;
 import log.charter.data.song.Phrase;
 import log.charter.data.song.ToneChange;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.gui.components.tabs.TextTab;
 import log.charter.services.data.ChartTimeHandler;
 
 public class GuitarUndoState extends UndoState {
@@ -53,7 +54,7 @@ public class GuitarUndoState extends UndoState {
 	}
 
 	@Override
-	public GuitarUndoState undo(final ChartData data, final ChartTimeHandler chartTimeHandler) {
+	public GuitarUndoState undo(final ChartData data, final ChartTimeHandler chartTimeHandler, final TextTab textTab) {
 		final GuitarUndoState redo = new GuitarUndoState(data, arrangementId, levelId);
 
 		final Arrangement arrangement = data.songChart.arrangements.get(arrangementId);
