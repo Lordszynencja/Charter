@@ -75,7 +75,12 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		};
 
 		if (arrangement.forceExport) {
-			color = color.brighter().brighter();
+			color = switch (arrangement.arrangementType) {
+				case Lead -> new Color(255, 255, 0);
+				case Rhythm -> new Color(0, 255, 0);
+				case Bass -> new Color(0, 0, 255);
+				default -> new Color(255, 255, 255);
+			};
 		} else if (arrangement.ignore) {
 			color = color.darker().darker();
 		}

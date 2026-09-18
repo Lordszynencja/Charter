@@ -172,7 +172,7 @@ public class Localization {
 		FOLDER_EXISTS("Given folder already exists"), //
 		FOLDER_EXISTS_MSG("Do you want to use existing folder?"), //
 		FORCE_ARPEGGIO_IN_RS("in RS"), //
-		FORCE_EXPORT("Force export"), //
+		FORCE_EXPORT("Force export (only after consultation)"), //
 		FPS("FPS"), //
 		FRET("Fret"), //
 		FINGER_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
