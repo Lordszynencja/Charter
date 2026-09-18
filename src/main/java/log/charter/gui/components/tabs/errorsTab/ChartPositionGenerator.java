@@ -59,6 +59,10 @@ public class ChartPositionGenerator {
 			return this;
 		}
 
+		public Integer arrangementId() {
+			return arrangementId;
+		}
+
 		public ChartPosition arrangement(final int arrangementId) {
 			this.arrangementId = arrangementId;
 			return this;

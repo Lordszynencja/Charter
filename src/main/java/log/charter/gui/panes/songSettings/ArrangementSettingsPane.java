@@ -41,12 +41,14 @@ import log.charter.gui.components.simple.TextInputWithValidation;
 import log.charter.gui.components.utils.validators.IntegerValueValidator;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.io.rs.xml.song.ArrangementType;
+import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.sound.data.AudioUtils;
 
 public class ArrangementSettingsPane extends ParamsPane {
 	private static final long serialVersionUID = -3193534671039163160L;
 
+	private final ArrangementFixer arrangementFixer;
 	private final CharterMenuBar charterMenuBar;
 	private final ChartData data;
 	private final CharterFrame frame;
@@ -71,10 +73,12 @@ public class ArrangementSettingsPane extends ParamsPane {
 
 	boolean ignoreEvents = false;
 
-	public ArrangementSettingsPane(final CharterMenuBar charterMenuBar, final ChartData data, final CharterFrame frame,
-			final SelectionManager selectionManager, final Runnable onCancel, final boolean newArrangement) {
+	public ArrangementSettingsPane(final ArrangementFixer arrangementFixer, final CharterMenuBar charterMenuBar,
+			final ChartData data, final CharterFrame frame, final SelectionManager selectionManager,
+			final Runnable onCancel, final boolean newArrangement) {
 		super(frame, Label.ARRANGEMENT_OPTIONS_PANE, inputSize * 20);
 
+		this.arrangementFixer = arrangementFixer;
 		this.charterMenuBar = charterMenuBar;
 		this.data = data;
 		this.frame = frame;
@@ -358,10 +362,7 @@ public class ArrangementSettingsPane extends ParamsPane {
 	private void changeChordTemplate(final ChordTemplate chordTemplate, final int[] fretsDifference) {
 		boolean templateChanged = false;
 		for (final int string : new ArrayList<>(chordTemplate.frets.keySet())) {
-			if (string >= tuning.strings()) {
-				chordTemplate.frets.remove(string);
-				chordTemplate.fingers.remove(string);
-			} else if (fretsDifference[string] != 0) {
+			if (string >= 0 && string < tuning.strings() && fretsDifference[string] != 0) {
 				templateChanged = true;
 				int newFret = chordTemplate.frets.get(string) + fretsDifference[string];
 				if (newFret < 0) {
@@ -428,6 +429,8 @@ public class ArrangementSettingsPane extends ParamsPane {
 		arrangement.pickedBass = pickedBass;
 
 		selectionManager.clear();
+
+		arrangementFixer.fixArrangement(arrangement);
 
 		charterMenuBar.refreshMenus();
 		frame.updateSizes();

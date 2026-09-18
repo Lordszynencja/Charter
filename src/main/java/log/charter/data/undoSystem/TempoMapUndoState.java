@@ -8,6 +8,7 @@ import java.util.List;
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.Beat;
+import log.charter.gui.components.tabs.TextTab;
 import log.charter.services.data.ChartTimeHandler;
 
 public class TempoMapUndoState extends UndoState {
@@ -22,7 +23,7 @@ public class TempoMapUndoState extends UndoState {
 		this.beats = beats;
 	}
 
-	public TempoMapUndoState(final ChartData data) {
+	public TempoMapUndoState(final ChartData data, final String text) {
 		guitarUndoStates = new ArrayList<>();
 		for (int arrangementId = 0; arrangementId < data.songChart.arrangements.size(); arrangementId++) {
 			final Arrangement arrangement = data.songChart.arrangements.get(arrangementId);
@@ -33,18 +34,19 @@ public class TempoMapUndoState extends UndoState {
 
 		vocalUndoStates = new ArrayList<>();
 		for (int vocalPathId = 0; vocalPathId < data.songChart.vocalPaths.size(); vocalPathId++) {
-			vocalUndoStates.add(new VocalUndoState(vocalPathId, data.songChart.vocalPaths.get(vocalPathId)));
+			vocalUndoStates.add(new VocalUndoState(vocalPathId, data.songChart.vocalPaths.get(vocalPathId), text));
 		}
 
 		beats = map(data.beats(), Beat::new);
 	}
 
 	@Override
-	public TempoMapUndoState undo(final ChartData chartData, final ChartTimeHandler chartTimeHandler) {
+	public TempoMapUndoState undo(final ChartData chartData, final ChartTimeHandler chartTimeHandler,
+			final TextTab textTab) {
 		final List<GuitarUndoState> guitarRedoStates = map(guitarUndoStates,
-				state -> state.undo(chartData, chartTimeHandler));
+				state -> state.undo(chartData, chartTimeHandler, textTab));
 		final List<VocalUndoState> vocalRedoStates = map(vocalUndoStates,
-				state -> state.undo(chartData, chartTimeHandler));
+				state -> state.undo(chartData, chartTimeHandler, textTab));
 		final List<Beat> beatsRedo = map(chartData.beats(), Beat::new);
 		chartData.songChart.beatsMap.beats = beats;
 

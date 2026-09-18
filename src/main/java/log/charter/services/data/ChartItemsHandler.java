@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 import log.charter.data.ChartData;
 import log.charter.data.song.Arrangement;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
-import log.charter.data.song.BendValue;
 import log.charter.data.song.EventPoint;
 import log.charter.data.song.FHP;
 import log.charter.data.song.HandShape;
@@ -159,7 +158,9 @@ public class ChartItemsHandler {
 
 	private <T extends IVirtualPosition> void snapPositions(final Stream<T> positions, final List<T> allPositions) {
 		positions.forEach(p -> chartData.beats().snap(p));
-		clearRepeatedPositions(allPositions);
+		if (allPositions != null) {
+			clearRepeatedPositions(allPositions);
+		}
 	}
 
 	private <T extends IVirtualConstantPosition> void clearRepeatedPositions(final List<T> positions) {
@@ -175,15 +176,14 @@ public class ChartItemsHandler {
 		}
 	}
 
-	private void snapNotePositions(final Stream<ChordOrNote> positions) {
-		final List<ChordOrNote> sounds = chartData.currentSounds();
-		final List<BendValue> bends = sounds.stream()//
-				.flatMap(c -> c.isNote() ? c.note().bendValues.stream()
-						: c.chord().chordNotes.values().stream().flatMap(n -> n.bendValues.stream()))//
-				.collect(Collectors.toList());
+	private void snapNotePositions( Stream<ChordOrNote> positions) {
+		positions=	positions.peek(c -> (c.isNote() ? c.note().bendValues.stream()
+				: c.chord().chordNotes.values().stream().flatMap(n -> n.bendValues.stream()))//
+				.forEach(p -> chartData.beats().snap(p)));
 
-		snapPositions(bends.stream(), bends);
+		final List<ChordOrNote> sounds = chartData.currentSounds();
 		snapPositions(positions, sounds);
+
 		arrangementFixer.fixNoteLengths(sounds);
 	}
 

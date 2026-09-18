@@ -47,6 +47,9 @@ import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 import log.charter.services.mouseAndKeyboard.MouseHandler;
 
 public class ActionHandler implements Initiable {
+	public static record TypingPart(int value, int part, int totalParts) {
+	}
+
 	private AudioHandler audioHandler;
 	private BeatsService beatsService;
 	private BPMDoubler bpmDoubler;
@@ -201,6 +204,8 @@ public class ActionHandler implements Initiable {
 
 	private void handleNumber(final int number) {
 		modeManager.getHandler().handleNumber(number);
+
+		chartToolbar.updateTypingPartValue();
 	}
 
 	private void doubleGridSize() {
@@ -293,6 +298,16 @@ public class ActionHandler implements Initiable {
 			case GUITAR -> modeManager.getGuitarModeHandler().switchTypingPart();
 			default -> throw new IllegalArgumentException("Unexpected value: " + modeManager.getMode());
 		}
+
+		chartToolbar.updateTypingPartValue();
+	}
+
+	public TypingPart getTypingPart() {
+		return switch (modeManager.getMode()) {
+			case TEMPO_MAP -> modeManager.getTempoMapModeHandler().getTypingPart();
+			case GUITAR -> modeManager.getGuitarModeHandler().getTypingPart();
+			default -> new TypingPart(0, 0, 0);
+		};
 	}
 
 	public void changeZoom(final int change) {
@@ -300,6 +315,7 @@ public class ActionHandler implements Initiable {
 	}
 
 	private final Map<Action, Runnable> actionHandlers = new HashMap<>();
+	private final Map<Action, Runnable> actionReleaseHandlers = new HashMap<>();
 
 	@Override
 	public void init() {
@@ -483,6 +499,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.ZOOM_IN_FAST, () -> changeZoom(16));
 		actionHandlers.put(Action.ZOOM_OUT, () -> changeZoom(-1));
 		actionHandlers.put(Action.ZOOM_OUT_FAST, () -> changeZoom(-16));
+
+		actionReleaseHandlers.put(Action.PLACE_LYRIC_FROM_TEXT, vocalsHandler::setEndForLastVocalPlaced);
 	}
 
 	private static final List<Action> actionsNotClearingMousePress = asList(//
@@ -591,6 +609,17 @@ public class ActionHandler implements Initiable {
 		} catch (final Exception ex) {
 			Logger.error("Exception on action " + action, ex);
 			ComponentUtils.showPopup(charterFrame, Label.ERROR, ex.getLocalizedMessage());
+		}
+	}
+
+	public void stopAction(final Action action) {
+		final Runnable actionHandler = actionReleaseHandlers.get(action);
+		if (actionHandler != null) {
+			actionHandler.run();
+		}
+
+		if (!actionsNotChangingChartMap.contains(action)) {
+			chartMap.redraw();
 		}
 	}
 

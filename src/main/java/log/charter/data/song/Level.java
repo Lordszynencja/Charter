@@ -11,6 +11,7 @@ import com.thoughtworks.xstream.annotations.XStreamInclude;
 import log.charter.data.song.BeatsMap.ImmutableBeatsMap;
 import log.charter.data.song.notes.Chord;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.util.CollectionUtils;
 
 @XStreamAlias("level")
 @XStreamInclude({ FHP.class, ChordOrNote.class, HandShape.class })
@@ -22,6 +23,12 @@ public class Level {
 	public List<HandShape> handShapes = new ArrayList<>();
 
 	public Level() {
+	}
+
+	public Level(final Level other) {
+		fhps = CollectionUtils.map(other.fhps, FHP::new);
+		sounds = CollectionUtils.map(other.sounds, ChordOrNote::from);
+		handShapes = CollectionUtils.map(other.handShapes, HandShape::new);
 	}
 
 	public boolean shouldChordShowNotes(final ImmutableBeatsMap beats, final int id) {

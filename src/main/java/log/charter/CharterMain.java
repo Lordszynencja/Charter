@@ -12,8 +12,8 @@ import log.charter.services.mouseAndKeyboard.ShortcutConfig;
 import log.charter.util.RW;
 
 public class CharterMain {
-	public static final String VERSION = "0.22.40";
-	public static final String VERSION_DATE = "2026.06.29 23:30";
+	public static final String VERSION = "0.22.41";
+	public static final String VERSION_DATE = "2026.09.17 17:00";
 	public static final String TITLE = "Charter " + VERSION;
 
 	private static void deleteTempUpdateFile() {

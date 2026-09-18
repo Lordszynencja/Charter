@@ -43,6 +43,7 @@ public class TextTab extends CharterScrollPane {
 
 	public void setText(final String text) {
 		textArea.setText(text);
+		textArea.setCaretPosition(0);
 	}
 
 	public void recalculateSizes() {

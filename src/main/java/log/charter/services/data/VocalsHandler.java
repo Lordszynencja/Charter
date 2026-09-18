@@ -22,6 +22,7 @@ import log.charter.services.data.ChartItemsHandler.Insertable;
 import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.Selection;
 import log.charter.services.data.selection.SelectionManager;
+import log.charter.util.data.Fraction;
 
 public class VocalsHandler {
 	private ArrangementFixer arrangementFixer;
@@ -33,6 +34,8 @@ public class VocalsHandler {
 	private SelectionManager selectionManager;
 	private TextTab textTab;
 	private UndoSystem undoSystem;
+
+	private Vocal lastVocalPlaced = null;
 
 	public void insertVocal() {
 		final Insertable<Vocal> insertable = chartItemsHandler.getItemForInsert(chartData.currentVocals().vocals);
@@ -149,15 +152,15 @@ public class VocalsHandler {
 					vocalPosition = chartData.beats().addGrid(vocalPosition, 1).toFraction(chartData.beats());
 				}
 			}
-			final IVirtualConstantPosition vocalEndPosition = chartData.beats().getMinEndPositionAfter(vocalPosition)
-					.toFraction(chartData.beats());
 
 			final FractionalPosition start = vocalPosition.toFraction(chartData.beats()).position();
-			final FractionalPosition end = vocalEndPosition.toFraction(chartData.beats()).position();
+			final FractionalPosition end = start.add(new Fraction(1, 16));
 			final Vocal vocal = new Vocal(start, end, syllable, flag);
 
 			chartData.currentVocals().vocals.add(vocal);
 			chartData.currentVocals().vocals.sort(IConstantFractionalPosition::compareTo);
+
+			lastVocalPlaced = vocal;
 		}
 
 		public void placeSyllable() {
@@ -183,5 +186,33 @@ public class VocalsHandler {
 
 	public void placeLyricFromText() {
 		new LyricsFromTextPlacer().placeSyllable();
+	}
+
+	public void updateEndForLastPlacedVocal() {
+		if (lastVocalPlaced == null) {
+			return;
+		}
+
+		final double currentTimeMs = chartTimeHandler.time() - AudioConfig.delay;
+		final FractionalPosition vocalEndPosition = FractionalPosition.fromTime(chartData.beats(), currentTimeMs);
+
+		if (vocalEndPosition.compareTo(lastVocalPlaced.endPosition()) > 0) {
+			lastVocalPlaced.endPosition(vocalEndPosition);
+		}
+	}
+
+	public void setEndForLastVocalPlaced() {
+		if (lastVocalPlaced == null) {
+			return;
+		}
+
+		final double currentTimeMs = chartTimeHandler.time() - AudioConfig.delay;
+		final FractionalPosition vocalEndPosition = chartData.beats()
+				.getPositionFromGridBefore(new ConstantPosition(currentTimeMs))//
+				.toFraction(chartData.beats()).position();
+
+		if (vocalEndPosition.compareTo(lastVocalPlaced.endPosition()) > 0) {
+			lastVocalPlaced.endPosition(vocalEndPosition);
+		}
 	}
 }

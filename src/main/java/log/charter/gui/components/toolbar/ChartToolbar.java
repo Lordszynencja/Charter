@@ -51,6 +51,7 @@ import log.charter.gui.lookAndFeel.CharterSliderUI;
 import log.charter.io.Logger;
 import log.charter.services.Action;
 import log.charter.services.ActionHandler;
+import log.charter.services.ActionHandler.TypingPart;
 import log.charter.services.CharterContext.Initiable;
 import log.charter.services.RepeatManager;
 import log.charter.services.audio.AudioHandler;
@@ -132,6 +133,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 	private JButton gridHalveButton;
 	private JToggleButton beatGridType;
 	private JToggleButton noteGridType;
+
+	private JLabel typingPart;
 
 	private JButton chartLock;
 
@@ -259,6 +262,11 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		final ButtonGroup gridTypeGroup = new ButtonGroup();
 		gridTypeGroup.add(beatGridType);
 		gridTypeGroup.add(noteGridType);
+	}
+
+	private void addTypingPart() {
+		typingPart = new JLabel("");
+		add(typingPart);
 	}
 
 	public void setChartLockIcon() {
@@ -439,6 +447,8 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		addGridSizeButtons();
 		addGridTypes();
 
+		addTypingPart();
+
 		addChartLock();
 
 		volume = addVolumeSlider(Label.TOOLBAR_VOLUME, Label.TOOLBAR_VOLUME_TOOLTIP, volumeIcon, volumeMuteIcon,
@@ -466,18 +476,21 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		addKeyListener(keyboardHandler);
 	}
 
-	@Override
-	public void updateValues() {
+	private void updateToggleableSoundsValues() {
 		midi.setSelected(audioHandler.midiNotesPlaying);
 		midi.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
 		claps.setSelected(clapsHandler.claps());
 		metronome.setSelected(metronomeHandler.metronome());
+	}
+
+	private void updateWaveformValues() {
 		waveformGraph.setSelected(waveFormDrawer.drawing());
 		waveformGraph.setEnabled(modeManager.getMode() != EditMode.TEMPO_MAP);
 		rms.setEnabled(waveFormDrawer.drawing());
 		rms.setSelected(waveFormDrawer.rms());
-		repeater.setSelected(repeatManager.isOn());
+	}
 
+	private void updateGridSizeAndTypeValues() {
 		gridSize.field.setTextWithoutEvent(GridConfig.gridSize + "");
 		switch (GridConfig.gridType) {
 			case BEAT:
@@ -490,8 +503,37 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 				Logger.error("Wrong grid type for toolbar " + GridConfig.gridType);
 				break;
 		}
+	}
+
+	@Override
+	public void updateTypingPartValue() {
+		String text = "";
+		if (modeManager.modeIs(EditMode.TEMPO_MAP, EditMode.GUITAR)) {
+			final TypingPart typingPartValue = actionHandler.getTypingPart();
+
+			for (int i = 0; i < typingPartValue.part(); i++) {
+				text += "▮/";
+			}
+			text += (typingPartValue.value() != 0 ? typingPartValue.value() : "") + "_";
+
+			for (int i = typingPartValue.part() + 1; i < typingPartValue.totalParts(); i++) {
+				text += "/▮";
+			}
+		}
+
+		typingPart.setText(text);
+	}
+
+	@Override
+	public void updateValues() {
+		updateToggleableSoundsValues();
+		updateWaveformValues();
+		repeater.setSelected(repeatManager.isOn());
+		updateGridSizeAndTypeValues();
+		updateTypingPartValue();
 
 		volume.field.setValue(getVolumeAsInteger(projectAudioHandler.getVolume()));
+
 		playbackSpeed.field.setTextWithoutEvent(Config.stretchedMusicSpeed + "");
 
 		lowPassFilter.setSelected(audioHandler.lowPassFilterEnabled);
@@ -520,6 +562,12 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		b.setFont(b.getFont().deriveFont(GraphicalConfig.inputSize / 1.6f));
 		b.setBounds(x.getAndAdd(GraphicalConfig.inputSize), verticalSpacing, GraphicalConfig.inputSize,
 				GraphicalConfig.inputSize);
+	}
+
+	private void resizeLabel(final AtomicInteger x, final JLabel l, final int expectedMaxTextLength) {
+		l.setFont(l.getFont().deriveFont(GraphicalConfig.inputSize / 1.6f));
+		final int width = (int) (expectedMaxTextLength * l.getFont().getSize() / 1.6f);
+		l.setBounds(x.getAndAdd(horizontalSpacing + width), verticalSpacing, width, GraphicalConfig.inputSize);
 	}
 
 	private void resizeGridInputs(final AtomicInteger x) {
@@ -601,6 +649,11 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 
 		x.addAndGet(horizontalSpacing * 2);
 		resizeGridInputs(x);
+
+		if (modeManager.modeIs(EditMode.TEMPO_MAP, EditMode.GUITAR)) {
+			x.addAndGet(horizontalSpacing * 2);
+			resizeLabel(x, typingPart, 5);
+		}
 
 		x.addAndGet(horizontalSpacing * 2);
 		resizeButton(x, chartLock);

@@ -96,6 +96,8 @@ public class Localization {
 		CHOOSE_COLOR_FOR("Choose color for %s"), //
 		CHORD_WITH_NOTE_TAILS("Chord with note tails without any techniques"), //
 		CHORD_WITH_SPLIT_AND_ONLY_BOX("Chord has both Split and Only box flags marked"), //
+		CLONE_ARRANGEMENT("Clone arrangement"), //
+		CLONE_VOCAL_PATH("Clone vocal path"), //
 		CONFIG("Config"), //
 		CONFIG_AUDIO("Audio"), //
 		CONFIG_DISPLAY("Display"), //
@@ -170,6 +172,7 @@ public class Localization {
 		FOLDER_EXISTS("Given folder already exists"), //
 		FOLDER_EXISTS_MSG("Do you want to use existing folder?"), //
 		FORCE_ARPEGGIO_IN_RS("in RS"), //
+		FORCE_EXPORT("Force export (only after consultation)"), //
 		FPS("FPS"), //
 		FRET("Fret"), //
 		FINGER_DIFFERENT_THAN_IN_ARPEGGIO_HANDSHAPE(
@@ -196,6 +199,7 @@ public class Localization {
 		HIGH_PASS_SETTINGS("High pass settings"), //
 		HIGH_PASS_TOOLTIP(
 				"<html>High pass filter filters out frequencies below given value<br/>Right click for settings</html>"), //
+		IGNORE_ARRANGEMENT("Ignore arrangement"), //
 		IMPORT_TEMPO_MAP("Import tempo map"), //
 		IMPORTING_AUDIO("Importing audio"), //
 		IMPORT_AUDIO_AS_STEM("Import audio as stem?"), //
@@ -315,6 +319,8 @@ public class Localization {
 		PREVIOUS_ITEM_WITH_SELECT_SHIFT("Previous item with group select"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
+		REARRANGE_ARRANGEMENTS("Rearrange arrangements"), //
+		REARRANGE_VOCAL_PATHS("Rearrange vocal paths"), //
 		REDO("Redo"), //
 		REMOVE_GRID_TRIPLET("Remove grid triplet"), //
 		REWIND_TOOLTIP("Rewinds the song"), //

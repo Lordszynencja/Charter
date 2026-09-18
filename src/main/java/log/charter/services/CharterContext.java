@@ -304,6 +304,7 @@ public class CharterContext {
 		} catch (final Exception e) {
 			Logger.error("Error when exiting", e);
 		}
+
 		System.exit(0);
 	}
 }

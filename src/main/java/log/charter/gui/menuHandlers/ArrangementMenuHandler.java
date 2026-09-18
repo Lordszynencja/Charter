@@ -2,6 +2,8 @@ package log.charter.gui.menuHandlers;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -13,15 +15,18 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.Level;
 import log.charter.data.song.vocals.VocalPath;
 import log.charter.gui.panes.songSettings.ArrangementSettingsPane;
+import log.charter.gui.panes.songSettings.RearrangingPane;
 import log.charter.gui.panes.songSettings.VocalPathSettingsPane;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.services.Action;
 import log.charter.services.data.LevelSquisher;
+import log.charter.services.data.fixers.ArrangementFixer;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 
 public class ArrangementMenuHandler extends CharterMenuHandler {
+	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
 	private CharterMenuBar charterMenuBar;
 	private ModeManager modeManager;
@@ -61,6 +66,28 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		}
 	}
 
+	private Color getArrangementLabelColor(final Arrangement arrangement) {
+		Color color = switch (arrangement.arrangementType) {
+			case Lead -> new Color(255, 200, 80);
+			case Rhythm -> new Color(120, 255, 120);
+			case Bass -> new Color(80, 120, 255);
+			default -> new Color(255, 255, 120);
+		};
+
+		if (arrangement.forceExport) {
+			color = switch (arrangement.arrangementType) {
+				case Lead -> new Color(255, 255, 0);
+				case Rhythm -> new Color(0, 255, 0);
+				case Bass -> new Color(0, 0, 255);
+				default -> new Color(255, 255, 255);
+			};
+		} else if (arrangement.ignore) {
+			color = color.darker().darker();
+		}
+
+		return color;
+	}
+
 	private void addArrangementsList(final JMenu menu) {
 		for (int i = 0; i < chartData.songChart.arrangements.size(); i++) {
 			final Arrangement arrangement = chartData.songChart.arrangements.get(i);
@@ -70,12 +97,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 			final int arrangementId = i;
 
 			final JMenuItem menuItem = createItem(arrangementLabel, () -> modeManager.setArrangement(arrangementId));
-			menuItem.setForeground(switch (arrangement.arrangementType) {
-				case Lead -> new Color(255, 200, 80);
-				case Rhythm -> new Color(120, 255, 120);
-				case Bass -> new Color(80, 120, 255);
-				default -> new Color(255, 255, 120);
-			});
+			menuItem.setForeground(getArrangementLabelColor(arrangement));
 			menuItem.setFont(menuItem.getFont().deriveFont(Font.BOLD));
 			menu.add(menuItem);
 		}
@@ -107,10 +129,16 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		menu.addSeparator();
 		addVocalPathsList(menu);
 		menu.add(createItem(Label.NEW_VOCAL_PATH, this::addVocalPath));
+		if (chartData.songChart.vocalPaths.size() >= 2) {
+			menu.add(createItem(Label.REARRANGE_VOCAL_PATHS, this::rearrangeVocalPaths));
+		}
 
 		menu.addSeparator();
 		addArrangementsList(menu);
 		menu.add(createItem(Label.NEW_ARRANGEMENT, this::addArrangement));
+		if (chartData.songChart.arrangements.size() >= 2) {
+			menu.add(createItem(Label.REARRANGE_ARRANGEMENTS, this::rearrangeArrangements));
+		}
 
 		menu.addSeparator();
 		menu.add(createItem(Action.ARRANGEMENT_NEXT));
@@ -119,12 +147,18 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		if (modeManager.getMode() == EditMode.VOCALS) {
 			menu.addSeparator();
 			menu.add(createItem(Label.VOCAL_PATH_OPTIONS, this::editVocalPathSettings));
+			menu.add(createItem(Label.CLONE_VOCAL_PATH, this::cloneVocalPath));
 
 			menu.addSeparator();
 			menu.add(createItem(Label.DELETE_VOCAL_PATH, this::deleteVocalPath));
 		} else if (modeManager.getMode() == EditMode.GUITAR) {
 			menu.addSeparator();
 			menu.add(createItem(Label.ARRANGEMENT_OPTIONS, this::editArrangementSettings));
+			menu.add(createItem(Label.CLONE_ARRANGEMENT, this::cloneArrangement));
+			menu.add(createCheckboxItem(Label.IGNORE_ARRANGEMENT, this::toggleIgnoreArrangement,
+					chartData.currentArrangement().ignore));
+			menu.add(createCheckboxItem(Label.FORCE_EXPORT, this::toggleForceExport,
+					chartData.currentArrangement().forceExport));
 
 			menu.addSeparator();
 			createLevelMenuItems(menu);
@@ -149,7 +183,7 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		chartData.songChart.arrangements.add(new Arrangement(ArrangementType.Lead));
 		modeManager.setArrangement(chartData.songChart.arrangements.size() - 1);
 
-		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, () -> {
+		new ArrangementSettingsPane(arrangementFixer, charterMenuBar, chartData, charterFrame, selectionManager, () -> {
 			if (previousEditMode == EditMode.GUITAR) {
 				modeManager.setArrangement(previousArrangement);
 				modeManager.setLevel(previousDifficulty);
@@ -168,13 +202,64 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 				new VocalPath(), true);
 	}
 
+	private void rearrangeVocalPaths() {
+		final List<String> vocalPathsNames = new ArrayList<>();
+		int id = 0;
+		for (final VocalPath vocalPath : chartData.songChart.vocalPaths) {
+			vocalPathsNames.add(vocalPath.getName(id++));
+		}
+
+		new RearrangingPane<>(charterFrame, modeManager, Label.REARRANGE_VOCAL_PATHS, chartData.songChart.vocalPaths,
+				vocalPathsNames);
+	}
+
 	private void editVocalPathSettings() {
 		new VocalPathSettingsPane(chartData, charterMenuBar, charterFrame, modeManager, selectionManager,
 				chartData.currentVocals(), false);
 	}
 
+	private void cloneVocalPath() {
+		final VocalPath vocalPath = new VocalPath(chartData.currentVocals());
+		chartData.songChart.vocalPaths.add(vocalPath);
+
+		charterMenuBar.refreshMenus();
+	}
+
+	private void rearrangeArrangements() {
+		final List<String> arrangementNames = new ArrayList<>();
+		int id = 0;
+		for (final Arrangement arrangement : chartData.songChart.arrangements) {
+			arrangementNames.add(arrangement.getTypeNameLabel(id++));
+		}
+
+		new RearrangingPane<>(charterFrame, modeManager, Label.REARRANGE_ARRANGEMENTS, chartData.songChart.arrangements,
+				arrangementNames);
+	}
+
 	private void editArrangementSettings() {
-		new ArrangementSettingsPane(charterMenuBar, chartData, charterFrame, selectionManager, null, false);
+		new ArrangementSettingsPane(arrangementFixer, charterMenuBar, chartData, charterFrame, selectionManager, null,
+				false);
+	}
+
+	private void cloneArrangement() {
+		final Arrangement arrangement = new Arrangement(chartData.currentArrangement());
+		chartData.songChart.arrangements.add(arrangement);
+
+		charterMenuBar.refreshMenus();
+	}
+
+	private void toggleIgnoreArrangement() {
+		final Arrangement arrangement = chartData.currentArrangement();
+		arrangement.ignore = !arrangement.ignore;
+
+		charterMenuBar.refreshMenus();
+	}
+
+	private void toggleForceExport() {
+		final Arrangement arrangement = chartData.currentArrangement();
+		arrangement.forceExport = !arrangement.forceExport;
+
+		charterMenuBar.refreshMenus();
 	}
 
 	private void addLevel() {

@@ -148,6 +148,10 @@ public class ModeManager implements Initiable {
 	}
 
 	public void setLevel(final int level) {
+		if (chartData.currentLevel == level) {
+			return;
+		}
+
 		audioHandler.stopMusic();
 		selectionManager.clear();
 
@@ -155,6 +159,17 @@ public class ModeManager implements Initiable {
 
 		charterMenuBar.refreshMenus();
 		chartMap.redraw();
+	}
+
+	public void reloadCurrent() {
+		audioHandler.stopMusic();
+		selectionManager.clear();
+		chartToolbar.updateValues();
+		charterMenuBar.refreshMenus();
+		charterFrame.updateSizes();
+		titleUpdater.updateTitle();
+		chartMap.redraw();
+		chordTemplatesEditorTab.refreshTemplates();
 	}
 
 	public EditMode getMode() {

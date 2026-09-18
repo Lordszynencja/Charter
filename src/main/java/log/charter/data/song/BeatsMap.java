@@ -208,6 +208,10 @@ public class BeatsMap {
 			return BeatsMap.this.findNextAnchoredBeat(beatId);
 		}
 
+		public FractionalPosition getPositionFromGridBefore(final IVirtualConstantPosition position) {
+			return GridPosition.create(beats, position).fractionalPosition();
+		}
+
 		public FractionalPosition getPositionFromGridClosestTo(final IVirtualConstantPosition position) {
 			final GridPosition<Beat> gridPosition = GridPosition.create(beats, position);
 			final FractionalPosition leftPosition = gridPosition.fractionalPosition();

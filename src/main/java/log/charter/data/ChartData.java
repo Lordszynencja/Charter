@@ -22,6 +22,7 @@ import log.charter.data.song.notes.ChordOrNote;
 import log.charter.data.song.vocals.VocalPath;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
+import log.charter.gui.components.simple.ChartMap;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.services.data.selection.SelectionManager;
 import log.charter.services.editModes.EditMode;
@@ -39,6 +40,7 @@ public class ChartData {
 
 	private CharterFrame charterFrame;
 	private CharterMenuBar charterMenuBar;
+	private ChartMap chartMap;
 	private ModeManager modeManager;
 	private SelectionManager selectionManager;
 	private UndoSystem undoSystem;
@@ -65,6 +67,7 @@ public class ChartData {
 
 		charterMenuBar.refreshMenus();
 		charterFrame.updateSizes();
+		chartMap.redraw();
 
 		selectionManager.clear();
 		undoSystem.clear();

@@ -105,6 +105,114 @@ public class ArrangementFixer {
 	private ChordTemplatesEditorTab chordTemplatesEditorTab;
 	private SelectionManager selectionManager;
 
+	private void removeWrongStringsFromSingleNotes(final Arrangement arrangement) {
+		final int strings = arrangement.tuning.strings();
+
+		for (final Level level : arrangement.levels) {
+			level.sounds.removeIf(sound -> {
+				if (!sound.isNote()) {
+					return false;
+				}
+				final int string = sound.note().string;
+				return string < 0 || string >= strings;
+			});
+		}
+	}
+
+	private boolean checkWrongStringsOnTemplate(final int strings, final ChordTemplate originalChordTemplate,
+			final ChordTemplate chordTemplate) {
+		boolean wrong = false;
+		for (final int string : originalChordTemplate.frets.keySet()) {
+			if (string < 0 || string >= strings) {
+				wrong = true;
+				chordTemplate.frets.remove(string);
+			}
+		}
+		for (final int string : originalChordTemplate.fingers.keySet()) {
+			if (string < 0 || string >= strings) {
+				wrong = true;
+				chordTemplate.fingers.remove(string);
+			}
+		}
+
+		return wrong;
+	}
+
+	private void replaceChordTemplate(final Arrangement arrangement, final int oldId,
+			final ChordTemplate chordTemplate) {
+		final int newId = arrangement.getChordTemplateIdWithSave(chordTemplate);
+
+		for (final Level level : arrangement.levels) {
+			for (final ChordOrNote sound : level.sounds) {
+				if (!sound.isChord()) {
+					continue;
+				}
+
+				final Chord chord = sound.chord();
+				if (chord.templateId() != oldId) {
+					continue;
+				}
+
+				chord.updateTemplate(newId, chordTemplate);
+			}
+			for (final HandShape handShape : level.handShapes) {
+				if (handShape.templateId == oldId) {
+					handShape.templateId = newId;
+				}
+			}
+		}
+	}
+
+	private void replaceChordsWithNotes(final Arrangement arrangement, final int templateId) {
+		for (final Level level : arrangement.levels) {
+			for (int i = 0; i < level.sounds.size(); i++) {
+				final ChordOrNote sound = level.sounds.get(i);
+				if (!sound.isChord() || sound.chord().templateId() != templateId) {
+					continue;
+				}
+
+				level.sounds.set(i, sound.asNote(arrangement.chordTemplates));
+			}
+
+			level.handShapes.removeIf(handShape -> handShape.templateId == templateId);
+		}
+	}
+
+	private void deleteChordTemplate(final Arrangement arrangement, final int templateId) {
+		for (final Level level : arrangement.levels) {
+			level.sounds.removeIf(sound -> sound.isChord() && sound.chord().templateId() == templateId);
+			level.handShapes.removeIf(handShape -> handShape.templateId == templateId);
+		}
+	}
+
+	private void removeWrongStringsFromChordTemplates(final Arrangement arrangement) {
+		final int strings = arrangement.tuning.strings();
+
+		final int templatesToCheck = arrangement.chordTemplates.size();
+		for (int i = 0; i < templatesToCheck; i++) {
+			final ChordTemplate originalChordTemplate = arrangement.chordTemplates.get(i);
+			final ChordTemplate chordTemplate = new ChordTemplate(originalChordTemplate);
+			final boolean wrong = checkWrongStringsOnTemplate(strings, originalChordTemplate, chordTemplate);
+
+			if (!wrong) {
+				continue;
+			}
+
+			if (chordTemplate.frets.size() >= 2) {
+				replaceChordTemplate(arrangement, i, chordTemplate);
+			} else if (chordTemplate.frets.size() == 1) {
+				replaceChordsWithNotes(arrangement, i);
+			} else {
+				deleteChordTemplate(arrangement, i);
+			}
+		}
+	}
+
+	private void removeWrongStrings(final Arrangement arrangement) {
+		removeWrongStringsFromSingleNotes(arrangement);
+		removeWrongStringsFromChordTemplates(arrangement);
+	}
+
 	private void removeWrongEventPoints(final Arrangement arrangement) {
 		arrangement.eventPoints.removeIf(ep -> ep.section == null && !ep.hasPhrase() && ep.events.isEmpty());
 	}
@@ -156,6 +264,8 @@ public class ArrangementFixer {
 				break;
 			}
 			if (nextChord.templateId() != chord.templateId()) {
+				maxEndPosition = min(maxEndPosition,
+						lastChord.endPosition().add(nextChord.position()).multiply(new Fraction(1, 2)));
 				break;
 			}
 			if (nextChord.distance(lastChord.endPosition()).compareTo(maxDistanceBeforeBreakingHandshape) > 0) {
@@ -169,6 +279,9 @@ public class ArrangementFixer {
 		FractionalPosition endPosition = lastChord.endPosition().position();
 		if (endPosition.compareTo(lastChord) <= 0) {
 			endPosition = endPosition.add(new Fraction(1, 4));
+		}
+		if (endPosition.compareTo(maxEndPosition) > 0) {
+			endPosition = maxEndPosition.position();
 		}
 
 		final HandShape handShape = new HandShape(position, endPosition, chord.templateId());
@@ -551,28 +664,33 @@ public class ArrangementFixer {
 		fixCapoFrets(arrangement, level);
 	}
 
-	public void fixArrangements() {
+	public void fixArrangement(final Arrangement arrangement) {
 		final double end = chartTimeHandler.maxTime();
 		final FractionalPosition endFractional = FractionalPosition.fromTime(chartData.beats(), end);
 
-		chartData.songChart.beatsMap.makeBeatsUntilSongEnd(end);
+		arrangement.eventPoints.sort(IConstantFractionalPosition::compareTo);
+		arrangement.toneChanges.sort(IConstantFractionalPosition::compareTo);
+
+		removeWrongStrings(arrangement);
+		removeWrongEventPoints(arrangement);
+		removeWrongPositions(arrangement, endFractional);
+		for (final Level level : arrangement.levels) {
+			fixLevel(arrangement, level);
+		}
+
+		DuplicatedChordTemplatesRemover.remove(arrangement);
+		UnusedChordTemplatesRemover.remove(arrangement);
+		MissingFingersOnChordTemplatesFixer.fix(arrangement);
+	}
+
+	public void fixArrangements() {
+		chartData.songChart.beatsMap.makeBeatsUntilSongEnd(chartTimeHandler.maxTime());
 		chartData.songChart.beatsMap.fixFirstBeatInMeasures();
 
 		chartData.songChart.showlights(fixShowlights(chartData.showlights()));
 
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
-			arrangement.eventPoints.sort(IConstantFractionalPosition::compareTo);
-			arrangement.toneChanges.sort(IConstantFractionalPosition::compareTo);
-
-			removeWrongEventPoints(arrangement);
-			removeWrongPositions(arrangement, endFractional);
-			for (final Level level : arrangement.levels) {
-				fixLevel(arrangement, level);
-			}
-
-			DuplicatedChordTemplatesRemover.remove(arrangement);
-			UnusedChordTemplatesRemover.remove(arrangement);
-			MissingFingersOnChordTemplatesFixer.fix(arrangement);
+			fixArrangement(arrangement);
 		}
 
 		chartData.songChart.beatsMap.truncate(chartTimeHandler.maxNonBeatTime());

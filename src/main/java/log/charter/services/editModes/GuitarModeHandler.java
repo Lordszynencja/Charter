@@ -32,6 +32,9 @@ import log.charter.gui.panes.songEdits.FHPPane;
 import log.charter.gui.panes.songEdits.GuitarEventPointPane;
 import log.charter.gui.panes.songEdits.HandShapePane;
 import log.charter.gui.panes.songEdits.ToneChangePane;
+import log.charter.io.Logger;
+import log.charter.services.ActionHandler.TypingPart;
+import log.charter.services.CharterContext.Initiable;
 import log.charter.services.data.ChartItemsHandler;
 import log.charter.services.data.ChartItemsHandler.Insertable;
 import log.charter.services.data.GuitarSoundsHandler;
@@ -44,8 +47,9 @@ import log.charter.services.mouseAndKeyboard.MouseButtonPressReleaseHandler.Mous
 import log.charter.services.mouseAndKeyboard.PositionWithStringOrNoteId;
 import log.charter.util.collections.Pair;
 
-public class GuitarModeHandler implements ModeHandler {
+public class GuitarModeHandler implements Initiable, ModeHandler {
 	private static final long scrollTimeoutForUndo = 1000;
+	private static final int typingPartTimeout = 2000;
 
 	private ArrangementFixer arrangementFixer;
 	private ChartData chartData;
@@ -63,6 +67,38 @@ public class GuitarModeHandler implements ModeHandler {
 	private int lastFretNumber = 0;
 	private long fretNumberTimer = 0;
 	private int typingNumber = 0;
+	private boolean typingClear = true;
+
+	private final Thread t = new Thread(this::checkTypingRefresh);
+
+	@Override
+	public void init() {
+		t.setName("GuitarModeHandler.checkTypingRefresh");
+		t.start();
+	}
+
+	private void checkTypingRefresh() {
+		try {
+			while (true) {
+				long sleepTime = typingPartTimeout;
+
+				synchronized (this) {
+					final long time = nanoTime() / 1_000_000;
+					if (fretNumberTimer < time) {
+						if (!typingClear) {
+							clearNumbers();
+						}
+					} else {
+						sleepTime = fretNumberTimer - time;
+					}
+				}
+
+				Thread.sleep(sleepTime);
+			}
+		} catch (final InterruptedException e) {
+			Logger.error("Interruption in GuitarModeHandler.checkTypingRefresh", e);
+		}
+	}
 
 	private void addOrUpdateEventPoint(final Insertable<EventPoint> insertable) {
 		selectionManager.clear();
@@ -472,23 +508,26 @@ public class GuitarModeHandler implements ModeHandler {
 	}
 
 	private void setFretNumberTimer() {
-		fretNumberTimer = nanoTime() / 1_000_000 + 2000;
+		fretNumberTimer = nanoTime() / 1_000_000 + typingPartTimeout;
+		typingClear = false;
 	}
 
 	@Override
 	public void handleNumber(final int number) {
-		if (nanoTime() / 1_000_000 <= fretNumberTimer) {
-			if (lastFretNumber * 10 + number <= InstrumentConfig.frets) {
-				lastFretNumber = lastFretNumber * 10 + number;
+		synchronized (this) {
+			if (nanoTime() / 1_000_000 <= fretNumberTimer) {
+				if (lastFretNumber * 10 + number <= InstrumentConfig.frets) {
+					lastFretNumber = lastFretNumber * 10 + number;
+				} else {
+					lastFretNumber = number;
+				}
 			} else {
+				clearNumbers();
 				lastFretNumber = number;
 			}
-		} else {
-			clearNumbers();
-			lastFretNumber = number;
-		}
 
-		setFretNumberTimer();
+			setFretNumberTimer();
+		}
 
 		guitarSoundsHandler.setFret(lastFretNumber, typingNumber);
 	}
@@ -498,11 +537,18 @@ public class GuitarModeHandler implements ModeHandler {
 		fretNumberTimer = 0;
 		lastFretNumber = 0;
 		typingNumber = 0;
+		typingClear = true;
 	}
 
 	public void switchTypingPart() {
-		typingNumber++;
-		lastFretNumber = 0;
-		setFretNumberTimer();
+		synchronized (this) {
+			typingNumber++;
+			lastFretNumber = 0;
+			setFretNumberTimer();
+		}
+	}
+
+	public TypingPart getTypingPart() {
+		return new TypingPart(lastFretNumber, typingNumber % 2, 2);
 	}
 }

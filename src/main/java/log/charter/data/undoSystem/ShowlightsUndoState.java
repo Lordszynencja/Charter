@@ -4,6 +4,7 @@ import java.util.List;
 
 import log.charter.data.ChartData;
 import log.charter.data.song.Showlight;
+import log.charter.gui.components.tabs.TextTab;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.util.CollectionUtils;
 
@@ -24,7 +25,8 @@ public class ShowlightsUndoState extends UndoState {
 	}
 
 	@Override
-	public ShowlightsUndoState undo(final ChartData data, final ChartTimeHandler chartTimeHandler) {
+	public ShowlightsUndoState undo(final ChartData data, final ChartTimeHandler chartTimeHandler,
+			final TextTab textTab) {
 		final ShowlightsUndoState redo = new ShowlightsUndoState(data, true);
 
 		data.songChart.showlights(showlights);
