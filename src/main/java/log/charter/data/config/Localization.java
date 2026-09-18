@@ -725,7 +725,8 @@ public class Localization {
 		PLACE_LYRIC_FROM_TEXT("Place lyric from text"), //
 		PLAY_AUDIO("Play audio"), //
 		PROJECT_IS_NEWER_VERSION("Project is newer version than program handles"), //
-		RS_ARRANGEMENT_FILE("RS arrangment file (XML)"), //
+		RS_ARRANGEMENT_FILE("RS arrangement file (XML)"), //
+		RS_VOCALS_FILE("RS vocals file (XML)"), //
 		SAVING_AUDIO("Saving audio"), //
 		SELECT_FOLDER("Select"), //
 		SLOW_BACKWARD("Slow backward"), //
