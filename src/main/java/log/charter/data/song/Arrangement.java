@@ -28,6 +28,7 @@ import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.io.rsc.xml.converters.ArrangementConverter;
 import log.charter.io.rsc.xml.converters.PhraseDataConverter;
 import log.charter.util.CollectionUtils;
+import log.charter.util.data.Fraction;
 
 @XStreamAlias("arrangement")
 @XStreamInclude({ ChordTemplate.class, EventPoint.class, Level.class, Phrase.class, ToneChange.class })
@@ -48,6 +49,18 @@ public class Arrangement {
 		public String toString() {
 			return label.label();
 		}
+	}
+
+	public static final Arrangement dummy = new Arrangement();
+	static {
+		dummy.tuning.strings(6);
+		dummy.eventPoints.add(new EventPoint(new FractionalPosition(), null, "COUNT"));
+		dummy.eventPoints.add(new EventPoint(new FractionalPosition(new Fraction(1, 100)), SectionType.VERSE, "Verse"));
+		dummy.eventPoints.add(new EventPoint(new FractionalPosition(1), null, "END"));
+		dummy.phrases.put("COUNT", new Phrase(0, false));
+		dummy.phrases.put("Verse", new Phrase(0, false));
+		dummy.phrases.put("END", new Phrase(0, false));
+		dummy.setLevel(0, Level.dummy);
 	}
 
 	@XStreamAsAttribute
@@ -198,5 +211,13 @@ public class Arrangement {
 				.collect(Collectors.toSet());
 
 		phrases.keySet().removeIf(p -> !usedPhrases.contains(p));
+	}
+
+	public Arrangement createDummy() {
+		final Arrangement dummyCopy = new Arrangement(dummy);
+		dummyCopy.arrangementType = arrangementType;
+		dummyCopy.arrangementSubtype = arrangementSubtype;
+
+		return dummyCopy;
 	}
 }

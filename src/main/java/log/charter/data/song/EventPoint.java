@@ -28,6 +28,12 @@ public class EventPoint implements IFractionalPosition {
 		this.position = position;
 	}
 
+	public EventPoint(final FractionalPosition position, final SectionType section, final String phrase) {
+		this.position = position;
+		this.section = section;
+		this.phrase = phrase;
+	}
+
 	public EventPoint(final EventPoint other) {
 		position = other.position;
 		section = other.section;
