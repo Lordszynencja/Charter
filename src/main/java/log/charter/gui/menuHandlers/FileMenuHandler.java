@@ -203,7 +203,7 @@ public class FileMenuHandler extends CharterMenuHandler {
 
 	private void importRSVocalsXML() {
 		final File file = FileChooseUtils.chooseFile(charterFrame, chartData.path, new String[] { ".xml" },
-				Label.RS_ARRANGEMENT_FILE.label());
+				Label.RS_VOCALS_FILE.label());
 		if (file == null) {
 			return;
 		}
@@ -249,9 +249,11 @@ public class FileMenuHandler extends CharterMenuHandler {
 				return;
 			}
 
-			if (file.getName().endsWith(".gp3") || file.getName().endsWith(".gp4") || file.getName().endsWith(".gp5")) {
+			// endsWith is case sensitive and windows files can be SONG.GP5 too
+			final String fileName = file.getName().toLowerCase();
+			if (fileName.endsWith(".gp3") || fileName.endsWith(".gp4") || fileName.endsWith(".gp5")) {
 				gp5FileImporter.importGP5File(file);
-			} else if (file.getName().endsWith(".gp")) {
+			} else if (fileName.endsWith(".gp")) {
 				gp7PlusFileImporter.importGP7PlusFile(file);
 			}
 		} catch (final Exception e) {

@@ -88,6 +88,10 @@ public class NewProjectFromRSXMLCreator {
 				songChart.title());
 		final File projectFolder = newProjectService.chooseSongFolder(songFile.getParentFile(), defaultChartFolderName,
 				arrangementFile.getParentFile());
+		// null means the folder dialog was canceled
+		if (projectFolder == null) {
+			return;
+		}
 
 		newProjectService.setDataForNewProject(projectFolder, songChart, musicData);
 		modeManager.setArrangement(0);
