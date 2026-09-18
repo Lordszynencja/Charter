@@ -157,6 +157,17 @@ public class ModeManager implements Initiable {
 		chartMap.redraw();
 	}
 
+	public void reloadCurrent() {
+		audioHandler.stopMusic();
+		selectionManager.clear();
+		chartToolbar.updateValues();
+		charterMenuBar.refreshMenus();
+		charterFrame.updateSizes();
+		titleUpdater.updateTitle();
+		chartMap.redraw();
+		chordTemplatesEditorTab.refreshTemplates();
+	}
+
 	public EditMode getMode() {
 		return editMode;
 	}

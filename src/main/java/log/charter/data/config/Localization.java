@@ -318,6 +318,8 @@ public class Localization {
 		PREVIOUS_ITEM_WITH_SELECT_SHIFT("Previous item with group select"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
+		REARRANGE_ARRANGEMENTS("Rearrange arrangements"), //
+		REARRANGE_VOCAL_PATHS("Rearrange vocal paths"), //
 		REDO("Redo"), //
 		REMOVE_GRID_TRIPLET("Remove grid triplet"), //
 		REWIND_TOOLTIP("Rewinds the song"), //

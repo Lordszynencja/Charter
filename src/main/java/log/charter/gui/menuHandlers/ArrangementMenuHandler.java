@@ -2,6 +2,8 @@ package log.charter.gui.menuHandlers;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -13,6 +15,7 @@ import log.charter.data.song.Arrangement;
 import log.charter.data.song.Level;
 import log.charter.data.song.vocals.VocalPath;
 import log.charter.gui.panes.songSettings.ArrangementSettingsPane;
+import log.charter.gui.panes.songSettings.RearrangingPane;
 import log.charter.gui.panes.songSettings.VocalPathSettingsPane;
 import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.services.Action;
@@ -119,10 +122,16 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		menu.addSeparator();
 		addVocalPathsList(menu);
 		menu.add(createItem(Label.NEW_VOCAL_PATH, this::addVocalPath));
+		if (chartData.songChart.vocalPaths.size() >= 2) {
+			menu.add(createItem(Label.REARRANGE_VOCAL_PATHS, this::rearrangeVocalPaths));
+		}
 
 		menu.addSeparator();
 		addArrangementsList(menu);
 		menu.add(createItem(Label.NEW_ARRANGEMENT, this::addArrangement));
+		if (chartData.songChart.arrangements.size() >= 2) {
+			menu.add(createItem(Label.REARRANGE_ARRANGEMENTS, this::rearrangeArrangements));
+		}
 
 		menu.addSeparator();
 		menu.add(createItem(Action.ARRANGEMENT_NEXT));
@@ -184,6 +193,17 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 				new VocalPath(), true);
 	}
 
+	private void rearrangeVocalPaths() {
+		final List<String> vocalPathsNames = new ArrayList<>();
+		int id = 0;
+		for (final VocalPath vocalPath : chartData.songChart.vocalPaths) {
+			vocalPathsNames.add(vocalPath.getName(id++));
+		}
+
+		new RearrangingPane<>(charterFrame, modeManager, Label.REARRANGE_VOCAL_PATHS, chartData.songChart.vocalPaths,
+				vocalPathsNames);
+	}
+
 	private void editVocalPathSettings() {
 		new VocalPathSettingsPane(chartData, charterMenuBar, charterFrame, modeManager, selectionManager,
 				chartData.currentVocals(), false);
@@ -194,6 +214,17 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 		chartData.songChart.vocalPaths.add(vocalPath);
 
 		charterMenuBar.refreshMenus();
+	}
+
+	private void rearrangeArrangements() {
+		final List<String> arrangementNames = new ArrayList<>();
+		int id = 0;
+		for (final Arrangement arrangement : chartData.songChart.arrangements) {
+			arrangementNames.add(arrangement.getTypeNameLabel(id++));
+		}
+
+		new RearrangingPane<>(charterFrame, modeManager, Label.REARRANGE_ARRANGEMENTS, chartData.songChart.arrangements,
+				arrangementNames);
 	}
 
 	private void editArrangementSettings() {
