@@ -148,6 +148,10 @@ public class ModeManager implements Initiable {
 	}
 
 	public void setLevel(final int level) {
+		if (chartData.currentLevel == level) {
+			return;
+		}
+
 		audioHandler.stopMusic();
 		selectionManager.clear();
 

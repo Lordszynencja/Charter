@@ -5,6 +5,8 @@ import static log.charter.gui.components.utils.ComponentUtils.setComponentBounds
 
 import java.awt.Dimension;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -15,9 +17,12 @@ import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.values.InstrumentConfig;
+import log.charter.data.song.Arrangement;
 import log.charter.data.song.ChordTemplate;
+import log.charter.data.song.HandShape;
 import log.charter.data.song.Level;
 import log.charter.data.song.notes.ChordOrNote;
+import log.charter.data.song.position.fractional.IFractionalPosition;
 import log.charter.data.undoSystem.UndoSystem;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.components.containers.RowedPanel;
@@ -27,6 +32,8 @@ import log.charter.gui.components.utils.ComponentUtils;
 import log.charter.gui.components.utils.PaneSizes;
 import log.charter.gui.components.utils.PaneSizesBuilder;
 import log.charter.services.CharterContext.Initiable;
+import log.charter.services.data.ChartTimeHandler;
+import log.charter.services.editModes.ModeManager;
 import log.charter.services.mouseAndKeyboard.KeyboardHandler;
 
 public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
@@ -42,7 +49,9 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 
 	private ChartData chartData;
 	private CharterFrame charterFrame;
+	private ChartTimeHandler chartTimeHandler;
 	private KeyboardHandler keyboardHandler;
+	private ModeManager modeManager;
 	private UndoSystem undoSystem;
 
 	private Integer currentChordTemplateId = null;
@@ -164,9 +173,34 @@ public class ChordTemplatesEditorTab extends RowedPanel implements Initiable {
 		arpeggioCheckBox.setSelected(chordTemplate.arpeggio);
 	}
 
+	private void goToFirstUsageOfTemplate(final int id) {
+		final Arrangement arrangement = chartData.currentArrangement();
+
+		for (int i = arrangement.levels.size(); i >= 0; i--) {
+			final Level level = arrangement.getLevel(i);
+			final Optional<ChordOrNote> chord = level.sounds.stream()
+					.filter(s -> s.isChord() && s.chord().templateId() == id).findFirst();
+			final Optional<HandShape> handShape = level.handShapes.stream().filter(hs -> hs.templateId == id)
+					.findFirst();
+
+			final Optional<IFractionalPosition> goTo = Stream
+					.<IFractionalPosition>concat(chord.stream(), handShape.stream())
+					.min(IFractionalPosition::compareTo);
+			if (goTo.isPresent()) {
+				modeManager.setLevel(i);
+				chartTimeHandler.nextFractionalTime(goTo.get());
+				return;
+			}
+		}
+	}
+
 	public void selectChordTemplate(final int id) {
-		currentChordTemplateId = id;
-		setTemplate();
+		if (currentChordTemplateId == null || currentChordTemplateId != id) {
+			currentChordTemplateId = id;
+			setTemplate();
+		} else {
+			goToFirstUsageOfTemplate(id);
+		}
 	}
 
 	public Integer getSelectedChordTemplateId() {
