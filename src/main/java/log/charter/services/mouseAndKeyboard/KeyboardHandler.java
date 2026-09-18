@@ -120,7 +120,7 @@ public class KeyboardHandler implements KeyListener {
 
 		try {
 			int keyCode = e.getKeyCode();
-			if (keyCode == KeyEvent.VK_UNDEFINED) {
+			if (keyCode == KeyEvent.VK_UNDEFINED || keyCode == shortcut.key) {
 				return;
 			}
 
@@ -188,6 +188,10 @@ public class KeyboardHandler implements KeyListener {
 			}
 			if (keyCode == KeyEvent.VK_SUBTRACT) {
 				keyCode = KeyEvent.VK_MINUS;
+			}
+
+			if (heldAction != null) {
+				actionHandler.stopAction(heldAction);
 			}
 
 			switch (keyCode) {

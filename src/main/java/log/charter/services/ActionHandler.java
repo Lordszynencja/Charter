@@ -315,6 +315,7 @@ public class ActionHandler implements Initiable {
 	}
 
 	private final Map<Action, Runnable> actionHandlers = new HashMap<>();
+	private final Map<Action, Runnable> actionReleaseHandlers = new HashMap<>();
 
 	@Override
 	public void init() {
@@ -498,6 +499,8 @@ public class ActionHandler implements Initiable {
 		actionHandlers.put(Action.ZOOM_IN_FAST, () -> changeZoom(16));
 		actionHandlers.put(Action.ZOOM_OUT, () -> changeZoom(-1));
 		actionHandlers.put(Action.ZOOM_OUT_FAST, () -> changeZoom(-16));
+
+		actionReleaseHandlers.put(Action.PLACE_LYRIC_FROM_TEXT, vocalsHandler::setEndForLastVocalPlaced);
 	}
 
 	private static final List<Action> actionsNotClearingMousePress = asList(//
@@ -606,6 +609,17 @@ public class ActionHandler implements Initiable {
 		} catch (final Exception ex) {
 			Logger.error("Exception on action " + action, ex);
 			ComponentUtils.showPopup(charterFrame, Label.ERROR, ex.getLocalizedMessage());
+		}
+	}
+
+	public void stopAction(final Action action) {
+		final Runnable actionHandler = actionReleaseHandlers.get(action);
+		if (actionHandler != null) {
+			actionHandler.run();
+		}
+
+		if (!actionsNotChangingChartMap.contains(action)) {
+			chartMap.redraw();
 		}
 	}
 

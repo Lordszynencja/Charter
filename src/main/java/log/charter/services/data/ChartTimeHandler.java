@@ -64,6 +64,7 @@ public class ChartTimeHandler {
 	private ModeManager modeManager;
 	private ProjectAudioHandler projectAudioHandler;
 	private SelectionManager selectionManager;
+	private VocalsHandler vocalsHandler;
 
 	private double time = 0;
 	private FractionalPosition fractionalTime = new FractionalPosition();
@@ -376,5 +377,9 @@ public class ChartTimeHandler {
 		fractionalTime = nextFractionalTime;
 		nextTime = time;
 		nextFractionalTime = fractionalTime;
+
+		if (keyboardHandler.heldAction().filter(a -> a == Action.PLACE_LYRIC_FROM_TEXT).isPresent()) {
+			vocalsHandler.updateEndForLastPlacedVocal();
+		}
 	}
 }
