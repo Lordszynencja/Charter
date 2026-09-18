@@ -141,7 +141,7 @@ public class SongFileHandler {
 
 		int id = 1;
 		for (final Arrangement arrangement : chartData.songChart.arrangements) {
-			if (!arrangement.ignore) {
+			if (!arrangement.ignore && (arrangement.forceExport || !arrangement.hasErrors)) {
 				writeRSXML(timer, dir, id, arrangement);
 			}
 			id++;
@@ -162,26 +162,16 @@ public class SongFileHandler {
 			return;
 		}
 
-		final Timer timer = new Timer();
-
 		arrangementFixer.fixArrangements();
-		timer.addTimestamp("arrangementFixer.fixArrangements()");
 
 		final ChartProject project = new ChartProject(chartTimeHandler.time(), modeManager.getMode(), chartData,
 				chartData.songChart, projectAudioHandler.getSelectedStem(), textTab.getText());
-		timer.addTimestamp("generated project");
 		final String xml = writeChartProject(project);
-		timer.addTimestamp("wrote project to variable");
-
 		RW.write(new File(chartData.path, chartData.projectFileName), xml, "UTF-8");
-		timer.addTimestamp("wrote project to disk");
+
 		writeRSXMLs();
-		timer.addTimestamp("wrote RS XML");
 
 		undoSystem.onSave();
-		timer.addTimestamp("marked undo saved");
-
-		timer.print("save", Timer.defaultFormat(35));
 	}
 
 	public void saveAs() {

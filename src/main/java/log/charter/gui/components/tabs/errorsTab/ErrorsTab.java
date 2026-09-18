@@ -24,6 +24,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
+import log.charter.data.ChartData;
 import log.charter.data.config.ChartPanelColors.ColorLabel;
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
@@ -67,6 +68,8 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 		warningImage = ImageUtils.loadSafeFromDir(imagesFolder, "/warning.png");
 		remakeWarningIcon();
 	}
+
+	private ChartData chartData;
 
 	private Tab tab;
 
@@ -168,6 +171,16 @@ public class ErrorsTab extends RowedPanel implements ComponentListener {
 	public void swapBuffer() {
 		internalBuffer = errorsBuffer;
 		errorsBuffer = new ArrayList<>();
+
+		final boolean[] arrangementErrors = new boolean[chartData.songChart.arrangements.size()];
+		for (final ChartError error : internalBuffer) {
+			if (error.position.arrangementId() != null) {
+				arrangementErrors[error.position.arrangementId()] = true;
+			}
+		}
+		for (int i = 0; i < arrangementErrors.length; i++) {
+			chartData.songChart.arrangements.get(i).hasErrors = arrangementErrors[i];
+		}
 
 		if (tab != null) {
 			final boolean hasErrors = internalBuffer.stream()

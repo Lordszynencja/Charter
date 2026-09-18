@@ -18,6 +18,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamInclude;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import log.charter.data.config.Localization.Label;
 import log.charter.data.song.configs.Tuning;
@@ -67,6 +68,11 @@ public class Arrangement {
 	public boolean pickedBass = false;
 	@XStreamAsAttribute
 	public boolean ignore = false;
+
+	@XStreamOmitField
+	public boolean hasErrors = false;
+	@XStreamOmitField
+	public boolean forceExport = false;
 
 	public List<EventPoint> eventPoints = new ArrayList<>();
 	@XStreamConverter(PhraseDataConverter.class)

@@ -74,7 +74,9 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 			default -> new Color(255, 255, 120);
 		};
 
-		if (arrangement.ignore) {
+		if (arrangement.forceExport) {
+			color = color.brighter().brighter();
+		} else if (arrangement.ignore) {
 			color = color.darker().darker();
 		}
 
@@ -150,6 +152,8 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 			menu.add(createItem(Label.CLONE_ARRANGEMENT, this::cloneArrangement));
 			menu.add(createCheckboxItem(Label.IGNORE_ARRANGEMENT, this::toggleIgnoreArrangement,
 					chartData.currentArrangement().ignore));
+			menu.add(createCheckboxItem(Label.FORCE_EXPORT, this::toggleForceExport,
+					chartData.currentArrangement().forceExport));
 
 			menu.addSeparator();
 			createLevelMenuItems(menu);
@@ -242,6 +246,13 @@ public class ArrangementMenuHandler extends CharterMenuHandler {
 	private void toggleIgnoreArrangement() {
 		final Arrangement arrangement = chartData.currentArrangement();
 		arrangement.ignore = !arrangement.ignore;
+
+		charterMenuBar.refreshMenus();
+	}
+
+	private void toggleForceExport() {
+		final Arrangement arrangement = chartData.currentArrangement();
+		arrangement.forceExport = !arrangement.forceExport;
 
 		charterMenuBar.refreshMenus();
 	}

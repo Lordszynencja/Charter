@@ -3,7 +3,7 @@ package log.charter.services.data.files;
 import static log.charter.gui.components.simple.LoadingDialog.doWithLoadingDialog;
 import static log.charter.gui.components.utils.ComponentUtils.showPopup;
 import static log.charter.io.rsc.xml.ChartProjectXStreamHandler.readChartProject;
-import static log.charter.services.data.files.SongFilesBackuper.makeBackups;
+import static log.charter.services.data.files.SongFilesBackuper.makeBackupsForFiles;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -99,7 +99,7 @@ public class ExistingProjectImporter {
 			return;
 		}
 
-		makeBackups(dir, filesToBackup);
+		makeBackupsForFiles(dir, filesToBackup);
 
 		chartData.setSong(dir, songChart, projectFileChosen.getName(), project.editMode, project.arrangement,
 				project.level);
