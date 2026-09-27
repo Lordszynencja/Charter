@@ -134,8 +134,8 @@ public class MidiNotePlayer {
 		final MidiChannel channel = channels[string];
 
 		int actualNote = lastNotes[string];
-		bendValue += getMidiNote(string, fret, chartData.currentStrings())
-				+ chartData.currentArrangement().tuning.getTuning()[string] - actualNote;
+		bendValue += getMidiNote(string, fixCapoFret(fret, chartData.currentArrangement().capo),
+				chartData.currentStrings()) + chartData.currentArrangement().tuning.getTuning()[string] - actualNote;
 		bendValue += chartData.currentArrangement().centOffset.multiply(new BigDecimal("0.01")).doubleValue();
 
 		int roundedValue = (int) Math.round(bendValue);
@@ -208,9 +208,13 @@ public class MidiNotePlayer {
 		return chartData.currentArrangement().startingTone;
 	}
 
+	private int fixCapoFret(final int fret, final int capo) {
+		return fret <= capo ? capo : fret;
+	}
+
 	private void playNote(final Note note) {
 		final int string = note.string;
-		final int fret = note.fret;
+		final int fret = fixCapoFret(note.fret, chartData.currentArrangement().capo);
 		final boolean mute = note.mute != Mute.NONE;
 		final boolean harmonic = note.harmonic != Harmonic.NONE;
 		final List<BendValue> bendValues = note.bendValues;
@@ -220,12 +224,13 @@ public class MidiNotePlayer {
 	}
 
 	private void playChord(final Chord chord) {
+		final int capo = chartData.currentArrangement().capo;
 		final String toneName = getToneName(chord.position(chartData.beats()));
 		final ChordTemplate template = chartData.currentArrangement().chordTemplates.get(chord.templateId());
 
 		for (final Entry<Integer, ChordNote> chordNoteData : chord.chordNotes.entrySet()) {
 			final int string = chordNoteData.getKey();
-			final int fret = template.frets.get(string);
+			final int fret = fixCapoFret(template.frets.get(string), capo);
 			final boolean mute = chordNoteData.getValue().mute != Mute.NONE;
 			final boolean harmonic = chordNoteData.getValue().harmonic != Harmonic.NONE;
 			final List<BendValue> bendValues = chordNoteData.getValue().bendValues;

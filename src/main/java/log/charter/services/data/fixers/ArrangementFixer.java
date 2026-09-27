@@ -624,7 +624,7 @@ public class ArrangementFixer {
 		for (final ChordTemplate template : arrangement.chordTemplates) {
 			for (final Entry<Integer, Integer> entry : template.frets.entrySet()) {
 				if (entry.getValue() <= capo) {
-					template.frets.put(entry.getKey(), capo);
+					template.frets.put(entry.getKey(), 0);
 				}
 			}
 		}
@@ -635,7 +635,7 @@ public class ArrangementFixer {
 			}
 
 			if (sound.note().fret <= capo) {
-				sound.note().fret = capo;
+				sound.note().fret = 0;
 			}
 		}
 	}
