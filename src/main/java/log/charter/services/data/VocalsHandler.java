@@ -214,5 +214,7 @@ public class VocalsHandler {
 		if (vocalEndPosition.compareTo(lastVocalPlaced.endPosition()) > 0) {
 			lastVocalPlaced.endPosition(vocalEndPosition);
 		}
+
+		lastVocalPlaced = null;
 	}
 }

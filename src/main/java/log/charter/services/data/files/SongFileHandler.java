@@ -31,6 +31,7 @@ import log.charter.io.rsc.xml.ChartProject;
 import log.charter.services.data.ChartTimeHandler;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.data.fixers.ArrangementFixer;
+import log.charter.services.data.validation.ChartValidator;
 import log.charter.services.editModes.EditMode;
 import log.charter.services.editModes.ModeManager;
 import log.charter.util.FileChooseUtils;
@@ -46,6 +47,7 @@ public class SongFileHandler {
 	private ChartData chartData;
 	private CharterFrame charterFrame;
 	private ChartTimeHandler chartTimeHandler;
+	private ChartValidator chartValidator;
 	private ExistingProjectImporter existingProjectImporter;
 	private ModeManager modeManager;
 	private ProjectAudioHandler projectAudioHandler;
@@ -169,6 +171,7 @@ public class SongFileHandler {
 		final String xml = writeChartProject(project);
 		RW.write(new File(chartData.path, chartData.projectFileName), xml, "UTF-8");
 
+		chartValidator.validate();
 		writeRSXMLs();
 
 		undoSystem.onSave();
