@@ -102,7 +102,7 @@ public class ChartValidator implements Initiable {
 		}
 	}
 
-	private void validate() {
+	public void validate() {
 		if (chartData.isEmpty) {
 			return;
 		}
