@@ -152,7 +152,7 @@ public class NewProjectFromGP7Creator {
 			return;
 		}
 
-		final SongChart songChart = gp7PlusFileImporter.transformGPIFToSongChart(gpif, importOptions);
+		final SongChart songChart = gp7PlusFileImporter.transformGPIFToSongChart(gpif, importOptions).chart();
 		newProjectService.fillMetadata(songChart, songFile.file, metadata);
 		newProjectService.setDataForNewProject(songFolder, songChart, musicData);
 	}

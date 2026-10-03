@@ -1,6 +1,7 @@
 package log.charter.gui.panes.imports;
 
 import static java.lang.Math.max;
+import static log.charter.data.config.GraphicalConfig.inputSize;
 import static log.charter.services.ArrangementFretHandPositionsCreator.createFHPs;
 
 import java.util.ArrayList;
@@ -72,13 +73,16 @@ public class ArrangementImportOptions extends ParamsPane {
 		for (int i = 0; i < imported.arrangements.size(); i++) {
 			final String arrangementName = trackNames.get(i);
 			final int width = addArrangementName(row + i, i, arrangementName);
-			maxWidth = max(maxWidth, width);
+			maxWidth = max(maxWidth, width + inputSize / 2);
 		}
+
 		for (int i = 0; i < imported.arrangements.size(); i++) {
 			addArrangementOptions(row + i, i, maxWidth);
 		}
 
 		row += imported.arrangements.size() + 1;
+
+		sizes.width = maxWidth + inputSize * 9;
 
 		setOnFinish(this::saveAndExit, null);
 		addDefaultFinish(row);

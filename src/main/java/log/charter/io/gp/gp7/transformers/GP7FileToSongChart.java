@@ -1,5 +1,6 @@
 package log.charter.io.gp.gp7.transformers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import log.charter.data.song.BeatsMap;
@@ -8,6 +9,9 @@ import log.charter.io.gp.GPFileImportOptions;
 import log.charter.io.gp.gp7.data.GPIF;
 
 public class GP7FileToSongChart {
+	public record SongChartWithTrackNames(SongChart chart, List<String> trackNames) {
+	}
+
 	private static void setMetadata(final SongChart chart, final GPIF gpif) {
 		if (gpif.score.title != null && !gpif.score.title.isBlank()) {
 			chart.title(gpif.score.title);
@@ -32,10 +36,12 @@ public class GP7FileToSongChart {
 		return true;
 	}
 
-	public static SongChart transform(final GPIF gpif, final BeatsMap beatsMap,
+	public static SongChartWithTrackNames transform(final GPIF gpif, final BeatsMap beatsMap,
 			final GPFileImportOptions importOptions) {
 		final SongChart chart = new SongChart(beatsMap);
 		setMetadata(chart, gpif);
+
+		final List<String> trackNames = new ArrayList<>();
 		final List<Track> tracks = new NotesPerTrackReader(beatsMap.immutable, gpif).getTracks();
 
 		for (final Track track : tracks) {
@@ -43,10 +49,11 @@ public class GP7FileToSongChart {
 				continue;
 			}
 
+			trackNames.add(track.trackInfo.name);
 			chart.arrangements
 					.add(GP7TrackToArrangementTransformer.transform(beatsMap.immutable, track, importOptions));
 		}
 
-		return chart;
+		return new SongChartWithTrackNames(chart, trackNames);
 	}
 }
