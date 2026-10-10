@@ -515,7 +515,7 @@
         <h1>🎸 Charter<br><span style="font-size:0.5em;color:#8fcbff;">Manual de Uso y Creación de Charts</span></h1>
         <p style="text-align:center;color:#8aaccc;font-size:1.1em;">
             Guía completa para el editor de charts de Rocksmith<br>
-            <span style="font-size:0.85em;color:#6a8aaa;">Basado en el repositorio <a href="https://github.com/Lordszynencja/Charter.wiki" style="color:#6aafff;text-decoration:none;">github.com/Lordszynencja/Charter.wiki</a></span>
+            <span style="font-size:0.85em;color:#6a8aaa;">Basado en el repositorio <a href="https://github.com/Lordszynencja/charter/wiki" style="color:#6aafff;text-decoration:none;">github.com/Lordszynencja/charter/wiki</a></span>
         </p>
 
         <!-- ============================================================ -->
@@ -662,15 +662,17 @@
                 </tr>
                 <tr>
                     <td><strong>Phrase</strong></td>
-                    <td>Fragmento de la canción para práctica y selección de dificultad. Se muestra como bloques naranjas o morados.<br>
-                        <span style="color:#8aaccc;">COUNT:</span> Un compás antes de la primera nota.<br>
-                        <span style="color:#8aaccc;">END:</span> Después de la última nota.
+                    <td>Fragmento de la canción para práctica y selección de dificultad. Se muestra como bloques naranjas.<br>
+                        <span style="color:#8aaccc;">COUNT:</span> Frase obligatoria antes del primer compás con notas.<br>
+                        <span style="color:#8aaccc;">END:</span> Frase final, justo después de la última nota; nada puede ir después.<br>
+                        <span style="font-size:0.85em;color:#6a8aaa;">Ver detalle completo en 1.3 &rarr; Secciones y Frases.</span>
                     </td>
                 </tr>
                 <tr>
                     <td><strong>Section</strong></td>
-                    <td>Parte de la canción (Verso, Estribillo, Solo, etc.). Cada arreglo necesita al menos una.<br>
-                        <span style="color:#8aaccc;">No guitar:</span> Sección especial para partes sin guitarra.
+                    <td>Parte musical de la canción (Verso, Estribillo, Solo, etc.). Cada arreglo necesita al menos una. Solo se marca dónde empieza.<br>
+                        <span style="color:#8aaccc;">No guitar:</span> Sección especial para partes sin guitarra.<br>
+                        <span style="font-size:0.85em;color:#6a8aaa;">Ver detalle completo en 1.3 &rarr; Secciones y Frases.</span>
                     </td>
                 </tr>
                 <tr>
@@ -720,7 +722,7 @@
         </div>
 
         <div class="img-container">
-            <img src="https://raw.githubusercontent.com/Lordszynencja/Charter.wiki/main/images/accents%20on%20chords%202D.png" alt="Acentos en acordes - 2D" loading="lazy" onerror="this.style.display='none'">
+            <img src="https://github.com/user-attachments/assets/c431c1c1-0451-4b61-8d2e-f9ba4f7f0097" alt="Acentos en acordes - 2D" loading="lazy" onerror="this.style.display='none'">
             <span class="img-label">Acentos en acordes (vista 2D)</span>
         </div>
 
@@ -1096,21 +1098,36 @@
         <!-- SECCIONES Y FRASES                                            -->
         <!-- ============================================================ -->
         <h4>Secciones y Frases <span style="font-size:0.7em;color:#6a8aaa;">(Sections &amp; Phrases)</span></h4>
-        <p>Las secciones son partes de la canción (Intro, Verso, Solo, etc.). Las frases son fragmentos más pequeños (4-8 compases) que se usan para la práctica y la dificultad dinámica.</p>
+        <p>Las secciones son las partes musicales de la canción (Intro, Verso, Estribillo, Solo, etc.). Las frases son los fragmentos más pequeños dentro de esas secciones que el jugador practica en el Riff Repeater y que además controlan la dificultad dinámica.</p>
+        <p>En el juego, las secciones son las líneas que aparecen debajo de los bloques del Riff Repeater; las frases son esos bloques. En el editor, las secciones se marcan con líneas moradas y las frases con líneas naranjas en el mapa del chart.</p>
 
-        <div class="img-container">
-            <img src="https://github.com/user-attachments/assets/3584c788-8e91-435c-abc7-8c04850c60ce" alt="Frase con sección" loading="lazy" onerror="this.style.display='none'">
-            <span class="img-label">Frase con sección</span>
-        </div>
+       <img src="https://i.ibb.co/yF649cdK/obraz.png" alt="Estructura Charter" style="width: 100%; height: auto; display: block; margin: 20px auto;">
+
+
+        <p><strong>Reglas para las Secciones:</strong></p>
+        <ul>
+            <li>Divides la canción en partes musicales (Verso, Estribillo, Solo...). Solo se marca <strong>dónde empieza</strong> cada sección, no hace falta marcar dónde termina.</li>
+            <li>Los tramos sin guitarra se marcan con la sección especial <span class="command">No guitar</span>.</li>
+        </ul>
+
+        <p><strong>Reglas para las Frases:</strong></p>
+        <ul>
+            <li>Como referencia se suelen colocar cada 4 compases, pero la idea real es meter en una frase "un trozo que el jugador querría practicar" (por ejemplo, un riff completo).</li>
+            <li>Si una melodía se repite dentro de una sección, esa sección puede tener varias frases; si dos frases contienen exactamente las mismas notas, es buena práctica ponerles el <strong>mismo nombre</strong> (algunas herramientas, como DLCB, renombran las frases igualmente, así que el nombre es sobre todo para tu propia referencia).</li>
+            <li>En los solos, se dividen las frases como creas que el jugador querrá practicar cada parte, no hay una regla fija de compases.</li>
+            <li>A veces una frase es muy corta a propósito, por ejemplo cuando hay una nota extra justo antes de que empiece el compás siguiente; esto puede pasar al principio o al final de una sección.</li>
+            <li>Los nombres de sección y frase no se muestran en el juego (aunque el juego puede darte una tarea del tipo "practica el Verso de esta canción"), así que puedes nombrarlas como prefieras: por sección y número (<span class="command">Verso1_1</span>, <span class="command">Verso1_2</span>) o por riff (<span class="command">riff1</span>, <span class="command">riff2</span>, <span class="command">riff1_long</span> para una variación del mismo riff).</li>
+        </ul>
+
+        <p><strong>COUNT y END en detalle:</strong></p>
+        <ul>
+            <li><span style="color:#8aaccc;">COUNT:</span> es una frase obligatoria que debe existir <strong>antes</strong> del primer compás con notas; si no está, EOF/Charter avisará al guardar. En la práctica, muchos charters añaden ~10 segundos de silencio al inicio del audio y usan uno o dos compases libres para el conteo antes de que empiece la música, marcando ese primer compás libre como <span class="command">COUNT</span>.</li>
+            <li><span style="color:#8aaccc;">END:</span> se coloca justo después de la última nota, normalmente en el primer compás libre tras terminar la música. No puede haber ninguna sección ni frase después del END: debe ser siempre el último elemento del chart.</li>
+        </ul>
 
         <div class="img-container">
             <img src="https://raw.githubusercontent.com/Lordszynencja/Charter.wiki/main/images/Phrase%20without%20section.png" alt="Frase sin sección" loading="lazy" onerror="this.style.display='none'">
             <span class="img-label">Frase sin sección</span>
-        </div>
-
-        <div class="img-container">
-            <img src="https://github.com/user-attachments/assets/3584c788-8e91-435c-abc7-8c04850c60ce" alt="Frase repetida" loading="lazy" onerror="this.style.display='none'">
-            <span class="img-label">Frase repetida</span>
         </div>
 
         <div class="img-container">
@@ -1646,7 +1663,7 @@
         <!-- ============================================================ -->
         <div class="footer">
             <p>📘 <strong>Charter</strong> — Manual de Uso y Creación de Charts</p>
-            <p>Basado en el repositorio <a href="https://github.com/Lordszynencja/Charter.wiki" target="_blank">github.com/Lordszynencja/Charter.wiki</a></p>
+            <p>Basado en el repositorio <a href="https://github.com/Lordszynencja/charter/wiki" target="_blank">github.com/Lordszynencja/Charter.wiki</a></p>
             <p style="font-size:0.8em;color:#4a6a8a;">Generado con ❤️ para la comunidad de CustomsForge</p>
         </div>
 
