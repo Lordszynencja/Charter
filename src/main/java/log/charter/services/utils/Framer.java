@@ -8,6 +8,7 @@ public class Framer {
 	private static final double scale = 1_000_000_000.0;
 
 	private double frameLength;
+	public boolean skipFramesIfNeeded = true;
 
 	private long frameTime = System.nanoTime();
 	private long previousFrameTime = System.nanoTime();
@@ -33,6 +34,10 @@ public class Framer {
 		frameTime += frameLength;
 		final long currentTime = System.nanoTime();
 		if (frameTime <= currentTime) {
+			if (!skipFramesIfNeeded) {
+				return;
+			}
+
 			frameTime = currentTime;
 		}
 

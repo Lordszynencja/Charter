@@ -22,6 +22,7 @@ import log.charter.services.editModes.EditMode;
 @XStreamAlias("project")
 @XStreamInclude({ Arrangement.class, Beat.class, VocalPath.class })
 public class ChartProject {
+	public String id;
 	public int chartFormatVersion = 3;
 	public EditMode editMode = EditMode.TEMPO_MAP;
 	public int arrangement = 0;
@@ -54,6 +55,7 @@ public class ChartProject {
 
 	public ChartProject(final double time, final EditMode editMode, final ChartData data, final SongChart songChart,
 			final int selectedStem, final String text) {
+		id = songChart.id;
 		this.editMode = editMode;
 		arrangement = data.currentArrangement;
 		level = data.currentLevel;

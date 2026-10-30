@@ -16,10 +16,12 @@ import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IConstantFractionalPositionWithEnd;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
 import log.charter.io.rs.xml.vocals.ArrangementVocals;
+import log.charter.util.Utils;
 
 @XStreamAlias("vocals")
 @XStreamInclude(Vocal.class)
 public class VocalPath {
+	public String id;
 	public String name = "";
 	public Color color = new Color(255, 255, 255);
 	public List<Vocal> vocals = new ArrayList<>();
@@ -41,6 +43,7 @@ public class VocalPath {
 	}
 
 	public VocalPath(final VocalPath other) {
+		id = Utils.generateRandomId("vocals");
 		name = other.name;
 		color = other.color;
 		vocals = map(other.vocals, Vocal::new);
