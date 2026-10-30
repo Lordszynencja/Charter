@@ -64,7 +64,7 @@ public class Arrangement {
 		dummy.setLevel(0, Level.dummy);
 	}
 
-	public final String id;
+	public String id;
 	@XStreamAsAttribute
 	@XStreamAlias("type")
 	public ArrangementType arrangementType = ArrangementType.Lead;
