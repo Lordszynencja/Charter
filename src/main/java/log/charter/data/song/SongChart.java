@@ -16,12 +16,14 @@ import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.position.fractional.IFractionalPosition;
 import log.charter.data.song.vocals.VocalPath;
 import log.charter.io.rsc.xml.ChartProject;
+import log.charter.util.Utils;
 
 public class SongChart {
 	private static String cleanString(final String s) {
 		return s == null ? "" : s.replace("\u0000", "");
 	}
 
+	public final String id;
 	public String musicFileName;
 	public List<Stem> stems = new ArrayList<>();
 
@@ -45,16 +47,19 @@ public class SongChart {
 	public Map<Integer, Double> bookmarks = new HashMap<>();
 
 	public SongChart() {
+		id = Utils.generateRandomId("emptySong");
 		beatsMap = new BeatsMap(1);
 	}
 
 	public SongChart(final BeatsMap beatsMap) {
+		id = Utils.generateRandomId("emptySong");
 		this.beatsMap = beatsMap;
 	}
 
 	public SongChart(final String musicFileName, final String artistName, final String artistNameSort,
 			final String title, final String albumName, final Integer albumYear, final BeatsMap beatsMap,
 			final List<Arrangement> arrangements) {
+		id = Utils.generateRandomId(artistName + "-" + title);
 		this.musicFileName = musicFileName;
 
 		this.artistName(artistName);
@@ -71,6 +76,7 @@ public class SongChart {
 	 * creates chart from loaded project
 	 */
 	public SongChart(final ChartProject project, final String dir) throws IOException {
+		id = project.id == null ? Utils.generateRandomId(project.artistName + "-" + project.title) : project.id;
 		musicFileName = project.musicFileName;
 
 		stems = nvl(project.stems, new ArrayList<>());

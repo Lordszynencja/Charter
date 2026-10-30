@@ -116,7 +116,7 @@ public class ChartData {
 
 	public Arrangement currentArrangement() {
 		if (songChart == null || currentArrangement < 0 || currentArrangement >= songChart.arrangements.size()) {
-			return new Arrangement();
+			return Arrangement.dummy;
 		}
 
 		return songChart.arrangements.get(currentArrangement);

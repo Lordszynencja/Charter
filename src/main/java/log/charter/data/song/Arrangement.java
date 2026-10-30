@@ -28,6 +28,7 @@ import log.charter.io.rs.xml.song.ArrangementType;
 import log.charter.io.rsc.xml.converters.ArrangementConverter;
 import log.charter.io.rsc.xml.converters.PhraseDataConverter;
 import log.charter.util.CollectionUtils;
+import log.charter.util.Utils;
 import log.charter.util.data.Fraction;
 
 @XStreamAlias("arrangement")
@@ -63,6 +64,7 @@ public class Arrangement {
 		dummy.setLevel(0, Level.dummy);
 	}
 
+	public final String id;
 	@XStreamAsAttribute
 	@XStreamAlias("type")
 	public ArrangementType arrangementType = ArrangementType.Lead;
@@ -96,15 +98,18 @@ public class Arrangement {
 	public List<Level> levels = new ArrayList<>();
 
 	public Arrangement() {
+		id = Utils.generateRandomId("empty");
 		setLevel(0, new Level());
 	}
 
 	public Arrangement(final ArrangementType arrangementType) {
 		this.arrangementType = arrangementType;
+		id = Utils.generateRandomId(arrangementType.label.label());
 		setLevel(0, new Level());
 	}
 
 	public Arrangement(final Arrangement other) {
+		id = Utils.generateRandomId(getTypeNameLabel());
 		arrangementType = other.arrangementType;
 		arrangementSubtype = other.arrangementSubtype;
 		tuning = new Tuning(other.tuning);
