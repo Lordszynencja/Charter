@@ -4,12 +4,15 @@ import static log.charter.data.config.SystemType.MAC;
 import static log.charter.gui.components.utils.ComponentUtils.askYesNo;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.SwingUtilities;
 
 import log.charter.data.ChartData;
+import log.charter.data.WorkTimes;
 import log.charter.data.config.Localization.Label;
 import log.charter.data.config.SystemType;
 import log.charter.data.undoSystem.UndoSystem;
@@ -136,6 +139,7 @@ public class CharterContext {
 	private final VocalsHandler vocalsHandler = new VocalsHandler();
 	private final WaveFormDrawer waveFormDrawer = new WaveFormDrawer();
 	private final WindowedPreviewHandler windowedPreviewHandler = new WindowedPreviewHandler();
+	private final WorkTimes workTimes = new WorkTimes();
 
 	private final CharterFrame charterFrame = new CharterFrame();
 	private final CharterMenuBar charterMenuBar = new CharterMenuBar();
@@ -151,6 +155,8 @@ public class CharterContext {
 	private final AudioFramer audioFramer = new AudioFramer();
 	private final Framer framer = new Framer(this::frame);
 	private final UpdateChecker updateChecker = new UpdateChecker();
+
+	private final List<Runnable> onExit = new ArrayList<>();
 
 	private Map<String, Object> getFieldsValues() {
 		final Map<String, Object> fields = new HashMap<>();
@@ -293,10 +299,23 @@ public class CharterContext {
 		onExit();
 	}
 
+	public void addOnExit(final Runnable r) {
+		onExit.add(r);
+	}
+
 	private void onExit() {
 		try {
 			audioFramer.stop();
 			framer.stop();
+
+			for (final Runnable r : onExit) {
+				try {
+					r.run();
+				} catch (final Exception e) {
+					e.printStackTrace();
+				}
+			}
+
 			try {
 				charterFrame.dispose();
 			} catch (final Exception e) {
