@@ -117,6 +117,10 @@ public class ChordNameSuggester {
 	}
 
 	public static void setFirstSuggestedName(final ChordTemplate template, final Tuning tuning) {
+		if (template.frets.size() <= 2) {
+			return;
+		}
+
 		final List<String> suggestions = suggestChordNames(tuning, template.frets);
 		template.chordName = suggestions.isEmpty() ? "" : suggestions.get(0);
 	}
