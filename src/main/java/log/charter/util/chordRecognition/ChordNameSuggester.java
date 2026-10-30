@@ -4,8 +4,6 @@ import static java.lang.Math.floorMod;
 import static java.util.Arrays.asList;
 import static log.charter.util.SoundUtils.soundToSimpleName;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,25 +47,7 @@ public class ChordNameSuggester {
 		throw new IllegalArgumentException("Unknown error when changing tone " + tone + " by " + change);
 	}
 
-	private static List<Integer> soundsToNotes(final int[] sounds) {
-		final List<Integer> notes = new ArrayList<>(sounds.length);
-		for (int i = 0; i < sounds.length; i++) {
-			int note = sounds[i];
-			while (note < 0) {
-				note += 12;
-			}
-			note = note % 12;
-
-			if (!notes.contains(note)) {
-				notes.add(note);
-			}
-		}
-
-		return notes;
-	}
-
-	private static List<String> recognizeChord(final int[] sounds) {
-		final List<Integer> notes = soundsToNotes(sounds);
+	private static List<String> recognizeChord(final List<Integer> notes) {
 		if (notes.size() == 1) {
 			return asList(soundToSimpleName(notes.get(0), true));
 		}
@@ -78,7 +58,7 @@ public class ChordNameSuggester {
 			final List<String> foundNamesForRoot = ChordNameAdder.getSuggestedChordNames(root, notes);
 			foundNames.addAll(foundNamesForRoot);
 
-			if (root != sounds[0] % 12) {
+			if (i != 0) {
 				for (final String name : foundNamesForRoot) {
 					foundNames.add(name + "/" + soundToSimpleName(notes.get(0), true));
 				}
@@ -88,36 +68,18 @@ public class ChordNameSuggester {
 		return foundNames;
 	}
 
-	private static boolean negativeExists(final int[] sounds) {
-		for (final int sound : sounds) {
-			if (sound < 0) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	public static List<String> suggestChordNames(final Tuning tuning, final Map<Integer, Integer> templateFrets) {
-		final int[] sounds = SoundUtils.getSounds(tuning, false, templateFrets);
+		final List<Integer> notes = SoundUtils.getNotes(tuning, false, templateFrets);
 
-		while (negativeExists(sounds)) {
-			for (int i = 0; i < sounds.length; i++) {
-				sounds[i] += 12;
-			}
+		if (notes.size() == 1) {
+			return asList();
 		}
 
-		Arrays.sort(sounds);
-
-		if (sounds.length == 1) {
-			return asList(soundToSimpleName(sounds[0], true));
-		}
-
-		return recognizeChord(sounds);
+		return recognizeChord(notes);
 	}
 
 	public static void setFirstSuggestedName(final ChordTemplate template, final Tuning tuning) {
-		if (template.frets.size() <= 2) {
+		if (SoundUtils.getNotes(tuning, false, template.frets).size() <= 2) {
 			return;
 		}
 

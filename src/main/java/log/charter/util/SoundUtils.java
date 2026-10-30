@@ -1,5 +1,7 @@
 package log.charter.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -65,5 +67,44 @@ public class SoundUtils {
 		}
 
 		return sounds;
+	}
+
+	private static boolean negativeExists(final int[] sounds) {
+		for (final int sound : sounds) {
+			if (sound < 0) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static List<Integer> soundsToNotes(final int[] sounds) {
+		final List<Integer> notes = new ArrayList<>(sounds.length);
+		for (int i = 0; i < sounds.length; i++) {
+			int note = sounds[i];
+			while (note < 0) {
+				note += 12;
+			}
+			note = note % 12;
+
+			if (!notes.contains(note)) {
+				notes.add(note);
+			}
+		}
+
+		return notes;
+	}
+
+	public static List<Integer> getNotes(final Tuning tuning, final boolean bass, final Map<Integer, Integer> frets) {
+		final int[] sounds = getSounds(tuning, false, frets);
+
+		while (negativeExists(sounds)) {
+			for (int i = 0; i < sounds.length; i++) {
+				sounds[i] += 12;
+			}
+		}
+
+		return soundsToNotes(sounds);
 	}
 }
