@@ -79,7 +79,7 @@ public class ChordNameSuggester {
 	}
 
 	public static void setFirstSuggestedName(final ChordTemplate template, final Tuning tuning) {
-		if (template.frets.size() <= 2) {
+		if (SoundUtils.getNotes(tuning, false, template.frets).size() <= 2) {
 			return;
 		}
 
