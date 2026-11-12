@@ -30,7 +30,7 @@ public final class MidiReader {
 	}
 
 	private static void addVocalsIfAvailable(final Sequence seq, final MidiFileData midiFileData) {
-		final List<Vocal> vocals = MidiVocalsReader.read(seq);
+		final List<Vocal> vocals = MidiVocalsReader.read(seq, midiFileData.beats);
 		if (vocals != null) {
 			for (int i = 1; i < vocals.size(); i++) {
 				while (i < vocals.size() && vocals.get(i).text().isBlank()) {

@@ -86,7 +86,6 @@ public class WorkTimes implements Initiable {
 
 	private void save() {
 		try {
-			System.out.println("Saving");
 			final String xml = ChartWorkTimesXStreamHandler.write(charts);
 			RW.write(new File(workTimesPath), xml);
 		} catch (final Exception e) {
@@ -193,7 +192,6 @@ public class WorkTimes implements Initiable {
 
 	public void addTime(final double dt) {
 		if (charterFrame.isFocused() && !modeManager.modeIs(EditMode.EMPTY)) {
-			System.out.println("Adding work time");
 			final ChartWorkTimes currentChartInfo = getCurrentChartInfo();
 			updateWorkTime(currentChartInfo);
 			updateNumbers(currentChartInfo);
@@ -201,7 +199,7 @@ public class WorkTimes implements Initiable {
 
 		if (--saveCounter <= 0) {
 			save();
-			saveCounter = 1;
+			saveCounter = 60;
 		}
 	}
 

@@ -6,6 +6,7 @@ import java.util.Objects;
 
 public class Fraction implements Comparable<Fraction> {
 	public static final Fraction ZERO = new Fraction(0);
+	public static final Fraction ONE = new Fraction(1);
 
 	private static long gcd(long a, long b) {
 		if (a == 0) {

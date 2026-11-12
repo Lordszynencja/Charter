@@ -185,7 +185,6 @@ public class Utils {
 	}
 
 	public static String generateRandomId(final String name) {
-		System.out.println("Generating id for " + name);
 		final long t = System.nanoTime();
 		final String randomHex = new Random().ints(10, 0, 16).mapToObj(Integer::toHexString)
 				.collect(Collectors.joining());
