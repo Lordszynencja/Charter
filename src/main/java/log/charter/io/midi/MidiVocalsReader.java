@@ -13,6 +13,7 @@ import javax.sound.midi.Track;
 
 import org.jcodec.common.logging.Logger;
 
+import log.charter.data.song.BeatsMap;
 import log.charter.data.song.position.FractionalPosition;
 import log.charter.data.song.vocals.Vocal;
 import log.charter.data.song.vocals.Vocal.VocalFlag;
@@ -49,16 +50,18 @@ public class MidiVocalsReader {
 		return null;
 	}
 
-	public static List<Vocal> read(final Sequence sequence) {
+	public static List<Vocal> read(final Sequence sequence, final BeatsMap beats) {
 		final Track track = findVocalsTrack(sequence);
 		if (track == null) {
 			return null;
 		}
 
-		return new MidiVocalsReader(sequence.getResolution()).read(track);
+		return new MidiVocalsReader(sequence.getResolution(), beats).read(track);
 	}
 
+	private final List<FractionalPosition> quarterNotePositions = new ArrayList<>();
 	private final int midiResolution;
+	private final BeatsMap beats;
 	private final List<Vocal> vocals = new ArrayList<>();
 
 	private Vocal current = null;
@@ -68,8 +71,10 @@ public class MidiVocalsReader {
 
 	private boolean lineStarted = false;
 
-	private MidiVocalsReader(final int midiResolution) {
+	private MidiVocalsReader(final int midiResolution, final BeatsMap beats) {
+		quarterNotePositions.add(new FractionalPosition());
 		this.midiResolution = midiResolution;
+		this.beats = beats;
 	}
 
 	private String printMidiValues(final MidiEvent midiEvent) {
@@ -87,8 +92,60 @@ public class MidiVocalsReader {
 		return s.toString();
 	}
 
+	private void addNextQuarterNotePosition() {
+		FractionalPosition currentPosition = quarterNotePositions.get(quarterNotePositions.size() - 1);
+		Fraction remainingPart = new Fraction(1, 4);
+
+		while (remainingPart.compareTo(Fraction.ZERO) > 0) {
+			final Fraction remainingBeatPart = Fraction.ONE.add(currentPosition.fraction.negate())
+					.multiply(new Fraction(1, beats.getBeatSafe(currentPosition.beatId).noteDenominator));
+			if (remainingBeatPart.compareTo(remainingPart) < 0) {
+				remainingPart = remainingPart.add(remainingBeatPart.negate());
+				currentPosition = new FractionalPosition(currentPosition.beatId + 1);
+			} else {
+				currentPosition = currentPosition
+						.add(remainingPart.multiply(beats.getBeatSafe(currentPosition.beatId).noteDenominator));
+				remainingPart = Fraction.ZERO;
+			}
+		}
+
+		quarterNotePositions.add(currentPosition);
+	}
+
+	private void addQuarterNotePositionsUntil(final int quarterNoteId) {
+		if (quarterNotePositions.size() > quarterNoteId) {
+			return;
+		}
+
+		for (int i = quarterNotePositions.size(); i <= quarterNoteId; i++) {
+			addNextQuarterNotePosition();
+		}
+	}
+
+	private FractionalPosition getPositionForQuarterNote(final Fraction quarterNotes) {
+		addQuarterNotePositionsUntil(quarterNotes.intValue());
+
+		FractionalPosition currentPosition = quarterNotePositions.get(quarterNotes.intValue());
+		Fraction remainingPart = quarterNotes.add(-quarterNotes.intValue()).multiply(1, 4);
+
+		while (remainingPart.compareTo(Fraction.ZERO) > 0) {
+			final Fraction remainingBeatPart = Fraction.ONE.add(currentPosition.fraction.negate())
+					.multiply(new Fraction(1, beats.getBeatSafe(currentPosition.beatId).noteDenominator));
+			if (remainingBeatPart.compareTo(remainingPart) < 0) {
+				remainingPart = remainingPart.add(remainingBeatPart.negate());
+				currentPosition = new FractionalPosition(currentPosition.beatId + 1);
+			} else {
+				currentPosition = currentPosition
+						.add(remainingPart.multiply(beats.getBeatSafe(currentPosition.beatId).noteDenominator));
+				remainingPart = Fraction.ZERO;
+			}
+		}
+
+		return currentPosition;
+	}
+
 	private FractionalPosition getPosition(final long t) {
-		return new FractionalPosition(new Fraction(t, midiResolution));
+		return getPositionForQuarterNote(new Fraction(t, midiResolution));
 	}
 
 	private void createCurrent(final long t) {

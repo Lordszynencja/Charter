@@ -28,7 +28,7 @@ public class GpaXmlImporter {
 	public void importGpaXml(final File file) {
 		try {
 			final GpaTrack gpaTrack = GpaXmlXStreamHandler.readGpaTrack(file);
-			System.out.println(gpaTrack.scoreUrl);
+			// System.out.println(gpaTrack.scoreUrl);
 			setMetadata(gpaTrack);
 
 			// TODO try to load audio from given url (ask user)
