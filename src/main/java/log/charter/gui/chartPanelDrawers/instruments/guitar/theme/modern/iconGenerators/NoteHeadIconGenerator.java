@@ -5,11 +5,12 @@ import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
+
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 
 public class NoteHeadIconGenerator {
 	public static BufferedImage generateNoteIcon(final Color innerColor, final Color borderInnerColor,
@@ -19,7 +20,7 @@ public class NoteHeadIconGenerator {
 		final BufferedImage icon = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D graphics = (Graphics2D) icon.getGraphics();
 
-		graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(graphics);
 
 		final int borderSize = max(1, size / 15);
 		final int borderInnerSize = borderSize * 2;
@@ -58,7 +59,7 @@ public class NoteHeadIconGenerator {
 		final BufferedImage icon = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D g = (Graphics2D) icon.getGraphics();
 
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 
 		final int borderSize = max(1, size / 15);
 		final int borderInnerSize = borderSize * 2;

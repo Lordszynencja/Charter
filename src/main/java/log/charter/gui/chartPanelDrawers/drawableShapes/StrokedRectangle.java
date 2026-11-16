@@ -3,7 +3,6 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 
 class StrokedRectangle implements DrawableShape {
 	private final ShapePositionWithSize position;
@@ -31,7 +30,7 @@ class StrokedRectangle implements DrawableShape {
 
 	@Override
 	public void draw(final Graphics2D g) {
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 		g.setColor(color);
 		g.setStroke(new BasicStroke(thickness));
 		g.drawRect(position.x, position.y, position.width, position.height);

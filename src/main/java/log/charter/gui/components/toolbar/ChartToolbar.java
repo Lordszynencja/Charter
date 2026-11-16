@@ -12,7 +12,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -42,6 +41,7 @@ import log.charter.data.config.values.GridConfig;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.CharterFrame;
 import log.charter.gui.chartPanelDrawers.common.waveform.WaveFormDrawer;
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 import log.charter.gui.components.simple.FieldWithLabel;
 import log.charter.gui.components.simple.FieldWithLabel.LabelPosition;
 import log.charter.gui.components.simple.TextInputWithValidation;
@@ -309,7 +309,7 @@ public class ChartToolbar extends JToolBar implements IChartToolbar, Initiable {
 		final int h = size;
 		final BufferedImage img = new BufferedImage(w, h, icon.getType());
 		final Graphics2D g = (Graphics2D) img.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 		g.drawImage(icon, 0, 0, w, h, null);
 		return img;
 	}

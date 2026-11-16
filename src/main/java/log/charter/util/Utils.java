@@ -18,8 +18,9 @@ public class Utils {
 
 		return switch (SystemType.systemType) {
 			case WINDOWS -> System.getenv("APPDATA") + "/" + programFolderName + "/";
+			case LINUX -> System.getenv("HOME") + "/.local/" + programFolderName + "/";
 			case MAC -> "~/Library/Preferences/" + programFolderName + "/";
-			default -> "~/.local/" + programFolderName + "/";
+			default -> "config/";
 		};
 	}
 

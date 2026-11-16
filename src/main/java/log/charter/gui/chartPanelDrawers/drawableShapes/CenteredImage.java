@@ -4,7 +4,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import log.charter.util.MultiComposite;
@@ -73,7 +72,7 @@ public class CenteredImage implements DrawableShape {
 
 	@Override
 	public void draw(final Graphics2D g) {
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 
 		final int x = position.x - image.getWidth() / 2;
 		final int y = position.y - image.getHeight() / 2;

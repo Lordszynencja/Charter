@@ -152,7 +152,7 @@ public class WaveFormDrawer {
 			return;
 		}
 
-		if (ZoomUtils.zoom > 1) {
+		if (ZoomUtils.zoom > 10) {
 			drawFull(frameData.g, frameData.time);
 		} else {
 			drawFromMap(frameData.g, frameData.time);

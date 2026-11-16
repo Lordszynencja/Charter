@@ -6,9 +6,10 @@ import static log.charter.gui.chartPanelDrawers.instruments.guitar.theme.modern.
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.RenderingHints;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
+
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 
 public class MuteIconGenerator {
 	private static Polygon generateX(final int size, final int space) {
@@ -35,7 +36,7 @@ public class MuteIconGenerator {
 
 		final BufferedImage icon = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 
 		final Polygon inner = generateX(size - 2, space - 1);
 		inner.translate(1, 1);
@@ -62,7 +63,7 @@ public class MuteIconGenerator {
 
 		final BufferedImage icon = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 
 		final Polygon inner = generateX(size - 2, space - 1);
 		inner.translate(1, 1);

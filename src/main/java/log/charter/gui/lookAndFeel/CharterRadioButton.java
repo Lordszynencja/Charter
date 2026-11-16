@@ -6,13 +6,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 
 import javax.swing.ButtonModel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 
 public class CharterRadioButton {
 	public static class RadioIcon extends SimpleIcon {
@@ -85,7 +85,7 @@ public class CharterRadioButton {
 		}
 
 		private void setupGraphics(final Graphics2D g2d) {
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			QualitySettingsFor2D.setQuality(g2d);
 		}
 	}
 

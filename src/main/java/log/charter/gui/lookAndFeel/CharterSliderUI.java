@@ -6,13 +6,13 @@ import static log.charter.gui.chartPanelDrawers.common.DrawerUtils.getAsOdd;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 
 import javax.swing.JComponent;
 import javax.swing.JSlider;
 import javax.swing.plaf.metal.MetalSliderUI;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 
 public class CharterSliderUI extends MetalSliderUI {
 	@Override
@@ -22,7 +22,7 @@ public class CharterSliderUI extends MetalSliderUI {
 	}
 
 	private void setupGraphics(final Graphics2D g2d) {
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g2d);
 	}
 
 	@Override

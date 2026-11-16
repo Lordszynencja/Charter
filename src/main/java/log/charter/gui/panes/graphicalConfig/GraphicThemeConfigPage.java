@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 
 import log.charter.data.config.GraphicalConfig;
 import log.charter.data.config.Localization.Label;
+import log.charter.data.config.Quality;
 import log.charter.data.config.Theme;
 import log.charter.gui.components.containers.Page;
 import log.charter.gui.components.containers.RowedPanel;
@@ -40,6 +41,7 @@ public class GraphicThemeConfigPage implements Page {
 	private static final BigDecimalValueValidator scrollSpeedValidator = new BigDecimalValueValidator(
 			new BigDecimal("0.1"), new BigDecimal("2.0"), false);
 
+	private Quality quality2D = GraphicalConfig.quality2D;
 	private Theme theme = GraphicalConfig.theme;
 
 	private int inputSize = GraphicalConfig.inputSize;
@@ -51,6 +53,7 @@ public class GraphicThemeConfigPage implements Page {
 	private boolean showChordBoxes = GraphicalConfig.showChordBoxes;
 	private BigDecimal previewScrollSpeed = BigDecimal.valueOf(GraphicalConfig.previewWindowScrollSpeed);
 
+	private FieldWithLabel<CharterSelect<Quality>> quality2DField;
 	private FieldWithLabel<CharterSelect<Theme>> themeField;
 	private final List<JButton> sizeChangeButtons = new ArrayList<>();
 	private FieldWithLabel<TextInputWithValidation> inputSizeField;
@@ -69,6 +72,9 @@ public class GraphicThemeConfigPage implements Page {
 
 	@Override
 	public void init(final RowedPanel panel, final RowedPosition position) {
+		addQuality2DPicker(panel, position);
+		position.newRow();
+
 		addThemePicker(panel, position);
 		position.newRow();
 
@@ -97,6 +103,15 @@ public class GraphicThemeConfigPage implements Page {
 		position.newRow();
 
 		addScrollSpeedFieldField(panel, position);
+	}
+
+	private void addQuality2DPicker(final RowedPanel panel, final RowedPosition position) {
+		final CharterSelect<Quality> input = new CharterSelect<>(Quality.values(), quality2D, v -> v.label.label(),
+				q -> quality2D = q);
+
+		quality2DField = new FieldWithLabel<>(Label.GRAPHIC_CONFIG_QUALITY, inputSize * 3, inputSize * 15 / 2,
+				inputSize, input, LabelPosition.LEFT);
+		panel.add(quality2DField, position);
 	}
 
 	private void onThemeChange(final Theme newTheme) {

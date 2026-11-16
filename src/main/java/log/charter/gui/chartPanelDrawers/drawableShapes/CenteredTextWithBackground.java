@@ -3,7 +3,6 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 
 import log.charter.gui.components.preview3D.glUtils.Point2D;
 import log.charter.util.data.Position2D;
@@ -34,7 +33,7 @@ public class CenteredTextWithBackground implements DrawableShape {
 
 	@Override
 	public void draw(final Graphics2D g) {
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 		draw(g, getPositionAndSize(g));
 	}
 
