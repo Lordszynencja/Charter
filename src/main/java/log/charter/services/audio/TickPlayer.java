@@ -29,8 +29,11 @@ public class TickPlayer {
 	}
 
 	public void nextTime(final double t) {
-		if (nextSoundTime != null && nextSoundTime < t) {
-			SoundSystem.play(tick, AudioConfig::getSfxVolumeWithMute, 100);
+		if (nextSoundTime != null && nextSoundTime <= t) {
+			if (on) {
+				new Thread(() -> SoundSystem.play(tick, AudioConfig::getSfxVolumeWithMute, 100)).start();
+			}
+
 			nextSoundTime = null;
 		}
 
