@@ -226,6 +226,7 @@ public class GraphicThemeConfigPage implements Page {
 
 	@Override
 	public void setVisible(final boolean visibility) {
+		quality2DField.setVisible(visibility);
 		themeField.setVisible(visibility);
 		sizeChangeButtons.forEach(b -> b.setVisible(visibility));
 		inputSizeField.setVisible(visibility);
@@ -239,6 +240,7 @@ public class GraphicThemeConfigPage implements Page {
 	}
 
 	public void save() {
+		GraphicalConfig.quality2D = quality2D;
 		GraphicalConfig.theme = theme;
 		GraphicalConfig.inputSize = inputSize;
 		GraphicalConfig.noteHeight = noteHeight;
