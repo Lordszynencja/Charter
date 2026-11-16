@@ -6,9 +6,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.RenderingHints;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
+
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 
 public class HOPOIconGenerator {
 	public static BufferedImage generateHammerOnIcon() {
@@ -16,7 +17,7 @@ public class HOPOIconGenerator {
 		final int h = noteHeight * 2 / 5;
 		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 
 		g.setColor(Color.WHITE);
 		g.fill(new Polygon(new int[] { 1, w / 2, w - 1 }, new int[] { 1, h - 1, 1 }, 3));
@@ -34,7 +35,7 @@ public class HOPOIconGenerator {
 		final int h = noteHeight * 2 / 5;
 		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 
 		g.setColor(Color.WHITE);
 		g.fill(new Polygon(new int[] { 1, w / 2, w - 1 }, new int[] { h - 1, 1, h - 1 }, 3));
@@ -52,7 +53,7 @@ public class HOPOIconGenerator {
 		final int h = noteHeight * 2 / 5;
 		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 
 		g.setColor(Color.BLACK);
 		g.fill(new Polygon(new int[] { 1, w / 2, w - 1 }, new int[] { 1, h - 1, 1 }, 3));
@@ -70,7 +71,7 @@ public class HOPOIconGenerator {
 		final int h = noteHeight * 2 / 5;
 		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 
 		g.setColor(color);
 		g.setFont(new Font(Font.DIALOG, Font.BOLD, h + 1));
@@ -84,7 +85,7 @@ public class HOPOIconGenerator {
 		final int h = noteHeight * 2 / 5;
 		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 
 		g.setColor(Color.BLACK);
 		g.fill(new Polygon(new int[] { 1, w / 2, w - 1 }, new int[] { 1, h - 1, 1 }, 3));
@@ -106,7 +107,7 @@ public class HOPOIconGenerator {
 		final int h = noteHeight * 2 / 5;
 		final BufferedImage icon = new BufferedImage(w, h, BufferedImage.TYPE_4BYTE_ABGR);
 		final Graphics2D g = (Graphics2D) icon.getGraphics();
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 
 		g.setColor(Color.BLACK);
 		g.fill(new Polygon(new int[] { 1, w / 2, w - 1 }, new int[] { h - 1, 1, h - 1 }, 3));

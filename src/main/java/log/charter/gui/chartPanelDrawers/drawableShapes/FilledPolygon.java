@@ -2,7 +2,6 @@ package log.charter.gui.chartPanelDrawers.drawableShapes;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 
 import log.charter.util.data.Position2D;
 
@@ -17,7 +16,7 @@ class FilledPolygon implements DrawableShape {
 
 	@Override
 	public void draw(final Graphics2D g) {
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g);
 		g.setColor(color);
 		final int[] xs = new int[points.length];
 		final int[] ys = new int[points.length];

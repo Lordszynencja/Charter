@@ -23,6 +23,7 @@ import log.charter.util.Utils;
 public class GraphicalConfig {
 	private static final String configPath = Utils.defaultConfigDir + "graphicalConfig.ini";
 
+	public static Quality quality2D = Quality.HIGH;
 	public static Theme theme = Theme.MODERN;
 
 	public static int inputSize = 25;
@@ -66,6 +67,7 @@ public class GraphicalConfig {
 	static {
 		setDefaultFPS();
 
+		valueAccessors.put("quality2D", forEnum(Quality.class, v -> quality2D = v, () -> quality2D, quality2D));
 		valueAccessors.put("theme", forEnum(Theme.class, v -> theme = v, () -> theme, theme));
 		valueAccessors.put("inputSize", forInteger(v -> inputSize = v, () -> inputSize, inputSize));
 		valueAccessors.put("chartTextHeight",

@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
 import java.awt.geom.RoundRectangle2D;
 
@@ -13,6 +12,7 @@ import javax.swing.JCheckBox;
 import javax.swing.UIManager;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 
 public class CharterCheckBox {
 	public static class CheckBoxIcon extends SimpleIcon {
@@ -41,7 +41,7 @@ public class CharterCheckBox {
 		}
 
 		private void setupGraphics(final Graphics2D g2d) {
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			QualitySettingsFor2D.setQuality(g2d);
 		}
 
 		private Color getColor(final Color inputColor, final ColorLabel colorLabel) {

@@ -5,6 +5,7 @@ import static log.charter.util.Utils.formatTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import log.charter.data.config.values.DebugConfig;
 import log.charter.io.Logger;
 import log.charter.util.Utils.TimeUnit;
 import log.charter.util.collections.Pair;
@@ -29,8 +30,18 @@ public class Timer {
 	}
 
 	public void print(final String label, final String format) {
+		if (!DebugConfig.logging) {
+			return;
+		}
+
 		Logger.debug(label + " times:");
 		timings.forEach(pair -> Logger.debug(String.format(format, pair.a,
+				formatTime(pair.b, TimeUnit.NANOSECONDS, TimeUnit.NANOSECONDS, TimeUnit.SECONDS))));
+	}
+
+	public void printInfo(final String label, final String format) {
+		Logger.info(label + " times:");
+		timings.forEach(pair -> Logger.info(String.format(format, pair.a,
 				formatTime(pair.b, TimeUnit.NANOSECONDS, TimeUnit.NANOSECONDS, TimeUnit.SECONDS))));
 	}
 }

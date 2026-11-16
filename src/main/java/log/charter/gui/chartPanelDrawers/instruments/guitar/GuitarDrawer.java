@@ -17,7 +17,6 @@ import static log.charter.util.ScalingUtils.timeToXLength;
 import static log.charter.util.Utils.getStringPosition;
 
 import java.awt.Font;
-import java.awt.RenderingHints;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -42,8 +41,10 @@ import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData.HighlightPosition;
 import log.charter.gui.chartPanelDrawers.drawableShapes.CenteredText;
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 import log.charter.gui.chartPanelDrawers.instruments.guitar.highway.HighwayDrawer;
 import log.charter.gui.components.tabs.selectionEditor.CurrentSelectionEditor;
+import log.charter.util.Timer;
 import log.charter.util.data.Position2D;
 
 public class GuitarDrawer {
@@ -359,7 +360,7 @@ public class GuitarDrawer {
 
 		final int width = fontSize * 5 / 3;
 
-		frameData.g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(frameData.g);
 		frameData.g.setColor(ColorLabel.LANE.color());
 		frameData.g.fillRect(0, lanesTop, width + 3, lanesHeight + 1);
 
@@ -373,12 +374,20 @@ public class GuitarDrawer {
 
 	public void draw(final FrameData frameData) {
 		try {
+			final Timer t = new Timer();
+			t.start();
 			waveFormDrawer.draw(frameData);
+			t.addTimestamp("waveFormDrawer finished");
 			beatsDrawer.draw(frameData);
+			t.addTimestamp("beatsDrawer finished");
 			lyricLinesDrawer.draw(frameData);
+			t.addTimestamp("lyricLinesDrawer finished");
 
 			drawGuitar(frameData);
+			t.addTimestamp("drawGuitar finished");
 			drawStringNames(frameData);
+			t.addTimestamp("drawStringNames finished");
+			t.print("GuitarDrawer.draw", Timer.defaultFormat(30));
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

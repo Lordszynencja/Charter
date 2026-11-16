@@ -3,7 +3,6 @@ package log.charter.gui.lookAndFeel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JComponent;
@@ -15,6 +14,7 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTextFieldUI;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 
 public class CharterTextFieldUI extends BasicTextFieldUI {
 	private static final String CHARTER_TEXT_FIELD_UI = "CharterTextFieldUI";
@@ -105,7 +105,7 @@ public class CharterTextFieldUI extends BasicTextFieldUI {
 	}
 
 	private void setupGraphics(final Graphics2D g2d, final JComponent c) {
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g2d);
 	}
 
 	public static void install() {

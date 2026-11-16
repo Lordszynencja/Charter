@@ -3,7 +3,6 @@ package log.charter.data.config;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,6 +12,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 import log.charter.gui.menuHandlers.CharterMenuBar;
 import log.charter.util.RW;
 
@@ -319,6 +319,8 @@ public class Localization {
 		PREVIOUS_ITEM_WITH_SELECT_SHIFT("Previous item with group select"), //
 		PULL_OFF_ON_HIGHER_EQUAL_FRET("Pull off on a higher or equal fret"), //
 		PULL_OFF_WITHOUT_NOTE_BEFORE("Pull off without note before"), //
+		QUALITY_HIGH("High"), //
+		QUALITY_LOW("Low"), //
 		REARRANGE_ARRANGEMENTS("Rearrange arrangements"), //
 		REARRANGE_VOCAL_PATHS("Rearrange vocal paths"), //
 		REDO("Redo"), //
@@ -754,6 +756,7 @@ public class Localization {
 
 		PAGE_TEXTURES("Textures"), //
 		PAGE_THEME("Theme"), //
+		GRAPHIC_CONFIG_QUALITY("Quality"), //
 		GRAPHIC_CONFIG_THEME("Theme"), //
 		GRAPHIC_CONFIG_NOTE_HEIGHT("Note height (px)"), //
 		GRAPHIC_CONFIG_NOTE_WIDTH("Note width (px)"), //
@@ -874,14 +877,14 @@ public class Localization {
 
 			BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D graphics = (Graphics2D) img.getGraphics();
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			QualitySettingsFor2D.setQuality(graphics);
 			graphics.setFont(font);
 			final Rectangle2D bounds = graphics.getFontMetrics().getStringBounds(label(), graphics);
 
 			img = new BufferedImage((int) bounds.getWidth() + 1, (int) bounds.getHeight() + 1,
 					BufferedImage.TYPE_INT_ARGB);
 			graphics = (Graphics2D) img.getGraphics();
-			graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			QualitySettingsFor2D.setQuality(graphics);
 			graphics.setFont(font);
 			graphics.setColor(color);
 			graphics.drawString(label, 0, (int) -bounds.getY());

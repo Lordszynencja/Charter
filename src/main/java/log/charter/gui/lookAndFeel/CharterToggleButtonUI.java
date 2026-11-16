@@ -3,7 +3,6 @@ package log.charter.gui.lookAndFeel;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.AbstractButton;
@@ -14,6 +13,7 @@ import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicToggleButtonUI;
 
 import log.charter.data.config.ChartPanelColors.ColorLabel;
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 
 public class CharterToggleButtonUI extends BasicToggleButtonUI {
 	private static final CharterToggleButtonUI toggleButtonUI = new CharterToggleButtonUI();
@@ -76,7 +76,7 @@ public class CharterToggleButtonUI extends BasicToggleButtonUI {
 	}
 
 	private void setupGraphics(final Graphics2D g2d, final JComponent c) {
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		QualitySettingsFor2D.setQuality(g2d);
 	}
 
 	static void install() {
