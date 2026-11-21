@@ -42,8 +42,16 @@ public class ClapsHandler {
 		chartToolbar.updateValues();
 	}
 
+	public void start(final double t) {
+		clapsPlayer.start(t);
+	}
+
 	public void nextTime(final double nextTime) {
 		clapsPlayer.nextTime(nextTime);
+	}
+
+	public void reset(final double t) {
+		clapsPlayer.reset(t);
 	}
 
 	public void stop() {

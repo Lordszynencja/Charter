@@ -2,6 +2,8 @@ package log.charter.sound.data;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static log.charter.sound.utils.FloatSamplesUtils.readSample;
+import static log.charter.sound.utils.FloatSamplesUtils.writeSample;
 
 import java.io.File;
 import java.util.Arrays;
@@ -119,12 +121,18 @@ public class AudioData {
 				sampleRate, false);
 	}
 
+	public AudioData(final byte[] data, final AudioFormat format) {
+		this.data = data;
+		this.format = format;
+	}
+
 	public int frames() {
 		return data.length / max(1, format.getFrameSize());
 	}
 
 	public float getSample(final int frame, final int channel) {
-		return FloatSamplesUtils.readSample(data, frame * format.getChannels(), format.getSampleSizeInBits() / 8);
+		return FloatSamplesUtils.readSample(data, frame * format.getChannels() + channel,
+				format.getSampleSizeInBits() / 8);
 	}
 
 	public double msLength() {
@@ -217,5 +225,16 @@ public class AudioData {
 	public AudioData cutToLength(final double time) {
 		final int to = byteOffset(time);
 		return copyPart(0, to);
+	}
+
+	public AudioData withVolume(final float volume) {
+		final int sampleSize = format.getSampleSizeInBits() / 8;
+		final int samplesNumber = data.length / sampleSize;
+		final byte[] newData = new byte[samplesNumber * sampleSize];
+		for (int i = 0; i < samplesNumber; i++) {
+			writeSample(newData, i * sampleSize, readSample(data, i, sampleSize) * volume, sampleSize);
+		}
+
+		return new AudioData(newData, format);
 	}
 }
