@@ -387,7 +387,7 @@ public class GuitarDrawer {
 			t.addTimestamp("drawGuitar finished");
 			drawStringNames(frameData);
 			t.addTimestamp("drawStringNames finished");
-			t.print("GuitarDrawer.draw", Timer.defaultFormat(30));
+			// t.print("GuitarDrawer.draw", Timer.defaultFormat(30));
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

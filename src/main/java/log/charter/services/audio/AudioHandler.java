@@ -107,6 +107,9 @@ public class AudioHandler {
 		songTimeOnStart = chartTimeHandler.time();
 		playStartTime = nanoTime() / 1_000_000L;
 
+		clapsHandler.start(songTimeOnStart);
+		metronomeHandler.start(songTimeOnStart);
+
 		if (midiNotesPlaying) {
 			midiChartNotePlayer.startPlaying(speed);
 		}
@@ -225,11 +228,8 @@ public class AudioHandler {
 		stop();
 
 		chartTimeHandler.nextTime(t);
-
-		metronomeHandler.stop();
-		metronomeHandler.nextTime(t);
-		clapsHandler.stop();
-		clapsHandler.nextTime(t);
+		metronomeHandler.reset(t);
+		clapsHandler.reset(t);
 		if (midiNotesPlaying) {
 			midiChartNotePlayer.stopPlaying();
 			midiChartNotePlayer.startPlaying(speed);

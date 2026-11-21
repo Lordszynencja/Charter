@@ -21,8 +21,16 @@ public class MetronomeHandler {
 		chartToolbar.updateValues();
 	}
 
+	public void start(final double t) {
+		metronomePlayer.start(t);
+	}
+
 	public void nextTime(final double nextTime) {
 		metronomePlayer.nextTime(nextTime);
+	}
+
+	public void reset(final double t) {
+		metronomePlayer.reset(t);
 	}
 
 	public void stop() {

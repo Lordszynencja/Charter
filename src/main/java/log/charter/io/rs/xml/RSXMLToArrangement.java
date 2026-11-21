@@ -32,17 +32,7 @@ import log.charter.io.rs.xml.song.SongArrangement;
 public class RSXMLToArrangement {
 	private static Tuning getTuning(final ArrangementTuning arrangementTuning, final ArrangementType arrangementType) {
 		final int strings = arrangementTuning.strings == 0 ? arrangementType.defaultStrings : arrangementTuning.strings;
-		int[] tuning = new int[] { //
-				arrangementTuning.string0, //
-				arrangementTuning.string1, //
-				arrangementTuning.string2, //
-				arrangementTuning.string3, //
-				arrangementTuning.string4, //
-				arrangementTuning.string5, //
-				arrangementTuning.string6, //
-				arrangementTuning.string7, //
-				arrangementTuning.string8 };
-		tuning = Arrays.copyOf(tuning, strings);
+		final int[] tuning = Arrays.copyOf(arrangementTuning.tuningValues, strings);
 		final TuningType tuningType = TuningType.fromTuning(tuning);
 
 		return new Tuning(tuningType, strings, tuning);
