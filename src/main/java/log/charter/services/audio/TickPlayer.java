@@ -52,8 +52,6 @@ public class TickPlayer {
 
 		if (on) {
 			line.write(tick.withVolume((float) (AudioConfig.getSfxVolumeWithMute() * 0.5)).data);
-			// new Thread(() -> line.write(tick.withVolume((float)
-			// (AudioConfig.getSfxVolumeWithMute() * 0.5)).data)).start();
 		}
 
 		nextSoundId++;
@@ -61,9 +59,11 @@ public class TickPlayer {
 		if (nextSoundId >= positions.size()) {
 			nextSoundId = null;
 			nextSoundTime = null;
-			line.stop();
-			line.close();
-			line = null;
+			if (line != null) {
+				line.stop();
+				line.close();
+				line = null;
+			}
 		} else {
 			nextSoundTime = positionsSupplier.get().get(nextSoundId).toPosition(beatsSupplier.get()).position();
 		}
