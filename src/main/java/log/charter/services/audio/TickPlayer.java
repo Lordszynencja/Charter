@@ -40,7 +40,16 @@ public class TickPlayer {
 		}
 	}
 
+	private synchronized void closeLineIfNeeded() {
+		if (line != null) {
+			line.stop();
+			line.close();
+			line = null;
+		}
+	}
+
 	public void start(final double t) {
+		closeLineIfNeeded();
 		line = SoundSystem.getCurrentSoundSystem().getNewLine(tick.format);
 		setNextSoundForTime(t);
 	}
@@ -57,13 +66,7 @@ public class TickPlayer {
 		nextSoundId++;
 		final List<? extends IVirtualConstantPosition> positions = positionsSupplier.get();
 		if (nextSoundId >= positions.size()) {
-			nextSoundId = null;
-			nextSoundTime = null;
-			if (line != null) {
-				line.stop();
-				line.close();
-				line = null;
-			}
+			stop();
 		} else {
 			nextSoundTime = positionsSupplier.get().get(nextSoundId).toPosition(beatsSupplier.get()).position();
 		}
@@ -74,12 +77,7 @@ public class TickPlayer {
 	}
 
 	public void stop() {
-		if (line != null) {
-			line.stop();
-			line.close();
-			line = null;
-		}
-
+		closeLineIfNeeded();
 		nextSoundId = null;
 		nextSoundTime = null;
 	}
