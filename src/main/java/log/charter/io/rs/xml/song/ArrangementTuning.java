@@ -11,14 +11,17 @@ import log.charter.io.rs.xml.converters.ArrangementTuningConverter;
 public class ArrangementTuning {
 	public int[] tuningValues;
 	public int strings;
+	public boolean extendedRange;
 
-	public ArrangementTuning(final int[] tuningValues, final int strings) {
+	public ArrangementTuning(final int[] tuningValues, final int strings, final boolean extendedRange) {
 		this.tuningValues = tuningValues;
 		this.strings = strings;
+		this.extendedRange = extendedRange;
 	}
 
-	public ArrangementTuning(final Tuning tuning) {
+	public ArrangementTuning(final Tuning tuning, final boolean bass) {
 		strings = tuning.strings();
 		tuningValues = tuning.getTuning(max(6, strings));
+		extendedRange = strings > (bass ? 4 : 6);
 	}
 }

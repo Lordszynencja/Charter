@@ -145,7 +145,7 @@ public class SongArrangement {
 		averageTempo = new BigDecimal(
 				(double) (beatsTmp.get(beatsTmp.size() - 1).position() - startBeat) / (beatsTmp.size() - 1))
 				.setScale(3, RoundingMode.HALF_UP);
-		tuning = new ArrangementTuning(arrangement.tuning);
+		tuning = new ArrangementTuning(arrangement.tuning, arrangement.arrangementType == ArrangementType.Bass);
 		capo = arrangement.capo;
 		artistName = cleanString(songChart.artistName());
 		artistNameSort = cleanString(songChart.artistNameSort());
