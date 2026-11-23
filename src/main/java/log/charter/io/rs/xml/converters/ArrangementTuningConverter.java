@@ -19,6 +19,7 @@ public class ArrangementTuningConverter implements Converter {
 	public void marshal(final Object source, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		final ArrangementTuning tuning = (ArrangementTuning) source;
 
+		writer.addAttribute("extendedRange", tuning.extendedRange ? "1" : "0");
 		for (int i = 0; i < tuning.tuningValues.length; i++) {
 			writer.addAttribute("string" + i, "" + tuning.tuningValues[i]);
 		}
@@ -29,6 +30,7 @@ public class ArrangementTuningConverter implements Converter {
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
 		final int[] tuningValues;
 		int strings;
+		final boolean extendedRange = "1".equals(reader.getAttribute("extendedRange"));
 
 		try {
 			strings = Integer.parseInt(reader.getAttribute("strings"));
@@ -44,7 +46,7 @@ public class ArrangementTuningConverter implements Converter {
 			}
 		}
 
-		return new ArrangementTuning(tuningValues, strings);
+		return new ArrangementTuning(tuningValues, strings, extendedRange);
 	}
 
 }

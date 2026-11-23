@@ -1,5 +1,6 @@
 package log.charter.services.audio;
 
+import static log.charter.data.config.values.AudioConfig.bufferedMs;
 import static log.charter.util.CollectionUtils.firstAfter;
 
 import java.util.Comparator;
@@ -51,11 +52,16 @@ public class TickPlayer {
 	public void start(final double t) {
 		closeLineIfNeeded();
 		line = SoundSystem.getCurrentSoundSystem().getNewLine(tick.format);
-		setNextSoundForTime(t);
+		setNextSoundForTime(t + bufferedMs / 1000.0);
 	}
 
-	public void nextTime(final double t) {
+	public void nextTime(double t) {
+		t += +bufferedMs / 1000.0;
 		if (line == null || nextSoundTime == null || nextSoundTime > t) {
+			while (line.wantsMoreData()) {
+				line.write(new byte[32]);
+			}
+
 			return;
 		}
 
@@ -66,7 +72,15 @@ public class TickPlayer {
 		nextSoundId++;
 		final List<? extends IVirtualConstantPosition> positions = positionsSupplier.get();
 		if (nextSoundId >= positions.size()) {
-			stop();
+			new Thread(() -> {
+				try {
+					Thread.sleep(100);
+				} catch (final InterruptedException e) {
+				}
+				closeLineIfNeeded();
+			}).start();
+			nextSoundId = null;
+			nextSoundTime = null;
 		} else {
 			nextSoundTime = positionsSupplier.get().get(nextSoundId).toPosition(beatsSupplier.get()).position();
 		}
