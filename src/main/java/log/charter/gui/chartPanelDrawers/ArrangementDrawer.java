@@ -3,6 +3,7 @@ package log.charter.gui.chartPanelDrawers;
 import java.awt.Graphics2D;
 
 import log.charter.data.ChartData;
+import log.charter.gui.ChartPanel;
 import log.charter.gui.chartPanelDrawers.common.LyricLinesDrawer;
 import log.charter.gui.chartPanelDrawers.data.FrameData;
 import log.charter.gui.chartPanelDrawers.data.HighlightData;
@@ -25,6 +26,7 @@ import log.charter.services.mouseAndKeyboard.MouseHandler;
 public class ArrangementDrawer implements Initiable {
 	private CharterContext charterContext;
 	private ChartData chartData;
+	private ChartPanel chartPanel;
 	private GuitarDrawerUtils guitarDrawerUtils;
 	private HighlightManager highlightManager;
 	private KeyboardHandler keyboardHandler;
@@ -75,6 +77,7 @@ public class ArrangementDrawer implements Initiable {
 				time, //
 				projectAudioHandler.audioLengthMs(), //
 				g, //
+				chartPanel.getWidth(), //
 				generateHighlightData(time), //
 				keyboardHandler.ctrl());
 	}

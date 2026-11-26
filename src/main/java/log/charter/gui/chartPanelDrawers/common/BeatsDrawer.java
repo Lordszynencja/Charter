@@ -213,7 +213,7 @@ public class BeatsDrawer {
 			if (x < -1000) {
 				continue;
 			}
-			if (x > chartPanel.getWidth()) {
+			if (x > frameData.panelWidth) {
 				break;
 			}
 

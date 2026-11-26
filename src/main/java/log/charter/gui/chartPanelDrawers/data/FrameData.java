@@ -30,6 +30,7 @@ public class FrameData {
 	public final double time;
 	public final double songLength;
 	public final Graphics2D g;
+	public final int panelWidth;
 	public final HighlightData highlightData;
 	public final boolean ctrlPressed;
 
@@ -38,8 +39,8 @@ public class FrameData {
 			final List<Showlight> showlightsLaser, final VocalPath vocals, final Arrangement arrangement,
 			final Level level, final Pair<Double, Double> repeaterSpan,
 			final ISelectionAccessor<? extends IVirtualConstantPosition> selection, final PositionType emptySelection,
-			final double time, final double songLength, final Graphics2D g, final HighlightData highlightData,
-			final boolean ctrlPressed) {
+			final double time, final double songLength, final Graphics2D g, final int panelWidth,
+			final HighlightData highlightData, final boolean ctrlPressed) {
 		this.beats = beats;
 		this.bookmarks = bookmarks;
 		this.showlights = showlights;
@@ -55,14 +56,15 @@ public class FrameData {
 		this.time = time;
 		this.songLength = songLength;
 		this.g = g;
+		this.panelWidth = panelWidth;
 		this.highlightData = highlightData;
 		this.ctrlPressed = ctrlPressed;
 	}
 
 	public FrameData spawnSubData(final Graphics2D g) {
 		return new FrameData(beats, bookmarks, showlights, showlightsFog, showlightsBeam, showlightsLaser, vocals,
-				arrangement, level, repeaterSpan, selection, emptySelection, time, songLength, g, highlightData,
-				ctrlPressed);
+				arrangement, level, repeaterSpan, selection, emptySelection, time, songLength, g, panelWidth,
+				highlightData, ctrlPressed);
 	}
 
 }

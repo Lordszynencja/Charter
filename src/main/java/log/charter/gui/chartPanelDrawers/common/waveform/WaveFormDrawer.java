@@ -10,12 +10,15 @@ import static log.charter.util.ScalingUtils.xToPosition;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.List;
 
 import log.charter.data.config.ChartPanelColors;
 import log.charter.data.config.ZoomUtils;
 import log.charter.gui.ChartPanel;
 import log.charter.gui.chartPanelDrawers.data.FrameData;
+import log.charter.gui.chartPanelDrawers.drawableShapes.QualitySettingsFor2D;
 import log.charter.gui.components.toolbar.ChartToolbar;
 import log.charter.services.data.ProjectAudioHandler;
 import log.charter.services.editModes.EditMode;
@@ -70,16 +73,27 @@ public class WaveFormDrawer {
 		return drawWaveForm || modeManager.getMode() == EditMode.TEMPO_MAP;
 	}
 
-	private void drawFromMap(final Graphics g, final double time) {
+	private void setQuickRendering(final Graphics2D g) {
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+	}
+
+	private void drawFromMap(final FrameData frameData) {
 		final WaveformMap map = this.map;
 		if (map == null) {
 			return;
 		}
 
+		final Graphics2D g = frameData.g;
+		final double time = frameData.time;
+		setQuickRendering(g);
+
 		final Pair<Integer, List<WaveformInformation>> level = map.getLevel(1 / ZoomUtils.zoom);
 		final int timeSpan = getSpanForLevel(level.a);
 
-		final int width = chartPanel.getWidth();
+		final int width = frameData.panelWidth;
 		final int y = getMiddle();
 		final int fullHeight = getHeight();
 		final int start = max(0, (int) (xToPosition(0, time) / timeSpan));
@@ -112,6 +126,8 @@ public class WaveFormDrawer {
 				g.fillRect(x, y, 1, 1);
 			}
 		}
+
+		QualitySettingsFor2D.setQuality(g);
 	}
 
 	private void drawFull(final Graphics g, final double time) {
@@ -155,7 +171,7 @@ public class WaveFormDrawer {
 		if (ZoomUtils.zoom > 10) {
 			drawFull(frameData.g, frameData.time);
 		} else {
-			drawFromMap(frameData.g, frameData.time);
+			drawFromMap(frameData);
 		}
 	}
 }
