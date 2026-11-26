@@ -11,6 +11,7 @@ import log.charter.io.gp.gp7.converters.GP7BeatConverter;
 @XStreamAlias("Beat")
 @XStreamConverter(GP7BeatConverter.class)
 public class GP7Beat {
+	public String graceNotes;
 	public int rhythmReference = -1;
 	public boolean tremolo;
 	public List<Integer> notes = new ArrayList<>();

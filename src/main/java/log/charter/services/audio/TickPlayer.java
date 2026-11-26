@@ -56,8 +56,12 @@ public class TickPlayer {
 	}
 
 	public void nextTime(double t) {
+		if (line == null) {
+			return;
+		}
+
 		t += +bufferedMs / 1000.0;
-		if (line == null || nextSoundTime == null || nextSoundTime > t) {
+		if (nextSoundTime == null || nextSoundTime > t) {
 			while (line.wantsMoreData()) {
 				line.write(new byte[32]);
 			}

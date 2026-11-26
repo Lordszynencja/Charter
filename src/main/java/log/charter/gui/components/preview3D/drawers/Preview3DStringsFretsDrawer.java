@@ -4,11 +4,11 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static log.charter.data.config.ChartPanelColors.getStringBasedColor;
 import static log.charter.data.song.notes.ChordOrNote.isLinkedToPrevious;
+import static log.charter.gui.components.preview3D.Preview3DUtils.bottomStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.fretThickness;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getFretPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.getStringPosition;
 import static log.charter.gui.components.preview3D.Preview3DUtils.stringDistance;
-import static log.charter.gui.components.preview3D.Preview3DUtils.bottomStringPosition;
 import static log.charter.util.CollectionUtils.firstAfter;
 import static log.charter.util.CollectionUtils.lastBefore;
 import static log.charter.util.ColorUtils.mix;
@@ -35,6 +35,8 @@ import log.charter.gui.components.preview3D.shaders.ShadersHolder.BaseShaderDraw
 import log.charter.util.data.IntRange;
 
 public class Preview3DStringsFretsDrawer {
+	private static final boolean twelveStrings = false;
+
 	private static final int highlightTime = 100;
 	private static final int activeTime = 500;
 
@@ -44,13 +46,20 @@ public class Preview3DStringsFretsDrawer {
 		this.chartData = chartData;
 	}
 
-	private void addStrings(final BaseShaderDrawData drawData) {
+	private void addStrings(final BaseShaderDrawData drawData, final BaseShaderDrawData shaderDrawDataThin) {
 		final double x0 = getFretPosition(0);
 		final double x1 = getFretPosition(InstrumentConfig.frets);
 
 		for (int i = 0; i < chartData.currentStrings(); i++) {
 			final Color stringColor = getStringBasedColor(StringColorLabelType.LANE, i, chartData.currentStrings());
-			final double y = getStringPosition(i, chartData.currentStrings());
+			double y = getStringPosition(i, chartData.currentStrings());
+
+			if (twelveStrings) {
+				y += 0.04;
+				shaderDrawDataThin.addVertex(new Point3D(x0, y - 0.08, 0), stringColor)//
+						.addVertex(new Point3D(x1, y - 0.08, 0), stringColor);
+			}
+
 			drawData.addVertex(new Point3D(x0, y, 0), stringColor)//
 					.addVertex(new Point3D(x1, y, 0), stringColor);
 		}
@@ -153,9 +162,15 @@ public class Preview3DStringsFretsDrawer {
 
 	public void draw(final ShadersHolder shadersHolder, final Preview3DDrawData drawData) {
 		final BaseShaderDrawData shaderDrawData = shadersHolder.new BaseShaderDrawData();
+		final BaseShaderDrawData shaderDrawDataThin = shadersHolder.new BaseShaderDrawData();
 
-		addStrings(shaderDrawData);
+		addStrings(shaderDrawData, shaderDrawDataThin);
 		addFrets(shadersHolder, drawData);
+
+		if (twelveStrings) {
+			GL30.glLineWidth(0.3f);
+			shaderDrawDataThin.draw(GL30.GL_LINES, Matrix4.identity);
+		}
 
 		GL30.glLineWidth(2);
 		shaderDrawData.draw(GL30.GL_LINES, Matrix4.identity);

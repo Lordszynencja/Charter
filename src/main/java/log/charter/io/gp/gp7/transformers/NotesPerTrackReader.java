@@ -47,6 +47,8 @@ class NotesPerTrackReader {
 	private List<GP7NotesWithPosition> getNotesForTrack(final List<Pair<GP7MasterBar, Integer>> trackBarIds) {
 		final List<GP7NotesWithPosition> trackNotes = new ArrayList<>();
 		int currentBeatId = 0;
+		GP7Rhythm gracePushback = null;
+
 		for (final Pair<GP7MasterBar, Integer> barId : trackBarIds) {
 			final GP7Bar bar = gpif.bars.get(barId.b);
 
@@ -63,7 +65,15 @@ class NotesPerTrackReader {
 				for (final int beatId : gpif.voices.get(voiceId).beats) {
 					final GP7Beat beat = gpif.beats.get(beatId);
 					final GP7Rhythm rhythm = gpif.rhythms.get(beat.rhythmReference);
-					final GP7FractionalPosition nextPosition = currentPosition.move(rhythm);
+					if ("BeforeBeat".equals(beat.graceNotes)) {
+						currentPosition = currentPosition.move(rhythm, true);
+					}
+
+					GP7FractionalPosition nextPosition = currentPosition.move(rhythm, false);
+					if (gracePushback != null) {
+						nextPosition = nextPosition.move(gracePushback, true);
+						gracePushback = null;
+					}
 
 					if (!barNotesMap.containsKey(currentPosition.position())) {
 						barNotesMap.put(currentPosition.position(), new ArrayList<>());
@@ -75,6 +85,9 @@ class NotesPerTrackReader {
 						barNotesMap.get(currentPosition.position()).add(note);
 					}
 
+					if ("OnBeat".equals(beat.graceNotes)) {
+						gracePushback = rhythm;
+					}
 					currentPosition = nextPosition;
 				}
 

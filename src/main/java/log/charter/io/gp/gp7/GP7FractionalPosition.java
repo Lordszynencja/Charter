@@ -40,7 +40,7 @@ public class GP7FractionalPosition implements IConstantFractionalPosition {
 		return add(new Fraction(-getCurrentBeatDenominator(), duration.denominator));
 	}
 
-	public GP7FractionalPosition move(final GP7Rhythm rhythm) {
+	public GP7FractionalPosition move(final GP7Rhythm rhythm, final boolean backwards) {
 		Fraction addFraction = new Fraction(getCurrentBeatDenominator(), rhythm.duration.denominator);
 		if (!rhythm.primaryTuplet.isSimple()) {
 			addFraction = addFraction.multiply(rhythm.primaryTuplet.denominator, rhythm.primaryTuplet.numerator);
@@ -60,6 +60,10 @@ public class GP7FractionalPosition implements IConstantFractionalPosition {
 			}
 
 			addFraction = addFraction.multiply(dotNumerator, dotDenominator);
+		}
+
+		if (backwards) {
+			addFraction = addFraction.negate();
 		}
 
 		return add(addFraction);

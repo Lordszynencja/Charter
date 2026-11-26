@@ -299,8 +299,11 @@ public class ChartTimeHandler {
 	}
 
 	public void moveToNextBeat() {
-		final IConstantFractionalPosition timePosition = timeFractional();
-		nextTime(new FractionalPosition(timePosition.position().beatId + 1));
+		if (time() < chartData.beats().get(0).position()) {
+			nextTime(new FractionalPosition(0));
+		} else {
+			nextTime(new FractionalPosition(timeFractional().position().beatId + 1));
+		}
 	}
 
 	public void moveToNextGrid() {
