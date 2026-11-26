@@ -538,14 +538,60 @@ public class GuitarSoundSelectionEditor extends ChordTemplateEditor {
 		setCurrentValuesInInputs();
 	}
 
-	private void setSlide(final List<ChordOrNote> selected) {
-		final List<CommonNote> selectedNotesWithoutOpenStrings = selected.stream()//
-				.flatMap(sound -> sound.notesWithFrets(chartData.currentChordTemplates()))//
+	private Pair<Integer, Boolean> getSlideValues(final ChordOrNote sound) {
+		if (sound.isNote()) {
+			final Note note = sound.note();
+			if (parent.isEdited(note.string)) {
+				return new Pair<>(note.slideTo, note.unpitchedSlide);
+			} else {
+				return null;
+			}
+		}
+
+		record SlideInfo(int fret, Integer slideTo, boolean unpitchedSlide) {
+		}
+		;
+
+		final List<SlideInfo> slideInfos = sound.notesWithFrets(chartData.currentChordTemplates())//
 				.filter(n -> n.fret() > 0 && parent.isEdited(n.string()))//
+				.map(n -> new SlideInfo(n.fret(), n.slideTo(), n.unpitchedSlide()))//
 				.collect(Collectors.toList());
 
-		final Pair<Integer, Boolean> slideValue = getSingleValue(selectedNotesWithoutOpenStrings,
-				note -> new Pair<>(note.slideTo(), note.unpitchedSlide()), new Pair<>(null, false));
+		Integer difference = null;
+		int lowestSlideTo = InstrumentConfig.frets;
+		Boolean unpitchedSlide = null;
+		for (final SlideInfo slideInfo : slideInfos) {
+			if (slideInfo.slideTo == null) {
+				return null;
+			}
+			if (unpitchedSlide != null && unpitchedSlide != slideInfo.unpitchedSlide) {
+				return null;
+			}
+
+			final int currentDifference = slideInfo.slideTo - slideInfo.fret;
+			if (difference != null && currentDifference != difference) {
+				return null;
+			}
+
+			difference = currentDifference;
+			lowestSlideTo = min(lowestSlideTo, slideInfo.slideTo);
+			unpitchedSlide = slideInfo.unpitchedSlide;
+		}
+
+		if (difference != null) {
+			return new Pair<>(lowestSlideTo, unpitchedSlide);
+		}
+
+		return null;
+	}
+
+	private void setSlide(final List<ChordOrNote> selected) {
+		final List<Pair<Integer, Boolean>> slideValues = selected.stream()//
+				.map(this::getSlideValues)//
+				.filter(n -> n != null)//
+				.collect(Collectors.toList());
+
+		final Pair<Integer, Boolean> slideValue = getSingleValue(slideValues, p -> p, new Pair<>(null, false));
 
 		slideFret.field.setTextWithoutEvent(slideValue.a == null ? "" : (slideValue.a + ""));
 		unpitchedSlide.field.setSelected(slideValue.b);
