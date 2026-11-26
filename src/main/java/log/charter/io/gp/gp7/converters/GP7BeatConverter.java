@@ -29,6 +29,9 @@ public class GP7BeatConverter implements Converter {
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();
 			switch (reader.getNodeName()) {
+				case "GraceNotes":
+					beat.graceNotes = reader.getValue();
+					break;
 				case "Tremolo":
 					beat.tremolo = true;
 					break;
